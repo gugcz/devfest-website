@@ -1,0 +1,61 @@
+/* IE fixes */
+.agnes {
+	background: #303030;
+}
+.navbar .brand {
+	width: 168px; 
+}
+.home .navbar .brand {
+	width: 23px; 
+}
+.logos li {
+	float: left;
+	padding: 0 20px;
+}
+#program .span10 {
+	width: 800px;
+}
+#program .span10 .span2 {
+  width: 200px;
+  margin: 0;
+}  
+#program .program-item-text {
+	margin-left: 0;
+}
+#program .program-item-text.span10 {
+    float: right;    
+}
+#program .long .program-item-text {
+	width: 800px;
+}
+#program .row {
+	margin-bottom: 10px;
+}
+#program .blocks h2 {
+	font-size: 20px;
+	padding: 10px 20px 5px 30px;
+}
+#program .blocks p {
+	font-size: 13px;
+	padding: 0 25px 12px 17px
+}
+#program .blocks .span2.offset2 {
+	margin-left: 200px;
+}
+#program .blocks .span2.offset3 {
+	margin-left: 400px;
+}
+/* IE7 */
+* + html .carousel .item {
+	height: 300px !important;
+}
+* + html #speakers .speaker {
+	position: relative;
+}
+* + html .forkit {
+	height: 59px;
+	width: 60px;
+	background: transparent url('../imgs/agnes.png') top left no-repeat;
+	text-indent: -9999px;
+	z-index: 99999;
+}
