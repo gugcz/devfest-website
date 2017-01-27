@@ -1,0 +1,47 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../hoverboard-app.html"></head><body><dom-module id="cod-page">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .details {
+        @apply(--layout-vertical);
+        @apply(--layout-center-justified);
+      }
+
+      .details-item {
+        @apply(--layout-horizontal);
+        margin: 0 auto;
+        padding-bottom: 32px;
+      }
+
+      @media (min-width: 1600px) {
+        .container {
+          max-width: 960px;
+        }
+      }
+    </style>
+
+    <iron-ajax auto="" id="ajax" url="[[source]]" handle-as="text" on-response="updateCascadedNodes" last-response="{{cod}}"></iron-ajax>
+
+    <div class="container">
+      <div class="details">
+        <div class="details-item" cascaded="">
+          <marked-element markdown="[[cod]]">
+            <div class="markdown-html"></div>
+          </marked-element>
+        </div>
+      </div>
+    </div>
+
+    <footer-block app="{{app}}" cascaded=""></footer-block>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"cod-page",behaviors:[HOVERBOARD.PageBehavior,HOVERBOARD.CascadedBehavior],properties:{source:{type:String,value:"data/posts/code-of-conduct.markdown"}}})}();</script>
+
+</dom-module>
+</body></html>

@@ -1,0 +1,171 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../hoverboard-app.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="paper-listbox" assetpath="../../bower_components/paper-listbox/">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 8px 0;
+
+        background: var(--paper-listbox-background-color, --primary-background-color);
+        color: var(--paper-listbox-color, --primary-text-color);
+
+        @apply(--paper-listbox);
+      }
+    </style>
+
+    <content></content>
+  </template>
+
+  <script>!function(){Polymer({is:"paper-listbox",behaviors:[Polymer.IronMenuBehavior],hostAttributes:{role:"listbox"}})}();</script>
+</dom-module>
+</div><dom-module id="admin-page">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .layout {
+        @apply(--layout-vertical);
+      }
+
+      paper-card {
+        margin: 0 0 40px 0;
+        background-color: #fafafa;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .infocard {
+        padding: 24px;
+      }
+
+      .infocard h3 {
+        font-size: 26px;
+      }
+
+      .infocard h4 {
+        font-size: 22px;
+        margin: 0 0 16px 0;
+      }
+
+      .infocard .row {
+        @apply(--layout-vertical);
+        margin: 24px 0 0 0;
+      }
+
+      .infocard .column {
+        @apply(--layout-vertical);
+        margin: 0 16px;
+      }
+
+      @media (min-width: 601px) {
+
+        .infocard .column {
+          @apply(--layout-flex);
+        }
+
+        .infocard .row {
+          @apply(--layout-horizontal);
+          @apply(--layout-flex);
+        }
+      }
+
+    </style>
+
+    <div class="container">
+      <div class="layout">
+        <paper-card class="infocard">
+          <h3>Welcome to Ultimate Admin Page</h3>
+          <div class="row">
+            <div class="column">
+              <h4>Send push notification</h4>
+
+              <paper-dropdown-menu label="Category">
+                <paper-listbox class="dropdown-content" attr-for-selected="name" id="fcmCategory">
+                  <paper-item name="schedule_update">Schedule updated</paper-item>
+                  <paper-item name="general_announcement">General announcement</paper-item>
+                  <paper-item name="session_beggining">Session beggining (custom)</paper-item>
+                  <paper-item name="new_blogpost">New blogpost</paper-item>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-input label="Title" id="fcmTitle"></paper-input>
+              <paper-input label="Description" id="fcmDesc"></paper-input>
+              <paper-input label="Target UID (don't use)" id="fcmUID"></paper-input>
+
+              <paper-dropdown-menu label="Target URL (opens on click)">
+                <paper-listbox class="dropdown-content" attr-for-selected="name" id="fcmTarget">
+                  <paper-item name="url_home">Home</paper-item>
+                  <paper-item name="url_blog">Blog</paper-item>
+                  <paper-item name="url_speakers">Speakers</paper-item>
+                  <paper-item name="url_schedule_day0">Schedule (Day 1)</paper-item>
+                  <paper-item name="url_schedule_day1">Schedule (Day 2)</paper-item>
+                  <paper-item name="url_schedule_day3">Schedule (Day 3)</paper-item>
+                  <paper-item name="url_schedule_my">My Schedule</paper-item>
+                  <paper-item name="url_attending">Attending</paper-item>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-dropdown-menu label="Filter by session">
+                <paper-listbox class="dropdown-content" attr-for-selected="name" id="fcmFilter">
+                  <template is="dom-repeat" items="[[_sessionsToArray(sessions)]]" as="session">
+                    <paper-item name="[[session.id]]">[[session.name]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-dropdown-menu label="Speaker">
+                <paper-listbox class="dropdown-content" attr-for-selected="name" id="fcmSpeaker">
+                  <paper-item name="BqqKw5N1HdNjHd48EZdq9X46dFf2">Oleh Zasadnyy</paper-item>
+                  <paper-item name="jV8PfhzFvbW9eBVKuSnnhTnwOA63">David Vávra</paper-item>
+                  <paper-item name="DPlAfgoR7nOetbnakG7l24aijMo2">Ondřej Veselý</paper-item>
+                  <paper-item name="1eNuPE4Yl1Pas6MjJwaDCUoe2TK2">Petr Hamernik</paper-item>
+                  <paper-item name="Vnq2orgJPIcO0yILL2bjHdRV4lz1">Honza Slavik</paper-item>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-button raised="" on-tap="_sendNotification">Send notification</paper-button>
+            </div>
+            <div class="column">
+              <h4>Info</h4>
+              <ul>
+                <li>Target devices: [[pushRegistrations.length]]</li>
+              </ul>
+              <p>Useful UIDs</p>
+              <ul>
+                <li>Filip Prochazka: TOl5WdIqDQaUfzyyYUwtBwDAF7p2</li>
+                <li>Marcel Laza: BtaEKGrYe9QSujvUapbDTfNRusp2</li>
+                <li>Honza Steinbach: xjSMG9v8C1hLC9bsgU9USKlF0KG2</li>
+              </ul>
+            </div>
+          </div>
+        </paper-card>
+
+        <paper-card class="infocard">
+          <h3>Users sessions</h3>
+          <table style="width: 70%; margin: 0 15%">
+            <tbody><tr>
+              <th>Session title</th>
+              <th>Count</th>
+            </tr>
+            <template is="dom-repeat" items="[[sessionList]]" as="session">
+              <tr>
+                <td>[[session.name]]</td>
+                <td>[[session.count]]</td>
+              </tr>
+            </template>
+          </tbody></table>
+        </paper-card>
+      </div>
+    </div>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"admin-page",behaviors:[HOVERBOARD.PageBehavior],properties:{app:{type:Object},sessions:{type:Object,observer:"_onSessionsChanged"},sessionList:{type:Array}},attached:function(){var e=firebase.app(this.app.data.firebase.name).database();e.ref("/userPushTokensPath").once("value").then(function(e){this.set("pushRegistrations",Object.keys(e.val()))}.bind(this)).catch(function(e){})},_onSessionsChanged:function(e){if(e){var s=firebase.app(this.app.data.firebase.name).database();s.ref("/userSessions").once("value").then(function(e){var s={},t=e.val();Object.keys(t).forEach(function(e){Object.keys(t[e]).forEach(function(e){s[e]?s[e]+=1:s[e]=1})});var i=[];Object.keys(s).forEach(function(e){i.push({name:this.sessions[e].title,count:s[e]})}.bind(this)),console.log("sessionList",i),this.set("sessionList",i)}.bind(this)).catch(function(e){})}},_sendNotification:function(){var e=firebase.app(this.app.data.firebase.name).database(),s=this.$.fcmCategory.selected,t=this.$.fcmTitle.value,i=this.$.fcmDesc.value,a=this.$.fcmTarget.selected,n=this.$.fcmFilter.selected,o=this.$.fcmUID.value,c=this.$.fcmSpeaker.selected;c&&(o=c);var r={category:s,title:t,description:i,target:a};n&&(r.sessionFilter=n),o&&o.length>0&&(r.targetUID=o),e.ref("/queue/tasks").push().set({type:"send_push_notification",data:r})},_sessionsToArray:function(e){return Object.keys(e).map(function(e){return{id:e,name:this.sessions[e].title}}.bind(this))}})}();</script>
+
+</dom-module>
+</body></html>

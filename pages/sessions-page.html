@@ -1,0 +1,164 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../hoverboard-app.html"></head><body><div hidden="" by-vulcanize=""><dom-module id="sessions-list" assetpath="../elements/">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --grid-column-width: 396px;
+        --grid-gutter: 8px;
+      }
+
+      .sessions-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        margin: var(--grid-gutter) auto 40px;
+        max-width: calc(2 * var(--grid-column-width) + 4 * var(--grid-gutter));
+      }
+
+      .session {
+        @apply(--layout-vertical);
+        margin: var(--grid-gutter);
+        width: var(--grid-column-width);
+        height: var(--grid-item-height);
+        text-decoration: none;
+        padding: 0 32px 16px;
+        box-sizing: border-box;
+        color: var(--primary-text-color);
+        background-color: #fafafa;
+        border: 1px solid #eaeaea;
+      }
+
+      .title {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        padding: 32px 16px 16px;
+        min-height: 42px;
+        font-size: 20px;
+        font-weight: 300;
+        text-align: center;
+        letter-spacing: 0.8px;
+        line-height: 1.05;
+      }
+
+      .sessions-more-coming {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        margin: 0 0 60px 0;
+      }
+
+      .speakers-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        @apply(--layout-center-justified);
+        margin: 16px 0 0 0;
+      }
+
+      .speaker {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      .speaker .photo {
+        width: 48px;
+        height: 48px;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        -webkit-border-radius: 24px;
+        -moz-border-radius: 24px;
+        border-radius: 24px;
+        margin: 0 16px 0 0;
+        border: 1px solid #eaeaea;
+      }
+
+      .tags {
+        @apply(--layout-self-stretch);
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        @apply(--layout-center-justified);
+        font-size: 14px;
+        color: var(--primary-text-color);
+        margin: 0 0 16px 0;
+      }
+
+      .tag {
+        margin: 2px 0 0 2px;
+        padding: 1px 4px;
+        color: #fff;
+        display: inline-block;
+        font-size: 12px;
+        border-radius: 2px;
+        background: var(--general);
+      }
+
+      @media (max-width: 600px) {
+        .sessions-container {
+          padding: 0 var(--grid-gutter);
+        }
+      }
+
+      @media (max-width: 960px) {
+        .sessions-container {
+          max-width: none;
+        }
+
+        .session {
+          width: 100% !important;
+          height: var(--grid-item-height) !important;
+          margin: var(--grid-gutter) 0;
+        }
+      }
+
+      @media (min-width: 961px) {
+        .post:hover .image {
+          opacity: 1;
+        }
+      }
+    </style>
+
+    <div class="container sessions-container">
+      <template is="dom-repeat" items="[[sessions]]" as="session" on-dom-change="_updateCascadedNodes">
+        <div class="session">
+          <div class="title">[[session.title]]</div>
+          <div class="tags">
+            <template is="dom-repeat" items="[[session.tags]]" as="tag">
+              <span class="tag" style$="{{_getCustomStyleValue(tag)}}">[[tag]]</span>
+            </template>
+          </div>
+          <div class="description">[[_shortenDesc(session.description)]]</div>
+          <div class="speakers-container">
+            <template is="dom-repeat" items="[[session.speakers]]" as="speakerId" on-dom-change="_updateCascadedNodes">
+              <div class="speaker">
+                <div class="photo" style$="background-image: url([[_getSpeakerPhotoById(speakerId)]])"></div>
+                <div class="name">[[_getSpeakerNameById(speakerId)]]</div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <h2 class="sessions-more-coming">More coming soon...</h2>
+
+    <footer-block app="{{app}}" cascaded=""></footer-block>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"sessions-list",behaviors:[Polymer.NeonAnimationRunnerBehavior,Polymer.NeonSharedElementAnimatableBehavior,HOVERBOARD.UtilsBehavior,HOVERBOARD.PageBehavior],properties:{sessions:{type:Array},speakers:{type:Object},animationConfig:{type:Object,value:function(){return{entry:[{name:"fade-in-animation",animation:"fade-in-animation",node:this,timing:{delay:500}}],exit:[{name:"fade-out-animation",animation:"fade-out-animation",node:this}]}}}},_updateCascadedNodes:function(){var e=Polymer.dom(this.root).querySelectorAll("[cascaded]"),n=Array.prototype.slice.call(e);this.animationConfig.entry.push({name:"cascaded-animation",animation:"transform-animation",transformFrom:"translate3d(0, 100%, 0)",timing:{delay:500},nodes:n}),this.animationConfig.exit.push({name:"cascaded-animation",animation:"transform-animation",transformTo:"translate3d(0, 100%, 0)",nodes:n})},_getSpeakerNameById:function(e){return this.speakers[e]?this.speakers[e].name:"undefined"},_getSpeakerPhotoById:function(e){return this.speakers[e]?this.speakers[e].photoUrl:"undefined"},_shortenDesc:function(e){return e.length>160?e.substr(0,160)+"...":e},_getCustomStyleValue:function(e){return"background-color: "+this.getComputedStyleValue("--"+this._generateClass(e))||this.getComputedStyleValue("--general")}})}();</script>
+
+</dom-module>
+</div><dom-module id="sessions-page">
+
+  <template>
+
+    <sessions-list id="sessionList" name="" app="{{app}}" sessions="[[convertSessionsToArray(sessions)]]" speakers="[[speakers]]"></sessions-list>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"sessions-page",behaviors:[Polymer.NeonAnimatableBehavior,HOVERBOARD.PageBehavior],properties:{route:{type:Object},sessions:{type:Object},speakers:{type:Object},animationConfig:{type:Object,value:function(){return{entry:[{name:"fade-in-animation",animation:"fade-in-animation",node:this,timing:{delay:500}}],exit:[{name:"fade-out-animation",animation:"fade-out-animation",node:this}]}}}},convertSessionsToArray:function(e){var n=[];return Object.keys(e).forEach(function(i){n.push(e[i])}.bind(this)),n}})}();</script>
+
+</dom-module>
+</body></html>

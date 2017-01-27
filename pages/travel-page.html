@@ -1,0 +1,248 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../hoverboard-app.html"></head><body><dom-module id="travel-page">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .layout {
+        @apply(--layout-vertical);
+      }
+
+      paper-card {
+        margin: 0 0 40px 0;
+        background-color: #fafafa;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .infocard {
+        padding: 24px;
+      }
+
+      .infocard h3 {
+        text-align: center;
+        font-size: 26px;
+      }
+
+      .infocard h4 {
+        font-size: 22px;
+        margin: 0 0 16px 0;
+      }
+
+      .infocard .row {
+        @apply(--layout-vertical);
+        margin: 24px 0 0 0;
+      }
+
+      .infocard .column {
+        @apply(--layout-vertical);
+        margin: 0 16px;
+      }
+
+      .infocard .column table {
+        width: 70%;
+        margin: 16px 15%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+
+      .infocard .custom-places-map {
+        width: 90%;
+        height: 500px;
+        margin: 24px 5%;
+      }
+
+      .infocard .small-column {
+        width: 70%;
+        margin: 0 15%;
+      }
+
+      table th {
+        width: 33%;
+        border-bottom: 2px solid #999;
+        padding: 8px 16px;
+      }
+
+      table td {
+        width: 33%;
+        padding: 8px 16px;
+      }
+
+      .hotel {
+        @apply(--layout-vertical);
+        @apply(--layout-self-stretch);
+      }
+
+      .hotel .row1 {
+        @apply(--layout-vertical);
+        padding: 24px;
+      }
+
+      .hotel .row1 .details {
+        @apply(--layout-vertical);
+        margin: 0 24px 0 0;
+      }
+
+      .hotel .details .title {
+        font-size: 24px;
+        margin: 0 0 12px 0;
+      }
+
+      .hotel .details .description {
+        margin: 16px 0 0 0;
+      }
+
+      .hotel .details .basic-info {
+        @apply(--layout-vertical);
+      }
+
+      .hotel .details .basic-info .stars {
+        @apply(--layout-horizontal);
+        color: #FF9800;
+        margin: 0 24px 0 0;
+      }
+
+      .hotel .image {
+        @apply(--layout-self-stretch);
+        height: 180px;
+        background-size: cover;
+      }
+
+      .hotel google-map {
+        @apply(--layout-flex);
+        min-height: 150px;
+        cursor: pointer;
+      }
+
+      @media (min-width: 601px) {
+        .infocard .row {
+          @apply(--layout-horizontal);
+          @apply(--layout-flex);
+        }
+
+        .infocard .custom-places-map {
+          height: 300px;
+        }
+
+        .infocard .small-column {
+          width: 50%;
+          margin: 0 25%;
+        }
+
+        .infocard .column {
+          @apply(--layout-flex);
+        }
+
+        .hotel .row1 {
+          @apply(--layout-horizontal);
+          @apply(--layout-self-stretch);
+        }
+
+        .hotel .image {
+          width: 200px;
+          height: 200px;
+        }
+
+        .hotel .row1 .details {
+          @apply(--layout-flex);
+        }
+
+        .hotel .details .basic-info {
+          @apply(--layout-horizontal);
+          @apply(--layout-center);
+        }
+      }
+
+    </style>
+
+    <div class="container">
+      <div class="layout">
+        <paper-card class="infocard">
+          <h3>Travel information &amp; map</h3>
+          <br>
+          <p class="small-column">
+            The Venue is really close the the main train station in Pilsen and not so far from the main bus station. We prepared a map for you where you can find all important places.
+          </p>
+          <iframe class="custom-places-map" src="https://www.google.com/maps/d/embed?mid=1MvKa8Rtt7Wqn0q9aWNT9bsn4hyM"></iframe>
+        </paper-card>
+        <paper-card class="infocard">
+          <h3>Accommodation</h3>
+          <div class="row">
+            <div class="column">
+              <h4>Free</h4>
+              <p>
+                For those of you who want to minimize cost of staying for DevFest, we prepared two local school gyms
+                where you can sleep in your sleeping bag.
+                <br><br>
+                <b>Important</b>
+              </p>
+              <ul>
+                <li><b>fill out <a href="https://docs.google.com/forms/d/e/1FAIpQLSfHNXepzczTjoeU-weKKF-tnhsLhgnzogWAs9CF3LQvmISaCw/viewform">this
+                  form</a></b></li>
+                <li>make sure to bring your sleeping bag with you</li>
+                <li>0.5 minute walk from Venue</li>
+                <li>detailed information at Infodesk during event</li>
+              </ul>
+            </div>
+            <div class="column">
+              <h4>Hotels (discount)</h4>
+              <p>
+                In order to make it easier for you to stay for both days, we made deals with local hotels, providing
+                you with discount.
+              </p>
+              <ul>
+                <li>Partner hotels are listed below</li>
+                <li><b>Just tell them that you are coming to DevFest</b></li>
+              </ul>
+            </div>
+          </div>
+        </paper-card>
+
+        <template is="dom-repeat" items="[[hotels]]" as="hotel">
+          <paper-card cascaded="">
+            <div class="hotel">
+              <div class="row1">
+                <div class="details">
+                  <h4 class="title">
+                    [[hotel.name]]
+                    <template is="dom-if" if="[[hotel.discount]]">
+                      ([[hotel.discount]]% discount)
+                    </template>
+                  </h4>
+                  <div class="basic-info">
+                    <div class="stars">
+                      <template is="dom-repeat" items="[[_createStartsArray(hotel.stars)]]">
+                        <iron-icon icon="mdi:star"></iron-icon>
+                      </template>
+                    </div>
+                    <a href="http://[[hotel.website]]" class="website">[[hotel.website]]</a>
+                  </div>
+                  <p class="description">[[hotel.description]]</p>
+                  <ul>
+                    <template is="dom-repeat" items="[[hotel.features]]" as="feature">
+                      <li>[[feature]]</li>
+                    </template>
+                  </ul>
+                </div>
+                <div class="image" style="background-image: url('[[hotel.image]]')"></div>
+              </div>
+              <google-map latitude="[[hotel.location.latitude]]" longitude="[[hotel.location.longitude]]" draggable="false" disable-zoom="" disable-default-ui="" on-tap="_openGoogleMap" zoom="14">
+                <google-map-marker latitude="[[hotel.location.latitude]]" longitude="[[hotel.location.longitude]]" title="[[hotel.name]]"></google-map-marker>
+              </google-map>
+            </div>
+          </paper-card>
+        </template>
+      </div>
+    </div>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"travel-page",behaviors:[HOVERBOARD.PageBehavior],properties:{route:{type:Object},hotels:{type:Array}},_createStartsArray:function(e){return new Array(e)},_openGoogleMap:function(e){var o=e.model.hotel,t=window.open("https://www.google.cz/maps/place/@"+o.location.latitude+","+o.location.longitude+",18z","_blank");t.focus()}})}();</script>
+
+</dom-module>
+</body></html>

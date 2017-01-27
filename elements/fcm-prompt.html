@@ -1,0 +1,86 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+
+<link rel="import" href="../behaviors/localize-behavior.html">
+
+</head><body><dom-module id="fcm-prompt">
+
+  <template>
+    <style include="shared-styles">
+      :host {
+        @apply(--layout-vertical);
+        @apply(--shadow-elevation-2dp);
+        position: fixed;
+        display: none;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 100;
+      }
+
+      :host([displayed]) {
+        display: block;
+      }
+
+      .title {
+        display: inline-block;
+        margin: 16px 16px 8px;
+        font-size: 18px;
+      }
+
+      .description {
+        display: inline-block;
+        margin: 8px 16px;
+        font-size: 16px;
+      }
+
+      .button-bar {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        @apply(--layout-end-justified);
+        margin-bottom: 8px;
+      }
+
+      paper-button[primary-target] {
+        color: var(--accent-color);
+        font-weight: bold;
+      }
+
+      @media (min-width: 600px) {
+
+        :host {
+          @apply(--shadow-elevation-4dp);
+          width: 300px;
+          margin: 24px;
+          border-radius: 2px;
+        }
+
+      }
+
+    </style>
+
+    
+
+    <app-localstorage-document id="stateStorage" key="notificationsState" data="{{fcmPromptState}}">
+    </app-localstorage-document>
+
+    <span class="title">Enable notifications?</span>
+
+    <span class="description">No spam, only important events and sessions from your schedule</span>
+
+    <div class="button-bar">
+      <paper-button on-tap="_disablePrompt">No thanks</paper-button>
+      <paper-button on-tap="_enableNotifications" primary-target="">Yes</paper-button>
+    </div>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"fcm-prompt",behaviors:[HOVERBOARD.LocalizeBehavior],properties:{app:{type:Object},displayed:{type:Boolean,value:!1,reflectToAttribute:!0}},observers:["_updateDisplayed(fcmPromptState, app.data.firebase.name)"],attached:function(){console.log("fcm-prompt"),this._updateDisplayed()},_updateDisplayed:function(){var e=this.$.stateStorage;if(console.log("_updateDisplayed",e.data),e.data&&"unknown"!==e.data||this.displayed){if(this.set("displayed",!1),this.app.data&&"enabled"===e.data){console.log("_updateDisplayed - notifications enabled, obtaining token");var a=firebase.app(this.app.data.firebase.name).messaging();a.getToken().then(function(e){console.log("_updateDisplayed - token="+e),e&&this._registerFcmServer(e)}.bind(this))}}else this.set("displayed",!0)},_disablePrompt:function(){this.$.stateStorage.data="disabled",this.set("displayed",!1)},_enableNotifications:function(){var e=firebase.app(this.app.data.firebase.name).messaging();e.requestPermission().then(function(){return this.$.stateStorage.data="enabled",this.set("displayed",!1),e.getToken()}.bind(this)).then(function(e){e&&this._registerFcmServer(e)}.bind(this))},_registerFcmServer:function(e){if(console.log("_registerFcmServer",e,this.app.uniqueClientId),!this.app.uniqueClientId){var a=firebase.app(this.app.data.firebase.name).database().ref().push().key;this.set("app.uniqueClientId",a)}firebase.app(this.app.data.firebase.name).database().ref(this.app.data.firebase.userPushTokensPath+"/"+this.app.uniqueClientId).set(e)}})}();</script>
+</dom-module>
+</body></html>

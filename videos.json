@@ -1,0 +1,38 @@
+[
+  {
+    "youtubeId": "-mnUFxryQ6Y",
+    "title": "Tips and trics Apps Script",
+    "speakers": "Tomáš Velecký",
+    "thumbnail": "/images/sessions/past_1.jpg"
+  },
+  {
+    "youtubeId": "ui7YU8ubcoo",
+    "title": "Building Android for my Nexus",
+    "speakers": "Mathieu Maret",
+    "thumbnail": "/images/sessions/past_2.jpg"
+  },
+  {
+    "youtubeId": "lGJ4TdfApxI",
+    "title": "Building communities",
+    "speakers": "Renáta Ptáčníková",
+    "thumbnail": "/images/sessions/past_3.jpg"
+  },
+  {
+    "youtubeId": "_Ne76nJF6G4",
+    "title": "Use your data to understand the world",
+    "speakers": "Mircea Pricop",
+    "thumbnail": "/images/sessions/past_4.jpg"
+  },
+  {
+    "youtubeId": "f8pPk9ttjmM",
+    "title": "Battle for each FPS",
+    "speakers": "Martin Pernica",
+    "thumbnail": "/images/sessions/past_5.jpg"
+  },
+  {
+    "youtubeId": "ZJq5pmpTpRM",
+    "title": "Tisíc knih = Polymer.dart + Material Design + (...)",
+    "speakers": "Filip Hráček",
+    "thumbnail": "/images/sessions/past_6.jpg"
+  }
+]

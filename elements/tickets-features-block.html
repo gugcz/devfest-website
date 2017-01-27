@@ -1,0 +1,144 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+
+<link rel="import" href="../styles/shared-styles.html">
+<link rel="import" href="../behaviors/localize-behavior.html">
+
+
+</head><body><dom-module id="tickets-features-block">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 0 0 40px 0;
+        position: relative;
+        overflow: hidden;
+        min-height: 200px;
+        --paper-item-disabled-color: var(--primary-text-color);
+        background: var(--default-primary-color);
+        color: var(--text-primary-color);
+      }
+
+      .container {
+        @apply(--layout-horizontal);
+      }
+
+      .blocks-wrapper {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+        @apply(--layout-center);
+      }
+
+      .block {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        margin: 0 0 56px 0;
+        width: 250px;
+      }
+
+      .block iron-icon {
+        @apply(--shadow-elevation-2dp);
+        padding: 48px;
+        box-sizing: border-box;
+        --iron-icon-width: 196px;
+        --iron-icon-height: 196px;
+        border-radius: calc(196px / 2);
+        color: #333333;
+        background-color: white;
+      }
+
+      .block .title {
+        font-size: 22px;
+        font-weight: bold;
+        margin: 32px 0;
+        text-align: center;
+      }
+
+      .block .desc {
+        text-align: center;
+      }
+
+      .block .desc ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+      }
+
+      paper-icon-item {
+        --paper-item-disabled-color: inherit;
+      }
+
+      paper-icon-item iron-icon {
+        --iron-icon-fill-color: var(--default-primary-color);
+      }
+
+      @media (min-width: 769px) {
+        .container {
+          margin: 0 auto;
+          padding: 0 16px 60px 0;
+          max-width: 896px;
+        }
+      }
+
+      @media (min-width: 900px) {
+        .blocks-wrapper {
+          @apply(--layout-horizontal);
+          @apply(--layout-flex);
+          @apply(--layout-wrap);
+          @apply(--layout-start);
+          @apply(--layout-center-justified);
+        }
+
+        .block {
+          padding: 0 16px;
+          margin: 0 0 16px 0;
+        }
+      }
+    </style>
+
+    <div class="container">
+      <div class="blocks-wrapper">
+        <div class="block">
+          <iron-icon icon="mdi:food"></iron-icon>
+          <span class="title">Food included</span>
+          <span class="desc">With the ticket, you get complete catering coverage for both days (and some beer at the warm-up party)</span>
+        </div>
+        <div class="block">
+          <iron-icon icon="mdi:hotel"></iron-icon>
+          <span class="title">Accommodation</span>
+          <div class="desc">We prepared multiple options of accommodation for you:
+            <br><br>
+            <ul>
+              <li><b>Free</b></li>
+              <li>gym (sleeping bag)</li>
+              <li>&nbsp;</li>
+              <li><b>Discount</b></li>
+              <li>nearby pensions</li>
+              <li>partner hotels</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block">
+          <iron-icon icon="mdi:car"></iron-icon>
+          <span class="title">Free Parking</span>
+          <span class="desc">There is large guarded parking lot available for the duration of the event at the venue</span>
+        </div>
+      </div>
+    </div>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"tickets-features-block",behaviors:[HOVERBOARD.LocalizeBehavior],properties:{}})}();</script>
+
+</dom-module>
+</body></html>

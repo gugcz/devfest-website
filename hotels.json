@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Penzion U Zimáku",
+    "discount": 10,
+    "description": "Náš penzion se nachází v centru města Plzně, přímo naproti zimnímu stadionu. Poskytujeme levné ubytování v osmi dvoulůžkových pokojích s vlastním sociálním zařízením. Parkování pro ubytované hosty je možné zdarma ve dvoře penzionu.",
+    "stars": 2,
+    "image": "/images/stuff/penzion_u_zimaku.jpg",
+    "location": {
+      "latitude": 49.736541,
+      "longitude": 13.3791653
+    },
+    "website": "www.penzionuzimaku.cz",
+    "features": [
+      "Wi-Fi",
+      "5 minutes walk to Venue"
+    ]
+  },
+  {
+    "name": "Hotel Astory",
+    "discount": 15,
+    "description": "The newly opened A-Story Hotel offers stylish accommodation. It is located near the centre of Pilsen next to the main motorways passing through the city, as well as to the train station and mass public transportation.",
+    "stars": 4,
+    "image": "/images/stuff/astory_hotel.jpg",
+    "location": {
+      "latitude": 49.7445585,
+      "longitude": 13.3867148
+    },
+    "website": "www.astory.cz",
+    "features": [
+      "Wi-Fi",
+      "Breakfast",
+      "15 minutes walk to Venue"
+    ]
+  },
+  {
+    "name": "Hotel Primavera",
+    "description": "PRIMAVERA Hotel & Congress centre **** is a modern, newly-built 4-star hotel located in a quiet but still central part of Pilsen called Brucna and not far from the exit of the highway D5 direction Prague-Nuremberk.",
+    "stars": 4,
+    "image": "/images/stuff/primavera_hotel.jpg",
+    "location": {
+      "latitude": 49.7102481,
+      "longitude": 13.3951015
+    },
+    "website": "www.primaverahotel.cz",
+    "features": [
+      "Wi-Fi",
+      "Breakfast",
+      "15 minutes public transport to Venue"
+    ]
+  }
+]

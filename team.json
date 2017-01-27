@@ -1,0 +1,262 @@
+[
+  {
+    "title": "Core Team",
+    "members": [
+      {
+        "name": "Filip Procházka",
+        "photoUrl": "/images/people/filip_prochazka.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/filipproch",
+            "name": "Twitter"
+          },
+          {
+            "icon": "gplus",
+            "link": "https://plus.google.com/+FilipJacktechProcházka",
+            "name": "Google+"
+          }
+        ],
+        "title": "Sponsors and website"
+      },
+      {
+        "name": "Honza Slavík",
+        "photoUrl": "/images/people/honza_slavik.jpg",
+        "socials": [
+          {
+            "icon": "linkedin",
+            "link": "https://cz.linkedin.com/in/honzaslavik",
+            "name": "Linkedin"
+          },
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/honza_slavik",
+            "name": "Twitter"
+          }
+        ],
+        "title": "Vision & Cooperation"
+      },
+      {
+        "name": "Honza Steinbach",
+        "photoUrl": "/images/people/honza_steinbach.jpg",
+        "socials": [
+          {
+            "icon": "linkedin",
+            "link": "https://www.linkedin.com/in/honzasteinbach",
+            "name": "Linkedin"
+          },
+          {
+            "icon": "facebook",
+            "link": "https://www.facebook.com/blitziard",
+            "name": "Facebook"
+          }
+        ],
+        "title": "Happiness of visitors"
+      },
+      {
+        "name": "Lukáš Vaculík",
+        "photoUrl": "/images/people/lukas_vaculik.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/D3VL3R",
+            "name": "Twitter"
+          },
+          {
+            "icon": "facebook",
+            "link": "https://www.facebook.com/vaculik.luk",
+            "name": "Facebook"
+          }
+        ],
+        "title": "Social Media"
+      },
+      {
+        "name": "Marcel Láža",
+        "photoUrl": "/images/people/marcel_laza.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/lazamarcel",
+            "name": "Twitter"
+          },
+          {
+            "icon": "linkedin",
+            "link": "https://www.linkedin.com/in/marcellaza",
+            "name": "LinkedIn"
+          }
+        ],
+        "title": "Speakers"
+      },
+      {
+        "name": "Filip Goszler",
+        "photoUrl": "/images/people/filip_goszler.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/FilipGoszler",
+            "name": "Twitter"
+          }
+        ],
+        "title": "Legal stuff & Budget"
+      }
+    ]
+  },
+  {
+    "title": "Support team",
+    "members": [
+      {
+        "name": "Matěj Horák",
+        "photoUrl": "/images/people/matej_horak.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/horakmat",
+            "name": "Twitter"
+          }
+        ],
+        "title": "Team coordination"
+      },
+      {
+        "name": "Dana Léw",
+        "photoUrl": "/images/people/dana_lew.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/Lwvdn",
+            "name": "Twitter"
+          }
+        ],
+        "title": ""
+      },
+      {
+        "name": "Danny Macho",
+        "photoUrl": "/images/people/danny_macho.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/lordwiccar",
+            "name": "Twitter"
+          }
+        ],
+        "title": "Photographer"
+      },
+      {
+        "name": "Renáta Měchurová",
+        "photoUrl": "/images/people/renata_mechurova.jpg",
+        "socials": [
+        ],
+        "title": ""
+      },
+      {
+        "name": "Leon Freiberg",
+        "photoUrl": "/images/people/leon_freiberg.jpg",
+        "socials": [
+        ],
+        "title": ""
+      },
+      {
+        "name": "Jakub Škvára",
+        "photoUrl": "/images/people/jakub_škvára.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/skvaros",
+            "name": "Twitter"
+          }
+        ],
+        "title": ""
+      },
+      {
+        "name": "Eva Neuhöferová",
+        "photoUrl": "/images/people/eva_neuhoferova.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/Evuse",
+            "name": "Twitter"
+          }
+        ],
+        "title": ""
+      },
+      {
+        "name": "Vít Listík",
+        "photoUrl": "/images/people/vit_listik.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/tivwvit",
+            "name": "Twitter"
+          }
+        ],
+        "title": ""
+      },
+      {
+        "name": "Jakub Bouček",
+        "photoUrl": "/images/people/jakub_boucek.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/JakubBoucek",
+            "name": "Twitter"
+          }
+        ],
+        "title": ""
+      },
+      {
+        "name": "Karel Žižka",
+        "photoUrl": "/images/people/karel_zizka.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/karelzizka",
+            "name": "Twitter"
+          }
+        ],
+        "title": ""
+      },
+      {
+        "name": "Kateřina Pejšková",
+        "photoUrl": "/images/people/katerina_pejskova.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/taluranit",
+            "name": "Twitter"
+          }
+        ],
+        "title": ""
+      },
+      {
+        "name": "David Kovac",
+        "photoUrl": "/images/people/david_kovac.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/kovkus",
+            "name": "Twitter"
+          }
+        ],
+        "title": ""
+      },
+      {
+        "name": "Miroslav Košík",
+        "photoUrl": "/images/people/miro_kosik.jpg",
+        "socials": [
+          {
+            "icon": "twitter",
+            "link": "https://twitter.com/MiroKosik",
+            "name": "Twitter"
+          }
+        ],
+        "title": ""
+      },
+      {
+        "name": "Matus Kacmar",
+        "photoUrl": "/images/people/matus_kacmar.png",
+        "socials": [
+        ],
+        "title": ""
+      }
+    ]
+  }
+]

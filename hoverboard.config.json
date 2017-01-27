@@ -1,0 +1,274 @@
+{
+  "firebase": {
+    "name": "devfestcz",
+    "domain": "devfestcz-b77a3.firebaseapp.com",
+    "database": "https://devfestcz-b77a3.firebaseio.com",
+    "api": "AIzaSyBgGXKFtNEQVVlTsmp0AuwoAn7EXsKUFlI",
+    "messagingSenderId": "464613016768",
+    "userSessionsPath": "/userSessions",
+    "userPushTokensPath": "/userPushTokensPath"
+  },
+  "pages": {
+    "home": {
+      "headerSettings": {
+        "backgroundColor": "#1976D2",
+        "backgroundImage": "/images/backgrounds/home.png",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff",
+        "hideLogo": true,
+        "video": {
+          "title": "GDG DevFest Pilsen 2016",
+          "youtubeId": "klBANbKgOI8",
+          "text": "see-invite"
+        },
+        "minHeight": "360px"
+      }
+    },
+    "blog": {
+      "headerSettings": {
+        "backgroundColor": "#03a9f4",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
+      }
+    },
+    "speakers": {
+      "headerSettings": {
+        "backgroundColor": "#3f51b5",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
+      }
+    },
+    "schedule": {
+      "headerSettings": {
+        "backgroundColor": "#673ab7",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
+      }
+    },
+    "team": {
+      "headerSettings": {
+        "backgroundColor": "#009688",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
+      }
+    },
+    "cod": {
+      "headerSettings": {
+        "backgroundColor": "#673ab7",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
+      }
+    },
+    "hub": {
+      "headerSettings": {
+        "backgroundColor": "#607D8B",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff",
+        "backgroundImage": "/images/posts/speakers_announced.jpg"
+      }
+    },
+    "sessions": {
+      "headerSettings": {
+        "backgroundColor": "#009688",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
+      }
+    },
+    "travel": {
+      "headerSettings": {
+        "backgroundColor": "#607D8B",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
+      }
+    },
+    "admin": {
+      "headerSettings": {
+        "backgroundColor": "#222222",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
+      }
+    }
+  },
+  "navigation": [
+    {
+      "route": "home",
+      "permalink": "/"
+    },
+    {
+      "route": "blog",
+      "permalink": "/blog/"
+    },
+    {
+      "route": "speakers",
+      "permalink": "/speakers/"
+    },
+    {
+      "route": "schedule",
+      "permalink": "/schedule/"
+    },
+    {
+      "route": "travel",
+      "permalink": "/travel/"
+    }
+  ],
+  "url": "https://www.devfest.cz/",
+  "mailchimp": {
+    "url": "https://gug.us9.list-manage.com/subscribe?u=dbd4716ed6dbba520844478a2&id=79b5e07c3b",
+    "name": "b_b7e853a79164ddfdbda3ed77b_7993e39fbe"
+  },
+  "partnershipProposition": "https://bit.ly/dfplzen-sponsor",
+  "disqusShortName": "hoverboard-gdg-x",
+  "languages": [
+    {
+      "name": "English",
+      "key": "en"
+    }
+  ],
+  "footerBlocks": [
+    {
+      "title": "for-visitors",
+      "links": [
+        {
+          "text": "team",
+          "url": "/team/"
+        },
+        {
+          "text": "google-developers",
+          "url": "https://developers.google.com/",
+          "newTab": true
+        },
+        {
+          "text": "press-release",
+          "url": "https://docs.google.com/document/d/1Re8OYSp0o-1hgvLYlsKK98Lpg_LwsaTnNCQmThhjDiI/edit",
+          "newTab": true
+        }
+      ]
+    },
+    {
+      "title": "for-partners",
+      "links": [
+        {
+          "text": "partnership-proposition",
+          "url": "https://bit.ly/dfplzen-sponsor",
+          "newTab": true
+        },
+        {
+          "text": "media-kit",
+          "url": "https://bit.ly/dfplzen-media",
+          "newTab": true
+        }
+      ]
+    }
+  ],
+  "contactBlock": {
+    "links": [
+      {
+        "text": "gdgplzen@gug.cz",
+        "url": "mailto:gdgplzen@gug.cz"
+      }
+    ]
+  },
+  "tickets": {
+    "url": "https://dfplzen.eventbrite.com/?aff=webdirectlink",
+    "elements": [
+      {
+        "name": "student-ticket",
+        "price": 299,
+        "currency": "Kč",
+        "starts": "student-ticket-starts",
+        "ends": "student-ticket-ends",
+        "info": "student-ticket-info",
+        "soldOut": true
+      },
+      {
+        "name": "early-ticket",
+        "price": 399,
+        "currency": "Kč",
+        "starts": "early-ticket-starts",
+        "ends": "early-ticket-ends",
+        "info": "early-ticket-info",
+        "soldOut": true
+      },
+      {
+        "name": "lazy-ticket",
+        "price": 599,
+        "currency": "Kč",
+        "starts": "lazy-ticket-starts",
+        "ends": "lazy-ticket-ends",
+        "soldOut": true
+      }
+    ]
+  },
+  "teamPageTitle": "team-page-title",
+  "teamPageText": "team-page-text",
+  "statistics": [
+    {
+      "counter": 2,
+      "caption": "days"
+    },
+    {
+      "counter": 6,
+      "caption": "workshops"
+    },
+    {
+      "counter": 40,
+      "caption": "sessions"
+    },
+    {
+      "counter": 600,
+      "caption": "attendees"
+    }
+  ],
+  "hashtag": "devfestcz",
+  "social": [
+    {
+      "name": "twitter",
+      "nickname": "GDG Plzeň",
+      "url": "https://twitter.com/gdgplzen"
+    },
+    {
+      "name": "gplus",
+      "nickname": "111850911527969001859",
+      "url": "https://plus.google.com/111850911527969001859"
+    },
+    {
+      "name": "facebook",
+      "nickname": "GDG Plzeň",
+      "url": "https://www.facebook.com/gdgplzen"
+    }
+  ],
+  "tweetsSource": "/data/tweets.json",
+  "gallery": {
+    "albumUrl": "https://www.facebook.com/events/1653980754912287/1686317148345314/?notif_t=plan_mall_activity&notif_id=1478629598605659",
+    "photos": {
+      "big": "/images/backgrounds/2016_1.jpg",
+      "small": [
+        "/images/backgrounds/2016_2.jpg",
+        "/images/backgrounds/2016_3.jpg"
+      ]
+    }
+  },
+  "location": {
+    "apiKey": "",
+    "link": "http://www.depo2015.cz/",
+    "pointer": {
+      "latitude": 49.738308,
+      "longitude": 13.382054,
+      "zoom": 14
+    },
+    "mapCenter": {
+      "latitude": 49.738308,
+      "longitude": 13.382054
+    },
+    "images": [
+      "/images/backgrounds/location_1.jpg",
+      "/images/backgrounds/location_2.jpg",
+      "/images/backgrounds/location_3.jpg"
+    ]
+  },
+  "videosSessionsUrl": "https://www.youtube.com/playlist?list=PLcyrRW-49oITCeOmO9au4fVudNLlL7PkD",
+  "callToAction": {
+    "videoTitle": "action-title",
+    "videoId": "cKN26btTxAg"
+  }
+}

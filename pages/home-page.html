@@ -1,0 +1,27 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../hoverboard-app.html"></head><body><dom-module id="home-page">
+
+  <template>
+
+    <statistics-block app="{{app}}" cascaded=""></statistics-block>
+    <photo-block app="{{app}}" cascaded=""></photo-block>
+    
+    <featured-people app="{{app}}" people="{{people}}" cascaded=""></featured-people>
+    <social-feed app="{{app}}" cascaded=""></social-feed>
+    
+    
+    <about-block app="{{app}}" cascaded=""></about-block>
+    <call-to-action app="{{app}}" cascaded=""></call-to-action>
+    <latest-posts app="{{app}}" posts="{{posts}}" cascaded=""></latest-posts>
+    
+    
+    
+    <map-block app="{{app}}" selected="{{selected}}" cascaded=""></map-block>
+    <logos-block app="{{app}}" cascaded=""></logos-block>
+    <footer-block app="{{app}}" cascaded=""></footer-block>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"home-page",behaviors:[HOVERBOARD.PageBehavior,HOVERBOARD.CascadedBehavior],properties:{people:{type:Array},posts:{type:Array},logos:{type:Array},videos:{type:Array}},ready:function(){this.updateCascadedNodes()}})}();</script>
+
+</dom-module>
+</body></html>

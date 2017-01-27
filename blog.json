@@ -1,0 +1,92 @@
+[
+  {
+    "id": "devfest-2016-announced",
+    "title": "GDG DevFest 2016 in Pilsen!!!",
+    "posted": "2016-09-05",
+    "primaryColor": "#00BCD4",
+    "secondaryColor": "#00BCD4",
+    "image": "/images/posts/announce.jpg",
+    "brief": "Have you ever been on any Devfest before? Have you ever met in one weekend hundreds of people with the same interests and passion as you have? Have you ever been in Pilsen? No? Then it is a great pleasure for us to welcome you here on Google Devfest 2016 website."
+  },
+  {
+    "id": "first-speakers-and-cfp",
+    "title": "First speakers and Call for Papers",
+    "posted": "2016-09-25",
+    "primaryColor": "#F44336",
+    "secondaryColor": "#F44336",
+    "image": "/images/posts/speakers_announced.jpg",
+    "brief": "Today we are announcing our first set of rockstar speakers that you will be able to meet at DevFest!!!"
+  },
+  {
+    "id": "free-tickets-contest",
+    "title": "Free Tickets Contest",
+    "posted": "2016-10-10",
+    "primaryColor": "#3F51B5",
+    "secondaryColor": "#3F51B5",
+    "image": "/images/posts/free_tickets_contest.png",
+    "brief": "Here we are back with yet another update, this time, we prepared a Facebook contest for you."
+  },
+  {
+    "id": "meet-our-platinum-partner",
+    "title": "Meet our platinum partner AIMTEC",
+    "posted": "2016-10-13",
+    "primaryColor": "#F39323",
+    "secondaryColor": "#F39323",
+    "image": "/images/posts/aimtec_partner_1.jpg",
+    "brief": "Here you can read text from our Platinum partner AIMTEC whom are sponsoring the awesome Warm-up party on Day 0."
+  },
+  {
+    "id": "our-gold-partner-avast-and-wifisnitcher",
+    "title": "Our Gold partner Avast and Wifisnitcher",
+    "posted": "2016-10-25",
+    "primaryColor": "#FF7800",
+    "secondaryColor": "#FF7800",
+    "image": "/images/posts/avast_wifisnitcher.jpg",
+    "brief": "Avast Software is a global leader in digital security. They are bringing Wifisnitcher to our conference to help you secure your devices against attacks."
+  },
+  {
+    "id": "our-gift-partner-jetbrains",
+    "title": "Our Gift partner JetBrains",
+    "posted": "2016-10-26",
+    "primaryColor": "#ED3D7D",
+    "secondaryColor": "#ED3D7D",
+    "image": "/images/posts/jetbrains_partner.jpg",
+    "brief": "Společnost JetBrains byla založena v roce 2000 jako malá firma o pěti zaměstnancích. Za 16 let činnosti se z JetBrains stal lídr na trhu profesionálních vývojářských nástrojů pro populární platformy jako například Java, JavaScript, Objective-C, .NET, C++, Ruby, PHP, Python, Android, iOS."
+  },
+  {
+    "id": "our-gold-partner-fnx-io",
+    "title": "Meet our Gold partner fnx.io",
+    "posted": "2016-10-31",
+    "primaryColor": "#FF0000",
+    "secondaryColor": "#FF0000",
+    "image": "/images/posts/fnxio_partner.jpg",
+    "brief": "fnx.io se orientuje na vývoj zakázkových backendů a na konzultace v oblasti cloudových řešení."
+  },
+  {
+    "id": "our-gold-partner-eman",
+    "title": "Meet our Gold Sponsor - eMan",
+    "posted": "2016-11-02",
+    "primaryColor": "#008FD5",
+    "secondaryColor": "#008FD5",
+    "image": "/images/posts/eman_partner.jpg",
+    "brief": "eMan je předním českým poskytovatelem mobilních řešení. Nabízíme služby v oblasti zakázkového vývoje mobilních aplikací, mobilních a responzivních webů a webových aplikací."
+  },
+  {
+    "id": "our-diamond-partner-eurosoftware",
+    "title": "Meet our Diamond Partner - Eurosoftware",
+    "posted": "2016-11-03",
+    "primaryColor": "#06538B",
+    "secondaryColor": "#06538B",
+    "image": "/images/posts/eurosoftware_partner.jpg",
+    "brief": "eMan je předním českým poskytovatelem mobilních řešení. Nabízíme služby v oblasti zakázkového vývoje mobilních aplikací, mobilních a responzivních webů a webových aplikací."
+  },
+  {
+    "id": "thanks-to-our-gift-partner-asus",
+    "title": "Big thanks to our gift partner ASUS",
+    "posted": "2016-11-09",
+    "primaryColor": "#333333",
+    "secondaryColor": "#333333",
+    "image": "/images/posts/asus_partner.png",
+    "brief": "Rádi bychom tímto velice poděkovali firmě ASUS, která věnovala hlavní ceny do letošní soutěže na DevFestu. Příkládáme zároveň několik málo vět abyste se o ní také něco dozvěděli."
+  }
+]

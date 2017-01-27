@@ -1,0 +1,701 @@
+{
+  "1": {
+    "id": 1,
+    "title": "AIMTEC Warm-Up party",
+    "description": "Our Facebook event : <a href=\"https://www.facebook.com/events/1584735031835466/\">https://www.facebook.com/events/1584735031835466/</a>",
+    "language": "English",
+    "image": "/images/sessions/afterparty.jpg"
+  },
+  "10": {
+    "id": 10,
+    "title": "Breakfast & Registration",
+    "description": "",
+    "language": "",
+    "image": "/images/sessions/breakfast.jpg"
+  },
+  "11": {
+    "id": 11,
+    "title": "Breakfast & Registration",
+    "description": "",
+    "language": "",
+    "image": "/images/sessions/breakfast.jpg"
+  },
+  "20": {
+    "id": 20,
+    "title": "Keynote",
+    "description": "",
+    "language": "English",
+    "image": "/images/posts/speakers_announced.jpg"
+  },
+  "30": {
+    "id": 30,
+    "title": "Lunch",
+    "description": "",
+    "language": "",
+    "image": "/images/sessions/lunch.jpg"
+  },
+  "31": {
+    "id": 31,
+    "title": "Lunch",
+    "description": "",
+    "language": "",
+    "image": "/images/sessions/lunch.jpg"
+  },
+  "40": {
+    "id": 40,
+    "title": "Dinner",
+    "description": "",
+    "language": "",
+    "image": "/images/sessions/dinner.jpg"
+  },
+  "50": {
+    "id": 50,
+    "title": "Closing Day Note",
+    "description": "",
+    "language": "English",
+    "image": "/images/posts/speakers_announced.jpg"
+  },
+  "60": {
+    "id": 60,
+    "title": "After Party",
+    "description": "",
+    "language": "English",
+    "image": "/images/sessions/afterparty.jpg"
+  },
+  "70": {
+    "id": 70,
+    "title": "Barcamp",
+    "description": "TBD",
+    "language": "Czech",
+    "image": "/images/sessions/barcamp.jpg"
+  },
+  "80": {
+    "id": 80,
+    "title": "Closing Keynote",
+    "description": "",
+    "language": "English",
+    "image": "/images/posts/speakers_announced.jpg"
+  },
+  "90": {
+    "id": 90,
+    "title": "Doors closed",
+    "description": "",
+    "language": ""
+  },
+  "99": {
+    "id": 99,
+    "title": "TBD",
+    "description": "TBD",
+    "language": "English"
+  },
+  "100": {
+    "id": 100,
+    "title": "Firebase + Kotlin + MVP + Rx: Practical Tips",
+    "description": "New Firebase products announced at I/O make an Android developer’s life so much easier. We have been happily developing with it since January 2016. Sample projects work great, but what if your database structure is complex and you want a solid architecture with MVP, RxJava and Kotlin? Come to learn some practical tips.",
+    "speakers": [
+      2
+    ],
+    "language": "English",
+    "complexity": "Advanced",
+    "tags": [
+      "Frontend",
+      "Android",
+      "Firebase",
+      "MVP"
+    ]
+  },
+  "200": {
+    "id": 200,
+    "title": "Wanna more fire? - Let's try polymerfire!",
+    "description": "Have you ever tried to build Web application using Polymer with Firebase integration, additionally adhere to PWA's canons? I have, and know how many surprises can be found during developmet :). Polymerfire is a great Polymer Web Component Firebase and looks very easy to play with. During my talk I want to dive into tips & tricks on how you can integrate your web app on Polymer with Firebase + how to add offline support (since Firebase uses web sockets for data transferring, service worker will not help in that case).",
+    "speakers": [
+      3
+    ],
+    "language": "English",
+    "complexity": "Advanced",
+    "tags": [
+      "Frontend",
+      "Polymer",
+      "Firebase"
+    ]
+  },
+  "300": {
+    "id": 300,
+    "title": "Projektoví Zombíci",
+    "description": "Projektové řízení je plné přežitých dogmat a nesmyslů, které ovšem stále předáváme dál a ještě hůře, vyžadujeme u certifikací. A přitom většinu teorie můžeme s klidem zahodit a k celé problematice přistupovat jinak. Kostlivce ze skříně ven a projektové zombíky do hrobu.",
+    "speakers": [
+      4
+    ],
+    "language": "Czech",
+    "complexity": "Advanced",
+    "tags": [
+      "Management",
+      "Entrepreneurship",
+      "Project management"
+    ]
+  },
+  "400": {
+    "id": 400,
+    "title": "REST API je mrtvé, ať žije GraphQL",
+    "description": "REST se stal standardem pro API. Poslední dobou se ale ukazuje, že není vhodné pro uživatelské rozhraní. Facebook nám nabídl GraphQL a skvělou knihovnu Relay, která usnadňuje a zrychluje práci s daty v aplikacích. ",
+    "speakers": [
+      6
+    ],
+    "language": "Czech",
+    "complexity": "Advanced",
+    "tags": [
+      "Backend",
+      "Web",
+      "GraphQL",
+      "REST API"
+    ]
+  },
+  "500": {
+    "id": 500,
+    "title": "Improve Your Android App's UX With Accessibility",
+    "description": "Accessibility is a very important step to make sure that your app reaches everyone in an easy and fun way to use. Good accessibility support means much more than just making sure the app supports screen readers, different fonts sizes and good contrast ratios. It is a learning process, and one in which we ourselves still have much to learn and explore.",
+    "speakers": [
+      5
+    ],
+    "language": "English",
+    "complexity": "Beginner",
+    "tags": [
+      "Frontend",
+      "Android",
+      "UI/UX"
+    ]
+  },
+  "600": {
+    "id": 600,
+    "title": "Make your Polymer web-app Progressive",
+    "description": "Polymer helps you organize your app and make it more meaningful. In this talk, I will show you how to make your app load faster with app shell, lazy loading etc. and another Tip and Tricks in PWA.",
+    "speakers": [
+      9
+    ],
+    "language": "English",
+    "complexity": "Advanced",
+    "tags": [
+      "Frontend",
+      "Polymer",
+      "Web"
+    ]
+  },
+  "700": {
+    "id": 700,
+    "title": "Angular2.Dart",
+    "description": "How to start developing in Dart and how to build applications with Angular2.",
+    "speakers": [
+      11
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Frontend",
+      "Dart",
+      "Angular2"
+    ]
+  },
+  "800": {
+    "id": 800,
+    "title": "Techniky duševní práce",
+    "description": "Pojďme se společně zamyslet co to znamená pracovat jako znalostní pracovník, jako programátor. Jak z této činnosti vydat maximum. Jak efektivně využít náš hlavní nástroj - mozek. Přiblížíme si pojmy jako je hluboká práce, inovace, zen programmer a nastavení mysli.",
+    "speakers": [
+      8
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Management",
+      "Innovation"
+    ]
+  },
+  "900": {
+    "id": 900,
+    "title": "Iterative Product Development",
+    "description": "We have an idea for a great product! Or do we? In this session we will explore cases where iterations can help define and grow the best product.",
+    "speakers": [
+      10
+    ],
+    "language": "English",
+    "complexity": "Beginner",
+    "tags": [
+      "Management",
+      "Entrepreneurship",
+      "Agile",
+      "Scrum"
+    ]
+  },
+  "1000": {
+    "id": 1000,
+    "title": "Building data-driven IoT mobile applications",
+    "description": "I will be talk about how to use data from various IoT devices, sensors, open datasets for building mobile apps. How to store data in real time database in Firebase and how to design interfaces that will interact with these devices.",
+    "speakers": [
+      13
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "IoT",
+      "Firebase"
+    ]
+  },
+  "1100": {
+    "id": 1100,
+    "title": "Building Node.js apps on Google Cloud Platform",
+    "description": "Node.js makes building web applications that perform at scale easy - Google App Engine makes running Node.js in production fun. In this session, we're going to learn about the various ways to run Node.js applications on Google Cloud. We'll walk through deploying your first Hello World app and using the gcloud NPM module, we will connect our app to other Google Cloud services such as Vision API (to classify images), Cloud Storage (for binary storage), Pub/Sub (for messaging). We will look at versioning, traffic splitting, live debugging, HTTP tracing and all other features that make running Node.js in the cloud fun!",
+    "speakers": [
+      1
+    ],
+    "language": "English",
+    "complexity": "Beginner",
+    "tags": [
+      "Backend",
+      "App Engine",
+      "Node.js",
+      "Google Cloud Platform"
+    ]
+  },
+  "1201": {
+    "id": 1201,
+    "title": "Apps Script Workshop (part 1)",
+    "description": "TBD",
+    "speakers": [
+      18
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Backend",
+      "Apps Script"
+    ]
+  },"1202": {
+    "id": 1202,
+    "title": "Apps Script Workshop (part 2)",
+    "description": "TBD",
+    "speakers": [
+      18
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Backend",
+      "Apps Script"
+    ]
+  },
+  "1300": {
+    "id": 1300,
+    "title": "Angular2.js Workshop (part 1)",
+    "description": "Pokud se chystáte na workshop Angular 2, nezapomeňte si vzít laptop ;) a nepřehlédněte tento repozitář, kterrý si pro Vás kluci připravili <a href='https://bitbucket.org/angular_cz/devfest-angular2-workshop' target='_blank'>angular2-workshop<a/>",
+    "speakers": [
+      15, 16
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Frontend",
+      "Angular.js 2"
+    ]
+  },
+  "1301": {
+    "id": 1301,
+    "title": "Angular2.js Workshop (part 2)",
+    "description": "Pokud se chystáte na workshop Angular 2, nezapomeňte si vzít laptop ;) a nepřehlédněte tento repozitář, kterrý si pro Vás kluci připravili <a href='https://bitbucket.org/angular_cz/devfest-angular2-workshop' target='_blank'>angular2-workshop<a/>",
+    "speakers": [
+      15, 16
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Frontend",
+      "Angular.js 2"
+    ]
+  },
+  "1302": {
+    "id": 1302,
+    "title": "Angular2.js Workshop (part 3)",
+    "description": "Pokud se chystáte na workshop Angular 2, nezapomeňte si vzít laptop ;) a nepřehlédněte tento repozitář, kterrý si pro Vás kluci připravili <a href='https://bitbucket.org/angular_cz/devfest-angular2-workshop' target='_blank'>angular2-workshop<a/>",
+    "speakers": [
+      15, 16
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Frontend",
+      "Angular.js 2"
+    ]
+  },
+  "1400": {
+    "id": 1400,
+    "title": "BigClown Workshop (part 1)",
+    "description": "TBD",
+    "speakers": [
+      24,
+      27
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "IoT",
+      "Open Hardware"
+    ]
+  },
+  "1401": {
+    "id": 1401,
+    "title": "BigClown Workshop (part 2)",
+    "description": "TBD",
+    "speakers": [
+      24,
+      27
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "IoT",
+      "Open Hardware"
+    ]
+  },
+  "1402": {
+    "id": 1402,
+    "title": "BigClown Workshop (part 3)",
+    "description": "TBD",
+    "speakers": [
+      24,
+      27
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "IoT",
+      "Open Hardware"
+    ]
+  },
+  "1403": {
+    "id": 1403,
+    "title": "BigClown Workshop (part 4)",
+    "description": "TBD",
+    "speakers": [
+      24,
+      27
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "IoT",
+      "Open Hardware"
+    ]
+  },
+  "1500": {
+    "id": 1500,
+    "title": "Guide to the jungle of testing frameworks (part 1)",
+    "description": "There are many tools, libraries and frameworks available for Android developers to test their applications. The jungle is huge and it's not easy to find the right ones. Some frameworks are good for unit testing, some are good for instrumentation testing, and some can be used for both. Some have great capabilities but annoying weaknesses. Some are good for testing UI, other allow you to make good mocks. We will look at many frameworks, the popular ones like Mockito, Robolectric, Espresso, and some other.",
+    "speakers": [
+      14
+    ],
+    "language": "English",
+    "complexity": "Advanced",
+    "tags": [
+      "Frontend",
+      "Android"
+    ]
+  },
+  "1501": {
+    "id": 1501,
+    "title": "Guide to the jungle of testing frameworks (part 2)",
+    "description": "There are many tools, libraries and frameworks available for Android developers to test their applications. The jungle is huge and it's not easy to find the right ones. Some frameworks are good for unit testing, some are good for instrumentation testing, and some can be used for both. Some have great capabilities but annoying weaknesses. Some are good for testing UI, other allow you to make good mocks. We will look at many frameworks, the popular ones like Mockito, Robolectric, Espresso, and some other.",
+    "speakers": [
+      14
+    ],
+    "language": "English",
+    "complexity": "Advanced",
+    "tags": [
+      "Frontend",
+      "Android"
+    ]
+  },
+  "1600": {
+    "id": 1600,
+    "title": "Správa závislostí Android projektu",
+    "description": "Přidat novou knihovnu k projektu je velmi snadné. Málokdo ale již zkoumá, co taková závislost přináší a co může bez vašeho vědomí změnit. Na problematiku se podíváme zejména z pohledu systému Gradle a Android manifestu. Téma obsahuje i část, jak přidávat vlastní závislosti, a je určeno spíše středně pokročilým vývojářům.",
+    "speakers": [
+      19
+    ],
+    "language": "Czech",
+    "complexity": "Advanced",
+    "tags": [
+      "Frontend",
+      "Android",
+      "Dependency Management"
+    ]
+  },
+  "1700": {
+    "id": 1700,
+    "title": "Using Docker for Machine learning",
+    "description": "Have you always wanted to use machine learning in you projects, but the initial setup it just too complicated?I will tell you how to simplify installation of machine learning frameworks with Docker without pain. Then we will go trough the the process of picking the best framework and model. And finally you will see how to test your model and use it in your project.",
+    "speakers": [
+      17
+    ],
+    "language": "Czech",
+    "complexity": "Advanced",
+    "tags": [
+      "Machine Learning",
+      "Docker"
+    ]
+  },
+  "1800": {
+    "id": 1800,
+    "title": "Android Sucks",
+    "description": "When you don't want android code in your app",
+    "speakers": [
+      7
+    ],
+    "language": "English",
+    "complexity": "Advanced",
+    "tags": [
+      "Frontend",
+      "Android"
+    ]
+  },
+  "1900": {
+    "id": 1900,
+    "title": "OLAP Framework - Svoboda pro vývojáře!",
+    "description": "Získejte svobodu pracovat odkudkoliv po celém světě a svobodu a pracovat kdykoliv během dne.",
+    "speakers": [
+      20
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Management",
+      "Entrepreneurship"
+    ]
+  },
+  "2000": {
+    "id": 2000,
+    "title": "Seznam se s Kafkou",
+    "description": "Terabytům se směje, s petabyty se kamarádí. Tam, kde tradiční messaging selhává, přichází Kafka. Pojďme si společně představit nejvýkonnější a nejpoužívanější messaging platformu pro zpracovaní velkých dat. Co nabízí, jak funguje a jak ji využívá vyhledávání Seznamu?",
+    "speakers": [
+      21
+    ],
+    "language": "Czech",
+    "complexity": "Advanced",
+    "tags": [
+      "Backend",
+      "BigData",
+      "Kafka"
+
+    ]
+  },
+  "2100": {
+    "id": 2100,
+    "title": "BigQuery, introduction",
+    "description": "What it is, what for it is (where it fits), what is under the hood. Web interface, API. Description of use case in Kiwi.com with benchmark. Maybe comparison with Cassandra and Postgres.",
+    "speakers": [
+      22
+    ],
+    "language": "Czech",
+    "complexity": "Advanced",
+    "tags": [
+      "Backend",
+      "BigQuery"
+    ]
+  },
+  "2200": {
+    "id": 2200,
+    "title": "Plánování dodávky informačního systému v multi-projektovém prostředí",
+    "description": "Jak naplánovat práci týmu v prostředí, kdy běží několik projektů souběžně najednou a každý člen týmu participuje na více projektech? Jaké termíny zákazníkovi slíbit? Jak ověřit, že projekt jde správným směrem a neovlivní ostatní projekty?",
+    "speakers": [
+      23
+    ],
+    "language": "Czech",
+    "complexity": "Intermediate",
+    "tags": [
+      "Management",
+      "Project Planning"
+    ]
+  },
+  "2300": {
+    "id": 2300,
+    "title": "Open-source a zároveň bezpečná domácí automatizace",
+    "description": "Architektura systému, bezpečnostní opatření, komponenty a jejich funkce, řízení projektu",
+    "speakers": [
+      24
+    ],
+    "language": "Czech",
+    "complexity": "Intermediate",
+    "tags": [
+      "IoT",
+      "Open Hardware"
+    ]
+  },
+  "2400": {
+    "id": 2400,
+    "title": "Firebase CodeLab",
+    "description": "Google Developers Codelabs provide a guided, tutorial, hands-on coding experience with Firebase. All needed information for codelabs is right <a href='https://codelabs.developers.google.com/?cat=Firebase&utm_campaign=devfest16&utm_medium=event&utm_source=plzen' target='_blank'>here Let's CODE!</a>",
+    "speakers": [
+      2,
+      3
+    ],
+    "language": "English Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Backend",
+      "Firebase",
+      "CodeLab"
+    ]
+  },
+  "2500": {
+    "id": 2500,
+    "title": "UX zkušenost - nová navigace, design a testy pro DCIx",
+    "description": "Zkušenosti z projektu, kdy jsme předělávali vzhled a ovládání aplikace a potýkali se řadou problémů, co se týče technologií a testování.",
+    "speakers": [
+      28
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Frontend"
+    ]
+  },
+  "2600": {
+    "id": 2600,
+    "title": "Praktické zkušenosti z 8 let automatického testování WMS systému",
+    "description": "Již dlouhou dobu se zabýváme rozsáhlým automatickým testováním WMS systému a máme z této oblasti bohaté zkušenosti. Chtěli bychom se s vámi podělit o několik zajímavých problémů a výzev, s nimiž jsme se v poslední době museli potýkat a ukázat, jaké řešení aktuálně máme.",
+    "speakers": [
+      29
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Backend",
+      "Testing"
+    ]
+  },
+  "2700": {
+    "id": 2700,
+    "title": "Dekompozice monolitické aplikace",
+    "description": "Jedna se o case study prechodu od monoliticke aplikace k architekture sluzeb. Zhodnoceni stavu v polovine cesty.",
+    "speakers": [
+      30
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+    ]
+  },
+  "2800": {
+    "id": 2800,
+    "title": "Čtyři roky retrospektiv",
+    "description": "Co nám retrospektivy přináší, jak to vypadalo z počátku a jak to funguje nyní.",
+    "speakers": [
+      31
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+    ]
+  },
+  "2900": {
+    "id": 2900,
+    "title": "Centrální logovací pipeline",
+    "description": "Stručně o tom, jak nám v ClouEDI usnadňuje práci centralizované logování v čele s aplikacemi Graylog a Logstash.",
+    "speakers": [
+      32
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Backend"
+    ]
+  },
+  "3000": {
+    "id": 3000,
+    "title": "Elasticsearch a strukturovaná data",
+    "description": "Zkušenosti z nasazení a produkčního provozu Elasticsearch engine nad strukturovanými daty.",
+    "speakers": [
+      33
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Backend"
+    ]
+  },
+  "3100": {
+    "id": 3100,
+    "title": "Když ptáčka lapají...",
+    "description": "Na co si mají ajťáci dávat pozor při výběru nové práce? Kde hledat, koho odpálkovat, na co se ptát? Co je to ta firemní kultura, kde se projevuje a proč je důležitá?",
+    "speakers": [
+      25
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Management"
+    ]
+  },
+  "3200": {
+    "id": 3200,
+    "title": "Jak zařídit, aby počítače četly za nás",
+    "description": "Na světě vzniká enormní množství textu. Každý z nás je zavalen více texty než může zvládnout přečíst, natož pochopit a zanalyzovat. Naštěstí pomocí textové analytiky vám počítače mohou pomoci najít v textech to důležité. V přednášce se také podíváme na příklady, jak integrovat systém pro počítačové zpracování jazyka (NLP) s některými aplikacemi Google.",
+    "speakers": [
+      26
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "Machine Learning"
+    ]
+  },
+  "3300": {
+    "id": 3300,
+    "title": "Google Tango",
+    "description": "Tablet vyvinutý společností Google, který umožňuje skenování 3D prostoru, promítání virtuální reality a plno dalších možností.",
+    "speakers": [
+      12
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "General"
+    ]
+  },
+  "3400": {
+    "id": 3400,
+    "title": "Náš hackathon a inovace v Aimtecu",
+    "description": "Jak se snažíme inovovat v striktně plánovaném vývoji. Jak nám k tomu pomáhá formát hackathonu a co chceme zkusit dál.",
+    "speakers": [
+      31
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "General"
+    ]
+  },
+  "3500": {
+    "id": 3500,
+    "title": "Apache NiFi",
+    "description": "Jak snadno mezi systémy pumpovat a upravovat velké množství dat bez programování? Apache NiFi je klikací, ale mocný nástroj pro manipulaci s daty na cestě. Má mírně kontroverzní historii, ale může napáchat mnoho dobra.",
+    "speakers": [
+      34
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "General"
+    ]
+  },
+  "3600": {
+    "id": 3600,
+    "title": "API Produktu - Server bez klienta",
+    "description": "Zkušenost s implementací produktového API s ohledem na specifika našich zákazníků.",
+    "speakers": [
+      35
+    ],
+    "language": "Czech",
+    "complexity": "Beginner",
+    "tags": [
+      "General"
+    ]
+  }
+}

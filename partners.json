@@ -1,0 +1,137 @@
+[
+  {
+    "title": "general-partner",
+    "logos": [
+      {
+        "name": "Google",
+        "url": "https://www.google.cz/intl/en/about/",
+        "logoUrl": "../images/logos/google.svg",
+        "width": 140
+      },
+      {
+        "name": "GUG.cz",
+        "url": "http://www.gug.cz",
+        "logoUrl": "../images/logos/gug-cz.svg",
+        "width": 140
+      }
+    ]
+  },
+  {
+    "title": "platinum-partner",
+    "logos": [
+      {
+        "name": "AIMTEC",
+        "url": "http://www.aimtec.cz",
+        "logoUrl": "../images/logos/aimtec.gif",
+        "width": 160
+      }
+    ]
+  },
+  {
+    "title": "diamond-partners",
+    "logos": [
+      {
+        "name": "Eurosoftware s.r.o.",
+        "url": "https://www.gk-software.com/en/company/eurosoftware-s-r-o",
+        "logoUrl": "../images/logos/eurosoftware.svg",
+        "width": 260
+      }
+    ]
+  },
+  {
+    "title": "gold-partners",
+    "logos": [
+      {
+        "name": "Netmail.eu",
+        "url": "http://cloud.netmail.cz/",
+        "logoUrl": "../images/logos/netmail.svg",
+        "width": 80
+      },
+      {
+        "name": "eMan s.r.o.",
+        "url": "https://www.eman.cz/",
+        "logoUrl": "../images/logos/eman.png",
+        "width": 130
+      },
+      {
+        "name": "Avast",
+        "url": "https://www.avast.com/",
+        "logoUrl": "../images/logos/avast.svg",
+        "width": 140
+      },
+      {
+        "name": "ASUS",
+        "url": "https://www.asus.com/",
+        "logoUrl": "../images/logos/asus.svg",
+        "width": 120
+      },
+      {
+        "name": "FNX.io",
+        "url": "https://www.fnx.io/",
+        "logoUrl": "../images/logos/fnxio.svg",
+        "width": 100
+      },
+      {
+        "name": "Alza.cz",
+        "url": "https://www.alza.cz/",
+        "logoUrl": "../images/logos/alza_cz.png",
+        "width": 140
+      }
+    ]
+  },
+  {
+    "title": "gift-partners",
+    "logos": [
+      {
+        "name": "JetBrains",
+        "url": "https://www.jetbrains.com/",
+        "logoUrl": "../images/logos/jetbrains.svg",
+        "width": 80,
+        "height": 80
+      }
+    ]
+  },
+  {
+    "title": "general-media-partner",
+    "logos": [
+      {
+        "name": "Dotekománie.cz",
+        "url": "https://dotekomanie.cz/",
+        "logoUrl": "../images/logos/dotekomanie.png",
+        "width": 232
+      }
+    ]
+  },
+  {
+    "title": "media-partners",
+    "logos": [
+      {
+        "name": "Droidik.cz",
+        "url": "https://www.droidik.cz/",
+        "logoUrl": "../images/logos/droidik.png"
+      },
+      {
+        "name": "Tyinternety.cz",
+        "url": "http://tyinternety.cz/",
+        "logoUrl": "../images/logos/tyinternety.svg"
+      },
+      {
+        "name": "eventigo.cz",
+        "url": "https://eventigo.cz/",
+        "logoUrl": "../images/logos/eventigo.png"
+      }
+    ]
+  },
+  {
+    "title": "catering-partner",
+    "logos": [
+      {
+        "name": "Zajíc na pivu",
+        "url": "http://www.zajicnapivu.cz/",
+        "logoUrl": "../images/logos/zajic_na_pivu.png",
+        "width": 160,
+        "height": 160
+      }
+    ]
+  }
+]

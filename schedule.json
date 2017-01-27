@@ -1,0 +1,305 @@
+[
+  {
+    "date": "2016-11-04",
+    "dateReadable": "November 4",
+    "tracks": [
+      {
+        "title": "Small hall"
+      }
+    ],
+    "sections": [
+      {
+        "title": "Main Area"
+      }
+    ],
+    "timeslots": [
+      [
+        {
+          "startTime": "20:00",
+          "endTime": "23:59",
+          "sessions": [
+            [
+              1
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "date": "2016-11-05",
+    "dateReadable": "November 5",
+    "tracks": [
+      {
+        "title": "Large hall"
+      },
+      {
+        "title": "Small hall"
+      },
+      {
+        "title": "Workshop room 1"
+      },
+      {
+        "title": "Workshop room 2"
+      }
+    ],
+    "sections": [
+      {
+        "title": "Main Area"
+      },
+      {
+        "title": "Innovation Day"
+      },
+      {
+        "title": "Firebase Codelab"
+      }
+    ],
+    "timeslots": [
+      [
+        {
+          "startTime": "8:30",
+          "endTime": "9:30",
+          "sessions": [
+            [
+              10
+            ]
+          ]
+        },
+        {
+          "startTime": "9:30",
+          "endTime": "10:00",
+          "sessions": [
+            [
+              20
+            ]
+          ]
+        },
+        {
+          "startTime": "10:00",
+          "endTime": "11:00",
+          "sessions": [
+            [1100],
+            [2200],
+            [1300]
+          ]
+        },
+        {
+          "startTime": "11:00",
+          "endTime": "12:00",
+          "sessions": [
+            [100],
+            [400],
+            [1201],
+            [1301]
+          ]
+        },
+        {
+          "startTime": "12:00",
+          "endTime": "13:00",
+          "sessions": [
+            [200],
+            [2300],
+            [1202],
+            [1302]
+          ]
+        },
+        {
+          "startTime": "13:00",
+          "endTime": "14:30",
+          "sessions": [
+            [
+              30
+            ]
+          ]
+        },
+        {
+          "startTime": "14:30",
+          "endTime": "15:30",
+          "sessions": [
+            [600],
+            [300],
+            [1400]
+          ]
+        },
+        {
+          "startTime": "15:30",
+          "endTime": "16:30",
+          "sessions": [
+            [1600],
+            [2900],
+            [1401]
+          ]
+        },
+        {
+          "startTime": "16:30",
+          "endTime": "17:00",
+          "sessions": [
+            [1500],
+            [3100],
+            [1402]
+          ]
+        },
+        {
+          "startTime": "17:00",
+          "endTime": "17:30",
+          "sessions": [
+            [1501],
+            [3000],
+            [1403]
+          ]
+        },
+        {
+          "startTime": "17:30",
+          "endTime": "18:00",
+          "sessions": [
+            [900],
+            [3200]
+          ]
+        },
+        {
+          "startTime": "18:00",
+          "endTime": "18:30",
+          "sessions": [
+            [
+              40
+            ]
+          ]
+        },
+        {
+          "startTime": "18:30",
+          "endTime": "19:00",
+          "sessions": [
+            [
+              50
+            ]
+          ]
+        },
+        {
+          "startTime": "19:00",
+          "endTime": "23:59",
+          "sessions": [
+            [
+              60
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "startTime": "11:00",
+          "endTime": "13:00",
+          "sessions": [
+            [
+              2800,
+              3400,
+              3300,
+              2600,
+              2500,
+              2700,
+              3600,
+              3500
+            ]
+          ],
+          "room": "Coworking"
+        }
+      ],
+      [
+        {
+          "startTime": "14:30",
+          "endTime": "16:30",
+          "sessions": [
+            [
+              2400
+            ]
+          ],
+          "room": "Coworking"
+        }
+      ]
+    ]
+  },
+  {
+    "date": "2016-11-05",
+    "dateReadable": "November 6",
+    "tracks": [
+      {
+        "title": "Large hall"
+      },
+      {
+        "title": "Small hall"
+      },
+      {
+        "title": "Firebase CodeLab"
+      }
+    ],
+    "sections": [
+      {
+        "title": "Main Area"
+      }
+    ],
+    "timeslots": [
+      [
+        {
+          "startTime": "8:30",
+          "endTime": "9:00",
+          "sessions": [
+            [11]
+          ]
+        },
+        {
+          "startTime": "9:00",
+          "endTime": "10:00",
+          "sessions": [
+            [],
+            [2100]
+          ]
+        },
+        {
+          "startTime": "10:00",
+          "endTime": "11:00",
+          "sessions": [
+            [1800],
+            [1700]
+          ]
+        },
+        {
+          "startTime": "11:00",
+          "endTime": "12:00",
+          "sessions": [
+            [800],
+            [1900]
+          ]
+        },
+        {
+          "startTime": "12:00",
+          "endTime": "13:00",
+          "sessions": [
+            [2000],
+            [700]
+          ]
+        },
+        {
+          "startTime": "13:00",
+          "endTime": "14:00",
+          "sessions": [
+            [500],
+            []
+          ]
+        },
+        {
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "sessions": [
+            [31]
+          ]
+        },
+        {
+          "startTime": "15:00",
+          "endTime": "15:30",
+          "sessions": [
+            [80]
+          ]
+        }
+      ]
+    ]
+  }
+]

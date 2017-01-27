@@ -1,0 +1,84 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+
+<link rel="import" href="../behaviors/localize-behavior.html">
+
+</head><body><dom-module id="login-feature-prompt">
+
+  <template>
+    <style include="shared-styles">
+      :host {
+        @apply(--layout-vertical);
+        @apply(--shadow-elevation-2dp);
+        position: fixed;
+        display: none;
+        top: 0;
+        right: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 100;
+      }
+
+      :host([displayed]) {
+        display: block;
+      }
+
+      .title {
+        display: inline-block;
+        margin: 16px 16px 8px;
+        font-size: 18px;
+      }
+
+      .description {
+        display: inline-block;
+        margin: 8px 16px;
+        font-size: 16px;
+      }
+
+      .button-bar {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        @apply(--layout-end-justified);
+        margin-bottom: 8px;
+      }
+
+      paper-button[primary-target] {
+        color: var(--accent-color);
+        font-weight: bold;
+      }
+
+      @media (min-width: 600px) {
+
+        :host {
+          @apply(--shadow-elevation-4dp);
+          width: 300px;
+          margin: 24px;
+          border-radius: 2px;
+        }
+
+      }
+
+    </style>
+
+    <app-localstorage-document id="stateStorage" key="loginFeaturePromptState">
+    </app-localstorage-document>
+
+    <span class="title">Sign-in?</span>
+
+    <span class="description">Create your custom schedule &amp; receive notifications</span>
+
+    <div class="button-bar">
+      <paper-button on-tap="_disablePrompt">No thanks</paper-button>
+      <paper-button on-tap="_enableLogin" primary-target="">Yes</paper-button>
+    </div>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"login-feature-prompt",behaviors:[HOVERBOARD.LocalizeBehavior],properties:{app:{type:Object},displayed:{type:Boolean,value:!1,reflectToAttribute:!0}},observers:["_onUserChanged(app.user, app.authStatusKnown)"],_onUserChanged:function(e,t){var a=this.$.stateStorage;e||a.data&&"unknown"!==a.data||this.displayed||!t?this.set("displayed",!1):this.set("displayed",!0)},_disablePrompt:function(){this.$.stateStorage.data="disabled",this.set("displayed",!1)},_enableLogin:function(){HOVERBOARD.Elements.Template.$.auth.signInWithPopup(),this.$.stateStorage.data="enabled",this.set("displayed",!1)}})}();</script>
+</dom-module>
+</body></html>

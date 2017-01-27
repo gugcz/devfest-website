@@ -1,0 +1,91 @@
+,
+{
+"title": "Garanti sekcí",
+"members": [
+{
+"name": "Tomáš Jukin",
+"photoUrl": "/images/people/tomas_jukin.jpg",
+"socials": [
+{
+"icon": "gplus",
+"link": "https://plus.google.com/+DianaPinchuk",
+"name": "Google+"
+},
+{
+"icon": "facebook",
+"link": "https://www.facebook.com/diana.pinchuk.9",
+"name": "Facebook"
+}
+],
+"title": "IoT & Open Hardware"
+},
+{
+"name": "Vít Listík",
+"photoUrl": "/images/people/vit_listik.jpg",
+"socials": [
+{
+"icon": "gplus",
+"link": "https://plus.google.com/104036874811391520583",
+"name": "Google+"
+},
+{
+"icon": "facebook",
+"link": "https://www.facebook.com/marta.maxymiak",
+"name": "Facebook"
+}
+],
+"title": "Machine Learning"
+},
+{
+"name": "?? ??",
+"photoUrl": "/images/people/person_a.jpg",
+"socials": [
+{
+"icon": "gplus",
+"link": "https://plus.google.com/104036874811391520583",
+"name": "Google+"
+},
+{
+"icon": "facebook",
+"link": "https://www.facebook.com/marta.maxymiak",
+"name": "Facebook"
+}
+],
+"title": "Bussiness & Inovace"
+},
+{
+"name": "?? ??",
+"photoUrl": "/images/people/person_a.jpg",
+"socials": [
+{
+"icon": "gplus",
+"link": "https://plus.google.com/104036874811391520583",
+"name": "Google+"
+},
+{
+"icon": "facebook",
+"link": "https://www.facebook.com/marta.maxymiak",
+"name": "Facebook"
+}
+],
+"title": "Mobilní vývoj"
+},
+{
+"name": "?? ??",
+"photoUrl": "/images/people/person_a.jpg",
+"socials": [
+{
+"icon": "gplus",
+"link": "https://plus.google.com/104036874811391520583",
+"name": "Google+"
+},
+{
+"icon": "facebook",
+"link": "https://www.facebook.com/marta.maxymiak",
+"name": "Facebook"
+}
+],
+"title": "Backend"
+}
+]
+}

@@ -1,0 +1,56 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../styles/shared-styles.html">
+<link rel="import" href="../behaviors/localize-behavior.html">
+
+
+</head><body><dom-module id="cfp-block">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+        background: var(--default-primary-color);
+        color: var(--text-primary-color);
+        padding: 24px 0;
+      }
+
+      .container {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+      }
+
+      .heading {
+        @apply(--layout-flex);
+        @apply(--layout-self-center);
+        margin-bottom: 0 !important;
+      }
+
+      .cfp-submit-button {
+        margin-top: 24px;
+        background-color: white;
+      }
+
+      @media (max-width: 599px) {
+        .open-dialog-button {
+          margin-top: 10px;
+        }
+      }
+    </style>
+
+    <div class="container container-narrow">
+      <h4 class="heading">[[localize('cfp-title')]]</h4>
+      <a href="https://goo.gl/forms/QaYp04WR1qzTBref2" target="_blank" class="block-link">
+        <paper-button class="cfp-submit-button" raised="">[[localize('cfp-button')]]</paper-button>
+      </a>
+    </div>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"cfp-block",behaviors:[HOVERBOARD.LocalizeBehavior]})}();</script>
+
+</dom-module>
+</body></html>

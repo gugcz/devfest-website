@@ -1,0 +1,1074 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../hoverboard-app.html"></head><body><div hidden="" by-vulcanize=""><script>!function(){"use strict";var e={},r="undefined"!=typeof SharedWorker,o="undefined"!=typeof Worker,t=document._currentScript||document.currentScript||function(){var e=document.getElementsByTagName("script");return e[e.length-1]}(),n=t.ownerDocument.baseURI,s=Polymer.ResolveUrl.resolveUrl("common-worker-scope.js",n);Polymer.CommonWorker=function(t){return r?new SharedWorker(t):(o?e.hasOwnProperty(t)||(e[t]=new Worker(s+"?"+t)):console.error("This browser does not support SharedWorker orWebWorker, but at least one of those two features is required forCommonWorker to do its thing."),this.channel=new MessageChannel,this.webWorker=e[t],void(this.webWorker&&this.webWorker.postMessage({type:"common-worker-connect"},[this.channel.port2])))},Polymer.CommonWorker.prototype={get port(){return this.channel.port1},addEventListener:function(){if(this.webWorker)return this.webWorker.addEventListener.apply(this.webWorker,arguments)},removeEventListener:function(){if(this.webWorker)return this.webWorker.removeEventListener.apply(this.webWorker,arguments)}}}();</script>
+<script>!function(){"use strict";var t="__workerUrl",e="__connectsToWorker",n="__connected",o="__messageId",r="__mirroringSupported";Polymer.AppIndexedDBMirrorClient=function(i){this[t]=i,this[n]=!1,this[o]=0,this[e]=null,this[r]=null,this.connect()},Polymer.AppIndexedDBMirrorClient.prototype={get supportsMirroring(){return this[r]},validateSession:function(t){if(void 0!==t)return this.post({type:"app-mirror-validate-session",session:t})},post:function(t){return this.connect().then(function(e){return this[r]?new Promise(function(n){var r=this[o]++,i=e.port;i.addEventListener("message",function t(e){e.data&&e.data.id===r&&(i.removeEventListener("message",t),n(e.data.result))}),t.id=r,i.postMessage(t)}.bind(this)):Promise.resolve({})}.bind(this))},transaction:function(t,e,n){return this.post({type:"app-mirror-transaction",method:t,key:e,value:n})},closeDb:function(){return this.post({type:"app-mirror-close-db"})},connect:function(){return this[n]||this[e]?this[e]:(console.log("App IndexedDB Client connecting.."),this[e]=new Promise(function(e){var o=new Polymer.CommonWorker(this[t]);o.port.addEventListener("message",function(t){t.data&&"app-mirror-connected"===t.data.type&&(console.log("App IndexedDB Client connected!"),this[n]=!0,this[r]=t.data.supportsIndexedDB,e(o))}.bind(this)),o.addEventListener("error",function(t){console.error(t.message||t)}),o.port.start(),o.port.postMessage({type:"app-mirror-connect"})}.bind(this)))}}}();</script>
+<dom-module id="app-indexeddb-mirror" assetpath="../../bower_components/app-storage/app-indexeddb-mirror/">
+  <script>!function(){"use strict";Polymer({is:"app-indexeddb-mirror",behaviors:[Polymer.AppStorageBehavior,Polymer.AppNetworkStatusBehavior],properties:{key:{type:String,value:"app-mirror-default-key"},session:{type:String},workerUrl:{type:String,value:function(){return this.resolveUrl("./app-indexeddb-mirror-worker.js")}},client:{type:Polymer.AppIndexedDBMirrorClient,computed:"__computeClient(workerUrl)",observer:"__clientChanged"},persistedData:{type:Object,notify:!0}},observers:["__updatePersistedData(client, key, session, online)","__updatePersistedData(data.*)"],get isNew(){return!1},destroy:function(){return this.client.transaction("set",this.key,null)},setStoredValue:function(e,t){return this.online?this.client.transaction("set",this.key,this.data):Promise.resolve()},getStoredValue:function(e){return this.client.transaction("get",this.key)},initializeStoredValue:function(){return Promise.resolve()},__clientChanged:function(e){this._enqueueTransaction(function(){return e.connect()})},__computeClient:function(e){return new Polymer.AppIndexedDBMirrorClient(e)},__updatePersistedData:function(){this._log("Updating persisted data.."),this._enqueueTransaction(function(){return this.client.validateSession(this.session)}),this.online?(this.persistedData=this.data,this.linkPaths("data","persistedData")):(this.unlinkPaths("data","persistedData"),this._enqueueTransaction(function(){return this.getStoredValue().then(function(e){!this.online&&this.client.supportsMirroring&&(this.persistedData=e)}.bind(this))}))}})}();</script>
+</dom-module>
+<script>Polymer.IronCheckedElementBehaviorImpl={properties:{checked:{type:Boolean,value:!1,reflectToAttribute:!0,notify:!0,observer:"_checkedChanged"},toggles:{type:Boolean,value:!0,reflectToAttribute:!0},value:{type:String,value:"on",observer:"_valueChanged"}},observers:["_requiredChanged(required)"],created:function(){this._hasIronCheckedElementBehavior=!0},_getValidity:function(e){return this.disabled||!this.required||this.checked},_requiredChanged:function(){this.required?this.setAttribute("aria-required","true"):this.removeAttribute("aria-required")},_checkedChanged:function(){this.active=this.checked,this.fire("iron-change")},_valueChanged:function(){void 0!==this.value&&null!==this.value||(this.value="on")}},Polymer.IronCheckedElementBehavior=[Polymer.IronFormElementBehavior,Polymer.IronValidatableBehavior,Polymer.IronCheckedElementBehaviorImpl];</script>
+<script>Polymer.PaperCheckedElementBehaviorImpl={_checkedChanged:function(){Polymer.IronCheckedElementBehaviorImpl._checkedChanged.call(this),this.hasRipple()&&(this.checked?this._ripple.setAttribute("checked",""):this._ripple.removeAttribute("checked"))},_buttonStateChanged:function(){Polymer.PaperRippleBehavior._buttonStateChanged.call(this),this.disabled||this.isAttached&&(this.checked=this.active)}},Polymer.PaperCheckedElementBehavior=[Polymer.PaperInkyFocusBehavior,Polymer.IronCheckedElementBehavior,Polymer.PaperCheckedElementBehaviorImpl];</script>
+<dom-module id="paper-checkbox" assetpath="../../bower_components/paper-checkbox/">
+  <template strip-whitespace="">
+    <style>
+      :host {
+        display: inline-block;
+        white-space: nowrap;
+        cursor: pointer;
+        --calculated-paper-checkbox-size: var(--paper-checkbox-size, 18px);
+        /* -1px is a sentinel for the default and is replaced in `attached`. */
+        --calculated-paper-checkbox-ink-size: var(--paper-checkbox-ink-size, -1px);
+        @apply(--paper-font-common-base);
+        line-height: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :host([hidden]) {
+        display: none !important;
+      }
+
+      :host(:focus) {
+        outline: none;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #checkboxContainer {
+        display: inline-block;
+        position: relative;
+        width: var(--calculated-paper-checkbox-size);
+        height: var(--calculated-paper-checkbox-size);
+        min-width: var(--calculated-paper-checkbox-size);
+        margin: var(--paper-checkbox-margin, initial);
+        vertical-align: var(--paper-checkbox-vertical-align, middle);
+        background-color: var(--paper-checkbox-unchecked-background-color, transparent);
+      }
+
+      #ink {
+        position: absolute;
+
+        /* Center the ripple in the checkbox by negative offsetting it by
+         * (inkWidth - rippleWidth) / 2 */
+        top: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
+        left: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
+        width: var(--calculated-paper-checkbox-ink-size);
+        height: var(--calculated-paper-checkbox-ink-size);
+        color: var(--paper-checkbox-unchecked-ink-color, var(--primary-text-color));
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      :host-context([dir="rtl"]) #ink {
+        right: calc(0px - (var(--calculated-paper-checkbox-ink-size) - var(--calculated-paper-checkbox-size)) / 2);
+        left: auto;
+      }
+
+      #ink[checked] {
+        color: var(--paper-checkbox-checked-ink-color, var(--primary-color));
+      }
+
+      #checkbox {
+        position: relative;
+        box-sizing: border-box;
+        height: 100%;
+        border: solid 2px;
+        border-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
+        border-radius: 2px;
+        pointer-events: none;
+        -webkit-transition: background-color 140ms, border-color 140ms;
+        transition: background-color 140ms, border-color 140ms;
+      }
+
+      /* checkbox checked animations */
+      #checkbox.checked #checkmark {
+        -webkit-animation: checkmark-expand 140ms ease-out forwards;
+        animation: checkmark-expand 140ms ease-out forwards;
+      }
+
+      @-webkit-keyframes checkmark-expand {
+        0% {
+          -webkit-transform: scale(0, 0) rotate(45deg);
+        }
+        100% {
+          -webkit-transform: scale(1, 1) rotate(45deg);
+        }
+      }
+
+      @keyframes checkmark-expand {
+        0% {
+          transform: scale(0, 0) rotate(45deg);
+        }
+        100% {
+          transform: scale(1, 1) rotate(45deg);
+        }
+      }
+
+      #checkbox.checked {
+        background-color: var(--paper-checkbox-checked-color, var(--primary-color));
+        border-color: var(--paper-checkbox-checked-color, var(--primary-color));
+      }
+
+      #checkmark {
+        position: absolute;
+        width: 36%;
+        height: 70%;
+        border-style: solid;
+        border-top: none;
+        border-left: none;
+        border-right-width: calc(2/15 * var(--calculated-paper-checkbox-size));
+        border-bottom-width: calc(2/15 * var(--calculated-paper-checkbox-size));
+        border-color: var(--paper-checkbox-checkmark-color, white);
+        -webkit-transform-origin: 97% 86%;
+        transform-origin: 97% 86%;
+        box-sizing: content-box; /* protect against page-level box-sizing */
+      }
+
+      :host-context([dir="rtl"]) #checkmark {
+        -webkit-transform-origin: 50% 14%;
+        transform-origin: 50% 14%;
+      }
+
+      /* label */
+      #checkboxLabel {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: var(--paper-checkbox-label-spacing, 8px);
+        white-space: normal;
+        line-height: normal;
+        color: var(--paper-checkbox-label-color, var(--primary-text-color));
+        @apply(--paper-checkbox-label);
+      }
+
+      :host([checked]) #checkboxLabel {
+        color: var(--paper-checkbox-label-checked-color, var(--paper-checkbox-label-color, var(--primary-text-color)));
+        @apply(--paper-checkbox-label-checked);
+      }
+
+      :host-context([dir="rtl"]) #checkboxLabel {
+        padding-right: var(--paper-checkbox-label-spacing, 8px);
+        padding-left: 0;
+      }
+
+      #checkboxLabel[hidden] {
+        display: none;
+      }
+
+      /* disabled state */
+
+      :host([disabled]) #checkbox {
+        opacity: 0.5;
+        border-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
+      }
+
+      :host([disabled][checked]) #checkbox {
+        background-color: var(--paper-checkbox-unchecked-color, var(--primary-text-color));
+        opacity: 0.5;
+      }
+
+      :host([disabled]) #checkboxLabel  {
+        opacity: 0.65;
+      }
+
+      /* invalid state */
+      #checkbox.invalid:not(.checked) {
+        border-color: var(--paper-checkbox-error-color, var(--error-color));
+      }
+    </style>
+
+    <div id="checkboxContainer">
+      <div id="checkbox" class$="[[_computeCheckboxClass(checked, invalid)]]">
+        <div id="checkmark" class$="[[_computeCheckmarkClass(checked)]]"></div>
+      </div>
+    </div>
+
+    <div id="checkboxLabel"><content></content></div>
+  </template>
+
+  <script>Polymer({is:"paper-checkbox",behaviors:[Polymer.PaperCheckedElementBehavior],hostAttributes:{role:"checkbox","aria-checked":!1,tabindex:0},properties:{ariaActiveAttribute:{type:String,value:"aria-checked"}},attached:function(){var e=this.getComputedStyleValue("--calculated-paper-checkbox-ink-size");if("-1px"===e){var t=parseFloat(this.getComputedStyleValue("--calculated-paper-checkbox-size")),a=Math.floor(8/3*t);a%2!==t%2&&a++,this.customStyle["--paper-checkbox-ink-size"]=a+"px",this.updateStyles()}},_computeCheckboxClass:function(e,t){var a="";return e&&(a+="checked "),t&&(a+="invalid"),a},_computeCheckmarkClass:function(e){return e?"":"hidden"},_createRipple:function(){return this._rippleContainer=this.$.checkboxContainer,Polymer.PaperInkyFocusBehaviorImpl._createRipple.call(this)}});</script>
+</dom-module>
+<dom-module id="schedule-subnav" assetpath="../elements/">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --paper-menu-background-color: #fff;
+      }
+
+      .subpage-nav {
+        padding-left: 16px;
+        height: 69px;
+        background: var(--default-primary-color);
+      }
+
+      .subpage-nav[phoneSize] {
+        padding-left: 8px;
+      }
+
+      .subpage-nav[phoneSize] .schedule-tabs {
+        width: 100%;
+      }
+
+      .schedule-tabs {
+        height: 100%;
+      }
+
+      .subpage-nav[phoneSize] .schedule-tabs::before,
+      .subpage-nav[phoneSize] .schedule-tabs::after {
+        display: block;
+        width: 8px;
+        height: 100%;
+        top: 0;
+        position: absolute;
+        z-index: 1;
+        content: "";
+        background: linear-gradient(to right, var(--default-primary-color) 10%, rgba(147, 126, 232, 0) 100%);
+      }
+
+      .subpage-nav[phoneSize] .schedule-tabs::after {
+        right: 0;
+        background: linear-gradient(to left, var(--default-primary-color) 10%, rgba(147, 126, 232, 0) 100%);
+      }
+
+      .schedule-tabs paper-tab {
+        margin: 0 8px;
+      }
+
+      paper-tab a {
+        color: var(--text-primary-color);
+      }
+
+      .filter-button {
+        font-size: 14px;
+      }
+
+      .filter-icon {
+        --iron-icon-height: 16px;
+        --iron-icon-width: 16px;
+        margin-left: 4px;
+      }
+
+      paper-checkbox {
+        padding: 0 24px;
+        position: relative;
+        min-height: 48px;
+      }
+
+      paper-item {
+        padding: 0 24px;
+        cursor: pointer;
+      }
+
+      .info-banner {
+        padding: 16px;
+        background: rgba(236, 239, 241, 0.6);
+        color: rgba(0, 0, 0, 0.54);
+        font-size: 12px;
+      }
+
+      .legend-item {
+        margin-right: 8px;
+      }
+
+      .point {
+        margin-right: 4px;
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        border-radius: 50%;
+      }
+
+     paper-button {
+        text-transform: none;
+      }
+
+      a {
+        color: var(--primary-text-color);
+      }
+
+      paper-menu-button {
+        padding-left: 0;
+      }
+
+      .myschedue-button[disabled] {
+        opacity: 0;
+      }
+    </style>
+
+    <nav class="subpage-nav" phonesize$="[[app.isPhoneSize]]" layout="" horizontal="" center="" justified="" relative="">
+
+      <template is="dom-if" if="[[!app.isPhoneSize]]">
+        <paper-tabs class="schedule-tabs" selected="[[selectedDay]]" attr-for-selected="day" scrollable="[[app.isPhoneSize]]" relative="" hide-scroll-buttons="">
+          <template is="dom-repeat" items="[[schedule]]" as="day">
+            <paper-tab day$="day[[_addToValue(index, 1)]]" link="">
+              <a href$="/schedule/day[[_addToValue(index, 1)]]" layout="" center="">
+                [[day.dateReadable]]
+              </a>
+            </paper-tab>
+          </template>
+          <template is="dom-if" if="{{app.user}}">
+            <paper-tab day="myschedule" link="">
+              <a href="/schedule/myschedule" layout="" center="">
+                [[localize('my-schedule')]]
+              </a>
+            </paper-tab>
+          </template>
+        </paper-tabs>
+      </template>
+
+      <template is="dom-if" if="[[_showDaySelector(app.isPhoneSize, selectedDay)]]">
+        <paper-menu-button vertical-align="top" horizontal-align="left">
+          <paper-button class="dropdown-trigger">
+            [[_getDayLabel(selectedDay)]]
+            <iron-icon icon="arrow-drop-down"></iron-icon>
+          </paper-button>
+          <paper-menu class="dropdown-content" selected="[[selectedDay]]" attr-for-selected="day">
+
+            <template is="dom-repeat" items="[[schedule]]" as="day">
+              <paper-item label$="[[day.dateReadable]]" day$="day[[_addToValue(index, 1)]]" link="">
+                <a href$="/schedule/day[[_addToValue(index, 1)]]" layout="" center="">[[day.dateReadable]]</a>
+              </paper-item>
+            </template>
+
+            <template is="dom-if" if="{{app.user}}">
+              <paper-item label$="[[localize('my-schedule')]]" day="myschedule" link="">
+                <a href="/schedule/myschedule" layout="" center="">
+                  [[localize('my-schedule')]]
+                </a>
+              </paper-item>
+            </template>
+          </paper-menu>
+        </paper-menu-button>
+      </template>
+
+      <template is="dom-if" if="[[_showMyScheduleArrow(app.isPhoneSize, selectedDay)]]">
+        <div class="myscheduleback" layout="" horizontal="" center="">
+          <paper-icon-button icon="arrow-back" aria-label="Close My Schedule" on-tap="_goBack"></paper-icon-button>
+          <span>[[localize('my-schedule')]]</span>
+        </div>
+      </template>
+
+      <div layout="" horizontal="" center="">
+        <div class="myschedue-button" hidden$="[[!_displayPersonIcon(app.isPhoneSize, app.user)]]" disabled$="[[_isMySchedulePage(selectedDay)]]">
+          <a href="/schedule/myschedule">
+            <paper-icon-button icon="person" aria-label="[[localize('my-schedule')]]"></paper-icon-button>
+          </a>
+        </div>
+        <paper-menu-button id="filtersMenuToggle" horizontal-align="right" ignore-select="" allow-outside-scroll="" opened="{{_filtersOpened}}">
+          <paper-button class="filter-button dropdown-trigger">
+            [[localize('filter')]]
+            <iron-icon class="filter-icon" icon="filter-list"></iron-icon>
+          </paper-button>
+          <paper-menu id="filters" class="filters-content dropdown-content" attr-for-selected="value" selected-values="{{filters}}" multi="">
+            <template is="dom-repeat" items="[[schedule.tags]]" as="tag">
+              <paper-checkbox value="[[tag]]" checked="{{_isChecked(tag)}}" layout="" horizontal="" center="" flex="">
+                [[tag]]
+              </paper-checkbox>
+            </template>
+            <paper-item on-tap="clearFilters">[[localize('clear-all')]]</paper-item>
+          </paper-menu>
+        </paper-menu-button>
+      </div>
+    </nav>
+
+    <div class="info-banner" layout="" horizontal="" justified="">
+      <div class="legend" layout="" horizontal="" wrap="">
+        <template is="dom-repeat" items="[[schedule.tags]]" as="tag">
+          <div class="legend-item">
+            <i class="point" style$="background: [[_getCustomStyleValue(tag)]]"></i>[[tag]]
+          </div>
+        </template>
+      </div>
+      <div class="filters" hidden$="[[!_filtersLabel]]">
+        [[localize('filtered-by')]] [[_filtersLabel]]
+      </div>
+    </div>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"schedule-subnav",behaviors:[HOVERBOARD.UtilsBehavior,HOVERBOARD.LocalizeBehavior],properties:{schedule:{type:Array},selectedDay:{type:String},filters:{type:Array,value:[],notify:!0}},listeners:{"iron-select":"_refreshFiltersLabel","iron-deselect":"_refreshFiltersLabel"},attached:function(){this._target=this.$.filtersMenuToggle,this.listen(this._target,"mouseenter","_showFilters"),this.listen(this._target,"mouseleave","_hideFilters"),this.listen(this._target,"tap","_hideFilters")},detached:function(){this._target&&(this.unlisten(this._target,"mouseenter","_showFilters"),this.unlisten(this._target,"mouseleave","_hideFilters"),this.unlisten(this._target,"tap","_hideFilters"))},clearFilters:function(e){e&&(e.preventDefault(),e.stopPropagation()),this.filters=[];var t=this.$.filters.querySelectorAll("paper-checkbox");Array.prototype.forEach.call(t,function(e){e.checked=!1})},_isChecked:function(e){return this.filters.indexOf(e)>-1},_showFilters:function(e){e.stopPropagation(),this.debounce("doSomething",function(){this._filtersOpened||this.set("_filtersOpened",!0)},50)},_hideFilters:function(e){e.stopPropagation(),this.debounce("doSomething",function(){this._filtersOpened&&this.set("_filtersOpened",!1)},50)},_getCustomStyleValue:function(e){return this.getComputedStyleValue("--"+this._generateClass(e))},_activeFilters:function(){return this.filters&&this.filters.length},_refreshFiltersLabel:function(){this._filtersLabel=this.filters.join(", ")},_showDaySelector:function(e,t){return e&&!this._isMySchedulePage(t)},_showMyScheduleArrow:function(e,t){return e&&this._isMySchedulePage(t)},_isMySchedulePage:function(e){return"myschedule"===e},_displayPersonIcon:function(e,t){return e&&t},_goBack:function(e){e.stopPropagation(),e.preventDefault(),window.history.go(-1)},_getDayLabel:function(e){if(!this._isMySchedulePage(e)){var t=Number(e.match(/\d+/)[0]);return this.schedule[t-1].dateReadable}}})}();</script>
+
+</dom-module>
+<script>!function(){"use strict";HOVERBOARD.MyScheduleBehavior={properties:{app:{type:Object,notify:!0}},toggleMyScheduleSession:function(s){if(s.stopPropagation(),s.preventDefault(),!this.app.user)return void HOVERBOARD.Elements.Template.$.toast.showMessage(this.localize("you-should-sign-in"),HOVERBOARD.Elements.Template.signIn,this.localize("sign-in"));if(this.online){var e=s.target.getAttribute("session-id");"1"!==e&&(this.app.user.sessions&&this.app.user.sessions[e]?(this.set("app.user.sessions."+e,null),s.target.classList.remove("remove"),HOVERBOARD.Elements.Template.$.toast.showMessage(this.localize("removed-from-schedule"))):(this.app.user.sessions||(this.app.user.sessions={}),this.set("app.user.sessions."+e,!0),s.target.classList.add("remove"),HOVERBOARD.Elements.Template.$.toast.showMessage(this.localize("added-to-schedule"))))}},isInMySchedule:function(s){return!!this.app.user&&(this.app.user.sessions||(this.app.user.sessions={}),!!this.app.user.sessions[s])}}}();</script>
+<dom-module id="session-element" assetpath="../elements/">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .session {
+        @apply(--shadow-transition);
+        cursor: pointer;
+        color: var(--primary-text-color);
+      }
+
+      .session[with-background] {
+        color: #fff;
+      }
+
+      .session[with-background] .overlay {
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      .session:hover {
+        @apply(--shadow-elevation-4dp);
+      }
+
+      .sessions-wrapper[vertical] .session:not(:first-of-type) .session,
+      .session:not(:first-of-type) {
+        margin-top: 16px;
+      }
+
+      .session-content {
+        padding: 24px;
+        flex-basis: auto;
+      }
+
+      .session-content p {
+        margin: 24px 0 8px;
+      }
+
+      .session-title {
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 22px;
+      }
+
+      .session-meta {
+        margin: 8px 0 0;
+        padding: 0;
+        font-size: 15px;
+        color: var(--secondary-text-color);
+      }
+
+      .session[with-background] .tags,
+      .session[with-background] .session-meta {
+        color: #fff;
+      }
+
+      .session-meta li {
+        display: inline-block;
+      }
+
+      .session-meta li:not(:last-of-type)::after {
+        margin-left: 5px;
+        content: "/";
+      }
+
+      .speaker-block {
+        padding: 12px 24px;
+        color: #fff;
+      }
+
+      .image-overlay {
+        transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0.85;
+      }
+
+      .session[wide]:hover .image-overlay,
+      .session[wide]:hover .action-icon {
+        opacity: 1;
+      }
+
+      .action-icon[disabled],
+      .session[wide]:hover .action-icon[disabled] {
+        opacity: 0.2;
+        cursor: default;
+      }
+
+      .session[wide] .action-icon.remove-circle {
+        opacity: 1;
+      }
+
+      .session[with-background][wide] .image-overlay,
+      .session[with-background][wide]:hover .image-overlay {
+        opacity: 0;
+      }
+
+      .bottom-caption {
+        position: relative;
+        font-size: 13px;
+        color: var(--secondary-text-color);
+      }
+
+      .action-icon {
+        --iron-icon-width: 20px;
+        --iron-icon-height: 20px;
+        margin-left: 16px;
+        padding: 16px 24px;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+      }
+
+      .session[with-background] .action-icon {
+        color: #fff;
+      }
+
+      .session[wide] .action-icon {
+        opacity: 0;
+        transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .tags {
+        padding: 16px 24px;
+      }
+
+      .tags iron-icon {
+        --iron-icon-width: 14px;
+        --iron-icon-height: 14px;
+        margin-right: 8px;
+      }
+
+      .speaker-block {
+        background-color: #7a7a7a;
+      }
+
+      .speakers {
+        @apply(--layout-vertical);
+      }
+
+      .speaker {
+        margin: 4px 0;
+      }
+
+      .speaker:not(:last-of-type) {
+        margin-bottom: 16px;
+      }
+
+      .person-detail {
+        margin-left: 7px;
+        line-height: 1;
+        z-index: 1;
+      }
+
+      .speaker-title {
+        font-size: 13px;
+      }
+    </style>
+
+    <a class="session" href$="/schedule/[[scheduleSection]]?sessionId=[[session.id]]" with-background$="[[session.image]]" wide$="{{!app.isPhoneSize}}" layout="" flex-auto="">
+      <paper-card layout="" flex-auto="">
+
+        <iron-image src="[[session.image]]" sizing="cover" fit="" preload=""></iron-image>
+
+        <div class="overlay" relative="" layout="" vertical="" flex="">
+          <div class="session-content" flex="">
+            <h2 class="session-title">[[session.title]]</h2>
+            <ul class="session-meta">
+              <li hidden$="[[!session.language]]">[[session.language]]</li>
+              <li hidden$="[[!session.complexity]]">[[session.complexity]]</li>
+              <template is="dom-if" if="[[session.room]]">
+                <li>[[session.room]]</li>
+              </template>
+              <li hidden$="[[session.room]]">[[session.track.title]]</li>
+            </ul>
+          </div>
+
+          <div class="bottom-caption" layout="" horizontal="" center="" justified="">
+            <div class="tags" hidden$="[[!session.tags.length]]" layout="" horizontal="" center="">
+              <iron-icon icon="tags"></iron-icon>
+              <span>[[_joinArray(session.tags)]]</span>
+            </div>
+
+            <iron-icon class$="action-icon [[myScheduleIcon]]" icon$="[[myScheduleIcon]]" on-tap="toggleMyScheduleSession" session-id$="[[session.id]]" disabled$="[[!online]]"></iron-icon>
+
+            <template is="dom-if" if="[[!app.user.uid]]">
+              <iron-icon class="action-icon add-icon-outline" icon="add-circle-outline" on-tap="toggleMyScheduleSession" disabled$="[[!online]]"></iron-icon>
+            </template>
+          </div>
+
+          <div class="speaker-block" hidden$="[[!session.speakers.length]]" layout="" horizontal="" wrap="" relative="">
+
+            <div class="image-overlay" style$="background-color: [[sessionColor]];" fit="">
+            </div>
+
+            <div class="speakers">
+              <template is="dom-repeat" items="[[session.speakers]]" as="speaker">
+                <div class="speaker" layout="" horizontal="" center="">
+                  <iron-icon icon="account"></iron-icon>
+                  <div class="person-detail" flex="">
+                    <span class="speaker-name">[[speaker.name]]</span>
+                    
+                  </div>
+                </div>
+              </template>
+            </div>
+
+          </div>
+
+        </div>
+      </paper-card>
+    </a>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"session-element",behaviors:[Polymer.AppNetworkStatusBehavior,HOVERBOARD.UtilsBehavior,HOVERBOARD.LocalizeBehavior,HOVERBOARD.MyScheduleBehavior],properties:{app:{type:Object,notify:!0},scheduleSection:{type:String},session:{type:Object},sessionColor:{type:String,value:""},myScheduleIcon:{type:String,value:"add-circle-outline"}},observers:["_getMyScheduleIcon(session.id, app.user.sessions)","_userUpdated(app.user)"],ready:function(){this.async(function(){this.sessionColor=this.getComputedStyleValue("--"+this._generateClass(this.session.mainTag))}.bind(this))},_splitText:function(e,s,i){return e.split(s)[i]},_joinArray:function(e){if(e)return e.join(", ")},_getMyScheduleIcon:function(e){this.myScheduleIcon=this.isInMySchedule(e)?"remove-circle":"add-circle-outline"},_userUpdated:function(e){!e&&this.session&&this._getMyScheduleIcon(this.session.id)}})}();</script>
+
+</dom-module>
+<dom-module id="schedule-day" assetpath="../elements/">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --paper-card-background-color: var(--secondary-background-color);
+      }
+
+      .timeslot {
+        margin-top: 40px;
+      }
+
+      .timeslot:last-of-type {
+        margin-bottom: 64px;
+      }
+
+      .start-time {
+        padding-left: 24px;
+        min-width: 110px;
+        color: var(--secondary-text-color);
+      }
+
+      .hours {
+        font-size: 56px;
+        font-weight: 300;
+        letter-spacing: -0.04em;
+      }
+
+      .minutes {
+        margin-left: 3px;
+        font-size: 16px;
+      }
+
+      .session {
+        padding: 0 16px;
+      }
+
+      .session[flex] {
+        padding: 0 8px;
+      }
+
+      .day-section {
+        display: block;
+        margin: 36px 12px;
+        font-size: 32px;
+      }
+    </style>
+
+    <template is="dom-repeat" items="[[day.timeslots]]" as="daySection">
+
+      <h2 class="day-section">[[_getDaySectionName(index)]]</h2>
+
+      <template is="dom-repeat" items="[[daySection]]" as="timeslot">
+        <div class="timeslot" layout="" vertical$="{{app.isPhoneSize}}" horizontal$="{{!app.isPhoneSize}}">
+
+          <div class="start-time">
+            <span class="hours">[[_splitText(timeslot.startTime, ':', 0)]]</span>
+            <span class="minutes">[[_splitText(timeslot.startTime, ':', 1)]]</span>
+          </div>
+
+          <div class="sessions-wrapper" layout="" vertical$="{{app.isPhoneSize}}" horizontal$="{{!app.isPhoneSize}}" flex$="{{!app.isPhoneSize}}">
+
+            <template is="dom-repeat" items="[[timeslot.sessions]]" as="session">
+              <div class="session" layout="" vertical="" flex$="{{!app.isPhoneSize}}">
+                <template is="dom-repeat" items="[[session]]" as="subSession" filter="{{_filterSession(filters.splices)}}">
+
+                  <session-element app="{{app}}" schedule-section="[[name]]" session="{{subSession}}" layout="" flex-auto="">
+                  </session-element>
+
+                </template>
+              </div>
+            </template>
+          </div>
+
+        </div>
+      </template>
+    </template>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"schedule-day",behaviors:[HOVERBOARD.CascadedBehavior,HOVERBOARD.UtilsBehavior,HOVERBOARD.LocalizeBehavior,HOVERBOARD.MyScheduleBehavior],properties:{app:{type:Object,notify:!0},day:{type:Object},filters:{type:Array,value:[]}},_splitText:function(e,t,i){return e.split(t)[i]},_filterSession:function(){var e=this.filters||[];return!!e.length&&function(t){return e.indexOf(t.mainTag)>-1}},_getDaySectionName:function(e){return this.day.sections[e].title}})}();</script>
+
+</dom-module>
+<dom-module id="my-schedule" assetpath="../elements/">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --paper-card-background-color: var(--secondary-background-color);
+      }
+
+      .timeslot {
+        margin-top: 40px;
+      }
+
+      .timeslot:last-of-type {
+        margin-bottom: 64px;
+      }
+
+      .start-time {
+        padding-left: 24px;
+        min-width: 110px;
+        color: var(--secondary-text-color);
+      }
+
+      .hours {
+        font-size: 56px;
+        font-weight: 300;
+        letter-spacing: -0.04em;
+      }
+
+      .minutes {
+        margin-left: 3px;
+        font-size: 16px;
+      }
+
+      .session {
+        padding: 0 16px;
+      }
+
+      .session[flex] {
+        padding: 0 8px;
+      }
+
+      .browse-more {
+        margin: 32px 0 24px;
+        text-transform: uppercase;
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      .browse-more iron-icon {
+        --iron-icon-width: 16px;
+        --iron-icon-height: 16px;
+        margin-right: 4px;
+      }
+    </style>
+
+    <template id="mySchedule" is="dom-repeat" items="{{schedule}}" as="day">
+      <div class="timeslot" layout="" vertical="">
+        <div class="start-time">
+          <span class="hours">[[day.dateReadable]]</span>
+        </div>
+      </div>
+
+      <template is="dom-if" if="{{app.user.sessions}}">
+        <template is="dom-repeat" items="{{day.timeslots}}" as="daySection" filter="{{_filterTimeslots(app.user.sessions)}}">
+          <template is="dom-repeat" items="{{daySection}}" as="timeslot">
+            <div class="timeslot" layout="" vertical$="{{app.isPhoneSize}}" horizontal$="{{!app.isPhoneSize}}">
+
+              <div class="start-time">
+                <span class="hours">[[_splitText(timeslot.startTime, ':', 0)]]</span>
+                <span class="minutes">[[_splitText(timeslot.startTime, ':', 1)]]</span>
+              </div>
+
+              <div class="sessions-wrapper" layout="" vertical$="{{app.isPhoneSize}}" horizontal$="{{!app.isPhoneSize}}" flex$="{{!app.isPhoneSize}}">
+
+                <template is="dom-repeat" items="{{timeslot.sessions}}" as="session">
+                  <div class="session" layout="" vertical="" flex$="{{!app.isPhoneSize}}">
+                    <template is="dom-repeat" items="[[session]]" as="subSession" filter="{{_filterSession(app.user.sessions)}}">
+
+                      <session-element app="{{app}}" session="[[subSession]]" layout="" flex-auto="">
+                      </session-element>
+
+                    </template>
+                  </div>
+                </template>
+              </div>
+
+            </div>
+          </template>
+        </template>
+      </template>
+
+      <div layout="" horizontal="" center-justified="">
+        <a class="browse-more" href$="/schedule/day[[_addToValue(index, 1)]]" layout="" horizontal="" center="">
+          <iron-icon icon="add-circle-outline"></iron-icon>
+          <span>[[localize('browse-more')]]</span>
+        </a>
+      </div>
+    </template>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"my-schedule",behaviors:[HOVERBOARD.CascadedBehavior,HOVERBOARD.LocalizeBehavior,HOVERBOARD.UtilsBehavior],properties:{app:{type:Object,notify:!0},schedule:{type:Array},day:{type:Object},filters:{type:Array,value:[]}},_removeFromMySchedule:function(e){e.stopPropagation(),e.preventDefault();var s=e.target.sessionId;this.app.user.sessions&&this.app.user.sessions[s]&&this.set("app.user.sessions."+s,null),HOVERBOARD.Elements.Template.$.toast.showMessage(this.localize("removed-from-schedule"))},_splitText:function(e,s,t){return e.split(s)[t]},_filterTimeslots:function(e){return function(s){var t=!1;return s.forEach(function(s){s.sessions?s.sessions.map(function(s){e&&e[s[0].id]&&(t=!0)}):console.log("warn, timeslot.sessions undefined",s)}),t}},_filterSession:function(e){var s=this.filters||[];return function(t){return e&&e[t.id]||s.length&&s.indexOf(t.mainTag)>-1}}})}();</script>
+
+</dom-module>
+<dom-module id="paper-fab" assetpath="../../bower_components/paper-fab/">
+  <template strip-whitespace="">
+    <style include="paper-material-shared-styles">
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+
+        background: var(--paper-fab-background, --accent-color);
+        border-radius: 50%;
+        box-sizing: border-box;
+        color: var(--text-primary-color);
+        cursor: pointer;
+        height: 56px;
+        min-width: 0;
+        outline: none;
+        padding: 16px;
+        position: relative;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        width: 56px;
+        z-index: 0;
+
+        /* NOTE: Both values are needed, since some phones require the value `transparent`. */
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+        -webkit-tap-highlight-color: transparent;
+
+        @apply(--paper-fab);
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      :host([mini]) {
+        width: 40px;
+        height: 40px;
+        padding: 8px;
+
+        @apply(--paper-fab-mini);
+      }
+
+      :host([disabled]) {
+        color: var(--paper-fab-disabled-text, --paper-grey-500);
+        background: var(--paper-fab-disabled-background, --paper-grey-300);
+
+        @apply(--paper-fab-disabled);
+      }
+
+      iron-icon {
+        @apply(--paper-fab-iron-icon);
+      }
+
+      span {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+      }
+
+      :host(.keyboard-focus) {
+        background: var(--paper-fab-keyboard-focus-background, --paper-pink-900);
+      }
+    </style>
+
+    <iron-icon id="icon" hidden$="{{!_computeIsIconFab(icon, src)}}" src="[[src]]" icon="[[icon]]"></iron-icon>
+    <span hidden$="{{_computeIsIconFab(icon, src)}}">{{label}}</span>
+  </template>
+
+  <script>Polymer({is:"paper-fab",behaviors:[Polymer.PaperButtonBehavior],properties:{src:{type:String,value:""},icon:{type:String,value:""},mini:{type:Boolean,value:!1,reflectToAttribute:!0},label:{type:String,observer:"_labelChanged"}},_labelChanged:function(){this.setAttribute("aria-label",this.label)},_computeIsIconFab:function(e,t){return e.length>0||t.length>0}});</script>
+</dom-module>
+<dom-module id="session-details" assetpath="../elements/">
+
+  <template>
+
+    <style include="shared-styles dialog-styles">
+      a {
+        color: var(--default-primary-color);
+        text-decoration: none;
+      }
+
+      paper-icon-item {
+        cursor: pointer;
+      }
+
+      paper-fab {
+        --paper-fab-iron-icon: {
+          color: inherit;
+        };
+        transition: background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      paper-fab.remove {
+        @apply(--shadow-elevation-4dp);
+        @apply(--shadow-transition);
+        color: #fff;
+        background: var(--accent-color);
+      }
+
+      paper-fab[disabled]:not(.remove) {
+        color: var(--disabled-text-color);
+        cursor: default;
+      }
+
+      paper-fab[disabled].remove {
+        @apply(--shadow-none);
+        background: var(--disabled-accent-color);
+        cursor: default;
+      }
+
+      .share-menu {
+        padding: 0;
+      }
+    </style>
+
+    <paper-scroll-header-panel id="scrollHeaderPanel" no-reveal="">
+      <paper-toolbar class="tall">
+        <paper-icon-button class="back-button" dialog-dismiss="" icon="arrow-back"></paper-icon-button>
+        <div class="middle fallback-image-wrapper">
+          <iron-image class="fallback-image" src="/images/logo-white.svg" alt="[[app.data.title]]"></iron-image>
+        </div>
+      </paper-toolbar>
+      <div class="content">
+        <paper-fab class$="float-button header-action [[fabIcon]]" icon="[[fabIcon]]" session-id$="[[session.id]]" on-tap="toggleMyScheduleSession" disabled$="[[!online]]"></paper-fab>
+
+        <div class="metadata-wrapper">
+          <div class="main-info">
+            <div class="info">
+              <h1 class="main-title">[[session.title]]</h1>
+              <div class="meta highlight">[[session.dateReadable]] / [[session.startTime]] - [[session.endTime]] /
+                [[session.track.title]]
+                <span hidden$="[[!session.language]]">
+                  / [[session.language]]
+                </span>
+                <span hidden$="[[!session.complexity]]">
+                  / [[session.complexity]]
+                </span>
+              </div>
+              <span class="meta">[[_concatArray(session.tags)]]</span>
+            </div>
+          </div>
+        </div>
+
+        <marked-element markdown="[[session.description]]">
+          <div class="markdown-html"></div>
+        </marked-element>
+
+        <div class="actions">
+          <paper-menu-button class="share-menu" horizontal-align="left" vertical-align="bottom" share-menu="">
+            <paper-button class="action dropdown-trigger">
+              <iron-icon icon="share"></iron-icon>
+              [[localize('share')]]
+            </paper-button>
+            <div class="dropdown-content">
+              <paper-icon-item on-tap="share" share="gplus">
+                <iron-icon icon="gplus" item-icon=""></iron-icon>
+                Google+
+              </paper-icon-item>
+              <paper-icon-item on-tap="share" share="facebook">
+                <iron-icon icon="facebook" item-icon=""></iron-icon>
+                Facebook
+              </paper-icon-item>
+              <paper-icon-item on-tap="share" share="twitter">
+                <iron-icon icon="twitter" item-icon=""></iron-icon>
+                Twitter
+              </paper-icon-item>
+              <paper-icon-item on-tap="share" share="copy">
+                <iron-icon icon="link" item-icon=""></iron-icon>
+                [[localize('copy-link')]]
+              </paper-icon-item>
+            </div>
+          </paper-menu-button>
+
+
+          <a href$="[[session.presentation]]" hidden$="[[!session.presentation]]" target="_blank" rel="noopener noreferrer">
+            <paper-button class="action">
+              <iron-icon icon="presentation"></iron-icon>
+              [[localize('view-presentation')]]
+            </paper-button>
+          </a>
+          <div on-tap="_openVideo" hidden$="[[!session.videoId]]">
+            <paper-button class="action">
+              <iron-icon icon="video"></iron-icon>
+              [[localize('view-video')]]
+            </paper-button>
+          </div>
+        </div>
+
+      </div>
+
+      <template is="dom-if" if="{{session.speakers.length}}">
+        <div class="sections-wrapper content">
+          <h4 class="block-title">[[localize('speakers')]]</h4>
+          <div class="sections">
+            <template is="dom-repeat" items="[[session.speakers]]" as="speaker">
+              <div class="section">
+                <div class="section-photo" style$="background-image: url([[speaker.photoUrl]])"></div>
+                <div class="section-info">
+                  <h3 class="section-title">[[speaker.name]]</h3>
+                  <span class="section-sub-title">[[speaker.company]], [[speaker.country]]</span>
+                  <div class="badges">
+                    <template is="dom-repeat" items="[[speaker.badges]]" as="badge">
+                      <a class="badge" href$="[[badge.link]]" target="_blank" rel="noopener noreferrer">[[badge.name]]</a>
+                    </template>
+                  </div>
+                  <truncate-marked-text text="[[speaker.bio]]" characters="220" break-last-word=""></truncate-marked-text>
+
+                  <a class="read-more" href$="/speakers/[[speaker.id]]" dialog-dismiss="">[[localize('read-more')]]</a>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+    </paper-scroll-header-panel>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"session-details",behaviors:[Polymer.PaperDialogBehavior,Polymer.NeonAnimationRunnerBehavior,Polymer.AppNetworkStatusBehavior,HOVERBOARD.LocalizeBehavior,HOVERBOARD.UtilsBehavior,HOVERBOARD.ShareBehavior,HOVERBOARD.MyScheduleBehavior],properties:{session:{type:Object,observer:"_sessionChanged"},fabIcon:{type:String,value:"add"}},observers:["_getMyScheduleIcon(session.id, app.user.sessions)"],listeners:{"neon-animation-finish":"_onNeonAnimationFinish"},_openVideo:function(){HOVERBOARD.Elements.Template.openVideo(this.session.title,this.session.videoId,!0)},_concatArray:function(e){return e?e.join(", "):""},_sessionChanged:function(){var e=this._generateClass(this.session.mainTag);this.customStyle["--paper-scroll-header-panel-color"]="var(--"+e+")",this._previousBrowserColor=HOVERBOARD.Util.getMetaThemeColor(),HOVERBOARD.Util.setMetaThemeColor(this.getComputedStyleValue("--"+e)),this.updateStyles()},_renderOpened:function(){this.withBackdrop&&window.innerWidth>960&&this.backdropElement.open(),this.playAnimation("entry"),this.async(function(){this.$.scrollHeaderPanel.scrollToTop(!0),this.$.scrollHeaderPanel.notifyResize()}),HOVERBOARD.Analytics.trackEvent("session","open details",this.session.title)},_renderClosed:function(){HOVERBOARD.Util.setMetaThemeColor(this._previousBrowserColor),this.backdropElement.close(),this.playAnimation("exit")},_onNeonAnimationFinish:function(){this.opened?(Polymer.IronDropdownScrollManager.pushScrollLock(this.$.scrollHeaderPanel),this._finishRenderOpened()):(Polymer.IronDropdownScrollManager.removeScrollLock(this.$.scrollHeaderPanel),this._finishRenderClosed())},_getMyScheduleIcon:function(e){this.fabIcon=this.isInMySchedule(e)?"remove":"add"}})}();</script>
+
+</dom-module>
+</div><dom-module id="schedule-page">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .container[phone] {
+        padding-right: 0;
+        padding-left: 0;
+      }
+
+      schedule-day {
+        margin-bottom: 64px;
+      }
+    </style>
+
+    <app-route route="{{route}}" pattern="/:day" data="{{routeData}}" query-params="{{queryParams}}"></app-route>
+
+    <firebase-document id="userSessions" app-name="[[app.data.firebase.name]]" path="[[app.data.firebase.userSessionsPath]]/[[app.user.uid]]" data="{{persistedData}}">
+    </firebase-document>
+
+    <app-indexeddb-mirror session="[[app.user.uid]]" key="mySchedule" data="{{persistedData}}" persisted-data="{{app.user.sessions}}">
+    </app-indexeddb-mirror>
+
+    <div class="container" phone$="{{app.isPhoneSize}}">
+      <schedule-subnav app="{{app}}" schedule="[[schedule]]" selected-day="[[app.selectedDay]]" filters="{{filters}}"></schedule-subnav>
+
+      <neon-animated-pages selected="[[app.selectedDay]]" attr-for-selected="name">
+        <template is="dom-repeat" items="[[schedule]]" as="day" on-dom-change="updateCascadedNodes">
+          <schedule-day name$="day[[_addToValue(index, 1)]]" app="{{app}}" day="[[day]]" filters="[[filters]]"></schedule-day>
+        </template>
+        <template is="dom-if" if="{{app.user}}">
+          <my-schedule name="myschedule" app="{{app}}" schedule="[[schedule]]"></my-schedule>
+        </template>
+      </neon-animated-pages>
+    </div>
+
+    <session-details id="sessionDetails" app="{{app}}" session="[[_selectedSession]]" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop=""></session-details>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"schedule-page",behaviors:[HOVERBOARD.PageBehavior,HOVERBOARD.CascadedBehavior,HOVERBOARD.UtilsBehavior],properties:{route:{type:Object,notify:!0},routeData:{type:Object},schedule:{type:Array},sessions:{type:Object},filters:{type:Array}},observers:["_routePageChanged(routeData.day)","_userChanged(app.user)","_queryParamsChanged(queryParams)","_filtersChanged(filters.splices)"],listeners:{"iron-overlay-closed":"_resetSessionIdParam"},_routePageChanged:function(e){if(this.selected)if(e)"myschedule"!==e||this.app.user?this.app.selectedDay!==e&&this.set("app.selectedDay",e):this.set("routeData.day","day1");else{for(var s=null,t=(new Date).toISOString().substring(0,10),i=0,a=this.schedule.length;i<a;i++)t===this.schedule[i].date&&(s="day"+(i+1));this.set("routeData.day",s||"day1")}},_queryParamsChanged:function(e){if(this.selected){if(e.sessionId){var s=this.sessions[e.sessionId];if(!s)return void this._resetSessionIdParam();window.requestAnimationFrame(function(){this._selectedSession=s,this.$.sessionDetails.open()}.bind(this))}e.filters?this.set("filters",e.filters.split(",")):this.set("queryParams.filters",null)}},_filtersChanged:function(){this.filters.length?this.set("queryParams.filters",this.filters.join(",")):this.set("queryParams.filters",null)},_resetSessionIdParam:function(){!this.$.sessionDetails.opened&&this.set("queryParams.sessionId",null)},_userChanged:function(e){e||"myschedule"!==this.app.selectedDay||this.set("routeData.day","day1")}})}();</script>
+
+</dom-module>
+</body></html>

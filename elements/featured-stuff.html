@@ -1,0 +1,97 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../styles/shared-styles.html">
+<link rel="import" href="../behaviors/utils-behavior.html">
+<link rel="import" href="../behaviors/localize-behavior.html">
+
+
+</head><body><dom-module id="featured-stuff">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+        background: #fff;
+        overflow: hidden;
+      }
+
+      .container {
+        text-align: center;
+      }
+
+      .controls {
+        margin-bottom: 10px;
+      }
+
+      .videos {
+        @apply(--layout-horizontal);
+        transition: all 0.4s cubic-bezier(0, 0, 0.2, 1);
+        will-change: transition;
+      }
+
+      .video-item {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        color: var(--primary-text-color);
+        width: 100%;
+        min-width: 100%;
+      }
+
+      .photo {
+        height: 112px;
+        width: 112px;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+      }
+
+      .name {
+        margin-top: 12px;
+        padding: 0 16px;
+        line-height: .9;
+      }
+
+      @media (min-width: 601px) {
+        .videos-header {
+          @apply(--layout-horizontal);
+        }
+
+        .video-item {
+          @apply(--layout-center);
+          padding: 0 64px;
+          width: 100px;
+          min-width: 100px;
+        }
+
+        .video-item:hover paper-card {
+          @apply(--shadow-elevation-2dp);
+        }
+      }
+    </style>
+
+    <div class="container">
+      <h4 class="heading">[[localize('featured-stuff-title')]]</h4>
+      <div id="videos" class="videos">
+        <template is="dom-repeat" items="[[stuff]]" as="stuff">
+          <div class="video-item">
+            <div style$="[[_computeStyleForStuff(stuff)]]" class="photo"></div>
+            
+            <h4 class="name">[[stuff.name]]</h4>
+            
+          </div>
+        </template>
+      </div>
+      
+    </div>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"featured-stuff",behaviors:[HOVERBOARD.LocalizeBehavior,HOVERBOARD.UtilsBehavior],listeners:{touchstart:"_onTouchStart",touchend:"_onTouchEnd"},properties:{stuff:{type:Array,value:function(){return[{photoUrl:"/images/stuff/gcp_logo.png",name:"Firebase"},{photoUrl:"/images/stuff/polymer-logo.png",name:"Polymer"},{photoUrl:"/images/stuff/android_logo.png",name:"Android"},{photoUrl:"/images/stuff/graph_ql.png",name:"GraphQL"},{photoUrl:"/images/stuff/iot_openhw.png",name:"IoT"},{photoUrl:"/images/stuff/dart_lang.png",name:"Dart"},{photoUrl:"/images/stuff/machine_learning.png",name:"TensorFlow"},{photoUrl:"/images/stuff/angular.svg",name:"Angular2"}]}},_currentIndex:{type:Number,value:0}},ready:function(){window.setInterval(function(){this.shiftContentRight()}.bind(this),2e3)},_computeStyleForStuff:function(t){return"background-image: url('"+t.photoUrl+"');"},_onTouchStart:function(t){var e=t.changedTouches[0];this.startX=e.pageX,this.startY=e.pageY,this.nodeWidth=t.currentTarget.offsetWidth},_onTouchEnd:function(t){this.threshold=this.nodeWidth/4,this.restraint=100;var e=t.changedTouches[0];this.distX=e.pageX-this.startX,this.distY=e.pageY-this.startY,Math.abs(this.distX)>=this.threshold&&Math.abs(this.distY)<=this.restraint&&(this.distX>0?this.shiftContentLeft():this.shiftContentRight())},shiftContentLeft:function(){var t=Polymer.dom(this.root).querySelectorAll(".video-item"),e=t[t.length-1].getBoundingClientRect(),n=e.width,i=-(this._currentIndex-1)*n;this._currentIndex<t.length&&this._currentIndex>0&&(this.$.videos.style.transform="translate3d("+i+"px, 0, 0)",this._currentIndex--)},shiftContentRight:function(){var t=Polymer.dom(this.root).querySelectorAll(".video-item"),e=!1;if(t.forEach(function(t){this._isElementInViewport(t)&&(e=!0)}.bind(this)),e)if(this._isElementInViewport(t[t.length-1]))this.$.videos.style.transform="translate3d(0px, 0, 0)",this._currentIndex=0;else{var n=t[t.length-1].getBoundingClientRect(),i=n.width,r=-(this._currentIndex+1)*i;this._currentIndex>=0&&this._currentIndex<t.length-1&&(this.$.videos.style.transform="translate3d("+r+"px, 0, 0)",this._currentIndex++)}},_isElementInViewport:function(t){var e=t.getBoundingClientRect();return e.top>=0&&e.left>=0&&e.bottom<=(window.innerHeight||document.documentElement.clientHeight)&&e.right<=(window.innerWidth||document.documentElement.clientWidth)}})}();</script>
+
+</dom-module>
+</body></html>

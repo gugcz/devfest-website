@@ -1,0 +1,144 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../behaviors/localize-behavior.html">
+
+
+</head><body><dom-module id="schedule-block">
+
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        background: var(--default-primary-color);
+        color: var(--text-primary-color);
+        --iron-icon-fill-color: var(--primary-text-color);
+        --paper-card-background-color: #fff;
+        overflow: hidden;
+      }
+
+      .container {
+        @apply(--layout-vertical);
+        text-align: center;
+      }
+
+      .days-wrapper {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+      }
+
+      .day {
+        @apply(--layout-vertical);
+        padding: 16px 32px;
+        width: 200px;
+        background-color: white;
+        border-radius: 3px;
+        user-select: none;
+        color: var(--primary-text-color);
+        @apply(--shadow-elevation-2dp);
+        @apply(--shadow-transition);
+        margin: 16px 0;
+      }
+
+      .day .heading {
+        margin: 0 0 0 0;
+      }
+
+      .day .subheading {
+        text-transform: uppercase;
+        color: var(--disabled-text-color);
+        margin: 0 0 8px 0;
+      }
+
+      .day ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+      }
+
+      .day ul li.head {
+        color: var(--secondary-text-color);
+      }
+
+      .day ul li {
+        display: block;
+        margin: 0;
+        padding: 0;
+        height: 40px;
+        line-height: 40px;
+        color: var(--primary-text-color);
+      }
+
+      .day ul li:not(:last-child) {
+        border-bottom: 1px solid #dadada;
+      }
+
+      .see-all-button {
+        @apply(--layout-self-center);
+      }
+
+      .see-all-button paper-button {
+        background-color: white;
+      }
+
+      @media (min-width: 601px) {
+        .days-wrapper {
+          @apply(--layout-horizontal);
+          @apply(--layout-wrap);
+          @apply(--layout-center-justified);
+        }
+
+        .day {
+          @apply(--layout-self-start);
+          margin: 0 16px 32px;
+        }
+      }
+
+    </style>
+
+    <div class="container">
+      <div class="block-header">
+        <h4 class="heading">Schedule</h4>
+      </div>
+      <div class="days-wrapper">
+        <div class="day">
+          <span class="heading">Day 0</span>
+          <span class="subheading">Friday</span>
+          <ul>
+            <li class="head">Early registration</li>
+            <li>Warm-up party</li>
+          </ul>
+        </div>
+        <div class="day">
+          <span class="heading">Day 1</span>
+          <span class="subheading">Saturday</span>
+          <ul>
+            <li class="head">Breakfast &amp; Registration</li>
+            <li>Sessions</li>
+            <li class="head">Lunch</li>
+            <li>Sessions</li>
+            <li class="head">Dinner</li>
+            <li>Afterparty</li>
+          </ul>
+        </div>
+        <div class="day">
+          <span class="heading">Day 2</span>
+          <span class="subheading">Sunday</span>
+          <ul>
+            <li class="head">Breakfast</li>
+            <li>Sessions</li>
+            <li class="head">Lunch</li>
+            <li>End keynote</li>
+          </ul>
+        </div>
+      </div>
+      <a href="/schedule/" class="see-all-button">
+        <paper-button raised="">See complete schedule</paper-button>
+      </a>
+    </div>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"schedule-block",behaviors:[HOVERBOARD.LocalizeBehavior],ready:function(){HOVERBOARD.Elements.Schedule=this}})}();</script>
+</dom-module>
+</body></html>
