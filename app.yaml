@@ -2,7 +2,7 @@ runtime: python27
 version: 1
 api_version: 1
 threadsafe: true
-module: 2017-website
+module: website-2017
 
 handlers:
 - url: /images
