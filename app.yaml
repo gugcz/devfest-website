@@ -1,11 +1,16 @@
 runtime: go
-version: 1
 api_version: go1
 threadsafe: true
 
+skip_files:
+- ^node_modules$
+- ^\.idea$
+
 handlers:
 - url: /service-worker.js
-
+  static_files: public/service-worker.js
+  upload: public/service-worker.js
+  secure: always
 
 - url: /.*
   script: _go_app
