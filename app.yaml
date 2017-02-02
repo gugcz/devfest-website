@@ -1,20 +1,35 @@
 runtime: python27
-version: 1
 api_version: 1
 threadsafe: true
-module: website-2017
+service: website-2017
+
+skip_files:
+- ^node_modules$
+- ^\.idea$
 
 handlers:
 - url: /images
-  static_dir: build/bundled/images
+  static_dir: public/images
   secure: always
 
-- url: /service-worker.js
-  static_files: build/bundled/service-worker.js
-  upload: build/bundled/service-worker.js
+- url: /css
+  static_dir: public/css
   secure: always
 
-- url: /.*
-  static_files: build/bundled/index.html
-  upload: build/bundled/index.html
+- url: /fonts
+  static_dir: public/fonts
+  secure: always
+
+- url: /js
+  static_dir: public/js
+  secure: always
+
+- url: /previous-years.html
+  static_files: public/previous-years.html
+  upload: public/previous-years.html
+  secure: always
+
+- url: /
+  static_files: public/index.html
+  upload: public/index.html
   secure: always

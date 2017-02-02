@@ -1,0 +1,29 @@
+{
+  "name": "devfest-website",
+  "version": "1.0.0",
+  "description": "The official website of GDG DevFest in Czech Republic",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "browser-sync": "^2.18.7",
+    "gulp": "^3.9.1",
+    "whatwg-fetch": "^2.0.2"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.7",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^3.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gugcz/devfest-website.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gugcz/devfest-website/issues"
+  },
+  "homepage": "https://github.com/gugcz/devfest-website#readme"
+}

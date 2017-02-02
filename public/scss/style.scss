@@ -1,0 +1,262 @@
+$primary-color: #455A64;
+$primary-color-dark: #263238;
+
+html, body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  background-color: $primary-color-dark;
+}
+
+.mono {
+  font-family: 'Roboto Mono', monospace;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+header img {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+#desktopHeader {
+  display: none;
+}
+
+#mobileHeader {
+  width: 80%;
+}
+
+.frontpage {
+  display: flex;
+  flex-direction: column;
+
+  height: 100vh;
+}
+
+.frontpage header {
+  flex-grow: 1;
+  position: relative;
+}
+
+.frontpage .frontpage-content {
+  background-color: #fff;
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-button {
+  display: block;
+  text-align: center;
+  background-color: $primary-color;
+  color: white;
+  border-radius: 4px;
+  text-transform: uppercase;
+  border: 2px solid $primary-color;
+
+  cursor: pointer;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
+
+  font-size: 18px;
+}
+
+.action-button:not(:first-child) {
+  margin: 24px 0 0 0;
+}
+
+.action-button.blank {
+  background-color: transparent;
+  border: 2px solid $primary-color;
+  color: $primary-color;
+}
+
+.action-button span {
+  display: block;
+
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  padding: 12px 16px;
+}
+
+.action-button input {
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 2px;
+  font-size: 18px;
+  text-align: center;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.action-button input[type=submit] {
+  background-color: $primary-color;
+  color: #fff;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#userSubscribe {
+  visibility: hidden;
+}
+
+.text-input {
+  display: none;
+}
+
+.frontpage .frontpage-content .previous-years-action {
+  display: none;
+}
+
+.previous-years-action a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  color: $primary-color-dark;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 18px;
+}
+
+.previous-years-action a span {
+  display: inline-block;
+  margin: 0 0 0 8px;
+}
+
+.frontpage .frontpage-content .social-media {
+  display: none;
+}
+
+.social-media {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 16px;
+}
+
+.social-media a {
+  display: block;
+  margin: 0 0 0 18px;
+
+  color: white;
+  text-decoration: none;
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  color: #fff;
+
+  padding: 16px 0;
+}
+
+footer a {
+  color: #fff;
+}
+
+.action-button {
+  min-width: 250px;
+}
+
+#subscribeForm {
+  flex: 1;
+}
+
+.mobile-texts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  font-family: 'Product Sans', 'Roboto', sans-serif;
+  color: $primary-color;
+  flex: 1;
+}
+
+.mobile-texts h2 {
+  font-size: 32px;
+  margin: 0 0 16px 0;
+}
+
+.mobile-texts h4 {
+  font-size: 24px;
+  margin: 0;
+}
+
+@media (min-width: 700px) {
+  #subscribeForm {
+    flex: 0;
+  }
+
+  .mobile-texts {
+    display: none;
+  }
+
+  #desktopHeader {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 700px;
+    margin: 0 auto;
+    bottom: -139px;
+  }
+
+  #mobileHeader {
+    display: none;
+  }
+
+  .frontpage .frontpage-content {
+    padding: 139px 0 0 0;
+    box-sizing: border-box;
+  }
+
+  .frontpage .frontpage-content .previous-years-action {
+    position: absolute;
+    display: block;
+    left: 24px;
+    bottom: 24px;
+  }
+
+  .frontpage .frontpage-content .social-media {
+    position: absolute;
+    display: flex;
+    right: 24px;
+    bottom: 24px;
+  }
+
+  .social-media {
+    margin: 16px;
+  }
+
+  .social-media a {
+    color: $primary-color;
+  }
+
+  footer .social-media {
+    display: none;
+  }
+}

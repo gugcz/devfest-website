@@ -1,2 +1,4 @@
 .idea/
 *.iml
+public/css/style.css
+node_modules
