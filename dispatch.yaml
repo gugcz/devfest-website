@@ -1,3 +1,9 @@
 dispatch:
 - url: "*/.well-known/*"
   module: letsencrypt
+
+- url: "2017.devfest.cz/*"
+  module: website-2017
+
+- url: "2016.devfest.cz/*"
+  module: website-2016
