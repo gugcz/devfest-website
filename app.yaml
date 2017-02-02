@@ -4,5 +4,8 @@ api_version: go1
 threadsafe: true
 
 handlers:
+- url: /service-worker.js
+
+
 - url: /.*
   script: _go_app
