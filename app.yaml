@@ -7,86 +7,107 @@ handlers:
 - url: /
   static_files: public/index.html
   upload: index\.html$
+  secure: always
 
 - url: /team/
   static_files: public/team/index.html
   upload: index\.html$
+  secure: always
 
 - url: /speakers/
   static_files: public/speakers/index.html
   upload: index\.html$
+  secure: always
 
 - url: /women-techmakers/
   static_files: public/women-techmakers/index.html
   upload: index\.html$
+  secure: always
 
 - url: /businessbuild/
   static_files: public/businessbuild/index.html
   upload: index\.html$
+  secure: always
 
 - url: /geekfun/
   static_files: public/geekfun/index.html
   upload: index\.html$
+  secure: always
 
 - url: /(.+)/
   static_files: public/index.html
   upload: .+/index\.html$
+  secure: always
 
 - url: /logistics/
   static_files: public/logistics/index.html
   upload: index\.html$
+  secure: always
 
 - url: /cod/
   static_files: public/cod/index.html
   upload: index\.html$
+  secure: always
 
 - url: /blog/(.*)$
   static_files: public/blog/(.*)$
   upload: .*$
+  secure: always
 
 - url: /program/
   static_files: public/program/index.html
   upload: index\.html$
+  secure: always
 
 - url: /program-p1/
   static_files: public/program-p1/index.html
   upload: index\.html$
+  secure: always
 
 - url: /program-p2/
   static_files: public/program-p2/index.html
   upload: index\.html$
+  secure: always
 
 - url: /program-p3/
   static_files: public/program-p3/index.html
   upload: index\.html$
+  secure: always
 
 - url: /program-w1/
   static_files: public/program-w1/index.html
   upload: index\.html$
+  secure: always
 
 - url: /program-w2/
   static_files: public/program-w2/index.html
   upload: index\.html$
+  secure: always
 
 - url: /program-w3/
   static_files: public/program-w3/index.html
   upload: index\.html$
+  secure: always
 
 - url: /assets/(.*)
   static_files: public/assets/(.*)
   upload: index\.html$
+  secure: always
 
 - url: /js/(.*)
   static_files: public/js/\1
   upload : public/js/.*
   expiration: "90d"
+  secure: always
 
 - url: /(.*\.(gif|png|jpg))$
   static_files: public/\1
   upload: .*\.(gif|png|jpg)$
   expiration: "90d"
+  secure: always
 
 - url: /(.*)$
   static_files: public/\1
   upload: .*$
   expiration: "30m"
+  secure: always
