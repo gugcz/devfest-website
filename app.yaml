@@ -1,0 +1,92 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+service: website-2014
+
+handlers:
+- url: /
+  static_files: public/index.html
+  upload: index\.html$
+
+- url: /team/
+  static_files: public/team/index.html
+  upload: index\.html$
+
+- url: /speakers/
+  static_files: public/speakers/index.html
+  upload: index\.html$
+
+- url: /women-techmakers/
+  static_files: public/women-techmakers/index.html
+  upload: index\.html$
+
+- url: /businessbuild/
+  static_files: public/businessbuild/index.html
+  upload: index\.html$
+
+- url: /geekfun/
+  static_files: public/geekfun/index.html
+  upload: index\.html$
+
+- url: /(.+)/
+  static_files: public/index.html
+  upload: .+/index\.html$
+
+- url: /logistics/
+  static_files: public/logistics/index.html
+  upload: index\.html$
+
+- url: /cod/
+  static_files: public/cod/index.html
+  upload: index\.html$
+
+- url: /blog/(.*)$
+  static_files: public/blog/(.*)$
+  upload: .*$
+
+- url: /program/
+  static_files: public/program/index.html
+  upload: index\.html$
+
+- url: /program-p1/
+  static_files: public/program-p1/index.html
+  upload: index\.html$
+
+- url: /program-p2/
+  static_files: public/program-p2/index.html
+  upload: index\.html$
+
+- url: /program-p3/
+  static_files: public/program-p3/index.html
+  upload: index\.html$
+
+- url: /program-w1/
+  static_files: public/program-w1/index.html
+  upload: index\.html$
+
+- url: /program-w2/
+  static_files: public/program-w2/index.html
+  upload: index\.html$
+
+- url: /program-w3/
+  static_files: public/program-w3/index.html
+  upload: index\.html$
+
+- url: /assets/(.*)
+  static_files: public/assets/(.*)
+  upload: index\.html$
+
+- url: /js/(.*)
+  static_files: public/js/\1
+  upload : public/js/.*
+  expiration: "90d"
+
+- url: /(.*\.(gif|png|jpg))$
+  static_files: public/\1
+  upload: .*\.(gif|png|jpg)$
+  expiration: "90d"
+
+- url: /(.*)$
+  static_files: public/\1
+  upload: .*$
+  expiration: "30m"

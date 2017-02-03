@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>DevFest Praha 2014</title>
+    <description>DevFest Praha 2014, to je den plný zážitků, technologií, networkingu, přednášek a kódu. Od vývojářů pro vývojáře.</description>
+    <link>http://www.devfest.cz/</link>
+    <atom:link href="http://www.devfest.cz/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>Registrace uzavřeny</title>
+        <description>&lt;p&gt;Je to tak. DevFest se nezadržitelně blíží a nastal čas, kdy bylo potřeba uzavřít registrace, abychom mohli rozeslat finální várku potvrzujících e-mailů. Na všechny, na které se usměje štěstí a na DevFest se dostanou, se už nyní těšíme a chystáme pro vás nejlepší, nezapomenutelný vývojářský festival!&lt;/p&gt;
+</description>
+        <pubDate>Thu, 13 Nov 2014 00:59:59 +0100</pubDate>
+        <link>http://www.devfest.cz/blog/registrations-closed</link>
+        <guid isPermaLink="true">http://www.devfest.cz/blog/registrations-closed</guid>
+      </item>
+    
+      <item>
+        <title>Registrace úspěšně vypuštěny</title>
+        <description>&lt;p&gt;A je to venku! Oficiálně jsme otevřeli možnost registrovat se na letošní ročník DevFest Praha 2014. Protože míst je oproti loňskému roku cca o třetinu méně, budeme více dbát na předvýběr účastníků, aby pro ně byla celá akce co nejpřínosnější. Doporučujeme proto pečlivě vyplnit &lt;a href=&quot;https://docs.google.com/forms/d/1dn2Yomh-ZI15ifqB0beSrwpBvLgr8A_y7ujVdjsIUQ0/viewform?usp=send_form&quot;&gt;registrační formulář&lt;/a&gt; a tím zvýšit svou naději na výběr.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 09 Oct 2014 11:00:00 +0200</pubDate>
+        <link>http://www.devfest.cz/blog/registrations-open</link>
+        <guid isPermaLink="true">http://www.devfest.cz/blog/registrations-open</guid>
+      </item>
+    
+      <item>
+        <title>Calling for Papers</title>
+        <description>&lt;p&gt;Podobně jako v loňském roce i letos bychom dali rádi prostor doposud nepoznaným talentům v oblasti vývojářského řečnění před publikem. Pokud máte zájem postavit se se svým příspěvkem před nadšené publikum, případně pokud o někom takovém víte, pokračujte klikem na &lt;a href=&quot;https://docs.google.com/forms/d/1Tylmnz_O8N8h5jmqFQsMLm1cpRzD7krXu8J9qaJb5vQ/viewform?usp=send_form&quot;&gt;formulář pro Call for papers&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 09 Oct 2014 10:00:00 +0200</pubDate>
+        <link>http://www.devfest.cz/blog/call-for-papers</link>
+        <guid isPermaLink="true">http://www.devfest.cz/blog/call-for-papers</guid>
+      </item>
+    
+  </channel>
+</rss>

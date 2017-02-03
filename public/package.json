@@ -1,0 +1,24 @@
+{
+  "name": "zeppelin",
+  "version": "1.0.0",
+  "description": "Project Zeppelin allows you to setup awesome GDG DevFest site in 5 minutes.",
+  "main": " ",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/devfestcz/zeppelin.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/devfestcz/zeppelin/issues"
+  },
+  "dependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-compass": "~1.0.1",
+    "grunt-contrib-cssmin": "~0.10.0",
+    "grunt-jekyll": "~0.4.2"
+  }
+}
