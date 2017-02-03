@@ -5,55 +5,55 @@ service: website-2015
 
 handlers:
 - url: /
-  static_files: index.html
-  upload : index.html
+  static_files: public/index.html
+  upload : public/index.html
   secure: always
 
 - url: /test.html
-  static_files: test.html
-  upload : test.html
+  static_files: public/test.html
+  upload : public/test.html
   secure: always
 
 - url: /potvrzeni(.*)
   mime_type: text/html
-  static_files: potvrzeni/index.html
-  upload: potvrzeni/index\.html$
+  static_files: public/potvrzeni/index.html
+  upload: public/potvrzeni/index\.html$
   secure: always
 
 - url: /speakers(.*)
   mime_type: text/html
-  static_files: speakers/index.html
-  upload: speakers/index\.html$
+  static_files: public/speakers/index.html
+  upload: public/speakers/index\.html$
   secure: always
 
 - url: /team(.*)
   mime_type: text/html
-  static_files: team/index.html
-  upload: team/index\.html$
+  static_files: public/team/index.html
+  upload: public/team/index\.html$
   secure: always
 
 - url: /program(.*)
   mime_type: text/html
-  static_files: program/index.html
-  upload: program/index\.html$
+  static_files: public/program/index.html
+  upload: public/program/index\.html$
   secure: always
 
 - url: /css/(.*)
-  static_files: css/\1
-  upload : css/.*
+  static_files: public/css/\1
+  upload : public/css/.*
   secure: always
 
 - url: /js/(.*)
-  static_files: js/\1
-  upload : js/.*
+  static_files: public/js/\1
+  upload : public/js/.*
   secure: always
 
 - url: /fonts/(.*)
-  static_files: fonts/\1
-  upload : fonts/.*
+  static_files: public/fonts/\1
+  upload : public/fonts/.*
   secure: always
 
 - url: /images/(.*)
-  static_files: images/\1
-  upload : images/.*
+  static_files: public/images/\1
+  upload : public/images/.*
   secure: always
