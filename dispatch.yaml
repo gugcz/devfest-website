@@ -10,3 +10,6 @@ dispatch:
 
 - url: "2015.devfest.cz/*"
   module: website-2015
+
+- url: "2014.devfest.cz/*"
+  module: website-2014
