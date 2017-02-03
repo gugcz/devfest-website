@@ -1,8 +1,11 @@
 runtime: python27
-version: 1
 api_version: 1
 threadsafe: true
-module: 2016-website
+service: 2016-website
+
+skip_files:
+- ^node_modules$
+- ^\.idea$
 
 handlers:
 - url: /bower_components
@@ -11,6 +14,14 @@ handlers:
 
 - url: /images
   static_dir: build/bundled/images
+  secure: always
+
+- url: /scripts
+  static_dir: build/bundled/scripts
+  secure: always
+
+- url: /data
+  static_dir: build/bundled/data
   secure: always
 
 - url: /src
