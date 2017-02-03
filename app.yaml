@@ -7,53 +7,53 @@ handlers:
 - url: /
   static_files: index.html
   upload : index.html
-  secure: true
+  secure: always
 
 - url: /test.html
   static_files: test.html
   upload : test.html
-  secure: true
+  secure: always
 
 - url: /potvrzeni(.*)
   mime_type: text/html
   static_files: potvrzeni/index.html
   upload: potvrzeni/index\.html$
-  secure: true
+  secure: always
 
 - url: /speakers(.*)
   mime_type: text/html
   static_files: speakers/index.html
   upload: speakers/index\.html$
-  secure: true
+  secure: always
 
 - url: /team(.*)
   mime_type: text/html
   static_files: team/index.html
   upload: team/index\.html$
-  secure: true
+  secure: always
 
 - url: /program(.*)
   mime_type: text/html
   static_files: program/index.html
   upload: program/index\.html$
-  secure: true
+  secure: always
 
 - url: /css/(.*)
   static_files: css/\1
   upload : css/.*
-  secure: true
+  secure: always
 
 - url: /js/(.*)
   static_files: js/\1
   upload : js/.*
-  secure: true
+  secure: always
 
 - url: /fonts/(.*)
   static_files: fonts/\1
   upload : fonts/.*
-  secure: true
+  secure: always
 
 - url: /images/(.*)
   static_files: images/\1
   upload : images/.*
-  secure: true
+  secure: always
