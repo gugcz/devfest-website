@@ -1,0 +1,59 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+service: website-2015
+
+handlers:
+- url: /
+  static_files: index.html
+  upload : index.html
+  secure: true
+
+- url: /test.html
+  static_files: test.html
+  upload : test.html
+  secure: true
+
+- url: /potvrzeni(.*)
+  mime_type: text/html
+  static_files: potvrzeni/index.html
+  upload: potvrzeni/index\.html$
+  secure: true
+
+- url: /speakers(.*)
+  mime_type: text/html
+  static_files: speakers/index.html
+  upload: speakers/index\.html$
+  secure: true
+
+- url: /team(.*)
+  mime_type: text/html
+  static_files: team/index.html
+  upload: team/index\.html$
+  secure: true
+
+- url: /program(.*)
+  mime_type: text/html
+  static_files: program/index.html
+  upload: program/index\.html$
+  secure: true
+
+- url: /css/(.*)
+  static_files: css/\1
+  upload : css/.*
+  secure: true
+
+- url: /js/(.*)
+  static_files: js/\1
+  upload : js/.*
+  secure: true
+
+- url: /fonts/(.*)
+  static_files: fonts/\1
+  upload : fonts/.*
+  secure: true
+
+- url: /images/(.*)
+  static_files: images/\1
+  upload : images/.*
+  secure: true
