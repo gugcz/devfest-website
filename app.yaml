@@ -1,7 +1,7 @@
 runtime: python27
 api_version: 1
 threadsafe: true
-service: 2016-website
+service: website-2016
 
 skip_files:
 - ^node_modules$
