@@ -1,0 +1,17 @@
+<svg width="24" height="24" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:figma="http://www.figma.com/figma/ns">
+<title>Medium Icon</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(-44 -443)" figma:type="canvas">
+<mask id="mask0_alpha" mask-type="alpha">
+<path d="M 44 443L 68 443L 68 467L 44 467L 44 443Z" fill="#FFFFFF"/>
+</mask>
+<g id="Medium Icon" style="mix-blend-mode:normal;" mask="url(#mask0_alpha)" figma:type="frame">
+<g id="Exclude" style="mix-blend-mode:normal;" figma:type="vector-operation">
+<use xlink:href="#path0_fill" transform="translate(44 443)" fill="#455A64" style="mix-blend-mode:normal;"/>
+</g>
+</g>
+</g>
+<defs>
+<path id="path0_fill" fill-rule="evenodd" d="M 2 0C 0.895432 0 0 0.895416 0 2L 0 22C 0 23.1046 0.895432 24 2 24L 22 24C 23.1046 24 24 23.1046 24 22L 24 2C 24 0.895416 23.1046 0 22 0L 2 0ZM 15.501 15.9665L 20.937 7.10147L 15.402 4.33847C 15.15 4.26648 14.853 4.36548 14.7 4.59949L 11.613 9.63049L 15.501 15.9665ZM 20.001 19.3775C 20.55 19.6565 21 19.4585 21 18.9455L 21 8.71249L 15.762 17.2625L 20.001 19.3775ZM 8.463 19.5935C 8.913 19.8275 9.3 19.5935 9.3 19.0895L 9.3 7.55148L 9.03 7.13748L 3.666 4.45547C 3.297 4.29349 3 4.46448 3 4.86948L 3 16.3175C 3 16.6235 3.225 16.9835 3.495 17.1275L 8.463 19.5935ZM 10.2 14.4725L 14.961 16.8575L 10.2 9.07248L 10.2 14.4725Z"/>
+</defs>
+</svg>

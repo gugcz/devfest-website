@@ -24,11 +24,6 @@ handlers:
   static_dir: public/js
   secure: always
 
-- url: /previous-years.html
-  static_files: public/previous-years.html
-  upload: public/previous-years.html
-  secure: always
-
 - url: /
   static_files: public/index.html
   upload: public/index.html

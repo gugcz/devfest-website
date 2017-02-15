@@ -5,18 +5,18 @@
     <title>DevFest 2017</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Product+Sans:400,400i,700,700i' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300i,400,500|Roboto+Mono:300i,400,500" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Product+Sans:400,400i,700,700i' rel='stylesheet'
+          type='text/css'>
 
     <script src="/js/promise.min.js"></script>
     <script src="/js/fetch.js"></script>
 
-    <link href="/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<div class="frontpage">
+<div class="full-page">
     <header>
         <img src="/images/df_header_desktop.svg" id="desktopHeader">
         <img src="/images/df_header_mobile.svg" id="mobileHeader">
@@ -25,15 +25,15 @@
     <div class="frontpage-content">
         <div class="mobile-texts">
             <h2>Coming back to Prague</h2>
-            <h4>November 2017</h4>
+            <h4>November 4-5, 2017</h4>
         </div>
 
-        <form id="subscribeForm" action="//gug.us4.list-manage.com/subscribe/post?u=0da7a509ea18feb2638420b7f&amp;id=79029be7e6"
+        <form id="subscribeForm"
+              action="//gug.us4.list-manage.com/subscribe/post?u=0da7a509ea18feb2638420b7f&amp;id=79029be7e6"
               method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
               target="_blank" novalidate>
             <div class="action-buttons">
                 <div class="action-button blank" id="subscribeButton">
-                    <span class="text-normal" id="userEmailText">I want updates</span>
                     <input type="email" placeholder="Your e-mail" id="userEmailInput" name="EMAIL" class="text-input">
                 </div>
 
@@ -41,40 +41,110 @@
                     <input type="submit" value="Subscribe" name="subscribe">
                 </div>
             </div>
+            <p class="subscription-info">
+                You'll get a heads-up for early bird tickets. We'll also keep you updated on the venue, speakers and
+                more.
+            </p>
         </form>
-<!--        <div class="previous-years-action mono">
-            <a href="/previous-years.html">
-                <i class="mdi mdi-arrow-left mdi-24px"></i>
-                <span>Previous years</span>
-            </a>
-        </div>-->
+
         <div class="social-media">
             <a href="https://twitter.com/DevFest_CZ" target="_blank">
-                <i class="mdi mdi-twitter-box mdi-36px"></i>
+                <img src="/images/twitter_icon.svg">
             </a>
             <a href="https://www.facebook.com/DevFestCZ" target="_blank">
-                <i class="mdi mdi-facebook-box mdi-36px"></i>
+                <img src="/images/fb_icon.svg">
             </a>
             <a href="https://www.instagram.com/devfestcz" target="_blank">
-                <i class="mdi mdi-instagram mdi-36px"></i>
+                <img src="/images/instagram_icon.svg">
+            </a>
+            <a href="https://medium.com/devfestcz" target="_blank">
+                <img src="/images/medium_icon.svg">
             </a>
         </div>
+
+        <nav class="bottom-actions">
+            <div class="right-side-action mono">
+                <a href="#previous-years">
+                    <span>Previous years</span>
+                </a>
+            </div>
+            <div class="left-side-action mono">
+                <a href="http://www.gug.cz" target="_blank">
+                    <span>GUG.cz</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<div class="full-page flexible">
+    <h2 id="previous-years">Previous years</h2>
+    <div class="timeline">
+        <div class="line"></div>
+
+        <div class="year-point">
+            <div class="point"></div>
+            <span class="place">Prague</span>
+            <span class="year">2012</span>
+            <span class="description">Successor of Google Developer Days</span>
+        </div>
+
+        <div class="year-point">
+            <div class="point"></div>
+            <span class="place">Prague & Pardubice</span>
+            <span class="year">2013</span>
+            <span class="description">Two DevFests in a year</span>
+        </div>
+
+        <div class="year-point">
+            <div class="point"></div>
+            <a href="https://2014.devfest.cz" target="_blank" class="place">Prague</a>
+            <span class="year">2014</span>
+            <span class="description">IoT Machine Room & RPG game</span>
+        </div>
+
+        <div class="year-point">
+            <div class="point"></div>
+            <a href="https://2015.devfest.cz" target="_blank" class="place">Ostrava</a>
+            <span class="year">2015</span>
+            <span class="description">!!!</span>
+        </div>
+
+        <div class="year-point">
+            <div class="point"></div>
+            <a href="https://2016.devfest.cz" target="_blank" class="place">Pilsen</a>
+            <span class="year">2016</span>
+            <span class="description">Two days for the first time</span>
+        </div>
+
+        <div class="year-point">
+            <div class="point"></div>
+            <a href="https://2017.devfest.cz" class="place">Prague</a>
+            <span class="year">2017</span>
+            <span class="description">Comeback</span>
+        </div>
+
+        <div class="end"></div>
     </div>
 </div>
 
 <footer>
     <div class="social-media">
         <a href="https://twitter.com/DevFest_CZ" target="_blank">
-            <i class="mdi mdi-twitter-box mdi-36px"></i>
+            <img src="/images/twitter_icon.svg">
         </a>
         <a href="https://www.facebook.com/DevFestCZ" target="_blank">
-            <i class="mdi mdi-facebook-box mdi-36px"></i>
+            <img src="/images/fb_icon.svg">
         </a>
         <a href="https://www.instagram.com/devfestcz" target="_blank">
-            <i class="mdi mdi-instagram mdi-36px"></i>
+            <img src="/images/instagram_icon.svg">
+        </a>
+        <a href="https://medium.com/devfestcz" target="_blank">
+            <img src="/images/medium_icon.svg">
         </a>
     </div>
-    <p class="gug-info">Organizuje GUG.cz z.s. | <a href="mailto:devfest@gug.cz">devfest@gug.cz</a></p>
+
+    <p class="gug-info">Organized by GUG.cz z.s. | <a href="mailto:devfest@gug.cz">devfest@gug.cz</a></p>
 </footer>
 
 <script src="/js/main.js"></script>

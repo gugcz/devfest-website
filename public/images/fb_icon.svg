@@ -1,0 +1,17 @@
+<svg width="24" height="24" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:figma="http://www.figma.com/figma/ns">
+<title>FB Icon</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(42 -443)" figma:type="canvas">
+<mask id="mask0_alpha" mask-type="alpha">
+<path d="M -42 443L -18 443L -18 467L -42 467L -42 443Z" fill="#FFFFFF"/>
+</mask>
+<g id="FB Icon" style="mix-blend-mode:normal;" mask="url(#mask0_alpha)" figma:type="frame">
+<g id="Vector" style="mix-blend-mode:normal;" figma:type="vector">
+<use xlink:href="#path0_fill" transform="translate(-42 443)" fill="#455A64" style="mix-blend-mode:normal;"/>
+</g>
+</g>
+</g>
+<defs>
+<path id="path0_fill" d="M 20.4 2.4L 20.4 6L 18 6C 17.6817 6 17.3765 6.12643 17.1515 6.35147C 16.9264 6.57652 16.8 6.88174 16.8 7.2L 16.8 9.6L 20.4 9.6L 20.4 13.2L 16.8 13.2L 16.8 21.6L 13.2 21.6L 13.2 13.2L 10.8 13.2L 10.8 9.6L 13.2 9.6L 13.2 6.6C 13.2 4.272 15.084 2.4 17.4 2.4L 20.4 2.4ZM 21.6 0L 2.4 0C 1.76348 5.32907e-16 1.15303 0.252856 0.702944 0.702944C 0.252856 1.15303 1.06581e-15 1.76348 5.32907e-16 2.4L 5.32907e-16 21.6C 1.06581e-15 22.2365 0.252856 22.847 0.702944 23.2971C 1.15303 23.7471 1.76348 24 2.4 24L 21.6 24C 22.2365 24 22.847 23.7471 23.2971 23.2971C 23.7471 22.847 24 22.2365 24 21.6L 24 2.4C 24 1.068 22.92 0 21.6 0Z"/>
+</defs>
+</svg>

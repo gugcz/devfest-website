@@ -1,0 +1,17 @@
+<svg width="24" height="24" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:figma="http://www.figma.com/figma/ns">
+<title>Twitter Icon</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(85 -443)" figma:type="canvas">
+<mask id="mask0_alpha" mask-type="alpha">
+<path d="M -85 443L -61 443L -61 467L -85 467L -85 443Z" fill="#FFFFFF"/>
+</mask>
+<g id="Twitter Icon" style="mix-blend-mode:normal;" mask="url(#mask0_alpha)" figma:type="frame">
+<g id="Vector" style="mix-blend-mode:normal;" figma:type="vector">
+<use xlink:href="#path0_fill" transform="translate(-85 443)" fill="#455A64" style="mix-blend-mode:normal;"/>
+</g>
+</g>
+</g>
+<defs>
+<path id="path0_fill" d="M 18.852 8.796C 18.768 14.34 15.228 18.132 9.936 18.372C 7.752 18.468 6.18 17.772 4.8 16.896C 6.408 17.148 8.4 16.512 9.48 15.6C 7.896 15.432 6.972 14.628 6.528 13.344C 6.984 13.416 7.464 13.392 7.896 13.308C 6.468 12.828 5.448 11.94 5.4 10.092C 5.796 10.284 6.216 10.452 6.768 10.488C 5.7 9.876 4.92 7.656 5.82 6.192C 7.404 7.932 9.312 9.348 12.444 9.54C 11.652 6.18 16.104 4.356 17.964 6.6C 18.756 6.456 19.392 6.168 20.016 5.832C 19.764 6.6 19.272 7.164 18.672 7.596C 19.32 7.512 19.908 7.356 20.4 7.104C 20.1 7.74 19.428 8.316 18.852 8.796ZM 21.6 0L 2.4 0C 1.76348 5.32907e-16 1.15303 0.252856 0.702944 0.702944C 0.252856 1.15303 1.06581e-15 1.76348 5.32907e-16 2.4L 5.32907e-16 21.6C 1.06581e-15 22.2365 0.252856 22.847 0.702944 23.2971C 1.15303 23.7471 1.76348 24 2.4 24L 21.6 24C 22.2365 24 22.847 23.7471 23.2971 23.2971C 23.7471 22.847 24 22.2365 24 21.6L 24 2.4C 24 1.068 22.92 0 21.6 0Z"/>
+</defs>
+</svg>

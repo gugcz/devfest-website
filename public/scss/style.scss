@@ -40,19 +40,33 @@ header img {
   width: 80%;
 }
 
-.frontpage {
+.full-page {
   display: flex;
   flex-direction: column;
 
   height: 100vh;
 }
 
-.frontpage header {
-  flex-grow: 1;
+.full-page.flexible {
+  min-height: 100vh;
+  height: auto;
+}
+
+.full-page header {
+  height: 200px;
   position: relative;
 }
 
-.frontpage .frontpage-content {
+.full-page h2 {
+  -ms-align-self: center;
+  -webkit-align-self: center;
+  align-self: center;
+  color: #fff;
+  margin: 92px 0;
+  font-size: 36px;
+}
+
+.full-page .frontpage-content {
   background-color: #fff;
   flex-grow: 1;
 
@@ -60,6 +74,16 @@ header img {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.full-page .frontpage-content h2 {
+  color: $primary-color;
+}
+
+.action-buttons {
+  -ms-align-self: center;
+  -webkit-align-self: center;
+  align-self: center;
 }
 
 .action-button {
@@ -72,7 +96,7 @@ header img {
   border: 2px solid $primary-color;
 
   cursor: pointer;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
   font-size: 18px;
 }
@@ -115,15 +139,17 @@ header img {
   cursor: pointer;
 }
 
-#userSubscribe {
-  visibility: hidden;
+.subscription-info {
+  max-width: 200px;
+  text-align: center;
+  font-size: 14px;
+  margin: 36px 0 0 0;
+  -ms-align-self: center;
+  -webkit-align-self: center;
+  align-self: center;
 }
 
-.text-input {
-  display: none;
-}
-
-.frontpage .frontpage-content .previous-years-action {
+.full-page .frontpage-content .previous-years-action {
   display: none;
 }
 
@@ -143,7 +169,7 @@ header img {
   margin: 0 0 0 8px;
 }
 
-.frontpage .frontpage-content .social-media {
+.full-page .frontpage-content .social-media {
   display: none;
 }
 
@@ -156,7 +182,7 @@ header img {
 
 .social-media a {
   display: block;
-  margin: 0 0 0 18px;
+  margin: 0 9px;
 
   color: white;
   text-decoration: none;
@@ -176,11 +202,24 @@ footer a {
   color: #fff;
 }
 
+footer .social-media {
+  background-color: white;
+  padding: 16px 12px 12px 12px;
+  border-radius: 2px;
+}
+
 .action-button {
   min-width: 250px;
 }
 
 #subscribeForm {
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column;
   flex: 1;
 }
 
@@ -206,9 +245,123 @@ footer a {
   margin: 0;
 }
 
+.bottom-actions {
+  display: none;
+}
+
+.timeline {
+  position: relative;
+  -ms-align-self: center;
+  -webkit-align-self: center;
+  align-self: center;
+  color: #fff;
+}
+
+.timeline .line {
+  position: absolute;
+  height: 100%;
+  left: 50%;
+  width: 4px;
+  background-color: #fff;
+  transform: translate(-50%);
+}
+
+.timeline .year-point {
+  position: relative;
+  top: -78px;
+  margin: 64px 0;
+}
+
+.timeline .year-point:nth-child(even) {
+  text-align: right;
+  left: -60%;
+}
+
+.timeline .year-point:nth-child(odd) {
+  text-align: left;
+  left: 60%;
+}
+
+.timeline .year-point .point {
+  position: absolute;
+  top: 8px;
+  transform: translate(-8px);
+
+  width: 16px;
+  height: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.timeline .year-point:nth-child(even) .point {
+  left: 110%;
+}
+
+.timeline .year-point:nth-child(odd) .point {
+  left: -10%;
+}
+
+.timeline .year-point:nth-child(2) .point {
+  top: 14px;
+  transform: translate(-10px);
+
+  width: 20px;
+  height: 4px;
+  border-radius: 0;
+}
+
+.timeline .year-point .place {
+  display: block;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 500;
+  width: 180px;
+}
+
+.timeline .year-point .description {
+  display: block;
+  margin: 16px 0 0 0;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: lighter;
+  width: 180px;
+}
+
+.timeline .year-point .year {
+  position: absolute;
+  top: 0;
+  left: 120%;
+  display: block;
+  font-size: 24px;
+  font-style: italic;
+  font-weight: 300;
+}
+
+.timeline .year-point:nth-child(even) .year {
+  left: 120%;
+}
+
+.timeline .year-point:nth-child(odd) .year {
+  left: -50%;
+}
+
+.timeline .end {
+  position: relative;
+  top: 8px;
+  width: 100%;
+  height: 39px;
+  background-image: url("/images/arrow.svg");
+  background-size: 45px 39px;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+}
+
 @media (min-width: 700px) {
   #subscribeForm {
-    flex: 0;
+    flex: 1;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
   }
 
   .mobile-texts {
@@ -229,23 +382,27 @@ footer a {
     display: none;
   }
 
-  .frontpage .frontpage-content {
+  .full-page header {
+    height: 300px;
+  }
+
+  .full-page .frontpage-content {
     padding: 139px 0 0 0;
     box-sizing: border-box;
   }
 
-  .frontpage .frontpage-content .previous-years-action {
+  .full-page .frontpage-content .previous-years-action {
     position: absolute;
     display: block;
     left: 24px;
     bottom: 24px;
   }
 
-  .frontpage .frontpage-content .social-media {
-    position: absolute;
+  .full-page .frontpage-content .social-media {
+    display: -ms-flexbox;
+    display: -webkit-flex;
     display: flex;
-    right: 24px;
-    bottom: 24px;
+    margin: 0 0 24px 0;
   }
 
   .social-media {
@@ -259,4 +416,38 @@ footer a {
   footer .social-media {
     display: none;
   }
+
+  .subscription-info {
+    max-width: 400px;
+  }
+
+  .bottom-actions {
+    display: block;
+    position: absolute;
+    bottom: 24px;
+    width: 100%;
+  }
+
+  .bottom-actions a {
+    color: #2a2a2a;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 500;
+    display: block;
+    height: 24px;
+    line-height: 24px;
+  }
+
+  .bottom-actions .left-side-action {
+    position: absolute;
+    bottom: 0;
+    left: 24px;
+  }
+
+  .bottom-actions .right-side-action {
+    position: absolute;
+    bottom: 0;
+    right: 24px;
+  }
+
 }
