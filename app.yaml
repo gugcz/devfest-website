@@ -1,7 +1,7 @@
 runtime: python27
 api_version: 1
 threadsafe: true
-service: 2013
+service: website-2013
 
 handlers:
 - url: /(.*\.png)
