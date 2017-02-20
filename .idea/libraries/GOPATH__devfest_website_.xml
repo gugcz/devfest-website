@@ -1,0 +1,22 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;devfest-website&gt;">
+    <CLASSES>
+      <root url="file://$USER_HOME$/development/projects/golang/src/golang.org" />
+      <root url="file://$USER_HOME$/development/projects/golang/src/stepuplabs.io" />
+      <root url="file://$USER_HOME$/development/projects/golang/src/github.com" />
+      <root url="file://$USER_HOME$/development/projects/golang/src/vires.io" />
+      <root url="file://$USER_HOME$/development/projects/golang/src/google.golang.org" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/development/projects/golang/src/golang.org" />
+      <root url="file://$USER_HOME$/development/projects/golang/src/stepuplabs.io" />
+      <root url="file://$USER_HOME$/development/projects/golang/src/github.com" />
+      <root url="file://$USER_HOME$/development/projects/golang/src/vires.io" />
+      <root url="file://$USER_HOME$/development/projects/golang/src/google.golang.org" />
+    </SOURCES>
+    <excluded>
+      <root url="file://$PROJECT_DIR$" />
+    </excluded>
+  </library>
+</component>
