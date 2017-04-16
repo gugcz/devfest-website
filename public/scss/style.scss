@@ -94,6 +94,7 @@ header img {
   border-radius: 4px;
   text-transform: uppercase;
   border: 2px solid $primary-color;
+  text-decoration: none;
 
   cursor: pointer;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
@@ -356,6 +357,19 @@ footer .social-media {
   background-position: center bottom;
 }
 
+.gug-info {
+  text-align: center;
+}
+
+footer .partnership {
+  display: none;
+}
+
+footer .partnership-note {
+  margin: 16px 0 0 0;
+  display: inline-block;
+}
+
 @media (min-width: 700px) {
   #subscribeForm {
     flex: 1;
@@ -449,6 +463,20 @@ footer .social-media {
     position: absolute;
     bottom: 0;
     right: 24px;
+  }
+
+  footer .partnership {
+    display: block;
+    margin: 48px 0;
+  }
+
+  footer .partnership-note {
+    display: none;
+  }
+
+  .partnership-button {
+    background-color: #F44336;
+    border: 0;
   }
 
 }
