@@ -123,7 +123,7 @@ header img {
   padding: 12px 16px;
 }
 
-.action-button input {
+.action-button input, .action-button div {
   padding: 12px 16px;
   border: 0;
   border-radius: 2px;
@@ -213,6 +213,26 @@ footer .social-media {
   min-width: 250px;
 }
 
+.center-container {
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  align-items: center;
+
+  flex: 1;
+}
+
+.center-container .divider {
+  width: 150px;
+  background-color: #BDBDBD;
+  height: 1px;
+  margin: 32px 0;
+}
+
 #subscribeForm {
   display: -ms-flexbox;
   display: -webkit-flex;
@@ -221,7 +241,20 @@ footer .social-media {
   -ms-flex-direction: column;
   -webkit-flex-direction: column;
   flex-direction: column;
-  flex: 1;
+
+  width: 350px;
+}
+
+.cfpForm {
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+
+  width: 350px;
 }
 
 .mobile-texts {
@@ -371,12 +404,12 @@ footer .partnership-note {
 }
 
 @media (min-width: 700px) {
-  #subscribeForm {
+/*  #subscribeForm {
     flex: 1;
     -ms-flex-pack: center;
     -webkit-justify-content: center;
     justify-content: center;
-  }
+  }*/
 
   .mobile-texts {
     display: none;
@@ -477,6 +510,26 @@ footer .partnership-note {
   .partnership-button {
     background-color: #F44336;
     border: 0;
+  }
+
+  .center-container {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -ms-flex-direction: row;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    align-items: center;
+
+    flex: 1;
+  }
+
+  .center-container .divider {
+    width: 1px;
+    background-color: #BDBDBD;
+    height: 150px;
+    margin: 0 32px;
   }
 
 }

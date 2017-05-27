@@ -44,10 +44,17 @@
           type='text/css'>
 
     <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      (function (i, s, o, g, r, a, m) {
+        i[ 'GoogleAnalyticsObject' ] = r;
+        i[ r ] = i[ r ] || function () {
+            (i[ r ].q = i[ r ].q || []).push(arguments)
+          }, i[ r ].l = 1 * new Date();
+        a = s.createElement(o),
+          m = s.getElementsByTagName(o)[ 0 ];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
       ga('create', 'UA-92900606-1', 'auto');
       ga('send', 'pageview');
@@ -73,24 +80,36 @@
             <h4>November 4-5, 2017</h4>
         </div>
 
-        <form id="subscribeForm"
-              action="//gug.us4.list-manage.com/subscribe/post?u=0da7a509ea18feb2638420b7f&amp;id=79029be7e6"
-              method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
-              target="_blank" novalidate>
-            <div class="action-buttons">
-                <div class="action-button blank" id="subscribeButton">
-                    <input type="email" placeholder="Your e-mail" id="userEmailInput" name="EMAIL" class="text-input">
-                </div>
+        <div class="center-container">
+            <form id="subscribeForm"
+                  action="//gug.us4.list-manage.com/subscribe/post?u=0da7a509ea18feb2638420b7f&amp;id=79029be7e6"
+                  method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
+                  target="_blank" novalidate>
+                <div class="action-buttons">
+                    <div class="action-button blank" id="subscribeButton">
+                        <input type="email" placeholder="Your e-mail" id="userEmailInput" name="EMAIL"
+                               class="text-input">
+                    </div>
 
-                <div class="action-button" id="userSubscribe">
-                    <input type="submit" value="Subscribe" name="subscribe">
+                    <div class="action-button blue" id="userSubscribe">
+                        <input type="submit" value="Subscribe" name="subscribe">
+                    </div>
+                </div><!--
+                <p class="subscription-info">
+                    You'll get a heads-up for early bird tickets. We'll also keep you updated on the venue, speakers and
+                    more.
+                </p>-->
+            </form>
+            <div class="divider"></div>
+            <div class="cfpForm">
+                <div class="action-buttons">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdZFboQT62_NfcyEfaPxh4RK-sIkM00g8aSVybI2tNkq2T2KA/viewform"
+                       class="action-button red">
+                        <div>Propose a talk</div>
+                    </a>
                 </div>
             </div>
-            <p class="subscription-info">
-                You'll get a heads-up for early bird tickets. We'll also keep you updated on the venue, speakers and
-                more.
-            </p>
-        </form>
+        </div>
 
         <div class="social-media">
             <a href="https://twitter.com/DevFest_CZ" target="_blank">
@@ -190,7 +209,8 @@
     </div>
 
     <div class="partnership">
-        <a href="https://drive.google.com/file/d/0B6rxb_ov7Sd5SV9mN1VUOGJObkE/view" class="action-button partnership-button">
+        <a href="https://drive.google.com/file/d/0B6rxb_ov7Sd5SV9mN1VUOGJObkE/view"
+           class="action-button partnership-button">
             <span>Become a partner</span>
         </a>
     </div>
@@ -198,7 +218,8 @@
     <p class="gug-info">
         Organized by GUG.cz z.s. | <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>
         <br>
-        <a class="partnership-note" href="https://drive.google.com/file/d/0B6rxb_ov7Sd5SV9mN1VUOGJObkE/view">Become a partner</a>
+        <a class="partnership-note" href="https://drive.google.com/file/d/0B6rxb_ov7Sd5SV9mN1VUOGJObkE/view">Become a
+            partner</a>
     </p>
 
 </footer>
@@ -216,6 +237,7 @@
       "url": "https://2017.devfest.cz/",
       "location": "Prague"
     }
+
 </script>
 
 </body>

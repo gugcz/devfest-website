@@ -1,11 +1,12 @@
 runtime: python27
 api_version: 1
 threadsafe: true
-service: website-2017
+service: dev
 
 skip_files:
 - ^node_modules$
 - ^\.idea$
+- ^\.git$
 
 handlers:
 - url: /images
