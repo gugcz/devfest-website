@@ -1,42 +1,42 @@
 {
-  "url": "https://hoverboard.firebaseapp.com/",
-  "startDate": "2016-09-09T09:00:00+03:00",
-  "endDate": "2016-09-10T19:00:00+03:00",
+  "url": "https://devfest-2017-d44d9.firebaseapp.com/",
+  "startDate": "2017-11-04T09:00:00+01:00",
+  "endDate": "2017-11-05T19:00:00+01:00",
   "analytics": {
-    "prod": "UA-43643469-8",
-    "dev": "UA-43643469-9"
+    "prod": "UA-92900606-1",
+    "dev": "UA-92900606-2"
   },
   "organizer": {
-    "name": "GDG Lviv",
-    "twitter": "gdglviv"
+    "name": "GDG Prague",
+    "twitter": "gdgprague"
   },
   "webapp": {
     "shortName": "DevFest",
-    "themeColor": "#F57C00",
-    "backgroundColor": "#F57C00"
+    "themeColor": "#2196F3",
+    "backgroundColor": "#2196F3"
   },
   "firebase": {
-    "name": "hoverboard-experimental",
-    "domain": "hoverboard-experimental.firebaseapp.com",
-    "database": "https://hoverboard-experimental.firebaseio.com",
-    "api": "AIzaSyALDa2D7CMhK_wt2VkET1MaJuQXYVUJd2I",
+    "name": "devfest-2017-d44d9",
+    "domain": "devfest-2017-d44d9.firebaseapp.com",
+    "database": "https://devfest-2017-d44d9.firebaseio.com",
+    "api": "AIzaSyAr1fxdqxLoYMj2RuljJEDTVmK37hn0QN8",
     "userSessionsPath": "/userSessions",
     "ratingsPath": "/ratings",
     "indexedDbSession": "hoverboard"
   },
   "mailchimp": {
-    "url": "https://gdg.us11.list-manage.com/subscribe/post?u=b7e853a79164ddfdbda3ed77b&amp;id=7993e39fbe",
+    "url": "https://gug.us4.list-manage.com/subscribe/post?u=0da7a509ea18feb2638420b7f&id=79029be7e6",
     "name": "b_b7e853a79164ddfdbda3ed77b_7993e39fbe"
   },
   "dateFormat": {
     "locale": "en-US",
     "blog": {"month": "short", "day": "numeric", "year": "numeric"}
   },
-  "hashtag": "dfua",
-  "disqusShortName": "hoverboard-gdg-x",
+  "hashtag": "DevFestCZ",
+  "disqusShortName": "",
   "tweetsSource": "/data/tweets.json",
-  "partnershipProposition": "http://bit.ly/df16-sponsor",
-  "videosSessionsUrl": "https://www.youtube.com/playlist?list=PLt8lEzcLNl31AX3-ONkkWmDOZezu9Cmnv",
+  "partnershipProposition": "https://drive.google.com/file/d/0B6rxb_ov7Sd5SV9mN1VUOGJObkE/view",
+  "videosSessionsUrl": "https://slideslive.com/gdg/devfest-2016",
   "enableSessionsRating": true,
   "navigation": [
     {
@@ -63,23 +63,18 @@
   "social": [
     {
       "name": "twitter",
-      "nickname": "GDGLviv",
-      "url": "https://twitter.com/gdglviv"
-    },
-    {
-      "name": "gplus",
-      "nickname": "102444623953913144164",
-      "url": "https://plus.google.com/102444623953913144164"
+      "nickname": "devfest_cz",
+      "url": "https://twitter.com/devfest_cz"
     },
     {
       "name": "facebook",
-      "nickname": "GDGLviv",
-      "url": "https://www.facebook.com/GDGLviv"
+      "nickname": "DevFestCZ",
+      "url": "https://www.facebook.com/DevFestCZ"
     },
     {
       "name": "linkedin",
-      "nickname": "google-developers-group-lviv",
-      "url": "https://www.linkedin.com/company/google-developers-group-lviv"
+      "nickname": "11053288",
+      "url": "https://www.linkedin.com/company/11053288"
     }
   ],
   "location": {
@@ -121,7 +116,7 @@
         "fontColor": "#fff",
         "tabBarColor": "#fff",
         "video": {
-          "title": "GDG DevFest Ukraine 2016",
+          "title": "GDG DevFest Pilsen 2016",
           "youtubeId": "TdpbgRgz6eE",
           "text": "See how it was in 2016"
         },
@@ -162,7 +157,7 @@
       }
     },
     "cod": {
-      "title": "Cod of Conduct",
+      "title": "Code of Conduct",
       "headerSettings": {
         "backgroundColor": "#673ab7",
         "fontColor": "#fff",
