@@ -7,11 +7,9 @@
 <link rel="import" href="../styles/shared-styles.html">
 <link rel="import" href="ticket-element.html">
 
-
 <dom-module id="tickets-block">
-
   <template>
-
+    <link rel="stylesheet" type="text/css" href='https://css.tito.io/v1.1'>
     <style include="shared-styles">
       :host {
         --iron-icon-fill-color: var(--text-primary-color);
@@ -24,8 +22,21 @@
 
       .tickets-wrapper {
         @apply(--layout-horizontal);
-        @apply(--layout-wrap);
-        @apply(--layout-center-justified);
+        @apply(--layout-center-center);
+      }
+
+      tito-widget {
+        @apply(--shadow-elevation-2dp);
+        border-radius: 3px;
+        background: white;
+        color: #333;
+        padding: 16px;
+      }
+
+      .tito-wrapper {
+        border: 0 !important;
+        background: transparent !important;
+        margin: 0 !important;
       }
 
       ticket-element {
@@ -69,7 +80,8 @@
         <h4 class="heading">{$ ticketsTitle $}</h4>
       </div>
       <div class="tickets-wrapper">
-        <template is="dom-repeat" items="[[app.tickets.elements]]" as="ticket">
+        <tito-widget id="titoWidget" event="gug-cz/gdg-devfest-2017-prague"></tito-widget>
+        <!-- <template is="dom-repeat" items="[[app.tickets.elements]]" as="ticket">
           <ticket-element
             type="[[ticket.name]]"
             price="[[ticket.price]]"
@@ -85,7 +97,7 @@
       <div class="details">{$ ticketsDetails $}</div>
       <a href="[[app.tickets.url]]" target="_blank" rel="noopener noreferrer" on-tap="_trackBuyClick">
         <paper-button class="buy-button" raised>{$ buyTicket $}</paper-button>
-      </a>
+      </a> -->
     </div>
 
   </template>
@@ -99,6 +111,12 @@
 
         ready: function () {
           HOVERBOARD.Elements.Tickets = this
+
+          var titoWidget = this.$.titoWidget
+          TitoWidget.widget_elements = function () {
+            return [ titoWidget ];
+          }
+          TitoWidget.buildWidgets()
         },
 
         _trackBuyClick: function (e) {
