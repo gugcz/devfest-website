@@ -1,10 +1,10 @@
 {
-  "title": "GDG DevFest Prague 2017",
-  "description": "The biggest Google tech conference in Ukraine carefully crafted for you by GDG community! All about Android, Web and Cloud from the world experts",
+  "title": "DevFest CZ 2017",
+  "description": "DevFest is coming back to Prague this year. Attend the largest (not only) Google tech festival in Central Europe.",
   "keywords": "event, gdg, gde, devfest, google, programming, android, chrome, polymer, developers, web, cloud, androiddev",
   "dates": "November 4-5, 2017",
   "locationAddressShort": "Prague, Czech Republic",
-  "motto": "Be a GDG. Be a Hero!",
+  "motto": "From developers to developers",
   "playIcon": "See how it was in 2016",
   "c4p": "Become a speaker",
   "buyTicket": "Buy ticket",
@@ -23,16 +23,16 @@
   "clickToViewPhotos": "Click here to view more photos",
   "partners": "Partners",
   "becomePartner": "Become a partner",
-  "featuredVideosTitle": "Featured #DFUA '15 Sessions",
+  "featuredVideosTitle": "Featured DevFest Pilsen 2016 Sessions",
   "featuredVideosViewAll": "View all videos",
   "featuredPeopleTitle": "Rockstar Speakers",
   "featuredPeopleViewAll": "View all speakers",
   "action": "See how it was",
-  "locationTitle": "Pivdennyi Expo Center",
-  "locationDescription": "Newly built Pivdennyi Expo is a long-awaited exhibition center in Lviv, which can fulfill the needs of the large-scale event",
-  "locationAddress": "Shchyretska St, 36",
+  "locationTitle": "Czech University of Life Sciences Prague",
+  "locationDescription": "Czech University of Life Sciences has a spacious campus ideal for organizing big events like DevFest",
+  "locationAddress": "Kamýcká 129, 165 00 Praha 6 - Suchdol-Praha-Suchdol",
   "organizerTitle": "Organizer",
-  "aboutOrganizers": "<a href='http://lviv.gdg.org.ua' target='_blank'>GDG Lviv</a> with support of 10 GDGs from all around Ukraine is proud organizer of DevFest Ukraine",
+  "aboutOrganizers": "<a href='http://gug.cz' target='_blank'>GUG.cz</a> with support of many GDGs from all around Czechia is proud organizer of DevFest CZ",
   "openTeamPage": "Open team page",
   "whatIsGdg": "What is GDG?",
   "aboutGdg": "Google Developers Group (GDG) - is open and volunteer geek community who create exciting projects and share experience about Google technologies with a passion",
@@ -76,35 +76,35 @@
           "text": "Google Developers",
           "url": "https://developers.google.com/",
           "newTab": true
-        },
-        {
-          "text": "GDG DevFest Ukraine 2013",
-          "url": "http://gdg-devfest-ua.appspot.com/",
-          "newTab": true
-        },
-        {
-          "text": "GDG DevFest Ukraine 2014",
-          "url": "http://devfest.gdg.org.ua/2014/",
-          "newTab": true
-        },
-        {
-          "text": "GDG DevFest Ukraine 2015",
-          "url": "http://devfest.gdg.org.ua/2015/",
-          "newTab": true
         }
       ]
     },
     {
-      "title": "For Partners",
+      "title": "Previous years",
       "links": [
         {
-          "text": "Partnership Proposition",
-          "url": "http://bit.ly/df16-sponsor",
+          "text": "Prague 2012",
+          "url": "https://2012.devfest.cz/",
           "newTab": true
         },
         {
-          "text": "Media Kit",
-          "url": "http://bit.ly/df16-media",
+          "text": "Prague & Pardubice 2013",
+          "url": "https://2013.devfest.cz/",
+          "newTab": true
+        },
+        {
+          "text": "Prague 2014",
+          "url": "https://2014.devfest.cz/",
+          "newTab": true
+        },
+        {
+          "text": "Ostrava 2015",
+          "url": "https://2015.devfest.cz/",
+          "newTab": true
+        },
+        {
+          "text": "Pilsen 2016",
+          "url": "https://2016.devfest.cz/",
           "newTab": true
         }
       ]
@@ -113,13 +113,13 @@
   "contactBlock": {
     "links": [
       {
-        "text": "devfest@google.com",
-        "url": "mailto:devfest@google.com"
+        "text": "devfest@gug.cz",
+        "url": "mailto:devfest@gug.cz"
       }
     ]
   },
   "teamPageTitle": "Team",
-  "teamPageText": "Google is known all around the world. Everyone is 'googling', checking on 'maps' and communicating in 'gmail'. For simple users, they are services that just works, but not for us. Developers see much more: APIs, scalability issues, complex technology stacks. And that is what GDG is about.<br><br> [Google Developers Group (GDG) Lviv](http://lviv.gdg.org.ua/) - is open and volunteer geek community who create exciting projects and share experience about Google technologies with a passion.<br><br> Our goal is to organize space to connect the best industry experts with Ukrainian audience to boost development of IT.",
+  "teamPageText": "DevFest is organized by GUG.cz - an umbrella organization for GDGs in the Czech Republic",
   "statistics": [
     {
       "counter": 600,
@@ -130,8 +130,8 @@
       "caption": "Days"
     },
     {
-      "counter": 30,
-      "caption": "Sessions"
+      "counter": 35,
+      "caption": "Talks & Workshops"
     },
     {
       "counter": 3,
