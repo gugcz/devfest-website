@@ -167,8 +167,9 @@
       <div class="footer-content">
         <iron-image
           class="gdg-logo"
-          src="/images/gdg-logo.svg"
+          src="/images/logos/gug-cz.svg"
           sizing="contain"
+          position="start"
           alt="{$ organizer.name $}"
         ></iron-image>
         <paper-button class="footer-backtotop" on-tap="scrollToTop" noink>
@@ -207,7 +208,7 @@
               {% endfor %}
             </div>
           </div>
-          <div class="subscribe">
+          <!-- <div class="subscribe">
             <div class="link-block-title">{$ subscribe $}</div>
             <span>{$ subscribeNote $}</span>
             <mailchimp-subscribe
@@ -215,7 +216,7 @@
               url="{$ mailchimp.url $}"
               name="{$ mailchimp.name $}"
             ></mailchimp-subscribe>
-          </div>
+          </div> -->
         </nav>
       </div>
       <div class="footer-content footer-bottom">

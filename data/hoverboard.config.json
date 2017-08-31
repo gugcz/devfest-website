@@ -44,18 +44,6 @@
       "permalink": "/"
     },
     {
-      "route": "blog",
-      "permalink": "/blog/"
-    },
-    {
-      "route": "schedule",
-      "permalink": "/schedule/"
-    },
-    {
-      "route": "speakers",
-      "permalink": "/speakers/"
-    },
-    {
       "route": "team",
       "permalink": "/team/"
     }
@@ -72,24 +60,29 @@
       "url": "https://www.facebook.com/DevFestCZ"
     },
     {
-      "name": "linkedin",
-      "nickname": "11053288",
-      "url": "https://www.linkedin.com/company/11053288"
+      "name": "instagram",
+      "nickname": "devfestcz",
+      "url": "https://www.instagram.com/devfestcz"
+    },
+    {
+      "name": "medium",
+      "nickname": "devfestcz",
+      "url": "https://medium.com/devfestcz"
     }
   ],
   "location": {
     "apiKey": "",
-    "name": "Pivdennyi Expo Center",
-    "address": "36 Shchyretska St, Lviv, Ukraine",
-    "link": "https://www.facebook.com/expopivdennij",
+    "name": "Czech University of Life Sciences Prague",
+    "address": "Kamýcká 129, 165 00 Praha 6 - Suchdol-Praha-Suchdol",
+    "link": "https://www.czu.cz/cs/",
     "pointer": {
-      "latitude": 49.809841,
-      "longitude": 23.972805,
-      "zoom": 15
+      "latitude": 50.1302934,
+      "longitude": 14.3748,
+      "zoom": 14
     },
     "mapCenter": {
-      "latitude": 49.809841,
-      "longitude": 23.982805
+      "latitude": 50.1302934,
+      "longitude": 14.3748
     },
     "images": [
       "/images/backgrounds/location_1.jpg",
@@ -122,14 +115,6 @@
         },
         "hideLogo": true,
         "minHeight": "360px"
-      }
-    },
-    "blog": {
-      "title": "Blog",
-      "headerSettings": {
-        "backgroundColor": "#03a9f4",
-        "fontColor": "#fff",
-        "tabBarColor": "#fff"
       }
     },
     "speakers": {
