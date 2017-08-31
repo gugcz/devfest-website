@@ -34,7 +34,7 @@
   },
   "hashtag": "DevFestCZ",
   "disqusShortName": "",
-  "tweetsSource": "/data/tweets.json",
+  "tweetsSource": "https://devfest-cz-17-tweetledee.herokuapp.com/tweetledee/twitterwall.php",
   "partnershipProposition": "https://drive.google.com/file/d/0B6rxb_ov7Sd5SV9mN1VUOGJObkE/view",
   "videosSessionsUrl": "https://slideslive.com/gdg/devfest-2016",
   "enableSessionsRating": true,
@@ -91,12 +91,12 @@
     ]
   },
   "gallery": {
-    "albumUrl": "https://plus.google.com/events/gallery/cc6tosp4ohkp6qj9pg5jb4g6o3k?sort=1",
+    "albumUrl": "https://www.facebook.com/events/1653980754912287/1686317148345314/",
     "photos": {
-      "big": "/images/backgrounds/2015_1.jpg",
+      "big": "/images/backgrounds/2016_1.jpg",
       "small": [
-        "/images/backgrounds/2015_2.jpg",
-        "/images/backgrounds/2015_3.jpg"
+        "/images/backgrounds/2016_2.jpg",
+        "/images/backgrounds/2016_3.jpg"
       ]
     }
   },
@@ -109,9 +109,9 @@
         "fontColor": "#fff",
         "tabBarColor": "#fff",
         "video": {
-          "title": "GDG DevFest Pilsen 2016",
-          "youtubeId": "TdpbgRgz6eE",
-          "text": "See how it was in 2016"
+          "title": "GDG DevFest CZ 2017",
+          "youtubeId": "5oIUGRx4Xt0",
+          "text": "Teaser 2017"
         },
         "hideLogo": true,
         "minHeight": "360px"

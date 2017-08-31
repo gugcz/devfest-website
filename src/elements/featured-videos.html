@@ -227,7 +227,7 @@
 
         _playVideo: function (e) {
           var presenters = e.model.video.speakers ? (' by ' + e.model.video.speakers) : '';
-          HOVERBOARD.Elements.Template.openVideo(e.model.video.title + presenters, e.model.video.youtubeId, true);
+          window.open(e.model.video.link,'_blank');
 
           HOVERBOARD.Analytics.trackEvent('video', 'watch', 'featured video ' + e.model.video.title);
         },
