@@ -1,7 +1,7 @@
 # 1. Purpose
 
 A primary goal of [Czech Google Developer Groups](http://gug.cz/) is to be inclusive to the largest number of contributors, with the most varied and diverse backgrounds possible. As such, we are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, sexual orientation, ability, ethnicity, socioeconomic status, and religion (or lack thereof). 
-Czech GDGs prides itself on being an open, respectful, and inclusive community. That means the [jerky behavior](https://meta.wikimedia.org/wiki/Don%27t_be_a_jerk) isn’t allowed at GDG meetings.
+GUG.cz prides itself on being an open, respectful, and inclusive community. That means the [jerky behavior](https://meta.wikimedia.org/wiki/Don%27t_be_a_jerk) isn’t allowed at GDG meetings.
 
 This code of conduct outlines our expectations for all those who participate in our community, as well as the consequences for unacceptable behavior.
 We invite all those who participate in Google Developers Group to help us create safe and positive experiences for everyone.
@@ -49,4 +49,4 @@ We expect all community participants to abide by this Code of Conduct in all com
 # 7. Contact info
 
 - David Vávra, [david.vavra@gug.cz](mailto:david.vavra@gug.cz)
-- Barbora Drbohlavová, [bara.drbohlavova@gug.cz](mailto:bara.drbohlavova@gug.cz)
+- Bára Drbohlavová, [bara.drbohlavova@gug.cz](mailto:bara.drbohlavova@gug.cz)
