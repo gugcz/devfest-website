@@ -60,6 +60,12 @@
         text-transform: uppercase;
       }
 
+      paper-tab sup {
+        vertical-align: top;
+        position: relative;
+        top: -0.3em;
+      }
+
       .nav-link {
         @apply(--layout-horizontal);
         @apply(--layout-center-center);
@@ -151,6 +157,12 @@
               <a href="{$ nav.permalink $}" class="nav-link">{$ pages[nav.route].title $}</a>
             </paper-tab>
             {% endfor %}
+            <paper-tab name="speakers" hidden$="{{!app.remoteConfig.showSpeakers}}" link>
+              <a href="/speakers/" class="nav-link">Speakers</a>
+            </paper-tab>
+            <paper-tab name="schedule" hidden$="{{!app.remoteConfig.showSchedule}}" link>
+              <a href="/schedule/" class="nav-link">Schedule&nbsp;<sup>[[app.remoteConfig.scheduleVersion]]</sup></a>
+            </paper-tab>
           </paper-tabs>
         </template>
 

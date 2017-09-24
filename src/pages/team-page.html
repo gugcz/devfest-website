@@ -26,6 +26,7 @@
       .details {
         @apply(--layout-vertical);
         @apply(--layout-center-justified);
+        text-align: center;
       }
 
       .details-item {
@@ -194,7 +195,6 @@
     <div class="container">
       <div class="details">
         <div class="details-item" cascaded>
-          <iron-icon class="details-icon" icon="info"></iron-icon>
           <div class="details-info">
             <h4 class="details-title">{$ teamPageTitle $}</h4>
             <marked-element class="details-text" markdown="{$ teamPageText $}">
