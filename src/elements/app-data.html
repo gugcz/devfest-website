@@ -108,6 +108,13 @@
       persisted-data="{{app.tickets}}">
     </app-indexeddb-mirror>
 
+    <firebase-document
+      id="queryConfig"
+      app-name="{$ firebase.name $}"
+      path="/config"
+      data="{{app.remoteConfig}}">
+    </firebase-document>
+
   </template>
   <script>
     (function () {

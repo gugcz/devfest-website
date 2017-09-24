@@ -25,9 +25,14 @@
 <dom-module id="home-page">
 
   <template>
+    <style>
+    [hidden] {
+      display: none !important;
+    }
+    </style>
 
     <statistics-block app="{{app}}" cascaded></statistics-block>
-    <!-- <featured-people app="{{app}}" people="{{people}}" cascaded></featured-people> -->
+    <featured-people app="{{app}}" people="{{people}}" cascaded hidden$="{{!app.remoteConfig.showSpeakers}}"></featured-people>
     {% if videosSessionsUrl %}
       <featured-videos app="{{app}}" cascaded></featured-videos>
     {% endif %}

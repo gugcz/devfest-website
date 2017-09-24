@@ -2,12 +2,12 @@
   "title": "DevFest CZ 2017",
   "description": "DevFest is coming back to Prague this year. Attend the largest (not only) Google tech festival in Central Europe!",
   "keywords": "event, gdg, gde, devfest, google, programming, android, chrome, polymer, developers, web, cloud, androiddev",
-  "dates": "November 4-5, 2017",
+  "dates": "November 4–5, 2017",
   "locationAddressShort": "Prague, Czech Republic",
   "motto": "From developers to developers",
   "playIcon": "Watch teaser",
   "c4p": "Become a speaker",
-  "buyTicket": "Buy ticket",
+  "buyTicket": "Buy tickets",
   "backToTop": "Back to top",
   "subscribe": "Subscribe",
   "yourEmail": "Your email",
@@ -18,8 +18,8 @@
   "close": "Close",
   "soldOutTickets": "Sold Out",
   "socialTitle": "Social",
-  "socialMotto": "Add to circles, like, follow or connect with us on",
-  "beforeHashtag": "What's up",
+  "socialMotto": "Connect with us on",
+  "beforeHashtag": "What's up ",
   "clickToViewPhotos": "Click here to view more photos",
   "partners": "Partners",
   "becomePartner": "Become a partner",
@@ -33,7 +33,7 @@
   "locationAddress": "Kamýcká 129, 165 00 Praha 6 - Suchdol-Praha-Suchdol",
   "organizerTitle": "Organizer",
   "aboutOrganizers": "<a href='http://gug.cz' target='_blank'>GUG.cz</a> with support of many GDGs from all around Czechia is a proud organizer of DevFest CZ",
-  "openTeamPage": "Open team page",
+  "openTeamPage": "View team members",
   "whatIsGdg": "What is GDG?",
   "aboutGdg": "Google Developers Group (GDG) - is open and volunteer geek community who create exciting projects and share experience about Google technologies with a passion",
   "readMore": "Read more",
@@ -83,18 +83,8 @@
       "title": "Previous years",
       "links": [
         {
-          "text": "Prague 2012",
-          "url": "https://2012.devfest.cz/",
-          "newTab": true
-        },
-        {
-          "text": "Prague & Pardubice 2013",
-          "url": "https://2013.devfest.cz/",
-          "newTab": true
-        },
-        {
-          "text": "Prague 2014",
-          "url": "https://2014.devfest.cz/",
+          "text": "Pilsen 2016",
+          "url": "https://2016.devfest.cz/",
           "newTab": true
         },
         {
@@ -103,8 +93,18 @@
           "newTab": true
         },
         {
-          "text": "Pilsen 2016",
-          "url": "https://2016.devfest.cz/",
+          "text": "Prague 2014",
+          "url": "https://2014.devfest.cz/",
+          "newTab": true
+        },
+        {
+          "text": "Prague & Pardubice 2013",
+          "url": "https://2013.devfest.cz/",
+          "newTab": true
+        },
+        {
+          "text": "Prague 2012",
+          "url": "http://2012.devfest.cz/",
           "newTab": true
         }
       ]
@@ -119,7 +119,7 @@
     ]
   },
   "teamPageTitle": "Team",
-  "teamPageText": "DevFest is organized by GUG.cz - an umbrella organization for GDGs in the Czech Republic",
+  "teamPageText": "DevFest CZ is organized by GUG.cz – an umbrella organization for GDGs in the Czech Republic.",
   "statistics": [
     {
       "counter": 600,
