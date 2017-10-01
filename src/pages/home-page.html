@@ -32,15 +32,16 @@
     </style>
 
     <statistics-block app="{{app}}" cascaded></statistics-block>
-    <featured-people app="{{app}}" people="{{people}}" cascaded hidden$="{{!app.remoteConfig.showSpeakers}}"></featured-people>
-    {% if videosSessionsUrl %}
+    <featured-people app="{{app}}" people="{{people}}" cascaded></featured-people>
+    <!-- {% if videosSessionsUrl %}
       <featured-videos app="{{app}}" cascaded></featured-videos>
-    {% endif %}
-    <about-block app="{{app}}" cascaded></about-block>
-    {% if gallery %}
+    {% endif %} -->
+  
+    <!-- {% if gallery %}
       <photo-block app="{{app}}" cascaded></photo-block>
-    {% endif %}
+    {% endif %} -->
     <tickets-block app="{{app}}" cascaded></tickets-block>
+    <about-block app="{{app}}" cascaded></about-block>
     <!-- <latest-posts app="{{app}}" posts="{{posts}}" cascaded></latest-posts> -->
     <social-feed app="{{app}}" cascaded></social-feed>
     <map-block app="{{app}}" selected="{{selected}}" cascaded></map-block>
