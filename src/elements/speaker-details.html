@@ -22,7 +22,11 @@
 
   <template>
 
-    <style include="shared-styles dialog-styles"></style>
+    <style include="shared-styles dialog-styles">
+      .fallback-image {
+        --iron-image-width: 140px;
+      }    
+    </style>
 
     <paper-scroll-header-panel id="scrollHeaderPanel" condenses="{{app.isPhoneSize}}" no-reveal="{{!app.isPhoneSize}}">
       <paper-toolbar class="tall">
