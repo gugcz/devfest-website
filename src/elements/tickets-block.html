@@ -21,7 +21,7 @@
       }
 
       .tickets-wrapper {
-        @apply(--layout-horizontal);
+        @apply(--layout-vertical);
         @apply(--layout-center-center);
       }
 
@@ -49,7 +49,7 @@
       }
 
       .details {
-        margin: 10px auto 0;
+        margin: 64px auto 0;
         font-size: 14px;
         max-width: 600px;
       }
@@ -82,6 +82,8 @@
       </div>
       <div class="tickets-wrapper">
         <tito-widget id="titoWidget" event="gug-cz/devfest-cz-2017"></tito-widget>
+
+        <div class="details">{$ ticketsDetails $}</div>
         <!-- <template is="dom-repeat" items="[[app.tickets.elements]]" as="ticket">
           <ticket-element
             type="[[ticket.name]]"
@@ -95,7 +97,7 @@
           </ticket-element>
         </template>
       </div>
-      <div class="details">{$ ticketsDetails $}</div>
+      
       <a href="[[app.tickets.url]]" target="_blank" rel="noopener noreferrer" on-tap="_trackBuyClick">
         <paper-button class="buy-button" raised>{$ buyTicket $}</paper-button>
       </a> -->
