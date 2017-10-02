@@ -14,7 +14,7 @@
   "subscribeNote": "No spam, only the latest news and updates!",
   "contactUs": "Contact us",
   "ticketsTitle": "Tickets",
-  "ticketsDetails": "Tickets grant access to all conference sections, coffee breaks, lunch and party. Accommodation is NOT included in the ticket price.",
+  "ticketsDetails": "All tickets include food for two days, talks, workshops, gamification and Google I/O-inspired afterparty.",
   "close": "Close",
   "soldOutTickets": "Sold Out",
   "socialTitle": "Social",
@@ -60,12 +60,17 @@
   "rateSession": "Rate session",
   "footerBlocks": [
     {
-      "title": "For visitors",
+      "title": "More",
       "links": [
         {
-          "text": "Team",
-          "url": "/team/",
-          "newTab": false
+          "text": "Blog",
+          "url": "https://medium.com/devfestcz",
+          "newTab": true
+        },
+        {
+          "text": "Press Kit",
+          "url": "https://drive.google.com/open?id=0B38-GodXnjxjNy1oVW9xaGtnWGM",
+          "newTab": true
         },
         {
           "text": "Code of Conduct",
