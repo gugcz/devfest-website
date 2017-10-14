@@ -1,0 +1,73 @@
+
+The biggest Google tech conference in CEE, [GDG DevFest Ukraine 2017](https://devfest.gdg.org.ua/), has wrapped up. It was fun, advantageous, crowded and exciting event! The scale of DevFest is simply breathtaking - 2 days full of Android, Web and Cloud hardcore!
+
+
+This year’s conference drew a rather large number of attendees, much more than last year’s event.  We estimate attendees **~1000**, many came to seek added knowledge and understanding to rapidly changing world of technologies.
+
+This year we had so many experts all around the world, passioned speakers has come from **16 countries** (*United Kingdom - 9, Ukraine - 8, Israel - 4, Germany - 4, Switzerland - 4, USA - 3, Netherlands - 3, Poland - 2, Austria - 1, Denmark - 1, Czech Republic  -1, Ireland - 1, Spain - 1, Brazil - 1, Romania - 1, Belarus - 1*) to share their knowledge and experience with everyone.
+
+The opening keynote speech  was really motivated. Yonatan Levin shared honestly all his fails and success on creating own products, and all the truth about having own startups.
+
+<img src="/images/posts/summary17_1.jpg" style="width: 70%;"/>
+
+
+Lots of sessions were full of deep knowledge and inspiration.  First DevFest day was very saturated. Speakers impressed not only their perfect speeches, but also a good sense of humor.
+
+<img src="/images/posts/summary17_2.jpg" style="width: 70%;"/>
+
+Martin Split (head of engineering at Archilogic) said: “Polymer is not a magic, just work. No magic, just good stuff” 
+The presentation was really fun, especially when he wears a special suit of the unicorn 😵.
+
+<img src="/images/posts/summary17_3.jpg" style="width: 70%;"/>
+
+Jean-Baptiste Clion (Cloud Expert at GDE) showed in his presentation how we can use Genetic Algorithm to illustrated bacterial evolution.
+
+<img src="/images/posts/summary17_4.jpg" style="width: 70%;"/>
+
+We got a "full house" on Stage 2 when Anton Minashkin (Chief Software Engineer) was presenting.
+
+Speakers were motivating the audience to create great products.Some of them were coding live. The audience really appreciated it.
+The great mood of the participants and interesting content contributed to a large number of questions. During the breaks between the speeches, participants of Stage 3 actively became acquainted with each other, they made selphy and shared photos.
+
+<img src="/images/posts/summary17_5.jpg" style="width: 70%;"/>
+
+What about workshops, they were at their top, for sure. Credits to our incredible speakers who did their best to provide all of the attendees with unforgettable knowledge and experience. 
+
+<img src="/images/posts/summary17_6.jpg" style="width: 70%;"/>
+
+
+And those amazing people are Jaroslav Khorishchenko, Ukrainian Iron Man 🏃, Gerard Sans, the Angular Superman 💪, and Lesya Danylyuk, the Wonder Woman of Design Sprint ⭐️.
+
+
+<img src="/images/posts/summary17_7.jpg" style="width: 70%;"/>
+
+
+The conference became possible through the support of a number of companies.
+**Big THANK** to all of DevFest’s sponsors, namely:
+- *General partner* - [Google](https://www.google.com.ua/intl/en/about/)
+- *Graphene sponsor* - [Toptal](http://toptal.com/top-3-percent?utm_source=GDGDevFestUa&utm_medium=logo&utm_campaign=sponsorships)
+- *Diamond sponsors* - [CoreValue](http://www.corevalue.com.ua/), [SoftServe](https://www.softserveinc.com/)
+- *Platinum sponsors* - [GlobalLogic](http://www.globallogic.com/), [N-iX](http://n-ix.com/), [DataArt](http://dataart.ua/), [TechMagic](http://www.techmagic.co/), [Perfectial](https://perfectial.com/), [Team Technologies](https://perfectial.com/), [levi nine](https://www.levi9.com/), [Symphony Solutions](http://www.symphony-solutions.eu/)
+- Gold partners - [Rucus](https://www.ruckuswireless.com/), [Cloud Native Computing Foundation](https://www.linuxfoundation.org/), [ Very Good Security](http://www.becomeverygood.com/)
+
+And, of course, a BIG THANK to all the volunteers their priceless help 💜
+
+We hope you found the conference informative and worthwhile. Your presence helped to make this event a great success, and your enthusiasm and positive spirit helped to make our time together both productive and fun.  We wish you all the best and hope that you continue to be engaged with the DevFest Ukraine.
+BTW, stay tuned for upcoming events by visiting [lviv.gdg.org.ua](http://lviv.gdg.org.ua/) and subscribing to our [news](https://facebook.com/GDGLviv), like us on [Facebook](https://www.facebook.com/devfest.ukraine/), check [Twitter](https://twitter.com/devfest_ukraine) or add to circles on [Google+](https://plus.google.com/b/102444623953913144164)!
+
+Post-Conference Follow-Up
+-------------------------
+As a reminder, all sessions' slides and HD video records 🎥 will be available ASAP, and once everything has been aggregated, we’ll notify you. 
+Please visit our Facebook [page](https://twitter.com/devfest_ukraine) to view latest updates.
+
+We have created [album](https://photos.app.goo.gl/sKx8x4DP9MLmbw2G3) on Google Photos, and will continue to upload photos there. [Check it now!](https://photos.app.goo.gl/sKx8x4DP9MLmbw2G3) There is also a [shared album](https://photos.app.goo.gl/orlnk5xOZsJT1SgU2), share your experience at #dfua with everyone! 
+See you at the next events!
+
+More 🔥 HOT 🔥 updates
+-------------------------
+Already missing these two crazy days? Secure your pass for 2018 
+It is official! [GDG DevFest Ukraine](https://devfest.gdg.org.ua/2018) 2018 is going to take place in Lviv, on **October 12th-13th**. More info is [here](https://devfest.gdg.org.ua/2018). 
+
+
+With love 💕,
+GDG DevFest Ukraine Team
