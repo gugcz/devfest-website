@@ -187,5 +187,13 @@
     "secondaryColor": "#01579B",
     "image": "/images/posts/toptal.jpg",
     "brief": "Toptal connects the world’s best organizations with the world’s top talent. We are a network of senior software engineers, designers..."
+  },{
+    "id": "summary",
+    "title": "#DFUA 2017 ended - SUMMARY",
+    "posted": "2017-10-14",
+    "primaryColor": "#3153B8",
+    "secondaryColor": "#18379E",
+    "image": "/images/backgrounds/home.jpg",
+    "brief": "The biggest Google tech conference in CEE, GDG DevFest Ukraine 2017, has wrapped up..."
   }
 ]
