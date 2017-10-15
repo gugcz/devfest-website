@@ -110,13 +110,13 @@
         </div>
       </paper-toolbar>
       <div class="content">
-        <!-- <paper-fab
+        <paper-fab
           class$="float-button header-action [[fabIcon]]"
           icon="[[fabIcon]]"
           session-id$="[[session.id]]"
           on-tap="toggleMyScheduleSession"
           disabled$="[[!online]]"
-        ></paper-fab> -->
+        ></paper-fab>
 
         <div class="metadata-wrapper">
           <div class="main-info">
@@ -141,7 +141,7 @@
               </div>
               <span class="meta">
                   <span>[[_concatArray(session.tags)]]</span>
-                  <span hidden$="[[!session.type]]"> / [[session.type]]</span>
+                  <span hidden$="[[!session.type]]">[[session.type]]</span>
               </span>
             </div>
           </div>
