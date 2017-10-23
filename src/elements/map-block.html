@@ -95,6 +95,14 @@
         display: none;
       }
 
+      .card-actions {
+        @apply(--layout-horizontal);
+      }
+
+      .spacer {
+        @apply(--layout-flex);
+      }
+
       @media (min-width: 601px) {
         .card {
           min-width: 400px;
@@ -159,6 +167,11 @@
                  rel="noopener noreferrer"
               >
                 <paper-icon-button icon="icons:directions"></paper-icon-button>
+              </a>
+              <div class="spacer"></div>
+              <a class="bottom-link"
+                href="/venue/">
+                <paper-button>How to get there</paper-button>
               </a>
             </div>
           </div>

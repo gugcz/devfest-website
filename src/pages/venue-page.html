@@ -1,0 +1,127 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="../elements/footer-block.html">
+<link rel="import" href="../behaviors/page-behavior.html">
+<link rel="import" href="../behaviors/cascaded-behavior.html">
+
+<dom-module id="venue-page">
+
+  <template>
+
+    <style include="shared-styles">
+      .container {
+        margin: 0 16px;
+        @apply(--layout-vertical);
+      }
+
+      .container .map {
+        width: 100%;
+        height: 300px;
+        margin: 16px 0;
+      }
+
+      @media (min-width: 720px) {
+
+        .container .map {
+          width: 600px;
+          margin: 16px auto;
+          height: 300px;
+        }
+      }
+
+      @media screen and (min-width: 900px) {
+        .container {
+          max-width: 800px;
+          margin: 0 auto;
+        }
+
+        .container .map {
+          width: 700px;
+          height: 350px;
+        }
+      }
+
+    </style>
+
+    <div class="container">
+      <p>
+        DevFest CZ is happening at&nbsp;<a href="https://www.google.com/maps/place/Czech+University+of+Life+Sciences+Prague/@50.1302934,14.371517,16z/data=!4m18!1m12!4m11!1m3!2m2!1d14.3748!2d50.1302934!1m6!1m2!1s0x470beaa5d02097fb:0xf29bd7cffb8fb4bc!2zxIxlc2vDoSB6ZW3Em2TEm2xza8OhIHVuaXZlcnppdGEgdiBQcmF6ZQ!2m2!1d14.373443!2d50.130001!3m4!1s0x470beaa5d02097fb:0xf29bd7cffb8fb4bc!8m2!3d50.130001!4d14.373443" target="blank">University of Life Sciences in Prague</a>. All important places are here:
+      </p>
+      <iframe class="map" id="map1" width="640" height="480"></iframe>
+      <p>
+        You can get there:
+      </p>
+      <h3 id="transport-by-car">By Car</h3>
+      <p>
+        There are plenty of&nbsp;<b>parking places</b>&nbsp;available for free. Come from the road following the signs “ČZU”. First gate should be open, turn
+        left and you will get to a large parking place. If it’s not open, say the secret code “DevFest” to the intercom.
+      </p>
+      <h3 id="transport-by-metro-bus">By Metro+Bus</h3>
+      <p>First, take&nbsp;<b>metro A</b>&nbsp;to the station&nbsp;<b>Dejvická</b>&nbsp;and then take a bus number&nbsp;<b>107, 147 or 160</b>. Get off at the station&nbsp;<b>Zemědělská univerzita</b>. Beware that the buses may be crowded. Dejvická station can be bit of a maze, take the exit from the station which says “Vítězné náměstí” and then go here:
+      </p>
+      <iframe class="map" id="map2" width="640" height="480"></iframe>
+      <br>
+      <h3 id="transport-by-train-bus">By Train+Bus</h3>
+      <p>The train station&nbsp;<b>Praha-Podbaba</b>&nbsp;is surprisingly close to the venue. Trains go there from Praha Masarykovo Nádraží, Praha-Libeň, Ústí nad Labem, Děčín and more. When you get there just take a bus&nbsp;<b>107</b>&nbsp;or&nbsp;<b>147</b>&nbsp;to the station&nbsp;<b>Zemědělská univerzita</b>&nbsp;(just 5 stops).
+      </p>
+      <h3 id="transport-from-airport">From the Airport</h3>
+      <p>The venue is quite close to the airport and we recommend taking a taxi (see the next section). It should be cheaper
+        than a taxi to the center. If you want to use the public transportation, take a bus&nbsp;<b>119</b>&nbsp;to&nbsp;<b>Nádraží Veleslavín</b>, then&nbsp;<b>metro A</b>&nbsp;to the station&nbsp;<b>Dejvická</b>&nbsp;and then follow the&nbsp;“By Metro+Bus”.
+      </p>
+      <h3 id="transport-by-taxi">By Taxi</h3>
+      <p>
+        Taxis in Prague don’t have the best reputation. But you will be totally fine if you use&nbsp;<a href="https://www.uber.com/" target="blank"><b>Uber</b></a>&nbsp;or&nbsp;<a href="https://www.liftago.com/" target="blank"><b>Liftago</b></a>. They both have apps and it’s easy and inexpensive. Liftago partnered with us and offering a promo code&nbsp;<b>DEVFESTCZ</b>&nbsp;which will give you a discount.
+      </p>
+      <h3 id="transport-by-boat">By Boat</h3>
+      <p>
+        You might be surprised that you can actually get to DevFest by a boat! It might not be the fastest way, but definitely worth
+        the experience! The boat is near the bus station&nbsp;<b>Podhoří</b>&nbsp;at the river. You can cross it on a boat, and the public transport tickets are valid there. On the other side of the river get on a bus at the stop&nbsp;<b>V Podbabě</b>&nbsp;and take a bus&nbsp;<b>107</b>&nbsp;or&nbsp;<b>147</b>&nbsp;to&nbsp;<b>Zemědělská univerzita</b>&nbsp;(just 4 stops).
+      </p>
+    </div>
+
+  </template>
+
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+
+        is: 'venue-page',
+
+        behaviors: [
+          HOVERBOARD.PageBehavior,
+          HOVERBOARD.CascadedBehavior
+        ],
+
+        properties: {
+          selected: {
+            type: Boolean,
+            notify: true,
+            reflectToAttribute: true,
+            observer: '_selectedChanged'
+          }
+        },
+
+        _selectedChanged: function (value) {
+          if (value) {
+            this.$.map1.src = 'https://www.google.com/maps/d/u/0/embed?mid=1ux7ZLFD6BwRPq1JHGLKLTa4tPfU';
+            this.$.map2.src = 'https://www.google.com/maps/d/u/0/embed?mid=13tPbPc6QfESoR24yqEKfSz1Nefo';
+          } else {
+            this.$.map1.src = '';
+            this.$.map2.src = '';
+          }
+        }
+
+      });
+
+    }());
+
+  </script>
+
+</dom-module>

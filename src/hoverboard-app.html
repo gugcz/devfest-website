@@ -198,6 +198,9 @@
           <cod-page name="cod"
                     app="{{app}}"></cod-page>
 
+          <venue-page name="venue"
+                    app="{{app}}"></venue-page>
+
         </neon-animated-pages>
       </div>
 
@@ -269,7 +272,7 @@
             HOVERBOARD.ServiceWorkerRegistration.register();
             this.importHref(this.resolveUrl('pages/schedule-page.html'), null, null, true);
             this.importHref(this.resolveUrl('pages/speakers-page.html'), null, null, true);
-            this.importHref(this.resolveUrl('pages/blog-page.html'), null, null, true);
+            this.importHref(this.resolveUrl('pages/venue-page.html'), null, null, true);
           }.bind(this));
         },
 
