@@ -54,6 +54,10 @@
     {
       "route": "schedule",
       "permalink": "/schedule/"
+    },
+    {
+      "route": "venue",
+      "permalink": "/venue/"
     }
   ],
   "social": [
@@ -153,6 +157,14 @@
       "title": "Code of Conduct",
       "headerSettings": {
         "backgroundColor": "#673ab7",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
+      }
+    },
+    "venue": {
+      "title": "Venue",
+      "headerSettings": {
+        "backgroundColor": "#4CAF50",
         "fontColor": "#fff",
         "tabBarColor": "#fff"
       }
