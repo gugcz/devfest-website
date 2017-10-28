@@ -1,16 +1,32 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 
 <dom-module id="app-data">
   <template>
     <iron-ajax auto url="[[postsSource]]" handle-as="json" on-response="_reversePosts"></iron-ajax>
 
+    <!--<firebase-document-->
+      <!--id="queryPreviousSpeakers"-->
+      <!--app-name="{$ firebase.name $}"-->
+      <!--path="/previousSpeakers"-->
+      <!--data="{{_firebasePreviousSpeakersRaw}}">-->
+    <!--</firebase-document>-->
+
+    <!--<app-indexeddb-mirror-->
+      <!--session="{$ firebase.indexedDbSession $}"-->
+      <!--key="previousSpeakers"-->
+      <!--data="{{_firebasePreviousSpeakersRaw}}"-->
+      <!--persisted-data="{{app.previousSpeakers}}">-->
+    <!--</app-indexeddb-mirror>-->
+
     <firebase-document
       id="querySpeakers"
       app-name="{$ firebase.name $}"
-      path="/speakers"
+      path="/generated/speakers"
+      order-by-child="order"
       data="{{_firebaseSpeakersRaw}}">
     </firebase-document>
 
@@ -18,13 +34,13 @@
       session="{$ firebase.indexedDbSession $}"
       key="speakers"
       data="{{_firebaseSpeakersRaw}}"
-      persisted-data="{{_speakersRaw}}">
+      persisted-data="{{speakers}}">
     </app-indexeddb-mirror>
 
     <firebase-document
       id="querySessions"
       app-name="{$ firebase.name $}"
-      path="/sessions"
+      path="/generated/sessions"
       data="{{_firebaseSessions}}">
     </firebase-document>
 
@@ -32,13 +48,13 @@
       session="{$ firebase.indexedDbSession $}"
       key="sessions"
       data="{{_firebaseSessions}}"
-      persisted-data="{{_sessionsRaw}}">
+      persisted-data="{{sessions}}">
     </app-indexeddb-mirror>
 
     <firebase-document
       id="querySchedule"
       app-name="{$ firebase.name $}"
-      path="/schedule"
+      path="/generated/schedule"
       data="{{_firebaseSchedule}}">
     </firebase-document>
 
@@ -46,7 +62,7 @@
       session="{$ firebase.indexedDbSession $}"
       key="schedule"
       data="{{_firebaseSchedule}}"
-      persisted-data="{{_scheduleRaw}}">
+      persisted-data="{{schedule}}">
     </app-indexeddb-mirror>
 
     <firebase-query
@@ -131,7 +147,7 @@
 
           postsSource: {
             type: String,
-            value: 'data/blog.json'
+            value: '/data/blog.json'
           },
 
           posts: {
@@ -140,64 +156,30 @@
           },
 
           speakers: {
-            type: Array,
+            type: Object,
             notify: true
           },
 
           sessions: {
-            type: Array,
+            type: Object,
             notify: true
           },
 
           schedule: {
-            type: Array,
+            type: Object,
             notify: true
-          },
-
-          _speakersRaw: {
-            type: Object
-          },
-
-          _sessionsRaw: {
-            type: Object
-          },
-
-          _scheduleRaw: {
-            type: Array
           }
         },
-
-        observers: [
-          '_generateSchedule(_speakersRaw, _sessionsRaw, _scheduleRaw)'
-        ],
 
         ready: function () {
           this.app = this.app || {};
         },
 
-      _generateSchedule: function () {
-        var myWorker = new Worker('./scripts/helper/schedule-webworker.js');
+        _reversePosts: function (response) {
+          this.posts = response.detail.response.reverse();
+        }
+      });
 
-        myWorker.postMessage({
-          speakers: this._speakersRaw,
-          sessions: this._sessionsRaw,
-          schedule: this._scheduleRaw
-        });
-
-        myWorker.addEventListener('message', function(e) {
-          this.set('schedule', e.data.schedule);
-          this.set('sessions', e.data.sessions);
-          this.set('speakers', e.data.speakers);
-          myWorker.terminate();
-        }.bind(this), false);
-
-      },
-
-      _reversePosts: function (response) {
-        this.posts = response.detail.response.reverse();
-      }
-    });
-
-  }());
+    }());
   </script>
 </dom-module>

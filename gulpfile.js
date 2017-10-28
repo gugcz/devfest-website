@@ -9,6 +9,7 @@ const mergeStream = require('merge-stream');
 const polymerBuild = require('polymer-build');
 const browserSync = require('browser-sync').create();
 const history = require('connect-history-api-fallback');
+const gutil = require('gulp-util');
 
 const logging = require('plylog');
 // logging.setVerbose();
@@ -67,7 +68,8 @@ function build() {
           .pipe(gulpif(/\.(png|gif|jpg|svg)$/, images.minify()))
           .pipe(sourcesStreamSplitter.split())
           // splitHtml doesn't split CSS https://github.com/Polymer/polymer-build/issues/32
-          .pipe(gulpif(/\.js$/, uglify()))
+          .pipe(gulpif(/\.js$/, uglify()))          
+          .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
           .pipe(gulpif(/\.(html|css)$/, cssSlam()))
           .pipe(gulpif(/\.html$/, html.minify()))
           .pipe(sourcesStreamSplitter.rejoin());

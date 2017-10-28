@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../styles/shared-styles.html">
+
+<dom-module id="subscribe-block">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .heading {
+        text-align: center;
+      }
+
+      @media (min-width: 601px) {
+        .heading {
+          margin-right: 32px;
+          margin-bottom: 0 !important;
+        }
+      }
+    </style>
+
+    <div class="container container-narrow" layout horizontal center-center wrap>
+      <h4 class="heading">{$ subscribeForUpdates $}</h4>
+      <a class="block-link" href="{$ mailchimp.page $}" target="_blank" rel="noopener noreferrer" on-tap="_trackClick">
+        <paper-button class="primary" raised>{$ subscribe $}</paper-button>
+      </a>
+    </div>
+
+  </template>
+
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+
+        is: 'subscribe-block',
+
+        _trackClick: function() {
+          HOVERBOARD.Analytics.trackEvent('attendees', 'subscribe', 'Subscribe mailchimp - block');
+        }
+      });
+
+    }());
+  </script>
+
+</dom-module>

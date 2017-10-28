@@ -19,7 +19,7 @@
         display: block;
         background: var(--default-primary-color);
         color: var(--text-primary-color);
-        --iron-icon-fill-color: var(--primary-text-color);
+        --iron-icon-fill-color: var(--text-primary-color);
         --paper-card-background-color: #fff;
         overflow: hidden;
       }
@@ -116,8 +116,8 @@
       <div class="videos-header">
         <h4 class="heading">{$ featuredVideosTitle $}</h4>
         <div class="controls">
-          <paper-icon-button icon="icons:chevron-left" on-tap="shiftContentLeft"></paper-icon-button>
-          <paper-icon-button icon="icons:chevron-right" on-tap="shiftContentRight"></paper-icon-button>
+          <paper-icon-button icon="chevron-left" on-tap="shiftContentLeft"></paper-icon-button>
+          <paper-icon-button icon="chevron-right" on-tap="shiftContentRight"></paper-icon-button>
         </div>
       </div>
       <div id="videos" class="videos">

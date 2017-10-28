@@ -177,7 +177,7 @@
                data="{{routeData}}"></app-route>
 
     <div class="container speakers-container">
-      <template is="dom-repeat" items="[[_toArray(speakers)]]" as="speaker" on-dom-change="updateCascadedNodes">
+      <template is="dom-repeat" items="[[_sortSpeakers(speakers)]]" as="speaker" on-dom-change="updateCascadedNodes">
         <div class="speaker" cascaded>
           <paper-material class="card">
             <a href$="/speakers/[[speaker.id]]/" class="header">
@@ -199,11 +199,11 @@
             </a>
             <a href$="/speakers/[[speaker.id]]/" class="card-content">
               <iron-image class="company-logo" src="{{speaker.companyLogo}}" sizing="contain"></iron-image>
-              <div class="tags">{$ skills $}:
+              <!-- <div class="tags">{$ skills $}:
                 <template is="dom-repeat" items="[[speaker.tags]]" as="tag">
                   <span class="tag" style$="{{_getCustomStyleValue(tag)}}">[[tag]]</span>
                 </template>
-              </div>
+              </div> -->
               <marked-element class="details-text" markdown="[[speaker.shortBio]]">
                 <div class="markdown-html"></div>
               </marked-element>
@@ -302,6 +302,12 @@
 
         _resetSpeakerIdParam: function () {
           this.set('routeData.speakerId', null);
+        },
+
+        _sortSpeakers: function(speakers) {
+          return this._toArray(speakers).sort(function (a, b) {
+            return a.order - b.order;
+          });
         }
       });
 
