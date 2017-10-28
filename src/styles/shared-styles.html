@@ -8,8 +8,6 @@
   <template>
     <style>
       :root {
-        /* Generate theme at https://www.materialpalette.com */
-
         /* Primary colors */
         --dark-primary-color:       #1976D2;
         --default-primary-color:    #2196F3;
@@ -25,15 +23,11 @@
 
         /* Text colors */
         --primary-text-color:       #212121;
-        --secondary-text-color:     #727272;
+        --secondary-text-color:     #757575;
         --disabled-text-color:      #BDBDBD;
 
         /* Other colors */
-        --divider-color:            #B6B6B6;
-
-        /* --- End of replace section --- */
-
-        --secondary-background-color: #FFFFFF;
+        --divider-color:            #BDBDBD;
 
         /* Footer */
         --footer-background-color:    #fcfcfc;
@@ -45,6 +39,7 @@
         --web: #43A6F5;
         --cloud: #5C6CC0;
         --community: #e91e63;
+        --design: #E91E63;
         --it: #9E9E9E;
         --angular-js: #e0343d;
         --angular-js2: #e0343d;
@@ -129,8 +124,8 @@
       }
 
       [center-justified] {
-        @apply(--layout-center-justified);
-      }
+         @apply(--layout-center-justified);
+       }
 
       [self-center] {
         @apply(--layout-self-center);
@@ -193,11 +188,110 @@
         font-weight: 300;
       }
 
+      .markdown-html .highlight-quote {
+        margin: 24px;
+        color: var(--accent-color);
+        font-size: 1.4em;
+        font-style: italic;
+        text-transform: uppercase;
+        line-height: 1.1;
+      }
+
+      .markdown-html .highlight-blockquote {
+        border-left-width: 10px;
+        background-color: rgba(128,128,128,0.05);
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        border-left: 5px solid rgba(128,128,128,0.075);
+        padding: 15px 20px;
+      }
+
       a,
       .anchor-like,
       .markdown-html a {
         color: var(--default-primary-color);
         text-decoration: none;
+      }
+
+      .markdown-html .videoWrapper {
+        margin: 24px auto;
+        padding-top: 25px;
+        padding-bottom: 56.25%; /* 16:9 */
+        position: relative;
+        height: 0;
+      }
+
+      .markdown-html .videoWrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .markdown-html .quote-container {
+        padding: 8px 16px;
+        display: flex;
+        flex-direction: row;
+      }
+
+      .markdown-html .quote-container.reverse {
+        flex-direction: row-reverse;
+      }
+
+      .markdown-html .quote-photo {
+        margin-right: 16px;
+        width: 64px;
+        height: 64px;
+        background-position: center;
+        background-size: cover;
+        border-radius: 50%;
+      }
+
+      .markdown-html .quote-container.reverse .quote-photo {
+        margin-right: 0;
+        margin-left: 16px;
+      }
+
+      .markdown-html .quote-text-wrapper {
+        flex: 1;
+      }
+
+      .markdown-html .quote-text {
+        font-style: italic;
+      }
+
+      .markdown-html .quote-author {
+        margin-top: 16px;
+        font-size: 0.85em;
+      }
+
+      .markdown-html .quote-container.reverse .quote-text,
+      .markdown-html .quote-container.reverse .quote-author {
+        text-align: right;
+      }
+
+      .markdown-html .speaker-text-wrapper {
+        flex: 1;
+      }
+
+      .markdown-html .speaker-text-wrapper h3 {
+        font-weight: 400;
+      }
+
+      .markdown-html .speaker-text-wrapper h4 {
+        opacity: 0.7;
+        font-size: smaller;
+        margin-bottom: 10px;
+      }
+
+      .markdown-html .speaker-photo {
+        margin-right: 16px;
+        width: 64px;
+        height: 64px;
+        background-position: center;
+        background-size: cover;
+        border-radius: 50%;
       }
 
       .placeholder-color {
@@ -242,6 +336,36 @@
       }
 
       @media (min-width: 769px) {
+        .markdown-html .highlight-quote {
+          font-size: 2em;
+        }
+
+        .markdown-html .quote-container {
+          padding: 16px 64px;
+          align-items: center;
+        }
+
+        .markdown-html .quote-photo {
+          margin-right: 32px;
+          width: 128px;
+          height: 128px;
+        }
+
+        .markdown-html .quote-container.reverse .quote-photo {
+          margin-right: 0;
+          margin-left: 32px;
+        }
+
+        .markdown-html .quote-text {
+          font-size: 1.15em;
+        }
+
+        .markdown-html .speaker-photo {
+          margin-right: 32px;
+          width: 200px;
+          height: 200px;
+        }
+
         .container {
           margin: 0 auto;
           padding: 60px 16px;
@@ -266,9 +390,9 @@
         }
       }
 
-      @media (min-width: 1400px) {
+      @media (min-width: 1100px) {
         .container {
-          max-width: 1280px;
+          max-width: 80%;
         }
       }
 

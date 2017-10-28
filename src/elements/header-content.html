@@ -21,15 +21,22 @@
         --paper-tab-content: {
           font-weight: 400 !important;
         };
+
         --paper-tab: {
           color: #FFFFFF;
           font-weight: 400;
           text-transform: uppercase;
           flex: none;
         };
+
         display: block;
         position: relative;
         overflow: hidden;
+      }
+
+      .fire-icon {
+        color: var(--firebase);
+        margin-right: 0;
       }
 
       app-toolbar {
@@ -80,13 +87,14 @@
       }
 
       .motto {
-        margin-top: 20px;
-        font-size: 22px;
+        margin-top: 24px;
+        max-width: 470px;
+        font-size: 24px;
         line-height: 1;
       }
 
       .action-buttons {
-        margin-top: 40px;
+        margin-top: 24px;
       }
 
       paper-button {
@@ -94,16 +102,33 @@
         color: #fff;
       }
 
-      .open-video {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        margin-top: 20px;
-        cursor: pointer;
-        font-size: 16px;
+      paper-button iron-icon {
+        margin-right: 8px;
       }
 
-      .open-video iron-icon {
-        margin-right: 5px;
+      .primary-white {
+        --iron-icon-fill-color: var(--default-primary-color);
+        background-color: #fff;
+        color: var(--default-primary-color);
+      }
+
+      .info-items {
+        margin-top: 8px;
+      }
+
+      .info-item:not(:last-of-type) {
+        margin-right: 8px;
+      }
+
+      .watch-video {
+        margin-top: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        letter-spacing: 0.2px;
+      }
+
+      .watch-video iron-icon {
+        margin-right: 4px;
       }
 
       @media (min-width: 601px) {
@@ -129,8 +154,19 @@
           <div class="container" center-justified>
             <div class="home-wrapper">
               <iron-image class="logo" src="/images/logo-light.svg" sizing="contain"
-                          alt="GDG DevFest Ukraine 2016"></iron-image>
-              <h3 class="dates">{$ dates $}</h3>
+                          alt="GDG DevFest Ukraine 2017"></iron-image>
+
+              <div class="info-items" layout horizontal wrap>
+                <div class="info-item">
+                  <iron-icon icon="calendar-event"></iron-icon>
+                  {$ dates $}
+                </div>
+                <div class="info-item">
+                  <iron-icon icon="place"></iron-icon>
+                  {$ locationAddressShort $}
+                </div>
+              </div>
+
               <h2 class="motto">{$ motto $}</h2>
               {% if pages.home.headerSettings.video %}
                 <div class="open-video" on-tap="_openVideo">
@@ -152,14 +188,20 @@
           </div>
         </animatable-content>
         {% for page, settings in pages %}
-          {% if page !== 'home' and page !== 'blog' %}
-            <animatable-content name="{$ page $}">
-              <div class="container">
-                <h3 class="page-title">{$ settings.title $}</h3>
-              </div>
-            </animatable-content>
-          {% endif %}
-        {% endfor %}
+        {% if page !== 'home' and page !== 'blog' %}
+        <animatable-content name="{$ page $}">
+          <div class="container">
+            <h3 class="page-title">{$ settings.title $}</h3>
+          </div>
+        </animatable-content>
+        {% endif %}
+        {% endfor %}        
+        <animatable-content name="quest">
+            <div class="container">
+              <h3 class="page-title">{$ quest $}</h3>
+            </div>
+        </animatable-content>
+       
       </neon-animated-pages>
     </app-toolbar>
 
@@ -185,19 +227,9 @@
           }
         },
 
-        _openVideo: function () {
-          HOVERBOARD.Elements.Template.openVideo('{$ pages.home.headerSettings.video.title $}',
-            '{$ pages.home.headerSettings.video.youtubeId $}', true);
-          HOVERBOARD.Analytics.trackEvent('video', 'watch', '{$ pages.home.headerSettings.video.title $}');
-        },
-
-        _scrollToTickets: function () {
-          HOVERBOARD.Analytics.trackEvent('ticket', 'buy_click', 'header');
-          Polymer.AppLayout.scroll({
-            top: HOVERBOARD.Elements.Tickets.getBoundingClientRect().top,
-            behavior: 'smooth',
-            target: HOVERBOARD.Elements.Scroller
-          });
+        _openTeaser: function () {
+          HOVERBOARD.Analytics.trackEvent('video', 'watch_teaser', 'header');
+          HOVERBOARD.Elements.Template.openVideo('{$ teaser.title $}', '{$ teaser.youTubeId $}', true);
         }
 
       });

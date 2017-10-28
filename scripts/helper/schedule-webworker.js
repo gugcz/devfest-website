@@ -6,15 +6,11 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-function findSpeakerById(id, speakerList) {
-  return speakerList.filter(function(s) {return s.id === +id;})[0];
-}
-
 function attachSessionAndSpeakersTogether(session, speakersRaw) {
   if (isDefined(session.speakers)) {
     for (var speakerIdx = 0; speakerIdx < session.speakers.length; speakerIdx++) {
       if (isDefined(session.speakers[speakerIdx]) && !isDefined(session.speakers[speakerIdx].id)) {
-        session.speakers[speakerIdx] = findSpeakerById(session.speakers[speakerIdx], speakersRaw);
+        session.speakers[speakerIdx] = speakersRaw[session.speakers[speakerIdx]];
         var tempSession = clone(session);
         delete tempSession.speakers;
         if (isDefined(session.speakers[speakerIdx])) {
@@ -74,7 +70,14 @@ self.addEventListener('message', function (e) {
             addTagTo(session.mainTag, schedule.tags);
 
             if (!isDefined(session.track)) {
-              session.track = day.tracks[sessionIndex];
+
+              // [temp fix] when we have 1 session and 1 workshop, to have correct location for workshop (not Stage 2)
+              if (sessionsLen == 2 && sessionIndex == sessionsLen - 1) {                
+                session.track = day.tracks[day.tracks.length - 1];
+              }
+              else {
+                session.track = day.tracks[sessionIndex];
+              }
             }
             session.startTime = timeslot.startTime;
             session.endTime = subSessionsLen > 1 ? getEndTime(day.date, timeslot.startTime, timeslot.endTime, subSessionsLen, subSessIdx + 1) : timeslot.endTime;

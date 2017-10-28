@@ -22,7 +22,7 @@
     "api": "AIzaSyAr1fxdqxLoYMj2RuljJEDTVmK37hn0QN8",
     "userSessionsPath": "/userSessions",
     "ratingsPath": "/ratings",
-    "indexedDbSession": "hoverboard"
+    "indexedDbSession": "dfua"
   },
   "mailchimp": {
     "url": "https://gug.us4.list-manage.com/subscribe/post?u=0da7a509ea18feb2638420b7f&id=79029be7e6",
@@ -112,6 +112,7 @@
       ]
     }
   },
+
   "pages": {
     "home": {
       "title": "Home",

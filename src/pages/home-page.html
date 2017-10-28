@@ -3,6 +3,8 @@
 <link rel="import" href="../behaviors/cascaded-behavior.html">
 <link rel="import" href="../behaviors/page-behavior.html">
 <link rel="import" href="../elements/statistics-block.html">
+<link rel="import" href="../elements/subscribe-block.html">
+<link rel="import" href="../elements/tickets-block.html">
 <link rel="import" href="../elements/featured-people.html">
 {% if videosSessionsUrl %}
   <link rel="import" href="../elements/featured-videos.html">
@@ -11,7 +13,7 @@
   <link rel="import" href="../elements/call-to-action.html">
 {% endif %}
 <link rel="import" href="../elements/about-block.html">
-<link rel="import" href="../elements/tickets-block.html">
+<link rel="import" href="../elements/quotes-block.html">
 <link rel="import" href="../elements/latest-posts.html">
 <link rel="import" href="../elements/footer-block.html">
 {% if gallery %}
@@ -44,10 +46,8 @@
     <about-block app="{{app}}" cascaded></about-block>
     <!-- <latest-posts app="{{app}}" posts="{{posts}}" cascaded></latest-posts> -->
     <social-feed app="{{app}}" cascaded></social-feed>
-    <map-block app="{{app}}" selected="{{selected}}" cascaded></map-block>
     <logos-block app="{{app}}" cascaded></logos-block>
     <footer-block app="{{app}}" cascaded></footer-block>
-
   </template>
 
   <script>

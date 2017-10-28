@@ -25,7 +25,7 @@
   "becomePartner": "Become a partner",
   "featuredVideosTitle": "Featured DevFest Pilsen 2016 Sessions",
   "featuredVideosViewAll": "View all videos",
-  "featuredPeopleTitle": "Rockstar Speakers",
+  "featuredPeopleTitle": "Meet #dfua Rockstars",
   "featuredPeopleViewAll": "View all speakers",
   "action": "See how it was",
   "locationTitle": "Czech University of Life Sciences Prague",
@@ -58,6 +58,15 @@
   "removedFromSchedule": "Removed from My Schedule",
   "addedToSchedule": "Added to My Schedule",
   "rateSession": "Rate session",
+  "shareYourStory": "Share your story about #dfua",
+  "addPhotos": "Add your photos to",
+  "sharedAlbum": "Shared album",
+  "orView": "the photo highlights from #DFUA16",
+  "view": "View",
+  "highlights": "Highlights",
+  "subscribeForUpdates": "Get notified about the conference updates",
+  "quest": "GDG Quest",
+
   "footerBlocks": [
     {
       "title": "More",
@@ -127,7 +136,7 @@
   "teamPageText": "DevFest CZ is organized by GUG.cz – an umbrella organization for GDGs in the Czech Republic.",
   "statistics": [
     {
-      "counter": 600,
+      "counter": 900,
       "caption": "Attendees"
     },
     {
@@ -139,12 +148,35 @@
       "caption": "Talks & Workshops"
     },
     {
-      "counter": 3,
-      "caption": "Tracks"
+      "counter": 5,
+      "caption": "Workshops"
     }
   ],
   "callToAction": {
     "videoTitle": "GDG DevFest 2015",
     "videoId": "DfMnJAzOFng"
+  },
+  "countdown": {
+    "label": "Call for papers will close in",
+    "button": {
+      "link": "/blog/posts/c4p",
+      "label": "Submit proposal"
+    },
+    "deadline": "2017-07-01T00:00:00+03:00"
+  },
+  "teaser": {
+    "title": "GDG DevFest Ukraine 2017 - Teaser",
+    "youTubeId": "213KE48Gu6U"
+  },
+  "workshopWarning": {
+    "headerText": "Capacity for this workshop is limited.",
+    "infoText": "Session seats will be distributed on first-come, first-served basis.",
+    "ctaButtonText": "Got it"
+  },
+  "mySchedulePopup": {
+    "headerText": "⚡ Introducing MY SCHEDULE ⚡",
+    "infoText": "Sign in and add your favorite sessions to your personal schedule to not miss a thing!",
+    "infoTextAuthenticated": "Add your favorite sessions to your personal schedule to not miss a thing!",
+    "ctaButtonText": "Got it"
   }
 }
