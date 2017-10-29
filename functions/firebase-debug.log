@@ -1,0 +1,12 @@
+[debug] [2017-10-28T10:30:03.702Z] ----------------------------------------------------------------------
+[debug] [2017-10-28T10:30:03.704Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy --only functions
+[debug] [2017-10-28T10:30:03.704Z] CLI Version:   3.12.0
+[debug] [2017-10-28T10:30:03.704Z] Platform:      linux
+[debug] [2017-10-28T10:30:03.704Z] Node Version:  v8.6.0
+[debug] [2017-10-28T10:30:03.704Z] Time:          Sat Oct 28 2017 12:30:03 GMT+0200 (CEST)
+[debug] [2017-10-28T10:30:03.704Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2017-10-28T10:30:03.713Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2017-10-28T10:30:03.713Z] > authorizing via signed-in user
+[debug] [2017-10-28T10:30:03.715Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/devfest-2017-d44d9  
+ Sat Oct 28 2017 12:30:03 GMT+0200 (CEST)

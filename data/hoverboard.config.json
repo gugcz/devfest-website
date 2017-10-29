@@ -1,5 +1,5 @@
 {
-  "url": "https://devfest-2017-d44d9.firebaseapp.com/",
+  "url": "https://2017.devfest.cz/",
   "startDate": "2017-11-04T09:00:00+01:00",
   "endDate": "2017-11-05T19:00:00+01:00",
   "analytics": {
@@ -22,7 +22,7 @@
     "api": "AIzaSyAr1fxdqxLoYMj2RuljJEDTVmK37hn0QN8",
     "userSessionsPath": "/userSessions",
     "ratingsPath": "/ratings",
-    "indexedDbSession": "dfua"
+    "indexedDbSession": "dfprague"
   },
   "mailchimp": {
     "url": "https://gug.us4.list-manage.com/subscribe/post?u=0da7a509ea18feb2638420b7f&id=79029be7e6",

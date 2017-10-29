@@ -58,6 +58,22 @@ HOVERBOARD.ServiceWorkerRegistration = (function () {
     }
   };
 
+  var unregister = function () {
+    if ('serviceWorker' in navigator) {
+      console.log('unregistering service workers');
+      navigator.serviceWorker.getRegistrations()
+        .then(function (registrations) {
+          console.log('found ', registrations, ' service workers');
+          registrations.forEach(function (worker) {
+            worker.unregister()
+              .then(function () {
+                console.log('service worker unregistered')
+              })
+          });
+        });
+    }
+  };
+
   // Check to see if the service worker controlling the page at initial load
   // has become redundant, since this implies there's a new service worker with fresh content.
   if (navigator.serviceWorker && navigator.serviceWorker.controller) {
@@ -83,6 +99,7 @@ HOVERBOARD.ServiceWorkerRegistration = (function () {
 
   return {
     register: register,
+    unregister: unregister,
     URL: URL,
     SCOPE: SCOPE
   };
