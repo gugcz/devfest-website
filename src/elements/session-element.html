@@ -163,6 +163,10 @@
       .speaker-title {
         font-size: 13px;
       }
+
+      .session paper-card {
+        background-color: #fafafa;
+      }
     </style>
 
     <a
@@ -198,29 +202,29 @@
               </div>
 
               <div hidden$="[[!session.type]]" layout horizontal center>
-                <iron-icon icon="info"></iron-icon>
+                <iron-icon class="tag-icon" icon="info"></iron-icon>
                 <span>[[session.type]]</span>
               </div>
 
               <div hidden$="[[!session.videoId]]" layout horizontal center>
-                <iron-icon icon="video"></iron-icon>
+                <iron-icon class="tag-icon" icon="video"></iron-icon>
                 <span>Recording available</span>
               </div>
 
               <div hidden$="[[!session.presentation]]" layout horizontal center>
-                <iron-icon icon="presentation"></iron-icon>
+                <iron-icon class="tag-icon" icon="presentation"></iron-icon>
                 <span>Presentation available</span>
               </div>
             </div>
 
-            <!-- <iron-icon
+             <iron-icon
               class$="action-icon [[myScheduleIcon]]"
               icon$="[[myScheduleIcon]]"
               on-tap="toggleMyScheduleSession"
               session-id$="[[session.id]]"
               session-track$="[[session.track.title]]"
               disabled$="[[!online]]"
-            ></iron-icon> -->
+            ></iron-icon>
           </div>
 
           <div

@@ -39,7 +39,7 @@
 
       schedule-day {
         margin-bottom: 64px;
-      }      
+      }
 
       paper-progress {
         width: 100%;
@@ -76,7 +76,7 @@
         tags="[[schedule.tags]]"
         selected-day="[[app.selectedDay]]"
         filters="{{filters}}"
-      ></schedule-subnav>      
+      ></schedule-subnav>
 
       <paper-progress id="progressBar" indeterminate></paper-progress>
 
@@ -90,13 +90,13 @@
             filters="[[filters]]"
           ></schedule-day>
         </template>
-        <!-- <template is="dom-if" if="{{app.user}}">
+         <template is="dom-if" if="{{app.user}}">
           <my-schedule
             name="myschedule"
             app="{{app}}"
             days="[[schedule.days]]"
           ></my-schedule>
-        </template> -->
+        </template>
       </neon-animated-pages>
     </div>
 
@@ -145,7 +145,7 @@
 
           filters: {
             type: Array
-          },    
+          },
 
           scheduleRendered: {
             type: Boolean,

@@ -45,20 +45,25 @@
           if (!this.app.user.sessions) {
             this.app.user.sessions = {};
           }
-          this.set('app.user.sessions.' + id, true);    
-          
+
+          /*firebase.database(firebase.app('{$ firebase.name $}'))
+            .ref('{$ firebase.userSessionsPath $}' + this.app.user.uid + '/' + id)
+            .set(true);*/
+
+          this.set('app.user.sessions.' + id, true);
+
           // [temp fix] to trigger app.sessions observer and re-filter my-schedule
           // @ozasadnyy, I hope you won't have heart attack
           // DevFest is coming :)
-          this.set('app.user.sessions.000', null);          
-          HOVERBOARD.Elements.Template.$.toast.showMessage('{$ addedToSchedule $}');     
+          this.set('app.user.sessions.000', null);
+          HOVERBOARD.Elements.Template.$.toast.showMessage('{$ addedToSchedule $}');
 
           if (isWorkshop) {
             this.close && this.close();
             HOVERBOARD.Elements.Template.$.infoDialog.headerText = '{$ workshopWarning.headerText $}';
             HOVERBOARD.Elements.Template.$.infoDialog.infoText = '{$ workshopWarning.infoText $}';
             HOVERBOARD.Elements.Template.$.infoDialog.ctaButtonText = '{$ workshopWarning.ctaButtonText $}';
-            
+
             HOVERBOARD.Elements.Template.$.infoDialog.open();
           }
         }

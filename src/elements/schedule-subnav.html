@@ -247,7 +247,7 @@
       <div class="filters" hidden$="[[!_filtersLabel]]">
         {$ filteredBy $} [[_filtersLabel]]
       </div>
-    </div>    
+    </div>
 
   </template>
 
@@ -336,7 +336,7 @@
           });
         },
 
-        _userChanged: function(user, userSessions) {      
+        _userChanged: function(user, userSessions) {
 
           // user's sessions object is filled after 2nd call of observer
           this.sessionsChangedCount ++;
@@ -349,15 +349,15 @@
 
           if (!Object.keys(userSessions).length) {
             this._showMySchedulePopup('{$ mySchedulePopup.infoTextAuthenticated $}');
-            this.showPopupForAuthenticatedUser = false;  
+            this.showPopupForAuthenticatedUser = false;
           }
           else {
             window.localStorage.setItem('mySchedulePopupShown', 'true');
           }
         },
 
-        _selectedDayChanged: function(user, selectedDay) {   
-           if (!this._shouldOpenMySchedulePopup(selectedDay)) { 
+        _selectedDayChanged: function(user, selectedDay) {
+           if (!this._shouldOpenMySchedulePopup(selectedDay)) {
               window.localStorage.setItem('mySchedulePopupShown', 'true');
               return;
            }
@@ -366,7 +366,7 @@
              this.showPopupForAuthenticatedUser = true;
            }
            else {
-            this._showMySchedulePopup();            
+            this._showMySchedulePopup();
             window.localStorage.setItem('mySchedulePopupShown', 'true');
            }
         },
@@ -376,11 +376,11 @@
         },
 
         _showMySchedulePopup: function(infoText) {
-            HOVERBOARD.Elements.Template.$.infoDialog.headerText = '{$ mySchedulePopup.headerText $}';
+            /*HOVERBOARD.Elements.Template.$.infoDialog.headerText = '{$ mySchedulePopup.headerText $}';
             HOVERBOARD.Elements.Template.$.infoDialog.ctaButtonText = '{$ mySchedulePopup.ctaButtonText $}';
             HOVERBOARD.Elements.Template.$.infoDialog.infoText = infoText || '{$ mySchedulePopup.infoText $}';
-            HOVERBOARD.Elements.Template.$.infoDialog.displayImage = true;   
-            HOVERBOARD.Elements.Template.$.infoDialog.open();
+            HOVERBOARD.Elements.Template.$.infoDialog.displayImage = true;
+            HOVERBOARD.Elements.Template.$.infoDialog.open();*/
         },
 
         _isChecked: function (tag) {
