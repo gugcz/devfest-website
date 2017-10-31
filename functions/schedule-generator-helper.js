@@ -125,4 +125,29 @@ function generateSchedule(scheduleDB, sessionsDB, speakersDB) {
   }
 }
 
+function generateScheduleOnChange(schedulePromise, sessionsPromise, speakersPromise) {
+  return Promise.all([schedulePromise, sessionsPromise, speakersPromise])
+      .then(([scheduleSnapshot, sessionsSnapshot, speakersSnapshot]) => {
+
+          const scheduleDB = scheduleSnapshot.val();
+          const sessionsDB = sessionsSnapshot.val();
+          const speakersDB = speakersSnapshot.val();
+
+          const {
+              schedule,
+              sessions,
+              speakers
+          } = generateSchedule(scheduleDB, sessionsDB, speakersDB);
+
+          admin.database().ref('/generated/schedule').set(schedule);
+          admin.database().ref('/generated/sessions').set(sessions);
+          admin.database().ref('/generated/speakers').set(speakers);
+
+      })
+      .catch(e => console.log('Error at schedule genaration', e));
+}
+
+
+
 exports.generateSchedule = generateSchedule;
+exports.generateScheduleOnChange = generateScheduleOnChange;
