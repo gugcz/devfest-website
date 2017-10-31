@@ -1,13 +1,15 @@
 'use strict';
 
+const config = functions.config().firebase;
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const users = require('./users');
 
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp(config);
 
-exports.saveUserData = require('./users');
+exports.saveUserData = users.saveUserData;
 
-const scheduleGenerator = require('./schedule-generator-helper.js').generateSchedule;
+const generateScheduleOnChange = require('./schedule-generator-helper.js').generateScheduleOnChange;
 
 exports.scheduleWrite = functions.database
     .ref("/schedule").onWrite(event => {
@@ -38,24 +40,14 @@ exports.speakersWrite = functions.database
         return generateScheduleOnChange(schedulePromise, sessionsPromise, speakersPromise);
     });
 
-function generateScheduleOnChange(schedulePromise, sessionsPromise, speakersPromise) {
-    return Promise.all([schedulePromise, sessionsPromise, speakersPromise])
-        .then(([scheduleSnapshot, sessionsSnapshot, speakersSnapshot]) => {
 
-            const scheduleDB = scheduleSnapshot.val();
-            const sessionsDB = sessionsSnapshot.val();
-            const speakersDB = speakersSnapshot.val();
+// Update users scores in games
+const userIdDatabase = functions.database.ref('/cdhProgress/{userId}/');
+exports.computeScore = userIdDatabase.onUpdate(users.invalidateUser);
 
-            const {
-                schedule,
-                sessions,
-                speakers
-            } = scheduleGenerator(scheduleDB, sessionsDB, speakersDB);
+const userIdChange = functions.database.ref('/users/{userId}/');
+exports.updateScoreByUser = userIdChange.onUpdate(users.invalidateUser);
 
-            admin.database().ref('/generated/schedule').set(schedule);
-            admin.database().ref('/generated/sessions').set(sessions);
-            admin.database().ref('/generated/speakers').set(speakers);
-
-        })
-        .catch(e => console.log('Error at schedule genaration', e));
-}
+// Update photo after user create / change
+const userChangeOrUpdate = functions.database.ref('/users/{userId}/');
+exports.updateUserPhoto = userChangeOrUpdate.onUpdate(users.invalidateUserPhoto);
