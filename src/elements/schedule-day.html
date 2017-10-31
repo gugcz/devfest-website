@@ -64,12 +64,28 @@
         padding: 0 8px;
       }
 
-
       .sessions-wrapper[vertical] .session:not(:first-of-type) session-element,
       session-element:not(:first-of-type) {
         margin-top: 16px;
       }
+
+      .day-infonote {
+        font-size: 1.1em;
+        margin: 48px 0;
+        text-align: center;
+      }
+
+      @media screen and (min-width: 760px) {
+        .day-infonote {
+          margin-left: 140px;
+        }
+      }
     </style>
+
+    <template is="dom-if" if="[[_isWorkshopDay(day)]]">
+      <p class="day-infonote">Capacity of workshops is limited, register <a href="https://ti.to/gug-cz/devfest-cz-2017-workshops">here</a> to
+        guarantee your spot. Bring your DevFest badge to the workshop.</p>
+    </template>
 
     <template is="dom-repeat" items="[[day.timeslots]]" as="timeslot">
       <div class="timeslot" layout vertical$="{{app.isPhoneSize}}" horizontal$="{{!app.isPhoneSize}}">
@@ -118,8 +134,8 @@
       Polymer({
 
         is: 'schedule-day',
-        
-        attached: function() {
+
+        attached: function () {
           this.set('rendered', true);
         },
 
@@ -154,8 +170,8 @@
           }
         },
 
-        _getConnectedCells: function(sessions) {
-            return sessions.length == 2 ? 'united': '';
+        _getConnectedCells: function (sessions) {
+          return sessions.length == 2 ? 'united' : '';
         },
 
         _splitText: function (text, divider, index) {
@@ -168,6 +184,10 @@
           return function (session) {
             return filters.indexOf(session.mainTag) > -1;
           };
+        },
+
+        _isWorkshopDay: function (day) {
+          return day.date === '2017-11-05'
         }
       });
 
