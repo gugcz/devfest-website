@@ -1,11 +1,10 @@
 'use strict';
 
-const config = functions.config().firebase;
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const users = require('./users');
 
-admin.initializeApp(config);
+admin.initializeApp(functions.config().firebase);
 
 exports.saveUserData = users.saveUserData;
 
