@@ -14,7 +14,7 @@ exports.saveUserData = functions.auth.user().onCreate(({ data }) => {
     photoURL: data.photoURL || data.providerData[0].photoURL || ''
   };
 
-  return admin.database().ref(`/users/${uid}`).set(userData);
+  return admin.database().ref(`/webUsers/${uid}`).set(userData);
 });
 
 exports.invalidateUser = (event) => {

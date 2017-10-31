@@ -29,6 +29,10 @@
     	".read": true,
     	".write": false
     },
+    "generated": {
+      ".read": true,
+      ".write": false
+    },
     "userSessions": {
       ".read": false,
       ".write": false,

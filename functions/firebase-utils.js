@@ -1,6 +1,5 @@
 'use strict';
 
-const firebase = require('firebase');
 const admin = require('firebase-admin');
 const gcs = require('@google-cloud/storage')();
 
