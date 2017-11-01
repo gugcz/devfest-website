@@ -1,6 +1,5 @@
 {
   "rules": {
-    ".read": true,
     "ratings": {
       ".read": false,
       ".write": false,
@@ -48,6 +47,10 @@
     "cdhPrivateKey":{
     	".read": true,
     	".write": false
+    },
+    "cdhPrivateKeyParts":{
+      ".read": true,
+      ".write": false
     },
     "maplayer":{
     	".read": true,
