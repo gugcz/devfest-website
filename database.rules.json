@@ -29,6 +29,10 @@
     	".read": true,
     	".write": false
     },
+    "team": {
+      ".read": true,
+      ".write": false
+    },
     "generated": {
       ".read": true,
       ".write": false
@@ -62,6 +66,12 @@
     "users":{
     	"$uid": {
       	".read": true,
+      	".write": "auth.uid === $uid"
+     	}
+    },
+    "webUsers":{
+    	"$uid": {
+      	".read": "auth.uid === $uid",
       	".write": "auth.uid === $uid"
      	}
     },

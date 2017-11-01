@@ -1,3 +1,5 @@
+const admin = require('firebase-admin');
+
 function isDefined(v) {
   return v !== undefined;
 }
