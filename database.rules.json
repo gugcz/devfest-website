@@ -13,20 +13,20 @@
       ".write": "root.child('users').child(auth.uid).child('rules').child('speakers').val() === true"
     },
     "partners":{
-    	".read": true,
-    	".write": false
+      ".read": true,
+      ".write": false
     },
     "schedule":{
-    	".read": true,
-    	".write": false
+      ".read": true,
+      ".write": false
     },
     "sessions":{
-    	".read": true,
-    	".write": false
+      ".read": true,
+      ".write": false
     },
     "resources":{
-    	".read": true,
-    	".write": false
+      ".read": true,
+      ".write": false
     },
     "team": {
       ".read": true,
@@ -45,32 +45,33 @@
       }
     },
     "cdhPrivateKey":{
-    	".read": true,
-    	".write": false
+      ".read": true,
+      ".write": false
     },
     "cdhPrivateKeyParts":{
       ".read": true,
       ".write": false
     },
     "maplayer":{
-    	".read": true,
-    	".write": false
+      ".read": true,
+      ".write": false
     },
     "tags":{
-    	".read": true,
-    	".write": false
+      ".read": true,
+      ".write": false
     },
     "userFeedbacks":{
-    	"$uid": {
-      	".read": "auth.uid === $uid",
-      	".write": "auth.uid === $uid"
-     	}
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid"
+      }
     },
     "users":{
-    	"$uid": {
-      	".read": true,
-      	".write": "auth.uid === $uid"
-     	}
+      ".read": true,
+      "$uid": {
+        ".read": true,
+        ".write": "auth.uid === $uid"
+      }
     },
     "webUsers":{
     	"$uid": {
@@ -79,10 +80,11 @@
      	}
     },
     "cdhProgress":{
-    	"$uid": {
-      	".read": "auth.uid === $uid",
-      	".write": "auth.uid === $uid"
-     	}
+      ".read": true,
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid"
+      }
     }
   }
 }
