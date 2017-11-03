@@ -50,3 +50,4 @@ exports.updateScoreByUser = userIdChange.onUpdate(users.invalidateUser);
 // Update photo after user create / change
 const userChangeOrUpdate = functions.database.ref('/users/{userId}/');
 exports.updateUserPhoto = userChangeOrUpdate.onUpdate(users.invalidateUserPhoto);
+exports.updateUserPhoto = userChangeOrUpdate.onCreate(users.invalidateUserPhoto);
