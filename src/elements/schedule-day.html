@@ -84,7 +84,10 @@
 
     <template is="dom-if" if="[[_isWorkshopDay(day)]]">
       <p class="day-infonote">Capacity of workshops is limited, register <a href="https://ti.to/gug-cz/devfest-cz-2017-workshops">here</a> to
-        guarantee your spot. Bring your DevFest badge to the workshop.</p>
+        guarantee your spot. Bring your DevFest badge to the workshop.
+        <br><br>
+        There will also be a physical waiting list on Sunday
+      </p>
     </template>
 
     <template is="dom-repeat" items="[[day.timeslots]]" as="timeslot">
