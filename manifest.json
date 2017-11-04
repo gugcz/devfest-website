@@ -43,5 +43,16 @@
   "background_color": "{$ webapp.backgroundColor $}",
   "theme_color": "{$ webapp.themeColor $}",
   "content_security_policy": "script-src 'self' https://apis.google.com https://www.googleapis.com https://securetoken.googleapis.com; object-src 'self'",
-  "permissions": ["https://*/*","activeTab"]
+  "permissions": ["https://*/*","activeTab"],
+  "prefer_related_applications": true,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "cz.eman.android.devfest"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://itunes.apple.com/th/app/devfest-cz-2017/id1297036462"
+    }
+  ]
 }
