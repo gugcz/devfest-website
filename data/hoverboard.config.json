@@ -106,10 +106,17 @@
     "albumUrl": "https://www.facebook.com/pg/DevFestCZ/photos/?tab=album&album_id=716208851907505",
     "photos": [
       {
-        "big": "/images/backgrounds/2017_1.jpg",
+        "big": "/images/backgrounds/2017_3.jpg",
         "small": [
           "/images/backgrounds/2017_2.jpg",
-          "/images/backgrounds/2017_3.jpg"
+          "/images/backgrounds/2017_1.jpg"
+        ]
+      },
+      {
+        "big": "/images/backgrounds/2017_4.jpg",
+        "small": [
+          "/images/backgrounds/2017_5.jpg",
+          "/images/backgrounds/2017_6.jpg"
         ]
       }
     ]
