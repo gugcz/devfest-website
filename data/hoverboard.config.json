@@ -103,14 +103,16 @@
     ]
   },
   "gallery": {
-    "albumUrl": "https://www.facebook.com/events/1653980754912287/1686317148345314/",
-    "photos": {
-      "big": "/images/backgrounds/2016_1.jpg",
-      "small": [
-        "/images/backgrounds/2016_2.jpg",
-        "/images/backgrounds/2016_3.jpg"
-      ]
-    }
+    "albumUrl": "https://www.facebook.com/pg/DevFestCZ/photos/?tab=album&album_id=716208851907505",
+    "photos": [
+      {
+        "big": "/images/backgrounds/2017_1.jpg",
+        "small": [
+          "/images/backgrounds/2017_2.jpg",
+          "/images/backgrounds/2017_3.jpg"
+        ]
+      }
+    ]
   },
 
   "pages": {
