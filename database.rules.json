@@ -85,6 +85,10 @@
         ".read": "auth.uid === $uid",
         ".write": "auth.uid === $uid"
       }
+    },
+    "videos": {
+      ".read": true,
+      ".write": false
     }
   }
 }
