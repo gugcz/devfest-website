@@ -23,7 +23,7 @@
   "clickToViewPhotos": "Click here to view more photos",
   "partners": "Partners",
   "becomePartner": "Become a partner",
-  "featuredVideosTitle": "Featured DevFest Pilsen 2016 Sessions",
+  "featuredVideosTitle": "Featured Recordings",
   "featuredVideosViewAll": "View all videos",
   "featuredPeopleTitle": "Rockstar Speakers",
   "featuredPeopleViewAll": "View all speakers",
@@ -133,7 +133,7 @@
   "teamPageText": "DevFest CZ is organized by GUG.cz – an umbrella organization for GDGs in the Czech Republic.",
   "statistics": [
     {
-      "counter": 600,
+      "counter": 500,
       "caption": "Attendees"
     },
     {
