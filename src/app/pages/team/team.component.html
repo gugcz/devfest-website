@@ -1,0 +1,8 @@
+<section>
+  <div class="background-gradient">
+    <div class="container" *ngIf="organizers">
+      <app-organizer-card class="organizer-card" *ngFor="let organizer of organizers"
+                          [id]="organizer.id"></app-organizer-card>
+    </div>
+  </div>
+</section>

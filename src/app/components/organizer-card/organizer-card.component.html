@@ -1,0 +1,25 @@
+<mat-card class="organizer-card" *ngIf="organizer" [@slideInRight]>
+  <mat-card-header>
+    <mat-card-title class="title">
+      {{organizer.name}}
+    </mat-card-title>
+    <mat-card-subtitle class="subtitle">
+      {{organizer.position}}
+    </mat-card-subtitle>
+  </mat-card-header>
+  <img mat-card-md-image [src]="organizer.photo" class="image">
+  <mat-card-actions>
+    <a mat-icon-button *ngIf="organizer.facebook" [href]="'https://www.facebook.com/' + organizer.facebook"
+       target="_blank" class="link">
+      <mat-icon svgIcon="facebook"></mat-icon>
+    </a>
+    <a mat-icon-button *ngIf="organizer.instagram" [href]="'https://www.instagram.com/' + organizer.instagram"
+       target="_blank" class="link">
+      <mat-icon svgIcon="instagram"></mat-icon>
+    </a>
+    <a mat-icon-button *ngIf="organizer.twitter" [href]="'https://www.twitter.com/' + organizer.twitter"
+       target="_blank" class="link">
+      <mat-icon svgIcon="twitter"></mat-icon>
+    </a>
+  </mat-card-actions>
+</mat-card>

@@ -5,12 +5,12 @@ import {Observable} from 'rxjs/Observable';
 @Injectable()
 export class OrgGuardService implements CanActivate {
 
-    constructor() {
-    }
+  constructor() {
+  }
 
-    canActivate(next: ActivatedRouteSnapshot,
-                state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        return true;
-    }
+  canActivate(next: ActivatedRouteSnapshot,
+              state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    return true;
+  }
 
 }

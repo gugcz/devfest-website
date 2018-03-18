@@ -205,7 +205,7 @@ section {
   }
 }
 
-@media only screen and (min-width: 1024px) and (orientation: landscape) {
+@media only screen and (min-width: 1024px) and (orientation: landscape){
   .container {
     padding: 48px 64px 0;
     min-height: calc(100vh - 48px);
@@ -263,9 +263,9 @@ section {
 
 @media screen and (min-width: 1920px) {
   .container {
-    .social-networks-container {
-      margin: 96px 0;
-    }
+      .social-networks-container {
+        margin: 96px 0;
+      }
   }
 }
 

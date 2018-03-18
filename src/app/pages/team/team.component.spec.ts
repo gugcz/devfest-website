@@ -1,20 +1,20 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {EmailNotifierComponent} from './email-notifier.component';
+import {TeamComponent} from './team.component';
 
-describe('EmailNotifierComponent', () => {
-  let component: EmailNotifierComponent;
-  let fixture: ComponentFixture<EmailNotifierComponent>;
+describe('TeamComponent', () => {
+  let component: TeamComponent;
+  let fixture: ComponentFixture<TeamComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [EmailNotifierComponent]
+      declarations: [TeamComponent]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EmailNotifierComponent);
+    fixture = TestBed.createComponent(TeamComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
