@@ -10,6 +10,7 @@ $frontend-app-theme: mat-dark-theme($anms-black-primary, $anms-black-accent, $an
 
 @include angular-material-theme($frontend-app-theme);
 
+
 @font-face {
   font-family: ProductSans;
   src: url(../assets/fonts/ProductSansRegular.ttf);
@@ -24,7 +25,6 @@ body, html {
   height: 100%;
   margin: 0;
 }
-
 .app-loading {
   position: relative;
   display: flex;

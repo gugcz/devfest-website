@@ -1,0 +1,26 @@
+section {
+  flex: 1;
+  min-height: 100vh;
+  background: url("../../../assets/team-photo.jpg") no-repeat center;
+  background-size: cover;
+  color: #ffffff;
+
+  .background-gradient {
+    display: flex;
+    flex: 1;
+    background: linear-gradient(180deg, rgba(21, 25, 38, 0.2) 0%, rgb(24, 32, 17) 95%), radial-gradient(farthest-side at 0 0, rgba(4, 102, 255, 0.3), rgba(255, 26, 198, 0)), radial-gradient(farthest-side at 100% 0, rgba(60, 221, 221, .4), rgba(60, 221, 221, 0)), radial-gradient(farthest-side at 50% 0, rgba(255, 26, 198, .1), rgba(255, 26, 198, 0));
+    padding: 0 2rem;
+
+    .container {
+      display: grid;
+      -webkit-column-count: 1;
+      -moz-column-count: 1;
+      column-count: 1;
+      grid-gap: 2rem;
+      width: 100%;
+      z-index: 2;
+    }
+
+  }
+}
+
