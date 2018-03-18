@@ -1,0 +1,56 @@
+.container {
+  display: grid;
+  -webkit-column-count: 3;
+  -moz-column-count: 3;
+  column-count: 3;
+  grid-gap: 8px;
+  .link {
+    grid-row: 1;
+    .icon {
+      height: 36px;
+      width: 36px;
+    }
+    .icon-instagram {
+      height: 30px;
+      width: 30px;
+    }
+  }
+}
+
+@media only screen and (min-width: 1024px) and (orientation: portrait) {
+  .container {
+    grid-gap: 40px;
+    .link {
+      .icon {
+        height: 64px;
+        width: 64px;
+      }
+      .icon-instagram {
+        position: relative;
+        top: 4px;
+        left: 3px;
+        height: 58px;
+        width: 58px;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .container {
+    grid-gap: 12px;
+    .link {
+      .icon {
+        height: 50px;
+        width: 50px;
+      }
+      .icon-instagram {
+        position: relative;
+        top: 4px;
+        left: 3px;
+        height: 44px;
+        width: 44px;
+      }
+    }
+  }
+}

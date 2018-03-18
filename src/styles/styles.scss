@@ -1,0 +1,77 @@
+@import '../../node_modules/@angular/material/theming';
+@import 'colors';
+
+@include mat-core();
+
+$anms-black-primary: mat-palette($mat-blue, 400);
+$anms-black-accent: mat-palette($mat-yellow, 600);
+$anms-black-warn: mat-palette($mat-red, A200);
+$frontend-app-theme: mat-dark-theme($anms-black-primary, $anms-black-accent, $anms-black-warn);
+
+@include angular-material-theme($frontend-app-theme);
+
+@font-face {
+  font-family: ProductSans;
+  src: url(../assets/fonts/ProductSansRegular.ttf);
+  font-weight: normal;
+}
+
+* {
+  font-family: "ProductSans", serif;
+}
+
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
+.app-loading {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.app-loading .spinner {
+  height: 200px;
+  width: 200px;
+  animation: rotate 2s linear infinite;
+  transform-origin: center center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.app-loading .spinner .path {
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  animation: dash 1.5s ease-in-out infinite;
+  stroke-linecap: round;
+  stroke: #ddd;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
+}

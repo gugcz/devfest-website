@@ -1,0 +1,318 @@
+.countdown-container {
+  display: grid;
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+  grid-gap: 1rem;
+  font-family: ProductSans, serif;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+
+  .number-container {
+    display: flex;
+    flex-direction: row;
+
+    p.number {
+      font-size: 4.6rem;
+      line-height: 4.6rem;
+      margin: 0;
+      text-align: right;
+    }
+
+    .two-digit {
+      min-width: 5.688rem;
+      width: 5.688rem;
+      max-width: 5.688rem;
+    }
+
+    .minutes {
+      padding-left: 1.8rem;
+    }
+
+    .three-digit {
+      min-width: 7.563rem;
+      width: 7.563rem;
+      max-width: 7.563rem;
+    }
+
+    .description {
+      margin: 0;
+      flex-grow: 1;
+      align-self: flex-end;
+      justify-self: flex-end;
+      font-size: 1.125rem;
+      padding-bottom: 0.32rem;
+      padding-left: 0.25rem;
+      min-width: 1rem;
+      width: 1rem;
+      max-width: 1rem;
+    }
+  }
+}
+
+@media only screen and (min-width: 525px) {
+  .countdown-container {
+    grid-gap: 2rem;
+    .number-container {
+      p.number {
+        font-size: 5.390625rem;
+        line-height: 5.390625rem;
+      }
+
+      p.two-digit {
+        min-width: 6.665625rem;
+        width: 6.665625rem;
+        max-width: 6.665625rem;
+      }
+
+      p.minutes {
+        padding-left: 2.109375rem;
+      }
+
+      p.three-digit {
+        min-width: 8.862890625rem;
+        width: 8.862890625rem;
+        max-width: 8.862890625rem;
+      }
+
+      p.description {
+        align-self: flex-end;
+        font-size: 1.318359375rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0.3rem;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 625px) {
+  .countdown-container {
+    grid-gap: 2.5rem;
+    .number-container {
+      p.number {
+        font-size: 6.417410714rem;
+        line-height: 6.417410714rem;
+      }
+
+      p.two-digit {
+        min-width: 7.935267857rem;
+        width: 7.935267857rem;
+        max-width: 7.935267857rem;
+      }
+
+      p.minutes {
+        padding-left: 2.511160714rem;
+      }
+
+      p.three-digit {
+        min-width: 10.551060268rem;
+        width: 10.551060268rem;
+        max-width: 10.551060268rem;
+      }
+
+      p.description {
+        align-self: flex-end;
+        font-size: 1.569475446rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0.4rem;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .countdown-container {
+    .number-container:nth-child(odd) {
+      justify-content: flex-end;
+    }
+
+    .number-container:nth-child(even) {
+      justify-content: flex-start;
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .countdown-container {
+    -webkit-column-count: 4;
+    -moz-column-count: 4;
+    column-count: 4;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 0 2rem;
+    min-width: 608px;
+    width: 608px;
+    max-width: 608px;
+
+    .number-container {
+      p.number {
+        font-size: 4.8rem;
+        line-height: 4.8rem;
+      }
+
+      p.two-digit {
+        min-width: 5.932368rem;
+        width: 5.932368rem;
+        max-width: 5.932368rem;
+      }
+
+      p.minutes {
+        padding-left: 0;
+      }
+
+      p.three-digit {
+        min-width: 8.05536rem;
+        width: 8.05536rem;
+        max-width: 8.05536rem;
+      }
+
+      p.description {
+        font-size: 1.28rem;
+        padding-left: 0.3rem;
+        padding-bottom: 0.4rem;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1024px) and (orientation: portrait) {
+  .countdown-container {
+    padding: 0 4rem;
+    min-width: 800px;
+    width: 800px;
+    max-width: 800px;
+
+    .number-container {
+      justify-content: center;
+      p.number {
+        font-size: 6rem;
+        line-height: 6rem;
+      }
+
+      p.two-digit {
+        min-width: 7.41rem;
+        width: 7.41rem;
+        max-width: 7.41rem;
+      }
+
+      p.minutes {
+        padding-left: 0;
+      }
+
+      p.three-digit {
+        min-width: 10.06rem;
+        width: 10.06rem;
+        max-width: 10.06rem;
+      }
+
+      p.description {
+        font-size: 1.6rem;
+        padding-left: 0.4rem;
+        padding-bottom: 0.6rem;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1024px) and (orientation: landscape) {
+  .countdown-container {
+    min-width: 627px;
+    width: 627px;
+    max-width: 627px;
+
+    .number-container {
+      p.number {
+        font-size: 4.5rem;
+        line-height: 4.5rem;
+      }
+
+      p.two-digit {
+        min-width: 5.5616rem;
+        width: 5.5616rem;
+        max-width: 5.5616rem;
+      }
+
+      p.three-digit {
+        min-width: 7.552rem;
+        width: 7.552rem;
+        max-width: 7.552rem;
+      }
+
+      p.description {
+        font-size: 1.2rem;
+        padding-bottom: 0.35rem;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1376px) {
+  .countdown-container {
+    min-width: 843px;
+    width: 843px;
+    max-width: 843px;
+    margin: 32px 0;
+
+    .number-container {
+      p.number {
+        font-size: 5rem;
+        line-height: 5rem;
+      }
+
+      p.two-digit {
+        min-width: 6.179555556rem;
+        width: 6.179555556rem;
+        max-width: 6.179555556rem;
+      }
+
+      p.three-digit {
+        min-width: 8.391111111rem;
+        width: 8.391111111rem;
+        max-width: 8.391111111rem;
+      }
+
+      p.description {
+        font-size: 1.333333333rem;
+        padding-bottom: 0.35rem;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1920px) {
+  .countdown-container {
+    min-width: 1172px;
+    width: 1172px;
+    max-width: 1172px;
+    margin: 48px 0;
+
+    .number-container {
+      p.number {
+        font-size: 6.976744186rem;
+        line-height: 6.976744186rem;
+      }
+
+      p.two-digit {
+        min-width: 8.62263566rem;
+        width: 8.62263566rem;
+        max-width: 8.62263566rem;
+      }
+
+      p.three-digit {
+        min-width: 11.708527132rem;
+        width: 11.708527132rem;
+        max-width: 11.708527132rem;
+      }
+
+      p.description {
+        font-size: 1.860465116rem;
+        padding-bottom: 0.35rem;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1920px) {
+  .countdown-container {
+    margin: 64px 0;
+  }
+}

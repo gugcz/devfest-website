@@ -1,0 +1,28 @@
+<section>
+    <div class="container">
+        <div class="header" [ngClass]="animateOnRouteEnter">
+            <div class="header-item">
+                <img class="cover-logo" src="assets/cover-logo.png" alt="Devfest cz 2018 logo">
+            </div>
+            <div class="header-item date-container">
+                <h1>November 10 - 11, 2018<br>Prague</h1>
+            </div>
+        </div>
+        <div class="countdown-container">
+            <app-countdown [ngClass]="animateOnRouteEnter" class="countdown"
+                           [countDownEnd]="'2018-11-10, 9:00:00AM'"></app-countdown>
+        </div>
+        <div class="email-notifier-container">
+            <app-email-notifier></app-email-notifier>
+        </div>
+        <div class="info-text">
+            <p>
+                You´ll get a heads-up for early bird tickets. We´ll also keep you updated on the venue, speakers and
+                more.
+            </p>
+        </div>
+        <div class="social-networks-container">
+            <app-social-networks></app-social-networks>
+        </div>
+    </div>
+</section>
