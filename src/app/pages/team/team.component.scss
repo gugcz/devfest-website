@@ -22,6 +22,7 @@ section {
       justify-content: center;
 
       .organizer-card {
+        height: 250px;
         width: 272px;
       }
     }
@@ -51,6 +52,20 @@ section {
         column-count: 3;
         grid-column-gap: 2rem;
         grid-template-columns: 272px 272px 272px;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  section {
+    .background-gradient {
+      .container {
+        -webkit-column-count: 4;
+        -moz-column-count: 4;
+        column-count: 4;
+        grid-column-gap: 2rem;
+        grid-template-columns: 272px 272px 272px 272px;
       }
     }
   }
