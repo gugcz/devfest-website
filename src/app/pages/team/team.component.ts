@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Organizer} from '../../database/organizer';
 import {AngularFirestore} from 'angularfire2/firestore';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-team',
@@ -9,18 +10,13 @@ import {AngularFirestore} from 'angularfire2/firestore';
 })
 export class TeamComponent implements OnInit {
 
-  organizers: Organizer[];
-  loading: Boolean;
+  organizers$: Observable<Organizer[]>;
 
   constructor(private fireStore: AngularFirestore) {
   }
 
   ngOnInit() {
-    this.loading = true;
-    this.fireStore.collection<Organizer>('organizers').valueChanges().subscribe((data) => {
-      this.loading = false;
-      this.organizers = data.sort((a, b) => a.cardPosition < b.cardPosition ? -1 : 1);
-    });
+   this.organizers$ = this.fireStore.collection<Organizer>('organizers', ref => ref.orderBy('cardPosition')).valueChanges();
   }
 
 }
