@@ -1,9 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AngularFirestore} from 'angularfire2/firestore';
+import {AngularFireStorage} from 'angularfire2/storage';
 import {Organizer} from '../../database/organizer';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {MatIconRegistry} from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-organizer-card',
@@ -25,15 +27,24 @@ import {DomSanitizer} from '@angular/platform-browser';
             animate('500ms', style({transform: 'translateY(-100%)', opacity: 0}))
           ]
         )
+      ]), trigger('fadeInOut', [
+      transition(':enter', [   // :enter is alias to 'void => *'
+        style({ opacity: 0 }),
+        animate('500ms', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [   // :leave is alias to '* => void'
+        animate('500ms', style({ opacity: 0 }))
       ])
+    ])
   ]
 })
 export class OrganizerCardComponent implements OnInit {
 
   @Input() id: string;
   organizer: Organizer;
+  profileUrl: Observable<string | null>;
 
-  constructor(private fireStore: AngularFirestore, private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+  constructor(private fireStore: AngularFirestore, private storage: AngularFireStorage, private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
     iconRegistry.addSvgIcon(
       'facebook',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/facebook.svg'));
@@ -48,6 +59,8 @@ export class OrganizerCardComponent implements OnInit {
   ngOnInit() {
     this.fireStore.collection<Organizer>('organizers').doc<Organizer>(this.id).valueChanges().subscribe((data) => {
       this.organizer = data;
+      const ref = this.storage.ref(this.organizer.photo);
+      this.profileUrl = ref.getDownloadURL();
     });
   }
 
