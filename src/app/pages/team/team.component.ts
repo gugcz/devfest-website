@@ -10,12 +10,15 @@ import {AngularFirestore} from 'angularfire2/firestore';
 export class TeamComponent implements OnInit {
 
   organizers: Organizer[];
+  loading: Boolean;
 
   constructor(private fireStore: AngularFirestore) {
   }
 
   ngOnInit() {
+    this.loading = true;
     this.fireStore.collection<Organizer>('organizers').valueChanges().subscribe((data) => {
+      this.loading = false;
       this.organizers = data.sort((a, b) => a.cardPosition < b.cardPosition ? -1 : 1);
     });
   }
