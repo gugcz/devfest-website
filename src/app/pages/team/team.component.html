@@ -1,8 +1,14 @@
 <section>
-  <div class="background-gradient">
-    <div class="container" *ngIf="organizers">
+  <div class="background-gradient" *ngIf="!loading">
+    <div class="container"  *ngIf="organizers">
       <app-organizer-card class="organizer-card" *ngFor="let organizer of organizers"
                           [id]="organizer.id"></app-organizer-card>
     </div>
+  </div>
+  <div class="app-loading-child background-gradient" *ngIf="loading">
+    <div class="logo"></div>
+    <svg class="spinner" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+    </svg>
   </div>
 </section>
