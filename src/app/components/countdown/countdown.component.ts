@@ -14,8 +14,7 @@ export class CountdownComponent implements OnInit {
   minutes: number;
   seconds: number;
 
-  constructor() {
-  }
+  constructor() {}
 
   ngOnInit() {
     this.setupTime(0);
