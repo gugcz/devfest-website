@@ -1,3 +1,5 @@
+@import "../../../styles/colors";
+
 section {
   display: flex;
   min-height: 100vh;
@@ -26,6 +28,10 @@ section {
         width: 272px;
       }
     }
+  }
+  .dark-background {
+      flex: 1;
+      background-color: $dark-background;
   }
 }
 

@@ -1,4 +1,7 @@
+@import "../styles/colors";
+
 .app-loading {
+  background-color: $dark-background;
   .logo {
     width: 100px;
     height: 100px;
