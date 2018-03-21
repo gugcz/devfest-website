@@ -1,4 +1,5 @@
 <section>
+  <app-top-toolbar></app-top-toolbar>
   <div class="background-gradient" *ngIf="organizers$ | async;let organizers; else loading">
     <div class="container">
       <app-organizer-card *ngFor="let organizer of organizers" class="organizer-card" [id]="organizer.id"></app-organizer-card>

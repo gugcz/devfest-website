@@ -10,15 +10,37 @@ $frontend-app-theme: mat-dark-theme($anms-black-primary, $anms-black-accent, $an
 
 @include angular-material-theme($frontend-app-theme);
 
-
-@font-face {
-  font-family: ProductSans;
-  src: url(../assets/fonts/ProductSansRegular.ttf);
-  font-weight: normal;
+* {
+  font-family: Roboto, serif;
+  font-weight: 400;
 }
 
-* {
-  font-family: "ProductSans", serif;
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 400;
+  src: url(../assets/fonts/Roboto-Regular.ttf);
+}
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  src: url(../assets/fonts/Roboto-Medium.ttf);
+}
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  src: url(../assets/fonts/Roboto-Bold.ttf);
+}
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  src: url(../assets/fonts/Roboto-Black.ttf);
 }
 
 body, html {
