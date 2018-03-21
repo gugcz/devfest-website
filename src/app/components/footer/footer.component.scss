@@ -19,6 +19,7 @@
         color: white;
         font-size: 1.4rem;
         margin-bottom: 0;
+        font-weight: 600;
       }
       .list {
         padding-left: 0;
@@ -26,10 +27,10 @@
         margin-top: 0.5rem;
         margin-bottom: 0;
         li {
-          padding: 0.125rem 0;
+          padding: 0.225rem 0;
         }
         li:last-child {
-          padding: 0;
+          padding: 0.225rem 0 0 0;
         }
         .link {
           color: white;
@@ -63,12 +64,24 @@
       }
       .organizers-contact {
         color: white;
-        font-weight: 400;
-        font-size: 0.91rem;
+        font-weight: 500;
+        font-size: 0.9rem;
         margin: 0;
         a {
           color: white;
           text-decoration: none;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 360px) {
+  .footer-container {
+    .content-container {
+      .button-container {
+        .organizers-contact {
+          font-size: 1.04rem;
         }
       }
     }
@@ -88,8 +101,7 @@
       }
       .button-container {
         .organizers-contact {
-          font-weight: 400;
-          font-size: 1.1rem;
+          font-size: 1.085rem;
         }
       }
     }
