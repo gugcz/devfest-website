@@ -1,9 +1,9 @@
-<div class="countdown-container">
+<div class="countdown-container" [ngClass]="{'three-digit-container': this.days >= 100, 'two-digit-container': this.days < 100}">
   <div class="number-container">
-    <p class="number three-digit">{{days < 10 ? ('0' + days) : days}}</p>
+    <p class="number" [ngClass]="{'three-digit': this.days >= 100, 'two-digit': this.days < 100}">{{days < 10 ? ('0' + days) : days}}</p>
     <p class="description">D</p>
   </div>
-  <div class="number-container">
+  <div class="number-container" [ngClass]="{'padding-for-three-digit': this.days >= 100}">
     <p class="number two-digit">{{hours < 10 ? ('0' + hours) : hours}}</p>
     <p class="description">H</p>
   </div>
