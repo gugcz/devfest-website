@@ -4,9 +4,6 @@
   -moz-column-count: 2;
   column-count: 2;
   grid-gap: 1rem;
-  font-family: ProductSans, serif;
-  grid-template-columns: 1fr 1fr;
-  width: 100%;
 
   .number-container {
     display: flex;
@@ -41,13 +38,21 @@
       align-self: flex-end;
       justify-self: flex-end;
       font-size: 1.125rem;
-      padding-bottom: 0.32rem;
-      padding-left: 0.25rem;
+      padding-bottom: 0.525rem;
+      padding-left: 0.45rem;
       min-width: 1rem;
       width: 1rem;
       max-width: 1rem;
     }
   }
+}
+
+.three-digit-container {
+  grid-template-columns: 145px 114.2px;
+}
+
+.two-digit-container {
+  grid-template-columns: 114.2px 114.2px;
 }
 
 @media only screen and (min-width: 525px) {
