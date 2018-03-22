@@ -1,4 +1,15 @@
+@import "../styles/colors";
+
 .app-loading {
+  background-color: $dark-background;
+  .logo {
+    width: 100px;
+    height: 100px;
+    background: url('../assets/gdg-logo.png') center center no-repeat;
+  }
+}
+
+.app-loading-child {
   .logo {
     width: 100px;
     height: 100px;
