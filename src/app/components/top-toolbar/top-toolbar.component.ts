@@ -39,4 +39,8 @@ export class TopToolbarComponent implements OnInit {
       'twitter',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/twitter.svg'));
   }
+
+  ngOnInit(){
+    
+  }
 }
