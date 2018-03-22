@@ -8,5 +8,4 @@ import {routerTransition} from './global/animations/router.transition';
   animations: [routerTransition]
 })
 export class AppComponent {
-  title = 'app';
 }
