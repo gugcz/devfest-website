@@ -1,67 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   viewBox="0 0 24 24"
-   version="1.1"
-   fill="#3498db"
-   width="96px"
-   height="96px"
-   id="svg3406"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="twitter.svg">
-  <metadata
-     id="metadata3415">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs3413" />
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     id="namedview3411"
-     showgrid="false"
-     inkscape:zoom="8.6458333"
-     inkscape:cx="48"
-     inkscape:cy="48"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg3406" />
-  <rect
-     id="rect3417"
-     width="16.510843"
-     height="13.966265"
-     x="3.6433735"
-     y="3.9614458"
-     style="fill:#ffffff" />
-  <g
-     id="surface1"
-     fill="#3498db">
-    <path
-       style=" "
-       d="M 20 2 L 4 2 C 2.898438 2 2 2.898438 2 4 L 2 20 C 2 21.101563 2.898438 22 4 22 L 20 22 C 21.101563 22 22 21.101563 22 20 L 22 4 C 22 2.898438 21.101563 2 20 2 Z M 17.601563 8.800781 C 17.601563 8.898438 17.601563 9 17.601563 9.199219 C 17.601563 13 14.699219 17.398438 9.398438 17.398438 C 7.800781 17.398438 6.300781 16.898438 5 16.101563 C 5.199219 16.101563 5.5 16.101563 5.699219 16.101563 C 7 16.101563 8.300781 15.601563 9.300781 14.898438 C 8 14.898438 7 14 6.601563 12.898438 C 6.800781 12.898438 7 13 7.101563 13 C 7.398438 13 7.601563 13 7.898438 12.898438 C 6.601563 12.601563 5.601563 11.5 5.601563 10.101563 C 6 10.300781 6.398438 10.398438 6.898438 10.5 C 6.101563 9.800781 5.601563 9 5.601563 8 C 5.601563 7.5 5.699219 7 6 6.601563 C 7.398438 8.300781 9.5 9.5 11.898438 9.601563 C 11.898438 9.398438 11.800781 9.199219 11.800781 8.898438 C 11.800781 7.300781 13.101563 6 14.699219 6 C 15.5 6 16.300781 6.300781 16.800781 6.898438 C 17.5 6.800781 18.101563 6.5 18.601563 6.199219 C 18.398438 6.898438 17.898438 7.398438 17.300781 7.800781 C 17.898438 7.699219 18.398438 7.601563 19 7.300781 C 18.601563 7.898438 18.101563 8.398438 17.601563 8.800781 Z "
-       fill="#3498db"
-       id="path3409" />
-  </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Twitter" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 128 128" enable-background="new 0 0 128 128" xml:space="preserve">
+<g>
+	<circle id="twitter-back" fill="#55ACEE" cx="64" cy="64" r="64"/>
+	<path id="twitter-twitter" fill="#FFFFFF" d="M99.8398,41.7695c-2.6367,1.17-5.4707,1.96-8.4462,2.3155
+		c3.0351-1.8204,5.3681-4.7022,6.4658-8.1363c-2.8408,1.6851-5.9883,2.9097-9.3379,3.5689
+		c-2.6826-2.8584-6.5049-4.6436-10.7344-4.6436c-8.123,0-14.7065,6.584-14.7065,14.7051c0,1.1533,0.1303,2.2754,0.3808,3.3516
+		c-12.2221-0.6133-23.0581-6.4678-30.311-15.3648c-1.2661,2.1714-1.9912,4.6978-1.9912,7.3931c0,5.1015,2.5962,9.6025,6.542,12.2397
+		c-2.4107-0.0757-4.6783-0.7378-6.6607-1.8393c-0.0014,0.0615-0.0014,0.123-0.0014,0.1855c0,7.125,5.0693,13.0684,11.7968,14.4199
+		c-1.2343,0.336-2.5337,0.5157-3.8745,0.5157c-0.9477,0-1.8691-0.0928-2.7671-0.2637c1.8716,5.8418,7.3023,10.0937,13.7378,10.2119
+		c-5.0332,3.9453-11.374,6.2959-18.2646,6.2959c-1.187,0-2.357-0.0693-3.5073-0.2051c6.5083,4.1729,14.2377,6.6065,22.5429,6.6065
+		c27.0498,0,41.8418-22.4082,41.8418-41.8418c0-0.6377-0.0146-1.2715-0.0429-1.9024C95.375,47.3086,97.8691,44.7188,99.8398,41.7695
+		z"/>
+</g>
 </svg>

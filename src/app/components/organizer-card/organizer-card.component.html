@@ -7,7 +7,9 @@
       {{organizer.position}}
     </mat-card-subtitle>
   </mat-card-header>
-  <img mat-card-md-image [src]="organizer.photo" class="image">
+  <span *ngIf="profileUrl | async;let url;else loadingImage">
+     <img mat-card-md-image [src]="url" class="image"  [@fadeInOut]>
+  </span>
   <mat-card-actions>
     <a mat-icon-button *ngIf="organizer.facebook" [href]="'https://www.facebook.com/' + organizer.facebook"
        target="_blank" class="link">
@@ -23,3 +25,6 @@
     </a>
   </mat-card-actions>
 </mat-card>
+<ng-template #loadingImage>
+  <mat-spinner [diameter]="115"></mat-spinner>
+</ng-template>
