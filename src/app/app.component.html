@@ -14,7 +14,6 @@
         <button mat-icon-button *ngIf="mobile" (click)="sidenav.open()">
           <mat-icon>menu</mat-icon>
         </button>
-        <span class="spacer"></span>
         <button class="logo-button" *ngIf="!route.match('Home')" [routerLink]="['/']" mat-button [@fadeInOut]>
           <img class="home-logo" src="assets/cover-logo.png"/>
         </button>
