@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {ANIMATE_ON_ROUTE_ENTER} from '../../global/animations/router.transition';
 
 @Component({
   selector: 'app-home',
@@ -8,7 +7,6 @@ import {ANIMATE_ON_ROUTE_ENTER} from '../../global/animations/router.transition'
 })
 export class HomeComponent implements OnInit {
 
-  animateOnRouteEnter = ANIMATE_ON_ROUTE_ENTER;
 
   constructor() { }
 
