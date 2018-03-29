@@ -4,7 +4,7 @@ import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {SharedModule} from './global/shared.module';
 import {ComponentsModule} from './components/components.module';
 import {HttpClientModule} from '@angular/common/http';
@@ -21,6 +21,7 @@ import {PagesModule} from './pages/pages.module';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    NoopAnimationsModule,
     HttpClientModule,
     SharedModule,
     ComponentsModule,
@@ -34,4 +35,6 @@ import {PagesModule} from './pages/pages.module';
   bootstrap: [AppComponent]
 })
 export class AppModule {
+
+
 }
