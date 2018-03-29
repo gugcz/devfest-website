@@ -20,7 +20,7 @@
         <span class="spacer"></span>
         <div class="button-row" *ngIf="!mobile">
           <a *ngFor="let item of navigation" class="nav-button" mat-button [routerLink]="[item.link]"
-             color="accent">{{item.label}}
+             color="accent" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">{{item.label}}
           </a>
         </div>
       </mat-toolbar>
