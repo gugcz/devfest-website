@@ -21,6 +21,16 @@
   flex: 1 1 auto;
 }
 
+.content {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+}
+
+.mat-toolbar {
+  background: transparent;
+}
+
 a.active {
   border-bottom: 1px solid white;
   padding-bottom: 5px;
@@ -37,7 +47,7 @@ mat-sidenav-container {
     overflow-y: auto;
 
     .toolbar {
-      background-color: transparent;
+      background: transparent;
       position: fixed;
       top: 0;
       z-index: 999999;
@@ -89,7 +99,6 @@ mat-sidenav-container {
     }
 
     .content {
-      padding-top: 64px;
       flex: 1 0 auto;
       position: relative;
     }
