@@ -21,6 +21,11 @@
   flex: 1 1 auto;
 }
 
+a.active {
+  border-bottom: 1px solid white;
+  padding-bottom: 5px;
+}
+
 mat-sidenav-container {
 
   .wrapper {
@@ -41,6 +46,8 @@ mat-sidenav-container {
 
       .nav-button {
         margin: 0 10px 0 0;
+        font-size: 1.1em;
+        color: white;
       }
 
       .branding {
