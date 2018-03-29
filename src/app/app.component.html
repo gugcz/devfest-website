@@ -14,15 +14,14 @@
         <button mat-icon-button *ngIf="mobile" (click)="sidenav.open()">
           <mat-icon>menu</mat-icon>
         </button>
-        <span class="spacer"></span>
         <button class="logo-button" *ngIf="!route.match('Home')" [routerLink]="['/']" mat-button [@fadeInOut]>
           <img class="home-logo" src="assets/cover-logo.png"/>
         </button>
         <span class="spacer"></span>
         <div class="button-row" *ngIf="!mobile">
-          <button *ngFor="let item of navigation" class="nav-button" mat-raised-button [routerLink]="[item.link]"
-                  color="accent">{{item.label}}
-          </button>
+          <a *ngFor="let item of navigation" class="nav-button" mat-button [routerLink]="[item.link]"
+             color="accent">{{item.label}}
+          </a>
         </div>
       </mat-toolbar>
     </div>
