@@ -13,7 +13,7 @@
   }
 }
 
-@media only screen and (min-width: 1024px) and (orientation: portrait){
+@media only screen and (min-width: 1024px) and (orientation: portrait) {
   .container {
     grid-gap: 40px;
     .link {
@@ -27,11 +27,11 @@
 
 @media only screen and (min-width: 1920px) {
   .container {
-    grid-gap: 12px;
+    grid-gap: 40px;
     .link {
       .icon {
-        height: 50px;
-        width: 50px;
+        height: 64px;
+        width: 64px;
       }
     }
   }
