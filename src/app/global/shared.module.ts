@@ -23,11 +23,17 @@ import {
   MatTooltipModule
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    HttpClientJsonpModule,
     MatButtonModule,
     MatToolbarModule,
     MatSelectModule,
@@ -52,6 +58,10 @@ import {RouterModule} from '@angular/router';
   exports: [
     CommonModule,
     RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    HttpClientJsonpModule,
     MatButtonModule,
     MatMenuModule,
     MatTabsModule,

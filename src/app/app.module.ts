@@ -7,7 +7,6 @@ import {AppRoutingModule} from './app-routing.module';
 import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {SharedModule} from './global/shared.module';
 import {ComponentsModule} from './components/components.module';
-import {HttpClientModule} from '@angular/common/http';
 import {AngularFireModule} from 'angularfire2';
 import {environment} from '../environments/environment';
 import {AngularFirestoreModule} from 'angularfire2/firestore';
@@ -22,7 +21,6 @@ import {PagesModule} from './pages/pages.module';
     BrowserModule,
     BrowserAnimationsModule,
     NoopAnimationsModule,
-    HttpClientModule,
     SharedModule,
     ComponentsModule,
     AppRoutingModule,
