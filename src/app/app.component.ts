@@ -4,6 +4,7 @@ import {Router} from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Location} from '@angular/common';
 import {animate, style, transition, trigger} from '@angular/animations';
+import { HostListener} from "@angular/core";
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ import {animate, style, transition, trigger} from '@angular/animations';
     ])
   ])]
 })
+
 export class AppComponent implements OnInit {
 
   public route: string;
@@ -27,10 +29,15 @@ export class AppComponent implements OnInit {
     {link: '', label: 'Home'},
     {link: 'team', label: 'Team'}
   ];
+  lastYOffset: number;
+  showMenu: boolean;
+  menuType: string;
 
 
   constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public router: Router, public location: Location) {
     this.route = '';
+    this.showMenu = true;
+    this.menuType = 'transparent';
     router.events.subscribe(() => {
       if (location.path() !== '') {
         this.route = location.path();
@@ -51,5 +58,19 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
 
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    if (window.pageYOffset === 0) {
+      this.menuType = 'transparent';
+      this.showMenu = true;
+    } else if (this.lastYOffset > window.pageYOffset) {
+      this.menuType = 'dark-toolbar';
+      this.showMenu = true;
+    } else {
+      this.showMenu = false;
+    }
+    this.lastYOffset = window.pageYOffset;
   }
 }
