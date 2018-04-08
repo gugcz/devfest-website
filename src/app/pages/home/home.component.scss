@@ -122,9 +122,15 @@ section {
   }
 }
 
+@media only screen and (min-width: 576px) {
+  .container {
+    padding-top: 64px;
+  }
+}
+
 @media only screen and (min-width: 768px) {
   .container {
-    padding: 36px 48px 0;
+    padding: 64px 48px 0;
     min-height: calc(100vh - 2.25rem);
     .header {
       -webkit-column-count: 2;
@@ -169,6 +175,7 @@ section {
 
 @media only screen and (min-width: 1024px) and (orientation: portrait) {
   .container {
+    padding-top: 64px;
     .header {
       grid-gap: 5rem;
 
@@ -207,9 +214,9 @@ section {
   }
 }
 
-@media only screen and (min-width: 1024px) and (orientation: landscape){
+@media only screen and (min-width: 1024px) and (orientation: landscape) {
   .container {
-    padding: 48px 64px 0;
+    padding: 64px 96px 0;
     min-height: calc(100vh - 48px);
 
     .header {

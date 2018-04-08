@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     iconRegistry.addSvgIcon(
       'twitter',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/twitter.svg'));
-    if (window.screen.width < 500) { // 768px portrait
+    if (window.screen.width < 768) {
       this.mobile = true;
     }
   }
@@ -72,5 +72,10 @@ export class AppComponent implements OnInit {
       this.showMenu = false;
     }
     this.lastYOffset = window.pageYOffset;
+  }
+
+  @HostListener('window:resize', [])
+  onWindowResize() {
+    this.mobile = window.screen.width < 768;
   }
 }

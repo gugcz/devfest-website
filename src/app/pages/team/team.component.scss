@@ -35,6 +35,14 @@ section {
   }
 }
 
+@media only screen and (max-width: 768px) {
+  section {
+    .background-gradient {
+      padding-top: 80px;
+    }
+  }
+}
+
 @media only screen and (min-width: 608px) {
   section {
     .background-gradient {
@@ -52,6 +60,7 @@ section {
 @media only screen and (min-width: 912px) {
   section {
     .background-gradient {
+      padding-top: 6rem;
       .container {
         -webkit-column-count: 3;
         -moz-column-count: 3;

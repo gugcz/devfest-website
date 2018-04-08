@@ -208,3 +208,47 @@ mat-sidenav {
     padding-top: 0;
   }
 }
+
+@media only screen and (max-width: 767.5px){
+  .mat-toolbar {
+    background: $dark-background;
+  }
+}
+
+@media only screen and (min-width: 425px) {
+  .mat-toolbar {
+    .nav-button {
+      border: none;
+      width: 88px !important;
+    }
+
+    .nav-button:last-child {
+      margin-right: 0 !important;
+    }
+
+    hr.line {
+      height: 3px;
+      width: 88px;
+      margin: 0;
+      background: white;
+      border: none;
+      transition: .3s ease-in-out;
+    }
+
+    .nav-button-0.active ~ hr.line {
+      margin-left: 0;
+    }
+
+    .nav-button-1.active ~ hr.line {
+      margin-left: 98px;
+    }
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .mat-toolbar {
+    .nav-button {
+      width: 60px !important;
+    }
+  }
+}
