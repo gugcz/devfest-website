@@ -19,8 +19,10 @@ import {MetaChangerService} from './services/meta-changer.service';
     AppComponent
   ],
   imports: [
-    BrowserModule,
+    // angular
     BrowserAnimationsModule,
+    BrowserModule,
+
     NoopAnimationsModule,
     SharedModule,
     ComponentsModule,
