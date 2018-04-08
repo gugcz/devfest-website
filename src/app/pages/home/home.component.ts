@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {MetaChangerService} from '../../services/meta-changer.service';
+import {ANIMATE_ON_ROUTE_ENTER} from '../../global/animations/router.transition';
 
 @Component({
   selector: 'app-home',
@@ -8,8 +8,10 @@ import {MetaChangerService} from '../../services/meta-changer.service';
 })
 export class HomeComponent implements OnInit {
 
+  animateOnRouteEnter = ANIMATE_ON_ROUTE_ENTER;
 
-  constructor(private metaChanger: MetaChangerService) { }
+  constructor() {
+  }
 
   ngOnInit() {
   }
