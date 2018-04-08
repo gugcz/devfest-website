@@ -1,4 +1,5 @@
 @import '../styles/styles-variables';
+@import '../styles/colors';
 
 :host {
   height: 100%;
@@ -47,7 +48,6 @@ mat-sidenav-container {
     overflow-y: auto;
 
     .toolbar {
-      background: transparent;
       position: fixed;
       top: 0;
       z-index: 999999;
@@ -97,6 +97,18 @@ mat-sidenav-container {
           margin: 0 5px 0 0;
         }
       }
+    }
+
+    .toolbar.dark-toolbar {
+      background: $dark-background;
+    }
+
+    .toolbar.transparent {
+      background: transparent;
+      -webkit-transition: background-color 0.5s ease-out;
+      -moz-transition: background-color 0.5s ease-out;
+      -o-transition: background-color 0.5s ease-out;
+      transition: background-color 0.5s ease-out;
     }
 
     .content {

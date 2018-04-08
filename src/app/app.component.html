@@ -9,8 +9,8 @@
     </mat-nav-list>
   </mat-sidenav>
   <div class="wrapper">
-    <div class="toolbar">
-      <mat-toolbar>
+    <div class="toolbar" [ngClass]="{'dark-toolbar': menuType === 'dark-toolbar', 'transparent': menuType === 'transparent'}">
+      <mat-toolbar *ngIf="showMenu">
         <button mat-icon-button *ngIf="mobile" (click)="sidenav.open()">
           <mat-icon>menu</mat-icon>
         </button>
