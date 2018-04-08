@@ -19,7 +19,8 @@
         </button>
         <span class="spacer"></span>
         <div class="button-row" *ngIf="!mobile">
-          <a *ngFor="let item of navigation" class="nav-button" mat-button [routerLink]="[item.link]" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">{{item.label}}</a>
+          <a *ngFor="let item of navigation; let index = index" class="nav-button mat-button nav-button-{{index}}" mat-button [routerLink]="[item.link]" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">{{item.label}}</a>
+          <hr class="line">
         </div>
       </mat-toolbar>
     </div>
@@ -31,4 +32,4 @@
 <footer>
   <app-footer></app-footer>
 </footer>
-  <mat-sidenav-container>
+</mat-sidenav-container>
