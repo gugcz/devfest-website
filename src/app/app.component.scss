@@ -14,8 +14,26 @@
 }
 
 .logo-button {
-  max-width: 150px;
-  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100px;
+  width: 100px;
+  img {
+    margin-left: 10px;
+    height: 26px;
+  }
+}
+
+@media only screen and (min-width: 425px) {
+  .logo-button {
+    max-width: 150px;
+    width: 150px;
+    img {
+      margin-left: 10px;
+      height: 39px;
+    }
+  }
 }
 
 .spacer {
@@ -38,7 +56,6 @@ a.active {
 }
 
 mat-sidenav-container {
-
   .wrapper {
     z-index: -2;
     height: 100%;
@@ -213,7 +230,7 @@ mat-sidenav {
   }
 }
 
-@media only screen and (max-width: 767px){
+@media only screen and (max-width: 767px) {
   .mat-toolbar {
     background: $dark-background;
   }
