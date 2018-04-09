@@ -62,7 +62,7 @@ export class AppComponent implements OnInit {
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
-    if (window.pageYOffset === 0) {
+    if (window.pageYOffset < 5) {
       this.menuType = 'transparent';
       this.showMenu = true;
     } else if (this.lastYOffset > window.pageYOffset) {
