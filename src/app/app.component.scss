@@ -70,6 +70,10 @@ mat-sidenav-container {
       z-index: 999999;
       width: 100%;
       flex: 0 0 auto;
+      -webkit-transition: margin-top 0.5s ease-out, background-color 0.5s ease-out;
+      -moz-transition: margin-top 0.5s ease-out, background-color 0.5s ease-out;
+      -o-transition: margin-top 0.5s ease-out, background-color 0.5s ease-out;
+      transition: margin-top 0.5s ease-out, background-color 0.5s ease-out;
 
       .nav-button {
         margin: 0 10px 0 0;
@@ -120,12 +124,12 @@ mat-sidenav-container {
       background: $dark-background;
     }
 
+    .toolbar.hidden {
+      margin-top: -64px;
+    }
+
     .toolbar.transparent {
       background: transparent;
-      -webkit-transition: background-color 0.5s ease-out;
-      -moz-transition: background-color 0.5s ease-out;
-      -o-transition: background-color 0.5s ease-out;
-      transition: background-color 0.5s ease-out;
     }
 
     .content {
