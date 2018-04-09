@@ -209,13 +209,13 @@ mat-sidenav {
   }
 }
 
-@media only screen and (max-width: 767.5px){
+@media only screen and (max-width: 767px){
   .mat-toolbar {
     background: $dark-background;
   }
 }
 
-@media only screen and (min-width: 425px) {
+@media only screen and (min-width: 768px) {
   .mat-toolbar {
     .nav-button {
       border: none;
@@ -227,12 +227,14 @@ mat-sidenav {
     }
 
     hr.line {
+      position: relative;
       height: 3px;
       width: 88px;
       margin: 0;
       background: white;
       border: none;
       transition: .3s ease-in-out;
+      top: -3px;
     }
 
     .nav-button-0.active ~ hr.line {
