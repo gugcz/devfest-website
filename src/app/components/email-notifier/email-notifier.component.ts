@@ -1,11 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {AngularFirestore} from 'angularfire2/firestore';
 import {FormControl, Validators} from '@angular/forms';
-
-interface MailChimpResponse {
-  result: string;
-  msg: string;
-}
+import {MatSnackBar} from '@angular/material';
+import {MailchimpEmail} from '../../database/mailchimp-email';
 
 @Component({
   selector: 'app-email-notifier',
@@ -14,59 +11,32 @@ interface MailChimpResponse {
 })
 export class EmailNotifierComponent implements OnInit {
 
-
-  submitted = false;
-  mailChimp = 'https://gug.us4.list-manage.com/subscribe/post-json?u=0da7a509ea18feb2638420b7f&amp;id=3a27fbd474';
-  error = '';
-
   emailControl = new FormControl('', [
     Validators.required,
     Validators.email,
   ]);
-  nameControl = new FormControl('', [
-    Validators.required
-  ]);
 
-  constructor(private http: HttpClient) {
+  constructor(private firestore: AngularFirestore, private snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
   }
 
   getEmailErrorMessage() {
-    return this.emailControl.hasError('required') ? 'You must enter a value' :
+    return this.emailControl.hasError('required') ? 'You must enter a email' :
       this.emailControl.hasError('email') ? 'Not a valid email' :
         '';
   }
 
-  getNameErrorMessage() {
-    return this.nameControl.hasError('required') ? 'You must enter a value' : '';
-  }
-
   submit() {
-    this.error = '';
-    if (this.emailControl.status === 'VALID' && this.nameControl.status === 'VALID') {
-
-      const params = new HttpParams()
-        .set('EMAIL', this.emailControl.value)
-        .set('FNAME', this.nameControl.value.split(' ').slice(0, -1).join(' '))
-        .set('LNAME', this.nameControl.value.split(' ').slice(-1).join(' '))
-        .set('b_0da7a509ea18feb2638420b7f_3a27fbd474', ''); // hidden input name
-      const mailChimpUrl = this.mailChimp + params.toString();
-
-
-      // 'c' refers to the jsonp callback param key. This is specific to Mailchimp
-      this.http.jsonp<MailChimpResponse>(mailChimpUrl, 'c').subscribe(response => {
-
-        if (response.result && response.result !== 'error') {
-          this.submitted = true;
-        } else {
-          this.error = response.msg;
-        }
-      }, error => {
-        this.error = 'Sorry, an error occurred.';
+    if (this.emailControl.status === 'VALID') {
+      const id = this.firestore.createId();
+      const data: MailchimpEmail = {id: id, dateImported: new Date(), email: this.emailControl.value, imported: false};
+      this.firestore.collection<MailchimpEmail>('mailchimp-emails').doc<MailchimpEmail>(id).set(data).then(() => {
+        this.snackBar.open('You have subscribed', ' ', {duration: 3000});
       });
+    } else {
+      this.snackBar.open(this.getEmailErrorMessage(), ' ', {duration: 3000});
     }
   }
-
 }

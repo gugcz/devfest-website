@@ -24,16 +24,17 @@ import {
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
+import {HttpClientModule} from '@angular/common/http';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
-    HttpClientJsonpModule,
     MatButtonModule,
     MatToolbarModule,
     MatSelectModule,
@@ -58,10 +59,10 @@ import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
   exports: [
     CommonModule,
     RouterModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
-    HttpClientJsonpModule,
     MatButtonModule,
     MatMenuModule,
     MatTabsModule,

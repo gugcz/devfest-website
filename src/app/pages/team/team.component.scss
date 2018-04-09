@@ -35,10 +35,11 @@ section {
   }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (min-width: 577px) and (max-width: 767px) {
   section {
+    background-position-y: 56px;
     .background-gradient {
-      padding-top: 80px;
+      padding-top: 120px;
     }
   }
 }
@@ -57,10 +58,16 @@ section {
   }
 }
 
-@media only screen and (min-width: 912px) {
+@media only screen and (min-width: 768px) {
   section {
     .background-gradient {
       padding-top: 6rem;
+    }
+  }
+}
+@media only screen and (min-width: 912px) {
+  section {
+    .background-gradient {
       .container {
         -webkit-column-count: 3;
         -moz-column-count: 3;

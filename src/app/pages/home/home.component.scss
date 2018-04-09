@@ -130,7 +130,7 @@ section {
 
 @media only screen and (min-width: 768px) {
   .container {
-    padding: 64px 48px 0;
+    padding: 80px 48px 0;
     min-height: calc(100vh - 2.25rem);
     .header {
       -webkit-column-count: 2;
@@ -175,7 +175,6 @@ section {
 
 @media only screen and (min-width: 1024px) and (orientation: portrait) {
   .container {
-    padding-top: 64px;
     .header {
       grid-gap: 5rem;
 
@@ -216,7 +215,7 @@ section {
 
 @media only screen and (min-width: 1024px) and (orientation: landscape) {
   .container {
-    padding: 64px 96px 0;
+    padding: 80px 96px 0;
     min-height: calc(100vh - 48px);
 
     .header {
@@ -244,7 +243,6 @@ section {
 
 @media screen and (min-width: 1376px) {
   .container {
-    padding: 64px 96px 0;
     min-height: calc(100vh - 64px);
 
     .header {
@@ -280,7 +278,7 @@ section {
 
 @media screen and (min-width: 2560px) {
   .container {
-    padding: 46px 96px 0;
+    padding: 96px 96px 0;
     min-height: calc(100vh - 46px);
 
     .header {

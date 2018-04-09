@@ -53,6 +53,10 @@ mat-sidenav-container {
       z-index: 999999;
       width: 100%;
       flex: 0 0 auto;
+      -webkit-transition: margin-top 0.5s ease-out, background-color 0.5s ease-out;
+      -moz-transition: margin-top 0.5s ease-out, background-color 0.5s ease-out;
+      -o-transition: margin-top 0.5s ease-out, background-color 0.5s ease-out;
+      transition: margin-top 0.5s ease-out, background-color 0.5s ease-out;
 
       .nav-button {
         margin: 0 10px 0 0;
@@ -103,12 +107,12 @@ mat-sidenav-container {
       background: $dark-background;
     }
 
+    .toolbar.hidden {
+      margin-top: -64px;
+    }
+
     .toolbar.transparent {
       background: transparent;
-      -webkit-transition: background-color 0.5s ease-out;
-      -moz-transition: background-color 0.5s ease-out;
-      -o-transition: background-color 0.5s ease-out;
-      transition: background-color 0.5s ease-out;
     }
 
     .content {
@@ -209,13 +213,13 @@ mat-sidenav {
   }
 }
 
-@media only screen and (max-width: 767.5px){
+@media only screen and (max-width: 767px){
   .mat-toolbar {
     background: $dark-background;
   }
 }
 
-@media only screen and (min-width: 425px) {
+@media only screen and (min-width: 768px) {
   .mat-toolbar {
     .nav-button {
       border: none;
@@ -227,12 +231,14 @@ mat-sidenav {
     }
 
     hr.line {
+      position: relative;
       height: 3px;
       width: 88px;
       margin: 0;
       background: white;
       border: none;
       transition: .3s ease-in-out;
+      top: -3px;
     }
 
     .nav-button-0.active ~ hr.line {
