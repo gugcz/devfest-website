@@ -9,7 +9,7 @@
 /node_modules
 /functions/node_modules
 /functions/package-lock.json
-package-lock.json
+/package-lock.json
 
 # IDEs and editors
 /.idea
@@ -52,4 +52,4 @@ ANGULAR-devfest.iml
 *.iml
 
 # Config
-config.json
+/config.json
