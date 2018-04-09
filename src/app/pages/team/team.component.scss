@@ -7,18 +7,19 @@ section {
   background: url("../../../assets/team-photo.jpg") no-repeat center;
   background-size: cover;
   color: #ffffff;
+  overflow-y: hidden;
 
   .background-gradient {
     flex: 1;
     background: linear-gradient(180deg, rgba(21, 25, 38, 0.2) 0%, rgb(24, 32, 17) 95%), radial-gradient(farthest-side at 0 0, rgba(4, 102, 255, 0.3), rgba(255, 26, 198, 0)), radial-gradient(farthest-side at 100% 0, rgba(60, 221, 221, .4), rgba(60, 221, 221, 0)), radial-gradient(farthest-side at 50% 0, rgba(255, 26, 198, .1), rgba(255, 26, 198, 0));
-    padding: 4rem 2rem;
+    padding: 32px 24px;
 
     .container {
       display: grid;
       -webkit-column-count: 1;
       -moz-column-count: 1;
       column-count: 1;
-      grid-gap: 2rem;
+      grid-gap: 32px;
       width: 100%;
       z-index: 2;
       justify-content: center;
@@ -30,8 +31,16 @@ section {
     }
   }
   .dark-background {
-      flex: 1;
-      background-color: $dark-background;
+    flex: 1;
+    background-color: $dark-background;
+  }
+}
+
+@media only screen and (min-width: 375px) {
+  section {
+    .background-gradient {
+      padding-top: 48px;
+    }
   }
 }
 
@@ -39,7 +48,7 @@ section {
   section {
     background-position-y: 56px;
     .background-gradient {
-      padding-top: 120px;
+      padding-top: 7.5rem;
     }
   }
 }
@@ -51,7 +60,7 @@ section {
         -webkit-column-count: 2;
         -moz-column-count: 2;
         column-count: 2;
-        grid-column-gap: 2rem;
+        grid-column-gap: 32px;
         grid-template-columns: 272px 272px;
       }
     }
@@ -61,10 +70,11 @@ section {
 @media only screen and (min-width: 768px) {
   section {
     .background-gradient {
-      padding-top: 6rem;
+      padding-top: 96px;
     }
   }
 }
+
 @media only screen and (min-width: 912px) {
   section {
     .background-gradient {
@@ -72,7 +82,6 @@ section {
         -webkit-column-count: 3;
         -moz-column-count: 3;
         column-count: 3;
-        grid-column-gap: 2rem;
         grid-template-columns: 272px 272px 272px;
       }
     }
@@ -86,7 +95,6 @@ section {
         -webkit-column-count: 4;
         -moz-column-count: 4;
         column-count: 4;
-        grid-column-gap: 2rem;
         grid-template-columns: 272px 272px 272px 272px;
       }
     }

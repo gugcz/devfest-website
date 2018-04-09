@@ -1,6 +1,6 @@
 <mat-sidenav-container>
   <mat-sidenav #sidenav>
-    <div class="branding"><img src="assets/cover-logo.png"/></div>
+    <div class="branding"><img src="assets/cover-logo.png" alt="DevFest logo"/></div>
     <mat-nav-list>
       <a mat-list-item *ngFor="let item of navigation" (click)="sidenav.close()"
          [routerLink]="[item.link]">
@@ -14,9 +14,9 @@
         <button mat-icon-button *ngIf="mobile" (click)="sidenav.open()">
           <mat-icon>menu</mat-icon>
         </button>
-        <button class="logo-button" *ngIf="!route.match('Home')" [routerLink]="['/']" mat-button [@fadeInOut]>
-          <img class="home-logo" src="assets/cover-logo.png"/>
-        </button>
+        <a class="logo-button" *ngIf="!route.match('Home')" [routerLink]="['/']">
+          <img class="home-logo" src="assets/cover-logo.png" alt="DevFest logo"/>
+        </a>
         <span class="spacer"></span>
         <div class="button-row" *ngIf="!mobile">
           <a *ngFor="let item of navigation; let index = index" class="nav-button mat-button nav-button-{{index}}" mat-button [routerLink]="[item.link]" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">{{item.label}}</a>
