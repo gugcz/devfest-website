@@ -1,0 +1,22 @@
+{
+  "environments": {
+    "prod": {
+      "apiKey": "AIzaSyDtuF9K1k7-crG8_xqmM6Fi49ZFTbPxmgU",
+      "authDomain": "devfest-2018-cz.firebaseapp.com",
+      "databaseURL": "https://devfest-2018-cz.firebaseio.com",
+      "projectId": "devfest-2018-cz",
+      "storageBucket": "devfest-2018-cz.appspot.com",
+      "messagingSenderId": "615143123799"
+    },
+    "test": {
+      "apiKey": "AIzaSyBZb3XkBPfmP9Chgsyd-t_ojwDv0wOaE3Q",
+      "authDomain": "devfest2018-test.firebaseapp.com",
+      "databaseURL": "https://devfest2018-test.firebaseio.com",
+      "projectId": "devfest2018-test",
+      "storageBucket": "devfest2018-test.appspot.com",
+      "messagingSenderId": "674588630934"
+    }
+  },
+  "mailchimpApiKey": "f02dc0c3e149f6005d6d31e252c0e535-us4",
+  "mailchimpIdEarlySubscribeList": "3a27fbd474"
+}
