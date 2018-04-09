@@ -3,7 +3,7 @@
   -webkit-column-count: 2;
   -moz-column-count: 2;
   column-count: 2;
-  grid-gap: 1rem;
+  grid-gap: 16px;
 
   .number-container {
     display: flex;
@@ -18,18 +18,18 @@
 
     .two-digit {
       min-width: 5.688rem;
-      width: 5.688rem;
-      max-width: 5.688rem;
+      width: 91px;
+      max-width: 91px;
     }
 
     .minutes {
-      padding-left: 1.8rem;
+      padding-left: 29px;
     }
 
     .three-digit {
-      min-width: 7.563rem;
-      width: 7.563rem;
-      max-width: 7.563rem;
+      min-width: 121px;
+      width: 121px;
+      max-width: 121px;
     }
 
     .description {
@@ -38,11 +38,11 @@
       align-self: flex-end;
       justify-self: flex-end;
       font-size: 1.125rem;
-      padding-bottom: 0.525rem;
-      padding-left: 0.45rem;
-      min-width: 1rem;
-      width: 1rem;
-      max-width: 1rem;
+      padding-bottom: 8px;
+      padding-left: 7px;
+      min-width: 16px;
+      width: 16px;
+      max-width: 16px;
     }
   }
 }
@@ -57,7 +57,7 @@
 
 @media only screen and (min-width: 525px) {
   .countdown-container {
-    grid-gap: 2rem;
+    grid-gap: 32px;
     .number-container {
       p.number {
         font-size: 5.390625rem;
@@ -65,26 +65,26 @@
       }
 
       p.two-digit {
-        min-width: 6.665625rem;
-        width: 6.665625rem;
-        max-width: 6.665625rem;
+        min-width: 107px;
+        width: 107px;
+        max-width: 107px;
       }
 
       p.minutes {
-        padding-left: 2.109375rem;
+        padding-left: 34px;
       }
 
       p.three-digit {
-        min-width: 8.862890625rem;
-        width: 8.862890625rem;
-        max-width: 8.862890625rem;
+        min-width: 142px;
+        width: 142px;
+        max-width: 142px;
       }
 
       p.description {
         align-self: flex-end;
         font-size: 1.318359375rem;
-        padding-bottom: 0.5rem;
-        padding-left: 0.3rem;
+        padding-bottom: 8px;
+        padding-left: 10px;
       }
     }
   }
@@ -92,7 +92,7 @@
 
 @media only screen and (min-width: 625px) {
   .countdown-container {
-    grid-gap: 2.5rem;
+    grid-gap: 40px;
     .number-container {
       p.number {
         font-size: 6.417410714rem;
@@ -100,26 +100,26 @@
       }
 
       p.two-digit {
-        min-width: 7.935267857rem;
-        width: 7.935267857rem;
-        max-width: 7.935267857rem;
+        min-width: 127px;
+        width: 127px;
+        max-width: 127px;
       }
 
       p.minutes {
-        padding-left: 2.511160714rem;
+        padding-left: 40px;
       }
 
       p.three-digit {
-        min-width: 10.551060268rem;
-        width: 10.551060268rem;
-        max-width: 10.551060268rem;
+        min-width: 169px;
+        width: 169px;
+        max-width: 169px;
       }
 
       p.description {
         align-self: flex-end;
         font-size: 1.569475446rem;
-        padding-bottom: 0.5rem;
-        padding-left: 0.4rem;
+        padding-bottom: 10px;
+        padding-left: 6px;
       }
     }
   }
@@ -143,7 +143,7 @@
     -moz-column-count: 4;
     column-count: 4;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    padding: 0 2rem;
+    padding: 0 32px;
     min-width: 608px;
     width: 608px;
     max-width: 608px;
@@ -155,9 +155,9 @@
       }
 
       p.two-digit {
-        min-width: 5.932368rem;
-        width: 5.932368rem;
-        max-width: 5.932368rem;
+        min-width: 95px;
+        width: 95px;
+        max-width: 95px;
       }
 
       p.minutes {
@@ -165,15 +165,15 @@
       }
 
       p.three-digit {
-        min-width: 8.05536rem;
-        width: 8.05536rem;
-        max-width: 8.05536rem;
+        min-width: 129px;
+        width: 129px;
+        max-width: 129px;
       }
 
       p.description {
         font-size: 1.28rem;
-        padding-left: 0.3rem;
-        padding-bottom: 0.4rem;
+        padding-left: 5px;
+        padding-bottom: 7px;
       }
     }
   }
@@ -181,7 +181,7 @@
 
 @media only screen and (min-width: 1024px) and (orientation: portrait) {
   .countdown-container {
-    padding: 0 4rem;
+    padding: 0 64px;
     min-width: 800px;
     width: 800px;
     max-width: 800px;
@@ -194,9 +194,9 @@
       }
 
       p.two-digit {
-        min-width: 7.41rem;
-        width: 7.41rem;
-        max-width: 7.41rem;
+        min-width: 119px;
+        width: 119px;
+        max-width: 119px;
       }
 
       p.minutes {
@@ -204,15 +204,15 @@
       }
 
       p.three-digit {
-        min-width: 10.06rem;
-        width: 10.06rem;
-        max-width: 10.06rem;
+        min-width: 161px;
+        width: 161px;
+        max-width: 161px;
       }
 
       p.description {
         font-size: 1.6rem;
-        padding-left: 0.4rem;
-        padding-bottom: 0.6rem;
+        padding-left: 6px;
+        padding-bottom: 10px;
       }
     }
   }
@@ -231,20 +231,20 @@
       }
 
       p.two-digit {
-        min-width: 5.5616rem;
-        width: 5.5616rem;
-        max-width: 5.5616rem;
+        min-width: 89px;
+        width: 89px;
+        max-width: 89px;
       }
 
       p.three-digit {
-        min-width: 7.552rem;
-        width: 7.552rem;
-        max-width: 7.552rem;
+        min-width: 121px;
+        width: 121px;
+        max-width: 121px;
       }
 
       p.description {
         font-size: 1.2rem;
-        padding-bottom: 0.35rem;
+        padding-bottom: 6px;
       }
     }
   }
@@ -264,20 +264,20 @@
       }
 
       p.two-digit {
-        min-width: 6.179555556rem;
-        width: 6.179555556rem;
-        max-width: 6.179555556rem;
+        min-width: 99px;
+        width: 99px;
+        max-width: 99px;
       }
 
       p.three-digit {
-        min-width: 8.391111111rem;
-        width: 8.391111111rem;
-        max-width: 8.391111111rem;
+        min-width: 134px;
+        width: 134px;
+        max-width: 134px;
       }
 
       p.description {
         font-size: 1.333333333rem;
-        padding-bottom: 0.35rem;
+        padding-bottom: 8px;
       }
     }
   }
@@ -297,20 +297,20 @@
       }
 
       p.two-digit {
-        min-width: 8.62263566rem;
-        width: 8.62263566rem;
-        max-width: 8.62263566rem;
+        min-width: 138px;
+        width: 138px;
+        max-width: 138px;
       }
 
       p.three-digit {
-        min-width: 11.708527132rem;
-        width: 11.708527132rem;
-        max-width: 11.708527132rem;
+        min-width: 187px;
+        width: 187px;
+        max-width: 187px;
       }
 
       p.description {
         font-size: 1.860465116rem;
-        padding-bottom: 0.35rem;
+        padding-bottom: 6px;
       }
     }
   }
@@ -319,5 +319,16 @@
 @media screen and (min-width: 1920px) {
   .countdown-container {
     margin: 64px 0;
+  }
+}
+
+@media screen and (min-width: 1920px) {
+  .countdown-container {
+    .number-container {
+      p.description {
+        padding-bottom: 8px;
+        padding-left: 8px;
+      }
+    }
   }
 }

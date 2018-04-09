@@ -6,7 +6,7 @@
     }
     .stay-notified {
       font-size: 1.4rem;
-      padding: 0.25rem 0;
+      padding: 4px 0;
       width: 100%;
     }
   }
@@ -19,7 +19,7 @@
       -webkit-column-count: 1;
       -moz-column-count: 1;
       column-count: 1;
-      grid-gap: 1rem;
+      grid-gap: 16px;
       align-items: center;
 
       mat-form-field.email-form-field {
@@ -28,8 +28,8 @@
       }
       .stay-notified {
         font-size: 1.4rem;
-        padding: 0.25rem 0;
-        height: 2.8125rem;
+        padding: 4px 0;
+        height: 45px;
         width: unset;
       }
     }
@@ -44,8 +44,8 @@
       }
       .stay-notified {
         font-size: 1.75rem;
-        padding: 0.25rem 0;
-        height: 3.515625rem;
+        padding: 4px 0;
+        height: 56px;
         width: unset;
       }
     }
