@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {MatIconRegistry} from '@angular/material';
-import {Router} from '@angular/router';
+import {Router, NavigationEnd} from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Location} from '@angular/common';
 import {animate, style, transition, trigger} from '@angular/animations';
-import { HostListener} from "@angular/core";
+import {HostListener} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -57,7 +57,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.router.events.subscribe(evt => {
+      if (!(evt instanceof NavigationEnd)) {
+          return;
+      }
+      window.scrollTo(0, 0);
+    });
   }
 
   @HostListener('window:scroll', [])
