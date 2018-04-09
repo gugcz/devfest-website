@@ -13,8 +13,6 @@ import {AngularFirestoreModule} from 'angularfire2/firestore';
 import {AngularFireStorageModule} from 'angularfire2/storage';
 import {PagesModule} from './pages/pages.module';
 import {MetaChangerService} from './services/meta-changer.service';
-import {RouteReuseStrategy} from '@angular/router';
-import {CustomReuseStrategy} from './services/custom-reuse.strategy';
 
 @NgModule({
   declarations: [
@@ -32,7 +30,7 @@ import {CustomReuseStrategy} from './services/custom-reuse.strategy';
     AngularFirestoreModule,
     AngularFireStorageModule
   ],
-  providers: [MetaChangerService, {provide: RouteReuseStrategy, useClass: CustomReuseStrategy}],
+  providers: [MetaChangerService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
