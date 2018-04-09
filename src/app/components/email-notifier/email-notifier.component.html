@@ -1,18 +1,10 @@
 <div class="email-notifier">
-  <form (ngSubmit)="submit()">
+  <form>
     <div class="input-container">
-      <mat-form-field>
-        <input matInput placeholder="Enter your email" [formControl]="emailControl" name="EMAIL" required autofocus>
-        <mat-error *ngIf="emailControl.status === 'INVALID'">{{getEmailErrorMessage()}}</mat-error>
+      <mat-form-field class="email-form-field">
+        <input matInput type="email" value="" [formControl]="emailControl" placeholder="Email address">
       </mat-form-field>
-
-      <mat-form-field>
-        <input matInput placeholder="Enter your name" [formControl]="nameControl" required>
-        <mat-error *ngIf="nameControl.status === 'INVALID'">{{getNameErrorMessage()}}</mat-error>
-      </mat-form-field>
-
-      <button mat-raised-button color="accent" type="submit" class="stay-notified">Stay notified</button>
+      <button mat-raised-button color="accent" (click)="submit()" class="stay-notified">Stay notified</button>
     </div>
   </form>
 </div>
-
