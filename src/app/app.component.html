@@ -9,8 +9,8 @@
     </mat-nav-list>
   </mat-sidenav>
   <div class="wrapper">
-    <div class="toolbar" [ngClass]="{'dark-toolbar': menuType === 'dark-toolbar', 'transparent': menuType === 'transparent'}">
-      <mat-toolbar *ngIf="showMenu">
+    <div class="toolbar" [ngClass]="{'dark-toolbar': menuType === 'dark-toolbar', 'transparent': menuType === 'transparent', 'hidden': !showMenu}">
+      <mat-toolbar>
         <button mat-icon-button *ngIf="mobile" (click)="sidenav.open()">
           <mat-icon>menu</mat-icon>
         </button>
@@ -25,8 +25,9 @@
       </mat-toolbar>
     </div>
 
-    <div class="content">
-      <router-outlet></router-outlet>
+    <div class="content"
+         [@routerTransition]="o.isActivated && o.activatedRoute.routeConfig.path">
+      <router-outlet #o="outlet"></router-outlet>
     </div>
   </div>
 <footer>
