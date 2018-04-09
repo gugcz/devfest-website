@@ -7,6 +7,7 @@ section {
   background: url("../../../assets/team-photo.jpg") no-repeat center;
   background-size: cover;
   color: #ffffff;
+  overflow-y: hidden;
 
   .background-gradient {
     flex: 1;
