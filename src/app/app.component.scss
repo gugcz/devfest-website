@@ -14,8 +14,26 @@
 }
 
 .logo-button {
-  max-width: 150px;
-  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100px;
+  width: 100px;
+  img {
+    margin-left: 10px;
+    height: 26px;
+  }
+}
+
+@media only screen and (min-width: 425px) {
+  .logo-button {
+    max-width: 150px;
+    width: 150px;
+    img {
+      margin-left: 10px;
+      height: 39px;
+    }
+  }
 }
 
 .spacer {
