@@ -2,7 +2,7 @@
   <form (ngSubmit)="submit()">
     <div class="input-container">
       <mat-form-field>
-        <input matInput placeholder="Enter your email" [formControl]="emailControl" name="EMAIL" required autofocus>
+        <input matInput placeholder="Enter your email" [formControl]="emailControl" name="EMAIL" required>
         <mat-error *ngIf="emailControl.status === 'INVALID'">{{getEmailErrorMessage()}}</mat-error>
       </mat-form-field>
 
