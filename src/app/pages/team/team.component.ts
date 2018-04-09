@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Organizer} from '../../database/organizer';
 import {AngularFirestore} from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
+import {Observable} from 'rxjs/Observable';
+import {ANIMATE_ON_ROUTE_ENTER} from '../../global/animations/router.transition';
 
 @Component({
   selector: 'app-team',
@@ -11,6 +12,7 @@ import { Observable } from 'rxjs/Observable';
 export class TeamComponent implements OnInit {
 
   organizers$: Observable<Organizer[]>;
+  animateOnRouteEnter = ANIMATE_ON_ROUTE_ENTER;
 
   constructor(private fireStore: AngularFirestore) {
   }
