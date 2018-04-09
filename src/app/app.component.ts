@@ -1,10 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {MatIconRegistry} from '@angular/material';
 import {Router, NavigationEnd} from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Location} from '@angular/common';
 import {animate, style, transition, trigger} from '@angular/animations';
-import {HostListener} from '@angular/core';
+
+import {MetaChangerService} from './services/meta-changer.service';
+import {routerTransition} from './global/animations/router.transition';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +20,7 @@ import {HostListener} from '@angular/core';
     transition(':leave', [   // :leave is alias to '* => void'
       animate('500ms', style({opacity: 0}))
     ])
-  ])]
+  ]), routerTransition]
 })
 
 export class AppComponent implements OnInit {
@@ -34,7 +36,7 @@ export class AppComponent implements OnInit {
   menuType: string;
 
 
-  constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public router: Router, public location: Location) {
+  constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public router: Router, public location: Location, private metaChanger: MetaChangerService) {
     this.route = '';
     this.showMenu = true;
     this.menuType = 'transparent';
