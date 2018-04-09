@@ -30,8 +30,8 @@ section {
     }
   }
   .dark-background {
-      flex: 1;
-      background-color: $dark-background;
+    flex: 1;
+    background-color: $dark-background;
   }
 }
 
@@ -39,7 +39,7 @@ section {
   section {
     background-position-y: 56px;
     .background-gradient {
-      padding-top: 120px;
+      padding-top: 7.5rem;
     }
   }
 }
@@ -65,6 +65,7 @@ section {
     }
   }
 }
+
 @media only screen and (min-width: 912px) {
   section {
     .background-gradient {

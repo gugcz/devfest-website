@@ -131,12 +131,12 @@ section {
 @media only screen and (min-width: 768px) {
   .container {
     padding: 80px 48px 0;
-    min-height: calc(100vh - 2.25rem);
+    min-height: calc(100vh - 36px);
     .header {
       -webkit-column-count: 2;
       -moz-column-count: 2;
       column-count: 2;
-      grid-gap: 3rem;
+      grid-gap: 48px;
       grid-template-columns: 1fr 1fr;
 
       .header-item {
@@ -147,7 +147,7 @@ section {
 
       .date-container h1 {
         font-size: 1.7rem;
-        margin: 0.35rem 0 0;
+        margin: 5.6px 0 0;
       }
     }
 
@@ -155,7 +155,7 @@ section {
       display: flex;
       flex: 1 1;
       flex-direction: row;
-      margin-top: 4.875rem;
+      margin-top: 78px;
       width: 100%;
     }
 
@@ -176,7 +176,7 @@ section {
 @media only screen and (min-width: 1024px) and (orientation: portrait) {
   .container {
     .header {
-      grid-gap: 5rem;
+      grid-gap: 80px;
 
       .header-item {
         .cover-logo {
@@ -186,7 +186,7 @@ section {
 
       .date-container h1 {
         font-size: 2.4rem;
-        margin: 0.35rem 0 0;
+        margin: 5.6px 0 0;
       }
     }
 
@@ -194,7 +194,7 @@ section {
       display: flex;
       flex: 1 1;
       flex-direction: row;
-      margin-top: 4.875rem;
+      margin-top: 78px;
       width: 100%;
     }
 
@@ -227,7 +227,7 @@ section {
 
       .date-container h1 {
         font-size: 1.92rem;
-        margin-top: 0.125rem;
+        margin-top: 2px;
       }
     }
 

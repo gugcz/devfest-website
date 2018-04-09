@@ -38,7 +38,6 @@ a.active {
 }
 
 mat-sidenav-container {
-
   .wrapper {
     z-index: -2;
     height: 100%;
@@ -209,7 +208,7 @@ mat-sidenav {
   }
 }
 
-@media only screen and (max-width: 767px){
+@media only screen and (max-width: 767px) {
   .mat-toolbar {
     background: $dark-background;
   }
