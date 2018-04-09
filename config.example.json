@@ -1,0 +1,22 @@
+{
+  "environments": {
+    "prod": {
+      "apiKey": "PROD-FIREBASE",
+      "authDomain": "PROD-FIREBASE",
+      "databaseURL": "PROD-FIREBASE",
+      "projectId": "PROD-FIREBASE",
+      "storageBucket": "PROD-FIREBASE",
+      "messagingSenderId": "PROD-FIREBASE"
+    },
+    "test": {
+      "apiKey": "TEST-FIREBASE",
+      "authDomain": "TEST-FIREBASE",
+      "databaseURL": "TEST-FIREBASE",
+      "projectId": "TEST-FIREBASE",
+      "storageBucket": "TEST-FIREBASE",
+      "messagingSenderId": "TEST-FIREBASE"
+    }
+  },
+  "mailchimpApiKey": "mailchimpapikey",
+  "mailchimpIdEarlySubscribeList": "mailchimpapikey-idlist"
+}

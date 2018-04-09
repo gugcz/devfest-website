@@ -50,3 +50,6 @@ Thumbs.db
 ANGULAR-devfest.iml
 /organizers/
 *.iml
+
+# Config
+config.json
