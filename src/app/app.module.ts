@@ -4,7 +4,7 @@ import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
-import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SharedModule} from './global/shared.module';
 import {ComponentsModule} from './components/components.module';
 import {AngularFireModule} from 'angularfire2';
@@ -22,8 +22,6 @@ import {MetaChangerService} from './services/meta-changer.service';
     // angular
     BrowserAnimationsModule,
     BrowserModule,
-
-    NoopAnimationsModule,
     SharedModule,
     ComponentsModule,
     AppRoutingModule,
