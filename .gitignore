@@ -8,6 +8,8 @@
 # dependencies
 /node_modules
 /functions/node_modules
+/functions/package-lock.json
+/package-lock.json
 
 # IDEs and editors
 /.idea
@@ -33,6 +35,8 @@
 npm-debug.log
 testem.log
 /typings
+firebase-debug.log
+/functions/firebase-debug.log
 
 # e2e
 /e2e/*.js
@@ -46,3 +50,6 @@ Thumbs.db
 ANGULAR-devfest.iml
 /organizers/
 *.iml
+
+# Config
+/config.json
