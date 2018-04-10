@@ -11,8 +11,8 @@
 
 .app-loading-child {
   .logo {
-    position: relative;
-    top: -25px;
+    position: absolute;
+    top: calc(50% - 50px);
     width: 100px;
     height: 100px;
     background: url('../assets/gdg-logo.png') center center no-repeat;
