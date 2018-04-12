@@ -4,6 +4,7 @@
   -moz-column-count: 2;
   column-count: 2;
   grid-gap: 16px;
+  grid-template-columns: 1fr 1fr;
 
   .number-container {
     display: flex;
@@ -27,9 +28,9 @@
     }
 
     .three-digit {
-      min-width: 121px;
-      width: 121px;
-      max-width: 121px;
+      min-width: 123px;
+      width: 123px;
+      max-width: 123px;
     }
 
     .description {
@@ -39,20 +40,12 @@
       justify-self: flex-end;
       font-size: 1.125rem;
       padding-bottom: 8px;
-      padding-left: 7px;
+      padding-left: 9px;
       min-width: 16px;
       width: 16px;
       max-width: 16px;
     }
   }
-}
-
-.three-digit-container {
-  grid-template-columns: 145px 114.2px;
-}
-
-.two-digit-container {
-  grid-template-columns: 114.2px 114.2px;
 }
 
 @media only screen and (min-width: 525px) {
@@ -75,16 +68,16 @@
       }
 
       p.three-digit {
-        min-width: 142px;
-        width: 142px;
-        max-width: 142px;
+        min-width: 144px;
+        width: 144px;
+        max-width: 144px;
       }
 
       p.description {
         align-self: flex-end;
         font-size: 1.318359375rem;
         padding-bottom: 8px;
-        padding-left: 10px;
+        padding-left: 12px;
       }
     }
   }
@@ -110,16 +103,16 @@
       }
 
       p.three-digit {
-        min-width: 169px;
-        width: 169px;
-        max-width: 169px;
+        min-width: 171px;
+        width: 171px;
+        max-width: 171px;
       }
 
       p.description {
         align-self: flex-end;
         font-size: 1.569475446rem;
         padding-bottom: 10px;
-        padding-left: 6px;
+        padding-left: 12px;
       }
     }
   }
@@ -129,10 +122,22 @@
   .countdown-container {
     .number-container:nth-child(odd) {
       justify-content: flex-end;
+
+      p.number {
+        text-align: right;
+      }
     }
 
     .number-container:nth-child(even) {
       justify-content: flex-start;
+
+      p.number {
+        text-align: left;
+      }
+
+      p.description {
+        padding-left: 0;
+      }
     }
   }
 }
