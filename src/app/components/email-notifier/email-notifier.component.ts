@@ -23,8 +23,8 @@ export class EmailNotifierComponent implements OnInit {
   }
 
   getEmailErrorMessage() {
-    return this.emailControl.hasError('required') ? 'You must enter a email' :
-      this.emailControl.hasError('email') ? 'Not a valid email' :
+    return this.emailControl.hasError('required') ? 'You must enter an email!' :
+      this.emailControl.hasError('email') ? 'Not a valid email!' :
         '';
   }
 
@@ -33,10 +33,10 @@ export class EmailNotifierComponent implements OnInit {
       const id = this.firestore.createId();
       const data: MailchimpEmail = {id: id, dateImported: new Date(), email: this.emailControl.value, imported: false};
       this.firestore.collection<MailchimpEmail>('mailchimp-emails').doc<MailchimpEmail>(id).set(data).then(() => {
-        this.snackBar.open('You have subscribed', ' ', {duration: 3000});
+        this.snackBar.open('You have subscribed!', ' ', {duration: 3000, extraClasses: ['email-snackbar']});
       });
     } else {
-      this.snackBar.open(this.getEmailErrorMessage(), ' ', {duration: 3000});
+      this.snackBar.open(this.getEmailErrorMessage(), ' ', {duration: 3000, extraClasses: ['email-error-snackbar']});
     }
   }
 }
