@@ -131,3 +131,13 @@ body, html {
 body mat-toolbar.mat-toolbar a.mat-button div.mat-button-focus-overlay {
   background-color: rgba(255, 255, 255, 0.12);
 }
+
+.email-snackbar {
+  background-color: $dark-background;
+  color: white;
+}
+
+.email-error-snackbar {
+  background-color: $dark-background;
+  color: $error-message;
+}
