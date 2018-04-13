@@ -10,18 +10,14 @@
   <span *ngIf="profileUrl | async;let url;else loadingImage">
      <img mat-card-md-image [src]="url" class="image"  [@fadeInOut]>
   </span>
-  <mat-card-actions>
-    <a mat-icon-button *ngIf="organizer.facebook" [href]="'https://www.facebook.com/' + organizer.facebook"
+  <mat-card-actions class="actions">
+    <a mat-icon-button *ngIf="organizer.twitter" [href]="'https://www.twitter.com/' + organizer.twitter"
        target="_blank" class="link">
-      <mat-icon svgIcon="facebook"></mat-icon>
+      <mat-icon svgIcon="twitter"></mat-icon>
     </a>
     <a mat-icon-button *ngIf="organizer.instagram" [href]="'https://www.instagram.com/' + organizer.instagram"
        target="_blank" class="link">
       <mat-icon svgIcon="instagram"></mat-icon>
-    </a>
-    <a mat-icon-button *ngIf="organizer.twitter" [href]="'https://www.twitter.com/' + organizer.twitter"
-       target="_blank" class="link">
-      <mat-icon svgIcon="twitter"></mat-icon>
     </a>
   </mat-card-actions>
 </mat-card>

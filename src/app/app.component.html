@@ -27,6 +27,7 @@
 
     <div class="content"
          [@routerTransition]="o.isActivated && o.activatedRoute.routeConfig.path">
+      <simple-notifications></simple-notifications>
       <router-outlet #o="outlet"></router-outlet>
     </div>
   </div>
