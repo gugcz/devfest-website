@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AngularFirestore} from 'angularfire2/firestore';
-import {FormControl, Validators} from '@angular/forms';
-import {MatSnackBar} from '@angular/material';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MailchimpEmail} from '../../database/mailchimp-email';
+import {NotificationsService} from 'angular2-notifications';
 
 @Component({
   selector: 'app-email-notifier',
@@ -11,32 +11,33 @@ import {MailchimpEmail} from '../../database/mailchimp-email';
 })
 export class EmailNotifierComponent implements OnInit {
 
-  emailControl = new FormControl('', [
-    Validators.required,
-    Validators.email,
-  ]);
+  @ViewChild('email') emailRef: ElementRef;
 
-  constructor(private firestore: AngularFirestore, private snackBar: MatSnackBar) {
+  emailForm = new FormGroup({
+    email: new FormControl('', [
+      Validators.required,
+      Validators.email,
+    ])
+  });
+
+  constructor(private firestore: AngularFirestore, private notification: NotificationsService) {
   }
 
   ngOnInit() {
   }
 
-  getEmailErrorMessage() {
-    return this.emailControl.hasError('required') ? 'You must enter a email' :
-      this.emailControl.hasError('email') ? 'Not a valid email' :
-        '';
-  }
-
-  submit() {
-    if (this.emailControl.status === 'VALID') {
+  submit(directive) {
+    if (this.emailForm.status === 'VALID') {
       const id = this.firestore.createId();
-      const data: MailchimpEmail = {id: id, dateImported: new Date(), email: this.emailControl.value, imported: false};
+      const data: MailchimpEmail = {id: id, dateImported: new Date(), email: this.emailForm.value.email, imported: false};
       this.firestore.collection<MailchimpEmail>('mailchimp-emails').doc<MailchimpEmail>(id).set(data).then(() => {
-        this.snackBar.open('You have subscribed', ' ', {duration: 3000});
+        directive.resetForm();
+        this.emailForm.reset();
+        this.notification.success('You have subscribed');
+        /*        this.snackBar.open('You have subscribed!', ' ', {duration: 3000, extraClasses: ['email-snackbar']});*/
       });
     } else {
-      this.snackBar.open(this.getEmailErrorMessage(), ' ', {duration: 3000});
+      this.notification.error('You must enter an valid email!');
     }
   }
 }

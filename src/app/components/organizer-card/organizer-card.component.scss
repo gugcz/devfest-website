@@ -16,5 +16,12 @@
     width: 128px;
     height: 128px;
   }
+
+  mat-card-actions.actions {
+    min-height: 40px;
+    height: 40px;
+    max-height: 40px;
+    padding-top: 8px;
+  }
 }
 

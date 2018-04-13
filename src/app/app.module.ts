@@ -12,6 +12,7 @@ import {AngularFirestoreModule} from 'angularfire2/firestore';
 import {AngularFireStorageModule} from 'angularfire2/storage';
 import {PagesModule} from './pages/pages.module';
 import {MetaChangerService} from './services/meta-changer.service';
+import {SimpleNotificationsModule} from 'angular2-notifications';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,12 @@ import {MetaChangerService} from './services/meta-changer.service';
     ComponentsModule,
     AppRoutingModule,
     PagesModule,
+    SimpleNotificationsModule.forRoot({
+      timeOut: 3000,
+      showProgressBar: true,
+      pauseOnHover: true,
+      clickToClose: true
+    }),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireStorageModule
