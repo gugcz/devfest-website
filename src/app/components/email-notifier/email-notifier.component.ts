@@ -33,11 +33,20 @@ export class EmailNotifierComponent implements OnInit {
       this.firestore.collection<MailchimpEmail>('mailchimp-emails').doc<MailchimpEmail>(id).set(data).then(() => {
         directive.resetForm();
         this.emailForm.reset();
-        this.notification.success('You have subscribed');
-        /*        this.snackBar.open('You have subscribed!', ' ', {duration: 3000, extraClasses: ['email-snackbar']});*/
+        this.notification.success('You have subscribed', '', {
+          timeOut: 3000,
+          showProgressBar: true,
+          pauseOnHover: true,
+          clickToClose: true
+        });
       });
     } else {
-      this.notification.error('You must enter an valid email!');
+      this.notification.error('You must enter an valid email!', '', {
+        timeOut: 3000,
+        showProgressBar: true,
+        pauseOnHover: true,
+        clickToClose: true
+      });
     }
   }
 }

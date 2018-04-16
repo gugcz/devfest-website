@@ -24,12 +24,7 @@ import {SimpleNotificationsModule} from 'angular2-notifications';
     ComponentsModule,
     AppRoutingModule,
     PagesModule,
-    SimpleNotificationsModule.forRoot({
-      timeOut: 3000,
-      showProgressBar: true,
-      pauseOnHover: true,
-      clickToClose: true
-    }),
+    SimpleNotificationsModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireStorageModule
