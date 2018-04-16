@@ -1,3 +1,4 @@
+<simple-notifications></simple-notifications>
 <mat-sidenav-container>
   <mat-sidenav #sidenav>
     <div class="branding"><img src="assets/cover-logo.png" alt="DevFest logo"/></div>
@@ -27,7 +28,6 @@
 
     <div class="content"
          [@routerTransition]="o.isActivated && o.activatedRoute.routeConfig.path">
-      <simple-notifications></simple-notifications>
       <router-outlet #o="outlet"></router-outlet>
     </div>
   </div>
