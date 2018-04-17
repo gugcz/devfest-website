@@ -1,10 +1,11 @@
 <div class="email-notifier">
-  <form>
+  <form [formGroup]="emailForm" #formDirective="ngForm">
     <div class="input-container">
       <mat-form-field class="email-form-field">
-        <input matInput type="email" value="" [formControl]="emailControl" placeholder="Email address">
+        <input matInput type="email" value="" [formControlName]="'email'" placeholder="Email address" #email>
       </mat-form-field>
-      <button mat-raised-button color="accent" (click)="submit()" class="stay-notified">Stay notified</button>
+      <button mat-raised-button color="accent" (click)="submit(formDirective)" class="stay-notified">Stay notified
+      </button>
     </div>
   </form>
 </div>
