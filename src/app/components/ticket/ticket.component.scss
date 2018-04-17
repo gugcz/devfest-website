@@ -1,0 +1,69 @@
+@import "../../../styles/colors";
+
+.ticket-card {
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .title {
+      width: 100%;
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 500;
+      margin: 0;
+      text-align: center;
+    }
+
+    .price {
+      width: 100%;
+      color: $yellow;
+      font-size: 2.75rem;
+      font-weight: 500;
+      margin: 16px 0;
+      text-align: center;
+    }
+
+    .subtitle {
+      width: 100%;
+      color: white;
+      font-size: 1.1rem;
+      margin: 16px 0 0 0;
+      text-align: center;
+    }
+
+    .description {
+      color: white;
+      width: 100%;
+      text-align: center;
+      font-size: 1.25rem;
+      margin: 0;
+    }
+
+    .buy-button {
+      margin-top: 26px;
+      font-size: 1.25rem;
+      font-weight: 500;
+      height: 50px;
+      width: 200px;
+    }
+
+    .sold-out {
+      margin-top: 36px;
+      margin-bottom: 10px;
+      font-size: 1.25rem;
+      font-weight: 500;
+      width: 100%;
+      text-align: center;
+    }
+  }
+}
+
+.ticket-card.actual {
+  border-top: 4px solid $yellow;
+  box-shadow: rgba(253, 216, 53, 0.5) 0 2px 3px 3px;
+}
+
+.ticket-card.actual:hover {
+  box-shadow: rgba(253, 216, 53, 0.7) 0 2px 3px 3px;
+}

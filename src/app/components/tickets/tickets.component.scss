@@ -1,0 +1,21 @@
+@import "../../../styles/colors";
+
+.container {
+  padding: 22px;
+  background-color: $dark-background;
+
+  .tickets-title {
+    color: white;
+    font-size: 2.75rem;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+  }
+
+  .tickets-container {
+    padding-top: 22px;
+    display: grid;
+    column-count: 1;
+    grid-gap: 22px;
+  }
+}
