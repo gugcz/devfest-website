@@ -11,7 +11,7 @@
     color: white;
     font-size: 2.75rem;
     font-weight: 600;
-    margin: 0;
+    margin: 16px 0 0 0;
     text-align: center;
   }
 
@@ -32,6 +32,10 @@
       app-ticket {
         width: 250px;
       }
+    }
+
+    .app-loading-child .spinner {
+      position: relative;
     }
   }
   .help-text {
