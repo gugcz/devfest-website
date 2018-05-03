@@ -15,6 +15,10 @@ $frontend-app-theme: mat-dark-theme($anms-black-primary, $anms-black-accent, $an
   font-weight: 400;
 }
 
+a {
+  text-decoration: none;
+}
+
 @font-face {
   font-family: Roboto;
   font-style: normal;

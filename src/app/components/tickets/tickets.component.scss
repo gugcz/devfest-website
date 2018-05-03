@@ -1,8 +1,11 @@
 @import "../../../styles/colors";
 
 .container {
+  display: flex;
   padding: 22px;
   background-color: $dark-background;
+  height: calc(100vh - 44px);
+  flex-direction: column;
 
   .tickets-title {
     color: white;
@@ -12,10 +15,62 @@
     text-align: center;
   }
 
-  .tickets-container {
-    padding-top: 22px;
-    display: grid;
-    column-count: 1;
-    grid-gap: 22px;
+  .tickets {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+
+    .tickets-container {
+      padding-top: 22px;
+      display: grid;
+      column-count: 1;
+      grid-gap: 32px;
+      column-gap: 32px;
+      justify-content: center;
+
+      app-ticket {
+        width: 250px;
+      }
+    }
+  }
+  .help-text {
+    text-align: center;
+
+    a {
+      color: white;
+    }
+  }
+}
+
+@media only screen and (min-width: 526px) {
+  .container {
+    .tickets {
+      .tickets-container {
+        column-count: 2;
+        grid-template-columns: 250px 250px;
+
+        app-ticket:nth-child(odd) {
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        app-ticket:nth-child(even) {
+          display: flex;
+          justify-content: flex-start;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .container {
+    .tickets {
+      .tickets-container {
+        column-count: 4;
+        grid-template-columns: 250px 250px 250px 250px;
+      }
+    }
   }
 }
