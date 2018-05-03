@@ -14,17 +14,12 @@
       <app-countdown class="countdown"
                      [countDownEnd]="'2018-11-10, 9:00:00AM'"></app-countdown>
     </div>
-    <div class="email-notifier-container" [ngClass]="animateOnRouteEnter">
-      <app-email-notifier></app-email-notifier>
-    </div>
-    <div class="info-text" [ngClass]="animateOnRouteEnter">
-      <p>
-        <span class="nowrap">You´ll</span> get a heads-up for early bird tickets. <span class="nowrap">We´ll</span> also keep you updated on the venue, speakers and more.
-      </p>
+    <div class="register-now-button-container" [ngClass]="animateOnRouteEnter">
+      <app-register-now-button></app-register-now-button>
     </div>
     <div class="social-networks-container" [ngClass]="animateOnRouteEnter">
       <app-social-networks></app-social-networks>
     </div>
   </div>
 </section>
-<app-tickets></app-tickets>
+<app-tickets id="js-tickets"></app-tickets>

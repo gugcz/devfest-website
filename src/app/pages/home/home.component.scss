@@ -46,9 +46,16 @@ section {
     }
   }
 
-  .info-text {
-    margin-top: 10px;
-    text-align: justify;
+  .register-now-button-container {
+    display: flex;
+    flex: 2;
+    justify-content: center;
+    margin-top: 24px;
+    width: 100%;
+    app-register-now-button {
+      display: flex;
+      align-items: center;
+    }
   }
 
   .countdown-container {
@@ -83,9 +90,6 @@ section {
       }
     }
   }
-  .info-text {
-    font-size: 0.9rem;
-  }
 }
 
 @media only screen and (min-width: 375px) {
@@ -96,9 +100,6 @@ section {
       }
     }
   }
-  .info-text {
-    font-size: 1rem;
-  }
 }
 
 @media only screen and (min-width: 425px) {
@@ -107,22 +108,6 @@ section {
       .date-container h1 {
         font-size: 2.16rem;
       }
-    }
-  }
-  .info-text {
-    font-size: 1.1rem;
-  }
-}
-
-@media only screen and (min-width: 525px) {
-  .container {
-    .email-notifier-container {
-      width: 400px;
-    }
-
-    .info-text {
-      font-size: 1.2rem;
-      width: 400px;
     }
   }
 }
@@ -164,18 +149,11 @@ section {
       width: 100%;
     }
 
-    .email-notifier-container {
-      width: 400px;
-    }
-
     .social-networks-container {
       margin: 48px 0;
     }
   }
 
-  .info-text {
-    font-size: 1.2rem;
-  }
 }
 
 @media only screen and (min-width: 1024px) and (orientation: portrait) {
@@ -203,18 +181,10 @@ section {
       width: 100%;
     }
 
-    .email-notifier-container {
-      width: 500px;
-    }
-
     .social-networks-container {
       margin: 64px 0;
     }
 
-    .info-text {
-      font-size: 1.5rem;
-      width: 500px;
-    }
   }
 }
 
@@ -239,10 +209,6 @@ section {
     .countdown {
       justify-content: center;
     }
-
-    .info-text {
-      font-size: 1.1rem;
-    }
   }
 }
 
@@ -266,10 +232,6 @@ section {
       margin: 64px 0;
     }
 
-    .info-text {
-      font-size: 1.1rem;
-      margin-top: 10px;
-    }
   }
 }
 
@@ -299,11 +261,6 @@ section {
 
     .social-networks-container {
       margin: 96px 0;
-    }
-
-    .info-text {
-      font-size: 1.4rem;
-      margin-top: 10px;
     }
   }
 }
