@@ -4,7 +4,7 @@
   display: flex;
   padding: 22px;
   background-color: $dark-background;
-  height: calc(100vh - 44px);
+  min-height: calc(100vh - 44px);
   flex-direction: column;
 
   .tickets-title {

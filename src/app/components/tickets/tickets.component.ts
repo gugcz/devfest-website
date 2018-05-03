@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {Ticket} from '../../database/ticket';
+import {AngularFirestore} from 'angularfire2/firestore';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-tickets',
@@ -7,9 +10,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TicketsComponent implements OnInit {
 
-  constructor() { }
+  tickets$: Observable<Ticket[]>;
+
+  constructor(private fireStore: AngularFirestore) {
+  }
 
   ngOnInit() {
+    this.tickets$ = this.fireStore.collection<Ticket>('tickets', ref => ref.orderBy('order')).valueChanges();
+    console.log(this.tickets$);
   }
 
 }
