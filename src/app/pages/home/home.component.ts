@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ANIMATE_ON_ROUTE_ENTER} from '../../global/animations/router.transition';
+import {MatButtonModule} from '@angular/material';
 
 @Component({
   selector: 'app-home',
