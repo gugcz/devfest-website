@@ -2,7 +2,6 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AngularFirestore} from 'angularfire2/firestore';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MailchimpEmail} from '../../database/mailchimp-email';
-import {NotificationsService} from 'angular2-notifications';
 
 @Component({
   selector: 'app-email-notifier',
@@ -20,33 +19,9 @@ export class EmailNotifierComponent implements OnInit {
     ])
   });
 
-  constructor(private firestore: AngularFirestore, private notification: NotificationsService) {
+  constructor(private firestore: AngularFirestore) {
   }
 
   ngOnInit() {
-  }
-
-  submit(directive) {
-    if (this.emailForm.status === 'VALID') {
-      const id = this.firestore.createId();
-      const data: MailchimpEmail = {id: id, dateImported: new Date(), email: this.emailForm.value.email, imported: false};
-      this.firestore.collection<MailchimpEmail>('mailchimp-emails').doc<MailchimpEmail>(id).set(data).then(() => {
-        directive.resetForm();
-        this.emailForm.reset();
-        this.notification.success('You have subscribed', '', {
-          timeOut: 3000,
-          showProgressBar: true,
-          pauseOnHover: true,
-          clickToClose: true
-        });
-      });
-    } else {
-      this.notification.error('You must enter an valid email!', '', {
-        timeOut: 3000,
-        showProgressBar: true,
-        pauseOnHover: true,
-        clickToClose: true
-      });
-    }
   }
 }
