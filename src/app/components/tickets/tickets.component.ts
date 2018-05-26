@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Ticket} from '../../database/ticket';
 import {AngularFirestore} from 'angularfire2/firestore';
 import {Observable} from 'rxjs/Observable';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Component({
   selector: 'app-tickets',
@@ -12,12 +13,20 @@ export class TicketsComponent implements OnInit {
 
   tickets$: Observable<Ticket[]>;
 
-  constructor(private fireStore: AngularFirestore) {
+  constructor(private http: HttpClient, private fireStore: AngularFirestore) {
   }
 
   ngOnInit() {
-    this.tickets$ = this.fireStore.collection<Ticket>('tickets', ref => ref.orderBy('order')).valueChanges();
-    console.log(this.tickets$);
+    const headers = {
+      headers: new HttpHeaders({
+        'Authorization': 'Token token=6z4GwhHNVrcudVCCJnTD',
+        'Access-Control-Allow-Origin': '*',
+        'Accept': 'application/vnd.api+json'
+      })
+    };
+    this.http.get('https://api.tito.io/v2/vendelinkuv-ucet/vendelinkuv-event/releases', headers)
+      .toPromise()
+      .then(console.log);
   }
 
 }
