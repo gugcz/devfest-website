@@ -1,7 +1,7 @@
 <div class="container">
   <h2 class="tickets-title">Tickets</h2>
   <div class="tickets">
-    <div class="tickets-container" *ngIf="tickets$ | async;let tickets; else loading">
+    <div class="tickets-container">
       <app-ticket *ngFor="let ticket of tickets" [ticket]="ticket"></app-ticket>
     </div>
   </div>
