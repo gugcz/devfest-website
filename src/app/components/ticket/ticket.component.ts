@@ -14,6 +14,12 @@ export class TicketComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.ticket.price = this.ticket.price.map(it => {
+      return {
+        title: it.title,
+        price: Math.round(it.price)
+      };
+    });
   }
 
   buy() {
