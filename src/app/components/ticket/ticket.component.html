@@ -4,7 +4,7 @@
     <div class="prices-container">
       <div *ngFor="let price of ticket.price; first as isFirst" [ngClass]="{'individual': isFirst}">
         <h4 class="price">
-          {{price.price}}€
+          {{price.price | number}}€
         </h4>
         <h4 class="subtitle">
           {{price.title}}
@@ -12,7 +12,9 @@
       </div>
     </div>
     <p class="description" [innerHtml]="ticket.description"></p>
-    <button *ngIf="ticket.actual || ticket.support;else soldOut" mat-raised-button color="accent" (click)="buy()" class="buy-button">BUY TICKET</button>
+    <a *ngIf="ticket.actual || ticket.support;else soldOut" mat-raised-button color="accent" (click)="buy()"
+            class="buy-button" href="https://ti.to/devfest-cz/2018">BUY TICKET
+    </a>
   </mat-card-content>
 </mat-card>
 <ng-template #soldOut>
