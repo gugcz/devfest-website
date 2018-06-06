@@ -2,8 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {Price, Ticket, TicketDescription} from '../../database/ticket';
 import {AngularFirestore} from 'angularfire2/firestore';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
-import {Organizer} from '../../database/organizer';
 
 @Component({
   selector: 'app-tickets',
@@ -30,11 +28,13 @@ export class TicketsComponent implements OnInit {
     });
     const headers = {
       headers: new HttpHeaders({
-        'Authorization': 'Token token=6z4GwhHNVrcudVCCJnTD',
-        'Access-Control-Allow-Origin': '*',
+        'Authorization': 'Token token=wy-3g2toPzQfsY_5zsCQOw',
         'Accept': 'application/vnd.api+json'
       })
     };
+
+    this.http.get('https://api.tito.io/v2/devfest-cz/2018/releases', headers).toPromise().then(console.log).catch(console.log);
+
     this.response = {
       'data': [
         {
@@ -582,7 +582,6 @@ export class TicketsComponent implements OnInit {
     this.tickets = [
       this.mergeTickets(earlyBirds), this.mergeTickets(regular), this.mergeTickets(lazyBirds), this.mergeTickets(vip)
     ];
-    console.log(this.tickets);
   }
 
   mergeTickets(tickets) {
@@ -590,9 +589,6 @@ export class TicketsComponent implements OnInit {
       const individualTicket = tickets.filter(ticketFltr => ticketFltr['attributes']['title'].indexOf('Individual') !== -1)[0];
       const studentTicket = tickets.filter(ticketFltr => ticketFltr['attributes']['title'].indexOf('Student') !== -1)[0];
       const companyTicket = tickets.filter(ticketFltr => ticketFltr['attributes']['title'].indexOf('Company funded') !== -1)[0];
-      console.log(studentTicket);
-      console.log(individualTicket);
-      console.log(companyTicket);
       const individualPrice: Price = {price: individualTicket['attributes']['price'], title: 'Individual'};
       const companyPrice: Price = {price: companyTicket['attributes']['price'], title: 'Company funded'};
       const studentPrice: Price = {price: studentTicket['attributes']['price'], title: 'Student'};
