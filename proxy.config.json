@@ -1,6 +1,6 @@
 {
   "/tito": {
-    "target": "https://api.tito.io/v2/vendelinkuv-ucet/vendelinkuv-event/releases",
+    "target": "https://api.tito.io/v2/devfest-cz/2018/releases/",
     "secure": true,
     "changeOrigin": true
   }
