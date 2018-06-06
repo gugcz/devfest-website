@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Price, Ticket} from '../../database/ticket';
+import {Price, Ticket, TicketDescription} from '../../database/ticket';
 import {AngularFirestore} from 'angularfire2/firestore';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable} from 'rxjs/Observable';
+import {Organizer} from '../../database/organizer';
 
 @Component({
   selector: 'app-tickets',
@@ -12,11 +14,20 @@ export class TicketsComponent implements OnInit {
 
   response: Object;
   tickets: Ticket[];
+  ticketDescriptions: TicketDescription[];
+  showSpinner: Boolean;
 
   constructor(private http: HttpClient, private fireStore: AngularFirestore) {
+    this.showSpinner = true;
   }
 
   ngOnInit() {
+    this.fireStore.collection<TicketDescription>('ticketDescriptions').valueChanges().subscribe(data => {
+      console.log(data);
+      this.ticketDescriptions = data;
+      this.processTickets();
+      this.showSpinner = false;
+    });
     const headers = {
       headers: new HttpHeaders({
         'Authorization': 'Token token=6z4GwhHNVrcudVCCJnTD',
@@ -556,7 +567,6 @@ export class TicketsComponent implements OnInit {
         }
       ]
     };
-    this.processTickets();
   }
 
   processTickets() {
@@ -603,7 +613,7 @@ export class TicketsComponent implements OnInit {
       const prices = [price];
       return {
         actual: supportTicket['attributes']['state'] === 'on_sale',
-        description: 'You want to support community',
+        description: this.ticketDescriptions.filter(it => it.id === 'vip')[0].text,
         price: prices,
         order: 1,
         soldOut: false,
@@ -615,11 +625,11 @@ export class TicketsComponent implements OnInit {
 
   getDescription(ticket) {
     if (ticket['attributes']['title'].indexOf('Early') !== -1) {
-      return 'Jun 6 - Aug 31<br>Or 200 first';
+      return this.ticketDescriptions.filter(it => it.id === 'earlyBird')[0].text;
     } else if (ticket['attributes']['title'].indexOf('Lazy') !== -1) {
-      return 'Sep 1 - Oct 31<br>Or 500 first';
+      return this.ticketDescriptions.filter(it => it.id === 'lazyBird')[0].text;
     } else {
-      return 'Nov 1 - Nov 9<br>Or 200 first';
+      return this.ticketDescriptions.filter(it => it.id === 'regular')[0].text;
     }
   }
 
