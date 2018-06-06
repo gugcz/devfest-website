@@ -1,7 +1,7 @@
 <div class="container">
   <h2 class="tickets-title">Tickets</h2>
   <div class="tickets">
-    <div class="tickets-container">
+    <div class="tickets-container" *ngIf="!showSpinner; else loading">
       <app-ticket *ngFor="let ticket of tickets" [ticket]="ticket"></app-ticket>
     </div>
   </div>

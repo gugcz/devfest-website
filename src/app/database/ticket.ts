@@ -8,6 +8,11 @@ export interface Ticket {
   support: boolean;
 }
 
+export interface TicketDescription {
+  id: string;
+  text: string;
+}
+
 export interface Price {
   price: number;
   title: string;
