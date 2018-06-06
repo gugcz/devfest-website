@@ -26,14 +26,10 @@ export class TicketsComponent implements OnInit {
       this.processTickets();
       this.showSpinner = false;
     });
-    const headers = {
-      headers: new HttpHeaders({
-        'Authorization': 'Token token=wy-3g2toPzQfsY_5zsCQOw',
-        'Accept': 'application/vnd.api+json'
-      })
-    };
-
-    this.http.get('https://api.tito.io/v2/devfest-cz/2018/releases', headers).toPromise().then(console.log).catch(console.log);
+    const headers = new HttpHeaders();
+    headers.append('Authorization', 'Token token=wy-3g2toPzQfsY_5zsCQOw');
+    headers.append('Accept', 'application/vnd.api+json');
+    this.http.get('https://api.tito.io/v2/devfest-cz/2018/releases', {headers: headers}).toPromise().then(console.log).catch(console.log);
 
     this.response = {
       'data': [
