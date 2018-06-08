@@ -13,7 +13,7 @@ export class TicketsComponent implements OnInit {
   tickets: Ticket[];
   showSpinner: Boolean;
 
-  constructor(private http: HttpClient, private fireStore: AngularFirestore) {
+  constructor(private http: HttpClient) {
     this.showSpinner = true;
   }
 
