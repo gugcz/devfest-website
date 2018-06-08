@@ -4,7 +4,6 @@ const request = require('request');
 const cors = require('cors')({origin: true});
 
 admin.initializeApp(functions.config().firebase);
-const firestore = admin.firestore();
 
 exports.recievedNewSubscriber = functions.firestore.document('mailchimp-emails/{pushId}').onCreate(function (event) {
   const newValue = event.data.data();
@@ -32,16 +31,12 @@ exports.getTickets = functions.https.onRequest((req, res) => {
       }
     };
     request.get(options, (error, response, body) => {
-      firestore.collection('ticketDescriptions').get().then(snapshot => {
-        const descriptions = [];
-        snapshot.forEach(it => descriptions.push(it.data()));
-        res.send(processTickets(JSON.parse(body), descriptions));
-      });
+      res.send(processTickets(JSON.parse(body)));
     });
   });
 });
 
-function processTickets(body, descriptions) {
+function processTickets(body) {
   const earlyBirds = body.data.filter(it => it.attributes.title === 'Early bird - Student/Diversity'
     || it.attributes.title === 'Early bird - Individual' || it.attributes.title === 'Early bird - Company funded');
   const regular = body.data.filter(it => it.attributes.title === 'Student/Diversity'
@@ -49,12 +44,10 @@ function processTickets(body, descriptions) {
   const lazyBirds = body.data.filter(it => it.attributes.title === 'Lazy bird - Student/Diversity'
     || it.attributes.title === 'Lazy bird - Individual' || it.attributes.title === 'Lazy bird - Company funded');
   const vip = body.data.filter(it => it.attributes.title === 'VIP');
-  return [
-    mergeTickets(earlyBirds, descriptions), mergeTickets(regular, descriptions), mergeTickets(lazyBirds, descriptions), mergeTickets(vip, descriptions)
-  ];
+  return [ mergeTickets(earlyBirds), mergeTickets(regular), mergeTickets(lazyBirds), mergeTickets(vip) ];
 }
 
-function mergeTickets(tickets, descriptions) {
+function mergeTickets(tickets) {
   if (tickets.length > 1) {
     const individualTicket = tickets.filter(it => it.attributes.title.indexOf('Individual') !== -1)[0];
     const studentTicket = tickets.filter(it => it.attributes.title.indexOf('Student') !== -1)[0];
@@ -64,9 +57,14 @@ function mergeTickets(tickets, descriptions) {
     const studentPrice = {price: studentTicket.attributes.price, title: 'Student'};
     const prices = [individualPrice, companyPrice, studentPrice];
     const basicTitle = individualTicket.attributes.title.substring(0, individualTicket.attributes.title.indexOf('-') - 1) || 'Regular';
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const now = new Date();
+    const startDate = new Date(individualTicket.attributes['start-at']);
+    const endDate = new Date(individualTicket.attributes['end-at']);
+    const quantity = individualTicket.attributes.quantity + studentTicket.attributes.quantity + companyTicket.attributes.quantity;
     return {
-      actual: individualTicket.attributes.state === 'on_sale',
-      description: getTicketDescription(individualTicket, descriptions),
+      actual: now >= startDate && now <= endDate,
+      description: `From ${months[startDate.getMonth()]} ${startDate.getDate()} to ${months[endDate.getMonth()]} ${endDate.getDate()}<br>Or ${quantity} first`,
       price: prices,
       order: 1,
       soldOut: false,
@@ -79,22 +77,12 @@ function mergeTickets(tickets, descriptions) {
     const prices = [price];
     return {
       actual: supportTicket.attributes.state === 'on_sale',
-      description: descriptions.filter(it => it.id === 'vip')[0].text,
+      description: 'You want to support community',
       price: prices,
       order: 1,
       soldOut: false,
       title: 'VIP',
       support: true
     };
-  }
-}
-
-function getTicketDescription(ticket, descriptions) {
-  if (ticket.attributes.title.indexOf('Early') !== -1) {
-    return descriptions.filter(it => it.id === 'earlyBird')[0].text;
-  } else if (ticket.attributes.title.indexOf('Lazy') !== -1) {
-    return descriptions.filter(it => it.id === 'lazyBird')[0].text;
-  } else {
-    return descriptions.filter(it => it.id === 'regular')[0].text;
   }
 }
