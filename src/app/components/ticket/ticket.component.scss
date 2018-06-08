@@ -77,10 +77,13 @@
 }
 
 .ticket-card.actual {
-  border-top: 4px solid $yellow;
-  box-shadow: rgba(253, 216, 53, 0.5) 0 2px 3px 3px;
+  border: 2px solid rgba(253, 216, 53, 0.7);
 }
 
 .ticket-card.actual:hover {
-  box-shadow: rgba(253, 216, 53, 0.7) 0 2px 3px 3px;
+  box-shadow: rgba(253, 216, 53, 0.5) 0 0 30px 5px;
+}
+
+.ticket-card.unavailable {
+  transform: scale(0.8);
 }

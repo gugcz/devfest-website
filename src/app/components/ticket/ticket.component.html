@@ -1,4 +1,4 @@
-<mat-card class="ticket-card" [ngClass]="{'actual': ticket.actual}">
+<mat-card class="ticket-card" [ngClass]="{'actual': ticket.actual, 'smaller': !ticket.actual || ticket.support}">
   <mat-card-content class="content">
     <h3 class="title" [innerHtml]="ticket.title"></h3>
     <div class="prices-container">
