@@ -1,0 +1,143 @@
+@import "../../../styles/colors";
+
+.container {
+  display: flex;
+  padding: 22px;
+  background-color: $dark-background;
+  min-height: calc(100vh - 44px);
+  flex-direction: column;
+
+  .tickets-title {
+    color: white;
+    font-size: 2.75rem;
+    font-weight: 600;
+    margin: 16px 0 0 0;
+    text-align: center;
+  }
+
+  .tickets {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+
+    .tickets-container {
+      padding-top: 22px;
+      display: grid;
+      column-count: 1;
+      grid-gap: 16px;
+      column-gap: 8px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    app-ticket {
+      height: 541px;
+      width: 250px;
+    }
+
+    .ticket-0 {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .ticket-1 {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .ticket-2 {
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+    .ticket-3 {
+      grid-column: 1;
+      grid-row: 4;
+    }
+    .app-loading-child .spinner {
+      position: relative;
+    }
+  }
+  .help-text {
+    text-align: center;
+
+    a {
+      color: white;
+    }
+  }
+}
+
+@media only screen and (min-width: 526px) {
+  .container {
+    .tickets {
+      .tickets-container {
+        column-count: 2;
+        .ticket-0 {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        .ticket-1 {
+          grid-column: 2;
+          grid-row: 1;
+        }
+
+        .ticket-2 {
+          grid-column: 1;
+          grid-row: 2;
+        }
+
+        .ticket-3 {
+          grid-column: 2;
+          grid-row: 2;
+        }
+
+        app-ticket:nth-child(odd) {
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        app-ticket:nth-child(even) {
+          display: flex;
+          justify-content: flex-start;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .container {
+    .tickets {
+      .tickets-container {
+        column-count: 4;
+
+        .ticket-0 {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        .ticket-1 {
+          grid-column: 2;
+          grid-row: 1;
+        }
+
+        .ticket-2 {
+          grid-column: 3;
+          grid-row: 1;
+        }
+
+        .ticket-3 {
+          grid-column: 4;
+          grid-row: 1;
+        }
+
+        app-ticket.smaller {
+          width: 200px;
+          height: 438px;
+        }
+      }
+    }
+  }
+}
