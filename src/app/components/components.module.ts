@@ -9,6 +9,7 @@ import {OrganizerCardComponent} from './organizer-card/organizer-card.component'
 import {TicketsComponent} from './tickets/tickets.component';
 import {TicketComponent} from './ticket/ticket.component';
 import {RegisterNowButtonComponent} from './register-now-button/register-now-button.component';
+import { PartnersComponent } from './partners/partners.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -22,7 +23,8 @@ import {RegisterNowButtonComponent} from './register-now-button/register-now-but
     OrganizerCardComponent,
     TicketsComponent,
     TicketComponent,
-    RegisterNowButtonComponent
+    RegisterNowButtonComponent,
+    PartnersComponent
   ],
   exports: [
     CountdownComponent,
@@ -31,7 +33,8 @@ import {RegisterNowButtonComponent} from './register-now-button/register-now-but
     OrganizerCardComponent,
     TicketsComponent,
     TicketComponent,
-    RegisterNowButtonComponent
+    RegisterNowButtonComponent,
+    PartnersComponent
   ]
 })
 export class ComponentsModule {
