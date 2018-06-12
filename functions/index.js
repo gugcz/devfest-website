@@ -25,7 +25,7 @@ exports.getTickets = functions.https.onRequest((req, res) => {
     const options = {
       url: 'https://api.tito.io/v2/devfest-cz/2018/releases',
       headers: {
-        'Authorization': 'Token token=YOUR-API-KEY',
+        'Authorization': `Token token=${functions.config().tito.key}`,
         'Accept': 'application/vnd.api+json',
         'Content-Type': 'application/json'
       }
