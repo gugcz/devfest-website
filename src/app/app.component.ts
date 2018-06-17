@@ -82,6 +82,5 @@ export class AppComponent implements OnInit {
   @HostListener('window:resize', [])
   onWindowResize() {
     this.mobile = window.screen.width < 768 || window.innerWidth < 768;
-    console.log(this.mobile);
   }
 }
