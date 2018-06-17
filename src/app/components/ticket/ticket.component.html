@@ -1,0 +1,22 @@
+<mat-card class="ticket-card" [ngClass]="{'actual': ticket.actual, 'smaller': !ticket.actual || ticket.support}">
+  <mat-card-content class="content">
+    <h3 class="title" [innerHtml]="ticket.title"></h3>
+    <div class="prices-container">
+      <div *ngFor="let price of ticket.price; first as isFirst" [ngClass]="{'individual': isFirst}">
+        <h4 class="price">
+          {{price.price | number}}€
+        </h4>
+        <h4 class="subtitle">
+          {{price.title}}
+        </h4>
+      </div>
+    </div>
+    <p class="description" [innerHtml]="ticket.description"></p>
+    <a *ngIf="ticket.actual else soldOut" mat-raised-button color="accent" (click)="buy()"
+            class="buy-button" href="https://ti.to/devfest-cz/2018" target="_blank">BUY TICKET
+    </a>
+  </mat-card-content>
+</mat-card>
+<ng-template #soldOut>
+  <h5 class="sold-out">{{ticket.soldOut ? "SOLD OUT!" : "NOT AVAILABLE YET"}}</h5>
+</ng-template>
