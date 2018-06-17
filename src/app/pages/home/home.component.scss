@@ -46,16 +46,9 @@ section {
     }
   }
 
-  .register-now-button-container {
-    display: flex;
-    flex: 2;
-    justify-content: center;
-    margin-top: 24px;
-    width: 100%;
-    app-register-now-button {
-      display: flex;
-      align-items: center;
-    }
+  .info-text {
+    margin-top: 10px;
+    text-align: justify;
   }
 
   .countdown-container {
@@ -90,6 +83,9 @@ section {
       }
     }
   }
+  .info-text {
+    font-size: 0.9rem;
+  }
 }
 
 @media only screen and (min-width: 375px) {
@@ -100,6 +96,9 @@ section {
       }
     }
   }
+  .info-text {
+    font-size: 1rem;
+  }
 }
 
 @media only screen and (min-width: 425px) {
@@ -108,6 +107,22 @@ section {
       .date-container h1 {
         font-size: 2.16rem;
       }
+    }
+  }
+  .info-text {
+    font-size: 1.1rem;
+  }
+}
+
+@media only screen and (min-width: 525px) {
+  .container {
+    .email-notifier-container {
+      width: 400px;
+    }
+
+    .info-text {
+      font-size: 1.2rem;
+      width: 400px;
     }
   }
 }
@@ -121,7 +136,7 @@ section {
 @media only screen and (min-width: 768px) {
   .container {
     padding: 80px 48px 0;
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 36px);
     .header {
       -webkit-column-count: 2;
       -moz-column-count: 2;
@@ -149,11 +164,18 @@ section {
       width: 100%;
     }
 
+    .email-notifier-container {
+      width: 400px;
+    }
+
     .social-networks-container {
       margin: 48px 0;
     }
   }
 
+  .info-text {
+    font-size: 1.2rem;
+  }
 }
 
 @media only screen and (min-width: 1024px) and (orientation: portrait) {
@@ -181,17 +203,25 @@ section {
       width: 100%;
     }
 
+    .email-notifier-container {
+      width: 500px;
+    }
+
     .social-networks-container {
       margin: 64px 0;
     }
 
+    .info-text {
+      font-size: 1.5rem;
+      width: 500px;
+    }
   }
 }
 
 @media only screen and (min-width: 1024px) and (orientation: landscape) {
   .container {
     padding: 80px 96px 0;
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 48px);
 
     .header {
       .header-item {
@@ -209,12 +239,16 @@ section {
     .countdown {
       justify-content: center;
     }
+
+    .info-text {
+      font-size: 1.1rem;
+    }
   }
 }
 
 @media screen and (min-width: 1376px) {
   .container {
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 64px);
 
     .header {
       .header-item {
@@ -232,21 +266,25 @@ section {
       margin: 64px 0;
     }
 
+    .info-text {
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
   }
 }
 
 @media screen and (min-width: 1920px) {
   .container {
-      .social-networks-container {
-        margin: 96px 0;
-      }
+    .social-networks-container {
+      margin: 96px 0;
+    }
   }
 }
 
 @media screen and (min-width: 2560px) {
   .container {
     padding: 96px 96px 0;
-    min-height: calc(100vh - 96px);
+    min-height: calc(100vh - 46px);
 
     .header {
       .header-item {
@@ -261,6 +299,11 @@ section {
 
     .social-networks-container {
       margin: 96px 0;
+    }
+
+    .info-text {
+      font-size: 1.4rem;
+      margin-top: 10px;
     }
   }
 }

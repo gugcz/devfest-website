@@ -53,15 +53,13 @@ export class AppComponent implements OnInit {
     iconRegistry.addSvgIcon(
       'twitter',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/twitter.svg'));
-    if (window.screen.width < 768) {
-      this.mobile = true;
-    }
+    this.mobile = window.screen.width < 768 || window.innerWidth < 768;
   }
 
   ngOnInit() {
     this.router.events.subscribe(evt => {
       if (!(evt instanceof NavigationEnd)) {
-          return;
+        return;
       }
       window.scrollTo(0, 0);
     });
@@ -83,6 +81,7 @@ export class AppComponent implements OnInit {
 
   @HostListener('window:resize', [])
   onWindowResize() {
-    this.mobile = window.screen.width < 768;
+    this.mobile = window.screen.width < 768 || window.innerWidth < 768;
+    console.log(this.mobile);
   }
 }
