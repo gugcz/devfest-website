@@ -6,10 +6,9 @@ import {AppRoutingModule} from '../app-routing.module';
 import {FooterComponent} from './footer/footer.component';
 import {SocialNetworksComponent} from './social-networks/social-networks.component';
 import {OrganizerCardComponent} from './organizer-card/organizer-card.component';
-import {TicketsComponent} from './tickets/tickets.component';
-import {TicketComponent} from './ticket/ticket.component';
-import {RegisterNowButtonComponent} from './register-now-button/register-now-button.component';
-import { PartnersComponent } from './partners/partners.component';
+import {EmailNotifierComponent} from './email-notifier/email-notifier.component';
+import {PartnersComponent} from './partners/partners.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -21,9 +20,7 @@ import { PartnersComponent } from './partners/partners.component';
     FooterComponent,
     SocialNetworksComponent,
     OrganizerCardComponent,
-    TicketsComponent,
-    TicketComponent,
-    RegisterNowButtonComponent,
+    EmailNotifierComponent,
     PartnersComponent
   ],
   exports: [
@@ -34,7 +31,6 @@ import { PartnersComponent } from './partners/partners.component';
     TicketsComponent,
     TicketComponent,
     RegisterNowButtonComponent,
-    PartnersComponent
   ]
 })
 export class ComponentsModule {
