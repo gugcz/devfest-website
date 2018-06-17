@@ -28,9 +28,8 @@ import {PartnersComponent} from './partners/partners.component';
     FooterComponent,
     SocialNetworksComponent,
     OrganizerCardComponent,
-    TicketsComponent,
-    TicketComponent,
-    RegisterNowButtonComponent,
+    EmailNotifierComponent,
+    PartnersComponent
   ]
 })
 export class ComponentsModule {
