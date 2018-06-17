@@ -7,6 +7,7 @@ import {FooterComponent} from './footer/footer.component';
 import {SocialNetworksComponent} from './social-networks/social-networks.component';
 import {OrganizerCardComponent} from './organizer-card/organizer-card.component';
 import {EmailNotifierComponent} from './email-notifier/email-notifier.component';
+import {PartnersComponent} from './partners/partners.component';
 
 @NgModule({
   imports: [
@@ -19,14 +20,16 @@ import {EmailNotifierComponent} from './email-notifier/email-notifier.component'
     FooterComponent,
     SocialNetworksComponent,
     OrganizerCardComponent,
-    EmailNotifierComponent
+    EmailNotifierComponent,
+    PartnersComponent
   ],
   exports: [
     CountdownComponent,
     FooterComponent,
     SocialNetworksComponent,
     OrganizerCardComponent,
-    EmailNotifierComponent
+    EmailNotifierComponent,
+    PartnersComponent
   ]
 })
 export class ComponentsModule {
