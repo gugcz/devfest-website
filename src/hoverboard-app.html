@@ -200,7 +200,7 @@
                     app="{{app}}"></cod-page>
 
           <venue-page name="venue"
-                    app="{{app}}"></venue-page>
+                      app="{{app}}"></venue-page>
 
         </neon-animated-pages>
       </div>
@@ -216,16 +216,19 @@
 
     <toast-element id="toast" app="{{app}}"></toast-element>
 
-<!--    <info-dialog
-      id="infoDialog"
-      app="[[app]]"
-      class="info-dialog"
-      entry-animation="scale-up-animation"
-      exit-animation="fade-out-animation"
-      with-backdrop
-    >
-    </info-dialog>-->
-
+    <!--    <info-dialog
+          id="infoDialog"
+          app="[[app]]"
+          class="info-dialog"
+          entry-animation="scale-up-animation"
+          exit-animation="fade-out-animation"
+          with-backdrop
+        >
+        </info-dialog>-->
+    <p style="position: fixed; bottom: 1px; border-radius: 2px; background-color: #323232; color: white; padding: 16px 32px; margin: 11px; right: 0; font-size: 14px;">
+      Checkout our latest
+      <a href="https://2018.devfest.cz/" style="text-decoration: underline; color: white;" target="_blank">web</a>!
+    </p>
   </template>
 
   <script>
@@ -285,6 +288,7 @@
             this.importHref(this.resolveUrl('pages/speakers-page.html'), null, null, true);
             this.importHref(this.resolveUrl('pages/venue-page.html'), null, null, true);
           }.bind(this));
+          HOVERBOARD.Elements.Template.$.toast.showMessage('afads fasdfadf ajdf aj;dfasdfklasdf');
         },
 
         _routePageChanged: function (page) {
