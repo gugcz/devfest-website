@@ -225,9 +225,27 @@
           with-backdrop
         >
         </info-dialog>-->
-    <p style="position: fixed; bottom: 1px; border-radius: 2px; background-color: #323232; color: white; padding: 16px 32px; margin: 11px; right: 0; font-size: 14px;">
-      Checkout our latest
-      <a href="https://2018.devfest.cz/" style="text-decoration: underline; color: white;" target="_blank">web</a>!
+    <style>
+      .new-web-dialog {
+        position: fixed;
+        bottom: 1px;
+        border-radius: 2px;
+        background-color: #323232;
+        color: white;
+        padding: 16px 32px;
+        margin: 11px;
+        right: 0;
+        font-size: 14px;
+      }
+
+      .link {
+        color: white;
+        text-decoration: underline;
+      }
+    </style>
+
+    <p class="new-web-dialog">
+      <a class="link" href="https://2018.devfest.cz/" target="_blank">Ready for DevFestCZ 2018?</a>
     </p>
   </template>
 
@@ -288,7 +306,6 @@
             this.importHref(this.resolveUrl('pages/speakers-page.html'), null, null, true);
             this.importHref(this.resolveUrl('pages/venue-page.html'), null, null, true);
           }.bind(this));
-          HOVERBOARD.Elements.Template.$.toast.showMessage('afads fasdfadf ajdf aj;dfasdfklasdf');
         },
 
         _routePageChanged: function (page) {
