@@ -225,28 +225,66 @@
           with-backdrop
         >
         </info-dialog>-->
-    <style>
-      .new-web-dialog {
-        position: fixed;
-        bottom: 1px;
-        border-radius: 2px;
-        background-color: #323232;
-        color: white;
-        padding: 16px 32px;
-        margin: 11px;
-        right: 0;
-        font-size: 14px;
-      }
 
+    <style>
       .link {
         color: white;
         text-decoration: underline;
       }
+
+      .close-button {
+        background: transparent;
+        outline: none;
+        border: none;
+        width: 19px;
+        height: 19px;
+      }
+
+      .close-button:hover {
+        cursor: pointer;
+      }
+
+      .close-image {
+        height: 19px;
+        width: 19px;
+      }
+
+      .new-web-dialog {
+        position: fixed;
+        bottom: -16px;
+        background-color: #323232;
+        color: white;
+        padding: 16px 24px 30px;
+        right: 0;
+        width: calc(100% - 48px);
+        display: flex;
+        font-size: 14px;
+      }
+
+      .empty-space {
+        flex: 1;
+      }
+
+      @media screen and (min-width: 769px) {
+        .new-web-dialog {
+          position: fixed;
+          bottom: 1px;
+          border-radius: 2px;
+          background-color: #323232;
+          color: white;
+          padding: 16px 32px;
+          margin: 11px;
+          right: 0;
+          width: 240px;
+        }
+      }
     </style>
 
-    <p class="new-web-dialog">
-      <a class="link" href="https://2018.devfest.cz/" target="_blank">Ready for DevFestCZ 2018?</a>
-    </p>
+    <div class="new-web-dialog" hidden$="{{hidden}}">
+      Ready for&nbsp;<a class="link" href="https://2018.devfest.cz/" target="_blank">DevFestCZ 2018</a>?
+      <span class="empty-space"></span>
+      <button class="close-button" on-click="hide"><img class="close-image" src="/images/close.png" alt="close"></button>
+    </div>
   </template>
 
   <script>
@@ -276,6 +314,11 @@
             }
           },
 
+          hidden: {
+            type: Boolean,
+            value: false
+          },
+
           _authStatusKnown: {
             type: Boolean,
             value: false,
@@ -291,6 +334,10 @@
             type: Array,
             value: {$ pages | dump | safe $}
           }
+        },
+
+        hide: function() {
+          this.hidden = true;
         },
 
         observers: [
