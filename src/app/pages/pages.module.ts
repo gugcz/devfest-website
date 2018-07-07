@@ -3,19 +3,33 @@ import {CommonModule} from '@angular/common';
 import {HomeComponent} from './home/home.component';
 import {TeamComponent} from './team/team.component';
 import {ComponentsModule} from '../components/components.module';
+import {InvoiceComponent} from './invoice/invoice.component';
+import {MatButtonModule, MatFormFieldModule, MatInputModule, MatOptionModule, MatSelectModule} from '@angular/material';
 
 @NgModule({
   imports: [
     CommonModule,
-    ComponentsModule
+    ComponentsModule,
+    MatFormFieldModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatInputModule
   ],
   declarations: [
     HomeComponent,
-    TeamComponent
+    TeamComponent,
+    InvoiceComponent
   ],
   exports: [
     HomeComponent,
-    TeamComponent
+    TeamComponent,
+    InvoiceComponent,
+    MatFormFieldModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatInputModule,
+    MatButtonModule
   ]
 })
 export class PagesModule {

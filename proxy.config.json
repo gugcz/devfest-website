@@ -1,8 +1,0 @@
-{
-  "/tito": {
-    "target": "https://api.tito.io/v2/devfest-cz/2018/releases/",
-    "secure": true,
-    "changeOrigin": true
-  }
-
-}
