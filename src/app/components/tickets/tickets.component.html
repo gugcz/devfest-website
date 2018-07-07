@@ -1,0 +1,20 @@
+<div class="container">
+  <h2 class="tickets-title">Tickets</h2>
+  <div class="tickets">
+    <div class="tickets-container" *ngIf="!showSpinner; else loading">
+      <app-ticket *ngFor="let ticket of tickets; let i = index" [ticket]="ticket" [ngClass]="{'smaller': !ticket.actual || ticket.support}" class="{{('ticket-' + i)}}"></app-ticket>
+    </div>
+  </div>
+  <div class="invoice">
+    <button mat-raised-button class="invoice-button" color="accent" (click)="goToInvoice()">Order by invoice</button>
+    <p class="text">if you need company invoice first</p>
+  </div>
+  <p class="help-text">Need help? Contact us at: <a href="mailto:info@devfest.cz">info@devfest.cz</a></p>
+</div>
+<ng-template #loading>
+  <div class="app-loading-child background-gradient">
+    <svg class="spinner" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+    </svg>
+  </div>
+</ng-template>
