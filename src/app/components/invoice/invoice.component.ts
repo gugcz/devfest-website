@@ -20,7 +20,7 @@ export class InvoiceComponent implements OnInit {
     registrationNumberIC = new FormControl('', [Validators.required]);
     registrationNumberDIC = new FormControl('', [Validators.required]);
     country = new FormControl('', [Validators.required]);
-    loading: boolean = false;
+    loading = false;
 
     constructor(
         public dialogRef: MatDialogRef<InvoiceComponent>, public afStore: AngularFirestore) {
