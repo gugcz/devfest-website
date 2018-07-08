@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Price, Ticket, TicketDescription} from '../../database/ticket';
-import {AngularFirestore} from 'angularfire2/firestore';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Ticket} from '../../database/ticket';
+import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
+import {MatDialog} from '@angular/material';
+import {InvoiceComponent} from '../invoice/invoice.component';
 
 @Component({
   selector: 'app-tickets',
@@ -14,7 +15,7 @@ export class TicketsComponent implements OnInit {
   tickets: Ticket[];
   showSpinner: Boolean;
 
-  constructor(private http: HttpClient, private router: Router) {
+    constructor(private http: HttpClient, private router: Router, public dialog: MatDialog) {
     this.showSpinner = true;
   }
 
@@ -26,7 +27,9 @@ export class TicketsComponent implements OnInit {
   }
 
   goToInvoice() {
-    this.router.navigateByUrl('invoice');
+      const dialogRef = this.dialog.open(InvoiceComponent, {
+          width: '400px'
+      });
   }
 
 }

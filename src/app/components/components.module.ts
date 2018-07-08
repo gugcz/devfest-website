@@ -11,6 +11,7 @@ import {TicketComponent} from './ticket/ticket.component';
 import {RegisterNowButtonComponent} from './register-now-button/register-now-button.component';
 import {PartnersComponent} from './partners/partners.component';
 import {EmailNotifierComponent} from './email-notifier/email-notifier.component';
+import {InvoiceComponent} from './invoice/invoice.component';
 
 @NgModule({
     imports: [
@@ -27,7 +28,8 @@ import {EmailNotifierComponent} from './email-notifier/email-notifier.component'
         TicketsComponent,
         TicketComponent,
         RegisterNowButtonComponent,
-        PartnersComponent
+        PartnersComponent,
+        InvoiceComponent
     ],
     exports: [
         CountdownComponent,
@@ -37,7 +39,8 @@ import {EmailNotifierComponent} from './email-notifier/email-notifier.component'
         TicketsComponent,
         TicketComponent,
         RegisterNowButtonComponent,
-        PartnersComponent
+        PartnersComponent,
+        InvoiceComponent
     ]
 })
 export class ComponentsModule {
