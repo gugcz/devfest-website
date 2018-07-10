@@ -47,13 +47,19 @@ export class OrganizerCardComponent implements OnInit {
   constructor(private fireStore: AngularFirestore, private storage: AngularFireStorage, private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
     iconRegistry.addSvgIcon(
       'facebook',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/facebook.svg'));
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/socials/facebook.svg'));
     iconRegistry.addSvgIcon(
       'twitter',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/twitter.svg'));
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/socials/twitter.svg'));
     iconRegistry.addSvgIcon(
       'instagram',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/instagram.svg'));
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/socials/instagram.svg'));
+      iconRegistry.addSvgIcon(
+          'googleplus',
+          sanitizer.bypassSecurityTrustResourceUrl('assets/icons/socials/google.svg'));
+      iconRegistry.addSvgIcon(
+          'linkedin',
+          sanitizer.bypassSecurityTrustResourceUrl('assets/icons/socials/linkedin.svg'));
   }
 
   ngOnInit() {
