@@ -1,0 +1,64 @@
+@import "../../../styles/colors";
+
+.call-for-proposals {
+  margin-top: 10px;
+  .input-container {
+    mat-form-field.email-form-field {
+      width: 100%;
+      font-size: 1.25rem;
+    }
+    .call-for-proposals-call {
+      font-size: 1.4rem;
+      padding: 4px 0;
+      width: 100%;
+    }
+  }
+  .snackbar {
+    background-color: $dark-background;
+    color: white;
+  }
+  .error-snackbar {
+    background-color: $error-message;
+    color: white;
+  }
+}
+
+@media only screen and (min-width: 525px) {
+  .call-for-proposals {
+    .input-container {
+      display: grid;
+      -webkit-column-count: 1;
+      -moz-column-count: 1;
+      column-count: 1;
+      grid-gap: 16px;
+      align-items: center;
+
+      mat-form-field.email-form-field {
+        width: 100%;
+        font-size: 1.25rem;
+      }
+      .call-for-proposals-call {
+        font-size: 1.4rem;
+        padding: 4px 0;
+        height: 45px;
+        width: unset;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1024px) and (orientation: portrait) {
+  .call-for-proposals {
+    .input-container {
+      mat-form-field.email-form-field {
+        font-size: 1.5625rem;
+      }
+      .call-for-proposals-call {
+        font-size: 1.75rem;
+        padding: 4px 0;
+        height: 56px;
+        width: unset;
+      }
+    }
+  }
+}

@@ -12,6 +12,7 @@ import {RegisterNowButtonComponent} from './register-now-button/register-now-but
 import {PartnersComponent} from './partners/partners.component';
 import {EmailNotifierComponent} from './email-notifier/email-notifier.component';
 import {InvoiceComponent} from './invoice/invoice.component';
+import {CallForProposalsComponent} from './call-for-proposals/call-for-proposals.component';
 
 @NgModule({
     imports: [
@@ -29,7 +30,8 @@ import {InvoiceComponent} from './invoice/invoice.component';
         TicketComponent,
         RegisterNowButtonComponent,
         PartnersComponent,
-        InvoiceComponent
+        InvoiceComponent,
+        CallForProposalsComponent
     ],
     exports: [
         CountdownComponent,
@@ -41,7 +43,8 @@ import {InvoiceComponent} from './invoice/invoice.component';
         TicketComponent,
         RegisterNowButtonComponent,
         PartnersComponent,
-        InvoiceComponent
+        InvoiceComponent,
+        CallForProposalsComponent
     ]
 })
 export class ComponentsModule {
