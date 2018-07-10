@@ -34,6 +34,7 @@ import {InvoiceComponent} from './invoice/invoice.component';
     exports: [
         CountdownComponent,
         FooterComponent,
+        EmailNotifierComponent,
         SocialNetworksComponent,
         OrganizerCardComponent,
         TicketsComponent,
