@@ -21,6 +21,7 @@ export class InvoiceComponent implements OnInit {
     registrationNumberDIC = new FormControl('', [Validators.required]);
     country = new FormControl('', [Validators.required]);
     loading = false;
+    done = false;
 
     constructor(
         public dialogRef: MatDialogRef<InvoiceComponent>, public afStore: AngularFirestore) {
@@ -48,8 +49,7 @@ export class InvoiceComponent implements OnInit {
         this.loading = true;
         this.afStore.collection('invoices').add(invoice).then(() => {
             this.loading = false;
-            this.dialogRef.close();
-            // TODO - thanks for buy
+            this.done = true;
         });
     }
 
