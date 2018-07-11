@@ -19,6 +19,22 @@
        target="_blank" class="link">
       <mat-icon svgIcon="instagram"></mat-icon>
     </a>
+    <a mat-icon-button *ngIf="organizer.googleplus" [href]="'https://plus.google.com/u/0/' + organizer.googleplus"
+       target="_blank" class="link">
+      <mat-icon svgIcon="googleplus"></mat-icon>
+    </a>
+    <a mat-icon-button *ngIf="organizer.facebook" [href]="'https://www.facebook.com/' + organizer.facebook"
+       target="_blank" class="link">
+      <mat-icon svgIcon="facebook"></mat-icon>
+    </a>
+    <a mat-icon-button *ngIf="organizer.linkedin" [href]="'https://www.linkedin.com/in/' + organizer.linkedin"
+       target="_blank" class="link">
+      <mat-icon svgIcon="linkedin"></mat-icon>
+    </a>
+    <a mat-icon-button *ngIf="organizer.youtube" [href]="'https://www.youtube.com/user/' + organizer.youtube"
+       target="_blank" class="link">
+      <mat-icon svgIcon="youtube"></mat-icon>
+    </a>
   </mat-card-actions>
 </mat-card>
 <ng-template #loadingImage>

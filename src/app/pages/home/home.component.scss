@@ -10,6 +10,10 @@ section {
   overflow-y: hidden;
 }
 
+.minimal-text {
+  margin: 2px;
+}
+
 .nowrap {
   white-space: nowrap;
 }
@@ -43,6 +47,18 @@ section {
       font-size: 1.567rem;
       margin: 16px 0 0;
       text-align: right;
+    }
+  }
+
+  .register-now-button-container {
+    display: flex;
+    flex: 2;
+    justify-content: center;
+    margin-top: 24px;
+    width: 100%;
+    app-register-now-button {
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -136,7 +152,7 @@ section {
 @media only screen and (min-width: 768px) {
   .container {
     padding: 80px 48px 0;
-    min-height: calc(100vh - 36px);
+    min-height: calc(100vh - 80px);
     .header {
       -webkit-column-count: 2;
       -moz-column-count: 2;
@@ -221,7 +237,7 @@ section {
 @media only screen and (min-width: 1024px) and (orientation: landscape) {
   .container {
     padding: 80px 96px 0;
-    min-height: calc(100vh - 48px);
+    min-height: calc(100vh - 80px);
 
     .header {
       .header-item {
@@ -248,7 +264,7 @@ section {
 
 @media screen and (min-width: 1376px) {
   .container {
-    min-height: calc(100vh - 64px);
+    min-height: calc(100vh - 80px);
 
     .header {
       .header-item {
@@ -275,16 +291,16 @@ section {
 
 @media screen and (min-width: 1920px) {
   .container {
-    .social-networks-container {
-      margin: 96px 0;
-    }
+      .social-networks-container {
+        margin: 96px 0;
+      }
   }
 }
 
 @media screen and (min-width: 2560px) {
   .container {
     padding: 96px 96px 0;
-    min-height: calc(100vh - 46px);
+    min-height: calc(100vh - 96px);
 
     .header {
       .header-item {

@@ -8,4 +8,6 @@ export interface Organizer {
   facebook?: string;
   instagram?: string;
   linkedin?: string;
+    googleplus?: string;
+    youtube?: string;
 }
