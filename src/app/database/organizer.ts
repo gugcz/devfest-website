@@ -9,4 +9,5 @@ export interface Organizer {
   instagram?: string;
   linkedin?: string;
     googleplus?: string;
+    youtube?: string;
 }

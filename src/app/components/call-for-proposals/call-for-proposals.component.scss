@@ -1,7 +1,41 @@
 @import "../../../styles/colors";
 
+@keyframes blink {
+  0% {
+    box-shadow: 0 0 15px dodgerblue;
+  }
+  50% {
+    box-shadow: none;
+  }
+  100% {
+    box-shadow: 0 0 15px dodgerblue;
+  }
+}
+
+@-webkit-keyframes blink {
+  0% {
+    box-shadow: 0 0 15px dodgerblue;
+  }
+  50% {
+    box-shadow: 0 0 0;
+  }
+  100% {
+    box-shadow: 0 0 15px dodgerblue;
+  }
+}
+
+.blick {
+  -webkit-animation: blink 3.0s linear infinite;
+  -moz-animation: blink 3.0s linear infinite;
+  -ms-animation: blink 3.0s linear infinite;
+  -o-animation: blink 3.0s linear infinite;
+  animation: blink 3.0s linear infinite;
+}
+
+
 .call-for-proposals {
   margin-top: 10px;
+  margin-bottom: 35px;
   .input-container {
     mat-form-field.email-form-field {
       width: 100%;
