@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import {MatIconRegistry} from "@angular/material";
-import {DomSanitizer} from "@angular/platform-browser";
+import {Component, OnInit} from '@angular/core';
+import {MatIconRegistry} from '@angular/material';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-social-networks',
@@ -12,13 +12,13 @@ export class SocialNetworksComponent implements OnInit {
   constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
     iconRegistry.addSvgIcon(
       'facebook',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/facebook.svg'));
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/socials/facebook.svg'));
     iconRegistry.addSvgIcon(
       'twitter',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/twitter.svg'));
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/socials/twitter.svg'));
     iconRegistry.addSvgIcon(
       'instagram',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/instagram.svg'));
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/socials/instagram.svg'));
   }
 
   ngOnInit() {

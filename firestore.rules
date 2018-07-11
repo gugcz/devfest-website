@@ -1,6 +1,6 @@
 service cloud.firestore {
   match /databases/{database}/documents {
-     match /mailchimp-emails/{document=**} {
+    match /mailchimp-emails/{document=**} {
       allow read: if request.auth.uid != null;
       allow write;
     }
@@ -11,6 +11,18 @@ service cloud.firestore {
     match /speakers/{document=**} {
       allow read;
       allow write: if request.auth.uid != null;
+    }
+    match /tickets/{document=**} {
+      allow read;
+      allow write: if request.auth.uid != null;
+    }
+    match /ticketDescriptions/{document=**} {
+      allow read;
+      allow write: if request.auth.uid != null;
+    }
+    match /invoices/{document=**} {
+      allow read: if request.auth.uid != null;
+      allow write;
     }
   }
 }

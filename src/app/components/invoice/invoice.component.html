@@ -1,0 +1,73 @@
+<section class="content">
+    <h1 class="title">Tickets invoice</h1>
+    <div *ngIf="!done else thank">
+        <p class="text">This is a simple form that lets you order tickets for DevFestCZ 2018 by invoice. You'll pay 20€
+            per ticket.</p>
+        <form class="form">
+            <mat-form-field class="form-field" color="accent">
+                <input class="input" matInput placeholder="Count" [formControl]="countTickets" type="number" min="00">
+                <mat-error *ngIf="countTickets.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="form-field" color="accent">
+                <input class="input" matInput [formControl]="email" placeholder="Email for delivering invoice">
+                <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="form-field" color="accent">
+                <input class="input" matInput [formControl]="companyName" placeholder="Company name">
+                <mat-error *ngIf="companyName.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="form-field" color="accent">
+                <input class="input" matInput [formControl]="street" placeholder="Street">
+                <mat-error *ngIf="street.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="form-field" color="accent">
+                <input class="input" matInput [formControl]="city" placeholder="City">
+                <mat-error *ngIf="city.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="form-field" color="accent">
+                <input class="input" matInput [formControl]="zip" placeholder="Zip code (PSČ)">
+                <mat-error *ngIf="zip.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="form-field" color="accent">
+                <input class="input" matInput [formControl]="registrationNumberIC"
+                       placeholder="Registration number (IČ)">
+                <mat-error *ngIf="registrationNumberIC.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="form-field" color="accent">
+                <input class="input" matInput [formControl]="registrationNumberDIC"
+                       placeholder="Registration number (DIČ)">
+                <mat-error *ngIf="registrationNumberDIC.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field color="accent">
+                <mat-label>Country</mat-label>
+                <mat-select [formControl]="country">
+                    <mat-option value="cz">Czech republic</mat-option>
+                    <mat-option value="sk">Slovakia</mat-option>
+                    <mat-option value="us">USA</mat-option>
+                    <mat-option value="uk">UK</mat-option>
+                    <mat-option value="de">Germany</mat-option>
+                </mat-select>
+                <mat-error *ngIf="country.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <div class="buttons-container">
+                <button mat-raised-button class="invoice-button cancel" color="warn" (click)="goToHome()">Cancel
+                </button>
+                <button mat-raised-button *ngIf="!(countTickets.invalid || email.invalid || companyName.invalid || street.invalid || city.invalid
+        || zip.invalid || registrationNumberIC.invalid || registrationNumberDIC.invalid || country.invalid)"
+                        class="invoice-button buy" color="accent" (click)="sendInvoice()">Buy
+                </button>
+            </div>
+            <div class="spinner-container">
+                <mat-spinner *ngIf="loading"></mat-spinner>
+            </div>
+        </form>
+    </div>
+    <ng-template #thank>
+        <p class="text">
+            You gonna receive email with instructions early
+        </p>
+        <div>
+            <button mat-raised-button color="accent" (click)="goToHome()">OK</button>
+        </div>
+    </ng-template>
+</section>
