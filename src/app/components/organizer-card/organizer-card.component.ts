@@ -60,6 +60,9 @@ export class OrganizerCardComponent implements OnInit {
       iconRegistry.addSvgIcon(
           'linkedin',
           sanitizer.bypassSecurityTrustResourceUrl('assets/icons/socials/linkedin.svg'));
+      iconRegistry.addSvgIcon(
+          'youtube',
+          sanitizer.bypassSecurityTrustResourceUrl('assets/icons/socials/youtube.svg'));
   }
 
   ngOnInit() {
