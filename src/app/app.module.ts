@@ -23,7 +23,7 @@ import {AngularFireModule} from 'angularfire2';
         AppRoutingModule,
         PagesModule,
         AngularFireModule.initializeApp(environment.firebase),
-        AngularFirestoreModule.enablePersistence(),
+        AngularFirestoreModule,
         AngularFireStorageModule,
         ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
     ],
