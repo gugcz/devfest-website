@@ -55,6 +55,12 @@
       grid-column: 1;
       grid-row: 4;
     }
+
+    .ticket-4 {
+      grid-column: 1;
+      grid-row: 5;
+    }
+
     .app-loading-child .spinner {
       position: relative;
     }
@@ -111,6 +117,11 @@
           grid-row: 2;
         }
 
+        .ticket-4 {
+          grid-column: 1;
+          grid-row: 3;
+        }
+
         app-ticket:nth-child(odd) {
           display: flex;
           justify-content: flex-end;
@@ -148,6 +159,11 @@
 
         .ticket-3 {
           grid-column: 4;
+          grid-row: 1;
+        }
+
+        .ticket-4 {
+          grid-column: 5;
           grid-row: 1;
         }
 

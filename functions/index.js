@@ -5,27 +5,12 @@ const cors = require('cors')({origin: true});
 
 admin.initializeApp(functions.config().firebase);
 
-exports.recievedNewSubscriber = functions.firestore.document('mailchimp-emails/{pushId}').onCreate(function (event) {
-    const newValue = event.data.data();
-    const email = newValue.email;
-    return request.post('https://us4.api.mailchimp.com/3.0/lists/' + functions.config().mailchimp.early.list + '/members', {
-        'auth': {
-            'user': 'anystring',
-            'password': functions.config().mailchimp.api
-        },
-        'json': {
-            "email_address": email,
-            "status": "subscribed"
-        }
-    });
-});
-
 exports.getTickets = functions.https.onRequest((req, res) => {
     cors(req, res, () => {
         const options = {
             url: 'https://api.tito.io/v2/devfest-cz/2018/releases',
             headers: {
-                'Authorization': `Token token=${functions.config().tito.key}`,
+                // 'Authorization': `Token token=${functions.config().tito.key}`,
                 'Accept': 'application/vnd.api+json',
                 'Content-Type': 'application/json'
             }
@@ -37,6 +22,7 @@ exports.getTickets = functions.https.onRequest((req, res) => {
 });
 
 function processTickets(body) {
+    const superEarlyBird = body.data.filter(it => it.attributes.title === 'Super early bird');
     const earlyBirds = body.data.filter(it => it.attributes.title === 'Early bird - Student/Diversity'
         || it.attributes.title === 'Early bird - Individual' || it.attributes.title === 'Early bird - Company funded');
     const regular = body.data.filter(it => it.attributes.title === 'Student/Diversity'
@@ -44,7 +30,7 @@ function processTickets(body) {
     const lazyBirds = body.data.filter(it => it.attributes.title === 'Lazy bird - Student/Diversity'
         || it.attributes.title === 'Lazy bird - Individual' || it.attributes.title === 'Lazy bird - Company funded');
     const vip = body.data.filter(it => it.attributes.title === 'VIP');
-    return [ mergeTickets(earlyBirds), mergeTickets(regular), mergeTickets(lazyBirds), mergeTickets(vip) ];
+    return [mergeTickets(superEarlyBird), mergeTickets(earlyBirds), mergeTickets(regular), mergeTickets(lazyBirds), mergeTickets(vip)];
 }
 
 function mergeTickets(tickets) {
@@ -71,7 +57,7 @@ function mergeTickets(tickets) {
             title: basicTitle,
             support: false
         };
-    } else {
+    } else if (tickets[0].attributes.title === 'VIP') {
         const supportTicket = tickets[0];
         const price = {price: supportTicket.attributes.price, title: 'Support'};
         const prices = [price];
@@ -83,6 +69,24 @@ function mergeTickets(tickets) {
             soldOut: false,
             title: 'VIP',
             support: true
+        };
+    } else if (tickets[0].attributes.title === 'Super early bird') {
+        const oneTicket = tickets[0];
+        const price = {price: oneTicket.attributes.price, title: 'Super early bird'};
+        const prices = [price];
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const now = new Date();
+        const startDate = new Date(oneTicket.attributes['start-at']);
+        const endDate = new Date(oneTicket.attributes['end-at']);
+        const quantity = oneTicket.attributes.quantity;
+        return {
+            actual: now >= startDate && now <= endDate,
+            description: `From ${months[startDate.getMonth()]} ${startDate.getDate()} to ${months[endDate.getMonth()]} ${endDate.getDate()}<br>Or ${quantity} first`,
+            price: prices,
+            order: 1,
+            soldOut: false,
+            title: 'Super early bird',
+            support: false
         };
     }
 }
