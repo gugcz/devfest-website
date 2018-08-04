@@ -1,0 +1,13 @@
+<mat-card *ngIf="$press | async;let press; else loading">
+    <mat-card-title>
+        Media releases
+    </mat-card-title>
+    <mat-card-content>
+        <div *ngFor="let one of press">
+            <a mat-button [href]="one.url">{{one.name}}</a>
+        </div>
+    </mat-card-content>
+</mat-card>
+<ng-template #loadingImage>
+    <mat-spinner [diameter]="115"></mat-spinner>
+</ng-template>

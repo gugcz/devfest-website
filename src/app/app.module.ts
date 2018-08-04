@@ -49,6 +49,7 @@ import {RouterModule} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
 import {MediaGraphicsComponent} from './components/media-graphics/media-graphics.component';
+import {MediaPressComponent} from './components/media-press/media-press.component';
 
 @NgModule({
     declarations: [
@@ -68,6 +69,7 @@ import {MediaGraphicsComponent} from './components/media-graphics/media-graphics
         TeamComponent,
         MediaComponent,
         MediaGraphicsComponent,
+        MediaPressComponent,
     ],
     imports: [
         BrowserModule,
