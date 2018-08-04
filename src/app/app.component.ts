@@ -1,6 +1,6 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {MatIconRegistry} from '@angular/material';
-import {Router, NavigationEnd} from '@angular/router';
+import {NavigationEnd, Router} from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Location} from '@angular/common';
 import {animate, style, transition, trigger} from '@angular/animations';
@@ -28,7 +28,8 @@ export class AppComponent implements OnInit {
     public mobile: Boolean;
     navigation = [
         {link: '', label: 'Home'},
-        {link: 'team', label: 'Team'}
+        {link: 'team', label: 'Team'},
+        {link: 'media', label: 'Media'}
     ];
     lastYOffset: number;
     showMenu: boolean;
