@@ -265,6 +265,10 @@ mat-sidenav {
     .nav-button-1.active ~ hr.line {
       margin-left: 98px;
     }
+
+    .nav-button-2.active ~ hr.line {
+      margin-left: 196px;
+    }
   }
 }
 

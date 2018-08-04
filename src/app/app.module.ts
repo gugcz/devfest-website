@@ -48,6 +48,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterModule} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
+import {MediaGraphicsComponent} from './components/media-graphics/media-graphics.component';
 
 @NgModule({
     declarations: [
@@ -66,6 +67,7 @@ import {HttpClientModule} from '@angular/common/http';
         HomeComponent,
         TeamComponent,
         MediaComponent,
+        MediaGraphicsComponent,
     ],
     imports: [
         BrowserModule,
