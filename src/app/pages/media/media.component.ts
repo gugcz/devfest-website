@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
 
 @Component({
     selector: 'app-media',
@@ -8,7 +7,6 @@ import {Observable} from 'rxjs/Observable';
 })
 export class MediaComponent implements OnInit {
 
-    mediaInfo$: Observable<any>;
 
     constructor() {
     }

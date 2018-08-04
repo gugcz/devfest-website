@@ -15,19 +15,10 @@ section {
     padding: 32px 24px;
 
     .container {
-      display: grid;
-      -webkit-column-count: 1;
-      -moz-column-count: 1;
-      column-count: 1;
-      grid-gap: 32px;
+      display: flex;
       width: 100%;
       z-index: 2;
       justify-content: center;
-
-      .organizer-card {
-        height: 250px;
-        width: 272px;
-      }
     }
   }
   .dark-background {
@@ -54,17 +45,6 @@ section {
 }
 
 @media only screen and (min-width: 608px) {
-  section {
-    .background-gradient {
-      .container {
-        -webkit-column-count: 2;
-        -moz-column-count: 2;
-        column-count: 2;
-        grid-column-gap: 32px;
-        grid-template-columns: 272px 272px;
-      }
-    }
-  }
 }
 
 @media only screen and (min-width: 768px) {
@@ -76,27 +56,9 @@ section {
 }
 
 @media only screen and (min-width: 912px) {
-  section {
-    .background-gradient {
-      .container {
-        -webkit-column-count: 3;
-        -moz-column-count: 3;
-        column-count: 3;
-        grid-template-columns: 272px 272px 272px;
-      }
-    }
-  }
+
 }
 
 @media only screen and (min-width: 1920px) {
-  section {
-    .background-gradient {
-      .container {
-        -webkit-column-count: 4;
-        -moz-column-count: 4;
-        column-count: 4;
-        grid-template-columns: 272px 272px 272px 272px;
-      }
-    }
-  }
+
 }

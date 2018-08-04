@@ -24,5 +24,9 @@ service cloud.firestore {
       allow read: if request.auth.uid != null;
       allow write;
     }
+     match /mediaGraphics/{document=**} {
+      allow read;
+      allow write: if request.auth.uid != null;
+    }
   }
 }
