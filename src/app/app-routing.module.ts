@@ -1,7 +1,8 @@
-import { NgModule } from '@angular/core';
-import {Routes, RouterModule, PreloadAllModules} from '@angular/router';
+import {NgModule} from '@angular/core';
+import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {TeamComponent} from './pages/team/team.component';
 import {HomeComponent} from './pages/home/home.component';
+import {MediaComponent} from './pages/media/media.component';
 
 const routes: Routes = [
     {
@@ -13,6 +14,11 @@ const routes: Routes = [
         path: 'team',
         component: TeamComponent,
         pathMatch: 'full',
+    },
+    {
+        path: 'media',
+        component: MediaComponent,
+        pathMatch: 'full'
     },
     {
         path: '**',
