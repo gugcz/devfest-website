@@ -99,7 +99,6 @@ import {HttpClientModule} from '@angular/common/http';
         MatTableModule,
         MatPaginatorModule,
         MatProgressBarModule
-        // TODO - konfigure service worker ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
     ],
     providers: [],
     bootstrap: [AppComponent]
