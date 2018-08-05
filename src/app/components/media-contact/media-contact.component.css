@@ -1,0 +1,12 @@
+mat-card {
+    min-width: 300px;
+}
+
+.contant-image {
+    max-width: 200px;
+}
+
+.image-holder {
+    width: 100%;
+    text-align: center;
+}
