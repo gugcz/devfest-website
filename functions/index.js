@@ -144,7 +144,7 @@ function mergeTickets(tickets) {
             price: prices,
             order: 1,
             soldOut: false,
-            title: 'Super early bird',
+            title: 'Super early<br>bird',
             support: false,
             url: 'https://ti.to/devfest-cz/2018/with/oc0cuxocymm'
         };

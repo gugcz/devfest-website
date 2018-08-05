@@ -32,8 +32,8 @@
     }
 
     app-ticket {
-      height: 541px;
       width: 250px;
+      height: 340px;
     }
 
     .ticket-0 {
@@ -165,6 +165,10 @@
         .ticket-4 {
           grid-column: 5;
           grid-row: 1;
+        }
+
+        app-ticket {
+          height: 500px;
         }
 
         app-ticket.smaller {
