@@ -50,6 +50,8 @@ import {CommonModule} from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
 import {MediaGraphicsComponent} from './components/media-graphics/media-graphics.component';
 import {MediaPressComponent} from './components/media-press/media-press.component';
+import {MediaContactComponent} from './components/media-contact/media-contact.component';
+import {MediaOthersComponent} from './components/media-others/media-others.component';
 
 @NgModule({
     declarations: [
@@ -70,6 +72,8 @@ import {MediaPressComponent} from './components/media-press/media-press.componen
         MediaComponent,
         MediaGraphicsComponent,
         MediaPressComponent,
+        MediaContactComponent,
+        MediaOthersComponent,
     ],
     imports: [
         BrowserModule,
