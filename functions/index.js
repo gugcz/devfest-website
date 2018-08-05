@@ -87,8 +87,8 @@ function processTickets(body) {
         || it.attributes.title === 'Individual' || it.attributes.title === 'Company funded');
     const lazyBirds = body.data.filter(it => it.attributes.title === 'Lazy bird - Student/Diversity'
         || it.attributes.title === 'Lazy bird - Individual' || it.attributes.title === 'Lazy bird - Company funded');
-    const vip = body.data.filter(it => it.attributes.title === 'Community Support');
-    return [mergeTickets(superEarlyBird)];
+    const communitySupport = body.data.filter(it => it.attributes.title === 'Community Support');
+    return [mergeTickets(superEarlyBird), mergeTickets(communitySupport)];
 }
 
 function mergeTickets(tickets) {
@@ -126,7 +126,8 @@ function mergeTickets(tickets) {
             order: 1,
             soldOut: false,
             title: 'Community Support',
-            support: true
+            support: true,
+            url: 'https://ti.to/devfest-cz/2018/with/w65mf5epnjg'
         };
     } else if (tickets[0].attributes.title === 'Super early bird') {
         const oneTicket = tickets[0];
@@ -144,7 +145,8 @@ function mergeTickets(tickets) {
             order: 1,
             soldOut: false,
             title: 'Super early bird',
-            support: false
+            support: false,
+            url: 'https://ti.to/devfest-cz/2018/with/oc0cuxocymm'
         };
     }
 }
