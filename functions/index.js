@@ -108,7 +108,7 @@ function mergeTickets(tickets) {
         const quantity = individualTicket.attributes.quantity + studentTicket.attributes.quantity + companyTicket.attributes.quantity;
         return {
             actual: now >= startDate && now <= endDate,
-            description: ` `,
+            description: ``,
             price: prices,
             order: 1,
             soldOut: false,
@@ -139,7 +139,7 @@ function mergeTickets(tickets) {
         const quantity = oneTicket.attributes.quantity;
         return {
             actual: now >= startDate && now <= endDate,
-            description: `first 30`,
+            description: `First 30`,
             price: prices,
             order: 1,
             soldOut: false,
