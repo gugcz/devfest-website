@@ -72,7 +72,7 @@ function mergeTickets(tickets) {
         };
     } else if (tickets[0].attributes.title === 'Super early bird') {
         const oneTicket = tickets[0];
-        const price = {price: oneTicket.attributes.price, title: 'Super early bird'};
+        const price = {price: oneTicket.attributes.price, title: 'Individual'};
         const prices = [price];
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const now = new Date();
