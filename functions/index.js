@@ -22,7 +22,7 @@ exports.getTickets = functions.https.onRequest((req, res) => {
         const options = {
             url: 'https://api.tito.io/v2/devfest-cz/2018/releases',
             headers: {
-                'Authorization': `Token token=BbHzz_AxrAyMYX3sVv-E`,
+                'Authorization': `Token token=${functions.config().tito.key}`,
                 'Accept': 'application/vnd.api+json',
                 'Content-Type': 'application/json'
             }
@@ -108,7 +108,7 @@ function mergeTickets(tickets) {
         const quantity = individualTicket.attributes.quantity + studentTicket.attributes.quantity + companyTicket.attributes.quantity;
         return {
             actual: now >= startDate && now <= endDate,
-            description: `From ${months[startDate.getMonth()]} ${startDate.getDate()} to ${months[endDate.getMonth()]} ${endDate.getDate()}<br>Or ${quantity} first`,
+            description: ` `,
             price: prices,
             order: 1,
             soldOut: false,
@@ -139,7 +139,7 @@ function mergeTickets(tickets) {
         const quantity = oneTicket.attributes.quantity;
         return {
             actual: now >= startDate && now <= endDate,
-            description: `From ${months[startDate.getMonth()]} ${startDate.getDate()} to ${months[endDate.getMonth()]} ${endDate.getDate()}<br>Or ${quantity} first`,
+            description: `first 30`,
             price: prices,
             order: 1,
             soldOut: false,
