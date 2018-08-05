@@ -22,7 +22,7 @@ exports.getTickets = functions.https.onRequest((req, res) => {
         const options = {
             url: 'https://api.tito.io/v2/devfest-cz/2018/releases',
             headers: {
-                'Authorization': `Token token=${functions.config().tito.key}`,
+                'Authorization': `Token token=BbHzz_AxrAyMYX3sVv-E`,
                 'Accept': 'application/vnd.api+json',
                 'Content-Type': 'application/json'
             }
@@ -87,7 +87,7 @@ function processTickets(body) {
         || it.attributes.title === 'Individual' || it.attributes.title === 'Company funded');
     const lazyBirds = body.data.filter(it => it.attributes.title === 'Lazy bird - Student/Diversity'
         || it.attributes.title === 'Lazy bird - Individual' || it.attributes.title === 'Lazy bird - Company funded');
-    const vip = body.data.filter(it => it.attributes.title === 'VIP');
+    const vip = body.data.filter(it => it.attributes.title === 'Community Support');
     return [mergeTickets(superEarlyBird), mergeTickets(earlyBirds), mergeTickets(regular), mergeTickets(lazyBirds), mergeTickets(vip)];
 }
 
@@ -115,7 +115,7 @@ function mergeTickets(tickets) {
             title: basicTitle,
             support: false
         };
-    } else if (tickets[0].attributes.title === 'VIP') {
+    } else if (tickets[0].attributes.title === 'Community Support') {
         const supportTicket = tickets[0];
         const price = {price: supportTicket.attributes.price, title: 'Support'};
         const prices = [price];
@@ -125,7 +125,7 @@ function mergeTickets(tickets) {
             price: prices,
             order: 1,
             soldOut: false,
-            title: 'VIP',
+            title: 'Community Support',
             support: true
         };
     } else if (tickets[0].attributes.title === 'Super early bird') {
