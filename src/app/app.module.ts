@@ -109,6 +109,9 @@ import {MediaOthersComponent} from './components/media-others/media-others.compo
         MatProgressBarModule
     ],
     providers: [],
+    entryComponents: [
+        InvoiceComponent
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {
