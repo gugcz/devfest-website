@@ -32,5 +32,9 @@ service cloud.firestore {
       allow read;
       allow write: if request.auth.uid != null;
     }
+    match /mediaOthers/{document=**} {
+          allow read;
+          allow write: if request.auth.uid != null;
+    }
   }
 }
