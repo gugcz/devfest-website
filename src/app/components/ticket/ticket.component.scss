@@ -2,9 +2,8 @@
 
 .ticket-card {
   display: flex;
-  height: 489px;
   width: 250px;
-  padding: 24px 0;
+  padding: 16px 0;
   z-index: 10;
   .content {
     display: flex;
@@ -15,7 +14,7 @@
     .title {
       width: 100%;
       color: white;
-      font-size: 2.5rem;
+      font-size: 1.75rem;
       font-weight: 500;
       margin: 0;
       text-align: center;
@@ -38,7 +37,7 @@
 
       .individual {
         .price {
-          font-size: 3.5rem;
+          font-size: 3rem;
         }
       }
 
@@ -56,7 +55,7 @@
       width: 100%;
       text-align: center;
       font-size: 1.25rem;
-      margin: 26px 0;
+      margin: 16px 0;
     }
 
     .buy-button {
@@ -65,7 +64,7 @@
       height: 50px;
       width: 200px;
       padding-top: 7px;
-      margin-top: 20px;
+      margin-top: 12px;
     }
 
     .sold-out {
@@ -80,7 +79,6 @@
 
 .ticket-card.actual {
   border: 2px solid rgba(253, 216, 53, 0.7);
-  height: 485px;
   width: 246px;
 }
 
@@ -90,6 +88,24 @@
 
 
 @media only screen and (min-width: 1024px) {
+  .ticket-card.actual {
+    height: 438px;
+    .content {
+
+      .title {
+        font-size: 2.5rem;
+      }
+
+      .prices-container {
+        .individual {
+          .price {
+            font-size: 3.5rem;
+          }
+        }
+      }
+    }
+  }
+
   .ticket-card.smaller {
     height: 380px;
     z-index: 1;
@@ -98,6 +114,7 @@
         font-size: 2rem;
       }
       .prices-container {
+        flex: 1;
         .price {
           font-size: 2.2rem;
         }
