@@ -6,7 +6,7 @@ import {MediaPress} from '../../database/media-press';
 @Component({
     selector: 'app-media-press',
     templateUrl: './media-press.component.html',
-    styleUrls: ['./media-press.component.css']
+    styleUrls: ['./media-press.component.scss']
 })
 export class MediaPressComponent implements OnInit {
 

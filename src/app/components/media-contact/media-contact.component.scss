@@ -1,0 +1,35 @@
+mat-card.contact-card {
+  width: 256px;
+  margin-right: 0;
+
+  .title {
+    text-align: center;
+  }
+
+  .contact-image {
+    width: 200px;
+    border-radius: 100px;
+  }
+
+  .image-holder {
+    width: 100%;
+    text-align: center;
+  }
+
+  .contact-name {
+    text-align: center;
+  }
+
+  .contact {
+    display: flex;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+
+    .email {
+      padding-top: 4px;
+      padding-left: 4px;
+    }
+  }
+
+}

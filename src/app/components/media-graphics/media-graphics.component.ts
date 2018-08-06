@@ -7,7 +7,7 @@ import {AngularFireStorage} from 'angularfire2/storage';
 @Component({
     selector: 'app-media-graphics',
     templateUrl: './media-graphics.component.html',
-    styleUrls: ['./media-graphics.component.css']
+    styleUrls: ['./media-graphics.component.scss']
 })
 export class MediaGraphicsComponent implements OnInit {
 
