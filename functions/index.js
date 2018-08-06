@@ -143,7 +143,7 @@ function mergeTickets(tickets) {
             description: `${quantity} first`,
             price: prices,
             order: 1,
-            soldOut: oneTicket['quantity-sold'] === oneTicket.quantity,
+            soldOut: oneTicket.attributes['quantity-sold'] === oneTicket.attributes.quantity,
             title: 'Super early<br>bird',
             support: false,
             url: 'https://ti.to/devfest-cz/2018/with/oc0cuxocymm'
