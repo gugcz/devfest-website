@@ -88,7 +88,7 @@ function processTickets(body) {
     const lazyBirds = body.data.filter(it => it.attributes.title === 'Lazy bird - Student/Diversity'
         || it.attributes.title === 'Lazy bird - Individual' || it.attributes.title === 'Lazy bird - Company funded');
     const communitySupport = body.data.filter(it => it.attributes.title === 'Community Support');
-    return [mergeTickets(superEarlyBird), mergeTickets(communitySupport)];
+    return [mergeTickets(superEarlyBird), mergeTickets(earlyBirds), mergeTickets(regular), mergeTickets(lazyBirds), mergeTickets(communitySupport)];
 }
 
 function mergeTickets(tickets) {
@@ -108,7 +108,7 @@ function mergeTickets(tickets) {
         const quantity = individualTicket.attributes.quantity + studentTicket.attributes.quantity + companyTicket.attributes.quantity;
         return {
             actual: now >= startDate && now <= endDate,
-            description: `From ${months[startDate.getMonth()]} ${startDate.getDate()} to ${months[endDate.getMonth()]} ${endDate.getDate()}<br>Or ${quantity} first`,
+            //description: `From ${months[startDate.getMonth()]} ${startDate.getDate()} to ${months[endDate.getMonth()]} ${endDate.getDate()}<br>Or ${quantity} first`,
             price: prices,
             order: 1,
             soldOut: false,
@@ -140,10 +140,10 @@ function mergeTickets(tickets) {
         const quantity = oneTicket.attributes.quantity;
         return {
             actual: now >= startDate && now <= endDate,
-            description: `Or ${quantity} first`,
+            description: `${quantity} first`,
             price: prices,
             order: 1,
-            soldOut: false,
+            soldOut: oneTicket['quantity-sold'] === oneTicket.quantity,
             title: 'Super early<br>bird',
             support: false,
             url: 'https://ti.to/devfest-cz/2018/with/oc0cuxocymm'
