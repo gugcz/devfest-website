@@ -1,3 +1,17 @@
-mat-card {
-    width: 256px;
+mat-card.wrote-about-us {
+  width: 256px;
+
+  .content {
+    .list {
+      font-size: 1rem;
+      padding-left: 16px;
+      .link-container {
+        padding: 8px 0;
+
+        .link {
+          color: white;
+        }
+      }
+    }
+  }
 }
