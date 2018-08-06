@@ -26,10 +26,14 @@ mat-card.contact-card {
     color: white;
     text-decoration: none;
 
-    .email {
+    .text {
       padding-top: 4px;
-      padding-left: 4px;
+      padding-left: 8px;
     }
+  }
+
+  .contact.phone {
+    margin-top: 10px;
   }
 
 }
