@@ -12,7 +12,7 @@
       </div>
     </div>
     <p *ngIf="ticket.description" class="description" [innerHtml]="ticket.description"></p>
-    <a *ngIf="ticket.actual else soldOut" mat-raised-button color="accent" (click)="buy()"
+    <a *ngIf="ticket.actual && !ticket.soldOut else soldOut" mat-raised-button color="accent" (click)="buy()"
             class="buy-button" href="{{ticket.url}}" target="_blank">BUY TICKET
     </a>
   </mat-card-content>
