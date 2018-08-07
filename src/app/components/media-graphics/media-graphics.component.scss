@@ -1,3 +1,21 @@
 mat-card {
   width: 256px;
+
+  .image-item {
+    display: grid;
+    grid-template-columns: 72px 1fr 40px;
+    grid-row-gap: 16px;
+
+    .thumbnail {
+      height: 32px;
+    }
+
+    .thumbnail, .download-button {
+      justify-self: center;
+    }
+
+    .thumbnail, .name, .download-button {
+      align-self: center;
+    }
+  }
 }
