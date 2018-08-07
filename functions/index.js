@@ -117,7 +117,7 @@ function mergeTickets(tickets) {
         };
     } else if (tickets[0].attributes.title === 'Community Support') {
         const supportTicket = tickets[0];
-        const price = {price: supportTicket.attributes.price, title: 'Support'};
+        const price = {price: supportTicket.attributes.price, title: 'I ♥︎ DevFest'};
         const prices = [price];
         return {
             actual: supportTicket.attributes.state === 'on_sale',
