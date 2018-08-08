@@ -87,8 +87,8 @@ function processTickets(body) {
         || it.attributes.title === 'Individual' || it.attributes.title === 'Company funded');
     const lazyBirds = body.data.filter(it => it.attributes.title === 'Lazy bird - Student/Diversity'
         || it.attributes.title === 'Lazy bird - Individual' || it.attributes.title === 'Lazy bird - Company funded');
-    const vip = body.data.filter(it => it.attributes.title === 'Community Support');
-    return [mergeTickets(superEarlyBird), mergeTickets(earlyBirds), mergeTickets(regular), mergeTickets(lazyBirds), mergeTickets(vip)];
+    const communitySupport = body.data.filter(it => it.attributes.title === 'Community Support');
+    return [mergeTickets(superEarlyBird), mergeTickets(earlyBirds), mergeTickets(regular), mergeTickets(lazyBirds), mergeTickets(communitySupport)];
 }
 
 function mergeTickets(tickets) {
@@ -108,7 +108,7 @@ function mergeTickets(tickets) {
         const quantity = individualTicket.attributes.quantity + studentTicket.attributes.quantity + companyTicket.attributes.quantity;
         return {
             actual: now >= startDate && now <= endDate,
-            description: ``,
+            //description: `From ${months[startDate.getMonth()]} ${startDate.getDate()} to ${months[endDate.getMonth()]} ${endDate.getDate()}<br>Or ${quantity} first`,
             price: prices,
             order: 1,
             soldOut: false,
@@ -117,7 +117,7 @@ function mergeTickets(tickets) {
         };
     } else if (tickets[0].attributes.title === 'Community Support') {
         const supportTicket = tickets[0];
-        const price = {price: supportTicket.attributes.price, title: 'Support'};
+        const price = {price: supportTicket.attributes.price, title: 'I ♥︎ DevFest'};
         const prices = [price];
         return {
             actual: supportTicket.attributes.state === 'on_sale',
@@ -126,7 +126,8 @@ function mergeTickets(tickets) {
             order: 1,
             soldOut: false,
             title: 'Community Support',
-            support: true
+            support: true,
+            url: 'https://ti.to/devfest-cz/2018/with/w65mf5epnjg'
         };
     } else if (tickets[0].attributes.title === 'Super early bird') {
         const oneTicket = tickets[0];
@@ -139,12 +140,13 @@ function mergeTickets(tickets) {
         const quantity = oneTicket.attributes.quantity;
         return {
             actual: now >= startDate && now <= endDate,
-            description: `First 30`,
+            description: `First ${quantity}`,
             price: prices,
             order: 1,
-            soldOut: false,
-            title: 'Super early bird',
-            support: false
+            soldOut: oneTicket.attributes['quantity-sold'] === oneTicket.attributes.quantity,
+            title: 'Super early<br>bird',
+            support: false,
+            url: 'https://ti.to/devfest-cz/2018/with/oc0cuxocymm'
         };
     }
 }

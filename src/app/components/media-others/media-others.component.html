@@ -1,11 +1,13 @@
-<mat-card *ngIf="$press | async;let press; else loadingImage">
+<mat-card *ngIf="$press | async;let press; else loadingImage" class="wrote-about-us">
     <mat-card-title>
         Wrote about us
     </mat-card-title>
-    <mat-card-content>
-        <div *ngFor="let one of press">
-            <a mat-button [href]="one.url">{{one.name}}</a>
-        </div>
+    <mat-card-content class="content">
+      <ul class="list">
+        <li *ngFor="let one of press" class="link-container">
+          <a [href]="one.url" class="link" target="_blank">{{one.name}}</a>
+        </li>
+      </ul>
     </mat-card-content>
 </mat-card>
 <ng-template #loadingImage>
