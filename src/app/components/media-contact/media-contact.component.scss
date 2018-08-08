@@ -1,8 +1,6 @@
 mat-card.contact-card {
   width: 256px;
-  height: 100%;
-  min-height: 400px;
-  max-height: 400px;
+  height: calc(100% - 48px);
   background-color: #818181;
 
   .title {

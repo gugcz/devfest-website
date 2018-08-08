@@ -1,8 +1,6 @@
 mat-card.press-card {
   width: 256px;
-  height: 100%;
-  min-height: 400px;
-  max-height: 400px;
+  height: calc(100% - 48px);
 
   .content {
     .list {
