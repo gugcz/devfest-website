@@ -1,15 +1,19 @@
 mat-card.wrote-about-us {
   width: 256px;
+  height: 100%;
+  min-height: 400px;
+  max-height: 400px;
 
   .content {
     .list {
       font-size: 1rem;
-      padding-left: 16px;
       .link-container {
         padding: 8px 0;
-
+        width: 100%;
         .link {
-          color: white;
+          width: 100%;
+          margin: 5px;
+          white-space: normal !important;
         }
       }
     }
