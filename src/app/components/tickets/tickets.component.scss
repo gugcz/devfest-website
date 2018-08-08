@@ -4,7 +4,7 @@
   display: flex;
   padding: 22px;
   background-color: $dark-background;
-  min-height: calc(100vh - 44px);
+  min-height: calc(70vh - 44px);
   flex-direction: column;
 
   .tickets-title {
@@ -21,49 +21,68 @@
     align-items: center;
     justify-content: center;
 
-    .tickets-container {
-      padding-top: 22px;
+    .full-container {
       display: grid;
       column-count: 1;
-      grid-gap: 16px;
-      column-gap: 8px;
-      justify-content: center;
-      align-items: center;
+      grid-gap: 8px;
+      .vat-container {
+        grid-column: 1;
+        grid-row: 2;
+        width: 100%;
+        .vat-description {
+          float: right;
+          font-style: italic;
+        }
+      }
+
+      .tickets-container {
+        grid-column: 1;
+        grid-row: 1;
+        padding-top: 22px;
+        display: grid;
+        column-count: 1;
+        grid-gap: 16px;
+        column-gap: 8px;
+        justify-content: center;
+        align-items: center;
+      }
+
+      app-ticket {
+        width: 250px;
+        height: 340px;
+      }
+
+      .ticket-0 {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .ticket-1 {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .ticket-2 {
+        grid-column: 1;
+        grid-row: 3;
+      }
+
+      .ticket-3 {
+        grid-column: 1;
+        grid-row: 4;
+      }
+
+      .ticket-4 {
+        grid-column: 1;
+        grid-row: 5;
+      }
+
+      .app-loading-child .spinner {
+        position: relative;
+      }
     }
 
-    app-ticket {
-      width: 250px;
-      height: 340px;
-    }
 
-    .ticket-0 {
-      grid-column: 1;
-      grid-row: 1;
-    }
-
-    .ticket-1 {
-      grid-column: 1;
-      grid-row: 2;
-    }
-
-    .ticket-2 {
-      grid-column: 1;
-      grid-row: 3;
-    }
-
-    .ticket-3 {
-      grid-column: 1;
-      grid-row: 4;
-    }
-
-    .ticket-4 {
-      grid-column: 1;
-      grid-row: 5;
-    }
-
-    .app-loading-child .spinner {
-      position: relative;
-    }
   }
   .help-text {
     text-align: center;
@@ -140,7 +159,7 @@
   .container {
     .tickets {
       .tickets-container {
-        column-count: 4;
+        column-count: 5;
 
         .ticket-0 {
           grid-column: 1;
