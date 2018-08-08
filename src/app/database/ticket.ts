@@ -6,6 +6,7 @@ export interface Ticket {
   soldOut: boolean;
   title: string;
   support: boolean;
+  url: string;
 }
 
 export interface TicketDescription {

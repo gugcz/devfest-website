@@ -28,8 +28,7 @@ export class AppComponent implements OnInit {
     public mobile: Boolean;
     navigation = [
         {link: '', label: 'Home'},
-        {link: 'team', label: 'Team'},
-        {link: 'media', label: 'Media'}
+        {link: 'team', label: 'Team'}
     ];
     lastYOffset: number;
     showMenu: boolean;

@@ -14,18 +14,9 @@
       <app-countdown class="countdown"
                      [countDownEnd]="'2018-10-26, 9:00:00AM'"></app-countdown>
     </div>
-    <!--div class="register-now-button-container" [ngClass]="animateOnRouteEnter">
-      <app-register-now-button></app-register-now-button>
-    </div-->
-    <div class="email-notifier-container" [ngClass]="animateOnRouteEnter">
+    <div [ngClass]="animateOnRouteEnter">
       <app-call-for-proposals></app-call-for-proposals>
-      <app-email-notifier></app-email-notifier>
-    </div>
-    <div class="info-text" [ngClass]="animateOnRouteEnter">
-        <p class="minimal-text">
-        <span class="nowrap">You´ll</span> get a heads-up for early bird tickets. <span class="nowrap">We´ll</span> also
-        keep you updated on the venue, speakers and more.
-      </p>
+      <app-register-now-button></app-register-now-button>
     </div>
     <div class="social-networks-container" [ngClass]="animateOnRouteEnter">
       <app-social-networks></app-social-networks>

@@ -1,15 +1,14 @@
-<mat-card *ngIf="$graphics | async;let graphics; else loadingImage">
+<mat-card>
     <mat-card-title>
         Graphics
     </mat-card-title>
     <mat-card-content>
-        <div *ngFor="let graphic of graphics">{{graphic.name}}
-            <button mat-icon-button (click)="downloadGraphic(graphic.file)">
+        <div *ngFor="let url of imageUrls" class="image-item">
+            <img class="thumbnail" [src]="url.thumbUrl">
+            <span class="name">{{url.name}}</span>
+            <button class="download-button" mat-icon-button (click)="downloadGraphic(url.url)">
                 <mat-icon>get_app</mat-icon>
             </button>
         </div>
     </mat-card-content>
 </mat-card>
-<ng-template #loadingImage>
-    <mat-spinner [diameter]="115"></mat-spinner>
-</ng-template>

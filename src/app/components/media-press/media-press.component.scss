@@ -1,0 +1,17 @@
+mat-card.press-card {
+  width: 256px;
+
+  .content {
+    .list {
+      font-size: 1rem;
+      padding-left: 16px;
+      .link-container {
+        padding: 8px 0;
+
+        .link {
+          color: white;
+        }
+      }
+    }
+  }
+}

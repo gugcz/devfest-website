@@ -12,29 +12,16 @@ section {
   .background-gradient {
     flex: 1;
     background: linear-gradient(180deg, rgba(21, 25, 38, 0.2) 0%, rgb(24, 32, 17) 95%), radial-gradient(farthest-side at 0 0, rgba(4, 102, 255, 0.3), rgba(255, 26, 198, 0)), radial-gradient(farthest-side at 100% 0, rgba(60, 221, 221, .4), rgba(60, 221, 221, 0)), radial-gradient(farthest-side at 50% 0, rgba(255, 26, 198, .1), rgba(255, 26, 198, 0));
-    padding: 32px 24px;
+    padding: 16px 16px;
 
     .container {
       display: grid;
       width: 100%;
       z-index: 2;
       justify-content: center;
-
-      .information-1 {
-        margin: 15px;
-      }
-
-      .information-2 {
-        margin: 15px;
-      }
-
-      .information-3 {
-        margin: 15px;
-      }
-
-      .information-4 {
-        margin: 15px;
-      }
+      column-count: 1;
+      grid-row-gap: 16px;
+      column-gap: 16px;
     }
   }
   .dark-background {
@@ -98,6 +85,11 @@ section {
   section {
     .background-gradient {
       padding-top: 96px;
+
+      .container {
+        column-count: 2;
+        grid-template-columns: 304px 304px;
+      }
     }
   }
 }

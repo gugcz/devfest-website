@@ -85,10 +85,6 @@ section {
   .social-networks-container {
     margin: 24px 0;
   }
-
-  .email-notifier-container {
-    width: 100%;
-  }
 }
 
 @media only screen and (min-width: 360px) {
@@ -132,9 +128,6 @@ section {
 
 @media only screen and (min-width: 525px) {
   .container {
-    .email-notifier-container {
-      width: 400px;
-    }
 
     .info-text {
       font-size: 1.2rem;
@@ -180,10 +173,6 @@ section {
       width: 100%;
     }
 
-    .email-notifier-container {
-      width: 400px;
-    }
-
     .social-networks-container {
       margin: 48px 0;
     }
@@ -217,10 +206,6 @@ section {
       flex-direction: row;
       margin-top: 78px;
       width: 100%;
-    }
-
-    .email-notifier-container {
-      width: 500px;
     }
 
     .social-networks-container {
