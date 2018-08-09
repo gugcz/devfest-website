@@ -5,8 +5,18 @@
     <mat-card-content class="content">
         <div class="list">
             <div class="link-container">
-                <a mat-raised-button [color]="'accent'" *ngFor="let one of press" [href]="one.url" class="link"
-                   target="_blank">{{one.name}}</a>
+                <mat-list>
+                    <ng-container *ngFor="let one of press">
+                        <h3 mat-subheader>{{one.name}}</h3>
+                        <mat-list-item>
+                            <a mat-raised-button [color]="'accent'" [href]="one.url" class="link"
+                               target="_blank">{{one.source}}</a>
+
+                        </mat-list-item>
+                        <mat-divider></mat-divider>
+                    </ng-container>
+                </mat-list>
+
             </div>
 
         </div>
