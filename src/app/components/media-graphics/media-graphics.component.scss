@@ -1,5 +1,6 @@
 mat-card {
   width: 256px;
+  height: calc(100% - 48px);
 
   .image-item {
     display: grid;

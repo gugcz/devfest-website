@@ -3,11 +3,16 @@
         Wrote about us
     </mat-card-title>
     <mat-card-content class="content">
-      <ul class="list">
-        <li *ngFor="let one of press" class="link-container">
-          <a [href]="one.url" class="link" target="_blank">{{one.name}}</a>
-        </li>
-      </ul>
+        <div class="list">
+            <div class="link-container">
+              <div class="item" *ngFor="let one of press">
+                  <h3 mat-subheader class="link-title">{{one.name}}</h3>
+                  <a mat-raised-button [color]="'accent'" [href]="one.url" class="link"
+                     target="_blank">{{one.source}}</a>
+                  <mat-divider class="divider"></mat-divider>
+              </div>
+            </div>
+        </div>
     </mat-card-content>
 </mat-card>
 <ng-template #loadingImage>

@@ -22,6 +22,23 @@ section {
       column-count: 1;
       grid-row-gap: 16px;
       column-gap: 16px;
+
+      .media-graphics {
+        grid-column: 1;
+        grid-row: 2;
+      }
+      .media-press {
+        grid-column: 1;
+        grid-row: 3;
+      }
+      .media-others {
+        grid-column: 1;
+        grid-row: 4;
+      }
+      .media-contact {
+        grid-column: 1;
+        grid-row: 1;
+      }
     }
   }
   .dark-background {
@@ -35,23 +52,6 @@ section {
     .background-gradient {
       padding-top: 48px;
     }
-
-    .information-1 {
-      grid-column: 1;
-      grid-row: 1;
-    }
-    .information-2 {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    .information-3 {
-      grid-column: 1;
-      grid-row: 3;
-    }
-    .information-4 {
-      grid-column: 1;
-      grid-row: 4;
-    }
   }
 }
 
@@ -60,23 +60,6 @@ section {
     background-position-y: 56px;
     .background-gradient {
       padding-top: 7.5rem;
-    }
-
-    .information-1 {
-      grid-column: 1;
-      grid-row: 1;
-    }
-    .information-2 {
-      grid-column: 2;
-      grid-row: 1;
-    }
-    .information-3 {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    .information-4 {
-      grid-column: 2;
-      grid-row: 2;
     }
   }
 }
@@ -89,51 +72,51 @@ section {
       .container {
         column-count: 2;
         grid-template-columns: 304px 304px;
+
+        .media-graphics {
+          grid-column: 1;
+          grid-row: 1;
+        }
+        .media-press {
+          grid-column: 2;
+          grid-row: 2;
+        }
+        .media-others {
+          grid-column: 1;
+          grid-row: 2;
+        }
+        .media-contact {
+          grid-column: 2;
+          grid-row: 1;
+        }
       }
     }
   }
 }
 
-@media only screen and (min-width: 912px) {
-  section {
-    .information-1 {
-      grid-column: 1;
-      grid-row: 1;
-    }
-    .information-2 {
-      grid-column: 2;
-      grid-row: 1;
-    }
-    .information-3 {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    .information-4 {
-      grid-column: 2;
-      grid-row: 2;
-    }
-  }
-
-
-}
-
 @media only screen and (min-width: 1920px) {
   section {
-    .information-1 {
-      grid-column: 1;
-      grid-row: 1;
-    }
-    .information-2 {
-      grid-column: 2;
-      grid-row: 1;
-    }
-    .information-3 {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    .information-4 {
-      grid-column: 2;
-      grid-row: 2;
+    .background-gradient {
+      .container {
+        column-count: 4;
+        .media-graphics {
+          grid-column: 1;
+          grid-row: 1;
+        }
+        .media-press {
+          grid-column: 2;
+          grid-row: 1;
+        }
+        .media-others {
+          grid-column: 3;
+          grid-row: 1;
+        }
+        .media-contact {
+          grid-column: 4;
+          grid-row: 1;
+        }
+
+      }
     }
   }
 

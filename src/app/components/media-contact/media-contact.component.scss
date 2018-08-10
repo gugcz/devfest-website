@@ -1,6 +1,7 @@
 mat-card.contact-card {
   width: 256px;
-  margin-right: 0;
+  height: calc(100% - 48px);
+  background-color: #818181;
 
   .title {
     text-align: center;
