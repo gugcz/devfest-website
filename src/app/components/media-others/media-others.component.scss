@@ -1,17 +1,36 @@
 mat-card.wrote-about-us {
   width: 256px;
+  height: calc(100% - 48px);
 
   .content {
     .list {
       font-size: 1rem;
-      padding-left: 16px;
       .link-container {
-        padding: 8px 0;
+        width: 100%;
 
-        .link {
-          color: white;
+        .item {
+
+          .link-title.mat-subheader {
+            padding: 0 !important;
+            margin-top: 24px !important;
+            font-size: 16px;
+            height: 16px !important;
+          }
+
+          .link {
+            width: 100%;
+            white-space: normal !important;
+          }
+
+          .divider {
+            margin-top: 12px;
+          }
         }
       }
     }
   }
+}
+
+.mat-list .mat-list-item .mat-list-item-content {
+  padding: 0 !important;
 }
