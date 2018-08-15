@@ -5,25 +5,18 @@ mat-card.wrote-about-us {
   .content {
     .list {
       font-size: 1rem;
+
       .link-container {
         width: 100%;
 
         .item {
-
-          .link-title.mat-subheader {
-            padding: 0 !important;
-            margin-top: 24px !important;
-            font-size: 16px;
-            height: 16px !important;
-          }
-
           .link {
+            color: white;
+            display: block;
+            padding: 12px 0;
+            font-size: 16px;
             width: 100%;
             white-space: normal !important;
-          }
-
-          .divider {
-            margin-top: 12px;
           }
         }
       }
