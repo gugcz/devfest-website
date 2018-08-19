@@ -3,6 +3,7 @@ import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {TeamComponent} from './pages/team/team.component';
 import {HomeComponent} from './pages/home/home.component';
 import {MediaComponent} from './pages/media/media.component';
+import { AppInvitationComponent } from './components/app-invitation/app-invitation.component';
 
 const routes: Routes = [
     {
@@ -19,6 +20,11 @@ const routes: Routes = [
         path: 'media',
         component: MediaComponent,
         pathMatch: 'full',
+    },
+    {
+        path: 'app-invitation',
+        component: AppInvitationComponent,
+        pathMatch: 'full'
     },
     {
         path: '**',
