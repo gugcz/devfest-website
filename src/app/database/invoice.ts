@@ -8,4 +8,6 @@ export interface Invoice {
     registrationNumberIC: string;
     registrationNumberDIC: string;
     country: string;
+    facturoidContactFound: boolean;
+    facturoidContactId: string;
 }
