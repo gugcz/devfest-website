@@ -44,7 +44,9 @@ export class InvoiceComponent implements OnInit {
             zip: this.zip.value,
             registrationNumberIC: this.registrationNumberIC.value,
             registrationNumberDIC: this.registrationNumberIC.value,
-            country: this.country.value
+            country: this.country.value,
+            facturoidContactFound: false,
+            facturoidContactId: null
         };
         this.loading = true;
         this.afStore.collection('invoices').add(invoice).then(() => {

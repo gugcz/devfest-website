@@ -23,7 +23,7 @@ const routes: Routes = [
     },
     {
         path: 'app-invitation',
-        component: AppInvitationComponent,
+        redirectTo : '', // TODO - after created app use AppInvitationComponent
         pathMatch: 'full'
     },
     {
