@@ -52,6 +52,7 @@ import {MediaGraphicsComponent} from './components/media-graphics/media-graphics
 import {MediaPressComponent} from './components/media-press/media-press.component';
 import {MediaContactComponent} from './components/media-contact/media-contact.component';
 import {MediaOthersComponent} from './components/media-others/media-others.component';
+import { AppInvitationComponent } from './components/app-invitation/app-invitation.component';
 
 @NgModule({
     declarations: [
@@ -74,6 +75,7 @@ import {MediaOthersComponent} from './components/media-others/media-others.compo
         MediaPressComponent,
         MediaContactComponent,
         MediaOthersComponent,
+        AppInvitationComponent,
     ],
     imports: [
         BrowserModule,
