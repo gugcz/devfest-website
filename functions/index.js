@@ -99,10 +99,10 @@ exports.invoiceFindContact = functions.firestore.document('invoices/{invoiceId}'
         uri: 'https://app.fakturoid.cz/api/v2/accounts/' + FACTUROID_COMPANY + '/subjects.json',
         headers: {
             'Content-Type': 'application/json',
-            'User-Agent': 'vaclavpavlicek'
+            'User-Agent': FACTUROID_COMPANY
         },
         auth: {
-            'user': 'venda.pavlicek@gmail.com',
+            'user': `${functions.config().fakturoid.login}`,
             'pass': `${functions.config().fakturoid.key}`
         }
     };
@@ -119,10 +119,10 @@ exports.invoiceFindContact = functions.firestore.document('invoices/{invoiceId}'
                 uri: 'https://app.fakturoid.cz/api/v2/accounts/' + FACTUROID_COMPANY + '/subjects.json',
                 headers: {
                     'Content-Type': 'application/json',
-                    'User-Agent': 'vaclavpavlicek'
+                    'User-Agent': FACTUROID_COMPANY
                 },
                 auth: {
-                    'user': 'venda.pavlicek@gmail.com',
+                    'user': `${functions.config().fakturoid.login}`,
                     'pass': `${functions.config().fakturoid.key}`
                 },
                 body: {
@@ -169,10 +169,10 @@ exports.invoiceCreateInvoice = functions.firestore.document('invoices/{invoiceId
             uri: 'https://app.fakturoid.cz/api/v2/accounts/' + FACTUROID_COMPANY + '/invoices.json',
             headers: {
                 'Content-Type': 'application/json',
-                'User-Agent': 'vaclavpavlicek'
+                'User-Agent': FACTUROID_COMPANY
             },
             auth: {
-                'user': 'venda.pavlicek@gmail.com',
+                'user': `${functions.config().fakturoid.login}`,
                 'pass': `${functions.config().fakturoid.key}`
             },
             body: {
