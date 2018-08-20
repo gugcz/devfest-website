@@ -275,8 +275,12 @@ function mergeTickets(tickets) {
         const price = { price: oneTicket.attributes['price'], title: 'Individual' };
         const prices = [price];
         const quantity = oneTicket.attributes['quantity'];
+        const now = new Date();
+        const startDate = new Date(oneTicket.attributes['start-at']);
+        const endDate = new Date(oneTicket.attributes['end-at']);
+        const state = oneTicket.attributes['state'];
         return {
-            actual: oneTicket.attributes['state'] === 'on_sale',
+            actual:  ((state === 'on_sale') && (now >= startDate && now <= endDate)),
             description: `First ${quantity}`,
             price: prices,
             order: 1,
