@@ -30,6 +30,7 @@
         grid-row: 2;
         width: 100%;
         .vat-description {
+          margin: 5px;
           float: right;
           font-style: italic;
         }
@@ -49,7 +50,7 @@
 
       app-ticket {
         width: 250px;
-        height: 340px;
+        height: 380px;
       }
 
       .ticket-0 {
