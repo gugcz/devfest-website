@@ -253,7 +253,8 @@ function mergeTickets(tickets) {
             order: 1,
             soldOut: false,
             title: basicTitle,
-            support: false
+            support: false,
+            url: 'https://ti.to/devfest-cz/2018/'
         };
     } else if (tickets[0].attributes.title === 'Community Support') {
         const supportTicket = tickets[0];
