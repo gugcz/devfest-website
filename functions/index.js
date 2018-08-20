@@ -163,7 +163,7 @@ exports.invoiceCreateInvoice = functions.firestore.document('invoices/{invoiceId
     const id = context.params.invoiceId;
     const fakturoidId = newValue.facturoidContactId;
     const countTickets = newValue.countTickets;
-    if (facturoidContactFound == true){
+    if (facturoidContactFound == true) {
         const options = {
             method: 'POST',
             uri: 'https://app.fakturoid.cz/api/v2/accounts/' + FACTUROID_COMPANY + '/invoices.json',
@@ -195,7 +195,7 @@ exports.invoiceCreateInvoice = functions.firestore.document('invoices/{invoiceId
         return rp(options).then((createValue) => {
             // TODO - send invoice
         });
-    } else{
+    } else {
         return true;
     }
 });
@@ -233,14 +233,22 @@ function mergeTickets(tickets) {
         const studentPrice = { price: studentTicket.attributes.price, title: 'Student' };
         const prices = [individualPrice, companyPrice, studentPrice];
         const basicTitle = individualTicket.attributes.title.substring(0, individualTicket.attributes.title.indexOf('-') - 1) || 'Regular';
+        let description = '';
+        if (tickets[0].attributes['title'] == 'Early bird - Individual' || tickets[0].attributes['title'] == 'Early bird - Student/Diversity' || tickets[0].attributes['title'] == 'Early bird - Company funded') {
+            description = 'First 100';
+        } else if (tickets[0].attributes['title'] == 'Individual' || tickets[0].attributes['title'] == 'Student/Diversity' || tickets[0].attributes['title'] == 'Company funded') {
+            description = 'Until 11th September';
+        } else if (tickets[0].attributes['title'] == 'Lazy bird - Company funded' || tickets[0].attributes['title'] == 'Lazy bird - Individual' || tickets[0].attributes['title'] == 'Lazy bird - Student/Diversity') {
+            description = 'From 12th September';
+        }
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const now = new Date();
         const startDate = new Date(individualTicket.attributes['start-at']);
         const endDate = new Date(individualTicket.attributes['end-at']);
-        const quantity = individualTicket.attributes.quantity + studentTicket.attributes.quantity + companyTicket.attributes.quantity;
+        const state = individualTicket.attributes['state'];
         return {
-            actual: now >= startDate && now <= endDate,
-            //description: `From ${months[startDate.getMonth()]} ${startDate.getDate()} to ${months[endDate.getMonth()]} ${endDate.getDate()}<br>Or ${quantity} first`,
+            actual: ((state === 'on_sale') && (now >= startDate && now <= endDate)),
+            description: description,
             price: prices,
             order: 1,
             soldOut: false,
@@ -249,10 +257,10 @@ function mergeTickets(tickets) {
         };
     } else if (tickets[0].attributes.title === 'Community Support') {
         const supportTicket = tickets[0];
-        const price = { price: supportTicket.attributes.price, title: 'I ♥︎ DevFest' };
+        const price = { price: supportTicket.attributes['price'], title: 'I ♥︎ DevFest' };
         const prices = [price];
         return {
-            actual: supportTicket.attributes.state === 'on_sale',
+            actual: supportTicket.attributes['state'] === 'on_sale',
             description: 'You want to support community',
             price: prices,
             order: 1,
@@ -263,19 +271,15 @@ function mergeTickets(tickets) {
         };
     } else if (tickets[0].attributes.title === 'Super early bird') {
         const oneTicket = tickets[0];
-        const price = { price: oneTicket.attributes.price, title: 'Individual' };
+        const price = { price: oneTicket.attributes['price'], title: 'Individual' };
         const prices = [price];
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const now = new Date();
-        const startDate = new Date(oneTicket.attributes['start-at']);
-        const endDate = new Date(oneTicket.attributes['end-at']);
-        const quantity = oneTicket.attributes.quantity;
+        const quantity = oneTicket.attributes['quantity'];
         return {
-            actual: now >= startDate && now <= endDate,
+            actual: oneTicket.attributes['state'] === 'on_sale',
             description: `First ${quantity}`,
             price: prices,
             order: 1,
-            soldOut: oneTicket.attributes['quantity-sold'] === oneTicket.attributes.quantity,
+            soldOut: oneTicket.attributes['quantity-sold'] === oneTicket.attributes['quantity'],
             title: 'Super early<br>bird',
             support: false,
             url: 'https://ti.to/devfest-cz/2018/with/oc0cuxocymm'
