@@ -1,8 +1,6 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
-import {TeamComponent} from './pages/team/team.component';
 import {HomeComponent} from './pages/home/home.component';
-import {MediaComponent} from './pages/media/media.component';
 import { AppInvitationComponent } from './components/app-invitation/app-invitation.component';
 
 const routes: Routes = [
@@ -12,18 +10,8 @@ const routes: Routes = [
         pathMatch: 'full',
     },
     {
-        path: 'team',
-        component: TeamComponent,
-        pathMatch: 'full',
-    },
-    {
-        path: 'media',
-        component: MediaComponent,
-        pathMatch: 'full',
-    },
-    {
         path: 'app-invitation',
-        redirectTo : '', // TODO - after created app use AppInvitationComponent
+        redirectTo : '', // TODO - after created app use AppInvitationCo mponent
         pathMatch: 'full'
     },
     {

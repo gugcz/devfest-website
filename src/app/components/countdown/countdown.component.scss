@@ -1,10 +1,11 @@
-.countdown-container {
+.countdown {
+  color: #ffffff;
   display: grid;
-  -webkit-column-count: 2;
-  -moz-column-count: 2;
-  column-count: 2;
+  -webkit-column-count: 1;
+  -moz-column-count: 1;
+  column-count: 1;
   grid-gap: 16px;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
 
   .number-container {
     display: flex;
@@ -12,7 +13,6 @@
 
     p.number {
       font-size: 4.6rem;
-      line-height: 4.6rem;
       margin: 0;
       text-align: right;
     }
@@ -21,10 +21,6 @@
       min-width: 5.688rem;
       width: 91px;
       max-width: 91px;
-    }
-
-    .minutes {
-      padding-left: 29px;
     }
 
     .three-digit {
@@ -41,9 +37,6 @@
       font-size: 1.125rem;
       padding-bottom: 8px;
       padding-left: 9px;
-      min-width: 16px;
-      width: 16px;
-      max-width: 16px;
     }
   }
 }
@@ -54,17 +47,12 @@
     .number-container {
       p.number {
         font-size: 5.390625rem;
-        line-height: 5.390625rem;
       }
 
       p.two-digit {
         min-width: 107px;
         width: 107px;
         max-width: 107px;
-      }
-
-      p.minutes {
-        padding-left: 34px;
       }
 
       p.three-digit {
@@ -89,17 +77,12 @@
     .number-container {
       p.number {
         font-size: 6.417410714rem;
-        line-height: 6.417410714rem;
       }
 
       p.two-digit {
         min-width: 127px;
         width: 127px;
         max-width: 127px;
-      }
-
-      p.minutes {
-        padding-left: 40px;
       }
 
       p.three-digit {
@@ -144,10 +127,6 @@
 
 @media screen and (min-width: 768px) {
   .countdown-container {
-    -webkit-column-count: 4;
-    -moz-column-count: 4;
-    column-count: 4;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
     padding: 0 32px;
     min-width: 608px;
     width: 608px;
@@ -156,17 +135,12 @@
     .number-container {
       p.number {
         font-size: 4.8rem;
-        line-height: 4.8rem;
       }
 
       p.two-digit {
         min-width: 95px;
         width: 95px;
         max-width: 95px;
-      }
-
-      p.minutes {
-        padding-left: 0;
       }
 
       p.three-digit {
@@ -195,17 +169,12 @@
       justify-content: center;
       p.number {
         font-size: 6rem;
-        line-height: 6rem;
       }
 
       p.two-digit {
         min-width: 119px;
         width: 119px;
         max-width: 119px;
-      }
-
-      p.minutes {
-        padding-left: 0;
       }
 
       p.three-digit {
@@ -232,7 +201,6 @@
     .number-container {
       p.number {
         font-size: 4.5rem;
-        line-height: 4.5rem;
       }
 
       p.two-digit {
@@ -265,7 +233,6 @@
     .number-container {
       p.number {
         font-size: 5rem;
-        line-height: 5rem;
       }
 
       p.two-digit {
@@ -298,7 +265,6 @@
     .number-container {
       p.number {
         font-size: 6.976744186rem;
-        line-height: 6.976744186rem;
       }
 
       p.two-digit {
@@ -322,16 +288,14 @@
 }
 
 @media screen and (min-width: 1920px) {
-  .countdown-container {
-    margin: 64px 0;
-  }
-}
-
-@media screen and (min-width: 1920px) {
-  .countdown-container {
+  .countdown {
     .number-container {
+      p.number {
+        font-size: 3.5rem;
+        font-weight: bold;
+      }
       p.description {
-        padding-bottom: 8px;
+        font-size: 2rem;
         padding-left: 8px;
       }
     }
