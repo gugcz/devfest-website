@@ -1,310 +1,40 @@
-section {
+.container {
   flex: 1;
   min-height: 100vh;
-  background: url("../../../assets/cover-photo.jpg") no-repeat center center fixed;
+  background: url("../../../assets/town-background.jpg") no-repeat center center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  color: #ffffff;
   overflow-y: hidden;
 }
 
-.minimal-text {
-  margin: 2px;
-}
-
-.nowrap {
-  white-space: nowrap;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-image: linear-gradient(180deg, rgba(21, 25, 38, 0.2) 0%, rgb(24, 32, 17) 95%), radial-gradient(farthest-side at 0 0, rgba(4, 102, 255, 0.3), rgba(255, 26, 198, 0)), radial-gradient(farthest-side at 100% 0, rgba(60, 221, 221, .4), rgba(60, 221, 221, 0)), radial-gradient(farthest-side at 50% 0, rgba(255, 26, 198, .1), rgba(255, 26, 198, 0));;
-  min-height: calc(100vh - 24px);
-  padding: 24px 22px 0;
-  z-index: 2;
-  flex: 1;
-
-  .header {
-    display: grid;
-    -webkit-column-count: 1;
-    -moz-column-count: 1;
-    column-count: 1;
-    width: 100%;
-
-    .header-item {
-      width: 100%;
-
-      .cover-logo {
-        width: 100%;
-      }
-    }
-
-    .date-container h1 {
-      font-size: 1.567rem;
-      margin: 16px 0 0;
-      text-align: right;
-    }
-  }
-
-  .register-now-button-container {
-    display: flex;
-    flex: 2;
-    justify-content: center;
-    margin-top: 24px;
-    width: 100%;
-    app-register-now-button {
-      display: flex;
-      align-items: center;
-    }
-  }
-
-  .info-text {
-    margin-top: 10px;
-    text-align: justify;
-  }
-
-  .countdown-container {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    width: 100%;
-    .countdown {
-      display: flex;
-      flex: 1 1;
-      flex-direction: row;
-      justify-content: center;
-      margin-top: 16px;
-      width: 100%;
-    }
-  }
-
-  .social-networks-container {
-    margin: 24px 0;
-  }
-}
-
-@media only screen and (min-width: 360px) {
+@media only screen and (min-width: 1920px) {
   .container {
-    .header {
-      .date-container h1 {
-        font-size: 1.792rem;
-      }
-    }
-  }
-  .info-text {
-    font-size: 0.9rem;
-  }
-}
+    .cover {
+      padding: 64px 190px 0;
 
-@media only screen and (min-width: 375px) {
-  .container {
-    .header {
-      .date-container h1 {
-        font-size: 1.875rem;
-      }
-    }
-  }
-  .info-text {
-    font-size: 1rem;
-  }
-}
+      .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
 
-@media only screen and (min-width: 425px) {
-  .container {
-    .header {
-      .date-container h1 {
-        font-size: 2.16rem;
-      }
-    }
-  }
-  .info-text {
-    font-size: 1.1rem;
-  }
-}
+        .date {
+          font-size: 3.5rem;
+          font-family: Roboto, serif;
+          text-align: right;
 
-@media only screen and (min-width: 525px) {
-  .container {
-
-    .info-text {
-      font-size: 1.2rem;
-      width: 400px;
-    }
-  }
-}
-
-@media only screen and (min-width: 576px) {
-  .container {
-    padding-top: 64px;
-  }
-}
-
-@media only screen and (min-width: 768px) {
-  .container {
-    padding: 80px 48px 0;
-    min-height: calc(100vh - 80px);
-    .header {
-      -webkit-column-count: 2;
-      -moz-column-count: 2;
-      column-count: 2;
-      grid-gap: 48px;
-      grid-template-columns: 1fr 1fr;
-
-      .header-item {
-        .cover-logo {
-          width: 312px;
+          .place {
+            font-size: 2.85rem;
+          }
         }
       }
 
-      .date-container h1 {
-        font-size: 1.7rem;
-        margin: 5.6px 0 0;
+      .countdown-container {
+        padding-top: 100px;
+        padding-left: 65px;
+        width: 331px;
       }
-    }
-
-    .countdown {
-      display: flex;
-      flex: 1 1;
-      flex-direction: row;
-      margin-top: 78px;
-      width: 100%;
-    }
-
-    .social-networks-container {
-      margin: 48px 0;
-    }
-  }
-
-  .info-text {
-    font-size: 1.2rem;
-  }
-}
-
-@media only screen and (min-width: 1024px) and (orientation: portrait) {
-  .container {
-    .header {
-      grid-gap: 80px;
-
-      .header-item {
-        .cover-logo {
-          width: 100%;
-        }
-      }
-
-      .date-container h1 {
-        font-size: 2.4rem;
-        margin: 5.6px 0 0;
-      }
-    }
-
-    .countdown {
-      display: flex;
-      flex: 1 1;
-      flex-direction: row;
-      margin-top: 78px;
-      width: 100%;
-    }
-
-    .social-networks-container {
-      margin: 64px 0;
-    }
-
-    .info-text {
-      font-size: 1.5rem;
-      width: 500px;
-    }
-  }
-}
-
-@media only screen and (min-width: 1024px) and (orientation: landscape) {
-  .container {
-    padding: 80px 96px 0;
-    min-height: calc(100vh - 80px);
-
-    .header {
-      .header-item {
-        .cover-logo {
-          width: 318px;
-        }
-      }
-
-      .date-container h1 {
-        font-size: 1.92rem;
-        margin-top: 2px;
-      }
-    }
-
-    .countdown {
-      justify-content: center;
-    }
-
-    .info-text {
-      font-size: 1.1rem;
-    }
-  }
-}
-
-@media screen and (min-width: 1376px) {
-  .container {
-    min-height: calc(100vh - 80px);
-
-    .header {
-      .header-item {
-        .cover-logo {
-          width: 439px;
-        }
-      }
-
-      .date-container h1 {
-        font-size: 2.85rem;
-      }
-    }
-
-    .social-networks-container {
-      margin: 64px 0;
-    }
-
-    .info-text {
-      font-size: 1.1rem;
-      margin-top: 10px;
-    }
-  }
-}
-
-@media screen and (min-width: 1920px) {
-  .container {
-      .social-networks-container {
-        margin: 96px 0;
-      }
-  }
-}
-
-@media screen and (min-width: 2560px) {
-  .container {
-    padding: 96px 96px 0;
-    min-height: calc(100vh - 96px);
-
-    .header {
-      .header-item {
-        .cover-logo {
-          width: 675px;
-        }
-      }
-      .date-container h1 {
-        font-size: 4.6rem;
-      }
-    }
-
-    .social-networks-container {
-      margin: 96px 0;
-    }
-
-    .info-text {
-      font-size: 1.4rem;
-      margin-top: 10px;
     }
   }
 }

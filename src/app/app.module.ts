@@ -18,8 +18,6 @@ import {CountdownComponent} from './components/countdown/countdown.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {SocialNetworksComponent} from './components/social-networks/social-networks.component';
 import {TicketsComponent} from './components/tickets/tickets.component';
-import {TeamComponent} from './pages/team/team.component';
-import {MediaComponent} from './pages/media/media.component';
 import {HomeComponent} from './pages/home/home.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {
@@ -69,8 +67,6 @@ import { AppInvitationComponent } from './components/app-invitation/app-invitati
         InvoiceComponent,
         CallForProposalsComponent,
         HomeComponent,
-        TeamComponent,
-        MediaComponent,
         MediaGraphicsComponent,
         MediaPressComponent,
         MediaContactComponent,

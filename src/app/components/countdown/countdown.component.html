@@ -1,18 +1,18 @@
-<div class="countdown-container" [ngClass]="{'three-digit-container': this.days >= 100, 'two-digit-container': this.days < 100}">
+<div class="countdown" [ngClass]="{'three-digit-container': this.days >= 100, 'two-digit-container': this.days < 100}">
   <div class="number-container">
     <p class="number" [ngClass]="{'three-digit': this.days >= 100, 'two-digit': this.days < 100}">{{days < 10 ? ('0' + days) : days}}</p>
-    <p class="description">D</p>
+    <p class="description">days</p>
   </div>
   <div class="number-container" [ngClass]="{'padding-for-three-digit': this.days >= 100}">
     <p class="number two-digit">{{hours < 10 ? ('0' + hours) : hours}}</p>
-    <p class="description">H</p>
+    <p class="description">hours</p>
   </div>
   <div class="number-container">
     <p class="number two-digit minutes">{{minutes < 10 ? ('0' + minutes) : minutes}}</p>
-    <p class="description">M</p>
+    <p class="description">minutes</p>
   </div>
   <div class="number-container">
     <p class="number two-digit">{{seconds < 10 ? ('0' + seconds) : seconds}}</p>
-    <p class="description">S</p>
+    <p class="description">seconds</p>
   </div>
 </div>
