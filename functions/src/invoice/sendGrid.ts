@@ -10,7 +10,8 @@ export async function sendInvoiceInEmail(invoice, email: string) {
     attachments: [
       {
         content: invoice,
-        filename: 'invoice.pdf'
+        filename: 'invoice.pdf',
+        contentType: 'application/pdf'
       }
     ]
   }
