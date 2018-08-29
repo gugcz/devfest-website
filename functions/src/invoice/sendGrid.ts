@@ -23,6 +23,10 @@ export async function sendDiscountCode(discountCode, email: string) {
     to: email,
     from: 'devfest@gug.cz',
     templateId: 'd-938d8ea5d35f47009502af862d748720',
+    substitutionWrappers: ['{{', '}}'],
+    dynamicTemplateData: {
+      code: discountCode
+    }
   }
   await sgMail.send(msg);
   return true;
