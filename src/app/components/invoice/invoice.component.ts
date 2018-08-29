@@ -44,7 +44,7 @@ export class InvoiceComponent implements OnInit {
             zip: this.zip.value,
             registrationNumberIC: this.registrationNumberIC.value,
             registrationNumberDIC: this.registrationNumberDIC.value,
-            country: this.country.value,
+            country: this.country.value
         };
         this.loading = true;
         this.afStore.collection('invoices').add(invoice).then(() => {
