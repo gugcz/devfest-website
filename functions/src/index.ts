@@ -8,7 +8,9 @@ import * as invoice from './invoice/invoiceTriggers';
 
 export const generateThumbnailMediaGraphics = old.generateThumbnailMediaGraphics;
 export const getTickets = old.getTickets;
-export const invoiceFindContact = invoice.invoiceFindContact;
-export const invoiceCreateInvoice = invoice.invoiceCreateInvoice;
-export const emailEnvoice = invoice.invoiceEmailInvoice;
-export const processBank = invoice.processBank;
+
+export const invoiceProcessCompany = invoice.invoiceProcessCompany;
+export const invoiceProcessInvoice = invoice.invoiceProcessInvoice;
+export const invoicePaid = invoice.invoicePaid;
+/*export const emailEnvoice = invoice.invoiceEmailInvoice;
+export const processBank = invoice.processBank;*/

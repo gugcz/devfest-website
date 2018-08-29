@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+
 const request = require('request');
 const cors = require('cors')({ origin: true });
 const gcs = require('@google-cloud/storage')();
@@ -101,14 +101,14 @@ function mergeTickets(tickets) {
         const prices = [individualPrice, companyPrice, studentPrice];
         const basicTitle = individualTicket.attributes.title.substring(0, individualTicket.attributes.title.indexOf('-') - 1) || 'Regular';
         let description = '';
-        if (tickets[0].attributes['title'] === 'Early bird - Individual' || tickets[0].attributes['title'] === 'Early bird - Student/Diversity' || tickets[0].attributes['title'] ==W= 'Early bird - Company funded') {
+        if (tickets[0].attributes['title'] === 'Early bird - Individual' || tickets[0].attributes['title'] === 'Early bird - Student/Diversity' || tickets[0].attributes['title'] === 'Early bird - Company funded') {
             description = 'First 100';
         } else if (tickets[0].attributes['title'] === 'Individual' || tickets[0].attributes['title'] === 'Student/Diversity' || tickets[0].attributes['title'] === 'Company funded') {
             description = 'Until 11th October';
         } else if (tickets[0].attributes['title'] === 'Lazy bird - Company funded' || tickets[0].attributes['title'] === 'Lazy bird - Individual' || tickets[0].attributes['title'] === 'Lazy bird - Student/Diversity') {
             description = 'From 12th October';
         }
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        //const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const now = new Date();
         const startDate = new Date(individualTicket.attributes['start-at']);
         const endDate = new Date(individualTicket.attributes['end-at']);
