@@ -99,7 +99,7 @@ export const invoiceProcessInvoice = functions.firestore.document('invoices/{inv
                 titoDiscountLink: ('https://ti.to/devfest-cz/2018/discount/' + querystring.escape(code)),
                 titoDiscountCodeGenerated: true
             }).then(() => {
-                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Vygenerován slevový kupón')
+                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Zaplaceno a vygenerován slevový kupón')
             })
         })
     }
@@ -118,7 +118,6 @@ export const invoiceProcessInvoice = functions.firestore.document('invoices/{inv
 export const invoicePaid = functions.https.onRequest((req, res) => {
     const body = req.body;
     const fakturoidInvoiceId = body.invoice_id;
-    const money = body.total;
     if (body.status === "paid" && body.event_name === "invoice_paid") {
         return invoiceFire.setFakturoidInvoicePaid(fakturoidInvoiceId, body.total)
             .then(() => {
