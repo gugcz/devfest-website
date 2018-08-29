@@ -53,7 +53,7 @@
                 <button mat-raised-button class="invoice-button cancel" color="warn" (click)="goToHome()">Cancel
                 </button>
                 <button mat-raised-button *ngIf="!(countTickets.invalid || email.invalid || companyName.invalid || street.invalid || city.invalid
-        || zip.invalid || registrationNumberIC.invalid || registrationNumberDIC.invalid || country.invalid)"
+        || zip.invalid || registrationNumberIC.invalid || country.invalid)"
                         class="invoice-button buy" color="accent" (click)="sendInvoice()">Buy
                 </button>
             </div>

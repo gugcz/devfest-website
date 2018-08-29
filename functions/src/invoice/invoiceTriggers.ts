@@ -31,7 +31,7 @@ export const invoiceProcessCompany = functions.firestore.document('invoices/{inv
                     registrationNumberIC: registrationNumberIC,
                     country: country
                 };
-                if (registrationNumberDIC){
+                if (registrationNumberDIC) {
                     company['registrationNumberDIC'] = registrationNumberDIC;
                 }
                 return fakturoid.createFakturoidCompany(company)
@@ -44,7 +44,7 @@ export const invoiceProcessCompany = functions.firestore.document('invoices/{inv
                 facturoidContactId: fakturoidId
             })
         }).then(() => {
-            return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Zaevidován nový požadavek na fakturu     - pro ' + countTickets + ' lístků')
+            return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Zaevidován nový požadavek na fakturu - ' + countTickets + ' lístků')
         }).catch((error) => {
             return error;
         })
@@ -70,7 +70,7 @@ export const invoiceProcessInvoice = functions.firestore.document('invoices/{inv
                     fakturoidInvoiceVariable: invoice.variableSymbol
                 })
             }).then(() => {
-                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Vygenerovaná nová faktura - ' + companyName)
+                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Vygenerovaná nová faktura')
             }).catch((error) => {
                 return error;
             })
@@ -87,7 +87,7 @@ export const invoiceProcessInvoice = functions.firestore.document('invoices/{inv
                 }
                 return null;
             }).then(() => {
-                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Faktura zaslána na email - ' + companyName)
+                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Faktura zaslána na email')
             }).catch((error) => {
                 return error;
             })
@@ -99,16 +99,16 @@ export const invoiceProcessInvoice = functions.firestore.document('invoices/{inv
                 titoDiscountLink: ('https://ti.to/devfest-cz/2018/discount/' + querystring.escape(code)),
                 titoDiscountCodeGenerated: true
             }).then(() => {
-                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Vygenerován slevový kupón - ' + companyName)
+                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Vygenerován slevový kupón')
             })
-        }) 
+        })
     }
     if (!newValue.sendGridDiscountSended && newValue.titoDiscountCodeGenerated) {
         return sendgrid.sendDiscountCode(newValue.titoDiscountCode, newValue.titoDiscountLink, newValue.email).then(() => {
             return snap.after.ref.update({
                 sendGridDiscountSended: true
             }).then(() => {
-                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Slevový kupón zaslán na email - ' + )
+                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Slevový kupón zaslán na email')  
             })
         })
     }
@@ -123,8 +123,6 @@ export const invoicePaid = functions.https.onRequest((req, res) => {
         return invoiceFire.setFakturoidInvoicePaid(fakturoidInvoiceId, body.total)
             .then(() => {
                 return res.status(200).send(true);
-            }).then(() => {
-                return slack.informationToDevfestSlack('FAKTURY - Zaplacená nová faktura - ' + money + ' Kč na účtě HURRAY!!!!')
             }).catch((error) => {
                 return error;
             })
