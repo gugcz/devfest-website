@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as rp from 'request-promise';
+import * as tito from './tito';
 
 const FACTUROID_COMPANY = 'gug';
 
@@ -97,6 +98,9 @@ export async function createFakturoidCompany(company: Company) {
  * @param countTickets počet tickets
  */
 export async function createInvoice(fakturoidID, countTickets) {
+    const EUR_CZK = 25.74;
+    const priceOne = await tito.getActualPriceCompanyFunded();
+    const price = parseInt(priceOne) * EUR_CZK;
     const options = {
         method: 'POST',
         uri: 'https://app.fakturoid.cz/api/v2/accounts/' + FACTUROID_COMPANY + '/invoices.json',
@@ -110,14 +114,14 @@ export async function createInvoice(fakturoidID, countTickets) {
         },
         body: {
             "subject_id": fakturoidID,
-            "currency": "EUR",
+            "currency": "CZK",
             "payment_method": "bank",
             "lines": [
                 {
                     "name": "Devfest 2018",
                     "quantity": countTickets,
                     "unit_name": "tickets",
-                    "unit_price": "20",
+                    "unit_price": price,
                     "vat_rate": "21"
                 }
             ]
