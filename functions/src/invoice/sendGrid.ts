@@ -19,14 +19,15 @@ export async function sendInvoiceInEmail(invoice, email: string) {
   return true;
 }
 
-export async function sendDiscountCode(discountLink, email: string) {
+export async function sendDiscountCode(discountCode, discountLink, email: string) {
   const msg = {
     to: email,
     from: 'devfest@gug.cz',
     templateId: 'd-938d8ea5d35f47009502af862d748720',
     substitutionWrappers: ['{{', '}}'],
     dynamicTemplateData: {
-      code: discountLink
+      code: discountCode, 
+      codeUrl: discountLink
     }
   }
   await sgMail.send(msg);
