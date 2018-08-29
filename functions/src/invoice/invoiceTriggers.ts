@@ -3,7 +3,6 @@ import * as fakturoid from './fakturoid';
 import * as sendgrid from './sendGrid';
 import * as invoiceFire from './invoice';
 import * as tito from './tito';
-import { emit } from 'cluster';
 
 export const invoiceProcessCompany = functions.firestore.document('invoices/{invoiceId}').onCreate((snap, context) => {
     const id = context.params.invoiceId;
@@ -81,7 +80,7 @@ export const invoiceProcessInvoice = functions.firestore.document('invoices/{inv
             })
     }
     if (!newValue.titoDiscountCodeGenerated && newValue.fakturoidInvoicePaid) {
-        return tito.generateTitoCode(newValue.fakturoidInvoicePaidAmmount).then((code) => {
+        return tito.generateTitoCode(context.params.invoiceId, countTickets).then((code) => {
             return snap.after.ref.update({
                 titoDiscountCode: code,
                 titoDiscountCodeGenerated: true
