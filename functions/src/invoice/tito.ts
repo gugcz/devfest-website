@@ -13,12 +13,12 @@ export async function generateTitoCode(companyName, id, countTickets: string) {
     body: {
       "data":
       {
-        "type":"discount-codes",
+        "type": "discount-codes",
         "attributes":
         {
           "code": (companyName + "-" + id),
-          "discount_code_type":"PercentOffDiscountCode",
-          "value":"100.00",
+          "discount_code_type": "PercentOffDiscountCode",
+          "value": "100.00",
           "quantity": countTickets
         }
       }
@@ -26,5 +26,9 @@ export async function generateTitoCode(companyName, id, countTickets: string) {
     json: true
   }
   const discount = await rp(options);
-  return discount.attributes.code;
+  return discount.data.attributes.code;
+}
+
+export async function getActualPriceCompanyFunded() {
+
 }

@@ -87,13 +87,13 @@ export const invoiceProcessInvoice = functions.firestore.document('invoices/{inv
         return tito.generateTitoCode(newValue.companyName, context.params.invoiceId, countTickets).then((code) => {
             return snap.after.ref.update({
                 titoDiscountCode: code,
-                titoDiscountLink: ('https://ti.to/devfest-cz/2018/discount/' + querystring.stringify(code)),
+                titoDiscountLink: ('https://ti.to/devfest-cz/2018/discount/' + querystring.escape(code)),
                 titoDiscountCodeGenerated: true
             })
         }) 
     }
     if (!newValue.sendGridDiscountSended && newValue.titoDiscountCodeGenerated) {
-        return sendgrid.sendDiscountCode(newValue.titoDiscountCode, newValue.email).then(() => {
+        return sendgrid.sendDiscountCode(newValue.titoDiscountLink, newValue.email).then(() => {
             return snap.after.ref.update({
                 sendGridDiscountSended: true
             })
