@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
-import {AngularFirestore} from 'angularfire2/firestore';
-import {FormControl, Validators} from '@angular/forms';
-import {Invoice} from '../../database/invoice';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { FormControl, Validators } from '@angular/forms';
+import { Invoice } from '../../database/invoice';
 
 @Component({
     selector: 'app-invoice',
@@ -18,7 +18,7 @@ export class InvoiceComponent implements OnInit {
     city = new FormControl('', [Validators.required]);
     zip = new FormControl('', [Validators.required]);
     registrationNumberIC = new FormControl('', [Validators.required]);
-    registrationNumberDIC = new FormControl('', [Validators.required]);
+    registrationNumberDIC = new FormControl('', []);
     country = new FormControl('', [Validators.required]);
     loading = false;
     done = false;
@@ -43,9 +43,11 @@ export class InvoiceComponent implements OnInit {
             city: this.city.value,
             zip: this.zip.value,
             registrationNumberIC: this.registrationNumberIC.value,
-            registrationNumberDIC: this.registrationNumberDIC.value,
             country: this.country.value
         };
+        if (this.registrationNumberDIC.value.length > 0) {
+            invoice.registrationNumberDIC = this.registrationNumberDIC.value;
+        }
         this.loading = true;
         this.afStore.collection('invoices').add(invoice).then(() => {
             this.loading = false;

@@ -1,7 +1,7 @@
 import * as rp from 'request-promise';
 import * as functions from 'firebase-functions';
 
-export async function generateTitoCode(id, countTickets: string) {
+export async function generateTitoCode(companyName, id, countTickets: string) {
   const options = {
     method: 'POST',
     url: 'https://api.tito.io/v2/devfest-cz/2018/discount_codes',
@@ -16,7 +16,7 @@ export async function generateTitoCode(id, countTickets: string) {
         "type":"discount-codes",
         "attributes":
         {
-          "code": id,
+          "code": (companyName + "-" + id),
           "discount_code_type":"PercentOffDiscountCode",
           "value":"100.00",
           "quantity": countTickets
@@ -25,6 +25,6 @@ export async function generateTitoCode(id, countTickets: string) {
     },
     json: true
   }
-  await rp(options);
-  return id;
+  const discount = await rp(options);
+  return discount.attributes.code;
 }

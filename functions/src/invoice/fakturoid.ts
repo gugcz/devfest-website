@@ -11,7 +11,7 @@ interface Company {
     city: string;
     zip: string;
     registrationNumberIC: string;
-    registrationNumberDIC: string;
+    registrationNumberDIC?: string;
     country: string;
 }
 
@@ -112,7 +112,6 @@ export async function createInvoice(fakturoidID, countTickets) {
             "subject_id": fakturoidID,
             "currency": "EUR",
             "payment_method": "bank",
-            "due": 7,
             "lines": [
                 {
                     "name": "Devfest 2018",
