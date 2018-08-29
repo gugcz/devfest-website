@@ -3,6 +3,7 @@ import * as fakturoid from './fakturoid';
 import * as sendgrid from './sendGrid';
 import * as invoiceFire from './invoice';
 import * as tito from './tito';
+import * as querystring from 'querystring';
 
 export const invoiceProcessCompany = functions.firestore.document('invoices/{invoiceId}').onCreate((snap, context) => {
     const id = context.params.invoiceId;
@@ -13,12 +14,12 @@ export const invoiceProcessCompany = functions.firestore.document('invoices/{inv
     const city = newValue.city;
     const zip = newValue.zip;
     const registrationNumberIC = newValue.registrationNumberIC;
-    const registrationNumberDIC = newValue.registrationNumberDIC;
+    const registrationNumberDIC = (newValue.registrationNumberDIC ? newValue.registrationNumberDIC : null);
     const country = newValue.country;
     return fakturoid.findFaktruoidCompanyId(companyName)
         .then((fakturoidId) => {
             if (fakturoidId === null) {
-                return fakturoid.createFakturoidCompany({
+                const company = {
                     firebaseId: id,
                     name: companyName,
                     street: street,
@@ -26,9 +27,12 @@ export const invoiceProcessCompany = functions.firestore.document('invoices/{inv
                     email: email,
                     zip: zip,
                     registrationNumberIC: registrationNumberIC,
-                    registrationNumberDIC: registrationNumberDIC,
                     country: country
-                })
+                };
+                if (registrationNumberDIC){
+                    company['registrationNumberDIC'] = registrationNumberDIC;
+                }
+                return fakturoid.createFakturoidCompany(company)
             }
             return fakturoidId
         })
@@ -80,9 +84,10 @@ export const invoiceProcessInvoice = functions.firestore.document('invoices/{inv
             })
     }
     if (!newValue.titoDiscountCodeGenerated && newValue.fakturoidInvoicePaid) {
-        return tito.generateTitoCode(context.params.invoiceId, countTickets).then((code) => {
+        return tito.generateTitoCode(newValue.companyName, context.params.invoiceId, countTickets).then((code) => {
             return snap.after.ref.update({
                 titoDiscountCode: code,
+                titoDiscountLink: ('https://ti.to/devfest-cz/2018/discount/' + querystring.stringify(code)),
                 titoDiscountCodeGenerated: true
             })
         }) 
