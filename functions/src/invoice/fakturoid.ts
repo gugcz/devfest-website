@@ -115,9 +115,9 @@ export async function createInvoice(fakturoidID, countTickets) {
             "due": 7,
             "lines": [
                 {
-                    "name": "Devfest 2018 ticket",
+                    "name": "Devfest 2018",
                     "quantity": countTickets,
-                    "unit_name": "number",
+                    "unit_name": "tickets",
                     "unit_price": "20",
                     "vat_rate": "21"
                 }
@@ -139,14 +139,16 @@ export async function downloadInvoiceById(invoiceId: string){
         method: 'GET',
         uri: 'https://app.fakturoid.cz/api/v2/accounts/' + FACTUROID_COMPANY + '/invoices/' + invoiceId + '/download.pdf',
         headers: {
-            'Content-Type': 'application/json',
+            "Content-type": "application/pdf",
             'User-Agent': FACTUROID_COMPANY
         },
+        encoding: null,
         auth: {
             'user': `${functions.config().fakturoid.login}`,
             'pass': `${functions.config().fakturoid.key}`
         }
     };
     const data = await rp(options)
-    return new Buffer(data).toString('base64');
+    const buffered = data.toString('base64')
+    return buffered;
 }
