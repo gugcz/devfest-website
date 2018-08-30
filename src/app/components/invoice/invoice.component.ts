@@ -12,15 +12,15 @@ import * as firebase from 'firebase';
 })
 export class InvoiceComponent implements OnInit {
 
-    countTickets = new FormControl('', [Validators.required]);
-    email = new FormControl('', [Validators.required]);
-    companyName = new FormControl('', [Validators.required]);
-    street = new FormControl('', [Validators.required]);
-    city = new FormControl('', [Validators.required]);
-    zip = new FormControl('', [Validators.required]);
-    registrationNumberIC = new FormControl('', [Validators.required]);
-    registrationNumberDIC = new FormControl('', []);
-    country = new FormControl('', [Validators.required]);
+    countTickets;
+    email;
+    companyName;
+    street;
+    city;
+    zip;
+    registrationNumberIC;
+    registrationNumberDIC;
+    country;
     loading = false;
     done = false;
     price: number;
@@ -31,6 +31,7 @@ export class InvoiceComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.countTickets = 1;
         const getCurrentCompanyFundedPrice = firebase.functions().httpsCallable('invoiceGetCurrentCompanyFundedPrice');
         getCurrentCompanyFundedPrice({}).then((result) => {
             this.priceCompany = result.data.price;
@@ -47,17 +48,17 @@ export class InvoiceComponent implements OnInit {
 
     sendInvoice() {
         const invoice: Invoice = {
-            countTickets: this.countTickets.value,
-            email: this.email.value,
-            companyName: this.companyName.value,
-            street: this.street.value,
-            city: this.city.value,
-            zip: this.zip.value,
-            registrationNumberIC: this.registrationNumberIC.value,
-            country: this.country.value
+            countTickets: this.countTickets,
+            email: this.email,
+            companyName: this.companyName,
+            street: this.street,
+            city: this.city,
+            zip: this.zip,
+            registrationNumberIC: this.registrationNumberIC,
+            country: this.country
         };
-        if (this.registrationNumberDIC.value.length > 0) {
-            invoice.registrationNumberDIC = this.registrationNumberDIC.value;
+        if (this.registrationNumberDIC.length > 0) {
+            invoice.registrationNumberDIC = this.registrationNumberDIC;
         }
         this.loading = true;
         this.afStore.collection('invoices').add(invoice).then(() => {
