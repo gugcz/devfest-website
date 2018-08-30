@@ -31,16 +31,87 @@
   }
 }
 
+@media only screen and (min-width: 375px) {
+  .menu {
+    grid-template-columns: 102px 102px 102px;
+
+    .link .shield {
+      height: 119px;
+      width: 102px;
+    }
+  }
+}
+
+@media only screen and (min-width: 475px) {
+  .menu {
+    grid-template-columns: 126px 126px 126px;
+
+    .link .shield {
+      height: 147px;
+      width: 126px;
+    }
+  }
+}
+
+@media only screen and (min-width: 575px) {
+  .menu {
+    grid-column-gap: 32px;
+    grid-row-gap: 32px;
+    grid-template-columns: 159px 159px 159px;
+
+    .link .shield {
+      height: 186px;
+      width: 159px;
+    }
+  }
+}
+
+@media all and (min-width: 1024px) and (orientation: portrait) {
+  .menu {
+    grid-column-gap: 48px;
+    grid-row-gap: 48px;
+    grid-template-columns: 200px 200px 200px;
+
+    .link .shield {
+      height: 234px;
+      width: 200px;
+    }
+  }
+}
+
+@media all and (min-width: 1024px) and (orientation: landscape) {
+  .menu {
+    grid-column-gap: 32px;
+    grid-row-gap: 32px;
+    grid-template-columns: 100px 100px 100px;
+
+    .link .shield {
+      height: 116px;
+      width: 100px;
+    }
+  }
+}
+
+@media screen and (min-width: 1376px) {
+  .menu {
+    grid-template-columns: 130px 130px 130px;
+
+    .link .shield {
+      height: 152px;
+      width: 130px;
+    }
+  }
+}
+
 @media only screen and (min-width: 1920px) {
   .menu {
-    grid-column-gap: 82px;
+    grid-column-gap: 48px;
     grid-row-gap: 48px;
     grid-template-columns: 201px 201px 201px;
 
-    .link-container {
-      .shield {
-        width: 201px;
-      }
+    .link .shield {
+      height: 235px;
+      width: 201px;
     }
   }
 }

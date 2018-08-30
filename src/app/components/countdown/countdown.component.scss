@@ -48,268 +48,75 @@
   }
 }
 
-@media only screen and (min-width: 525px) {
-  .countdown-container {
-    grid-gap: 32px;
+@media only screen and (min-width: 475px) {
+  .countdown {
+    grid-template-columns: 180px 180px;
     .number-container {
-      p.number {
-        font-size: 5.390625rem;
-      }
-
-      p.two-digit {
-        min-width: 107px;
-        width: 107px;
-        max-width: 107px;
-      }
-
-      p.three-digit {
-        min-width: 144px;
-        width: 144px;
-        max-width: 144px;
-      }
-
-      p.description {
-        align-self: flex-end;
-        font-size: 1.318359375rem;
-        padding-bottom: 8px;
-        padding-left: 12px;
+      p.number, .description {
+        font-size: 2.2rem;
       }
     }
   }
 }
 
-@media only screen and (min-width: 625px) {
-  .countdown-container {
-    grid-gap: 40px;
+@media only screen and (min-width: 575px) {
+  .countdown {
+    grid-template-columns: 230px 230px;
     .number-container {
-      p.number {
-        font-size: 6.417410714rem;
-      }
-
-      p.two-digit {
-        min-width: 127px;
-        width: 127px;
-        max-width: 127px;
-      }
-
-      p.three-digit {
-        min-width: 171px;
-        width: 171px;
-        max-width: 171px;
-      }
-
-      p.description {
-        align-self: flex-end;
-        font-size: 1.569475446rem;
-        padding-bottom: 10px;
-        padding-left: 12px;
+      p.number, .description {
+        font-size: 2.8rem;
       }
     }
   }
 }
 
-@media only screen and (max-width: 767px) {
-  .countdown-container {
-    .number-container:nth-child(odd) {
-      justify-content: flex-end;
-
-      p.number {
-        text-align: right;
-      }
-    }
-
-    .number-container:nth-child(even) {
-      justify-content: flex-start;
-
-      p.number {
-        text-align: left;
-      }
-
-      p.description {
-        padding-left: 0;
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .countdown-container {
-    padding: 0 32px;
-    min-width: 608px;
-    width: 608px;
-    max-width: 608px;
-
+@media all and (min-width: 1024px) and (orientation: portrait) {
+  .countdown {
+    grid-template-columns: 330px 330px;
     .number-container {
-      p.number {
-        font-size: 4.8rem;
-      }
-
-      p.two-digit {
-        min-width: 95px;
-        width: 95px;
-        max-width: 95px;
-      }
-
-      p.three-digit {
-        min-width: 129px;
-        width: 129px;
-        max-width: 129px;
-      }
-
-      p.description {
-        font-size: 1.28rem;
-        padding-left: 5px;
-        padding-bottom: 7px;
-      }
-    }
-  }
-}
-
-@media only screen and (min-width: 1024px) and (orientation: portrait) {
-  .countdown-container {
-    padding: 0 64px;
-    min-width: 800px;
-    width: 800px;
-    max-width: 800px;
-
-    .number-container {
-      justify-content: center;
-      p.number {
-        font-size: 6rem;
-      }
-
-      p.two-digit {
-        min-width: 119px;
-        width: 119px;
-        max-width: 119px;
-      }
-
-      p.three-digit {
-        min-width: 161px;
-        width: 161px;
-        max-width: 161px;
-      }
-
-      p.description {
-        font-size: 1.6rem;
-        padding-left: 6px;
-        padding-bottom: 10px;
+      p.number, .description {
+        font-size: 4rem;
       }
     }
   }
 }
 
 @media screen and (min-width: 1024px) and (orientation: landscape) {
-  .countdown-container {
-    min-width: 627px;
-    width: 627px;
-    max-width: 627px;
-
-    .number-container {
-      p.number {
-        font-size: 4.5rem;
-      }
-
-      p.two-digit {
-        min-width: 89px;
-        width: 89px;
-        max-width: 89px;
-      }
-
-      p.three-digit {
-        min-width: 121px;
-        width: 121px;
-        max-width: 121px;
-      }
-
-      p.description {
-        font-size: 1.2rem;
-        padding-bottom: 6px;
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 1376px) {
-  .countdown-container {
-    min-width: 843px;
-    width: 843px;
-    max-width: 843px;
-    margin: 32px 0;
-
-    .number-container {
-      p.number {
-        font-size: 5rem;
-      }
-
-      p.two-digit {
-        min-width: 99px;
-        width: 99px;
-        max-width: 99px;
-      }
-
-      p.three-digit {
-        min-width: 134px;
-        width: 134px;
-        max-width: 134px;
-      }
-
-      p.description {
-        font-size: 1.333333333rem;
-        padding-bottom: 8px;
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 1920px) {
-  .countdown-container {
-    min-width: 1172px;
-    width: 1172px;
-    max-width: 1172px;
-    margin: 48px 0;
-
-    .number-container {
-      p.number {
-        font-size: 6.976744186rem;
-      }
-
-      p.two-digit {
-        min-width: 138px;
-        width: 138px;
-        max-width: 138px;
-      }
-
-      p.three-digit {
-        min-width: 187px;
-        width: 187px;
-        max-width: 187px;
-      }
-
-      p.description {
-        font-size: 1.860465116rem;
-        padding-bottom: 6px;
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 1920px) {
   .countdown {
+    color: white;
     -webkit-column-count: 1;
     -moz-column-count: 1;
     column-count: 1;
     grid-gap: 16px;
     grid-template-columns: 1fr;
     .number-container {
-      p.number {
-        font-size: 3.5rem;
-        font-weight: bold;
-      }
-      p.description {
+      p.number, .description {
         font-size: 2rem;
-        padding-left: 8px;
       }
+    }
+  }
+}
+
+@media screen and (min-width: 1376px) {
+  .countdown .number-container {
+    p.number, .description {
+      font-size: 2.25rem;
+    }
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .countdown .number-container {
+    p.number, .description {
+      font-size: 2.5rem;
+    }
+  }
+}
+
+@media screen and (min-width: 1920px) {
+  .countdown .number-container {
+    p.number, .description {
+      font-size: 3rem;
     }
   }
 }
