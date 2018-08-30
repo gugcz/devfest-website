@@ -1,8 +1,9 @@
 <section class="content">
     <h1 class="title">Tickets invoice</h1>
     <div *ngIf="!done else thank">
-        <p class="text">This is a simple form that lets you order tickets for DevFestCZ 2018 by invoice. You'll pay 20€
-            per ticket.</p>
+        <p class="text">This is a simple form that lets you order tickets for DevFestCZ 2018 by invoice.</p>
+        <p *ngIf="price && priceCompany; else loadingPrice" class="text">You'll pay {{priceCompany}}€ ({{price*priceCompany}} CZK) for ticket</p>
+        <p class="text">Summary: <span *ngIf="countTickets.value && price && priceCompany">{{priceCompany*countTickets.value}}€ ({{price*priceCompany*countTickets.value}} CZK)</span></p>
         <form class="form">
             <mat-form-field class="form-field" color="accent">
                 <input class="input" matInput placeholder="Count" [formControl]="countTickets" type="number" min="00">
@@ -69,5 +70,10 @@
         <div>
             <button mat-raised-button color="accent" (click)="goToHome()">OK</button>
         </div>
+    </ng-template>
+    <ng-template #loadingPrice>
+        <p class="text">
+            Price is loading...
+        </p>
     </ng-template>
 </section>

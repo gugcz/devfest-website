@@ -12,5 +12,7 @@ export const getTickets = old.getTickets;
 export const invoiceProcessCompany = invoice.invoiceProcessCompany;
 export const invoiceProcessInvoice = invoice.invoiceProcessInvoice;
 export const invoicePaid = invoice.invoicePaid;
+export const invoiceGetCurrentExchangeRate = invoice.getCurrentExchangeRate;
+export const invoiceGetCurrentCompanyFundedPrice = invoice.getCurrentCompanyFundedPrice;
 /*export const emailEnvoice = invoice.invoiceEmailInvoice;
 export const processBank = invoice.processBank;*/
