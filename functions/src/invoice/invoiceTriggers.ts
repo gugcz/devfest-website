@@ -108,7 +108,7 @@ export const invoiceProcessInvoice = functions.firestore.document('invoices/{inv
             return snap.after.ref.update({
                 sendGridDiscountSended: true
             }).then(() => {
-                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Slevový kupón zaslán na email')  
+                return slack.informationToDevfestSlack('FAKTURY - ' + companyName + ' - Slevový kupón zaslán na email')
             })
         })
     }
@@ -128,3 +128,21 @@ export const invoicePaid = functions.https.onRequest((req, res) => {
     }
     return res.status(200).send(true);
 })
+
+export const getCurrentExchangeRate = functions.https.onCall((data, context) => {
+    const from = data.from;
+    const to = data.to;
+    return invoiceFire.getCurrentExchangeRate(from, to).then((price) => {
+        return { price: price }
+    }).catch((error) => {
+        return error;
+    })
+});
+
+export const getCurrentCompanyFundedPrice = functions.https.onCall((data, context) => {
+    return tito.getActualPriceCompanyFunded().then((price) => {
+        return { price: parseInt(price) }
+    }).catch((error) => {
+        return error;
+    });
+});

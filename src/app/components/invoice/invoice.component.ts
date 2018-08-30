@@ -3,6 +3,7 @@ import { MatDialogRef } from '@angular/material';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { FormControl, Validators } from '@angular/forms';
 import { Invoice } from '../../database/invoice';
+import * as firebase from 'firebase';
 
 @Component({
     selector: 'app-invoice',
@@ -22,12 +23,22 @@ export class InvoiceComponent implements OnInit {
     country = new FormControl('', [Validators.required]);
     loading = false;
     done = false;
+    price: number;
+    priceCompany: number;
 
     constructor(
         public dialogRef: MatDialogRef<InvoiceComponent>, public afStore: AngularFirestore) {
     }
 
     ngOnInit() {
+        const getCurrentCompanyFundedPrice = firebase.functions().httpsCallable('invoiceGetCurrentCompanyFundedPrice');
+        getCurrentCompanyFundedPrice({}).then((result) => {
+            this.priceCompany = result.data.price;
+        });
+        const getCurrentExchangeRate = firebase.functions().httpsCallable('invoiceGetCurrentExchangeRate');
+        getCurrentExchangeRate({ from: 'EUR', to: 'CZK' }).then((result) => {
+           this.price = result.data.price;
+        });
     }
 
     goToHome() {

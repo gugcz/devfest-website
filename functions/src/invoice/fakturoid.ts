@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as rp from 'request-promise';
 import * as tito from './tito';
+import * as fireInvoice from './invoice';
 
 const FACTUROID_COMPANY = 'gug';
 
@@ -98,7 +99,7 @@ export async function createFakturoidCompany(company: Company) {
  * @param countTickets počet tickets
  */
 export async function createInvoice(fakturoidID, countTickets) {
-    const EUR_CZK = 25.74;
+    const EUR_CZK = await fireInvoice.getCurrentExchangeRate('EUR', 'CZK');
     const priceOne = await tito.getActualPriceCompanyFunded();
     const price = parseInt(priceOne) * EUR_CZK;
     const options = {
