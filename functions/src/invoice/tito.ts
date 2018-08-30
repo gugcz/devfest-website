@@ -1,7 +1,9 @@
 import * as rp from 'request-promise';
 import * as functions from 'firebase-functions';
+import * as slugify from 'slugify';
 
 export async function generateTitoCode(companyName, id, countTickets: string) {
+  const postCompanyName = slugify.default(companyName).toLowerCase();
   const options = {
     method: 'POST',
     url: 'https://api.tito.io/v2/devfest-cz/2018/discount_codes',
@@ -16,7 +18,7 @@ export async function generateTitoCode(companyName, id, countTickets: string) {
         "type": "discount-codes",
         "attributes":
         {
-          "code": (companyName + "-" + id),
+          "code": (postCompanyName + "-" + id),
           "discount_code_type": "PercentOffDiscountCode",
           "value": "100.00",
           "quantity": countTickets,
