@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
-import {AngularFirestore} from 'angularfire2/firestore';
-import {FormControl, Validators} from '@angular/forms';
-import {Invoice} from '../../database/invoice';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { FormControl, Validators } from '@angular/forms';
+import { Invoice } from '../../database/invoice';
+import * as firebase from 'firebase';
 
 @Component({
     selector: 'app-invoice',
@@ -11,23 +12,34 @@ import {Invoice} from '../../database/invoice';
 })
 export class InvoiceComponent implements OnInit {
 
-    countTickets = new FormControl('', [Validators.required]);
-    email = new FormControl('', [Validators.required]);
-    companyName = new FormControl('', [Validators.required]);
-    street = new FormControl('', [Validators.required]);
-    city = new FormControl('', [Validators.required]);
-    zip = new FormControl('', [Validators.required]);
-    registrationNumberIC = new FormControl('', [Validators.required]);
-    registrationNumberDIC = new FormControl('', [Validators.required]);
-    country = new FormControl('', [Validators.required]);
+    countTickets;
+    email = new FormControl('', [Validators.email]);
+    companyName;
+    street;
+    city;
+    zip;
+    registrationNumberIC;
+    registrationNumberDIC;
+    country;
     loading = false;
     done = false;
+    price: number;
+    priceCompany: number;
 
     constructor(
         public dialogRef: MatDialogRef<InvoiceComponent>, public afStore: AngularFirestore) {
     }
 
     ngOnInit() {
+        this.countTickets = 1;
+        const getCurrentCompanyFundedPrice = firebase.functions().httpsCallable('invoiceGetCurrentCompanyFundedPrice');
+        getCurrentCompanyFundedPrice({}).then((result) => {
+            this.priceCompany = result.data.price;
+        });
+        const getCurrentExchangeRate = firebase.functions().httpsCallable('invoiceGetCurrentExchangeRate');
+        getCurrentExchangeRate({ from: 'EUR', to: 'CZK' }).then((result) => {
+           this.price = result.data.price;
+        });
     }
 
     goToHome() {
@@ -36,18 +48,18 @@ export class InvoiceComponent implements OnInit {
 
     sendInvoice() {
         const invoice: Invoice = {
-            countTickets: this.countTickets.value,
+            countTickets: this.countTickets,
             email: this.email.value,
-            companyName: this.companyName.value,
-            street: this.street.value,
-            city: this.city.value,
-            zip: this.zip.value,
-            registrationNumberIC: this.registrationNumberIC.value,
-            registrationNumberDIC: this.registrationNumberIC.value,
-            country: this.country.value,
-            facturoidContactFound: false,
-            facturoidContactId: null
+            companyName: this.companyName,
+            street: this.street,
+            city: this.city,
+            zip: this.zip,
+            registrationNumberIC: this.registrationNumberIC,
+            country: this.country
         };
+        if (this.registrationNumberDIC.length > 0) {
+            invoice.registrationNumberDIC = this.registrationNumberDIC;
+        }
         this.loading = true;
         this.afStore.collection('invoices').add(invoice).then(() => {
             this.loading = false;
@@ -55,8 +67,9 @@ export class InvoiceComponent implements OnInit {
         });
     }
 
-    getErrorMessage() {
-        return 'You must enter a value';
+    getEmailErrorMessage() {
+        return this.email.hasError('email') ? 'Not a valid email' :
+        '';
     }
 
 }

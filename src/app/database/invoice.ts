@@ -6,8 +6,6 @@ export interface Invoice {
     city: string;
     zip: string;
     registrationNumberIC: string;
-    registrationNumberDIC: string;
+    registrationNumberDIC?: string;
     country: string;
-    facturoidContactFound: boolean;
-    facturoidContactId: string;
 }
