@@ -1,5 +1,5 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+import * as functions from 'firebase-functions';
+
 const request = require('request');
 const cors = require('cors')({ origin: true });
 const gcs = require('@google-cloud/storage')();
@@ -8,7 +8,6 @@ const path = require('path');
 const os = require('os');
 const mkdirp = require('mkdirp-promise');
 const fs = require('fs');
-const rp = require('request-promise');
 
 // Max height and width of the thumbnail in pixels.
 const THUMB_MAX_HEIGHT = 50;
@@ -16,11 +15,9 @@ const THUMB_MAX_WIDTH = 50;
 // Thumbnail prefix added to file names.
 const THUMB_PREFIX = 'thumb_';
 
-const FACTUROID_COMPANY = 'vaclavpavlicek';
 
-admin.initializeApp(functions.config().firebase);
 
-exports.generateThumbnailMediaGraphics = functions.storage.object().onFinalize((object) => {
+export const generateThumbnailMediaGraphics = functions.storage.object().onFinalize((object) => {
     const filePath = object.name;
     const contentType = object.contentType;
     const fileDir = path.dirname(filePath);
@@ -65,8 +62,7 @@ exports.generateThumbnailMediaGraphics = functions.storage.object().onFinalize((
     })
 });
 
-
-exports.getTickets = functions.https.onRequest((req, res) => {
+export const getTickets = functions.https.onRequest((req, res) => {
     cors(req, res, () => {
         const options = {
             url: 'https://api.tito.io/v2/devfest-cz/2018/releases',
@@ -81,135 +77,6 @@ exports.getTickets = functions.https.onRequest((req, res) => {
         });
     });
 });
-
-exports.invoiceFindContact = functions.firestore.document('invoices/{invoiceId}').onCreate((snap, context) => {
-    const id = context.params.invoiceId;
-    const newValue = snap.data();
-
-    const email = newValue.email;
-    const companyName = newValue.companyName;
-    const street = newValue.street;
-    const city = newValue.city;
-    const zip = newValue.zip;
-    const registrationNumberIC = newValue.registrationNumberIC;
-    const registrationNumberDIC = newValue.registrationNumberDIC;
-    const country = newValue.country;
-    const options = {
-        method: 'GET',
-        uri: 'https://app.fakturoid.cz/api/v2/accounts/' + FACTUROID_COMPANY + '/subjects.json',
-        headers: {
-            'Content-Type': 'application/json',
-            'User-Agent': FACTUROID_COMPANY
-        },
-        auth: {
-            'user': `${functions.config().fakturoid.login}`,
-            'pass': `${functions.config().fakturoid.key}`
-        }
-    };
-    return rp(options).then((value) => {
-        const facturoidId = findCompany(companyName, value);
-        if (facturoidId.length > 0) {
-            snap.ref.set({
-                facturoidContactFound: true,
-                facturoidContactId: facturoidId
-            });
-        } else {
-            const options = {
-                method: 'POST',
-                uri: 'https://app.fakturoid.cz/api/v2/accounts/' + FACTUROID_COMPANY + '/subjects.json',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'User-Agent': FACTUROID_COMPANY
-                },
-                auth: {
-                    'user': `${functions.config().fakturoid.login}`,
-                    'pass': `${functions.config().fakturoid.key}`
-                },
-                body: {
-                    "custom_id": id,
-                    "name": companyName,
-                    "street": street,
-                    "street2": null,
-                    "city": city,
-                    "zip": zip,
-                    "country": country,
-                    "registration_no": registrationNumberIC,
-                    "vat_no": registrationNumberDIC,
-                    "bank_account": "",
-                    "iban": "",
-                    "variable_symbol": "",
-                    "full_name": "",
-                    "email": email,
-                    "email_copy": email,
-                    "phone": "",
-                    "web": ""
-                },
-                json: true
-            };
-            return rp(options).then((createValue) => {
-                const newId = createValue.id;
-                snap.ref.set({
-                    facturoidContactFound: true,
-                    facturoidContactId: newId
-                });
-            });
-        };
-    });
-
-});
-
-exports.invoiceCreateInvoice = functions.firestore.document('invoices/{invoiceId}').onUpdate((snap, context) => {
-    const newValue = snap.after.data();
-    const id = context.params.invoiceId;
-    const fakturoidId = newValue.facturoidContactId;
-    const countTickets = newValue.countTickets;
-    if (facturoidContactFound == true) {
-        const options = {
-            method: 'POST',
-            uri: 'https://app.fakturoid.cz/api/v2/accounts/' + FACTUROID_COMPANY + '/invoices.json',
-            headers: {
-                'Content-Type': 'application/json',
-                'User-Agent': FACTUROID_COMPANY
-            },
-            auth: {
-                'user': `${functions.config().fakturoid.login}`,
-                'pass': `${functions.config().fakturoid.key}`
-            },
-            body: {
-                "subject_id": fakturoidId,
-                "currency": "EUR",
-                "payment_method": "bank",
-                "due": 7,
-                "lines": [
-                    {
-                        "name": "Devfest 2018 ticket",
-                        "quantity": countTickets,
-                        "unit_name": "number",
-                        "unit_price": "20",
-                        "vat_rate": "21"
-                    }
-                ]
-            },
-            json: true
-        };
-        return rp(options).then((createValue) => {
-            // TODO - send invoice
-        });
-    } else {
-        return true;
-    }
-});
-
-function findCompany(name, body) {
-    const list = JSON.parse(body);
-    let foundId = '';
-    list.forEach(element => {
-        if (element.name == name) {
-            foundId = element.id;
-        }
-    });
-    return foundId;
-}
 
 function processTickets(body) {
     const superEarlyBird = body.data.filter(it => it.attributes.title === 'Super early bird');
@@ -234,14 +101,14 @@ function mergeTickets(tickets) {
         const prices = [individualPrice, companyPrice, studentPrice];
         const basicTitle = individualTicket.attributes.title.substring(0, individualTicket.attributes.title.indexOf('-') - 1) || 'Regular';
         let description = '';
-        if (tickets[0].attributes['title'] == 'Early bird - Individual' || tickets[0].attributes['title'] == 'Early bird - Student/Diversity' || tickets[0].attributes['title'] == 'Early bird - Company funded') {
+        if (tickets[0].attributes['title'] === 'Early bird - Individual' || tickets[0].attributes['title'] === 'Early bird - Student/Diversity' || tickets[0].attributes['title'] === 'Early bird - Company funded') {
             description = 'First 100';
-        } else if (tickets[0].attributes['title'] == 'Individual' || tickets[0].attributes['title'] == 'Student/Diversity' || tickets[0].attributes['title'] == 'Company funded') {
+        } else if (tickets[0].attributes['title'] === 'Individual' || tickets[0].attributes['title'] === 'Student/Diversity' || tickets[0].attributes['title'] === 'Company funded') {
             description = 'Until 11th October';
-        } else if (tickets[0].attributes['title'] == 'Lazy bird - Company funded' || tickets[0].attributes['title'] == 'Lazy bird - Individual' || tickets[0].attributes['title'] == 'Lazy bird - Student/Diversity') {
+        } else if (tickets[0].attributes['title'] === 'Lazy bird - Company funded' || tickets[0].attributes['title'] === 'Lazy bird - Individual' || tickets[0].attributes['title'] === 'Lazy bird - Student/Diversity') {
             description = 'From 12th October';
         }
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        //const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const now = new Date();
         const startDate = new Date(individualTicket.attributes['start-at']);
         const endDate = new Date(individualTicket.attributes['end-at']);
@@ -289,5 +156,7 @@ function mergeTickets(tickets) {
             support: false,
             url: 'https://ti.to/devfest-cz/2018/with/oc0cuxocymm'
         };
+    } else {
+        return null;
     }
 }
