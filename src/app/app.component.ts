@@ -1,11 +1,12 @@
-import {Component, HostListener, OnInit} from '@angular/core';
-import {MatIconRegistry} from '@angular/material';
-import {NavigationEnd, Router} from '@angular/router';
-import {DomSanitizer} from '@angular/platform-browser';
-import {Location} from '@angular/common';
-import {animate, style, transition, trigger} from '@angular/animations';
+import { Component, HostListener, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { MatIconRegistry, MatDialogRef } from '@angular/material';
+import { NavigationEnd, Router } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Location } from '@angular/common';
+import { animate, style, transition, trigger } from '@angular/animations';
 
-import {routerTransition} from './global/animations/router.transition';
+import { routerTransition } from './global/animations/router.transition';
+import { InvoiceComponent } from './components/invoice/invoice.component';
 
 @Component({
     selector: 'app-root',
@@ -13,11 +14,11 @@ import {routerTransition} from './global/animations/router.transition';
     styleUrls: ['./app.component.scss'],
     animations: [trigger('fadeInOut', [
         transition(':enter', [   // :enter is alias to 'void => *'
-            style({opacity: 0}),
-            animate('500ms', style({opacity: 1}))
+            style({ opacity: 0 }),
+            animate('500ms', style({ opacity: 1 }))
         ]),
         transition(':leave', [   // :leave is alias to '* => void'
-            animate('500ms', style({opacity: 0}))
+            animate('500ms', style({ opacity: 0 }))
         ])
     ]), routerTransition]
 })
@@ -27,16 +28,17 @@ export class AppComponent implements OnInit {
     public route: string;
     public mobile: Boolean;
     navigation = [
-        {link: '', label: 'Home'},
-        {link: 'team', label: 'Team'},
-        {link: 'media', label: 'Media'}
+        { link: '', label: 'Home' },
+        { link: 'team', label: 'Team' },
+        { link: 'media', label: 'Media' }
     ];
     lastYOffset: number;
     showMenu: boolean;
     menuType: string;
 
 
-    constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public router: Router, public location: Location) {
+    constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public router: Router,
+        public location: Location) {
         this.route = '';
         this.showMenu = true;
         this.menuType = 'transparent';
@@ -69,6 +71,9 @@ export class AppComponent implements OnInit {
 
     @HostListener('window:scroll', [])
     onWindowScroll() {
+        if (window.pageYOffset === 0) {
+            return;
+        }
         if (window.pageYOffset < 5) {
             this.menuType = 'transparent';
             this.showMenu = true;
