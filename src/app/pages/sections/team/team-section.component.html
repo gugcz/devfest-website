@@ -1,0 +1,46 @@
+<div style="width: 100%; text-align:center;">
+  <h1 style="font-family: MyMediaval; font-size: 5rem">
+    Aristocracy
+  </h1>
+  <div *ngIf="organizers; else loading">
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap; ">
+      <div *ngFor="let organizer of organizers" style="width: 25%; height: 300px; text-align: center;"> 
+        <img [src]="organizer.photo" class="image-organizer">
+        <p style="font-weight: 500; font-size: 1.3rem; margin-bottom: 10px;">{{organizer.name}}</p>
+        <div style="font-weight: 300; font-size: 1.2rem">{{organizer.title}}</div>
+        <div>
+            <a mat-icon-button *ngIf="organizer.twitter" [href]="'https://www.twitter.com/' + organizer.twitter"
+            target="_blank" class="link">
+           <mat-icon svgIcon="twitter"></mat-icon>
+         </a>
+         <a mat-icon-button *ngIf="organizer.instagram" [href]="'https://www.instagram.com/' + organizer.instagram"
+            target="_blank" class="link">
+           <mat-icon svgIcon="instagram"></mat-icon>
+         </a>
+         <a mat-icon-button *ngIf="organizer.googleplus" [href]="'https://plus.google.com/u/0/' + organizer.googleplus"
+            target="_blank" class="link">
+           <mat-icon svgIcon="googleplus"></mat-icon>
+         </a>
+         <a mat-icon-button *ngIf="organizer.facebook" [href]="'https://www.facebook.com/' + organizer.facebook"
+            target="_blank" class="link">
+           <mat-icon svgIcon="facebook"></mat-icon>
+         </a>
+         <a mat-icon-button *ngIf="organizer.linkedin" [href]="'https://www.linkedin.com/in/' + organizer.linkedin"
+            target="_blank" class="link">
+           <mat-icon svgIcon="linkedin"></mat-icon>
+         </a>
+         <a mat-icon-button *ngIf="organizer.youtube" [href]="'https://www.youtube.com/user/' + organizer.youtube"
+            target="_blank" class="link">
+           <mat-icon svgIcon="youtube"></mat-icon>
+         </a>
+        </div>
+      </div>  
+    </div>
+    <div style="width: 100%; text-align: center;">
+      <img style="max-width: 300px; width: 50%; opacity: 0.5; filter: brightness(0) invert(1);" src="assets/partners/GUG.png">
+    </div>
+  </div>
+  <ng-template #loading>
+    <img src="assets/mediaval-loading.gif">
+  </ng-template>
+</div>
