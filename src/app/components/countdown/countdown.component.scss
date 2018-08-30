@@ -1,42 +1,49 @@
 .countdown {
-  color: #ffffff;
+  color: black;
   display: grid;
-  -webkit-column-count: 1;
-  -moz-column-count: 1;
-  column-count: 1;
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
   grid-gap: 16px;
-  grid-template-columns: 1fr;
+  justify-content: center;
+  grid-template-columns: 130px 130px;
 
   .number-container {
     display: flex;
     flex-direction: row;
 
     p.number {
-      font-size: 4.6rem;
+      font-size: 1.5rem;
+      font-weight: bold;
       margin: 0;
-      text-align: right;
-    }
-
-    .two-digit {
-      min-width: 5.688rem;
-      width: 91px;
-      max-width: 91px;
-    }
-
-    .three-digit {
-      min-width: 123px;
-      width: 123px;
-      max-width: 123px;
     }
 
     .description {
       margin: 0;
-      flex-grow: 1;
-      align-self: flex-end;
-      justify-self: flex-end;
-      font-size: 1.125rem;
-      padding-bottom: 8px;
+      font-size: 1.5rem;
       padding-left: 9px;
+    }
+  }
+}
+
+@media only screen and (min-width: 375px) {
+  .countdown {
+    grid-template-columns: 133px 133px;
+    .number-container {
+      p.number, .description {
+        font-size: 1.6rem;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 425px) {
+  .countdown {
+    grid-template-columns: 148px 148px;
+    .number-container {
+      p.number, .description {
+        font-size: 1.8rem;
+      }
     }
   }
 }
@@ -289,6 +296,11 @@
 
 @media screen and (min-width: 1920px) {
   .countdown {
+    -webkit-column-count: 1;
+    -moz-column-count: 1;
+    column-count: 1;
+    grid-gap: 16px;
+    grid-template-columns: 1fr;
     .number-container {
       p.number {
         font-size: 3.5rem;
