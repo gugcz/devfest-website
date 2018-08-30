@@ -6,9 +6,7 @@
         <div class="list">
             <div class="link-container">
               <div class="item" *ngFor="let one of press">
-                  <h3 mat-subheader class="link-title">{{one.name}}</h3>
-                  <a mat-raised-button [color]="'accent'" [href]="one.url" class="link"
-                     target="_blank">{{one.source}}</a>
+                  <a class="link" href="{{one.url}}" target="_blank">{{one.name}} | {{one.source}}</a>
                   <mat-divider class="divider"></mat-divider>
               </div>
             </div>
