@@ -7,6 +7,61 @@
   -o-background-size: cover;
   background-size: cover;
   overflow-y: hidden;
+
+  .cover {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 16px 32px;
+    flex-grow: 1;
+    min-height: calc(100vh - 48px);
+
+    .header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .logo {
+        width: 128px;
+      }
+
+      .date {
+        font-size: 1.5rem;
+        text-align: right;
+      }
+    }
+
+    .body {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+
+      .countdown-container {
+        padding-top: 20px;
+      }
+
+      .menu-container {
+        display: flex;
+        flex-grow: 1;
+        align-items: flex-end;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 375px) {
+  .container .cover {
+    .header {
+      .logo {
+        width: 164px;
+      }
+
+      .date {
+        font-size: 1.7rem;
+        text-align: right;
+      }
+    }
+  }
 }
 
 @media only screen and (min-width: 1920px) {
@@ -25,6 +80,10 @@
           font-size: 3.5rem;
           font-family: Roboto, serif;
           text-align: right;
+
+          .only-for-mobile {
+            display: none;
+          }
 
           .place {
             font-size: 2.85rem;
