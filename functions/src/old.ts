@@ -120,7 +120,8 @@ function mergeTickets(tickets) {
             order: 1,
             soldOut: false,
             title: basicTitle,
-            support: false
+            support: false,
+            url: 'https://ti.to/devfest-cz/2018/'
         };
     } else if (tickets[0].attributes.title === 'Community Support') {
         const supportTicket = tickets[0];
@@ -141,8 +142,12 @@ function mergeTickets(tickets) {
         const price = { price: oneTicket.attributes['price'], title: 'Individual' };
         const prices = [price];
         const quantity = oneTicket.attributes['quantity'];
+        const now = new Date();
+        const startDate = new Date(oneTicket.attributes['start-at']);
+        const endDate = new Date(oneTicket.attributes['end-at']);
+        const state = oneTicket.attributes['state'];
         return {
-            actual: oneTicket.attributes['state'] === 'on_sale',
+            actual:  ((state === 'on_sale') && (now >= startDate && now <= endDate)),
             description: `First ${quantity}`,
             price: prices,
             order: 1,
