@@ -51,8 +51,8 @@ import {MediaPressComponent} from './components/media-press/media-press.componen
 import {MediaContactComponent} from './components/media-contact/media-contact.component';
 import {MediaOthersComponent} from './components/media-others/media-others.component';
 import { AppInvitationComponent } from './components/app-invitation/app-invitation.component';
-import { MenuComponent } from './components/menu/menu.component';
-
+import { SectionsComponent } from './pages/sections/sections.component';
+import { TeamSectionComponent } from './pages/sections/team/team-section.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -73,7 +73,8 @@ import { MenuComponent } from './components/menu/menu.component';
         MediaContactComponent,
         MediaOthersComponent,
         AppInvitationComponent,
-        MenuComponent,
+        SectionsComponent,
+        TeamSectionComponent
     ],
     imports: [
         BrowserModule,
@@ -110,7 +111,8 @@ import { MenuComponent } from './components/menu/menu.component';
     ],
     providers: [],
     entryComponents: [
-        InvoiceComponent
+        InvoiceComponent,
+        TeamSectionComponent
     ],
     bootstrap: [AppComponent]
 })

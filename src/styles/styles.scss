@@ -43,6 +43,12 @@ $frontend-app-theme: mat-dark-theme($anms-black-primary, $anms-black-accent, $an
   src: url(../assets/fonts/Roboto-Black.ttf);
 }
 
+@font-face {
+  font-family: MyMediaval;
+  src: url(../assets/fonts/Deutsch.ttf);
+  font-weight:400;
+}
+
 body, html {
   height: 100%;
   margin: 0;
@@ -140,4 +146,9 @@ body mat-toolbar.mat-toolbar a.mat-button div.mat-button-focus-overlay {
 .email-error-snackbar {
   background-color: $dark-background;
   color: $error-message;
+}
+
+.mat-dialog-container{
+  background: url(../assets/scroll-template.jpg);
+  color: #333;
 }
