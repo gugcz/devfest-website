@@ -1,7 +1,6 @@
 <mat-dialog-content class="content">
-    <h1 class="title">Tickets invoice</h1>
+    <h1 class="title">Order by invoice</h1>
     <div *ngIf="!done else thank">
-        <p class="text">This is a simple form that lets you order tickets for DevFestCZ 2018 by invoice.</p>
         <p class="text">Summary: <span *ngIf="(countTickets && price && priceCompany); else loadingPrice">{{priceCompany*countTickets}}€
                 ({{price*priceCompany*countTickets | number : '1.2-2'}} CZK)</span></p>
         <form class="form">
@@ -9,7 +8,8 @@
                 <input  [(ngModel)]="countTickets" name="countTickets" class="input" matInput placeholder="Count*"  type="number" min="00">
             </mat-form-field>
             <mat-form-field class="form-field" color="accent">
-                <input [(ngModel)]="email"  name="email"class="input" matInput  placeholder="Email for delivering invoice*">
+                <input [formControl]="email" class="input" matInput  placeholder="Email for delivering invoice*">
+                <mat-error *ngIf="email.invalid">{{getEmailErrorMessage()}}</mat-error>
             </mat-form-field>
             <mat-form-field class="form-field" color="accent">
                 <input [(ngModel)]="companyName" name="companyName" class="input" matInput  placeholder="Company name*">
@@ -286,7 +286,7 @@
             <div class="buttons-container">
                 <button mat-raised-button class="invoice-button cancel" color="warn" (click)="goToHome()">Cancel
                 </button>
-                <button mat-raised-button *ngIf="(countTickets && email && companyName && street && city
+                <button mat-raised-button *ngIf="(countTickets && !email.invalid && companyName && street && city
                 && zip && registrationNumberIC && country)" class="invoice-button buy" color="accent" (click)="sendInvoice()">Buy
                 </button>
             </div>

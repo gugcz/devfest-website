@@ -13,7 +13,7 @@ import * as firebase from 'firebase';
 export class InvoiceComponent implements OnInit {
 
     countTickets;
-    email;
+    email = new FormControl('', [Validators.email]);
     companyName;
     street;
     city;
@@ -49,7 +49,7 @@ export class InvoiceComponent implements OnInit {
     sendInvoice() {
         const invoice: Invoice = {
             countTickets: this.countTickets,
-            email: this.email,
+            email: this.email.value,
             companyName: this.companyName,
             street: this.street,
             city: this.city,
@@ -67,8 +67,9 @@ export class InvoiceComponent implements OnInit {
         });
     }
 
-    getErrorMessage() {
-        return 'You must enter a value';
+    getEmailErrorMessage() {
+        return this.email.hasError('email') ? 'Not a valid email' :
+        '';
     }
 
 }
