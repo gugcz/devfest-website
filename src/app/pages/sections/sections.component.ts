@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { TeamSectionComponent } from './team/team-section.component';
 @Component({
   selector: 'app-sections',
@@ -12,7 +12,7 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
 
   private sub: any;
 
-  constructor(private route: ActivatedRoute, private matDialog: MatDialog) {
+  constructor(private route: ActivatedRoute, private matDialog: MatDialog, private router: Router) {
 
   }
 
@@ -24,6 +24,7 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
           case 'team': {
             this.matDialog.open(TeamSectionComponent, {
               width: '70vw',
+              maxWidth: '1000px',
               height: '90vh'
             });
           }
