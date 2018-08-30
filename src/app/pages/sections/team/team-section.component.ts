@@ -27,24 +27,24 @@ export class TeamSectionComponent implements OnInit {
 
   constructor(private firestore: AngularFirestore, private iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer, private storage: AngularFireStorage) {
-      iconRegistry.addSvgIcon(
-        'facebook',
-          sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/facebook.svg'));
-      iconRegistry.addSvgIcon(
-        'twitter',
-          sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/twitter.svg'));
-      iconRegistry.addSvgIcon(
-        'instagram',
-          sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/instagram.svg'));
-        iconRegistry.addSvgIcon(
-            'googleplus',
-            sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/google.svg'));
-        iconRegistry.addSvgIcon(
-            'linkedin',
-            sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/linkedin.svg'));
-        iconRegistry.addSvgIcon(
-            'youtube',
-            sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/youtube.svg'));
+    iconRegistry.addSvgIcon(
+      'facebook',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/facebook.svg'));
+    iconRegistry.addSvgIcon(
+      'twitter',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/twitter.svg'));
+    iconRegistry.addSvgIcon(
+      'instagram',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/instagram.svg'));
+    iconRegistry.addSvgIcon(
+      'googleplus',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/google.svg'));
+    iconRegistry.addSvgIcon(
+      'linkedin',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/linkedin.svg'));
+    iconRegistry.addSvgIcon(
+      'youtube',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/youtube.svg'));
   }
 
   ngOnInit() {
