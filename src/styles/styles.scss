@@ -49,6 +49,18 @@ $frontend-app-theme: mat-dark-theme($anms-black-primary, $anms-black-accent, $an
   font-weight:400;
 }
 
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: local('Material Icons'),
+  local('MaterialIcons-Regular'),
+  url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
+  url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
+  url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
+}
+
 body, html {
   height: 100%;
   margin: 0;
@@ -151,4 +163,36 @@ body mat-toolbar.mat-toolbar a.mat-button div.mat-button-focus-overlay {
 .mat-dialog-container{
   background: url(../assets/scroll-template.jpg);
   color: #333;
+}
+
+.material-icons {
+  font-family: 'Material Icons', serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+@media screen and (min-width: 1024px) {
+  .cdk-overlay-pane {
+    max-width: 1200px;
+    max-height: 90vh;
+  }
 }
