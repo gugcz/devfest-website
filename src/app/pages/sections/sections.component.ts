@@ -3,9 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { TeamSectionComponent } from './team/team-section.component';
 @Component({
+  templateUrl: './sections.component.html',
   selector: 'app-sections',
-  templateUrl: './../home/home.component.html',
-  styleUrls: ['./../home/home.component.scss']
 })
 export class SectionsComponent implements OnDestroy, AfterViewInit {
 
@@ -18,18 +17,26 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     setTimeout(() => {
+      let dialogRef;
       this.sub = this.route.params.subscribe(params => {
         const type = params['type'];
         switch (type) {
           case 'team': {
-            this.matDialog.open(TeamSectionComponent, {
+            dialogRef = this.matDialog.open(TeamSectionComponent, {
               width: '70vw',
               maxWidth: '1000px',
               height: '90vh'
             });
+
           }
         }
       });
+      if (dialogRef != null) {
+        dialogRef.afterClosed().subscribe(() => {
+          this.router.navigateByUrl('/');
+        });
+      }
+
     });
   }
 
