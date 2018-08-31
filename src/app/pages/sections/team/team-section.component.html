@@ -1,6 +1,8 @@
 <div class="team-section">
   <div class="close-button-container">
-    <i class="material-icons close-button">close</i>
+    <a class="close-button" routerLink="/">
+      <i class="material-icons">close</i>
+    </a>
   </div>
   <h1 class="title">
     Aristocracy
@@ -44,6 +46,8 @@
     </div>
   </div>
   <ng-template #loading>
-    <img style="max-width: 80%;" src="assets/mediaval-loading.gif">
+    <div class="loading-container">
+      <img class="loading-image" src="assets/mediaval-loading.gif">
+    </div>
   </ng-template>
 </div>

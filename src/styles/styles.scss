@@ -190,9 +190,15 @@ body mat-toolbar.mat-toolbar a.mat-button div.mat-button-focus-overlay {
   font-feature-settings: 'liga';
 }
 
-@media screen and (min-width: 1024px) {
+app-team-section {
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+}
+
+@media screen and (min-width: 1376px) {
   .cdk-overlay-pane {
-    max-width: 1200px;
+    max-width: 1376px;
     max-height: 90vh;
   }
 }
