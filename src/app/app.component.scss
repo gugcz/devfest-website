@@ -260,10 +260,17 @@ mat-sidenav {
     }
   }
 }
-  @media only screen and (min-width: 1024px) {
-    .mat-toolbar {
-      .nav-button {
-        width: 60px !important;
-      }
+
+@media only screen and (min-width: 1024px) {
+  .mat-toolbar {
+    .nav-button {
+      width: 60px !important;
     }
   }
+}
+
+@media screen and (min-width: 1376px) {
+  mat-dialog-container {
+    max-width: 1376px;
+  }
+}
