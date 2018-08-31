@@ -8,17 +8,18 @@ const routes: Routes = [
     {
         path: '',
         component: HomeComponent,
-        pathMatch: 'full',
-    },
-    {
-        path: 'section/:type',
-        component: SectionsComponent,
-        pathMatch: 'full'
-    },
-    {
-        path: 'app-invitation',
-        redirectTo : '', // TODO - after created app use AppInvitationCo mponent
-        pathMatch: 'full'
+        children: [
+            {
+                path: 'section/:type',
+                component: SectionsComponent,
+                pathMatch: 'full'
+            },
+            {
+                path: 'app-invitation',
+                redirectTo : '', // TODO - after created app use AppInvitationCo mponent
+                pathMatch: 'full'
+            },
+        ]
     },
     {
         path: '**',
