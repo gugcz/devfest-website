@@ -4,6 +4,7 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AngularFireStorage } from 'angularfire2/storage';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 
 interface Organizer {
   name: string;
@@ -26,7 +27,8 @@ export class TeamSectionComponent implements OnInit {
   private organizers: Organizer[];
 
   constructor(private firestore: AngularFirestore, private iconRegistry: MatIconRegistry,
-    sanitizer: DomSanitizer, private storage: AngularFireStorage) {
+    sanitizer: DomSanitizer, private storage: AngularFireStorage,
+    public dialogRef: MatDialogRef<TeamSectionComponent>) {
     iconRegistry.addSvgIcon(
       'facebook',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/facebook.svg'));
@@ -79,5 +81,8 @@ export class TeamSectionComponent implements OnInit {
     return await this.storage.ref(folder).getDownloadURL().toPromise();
   }
 
+  close(){
+      this.dialogRef.close();
+  }
 
 }
