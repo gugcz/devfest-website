@@ -1,9 +1,10 @@
-<div class="wrapper">
+<div class="wrapper" style="mat-elevation-z3">
   <div class="content"
        [@routerTransition]="o.isActivated && o.activatedRoute.routeConfig.path">
     <router-outlet #o="outlet"></router-outlet>
   </div>
 </div>
+<app-partners></app-partners>
 <footer>
   <app-footer></app-footer>
 </footer>
