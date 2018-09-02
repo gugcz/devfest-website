@@ -1,10 +1,15 @@
-<div style="width: 100%; text-align:center;">
-  <h1 style="font-family: MyMediaval; font-size: 5rem">
+<div class="team-section">
+  <div class="close-button-container">
+    <a (click)="close()" class="close-button" >
+      <i class="material-icons">close</i>
+    </a>
+  </div>
+  <h1 class="title">
     Aristocracy
   </h1>
-  <div *ngIf="organizers; else loading">
-    <div style="display: flex; flex-direction: row; flex-wrap: wrap; ">
-      <div *ngFor="let organizer of organizers" style="width: 25%; height: 300px; text-align: center;"> 
+  <div *ngIf="organizers; else loading" class="body">
+    <div class="organizers-container">
+      <div class="organizer" *ngFor="let organizer of organizers">
         <img [src]="organizer.photo" class="image-organizer">
         <p style="font-weight: 500; font-size: 1.3rem; margin-bottom: 10px;">{{organizer.name}}</p>
         <div style="font-weight: 300; font-size: 1.2rem">{{organizer.title}}</div>
@@ -34,13 +39,15 @@
            <mat-icon svgIcon="youtube"></mat-icon>
          </a>
         </div>
-      </div>  
+      </div>
     </div>
-    <div style="width: 100%; text-align: center;">
-      <img style="max-width: 300px; width: 50%; opacity: 0.5; filter: brightness(0) invert(1);" src="assets/partners/GUG.png">
+    <div class="gug-logo-container">
+      <img class="gug-logo" src="assets/partners/GUG.png">
     </div>
   </div>
   <ng-template #loading>
-    <img src="assets/mediaval-loading.gif">
+    <div class="loading-container">
+      <img class="loading-image" src="assets/mediaval-loading.gif">
+    </div>
   </ng-template>
 </div>
