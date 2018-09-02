@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { TeamSectionComponent } from './team/team-section.component';
 import { MediaSectionComponent } from './media/media-section.component';
+import { TicketsSectionComponent } from './tickets/tickets-section.component';
 @Component({
   templateUrl: './sections.component.html',
   selector: 'app-sections',
@@ -34,6 +35,14 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
               width: '100vw',
               height: '100vh',
             });
+            break;
+          }
+          case 'tickets': {
+            dialogRef = this.matDialog.open(TicketsSectionComponent, {
+              width: '100vw',
+              height: '100vh',
+            });
+            break;
           }
         }
       });
