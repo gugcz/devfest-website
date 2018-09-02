@@ -2,10 +2,10 @@
     Wrote about us
 </div>
 <div *ngIf="$press | async;let press; else loadingImage">
-    <div  *ngFor="let one of press">
-            <a [href]="one.url" class="link" target="_blank">{{one.name}}</a>
+    <div *ngFor="let one of press">
+        <a [href]="one.url" class="link" target="_blank">{{one.name}}</a>
     </div>
 </div>
 <ng-template #loadingImage>
-    <img src="assets/mediaval-loading.gif">
+    <img style="width: 100%;" src="assets/mediaval-loading.gif">
 </ng-template>
