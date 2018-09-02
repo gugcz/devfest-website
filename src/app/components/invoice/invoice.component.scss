@@ -3,7 +3,6 @@
 .content {
 
   .title {
-    color: white;
     font-size: 2.75rem;
     font-weight: 600;
     text-align: center;
@@ -11,7 +10,6 @@
   }
 
   .text {
-    color: white;
     line-height: 24px;
     margin-bottom: 24px;
     width: 100%;
@@ -19,7 +17,6 @@
   }
 
   .price-info {
-    color: white;
     text-align: left;
     margin-top: 4px;
     width: 100%;
@@ -31,12 +28,6 @@
     flex-direction: column;
     width: 100%;
     max-width: 350px;
-
-    .form-field {
-      .input {
-        color: white;
-      }
-    }
 
     .spinner-container {
       text-align: center;
