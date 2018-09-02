@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { TeamSectionComponent } from './team/team-section.component';
+import { MediaSectionComponent } from './media/media-section.component';
 @Component({
   templateUrl: './sections.component.html',
   selector: 'app-sections',
@@ -26,6 +27,14 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
               maxWidth: '',
               width: '100vw',
               height: '100vh',
+            });
+            break;
+          }
+          case 'media': {
+            this.matDialog.open(MediaSectionComponent, {
+              width: '90vw',
+              maxWidth: '1200px',
+              height: '90vh'
             });
           }
         }

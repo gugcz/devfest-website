@@ -1,16 +1,11 @@
-<mat-card *ngIf="$press | async;let press; else loadingImage" class="press-card">
-    <mat-card-title>
-        Media releases
-    </mat-card-title>
-    <mat-card-content class="content">
-        <div class="list">
-            <div class="link-container">
-                <a mat-raised-button [color]="'accent'" *ngFor="let one of press" [href]="one.url" class="link"
-                   target="_blank">{{one.name}}</a>
-            </div>
-        </div>
-    </mat-card-content>
-</mat-card>
+<div style="font-family: MyMediaval; font-size: 3rem">
+    Wrote about us
+</div>
+<div *ngIf="$press | async;let press; else loadingImage">
+    <div  *ngFor="let one of press">
+            <a [href]="one.url" class="link" target="_blank">{{one.name}}</a>
+    </div>
+</div>
 <ng-template #loadingImage>
-  <mat-spinner [diameter]="115"></mat-spinner>
+    <img src="assets/mediaval-loading.gif">
 </ng-template>
