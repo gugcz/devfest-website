@@ -55,6 +55,7 @@ import { SectionsComponent } from './pages/sections/sections.component';
 import { TeamSectionComponent } from './pages/sections/team/team-section.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { MediaSectionComponent } from './pages/sections/media/media-section.component';
+import { TicketsSectionComponent } from './pages/sections/tickets/tickets-section.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -78,7 +79,8 @@ import { MediaSectionComponent } from './pages/sections/media/media-section.comp
         SectionsComponent,
         TeamSectionComponent,
         MenuComponent,
-        MediaSectionComponent
+        MediaSectionComponent,
+        TicketsSectionComponent
     ],
     imports: [
         BrowserModule,
@@ -117,7 +119,8 @@ import { MediaSectionComponent } from './pages/sections/media/media-section.comp
     entryComponents: [
         InvoiceComponent,
         TeamSectionComponent,
-        MediaSectionComponent
+        MediaSectionComponent,
+        TicketsSectionComponent
     ],
     bootstrap: [AppComponent]
 })
