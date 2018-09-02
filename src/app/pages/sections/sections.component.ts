@@ -4,9 +4,8 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { TeamSectionComponent } from './team/team-section.component';
 import { MediaSectionComponent } from './media/media-section.component';
 @Component({
+  templateUrl: './sections.component.html',
   selector: 'app-sections',
-  templateUrl: './../home/home.component.html',
-  styleUrls: ['./../home/home.component.scss']
 })
 export class SectionsComponent implements OnDestroy, AfterViewInit {
 
@@ -19,14 +18,15 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     setTimeout(() => {
+      let dialogRef;
       this.sub = this.route.params.subscribe(params => {
         const type = params['type'];
         switch (type) {
           case 'team': {
-            this.matDialog.open(TeamSectionComponent, {
-              width: '90vw',
-              maxWidth: '1000px',
-              height: '90vh'
+            dialogRef = this.matDialog.open(TeamSectionComponent, {
+              maxWidth: '',
+              width: '100vw',
+              height: '100vh',
             });
             break;
           }
@@ -39,6 +39,12 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
           }
         }
       });
+      if (dialogRef != null) {
+        dialogRef.afterClosed().subscribe(() => {
+          this.router.navigateByUrl('/');
+        });
+      }
+
     });
   }
 
