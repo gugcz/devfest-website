@@ -24,17 +24,15 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
         switch (type) {
           case 'team': {
             dialogRef = this.matDialog.open(TeamSectionComponent, {
-              maxWidth: '',
               width: '100vw',
               height: '100vh',
             });
             break;
           }
           case 'media': {
-            this.matDialog.open(MediaSectionComponent, {
-              width: '90vw',
-              maxWidth: '1200px',
-              height: '90vh'
+            dialogRef = this.matDialog.open(MediaSectionComponent, {
+              width: '100vw',
+              height: '100vh',
             });
           }
         }
