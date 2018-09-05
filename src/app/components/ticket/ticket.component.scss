@@ -2,6 +2,9 @@
 
 .ticket-card {
   display: flex;
+  background-color: none;
+  background-image: url("../../../assets/ticket-template.jpg");
+  background-position: center center;
   height: 358px;
   width: 250px;
   padding: 16px 0;
