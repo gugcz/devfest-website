@@ -1,11 +1,16 @@
-<div style="font-family: MyMediaval; font-size: 3rem">
-    Wrote about us
-</div>
-<div *ngIf="$press | async;let press; else loadingImage">
-    <div *ngFor="let one of press">
-        <a [href]="one.url" class="link" target="_blank">{{one.name}}</a>
+<div class="media-others-container">
+  <div class="title">
+      Media releases
+  </div>
+  <div *ngIf="$press | async;let press; else loadingImage">
+    <div *ngFor="let one of press" class="link-container">
+      <a [href]="one.url" class="link" target="_blank">{{one.name}}</a>
     </div>
+  </div>
 </div>
+
 <ng-template #loadingImage>
-    <img style="width: 100%;" src="assets/mediaval-loading.gif">
+  <div class="loading-image-container">
+    <img class="loading-image" src="assets/mediaval-loading.gif">
+  </div>
 </ng-template>

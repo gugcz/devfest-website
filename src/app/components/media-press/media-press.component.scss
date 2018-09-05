@@ -1,19 +1,26 @@
-mat-card.press-card {
-  width: 256px;
-  height: calc(100% - 48px);
+.media-others-container {
 
-  .content {
-    .list {
-      font-size: 1rem;
-      .link-container {
-        padding: 8px 0;
-        width: 100%;
-        .link {
-          width: 100%;
-          margin: 5px 0 !important;
-          white-space: normal !important;
-        }
-      }
+  .title {
+    font-family: MyMediaval, serif;
+    font-size: 3rem;
+    text-align: center;
+  }
+
+  .link-container {
+    display: flex;
+    justify-content: center;
+
+    .link {
+      text-align: center;
+    }
+  }
+
+  .loading-image-container {
+    display: flex;
+    justify-content: center;
+    .loading-image {
+      height: 75%;
+      width: 75%;
     }
   }
 }

@@ -1,16 +1,19 @@
-<div style="font-family: MyMediaval; font-size: 3rem">
+<div class="media-others-container">
+  <div class="title">
     Wrote about us
-</div>
-<div *ngIf="$press | async;let press; else loadingImage">
-    <div style="width: 100%;border-bottom: 2px solid;margin: 15px;font-size: 1.5rem;" *ngFor="let one of press">
-        <div style="width: 100%; text-align: left"><a style="text-decoration: none;color: inherit; " href="{{one.url}}" target="_blank">{{one.name}}</a></div>
-        <div style="display: flex;width:100%;">
-            <div style="width:50%">
-            </div>
-            <div style="width:50%;text-align: left; ">- {{one.source}}</div>
-        </div>
+  </div>
+  <div *ngIf="$press | async;let press; else loadingImage">
+    <div class="link-container" *ngFor="let one of press">
+      <div class="link"><a href="{{one.url}}" target="_blank">{{one.name}}</a></div>
+      <div class="source-container">
+        <div></div>
+        <div>- {{one.source}}</div>
+      </div>
     </div>
+  </div>
 </div>
 <ng-template #loadingImage>
-    <img style="width: 100%;" src="assets/mediaval-loading.gif">
+  <div class="loading-image-container">
+    <img class="loading-image" src="assets/mediaval-loading.gif">
+  </div>
 </ng-template>
