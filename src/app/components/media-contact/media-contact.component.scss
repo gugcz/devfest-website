@@ -1,3 +1,49 @@
+.media-contact-container {
+  .title {
+    font-family: MyMediaval, serif;
+    font-size: 3rem;
+    text-align: center;
+  }
+
+  .contact-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .contact-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .contact {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-right: 32px;
+
+        .name {
+          font-size: 2.5rem;
+        }
+
+        .email, .phone {
+          color: inherit;
+          font-size: 1.5rem;
+          outline: none;
+          text-decoration: none;
+        }
+      }
+
+      .image-container {
+        .image {
+          border-radius: 50%;
+          height: 256px;
+          width: 256px;
+        }
+      }
+    }
+  }
+}
+
 .contact-image {
   width: 200px;
   border-radius: 100px;

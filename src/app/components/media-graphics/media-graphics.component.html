@@ -1,15 +1,17 @@
-<div style="font-family: MyMediaval; font-size: 3rem">
+<div class="media-graphics-container">
+  <div class="title">
     Graphics
-</div>
-<div *ngIf="imageUrls; else loading">
-    <div *ngFor="let url of imageUrls" style="display: flex; margin-top:10px;">
-        <img  [src]="url.thumbUrl">
-        <span style="width: 50%; margin: auto;" >{{url.name}}</span>
-        <button style="width: 25%"  mat-icon-button (click)="downloadGraphic(url.url)">
-            <mat-icon>get_app</mat-icon>
-        </button>
+  </div>
+  <div *ngIf="imageUrls; else loading">
+    <div *ngFor="let url of imageUrls" class="image-item">
+      <img [src]="url.thumbUrl" alt="Graphics thumbnail" class="thumbnail">
+      <span class="name">{{url.name}}</span>
+      <button class="download-button" mat-icon-button (click)="downloadGraphic(url.url)">
+        <mat-icon>get_app</mat-icon>
+      </button>
     </div>
+  </div>
 </div>
 <ng-template #loading>
-    <img src="assets/mediaval-loading.gif">
+  <img class="loading-image" src="assets/mediaval-loading.gif">
 </ng-template>

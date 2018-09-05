@@ -1,23 +1,13 @@
-<div style="width: 100%; text-align:center;">
-  <div style="display: flex; flex-direction: row; flex-wrap: wrap; ">
-    <div style="width: 20%">
-      <app-media-graphics>
-
-      </app-media-graphics>
-    </div>
-    <div style="width: 35%">
-      <app-media-others>
-
-      </app-media-others>
-    </div>
-    <div style="width: 45%">
-      <app-media-press>
-        
-      </app-media-press>
-    </div>
-    <div style="width: 100%">
-      <app-media-contact>
-      </app-media-contact>
-    </div>
+<div class="media-dialog">
+  <div class="close-button-container">
+    <a (click)="close()" class="close-button" >
+      <i class="material-icons">close</i>
+    </a>
+  </div>
+  <div class="media-container">
+    <app-media-graphics class="media-graphics"></app-media-graphics>
+    <app-media-others class="media-others"></app-media-others>
+    <app-media-press class="media-press"></app-media-press>
+    <app-media-contact class="media-contact"></app-media-contact>
   </div>
 </div>

@@ -1,6 +1,10 @@
-mat-card {
-  width: 256px;
-  height: calc(100% - 48px);
+.media-graphics-container {
+
+  .title {
+    font-family: MyMediaval, serif;
+    font-size: 3rem;
+    text-align: center;
+  }
 
   .image-item {
     display: grid;
@@ -11,6 +15,10 @@ mat-card {
       height: 32px;
     }
 
+    .name {
+      font-size: 1rem;
+    }
+
     .thumbnail, .download-button {
       justify-self: center;
     }
@@ -18,5 +26,9 @@ mat-card {
     .thumbnail, .name, .download-button {
       align-self: center;
     }
+  }
+
+  .loading-image {
+    width: 100%;
   }
 }
