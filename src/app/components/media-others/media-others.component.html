@@ -6,8 +6,7 @@
     <div class="link-container" *ngFor="let one of press">
       <div class="link"><a href="{{one.url}}" target="_blank">{{one.name}}</a></div>
       <div class="source-container">
-        <div></div>
-        <div>- {{one.source}}</div>
+        <span class="source">-&nbsp;{{one.source}}</span>
       </div>
     </div>
   </div>
