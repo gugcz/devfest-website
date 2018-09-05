@@ -27,6 +27,7 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             dialogRef = this.matDialog.open(TeamSectionComponent, {
               width: '100vw',
               height: '100vh',
+              maxWidth: '',
             });
             break;
           }
@@ -34,6 +35,7 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             dialogRef = this.matDialog.open(MediaSectionComponent, {
               width: '100vw',
               height: '100vh',
+              maxWidth: '',
             });
             break;
           }
@@ -41,6 +43,7 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             dialogRef = this.matDialog.open(TicketsSectionComponent, {
               width: '100vw',
               height: '100vh',
+              maxWidth: '',
             });
             break;
           }

@@ -2,7 +2,7 @@
 
   .title {
     font-family: MyMediaval, serif;
-    font-size: 3rem;
+    font-size: 2.5rem;
     text-align: center;
   }
 
@@ -10,7 +10,6 @@
     border-bottom: 2px solid;
     margin: 15px;
     font-size: 1.5rem;
-    width: 100%;
 
     .link {
       text-align: left;
@@ -23,10 +22,13 @@
     }
 
     .source-container {
-      display: grid;
-      column-count: 2;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      justify-content: flex-end;
       width: 100%;
+
+      .source {
+        font-size: 1.25rem;
+      }
     }
   }
 
@@ -37,5 +39,11 @@
       height: 75%;
       width: 75%;
     }
+  }
+}
+
+@media only screen and (min-width: 1376px) {
+  .media-others-container .title {
+      font-size: 3rem;
   }
 }
