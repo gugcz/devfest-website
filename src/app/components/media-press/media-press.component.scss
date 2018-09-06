@@ -6,12 +6,35 @@
     text-align: center;
   }
 
-  .link-container {
-    display: flex;
-    justify-content: center;
+  .flags-container {
+    display: grid;
+    grid-row-gap: 16px;
+    padding-top: 32px;
 
-    .link {
-      text-align: center;
+    .link-container {
+      justify-content: center;
+      height: 56px;
+
+      .link {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+        text-decoration: none;
+        color: inherit;
+        height: 56px;
+
+        .image {
+          width: 100%;
+          height: 56px;
+        }
+
+        .text {
+          position: relative;
+          font-size: 1.15rem;
+          top: -2.15rem;
+        }
+      }
     }
   }
 
