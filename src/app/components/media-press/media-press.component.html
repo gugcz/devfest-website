@@ -4,9 +4,8 @@
   </div>
   <div *ngIf="$press | async;let press; else loadingImage" class="flags-container">
     <div *ngFor="let one of press; let i = index" class="link-container">
-      <a [href]="one.url" class="link" target="_blank">
-        <img [src]="(i + 1) % 2 === 0 ? 'assets/stuha-even.png' : 'assets/stuha-odd.png'" alt="stuha" class="image">
-        <span class="text">{{one.name}}</span>
+      <a [href]="one.url" class="link" target="_blank" [ngClass]="(i + 1) % 2 === 0 ? 'even' : 'odd'">
+        <div class="text">{{one.name}}</div>
       </a>
     </div>
   </div>

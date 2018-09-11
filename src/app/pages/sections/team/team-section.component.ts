@@ -24,7 +24,7 @@ interface Organizer {
 })
 export class TeamSectionComponent implements OnInit {
 
-  private organizers: Organizer[];
+  organizers: Organizer[];
 
   constructor(private firestore: AngularFirestore, private iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer, private storage: AngularFireStorage,
