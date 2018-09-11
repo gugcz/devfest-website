@@ -1,6 +1,7 @@
 .tickets-section {
   display: flex;
   flex-direction: column;
+  min-height: 100%;
 
   .title {
     font-family: MyMediaval, serif;
@@ -25,7 +26,6 @@
   app-tickets {
     display: flex;
     flex-grow: 1;
-    height: 100%;
     justify-content: center;
     align-items: center;
   }

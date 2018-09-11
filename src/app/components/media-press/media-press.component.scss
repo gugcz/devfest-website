@@ -12,6 +12,7 @@
     padding-top: 32px;
 
     .link-container {
+      display: flex;
       justify-content: center;
       height: 56px;
 
@@ -20,20 +21,32 @@
         flex-direction: column;
         text-align: center;
         justify-content: center;
+        align-items: center;
         text-decoration: none;
         color: inherit;
+        background: no-repeat center;
+        background-size: auto 56px;
+        width: 100%;
+        max-width: 280px;
         height: 56px;
 
-        .image {
-          width: 100%;
-          height: 56px;
-        }
-
         .text {
-          position: relative;
           font-size: 1.15rem;
-          top: -2.15rem;
+          width: 70%;
+          max-width: 70%;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          padding-top: 8px;
         }
+      }
+
+      .link.even {
+        background-image: url("../../../assets/stuha-even.png");
+      }
+
+      .link.odd {
+        background-image: url("../../../assets/stuha-odd.png");
       }
     }
   }
@@ -45,6 +58,14 @@
       height: 75%;
       width: 75%;
     }
+  }
+}
+
+@media only screen and (min-width: 425px) {
+  .media-others-container .flags-container .link-container .link {
+    background-size: 100% 56px;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
