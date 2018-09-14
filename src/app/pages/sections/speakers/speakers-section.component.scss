@@ -1,0 +1,70 @@
+@media only screen and (min-width: 1920px) {
+  .speakers-section {
+    .close-button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      .close-button {
+        color: #333333;
+        cursor: pointer;
+        text-decoration: none;
+        outline: none;
+      }
+    }
+
+    .title {
+      font-family: MyMediaval, serif;
+      font-size: 3rem;
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .body {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      .speakers-container {
+        display: grid;
+        grid-template-columns: 250px 250px 250px 250px 250px;
+        grid-row-gap: 16px;
+        grid-column-gap: 8px;
+
+        .speaker {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          .photo {
+            border-radius: 50%;
+            height: 200px;
+            width: 200px;
+          }
+
+          .company {
+            margin: 16px 0 4px;
+            height: 32px;
+            width: auto;
+          }
+
+          .name {
+            font-weight: 500;
+            font-size: 1.5rem;
+            margin: 8px;
+            text-align: center;
+          }
+
+          .city {
+            font-weight: 300;
+            font-size: 1rem;
+          }
+
+          .intro {
+            font-weight: 400;
+            font-size: 1.2rem;
+          }
+        }
+      }
+    }
+  }
+}

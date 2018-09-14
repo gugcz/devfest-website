@@ -1,9 +1,11 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { TeamSectionComponent } from './team/team-section.component';
-import { MediaSectionComponent } from './media/media-section.component';
-import { TicketsSectionComponent } from './tickets/tickets-section.component';
+import {Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
+import {Router, ActivatedRoute} from '@angular/router';
+import {MatDialog, MatDialogRef} from '@angular/material';
+import {TeamSectionComponent} from './team/team-section.component';
+import {MediaSectionComponent} from './media/media-section.component';
+import {TicketsSectionComponent} from './tickets/tickets-section.component';
+import {SpeakersSectionComponent} from './speakers/speakers-section.component';
+
 @Component({
   templateUrl: './sections.component.html',
   selector: 'app-sections',
@@ -41,6 +43,14 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
           }
           case 'tickets': {
             dialogRef = this.matDialog.open(TicketsSectionComponent, {
+              width: '100vw',
+              height: '100vh',
+              maxWidth: '',
+            });
+            break;
+          }
+          case 'speakers': {
+            dialogRef = this.matDialog.open(SpeakersSectionComponent, {
               width: '100vw',
               height: '100vh',
               maxWidth: '',
