@@ -34,8 +34,12 @@ export class SpeakersSectionComponent implements OnInit {
   ngOnInit() {
   }
 
-  close(){
+  close() {
     this.dialogRef.close();
+  }
+
+  click() {
+    console.log('click');
   }
 
 }
