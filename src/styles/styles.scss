@@ -161,9 +161,25 @@ body mat-toolbar.mat-toolbar a.mat-button div.mat-button-focus-overlay {
 }
 
 .mat-dialog-container{
-  background: url(../assets/scroll-template.jpg);
+  background: url(../assets/scroll-template.jpeg);
   color: #333;
   padding: 16px 12px !important;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #E3C190; 
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #603813; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #42210B; 
 }
 
 .material-icons {
