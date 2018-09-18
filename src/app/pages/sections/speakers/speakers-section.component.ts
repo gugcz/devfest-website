@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {MatDialogRef, MatIconRegistry} from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-speakers-section',
@@ -10,7 +11,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 export class SpeakersSectionComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<SpeakersSectionComponent>, private iconRegistry: MatIconRegistry,
-              sanitizer: DomSanitizer) {
+              sanitizer: DomSanitizer, private router: Router) {
     iconRegistry.addSvgIcon(
       'facebook',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/facebook.svg'));

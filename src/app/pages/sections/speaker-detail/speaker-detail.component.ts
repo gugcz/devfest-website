@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import {MatIconRegistry} from '@angular/material';
+import {Component, OnInit} from '@angular/core';
+import {MatDialogRef, MatIconRegistry} from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
+import {TeamSectionComponent} from '../team/team-section.component';
 
 @Component({
   selector: 'app-speaker-detail-section',
@@ -9,7 +10,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 })
 export class SpeakerDetailSectionComponent implements OnInit {
 
-  constructor(private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+  constructor(private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public dialogRef: MatDialogRef<TeamSectionComponent>) {
     iconRegistry.addSvgIcon(
       'facebook',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/facebook.svg'));
@@ -31,6 +32,10 @@ export class SpeakerDetailSectionComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  close() {
+    this.dialogRef.close();
   }
 
 }
