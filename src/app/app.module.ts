@@ -57,6 +57,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { MediaSectionComponent } from './pages/sections/media/media-section.component';
 import { TicketsSectionComponent } from './pages/sections/tickets/tickets-section.component';
 import { SpeakersSectionComponent } from './pages/sections/speakers/speakers-section.component';
+import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/speaker-detail.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -82,7 +83,8 @@ import { SpeakersSectionComponent } from './pages/sections/speakers/speakers-sec
         MenuComponent,
         MediaSectionComponent,
         TicketsSectionComponent,
-        SpeakersSectionComponent
+        SpeakersSectionComponent,
+        SpeakerDetailSectionComponent
     ],
     imports: [
         BrowserModule,
@@ -123,7 +125,8 @@ import { SpeakersSectionComponent } from './pages/sections/speakers/speakers-sec
         TeamSectionComponent,
         MediaSectionComponent,
         TicketsSectionComponent,
-        SpeakersSectionComponent
+        SpeakersSectionComponent,
+        SpeakerDetailSectionComponent
     ],
     bootstrap: [AppComponent]
 })

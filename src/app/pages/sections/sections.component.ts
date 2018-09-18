@@ -5,6 +5,7 @@ import {TeamSectionComponent} from './team/team-section.component';
 import {MediaSectionComponent} from './media/media-section.component';
 import {TicketsSectionComponent} from './tickets/tickets-section.component';
 import {SpeakersSectionComponent} from './speakers/speakers-section.component';
+import {SpeakerDetailSectionComponent} from './speaker-detail/speaker-detail.component';
 
 @Component({
   templateUrl: './sections.component.html',
@@ -51,6 +52,15 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
           }
           case 'speakers': {
             dialogRef = this.matDialog.open(SpeakersSectionComponent, {
+              width: '100vw',
+              height: '100vh',
+              maxWidth: '',
+            });
+            break;
+          }
+          case 'speaker-detail': {
+            dialogRef = this.matDialog.open(SpeakerDetailSectionComponent, {
+              panelClass: 'speaker-detail-dialog',
               width: '100vw',
               height: '100vh',
               maxWidth: '',
