@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {Talk} from '../../database/talk';
 
 @Component({
   selector: 'app-talk',
@@ -7,7 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TalkComponent implements OnInit {
 
-  constructor() { }
+  @Input() talk: Talk;
+
+  constructor() {
+    console.log(this.talk);
+  }
 
   ngOnInit() {
   }
