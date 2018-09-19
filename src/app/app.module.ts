@@ -57,6 +57,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { MediaSectionComponent } from './pages/sections/media/media-section.component';
 import { TicketsSectionComponent } from './pages/sections/tickets/tickets-section.component';
 import { ScheduleSectionComponent } from './pages/sections/schedule/schedule-section.component';
+import { TalkComponent } from './components/talk/talk.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -82,7 +83,8 @@ import { ScheduleSectionComponent } from './pages/sections/schedule/schedule-sec
         MenuComponent,
         MediaSectionComponent,
         TicketsSectionComponent,
-        ScheduleSectionComponent
+        ScheduleSectionComponent,
+        TalkComponent
     ],
     imports: [
         BrowserModule,

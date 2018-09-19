@@ -50,7 +50,7 @@
 
       .times {
         .time {
-          height: 176px;
+          height: 188px;
 
           .time-title {
             margin: 0;
@@ -63,53 +63,57 @@
       .tracks {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: repeat(24, 80px);
+        grid-template-rows: repeat(24, 86px);
         grid-column-gap: 8px;
         grid-row-gap: 8px;
-
-        .keynote {
-          grid-column-start: 1;
-          grid-column-end: 4;
-          grid-row: 1;
-          border: solid 1px #333333;
-          padding: 8px;
-
-          p {
-            font-weight: 500;
-          }
-        }
-
-        .lunch {
-          grid-column-start: 1;
-          grid-column-end: 4;
-          grid-row-start: 7;
-          grid-row-end: 8;
-          border: solid 1px #333333;
-          padding: 8px;
-
-          p {
-            font-weight: 500;
-          }
-        }
-
-        p {
-          margin: 0;
-        }
 
         .schedule-item {
           background: url("../../../../assets/ticket-template.jpg");
           background-repeat: no-repeat;
           background-size: 100% 100%;
           color: white;
+          display: flex;
+          flex: 1;
+          width: 100%;
         }
 
-        .track {
-          border: 1px solid #333333;
+        .full-row-item {
+          grid-column-start: 1;
+          grid-column-end: 4;
+          border: solid 1px #333333;
           padding: 8px;
+          width: calc(100% - 16px);
 
-          .track-title {
+          p {
             font-weight: 500;
           }
+        }
+
+        .keynote {
+          grid-row: 1;
+        }
+
+        .lunch {
+          grid-row: 7;
+        }
+
+        .closing-keynote {
+          grid-row: 22;
+        }
+
+        .afterparty {
+          grid-row-start: 23;
+          grid-row-end: 25;
+        }
+
+        p {
+          margin: 0;
+        }
+
+        app-talk {
+          display: flex;
+          flex: 1;
+          width: 100%;
         }
 
         .track-hall-1 {
@@ -317,31 +321,6 @@
         .track-from-21-to-21 {
           grid-row-start: 21;
           grid-row-end: 22;
-        }
-
-        .closing-keynote {
-          grid-column-start: 1;
-          grid-column-end: 4;
-          grid-row: 22;
-          border: solid 1px #333333;
-          padding: 8px;
-
-          p {
-            font-weight: 500;
-          }
-        }
-
-        .afterparty {
-          grid-column-start: 1;
-          grid-column-end: 4;
-          grid-row-start: 23;
-          grid-row-end: 25;
-          border: solid 1px #333333;
-          padding: 8px;
-
-          p {
-            font-weight: 500;
-          }
         }
       }
     }
