@@ -4,7 +4,7 @@
     <p class="talk-level">{{talk.level}} / {{talk.language}}</p>
   </div>
   <div class="footer" ngClass="{{talk.technologyClass}}">
-    <img class="speaker-image" [src]="talk.imageUrl" alt="{{talk.speaker}}">
+    <img class="speaker-image" [src]="talk.speaker.imageUrl" alt="{{talk.speaker.name}}">
     <div class="speaker">
       <span class="name">{{talk.speaker.name}}</span>
       <span class="job">{{talk.speaker.job}} / {{talk.speaker.city}}</span>
