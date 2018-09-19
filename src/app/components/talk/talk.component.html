@@ -1,11 +1,14 @@
 <div class="talk">
   <div class="body">
-    <p class="talk-title">Bark at the moon</p>
-    <p class="talk-level">Beginner</p>
+    <p class="talk-title">{{talk.title}}</p>
+    <p class="talk-level">{{talk.level}} / {{talk.language}}</p>
   </div>
-  <div class="footer">
-    <p class="speaker">Ozzy Osbourne</p>
-    <p class="language">EN</p>
-    <p class="talk-length">30 min</p>
+  <div class="footer" ngClass="{{talk.technologyClass}}">
+    <img class="speaker-image" [src]="talk.imageUrl" alt="{{talk.speaker}}">
+    <div class="speaker">
+      <span class="name">{{talk.speaker.name}}</span>
+      <span class="job">{{talk.speaker.job}} / {{talk.speaker.city}}</span>
+    </div>
+    <p class="talk-length">{{talk.length}}</p>
   </div>
 </div>
