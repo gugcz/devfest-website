@@ -10,6 +10,7 @@
     flex-direction: column;
 
     .talk-title {
+      font-size: 1.25rem;
       margin: 0;
       font-weight: 500;
     }
@@ -23,16 +24,49 @@
     background: #fdd835;
     display: flex;
     flex-direction: row;
-    color: black;
-    padding: 4px 8px;
+    padding: 6px;
+    align-items: center;
+    color: #333333;
 
-    .speaker, .talk-length, .language {
+    .speaker-image {
+      height: 32px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .speaker, .talk-length {
       margin: 0;
     }
 
-    .language {
-      margin-left: 16px;
-      flex: 1;
+    .speaker {
+      display: flex;
+      flex-direction: column;
+
+      .name {
+        font-size: 1rem;
+        font-weight: 500;
+      }
+      .job {
+        font-size: 0.85rem;
+        font-weight: 400;
+      }
     }
+
+    .talk-length {
+      flex: 1;
+      text-align: right;
+    }
+  }
+
+  .footer.firebase {
+    background: #ffa118;
+  }
+
+  .footer.dart {
+    background: #26b3a2;
+  }
+
+  .footer.android {
+    background: #6ab344;
   }
 }
