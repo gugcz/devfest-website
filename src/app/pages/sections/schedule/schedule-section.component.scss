@@ -1,0 +1,349 @@
+.schedule-dialog {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  .close-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .close-button {
+      color: #333333;
+      cursor: pointer;
+      position: fixed;
+      text-decoration: none;
+      outline: none;
+    }
+  }
+
+  .title {
+    font-family: MyMediaval, serif;
+    font-size: 3rem;
+    margin-top: 0;
+    text-align: center;
+  }
+
+  .body {
+    padding: 24px;
+
+    .schedule {
+      display: grid;
+      width: 100%;
+      grid-template-columns: 100px 1fr;
+      grid-row-gap: 16px;
+
+      .halls {
+        display: grid;
+        grid-column-start: 1;
+        grid-column-end: 3;
+        grid-template-columns: 1fr 1fr 1fr;
+        padding-left: 100px;
+
+        .hall .hall-title {
+          font-size: 2rem;
+          font-weight: 500;
+          margin: 0;
+          text-align: center;
+        }
+      }
+
+      .times {
+        .time {
+          height: 176px;
+
+          .time-title {
+            margin: 0;
+            font-weight: 500;
+            font-size: 1.75rem;
+          }
+        }
+      }
+
+      .tracks {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: repeat(24, 80px);
+        grid-column-gap: 8px;
+        grid-row-gap: 8px;
+
+        .keynote {
+          grid-column-start: 1;
+          grid-column-end: 4;
+          grid-row: 1;
+          border: solid 1px #333333;
+          padding: 8px;
+
+          p {
+            font-weight: 500;
+          }
+        }
+
+        .lunch {
+          grid-column-start: 1;
+          grid-column-end: 4;
+          grid-row-start: 7;
+          grid-row-end: 8;
+          border: solid 1px #333333;
+          padding: 8px;
+
+          p {
+            font-weight: 500;
+          }
+        }
+
+        p {
+          margin: 0;
+        }
+
+        .schedule-item {
+          background: url("../../../../assets/ticket-template.jpg");
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
+          color: white;
+        }
+
+        .track {
+          border: 1px solid #333333;
+          padding: 8px;
+
+          .track-title {
+            font-weight: 500;
+          }
+        }
+
+        .track-hall-1 {
+          grid-column: 1;
+        }
+
+        .track-hall-2 {
+          grid-column: 2;
+        }
+
+        .track-hall-3 {
+          grid-column: 3;
+        }
+
+        .track-from-2-to-2 {
+          grid-row-start: 2;
+          grid-row-end: 3;
+        }
+
+        .track-from-2-to-3 {
+          grid-row-start: 2;
+          grid-row-end: 4;
+        }
+
+        .track-from-3-to-3 {
+          grid-row-start: 3;
+          grid-row-end: 4;
+        }
+
+        .track-from-3-to-4 {
+          grid-row-start: 3;
+          grid-row-end: 5;
+        }
+
+        .track-from-4-to-4 {
+          grid-row-start: 4;
+          grid-row-end: 5;
+        }
+
+        .track-from-4-to-5 {
+          grid-row-start: 4;
+          grid-row-end: 6;
+        }
+
+        .track-from-5-to-5 {
+          grid-row-start: 5;
+          grid-row-end: 6;
+        }
+
+        .track-from-5-to-6 {
+          grid-row-start: 5;
+          grid-row-end: 7;
+        }
+
+        .track-from-6-to-6 {
+          grid-row-start: 6;
+          grid-row-end: 7;
+        }
+
+        .track-from-6-to-7 {
+          grid-row-start: 6;
+          grid-row-end: 8;
+        }
+
+        .track-from-7-to-7 {
+          grid-row-start: 7;
+          grid-row-end: 8;
+        }
+
+        .track-from-7-to-8 {
+          grid-row-start: 7;
+          grid-row-end: 9;
+        }
+
+        .track-from-8-to-8 {
+          grid-row-start: 8;
+          grid-row-end: 9;
+        }
+
+        .track-from-8-to-9 {
+          grid-row-start: 8;
+          grid-row-end: 10;
+        }
+
+        .track-from-9-to-9 {
+          grid-row-start: 9;
+          grid-row-end: 10;
+        }
+
+        .track-from-9-to-10 {
+          grid-row-start: 9;
+          grid-row-end: 11;
+        }
+
+        .track-from-10-to-10 {
+          grid-row-start: 10;
+          grid-row-end: 11;
+        }
+
+        .track-from-10-to-11 {
+          grid-row-start: 10;
+          grid-row-end: 12;
+        }
+
+        .track-from-11-to-11 {
+          grid-row-start: 11;
+          grid-row-end: 12;
+        }
+
+        .track-from-11-to-12 {
+          grid-row-start: 11;
+          grid-row-end: 13;
+        }
+
+        .track-from-12-to-12 {
+          grid-row-start: 12;
+          grid-row-end: 13;
+        }
+
+        .track-from-12-to-13 {
+          grid-row-start: 12;
+          grid-row-end: 14;
+        }
+
+        .track-from-13-to-13 {
+          grid-row-start: 13;
+          grid-row-end: 14;
+        }
+
+        .track-from-13-to-14 {
+          grid-row-start: 13;
+          grid-row-end: 15;
+        }
+
+        .track-from-14-to-14 {
+          grid-row-start: 14;
+          grid-row-end: 15;
+        }
+
+        .track-from-14-to-15 {
+          grid-row-start: 14;
+          grid-row-end: 16;
+        }
+
+        .track-from-15-to-15 {
+          grid-row-start: 15;
+          grid-row-end: 16;
+        }
+
+        .track-from-15-to-16 {
+          grid-row-start: 15;
+          grid-row-end: 17;
+        }
+
+        .track-from-16-to-16 {
+          grid-row-start: 16;
+          grid-row-end: 17;
+        }
+
+        .track-from-16-to-17 {
+          grid-row-start: 16;
+          grid-row-end: 18;
+        }
+
+        .track-from-17-to-17 {
+          grid-row-start: 17;
+          grid-row-end: 18;
+        }
+
+        .track-from-17-to-18 {
+          grid-row-start: 17;
+          grid-row-end: 19;
+        }
+
+        .track-from-18-to-18 {
+          grid-row-start: 18;
+          grid-row-end: 19;
+        }
+
+        .track-from-18-to-19 {
+          grid-row-start: 18;
+          grid-row-end: 20;
+        }
+
+        .track-from-19-to-19 {
+          grid-row-start: 19;
+          grid-row-end: 20;
+        }
+
+        .track-from-19-to-20 {
+          grid-row-start: 19;
+          grid-row-end: 21;
+        }
+
+        .track-from-20-to-20 {
+          grid-row-start: 20;
+          grid-row-end: 21;
+        }
+
+        .track-from-20-to-21 {
+          grid-row-start: 20;
+          grid-row-end: 22;
+        }
+
+        .track-from-21-to-21 {
+          grid-row-start: 21;
+          grid-row-end: 22;
+        }
+
+        .closing-keynote {
+          grid-column-start: 1;
+          grid-column-end: 4;
+          grid-row: 22;
+          border: solid 1px #333333;
+          padding: 8px;
+
+          p {
+            font-weight: 500;
+          }
+        }
+
+        .afterparty {
+          grid-column-start: 1;
+          grid-column-end: 4;
+          grid-row-start: 23;
+          grid-row-end: 25;
+          border: solid 1px #333333;
+          padding: 8px;
+
+          p {
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+}
