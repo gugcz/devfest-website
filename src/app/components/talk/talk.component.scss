@@ -1,0 +1,38 @@
+.talk {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  .body {
+    display: flex;
+    flex: 1;
+    padding: 8px;
+    flex-direction: column;
+
+    .talk-title {
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .talk-level {
+      margin: 0;
+    }
+  }
+
+  .footer {
+    background: #fdd835;
+    display: flex;
+    flex-direction: row;
+    color: black;
+    padding: 4px 8px;
+
+    .speaker, .talk-length, .language {
+      margin: 0;
+    }
+
+    .language {
+      margin-left: 16px;
+      flex: 1;
+    }
+  }
+}
