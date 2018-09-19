@@ -7,12 +7,12 @@ import { TicketsSectionComponent } from './tickets/tickets-section.component';
 import { VenueSectionComponent } from './venue/venue-section.component';
 import { SpeakersSectionComponent } from './speakers/speakers-section.component';
 import { SpeakerDetailSectionComponent } from './speaker-detail/speaker-detail.component';
+import {ScheduleSectionComponent} from './schedule/schedule-section.component';
 @Component({
   templateUrl: './sections.component.html',
   selector: 'app-sections',
 })
 export class SectionsComponent implements OnDestroy, AfterViewInit {
-
 
   private sub: any;
 
@@ -45,6 +45,14 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
           }
           case 'tickets': {
             dialogRef = this.matDialog.open(TicketsSectionComponent, {
+              width: '100vw',
+              height: '100vh',
+              maxWidth: '',
+            });
+            break;
+          }
+          case 'schedule': {
+            dialogRef = this.matDialog.open(ScheduleSectionComponent, {
               width: '100vw',
               height: '100vh',
               maxWidth: '',
