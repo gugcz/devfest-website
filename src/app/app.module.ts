@@ -61,6 +61,7 @@ import { AgmCoreModule } from '@agm/core';
 import { SpeakersSectionComponent } from './pages/sections/speakers/speakers-section.component';
 import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/speaker-detail.component';
 import { ScheduleSectionComponent } from './pages/sections/schedule/schedule-section.component';
+import { TalkComponent } from './components/talk/talk.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -89,8 +90,8 @@ import { ScheduleSectionComponent } from './pages/sections/schedule/schedule-sec
         VenuePositionMapComponent,
         SpeakersSectionComponent,
         SpeakerDetailSectionComponent
-        TicketsSectionComponent,
-        ScheduleSectionComponent
+        ScheduleSectionComponent,
+        TalkComponent
     ],
     imports: [
         BrowserModule,
