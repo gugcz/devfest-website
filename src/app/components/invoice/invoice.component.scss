@@ -1,8 +1,8 @@
 @import "../../../styles/colors";
 
 .content { 
-  color: wheat;
-
+  color: #333;
+  
   .title {
     font-size: 2.75rem;
     font-weight: 600;
@@ -29,6 +29,7 @@
     flex-direction: column;
     width: 100%;
     max-width: 350px;
+    color: #333;
 
     .spinner-container {
       text-align: center;
