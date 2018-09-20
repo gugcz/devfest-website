@@ -10,9 +10,7 @@ export class TalkComponent implements OnInit {
 
   @Input() talk: Talk;
 
-  constructor() {
-    console.log(this.talk);
-  }
+  constructor() {}
 
   ngOnInit() {
   }
