@@ -7,8 +7,8 @@
   background: transparent;
   height: 358px;
   width: 250px;
-  border-left: solid 2px #41403E;
-  border-right: solid 2px #41403E;
+  border: 10px solid transparent;
+  border-image: url("../../../assets/border-left-right.png") 30 stretch; 
   color: #333343;
   box-shadow: none!important;
 
@@ -36,11 +36,15 @@
 
       .price {
         width: 100%;
-        color: $yellow;
         font-size: 1.75rem;
         font-weight: 500;
         margin: 16px 0 0 0;
         text-align: center;
+      }
+
+      .price.actual{
+        color: $yellow;
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
       }
 
       .individual {
@@ -71,7 +75,9 @@
       width: 200px;
       padding-top: 7px;
       margin-top: 12px;
-      box-shadow: 20px 38px 34px -26px hsla(0,0%,0%,.2);
+      box-shadow: none;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      border:solid 2px #41403E;
     }
 
     .sold-out {
@@ -85,15 +91,6 @@
   }
 }
 
-.ticket-card.actual {
-  border: 2px solid rgba(253, 216, 53, 0.7);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  width: 246px;
-}
-
-.ticket-card.actual:hover {
-  box-shadow: rgba(253, 216, 53, 0.5) 0 0 30px 5px;
-}
 
 
 @media only screen and (min-width: 1095px) {
