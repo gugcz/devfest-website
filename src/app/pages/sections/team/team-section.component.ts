@@ -5,7 +5,7 @@ import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AngularFireStorage } from 'angularfire2/storage';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
-
+import { animate, style, transition, trigger } from '@angular/animations';
 interface Organizer {
   name: string;
   title: string;
@@ -20,11 +20,20 @@ interface Organizer {
 @Component({
   selector: 'app-team-section',
   templateUrl: './team-section.component.html',
-  styleUrls: ['./team-section.component.scss']
+  styleUrls: ['./team-section.component.scss'],
+  animations: [trigger('fadeInOut', [
+      transition(':enter', [   // :enter is alias to 'void => *'
+          style({ opacity: 0 }),
+          animate('500ms', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [   // :leave is alias to '* => void'
+          animate('500ms', style({ opacity: 0 }))
+      ])
+  ])]
 })
 export class TeamSectionComponent implements OnInit {
 
-  organizers: Organizer[];
+  organizers: Organizer[] = [];
 
   constructor(private firestore: AngularFirestore, private iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer, private storage: AngularFireStorage,
@@ -54,12 +63,13 @@ export class TeamSectionComponent implements OnInit {
   }
 
   async processOrganizers() {
-    const newList = [];
     const organizersSnapshot = await this.firestore.collection('organizers').ref.get();
-    organizersSnapshot.docs.sort((a, b) => a.data().cardPosition - b.data().cardPosition).forEach((organizer) => {
-      const data = organizer.data();
+    const organizerData = organizersSnapshot.docs.sort((a, b) => a.data().cardPosition - b.data().cardPosition);
+    for (let i = 0; i < organizerData.length; i++) {
+      const data = organizerData[i].data();
+      const photo = await this.findOrganizerPhoto(data.photo);
       const point: Organizer = {
-        photo: data.photo,
+        photo: photo,
         name: data.name,
         title: data.position,
         facebook: data.facebook ? data.facebook : null,
@@ -68,20 +78,15 @@ export class TeamSectionComponent implements OnInit {
         twitter: data.twitter ? data.twitter : null,
         googleplus: data.googleplus ? data.googleplus : null,
       };
-      newList.push(point);
-    });
-    for (const organizer of newList) {
-      organizer.photo = await this.findOrganizerPhoto(organizer.photo);
+      this.organizers.push(point);
     }
-
-    this.organizers = newList;
   }
 
   async findOrganizerPhoto(folder: string) {
     return await this.storage.ref(folder).getDownloadURL().toPromise();
   }
 
-  close(){
+  close() {
       this.dialogRef.close();
   }
 
