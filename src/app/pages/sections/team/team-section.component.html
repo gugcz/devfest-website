@@ -12,7 +12,7 @@
       <div class="organizer" *ngFor="let organizer of organizers">
         <img [src]="organizer.photo" class="image-organizer">
         <p style="font-weight: 500; font-size: 1.3rem; margin-bottom: 10px;">{{organizer.name}}</p>
-        <div style="font-weight: 300; font-size: 1.2rem">{{organizer.title}}</div>
+        <div style="font-weight: 300; font-size: 1.2rem; text-align: center; min-height: 48px;" [innerHTML]="organizer.title">s</div>
         <div>
             <a mat-icon-button *ngIf="organizer.twitter" [href]="'https://www.twitter.com/' + organizer.twitter"
             target="_blank" class="link">
