@@ -1,29 +1,51 @@
-mat-card.wrote-about-us {
-  width: 256px;
-  height: calc(100% - 48px);
+.media-others-container {
 
-  .content {
-    .list {
-      font-size: 1rem;
+  .title {
+    font-family: MyMediaval, serif;
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 0 0 8px;
+  }
 
-      .link-container {
-        width: 100%;
+  .link-container {
+    border: 10px solid transparent;
+    border-image: url("../../../assets/border-bottom.png") 30 stretch; 
+    margin: 15px;
+    font-size: 1.5rem;
 
-        .item {
-          .link {
-            color: white;
-            display: block;
-            padding: 12px 0;
-            font-size: 16px;
-            width: 100%;
-            white-space: normal !important;
-          }
-        }
+    .link {
+      text-align: left;
+      width: 100%;
+
+      a {
+        color: inherit;
+        text-decoration: none;
       }
+    }
+
+    .source-container {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+
+      .source {
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  .loading-image-container {
+    display: flex;
+    justify-content: center;
+    .loading-image {
+      height: 75%;
+      width: 75%;
     }
   }
 }
 
-.mat-list .mat-list-item .mat-list-item-content {
-  padding: 0 !important;
+@media only screen and (min-width: 1376px) {
+  .media-others-container .title {
+      font-size: 3rem;
+  }
 }

@@ -3,7 +3,7 @@
     <h3 class="title" [innerHtml]="ticket.title"></h3>
     <div class="prices-container">
       <div *ngFor="let price of ticket.price; first as isFirst" [ngClass]="{'individual': isFirst}">
-        <h4 class="price">
+        <h4 class="price" [ngClass]="{'actual': ticket.actual}">
           {{price.price | number}}€
         </h4>
         <h4 class="subtitle">

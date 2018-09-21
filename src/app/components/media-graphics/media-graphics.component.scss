@@ -1,14 +1,24 @@
-mat-card {
-  width: 256px;
-  height: calc(100% - 48px);
+.media-graphics-container {
+  .title {
+    font-family: MyMediaval, serif;
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 0 0 8px;
+  }
 
   .image-item {
     display: grid;
     grid-template-columns: 72px 1fr 40px;
+    border: 10px solid transparent;
+    border-image: url("../../../assets/border-bottom.png") 30 stretch; 
     grid-row-gap: 16px;
 
     .thumbnail {
       height: 32px;
+    }
+
+    .name {
+      font-size: 1.5rem;
     }
 
     .thumbnail, .download-button {
@@ -18,5 +28,15 @@ mat-card {
     .thumbnail, .name, .download-button {
       align-self: center;
     }
+  }
+
+  .loading-image {
+    width: 100%;
+  }
+}
+
+@media only screen and (min-width: 1376px) {
+  .media-graphics-container .title {
+    font-size: 3rem;
   }
 }

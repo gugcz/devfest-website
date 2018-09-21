@@ -1,18 +1,18 @@
-<mat-card *ngIf="$press | async;let press; else loadingImage" class="wrote-about-us">
-    <mat-card-title>
-        Wrote about us
-    </mat-card-title>
-    <mat-card-content class="content">
-        <div class="list">
-            <div class="link-container">
-              <div class="item" *ngFor="let one of press">
-                  <a class="link" href="{{one.url}}" target="_blank">{{one.name}} | {{one.source}}</a>
-                  <mat-divider class="divider"></mat-divider>
-              </div>
-            </div>
-        </div>
-    </mat-card-content>
-</mat-card>
+<div class="media-others-container">
+  <div class="title">
+    Wrote about us
+  </div>
+  <div *ngIf="$press | async;let press; else loadingImage">
+    <div class="link-container" *ngFor="let one of press">
+      <div class="link"><a href="{{one.url}}" target="_blank">{{one.name}}</a></div>
+      <div class="source-container">
+        <span class="source">-&nbsp;{{one.source}}</span>
+      </div>
+    </div>
+  </div>
+</div>
 <ng-template #loadingImage>
-    <mat-spinner [diameter]="115"></mat-spinner>
+  <div class="loading-image-container">
+    <img class="loading-image" src="assets/mediaval-loading.gif">
+  </div>
 </ng-template>

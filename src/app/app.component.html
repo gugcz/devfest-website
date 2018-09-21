@@ -1,39 +1,10 @@
-<mat-sidenav-container>
-    <mat-sidenav #sidenav>
-        <div class="branding"><img src="assets/cover-logo.png" alt="DevFest logo"/></div>
-        <mat-nav-list>
-            <a mat-list-item *ngFor="let item of navigation" (click)="sidenav.close()"
-               [routerLink]="[item.link]">
-                {{item.label}}
-            </a>
-        </mat-nav-list>
-    </mat-sidenav>
-    <div class="wrapper">
-        <div class="toolbar"
-             [ngClass]="{'dark-toolbar': menuType === 'dark-toolbar', 'transparent': menuType === 'transparent', 'hidden': !showMenu}">
-            <mat-toolbar>
-                <button mat-icon-button *ngIf="mobile" (click)="sidenav.open()">
-                    <mat-icon>menu</mat-icon>
-                </button>
-                <a class="logo-button" *ngIf="!route.match('Home')" [routerLink]="['/']">
-                    <img class="home-logo" src="assets/cover-logo.png" alt="DevFest logo"/>
-                </a>
-                <span class="spacer"></span>
-                <div class="button-row" *ngIf="!mobile">
-                    <a *ngFor="let item of navigation; let index = index"
-                       class="nav-button mat-button nav-button-{{index}}" mat-button [routerLink]="[item.link]"
-                       [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">{{item.label}}</a>
-                    <hr class="line">
-                </div>
-            </mat-toolbar>
-        </div>
-
-        <div class="content"
-             [@routerTransition]="o.isActivated && o.activatedRoute.routeConfig.path">
-            <router-outlet #o="outlet"></router-outlet>
-        </div>
-    </div>
-    <footer>
-        <app-footer></app-footer>
-    </footer>
-</mat-sidenav-container>
+<div class="wrapper" style="mat-elevation-z3">
+  <div class="content"
+       [@routerTransition]="o.isActivated && o.activatedRoute.routeConfig.path">
+    <router-outlet #o="outlet"></router-outlet>
+  </div>
+</div>
+<app-partners></app-partners>
+<footer>
+  <app-footer></app-footer>
+</footer>
