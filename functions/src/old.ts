@@ -113,12 +113,13 @@ function mergeTickets(tickets) {
         const startDate = new Date(individualTicket.attributes['start-at']);
         const endDate = new Date(individualTicket.attributes['end-at']);
         const state = individualTicket.attributes['state'];
+        const sold = (individualTicket.attributes['quantity'] === individualTicket.attributes['quantity-sold']);
         return {
             actual: ((state === 'on_sale') && (now >= startDate && now <= endDate)),
             description: description,
             price: prices,
             order: 1,
-            soldOut: false,
+            soldOut: sold,
             title: basicTitle,
             support: false,
             url: 'https://ti.to/devfest-cz/2018/'
