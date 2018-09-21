@@ -1,37 +1,38 @@
-<mat-dialog-content class="content">
+<div class="content">
     <h1 class="title">Order by invoice</h1>
     <div *ngIf="!done else thank">
         <p class="text">Summary: <span *ngIf="(countTickets && price && priceCompany); else loadingPrice">{{priceCompany*countTickets}}€
                 ({{price*priceCompany*countTickets | number : '1.2-2'}} CZK)</span></p>
         <form class="form">
-            <mat-form-field class="form-field" color="accent">
-                <input  [(ngModel)]="countTickets" name="countTickets" class="input" matInput placeholder="Count*"  type="number" min="00">
+            <mat-form-field class="form-field" appearance="fill" color="accent">
+                <input [(ngModel)]="countTickets" name="countTickets" class="input" matInput placeholder="Count*" type="number"
+                    min="00">
             </mat-form-field>
-            <mat-form-field class="form-field" color="accent">
-                <input [formControl]="email" class="input" matInput  placeholder="Email for delivering invoice*">
+            <mat-form-field class="form-field" appearance="fill" color="accent">
+                <input [formControl]="email" class="input" matInput placeholder="Email for delivering invoice*">
                 <mat-error *ngIf="email.invalid">{{getEmailErrorMessage()}}</mat-error>
             </mat-form-field>
-            <mat-form-field class="form-field" color="accent">
-                <input [(ngModel)]="companyName" name="companyName" class="input" matInput  placeholder="Company name*">
+            <mat-form-field class="form-field" appearance="fill" color="accent">
+                <input [(ngModel)]="companyName" name="companyName" class="input" matInput placeholder="Company name*">
             </mat-form-field>
-            <mat-form-field class="form-field" color="accent">
-                <input [(ngModel)]="street"  name="street"class="input" matInput  placeholder="Street*">
+            <mat-form-field class="form-field" appearance="fill" color="accent">
+                <input [(ngModel)]="street" name="street" class="input" matInput placeholder="Street*">
             </mat-form-field>
-            <mat-form-field class="form-field" color="accent">
+            <mat-form-field class="form-field" appearance="fill" color="accent">
                 <input [(ngModel)]="city" name="city" class="input" matInput placeholder="City*">
             </mat-form-field>
-            <mat-form-field class="form-field" color="accent">
-                <input [(ngModel)]="zip"  name="zip"class="input" matInput placeholder="Zip code (PSČ)*">
+            <mat-form-field class="form-field" appearance="fill" color="accent">
+                <input [(ngModel)]="zip" name="zip" class="input" matInput placeholder="Zip code (PSČ)*">
             </mat-form-field>
-            <mat-form-field class="form-field" color="accent">
-                <input [(ngModel)]="registrationNumberIC"  name="registrationNumberIC"class="input" matInput  placeholder="Registration number (IČ)*">
+            <mat-form-field class="form-field" appearance="fill">
+                <input [(ngModel)]="registrationNumberIC" name="registrationNumberIC" class="input" matInput placeholder="Registration number (IČ)*">
             </mat-form-field>
-            <mat-form-field class="form-field" color="accent">
-                <input [(ngModel)]="registrationNumberDIC"  name="registrationNumberDIC" class="input" matInput  placeholder="Registration number (DIČ)">
+            <mat-form-field class="form-field" appearance="fill" color="accent">
+                <input [(ngModel)]="registrationNumberDIC" name="registrationNumberDIC" class="input" matInput placeholder="Registration number (DIČ)">
             </mat-form-field>
-            <mat-form-field color="accent">
+            <mat-form-field appearance="fill" color="accent">
                 <mat-label>Country*</mat-label>
-                <mat-select [(ngModel)]="country"  name="country">
+                <mat-select [(ngModel)]="country" name="country">
                     <mat-option value="AF">Afghanistan</mat-option>
                     <mat-option value="AX">Åland Islands</mat-option>
                     <mat-option value="AL">Albania</mat-option>
@@ -287,7 +288,8 @@
                 <button mat-raised-button class="invoice-button cancel" color="warn" (click)="goToHome()">Cancel
                 </button>
                 <button mat-raised-button *ngIf="(countTickets && !email.invalid && companyName && street && city
-                && zip && registrationNumberIC && country)" class="invoice-button buy" color="accent" (click)="sendInvoice()">Buy
+                    && zip && registrationNumberIC && country)"
+                    class="invoice-button buy" color="accent" (click)="sendInvoice()">Buy
                 </button>
             </div>
             <div class="spinner-container">
@@ -295,15 +297,16 @@
             </div>
         </form>
     </div>
-    <ng-template #thank>
-        <p class="text">
-            You gonna receive email with instructions early
-        </p>
-        <div>
-            <button mat-raised-button color="accent" (click)="goToHome()">OK</button>
-        </div>
-    </ng-template>
-    <ng-template #loadingPrice>
-        Price is loading...
-    </ng-template>
-</mat-dialog-content>
+</div>
+
+<ng-template #thank>
+    <p class="text">
+        You gonna receive email with instructions early
+    </p>
+    <div>
+        <button mat-raised-button color="accent" (click)="goToHome()">OK</button>
+    </div>
+</ng-template>
+<ng-template #loadingPrice>
+    Price is loading...
+</ng-template>
