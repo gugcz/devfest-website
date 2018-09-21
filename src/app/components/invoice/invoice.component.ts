@@ -38,7 +38,7 @@ export class InvoiceComponent implements OnInit {
         });
         const getCurrentExchangeRate = firebase.functions().httpsCallable('invoiceGetCurrentExchangeRate');
         getCurrentExchangeRate({ from: 'EUR', to: 'CZK' }).then((result) => {
-           this.price = result.data.price;
+            this.price = result.data.price;
         });
     }
 
@@ -57,11 +57,13 @@ export class InvoiceComponent implements OnInit {
             registrationNumberIC: this.registrationNumberIC,
             country: this.country
         };
-        if (this.registrationNumberDIC.length > 0) {
-            invoice.registrationNumberDIC = this.registrationNumberDIC;
+        if (this.registrationNumberDIC !== undefined) {
+            if (this.registrationNumberDIC.length > 0) {
+                invoice.registrationNumberDIC = this.registrationNumberDIC;
+            }
         }
         this.loading = true;
-        this.afStore.collection('invoices').add(invoice).then(() => {
+            this.afStore.collection('invoices').add(invoice).then(() => {
             this.loading = false;
             this.done = true;
         });
@@ -69,7 +71,7 @@ export class InvoiceComponent implements OnInit {
 
     getEmailErrorMessage() {
         return this.email.hasError('email') ? 'Not a valid email' :
-        '';
+            '';
     }
 
 }
