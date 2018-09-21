@@ -3,9 +3,12 @@
 .app-loading {
   background-color: $dark-background;
   .logo {
-    width: 100px;
-    height: 100px;
-    background: url('../assets/gdg-logo.png') center center no-repeat;
+    width: 300px;
+    height: 300px;
+    background: url('../assets/main-mediaval-loading.gif');
+    background-position: center center;
+    background-repeat: no-repeat; 
+    background-size: cover;
   }
 }
 
@@ -13,10 +16,11 @@
   .logo {
     position: absolute;
     top: calc(50% - 50px);
-    width: 100px;
-    height: 100px;
-    background: url('../assets/gdg-logo.png') center center no-repeat;
+    width: 300px;
+    height: 300px;
+    background: url('../assets/main-mediaval-loading.gif');
+    background-position: center center;
+    background-repeat: no-repeat; 
+    background-size: cover;
   }
 }
-
-.loading-child {}

@@ -1,19 +1,76 @@
-mat-card.press-card {
-  width: 256px;
-  height: calc(100% - 48px);
+.media-others-container {
 
-  .content {
-    .list {
-      font-size: 1rem;
-      .link-container {
-        padding: 8px 0;
+  .title {
+    font-family: MyMediaval, serif;
+    font-size: 2.5rem;
+    text-align: center;
+  }
+
+  .flags-container {
+    display: grid;
+    grid-row-gap: 16px;
+    padding-top: 32px;
+
+    .link-container {
+      display: flex;
+      justify-content: center;
+      height: 56px;
+
+      .link {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+        background: no-repeat center;
+        background-size: auto 56px;
         width: 100%;
-        .link {
-          width: 100%;
-          margin: 5px 0 !important;
-          white-space: normal !important;
+        max-width: 280px;
+        height: 56px;
+
+        .text {
+          font-size: 1.15rem;
+          width: 70%;
+          max-width: 70%;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          padding-top: 8px;
         }
       }
+
+      .link.even {
+        background-image: url("../../../assets/stuha-even.png");
+      }
+
+      .link.odd {
+        background-image: url("../../../assets/stuha-odd.png");
+      }
     }
+  }
+
+  .loading-image-container {
+    display: flex;
+    justify-content: center;
+    .loading-image {
+      height: 75%;
+      width: 75%;
+    }
+  }
+}
+
+@media only screen and (min-width: 425px) {
+  .media-others-container .flags-container .link-container .link {
+    background-size: 100% 56px;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .media-others-container .title {
+    font-size: 3rem;
   }
 }

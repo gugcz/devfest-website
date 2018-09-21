@@ -1,40 +1,80 @@
-mat-card.contact-card {
-  width: 256px;
-  height: calc(100% - 48px);
-  background-color: #818181;
-
+.media-contact-container {
   .title {
+    font-family: MyMediaval, serif;
+    font-size: 2.5rem;
     text-align: center;
+    margin: 0 0 8px;
   }
 
-  .contact-image {
-    width: 200px;
-    border-radius: 100px;
-  }
-
-  .image-holder {
-    width: 100%;
-    text-align: center;
-  }
-
-  .contact-name {
-    text-align: center;
-  }
-
-  .contact {
+  .contact-container {
     display: flex;
     justify-content: center;
-    color: white;
-    text-decoration: none;
+    align-items: center;
 
-    .text {
-      padding-top: 4px;
-      padding-left: 8px;
+    .contact-row {
+      display: flex;
+      --webkit-flex-direction: column-reverse;
+      flex-direction: column-reverse;
+      align-items: center;
+
+      .contact {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+
+        .name {
+          font-size: 1.5rem;
+          font-weight: bold;
+        }
+
+        .email, .phone {
+          color: inherit;
+          font-size: 1.25rem;
+          outline: none;
+          text-decoration: none;
+        }
+      }
+
+      .image-container {
+        .image {
+          border-radius: 50%;
+          height: 200px;
+          width: 200px;
+        }
+      }
     }
   }
+}
 
-  .contact.phone {
-    margin-top: 10px;
+@media only screen and (min-width: 1376px) {
+  .media-contact-container {
+    .title {
+      font-size: 3rem;
+    }
+
+    .contact-container .contact-row {
+      flex-direction: row;
+      --webkit-flex-direction: row;
+
+      .contact {
+        margin-right: 32px;
+
+        .name {
+          font-size: 2.5rem;
+        }
+
+        .email, .phone {
+          font-size: 1.5rem;
+        }
+      }
+
+      .image-container {
+        .image {
+          height: 256px;
+          width: 256px;
+        }
+      }
+    }
   }
-
 }

@@ -41,9 +41,15 @@
 
         .logo {
           display: block;
-          height: 64px;
+          height: 50px;
         }
       }
     }
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .container .partner-section .logos-container .link .logo {
+    height: 64px;
   }
 }

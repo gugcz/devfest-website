@@ -1,30 +1,25 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
-import {TeamComponent} from './pages/team/team.component';
 import {HomeComponent} from './pages/home/home.component';
-import {MediaComponent} from './pages/media/media.component';
 import { AppInvitationComponent } from './components/app-invitation/app-invitation.component';
+import { SectionsComponent } from './pages/sections/sections.component';
 
 const routes: Routes = [
     {
         path: '',
         component: HomeComponent,
-        pathMatch: 'full',
-    },
-    {
-        path: 'team',
-        component: TeamComponent,
-        pathMatch: 'full',
-    },
-    {
-        path: 'media',
-        component: MediaComponent,
-        pathMatch: 'full',
-    },
-    {
-        path: 'app-invitation',
-        redirectTo : '', // TODO - after created app use AppInvitationComponent
-        pathMatch: 'full'
+        children: [
+            {
+                path: 'section/:type',
+                component: SectionsComponent,
+                pathMatch: 'full'
+            },
+            {
+                path: 'app-invitation',
+                redirectTo : '', // TODO - after created app use AppInvitationCo mponent
+                pathMatch: 'full'
+            },
+        ]
     },
     {
         path: '**',

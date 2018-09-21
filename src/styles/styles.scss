@@ -15,10 +15,6 @@ $frontend-app-theme: mat-dark-theme($anms-black-primary, $anms-black-accent, $an
   font-weight: 400;
 }
 
-a {
-  text-decoration: none;
-}
-
 @font-face {
   font-family: Roboto;
   font-style: normal;
@@ -47,6 +43,24 @@ a {
   src: url(../assets/fonts/Roboto-Black.ttf);
 }
 
+@font-face {
+  font-family: MyMediaval;
+  src: url(../assets/fonts/Deutsch.ttf);
+  font-weight:400;
+}
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: local('Material Icons'),
+  local('MaterialIcons-Regular'),
+  url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
+  url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
+  url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
+}
+
 body, html {
   height: 100%;
   margin: 0;
@@ -60,27 +74,6 @@ body, html {
   justify-content: center;
 }
 
-.app-loading-child .spinner {
-  height: 200px;
-  width: 200px;
-  animation: rotate 2s linear infinite;
-  transform-origin: center center;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-}
-
-.app-loading-child .spinner .path {
-  stroke-dasharray: 1, 200;
-  stroke-dashoffset: 0;
-  animation: dash 1.5s ease-in-out infinite;
-  stroke-linecap: round;
-  stroke: #ddd;
-}
-
 .app-loading {
   position: relative;
   display: flex;
@@ -88,27 +81,6 @@ body, html {
   align-items: center;
   justify-content: center;
   height: 100%;
-}
-
-.app-loading .spinner {
-  height: 200px;
-  width: 200px;
-  animation: rotate 2s linear infinite;
-  transform-origin: center center;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-}
-
-.app-loading .spinner .path {
-  stroke-dasharray: 1, 200;
-  stroke-dashoffset: 0;
-  animation: dash 1.5s ease-in-out infinite;
-  stroke-linecap: round;
-  stroke: #ddd;
 }
 
 @keyframes rotate {
@@ -144,4 +116,64 @@ body mat-toolbar.mat-toolbar a.mat-button div.mat-button-focus-overlay {
 .email-error-snackbar {
   background-color: $dark-background;
   color: $error-message;
+}
+
+.mat-dialog-container{
+  background: url(../assets/scroll-template.jpg);
+  color: #333333;
+  padding: 16px 12px !important;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #E3C190; 
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #603813; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #42210B; 
+}
+
+.material-icons {
+  font-family: 'Material Icons', serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+app-team-section {
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+}
+
+@media screen and (min-width: 1376px) {
+  .cdk-overlay-pane {
+    max-width: 1376px;
+    max-height: 90vh;
+  }
 }
