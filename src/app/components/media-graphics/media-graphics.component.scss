@@ -9,6 +9,8 @@
   .image-item {
     display: grid;
     grid-template-columns: 72px 1fr 40px;
+    border: 10px solid transparent;
+    border-image: url("../../../assets/border-bottom.png") 30 stretch; 
     grid-row-gap: 16px;
 
     .thumbnail {
@@ -16,7 +18,7 @@
     }
 
     .name {
-      font-size: 1rem;
+      font-size: 1.5rem;
     }
 
     .thumbnail, .download-button {
