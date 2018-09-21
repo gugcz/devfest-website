@@ -1,11 +1,11 @@
-import {Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
-import {MatDialog, MatDialogRef} from '@angular/material';
-import {TeamSectionComponent} from './team/team-section.component';
-import {MediaSectionComponent} from './media/media-section.component';
-import {TicketsSectionComponent} from './tickets/tickets-section.component';
-import {SpeakersSectionComponent} from './speakers/speakers-section.component';
-import {SpeakerDetailSectionComponent} from './speaker-detail/speaker-detail.component';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { TeamSectionComponent } from './team/team-section.component';
+import { MediaSectionComponent } from './media/media-section.component';
+import { TicketsSectionComponent } from './tickets/tickets-section.component';
+import { SpeakersSectionComponent } from './speakers/speakers-section.component';
+import { SpeakerDetailSectionComponent } from './speaker-detail/speaker-detail.component';
 
 @Component({
   templateUrl: './sections.component.html',
@@ -52,10 +52,17 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             break;
           }
           case 'speakers': {
-            dialogRef = this.matDialog.open(SpeakersSectionComponent, {
+            const speacialRef = this.matDialog.open(SpeakersSectionComponent, {
               width: '100vw',
               height: '100vh',
               maxWidth: '',
+            });
+            speacialRef.afterClosed().subscribe((result) => {
+              if (result != null) {
+                this.router.navigateByUrl('/section/speaker-detail/' + result);
+              } else {
+                this.router.navigateByUrl('/');
+              }
             });
             break;
           }
@@ -65,10 +72,10 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
               width: '100vw',
               height: '100vh',
               maxWidth: '',
-              data: {id: extra}
+              data: { id: extra }
             });
             speacialRef.afterClosed().subscribe(() => {
-              this.router.navigateByUrl('/sections/speakers');
+              this.router.navigateByUrl('/section/speakers');
             });
             break;
           }

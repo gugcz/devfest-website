@@ -103,7 +103,7 @@ export class SpeakersSectionComponent implements OnInit {
   }
 
   click(id) {
-    console.log(id);
+    this.dialogRef.close(id);
   }
 
 }

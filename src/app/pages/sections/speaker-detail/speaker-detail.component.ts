@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {MatDialogRef, MatIconRegistry} from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
 import {TeamSectionComponent} from '../team/team-section.component';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFireStorage } from 'angularfire2/storage';
 
 @Component({
   selector: 'app-speaker-detail-section',
@@ -10,7 +12,8 @@ import {TeamSectionComponent} from '../team/team-section.component';
 })
 export class SpeakerDetailSectionComponent implements OnInit {
 
-  constructor(private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public dialogRef: MatDialogRef<TeamSectionComponent>) {
+  constructor(private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public dialogRef: MatDialogRef<TeamSectionComponent>,
+     private firestore: AngularFirestore, private storage: AngularFireStorage) {
     iconRegistry.addSvgIcon(
       'facebook',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/facebook.svg'));
