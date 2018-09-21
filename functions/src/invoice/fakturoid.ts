@@ -122,7 +122,7 @@ export async function createInvoice(fakturoidID, countTickets) {
                     "name": "Devfest 2018",
                     "quantity": countTickets,
                     "unit_name": "tickets",
-                    "unit_price": price,
+                    "unit_price": (price / 1.21),
                     "vat_rate": "21"
                 }
             ]
