@@ -1,17 +1,45 @@
 import { Component, OnInit } from '@angular/core';
-import {MatDialogRef, MatIconRegistry} from '@angular/material';
-import {DomSanitizer} from '@angular/platform-browser';
-import {Router} from '@angular/router';
+import { MatDialogRef, MatIconRegistry } from '@angular/material';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFireStorage } from 'angularfire2/storage';
+
+interface Speaker {
+  id: string;
+  name: string;
+  companies: string[];
+  intro: string;
+  photo: string;
+  residence: string;
+  facebook: string;
+  instagram: string;
+  linkedin: string;
+  twitter: string;
+  googleplus: string;
+}
 
 @Component({
   selector: 'app-speakers-section',
   templateUrl: './speakers-section.component.html',
-  styleUrls: ['./speakers-section.component.scss']
+  styleUrls: ['./speakers-section.component.scss'],
+  animations: [trigger('fadeInOut', [
+    transition(':enter', [   // :enter is alias to 'void => *'
+      style({ opacity: 0 }),
+      animate('500ms', style({ opacity: 1 }))
+    ]),
+    transition(':leave', [   // :leave is alias to '* => void'
+      animate('500ms', style({ opacity: 0 }))
+    ])
+  ])]
 })
 export class SpeakersSectionComponent implements OnInit {
 
+  speakers: Speaker[] = [];
+
   constructor(public dialogRef: MatDialogRef<SpeakersSectionComponent>, private iconRegistry: MatIconRegistry,
-              sanitizer: DomSanitizer, private router: Router) {
+    sanitizer: DomSanitizer, private router: Router, private firestore: AngularFirestore, private storage: AngularFireStorage) {
     iconRegistry.addSvgIcon(
       'facebook',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team-socials/facebook.svg'));
@@ -33,14 +61,49 @@ export class SpeakersSectionComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.processSpeakers();
   }
+
+  async processSpeakers() {
+    const speakersSnapshot = await this.firestore.collection('speakers').ref.get();
+    const speakersData = speakersSnapshot.docs.sort((a, b) => a.data().cardPosition - b.data().cardPosition);
+    for (let i = 0; i < speakersData.length; i++) {
+      const data = speakersData[i].data();
+      const id = speakersData[i].ref.id;
+      const photo = await this.findPhoto(data.photo);
+      const companies = [];
+      for (let y = 0; y < data.companies.length; y++) {
+          const logo = await this.findPhoto(data.companies[y]);
+          companies.push(logo);
+      }
+      const one: Speaker = {
+        id: id,
+        photo: photo,
+        name: data.name,
+        companies: companies,
+        residence: data.residence,
+        intro: data.intro,
+        facebook: data.facebook ? data.facebook : null,
+        instagram: data.instagram ? data.instagram : null,
+        linkedin: data.linkedin ? data.linkedin : null,
+        twitter: data.twitter ? data.twitter : null,
+        googleplus: data.googleplus ? data.googleplus : null,
+      };
+      this.speakers.push(one);
+    }
+  }
+
+  async findPhoto(folder: string) {
+    return await this.storage.ref(folder).getDownloadURL().toPromise();
+  }
+
 
   close() {
     this.dialogRef.close();
   }
 
-  click() {
-    console.log('click');
+  click(id) {
+    console.log(id);
   }
 
 }
