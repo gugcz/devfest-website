@@ -1,5 +1,15 @@
 @import "../../../styles/colors";
 
+.mat-input-element {
+  font-weight: 400;
+  font-size: 1.4rem;
+}
+
+::placeholder { 
+  color: #707076;
+  opacity: 1; 
+}
+
 .content { 
   color: #333;
   
@@ -14,6 +24,9 @@
     line-height: 24px;
     margin-bottom: 24px;
     width: 100%;
+    font-weight: 400;
+    text-align: center;
+    font-size: 1.2rem;
     max-width: 350px;
   }
 
