@@ -25,6 +25,7 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
       let dialogRef;
       this.sub = this.route.params.subscribe(params => {
         const type = params['type'];
+        const extra = params['extra'];
         switch (type) {
           case 'team': {
             dialogRef = this.matDialog.open(TeamSectionComponent, {
@@ -59,11 +60,15 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             break;
           }
           case 'speaker-detail': {
-            dialogRef = this.matDialog.open(SpeakerDetailSectionComponent, {
+            const speacialRef = this.matDialog.open(SpeakerDetailSectionComponent, {
               panelClass: 'speaker-detail-dialog',
               width: '100vw',
               height: '100vh',
               maxWidth: '',
+              data: {id: extra}
+            });
+            speacialRef.afterClosed().subscribe(() => {
+              this.router.navigateByUrl('/sections/speakers');
             });
             break;
           }
