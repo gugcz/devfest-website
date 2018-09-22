@@ -57,6 +57,9 @@ import { MenuComponent } from './components/menu/menu.component';
 import { MediaSectionComponent } from './pages/sections/media/media-section.component';
 import { TicketsSectionComponent } from './pages/sections/tickets/tickets-section.component';
 import { VenueSectionComponent } from './pages/sections/venue/venue-section.component';
+import { VenuePositionMapComponent } from './components/venue-position-map/venue-position-map.component';
+import { AgmCoreModule } from '@agm/core';
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -82,7 +85,8 @@ import { VenueSectionComponent } from './pages/sections/venue/venue-section.comp
         MenuComponent,
         MediaSectionComponent,
         TicketsSectionComponent,
-        VenueSectionComponent
+        VenueSectionComponent,
+        VenuePositionMapComponent
     ],
     imports: [
         BrowserModule,
@@ -115,7 +119,10 @@ import { VenueSectionComponent } from './pages/sections/venue/venue-section.comp
         MatSnackBarModule,
         MatTableModule,
         MatPaginatorModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        AgmCoreModule.forRoot({
+            apiKey: 'AIzaSyAyh_pL4QhU2XjcGI9QyRfPRI2ZqEEF0aA'
+        })
     ],
     providers: [],
     entryComponents: [
