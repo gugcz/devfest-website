@@ -13,8 +13,11 @@
     flex-direction: column;
     padding: 16px 16px 32px;
     flex-grow: 1;
-    min-height: calc(100vh - 48px);
-    background-image: linear-gradient(180deg, rgba(21, 25, 38, 0.01) 0%, rgba(24, 32, 17, 0.1) 99%);
+    min-height: 100vh;
+    background:     linear-gradient(
+      rgba(0, 0, 0, 0.3), 
+      rgba(0, 0, 0, 0.3)
+    );
 
     .header {
       display: flex;
@@ -50,6 +53,7 @@
       .menu-container {
         display: flex;
         flex-grow: 1;
+        margin-bottom: 25px;
         align-items: flex-end;
         justify-content: center;
       }
@@ -115,7 +119,7 @@
 @media all and (min-width: 1024px) and (orientation: portrait) {
   .container .cover {
     padding: 64px;
-    min-height: calc(100vh - 128px);
+    min-height: 100vh;
 
     .header {
       .logo {
@@ -132,7 +136,7 @@
 @media screen and (min-width: 1024px) and (orientation: landscape) {
   .container .cover {
     padding: 64px;
-    min-height: calc(100vh - 128px);
+    min-height: 100vh;
     .header {
       .logo {
         width: 188px;
