@@ -67,15 +67,12 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             break;
           }
           case 'speaker-detail': {
-            const speacialRef = this.matDialog.open(SpeakerDetailSectionComponent, {
+            dialogRef = this.matDialog.open(SpeakerDetailSectionComponent, {
               panelClass: 'speaker-detail-dialog',
               width: '100vw',
               height: '100vh',
               maxWidth: '',
               data: { id: extra }
-            });
-            speacialRef.afterClosed().subscribe(() => {
-              this.router.navigateByUrl('/section/speakers');
             });
             break;
           }
