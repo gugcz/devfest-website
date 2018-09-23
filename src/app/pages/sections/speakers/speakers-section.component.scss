@@ -20,6 +20,13 @@
     text-align: center;
   }
 
+  .subtitle {
+    font-family: MyMediaval, serif;
+    font-size: 1.2rem;
+    margin-top: 0;
+    text-align: center;
+  }
+
   .body {
     display: flex;
     align-items: center;
@@ -62,6 +69,8 @@
         .intro {
           font-weight: 400;
           font-size: 1.2rem;
+          max-height: 165px;
+          min-height: 165px;
         }
       }
     }
