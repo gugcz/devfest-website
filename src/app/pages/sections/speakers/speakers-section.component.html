@@ -18,10 +18,8 @@
             <img [src]="photo" class="photo" [@fadeInOut]>
           </div>
           <p class="name">{{speaker.name}}</p>
-          <span *ngFor="let company of speaker.companies">
-            <span *ngIf="company | async as companyphoto; else loadingCompany">
+          <span *ngIf="speaker.companies | async as companyphoto; else loadingCompany">
                <img [src]="companyphoto" class="company" [@fadeInOut]>
-            </span>
           </span>
           <p class="intro">{{speaker.about}}</p>
         </div>
