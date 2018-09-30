@@ -14,9 +14,15 @@
     <div class="speakers-container">
       <div class="speaker" *ngFor="let speaker of speakers" [@fadeInOut]>
         <div class="body" (click)="click(speaker.id)">
-          <img [src]="speaker.photo" class="photo">
+          <div *ngIf="speaker.photo | async as photo; else loadingProfile ">
+            <img [src]="photo" class="photo" [@fadeInOut]>
+          </div>
           <p class="name">{{speaker.name}}</p>
-          <img *ngFor="let company of speaker.companies" [src]="company" class="company">
+          <span *ngFor="let company of speaker.companies">
+            <span *ngIf="company | async as companyphoto; else loadingCompany">
+               <img [src]="companyphoto" class="company" [@fadeInOut]>
+            </span>
+          </span>
           <p class="intro">{{speaker.intro}}</p>
         </div>
         <div class="footer">
@@ -48,9 +54,12 @@
       </div>
     </div>
   </div>
-  <ng-template #loading>
-    <div class="loading-container">
+  <ng-template #loadingProfile>
       <img class="loading-image" src="assets/mediaval-loading.gif">
+  </ng-template>
+  <ng-template #loadingCompany>
+    <div style="height: 49px">
+
     </div>
   </ng-template>
 </div>
