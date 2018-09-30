@@ -1,0 +1,60 @@
+<div class="speaker-detail-section">
+  <div class="close-button-container">
+    <a (click)="close()" class="close-button" >
+      <i class="material-icons">close</i>
+    </a>
+  </div>
+  <h1 class="title">
+    Knight detail
+  </h1>
+  <div class="speaker" *ngIf="speaker" [@fadeInOut]>
+    <div class="head">
+      <div class="photo-container">
+        <img [src]="speaker.photo" class="photo">
+      </div>
+      <div class="info">
+        <p class="name">{{speaker.name}}</p>
+        <p class="job">{{speaker.job}}</p>
+        <img *ngFor="let company of speaker.companies" [src]="company" class="company">
+      </div>
+    </div>
+    <p class="intro">{{speaker.intro}}</p>
+    <!--p class="sessions-title">Sessions</p>
+    <ul class="sessions-container">
+      <li class="session">
+        <p class="text">Event organizing in Ostrava (Sun 10:00 - 10:50, A hall)</p>
+      </li>
+    </ul-->
+    <div class="footer">
+      <a mat-icon-button *ngIf="speaker.twitter" [href]="'https://www.twitter.com/' + speaker.twitter"
+        target="_blank" class="link">
+       <mat-icon svgIcon="twitter"></mat-icon>
+     </a>
+     <a mat-icon-button *ngIf="speaker.instagram" [href]="'https://www.instagram.com/' + speaker.instagram"
+        target="_blank" class="link">
+       <mat-icon svgIcon="instagram"></mat-icon>
+     </a>
+     <a mat-icon-button *ngIf="speaker.googleplus" [href]="'https://plus.google.com/u/0/' + speaker.googleplus"
+        target="_blank" class="link">
+       <mat-icon svgIcon="googleplus"></mat-icon>
+     </a>
+     <a mat-icon-button *ngIf="speaker.facebook" [href]="'https://www.facebook.com/' + speaker.facebook"
+        target="_blank" class="link">
+       <mat-icon svgIcon="facebook"></mat-icon>
+     </a>
+     <a mat-icon-button *ngIf="speaker.linkedin" [href]="'https://www.linkedin.com/in/' + speaker.linkedin"
+        target="_blank" class="link">
+       <mat-icon svgIcon="linkedin"></mat-icon>
+     </a>
+     <a mat-icon-button *ngIf="speaker.youtube" [href]="'https://www.youtube.com/user/' + speaker.youtube"
+        target="_blank" class="link">
+       <mat-icon svgIcon="youtube"></mat-icon>
+     </a>
+    </div>
+  </div>
+  <ng-template #loading>
+    <div class="loading-container">
+      <img class="loading-image" src="assets/mediaval-loading.gif">
+    </div>
+  </ng-template>
+</div>

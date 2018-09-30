@@ -50,12 +50,13 @@ import {MediaGraphicsComponent} from './components/media-graphics/media-graphics
 import {MediaPressComponent} from './components/media-press/media-press.component';
 import {MediaContactComponent} from './components/media-contact/media-contact.component';
 import {MediaOthersComponent} from './components/media-others/media-others.component';
-import { AppInvitationComponent } from './components/app-invitation/app-invitation.component';
 import { SectionsComponent } from './pages/sections/sections.component';
 import { TeamSectionComponent } from './pages/sections/team/team-section.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { MediaSectionComponent } from './pages/sections/media/media-section.component';
 import { TicketsSectionComponent } from './pages/sections/tickets/tickets-section.component';
+import { SpeakersSectionComponent } from './pages/sections/speakers/speakers-section.component';
+import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/speaker-detail.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -75,12 +76,13 @@ import { TicketsSectionComponent } from './pages/sections/tickets/tickets-sectio
         MediaPressComponent,
         MediaContactComponent,
         MediaOthersComponent,
-        AppInvitationComponent,
         SectionsComponent,
         TeamSectionComponent,
         MenuComponent,
         MediaSectionComponent,
-        TicketsSectionComponent
+        TicketsSectionComponent,
+        SpeakersSectionComponent,
+        SpeakerDetailSectionComponent
     ],
     imports: [
         BrowserModule,
@@ -120,7 +122,9 @@ import { TicketsSectionComponent } from './pages/sections/tickets/tickets-sectio
         InvoiceComponent,
         TeamSectionComponent,
         MediaSectionComponent,
-        TicketsSectionComponent
+        TicketsSectionComponent,
+        SpeakersSectionComponent,
+        SpeakerDetailSectionComponent
     ],
     bootstrap: [AppComponent]
 })

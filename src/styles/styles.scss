@@ -177,3 +177,10 @@ app-team-section {
     max-height: 90vh;
   }
 }
+
+@media screen and (min-width: 1024px) {
+  .speaker-detail-dialog {
+    max-width: 800px;
+    max-height: 600px;
+  }
+}

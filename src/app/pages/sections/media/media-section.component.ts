@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {TeamSectionComponent} from '../team/team-section.component';
 
@@ -15,7 +15,7 @@ export class MediaSectionComponent implements OnInit {
   ngOnInit() {
   }
 
-  close(){
+  close() {
     this.dialogRef.close();
   }
 
