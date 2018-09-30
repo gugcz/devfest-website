@@ -1,0 +1,65 @@
+<div class="speakers-section">
+  <div class="close-button-container">
+    <a (click)="close()" class="close-button" >
+      <i class="material-icons">close</i>
+    </a>
+  </div>
+  <h1 class="title">
+    Speakers
+  </h1>
+  <h3 class="subtitle">
+    Click on speaker for detail
+  </h3>
+  <div class="body">
+    <div class="speakers-container">
+      <div class="speaker" *ngFor="let speaker of speakers" [@fadeInOut]>
+        <div class="body" (click)="click(speaker.id)">
+          <div *ngIf="speaker.photo | async as photo; else loadingProfile ">
+            <img [src]="photo" class="photo" [@fadeInOut]>
+          </div>
+          <p class="name">{{speaker.name}}</p>
+          <span *ngFor="let company of speaker.companies">
+            <span *ngIf="company | async as companyphoto; else loadingCompany">
+               <img [src]="companyphoto" class="company" [@fadeInOut]>
+            </span>
+          </span>
+          <p class="intro">{{speaker.intro}}</p>
+        </div>
+        <div class="footer">
+          <a mat-icon-button *ngIf="speaker.twitter" [href]="'https://www.twitter.com/' + speaker.twitter"
+            target="_blank" class="link">
+           <mat-icon svgIcon="twitter"></mat-icon>
+         </a>
+         <a mat-icon-button *ngIf="speaker.instagram" [href]="'https://www.instagram.com/' + speaker.instagram"
+            target="_blank" class="link">
+           <mat-icon svgIcon="instagram"></mat-icon>
+         </a>
+         <a mat-icon-button *ngIf="speaker.googleplus" [href]="'https://plus.google.com/u/0/' + speaker.googleplus"
+            target="_blank" class="link">
+           <mat-icon svgIcon="googleplus"></mat-icon>
+         </a>
+         <a mat-icon-button *ngIf="speaker.facebook" [href]="'https://www.facebook.com/' + speaker.facebook"
+            target="_blank" class="link">
+           <mat-icon svgIcon="facebook"></mat-icon>
+         </a>
+         <a mat-icon-button *ngIf="speaker.linkedin" [href]="'https://www.linkedin.com/in/' + speaker.linkedin"
+            target="_blank" class="link">
+           <mat-icon svgIcon="linkedin"></mat-icon>
+         </a>
+         <a mat-icon-button *ngIf="speaker.youtube" [href]="'https://www.youtube.com/user/' + speaker.youtube"
+            target="_blank" class="link">
+           <mat-icon svgIcon="youtube"></mat-icon>
+         </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #loadingProfile>
+      <img class="loading-image" src="assets/mediaval-loading.gif">
+  </ng-template>
+  <ng-template #loadingCompany>
+    <div style="height: 49px">
+
+    </div>
+  </ng-template>
+</div>

@@ -15,6 +15,11 @@ const routes: Routes = [
                 pathMatch: 'full'
             },
             {
+                path: 'section/:type/:extra',
+                component: SectionsComponent,
+                pathMatch: 'full'
+            },
+            {
                 path: 'app-invitation',
                 redirectTo : '', // TODO - after created app use AppInvitationCo mponent
                 pathMatch: 'full'

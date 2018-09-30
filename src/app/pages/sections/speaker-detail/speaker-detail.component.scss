@@ -1,0 +1,141 @@
+.speaker-detail-section {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  .close-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .close-button {
+      color: #333333;
+      cursor: pointer;
+      position: fixed;
+      text-decoration: none;
+      outline: none;
+    }
+  }
+
+  .title {
+    font-family: MyMediaval, serif;
+    font-size: 3rem;
+    margin-top: 0;
+    text-align: center;
+  }
+
+  .speaker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 24px;
+    flex: 1;
+
+    .head {
+      width: 100%;
+
+      .photo-container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+
+        .photo {
+          border-radius: 50%;
+          height: 200px;
+          width: 200px;
+        }
+      }
+
+      .info {
+        text-align: center;
+        .company {
+          margin: 8px 0;
+          height: 32px;
+          width: auto;
+        }
+
+        .name, .job {
+          font-weight: 500;
+          font-size: 1.5rem;
+          margin: 8px;
+        }
+
+        .city {
+          font-weight: 300;
+          font-size: 1rem;
+        }
+      }
+    }
+
+    .intro {
+      font-weight: 400;
+      font-size: 1.2rem;
+      margin-top: 4px;
+    }
+
+    .sessions-title {
+      font-weight: 500;
+      font-size: 1.5rem;
+      margin: 8px;
+      text-align: center;
+    }
+
+    .sessions-container {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      .session {
+        .text {
+          font-weight: 400;
+          font-size: 1.2rem;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  .footer {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-end;
+  }
+}
+
+.cdk-overlay-pane {
+  max-width: 1000px !important;
+}
+
+@media only screen and (min-width: 1024px) {
+  .speaker-detail-section .speaker {
+    align-items: flex-start;
+    .head {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+
+      .photo-container {
+        width: unset;
+      }
+
+      .info {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: column;
+        flex-grow: 1;
+        padding-left: 48px;
+
+        .name, .city, .job {
+          margin: 6px 0 0;
+        }
+      }
+    }
+
+    .sessions-title {
+      margin-left: 0;
+    }
+  }
+}
