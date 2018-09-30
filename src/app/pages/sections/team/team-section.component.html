@@ -7,7 +7,7 @@
   <h1 class="title">
     Aristocracy
   </h1>
-  <div *ngIf="organizers; else loading" class="body">
+  <div *ngIf="organizers" class="body">
     <div class="organizers-container" >
       <div class="organizer" *ngFor="let organizer of organizers" [@fadeInOut]>
         <div *ngIf="organizer.photo | async as photo; else loadingProfile ">
