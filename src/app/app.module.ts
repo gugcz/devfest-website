@@ -50,7 +50,6 @@ import {MediaGraphicsComponent} from './components/media-graphics/media-graphics
 import {MediaPressComponent} from './components/media-press/media-press.component';
 import {MediaContactComponent} from './components/media-contact/media-contact.component';
 import {MediaOthersComponent} from './components/media-others/media-others.component';
-import { AppInvitationComponent } from './components/app-invitation/app-invitation.component';
 import { SectionsComponent } from './pages/sections/sections.component';
 import { TeamSectionComponent } from './pages/sections/team/team-section.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -77,7 +76,6 @@ import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/s
         MediaPressComponent,
         MediaContactComponent,
         MediaOthersComponent,
-        AppInvitationComponent,
         SectionsComponent,
         TeamSectionComponent,
         MenuComponent,
