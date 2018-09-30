@@ -10,7 +10,7 @@ import {Observable} from 'rxjs';
 interface Speaker {
   id: string;
   name: string;
-  companies: Observable<string>[];
+  companies: Observable<string>;
   about: string;
   photo: Observable<string>;
   residence: string;
@@ -75,11 +75,7 @@ export class SpeakersSectionComponent implements OnInit {
       const data = speakersData[i].data();
       const id = speakersData[i].ref.id;
       const photo = this.storage.ref(data.photo).getDownloadURL();
-      const companies = [];
-      for (let y = 0; y < data.companies.length; y++) {
-        const logo = await this.storage.ref(data.companies[y]).getDownloadURL();
-          companies.push(logo);
-      }
+      const companies = await this.storage.ref(data.companies[0]).getDownloadURL();
       const one: Speaker = {
         id: id,
         photo: photo,
