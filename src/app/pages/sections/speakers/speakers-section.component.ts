@@ -68,7 +68,9 @@ export class SpeakersSectionComponent implements OnInit {
 
   async processSpeakers() {
     const speakersSnapshot = await this.firestore.collection('speakers').ref.get();
-    const speakersData = speakersSnapshot.docs.sort((a, b) => a.data().cardPosition - b.data().cardPosition);
+    const speakersData = speakersSnapshot.docs
+    .sort((a, b) => a.data().cardPosition - b.data().cardPosition)
+    .filter(a => (a.data().show === true));
     for (let i = 0; i < speakersData.length; i++) {
       const data = speakersData[i].data();
       const id = speakersData[i].ref.id;
