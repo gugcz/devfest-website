@@ -62,19 +62,10 @@
       filter: brightness(0) invert(1);
     }
   }
+}
 
-  .loading-container {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-
-    .loading-image {
-      width: 100%;
-    }
-  }
+.loading-image {
+  height: 133px;
 }
 
 @media screen and (min-width: 600px) {
@@ -92,12 +83,6 @@
         grid-template-columns: 215px 215px 215px;
       }
     }
-
-    .loading-container {
-      .loading-image {
-        width: 80%;
-      }
-    }
   }
 }
 
@@ -106,13 +91,6 @@
     .body {
       .organizers-container {
         grid-template-columns: 215px 215px 215px 215px;
-      }
-    }
-
-    .loading-container {
-      .loading-image {
-        max-width: 768px;
-        width: 60%;
       }
     }
   }
