@@ -11,7 +11,7 @@ interface Speaker {
   id: string;
   name: string;
   companies: Observable<string>[];
-  intro: string;
+  about: string;
   photo: Observable<string>;
   residence: string;
   facebook: string;
@@ -84,7 +84,7 @@ export class SpeakersSectionComponent implements OnInit {
         name: data.name,
         companies: companies,
         residence: data.residence,
-        intro: data.intro,
+        about: (data.about.length > 150 ? (data.about.substring(0, 150) + '...') : data.about ),
         facebook: data.facebook ? data.facebook : null,
         instagram: data.instagram ? data.instagram : null,
         linkedin: data.linkedin ? data.linkedin : null,
