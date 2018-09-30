@@ -82,7 +82,7 @@ export class SpeakersSectionComponent implements OnInit {
         name: data.name,
         companies: companies,
         residence: data.residence,
-        about: (data.about.length > 150 ? (data.about.substring(0, 150) + '...') : data.about ),
+        about: (data.about.length > 150 ? (data.about.substring(0, 100) + '...') : data.about ),
         facebook: data.facebook ? data.facebook : null,
         instagram: data.instagram ? data.instagram : null,
         linkedin: data.linkedin ? data.linkedin : null,
