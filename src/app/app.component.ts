@@ -1,93 +1,71 @@
-import { Component, HostListener, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { MatIconRegistry, MatDialogRef } from '@angular/material';
-import { NavigationEnd, Router } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Location } from '@angular/common';
-import { animate, style, transition, trigger } from '@angular/animations';
+import { Component } from '@angular/core';
+import { animate, style, transition, trigger, query, sequence, stagger } from '@angular/animations';
 
-import { routerTransition } from './global/animations/router.transition';
-import { InvoiceComponent } from './components/invoice/invoice.component';
+export const ANIMATE_ON_ROUTE_ENTER = 'route-enter-staggered';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     animations: [trigger('fadeInOut', [
-        transition(':enter', [   // :enter is alias to 'void => *'
+        transition(':enter', [
             style({ opacity: 0 }),
-            animate('500ms', style({ opacity: 1 }))
+            animate('200ms', style({ opacity: 1 }))
         ]),
-        transition(':leave', [   // :leave is alias to '* => void'
-            animate('500ms', style({ opacity: 0 }))
+        transition(':leave', [
+            animate('200ms', style({ opacity: 0 }))
         ])
-    ]), routerTransition]
+    ]), trigger('routerTransition', [
+        transition('* <=> *', [
+            query(':enter > *', style({ opacity: 0, position: 'fixed' }), {
+                optional: true
+            }),
+            query(':enter .' + ANIMATE_ON_ROUTE_ENTER, style({ opacity: 0 }), {
+                optional: true
+            }),
+            sequence([
+                query(
+                    ':leave > *',
+                    [
+                        style({ transform: 'translateY(0%)', opacity: 1 }),
+                        animate(
+                            '0.2s ease-in-out',
+                            style({ transform: 'translateY(-3%)', opacity: 0 })
+                        ),
+                        style({ position: 'fixed' })
+                    ],
+                    { optional: true }
+                ),
+                query(
+                    ':enter > *',
+                    [
+                        style({
+                            transform: 'translateY(-3%)',
+                            opacity: 0,
+                            position: 'static'
+                        }),
+                        animate(
+                            '0.5s ease-in-out',
+                            style({ transform: 'translateY(0%)', opacity: 1 })
+                        )
+                    ],
+                    { optional: true }
+                )
+            ]),
+            query(
+                ':enter .' + ANIMATE_ON_ROUTE_ENTER,
+                stagger(100, [
+                    style({ transform: 'translateY(15%)', opacity: 0 }),
+                    animate(
+                        '0.5s ease-in-out',
+                        style({ transform: 'translateY(0%)', opacity: 1 })
+                    )
+                ]),
+                { optional: true }
+            )
+        ])
+    ])]
 })
 
-export class AppComponent implements OnInit {
-
-    public route: string;
-    public mobile: Boolean;
-    navigation = [
-        { link: '', label: 'Home' },
-        { link: 'team', label: 'Team' },
-        { link: 'media', label: 'Media' }
-    ];
-    lastYOffset: number;
-    showMenu: boolean;
-    menuType: string;
-
-
-    constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public router: Router,
-        public location: Location) {
-        this.route = '';
-        this.showMenu = true;
-        this.menuType = 'transparent';
-        router.events.subscribe(() => {
-            if (location.path() !== '') {
-                this.route = location.path();
-            } else {
-                this.route = 'Home';
-            }
-        });
-        iconRegistry.addSvgIcon(
-            'facebook',
-            sanitizer.bypassSecurityTrustResourceUrl('assets/icons/facebook.svg'));
-        iconRegistry.addSvgIcon(
-            'twitter',
-            sanitizer.bypassSecurityTrustResourceUrl('assets/icons/twitter.svg'));
-        if (window.screen.width < 768) {
-            this.mobile = true;
-        }
-    }
-
-    ngOnInit() {
-        this.router.events.subscribe(evt => {
-            if (!(evt instanceof NavigationEnd)) {
-                return;
-            }
-            window.scrollTo(0, 0);
-        });
-    }
-
-    @HostListener('window:scroll', [])
-    onWindowScroll() {
-        if (window.pageYOffset === 0) {
-            return;
-        }
-        if (window.pageYOffset < 5) {
-            this.menuType = 'transparent';
-            this.showMenu = true;
-        } else if (this.lastYOffset > window.pageYOffset) {
-            this.menuType = 'dark-toolbar';
-            this.showMenu = true;
-        } else {
-            this.showMenu = false;
-        }
-        this.lastYOffset = window.pageYOffset;
-    }
-
-    @HostListener('window:resize', [])
-    onWindowResize() {
-        this.mobile = window.screen.width < 768;
-    }
+export class AppComponent {
 }
