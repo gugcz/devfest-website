@@ -16,7 +16,6 @@
         <div class="body" (click)="click(speaker.id)">
           <img [src]="speaker.photo" class="photo">
           <p class="name">{{speaker.name}}</p>
-          <div class="city">{{speaker.residence}}</div>
           <img *ngFor="let company of speaker.companies" [src]="company" class="company">
           <p class="intro">{{speaker.intro}}</p>
         </div>
