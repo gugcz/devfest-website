@@ -33,6 +33,7 @@
     flex-direction: column;
     .speakers-container {
       display: grid;
+      cursor: pointer;
       grid-template-columns: 250px;
       grid-row-gap: 32px;
       grid-column-gap: 16px;
