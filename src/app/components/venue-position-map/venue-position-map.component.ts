@@ -7,8 +7,14 @@ import { MatDialogRef } from '@angular/material';
   styleUrls: ['./venue-position-map.component.scss']
 })
 export class VenuePositionMapComponent {
-  lat = 50.110663;
-  lng = 14.509968;
+  lat = 50.110443;
+  lng = 14.509967899999992;
   constructor() {
+  }
+
+  showInGoogle() {
+    const url = 'https://goo.gl/maps/xizNF3ZVgVk';
+    const win = window.open(url, '_blank');
+    win.focus();
   }
 }
