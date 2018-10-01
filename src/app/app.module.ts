@@ -55,6 +55,9 @@ import { TeamSectionComponent } from './pages/sections/team/team-section.compone
 import { MenuComponent } from './components/menu/menu.component';
 import { MediaSectionComponent } from './pages/sections/media/media-section.component';
 import { TicketsSectionComponent } from './pages/sections/tickets/tickets-section.component';
+import { VenueSectionComponent } from './pages/sections/venue/venue-section.component';
+import { VenuePositionMapComponent } from './components/venue-position-map/venue-position-map.component';
+import { AgmCoreModule } from '@agm/core';
 import { SpeakersSectionComponent } from './pages/sections/speakers/speakers-section.component';
 import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/speaker-detail.component';
 @NgModule({
@@ -81,6 +84,8 @@ import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/s
         MenuComponent,
         MediaSectionComponent,
         TicketsSectionComponent,
+        VenueSectionComponent,
+        VenuePositionMapComponent
         SpeakersSectionComponent,
         SpeakerDetailSectionComponent
     ],
@@ -115,7 +120,10 @@ import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/s
         MatSnackBarModule,
         MatTableModule,
         MatPaginatorModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        AgmCoreModule.forRoot({
+            apiKey: 'AIzaSyAyh_pL4QhU2XjcGI9QyRfPRI2ZqEEF0aA'
+        })
     ],
     providers: [],
     entryComponents: [
@@ -123,6 +131,7 @@ import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/s
         TeamSectionComponent,
         MediaSectionComponent,
         TicketsSectionComponent,
+        VenueSectionComponent
         SpeakersSectionComponent,
         SpeakerDetailSectionComponent
     ],

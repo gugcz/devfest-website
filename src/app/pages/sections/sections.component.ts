@@ -4,9 +4,9 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { TeamSectionComponent } from './team/team-section.component';
 import { MediaSectionComponent } from './media/media-section.component';
 import { TicketsSectionComponent } from './tickets/tickets-section.component';
+import { VenueSectionComponent } from './venue/venue-section.component';
 import { SpeakersSectionComponent } from './speakers/speakers-section.component';
 import { SpeakerDetailSectionComponent } from './speaker-detail/speaker-detail.component';
-
 @Component({
   templateUrl: './sections.component.html',
   selector: 'app-sections',
@@ -45,6 +45,14 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
           }
           case 'tickets': {
             dialogRef = this.matDialog.open(TicketsSectionComponent, {
+              width: '100vw',
+              height: '100vh',
+              maxWidth: '',
+            });
+            break;
+          }
+          case 'venue': {
+            dialogRef = this.matDialog.open(VenueSectionComponent , {
               width: '100vw',
               height: '100vh',
               maxWidth: '',
