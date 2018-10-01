@@ -2,12 +2,34 @@
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  text-align: center;
 
   .title {
     font-family: MyMediaval, serif;
     font-size: 3rem;
     margin: 0;
     text-align: center;
+  }
+
+  .informations {
+    font-size: 1.2rem;
+    font-weight: 400;
+    width: 90%;
+    margin: auto;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .venue-photo-container{
+    width: 90%;
+    padding-top: 15px;
+    margin: auto;
+    .venue-photo{
+      width: 100%;
+      box-shadow: none;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      border:solid 2px #41403E;
+    }
   }
 
   .close-button-container {

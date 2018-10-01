@@ -1,4 +1,4 @@
-<agm-map [latitude]="lat" [longitude]="lng" [zoom]="15" [styles]='[
+<agm-map [latitude]="lat" [longitude]="lng" [zoom]="15"  [styles]='[
 {
   "elementType": "geometry",
   "stylers": [
@@ -212,5 +212,5 @@
     }
   ]
 }]'>
-  <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+  <agm-marker [latitude]="lat" [longitude]="lng" [iconUrl]="'assets/castle-map-icon.png'" (markerClick)="showInGoogle()"></agm-marker>
 </agm-map>
