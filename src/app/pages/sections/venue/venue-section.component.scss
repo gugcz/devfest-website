@@ -21,8 +21,7 @@
   }
 
   .venue-photo-container{
-    width: 90%;
-    padding-top: 15px;
+    padding: 30px;
     margin: auto;
     .venue-photo{
       width: 100%;
@@ -49,7 +48,32 @@
   app-venue-position-map {
     display: flex;
     flex-grow: 1;
+    padding: 30px;
     justify-content: center;
     align-items: center;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .venue-section {
+    .informations {
+      width: 80%;
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .venue-section {
+    .informations {
+      width: 60%;
+    }
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .venue-section {
+    .informations {
+      width: 40%;
+    }
   }
 }
