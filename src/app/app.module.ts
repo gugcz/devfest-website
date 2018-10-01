@@ -50,7 +50,6 @@ import {MediaGraphicsComponent} from './components/media-graphics/media-graphics
 import {MediaPressComponent} from './components/media-press/media-press.component';
 import {MediaContactComponent} from './components/media-contact/media-contact.component';
 import {MediaOthersComponent} from './components/media-others/media-others.component';
-import { AppInvitationComponent } from './components/app-invitation/app-invitation.component';
 import { SectionsComponent } from './pages/sections/sections.component';
 import { TeamSectionComponent } from './pages/sections/team/team-section.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -59,7 +58,8 @@ import { TicketsSectionComponent } from './pages/sections/tickets/tickets-sectio
 import { VenueSectionComponent } from './pages/sections/venue/venue-section.component';
 import { VenuePositionMapComponent } from './components/venue-position-map/venue-position-map.component';
 import { AgmCoreModule } from '@agm/core';
-
+import { SpeakersSectionComponent } from './pages/sections/speakers/speakers-section.component';
+import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/speaker-detail.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -79,7 +79,6 @@ import { AgmCoreModule } from '@agm/core';
         MediaPressComponent,
         MediaContactComponent,
         MediaOthersComponent,
-        AppInvitationComponent,
         SectionsComponent,
         TeamSectionComponent,
         MenuComponent,
@@ -87,6 +86,8 @@ import { AgmCoreModule } from '@agm/core';
         TicketsSectionComponent,
         VenueSectionComponent,
         VenuePositionMapComponent
+        SpeakersSectionComponent,
+        SpeakerDetailSectionComponent
     ],
     imports: [
         BrowserModule,
@@ -131,6 +132,8 @@ import { AgmCoreModule } from '@agm/core';
         MediaSectionComponent,
         TicketsSectionComponent,
         VenueSectionComponent
+        SpeakersSectionComponent,
+        SpeakerDetailSectionComponent
     ],
     bootstrap: [AppComponent]
 })

@@ -7,10 +7,12 @@
   <h1 class="title">
     Aristocracy
   </h1>
-  <div *ngIf="organizers; else loading" class="body">
+  <div *ngIf="organizers" class="body">
     <div class="organizers-container" >
       <div class="organizer" *ngFor="let organizer of organizers" [@fadeInOut]>
-        <img [src]="organizer.photo" class="image-organizer">
+        <div *ngIf="organizer.photo | async as photo; else loadingProfile ">
+            <img [src]="photo" class="image-organizer" [@fadeInOut]>
+        </div>
         <p style="font-weight: 500; font-size: 1.3rem; margin-bottom: 10px;">{{organizer.name}}</p>
         <div style="font-weight: 300; font-size: 1.2rem; text-align: center; min-height: 48px;" [innerHTML]="organizer.title">s</div>
         <div>
@@ -45,9 +47,7 @@
       <img class="gug-logo" src="assets/partners/GUG.png">
     </div>
   </div>
-  <ng-template #loading>
-    <div class="loading-container">
-      <img class="loading-image" src="assets/mediaval-loading.gif">
-    </div>
-  </ng-template>
+  <ng-template #loadingProfile>
+    <div class="loading-image"></div>
+</ng-template>
 </div>
