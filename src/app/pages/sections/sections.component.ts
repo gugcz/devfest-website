@@ -67,12 +67,19 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             break;
           }
           case 'speaker-detail': {
-            dialogRef = this.matDialog.open(SpeakerDetailSectionComponent, {
+            const speacialRef = this.matDialog.open(SpeakerDetailSectionComponent, {
               panelClass: 'speaker-detail-dialog',
               width: '100vw',
               height: '100vh',
               maxWidth: '',
               data: { id: extra }
+            });
+            speacialRef.afterClosed().subscribe((data) => {
+              if (this.router['navigationId'] > 1) {
+                this.router.navigateByUrl('/section/speakers');
+              } else {
+                this.router.navigateByUrl('/');
+              }
             });
             break;
           }
@@ -83,7 +90,6 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
           this.router.navigateByUrl('/');
         });
       }
-
     });
   }
 
