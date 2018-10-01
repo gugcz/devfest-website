@@ -85,7 +85,7 @@ import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/s
         MediaSectionComponent,
         TicketsSectionComponent,
         VenueSectionComponent,
-        VenuePositionMapComponent
+        VenuePositionMapComponent,
         SpeakersSectionComponent,
         SpeakerDetailSectionComponent
     ],
@@ -131,7 +131,7 @@ import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/s
         TeamSectionComponent,
         MediaSectionComponent,
         TicketsSectionComponent,
-        VenueSectionComponent
+        VenueSectionComponent,
         SpeakersSectionComponent,
         SpeakerDetailSectionComponent
     ],
