@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {HomeComponent} from './pages/home/home.component';
-import { AppInvitationComponent } from './components/app-invitation/app-invitation.component';
 import { SectionsComponent } from './pages/sections/sections.component';
 
 const routes: Routes = [
@@ -11,6 +10,11 @@ const routes: Routes = [
         children: [
             {
                 path: 'section/:type',
+                component: SectionsComponent,
+                pathMatch: 'full'
+            },
+            {
+                path: 'section/:type/:extra',
                 component: SectionsComponent,
                 pathMatch: 'full'
             },

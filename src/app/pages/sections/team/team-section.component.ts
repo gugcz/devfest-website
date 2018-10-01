@@ -6,10 +6,11 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { AngularFireStorage } from 'angularfire2/storage';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { Observable } from 'rxjs';
 interface Organizer {
   name: string;
   title: string;
-  photo: string;
+  photo: Observable<string>;
   facebook: string;
   instagram: string;
   linkedin: string;
@@ -67,7 +68,7 @@ export class TeamSectionComponent implements OnInit {
     const organizerData = organizersSnapshot.docs.sort((a, b) => a.data().cardPosition - b.data().cardPosition);
     for (let i = 0; i < organizerData.length; i++) {
       const data = organizerData[i].data();
-      const photo = await this.findOrganizerPhoto(data.photo);
+      const photo = this.storage.ref(data.photo).getDownloadURL();
       const point: Organizer = {
         photo: photo,
         name: data.name,
@@ -80,10 +81,6 @@ export class TeamSectionComponent implements OnInit {
       };
       this.organizers.push(point);
     }
-  }
-
-  async findOrganizerPhoto(folder: string) {
-    return await this.storage.ref(folder).getDownloadURL().toPromise();
   }
 
   close() {
