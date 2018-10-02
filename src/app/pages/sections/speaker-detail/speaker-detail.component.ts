@@ -71,7 +71,11 @@ export class SpeakerDetailSectionComponent implements OnInit {
   }
 
   async processSpeaker(id) {
-    const speakerSnapshot = await this.firestore.collection('speakers').doc(id).ref.get();
+    let speakerSnapshot = await this.firestore.collection('speakers').doc(id).ref.get();
+    if (speakerSnapshot.exists === false) {
+      const speakers = await this.firestore.collection('speakers').ref.where('shareId', '==', id).get();
+      speakerSnapshot = speakers.docs[0];
+    }
     const data = speakerSnapshot.data();
     const photo = await this.findPhoto(data.photo);
     const companies = [];
