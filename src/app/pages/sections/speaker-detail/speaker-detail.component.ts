@@ -17,7 +17,13 @@ interface Speaker {
   job: string;
   linkedin: string;
   twitter: string;
+  sessions: Session[];
   googleplus: string;
+}
+
+interface Session {
+  name: string;
+  description: string;
 }
 
 @Component({
@@ -80,6 +86,7 @@ export class SpeakerDetailSectionComponent implements OnInit {
       residence: data.residence,
       job: data.job,
       intro: data.about,
+      sessions: data.sessions ? data.sessions : [],
       facebook: data.facebook ? data.facebook : null,
       instagram: data.instagram ? data.instagram : null,
       linkedin: data.linkedin ? data.linkedin : null,
