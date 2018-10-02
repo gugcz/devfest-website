@@ -19,12 +19,13 @@
       </div>
     </div>
     <p class="intro">{{speaker.intro}}</p>
-    <!--p class="sessions-title">Sessions</p>
+    <p class="sessions-title">Sessions</p>
     <ul class="sessions-container">
-      <li class="session">
-        <p class="text">Event organizing in Ostrava (Sun 10:00 - 10:50, A hall)</p>
+      <li class="session" *ngFor="let session of speaker.sessions">
+        <h2>{{session.name}}</h2>
+        <p class="text">{{session.description}}</p>
       </li>
-    </ul-->
+    </ul>
     <div class="footer">
       <a mat-icon-button *ngIf="speaker.twitter" [href]="'https://www.twitter.com/' + speaker.twitter"
         target="_blank" class="link">
