@@ -10,11 +10,12 @@
     display: grid;
     grid-template-columns: 72px 1fr 40px;
     border: 10px solid transparent;
-    border-image: url("../../../assets/border-bottom.png") 30 stretch; 
+    border-image: url("../../../assets/border-bottom.png") 30 stretch;
     grid-row-gap: 16px;
 
     .thumbnail {
-      height: 32px;
+      max-height: 32px;
+      max-width: 72px;
     }
 
     .name {
