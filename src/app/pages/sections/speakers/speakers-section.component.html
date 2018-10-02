@@ -7,10 +7,13 @@
   <h1 class="title">
     Speakers
   </h1>
+  <h3 class="subtitle">
+    Click on speaker for full profile
+  </h3>
   <div class="body">
     <div class="speakers-container">
       <div class="speaker" *ngFor="let speaker of speakers" [@fadeInOut]>
-        <div class="body" (click)="click(speaker.id)">
+        <div class="body" (click)="click(speaker.shareId)">
           <div *ngIf="speaker.photo | async as photo; else loadingProfile ">
             <img [src]="photo" class="photo" [@fadeInOut]>
           </div>

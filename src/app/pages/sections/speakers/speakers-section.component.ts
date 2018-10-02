@@ -20,6 +20,7 @@ interface Speaker {
   twitter: string;
   googleplus: string;
   youtube: string;
+  shareId: string;
 }
 
 @Component({
@@ -88,7 +89,8 @@ export class SpeakersSectionComponent implements OnInit {
         linkedin: data.linkedin ? data.linkedin : null,
         twitter: data.twitter ? data.twitter : null,
         googleplus: data.googleplus ? data.googleplus : null,
-        youtube: data.youtube ? data.youtube : null
+        youtube: data.youtube ? data.youtube : null,
+        shareId: data.shareId ? data.shareId : id
       };
       this.speakers.push(one);
     }
