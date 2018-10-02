@@ -9,7 +9,7 @@
 
   .link-container {
     border: 10px solid transparent;
-    border-image: url("../../../assets/border-bottom.png") 30 stretch; 
+    border-image: url("../../../assets/border-bottom.png") 30 stretch;
     margin: 15px;
     font-size: 1.5rem;
 
@@ -45,7 +45,14 @@
 }
 
 @media only screen and (min-width: 1376px) {
-  .media-others-container .title {
+  .media-others-container {
+    .title {
       font-size: 3rem;
+    }
+
+    .links-container {
+      height: 40vh;
+      overflow-y: auto;
+    }
   }
 }
