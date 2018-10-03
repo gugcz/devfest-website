@@ -1,0 +1,21 @@
+dispatch:
+- url: "*/.well-known/*"
+  module: letsencrypt
+
+- url: "2017.devfest.cz/*"
+  module: website-2017
+
+- url: "2016.devfest.cz/*"
+  module: website-2016
+
+- url: "2015.devfest.cz/*"
+  module: website-2015
+
+- url: "2014.devfest.cz/*"
+  module: website-2014
+
+- url: "2013.devfest.cz/*"
+  module: website-2013
+
+- url: "2012.devfest.cz/*"
+  module: website-2012

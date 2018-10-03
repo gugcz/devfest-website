@@ -1,0 +1,55 @@
+@import "../../../styles/colors";
+
+.container {
+  display: flex;
+  padding: 22px;
+  background-color: $dark-background;
+  color: white;
+  flex-direction: column;
+
+  .partners-title {
+    font-size: 2.75rem;
+    font-weight: 600;
+    margin: 16px 0 0 0;
+    text-align: center;
+  }
+
+  .partner-section {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin: 16px 0;
+
+    .section-title {
+      font-weight: 500;
+      font-size: 1.5rem;
+      margin: 16px;
+      text-align: center;
+    }
+
+    .logos-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 800px;
+
+      .link {
+        display: block;
+        margin: 16px;
+        width: fit-content;
+
+        .logo {
+          display: block;
+          height: 50px;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .container .partner-section .logos-container .link .logo {
+    height: 64px;
+  }
+}

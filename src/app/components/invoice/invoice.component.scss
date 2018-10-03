@@ -1,0 +1,67 @@
+@import "../../../styles/colors";
+
+.mat-input-element {
+  font-weight: 400;
+  font-size: 1.4rem;
+}
+
+::placeholder { 
+  color: #707076;
+  opacity: 1; 
+}
+
+.content { 
+  color: #333;
+  
+  .title {
+    font-size: 2.75rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 16px 0 0 0;
+  }
+
+  .text {
+    line-height: 24px;
+    margin-bottom: 24px;
+    width: 100%;
+    font-weight: 400;
+    text-align: center;
+    font-size: 1.2rem;
+    max-width: 350px;
+  }
+
+  .price-info {
+    text-align: left;
+    margin-top: 4px;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 350px;
+    color: #333;
+
+    .spinner-container {
+      text-align: center;
+      width: 100%;
+      .spinner {
+        margin: 0 auto;
+      }
+    }
+
+    .buttons-container {
+      display: grid;
+      column-gap: 16px;
+      grid-template-columns: 1fr 1fr;
+
+      .invoice-button {
+        font-size: 22.4px;
+        padding: 6px 0;
+        width: 100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+<div class="media-others-container">
+  <div class="title">
+      Media releases
+  </div>
+  <div *ngIf="$press | async;let press; else loadingImage" class="flags-container">
+    <div *ngFor="let one of press; let i = index" class="link-container">
+      <a [href]="one.url" class="link" target="_blank" [ngClass]="(i + 1) % 2 === 0 ? 'even' : 'odd'">
+        <div class="text">{{one.name}}</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingImage>
+  <div class="loading-image-container">
+    <img class="loading-image" src="assets/mediaval-loading.gif">
+  </div>
+</ng-template>

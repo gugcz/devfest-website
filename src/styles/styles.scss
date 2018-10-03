@@ -1,0 +1,186 @@
+@import '../../node_modules/@angular/material/theming';
+@import 'colors';
+
+@include mat-core();
+
+$anms-black-primary: mat-palette($mat-blue, 400);
+$anms-black-accent: mat-palette($mat-yellow, 600);
+$anms-black-warn: mat-palette($mat-red, A200);
+$frontend-app-theme: mat-dark-theme($anms-black-primary, $anms-black-accent, $anms-black-warn);
+
+@include angular-material-theme($frontend-app-theme);
+
+* {
+  font-family: Roboto, serif;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 400;
+  src: url(../assets/fonts/Roboto-Regular.ttf);
+}
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  src: url(../assets/fonts/Roboto-Medium.ttf);
+}
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  src: url(../assets/fonts/Roboto-Bold.ttf);
+}
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  src: url(../assets/fonts/Roboto-Black.ttf);
+}
+
+@font-face {
+  font-family: MyMediaval;
+  src: url(../assets/fonts/Deutsch.ttf);
+  font-weight:400;
+}
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: local('Material Icons'),
+  local('MaterialIcons-Regular'),
+  url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
+  url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
+  url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
+.app-loading-child {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-loading {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
+}
+
+body mat-toolbar.mat-toolbar a.mat-button div.mat-button-focus-overlay {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.email-snackbar {
+  background-color: $dark-background;
+  color: white;
+}
+
+.email-error-snackbar {
+  background-color: $dark-background;
+  color: $error-message;
+}
+
+.mat-dialog-container{
+  background: url(../assets/scroll-template.jpg);
+  color: #333333;
+  padding: 16px 12px !important;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #E3C190; 
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #603813; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #42210B; 
+}
+
+.material-icons {
+  font-family: 'Material Icons', serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+app-team-section {
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+}
+
+@media screen and (min-width: 1376px) {
+  .cdk-overlay-pane {
+    max-width: 1376px;
+    max-height: 90vh;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .speaker-detail-dialog {
+    max-width: 800px;
+    max-height: 600px;
+  }
+}

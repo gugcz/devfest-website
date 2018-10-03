@@ -1,0 +1,17 @@
+<div class="media-graphics-container">
+  <div class="title">
+    Graphics
+  </div>
+  <div *ngIf="imageUrls; else loading">
+    <div *ngFor="let url of imageUrls" class="image-item">
+      <img [src]="url.thumbUrl" alt="Graphics thumbnail" class="thumbnail">
+      <span class="name">{{url.name}}</span>
+      <button class="download-button" mat-icon-button (click)="downloadGraphic(url.url)">
+        <mat-icon>get_app</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+<ng-template #loading>
+  <img class="loading-image" src="assets/mediaval-loading.gif">
+</ng-template>

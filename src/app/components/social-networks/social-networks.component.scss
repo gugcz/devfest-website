@@ -1,0 +1,38 @@
+.container {
+  display: grid;
+  -webkit-column-count: 3;
+  -moz-column-count: 3;
+  column-count: 3;
+  grid-gap: 8px;
+  .link {
+    grid-row: 1;
+    .icon {
+      height: 36px;
+      width: 36px;
+    }
+  }
+}
+
+@media only screen and (min-width: 1024px) and (orientation: portrait) {
+  .container {
+    grid-gap: 40px;
+    .link {
+      .icon {
+        height: 64px;
+        width: 64px;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .container {
+    grid-gap: 40px;
+    .link {
+      .icon {
+        height: 64px;
+        width: 64px;
+      }
+    }
+  }
+}

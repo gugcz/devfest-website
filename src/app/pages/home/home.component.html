@@ -1,0 +1,20 @@
+<router-outlet></router-outlet>
+<div class="container">
+  <div class="cover">
+    <div class="header" [ngClass]="animateOnRouteEnter">
+      <a href="/">
+        <img class="logo" src="assets/devfest-logo.png" alt="Devfest.cz 2018 logo">
+      </a>
+      <h1 class="date">26th - 27th <br class="heading-linebreak">October 2018<br><span class="place">Prague</span></h1>
+    </div>
+    <div class="body">
+      <div class="countdown-container" [ngClass]="animateOnRouteEnter">
+        <app-countdown class="countdown"
+                       [countDownEnd]="'2018-10-26, 9:00:00AM'"></app-countdown>
+      </div>
+      <div class="menu-container" [ngClass]="animateOnRouteEnter">
+        <app-menu></app-menu>
+      </div>
+    </div>
+  </div>
+</div>
