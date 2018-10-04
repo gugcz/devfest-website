@@ -126,7 +126,7 @@
 @media only screen and (min-width: 575px) {
   .container .cover {
     .header .date {
-        font-size: 2.5rem;
+      font-size: 2.5rem;
     }
     .body {
       grid-template-rows: 80px 128px 1fr;
@@ -160,34 +160,61 @@
   }
 }
 
-@media screen and (min-width: 1024px) and (orientation: landscape) {
-  .container .cover .header {
-    .logo {
-      width: 188px;
-    }
-
-    .date {
-      font-size: 2.5rem;
-      .heading-linebreak {
+@media screen and (max-width: 1024px) {
+  .container .cover {
+    .header {
+      .buy-tickets-container {
         display: none;
       }
     }
   }
-  .body {
-    flex-direction: row;
-    justify-content: space-between;
+}
 
-    .countdown-container {
-      display: flex;
-      padding-top: 0;
-      padding-left: 20px;
-      align-items: center;
+@media screen and (min-width: 1024px) and (orientation: landscape) {
+  .container .cover {
+    .header {
+      .logo {
+        width: 188px;
+      }
+
+      .buy-tickets-container {
+        display: block;
+        position: relative;
+        top: 80px;
+        left: -109px;
+        width: 80px;
+
+        .buy-tickets-link .buy-tickets-image {
+          height: 80px;
+        }
+      }
+
+      .date {
+        font-size: 2.5rem;
+        .heading-linebreak {
+          display: none;
+        }
+      }
     }
 
-    .menu-container {
-      flex-grow: 0;
-      padding-right: 20px;
-      align-items: center;
+    .body {
+      grid-template-rows: 1fr;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 128px - 180px);
+
+      .buy-tickets-container {
+        display: none;
+      }
+
+      .countdown-container {
+        display: flex;
+        padding-left: 60px;
+        align-items: center;
+      }
+
+      .menu-container {
+        align-items: center;
+      }
     }
   }
 }
@@ -200,6 +227,7 @@
       }
     }
     .body {
+      min-height: calc(100vh - 128px - 297px - 16px);
       .countdown-container {
         padding-left: 80px;
       }
@@ -214,10 +242,18 @@
 @media only screen and (min-width: 1920px) {
   .container {
     .cover {
-      padding: 64px 190px 0;
+      .header {
+        .buy-tickets-container {
+          top: 80px;
 
-      .header .date {
-        font-size: 3.5rem;
+          .buy-tickets-link .buy-tickets-image {
+            height: 120px;
+          }
+        }
+
+        .date {
+          font-size: 3.5rem;
+        }
       }
 
       .body {
