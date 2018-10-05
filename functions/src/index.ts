@@ -5,7 +5,8 @@ admin.initializeApp(functions.config().firebase);
 import * as ticket from './tickets/ticketPrice';
 import * as press from './press';
 import * as invoice from './invoice/invoiceTriggers';
-
+import * as sync from './sync';
+ 
 /**** Tickets ***/
 export const getTickets = ticket.getTickets;
 /**** Press ***/
@@ -16,3 +17,7 @@ export const invoiceProcessInvoice = invoice.invoiceProcessInvoice;
 export const invoicePaid = invoice.invoicePaid;
 export const invoiceGetCurrentExchangeRate = invoice.getCurrentExchangeRate;
 export const invoiceGetCurrentCompanyFundedPrice = invoice.getCurrentCompanyFundedPrice;
+/**** Sync ***/
+export const syncChangedTag = sync.changedTag;
+export const syncCreatedTag = sync.createdTag;
+export const syncDeletedTag = sync.deletedTag;
