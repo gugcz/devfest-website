@@ -36,8 +36,24 @@ service cloud.firestore {
        allow read;
        allow write: if request.auth.uid != null;
     }
+    match /sessions/{document=**} {
+       allow read;
+       allow write: if request.auth.uid != null;
+    }
+    match /tracks/{document=**} {
+       allow read;
+       allow write: if request.auth.uid != null;
+    }
+    match /timeSlots/{document=**} {
+       allow read;
+       allow write: if request.auth.uid != null;    
+    }
     match /exchangeRates/{document=**} {
       allow read, write: if false;
+    }
+    match /tags/{document=**} {
+       allow read;
+       allow write: if request.auth.uid != null;       	
     }
   }
 }
