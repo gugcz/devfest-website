@@ -13,7 +13,7 @@ export const created = functions.firestore.document('tags/{tagId}').onCreate((sn
   return updateOrCreateTag(name, color);
 });
 
-export const deleted = functions.firestore.document('tags/{tagId}').onCreate((snap, context) => {
+export const deleted = functions.firestore.document('tags/{tagId}').onDelete((snap, context) => {
   const name = snap.data().type;
   const color = snap.data().color;
   return deleteTag(name, color);
