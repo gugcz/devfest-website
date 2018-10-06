@@ -2,8 +2,8 @@ export interface TimeSlot {
   id: string;
   text: string;
   sessions: TimeSlotItem[];
-  endTime: string;
-  startTime: string;
+  endTime: Date;
+  startTime: Date;
   primary?: boolean;
 }
 

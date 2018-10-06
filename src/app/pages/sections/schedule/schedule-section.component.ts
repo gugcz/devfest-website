@@ -7,6 +7,7 @@ import {AngularFirestore} from 'angularfire2/firestore';
 import {Organizer} from '../../../database/organizer';
 import {TimeSlot, TimeSlotItem} from '../../../database/time-slot';
 import {Time} from '@angular/common';
+import {startTimeRange} from '@angular/core/src/profile/wtf_impl';
 
 @Component({
   selector: 'app-schedule-section',
@@ -19,6 +20,7 @@ export class ScheduleSectionComponent implements OnInit {
   selectedTimeSlotId: string;
   timeSlotTracksRefs: {};
   timeSlotTracks: {};
+  times: number[];
 
   constructor(public dialogRef: MatDialogRef<ScheduleSectionComponent>, private firestore: AngularFirestore) {
   }
@@ -44,6 +46,12 @@ export class ScheduleSectionComponent implements OnInit {
       const timeSlotsItems: TimeSlotItem[] = data.sessions.map(timeSlotItem => {
         if (this.timeSlotTracksRefs[data.id].indexOf(timeSlotItem.track.id) === -1) {
           this.timeSlotTracksRefs[data.id].push(timeSlotItem.track.id);
+          const startDate = data.startTime.toDate();
+          const endDate = data.endTime.toDate();
+          this.createTimesArray(
+            startDate.getHours(),
+            endDate.getMinutes() === 0 ? endDate.getHours() : endDate.getHours() + 1
+          );
         }
         return {
             session: timeSlotItem.session,
@@ -54,8 +62,8 @@ export class ScheduleSectionComponent implements OnInit {
       const timeSlot: TimeSlot = {
         id: data.id,
         text: data.text,
-        endTime: data.endTime,
-        startTime: data.startTime,
+        endTime: data.endTime.toDate(),
+        startTime: data.startTime.toDate(),
         sessions: timeSlotsItems,
       };
 
@@ -79,8 +87,20 @@ export class ScheduleSectionComponent implements OnInit {
     });
   }
 
+  createTimesArray(startTime: number, endTime: number) {
+    this.times = [];
+    for (let i = 0; i < endTime - startTime; i++) {
+      this.times.push(startTime + i);
+    }
+  }
+
   changeSelectedTimeSlot(id: string) {
     this.selectedTimeSlotId = id;
+    const actualTimeSlot = this.timeSlots.find(timeSlot => timeSlot.id === id);
+    this.createTimesArray(
+      actualTimeSlot.startTime.getHours(),
+      actualTimeSlot.endTime.getMinutes() === 0 ? actualTimeSlot.endTime.getHours() : actualTimeSlot.endTime.getHours() + 1
+    );
   }
 
   close() {
