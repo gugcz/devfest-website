@@ -1,4 +1,5 @@
 export interface TimeSlot {
+  id: string;
   text: string;
   sessions: TimeSlotItem[];
   endTime: Date;

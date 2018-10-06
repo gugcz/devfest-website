@@ -110,10 +110,16 @@ export class ScheduleSectionComponent implements OnInit {
         const sessionObj = timeSlot.sessions.find(session => session.session.id === sessionSnapshot.ref.id);
 
         if (sessionObj && this.timeSlotTracksRefs[timeSlot.id].indexOf(sessionObj.track.id) !== -1) {
-          const order = this.timeSlotTracks[timeSlot.id].find(timeSlotTrack => timeSlotTrack.id === sessionObj.track.id).order;
+          let columnStart = this.timeSlotTracks[timeSlot.id].find(timeSlotTrack => timeSlotTrack.id === sessionObj.track.id).order;
+          let columnEnd = columnStart + 1;
+          console.log(data);
+          if (data.fullRow) {
+            columnStart = 1;
+            columnEnd = this.getColumnsCount(timeSlot.id) + 1;
+          }
           this.timeSlotSessions[timeSlot.id].push({
-            columnStart: order,
-            columnEnd: order + 1,
+            columnStart: columnStart,
+            columnEnd: columnEnd,
             rowStart: this.countRow(data.startTime.toDate(), timeSlot.startTime),
             rowEnd: this.countRow(data.endTime.toDate(), timeSlot.startTime),
             name: data.name,

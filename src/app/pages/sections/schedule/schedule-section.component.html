@@ -27,7 +27,7 @@
       <div class="tracks" [ngClass]="['tracks-rows-' + getRowsCount(selectedTimeSlotId), 'tracks-columns-' + getColumnsCount(selectedTimeSlotId)]">
         <ng-container *ngIf="showTracks === true">
           <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId]">
-            <div [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.columnStart]"
+            <div [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.columnStart + '-to-' + talk.columnEnd]"
                  class="schedule-item">
               <p>{{talk.name}}</p>
             </div>
