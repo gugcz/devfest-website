@@ -107,9 +107,6 @@ export class ScheduleSectionComponent implements OnInit {
 
         if (sessionObj && this.timeSlotTracksRefs[timeSlot.id].indexOf(sessionObj.track.id) !== -1) {
           const priority = this.timeSlotTracks[timeSlot.id].find(timeSlotTrack => timeSlotTrack.id === sessionObj.track.id).priority;
-          console.log(data.startTime.toDate().getHours());
-          console.log(timeSlot.startTime.getHours());
-          console.log(data.startTime.toDate().getHours() - timeSlot.startTime.getHours());
           this.timeSlotSessions[timeSlot.id].push({
             columnStart: priority,
             columnEnd: priority + 1,

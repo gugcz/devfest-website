@@ -9,6 +9,6 @@ export interface TimeSlot {
 }
 
 export interface TimeSlotItem {
-  session: string;
+  session: {id: any};
   track: {id: any};
 }
