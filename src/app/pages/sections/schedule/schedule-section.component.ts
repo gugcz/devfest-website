@@ -45,13 +45,14 @@ export class ScheduleSectionComponent implements OnInit {
     const timeSlotsSnapshot = await this.firestore.collection('timeSlots').ref.get();
     timeSlotsSnapshot.docs.forEach(timeSlotSnap => {
       const data = timeSlotSnap.data();
-      this.timeSlotTracksRefs[data.id] = [];
+      const id = timeSlotSnap.id;
+      this.timeSlotTracksRefs[id] = [];
 
-      this.selectedTimeSlotId = data.primary ? data.id : this.selectedTimeSlotId;
+      this.selectedTimeSlotId = data.primary ? id : this.selectedTimeSlotId;
 
       const timeSlotsItems: TimeSlotItem[] = data.sessions.map(timeSlotItem => {
-        if (this.timeSlotTracksRefs[data.id].indexOf(timeSlotItem.track.id) === -1) {
-          this.timeSlotTracksRefs[data.id].push(timeSlotItem.track.id);
+        if (this.timeSlotTracksRefs[id].indexOf(timeSlotItem.track.id) === -1) {
+          this.timeSlotTracksRefs[id].push(timeSlotItem.track.id);
           const startDate = data.startTime.toDate();
           const endDate = data.endTime.toDate();
           this.createTimesArray(
@@ -67,7 +68,7 @@ export class ScheduleSectionComponent implements OnInit {
       });
 
       const timeSlot: TimeSlot = {
-        id: data.id,
+        id: id,
         text: data.text,
         endTime: data.endTime.toDate(),
         startTime: data.startTime.toDate(),
@@ -75,7 +76,7 @@ export class ScheduleSectionComponent implements OnInit {
         rowsCount: this.countRows(data.startTime.toDate(), data.endTime.toDate())
       };
 
-      this.timeSlotSessions[data.id] = [];
+      this.timeSlotSessions[id] = [];
 
       this.timeSlots.push(timeSlot);
     });
