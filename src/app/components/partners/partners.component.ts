@@ -12,6 +12,7 @@ interface PartnerSection {
 interface Partner {
     logo: Observable<string>;
     url: string;
+    name: string;
 }
 
 @Component({
@@ -47,7 +48,8 @@ export class PartnersComponent implements OnInit {
             await logosSnapshot.docs.forEach(async (logoSnapshot) => {
                 const partner: Partner = {
                     url: logoSnapshot.data().url,
-                    logo: this.firestorage.ref(logoSnapshot.data().logo).getDownloadURL()
+                    logo: this.firestorage.ref(logoSnapshot.data().logo).getDownloadURL(),
+                    name: logoSnapshot.data().name
                 };
                 partners.push(partner);
             });
