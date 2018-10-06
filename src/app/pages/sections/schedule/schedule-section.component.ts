@@ -92,7 +92,7 @@ export class ScheduleSectionComponent implements OnInit {
             this.timeSlotTracks[timeSlotRef] = [];
           }
 
-          this.timeSlotTracks[timeSlotRef].push(trackSnapshot.data());
+          this.timeSlotTracks[timeSlotRef].push({...trackSnapshot.data(), id: trackSnapshot.ref.id});
         }
       });
     });
@@ -112,7 +112,7 @@ export class ScheduleSectionComponent implements OnInit {
             columnStart: priority,
             columnEnd: priority + 1,
             rowStart: this.countRow(data.startTime.toDate(), timeSlot.startTime),
-            rowEnd: this.countRow(data.endTime.toDate(), timeSlot.startTime) - 1,
+            rowEnd: this.countRow(data.endTime.toDate(), timeSlot.startTime),
             name: data.name,
             description: data.description,
           });
@@ -137,6 +137,10 @@ export class ScheduleSectionComponent implements OnInit {
       actualTimeSlot.startTime.getHours(),
       actualTimeSlot.endTime.getMinutes() === 0 ? actualTimeSlot.endTime.getHours() : actualTimeSlot.endTime.getHours() + 1
     );
+  }
+
+  getColumnsCount(selectedTimeSlotId) {
+    return this.timeSlotTracks[selectedTimeSlotId] && this.timeSlotTracks[selectedTimeSlotId].length || 0;
   }
 
   getRowsCount(selectedTimeSlotId) {
