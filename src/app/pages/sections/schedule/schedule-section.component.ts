@@ -96,6 +96,9 @@ export class ScheduleSectionComponent implements OnInit {
         }
       });
     });
+    Object.keys(this.timeSlotTracksRefs).forEach(timeSlotRef => {
+      this.timeSlotTracks[timeSlotRef].sort((a, b) => a.order > b.order ? 1 : -1);
+    });
   }
 
   async processSessions() {
@@ -107,10 +110,10 @@ export class ScheduleSectionComponent implements OnInit {
         const sessionObj = timeSlot.sessions.find(session => session.session.id === sessionSnapshot.ref.id);
 
         if (sessionObj && this.timeSlotTracksRefs[timeSlot.id].indexOf(sessionObj.track.id) !== -1) {
-          const priority = this.timeSlotTracks[timeSlot.id].find(timeSlotTrack => timeSlotTrack.id === sessionObj.track.id).priority;
+          const order = this.timeSlotTracks[timeSlot.id].find(timeSlotTrack => timeSlotTrack.id === sessionObj.track.id).order;
           this.timeSlotSessions[timeSlot.id].push({
-            columnStart: priority,
-            columnEnd: priority + 1,
+            columnStart: order,
+            columnEnd: order + 1,
             rowStart: this.countRow(data.startTime.toDate(), timeSlot.startTime),
             rowEnd: this.countRow(data.endTime.toDate(), timeSlot.startTime),
             name: data.name,
