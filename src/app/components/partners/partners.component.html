@@ -3,8 +3,8 @@
   <div class="partner-section" *ngFor="let partnerSection of partnerSections" [@fadeInOut]>
     <h3 class="section-title" >{{partnerSection.name}}</h3>
     <div class="logos-container">
-      <a *ngFor="let logo of partnerSection.partners" [href]="logo.url" class="link" target="_blank" title="GUG.cz">
-        <img class="logo" [src]="logo.logo | async" alt="GUG.cz" [@fadeInOut]>
+      <a *ngFor="let logo of partnerSection.partners" [href]="logo.url" class="link" target="_blank" [title]="logo.name" [@fadeInOut]>
+        <img *ngIf="logo.logo | async as photo" class="logo" [src]="photo" [alt]="logo.name" >
       </a>
     </div>
   </div>
