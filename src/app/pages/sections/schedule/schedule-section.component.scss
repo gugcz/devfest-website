@@ -59,17 +59,21 @@
       }
 
       .halls {
-        display: grid;
+        display: flex;
+        flex-direction: row;
         grid-column-start: 1;
         grid-column-end: 3;
-        grid-template-columns: 1fr 1fr 1fr;
         padding-left: 100px;
 
-        .hall .hall-title {
-          font-size: 2rem;
-          font-weight: 500;
-          margin: 0;
-          text-align: center;
+        .hall {
+          flex: 1;
+
+          .hall-title {
+            font-size: 2rem;
+            font-weight: 500;
+            margin: 0;
+            text-align: center;
+          }
         }
       }
 

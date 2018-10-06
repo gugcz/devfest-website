@@ -15,14 +15,8 @@
         </div>
       </div>
       <div class="halls">
-        <div class="hall">
-          <p class="hall-title">Hall A</p>
-        </div>
-        <div class="hall">
-          <p class="hall-title">Hall B</p>
-        </div>
-        <div class="hall">
-          <p class="hall-title">Hall C</p>
+        <div class="hall" *ngFor="let track of timeSlotTracks[selectedTimeSlotId]">
+          <p class="hall-title">{{track.name}}</p>
         </div>
       </div>
       <div class="times">
