@@ -20,41 +20,8 @@
         </div>
       </div>
       <div class="times">
-        <div class="time">
-          <p class="time-title">9:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">10:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">11:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">12:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">13:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">14:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">15:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">16:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">17:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">18:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">19:00</p>
-        </div>
-        <div class="time">
-          <p class="time-title">20:00</p>
+        <div class="time" *ngFor="let time of times">
+          <p class="time-title">{{time}}:00</p>
         </div>
       </div>
       <div class="tracks">

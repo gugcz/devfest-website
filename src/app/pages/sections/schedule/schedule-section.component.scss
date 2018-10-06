@@ -92,7 +92,6 @@
       .tracks {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: repeat(24, 110px);
         grid-column-gap: 8px;
         grid-row-gap: 8px;
 
