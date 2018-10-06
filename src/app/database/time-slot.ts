@@ -5,9 +5,10 @@ export interface TimeSlot {
   endTime: Date;
   startTime: Date;
   primary?: boolean;
+  rowsCount: number;
 }
 
 export interface TimeSlotItem {
   session: string;
-  track: string;
+  track: {id: any};
 }

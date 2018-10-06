@@ -24,16 +24,14 @@
           <p class="time-title">{{time}}:00</p>
         </div>
       </div>
-      <div class="tracks">
-        <ng-container *ngFor="let talk of talks" [ngSwitch]="talk.title">
-          <div class="keynote schedule-item full-row-item" *ngSwitchCase="'Keynote'">
-            <p>Keynote</p>
-          </div>
-          <div *ngSwitchDefault
-               [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.trackNumber]"
-               class="schedule-item">
-            <app-talk [talk]="talk"></app-talk>
-          </div>
+      <div class="tracks" [ngClass]="'tracks-rows-' + getRowsCount(selectedTimeSlotId)">
+        <ng-container *ngIf="showTracks === true">
+          <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId]">
+            <div [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.columnStart]"
+                 class="schedule-item">
+              <p>{{talk.name}}</p>
+            </div>
+          </ng-container>
         </ng-container>
       </div>
     </div>
