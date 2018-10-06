@@ -20,7 +20,7 @@
   .title {
     font-family: MyMediaval, serif;
     font-size: 3rem;
-    margin-top: 0;
+    margin: 0;
     text-align: center;
   }
 
@@ -32,6 +32,31 @@
       width: 100%;
       grid-template-columns: 100px 1fr;
       grid-row-gap: 16px;
+
+      .time-slot-switch-container {
+        display: flex;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        flex-direction: row;
+
+        .time-slot-switch {
+          cursor: pointer;
+          flex: 1;
+          text-align: center;
+
+          &-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 0;
+            border-bottom: 2px solid transparent;
+            padding: 8px;
+          }
+
+          &.active .time-slot-switch-title {
+            border-bottom: 2px solid #333333;
+          }
+        }
+      }
 
       .halls {
         display: grid;
@@ -68,9 +93,7 @@
         grid-row-gap: 8px;
 
         .schedule-item {
-          background: url("../../../../assets/ticket-template.jpg");
-          background-repeat: no-repeat;
-          background-size: 100% 100%;
+          background: saddlebrown;
           color: white;
           display: flex;
           flex: 1;
