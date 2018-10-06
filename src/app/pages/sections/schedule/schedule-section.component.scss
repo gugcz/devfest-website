@@ -104,8 +104,6 @@
         }
 
         .full-row-item {
-          grid-column-start: 1;
-          grid-column-end: 4;
           border: solid 1px #333333;
           padding: 8px;
           width: calc(100% - 16px);
@@ -349,6 +347,16 @@
           grid-row-start: 21;
           grid-row-end: 22;
         }
+      }
+
+      @for $i from 1 through 48 {
+        .tracks-rows-#{$i} {
+          grid-template-rows: repeat($i, 1fr);
+        }
+      }
+
+      .tracks-3-columns {
+        grid-template-columns: 1fr 1fr 1fr;
       }
     }
   }
