@@ -89,7 +89,7 @@ import { TalkComponent } from './components/talk/talk.component';
         VenueSectionComponent,
         VenuePositionMapComponent,
         SpeakersSectionComponent,
-        SpeakerDetailSectionComponent
+        SpeakerDetailSectionComponent,
         ScheduleSectionComponent,
         TalkComponent
     ],
@@ -137,7 +137,7 @@ import { TalkComponent } from './components/talk/talk.component';
         TicketsSectionComponent,
         VenueSectionComponent,
         SpeakersSectionComponent,
-        SpeakerDetailSectionComponent
+        SpeakerDetailSectionComponent,
         TicketsSectionComponent,
         ScheduleSectionComponent
     ],

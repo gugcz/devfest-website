@@ -9,6 +9,11 @@
   </h1>
   <div class="body">
     <div class="schedule">
+      <div class="time-slot-switch-container">
+        <div class="time-slot-switch" *ngFor="let timeSlot of timeSlots" [ngClass]="{'active': timeSlot.id === selectedTimeSlotId}" (click)="changeSelectedTimeSlot(timeSlot.id)">
+          <p class="time-slot-switch-title">{{timeSlot.text}}</p>
+        </div>
+      </div>
       <div class="halls">
         <div class="hall">
           <p class="hall-title">Hall A</p>
@@ -58,7 +63,7 @@
           <p class="time-title">20:00</p>
         </div>
       </div>
-      <div class="tracks">
+      <!--<div class="tracks">
         <ng-container *ngFor="let talk of talks" [ngSwitch]="talk.title">
           <div class="keynote schedule-item full-row-item" *ngSwitchCase="'Keynote'">
             <p>Keynote</p>
@@ -69,7 +74,7 @@
             <app-talk [talk]="talk"></app-talk>
           </div>
         </ng-container>
-      </div>
+      </div>-->
     </div>
   </div>
 </div>
