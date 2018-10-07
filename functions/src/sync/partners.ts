@@ -1,6 +1,5 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-const gcs = require('@google-cloud/storage')();
 
 export const createdSection = functions.firestore.document('partners/{sectionId}').onCreate((snap, context) => {
   const id = snap.id;
@@ -52,6 +51,10 @@ async function updateOrCreatePartnerInSection(sectionId, partnerId, namePartner,
   logos[partnerId] = {};
   logos[partnerId]["name"] = namePartner;
   logos[partnerId]["url"] = url;
+
+  logos[partnerId]["logoUrl"] = "nastavit";
+  logos[partnerId]["width"] = "nastavit";
+  logos[partnerId]["height"] = "nastavit";
   return admin.database().ref('partners').child(sectionId).child('logos').set(logos);
 }
 
