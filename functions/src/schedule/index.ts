@@ -26,7 +26,7 @@ const removeSessionsHalls = (data) => {
   if (data.sessions) {
     data.sessions.forEach(async session => {
       if (session.track && session.session) {
-        admin.firestore().doc(session.session).set({hall: FieldValue.delete()}, {merge: true});
+        session.session.set({hall: FieldValue.delete()}, {merge: true});
       }
     });
   }
@@ -36,8 +36,9 @@ const addSessionsHalls = (data) => {
   if (data.sessions) {
     data.sessions.forEach(async session => {
       if (session.track && session.session) {
-        const trackSnap = await admin.firestore().doc(session.track).get();
-        admin.firestore().doc(session.session).set({hall: trackSnap.data().name}, {merge: true});
+        session.track.get().then(doc => {
+          session.session.set({hall: doc.data().name}, {merge: true});
+        });
       }
     });
   }
