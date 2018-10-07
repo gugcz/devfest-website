@@ -6,40 +6,40 @@ import FieldValue = admin.firestore.FieldValue;
 export const timeSlotCreated = functions.firestore
   .document('timeSlots/{timeSlotId}')
   .onCreate((snap, context) => {
-    addSessionsHalls(snap.data());
+    return addSessionsHalls(snap.data());
   });
 
 export const timeSlotUpdated = functions.firestore
   .document('timeSlots/{timeSlotId}')
   .onUpdate((change, context) => {
-    removeSessionsHalls(change.before.data());
-    addSessionsHalls(change.after.data());
+    return removeSessionsHalls(change.before.data()).then(() => {
+      return addSessionsHalls(change.after.data());
+    });
   });
 
 export const timeSlotDeleted = functions.firestore
   .document('timeSlots/{timeSlotId}')
   .onDelete((snap, context) => {
-    removeSessionsHalls(snap.data());
+    return removeSessionsHalls(snap.data());
   });
 
-const removeSessionsHalls = (data) => {
+async function removeSessionsHalls (data) {
   if (data.sessions) {
-    data.sessions.forEach(async session => {
+    await data.sessions.forEach(async session => {
       if (session.track && session.session) {
-        session.session.set({hall: FieldValue.delete()}, {merge: true});
+        await session.session.set({hall: FieldValue.delete()}, {merge: true});
       }
     });
   }
 };
 
-const addSessionsHalls = (data) => {
+async function addSessionsHalls (data) {
   if (data.sessions) {
-    data.sessions.forEach(async session => {
+    await data.sessions.forEach(async session => {
       if (session.track && session.session) {
-        session.track.get().then(doc => {
-          const tracktData = doc.data();
-          session.session.set({hall: {name: tracktData.name, order: tracktData.order}}, {merge: true});
-        });
+        const doc = await session.track.get()
+        const tracktData = doc.data();
+        await session.session.set({hall: {name: tracktData.name, order: tracktData.order}}, {merge: true});
       }
     });
   }
