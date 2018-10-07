@@ -1,6 +1,6 @@
 export interface Talk {
   name: string;
-  speakers?: Speaker[];
+  speakers: Speaker[];
   level?: string;
   language?: string;
   length?: string;
