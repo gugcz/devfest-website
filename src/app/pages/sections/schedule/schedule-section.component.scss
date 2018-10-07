@@ -113,8 +113,18 @@
 }
 
 @media screen and (max-width: 1396px) {
-  .schedule-dialog .body .schedule .tracks {
-    grid-template-rows: 146px 146px 146px;
+  .schedule-dialog .body .schedule {
+    @for $i from 1 through 100 {
+      .tracks-mobile-rows-#{$i} {
+        grid-template-rows: repeat($i, 146px);
+
+        @for $x from 1  through 100 {
+          .talk-mobile-row-#{$x} {
+            grid-row: $x;
+          }
+        }
+      }
+    }
   }
 }
 

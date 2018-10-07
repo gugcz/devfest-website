@@ -126,6 +126,8 @@ export class ScheduleSectionComponent implements OnInit {
             columnEnd: columnEnd,
             rowStart: this.countRow(data.startTime.toDate(), timeSlot.startTime),
             rowEnd: this.countRow(data.endTime.toDate(), timeSlot.startTime),
+            startHour: data.startTime.toDate(),
+            endHour: data.startTime.toDate(),
             name: data.name,
             description: data.description,
             speakers: speakers,
@@ -175,6 +177,19 @@ export class ScheduleSectionComponent implements OnInit {
 
   countRows(startTime: Date, endTime: Date) {
     return (endTime.getHours() - startTime.getHours()) * 2;
+  }
+
+  getMobileRowsCount(selectedTimeSlotId) {
+    const timeSlot = this.timeSlots.find(it => it.id === selectedTimeSlotId);
+    const hours = timeSlot && (timeSlot.endTime.getHours() - timeSlot.startTime.getHours()) || 1;
+    const tracksCount = this.timeSlotTracks[selectedTimeSlotId] &&  this.timeSlotTracks[selectedTimeSlotId].length || 1;
+    return tracksCount * hours;
+  }
+
+  countMobileRow(talk, selectedTimeSlotId) {
+    const timeSlot = this.timeSlots.find(it => it.id === selectedTimeSlotId);
+    console.log(talk);
+    return (talk.startHour.getHours() - timeSlot.startTime.getHours()) * this.timeSlotTracks[selectedTimeSlotId].length + talk.hall.order;
   }
 
   close() {
