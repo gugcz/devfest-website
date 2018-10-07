@@ -1,14 +1,13 @@
 <div class="talk">
   <div class="body">
-    <p class="talk-title">{{talk.title}}</p>
-    <p class="talk-level">{{talk.level}} / {{talk.language}} / {{talk.hall}}</p>
+    <p class="talk-title">{{talk.name}}</p>
+    <p class="talk-level">{{talk.level}} / {{talk.language}} / {{talk.hall}} / {{talk.length}}</p>
   </div>
-  <div class="footer" ngClass="{{talk.technologyClass}}">
-    <img class="speaker-image" [src]="talk.speaker.imageUrl" alt="{{talk.speaker.name}}">
+  <div class="footer" *ngFor="let speaker of talk.speakers" [ngStyle]="{'background-color': talk.tag.color}">
+    <img class="speaker-image" [src]="speaker.photoUrl" alt="{{speaker.name}}">
     <div class="speaker">
-      <span class="name">{{talk.speaker.name}}</span>
-      <span class="job">{{talk.speaker.job}} / {{talk.speaker.city}}</span>
+      <span class="name">{{speaker.name}}</span>
+      <span class="job">{{speaker.job}}</span>
     </div>
-    <p class="talk-length">{{talk.length}}</p>
   </div>
 </div>

@@ -29,7 +29,7 @@
           <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId]">
             <div [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.columnStart + '-to-' + talk.columnEnd]"
                  class="schedule-item">
-              <p>{{talk.name}}</p>
+              <app-talk [talk]="talk"></app-talk>
             </div>
           </ng-container>
         </ng-container>
