@@ -6,7 +6,11 @@ import * as ticket from './tickets/ticketPrice';
 import * as press from './press';
 import * as invoice from './invoice/invoiceTriggers';
 import * as sync from './sync';
+import * as gaSpeakers from './assistant/speakers';
  
+/**** Google Assitant */
+export const gaGetSpeakers = gaSpeakers.getSpeakers;
+
 /**** Tickets ***/
 export const getTickets = ticket.getTickets;
 /**** Press ***/
