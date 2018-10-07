@@ -20,6 +20,7 @@ import {SocialNetworksComponent} from './components/social-networks/social-netwo
 import {TicketsComponent} from './components/tickets/tickets.component';
 import {HomeComponent} from './pages/home/home.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {TrackSort} from './pages/sections/schedule/trackSort';
 import {
     MatButtonModule,
     MatCardModule,
@@ -91,7 +92,8 @@ import { TalkComponent } from './components/talk/talk.component';
         SpeakersSectionComponent,
         SpeakerDetailSectionComponent,
         ScheduleSectionComponent,
-        TalkComponent
+        TalkComponent,
+        TrackSort
     ],
     imports: [
         BrowserModule,

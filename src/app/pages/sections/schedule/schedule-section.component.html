@@ -25,8 +25,8 @@
         </div>
       </div>
       <div class="tracks" [ngClass]="['tracks-rows-' + getRowsCount(selectedTimeSlotId), 'tracks-columns-' + getColumnsCount(selectedTimeSlotId)]">
-        <ng-container *ngIf="showTracks === true">
-          <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId]">
+        <ng-container *ngIf="timeSlotSessions[selectedTimeSlotId] && timeSlotSessions[selectedTimeSlotId].length !== 0">
+          <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId] | trackSort">
             <div [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.columnStart + '-to-' + talk.columnEnd]"
                  class="schedule-item">
               <app-talk [talk]="talk"></app-talk>

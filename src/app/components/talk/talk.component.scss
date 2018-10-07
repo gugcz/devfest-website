@@ -2,20 +2,23 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  height: 146px;
+  width: 100%;
 
   .body {
     display: flex;
     flex: 1;
-    padding: 8px;
+    padding: 4px;
     flex-direction: column;
 
     .talk-title {
-      font-size: 1.25rem;
+      font-size: 1rem;
       margin: 0;
       font-weight: 500;
     }
 
     .talk-level {
+      font-size: 0.75rem;
       margin: 0;
     }
   }
@@ -27,6 +30,7 @@
     padding: 6px;
     align-items: center;
     color: white;
+    width: calc(100% - 12px);
 
     .speaker-image {
       height: 32px;
@@ -68,5 +72,23 @@
 
   .footer.android {
     background: #6ab344;
+  }
+}
+
+@media only screen and (min-width: 1376px) {
+  .talk {
+    height: auto;
+
+    .body {
+      padding: 8px;
+    }
+
+    .talk-title {
+      font-size: 1.25rem;
+    }
+
+    .talk-level {
+      font-size: 1rem;
+    }
   }
 }
