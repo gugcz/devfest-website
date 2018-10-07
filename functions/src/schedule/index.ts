@@ -23,24 +23,30 @@ export const timeSlotDeleted = functions.firestore
     return removeSessionsHalls(snap.data());
   });
 
-async function removeSessionsHalls (data) {
+async function removeSessionsHalls(data) {
   if (data.sessions) {
     await data.sessions.forEach(async session => {
       if (session.track && session.session) {
-        await session.session.set({hall: FieldValue.delete()}, {merge: true});
+        const sessionref = session.session;
+        await sessionref.set({ hall: FieldValue.delete() }, { merge: true });
       }
     });
   }
+  return true;
 };
 
-async function addSessionsHalls (data) {
+async function addSessionsHalls(data) {
   if (data.sessions) {
     await data.sessions.forEach(async session => {
       if (session.track && session.session) {
         const doc = await session.track.get()
         const tracktData = doc.data();
-        await session.session.set({hall: {name: tracktData.name, order: tracktData.order}}, {merge: true});
+        const sessionRef = session.session;
+        if (tracktData) {
+          await sessionRef.set({ hall: { name: tracktData.name, order: tracktData.order } }, { merge: true });
+        }
       }
     });
   }
+  return true;
 };
