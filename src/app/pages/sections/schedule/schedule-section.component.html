@@ -27,7 +27,7 @@
       <div class="tracks" [ngClass]="['tracks-rows-' + getRowsCount(selectedTimeSlotId), 'tracks-columns-' + getColumnsCount(selectedTimeSlotId), 'tracks-mobile-rows-' + getMobileRowsCount(selectedTimeSlotId)]">
         <ng-container *ngIf="timeSlotSessions[selectedTimeSlotId] && timeSlotSessions[selectedTimeSlotId].length !== 0">
           <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId] | trackSort">
-            <div [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.columnStart + '-to-' + talk.columnEnd, 'talk-mobile-row-' + countMobileRow(talk, selectedTimeSlotId)]"
+            <div [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.columnStart + '-to-' + talk.columnEnd, 'talk-mobile-row-' + countMobileRow(talk, selectedTimeSlotId), talk.fullRow ? 'full-row' : '']"
                  class="schedule-item">
               <app-talk [talk]="talk"></app-talk>
             </div>
