@@ -9,5 +9,5 @@ export const changedSection = partners.changedSection;
 export const createdSection = partners.createdSection;
 export const deletedSection = partners.deletedSection;
 export const createdPartner = partners.createdPartner;
-export const changedPartner = partners.createdPartner;
+export const changedPartner = partners.changedPartner;
 export const deletedPartner = partners.deletedPartner;
