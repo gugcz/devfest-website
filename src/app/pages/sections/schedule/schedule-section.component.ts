@@ -118,8 +118,11 @@ export class ScheduleSectionComponent implements OnInit {
             });
           }
 
-          const tagSnap = await this.firestore.doc(data.tag).ref.get();
-          const tag = tagSnap.data();
+          let tag;
+          if (data.tag) {
+            const tagSnap = await this.firestore.doc(data.tag).ref.get();
+            tag = tagSnap.data();
+          }
 
           this.timeSlotSessions[timeSlot.id].push({
             columnStart: columnStart,
@@ -135,7 +138,8 @@ export class ScheduleSectionComponent implements OnInit {
             language: data.language,
             length: data.length,
             hall: data.hall,
-            tag: tag
+            tag: tag,
+            fullRow: data.fullRow
           });
         }
       });
@@ -182,13 +186,12 @@ export class ScheduleSectionComponent implements OnInit {
   getMobileRowsCount(selectedTimeSlotId) {
     const timeSlot = this.timeSlots.find(it => it.id === selectedTimeSlotId);
     const hours = timeSlot && (timeSlot.endTime.getHours() - timeSlot.startTime.getHours()) || 1;
-    const tracksCount = this.timeSlotTracks[selectedTimeSlotId] &&  this.timeSlotTracks[selectedTimeSlotId].length || 1;
+    const tracksCount = this.timeSlotTracks[selectedTimeSlotId] && this.timeSlotTracks[selectedTimeSlotId].length || 1;
     return tracksCount * hours;
   }
 
   countMobileRow(talk, selectedTimeSlotId) {
     const timeSlot = this.timeSlots.find(it => it.id === selectedTimeSlotId);
-    console.log(talk);
     return (talk.startHour.getHours() - timeSlot.startTime.getHours()) * this.timeSlotTracks[selectedTimeSlotId].length + talk.hall.order;
   }
 

@@ -122,6 +122,13 @@
           .talk-mobile-row-#{$x} {
             grid-row: $x;
           }
+
+          .talk-mobile-row-#{$x}.full-row {
+            grid: unset;
+            grid-row-start: $x;
+            grid-row-end: $x + 3;
+            height: 450px;
+          }
         }
       }
     }
@@ -205,6 +212,7 @@
             border: 2px solid #333333;
             color: #333333;
             display: flex;
+            height: unset;
             flex: 1;
             width: 100%;
           }

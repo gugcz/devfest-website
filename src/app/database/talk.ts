@@ -11,6 +11,7 @@ export interface Talk {
   hall: { name: string, order: number };
   rowStart: number;
   rowEnd: number;
+  fullRow: boolean;
   tag: { color: string; type: string; };
 }
 
