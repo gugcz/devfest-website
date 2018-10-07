@@ -106,7 +106,7 @@ export class ScheduleSectionComponent implements OnInit {
 
     sessionsSnapshot.docs.forEach(sessionSnapshot => {
       const data = sessionSnapshot.data();
-      this.timeSlots.forEach(timeSlot => {
+      this.timeSlots.forEach(async timeSlot => {
         const sessionObj = timeSlot.sessions.find(session => session.session.id === sessionSnapshot.ref.id);
 
         if (sessionObj && this.timeSlotTracksRefs[timeSlot.id].indexOf(sessionObj.track.id) !== -1) {
@@ -117,6 +117,18 @@ export class ScheduleSectionComponent implements OnInit {
             columnStart = 1;
             columnEnd = this.getColumnsCount(timeSlot.id) + 1;
           }
+
+          const speakers = [];
+          if (data.speakers) {
+            data.speakers.forEach(async speakerRef => {
+              const speakerSnapshot = await this.firestore.doc(speakerRef).ref.get();
+              speakers.push(speakerSnapshot.data());
+            });
+          }
+
+          const tagSnap = await this.firestore.doc(data.tag).ref.get();
+          const tag = tagSnap.data();
+
           this.timeSlotSessions[timeSlot.id].push({
             columnStart: columnStart,
             columnEnd: columnEnd,
@@ -124,6 +136,12 @@ export class ScheduleSectionComponent implements OnInit {
             rowEnd: this.countRow(data.endTime.toDate(), timeSlot.startTime),
             name: data.name,
             description: data.description,
+            speakers: speakers,
+            level: data.level,
+            language: data.language,
+            length: data.length,
+            hall: data.hall,
+            tag: tag
           });
         }
       });

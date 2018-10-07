@@ -1,6 +1,6 @@
 export interface Talk {
-  title: string;
-  speaker?: Speaker;
+  name: string;
+  speakers?: Speaker[];
   level?: string;
   language?: string;
   length?: string;
@@ -11,11 +11,13 @@ export interface Talk {
   hall: string;
   rowStart: number;
   rowEnd: number;
+  tag: { color: string; type: string; };
 }
 
 export interface Speaker {
   name: string;
   job: string;
   city: string;
-  imageUrl: string;
+  photoUrl: string;
+  photo: any;
 }

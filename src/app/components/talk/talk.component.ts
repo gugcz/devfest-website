@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Talk} from '../../database/talk';
+import {AngularFireStorage} from 'angularfire2/storage';
 
 @Component({
   selector: 'app-talk',
