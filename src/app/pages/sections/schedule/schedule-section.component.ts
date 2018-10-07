@@ -1,14 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {TeamSectionComponent} from '../team/team-section.component';
 import {MatDialogRef} from '@angular/material';
-import {Talk, Speaker} from '../../../database/talk';
-import {AngularFireStorage} from 'angularfire2/storage';
 import {AngularFirestore} from 'angularfire2/firestore';
-import {Organizer} from '../../../database/organizer';
 import {TimeSlot, TimeSlotItem} from '../../../database/time-slot';
-import {Time} from '@angular/common';
-import {startTimeRange} from '@angular/core/src/profile/wtf_impl';
-import {Session} from 'selenium-webdriver';
 
 @Component({
   selector: 'app-schedule-section',
@@ -104,15 +97,14 @@ export class ScheduleSectionComponent implements OnInit {
   async processSessions() {
     const sessionsSnapshot = await this.firestore.collection('sessions').ref.get();
 
-    sessionsSnapshot.docs.forEach(sessionSnapshot => {
+    sessionsSnapshot.docs.forEach(async sessionSnapshot => {
       const data = sessionSnapshot.data();
-      this.timeSlots.forEach(async timeSlot => {
+      await this.timeSlots.forEach(async timeSlot => {
         const sessionObj = timeSlot.sessions.find(session => session.session.id === sessionSnapshot.ref.id);
 
         if (sessionObj && this.timeSlotTracksRefs[timeSlot.id].indexOf(sessionObj.track.id) !== -1) {
           let columnStart = this.timeSlotTracks[timeSlot.id].find(timeSlotTrack => timeSlotTrack.id === sessionObj.track.id).order;
           let columnEnd = columnStart + 1;
-          console.log(data);
           if (data.fullRow) {
             columnStart = 1;
             columnEnd = this.getColumnsCount(timeSlot.id) + 1;

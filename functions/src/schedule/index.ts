@@ -37,7 +37,8 @@ const addSessionsHalls = (data) => {
     data.sessions.forEach(async session => {
       if (session.track && session.session) {
         session.track.get().then(doc => {
-          session.session.set({hall: doc.data().name}, {merge: true});
+          const tracktData = doc.data();
+          session.session.set({hall: {name: tracktData.name, order: tracktData.order}}, {merge: true});
         });
       }
     });

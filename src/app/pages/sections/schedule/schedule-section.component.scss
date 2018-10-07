@@ -30,12 +30,12 @@
     .schedule {
       display: grid;
       width: 100%;
-      grid-template-columns: 100px 1fr;
+      grid-template-columns: 50px 1fr;
       grid-row-gap: 16px;
 
       .time-slot-switch-container {
         display: flex;
-        grid-column-start: 2;
+        grid-column-start: 1;
         grid-column-end: 3;
         flex-direction: row;
 
@@ -45,7 +45,7 @@
           text-align: center;
 
           &-title {
-            font-size: 1.5rem;
+            font-size: 1rem;
             font-weight: 500;
             margin: 0;
             border-bottom: 2px solid transparent;
@@ -63,13 +63,13 @@
         flex-direction: row;
         grid-column-start: 1;
         grid-column-end: 3;
-        padding-left: 100px;
+        padding-left: 50px;
 
         .hall {
           flex: 1;
 
           .hall-title {
-            font-size: 2rem;
+            font-size: 1.1rem;
             font-weight: 500;
             margin: 0;
             text-align: center;
@@ -79,12 +79,12 @@
 
       .times {
         .time {
-          height: 236px;
+          height: 450px;
 
           .time-title {
             margin: 0;
             font-weight: 500;
-            font-size: 1.75rem;
+            font-size: 1rem;
           }
         }
       }
@@ -93,88 +93,185 @@
         display: grid;
         grid-column-gap: 8px;
         grid-row-gap: 8px;
+        grid-template-columns: 1fr;
 
         .schedule-item {
+          display: flex;
           background-color: #ecd4a8;
           border: 2px solid #333333;
           color: #333333;
-          display: flex;
-          flex: 1;
+          height: 146px;
           width: 100%;
+
+          app-talk {
+            width: 100%;
+          }
         }
+      }
+    }
+  }
+}
 
-        .full-row-item {
-          border: solid 1px #333333;
-          padding: 8px;
-          width: calc(100% - 16px);
+@media screen and (max-width: 1396px) {
+  .schedule-dialog .body .schedule .tracks {
+    grid-template-rows: 146px 146px 146px;
+  }
+}
 
-          p {
-            font-weight: 500;
-            font-size: 1.25rem;
+@media screen and (min-width: 1396px) {
+  .schedule-dialog {
+    .body {
+      padding: 24px;
+
+      .schedule {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 100px 1fr;
+        grid-row-gap: 16px;
+
+        .time-slot-switch-container {
+          display: flex;
+          grid-column-start: 2;
+          grid-column-end: 3;
+          flex-direction: row;
+
+          .time-slot-switch {
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+
+            &-title {
+              font-size: 1.5rem;
+              font-weight: 500;
+              margin: 0;
+              border-bottom: 2px solid transparent;
+              padding: 8px;
+            }
+
+            &.active .time-slot-switch-title {
+              border-bottom: 2px solid #333333;
+            }
           }
         }
 
-        .keynote {
-          grid-row: 1;
-        }
-
-        .lunch {
-          grid-row: 7;
-        }
-
-        .closing-keynote {
-          grid-row: 22;
-        }
-
-        .afterparty {
-          grid-row-start: 23;
-          grid-row-end: 25;
-        }
-
-        p {
-          margin: 0;
-        }
-
-        app-talk {
+        .halls {
           display: flex;
-          flex: 1;
-          width: 100%;
+          flex-direction: row;
+          grid-column-start: 1;
+          grid-column-end: 3;
+          padding-left: 100px;
+
+          .hall {
+            flex: 1;
+
+            .hall-title {
+              font-size: 2rem;
+              font-weight: 500;
+              margin: 0;
+              text-align: center;
+            }
+          }
+        }
+
+        .times {
+          .time {
+            height: 236px;
+
+            .time-title {
+              margin: 0;
+              font-weight: 500;
+              font-size: 1.75rem;
+            }
+          }
+        }
+
+        .tracks {
+          display: grid;
+          grid-column-gap: 8px;
+          grid-row-gap: 8px;
+
+          .schedule-item {
+            background-color: #ecd4a8;
+            border: 2px solid #333333;
+            color: #333333;
+            display: flex;
+            flex: 1;
+            width: 100%;
+          }
+
+          .full-row-item {
+            border: solid 1px #333333;
+            padding: 8px;
+            width: calc(100% - 16px);
+
+            p {
+              font-weight: 500;
+              font-size: 1.25rem;
+            }
+          }
+
+          .keynote {
+            grid-row: 1;
+          }
+
+          .lunch {
+            grid-row: 7;
+          }
+
+          .closing-keynote {
+            grid-row: 22;
+          }
+
+          .afterparty {
+            grid-row-start: 23;
+            grid-row-end: 25;
+          }
+
+          p {
+            margin: 0;
+          }
+
+          app-talk {
+            display: flex;
+            flex: 1;
+            width: 100%;
+          }
+
+          @for $i from 1 through 10 {
+            .talk-hall-#{$i}-to-#{$i + 1} {
+              grid-column-start: $i;
+              grid-column-end: $i + 1;
+            }
+
+            .talk-hall-1-to-#{$i} {
+              grid-column-start: 1;
+              grid-column-end: #{$i};
+            }
+          }
+
+          @for $i from 2 through 48 {
+            .talk-from-#{$i}-to-#{$i + 1} {
+              grid-row-start: #{$i};
+              grid-row-end: #{$i + 1};
+            }
+
+            .talk-from-#{$i}-to-#{$i + 2} {
+              grid-row-start: #{$i};
+              grid-row-end: #{$i + 2};
+            }
+          }
+        }
+
+        @for $i from 1 through 48 {
+          .tracks-rows-#{$i} {
+            grid-template-rows: repeat($i, 1fr);
+          }
         }
 
         @for $i from 1 through 10 {
-          .talk-hall-#{$i}-to-#{$i + 1} {
-            grid-column-start: $i;
-            grid-column-end: $i + 1;
+          .tracks-columns-#{$i} {
+            grid-template-columns: repeat($i, 1fr);
           }
-
-          .talk-hall-1-to-#{$i} {
-            grid-column-start: 1;
-            grid-column-end: #{$i};
-          }
-        }
-
-        @for $i from 2 through 48 {
-          .talk-from-#{$i}-to-#{$i + 1} {
-            grid-row-start: #{$i};
-            grid-row-end: #{$i + 1};
-          }
-
-          .talk-from-#{$i}-to-#{$i + 2} {
-            grid-row-start: #{$i};
-            grid-row-end: #{$i + 2};
-          }
-        }
-      }
-
-      @for $i from 1 through 48 {
-        .tracks-rows-#{$i} {
-          grid-template-rows: repeat($i, 1fr);
-        }
-      }
-
-      @for $i from 1 through 10 {
-        .tracks-columns-#{$i} {
-          grid-template-columns: repeat($i, 1fr);
         }
       }
     }
