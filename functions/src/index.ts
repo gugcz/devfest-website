@@ -27,3 +27,6 @@ export const syncDeletedSection = sync.deletedSection;
 export const syncCreatedPartner = sync.createdPartner;
 export const syncChangedPartner = sync.changedPartner;
 export const syncDeletedPartner = sync.deletedPartner;
+export const syncCreatedSpeaker = sync.createdSpeaker;
+export const syncChangedSpeaker = sync.changedSpeaker;
+export const syncDeletedSpeaker = sync.deletedSpeaker;

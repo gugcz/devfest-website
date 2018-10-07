@@ -51,10 +51,7 @@ async function updateOrCreatePartnerInSection(sectionId, partnerId, namePartner,
   logos[partnerId] = {};
   logos[partnerId]["name"] = namePartner;
   logos[partnerId]["url"] = url;
-
-  logos[partnerId]["logoUrl"] = "nastavit";
-  logos[partnerId]["width"] = "nastavit";
-  logos[partnerId]["height"] = "nastavit";
+  logos[partnerId]["logoUrl"] = logo;
   return admin.database().ref('partners').child(sectionId).child('logos').set(logos);
 }
 
