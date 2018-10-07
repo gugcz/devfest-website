@@ -21,3 +21,5 @@ export const invoiceGetCurrentCompanyFundedPrice = invoice.getCurrentCompanyFund
 export const timeSlotCreated = schedule.timeSlotCreated;
 export const timeSlotUpdated = schedule.timeSlotUpdated;
 export const timeSlotDeleted = schedule.timeSlotDeleted;
+export const addSpeakerToSession = schedule.addSpeakerToSession;
+export const changeSpeakerToSession = schedule.changeSpeakerToSession;
