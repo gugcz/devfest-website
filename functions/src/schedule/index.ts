@@ -38,9 +38,12 @@ export const changeSpeakerToSession = functions.firestore.document('sessions/{se
 });
 
 async function addSessionToSpeaker(speakersRef, sessionRef) {
-  await speakersRef.forEach(async oneRef => {
-    await oneRef.set({session: sessionRef}, { merge: true });
-  })
+  if (speakersRef){
+    await speakersRef.forEach(async oneRef => {
+      await oneRef.set({session: sessionRef}, { merge: true });
+    })
+  }
+  return true
 }
 
 async function removeSessionsHalls(data) {
