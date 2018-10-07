@@ -46,7 +46,7 @@ async function updateOrCreateSpeaker(id, speakerFire: SpeakerFirestore) {
   speaker["photoUrl"] = speakerFire.photo;
   speaker["shortBio"] = speakerFire.about.substring(0,80) + "...";
   speaker["socials"] = [];
-  if (speaker.twitter){
+  if (speakerFire.twitter){
     speaker["socials"][0] = {icon: "twitter", link: ("https://twitter.com/" + speaker.twitter), name: "Twitter"};
   }
   speaker["tags"] = [];
