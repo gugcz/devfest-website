@@ -31,8 +31,8 @@ async function updateOrCreateTimeSlot(id, data) {
       const sessionDataSnapshot = await session.session.get();
       const sessionData = sessionDataSnapshot.data();
       if (sessionData.startTime && sessionData.endTime){
-        const sessionStartTime = sessionData.startTime.toDate().getHours() + ":" + (("0" + sessionData.startTime.toDate().getMinutes()).slice(-2))
-        const sessionEndTime = sessionData.endTime.toDate().getHours() + ":" + (("0" + sessionData.endTime.toDate().getMinutes()).slice(-2))
+        const sessionStartTime = (sessionData.startTime.toDate().getHours() + 2) + ":" + (("0" + sessionData.startTime.toDate().getMinutes()).slice(-2))
+        const sessionEndTime = (sessionData.endTime.toDate().getHours() + 2) + ":" + (("0" + sessionData.endTime.toDate().getMinutes()).slice(-2))
         let findId = null;
         timeslots.forEach((slot,ind) => {
           if (slot.startTime === sessionStartTime &&  slot.endTime === sessionEndTime) {
