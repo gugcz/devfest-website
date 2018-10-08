@@ -21,7 +21,7 @@
     <p class="intro">{{speaker.intro}}</p>
     <p class="sessions-title">Sessions</p>
     <ul class="sessions-container">
-      <li class="session" *ngFor="let session of speaker.sessions">
+      <li class="session" *ngIf="session" [@fadeInOut]>
         <h2>{{session.name}}</h2>
         <p class="text">{{session.description}}</p>
       </li>
