@@ -22,10 +22,8 @@ async function updateOrCreateTimeSlot(id, data) {
   const tracks = [];
   const timeslots = [];
   if (data.sessions.length > 0){
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < data.sessions.length; i++){
-      const session = data.sessions[i];
-      if (!(tracks.indexOf(session.track.id) >= -1)){
+    for (const session of data.sessions){
+      if (tracks.indexOf(session.track.id) < 0){
         tracks[session.track.id] = {};
         const trackData = await session.track.get();
         tracks[session.track.id] = {title: trackData.data().name}
@@ -53,13 +51,15 @@ async function updateOrCreateTimeSlot(id, data) {
           timeslots[findId] = timeSlotIn;
         };
       }
-      
     }
   }
   const date = data.startTime.toDate();
-  timeSlot['tracks'] = tracks;
   timeSlot['date'] = date.getFullYear() + "-" + (date.getMonth()-1) + "-" + date.getDate();
   timeSlot['dateReadable'] = data.text;
-  timeSlot['sessions'] = timeslots;
-  return admin.database().ref('schedule').child(id).update(timeSlot);
+  timeSlot['tracks'] = tracks;
+  timeSlot['sessions'] = timeslots
+  console.log(tracks);
+  console.log(timeslots);
+  await admin.database().ref('schedule').child(id).set(timeSlot);
+  return true;
 }
