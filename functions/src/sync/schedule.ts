@@ -21,32 +21,39 @@ async function updateOrCreateTimeSlot(id, data) {
   const timeSlot = {};
   const tracks = [];
   const timeslots = [];
-  if (data.sessions){
-    await data.sessions.forEach(async session => {
-      if (!tracks.indexOf(session.track.id)){
+  if (data.sessions.length > 0){
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < data.sessions.length; i++){
+      const session = data.sessions[i];
+      if (!(tracks.indexOf(session.track.id) >= -1)){
         tracks[session.track.id] = {};
         const trackData = await session.track.get();
         tracks[session.track.id] = {title: trackData.data().name}
       }
-      const sessionData = await session.session.get();
-      if (timeslots.filter(slot => (slot.startTime === sessionData.startTime && slot.endTime === sessionData.endTime)).length === 0) {
+      const sessionDataSnapshot = await session.session.get();
+      const sessionData = sessionDataSnapshot.data();
+      let findId = null;
+      timeslots.forEach((slot,ind) => {
+        if (slot.startTime === sessionData.startTime && slot.endTime === sessionData.endTime) {
+          findId = ind;
+        }
+      })
+      if (findId === null) {
         const sessionsIn = [];
         sessionsIn.push(session.session.id);
         timeslots.push({startTime: sessionData.startTime, endTime: sessionData.endTime, sessions: sessionsIn});
       } else {
-        const timeSlotIn = timeslots.filter(slot => (slot.startTime === sessionData.startTime && slot.endTime === sessionData.endTime))[0];
-        const indexTimeSlotIn = timeslots.indexOf(slot => (slot.startTime === sessionData.startTime && slot.endTime === sessionData.endTime));
+        const timeSlotIn = timeslots[findId];
         const sessionsIn = timeSlotIn.sessions;
         sessionsIn.push(session.session.id)
         timeSlotIn['sessions'] = sessionsIn;
-        timeslots[indexTimeSlotIn] = timeSlotIn;
-      }
-    });
+        console.log(timeSlotIn);
+        timeslots[findId] = timeSlotIn;
+      };
+    }
   }
   timeSlot['tracks'] = tracks;
-  const dateFormat = new Date(data.startTime);
-  const returnDate = dateFormat.getFullYear() + "-" + dateFormat.getMonth() + "-" + dateFormat.getDate();
-  timeSlot['date'] = returnDate;
+  timeSlot['date'] = data.startTime;
   timeSlot['dateReadable'] = data.text;
   timeSlot['sessions'] = timeslots;
   return admin.database().ref('schedule').child(id).update(timeSlot);
