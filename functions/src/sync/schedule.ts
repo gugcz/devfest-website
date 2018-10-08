@@ -57,9 +57,7 @@ async function updateOrCreateTimeSlot(id, data) {
   timeSlot['date'] = date.getFullYear() + "-" + (date.getMonth()-1) + "-" + date.getDate();
   timeSlot['dateReadable'] = data.text;
   timeSlot['tracks'] = tracks;
-  timeSlot['sessions'] = timeslots
-  console.log(tracks);
-  console.log(timeslots);
+  timeSlot['sessions'] = timeslots;
   await admin.database().ref('schedule').child(id).set(timeSlot);
   return true;
 }
