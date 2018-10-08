@@ -17,7 +17,6 @@ interface Speaker {
   job: string;
   linkedin: string;
   twitter: string;
-  sessions: Session[];
   googleplus: string;
 }
 
@@ -43,6 +42,7 @@ interface Session {
 export class SpeakerDetailSectionComponent implements OnInit {
 
   speaker: Speaker;
+  session: Session;
 
   constructor(private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public dialogRef: MatDialogRef<TeamSectionComponent>,
     private firestore: AngularFirestore, private storage: AngularFireStorage, @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -77,6 +77,9 @@ export class SpeakerDetailSectionComponent implements OnInit {
       speakerSnapshot = speakers.docs[0];
     }
     const data = speakerSnapshot.data();
+    data.session.get().then(sessionSnap => {
+      this.session = sessionSnap.data();
+    });
     const photo = await this.findPhoto(data.photo);
     const companies = [];
     for (let y = 0; y < data.companies.length; y++) {
@@ -90,7 +93,6 @@ export class SpeakerDetailSectionComponent implements OnInit {
       residence: data.residence,
       job: data.job,
       intro: data.about,
-      sessions: data.sessions ? data.sessions : [],
       facebook: data.facebook ? data.facebook : null,
       instagram: data.instagram ? data.instagram : null,
       linkedin: data.linkedin ? data.linkedin : null,
