@@ -23,10 +23,10 @@ async function updateOrCreateSession(id, data){
   if (session === null){
     session = {}
   }
-  session["description"] = data.description;
+  session["description"] = data.description ? data.description : null;
   session["id"] = id;
   session["title"] = data.name;
-  session["language"] = data.language ? data.language : undefined;
+  session["language"] = data.language ? data.language : null;
   const speakers = [];
   if (data.speakers){
     data.speakers.forEach(speaker => {
@@ -34,7 +34,7 @@ async function updateOrCreateSession(id, data){
     });
   }
   session["speakers"] = speakers;
-  session["complexity"] = data.level ? data.level : undefined;
-  session["track"] = data.hall ? data.hall.name : undefined;
+  session["complexity"] = data.level ? data.level : null;
+  session["track"] = data.hall ? data.hall.name : null;
   return admin.database().ref('sessions').child(id).update(session);
 }
