@@ -30,3 +30,6 @@ export const syncDeletedPartner = sync.deletedPartner;
 export const syncCreatedSpeaker = sync.createdSpeaker;
 export const syncChangedSpeaker = sync.changedSpeaker;
 export const syncDeletedSpeaker = sync.deletedSpeaker;
+export const syncCreatedSession = sync.createdSession;
+export const syncChangedSession = sync.changedSession;
+export const syncDeletedSession = sync.deletedSession;
