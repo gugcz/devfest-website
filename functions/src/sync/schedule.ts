@@ -32,28 +32,33 @@ async function updateOrCreateTimeSlot(id, data) {
       }
       const sessionDataSnapshot = await session.session.get();
       const sessionData = sessionDataSnapshot.data();
-      let findId = null;
-      timeslots.forEach((slot,ind) => {
-        if (slot.startTime === sessionData.startTime && slot.endTime === sessionData.endTime) {
-          findId = ind;
-        }
-      })
-      if (findId === null) {
-        const sessionsIn = [];
-        sessionsIn.push(session.session.id);
-        timeslots.push({startTime: sessionData.startTime, endTime: sessionData.endTime, sessions: sessionsIn});
-      } else {
-        const timeSlotIn = timeslots[findId];
-        const sessionsIn = timeSlotIn.sessions;
-        sessionsIn.push(session.session.id)
-        timeSlotIn['sessions'] = sessionsIn;
-        console.log(timeSlotIn);
-        timeslots[findId] = timeSlotIn;
-      };
+      if (sessionData.startTime && sessionData.endTime){
+        const sessionStartTime = sessionData.startTime.toDate().getHours() + ":" + (("0" + sessionData.startTime.toDate().getMinutes()).slice(-2))
+        const sessionEndTime = sessionData.endTime.toDate().getHours() + ":" + (("0" + sessionData.endTime.toDate().getMinutes()).slice(-2))
+        let findId = null;
+        timeslots.forEach((slot,ind) => {
+          if (slot.startTime === sessionStartTime &&  slot.endTime === sessionEndTime) {
+            findId = ind;
+          }
+        })
+        if (findId === null) {
+          const sessionsIn = [];
+          sessionsIn[session.track.id] = session.session.id;
+          timeslots.push({startTime: sessionStartTime, endTime: sessionEndTime, sessions: sessionsIn});
+        } else {
+          const timeSlotIn = timeslots[findId];
+          const sessionsIn = timeSlotIn.sessions;
+          sessionsIn[session.track.id] = session.session.id;
+          timeSlotIn['sessions'] = sessionsIn;
+          timeslots[findId] = timeSlotIn;
+        };
+      }
+      
     }
   }
+  const date = data.startTime.toDate();
   timeSlot['tracks'] = tracks;
-  timeSlot['date'] = data.startTime;
+  timeSlot['date'] = date.getFullYear() + "-" + (date.getMonth()-1) + "-" + date.getDate();
   timeSlot['dateReadable'] = data.text;
   timeSlot['sessions'] = timeslots;
   return admin.database().ref('schedule').child(id).update(timeSlot);
