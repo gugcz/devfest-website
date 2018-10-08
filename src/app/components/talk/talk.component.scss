@@ -17,7 +17,7 @@
       font-weight: 500;
     }
 
-    .talk-level {
+    .talk-subtitle {
       font-size: 0.75rem;
       margin: 0;
     }
@@ -81,14 +81,14 @@
 
     .body {
       padding: 8px;
-    }
 
-    .talk-title {
-      font-size: 1.25rem;
-    }
+      .talk-title {
+        font-size: 1.25rem;
+      }
 
-    .talk-level {
-      font-size: 1rem;
+      .talk-subtitle {
+        font-size: 1rem;
+      }
     }
   }
 }
