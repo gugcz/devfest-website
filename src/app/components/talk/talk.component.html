@@ -1,10 +1,9 @@
 <div class="talk">
   <div class="body">
     <p class="talk-title">{{talk.name}}</p>
-    <p class="talk-level" *ngIf="!talk.fullRow">{{talk.level}} / {{talk.language}} / {{talk.hall.name}} / {{talk.length}}</p>
-    <p class="talk-level" *ngIf="talk.fullRow">{{talk.language}} / {{talk.hall.name}} / {{talk.length}}</p>
+    <p class="talk-level">{{talkSubtitle}}</p>
   </div>
-  <div class="footer" *ngFor="let speaker of talk.speakers" [ngStyle]="{'background-color': talk.tag.color}">
+  <div class="footer" *ngFor="let speaker of talk.speakers" [ngStyle]="{'background-color': talk.tag && talk.tag.color || ''}">
     <img class="speaker-image" [src]="speaker.photo" alt="{{speaker.name}}">
     <div class="speaker">
       <span class="name">{{speaker.name}}</span>

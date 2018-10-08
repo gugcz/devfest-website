@@ -111,7 +111,7 @@ export class ScheduleSectionComponent implements OnInit {
           }
 
           const speakers = [];
-          if (data.speakers) {
+          if (data.speakers && data.speakers.forEach) {
             data.speakers.forEach(async speakerRef => {
               const speakerSnapshot = await this.firestore.doc(speakerRef).ref.get();
               speakers.push(speakerSnapshot.data());
@@ -174,13 +174,13 @@ export class ScheduleSectionComponent implements OnInit {
   }
 
   countRow(trackDate: Date, timeSlotDate: Date) {
-    const trackTime = trackDate.getMinutes() === 30 ? trackDate.getHours() + 0.5 : trackDate.getHours();
-    const timeSlotTime = timeSlotDate.getMinutes() === 30 ? timeSlotDate.getHours() + 0.5 : timeSlotDate.getHours();
-    return (trackTime - timeSlotTime) * 2 + 1;
+    const trackTime = trackDate.getHours() * 6 + (trackDate.getMinutes() / 10);
+    const timeSlotTime = timeSlotDate.getHours() * 6 + (timeSlotDate.getMinutes() / 10);
+    return trackTime - timeSlotTime + 1;
   }
 
   countRows(startTime: Date, endTime: Date) {
-    return (endTime.getHours() - startTime.getHours()) * 2;
+    return (endTime.getHours() - startTime.getHours()) * 6;
   }
 
   getMobileRowsCount(selectedTimeSlotId) {
@@ -192,7 +192,7 @@ export class ScheduleSectionComponent implements OnInit {
 
   countMobileRow(talk, selectedTimeSlotId) {
     const timeSlot = this.timeSlots.find(it => it.id === selectedTimeSlotId);
-    return (talk.startHour.getHours() - timeSlot.startTime.getHours()) * this.timeSlotTracks[selectedTimeSlotId].length + talk.hall.order;
+    return (talk.startHour.getHours() - timeSlot.startTime.getHours()) * this.timeSlotTracks[selectedTimeSlotId].length + talk.hall && talk.hall.order || 0;
   }
 
   close() {
