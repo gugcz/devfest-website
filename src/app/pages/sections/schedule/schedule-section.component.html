@@ -10,26 +10,26 @@
   <div class="body">
     <div class="schedule">
       <div class="time-slot-switch-container">
-        <div class="time-slot-switch" *ngFor="let timeSlot of timeSlots" [ngClass]="{'active': timeSlot.id === selectedTimeSlotId}" (click)="changeSelectedTimeSlot(timeSlot.id)">
+        <div class="time-slot-switch" *ngFor="let timeSlot of timeSlots" [ngClass]="{'active': timeSlot.id === selectedTimeSlotId}" (click)="changeSelectedTimeSlot(timeSlot.id)" [@fadeInOut]>
           <p class="time-slot-switch-title">{{timeSlot.text}}</p>
         </div>
       </div>
       <div class="halls">
-        <div class="hall" *ngFor="let track of timeSlotTracks[selectedTimeSlotId]">
+        <div class="hall" *ngFor="let track of timeSlotTracks[selectedTimeSlotId]" [@fadeInOut]>
           <p class="hall-title">{{track.name}}</p>
         </div>
       </div>
       <div class="times">
-        <div class="time" *ngFor="let time of times">
+        <div class="time" *ngFor="let time of times" [@fadeInOut]>
           <p class="time-title">{{time}}:00</p>
         </div>
       </div>
       <div class="tracks" [ngClass]="['tracks-rows-' + getRowsCount(selectedTimeSlotId), 'tracks-columns-' + getColumnsCount(selectedTimeSlotId), 'tracks-mobile-rows-' + getMobileRowsCount(selectedTimeSlotId)]">
         <ng-container *ngIf="timeSlotSessions[selectedTimeSlotId] && timeSlotSessions[selectedTimeSlotId].length !== 0">
-          <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId] | trackSort">
+          <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId] | trackSort" [@fadeInOut]>
             <div [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.columnStart + '-to-' + talk.columnEnd, 'talk-mobile-row-' + countMobileRow(talk, selectedTimeSlotId), talk.fullRow ? 'full-row' : '']"
                  class="schedule-item">
-              <app-talk [talk]="talk"></app-talk>
+              <app-talk [talk]="talk" (click)="viewDetailSession(talk.id)" [@fadeInOut]></app-talk>
             </div>
           </ng-container>
         </ng-container>
