@@ -8,7 +8,10 @@ export class TrackSort implements PipeTransform {
     console.log(array);
     array.sort((a, b) => {
       if (a.startRow === b.startRow) {
-        return a.hall.order < b.hall.order ? -1 : 1;
+        if (a.hall && b.hall) {
+          return a.hall.order < b.hall.order ? -1 : 1;
+        }
+        return 0;
       } else {
         return a.startRow < b.startRow ? -1 : 1;
       }
