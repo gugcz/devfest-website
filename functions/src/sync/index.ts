@@ -1,6 +1,7 @@
 import * as tags from './tags';
 import * as partners from './partners';
 import * as speakers from './speakers';
+import * as sessions from './sessions';
 
 export const changedTag = tags.changed;
 export const createdTag = tags.created;
@@ -16,3 +17,7 @@ export const deletedPartner = partners.deletedPartner;
 export const changedSpeaker = speakers.changedSpeaker;
 export const createdSpeaker = speakers.createdSpeaker;
 export const deletedSpeaker = speakers.deletedSpeaker;
+
+export const createdSession = sessions.createdSession;
+export const changedSession = sessions.changedSession;
+export const deletedSession = sessions.deletedSession;
