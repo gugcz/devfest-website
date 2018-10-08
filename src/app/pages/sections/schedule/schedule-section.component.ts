@@ -112,7 +112,7 @@ export class ScheduleSectionComponent implements OnInit {
 
           const speakers = [];
           if (data.speakers && data.speakers.forEach) {
-            data.speakers.forEach(async speakerRef => {
+            await data.speakers.forEach(async speakerRef => {
               const speakerSnapshot = await this.firestore.doc(speakerRef).ref.get();
               speakers.push(speakerSnapshot.data());
             });
@@ -192,7 +192,8 @@ export class ScheduleSectionComponent implements OnInit {
 
   countMobileRow(talk, selectedTimeSlotId) {
     const timeSlot = this.timeSlots.find(it => it.id === selectedTimeSlotId);
-    return (talk.startHour.getHours() - timeSlot.startTime.getHours()) * this.timeSlotTracks[selectedTimeSlotId].length + talk.hall && talk.hall.order || 0;
+    return (talk.startHour.getHours() - timeSlot.startTime.getHours()) *
+     this.timeSlotTracks[selectedTimeSlotId].length + talk.hall && talk.hall.order || 0;
   }
 
   close() {

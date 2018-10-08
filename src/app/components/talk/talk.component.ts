@@ -21,15 +21,13 @@ export class TalkComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     this.talk.speakers.forEach(async speaker => {
-      speaker.photo = await this.findPhoto(speaker.photo);
+      speaker.photo = this.storage.ref(speaker.photo).getDownloadURL();
+      speaker['showPhoto'] = true;
     });
     this.talkSubtitle = [this.talk.level, this.talk.language, this.talk.hall && this.talk.hall.name || '', this.talk.length]
       .filter(item => item)
       .join(' / ');
   }
 
-  async findPhoto(folder: string) {
-    return await this.storage.ref(folder).getDownloadURL().toPromise();
-  }
 
 }
