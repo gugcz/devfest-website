@@ -1,0 +1,25 @@
+<div class="session-section">
+  <div class="close-button-container">
+    <a (click)="close()" class="close-button">
+      <i class="material-icons">close</i>
+    </a>
+  </div>
+  <h1 class="title">
+    Session detail
+  </h1>
+  <div class="session" *ngIf="session; else loading" [@fadeInOut]>
+      <h2>{{session.name}}</h2>
+      <H3>{{session.hall?.name}} / {{session.language}} / {{session.length}} / {{session.level}}</H3>
+      <p *ngIf="session.description">1
+        {{session.description}}
+      </p>
+      <h3>Speakers</h3>
+      <div *ngFor="let speaker of speakers">
+        <h2>{{speaker.name}}</h2>
+        <img [src]="speaker.photo | async">
+      </div>
+  </div>
+</div>
+<ng-template #loading>
+  <img class="loading-image" src="assets/mediaval-loading.gif">Ł
+</ng-template>

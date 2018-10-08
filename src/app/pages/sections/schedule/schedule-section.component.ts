@@ -1,12 +1,22 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
-import {AngularFirestore} from 'angularfire2/firestore';
-import {TimeSlot, TimeSlotItem} from '../../../database/time-slot';
-
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { TimeSlot, TimeSlotItem } from '../../../database/time-slot';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-schedule-section',
   templateUrl: './schedule-section.component.html',
-  styleUrls: ['./schedule-section.component.scss']
+  styleUrls: ['./schedule-section.component.scss'],
+  animations: [trigger('fadeInOut', [
+    transition(':enter', [   // :enter is alias to 'void => *'
+      style({ opacity: 0 }),
+      animate('200ms', style({ opacity: 1 }))
+    ]),
+    transition(':leave', [   // :leave is alias to '* => void'
+      animate('500ms', style({ opacity: 0 }))
+    ])
+  ])]
 })
 export class ScheduleSectionComponent implements OnInit {
 
@@ -18,7 +28,7 @@ export class ScheduleSectionComponent implements OnInit {
   times: number[];
   showTracks: boolean;
 
-  constructor(public dialogRef: MatDialogRef<ScheduleSectionComponent>, private firestore: AngularFirestore) {
+  constructor(public dialogRef: MatDialogRef<ScheduleSectionComponent>, private firestore: AngularFirestore, private router: Router) {
   }
 
   ngOnInit() {
@@ -85,7 +95,7 @@ export class ScheduleSectionComponent implements OnInit {
             this.timeSlotTracks[timeSlotRef] = [];
           }
 
-          this.timeSlotTracks[timeSlotRef].push({...trackSnapshot.data(), id: trackSnapshot.ref.id});
+          this.timeSlotTracks[timeSlotRef].push({ ...trackSnapshot.data(), id: trackSnapshot.ref.id });
         }
       });
     });
@@ -125,6 +135,7 @@ export class ScheduleSectionComponent implements OnInit {
           }
 
           this.timeSlotSessions[timeSlot.id].push({
+            id: sessionSnapshot.id,
             columnStart: columnStart,
             columnEnd: columnEnd,
             rowStart: this.countRow(data.startTime.toDate(), timeSlot.startTime),
@@ -193,11 +204,15 @@ export class ScheduleSectionComponent implements OnInit {
   countMobileRow(talk, selectedTimeSlotId) {
     const timeSlot = this.timeSlots.find(it => it.id === selectedTimeSlotId);
     return (talk.startHour.getHours() - timeSlot.startTime.getHours()) *
-     this.timeSlotTracks[selectedTimeSlotId].length + talk.hall && talk.hall.order || 0;
+      this.timeSlotTracks[selectedTimeSlotId].length + talk.hall && talk.hall.order || 0;
   }
 
   close() {
     this.dialogRef.close();
+  }
+
+  viewDetailSession(id) {
+    this.router.navigateByUrl('/section/session-detail/' + id);
   }
 
 }
