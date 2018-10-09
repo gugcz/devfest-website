@@ -20,6 +20,8 @@ import {SocialNetworksComponent} from './components/social-networks/social-netwo
 import {TicketsComponent} from './components/tickets/tickets.component';
 import {HomeComponent} from './pages/home/home.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {TrackSort} from './pages/sections/schedule/trackSort';
+import {GroupSort} from './pages/sections/schedule/groupSort';
 import {
     MatButtonModule,
     MatCardModule,
@@ -60,6 +62,9 @@ import { VenuePositionMapComponent } from './components/venue-position-map/venue
 import { AgmCoreModule } from '@agm/core';
 import { SpeakersSectionComponent } from './pages/sections/speakers/speakers-section.component';
 import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/speaker-detail.component';
+import { ScheduleSectionComponent } from './pages/sections/schedule/schedule-section.component';
+import { TalkComponent } from './components/talk/talk.component';
+import { SessionDetailComponent } from './pages/sections/session-detail/session-detail.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -87,7 +92,13 @@ import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/s
         VenueSectionComponent,
         VenuePositionMapComponent,
         SpeakersSectionComponent,
-        SpeakerDetailSectionComponent
+        SpeakerDetailSectionComponent,
+        ScheduleSectionComponent,
+        TalkComponent,
+        TrackSort,
+        SessionDetailComponent,
+        TrackSort,
+        GroupSort
     ],
     imports: [
         BrowserModule,
@@ -133,7 +144,10 @@ import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/s
         TicketsSectionComponent,
         VenueSectionComponent,
         SpeakersSectionComponent,
-        SpeakerDetailSectionComponent
+        SpeakerDetailSectionComponent,
+        TicketsSectionComponent,
+        ScheduleSectionComponent,
+        SessionDetailComponent
     ],
     bootstrap: [AppComponent]
 })

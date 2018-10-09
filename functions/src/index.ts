@@ -8,8 +8,8 @@ import * as invoice from './invoice/invoiceTriggers';
 import * as sync from './sync';
 import * as gaSpeakers from './assistant/speakers';
  
-/**** Google Assitant */
 export const gaGetSpeakers = gaSpeakers.getSpeakers;
+import * as schedule from './schedule';
 
 /**** Tickets ***/
 export const getTickets = ticket.getTickets;
@@ -21,7 +21,6 @@ export const invoiceProcessInvoice = invoice.invoiceProcessInvoice;
 export const invoicePaid = invoice.invoicePaid;
 export const invoiceGetCurrentExchangeRate = invoice.getCurrentExchangeRate;
 export const invoiceGetCurrentCompanyFundedPrice = invoice.getCurrentCompanyFundedPrice;
-/**** Sync ***/
 export const syncChangedTag = sync.changedTag;
 export const syncCreatedTag = sync.createdTag;
 export const syncDeletedTag = sync.deletedTag;
@@ -40,3 +39,8 @@ export const syncDeletedSession = sync.deletedSession;
 export const syncCreatedTimeSlot = sync.createdTimeSlot;
 export const syncChangedTimeSlot = sync.changedTimeSlot;
 export const syncDeletedTimeSlot = sync.deletedTimeSlot;
+export const timeSlotCreated = schedule.timeSlotCreated;
+export const timeSlotUpdated = schedule.timeSlotUpdated;
+export const timeSlotDeleted = schedule.timeSlotDeleted;
+export const addSpeakerToSession = schedule.addSpeakerToSession;
+export const changeSpeakerToSession = schedule.changeSpeakerToSession;

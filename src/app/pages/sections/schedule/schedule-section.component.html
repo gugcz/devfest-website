@@ -1,0 +1,53 @@
+<div class="schedule-dialog">
+  <div class="close-button-container">
+    <a (click)="close()" class="close-button">
+      <i class="material-icons">close</i>
+    </a>
+  </div>
+  <h1 class="title">
+    Schedule
+  </h1>
+  <div class="body">
+    <div class="schedule">
+      <div class="time-slot-switch-container">
+        <div class="time-slot-switch" *ngFor="let timeSlot of timeSlots"
+             [ngClass]="{'active': timeSlot.id === selectedTimeSlotId}" (click)="changeSelectedTimeSlot(timeSlot.id)">
+          <p class="time-slot-switch-title">{{timeSlot.text}}</p>
+        </div>
+      </div>
+      <div class="halls hide-on-mobile">
+        <div class="hall" *ngFor="let track of timeSlotTracks[selectedTimeSlotId]" [@fadeInOut]>
+          <p class="hall-title">{{track.name}}</p>
+        </div>
+      </div>
+      <div class="times hide-on-mobile">
+        <div class="time" *ngFor="let time of times" [@fadeInOut]>
+          <p class="time-title">{{time}}:00</p>
+        </div>
+      </div>
+      <div class="tracks hide-on-mobile"
+           [ngClass]="['tracks-rows-' + getRowsCount(selectedTimeSlotId), 'tracks-columns-' + getColumnsCount(selectedTimeSlotId)]">
+        <ng-container *ngIf="timeSlotSessions[selectedTimeSlotId] && timeSlotSessions[selectedTimeSlotId].length !== 0">
+          <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId] | trackSort" [@fadeInOut]>
+            <div
+              [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.columnStart + '-to-' + talk.columnEnd, talk.fullRow ? 'full-row' : '']"
+              class="schedule-item">
+              <app-talk [talk]="talk" (click)="viewDetailSession(talk.id)" [@fadeInOut]></app-talk>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div *ngIf="timesMobile[selectedTimeSlotId] && timesMobile[selectedTimeSlotId].length === 14"
+           class="tracks-mobile">
+        <div *ngFor="let group of timesMobile[selectedTimeSlotId] | groupSort" class="track-group-mobile">
+          <div class="time-title">{{group.time}}</div>
+          <div class="track-container">
+            <div *ngFor="let talk of group.talks" class="track-mobile">
+              <app-talk [talk]="talk" (click)="viewDetailSession(talk.id)" [@fadeInOut]></app-talk>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

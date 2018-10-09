@@ -1,0 +1,13 @@
+<div class="talk">
+  <div class="body">
+    <p class="talk-title">{{talk.name}}</p>
+    <p class="talk-subtitle">{{talkSubtitle}}</p>
+  </div>
+  <div class="footer" *ngFor="let speaker of talk.speakers" [ngStyle]="{'background-color': talk.tag && talk.tag.color || ''}">
+    <img class="speaker-image" *ngIf="speaker.showPhoto != null && (speaker.photo | async)" [src]="speaker.photo | async" alt="{{speaker.name}}">
+    <div class="speaker">
+      <span class="name">{{speaker.name}}</span>
+      <span class="job">{{speaker.job}}</span>
+    </div>
+  </div>
+</div>
