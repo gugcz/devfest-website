@@ -2,6 +2,7 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 import {Talk} from '../../database/talk';
 import {AngularFireStorage} from 'angularfire2/storage';
 import {AngularFirestore} from 'angularfire2/firestore';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-talk',
@@ -17,16 +18,19 @@ export class TalkComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
     this.talk.speakers.forEach(async speaker => {
-      speaker.photo = this.storage.ref(speaker.photo).getDownloadURL();
-      speaker['showPhoto'] = true;
+      if (!(speaker.photo instanceof Observable)) {
+        speaker.photo = this.storage.ref(speaker.photo).getDownloadURL();
+        speaker['showPhoto'] = true;
+      }
     });
     this.talkSubtitle = [this.talk.level, this.talk.language, this.talk.hall && this.talk.hall.name || '', this.talk.length]
       .filter(item => item)
       .join(' / ');
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+
   }
 
 
