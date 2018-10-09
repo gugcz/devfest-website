@@ -34,10 +34,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 24px;
+    padding: 12px 12px;
     flex: 1;
     background-color: #ecd4a8;
     border: 2px solid #333333;
+    margin: 0 24px;
 
     .session-name {
       margin-top: 0;
