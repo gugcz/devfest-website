@@ -51,5 +51,13 @@ service cloud.firestore {
     match /exchangeRates/{document=**} {
       allow read, write: if false;
     }
+    match /tags/{document=**} {
+       allow read;
+       allow write: if request.auth.uid != null;  
+    }     	
+    match /partners/{document=**} {
+       allow read;
+       allow write: if request.auth.uid != null;       	
+    }
   }
 }

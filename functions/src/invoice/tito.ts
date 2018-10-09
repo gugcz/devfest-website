@@ -20,6 +20,7 @@ export async function generateTitoCode(companyName, id, countTickets: string) {
         {
           "code": (postCompanyName + "-" + id),
           "discount_code_type": "PercentOffDiscountCode",
+          "only-show-attached": true,
           "value": "100.00",
           "quantity": countTickets,
           "release-ids": await getIdsOfCompanyFunded()
