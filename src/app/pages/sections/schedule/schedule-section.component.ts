@@ -218,7 +218,7 @@ export class ScheduleSectionComponent implements OnInit {
   }
 
   viewDetailSession(id) {
-    this.router.navigateByUrl('/section/session-detail/' + id);
+    this.dialogRef.close(id);
   }
 
 }
