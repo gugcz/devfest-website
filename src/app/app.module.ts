@@ -64,6 +64,7 @@ import { SpeakersSectionComponent } from './pages/sections/speakers/speakers-sec
 import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/speaker-detail.component';
 import { ScheduleSectionComponent } from './pages/sections/schedule/schedule-section.component';
 import { TalkComponent } from './components/talk/talk.component';
+import { SessionDetailComponent } from './pages/sections/session-detail/session-detail.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -94,6 +95,8 @@ import { TalkComponent } from './components/talk/talk.component';
         SpeakerDetailSectionComponent,
         ScheduleSectionComponent,
         TalkComponent,
+        TrackSort,
+        SessionDetailComponent
         TrackSort,
         GroupSort
     ],
@@ -143,7 +146,8 @@ import { TalkComponent } from './components/talk/talk.component';
         SpeakersSectionComponent,
         SpeakerDetailSectionComponent,
         TicketsSectionComponent,
-        ScheduleSectionComponent
+        ScheduleSectionComponent,
+        SessionDetailComponent
     ],
     bootstrap: [AppComponent]
 })

@@ -16,23 +16,23 @@
         </div>
       </div>
       <div class="halls hide-on-mobile">
-        <div class="hall" *ngFor="let track of timeSlotTracks[selectedTimeSlotId]">
+        <div class="hall" *ngFor="let track of timeSlotTracks[selectedTimeSlotId]" [@fadeInOut]>
           <p class="hall-title">{{track.name}}</p>
         </div>
       </div>
       <div class="times hide-on-mobile">
-        <div class="time" *ngFor="let time of times">
+        <div class="time" *ngFor="let time of times" [@fadeInOut]>
           <p class="time-title">{{time}}:00</p>
         </div>
       </div>
       <div class="tracks hide-on-mobile"
            [ngClass]="['tracks-rows-' + getRowsCount(selectedTimeSlotId), 'tracks-columns-' + getColumnsCount(selectedTimeSlotId)]">
         <ng-container *ngIf="timeSlotSessions[selectedTimeSlotId] && timeSlotSessions[selectedTimeSlotId].length !== 0">
-          <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId] | trackSort">
+          <ng-container *ngFor="let talk of timeSlotSessions[selectedTimeSlotId] | trackSort" [@fadeInOut]>
             <div
               [ngClass]="['talk-from-' + talk.rowStart + '-to-' + talk.rowEnd, 'talk-hall-' + talk.columnStart + '-to-' + talk.columnEnd, talk.fullRow ? 'full-row' : '']"
               class="schedule-item">
-              <app-talk [talk]="talk"></app-talk>
+              <app-talk [talk]="talk" (click)="viewDetailSession(talk.id)" [@fadeInOut]></app-talk>
             </div>
           </ng-container>
         </ng-container>
