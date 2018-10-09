@@ -109,6 +109,7 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
           }
           case 'session-detail': {
             const speacialRef  = this.matDialog.open(SessionDetailComponent , {
+              panelClass: 'session-detail-dialog',
               width: '100vw',
               height: '100vh',
               maxWidth: '',
