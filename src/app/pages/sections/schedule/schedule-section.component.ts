@@ -128,7 +128,7 @@ export class ScheduleSectionComponent implements OnInit {
 
           const speakers = [];
           if (data.speakers && data.speakers.forEach) {
-            data.speakers.forEach(async speakerRef => {
+            await data.speakers.forEach(async speakerRef => {
               const speakerSnapshot = await this.firestore.doc(speakerRef).ref.get();
               speakers.push(speakerSnapshot.data());
             });
@@ -140,7 +140,8 @@ export class ScheduleSectionComponent implements OnInit {
             tag = tagSnap.data();
           }
 
-          const newTime = data.startTime.toDate().getHours() + ':' + (data.startTime.toDate().getMinutes() === 0 ? '00' : data.startTime.toDate().getMinutes());
+          const newTime = data.startTime.toDate().getHours() + ':' +
+           (data.startTime.toDate().getMinutes() === 0 ? '00' : data.startTime.toDate().getMinutes());
 
           const timesMobile = this.timesMobile[timeSlot.id].find(timeSlotObj => timeSlotObj.time === newTime);
 
