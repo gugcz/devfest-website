@@ -28,11 +28,6 @@
     padding: 24px;
 
     .schedule {
-      display: grid;
-      width: 100%;
-      grid-template-columns: 50px 1fr;
-      grid-row-gap: 16px;
-
       .time-slot-switch-container {
         display: flex;
         grid-column-start: 1;
@@ -78,8 +73,10 @@
       }
 
       .times {
+        display: grid;
+        grid-template-rows: 490px;
         .time {
-          height: 450px;
+          height: 490px;
 
           .time-title {
             margin: 0;
@@ -94,6 +91,7 @@
         grid-column-gap: 8px;
         grid-row-gap: 8px;
         grid-template-columns: 1fr;
+        column-count: 1;
 
         .schedule-item {
           display: flex;
@@ -113,21 +111,44 @@
 }
 
 @media screen and (max-width: 1396px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
   .schedule-dialog .body .schedule {
-    @for $i from 1 through 100 {
+    @for $i from 1 through 288 {
       .tracks-mobile-rows-#{$i} {
-        grid-template-rows: repeat($i, 146px);
+        grid-template-rows: repeat($i, 75px);
+      }
+    }
 
-        @for $x from 1  through 100 {
-          .talk-mobile-row-#{$x} {
-            grid-row: $x;
-          }
+    .tracks-mobile {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-row-gap: 8px;
+      padding-top: 8px;
+      width: 100%;
 
-          .talk-mobile-row-#{$x}.full-row {
-            grid: unset;
-            grid-row-start: $x;
-            grid-row-end: $x + 3;
-            height: 450px;
+      .track-group-mobile {
+        display: grid;
+        grid-template-columns: 50px 1fr;
+        grid-column-gap: 16px;
+        width: 100%;
+
+        .time-title {
+          font-size: 1.2rem;
+          font-weight: 500;
+          text-align: right;
+        }
+
+        .track-container {
+          display: grid;
+          grid-row-gap: 8px;
+          width: 100%;
+
+          .track-mobile {
+            background-color: #ecd4a8;
+            border: 2px solid #333333;
+            width: 100%;
           }
         }
       }
@@ -292,6 +313,10 @@
           .tracks-columns-#{$i} {
             grid-template-columns: repeat($i, 1fr);
           }
+        }
+
+        .tracks-mobile {
+          display: none !important;
         }
       }
     }

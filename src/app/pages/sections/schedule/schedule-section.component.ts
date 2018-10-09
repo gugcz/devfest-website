@@ -17,6 +17,7 @@ export class ScheduleSectionComponent implements OnInit {
   timeSlotSessions: {};
   times: number[];
   showTracks: boolean;
+  timesMobile: {};
 
   constructor(public dialogRef: MatDialogRef<ScheduleSectionComponent>, private firestore: AngularFirestore) {
   }
@@ -28,6 +29,7 @@ export class ScheduleSectionComponent implements OnInit {
     this.timeSlotTracks = {};
     this.timeSlotSessions = {};
     this.showTracks = false;
+    this.timesMobile = {};
 
     this.processTimeSlots()
       .then(this.processTracks.bind(this))
@@ -100,6 +102,10 @@ export class ScheduleSectionComponent implements OnInit {
     sessionsSnapshot.docs.forEach(async sessionSnapshot => {
       const data = sessionSnapshot.data();
       await this.timeSlots.forEach(async timeSlot => {
+        if (!this.timesMobile[timeSlot.id]) {
+          this.timesMobile[timeSlot.id] = [];
+        }
+
         const sessionObj = timeSlot.sessions.find(session => session.session.id === sessionSnapshot.ref.id);
 
         if (sessionObj && this.timeSlotTracksRefs[timeSlot.id].indexOf(sessionObj.track.id) !== -1) {
@@ -112,7 +118,7 @@ export class ScheduleSectionComponent implements OnInit {
 
           const speakers = [];
           if (data.speakers && data.speakers.forEach) {
-            await data.speakers.forEach(async speakerRef => {
+            data.speakers.forEach(async speakerRef => {
               const speakerSnapshot = await this.firestore.doc(speakerRef).ref.get();
               speakers.push(speakerSnapshot.data());
             });
@@ -124,7 +130,11 @@ export class ScheduleSectionComponent implements OnInit {
             tag = tagSnap.data();
           }
 
-          this.timeSlotSessions[timeSlot.id].push({
+          const newTime = data.startTime.toDate().getHours() + ':' + (data.startTime.toDate().getMinutes() === 0 ? '00' : data.startTime.toDate().getMinutes());
+
+          const timesMobile = this.timesMobile[timeSlot.id].find(timeSlotObj => timeSlotObj.time === newTime);
+
+          const finalSession = {
             columnStart: columnStart,
             columnEnd: columnEnd,
             rowStart: this.countRow(data.startTime.toDate(), timeSlot.startTime),
@@ -140,7 +150,15 @@ export class ScheduleSectionComponent implements OnInit {
             hall: data.hall,
             tag: tag,
             fullRow: data.fullRow
-          });
+          };
+
+          if (timesMobile) {
+            timesMobile.talks.push(finalSession);
+          } else {
+            this.timesMobile[timeSlot.id].push({time: newTime, talks: [finalSession]});
+          }
+
+          this.timeSlotSessions[timeSlot.id].push(finalSession);
         }
       });
     });
@@ -181,19 +199,6 @@ export class ScheduleSectionComponent implements OnInit {
 
   countRows(startTime: Date, endTime: Date) {
     return (endTime.getHours() - startTime.getHours()) * 6;
-  }
-
-  getMobileRowsCount(selectedTimeSlotId) {
-    const timeSlot = this.timeSlots.find(it => it.id === selectedTimeSlotId);
-    const hours = timeSlot && (timeSlot.endTime.getHours() - timeSlot.startTime.getHours()) || 1;
-    const tracksCount = this.timeSlotTracks[selectedTimeSlotId] && this.timeSlotTracks[selectedTimeSlotId].length || 1;
-    return tracksCount * hours;
-  }
-
-  countMobileRow(talk, selectedTimeSlotId) {
-    const timeSlot = this.timeSlots.find(it => it.id === selectedTimeSlotId);
-    return (talk.startHour.getHours() - timeSlot.startTime.getHours()) *
-     this.timeSlotTracks[selectedTimeSlotId].length + talk.hall && talk.hall.order || 0;
   }
 
   close() {

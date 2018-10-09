@@ -21,6 +21,7 @@ import {TicketsComponent} from './components/tickets/tickets.component';
 import {HomeComponent} from './pages/home/home.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TrackSort} from './pages/sections/schedule/trackSort';
+import {GroupSort} from './pages/sections/schedule/groupSort';
 import {
     MatButtonModule,
     MatCardModule,
@@ -93,7 +94,8 @@ import { TalkComponent } from './components/talk/talk.component';
         SpeakerDetailSectionComponent,
         ScheduleSectionComponent,
         TalkComponent,
-        TrackSort
+        TrackSort,
+        GroupSort
     ],
     imports: [
         BrowserModule,

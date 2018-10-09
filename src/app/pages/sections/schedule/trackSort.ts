@@ -5,7 +5,6 @@ import {Pipe, PipeTransform} from '@angular/core';
 })
 export class TrackSort implements PipeTransform {
   transform(array: any[]): any[] {
-    console.log(array);
     array.sort((a, b) => {
       if (a.startRow === b.startRow) {
         if (a.hall && b.hall) {
