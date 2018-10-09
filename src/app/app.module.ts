@@ -96,7 +96,7 @@ import { SessionDetailComponent } from './pages/sections/session-detail/session-
         ScheduleSectionComponent,
         TalkComponent,
         TrackSort,
-        SessionDetailComponent
+        SessionDetailComponent,
         TrackSort,
         GroupSort
     ],
