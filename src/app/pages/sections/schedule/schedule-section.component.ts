@@ -161,7 +161,8 @@ export class ScheduleSectionComponent implements OnInit {
             length: data.length,
             hall: data.hall,
             tag: tag,
-            fullRow: data.fullRow
+            fullRow: data.fullRow,
+            wtm: data.wtm || false
           };
 
           if (timesMobile) {
