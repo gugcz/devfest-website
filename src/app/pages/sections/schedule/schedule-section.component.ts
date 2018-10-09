@@ -1,12 +1,22 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
-import {AngularFirestore} from 'angularfire2/firestore';
-import {TimeSlot, TimeSlotItem} from '../../../database/time-slot';
-
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { TimeSlot, TimeSlotItem } from '../../../database/time-slot';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-schedule-section',
   templateUrl: './schedule-section.component.html',
-  styleUrls: ['./schedule-section.component.scss']
+  styleUrls: ['./schedule-section.component.scss'],
+  animations: [trigger('fadeInOut', [
+    transition(':enter', [   // :enter is alias to 'void => *'
+      style({ opacity: 0 }),
+      animate('200ms', style({ opacity: 1 }))
+    ]),
+    transition(':leave', [   // :leave is alias to '* => void'
+      animate('500ms', style({ opacity: 0 }))
+    ])
+  ])]
 })
 export class ScheduleSectionComponent implements OnInit {
 
@@ -19,7 +29,7 @@ export class ScheduleSectionComponent implements OnInit {
   showTracks: boolean;
   timesMobile: {};
 
-  constructor(public dialogRef: MatDialogRef<ScheduleSectionComponent>, private firestore: AngularFirestore) {
+  constructor(public dialogRef: MatDialogRef<ScheduleSectionComponent>, private firestore: AngularFirestore, private router: Router) {
   }
 
   ngOnInit() {
@@ -87,7 +97,7 @@ export class ScheduleSectionComponent implements OnInit {
             this.timeSlotTracks[timeSlotRef] = [];
           }
 
-          this.timeSlotTracks[timeSlotRef].push({...trackSnapshot.data(), id: trackSnapshot.ref.id});
+          this.timeSlotTracks[timeSlotRef].push({ ...trackSnapshot.data(), id: trackSnapshot.ref.id });
         }
       });
     });
@@ -135,6 +145,7 @@ export class ScheduleSectionComponent implements OnInit {
           const timesMobile = this.timesMobile[timeSlot.id].find(timeSlotObj => timeSlotObj.time === newTime);
 
           const finalSession = {
+            id: sessionSnapshot.id,
             columnStart: columnStart,
             columnEnd: columnEnd,
             rowStart: this.countRow(data.startTime.toDate(), timeSlot.startTime),
@@ -203,6 +214,10 @@ export class ScheduleSectionComponent implements OnInit {
 
   close() {
     this.dialogRef.close();
+  }
+
+  viewDetailSession(id) {
+    this.router.navigateByUrl('/section/session-detail/' + id);
   }
 
 }
