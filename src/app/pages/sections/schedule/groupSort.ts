@@ -16,26 +16,7 @@ export class GroupSort implements PipeTransform {
         return hoursA > hoursB ? 1 : -1;
       }
     });
-    console.log(array.map(group => {
-      console.log(group.time);
-      console.log(group.talks);
-      return {
-        time: group.time,
-        talks: group.talks.sort((a, b) => {
-          console.log(a.name);
-          console.log(b.name);
-          if (a.hall && b.hall) {
-            console.log('a: ' + a.hall.order);
-            console.log(a.name);
-            console.log('b: ' + b.hall.order);
-            console.log(b.name);
-            return a.hall.order > b.hall.order ? 1 : -1;
-          } else {
-            return 0;
-          }
-        })
-      };
-    }));
+
     return array.map(group => {
       return {
         time: group.time,
