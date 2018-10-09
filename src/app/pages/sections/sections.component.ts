@@ -7,12 +7,13 @@ import { TicketsSectionComponent } from './tickets/tickets-section.component';
 import { VenueSectionComponent } from './venue/venue-section.component';
 import { SpeakersSectionComponent } from './speakers/speakers-section.component';
 import { SpeakerDetailSectionComponent } from './speaker-detail/speaker-detail.component';
+import {ScheduleSectionComponent} from './schedule/schedule-section.component';
+import { SessionDetailComponent } from './session-detail/session-detail.component';
 @Component({
   templateUrl: './sections.component.html',
   selector: 'app-sections',
 })
 export class SectionsComponent implements OnDestroy, AfterViewInit {
-
 
   private sub: any;
 
@@ -51,6 +52,21 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             });
             break;
           }
+          case 'schedule': {
+            const speacialRef = this.matDialog.open(ScheduleSectionComponent, {
+              width: '100vw',
+              height: '100vh',
+              maxWidth: '',
+            });
+            speacialRef.afterClosed().subscribe((result) => {
+              if (result != null) {
+                this.router.navigateByUrl('/section/session-detail/' + result);
+              } else {
+                this.router.navigateByUrl('/');
+              }
+            });
+            break;
+          }
           case 'venue': {
             dialogRef = this.matDialog.open(VenueSectionComponent , {
               width: '100vw',
@@ -85,6 +101,23 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             speacialRef.afterClosed().subscribe((data) => {
               if (this.router['navigationId'] > 1) {
                 this.router.navigateByUrl('/section/speakers');
+              } else {
+                this.router.navigateByUrl('/');
+              }
+            });
+            break;
+          }
+          case 'session-detail': {
+            const speacialRef = this.matDialog.open(SessionDetailComponent , {
+              panelClass: 'session-detail-dialog',
+              width: '100vw',
+              height: '100vh',
+              maxWidth: '',
+              data: { id: extra }
+            });
+            speacialRef.afterClosed().subscribe((data) => {
+              if (this.router['navigationId'] > 1) {
+                this.router.navigateByUrl('/section/schedule');
               } else {
                 this.router.navigateByUrl('/');
               }
