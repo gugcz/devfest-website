@@ -108,19 +108,12 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             break;
           }
           case 'session-detail': {
-            const speacialRef  = this.matDialog.open(SessionDetailComponent , {
+            this.matDialog.open(SessionDetailComponent , {
               panelClass: 'session-detail-dialog',
               width: '100vw',
               height: '100vh',
               maxWidth: '',
               data: { id: extra }
-            });
-            speacialRef.afterClosed().subscribe((data) => {
-              if (this.router['navigationId'] > 1) {
-                this.router.navigateByUrl('/section/schedule');
-              } else {
-                this.router.navigateByUrl('/');
-              }
             });
             break;
           }
