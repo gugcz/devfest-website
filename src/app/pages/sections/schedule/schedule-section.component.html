@@ -42,8 +42,8 @@
         <div *ngFor="let group of timesMobile[selectedTimeSlotId] | groupSort" class="track-group-mobile">
           <div class="time-title">{{group.time}}</div>
           <div class="track-container">
-            <div *ngFor="let track of group.talks" class="track-mobile">
-              <app-talk [talk]="track"></app-talk>
+            <div *ngFor="let talk of group.talks" class="track-mobile">
+              <app-talk [talk]="talk" (click)="viewDetailSession(talk.id)" [@fadeInOut]></app-talk>
             </div>
           </div>
         </div>
