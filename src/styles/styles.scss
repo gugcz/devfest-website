@@ -129,15 +129,15 @@ body mat-toolbar.mat-toolbar a.mat-button div.mat-button-focus-overlay {
 }
 
 ::-webkit-scrollbar-track {
-    background: #E3C190; 
+    background: #E3C190;
 }
- 
+
 ::-webkit-scrollbar-thumb {
-    background: #603813; 
+    background: #603813;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #42210B; 
+    background: #42210B;
 }
 
 .material-icons {
@@ -180,6 +180,11 @@ app-team-section {
 
 @media screen and (min-width: 1024px) {
   .speaker-detail-dialog {
+    max-width: 800px;
+    max-height: 600px;
+  }
+
+  .session-detail-dialog {
     max-width: 800px;
     max-height: 600px;
   }

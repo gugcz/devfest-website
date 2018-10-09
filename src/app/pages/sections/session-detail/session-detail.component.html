@@ -8,18 +8,17 @@
     Session detail
   </h1>
   <div class="session" *ngIf="session; else loading" [@fadeInOut]>
-      <h2>{{session.name}}</h2>
-      <H3>{{session.hall?.name}} / {{session.language}} / {{session.length}} / {{session.level}}</H3>
-      <p *ngIf="session.description">1
+      <h2 class="session-name">{{session.name}}</h2>
+      <h3 class="session-subtitle">{{session.talkSubtitle}}</h3>
+      <p *ngIf="session.description">
         {{session.description}}
       </p>
-      <h3>Speakers</h3>
-      <div *ngFor="let speaker of speakers">
-        <h2>{{speaker.name}}</h2>
-        <img [src]="speaker.photo | async">
+      <div *ngFor="let speaker of speakers" class="speaker-info">
+        <img *ngIf="speaker.photo" [src]="speaker.photo | async" class="session-speaker-photo">
+        <h2 class="session-speaker-name">{{speaker.name}}</h2>
       </div>
   </div>
 </div>
 <ng-template #loading>
-  <img class="loading-image" src="assets/mediaval-loading.gif">Ł
+  <img class="loading-image" src="assets/mediaval-loading.gif">
 </ng-template>
