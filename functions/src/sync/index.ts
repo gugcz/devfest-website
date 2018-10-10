@@ -15,9 +15,7 @@ export const createdPartner = partners.createdPartner;
 export const changedPartner = partners.changedPartner;
 export const deletedPartner = partners.deletedPartner;
 
-export const changedSpeaker = speakers.changedSpeaker;
-export const createdSpeaker = speakers.createdSpeaker;
-export const deletedSpeaker = speakers.deletedSpeaker;
+export const changedSpeakers = speakers.changedSpeakers;
 
 export const createdSession = sessions.createdSession;
 export const changedSession = sessions.changedSession;
