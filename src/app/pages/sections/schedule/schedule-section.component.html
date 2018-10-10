@@ -7,11 +7,13 @@
   <h1 class="title">
     Schedule
   </h1>
-  <h2 style="margin-top: 30px; margin-bottom: 15px;" class="legend">Technologies</h2>
-  <div style="width: 100%; text-align: center; ">
-      <span *ngFor="let tag of tags | async">
-          <span [style.border-color]="tag.color" [style.color]="tag.color" style="border-radius: 24px;border: 3px solid currentColor; min-width: 20px; margin: 10px;  padding: 4px 8px; background-color: white">{{tag.type}}</span>
-      </span>
+  <h2 class="legend-title">Technologies</h2>
+  <div class="chips-container">
+    <div class="chips-rows">
+      <div *ngFor="let tag of tags | async" class="chip">
+        <div *ngIf="tag.show" [style.border-color]="tag.color" [style.color]="tag.color" class="chip-text">{{tag.type}}</div>
+      </div>
+    </div>
   </div>
   <div class="body">
     <div class="schedule">
@@ -38,5 +40,5 @@
         </div>
       </div>
     </div>
-  </div> 
+  </div>
 </div>
