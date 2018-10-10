@@ -15,6 +15,4 @@ export const changedSpeakers = speakers.changedSpeakers;
 
 export const changedSessions = sessions.changedSessions;
 
-export const createdTimeSlot = timeslots.createdTimeSlot;
-export const changedTimeSlot = timeslots.changedTimeSlot;
-export const deletedTimeSlot = timeslots.deletedTimeSlot;
+export const changedTimeSlots = timeslots.changedTimeSlots;
