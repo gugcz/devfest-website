@@ -1,8 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-import FieldValue = admin.firestore.FieldValue;
-
 export const timeSlotCreated = functions.firestore
   .document('timeSlots/{timeSlotId}')
   .onCreate((snap, context) => {
