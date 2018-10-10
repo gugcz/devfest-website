@@ -167,6 +167,13 @@ export class ScheduleSectionComponent implements OnInit {
 
           if (timesMobile) {
             timesMobile.talks.push(finalSession);
+            timesMobile.talks.sort((a, b) => {
+              if (a.hall && b.hall) {
+                return a.hall.order > b.hall.order ? 1 : -1;
+              } else {
+                return 0;
+              }
+            });
           } else {
             this.timesMobile[timeSlot.id].push({time: newTime, talks: [finalSession]});
           }
