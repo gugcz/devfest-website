@@ -147,7 +147,9 @@
           border: 2px solid #333333;
           display: flex;
           width: 100%;
+
           app-talk {
+            cursor: pointer;
             display: flex;
             flex: 1;
           }
