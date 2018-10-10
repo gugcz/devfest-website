@@ -20,8 +20,8 @@
           <p class="hall-title">{{track.name}}</p>
         </div>
       </div>
-      <div *ngIf="timesMobile[selectedTimeSlotId]"
-           class="tracks-mobile">
+      <div *ngIf="timesMobile[selectedTimeSlotId] && timesMobile[selectedTimeSlotId].length === 14"
+      class="tracks-mobile">
         <div *ngFor="let group of timesMobile[selectedTimeSlotId] | groupSort" class="track-group-mobile">
           <div class="time-title">{{group.time}}</div>
           <div class="track-container">
