@@ -54,7 +54,16 @@
     .wtm-logo {
       height: 32px;
       width: 38px;
-      margin-top: 4px;
+      margin: 6px 0;
+    }
+
+    .session-time.session-start-time {
+      margin-top: 12px;
+    }
+
+    .session-time {
+      margin: 2px;
+      font-weight: 500;
     }
 
     .speaker-info {
