@@ -30,7 +30,13 @@ async function updateSessions(){
       }
       session["speakers"] = speakers;
       session["complexity"] = data.level ? data.level : null;
-      session["track"] = data.hall ? data.hall.name : null;
+      session["track"] = data.hall ? {title: data.hall.name} : null;
+      const tags = [];
+      if (data.tag){
+        const tagSnasphot = await data.tag.get();
+        tags.push(tagSnasphot.data().type);
+      }
+      session["tags"] = tags;
       pushArray.push(session);
     } catch(e){
     }
