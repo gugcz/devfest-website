@@ -10,6 +10,7 @@
   <div class="session" *ngIf="session; else loading" [@fadeInOut]>
       <h2 class="session-name">{{session.name}}</h2>
       <h3 class="session-subtitle">{{session.talkSubtitle}}</h3>
+      <img *ngIf="session.wtm" class="wtm-logo" src="assets/wtm.png" alt="Women Techmakers" title="Women Techmakers">
       <p *ngIf="session.description">
         {{session.description}}
       </p>
