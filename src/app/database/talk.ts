@@ -13,6 +13,7 @@ export interface Talk {
   rowEnd: number;
   fullRow: boolean;
   tag: { color: string; type: string; };
+  wtm: boolean;
 }
 
 export interface Speaker {
