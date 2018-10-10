@@ -7,6 +7,12 @@
   <h1 class="title">
     Schedule
   </h1>
+  <h2 style="margin-top: 30px; margin-bottom: 15px;" class="legend">Technologies</h2>
+  <div style="width: 100%; text-align: center; ">
+      <span *ngFor="let tag of tags | async">
+          <span [style.border-color]="tag.color" [style.color]="tag.color" style="border-radius: 24px;border: 3px solid currentColor; min-width: 20px; margin: 10px;  padding: 4px 8px; background-color: white">{{tag.type}}</span>
+      </span>
+  </div>
   <div class="body">
     <div class="schedule">
       <div class="time-slot-switch-container">
@@ -32,5 +38,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> 
 </div>

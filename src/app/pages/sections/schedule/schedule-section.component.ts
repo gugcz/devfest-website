@@ -4,6 +4,7 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { TimeSlot, TimeSlotItem } from '../../../database/time-slot';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-schedule-section',
   templateUrl: './schedule-section.component.html',
@@ -28,6 +29,7 @@ export class ScheduleSectionComponent implements OnInit {
   times: number[];
   showTracks: boolean;
   timesMobile: {};
+  tags: Observable<any[]>;
 
   constructor(public dialogRef: MatDialogRef<ScheduleSectionComponent>, private firestore: AngularFirestore, private router: Router) {
   }
@@ -40,7 +42,7 @@ export class ScheduleSectionComponent implements OnInit {
     this.timeSlotSessions = {};
     this.showTracks = false;
     this.timesMobile = {};
-
+    this.tags = this.firestore.collection('tags').valueChanges();
     this.processTimeSlots()
       .then(this.processTracks.bind(this))
       .then(this.processSessions.bind(this));
