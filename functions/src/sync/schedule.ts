@@ -56,7 +56,7 @@ async function changedTimeslot() {
         }
       }
       timeslot['tracks'] = tracks;
-      timeslot['sessions'] = timeslots;
+      timeslot['timeslots'] = timeslots;
       pushArray.push(timeslot);
   }
   return admin.database().ref('schedule').set(pushArray);
