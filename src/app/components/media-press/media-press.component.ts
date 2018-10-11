@@ -13,7 +13,7 @@ export class MediaPressComponent implements OnInit {
     $press: Observable<MediaPress[]>;
 
     constructor(private firestore: AngularFirestore) {
-        this.$press = this.firestore.collection<MediaPress>('mediaPress').valueChanges();
+        this.$press = this.firestore.collection<MediaPress>('mediaPress', ref => ref.orderBy('order', 'desc')).valueChanges();
     }
 
     ngOnInit() {
