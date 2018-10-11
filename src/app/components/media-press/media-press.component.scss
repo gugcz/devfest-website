@@ -69,6 +69,16 @@
   }
 }
 
+@media only screen and (min-width: 1376px) {
+  .media-others-container {
+    .flags-container {
+      height: 37vh;
+      overflow-y: auto;
+    }
+  }
+}
+
+
 @media only screen and (min-width: 1920px) {
   .media-others-container .title {
     font-size: 3rem;
