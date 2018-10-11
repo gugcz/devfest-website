@@ -7,20 +7,22 @@
   <h1 class="title">
     Schedule
   </h1>
-  <h2 class="legend-title">Technologies</h2>
-  <div class="chips-container">
-    <div class="chips-rows">
-      <div *ngFor="let tag of tags | async" class="chip">
-        <div *ngIf="tag.show" [style.border-color]="tag.color" [style.color]="tag.color" class="chip-text">{{tag.type}}</div>
-      </div>
-    </div>
-  </div>
   <div class="body">
-    <div class="schedule">
+    <div class="schedule" *ngIf="!isWorkshopDay(selectedTimeSlotId); else workshops">
       <div class="time-slot-switch-container">
         <div class="time-slot-switch" *ngFor="let timeSlot of timeSlots"
              [ngClass]="{'active': timeSlot.id === selectedTimeSlotId}" (click)="changeSelectedTimeSlot(timeSlot.id)">
           <p class="time-slot-switch-title">{{timeSlot.text}}</p>
+        </div>
+      </div>
+      <div class="technologies">
+        <h2 class="legend-title">Technologies</h2>
+        <div class="chips-container">
+          <div class="chips-rows">
+            <div *ngFor="let tag of tags | async" class="chip">
+              <div *ngIf="tag.show" [style.border-color]="tag.color" [style.color]="tag.color" class="chip-text">{{tag.type}}</div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="halls hide-on-mobile">
@@ -42,3 +44,14 @@
     </div>
   </div>
 </div>
+<ng-template #workshops>
+  <div class="workshops schedule">
+    <div class="time-slot-switch-container">
+      <div class="time-slot-switch" *ngFor="let timeSlot of timeSlots"
+           [ngClass]="{'active': timeSlot.id === selectedTimeSlotId}" (click)="changeSelectedTimeSlot(timeSlot.id)">
+        <p class="time-slot-switch-title">{{timeSlot.text}}</p>
+      </div>
+    </div>
+    <div class="text">Workshops will be held at our partners. More info coming soon!</div>
+  </div>
+</ng-template>

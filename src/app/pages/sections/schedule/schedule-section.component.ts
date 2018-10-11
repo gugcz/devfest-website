@@ -77,6 +77,7 @@ export class ScheduleSectionComponent implements OnInit {
       const timeSlot: TimeSlot = {
         id: id,
         text: data.text,
+        isWorkshopDay: data.isWorkshopDay || false,
         endTime: data.endTime.toDate(),
         startTime: data.startTime.toDate(),
         sessions: timeSlotsItems,
@@ -104,7 +105,7 @@ export class ScheduleSectionComponent implements OnInit {
       });
     });
     Object.keys(this.timeSlotTracksRefs).forEach(timeSlotRef => {
-      this.timeSlotTracks[timeSlotRef].sort((a, b) => a.order > b.order ? 1 : -1);
+      this.timeSlotTracks[timeSlotRef] && this.timeSlotTracks[timeSlotRef].sort((a, b) => a.order > b.order ? 1 : -1);
     });
   }
 
@@ -221,6 +222,12 @@ export class ScheduleSectionComponent implements OnInit {
 
   countRows(startTime: Date, endTime: Date) {
     return (endTime.getHours() - startTime.getHours()) * 6;
+  }
+
+  isWorkshopDay(timeSlotId) {
+    console.log(timeSlotId);
+    const timeSlot = this.timeSlots.find(it => it.id === timeSlotId);
+    return timeSlot && timeSlot.isWorkshopDay;
   }
 
   close() {

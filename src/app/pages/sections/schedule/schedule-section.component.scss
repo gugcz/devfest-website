@@ -23,35 +23,6 @@
     margin: 0;
     text-align: center;
   }
-
-  .legend-title {
-    font-family: MyMediaval, serif;
-    font-size: 1.75rem;
-    margin: 15px 0;
-    text-align: center;
-  }
-
-  .chips-container {
-    width: 100%;
-    text-align: center;
-
-    .chips-rows {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      flex-wrap: wrap;
-
-      .chip-text {
-        border-radius: 24px;
-        border: 3px solid currentColor;
-        padding: 4px 8px;
-        margin: 4px;
-        background-color: white;
-        font-size: 12px;
-      }
-    }
-  }
-
   .body {
     padding: 24px;
 
@@ -77,6 +48,36 @@
 
           &.active .time-slot-switch-title {
             border-bottom: 2px solid #333333;
+          }
+        }
+      }
+
+      .technologies {
+        .legend-title {
+          font-family: MyMediaval, serif;
+          font-size: 1.75rem;
+          margin: 15px 0;
+          text-align: center;
+        }
+
+        .chips-container {
+          width: 100%;
+          text-align: center;
+
+          .chips-rows {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;
+
+            .chip-text {
+              border-radius: 24px;
+              border: 3px solid currentColor;
+              padding: 4px 8px;
+              margin: 4px;
+              background-color: white;
+              font-size: 12px;
+            }
           }
         }
       }
@@ -135,6 +136,12 @@
           }
         }
       }
+    }
+
+    .workshops .text {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 1.25rem;
     }
   }
 }

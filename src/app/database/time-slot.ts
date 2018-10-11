@@ -6,6 +6,7 @@ export interface TimeSlot {
   startTime: Date;
   primary?: boolean;
   rowsCount: number;
+  isWorkshopDay?: boolean;
 }
 
 export interface TimeSlotItem {
