@@ -16,8 +16,8 @@ async function getAllSpeakers() {
       name: speakerData.name,
       about: speakerData.about,
       twitter: speakerData.twitter ? speakerData.twitter : undefined,
-      sessionName: speakerData.sessions[0].name,
-      sessionDescription: speakerData.sessions[0].description
+      sessionName: speakerData.sessions ? speakerData.sessions[0].name : undefined,
+      sessionDescription: speakerData.sessions ? speakerData.sessions[0].description : undefined
     })
   });
   return speakers;
