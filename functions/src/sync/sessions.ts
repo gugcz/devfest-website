@@ -21,7 +21,7 @@ async function updateSessions(){
       const speakers = [];
       if (data.speakers){
         const speakersReal = await admin.database().ref('speakers').once('value');
-        for (const speaker of speakers){
+        for (const speaker of data.speakers){
           const speakerRealFi = speakersReal.val().filter((a) => a["customId"] === speaker.id);
           if (speakerRealFi.length > 0) {
             speakers.push(speakerRealFi[0]["id"]);
