@@ -7,7 +7,7 @@ import { TicketsSectionComponent } from './tickets/tickets-section.component';
 import { VenueSectionComponent } from './venue/venue-section.component';
 import { SpeakersSectionComponent } from './speakers/speakers-section.component';
 import { SpeakerDetailSectionComponent } from './speaker-detail/speaker-detail.component';
-import {ScheduleSectionComponent} from './schedule/schedule-section.component';
+import { ScheduleSectionComponent } from './schedule/schedule-section.component';
 import { SessionDetailComponent } from './session-detail/session-detail.component';
 @Component({
   templateUrl: './sections.component.html',
@@ -68,7 +68,7 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             break;
           }
           case 'venue': {
-            dialogRef = this.matDialog.open(VenueSectionComponent , {
+            dialogRef = this.matDialog.open(VenueSectionComponent, {
               width: '100vw',
               height: '100vh',
               maxWidth: '',
@@ -108,7 +108,7 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             break;
           }
           case 'session-detail': {
-            const speacialRef = this.matDialog.open(SessionDetailComponent , {
+            const speacialRef = this.matDialog.open(SessionDetailComponent, {
               panelClass: 'session-detail-dialog',
               width: '100vw',
               height: '100vh',
@@ -116,10 +116,15 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
               data: { id: extra }
             });
             speacialRef.afterClosed().subscribe((data) => {
-              if (this.router['navigationId'] > 1) {
-                this.router.navigateByUrl('/section/schedule');
+              console.log(data);
+              if (data != null) {
+                this.router.navigateByUrl('/section/speaker-detail/' + data);
               } else {
-                this.router.navigateByUrl('/');
+                if (this.router['navigationId'] > 1) {
+                  this.router.navigateByUrl('/section/schedule');
+                } else {
+                  this.router.navigateByUrl('/');
+                }
               }
             });
             break;

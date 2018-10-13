@@ -37,19 +37,26 @@ export class SessionDetailComponent implements OnInit {
   async processSession(id) {
     const sessionSnapshot = await this.firestore.collection('sessions').doc(id).ref.get();
     this.session = sessionSnapshot.data();
-    this.session.talkSubtitle = [this.session.level, this.session.language, this.session.hall && this.session.hall.name || '', this.session.length]
+    this.session.talkSubtitle = [this.session.level, this.session.language,
+       this.session.hall && this.session.hall.name || '', this.session.length]
       .filter(item => item)
       .join(' / ');
     this.session.speakers.forEach(async oneSpeaker => {
       const snapshot = await oneSpeaker.get();
       this.speakers.push({
         name: snapshot.data().name,
-        photo: this.storage.ref(snapshot.data().photo).getDownloadURL()
+        photo: this.storage.ref(snapshot.data().photo).getDownloadURL(),
+        id: oneSpeaker.id
       });
     });
   }
 
   close() {
     this.dialogRef.close();
+  }
+
+  openSpeaker(id: string) {
+    console.log(id);
+    this.dialogRef.close(id);
   }
 }
