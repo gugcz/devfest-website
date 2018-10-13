@@ -10,7 +10,7 @@ export const getSpeakers = functions.https.onRequest((req, res) => {
 async function getAllSpeakers() {
   const speakersSnapshot = await admin.firestore().collection('speakers').get();
   const speakers = [];
-  for (let speaker of speakersSnapshot.docs){
+  for (const speaker of speakersSnapshot.docs){
     const speakerData = speaker.data();
     let sessionData = null;
     if (speakerData.session){
