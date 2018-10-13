@@ -19,11 +19,9 @@
       </div>
     </div>
     <p class="intro">{{speaker.intro}}</p>
-    <p class="sessions-title">Sessions</p>
     <ul class="sessions-container">
-      <li class="session" *ngIf="session" [@fadeInOut]>
-        <h2>{{session.name}}</h2>
-        <p class="text">{{session.description}}</p>
+      <li class="session" *ngIf="sessionId">
+        <button mat-raised-button color="accent" class="detail" *ngIf="sessionId" (click)="seeSession(sessionId)"  [@fadeInOut]>Session</button>
       </li>
     </ul>
     <div class="footer">

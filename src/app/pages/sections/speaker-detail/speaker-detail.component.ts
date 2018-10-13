@@ -43,6 +43,7 @@ export class SpeakerDetailSectionComponent implements OnInit {
 
   speaker: Speaker;
   session: Session;
+  sessionId: string;
 
   constructor(private iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public dialogRef: MatDialogRef<TeamSectionComponent>,
     private firestore: AngularFirestore, private storage: AngularFireStorage, @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -79,6 +80,7 @@ export class SpeakerDetailSectionComponent implements OnInit {
     const data = speakerSnapshot.data();
     data.session.get().then(sessionSnap => {
       this.session = sessionSnap.data();
+      this.sessionId = sessionSnap.id;
     });
     const photo = await this.findPhoto(data.photo);
     const companies = [];
@@ -104,6 +106,10 @@ export class SpeakerDetailSectionComponent implements OnInit {
 
   close() {
     this.dialogRef.close();
+  }
+
+  seeSession(id: string) {
+    this.dialogRef.close(id);
   }
 
   async findPhoto(folder: string) {

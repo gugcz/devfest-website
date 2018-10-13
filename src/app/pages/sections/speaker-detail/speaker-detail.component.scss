@@ -88,12 +88,24 @@
       list-style: none;
       padding: 0;
       margin: 0;
+      width: 100%;
+      text-align: center;
 
       .session {
         .text {
           font-weight: 400;
           font-size: 1.2rem;
           margin: 0;
+        }
+
+        .detail {
+          font-size: 22.4px;
+          padding: 6px 0;
+          margin: 16px 0;
+          width: 250px;
+          box-shadow: none;
+          border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+          border:solid 2px #41403E;
         }
       }
     }

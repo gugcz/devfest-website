@@ -225,7 +225,6 @@ export class ScheduleSectionComponent implements OnInit {
   }
 
   isWorkshopDay(timeSlotId) {
-    console.log(timeSlotId);
     const timeSlot = this.timeSlots.find(it => it.id === timeSlotId);
     return timeSlot && timeSlot.isWorkshopDay;
   }

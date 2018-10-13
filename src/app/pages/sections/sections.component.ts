@@ -99,11 +99,16 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
               data: { id: extra }
             });
             speacialRef.afterClosed().subscribe((data) => {
-              if (this.router['navigationId'] > 1) {
-                this.router.navigateByUrl('/section/speakers');
+              if (data != null) {
+                this.router.navigateByUrl('/section/session-detail/' + data);
               } else {
-                this.router.navigateByUrl('/');
+                if (this.router['navigationId'] > 1) {
+                  this.router.navigateByUrl('/section/speakers');
+                } else {
+                  this.router.navigateByUrl('/');
+                }
               }
+
             });
             break;
           }
@@ -116,7 +121,6 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
               data: { id: extra }
             });
             speacialRef.afterClosed().subscribe((data) => {
-              console.log(data);
               if (data != null) {
                 this.router.navigateByUrl('/section/speaker-detail/' + data);
               } else {
