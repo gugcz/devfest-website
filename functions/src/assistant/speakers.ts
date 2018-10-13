@@ -10,15 +10,20 @@ export const getSpeakers = functions.https.onRequest((req, res) => {
 async function getAllSpeakers() {
   const speakersSnapshot = await admin.firestore().collection('speakers').get();
   const speakers = [];
-  speakersSnapshot.docs.forEach(speaker => {
+  for (let speaker of speakersSnapshot.docs){
     const speakerData = speaker.data();
+    let sessionData = null;
+    if (speakerData.session){
+      const sessionSnapshot = await speakerData.session.get();
+      sessionData = sessionSnapshot.data();
+    }
     speakers.push({
       name: speakerData.name,
       about: speakerData.about,
       twitter: speakerData.twitter ? speakerData.twitter : undefined,
-      sessionName: speakerData.sessions ? speakerData.sessions[0].name : undefined,
-      sessionDescription: speakerData.sessions ? speakerData.sessions[0].description : undefined
+      sessionName: sessionData ? sessionData.name : undefined,
+      sessionDescription: sessionData ? sessionData.description : undefined
     })
-  });
+  }
   return speakers;
 }
