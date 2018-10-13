@@ -56,7 +56,6 @@ export class SessionDetailComponent implements OnInit {
   }
 
   openSpeaker(id: string) {
-    console.log(id);
     this.dialogRef.close(id);
   }
 }
