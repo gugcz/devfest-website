@@ -78,10 +78,12 @@ export class SpeakerDetailSectionComponent implements OnInit {
       speakerSnapshot = speakers.docs[0];
     }
     const data = speakerSnapshot.data();
-    data.session.get().then(sessionSnap => {
-      this.session = sessionSnap.data();
-      this.sessionId = sessionSnap.id;
-    });
+    if (data.session) {
+      data.session.get().then(sessionSnap => {
+        this.session = sessionSnap.data();
+        this.sessionId = sessionSnap.id;
+      });
+    }
     const photo = await this.findPhoto(data.photo);
     const companies = [];
     for (let y = 0; y < data.companies.length; y++) {

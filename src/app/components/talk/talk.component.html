@@ -8,7 +8,7 @@
     <img class="speaker-image" *ngIf="speaker.showPhoto != null && (speaker.photo | async)" [src]="speaker.photo | async" alt="{{speaker.name}}">
     <div class="speaker">
       <span class="name">{{speaker.name}}</span>
-      <span class="job">{{speaker.job}}</span>
+      <span class="job">{{speaker.company}} / {{speaker.job}}</span>
     </div>
   </div>
 </div>
