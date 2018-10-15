@@ -15,6 +15,7 @@ async function getSessions() {
     const finalOut = date.getFullYear() + "-" + (date.getMonth() - 1) + "-" + date.getDate() + " " + (date.getUTCHours() + 2) + ":" + (("0" + date.getMinutes()).slice(-2))
     sessions.push({
       name: session.data().name,
+      description: session.data().description,
       startTime: finalOut,
       place: session.data().hall.name,
     })
