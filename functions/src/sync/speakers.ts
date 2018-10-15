@@ -14,7 +14,7 @@ async function updateOrCreateSpeaker() {
       const speakerFire = speakerFireDoc.data();
       speaker["bio"] = speakerFire.about;
       const companyArray = speakerFire.companies[0].split("/");
-      speaker["company"] = companyArray[companyArray.length-1].slice(0,-4);
+      speaker["company"] = speakerFire.company ? speakerFire.company : companyArray[companyArray.length-1].slice(0,-4);
       speaker["companyLogo"] = speakerFire.companies[0];
       speaker["featured"] = speakerFire.show;
       speaker["id"] = pushArray.length;
@@ -24,7 +24,7 @@ async function updateOrCreateSpeaker() {
       speaker["shortBio"] = speakerFire.about.substring(0,80) + "...";
       speaker["socials"] = [];
       if (speakerFire.twitter){
-        speaker["socials"][0] = {icon: "twitter", link: ("https://twitter.com/" + speaker['twitter']), name: "Twitter"};
+        speaker["socials"][0] = {icon: "twitter", link: ("https://twitter.com/" + speakerFire['twitter']), name: "Twitter"};
       }
       speaker["tags"] = [];
       speaker["title"] = speakerFire.job;
