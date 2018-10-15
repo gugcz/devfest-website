@@ -1,16 +1,19 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 admin.initializeApp(functions.config().firebase);
+admin.firestore().settings({ timestampsInSnapshots: true });
 
 import * as ticket from './tickets/ticketPrice';
 import * as press from './press';
 import * as invoice from './invoice/invoiceTriggers';
 import * as sync from './sync';
-import * as gaSpeakers from './assistant/speakers';
- 
-export const gaGetSpeakers = gaSpeakers.getSpeakers;
+import * as assistant from './assistant';
+
 import * as schedule from './schedule';
 
+/**** Assistant ***/
+export const assistantGetSpeakers = assistant.assistantGetSpeakers;
+export const assistantGetLastSessions = assistant.assistantGetLastSessions;
 /**** Tickets ***/
 export const getTickets = ticket.getTickets;
 /**** Press ***/
