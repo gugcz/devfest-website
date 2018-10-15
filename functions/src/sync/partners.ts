@@ -10,7 +10,7 @@ export const changedPartners = functions.firestore.document('partners/{sectionId
 });
 
 async function updatePartners() {
-  const partnerSectionSnapshot = await admin.firestore().collection('partners').get();
+  const partnerSectionSnapshot = await admin.firestore().collection('partners').orderBy('position').get();
   const pushArray = [];
   for (const oneSection of partnerSectionSnapshot.docs){
     try {
