@@ -45,9 +45,9 @@ function mergeTickets(tickets) {
         if (tickets[0].attributes['title'] === 'Early bird - Individual' || tickets[0].attributes['title'] === 'Early bird - Student/Diversity' || tickets[0].attributes['title'] === 'Early bird - Company funded') {
             description = 'First 100';
         } else if (tickets[0].attributes['title'] === 'Individual' || tickets[0].attributes['title'] === 'Student/Diversity' || tickets[0].attributes['title'] === 'Company funded') {
-            description = 'Until 14th October';
+            description = 'Until 21th October';
         } else if (tickets[0].attributes['title'] === 'Lazy bird - Company funded' || tickets[0].attributes['title'] === 'Lazy bird - Individual' || tickets[0].attributes['title'] === 'Lazy bird - Student/Diversity') {
-            description = 'From 15th October';
+            description = 'From 22th October';
         }
         //const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const now = new Date();
