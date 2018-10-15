@@ -19,6 +19,7 @@
       <div *ngFor="let speaker of speakers" class="speaker-info" (click)="openSpeaker(speaker.id)" >
         <img *ngIf="speaker.photo" [src]="speaker.photo | async"  class="session-speaker-photo">
         <h2 class="session-speaker-name" >{{speaker.name}}</h2>
+        <h4 class="session-speaker-company">{{speaker.company}} / {{speaker.job}}</h4>
       </div>
   </div>
 </div>

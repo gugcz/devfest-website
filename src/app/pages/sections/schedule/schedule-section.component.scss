@@ -138,7 +138,7 @@
       }
     }
 
-    .workshops .text {
+    .text-workshops {
       margin-top: 16px;
       text-align: center;
       font-size: 1.25rem;
@@ -154,6 +154,46 @@
   }
 
   .tracks-mobile {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-row-gap: 8px;
+    padding-top: 8px;
+    width: 100%;
+
+    .track-group-mobile {
+      display: grid;
+      grid-template-columns: 50px 1fr;
+      grid-column-gap: 16px;
+      width: 100%;
+
+      .time-title {
+        font-size: 1.2rem;
+        font-weight: 500;
+        text-align: right;
+      }
+
+      .track-container {
+        display: grid;
+        grid-row-gap: 8px;
+        width: 100%;
+
+        .track-mobile {
+          background-color: #ecd4a8;
+          border: 2px solid #333333;
+          display: flex;
+          width: 100%;
+
+          app-talk {
+            cursor: pointer;
+            display: flex;
+            flex: 1;
+          }
+        }
+      }
+    }
+  }
+
+  .tracks-mobile-workshops {
     display: grid;
     grid-template-columns: 1fr;
     grid-row-gap: 8px;

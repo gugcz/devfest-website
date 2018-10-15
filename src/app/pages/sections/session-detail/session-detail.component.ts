@@ -39,13 +39,14 @@ export class SessionDetailComponent implements OnInit {
     this.session = sessionSnapshot.data();
     this.session.talkSubtitle = [this.session.level, this.session.language,
        this.session.hall && this.session.hall.name || '', this.session.length]
-      .filter(item => item)
       .join(' / ');
     this.session.speakers.forEach(async oneSpeaker => {
       const snapshot = await oneSpeaker.get();
       this.speakers.push({
         name: snapshot.data().name,
         photo: this.storage.ref(snapshot.data().photo).getDownloadURL(),
+        company: snapshot.data().company,
+        job: snapshot.data().job,
         id: oneSpeaker.id
       });
     });
