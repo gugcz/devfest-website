@@ -10,10 +10,6 @@ import {TeamSectionComponent} from '../team/team-section.component';
 export class TicketsSectionComponent {
   constructor(public dialogRef: MatDialogRef<TeamSectionComponent>) {
   }
-
-  ngOnInit() {
-  }
-
   close() {
     this.dialogRef.close();
   }

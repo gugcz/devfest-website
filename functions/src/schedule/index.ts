@@ -3,25 +3,25 @@ import * as admin from 'firebase-admin';
 
 export const timeSlotCreated = functions.firestore
   .document('timeSlots/{timeSlotId}')
-  .onCreate((snap, context) => {
+  .onCreate((snap) => {
     return addSessionsHalls(snap.data());
   });
 
 export const timeSlotUpdated = functions.firestore
   .document('timeSlots/{timeSlotId}')
-  .onUpdate((change, context) => {
+  .onUpdate((change) => {
     return addSessionsHalls(change.after.data());
   });
 
 export const addSpeakerToSession = functions.firestore.document('sessions/{sessionId}')
-  .onCreate((snap, context) => {
+  .onCreate((snap) => {
     const speakers = snap.data().speakers;
     const ref = snap.ref;
     return addSessionToSpeaker(speakers, ref)
   });
 
 export const changeSpeakerToSession = functions.firestore.document('sessions/{sessionId}')
-  .onUpdate((snap, context) => {
+  .onUpdate((snap) => {
     const speakers = snap.after.data().speakers;
     const ref = snap.after.ref;
     return addSessionToSpeaker(speakers, ref)
@@ -41,7 +41,7 @@ async function addSessionsHalls(data) {
   if (data.sessions) {
     await data.sessions.forEach(async session => {
       if (session.track && session.session) {
-        const doc = await session.track.get()
+        const doc = await session.track.get();
         const tracktData = doc.data();
         const sessionRef = session.session;
         if (tracktData) {
@@ -51,4 +51,4 @@ async function addSessionsHalls(data) {
     });
   }
   return batch.commit();
-};
+}
