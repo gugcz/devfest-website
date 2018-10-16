@@ -23,9 +23,9 @@ interface Invoice {
 }
 
 /**
- * Nalezení firmy ve fakturoidu
- * Vrací id firmy
- * @param companyName 
+ * Find company in facturoid
+ * @param companyName
+ * @return Promise<string> - id of facturoid company
  */
 export async function findFaktruoidCompanyId(companyName?: string) {
     const options = {
@@ -42,19 +42,14 @@ export async function findFaktruoidCompanyId(companyName?: string) {
     };
     const fakturoidCompanies = await rp(options);
     const listCompanies = JSON.parse(fakturoidCompanies);
-    let foundId = null;
-    listCompanies.forEach(element => {
-        if (element.name === companyName) {
-            foundId = element.id;
-        }
-    });
-    return foundId;
+  const foundCompanies = listCompanies.filter(a => a.name === companyName);
+  return foundCompanies[0].id;
 }
 
 /**
- * Vytvoření ve fakturoidu
- * Vrací id nové firmy
- * @param company 
+ * Creating company in facturoid
+ * @param company
+ * @return Promise<string> - id of company
  */
 export async function createFakturoidCompany(company: Company) {
     const options = {
@@ -94,9 +89,10 @@ export async function createFakturoidCompany(company: Company) {
 }
 
 /**
- * Vytvoření faktury
- * @param fakturoidID Id firmy ve fakturoidu
- * @param countTickets počet tickets
+ * Creating invoice
+ * @param fakturoidID - id of company in facturoid
+ * @param countTickets - number of tickets he wanna buy
+ * @return Promise<Invoice> - complete inovice info
  */
 export async function createInvoice(fakturoidID, countTickets) {
     const EUR_CZK = await fireInvoice.getCurrentExchangeRate('EUR', 'CZK');
@@ -129,14 +125,14 @@ export async function createInvoice(fakturoidID, countTickets) {
         },
         json: true
     };
-    const data = await rp(options)
-    const invoice: Invoice = {id: data.id, variableSymbol: data.variable_symbol};
-    return invoice;
+  const data = await rp(options);
+  return {id: data.id, variableSymbol: data.variable_symbol};
 }
 
 /**
- * Stažení pdf 
- * @param invoiceId Id faktury ve fakturoidu
+ * Download invoice pdf
+ * @param invoiceId - id of invoice in facturoid
+ * @return Promise<string> - base64 pdf
  */
 export async function downloadInvoiceById(invoiceId: string){
     const options = {
@@ -152,7 +148,6 @@ export async function downloadInvoiceById(invoiceId: string){
             'pass': `${functions.config().fakturoid.key}`
         }
     };
-    const data = await rp(options)
-    const buffered = data.toString('base64')
-    return buffered;
+  const data = await rp(options);
+  return data.toString('base64');
 }

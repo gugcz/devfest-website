@@ -2,6 +2,13 @@ import * as rp from 'request-promise';
 import * as functions from 'firebase-functions';
 import * as slugify from 'slugify';
 
+/**
+ * Generating code in tito
+ * @param companyName - name of company
+ * @param id - id of process
+ * @param countTickets - number of tickets
+ * @return Promise<string> - code
+ */
 export async function generateTitoCode(companyName, id, countTickets: string) {
   const postCompanyName = slugify.default(companyName).toLowerCase();
   const options = {
@@ -14,25 +21,29 @@ export async function generateTitoCode(companyName, id, countTickets: string) {
     },
     body: {
       "data":
-      {
-        "type": "discount-codes",
-        "attributes":
         {
-          "code": (postCompanyName + "-" + id),
-          "discount_code_type": "PercentOffDiscountCode",
-          "only-show-attached": true,
-          "value": "100.00",
-          "quantity": countTickets,
-          "release-ids": await getIdsOfCompanyFunded()
+          "type": "discount-codes",
+          "attributes":
+            {
+              "code": (postCompanyName + "-" + id),
+              "discount_code_type": "PercentOffDiscountCode",
+              "only-show-attached": true,
+              "value": "100.00",
+              "quantity": countTickets,
+              "release-ids": await getIdsOfCompanyFunded()
+            }
         }
-      }
     },
     json: true
-  }
+  };
   const discount = await rp(options);
   return discount.data.attributes.code;
 }
 
+/**
+ * Get current price for invoice
+ * @return Promise<number>
+ */
 export async function getActualPriceCompanyFunded() {
   const options = {
     method: 'GET',
@@ -52,6 +63,10 @@ export async function getActualPriceCompanyFunded() {
   return chosenTicket.attributes.price;
 }
 
+/**
+ * Get all ids of company funded tickets
+ * @return Promise<string[]>
+ */
 export async function getIdsOfCompanyFunded() {
   const options = {
     method: 'GET',
@@ -65,9 +80,5 @@ export async function getIdsOfCompanyFunded() {
   const releases = JSON.parse(await rp(options));
   const tickets = releases.data;
   const companyTickets = tickets.filter(it => (it.attributes.title.indexOf('Company funded') !== -1));
-  const ids = [];
-  companyTickets.forEach((oneTicket) => {
-    ids.push(oneTicket.id);
-  })
-  return ids;
+  return companyTickets.map(oneTicket => oneTicket.id);
 }

@@ -1,5 +1,12 @@
 import * as admin from 'firebase-admin';
+import * as rp from 'request-promise';
 
+/**
+ * Setting invoice in firestore as paid
+ * @param fakturoidId - id of facturoid invoice
+ * @param paid - ammount of paid
+ * @return Promise<boolean>
+ */
 export async function setFakturoidInvoicePaid(fakturoidId: string, paid: string) {
   const snapshot = await admin.firestore().collection('invoices').where('faktruoidInvoiceId', '==', fakturoidId).get();
   if (snapshot.empty) {
@@ -8,16 +15,23 @@ export async function setFakturoidInvoicePaid(fakturoidId: string, paid: string)
     await snapshot.docs[0].ref.update({
       fakturoidInvoicePaid: true,
       fakturoidInvoicePaidAmmount: paid
-    })
+    });
     return true;
   }
 }
 
+/**
+ * Get current exchange rate
+ * @param from - from what currency
+ * @param to - to what currency
+ * @return Promise<number> - exchange rate
+ */
 export async function getCurrentExchangeRate(from: string, to: string){
-  const snapshot = await admin.firestore().collection('exchangeRates').where('from', '==', from).where('to', '==', to).limit(1).get();
-  if (snapshot.empty) {
-    throw Error('Missing exchangeRate');
-  } else {
-    return snapshot.docs[0].data().price;
-  }
+  const options = {
+    method: 'GET',
+    uri: 'https://api.exchangeratesapi.io/latest?base=' + from,
+    json: true
+  };
+  const data = await rp(options);
+  return data['rates'][to];
 }
