@@ -20,7 +20,7 @@ interface LogoView extends Logo {
   templateUrl: './partners.component.html',
   styleUrls: ['./partners.component.scss'],
   animations: [trigger('fadeInOut', [
-    transition('* => *', [   // :enter is alias to 'void => *'
+    transition(':enter', [   // :enter is alias to 'void => *'
       style({opacity: 0}),
       animate('200ms', style({opacity: 1}))
     ]),
