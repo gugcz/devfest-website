@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Ticket} from '../../database/ticket';
+import {Ticket} from '../../customObjects/ticket';
 
 @Component({
   selector: 'app-ticket',

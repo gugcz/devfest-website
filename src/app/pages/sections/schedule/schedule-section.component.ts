@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
-import { AngularFirestore } from 'angularfire2/firestore';
-import { TimeSlot, TimeSlotItem } from '../../../database/time-slot';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {MatDialogRef} from '@angular/material';
+import {AngularFirestore} from 'angularfire2/firestore';
+import {animate, style, transition, trigger} from '@angular/animations';
+import {Router} from '@angular/router';
+import {Observable} from 'rxjs';
+import {TimeSlot, TimeSlotItem} from '../../../customObjects/timeSlot';
+
 @Component({
   selector: 'app-schedule-section',
   templateUrl: './schedule-section.component.html',

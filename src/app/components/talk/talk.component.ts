@@ -1,8 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {Talk} from '../../database/talk';
 import {AngularFireStorage} from 'angularfire2/storage';
-import {AngularFirestore} from 'angularfire2/firestore';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
+import {Talk} from '../../customObjects/talk';
 
 @Component({
   selector: 'app-talk',

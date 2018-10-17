@@ -1,11 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AngularFirestore} from 'angularfire2/firestore';
 import {AngularFireStorage} from 'angularfire2/storage';
-import {Organizer} from '../../database/organizer';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {MatIconRegistry} from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Observable} from 'rxjs/Observable';
+import {Organizer} from '../../dto/organizer';
 
 @Component({
   selector: 'app-organizer-card',
