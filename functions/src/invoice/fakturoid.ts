@@ -43,7 +43,7 @@ export async function findFaktruoidCompanyId(companyName?: string) {
     const fakturoidCompanies = await rp(options);
     const listCompanies = JSON.parse(fakturoidCompanies);
   const foundCompanies = listCompanies.filter(a => a.name === companyName);
-  return foundCompanies[0].id;
+  return foundCompanies.length > 0 ? foundCompanies[0].id : null;
 }
 
 /**
