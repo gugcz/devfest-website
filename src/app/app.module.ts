@@ -8,9 +8,7 @@ import {AngularFirestoreModule} from 'angularfire2/firestore';
 import {AngularFireStorageModule} from 'angularfire2/storage';
 import {AngularFireModule} from 'angularfire2';
 import {RegisterNowButtonComponent} from './components/register-now-button/register-now-button.component';
-import {EmailNotifierComponent} from './components/email-notifier/email-notifier.component';
 import {TicketComponent} from './components/ticket/ticket.component';
-import {CallForProposalsComponent} from './components/call-for-proposals/call-for-proposals.component';
 import {OrganizerCardComponent} from './components/organizer-card/organizer-card.component';
 import {PartnersComponent} from './components/partners/partners.component';
 import {InvoiceComponent} from './components/invoice/invoice.component';
@@ -23,26 +21,26 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TrackSort} from './pages/sections/schedule/trackSort';
 import {GroupSort} from './pages/sections/schedule/groupSort';
 import {
-    MatButtonModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatChipsModule,
-    MatDialogModule,
-    MatGridListModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatMenuModule,
-    MatPaginatorModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatSelectModule,
-    MatSidenavModule,
-    MatSnackBarModule,
-    MatTableModule,
-    MatTabsModule,
-    MatToolbarModule,
-    MatTooltipModule
+  MatButtonModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatChipsModule,
+  MatDialogModule,
+  MatGridListModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
+  MatMenuModule,
+  MatPaginatorModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatSelectModule,
+  MatSidenavModule,
+  MatSnackBarModule,
+  MatTableModule,
+  MatTabsModule,
+  MatToolbarModule,
+  MatTooltipModule
 } from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterModule} from '@angular/router';
@@ -52,25 +50,25 @@ import {MediaGraphicsComponent} from './components/media-graphics/media-graphics
 import {MediaPressComponent} from './components/media-press/media-press.component';
 import {MediaContactComponent} from './components/media-contact/media-contact.component';
 import {MediaOthersComponent} from './components/media-others/media-others.component';
-import { SectionsComponent } from './pages/sections/sections.component';
-import { TeamSectionComponent } from './pages/sections/team/team-section.component';
-import { MenuComponent } from './components/menu/menu.component';
-import { MediaSectionComponent } from './pages/sections/media/media-section.component';
-import { TicketsSectionComponent } from './pages/sections/tickets/tickets-section.component';
-import { VenueSectionComponent } from './pages/sections/venue/venue-section.component';
-import { VenuePositionMapComponent } from './components/venue-position-map/venue-position-map.component';
-import { AgmCoreModule } from '@agm/core';
-import { SpeakersSectionComponent } from './pages/sections/speakers/speakers-section.component';
-import { SpeakerDetailSectionComponent } from './pages/sections/speaker-detail/speaker-detail.component';
-import { ScheduleSectionComponent } from './pages/sections/schedule/schedule-section.component';
-import { TalkComponent } from './components/talk/talk.component';
-import { SessionDetailComponent } from './pages/sections/session-detail/session-detail.component';
+import {SectionsComponent} from './pages/sections/sections.component';
+import {TeamSectionComponent} from './pages/sections/team/team-section.component';
+import {MenuComponent} from './components/menu/menu.component';
+import {MediaSectionComponent} from './pages/sections/media/media-section.component';
+import {TicketsSectionComponent} from './pages/sections/tickets/tickets-section.component';
+import {VenueSectionComponent} from './pages/sections/venue/venue-section.component';
+import {VenuePositionMapComponent} from './components/venue-position-map/venue-position-map.component';
+import {AgmCoreModule} from '@agm/core';
+import {SpeakersSectionComponent} from './pages/sections/speakers/speakers-section.component';
+import {SpeakerDetailSectionComponent} from './pages/sections/speaker-detail/speaker-detail.component';
+import {ScheduleSectionComponent} from './pages/sections/schedule/schedule-section.component';
+import {TalkComponent} from './components/talk/talk.component';
+import {SessionDetailComponent} from './pages/sections/session-detail/session-detail.component';
+
 @NgModule({
     declarations: [
         AppComponent,
         CountdownComponent,
         FooterComponent,
-        EmailNotifierComponent,
         SocialNetworksComponent,
         OrganizerCardComponent,
         TicketsComponent,
@@ -78,7 +76,6 @@ import { SessionDetailComponent } from './pages/sections/session-detail/session-
         RegisterNowButtonComponent,
         PartnersComponent,
         InvoiceComponent,
-        CallForProposalsComponent,
         HomeComponent,
         MediaGraphicsComponent,
         MediaPressComponent,

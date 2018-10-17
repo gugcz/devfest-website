@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AngularFirestore} from 'angularfire2/firestore';
-import {Observable} from 'rxjs';
-import {MediaGraphics} from '../../database/media-graphics';
 import {AngularFireStorage} from 'angularfire2/storage';
+import {MediaGraphics} from '../../dto/mediaGraphics';
 
 @Component({
   selector: 'app-media-graphics',
@@ -35,5 +34,6 @@ export class MediaGraphicsComponent implements OnInit {
       });
     });
   }
+
 
 }

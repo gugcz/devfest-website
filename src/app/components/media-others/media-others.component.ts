@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {MediaPress} from '../../database/media-press';
 import {AngularFirestore} from 'angularfire2/firestore';
+import {MediaOther} from '../../dto/mediaOther';
 
 @Component({
     selector: 'app-media-others',
@@ -10,10 +10,10 @@ import {AngularFirestore} from 'angularfire2/firestore';
 })
 export class MediaOthersComponent implements OnInit {
 
-    $press: Observable<MediaPress[]>;
+  $press: Observable<MediaOther[]>;
 
     constructor(private firestore: AngularFirestore) {
-        this.$press = this.firestore.collection<MediaPress>('mediaOthers', ref => ref.orderBy('order', 'desc')).valueChanges();
+      this.$press = this.firestore.collection<MediaOther>('mediaOthers', ref => ref.orderBy('order', 'desc')).valueChanges();
     }
 
     ngOnInit() {

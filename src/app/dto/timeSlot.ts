@@ -3,13 +3,13 @@ import * as firebase from 'firebase';
 export interface TimeSlot {
   endTime: firebase.firestore.Timestamp;
   isWorkshopDay?: boolean;
-  sessions: SessionPart[];
+  sessions: TimeSlotPart[];
   startTime: firebase.firestore.Timestamp;
   text: string;
   primary?: boolean;
 }
 
-interface SessionPart {
+export interface TimeSlotPart {
   session: firebase.firestore.DocumentReference;
   track: firebase.firestore.DocumentReference;
 }

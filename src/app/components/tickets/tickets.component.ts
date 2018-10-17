@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Ticket} from '../../database/ticket';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {InvoiceComponent} from '../invoice/invoice.component';
+import {Ticket} from '../../customObjects/ticket';
 
 @Component({
   selector: 'app-tickets',
