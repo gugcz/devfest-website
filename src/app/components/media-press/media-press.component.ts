@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {AngularFirestore} from 'angularfire2/firestore';
-import {MediaPress} from '../../database/media-press';
+import {MediaPress} from '../../dto/mediaPress';
 
 @Component({
     selector: 'app-media-press',
