@@ -1,4 +1,4 @@
-<div class="container" *ngIf="!showSpinner; else loading">
+<div class="container" *ngIf="!showSpinner; else loading" [@fadeInOut]>
     <div class="tickets">
         <div class="full-container">
             <div class="tickets-container">
@@ -21,7 +21,7 @@
     <p class="help-text">Need help? Contact us at: <a href="mailto:info@devfest.cz">info@devfest.cz</a></p>
 </div>
 <ng-template #loading>
-  <div class="image-container">
+  <div class="image-container" [@fadeInOut]>
     <img class="image" src="assets/mediaval-loading.gif">
   </div>
 </ng-template>
