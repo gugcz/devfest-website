@@ -1,14 +1,18 @@
 @import "../../../styles/colors";
 
-app-ticket{
+app-tickets {
+  overflow-y: hidden;
+}
+
+app-ticket {
   margin: 10px;
 }
 
 .container {
   display: flex;
-  padding: 22px 22px 0;
   min-height: calc(70vh - 44px);
   flex-direction: column;
+  overflow-x: hidden;
 
   .tickets {
     display: flex;
@@ -40,6 +44,7 @@ app-ticket{
         column-gap: 8px;
         justify-content: center;
         align-items: center;
+        grid-template-rows: 400px 400px 400px 400px 400px;
       }
 
       app-ticket {
@@ -99,7 +104,7 @@ app-ticket{
       width: 250px;
       box-shadow: none;
       border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-      border:solid 2px #41403E;
+      border: solid 2px #41403E;
     }
 
     .text {
@@ -122,45 +127,42 @@ app-ticket{
 }
 
 @media only screen and (min-width: 526px) {
-  .container {
-    .tickets {
-      .tickets-container {
-        column-count: 2;
-        .ticket-0 {
-          grid-column: 1;
-          grid-row: 1;
-        }
+  .container .tickets .full-container .tickets-container {
+    column-count: 2;
+    grid-template-rows: 400px 400px 400px;
+    .ticket-0 {
+      grid-column: 1;
+      grid-row: 1;
+    }
 
-        .ticket-1 {
-          grid-column: 2;
-          grid-row: 1;
-        }
+    .ticket-1 {
+      grid-column: 2;
+      grid-row: 1;
+    }
 
-        .ticket-2 {
-          grid-column: 1;
-          grid-row: 2;
-        }
+    .ticket-2 {
+      grid-column: 1;
+      grid-row: 2;
+    }
 
-        .ticket-3 {
-          grid-column: 2;
-          grid-row: 2;
-        }
+    .ticket-3 {
+      grid-column: 2;
+      grid-row: 2;
+    }
 
-        .ticket-4 {
-          grid-column: 1;
-          grid-row: 3;
-        }
+    .ticket-4 {
+      grid-column: 1;
+      grid-row: 3;
+    }
 
-        app-ticket:nth-child(odd) {
-          display: flex;
-          justify-content: flex-end;
-        }
+    app-ticket:nth-child(odd) {
+      display: flex;
+      justify-content: flex-end;
+    }
 
-        app-ticket:nth-child(even) {
-          display: flex;
-          justify-content: flex-start;
-        }
-      }
+    app-ticket:nth-child(even) {
+      display: flex;
+      justify-content: flex-start;
     }
   }
 }
@@ -173,45 +175,52 @@ app-ticket{
 }
 
 @media only screen and (min-width: 1095px) {
-  .container {
-    .tickets {
-      .tickets-container {
-        column-count: 5;
+  .container .tickets .full-container .tickets-container {
+    column-count: 5;
+    grid-template-rows: 1fr;
 
-        .ticket-0 {
-          grid-column: 1;
-          grid-row: 1;
-        }
+    .ticket-0 {
+      grid-column: 1;
+      grid-row: 1;
+    }
 
-        .ticket-1 {
-          grid-column: 2;
-          grid-row: 1;
-        }
+    .ticket-1 {
+      grid-column: 2;
+      grid-row: 1;
+    }
 
-        .ticket-2 {
-          grid-column: 3;
-          grid-row: 1;
-        }
+    .ticket-2 {
+      grid-column: 3;
+      grid-row: 1;
+    }
 
-        .ticket-3 {
-          grid-column: 4;
-          grid-row: 1;
-        }
+    .ticket-3 {
+      grid-column: 4;
+      grid-row: 1;
+    }
 
-        .ticket-4 {
-          grid-column: 5;
-          grid-row: 1;
-        }
+    .ticket-4 {
+      grid-column: 5;
+      grid-row: 1;
+    }
 
-        app-ticket {
-          height: 474px;
-        }
+    app-ticket {
+      height: 516px;
+    }
 
-        app-ticket.smaller {
-          width: 200px;
-          height: 438px;
-        }
-      }
+    app-ticket.smaller {
+      width: 200px;
+      height: 480px;
+    }
+  }
+}
+
+@media only screen and (max-width: 1095px) {
+  .container .tickets .full-container {
+    margin-bottom: 64px;
+
+    .vat-container {
+      margin-top: 32px;
     }
   }
 }
