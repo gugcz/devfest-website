@@ -11,6 +11,7 @@ export interface Session {
   speakers?: firebase.firestore.DocumentReference[];
   startTime: firebase.firestore.Timestamp;
   tag?: firebase.firestore.DocumentReference;
+  registrationLink?: string;
 }
 
 interface Hall {
