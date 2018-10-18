@@ -40,6 +40,16 @@
     border: 2px solid #333333;
     margin: 0 24px;
 
+    .detail {
+      font-size: 22.4px;
+      padding: 6px 0;
+      margin: 16px 0;
+      width: 250px;
+      box-shadow: none;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      border:solid 2px #41403E;
+    }
+
     .session-name {
       margin-top: 0;
       font-weight: 600;
