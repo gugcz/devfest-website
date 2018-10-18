@@ -9,6 +9,7 @@ import {Ticket} from '../../customObjects/ticket';
 export class TicketComponent implements OnInit {
 
   @Input() ticket: Ticket;
+  @Input() euroToCrowns: number;
 
   constructor() {
   }
@@ -17,7 +18,8 @@ export class TicketComponent implements OnInit {
     this.ticket.price = this.ticket.price.map(it => {
       return {
         title: it.title,
-        price: Math.round(it.price)
+        price: Math.round(it.price),
+        priceInCrows: Math.round(this.euroToCrowns * it.price)
       };
     });
   }

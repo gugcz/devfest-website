@@ -6,6 +6,9 @@
         <h4 class="price" [ngClass]="{'actual': ticket.actual}">
           {{price.price | number}}€
         </h4>
+        <h4 class="price-in-crowns" style="margin: 0">
+          ≃ {{price.priceInCrows | number}} CZK
+        </h4>
         <h4 class="subtitle">
           {{price.title}}
         </h4>
