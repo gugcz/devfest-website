@@ -59,4 +59,9 @@ export class SessionDetailComponent implements OnInit {
   openSpeaker(id: string) {
     this.dialogRef.close(id);
   }
+
+  seeLink(link: string) {
+    const cust = window.open(link, '_blank');
+    cust.focus();
+  }
 }

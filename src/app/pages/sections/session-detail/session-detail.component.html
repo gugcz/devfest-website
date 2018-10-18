@@ -23,6 +23,7 @@
         <h2 class="session-speaker-name" >{{speaker.name}}</h2>
         <h4 class="session-speaker-company">{{speaker.company}} / {{speaker.job}}</h4>
       </div>
+      <button mat-raised-button color="accent" class="detail" *ngIf="session.registrationLink" (click)="seeLink(session.registrationLink)" [@fadeInOut]>Registration</button>
   </div>
 </div>
 <ng-template #loading>
