@@ -12,11 +12,11 @@ import {TimeSlot, TimeSlotItem} from '../../../customObjects/timeSlot';
   styleUrls: ['./schedule-section.component.scss'],
   animations: [trigger('fadeInOut', [
     transition(':enter', [   // :enter is alias to 'void => *'
-      style({ opacity: 0 }),
-      animate('200ms', style({ opacity: 1 }))
+      style({opacity: 0}),
+      animate('200ms', style({opacity: 1}))
     ]),
     transition(':leave', [   // :leave is alias to '* => void'
-      animate('500ms', style({ opacity: 0 }))
+      animate('500ms', style({opacity: 0}))
     ])
   ])]
 })
@@ -101,7 +101,7 @@ export class ScheduleSectionComponent implements OnInit {
             this.timeSlotTracks[timeSlotRef] = [];
           }
 
-          this.timeSlotTracks[timeSlotRef].push({ ...trackSnapshot.data(), id: trackSnapshot.ref.id });
+          this.timeSlotTracks[timeSlotRef].push({...trackSnapshot.data(), id: trackSnapshot.ref.id});
         }
       });
     });
@@ -145,7 +145,7 @@ export class ScheduleSectionComponent implements OnInit {
           }
 
           const newTime = data.startTime.toDate().getHours() + ':' +
-           (data.startTime.toDate().getMinutes() === 0 ? '00' : data.startTime.toDate().getMinutes());
+            (data.startTime.toDate().getMinutes() === 0 ? '00' : data.startTime.toDate().getMinutes());
 
           const timesMobile = this.timesMobile[timeSlot.id].find(timeSlotObj => timeSlotObj.time === newTime);
 
@@ -160,6 +160,7 @@ export class ScheduleSectionComponent implements OnInit {
             name: data.name,
             description: data.description,
             speakers: speakers,
+            registrationLink: data.registrationLink ? data.registrationLink : null,
             level: data.level,
             language: data.language,
             length: data.length,
