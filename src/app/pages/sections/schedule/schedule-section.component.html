@@ -56,8 +56,8 @@
       <div class="text-workshops">Workshops will be held at our partners. More info coming soon!</div>
     </div>
     <div></div>
-    <div *ngIf="timesMobile[selectedTimeSlotId] && timesMobile[selectedTimeSlotId].length === 2"
-      class="tracks-mobile-workshops">
+    <div *ngIf="timesMobile[selectedTimeSlotId] && timesMobile[selectedTimeSlotId].length === 3"
+         class="tracks-mobile-workshops">
         <div *ngFor="let group of timesMobile[selectedTimeSlotId] | groupSort" class="track-group-mobile">
           <div class="time-title">{{group.time}}</div>
           <div class="track-container">
