@@ -15,7 +15,7 @@ async function getSessions() {
   const sessionsSnapshot = await admin.firestore().collection('sessions').orderBy('startTime').limit(3).get();
   return sessionsSnapshot.docs.map(session => {
     const date = session.data().startTime.toDate();
-    const finalOut = date.getFullYear() + '-' + (date.getMonth() - 1) + '-' + date.getDate() + ' ' + (date.getUTCHours() + 2) + ':' + (('0' + date.getMinutes()).slice(-2));
+    const finalOut = (date.getUTCHours() + 2) + ':' + (('0' + date.getMinutes()).slice(-2));
     return {
       name: session.data().name,
       description: session.data().description,
