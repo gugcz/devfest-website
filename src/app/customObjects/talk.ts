@@ -8,6 +8,7 @@ export interface Talk {
   columnStart?: number;
   columnEnd?: number;
   trackNumber?: number;
+  registrationLink?: string;
   hall: { name: string, order: number };
   rowStart: number;
   rowEnd: number;

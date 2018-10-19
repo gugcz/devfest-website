@@ -2,6 +2,7 @@
   <div class="body">
     <p class="talk-title">{{talk.name}}</p>
     <p class="talk-subtitle">{{talkSubtitle}}</p>
+    <span class="registration" *ngIf="talk.registrationLink != null">Registration needed</span>
     <img *ngIf="talk.wtm" class="wtm-logo" src="assets/wtm.png" alt="Women Techmakers" title="Women Techmakers">
   </div>
   <div class="footer" *ngFor="let speaker of talk.speakers" [ngStyle]="{'background-color': talk.tag && talk.tag.color || ''}">
