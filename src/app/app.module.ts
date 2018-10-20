@@ -6,6 +6,7 @@ import {AppComponent} from './app.component';
 import {environment} from '../environments/environment';
 import {AngularFirestoreModule} from 'angularfire2/firestore';
 import {AngularFireStorageModule} from 'angularfire2/storage';
+import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import {AngularFireModule} from 'angularfire2';
 import {RegisterNowButtonComponent} from './components/register-now-button/register-now-button.component';
 import {TicketComponent} from './components/ticket/ticket.component';
@@ -103,6 +104,7 @@ import {SessionDetailComponent} from './pages/sections/session-detail/session-de
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireStorageModule,
+    AngularFireFunctionsModule,
     CommonModule,
     RouterModule,
     BrowserAnimationsModule,
