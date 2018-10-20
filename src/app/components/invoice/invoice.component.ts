@@ -4,6 +4,7 @@ import {AngularFirestore} from 'angularfire2/firestore';
 import {FormControl, Validators} from '@angular/forms';
 import * as firebase from 'firebase';
 import {Invoice} from '../../dto/invoice';
+import { AngularFireFunctionsModule, AngularFireFunctions } from '@angular/fire/functions';
 
 @Component({
   selector: 'app-invoice',
@@ -27,18 +28,18 @@ export class InvoiceComponent implements OnInit {
   priceCompany: number;
 
   constructor(
-    public dialogRef: MatDialogRef<InvoiceComponent>, public afStore: AngularFirestore) {
+    public dialogRef: MatDialogRef<InvoiceComponent>, public afStore: AngularFirestore, private afFunctions: AngularFireFunctions) {
   }
 
   ngOnInit() {
     this.countTickets = 1;
-    const getCurrentCompanyFundedPrice = firebase.functions().httpsCallable('invoiceGetCurrentCompanyFundedPrice');
-    getCurrentCompanyFundedPrice({}).then((result) => {
-      this.priceCompany = result.data.price;
+    const getCurrentCompanyFundedPrice = this.afFunctions.httpsCallable('invoiceGetCurrentCompanyFundedPrice');
+    getCurrentCompanyFundedPrice({}).subscribe(result => {
+      this.priceCompany = result.price;
     });
-    const getCurrentExchangeRate = firebase.functions().httpsCallable('invoiceGetCurrentExchangeRate');
-    getCurrentExchangeRate({from: 'EUR', to: 'CZK'}).then((result) => {
-      this.price = result.data.price;
+    const getCurrentExchangeRate = this.afFunctions.httpsCallable('invoiceGetCurrentExchangeRate');
+    getCurrentExchangeRate({from: 'EUR', to: 'CZK'}).subscribe((result) => {
+      this.price = result.price;
     });
   }
 

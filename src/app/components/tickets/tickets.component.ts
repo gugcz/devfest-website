@@ -5,6 +5,7 @@ import {InvoiceComponent} from '../invoice/invoice.component';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {Ticket} from '../../customObjects/ticket';
 import * as firebase from 'firebase';
+import { AngularFireFunctions } from '@angular/fire/functions';
 
 @Component({
   selector: 'app-tickets',
@@ -25,7 +26,7 @@ export class TicketsComponent implements OnInit {
   ticketsReady: Boolean;
   priceReady: Boolean;
 
-  constructor(private http: HttpClient, public dialog: MatDialog) {
+  constructor(private http: HttpClient, public dialog: MatDialog, private afFunctions: AngularFireFunctions) {
     this.showSpinner = true;
   }
 
@@ -36,9 +37,9 @@ export class TicketsComponent implements OnInit {
       this.checkSpinner();
     });
 
-    const getCurrentExchangeRate = firebase.functions().httpsCallable('invoiceGetCurrentExchangeRate');
-    getCurrentExchangeRate({from: 'EUR', to: 'CZK'}).then((result) => {
-      this.euroToCrowns = result.data.price;
+    const getCurrentExchangeRate = this.afFunctions.httpsCallable('invoiceGetCurrentExchangeRate');
+    getCurrentExchangeRate({from: 'EUR', to: 'CZK'}).subscribe((result) => {
+      this.euroToCrowns = result.price;
       this.priceReady = true;
       this.checkSpinner();
     });
