@@ -13,9 +13,8 @@
       <img *ngIf="session.wtm" class="wtm-logo" src="assets/wtm.png" alt="Women Techmakers" title="Women Techmakers">
       <p class="session-time session-start-time">Start: {{session.startTime.toDate().getHours()}}:{{session.startTime.toDate().getMinutes() === 0 ? '00' : session.startTime.toDate().getMinutes()}}</p>
       <p class="session-time">End: {{session.endTime.toDate().getHours()}}:{{session.endTime.toDate().getMinutes() === 0 ? '00' : session.endTime.toDate().getMinutes()}}</p>
-      <p *ngIf="session.description">
-        {{session.description}}
-      </p>
+      <p *ngIf="session.capacity">Capacity: {{session.capacity}}</p>
+      <p *ngIf="session.description">{{session.description}}</p>
       <div *ngFor="let speaker of speakers" class="speaker-info" (click)="openSpeaker(speaker.id)" >
         <span *ngIf="speaker.photo | async as photo">
             <img [src]="photo" class="session-speaker-photo">
