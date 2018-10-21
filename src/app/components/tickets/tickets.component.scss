@@ -16,8 +16,12 @@ app-ticket {
 
   .children-text{
     text-align: center;
-    margin-top: 15px;
-    font-size: 1.1rem;
+    margin-top: 8px;
+  }
+
+  .vat-container {
+    margin-top: 12px;
+    text-align: center;
   }
 
   .tickets {
@@ -29,17 +33,6 @@ app-ticket {
       display: grid;
       column-count: 1;
       grid-gap: 8px;
-
-      .vat-container {
-        grid-column: 1;
-        grid-row: 2;
-        width: 100%;
-
-        .vat-description {
-          margin-top: 12px;
-          text-align: right;
-        }
-      }
 
       .tickets-container {
         grid-column: 1;
