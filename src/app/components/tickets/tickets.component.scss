@@ -14,6 +14,12 @@ app-ticket {
   flex-direction: column;
   overflow-x: hidden;
 
+  .children-text{
+    text-align: center;
+    margin-top: 15px;
+    font-size: 1.1rem;
+  }
+
   .tickets {
     display: flex;
     flex: 1;
