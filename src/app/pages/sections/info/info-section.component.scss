@@ -1,0 +1,108 @@
+.venue-section {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  text-align: center;
+
+  .title {
+    font-family: MyMediaval, serif;
+    font-size: 3rem;
+    margin: 0;
+    text-align: center;
+  }
+
+  .close-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .close-button {
+      color: #333333;
+      cursor: pointer;
+      position: fixed;
+      text-decoration: none;
+      outline: none;
+    }
+  }
+
+  .info-holder{
+    width: 100%;
+    display: grid;
+    grid-column-gap: 8px;
+    grid-row-gap: 8px;
+    grid-template-columns: 1fr;
+
+    .first-half {
+      text-align: center;
+      .title{
+        font-family: MyMediaval, serif;
+        font-size: 2.5rem;
+      }
+      .informations {
+        font-weight: 400;
+        width: 90%;
+        margin: auto;
+        padding-top: 16px;
+        padding-bottom: 16px;
+      }
+    
+      .venue-photo-container{
+        padding: 30px;
+        margin: auto;
+        .venue-photo{
+          width: 100%;
+          box-shadow: none;
+          border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+          border:solid 2px #41403E;
+        }
+      }
+    }
+
+    .second-half{
+      text-align: center;
+      .wtm-logo{
+        margin: 18px;
+        width: 80px;
+      }
+      .list-information{
+        margin-top: 8px;
+        text-align: left;
+        width: 100%;
+        .recommended{
+          font-weight: 800;
+        }
+      }
+      .community-title{
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-family: MyMediaval, serif;
+        font-size: 2.5rem;
+      }
+      .informations {
+        font-weight: 400;
+      }
+    }
+  }
+
+  app-venue-position-map {
+    display: flex;
+    flex-grow: 1;
+    padding: 30px;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .venue-section {
+    .info-holder{
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+}
+
+@media screen and (min-width: 1024px) {
+}

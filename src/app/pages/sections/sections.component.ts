@@ -9,6 +9,7 @@ import { SpeakersSectionComponent } from './speakers/speakers-section.component'
 import { SpeakerDetailSectionComponent } from './speaker-detail/speaker-detail.component';
 import { ScheduleSectionComponent } from './schedule/schedule-section.component';
 import { SessionDetailComponent } from './session-detail/session-detail.component';
+import { InfoSectionComponent } from './info/info-section.component';
 @Component({
   templateUrl: './sections.component.html',
   selector: 'app-sections',
@@ -67,8 +68,8 @@ export class SectionsComponent implements OnDestroy, AfterViewInit {
             });
             break;
           }
-          case 'venue': {
-            dialogRef = this.matDialog.open(VenueSectionComponent, {
+          case 'info': {
+            dialogRef = this.matDialog.open(InfoSectionComponent, {
               width: '100vw',
               height: '100vh',
               maxWidth: '',
