@@ -23,7 +23,8 @@ export class TalkComponent implements OnInit, OnChanges {
         speaker['showPhoto'] = true;
       }
     });
-    this.talkSubtitle = [this.talk.level, this.talk.language, this.talk.hall && this.talk.hall.name || '', this.talk.length]
+    this.talkSubtitle = [this.talk.level, this.talk.language, ((this.talk.hall && !this.talk.hideHall) ?
+       this.talk.hall.name : ''), this.talk.length]
       .filter(item => item)
       .join(' / ');
   }

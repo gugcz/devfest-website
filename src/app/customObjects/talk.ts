@@ -15,6 +15,7 @@ export interface Talk {
   fullRow: boolean;
   tag: { color: string; type: string; };
   wtm: boolean;
+  hideHall?: boolean;
 }
 
 export interface Speaker {

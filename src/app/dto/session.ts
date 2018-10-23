@@ -12,6 +12,7 @@ export interface Session {
   startTime: firebase.firestore.Timestamp;
   tag?: firebase.firestore.DocumentReference;
   registrationLink?: string;
+  hideHall?: boolean;
 }
 
 interface Hall {
