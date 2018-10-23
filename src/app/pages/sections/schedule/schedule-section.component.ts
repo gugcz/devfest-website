@@ -164,6 +164,7 @@ export class ScheduleSectionComponent implements OnInit {
             level: data.level,
             language: data.language,
             length: data.length,
+            hideHall: data.hideHall ? data.hideHall : null,
             hall: data.hall,
             tag: tag,
             fullRow: data.fullRow,
