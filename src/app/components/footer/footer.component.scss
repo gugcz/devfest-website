@@ -63,6 +63,11 @@
         padding: 4px 0;
         width: 100%;
       }
+      .coc-button{
+        font-size: 1.4rem;
+        padding: 4px 0;
+        width: 100%;        
+      }
       .organizers-contact {
         color: white;
         font-weight: 500;
@@ -151,9 +156,17 @@
         grid-gap: 0;
         grid-template-rows: auto 18px;
 
-        .partner-button {
+        .coc-button{
           grid-row-start: 1;
           grid-row-end: 1;
+          align-self: center;
+          justify-self: end;
+          height: 45px;
+        }
+
+        .partner-button {
+          grid-row-start: 2;
+          grid-row-end: 2;
           align-self: center;
           justify-self: end;
           height: 45px;
@@ -162,8 +175,8 @@
         .organizers-contact-container {
           display: grid;
           align-items: end;
-          grid-row-start: 2;
-          grid-row-end: 2;
+          grid-row-start: 3;
+          grid-row-end: 3;
           .organizers-contact {
             font-size: 1.4rem;
             font-weight: 400;
