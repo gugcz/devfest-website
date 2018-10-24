@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
-import {AngularFirestore} from 'angularfire2/firestore';
-import {animate, style, transition, trigger} from '@angular/animations';
-import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
-import {TimeSlot, TimeSlotItem} from '../../../customObjects/timeSlot';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { TimeSlot, TimeSlotItem } from '../../../customObjects/timeSlot';
 
 @Component({
   selector: 'app-schedule-section',
@@ -12,11 +12,11 @@ import {TimeSlot, TimeSlotItem} from '../../../customObjects/timeSlot';
   styleUrls: ['./schedule-section.component.scss'],
   animations: [trigger('fadeInOut', [
     transition(':enter', [   // :enter is alias to 'void => *'
-      style({opacity: 0}),
-      animate('200ms', style({opacity: 1}))
+      style({ opacity: 0 }),
+      animate('200ms', style({ opacity: 1 }))
     ]),
     transition(':leave', [   // :leave is alias to '* => void'
-      animate('500ms', style({opacity: 0}))
+      animate('500ms', style({ opacity: 0 }))
     ])
   ])]
 })
@@ -31,6 +31,7 @@ export class ScheduleSectionComponent implements OnInit {
   showTracks: boolean;
   timesMobile: {};
   tags: Observable<any[]>;
+  filter: string;
 
   constructor(public dialogRef: MatDialogRef<ScheduleSectionComponent>, private firestore: AngularFirestore, private router: Router) {
   }
@@ -101,7 +102,7 @@ export class ScheduleSectionComponent implements OnInit {
             this.timeSlotTracks[timeSlotRef] = [];
           }
 
-          this.timeSlotTracks[timeSlotRef].push({...trackSnapshot.data(), id: trackSnapshot.ref.id});
+          this.timeSlotTracks[timeSlotRef].push({ ...trackSnapshot.data(), id: trackSnapshot.ref.id });
         }
       });
     });
@@ -181,7 +182,7 @@ export class ScheduleSectionComponent implements OnInit {
               }
             });
           } else {
-            this.timesMobile[timeSlot.id].push({time: newTime, talks: [finalSession]});
+            this.timesMobile[timeSlot.id].push({ time: newTime, talks: [finalSession] });
           }
 
           this.timeSlotSessions[timeSlot.id].push(finalSession);
@@ -238,6 +239,14 @@ export class ScheduleSectionComponent implements OnInit {
 
   viewDetailSession(id) {
     this.dialogRef.close(id);
+  }
+
+  setFilter(chosen) {
+    if (chosen === this.filter) {
+      this.filter = null;
+    } else {
+      this.filter = chosen;
+    }
   }
 
 }

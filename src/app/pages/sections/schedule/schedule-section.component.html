@@ -20,7 +20,7 @@
         <div class="chips-container">
           <div class="chips-rows">
             <div *ngFor="let tag of tags | async" class="chip">
-              <div *ngIf="tag.show" [style.border-color]="tag.color" [style.color]="tag.color" class="chip-text">{{tag.type}}</div>
+              <div *ngIf="tag.show" [style.border-color]="tag.color" [style.color]="tag.color" class="chip-text" (click)="setFilter(tag.type)">{{tag.type}}</div>
             </div>
           </div>
         </div>
@@ -36,7 +36,7 @@
           <div class="time-title">{{group.time}}</div>
           <div class="track-container">
             <div *ngFor="let talk of group.talks" class="track-mobile" [ngClass]="{'full-row': talk.fullRow}">
-              <app-talk [talk]="talk" (click)="viewDetailSession(talk.id)" [@fadeInOut]></app-talk>
+              <app-talk [ngStyle]="{filter: (talk.tag && filter != null && filter != talk.tag.type) ? 'grayscale(100%)' : ''}" [talk]="talk" (click)="viewDetailSession(talk.id)"[@fadeInOut]></app-talk>
             </div>
           </div>
         </div>

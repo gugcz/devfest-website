@@ -3,6 +3,10 @@
   flex-direction: column;
   flex-grow: 1;
 
+  &.disabled{
+    filter: grayscale(100%);
+  }
+
   .close-button-container {
     display: flex;
     flex-direction: column;
@@ -74,6 +78,7 @@
               border-radius: 24px;
               border: 3px solid currentColor;
               padding: 4px 8px;
+              cursor: pointer;
               margin: 4px;
               background-color: white;
               font-size: 12px;
@@ -134,6 +139,7 @@
             width: 100%;
             cursor: pointer;
           }
+
         }
       }
     }
@@ -264,6 +270,19 @@
             grid-column-start: 1;
             grid-column-end: 4;
           }
+        }
+      }
+    }
+
+    .tracks-mobile-workshops{
+      .track-group-mobile {
+        .track-container{
+          grid-column-gap: 16px;
+          grid-template-columns: 1fr 1fr;
+        }
+        .track-mobile.full-row {
+          grid-column-start: 1;
+          grid-column-end: 3;
         }
       }
     }
