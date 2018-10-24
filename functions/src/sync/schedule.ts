@@ -27,7 +27,7 @@ async function changedTimeslot() {
             tracks[tracks.indexOf(tracksFi[0])]['count']++;
           }
         }
-        tracks.sort((a, b) => { return a - b });
+        tracks.sort((a, b) => { return b.count - a.count });
         for (const session of data.sessions) {
           const sessionDataSnapshot = await session.session.get();
           const sessionData = sessionDataSnapshot.data();
