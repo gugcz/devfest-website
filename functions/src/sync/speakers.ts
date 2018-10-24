@@ -16,6 +16,7 @@ async function updateOrCreateSpeaker() {
       const companyArray = speakerFire.companies[0].split("/");
       speaker["company"] = speakerFire.company ? speakerFire.company : companyArray[companyArray.length-1].slice(0,-4);
       speaker["companyLogo"] = speakerFire.companies[0];
+      speaker["cardPosition"] = speakerFire.cardPosition ? speakerFire.cardPosition : 0;
       speaker["featured"] = speakerFire.show;
       speaker["id"] = pushArray.length;
       speaker["customId"] = speakerFireDoc.id;
@@ -32,5 +33,6 @@ async function updateOrCreateSpeaker() {
     } catch (e){
     }
   }
+  pushArray.sort((a,b)=> a.cardPosition - b.cardPosition);
   return admin.database().ref('speakers').set(pushArray);
 }
