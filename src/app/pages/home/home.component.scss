@@ -56,6 +56,7 @@
 
         .buy-tickets-link .buy-tickets-image {
           height: 40px;
+          visibility: hidden;
         }
       }
 
@@ -65,8 +66,83 @@
         align-items: flex-end;
         justify-content: center;
       }
+
+      .countdown-container{
+        text-align: center;
+        margin-top: 26px;
+        .next-year-button{
+          width: 100%;
+          img {
+            width: 100%;
+          }
+        }
+      }
     }
   }
+}
+
+
+@keyframes glitch-small {
+    0% {
+        transform: translate(0)
+    }
+    33% {
+        transform: translate(2px, 1px)
+    }
+    66% {
+        transform: translate(-1px, -1px)
+    }
+    to {
+        transform: translate(0)
+    }
+}
+@keyframes glitch-medium {
+    0% {
+        transform: translate(0)
+    }
+    20% {
+        transform: translate(-2px, 2px)
+    }
+    40% {
+        transform: translate(-2px, -2px)
+    }
+    60% {
+        transform: translate(2px, 2px)
+    }
+    80% {
+        transform: translate(2px, -2px)
+    }
+    to {
+        transform: translate(0)
+    }
+}
+@keyframes glitch-left {
+    0% {
+        transform: translate(0)
+    }
+    33% {
+        transform: translate(-5px, 3px)
+    }
+    66% {
+        transform: translate(5px, -3px)
+    }
+    to {
+        transform: translate(0)
+    }
+}
+@keyframes glitch-left-2 {
+    0% {
+        transform: translate(0)
+    }
+    33% {
+        transform: translate(-5px, -3px)
+    }
+    66% {
+        transform: translate(5px, 2px)
+    }
+    to {
+        transform: translate(0)
+    }
 }
 
 @media only screen and (min-width: 375px) {
@@ -118,6 +194,10 @@
 
       .buy-tickets-container .buy-tickets-link .buy-tickets-image {
         height: 80px;
+      }
+
+      .countdown-container{
+        text-align: center;
       }
     }
   }
@@ -210,6 +290,7 @@
         display: flex;
         padding-left: 60px;
         align-items: center;
+        text-align: center;
       }
 
       .menu-container {
@@ -230,6 +311,7 @@
       min-height: calc(100vh - 128px - 297px - 16px);
       .countdown-container {
         padding-left: 80px;
+        text-align: center;
       }
 
       .menu-container {
