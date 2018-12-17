@@ -4,7 +4,7 @@ path {
   filter: url(#white-glow);
   fill: white;
   stroke: white;
-  animation: load 5s cubic-bezier(0, 0.23, .83, .67), flicker 5s infinite 6s step-end;
+  animation: load 4s cubic-bezier(0, 0.47, .83, .67), flicker 5s infinite 6s step-end;
 }
 
 polygon {
@@ -12,7 +12,7 @@ polygon {
   opacity: 10;
   filter: url(#red-glow);
   stroke: white;
-  animation: load 5s cubic-bezier(0, 0.23, .83, .67), flicker 5s infinite 6s step-end;
+  animation: load 4s cubic-bezier(0, 0.47, .83, .67), flicker 5s infinite 6s step-end;
 }
 
 .yellowPart{
