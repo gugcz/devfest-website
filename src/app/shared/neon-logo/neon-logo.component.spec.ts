@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NeonLogoComponent } from './neon-logo.component';
+import { NeonLogoComponent } from './../neon-logo/neon-logo.component';
 
 describe('NeonLogoComponent', () => {
   let component: NeonLogoComponent;
