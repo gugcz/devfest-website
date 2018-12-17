@@ -4,20 +4,58 @@ path {
   filter: url(#white-glow);
   fill: white;
   stroke: white;
-  animation:  load 5s cubic-bezier(0, 0.23, 1, .1), flicker 5s infinite 6s step-end;
+  animation: load 5s cubic-bezier(0, 0.23, .83, .67), flicker 5s infinite 6s step-end;
 }
 
+polygon {
+  stroke-dasharray: 1800;
+  opacity: 10;
+  filter: url(#red-glow);
+  stroke: white;
+  animation: load 5s cubic-bezier(0, 0.23, .83, .67), flicker 5s infinite 6s step-end;
+}
+
+.yellowPart{
+  fill: #f3c744;
+  stroke: #f3c744;
+  filter: url(#yellow-glow);
+}
+
+.greenPart{
+  fill: #22a062;
+  stroke: #22a062;
+  filter: url(#green-glow);
+}
+
+.bluePart{
+  fill: #519bec;
+  stroke: #519bec;
+  filter: url(#blue-glow);
+}
+
+.redPart{
+  fill: #d74a3d;
+  stroke: #d74a3d;
+  filter: url(#red-glow);
+}
+
+
+
+
 @keyframes load {
+
   0% {
-    opacity: 0;
+    opacity: 1;
     fill: none;
     stroke-dashoffset: 1800;
   }
 
+  20% {
+    opacity: 5;
+  }
+
   30% {
     opacity: 10;
-    fill: none;
-    stroke-dashoffset: 1800;
   }
 
   90% {
