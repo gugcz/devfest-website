@@ -4,11 +4,14 @@ import { HomeComponent } from './home.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
+import { MatButtonModule } from '@angular/material/button';
+
 @NgModule({
   imports: [
     CommonModule,
     HomeRoutingModule,
-    SharedModule
+    SharedModule,
+    MatButtonModule
   ],
   declarations: [
     HomeComponent,
