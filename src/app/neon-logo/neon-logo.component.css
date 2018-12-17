@@ -39,9 +39,6 @@ polygon {
   filter: url(#red-glow);
 }
 
-
-
-
 @keyframes load {
 
   0% {
