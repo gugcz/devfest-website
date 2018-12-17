@@ -9,5 +9,5 @@ func init() {
 }
 
 func Redirect(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "https://2018.devfest.cz", http.StatusMovedPermanently)
+	http.Redirect(w, r, "https://2019.devfest.cz", http.StatusMovedPermanently)
 }
