@@ -1,5 +1,6 @@
 .footer-container {
   display: grid;
+  text-align: center;
   padding: 0 22px 22px;
   background-color: rgba(18, 42, 66, .98);
   -webkit-column-count: 1;
@@ -180,6 +181,7 @@
       column-count: 3;
 
       .links-content {
+        text-align: left;
         grid-column-start: 1;
         grid-column-end: 1;
       }
