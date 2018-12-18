@@ -5,22 +5,27 @@ import { NeonDateComponent } from './neon-date/neon-date.component';
 import { FooterComponent } from './footer/footer.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule} from '@angular/material/button';
+import { NavigationComponent } from './navigation/navigation.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @NgModule({
   imports: [
     CommonModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatToolbarModule,
   ],
   declarations: [
     NeonLogoComponent,
     NeonDateComponent,
     FooterComponent,
+    NavigationComponent,
   ],
   exports: [
     NeonLogoComponent,
     NeonDateComponent,
-    FooterComponent
+    FooterComponent,
+    NavigationComponent
   ]
 })
 export class SharedModule { }
