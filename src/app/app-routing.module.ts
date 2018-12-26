@@ -6,6 +6,10 @@ const routes: Routes = [
     path: '',
     loadChildren:  './home/home.module#HomeModule'
   },
+  {
+    path: 'team',
+    loadChildren:  './team/team.module#TeamModule'
+  },
   { path: '**', redirectTo: '' }
 ];
 
