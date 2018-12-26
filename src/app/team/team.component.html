@@ -1,5 +1,9 @@
 <div class="container">
   <div class="wrapper">
-    a
+    <div class="team-cont" >
+        <div *ngFor="let member of team | async">
+            <app-member-card [name]="member.name" [position]="member.position" [photoPath]="member.photoPath"></app-member-card>
+        </div>
+    </div>
   </div>
 </div>
