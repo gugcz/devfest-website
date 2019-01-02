@@ -14,3 +14,7 @@ mat-toolbar a{
   width: 110px;
   height: 100%;
 }
+
+.nav-link {
+  font-size: 1.3rem;
+}
