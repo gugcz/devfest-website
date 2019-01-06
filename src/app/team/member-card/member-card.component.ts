@@ -6,6 +6,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { Social } from 'src/app/dto/social';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { SocialIconsService } from 'src/app/shared/social-icons.service';
 
 @Component({
   selector: 'app-member-card',
@@ -39,12 +40,8 @@ export class MemberCardComponent implements OnInit {
 
   photoUrl: Observable<string>;
 
-  constructor(private firestore: AngularFirestore, private firestorage: AngularFireStorage,
-     private iconRegistry: MatIconRegistry, private sanitizer: DomSanitizer) {
-       iconRegistry.addSvgIcon(
-         'twitter',
-         sanitizer.bypassSecurityTrustResourceUrl('assets/icons/twitter.svg')
-       )
+  constructor(private firestore: AngularFirestore, private firestorage: AngularFireStorage,private socialsSer: SocialIconsService) {
+
       }
 
   ngOnInit() {
