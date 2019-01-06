@@ -7,6 +7,7 @@ import { SharedModule } from '../shared/shared.module';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { SocialIconsService } from '../shared/social-icons.service';
 
 @NgModule({
   imports: [
@@ -17,6 +18,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatIconModule
   ],
-  declarations: [TeamComponent, MemberCardComponent]
+  declarations: [TeamComponent, MemberCardComponent],
+  providers: [
+    SocialIconsService
+  ]
 })
 export class TeamModule { }
