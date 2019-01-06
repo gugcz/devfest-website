@@ -1,5 +1,5 @@
 <mat-toolbar [@transparent]="transparent">
-  <a class="logo" mat-icon-button routerLink="home"><app-neon-logo></app-neon-logo></a>
+  <a *ngIf="!isHome" class="logo" mat-icon-button routerLink="home"><app-neon-logo></app-neon-logo></a>
   <span class="spacer"></span>
   <a mat-button routerLink="team" class="nav-link">Team</a>
 </mat-toolbar>
