@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, HostBinding } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { throttleTime, map, pairwise, distinctUntilChanged, share, filter } from 'rxjs/operators';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { Router, Event, NavigationEnd } from '@angular/router';
 
 enum Direction {
   Up = 'Up',
@@ -50,6 +51,7 @@ enum TransparentState {
 export class NavigationComponent implements AfterViewInit {
   private isVisible = true;
   private isTop = true;
+  public isHome = true;
 
   @HostBinding('@toggle')
   get toggle(): VisibilityState {
@@ -60,9 +62,19 @@ export class NavigationComponent implements AfterViewInit {
     return this.isTop ? TransparentState.Full : TransparentState.Transparent;
   }
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngAfterViewInit() {
+    this.router.events.subscribe((event: Event) => {
+      if (event instanceof NavigationEnd ) {
+        if (event.url === "/" || event.url === "/home"){
+          this.isHome = true;
+        } else{
+          this.isHome = false;
+        }
+      }
+    })
+
     const scroll$ = fromEvent(window, 'scroll').pipe(
       map(() => window.pageYOffset),
       pairwise(),
@@ -84,14 +96,11 @@ export class NavigationComponent implements AfterViewInit {
     );
 
     const scrollTop$ = scrollOffSet$.pipe(
-      filter(y => y == 0)
+      filter(y => y === 0)
     );
 
-    
     scrollTop$.subscribe(() => (this.isTop = true));
     scrollUp$.subscribe(() => (this.isVisible = true));
     scrollDown$.subscribe(() => {this.isVisible = false; this.isTop = false});
   }
-
-
 }
