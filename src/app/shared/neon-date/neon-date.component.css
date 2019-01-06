@@ -4,7 +4,8 @@ path {
   filter: url(#white-glow);
   fill: white;
   stroke: white;
-  animation: load 4s cubic-bezier(0, 0.47, .83, .67), flicker 5s infinite 9s step-end;
+  animation-delay: 2s;
+  animation: load 4s cubic-bezier(0.42, 0.0, 0.58, 1.0), flicker 5s infinite 9s step-end;
 }
 
 
