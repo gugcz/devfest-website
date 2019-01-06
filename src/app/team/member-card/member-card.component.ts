@@ -3,6 +3,9 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { Social } from 'src/app/dto/social';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-member-card',
@@ -30,12 +33,19 @@ export class MemberCardComponent implements OnInit {
   @Input() photoPath: string;
   @Input() name: string;
   @Input() position: string;
+  @Input() socials: Social[];
 
   visiblePhoto: boolean = false;
 
   photoUrl: Observable<string>;
 
-  constructor(private firestore: AngularFirestore, private firestorage: AngularFireStorage) { }
+  constructor(private firestore: AngularFirestore, private firestorage: AngularFireStorage,
+     private iconRegistry: MatIconRegistry, private sanitizer: DomSanitizer) {
+       iconRegistry.addSvgIcon(
+         'twitter',
+         sanitizer.bypassSecurityTrustResourceUrl('assets/icons/twitter.svg')
+       )
+      }
 
   ngOnInit() {
     this.photoUrl = this.firestorage.ref(this.photoPath).getDownloadURL();

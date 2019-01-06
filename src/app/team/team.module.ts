@@ -6,14 +6,18 @@ import { MemberCardComponent } from './member-card/member-card.component';
 import { SharedModule } from '../shared/shared.module';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   imports: [
+    HttpClientModule,
     CommonModule,
     TeamRoutingModule,
     SharedModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   declarations: [TeamComponent, MemberCardComponent]
 })

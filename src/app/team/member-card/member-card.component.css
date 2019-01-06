@@ -1,6 +1,22 @@
 mat-card{
     margin: 5px;
     width: 200px;
+    text-align: center;
+}
+
+.position{
+  margin-top: 0px;
+}
+
+.name{
+  margin-bottom: 5px;
+}
+
+.socials{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 40px;
 }
 
 .image-holder{

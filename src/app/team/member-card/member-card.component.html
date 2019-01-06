@@ -1,18 +1,15 @@
 <mat-card color="primary" [@fadeInOut]>
-  <mat-card-header>
-    <mat-card-title>{{name}}</mat-card-title>
-    <mat-card-subtitle>{{position}}</mat-card-subtitle>
-  </mat-card-header>
-  <div class="image-holder">
+  <h2 class="name">{{name}}</h2>
+  <h4 class="position">{{position}}</h4>
+  <!--div class="image-holder">
       <img mat-card-image 
       *ngIf="photoUrl | async as photo" 
       [@fadeImage]="visiblePhoto" 
       (load)="visiblePhoto = true" 
       [src]="photo" 
       [alt]="name">
+  </div-->
+  <div class="socials">
+    <a mat-icon-button *ngFor="let social of socials" target="_blank" [href]="social.url"><mat-icon [svgIcon]="social.key"></mat-icon></a>
   </div>
-  <mat-card-actions>
-      <button mat-button>LIKE</button>
-      <button mat-button>SHARE</button>
-  </mat-card-actions>
 </mat-card>
