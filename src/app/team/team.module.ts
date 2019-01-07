@@ -6,6 +6,8 @@ import { MemberCardComponent } from './member-card/member-card.component';
 import { SharedModule } from '../shared/shared.module';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { SocialIconsService } from '../shared/social-icons.service';
 
 @NgModule({
   imports: [
@@ -13,8 +15,12 @@ import { MatButtonModule } from '@angular/material/button';
     TeamRoutingModule,
     SharedModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
-  declarations: [TeamComponent, MemberCardComponent]
+  declarations: [TeamComponent, MemberCardComponent],
+  providers: [
+    SocialIconsService
+  ]
 })
 export class TeamModule { }
