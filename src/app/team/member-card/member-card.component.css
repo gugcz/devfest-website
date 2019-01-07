@@ -1,7 +1,15 @@
 mat-card{
-    margin: 5px;
     width: 200px;
     text-align: center;
+    z-index: 3;
+    position: absolute;
+}
+
+.member-holder{
+  height:300px; 
+  width: 250px; 
+  position: relative;
+  margin: 5px;
 }
 
 .position{
@@ -20,6 +28,14 @@ mat-card{
   min-height: 40px;
 }
 
+img{
+  height: 100%;
+}
+
 .image-holder{
-  height: 232px;
+  z-index: 1;
+  height: 180px;
+  width: 100%;
+  text-align: center;
+  position: absolute
 }
