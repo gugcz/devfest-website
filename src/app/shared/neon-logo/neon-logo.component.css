@@ -5,6 +5,7 @@ path {
   fill: white;
   stroke: white;
   animation: load 4s cubic-bezier(0.42, 0.0, 0.58, 1.0), flicker 5s infinite 6s step-end;
+  -webkit-animation: load 4s cubic-bezier(0.42, 0.0, 0.58, 1.0), flicker 5s infinite 6s step-end;
 }
 
 polygon {
@@ -13,6 +14,7 @@ polygon {
   filter: url(#red-glow);
   stroke: white;
   animation: load 4s cubic-bezier(0.42, 0.0, 0.58, 1.0), flicker 5s infinite 6s step-end;
+  -webkit-animation: load 4s cubic-bezier(0.42, 0.0, 0.58, 1.0), flicker 5s infinite 6s step-end;
 }
 
 .yellowPart{
