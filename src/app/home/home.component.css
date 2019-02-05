@@ -19,7 +19,16 @@
   background-color: rgba(18, 42, 66, .98);
 }
 
+.containerThird {
+  height: 300px;
+  min-width: 100%;
+}
+
 .wrapperSecond {
+  padding: 10px;
+}
+
+.wrapperThird{
   padding: 10px;
 }
 
