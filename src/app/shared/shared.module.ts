@@ -8,6 +8,10 @@ import { MatButtonModule} from '@angular/material/button';
 import { NavigationComponent } from './navigation/navigation.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
+import { PartnerPanelComponent } from './partner-panel/partner-panel.component';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { PartnerLogoComponent } from './partner-logo/partner-logo.component';
 
 @NgModule({
   imports: [
@@ -15,19 +19,24 @@ import { RouterModule } from '@angular/router';
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
-    RouterModule
+    RouterModule,
+    AngularFireStorageModule,
+    AngularFirestoreModule
   ],
   declarations: [
     NeonLogoComponent,
     NeonDateComponent,
     FooterComponent,
     NavigationComponent,
+    PartnerPanelComponent,
+    PartnerLogoComponent,
   ],
   exports: [
     NeonLogoComponent,
     NeonDateComponent,
     FooterComponent,
-    NavigationComponent
+    NavigationComponent,
+    PartnerPanelComponent
   ]
 })
 export class SharedModule { }

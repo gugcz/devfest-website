@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PremiumPartnersComponent } from './premium-partners.component';
+import { PartnerPanelComponent } from './partner-panel.component';
 
-describe('PremiumPartnersComponent', () => {
-  let component: PremiumPartnersComponent;
-  let fixture: ComponentFixture<PremiumPartnersComponent>;
+describe('PartnerPanelComponent', () => {
+  let component: PartnerPanelComponent;
+  let fixture: ComponentFixture<PartnerPanelComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PremiumPartnersComponent ]
+      declarations: [ PartnerPanelComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PremiumPartnersComponent);
+    fixture = TestBed.createComponent(PartnerPanelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

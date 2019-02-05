@@ -5,18 +5,18 @@ import { HomeRoutingModule } from './home-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { MatButtonModule } from '@angular/material/button';
-import { PremiumPartnersComponent } from './premium-partners/premium-partners.component';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 @NgModule({
   imports: [
     CommonModule,
     HomeRoutingModule,
     SharedModule,
-    MatButtonModule
+    MatButtonModule,
+    AngularFirestoreModule
   ],
   declarations: [
-    HomeComponent,
-    PremiumPartnersComponent,
+    HomeComponent
   ]
 })
 export class HomeModule { }
