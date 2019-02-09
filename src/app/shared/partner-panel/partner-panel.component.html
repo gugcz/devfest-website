@@ -1,1 +1,4 @@
-{{partnerGroupId}}
+<h1 class="partner-group-name">{{groupName}}</h1>
+<div class="companies">
+   <app-partner-logo *ngFor="let company of companies" [name]="company.name" [url]="company.url" [photoPath]="company.photoPath"></app-partner-logo>
+</div>

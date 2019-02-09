@@ -5,7 +5,7 @@ export interface Partner {
     companies: Company[];
 }
 
-interface Company {
+export interface Company {
     name: string;
     url: string;
     photoPath: string;

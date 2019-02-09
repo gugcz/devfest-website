@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { Company } from 'src/app/dto/partner';
 
 @Component({
   selector: 'app-partner-panel',
@@ -7,9 +8,11 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class PartnerPanelComponent implements OnInit {
 
-  @Input() partnerGroupId;
+  @Input() groupName: string;
+  @Input() companies: Company[];
 
-  constructor() { }
+  constructor() {
+   }
 
   ngOnInit() {
   }
