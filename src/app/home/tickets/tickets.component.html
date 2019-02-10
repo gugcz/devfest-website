@@ -1,3 +1,14 @@
-<p>
-  tickets works!
-</p>
+<div class="ticket-holder">
+  <div class="ticket" [@fadeInOut] *ngFor="let ticketGroup of ticketGroups">
+    <h1>{{ticketGroup.name}}</h1>
+    <div class="ticket-status-unavailable unactive" *ngIf="!ticketGroup.tickets[0].sold_out && !ticketGroup.tickets[0].active">
+      UNAVAILABLE
+    </div>
+    <div class="ticket-status-sold unactive" *ngIf="ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active">
+      SOLD OUT
+    </div>
+    <div class="ticket-status-buy" *ngIf="!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active">
+      BUY NOW
+    </div>
+  </div>
+</div>
