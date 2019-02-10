@@ -23,6 +23,21 @@
   padding: 10px;
 }
 
+.containerThird {
+  min-height: 650px;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(18, 42, 66, .98);
+}
+
+h1 {
+  color: white;
+}
+
+.wrapperThird {
+  padding: 10px;
+}
+
 .arrows {
 	width: 60px;
 	height: 72px;

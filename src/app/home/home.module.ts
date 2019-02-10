@@ -6,13 +6,17 @@ import { SharedModule } from '../shared/shared.module';
 
 import { MatButtonModule } from '@angular/material/button';
 import { TicketsComponent } from './tickets/tickets.component';
+import { AngularFireFunctionsModule } from '@angular/fire/functions';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 @NgModule({
   imports: [
     CommonModule,
     HomeRoutingModule,
     SharedModule,
-    MatButtonModule
+    MatButtonModule,
+    AngularFireFunctionsModule,
+    AngularFirestoreModule
   ],
   declarations: [
     HomeComponent,

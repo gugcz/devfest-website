@@ -1,0 +1,65 @@
+.ticket-holder{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.ticket{
+    flex-basis: 300px;
+    width: 300px;
+    height: 600px;
+    border: 1px solid white;
+    margin: 8px;
+    border-radius: 9px;
+    box-shadow: 0 0 .5rem #fff, inset 0 0 .5rem #fff;
+    padding: 15px;
+    color: white;
+    position: relative;
+}
+
+.unactive{
+    filter: grayscale(100%);
+}
+
+.ticket-status-unavailable{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    height: 60px;
+    line-height: 60px;
+    font-size: 40px;
+    font-weight: 700;
+    text-align: center;
+    color: white;
+    width: 100%;
+}
+
+.ticket-status-sold{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    height: 60px;
+    line-height: 60px;
+    font-size: 40px;
+    font-weight: 700;
+    text-align: center;
+    color: white;
+    width: 100%;
+}
+
+.ticket-status-buy{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    border-bottom: 1px solid white;
+    border-radius: 0px 0px 9px 9px;
+    height: 60px;
+    line-height: 60px;
+    font-size: 40px;
+    font-weight: 700;
+    text-align: center;
+    color: #d74a3d;
+    background-color: white;
+    width: 100%;
+}
