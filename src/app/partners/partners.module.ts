@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PartnersRoutingModule } from './partners-routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { PartnersComponent } from './partners.component';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 @NgModule({
   declarations: [
@@ -11,7 +12,8 @@ import { PartnersComponent } from './partners.component';
   imports: [
     PartnersRoutingModule,
     CommonModule,
-    SharedModule
+    SharedModule,
+    AngularFirestoreModule
   ]
 })
 export class PartnersModule { }
