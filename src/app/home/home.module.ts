@@ -5,6 +5,7 @@ import { HomeRoutingModule } from './home-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { MatButtonModule } from '@angular/material/button';
+import { TicketsComponent } from './tickets/tickets.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
   ],
   declarations: [
     HomeComponent,
+    TicketsComponent,
   ]
 })
 export class HomeModule { }
