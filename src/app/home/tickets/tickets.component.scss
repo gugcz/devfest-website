@@ -17,6 +17,13 @@
     position: relative;
 }
 
+.spinner-holder{
+    width: 100%;
+    mat-spinner{
+        margin: 0 auto;
+    }
+}
+
 .description{
     font-size: 25px;
 }

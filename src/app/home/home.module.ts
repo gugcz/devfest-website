@@ -5,6 +5,7 @@ import { HomeRoutingModule } from './home-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';  
 import { TicketsComponent } from './tickets/tickets.component';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
@@ -15,6 +16,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     HomeRoutingModule,
     SharedModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     AngularFireFunctionsModule,
     AngularFirestoreModule
   ],
