@@ -1,41 +1,28 @@
-mat-card{
-    width: 200px;
-    text-align: center;
-    z-index: 3;
-    position: absolute;
-}
-
-.member-holder{
-  height:300px; 
-  width: 250px; 
-  position: relative;
-  margin: 5px;
-}
-
-.position{
-  margin-top: 0px;
-  margin-bottom: 5px;
+.member-card{
+  height: 400px;
+  width: 320px;
+  color: white;
+  text-align: center;
+  background-image: url(../../../assets/projector.png);
+  background-size:100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .name{
-  margin-bottom: 5px;
+  margin-bottom: 0px;
+  font-size: 30px;
 }
 
-.socials{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  min-height: 40px;
+.position{
+  margin-top: 5px;
 }
 
-img{
-  height: 100%;
-}
-
-.image-holder{
-  z-index: 1;
+.photo-holder{
   height: 180px;
-  width: 100%;
-  text-align: center;
-  position: absolute
+}
+
+.photo{
+  height: 100%;
+  opacity: 0;
 }

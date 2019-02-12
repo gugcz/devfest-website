@@ -10,6 +10,11 @@ enum PhotoVisibilityState {
   Hidden = 'hidden'
 }
 
+enum PhotoMode {
+  Normal = 'normal',
+  Cringe = 'cringe'
+}
+
 @Component({
   selector: 'app-member-card',
   templateUrl: './member-card.component.html',
@@ -17,22 +22,17 @@ enum PhotoVisibilityState {
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
-        style({opacity: 0}),
-        animate('500ms', style({opacity: 1}))
+        style({ opacity: 0 }),
+        animate('500ms', style({ opacity: 1 }))
       ]),
       transition(':leave', [
-        animate('500ms', style({opacity: 0}))
+        animate('500ms', style({ opacity: 0 }))
       ])
     ]),
     trigger('fadeImage', [
-      state(PhotoVisibilityState.Hidden, style({opacity: 0})),
-      state(PhotoVisibilityState.Visible, style({opacity: 1})),
+      state(PhotoVisibilityState.Hidden, style({ opacity: 0 })),
+      state(PhotoVisibilityState.Visible, style({ opacity: 1 })),
       transition('* => *', animate('200ms ease-in'))
-    ]),
-    trigger('toggle', [
-      state(PhotoVisibilityState.Hidden, style({ transform: 'translateY(0)'})),
-      state(PhotoVisibilityState.Visible, style({ transform: 'translateY(168px)'})),
-      transition('* => *', animate('180ms ease-in'))
     ])
   ]
 })
@@ -41,17 +41,22 @@ export class MemberCardComponent implements OnInit {
   private visiblePhoto = false;
 
   @Input() photoPath: string;
+  @Input() photoPathCringe: string;
   @Input() name: string;
   @Input() position: string;
   @Input() socials: Social[];
 
   photoUrl: Observable<string>;
+  photoUrlCringe: Observable<string>;
+
+  photoMode: PhotoMode = PhotoMode.Normal;
 
   constructor(private firestorage: AngularFireStorage, private socialsSer: SocialIconsService) {
   }
 
   ngOnInit() {
     this.photoUrl = this.firestorage.ref(this.photoPath).getDownloadURL();
+    this.photoUrlCringe = this.firestorage.ref(this.photoPathCringe).getDownloadURL();
   }
 
   get visibilityPhoto(): PhotoVisibilityState {
@@ -59,11 +64,17 @@ export class MemberCardComponent implements OnInit {
   }
 
   changePhotoVisibility() {
-    if (this.visiblePhoto) {
-      this.visiblePhoto = false;
+    this.visiblePhoto = true;
+    console.log('visibility');
+  }
+
+  changePhotoMode() {
+    if (this.photoMode == PhotoMode.Cringe) {
+      this.photoMode = PhotoMode.Normal;
     } else {
-      this.visiblePhoto = true;
+      this.photoMode = PhotoMode.Cringe;
     }
+    console.log('mode');
   }
 
 }
