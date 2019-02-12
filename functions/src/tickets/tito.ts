@@ -37,6 +37,7 @@ async function processTicketBody(ticketData) {
             end: a.end_at,
             description: a.description,
             url: a.share_url,
+            quantity: a.quantity
         }
     });
     return tickets

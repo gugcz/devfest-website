@@ -25,7 +25,7 @@ interface TicketGroupView extends TicketGroup{
 @Component({
   selector: 'app-tickets',
   templateUrl: './tickets.component.html',
-  styleUrls: ['./tickets.component.css'],
+  styleUrls: ['./tickets.component.scss'],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [   // :enter is alias to 'void => *'
@@ -60,7 +60,7 @@ export class TicketsComponent implements OnInit {
       const group =  doc.data() as TicketGroupView;
       group.tickets = group.tickets.map((tic) => {
         const titoTic = titoData.filter(one => one.title === tic.titoName);
-        return titoTic.length > 0 ? titoTic[0] : null;
+        return titoTic.length > 0 ? {tic, ...titoTic[0]} : null;
       });
       return group
     });
