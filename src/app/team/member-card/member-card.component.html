@@ -1,15 +1,11 @@
-<div class="member-holder" (mouseenter)="changePhotoVisibility()" (mouseleave)="changePhotoVisibility()">
-  <div class="image-holder" [@fadeImage]="visibilityPhoto">
-    <img 
-    *ngIf="photoUrl | async as photo" 
-    [src]="photo" 
-    [alt]="name">
-  </div> 
-  <mat-card color="primary" [@fadeInOut] [@toggle]="visibilityPhoto">
-    <h2 class="name">{{name}}</h2>
-    <h4 class="position">{{position}}</h4>
-    <div class="socials">
+<div class="member-card" [@fadeInOut]>
+  <h2 class="name">{{name}}</h2>
+  <h3 class="position">{{position}}</h3>
+  <div class="photo-holder">
+    <img [@fadeImage]="visibilityPhoto" class="photo" *ngIf="photoMode == 'normal'" [attr.src]="photoUrl | async"
+      (load)="changePhotoVisibility()" [alt]="name">
+  </div>
+  <!--div >
       <a mat-icon-button *ngFor="let social of socials" target="_blank" [href]="social.url"><mat-icon [svgIcon]="social.key"></mat-icon></a>
-    </div>
-  </mat-card>
+    </div-->
 </div>
