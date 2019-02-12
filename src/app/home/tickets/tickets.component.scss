@@ -6,16 +6,33 @@
 }
 
 .ticket{
-    flex-basis: 300px;
-    width: 300px;
+    flex-basis: 270px;
+    width: 270px;
     height: 600px;
     border: 1px solid white;
     margin: 8px;
     border-radius: 9px;
-    box-shadow: 0 0 .5rem #fff, inset 0 0 .5rem #fff;
     padding: 15px;
     color: white;
     position: relative;
+}
+
+.description{
+    font-size: 25px;
+}
+
+.box-shadow-white {
+    box-shadow: 0 0 .5rem #fff, inset 0 0 .5rem #fff;
+    *{
+        text-shadow: 0 0 10px white;
+    }
+}
+
+.box-shadow-red{
+    box-shadow: 0 0 1.5rem #d74a3d, inset 0 0 1.5rem #d74a3d;
+    *{
+        text-shadow: 0 0 30px #d74a3d;
+    }
 }
 
 .unactive{
@@ -62,4 +79,45 @@
     color: #d74a3d;
     background-color: white;
     width: 100%;
+}
+
+.one-ticket{
+    min-height: 140px;
+}
+
+.czech-price{
+    font-size: 50px;
+    font-weight: 600;
+    line-height: 45px;
+}
+
+.eur-price{
+    font-size: 30px;
+}
+
+.count{
+    position: absolute;
+    bottom: 80px;
+    left: 0px;
+    font-size: 30px;
+    text-align: center;
+    width: 100%;
+}
+
+.date{
+    position: absolute;
+    bottom: 80px;
+    left: 0px;
+    font-size: 30px;
+    text-align: center;
+    width: 100%;
+}
+
+.ticket-name {
+    font-size: 30px;
+}
+
+.ticketgroup-name{
+    margin-top: 5px;
+    font-weight: bolder;
 }
