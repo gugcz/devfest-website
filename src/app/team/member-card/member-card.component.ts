@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ɵConsole } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -32,7 +32,7 @@ enum PhotoMode {
     trigger('fadeImage', [
       state(PhotoVisibilityState.Hidden, style({ opacity: 0 })),
       state(PhotoVisibilityState.Visible, style({ opacity: 1 })),
-      transition('* => *', animate('200ms ease-in'))
+      transition(PhotoVisibilityState.Hidden + '=>' + PhotoVisibilityState.Visible, animate('200ms ease-in'))
     ])
   ]
 })
@@ -46,8 +46,8 @@ export class MemberCardComponent implements OnInit {
   @Input() position: string;
   @Input() socials: Social[];
 
-  photoUrl: Observable<string>;
-  photoUrlCringe: Observable<string>;
+  photoUrl: string;
+  photoUrlCringe: string;
 
   photoMode: PhotoMode = PhotoMode.Normal;
 
@@ -55,8 +55,12 @@ export class MemberCardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.photoUrl = this.firestorage.ref(this.photoPath).getDownloadURL();
-    this.photoUrlCringe = this.firestorage.ref(this.photoPathCringe).getDownloadURL();
+    const photoUrlPromise = this.firestorage.ref(this.photoPath).getDownloadURL().toPromise();
+    const photoUrlCringePromise = this.firestorage.ref(this.photoPathCringe).getDownloadURL().toPromise();
+    Promise.all([photoUrlPromise, photoUrlCringePromise]).then(urls => {
+      this.photoUrl = urls[0];
+      this.photoUrlCringe = urls[1];
+    })
   }
 
   get visibilityPhoto(): PhotoVisibilityState {
@@ -64,17 +68,17 @@ export class MemberCardComponent implements OnInit {
   }
 
   changePhotoVisibility() {
-    this.visiblePhoto = true;
-    console.log('visibility');
+    if (!this.visiblePhoto) {
+      this.visiblePhoto = true;
+    }
   }
 
-  changePhotoMode() {
-    if (this.photoMode == PhotoMode.Cringe) {
-      this.photoMode = PhotoMode.Normal;
-    } else {
-      this.photoMode = PhotoMode.Cringe;
-    }
-    console.log('mode');
+  setCringe() {
+    this.photoMode = PhotoMode.Cringe;
+  }
+
+  setNormal() {
+    this.photoMode = PhotoMode.Normal;
   }
 
 }
