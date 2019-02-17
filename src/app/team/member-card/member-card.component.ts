@@ -5,12 +5,12 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { Social } from 'src/app/dto/social';
 import { SocialIconsService } from 'src/app/shared/social-icons.service';
 
-enum PhotoVisibilityState {
+export enum PhotoVisibilityState {
   Visible = 'visible',
   Hidden = 'hidden'
 }
 
-enum PhotoMode {
+export enum PhotoMode {
   Normal = 'normal',
   Cringe = 'cringe'
 }
@@ -28,6 +28,11 @@ enum PhotoMode {
       transition(':leave', [
         animate('500ms', style({ opacity: 0 }))
       ])
+    ]),
+    trigger('infoHide', [
+      state(PhotoMode.Normal, style({ opacity: 0 })),
+      state(PhotoMode.Cringe, style({ opacity: 1 })),
+      transition('* => *', animate('200ms ease-in'))
     ]),
     trigger('fadeImage', [
       state(PhotoVisibilityState.Hidden, style({ opacity: 0 })),

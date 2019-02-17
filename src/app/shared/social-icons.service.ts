@@ -13,10 +13,6 @@ export class SocialIconsService {
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/twitter.svg')
     );
     iconRegistry.addSvgIcon(
-      'youtube',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/youtube.svg')
-    );
-    iconRegistry.addSvgIcon(
       'facebook',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/facebook.svg')
     );
@@ -27,6 +23,22 @@ export class SocialIconsService {
     iconRegistry.addSvgIcon(
       'instagram',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/instagram.svg')
+    );
+    iconRegistry.addSvgIcon(
+      'blogger',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/blogger.svg')
+    );
+    iconRegistry.addSvgIcon(
+      'github',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/github.svg')
+    );
+    iconRegistry.addSvgIcon(
+      'pinterest',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/pinterest.svg')
+    );
+    iconRegistry.addSvgIcon(
+      'reddit',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/reddit.svg')
     );
    }
 }
