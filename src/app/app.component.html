@@ -8,4 +8,7 @@
 <div class="body">
     <router-outlet *ngIf="!menuShowed"></router-outlet>
 </div>
-<app-footer *ngIf="!menuShowed"></app-footer>
+<ng-container *ngIf="!menuShowed">
+    <app-footer></app-footer>
+    <app-contribute-panel></app-contribute-panel>
+</ng-container>
