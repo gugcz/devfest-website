@@ -14,3 +14,8 @@
       <a mat-flat-button class="info-button" color="primary" href="http://eepurl.com/dL63pk"><h1>I want to be there!</h1></a>
   </div>
 </div>
+<div class="containerThird">
+  <div class="wrapperThird">
+    <app-partner-panel *ngFor="let partner of partners | async" [groupName]="partner.name" [companies]="partner.companies"></app-partner-panel>
+  </div>
+</div>
