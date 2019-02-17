@@ -4,17 +4,17 @@ import { throttleTime, map, pairwise, distinctUntilChanged, share, filter } from
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Router, Event, NavigationEnd } from '@angular/router';
 
-enum Direction {
+export enum Direction {
   Up = 'Up',
   Down = 'Down'
 }
 
-enum VisibilityState {
+export enum VisibilityState {
   Visible = 'visible',
   Hidden = 'hidden'
 }
 
-enum TransparentState {
+export enum TransparentState {
   Transparent = 'transparent',
   Full = 'full'
 }
