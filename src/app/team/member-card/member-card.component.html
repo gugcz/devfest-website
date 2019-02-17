@@ -6,7 +6,7 @@
       <img [@fadeImage]="visibilityPhoto" class="photo" [attr.src]="photoMode == 'normal' ? (photoUrl) : (photoUrlCringe)"
         (load)="changePhotoVisibility()" [alt]="name">
     </div>
-    <div [@infoHide]="photoMode">
+    <div [@infoHide]="photoMode" class="socials">
         <a mat-icon-button *ngFor="let social of socials" target="_blank" [href]="social.url"><mat-icon [svgIcon]="social.key"></mat-icon></a>
     </div>
   </div>
