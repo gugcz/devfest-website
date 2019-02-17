@@ -13,6 +13,8 @@ import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { PartnerLogoComponent } from './partner-logo/partner-logo.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { ContributePanelComponent } from './contribute-panel/contribute-panel.component';
+import { SocialIconsService } from './social-icons.service';
 
 @NgModule({
   imports: [
@@ -32,13 +34,18 @@ import { MatTabsModule } from '@angular/material/tabs';
     NavigationComponent,
     PartnerPanelComponent,
     PartnerLogoComponent,
+    ContributePanelComponent,
   ],
   exports: [
     NeonLogoComponent,
     NeonDateComponent,
     FooterComponent,
     NavigationComponent,
-    PartnerPanelComponent
+    PartnerPanelComponent,
+    ContributePanelComponent
+  ],
+  providers: [
+    SocialIconsService
   ]
 })
 export class SharedModule { }
