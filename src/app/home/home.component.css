@@ -16,7 +16,16 @@
   height: 80px;
   width: 100%;
   text-align: center;
-  background-color: rgba(18, 42, 66, .98);
+}
+
+.containerThird {
+  min-height: 300px;
+  width: 100%;
+  text-align: center;
+}
+
+.wrapperThird {
+  padding: 30px;
 }
 
 .wrapperSecond {

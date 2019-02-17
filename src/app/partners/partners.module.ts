@@ -1,22 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HomeComponent } from './home.component';
-import { HomeRoutingModule } from './home-routing.module';
+import { PartnersRoutingModule } from './partners-routing.module';
 import { SharedModule } from '../shared/shared.module';
-
-import { MatButtonModule } from '@angular/material/button';
+import { PartnersComponent } from './partners.component';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    HomeRoutingModule,
-    SharedModule,
-    MatButtonModule,
-    AngularFirestoreModule
-  ],
   declarations: [
-    HomeComponent
+    PartnersComponent
+  ],
+  imports: [
+    PartnersRoutingModule,
+    CommonModule,
+    SharedModule,
+    AngularFirestoreModule
   ]
 })
-export class HomeModule { }
+export class PartnersModule { }
