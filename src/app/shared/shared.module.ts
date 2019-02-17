@@ -4,7 +4,7 @@ import { NeonLogoComponent } from './neon-logo/neon-logo.component';
 import { NeonDateComponent } from './neon-date/neon-date.component';
 import { FooterComponent } from './footer/footer.component';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { NavigationComponent } from './navigation/navigation.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -12,6 +12,7 @@ import { PartnerPanelComponent } from './partner-panel/partner-panel.component';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { PartnerLogoComponent } from './partner-logo/partner-logo.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { PartnerLogoComponent } from './partner-logo/partner-logo.component';
     MatToolbarModule,
     RouterModule,
     AngularFireStorageModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    MatTabsModule
   ],
   declarations: [
     NeonLogoComponent,

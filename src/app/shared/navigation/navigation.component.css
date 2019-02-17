@@ -15,6 +15,10 @@ mat-toolbar a{
   height: 100%;
 }
 
-.nav-link {
+.menu-button{
+  color: white;
+}
+
+.mat-tab-link {
   font-size: 1.3rem;
 }

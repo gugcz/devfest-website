@@ -3,18 +3,18 @@ import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: '',
-    loadChildren:  './home/home.module#HomeModule'
+    path: 'home',
+    loadChildren: './home/home.module#HomeModule'
   },
   {
     path: 'team',
-    loadChildren:  './team/team.module#TeamModule'
+    loadChildren: './team/team.module#TeamModule'
   },
   {
     path: 'partners',
     loadChildren: './partners/partners.module#PartnersModule'
   },
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: 'home' }
 ];
 
 @NgModule({
