@@ -3,7 +3,7 @@ import { AngularFireStorage } from '@angular/fire/storage';
 import { Observable } from 'rxjs';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
-enum PhotoState {
+export enum PhotoState {
   Loading = 'Loading',
   Downloaded = 'Downloaded'
 }
@@ -15,7 +15,7 @@ enum PhotoState {
   animations: [ trigger('fadeImage', [
     state(PhotoState.Loading, style({opacity: 0})),
     state(PhotoState.Downloaded, style({opacity: 1})),
-    transition('* <=> *', animate(1000))
+    transition('* <=> *', animate(200))
   ])]
 })
 export class PartnerLogoComponent implements OnInit {
