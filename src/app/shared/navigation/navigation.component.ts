@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, HostBinding } from '@angular/core';
+import { Component, OnInit, AfterViewInit, HostBinding, Input, Output, EventEmitter } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { throttleTime, map, pairwise, distinctUntilChanged, share, filter } from 'rxjs/operators';
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -38,11 +38,11 @@ export enum TransparentState {
     trigger('transparent', [
       state(
         TransparentState.Transparent,
-        style({backgroundColor: 'rgba(18, 42, 66, .98)'})
+        style({ backgroundColor: 'rgba(18, 42, 66, .98)' })
       ),
       state(
         TransparentState.Full,
-        style({ backgroundColor: 'rgba(18, 42, 66,  0.2)'})
+        style({ backgroundColor: 'rgba(18, 42, 66,  0.2)' })
       ),
       transition('* => *', animate('200ms ease-in'))
     ])
@@ -53,11 +53,33 @@ export class NavigationComponent implements AfterViewInit {
   private isTop = true;
   public isHome = true;
 
+  @Input() isMobile = false;
+  @Output() homeClicked = new EventEmitter<void>();
+
+  navLinks = [
+    {
+      path: 'home',
+      label: 'Home'
+    },
+    {
+      path: 'team',
+      label: 'Team'
+    }
+    /**
+     * ,
+    {
+      path: 'partners',
+      label: 'Partners'
+    }
+     */
+    
+  ];
+
   @HostBinding('@toggle')
   get toggle(): VisibilityState {
     return this.isVisible ? VisibilityState.Visible : VisibilityState.Hidden;
   }
-  
+
   get transparent(): TransparentState {
     return this.isTop ? TransparentState.Full : TransparentState.Transparent;
   }
@@ -66,10 +88,10 @@ export class NavigationComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.router.events.subscribe((event: Event) => {
-      if (event instanceof NavigationEnd ) {
-        if (event.url === "/" || event.url === "/home"){
+      if (event instanceof NavigationEnd) {
+        if (event.url === "/" || event.url === "/home") {
           this.isHome = true;
-        } else{
+        } else {
           this.isHome = false;
         }
       }
@@ -90,7 +112,7 @@ export class NavigationComponent implements AfterViewInit {
     const scrollUp$ = scroll$.pipe(
       filter(direction => direction === Direction.Up)
     );
-    
+
     const scrollDown$ = scroll$.pipe(
       filter(direction => direction === Direction.Down)
     );
@@ -101,6 +123,6 @@ export class NavigationComponent implements AfterViewInit {
 
     scrollTop$.subscribe(() => (this.isTop = true));
     scrollUp$.subscribe(() => (this.isVisible = true));
-    scrollDown$.subscribe(() => {this.isVisible = false; this.isTop = false});
+    scrollDown$.subscribe(() => { this.isVisible = false; this.isTop = false });
   }
 }
