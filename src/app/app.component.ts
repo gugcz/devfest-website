@@ -62,6 +62,7 @@ export class AppComponent implements OnDestroy {
   openSideMenu() {
     if (!this.menuShowed){
       this.menuShowed = true;
+      window.scrollTo(0,0);
     } else {
       this.menuShowed = false;
     }
