@@ -30,7 +30,7 @@ async function processTicketBody(ticketData) {
         return {
             title: a.title,
             price: a.price,
-            eur_price: Math.ceil((a.price * exchange) / 5) * 5,
+            eur_price: Math.round((a.price * exchange) / 5) * 5,
             active: !a.expired && !a.sold_out && !a.upcoming,
             sold_out: a.expired || a.sold_out,
             start: a.start_at,
