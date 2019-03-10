@@ -4,16 +4,7 @@ import * as rp from 'request-promise';
 import * as helpers from './helpers';
 
 export const getTickets = functions.https.onCall((req, res) => {
-    const options = {
-        method: 'GET',
-        json: true,
-        uri: functions.config().tito.url,
-        headers: {
-            'Authorization': `Token token=${functions.config().tito.key}`,
-            'Accept': 'application/json'
-        }
-    }
-    return rp(options)
+    return getTicketsFromTito()
         .then((data) => {
             return processTicketBody(data['releases']);
         }).then((tickets) => {
@@ -23,6 +14,37 @@ export const getTickets = functions.https.onCall((req, res) => {
             throw error;
         });
 });
+
+export const getCurrentCompanyTicket = functions.https.onCall((req, res) => {
+    return findCurrentCompany().then((data) => {
+        return data;
+    }).catch((error) => {
+        console.error('Error in getting company ticket');
+        throw error;
+    });
+});
+
+
+async function getTicketsFromTito() {
+    const options = {
+        method: 'GET',
+        json: true,
+        uri: functions.config().tito.url,
+        headers: {
+            'Authorization': `Token token=${functions.config().tito.key}`,
+            'Accept': 'application/json'
+        }
+    }
+    const data = await rp(options);
+    return data;
+}
+
+async function findCurrentCompany() {
+    const ticketsData = await getTicketsFromTito();
+    const processedTickets = await processTicketBody(ticketsData['releases']);
+    const onlyActiveCompany = processedTickets.filter(ticket => ticket.active === true && ticket.title.includes('Company'));
+    return onlyActiveCompany[onlyActiveCompany.length - 1];
+}
 
 async function processTicketBody(ticketData) {
     const exchange = await helpers.getCurrentExchangeRate('CZK', 'EUR');

@@ -1,0 +1,53 @@
+<h1 mat-dialog-title>Order by invoice</h1>
+<mat-dialog-content>
+    <div *ngIf="currentCompanyPrice; else missingPrice"> 
+        Current price of company ticket: {{currentCompanyPrice * countTickets}} CZK ({{currentCompanyPriceE * countTickets}} €)
+    </div>
+    <form class="form">
+        <mat-form-field class="form-field" appearance="fill" color="accent">
+            <input [(ngModel)]="countTickets" name="countTickets" class="input" matInput placeholder="Count*" type="number"
+                min="00">
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="fill" color="accent">
+            <input [formControl]="email" class="input" matInput placeholder="Email for delivering invoice*">
+            <mat-error *ngIf="email.invalid">{{getEmailErrorMessage()}}</mat-error>
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="fill" color="accent">
+            <input [(ngModel)]="companyName" name="companyName" class="input" type="" matInput autocomplete="name" placeholder="Company name*">
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="fill" color="accent">
+            <input [(ngModel)]="city" name="city" class="input" matInput autocomplete="shipping locality" placeholder="City*">
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="fill" color="accent">
+            <input [(ngModel)]="street" name="street" class="input" matInput autocomplete="shipping street-address" placeholder="Street (with number)*">
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="fill" color="accent">
+            <input [(ngModel)]="zip" name="zip" class="input" matInput autocomplete="shipping postal-code" placeholder="Zip code (PSČ)*">
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="fill">
+            <input [(ngModel)]="registrationNumberIC" name="registrationNumberIC" class="input" matInput placeholder="Registration (IČO)*">
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="fill" color="accent">
+            <input [(ngModel)]="vatNumber" name="registrationNumberDIC" class="input" matInput placeholder="VAT number (DIČ)">
+        </mat-form-field>
+        <mat-form-field appearance="fill" color="accent">
+            <mat-label>Country*</mat-label>
+            <mat-select [(ngModel)]="country" name="country">
+                <mat-option *ngFor="let country of listOfCountries" [value]="country.name">{{country.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button tabindex="-1" class="invoice-button" color="warn" (click)="goToHome()">Cancel
+    </button>
+    <button mat-raised-button tabindex="-1"[disabled]="!(countTickets && !email.invalid && companyName && street && city
+    && zip && registrationNumberIC && country)" 
+        class="invoice-button" color="accent" (click)="sendInvoice()">Buy
+    </button>
+</mat-dialog-actions>
+<ng-template #missingPrice>
+    <div>
+       Loading price...
+    </div>
+</ng-template>

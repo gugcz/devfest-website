@@ -1,0 +1,13 @@
+mat-dialog-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.form-field{
+    margin: 5px;
+    width: 250px;
+}
+
+.invoice-button{
+    margin: 8px;
+}
