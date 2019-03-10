@@ -17,8 +17,13 @@
     position: relative;
 }
 
+.addition-info{
+    color: white;
+}
+
 .spinner-holder{
     width: 100%;
+    min-height: 650px;
     mat-spinner{
         margin: 0 auto;
     }
@@ -127,4 +132,9 @@
 .ticketgroup-name{
     margin-top: 5px;
     font-weight: bolder;
+}
+
+.invoice-info{
+    margin-top: 5px;
+    color: white;
 }

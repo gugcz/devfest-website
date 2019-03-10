@@ -6,3 +6,4 @@ admin.firestore().settings({ timestampsInSnapshots: true });
 import * as tickets from './tickets';
 
 export const getTickets = tickets.getTickets;
+export const getCurrentCompanyTicket = tickets.getCurrentCompanyTicket;
