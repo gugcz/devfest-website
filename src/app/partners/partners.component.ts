@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { Partner } from '../dto/partner';
 import { Observable } from 'rxjs';
+import { Partner } from '../dto/partner';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  selector: 'app-partners',
+  templateUrl: './partners.component.html',
+  styleUrls: ['./partners.component.css']
 })
-export class HomeComponent implements OnInit {
+export class PartnersComponent implements OnInit {
 
   private partnersCollection: AngularFirestoreCollection<Partner>;
   partners: Observable<Partner[]>;
@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
   constructor(private afStore: AngularFirestore) { }
 
   ngOnInit() {
-    this.partnersCollection = this.afStore.collection<Partner>('partners', ref => ref.where('top', '==', true).orderBy('order'));
+    this.partnersCollection = this.afStore.collection<Partner>('partners', ref => ref.where('top', '==', false).orderBy('order'));
     this.partners = this.partnersCollection.valueChanges();
   }
 
