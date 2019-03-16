@@ -1,0 +1,48 @@
+.holder {
+    height: 300px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.sliderbox {
+    position: relative;
+    height: 100%;
+    display: inline-flex;
+    animation-name: sliding;
+    animation-duration: 50s;
+    animation-iteration-count: infinite;
+}
+
+.sliderbox:hover{
+    -webkit-animation-play-state: paused;
+    -moz-animation-play-state: paused;
+    -o-animation-play-state: paused;
+    animation-play-state: paused;
+}
+
+.title-holder{
+    width: 100%;
+    text-align: center;
+    color: white;
+}
+
+.image{
+    height: 100%;
+    float: left;
+    display: inline-table;
+}
+
+@keyframes sliding {
+    0%
+    {
+        left: 0px;
+    }
+    50%
+    {
+        left:-100%;
+    }
+    100%
+    {
+        left: 0px;
+    }
+}
