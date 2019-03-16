@@ -19,20 +19,15 @@ enum PhotoVisibilityState {
       transition(':leave', [
         animate('500ms', style({opacity: 0}))
       ])
-    ]),
-    trigger('fadeImage', [
-      state(PhotoVisibilityState.Hidden, style({opacity: 0})),
-      state(PhotoVisibilityState.Visible, style({opacity: 1})),
-      transition('* => *', animate('200ms ease-in'))
     ])
   ]
 })
 export class PhotoSectionComponent implements OnInit {
 
   readonly images = [
-    'assets/images/show1-min.jpg',
-    'assets/images/show2-min.jpg',
     'assets/images/show3-min.jpg',
+    'assets/images/show2-min.jpg',
+    'assets/images/show1-min.jpg',
     'assets/images/show4-min.jpg',
     'assets/images/show5-min.jpg',
     'assets/images/show6-min.jpg',
