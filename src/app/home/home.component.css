@@ -27,8 +27,18 @@
   padding: 30px;
 }
 
+.containerThird {
+  height: 400px;
+  min-width: 100%;
+}
+
 .wrapperSecond {
   padding: 10px;
+}
+
+.wrapperThird{
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .arrows {
