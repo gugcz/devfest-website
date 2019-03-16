@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SocialIconsService } from '../shared/social-icons.service';
+import { SocialsPipe } from './member-card/socials.pipe';
 
 @NgModule({
   imports: [
@@ -18,7 +19,7 @@ import { SocialIconsService } from '../shared/social-icons.service';
     MatButtonModule,
     MatIconModule
   ],
-  declarations: [TeamComponent, MemberCardComponent],
+  declarations: [TeamComponent, MemberCardComponent, SocialsPipe],
   providers: [
     SocialIconsService
   ]
