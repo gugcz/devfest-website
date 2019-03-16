@@ -16,7 +16,7 @@ import { PhotoSectionComponent } from './photo-section/photo-section.component';
   ],
   declarations: [
     HomeComponent,
-    PhotoSectionComponent,
+    PhotoSectionComponent
   ]
 })
 export class HomeModule { }

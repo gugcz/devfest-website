@@ -20,7 +20,7 @@
 }
 
 .containerThird {
-  height: 300px;
+  height: 400px;
   min-width: 100%;
 }
 
@@ -29,7 +29,8 @@
 }
 
 .wrapperThird{
-  padding: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .arrows {
