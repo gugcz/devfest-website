@@ -5,6 +5,7 @@ import { HomeRoutingModule } from './home-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { MatButtonModule } from '@angular/material/button';
+import { PhotoSectionComponent } from './photo-section/photo-section.component';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 @NgModule({
@@ -16,7 +17,8 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     AngularFirestoreModule
   ],
   declarations: [
-    HomeComponent
+    HomeComponent,
+    PhotoSectionComponent
   ]
 })
 export class HomeModule { }
