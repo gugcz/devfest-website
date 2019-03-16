@@ -6,7 +6,7 @@ import { SharedModule } from '../shared/shared.module';
 
 import { MatButtonModule } from '@angular/material/button';
 import { PhotoSectionComponent } from './photo-section/photo-section.component';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
+import {SlideshowModule} from 'ng-simple-slideshow';
 
 @NgModule({
   imports: [
@@ -14,7 +14,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     HomeRoutingModule,
     SharedModule,
     MatButtonModule,
-    AngularFirestoreModule
+    SlideshowModule
   ],
   declarations: [
     HomeComponent,

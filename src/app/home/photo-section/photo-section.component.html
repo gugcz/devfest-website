@@ -2,7 +2,6 @@
     <h2>Happened in past...</h2>
 </div>
 <div class="holder">
-    <div class="sliderbox">
-        <img *ngFor="let image of images" [src]="image" class="image">
-    </div>
+    <slideshow [imageUrls]="images" [autoPlay]="true" [lazyLoad]="true" [autoPlayWaitForLazyLoad]="true"></slideshow>
 </div>
+
