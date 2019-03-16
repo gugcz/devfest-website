@@ -24,6 +24,49 @@ export const getCurrentCompanyTicket = functions.https.onCall((req, res) => {
     });
 });
 
+export const registeredNewTicket = functions.https.onRequest((req, res) => {
+    const data = req.body;
+    const name = data.name;
+    const ticketsInfo = data.line_items.map((tic) => tic.quantity + "x " + tic.release_title);
+    return getCurrentSoldTickets().then((current) => {
+        const slackMessage = {
+            "text": "Registrované nové lístky :tada:",
+            "attachments": [
+                {
+                    "title": "Jméno",
+                    "text": name,
+                    "color": "#7da453"
+                },
+                {
+                    "title": "Seznam lístků",
+                    "text": ticketsInfo.join("\n"),
+                    "color": "#7da453"
+                },
+                {
+                    "title": "Celkově prodaných lístků",
+                    "text": current.toString(),
+                    "color": "#333"
+                }
+            ]
+        }
+        return helpers.sendInfoIntoSlack(slackMessage);
+    }).then(() => {
+        return res.status(200).send(true);
+    }).catch((error) => {
+        console.error('Error informing about registered new ticket');
+        throw error;
+    })
+});
+
+async function getCurrentSoldTickets() {
+    const ticketsData = await getTicketsFromTito();
+    const sum = ticketsData['releases'].map(a => a.tickets_count).reduce(getSum);
+    return sum;
+}
+
+function getSum(total, ticket) {
+    return total + ticket;
+}
 
 async function getTicketsFromTito() {
     const options = {
@@ -45,6 +88,7 @@ async function findCurrentCompany() {
     const onlyActiveCompany = processedTickets.filter(ticket => ticket.active === true && ticket.title.includes('Company'));
     return onlyActiveCompany[onlyActiveCompany.length - 1];
 }
+
 
 async function processTicketBody(ticketData) {
     const exchange = await helpers.getCurrentExchangeRate('CZK', 'EUR');
