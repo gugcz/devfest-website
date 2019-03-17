@@ -69,8 +69,7 @@ export class InvoiceFormComponent implements OnInit {
     this.dialogRef.close();
   }
 
-
-  sendInvoice() {
+  async sendInvoice() {
     const invoice: NewInvoice = {
       countTickets: this.countTickets,
       email: this.email.value,
@@ -86,7 +85,7 @@ export class InvoiceFormComponent implements OnInit {
         invoice.vatNumber = this.vatNumber;
       }
     }
-    this.afStore.collection('newInvoices').add(invoice).then(() => this.goToHome);
+    this.afStore.collection('invoiceRequests').add(invoice).then(() => this.goToHome());
   }
 
   getEmailErrorMessage() {

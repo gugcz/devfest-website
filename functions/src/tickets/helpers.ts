@@ -1,7 +1,6 @@
 import * as rp from 'request-promise';
 import * as functions from 'firebase-functions';
 
-
 /**
 * Get current exchange rate
 * @param from - from what currency
@@ -18,6 +17,10 @@ export async function getCurrentExchangeRate(from, to) {
     return data['rates'][to];
 }
 
+/**
+ * Sends message into slack predefined webhook
+ * @param message - message in format https://api.slack.com/docs/messages/builder
+ */
 export async function sendInfoIntoSlack(message){
     const options = {
         method: 'POST',

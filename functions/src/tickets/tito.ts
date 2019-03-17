@@ -3,7 +3,8 @@ import * as rp from 'request-promise';
 
 import * as helpers from './helpers';
 
-export const getTickets = functions.https.onCall((req, res) => {
+
+export const getTickets = functions.https.onCall((_req, _res) => {
     return getTicketsFromTito()
         .then((data) => {
             return processTicketBody(data['releases']);
@@ -15,7 +16,7 @@ export const getTickets = functions.https.onCall((req, res) => {
         });
 });
 
-export const getCurrentCompanyTicket = functions.https.onCall((req, res) => {
+export const getCurrentCompanyTicket = functions.https.onCall((_req, _res) => {
     return findCurrentCompany().then((data) => {
         return data;
     }).catch((error) => {
@@ -30,16 +31,16 @@ export const registeredNewTicket = functions.https.onRequest((req, res) => {
     const ticketsInfo = data.line_items.map((tic) => tic.quantity + "x " + tic.release_title);
     return getCurrentSoldTickets().then((current) => {
         const slackMessage = {
-            "text": "Registrované nové lístky :tada:",
+            "text": "Registrované nové lístky :ticket:",
             "attachments": [
                 {
-                    "title": "Jméno",
-                    "text": name,
-                    "color": "#7da453"
-                },
-                {
-                    "title": "Seznam lístků",
-                    "text": ticketsInfo.join("\n"),
+                    "fields": [{
+                        "title": "Jméno",
+                        "value" : name
+                    },{
+                        "title": "Seznam lístků",
+                        "value" : ticketsInfo.join("\n")
+                    }],
                     "color": "#7da453"
                 },
                 {
@@ -58,6 +59,9 @@ export const registeredNewTicket = functions.https.onRequest((req, res) => {
     })
 });
 
+/**
+ * Retrieves current count of tickets
+ */
 async function getCurrentSoldTickets() {
     const ticketsData = await getTicketsFromTito();
     const sum = ticketsData['releases'].map(a => a.tickets_count).reduce(getSum);
@@ -68,6 +72,9 @@ function getSum(total, ticket) {
     return total + ticket;
 }
 
+/**
+ * Download all informations about tickets from tito
+ */
 async function getTicketsFromTito() {
     const options = {
         method: 'GET',
@@ -82,6 +89,9 @@ async function getTicketsFromTito() {
     return data;
 }
 
+/**
+ * Returns current company ticket
+ */
 async function findCurrentCompany() {
     const ticketsData = await getTicketsFromTito();
     const processedTickets = await processTicketBody(ticketsData['releases']);
@@ -89,7 +99,10 @@ async function findCurrentCompany() {
     return onlyActiveCompany[onlyActiveCompany.length - 1];
 }
 
-
+/**
+ * Returns cleaned data for frontend
+ * @param ticketData - downloaded releases from tito
+ */
 async function processTicketBody(ticketData) {
     const exchange = await helpers.getCurrentExchangeRate('CZK', 'EUR');
     const tickets = ticketData.filter(a => a.secret === false).map((a) => {
