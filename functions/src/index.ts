@@ -8,3 +8,4 @@ import * as tickets from './tickets';
 export const getTickets = tickets.getTickets;
 export const getCurrentCompanyTicket = tickets.getCurrentCompanyTicket;
 export const registeredNewTicket = tickets.registeredNewTicket;
+export const newInvoiceRequest = tickets.newInvoiceRequest;
