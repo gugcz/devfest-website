@@ -22,6 +22,7 @@ export class PartnerPanelComponent implements OnInit {
 
   @Input() groupName: string;
   @Input() companies: Company[];
+  @Input() main = false;
 
   constructor() {
    }
