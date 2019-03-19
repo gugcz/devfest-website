@@ -23,6 +23,7 @@ export class PartnerLogoComponent implements OnInit {
   @Input() url: string;
   @Input() name: string;
   @Input() photoPath: string;
+  @Input() main = false;
   imageUrl: Observable<string>;
   visibility: PhotoState = PhotoState.Loading;
 

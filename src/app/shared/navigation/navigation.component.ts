@@ -64,15 +64,11 @@ export class NavigationComponent implements AfterViewInit {
     {
       path: 'team',
       label: 'Team'
-    }
-    /**
-     * ,
+    },
     {
       path: 'partners',
       label: 'Partners'
     }
-     */
-    
   ];
 
   @HostBinding('@toggle')
