@@ -41,6 +41,30 @@ polygon {
   filter: url(#red-glow);
 }
 
+@media screen and (min-color-index:0) and(-webkit-min-device-pixel-ratio:0) { 
+  path { 
+    filter: none;
+  }
+}
+
+@media not all and (min-resolution:.001dpcm) { 
+  path { 
+    filter: none;
+  }
+  .yellowPart{
+    filter: none; 
+  }
+  .bluePart{
+    filter: none; 
+  }
+  .redPart{
+    filter: none; 
+  }
+  .greenPart{
+    filter: none; 
+  }
+}
+
 @keyframes load {
 
   0% {
