@@ -9,6 +9,17 @@ path {
   -webkit-animation: load 4s cubic-bezier(0.42, 0.0, 0.58, 1.0), flicker 5s infinite 9s step-end;
 }
 
+@media screen and (min-color-index:0) and(-webkit-min-device-pixel-ratio:0) { 
+  path { 
+    filter: none;
+  }
+}
+
+@media not all and (min-resolution:.001dpcm) { 
+  path { 
+    filter: none;
+  }
+}
 
 @keyframes load {
 
