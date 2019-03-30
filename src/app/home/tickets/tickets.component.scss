@@ -33,17 +33,22 @@
     font-size: 25px;
 }
 
-.box-shadow-white {
+.addition-info-ticket{
+    margin-top: 20px;
+    font-size: 25px;
+}
+
+.non-active-group {
     box-shadow: 0 0 .5rem #fff, inset 0 0 .5rem #fff;
     *{
         text-shadow: 0 0 10px white;
     }
 }
 
-.box-shadow-red{
-    box-shadow: 0 0 1.5rem #d74a3d, inset 0 0 1.5rem #d74a3d;
+.active-group{
+    box-shadow: 0 0 1.5rem #22a062, inset 0 0 1.5rem #22a062;
     *{
-        text-shadow: 0 0 30px #d74a3d;
+        text-shadow: 0 0 30px #22a062;
     }
 }
 
@@ -87,10 +92,12 @@
     line-height: 60px;
     font-size: 40px;
     font-weight: 700;
+    text-decoration: none;
     text-align: center;
-    color: #d74a3d;
+    color: #22a062;
     background-color: white;
     width: 100%;
+    text-shadow: none!important;
 }
 
 .one-ticket{

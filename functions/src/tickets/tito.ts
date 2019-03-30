@@ -3,7 +3,6 @@ import * as rp from 'request-promise';
 
 import * as helpers from './helpers';
 
-
 export const getTickets = functions.https.onCall((_req, _res) => {
     return getTicketsFromTito()
         .then((data) => {
@@ -16,8 +15,8 @@ export const getTickets = functions.https.onCall((_req, _res) => {
         });
 });
 
-export const getCurrentCompanyTicket = functions.https.onCall((_req, _res) => {
-    return findCurrentCompany().then((data) => {
+export const getCurrentTicketsForInvoice = functions.https.onCall((_req, _res) => {
+    return findCurrentTicketsForInvoice().then((data) => {
         return data;
     }).catch((error) => {
         console.error('Error in getting company ticket');
@@ -36,10 +35,10 @@ export const registeredNewTicket = functions.https.onRequest((req, res) => {
                 {
                     "fields": [{
                         "title": "Jméno",
-                        "value" : name
-                    },{
+                        "value": name
+                    }, {
                         "title": "Seznam lístků",
-                        "value" : ticketsInfo.join("\n")
+                        "value": ticketsInfo.join("\n")
                     }],
                     "color": "#7da453"
                 },
@@ -90,13 +89,17 @@ async function getTicketsFromTito() {
 }
 
 /**
- * Returns current company ticket
+ * Returns current tickets for invoice (Latest company and VIP)
  */
-async function findCurrentCompany() {
+async function findCurrentTicketsForInvoice() {
     const ticketsData = await getTicketsFromTito();
     const processedTickets = await processTicketBody(ticketsData['releases']);
-    const onlyActiveCompany = processedTickets.filter(ticket => ticket.active === true && ticket.title.includes('Company'));
-    return onlyActiveCompany[onlyActiveCompany.length - 1];
+    const onlyActiveCompany = processedTickets.filter(ticket => ticket.active === true && ticket.title.toUpperCase().includes('COMPANY'));
+    const onlyActiveVIP = processedTickets.filter(ticket => ticket.active === true && ticket.title.toUpperCase().includes('COMMUNITY SUPPORT'));
+    return {
+        normal: onlyActiveCompany[onlyActiveCompany.length - 1],
+        vip: onlyActiveVIP[onlyActiveVIP.length - 1]
+    };
 }
 
 /**

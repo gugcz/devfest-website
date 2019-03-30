@@ -5,18 +5,36 @@ import * as rp from 'request-promise';
 
 export const newInvoiceRequest = functions.firestore.document('invoiceRequests/{requestId}').onCreate((snap, context) => {
     const company = snap.data().companyName;
-    const count = snap.data().countTickets;
+    const countNormal = snap.data().countTicketsNormal;
+    const countVIP = snap.data().countVIP;
+    const fields = [];
+    fields.push(
+        {
+            "title": "Jméno firmy",
+            "value" : company
+        }
+    );
+    if (countNormal !== undefined && countNormal !== null){
+        fields.push(
+            {
+                "title": "Počet lístků",
+                "value" : countNormal
+            }
+        );
+    }
+    if (countVIP !== undefined && countVIP !== null){
+        fields.push(
+            {
+                "title": "Počet lístků VIP",
+                "value" : countVIP
+            }
+        );
+    }
     const slackMessage = {
         "text": "Žádost o novou fakturu :pencil: ",
         "attachments": [
             {
-                "fields": [{
-                    "title": "Jméno firmy",
-                    "value" : company
-                },{
-                    "title": "Počet lístků",
-                    "value" : count
-                }],
+                "fields": fields,
                 "color": "#7da453"
             }
         ]

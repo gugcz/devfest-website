@@ -6,6 +6,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { InvoiceFormComponent } from '../invoice-form/invoice-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TicketGroupView } from '../iticket/ticket-group-view';
+import { TicketAdditionalInfoComponent } from '../ticket-additional-info/ticket-additional-info.component';
 
 @Component({
   selector: 'app-tickets',
@@ -53,6 +54,17 @@ export class TicketsComponent implements OnInit {
 
   openInvoiceModal() {
     this.dialog.open(InvoiceFormComponent);
+  }
+
+  showAdditionalInfo(text, name) {
+    if (text != null) {
+      this.dialog.open(TicketAdditionalInfoComponent, {
+        data: {
+          name: name,
+          text: text,
+        }
+      });
+    }
   }
 
 }
