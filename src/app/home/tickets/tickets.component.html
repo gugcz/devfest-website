@@ -1,16 +1,19 @@
 <div class="ticket-holder" *ngIf="ticketGroups; else loading">
   <ng-container *ngFor="let ticketGroup of ticketGroups">
-    <div class="ticket" [@fadeInOut]
-      [ngClass]="!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active ? 'box-shadow-red': 'box-shadow-white'"
+    <div class="ticket" (click)="showAdditionalInfo(ticketGroup.additionalInfo, ticketGroup.name)" [@fadeInOut]
+      [ngClass]="!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active ? 'active-group': 'non-active-group'"
       *ngIf="ticketGroup.tickets[0] != null">
       <h1 class="ticketgroup-name">{{ticketGroup.name}}</h1>
       <div class="one-ticket" *ngFor="let ticket of ticketGroup.tickets">
-        <div class="ticket-name">{{ticket.tic.publicName}}</div>
+        <div class="ticket-name" *ngIf="!ticketGroup.hideTicketName">{{ticketGroup.hideTicketName}}{{ticket.tic.publicName}}</div>
         <div class="czech-price">{{ticket.price | number : 0}} CZK</div>
         <div class="eur-price">~{{ticket.eur_price}} €</div>
       </div>
       <div class="description" *ngIf="ticketGroup.showDescription">
         {{ticketGroup.tickets[0].description}}
+      </div>
+      <div class="addition-info-ticket" *ngIf="ticketGroup.additionalInfoDescription">
+        {{ticketGroup.additionalInfoDescription}}
       </div>
       <div class="count" *ngIf="ticketGroup.showCount">
         First {{ticketGroup.tickets[0].quantity}}

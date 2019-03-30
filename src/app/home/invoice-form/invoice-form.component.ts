@@ -7,6 +7,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl, Validators } from '@angular/forms';
 import { NewInvoice } from 'src/app/dto/new-invoice';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { elementEnd } from '@angular/core/src/render3/instructions';
 
 interface Country {
   code: string;
@@ -22,10 +23,13 @@ export class InvoiceFormComponent implements OnInit {
 
   currentCompanyPrice: number;
   currentCompanyPriceE: number;
+  currentVIPPrice: number;
+  currentVIPPriceE: number;
 
   listOfCountries: Country[];
 
-  countTickets = 1;
+  countTicketsNormal;
+  countTicketsVip;
   email = new FormControl('', [Validators.email]);
   companyName;
   street;
@@ -43,11 +47,15 @@ export class InvoiceFormComponent implements OnInit {
     private afStore: AngularFirestore) { }
 
   ngOnInit() {
-    const getCompanyPrice = this.afFunctions.httpsCallable<{}, TicketView>('getCurrentCompanyTicket');
+    const getCompanyPrice = this.afFunctions.httpsCallable<{}, {normal: TicketView, vip: TicketView}>('getCurrentTicketsForInvoice');
     getCompanyPrice({}).subscribe((data) => {
-      if (data != null) {
-        this.currentCompanyPrice = data.price;
-        this.currentCompanyPriceE = data.eur_price;
+      if (data.normal != null){
+        this.currentCompanyPrice = data.normal.price;
+        this.currentCompanyPriceE = data.normal.eur_price;
+      }
+      if (data.vip != null){
+        this.currentVIPPrice = data.vip.price;
+        this.currentVIPPriceE = data.vip.eur_price;
       }
     });
     this.http.get<Country>('assets/country-list.json').subscribe((data) => {
@@ -71,7 +79,8 @@ export class InvoiceFormComponent implements OnInit {
 
   async sendInvoice() {
     const invoice: NewInvoice = {
-      countTickets: this.countTickets,
+      countTicketsNormal: this.countTicketsNormal == null || this.countTicketsNormal > 0 ? this.countTicketsNormal : undefined,
+      countTicketsVIP: this.countTicketsVip == null || this.countTicketsVip > 0 ? this.countTicketsVip : undefined,
       email: this.email.value,
       companyName: this.companyName,
       street: this.street,

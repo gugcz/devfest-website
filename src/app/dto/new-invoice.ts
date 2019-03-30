@@ -1,5 +1,6 @@
 export interface NewInvoice {
-    countTickets: number;
+    countTicketsNormal?: number;
+    countTicketsVIP?: number;
     email: string;
     companyName: string;
     street: string;
