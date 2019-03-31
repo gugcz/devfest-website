@@ -20,7 +20,7 @@ export async function getCurrentExchangeRate(from, to): Promise<number> {
  * Sends message into slack predefined webhook
  * @param message - message in format https://api.slack.com/docs/messages/builder
  */
-export async function sendInfoIntoSlack(message): Promise<boolean> {
+export async function sendInfoIntoSlack(message): Promise<Object> {
   const options = {
     method: 'POST',
     uri: functions.config().slack.webhook.url,
@@ -30,8 +30,7 @@ export async function sendInfoIntoSlack(message): Promise<boolean> {
     body: message,
     json: true
   };
-  await rp(options);
-  return true;
+  return await rp(options);
 }
 
 /**
