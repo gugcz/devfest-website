@@ -1,24 +1,6 @@
 <h1 mat-dialog-title>Order by invoice</h1>
 <mat-dialog-content>
-    <div *ngIf="currentCompanyPrice != null || currentVIPPrice != null;else missingPrice ">
-        <div *ngIf="currentCompanyPrice">
-            Current price of company ticket: {{currentCompanyPrice * (countTicketsNormal == null ? 1 : countTicketsNormal)}} CZK
-            ({{currentCompanyPriceE * (countTicketsNormal == null ? 1 : countTicketsNormal)}} €)
-        </div>
-        <div *ngIf="currentVIPPrice">
-            Current community support ticket: {{currentVIPPrice * (countTicketsVip == null ? 1 : countTicketsVip)}} CZK
-            ({{currentVIPPriceE * (countTicketsVip == null ? 1 : countTicketsVip)}} €)
-        </div>
-    </div>
     <form class="form">
-        <mat-form-field class="form-field" appearance="fill" color="accent" >
-            <input [(ngModel)]="countTicketsNormal" name="countTicketsNormal" class="input" matInput placeholder="Company tickets"
-                type="number" min="00">
-        </mat-form-field>
-        <mat-form-field class="form-field" appearance="fill" color="accent">
-            <input [(ngModel)]="countTicketsVip" name="countTicketsVip" class="input" matInput
-                placeholder="Community support tickets" type="number" min="00">
-        </mat-form-field>
         <mat-form-field class="form-field" appearance="fill" color="accent">
             <input [formControl]="email" class="input" matInput placeholder="Email for delivering invoice*">
             <mat-error *ngIf="email.invalid">{{getEmailErrorMessage()}}</mat-error>
@@ -52,6 +34,24 @@
             <mat-select [(ngModel)]="country" name="country">
                 <mat-option *ngFor="let country of listOfCountries" [value]="country.name">{{country.name}}</mat-option>
             </mat-select>
+        </mat-form-field>
+        <div *ngIf="currentCompanyPrice != null || currentVIPPrice != null;else missingPrice ">
+            <div *ngIf="currentCompanyPrice">
+                Current price of company ticket: {{currentCompanyPrice * (countTicketsNormal == null ? 1 : countTicketsNormal)}} CZK
+                ({{currentCompanyPriceE * (countTicketsNormal == null ? 1 : countTicketsNormal)}} €)
+            </div>
+            <div *ngIf="currentVIPPrice">
+                Current community support ticket: {{currentVIPPrice * (countTicketsVip == null ? 1 : countTicketsVip)}} CZK
+                ({{currentVIPPriceE * (countTicketsVip == null ? 1 : countTicketsVip)}} €)
+            </div>
+        </div>
+        <mat-form-field class="form-field" appearance="fill" color="accent" >
+            <input [(ngModel)]="countTicketsNormal" name="countTicketsNormal" class="input" matInput placeholder="Company tickets"
+                type="number" min="00" [disabled]="!currentCompanyPrice">
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="fill" color="accent">
+            <input [(ngModel)]="countTicketsVip" name="countTicketsVip" class="input" matInput
+                placeholder="Community support tickets" type="number" min="00" [disabled]="!currentVIPPrice">
         </mat-form-field>
     </form>
 </mat-dialog-content>

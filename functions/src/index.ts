@@ -9,3 +9,4 @@ export const getTickets = tickets.getTickets;
 export const getCurrentTicketsForInvoice = tickets.getCurrentTicketsForInvoice;
 export const registeredNewTicket = tickets.registeredNewTicket;
 export const newInvoiceRequest = tickets.newInvoiceRequest;
+export const invoicePaid = tickets.invoicePaid;
