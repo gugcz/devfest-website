@@ -10,7 +10,7 @@ import { AngularFireFunctionsModule } from '@angular/fire/functions';
   imports: [
     CommonModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
+    AngularFirestoreModule.enablePersistence({experimentalTabSynchronization: true}),
     AngularFireStorageModule,
     AngularFireFunctionsModule
   ],

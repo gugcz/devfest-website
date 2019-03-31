@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { Partner } from '../dto/partner';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +10,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  private partnersCollection: AngularFirestoreCollection<Partner>;
+  partners: Observable<Partner[]>;
+
+  constructor(private afStore: AngularFirestore) { }
 
   ngOnInit() {
+    this.partnersCollection = this.afStore.collection<Partner>('partners', ref => ref.where('top', '==', true).orderBy('order'));
+    this.partners = this.partnersCollection.valueChanges();
   }
 
 }
