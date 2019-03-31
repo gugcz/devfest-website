@@ -1,8 +1,12 @@
 import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
+admin.initializeApp(functions.config().firebase);
+admin.firestore().settings({ timestampsInSnapshots: true });
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+import * as tickets from './tickets';
+
+export const getTickets = tickets.getTickets;
+export const getCurrentTicketsForInvoice = tickets.getCurrentTicketsForInvoice;
+export const registeredNewTicket = tickets.registeredNewTicket;
+export const newInvoiceRequest = tickets.newInvoiceRequest;
+export const invoicePaid = tickets.invoicePaid;
