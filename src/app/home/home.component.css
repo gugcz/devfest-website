@@ -17,17 +17,6 @@
   width: 100%;
   text-align: center;
 }
-
-.containerThird {
-  width: 100%;
-  text-align: center;
-}
-
-.wrapperThird {
-  padding-top: 30px;
-  padding-bottom: 30px;
-}
-
 .containerFourth {
   width: 100%;
   text-align: center;
@@ -42,9 +31,19 @@
   padding: 10px;
 }
 
-.wrapperThird{
-  padding-top: 10px;
-  padding-bottom: 10px;
+.containerThird {
+  min-height: 650px;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(18, 42, 66, .98);
+}
+
+h1 {
+  color: white;
+}
+
+.wrapperThird {
+  padding: 10px;
 }
 
 .arrows {

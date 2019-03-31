@@ -1,0 +1,62 @@
+<div class="ticket-holder" *ngIf="ticketGroups; else loading">
+  <ng-container *ngFor="let ticketGroup of ticketGroups">
+    <div class="ticket" (click)="showAdditionalInfo(ticketGroup.additionalInfo, ticketGroup.name)" [@fadeInOut]
+      [ngClass]="!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active ? 'active-group': 'non-active-group'"
+      *ngIf="ticketGroup.tickets[0] != null">
+      <h1 class="ticketgroup-name">{{ticketGroup.name}}</h1>
+      <div class="one-ticket" *ngFor="let ticket of ticketGroup.tickets">
+        <div class="ticket-name" *ngIf="!ticketGroup.hideTicketName">{{ticketGroup.hideTicketName}}{{ticket.tic.publicName}}</div>
+        <div class="czech-price">{{ticket.price | number : 0}} CZK</div>
+        <div class="eur-price">~{{ticket.eur_price}} €</div>
+      </div>
+      <div class="description" *ngIf="ticketGroup.showDescription">
+        {{ticketGroup.tickets[0].description}}
+      </div>
+      <div class="addition-info-ticket" *ngIf="ticketGroup.additionalInfoDescription">
+        {{ticketGroup.additionalInfoDescription}}
+      </div>
+      <div class="count" *ngIf="ticketGroup.showCount">
+        First {{ticketGroup.tickets[0].quantity}}
+      </div>
+      <div class="date" *ngIf="ticketGroup.showEnd">
+        Until {{ticketGroup.tickets[0].end | date}}
+      </div>
+      <div class="date" *ngIf="ticketGroup.showStart">
+        From {{ticketGroup.tickets[0].start | date}}
+      </div>
+      <div class="ticket-status-unavailable unactive"
+        *ngIf="!ticketGroup.tickets[0].sold_out && !ticketGroup.tickets[0].active">
+        UNAVAILABLE
+      </div>
+      <div class="ticket-status-sold unactive" *ngIf="ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active">
+        SOLD OUT
+      </div>
+      <a class="ticket-status-buy" [href]="ticketGroup.tickets[0].url"
+        *ngIf="!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active">
+        BUY NOW!
+      </a>
+    </div>
+  </ng-container>
+</div>
+<div class="addition-info">
+  <p>
+    All prices include VAT 21%
+  </p>
+  <p>
+    Children up to 12 years of age free of charge - please send us an email when ordering a ticket that you will bring
+    your child or children.
+  </p>
+</div>
+<div class="invoice-button-holder">
+  <div>
+    <button class="invoice-button" mat-raised-button color="primary" (click)="openInvoiceModal()"><h2>Order by invoice</h2></button>
+  </div>
+  <div class="invoice-info">
+    if you need company invoice first
+  </div>
+</div>
+<ng-template #loading>
+  <div class="spinner-holder">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>
