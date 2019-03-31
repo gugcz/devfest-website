@@ -58,7 +58,6 @@ export const newInvoiceRequest = functions.firestore.document('invoiceRequests/{
         }
         return helpers.sendInfoIntoSlack({
             "text": "Faktura zaslána na email :email:"
-
         });
     });
 
@@ -90,18 +89,17 @@ export const invoicePaid = functions.https.onRequest((req, res) => {
  * Find invoice data in firebase and generates discount and sends to company
  * @param invoiceId - id of invoice in fakturoid
  */
-async function sendDiscountCodeByInvoiceId(invoiceId): Promise<boolean> {
+async function sendDiscountCodeByInvoiceId(invoiceId): Promise<Object> {
     const snapshot = await admin.firestore().collection('invoiceRequests').where('invoiceId', '==', invoiceId).get();
     if (snapshot.empty) {
         return false;
     } else {
         const info = snapshot.docs[0].data();
         const code = await tito.generateTitoCode(info.companyName, invoiceId, (info.countTicketsNormal === null ? 0 : info.countTicketsNormal), (info.countTicketsVIP === null ? 0 : info.countTicketsVIP));
-        const sended = await sendgrid.sendDiscountCode(code, ('https://ti.to/devfest-cz/' + new Date().getFullYear() + '/discount/' + querystring.escape(code)), info.email);
         await admin.firestore().collection('invoiceRequests').doc(snapshot.docs[0].id).update({
             discoundCodeSended: true,
         });
-        return sended
+        return sendgrid.sendDiscountCode(code, ('https://ti.to/devfest-cz/' + new Date().getFullYear() + '/discount/' + querystring.escape(code)), info.email);
     }
 };
 

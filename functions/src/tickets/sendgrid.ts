@@ -7,9 +7,8 @@ sgMail.setApiKey(`${functions.config().sendgrid.key}`);
  * Send pdf invoice on email
  * @param invoice - pdf of invoice
  * @param email - destination
- * @return Promise<boolean>
  */
-export async function sendInvoiceInEmail(invoice, email: string) {
+export async function sendInvoiceInEmail(invoice, email: string):Promise<Object> {
   const msg = {
     to: email,
     from: 'devfest@gug.cz',
@@ -22,17 +21,15 @@ export async function sendInvoiceInEmail(invoice, email: string) {
       }
     ]
   };
-  await sgMail.send(msg);
-  return true;
+  return await sgMail.send(msg);;
 }
 
 /**
  * @param discountCode - discount code for sending
  * @param discountLink - discount link for sending
  * @param email - destination
- * @return Promise<boolean>
  */
-export async function sendDiscountCode(discountCode, discountLink, email: string) {
+export async function sendDiscountCode(discountCode, discountLink, email: string):Promise<Object> {
   const msg = {
     to: email,
     from: 'devfest@gug.cz',
@@ -43,6 +40,5 @@ export async function sendDiscountCode(discountCode, discountLink, email: string
       codeUrl: discountLink
     }
   };
-  await sgMail.send(msg);
-  return true;
+  return await sgMail.send(msg);
 }
