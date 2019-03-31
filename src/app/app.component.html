@@ -1,5 +1,15 @@
-<app-navigation class="navigation"></app-navigation>
-<div class="body">
-    <router-outlet></router-outlet>
+<app-navigation class="navigation" [isMobile]="mobileQuery.matches" (homeClicked)="openSideMenu()"></app-navigation>
+<div class="menu" [@slideInOut]="menuShowed">
+    <mat-nav-list>
+        <a class="navigation-item" mat-list-item routerLink="home" (click)="openSideMenu()"> Home </a>
+        <a class="navigation-item" mat-list-item routerLink="team" (click)="openSideMenu()"> Team </a>
+        <a class="navigation-item" mat-list-item routerLink="partners" (click)="openSideMenu()"> Partners </a>
+    </mat-nav-list>
 </div>
-<app-footer></app-footer>
+<div class="body">
+    <router-outlet *ngIf="!menuShowed"></router-outlet>
+</div>
+<ng-container *ngIf="!menuShowed">
+    <app-footer></app-footer>
+    <app-contribute-panel></app-contribute-panel>
+</ng-container>

@@ -18,6 +18,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { TicketAdditionalInfoComponent } from './ticket-additional-info/ticket-additional-info.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { PhotoSectionComponent } from './photo-section/photo-section.component';
+import {SlideshowModule} from 'ng-simple-slideshow';
 
 @NgModule({
   imports: [
@@ -46,6 +48,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   entryComponents: [
     InvoiceFormComponent,
     TicketAdditionalInfoComponent
+    SlideshowModule
+  ],
+  declarations: [
+    HomeComponent,
+    PhotoSectionComponent
   ]
 })
 export class HomeModule { }

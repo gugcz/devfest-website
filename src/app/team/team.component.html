@@ -1,8 +1,8 @@
 <div class="container">
   <div class="wrapper">
     <div class="team-cont" >
-        <div *ngFor="let member of team | async">
-            <app-member-card [name]="member.name" [position]="member.position" [photoPath]="member.photoPath" [socials]="member.socials ? member.socials : null"></app-member-card>
+        <div class="member" *ngFor="let member of team | async">
+            <app-member-card [name]="member.name" [position]="member.position" [photoPath]="member.photoPath" [photoPathCringe]="member.photoPathCringe"[socials]="member.socials ? member.socials : null"></app-member-card>
         </div>
     </div>
   </div>

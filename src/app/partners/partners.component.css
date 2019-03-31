@@ -1,0 +1,9 @@
+.container {
+    min-height: 100vh;
+    width: 100%;
+}
+
+.wrapper{
+    padding-top: 60px;
+    text-align: center;
+}
