@@ -8,6 +8,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { NewInvoice } from 'src/app/dto/new-invoice';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { elementEnd } from '@angular/core/src/render3/instructions';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface Country {
   code: string;
@@ -44,7 +45,8 @@ export class InvoiceFormComponent implements OnInit {
     private afFunctions: AngularFireFunctions,
     private http: HttpClient,
     private dialogRef: MatDialogRef<InvoiceFormComponent>,
-    private afStore: AngularFirestore) { }
+    private afStore: AngularFirestore,
+    private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     const getCompanyPrice = this.afFunctions.httpsCallable<{}, {normal: TicketView, vip: TicketView}>('getCurrentTicketsForInvoice');
@@ -79,8 +81,8 @@ export class InvoiceFormComponent implements OnInit {
 
   async sendInvoice() {
     const invoice: NewInvoice = {
-      countTicketsNormal: this.countTicketsNormal == null || this.countTicketsNormal > 0 ? this.countTicketsNormal : undefined,
-      countTicketsVIP: this.countTicketsVip == null || this.countTicketsVip > 0 ? this.countTicketsVip : undefined,
+      countTicketsNormal: this.countTicketsNormal !== undefined && this.countTicketsNormal > 0 ? this.countTicketsNormal : null,
+      countTicketsVIP: this.countTicketsVip !== undefined && this.countTicketsVip > 0 ? this.countTicketsVip : null ,
       email: this.email.value,
       companyName: this.companyName,
       street: this.street,
@@ -94,7 +96,9 @@ export class InvoiceFormComponent implements OnInit {
         invoice.vatNumber = this.vatNumber;
       }
     }
-    this.afStore.collection('invoiceRequests').add(invoice).then(() => this.goToHome());
+    this.afStore.collection('invoiceRequests').add(invoice)
+    .then(() => this.snackBar.open('Thank you! Check your email for details', null, {duration: 5000}))
+    .then(() => this.goToHome());
   }
 
   getEmailErrorMessage() {

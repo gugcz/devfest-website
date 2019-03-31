@@ -17,6 +17,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { TicketAdditionalInfoComponent } from './ticket-additional-info/ticket-additional-info.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   imports: [
@@ -33,7 +34,8 @@ import { TicketAdditionalInfoComponent } from './ticket-additional-info/ticket-a
     MatFormFieldModule,
     MatOptionModule,
     MatSelectModule,
-    MatInputModule
+    MatInputModule,
+    MatSnackBarModule
   ],
   declarations: [
     HomeComponent,

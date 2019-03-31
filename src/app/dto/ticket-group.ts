@@ -12,6 +12,6 @@ export interface TicketGroup {
 }
 
 export interface Ticket {
-    titoName: string
+    titoName: string;
     publicName: string;
 }

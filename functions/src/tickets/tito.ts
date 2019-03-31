@@ -1,80 +1,51 @@
 import * as functions from 'firebase-functions';
+import * as slugify from 'slugify';
 import * as rp from 'request-promise';
-
 import * as helpers from './helpers';
 
-export const getTickets = functions.https.onCall((_req, _res) => {
-    return getTicketsFromTito()
-        .then((data) => {
-            return processTicketBody(data['releases']);
-        }).then((tickets) => {
-            return tickets;
-        }).catch((error) => {
-            console.error('Error in processing tickets');
-            throw error;
-        });
-});
-
-export const getCurrentTicketsForInvoice = functions.https.onCall((_req, _res) => {
-    return findCurrentTicketsForInvoice().then((data) => {
-        return data;
-    }).catch((error) => {
-        console.error('Error in getting company ticket');
-        throw error;
-    });
-});
-
-export const registeredNewTicket = functions.https.onRequest((req, res) => {
-    const data = req.body;
-    const name = data.name;
-    const ticketsInfo = data.line_items.map((tic) => tic.quantity + "x " + tic.release_title);
-    return getCurrentSoldTickets().then((current) => {
-        const slackMessage = {
-            "text": "Registrované nové lístky :ticket:",
-            "attachments": [
-                {
-                    "fields": [{
-                        "title": "Jméno",
-                        "value": name
-                    }, {
-                        "title": "Seznam lístků",
-                        "value": ticketsInfo.join("\n")
-                    }],
-                    "color": "#7da453"
-                },
-                {
-                    "title": "Celkově prodaných lístků",
-                    "text": current.toString(),
-                    "color": "#333"
-                }
-            ]
-        }
-        return helpers.sendInfoIntoSlack(slackMessage);
-    }).then(() => {
-        return res.status(200).send(true);
-    }).catch((error) => {
-        console.error('Error informing about registered new ticket');
-        throw error;
-    })
-});
-
 /**
- * Retrieves current count of tickets
+ * Generating code in tito
+ * @param companyName - name of company
+ * @param id - id of process
+ * @param countTickets - number of tickets
  */
-async function getCurrentSoldTickets() {
-    const ticketsData = await getTicketsFromTito();
-    const sum = ticketsData['releases'].map(a => a.tickets_count).reduce(getSum);
-    return sum;
-}
-
-function getSum(total, ticket) {
-    return total + ticket;
+export async function generateTitoCode(companyName, id, countTickets: number, countTicketsVip: number): Promise<string> {
+    const postCompanyName = slugify.default(companyName).toLowerCase();
+    const invoiceTickets = await findCurrentTicketsForInvoice();
+    const completePrice = invoiceTickets.normal.price*countTickets + invoiceTickets.vip.price*countTicketsVip;
+    const ids = [invoiceTickets.normal.id,invoiceTickets.vip.id];
+    const options = {
+      method: 'POST',
+      url: functions.config().tito.discount ,
+      headers: {
+        'Authorization': `Token token=${functions.config().tito.key}`,
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/json'
+      },
+      body: {
+        "data":
+        {
+          "type": "discount-codes",
+          "attributes":
+            {
+              "code": (postCompanyName + "-" + id),
+              "type": "MoneyOffDiscountCode",
+              "value": completePrice,
+              "only-show-attached": true,
+              "release-ids": ids
+            }
+        }
+      },
+      json: true
+    };
+    const discount = await rp(options);
+    return discount.data.attributes.code;
 }
 
 /**
  * Download all informations about tickets from tito
  */
-async function getTicketsFromTito() {
+export async function getTicketsFromTito(): Promise<Object> {
     const options = {
         method: 'GET',
         json: true,
@@ -89,11 +60,25 @@ async function getTicketsFromTito() {
 }
 
 /**
+ * Retrieves current count of tickets
+ */
+export async function getCurrentSoldTickets() {
+    const ticketsData = await getTicketsFromTito();
+    const sum = ticketsData['releases'].map(a => a.tickets_count).reduce(getSum);
+    return sum;
+}
+
+function getSum(total, ticket) {
+    return total + ticket;
+}
+
+
+/**
  * Returns current tickets for invoice (Latest company and VIP)
  */
-async function findCurrentTicketsForInvoice() {
+export async function findCurrentTicketsForInvoice() {
     const ticketsData = await getTicketsFromTito();
-    const processedTickets = await processTicketBody(ticketsData['releases']);
+    const processedTickets = await helpers.processTicketBody(ticketsData['releases']);
     const onlyActiveCompany = processedTickets.filter(ticket => ticket.active === true && ticket.title.toUpperCase().includes('COMPANY'));
     const onlyActiveVIP = processedTickets.filter(ticket => ticket.active === true && ticket.title.toUpperCase().includes('COMMUNITY SUPPORT'));
     return {
@@ -102,25 +87,3 @@ async function findCurrentTicketsForInvoice() {
     };
 }
 
-/**
- * Returns cleaned data for frontend
- * @param ticketData - downloaded releases from tito
- */
-async function processTicketBody(ticketData) {
-    const exchange = await helpers.getCurrentExchangeRate('CZK', 'EUR');
-    const tickets = ticketData.filter(a => a.secret === false).map((a) => {
-        return {
-            title: a.title,
-            price: a.price,
-            eur_price: Math.round((a.price * exchange) / 5) * 5,
-            active: !a.expired && !a.sold_out && !a.upcoming,
-            sold_out: a.expired || a.sold_out,
-            start: a.start_at,
-            end: a.end_at,
-            description: a.description,
-            url: a.share_url,
-            quantity: a.quantity
-        }
-    });
-    return tickets
-}
