@@ -2,6 +2,17 @@
   <div class="wrapper">
     <app-neon-logo></app-neon-logo>
     <app-neon-date></app-neon-date>
+    <div class="socials">
+      <a mat-icon-button target="_blank" href="https://twitter.com/devfest_cz">
+        <mat-icon class="social" svgIcon="twitter"></mat-icon>
+      </a>
+      <a mat-icon-button target="_blank" href="https://www.facebook.com/DevFestCZ">
+        <mat-icon class="social" svgIcon="facebook"></mat-icon>
+      </a>
+      <a mat-icon-button target="_blank" href="https://www.instagram.com/devfestcz/">
+        <mat-icon class="social" svgIcon="instagram"></mat-icon>
+      </a>
+    </div>
   </div>
   <svg class="arrows">
     <path class="a1" d="M0 0 L30 32 L60 0"></path>
@@ -16,19 +27,20 @@
     </a>
   </div>
 </div>
-<div class="containerThird">
+<div *ngIf="showTickets" class="containerThird">
   <div class="wrapperThird">
-      <app-photo-section></app-photo-section>
+    <h1>Tickets</h1>
+    <app-tickets></app-tickets>
   </div>
 </div>
 <div class="containerFourth">
   <div class="wrapperFourth">
-    <app-partner-panel *ngFor="let partner of partners | async" [groupName]="partner.name" [companies]="partner.companies" [main]="true"></app-partner-panel>
+    <app-partner-panel *ngFor="let partner of partners | async" [groupName]="partner.name"
+      [companies]="partner.companies" [main]="true"></app-partner-panel>
   </div>
 </div>
-<div class="containerThird">
-  <div class="wrapperThird">
-    <h1>Tickets</h1>
-    <app-tickets></app-tickets>
+<div class="containerFifth">
+  <div class="wrapperFifth">
+    <app-photo-section></app-photo-section>
   </div>
 </div>
