@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  tickets: false,
   firebase: {
     apiKey: "AIzaSyDZYJFycJ-hQUvhHj5IQrSNaZpPz2KeBmA",
     authDomain: "devfest-2019-1f996.firebaseapp.com",

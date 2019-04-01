@@ -20,6 +20,8 @@ import { TicketAdditionalInfoComponent } from './ticket-additional-info/ticket-a
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { PhotoSectionComponent } from './photo-section/photo-section.component';
 import {SlideshowModule} from 'ng-simple-slideshow';
+import { SocialIconsService } from '../shared/social-icons.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   imports: [
@@ -37,22 +39,23 @@ import {SlideshowModule} from 'ng-simple-slideshow';
     MatOptionModule,
     MatSelectModule,
     MatInputModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    SlideshowModule,
+    MatIconModule
   ],
   declarations: [
     HomeComponent,
     TicketsComponent,
     InvoiceFormComponent,
     TicketAdditionalInfoComponent,
+    PhotoSectionComponent
   ],
   entryComponents: [
     InvoiceFormComponent,
     TicketAdditionalInfoComponent
-    SlideshowModule
   ],
-  declarations: [
-    HomeComponent,
-    PhotoSectionComponent
+  providers: [
+    SocialIconsService
   ]
 })
 export class HomeModule { }
