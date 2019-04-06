@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { TeamMember } from 'src/app/data/team-member';
+import { TeamMember } from '../data/team-member';
 
 interface TeamMemberId extends TeamMember { id: string;}
 
 @Component({
   selector: 'app-team',
   templateUrl: './team.component.html',
-  styleUrls: ['./team.component.css']
+  styleUrls: ['./team.component.scss']
 })
 export class TeamComponent implements OnInit {
 

@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { SocialIconsService } from 'src/app/services/social-icons.service';
-import { Partner } from 'src/app/data/partner';
+import { environment } from '../../environments/environment';
+import { Partner } from '../data/partner';
+import { SocialIconsService } from '../services/social-icons.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
 

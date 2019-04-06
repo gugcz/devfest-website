@@ -9,7 +9,7 @@ enum PhotoVisibilityState {
 @Component({
   selector: 'app-photo-section',
   templateUrl: './photo-section.component.html',
-  styleUrls: ['./photo-section.component.css'],
+  styleUrls: ['./photo-section.component.scss'],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [

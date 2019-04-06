@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PartnersRoutingModule } from './partners-routing.module';
 import { PartnersComponent } from './partners.component';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { PartnerPanelComponentModule } from 'src/app/components/partner-panel/partner-panel.module';
+import { PartnerPanelComponentModule } from '../components/partner-panel/partner-panel.module';
 
 @NgModule({
   declarations: [

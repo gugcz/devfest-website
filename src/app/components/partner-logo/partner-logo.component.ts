@@ -11,7 +11,7 @@ export enum PhotoState {
 @Component({
   selector: 'app-partner-logo',
   templateUrl: './partner-logo.component.html',
-  styleUrls: ['./partner-logo.component.css'],
+  styleUrls: ['./partner-logo.component.scss'],
   animations: [ trigger('fadeImage', [
     state(PhotoState.Loading, style({opacity: 0})),
     state(PhotoState.Downloaded, style({opacity: 1})),

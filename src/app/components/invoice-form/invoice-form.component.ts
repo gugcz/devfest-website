@@ -5,9 +5,8 @@ import { TicketView } from '../iticket/ticket-view';
 import { HttpClient } from '@angular/common/http';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl, Validators } from '@angular/forms';
-import { NewInvoice } from 'src/app/data/new-invoice';
+import { NewInvoice } from '../../data/new-invoice';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { elementEnd } from '@angular/core/src/render3/instructions';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface Country {
@@ -18,7 +17,7 @@ interface Country {
 @Component({
   selector: 'app-invoice-form',
   templateUrl: './invoice-form.component.html',
-  styleUrls: ['./invoice-form.component.css']
+  styleUrls: ['./invoice-form.component.scss']
 })
 export class InvoiceFormComponent implements OnInit {
 

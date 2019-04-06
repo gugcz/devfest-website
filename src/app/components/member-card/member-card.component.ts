@@ -2,8 +2,8 @@ import { Component, OnInit, Input, ɵConsole } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Social } from 'src/app/data/social';
-import { SocialIconsService } from 'src/app/services/social-icons.service';
+import { Social } from '../../data/social';
+import { SocialIconsService } from '../../services/social-icons.service';
 
 export enum PhotoVisibilityState {
   Visible = 'visible',
@@ -18,7 +18,7 @@ export enum PhotoMode {
 @Component({
   selector: 'app-member-card',
   templateUrl: './member-card.component.html',
-  styleUrls: ['./member-card.component.css'],
+  styleUrls: ['./member-card.component.scss'],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [

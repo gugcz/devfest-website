@@ -4,15 +4,15 @@ import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 const routes: Routes = [
   {
     path: 'home',
-    loadChildren: './pages/home/home.module#HomeModule'
+    loadChildren: './home/home.module#HomeModule'
   },
   {
     path: 'team',
-    loadChildren: './pages/team/team.module#TeamModule'
+    loadChildren: './team/team.module#TeamModule'
   },
   {
     path: 'partners',
-    loadChildren: './pages/partners/partners.module#PartnersModule'
+    loadChildren: './partners/partners.module#PartnersModule'
   },
   { path: '**', redirectTo: 'home' }
 ];
