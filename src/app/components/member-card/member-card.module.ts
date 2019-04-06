@@ -5,7 +5,7 @@ import { MemberCardComponent } from './member-card.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { SocialIconsService } from 'src/app/services/social-icons.service';
+import { SocialIconsService } from '../../services/social-icons.service';
 import { SocialsPipe } from './socials.pipe';
 
 @NgModule({

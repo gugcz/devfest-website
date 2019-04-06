@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { TicketGroup } from 'src/app/data/ticket-group';
+import { TicketGroup } from '../../data/ticket-group';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { InvoiceFormComponent } from '../invoice-form/invoice-form.component';
 import { MatDialog } from '@angular/material/dialog';

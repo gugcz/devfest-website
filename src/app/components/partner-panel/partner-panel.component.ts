@@ -1,11 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Company } from 'src/app/data/partner';
+import { Company } from '../../data/partner';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-partner-panel',
   templateUrl: './partner-panel.component.html',
-  styleUrls: ['./partner-panel.component.css'],
+  styleUrls: ['./partner-panel.component.scss'],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [   // :enter is alias to 'void => *'

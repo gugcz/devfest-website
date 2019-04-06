@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   selector: 'app-ticket-additional-info',
   templateUrl: './ticket-additional-info.component.html',
-  styleUrls: ['./ticket-additional-info.component.css']
+  styleUrls: ['./ticket-additional-info.component.scss']
 })
 export class TicketAdditionalInfoComponent {
 

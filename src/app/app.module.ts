@@ -27,7 +27,7 @@ import { NeonDateComponentModule } from './components/neon-date/neon-date.module
     AngularFireStorageModule,
     AngularFireFunctionsModule,
     HttpClientModule,
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     BrowserAnimationsModule,
     AppRoutingModule,
 

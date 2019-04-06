@@ -10,3 +10,7 @@ export const getCurrentTicketsForInvoice = tickets.getCurrentTicketsForInvoice;
 export const registeredNewTicket = tickets.registeredNewTicket;
 export const newInvoiceRequest = tickets.newInvoiceRequest;
 export const invoicePaid = tickets.invoicePaid;
+
+export const universal = functions.https.onRequest((request, response) => {
+    require(`${process.cwd()}/dist/devfest2019-webpack/server`).app(request, response);
+  });
