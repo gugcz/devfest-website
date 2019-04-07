@@ -23,11 +23,11 @@ import { NeonDateComponentModule } from './components/neon-date/neon-date.module
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule.enablePersistence({experimentalTabSynchronization: true}),
+    AngularFirestoreModule.enablePersistence(),
     AngularFireStorageModule,
     AngularFireFunctionsModule,
     HttpClientModule,
-    BrowserModule.withServerTransition({ appId: 'serverApp' }),
+    BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
 
