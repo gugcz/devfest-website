@@ -7,13 +7,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:prod": "ng build --prod && npm run copy:hosting && npm run build:ssr && npm run build:functions",
-    "build": "ng build && npm run copy:hosting && npm run build:ssr && npm run build:functions",
-    "build:ssr": "ng run devfest2019:server && npm run webpack:ssr",
-    "webpack:ssr": "webpack --config webpack.server.config.js",
-    "serve:ssr": "node dist/devfest2019-webpack/server.js",
-    "copy:hosting": "cp -r ./dist/devfest2019/* ./public && rm ./public/index.html",
-    "build:functions": "npm run --prefix functions build"
+    "build:prod": "ng build --prod",
+    "build" : "ng build"
   },
   "private": true,
   "dependencies": {
