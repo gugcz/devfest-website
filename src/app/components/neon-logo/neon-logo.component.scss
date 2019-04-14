@@ -11,7 +11,7 @@ path {
 polygon {
   stroke-dasharray: 1800;
   opacity: 10;
-  filter: url(#red-glow);
+  filter: url(#white-glow);
   stroke: white;
   animation: load 4s cubic-bezier(0.42, 0.0, 0.58, 1.0), flicker 5s infinite 6s step-end;
   -webkit-animation: load 4s cubic-bezier(0.42, 0.0, 0.58, 1.0), flicker 5s infinite 6s step-end;
@@ -39,30 +39,6 @@ polygon {
   fill: #d74a3d;
   stroke: #d74a3d;
   filter: url(#red-glow);
-}
-
-@media screen and (min-color-index:0) and(-webkit-min-device-pixel-ratio:0) { 
-  path { 
-    filter: none;
-  }
-}
-
-@media not all and (min-resolution:.001dpcm) { 
-  path { 
-    filter: none;
-  }
-  .yellowPart{
-    filter: none; 
-  }
-  .bluePart{
-    filter: none; 
-  }
-  .redPart{
-    filter: none; 
-  }
-  .greenPart{
-    filter: none; 
-  }
 }
 
 @keyframes load {
