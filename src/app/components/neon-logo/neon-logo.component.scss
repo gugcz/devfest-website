@@ -41,6 +41,31 @@ polygon {
   filter: url(#red-glow);
 }
 
+@media screen and (-webkit-min-device-pixel-ratio: 0) {	_::-webkit-full-page-media, _:future, :root ,  .redPart{
+  filter: none;
+}}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {	_::-webkit-full-page-media, _:future, :root ,  .greenPart{
+  filter: none;
+}}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {	_::-webkit-full-page-media, _:future, :root ,  .bluePart{
+  filter: none;
+}}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {	_::-webkit-full-page-media, _:future, :root ,  .yellowPart{
+  filter: none;
+}}
+
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {	_::-webkit-full-page-media, _:future, :root ,  path{
+  filter: none;
+}}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {	_::-webkit-full-page-media, _:future, :root ,  polygon{
+  filter: none;
+}}
+
 @keyframes load {
 
   0% {
