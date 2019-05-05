@@ -1,0 +1,16 @@
+<mat-toolbar [@transparent]="transparent">
+  <button (click)="homeClicked.emit()" *ngIf="isMobile" class="menu-button" mat-icon-button>
+    <mat-icon>menu</mat-icon>
+  </button>
+  <a *ngIf="!isHome" class="logo" mat-icon-button routerLink="home">
+    <app-neon-logo-min></app-neon-logo-min>
+  </a>
+  <span class="spacer"></span>
+  <nav *ngIf="!isMobile" mat-tab-nav-bar>
+    <a #rla="routerLinkActive" *ngFor="let link of navLinks" [active]="rla.isActive" [routerLink]="link.path"
+       mat-tab-link
+       routerLinkActive>
+      {{link.label}}
+    </a>
+  </nav>
+</mat-toolbar>

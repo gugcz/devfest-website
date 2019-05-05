@@ -1,0 +1,8 @@
+<div class="panel-holder">
+  <h1 [@fadeInOut] class="partner-group-name">{{groupName}}</h1>
+  <div class="companies">
+    <app-partner-logo *ngFor="let company of companies" [main]="main" [name]="company.name"
+                      [photoPath]="company.photoPath" [url]="company.url"></app-partner-logo>
+  </div>
+</div>
+

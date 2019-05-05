@@ -1,15 +1,17 @@
-<app-navigation class="navigation" [isMobile]="mobileQuery.matches" (homeClicked)="openSideMenu()"></app-navigation>
-<div class="menu" [@slideInOut]="menuShowed">
+<mat-sidenav-container class="main-holder">
+  <header class="navigation mat-elevation-z3">
+    <app-navigation (homeClicked)="sidenav.toggle()"></app-navigation>
+  </header>
+  <mat-sidenav #sidenav mode="over">
     <mat-nav-list>
-        <a class="navigation-item" mat-list-item routerLink="home" (click)="openSideMenu()"> Home </a>
-        <a class="navigation-item" mat-list-item routerLink="team" (click)="openSideMenu()"> Team </a>
-        <a class="navigation-item" mat-list-item routerLink="partners" (click)="openSideMenu()"> Partners </a>
+      <app-neon-logo-min></app-neon-logo-min>
+      <a (click)="sidenav.toggle()" *ngFor="let nav of navLinks" [routerLink]="nav.path" mat-list-item>{{nav.label}}</a>
     </mat-nav-list>
-</div>
-<div class="body">
-    <router-outlet *ngIf="!menuShowed"></router-outlet>
-</div>
-<ng-container *ngIf="!menuShowed">
+  </mat-sidenav>
+  <div class="info">
+    <router-outlet></router-outlet>
+  </div>
+  <footer>
     <app-footer></app-footer>
-    <app-contribute-panel></app-contribute-panel>
-</ng-container>
+  </footer>
+</mat-sidenav-container>

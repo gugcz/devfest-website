@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { Partner } from '../data/partner';
+import {Component, OnInit} from '@angular/core';
+import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
+import {Observable} from 'rxjs';
+import {Partner} from '../data/partner';
 
 @Component({
   selector: 'app-partners',
@@ -10,10 +10,11 @@ import { Partner } from '../data/partner';
 })
 export class PartnersComponent implements OnInit {
 
-  private partnersCollection: AngularFirestoreCollection<Partner>;
   partners: Observable<Partner[]>;
+  private partnersCollection: AngularFirestoreCollection<Partner>;
 
-  constructor(private afStore: AngularFirestore) { }
+  constructor(private afStore: AngularFirestore) {
+  }
 
   ngOnInit() {
     this.partnersCollection = this.afStore.collection<Partner>('partners', ref => ref.where('top', '==', false).orderBy('order'));

@@ -1,10 +1,12 @@
-import { Social } from './social';
+import {Social} from './social';
 
 export interface TeamMember {
-    name: string;
-    position: string;
-    photoPath: string;
-    photoPathCringe: string;
-    order: number;
-    socials?: Social[];
+  name: string;
+  position: string;
+  photoPath: string;
+  photoPathCringe: string;
+  order: number;
+  socials?: Social[];
+  email?: string;
+  phone?: string;
 }

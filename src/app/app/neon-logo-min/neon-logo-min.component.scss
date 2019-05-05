@@ -1,0 +1,69 @@
+path {
+  stroke-dasharray: 1800;
+  opacity: 10;
+  filter: url(#white-glow);
+  fill: white;
+  stroke: white;
+}
+
+.yellowPart {
+  fill: #f3c744;
+  stroke: #f3c744;
+  filter: url(#yellow-glow);
+}
+
+.greenPart {
+  fill: #22a062;
+  stroke: #22a062;
+  filter: url(#green-glow);
+}
+
+.bluePart {
+  fill: #519bec;
+  stroke: #519bec;
+  filter: url(#blue-glow);
+}
+
+.redPart {
+  fill: #d74a3d;
+  stroke: #d74a3d;
+  filter: url(#red-glow);
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  _::-webkit-full-page-media, _:future, :root, .redPart {
+    filter: none;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  _::-webkit-full-page-media, _:future, :root, .greenPart {
+    filter: none;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  _::-webkit-full-page-media, _:future, :root, .bluePart {
+    filter: none;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  _::-webkit-full-page-media, _:future, :root, .yellowPart {
+    filter: none;
+  }
+}
+
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  _::-webkit-full-page-media, _:future, :root, path {
+    filter: none;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  _::-webkit-full-page-media, _:future, :root, polygon {
+    filter: none;
+  }
+}
+  

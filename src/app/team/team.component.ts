@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { TeamMember } from '../data/team-member';
+import {Component, OnInit} from '@angular/core';
+import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {TeamMember} from '../data/team-member';
 
-interface TeamMemberId extends TeamMember { id: string;}
+interface TeamMemberId extends TeamMember {
+  id: string;
+}
 
 @Component({
   selector: 'app-team',
@@ -13,10 +15,11 @@ interface TeamMemberId extends TeamMember { id: string;}
 })
 export class TeamComponent implements OnInit {
 
-  private teamCollection: AngularFirestoreCollection<TeamMember>;
   team: Observable<TeamMemberId[]>;
+  private teamCollection: AngularFirestoreCollection<TeamMember>;
 
-  constructor(private firestore: AngularFirestore) { }
+  constructor(private firestore: AngularFirestore) {
+  }
 
   ngOnInit() {
     this.teamCollection = this.firestore.collection<TeamMember>('teamMembers', ref => ref.orderBy('order'));
@@ -24,7 +27,7 @@ export class TeamComponent implements OnInit {
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as TeamMember;
         const id = a.payload.doc.id;
-        return { id, ...data };
+        return {id, ...data};
       }))
     );
   }
