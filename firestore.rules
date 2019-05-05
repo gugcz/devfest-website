@@ -12,5 +12,8 @@ service cloud.firestore {
     match /invoiceRequests/{document=**} {
       allow write;
     }
+    match /pressLinks/{document=**} {
+      allow read;
+    }
   }
 }
