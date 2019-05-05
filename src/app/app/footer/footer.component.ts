@@ -1,4 +1,7 @@
 import {Component, OnInit} from '@angular/core';
+import {MatDialog} from '@angular/material';
+import {FaqComponent} from '../faq/faq.component';
+import {DeviceDetectorService} from 'ngx-device-detector';
 
 @Component({
   selector: 'app-footer',
@@ -7,14 +10,19 @@ import {Component, OnInit} from '@angular/core';
 })
 export class FooterComponent implements OnInit {
 
-  constructor() {
+  private isMobile: boolean;
+
+  constructor(private matDialog: MatDialog, private deviceService: DeviceDetectorService) {
+    this.isMobile = this.deviceService.isMobile();
   }
 
   ngOnInit() {
   }
 
-  mailTo() {
-    window.location.href = 'mailto:devfest@gug.cz,info@martinkokes.cz';
+  openFAQ() {
+    this.matDialog.open(FaqComponent, {
+      width: this.isMobile ? '370px' : '700px'
+    });
   }
 
 }
