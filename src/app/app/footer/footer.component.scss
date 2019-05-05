@@ -1,0 +1,40 @@
+.footer-container {
+  width: 100%;
+  color: white;
+}
+
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.links-content {
+  margin: 20px;
+  flex-basis: 300px;
+  text-align: center;
+}
+
+.button-container {
+  margin: 20px;
+  flex-basis: 300px;
+  text-align: center;
+}
+
+.previous-years {
+  font-size: 1.7rem;
+  font-weight: 600;
+}
+
+.link {
+  color: white;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+
+.p-button {
+  margin: 5px;
+  width: 250px;
+  font-size: 1.4rem;
+}

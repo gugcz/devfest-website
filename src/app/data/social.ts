@@ -1,4 +1,4 @@
 export interface Social {
-    key: string;
-    url: string;
+  key: string;
+  url: string;
 }

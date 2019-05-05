@@ -1,0 +1,22 @@
+.partner-group-name {
+  color: white;
+}
+
+.companies {
+  width: 100%;
+  min-height: 120px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+app-partner-logo {
+  flex-basis: 300px;
+  margin: 5px;
+}
+
+.panel-holder {
+  width: 100%;
+  text-align: center;
+}

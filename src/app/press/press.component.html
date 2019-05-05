@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="wrapper">
+    <div class="title-holder">
+      <h1>Press</h1>
+    </div>
+    <div style="display: flex; width: 100%; flex-wrap: wrap; justify-content: center;">
+      <div style="flex-basis: 1100px;">
+        <div style="display: flex;flex-wrap: wrap; justify-content: center;">
+          <div style="flex-basis: 500px;">
+
+
+            <app-press-link-table [links]="releases | async" [title]="'Media releases'"></app-press-link-table>
+
+          </div>
+          <div style="flex-basis: 500px;">
+            <app-press-link-table [links]="wrote | async" [title]="'Media wrote about us'"></app-press-link-table>
+          </div>
+        </div>
+        <div style="width: 100%; text-align: center">
+          <a color="primary" href="https://drive.google.com/open?id=1PIsjLfEScJkuONKGE7zQerhTJ1_61NCl" mat-raised-button
+             target="_blank">
+            Graphics to download
+          </a>
+
+        </div>
+      </div>
+      <div style="flex-basis: 700px;">
+        <div *ngFor="let member of team | async" class="member">
+          <app-member-panel [email]="member.email" [name]="member.name" [phone]="member.phone"
+                            [photoPathCringe]="member.photoPathCringe" [photoPath]="member.photoPath"
+                            [position]="member.position"
+                            [socials]="member.socials ? member.socials : null"></app-member-panel>
+        </div>
+      </div>
+
+    </div>
+  </div>

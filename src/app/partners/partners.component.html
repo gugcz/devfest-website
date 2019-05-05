@@ -1,6 +1,7 @@
 <div class="container">
-    <div class="wrapper">
-      <app-partner-panel *ngFor="let partner of partners | async" [groupName]="partner.name" [companies]="partner.companies" [main]="partner.main"></app-partner-panel>
-      <h1 style="color: white;">More coming soon...</h1>
-    </div>
+  <div class="wrapper">
+    <app-partner-panel *ngFor="let partner of partners | async" [companies]="partner.companies"
+                       [groupName]="partner.name" [main]="partner.main"></app-partner-panel>
+    <h1 style="color: white;">More coming soon...</h1>
+  </div>
 </div>

@@ -1,40 +1,53 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HomeRoutingModule } from './home-routing.module';
-import { HomeComponent } from './home.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { InvoiceFormComponentModule } from '../components/invoice-form/invoice-form.module';
-import { TicketAdditionalInfoComponentModule } from '../components/ticket-additional-info/tickets-additional-info.module';
-import { NeonDateComponentModule } from '../components/neon-date/neon-date.module';
-import { NeonLogoComponentModule } from '../components/neon-logo/neon-logo.module';
-import { TicketsComponentModule } from '../components/tickets/tickets.module';
-import { PartnerPanelComponentModule } from '../components/partner-panel/partner-panel.module';
-import { PhotoSectionComponentModule } from '../components/photo-section/photo-section.module';
-import { InvoiceFormComponent } from '../components/invoice-form/invoice-form.component';
-import { TicketAdditionalInfoComponent } from '../components/ticket-additional-info/ticket-additional-info.component';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {HomeComponent} from './home.component';
+import {NeonLogoComponent} from './neon-logo/neon-logo.component';
+import {NeonDateComponent} from './neon-date/neon-date.component';
+import {TicketAdditionalInfoComponent} from './ticket-additional-info/ticket-additional-info.component';
+import {TicketsComponent} from './tickets/tickets.component';
+import {
+  MatButtonModule,
+  MatDialogModule,
+  MatIconModule,
+  MatInputModule,
+  MatProgressSpinnerModule,
+  MatSelectModule,
+  MatSnackBarModule
+} from '@angular/material';
+import {HomeRoutingModule} from './home-routing.module';
+import {InvoiceFormComponent} from './invoice-form/invoice-form.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {TopPartnerLogoComponent} from './top-partner-logo/top-partner-logo.component';
+import {TopPartnerPanelComponent} from './top-partner-panel/top-partner-panel.component';
 
 @NgModule({
   imports: [
     CommonModule,
     HomeRoutingModule,
-    InvoiceFormComponentModule,
-    TicketAdditionalInfoComponentModule,
-    NeonDateComponentModule,
-    NeonLogoComponentModule,
+    MatProgressSpinnerModule,
     MatIconModule,
-    TicketsComponentModule,
-    PartnerPanelComponentModule,
-    PhotoSectionComponentModule,
-    InvoiceFormComponentModule,
-    MatButtonModule
+    MatDialogModule,
+    MatButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatSelectModule,
+    MatSnackBarModule,
   ],
   declarations: [
-    HomeComponent
+    HomeComponent,
+    NeonLogoComponent,
+    InvoiceFormComponent,
+    NeonDateComponent,
+    TicketAdditionalInfoComponent,
+    TicketsComponent,
+    TopPartnerLogoComponent,
+    TopPartnerPanelComponent
   ],
   entryComponents: [
-    InvoiceFormComponent,
-    TicketAdditionalInfoComponent
+    TicketAdditionalInfoComponent,
+    InvoiceFormComponent
   ]
 })
-export class HomeModule { }
+export class HomeModule {
+}

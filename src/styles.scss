@@ -1,34 +1,21 @@
-@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import '@angular/material/prebuilt-themes/pink-bluegrey.css';
+@import "colors";
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background-color: $devfest-blue;
+}
 
 * {
   font-family: Roboto, serif;
-  font-weight: 400;
 }
 
-@font-face {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 400;
-  src: url(assets/fonts/Roboto-Regular.ttf);
+.mat-tab-nav-bar {
+  border-bottom: none;
 }
 
-@font-face {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 500;
-  src: url(assets/fonts/Roboto-Medium.ttf);
-}
-
-@font-face {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 600;
-  src: url(assets/fonts/Roboto-Bold.ttf);
-}
-
-@font-face {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 600;
-  src: url(assets/fonts/Roboto-Black.ttf);
+.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #0bbcbc;
 }

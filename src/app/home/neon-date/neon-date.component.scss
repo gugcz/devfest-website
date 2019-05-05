@@ -1,0 +1,72 @@
+path {
+  stroke-dasharray: 1800;
+  opacity: 1;
+  filter: url(#white-text-glow);
+  fill: white;
+  stroke: white;
+  will-change: opacity, fill, stroke-dashoffset;
+  animation-delay: 2s;
+  animation: load 4s cubic-bezier(0.42, 0.0, 0.58, 1.0), flicker 5s infinite 9s step-end;
+  -webkit-animation: load 4s cubic-bezier(0.42, 0.0, 0.58, 1.0), flicker 5s infinite 9s step-end;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  _::-webkit-full-page-media, _:future, :root, path {
+    filter: none;
+  }
+}
+
+@keyframes load {
+
+  0% {
+    opacity: 1;
+    fill: none;
+    stroke-dashoffset: 1800;
+  }
+
+  20% {
+    opacity: 5;
+  }
+
+  30% {
+    opacity: 10;
+  }
+
+  90% {
+    fill: rgba(255, 255, 255, 0)
+  }
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 1;
+  }
+
+  3% {
+    opacity: 0.4;
+  }
+
+  6% {
+    opacity: 1;
+  }
+
+  7% {
+    opacity: 0.4;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  9% {
+    opacity: 0.4;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

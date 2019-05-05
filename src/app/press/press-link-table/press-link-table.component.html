@@ -1,0 +1,14 @@
+<div [@fadeInOut] class="table-box">
+  <div class="title-holder">
+    <div class="title">{{title}}</div>
+  </div>
+  <div class="link-table">
+    <div (click)="goToLink(onelink.link);" *ngFor="let onelink of links" [@fadeInOut] class="one-link">
+      <div class="one-link-in"> {{(onelink.name.length > 30) ? (onelink.name | slice:0:30) + '..' : (onelink.name) }}
+      </div>
+      <div *ngIf="onelink.author" class="author">
+        {{onelink.author}}
+      </div>
+    </div>
+  </div>
+</div>
