@@ -1,6 +1,17 @@
 <h1 mat-dialog-title>FAQ</h1>
 <mat-dialog-content>
-
+  <div class="questions">
+    <div *ngFor="let question of questions | async">
+      <h3>{{question.question}}</h3>
+      <div class="answer">{{question.answer}}</div>
+    </div>
+  </div>
+  <div class="contact">
+    Got question? Contact us on
+    <a class="question-link" href="https://www.facebook.com/events/752518098447370/">Facebook</a>,
+    <a class="question-link" href="https://www.meetup.com/GDGPrague/events/257340706/">Meetup</a> or <a
+    class="question-link" href="mailto:devfest@gug.cz">via email</a>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button [mat-dialog-close]="null" mat-button>Close</button>

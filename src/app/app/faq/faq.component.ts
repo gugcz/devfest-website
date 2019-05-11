@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {AngularFirestore} from '@angular/fire/firestore';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-faq',
@@ -7,10 +9,13 @@ import {Component, OnInit} from '@angular/core';
 })
 export class FaqComponent implements OnInit {
 
-  constructor() {
+  public questions: Observable<FAQ[]>;
+
+  constructor(private angularfirestore: AngularFirestore) {
   }
 
   ngOnInit() {
+    this.questions = this.angularfirestore.collection<FAQ>('faq').valueChanges();
   }
 
 }
