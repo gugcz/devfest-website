@@ -1,5 +1,7 @@
 @import '@angular/material/prebuilt-themes/pink-bluegrey.css';
 @import "colors";
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
 
 html, body {
   width: 100%;
@@ -10,6 +12,7 @@ html, body {
 
 * {
   font-family: Roboto, serif;
+  font-display: auto;
 }
 
 .mat-tab-nav-bar {
@@ -18,4 +21,8 @@ html, body {
 
 .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
   background-color: #0bbcbc;
+}
+
+*{
+  font-family: 'Roboto', sans-serif;
 }
