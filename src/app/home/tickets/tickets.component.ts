@@ -1,12 +1,12 @@
-import {Component, OnInit} from '@angular/core';
-import {AngularFireFunctions} from '@angular/fire/functions';
-import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
-import {TicketGroup} from '../../data/ticket-group';
-import {animate, style, transition, trigger} from '@angular/animations';
-import {InvoiceFormComponent} from '../invoice-form/invoice-form.component';
-import {MatDialog} from '@angular/material/dialog';
-import {TicketGroupView} from './ticket-group-view';
-import {TicketAdditionalInfoComponent} from '../ticket-additional-info/ticket-additional-info.component';
+import { Component, OnInit } from '@angular/core';
+import { AngularFireFunctions } from '@angular/fire/functions';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { TicketGroup } from '../../data/ticket-group';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { InvoiceFormComponent } from '../invoice-form/invoice-form.component';
+import { MatDialog } from '@angular/material/dialog';
+import { TicketGroupView } from './ticket-group-view';
+import { TicketAdditionalInfoComponent } from '../ticket-additional-info/ticket-additional-info.component';
 
 @Component({
   selector: 'app-tickets',
@@ -15,11 +15,11 @@ import {TicketAdditionalInfoComponent} from '../ticket-additional-info/ticket-ad
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [   // :enter is alias to 'void => *'
-        style({opacity: 0}),
-        animate('600ms', style({opacity: 1}))
+        style({ opacity: 0 }),
+        animate('600ms', style({ opacity: 1 }))
       ]),
       transition(':leave', [   // :leave is alias to '* => void'
-        animate('300ms', style({opacity: 0}))
+        animate('300ms', style({ opacity: 0 }))
       ])
     ])
   ]
@@ -46,11 +46,21 @@ export class TicketsComponent implements OnInit {
       ref => ref.orderBy('order'));
     const groups = await this.partnerGroupCollection.get().toPromise();
     this.ticketGroups = groups.docs.map((doc) => {
-      const group = doc.data() as TicketGroupView;
-      group.tickets = group.tickets.map((tic) => {
+      const group = { ...doc.data() } as TicketGroupView;
+      let url = '';
+      group.tickets = group.tickets.map((tic, index) => {
         const titoTic = titoData.filter(one => one.title === tic.titoName);
-        return titoTic.length > 0 ? {publicName: tic.publicName, ...titoTic[0]} : null;
+        if (titoTic.length > 0) {
+          if (index === 0) {
+            url += titoTic[0].url;
+          } else {
+            const parts = titoTic[0].url.split('/');
+            url += (',' + parts[parts.length - 1]);
+          }
+        }
+        return titoTic.length > 0 ? { publicName: tic.publicName, ...titoTic[0] } : null;
       });
+      group.url = url;
       return group;
     });
   }

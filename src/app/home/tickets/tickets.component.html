@@ -37,7 +37,7 @@
            class="ticket-status-sold unactive">
         SOLD OUT
       </div>
-      <a *ngIf="!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active" [href]="ticketGroup.tickets[0].url"
+      <a *ngIf="!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active" [href]="ticketGroup.url"
          class="ticket-status-buy">
         BUY NOW!
       </a>
