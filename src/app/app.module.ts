@@ -11,7 +11,6 @@ import {AngularFirestoreModule} from '@angular/fire/firestore';
 import {DeviceDetectorModule} from 'ngx-device-detector';
 import {MatButtonModule, MatIconModule, MatListModule, MatSidenavModule, MatTabsModule, MatToolbarModule} from '@angular/material';
 import {HttpClientModule} from '@angular/common/http';
-import {NeonLogoMinComponent} from './app/neon-logo-min/neon-logo-min.component';
 import {NavigationComponent} from './app/navigation/navigation.component';
 import {FooterComponent} from './app/footer/footer.component';
 import {ContributePanelComponent} from './app/contribute-panel/contribute-panel.component';
@@ -19,7 +18,6 @@ import {ContributePanelComponent} from './app/contribute-panel/contribute-panel.
 @NgModule({
   declarations: [
     AppComponent,
-    NeonLogoMinComponent,
     NavigationComponent,
     FooterComponent,
     ContributePanelComponent
