@@ -8,6 +8,8 @@ export enum PhotoState {
   Downloaded = 'Downloaded'
 }
 
+declare let gtag;
+
 @Component({
   selector: 'app-partner-logo',
   templateUrl: './partner-logo.component.html',
@@ -36,6 +38,10 @@ export class PartnerLogoComponent implements OnInit {
 
   setVisibilityOfLogo() {
     this.visibility = PhotoState.Downloaded;
+  }
+
+  trackPartnerOutgoing(url) {
+    gtag('event', 'outgoing_partner', {url});
   }
 
 }

@@ -1,4 +1,5 @@
-<a [href]="url" target="_blank"><img (load)="setVisibilityOfLogo()" [@fadeImage]="visibility" [alt]="name"
-                                     [attr.src]="imageUrl | async"
-                                     [style.maxHeight]="main? '200px' : '80px'" [style.maxWidth]="main? '310px' : '200px'"
-                                     class="partner-logo"></a>
+<a (click)="trackPartnerOutgoing(url)" [href]="url" target="_blank"><img (load)="setVisibilityOfLogo()"
+                                                                         [@fadeImage]="visibility" [alt]="name"
+                                                                         [attr.src]="imageUrl | async"
+                                                                         [style.maxHeight]="main? '200px' : '80px'" [style.maxWidth]="main? '310px' : '200px'"
+                                                                         class="partner-logo"></a>
