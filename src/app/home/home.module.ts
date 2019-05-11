@@ -1,8 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {HomeComponent} from './home.component';
-import {NeonLogoComponent} from './neon-logo/neon-logo.component';
-import {NeonDateComponent} from './neon-date/neon-date.component';
 import {TicketAdditionalInfoComponent} from './ticket-additional-info/ticket-additional-info.component';
 import {TicketsComponent} from './tickets/tickets.component';
 import {
@@ -36,9 +34,7 @@ import {TopPartnerPanelComponent} from './top-partner-panel/top-partner-panel.co
   ],
   declarations: [
     HomeComponent,
-    NeonLogoComponent,
     InvoiceFormComponent,
-    NeonDateComponent,
     TicketAdditionalInfoComponent,
     TicketsComponent,
     TopPartnerLogoComponent,

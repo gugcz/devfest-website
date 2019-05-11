@@ -4,7 +4,7 @@
   </header>
   <mat-sidenav #sidenav mode="over">
     <mat-nav-list>
-      <app-neon-logo-min></app-neon-logo-min>
+      <img class="logo" src="assets/devfest-logo.svg"/>
       <a (click)="sidenav.toggle()" *ngFor="let nav of navLinks" [routerLink]="nav.path" mat-list-item>{{nav.label}}</a>
     </mat-nav-list>
   </mat-sidenav>
