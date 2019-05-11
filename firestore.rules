@@ -15,5 +15,8 @@ service cloud.firestore {
     match /pressLinks/{document=**} {
       allow read;
     }
+    match /faq/{document=**} {
+      allow read;
+    }
   }
 }
