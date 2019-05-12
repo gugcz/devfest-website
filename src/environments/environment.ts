@@ -1,11 +1,11 @@
 export const environment = {
   production: false,
   firebase: {
-    apiKey: "AIzaSyC0fQ_CoXIIP-BO-Y72zg_yqdht-n_5a24",
-    authDomain: "devfestcz-test.firebaseapp.com",
-    databaseURL: "https://devfestcz-test.firebaseio.com",
-    projectId: "devfestcz-test",
-    storageBucket: "devfestcz-test.appspot.com",
-    messagingSenderId: "425339957531",
+    apiKey: 'AIzaSyDZYJFycJ-hQUvhHj5IQrSNaZpPz2KeBmA',
+    authDomain: 'devfest-2019-1f996.firebaseapp.com',
+    databaseURL: 'https://devfest-2019-1f996.firebaseio.com',
+    projectId: 'devfest-2019-1f996',
+    storageBucket: 'devfest-2019-1f996.appspot.com',
+    messagingSenderId: '24797806338'
   }
 };
