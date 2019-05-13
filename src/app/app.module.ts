@@ -9,18 +9,28 @@ import {AngularFireStorageModule} from '@angular/fire/storage';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
 import {DeviceDetectorModule} from 'ngx-device-detector';
-import {MatButtonModule, MatIconModule, MatListModule, MatSidenavModule, MatTabsModule, MatToolbarModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatDialogModule,
+  MatIconModule,
+  MatListModule,
+  MatSidenavModule,
+  MatTabsModule,
+  MatToolbarModule
+} from '@angular/material';
 import {HttpClientModule} from '@angular/common/http';
 import {NavigationComponent} from './app/navigation/navigation.component';
 import {FooterComponent} from './app/footer/footer.component';
 import {ContributePanelComponent} from './app/contribute-panel/contribute-panel.component';
+import {FaqComponent} from './app/faq/faq.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavigationComponent,
     FooterComponent,
-    ContributePanelComponent
+    ContributePanelComponent,
+    FaqComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -36,9 +46,11 @@ import {ContributePanelComponent} from './app/contribute-panel/contribute-panel.
     AppRoutingModule,
     MatSidenavModule,
     MatListModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDialogModule
   ],
   providers: [],
+  entryComponents: [FaqComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

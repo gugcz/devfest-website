@@ -1,0 +1,38 @@
+mat-dialog-content {
+  text-align: center;
+}
+
+.question-link {
+  text-decoration: underline;
+  color: white;
+}
+
+.questions {
+  height: 300px;
+  overflow-y: auto;
+}
+
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.answer {
+  text-align: justify;
+}
+
+.contact {
+  margin-top: 30px;
+}
