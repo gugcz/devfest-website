@@ -41,7 +41,7 @@ export class PartnerLogoComponent implements OnInit {
   }
 
   trackPartnerOutgoing(url) {
-    gtag('event', 'outgoing_partner', {url});
+    gtag('event', 'outgoing_partner', {'event_label': url});
   }
 
 }
