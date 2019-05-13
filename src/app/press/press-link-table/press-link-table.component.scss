@@ -1,3 +1,5 @@
+@import '../../../colors';
+
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -36,6 +38,7 @@
 
 .title {
   font-weight: 700;
+  color: $devfest-blue;
 }
 
 .link-table {
