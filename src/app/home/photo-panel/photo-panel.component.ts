@@ -20,7 +20,7 @@ enum PhotoState {
     transition('* <=> *', animate(500))
   ])]
 })
-export class PhotoPanelComponent implements OnInit {
+export class PhotoPanelComponent{
 
   images: Observable<string>[];
   imagesColRef: Observable<Images[]>;
@@ -29,10 +29,6 @@ export class PhotoPanelComponent implements OnInit {
 
   constructor(private afStorage: AngularFireStorage, private afStore: AngularFirestore) {
 
-  }
-
-  ngOnInit() {
-    this.loadImages();
   }
 
   loadImages() {
