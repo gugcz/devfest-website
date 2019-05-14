@@ -31,11 +31,17 @@
   text-align: center;
 }
 
-.containerFourth {
+.container-fourth {
   width: 100%;
   text-align: center;
 
   app-partner-panel {
     width: 100%;
   }
+}
+
+.container-photo {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  min-width: 100%;
 }

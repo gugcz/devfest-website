@@ -17,6 +17,8 @@ import {InvoiceFormComponent} from './invoice-form/invoice-form.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TopPartnerLogoComponent} from './top-partner-logo/top-partner-logo.component';
 import {TopPartnerPanelComponent} from './top-partner-panel/top-partner-panel.component';
+import {PhotoPanelComponent} from './photo-panel/photo-panel.component';
+import { LazyDirective } from './lazy.directive';
 
 @NgModule({
   imports: [
@@ -38,7 +40,9 @@ import {TopPartnerPanelComponent} from './top-partner-panel/top-partner-panel.co
     TicketAdditionalInfoComponent,
     TicketsComponent,
     TopPartnerLogoComponent,
-    TopPartnerPanelComponent
+    TopPartnerPanelComponent,
+    PhotoPanelComponent,
+    LazyDirective
   ],
   entryComponents: [
     TicketAdditionalInfoComponent,
