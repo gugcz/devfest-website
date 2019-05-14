@@ -1,9 +1,9 @@
-<div class="panel-holder">
+<div class="panel-holder" (lazyLoad)="loadImages()">
   <div class="photos-holder">
     <div (click)="goToGallery()" class="more-photos-info">
       <h1>Click to see more photos</h1>
     </div>
-    <div class="mover">
+    <div class="mover" >
       <img *ngFor="let image of images; let i = index"
         [ngClass]="i == 0 ? 'first': 'second'"
         (load)="setVisibilityOfImage(i)"
