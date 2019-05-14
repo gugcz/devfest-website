@@ -8,24 +8,31 @@
 
 .photos-holder {
   float: left;
-  min-width: 100%;
+  min-width: 1000px;
   height: 100%;
   position: relative;
-  transform: translate3d(0, 0, 0);
-
-  img {
-    transition: .3s all;
-  }
+  overflow: hidden;
 
   .mover {
-    width: min-content;
-    position: absolute;
-    top: 0;
-    left: 0;
+    transition: 0.3s all;
+    width: max-content;
     height: 100%;
     overflow: hidden;
-    transform: translate3d(0, 0, 0);
-    animation: moveSlideshow 12s linear infinite;
+
+    .first {
+      transform: translate3d(0, 0, 0);
+      -webkit-animation: moving 270s linear infinite;
+      -moz-animation: moving 270s linear infinite;
+      -ms-animation: moving 270s linear infinite;
+      -o-animation: moving 270s linear infinite;
+      animation: moving 270s linear infinite;
+    }
+
+    img{
+      height: 100%;
+      opacity: 0;
+    }
+
   }
 
   .more-photos-info {
@@ -33,7 +40,8 @@
     z-index: 2;
     position: absolute;
     width: 100vw;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
     left: 0;
     opacity: 0;
   }
@@ -42,9 +50,9 @@
 .photos-holder:hover {
   cursor: pointer;
 
-  img {
+  .mover {
     filter: blur(0px) grayscale(50%);
-    -webkit-filter: blur(7px) grayscale(50%);
+    -webkit-filter: blur(9px) grayscale(70%) brightness(40%);
   }
 
   .more-photos-info {
@@ -52,7 +60,11 @@
   }
 }
 
-.photo {
-  display: inline-block;
-  height: 100%;
+@keyframes moving {
+  0% {
+    margin-left: 0px;
+  }
+  100% {
+    margin-left: -100%;
+  }
 }
