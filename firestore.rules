@@ -18,5 +18,8 @@ service cloud.firestore {
     match /faq/{document=**} {
       allow read;
     }
+    match /images/{document=**} {
+      allow read;
+    }
   }
 }
