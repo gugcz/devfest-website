@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { Images } from 'src/app/data/images';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
-enum PhotoState {
+export enum PhotoState {
   Loading = 'Loading',
   Downloaded = 'Downloaded'
 }
