@@ -49,7 +49,7 @@ export class TicketsComponent implements OnInit {
       const group = { ...doc.data() } as TicketGroupView;
       let url = '';
       group.tickets = group.tickets.map((tic, index) => {
-        const titoTic = titoData.filter(one => one.title === tic.titoName);
+        const titoTic = titoData.filter(one => one.title === tic.titoName && one.sold_out === false);
         if (titoTic.length > 0) {
           if (index === 0) {
             url += titoTic[0].url;
