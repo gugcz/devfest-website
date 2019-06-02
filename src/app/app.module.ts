@@ -19,10 +19,10 @@ import {
   MatToolbarModule
 } from '@angular/material';
 import {HttpClientModule} from '@angular/common/http';
-import {NavigationComponent} from './app/navigation/navigation.component';
-import {FooterComponent} from './app/footer/footer.component';
-import {ContributePanelComponent} from './app/contribute-panel/contribute-panel.component';
-import {FaqComponent} from './app/faq/faq.component';
+import {NavigationComponent} from './core/navigation/navigation.component';
+import {FooterComponent} from './core/footer/footer.component';
+import {ContributePanelComponent} from './core/contribute-panel/contribute-panel.component';
+import {FaqComponent} from './core/faq/faq.component';
 
 @NgModule({
   declarations: [
