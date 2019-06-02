@@ -10,6 +10,7 @@
     transform: translate(-50%, -50%);
     width: 90%;
     max-width: 850px;
+    animation: fadein 2s;
   }
 
   .socials {
@@ -44,4 +45,9 @@
   margin-top: 30px;
   margin-bottom: 30px;
   min-width: 100%;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
