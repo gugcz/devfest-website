@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { Images } from 'src/app/data/images';
+import Images from 'src/app/data/images';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import config from 'src/config';
 
 export enum PhotoState {
   Loading = 'Loading',
@@ -20,7 +21,7 @@ export enum PhotoState {
     transition('* <=> *', animate(500))
   ])]
 })
-export class PhotoPanelComponent{
+export class PhotoPanelComponent {
 
   images: Observable<string>[];
   imagesColRef: Observable<Images[]>;
@@ -51,8 +52,8 @@ export class PhotoPanelComponent{
     this.visibilityOfPhoto[index] = PhotoState.Downloaded;
   }
 
-  goToGallery(){
-    window.open('https://photos.app.goo.gl/HZVpzAtDejCNnqUXA', '_blank');
+  goToGallery() {
+    window.open(config.photos, '_blank');
   }
 
 }

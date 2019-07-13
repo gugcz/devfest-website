@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Social} from '../../data/social';
+import Social from '../../data/social';
 
 @Component({
   selector: 'app-member-panel',

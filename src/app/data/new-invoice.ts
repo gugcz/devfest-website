@@ -1,4 +1,4 @@
-export interface NewInvoice {
+export default interface NewInvoice {
   countTicketsNormal?: number;
   countTicketsVIP?: number;
   email: string;

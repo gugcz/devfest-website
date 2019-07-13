@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
-import {PressLink} from '../../data/press-link';
+import PressLink from '../../data/press-link';
 
 @Component({
   selector: 'app-press-link-table',

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 import {Observable} from 'rxjs';
-import {Partner} from '../data/partner';
+import Partner from '../data/partner';
 
 @Component({
   selector: 'app-partners',

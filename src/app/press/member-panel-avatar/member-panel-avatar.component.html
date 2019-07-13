@@ -1,12 +1,10 @@
 <div *ngIf="(photoUrl && photoUrlCringe) | async" [@fadeInOut] class="member-card">
   <div (mouseleave)="setNormal()" (mouseover)="setCringe()" style="padding-top: 53px">
     <div class="photo-holder">
-      <img (load)="changePhotoVisibilityNormal()" [@fadeImage]="visibilityPhotoNormal"
-           [alt]="name" [attr.src]="photoUrl | async"
-           class="photo">
+      <img (load)="changePhotoVisibilityNormal()" [@fadeImage]="visibilityPhotoNormal" [attr.src]="photoUrl | async"
+        class="photo">
       <img (load)="changePhotoVisibilityCringe()" [@fadeImage]="visibilityPhotoCringe"
-           [alt]="name" [attr.src]="photoUrlCringe | async"
-           class="photo">
+        [attr.src]="photoUrlCringe | async" class="photo">
     </div>
   </div>
 </div>

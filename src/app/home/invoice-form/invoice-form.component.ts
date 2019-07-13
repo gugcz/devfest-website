@@ -5,7 +5,7 @@ import {TicketView} from '../tickets/ticket-view';
 import {HttpClient} from '@angular/common/http';
 import {MatDialogRef} from '@angular/material/dialog';
 import {FormControl, Validators} from '@angular/forms';
-import {NewInvoice} from '../../data/new-invoice';
+import NewInvoice from '../../data/new-invoice';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
@@ -20,7 +20,6 @@ interface Country {
   styleUrls: ['./invoice-form.component.scss']
 })
 export class InvoiceFormComponent implements OnInit {
-
 
   currentCompanyPrice: number;
   currentCompanyPriceE: number;
