@@ -25,6 +25,10 @@ import config from 'src/config';
 export class HomeComponent implements OnInit {
 
   hideTickets = config.hideTickets;
+  mailFormLink = config.mailFormLink;
+  twitterLink = config.twitter;
+  facebookLink = config.facebook;
+  instagramLink = config.instagram;
   partners: Observable<Partner[]>;
   private partnersCollection: AngularFirestoreCollection<Partner>;
 
