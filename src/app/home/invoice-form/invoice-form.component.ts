@@ -21,7 +21,6 @@ interface Country {
 })
 export class InvoiceFormComponent implements OnInit {
 
-
   currentCompanyPrice: number;
   currentCompanyPriceE: number;
   currentVIPPrice: number;

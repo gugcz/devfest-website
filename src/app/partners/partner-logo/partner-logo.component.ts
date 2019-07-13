@@ -17,7 +17,7 @@ declare let gtag;
   animations: [trigger('fadeImage', [
     state(PhotoState.Loading, style({opacity: 0})),
     state(PhotoState.Downloaded, style({opacity: 1})),
-    transition('* <=> *', animate(200))
+    transition('* <=> *', animate(400))
   ])]
 })
 export class PartnerLogoComponent implements OnInit {
@@ -41,7 +41,7 @@ export class PartnerLogoComponent implements OnInit {
   }
 
   trackPartnerOutgoing(url) {
-    gtag('event', 'outgoing_partner', {'event_label': url});
+    gtag('event', 'outgoing_partner', {event_label: url});
   }
 
 }
