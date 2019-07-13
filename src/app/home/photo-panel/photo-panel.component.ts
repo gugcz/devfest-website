@@ -21,7 +21,7 @@ export enum PhotoState {
     transition('* <=> *', animate(500))
   ])]
 })
-export class PhotoPanelComponent{
+export class PhotoPanelComponent {
 
   images: Observable<string>[];
   imagesColRef: Observable<Images[]>;
@@ -52,7 +52,7 @@ export class PhotoPanelComponent{
     this.visibilityOfPhoto[index] = PhotoState.Downloaded;
   }
 
-  goToGallery(){
+  goToGallery() {
     window.open(config.photos, '_blank');
   }
 
