@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {PressLink} from '../data/press-link';
+import PressLink from '../data/press-link';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {TeamMember} from '../data/team-member';
 import {map} from 'rxjs/operators';

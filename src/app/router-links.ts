@@ -1,4 +1,4 @@
-export const navLinks = [
+export default [
   {
     path: 'home',
     label: 'Home'

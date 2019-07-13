@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {navLinks} from './router-links';
+import navLinks from './router-links';
 
 @Component({
   selector: 'app-root',

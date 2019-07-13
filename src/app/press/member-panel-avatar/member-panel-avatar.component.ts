@@ -1,5 +1,5 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
-import {Social} from '../../data/social';
+import Social from '../../data/social';
 import {Observable} from 'rxjs';
 import {AngularFireStorage} from '@angular/fire/storage';
 import {SocialIconsService} from '../../services/social-icons.service';

@@ -1,4 +1,6 @@
-export interface Partner {
+import Company from "./company";
+
+export default interface Partner {
   name: string;
   order: number;
   top: boolean;
@@ -6,8 +8,3 @@ export interface Partner {
   companies: Company[];
 }
 
-export interface Company {
-  name: string;
-  url: string;
-  photoPath: string;
-}

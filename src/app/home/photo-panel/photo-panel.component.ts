@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { Images } from 'src/app/data/images';
+import Images from 'src/app/data/images';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 export enum PhotoState {
