@@ -4,6 +4,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import Images from 'src/app/data/images';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import config from 'src/config';
 
 export enum PhotoState {
   Loading = 'Loading',
@@ -52,7 +53,7 @@ export class PhotoPanelComponent{
   }
 
   goToGallery(){
-    window.open('https://photos.app.goo.gl/HZVpzAtDejCNnqUXA', '_blank');
+    window.open(config.photos, '_blank');
   }
 
 }

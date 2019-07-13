@@ -9,5 +9,6 @@ export default {
     facebookEvent: 'https://www.facebook.com/events/752518098447370/',
     meetupEvent: 'https://www.meetup.com/GDGPrague/events/257340706/',
     email: 'devfest@gug.cz',
-    partnersEmail: ''
+    partnersEmail: 'jiri.bartusek@gug.cz',
+    photos: 'https://photos.app.goo.gl/HZVpzAtDejCNnqUXA'
 };
