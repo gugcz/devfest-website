@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {PressLink} from '../data/press-link';
+import PressLink from '../data/press-link';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {TeamMember} from '../data/team-member';
 import {map} from 'rxjs/operators';
+import config from 'src/config';
 
 @Component({
   selector: 'app-press',
@@ -15,7 +16,7 @@ export class PressComponent implements OnInit {
   releases: Observable<PressLink[]>;
   wrote: Observable<PressLink[]>;
   team: Observable<TeamMember[]>;
-
+  publicGraphicLink = config.publicGraphicLink;
 
   constructor(private firestore: AngularFirestore) {
   }

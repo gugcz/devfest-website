@@ -8,9 +8,9 @@
   </div>
   <div class="contact">
     Got questions? Contact us on
-    <a class="question-link" href="https://www.facebook.com/events/752518098447370/">Facebook</a>,
-    <a class="question-link" href="https://www.meetup.com/GDGPrague/events/257340706/">Meetup</a> or <a
-    class="question-link" href="mailto:devfest@gug.cz">via email</a>
+    <a class="question-link" [href]="facebookEvent">Facebook</a>,
+    <a class="question-link" [href]="meetupEvent">Meetup</a> or <a
+    class="question-link" [href]="'mailto:' + email">via email</a>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

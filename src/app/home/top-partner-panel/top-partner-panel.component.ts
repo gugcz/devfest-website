@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Company} from '../../data/partner';
+import Company from '../../data/company';
 import {animate, style, transition, trigger} from '@angular/animations';
 
 @Component({

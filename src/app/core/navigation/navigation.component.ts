@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, Output} from '@angular/core';
 import {Event, NavigationEnd, Router} from '@angular/router';
 import {DeviceDetectorService} from 'ngx-device-detector';
-import {navLinks} from '../../router-links';
+import navLinks from '../../router-links';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {filter, map} from 'rxjs/operators';
 import {fromEvent} from 'rxjs';

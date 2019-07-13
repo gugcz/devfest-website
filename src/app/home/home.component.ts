@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 import {Observable} from 'rxjs';
-import {Partner} from '../data/partner';
+import Partner from '../data/partner';
 import {SocialIconsService} from '../services/social-icons.service';
 import {animate, style, transition, trigger} from '@angular/animations';
+import config from 'src/config';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +24,11 @@ import {animate, style, transition, trigger} from '@angular/animations';
 })
 export class HomeComponent implements OnInit {
 
-
+  hideTickets = config.hideTickets;
+  mailFormLink = config.mailFormLink;
+  twitterLink = config.twitter;
+  facebookLink = config.facebook;
+  instagramLink = config.instagram;
   partners: Observable<Partner[]>;
   private partnersCollection: AngularFirestoreCollection<Partner>;
 

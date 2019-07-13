@@ -17,8 +17,7 @@
           </div>
         </div>
         <div style="width: 100%; text-align: center">
-          <a color="primary" href="https://drive.google.com/open?id=1PIsjLfEScJkuONKGE7zQerhTJ1_61NCl" mat-raised-button
-             target="_blank">
+          <a class="p-button" color="primary" [href]="publicGraphicLink" mat-raised-button target="_blank">
             Graphics to download
           </a>
 
@@ -27,11 +26,9 @@
       <div style="flex-basis: 700px;">
         <div *ngFor="let member of team | async" class="member">
           <app-member-panel [email]="member.email" [name]="member.name" [phone]="member.phone"
-                            [photoPathCringe]="member.photoPathCringe" [photoPath]="member.photoPath"
-                            [position]="member.position"
-                            [socials]="member.socials ? member.socials : null"></app-member-panel>
+            [photoPathCringe]="member.photoPathCringe" [photoPath]="member.photoPath" [position]="member.position"
+            [socials]="member.socials ? member.socials : null"></app-member-panel>
         </div>
       </div>
-
     </div>
   </div>

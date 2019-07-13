@@ -2,7 +2,7 @@ import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {AngularFireStorage} from '@angular/fire/storage';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {Social} from '../../data/social';
+import Social from '../../data/social';
 import {SocialIconsService} from '../../services/social-icons.service';
 
 export enum PhotoVisibilityState {
