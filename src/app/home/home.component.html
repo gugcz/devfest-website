@@ -1,7 +1,7 @@
 <div class="container">
   <div class="logo-date-holder">
-    <img alt="Devfest logo" src="assets/devfest-logo.svg"/>
-    <img alt="Devfest date" src="assets/devfest-logo-time.svg"/>
+    <img alt="Devfest logo" src="assets/devfest-logo.svg" />
+    <img alt="Devfest date" src="assets/devfest-logo-time.svg" />
   </div>
   <div class="socials">
     <a href="https://twitter.com/devfest_cz" mat-icon-button target="_blank">
@@ -20,7 +20,7 @@
     <h1>I want to be there!</h1>
   </a>
 </div>
-<div class="tickets">
+<div class="tickets" *ngIf="!hideTickets">
   <div>
     <h1>Tickets</h1>
     <app-tickets></app-tickets>
@@ -28,7 +28,7 @@
 </div>
 <div class="container-fourth">
   <app-top-partner-panel *ngFor="let partner of partners | async" [companies]="partner.companies"
-                         [groupName]="partner.name" [main]="true"></app-top-partner-panel>
+    [groupName]="partner.name" [main]="true"></app-top-partner-panel>
 </div>
 <div class="container-photo">
   <app-photo-panel></app-photo-panel>

@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {Partner} from '../data/partner';
 import {SocialIconsService} from '../services/social-icons.service';
 import {animate, style, transition, trigger} from '@angular/animations';
+import config from 'src/config';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +24,7 @@ import {animate, style, transition, trigger} from '@angular/animations';
 })
 export class HomeComponent implements OnInit {
 
-
+  hideTickets = config.hideTickets;
   partners: Observable<Partner[]>;
   private partnersCollection: AngularFirestoreCollection<Partner>;
 
