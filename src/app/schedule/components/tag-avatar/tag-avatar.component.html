@@ -1,3 +1,5 @@
-<img class="image" (lazyLoad)="loadImage()" [attr.src]="imageUrl | async" (load)="changePhotoDownloadState()" [@photoVisible]="downloadedPhoto"
+<img class="image" (click)="avatarClicked.emit()" (lazyLoad)="loadImage()" [attr.src]="imageUrl | async"
+  (load)="changePhotoDownloadState()" [@photoVisible]="downloadedPhoto"
+  [@widthHover]="hovered"
   [style.boxShadow]="'0 0 10px' + tagColor + ', 0 0 5px ' + tagColor + ', 0 0 2px ' + tagColor + ', 0 0 1px ' + tagColor"
-  [alt]="name">
+  [style.cursor]="hovered ? 'pointer' : 'default'" (mouseover)="enableHover()" (mouseout)="disableHover()" [alt]="name">
