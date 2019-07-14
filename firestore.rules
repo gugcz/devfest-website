@@ -21,5 +21,14 @@ service cloud.firestore {
     match /images/{document=**} {
       allow read;
     }
+    match /tags/{document=**} {
+      allow read;
+    }
+    match /speakers/{document=**} {
+      allow read;
+    }
+    match /talks/{document**} {
+      allow read;
+    }
   }
 }

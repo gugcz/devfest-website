@@ -1,3 +1,3 @@
-<p>
-  tag-avatar works!
-</p>
+<img class="image" [attr.src]="imageUrl | async" 
+[style.border]="'10px solid ' + tagColor" 
+[style.boxShadow]="'0 0 10px' + tagColor + ', 0 0 5px ' + tagColor + ', 0 0 2px ' + tagColor + ', 0 0 1px ' + tagColor">
