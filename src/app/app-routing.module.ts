@@ -19,8 +19,8 @@ const routes: Routes = [
     loadChildren: './press/press.module#PressModule'
   },
   {
-    path: 'speakers',
-    loadChildren: './speakers/speakers.module#SpeakersModule'
+    path: 'schedule',
+    loadChildren: './schedule/schedule.module#ScheduleModule'
   },
   { path: '**', redirectTo: 'home' }
 ];
