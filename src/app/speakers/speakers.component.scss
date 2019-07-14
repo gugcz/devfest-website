@@ -1,0 +1,19 @@
+.container {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.wrapper {
+  padding-top: 60px;
+}
+
+.speakers-cont {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.member {
+  flex-basis: 320px;
+}
