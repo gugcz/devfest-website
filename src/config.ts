@@ -10,5 +10,6 @@ export default {
     meetupEvent: 'https://www.meetup.com/GDGPrague/events/257340706/',
     email: 'devfest@gug.cz',
     partnersEmail: 'jiri.bartusek@gug.cz',
-    photos: 'https://photos.app.goo.gl/HZVpzAtDejCNnqUXA'
+    photos: 'https://photos.app.goo.gl/HZVpzAtDejCNnqUXA',
+    cfpFormLink: 'https://forms.gle/S9rGE6X2ST4bR5x86'
 };
