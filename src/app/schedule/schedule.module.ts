@@ -8,6 +8,7 @@ import { SpeakerCardComponent } from './components/speaker-card/speaker-card.com
 import { LazyDirective } from './lazy.directive';
 import { MatDialogModule } from '@angular/material';
 import { SpeakerDetailComponent } from './components/speaker-detail/speaker-detail.component';
+import { DeviceDetectorModule } from 'ngx-device-detector';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,11 @@ import { SpeakerDetailComponent } from './components/speaker-detail/speaker-deta
   imports: [
     CommonModule,
     ScheduleRoutingModule,
-    MatDialogModule
+    MatDialogModule,
+    DeviceDetectorModule
+  ],
+  entryComponents: [
+    SpeakerDetailComponent
   ]
 })
 export class ScheduleModule { }

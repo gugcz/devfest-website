@@ -27,7 +27,7 @@ service cloud.firestore {
     match /speakers/{document=**} {
       allow read;
     }
-    match /talks/{document**} {
+    match /talks/{document=**} {
       allow read;
     }
   }

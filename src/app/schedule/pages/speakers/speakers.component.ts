@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import Speaker from 'src/app/data/speaker';
 
 @Component({
   selector: 'app-speakers',
@@ -7,9 +10,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SpeakersComponent implements OnInit {
 
-  constructor() { }
+  speakers: Observable<Speaker[]>;
+
+  constructor(private firestore: AngularFirestore) { }
 
   ngOnInit() {
+    this.speakers = this.firestore.collection<Speaker>('speakers').valueChanges();
   }
 
 }

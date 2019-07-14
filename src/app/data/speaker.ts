@@ -5,7 +5,6 @@ export default interface Speaker {
     name: string;
     companyPosition: string;
     company: string;
-    companyPhotoPath: string;
     photoPath: string;
     socials: Social[];
     bio: string;

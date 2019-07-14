@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import Tag from 'src/app/data/tag';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { MatDialog } from '@angular/material';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { SpeakerDetailComponent } from '../speaker-detail/speaker-detail.component';
 
 @Component({
   selector: 'app-speaker-card',
@@ -27,12 +29,31 @@ export class SpeakerCardComponent implements OnInit {
   @Input() imagePath: string;
   @Input() tag: Tag;
 
-  constructor(private matDialog: MatDialog) { }
+  private isMobile: boolean;
+
+  constructor(private matDialog: MatDialog, private deviceService: DeviceDetectorService) {
+    this.isMobile = this.deviceService.isMobile();
+  }
+
 
   ngOnInit() {
   }
 
   openSpeakerDetail() {
-
+    const config = {
+      data: {
+        ref: this.speakerRef
+      }
+    };
+    const mobiconfig = {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      data: {
+        ref: this.speakerRef
+      }
+    };
+    this.matDialog.open(SpeakerDetailComponent, this.isMobile ? mobiconfig : config);
   }
 }
