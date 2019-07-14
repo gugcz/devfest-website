@@ -27,11 +27,14 @@ export class TagAvatarComponent implements AfterViewInit {
   constructor(private fireStorage: AngularFireStorage) { }
 
   ngAfterViewInit() {
-    this.imageUrl = this.fireStorage.ref(this.firestorageImagePath).getDownloadURL();
   }
 
   changePhotoDownloadState() {
     this.downloadedPhoto = true;
+  }
+
+  loadImage(){
+    this.imageUrl = this.fireStorage.ref(this.firestorageImagePath).getDownloadURL();
   }
 
 }

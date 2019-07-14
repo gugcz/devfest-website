@@ -5,13 +5,15 @@ import { SpeakersComponent } from './pages/speakers/speakers.component';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { TagAvatarComponent } from './components/tag-avatar/tag-avatar.component';
 import { SpeakerCardComponent } from './components/speaker-card/speaker-card.component';
+import { LazyDirective } from './lazy.directive';
 
 @NgModule({
   declarations: [
     SpeakersComponent,
     ScheduleComponent,
     TagAvatarComponent,
-    SpeakerCardComponent
+    SpeakerCardComponent,
+    LazyDirective
   ],
   imports: [
     CommonModule,
