@@ -4,9 +4,15 @@ import { ScheduleRoutingModule } from './schedule-routing.module';
 import { SpeakersComponent } from './pages/speakers/speakers.component';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { TagAvatarComponent } from './components/tag-avatar/tag-avatar.component';
+import { SpeakerCardComponent } from './components/speaker-card/speaker-card.component';
 
 @NgModule({
-  declarations: [SpeakersComponent, ScheduleComponent, TagAvatarComponent],
+  declarations: [
+    SpeakersComponent,
+    ScheduleComponent,
+    TagAvatarComponent,
+    SpeakerCardComponent
+  ],
   imports: [
     CommonModule,
     ScheduleRoutingModule

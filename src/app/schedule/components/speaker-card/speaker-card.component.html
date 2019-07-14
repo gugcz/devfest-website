@@ -1,0 +1,9 @@
+<div class="speaker-holder" [@fadeInOut]>
+  <div class="header">
+    <h3>{{speakerName}}</h3>
+    <h5>{{companyName}}</h5>
+  </div>
+  <div class="image">
+    <app-tag-avatar [firestorageImagePath]="imagePath" [name]="speakerName" [tagColor]="tag"></app-tag-avatar>
+  </div>
+</div>
