@@ -41,6 +41,8 @@ export class SpeakerCardComponent implements OnInit {
 
   openSpeakerDetail() {
     const config = {
+      width: '800px',
+      height: '500px',
       data: {
         ref: this.speakerRef
       }

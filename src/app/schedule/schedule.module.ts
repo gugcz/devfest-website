@@ -6,7 +6,7 @@ import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { TagAvatarComponent } from './components/tag-avatar/tag-avatar.component';
 import { SpeakerCardComponent } from './components/speaker-card/speaker-card.component';
 import { LazyDirective } from './lazy.directive';
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule, MatButtonModule } from '@angular/material';
 import { SpeakerDetailComponent } from './components/speaker-detail/speaker-detail.component';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 
@@ -23,7 +23,8 @@ import { DeviceDetectorModule } from 'ngx-device-detector';
     CommonModule,
     ScheduleRoutingModule,
     MatDialogModule,
-    DeviceDetectorModule
+    DeviceDetectorModule,
+    MatButtonModule
   ],
   entryComponents: [
     SpeakerDetailComponent

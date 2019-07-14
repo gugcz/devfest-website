@@ -1,3 +1,24 @@
-<p>
-  speaker-detail works!
-</p>
+<div *ngIf="speaker | async as speak" [@fadeInOut]>
+  <h1 mat-dialog-title>{{speak.name}}</h1>
+  <mat-dialog-content>
+    <div class="holder">
+      <div class="wrapper">
+        <div class="left-info">
+          <div class="avatar-holder">
+            <app-tag-avatar [firestorageImagePath]="speak.photoPath" [name]="speak.name" [tagColor]="speak.tagColor">
+            </app-tag-avatar>
+          </div>
+          <h4>
+            {{speak.company}}
+          </h4>
+          <h4>
+            {{speak.companyPosition}}
+          </h4>
+        </div>
+        <div class="right-info">
+          {{speak.bio}}
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+</div>

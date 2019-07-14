@@ -1,0 +1,27 @@
+.holder {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+
+.left-info{
+    margin: 5px;
+    flex-basis: 150px;
+}
+
+.right-info{
+    margin: 5px;
+    flex-basis: 550px;
+}
+
+.avatar-holder{
+    height: 160px;
+}
