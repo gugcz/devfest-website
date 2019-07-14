@@ -15,7 +15,7 @@ export class SpeakersComponent implements OnInit {
   constructor(private firestore: AngularFirestore) { }
 
   ngOnInit() {
-    this.speakers = this.firestore.collection<Speaker>('speakers').valueChanges();
+    this.speakers = this.firestore.collection<Speaker>('speakers').valueChanges({idField: 'id'})
   }
 
 }
