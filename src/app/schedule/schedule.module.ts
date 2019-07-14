@@ -6,6 +6,8 @@ import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { TagAvatarComponent } from './components/tag-avatar/tag-avatar.component';
 import { SpeakerCardComponent } from './components/speaker-card/speaker-card.component';
 import { LazyDirective } from './lazy.directive';
+import { MatDialogModule } from '@angular/material';
+import { SpeakerDetailComponent } from './components/speaker-detail/speaker-detail.component';
 
 @NgModule({
   declarations: [
@@ -13,11 +15,13 @@ import { LazyDirective } from './lazy.directive';
     ScheduleComponent,
     TagAvatarComponent,
     SpeakerCardComponent,
-    LazyDirective
+    LazyDirective,
+    SpeakerDetailComponent
   ],
   imports: [
     CommonModule,
-    ScheduleRoutingModule
+    ScheduleRoutingModule,
+    MatDialogModule
   ]
 })
 export class ScheduleModule { }

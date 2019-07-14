@@ -4,6 +4,7 @@
     <h5>{{companyName}}</h5>
   </div>
   <div class="image">
-    <app-tag-avatar [firestorageImagePath]="imagePath" [name]="speakerName" [tagColor]="tag"></app-tag-avatar>
+    <app-tag-avatar [hoverEnabled]="true" (avatarClicked)="openSpeakerDetail()" [firestorageImagePath]="imagePath" [name]="speakerName"
+      [tagColor]="tag"></app-tag-avatar>
   </div>
 </div>

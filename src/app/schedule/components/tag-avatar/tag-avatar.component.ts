@@ -25,7 +25,7 @@ export class TagAvatarComponent implements AfterViewInit {
   @Input() firestorageImagePath = 'speakers/no-image.jpg';
   @Input() tagColor = '#fff';
   @Input() name: string;
-  @Input() hoverEnabled = true;
+  @Input() hoverEnabled = false;
   @Output() avatarClicked = new EventEmitter<void>();
 
   public imageUrl: Observable<string>;
