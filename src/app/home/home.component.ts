@@ -29,6 +29,7 @@ export class HomeComponent implements OnInit {
   twitterLink = config.twitter;
   facebookLink = config.facebook;
   instagramLink = config.instagram;
+  cfpFormLink = config.cfpFormLink;
   partners: Observable<Partner[]>;
   private partnersCollection: AngularFirestoreCollection<Partner>;
 
