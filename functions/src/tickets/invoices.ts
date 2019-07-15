@@ -49,7 +49,7 @@ export const newInvoiceRequest = functions.firestore.document('invoiceRequests/{
         });
         const downloaded = await fakturoid.downloadInvoiceById(invoice.id);
         const mail = await sendgrid.sendInvoiceInEmail(downloaded, email);
-        if (mail === true) {
+        if (mail) {
             await snap.ref.update({
                 invoiceSended: true
             })
