@@ -1,6 +1,6 @@
 <div class="speaker-holder" *ngIf="speaker | async as speak" [@fadeInOut]>
-  <h1 mat-dialog-title>{{speak.name}}</h1>
   <mat-dialog-content>
+    <h1>{{speak.name}}</h1>
     <div class="holder">
       <div class="wrapper">
         <div class="left-info">
@@ -14,6 +14,12 @@
           <h4>
             {{speak.companyPosition}}
           </h4>
+          <div *ngIf="speak.socials" class="socials">
+            <a tabindex="-1" *ngFor="let social of speak.socials | socials" [disableRipple]="true" [href]="social.url"
+              mat-icon-button target="_blank">
+              <mat-icon [svgIcon]="social.key"></mat-icon>
+            </a>
+          </div>
         </div>
         <div class="right-info">
           <div class="bio">
@@ -30,5 +36,6 @@
         </div>
       </div>
     </div>
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial>CLOSE</button>
   </mat-dialog-content>
 </div>

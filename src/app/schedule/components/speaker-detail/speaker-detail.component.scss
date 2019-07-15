@@ -16,11 +16,11 @@
   flex-basis: 150px;
 }
 
-mat-dialog-content{
+mat-dialog-content {
   max-height: 100% !important;
 }
 
-p{
+p {
   text-align: justify;
 }
 
@@ -33,6 +33,16 @@ p{
   height: 160px;
 }
 
-.speaker-holder{
+.socials {
+  .mat-icon-button-focus-overlay { background-color: transparent!important; }
+
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.speaker-holder {
   height: 100%;
 }

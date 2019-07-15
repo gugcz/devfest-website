@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import Speaker from 'src/app/data/speaker';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { SocialIconsService } from 'src/app/services/social-icons.service';
 
 @Component({
   selector: 'app-speaker-detail',
@@ -25,10 +26,9 @@ export class SpeakerDetailComponent implements OnInit {
 
   public speaker: Observable<Speaker>;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private firestore: AngularFirestore) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private firestore: AngularFirestore, private socials: SocialIconsService) { }
 
   ngOnInit() {
-    console.log(this.data.ref);
     this.speaker = this.firestore.collection('speakers').doc<Speaker>(this.data.ref).valueChanges();
   }
 
