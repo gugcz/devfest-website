@@ -1,4 +1,4 @@
-<div *ngIf="speaker | async as speak" [@fadeInOut]>
+<div class="speaker-holder" *ngIf="speaker | async as speak" [@fadeInOut]>
   <h1 mat-dialog-title>{{speak.name}}</h1>
   <mat-dialog-content>
     <div class="holder">
@@ -16,7 +16,17 @@
           </h4>
         </div>
         <div class="right-info">
-          {{speak.bio}}
+          <div class="bio">
+            <p>
+              {{speak.bio}}
+            </p>
+          </div>
+          <div class="talk">
+            <h3>{{speak.talkName}}</h3>
+            <p>
+              {{speak.talkDescription}}
+            </p>
+          </div>
         </div>
       </div>
     </div>

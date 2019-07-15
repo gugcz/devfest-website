@@ -8,20 +8,31 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-evenly;
 }
 
-
-.left-info{
-    margin: 5px;
-    flex-basis: 150px;
+.left-info {
+  margin: 5px;
+  flex-basis: 150px;
 }
 
-.right-info{
-    margin: 5px;
-    flex-basis: 550px;
+mat-dialog-content{
+  max-height: 100% !important;
 }
 
-.avatar-holder{
-    height: 160px;
+p{
+  text-align: justify;
+}
+
+.right-info {
+  margin: 5px;
+  flex-basis: 550px;
+}
+
+.avatar-holder {
+  height: 160px;
+}
+
+.speaker-holder{
+  height: 100%;
 }
