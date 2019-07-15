@@ -8,6 +8,10 @@ export default [
     label: 'Team'
   },
   {
+    path: 'schedule/speakers',
+    label: 'Speakers'
+  },
+  {
     path: 'press',
     label: 'Press'
   },
