@@ -4,7 +4,7 @@
   </div>
   <div class="link-table">
     <div (click)="goToLink(onelink.link);" *ngFor="let onelink of links" [@fadeInOut] class="one-link">
-      <div class="one-link-in"> {{(onelink.name.length > 30) ? (onelink.name | slice:0:30) + '..' : (onelink.name) }}
+      <div class="one-link-in" [style.width]="isMobile ? '250px' : '430px'">{{onelink.name}}
       </div>
       <div *ngIf="onelink.author" class="author">
         {{onelink.author}}

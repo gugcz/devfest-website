@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 import PressLink from '../../data/press-link';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-press-link-table',
@@ -23,7 +24,10 @@ export class PressLinkTableComponent {
   @Input() links: PressLink[];
   @Input() title: string;
 
-  constructor() {
+  public isMobile: boolean;
+
+  constructor(private deviceService: DeviceDetectorService) {
+    this.isMobile = this.deviceService.isMobile();
   }
 
   goToLink(link: string) {

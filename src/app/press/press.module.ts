@@ -6,6 +6,7 @@ import {MatButtonModule, MatIconModule} from '@angular/material';
 import {PressLinkTableComponent} from './press-link-table/press-link-table.component';
 import {MemberPanelComponent} from './member-panel/member-panel.component';
 import {MemberPanelAvatarComponent} from './member-panel-avatar/member-panel-avatar.component';
+import { DeviceDetectorModule } from 'ngx-device-detector';
 
 @NgModule({
   declarations: [PressComponent, PressLinkTableComponent, MemberPanelComponent, MemberPanelAvatarComponent],
@@ -13,7 +14,8 @@ import {MemberPanelAvatarComponent} from './member-panel-avatar/member-panel-ava
     CommonModule,
     PressRoutingModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    DeviceDetectorModule
   ]
 })
 export class PressModule {
