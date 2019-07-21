@@ -72,4 +72,7 @@
 
 .one-link-in {
   margin-left: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; 
 }
