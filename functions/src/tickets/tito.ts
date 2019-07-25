@@ -31,6 +31,7 @@ export async function generateTitoCode(companyName, id, countTickets: number, co
               "code": (postCompanyName + "-" + id),
               "type": "MoneyOffDiscountCode",
               "value": completePrice,
+              "quantity": 1,
               "only-show-attached": true,
               "release-ids": ids
             }
