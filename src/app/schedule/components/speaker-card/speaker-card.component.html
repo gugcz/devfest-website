@@ -1,7 +1,7 @@
 <div class="speaker-holder" [@fadeInOut]>
   <div class="header">
-    <h3>{{speakerName}}</h3>
-    <h5>{{companyName}}</h5>
+    <h3 class="speaker-name">{{speakerName}}</h3>
+    <h5 class="speaker-company">{{companyName}}</h5>
   </div>
   <div class="image">
     <app-tag-avatar [hoverEnabled]="true" (avatarClicked)="openSpeakerDetail()" [firestorageImagePath]="imagePath" [name]="speakerName"
