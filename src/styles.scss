@@ -38,3 +38,12 @@ html, body {
 ::-webkit-scrollbar-thumb:hover {
   background: #c2185b;
 }
+
+.cdk-overlay-container .cdk-global-overlay-wrapper .cdk-overlay-pane {
+  max-width: 100%;
+
+  .mat-dialog-container {
+    overflow: hidden;
+    padding: 0 24px;
+  }
+}

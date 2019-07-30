@@ -29,18 +29,15 @@ export class SpeakerCardComponent implements OnInit {
   @Input() imagePath: string;
   @Input() tag: Tag;
 
-  private isMobile: boolean;
-
-  constructor(private matDialog: MatDialog, private deviceService: DeviceDetectorService) {
-    this.isMobile = this.deviceService.isMobile();
-  }
+  constructor(private matDialog: MatDialog, private deviceService: DeviceDetectorService) {}
 
 
   ngOnInit() {
   }
 
   openSpeakerDetail() {
-    const config = {
+    const isMobile = this.deviceService.isMobile();
+    const desktopConfig = {
       width: '800px',
       height: '500px',
       data: {
@@ -48,7 +45,7 @@ export class SpeakerCardComponent implements OnInit {
       },
       autoFocus: false,
     };
-    const mobiconfig = {
+    const mobileConfig = {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -58,6 +55,6 @@ export class SpeakerCardComponent implements OnInit {
       },
       autoFocus: false,
     };
-    this.matDialog.open(SpeakerDetailComponent, this.isMobile ? mobiconfig : config);
+    this.matDialog.open(SpeakerDetailComponent, isMobile ? mobileConfig : desktopConfig);
   }
 }
