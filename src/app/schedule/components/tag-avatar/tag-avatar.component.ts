@@ -15,8 +15,8 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
     ]),
     trigger('widthHover', [
       state('false', style({ width: '100%' })),
-      state('true', style({ width: '90%' })),
-      transition('false <=> true', animate('150ms ease-in'))
+      state('true', style({ width: '95%' })),
+      transition('false <=> true', animate('100ms ease-in'))
     ])
   ]
 })
