@@ -45,7 +45,8 @@ export class SpeakerCardComponent implements OnInit {
       height: '500px',
       data: {
         ref: this.speakerRef
-      }
+      },
+      autoFocus: false,
     };
     const mobiconfig = {
       maxWidth: '100vw',
@@ -54,7 +55,8 @@ export class SpeakerCardComponent implements OnInit {
       width: '100%',
       data: {
         ref: this.speakerRef
-      }
+      },
+      autoFocus: false,
     };
     this.matDialog.open(SpeakerDetailComponent, this.isMobile ? mobiconfig : config);
   }
