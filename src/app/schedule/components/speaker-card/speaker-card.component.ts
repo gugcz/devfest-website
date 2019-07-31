@@ -37,9 +37,10 @@ export class SpeakerCardComponent implements OnInit {
 
   openSpeakerDetail() {
     const isMobile = this.deviceService.isMobile();
+
     const desktopConfig = {
       width: '800px',
-      height: '500px',
+      height: '550px',
       data: {
         ref: this.speakerRef
       },
