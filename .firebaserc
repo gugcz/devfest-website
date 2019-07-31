@@ -1,6 +1,7 @@
 {
   "projects": {
     "default": "devfest-2019-1f996",
-    "test": "devfestcz-test"
+    "prod": "devfest-2019-1f996",
+    "test": "devfestcztest"
   }
 }
