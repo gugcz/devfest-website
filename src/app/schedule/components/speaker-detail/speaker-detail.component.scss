@@ -1,48 +1,82 @@
-.holder {
-  width: 100%;
-  margin-top: 10px;
+.speaker-dialog {
   margin-bottom: 10px;
-}
-
-.wrapper {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-}
-
-.left-info {
-  margin: 5px;
-  flex-basis: 150px;
-}
-
-mat-dialog-content {
   max-height: 100% !important;
-}
-
-p {
-  text-align: justify;
-}
-
-.right-info {
-  margin: 5px;
-  flex-basis: 550px;
-}
-
-.avatar-holder {
-  height: 160px;
-}
-
-.socials {
-  .mat-icon-button-focus-overlay { background-color: transparent!important; }
-
-
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  min-height: 40px;
-}
-
-.speaker-holder {
   height: 100%;
+  width: 100%;
+  padding: 12px 24px 24px 24px;
+
+  .card-column {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 32px;
+
+    .header-container {
+      display: flex;
+      justify-content: flex-end;
+
+      .close-button {
+        position: relative;
+        right: -18px;
+      }
+    }
+
+    .card-row .right-panel {
+      .speaker-name {
+        margin: 8px 0 4px;
+      }
+      
+      .speaker-company {
+        margin: 4px 0;
+      }
+
+      .company-position {
+        margin: 4px 0;
+      }
+    }
+  }
+
+  .talk {
+    &-name {
+      font-size: 26px;
+      margin-bottom: 12px;
+    }
+  }
+
+  .socials {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    min-height: 40px;
+
+    .mat-icon-button-focus-overlay { 
+      background-color: transparent !important; 
+    }
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .speaker-dialog .card-column {
+    .card-row {
+      display: flex;
+      flex-direction: row;
+
+      .left-panel, .right-panel {
+        width: calc(50% - 16px);
+      }
+
+      .left-panel {
+        display: flex;
+        margin-right: 16px;
+        justify-content: center;
+
+        .avatar-holder {
+          width: 256px;
+        }
+      }
+
+      .right-panel {
+        margin-left: 16px;
+      }
+    }
+  }
 }
