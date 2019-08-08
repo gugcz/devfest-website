@@ -17,7 +17,7 @@ export class PartnersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.partnersCollection = this.afStore.collection<Partner>('partners', ref => ref.where('top', '==', false).orderBy('order'));
+    this.partnersCollection = this.afStore.collection<Partner>('partners', ref => ref.where('self', '==', false).orderBy('order'));
     this.partners = this.partnersCollection.valueChanges();
   }
 

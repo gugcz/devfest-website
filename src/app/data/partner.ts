@@ -6,5 +6,6 @@ export default interface Partner {
   top: boolean;
   main: boolean;
   companies: Company[];
+  self: boolean;
 }
 
