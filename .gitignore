@@ -56,3 +56,4 @@ ANGULAR-devfest.iml
 
 # Config
 /config.json
+.tool-versions
