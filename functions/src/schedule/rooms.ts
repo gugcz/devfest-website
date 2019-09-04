@@ -2,6 +2,8 @@ import * as functions from 'firebase-functions';
 import { buildSpeakerForSchedule } from './speakers';
 import { reject, isEmpty } from 'ramda';
 
+export const removeEmptyScheduleItems = reject(isEmpty);
+
 const containsTalkAndSpeakerRef = data => data && data.talkRef && data.speakerRef;
 
 export const onWrite = functions.firestore.document('rooms/{roomId}').onWrite(async (change, context) => {
@@ -42,13 +44,10 @@ export const onWrite = functions.firestore.document('rooms/{roomId}').onWrite(as
         });
 
         return Promise.all(schedule).then(values => {
-            dataAfter.schedule = values;
+            dataAfter.schedule = values.map(removeEmptyScheduleItems);
             return change.after.ref.set(dataAfter);
         });
     } else {
         return change.after.ref.set(dataAfter);
     }
 });
-
-
-export const removeEmptyScheduleItems = reject(isEmpty);
