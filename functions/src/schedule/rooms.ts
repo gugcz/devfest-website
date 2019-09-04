@@ -37,7 +37,7 @@ export const onWrite = functions.firestore.document('rooms/{roomId}').onWrite(as
         });
 
         return Promise.all(schedule).then(values => {
-            dataAfter.schedule = values.map(removeEmptyScheduleItems);
+            dataAfter.schedule = removeEmptyScheduleItems(values);
             return change.after.ref.set(dataAfter);
         });
     } else {
