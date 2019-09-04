@@ -1,16 +1,16 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { assoc, dissoc, pipe, propOr, map } from 'ramda';
+import { assoc, dissoc, pipe, prop, map, ifElse, has, identity } from 'ramda';
 import { removeEmptyScheduleItems } from './rooms';
 
 export const buildSpeakerForSchedule = speakerData => pipe(
-    assoc('name', propOr('', 'name', speakerData)),
-    assoc('photoPath', propOr('', 'photoPath', speakerData)),
-    assoc('language', propOr('', 'language', speakerData)),
-    assoc('company', propOr('', 'company', speakerData)),
-    assoc('tag', propOr('', 'tag', speakerData)),
-    assoc('tagColor', propOr('', 'tagColor', speakerData)),
-    assoc('pronoun', propOr('', 'pronoun', speakerData)),
+    ifElse(x => has('name', speakerData), assoc('name', prop('name', speakerData)), identity),
+    ifElse(x => has('photoPath', speakerData), assoc('photoPath', prop('photoPath', speakerData)), identity),
+    ifElse(x => has('language', speakerData), assoc('language', prop('language', speakerData)), identity),
+    ifElse(x => has('company', speakerData), assoc('company', prop('company', speakerData)), identity),
+    ifElse(x => has('tag', speakerData), assoc('tag', prop('tag', speakerData)), identity),
+    ifElse(x => has('tagColor', speakerData), assoc('tagColor', prop('tagColor', speakerData)), identity),
+    ifElse(x => has('pronoun', speakerData), assoc('pronoun', prop('pronoun', speakerData)), identity),
 )({});
 
 export const onSpeakerUpdate = functions.firestore.document('speakers/{speakerId}').onUpdate((change, context) => {
