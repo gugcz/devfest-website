@@ -11,3 +11,4 @@ export const roomOnWrite = room.onWrite;
 export const speakerOnUpdate = speakers.onSpeakerUpdate;
 export const speakerOnDelete = speakers.onSpeakerDelete;
 export const updateScheduleOnTalkUpdate = talk.updateScheduleOnTalkUpdate;
+export const onTalkDelete = talk.onTalkDelete;

@@ -2,10 +2,13 @@ import * as functions from 'firebase-functions';
 import { buildSpeakerForSchedule } from './speakers';
 import { reject, isEmpty } from 'ramda';
 import { assocTalkProps, dissocTalkProps} from './talks';
+import * as admin from 'firebase-admin';
+
+const containsTalkAndSpeakerRef = data => data && data.talkRef && data.speakerRef;
 
 export const removeEmptyScheduleItems = reject(isEmpty);
 
-const containsTalkAndSpeakerRef = data => data && data.talkRef && data.speakerRef;
+export const performFunctionOnEachRoom = fn => admin.firestore().collection('rooms').get().then(snapshot => snapshot.forEach(fn));
 
 export const onWrite = functions.firestore.document('rooms/{roomId}').onWrite(async (change, context) => {
     const dataAfter = change.after.data();
