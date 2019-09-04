@@ -15,3 +15,4 @@ export const tagUpdateColor = schedule.tagUpdateColor;
 export const tagApplyColor = schedule.tagApplyColor;
 export const talkUpdate = schedule.talkUpdate;
 export const talkApply = schedule.talkApply;
+export const roomOnWrite = schedule.roomOnWrite;
