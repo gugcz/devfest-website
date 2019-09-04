@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import { buildSpeakerForSchedule } from './speakers';
 import { reject, isEmpty } from 'ramda';
+import { assocTalkProps, dissocTalkProps} from './talks';
 
 export const removeEmptyScheduleItems = reject(isEmpty);
 
@@ -12,24 +13,13 @@ export const onWrite = functions.firestore.document('rooms/{roomId}').onWrite(as
     if (dataAfter.schedule && dataAfter.schedule.length > 0) {
         const scheduleAfter = dataAfter.schedule;
         const scheduleBefore = dataBefore.schedule;
-        const schedule = scheduleAfter.map(async (scheduleItem, index) => {
+        const schedule = scheduleAfter.map(async (item, index) => {
+            let scheduleItem = item;
             if (!(containsTalkAndSpeakerRef(scheduleItem) && containsTalkAndSpeakerRef(scheduleBefore[index])
                 && scheduleItem.talkRef.path === scheduleBefore[index].talkRef.path && scheduleItem.speakerRef.path === scheduleBefore[index].speakerRef.path)) {
                 if (scheduleItem.talkRef) {
                     const talkRef = await scheduleItem.talkRef.get();
-                    const talk = talkRef.data();
-                    if (talk.name) {
-                        scheduleItem.name = talk.name;
-                    }
-                    if (talk.description) {
-                        scheduleItem.description = talk.description;
-                    }
-                    if (talk.duration) {
-                        scheduleItem.duration = talk.duration;
-                    }
-                    if (talk.language) {
-                        scheduleItem.language = talk.language;
-                    }
+                    scheduleItem = assocTalkProps(dissocTalkProps(scheduleItem), talkRef.data());
                 }
                 if (scheduleItem.speakerRef) {
                     const speakerRef = await scheduleItem.speakerRef.get();

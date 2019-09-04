@@ -18,3 +18,4 @@ export const talkApply = schedule.talkApply;
 export const roomWrite = schedule.roomOnWrite;
 export const speakerUpdate = schedule.speakerOnUpdate;
 export const speakerDelete = schedule.speakerOnDelete;
+export const updateScheduleOnTalkUpdate = schedule.updateScheduleOnTalkUpdate;

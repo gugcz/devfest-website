@@ -1,5 +1,20 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import {assoc, dissoc, pipe, ifElse, has, identity} from 'ramda';
+
+export const dissocTalkProps = pipe(
+    dissoc('name'),
+    dissoc('description'),
+    dissoc('duration'),
+    dissoc('language')
+);
+
+export const assocTalkProps = (scheduleItem, talk) => pipe(
+    ifElse(x => has('name', talk), assoc('name', talk.name), identity),
+    ifElse(x => has('description', talk), assoc('description', talk.description), identity),
+    ifElse(x => has('duration', talk), assoc('duration', talk.duration), identity),
+    ifElse(x => has('language', talk), assoc('language', talk.language), identity),
+)(scheduleItem);
 
 export const applyTalk = functions.firestore.document('speakers/{documentId}').onCreate((snap) => {
     const data = snap.data();
@@ -37,4 +52,22 @@ export const updateOfTalk = functions.firestore.document('talks/{documentId}').o
         })
         return batch.commit();
     })
-})
+});
+
+export const updateScheduleOnTalkUpdate = functions.firestore.document('talks/{talkId}').onUpdate((change, context) => {
+    return admin.firestore().collection('rooms').get().then(snapshot => {
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.schedule && data.schedule.length > 0) {
+                data.schedule = data.schedule.map(item => {
+                    let scheduleItem = item;
+                    if (scheduleItem.talkRef && scheduleItem.talkRef.path === change.after.ref.path) {
+                        scheduleItem = assocTalkProps(dissocTalkProps(scheduleItem), change.after.data());
+                    }
+                    return scheduleItem;
+                });
+                doc.ref.set(data);
+            }
+        });
+    });
+});
