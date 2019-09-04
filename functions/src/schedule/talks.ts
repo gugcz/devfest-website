@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { assoc, dissoc, pipe, ifElse, has, identity, map } from 'ramda';
-import { performFunctionOnEachRoom, removeEmptyScheduleItems } from './rooms';
+import { removeEmptyScheduleItems } from './rooms';
 
 export const dissocTalkProps = pipe(
     dissoc('name'),
@@ -56,36 +56,48 @@ export const updateOfTalk = functions.firestore.document('talks/{documentId}').o
 });
 
 export const updateScheduleOnTalkUpdate = functions.firestore.document('talks/{talkId}').onUpdate((change, context) => {
-    return performFunctionOnEachRoom(doc => {
-        const data = doc.data();
-        if (data.schedule && data.schedule.length > 0) {
-            data.schedule = data.schedule.map(item => {
-                let scheduleItem = item;
-                if (scheduleItem.talkRef && scheduleItem.talkRef.path === change.after.ref.path) {
-                    scheduleItem = assocTalkProps(dissocTalkProps(scheduleItem), change.after.data());
-                }
-                return scheduleItem;
-            });
-            doc.ref.set(data);
-        }
+    return admin.firestore().collection('rooms').get().then(async snapshot => {
+        const batch = admin.firestore().batch();
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.schedule && data.schedule.length > 0) {
+                data.schedule = data.schedule.map(item => {
+                    let scheduleItem = item;
+                    if (scheduleItem.talkRef && scheduleItem.talkRef.path === change.after.ref.path) {
+                        scheduleItem = assocTalkProps(dissocTalkProps(scheduleItem), change.after.data());
+                    }
+                    return scheduleItem;
+                });
+                batch.set(doc.ref, data);
+            }
+        });
+
+        return batch.commit();
     });
 });
 
 export const onTalkDelete = functions.firestore.document('talks/{talkId}').onDelete((snap) => {
-    return performFunctionOnEachRoom(doc => {
-        const data = doc.data();
-        if (data.schedule && data.schedule.length > 0) {
-            data.schedule = pipe(
-                map(item => {
-                    let scheduleItem = item;
-                    if (scheduleItem.talkRef && scheduleItem.talkRef.path === snap.ref.path) {
-                        scheduleItem = dissoc('talkRef', dissocTalkProps(scheduleItem));
-                    }
-                    return scheduleItem;
-                }),
-                removeEmptyScheduleItems,
-            )(data.schedule);
-            doc.ref.set(data);
-        }
+    return admin.firestore().collection('rooms').get().then(async snapshot => {
+        const batch = admin.firestore().batch();
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.schedule && data.schedule.length > 0) {
+                data.schedule = pipe(
+                    map(item => {
+                        let scheduleItem = item;
+                        if (scheduleItem.talkRef && scheduleItem.talkRef.path === snap.ref.path) {
+                            scheduleItem = dissoc('talkRef', dissocTalkProps(scheduleItem));
+                        }
+                        return scheduleItem;
+                    }),
+                    removeEmptyScheduleItems,
+                )(data.schedule);
+                batch.set(doc.ref, data);
+            }
+        });
+
+        return batch.commit();
     });
 });

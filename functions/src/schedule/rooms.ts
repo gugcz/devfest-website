@@ -1,18 +1,19 @@
 import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import { buildSpeakerForSchedule } from './speakers';
 import { reject, isEmpty } from 'ramda';
 import { assocTalkProps, dissocTalkProps} from './talks';
-import * as admin from 'firebase-admin';
+import { beforeSnapshotConstructor } from 'firebase-functions/lib/providers/firestore';
 
 const containsTalkAndSpeakerRef = data => data && data.talkRef && data.speakerRef;
 
 export const removeEmptyScheduleItems = reject(isEmpty);
 
-export const performFunctionOnEachRoom = fn => admin.firestore().collection('rooms').get().then(snapshot => snapshot.forEach(fn));
-
 export const onWrite = functions.firestore.document('rooms/{roomId}').onWrite(async (change, context) => {
     const dataAfter = change.after.data();
     const dataBefore = change.before.data();
+    const batch = admin.firestore().batch();
+
     if (dataAfter.schedule && dataAfter.schedule.length > 0) {
         const scheduleAfter = dataAfter.schedule;
         const scheduleBefore = dataBefore.schedule;
@@ -38,9 +39,11 @@ export const onWrite = functions.firestore.document('rooms/{roomId}').onWrite(as
 
         return Promise.all(schedule).then(values => {
             dataAfter.schedule = removeEmptyScheduleItems(values);
-            return change.after.ref.set(dataAfter);
+            batch.set(change.after.ref, dataAfter);
+            return batch.commit();
         });
     } else {
-        return change.after.ref.set(dataAfter);
+        batch.set(change.after.ref, dataAfter);
+        return batch.commit();
     }
 });

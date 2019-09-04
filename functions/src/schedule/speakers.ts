@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import { assoc, dissoc, pipe, prop, map, ifElse, has, identity } from 'ramda';
-import { performFunctionOnEachRoom, removeEmptyScheduleItems } from './rooms';
+import { removeEmptyScheduleItems } from './rooms';
 
 export const buildSpeakerForSchedule = speakerData => pipe(
     ifElse(_ => has('name', speakerData), assoc('name', prop('name', speakerData)), identity),
@@ -13,47 +14,59 @@ export const buildSpeakerForSchedule = speakerData => pipe(
 )({});
 
 export const onSpeakerUpdate = functions.firestore.document('speakers/{speakerId}').onUpdate((change, context) => {
-    return performFunctionOnEachRoom(doc => {
-        const data = doc.data();
-        if (data.schedule && data.schedule.length > 0) {
-            data.schedule = data.schedule.map(scheduleItem => {
-                if (scheduleItem.speakerRef && scheduleItem.speakerRef.path === change.after.ref.path) {
-                    scheduleItem.speaker = buildSpeakerForSchedule(change.after.data());
-                }
-                if (scheduleItem.cospeakerRef && scheduleItem.cospeakerRef.path === change.after.ref.path) {
-                    scheduleItem.cospeaker = buildSpeakerForSchedule(change.after.data());
-                }
-                return scheduleItem;
-            });
-            doc.ref.set(data);
-        }
+    return admin.firestore().collection('rooms').get().then(async snapshot => {
+        const batch = admin.firestore().batch();
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.schedule && data.schedule.length > 0) {
+                data.schedule = data.schedule.map(scheduleItem => {
+                    if (scheduleItem.speakerRef && scheduleItem.speakerRef.path === change.after.ref.path) {
+                        scheduleItem.speaker = buildSpeakerForSchedule(change.after.data());
+                    }
+                    if (scheduleItem.cospeakerRef && scheduleItem.cospeakerRef.path === change.after.ref.path) {
+                        scheduleItem.cospeaker = buildSpeakerForSchedule(change.after.data());
+                    }
+                    return scheduleItem;
+                });
+                batch.set(doc.ref, data);
+            }
+        });
+
+        return batch.commit();
     });
 });
 
 export const onSpeakerDelete = functions.firestore.document('speakers/{speakerId}').onDelete((snap) => {
-    return performFunctionOnEachRoom(doc => {
-        const data = doc.data();
-        if (data.schedule && data.schedule.length > 0) {
-            data.schedule = pipe(
-                map(item => {
-                    let scheduleItem = item;
-                    if (scheduleItem.speakerRef && scheduleItem.speakerRef.path === snap.ref.path) {
-                        scheduleItem = pipe(
-                            dissoc('speaker'),
-                            dissoc('speakerRef')
-                        )(scheduleItem);
-                    }
-                    if (scheduleItem.cospeakerRef && scheduleItem.cospeakerRef.path === snap.ref.path) {
-                        scheduleItem = pipe(
-                            dissoc('cospeaker'),
-                            dissoc('cospeakerRef')
-                        )(scheduleItem);
-                    }
-                    return scheduleItem;
-                }),
-                removeEmptyScheduleItems,
-            )(data.schedule);
-            doc.ref.set(data);
-        }
+    return admin.firestore().collection('rooms').get().then(async snapshot => {
+        const batch = admin.firestore().batch();
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.schedule && data.schedule.length > 0) {
+                data.schedule = pipe(
+                    map(item => {
+                        let scheduleItem = item;
+                        if (scheduleItem.speakerRef && scheduleItem.speakerRef.path === snap.ref.path) {
+                            scheduleItem = pipe(
+                                dissoc('speaker'),
+                                dissoc('speakerRef')
+                            )(scheduleItem);
+                        }
+                        if (scheduleItem.cospeakerRef && scheduleItem.cospeakerRef.path === snap.ref.path) {
+                            scheduleItem = pipe(
+                                dissoc('cospeaker'),
+                                dissoc('cospeakerRef')
+                            )(scheduleItem);
+                        }
+                        return scheduleItem;
+                    }),
+                    removeEmptyScheduleItems,
+                )(data.schedule);
+                batch.set(doc.ref, data);
+            }
+        });
+
+        return batch.commit();
     });
 });
