@@ -9,3 +9,4 @@ export const talkApply = talk.applyTalk;
 export const talkUpdate = talk.updateOfTalk;
 export const roomOnWrite = room.onWrite;
 export const speakerOnUpdate = speakers.onSpeakerUpdate;
+export const speakerOnDelete = speakers.onSpeakerDelete;

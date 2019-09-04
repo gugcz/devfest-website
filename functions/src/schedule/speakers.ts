@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import {assoc, pipe, propOr} from 'ramda';
+import { assoc, dissoc, pipe, propOr, map } from 'ramda';
+import { removeEmptyScheduleItems } from './rooms';
 
 export const buildSpeakerForSchedule = speakerData => pipe(
     assoc('name', propOr('', 'name', speakerData)),
@@ -12,7 +13,7 @@ export const buildSpeakerForSchedule = speakerData => pipe(
     assoc('pronoun', propOr('', 'pronoun', speakerData)),
 )({});
 
-export const onSpeakerUpdate = functions.firestore.document('speakers/{documentId}').onUpdate((change, context) => {
+export const onSpeakerUpdate = functions.firestore.document('speakers/{speakerId}').onUpdate((change, context) => {
     return admin.firestore().collection('rooms').get().then(snapshot => {
         snapshot.forEach(doc => {
             const data = doc.data();
@@ -27,7 +28,37 @@ export const onSpeakerUpdate = functions.firestore.document('speakers/{documentI
                     return scheduleItem;
                 });
                 doc.ref.set(data);
-            }    
+            }
+        });
+    });
+});
+
+export const onSpeakerDelete = functions.firestore.document('speakers/{speakerId}').onDelete((snap) => {
+    return admin.firestore().collection('rooms').get().then(snapshot => {
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.schedule && data.schedule.length > 0) {
+                data.schedule = pipe(
+                    map(item => {
+                        let scheduleItem = item;
+                        if (scheduleItem.speakerRef && scheduleItem.speakerRef.path === snap.ref.path) {
+                            scheduleItem = pipe(
+                                dissoc('speaker'),
+                                dissoc('speakerRef')
+                            )(scheduleItem);
+                        }
+                        if (scheduleItem.cospeakerRef && scheduleItem.cospeakerRef.path === snap.ref.path) {
+                            scheduleItem = pipe(
+                                dissoc('cospeaker'),
+                                dissoc('cospeakerRef')
+                            )(scheduleItem);
+                        }
+                        return scheduleItem;
+                    }),
+                    removeEmptyScheduleItems,
+                )(data.schedule);
+                doc.ref.set(data);
+            }
         });
     });
 });

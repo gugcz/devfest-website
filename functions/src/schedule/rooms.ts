@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import { buildSpeakerForSchedule } from './speakers';
+import { reject, isEmpty } from 'ramda';
 
 const containsTalkAndSpeakerRef = data => data && data.talkRef && data.speakerRef;
 
@@ -48,3 +49,6 @@ export const onWrite = functions.firestore.document('rooms/{roomId}').onWrite(as
         return change.after.ref.set(dataAfter);
     }
 });
+
+
+export const removeEmptyScheduleItems = reject(isEmpty);
