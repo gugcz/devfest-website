@@ -10,9 +10,6 @@
 # dependencies
 /node_modules
 /functions/node_modules
-/functions/package-lock.json
-/functions/yarn.lock
-/package-lock.json
 
 # IDEs and editors
 /.idea
