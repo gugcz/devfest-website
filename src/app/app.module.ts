@@ -23,6 +23,8 @@ import {NavigationComponent} from './core/navigation/navigation.component';
 import {FooterComponent} from './core/footer/footer.component';
 import {ContributePanelComponent} from './core/contribute-panel/contribute-panel.component';
 import {FaqComponent} from './core/faq/faq.component';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './reducers';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,14 @@ import {FaqComponent} from './core/faq/faq.component';
     MatSidenavModule,
     MatListModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    StoreModule.forRoot(reducers, {
+      metaReducers,
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true
+      }
+    })
   ],
   providers: [],
   entryComponents: [FaqComponent],
