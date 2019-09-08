@@ -24,6 +24,8 @@ import {FooterComponent} from './core/footer/footer.component';
 import {ContributePanelComponent} from './core/contribute-panel/contribute-panel.component';
 import {FaqComponent} from './core/faq/faq.component';
 import {AgmCoreModule} from '@agm/core';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './reducers';
 
 @NgModule({
   declarations: [
@@ -52,6 +54,13 @@ import {AgmCoreModule} from '@agm/core';
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyAyh_pL4QhU2XjcGI9QyRfPRI2ZqEEF0aA',
       language: 'en'
+    }),
+    StoreModule.forRoot(reducers, {
+      metaReducers,
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true
+      }
     })
   ],
   providers: [],
