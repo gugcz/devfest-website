@@ -11,7 +11,7 @@ export class LazyDirective implements AfterViewInit {
 
   constructor(
     private _element: ElementRef
-  ) { 
+  ) {
   }
 
   public ngAfterViewInit() {

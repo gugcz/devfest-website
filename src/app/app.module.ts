@@ -1,14 +1,14 @@
-import {NgModule} from '@angular/core';
+import { NgModule } from '@angular/core';
 
-import {AppRoutingModule} from './app-routing.module';
-import {AppComponent} from './app.component';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {environment} from '../environments/environment';
-import {AngularFireFunctionsModule} from '@angular/fire/functions';
-import {AngularFireStorageModule} from '@angular/fire/storage';
-import {AngularFireModule} from '@angular/fire';
-import {AngularFirestoreModule} from '@angular/fire/firestore';
-import {DeviceDetectorModule} from 'ngx-device-detector';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { environment } from '../environments/environment';
+import { AngularFireFunctionsModule } from '@angular/fire/functions';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { DeviceDetectorModule } from 'ngx-device-detector';
 import {
   MatButtonModule,
   MatDialogModule,
@@ -25,7 +25,7 @@ import {ContributePanelComponent} from './core/contribute-panel/contribute-panel
 import {FaqComponent} from './core/faq/faq.component';
 import {AgmCoreModule} from '@agm/core';
 import { StoreModule } from '@ngrx/store';
-import { reducers, metaReducers } from './reducers';
+import { SocialsPipe } from './shared/pipe/socials.pipe';
 
 @NgModule({
   declarations: [
@@ -55,17 +55,10 @@ import { reducers, metaReducers } from './reducers';
       apiKey: 'AIzaSyAyh_pL4QhU2XjcGI9QyRfPRI2ZqEEF0aA',
       language: 'en'
     }),
-    StoreModule.forRoot(reducers, {
-      metaReducers,
-      runtimeChecks: {
-        strictStateImmutability: true,
-        strictActionImmutability: true
-      }
-    })
+    StoreModule.forRoot({})
   ],
   providers: [],
   entryComponents: [FaqComponent],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule {}

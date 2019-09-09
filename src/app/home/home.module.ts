@@ -18,7 +18,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TopPartnerLogoComponent} from './top-partner-logo/top-partner-logo.component';
 import {TopPartnerPanelComponent} from './top-partner-panel/top-partner-panel.component';
 import {PhotoPanelComponent} from './photo-panel/photo-panel.component';
-import { LazyDirective } from './lazy.directive';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -33,6 +33,7 @@ import { LazyDirective } from './lazy.directive';
     MatInputModule,
     MatSelectModule,
     MatSnackBarModule,
+    SharedModule
   ],
   declarations: [
     HomeComponent,
@@ -41,8 +42,7 @@ import { LazyDirective } from './lazy.directive';
     TicketsComponent,
     TopPartnerLogoComponent,
     TopPartnerPanelComponent,
-    PhotoPanelComponent,
-    LazyDirective
+    PhotoPanelComponent
   ],
   entryComponents: [
     TicketAdditionalInfoComponent,
