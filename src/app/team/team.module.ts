@@ -3,9 +3,9 @@ import {CommonModule} from '@angular/common';
 import {TeamComponent} from './team.component';
 import {TeamRoutingModule} from './team-routing.module';
 import {MemberCardComponent} from './member-card/member-card.component';
-import {SocialsPipe} from './member-card/socials.pipe';
 import {MatButtonModule, MatIconModule} from '@angular/material';
 import {SocialIconsService} from '../services/social-icons.service';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -13,11 +13,11 @@ import {SocialIconsService} from '../services/social-icons.service';
     TeamRoutingModule,
     MatIconModule,
     MatButtonModule,
+    SharedModule
   ],
   declarations: [
     TeamComponent,
-    MemberCardComponent,
-    SocialsPipe
+    MemberCardComponent
   ],
   providers: [
     SocialIconsService
