@@ -1,1 +1,8 @@
-<h1>Venue</h1>
+<div class="title-holder">
+    <h1>Venue</h1>
+</div>
+<div class="main-block">
+    <app-info-block *ngFor="let info of infoVenue | async"[text]="info.text">
+
+    </app-info-block>
+</div>
