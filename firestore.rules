@@ -30,5 +30,8 @@ service cloud.firestore {
     match /talks/{document=**} {
       allow read;
     }
+    match /info/{document=**} {
+    	allow read;
+    }
   }
 }
