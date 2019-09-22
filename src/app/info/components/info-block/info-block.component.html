@@ -3,6 +3,8 @@
         {{ text }}
     </div>
     <div *ngIf="photos" class="photo-block">
-
+        <a *ngFor="let url of photosUrls | async" href="url" target="_blank">
+            <img [src]="url">
+        </a>
     </div>
 </div>
