@@ -1,0 +1,50 @@
+.panel-holder {
+    box-shadow: 0 0 0.5rem #fff;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+    height: 250px;
+    overflow: hidden;
+  }
+  
+  .photos-holder {
+    float: left;
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  
+    .mover {
+      transition: 0.3s all;
+      width: max-content;
+      height: 100%;
+      overflow: hidden;
+  
+      .first {
+        transform: translate3d(0, 0, 0);
+        -webkit-animation: moving 100s linear infinite;
+        -moz-animation: moving 100s linear infinite;
+        -ms-animation: moving 100s linear infinite;
+        -o-animation: moving 100s linear infinite;
+        animation: moving 100s linear infinite;
+      }
+  
+      img{
+        height: 100%;
+      }
+  
+    }
+  
+  }
+  
+  @keyframes moving {
+    0% {
+      margin-left: 0px;
+    }
+    50% {
+      margin-left: -50%;
+    }
+    100% {
+      margin-left: 0px;
+    }
+  }
+  

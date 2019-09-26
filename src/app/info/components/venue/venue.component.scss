@@ -1,0 +1,30 @@
+.title-holder{
+    text-align: center;
+}
+
+.main-block{
+    width: 100%;
+    text-align: center;
+    
+    .info-holder{
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        app-venue-info-block{
+            margin: 16px;
+            flex-basis: 300px;
+        }
+
+        app-venue-map{
+            flex-basis: 300px;
+            border-radius: 8px;
+        }
+    }
+
+    .photo-holder{
+        margin-top: 16px;
+        width: 100%;
+    }
+}

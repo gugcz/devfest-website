@@ -22,13 +22,20 @@ const routes: Routes = [
     path: 'schedule',
     loadChildren: './schedule/schedule.module#ScheduleModule'
   },
+  {
+    path: 'info',
+    loadChildren: './info/info.module#InfoModule'
+  },
   { path: '**', redirectTo: 'home' }
 ];
 
-
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled', preloadingStrategy: PreloadAllModules })],
+  imports: [
+    RouterModule.forRoot(routes, {
+      scrollPositionRestoration: 'enabled',
+      preloadingStrategy: PreloadAllModules
+    })
+  ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}
