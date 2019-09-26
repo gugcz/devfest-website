@@ -18,5 +18,9 @@ export default [
   {
     path: 'partners',
     label: 'Partners'
+  },
+  {
+    path: 'info',
+    label: 'Info'
   }
 ];

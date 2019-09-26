@@ -1,0 +1,10 @@
+<div class="panel-holder" >
+        <div class="photos-holder">
+          <div class="mover" >
+            <img *ngFor="let image of images; let i = index"
+              [ngClass]="i == 0 ? 'first': 'second'"
+             [attr.src]="image">
+          </div>
+        </div>
+      </div>
+      
