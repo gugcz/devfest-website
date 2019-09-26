@@ -23,6 +23,7 @@ import {NavigationComponent} from './core/navigation/navigation.component';
 import {FooterComponent} from './core/footer/footer.component';
 import {ContributePanelComponent} from './core/contribute-panel/contribute-panel.component';
 import {FaqComponent} from './core/faq/faq.component';
+import {AgmCoreModule} from '@agm/core';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,11 @@ import {FaqComponent} from './core/faq/faq.component';
     MatSidenavModule,
     MatListModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyAyh_pL4QhU2XjcGI9QyRfPRI2ZqEEF0aA',
+      language: 'en'
+    })
   ],
   providers: [],
   entryComponents: [FaqComponent],

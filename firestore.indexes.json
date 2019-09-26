@@ -11,15 +11,6 @@
       ]
     },
     {
-      "collectionId": "info",
-      "fields": [
-        {
-          "fieldPath": "tag", "mode": "ASCENDING",
-          "fieldPath": "position", "mode": "ASCENDING"
-        }
-      ]
-    },
-    {
       "collectionId": "teamMembers",
       "fields": [
         {

@@ -10,7 +10,10 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-  
+
+        app-venue{
+          width: 100%;
+        }
       }
     }
   }
