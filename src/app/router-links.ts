@@ -4,6 +4,10 @@ export default [
     label: 'Home'
   },
   {
+    path: 'info',
+    label: 'Info'
+  },
+  {
     path: 'team',
     label: 'Team'
   },
@@ -18,9 +22,5 @@ export default [
   {
     path: 'partners',
     label: 'Partners'
-  },
-  {
-    path: 'info',
-    label: 'Info'
   }
 ];
