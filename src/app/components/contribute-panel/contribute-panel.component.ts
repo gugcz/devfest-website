@@ -5,12 +5,5 @@ import {Component, OnInit} from '@angular/core';
   templateUrl: './contribute-panel.component.html',
   styleUrls: ['./contribute-panel.component.scss']
 })
-export class ContributePanelComponent implements OnInit {
-
-  constructor() {
-  }
-
-  ngOnInit() {
-  }
-
+export class ContributePanelComponent {
 }

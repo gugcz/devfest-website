@@ -9,56 +9,41 @@ import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { DeviceDetectorModule } from 'ngx-device-detector';
-import {
-  MatButtonModule,
-  MatDialogModule,
-  MatIconModule,
-  MatListModule,
-  MatSidenavModule,
-  MatTabsModule,
-  MatToolbarModule
-} from '@angular/material';
-import {HttpClientModule} from '@angular/common/http';
-import {NavigationComponent} from './core/navigation/navigation.component';
-import {FooterComponent} from './core/footer/footer.component';
-import {ContributePanelComponent} from './core/contribute-panel/contribute-panel.component';
-import {FaqComponent} from './core/faq/faq.component';
-import {AgmCoreModule} from '@agm/core';
+import { HttpClientModule } from '@angular/common/http';
+import { AgmCoreModule } from '@agm/core';
 import { StoreModule } from '@ngrx/store';
-import { SocialsPipe } from './shared/pipe/socials.pipe';
+import { ContributePanelModule } from './components/contribute-panel/contribute-panel.module';
+import { FAQModule } from './components/faq/faq.module';
+import { FooterModule } from './components/footer/footer.module';
+import { NavigationModule } from './components/navigation/navigation.module';
+import { MatSidenavModule, MatListModule } from '@angular/material';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavigationComponent,
-    FooterComponent,
-    ContributePanelComponent,
-    FaqComponent
   ],
   imports: [
+    MatSidenavModule,
+    MatListModule,
+    NavigationModule,
+    FooterModule,
+    ContributePanelModule,
+    FAQModule,
     BrowserAnimationsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule.enablePersistence(),
     DeviceDetectorModule.forRoot(),
     AngularFireStorageModule,
     AngularFireFunctionsModule,
-    MatTabsModule,
     HttpClientModule,
-    MatIconModule,
-    MatToolbarModule,
     AppRoutingModule,
-    MatSidenavModule,
-    MatListModule,
-    MatButtonModule,
-    MatDialogModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyAyh_pL4QhU2XjcGI9QyRfPRI2ZqEEF0aA',
-      language: 'en'
+      language: 'en',
     }),
-    StoreModule.forRoot({})
+    StoreModule.forRoot({}),
   ],
   providers: [],
-  entryComponents: [FaqComponent],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

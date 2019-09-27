@@ -9,7 +9,7 @@ import FAQ from 'src/app/data/faq';
   templateUrl: './faq.component.html',
   styleUrls: ['./faq.component.scss']
 })
-export class FaqComponent implements OnInit {
+export class FAQComponent implements OnInit {
 
   public questions: Observable<FAQ[]>;
   public facebookEvent = config.facebookEvent;
