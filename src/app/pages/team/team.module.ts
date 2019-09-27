@@ -13,7 +13,7 @@ import { SharedModule } from '../../shared/shared.module';
     TeamRoutingModule,
     MatIconModule,
     MatButtonModule,
-    SharedModule
+    SharedModule,
   ],
   declarations: [
     TeamComponent,
