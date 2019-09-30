@@ -3,7 +3,7 @@ import { AngularFireFunctions } from '@angular/fire/functions';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { TicketGroup } from '../../../data/ticket-group';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { InvoiceFormComponent } from '../invoice-form/invoice-form.component';
+import { InvoiceFormComponent } from '../../../components/invoice-form/invoice-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TicketGroupView } from './ticket-group-view';
 import { TicketAdditionalInfoComponent } from '../ticket-additional-info/ticket-additional-info.component';

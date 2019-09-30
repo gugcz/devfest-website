@@ -13,12 +13,13 @@ import {
   MatSnackBarModule
 } from '@angular/material';
 import {HomeRoutingModule} from './home-routing.module';
-import {InvoiceFormComponent} from './invoice-form/invoice-form.component';
+import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TopPartnerLogoComponent} from './top-partner-logo/top-partner-logo.component';
 import {TopPartnerPanelComponent} from './top-partner-panel/top-partner-panel.component';
 import {PhotoPanelComponent} from './photo-panel/photo-panel.component';
 import { SharedModule } from '../../shared/shared.module';
+import { InvoiceFormModule } from 'src/app/components/invoice-form/invoice-form-module';
 
 @NgModule({
   imports: [
@@ -33,11 +34,11 @@ import { SharedModule } from '../../shared/shared.module';
     MatInputModule,
     MatSelectModule,
     MatSnackBarModule,
-    SharedModule
+    SharedModule,
+    InvoiceFormModule
   ],
   declarations: [
     HomeComponent,
-    InvoiceFormComponent,
     TicketAdditionalInfoComponent,
     TicketsComponent,
     TopPartnerLogoComponent,
