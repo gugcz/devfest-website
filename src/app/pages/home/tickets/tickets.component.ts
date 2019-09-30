@@ -6,7 +6,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { InvoiceFormComponent } from '../../../components/invoice-form/invoice-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TicketGroupView } from './ticket-group-view';
-import { TicketAdditionalInfoComponent } from '../ticket-additional-info/ticket-additional-info.component';
+import { TicketAdditionalInfoComponent } from '../../../components/ticket-additional-info/ticket-additional-info.component';
 
 @Component({
   selector: 'app-tickets',

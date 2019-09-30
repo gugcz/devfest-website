@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home.component';
-import { TicketAdditionalInfoComponent } from './ticket-additional-info/ticket-additional-info.component';
+import { TicketAdditionalInfoComponent } from '../../components/ticket-additional-info/ticket-additional-info.component';
 import { TicketsComponent } from './tickets/tickets.component';
 import {
   MatButtonModule,
@@ -20,6 +20,7 @@ import { TopPartnerPanelComponent } from './top-partner-panel/top-partner-panel.
 import { SharedModule } from '../../shared/shared.module';
 import { InvoiceFormModule } from 'src/app/components/invoice-form/invoice-form-module';
 import { PhotoPanelModule } from 'src/app/components/photo-panel/photo-panel.module';
+import { TicketAdditionalInfoModule } from 'src/app/components/ticket-additional-info/ticket-additional-info.module';
 
 @NgModule({
   imports: [
@@ -36,11 +37,11 @@ import { PhotoPanelModule } from 'src/app/components/photo-panel/photo-panel.mod
     MatSnackBarModule,
     SharedModule,
     InvoiceFormModule,
-    PhotoPanelModule
+    PhotoPanelModule,
+    TicketAdditionalInfoModule
   ],
   declarations: [
     HomeComponent,
-    TicketAdditionalInfoComponent,
     TicketsComponent,
     TopPartnerLogoComponent,
     TopPartnerPanelComponent,
