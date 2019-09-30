@@ -1,8 +1,8 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {HomeComponent} from './home.component';
-import {TicketAdditionalInfoComponent} from './ticket-additional-info/ticket-additional-info.component';
-import {TicketsComponent} from './tickets/tickets.component';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HomeComponent } from './home.component';
+import { TicketAdditionalInfoComponent } from './ticket-additional-info/ticket-additional-info.component';
+import { TicketsComponent } from './tickets/tickets.component';
 import {
   MatButtonModule,
   MatDialogModule,
@@ -10,16 +10,16 @@ import {
   MatInputModule,
   MatProgressSpinnerModule,
   MatSelectModule,
-  MatSnackBarModule
+  MatSnackBarModule,
 } from '@angular/material';
-import {HomeRoutingModule} from './home-routing.module';
-import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {TopPartnerLogoComponent} from './top-partner-logo/top-partner-logo.component';
-import {TopPartnerPanelComponent} from './top-partner-panel/top-partner-panel.component';
-import {PhotoPanelComponent} from './photo-panel/photo-panel.component';
+import { HomeRoutingModule } from './home-routing.module';
+import { InvoiceFormComponent } from '../../components/invoice-form/invoice-form.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TopPartnerLogoComponent } from './top-partner-logo/top-partner-logo.component';
+import { TopPartnerPanelComponent } from './top-partner-panel/top-partner-panel.component';
 import { SharedModule } from '../../shared/shared.module';
 import { InvoiceFormModule } from 'src/app/components/invoice-form/invoice-form-module';
+import { PhotoPanelModule } from 'src/app/components/photo-panel/photo-panel.module';
 
 @NgModule({
   imports: [
@@ -35,7 +35,8 @@ import { InvoiceFormModule } from 'src/app/components/invoice-form/invoice-form-
     MatSelectModule,
     MatSnackBarModule,
     SharedModule,
-    InvoiceFormModule
+    InvoiceFormModule,
+    PhotoPanelModule
   ],
   declarations: [
     HomeComponent,
@@ -43,12 +44,7 @@ import { InvoiceFormModule } from 'src/app/components/invoice-form/invoice-form-
     TicketsComponent,
     TopPartnerLogoComponent,
     TopPartnerPanelComponent,
-    PhotoPanelComponent
   ],
-  entryComponents: [
-    TicketAdditionalInfoComponent,
-    InvoiceFormComponent
-  ]
+  entryComponents: [TicketAdditionalInfoComponent, InvoiceFormComponent],
 })
-export class HomeModule {
-}
+export class HomeModule {}
