@@ -3,7 +3,7 @@ import Social from '../../../data/social';
 import {Observable} from 'rxjs';
 import {AngularFireStorage} from '@angular/fire/storage';
 import {SocialIconsService} from '../../../services/social-icons.service';
-import {PhotoMode, PhotoVisibilityState} from '../../team/member-card/member-card.component';
+import {PhotoMode, PhotoVisibilityState} from '../../../components/member-card/member-card.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
