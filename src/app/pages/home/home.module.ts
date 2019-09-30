@@ -18,6 +18,7 @@ import { TicketsModule } from 'src/app/components/tickets/tickets.module';
 import { TopPartnerPanelModule } from 'src/app/components/top-partner-panel/top-partner-panel.module';
 import { VenueModule } from 'src/app/components/venue/venue.module';
 import { TopicsPanelModule } from 'src/app/components/topics/topics-panel/topics-panel.module';
+import { SpeakerCardModule } from 'src/app/components/speaker-card/speaker-card.module';
 
 @NgModule({
   imports: [
@@ -30,7 +31,8 @@ import { TopicsPanelModule } from 'src/app/components/topics/topics-panel/topics
     TicketsModule,
     VenueModule,
     TopPartnerPanelModule,
-    TopicsPanelModule
+    TopicsPanelModule,
+    SpeakerCardModule
   ],
   declarations: [
     HomeComponent

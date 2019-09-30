@@ -1,10 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
-import {Observable} from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import {
+  AngularFirestore,
+  AngularFirestoreCollection,
+} from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 import Partner from '../../data/partner';
-import {SocialIconsService} from '../../services/social-icons.service';
-import {animate, style, transition, trigger} from '@angular/animations';
+import { SocialIconsService } from '../../services/social-icons.service';
+import { animate, style, transition, trigger } from '@angular/animations';
 import config from 'src/config';
+import Speaker from 'src/app/data/speaker';
 
 @Component({
   selector: 'app-home',
@@ -13,17 +17,14 @@ import config from 'src/config';
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
-        style({opacity: 0}),
-        animate('600ms', style({opacity: 1}))
+        style({ opacity: 0 }),
+        animate('600ms', style({ opacity: 1 })),
       ]),
-      transition(':leave', [
-        animate('300ms', style({opacity: 0}))
-      ])
-    ])
-  ]
+      transition(':leave', [animate('300ms', style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class HomeComponent implements OnInit {
-
   hideTickets = config.hideTickets;
   mailFormLink = config.mailFormLink;
   twitterLink = config.twitter;
@@ -31,14 +32,23 @@ export class HomeComponent implements OnInit {
   instagramLink = config.instagram;
   cfpFormLink = config.cfpFormLink;
   partners: Observable<Partner[]>;
+  speakers: Observable<Speaker[]>;
+
   private partnersCollection: AngularFirestoreCollection<Partner>;
 
-  constructor(private afStore: AngularFirestore, private socialsSer: SocialIconsService) {
-  }
+  constructor(
+    private afStore: AngularFirestore,
+    private socialsSer: SocialIconsService
+  ) {}
 
   ngOnInit() {
-    this.partnersCollection = this.afStore.collection<Partner>('partners', ref => ref.where('top', '==', true).orderBy('order'));
+    this.partnersCollection = this.afStore.collection<Partner>(
+      'partners',
+      ref => ref.where('top', '==', true).orderBy('order')
+    );
     this.partners = this.partnersCollection.valueChanges();
+    this.speakers = this.afStore
+      .collection<Speaker>('speakers', ref => ref.where('top', '==', true))
+      .valueChanges({ idField: 'id' });
   }
-
 }
