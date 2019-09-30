@@ -1,9 +1,9 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
-import Social from '../../../data/social';
+import Social from '../../data/social';
 import {Observable} from 'rxjs';
 import {AngularFireStorage} from '@angular/fire/storage';
-import {SocialIconsService} from '../../../services/social-icons.service';
-import {PhotoMode, PhotoVisibilityState} from '../../../components/member-card/member-card.component';
+import {SocialIconsService} from '../../services/social-icons.service';
+import {PhotoMode, PhotoVisibilityState} from '../member-card/member-card.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
