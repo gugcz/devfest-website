@@ -1,4 +1,4 @@
-import {Ticket} from '../../../data/ticket-group';
+import {Ticket} from '../../data/ticket-group';
 
 export interface TicketView extends Ticket {
   title: string;

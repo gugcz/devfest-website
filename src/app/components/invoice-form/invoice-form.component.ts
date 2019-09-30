@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {AngularFireFunctions} from '@angular/fire/functions';
-import {TicketView} from '../../pages/home/tickets/ticket-view';
+import {TicketView} from '../tickets/ticket-view';
 import {HttpClient} from '@angular/common/http';
 import {MatDialogRef} from '@angular/material/dialog';
 import {FormControl, Validators} from '@angular/forms';
