@@ -17,6 +17,7 @@ import { PhotoPanelModule } from 'src/app/components/photo-panel/photo-panel.mod
 import { TicketsModule } from 'src/app/components/tickets/tickets.module';
 import { TopPartnerPanelModule } from 'src/app/components/top-partner-panel/top-partner-panel.module';
 import { VenueModule } from 'src/app/components/venue/venue.module';
+import { TopicsPanelModule } from 'src/app/components/topics/topics-panel/topics-panel.module';
 
 @NgModule({
   imports: [
@@ -28,7 +29,8 @@ import { VenueModule } from 'src/app/components/venue/venue.module';
     PhotoPanelModule,
     TicketsModule,
     VenueModule,
-    TopPartnerPanelModule
+    TopPartnerPanelModule,
+    TopicsPanelModule
   ],
   declarations: [
     HomeComponent
