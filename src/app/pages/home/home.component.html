@@ -31,6 +31,9 @@
     </div>
   </div>
 </div>
+<div class="venue-container">
+  <app-venue></app-venue>
+</div>
 <div class="container-fourth">
   <app-top-partner-panel *ngFor="let partner of partners | async" [companies]="partner.companies"
     [groupName]="partner.name" [main]="true"></app-top-partner-panel>

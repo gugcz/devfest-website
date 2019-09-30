@@ -4,10 +4,6 @@ export default [
     label: 'Home'
   },
   {
-    path: 'info',
-    label: 'Info'
-  },
-  {
     path: 'team',
     label: 'Team'
   },

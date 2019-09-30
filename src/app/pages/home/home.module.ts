@@ -16,6 +16,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { PhotoPanelModule } from 'src/app/components/photo-panel/photo-panel.module';
 import { TicketsModule } from 'src/app/components/tickets/tickets.module';
 import { TopPartnerPanelModule } from 'src/app/components/top-partner-panel/top-partner-panel.module';
+import { VenueModule } from 'src/app/components/venue/venue.module';
 
 @NgModule({
   imports: [
@@ -26,6 +27,7 @@ import { TopPartnerPanelModule } from 'src/app/components/top-partner-panel/top-
     SharedModule,
     PhotoPanelModule,
     TicketsModule,
+    VenueModule,
     TopPartnerPanelModule
   ],
   declarations: [

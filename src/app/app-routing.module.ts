@@ -22,10 +22,6 @@ const routes: Routes = [
     path: 'schedule',
     loadChildren: './pages/schedule/schedule.module#ScheduleModule'
   },
-  {
-    path: 'info',
-    loadChildren: './pages/info/info.module#InfoModule'
-  },
   { path: '**', redirectTo: 'home' }
 ];
 
