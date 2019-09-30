@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import Company from '../../../data/company';
 import {animate, style, transition, trigger} from '@angular/animations';
+import { Company } from 'functions/src/tickets/dto/company';
 
 @Component({
   selector: 'app-partner-panel',

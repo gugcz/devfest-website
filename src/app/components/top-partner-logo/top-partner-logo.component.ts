@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {AngularFireStorage} from '@angular/fire/storage';
-import {PhotoState} from '../../pages/partners/partner-logo/partner-logo.component';
+import {PhotoState} from '../partner-logo/partner-logo.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
