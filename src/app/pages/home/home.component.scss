@@ -32,10 +32,22 @@
   margin-right: auto;
 }
 
+.bouncer {
+  height: 75px;
+}
+
 @media (max-width: 1480px) {
 
   .text-info {
     width: 240px; /* Force the image to its minimum width */
+  }
+
+}
+
+@media (max-width: 900px) {
+
+  .bouncer {
+    height: 45px; /* Force the image to its minimum width */
   }
 
 }
@@ -49,26 +61,26 @@
 }
 
 @keyframes head {
-  0% {font-size:5vw; opacity:1;}
-  10% {font-size:5vw; opacity:0.5;} 
-  15% {font-size:5.3vw; opacity:1; content: "2 tracks"}
-  20% {font-size:5vw; opacity:0.5;}
-  25% {font-size:5.3vw; opacity:1; content: "Interactive themed game"}
-  30% {font-size:5vw; opacity:0.5;}
-  35% {font-size:5.3vw; opacity:1; content: "International speakers"}
-  40% {font-size:5vw; opacity:0.5;}
-  45% {font-size:5.3vw; opacity:1; content: "Community-organized festival"}
-  50% {font-size:5vw; opacity:0.5;}
-  55% {font-size:5.3vw; opacity:1; content: "Geeky afterparty"}
-  60% {font-size:5vw; opacity:0.5;}
-  65% {font-size:5.3vw; opacity:1; content: "Children's corner with professional babysitting"}
-  70% {font-size:5vw; opacity:0.5;}
-  75% {font-size:5.3vw; opacity:1; content: "Kotlin, UX, Flutter, Firebase and much more!"}
-  80% {font-size:5vw; opacity:0.5;}
-  85% {font-size:5.3vw; opacity:1; content: "2 tracks"}
-  90% {font-size:5vw; opacity:0.5;}
-  95% {font-size:5.3vw; opacity:1; content: "Just fun!"}
-  100% {font-size:5vw; opacity:0.5;}
+  0% {font-size:4vw; opacity:1;}
+  10% {font-size:4vw; opacity:0.5;} 
+  15% {font-size:4.3vw; opacity:1; content: "2 tracks"}
+  20% {font-size:4vw; opacity:0.5;}
+  25% {font-size:4.3vw; opacity:1; content: "Interactive themed game"}
+  30% {font-size:4vw; opacity:0.5;}
+  35% {font-size:4.3vw; opacity:1; content: "International speakers"}
+  40% {font-size:4vw; opacity:0.5;}
+  45% {font-size:4.3vw; opacity:1; content: "Community-organized festival"}
+  50% {font-size:4vw; opacity:0.5;}
+  55% {font-size:4.3vw; opacity:1; content: "Geeky afterparty"}
+  60% {font-size:4vw; opacity:0.5;}
+  65% {font-size:4.3vw; opacity:1; content: "Children's corner with professional babysitting"}
+  70% {font-size:4vw; opacity:0.5;}
+  75% {font-size:4.3vw; opacity:1; content: "Kotlin, UX, Flutter, Firebase and much more!"}
+  80% {font-size:4vw; opacity:0.5;}
+  85% {font-size:4.3vw; opacity:1; content: "2 tracks"}
+  90% {font-size:4vw; opacity:0.5;}
+  95% {font-size:4.3vw; opacity:1; content: "Just fun!"}
+  100% {font-size:4vw; opacity:0.5;}
 }
 
 .speakers-container {
