@@ -19,6 +19,13 @@
     left: 50%;
     transform: translate(-50%, -50%);
   }
+
+  .register-button{
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 .top-speakers {
@@ -34,6 +41,10 @@
 
 .bouncer {
   height: 75px;
+}
+
+.topics{
+  padding: 15px;
 }
 
 @media (max-width: 1480px) {
@@ -58,6 +69,11 @@
   animation-name: head;
   animation-duration: 25s;
   animation-iteration-count: infinite;
+}
+
+.venue-container {
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
 
 @keyframes head {
@@ -126,6 +142,7 @@
 }
 
 .tickets {
+  padding: 15px;
   text-align: center;
 }
 

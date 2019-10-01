@@ -14,11 +14,11 @@
 
         app-venue-info-block{
             margin: 16px;
-            flex-basis: 300px;
+            flex-basis: 400px;
         }
 
         app-venue-map{
-            flex-basis: 300px;
+            flex-basis: 500px;
             border-radius: 8px;
         }
     }
@@ -28,3 +28,17 @@
         width: 100%;
     }
 }
+
+@media (max-width: 900px) {
+
+    app-venue-info-block{
+        margin: 16px;
+        flex-basis: 300px;
+    }
+
+    app-venue-map{
+        flex-basis: 300px;
+        border-radius: 8px;
+    }
+  
+  }
