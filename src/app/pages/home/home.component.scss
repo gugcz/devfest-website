@@ -26,6 +26,51 @@
   text-align: center;
 }
 
+.text-info {
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 1480px) {
+
+  .text-info {
+    width: 240px; /* Force the image to its minimum width */
+  }
+
+}
+
+.text:before{
+  content: '2 days';
+  font-size: 1vw;
+  animation-name: head;
+  animation-duration: 25s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes head {
+  0% {font-size:5vw; opacity:1;}
+  10% {font-size:5vw; opacity:0.5;} 
+  15% {font-size:5.3vw; opacity:1; content: "2 tracks"}
+  20% {font-size:5vw; opacity:0.5;}
+  25% {font-size:5.3vw; opacity:1; content: "Interactive themed game"}
+  30% {font-size:5vw; opacity:0.5;}
+  35% {font-size:5.3vw; opacity:1; content: "International speakers"}
+  40% {font-size:5vw; opacity:0.5;}
+  45% {font-size:5.3vw; opacity:1; content: "Community-organized festival"}
+  50% {font-size:5vw; opacity:0.5;}
+  55% {font-size:5.3vw; opacity:1; content: "Geeky afterparty"}
+  60% {font-size:5vw; opacity:0.5;}
+  65% {font-size:5.3vw; opacity:1; content: "Children's corner with professional babysitting"}
+  70% {font-size:5vw; opacity:0.5;}
+  75% {font-size:5.3vw; opacity:1; content: "Kotlin, UX, Flutter, Firebase and much more!"}
+  80% {font-size:5vw; opacity:0.5;}
+  85% {font-size:5.3vw; opacity:1; content: "2 tracks"}
+  90% {font-size:5vw; opacity:0.5;}
+  95% {font-size:5.3vw; opacity:1; content: "Just fun!"}
+  100% {font-size:5vw; opacity:0.5;}
+}
+
 .speakers-container {
   min-height: 300px;
   width: 100%;
@@ -65,6 +110,7 @@
   margin-top: 50px;
   margin-bottom: 50px;
   text-align: center;
+  justify-content: center;
 }
 
 .tickets {

@@ -16,43 +16,45 @@
   </div>
 </div>
 <div class="container-second">
-  <a class="info-button" color="primary" [href]="mailFormLink" mat-flat-button>
+  <!-- <a class="info-button" color="primary" [href]="mailFormLink" mat-flat-button>
     <h1>I want to be there!</h1>
-  </a>
+  </a> -->
   <!--a class="info-button cfp-button" color="accent" [href]="cfpFormLink" mat-flat-button>
     <h1>I want to speak there!</h1>
   </a-->
+  <h3 class="text-info">
+    A community-organized festival for developers and true geeks.
+  </h3>
+  <div style="height: 80px;">
+    <div class="text"></div>
+  </div>
 </div>
-
 <div class="top-speakers">
   <h1>Top speakers</h1>
-    <div class="speakers-container">
-        <div class="wrapper">
-          <div class="speakers-cont">
-            <app-speaker-card *ngFor="let speaker of speakers |async" class="member" 
-            [speakerName]="speaker.name" 
-            [companyName]="speaker.company" 
-            [tag]="speaker.tagColor" 
-            [speakerRef]="speaker['id']"
-            [imagePath]="speaker.photoPath"></app-speaker-card>
-          </div>
-        </div>
-      </div>      
+  <div class="speakers-container">
+    <div class="wrapper">
+      <div class="speakers-cont">
+        <app-speaker-card *ngFor="let speaker of speakers |async" class="member" [speakerName]="speaker.name"
+          [companyName]="speaker.company" [tag]="speaker.tagColor" [speakerRef]="speaker['id']"
+          [imagePath]="speaker.photoPath"></app-speaker-card>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="topics">
   <app-topics-panel></app-topics-panel>
 </div>
 <div id="tickets">
-    <div class="tickets" *ngIf="!hideTickets">
-      <div>
-        <h1>Tickets</h1>
-        <app-tickets></app-tickets>
-      </div>
+  <div class="tickets" *ngIf="!hideTickets">
+    <div>
+      <h1>Tickets</h1>
+      <app-tickets></app-tickets>
     </div>
   </div>
-  
+</div>
+
 <div class="venue-container">
-    <app-venue></app-venue>
+  <app-venue></app-venue>
 </div>
 <div class="container-fourth">
   <app-top-partner-panel *ngFor="let partner of partners | async" [companies]="partner.companies"
