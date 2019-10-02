@@ -30,7 +30,7 @@
       <input [(ngModel)]="vatNumber" class="input" matInput name="registrationNumberDIC"
              placeholder="VAT number (DIČ)">
     </mat-form-field>
-    <mat-form-field appearance="fill" color="accent">
+    <mat-form-field class="form-field" appearance="fill" color="accent">
       <mat-label>Country*</mat-label>
       <mat-select [(ngModel)]="country" name="country">
         <mat-option *ngFor="let country of listOfCountries" [value]="country.name">{{country.name}}</mat-option>

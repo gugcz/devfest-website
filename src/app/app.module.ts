@@ -11,7 +11,6 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { HttpClientModule } from '@angular/common/http';
 import { AgmCoreModule } from '@agm/core';
-import { StoreModule } from '@ngrx/store';
 import { ContributePanelModule } from './components/contribute-panel/contribute-panel.module';
 import { FAQModule } from './components/faq/faq.module';
 import { FooterModule } from './components/footer/footer.module';
@@ -31,7 +30,7 @@ import { MatSidenavModule, MatListModule } from '@angular/material';
     FAQModule,
     BrowserAnimationsModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule.enablePersistence(),
+    AngularFirestoreModule,
     DeviceDetectorModule.forRoot(),
     AngularFireStorageModule,
     AngularFireFunctionsModule,
@@ -40,8 +39,7 @@ import { MatSidenavModule, MatListModule } from '@angular/material';
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyAyh_pL4QhU2XjcGI9QyRfPRI2ZqEEF0aA',
       language: 'en',
-    }),
-    StoreModule.forRoot({}),
+    })
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -56,6 +56,17 @@
 
 }
 
+@media (max-height: 900px) {
+  .container {
+      
+    .logo-date-holder {
+      max-width: 650px;
+    }
+
+  }
+}
+
+
 @media (max-width: 900px) {
 
   .bouncer {
