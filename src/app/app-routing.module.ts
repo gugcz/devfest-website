@@ -4,27 +4,23 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: 'home',
-    loadChildren: './home/home.module#HomeModule'
+    loadChildren: './pages/home/home.module#HomeModule'
   },
   {
     path: 'team',
-    loadChildren: './team/team.module#TeamModule'
+    loadChildren: './pages/team/team.module#TeamModule'
   },
   {
     path: 'partners',
-    loadChildren: './partners/partners.module#PartnersModule'
+    loadChildren: './pages/partners/partners.module#PartnersModule'
   },
   {
     path: 'press',
-    loadChildren: './press/press.module#PressModule'
+    loadChildren: './pages/press/press.module#PressModule'
   },
   {
     path: 'schedule',
-    loadChildren: './schedule/schedule.module#ScheduleModule'
-  },
-  {
-    path: 'info',
-    loadChildren: './info/info.module#InfoModule'
+    loadChildren: './pages/schedule/schedule.module#ScheduleModule'
   },
   { path: '**', redirectTo: 'home' }
 ];

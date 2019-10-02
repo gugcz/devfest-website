@@ -1,0 +1,179 @@
+.container {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+
+  .logo-date-holder {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 850px;
+    animation: fadein 2s;
+    text-align: center
+  }
+
+  .socials {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .register-button{
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.top-speakers {
+  width:100%;
+  text-align: center;
+}
+
+.text-info {
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bouncer {
+  height: 75px;
+}
+
+.topics{
+  padding: 15px;
+}
+
+@media (max-width: 1480px) {
+
+  .text-info {
+    width: 240px; /* Force the image to its minimum width */
+  }
+
+}
+
+@media (max-height: 900px) {
+  .container {
+      
+    .logo-date-holder {
+      max-width: 650px;
+    }
+
+  }
+}
+
+
+@media (max-width: 900px) {
+
+  .bouncer {
+    height: 45px; /* Force the image to its minimum width */
+  }
+
+}
+
+.text:before{
+  content: '2 days';
+  font-size: 1vw;
+  animation-name: head;
+  animation-duration: 25s;
+  animation-iteration-count: infinite;
+}
+
+.venue-container {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+@keyframes head {
+  0% {font-size:4vw; opacity:1;}
+  10% {font-size:4vw; opacity:0.5;} 
+  15% {font-size:4.3vw; opacity:1; content: "2 tracks"}
+  20% {font-size:4vw; opacity:0.5;}
+  25% {font-size:4.3vw; opacity:1; content: "Interactive themed game"}
+  30% {font-size:4vw; opacity:0.5;}
+  35% {font-size:4.3vw; opacity:1; content: "International speakers"}
+  40% {font-size:4vw; opacity:0.5;}
+  45% {font-size:4.3vw; opacity:1; content: "Community-organized festival"}
+  50% {font-size:4vw; opacity:0.5;}
+  55% {font-size:4.3vw; opacity:1; content: "Geeky afterparty"}
+  60% {font-size:4vw; opacity:0.5;}
+  65% {font-size:4.3vw; opacity:1; content: "Children's corner with professional babysitting"}
+  70% {font-size:4vw; opacity:0.5;}
+  75% {font-size:4.3vw; opacity:1; content: "Kotlin, UX, Flutter, Firebase and much more!"}
+  80% {font-size:4vw; opacity:0.5;}
+  85% {font-size:4.3vw; opacity:1; content: "2 tracks"}
+  90% {font-size:4vw; opacity:0.5;}
+  95% {font-size:4.3vw; opacity:1; content: "Just fun!"}
+  100% {font-size:4vw; opacity:0.5;}
+}
+
+.speakers-container {
+  min-height: 300px;
+  width: 100%;
+
+  .wrapper {
+
+    .speakers-cont {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      .member {
+        flex-basis: 320px;
+      }
+    }
+  }
+  .info-holder{
+    text-align: center;
+  
+    .info-text {
+      font-size: 28px;
+    }
+  }
+}
+
+.info-button{
+  margin: 5px;
+}
+
+.cfp-button{
+  background-color: aqua;
+}
+
+.container-second {
+  width: 100%;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  text-align: center;
+  justify-content: center;
+}
+
+.tickets {
+  padding: 15px;
+  text-align: center;
+}
+
+.container-fourth {
+  width: 100%;
+  text-align: center;
+
+  app-partner-panel {
+    width: 100%;
+  }
+}
+
+.container-photo {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  min-width: 100%;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

@@ -4,11 +4,29 @@
   min-height: 100%;
   min-width: 100%;
   background-color: $devfest-blue;
-  background-image: linear-gradient(to bottom, $devfest-blue-light, $devfest-blue),
-  url(../assets/black-wall.jpg);
+
   background-position: top;
   background-size: 100% 100vh;
   background-repeat: no-repeat;
+}
+
+.people-back{
+  background-image: linear-gradient(to bottom, $devfest-blue-light, $devfest-blue),
+  url(../assets/background_image.jpg);
+}
+
+.base-back{
+  background-image: linear-gradient(to , $devfest-blue-light, $devfest-blue),
+  url(../assets/background_image.jpg);
+}
+
+
+@media (max-width: 1480px) {
+
+  .main-holder {
+    background-size: auto 100vh; /* Force the image to its minimum width */
+  }
+
 }
 
 .navigation {

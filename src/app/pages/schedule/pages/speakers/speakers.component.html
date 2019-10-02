@@ -1,0 +1,12 @@
+<div class="container">
+  <div class="wrapper">
+    <div class="speakers-cont">
+      <app-speaker-card *ngFor="let speaker of speakers |async" class="member" 
+      [speakerName]="speaker.name" 
+      [companyName]="speaker.company" 
+      [tag]="speaker.tagColor" 
+      [speakerRef]="speaker['id']"
+      [imagePath]="speaker.photoPath"></app-speaker-card>
+    </div>
+  </div>
+</div>

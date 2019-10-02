@@ -1,4 +1,4 @@
-<mat-sidenav-container class="main-holder">
+<mat-sidenav-container [ngClass]="(currentRoute == '/' || currentRoute == '/home')? 'people-back': 'base-back'" class="main-holder people-back">
   <header class="navigation mat-elevation-z3">
     <app-navigation (homeClicked)="sidenav.toggle()"></app-navigation>
   </header>

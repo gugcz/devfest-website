@@ -1,0 +1,8 @@
+<div (lazyLoad)="loadData()">
+    <div class="holder" *ngIf="data | async as topics" >
+        <h1 [@fadeInOut]>Topics</h1>
+        <div class="tags-holder">
+            <app-topic *ngFor="let dat of topics" [name]="dat.name" [color]="dat.color"></app-topic>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,73 @@
+<h1 mat-dialog-title>Order by invoice</h1>
+<mat-dialog-content>
+  <form class="form">
+    <mat-form-field appearance="fill" class="form-field" color="accent">
+      <input [formControl]="email" class="input" matInput placeholder="Email for delivering invoice*">
+      <mat-error *ngIf="email.invalid">{{getEmailErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="form-field" color="accent">
+      <input [(ngModel)]="companyName" autocomplete="name" class="input" matInput name="companyName"
+             placeholder="Company name*"
+             type="">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="form-field" color="accent">
+      <input [(ngModel)]="city" autocomplete="shipping locality" class="input" matInput name="city"
+             placeholder="City*">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="form-field" color="accent">
+      <input [(ngModel)]="street" autocomplete="shipping street-address" class="input" matInput name="street"
+             placeholder="Street (with number)*">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="form-field" color="accent">
+      <input [(ngModel)]="zip" autocomplete="shipping postal-code" class="input" matInput name="zip"
+             placeholder="Zip code (PSČ)*">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="form-field">
+      <input [(ngModel)]="registrationNumberIC" class="input" matInput name="registrationNumberIC"
+             placeholder="Registration (IČO)*">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="form-field" color="accent">
+      <input [(ngModel)]="vatNumber" class="input" matInput name="registrationNumberDIC"
+             placeholder="VAT number (DIČ)">
+    </mat-form-field>
+    <mat-form-field class="form-field" appearance="fill" color="accent">
+      <mat-label>Country*</mat-label>
+      <mat-select [(ngModel)]="country" name="country">
+        <mat-option *ngFor="let country of listOfCountries" [value]="country.name">{{country.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div *ngIf="currentCompanyPrice != null || currentVIPPrice != null;else missingPrice ">
+      <div *ngIf="currentCompanyPrice">
+        Current price of company ticket: {{currentCompanyPrice * (countTicketsNormal == null ? 1 : countTicketsNormal)}}
+        CZK
+        ({{currentCompanyPriceE * (countTicketsNormal == null ? 1 : countTicketsNormal)}} €)
+      </div>
+      <div *ngIf="currentVIPPrice">
+        Current community support ticket: {{currentVIPPrice * (countTicketsVip == null ? 1 : countTicketsVip)}} CZK
+        ({{currentVIPPriceE * (countTicketsVip == null ? 1 : countTicketsVip)}} €)
+      </div>
+    </div>
+    <mat-form-field appearance="fill" class="form-field" color="accent">
+      <input [(ngModel)]="countTicketsNormal" [disabled]="!currentCompanyPrice" class="input" matInput
+             min="00"
+             name="countTicketsNormal" placeholder="Company tickets" type="number">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="form-field" color="accent">
+      <input [(ngModel)]="countTicketsVip" [disabled]="!currentVIPPrice" class="input" matInput
+             min="00" name="countTicketsVip" placeholder="Community support tickets" type="number">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button (click)="goToHome()" class="invoice-button" color="warn" mat-raised-button tabindex="-1">Cancel
+  </button>
+  <button (click)="sendInvoice()" [disabled]="!((countTicketsVip || countTicketsNormal) && !email.invalid && companyName && street && city
+    && zip && registrationNumberIC && country)" class="invoice-button" color="accent" mat-raised-button tabindex="-1">
+    Buy
+  </button>
+</mat-dialog-actions>
+<ng-template #missingPrice>
+  <div>
+    Loading price...
+  </div>
+</ng-template>
