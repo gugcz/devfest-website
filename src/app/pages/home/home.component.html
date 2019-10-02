@@ -1,0 +1,74 @@
+<div class="container">
+  <div class="logo-date-holder">
+    <img alt="Devfest logo" src="assets/devfest-logo.svg" />
+    <img alt="Devfest date" src="assets/devfest-date.svg" />
+    <img style="width:50%" alt="Devfest venue" src="assets/devfest-venue.svg" />
+  </div>
+  <div class="register-button">
+    <a class="info-button" href="home#tickets" color="primary" mat-flat-button>
+      <h1>Register now</h1>
+    </a>
+  </div>
+  <div class="socials">
+    <a *ngIf="twitterLink" [href]="twitterLink" mat-icon-button target="_blank">
+      <mat-icon class="social" svgIcon="twitter"></mat-icon>
+    </a>
+    <a *ngIf="facebookLink" [href]="facebookLink" mat-icon-button target="_blank">
+      <mat-icon class="social" svgIcon="facebook"></mat-icon>
+    </a>
+    <a *ngIf="instagramLink" [href]="instagramLink" mat-icon-button target="_blank">
+      <mat-icon class="social" svgIcon="instagram"></mat-icon>
+    </a>
+  </div>
+</div>
+<div class="container-second">
+  <!-- <a class="info-button" color="primary" [href]="mailFormLink" mat-flat-button>
+    <h1>I want to be there!</h1>
+  </a> -->
+  <!--a class="info-button cfp-button" color="accent" [href]="cfpFormLink" mat-flat-button>
+    <h1>I want to speak there!</h1>
+  </a-->
+  <h3 class="text-info">
+    A community-organized festival for developers and true geeks.
+  </h3>
+  <h4 class="text-info">
+    *Workshops will take place at our partners’ offices. More information coming soon.
+  </h4>
+  <div class="bouncer">
+    <div class="text"></div>
+  </div>
+</div>
+<div class="top-speakers">
+  <h1>Top speakers</h1>
+  <div class="speakers-container">
+    <div class="wrapper">
+      <div class="speakers-cont">
+        <app-speaker-card *ngFor="let speaker of speakers |async" class="member" [speakerName]="speaker.name"
+          [companyName]="speaker.company" [tag]="speaker.tagColor" [speakerRef]="speaker['id']"
+          [imagePath]="speaker.photoPath"></app-speaker-card>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="topics">
+  <app-topics-panel></app-topics-panel>
+</div>
+<div id="tickets">
+  <div class="tickets" *ngIf="!hideTickets">
+    <div>
+      <h1>Tickets</h1>
+      <app-tickets></app-tickets>
+    </div>
+  </div>
+</div>
+
+<div class="venue-container">
+  <app-venue></app-venue>
+</div>
+<div class="container-fourth">
+  <app-top-partner-panel *ngFor="let partner of partners | async" [companies]="partner.companies"
+    [groupName]="partner.name" [main]="true"></app-top-partner-panel>
+</div>
+<div class="container-photo">
+  <app-photo-panel></app-photo-panel>
+</div>

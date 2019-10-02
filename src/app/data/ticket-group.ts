@@ -10,6 +10,7 @@ export interface TicketGroup {
   additionalInfoDescription?: string;
   additionalInfo?: string;
   customDescription?: string;
+  extra?: boolean;
 }
 
 export interface Ticket {

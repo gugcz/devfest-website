@@ -1,0 +1,77 @@
+<div *ngIf="ticketGroups; else loading" class="ticket-holder">
+  <ng-container *ngFor="let ticketGroup of ticketGroups">
+    <div (click)="showAdditionalInfo(ticketGroup.additionalInfo, ticketGroup.name)"
+         *ngIf="ticketGroup.tickets[0] != null" [@fadeInOut]
+         [ngClass]="{
+         'active-group': (!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active && !ticketGroup.extra), 
+         'non-active-group': !(!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active) && !ticketGroup.extra,
+         'extra-group': (!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active && ticketGroup.extra == true),
+         'reset-margin': isMobile}"
+         class="ticket">
+      <h1 class="ticketgroup-name">{{ticketGroup.name}}</h1>
+      <div *ngFor="let ticket of ticketGroup.tickets" class="one-ticket">
+        <div *ngIf="!ticketGroup.hideTicketName"
+             class="ticket-name">{{ticketGroup.hideTicketName}}{{ticket.publicName}}</div>
+        <div class="czech-price">{{ticket.price | number : 0}} CZK</div>
+        <div class="eur-price">~{{ticket.eur_price}} €</div>
+      </div>
+      <div *ngIf="ticketGroup.showDescription && !ticketGroup.customDescription" class="description">
+        {{ticketGroup.tickets[0].description}}
+      </div>
+      <div *ngIf="ticketGroup.showDescription && ticketGroup.customDescription" class="date">
+        {{ticketGroup.customDescription}}
+      </div>
+      <div *ngIf="ticketGroup.additionalInfoDescription" class="addition-info-ticket">
+        {{ticketGroup.additionalInfoDescription}}
+      </div>
+      <div *ngIf="ticketGroup.showCount" class="count">
+        First {{ticketGroup.tickets[0].quantity}}
+      </div>
+      <div *ngIf="ticketGroup.showEnd" class="date">
+        Until {{ticketGroup.tickets[0].end | date}}
+      </div>
+      <div *ngIf="ticketGroup.showStart" class="date">
+        From {{ticketGroup.tickets[0].start | date}}
+      </div>
+      <div *ngIf="!ticketGroup.tickets[0].sold_out && !ticketGroup.tickets[0].active"
+           class="ticket-status-unavailable unactive">
+        UNAVAILABLE
+      </div>
+      <div *ngIf="ticketGroup.tickets[0].sold_out && !ticketGroup.tickets[0].active"
+           class="ticket-status-sold unactive">
+        SOLD OUT
+      </div>
+      <a *ngIf="!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active" [href]="ticketGroup.url"
+        [ngClass]="{'extra-text': ticketGroup.extra}"
+         class="ticket-status-buy">
+        BUY NOW!
+      </a>
+    </div>
+  </ng-container>
+</div>
+<div class="addition-info">
+  <p>
+    All prices include VAT 21%
+  </p>
+  <p>
+    Children up to 12 years of age free of charge - please send us an email when ordering a ticket that you will bring
+    your child or children.
+  </p>
+  <p>
+    Ticket refund is only available within 24 hours after the purchase.
+  </p>
+</div>
+<div class="invoice-button-holder">
+  <div>
+    <button (click)="openInvoiceModal()" class="invoice-button" color="primary" mat-raised-button><h2>Order by
+      invoice</h2></button>
+  </div>
+  <div class="invoice-info">
+    if you need company invoice first
+  </div>
+</div>
+<ng-template #loading>
+  <div class="spinner-holder">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>
