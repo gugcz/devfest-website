@@ -2,7 +2,11 @@
   <ng-container *ngFor="let ticketGroup of ticketGroups">
     <div (click)="showAdditionalInfo(ticketGroup.additionalInfo, ticketGroup.name)"
          *ngIf="ticketGroup.tickets[0] != null" [@fadeInOut]
-         [ngClass]="!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active ? 'active-group': 'non-active-group'"
+         [ngClass]="{
+         'active-group': (!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active && !ticketGroup.extra), 
+         'non-active-group': !(!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active) && !ticketGroup.extra,
+         'extra-group': (!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active && ticketGroup.extra == true),
+         'reset-margin': isMobile}"
          class="ticket">
       <h1 class="ticketgroup-name">{{ticketGroup.name}}</h1>
       <div *ngFor="let ticket of ticketGroup.tickets" class="one-ticket">
@@ -38,6 +42,7 @@
         SOLD OUT
       </div>
       <a *ngIf="!ticketGroup.tickets[0].sold_out && ticketGroup.tickets[0].active" [href]="ticketGroup.url"
+        [ngClass]="{'extra-text': ticketGroup.extra}"
          class="ticket-status-buy">
         BUY NOW!
       </a>

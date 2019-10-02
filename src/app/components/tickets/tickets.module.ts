@@ -8,6 +8,7 @@ import { MatDialogModule, MatProgressSpinnerModule, MatButtonModule } from '@ang
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { CommonModule } from '@angular/common';
+import { DeviceDetectorModule } from 'ngx-device-detector';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { CommonModule } from '@angular/common';
     AngularFireFunctionsModule,
     InvoiceFormModule,
     TicketAdditionalInfoModule,
+    DeviceDetectorModule
   ],
   exports: [TicketsComponent],
 })

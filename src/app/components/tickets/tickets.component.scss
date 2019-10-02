@@ -41,10 +41,14 @@
 }
 
 .non-active-group {
-  box-shadow: 0 0 .5rem #fff, inset 0 0 .5rem #fff;
+  margin-top: 48px;
+  zoom: 0.80!important;
+  filter: blur(40%);
+  box-shadow: 0 0 .3rem #fff, inset 0 0 .3rem #fff;
 
   * {
-    text-shadow: 0 0 10px white;
+    text-shadow: 0 0 4px white;
+    color: transparent;
   }
 }
 
@@ -54,6 +58,25 @@
   * {
     text-shadow: 0 0 30px #22a062;
   }
+}
+
+.extra-group {
+  margin-left: 80px;
+  margin-right: 80px;
+  box-shadow: 0 0 1.5rem #DAA520, inset 0 0 1.5rem #DAA520;
+
+  * {
+    text-shadow: 0 0 40px #773B4D;
+  }
+}
+
+.extra-text {
+  color: #DAA520!important;
+}
+
+.reset-margin {
+  margin-left: 8px;
+  margin-right: 8px;
 }
 
 .unactive {

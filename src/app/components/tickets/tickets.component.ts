@@ -7,6 +7,7 @@ import { InvoiceFormComponent } from '../invoice-form/invoice-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TicketGroupView } from './ticket-group-view';
 import { TicketAdditionalInfoComponent } from '../ticket-additional-info/ticket-additional-info.component';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-tickets',
@@ -28,15 +29,18 @@ export class TicketsComponent implements OnInit {
 
   ticketGroups: TicketGroupView[];
   private partnerGroupCollection: AngularFirestoreCollection<TicketGroup>;
+  isMobile: boolean;
 
   constructor(
     private afFunctions: AngularFireFunctions,
     private afStore: AngularFirestore,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private device: DeviceDetectorService) {
   }
 
   ngOnInit() {
     this.prepareTickets();
+    this.isMobile = this.device.isMobile();
   }
 
   async prepareTickets() {
@@ -61,6 +65,7 @@ export class TicketsComponent implements OnInit {
         return titoTic.length > 0 ? { publicName: tic.publicName, ...titoTic[0] } : null;
       });
       group.url = url;
+      console.log(group);
       return group;
     });
   }
