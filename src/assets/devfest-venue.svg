@@ -3,11 +3,11 @@
 <svg version="1.1" id="Vrstva_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 900 300" style="enable-background:new 0 0 900 300;" xml:space="preserve">
 	   <defs>
-    <filter height="200%" id="white-text-glow" width="200%" x="-20%" y="-20%">
+    <filter height="130%" id="white-text-glow" width="130%" x="-20%" y="-20%">
       <feFlood flood-color="#ffffff" flood-opacity="1" result="flood"></feFlood>
       <feComposite in="flood" in2="SourceGraphic" operator="in" result="mask"></feComposite>
-      <feMorphology in="mask" operator="dilate" radius="2" result="dilated"></feMorphology>
-      <feGaussianBlur in="dilated" result="blurred" stdDeviation="5"></feGaussianBlur>
+      <feMorphology in="mask" operator="dilate" radius="1" result="dilated"></feMorphology>
+      <feGaussianBlur in="dilated" result="blurred" stdDeviation="1"></feGaussianBlur>
       <feMerge>
         <feMergeNode in="blurred"></feMergeNode>
         <feMergeNode in="SourceGraphic"></feMergeNode>
