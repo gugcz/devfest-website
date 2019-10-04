@@ -65,7 +65,6 @@ export class TicketsComponent implements OnInit {
         return titoTic.length > 0 ? { publicName: tic.publicName, ...titoTic[0] } : null;
       });
       group.url = url;
-      console.log(group);
       return group;
     });
   }
