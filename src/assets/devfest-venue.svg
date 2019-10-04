@@ -7,7 +7,7 @@
       <feFlood flood-color="#ffffff" flood-opacity="1" result="flood"></feFlood>
       <feComposite in="flood" in2="SourceGraphic" operator="in" result="mask"></feComposite>
       <feMorphology in="mask" operator="dilate" radius="2" result="dilated"></feMorphology>
-      <feGaussianBlur in="dilated" result="blurred" stdDeviation="5"></feGaussianBlur>
+      <feGaussianBlur in="dilated" result="blurred" stdDeviation="2"></feGaussianBlur>
       <feMerge>
         <feMergeNode in="blurred"></feMergeNode>
         <feMergeNode in="SourceGraphic"></feMergeNode>
