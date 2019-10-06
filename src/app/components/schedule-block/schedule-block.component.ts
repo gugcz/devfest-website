@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import Speaker from 'src/app/data/speaker';
 import { animFadeInOut } from 'src/app/animations';
+import { DocumentReference } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-schedule-block',
@@ -15,7 +16,9 @@ export class ScheduleBlockComponent {
   @Input() duration: number;
   @Input() speaker1: Speaker;
   @Input() speaker2: Speaker;
-  @Output() blockClicked = new EventEmitter<void>();
+  @Input() roomName: string;
+  @Input() talkRef: DocumentReference;
+  @Output() blockClicked = new EventEmitter<DocumentReference>();
 
   constructor() {}
 

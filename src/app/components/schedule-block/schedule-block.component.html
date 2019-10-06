@@ -1,7 +1,7 @@
 <div
   class="block"
   [@fadeInOut]
-  (click)="blockClicked.emit()"
+  (click)="blockClicked.emit(talkRef)"
   [ngClass]="speaker1 || speaker2 ? 'big-height' : 'small-height'"
 >
   <div>
@@ -11,7 +11,11 @@
   </div>
   <div class="talk-info" *ngIf="speaker1 || speaker2">
     <span *ngIf="level">{{ level }} / </span>
-    <span *ngIf="language">{{ language }} /</span> {{ duration }} min
+    <span *ngIf="language">{{ language }} /</span>
+
+     {{ duration }} min
+
+     <span *ngIf="roomName"> / {{ roomName }}</span>
   </div>
   <div
     class="speakers-info"

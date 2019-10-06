@@ -53,4 +53,8 @@ export class ScheduleComponent implements OnInit {
   changeDate(i) {
     console.log(i);
   }
+
+  clickedBlock(i) {
+    console.log(i);
+  }
 }

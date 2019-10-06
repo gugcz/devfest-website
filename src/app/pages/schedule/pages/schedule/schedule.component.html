@@ -43,11 +43,14 @@
                 'grid-row-start': isMobile? y*schedules.length + 2+i : y*schedules.length + 2,
                 'grid-row-end': isMobile? y*schedules.length + 3+i : y*schedules.length + 4
               }"
+              (blockClicked)="clickedBlock($event)"
               [title]="block.name"
               [level]="block.level"
+              [roomName]="rooms[i]"
               [language]="block.language"
               [duration]="block.duration"
               [speaker1]="block.speaker"
+              [talkRef]="block.talkRef"
               [speaker2]="block.cospeaker"
             ></app-schedule-block>
           </ng-container>
