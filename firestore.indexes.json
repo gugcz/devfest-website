@@ -1,23 +1,47 @@
 {
   "indexes": [
     {
-      "collectionId": "partners",
+      "collectionGroup": "partners",
+      "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "self", "mode": "ASCENDING",
-          "fieldPath": "order", "mode": "ASCENDING",
-          "fieldPath": "top", "mode": "ASCENDING"
+          "fieldPath": "self",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "order",
+          "order": "ASCENDING"
         }
       ]
     },
     {
-      "collectionId": "teamMembers",
+      "collectionGroup": "partners",
+      "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "position", "mode": "ASCENDING",
-          "fieldPath": "order", "mode": "ASCENDING"
+          "fieldPath": "top",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "order",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "teamMembers",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "position",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "order",
+          "order": "ASCENDING"
         }
       ]
     }
-  ]
+  ],
+  "fieldOverrides": []
 }
