@@ -1,10 +1,10 @@
-<div class="block" [@fadeInOut] (click)="blockClicked.emit()">
+<div class="block" [@fadeInOut] (click)="blockClicked.emit()" [ngClass]="speaker1 || speaker2 ? 'big-height': 'small-height'">
   <div>
     <h3 class="title">
       {{title}}
     </h3>
   </div>
-  <div class="talk-info">
+  <div class="talk-info" *ngIf="speaker1 || speaker2">
       <span *ngIf="level">{{level}} /</span><span *ngIf="language">{{language}} /</span> {{duration}} min
   </div>
   <div class="speakers-info" *ngIf="speaker1 || speaker2">
@@ -24,7 +24,7 @@
       </div>
       <div class="position">
         <div class="text">
-          {{speaker1.companyPosition}} <span *ngIf="speaker2">/ {{speaker2.companyPosition}}</span> / {{speaker1.company}}
+          {{speaker1.company}}
         </div>
       </div>
     </div>

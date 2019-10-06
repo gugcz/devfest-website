@@ -8,4 +8,16 @@ export default interface Schedule {
   startTime: Timestamp;
   talkRef: DocumentReference;
   description?: string;
+  speaker: IntSpeaker;
+  cospeaker: IntSpeaker;
+}
+
+interface IntSpeaker {
+    company: string;
+    language: string;
+    name: string;
+    photoPath: string;
+    pronoun: string;
+    tag: string;
+    tagColor: string;
 }
