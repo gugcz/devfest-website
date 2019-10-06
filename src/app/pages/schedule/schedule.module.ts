@@ -11,7 +11,7 @@ import {
   MatIconModule,
 } from '@angular/material';
 import { SpeakerDetailComponent } from '../../components/speaker-detail/speaker-detail.component';
-import { DeviceDetectorModule } from 'ngx-device-detector';
+import { DeviceDetectorModule, DeviceDetectorService } from 'ngx-device-detector';
 import { SocialIconsService } from '../../services/social-icons.service';
 import { SharedModule } from '../../shared/shared.module';
 import { SpeakerDetailModule } from 'src/app/components/speaker-detail/speaker-detail.module';
@@ -24,6 +24,9 @@ import { SpeakerCardModule } from 'src/app/components/speaker-card/speaker-card.
     ScheduleRoutingModule,
     SpeakerDetailModule,
     SpeakerCardModule,
+  ],
+  providers: [
+    DeviceDetectorService
   ],
   entryComponents: [SpeakerDetailComponent],
 })

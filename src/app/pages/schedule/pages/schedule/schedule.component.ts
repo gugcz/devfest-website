@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-schedule',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ScheduleComponent implements OnInit {
 
-  constructor() { }
+  isMobile: boolean;
+
+  constructor(private deviceDetector: DeviceDetectorService) { }
 
   ngOnInit() {
+    this.isMobile = this.deviceDetector.isMobile();
   }
 
 }

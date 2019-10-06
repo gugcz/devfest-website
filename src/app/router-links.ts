@@ -12,6 +12,10 @@ export default [
     label: 'Speakers'
   },
   {
+    path: 'schedule/overview',
+    label: 'Schedule'
+  },
+  {
     path: 'press',
     label: 'Press'
   },
