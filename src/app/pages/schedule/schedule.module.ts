@@ -16,6 +16,9 @@ import { SocialIconsService } from '../../services/social-icons.service';
 import { SharedModule } from '../../shared/shared.module';
 import { SpeakerDetailModule } from 'src/app/components/speaker-detail/speaker-detail.module';
 import { SpeakerCardModule } from 'src/app/components/speaker-card/speaker-card.module';
+import { ScheduleBlockModule } from 'src/app/components/schedule-block/schedule-block.module';
+import { ScheduleDatesModule } from 'src/app/components/schedule-dates/schedule-dates.module';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 @NgModule({
   declarations: [SpeakersComponent, ScheduleComponent],
@@ -24,6 +27,9 @@ import { SpeakerCardModule } from 'src/app/components/speaker-card/speaker-card.
     ScheduleRoutingModule,
     SpeakerDetailModule,
     SpeakerCardModule,
+    ScheduleBlockModule,
+    ScheduleDatesModule,
+    AngularFirestoreModule
   ],
   providers: [
     DeviceDetectorService
