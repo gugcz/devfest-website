@@ -9,15 +9,26 @@
         <ng-container *ngFor="let daysche of schedules; let i = index">
           <ng-container *ngFor="let block of daysche; let y = index">
             <div
-              *ngIf="i == 0"
+              style="text-align: center;"
+              *ngIf="y == 0"
+              [ngStyle]="{
+                'grid-column-start': 3 + i * 3,
+                'grid-column-end': 6 + i * 3,
+                'grid-row-start': 1,
+                'grid-row-end': 2
+              }"
+            >
+              <h1>{{ rooms[i] }}</h1>
+            </div>
+            <div
               [ngStyle]="{
                 'grid-column-start': 1,
                 'grid-column-end': 3,
-                'grid-row-start': y + 1,
-                'grid-row-end': y + 2
+                'grid-row-start': y + 2,
+                'grid-row-end': y + 3
               }"
             >
-              <h3 style="margin-top: 0px;">
+              <h3 style="margin-top: 0px;" *ngIf="i == 0">
                 {{ block.startTime.toDate() | date: 'H:mm' }}
               </h3>
             </div>
@@ -29,8 +40,8 @@
                   block.multiple && i == 0
                     ? 6 + (schedules.length - 1) * 3
                     : 6 + i * 3,
-                'grid-row-start': y + 1,
-                'grid-row-end': y + 2
+                'grid-row-start': y + 2,
+                'grid-row-end': y + 3
               }"
               [title]="block.name"
               [level]="block.level"

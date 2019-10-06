@@ -14,6 +14,7 @@ export class ScheduleComponent implements OnInit {
   isMobile: boolean;
   dates: Date[];
   schedules: Schedule[][];
+  rooms: string[];
 
   constructor(
     private deviceDetector: DeviceDetectorService,
@@ -45,6 +46,7 @@ export class ScheduleComponent implements OnInit {
             return 0;
           })
         );
+        this.rooms = a.map(a => a.name);
       });
   }
 
