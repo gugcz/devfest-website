@@ -8,9 +8,9 @@
       <div *ngIf="schedules" class="schedule">
         <ng-container *ngFor="let daysche of schedules; let i = index">
           <ng-container *ngFor="let block of daysche; let y = index">
-            <div
+            <div 
               style="text-align: center;"
-              *ngIf="y == 0"
+              *ngIf="y == 0 && !isMobile"
               [ngStyle]="{
                 'grid-column-start': 3 + i * 3,
                 'grid-column-end': 6 + i * 3,
@@ -24,8 +24,8 @@
               [ngStyle]="{
                 'grid-column-start': 1,
                 'grid-column-end': 3,
-                'grid-row-start': y + 2,
-                'grid-row-end': y + 3
+                'grid-row-start': y*schedules.length + 2,
+                'grid-row-end': y*schedules.length + 4
               }"
             >
               <h3 style="margin-top: 0px;" *ngIf="i == 0">
@@ -35,13 +35,13 @@
             <app-schedule-block
               *ngIf="!(block.multiple && i > 0)"
               [ngStyle]="{
-                'grid-column-start': block.multiple && i == 0 ? 3 : 3 + i * 3,
+                'grid-column-start': (block.multiple && i == 0 || isMobile) ? 3 : 3 + i * 3,
                 'grid-column-end':
-                  block.multiple && i == 0
+                  (block.multiple && i == 0 || isMobile)
                     ? 6 + (schedules.length - 1) * 3
                     : 6 + i * 3,
-                'grid-row-start': y + 2,
-                'grid-row-end': y + 3
+                'grid-row-start': isMobile? y*schedules.length + 2+i : y*schedules.length + 2,
+                'grid-row-end': isMobile? y*schedules.length + 3+i : y*schedules.length + 4
               }"
               [title]="block.name"
               [level]="block.level"
