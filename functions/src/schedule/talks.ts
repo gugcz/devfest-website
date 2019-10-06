@@ -13,6 +13,7 @@ export const dissocTalkProps = pipe(
 export const assocTalkProps = (scheduleItem, talk) => pipe(
     ifElse(_ => has('name', talk), assoc('name', talk.name), identity),
     ifElse(_ => has('description', talk), assoc('description', talk.description), identity),
+    ifElse(_ => has('startTime', talk), assoc('startTime', talk.startTime), identity),
     ifElse(_ => has('duration', talk), assoc('duration', talk.duration), identity),
     ifElse(_ => has('language', talk), assoc('language', talk.language), identity),
 )(scheduleItem);
