@@ -4,6 +4,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import Room from 'src/app/data/room';
 import Schedule from 'src/app/data/schedule';
+import { MatDialog } from '@angular/material';
+import { TalkDetailComponent } from 'src/app/components/talk-detail/talk-detail.component';
 
 @Component({
   selector: 'app-schedule',
@@ -18,7 +20,8 @@ export class ScheduleComponent implements OnInit {
 
   constructor(
     private deviceDetector: DeviceDetectorService,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -55,6 +58,24 @@ export class ScheduleComponent implements OnInit {
   }
 
   clickedBlock(i) {
-    console.log(i);
+    const desktopConfig = {
+      width: '800px',
+      height: '550px',
+      data: {
+        ref: i
+      },
+      autoFocus: false,
+    };
+    const mobileConfig = {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      data: {
+        ref: i
+      },
+      autoFocus: false,
+    };
+    this.dialog.open(TalkDetailComponent, this.isMobile ? mobileConfig : desktopConfig);
   }
 }

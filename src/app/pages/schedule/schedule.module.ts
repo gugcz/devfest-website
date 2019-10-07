@@ -19,6 +19,8 @@ import { SpeakerCardModule } from 'src/app/components/speaker-card/speaker-card.
 import { ScheduleBlockModule } from 'src/app/components/schedule-block/schedule-block.module';
 import { ScheduleDatesModule } from 'src/app/components/schedule-dates/schedule-dates.module';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { TalkDetailModule } from 'src/app/components/talk-detail/talk-detail.module';
+import { TalkDetailComponent } from 'src/app/components/talk-detail/talk-detail.component';
 
 @NgModule({
   declarations: [SpeakersComponent, ScheduleComponent],
@@ -29,11 +31,13 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     SpeakerCardModule,
     ScheduleBlockModule,
     ScheduleDatesModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    TalkDetailModule,
+    MatDialogModule
   ],
   providers: [
     DeviceDetectorService
   ],
-  entryComponents: [SpeakerDetailComponent],
+  entryComponents: [SpeakerDetailComponent, TalkDetailComponent],
 })
 export class ScheduleModule {}
