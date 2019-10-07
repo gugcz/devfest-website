@@ -1,0 +1,23 @@
+.container {
+  min-height: 100vh;
+  width: 100%;
+
+  .wrapper {
+    padding-top: 80px;
+    text-align: center;
+  }
+}
+
+.schedule-holder{
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.schedule {
+  margin: 20px;
+  display: grid;
+  grid-template-columns: 30px auto;
+  grid-template-rows: auto;
+  grid-column-gap: 15px;
+  grid-row-gap: 15px;
+}
