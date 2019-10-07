@@ -1,0 +1,33 @@
+.dates-hoder {
+  width: 300px;
+  height: 50px;
+}
+
+.mat-tab-label-content {
+  font-size: 50px;
+}
+
+.time-slot-switch-container {
+  display: flex;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  flex-direction: row;
+
+  .time-slot-switch {
+    cursor: pointer;
+    flex: 1;
+    text-align: center;
+
+    &-title {
+      font-size: 1rem;
+      font-weight: 500;
+      margin: 0;
+      border-bottom: 2px solid transparent;
+      padding: 8px;
+    }
+
+    &.active .time-slot-switch-title {
+      border-bottom: 2px solid #333333;
+    }
+  }
+}

@@ -1,0 +1,5 @@
+<div class="datesHolder">
+  <mat-tab-group dynamicHeight>
+    <mat-tab *ngFor="let dat of dates; let i = index" (click)="datePicked.emit(i)" [label]="dat | date:'d LLL'"></mat-tab>
+  </mat-tab-group>
+</div>

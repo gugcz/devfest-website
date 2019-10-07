@@ -11,11 +11,16 @@ import {
   MatIconModule,
 } from '@angular/material';
 import { SpeakerDetailComponent } from '../../components/speaker-detail/speaker-detail.component';
-import { DeviceDetectorModule } from 'ngx-device-detector';
+import { DeviceDetectorModule, DeviceDetectorService } from 'ngx-device-detector';
 import { SocialIconsService } from '../../services/social-icons.service';
 import { SharedModule } from '../../shared/shared.module';
 import { SpeakerDetailModule } from 'src/app/components/speaker-detail/speaker-detail.module';
 import { SpeakerCardModule } from 'src/app/components/speaker-card/speaker-card.module';
+import { ScheduleBlockModule } from 'src/app/components/schedule-block/schedule-block.module';
+import { ScheduleDatesModule } from 'src/app/components/schedule-dates/schedule-dates.module';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { TalkDetailModule } from 'src/app/components/talk-detail/talk-detail.module';
+import { TalkDetailComponent } from 'src/app/components/talk-detail/talk-detail.component';
 
 @NgModule({
   declarations: [SpeakersComponent, ScheduleComponent],
@@ -24,7 +29,15 @@ import { SpeakerCardModule } from 'src/app/components/speaker-card/speaker-card.
     ScheduleRoutingModule,
     SpeakerDetailModule,
     SpeakerCardModule,
+    ScheduleBlockModule,
+    ScheduleDatesModule,
+    AngularFirestoreModule,
+    TalkDetailModule,
+    MatDialogModule
   ],
-  entryComponents: [SpeakerDetailComponent],
+  providers: [
+    DeviceDetectorService
+  ],
+  entryComponents: [SpeakerDetailComponent, TalkDetailComponent],
 })
 export class ScheduleModule {}

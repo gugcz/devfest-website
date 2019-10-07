@@ -1,3 +1,61 @@
-<p>
-  schedule works!
-</p>
+<div class="container">
+  <div class="wrapper">
+    <!-- <app-schedule-dates
+        [dates]="dates"
+        (datePicked)="(changeDate)"
+      ></app-schedule-dates> -->
+    <div class="schedule-holder">
+      <div *ngIf="schedules" class="schedule">
+        <ng-container *ngFor="let daysche of schedules; let i = index">
+          <ng-container *ngFor="let block of daysche; let y = index">
+            <div 
+              style="text-align: center;"
+              *ngIf="y == 0 && !isMobile"
+              [ngStyle]="{
+                'grid-column-start': 3 + i * 3,
+                'grid-column-end': 6 + i * 3,
+                'grid-row-start': 1,
+                'grid-row-end': 2
+              }"
+            >
+              <h1>{{ rooms[i] }}</h1>
+            </div>
+            <div
+              [ngStyle]="{
+                'grid-column-start': 1,
+                'grid-column-end': 3,
+                'grid-row-start': y*schedules.length + 2,
+                'grid-row-end': y*schedules.length + 4
+              }"
+            >
+              <h3 style="margin-top: 0px;" *ngIf="i == 0">
+                {{ block.startTime.toDate() | date: 'H:mm' }}
+              </h3>
+            </div>
+            <app-schedule-block
+              *ngIf="!(block.multiple && i > 0)"
+              [ngStyle]="{
+                'grid-column-start': (block.multiple && i == 0 || isMobile) ? 3 : 3 + i * 3,
+                'grid-column-end':
+                  (block.multiple && i == 0 || isMobile)
+                    ? 6 + (schedules.length - 1) * 3
+                    : 6 + i * 3,
+                'grid-row-start': isMobile? y*schedules.length + 2+i : y*schedules.length + 2,
+                'grid-row-end': isMobile? y*schedules.length + 3+i : y*schedules.length + 4
+              }"
+              (blockClicked)="clickedBlock($event)"
+              [title]="block.name"
+              [level]="block.level"
+              [roomName]="rooms[i]"
+              [language]="block.language"
+              [duration]="block.duration"
+              [speaker1]="block.speaker"
+              [talkRef]="block.talkRef"
+              [speaker2]="block.cospeaker"
+            ></app-schedule-block>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

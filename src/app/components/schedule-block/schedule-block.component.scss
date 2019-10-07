@@ -1,0 +1,75 @@
+.block {
+  width: 100%;
+  border: 2px solid #333333;
+  background-color: #0e2430;
+  border-radius: 8px;
+  color: white;
+  box-shadow: 0 0 0.3rem #333333;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.title {
+  margin-top: 18px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 0px;
+}
+
+.big-height{
+    height: 130px;
+}
+
+.small-height{
+    height: 60px;
+}
+
+.small-height-mobile {
+    height: 80px;
+}
+
+.big-height-mobile{
+    height: 180px;
+}
+
+.talk-info {
+    position: absolute;
+    font-size: 17px;
+    bottom: 42px;
+    width: 100%;
+    text-align: center;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.speakers-info {
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+    height: 40px;
+    border-radius: 0px 0px 8px 8px;
+
+    .avatars{
+        float: left;
+        .avatar{
+            float: left;
+            margin-top: 5px;
+            margin-left: 7px;
+            height: 30px;
+            width: 30px;
+        }
+    }
+
+    .info {
+        .name {
+            height: 25px;
+            font-size: 17px;
+            font-weight: 400;
+        }
+        .position {
+            height: 15px;
+            font-size: 12px;
+        }
+    }
+}
