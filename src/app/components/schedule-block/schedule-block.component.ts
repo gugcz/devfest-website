@@ -39,4 +39,9 @@ export class ScheduleBlockComponent implements OnInit {
     const brightness = (c_r * 299 + c_g * 587 + c_b * 114) / 1000;
     return brightness > 155;
   }
+
+  getShortName(fullName) { 
+    const split = fullName.split(' ');
+    return split[0] + ' ' + split[split.length - 1];
+  }
 }

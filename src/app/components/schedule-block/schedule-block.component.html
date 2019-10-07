@@ -41,7 +41,7 @@
     <div class="info">
       <div class="name">
         <div class="text">
-          {{ speaker1.name }}
+          {{ isMobile ? getShortName(speaker1.name) : speaker1.name }}
           <span *ngIf="speaker2">& {{ speaker2.name }}</span>
         </div>
       </div>
