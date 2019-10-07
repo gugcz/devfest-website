@@ -10,7 +10,9 @@
 }
 
 .title {
-  margin-top: 3px;
+  margin-top: 18px;
+  margin-left: 5px;
+  margin-right: 5px;
   margin-bottom: 0px;
 }
 
@@ -20,6 +22,14 @@
 
 .small-height{
     height: 60px;
+}
+
+.small-height-mobile {
+    height: 80px;
+}
+
+.big-height-mobile{
+    height: 180px;
 }
 
 .talk-info {

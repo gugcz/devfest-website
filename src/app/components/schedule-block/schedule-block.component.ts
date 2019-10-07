@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import Speaker from 'src/app/data/speaker';
 import { animFadeInOut } from 'src/app/animations';
 import { DocumentReference } from '@angular/fire/firestore';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-schedule-block',
@@ -9,7 +10,7 @@ import { DocumentReference } from '@angular/fire/firestore';
   styleUrls: ['./schedule-block.component.scss'],
   animations: [animFadeInOut],
 })
-export class ScheduleBlockComponent {
+export class ScheduleBlockComponent implements OnInit {
   @Input() title: string;
   @Input() level: string;
   @Input() language: 'EN' | 'CZ';
@@ -20,7 +21,15 @@ export class ScheduleBlockComponent {
   @Input() talkRef: DocumentReference;
   @Output() blockClicked = new EventEmitter<DocumentReference>();
 
-  constructor() {}
+  isMobile: boolean;
+
+  constructor(private deviceDetector: DeviceDetectorService) {
+
+  }
+
+  ngOnInit(){
+    this.isMobile = this.deviceDetector.isMobile();
+  }
 
   wc_hex_is_light(color) {
     const hex = color.replace('#', '');

@@ -2,9 +2,9 @@
   class="block"
   [@fadeInOut]
   (click)="blockClicked.emit(talkRef)"
-  [ngClass]="speaker1 || speaker2 ? 'big-height' : 'small-height'"
+  [ngClass]="speaker1 || speaker2 ? (isMobile? 'big-height-mobile' : 'big-height') : (isMobile? 'small-height-mobile' : 'small-height')"
 >
-  <div>
+  <div class="title-holder">
     <h3 class="title">
       {{ title }}
     </h3>
@@ -15,7 +15,7 @@
 
      {{ duration }} min
 
-     <span *ngIf="roomName"> / {{ roomName }}</span>
+     <span *ngIf="roomName && isMobile"> / {{ roomName }}</span>
   </div>
   <div
     class="speakers-info"

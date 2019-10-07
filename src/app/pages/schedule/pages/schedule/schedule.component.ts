@@ -24,7 +24,7 @@ export class ScheduleComponent implements OnInit {
   ngOnInit() {
     this.isMobile = this.deviceDetector.isMobile();
     this.firestore
-      .collection<Room>('rooms')
+      .collection<Room>('rooms', ref=> ref.orderBy('order'))
       .valueChanges()
       .subscribe(a => {
         this.dates = a
