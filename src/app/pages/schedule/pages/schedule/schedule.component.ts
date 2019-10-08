@@ -6,6 +6,7 @@ import Room from 'src/app/data/room';
 import Schedule from 'src/app/data/schedule';
 import { MatDialog } from '@angular/material';
 import { TalkDetailComponent } from 'src/app/components/talk-detail/talk-detail.component';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Component({
   selector: 'app-schedule',
@@ -21,6 +22,7 @@ export class ScheduleComponent implements OnInit {
   constructor(
     private deviceDetector: DeviceDetectorService,
     private firestore: AngularFirestore,
+    private storage: AngularFireStorage,
     private dialog: MatDialog
   ) {}
 
@@ -57,11 +59,13 @@ export class ScheduleComponent implements OnInit {
     console.log(i);
   }
 
-  clickedBlock(i) {
+  async clickedBlock(i, icon) {
+    const url = await this.storage.ref(icon).getDownloadURL().toPromise();
     const desktopConfig = {
       width: '800px',
       data: {
-        ref: i
+        ref: i,
+        icon: url
       },
       autoFocus: false,
     };
@@ -71,7 +75,8 @@ export class ScheduleComponent implements OnInit {
       height: '100%',
       width: '100%',
       data: {
-        ref: i
+        ref: i,
+        icon: url
       },
       autoFocus: false,
     };

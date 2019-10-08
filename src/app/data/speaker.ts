@@ -15,4 +15,5 @@ export default interface Speaker {
     talkDescription?: string;
     talkRef?: DocumentReference;
     tagColor?: string;
+    tagIcon?: string;
 }

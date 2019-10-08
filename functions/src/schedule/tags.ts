@@ -28,7 +28,8 @@ export const updateOfColor = functions.firestore.document('tags/{documentId}').o
         const batch = admin.firestore().batch();
         speakers.forEach((speaker) => {
             batch.update(speaker.ref, { 
-                tagColor: data.color
+                tagColor: data.color,
+                tagIcon: data.icon
             })
         })
         return batch.commit();
