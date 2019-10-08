@@ -60,7 +60,6 @@ export class ScheduleComponent implements OnInit {
   clickedBlock(i) {
     const desktopConfig = {
       width: '800px',
-      height: '550px',
       data: {
         ref: i
       },
