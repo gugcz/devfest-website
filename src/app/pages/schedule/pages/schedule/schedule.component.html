@@ -43,7 +43,7 @@
                 'grid-row-start': isMobile? y*schedules.length + 2+i : y*schedules.length + 2,
                 'grid-row-end': isMobile? y*schedules.length + 3+i : y*schedules.length + 4
               }"
-              (blockClicked)="clickedBlock($event)"
+              (blockClicked)="block.description ? clickedBlock($event, block.speaker.tagIcon): null"
               [title]="block.name"
               [level]="block.level"
               [roomName]="rooms[i]"

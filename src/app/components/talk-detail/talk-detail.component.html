@@ -1,4 +1,4 @@
-<div class="speaker-dialog" *ngIf="talk | async as speak" [@fadeInOut] mat-dialog-content>
+<div class="speaker-dialog" *ngIf="talk | async as speak" [ngStyle]="{'background-image': 'url(' + background + ')'}" [@fadeInOut] mat-dialog-content>
   <div class="card-column">
     <div class="header-container">
       <button mat-icon-button aria-label="Close speaker button." class="close-button" [mat-dialog-close]="true">
@@ -7,7 +7,7 @@
     </div>
     <div>
       <h1>{{speak.name}}</h1>
-      <p>
+      <p class="description">
         {{speak.description}}
       </p>
     </div>
