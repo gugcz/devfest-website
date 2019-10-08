@@ -10,6 +10,7 @@ export const buildSpeakerForSchedule = speakerData => pipe(
     ifElse(_ => has('company', speakerData), assoc('company', prop('company', speakerData)), identity),
     ifElse(_ => has('tag', speakerData), assoc('tag', prop('tag', speakerData)), identity),
     ifElse(_ => has('tagColor', speakerData), assoc('tagColor', prop('tagColor', speakerData)), identity),
+    ifElse(_ => has('tagIcon', speakerData), assoc('tagIcon', prop('tagIcon', speakerData)), identity),
     ifElse(_ => has('pronoun', speakerData), assoc('pronoun', prop('pronoun', speakerData)), identity),
 )({});
 

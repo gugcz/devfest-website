@@ -25,11 +25,13 @@ import Talk from 'src/app/data/talk';
 export class TalkDetailComponent implements OnInit {
 
   public talk: Observable<Talk>;
+  public background = 'none';
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private firestore: AngularFirestore, private socials: SocialIconsService) { }
 
   ngOnInit() {
     this.talk = this.firestore.doc<Talk>(this.data.ref.path).valueChanges();
+    this.background = this.data.icon;
   }
 
 }
