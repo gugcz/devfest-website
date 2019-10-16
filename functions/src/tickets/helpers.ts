@@ -27,7 +27,7 @@ export async function sendInfoIntoSlack(message): Promise<Object> {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: message,
+    body: JSON.parse(message),
     json: true
   };
   return await rp(options);
