@@ -5,7 +5,7 @@
   [ngClass]="speaker1 || speaker2 ? (isMobile? 'big-height-mobile' : 'big-height') : (isMobile? 'small-height-mobile' : 'small-height')"
 >
   <div class="title-holder">
-    <h3 class="title">
+    <h3  [ngClass]="speaker1 || speaker2 ? 'title' : 'title-other'">
       {{ title }}
     </h3>
   </div>
