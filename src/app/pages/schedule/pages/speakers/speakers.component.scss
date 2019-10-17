@@ -6,13 +6,12 @@
     padding-top: 80px;
 
     .speakers-cont {
-      width: 100%;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
 
       .member {
-        flex-basis: 320px;
+        flex-basis: 420px;
       }
     }
   }
