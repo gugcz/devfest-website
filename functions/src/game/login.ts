@@ -3,12 +3,12 @@ import * as admin from 'firebase-admin';
 
 const db = admin.firestore();
 
-class LoginResponse {
-    constructor(public token: string) {}
+class TokenResponse {
+    constructor(public token: string, private type: string = 'token') {}
 }
 
 class ErrorResponse {
-    constructor(public message: string) {}
+    constructor(public message: string, private type: string = 'error') {}
 }
 
 export const login = functions.https.onRequest(async (request: functions.Request, response: functions.Response) => {
@@ -17,25 +17,31 @@ export const login = functions.https.onRequest(async (request: functions.Request
         const notUsedNumbers = db.collection('notUsedNumbers');
         notUsedNumbers.where('number', '==', parseInt(uid)).get().then(snapshot => {
             if (snapshot.empty) {
-              console.log('No matching documents.');
+              console.log('Wrong user number.');
+              sendResponse(new ErrorResponse('Wrong user number.'), response);
               return;
             }  
         
             snapshot.forEach(doc => {
-              console.log('doc.data()');
-              console.log(doc.data());
-              sendResponse({message: 'User succesfully registered!'}, response);
+              console.log('Creating token for ' + uid);
+              admin.auth().createCustomToken(uid)
+                .then(customToken => sendResponse(new TokenResponse(customToken), response))
+                .catch(error => {
+                  console.log('Error creating custom token:', error);
+                  sendResponse(new ErrorResponse('No user number provided.'), response);
+                });
             });
           })
           .catch(err => {
-            console.log('Error getting documents', err);
-          });;
+            console.error('Error getting documents', err);
+            sendResponse(new ErrorResponse('No user number provided.'), response);
+          });
     } else {
-        sendResponse({message: 'No user number provided.'}, response);
+        sendResponse(new ErrorResponse('No user number provided.'), response);
     }
 });
 
-function sendResponse(response: any, http: functions.Response) {
+function sendResponse(response: TokenResponse | ErrorResponse, http: functions.Response) {
     http.setHeader('Access-Control-Allow-Origin', '*');
     http.setHeader('Access-Control-Request-Method', '*');
     http.setHeader('Access-Control-Allow-Headers', '*');
