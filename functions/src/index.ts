@@ -1,10 +1,10 @@
-import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 admin.firestore().settings({ timestampsInSnapshots: true });
 
 import * as tickets from './tickets';
 import * as schedule from './schedule';
+import * as game from './game';
 
 export const getTickets = tickets.getTickets;
 export const getCurrentTicketsForInvoice = tickets.getCurrentTicketsForInvoice;
@@ -20,3 +20,4 @@ export const speakerUpdate = schedule.speakerOnUpdate;
 export const speakerDelete = schedule.speakerOnDelete;
 export const updateScheduleOnTalkUpdate = schedule.updateScheduleOnTalkUpdate;
 export const onTalkDelete = schedule.onTalkDelete;
+export const login = game.login;
