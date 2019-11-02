@@ -1,15 +1,9 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { sendResponse } from './index';
+import { TokenResponse, ErrorResponse } from './responses';
 
 const db = admin.firestore();
-
-class TokenResponse {
-  constructor(public token: string, private type: string = 'token') { }
-}
-
-class ErrorResponse {
-  constructor(public message: string, private type: string = 'error') { }
-}
 
 export const login = functions.https.onRequest(async (request: functions.Request, response: functions.Response) => {
   const uid = request.body.number;
@@ -48,11 +42,3 @@ export const login = functions.https.onRequest(async (request: functions.Request
     sendResponse(new ErrorResponse('No user number provided.'), response);
   }
 });
-
-function sendResponse(response: TokenResponse | ErrorResponse, http: functions.Response) {
-  http.setHeader('Access-Control-Allow-Origin', '*');
-  http.setHeader('Access-Control-Request-Method', '*');
-  http.setHeader('Access-Control-Allow-Headers', '*');
-  http.status(200);
-  http.end(JSON.stringify({ data: response }));
-}
