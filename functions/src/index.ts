@@ -22,3 +22,4 @@ export const updateScheduleOnTalkUpdate = schedule.updateScheduleOnTalkUpdate;
 export const onTalkDelete = schedule.onTalkDelete;
 export const login = game.login;
 export const loadQuestion = game.loadQuestion;
+export const answerQuestion = game.answerQuestion;

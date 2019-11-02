@@ -4,6 +4,7 @@ import * as questions from './questions';
 
 export const login = gameLogin.login;
 export const loadQuestion = questions.loadQuestion;
+export const answerQuestion = questions.answerQuestion;
 
 export function sendResponse(response: any, http: functions.Response) {
     http.setHeader('Access-Control-Allow-Origin', '*');
