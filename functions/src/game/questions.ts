@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { ErrorResponse, QuestionResponse, CorrectAnswerResponse, WrongAnswerResponse } from './responses';
-import { sendResponse } from '.';
 import { append, propOr, pipe, contains, dissoc } from 'ramda';
 import { CallableContext } from 'firebase-functions/lib/providers/https';
 
