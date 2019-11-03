@@ -3,12 +3,13 @@ import * as admin from 'firebase-admin';
 import { ErrorResponse, QuestionResponse, CorrectAnswerResponse, WrongAnswerResponse } from './responses';
 import { sendResponse } from '.';
 import { append, propOr, pipe, contains, dissoc } from 'ramda';
+import { CallableContext } from 'firebase-functions/lib/providers/https';
 
 const db = admin.firestore();
 
-export const loadQuestion = functions.https.onRequest(async (request: functions.Request, response: functions.Response) => {
-    const questionId = request.body.questionId;
-    const number = request.body.number;
+export const loadQuestion = functions.https.onCall(async (data: any, context: CallableContext) => {
+    const questionId = data.questionId;
+    const number = data.number;
 
     if (questionId && number) {
         const userSnap = await db.collection('users').doc(number).get();
@@ -20,34 +21,33 @@ export const loadQuestion = functions.https.onRequest(async (request: functions.
             )(userData);
 
             if (containsQuestionId) {
-                sendResponse(new ErrorResponse('Question already answered.'), response);
+                return new ErrorResponse('Question already answered.');
             } else {
                 const questionSnap = await db.collection('questions').doc(questionId).get();
                 if (questionSnap.exists) {
                     const question = questionSnap.data();
-                    const questionResponse = new QuestionResponse(pipe(
+                    return new QuestionResponse(pipe(
                         dissoc('correctAnswer'),
                         dissoc('score'),
                     )(question));
-                    sendResponse(questionResponse, response);
                 } else {
-                    sendResponse(new ErrorResponse('Question with this ID does not exist.'), response);
+                    return new ErrorResponse('Question with this ID does not exist.');
                 }
             }
         } else {
-            sendResponse(new ErrorResponse('User not found.'), response);
+            return new ErrorResponse('User not found.');
         }
     } else if (!questionId) {
-        sendResponse(new ErrorResponse('No question id provided.'), response);
+        return new ErrorResponse('No question id provided.');
     } else {
-        sendResponse(new ErrorResponse('No user id provided.'), response);
+        return new ErrorResponse('No user id provided.');
     }
 });
 
-export const answerQuestion = functions.https.onRequest(async (request: functions.Request, response: functions.Response) => {
-    const questionId = request.body.questionId;
-    const number = request.body.number;
-    const answer = request.body.answer;
+export const answerQuestion = functions.https.onCall(async (data: any, context: CallableContext) => {
+    const questionId = data.questionId;
+    const number = data.number;
+    const answer = data.answer;
 
     if (questionId && number && answer) {
         const userSnap = await db.collection('users').doc(number).get();
@@ -59,7 +59,7 @@ export const answerQuestion = functions.https.onRequest(async (request: function
             )(userData);
 
             if (containsQuestionId) {
-                sendResponse(new ErrorResponse('Question already answered.'), response);
+                return new ErrorResponse('Question already answered.');
             } else {
                 const questionSnap = await db.collection('questions').doc(questionId).get();
                 if (questionSnap.exists) {
@@ -77,22 +77,22 @@ export const answerQuestion = functions.https.onRequest(async (request: function
                     await db.collection('users').doc(number).set(userData);
 
                     if (question.correctAnswer === parseInt(answer)) {
-                        sendResponse(new CorrectAnswerResponse(question.score), response);
+                        return new CorrectAnswerResponse(question.score);
                     } else {
-                        sendResponse(new WrongAnswerResponse(), response);
+                        return new WrongAnswerResponse();
                     }
                 } else {
-                    sendResponse(new ErrorResponse('Question with this ID does not exist.'), response);
+                    return new ErrorResponse('Question with this ID does not exist.');
                 }
             }
         } else {
-            sendResponse(new ErrorResponse('User not found.'), response);
+            return new ErrorResponse('User not found.');
         }
     } else if (!questionId) {
-        sendResponse(new ErrorResponse('No question id provided.'), response);
+        return new ErrorResponse('No question id provided.');
     } else if (!number) {
-        sendResponse(new ErrorResponse('No user id provided.'), response);
+        return new ErrorResponse('No user id provided.');
     } else {
-        sendResponse(new ErrorResponse('No answer id provided.'), response);
+        return new ErrorResponse('No answer id provided.');
     }
 });
