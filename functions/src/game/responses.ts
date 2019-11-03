@@ -17,3 +17,7 @@ export class CorrectAnswerResponse {
 export class WrongAnswerResponse {
     constructor(private type: string = 'wrongAnswer') { }
 }
+
+export class WaterGiveSuccessfulResponse {
+    constructor(private type: string = 'waterGivenSuccessfully') { }
+}
