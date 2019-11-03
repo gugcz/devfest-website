@@ -20,6 +20,6 @@ export const speakerUpdate = schedule.speakerOnUpdate;
 export const speakerDelete = schedule.speakerOnDelete;
 export const updateScheduleOnTalkUpdate = schedule.updateScheduleOnTalkUpdate;
 export const onTalkDelete = schedule.onTalkDelete;
-export const login = game.login;
+export const deleteLogin = game.deleteLogin;
 export const loadQuestion = game.loadQuestion;
 export const answerQuestion = game.answerQuestion;
