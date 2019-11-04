@@ -18,6 +18,7 @@ export class ScheduleComponent implements OnInit {
   dates: Date[];
   schedules: Schedule[][];
   rooms: string[];
+  currentDate: number;
 
   constructor(
     private deviceDetector: DeviceDetectorService,
@@ -29,7 +30,7 @@ export class ScheduleComponent implements OnInit {
   ngOnInit() {
     this.isMobile = this.deviceDetector.isMobile();
     this.firestore
-      .collection<Room>('rooms', ref=> ref.orderBy('order'))
+      .collection<Room>('rooms', ref => ref.orderBy('order'))
       .valueChanges()
       .subscribe(a => {
         this.dates = a
@@ -37,6 +38,7 @@ export class ScheduleComponent implements OnInit {
           .map(date => date.getTime())
           .filter((date, i, array) => array.indexOf(date) === i)
           .map(time => new Date(time));
+        this.currentDate = this.dates.length - 1;
 
         this.schedules = a.map(one =>
           one.schedule.sort((je, dv) => {
@@ -60,12 +62,15 @@ export class ScheduleComponent implements OnInit {
   }
 
   async clickedBlock(i, icon) {
-    const url = await this.storage.ref(icon).getDownloadURL().toPromise();
+    const url = await this.storage
+      .ref(icon)
+      .getDownloadURL()
+      .toPromise();
     const desktopConfig = {
       width: '800px',
       data: {
         ref: i,
-        icon: url
+        icon: url,
       },
       autoFocus: false,
     };
@@ -76,10 +81,13 @@ export class ScheduleComponent implements OnInit {
       width: '100%',
       data: {
         ref: i,
-        icon: url
+        icon: url,
       },
       autoFocus: false,
     };
-    this.dialog.open(TalkDetailComponent, this.isMobile ? mobileConfig : desktopConfig);
+    this.dialog.open(
+      TalkDetailComponent,
+      this.isMobile ? mobileConfig : desktopConfig
+    );
   }
 }

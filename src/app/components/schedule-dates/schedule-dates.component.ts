@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { animFadeInOut } from 'src/app/animations';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-schedule-dates',
@@ -7,9 +8,16 @@ import { animFadeInOut } from 'src/app/animations';
   styleUrls: ['./schedule-dates.component.scss'],
   animations: [animFadeInOut],
 })
-export class ScheduleDatesComponent {
+export class ScheduleDatesComponent implements OnInit {
   @Input() dates: Date[];
   @Output() datePicked = new EventEmitter<number>();
+  @Input() currentPicked: number;
 
-  constructor() {}
+  isMobile: boolean;
+
+  constructor(private device: DeviceDetectorService) {}
+
+  ngOnInit() {
+    this.isMobile = this.device.isMobile();
+  }
 }
