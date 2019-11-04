@@ -3,6 +3,7 @@
     <app-schedule-dates
         [dates]="dates"
         (datePicked)="changeDate($event)"
+        [currentPicked]="currentDate"
       ></app-schedule-dates>
     <div class="schedule-holder">
       <div *ngIf="schedules" class="schedule">

@@ -1,17 +1,7 @@
 <div class="datesHolder">
-  <div *ngIf="!isMobile; else mobile">
-    <div *ngFor="let dat of dates; let i = index">
-      {{dat | date: 'd LLL'}}
+  <div>
+    <div *ngFor="let dat of dates; let i = index" class="dates-flex">
+      <h1 class="date"><u *ngIf="currentPicked == i">{{dat | date: 'd LLL'}}</u><span *ngIf="currentPicked != i">{{dat | date: 'd LLL'}}</span></h1>
     </div>
   </div>
-  <!-- <mat-tab-group dynamicHeight>
-    <mat-tab
-      (click)="datePicked.emit(i); console.log(i)"
-      [label]=""
-    ></mat-tab>
-  </mat-tab-group> -->
 </div>
-
-<ng-template #mobile>
-  mobile
-</ng-template>
