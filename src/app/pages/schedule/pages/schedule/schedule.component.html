@@ -1,9 +1,10 @@
 <div class="container">
   <div class="wrapper">
-    <!-- <app-schedule-dates
+    <app-schedule-dates
         [dates]="dates"
-        (datePicked)="(changeDate)"
-      ></app-schedule-dates> -->
+        (datePicked)="changeDate($event)"
+        [currentPicked]="currentDate"
+      ></app-schedule-dates>
     <div class="schedule-holder">
       <div *ngIf="schedules" class="schedule">
         <ng-container *ngFor="let daysche of schedules; let i = index">

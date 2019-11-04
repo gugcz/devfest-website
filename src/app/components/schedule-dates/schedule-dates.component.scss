@@ -3,31 +3,14 @@
   height: 50px;
 }
 
-.mat-tab-label-content {
-  font-size: 50px;
-}
-
-.time-slot-switch-container {
+.dates-flex{
   display: flex;
-  grid-column-start: 1;
-  grid-column-end: 3;
-  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
 
-  .time-slot-switch {
-    cursor: pointer;
-    flex: 1;
-    text-align: center;
-
-    &-title {
-      font-size: 1rem;
-      font-weight: 500;
-      margin: 0;
-      border-bottom: 2px solid transparent;
-      padding: 8px;
-    }
-
-    &.active .time-slot-switch-title {
-      border-bottom: 2px solid #333333;
-    }
+  .date{
+    flex-basis: 150px;
+    margin-top:3px;
+    margin-bottom: 3px;
   }
 }
