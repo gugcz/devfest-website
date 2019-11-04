@@ -11,6 +11,7 @@ export const getCurrentTicketsForInvoice = tickets.getCurrentTicketsForInvoice;
 export const registeredNewTicket = tickets.registeredNewTicket;
 export const newInvoiceRequest = tickets.newInvoiceRequest;
 export const invoicePaid = tickets.invoicePaid;
+export const sendInvoiceToEmail = tickets.sendInvoiceToEmail;
 export const tagUpdateColor = schedule.tagUpdateColor;
 export const tagApplyColor = schedule.tagApplyColor;
 export const talkUpdate = schedule.talkUpdate;
