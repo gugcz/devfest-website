@@ -16,6 +16,7 @@ export const assocTalkProps = (scheduleItem, talk) => pipe(
     ifElse(_ => has('startTime', talk), assoc('startTime', talk.startTime), identity),
     ifElse(_ => has('duration', talk), assoc('duration', talk.duration), identity),
     ifElse(_ => has('language', talk), assoc('language', talk.language), identity),
+    ifElse(_ => has('level', talk), assoc('level', talk.level), identity),
 )(scheduleItem);
 
 export const applyTalk = functions.firestore.document('speakers/{documentId}').onCreate((snap) => {
