@@ -23,3 +23,4 @@ export const onTalkDelete = schedule.onTalkDelete;
 export const deleteLogin = game.deleteLogin;
 export const loadQuestion = game.loadQuestion;
 export const answerQuestion = game.answerQuestion;
+export const giveWater = game.giveWater;
