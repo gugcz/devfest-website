@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { ErrorResponse, QuestionResponse, CorrectAnswerResponse, WrongAnswerResponse } from './responses';
+import { ErrorResponse, QuestionResponse, CorrectAnswerResponse, WrongAnswerResponse, PointsOnlyResponse } from './responses';
 import { append, propOr, pipe, contains, dissoc } from 'ramda';
 import { CallableContext } from 'firebase-functions/lib/providers/https';
 
@@ -23,12 +23,26 @@ export const loadQuestion = functions.https.onCall(async (data: any, context: Ca
                 return new ErrorResponse('Question already answered.');
             } else {
                 const questionSnap = await db.collection('questions').doc(questionId).get();
+                
                 if (questionSnap.exists) {
                     const question = questionSnap.data();
-                    return new QuestionResponse(pipe(
-                        dissoc('correctAnswer'),
-                        dissoc('score'),
-                    )(question));
+                    if (question.pointsOnly) {
+                        userData.totalScore = propOr(0, 'totalScore', userData) + propOr(0, 'score', question);
+                        userData.actualScore = propOr(0, 'actualScore', userData) + propOr(0, 'score', question);
+                        userData.answeredQuestions = pipe(
+                            propOr([], 'answeredQuestions'),
+                            append(questionId)
+                        )(userData);
+
+                        await db.collection('users').doc(number).set(userData);
+
+                        return new PointsOnlyResponse(propOr(0, 'score', question));
+                    } else {
+                        return new QuestionResponse(pipe(
+                            dissoc('correctAnswer'),
+                            dissoc('score'),
+                        )(question));
+                    }                    
                 } else {
                     return new ErrorResponse('Question with this ID does not exist.');
                 }
