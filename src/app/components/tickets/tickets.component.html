@@ -1,4 +1,7 @@
 <div *ngIf="ticketGroups; else loading" class="ticket-holder">
+  <div>
+    <h1>SOLD OUT</h1>
+  </div>
   <ng-container *ngFor="let ticketGroup of ticketGroups">
     <div (click)="showAdditionalInfo(ticketGroup.additionalInfo, ticketGroup.name)"
          *ngIf="ticketGroup.tickets[0] != null" [@fadeInOut]
@@ -63,7 +66,7 @@
 </div>
 <div class="invoice-button-holder">
   <div>
-    <button (click)="openInvoiceModal()" class="invoice-button" color="primary" mat-raised-button><h2>Order by
+    <button disabled (click)="openInvoiceModal()" class="invoice-button" color="primary" mat-raised-button><h2>Order by
       invoice</h2></button>
   </div>
   <div class="invoice-info">
