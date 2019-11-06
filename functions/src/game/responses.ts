@@ -21,3 +21,7 @@ export class WrongAnswerResponse {
 export class WaterGiveSuccessfulResponse {
     constructor(private type: string = 'waterGivenSuccessfully') { }
 }
+
+export class PointsOnlyResponse {
+    constructor(private pointsEarned: number, private type: string = 'pointsOnly') { }
+}
