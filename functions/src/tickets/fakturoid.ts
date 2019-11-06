@@ -112,7 +112,6 @@ export async function createFakturoidCompany(company: Company) {
             "vat_no": company.vatNumber,
             "bank_account": "",
             "iban": "",
-            "variable_symbohelpers.sendInfoIntoSlack(slackMessage)": "",
             "full_name": "",
             "email": company.email,
             "email_copy": company.email,
