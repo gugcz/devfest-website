@@ -11,15 +11,13 @@ export const giveWater = functions.https.onCall(async (data: any, context: Calla
     const water = data.water;
     const number = data.number;
 
-    console.log(data);
-
     if (fractionId && number && water) {
         const userSnap = await db.collection('users').doc(number).get();
         const userData = userSnap.data();
 
         const actualScore = propOr(0, 'actualScore', userData);
 
-        if (actualScore >= water) {
+        if (actualScore >= water && parseInt(water) >= 0) {
             await db.collection('users').doc(number).set(assoc('actualScore', actualScore - water, userData));             
             await db.runTransaction(t => {
                 const fractionRef = db.collection('fractions').doc('' + fractionId);
