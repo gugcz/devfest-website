@@ -11,7 +11,6 @@ export const giveWater = functions.https.onCall(async (data: any, context: Calla
     const water = data.water;
     const number = data.number;
 
-    console.log('data');
     console.log(data);
 
     if (fractionId && number && water) {
@@ -22,6 +21,15 @@ export const giveWater = functions.https.onCall(async (data: any, context: Calla
 
         if (actualScore >= water) {
             await db.collection('users').doc(number).set(assoc('actualScore', actualScore - water, userData));             
+            await db.runTransaction(t => {
+                const fractionRef = db.collection('fractions').doc('' + fractionId);
+                return t.get(fractionRef)
+                  .then(doc => {
+                    const newScore = parseInt(doc.data().score) + parseInt(water);
+                    t.update(fractionRef, {score: newScore});
+                    return Promise.resolve('Population increased to ' + newScore);                    
+                  });
+              });
             console.log('Success');
             return new WaterGiveSuccessfulResponse();
         } else {
