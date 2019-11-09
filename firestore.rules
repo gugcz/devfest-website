@@ -30,6 +30,12 @@ service cloud.firestore {
     match /talks/{document=**} {
       allow read;
     }
+    match /users/{document=**} {
+    	allow write, read: if request.auth.uid != null;
+    }
+    match /numbersOnBadges/{document=**} {
+      allow write, read: if request.auth.uid != null;
+    }
     match /rooms/{document=**} {
       allow read;
     }
