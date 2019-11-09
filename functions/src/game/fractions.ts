@@ -11,6 +11,9 @@ export const giveWater = functions.https.onCall(async (data: any, context: Calla
     const water = data.water;
     const number = data.number;
 
+    console.log('data');
+    console.log(data);
+
     if (fractionId && number && water) {
         const userSnap = await db.collection('users').doc(number).get();
         const userData = userSnap.data();
@@ -25,8 +28,11 @@ export const giveWater = functions.https.onCall(async (data: any, context: Calla
             console.log('Water error');
             return new ErrorResponse('Not enought of water.');
         }
-    } else {
-        console.log('UID error.');
+    } else if (!number) {
         return new ErrorResponse('No user id provided.');
+    } else if (!fractionId) {
+        return new ErrorResponse('No fraction id provided.');
+    } else {
+        return new ErrorResponse('Water error.');
     }
 });
