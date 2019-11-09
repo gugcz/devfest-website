@@ -22,5 +22,9 @@ export default [
   {
     path: 'partners',
     label: 'Partners'
-  }
+  },
+  {
+    path: 'downloadapp',
+    label: 'Download App'
+  },
 ];

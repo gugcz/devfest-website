@@ -22,6 +22,10 @@ const routes: Routes = [
     path: 'schedule',
     loadChildren: './pages/schedule/schedule.module#ScheduleModule'
   },
+  {
+    path: 'downloadapp',
+    loadChildren: './pages/downloadapp/downloadapp.module#DownloadAppModule'
+  },
   { path: '**', redirectTo: 'home' }
 ];
 
