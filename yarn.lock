@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@agm/core@^1.0.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@agm/core/-/core-1.1.0.tgz#6f8dcbac068f681fe4fa9b0a0cbf660588025911"
+  integrity sha512-cMvmm3+3/uuVFurLv1FKhE0/6ssIlDvYBjQFCi8ELg7h0OY2MkIU1MXWr7z+f/xZ08E936I4eeddni6k4yUTIA==
+  dependencies:
+    tslib "^1.9.0"
+
 "@angular-devkit/architect@0.13.9":
   version "0.13.9"
   resolved "https://registry.yarnpkg.com/@angular-devkit/architect/-/architect-0.13.9.tgz#8bbca4b968fccbf88fc2f86542cbee09e1256e1f"
@@ -5324,9 +5331,9 @@ path-key@^2.0.0, path-key@^2.0.1:
   integrity sha1-QRyttXTFoUDTpLGRDUDYDMn0C0A=
 
 path-parse@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.6.tgz#d62dbb5679405d72c4737ec58600e9ddcf06d24c"
-  integrity sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.7.tgz#fbc114b60ca42b30d9daf5858e4bd68bbedb6735"
+  integrity sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==
 
 path-to-regexp@0.1.7:
   version "0.1.7"
