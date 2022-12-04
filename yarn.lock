@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@agm/core@^1.0.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@agm/core/-/core-1.1.0.tgz#6f8dcbac068f681fe4fa9b0a0cbf660588025911"
+  integrity sha512-cMvmm3+3/uuVFurLv1FKhE0/6ssIlDvYBjQFCi8ELg7h0OY2MkIU1MXWr7z+f/xZ08E936I4eeddni6k4yUTIA==
+  dependencies:
+    tslib "^1.9.0"
+
 "@angular-devkit/architect@0.13.9":
   version "0.13.9"
   resolved "https://registry.yarnpkg.com/@angular-devkit/architect/-/architect-0.13.9.tgz#8bbca4b968fccbf88fc2f86542cbee09e1256e1f"
@@ -2147,9 +2154,9 @@ decamelize@^2.0.0:
     xregexp "4.0.0"
 
 decode-uri-component@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
-  integrity sha1-6zkTMzRYd1y4TNGh+uBiEGu4dUU=
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.2.tgz#e69dbe25d37941171dd540e024c444cd5188e1e9"
+  integrity sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==
 
 deep-equal@^1.0.1:
   version "1.0.1"
