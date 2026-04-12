@@ -1,0 +1,22 @@
+[
+    {
+        "question": "Co je DevFest.cz?",
+        "answer": "DevFest.cz je vývojářská konference, kterou pořádá komunita GUG.cz od roku 2012. Každoročně bývá pořádaná offline v některém z měst po celém Česku. Letos jsme se kvůli pandemie rozhodli pro online variantu, kdy je možné sledovat konferenci odkudkoliv."
+    },
+    {
+        "question": "Kdo jsou organizátoři?",
+        "answer": "Organizátoři jsou dobrovolníci z GUG.cz a TechMeetup Ostrava. Nadšenci do technologií a vývojáři z celého Česka, kteří stejně jako vy chtějí tady dostat konferenci světové úrovně. A pokud chcete pořádat takové akce s námi, stačí se nám ozvat."
+    },
+    {
+        "question": "Jak a kdo se může registrovat na DevFest.cz?",
+        "answer": "Účastnit se může kdokoliv se zájmem o technologie a vývoj. Přednášející vybíráme tak, aby si z témat vybral jak vývojář/ka jakéhokoliv věku a zkušeností."
+    },
+    {
+        "question": "Co je DevFest.cz Connect?",
+        "answer": "DevFest.cz Connect je offline varianta akce. Každoročně si tento formát organizujeme u celosvětové akce Google I/O, kdy se v rámci lokální komunity domluvíme na místě setkání a společně sledujeme celou akci."
+    },
+    {
+        "question": "Jak mohu uspořádat svůj lokální DevFest.cz Connect?",
+        "answer": "Stačí nás kontaktovat na devfest@gug.cz a rádi poradíme s celou organizací - od výběru místa, po doporučení techniky a propagace lokálního eventu."
+    }
+]

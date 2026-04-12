@@ -1,0 +1,172 @@
+[
+  {
+    "cid": "1",
+    "name": "Certicon",
+    "logo": "certicon.png",
+    "description": "company description",
+    "links": {
+      "website": "https://www.certicon.cz/",
+      "linkedin": "linkedin",
+      "facebook": "facebook",
+      "twitter": "twitter",
+      "instagram": "instagram",
+      "github": "github"
+    },
+    "visible": true,
+    "imageOnly": true,
+    "jobs": [ ]
+  },
+  {
+    "cid": "2",
+    "name": "Google",
+    "logo": "google.png",
+    "description": "company description",
+    "links": {
+      "website": "https://careers.google.com/",
+      "linkedin": "linkedin",
+      "facebook": "facebook",
+      "twitter": "twitter",
+      "instagram": "instagram",
+      "github": "github"
+    },
+    "visible": true,
+    "imageOnly": true,
+    "jobs": [ ]
+  },
+  {
+    "cid": "3",
+    "name": "JetBrains",
+    "logo": "jetbrains.png",
+    "description": "company description",
+    "links": {
+      "website": "https://www.jetbrains.com/",
+      "linkedin": "linkedin",
+      "facebook": "facebook",
+      "twitter": "twitter",
+      "instagram": "instagram",
+      "github": "github"
+    },
+    "visible": true,
+    "imageOnly": true,
+    "jobs": [ ]
+  },
+  {
+    "cid": "4",
+    "name": "Quadient",
+    "logo": "quadient.webp",
+    "description": "company description",
+    "links": {
+      "website": "https://www.quadient.com/",
+      "linkedin": "linkedin",
+      "facebook": "facebook",
+      "twitter": "twitter",
+      "instagram": "instagram",
+      "github": "github"
+    },
+    "visible": true,
+    "imageOnly": true,
+    "jobs": [ ]
+  },
+  {
+    "cid": "5",
+    "name": "SDE/3Pillar Global Czechia",
+    "logo": "sde.png",
+    "description": "company description",
+    "links": {
+      "website": "https://www.sde.cz/",
+      "linkedin": "linkedin",
+      "facebook": "facebook",
+      "twitter": "twitter",
+      "instagram": "instagram",
+      "github": "github"
+    },
+    "visible": true,
+    "imageOnly": true,
+    "jobs": [ ]
+  },
+  {
+    "cid": "6",
+    "name": "Storaenso",
+    "logo": "storaenso.png",
+    "description": "company description",
+    "links": {
+      "website": "https://www.storaenso.com/",
+      "linkedin": "linkedin",
+      "facebook": "facebook",
+      "twitter": "twitter",
+      "instagram": "instagram",
+      "github": "github"
+    },
+    "visible": true,
+    "imageOnly": true,
+    "jobs": [ ]
+  },
+  {
+    "cid": "6",
+    "name": "Y Soft",
+    "logo": "y-soft.jpeg",
+    "description": "company description",
+    "links": {
+      "website": "https://www.ysoft.com/",
+      "linkedin": "linkedin",
+      "facebook": "facebook",
+      "twitter": "twitter",
+      "instagram": "instagram",
+      "github": "github"
+    },
+    "visible": true,
+    "imageOnly": true,
+    "jobs": [ ]
+  },
+  {
+    "cid": "7",
+    "name": "Revolgy",
+    "logo": "revolgy.png",
+    "description": "company description",
+    "links": {
+      "website": "https://www.revolgy.com/",
+      "linkedin": "linkedin",
+      "facebook": "facebook",
+      "twitter": "twitter",
+      "instagram": "instagram",
+      "github": "github"
+    },
+    "visible": true,
+    "imageOnly": true,
+    "jobs": [ ]
+  },
+  {
+    "cid": "8",
+    "name": "Grow with Google",
+    "logo": "gwg.png",
+    "description": "company description",
+    "links": {
+      "website": "https://grow.google/",
+      "linkedin": "linkedin",
+      "facebook": "facebook",
+      "twitter": "twitter",
+      "instagram": "instagram",
+      "github": "github"
+    },
+    "visible": true,
+    "imageOnly": true,
+    "jobs": [ ]
+  },
+  {
+    "cid": "9",
+    "name": "Livesport",
+    "logo": "livesport.png",
+    "description": "company description",
+    "links": {
+      "website": "https://www.livesport.eu",
+      "linkedin": "linkedin",
+      "facebook": "facebook",
+      "twitter": "twitter",
+      "instagram": "instagram",
+      "github": "github"
+    },
+    "visible": true,
+    "imageOnly": true,
+    "jobs": [ ]
+  }
+]

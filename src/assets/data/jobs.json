@@ -1,0 +1,18 @@
+[
+  {
+    "jid": 102,
+    "cid": 1,
+    "title": "title",
+    "description": "description",
+    "technicalStack": [
+      "Angular", "React", "Vue"
+    ],
+    "applicationLink": "",
+    "email": "",
+    "location": "",
+    "type": "remote",
+    "experience": "mid-level",
+    "role": "Contract/Full-Time/Internship",
+    "active": true
+  }
+]

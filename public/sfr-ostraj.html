@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>OSTRAJ</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+        <script>
+            Prism.languages.ostrajava = Prism.languages.extend('clike', {
+                'class-name': {
+                    pattern: new RegExp(
+                            /(^|[^\w.])(?:[a-z]\w*\s*\.\s*)*(?:[A-Z]\w*\s*\.\s*)*/.source +
+                            /[A-Z](?:[\d_A-Z]*[a-z]\w*)?\b/.source
+                            ),
+                    lookbehind: true,
+                },
+                keyword:
+                        /\b(?:banik|bul|zdybat|chachar|tryda|dlabat|boinak|fagan od|kaj|kajtez|cyslo|natyv|zrob|chuj|fajront|davaj|joch|ci|bo|toz|forant|rubat)\b/,
+                punctuation: /[{}[\];(),.:]|pyco/,
+            });
+        </script>
+    </head>
+    <body>
+        <pre><code class="language-ostrajava">
+banik pyco
+
+tryda Ostrava {
+    rynek(chachar[] vstup) {
+        kaj (vstup == chuj) {
+            Konzola.pravit("Chybi vstupni soubor") pyco
+            davaj pyco
+        }
+
+        toz Dryst menoSouboru = zrob Dryst(vstup) pyco
+        toz Dekoder dekoder = zrob Dekoder(3) pyco
+        toz Dryst tajnyDryst = Dekoder.dekoduj(menoSouboru) pyco
+        Konzola.pravit(tajnyDryst) pyco
+    }
+} 
+
+tryda Dekoder {
+    toz cyslo posun pyco
+
+    Dekoder(cyslo posun) {
+        joch.posun = posun pyco
+    }
+
+    Dryst dekoduj(Dryst menoSouboru) {
+        toz Dryst dryst = "" pyco
+
+        toz Citac citac = zrob Citac() pyco
+        citac.otevr(menoSouboru) pyco
+
+        toz Dryst radka = citac.citajRadku() pyco
+
+        rubat (radka != chuj) {
+            toz Dryst[] cisla = radka.rozdel(' ') pyco
+            toz cyslo soucet = 0 pyco
+            toz cyslo synek = 0 pyco
+
+            rubat (synek &lt; Pole.velikost(cisla)) {
+                soucet = soucet + CysloCele.preved(cisla[synek]) pyco
+                synek = synek + 1 pyco
+            }
+
+            toz chachar znak = soucet + joch.posun pyco
+            dryst = dryst.pridaj(znak) pyco
+            radka = citac.citajRadku() pyco
+        }
+
+        davaj dryst pyco
+    }
+}
+
+fajront pyco
+  </code></pre>
+
+        <pre><code class="language-vim">
+13 11 12 10
+10 8 7 4
+21 5 19 18 5 10 6 11
+4 13 21 56 13 7
+12 5 6 11 13 18 35
+10 11 8
+5 10 32 17 4 10 17 4
+8 20 9 16 16 8 19 6
+19 14 10 11 14 4 7 38
+4 6 28 8 11 7 8 6 10 10
+7 20 41 6 15 4 4
+13 9 14 7
+5 13 7 4 14
+8 16 11 8
+</code></pre>
+
+    </body>
+</html>

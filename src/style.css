@@ -1,0 +1,60 @@
+@font-face {
+  font-family: "Roboto";
+  src: url(assets/fonts/Roboto-Regular.ttf);
+  font-display: swap;
+}
+.google-font{
+  font-family: "Roboto", Serif
+}
+
+
+/* Large Scale Display */
+@media screen and (min-width: 600px) {
+  .super-heading{
+    font-family: "Roboto", Serif;
+    font-size: 90px;
+    font-weight: 600;
+    line-height: 100px;
+  }
+  .h1-heading {
+    font-family: "Roboto", Serif;
+    font-size: 36px;
+    font-weight: 600;
+  }
+  .h1-subheading {
+    font-family: "Roboto", Serif;
+    font-size: 23px;
+    font-weight: 500;
+  }
+  .h2-subheading {
+    font-family: "Roboto", Serif;
+    font-size: 22px;
+    font-weight: 500;
+  }
+}
+
+
+/* Small Scale Display */
+@media only screen and (max-width: 600px) {
+  .super-heading{
+    font-family: "Roboto", Serif;
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 45px;
+  }
+  .h1-heading {
+    font-family: "Roboto", Serif;
+    font-size: 30px;
+    font-weight: 600;
+    /* color:#212121 */
+  }
+  .h1-subheading {
+    font-family: "Roboto", Serif;
+    font-size: 20px;
+  }
+
+  .h2-subheading {
+    font-family: "Roboto", Serif;
+    font-size: 15px;
+  }
+}

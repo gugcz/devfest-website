@@ -1,0 +1,419 @@
+[
+  {
+    "id": "1000",
+    "slide": "",
+    "title": "TBA",
+    "description": "Brzy bude doplněno",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "format": "",
+    "date": "",
+    "timeDuration": "40",
+    "speakers": [
+    ]
+  },
+  {
+    "id": "1001",
+    "slide": "",
+    "title": "Oběd",
+    "description": "🍴",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "format": "",
+    "date": "",
+    "timeDuration": "40",
+    "speakers": [
+    ]
+  },
+  {
+    "id": "1002",
+    "slide": "",
+    "title": "Zakončení",
+    "description": "",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "format": "",
+    "date": "",
+    "timeDuration": "40",
+    "speakers": [
+    ]
+  },
+  {
+    "id": "1003",
+    "slide": "",
+    "title": "React",
+    "description": "",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "format": "",
+    "date": "",
+    "timeDuration": "40",
+    "speakers": [
+    ]
+  },
+  {
+    "id": "1004",
+    "slide": "",
+    "title": "UX/Business",
+    "description": "",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "format": "",
+    "date": "",
+    "timeDuration": "40",
+    "speakers": [
+    ]
+  },
+  {
+    "id": "1005",
+    "slide": "",
+    "title": "Zahájení",
+    "description": "",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "format": "",
+    "date": "",
+    "timeDuration": "40",
+    "speakers": [
+    ]
+  },
+  {
+    "id": "100",
+    "slide": "",
+    "title": "Jak z refactoringu udělat standardní součást vývoje ve vašem týmu? Pojďme si to prakticky vyzkoušet!",
+    "description": "Na workshopu si nejprve projdeme a sjednotíme pár základních pojmů kolem refactoringu - co je to refactoring, ale taky proč, kdy a jak refactorovat [45 min]. Poté se vrhneme na samotný refactoring kódu. Popíšeme vám produkt, na kterém budete pracovat, a dáme vám praktické rady, jak začít. Nebojte, nenecháme vás v tom samotné. Během praktické části vám budu spolu s dalšími kolegy k dispozici pro vaše dotazy a případnou pomoc [60 min]. Na závěr si nasdílíme praktické zkušenosti - zhodnotíme, co se vám nejvíce líbilo, co vám připadalo užitečné a jak by se na daném projektu dalo dále pracovat [15 min].",
+    "track": "",
+    "link": "",
+    "place": "Online",
+    "company": "Y Soft",
+    "time":"",
+    "format": "Day 1",
+    "date": "25. listopad 2021",
+    "timeDuration": "120",
+    "speakers": [
+      100,
+      101,
+      102
+    ]
+  },
+  {
+    "id": "101",
+    "slide": "",
+    "title": "Nasazení doménově specifického jazyka ve zdravotnictví",
+    "description": "Jak probíhá nasazení doménově specifického jazyka v oblasti zdravotnictví. Proč používat doménově specifický jazyk – jaké nám to přináší výhody a jaká jsou naopak úskalí. Zkušenosti z využití tohoto jazyka k vývoji iOS aplikace. Z technologického hlediska bude řeč o primárně technologicky agnostickém vývoji momentálně využívající C# a .NET.",
+    "track": "",
+    "link": "",
+    "place": "Online",
+    "company": "CertiCon",
+    "time":"",
+    "format": "Day 1",
+    "date": "25. listopad 2021",
+    "timeDuration": "120",
+    "speakers": [
+      103
+    ]
+  },
+  {
+    "id": "102",
+    "slide": "",
+    "title": "Odpoledne s .Net/Blazor a nachmelenou opicí",
+    "description": "Zastav se za námi na přednášku v prostorách porubské pobočky a zapoj se do live coding workshopu. Sebou dobrou náladu a vlastní notebook. \n\n 16:30 NEFORMÁLNÍ ZAČÁTEK/OBČERSTVENÍ \n 17:00 TALK: Software craftsmanship přednáška - 30 min \n 17:30 TALK: 8 tipů na rozjezd projektů - technické rady zaměřené na nepříliš používané techniky které zjednodušují práci developerů v začátcích projektů \n 18:00 WORKSHOP: Blazor workshop 60 - 90 min \n • seznámení s frontend technologií určenou pro tvorbu interaktivních webových aplikací s použitím C# \n • live coding ukázka \n 19:30 VOLNÁ ZÁBAVA    ",
+    "track": "",
+    "link": "",
+    "place": "Online",
+    "company": "SDE/3Pillar Global Czechia",
+    "time":"",
+    "format": "Day 1",
+    "date": "25. listopad 2021",
+    "timeDuration": "120",
+    "speakers": [
+      104,
+      105,
+      106
+    ]
+  },
+  {
+    "id": "200",
+    "slide": "",
+    "title": "Z vývojáře startupista/majitel firmy",
+    "description": "Dozvíte se jak se změní váš život, kdyz si založíte firmu. Krok po kroku projdu úplné začátky. Od toho jak se pozná dobrý produkt. Jak se řeší investice. Jak si najít spolumajitele. I jak se změnil můj pohled na vývoj softwaru. Posledních 5 let se věnuji validaci a testování nápadu, jak v Californii, tak v ČR. Teď jsem CEO onetone.ai a možná mě znáte z podcastu SCRIPTease.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "Business",
+    "tagColor": "#E0F0FF",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      107
+    ]
+  },
+  {
+    "id": "201",
+    "slide": "",
+    "title": "HW & Machine Hacking with Ruby & Rails",
+    "description": "Ruby on Rails používá mnoho firem především pro své webové aplikace. Je ale možné Ruby nebo Rails použít pro ovládání komplexních strojů a výrobních linek? Je to spolehlivé, stabilní a udržitelné řešení? Pojďme si o tom popovídat a zlomit některé koncepty, které mě provázeli při prvotních myšlenkách k již mnoho let funkčnímu řešení.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "Development",
+    "tagColor": "#FFE8CD",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      108
+    ]
+  },
+  {
+    "id": "202",
+    "slide": "",
+    "title": "Infrastruktura jako kód v Google Cloud Platform",
+    "description": "Jak máme v Heurece postavenou IaC pomocí Terraformu, aby byla škálovatelná a připravená na multitenancy.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "DevOps",
+    "tagColor": "#FBE9E7",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      109
+    ]
+  },
+  {
+    "id": "203",
+    "slide": "",
+    "title": "Implementace infrastruktury pro vysokou dostupnust databáze PostgreSQL",
+    "description": "Popíšeme si jednu z cest, jak dosáhnout vysoké dostupnosti (v cloudu i mimo něj) a zotavení po havárii pro databázové servery Posqresql. Požijeme k tomu replikační manažer repmgr, sdružovač připojení pgbouncer, zálohovací systém (pg)barman a nějaké další nástroje (consul, corosync, name server, ...). K tomu vybrané krizové scénáře a jak řešit danou situaci.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "DevOps",
+    "tagColor": "#FBE9E7",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      110
+    ]
+  },
+  {
+    "id": "204",
+    "slide": "",
+    "title": "Agilní vývoj software pod pokličkou",
+    "description": "Co znamená \"agile\" pro vývojáře a jejich denní práci? Jaké strasti a pasti na vás čekají? Jak to ovlivňuje softwarový design? O svůj příběh, jak poznával agilní vývoj software od role řadového vývojáře v týmu až po roli leadera podílejícího se na agilní transformaci velké české banky se s vámi podělí aktuální area-lead za oblast vývoje.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "Product",
+    "tagColor": "#C7EFEE",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      111
+    ]
+  },
+  {
+    "id": "205",
+    "slide": "",
+    "title": "Jak vyladit distrubuované aplikace pomocí observability přístupu",
+    "description": "So your code is in production, now what? Do you know, if your application is up? Do you knew if something goes wrong? When it does, how will you debug it?Let's talk observability, the latest buzzword, what it means, and how to get started.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "DevOps",
+    "tagColor": "#FBE9E7",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      112
+    ]
+  },
+  {
+    "id": "206",
+    "slide": "",
+    "title": "Jak vyrostlo Freelo z 0 na 55 tisíc uživatelů #SaaS",
+    "description": "Provedu vás úspěšnými i špatnými rozhodnutími Freela za prvních 6 let existence. Projdu onboarding, pricing, marketingové strategie a technologie. Přednáška pomůže jak začínajícím SaaS aplikacím, tak nejspíš inspiruje i ty pokročilé. Z přednášky si odnesete konkrétní tipy k vylepšení onboardingu uživatelů, obchodní a marketingové taktiky, které nám nesou ovoce. A když budete dávat pozor, tak se vyvarujete chyb, kterými jsme si prošli.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "Business",
+    "tagColor": "#E0F0FF",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      113
+    ]
+  },
+  {
+    "id": "207",
+    "slide": "",
+    "title": "Jak začít s šifrováním citlivých dat",
+    "description": "Už jste někdy potřebovali ukládat skutečně citlivé osobní údaje? Telefon, email, adresa, .. to jsou takové nudné klasiky, ale co třeba rodné číslo, nějaké podpisové certifikáty, nebo dokonce zdravotnickou dokumentaci? Šifrování dat není častý use-case, ale když už je potřeba, je nekonečně mnoho způsobů jak to udělat špatně, ale jen pár způsobů jak to udělat dobře. Jeden z těch jednodušších si představíme a na příkladech si ukážeme, jak se vyhnout tučným GDPR pokutám.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "Development",
+    "tagColor": "#FFE8CD",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      114
+    ]
+  },
+  {
+    "id": "208",
+    "slide": "",
+    "title": "Použití GraphQL ve Vue.js a Node.js prakticky",
+    "description": "Již druhým rokem používáme v rámci MallGroup Apollo GraphQL API, kde jsme původní PHP web transformovali do moderní Vue.js / Node.js (respektive Nuxt.js) multitenant aplikace. V rámci přednášky se podíváme jak tento přerod na TypeScript, GraphQL a další technologie vypadal a jak se nám s ním dále žije. Podíváme se na věci jako cachování, hybridní rendering a další zajímavé technologie, které nám pomáhají stavět webovou část e-commerce platformy použité na mall.cz, mall.sk, mall.hu, mall.hr, mall.pl, mimovrste.com. Na své si přijdou vývojáři, které zajímá real life experience. ",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "Development",
+    "tagColor": "#FFE8CD",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      115
+    ]
+  },
+  {
+    "id": "209",
+    "slide": "",
+    "title": "Jak budovat produkty, které budou zákazníci milovat?",
+    "description": "Na světě existuje mnoho produktů, které jsou na míle vzdálené skutečnému řešení zákaznických problémů nebo nejsou intuitivní, jak bychom si jako uživatelé přáli. Takové produkty není jednoduché budovat, ale existují principy, které produktové týmy mohou navést na správnou cestu. V této přednášce se dozvíte, jak vypadá product discovery proces, a jak s ním začít.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "Product",
+    "tagColor": "#C7EFEE",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      116
+    ]
+  },
+  {
+    "id": "210",
+    "slide": "",
+    "title": "Elixir - Old is the new modern",
+    "description": "Elixir - nový moderní jazyk, jehož hlavní přednosti ale nejsou ani nové, ani moderní, za Elixírem totiž stojí titán jménem Erlang. Pojďme si povědět o tom, co nám Erlang z osmdesátých let může přinést a jak elegantně řeší problémy dneška. Pojďme zjistit jak je možné obsluhovat 2.5 milionu connections z jednoho serveru, nebo proč a jak běžet UI process na serveru.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "Development",
+    "tagColor": "#FFE8CD",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      117
+    ]
+  },
+  {
+    "id": "211",
+    "slide": "",
+    "title": "Jak se naučit React?",
+    "description": "První část přednášky je je zaměřena na komunitu ReactGirls, čemu se věnuje a jaké jsou kroky pro juniory při rekvalifikaci do IT. V druhé části přednášky se dozvíte jak a proč začít s Reactem, jak si vytvořit první komponentu a kroky k vytvoření své první aplikace za pomocí Reactu a frameworku Next.js. Tereza vystudovala molekulární biologii, nicméně už během studia se zamilovala do technologií a IT komunit. Proto se rozhodla rekvalifikovat, začala chodit na kurzy a samovzdělávat se. Zjistila, že je v Praze nedostatek kurzů na React a proto založila komunitu ReactGirls, ve které lektoři a seniorní programátoři pomáhají ženám při studiu Reactu. Poté rok pracovala v Avastu na pozici frontend developera a od příštího týdne nastupuje do Deepnote na pozici software inženýra.",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "Development",
+    "tagColor": "#FFE8CD",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      118
+    ]
+  },
+  {
+    "id": "212",
+    "slide": "",
+    "title": "Z garáže do Afriky během 2 let aneb proč netech founder potřebuje tech co-foundera",
+    "description": "Story našeho edtech startupu Twigsee. Jaké faily a lesson learned jsme si odnesli, proč po 2 letech refaktorujeme appky, jak škálujeme ze 3 lidí na 60 během 24 měsíců a proč geeci a BFUs mohou být nejlepší parťáci. ",
+    "track": "",
+    "link": "",
+    "place": "",
+    "placeLink": "",
+    "company": "",
+    "time":"",
+    "tag": "Business",
+    "tagColor": "#E0F0FF",
+    "format": "Day 2",
+    "date": "26. listopad 2021",
+    "timeDuration": "40",
+    "speakers": [
+      119
+    ]
+  }
+]

@@ -1,0 +1,362 @@
+[
+  
+  {
+    "id": "101",
+    "name": "Milan Schwarz",
+    "company": {
+      "designation": "",
+      "name": "Y Soft"
+    },
+    "image": "milan-schwarz.jpg",
+    "bio": "Ve Y Softu jsem začínal prěd 5 lety jako Tech Lead. Teď jsem na pozici Agile Coach a zaměřuji se na technický coaching. Mimo práci a věcí kolem Software Craftsmanship trávím nejvíce času s rodinou a dvěma dětmi, které spíš coachují mě 😄. Jinak mě baví šachy, stolní tenis a cestování.",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/milanschwarz/",
+      "website": "https://www.ysoft.com/",
+      "twitter": ""
+    },
+    "sessionId": [
+      100
+    ]
+  },
+  {
+    "id": "101",
+    "name": "Radim Göth",
+    "company": {
+      "designation": "",
+      "name": "Y Soft"
+    },
+    "image": "radim-goth.png",
+    "bio": "",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/radimgoth/",
+      "website": "https://www.ysoft.com/",
+      "twitter": ""
+    },
+    "sessionId": [
+      100
+    ]
+  },
+  {
+    "id": "102",
+    "name": "Tomáš Líška",
+    "company": {
+      "designation": "",
+      "name": "Y Soft"
+    },
+    "image": "tomas-liska.jpg",
+    "bio": "",
+    "social": {
+      "linkedin": "",
+      "twitter": ""
+    },
+    "sessionId": [
+      100
+    ]
+  },
+  {
+    "id": "103",
+    "name": "Pavel Kuchař",
+    "company": {
+      "designation": "",
+      "name": "CertiCon"
+    },
+    "image": "pavel-kuchar.jpeg",
+    "bio": "Přes studium jaderné fyziky, robotiky, umělé inteligence a vůbec všeho kolem IT na různých fakultách ČVUT nakonec zakotvil jako tester a posléze developer v Certiconu. Nyní se věnuje spolu s partou developerů rozprostřených napříč republikou a zeměkoulí vývoji životně kritické aplikace pro implantaci a správu kardiostimulátorů pro společnost Medtronic.",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/pavel-kuchar/",
+      "website": "https://www.certicon.cz/",
+      "twitter": ""
+    },
+    "sessionId": [
+      101
+    ]
+  },
+  {
+    "id": "104",
+    "name": "Petr Sedláček",
+    "company": {
+      "designation": "",
+      "name": "SDE/3Pillar Global Czechia"
+    },
+    "image": "petr-sedlacek.jpg",
+    "bio": " .NET vývojář, zastánce a aktivní contributor Free Libre a Open Source projektů. Autor YouTube C# video-tutoriálů. Software Craftsmanship nadšenec.",
+    "social": {
+      "linkedin": "",
+      "website": "https://sde.cz/",
+      "twitter": ""
+    },
+    "sessionId": [
+      102
+    ]
+  },
+  {
+    "id": "105",
+    "name": "Ondrej Pektor",
+    "company": {
+      "designation": "",
+      "name": "SDE/3Pillar Global Czechia"
+    },
+    "image": "ondrej-pektor.jpg",
+    "bio": "PhD student oboru aplikovaná informatika na Ostravské univerzitě, vyučující programovacích předmětů na Katedře informatiky a počítačů, .Net vývojář a technologický nadšenec.",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/ondrej-pektor/",
+      "website": "https://sde.cz/",
+      "twitter": ""
+    },
+    "sessionId": [
+      102
+    ]
+  },
+  {
+    "id": "106",
+    "name": "Jakub Plesník",
+    "company": {
+      "designation": "",
+      "name": "SDE/3Pillar Global Czechia"
+    },
+    "image": "jakub-plesnik.jpg",
+    "bio": "Software developer se zájmem o softwarovou architekturu a datovou analýzu. PhD student na VŠB-TU Ostrava. Zapálený do následování best practices a psaní udržitelného kódu. Moto: \"How it is done is as important as having it done.\"",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/jakub-plesnik/",
+      "website": "https://sde.cz/",
+      "twitter": ""
+    },
+    "sessionId": [
+      102
+    ]
+  },
+  {
+    "id": "107",
+    "name": "Jirka Bachel",
+    "company": {
+      "designation": "CEO",
+      "name": "Onetone.ai"
+    },
+    "image": "jirka-bachel.jpeg",
+    "bio": "Posledních 5 let se věnuji validaci a testování nápadu, jak v Californii, tak v ČR. Teď jsem CEO onetone.ai a možná mě znáte z podcastu SCRIPTease.",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/jirka-bachel/",
+      "website": "https://onetone.ai/",
+      "twitter": ""
+    },
+    "sessionId": [
+      200
+    ]
+  },
+  {
+    "id": "108",
+    "name": "Jakub Malina",
+    "company": {
+      "designation": "Ruby on Rails developer and CTO",
+      "name": "Mixit"
+    },
+    "image": "jakub-malina.jpeg",
+    "bio": "",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/jakub-malina-59735360/",
+      "website": "https://mixit.cz/",
+      "twitter": ""
+    },
+    "sessionId": [
+      201
+    ]
+  },
+  {
+    "id": "109",
+    "name": "Robin Opletal",
+    "company": {
+      "designation": "Infrastructure Engineer",
+      "name": "Heureka Group"
+    },
+    "image": "robin-opletal.jpeg",
+    "bio": "",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/robin-opletal/",
+      "website": "https://onas.heureka.cz/heureka-v-kostce",
+      "twitter": ""
+    },
+    "sessionId": [
+      202
+    ]
+  },
+  {
+    "id": "110",
+    "name": "Miroslav Minárik",
+    "company": {
+      "designation": "",
+      "name": "LMC"
+    },
+    "image": "miroslav-minarik.png",
+    "bio": "",
+    "social": {
+      "linkedin": "",
+      "website": "https://lmc.eu/",
+      "twitter": ""
+    },
+    "sessionId": [
+      203
+    ]
+  },
+  {
+    "id": "111",
+    "name": "Tom Janků",
+    "company": {
+      "designation": "Development area lead",
+      "name": "Česká Spořitelna"
+    },
+    "image": "tom-janku.jpeg",
+    "bio": "Skriptoval jsem, testoval, programoval, psal uživatelské příručky, managoval projekty i lidi, konzultoval i adminoval... Dokonce i s agilem koketoval, koučoval jej, scrum mastroval a dneska až k leadershipu za vývoja softwarové inženýrství se dopracoval. Z Ostravy původem, náplava v Čechách, Alpinista, ale i věčný student z přesvědčení.",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/jankutomas/",
+      "website": "https://www.csas.cz/",
+      "twitter": ""
+    },
+    "sessionId": [
+      204
+    ]
+  },
+  {
+    "id": "112",
+    "name": "Honza Král",
+    "company": {
+      "designation": "Co-Founder/CTO",
+      "name": "Aimful.io"
+    },
+    "image": "honza-kral.jpeg",
+    "bio": "Máš kód v produkci a co teď? Víš, že aplikace jede? Je všechno v pořádku? Nedochází k chybám? A pokud ano, jak budeš aplikaci debugovat? Pojďme si promluvit o observability přístupu - co znamená a jak začít?",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/honzakral/",
+      "website": "https://aimful.io/",
+      "twitter": ""
+    },
+    "sessionId": [
+      205
+    ]
+  },
+  {
+    "id": "113",
+    "name": "Karel Dytrych",
+    "company": {
+      "designation": "",
+      "name": ""
+    },
+    "image": "karel-dytrych.jpg",
+    "bio": "",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/kareldytrych/",
+      "website": "www.freelo.cz",
+      "twitter": ""
+    },
+    "sessionId": [
+      206
+    ]
+  },
+  {
+    "id": "114",
+    "name": "Filip Procházka",
+    "company": {
+      "designation": "VP of Engineering",
+      "name": "Cogvio"
+    },
+    "image": "filip-prochazka.jpeg",
+    "bio": "",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/fprochazka/",
+      "website": "https://filip-prochazka.com/",
+      "twitter": ""
+    },
+    "sessionId": [
+      207
+    ]
+  },
+  {
+    "id": "115",
+    "name": "Radim Štěpaník",
+    "company": {
+      "designation": "",
+      "name": ""
+    },
+    "image": "radim-stepanik.jpeg",
+    "bio": "Qest je moje srdcovka, kde jsem před 6 lety začínal a dostal se až do pozice CTO. Zároveň pracuji jako teamleader a JS developer pro mall.cz, kde působíme více než 3 roky. Baví mě javascript, node.js. aws, vue.js, react. Věříím v to, že se věci dají dělat jednoduše.",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/radim-%C5%A1t%C4%9Bpan%C3%ADk-755a868b/",
+      "website": "https://qest.cz/",
+      "twitter": ""
+    },
+    "sessionId": [
+      208
+    ]
+  },
+  {
+    "id": "116",
+    "name": "Eva Novotná",
+    "company": {
+      "designation": "PM",
+      "name": "Productboard"
+    },
+    "image": "eva-novotna.jpg",
+    "bio": "",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/eva-novotna-prague/",
+      "website": "",
+      "twitter": ""
+    },
+    "sessionId": [
+      209
+    ]
+  },
+  {
+    "id": "117",
+    "name": "Filip Vavera",
+    "company": {
+      "designation": "Software Engineer",
+      "name": "profiq"
+    },
+    "image": "filip-vavera.jpg",
+    "bio": "Filip pracuje jako Software Engineer v profiqu. Během své kariéry pracoval snad se všemi technologiemi od psaní pluginu do IDE až po designování distribuovanych cloud systémů a celých architektur. Filip používá Arch Linux a Vim a ve svém volném čase přispívá do open-source projektů, (samo)studuje ekonomii a věnuje se Bitcoinu.",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/filipvavera/",
+      "website": "https://www.profiq.com/",
+      "twitter": ""
+    },
+    "sessionId": [
+      210
+    ]
+  },
+  {
+    "id": "118",
+    "name": "Tereza Vaňková",
+    "company": {
+      "designation": "Founder",
+      "name": "ReactGirls"
+    },
+    "image": "tereza-vankova.png",
+    "bio": "Tereza vystudovala molekulární biologii, nicméně už během studia se zamilovala do technologií a IT komunit. Proto se rozhodla rekvalifikovat, začala chodit na kurzy a samovzdělávat se. Zjistila, že je v Praze nedostatek kurzů na React a proto založila komunitu ReactGirls, ve které lektoři a seniorní programátoři pomáhají ženám při studiu Reactu. Poté rok pracovala v Avastu na pozici frontend developera a od příštího týdne nastupuje do Deepnote na pozici software inženýra",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/tereza-vankova/",
+      "website": "https://reactgirls.com/",
+      "twitter": ""
+    },
+    "sessionId": [
+      211
+    ]
+  },
+  {
+    "id": "119",
+    "name": "Vanda Seidelová",
+    "company": {
+      "designation": "CEO / Founder",
+      "name": "Twigsee"
+    },
+    "image": "vanda-seidelova.jpg",
+    "bio": "",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/vandaseidelova/",
+      "website": "https://www.twigsee.com",
+      "twitter": ""
+    },
+    "sessionId": [
+      212
+    ]
+  }
+]

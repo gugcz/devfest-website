@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>APPSS</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+
+        <style>
+            span {
+                display: inline-block;
+                padding-left: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <pre><code class="language-appscript">
+            function firstPart() {
+                var i1Id = "1RTOL6t5F7pZTuBSoQPkEISPRaaM8WpZfwFKsrlsKeGs";
+                var textPartGUG = 3;
+                var i1f = SpreadsheetApp.openById(i1Id);
+                var textPartGUG = i1f.getName();
+                var i1r1 = i1f.getRange("L12");
+                var textPartMix = "v kódu.";
+                var i1r2 = i1f.getRange("C3");
+                var returnValue = "specialFunFunction()";
+                var i1r3 = i1f.getRange("F6");
+                if(i1r1.getValue()) {
+                  var special1 = parseInt(i1Id[0]) + parseInt(i1Id[5]) + parseInt(i1Id[9]) - parseInt(i1Id[7]);
+                  i1r2.setFormula("=GOOGLETRANSLATE(\""+textPartMix+"\"; \"cs\"; \"en\")");
+                  var special2 = i1r2.getValue();
+                  i1r2.setFormula("");
+                  returnValue = ""+special1+special1+" "+textPartGUG+" "+special2+" "+special1;
+                  i1r3.setValue(returnValue);
+                } else {
+                  i1r3.setValue("");
+                }
+              }
+        </code></pre>
+    </body>
+</html>
