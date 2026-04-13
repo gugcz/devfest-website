@@ -4,8 +4,8 @@
   "description": "DevFest.cz 2026 — global conference for developers in Prague",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#1a1a2e",
+  "background_color": "#050505",
+  "theme_color": "#050505",
   "icons": [
     {
       "src": "/apple-touch-icon.png",

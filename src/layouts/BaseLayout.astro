@@ -1,0 +1,210 @@
+---
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const siteUrl = "https://devfest.cz";
+const {
+	title = "DevFest.cz 2026",
+	description = "DevFest.cz 2026 is global conference and festival for developers, geeks and technological experts focusing on Web/Mobile Development, Cybersecurity, AI/ML trends and more. Join us in Prague to experience unique community-built event!",
+} = Astro.props;
+
+const ogImage = `${siteUrl}/og-image.jpg`;
+const canonicalUrl = `${siteUrl}/`;
+const ogImageAlt = "DevFest.cz 2026 conference banner";
+
+const jsonLd = JSON.stringify([
+	{
+		"@context": "https://schema.org",
+		"@type": "Event",
+		"name": title,
+		"description": description,
+		"image": ogImage,
+		"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+		"eventStatus": "https://schema.org/EventScheduled",
+		"startDate": "2026-10-30T09:00:00+01:00",
+		"endDate": "2026-10-30T20:00:00+01:00",
+		"inLanguage": "en",
+		"offers": {
+			"@type": "Offer",
+			"url": siteUrl,
+			"availability": "https://schema.org/PreOrder",
+			"priceCurrency": "CZK"
+		},
+		"location": {
+			"@type": "Place",
+			"name": "Prague",
+			"address": {
+				"@type": "PostalAddress",
+				"addressLocality": "Prague",
+				"addressCountry": "CZ"
+			}
+		},
+		"organizer": {
+			"@type": "Organization",
+			"name": "GDG Czech Republic",
+			"url": siteUrl
+		}
+	},
+	{
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		"name": "DevFest.cz",
+		"url": siteUrl
+	}
+]);
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="theme-color" content="#050505" />
+		<meta name="color-scheme" content="dark" />
+		<meta name="robots" content="index, follow" />
+
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalUrl} />
+		<link rel="alternate" hreflang="en" href={canonicalUrl} />
+		<link rel="alternate" hreflang="x-default" href={canonicalUrl} />
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/webp" href="/favicon-light.webp" media="(prefers-color-scheme: light)" />
+		<link rel="icon" type="image/webp" href="/favicon-dark.webp" media="(prefers-color-scheme: dark)" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+
+		<!-- Google Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IM+Fell+English:ital@0;1&family=Share+Tech+Mono&family=Special+Elite&display=swap" rel="stylesheet" />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:site_name" content="DevFest.cz" />
+		<meta property="og:locale" content="en_US" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:type" content="image/jpeg" />
+		<meta property="og:image:width" content="1920" />
+		<meta property="og:image:height" content="1080" />
+		<meta property="og:image:alt" content={ogImageAlt} />
+
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="@devfestcz" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image:alt" content={ogImageAlt} />
+
+		<!-- Structured Data -->
+		<script type="application/ld+json" set:html={jsonLd} />
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style is:global lang="scss">
+	:root {
+		--color-bg: #050505;
+		--color-text: #F0EDE6;
+		--color-accent: #CC0000;
+		--color-surface: rgba(255, 255, 255, 0.03);
+		--color-border: rgba(255, 255, 255, 0.08);
+	}
+
+	*, *::before, *::after {
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0;
+	}
+
+	html {
+		height: 100%;
+		scroll-behavior: smooth;
+	}
+
+	::selection {
+		background: rgba(204, 0, 0, 0.4);
+		color: var(--color-text);
+	}
+
+	body {
+		min-height: 100%;
+		position: relative;
+		background: var(--color-bg);
+		color: var(--color-text);
+		font-family: 'Special Elite', cursive;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		overflow-x: hidden;
+		cursor: crosshair;
+
+		// atmospheric red spotlight glow
+		&::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background:
+				radial-gradient(ellipse at 50% 0%, rgba(204, 0, 0, 0.08) 0%, transparent 50%),
+				radial-gradient(ellipse at 50% 40%, rgba(30, 5, 5, 0.6) 0%, transparent 60%);
+			pointer-events: none;
+			z-index: 0;
+			animation: spotlightFlicker 8s ease-in-out infinite;
+		}
+
+		// film-grain texture overlay
+		&::after {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+			background-size: cover;
+			opacity: 0.35;
+			pointer-events: none;
+			z-index: 9998;
+			mix-blend-mode: overlay;
+		}
+	}
+
+	// scanlines overlay
+	html::after {
+		content: '';
+		position: fixed;
+		inset: 0;
+		background: repeating-linear-gradient(
+			0deg,
+			transparent,
+			transparent 2px,
+			rgba(0, 0, 0, 0.15) 2px,
+			rgba(0, 0, 0, 0.15) 4px
+		);
+		pointer-events: none;
+		z-index: 9997;
+	}
+
+	a, button, [role="button"], input[type="submit"], input[type="email"] {
+		cursor: pointer;
+	}
+
+	input[type="email"] {
+		cursor: text;
+	}
+
+	@keyframes spotlightFlicker {
+		0%, 100% { opacity: 1; }
+		92% { opacity: 1; }
+		93% { opacity: 0.7; }
+		94% { opacity: 1; }
+		96% { opacity: 0.85; }
+		97% { opacity: 1; }
+	}
+</style>

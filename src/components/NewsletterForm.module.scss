@@ -1,0 +1,109 @@
+.form {
+	display: flex;
+	gap: 0;
+	max-width: 440px;
+	width: 100%;
+}
+
+.input {
+	flex: 1;
+	padding: 0.9rem 1.2rem;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(204, 0, 0, 0.15);
+	border-right: none;
+	border-radius: 0;
+	color: var(--color-text);
+	font-family: 'Share Tech Mono', monospace;
+	font-size: 0.8rem;
+	letter-spacing: 0.05em;
+	outline: none;
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+
+	&::placeholder {
+		color: rgba(240, 237, 230, 0.2);
+	}
+
+	&:focus {
+		border-color: var(--color-accent);
+		background: rgba(255, 255, 255, 0.05);
+		box-shadow: 0 0 0 1px rgba(204, 0, 0, 0.15), 0 0 15px rgba(204, 0, 0, 0.1);
+	}
+}
+
+.button {
+	padding: 0.9rem 1.8rem;
+	background: var(--color-accent);
+	color: var(--color-text);
+	border: 1px solid var(--color-accent);
+	border-radius: 0;
+	clip-path: polygon(0% 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+	font-family: 'Share Tech Mono', monospace;
+	font-size: 0.7rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: background 0.2s, box-shadow 0.3s, transform 0.2s;
+	white-space: nowrap;
+
+	&:hover {
+		background: #e60000;
+		box-shadow: 0 4px 28px rgba(204, 0, 0, 0.5), 0 0 20px rgba(204, 0, 0, 0.2);
+		transform: translateY(-1px);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: default;
+		transform: none;
+		box-shadow: none;
+	}
+}
+
+.srOnly {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.message {
+	font-family: 'Share Tech Mono', monospace;
+	font-size: 0.75rem;
+	letter-spacing: 0.1em;
+	color: var(--color-accent);
+	margin-top: 0.8rem;
+	min-height: 1.2em;
+	text-align: center;
+}
+
+@media (max-width: 500px) {
+	.form {
+		flex-direction: column;
+	}
+
+	.input {
+		border-right: 1px solid rgba(204, 0, 0, 0.15);
+		border-bottom: none;
+		border-radius: 0;
+
+		&:focus {
+			border-color: var(--color-accent);
+		}
+	}
+
+	.button {
+		border-radius: 0;
+		clip-path: none;
+	}
+}
