@@ -1,0 +1,90 @@
+---
+const siteUrl = "https://devfest.cz";
+const title = "DevFest.cz 2026";
+const description = "DevFest.cz 2026 is global conference and festival for developers, geeks and technological experts focusing on Web/Mobile Development, Cybersecurity, AI/ML trends and more. Join us in Prague to experience unique community-built event!";
+const ogImage = `${siteUrl}/og-image.jpg`;
+const canonicalUrl = `${siteUrl}/`;
+
+const ogImageAlt = "DevFest.cz 2026 conference banner";
+
+const jsonLd = JSON.stringify([
+	{
+		"@context": "https://schema.org",
+		"@type": "Event",
+		"name": title,
+		"description": description,
+		"image": ogImage,
+		"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+		"eventStatus": "https://schema.org/EventScheduled",
+		"location": {
+			"@type": "Place",
+			"name": "Prague",
+			"address": {
+				"@type": "PostalAddress",
+				"addressLocality": "Prague",
+				"addressCountry": "CZ"
+			}
+		},
+		"organizer": {
+			"@type": "Organization",
+			"name": "GDG Czech Republic",
+			"url": siteUrl
+		}
+	},
+	{
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		"name": "DevFest.cz",
+		"url": siteUrl
+	}
+]);
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="theme-color" content="#1a1a2e" />
+		<meta name="color-scheme" content="light dark" />
+		<meta name="robots" content="index, follow" />
+
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalUrl} />
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/webp" href="/favicon-light.webp" media="(prefers-color-scheme: light)" />
+		<link rel="icon" type="image/webp" href="/favicon-dark.webp" media="(prefers-color-scheme: dark)" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:site_name" content="DevFest.cz" />
+		<meta property="og:locale" content="en_US" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:type" content="image/jpeg" />
+		<meta property="og:image:width" content="1920" />
+		<meta property="og:image:height" content="1080" />
+		<meta property="og:image:alt" content={ogImageAlt} />
+
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="@devfestcz" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image:alt" content={ogImageAlt} />
+
+		<!-- Structured Data -->
+		<script type="application/ld+json" set:html={jsonLd} />
+	</head>
+	<body>
+		<h1>DevFest.cz 2026</h1>
+	</body>
+</html>
