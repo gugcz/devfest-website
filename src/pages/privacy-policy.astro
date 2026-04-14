@@ -1,0 +1,247 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+	title="Privacy Policy — DevFest.cz 2026"
+	description="Privacy policy for DevFest.cz 2026 — how we collect, use, and protect your personal data."
+>
+	<main class="policy">
+		<div class="policy-inner">
+			<a href="/" class="back-link">&#8592; Back</a>
+
+			<h1 class="policy-title">Privacy Policy</h1>
+			<p class="policy-meta">GDG Czech Republic · Last updated: April 2026</p>
+
+			<section>
+				<h2>1. Who we are</h2>
+				<p>
+					DevFest.cz 2026 is organised by GDG Czech Republic (Google Developer Group Czech Republic),
+					a volunteer community group. For privacy-related enquiries, contact us at
+					<a href="mailto:info@devfest.cz">info@devfest.cz</a>.
+				</p>
+			</section>
+
+			<section>
+				<h2>2. Data we collect and why</h2>
+
+				<h3>a) Newsletter sign-up</h3>
+				<p>
+					When you submit your email address via the notification form, we store it in
+					SmartEmailing (our email service provider) to send you conference updates such as
+					ticket availability announcements and event news. Legal basis: consent (GDPR Art. 6(1)(a)).
+					You may unsubscribe at any time via the link in every email.
+				</p>
+
+				<h3>b) Analytics cookies</h3>
+				<p>
+					If you accept cookies, we use Google Firebase Analytics (measurement ID G-L5NK2S2EZ0)
+					to collect anonymised usage statistics — pages visited, session duration, browser type —
+					so we can improve the website. No personally identifiable information is included.
+					Legal basis: consent (GDPR Art. 6(1)(a)). You can withdraw consent at any time by
+					clicking "Decline" in the cookie banner (clear your browser storage to see it again).
+				</p>
+
+				<h3>c) Server logs</h3>
+				<p>
+					Our hosting provider (Firebase Hosting) automatically records standard access logs
+					(IP address, browser, requested URL). These are retained for up to 30 days for
+					security purposes. Legal basis: legitimate interests (GDPR Art. 6(1)(f)).
+				</p>
+			</section>
+
+			<section>
+				<h2>3. Cookies</h2>
+				<p>We use the following cookies:</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Purpose</th>
+							<th>Duration</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>cookie-consent</code></td>
+							<td>Stores your cookie preference (localStorage)</td>
+							<td>Until you clear browser storage</td>
+						</tr>
+						<tr>
+							<td><code>_ga, _ga_*</code></td>
+							<td>Google Analytics — only set after consent</td>
+							<td>2 years</td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+
+			<section>
+				<h2>4. Data sharing</h2>
+				<p>
+					We do not sell your data. We share it only with the processors listed above
+					(SmartEmailing, Google Firebase) under data processing agreements, and only to the
+					extent necessary to provide the services described.
+				</p>
+			</section>
+
+			<section>
+				<h2>5. Your rights</h2>
+				<p>Under GDPR you have the right to:</p>
+				<ul>
+					<li>Access the personal data we hold about you</li>
+					<li>Request correction or deletion of your data</li>
+					<li>Withdraw consent at any time (this does not affect prior processing)</li>
+					<li>Lodge a complaint with the Czech Data Protection Authority (<a href="https://www.uoou.cz" target="_blank" rel="noopener noreferrer">uoou.cz</a>)</li>
+				</ul>
+				<p>To exercise these rights, email us at <a href="mailto:info@devfest.cz">info@devfest.cz</a>.</p>
+			</section>
+
+			<section>
+				<h2>6. Changes to this policy</h2>
+				<p>
+					We may update this policy as the website evolves. The "last updated" date at the top
+					reflects the most recent revision. Material changes will be announced via our newsletter.
+				</p>
+			</section>
+		</div>
+	</main>
+</BaseLayout>
+
+<style lang="scss">
+	.policy {
+		min-height: 100dvh;
+		padding: 5rem 1.5rem 6rem;
+		position: relative;
+		z-index: 1;
+	}
+
+	.policy-inner {
+		max-width: 680px;
+		margin: 0 auto;
+	}
+
+	.back-link {
+		display: inline-block;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.75rem;
+		letter-spacing: 0.1em;
+		color: rgba(240, 237, 230, 0.45);
+		text-decoration: none;
+		margin-bottom: 2.5rem;
+		transition: color 0.2s;
+
+		&:hover {
+			color: var(--color-accent);
+		}
+	}
+
+	.policy-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(2.5rem, 8vw, 4.5rem);
+		letter-spacing: 0.06em;
+		color: var(--color-text);
+		line-height: 0.9;
+		margin-bottom: 0.6rem;
+	}
+
+	.policy-meta {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.7rem;
+		letter-spacing: 0.12em;
+		color: rgba(240, 237, 230, 0.35);
+		margin-bottom: 3rem;
+		text-transform: uppercase;
+	}
+
+	section {
+		margin-bottom: 2.4rem;
+
+		& + section {
+			border-top: 1px solid var(--color-border);
+			padding-top: 2.4rem;
+		}
+	}
+
+	h2 {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 1.3rem;
+		letter-spacing: 0.08em;
+		color: var(--color-accent);
+		margin-bottom: 0.8rem;
+	}
+
+	h3 {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.8rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.6);
+		margin-top: 1.2rem;
+		margin-bottom: 0.5rem;
+	}
+
+	p {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.8rem;
+		line-height: 1.8;
+		letter-spacing: 0.03em;
+		color: rgba(240, 237, 230, 0.7);
+		margin-bottom: 0.6rem;
+	}
+
+	ul {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.8rem;
+		line-height: 1.8;
+		letter-spacing: 0.03em;
+		color: rgba(240, 237, 230, 0.7);
+		padding-left: 1.2rem;
+		margin-bottom: 0.6rem;
+	}
+
+	a {
+		color: var(--color-accent);
+		text-decoration: none;
+		border-bottom: 1px solid rgba(204, 0, 0, 0.35);
+		transition: border-color 0.2s;
+
+		&:hover {
+			border-color: var(--color-accent);
+		}
+	}
+
+	code {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.75rem;
+		background: rgba(255, 255, 255, 0.05);
+		padding: 0.1em 0.35em;
+		border: 1px solid var(--color-border);
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.73rem;
+		color: rgba(240, 237, 230, 0.7);
+		margin-top: 0.8rem;
+	}
+
+	th {
+		text-align: left;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.35);
+		font-weight: normal;
+		padding: 0.5rem 0.8rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	td {
+		padding: 0.6rem 0.8rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+		vertical-align: top;
+		line-height: 1.6;
+	}
+</style>

@@ -14,6 +14,20 @@ const firebaseConfig = {
 
 export const app: FirebaseApp = initializeApp(firebaseConfig);
 
-export const analytics: Promise<Analytics | null> = isSupported().then((ok) =>
-	ok ? getAnalytics(app) : null,
-);
+let analyticsInstance: Analytics | null = null;
+
+async function initAnalytics() {
+	if (analyticsInstance) return;
+	const supported = await isSupported();
+	if (supported) {
+		analyticsInstance = getAnalytics(app);
+	}
+}
+
+// Only initialise analytics if the user has already consented
+if (typeof localStorage !== 'undefined' && localStorage.getItem('cookie-consent') === 'accepted') {
+	initAnalytics();
+}
+
+// Initialise when consent is granted during this session
+window.addEventListener('cookie-consent-accepted', () => initAnalytics(), { once: true });

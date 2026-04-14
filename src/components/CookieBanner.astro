@@ -1,0 +1,136 @@
+---
+---
+
+<div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite">
+	<p class="cookie-text">
+		We use analytics cookies to understand how visitors use this site.
+		See our <a href="/privacy-policy" class="cookie-link">Privacy Policy</a> for details.
+	</p>
+	<div class="cookie-actions">
+		<button id="cookie-accept" class="cookie-btn cookie-btn--accept">Accept</button>
+		<button id="cookie-decline" class="cookie-btn cookie-btn--decline">Decline</button>
+	</div>
+</div>
+
+<script>
+	const CONSENT_KEY = 'cookie-consent';
+	const banner = document.getElementById('cookie-banner');
+
+	function hideBanner() {
+		banner?.setAttribute('aria-hidden', 'true');
+		banner?.classList.add('cookie-banner--hidden');
+	}
+
+	// Already decided — don't show
+	if (localStorage.getItem(CONSENT_KEY)) {
+		hideBanner();
+		if (localStorage.getItem(CONSENT_KEY) === 'accepted') {
+			window.dispatchEvent(new Event('cookie-consent-accepted'));
+		}
+	}
+
+	document.getElementById('cookie-accept')?.addEventListener('click', () => {
+		localStorage.setItem(CONSENT_KEY, 'accepted');
+		hideBanner();
+		window.dispatchEvent(new Event('cookie-consent-accepted'));
+	});
+
+	document.getElementById('cookie-decline')?.addEventListener('click', () => {
+		localStorage.setItem(CONSENT_KEY, 'declined');
+		hideBanner();
+	});
+</script>
+
+<style>
+	.cookie-banner {
+		position: fixed;
+		bottom: 1.5rem;
+		left: 50%;
+		transform: translateX(-50%);
+		width: min(calc(100vw - 2rem), 560px);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.2rem;
+		padding: 1rem 1.4rem;
+		background: rgba(10, 5, 5, 0.95);
+		border: 1px solid rgba(204, 0, 0, 0.25);
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		z-index: 10000;
+		transition: opacity 0.3s, transform 0.3s;
+	}
+
+	.cookie-banner--hidden {
+		opacity: 0;
+		pointer-events: none;
+		transform: translateX(-50%) translateY(8px);
+	}
+
+	.cookie-text {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.72rem;
+		line-height: 1.55;
+		letter-spacing: 0.03em;
+		color: rgba(240, 237, 230, 0.75);
+	}
+
+	.cookie-link {
+		color: var(--color-accent);
+		text-decoration: none;
+		border-bottom: 1px solid rgba(204, 0, 0, 0.4);
+		transition: border-color 0.2s;
+	}
+
+	.cookie-link:hover {
+		border-color: var(--color-accent);
+	}
+
+	.cookie-actions {
+		display: flex;
+		gap: 0.5rem;
+		flex-shrink: 0;
+	}
+
+	.cookie-btn {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.65rem;
+		letter-spacing: 0.15em;
+		text-transform: uppercase;
+		padding: 0.5rem 1rem;
+		border: 1px solid;
+		background: transparent;
+		cursor: pointer;
+		transition: background 0.2s, box-shadow 0.2s;
+		white-space: nowrap;
+	}
+
+	.cookie-btn--accept {
+		color: var(--color-text);
+		border-color: var(--color-accent);
+		background: var(--color-accent);
+	}
+
+	.cookie-btn--accept:hover {
+		background: #e60000;
+		box-shadow: 0 0 16px rgba(204, 0, 0, 0.4);
+	}
+
+	.cookie-btn--decline {
+		color: rgba(240, 237, 230, 0.5);
+		border-color: rgba(240, 237, 230, 0.15);
+	}
+
+	.cookie-btn--decline:hover {
+		color: rgba(240, 237, 230, 0.8);
+		border-color: rgba(240, 237, 230, 0.35);
+	}
+
+	@media (max-width: 500px) {
+		.cookie-banner {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.8rem;
+		}
+	}
+</style>
