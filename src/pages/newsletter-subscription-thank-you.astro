@@ -1,0 +1,120 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer';
+---
+
+<BaseLayout title="Subscribed · DevFest.cz 2026" description="You're subscribed to DevFest.cz 2026 updates. We'll let you know when tickets drop.">
+	<main class="landing">
+		<h1 class="title">
+			<img src="/logo.svg" alt="DevFest.cz 2026" class="logo" />
+		</h1>
+		<p class="headline">You're on the list.</p>
+		<p class="subtext">We'll reach out when tickets drop. Stay tuned.</p>
+		<a class="back-link" href="/">
+			<span class="back-arrow" aria-hidden="true">&#8592;</span>
+			Back to homepage
+		</a>
+		<div class="decoration-line" aria-hidden="true"></div>
+	</main>
+	<Footer client:load />
+</BaseLayout>
+
+<style lang="scss">
+	.landing {
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 4rem 1.5rem 6rem;
+		gap: 1.5rem;
+		text-align: center;
+		position: relative;
+		z-index: 1;
+	}
+
+	.title {
+		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+		line-height: 0;
+	}
+
+	.logo {
+		width: clamp(280px, 60vw, 520px);
+		height: auto;
+	}
+
+	.headline {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(2.5rem, 8vw, 5rem);
+		letter-spacing: 0.08em;
+		color: var(--color-text);
+		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+	}
+
+	.subtext {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 1rem;
+		font-style: italic;
+		line-height: 1.6;
+		max-width: 380px;
+		color: #888;
+		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+	}
+
+	.back-link {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.75rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-text);
+		text-decoration: none;
+		border: 1px solid rgba(204, 0, 0, 0.4);
+		padding: 0.7rem 2rem;
+		clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+		transition: background 0.25s, color 0.25s, border-color 0.25s;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+
+		&:hover {
+			background: rgba(204, 0, 0, 0.15);
+			border-color: rgba(204, 0, 0, 0.7);
+			color: var(--color-text);
+		}
+	}
+
+	.back-arrow {
+		font-size: 0.85rem;
+		transition: transform 0.25s;
+
+		.back-link:hover & {
+			transform: translateX(-2px);
+		}
+	}
+
+	.decoration-line {
+		width: 40px;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, rgba(204, 0, 0, 0.4), transparent);
+		margin-top: 1rem;
+		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(24px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
