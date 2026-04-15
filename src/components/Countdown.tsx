@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import s from './Countdown.module.scss';
 
 const TARGET = new Date('2026-10-30T09:00:00+01:00').getTime();
@@ -43,13 +43,13 @@ export default function Countdown() {
 	return (
 		<div className={s.countdown}>
 			{UNITS.map(({ key, label }, i) => (
-				<>
-					{i > 0 && <div key={`sep-${key}`} className={s.separator}>:</div>}
-					<div key={key} className={s.unit}>
+				<Fragment key={key}>
+					{i > 0 && <div className={s.separator}>:</div>}
+					<div className={s.unit}>
 						<span className={s.value}>{time[key]}</span>
 						<span className={s.label}>{label}</span>
 					</div>
-				</>
+				</Fragment>
 			))}
 		</div>
 	);
