@@ -4,16 +4,18 @@ import CookieBanner from '../components/CookieBanner.astro';
 interface Props {
 	title?: string;
 	description?: string;
+	noindex?: boolean;
 }
 
 const siteUrl = "https://devfest.cz";
 const {
 	title = "DevFest.cz 2026",
 	description = "DevFest.cz 2026 is global conference and festival for developers, geeks and technological experts focusing on Web/Mobile Development, Cybersecurity, AI/ML trends and more. Join us in Prague to experience unique community-built event!",
+	noindex = false,
 } = Astro.props;
 
 const ogImage = `${siteUrl}/og-image.jpg`;
-const canonicalUrl = `${siteUrl}/`;
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 const ogImageAlt = "DevFest.cz 2026 conference banner";
 
 const jsonLd = JSON.stringify([
@@ -65,13 +67,17 @@ const jsonLd = JSON.stringify([
 		<meta name="generator" content={Astro.generator} />
 		<meta name="theme-color" content="#050505" />
 		<meta name="color-scheme" content="dark" />
-		<meta name="robots" content="index, follow" />
+		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
 
 		<title>{title}</title>
 		<meta name="description" content={description} />
-		<link rel="canonical" href={canonicalUrl} />
-		<link rel="alternate" hreflang="en" href={canonicalUrl} />
-		<link rel="alternate" hreflang="x-default" href={canonicalUrl} />
+		{!noindex && (
+			<>
+				<link rel="canonical" href={canonicalUrl} />
+				<link rel="alternate" hreflang="en" href={canonicalUrl} />
+				<link rel="alternate" hreflang="x-default" href={canonicalUrl} />
+			</>
+		)}
 
 		<!-- Favicon -->
 		<link rel="icon" type="image/webp" href="/favicon-light.webp" media="(prefers-color-scheme: light)" />
@@ -107,7 +113,7 @@ const jsonLd = JSON.stringify([
 		<meta name="twitter:image:alt" content={ogImageAlt} />
 
 		<!-- Structured Data -->
-		<script type="application/ld+json" set:html={jsonLd} />
+		{!noindex && <script type="application/ld+json" set:html={jsonLd} />}
 
 		<!-- Firebase -->
 		<script>
