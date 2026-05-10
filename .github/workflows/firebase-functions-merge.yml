@@ -1,10 +1,11 @@
 # Deploys Cloud Functions (codebase: website) on push to the release branch.
 #
-# IMPORTANT: This workflow is scoped to named functions via `--only` so that
-# Firebase never auto-deletes functions on deploy. If you add a new function
-# under `functions/src/`, append its name to FUNCTIONS_LIST below.
-# Removing a function from the codebase will NOT delete it from the project —
-# delete it manually with `firebase functions:delete <name> --region europe-west1`.
+# No-delete guarantee: this workflow runs `firebase deploy` in
+# `--non-interactive` mode WITHOUT `--force`. If a function exists in the
+# project but no longer in the codebase, the CLI cannot prompt for deletion
+# and the deploy fails loudly. To remove a function, delete it manually with
+#   firebase functions:delete <name> --region europe-west1
+# and then re-run this workflow.
 
 name: Deploy Functions on merge
 on:
@@ -19,11 +20,6 @@ on:
 jobs:
   deploy_functions:
     runs-on: ubuntu-latest
-    env:
-      # Comma-separated list of functions to deploy. Scoping `--only` to named
-      # functions prevents Firebase from comparing manifests and offering
-      # deletions for any orphaned/removed functions.
-      FUNCTIONS_LIST: "functions:website:refreshTitoCache,functions:website:refreshTitoCacheNow,functions:website:titoWebhook,functions:website:dailyTicketStatus"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -43,10 +39,9 @@ jobs:
         run: |
           printf '%s' "$SA_JSON" > "$RUNNER_TEMP/sa.json"
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
-      - name: Deploy functions (scoped, no delete)
+      - name: Deploy functions
         run: |
           npx --yes firebase-tools@latest deploy \
-            --only "$FUNCTIONS_LIST" \
+            --only functions:website \
             --project devfest-cz-app \
-            --non-interactive \
-            --force
+            --non-interactive
