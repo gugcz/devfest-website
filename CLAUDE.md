@@ -74,6 +74,8 @@ Functions exposed (region `europe-west1`):
 
 Browser side: `src/components/Tickets.tsx` subscribes to `/tickets` via `firebase/database`'s `onValue`. `src/lib/tito.ts` holds browser-safe helpers (types, `filterDisplayable`, `checkoutUrl`, `formatPrice`). RTDB rules in `database.rules.json` (not wired into `firebase.json` — paste manually in console).
 
+While the Tickets section is hidden on the site, `/tickets` is also locked down in `database.rules.json` (`.read: false`). Cloud Functions still write via Admin SDK (which bypasses rules), so the cache stays fresh and Slack notifications continue. **When the site launch is ready, flip `tickets.\".read\"` to `true` in the Firebase console (or in `database.rules.json` if you wire it into `firebase.json`).**
+
 Conventions / gotchas:
 - New function in existing domain: add file → re-export in `tickets/index.ts`. New domain: new folder same shape + `export * from './<domain>/index.js'` in `src/index.ts`.
 - `params.ts` is the single source of truth for secrets/strings. Don't duplicate the table elsewhere.

@@ -90,7 +90,9 @@ Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 
 ### RTDB rules
 
-`database.rules.json` documents the required rules: `/tickets` publicly readable, everything else locked. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.json` and run `firebase deploy --only database`.
+`database.rules.json` documents the required rules. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.json` and run `firebase deploy --only database`.
+
+While the Tickets section is hidden on the site, `/tickets` is locked down (`.read: false`) so the cache cannot be pulled from outside. The Cloud Functions still write to it via the Admin SDK (which bypasses rules). When the site is ready to launch, flip `tickets.".read"` to `true` and re-deploy / re-paste the rules.
 
 ### Filtering
 

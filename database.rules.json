@@ -3,7 +3,7 @@
     ".read": false,
     ".write": false,
     "tickets": {
-      ".read": true,
+      ".read": false,
       ".write": false
     }
   }
