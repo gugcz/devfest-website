@@ -1,0 +1,47 @@
+# Deploys Cloud Functions (codebase: website) on push to the release branch.
+#
+# No-delete guarantee: this workflow runs `firebase deploy` in
+# `--non-interactive` mode WITHOUT `--force`. If a function exists in the
+# project but no longer in the codebase, the CLI cannot prompt for deletion
+# and the deploy fails loudly. To remove a function, delete it manually with
+#   firebase functions:delete <name> --region europe-west1
+# and then re-run this workflow.
+
+name: Deploy Functions on merge
+on:
+  push:
+    branches:
+      - "2026"
+    paths:
+      - "functions/**"
+      - "firebase.json"
+      - ".github/workflows/firebase-functions-merge.yml"
+
+jobs:
+  deploy_functions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - name: Install function deps
+        working-directory: functions
+        run: npm ci
+      - name: Build functions
+        working-directory: functions
+        run: npm run build
+      - name: Write service account credentials
+        env:
+          SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEVFEST_CZ_APP }}
+        run: |
+          printf '%s' "$SA_JSON" > "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+      - name: Deploy functions
+        run: |
+          npx --yes firebase-tools@latest deploy \
+            --only functions:website \
+            --project devfest-cz-app \
+            --non-interactive
