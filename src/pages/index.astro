@@ -3,11 +3,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Countdown from '../components/Countdown';
 import NewsletterForm from '../components/NewsletterForm';
 import Footer from '../components/Footer';
-// Tickets section temporarily hidden on main while we hold the
-// announcement. The Cloud Functions (`refreshTitoCache`, `titoWebhook`,
-// `dailyTicketStatus`) keep running so the cache and Slack notifications
-// stay live. To bring the section back: re-add the import below and
-// the `<Tickets client:load />` line in the markup.
 // import Tickets from '../components/Tickets';
 ---
 
@@ -24,7 +19,7 @@ import Footer from '../components/Footer';
 		<div class="newsletter-wrapper">
 			<NewsletterForm client:load />
 		</div>
-		{/* <Tickets client:load /> -- hidden until announcement; see frontmatter comment */}
+		{/* <Tickets client:load /> */}
 		<a class="last-year" href="https://2025.devfest.cz" target="_blank" rel="noopener noreferrer">
 			See last year's edition
 			<span class="last-year-arrow" aria-hidden="true">&#8599;</span>
