@@ -39,14 +39,46 @@ export interface TicketsCache {
 }
 
 /**
- * Filter to releases that should be shown publicly: on sale or sold out.
- * Hides drafts, paused, ended, and not-yet-on-sale releases.
+ * Filter to releases that should be shown publicly. Drafts and archived
+ * releases are hidden, but `paused`, `not_yet_on_sale`, `ended`, and
+ * `sold_out` releases are kept so visitors can see the full ticket
+ * lineup with appropriate status badges. The UI disables the Buy CTA
+ * for anything that is not currently `on_sale`.
  */
 export function filterDisplayable(releases: TitoRelease[]): TitoRelease[] {
-	return releases.filter((r) => {
-		if (r.state && r.state !== 'live' && r.state !== 'on_sale') return false;
-		return r.sale_status === 'on_sale' || r.sale_status === 'sold_out' || r.sold_out === true;
-	});
+	return releases.filter((r) => !r.state || r.state === 'live' || r.state === 'on_sale');
+}
+
+export interface ReleaseStatus {
+	/** Short label for the status badge. */
+	label: string;
+	/** Visual treatment for the badge (mapped to a CSS class). */
+	tone: 'on-sale' | 'paused' | 'soon' | 'sold-out' | 'ended';
+	/** Whether the Buy CTA should be enabled. */
+	purchasable: boolean;
+}
+
+/**
+ * Map a ti.to release to a display status. Sold-out wins over the raw
+ * `sale_status` to keep the UI consistent when ti.to flips just the
+ * `sold_out` flag without updating `sale_status`.
+ */
+export function releaseStatus(release: TitoRelease): ReleaseStatus {
+	if (release.sold_out || release.sale_status === 'sold_out') {
+		return { label: 'Sold out', tone: 'sold-out', purchasable: false };
+	}
+	switch (release.sale_status) {
+		case 'on_sale':
+			return { label: 'On sale', tone: 'on-sale', purchasable: true };
+		case 'paused':
+			return { label: 'Paused', tone: 'paused', purchasable: false };
+		case 'not_yet_on_sale':
+			return { label: 'Coming soon', tone: 'soon', purchasable: false };
+		case 'ended':
+			return { label: 'Ended', tone: 'ended', purchasable: false };
+		default:
+			return { label: release.sale_status || 'Unavailable', tone: 'paused', purchasable: false };
+	}
 }
 
 export function checkoutUrl(release: TitoRelease, accountSlug: string, eventSlug: string): string {

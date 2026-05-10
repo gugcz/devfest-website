@@ -79,7 +79,7 @@ Conventions / gotchas:
 - `params.ts` is the single source of truth for secrets/strings. Don't duplicate the table elsewhere.
 - TS imports inside `functions/` use `.js` suffixes (NodeNext module resolution).
 - `titoWebhook` reads `req.rawBody` (Buffer) for HMAC, not `req.body`.
-- Filter rule for displayed releases: `state ∈ {live, on_sale}` AND `sale_status ∈ {on_sale, sold_out}`. Buy URL pattern: `https://ti.to/<account>/<event>/with/<release-slug>`.
+- Filter rule for displayed releases: `state ∈ {live, on_sale}` (drafts hidden); any `sale_status` is shown with a status badge (on sale / sold out / paused / coming soon / ended). Buy CTA enabled only when `purchasable` (`releaseStatus()` in `src/lib/tito.ts`). Buy URL pattern: `https://ti.to/<account>/<event>/with/<release-slug>`.
 - Default Cloud Functions service account has the IAM to write RTDB; no explicit creds needed at runtime.
 
 Deploy steps, secret setup, and ti.to/Slack wiring live in [README.md](README.md).

@@ -62,7 +62,7 @@
 	transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
 	min-height: 180px;
 
-	&:hover:not(.isSoldOut):not(.skeleton) {
+	&:hover:not(.isInactive):not(.skeleton) {
 		border-color: rgba(204, 0, 0, 0.55);
 		transform: translateY(-2px);
 		box-shadow:
@@ -70,8 +70,8 @@
 			0 8px 32px rgba(204, 0, 0, 0.18);
 	}
 
-	&.isSoldOut {
-		opacity: 0.6;
+	&.isInactive {
+		opacity: 0.55;
 	}
 }
 
@@ -117,6 +117,18 @@
 
 .badgeSoldOut {
 	color: rgba(240, 237, 230, 0.5);
+}
+
+.badgePaused {
+	color: #f0c674;
+}
+
+.badgeSoon {
+	color: #6cb0ff;
+}
+
+.badgeEnded {
+	color: rgba(240, 237, 230, 0.4);
 }
 
 .ticketDescription {

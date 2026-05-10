@@ -6,6 +6,8 @@ import {
 	eventUrl,
 	filterDisplayable,
 	formatPrice,
+	releaseStatus,
+	type ReleaseStatus,
 	type TicketsCache,
 	type TitoRelease,
 } from '../lib/tito';
@@ -21,6 +23,22 @@ interface State {
 }
 
 const INITIAL: State = { status: 'loading', releases: [], accountSlug: '', eventSlug: '' };
+
+function badgeClass(styles: Record<string, string>, tone: ReleaseStatus['tone']): string {
+	switch (tone) {
+		case 'on-sale':
+			return styles.badgeOnSale;
+		case 'paused':
+			return styles.badgePaused;
+		case 'soon':
+			return styles.badgeSoon;
+		case 'ended':
+			return styles.badgeEnded;
+		case 'sold-out':
+		default:
+			return styles.badgeSoldOut;
+	}
+}
 
 export default function Tickets() {
 	const [state, setState] = useState<State>(INITIAL);
@@ -107,13 +125,13 @@ export default function Tickets() {
 			</header>
 			<ul className={s.list} role="list">
 				{releases.map((release) => {
-					const soldOut = release.sold_out || release.sale_status === 'sold_out';
+					const status = releaseStatus(release);
 					return (
-						<li key={release.id} className={`${s.ticket} ${soldOut ? s.isSoldOut : ''}`}>
+						<li key={release.id} className={`${s.ticket} ${status.purchasable ? '' : s.isInactive}`}>
 							<div className={s.ticketTop}>
 								<h3 className={s.ticketTitle}>{release.title}</h3>
-								<span className={`${s.badge} ${soldOut ? s.badgeSoldOut : s.badgeOnSale}`}>
-									{soldOut ? 'Sold out' : 'On sale'}
+								<span className={`${s.badge} ${badgeClass(s, status.tone)}`}>
+									{status.label}
 								</span>
 							</div>
 							{release.description && (
@@ -125,11 +143,7 @@ export default function Tickets() {
 									<span className={s.priceNote}>incl. VAT</span>
 								)}
 							</p>
-							{soldOut ? (
-								<span className={`${s.cta} ${s.ctaDisabled}`} aria-disabled="true">
-									Sold out
-								</span>
-							) : (
+							{status.purchasable ? (
 								<a
 									className={s.cta}
 									href={checkoutUrl(release, accountSlug, eventSlug)}
@@ -139,6 +153,10 @@ export default function Tickets() {
 									Buy ticket
 									<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
 								</a>
+							) : (
+								<span className={`${s.cta} ${s.ctaDisabled}`} aria-disabled="true">
+									{status.label}
+								</span>
 							)}
 						</li>
 					);
