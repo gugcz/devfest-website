@@ -44,6 +44,44 @@ Static Astro components (`.astro`) for layout and non-interactive UI. React comp
 
 Firebase Analytics is initialized **only after cookie consent** — it listens for the `cookie-consent-accepted` custom event. Firebase Realtime Database is configured but not currently used. Deployment targets the `devfest-public` site in the `devfest-cz-app` project via `firebase.json`.
 
+### ti.to Tickets pipeline
+
+Visitor browsers read ticket data from RTDB `/tickets`. The static build never calls ti.to. Cloud Functions own all ti.to traffic.
+
+```
+functions/src/
+├── index.ts                # top barrel — `export * from './<domain>/index.js'`
+├── lib/admin.ts            # Admin SDK singleton (`db()` returns RTDB)
+└── tickets/
+    ├── index.ts            # domain barrel
+    ├── params.ts           # secrets + string params (single source of truth)
+    ├── tito-api.ts         # ti.to HTTP client + `projectRelease()`
+    ├── tito-webhook.ts     # `verifyTitoSignature` + header constants + payload type
+    ├── slack-client.ts     # `postToSlack()`
+    ├── refresh-cache.ts    # `refreshTitoCache`, `refreshTitoCacheNow`
+    └── notify-purchase.ts  # `titoWebhook`
+```
+
+Functions exposed (region `europe-west1`):
+
+| Name | Trigger | Effect |
+| ---- | ------- | ------ |
+| `refreshTitoCache` | `onSchedule('every 1 hours')` | Fetch releases → write RTDB `/tickets` |
+| `refreshTitoCacheNow` | `onRequest` (`invoker: 'private'`) | Same as above, ad-hoc |
+| `titoWebhook` | `onRequest` (`invoker: 'public'`) | Verify `Tito-Signature` HMAC, post `ticket.completed` / `registration.finished` to Slack |
+
+Browser side: `src/components/Tickets.tsx` subscribes to `/tickets` via `firebase/database`'s `onValue`. `src/lib/tito.ts` holds browser-safe helpers (types, `filterDisplayable`, `checkoutUrl`, `formatPrice`). RTDB rules in `database.rules.json` (not wired into `firebase.json` — paste manually in console).
+
+Conventions / gotchas:
+- New function in existing domain: add file → re-export in `tickets/index.ts`. New domain: new folder same shape + `export * from './<domain>/index.js'` in `src/index.ts`.
+- `params.ts` is the single source of truth for secrets/strings. Don't duplicate the table elsewhere.
+- TS imports inside `functions/` use `.js` suffixes (NodeNext module resolution).
+- `titoWebhook` reads `req.rawBody` (Buffer) for HMAC, not `req.body`.
+- Filter rule for displayed releases: `state ∈ {live, on_sale}` AND `sale_status ∈ {on_sale, sold_out}`. Buy URL pattern: `https://ti.to/<account>/<event>/with/<release-slug>`.
+- Default Cloud Functions service account has the IAM to write RTDB; no explicit creds needed at runtime.
+
+Deploy steps, secret setup, and ti.to/Slack wiring live in [README.md](README.md).
+
 ### Styling Conventions
 
 - Global CSS variables (colors, fonts) defined in `BaseLayout.astro`

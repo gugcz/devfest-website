@@ -1,0 +1,7 @@
+# Build output (top-level lib/ only — src/lib/ is source, must be tracked).
+/lib/
+node_modules/
+*.log
+.env
+.env.local
+.firebase/

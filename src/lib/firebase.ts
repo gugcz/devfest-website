@@ -1,5 +1,6 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
+import { getDatabase, type Database } from 'firebase/database';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyB7lXxnVicSWTtUe9CbVUarm2MwFVRMucU',
@@ -14,6 +15,12 @@ const firebaseConfig = {
 
 export const app: FirebaseApp = initializeApp(firebaseConfig);
 
+let databaseInstance: Database | null = null;
+export function getDb(): Database {
+	if (!databaseInstance) databaseInstance = getDatabase(app);
+	return databaseInstance;
+}
+
 let analyticsInstance: Analytics | null = null;
 
 async function initAnalytics() {
@@ -24,10 +31,11 @@ async function initAnalytics() {
 	}
 }
 
-// Only initialise analytics if the user has already consented
-if (typeof localStorage !== 'undefined' && localStorage.getItem('cookie-consent') === 'accepted') {
-	initAnalytics();
+// Browser-only: initialise analytics if the user has already consented,
+// and listen for consent granted during this session.
+if (typeof window !== 'undefined') {
+	if (localStorage.getItem('cookie-consent') === 'accepted') {
+		initAnalytics();
+	}
+	window.addEventListener('cookie-consent-accepted', () => initAnalytics(), { once: true });
 }
-
-// Initialise when consent is granted during this session
-window.addEventListener('cookie-consent-accepted', () => initAnalytics(), { once: true });

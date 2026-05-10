@@ -31,6 +31,68 @@ npm run build
 npm run preview
 ```
 
+## ti.to Tickets — Cloud Functions + RTDB cache
+
+The "Get your ticket" section is rendered client-side from a Firebase Realtime Database cache. The static build never calls ti.to, and a scheduled Cloud Function keeps the cache fresh.
+
+```
+Cloud Scheduler (every 1 h, Europe/Prague)
+  └─> Cloud Function `refreshTitoCache` (europe-west1)
+        ├─ fetch  https://api.tito.io/v3/<acc>/<evt>/releases
+        └─ write  RTDB /tickets = { releases, accountSlug, eventSlug, fetchedAt }
+
+Browser
+  └─> Tickets.tsx (client:load)
+        └─ subscribe RTDB /tickets via firebase/database onValue
+```
+
+The Blaze plan is required for scheduled functions and Secret Manager.
+
+### Configure & deploy the functions
+
+```bash
+# Install function deps
+npm --prefix functions install
+
+# Set secrets (one-time each)
+firebase functions:secrets:set TITO_API_TOKEN          # ti.to admin API
+firebase functions:secrets:set TITO_WEBHOOK_SECRET     # ti.to webhook security token
+firebase functions:secrets:set SLACK_WEBHOOK_URL       # Slack incoming-webhook URL
+
+# Set ti.to slugs as non-secret params (functions/.env.devfest-cz-app)
+echo 'TITO_ACCOUNT_SLUG=your-account' >> functions/.env.devfest-cz-app
+echo 'TITO_EVENT_SLUG=your-event'      >> functions/.env.devfest-cz-app
+
+# Deploy
+firebase deploy --only functions
+
+# Trigger an immediate ticket-cache refresh (otherwise wait up to an hour)
+gcloud functions call refreshTitoCacheNow --region europe-west1
+```
+
+The default Cloud Functions service account has the IAM needed to write RTDB; no extra service-account JSON is required at runtime.
+
+### Functions
+
+| Name | Trigger | Purpose |
+| ---- | ------- | ------- |
+| `refreshTitoCache` | Cloud Scheduler, hourly | Sync ti.to releases → RTDB `/tickets` |
+| `refreshTitoCacheNow` | HTTPS, `invoker: private` | Ad-hoc cache refresh for project members |
+| `titoWebhook` | HTTPS, public | Verifies `Tito-Signature` and posts purchase notifications to Slack |
+
+Wire up the webhook in ti.to → Customize → Webhook Endpoints:
+1. Paste the deployed `titoWebhook` URL.
+2. Copy ti.to's security token into `TITO_WEBHOOK_SECRET` (Secret Manager).
+3. Subscribe at least to `ticket.completed` and `registration.finished`.
+
+### RTDB rules
+
+`database.rules.json` documents the required rules: `/tickets` publicly readable, everything else locked. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.json` and run `firebase deploy --only database`.
+
+### Filtering
+
+Only releases with `state` of `live`/`on_sale` and `sale_status` of `on_sale` or `sold_out` are displayed. Drafts, paused, ended, and not-yet-on-sale releases are filtered out client-side.
+
 ## Project Structure
 
 ```

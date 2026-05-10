@@ -1,0 +1,10 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "tickets": {
+      ".read": true,
+      ".write": false
+    }
+  }
+}
