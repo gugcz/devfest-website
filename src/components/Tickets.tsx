@@ -21,11 +21,6 @@ interface State {
 
 const INITIAL: State = { status: 'loading', releases: [], accountSlug: '', eventSlug: '' };
 
-interface TicketsProps {
-	/** Optional mock cache for preview/dev. When provided, RTDB is skipped. */
-	preview?: TicketsCache | null;
-}
-
 interface ReleaseGroup {
 	name: string;
 	description: string | null;
@@ -56,22 +51,10 @@ function groupReleases(releases: TitoRelease[]): ReleaseGroup[] {
 	return Array.from(map.values());
 }
 
-export default function Tickets({ preview }: TicketsProps = {}) {
-	const [state, setState] = useState<State>(() => {
-		if (preview) {
-			const visible = filterDisplayable(preview.releases ?? []);
-			return {
-				status: visible.length > 0 ? 'ready' : 'empty',
-				releases: visible,
-				accountSlug: preview.accountSlug ?? '',
-				eventSlug: preview.eventSlug ?? '',
-			};
-		}
-		return INITIAL;
-	});
+export default function Tickets() {
+	const [state, setState] = useState<State>(INITIAL);
 
 	useEffect(() => {
-		if (preview) return;
 		let unsubscribe: (() => void) | null = null;
 		let cancelled = false;
 		(async () => {
@@ -113,7 +96,7 @@ export default function Tickets({ preview }: TicketsProps = {}) {
 			cancelled = true;
 			unsubscribe?.();
 		};
-	}, [preview]);
+	}, []);
 
 	if (state.status === 'error') {
 		return (
