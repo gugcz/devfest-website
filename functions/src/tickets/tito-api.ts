@@ -59,6 +59,25 @@ export function projectRelease(release: TitoRelease): Record<string, unknown> {
 	return out;
 }
 
+/**
+ * Predicate: should this release be persisted to the public RTDB cache?
+ *
+ * Drafts/archived (`state` neither `live` nor `on_sale`) and any release
+ * whose `accessibility` is not `public` (i.e. `private` / `protected`)
+ * are dropped before write so they never reach `/tickets/releases` —
+ * the node is publicly readable, so unpublished titles must not land
+ * there at all.
+ */
+export function isWebsiteVisible(release: TitoRelease): boolean {
+	const state = typeof release.state === 'string' ? release.state : '';
+	if (state && state !== 'live' && state !== 'on_sale') return false;
+
+	const accessibility = typeof release.accessibility === 'string' ? release.accessibility : '';
+	if (accessibility && accessibility !== 'public') return false;
+
+	return true;
+}
+
 export async function fetchAllReleases(params: FetchReleasesParams): Promise<TitoRelease[]> {
 	const releases: TitoRelease[] = [];
 	let page = 1;

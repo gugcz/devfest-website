@@ -10,7 +10,7 @@ import { onRequest } from 'firebase-functions/v2/https';
 
 import { db } from '../lib/admin.js';
 import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from './params.js';
-import { fetchAllReleases, projectRelease } from './tito-api.js';
+import { fetchAllReleases, isWebsiteVisible, projectRelease } from './tito-api.js';
 
 const REGION = 'europe-west1';
 const TICKETS_PATH = 'tickets';
@@ -33,7 +33,8 @@ async function syncTickets(): Promise<SyncResult> {
 
 	logger.info(`Fetching ti.to releases for ${accountSlug}/${eventSlug}`);
 	const raw = await fetchAllReleases({ token, accountSlug, eventSlug });
-	const releases = raw.map(projectRelease);
+	const visible = raw.filter(isWebsiteVisible);
+	const releases = visible.map(projectRelease);
 
 	const payload = {
 		accountSlug,
@@ -43,7 +44,9 @@ async function syncTickets(): Promise<SyncResult> {
 	};
 
 	await db().ref(TICKETS_PATH).set(payload);
-	logger.info(`Wrote /${TICKETS_PATH} (count=${releases.length}, fetchedAt=${payload.fetchedAt})`);
+	logger.info(
+		`Wrote /${TICKETS_PATH} (visible=${releases.length}, dropped=${raw.length - releases.length}, fetchedAt=${payload.fetchedAt})`,
+	);
 
 	return { count: releases.length, fetchedAt: payload.fetchedAt };
 }
