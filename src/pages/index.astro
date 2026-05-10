@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Countdown from '../components/Countdown';
 import NewsletterForm from '../components/NewsletterForm';
+import AddToCalendar from '../components/AddToCalendar.astro';
 import Footer from '../components/Footer.astro';
 import HeroBackground from '../components/HeroBackground.astro';
 import Ticker from '../components/Ticker.astro';
@@ -144,6 +145,9 @@ const tickerTopics = [
 					Leave your email and we'll let you know the moment tickets go on sale.
 				</p>
 				<NewsletterForm client:visible />
+				<div class="newsletter-calendar">
+					<AddToCalendar />
+				</div>
 			</div>
 		</section>
 	</main>

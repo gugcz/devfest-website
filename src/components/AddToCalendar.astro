@@ -1,0 +1,42 @@
+---
+// add-to-calendar-button web component
+// All-day event: omit startTime/endTime; endDate matches startDate.
+---
+
+<div class="atcb-wrapper">
+	<add-to-calendar-button
+		name="DevFest.cz 2026"
+		description="The most original conference in Prague is here again—and it’s not without a few mysteries.[br]https://devfest.cz"
+		startDate="2026-10-30"
+		endDate="2026-10-30"
+		timeZone="Europe/Prague"
+		location="Prague, Czech Republic"
+		options="['Apple','Google','Microsoft365','Outlook.com','Yahoo','iCal']"
+		iCalFileName="devfest-cz-2026"
+		buttonStyle="custom"
+		hideIconButton
+		lightMode="dark"
+		styleDark="--btn-background: transparent; --btn-background-hover: rgba(204, 0, 0, 0.15); --btn-text: #F0EDE6; --btn-text-hover: #F0EDE6; --btn-border: rgba(204, 0, 0, 0.4); --btn-border-hover: rgba(204, 0, 0, 0.7); --btn-shadow: none; --btn-shadow-hover: none; --list-background: rgba(10, 10, 10, 0.96); --list-background-hover: rgba(204, 0, 0, 0.18); --list-text: #F0EDE6; --list-text-hover: #F0EDE6; --font: 'Share Tech Mono', monospace;"
+	></add-to-calendar-button>
+</div>
+
+<script>
+	import 'add-to-calendar-button';
+</script>
+
+<style>
+	.atcb-wrapper {
+		animation: addCalFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.65s both;
+	}
+
+	@keyframes addCalFadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
