@@ -5,7 +5,7 @@
  *   firebase functions:secrets:set <NAME>
  *
  * Non-secret strings can be set per-environment via
- *   functions/.env.<projectId>
+ *   functions/.env
  * or with `--set-env-vars` on `firebase deploy`.
  */
 

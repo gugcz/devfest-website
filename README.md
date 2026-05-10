@@ -59,9 +59,9 @@ firebase functions:secrets:set TITO_API_TOKEN          # ti.to admin API
 firebase functions:secrets:set TITO_WEBHOOK_SECRET     # ti.to webhook security token
 firebase functions:secrets:set SLACK_WEBHOOK_URL       # Slack incoming-webhook URL
 
-# Set ti.to slugs as non-secret params (functions/.env.devfest-cz-app)
-echo 'TITO_ACCOUNT_SLUG=your-account' >> functions/.env.devfest-cz-app
-echo 'TITO_EVENT_SLUG=your-event'      >> functions/.env.devfest-cz-app
+# Set ti.to slugs as non-secret params (functions/.env)
+echo 'TITO_ACCOUNT_SLUG=your-account' >> functions/.env
+echo 'TITO_EVENT_SLUG=your-event'      >> functions/.env
 
 # Deploy
 firebase deploy --only functions
