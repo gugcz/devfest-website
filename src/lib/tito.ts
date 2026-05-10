@@ -15,6 +15,8 @@ export type TitoSaleStatus =
 	| 'not_yet_on_sale'
 	| string;
 
+export type TitoAccessibility = 'public' | 'private' | 'protected' | string;
+
 export interface TitoRelease {
 	id: number;
 	slug: string;
@@ -29,6 +31,12 @@ export interface TitoRelease {
 	sold_out: boolean;
 	sales_start: string | null;
 	sales_end: string | null;
+	/**
+	 * `public` — listed on the site.
+	 * `private` — invite-only / sales-link-only; never listed.
+	 * `protected` — password-gated; not listed publicly.
+	 */
+	accessibility: TitoAccessibility | null;
 }
 
 export interface TicketsCache {
@@ -40,13 +48,21 @@ export interface TicketsCache {
 
 /**
  * Filter to releases that should be shown publicly. Drafts and archived
- * releases are hidden, but `paused`, `not_yet_on_sale`, `ended`, and
- * `sold_out` releases are kept so visitors can see the full ticket
- * lineup with appropriate status badges. The UI disables the Buy CTA
- * for anything that is not currently `on_sale`.
+ * releases are hidden via `state`. Releases marked `private` or
+ * `protected` in ti.to (Sales link only / password-protected) are also
+ * hidden — they remain reachable via their direct ti.to URL but never
+ * appear in the lineup.
+ *
+ * `paused`, `not_yet_on_sale`, `ended`, and `sold_out` releases are kept
+ * so visitors can see the full lineup with appropriate status badges;
+ * the UI disables the Buy CTA when the release is not `on_sale`.
  */
 export function filterDisplayable(releases: TitoRelease[]): TitoRelease[] {
-	return releases.filter((r) => !r.state || r.state === 'live' || r.state === 'on_sale');
+	return releases.filter((r) => {
+		if (r.state && r.state !== 'live' && r.state !== 'on_sale') return false;
+		if (r.accessibility && r.accessibility !== 'public') return false;
+		return true;
+	});
 }
 
 export interface ReleaseStatus {

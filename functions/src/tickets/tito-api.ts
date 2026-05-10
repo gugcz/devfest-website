@@ -47,6 +47,7 @@ export const RELEASE_FIELDS = [
 	'sold_out',
 	'sales_start',
 	'sales_end',
+	'accessibility',
 ] as const;
 
 export function projectRelease(release: TitoRelease): Record<string, unknown> {
