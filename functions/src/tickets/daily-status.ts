@@ -1,0 +1,145 @@
+/**
+ * `dailyTicketStatus` — once a day, fetch releases directly from the ti.to
+ * Admin API and post a sales summary to Slack. The cron is daily so the
+ * extra ti.to request is negligible (1/day, well under the 60/min limit),
+ * and reading live data avoids any staleness from the hourly cache.
+ */
+
+import { logger } from 'firebase-functions/v2';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
+
+import {
+	SLACK_WEBHOOK_URL,
+	TITO_ACCOUNT_SLUG,
+	TITO_API_TOKEN,
+	TITO_EVENT_SLUG,
+} from './params.js';
+import { postToSlack, type SlackPayload } from './slack-client.js';
+import { fetchAllReleases, type TitoRelease } from './tito-api.js';
+
+const REGION = 'europe-west1';
+
+interface ReleaseSummary {
+	title: string;
+	sold: number;
+	quantity: number | null;
+	soldOut: boolean;
+	saleStatus: string;
+	state: string;
+}
+
+interface Summary {
+	totalSold: number;
+	totalQuantity: number | null;
+	releases: ReleaseSummary[];
+	fetchedAt: number;
+}
+
+function summarize(releases: TitoRelease[]): Summary {
+	const summaries = releases.map<ReleaseSummary>((r) => ({
+		title: r.title,
+		sold: r.quantity_sold ?? 0,
+		quantity: r.quantity ?? null,
+		soldOut: Boolean(r.sold_out) || r.sale_status === 'sold_out',
+		saleStatus: r.sale_status ?? 'unknown',
+		state: r.state ?? 'unknown',
+	}));
+
+	const totalSold = summaries.reduce((acc, r) => acc + r.sold, 0);
+	const totalQuantityKnown = summaries.every((r) => r.quantity !== null);
+	const totalQuantity = totalQuantityKnown
+		? summaries.reduce((acc, r) => acc + (r.quantity ?? 0), 0)
+		: null;
+
+	return {
+		totalSold,
+		totalQuantity,
+		releases: summaries,
+		fetchedAt: Date.now(),
+	};
+}
+
+function buildSlackMessage(summary: Summary): SlackPayload {
+	const totalLabel = summary.totalQuantity == null
+		? `${summary.totalSold}`
+		: `${summary.totalSold} / ${summary.totalQuantity}`;
+
+	const releaseLines = summary.releases.length === 0
+		? ['_No releases returned by ti.to._']
+		: summary.releases.map((r) => {
+			const cap = r.quantity == null ? '?' : String(r.quantity);
+			const flag = r.soldOut ? ' • *sold out*' : '';
+			const status = r.saleStatus !== 'on_sale' && !r.soldOut ? ` • _${r.saleStatus}_` : '';
+			return `• *${r.title}* — ${r.sold} / ${cap}${flag}${status}`;
+		});
+
+	const blocks: unknown[] = [
+		{
+			type: 'header',
+			text: { type: 'plain_text', text: '📊 Daily ticket status', emoji: true },
+		},
+		{
+			type: 'section',
+			text: {
+				type: 'mrkdwn',
+				text: `*Total sold:* ${totalLabel}`,
+			},
+		},
+		{
+			type: 'section',
+			text: {
+				type: 'mrkdwn',
+				text: releaseLines.join('\n'),
+			},
+		},
+		{
+			type: 'context',
+			elements: [
+				{
+					type: 'mrkdwn',
+					text: `Fetched live from ti.to · ${new Date(summary.fetchedAt).toISOString()}`,
+				},
+			],
+		},
+	];
+
+	return {
+		text: `Daily ticket status — total sold ${totalLabel}`,
+		blocks,
+	};
+}
+
+/**
+ * Daily at 09:00 Europe/Prague. Fetches live data from ti.to (no RTDB).
+ */
+export const dailyTicketStatus = onSchedule(
+	{
+		schedule: 'every day 09:00',
+		timeZone: 'Europe/Prague',
+		region: REGION,
+		secrets: [SLACK_WEBHOOK_URL, TITO_API_TOKEN],
+		timeoutSeconds: 120,
+		memory: '256MiB',
+		retryCount: 1,
+	},
+	async () => {
+		const token = TITO_API_TOKEN.value();
+		const accountSlug = TITO_ACCOUNT_SLUG.value();
+		const eventSlug = TITO_EVENT_SLUG.value();
+
+		if (!token || !accountSlug || !eventSlug) {
+			throw new Error(
+				'Missing config: TITO_API_TOKEN secret and TITO_ACCOUNT_SLUG / TITO_EVENT_SLUG params must be set.',
+			);
+		}
+
+		const releases = await fetchAllReleases({ token, accountSlug, eventSlug });
+		const summary = summarize(releases);
+		await postToSlack(SLACK_WEBHOOK_URL.value(), buildSlackMessage(summary));
+
+		logger.info('dailyTicketStatus posted', {
+			totalSold: summary.totalSold,
+			releaseCount: summary.releases.length,
+		});
+	},
+);
