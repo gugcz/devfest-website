@@ -1,12 +1,11 @@
 /**
- * Scheduled and manual triggers that refresh the RTDB tickets cache from
- * the ti.to Admin API. The website reads `/tickets` directly so visitor
- * traffic never hits ti.to.
+ * Scheduled trigger that refreshes the RTDB tickets cache from the ti.to
+ * Admin API. The website reads `/tickets` directly so visitor traffic never
+ * hits ti.to.
  */
 
 import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { onRequest } from 'firebase-functions/v2/https';
 
 import { db } from '../lib/admin.js';
 import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from './params.js';
@@ -67,29 +66,5 @@ export const refreshTitoCache = onSchedule(
 	},
 	async () => {
 		await syncTickets();
-	},
-);
-
-/**
- * Manual HTTPS trigger for ad-hoc refreshes. `invoker: 'private'` requires
- * the caller to hold `cloudfunctions.invoker` IAM, so only authenticated
- * project members can run it (e.g. via `gcloud functions call`).
- */
-export const refreshTitoCacheNow = onRequest(
-	{
-		region: REGION,
-		secrets: [TITO_API_TOKEN],
-		timeoutSeconds: 120,
-		memory: '256MiB',
-		invoker: 'private',
-	},
-	async (_req, res) => {
-		try {
-			const result = await syncTickets();
-			res.status(200).json({ ok: true, ...result });
-		} catch (err) {
-			logger.error('refreshTitoCacheNow failed', err);
-			res.status(500).json({ ok: false, error: String(err) });
-		}
 	},
 );

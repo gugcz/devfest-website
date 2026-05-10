@@ -58,7 +58,7 @@ functions/src/
     ├── tito-api.ts         # ti.to HTTP client + `projectRelease()`
     ├── tito-webhook.ts     # `verifyTitoSignature` + header constants + payload type
     ├── slack-client.ts     # `postToSlack()`
-    ├── refresh-cache.ts    # `refreshTitoCache`, `refreshTitoCacheNow`
+    ├── refresh-cache.ts    # `refreshTitoCache`
     ├── notify-purchase.ts  # `titoWebhook`
     └── daily-status.ts     # `dailyTicketStatus`
 ```
@@ -68,7 +68,6 @@ Functions exposed (region `europe-west1`):
 | Name | Trigger | Effect |
 | ---- | ------- | ------ |
 | `refreshTitoCache` | `onSchedule('every 1 hours')` | Fetch releases → write RTDB `/tickets` |
-| `refreshTitoCacheNow` | `onRequest` (`invoker: 'private'`) | Same as above, ad-hoc |
 | `titoWebhook` | `onRequest` (`invoker: 'public'`) | Verify `Tito-Signature` HMAC, post `ticket.completed` / `registration.finished` to Slack |
 | `dailyTicketStatus` | `onSchedule('every day 09:00', Europe/Prague)` | Fetch live releases from ti.to and post sales summary to Slack |
 

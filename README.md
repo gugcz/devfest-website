@@ -67,9 +67,6 @@ echo 'TITO_EVENT_SLUG=your-event'      >> functions/.env
 
 # Deploy
 firebase deploy --only functions
-
-# Trigger an immediate ticket-cache refresh (otherwise wait up to an hour)
-gcloud functions call refreshTitoCacheNow --region europe-west1
 ```
 
 The default Cloud Functions service account has the IAM needed to write RTDB; no extra service-account JSON is required at runtime.
@@ -79,7 +76,6 @@ The default Cloud Functions service account has the IAM needed to write RTDB; no
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
 | `refreshTitoCache` | Cloud Scheduler, hourly | Sync ti.to releases → RTDB `/tickets` |
-| `refreshTitoCacheNow` | HTTPS, `invoker: private` | Ad-hoc cache refresh for project members |
 | `titoWebhook` | HTTPS, public | Verifies `Tito-Signature` and posts purchase notifications to Slack |
 | `dailyTicketStatus` | Cloud Scheduler, `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |
 

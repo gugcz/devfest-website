@@ -3,6 +3,6 @@
  * Add a new export here when a new ticket-related function is created.
  */
 
-export { refreshTitoCache, refreshTitoCacheNow } from './refresh-cache.js';
+export { refreshTitoCache } from './refresh-cache.js';
 export { titoWebhook } from './notify-purchase.js';
 export { dailyTicketStatus } from './daily-status.js';
