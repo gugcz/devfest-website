@@ -1,26 +1,54 @@
 /**
  * ti.to Admin API client.
  *
- * Docs: https://ti.to/docs/api/admin/3.1
+ * Docs: https://ti.to/docs/api/admin/3.0 (stable). v3.1 is in beta; we
+ * pin to v3.0 by hitting `https://api.tito.io/v3/...` without a beta
+ * opt-in (v3.0 is the default served at that path).
+ *
+ * Field naming follows the actual v3.0 response. Notable differences
+ * from what older code assumed:
+ *
+ *   - There is no `sale_status` or `accessibility` field. The release's
+ *     buyability is encoded across the boolean flags `sold_out`,
+ *     `off_sale`, `expired`, `upcoming`, `locked`, `archived`, `secret`.
+ *     We compute a synthetic `sale_status` from those flags via
+ *     `deriveSaleStatus()` below so the rest of the codebase has a
+ *     single, stable status string to switch on.
+ *   - The state field is `state_name` (e.g. `"on_sale"`) — not `state`.
+ *   - Sale window dates are `start_at` / `end_at` (not `sales_start` /
+ *     `sales_end`).
  */
 
 const TITO_API_BASE = 'https://api.tito.io/v3';
 
+export type DerivedSaleStatus =
+	| 'on_sale'
+	| 'sold_out'
+	| 'paused'
+	| 'not_yet_on_sale'
+	| 'ended'
+	| 'archived';
+
 export interface TitoRelease {
 	id: number;
 	slug: string;
-	title: string;
+	title?: string | null;
 	description?: string | null;
 	price?: string | null;
 	currency?: string | null;
 	quantity?: number | null;
 	quantity_sold?: number;
-	sale_status?: string;
-	state?: string;
+	tickets_count?: number;
+	state_name?: string;
 	sold_out?: boolean;
-	sales_start?: string | null;
-	sales_end?: string | null;
-	accessibility?: string | null;
+	off_sale?: boolean;
+	expired?: boolean;
+	upcoming?: boolean;
+	locked?: boolean;
+	archived?: boolean;
+	secret?: boolean;
+	start_at?: string | null;
+	end_at?: string | null;
 	[key: string]: unknown;
 }
 
@@ -39,8 +67,35 @@ interface TitoReleasesPage {
 }
 
 /**
+ * Derive a single sale-status string from the flag fields ti.to actually
+ * returns. Order matters: `sold_out` wins because it is the most
+ * informative signal for a visitor; `archived` wins over the time-based
+ * flags because an archived release is not coming back regardless of
+ * dates.
+ */
+export function deriveSaleStatus(r: TitoRelease): DerivedSaleStatus {
+	if (r.sold_out) return 'sold_out';
+	if (r.archived) return 'archived';
+	if (r.expired) return 'ended';
+	if (r.upcoming) return 'not_yet_on_sale';
+	if (r.off_sale || r.locked) return 'paused';
+	return 'on_sale';
+}
+
+/**
+ * Display title. v3.0 returns `title`; fall back to `slug` defensively
+ * in case ti.to omits it for some release shape.
+ */
+export function releaseTitle(r: TitoRelease): string {
+	return r.title ?? r.slug;
+}
+
+/**
  * Fields persisted to RTDB. Anything not in this list is dropped during
  * projection so the cache shape stays stable even if ti.to adds fields.
+ *
+ * The synthetic `sale_status` (computed via `deriveSaleStatus`) is added
+ * by `projectRelease` so the browser does not need to know the flag set.
  */
 export const RELEASE_FIELDS = [
 	'id',
@@ -51,12 +106,17 @@ export const RELEASE_FIELDS = [
 	'currency',
 	'quantity',
 	'quantity_sold',
-	'sale_status',
-	'state',
+	'tickets_count',
+	'state_name',
 	'sold_out',
-	'sales_start',
-	'sales_end',
-	'accessibility',
+	'off_sale',
+	'expired',
+	'upcoming',
+	'locked',
+	'archived',
+	'secret',
+	'start_at',
+	'end_at',
 ] as const;
 
 export function projectRelease(release: TitoRelease): Record<string, unknown> {
@@ -65,6 +125,7 @@ export function projectRelease(release: TitoRelease): Record<string, unknown> {
 		const value = release[key];
 		out[key] = value === undefined ? null : value;
 	}
+	out.sale_status = deriveSaleStatus(release);
 	return out;
 }
 
@@ -72,25 +133,29 @@ export function projectRelease(release: TitoRelease): Record<string, unknown> {
  * Predicate: should this release be persisted to the public RTDB cache?
  *
  * Hidden:
- *   - drafts / archived (`state` not `live` / `on_sale`)
- *   - non-public accessibility (`private`, `protected`)
- *   - paused, ended, not-yet-on-sale releases (the visitor cannot act
- *     on them, so we don't list them)
+ *   - archived releases
+ *   - `secret` releases (invite-only / private-link)
+ *   - expired (sale window passed) and upcoming (sale window not yet
+ *     open) releases — the visitor cannot act on them
+ *   - off_sale or locked releases that are not sold-out (paused tiers)
  *
  * Kept:
- *   - `sale_status === 'on_sale'` (buyable)
- *   - `sale_status === 'sold_out'` or `sold_out === true` (informative —
- *     visitors see that a tier sold out)
+ *   - On-sale releases (all flags clear)
+ *   - Sold-out releases (informative — visitors see that a tier sold
+ *     out)
  *
  * Filtering at the write site keeps unpublished release data out of the
  * publicly readable `/tickets` node entirely.
  */
 export function isWebsiteVisible(release: TitoRelease): boolean {
-	if (release.state && release.state !== 'live' && release.state !== 'on_sale') return false;
-	if (release.accessibility && release.accessibility !== 'public') return false;
-	if (release.sale_status === 'on_sale') return true;
-	if (release.sale_status === 'sold_out' || release.sold_out === true) return true;
-	return false;
+	if (release.archived) return false;
+	if (release.secret) return false;
+	if (release.sold_out) return true;
+	if (release.expired) return false;
+	if (release.upcoming) return false;
+	if (release.off_sale) return false;
+	if (release.locked) return false;
+	return true;
 }
 
 export async function fetchAllReleases(params: FetchReleasesParams): Promise<TitoRelease[]> {

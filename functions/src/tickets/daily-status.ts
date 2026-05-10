@@ -15,7 +15,13 @@ import {
 	TITO_EVENT_SLUG,
 } from './params.js';
 import { postToSlack, type SlackPayload } from './slack-client.js';
-import { fetchAllReleases, type TitoRelease } from './tito-api.js';
+import {
+	deriveSaleStatus,
+	fetchAllReleases,
+	releaseTitle,
+	type DerivedSaleStatus,
+	type TitoRelease,
+} from './tito-api.js';
 
 const REGION = 'europe-west1';
 
@@ -24,8 +30,7 @@ interface ReleaseSummary {
 	sold: number;
 	quantity: number | null;
 	soldOut: boolean;
-	saleStatus: string;
-	state: string;
+	saleStatus: DerivedSaleStatus;
 }
 
 interface Summary {
@@ -37,12 +42,11 @@ interface Summary {
 
 function summarize(releases: TitoRelease[]): Summary {
 	const summaries = releases.map<ReleaseSummary>((r) => ({
-		title: r.title,
-		sold: r.quantity_sold ?? 0,
+		title: releaseTitle(r),
+		sold: r.quantity_sold ?? r.tickets_count ?? 0,
 		quantity: r.quantity ?? null,
-		soldOut: Boolean(r.sold_out) || r.sale_status === 'sold_out',
-		saleStatus: r.sale_status ?? 'unknown',
-		state: r.state ?? 'unknown',
+		soldOut: Boolean(r.sold_out),
+		saleStatus: deriveSaleStatus(r),
 	}));
 
 	const totalSold = summaries.reduce((acc, r) => acc + r.sold, 0);
@@ -59,6 +63,15 @@ function summarize(releases: TitoRelease[]): Summary {
 	};
 }
 
+const STATUS_LABEL: Record<DerivedSaleStatus, string> = {
+	on_sale: 'on sale',
+	sold_out: 'sold out',
+	paused: 'paused',
+	not_yet_on_sale: 'not yet on sale',
+	ended: 'sales ended',
+	archived: 'archived',
+};
+
 function buildSlackMessage(summary: Summary): SlackPayload {
 	const totalLabel = summary.totalQuantity == null
 		? `${summary.totalSold}`
@@ -68,9 +81,15 @@ function buildSlackMessage(summary: Summary): SlackPayload {
 		? ['_No releases returned by ti.to._']
 		: summary.releases.map((r) => {
 			const cap = r.quantity == null ? '?' : String(r.quantity);
-			const flag = r.soldOut ? ' • *sold out*' : '';
-			const status = r.saleStatus !== 'on_sale' && !r.soldOut ? ` • _${r.saleStatus}_` : '';
-			return `• *${r.title}* — ${r.sold} / ${cap}${flag}${status}`;
+			// `sold_out` gets a bold flag; everything else gets an italic
+			// status suffix so the reader can see *why* it's not buyable.
+			if (r.soldOut) {
+				return `• *${r.title}* — ${r.sold} / ${cap} • *sold out*`;
+			}
+			if (r.saleStatus === 'on_sale') {
+				return `• *${r.title}* — ${r.sold} / ${cap} • _on sale_`;
+			}
+			return `• *${r.title}* — ${r.sold} / ${cap} • _${STATUS_LABEL[r.saleStatus]}_`;
 		});
 
 	const blocks: unknown[] = [

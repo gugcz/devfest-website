@@ -4,39 +4,45 @@
  * The actual ti.to API call lives in `functions/src/index.ts` (Cloud
  * Function). This module is browser-safe: types and formatting only.
  *
- * Docs: https://ti.to/docs/api/admin/3.1
+ * Docs: https://ti.to/docs/api/admin/3.0 (we pin to v3.0; v3.1 is beta).
+ *
+ * The function side projects each release into the shape below before
+ * writing to RTDB. We also receive a synthetic `sale_status` field
+ * computed server-side from ti.to's flag set (`sold_out`, `off_sale`,
+ * `expired`, `upcoming`, `archived`, `locked`) — see
+ * `functions/src/tickets/tito-api.ts::deriveSaleStatus`.
  */
 
 export type TitoSaleStatus =
 	| 'on_sale'
 	| 'sold_out'
 	| 'paused'
-	| 'ended'
 	| 'not_yet_on_sale'
-	| string;
-
-export type TitoAccessibility = 'public' | 'private' | 'protected' | string;
+	| 'ended'
+	| 'archived';
 
 export interface TitoRelease {
 	id: number;
 	slug: string;
-	title: string;
+	title: string | null;
 	description: string | null;
 	price: string | null;
 	currency: string | null;
 	quantity: number | null;
 	quantity_sold: number;
+	tickets_count?: number;
+	/** Synthetic status computed by the Cloud Function from ti.to flags. */
 	sale_status: TitoSaleStatus;
-	state: string;
+	state_name?: string | null;
 	sold_out: boolean;
-	sales_start: string | null;
-	sales_end: string | null;
-	/**
-	 * `public` — listed on the site.
-	 * `private` — invite-only / sales-link-only; never listed.
-	 * `protected` — password-gated; not listed publicly.
-	 */
-	accessibility: TitoAccessibility | null;
+	off_sale?: boolean;
+	expired?: boolean;
+	upcoming?: boolean;
+	locked?: boolean;
+	archived?: boolean;
+	secret?: boolean;
+	start_at: string | null;
+	end_at: string | null;
 }
 
 export interface TicketsCache {
@@ -53,18 +59,14 @@ export interface TicketsCache {
  * any non-public release that somehow lands in the cache is still
  * dropped at render time.
  *
- * Keep: on_sale OR sold_out releases that are `state ∈ {live, on_sale}`
- * AND `accessibility ∈ {public, undefined}`.
- * Drop: drafts/archived, private/protected, paused, not_yet_on_sale,
- *       ended.
+ * Keep: `on_sale` and `sold_out`.
+ * Drop: archived, secret, paused, not_yet_on_sale, ended.
  */
 export function filterDisplayable(releases: TitoRelease[]): TitoRelease[] {
 	return releases.filter((r) => {
-		if (r.state && r.state !== 'live' && r.state !== 'on_sale') return false;
-		if (r.accessibility && r.accessibility !== 'public') return false;
-		if (r.sale_status === 'on_sale') return true;
-		if (r.sale_status === 'sold_out' || r.sold_out === true) return true;
-		return false;
+		if (r.archived || r.secret) return false;
+		if (r.sold_out || r.sale_status === 'sold_out') return true;
+		return r.sale_status === 'on_sale';
 	});
 }
 
@@ -79,8 +81,8 @@ export interface ReleaseStatus {
 
 /**
  * Map a ti.to release to a display status. Sold-out wins over the raw
- * `sale_status` to keep the UI consistent when ti.to flips just the
- * `sold_out` flag without updating `sale_status`.
+ * `sale_status` so the UI stays consistent if ti.to flips only the
+ * `sold_out` flag without updating the derived status.
  */
 export function releaseStatus(release: TitoRelease): ReleaseStatus {
 	if (release.sold_out || release.sale_status === 'sold_out') {
@@ -95,9 +97,15 @@ export function releaseStatus(release: TitoRelease): ReleaseStatus {
 			return { label: 'Coming soon', tone: 'soon', purchasable: false };
 		case 'ended':
 			return { label: 'Ended', tone: 'ended', purchasable: false };
+		case 'archived':
+			return { label: 'Unavailable', tone: 'paused', purchasable: false };
 		default:
-			return { label: release.sale_status || 'Unavailable', tone: 'paused', purchasable: false };
+			return { label: 'Unavailable', tone: 'paused', purchasable: false };
 	}
+}
+
+export function releaseTitle(release: TitoRelease): string {
+	return release.title ?? release.slug;
 }
 
 export function checkoutUrl(release: TitoRelease, accountSlug: string, eventSlug: string): string {

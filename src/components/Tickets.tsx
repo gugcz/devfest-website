@@ -7,6 +7,7 @@ import {
 	filterDisplayable,
 	formatPrice,
 	releaseStatus,
+	releaseTitle,
 	type ReleaseStatus,
 	type TicketsCache,
 	type TitoRelease,
@@ -129,7 +130,7 @@ export default function Tickets() {
 					return (
 						<li key={release.id} className={`${s.ticket} ${status.purchasable ? '' : s.isInactive}`}>
 							<div className={s.ticketTop}>
-								<h3 className={s.ticketTitle}>{release.title}</h3>
+								<h3 className={s.ticketTitle}>{releaseTitle(release)}</h3>
 								<span className={`${s.badge} ${badgeClass(s, status.tone)}`}>
 									{status.label}
 								</span>
