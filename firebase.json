@@ -13,7 +13,7 @@
   "functions": [
     {
       "source": "functions",
-      "codebase": "default",
+      "codebase": "website",
       "runtime": "nodejs22",
       "ignore": [
         "node_modules",

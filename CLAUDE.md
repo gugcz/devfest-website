@@ -81,6 +81,7 @@ Conventions / gotchas:
 - `titoWebhook` reads `req.rawBody` (Buffer) for HMAC, not `req.body`.
 - Filter rule for displayed releases (`filterDisplayable` in `src/lib/tito.ts`): `state ∈ {live, on_sale}` AND `accessibility ∈ {public, undefined}`. Drafts/archived are hidden via state; `private` ("Sales link only") and `protected` releases are hidden via accessibility. Any `sale_status` is shown with a status badge (on sale / sold out / paused / coming soon / ended). Buy CTA enabled only when `purchasable` (`releaseStatus()`). Buy URL pattern: `https://ti.to/<account>/<event>/with/<release-slug>`.
 - Default Cloud Functions service account has the IAM to write RTDB; no explicit creds needed at runtime.
+- The Firebase project (`devfest-cz-app`) is **shared with the mobile app repo**, which deploys its own functions to the same project. To keep deploys isolated, this repo declares `"codebase": "website"` in `firebase.json`. The app repo must use a **different** codebase name (e.g. `app`) and **different function names**, otherwise deploys overwrite each other. `firebase deploy --only functions` only touches codebases declared in the local `firebase.json`.
 
 Deploy steps, secret setup, and ti.to/Slack wiring live in [README.md](README.md).
 

@@ -48,6 +48,8 @@ Browser
 
 The Blaze plan is required for scheduled functions and Secret Manager.
 
+> **Shared Firebase project.** `devfest-cz-app` also hosts the mobile app's Cloud Functions from a separate repo. This repo declares `"codebase": "website"` in `firebase.json` so deploys here only touch our own functions. The app repo must use a different codebase name and avoid colliding function names.
+
 ### Configure & deploy the functions
 
 ```bash
