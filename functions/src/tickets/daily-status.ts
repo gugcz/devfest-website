@@ -35,27 +35,14 @@ interface Summary {
 	fetchedAt: number;
 }
 
-function asNumber(value: unknown): number | null {
-	if (typeof value === 'number' && Number.isFinite(value)) return value;
-	if (typeof value === 'string' && value.trim() !== '') {
-		const n = Number(value);
-		return Number.isFinite(n) ? n : null;
-	}
-	return null;
-}
-
-function asString(value: unknown): string {
-	return typeof value === 'string' ? value : '';
-}
-
 function summarize(releases: TitoRelease[]): Summary {
 	const summaries = releases.map<ReleaseSummary>((r) => ({
 		title: r.title,
-		sold: asNumber(r.quantity_sold) ?? 0,
-		quantity: asNumber(r.quantity),
-		soldOut: Boolean(r.sold_out) || asString(r.sale_status) === 'sold_out',
-		saleStatus: asString(r.sale_status) || 'unknown',
-		state: asString(r.state) || 'unknown',
+		sold: r.quantity_sold ?? 0,
+		quantity: r.quantity ?? null,
+		soldOut: Boolean(r.sold_out) || r.sale_status === 'sold_out',
+		saleStatus: r.sale_status ?? 'unknown',
+		state: r.state ?? 'unknown',
 	}));
 
 	const totalSold = summaries.reduce((acc, r) => acc + r.sold, 0);

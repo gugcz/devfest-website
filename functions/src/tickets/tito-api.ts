@@ -10,6 +10,17 @@ export interface TitoRelease {
 	id: number;
 	slug: string;
 	title: string;
+	description?: string | null;
+	price?: string | null;
+	currency?: string | null;
+	quantity?: number | null;
+	quantity_sold?: number;
+	sale_status?: string;
+	state?: string;
+	sold_out?: boolean;
+	sales_start?: string | null;
+	sales_end?: string | null;
+	accessibility?: string | null;
 	[key: string]: unknown;
 }
 
@@ -77,17 +88,10 @@ export function projectRelease(release: TitoRelease): Record<string, unknown> {
  * publicly readable `/tickets` node entirely.
  */
 export function isWebsiteVisible(release: TitoRelease): boolean {
-	const state = typeof release.state === 'string' ? release.state : '';
-	if (state && state !== 'live' && state !== 'on_sale') return false;
-
-	const accessibility = typeof release.accessibility === 'string' ? release.accessibility : '';
-	if (accessibility && accessibility !== 'public') return false;
-
-	const saleStatus = typeof release.sale_status === 'string' ? release.sale_status : '';
-	const soldOutFlag = release.sold_out === true;
-	if (saleStatus === 'on_sale') return true;
-	if (saleStatus === 'sold_out' || soldOutFlag) return true;
-
+	if (release.state && release.state !== 'live' && release.state !== 'on_sale') return false;
+	if (release.accessibility && release.accessibility !== 'public') return false;
+	if (release.sale_status === 'on_sale') return true;
+	if (release.sale_status === 'sold_out' || release.sold_out === true) return true;
 	return false;
 }
 
