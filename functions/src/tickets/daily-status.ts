@@ -1,38 +1,23 @@
 /**
- * `dailyTicketStatus` — once a day, read the cached releases from RTDB and
- * post a sales summary to Slack. Reads `/tickets` (populated by
- * `refreshTitoCache`) so this function never hits ti.to itself.
+ * `dailyTicketStatus` — once a day, fetch releases directly from the ti.to
+ * Admin API and post a sales summary to Slack. The cron is daily so the
+ * extra ti.to request is negligible (1/day, well under the 60/min limit),
+ * and reading live data avoids any staleness from the hourly cache.
  */
 
 import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
-import { db } from '../lib/admin.js';
-import { SLACK_WEBHOOK_URL } from './params.js';
+import {
+	SLACK_WEBHOOK_URL,
+	TITO_ACCOUNT_SLUG,
+	TITO_API_TOKEN,
+	TITO_EVENT_SLUG,
+} from './params.js';
 import { postToSlack, type SlackPayload } from './slack-client.js';
+import { fetchAllReleases, type TitoRelease } from './tito-api.js';
 
 const REGION = 'europe-west1';
-const TICKETS_PATH = 'tickets';
-
-interface CachedRelease {
-	id: number;
-	slug: string;
-	title: string;
-	price: string | null;
-	currency: string | null;
-	quantity: number | null;
-	quantity_sold: number;
-	sale_status: string;
-	state: string;
-	sold_out: boolean;
-}
-
-interface TicketsCache {
-	accountSlug: string;
-	eventSlug: string;
-	fetchedAt: number;
-	releases: CachedRelease[];
-}
 
 interface ReleaseSummary {
 	title: string;
@@ -50,27 +35,40 @@ interface Summary {
 	fetchedAt: number;
 }
 
-function summarize(cache: TicketsCache): Summary {
-	const releases = (cache.releases ?? []).map<ReleaseSummary>((r) => ({
+function asNumber(value: unknown): number | null {
+	if (typeof value === 'number' && Number.isFinite(value)) return value;
+	if (typeof value === 'string' && value.trim() !== '') {
+		const n = Number(value);
+		return Number.isFinite(n) ? n : null;
+	}
+	return null;
+}
+
+function asString(value: unknown): string {
+	return typeof value === 'string' ? value : '';
+}
+
+function summarize(releases: TitoRelease[]): Summary {
+	const summaries = releases.map<ReleaseSummary>((r) => ({
 		title: r.title,
-		sold: typeof r.quantity_sold === 'number' ? r.quantity_sold : 0,
-		quantity: typeof r.quantity === 'number' ? r.quantity : null,
-		soldOut: Boolean(r.sold_out) || r.sale_status === 'sold_out',
-		saleStatus: r.sale_status ?? 'unknown',
-		state: r.state ?? 'unknown',
+		sold: asNumber(r.quantity_sold) ?? 0,
+		quantity: asNumber(r.quantity),
+		soldOut: Boolean(r.sold_out) || asString(r.sale_status) === 'sold_out',
+		saleStatus: asString(r.sale_status) || 'unknown',
+		state: asString(r.state) || 'unknown',
 	}));
 
-	const totalSold = releases.reduce((acc, r) => acc + r.sold, 0);
-	const totalQuantityKnown = releases.every((r) => typeof r.quantity === 'number');
+	const totalSold = summaries.reduce((acc, r) => acc + r.sold, 0);
+	const totalQuantityKnown = summaries.every((r) => r.quantity !== null);
 	const totalQuantity = totalQuantityKnown
-		? releases.reduce((acc, r) => acc + (r.quantity ?? 0), 0)
+		? summaries.reduce((acc, r) => acc + (r.quantity ?? 0), 0)
 		: null;
 
 	return {
 		totalSold,
 		totalQuantity,
-		releases,
-		fetchedAt: typeof cache.fetchedAt === 'number' ? cache.fetchedAt : Date.now(),
+		releases: summaries,
+		fetchedAt: Date.now(),
 	};
 }
 
@@ -80,7 +78,7 @@ function buildSlackMessage(summary: Summary): SlackPayload {
 		: `${summary.totalSold} / ${summary.totalQuantity}`;
 
 	const releaseLines = summary.releases.length === 0
-		? ['_No releases cached yet — `refreshTitoCache` may not have run._']
+		? ['_No releases returned by ti.to._']
 		: summary.releases.map((r) => {
 			const cap = r.quantity == null ? '?' : String(r.quantity);
 			const flag = r.soldOut ? ' • *sold out*' : '';
@@ -112,7 +110,7 @@ function buildSlackMessage(summary: Summary): SlackPayload {
 			elements: [
 				{
 					type: 'mrkdwn',
-					text: `Cache fetched: ${new Date(summary.fetchedAt).toISOString()}`,
+					text: `Fetched live from ti.to · ${new Date(summary.fetchedAt).toISOString()}`,
 				},
 			],
 		},
@@ -125,32 +123,33 @@ function buildSlackMessage(summary: Summary): SlackPayload {
 }
 
 /**
- * Daily at 09:00 Europe/Prague. Reads the RTDB cache (no ti.to call).
+ * Daily at 09:00 Europe/Prague. Fetches live data from ti.to (no RTDB).
  */
 export const dailyTicketStatus = onSchedule(
 	{
 		schedule: 'every day 09:00',
 		timeZone: 'Europe/Prague',
 		region: REGION,
-		secrets: [SLACK_WEBHOOK_URL],
-		timeoutSeconds: 60,
+		secrets: [SLACK_WEBHOOK_URL, TITO_API_TOKEN],
+		timeoutSeconds: 120,
 		memory: '256MiB',
 		retryCount: 1,
 	},
 	async () => {
-		const snapshot = await db().ref(TICKETS_PATH).get();
-		const cache = snapshot.val() as TicketsCache | null;
+		const token = TITO_API_TOKEN.value();
+		const accountSlug = TITO_ACCOUNT_SLUG.value();
+		const eventSlug = TITO_EVENT_SLUG.value();
 
-		if (!cache) {
-			logger.warn('dailyTicketStatus skipped — RTDB /tickets is empty');
-			await postToSlack(SLACK_WEBHOOK_URL.value(), {
-				text: '⚠️ Daily ticket status — RTDB /tickets is empty. Has `refreshTitoCache` run yet?',
-			});
-			return;
+		if (!token || !accountSlug || !eventSlug) {
+			throw new Error(
+				'Missing config: TITO_API_TOKEN secret and TITO_ACCOUNT_SLUG / TITO_EVENT_SLUG params must be set.',
+			);
 		}
 
-		const summary = summarize(cache);
+		const releases = await fetchAllReleases({ token, accountSlug, eventSlug });
+		const summary = summarize(releases);
 		await postToSlack(SLACK_WEBHOOK_URL.value(), buildSlackMessage(summary));
+
 		logger.info('dailyTicketStatus posted', {
 			totalSold: summary.totalSold,
 			releaseCount: summary.releases.length,

@@ -70,7 +70,7 @@ Functions exposed (region `europe-west1`):
 | `refreshTitoCache` | `onSchedule('every 1 hours')` | Fetch releases → write RTDB `/tickets` |
 | `refreshTitoCacheNow` | `onRequest` (`invoker: 'private'`) | Same as above, ad-hoc |
 | `titoWebhook` | `onRequest` (`invoker: 'public'`) | Verify `Tito-Signature` HMAC, post `ticket.completed` / `registration.finished` to Slack |
-| `dailyTicketStatus` | `onSchedule('every day 09:00', Europe/Prague)` | Read RTDB `/tickets` and post sales summary to Slack |
+| `dailyTicketStatus` | `onSchedule('every day 09:00', Europe/Prague)` | Fetch live releases from ti.to and post sales summary to Slack |
 
 Browser side: `src/components/Tickets.tsx` subscribes to `/tickets` via `firebase/database`'s `onValue`. `src/lib/tito.ts` holds browser-safe helpers (types, `filterDisplayable`, `checkoutUrl`, `formatPrice`). RTDB rules in `database.rules.json` (not wired into `firebase.json` — paste manually in console).
 
