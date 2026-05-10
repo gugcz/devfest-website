@@ -62,11 +62,19 @@ export function projectRelease(release: TitoRelease): Record<string, unknown> {
 /**
  * Predicate: should this release be persisted to the public RTDB cache?
  *
- * Drafts/archived (`state` neither `live` nor `on_sale`) and any release
- * whose `accessibility` is not `public` (i.e. `private` / `protected`)
- * are dropped before write so they never reach `/tickets/releases` —
- * the node is publicly readable, so unpublished titles must not land
- * there at all.
+ * Hidden:
+ *   - drafts / archived (`state` not `live` / `on_sale`)
+ *   - non-public accessibility (`private`, `protected`)
+ *   - paused, ended, not-yet-on-sale releases (the visitor cannot act
+ *     on them, so we don't list them)
+ *
+ * Kept:
+ *   - `sale_status === 'on_sale'` (buyable)
+ *   - `sale_status === 'sold_out'` or `sold_out === true` (informative —
+ *     visitors see that a tier sold out)
+ *
+ * Filtering at the write site keeps unpublished release data out of the
+ * publicly readable `/tickets` node entirely.
  */
 export function isWebsiteVisible(release: TitoRelease): boolean {
 	const state = typeof release.state === 'string' ? release.state : '';
@@ -75,7 +83,12 @@ export function isWebsiteVisible(release: TitoRelease): boolean {
 	const accessibility = typeof release.accessibility === 'string' ? release.accessibility : '';
 	if (accessibility && accessibility !== 'public') return false;
 
-	return true;
+	const saleStatus = typeof release.sale_status === 'string' ? release.sale_status : '';
+	const soldOutFlag = release.sold_out === true;
+	if (saleStatus === 'on_sale') return true;
+	if (saleStatus === 'sold_out' || soldOutFlag) return true;
+
+	return false;
 }
 
 export async function fetchAllReleases(params: FetchReleasesParams): Promise<TitoRelease[]> {

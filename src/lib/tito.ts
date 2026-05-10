@@ -47,21 +47,24 @@ export interface TicketsCache {
 }
 
 /**
- * Filter to releases that should be shown publicly. Drafts and archived
- * releases are hidden via `state`. Releases marked `private` or
- * `protected` in ti.to (Sales link only / password-protected) are also
- * hidden — they remain reachable via their direct ti.to URL but never
- * appear in the lineup.
+ * Filter to releases that should be shown publicly. Mirrors the
+ * `isWebsiteVisible()` rule applied server-side in
+ * `functions/src/tickets/tito-api.ts`; kept here as defence-in-depth so
+ * any non-public release that somehow lands in the cache is still
+ * dropped at render time.
  *
- * `paused`, `not_yet_on_sale`, `ended`, and `sold_out` releases are kept
- * so visitors can see the full lineup with appropriate status badges;
- * the UI disables the Buy CTA when the release is not `on_sale`.
+ * Keep: on_sale OR sold_out releases that are `state ∈ {live, on_sale}`
+ * AND `accessibility ∈ {public, undefined}`.
+ * Drop: drafts/archived, private/protected, paused, not_yet_on_sale,
+ *       ended.
  */
 export function filterDisplayable(releases: TitoRelease[]): TitoRelease[] {
 	return releases.filter((r) => {
 		if (r.state && r.state !== 'live' && r.state !== 'on_sale') return false;
 		if (r.accessibility && r.accessibility !== 'public') return false;
-		return true;
+		if (r.sale_status === 'on_sale') return true;
+		if (r.sale_status === 'sold_out' || r.sold_out === true) return true;
+		return false;
 	});
 }
 
