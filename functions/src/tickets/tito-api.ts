@@ -33,10 +33,8 @@ export interface FetchReleasesParams {
 interface TitoReleasesPage {
 	releases?: TitoRelease[];
 	meta?: {
-		current_page?: number;
 		total_pages?: number;
 		total_count?: number;
-		per_page?: number;
 	};
 }
 
@@ -96,30 +94,29 @@ export function isWebsiteVisible(release: TitoRelease): boolean {
 }
 
 export async function fetchAllReleases(params: FetchReleasesParams): Promise<TitoRelease[]> {
-	const releases: TitoRelease[] = [];
-	let page = 1;
-	const perPage = 100;
+	const url = `${TITO_API_BASE}/${params.accountSlug}/${params.eventSlug}/releases?per_page=100`;
+	const res = await fetch(url, {
+		headers: {
+			Authorization: `Token token=${params.token}`,
+			Accept: 'application/json',
+		},
+	});
 
-	while (true) {
-		const url = `${TITO_API_BASE}/${params.accountSlug}/${params.eventSlug}/releases?page=${page}&per_page=${perPage}`;
-		const res = await fetch(url, {
-			headers: {
-				Authorization: `Token token=${params.token}`,
-				Accept: 'application/json',
-			},
-		});
+	if (!res.ok) {
+		const body = await res.text().catch(() => '');
+		throw new Error(`ti.to API ${res.status} ${res.statusText}: ${body.slice(0, 300)}`);
+	}
 
-		if (!res.ok) {
-			const body = await res.text().catch(() => '');
-			throw new Error(`ti.to API ${res.status} ${res.statusText}: ${body.slice(0, 300)}`);
-		}
+	const data = (await res.json()) as TitoReleasesPage;
+	const releases = data.releases ?? [];
 
-		const data = (await res.json()) as TitoReleasesPage;
-		releases.push(...(data.releases ?? []));
-
-		const totalPages = data.meta?.total_pages ?? 1;
-		if (page >= totalPages) break;
-		page += 1;
+	// Sanity-check: if we ever blow past one page, we'll need to reintroduce
+	// pagination — surface it loudly rather than silently dropping rows.
+	const totalPages = data.meta?.total_pages ?? 1;
+	if (totalPages > 1) {
+		throw new Error(
+			`ti.to returned ${totalPages} pages of releases — fetchAllReleases only reads page 1. Add pagination.`,
+		);
 	}
 
 	return releases;
