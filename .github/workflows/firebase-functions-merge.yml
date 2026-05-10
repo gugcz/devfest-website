@@ -39,6 +39,15 @@ jobs:
         run: |
           printf '%s' "$SA_JSON" > "$RUNNER_TEMP/sa.json"
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+      - name: Write functions env (non-secret ti.to slugs)
+        env:
+          TITO_ACCOUNT_SLUG: ${{ vars.TITO_ACCOUNT_SLUG }}
+          TITO_EVENT_SLUG: ${{ vars.TITO_EVENT_SLUG }}
+        run: |
+          {
+            printf 'TITO_ACCOUNT_SLUG=%s\n' "$TITO_ACCOUNT_SLUG"
+            printf 'TITO_EVENT_SLUG=%s\n' "$TITO_EVENT_SLUG"
+          } > functions/.env
       - name: Deploy functions
         run: |
           npx --yes firebase-tools@latest deploy \
