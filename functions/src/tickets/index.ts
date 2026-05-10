@@ -5,3 +5,4 @@
 
 export { refreshTitoCache, refreshTitoCacheNow } from './refresh-cache.js';
 export { titoWebhook } from './notify-purchase.js';
+export { dailyTicketStatus } from './daily-status.js';
