@@ -92,7 +92,7 @@ While the Tickets section is hidden on the site, `/tickets` is locked down (`.re
 
 ### Filtering
 
-Only releases with `state` of `live`/`on_sale` and `sale_status` of `on_sale` or `sold_out` are displayed. Drafts, paused, ended, and not-yet-on-sale releases are filtered out client-side.
+Only releases that are on sale or sold out are displayed. Archived, secret, expired, upcoming, paused (`off_sale` / `locked`) releases are dropped server-side before writing to RTDB, with the same predicate applied again client-side as defence-in-depth. A single `sale_status` string is synthesised from ti.to's flag set (`sold_out`, `off_sale`, `expired`, `upcoming`, `archived`, `locked`) — see `functions/src/tickets/tito-api.ts::deriveSaleStatus`.
 
 ## Project Structure
 
