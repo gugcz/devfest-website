@@ -1,67 +1,184 @@
 .countdown {
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.8rem;
+	align-items: flex-end;
+	justify-content: flex-start;
+	gap: clamp(0.6rem, 1.4vw, 1.4rem);
 }
 
 .unit {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	min-width: 5.5rem;
-	padding: 1rem 0.6rem;
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(204, 0, 0, 0.15);
-	border-radius: 0;
-	clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	box-shadow:
-		0 1px 0 rgba(255, 255, 255, 0.02) inset,
-		0 4px 24px rgba(0, 0, 0, 0.3);
-	transition: border-color 0.3s, box-shadow 0.3s;
+	gap: 0.7rem;
 }
 
-.value {
-	font-family: 'Bebas Neue', sans-serif;
-	font-size: clamp(3rem, 8vw, 5rem);
+.cards {
+	display: flex;
+	gap: 3px;
+}
+
+.card {
+	position: relative;
+	width: clamp(2.6rem, 3.4vw, 4.2rem);
+	height: clamp(3.8rem, 5.1vw, 6rem);
+	background: var(--color-cream);
+	border-radius: 2px 2px 0 0;
+	transform: rotate(var(--card-tilt, 0deg));
+	box-shadow:
+		0 2px 6px rgba(0, 0, 0, 0.55),
+		0 1px 2px rgba(0, 0, 0, 0.35),
+		inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+	overflow: visible;
+
+	// fine paper grain
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='64' height='64' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+		background-size: 64px 64px;
+		mix-blend-mode: multiply;
+		pointer-events: none;
+		z-index: 2;
+	}
+
+	// deckled bottom edge
+	&::after {
+		content: '';
+		position: absolute;
+		bottom: -3px;
+		left: -1px;
+		right: -1px;
+		height: 5px;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='5' viewBox='0 0 40 5'%3E%3Cpath d='M0 2 Q5 0 10 2 Q15 4.5 20 2 Q25 0 30 2.5 Q35 5 40 2' stroke='%23E8E0CC' stroke-width='3' fill='none'/%3E%3C/svg%3E");
+		background-repeat: repeat-x;
+		background-size: 40px 5px;
+		pointer-events: none;
+		z-index: 5;
+	}
+}
+
+.cardStamp {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 24%;
+	background: rgba(180, 30, 30, 0.78);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 2px 2px 0 0;
+	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+	overflow: hidden;
+	z-index: 3;
+
+	// stamp ink turbulence
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='20'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='80' height='20' filter='url(%23t)' opacity='0.10'/%3E%3C/svg%3E");
+		background-size: 80px 20px;
+		mix-blend-mode: multiply;
+		pointer-events: none;
+	}
+}
+
+.cardStampText {
+	position: relative;
+	z-index: 1;
+	font-family: 'Share Tech Mono', monospace;
+	font-size: clamp(0.42rem, 0.5vw, 0.52rem);
+	letter-spacing: 0.32em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.92);
+	user-select: none;
+}
+
+.digit {
+	position: absolute;
+	top: 62%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-family: 'Special Elite', cursive;
+	font-size: clamp(2rem, 2.8vw, 3.2rem);
 	line-height: 1;
-	letter-spacing: 0.08em;
-	color: var(--color-text);
-	text-shadow: 0 0 30px rgba(204, 0, 0, 0.2);
+	letter-spacing: 0.02em;
+	color: #1A1208;
+	user-select: none;
+	z-index: 4;
+	text-shadow:
+		0 0.5px 0 rgba(26, 18, 8, 0.18),
+		0.4px 0 0 rgba(26, 18, 8, 0.12),
+		0 0 1.5px rgba(26, 18, 8, 0.28);
 }
 
 .label {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.6rem;
-	letter-spacing: 0.3em;
+	font-size: clamp(0.5rem, 0.62vw, 0.6rem);
+	letter-spacing: 0.38em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.35);
-	margin-top: 0.6rem;
+	color: rgba(240, 237, 230, 0.32);
 }
 
-.separator {
-	font-family: 'Bebas Neue', sans-serif;
-	font-size: clamp(1.8rem, 5vw, 3rem);
-	color: var(--color-accent);
-	opacity: 0.5;
-	padding-bottom: 1.4rem;
-	user-select: none;
-	text-shadow: 0 0 10px rgba(204, 0, 0, 0.3);
+.digitStamping {
+	animation: stampIn 0.22s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+	will-change: transform, opacity;
 }
 
-@media (max-width: 500px) {
+.cardJolting {
+	animation: cardJolt 0.2s ease forwards;
+	will-change: transform;
+}
+
+@keyframes stampIn {
+	0%   { transform: translate(-50%, -50%) scale(1.18) translateY(-4px); opacity: 0.55; filter: blur(0.6px); }
+	35%  { transform: translate(-50%, -50%) scale(0.96) translateY(1px);  opacity: 1;    filter: blur(0); }
+	65%  { transform: translate(-50%, -50%) scale(1.02) translateY(-0.5px); opacity: 1; filter: blur(0); }
+	100% { transform: translate(-50%, -50%) scale(1)    translateY(0);    opacity: 1; filter: blur(0); }
+}
+
+@keyframes cardJolt {
+	0%   { transform: rotate(var(--card-tilt, 0deg)) translateY(0); }
+	20%  { transform: rotate(var(--card-tilt, 0deg)) translateY(2px); }
+	50%  { transform: rotate(var(--card-tilt, 0deg)) translateY(-1px); }
+	100% { transform: rotate(var(--card-tilt, 0deg)) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.digitStamping,
+	.cardJolting {
+		animation: none;
+	}
+}
+
+@media (max-width: 600px) {
 	.countdown {
-		gap: 0.35rem;
+		gap: 0.5rem;
 	}
-
-	.unit {
-		min-width: 3.8rem;
-		padding: 0.6rem 0.3rem;
+	.cards {
+		gap: 2px;
 	}
-
-	.separator {
-		padding-bottom: 1rem;
+	.card {
+		width: clamp(2rem, 7.5vw, 2.8rem);
+		height: clamp(2.9rem, 10.5vw, 4rem);
+		--card-tilt: 0deg;
+	}
+	.digit {
+		font-size: clamp(1.6rem, 6.5vw, 2.2rem);
+		top: 60%;
+	}
+	.cardStamp {
+		height: 20%;
+	}
+	.cardStampText {
+		font-size: 0.42rem;
+		letter-spacing: 0.22em;
+	}
+	.label {
+		font-size: 0.48rem;
+		letter-spacing: 0.24em;
 	}
 }

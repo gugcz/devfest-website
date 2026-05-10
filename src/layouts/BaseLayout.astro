@@ -9,8 +9,8 @@ interface Props {
 
 const siteUrl = "https://devfest.cz";
 const {
-	title = "DevFest.cz 2026",
-	description = "DevFest.cz 2026 is global conference and festival for developers, geeks and technological experts focusing on Web/Mobile Development, Cybersecurity, AI/ML trends and more. Join us in Prague to experience unique community-built event!",
+	title = "DevFest.cz 2026 — Prague Developer Conference Tickets",
+	description = "Tickets from €70. DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026.",
 	noindex = false,
 } = Astro.props;
 
@@ -32,9 +32,11 @@ const jsonLd = JSON.stringify([
 		"inLanguage": "en",
 		"offers": {
 			"@type": "Offer",
-			"url": siteUrl,
-			"availability": "https://schema.org/PreOrder",
-			"priceCurrency": "CZK"
+			"url": `${siteUrl}#tickets`,
+			"availability": "https://schema.org/InStock",
+			"priceCurrency": "EUR",
+			"price": "70",
+			"validFrom": "2026-01-01"
 		},
 		"location": {
 			"@type": "Place",
@@ -100,8 +102,8 @@ const jsonLd = JSON.stringify([
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={ogImage} />
 		<meta property="og:image:type" content="image/jpeg" />
-		<meta property="og:image:width" content="1920" />
-		<meta property="og:image:height" content="1080" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
 		<meta property="og:image:alt" content={ogImageAlt} />
 
 		<!-- Twitter -->
@@ -114,14 +116,10 @@ const jsonLd = JSON.stringify([
 
 		<!-- Structured Data -->
 		{!noindex && <script type="application/ld+json" set:html={jsonLd} />}
-
-		<!-- Firebase -->
-		<script>
-			import '../lib/firebase';
-		</script>
 	</head>
 	<body>
-		<slot />
+		<a href="#main-content" class="skip-link">Skip to main content</a>
+		<div id="main-content"><slot /></div>
 		<CookieBanner />
 	</body>
 </html>
@@ -129,8 +127,14 @@ const jsonLd = JSON.stringify([
 <style is:global lang="scss">
 	:root {
 		--color-bg: #050505;
+		--color-near-black: #0D0D0D;
+		--color-dark: #1A1A1A;
+		--color-mid: #2E2E2E;
+		--color-grey: #888;
 		--color-text: #F0EDE6;
+		--color-cream: #E8E0CC;
 		--color-accent: #CC0000;
+		--color-accent-hot: #FF1111;
 		--color-surface: rgba(255, 255, 255, 0.03);
 		--color-border: rgba(255, 255, 255, 0.08);
 	}
@@ -142,7 +146,6 @@ const jsonLd = JSON.stringify([
 	}
 
 	html {
-		height: 100%;
 		scroll-behavior: smooth;
 	}
 
@@ -152,73 +155,93 @@ const jsonLd = JSON.stringify([
 	}
 
 	body {
-		min-height: 100%;
-		position: relative;
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
 		background: var(--color-bg);
 		color: var(--color-text);
 		font-family: 'Special Elite', cursive;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		overflow-x: hidden;
-		cursor: crosshair;
 
-		// atmospheric red spotlight glow
+		// film grain (matches inspiration)
 		&::before {
 			content: '';
 			position: fixed;
 			inset: 0;
-			background:
-				radial-gradient(ellipse at 50% 0%, rgba(204, 0, 0, 0.08) 0%, transparent 50%),
-				radial-gradient(ellipse at 50% 40%, rgba(30, 5, 5, 0.6) 0%, transparent 60%);
+			z-index: 9999;
 			pointer-events: none;
-			z-index: 0;
-			animation: spotlightFlicker 8s ease-in-out infinite;
+			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+			opacity: 0.35;
+			mix-blend-mode: overlay;
 		}
 
-		// film-grain texture overlay
+		// scanlines (matches inspiration)
 		&::after {
 			content: '';
 			position: fixed;
 			inset: 0;
-			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-			background-size: cover;
-			opacity: 0.35;
-			pointer-events: none;
 			z-index: 9998;
-			mix-blend-mode: overlay;
+			pointer-events: none;
+			background: repeating-linear-gradient(
+				0deg,
+				transparent,
+				transparent 2px,
+				rgba(0, 0, 0, 0.08) 2px,
+				rgba(0, 0, 0, 0.08) 4px
+			);
 		}
 	}
 
-	// scanlines overlay
-	html::after {
-		content: '';
-		position: fixed;
-		inset: 0;
-		background: repeating-linear-gradient(
-			0deg,
-			transparent,
-			transparent 2px,
-			rgba(0, 0, 0, 0.15) 2px,
-			rgba(0, 0, 0, 0.15) 4px
-		);
-		pointer-events: none;
-		z-index: 9997;
+	.skip-link {
+		position: absolute;
+		top: -40px;
+		left: 0;
+		padding: 0.6rem 1rem;
+		background: #050505;
+		color: #F0EDE6;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.75rem;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		text-decoration: none;
+		border: 1px solid rgba(204, 0, 0, 0.5);
+		z-index: 10001;
+		transition: top 0.2s;
+
+		&:focus {
+			top: 0;
+			outline: 2px solid var(--color-accent);
+		}
 	}
 
-	a, button, [role="button"], input[type="submit"], input[type="email"] {
-		cursor: pointer;
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
 	}
 
-	input[type="email"] {
-		cursor: text;
+	@keyframes fadeInDown {
+		from { opacity: 0; transform: translateY(-20px); }
+		to { opacity: 1; transform: translateY(0); }
 	}
 
-	@keyframes spotlightFlicker {
+	@keyframes fadeInUp {
+		from { opacity: 0; transform: translateY(30px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	@keyframes flicker {
 		0%, 100% { opacity: 1; }
 		92% { opacity: 1; }
-		93% { opacity: 0.7; }
+		93% { opacity: 0.6; }
 		94% { opacity: 1; }
-		96% { opacity: 0.85; }
-		97% { opacity: 1; }
+		97% { opacity: 0.8; }
+		98% { opacity: 1; }
+	}
+
+	@keyframes ticker {
+		from { transform: translateX(0); }
+		to { transform: translateX(-50%); }
 	}
 </style>

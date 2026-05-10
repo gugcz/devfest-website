@@ -1,7 +1,7 @@
 .tickets {
 	width: 100%;
 	max-width: 960px;
-	margin: 4rem auto 0;
+	margin: 4rem auto 5rem;
 	padding: 0 1.5rem;
 	position: relative;
 	z-index: 1;
@@ -16,7 +16,7 @@
 .eyebrow {
 	font-family: 'Share Tech Mono', monospace;
 	font-size: 0.7rem;
-	letter-spacing: 0.4em;
+	letter-spacing: 0.32em;
 	text-transform: uppercase;
 	color: var(--color-accent);
 	opacity: 0.8;
@@ -28,6 +28,7 @@
 	font-size: clamp(2.4rem, 6vw, 3.6rem);
 	letter-spacing: 0.04em;
 	line-height: 1;
+	color: var(--color-text);
 }
 
 .subheading {
@@ -42,36 +43,80 @@
 	padding: 0;
 	margin: 0;
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-	gap: 1.25rem;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 1.6rem;
 }
 
 .ticket {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: 0.9rem;
-	padding: 1.6rem 1.4rem;
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(204, 0, 0, 0.18);
-	clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
+	padding: 1.8rem 1.5rem 1.6rem;
+	background:
+		radial-gradient(
+			circle at 78% 78%,
+			transparent 0%, transparent 18%,
+			rgba(120, 70, 30, 0.10) 22%,
+			rgba(120, 70, 30, 0.04) 28%,
+			transparent 36%
+		),
+		var(--color-cream);
+	border-radius: 2px 2px 0 0;
 	box-shadow:
-		0 1px 0 rgba(255, 255, 255, 0.02) inset,
-		0 4px 24px rgba(0, 0, 0, 0.3);
-	transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-	min-height: 180px;
+		0 4px 12px rgba(0, 0, 0, 0.55),
+		0 1px 2px rgba(0, 0, 0, 0.4),
+		inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+	transform: rotate(var(--ticket-tilt, -0.4deg));
+	transition: transform 0.3s, box-shadow 0.3s;
+	min-height: 200px;
+
+	&:nth-child(2) { transform: rotate(0.4deg); }
+	&:nth-child(3) { transform: rotate(-0.3deg); }
+	&:nth-child(4) { transform: rotate(0.5deg); }
+	&:nth-child(5) { transform: rotate(-0.5deg); }
+
+	// fine paper grain
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='64' height='64' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+		background-size: 64px 64px;
+		mix-blend-mode: multiply;
+		pointer-events: none;
+		border-radius: inherit;
+	}
+
+	// deckled bottom edge
+	&::after {
+		content: '';
+		position: absolute;
+		bottom: -3px;
+		left: -1px;
+		right: -1px;
+		height: 5px;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='5' viewBox='0 0 40 5'%3E%3Cpath d='M0 2 Q5 0 10 2 Q15 4.5 20 2 Q25 0 30 2.5 Q35 5 40 2' stroke='%23E8E0CC' stroke-width='3' fill='none'/%3E%3C/svg%3E");
+		background-repeat: repeat-x;
+		background-size: 40px 5px;
+		pointer-events: none;
+	}
 
 	&:hover:not(.isInactive):not(.skeleton) {
-		border-color: rgba(204, 0, 0, 0.55);
-		transform: translateY(-2px);
 		box-shadow:
-			0 1px 0 rgba(255, 255, 255, 0.04) inset,
-			0 8px 32px rgba(204, 0, 0, 0.18);
+			0 6px 18px rgba(0, 0, 0, 0.65),
+			0 2px 3px rgba(0, 0, 0, 0.5),
+			inset 0 0 0 1px rgba(0, 0, 0, 0.08);
 	}
 
 	&.isInactive {
 		opacity: 0.55;
+	}
+
+	// card-level CTA sticks to bottom + stretches across paper
+	> .cta {
+		margin-top: auto;
+		align-self: stretch;
 	}
 }
 
@@ -79,11 +124,12 @@
 	background:
 		linear-gradient(
 			90deg,
-			rgba(255, 255, 255, 0.02) 0%,
-			rgba(255, 255, 255, 0.06) 50%,
-			rgba(255, 255, 255, 0.02) 100%
-		);
-	background-size: 200% 100%;
+			rgba(26, 18, 8, 0.05) 0%,
+			rgba(26, 18, 8, 0.12) 50%,
+			rgba(26, 18, 8, 0.05) 100%
+		),
+		var(--color-cream);
+	background-size: 200% 100%, 100% 100%;
 	animation: shimmer 1.6s linear infinite;
 }
 
@@ -92,50 +138,106 @@
 	justify-content: space-between;
 	align-items: flex-start;
 	gap: 0.75rem;
+	position: relative;
+	z-index: 1;
 }
 
 .ticketTitle {
 	font-family: 'Bebas Neue', sans-serif;
-	font-size: 1.6rem;
-	letter-spacing: 0.05em;
+	font-size: 1.7rem;
+	letter-spacing: 0.06em;
 	line-height: 1.1;
+	color: #1A1208;
 }
 
 .badge {
 	font-family: 'Share Tech Mono', monospace;
 	font-size: 0.55rem;
-	letter-spacing: 0.2em;
+	letter-spacing: 0.32em;
 	text-transform: uppercase;
-	padding: 0.25rem 0.55rem;
-	border: 1px solid currentColor;
+	padding: 0.28rem 0.6rem;
+	background: rgba(180, 30, 30, 0.78);
+	color: rgba(240, 237, 230, 0.92);
+	border-radius: 1px;
+	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 	white-space: nowrap;
+	transform: rotate(2deg);
+	position: relative;
+	z-index: 2;
 }
 
 .badgeOnSale {
-	color: #6fcf97;
+	background: rgba(180, 30, 30, 0.78);
+	color: rgba(240, 237, 230, 0.92);
 }
 
 .badgeSoldOut {
-	color: rgba(240, 237, 230, 0.5);
+	background: rgba(80, 60, 50, 0.55);
+	color: rgba(240, 237, 230, 0.85);
 }
 
 .badgePaused {
-	color: #f0c674;
+	background: rgba(120, 70, 30, 0.7);
+	color: rgba(240, 237, 230, 0.9);
 }
 
 .badgeSoon {
-	color: #6cb0ff;
+	background: rgba(80, 80, 80, 0.7);
+	color: rgba(240, 237, 230, 0.88);
 }
 
 .badgeEnded {
-	color: rgba(240, 237, 230, 0.4);
+	background: rgba(80, 80, 80, 0.45);
+	color: rgba(240, 237, 230, 0.78);
 }
 
 .ticketDescription {
-	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.8rem;
+	font-family: 'Special Elite', cursive;
+	font-style: italic;
+	font-size: 0.9rem;
 	line-height: 1.5;
-	color: rgba(240, 237, 230, 0.7);
+	color: rgba(26, 18, 8, 0.7);
+	position: relative;
+	z-index: 1;
+}
+
+.variants {
+	list-style: none;
+	margin: 0.4rem 0 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	z-index: 1;
+}
+
+.variant {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.7rem 0;
+	border-top: 1px dashed rgba(26, 18, 8, 0.28);
+
+	&:first-child {
+		border-top: none;
+		padding-top: 0.3rem;
+	}
+}
+
+.variantLabel {
+	font-family: 'Special Elite', cursive;
+	font-size: 0.85rem;
+	letter-spacing: 0.02em;
+	color: rgba(26, 18, 8, 0.7);
+}
+
+.variantPrice {
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: 1.6rem;
+	letter-spacing: 0.04em;
+	line-height: 1;
+	color: #1A1208;
 }
 
 .ticketPrice {
@@ -143,75 +245,131 @@
 	display: flex;
 	align-items: baseline;
 	gap: 0.5rem;
+	position: relative;
+	z-index: 1;
 }
 
 .priceAmount {
 	font-family: 'Bebas Neue', sans-serif;
-	font-size: 2.2rem;
+	font-size: 2.6rem;
 	letter-spacing: 0.04em;
 	line-height: 1;
-	color: var(--color-text);
-	text-shadow: 0 0 30px rgba(204, 0, 0, 0.2);
+	color: #1A1208;
 }
 
 .priceNote {
-	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.65rem;
-	letter-spacing: 0.15em;
+	font-family: 'Special Elite', cursive;
+	font-size: 0.75rem;
+	letter-spacing: 0.12em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.4);
+	color: rgba(26, 18, 8, 0.5);
 }
 
 .cta {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.75rem;
-	letter-spacing: 0.18em;
+	font-size: 0.85rem;
+	letter-spacing: 0.3em;
 	text-transform: uppercase;
-	color: var(--color-text);
+	color: #F5EBDC;
 	text-decoration: none;
 	text-align: center;
-	padding: 0.85rem 1.2rem;
-	border: 1px solid rgba(204, 0, 0, 0.5);
-	clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+	padding: 0.85rem 1.3rem;
+	background: #8B1818;
+	border: 2px solid #8B1818;
+	border-radius: 1px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-	background: transparent;
-	transition: background 0.25s, border-color 0.25s, color 0.25s;
+	transform: rotate(-1.5deg);
+	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+	transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+	position: relative;
+	overflow: hidden;
+	z-index: 2;
+
+	// stamp ink turbulence
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='80' height='30' filter='url(%23t)' opacity='0.16'/%3E%3C/svg%3E");
+		background-size: 80px 30px;
+		mix-blend-mode: multiply;
+		pointer-events: none;
+	}
 
 	&:hover {
-		background: rgba(204, 0, 0, 0.18);
-		border-color: rgba(204, 0, 0, 0.85);
+		background: var(--color-accent-hot);
+		transform: rotate(-1.5deg) translateY(-1px);
+		box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
+	}
+
+	&:active {
+		transform: rotate(-1.5deg) translateY(0);
 	}
 }
 
 .ctaDisabled {
-	cursor: not-allowed;
-	border-color: rgba(255, 255, 255, 0.12);
-	color: rgba(240, 237, 230, 0.4);
+	opacity: 0.55;
+	cursor: default;
+	transform: rotate(-1.5deg);
 
 	&:hover {
-		background: transparent;
-		border-color: rgba(255, 255, 255, 0.12);
+		background: #8B1818;
+		transform: rotate(-1.5deg);
+		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
 	}
 }
 
 .ctaSecondary {
-	border-color: rgba(255, 255, 255, 0.18);
+	background: transparent;
+	color: #1A1208;
+	border: 2px solid rgba(26, 18, 8, 0.55);
+	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+
+	&::before {
+		opacity: 0.5;
+	}
 
 	&:hover {
-		background: rgba(255, 255, 255, 0.04);
-		border-color: rgba(255, 255, 255, 0.4);
+		background: rgba(26, 18, 8, 0.06);
+		border-color: rgba(26, 18, 8, 0.8);
+		transform: rotate(-1.5deg) translateY(-1px);
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25), 0 2px 0 rgba(0, 0, 0, 0.18);
 	}
 }
 
 .ctaArrow {
-	font-size: 0.85rem;
+	font-size: 0.9rem;
+	color: inherit;
 	transition: transform 0.25s;
 
 	.cta:hover & {
-		transform: translate(1px, -1px);
+		transform: translate(2px, -1px);
+	}
+}
+
+.footnote {
+	margin-top: 1.8rem;
+	text-align: center;
+	font-family: 'IM Fell English', serif;
+	font-style: italic;
+	font-size: 1.05rem;
+	letter-spacing: 0.01em;
+	color: rgba(240, 237, 230, 0.65);
+}
+
+.footnoteLink {
+	color: rgba(240, 237, 230, 0.85);
+	text-decoration: none;
+	border-bottom: 1px dashed rgba(204, 0, 0, 0.5);
+	padding-bottom: 1px;
+	transition: color 0.2s, border-color 0.2s;
+
+	&:hover {
+		color: var(--color-accent);
+		border-color: var(--color-accent);
 	}
 }
 
@@ -220,13 +378,43 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 1.25rem;
-	padding: 2rem 1.5rem;
-	border: 1px dashed rgba(204, 0, 0, 0.2);
-	color: rgba(240, 237, 230, 0.7);
-	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.85rem;
+	gap: 1rem;
+	padding: 1.6rem 1.4rem;
+	max-width: 420px;
+	margin: 0 auto;
+	position: relative;
+	background:
+		radial-gradient(
+			circle at 78% 78%,
+			transparent 0%, transparent 18%,
+			rgba(120, 70, 30, 0.08) 22%,
+			rgba(120, 70, 30, 0.03) 28%,
+			transparent 36%
+		),
+		var(--color-cream);
+	border: 1px dashed rgba(26, 18, 8, 0.3);
+	border-radius: 2px;
+	box-shadow:
+		0 3px 8px rgba(0, 0, 0, 0.45),
+		0 1px 2px rgba(0, 0, 0, 0.35),
+		inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+	color: rgba(26, 18, 8, 0.75);
+	font-family: 'Special Elite', cursive;
+	font-style: italic;
+	font-size: 0.9rem;
 	line-height: 1.6;
+	transform: rotate(-0.3deg);
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='64' height='64' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+		background-size: 64px 64px;
+		mix-blend-mode: multiply;
+		pointer-events: none;
+		border-radius: inherit;
+	}
 }
 
 @keyframes fadeInUp {
@@ -241,6 +429,50 @@
 }
 
 @keyframes shimmer {
-	0% { background-position: 200% 0; }
-	100% { background-position: -200% 0; }
+	0% { background-position: 200% 0, 0 0; }
+	100% { background-position: -200% 0, 0 0; }
+}
+
+@media (max-width: 600px) {
+	.list {
+		grid-template-columns: 1fr;
+		gap: 1.4rem;
+	}
+
+	.ticket {
+		max-width: 360px;
+		margin: 0 auto;
+		width: 100%;
+		transform: none;
+
+		&:nth-child(2),
+		&:nth-child(3),
+		&:nth-child(4),
+		&:nth-child(5) {
+			transform: none;
+		}
+	}
+
+	.cta {
+		transform: rotate(-1deg);
+
+		&:hover {
+			transform: rotate(-1deg) translateY(-1px);
+		}
+		&:active {
+			transform: rotate(-1deg);
+		}
+	}
+
+	.ctaDisabled {
+		transform: rotate(-1deg);
+
+		&:hover {
+			transform: rotate(-1deg);
+		}
+	}
+
+	.empty {
+		transform: none;
+	}
 }

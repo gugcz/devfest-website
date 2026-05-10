@@ -9,4 +9,13 @@ export default defineConfig({
     site: 'https://devfest.cz',
     trailingSlash: 'never',
     integrations: [sitemap(), react()],
+    vite: {
+        server: {
+            fs: {
+                // Allow Vite dev to read from parent dirs (needed for git-worktree
+                // setups where node_modules sits above the working tree).
+                allow: ['..', '../..', '../../..'],
+            },
+        },
+    },
 });

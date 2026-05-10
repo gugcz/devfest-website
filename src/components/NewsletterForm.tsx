@@ -20,17 +20,19 @@ export default function NewsletterForm() {
 				<label htmlFor="newsletter-email" className={s.srOnly}>
 					Email address
 				</label>
-				<input
-					className={s.input}
-					type="text"
-					id="newsletter-email"
-					name="fields[df_emailaddress]"
-					data-emailaddress="1"
-					placeholder="your@email.com"
-					required
-					autoComplete="email"
-				/>
-				<button className={s.button} type="submit" name="_submit" value="Subscribe" disabled={!consented}>
+				<div className={s.paper}>
+					<input
+						className={s.input}
+						type="email"
+						id="newsletter-email"
+						name="fields[df_emailaddress]"
+						data-emailaddress="1"
+						placeholder="your@email.com"
+						required
+						autoComplete="email"
+					/>
+				</div>
+				<button className={s.button} type="submit" name="_submit" value="Subscribe" disabled={!consented} aria-describedby="newsletter-consent-text">
 					Notify Me
 				</button>
 				<input type="hidden" name="referrer" id="se-ref-field-id" defaultValue="" />
@@ -45,7 +47,7 @@ export default function NewsletterForm() {
 					onChange={(e) => setConsented(e.target.checked)}
 					required
 				/>
-				<span>
+				<span id="newsletter-consent-text">
 					I agree to receive conference updates by email. See our{' '}
 					<a href="/privacy-policy" className={s.consentLink}>Privacy Policy</a>.
 				</span>

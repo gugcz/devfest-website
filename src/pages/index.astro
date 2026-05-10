@@ -3,187 +3,723 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Countdown from '../components/Countdown';
 import NewsletterForm from '../components/NewsletterForm';
 import Footer from '../components/Footer';
-// import Tickets from '../components/Tickets';
+import Tickets from '../components/Tickets';
+import type { TicketsCache } from '../lib/tito';
+
+// TEMP: fake ti.to cache for UI preview. Remove when real RTDB feed is live.
+const MOCK_TICKETS: TicketsCache = {
+	accountSlug: 'devfest-cz',
+	eventSlug: 'devfest-cz-2026',
+	fetchedAt: Date.now(),
+	releases: [
+		{
+			id: 1,
+			slug: 'early-bird-individual',
+			title: 'Early bird — Individual',
+			description: 'First wave. Gone fast — book the whole table.',
+			price: '70',
+			currency: 'EUR',
+			quantity: 69,
+			quantity_sold: 69,
+			sale_status: 'sold_out',
+			state_name: 'on_sale',
+			sold_out: true,
+			off_sale: false,
+			expired: false,
+			upcoming: false,
+			locked: false,
+			archived: false,
+			secret: false,
+			start_at: null,
+			end_at: null,
+		},
+		{
+			id: 2,
+			slug: 'early-bird-company',
+			title: 'Early bird — Company funded',
+			description: null,
+			price: '105',
+			currency: 'EUR',
+			quantity: 17,
+			quantity_sold: 17,
+			sale_status: 'sold_out',
+			state_name: 'on_sale',
+			sold_out: true,
+			off_sale: false,
+			expired: false,
+			upcoming: false,
+			locked: false,
+			archived: false,
+			secret: false,
+			start_at: null,
+			end_at: null,
+		},
+		{
+			id: 3,
+			slug: 'regular-individual',
+			title: 'Regular — Individual',
+			description: 'Standard rate. Pace yourself — capacity holds.',
+			price: '100',
+			currency: 'EUR',
+			quantity: 86,
+			quantity_sold: 31,
+			sale_status: 'on_sale',
+			state_name: 'on_sale',
+			sold_out: false,
+			off_sale: false,
+			expired: false,
+			upcoming: false,
+			locked: false,
+			archived: false,
+			secret: false,
+			start_at: null,
+			end_at: null,
+		},
+		{
+			id: 4,
+			slug: 'regular-company',
+			title: 'Regular — Company funded',
+			description: null,
+			price: '150',
+			currency: 'EUR',
+			quantity: 21,
+			quantity_sold: 8,
+			sale_status: 'on_sale',
+			state_name: 'on_sale',
+			sold_out: false,
+			off_sale: false,
+			expired: false,
+			upcoming: false,
+			locked: false,
+			archived: false,
+			secret: false,
+			start_at: null,
+			end_at: null,
+		},
+		{
+			id: 5,
+			slug: 'lazy-bird-individual',
+			title: 'Lazy bird — Individual',
+			description: 'Last call. Doors close — final wave.',
+			price: '120',
+			currency: 'EUR',
+			quantity: 17,
+			quantity_sold: 0,
+			sale_status: 'on_sale',
+			state_name: 'on_sale',
+			sold_out: false,
+			off_sale: false,
+			expired: false,
+			upcoming: false,
+			locked: false,
+			archived: false,
+			secret: false,
+			start_at: null,
+			end_at: null,
+		},
+		{
+			id: 6,
+			slug: 'lazy-bird-company',
+			title: 'Lazy bird — Company funded',
+			description: null,
+			price: '180',
+			currency: 'EUR',
+			quantity: 4,
+			quantity_sold: 0,
+			sale_status: 'on_sale',
+			state_name: 'on_sale',
+			sold_out: false,
+			off_sale: false,
+			expired: false,
+			upcoming: false,
+			locked: false,
+			archived: false,
+			secret: false,
+			start_at: null,
+			end_at: null,
+		},
+	],
+};
 ---
 
 <BaseLayout>
-	<main class="landing">
-		<h1 class="title">
-			<img src="/logo.svg" alt="DevFest.cz 2026" class="logo" />
-		</h1>
-		<p class="tagline">The most original conference in Prague is here again—and it’s not without a few mysteries.</p>
-		<div class="countdown-section">
-			<Countdown client:load />
+	<main class="page">
+		<!-- HERO -->
+		<section id="hero">
+			<div class="hero-bg" aria-hidden="true"></div>
+			<div class="blinds" aria-hidden="true"></div>
+			<div class="city-silhouette" aria-hidden="true"></div>
+			<div class="spotlight" aria-hidden="true"></div>
+
+			<div class="hero-grid">
+				<div class="hero-content">
+					<h1 class="hero-title">
+						<img src="/logo.svg" alt="DevFest.cz 2026" class="hero-logo" />
+					</h1>
+
+					<p class="hero-subtitle">
+						The most original conference in Prague is here again—and it&rsquo;s not without a few mysteries.
+					</p>
+
+					<div class="hero-meta">
+						<div class="meta-item">
+							<span class="meta-label">Date</span>
+							<span class="meta-value">30. 10. 2026</span>
+						</div>
+						<div class="meta-item">
+							<span class="meta-label">Place</span>
+							<span class="meta-value">Prague</span>
+						</div>
+						<div class="meta-item">
+							<span class="meta-label">Format</span>
+							<span class="meta-value">In-person</span>
+						</div>
+					</div>
+
+					<div class="hero-cta-group">
+						<a href="#tickets" class="btn-primary">Get tickets</a>
+						<span class="cta-sep" aria-hidden="true">///</span>
+						<a href="https://2025.devfest.cz" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+							See last year's edition
+						</a>
+					</div>
+					<a href="#newsletter" class="hero-notify-link">Or notify me when more tiers drop&nbsp;↘</a>
+				</div>
+
+				<aside class="hero-countdown" aria-label="Time until doors open">
+					<div class="section-label">Doors open in</div>
+					<Countdown client:load />
+				</aside>
+			</div>
+		</section>
+
+		<!-- TICKER -->
+		<div class="ticker-wrap" aria-hidden="true">
+			<div class="ticker">
+				<span class="ticker-item">AI &amp; Machine Learning <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Android &amp; Kotlin <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Web Technologies <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Cloud &amp; DevOps <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Flutter &amp; Dart <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Security <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Open Source <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">AI &amp; Machine Learning <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Android &amp; Kotlin <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Web Technologies <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Cloud &amp; DevOps <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Flutter &amp; Dart <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Security <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Open Source <span class="ticker-sep">///</span></span>
+			</div>
 		</div>
-		<p class="cta-text">Be the first to know when tickets drop.</p>
-		<div class="newsletter-wrapper">
-			<NewsletterForm client:load />
-		</div>
-		{/* <Tickets client:load /> */}
-		<a class="last-year" href="https://2025.devfest.cz" target="_blank" rel="noopener noreferrer">
-			See last year's edition
-			<span class="last-year-arrow" aria-hidden="true">&#8599;</span>
-		</a>
-		<p class="location">
-			<span class="location-icon" aria-hidden="true">&#9670;</span>
-			Prague, Czech Republic · 30. 10. 2026
-		</p>
-		<div class="decoration-line" aria-hidden="true"></div>
+
+		<!-- TICKETS (preview — fake ti.to data) -->
+		<Tickets client:visible preview={MOCK_TICKETS} />
+
+		<!-- NEWSLETTER -->
+		<section id="newsletter">
+			<div class="section-label">The case file</div>
+			<h2 class="section-title">Be the first<br /><span class="red">to know.</span></h2>
+			<p class="newsletter-lede">
+				Tickets drop soon. Leave your email and we'll wire you the moment doors open.
+			</p>
+			<NewsletterForm client:visible />
+		</section>
 	</main>
-	<Footer client:load />
+	<Footer client:idle />
 </BaseLayout>
 
+<script>
+	// Parallax on city silhouette + spotlight (matches inspiration)
+	if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		let ticking = false;
+		window.addEventListener('scroll', () => {
+			if (ticking) return;
+			ticking = true;
+			requestAnimationFrame(() => {
+				const y = window.scrollY;
+				const city = document.querySelector('.city-silhouette') as HTMLElement | null;
+				const spotlight = document.querySelector('.spotlight') as HTMLElement | null;
+				if (city) city.style.transform = `translateY(${y * 0.2}px)`;
+				if (spotlight) spotlight.style.transform = `translateY(${y * 0.1}px)`;
+				ticking = false;
+			});
+		});
+	}
+</script>
+
 <style lang="scss">
-	.landing {
-		min-height: 100dvh;
+	.page {
+		flex: 1;
 		display: flex;
 		flex-direction: column;
+	}
+
+	/* ===================== HERO ===================== */
+	#hero {
+		position: relative;
+		min-height: 100vh;
+		display: flex;
 		align-items: center;
-		justify-content: center;
-		padding: 4rem 1.5rem 6rem;
-		gap: 1.5rem;
-		text-align: center;
-		position: relative;
+		overflow: hidden;
+		padding: 0 3rem;
+	}
+
+	.hero-bg {
+		position: absolute;
+		inset: 0;
+		background:
+			radial-gradient(ellipse 60% 70% at 70% 50%, rgba(30, 0, 0, 0.35) 0%, transparent 70%),
+			radial-gradient(ellipse 40% 60% at 15% 80%, rgba(204, 0, 0, 0.04) 0%, transparent 60%),
+			linear-gradient(135deg, #0D0D0D 0%, #050505 100%);
+		z-index: 0;
+	}
+
+	.blinds {
+		position: absolute;
+		inset: 0;
 		z-index: 1;
+		background: repeating-linear-gradient(
+			90deg,
+			transparent 0%,
+			transparent 7%,
+			rgba(0, 0, 0, 0.4) 7%,
+			rgba(0, 0, 0, 0.4) 8%
+		);
+		transform: skewX(-8deg) scaleX(1.1);
+		pointer-events: none;
+		opacity: 0.6;
 	}
 
-	.title {
-		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
-		line-height: 0;
+	.city-silhouette {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		width: 65%;
+		height: 70%;
+		z-index: 2;
+		clip-path: polygon(
+			0% 100%, 5% 100%, 5% 60%, 8% 60%, 8% 40%, 10% 40%, 10% 50%, 13% 50%,
+			13% 30%, 15% 30%, 15% 55%, 18% 55%, 18% 25%, 20% 25%, 20% 15%, 22% 15%,
+			22% 40%, 25% 40%, 25% 20%, 27% 20%, 27% 10%, 29% 10%, 29% 35%, 31% 35%,
+			31% 45%, 33% 45%, 33% 20%, 35% 20%, 35% 30%, 37% 30%, 37% 5%, 39% 5%,
+			39% 25%, 41% 25%, 41% 40%, 43% 40%, 43% 15%, 46% 15%, 46% 50%, 48% 50%,
+			48% 35%, 50% 35%, 50% 20%, 52% 20%, 52% 45%, 55% 45%, 55% 30%, 57% 30%,
+			57% 55%, 60% 55%, 60% 40%, 62% 40%, 62% 60%, 65% 60%, 65% 45%, 68% 45%,
+			68% 65%, 72% 65%, 72% 50%, 75% 50%, 75% 70%, 80% 70%, 80% 60%, 85% 60%,
+			85% 75%, 90% 75%, 90% 65%, 95% 65%, 95% 80%, 100% 80%, 100% 100%
+		);
+		background: #111;
+		opacity: 0.9;
+		pointer-events: none;
 	}
 
-	.logo {
-		width: clamp(280px, 60vw, 520px);
-		height: auto;
+	.spotlight {
+		position: absolute;
+		top: 0;
+		right: 18%;
+		width: 520px;
+		height: 100%;
+		background: conic-gradient(
+			from 168deg at 50% 0%,
+			transparent 0deg,
+			rgba(204, 0, 0, 0.03) 6deg,
+			rgba(204, 0, 0, 0.13) 15deg,
+			rgba(204, 0, 0, 0.03) 24deg,
+			transparent 32deg
+		);
+		filter: blur(1px);
+		z-index: 3;
+		pointer-events: none;
+		animation: flicker 8s infinite;
 	}
 
-	.tagline {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 1.1rem;
-		font-style: italic;
-		line-height: 1.6;
-		max-width: 480px;
-		color: #888;
-		margin-top: 0.5rem;
-		text-align: center;
-		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
-	}
-
-	.countdown-section {
-		margin: 1.5rem 0;
-		padding: 2.5rem 0;
+	.hero-grid {
 		position: relative;
-		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
-
-		&::before,
-		&::after {
-			content: '';
-			position: absolute;
-			left: 50%;
-			transform: translateX(-50%);
-			width: 200px;
-			height: 1px;
-			background: linear-gradient(
-				90deg,
-				transparent 0%,
-				rgba(204, 0, 0, 0.25) 50%,
-				transparent 100%
-			);
-		}
-
-		&::before { top: 0; }
-		&::after { bottom: 0; }
-	}
-
-	.cta-text {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.8rem;
-		letter-spacing: 0.08em;
-		opacity: 0.4;
-		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
-	}
-
-	.newsletter-wrapper {
-		display: flex;
-		flex-direction: column;
+		z-index: 10;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 5rem;
 		align-items: center;
 		width: 100%;
-		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+		max-width: 1200px;
+		margin: 0 auto;
 	}
 
-	.last-year {
+	.hero-content {
+		max-width: 620px;
+	}
+
+	.hero-countdown {
+		display: flex;
+		flex-direction: column;
+		gap: 1.2rem;
+		padding: 1.6rem 1.4rem 1.2rem;
+		background: transparent;
+		border: none;
+		animation: fadeInUp 1s ease 0.7s both;
+
+		.section-label {
+			margin-bottom: 0.4rem;
+			gap: 0.8rem;
+			font-size: 0.6rem;
+
+			&::after { flex: 0 0 32px; }
+		}
+	}
+
+	.hero-overline {
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.75rem;
-		letter-spacing: 0.12em;
+		font-size: 0.7rem;
+		letter-spacing: 0.4em;
 		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.55);
+		margin-bottom: 1.5rem;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		animation: fadeInDown 1s ease both;
+
+		&::before {
+			content: '';
+			width: 40px;
+			height: 1px;
+			background: rgba(240, 237, 230, 0.45);
+		}
+	}
+
+	.hero-title {
+		animation: fadeInUp 1s ease 0.2s both;
+		line-height: 0;
+		filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.9));
+	}
+
+	.hero-logo {
+		width: clamp(280px, 56vw, 620px);
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	.hero-subtitle {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+		color: var(--color-grey);
+		margin-top: 1.5rem;
+		line-height: 1.6;
+		max-width: 480px;
+		border-left: 2px solid rgba(180, 50, 50, 0.45);
+		padding-left: 1.2rem;
+		text-wrap: balance;
+		hyphens: auto;
+		animation: fadeInUp 1s ease 0.4s both;
+	}
+
+	.hero-meta {
+		margin-top: 2.5rem;
+		display: flex;
+		gap: 3rem;
+		flex-wrap: wrap;
+		animation: fadeInUp 1s ease 0.6s both;
+	}
+
+	.meta-item {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+
+	.meta-label {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.6rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: var(--color-grey);
+	}
+
+	.meta-value {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 1.4rem;
+		letter-spacing: 0.08em;
 		color: var(--color-text);
+	}
+
+	.hero-cta-group {
+		margin-top: 3rem;
+		display: flex;
+		gap: 1.5rem;
+		align-items: center;
+		flex-wrap: wrap;
+		animation: fadeInUp 1s ease 0.8s both;
+	}
+
+	.hero-notify-link {
+		display: inline-block;
+		margin-top: 1.1rem;
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 1.05rem;
+		letter-spacing: 0.01em;
+		color: rgba(240, 237, 230, 0.7);
 		text-decoration: none;
-		border: 1px solid rgba(204, 0, 0, 0.4);
-		padding: 0.7rem 2rem;
-		clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-		transition: background 0.25s, color 0.25s, border-color 0.25s;
+		border-bottom: 1px dashed rgba(204, 0, 0, 0.5);
+		padding-bottom: 1px;
+		transition: color 0.2s, border-color 0.2s;
+		animation: fadeInUp 1s ease 0.95s both;
+
+		&:hover {
+			color: var(--color-accent);
+			border-color: var(--color-accent);
+		}
+	}
+
+	.btn-primary {
+		display: inline-block;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.85rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		background: #8B1818;
+		color: #F5EBDC;
+		border: 2px solid #8B1818;
+		border-radius: 1px;
+		padding: 1.05rem 2.6rem;
+		text-decoration: none;
+		position: relative;
+		overflow: hidden;
+		transform: rotate(-1.5deg);
+		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+		transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='80' height='30' filter='url(%23t)' opacity='0.16'/%3E%3C/svg%3E");
+			background-size: 80px 30px;
+			mix-blend-mode: multiply;
+			pointer-events: none;
+		}
+
+		&:hover {
+			background: var(--color-accent-hot);
+			transform: rotate(-1.5deg) translateY(-1px);
+			box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
+		}
+
+		&:active {
+			transform: rotate(-1.5deg) translateY(0);
+		}
+	}
+
+	.btn-secondary {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.72rem;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		color: var(--color-grey);
+		text-decoration: none;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
-		margin-top: 0.5rem;
-		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+		transition: color 0.2s;
+
+		&::before {
+			content: '▶';
+			font-size: 0.6rem;
+			color: rgba(240, 237, 230, 0.55);
+		}
 
 		&:hover {
-			background: rgba(204, 0, 0, 0.15);
-			border-color: rgba(204, 0, 0, 0.7);
 			color: var(--color-text);
 		}
 	}
 
-	.last-year-arrow {
-		font-size: 0.85rem;
-		transition: transform 0.25s;
-
-		.last-year:hover & {
-			transform: translate(1px, -1px);
-		}
+	.cta-sep {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.78rem;
+		letter-spacing: 0.3em;
+		color: rgba(240, 237, 230, 0.18);
+		user-select: none;
 	}
 
-	.location {
+	/* ===================== TICKER ===================== */
+	.ticker-wrap {
+		position: relative;
+		z-index: 20;
+		background: #A01818;
+		overflow: hidden;
+		padding: 0.7rem 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+	}
+
+	.ticker {
+		display: flex;
+		white-space: nowrap;
+		animation: ticker 30s linear infinite;
+	}
+
+	.ticker-item {
 		font-family: 'Share Tech Mono', monospace;
 		font-size: 0.7rem;
-		letter-spacing: 0.2em;
+		letter-spacing: 0.25em;
 		text-transform: uppercase;
-		opacity: 0.25;
-		margin-top: 1.5rem;
+		color: var(--color-bg);
+		padding: 0 3rem;
+	}
+
+	.ticker-sep {
+		color: rgba(0, 0, 0, 0.4);
+	}
+
+	/* ===================== SHARED SECTION ===================== */
+	#countdown-section,
+	#newsletter {
+		padding: 6rem 3rem;
+		position: relative;
+		max-width: 1080px;
+		margin: 0 auto;
+		width: 100%;
+	}
+
+	#newsletter {
+		background: var(--color-near-black);
+		max-width: none;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	#newsletter > * {
+		max-width: 560px;
+		width: 100%;
+	}
+
+	#newsletter .section-label {
+		justify-content: center;
+	}
+
+	#newsletter .newsletter-lede {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.section-label {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.65rem;
+		letter-spacing: 0.4em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.55);
 		display: flex;
 		align-items: center;
-		gap: 0.6rem;
-		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
-	}
+		gap: 1rem;
+		margin-bottom: 2rem;
 
-	.location-icon {
-		font-size: 0.5rem;
-		color: var(--color-accent);
-		opacity: 0.8;
-	}
-
-	.decoration-line {
-		width: 40px;
-		height: 1px;
-		background: linear-gradient(90deg, transparent, rgba(204, 0, 0, 0.4), transparent);
-		margin-top: 1rem;
-		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
-	}
-
-	@keyframes fadeIn {
-		from { opacity: 0; }
-		to { opacity: 1; }
-	}
-
-	@keyframes fadeInUp {
-		from {
-			opacity: 0;
-			transform: translateY(24px);
+		&::after {
+			content: '';
+			flex: 0 0 60px;
+			height: 1px;
+			background: rgba(204, 0, 0, 0.45);
 		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
+	}
+
+	.section-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(2.5rem, 5vw, 4.5rem);
+		line-height: 0.92;
+		letter-spacing: 0.02em;
+		color: var(--color-text);
+		margin-bottom: 2.5rem;
+
+		.red { color: rgba(204, 0, 0, 0.85); }
+	}
+
+	.newsletter-lede {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 1.05rem;
+		line-height: 1.7;
+		color: var(--color-grey);
+		max-width: 520px;
+		margin-bottom: 2rem;
+	}
+
+	/* ===================== RESPONSIVE ===================== */
+	@media (max-width: 1240px) {
+		.hero-grid {
+			grid-template-columns: 1fr;
+			gap: 3rem;
+			justify-items: center;
 		}
+		.hero-content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			max-width: 620px;
+		}
+		.hero-subtitle {
+			text-align: center;
+			max-width: 30ch;
+		}
+		.hero-meta {
+			justify-content: center;
+		}
+		.hero-cta-group {
+			justify-content: center;
+		}
+		.hero-countdown {
+			justify-self: center;
+			align-items: center;
+		}
+		.hero-countdown .section-label {
+			justify-content: center;
+		}
+		#newsletter {
+			text-align: center;
+		}
+		#newsletter .section-label {
+			justify-content: center;
+		}
+		.newsletter-lede {
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+
+	@media (max-width: 900px) {
+		#hero { padding: 6rem 1.5rem 4rem; min-height: auto; }
+		.city-silhouette { opacity: 0.55; width: 80%; height: 50%; }
+		.hero-meta { gap: 1.5rem; }
+		.hero-countdown { padding: 1.2rem 1.1rem 1rem; }
+		#newsletter { padding: 5rem 1.5rem; }
+	}
+
+	@media (max-width: 600px) {
+		.hero-overline { font-size: 0.62rem; gap: 0.6rem; &::before { width: 26px; } }
+		.hero-subtitle {
+			font-size: 1rem;
+			padding-left: 1rem;
+			max-width: 28ch;
+			line-height: 1.55;
+		}
+		.meta-value { font-size: 1.2rem; }
+		.btn-primary { padding: 0.9rem 1.8rem; font-size: 0.72rem; }
+		.cta-sep { display: none; }
+		.section-label::after { flex-basis: 32px; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hero-overline,
+		.hero-title,
+		.hero-subtitle,
+		.hero-meta,
+		.hero-cta-group,
+		.hero-countdown,
+		.spotlight,
+		.ticker { animation: none; }
 	}
 </style>
