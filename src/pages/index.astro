@@ -51,38 +51,6 @@ import Footer from '../components/Footer';
 				<aside class="hero-countdown" aria-label="Time until doors open">
 					<div class="section-label">Doors open in</div>
 					<Countdown client:load />
-					<script is:inline>
-						(function () {
-							var TARGET = Date.UTC(2026, 9, 30, 8, 0, 0);
-							var diff = TARGET - Date.now();
-							var d, h, m, s;
-							if (diff <= 0) {
-								d = '000'; h = '00'; m = '00'; s = '00';
-							} else {
-								d = String(Math.floor(diff / 86400000)).padStart(3, '0');
-								h = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
-								m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-								s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-							}
-							var t = { days: d, hours: h, minutes: m, seconds: s };
-							document.querySelectorAll('[data-countdown-digit]').forEach(function (el) {
-								var unit = el.getAttribute('data-unit');
-								var idx = parseInt(el.getAttribute('data-idx'), 10);
-								var v = t[unit];
-								if (v && v[idx] !== undefined) el.textContent = v[idx];
-							});
-							var root = document.querySelector('[data-countdown-root]');
-							if (root) {
-								root.setAttribute('aria-label',
-									'Time until doors open: ' +
-									parseInt(t.days, 10) + ' days, ' +
-									parseInt(t.hours, 10) + ' hours, ' +
-									parseInt(t.minutes, 10) + ' minutes, ' +
-									parseInt(t.seconds, 10) + ' seconds'
-								);
-							}
-						})();
-					</script>
 				</aside>
 			</div>
 		</section>

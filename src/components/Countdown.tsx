@@ -36,10 +36,9 @@ interface StampDigitProps {
 	value: string;
 	idx: number;
 	code: string;
-	unit: string;
 }
 
-function StampDigit({ value, idx, code, unit }: StampDigitProps) {
+function StampDigit({ value, idx, code }: StampDigitProps) {
 	const [prev, setPrev] = useState(value);
 	const [animKey, setAnimKey] = useState(0);
 	const settleTimeoutRef = useRef<number | undefined>(undefined);
@@ -67,10 +66,6 @@ function StampDigit({ value, idx, code, unit }: StampDigitProps) {
 			<span
 				className={`${s.digit} ${stamping ? s.digitStamping : ''}`}
 				key={animKey}
-				data-countdown-digit=""
-				data-unit={unit}
-				data-idx={idx}
-				suppressHydrationWarning
 			>
 				{value}
 			</span>
@@ -101,15 +96,13 @@ export default function Countdown() {
 			aria-live="polite"
 			aria-atomic="true"
 			aria-label={`Time until doors open: ${daysNum} days, ${hoursNum} hours, ${minutesNum} minutes, ${secondsNum} seconds`}
-			data-countdown-root=""
-			suppressHydrationWarning
 		>
 			{UNITS.map(({ key, label, code }) => (
 				<Fragment key={key}>
 					<div className={s.unit} aria-hidden="true">
 						<div className={s.cards}>
 							{time[key].split('').map((d, idx) => (
-								<StampDigit key={`${key}-${idx}`} value={d} idx={idx} code={code} unit={key} />
+								<StampDigit key={`${key}-${idx}`} value={d} idx={idx} code={code} />
 							))}
 						</div>
 						<span className={s.label}>{label}</span>
