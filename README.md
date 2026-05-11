@@ -77,7 +77,7 @@ The default Cloud Functions service account has the IAM needed to write RTDB; no
 | ---- | ------- | ------- |
 | `refreshTitoCache` | Cloud Scheduler, hourly | Sync ti.to releases → RTDB `/tickets` |
 | `titoWebhook` | HTTPS, public | Verifies `Tito-Signature` and posts purchase notifications to Slack |
-| `dailyTicketStatus` | Cloud Scheduler, `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |
+| `weeklyTicketStatus` | Cloud Scheduler, Mondays `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |
 
 Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 1. Paste the deployed `titoWebhook` URL.

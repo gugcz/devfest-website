@@ -1,7 +1,7 @@
 /**
- * `dailyTicketStatus` — once a day, fetch releases directly from the ti.to
- * Admin API and post a sales summary to Slack. The cron is daily so the
- * extra ti.to request is negligible (1/day, well under the 60/min limit),
+ * `weeklyTicketStatus` — once a week, fetch releases directly from the ti.to
+ * Admin API and post a sales summary to Slack. The cron is weekly so the
+ * extra ti.to request is negligible (1/week, well under the 60/min limit),
  * and reading live data avoids any staleness from the hourly cache.
  */
 
@@ -95,7 +95,7 @@ function buildSlackMessage(summary: Summary): SlackPayload {
 	const blocks: unknown[] = [
 		{
 			type: 'header',
-			text: { type: 'plain_text', text: '📊 Daily ticket status', emoji: true },
+			text: { type: 'plain_text', text: '📊 Weekly ticket status', emoji: true },
 		},
 		{
 			type: 'section',
@@ -123,17 +123,17 @@ function buildSlackMessage(summary: Summary): SlackPayload {
 	];
 
 	return {
-		text: `Daily ticket status — total sold ${totalLabel}`,
+		text: `Weekly ticket status — total sold ${totalLabel}`,
 		blocks,
 	};
 }
 
 /**
- * Daily at 09:00 Europe/Prague. Fetches live data from ti.to (no RTDB).
+ * Weekly on Monday at 09:00 Europe/Prague. Fetches live data from ti.to (no RTDB).
  */
-export const dailyTicketStatus = onSchedule(
+export const weeklyTicketStatus = onSchedule(
 	{
-		schedule: 'every day 09:00',
+		schedule: 'every monday 09:00',
 		timeZone: 'Europe/Prague',
 		region: REGION,
 		secrets: [SLACK_WEBHOOK_URL, TITO_API_TOKEN],
@@ -156,7 +156,7 @@ export const dailyTicketStatus = onSchedule(
 		const summary = summarize(releases);
 		await postToSlack(SLACK_WEBHOOK_URL.value(), buildSlackMessage(summary));
 
-		logger.info('dailyTicketStatus posted', {
+		logger.info('weeklyTicketStatus posted', {
 			totalSold: summary.totalSold,
 			releaseCount: summary.releases.length,
 		});
