@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react';
-import { onValue, ref } from 'firebase/database';
-import { getDb } from '../lib/firebase';
 import {
-	checkoutUrl,
 	eventUrl,
 	filterDisplayable,
 	formatPrice,
 	releaseStatus,
 	releaseTitle,
-	type ReleaseStatus,
 	type TicketsCache,
 	type TitoRelease,
 } from '../lib/tito';
@@ -25,60 +21,103 @@ interface State {
 
 const INITIAL: State = { status: 'loading', releases: [], accountSlug: '', eventSlug: '' };
 
-function badgeClass(styles: Record<string, string>, tone: ReleaseStatus['tone']): string {
-	switch (tone) {
-		case 'on-sale':
-			return styles.badgeOnSale;
-		case 'paused':
-			return styles.badgePaused;
-		case 'soon':
-			return styles.badgeSoon;
-		case 'ended':
-			return styles.badgeEnded;
-		case 'sold-out':
-		default:
-			return styles.badgeSoldOut;
+interface ReleaseGroup {
+	name: string;
+	description: string | null;
+	variants: Array<{ release: TitoRelease; variantLabel: string }>;
+}
+
+/**
+ * Group releases that share a base name (e.g. "Early bird — Individual"
+ * and "Early bird — Company funded" → one "Early bird" card with two
+ * variants). Splits on em-dash / en-dash / hyphen surrounded by spaces.
+ * Group description is taken from the first variant that has one.
+ */
+function groupReleases(releases: TitoRelease[]): ReleaseGroup[] {
+	const map = new Map<string, ReleaseGroup>();
+	for (const release of releases) {
+		const parts = releaseTitle(release).split(/\s+[—–-]\s+/);
+		const base = parts[0].trim();
+		const variantLabel = (parts[1] ?? '').trim();
+		let group = map.get(base);
+		if (!group) {
+			group = { name: base, description: release.description, variants: [] };
+			map.set(base, group);
+		} else if (!group.description && release.description) {
+			group.description = release.description;
+		}
+		group.variants.push({ release, variantLabel });
 	}
+	return Array.from(map.values());
 }
 
 export default function Tickets() {
 	const [state, setState] = useState<State>(INITIAL);
 
 	useEffect(() => {
-		const db = getDb();
-		const ticketsRef = ref(db, 'tickets');
-
-		const unsubscribe = onValue(
-			ticketsRef,
-			(snapshot) => {
-				const data = snapshot.val() as TicketsCache | null;
-				if (!data) {
-					setState({ status: 'empty', releases: [], accountSlug: '', eventSlug: '' });
-					return;
-				}
-				const visible = filterDisplayable(data.releases ?? []);
-				setState({
-					status: visible.length > 0 ? 'ready' : 'empty',
-					releases: visible,
-					accountSlug: data.accountSlug ?? '',
-					eventSlug: data.eventSlug ?? '',
-				});
-			},
-			(err) => {
-				console.warn('[tickets] Failed to read /tickets from RTDB:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
-			},
-		);
-
-		return () => unsubscribe();
+		let unsubscribe: (() => void) | null = null;
+		let cancelled = false;
+		(async () => {
+			try {
+				const [{ getDb }, { onValue, ref }] = await Promise.all([
+					import('../lib/firebase'),
+					import('firebase/database'),
+				]);
+				if (cancelled) return;
+				const db = getDb();
+				const ticketsRef = ref(db, 'tickets');
+				unsubscribe = onValue(
+					ticketsRef,
+					(snapshot) => {
+						const data = snapshot.val() as TicketsCache | null;
+						if (!data) {
+							setState({ status: 'empty', releases: [], accountSlug: '', eventSlug: '' });
+							return;
+						}
+						const visible = filterDisplayable(data.releases ?? []);
+						setState({
+							status: visible.length > 0 ? 'ready' : 'empty',
+							releases: visible,
+							accountSlug: data.accountSlug ?? '',
+							eventSlug: data.eventSlug ?? '',
+						});
+					},
+					(err) => {
+						console.warn('[tickets] Failed to read /tickets from RTDB:', err);
+						setState((prev) => ({ ...prev, status: 'error' }));
+					},
+				);
+			} catch (err) {
+				console.warn('[tickets] Failed to load Firebase modules:', err);
+				if (!cancelled) setState((prev) => ({ ...prev, status: 'error' }));
+			}
+		})();
+		return () => {
+			cancelled = true;
+			unsubscribe?.();
+		};
 	}, []);
 
-	if (state.status === 'loading' || state.status === 'error') {
+	if (state.status === 'error') {
 		return (
-			<section className={s.tickets} aria-busy={state.status === 'loading'} aria-labelledby="tickets-heading">
+			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
 				<header className={s.header}>
 					<p className={s.eyebrow}>Tickets</p>
-					<h2 id="tickets-heading" className={s.heading}>Get your ticket</h2>
+					<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
+				</header>
+				<div className={s.empty} role="alert">
+					<p>Tickets are temporarily unavailable. Please check back soon.</p>
+				</div>
+			</section>
+		);
+	}
+
+	if (state.status === 'loading') {
+		return (
+			<section id="tickets" className={s.tickets} aria-busy={true} aria-labelledby="tickets-heading">
+				<header className={s.header}>
+					<p className={s.eyebrow}>Tickets</p>
+					<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
 				</header>
 				<ul className={s.list} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
@@ -95,10 +134,10 @@ export default function Tickets() {
 	if (state.status === 'empty') {
 		if (!hasEvent) return null;
 		return (
-			<section className={s.tickets} aria-labelledby="tickets-heading">
+			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
 				<header className={s.header}>
 					<p className={s.eyebrow}>Tickets</p>
-					<h2 id="tickets-heading" className={s.heading}>Get your ticket</h2>
+					<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
 					<p className={s.subheading}>Tickets are not yet available.</p>
 				</header>
 				<div className={s.empty}>
@@ -118,51 +157,68 @@ export default function Tickets() {
 	}
 
 	return (
-		<section className={s.tickets} aria-labelledby="tickets-heading">
+		<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
 			<header className={s.header}>
 				<p className={s.eyebrow}>Tickets</p>
-				<h2 id="tickets-heading" className={s.heading}>Get your ticket</h2>
-				<p className={s.subheading}>Limited capacity. Early-bird passes on sale now.</p>
+				<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
+				<p className={s.subheading}>Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>
 			</header>
 			<ul className={s.list} role="list">
-				{releases.map((release) => {
-					const status = releaseStatus(release);
+				{groupReleases(releases).map((group) => {
+					const allSoldOut = group.variants.every(
+						(v) => releaseStatus(v.release).tone === 'sold-out',
+					);
 					return (
-						<li key={release.id} className={`${s.ticket} ${status.purchasable ? '' : s.isInactive}`}>
+						<li key={group.name} className={`${s.ticket} ${allSoldOut ? s.isInactive : ''}`}>
 							<div className={s.ticketTop}>
-								<h3 className={s.ticketTitle}>{releaseTitle(release)}</h3>
-								<span className={`${s.badge} ${badgeClass(s, status.tone)}`}>
-									{status.label}
-								</span>
-							</div>
-							{release.description && (
-								<p className={s.ticketDescription}>{release.description}</p>
-							)}
-							<p className={s.ticketPrice}>
-								<span className={s.priceAmount}>{formatPrice(release.price, release.currency)}</span>
-								{release.currency && Number(release.price) > 0 && (
-									<span className={s.priceNote}>incl. VAT</span>
+								<h3 className={s.ticketTitle}>{group.name}</h3>
+								{allSoldOut && (
+									<span className={`${s.badge} ${s.badgeSoldOut}`}>Sold out</span>
 								)}
-							</p>
-							{status.purchasable ? (
+							</div>
+							{group.description && (
+								<p className={s.ticketDescription}>{group.description}</p>
+							)}
+							<ul className={s.variants}>
+								{group.variants.map(({ release, variantLabel }) => {
+									const label = variantLabel || releaseTitle(release);
+									return (
+										<li key={release.id} className={s.variant}>
+											<span className={s.variantLabel}>{label}</span>
+											<span className={s.variantPrice}>
+												{formatPrice(release.price, release.currency)}
+											</span>
+										</li>
+									);
+								})}
+							</ul>
+							{allSoldOut ? (
+								<span className={`${s.cta} ${s.ctaDisabled}`} aria-disabled="true">
+									Sold out
+								</span>
+							) : (
 								<a
 									className={s.cta}
-									href={checkoutUrl(release, accountSlug, eventSlug)}
+									href={eventUrl(accountSlug, eventSlug)}
 									target="_blank"
 									rel="noopener noreferrer"
+									aria-label={`Get ${group.name} tickets on ti.to`}
 								>
-									Buy ticket
+									Get tickets
 									<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
 								</a>
-							) : (
-								<span className={`${s.cta} ${s.ctaDisabled}`} aria-disabled="true">
-									{status.label}
-								</span>
 							)}
 						</li>
 					);
 				})}
 			</ul>
+			<p className={s.footnote}>
+				Not ready yet?{' '}
+				<a href="#newsletter" className={s.footnoteLink}>
+					Notify me when the next wave drops
+					<span aria-hidden="true">{' ↘︎'}</span>
+				</a>
+			</p>
 		</section>
 	);
 }

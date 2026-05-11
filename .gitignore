@@ -27,3 +27,6 @@ firestore-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Claude Code worktrees + local IDE configs
+.claude/

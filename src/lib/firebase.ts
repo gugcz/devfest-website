@@ -13,29 +13,27 @@ const firebaseConfig = {
 	measurementId: 'G-L5NK2S2EZ0',
 };
 
-export const app: FirebaseApp = initializeApp(firebaseConfig);
+let appInstance: FirebaseApp | null = null;
+function getApp(): FirebaseApp {
+	if (!appInstance) appInstance = initializeApp(firebaseConfig);
+	return appInstance;
+}
 
 let databaseInstance: Database | null = null;
 export function getDb(): Database {
-	if (!databaseInstance) databaseInstance = getDatabase(app);
+	if (!databaseInstance) databaseInstance = getDatabase(getApp());
 	return databaseInstance;
 }
 
 let analyticsInstance: Analytics | null = null;
-
-async function initAnalytics() {
+export async function initAnalytics(): Promise<void> {
 	if (analyticsInstance) return;
-	const supported = await isSupported();
-	if (supported) {
-		analyticsInstance = getAnalytics(app);
+	try {
+		const supported = await isSupported();
+		if (supported) {
+			analyticsInstance = getAnalytics(getApp());
+		}
+	} catch (err) {
+		console.warn('[firebase] Analytics init failed:', err);
 	}
-}
-
-// Browser-only: initialise analytics if the user has already consented,
-// and listen for consent granted during this session.
-if (typeof window !== 'undefined') {
-	if (localStorage.getItem('cookie-consent') === 'accepted') {
-		initAnalytics();
-	}
-	window.addEventListener('cookie-consent-accepted', () => initAnalytics(), { once: true });
 }
