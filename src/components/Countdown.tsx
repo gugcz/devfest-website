@@ -73,10 +73,13 @@ function StampDigit({ value, idx, code }: StampDigitProps) {
 	);
 }
 
+const INITIAL_TIME: TimeLeft = { days: '000', hours: '00', minutes: '00', seconds: '00' };
+
 export default function Countdown() {
-	const [time, setTime] = useState<TimeLeft>(calcTimeLeft);
+	const [time, setTime] = useState<TimeLeft>(INITIAL_TIME);
 
 	useEffect(() => {
+		setTime(calcTimeLeft());
 		const id = setInterval(() => setTime(calcTimeLeft()), 1000);
 		return () => clearInterval(id);
 	}, []);
