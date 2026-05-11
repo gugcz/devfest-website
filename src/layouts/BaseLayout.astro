@@ -9,8 +9,8 @@ interface Props {
 
 const siteUrl = "https://devfest.cz";
 const {
-	title = "DevFest.cz 2026 — Prague Developer Conference Tickets",
-	description = "Tickets from €70. DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026.",
+	title = "DevFest.cz 2026 — Prague Developer Conference",
+	description = "DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026. Tickets coming soon.",
 	noindex = false,
 } = Astro.props;
 
@@ -32,11 +32,9 @@ const jsonLd = JSON.stringify([
 		"inLanguage": "en",
 		"offers": {
 			"@type": "Offer",
-			"url": `${siteUrl}#tickets`,
-			"availability": "https://schema.org/InStock",
-			"priceCurrency": "EUR",
-			"price": "70",
-			"validFrom": "2026-01-01"
+			"url": siteUrl,
+			"availability": "https://schema.org/PreOrder",
+			"priceCurrency": "EUR"
 		},
 		"location": {
 			"@type": "Place",

@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Countdown from '../components/Countdown';
 import NewsletterForm from '../components/NewsletterForm';
 import Footer from '../components/Footer';
-import Tickets from '../components/Tickets';
+// import Tickets from '../components/Tickets'; // TICKETS HIDDEN — restore when sale opens
 ---
 
 <BaseLayout>
@@ -40,13 +40,12 @@ import Tickets from '../components/Tickets';
 					</div>
 
 					<div class="hero-cta-group">
-						<a href="#tickets" class="btn-primary">Get tickets</a>
+						<a href="#newsletter" class="btn-primary">Notify me</a>
 						<span class="cta-sep" aria-hidden="true">///</span>
 						<a href="https://2025.devfest.cz" target="_blank" rel="noopener noreferrer" class="btn-secondary">
 							See last year's edition
 						</a>
 					</div>
-					<a href="#newsletter" class="hero-notify-link">Or notify me when more tiers drop&nbsp;↘&#xFE0E;</a>
 				</div>
 
 				<aside class="hero-countdown" aria-label="Time until doors open">
@@ -76,15 +75,18 @@ import Tickets from '../components/Tickets';
 			</div>
 		</div>
 
-		<!-- TICKETS -->
+		<!-- TICKETS — hidden until sale opens. Restore by uncommenting:
 		<Tickets client:visible />
+		-->
+
+
 
 		<!-- NEWSLETTER -->
 		<section id="newsletter">
 			<div class="section-label">The case file</div>
 			<h2 class="section-title">Be the first<br /><span class="red">to know.</span></h2>
 			<p class="newsletter-lede">
-				Tickets drop soon. Leave your email and we'll wire you the moment doors open.
+				Doors open soon. Leave your email and we'll wire you the moment tickets drop.
 			</p>
 			<NewsletterForm client:visible />
 		</section>
