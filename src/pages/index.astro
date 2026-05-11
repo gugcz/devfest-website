@@ -11,14 +11,13 @@ import Tickets from '../components/Tickets';
 		<!-- HERO -->
 		<section id="hero">
 			<div class="hero-bg" aria-hidden="true"></div>
-			<div class="blinds" aria-hidden="true"></div>
+			<div class="hero-photo" aria-hidden="true"></div>
 			<div class="city-silhouette" aria-hidden="true"></div>
-			<div class="spotlight" aria-hidden="true"></div>
 
 			<div class="hero-grid">
 				<div class="hero-content">
 					<h1 class="hero-title">
-						<img src="/logo.svg" alt="DevFest.cz 2026" class="hero-logo" />
+						<img src="/logo.png" alt="DevFest.cz 2026" class="hero-logo" />
 					</h1>
 
 					<p class="hero-subtitle">
@@ -133,10 +132,59 @@ import Tickets from '../components/Tickets';
 		position: absolute;
 		inset: 0;
 		background:
-			radial-gradient(ellipse 60% 70% at 70% 50%, rgba(30, 0, 0, 0.35) 0%, transparent 70%),
-			radial-gradient(ellipse 40% 60% at 15% 80%, rgba(204, 0, 0, 0.04) 0%, transparent 60%),
-			linear-gradient(135deg, #0D0D0D 0%, #050505 100%);
+			radial-gradient(ellipse 40% 60% at 15% 80%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
+			#050505;
 		z-index: 0;
+	}
+
+	// Photo occupies the right 50% on desktop, faded into the page via a
+	// soft CSS mask on its left edge. On mobile it stretches full-width
+	// and the fade runs top-to-bottom instead.
+	.hero-photo {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		width: 60%;
+		background-image: url('/hero-detective.jpg');
+		background-size: cover;
+		background-position: center;
+		// fade the left edge into the black hero-bg
+		mask-image: linear-gradient(
+			to right,
+			transparent 0%,
+			rgba(0, 0, 0, 0.35) 12%,
+			rgba(0, 0, 0, 0.85) 30%,
+			#000 55%
+		);
+		-webkit-mask-image: linear-gradient(
+			to right,
+			transparent 0%,
+			rgba(0, 0, 0, 0.35) 12%,
+			rgba(0, 0, 0, 0.85) 30%,
+			#000 55%
+		);
+		opacity: 0.85;
+		pointer-events: none;
+		z-index: 1;
+
+		@media (max-width: 900px) {
+			width: 100%;
+			background-position: 38% center;
+			opacity: 0.55;
+			mask-image: linear-gradient(
+				to bottom,
+				rgba(0, 0, 0, 0.7) 0%,
+				rgba(0, 0, 0, 0.55) 45%,
+				rgba(0, 0, 0, 0.2) 100%
+			);
+			-webkit-mask-image: linear-gradient(
+				to bottom,
+				rgba(0, 0, 0, 0.7) 0%,
+				rgba(0, 0, 0, 0.55) 45%,
+				rgba(0, 0, 0, 0.2) 100%
+			);
+		}
 	}
 
 	.blinds {
@@ -156,6 +204,8 @@ import Tickets from '../components/Tickets';
 	}
 
 	.city-silhouette {
+		// Hidden — the hero photo already shows the Prague Castle silhouette.
+		display: none;
 		position: absolute;
 		bottom: 0;
 		right: 0;
