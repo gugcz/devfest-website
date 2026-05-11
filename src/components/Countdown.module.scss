@@ -156,29 +156,56 @@
 
 @media (max-width: 600px) {
 	.countdown {
-		gap: 0.5rem;
+		gap: 0.4rem;
+		justify-content: center;
 	}
 	.cards {
-		gap: 2px;
+		gap: 1.5px;
 	}
 	.card {
-		width: clamp(2rem, 7.5vw, 2.8rem);
-		height: clamp(2.9rem, 10.5vw, 4rem);
+		width: clamp(1.6rem, 6.4vw, 2.4rem);
+		height: clamp(2.4rem, 9vw, 3.4rem);
 		--card-tilt: 0deg;
 	}
 	.digit {
-		font-size: clamp(1.6rem, 6.5vw, 2.2rem);
+		font-size: clamp(1.3rem, 5.4vw, 1.85rem);
 		top: 60%;
 	}
 	.cardStamp {
-		height: 20%;
+		height: 22%;
 	}
 	.cardStampText {
-		font-size: 0.42rem;
-		letter-spacing: 0.22em;
+		font-size: 0.4rem;
+		letter-spacing: 0.18em;
 	}
 	.label {
-		font-size: 0.48rem;
-		letter-spacing: 0.24em;
+		font-size: 0.46rem;
+		letter-spacing: 0.22em;
+	}
+}
+
+@media (max-width: 380px) {
+	.countdown {
+		gap: 0.25rem;
+	}
+	.cards {
+		gap: 1px;
+	}
+	.card {
+		width: 1.45rem;
+		height: 2.15rem;
+	}
+	.digit {
+		font-size: 1.2rem;
+	}
+	.cardStamp {
+		height: 18%;
+	}
+	.cardStampText {
+		display: none;
+	}
+	.label {
+		font-size: 0.42rem;
+		letter-spacing: 0.18em;
 	}
 }
