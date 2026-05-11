@@ -216,7 +216,7 @@ export default function Tickets() {
 				Not ready yet?{' '}
 				<a href="#newsletter" className={s.footnoteLink}>
 					Notify me when the next wave drops
-					<span aria-hidden="true">&nbsp;↘</span>
+					<span aria-hidden="true">{' ↘︎'}</span>
 				</a>
 			</p>
 		</section>
