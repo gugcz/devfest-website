@@ -1,42 +1,56 @@
 ---
-// add-to-calendar-button web component
-// All-day event: omit startTime/endTime; endDate matches startDate.
+// TODO: replace with the public iCal URL of the DevFest 2026 calendar event.
+// Use `webcal://` scheme so most browsers hand off to the OS default calendar app
+// (Apple Calendar, Outlook desktop). Falls back to downloading the .ics file.
+const ICS_URL = 'webcal://example.com/devfest-cz-2026.ics';
 ---
 
-<div class="atcb-wrapper">
-	<add-to-calendar-button
-		name="DevFest.cz 2026"
-		description="The most original conference in Prague is here again—and it’s not without a few mysteries.[br]https://devfest.cz"
-		startDate="2026-10-30"
-		endDate="2026-10-30"
-		timeZone="Europe/Prague"
-		location="Prague, Czech Republic"
-		options="['Apple','Google','Microsoft365','Outlook.com','Yahoo','iCal']"
-		iCalFileName="devfest-cz-2026"
-		buttonStyle="default"
-		size="3"
-		lightMode="dark"
-		styleDark="--btn-background: transparent; --btn-background-hover: rgba(204, 0, 0, 0.15); --btn-text: #F0EDE6; --btn-text-hover: #F0EDE6; --btn-border: rgba(204, 0, 0, 0.4); --btn-border-hover: rgba(204, 0, 0, 0.7); --btn-shadow: none; --btn-shadow-hover: none; --list-background: rgba(10, 10, 10, 0.96); --list-background-hover: rgba(204, 0, 0, 0.18); --list-text: #F0EDE6; --list-text-hover: #F0EDE6; --font: 'Share Tech Mono', monospace;"
-	></add-to-calendar-button>
-</div>
+<a class="add-to-calendar" href={ICS_URL}>
+	<span class="label">Add to calendar</span>
+	<span class="icon" aria-hidden="true">+</span>
+</a>
 
-<script>
-	import 'add-to-calendar-button';
-</script>
+<style lang="scss">
+	.add-to-calendar {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.78rem;
+		letter-spacing: 0.28em;
+		text-transform: uppercase;
+		color: var(--color-text);
+		text-decoration: none;
+		background: transparent;
+		border: 1px solid rgba(204, 0, 0, 0.55);
+		padding: 0.85rem 2rem;
+		clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+		transition: background 0.25s, border-color 0.25s, color 0.25s;
 
-<style>
-	.atcb-wrapper {
-		animation: addCalFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.65s both;
+		&:hover {
+			background: rgba(204, 0, 0, 0.18);
+			border-color: rgba(204, 0, 0, 0.85);
+			color: var(--color-text);
+		}
+
+		&:focus-visible {
+			outline: 1px solid rgba(204, 0, 0, 0.85);
+			outline-offset: 3px;
+		}
 	}
 
-	@keyframes addCalFadeIn {
-		from {
-			opacity: 0;
-			transform: translateY(8px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
+	.icon {
+		font-size: 1rem;
+		color: var(--color-accent);
+		opacity: 0.9;
+		line-height: 1;
+	}
+
+	@media (max-width: 600px) {
+		.add-to-calendar {
+			font-size: 0.72rem;
+			padding: 0.75rem 1.6rem;
+			letter-spacing: 0.22em;
 		}
 	}
 </style>
