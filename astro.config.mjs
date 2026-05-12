@@ -8,7 +8,12 @@ import react from '@astrojs/react';
 export default defineConfig({
     site: 'https://devfest.cz',
     trailingSlash: 'never',
-    integrations: [sitemap(), react()],
+    integrations: [
+        sitemap({
+            filter: (page) => !page.includes('/newsletter-subscription-thank-you'),
+        }),
+        react(),
+    ],
     vite: {
         server: {
             fs: {

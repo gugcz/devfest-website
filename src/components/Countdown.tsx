@@ -93,8 +93,6 @@ export default function Countdown() {
 		<div
 			className={s.countdown}
 			role="timer"
-			aria-live="polite"
-			aria-atomic="true"
 			aria-label={`Time until doors open: ${daysNum} days, ${hoursNum} hours, ${minutesNum} minutes, ${secondsNum} seconds`}
 		>
 			{UNITS.map(({ key, label, code }) => (
