@@ -27,6 +27,10 @@ Conference landing page for DevFest.cz 2026, built with Astro 6 and deployed to 
 
 No lint or test scripts are configured — TypeScript strict mode provides type safety.
 
+## PR conventions
+
+- **No "Test plan" sections in PR bodies.** This repo has no automated test suite and reviewers verify visually against deploy previews. PR descriptions should cover Summary / Why / Behavior / Files only — skip the test checklist entirely.
+
 ## Architecture
 
 ### Pages & Routing
