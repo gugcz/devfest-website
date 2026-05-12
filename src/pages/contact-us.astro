@@ -1,0 +1,261 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer';
+---
+
+<BaseLayout
+	title="Contact — DevFest.cz 2026"
+	description="Reach the DevFest.cz 2026 organising team — general questions, partnerships, and speaker enquiries."
+>
+	<main class="contact-page">
+		<div class="contact-inner">
+			<a href="/" class="back-link">&#8592; Back</a>
+
+			<div class="section-label">The address book</div>
+			<h1 class="contact-title">Send us<br /><span class="red">a wire.</span></h1>
+			<p class="contact-lede">
+				Pick the right desk. We&rsquo;ll get back faster than the last tram out of Prague.
+			</p>
+
+			<div class="contact-grid">
+				<article class="contact-card">
+					<span class="card-label">File N&deg; 01</span>
+					<h2 class="card-title">General questions</h2>
+					<p class="card-desc">Tickets, billing, production, or anything else.</p>
+					<ul class="card-emails">
+						<li>
+							<a class="email-link" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
+						</li>
+					</ul>
+				</article>
+
+				<article class="contact-card">
+					<span class="card-label">File N&deg; 02</span>
+					<h2 class="card-title">Partners &amp; sales</h2>
+					<p class="card-desc">Partnerships, sponsorships, and media collaborations.</p>
+					<ul class="card-emails">
+						<li>
+							<span class="email-name">Filip Goszler &mdash; Lead</span>
+							<a class="email-link" href="mailto:filip.goszler@gug.cz">filip.goszler@gug.cz</a>
+						</li>
+					</ul>
+				</article>
+
+				<article class="contact-card">
+					<span class="card-label">File N&deg; 03</span>
+					<h2 class="card-title">Speakers &amp; lineup</h2>
+					<p class="card-desc">Call for Proposals questions and speaker travel.</p>
+					<ul class="card-emails">
+						<li>
+							<a class="email-link" href="mailto:devfest-speakers@gug.cz">devfest-speakers@gug.cz</a>
+						</li>
+					</ul>
+				</article>
+			</div>
+
+			<p class="contact-outro">
+				Organised by <strong>GUG.cz, z.s.</strong> &mdash; the volunteer crew behind DevFest.cz.
+			</p>
+		</div>
+	</main>
+	<Footer client:idle />
+</BaseLayout>
+
+<style lang="scss">
+	.contact-page {
+		min-height: 100dvh;
+		padding: 5rem 1.5rem 6rem;
+		position: relative;
+		z-index: 1;
+	}
+
+	.contact-inner {
+		max-width: 1080px;
+		margin: 0 auto;
+	}
+
+	.back-link {
+		display: inline-block;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.75rem;
+		letter-spacing: 0.1em;
+		color: rgba(240, 237, 230, 0.45);
+		text-decoration: none;
+		margin-bottom: 2.5rem;
+		transition: color 0.2s;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent);
+		}
+	}
+
+	.section-label {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.65rem;
+		letter-spacing: 0.4em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.55);
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 1.5rem;
+
+		&::after {
+			content: '';
+			flex: 0 0 60px;
+			height: 1px;
+			background: rgba(204, 0, 0, 0.45);
+		}
+	}
+
+	.contact-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(2.5rem, 6vw, 4.5rem);
+		line-height: 0.92;
+		letter-spacing: 0.02em;
+		color: var(--color-text);
+		margin: 0 0 1.5rem;
+
+		.red { color: rgba(204, 0, 0, 0.85); }
+	}
+
+	.contact-lede {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 1.1rem;
+		line-height: 1.7;
+		color: var(--color-grey);
+		max-width: 560px;
+		margin: 0 0 3rem;
+		border-left: 2px solid rgba(180, 50, 50, 0.45);
+		padding-left: 1.2rem;
+	}
+
+	.contact-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1.5rem;
+	}
+
+	.contact-card {
+		position: relative;
+		background: var(--color-near-black);
+		border: 1px solid rgba(240, 237, 230, 0.08);
+		border-top: 2px solid rgba(204, 0, 0, 0.5);
+		padding: 1.8rem 1.6rem 1.7rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+		transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+			pointer-events: none;
+			mix-blend-mode: overlay;
+		}
+
+		&:hover {
+			border-color: rgba(204, 0, 0, 0.45);
+			transform: translateY(-2px);
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+		}
+	}
+
+	.card-label {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.6rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.45);
+	}
+
+	.card-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 1.7rem;
+		line-height: 1;
+		letter-spacing: 0.04em;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	.card-desc {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 0.98rem;
+		line-height: 1.55;
+		color: var(--color-grey);
+		margin: 0 0 0.4rem;
+		flex: 1;
+	}
+
+	.card-emails {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+	}
+
+	.card-emails li {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+
+	.email-name {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.62rem;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.55);
+	}
+
+	.email-link {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.85rem;
+		letter-spacing: 0.04em;
+		color: var(--color-text);
+		text-decoration: none;
+		border-bottom: 1px dashed rgba(204, 0, 0, 0.5);
+		padding-bottom: 1px;
+		align-self: flex-start;
+		word-break: break-all;
+		transition: color 0.2s, border-color 0.2s;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent);
+			border-color: var(--color-accent);
+		}
+	}
+
+	.contact-outro {
+		margin-top: 3.5rem;
+		font-family: 'Special Elite', cursive;
+		font-size: 0.92rem;
+		letter-spacing: 0.02em;
+		color: rgba(240, 237, 230, 0.55);
+
+		strong {
+			color: var(--color-text);
+			font-weight: normal;
+		}
+	}
+
+	@media (max-width: 900px) {
+		.contact-page { padding: 4rem 1.5rem 5rem; }
+		.contact-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+	}
+
+	@media (max-width: 600px) {
+		.contact-page { padding: 3.5rem 1.1rem 4rem; }
+		.contact-card { padding: 1.5rem 1.3rem 1.4rem; }
+		.card-title { font-size: 1.5rem; }
+		.contact-lede { font-size: 1rem; }
+	}
+</style>
