@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Footer from '../components/Footer';
+import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout title="Subscribed · DevFest.cz 2026" description="You're subscribed to DevFest.cz 2026 updates. We'll let you know when tickets drop." noindex>
@@ -16,7 +16,7 @@ import Footer from '../components/Footer';
 		</a>
 		<div class="decoration-line" aria-hidden="true"></div>
 	</main>
-	<Footer client:idle />
+	<Footer />
 </BaseLayout>
 
 <style lang="scss">

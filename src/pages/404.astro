@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Footer from '../components/Footer';
+import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout
@@ -21,7 +21,7 @@ import Footer from '../components/Footer';
 		</a>
 		<div class="decoration-line" aria-hidden="true"></div>
 	</main>
-	<Footer client:idle />
+	<Footer />
 </BaseLayout>
 
 <style lang="scss">
