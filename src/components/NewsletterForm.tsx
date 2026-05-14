@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import s from './NewsletterForm.module.scss';
 
 const FORM_ACTION =
@@ -6,6 +6,8 @@ const FORM_ACTION =
 
 export default function NewsletterForm() {
 	const [consented, setConsented] = useState(false);
+	const [message, setMessage] = useState('');
+	const formRef = useRef<HTMLFormElement>(null);
 
 	useEffect(() => {
 		const refField = document.getElementById('se-ref-field-id') as HTMLInputElement | null;
@@ -14,9 +16,33 @@ export default function NewsletterForm() {
 		}
 	}, []);
 
+	function handleSubmit(event: FormEvent<HTMLFormElement>) {
+		const form = event.currentTarget;
+		const emailInput = form.querySelector<HTMLInputElement>('#newsletter-email');
+		if (!consented) {
+			event.preventDefault();
+			setMessage('Please confirm the consent checkbox to continue.');
+			return;
+		}
+		if (emailInput && !emailInput.checkValidity()) {
+			event.preventDefault();
+			setMessage('Enter a valid email address to receive updates.');
+			emailInput.focus();
+			return;
+		}
+		setMessage('Submitting your email…');
+	}
+
 	return (
 		<div className={s.wrapper}>
-			<form className={s.form} method="post" action={FORM_ACTION}>
+			<form
+				className={s.form}
+				method="post"
+				action={FORM_ACTION}
+				onSubmit={handleSubmit}
+				ref={formRef}
+				noValidate
+			>
 				<label htmlFor="newsletter-email" className={s.srOnly}>
 					Email address
 				</label>
@@ -30,9 +56,17 @@ export default function NewsletterForm() {
 						placeholder="your@email.com"
 						required
 						autoComplete="email"
+						aria-describedby="newsletter-message"
 					/>
 				</div>
-				<button className={s.button} type="submit" name="_submit" value="Subscribe" disabled={!consented} aria-describedby="newsletter-consent-text">
+				<button
+					className={s.button}
+					type="submit"
+					name="_submit"
+					value="Subscribe"
+					disabled={!consented}
+					aria-describedby="newsletter-consent-text"
+				>
 					Notify Me
 				</button>
 				<input type="hidden" name="referrer" id="se-ref-field-id" defaultValue="" />
@@ -52,6 +86,15 @@ export default function NewsletterForm() {
 					<a href="/privacy-policy" className={s.consentLink}>Privacy Policy</a>.
 				</span>
 			</label>
+			<p
+				id="newsletter-message"
+				className={s.message}
+				role="status"
+				aria-live="polite"
+				aria-atomic="true"
+			>
+				{message}
+			</p>
 		</div>
 	);
 }
