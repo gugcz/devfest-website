@@ -5,6 +5,7 @@ interface Props {
 	title?: string;
 	description?: string;
 	noindex?: boolean;
+	bodyClass?: string;
 }
 
 const siteUrl = "https://devfest.cz";
@@ -12,6 +13,7 @@ const {
 	title = "DevFest.cz 2026 — Prague Developer Conference",
 	description = "DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026. Tickets coming soon.",
 	noindex = false,
+	bodyClass = "",
 } = Astro.props;
 
 const ogImage = `${siteUrl}/og-image.jpg`;
@@ -109,7 +111,7 @@ const jsonLd = JSON.stringify([
 		<!-- Structured Data -->
 		{!noindex && <script type="application/ld+json" set:html={jsonLd} />}
 	</head>
-	<body>
+	<body class={bodyClass}>
 		<a href="#main-content" class="skip-link">Skip to main content</a>
 		<div id="main-content"><slot /></div>
 		<CookieBanner />
@@ -139,11 +141,30 @@ const jsonLd = JSON.stringify([
 
 	html {
 		scroll-behavior: smooth;
+		// keep keyboard-focused elements clear of the fixed cookie banner
+		scroll-padding-bottom: 8rem;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
 	}
 
 	::selection {
 		background: rgba(204, 0, 0, 0.4);
 		color: var(--color-text);
+	}
+
+	// global focus-visible: WCAG 2.4.7 + 2.4.13
+	:focus {
+		outline: none;
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 3px;
+		border-radius: 2px;
 	}
 
 	body {
@@ -157,7 +178,15 @@ const jsonLd = JSON.stringify([
 		-moz-osx-font-smoothing: grayscale;
 		overflow-x: hidden;
 
-		// film grain (matches inspiration)
+		// Opt-out so terminal pages (404, post-submit) can render plain text
+		// against solid bg — axe-core sometimes mis-samples through blend overlays.
+		&.no-overlay::before,
+		&.no-overlay::after {
+			display: none;
+		}
+
+		// film grain (matches inspiration). Keep light so axe-core contrast
+		// readings stay within WCAG limits — overlay layers compound on text.
 		&::before {
 			content: '';
 			position: fixed;
@@ -165,8 +194,8 @@ const jsonLd = JSON.stringify([
 			z-index: 9999;
 			pointer-events: none;
 			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-			opacity: 0.35;
-			mix-blend-mode: overlay;
+			opacity: 0.18;
+			mix-blend-mode: soft-light;
 		}
 
 		// scanlines (matches inspiration)
@@ -180,8 +209,8 @@ const jsonLd = JSON.stringify([
 				0deg,
 				transparent,
 				transparent 2px,
-				rgba(0, 0, 0, 0.08) 2px,
-				rgba(0, 0, 0, 0.08) 4px
+				rgba(0, 0, 0, 0.035) 2px,
+				rgba(0, 0, 0, 0.035) 4px
 			);
 		}
 	}
@@ -190,12 +219,12 @@ const jsonLd = JSON.stringify([
 		position: absolute;
 		top: -40px;
 		left: 0;
-		padding: 0.6rem 1rem;
+		padding: 0.7rem 1.1rem;
 		background: #050505;
 		color: #F0EDE6;
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.75rem;
-		letter-spacing: 0.2em;
+		font-size: 0.9rem;
+		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		text-decoration: none;
 		border: 1px solid rgba(204, 0, 0, 0.5);

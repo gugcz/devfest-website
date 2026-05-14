@@ -52,7 +52,7 @@ import Footer from '../components/Footer.astro';
 		font-family: 'Bebas Neue', sans-serif;
 		font-size: clamp(4rem, 14vw, 8rem);
 		letter-spacing: 0.16em;
-		color: var(--color-accent);
+		color: var(--color-accent-hot);
 		line-height: 1;
 		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
 	}
@@ -67,11 +67,11 @@ import Footer from '../components/Footer.astro';
 
 	.subtext {
 		font-family: 'IM Fell English', serif;
-		font-size: 1.1rem;
+		font-size: 1.25rem;
 		font-style: italic;
 		line-height: 1.6;
 		max-width: 380px;
-		color: var(--color-grey);
+		color: var(--color-cream);
 		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
 	}
 
@@ -116,6 +116,11 @@ import Footer from '../components/Footer.astro';
 		&:active {
 			transform: rotate(-1.5deg) translateY(0);
 		}
+
+		&:focus-visible {
+			outline: 3px solid #F5EBDC;
+			outline-offset: 3px;
+		}
 	}
 
 	.back-arrow {
@@ -148,6 +153,27 @@ import Footer from '../components/Footer.astro';
 		to {
 			opacity: 1;
 			transform: translateY(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.title,
+		.code,
+		.headline,
+		.subtext,
+		.back-link,
+		.decoration-line {
+			animation: none;
+		}
+
+		.back-link,
+		.back-link:hover,
+		.back-link:active {
+			transform: none;
+		}
+
+		.back-arrow {
+			transition: none;
 		}
 	}
 </style>

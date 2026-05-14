@@ -197,7 +197,7 @@ import Footer from '../components/Footer.astro';
 		.section-label {
 			margin-bottom: 0.4rem;
 			gap: 0.8rem;
-			font-size: 0.6rem;
+			font-size: 0.78rem;
 
 			&::after { flex: 0 0 32px; }
 		}
@@ -247,8 +247,8 @@ import Footer from '../components/Footer.astro';
 
 	.meta-label {
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.6rem;
-		letter-spacing: 0.3em;
+		font-size: 0.78rem;
+		letter-spacing: 0.24em;
 		text-transform: uppercase;
 		color: var(--color-grey);
 	}
@@ -272,8 +272,8 @@ import Footer from '../components/Footer.astro';
 	.btn-primary {
 		display: inline-block;
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.85rem;
-		letter-spacing: 0.3em;
+		font-size: 0.9rem;
+		letter-spacing: 0.24em;
 		text-transform: uppercase;
 		background: #8B1818;
 		color: #F5EBDC;
@@ -306,36 +306,49 @@ import Footer from '../components/Footer.astro';
 		&:active {
 			transform: rotate(-1.5deg) translateY(0);
 		}
+
+		&:focus-visible {
+			outline: 3px solid #F5EBDC;
+			outline-offset: 3px;
+		}
 	}
 
 	.btn-secondary {
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.72rem;
-		letter-spacing: 0.2em;
+		font-size: 0.85rem;
+		letter-spacing: 0.18em;
 		text-transform: uppercase;
-		color: var(--color-grey);
+		color: rgba(240, 237, 230, 0.78);
 		text-decoration: none;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
+		padding: 0.6rem 0.4rem;
+		min-height: 2.75rem;
 		transition: color 0.2s;
 
 		&::before {
 			content: '▶';
-			font-size: 0.6rem;
-			color: rgba(240, 237, 230, 0.55);
+			font-size: 0.75rem;
+			color: rgba(240, 237, 230, 0.78);
 		}
 
-		&:hover {
+		&:hover,
+		&:focus-visible {
 			color: var(--color-text);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 3px;
 		}
 	}
 
 	.cta-sep {
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.78rem;
+		font-size: 0.85rem;
 		letter-spacing: 0.3em;
-		color: rgba(240, 237, 230, 0.18);
+		color: rgba(240, 237, 230, 0.25);
 		user-select: none;
 	}
 
@@ -348,6 +361,12 @@ import Footer from '../components/Footer.astro';
 		padding: 0.7rem 0;
 		border-top: 1px solid rgba(255, 255, 255, 0.08);
 		border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+
+		// SC 2.2.2 — pause on pointer hover so users can read a topic.
+		// Touch + keyboard users get static content via prefers-reduced-motion.
+		&:hover .ticker {
+			animation-play-state: paused;
+		}
 	}
 
 	.ticker {
@@ -358,15 +377,15 @@ import Footer from '../components/Footer.astro';
 
 	.ticker-item {
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.7rem;
-		letter-spacing: 0.25em;
+		font-size: 0.85rem;
+		letter-spacing: 0.2em;
 		text-transform: uppercase;
-		color: var(--color-bg);
+		color: #F5EBDC;
 		padding: 0 3rem;
 	}
 
 	.ticker-sep {
-		color: rgba(0, 0, 0, 0.4);
+		color: rgba(245, 235, 220, 0.45);
 	}
 
 	/* ===================== SHARED SECTION ===================== */
@@ -404,10 +423,10 @@ import Footer from '../components/Footer.astro';
 
 	.section-label {
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.65rem;
-		letter-spacing: 0.4em;
+		font-size: 0.8rem;
+		letter-spacing: 0.3em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
+		color: rgba(240, 237, 230, 0.7);
 		display: flex;
 		align-items: center;
 		gap: 1rem;
@@ -429,7 +448,7 @@ import Footer from '../components/Footer.astro';
 		color: var(--color-text);
 		margin-bottom: 2.5rem;
 
-		.red { color: rgba(204, 0, 0, 0.85); }
+		.red { color: var(--color-accent-hot); }
 	}
 
 	.newsletter-lede {
@@ -505,7 +524,7 @@ import Footer from '../components/Footer.astro';
 		.meta-value { font-size: 1.2rem; }
 		.hero-countdown { padding: 1rem 0.6rem 0.8rem; align-self: stretch; }
 		.hero-cta-group { gap: 1rem; }
-		.btn-primary { padding: 0.9rem 1.8rem; font-size: 0.72rem; }
+		.btn-primary { padding: 0.9rem 1.8rem; font-size: 0.85rem; }
 		.cta-sep { display: none; }
 		.section-label::after { flex-basis: 32px; }
 		#newsletter { padding: 4rem 1.1rem; }
@@ -516,7 +535,7 @@ import Footer from '../components/Footer.astro';
 		#hero { padding: 4.5rem 0.85rem 2.5rem; }
 		.hero-subtitle { padding-left: 0.8rem; }
 		.hero-countdown { padding: 0.9rem 0.4rem 0.7rem; }
-		.btn-primary { padding: 0.85rem 1.4rem; font-size: 0.7rem; letter-spacing: 0.22em; }
+		.btn-primary { padding: 0.85rem 1.4rem; font-size: 0.82rem; letter-spacing: 0.18em; }
 		#newsletter { padding: 3.5rem 0.85rem; }
 	}
 

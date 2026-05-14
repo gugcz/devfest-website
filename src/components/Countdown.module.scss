@@ -90,8 +90,8 @@
 	position: relative;
 	z-index: 1;
 	font-family: 'Share Tech Mono', monospace;
-	font-size: clamp(0.42rem, 0.5vw, 0.52rem);
-	letter-spacing: 0.32em;
+	font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+	letter-spacing: 0.22em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.92);
 	user-select: none;
@@ -117,10 +117,10 @@
 
 .label {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: clamp(0.5rem, 0.62vw, 0.6rem);
-	letter-spacing: 0.38em;
+	font-size: clamp(0.78rem, 1vw, 0.9rem);
+	letter-spacing: 0.28em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.32);
+	color: rgba(240, 237, 230, 0.55);
 }
 
 .digitStamping {
@@ -175,11 +175,11 @@
 		height: 22%;
 	}
 	.cardStampText {
-		font-size: 0.4rem;
-		letter-spacing: 0.18em;
+		font-size: 0.7rem;
+		letter-spacing: 0.16em;
 	}
 	.label {
-		font-size: 0.46rem;
+		font-size: 0.78rem;
 		letter-spacing: 0.22em;
 	}
 }
@@ -205,7 +205,7 @@
 		display: none;
 	}
 	.label {
-		font-size: 0.42rem;
+		font-size: 0.75rem;
 		letter-spacing: 0.18em;
 	}
 }

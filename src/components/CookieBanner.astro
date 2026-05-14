@@ -1,7 +1,7 @@
 ---
 ---
 
-<div id="cookie-banner" class="cookie-banner" role="dialog" aria-modal="true" aria-label="Cookie consent" aria-live="polite">
+<div id="cookie-banner" class="cookie-banner" role="region" aria-label="Cookie consent" aria-live="polite">
 	<p class="cookie-text">
 		We use analytics cookies to understand how visitors use this site.
 		See our <a href="/privacy-policy" class="cookie-link">Privacy Policy</a> for details.
@@ -60,8 +60,8 @@
 		hideBanner();
 	});
 
-	document.addEventListener('keydown', (e) => {
-		if (e.key === 'Escape' && banner && !banner.classList.contains('cookie-banner--hidden')) {
+	banner?.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape' && !banner.classList.contains('cookie-banner--hidden')) {
 			(document.getElementById('cookie-decline') as HTMLButtonElement | null)?.click();
 		}
 	});
@@ -80,10 +80,17 @@
 		gap: 1.2rem;
 		padding: 0.9rem 1.2rem 0.9rem 1.4rem;
 		background: #0D0D0D;
-		border: 1px solid rgba(240, 237, 230, 0.1);
-		border-left: 2px solid rgba(204, 0, 0, 0.55);
+		border: 1px solid rgba(240, 237, 230, 0.35);
+		border-left: 2px solid var(--color-accent);
 		z-index: 10000;
 		transition: opacity 0.3s, transform 0.3s;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.cookie-banner {
+			transition: none;
+		}
 	}
 
 	.cookie-banner::before {
@@ -93,8 +100,8 @@
 		left: 12px;
 		padding: 0 6px;
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.5rem;
-		letter-spacing: 0.4em;
+		font-size: 0.7rem;
+		letter-spacing: 0.32em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.5);
 		background: var(--color-bg);
@@ -108,22 +115,28 @@
 
 	.cookie-text {
 		font-family: 'Special Elite', cursive;
-		font-size: 0.78rem;
+		font-size: 0.95rem;
 		line-height: 1.55;
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.7);
 	}
 
 	.cookie-link {
-		color: rgba(240, 237, 230, 0.65);
+		color: #F0EDE6;
 		text-decoration: none;
-		border-bottom: 1px dashed rgba(204, 0, 0, 0.35);
+		border-bottom: 1px dashed rgba(204, 0, 0, 0.6);
 		transition: color 0.2s, border-color 0.2s;
 	}
 
-	.cookie-link:hover {
-		color: var(--color-accent);
-		border-color: var(--color-accent);
+	.cookie-link:hover,
+	.cookie-link:focus-visible {
+		color: var(--color-accent-hot);
+		border-color: var(--color-accent-hot);
+	}
+
+	.cookie-link:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 3px;
 	}
 
 	.cookie-actions {
@@ -135,12 +148,19 @@
 
 	.cookie-btn {
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.66rem;
-		letter-spacing: 0.28em;
+		font-size: 0.85rem;
+		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		cursor: pointer;
 		transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
 		white-space: nowrap;
+		min-height: 2.75rem;
+		min-width: 2.75rem;
+	}
+
+	.cookie-btn:focus-visible {
+		outline: 3px solid #F5EBDC;
+		outline-offset: 3px;
 	}
 
 	.cookie-btn--accept {
@@ -172,10 +192,10 @@
 	}
 
 	.cookie-btn--decline {
-		padding: 0.55rem 0.4rem;
-		color: rgba(240, 237, 230, 0.45);
+		padding: 0.7rem 0.8rem;
+		color: rgba(240, 237, 230, 0.75);
 		background: transparent;
-		border: none;
+		border: 1px solid transparent;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -183,12 +203,19 @@
 
 	.cookie-btn--decline::before {
 		content: '▶';
-		font-size: 0.55rem;
-		color: rgba(240, 237, 230, 0.55);
+		font-size: 0.75rem;
+		color: rgba(240, 237, 230, 0.85);
 	}
 
-	.cookie-btn--decline:hover {
+	.cookie-btn--decline:hover,
+	.cookie-btn--decline:focus-visible {
 		color: var(--color-text);
+		border-color: rgba(240, 237, 230, 0.45);
+	}
+
+	.cookie-btn--decline:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 3px;
 	}
 
 	@media (max-width: 500px) {
