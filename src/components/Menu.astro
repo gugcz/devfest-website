@@ -1,13 +1,20 @@
 ---
 const links = [
-	{ href: '/#newsletter', label: 'Notify me' },
+	{ href: '/partners', label: 'Partners' },
+	{ href: '/contact', label: 'Contact' },
 	{ href: 'https://2025.devfest.cz', label: '2025 Edition', external: true },
 ] as const;
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => {
+	const path = href.split('#')[0].replace(/\/$/, '') || '/';
+	return !href.startsWith('http') && path === currentPath;
+};
 ---
 
 <header id="site-header" class="site-header" data-state="top">
 	<a href="/" class="brand" aria-label="DevFest.cz 2026 — home">
-		<img src="/logo.svg" alt="DevFest.cz 2026" class="brand-logo" width="160" height="32" />
+		<img src="/logo.svg" alt="DevFest.cz 2026" class="brand-logo" width="210" height="42" />
 	</a>
 
 	<nav class="nav" aria-label="Primary">
@@ -26,17 +33,22 @@ const links = [
 		</button>
 
 		<ul id="nav-list" class="nav-list" data-open="false">
-			{links.map(({ href, label, external }) => (
-				<li>
-					<a
-						href={href}
-						class={`nav-link${href.endsWith('#newsletter') ? ' nav-link--cta' : ''}`}
-						{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-					>
-						<span class="nav-link-num" aria-hidden="true">/// </span>{label}
-					</a>
-				</li>
-			))}
+			{links.map(({ href, label, external }) => {
+				const cta = href.endsWith('#newsletter');
+				const current = isCurrent(href);
+				return (
+					<li>
+						<a
+							href={href}
+							class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
+							{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+							{...(current ? { 'aria-current': 'page' } : {})}
+						>
+							<span class="nav-link-num" aria-hidden="true">/// </span>{label}
+						</a>
+					</li>
+				);
+			})}
 		</ul>
 	</nav>
 </header>
@@ -100,18 +112,24 @@ const links = [
 		align-items: center;
 		justify-content: space-between;
 		gap: 1.5rem;
-		padding: 0.9rem 3rem;
-		transition: background 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease, padding 0.25s ease;
-		border-bottom: 1px solid transparent;
+		// Constant padding — height stays fixed across scroll states so
+		// nav doesn't reflow / jump when the scroll handler flips data-state.
+		padding: 0.75rem 3rem;
+		// Soft dark scrim so nav reads over hero photo highlights.
+		// Long fade keeps the edge from looking like a hard line.
+		background: linear-gradient(
+			to bottom,
+			rgba(5, 5, 5, 0.95) 0%,
+			rgba(5, 5, 5, 0.55) 70%,
+			rgba(5, 5, 5, 0) 100%
+		);
+		transition: background 0.25s ease, backdrop-filter 0.25s ease;
 	}
 
 	.site-header[data-state='scrolled'] {
-		background: rgba(5, 5, 5, 0.78);
-		backdrop-filter: blur(10px) saturate(120%);
-		-webkit-backdrop-filter: blur(10px) saturate(120%);
-		border-bottom-color: rgba(204, 0, 0, 0.22);
-		padding-top: 0.6rem;
-		padding-bottom: 0.6rem;
+		background: rgba(5, 5, 5, 0.92);
+		backdrop-filter: blur(12px) saturate(120%);
+		-webkit-backdrop-filter: blur(12px) saturate(120%);
 	}
 
 	/* ===================== BRAND ===================== */
@@ -121,7 +139,7 @@ const links = [
 		text-decoration: none;
 		color: var(--color-text);
 		flex-shrink: 0;
-		filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+		filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.85));
 		transition: opacity 0.2s, transform 0.2s;
 	}
 
@@ -133,9 +151,10 @@ const links = [
 
 	.brand-logo {
 		display: block;
-		height: clamp(28px, 4.4vw, 38px);
+		height: clamp(30px, 4.6vw, 42px);
 		width: auto;
-		max-width: 220px;
+		// no max-width cap — SVG aspect 5:1 keeps width sensible;
+		// capping at 220px was clipping the "2026" character on intermediate viewports
 	}
 
 	/* ===================== NAV ===================== */
@@ -147,7 +166,7 @@ const links = [
 	.nav-list {
 		display: flex;
 		align-items: center;
-		gap: 1.8rem;
+		gap: 2rem;
 		list-style: none;
 		margin: 0;
 		padding: 0;
@@ -155,46 +174,50 @@ const links = [
 
 	.nav-link {
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.72rem;
-		letter-spacing: 0.28em;
+		font-size: 0.82rem;
+		letter-spacing: 0.22em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.7);
+		// Pure text color → WCAG AA contrast against scrim (≥4.5:1)
+		color: var(--color-text);
 		text-decoration: none;
 		display: inline-flex;
 		align-items: center;
-		gap: 0.4rem;
-		padding: 0.4rem 0;
+		gap: 0.45rem;
+		padding: 0.6rem 0.2rem;
+		min-height: 2.75rem; // touch target — WCAG 2.5.5
 		position: relative;
 		transition: color 0.2s;
+		text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
 	}
 
 	.nav-link-num {
-		color: rgba(204, 0, 0, 0.55);
-		font-size: 0.6rem;
+		color: var(--color-accent-hot);
+		font-size: 0.7rem;
 	}
 
 	.nav-link:hover,
 	.nav-link:focus-visible {
-		color: var(--color-text);
+		color: var(--color-accent-hot);
 		outline: none;
 	}
 
-	.nav-link:not(.nav-link--cta)::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: -2px;
-		height: 1px;
-		background: rgba(204, 0, 0, 0.6);
-		transform: scaleX(0);
-		transform-origin: left;
-		transition: transform 0.2s ease;
+	// Underline = real text-decoration so it tracks text width when the
+	// web font finishes loading (no FOUT-driven width animation).
+	// Default transparent so links don't look pre-marked.
+	.nav-link:not(.nav-link--cta) {
+		text-decoration: underline 1px solid transparent;
+		text-underline-offset: 0.5rem;
+		transition: text-decoration-color 0.2s ease, color 0.2s ease;
 	}
 
-	.nav-link:not(.nav-link--cta):hover::after,
-	.nav-link:not(.nav-link--cta):focus-visible::after {
-		transform: scaleX(1);
+	.nav-link:not(.nav-link--cta):hover,
+	.nav-link:not(.nav-link--cta):focus-visible,
+	.nav-link--current:not(.nav-link--cta) {
+		text-decoration-color: var(--color-accent-hot);
+	}
+
+	.nav-link--current:not(.nav-link--cta) {
+		color: var(--color-accent-hot);
 	}
 
 	.nav-link--cta {
@@ -225,22 +248,26 @@ const links = [
 		display: none;
 		align-items: center;
 		gap: 0.6rem;
-		padding: 0.45rem 0.8rem 0.45rem 0.6rem;
-		background: transparent;
-		border: 1px solid rgba(240, 237, 230, 0.18);
-		color: rgba(240, 237, 230, 0.85);
+		padding: 0.6rem 0.95rem 0.6rem 0.75rem;
+		min-height: 2.75rem;
+		min-width: 2.75rem;
+		background: rgba(5, 5, 5, 0.55);
+		border: 1px solid rgba(204, 0, 0, 0.45);
+		color: var(--color-text);
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.7rem;
-		letter-spacing: 0.28em;
+		font-size: 0.78rem;
+		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		cursor: pointer;
-		transition: border-color 0.2s, color 0.2s;
+		text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+		transition: border-color 0.2s, color 0.2s, background 0.2s;
 	}
 
 	.nav-toggle:hover,
 	.nav-toggle:focus-visible {
-		border-color: rgba(204, 0, 0, 0.6);
-		color: var(--color-text);
+		border-color: var(--color-accent-hot);
+		color: var(--color-accent-hot);
+		background: rgba(5, 5, 5, 0.85);
 		outline: none;
 	}
 
@@ -269,7 +296,7 @@ const links = [
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
 		.site-header {
-			padding: 0.8rem 1.5rem;
+			padding: 0.65rem 1.5rem;
 		}
 	}
 
@@ -300,7 +327,7 @@ const links = [
 		}
 
 		.nav-list li {
-			border-bottom: 1px dashed rgba(240, 237, 230, 0.08);
+			border-bottom: 1px dashed rgba(240, 237, 230, 0.14);
 		}
 
 		.nav-list li:last-child {
@@ -309,9 +336,10 @@ const links = [
 
 		.nav-link {
 			width: 100%;
-			padding: 1.1rem 0;
-			font-size: 0.85rem;
-			letter-spacing: 0.32em;
+			padding: 1.2rem 0;
+			min-height: 3rem;
+			font-size: 0.95rem;
+			letter-spacing: 0.24em;
 		}
 
 		.nav-link--cta {
