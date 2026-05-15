@@ -84,29 +84,26 @@ export default function Countdown() {
 		return () => clearInterval(id);
 	}, []);
 
-	const daysNum = parseInt(time.days, 10);
-	const hoursNum = parseInt(time.hours, 10);
-	const minutesNum = parseInt(time.minutes, 10);
-	const secondsNum = parseInt(time.seconds, 10);
-
+	// Animated digits are decorative — screen readers get the static
+	// "doors open" sentence below. A per-second aria-label would spam AT
+	// without adding value, since the exact date is already given.
 	return (
-		<div
-			className={s.countdown}
-			role="timer"
-			aria-label={`Time until doors open: ${daysNum} days, ${hoursNum} hours, ${minutesNum} minutes, ${secondsNum} seconds`}
-		>
-			{UNITS.map(({ key, label, code }) => (
-				<Fragment key={key}>
-					<div className={s.unit} aria-hidden="true">
-						<div className={s.cards}>
-							{time[key].split('').map((d, idx) => (
-								<StampDigit key={`${key}-${idx}`} value={d} idx={idx} code={code} />
-							))}
+		<>
+			<span className={s.srOnly}>Doors open on 30 October 2026 at 9:00 AM Central European Time.</span>
+			<div className={s.countdown} aria-hidden="true">
+				{UNITS.map(({ key, label, code }) => (
+					<Fragment key={key}>
+						<div className={s.unit}>
+							<div className={s.cards}>
+								{time[key].split('').map((d, idx) => (
+									<StampDigit key={`${key}-${idx}`} value={d} idx={idx} code={code} />
+								))}
+							</div>
+							<span className={s.label}>{label}</span>
 						</div>
-						<span className={s.label}>{label}</span>
-					</div>
-				</Fragment>
-			))}
-		</div>
+					</Fragment>
+				))}
+			</div>
+		</>
 	);
 }

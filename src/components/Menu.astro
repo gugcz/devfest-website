@@ -44,7 +44,7 @@ const isCurrent = (href: string) => {
 							{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
 							{...(current ? { 'aria-current': 'page' } : {})}
 						>
-							<span class="nav-link-num" aria-hidden="true">/// </span>{label}
+							{label}
 						</a>
 					</li>
 				);
@@ -66,13 +66,24 @@ const isCurrent = (href: string) => {
 	onScroll();
 	window.addEventListener('scroll', onScroll, { passive: true });
 
-	// Mobile drawer toggle
+	// Mobile drawer toggle — make non-drawer regions inert when open so
+	// keyboard focus and AT navigation stay within the menu.
+	const inertTargets = (): Element[] =>
+		Array.from(document.querySelectorAll('#main-content, footer, #cookie-banner'));
+
 	const setOpen = (open: boolean) => {
 		if (!toggle || !list) return;
 		toggle.setAttribute('aria-expanded', String(open));
 		toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 		list.dataset.open = String(open);
 		document.body.style.overflow = open ? 'hidden' : '';
+		for (const el of inertTargets()) {
+			if (open) {
+				el.setAttribute('inert', '');
+			} else {
+				el.removeAttribute('inert');
+			}
+		}
 	};
 
 	toggle?.addEventListener('click', () => {
@@ -190,11 +201,6 @@ const isCurrent = (href: string) => {
 		text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
 	}
 
-	.nav-link-num {
-		color: var(--color-accent-hot);
-		font-size: 0.7rem;
-	}
-
 	.nav-link:hover,
 	.nav-link:focus-visible {
 		color: var(--color-accent-hot);
@@ -229,10 +235,6 @@ const isCurrent = (href: string) => {
 		transform: rotate(-1.5deg);
 		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
 		transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-	}
-
-	.nav-link--cta .nav-link-num {
-		color: rgba(245, 235, 220, 0.55);
 	}
 
 	.nav-link--cta:hover,

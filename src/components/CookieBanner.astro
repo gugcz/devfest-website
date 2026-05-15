@@ -7,8 +7,8 @@
 		See our <a href="/privacy-policy" class="cookie-link">Privacy Policy</a> for details.
 	</p>
 	<div class="cookie-actions">
-		<button id="cookie-accept" class="cookie-btn cookie-btn--accept">Accept</button>
-		<button id="cookie-decline" class="cookie-btn cookie-btn--decline">Decline</button>
+		<button id="cookie-accept" type="button" class="cookie-btn cookie-btn--accept">Accept</button>
+		<button id="cookie-decline" type="button" class="cookie-btn cookie-btn--decline">Decline</button>
 	</div>
 </div>
 
@@ -103,7 +103,7 @@
 		font-size: 0.7rem;
 		letter-spacing: 0.32em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.5);
+		color: rgba(240, 237, 230, 0.72);
 		background: var(--color-bg);
 	}
 
@@ -179,7 +179,7 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='80' height='30' filter='url(%23t)' opacity='0.16'/%3E%3C/svg%3E");
+		background-image: var(--noise-stamp);
 		background-size: 80px 30px;
 		mix-blend-mode: multiply;
 		pointer-events: none;

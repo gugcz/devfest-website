@@ -3,15 +3,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Countdown from '../components/Countdown';
 import NewsletterForm from '../components/NewsletterForm';
 import Footer from '../components/Footer.astro';
+import HeroBackground from '../components/HeroBackground.astro';
+import Ticker from '../components/Ticker.astro';
 // import Tickets from '../components/Tickets'; // TICKETS HIDDEN — restore when sale opens
+
+const tickerTopics = [
+	'AI & Machine Learning',
+	'Android & Kotlin',
+	'Web Technologies',
+	'Cloud & DevOps',
+	'Flutter & Dart',
+	'Security',
+	'Open Source',
+];
 ---
 
 <BaseLayout>
 	<main class="page">
 		<!-- HERO -->
 		<section id="hero">
-			<div class="hero-bg" aria-hidden="true"></div>
-			<div class="hero-photo" aria-hidden="true"></div>
+			<HeroBackground photoOpacity={0.85} mobilePhotoOpacity={0.55} />
 
 			<div class="hero-grid">
 				<div class="hero-content">
@@ -51,24 +62,7 @@ import Footer from '../components/Footer.astro';
 		</section>
 
 		<!-- TICKER -->
-		<div class="ticker-wrap" aria-hidden="true">
-			<div class="ticker">
-				<span class="ticker-item">AI &amp; Machine Learning <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Android &amp; Kotlin <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Web Technologies <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Cloud &amp; DevOps <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Flutter &amp; Dart <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Security <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Open Source <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">AI &amp; Machine Learning <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Android &amp; Kotlin <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Web Technologies <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Cloud &amp; DevOps <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Flutter &amp; Dart <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Security <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Open Source <span class="ticker-sep">///</span></span>
-			</div>
-		</div>
+		<Ticker items={tickerTopics} />
 
 		<!-- TICKETS — hidden until sale opens. Restore by uncommenting:
 		<Tickets client:visible />
@@ -138,71 +132,12 @@ import Footer from '../components/Footer.astro';
 		padding: 0 3rem;
 	}
 
-	.hero-bg {
-		position: absolute;
-		inset: 0;
-		background:
-			radial-gradient(ellipse 40% 60% at 15% 80%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
-			#050505;
-		z-index: 0;
-	}
-
-	// Photo occupies the right 50% on desktop, faded into the page via a
-	// soft CSS mask on its left edge. On mobile it stretches full-width
-	// and the fade runs top-to-bottom instead.
-	.hero-photo {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		right: 0;
-		width: 60%;
-		background-image: url('/hero-detective.jpg');
-		background-size: cover;
-		background-position: center;
-		// fade the left edge into the black hero-bg
-		mask-image: linear-gradient(
-			to right,
-			transparent 0%,
-			rgba(0, 0, 0, 0.35) 12%,
-			rgba(0, 0, 0, 0.85) 30%,
-			#000 55%
-		);
-		-webkit-mask-image: linear-gradient(
-			to right,
-			transparent 0%,
-			rgba(0, 0, 0, 0.35) 12%,
-			rgba(0, 0, 0, 0.85) 30%,
-			#000 55%
-		);
-		opacity: 0.85;
-		pointer-events: none;
-		z-index: 1;
-
-		@media (max-width: 900px) {
-			width: 100%;
-			background-position: 38% center;
-			opacity: 0.55;
-			mask-image: linear-gradient(
-				to bottom,
-				rgba(0, 0, 0, 0.7) 0%,
-				rgba(0, 0, 0, 0.55) 45%,
-				rgba(0, 0, 0, 0.2) 100%
-			);
-			-webkit-mask-image: linear-gradient(
-				to bottom,
-				rgba(0, 0, 0, 0.7) 0%,
-				rgba(0, 0, 0, 0.55) 45%,
-				rgba(0, 0, 0, 0.2) 100%
-			);
-		}
-	}
-
 	.hero-grid {
 		position: relative;
 		z-index: 10;
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
-		gap: 5rem;
+		gap: 6rem;
 		align-items: center;
 		width: 100%;
 		max-width: 1200px;
@@ -216,14 +151,14 @@ import Footer from '../components/Footer.astro';
 	.hero-countdown {
 		display: flex;
 		flex-direction: column;
-		gap: 1.2rem;
-		padding: 1.6rem 1.4rem 1.2rem;
+		gap: 1.6rem;
+		padding: 2rem 1.6rem 1.6rem;
 		background: transparent;
 		border: none;
 		animation: fadeInUp 1s ease 0.7s both;
 
 		.section-label {
-			margin-bottom: 0.4rem;
+			margin-bottom: 0.8rem;
 			gap: 0.8rem;
 			font-size: 0.78rem;
 
@@ -249,20 +184,20 @@ import Footer from '../components/Footer.astro';
 		font-style: italic;
 		font-size: clamp(1.05rem, 1.6vw, 1.3rem);
 		color: var(--color-grey);
-		margin-top: 1.5rem;
-		line-height: 1.6;
+		margin-top: 2rem;
+		line-height: 1.7;
 		max-width: 480px;
 		border-left: 2px solid rgba(180, 50, 50, 0.45);
-		padding-left: 1.2rem;
+		padding-left: 1.4rem;
 		text-wrap: balance;
 		hyphens: auto;
 		animation: fadeInUp 1s ease 0.4s both;
 	}
 
 	.hero-meta {
-		margin-top: 2.5rem;
+		margin-top: 3.2rem;
 		display: flex;
-		gap: 3rem;
+		gap: 3.6rem;
 		flex-wrap: wrap;
 		animation: fadeInUp 1s ease 0.6s both;
 	}
@@ -270,7 +205,7 @@ import Footer from '../components/Footer.astro';
 	.meta-item {
 		display: flex;
 		flex-direction: column;
-		gap: 0.3rem;
+		gap: 0.55rem;
 	}
 
 	.meta-label {
@@ -289,7 +224,7 @@ import Footer from '../components/Footer.astro';
 	}
 
 	.hero-cta-group {
-		margin-top: 3rem;
+		margin-top: 3.75rem;
 		display: flex;
 		gap: 1.5rem;
 		align-items: center;
@@ -319,7 +254,7 @@ import Footer from '../components/Footer.astro';
 			content: '';
 			position: absolute;
 			inset: 0;
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='80' height='30' filter='url(%23t)' opacity='0.16'/%3E%3C/svg%3E");
+			background-image: var(--noise-stamp);
 			background-size: 80px 30px;
 			mix-blend-mode: multiply;
 			pointer-events: none;
@@ -341,46 +276,10 @@ import Footer from '../components/Footer.astro';
 		}
 	}
 
-	/* ===================== TICKER ===================== */
-	.ticker-wrap {
-		position: relative;
-		z-index: 20;
-		background: #A01818;
-		overflow: hidden;
-		padding: 0.7rem 0;
-		border-top: 1px solid rgba(255, 255, 255, 0.08);
-		border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-
-		// SC 2.2.2 — pause on pointer hover so users can read a topic.
-		// Touch + keyboard users get static content via prefers-reduced-motion.
-		&:hover .ticker {
-			animation-play-state: paused;
-		}
-	}
-
-	.ticker {
-		display: flex;
-		white-space: nowrap;
-		animation: ticker 30s linear infinite;
-	}
-
-	.ticker-item {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.85rem;
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		color: #F5EBDC;
-		padding: 0 3rem;
-	}
-
-	.ticker-sep {
-		color: rgba(245, 235, 220, 0.45);
-	}
-
 	/* ===================== GALLERY ===================== */
 	#gallery {
 		position: relative;
-		padding: 7rem 0 6rem;
+		padding: 8.5rem 0 8rem;
 		background:
 			linear-gradient(180deg, var(--color-bg) 0%, var(--color-near-black) 12%, var(--color-near-black) 88%, var(--color-bg) 100%);
 		overflow: hidden;
@@ -423,7 +322,7 @@ import Footer from '../components/Footer.astro';
 		position: relative;
 		z-index: 2;
 		max-width: 1080px;
-		margin: 0 auto 3.5rem;
+		margin: 0 auto 5rem;
 		padding: 0 3rem;
 		text-align: center;
 		display: flex;
@@ -436,7 +335,7 @@ import Footer from '../components/Footer.astro';
 	}
 
 	.gallery-head .section-title {
-		margin-bottom: 1.2rem;
+		margin-bottom: 1.6rem;
 	}
 
 	.gallery-lede {
@@ -454,7 +353,7 @@ import Footer from '../components/Footer.astro';
 		z-index: 2;
 		width: 100%;
 		overflow: hidden;
-		padding: 1.5rem 0;
+		padding: 2.2rem 0;
 		mask-image: linear-gradient(
 			to right,
 			transparent 0%,
@@ -478,7 +377,7 @@ import Footer from '../components/Footer.astro';
 
 	.gallery-track {
 		display: flex;
-		gap: 1.4rem;
+		gap: 2rem;
 		width: max-content;
 		animation: gallery-scroll 180s linear infinite;
 		will-change: transform;
@@ -523,7 +422,7 @@ import Footer from '../components/Footer.astro';
 	/* ===================== SHARED SECTION ===================== */
 	#countdown-section,
 	#newsletter {
-		padding: 6rem 3rem;
+		padding: 8rem 3rem;
 		position: relative;
 		max-width: 1080px;
 		margin: 0 auto;
@@ -561,8 +460,8 @@ import Footer from '../components/Footer.astro';
 		color: rgba(240, 237, 230, 0.7);
 		display: flex;
 		align-items: center;
-		gap: 1rem;
-		margin-bottom: 2rem;
+		gap: 1.2rem;
+		margin-bottom: 2.6rem;
 
 		&::after {
 			content: '';
@@ -578,7 +477,7 @@ import Footer from '../components/Footer.astro';
 		line-height: 0.92;
 		letter-spacing: 0.02em;
 		color: var(--color-text);
-		margin-bottom: 2.5rem;
+		margin-bottom: 3rem;
 
 		.red { color: var(--color-accent-hot); }
 	}
@@ -587,17 +486,17 @@ import Footer from '../components/Footer.astro';
 		font-family: 'IM Fell English', serif;
 		font-style: italic;
 		font-size: 1.05rem;
-		line-height: 1.7;
+		line-height: 1.75;
 		color: var(--color-grey);
 		max-width: 520px;
-		margin-bottom: 2rem;
+		margin-bottom: 2.6rem;
 	}
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 1240px) {
 		.hero-grid {
 			grid-template-columns: 1fr;
-			gap: 3rem;
+			gap: 4rem;
 			justify-items: center;
 		}
 		.hero-content {
@@ -637,48 +536,47 @@ import Footer from '../components/Footer.astro';
 	}
 
 	@media (max-width: 900px) {
-		#hero { padding: 6rem 1.5rem 4rem; min-height: auto; }
-		.hero-meta { gap: 1.5rem; }
-		.hero-countdown { padding: 1.2rem 1.1rem 1rem; }
-		#newsletter { padding: 5rem 1.5rem; }
-		#gallery { padding: 5rem 0 4.5rem; }
-		.gallery-head { padding: 0 1.5rem; margin-bottom: 2.5rem; }
-		.gallery-marquee { padding: 1.2rem 0; }
-		.gallery-track { gap: 1rem; }
+		#hero { padding: 7rem 1.5rem 5rem; min-height: auto; }
+		.hero-meta { gap: 2.2rem; }
+		.hero-countdown { padding: 1.6rem 1.2rem 1.4rem; }
+		#newsletter { padding: 6.5rem 1.5rem; }
+		#gallery { padding: 6.5rem 0 6rem; }
+		.gallery-head { padding: 0 1.5rem; margin-bottom: 3.5rem; }
+		.gallery-marquee { padding: 1.8rem 0; }
+		.gallery-track { gap: 1.4rem; }
 		.gallery-track img { height: 240px; padding: 0.45rem 0.45rem 1.2rem; }
 	}
 
 	@media (max-width: 600px) {
-		#hero { padding: 5rem 1.1rem 3rem; }
-		#gallery { padding: 4rem 0 3.5rem; }
-		.gallery-head { padding: 0 1.1rem; margin-bottom: 2rem; }
-		.gallery-marquee { padding: 1rem 0; }
-		.gallery-track { gap: 0.8rem; }
+		#hero { padding: 6rem 1.1rem 4rem; }
+		#gallery { padding: 5rem 0 5rem; }
+		.gallery-head { padding: 0 1.1rem; margin-bottom: 2.8rem; }
+		.gallery-marquee { padding: 1.4rem 0; }
+		.gallery-track { gap: 1.1rem; }
 		.gallery-track img { height: 190px; padding: 0.4rem 0.4rem 1rem; }
 		.gallery-lede { font-size: 0.98rem; }
-		.hero-content { gap: 1.1rem; }
+		.hero-content { gap: 1.5rem; }
 		.hero-subtitle {
 			font-size: 1rem;
-			padding-left: 1rem;
+			padding-left: 1.1rem;
 			max-width: 28ch;
-			line-height: 1.55;
+			line-height: 1.65;
 		}
-		.hero-meta { gap: 1.1rem; }
+		.hero-meta { gap: 1.6rem; }
 		.meta-value { font-size: 1.2rem; }
-		.hero-countdown { padding: 1rem 0.6rem 0.8rem; align-self: stretch; }
-		.hero-cta-group { gap: 1rem; }
+		.hero-countdown { padding: 1.4rem 0.6rem 1rem; align-self: stretch; }
+		.hero-cta-group { gap: 1rem; margin-top: 2.6rem; }
 		.btn-primary { padding: 0.9rem 1.8rem; font-size: 0.85rem; }
 		.section-label::after { flex-basis: 32px; }
-		#newsletter { padding: 4rem 1.1rem; }
-		.ticker { font-size: 0.95rem; }
+		#newsletter { padding: 5rem 1.1rem; }
 	}
 
 	@media (max-width: 380px) {
-		#hero { padding: 4.5rem 0.85rem 2.5rem; }
-		.hero-subtitle { padding-left: 0.8rem; }
-		.hero-countdown { padding: 0.9rem 0.4rem 0.7rem; }
+		#hero { padding: 5.5rem 0.85rem 3.5rem; }
+		.hero-subtitle { padding-left: 0.9rem; }
+		.hero-countdown { padding: 1.2rem 0.4rem 0.9rem; }
 		.btn-primary { padding: 0.85rem 1.4rem; font-size: 0.82rem; letter-spacing: 0.18em; }
-		#newsletter { padding: 3.5rem 0.85rem; }
+		#newsletter { padding: 4.5rem 0.85rem; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -687,7 +585,6 @@ import Footer from '../components/Footer.astro';
 		.hero-meta,
 		.hero-cta-group,
 		.hero-countdown,
-		.ticker,
 		.gallery-track { animation: none; }
 
 		.gallery-marquee {
