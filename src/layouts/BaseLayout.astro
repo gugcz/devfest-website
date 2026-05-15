@@ -217,9 +217,11 @@ const jsonLd = JSON.stringify([
 		}
 	}
 
+	// Visually hidden until focused — clip-path technique keeps it out
+	// of layout and avoids the slide-in jump that translateY produced.
 	.skip-link {
 		position: absolute;
-		top: -40px;
+		top: 0;
 		left: 0;
 		padding: 0.7rem 1.1rem;
 		background: #050505;
@@ -231,10 +233,18 @@ const jsonLd = JSON.stringify([
 		text-decoration: none;
 		border: 1px solid rgba(204, 0, 0, 0.5);
 		z-index: 10001;
-		transition: top 0.2s;
+		clip-path: inset(50%);
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		white-space: nowrap;
 
 		&:focus {
-			top: 0;
+			clip-path: none;
+			width: auto;
+			height: auto;
+			overflow: visible;
+			white-space: normal;
 			outline: 2px solid var(--color-accent);
 		}
 	}

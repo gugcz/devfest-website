@@ -40,10 +40,6 @@ import Footer from '../components/Footer.astro';
 
 					<div class="hero-cta-group">
 						<a href="#newsletter" class="btn-primary">Notify me</a>
-						<span class="cta-sep" aria-hidden="true">///</span>
-						<a href="https://2025.devfest.cz" target="_blank" rel="noopener noreferrer" class="btn-secondary">
-							See last year's edition
-						</a>
 					</div>
 				</div>
 
@@ -343,45 +339,6 @@ import Footer from '../components/Footer.astro';
 			outline: 3px solid #F5EBDC;
 			outline-offset: 3px;
 		}
-	}
-
-	.btn-secondary {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.85rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.78);
-		text-decoration: none;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.6rem 0.4rem;
-		min-height: 2.75rem;
-		transition: color 0.2s;
-
-		&::before {
-			content: '▶';
-			font-size: 0.75rem;
-			color: rgba(240, 237, 230, 0.78);
-		}
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-text);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: 3px;
-		}
-	}
-
-	.cta-sep {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.85rem;
-		letter-spacing: 0.3em;
-		color: rgba(240, 237, 230, 0.25);
-		user-select: none;
 	}
 
 	/* ===================== TICKER ===================== */
@@ -711,7 +668,6 @@ import Footer from '../components/Footer.astro';
 		.hero-countdown { padding: 1rem 0.6rem 0.8rem; align-self: stretch; }
 		.hero-cta-group { gap: 1rem; }
 		.btn-primary { padding: 0.9rem 1.8rem; font-size: 0.85rem; }
-		.cta-sep { display: none; }
 		.section-label::after { flex-basis: 32px; }
 		#newsletter { padding: 4rem 1.1rem; }
 		.ticker { font-size: 0.95rem; }

@@ -14,7 +14,6 @@ import Footer from '../components/Footer.astro';
 			<div class="hero-photo" aria-hidden="true"></div>
 
 			<div class="hero-content">
-				<a href="/" class="back-link">&#8592; Back</a>
 				<div class="section-label">The address book</div>
 				<h1 id="contact-title" class="hero-title">Send us<br /><span class="red">a wire.</span></h1>
 				<p class="hero-lede">
@@ -78,9 +77,6 @@ import Footer from '../components/Footer.astro';
 					</article>
 				</div>
 
-				<p class="contact-outro">
-					Organised by <strong>GUG.cz, z.s.</strong> &mdash; the volunteer crew behind DevFest.cz.
-				</p>
 			</div>
 		</section>
 	</main>
@@ -164,22 +160,6 @@ import Footer from '../components/Footer.astro';
 		max-width: 1080px;
 		width: 100%;
 		margin: 0 auto;
-	}
-
-	.back-link {
-		display: inline-block;
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.75rem;
-		letter-spacing: 0.1em;
-		color: rgba(240, 237, 230, 0.55);
-		text-decoration: none;
-		margin-bottom: 2rem;
-		transition: color 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent);
-		}
 	}
 
 	.section-label {
@@ -347,19 +327,6 @@ import Footer from '../components/Footer.astro';
 		&:focus-visible {
 			color: var(--color-accent);
 			border-color: var(--color-accent);
-		}
-	}
-
-	.contact-outro {
-		margin-top: 3.5rem;
-		font-family: 'Special Elite', cursive;
-		font-size: 0.92rem;
-		letter-spacing: 0.02em;
-		color: rgba(240, 237, 230, 0.55);
-
-		strong {
-			color: var(--color-text);
-			font-weight: normal;
 		}
 	}
 
