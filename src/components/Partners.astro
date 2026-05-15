@@ -1,5 +1,7 @@
 ---
-// TODO: replace with real partnership deck URL (PDF, Google Slides, Notion etc.)
+// Partnership deck is still in production. Once it lands (PDF / Google Slides / Notion),
+// flip `DECK_READY` to true and set `PRESENTATION_URL`.
+const DECK_READY = false;
 const PRESENTATION_URL = '#partners-deck-todo';
 const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.cz' };
 ---
@@ -24,11 +26,22 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 			</div>
 
 			<div class="partners-cta-wrap">
-				<a class="partners-cta" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
-					<span>See partnership deck</span>
-					<span class="partners-cta-arrow" aria-hidden="true">→</span>
-				</a>
-				<p class="partners-cta-note">Tiers, perks, audience stats — one PDF.</p>
+				{DECK_READY ? (
+					<a class="partners-cta" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
+						<span>See partnership deck</span>
+						<span class="partners-cta-arrow" aria-hidden="true">→</span>
+					</a>
+				) : (
+					<span class="partners-cta partners-cta-soon" aria-disabled="true" role="text">
+						<span class="partners-cta-label">Partnership deck</span>
+						<span class="partners-cta-stamp" aria-hidden="true">Coming soon</span>
+					</span>
+				)}
+				<p class="partners-cta-note">
+					{DECK_READY
+						? 'Tiers, perks, audience stats — one PDF.'
+						: 'Brochure lands soon. In the meantime, drop Filip a line.'}
+				</p>
 			</div>
 		</div>
 	</div>
@@ -246,6 +259,65 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 		}
 	}
 
+	.partners-cta-soon {
+		background: rgba(80, 60, 50, 0.55);
+		border-color: rgba(120, 90, 80, 0.6);
+		color: rgba(240, 237, 230, 0.8);
+		cursor: not-allowed;
+		gap: 0.7rem;
+		padding: 0.95rem 1.6rem 0.95rem 2.4rem;
+
+		&::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 1.2rem;
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: rgba(204, 0, 0, 0.7);
+			box-shadow: 0 0 8px rgba(204, 0, 0, 0.55);
+			transform: translateY(-50%);
+			animation: deckPulse 2s ease-in-out infinite;
+		}
+
+		&:hover,
+		&:focus-visible {
+			background: rgba(80, 60, 50, 0.55);
+			transform: rotate(-1.5deg);
+			box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+		}
+	}
+
+	.partners-cta-label {
+		opacity: 0.92;
+	}
+
+	.partners-cta-stamp {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.6rem;
+		letter-spacing: 0.28em;
+		text-transform: uppercase;
+		padding: 0.22rem 0.55rem;
+		background: rgba(204, 0, 0, 0.78);
+		color: #F5EBDC;
+		border: 1px solid rgba(0, 0, 0, 0.35);
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+		border-radius: 1px;
+		transform: rotate(3deg);
+	}
+
+	@keyframes deckPulse {
+		0%, 100% { opacity: 0.6; }
+		50% { opacity: 1; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.partners-cta-soon::after {
+			animation: none;
+		}
+	}
+
 	.partners-cta-note {
 		font-family: 'IM Fell English', serif;
 		font-style: italic;
@@ -273,6 +345,23 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 
 		.partners-cta {
 			justify-content: center;
+		}
+
+		.partners-cta-soon {
+			flex-wrap: wrap;
+			gap: 0.55rem;
+			padding: 0.9rem 1.2rem 0.9rem 2rem;
+			white-space: normal;
+
+			&::after {
+				left: 0.9rem;
+			}
+		}
+
+		.partners-cta-stamp {
+			font-size: 0.55rem;
+			letter-spacing: 0.24em;
+			padding: 0.2rem 0.45rem;
 		}
 
 		.partners-cta-note {
