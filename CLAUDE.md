@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## PR conventions
+
+- **Do not add a `## Test plan` section to PR descriptions.** The maintainer verifies changes manually and the checklist adds noise. Keep PR bodies to Summary / Why / Follow-up only.
+
 # DevFest Website
 
 Conference landing page for DevFest.cz 2026, built with Astro 6 and deployed to Firebase Hosting.
