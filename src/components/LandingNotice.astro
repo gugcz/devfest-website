@@ -1,0 +1,162 @@
+---
+interface Props {
+	code?: string;
+	headline: string;
+	subtext: string;
+	backLabel?: string;
+}
+
+const { code, headline, subtext, backLabel = 'Back to homepage' } = Astro.props;
+---
+
+<main class="landing">
+	<h1 class="title">
+		<img src="/logo.png" alt="DevFest.cz 2026" class="logo" />
+	</h1>
+	{code && <p class="code">{code}</p>}
+	<p class="headline">{headline}</p>
+	<p class="subtext">{subtext}</p>
+	<a class="back-link" href="/">
+		<span class="back-arrow" aria-hidden="true">&#8592;</span>
+		{backLabel}
+	</a>
+	<div class="decoration-line" aria-hidden="true"></div>
+</main>
+
+<style lang="scss">
+	.landing {
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 4rem 1.5rem 6rem;
+		gap: 1.5rem;
+		text-align: center;
+		position: relative;
+		z-index: 1;
+	}
+
+	.title {
+		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+		line-height: 0;
+	}
+
+	.logo {
+		width: clamp(280px, 60vw, 520px);
+		height: auto;
+	}
+
+	.code {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(4rem, 14vw, 8rem);
+		letter-spacing: 0.16em;
+		color: var(--color-accent-hot);
+		line-height: 1;
+		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+	}
+
+	.headline {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(2rem, 6vw, 3.5rem);
+		letter-spacing: 0.08em;
+		color: var(--color-text);
+		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+	}
+
+	.subtext {
+		font-family: 'IM Fell English', serif;
+		font-size: 1.25rem;
+		font-style: italic;
+		line-height: 1.6;
+		max-width: 380px;
+		color: var(--color-cream);
+		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+	}
+
+	.back-link {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.85rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: #F5EBDC;
+		text-decoration: none;
+		background: #8B1818;
+		border: 2px solid #8B1818;
+		border-radius: 1px;
+		padding: 0.95rem 2.2rem;
+		transform: rotate(-1.5deg);
+		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+		transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+		position: relative;
+		overflow: hidden;
+		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background-image: var(--noise-stamp);
+			background-size: 80px 30px;
+			mix-blend-mode: multiply;
+			pointer-events: none;
+		}
+
+		&:hover {
+			background: var(--color-accent-hot);
+			transform: rotate(-1.5deg) translateY(-1px);
+			box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
+		}
+
+		&:active {
+			transform: rotate(-1.5deg) translateY(0);
+		}
+
+		&:focus-visible {
+			outline: 3px solid #F5EBDC;
+			outline-offset: 3px;
+		}
+	}
+
+	.back-arrow {
+		font-size: 0.85rem;
+		transition: transform 0.25s;
+
+		.back-link:hover & {
+			transform: translateX(-2px);
+		}
+	}
+
+	.decoration-line {
+		width: 40px;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, rgba(204, 0, 0, 0.4), transparent);
+		margin-top: 1rem;
+		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.title,
+		.code,
+		.headline,
+		.subtext,
+		.back-link,
+		.decoration-line {
+			animation: none;
+		}
+
+		.back-link,
+		.back-link:hover,
+		.back-link:active {
+			transform: none;
+		}
+
+		.back-arrow {
+			transition: none;
+		}
+	}
+</style>

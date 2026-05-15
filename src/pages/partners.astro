@@ -1,12 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
+import HeroBackground from '../components/HeroBackground.astro';
+import Ticker from '../components/Ticker.astro';
 
 // Partnership deck is still in production. Once it lands (PDF / Google Slides / Notion),
 // flip `DECK_READY` to true and set `PRESENTATION_URL`.
 const DECK_READY = false;
 const PRESENTATION_URL = '#partners-deck-todo';
 const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.cz' };
+
+const tickerTopics = [
+	'Back the Crew',
+	'Power the Stage',
+	'Reach the Devs',
+	'Fund the Coffee',
+	'Sponsor a Track',
+];
 ---
 
 <BaseLayout
@@ -16,8 +26,7 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 	<main class="partners-page">
 		<!-- HERO BANNER -->
 		<section class="partners-hero" aria-labelledby="partners-title">
-			<div class="hero-bg" aria-hidden="true"></div>
-			<div class="hero-photo" aria-hidden="true"></div>
+			<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} />
 
 			<div class="hero-content">
 				<div class="section-label">The accomplices</div>
@@ -33,20 +42,7 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 		</section>
 
 		<!-- TICKER DIVIDER -->
-		<div class="ticker-wrap" aria-hidden="true">
-			<div class="ticker">
-				<span class="ticker-item">Back the Crew <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Power the Stage <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Reach the Devs <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Fund the Coffee <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Sponsor a Track <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Back the Crew <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Power the Stage <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Reach the Devs <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Fund the Coffee <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Sponsor a Track <span class="ticker-sep">///</span></span>
-			</div>
-		</div>
+		<Ticker items={tickerTopics} fontSize="0.7rem" />
 
 		<!-- BODY -->
 		<section class="partners-body" aria-label="Partnership contact">
@@ -65,7 +61,7 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 								<span class="partners-cta-arrow" aria-hidden="true">→</span>
 							</a>
 						) : (
-							<span class="partners-cta partners-cta-soon" aria-disabled="true" role="text">
+							<span class="partners-cta partners-cta-soon" aria-disabled="true">
 								<span class="partners-cta-label">Partnership deck</span>
 								<span class="partners-cta-stamp" aria-hidden="true">Coming soon</span>
 							</span>
@@ -92,66 +88,11 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 	/* ===================== HERO ===================== */
 	.partners-hero {
 		position: relative;
-		min-height: 60vh;
+		min-height: 65vh;
 		display: flex;
 		align-items: center;
 		overflow: hidden;
-		padding: 6rem 3rem 5rem;
-	}
-
-	.hero-bg {
-		position: absolute;
-		inset: 0;
-		background:
-			radial-gradient(ellipse 40% 60% at 15% 80%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
-			#050505;
-		z-index: 0;
-	}
-
-	.hero-photo {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		right: 0;
-		width: 60%;
-		background-image: url('/hero-detective.jpg');
-		background-size: cover;
-		background-position: center;
-		mask-image: linear-gradient(
-			to right,
-			transparent 0%,
-			rgba(0, 0, 0, 0.35) 12%,
-			rgba(0, 0, 0, 0.85) 30%,
-			#000 55%
-		);
-		-webkit-mask-image: linear-gradient(
-			to right,
-			transparent 0%,
-			rgba(0, 0, 0, 0.35) 12%,
-			rgba(0, 0, 0, 0.85) 30%,
-			#000 55%
-		);
-		opacity: 0.7;
-		pointer-events: none;
-		z-index: 1;
-
-		@media (max-width: 900px) {
-			width: 100%;
-			background-position: 38% center;
-			opacity: 0.4;
-			mask-image: linear-gradient(
-				to bottom,
-				rgba(0, 0, 0, 0.7) 0%,
-				rgba(0, 0, 0, 0.55) 45%,
-				rgba(0, 0, 0, 0.2) 100%
-			);
-			-webkit-mask-image: linear-gradient(
-				to bottom,
-				rgba(0, 0, 0, 0.7) 0%,
-				rgba(0, 0, 0, 0.55) 45%,
-				rgba(0, 0, 0, 0.2) 100%
-			);
-		}
+		padding: 8rem 3rem 6.5rem;
 	}
 
 	.hero-content {
@@ -170,8 +111,8 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 		color: rgba(240, 237, 230, 0.55);
 		display: flex;
 		align-items: center;
-		gap: 1rem;
-		margin-bottom: 1.5rem;
+		gap: 1.2rem;
+		margin-bottom: 2.2rem;
 
 		&::after {
 			content: '';
@@ -187,7 +128,7 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 		line-height: 0.92;
 		letter-spacing: 0.02em;
 		color: var(--color-text);
-		margin: 0 0 1.5rem;
+		margin: 0 0 2rem;
 		filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.8));
 
 		.red { color: rgba(204, 0, 0, 0.85); }
@@ -197,55 +138,16 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 		font-family: 'IM Fell English', serif;
 		font-style: italic;
 		font-size: clamp(1.05rem, 1.6vw, 1.25rem);
-		line-height: 1.65;
+		line-height: 1.75;
 		color: var(--color-grey);
 		max-width: 60ch;
 		margin: 0;
 	}
 
-	/* ===================== TICKER ===================== */
-	.ticker-wrap {
-		position: relative;
-		z-index: 20;
-		background: #A01818;
-		overflow: hidden;
-		padding: 0.7rem 0;
-		border-top: 1px solid rgba(255, 255, 255, 0.08);
-		border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-	}
-
-	.ticker {
-		display: flex;
-		white-space: nowrap;
-		animation: ticker 30s linear infinite;
-	}
-
-	.ticker-item {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.7rem;
-		letter-spacing: 0.25em;
-		text-transform: uppercase;
-		color: #F5EBDC;
-		padding: 0 3rem;
-	}
-
-	.ticker-sep {
-		color: rgba(245, 235, 220, 0.45);
-	}
-
-	@keyframes ticker {
-		from { transform: translateX(0); }
-		to { transform: translateX(-50%); }
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.ticker { animation: none; }
-	}
-
 	/* ===================== BODY ===================== */
 	.partners-body {
 		position: relative;
-		padding: 5rem 3rem 6rem;
+		padding: 7rem 3rem 8rem;
 		background: var(--color-bg);
 
 		&::before {
@@ -269,8 +171,8 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 		display: grid;
 		grid-template-columns: minmax(260px, 1fr) auto;
 		align-items: center;
-		gap: 2.5rem;
-		padding: 2.4rem 2.2rem;
+		gap: 3.2rem;
+		padding: 3.2rem 2.8rem;
 		position: relative;
 		border: 1px solid rgba(255, 255, 255, 0.08);
 		background:
@@ -306,8 +208,8 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 	.contact-card {
 		display: flex;
 		flex-direction: column;
-		gap: 0.3rem;
-		padding: 1.2rem 1.3rem 1.3rem;
+		gap: 0.55rem;
+		padding: 1.6rem 1.6rem 1.6rem;
 		background: rgba(0, 0, 0, 0.3);
 		border: 1px solid rgba(240, 237, 230, 0.08);
 		border-radius: 1px;
@@ -319,7 +221,7 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 		font-size: 0.6rem;
 		letter-spacing: 0.32em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.45);
+		color: rgba(240, 237, 230, 0.65);
 	}
 
 	.contact-name {
@@ -337,7 +239,7 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 		text-decoration: none;
 		border-bottom: 1px dashed rgba(204, 0, 0, 0.5);
 		padding-bottom: 1px;
-		margin-top: 0.4rem;
+		margin-top: 0.8rem;
 		align-self: flex-start;
 		transition: color 0.2s, border-color 0.2s;
 		word-break: break-all;
@@ -354,7 +256,7 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.9rem;
+		gap: 1.4rem;
 	}
 
 	.partners-cta {
@@ -382,7 +284,7 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 			content: '';
 			position: absolute;
 			inset: 0;
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='80' height='30' filter='url(%23t)' opacity='0.16'/%3E%3C/svg%3E");
+			background-image: var(--noise-stamp);
 			background-size: 80px 30px;
 			mix-blend-mode: multiply;
 			pointer-events: none;
@@ -479,12 +381,12 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		.partners-hero { padding: 5rem 1.5rem 4rem; min-height: 48vh; }
-		.partners-body { padding: 4rem 1.5rem 5rem; }
+		.partners-hero { padding: 6.5rem 1.5rem 5rem; min-height: 52vh; }
+		.partners-body { padding: 5.5rem 1.5rem 6.5rem; }
 		.partners-block {
 			grid-template-columns: 1fr;
-			gap: 1.8rem;
-			padding: 1.8rem 1.5rem 2rem;
+			gap: 2.4rem;
+			padding: 2.4rem 1.8rem 2.6rem;
 		}
 		.partners-cta-wrap { align-items: stretch; }
 		.partners-cta { justify-content: center; }
@@ -504,8 +406,8 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 	}
 
 	@media (max-width: 600px) {
-		.partners-hero { padding: 4.5rem 1.1rem 3.5rem; min-height: 42vh; }
-		.partners-body { padding: 3rem 1.1rem 4rem; }
+		.partners-hero { padding: 5.5rem 1.1rem 4.5rem; min-height: 46vh; }
+		.partners-body { padding: 4.5rem 1.1rem 5.5rem; }
 		.hero-lede { font-size: 1rem; }
 	}
 </style>

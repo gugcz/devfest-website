@@ -1,6 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
+import HeroBackground from '../components/HeroBackground.astro';
+import Ticker from '../components/Ticker.astro';
+
+const tickerTopics = [
+	'Drop a Line',
+	'Send a Wire',
+	'Knock on the Door',
+	'Leave a Note',
+	'Make the Call',
+];
 ---
 
 <BaseLayout
@@ -10,8 +20,7 @@ import Footer from '../components/Footer.astro';
 	<main class="contact-page">
 		<!-- HERO BANNER -->
 		<section class="contact-hero" aria-labelledby="contact-title">
-			<div class="hero-bg" aria-hidden="true"></div>
-			<div class="hero-photo" aria-hidden="true"></div>
+			<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} />
 
 			<div class="hero-content">
 				<div class="section-label">The address book</div>
@@ -23,20 +32,7 @@ import Footer from '../components/Footer.astro';
 		</section>
 
 		<!-- TICKER DIVIDER -->
-		<div class="ticker-wrap" aria-hidden="true">
-			<div class="ticker">
-				<span class="ticker-item">Drop a Line <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Send a Wire <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Knock on the Door <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Leave a Note <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Make the Call <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Drop a Line <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Send a Wire <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Knock on the Door <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Leave a Note <span class="ticker-sep">///</span></span>
-				<span class="ticker-item">Make the Call <span class="ticker-sep">///</span></span>
-			</div>
-		</div>
+		<Ticker items={tickerTopics} fontSize="0.7rem" />
 
 		<!-- CARDS -->
 		<section class="contact-body" aria-label="Contact desks">
@@ -92,66 +88,11 @@ import Footer from '../components/Footer.astro';
 	/* ===================== HERO ===================== */
 	.contact-hero {
 		position: relative;
-		min-height: 60vh;
+		min-height: 65vh;
 		display: flex;
 		align-items: center;
 		overflow: hidden;
-		padding: 6rem 3rem 5rem;
-	}
-
-	.hero-bg {
-		position: absolute;
-		inset: 0;
-		background:
-			radial-gradient(ellipse 40% 60% at 15% 80%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
-			#050505;
-		z-index: 0;
-	}
-
-	.hero-photo {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		right: 0;
-		width: 60%;
-		background-image: url('/hero-detective.jpg');
-		background-size: cover;
-		background-position: center;
-		mask-image: linear-gradient(
-			to right,
-			transparent 0%,
-			rgba(0, 0, 0, 0.35) 12%,
-			rgba(0, 0, 0, 0.85) 30%,
-			#000 55%
-		);
-		-webkit-mask-image: linear-gradient(
-			to right,
-			transparent 0%,
-			rgba(0, 0, 0, 0.35) 12%,
-			rgba(0, 0, 0, 0.85) 30%,
-			#000 55%
-		);
-		opacity: 0.7;
-		pointer-events: none;
-		z-index: 1;
-
-		@media (max-width: 900px) {
-			width: 100%;
-			background-position: 38% center;
-			opacity: 0.4;
-			mask-image: linear-gradient(
-				to bottom,
-				rgba(0, 0, 0, 0.7) 0%,
-				rgba(0, 0, 0, 0.55) 45%,
-				rgba(0, 0, 0, 0.2) 100%
-			);
-			-webkit-mask-image: linear-gradient(
-				to bottom,
-				rgba(0, 0, 0, 0.7) 0%,
-				rgba(0, 0, 0, 0.55) 45%,
-				rgba(0, 0, 0, 0.2) 100%
-			);
-		}
+		padding: 8rem 3rem 6.5rem;
 	}
 
 	.hero-content {
@@ -170,8 +111,8 @@ import Footer from '../components/Footer.astro';
 		color: rgba(240, 237, 230, 0.55);
 		display: flex;
 		align-items: center;
-		gap: 1rem;
-		margin-bottom: 1.5rem;
+		gap: 1.2rem;
+		margin-bottom: 2.2rem;
 
 		&::after {
 			content: '';
@@ -187,7 +128,7 @@ import Footer from '../components/Footer.astro';
 		line-height: 0.92;
 		letter-spacing: 0.02em;
 		color: var(--color-text);
-		margin: 0 0 1.5rem;
+		margin: 0 0 2rem;
 		filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.8));
 
 		.red { color: rgba(204, 0, 0, 0.85); }
@@ -197,18 +138,18 @@ import Footer from '../components/Footer.astro';
 		font-family: 'IM Fell English', serif;
 		font-style: italic;
 		font-size: clamp(1.05rem, 1.6vw, 1.25rem);
-		line-height: 1.65;
+		line-height: 1.75;
 		color: var(--color-grey);
 		max-width: 560px;
 		margin: 0;
 		border-left: 2px solid rgba(180, 50, 50, 0.45);
-		padding-left: 1.2rem;
+		padding-left: 1.4rem;
 	}
 
 	/* ===================== BODY ===================== */
 	.contact-body {
 		position: relative;
-		padding: 5rem 3rem 6rem;
+		padding: 7rem 3rem 8rem;
 		background: var(--color-bg);
 
 		&::before {
@@ -231,7 +172,7 @@ import Footer from '../components/Footer.astro';
 	.contact-grid {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 1.5rem;
+		gap: 2rem;
 	}
 
 	.contact-card {
@@ -239,10 +180,10 @@ import Footer from '../components/Footer.astro';
 		background: var(--color-near-black);
 		border: 1px solid rgba(240, 237, 230, 0.08);
 		border-top: 2px solid rgba(204, 0, 0, 0.5);
-		padding: 1.8rem 1.6rem 1.7rem;
+		padding: 2.2rem 2rem 2.1rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.85rem;
+		gap: 1.2rem;
 		transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 
 		&::before {
@@ -266,7 +207,7 @@ import Footer from '../components/Footer.astro';
 		font-size: 0.6rem;
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.45);
+		color: rgba(240, 237, 230, 0.65);
 	}
 
 	.card-title {
@@ -294,13 +235,13 @@ import Footer from '../components/Footer.astro';
 		margin: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 0.85rem;
+		gap: 1.2rem;
 	}
 
 	.card-emails li {
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
+		gap: 0.4rem;
 	}
 
 	.email-name {
@@ -308,7 +249,7 @@ import Footer from '../components/Footer.astro';
 		font-size: 0.62rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
+		color: rgba(240, 237, 230, 0.65);
 	}
 
 	.email-link {
@@ -330,57 +271,18 @@ import Footer from '../components/Footer.astro';
 		}
 	}
 
-	/* ===================== TICKER ===================== */
-	.ticker-wrap {
-		position: relative;
-		z-index: 20;
-		background: #A01818;
-		overflow: hidden;
-		padding: 0.7rem 0;
-		border-top: 1px solid rgba(255, 255, 255, 0.08);
-		border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-	}
-
-	.ticker {
-		display: flex;
-		white-space: nowrap;
-		animation: ticker 30s linear infinite;
-	}
-
-	.ticker-item {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.7rem;
-		letter-spacing: 0.25em;
-		text-transform: uppercase;
-		color: #F5EBDC;
-		padding: 0 3rem;
-	}
-
-	.ticker-sep {
-		color: rgba(245, 235, 220, 0.45);
-	}
-
-	@keyframes ticker {
-		from { transform: translateX(0); }
-		to { transform: translateX(-50%); }
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.ticker { animation: none; }
-	}
-
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		.contact-hero { padding: 5rem 1.5rem 4rem; min-height: 48vh; }
-		.contact-body { padding: 4rem 1.5rem 5rem; }
-		.contact-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+		.contact-hero { padding: 6.5rem 1.5rem 5rem; min-height: 52vh; }
+		.contact-body { padding: 5.5rem 1.5rem 6.5rem; }
+		.contact-grid { grid-template-columns: 1fr; gap: 1.6rem; }
 	}
 
 	@media (max-width: 600px) {
-		.contact-hero { padding: 4.5rem 1.1rem 3.5rem; min-height: 42vh; }
-		.contact-body { padding: 3rem 1.1rem 4rem; }
-		.contact-card { padding: 1.5rem 1.3rem 1.4rem; }
+		.contact-hero { padding: 5.5rem 1.1rem 4.5rem; min-height: 46vh; }
+		.contact-body { padding: 4.5rem 1.1rem 5.5rem; }
+		.contact-card { padding: 1.8rem 1.5rem 1.7rem; }
 		.card-title { font-size: 1.5rem; }
-		.hero-lede { font-size: 1rem; padding-left: 1rem; }
+		.hero-lede { font-size: 1rem; padding-left: 1.1rem; }
 	}
 </style>
