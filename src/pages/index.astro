@@ -78,6 +78,40 @@ import Footer from '../components/Footer.astro';
 		<Tickets client:visible />
 		-->
 
+		<!-- GALLERY — photos from last year's edition -->
+		<section id="gallery" aria-labelledby="gallery-title">
+			<div class="gallery-head">
+				<div class="section-label">From the archives</div>
+				<h2 id="gallery-title" class="section-title">DevFest <span class="red">2025</span></h2>
+				<p class="gallery-lede">
+					Last year's case is closed. A look back at the people who cracked it with us.
+				</p>
+			</div>
+
+			<div class="gallery-marquee" aria-hidden="true">
+				<div class="gallery-track">
+					{Array.from({ length: 2 }).map(() => (
+						<>
+							<img src="/gallery/devfest-2025-01.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-02.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-03.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-04.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-05.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-06.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-07.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-08.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-09.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-10.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-11.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-12.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-13.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							<img src="/gallery/devfest-2025-14.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+						</>
+					))}
+				</div>
+			</div>
+		</section>
+
 		<!-- NEWSLETTER -->
 		<section id="newsletter">
 			<div class="section-label">The case file</div>
@@ -386,6 +420,149 @@ import Footer from '../components/Footer.astro';
 		color: rgba(245, 235, 220, 0.45);
 	}
 
+	/* ===================== GALLERY ===================== */
+	#gallery {
+		position: relative;
+		padding: 7rem 0 6rem;
+		background:
+			linear-gradient(180deg, var(--color-bg) 0%, var(--color-near-black) 12%, var(--color-near-black) 88%, var(--color-bg) 100%);
+		overflow: hidden;
+		border-top: 1px solid rgba(204, 0, 0, 0.18);
+		border-bottom: 1px solid rgba(204, 0, 0, 0.18);
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background:
+				radial-gradient(ellipse 55% 70% at 85% 15%, rgba(204, 0, 0, 0.09) 0%, transparent 62%),
+				radial-gradient(ellipse 45% 65% at 8% 92%, rgba(139, 24, 24, 0.08) 0%, transparent 60%);
+			pointer-events: none;
+			z-index: 0;
+		}
+
+		// faint horizontal "evidence rail" line behind photos
+		&::after {
+			content: '';
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 60%;
+			height: 1px;
+			background: linear-gradient(
+				to right,
+				transparent 0%,
+				rgba(204, 0, 0, 0.22) 15%,
+				rgba(232, 224, 204, 0.18) 50%,
+				rgba(204, 0, 0, 0.22) 85%,
+				transparent 100%
+			);
+			pointer-events: none;
+			z-index: 1;
+		}
+	}
+
+	.gallery-head {
+		position: relative;
+		z-index: 2;
+		max-width: 1080px;
+		margin: 0 auto 3.5rem;
+		padding: 0 3rem;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.gallery-head .section-label {
+		justify-content: center;
+	}
+
+	.gallery-head .section-title {
+		margin-bottom: 1.2rem;
+	}
+
+	.gallery-lede {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 1.08rem;
+		line-height: 1.7;
+		color: var(--color-grey);
+		max-width: 520px;
+		margin: 0 auto;
+	}
+
+	.gallery-marquee {
+		position: relative;
+		z-index: 2;
+		width: 100%;
+		overflow: hidden;
+		padding: 1.5rem 0;
+		mask-image: linear-gradient(
+			to right,
+			transparent 0%,
+			#000 8%,
+			#000 92%,
+			transparent 100%
+		);
+		-webkit-mask-image: linear-gradient(
+			to right,
+			transparent 0%,
+			#000 8%,
+			#000 92%,
+			transparent 100%
+		);
+
+		&:hover .gallery-track,
+		&:focus-within .gallery-track {
+			animation-play-state: paused;
+		}
+	}
+
+	.gallery-track {
+		display: flex;
+		gap: 1.4rem;
+		width: max-content;
+		animation: gallery-scroll 180s linear infinite;
+		will-change: transform;
+	}
+
+	.gallery-track img {
+		display: block;
+		height: 320px;
+		width: auto;
+		max-width: none;
+		object-fit: cover;
+		padding: 0.55rem 0.55rem 1.4rem;
+		background: linear-gradient(180deg, #1a1715 0%, #0f0d0c 100%);
+		border: 1px solid rgba(232, 224, 204, 0.12);
+		filter: grayscale(0.85) sepia(0.35) contrast(1.08) brightness(0.78) saturate(0.9);
+		box-shadow:
+			inset 0 0 60px rgba(0, 0, 0, 0.6),
+			0 1px 0 rgba(232, 224, 204, 0.06),
+			0 14px 28px rgba(0, 0, 0, 0.6),
+			0 4px 0 rgba(0, 0, 0, 0.5),
+			0 0 0 1px rgba(0, 0, 0, 0.4);
+		transition: filter 0.6s ease, box-shadow 0.5s ease;
+
+		&:hover,
+		&:focus-visible {
+			filter: grayscale(0) sepia(0) contrast(1.05) brightness(1) saturate(1);
+			box-shadow:
+				inset 0 0 60px rgba(0, 0, 0, 0),
+				0 1px 0 rgba(232, 224, 204, 0.18),
+				0 16px 32px rgba(0, 0, 0, 0.65),
+				0 4px 0 rgba(0, 0, 0, 0.5),
+				0 0 0 1px rgba(204, 0, 0, 0.35),
+				0 0 18px rgba(204, 0, 0, 0.25);
+		}
+	}
+
+	@keyframes gallery-scroll {
+		from { transform: translateX(0); }
+		to   { transform: translateX(-50%); }
+	}
+
 	/* ===================== SHARED SECTION ===================== */
 	#countdown-section,
 	#newsletter {
@@ -507,10 +684,21 @@ import Footer from '../components/Footer.astro';
 		.hero-meta { gap: 1.5rem; }
 		.hero-countdown { padding: 1.2rem 1.1rem 1rem; }
 		#newsletter { padding: 5rem 1.5rem; }
+		#gallery { padding: 5rem 0 4.5rem; }
+		.gallery-head { padding: 0 1.5rem; margin-bottom: 2.5rem; }
+		.gallery-marquee { padding: 1.2rem 0; }
+		.gallery-track { gap: 1rem; }
+		.gallery-track img { height: 240px; padding: 0.45rem 0.45rem 1.2rem; }
 	}
 
 	@media (max-width: 600px) {
 		#hero { padding: 5rem 1.1rem 3rem; }
+		#gallery { padding: 4rem 0 3.5rem; }
+		.gallery-head { padding: 0 1.1rem; margin-bottom: 2rem; }
+		.gallery-marquee { padding: 1rem 0; }
+		.gallery-track { gap: 0.8rem; }
+		.gallery-track img { height: 190px; padding: 0.4rem 0.4rem 1rem; }
+		.gallery-lede { font-size: 0.98rem; }
 		.hero-content { gap: 1.1rem; }
 		.hero-subtitle {
 			font-size: 1rem;
@@ -543,6 +731,11 @@ import Footer from '../components/Footer.astro';
 		.hero-meta,
 		.hero-cta-group,
 		.hero-countdown,
-		.ticker { animation: none; }
+		.ticker,
+		.gallery-track { animation: none; }
+
+		.gallery-marquee {
+			overflow-x: auto;
+		}
 	}
 </style>
