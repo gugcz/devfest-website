@@ -23,6 +23,22 @@ import Footer from '../components/Footer.astro';
 			</div>
 		</section>
 
+		<!-- TICKER DIVIDER -->
+		<div class="ticker-wrap" aria-hidden="true">
+			<div class="ticker">
+				<span class="ticker-item">Drop a Line <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Send a Wire <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Knock on the Door <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Leave a Note <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Make the Call <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Drop a Line <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Send a Wire <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Knock on the Door <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Leave a Note <span class="ticker-sep">///</span></span>
+				<span class="ticker-item">Make the Call <span class="ticker-sep">///</span></span>
+			</div>
+		</div>
+
 		<!-- CARDS -->
 		<section class="contact-body" aria-label="Contact desks">
 			<div class="contact-inner">
@@ -345,6 +361,45 @@ import Footer from '../components/Footer.astro';
 			color: var(--color-text);
 			font-weight: normal;
 		}
+	}
+
+	/* ===================== TICKER ===================== */
+	.ticker-wrap {
+		position: relative;
+		z-index: 20;
+		background: #A01818;
+		overflow: hidden;
+		padding: 0.7rem 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+	}
+
+	.ticker {
+		display: flex;
+		white-space: nowrap;
+		animation: ticker 30s linear infinite;
+	}
+
+	.ticker-item {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.7rem;
+		letter-spacing: 0.25em;
+		text-transform: uppercase;
+		color: var(--color-bg);
+		padding: 0 3rem;
+	}
+
+	.ticker-sep {
+		color: rgba(0, 0, 0, 0.4);
+	}
+
+	@keyframes ticker {
+		from { transform: translateX(0); }
+		to { transform: translateX(-50%); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ticker { animation: none; }
 	}
 
 	/* ===================== RESPONSIVE ===================== */
