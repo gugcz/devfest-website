@@ -1,0 +1,348 @@
+---
+const links = [
+	{ href: '/#newsletter', label: 'Notify me' },
+	{ href: 'https://2025.devfest.cz', label: '2025 Edition', external: true },
+] as const;
+---
+
+<header id="site-header" class="site-header" data-state="top">
+	<a href="/" class="brand" aria-label="DevFest.cz 2026 — home">
+		<img src="/logo.svg" alt="DevFest.cz 2026" class="brand-logo" width="160" height="32" />
+	</a>
+
+	<nav class="nav" aria-label="Primary">
+		<button
+			id="nav-toggle"
+			class="nav-toggle"
+			type="button"
+			aria-expanded="false"
+			aria-controls="nav-list"
+			aria-label="Open menu"
+		>
+			<span class="nav-toggle-bars" aria-hidden="true">
+				<span></span><span></span><span></span>
+			</span>
+			<span class="nav-toggle-label">Menu</span>
+		</button>
+
+		<ul id="nav-list" class="nav-list" data-open="false">
+			{links.map(({ href, label, external }) => (
+				<li>
+					<a
+						href={href}
+						class={`nav-link${href.endsWith('#newsletter') ? ' nav-link--cta' : ''}`}
+						{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+					>
+						<span class="nav-link-num" aria-hidden="true">/// </span>{label}
+					</a>
+				</li>
+			))}
+		</ul>
+	</nav>
+</header>
+
+<script>
+	const header = document.getElementById('site-header');
+	const toggle = document.getElementById('nav-toggle');
+	const list = document.getElementById('nav-list');
+
+	// Scroll state — switches transparent → solid blurred backdrop
+	const onScroll = () => {
+		if (!header) return;
+		header.dataset.state = window.scrollY > 24 ? 'scrolled' : 'top';
+	};
+	onScroll();
+	window.addEventListener('scroll', onScroll, { passive: true });
+
+	// Mobile drawer toggle
+	const setOpen = (open: boolean) => {
+		if (!toggle || !list) return;
+		toggle.setAttribute('aria-expanded', String(open));
+		toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+		list.dataset.open = String(open);
+		document.body.style.overflow = open ? 'hidden' : '';
+	};
+
+	toggle?.addEventListener('click', () => {
+		const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+		setOpen(!isOpen);
+	});
+
+	// Close drawer when a link is followed
+	list?.addEventListener('click', (e) => {
+		const target = e.target as HTMLElement;
+		if (target.closest('a')) setOpen(false);
+	});
+
+	// Close on Escape
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+			setOpen(false);
+			toggle.focus();
+		}
+	});
+
+	// Reset open state when crossing the desktop breakpoint
+	const mql = window.matchMedia('(min-width: 760px)');
+	mql.addEventListener('change', (ev) => {
+		if (ev.matches) setOpen(false);
+	});
+</script>
+
+<style lang="scss">
+	.site-header {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding: 0.9rem 3rem;
+		transition: background 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease, padding 0.25s ease;
+		border-bottom: 1px solid transparent;
+	}
+
+	.site-header[data-state='scrolled'] {
+		background: rgba(5, 5, 5, 0.78);
+		backdrop-filter: blur(10px) saturate(120%);
+		-webkit-backdrop-filter: blur(10px) saturate(120%);
+		border-bottom-color: rgba(204, 0, 0, 0.22);
+		padding-top: 0.6rem;
+		padding-bottom: 0.6rem;
+	}
+
+	/* ===================== BRAND ===================== */
+	.brand {
+		display: inline-flex;
+		align-items: center;
+		text-decoration: none;
+		color: var(--color-text);
+		flex-shrink: 0;
+		filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+		transition: opacity 0.2s, transform 0.2s;
+	}
+
+	.brand:hover,
+	.brand:focus-visible {
+		opacity: 0.85;
+		outline: none;
+	}
+
+	.brand-logo {
+		display: block;
+		height: clamp(28px, 4.4vw, 38px);
+		width: auto;
+		max-width: 220px;
+	}
+
+	/* ===================== NAV ===================== */
+	.nav {
+		display: flex;
+		align-items: center;
+	}
+
+	.nav-list {
+		display: flex;
+		align-items: center;
+		gap: 1.8rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.nav-link {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.72rem;
+		letter-spacing: 0.28em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.7);
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.4rem 0;
+		position: relative;
+		transition: color 0.2s;
+	}
+
+	.nav-link-num {
+		color: rgba(204, 0, 0, 0.55);
+		font-size: 0.6rem;
+	}
+
+	.nav-link:hover,
+	.nav-link:focus-visible {
+		color: var(--color-text);
+		outline: none;
+	}
+
+	.nav-link:not(.nav-link--cta)::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -2px;
+		height: 1px;
+		background: rgba(204, 0, 0, 0.6);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 0.2s ease;
+	}
+
+	.nav-link:not(.nav-link--cta):hover::after,
+	.nav-link:not(.nav-link--cta):focus-visible::after {
+		transform: scaleX(1);
+	}
+
+	.nav-link--cta {
+		padding: 0.55rem 1.2rem;
+		background: #8B1818;
+		color: #F5EBDC;
+		border: 2px solid #8B1818;
+		border-radius: 1px;
+		transform: rotate(-1.5deg);
+		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+		transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+	}
+
+	.nav-link--cta .nav-link-num {
+		color: rgba(245, 235, 220, 0.55);
+	}
+
+	.nav-link--cta:hover,
+	.nav-link--cta:focus-visible {
+		background: var(--color-accent-hot);
+		color: #F5EBDC;
+		transform: rotate(-1.5deg) translateY(-1px);
+		box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
+	}
+
+	/* ===================== MOBILE TOGGLE ===================== */
+	.nav-toggle {
+		display: none;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.45rem 0.8rem 0.45rem 0.6rem;
+		background: transparent;
+		border: 1px solid rgba(240, 237, 230, 0.18);
+		color: rgba(240, 237, 230, 0.85);
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.7rem;
+		letter-spacing: 0.28em;
+		text-transform: uppercase;
+		cursor: pointer;
+		transition: border-color 0.2s, color 0.2s;
+	}
+
+	.nav-toggle:hover,
+	.nav-toggle:focus-visible {
+		border-color: rgba(204, 0, 0, 0.6);
+		color: var(--color-text);
+		outline: none;
+	}
+
+	.nav-toggle-bars {
+		display: inline-flex;
+		flex-direction: column;
+		justify-content: space-between;
+		width: 18px;
+		height: 12px;
+
+		span {
+			display: block;
+			height: 1.5px;
+			background: currentColor;
+			transition: transform 0.2s ease, opacity 0.2s ease;
+			transform-origin: center;
+		}
+	}
+
+	.nav-toggle[aria-expanded='true'] .nav-toggle-bars {
+		span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+		span:nth-child(2) { opacity: 0; }
+		span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+	}
+
+	/* ===================== RESPONSIVE ===================== */
+	@media (max-width: 900px) {
+		.site-header {
+			padding: 0.8rem 1.5rem;
+		}
+	}
+
+	@media (max-width: 760px) {
+		.nav-toggle {
+			display: inline-flex;
+		}
+
+		.nav-list {
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			width: min(86vw, 320px);
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0;
+			padding: 6rem 1.8rem 2rem;
+			background: #0A0A0A;
+			border-left: 1px solid rgba(204, 0, 0, 0.3);
+			transform: translateX(100%);
+			transition: transform 0.28s ease;
+			box-shadow: -20px 0 40px rgba(0, 0, 0, 0.5);
+		}
+
+		.nav-list[data-open='true'] {
+			transform: translateX(0);
+		}
+
+		.nav-list li {
+			border-bottom: 1px dashed rgba(240, 237, 230, 0.08);
+		}
+
+		.nav-list li:last-child {
+			border-bottom: none;
+		}
+
+		.nav-link {
+			width: 100%;
+			padding: 1.1rem 0;
+			font-size: 0.85rem;
+			letter-spacing: 0.32em;
+		}
+
+		.nav-link--cta {
+			margin-top: 1.4rem;
+			justify-content: center;
+			padding: 0.95rem 1.2rem;
+		}
+
+		.nav-link:not(.nav-link--cta)::after {
+			display: none;
+		}
+	}
+
+	@media (max-width: 380px) {
+		.site-header {
+			padding: 0.7rem 0.85rem;
+		}
+
+		.brand-logo {
+			height: 26px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.site-header,
+		.nav-list,
+		.nav-link,
+		.nav-link--cta,
+		.brand,
+		.nav-toggle-bars span {
+			transition: none;
+		}
+	}
+</style>
