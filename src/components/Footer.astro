@@ -185,11 +185,19 @@ const SITEMAP = [
 		align-items: center;
 		gap: 0.6rem;
 
+		&::before,
 		&::after {
 			content: '';
 			flex: 0 0 28px;
 			height: 1px;
 			background: rgba(204, 0, 0, 0.35);
+		}
+
+		@media (max-width: 500px) {
+			&::before,
+			&::after {
+				flex-basis: 20px;
+			}
 		}
 	}
 
