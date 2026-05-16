@@ -152,7 +152,13 @@ const isCurrent = (href: string) => {
 		color: var(--color-text);
 		flex-shrink: 0;
 		filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.85));
-		transition: opacity 0.25s ease, transform 0.2s;
+		opacity: 1;
+		transform: translateY(0);
+		// Reveal/hide: fade + slide; visibility delay handled per-state.
+		transition:
+			opacity 0.4s ease,
+			transform 0.4s ease,
+			visibility 0s linear 0s;
 	}
 
 	.brand:hover,
@@ -167,6 +173,12 @@ const isCurrent = (href: string) => {
 		opacity: 0;
 		visibility: hidden;
 		pointer-events: none;
+		transform: translateY(-6px);
+		// Delay visibility flip until after opacity fade-out so transition stays smooth.
+		transition:
+			opacity 0.4s ease,
+			transform 0.4s ease,
+			visibility 0s linear 0.4s;
 	}
 
 	.brand-logo {
@@ -380,8 +392,10 @@ const isCurrent = (href: string) => {
 		.nav-link,
 		.nav-link--cta,
 		.brand,
+		.site-header[data-home='true'][data-state='top'] .brand,
 		.nav-toggle-bars span {
 			transition: none;
+			transform: none;
 		}
 	}
 </style>
