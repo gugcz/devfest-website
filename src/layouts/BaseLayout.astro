@@ -148,6 +148,9 @@ const jsonLd = JSON.stringify([
 		scroll-behavior: smooth;
 		// keep keyboard-focused elements clear of the fixed cookie banner
 		scroll-padding-bottom: 8rem;
+		// canvas color — backs the iOS Safari URL bar tint and prevents
+		// a white flash during rubber-band scroll past the body edges.
+		background: var(--color-bg);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
