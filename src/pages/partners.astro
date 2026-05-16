@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
-import HeroBackground from '../components/HeroBackground.astro';
+import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
 
 // Partnership deck is still in production. Once it lands (PDF / Google Slides / Notion),
@@ -24,24 +24,13 @@ const tickerTopics = [
 	description="Back DevFest.cz 2026 — partner with the largest community developer conference in the Czech Republic."
 >
 	<main class="partners-page">
-		<!-- HERO BANNER -->
-		<section class="partners-hero" aria-labelledby="partners-title">
-			<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} />
+		<SubpageHero
+			label="The accomplices"
+			titleHtml={'Without our partners,<br /><span class="red">this case stays cold.</span>'}
+			lede="DevFest.cz is a non-profit community conference. Every coffee, every speaker ticket, every late-night neon glow is bankrolled by partners who back Czech tech."
+			titleId="partners-title"
+		/>
 
-			<div class="hero-content">
-				<div class="section-label">The accomplices</div>
-				<h1 id="partners-title" class="hero-title">
-					Without our partners,<br /><span class="red">this case stays cold.</span>
-				</h1>
-				<p class="hero-lede">
-					DevFest.cz is a non-profit community conference. Every speaker travel ticket, every coffee,
-					every late-night neon glow is bankrolled by partners who back the Czech tech community.
-					Grow your brand in front of hundreds of engineers, founders, and the press.
-				</p>
-			</div>
-		</section>
-
-		<!-- TICKER DIVIDER -->
 		<Ticker items={tickerTopics} fontSize="0.7rem" />
 
 		<!-- BODY -->
@@ -83,65 +72,6 @@ const tickerTopics = [
 	.partners-page {
 		display: flex;
 		flex-direction: column;
-	}
-
-	/* ===================== HERO ===================== */
-	.partners-hero {
-		position: relative;
-		min-height: 65vh;
-		display: flex;
-		align-items: center;
-		overflow: hidden;
-		padding: 8rem 3rem 6.5rem;
-	}
-
-	.hero-content {
-		position: relative;
-		z-index: 10;
-		max-width: 1080px;
-		width: 100%;
-		margin: 0 auto;
-	}
-
-	.section-label {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.65rem;
-		letter-spacing: 0.4em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
-		display: flex;
-		align-items: center;
-		gap: 1.2rem;
-		margin-bottom: 2.2rem;
-
-		&::after {
-			content: '';
-			flex: 0 0 60px;
-			height: 1px;
-			background: rgba(204, 0, 0, 0.45);
-		}
-	}
-
-	.hero-title {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(2.8rem, 7vw, 5.5rem);
-		line-height: 0.92;
-		letter-spacing: 0.02em;
-		color: var(--color-text);
-		margin: 0 0 2rem;
-		filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.8));
-
-		.red { color: rgba(204, 0, 0, 0.85); }
-	}
-
-	.hero-lede {
-		font-family: 'IM Fell English', serif;
-		font-style: italic;
-		font-size: clamp(1.05rem, 1.6vw, 1.25rem);
-		line-height: 1.75;
-		color: var(--color-grey);
-		max-width: 60ch;
-		margin: 0;
 	}
 
 	/* ===================== BODY ===================== */
@@ -381,7 +311,6 @@ const tickerTopics = [
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		.partners-hero { padding: 6.5rem 1.5rem 5rem; min-height: 52vh; }
 		.partners-body { padding: 5.5rem 1.5rem 6.5rem; }
 		.partners-block {
 			grid-template-columns: 1fr;
@@ -406,8 +335,6 @@ const tickerTopics = [
 	}
 
 	@media (max-width: 600px) {
-		.partners-hero { padding: 5.5rem 1.1rem 4.5rem; min-height: 46vh; }
 		.partners-body { padding: 4.5rem 1.1rem 5.5rem; }
-		.hero-lede { font-size: 1rem; }
 	}
 </style>

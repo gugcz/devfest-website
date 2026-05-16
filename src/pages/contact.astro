@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
-import HeroBackground from '../components/HeroBackground.astro';
+import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
 
 const tickerTopics = [
@@ -18,20 +18,13 @@ const tickerTopics = [
 	description="Reach the DevFest.cz 2026 organising team — general questions, partnerships, and speaker enquiries."
 >
 	<main class="contact-page">
-		<!-- HERO BANNER -->
-		<section class="contact-hero" aria-labelledby="contact-title">
-			<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} />
+		<SubpageHero
+			label="The address book"
+			titleHtml={'Send us<br /><span class="red">a wire.</span>'}
+			lede="Pick the right desk. We'll get back faster than the last tram out of Prague."
+			titleId="contact-title"
+		/>
 
-			<div class="hero-content">
-				<div class="section-label">The address book</div>
-				<h1 id="contact-title" class="hero-title">Send us<br /><span class="red">a wire.</span></h1>
-				<p class="hero-lede">
-					Pick the right desk. We&rsquo;ll get back faster than the last tram out of Prague.
-				</p>
-			</div>
-		</section>
-
-		<!-- TICKER DIVIDER -->
 		<Ticker items={tickerTopics} fontSize="0.7rem" />
 
 		<!-- CARDS -->
@@ -83,67 +76,6 @@ const tickerTopics = [
 	.contact-page {
 		display: flex;
 		flex-direction: column;
-	}
-
-	/* ===================== HERO ===================== */
-	.contact-hero {
-		position: relative;
-		min-height: 65vh;
-		display: flex;
-		align-items: center;
-		overflow: hidden;
-		padding: 8rem 3rem 6.5rem;
-	}
-
-	.hero-content {
-		position: relative;
-		z-index: 10;
-		max-width: 1080px;
-		width: 100%;
-		margin: 0 auto;
-	}
-
-	.section-label {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.65rem;
-		letter-spacing: 0.4em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
-		display: flex;
-		align-items: center;
-		gap: 1.2rem;
-		margin-bottom: 2.2rem;
-
-		&::after {
-			content: '';
-			flex: 0 0 60px;
-			height: 1px;
-			background: rgba(204, 0, 0, 0.45);
-		}
-	}
-
-	.hero-title {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(2.8rem, 7vw, 5.5rem);
-		line-height: 0.92;
-		letter-spacing: 0.02em;
-		color: var(--color-text);
-		margin: 0 0 2rem;
-		filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.8));
-
-		.red { color: rgba(204, 0, 0, 0.85); }
-	}
-
-	.hero-lede {
-		font-family: 'IM Fell English', serif;
-		font-style: italic;
-		font-size: clamp(1.05rem, 1.6vw, 1.25rem);
-		line-height: 1.75;
-		color: var(--color-grey);
-		max-width: 560px;
-		margin: 0;
-		border-left: 2px solid rgba(180, 50, 50, 0.45);
-		padding-left: 1.4rem;
 	}
 
 	/* ===================== BODY ===================== */
@@ -273,16 +205,13 @@ const tickerTopics = [
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		.contact-hero { padding: 6.5rem 1.5rem 5rem; min-height: 52vh; }
 		.contact-body { padding: 5.5rem 1.5rem 6.5rem; }
 		.contact-grid { grid-template-columns: 1fr; gap: 1.6rem; }
 	}
 
 	@media (max-width: 600px) {
-		.contact-hero { padding: 5.5rem 1.1rem 4.5rem; min-height: 46vh; }
 		.contact-body { padding: 4.5rem 1.1rem 5.5rem; }
 		.contact-card { padding: 1.8rem 1.5rem 1.7rem; }
 		.card-title { font-size: 1.5rem; }
-		.hero-lede { font-size: 1rem; padding-left: 1.1rem; }
 	}
 </style>
