@@ -1,7 +1,7 @@
 ---
 ---
 
-<div id="cookie-banner" class="cookie-banner" role="region" aria-label="Cookie consent" aria-live="polite">
+<div id="cookie-banner" class="cookie-banner cookie-banner--hidden" role="region" aria-label="Cookie consent" aria-live="polite" aria-hidden="true">
 	<p class="cookie-text">
 		We use analytics cookies to understand how visitors use this site.
 		See our <a href="/privacy-policy" class="cookie-link">Privacy Policy</a> for details.
@@ -21,6 +21,11 @@
 		banner?.classList.add('cookie-banner--hidden');
 	}
 
+	function showBanner() {
+		banner?.setAttribute('aria-hidden', 'false');
+		banner?.classList.remove('cookie-banner--hidden');
+	}
+
 	function getConsent(): string | null {
 		try { return localStorage.getItem(CONSENT_KEY); } catch { return null; }
 	}
@@ -38,14 +43,15 @@
 		}
 	}
 
-	// Already decided — don't show
+	// Banner starts hidden — reveal only if no decision yet
 	const stored = getConsent();
 	if (stored) {
-		hideBanner();
 		if (stored === 'accepted') {
 			loadAnalytics();
 			window.dispatchEvent(new Event('cookie-consent-accepted'));
 		}
+	} else {
+		showBanner();
 	}
 
 	document.getElementById('cookie-accept')?.addEventListener('click', () => {
