@@ -6,13 +6,14 @@ const links = [
 ] as const;
 
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isHome = currentPath === '/';
 const isCurrent = (href: string) => {
 	const path = href.split('#')[0].replace(/\/$/, '') || '/';
 	return !href.startsWith('http') && path === currentPath;
 };
 ---
 
-<header id="site-header" class="site-header" data-state="top">
+<header id="site-header" class="site-header" data-state="top" data-home={isHome ? 'true' : 'false'}>
 	<a href="/" class="brand" aria-label="DevFest.cz 2026 — home">
 		<img src="/logo.svg" alt="DevFest.cz 2026" class="brand-logo" width="210" height="42" />
 	</a>
@@ -151,13 +152,21 @@ const isCurrent = (href: string) => {
 		color: var(--color-text);
 		flex-shrink: 0;
 		filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.85));
-		transition: opacity 0.2s, transform 0.2s;
+		transition: opacity 0.25s ease, transform 0.2s;
 	}
 
 	.brand:hover,
 	.brand:focus-visible {
 		opacity: 0.85;
 		outline: none;
+	}
+
+	// Home + at top: hero owns brand identity, hide nav logo to avoid duplication.
+	// visibility: hidden keeps the flex slot so nav doesn't jump left on state flip.
+	.site-header[data-home='true'][data-state='top'] .brand {
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
 	}
 
 	.brand-logo {
