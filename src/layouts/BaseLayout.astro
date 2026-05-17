@@ -21,40 +21,75 @@ const ogImage = `${siteUrl}/og-image.jpg`;
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 const ogImageAlt = "DevFest.cz 2026 conference banner";
 
-const jsonLd = JSON.stringify([
-	{
-		"@context": "https://schema.org",
-		"@type": "Event",
-		"name": title,
-		"description": description,
-		"image": ogImage,
-		"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-		"eventStatus": "https://schema.org/EventScheduled",
-		"startDate": "2026-10-30T09:00:00+01:00",
-		"endDate": "2026-10-30T20:00:00+01:00",
-		"inLanguage": "en",
-		"location": {
-			"@type": "Place",
-			"name": "Prague",
-			"address": {
-				"@type": "PostalAddress",
-				"addressLocality": "Prague",
-				"addressCountry": "CZ"
-			}
-		},
-		"organizer": {
-			"@type": "Organization",
-			"name": "GDG Czech Republic",
-			"url": siteUrl
+// Event schema follows https://developers.google.com/search/docs/appearance/structured-data/event
+// Only rendered on the home page so subpages (privacy, contact, etc.) don't
+// claim to BE the event. WebSite + Organization render sitewide.
+const isHome = Astro.url.pathname === "/";
+
+// Once ti.to release is public, add `offers` to the Event:
+// "offers": {
+//   "@type": "Offer",
+//   "url": "https://ti.to/<account>/<event>",
+//   "price": "0",
+//   "priceCurrency": "CZK",
+//   "availability": "https://schema.org/InStock",
+//   "validFrom": "2026-XX-XXT00:00:00+02:00"
+// }
+const eventSchema = {
+	"@context": "https://schema.org",
+	"@type": "Event",
+	"name": "DevFest.cz 2026",
+	"description":
+		"DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML.",
+	"image": [ogImage],
+	"url": siteUrl,
+	"startDate": "2026-10-30T09:00:00+01:00",
+	"endDate": "2026-10-30T20:00:00+01:00",
+	"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+	"eventStatus": "https://schema.org/EventScheduled",
+	"inLanguage": "en",
+	"location": {
+		"@type": "Place",
+		"name": "Prague",
+		"address": {
+			"@type": "PostalAddress",
+			"addressLocality": "Prague",
+			"addressRegion": "Prague",
+			"addressCountry": "CZ"
 		}
 	},
-	{
-		"@context": "https://schema.org",
-		"@type": "WebSite",
-		"name": "DevFest.cz",
-		"url": siteUrl
+	"organizer": {
+		"@type": "Organization",
+		"name": "GUG.cz, z.s.",
+		"url": "https://gug.cz"
 	}
-]);
+};
+
+const organizationSchema = {
+	"@context": "https://schema.org",
+	"@type": "Organization",
+	"name": "DevFest.cz",
+	"url": siteUrl,
+	"logo": `${siteUrl}/logo.png`,
+	"sameAs": [
+		"https://x.com/devfest_cz",
+		"https://www.facebook.com/DevFestCZ",
+		"https://bsky.app/profile/devfest.cz"
+	]
+};
+
+const websiteSchema = {
+	"@context": "https://schema.org",
+	"@type": "WebSite",
+	"name": "DevFest.cz",
+	"url": siteUrl
+};
+
+const jsonLd = JSON.stringify(
+	isHome
+		? [eventSchema, organizationSchema, websiteSchema]
+		: [organizationSchema, websiteSchema]
+);
 ---
 
 <html lang="en">
