@@ -43,6 +43,20 @@ function formatPrice(price: string | null | undefined, currency: string | null |
 	}
 }
 
+function summarizeTickets(tickets: TitoWebhookPayload[] | undefined): string | null {
+	if (!tickets || tickets.length === 0) return null;
+	const counts = new Map<string, number>();
+	for (const ticket of tickets) {
+		const title = ticket.release_title?.trim() || 'Unknown release';
+		counts.set(title, (counts.get(title) ?? 0) + 1);
+	}
+	const lines: string[] = [];
+	for (const [title, count] of counts) {
+		lines.push(count > 1 ? `• ${count}× ${title}` : `• ${title}`);
+	}
+	return lines.join('\n');
+}
+
 function buildSlackMessage(event: TitoWebhookEvent, payload: TitoWebhookPayload): SlackPayload {
 	const isRegistration = event.startsWith('registration.');
 
@@ -58,7 +72,12 @@ function buildSlackMessage(event: TitoWebhookEvent, payload: TitoWebhookPayload)
 
 	if (payload.email) fields.push({ type: 'mrkdwn', text: `*Email:*\n${payload.email}` });
 
-	if (!isRegistration && payload.release_title) {
+	if (isRegistration) {
+		const ticketSummary = summarizeTickets(payload.tickets);
+		if (ticketSummary) {
+			fields.push({ type: 'mrkdwn', text: `*Tickets:*\n${ticketSummary}` });
+		}
+	} else if (payload.release_title) {
 		fields.push({ type: 'mrkdwn', text: `*Release:*\n${payload.release_title}` });
 	}
 
