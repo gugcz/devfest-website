@@ -82,20 +82,19 @@ const tickerTopics = [
 				<div class="gallery-track">
 					{Array.from({ length: 2 }).map(() => (
 						<>
-							<img src="/gallery/devfest-2025-01.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-02.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-03.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-04.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-05.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-06.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-07.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-08.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-09.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-10.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-11.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-12.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-13.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
-							<img src="/gallery/devfest-2025-14.jpg" alt="" loading="lazy" decoding="async" width="800" height="533" />
+							{Array.from({ length: 22 }, (_, i) => {
+								const n = String(i + 1).padStart(2, '0');
+								return (
+									<img
+										src={`/gallery/devfest-2025-${n}.jpg`}
+										alt=""
+										loading="lazy"
+										decoding="async"
+										width="800"
+										height="533"
+									/>
+								);
+							})}
 						</>
 					))}
 				</div>
@@ -592,3 +591,17 @@ const tickerTopics = [
 		}
 	}
 </style>
+
+<script>
+	const track = document.querySelector<HTMLElement>('.gallery-track');
+	if (track) {
+		const all = Array.from(track.children) as HTMLElement[];
+		const unique = all.slice(0, all.length / 2);
+		for (let i = unique.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[unique[i], unique[j]] = [unique[j], unique[i]];
+		}
+		const shuffled = [...unique, ...unique.map((n) => n.cloneNode(true) as HTMLElement)];
+		track.replaceChildren(...shuffled);
+	}
+</script>
