@@ -12,7 +12,7 @@ export default defineConfig({
         sitemap({
             filter: (page) =>
                 !page.includes('/newsletter-subscription-thank-you') &&
-                !page.includes('/ticket-purchase-thank-you'),
+                !page.includes('/thank-you'),
         }),
         react(),
     ],

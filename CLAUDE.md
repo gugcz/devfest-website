@@ -39,7 +39,7 @@ Pages under `src/pages/` using Astro file-based routing:
 - `/` — Main landing page (hero, countdown timer, newsletter form, footer)
 - `/privacy-policy` — GDPR privacy policy
 - `/newsletter-subscription-thank-you` — Post-signup confirmation
-- `/ticket-purchase-thank-you` — Post-purchase confirmation (configure as ti.to event "thank you URL")
+- `/thank-you` — Post-purchase confirmation (configure as ti.to event "thank you URL")
 
 ### Component Model
 
