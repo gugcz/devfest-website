@@ -35,10 +35,11 @@ No lint or test scripts are configured — TypeScript strict mode provides type 
 
 ### Pages & Routing
 
-Three pages under `src/pages/` using Astro file-based routing:
+Pages under `src/pages/` using Astro file-based routing:
 - `/` — Main landing page (hero, countdown timer, newsletter form, footer)
 - `/privacy-policy` — GDPR privacy policy
 - `/newsletter-subscription-thank-you` — Post-signup confirmation
+- `/ticket-purchase-thank-you` — Post-purchase confirmation (configure as ti.to event "thank you URL")
 
 ### Component Model
 
