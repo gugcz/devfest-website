@@ -10,7 +10,9 @@ export default defineConfig({
     trailingSlash: 'never',
     integrations: [
         sitemap({
-            filter: (page) => !page.includes('/newsletter-subscription-thank-you'),
+            filter: (page) =>
+                !page.includes('/newsletter-subscription-thank-you') &&
+                !page.includes('/thank-you'),
         }),
         react(),
     ],

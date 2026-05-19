@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+import LandingNotice from '../components/LandingNotice.astro';
+---
+
+<BaseLayout
+	title="Ticket confirmed · DevFest.cz 2026"
+	description="Your DevFest.cz 2026 ticket is confirmed. See you in Prague on 30 October 2026."
+	noindex
+>
+	<LandingNotice
+		headline="You're in."
+		subtext="Ticket confirmed. Check your inbox for the receipt and QR code. See you in Prague on 30 October 2026."
+	/>
+	<Footer />
+</BaseLayout>

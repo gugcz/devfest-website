@@ -15,6 +15,7 @@ const PATHS = [
 	'/contact/',
 	'/privacy-policy/',
 	'/newsletter-subscription-thank-you/',
+	'/thank-you/',
 	'/404.html',
 ];
 
