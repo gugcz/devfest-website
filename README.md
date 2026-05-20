@@ -82,7 +82,7 @@ The default Cloud Functions service account has the IAM needed to write RTDB; no
 Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 1. Paste the deployed `titoWebhook` URL.
 2. Copy ti.to's security token into `TITO_WEBHOOK_SECRET` (Secret Manager).
-3. Subscribe at least to `ticket.completed` and `registration.finished`.
+3. Subscribe to `registration.finished` — that event fires once per completed order and already lists every ticket in the registration, so subscribing to `ticket.completed` as well would double-post.
 
 ### RTDB rules
 
