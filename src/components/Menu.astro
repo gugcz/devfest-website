@@ -20,8 +20,12 @@ const links: readonly NavLink[] = [
 ];
 
 const isCurrent = (href: string) => {
-	const path = href.split('#')[0].replace(/\/$/, '') || '/';
-	return !href.startsWith('http') && path === currentPath;
+	if (href.startsWith('http')) return false;
+	// Same-page or cross-page anchor links (#tickets, /#tickets) jump within
+	// content; they are not the "current page" in the WCAG aria-current sense.
+	if (href.includes('#')) return false;
+	const path = href.replace(/\/$/, '') || '/';
+	return path === currentPath;
 };
 ---
 
