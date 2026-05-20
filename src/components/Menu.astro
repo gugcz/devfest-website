@@ -1,12 +1,24 @@
 ---
-const links = [
-	{ href: '/partners', label: 'Partners' },
-	{ href: '/contact', label: 'Contact' },
-	{ href: 'https://2025.devfest.cz', label: '2025 Edition', external: true },
-] as const;
+interface NavLink {
+	href: string;
+	label: string;
+	external?: boolean;
+	cta?: boolean;
+}
 
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isHome = currentPath === '/';
+// On the home page #tickets is a same-page anchor; from subpages we need
+// to send the visitor back to / first so the section actually exists.
+const ticketsHref = isHome ? '#tickets' : '/#tickets';
+
+const links: readonly NavLink[] = [
+	{ href: '/partners', label: 'Partners' },
+	{ href: '/contact', label: 'Contact' },
+	{ href: 'https://2025.devfest.cz', label: '2025 Edition', external: true },
+	{ href: ticketsHref, label: 'Tickets', cta: true },
+];
+
 const isCurrent = (href: string) => {
 	const path = href.split('#')[0].replace(/\/$/, '') || '/';
 	return !href.startsWith('http') && path === currentPath;
@@ -34,8 +46,7 @@ const isCurrent = (href: string) => {
 		</button>
 
 		<ul id="nav-list" class="nav-list" data-open="false">
-			{links.map(({ href, label, external }) => {
-				const cta = href.endsWith('#newsletter');
+			{links.map(({ href, label, external, cta }) => {
 				const current = isCurrent(href);
 				return (
 					<li>

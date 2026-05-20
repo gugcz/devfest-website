@@ -50,7 +50,8 @@ const tickerTopics = [
 					</div>
 
 					<div class="hero-cta-group">
-						<a href="#newsletter" class="btn-primary">Notify me</a>
+						<a href="#tickets" class="btn-primary">Get tickets</a>
+						<a href="#newsletter" class="btn-secondary">Notify me</a>
 					</div>
 				</div>
 
@@ -270,6 +271,40 @@ const tickerTopics = [
 
 		&:focus-visible {
 			outline: 3px solid #F5EBDC;
+			outline-offset: 3px;
+		}
+	}
+
+	.btn-secondary {
+		display: inline-block;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.9rem;
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		background: transparent;
+		color: var(--color-text);
+		border: 2px solid rgba(240, 237, 230, 0.55);
+		border-radius: 1px;
+		padding: 1.05rem 2.2rem;
+		text-decoration: none;
+		position: relative;
+		transform: rotate(1deg);
+		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+		transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+
+		&:hover {
+			background: rgba(240, 237, 230, 0.08);
+			border-color: var(--color-text);
+			transform: rotate(1deg) translateY(-1px);
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45), 0 2px 0 rgba(0, 0, 0, 0.2);
+		}
+
+		&:active {
+			transform: rotate(1deg) translateY(0);
+		}
+
+		&:focus-visible {
+			outline: 3px solid var(--color-text);
 			outline-offset: 3px;
 		}
 	}
@@ -564,7 +599,8 @@ const tickerTopics = [
 		.meta-value { font-size: 1.2rem; }
 		.hero-countdown { padding: 1.4rem 0.6rem 1rem; align-self: stretch; }
 		.hero-cta-group { gap: 1rem; margin-top: 2.6rem; }
-		.btn-primary { padding: 0.9rem 1.8rem; font-size: 0.85rem; }
+		.btn-primary,
+		.btn-secondary { padding: 0.9rem 1.8rem; font-size: 0.85rem; }
 		.section-label::after { flex-basis: 32px; }
 		#newsletter { padding: 5rem 1.1rem; }
 	}
@@ -573,7 +609,8 @@ const tickerTopics = [
 		#hero { padding: 5.5rem 0.85rem 3.5rem; }
 		.hero-subtitle { padding-left: 0.9rem; }
 		.hero-countdown { padding: 1.2rem 0.4rem 0.9rem; }
-		.btn-primary { padding: 0.85rem 1.4rem; font-size: 0.82rem; letter-spacing: 0.18em; }
+		.btn-primary,
+		.btn-secondary { padding: 0.85rem 1.4rem; font-size: 0.82rem; letter-spacing: 0.18em; }
 		#newsletter { padding: 4.5rem 0.85rem; }
 	}
 
