@@ -18,8 +18,10 @@
 	font-size: 0.85rem;
 	letter-spacing: 0.28em;
 	text-transform: uppercase;
-	color: var(--color-accent);
-	opacity: 0.85;
+	// --color-accent (#CC0000) at 0.85 opacity over the near-black page bg
+	// blends to ~#ae0101, which only hits 2.72:1 against #050505 — fails
+	// WCAG 1.4.3 AA (4.5:1). Use the hot accent at full opacity instead.
+	color: var(--color-accent-hot);
 	margin-bottom: 0.6rem;
 }
 
