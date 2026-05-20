@@ -74,13 +74,75 @@ const isCurrent = (href: string) => {
 	const toggle = document.getElementById('nav-toggle');
 	const list = document.getElementById('nav-list');
 
-	// Scroll state — switches transparent → solid blurred backdrop
-	const onScroll = () => {
+	// Scroll state — sets data-state for brand reveal on home page
+	const onScrollState = () => {
 		if (!header) return;
 		header.dataset.state = window.scrollY > 24 ? 'scrolled' : 'top';
 	};
-	onScroll();
-	window.addEventListener('scroll', onScroll, { passive: true });
+	onScrollState();
+	window.addEventListener('scroll', onScrollState, { passive: true });
+
+	// Hide-on-scroll-down, show-on-scroll-up — matches verygood.ventures
+	// pattern. Avoids the "partial shrink" look on Chrome mobile where the
+	// browser URL bar collapses gradually; instead nav fully slides out of
+	// view, lining up with the disappearing browser chrome.
+	let lastY = 0;
+	let delta = 0;
+	let hidden = false;
+	let raf = false;
+	const HIDE_THRESHOLD = 10;
+	const MIN_SCROLL_Y = 80;
+	// Only auto-hide on touch / small-viewport devices — on desktop the
+	// fixed nav stays visible so the user can jump sections without scroll-up.
+	const hideMql = window.matchMedia('(max-width: 760px)');
+	// Safari (macOS + iOS) collapses its own URL bar on scroll — stacking a
+	// second hide animation on top looks broken, so skip auto-hide there.
+	// Match `Safari` UA token while excluding the Chromium-family browsers
+	// that also include `Safari` in their string (Chrome, Edge, Firefox iOS).
+	const ua = navigator.userAgent;
+	const isSafari = /Safari/.test(ua) && !/(Chrome|CriOS|FxiOS|EdgiOS|Edg\/|Android)/.test(ua);
+	const onScrollHide = () => {
+		const y = window.scrollY;
+		if (header) {
+			const diff = y - lastY;
+			delta += diff;
+			// Reset direction accumulator when scroll direction flips so the
+			// next gesture isn't fighting leftover delta from the previous one.
+			if ((diff > 0 && delta < 0) || (diff < 0 && delta > 0)) delta = diff;
+			// Don't hide while the drawer is open — the user needs the toggle.
+			const drawerOpen = toggle?.getAttribute('aria-expanded') === 'true';
+			const canHide = hideMql.matches && !isSafari;
+			if (canHide && delta > HIDE_THRESHOLD && y > MIN_SCROLL_Y && !hidden && !drawerOpen) {
+				header.dataset.hidden = 'true';
+				hidden = true;
+				delta = 0;
+			} else if ((!canHide || delta < -HIDE_THRESHOLD) && hidden) {
+				header.dataset.hidden = 'false';
+				hidden = false;
+				delta = 0;
+			}
+		}
+		lastY = y;
+		raf = false;
+	};
+	// Restore visibility if user resizes from mobile → desktop while hidden.
+	hideMql.addEventListener('change', (ev) => {
+		if (!ev.matches && header && hidden) {
+			header.dataset.hidden = 'false';
+			hidden = false;
+			delta = 0;
+		}
+	});
+	window.addEventListener(
+		'scroll',
+		() => {
+			if (!raf) {
+				requestAnimationFrame(onScrollHide);
+				raf = true;
+			}
+		},
+		{ passive: true }
+	);
 
 	// Mobile drawer toggle — make non-drawer regions inert when open so
 	// keyboard focus and AT navigation stay within the menu.
@@ -93,6 +155,12 @@ const isCurrent = (href: string) => {
 		toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 		list.dataset.open = String(open);
 		document.body.style.overflow = open ? 'hidden' : '';
+		// Force header visible when the drawer opens — user needs the toggle.
+		if (open && header) {
+			header.dataset.hidden = 'false';
+			hidden = false;
+			delta = 0;
+		}
 		for (const el of inertTargets()) {
 			if (open) {
 				el.setAttribute('inert', '');
@@ -141,27 +209,37 @@ const isCurrent = (href: string) => {
 		gap: 1.5rem;
 		// Constant padding — height stays fixed across scroll states so
 		// nav doesn't reflow / jump when the scroll handler flips data-state.
-		// `padding-top` extends into the safe-area inset so iOS in-app
-		// browsers (Discord, Instagram, etc.) and notched devices don't show
-		// scrolled page content through translucent browser chrome.
-		padding: max(0.75rem, env(safe-area-inset-top)) 3rem 0.75rem;
-		// Solid scrim at the very top so anything behind translucent browser
-		// chrome reads as the brand background, fading to transparent further
-		// down so the hero photo still bleeds into nav at rest.
-		background: linear-gradient(
-			to bottom,
-			rgba(5, 5, 5, 1) 0%,
-			rgba(5, 5, 5, 1) 40%,
-			rgba(5, 5, 5, 0.55) 80%,
-			rgba(5, 5, 5, 0) 100%
-		);
-		transition: background 0.25s ease, backdrop-filter 0.25s ease;
+		padding: 0.75rem 3rem;
+		// Solid opaque background across all scroll states. Matches VGV
+		// pattern — fixed nav stays readable, no gradient bleed at any
+		// scroll position, no transparent zones for page content to leak
+		// through on iOS Safari URL-bar transitions.
+		background: #050505;
+		transition: transform 0.3s ease;
 	}
 
-	.site-header[data-state='scrolled'] {
-		background: rgba(5, 5, 5, 1);
-		backdrop-filter: blur(12px) saturate(120%);
-		-webkit-backdrop-filter: blur(12px) saturate(120%);
+	// Extends the header background upward by safe-area-inset-top so the
+	// brand-dark scrim fills the area behind the iOS / iPadOS status bar
+	// without pushing nav content below it via padding.
+	.site-header::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: calc(-1 * env(safe-area-inset-top));
+		height: env(safe-area-inset-top);
+		background: #050505;
+		pointer-events: none;
+	}
+
+	// Hide-on-scroll-down: full slide-up so nav doesn't look "shrunk" while
+	// the browser URL bar collapses next to it. JS sets data-hidden=true.
+	// Transform only applied in the hidden state — keeping the resting nav
+	// transform-free lets iOS Safari extend the layout viewport behind the
+	// status bar instead of pinning the header below it.
+	.site-header[data-hidden='true'] {
+		transform: translate3d(0, -100%, 0);
+		-webkit-transform: translate3d(0, -100%, 0);
 	}
 
 	/* ===================== BRAND ===================== */
