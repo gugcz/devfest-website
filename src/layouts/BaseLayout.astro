@@ -184,6 +184,10 @@ const jsonLd = JSON.stringify(
 
 	html {
 		scroll-behavior: smooth;
+		// Fixed site header sits on top of the page. Without this, in-page
+		// anchor jumps (#tickets, #newsletter, …) park the target's first
+		// pixel under the header and the section title is clipped.
+		scroll-padding-top: 6rem;
 		// keep keyboard-focused elements clear of the fixed cookie banner
 		scroll-padding-bottom: 8rem;
 		// canvas color — backs the iOS Safari URL bar tint and prevents
