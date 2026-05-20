@@ -12,7 +12,7 @@ interface Props {
 const siteUrl = "https://devfest.cz";
 const {
 	title = "DevFest.cz 2026 — Prague Developer Conference",
-	description = "DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026. Tickets coming soon.",
+	description = "DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026. Tickets on sale now.",
 	noindex = false,
 	bodyClass = "",
 } = Astro.props;
@@ -26,15 +26,10 @@ const ogImageAlt = "DevFest.cz 2026 conference banner";
 // claim to BE the event. WebSite + Organization render sitewide.
 const isHome = Astro.url.pathname === "/";
 
-// Once ti.to release is public, add `offers` to the Event:
-// "offers": {
-//   "@type": "Offer",
-//   "url": "https://ti.to/<account>/<event>",
-//   "price": "0",
-//   "priceCurrency": "CZK",
-//   "availability": "https://schema.org/InStock",
-//   "validFrom": "2026-XX-XXT00:00:00+02:00"
-// }
+// `offers.url` points to the on-site #tickets anchor so the schema stays
+// valid even if ti.to slugs change. Per-tier prices live in RTDB and aren't
+// baked into the build; add `price` + `priceCurrency` here once a single
+// representative price (e.g. lowest tier) is stable enough to hardcode.
 const eventSchema = {
 	"@context": "https://schema.org",
 	"@type": "Event",
@@ -62,6 +57,12 @@ const eventSchema = {
 		"@type": "Organization",
 		"name": "GUG.cz, z.s.",
 		"url": "https://gug.cz"
+	},
+	"offers": {
+		"@type": "Offer",
+		"url": `${siteUrl}/#tickets`,
+		"availability": "https://schema.org/InStock",
+		"validFrom": "2026-05-20T00:00:00+02:00"
 	}
 };
 

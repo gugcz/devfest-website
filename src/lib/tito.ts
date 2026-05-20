@@ -59,15 +59,12 @@ export interface TicketsCache {
  * any non-public release that somehow lands in the cache is still
  * dropped at render time.
  *
- * Keep: `on_sale` and `sold_out`.
- * Drop: archived, secret, paused, not_yet_on_sale, ended.
+ * Drop: secret. Keep everything else — `releaseStatus()` maps each
+ * state to its own badge (on sale, sold out, paused, coming soon,
+ * ended, unavailable) so visitors see the full pricing-wave roadmap.
  */
 export function filterDisplayable(releases: TitoRelease[]): TitoRelease[] {
-	return releases.filter((r) => {
-		if (r.archived || r.secret) return false;
-		if (r.sold_out || r.sale_status === 'sold_out') return true;
-		return r.sale_status === 'on_sale';
-	});
+	return releases.filter((r) => !r.secret);
 }
 
 export interface ReleaseStatus {
@@ -121,7 +118,7 @@ export function formatPrice(price: string | null, currency: string | null): stri
 	const numeric = Number(price);
 	if (!Number.isFinite(numeric)) return price;
 	if (numeric === 0) return 'Free';
-	const code = (currency ?? 'CZK').toUpperCase();
+	const code = (currency ?? 'EUR').toUpperCase();
 	try {
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',

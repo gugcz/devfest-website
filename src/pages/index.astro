@@ -5,7 +5,7 @@ import NewsletterForm from '../components/NewsletterForm';
 import Footer from '../components/Footer.astro';
 import HeroBackground from '../components/HeroBackground.astro';
 import Ticker from '../components/Ticker.astro';
-// import Tickets from '../components/Tickets'; // TICKETS HIDDEN — restore when sale opens
+import Tickets from '../components/Tickets';
 
 const tickerTopics = [
 	'AI & Machine Learning',
@@ -64,9 +64,8 @@ const tickerTopics = [
 		<!-- TICKER -->
 		<Ticker items={tickerTopics} />
 
-		<!-- TICKETS — hidden until sale opens. Restore by uncommenting:
+		<!-- TICKETS -->
 		<Tickets client:visible />
-		-->
 
 		<!-- GALLERY — photos from past editions -->
 		<section id="gallery" aria-labelledby="gallery-title">

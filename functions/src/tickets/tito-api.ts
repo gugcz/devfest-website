@@ -132,29 +132,16 @@ export function projectRelease(release: TitoRelease): Record<string, unknown> {
 /**
  * Predicate: should this release be persisted to the public RTDB cache?
  *
- * Hidden:
- *   - archived releases
- *   - `secret` releases (invite-only / private-link)
- *   - expired (sale window passed) and upcoming (sale window not yet
- *     open) releases — the visitor cannot act on them
- *   - off_sale or locked releases that are not sold-out (paused tiers)
- *
- * Kept:
- *   - On-sale releases (all flags clear)
- *   - Sold-out releases (informative — visitors see that a tier sold
- *     out)
- *
- * Filtering at the write site keeps unpublished release data out of the
- * publicly readable `/tickets` node entirely.
+ * Only `secret` releases (invite-only / private-link) are hidden. All
+ * other states — on-sale, sold-out, paused (`off_sale` / `locked`),
+ * upcoming, expired, archived — are persisted so the UI can render
+ * the full pricing-wave roadmap. Status mapping happens in
+ * `releaseStatus()` (`src/lib/tito.ts`): paused/upcoming tiers render
+ * with a disabled CTA so visitors can preview waves whose exact
+ * release date is not yet known.
  */
 export function isWebsiteVisible(release: TitoRelease): boolean {
-	if (release.archived) return false;
 	if (release.secret) return false;
-	if (release.sold_out) return true;
-	if (release.expired) return false;
-	if (release.upcoming) return false;
-	if (release.off_sale) return false;
-	if (release.locked) return false;
 	return true;
 }
 
