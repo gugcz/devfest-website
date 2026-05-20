@@ -82,10 +82,10 @@ const isCurrent = (href: string) => {
 	onScrollState();
 	window.addEventListener('scroll', onScrollState, { passive: true });
 
-	// Hide-on-scroll-down, show-on-scroll-up — matches verygood.ventures
-	// pattern. Avoids the "partial shrink" look on Chrome mobile where the
-	// browser URL bar collapses gradually; instead nav fully slides out of
-	// view, lining up with the disappearing browser chrome.
+	// Hide-on-scroll-down, show-on-scroll-up. Avoids the "partial shrink"
+	// look on Chrome mobile where the browser URL bar collapses gradually;
+	// instead nav fully slides out of view, lining up with the disappearing
+	// browser chrome.
 	let lastY = 0;
 	let delta = 0;
 	let hidden = false;
@@ -210,10 +210,10 @@ const isCurrent = (href: string) => {
 		// Constant padding — height stays fixed across scroll states so
 		// nav doesn't reflow / jump when the scroll handler flips data-state.
 		padding: 0.75rem 3rem;
-		// Solid opaque background across all scroll states. Matches VGV
-		// pattern — fixed nav stays readable, no gradient bleed at any
-		// scroll position, no transparent zones for page content to leak
-		// through on iOS Safari URL-bar transitions.
+		// Solid opaque background across all scroll states — fixed nav
+		// stays readable, no gradient bleed at any scroll position, no
+		// transparent zones for page content to leak through on iOS
+		// Safari URL-bar transitions.
 		background: #050505;
 		transition: transform 0.3s ease;
 	}

@@ -225,11 +225,10 @@ const jsonLd = JSON.stringify(
 	}
 
 	body {
-		// `100vh` (not `100dvh`) matches VGV — dynamic viewport units reflow
-		// the body box when iOS Safari's URL bar collapses, which can shift
-		// where the layout viewport's top edge sits and cause `position:
-		// fixed; top: 0` to render below the system status bar instead of
-		// behind it.
+		// `100vh` (not `100dvh`) — dynamic viewport units reflow the body
+		// box when iOS Safari's URL bar collapses, which can shift where
+		// the layout viewport's top edge sits and cause `position: fixed;
+		// top: 0` to render below the system status bar instead of behind it.
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
