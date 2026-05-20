@@ -100,12 +100,7 @@ const jsonLd = JSON.stringify(
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="theme-color" content="#050505" />
-		<meta name="theme-color" content="#050505" media="(prefers-color-scheme: light)" />
-		<meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)" />
 		<meta name="color-scheme" content="dark" />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
 
 		<title>{title}</title>
@@ -197,6 +192,14 @@ const jsonLd = JSON.stringify(
 		// canvas color — backs the iOS Safari URL bar tint and prevents
 		// a white flash during rubber-band scroll past the body edges.
 		background: var(--color-bg);
+		// Horizontal overflow clipped at the html level (not body) — keeps
+		// body free of overflow rules, which on iOS Safari can otherwise
+		// turn body into the scroll container and anchor `position: fixed`
+		// to body rather than the layout viewport.
+		overflow-x: hidden;
+		@supports (overflow-x: clip) {
+			overflow-x: clip;
+		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -222,7 +225,11 @@ const jsonLd = JSON.stringify(
 	}
 
 	body {
-		min-height: 100dvh;
+		// `100vh` (not `100dvh`) — dynamic viewport units reflow the body
+		// box when iOS Safari's URL bar collapses, which can shift where
+		// the layout viewport's top edge sits and cause `position: fixed;
+		// top: 0` to render below the system status bar instead of behind it.
+		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
 		background: var(--color-bg);
@@ -230,7 +237,6 @@ const jsonLd = JSON.stringify(
 		font-family: 'Special Elite', cursive;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
-		overflow-x: hidden;
 
 		// Opt-out so terminal pages (404, post-submit) can render plain text
 		// against solid bg — axe-core sometimes mis-samples through blend overlays.
