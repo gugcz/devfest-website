@@ -1,10 +1,11 @@
 /**
  * `titoWebhook` — receives ti.to webhook deliveries, verifies the HMAC
- * signature, and posts a Slack notification when a ticket is purchased.
+ * signature, and posts a Slack notification when a registration finishes.
  *
  * Configure ti.to → Customize → Webhook Endpoints with the deployed URL
  * and the same security token stored in `TITO_WEBHOOK_SECRET`. Subscribe
- * to at least `ticket.completed` and `registration.finished`.
+ * to `registration.finished` — that event fires once per completed order
+ * and already contains the full list of tickets purchased.
  */
 
 import { logger } from 'firebase-functions/v2';
@@ -23,9 +24,7 @@ import {
 
 const REGION = 'europe-west1';
 
-// Events we post to Slack. Other events are accepted (200) but ignored so
-// ti.to does not retry them.
-const NOTIFY_EVENTS = new Set<TitoWebhookEvent>(['ticket.completed', 'registration.finished']);
+const NOTIFY_EVENT: TitoWebhookEvent = 'registration.finished';
 
 function formatPrice(price: string | null | undefined, currency: string | null | undefined): string | null {
 	if (!price) return null;
@@ -57,13 +56,9 @@ function summarizeTickets(tickets: TitoWebhookPayload[] | undefined): string | n
 	return lines.join('\n');
 }
 
-function buildSlackMessage(event: TitoWebhookEvent, payload: TitoWebhookPayload): SlackPayload {
-	const isRegistration = event.startsWith('registration.');
-
-	const releaseTitle = payload.release_title ?? 'Ticket';
-	const headline = isRegistration
-		? `🎟️ Registration finished — ${payload.tickets_count ?? payload.tickets?.length ?? 1} ticket(s)`
-		: `🎟️ ${releaseTitle} purchased`;
+function buildSlackMessage(payload: TitoWebhookPayload): SlackPayload {
+	const ticketCount = payload.tickets_count ?? payload.tickets?.length ?? 1;
+	const headline = `🎟️ Registration finished — ${ticketCount} ticket(s)`;
 
 	const fields: { type: 'mrkdwn'; text: string }[] = [];
 
@@ -72,19 +67,15 @@ function buildSlackMessage(event: TitoWebhookEvent, payload: TitoWebhookPayload)
 
 	if (payload.email) fields.push({ type: 'mrkdwn', text: `*Email:*\n${payload.email}` });
 
-	if (isRegistration) {
-		const ticketSummary = summarizeTickets(payload.tickets);
-		if (ticketSummary) {
-			fields.push({ type: 'mrkdwn', text: `*Tickets:*\n${ticketSummary}` });
-		}
-	} else if (payload.release_title) {
-		fields.push({ type: 'mrkdwn', text: `*Release:*\n${payload.release_title}` });
+	const ticketSummary = summarizeTickets(payload.tickets);
+	if (ticketSummary) {
+		fields.push({ type: 'mrkdwn', text: `*Tickets:*\n${ticketSummary}` });
 	}
 
-	const priceLabel = formatPrice(payload.price ?? payload.total, payload.currency);
+	const priceLabel = formatPrice(payload.total ?? payload.price, payload.currency);
 	if (priceLabel) fields.push({ type: 'mrkdwn', text: `*Price:*\n${priceLabel}` });
 
-	const reference = payload.reference ?? payload.registration_reference;
+	const reference = payload.registration_reference ?? payload.reference;
 	if (reference) fields.push({ type: 'mrkdwn', text: `*Reference:*\n${reference}` });
 
 	const blocks: unknown[] = [
@@ -101,7 +92,7 @@ function buildSlackMessage(event: TitoWebhookEvent, payload: TitoWebhookPayload)
 			elements: [
 				{
 					type: 'mrkdwn',
-					text: `tito · \`${event}\` · ${new Date().toISOString()}`,
+					text: `tito · \`${NOTIFY_EVENT}\` · ${new Date().toISOString()}`,
 				},
 			],
 		},
@@ -154,9 +145,9 @@ export const titoWebhook = onRequest(
 			return;
 		}
 
-		// Only post to Slack for events we care about; ack everything else
+		// Only post to Slack for registration.finished; ack everything else
 		// with 200 so ti.to doesn't keep retrying.
-		if (!NOTIFY_EVENTS.has(eventName)) {
+		if (eventName !== NOTIFY_EVENT) {
 			logger.debug('titoWebhook ignored event', { event: eventName });
 			res.status(200).send('ignored');
 			return;
@@ -172,11 +163,11 @@ export const titoWebhook = onRequest(
 		}
 
 		try {
-			const message = buildSlackMessage(eventName, payload);
+			const message = buildSlackMessage(payload);
 			await postToSlack(SLACK_WEBHOOK_URL.value(), message);
 			logger.info('titoWebhook posted to Slack', {
 				event: eventName,
-				reference: payload.reference ?? payload.registration_reference ?? null,
+				reference: payload.registration_reference ?? payload.reference ?? null,
 			});
 			res.status(200).send('ok');
 		} catch (err) {
