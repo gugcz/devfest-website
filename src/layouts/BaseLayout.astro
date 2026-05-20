@@ -100,6 +100,16 @@ const jsonLd = JSON.stringify(
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<meta name="generator" content={Astro.generator} />
+		<!--
+			theme-color: tints iOS Safari's status bar / URL bar so the
+			native chrome stays brand-dark even when the layout viewport
+			doesn't extend behind it. Variants for light + dark cover
+			browsers that only respect the media-scoped form (Firefox,
+			Samsung Internet, older iOS in-app browsers).
+		-->
+		<meta name="theme-color" content="#050505" />
+		<meta name="theme-color" content="#050505" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)" />
 		<meta name="color-scheme" content="dark" />
 		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
 
@@ -151,6 +161,16 @@ const jsonLd = JSON.stringify(
 	</head>
 	<body class={bodyClass}>
 		<a href="#main-content" class="skip-link">Skip to main content</a>
+		<!--
+			Status-bar scrim — paints brand-dark behind iOS Safari's
+			translucent status bar / notch zone. Uses the
+			`top: calc(-1 * env(safe-area-inset-top))` trick so the
+			cover extends UP into the safe-area inset even when Safari
+			ignores `viewport-fit=cover` and anchors `top:0` below the
+			safe area. Z-index sits above the film-grain + scanline
+			overlays (9999 / 9998) so it stays opaque under the chrome.
+		-->
+		<div class="status-bar-cover" aria-hidden="true"></div>
 		<Menu />
 		<div id="main-content"><slot /></div>
 		<CookieBanner />
@@ -192,11 +212,16 @@ const jsonLd = JSON.stringify(
 		// canvas color — backs the iOS Safari URL bar tint and prevents
 		// a white flash during rubber-band scroll past the body edges.
 		background: var(--color-bg);
-		// Horizontal overflow clipped at the html level (not body) — keeps
-		// body free of overflow rules, which on iOS Safari can otherwise
-		// turn body into the scroll container and anchor `position: fixed`
-		// to body rather than the layout viewport.
-		overflow-x: hidden;
+		// Horizontal overflow clipped via `overflow-x: clip` only — NOT
+		// `overflow-x: hidden`. `hidden` turns html into a scroll
+		// container on iOS Safari, which anchors `position: fixed`
+		// elements to the html box instead of the layout viewport
+		// (so fixed top:0 lands below the iOS status bar / notch and
+		// `env(safe-area-inset-top)` reports 0). `clip` (Safari 15.4+)
+		// hides overflow without becoming a scroll container, leaving
+		// viewport-fit=cover + env() working as specced. On older
+		// browsers without `clip` support we accept potential horizontal
+		// overflow rather than break top-chrome rendering.
 		@supports (overflow-x: clip) {
 			overflow-x: clip;
 		}
@@ -325,5 +350,27 @@ const jsonLd = JSON.stringify(
 	@keyframes ticker {
 		from { transform: translateX(0); }
 		to { transform: translateX(-50%); }
+	}
+
+	// Status-bar scrim. iOS Safari ignores `viewport-fit=cover` in some
+	// browser modes and anchors `position: fixed; top: 0` *below* the
+	// safe-area inset, leaving the area behind the translucent status
+	// bar showing scrolled page content. Pulling the cover UP by
+	// `env(safe-area-inset-top)` with matching height paints exactly
+	// the inset zone — never overlaps the nav header below. Confirmed
+	// on iPhone Pro (Dynamic Island).
+	//
+	// `z-index: 10000` sits above the film-grain (9999) and scanline
+	// (9998) body overlays so mix-blend-mode doesn't desaturate / hide
+	// the cover. On desktop env == 0 → zero-height cover → invisible.
+	.status-bar-cover {
+		position: fixed;
+		top: calc(-1 * env(safe-area-inset-top));
+		left: 0;
+		right: 0;
+		height: env(safe-area-inset-top);
+		background: var(--color-bg);
+		z-index: 10000;
+		pointer-events: none;
 	}
 </style>

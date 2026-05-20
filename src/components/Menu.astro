@@ -202,7 +202,10 @@ const isCurrent = (href: string) => {
 		top: 0;
 		left: 0;
 		right: 0;
-		z-index: 100;
+		// Sits above the .status-bar-cover (z=10000) and the film-grain
+		// / scanline body overlays so nav content stays opaque across
+		// the full stacking order.
+		z-index: 10001;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -216,20 +219,6 @@ const isCurrent = (href: string) => {
 		// Safari URL-bar transitions.
 		background: #050505;
 		transition: transform 0.3s ease;
-	}
-
-	// Extends the header background upward by safe-area-inset-top so the
-	// brand-dark scrim fills the area behind the iOS / iPadOS status bar
-	// without pushing nav content below it via padding.
-	.site-header::before {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: calc(-1 * env(safe-area-inset-top));
-		height: env(safe-area-inset-top);
-		background: #050505;
-		pointer-events: none;
 	}
 
 	// Hide-on-scroll-down: full slide-up so nav doesn't look "shrunk" while
