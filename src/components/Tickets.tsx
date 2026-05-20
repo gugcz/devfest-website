@@ -5,10 +5,24 @@ import {
 	formatPrice,
 	releaseStatus,
 	releaseTitle,
+	type ReleaseStatus,
 	type TicketsCache,
 	type TitoRelease,
 } from '../lib/tito';
 import s from './Tickets.module.scss';
+
+// Static copy keyed by lowercased group name. Overrides whatever ti.to
+// returns in the release `description` so marketing copy stays in repo,
+// not in the ti.to admin.
+const GROUP_DESCRIPTIONS: Record<string, string> = {
+	'early bird': 'First on the scene. Lowest price of the year while seats are still warm.',
+	regular: 'Standard ticket. The investigation is in full swing — secure your seat before the trail cools.',
+	'lazy bird': 'Final call. Late price, same full access — claim a seat before doors close on the case.',
+};
+
+function groupDescription(groupName: string, fallback: string | null): string | null {
+	return GROUP_DESCRIPTIONS[groupName.trim().toLowerCase()] ?? fallback;
+}
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
 
@@ -165,20 +179,28 @@ export default function Tickets() {
 			</header>
 			<ul className={s.list} role="list">
 				{groupReleases(releases).map((group) => {
-					const allSoldOut = group.variants.every(
-						(v) => releaseStatus(v.release).tone === 'sold-out',
-					);
+					const statuses = group.variants.map((v) => releaseStatus(v.release));
+					const anyPurchasable = statuses.some((st) => st.purchasable);
+					// When no variant is buyable, pick a non-sold-out summary if one
+					// exists so a "Paused" or "Coming soon" wave isn't labeled "Sold
+					// out" just because one variant ran out.
+					const summary: ReleaseStatus | null = anyPurchasable
+						? null
+						: statuses.find((st) => st.tone !== 'sold-out') ?? statuses[0];
 					return (
-						<li key={group.name} className={`${s.ticket} ${allSoldOut ? s.isInactive : ''}`}>
+						<li
+							key={group.name}
+							className={`${s.ticket} ${!anyPurchasable ? s.isInactive : ''}`}
+						>
 							<div className={s.ticketTop}>
 								<h3 className={s.ticketTitle}>{group.name}</h3>
-								{allSoldOut && (
-									<span className={`${s.badge} ${s.badgeSoldOut}`}>Sold out</span>
-								)}
 							</div>
-							{group.description && (
-								<p className={s.ticketDescription}>{group.description}</p>
-							)}
+							{(() => {
+								const description = groupDescription(group.name, group.description);
+								return description && (
+									<p className={s.ticketDescription}>{description}</p>
+								);
+							})()}
 							<ul className={s.variants}>
 								{group.variants.map(({ release, variantLabel }) => {
 									const label = variantLabel || releaseTitle(release);
@@ -192,11 +214,7 @@ export default function Tickets() {
 									);
 								})}
 							</ul>
-							{allSoldOut ? (
-								<span className={`${s.cta} ${s.ctaDisabled}`} aria-disabled="true">
-									Sold out
-								</span>
-							) : (
+							{anyPurchasable ? (
 								<a
 									className={s.cta}
 									href={eventUrl(accountSlug, eventSlug)}
@@ -207,6 +225,10 @@ export default function Tickets() {
 									Get tickets
 									<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
 								</a>
+							) : (
+								<span className={`${s.cta} ${s.ctaDisabled}`} aria-disabled="true">
+									{summary?.label ?? 'Unavailable'}
+								</span>
 							)}
 						</li>
 					);
