@@ -28,8 +28,8 @@ const isHome = Astro.url.pathname === "/";
 
 // `offers.url` points to the on-site #tickets anchor so the schema stays
 // valid even if ti.to slugs change. `price` is the lowest-tier (early-bird)
-// figure used for Google Event rich results — bump this when the wave
-// changes if the lowest live price moves.
+// VAT-inclusive figure used for Google Event rich results — must match the
+// customer-facing price rendered by Tickets.tsx. Bump when the wave changes.
 const eventSchema = {
 	"@context": "https://schema.org",
 	"@type": "Event",
@@ -61,7 +61,7 @@ const eventSchema = {
 	"offers": {
 		"@type": "Offer",
 		"url": `${siteUrl}/#tickets`,
-		"price": "70",
+		"price": "84",
 		"priceCurrency": "EUR",
 		"availability": "https://schema.org/InStock",
 		"validFrom": "2026-05-20T00:00:00+02:00"
