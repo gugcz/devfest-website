@@ -27,6 +27,12 @@ export interface TitoRelease {
 	title: string | null;
 	description: string | null;
 	price: string | null;
+	/** Net price (excl. tax). Reliably net regardless of `tax_exclusive`. */
+	price_ex_tax?: string | null;
+	/** True when organizer entered `price` as net (gross = price + tax). */
+	tax_exclusive?: boolean | null;
+	/** Free-text tax label set by organizer (e.g. "VAT 21%"). */
+	tax_description?: string | null;
 	currency: string | null;
 	quantity: number | null;
 	quantity_sold: number;
@@ -118,6 +124,56 @@ export function formatPrice(price: string | null, currency: string | null): stri
 	const numeric = Number(price);
 	if (!Number.isFinite(numeric)) return price;
 	if (numeric === 0) return 'Free';
+	return formatAmount(numeric, currency);
+}
+
+/**
+ * Czech standard VAT rate. Used as a fallback when the ti.to release is
+ * configured tax-exclusive (`tax_exclusive=true`) — ti.to's Admin API
+ * does not expose a tax rate or a gross figure on releases, so we apply
+ * the country's statutory rate. If the release is tax-inclusive
+ * (`tax_exclusive=false`), the gross figure is taken directly from
+ * `price` and this constant is not used.
+ */
+export const FALLBACK_VAT_RATE = 0.21;
+
+export interface PriceDisplay {
+	/** Primary amount shown — gross when known, else net. */
+	primary: string;
+	/** Secondary line (e.g. "incl. VAT 21%" / "ex VAT €100"). Null when nothing to add. */
+	secondary: string | null;
+}
+
+/**
+ * Build the price display lines for a release. Always shows the gross
+ * (tax-inclusive) figure as the primary number with a small "VAT
+ * included" tag underneath — visitors see what they actually pay.
+ *
+ * - Tax-inclusive release (`tax_exclusive=false`): `price` is already
+ *   gross. Use it directly.
+ * - Tax-exclusive or unknown: `price` is net. Multiply by
+ *   `FALLBACK_VAT_RATE` because ti.to's Admin API does not expose a
+ *   tax rate on release or event objects.
+ *
+ * Secondary label uses `tax_description` when the organizer set one.
+ */
+export function priceDisplay(release: TitoRelease): PriceDisplay | null {
+	if (release.price == null) return { primary: 'Free', secondary: null };
+	const price = Number(release.price);
+	if (!Number.isFinite(price)) return { primary: release.price, secondary: null };
+	if (price === 0) return { primary: 'Free', secondary: null };
+
+	const currency = release.currency;
+	const label = (release.tax_description ?? '').trim() || 'VAT';
+	const gross = release.tax_exclusive === false ? price : price * (1 + FALLBACK_VAT_RATE);
+
+	return {
+		primary: formatAmount(gross, currency),
+		secondary: `${label} included`,
+	};
+}
+
+function formatAmount(numeric: number, currency: string | null): string {
 	const code = (currency ?? 'EUR').toUpperCase();
 	try {
 		return new Intl.NumberFormat('en-US', {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
 	eventUrl,
 	filterDisplayable,
-	formatPrice,
+	priceDisplay,
 	releaseStatus,
 	releaseTitle,
 	type ReleaseStatus,
@@ -204,11 +204,15 @@ export default function Tickets() {
 							<ul className={s.variants}>
 								{group.variants.map(({ release, variantLabel }) => {
 									const label = variantLabel || releaseTitle(release);
+									const price = priceDisplay(release);
 									return (
 										<li key={release.id} className={s.variant}>
 											<span className={s.variantLabel}>{label}</span>
-											<span className={s.variantPrice}>
-												{formatPrice(release.price, release.currency)}
+											<span className={s.variantPriceBlock}>
+												<span className={s.variantPrice}>{price?.primary}</span>
+												{price?.secondary && (
+													<span className={s.variantVat}>{price.secondary}</span>
+												)}
 											</span>
 										</li>
 									);

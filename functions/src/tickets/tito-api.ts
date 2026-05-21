@@ -35,6 +35,12 @@ export interface TitoRelease {
 	title?: string | null;
 	description?: string | null;
 	price?: string | null;
+	/** Net price (excl. tax). Always reliably net regardless of `tax_exclusive`. */
+	price_ex_tax?: string | null;
+	/** True when organizer entered `price` as net (gross = price + tax). */
+	tax_exclusive?: boolean | null;
+	/** Free-text tax label set by organizer (e.g. "VAT 21%"). Not structured. */
+	tax_description?: string | null;
 	currency?: string | null;
 	quantity?: number | null;
 	quantity_sold?: number;
@@ -103,6 +109,9 @@ export const RELEASE_FIELDS = [
 	'title',
 	'description',
 	'price',
+	'price_ex_tax',
+	'tax_exclusive',
+	'tax_description',
 	'currency',
 	'quantity',
 	'quantity_sold',
