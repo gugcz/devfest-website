@@ -234,12 +234,29 @@
 	color: rgba(26, 18, 8, 0.78);
 }
 
+.variantPriceBlock {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.15rem;
+	text-align: right;
+}
+
 .variantPrice {
 	font-family: 'Bebas Neue', sans-serif;
 	font-size: 1.6rem;
 	letter-spacing: 0.04em;
 	line-height: 1;
 	color: #1A1208;
+}
+
+.variantVat {
+	font-family: 'Share Tech Mono', monospace;
+	font-size: 0.7rem;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: rgba(26, 18, 8, 0.6);
+	line-height: 1;
 }
 
 .ticketPrice {
