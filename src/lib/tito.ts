@@ -174,9 +174,9 @@ export function priceDisplay(release: TitoRelease): PriceDisplay | null {
 }
 
 function formatAmount(numeric: number, currency: string | null): string {
-	const code = (currency ?? 'EUR').toUpperCase();
+	const code = (currency ?? 'CZK').toUpperCase();
 	try {
-		return new Intl.NumberFormat('en-US', {
+		return new Intl.NumberFormat('cs-CZ', {
 			style: 'currency',
 			currency: code,
 			maximumFractionDigits: numeric % 1 === 0 ? 0 : 2,
