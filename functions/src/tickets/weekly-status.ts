@@ -1,8 +1,12 @@
 /**
- * `weeklyTicketStatus` — once a week, fetch releases directly from the ti.to
- * Admin API and post a sales summary to Slack. The cron is weekly so the
- * extra ti.to request is negligible (1/week, well under the 60/min limit),
- * and reading live data avoids any staleness from the hourly cache.
+ * Ticket status reports — twice a week, fetch releases directly from the ti.to
+ * Admin API and post a sales summary to Slack. The cron runs only twice a week
+ * so the extra ti.to requests are negligible (2/week, well under the 60/min
+ * limit), and reading live data avoids any staleness from the hourly cache.
+ *
+ * Two scheduled functions share one handler (`runTicketStatus`): App Engine
+ * cron can't express two different times-of-day in a single expression, so
+ * Monday 09:00 and Thursday 18:00 are separate `onSchedule` exports.
  */
 
 import { logger } from 'firebase-functions/v2';
@@ -95,7 +99,7 @@ function buildSlackMessage(summary: Summary): SlackPayload {
 	const blocks: unknown[] = [
 		{
 			type: 'header',
-			text: { type: 'plain_text', text: '📊 Weekly ticket status', emoji: true },
+			text: { type: 'plain_text', text: '📊 Ticket status', emoji: true },
 		},
 		{
 			type: 'section',
@@ -123,42 +127,51 @@ function buildSlackMessage(summary: Summary): SlackPayload {
 	];
 
 	return {
-		text: `Weekly ticket status — total sold ${totalLabel}`,
+		text: `Ticket status — total sold ${totalLabel}`,
 		blocks,
 	};
 }
 
-/**
- * Weekly on Monday at 09:00 Europe/Prague. Fetches live data from ti.to (no RTDB).
- */
+/** Shared cron options for both status-report schedules. */
+const SCHEDULE_OPTS = {
+	timeZone: 'Europe/Prague',
+	region: REGION,
+	secrets: [SLACK_WEBHOOK_URL, TITO_API_TOKEN],
+	timeoutSeconds: 120,
+	memory: '256MiB' as const,
+	retryCount: 1,
+};
+
+/** Fetch live releases from ti.to and post a sales summary to Slack. */
+async function runTicketStatus(): Promise<void> {
+	const token = TITO_API_TOKEN.value();
+	const accountSlug = TITO_ACCOUNT_SLUG.value();
+	const eventSlug = TITO_EVENT_SLUG.value();
+
+	if (!token || !accountSlug || !eventSlug) {
+		throw new Error(
+			'Missing config: TITO_API_TOKEN secret and TITO_ACCOUNT_SLUG / TITO_EVENT_SLUG params must be set.',
+		);
+	}
+
+	const releases = await fetchAllReleases({ token, accountSlug, eventSlug });
+	const summary = summarize(releases);
+	await postToSlack(SLACK_WEBHOOK_URL.value(), buildSlackMessage(summary));
+
+	logger.info('ticket status posted', {
+		totalSold: summary.totalSold,
+		releaseCount: summary.releases.length,
+	});
+}
+
+/** Monday at 09:00 Europe/Prague. Fetches live data from ti.to (no RTDB). */
 export const weeklyTicketStatus = onSchedule(
-	{
-		schedule: 'every monday 09:00',
-		timeZone: 'Europe/Prague',
-		region: REGION,
-		secrets: [SLACK_WEBHOOK_URL, TITO_API_TOKEN],
-		timeoutSeconds: 120,
-		memory: '256MiB',
-		retryCount: 1,
-	},
-	async () => {
-		const token = TITO_API_TOKEN.value();
-		const accountSlug = TITO_ACCOUNT_SLUG.value();
-		const eventSlug = TITO_EVENT_SLUG.value();
+	{ ...SCHEDULE_OPTS, schedule: 'every monday 09:00' },
+	runTicketStatus,
+);
 
-		if (!token || !accountSlug || !eventSlug) {
-			throw new Error(
-				'Missing config: TITO_API_TOKEN secret and TITO_ACCOUNT_SLUG / TITO_EVENT_SLUG params must be set.',
-			);
-		}
-
-		const releases = await fetchAllReleases({ token, accountSlug, eventSlug });
-		const summary = summarize(releases);
-		await postToSlack(SLACK_WEBHOOK_URL.value(), buildSlackMessage(summary));
-
-		logger.info('weeklyTicketStatus posted', {
-			totalSold: summary.totalSold,
-			releaseCount: summary.releases.length,
-		});
-	},
+/** Thursday at 18:00 Europe/Prague. Fetches live data from ti.to (no RTDB). */
+export const thursdayTicketStatus = onSchedule(
+	{ ...SCHEDULE_OPTS, schedule: 'every thursday 18:00' },
+	runTicketStatus,
 );
