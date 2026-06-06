@@ -1,0 +1,389 @@
+	.press-page {
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* ===================== BODY ===================== */
+	.press-body {
+		position: relative;
+		padding: 7rem 3rem 8rem;
+		background: var(--color-bg);
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
+			pointer-events: none;
+			z-index: 0;
+		}
+	}
+
+	.press-inner {
+		position: relative;
+		z-index: 1;
+		max-width: 1080px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 5rem;
+	}
+
+	/* ===================== DESK ===================== */
+	.press-desk {
+		max-width: 560px;
+	}
+
+	.contact-card {
+		position: relative;
+		background: var(--color-near-black);
+		border: 1px solid rgba(240, 237, 230, 0.08);
+		border-top: 2px solid rgba(204, 0, 0, 0.5);
+		padding: 2.2rem 2rem 2.1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.2rem;
+		transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+			pointer-events: none;
+			mix-blend-mode: overlay;
+		}
+
+		&:hover {
+			border-color: rgba(204, 0, 0, 0.45);
+			transform: translateY(-2px);
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+		}
+	}
+
+	.card-label {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.6rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.65);
+	}
+
+	.card-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 1.7rem;
+		line-height: 1;
+		letter-spacing: 0.04em;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	.card-desc {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 0.98rem;
+		line-height: 1.55;
+		color: var(--color-grey);
+		margin: 0 0 0.4rem;
+		flex: 1;
+	}
+
+	.card-emails {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1.2rem;
+	}
+
+	.card-emails li {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.email-name {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.62rem;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.65);
+	}
+
+	.email-link {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.85rem;
+		letter-spacing: 0.04em;
+		color: var(--color-text);
+		align-self: flex-start;
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
+		text-decoration: underline dashed;
+		text-decoration-color: rgba(204, 0, 0, 0.5);
+		text-underline-offset: 4px;
+		word-break: break-all;
+		transition: color 0.2s, text-decoration-color 0.2s;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			text-decoration-color: var(--color-accent-hot);
+			outline: none;
+		}
+	}
+
+	/* ===================== PRESS KIT CTA ===================== */
+	.kit-note {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--color-grey);
+		max-width: 60ch;
+		margin: -0.6rem 0 1.6rem;
+	}
+
+	.kit-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.9rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.8rem;
+		letter-spacing: 0.28em;
+		text-transform: uppercase;
+		background: #8b1818;
+		color: #f5ebdc;
+		border: 2px solid #8b1818;
+		border-radius: 1px;
+		padding: 0.95rem 2rem;
+		text-decoration: none;
+		position: relative;
+		overflow: hidden;
+		transform: rotate(-1.5deg);
+		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+		transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background-image: var(--noise-stamp);
+			background-size: 80px 30px;
+			mix-blend-mode: multiply;
+			pointer-events: none;
+		}
+
+		&:hover,
+		&:focus-visible {
+			background: var(--color-accent-hot);
+			transform: rotate(-1.5deg) translateY(-1px);
+			box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
+			outline: none;
+		}
+
+		&:active { transform: rotate(-1.5deg) translateY(0); }
+	}
+
+	.kit-cta-arrow {
+		font-size: 0.95rem;
+		transition: transform 0.25s;
+
+		.kit-cta:hover & { transform: translateX(3px); }
+	}
+
+	/* ===================== SECTIONS ===================== */
+	.section-head {
+		display: flex;
+		align-items: baseline;
+		gap: 1.2rem;
+		margin-bottom: 2rem;
+		padding-bottom: 1.1rem;
+		border-bottom: 1px solid rgba(240, 237, 230, 0.1);
+	}
+
+	.section-file {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.6rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.55);
+		white-space: nowrap;
+	}
+
+	.section-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 2rem;
+		line-height: 1;
+		letter-spacing: 0.04em;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	/* ===================== EMPTY STATE ===================== */
+	.empty-state {
+		position: relative;
+		border: 1px dashed rgba(240, 237, 230, 0.18);
+		background: rgba(255, 255, 255, 0.015);
+		padding: 2.6rem 2.2rem;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.1rem;
+	}
+
+	.empty-stamp {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.6rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: #f5ebdc;
+		padding: 0.3rem 0.7rem;
+		background: rgba(204, 0, 0, 0.7);
+		border: 1px solid rgba(0, 0, 0, 0.35);
+		border-radius: 1px;
+		transform: rotate(-2deg);
+	}
+
+	.empty-line {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 1.02rem;
+		line-height: 1.6;
+		color: var(--color-grey);
+		max-width: 56ch;
+		margin: 0;
+	}
+
+	/* ===================== MEDIA COVERAGE CARDS ===================== */
+	.coverage-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1.4rem;
+	}
+
+	.coverage-card {
+		position: relative;
+		display: grid;
+		grid-template-columns: 220px 1fr;
+		gap: 1.5rem;
+		padding: 1.1rem;
+		background: var(--color-near-black);
+		border: 1px solid rgba(240, 237, 230, 0.08);
+		border-left: 2px solid rgba(204, 0, 0, 0.5);
+		text-decoration: none;
+		transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+
+		&:hover,
+		&:focus-visible {
+			border-color: rgba(204, 0, 0, 0.45);
+			transform: translateY(-2px);
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+			outline: none;
+
+			.coverage-title { color: var(--color-accent-hot); }
+			.coverage-thumb img { transform: scale(1.04); }
+			.coverage-arrow { transform: translateX(3px); }
+		}
+	}
+
+	.coverage-thumb {
+		position: relative;
+		overflow: hidden;
+		aspect-ratio: 16 / 9;
+		background: #0a0a0a;
+		border: 1px solid rgba(240, 237, 230, 0.08);
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+			filter: grayscale(0.35) contrast(1.05);
+			transition: transform 0.3s ease;
+		}
+	}
+
+	.coverage-text {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		min-width: 0;
+		align-self: center;
+	}
+
+	.coverage-outlet {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.6rem;
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.6);
+	}
+
+	.coverage-title {
+		font-family: 'IM Fell English', serif;
+		font-size: 1.15rem;
+		line-height: 1.35;
+		color: var(--color-text);
+		transition: color 0.2s;
+	}
+
+	.coverage-desc {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 0.92rem;
+		line-height: 1.5;
+		color: var(--color-grey);
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.coverage-meta {
+		display: inline-flex;
+		align-items: center;
+		margin-top: 0.2rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.66rem;
+		letter-spacing: 0.12em;
+		color: rgba(240, 237, 230, 0.5);
+		white-space: nowrap;
+	}
+
+	.coverage-arrow {
+		display: inline-block;
+		transition: transform 0.25s;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.kit-cta-arrow,
+		.coverage-arrow,
+		.coverage-thumb img { transition: none; }
+	}
+
+	/* ===================== RESPONSIVE ===================== */
+	@media (max-width: 900px) {
+		.press-body { padding: 5.5rem 1.5rem 6.5rem; }
+		.press-inner { gap: 4rem; }
+		.press-desk { max-width: none; }
+	}
+
+	@media (max-width: 600px) {
+		.press-body { padding: 4.5rem 1.1rem 5.5rem; }
+		.contact-card { padding: 1.8rem 1.5rem 1.7rem; }
+		.card-title { font-size: 1.5rem; }
+		.section-title { font-size: 1.7rem; }
+		.section-head { gap: 0.8rem; }
+
+		.coverage-card {
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+		.coverage-title { font-size: 1.05rem; }
+	}

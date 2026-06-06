@@ -1,0 +1,248 @@
+	.footer {
+		position: relative;
+		width: 100%;
+		z-index: 2;
+		padding: 4.5rem 2.5rem 2.4rem;
+		border-top: 1px solid rgba(240, 237, 230, 0.08);
+		background: #030303;
+		font-family: 'Share Tech Mono', monospace;
+		color: rgba(240, 237, 230, 0.65);
+
+		@media (max-width: 700px) {
+			padding: 3.5rem 1.5rem 2rem;
+		}
+	}
+
+	.footer-inner {
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	.footer-grid {
+		display: grid;
+		grid-template-columns: 1.4fr 1fr 1fr 1.4fr;
+		gap: 3.5rem;
+		padding-bottom: 3.5rem;
+		border-bottom: 1px solid rgba(240, 237, 230, 0.06);
+
+		@media (max-width: 960px) {
+			grid-template-columns: 1fr 1fr;
+			gap: 2.8rem;
+		}
+
+		@media (max-width: 500px) {
+			grid-template-columns: 1fr;
+			gap: 2.6rem;
+			text-align: center;
+			justify-items: center;
+		}
+	}
+
+	.col {
+		display: flex;
+		flex-direction: column;
+		gap: 1.2rem;
+		min-width: 0;
+
+		@media (max-width: 500px) {
+			align-items: center;
+		}
+	}
+
+	.col-title {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.78rem;
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.85);
+		font-weight: normal;
+		margin: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+
+		&::before,
+		&::after {
+			content: '';
+			flex: 0 0 28px;
+			height: 1px;
+			background: rgba(204, 0, 0, 0.35);
+		}
+
+		@media (max-width: 500px) {
+			&::before,
+			&::after {
+				flex-basis: 20px;
+			}
+		}
+	}
+
+	.brand-tagline {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 0.92rem;
+		line-height: 1.55;
+		color: rgba(240, 237, 230, 0.6);
+		max-width: 32ch;
+
+		@media (max-width: 500px) {
+			margin: 0 auto;
+		}
+	}
+
+	.contact {
+		font-style: normal;
+	}
+
+	.link-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+	}
+
+	.footer-link {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.88rem;
+		letter-spacing: 0.04em;
+		color: rgba(240, 237, 230, 0.78);
+		text-decoration: none;
+		border-bottom: 1px dashed transparent;
+		padding-bottom: 1px;
+		transition: color 0.2s ease, border-color 0.2s ease;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			border-bottom-color: var(--color-accent-hot);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 3px;
+		}
+	}
+
+	.ext {
+		font-size: 0.85em;
+		opacity: 0.65;
+	}
+
+	.event-meta {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		column-gap: 1.4rem;
+		row-gap: 0.7rem;
+		margin: 0;
+		font-size: 0.88rem;
+
+		@media (max-width: 500px) {
+			justify-content: center;
+			grid-template-columns: auto auto;
+		}
+
+		dt {
+			font-size: 0.72rem;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+			color: rgba(240, 237, 230, 0.5);
+			align-self: center;
+		}
+
+		dd {
+			margin: 0;
+			color: rgba(240, 237, 230, 0.82);
+			letter-spacing: 0.04em;
+		}
+	}
+
+	.email {
+		font-family: 'Special Elite', cursive;
+		font-size: 0.95rem;
+		color: rgba(240, 237, 230, 0.88);
+		text-decoration: none;
+		border-bottom: 1px dashed rgba(240, 237, 230, 0.5);
+		padding-bottom: 1px;
+		transition: color 0.2s ease, border-color 0.2s ease;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			border-bottom-color: var(--color-accent-hot);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 3px;
+		}
+	}
+
+	.col-organizer {
+		gap: 1.5rem;
+	}
+
+	.org {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.85rem;
+		line-height: 1.6;
+		color: rgba(240, 237, 230, 0.65);
+		max-width: 34ch;
+
+		@media (max-width: 500px) {
+			margin: 0 auto;
+		}
+	}
+
+	.org-link {
+		display: inline;
+	}
+
+	.socials {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		flex-wrap: wrap;
+
+		@media (max-width: 500px) {
+			justify-content: center;
+		}
+	}
+
+	.social-link {
+		color: rgba(240, 237, 230, 0.72);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 4px;
+		transition: color 0.25s ease, background 0.25s ease;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			background: rgba(240, 237, 230, 0.06);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 2px;
+		}
+	}
+
+	.footer-bottom {
+		padding-top: 2.4rem;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		font-size: 0.78rem;
+		letter-spacing: 0.06em;
+		color: rgba(240, 237, 230, 0.55);
+	}
+
+	.copyright {
+		font-size: inherit;
+	}
