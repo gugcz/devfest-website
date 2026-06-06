@@ -7,14 +7,13 @@ import Ticker from '../components/Ticker.astro';
 // ─────────────────────────────────────────────────────────────────────────
 // FAQ CONTENT — single source of truth.
 //
-// PLACEHOLDER copy below — swap each `q` / `a` for the final answers when
-// the content arrives. Everything else (page layout, the running file
-// numbers, and the FAQPage JSON-LD for Google rich results) is DERIVED from
-// this array, so editing copy here is all that's needed.
+// A living list: we know a handful of things for certain now and will add
+// more over time. The rendered accordion, the running "case file" numbers,
+// and the FAQPage JSON-LD (Google rich results) all DERIVE from this array,
+// so adding or editing a Q&A means touching only here.
 //
 //   • `a` may contain inline HTML (links, <strong>, …). It is rendered with
-//     set:html for display and reused verbatim in the structured data
-//     (Google allows a limited HTML subset in answer text).
+//     set:html for display and reused verbatim in the structured data.
 //   • Add / remove / reorder groups and items freely.
 // ─────────────────────────────────────────────────────────────────────────
 interface FaqItem {
@@ -29,74 +28,70 @@ interface FaqGroup {
 
 const faqGroups: FaqGroup[] = [
 	{
-		id: 'tickets',
-		label: 'Tickets & registration',
+		id: 'basics',
+		label: 'The essentials',
 		items: [
 			{
-				q: 'When do tickets go on sale?',
-				a: 'PLACEHOLDER — describe the on-sale date and pricing waves here. Live ticket status is always shown in the <a href="/#tickets">Tickets</a> section on the home page.',
+				q: 'When and where is DevFest.cz 2026?',
+				a: 'DevFest.cz 2026 takes place on <strong>30 October 2026</strong> in Prague, fully in person. The exact venue is still under wraps — sign up to the <a href="/#newsletter">newsletter</a> to be the first to know.',
 			},
 			{
-				q: 'Can I get an invoice for my company?',
-				a: 'PLACEHOLDER — explain how to request a VAT invoice and what billing details are needed.',
+				q: 'Who organises DevFest.cz?',
+				a: "It's run by GUG.cz, z.s. — the Czech developer community formerly known as GDG Czech Republic. DevFest.cz is a volunteer-driven community event.",
 			},
 			{
-				q: 'Are refunds or ticket transfers possible?',
-				a: 'PLACEHOLDER — state the refund window and how to transfer a ticket to a colleague.',
+				q: 'What topics does the conference cover?',
+				a: 'DevFest.cz spans the whole developer stack — AI &amp; Machine Learning, Android &amp; Kotlin, Web, Cloud &amp; DevOps, Flutter &amp; Dart, Security, and Open Source.',
+			},
+			{
+				q: 'What language are the talks in?',
+				a: 'All talks are in English.',
 			},
 		],
 	},
 	{
-		id: 'venue',
-		label: 'Venue & travel',
+		id: 'tickets',
+		label: 'Tickets',
 		items: [
 			{
-				q: 'Where is DevFest.cz 2026 held?',
-				a: 'PLACEHOLDER — venue name, address, and a map / directions link. The conference takes place in Prague on 30 October 2026.',
+				q: 'How do I get tickets?',
+				a: 'Live availability and pricing are shown in the <a href="/#tickets">Tickets</a> section on the home page. Tickets are released in waves — the earlier you grab one, the better the price.',
 			},
 			{
-				q: 'How do I get there by public transport?',
-				a: 'PLACEHOLDER — nearest metro / tram stops and walking time from the centre.',
+				q: "What's included with my ticket?",
+				a: 'Your ticket covers <strong>all talks</strong> and the evening <strong>after-party</strong>, plus free refreshments and snacks through the day. Lunch is not included — food trucks will be on site, so bring a card or a little cash for those.',
 			},
 			{
-				q: 'Is parking available?',
-				a: 'PLACEHOLDER — parking options near the venue, if any.',
+				q: 'Can I get an invoice for my company?',
+				a: 'Tickets are sold through ti.to, which emails a receipt as soon as you buy. For specific company billing details, contact <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>.',
 			},
 		],
 	},
 	{
 		id: 'program',
-		label: 'Program & talks',
+		label: 'Program & speakers',
 		items: [
 			{
-				q: 'What topics does the conference cover?',
-				a: 'PLACEHOLDER — AI &amp; ML, Android &amp; Kotlin, Web, Cloud &amp; DevOps, Flutter &amp; Dart, Security, Open Source, and more.',
-			},
-			{
 				q: 'Will the talks be recorded?',
-				a: 'PLACEHOLDER — whether recordings are published afterwards and where to find them.',
+				a: "Yes — talk recordings are published after the conference. We'll announce them via the <a href=\"/#newsletter\">newsletter</a> and our social channels.",
 			},
 			{
 				q: 'How can I become a speaker?',
-				a: 'PLACEHOLDER — Call for Proposals details and deadline. Speaker enquiries go to <a href="mailto:devfest-speakers@gug.cz">devfest-speakers@gug.cz</a>.',
+				a: "We'd love to hear your idea. Speaker enquiries and Call for Proposals questions go to <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>.",
 			},
 		],
 	},
 	{
-		id: 'practical',
-		label: 'On the day',
+		id: 'involved',
+		label: 'Get involved',
 		items: [
 			{
-				q: 'What is included with my ticket?',
-				a: 'PLACEHOLDER — talks, workshops, catering, swag, after-party — list what the ticket covers.',
+				q: 'How can my company become a partner?',
+				a: 'See the <a href="/partners">Partners</a> page for what we offer, or write to <a href="mailto:filip.goszler@gug.cz">filip.goszler@gug.cz</a>.',
 			},
 			{
-				q: 'Is the venue accessible?',
-				a: 'PLACEHOLDER — accessibility provisions; how to request specific accommodations.',
-			},
-			{
-				q: 'Is there a code of conduct?',
-				a: 'PLACEHOLDER — link the code of conduct and the contact for reporting issues on site.',
+				q: 'How do I stay updated?',
+				a: 'Drop your email in the form on the <a href="/#newsletter">home page</a> and follow us on social media — ticket drops and program news land there first.',
 			},
 		],
 	},
@@ -417,8 +412,8 @@ const faqJsonLd = JSON.stringify(faqSchema);
 		.faq-a {
 			padding: 0 1.2rem 1.3rem;
 		}
-		// Stack the file number above the question on narrow screens so long
-		// questions don't crush against the marker.
+		// Hide the file number on narrow screens so long questions don't
+		// crush against the marker.
 		.faq-num {
 			display: none;
 		}
