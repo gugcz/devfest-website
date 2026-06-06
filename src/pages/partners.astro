@@ -10,6 +10,13 @@ const DECK_READY = false;
 const PRESENTATION_URL = '#partners-deck-todo';
 const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.cz' };
 
+// Media partners — logos live in public/partners/media/.
+// Add an entry per partner: { name, logo, url? }. `url` optional.
+const mediaPartners: { name: string; logo: string; url?: string }[] = [
+	{ name: 'White Whale Media', logo: '/partners/media/whitewhalemedia.svg', url: 'https://www.whitewhale.media/' },
+	{ name: 'Dotěkománie', logo: '/partners/media/dotekomanie.avif', url: 'https://dotekomanie.cz/' },
+];
+
 const tickerTopics = [
 	'Back the Crew',
 	'Power the Stage',
@@ -64,6 +71,32 @@ const tickerTopics = [
 				</div>
 			</div>
 		</section>
+
+		{mediaPartners.length > 0 && (
+			<section class="media-partners" aria-labelledby="media-partners-title">
+				<div class="media-inner">
+					<div class="media-head">
+						<div class="section-label">Signal boost</div>
+						<h2 id="media-partners-title" class="media-title">
+							Media <span class="red">partners</span>
+						</h2>
+					</div>
+					<ul class="media-grid">
+						{mediaPartners.map((p) => (
+							<li class="media-item">
+								{p.url ? (
+									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+										<img src={p.logo} alt={p.name} loading="lazy" />
+									</a>
+								) : (
+									<img src={p.logo} alt={p.name} loading="lazy" />
+								)}
+							</li>
+						))}
+					</ul>
+				</div>
+			</section>
+		)}
 	</main>
 	<Footer />
 </BaseLayout>
@@ -336,5 +369,118 @@ const tickerTopics = [
 
 	@media (max-width: 600px) {
 		.partners-body { padding: 4.5rem 1.1rem 5.5rem; }
+	}
+
+	/* ===================== MEDIA PARTNERS ===================== */
+	.media-partners {
+		position: relative;
+		padding: 0 3rem 8rem;
+		background: var(--color-bg);
+	}
+
+	.media-inner {
+		max-width: 1080px;
+		margin: 0 auto;
+	}
+
+	.media-head {
+		margin-bottom: 2.6rem;
+	}
+
+	.media-head .section-label {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.65rem;
+		letter-spacing: 0.4em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.55);
+		display: flex;
+		align-items: center;
+		gap: 1.2rem;
+		margin-bottom: 1rem;
+
+		&::after {
+			content: '';
+			flex: 0 0 60px;
+			height: 1px;
+			background: rgba(204, 0, 0, 0.45);
+		}
+	}
+
+	.media-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(2rem, 4.5vw, 3.2rem);
+		line-height: 0.95;
+		letter-spacing: 0.03em;
+		color: var(--color-text);
+		margin: 0;
+
+		.red {
+			color: rgba(204, 0, 0, 0.85);
+		}
+	}
+
+	.media-grid {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 14px;
+	}
+
+	// Logos ship for light backgrounds (dark wordmarks, white cut-outs), so
+	// each sits on an off-white plate instead of the dark section bg.
+	.media-item {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 130px;
+		padding: 1.8rem 2rem;
+		background: #f0ede6;
+		border: 1px solid rgba(0, 0, 0, 0.18);
+		border-radius: 2px;
+		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+		transition: transform 0.2s, box-shadow 0.2s;
+
+		a {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		img {
+			display: block;
+			max-width: 100%;
+			max-height: 56px;
+			width: auto;
+			height: auto;
+			object-fit: contain;
+			opacity: 0.92;
+			transition: opacity 0.2s;
+		}
+
+		&:has(a:hover),
+		&:has(a:focus-visible) {
+			transform: translateY(-2px);
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), 0 2px 0 rgba(0, 0, 0, 0.25);
+		}
+
+		&:hover img,
+		a:focus-visible img {
+			opacity: 1;
+		}
+	}
+
+	@media (max-width: 900px) {
+		.media-partners { padding: 0 1.5rem 6.5rem; }
+		.media-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+		.media-item { min-height: 110px; padding: 1.4rem 1.2rem; }
+	}
+
+	@media (max-width: 600px) {
+		.media-partners { padding: 0 1.1rem 5.5rem; }
+		.media-grid { grid-template-columns: repeat(2, 1fr); }
 	}
 </style>
