@@ -10,17 +10,6 @@ import { listPressKit } from '../lib/press-kit';
 // file in that folder and it shows up here automatically.
 const pressKit = await listPressKit();
 
-// Press releases + media coverage are data-driven. They start empty (no 2026
-// announcements yet) and render a noir "still developing" empty state. To
-// publish, push entries here — the list markup below picks them up automatically.
-interface PressRelease {
-	date: string; // ISO — drives <time datetime>
-	dateLabel: string; // human-readable
-	title: string;
-	href: string;
-	lang: 'EN' | 'CZ';
-}
-
 // A media mention is just a URL. Outlet, title, image, description and date
 // are all read from the article's Open Graph tags at build time. Any field set
 // here wins over the scraped value — use that to pin a source that blocks
@@ -44,8 +33,6 @@ interface ResolvedMention {
 	image?: string;
 	description?: string;
 }
-
-const pressReleases: readonly PressRelease[] = [];
 
 const mediaCoverageRaw: readonly MediaMention[] = [
 	{ href: 'https://dotekomanie.cz/2026/06/pripad-otevren-devfest-cz-2026-spousti-prodej-vstupenek-a-odhaluje-detektivni-tema/' },
@@ -163,39 +150,10 @@ const tickerTopics = [
 						</section>
 					)}
 
-				<!-- PRESS RELEASES -->
-				<section class="press-section" aria-labelledby="releases-heading">
-					<header class="section-head">
-						<span class="section-file">File N&deg; 03</span>
-						<h2 id="releases-heading" class="section-title">Press releases</h2>
-					</header>
-
-					{pressReleases.length > 0 ? (
-						<ul class="release-list">
-							{pressReleases.map((r) => (
-								<li class="release-row">
-									<time class="release-date" datetime={r.date}>{r.dateLabel}</time>
-									<a class="release-link" href={r.href} target="_blank" rel="noopener noreferrer">
-										{r.title}
-									</a>
-									<span class="release-lang">{r.lang}</span>
-								</li>
-							))}
-						</ul>
-					) : (
-						<div class="empty-state" role="status">
-							<span class="empty-stamp" aria-hidden="true">Developing</span>
-							<p class="empty-line">
-								The presses are warming up. Official DevFest.cz 2026 releases drop here as the story breaks.
-							</p>
-						</div>
-					)}
-				</section>
-
 				<!-- MEDIA COVERAGE -->
 				<section class="press-section" aria-labelledby="coverage-heading">
 					<header class="section-head">
-						<span class="section-file">File N&deg; 04</span>
+						<span class="section-file">File N&deg; 03</span>
 						<h2 id="coverage-heading" class="section-title">In the press</h2>
 					</header>
 
@@ -556,64 +514,13 @@ const tickerTopics = [
 		margin: 0;
 	}
 
-	/* ===================== PRESS RELEASE LIST ===================== */
-	.release-list,
-	.coverage-list {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.release-row {
-		display: grid;
-		grid-template-columns: 7rem 1fr auto;
-		align-items: baseline;
-		gap: 1.4rem;
-		padding: 1.2rem 0;
-		border-bottom: 1px dashed rgba(240, 237, 230, 0.12);
-	}
-
-	.release-date {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.68rem;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
-		white-space: nowrap;
-	}
-
-	.release-link {
-		font-family: 'IM Fell English', serif;
-		font-size: 1.05rem;
-		line-height: 1.45;
-		color: var(--color-text);
-		text-decoration: none;
-		border-bottom: 1px solid transparent;
-		transition: color 0.2s, border-color 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			border-bottom-color: var(--color-accent-hot);
-			outline: none;
-		}
-	}
-
-	.release-lang {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.58rem;
-		letter-spacing: 0.18em;
-		color: rgba(240, 237, 230, 0.6);
-		border: 1px solid rgba(240, 237, 230, 0.2);
-		padding: 0.18rem 0.45rem;
-		border-radius: 1px;
-		white-space: nowrap;
-	}
-
 	/* ===================== MEDIA COVERAGE CARDS ===================== */
 	.coverage-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
 		gap: 1.4rem;
 	}
 
@@ -731,17 +638,6 @@ const tickerTopics = [
 		.card-title { font-size: 1.5rem; }
 		.section-title { font-size: 1.7rem; }
 		.section-head { gap: 0.8rem; }
-
-		.release-row {
-			grid-template-columns: 1fr auto;
-			grid-template-areas:
-				'date lang'
-				'link link';
-			gap: 0.5rem 1rem;
-		}
-		.release-date { grid-area: date; }
-		.release-lang { grid-area: lang; justify-self: end; }
-		.release-link { grid-area: link; }
 
 		.coverage-card {
 			grid-template-columns: 1fr;
