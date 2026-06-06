@@ -18,11 +18,11 @@ const mediaPartners: { name: string; logo: string; url?: string }[] = [
 ];
 
 const tickerTopics = [
-	'Back the Crew',
-	'Power the Stage',
-	'Reach the Devs',
-	'Fund the Coffee',
+	'Reach Developers',
 	'Sponsor a Track',
+	'Brand Visibility',
+	'Support the Community',
+	'Hire Talent',
 ];
 ---
 
@@ -32,45 +32,13 @@ const tickerTopics = [
 >
 	<main class="partners-page">
 		<SubpageHero
-			label="The accomplices"
-			titleHtml={'Without our partners,<br /><span class="red">this case stays cold.</span>'}
-			lede="DevFest.cz is a non-profit community conference. Every coffee, every speaker ticket, every late-night neon glow is bankrolled by partners who back Czech tech."
+			label="Partners"
+			titleHtml={'Powered by<br /><span class="red">our partners.</span>'}
+			lede="DevFest.cz is a non-profit, community-run conference. Our partners make it possible — funding the venue, the talks, and everything in between."
 			titleId="partners-title"
 		/>
 
 		<Ticker items={tickerTopics} fontSize="0.7rem" />
-
-		<!-- BODY -->
-		<section class="partners-body" aria-label="Partnership contact">
-			<div class="partners-inner">
-				<div class="partners-block">
-					<div class="contact-card">
-						<div class="contact-role">{FILIP.role}</div>
-						<div class="contact-name">{FILIP.name}</div>
-						<a class="contact-email" href={`mailto:${FILIP.email}`}>{FILIP.email}</a>
-					</div>
-
-					<div class="partners-cta-wrap">
-						{DECK_READY ? (
-							<a class="partners-cta" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
-								<span>See partnership deck</span>
-								<span class="partners-cta-arrow" aria-hidden="true">→</span>
-							</a>
-						) : (
-							<span class="partners-cta partners-cta-soon" aria-disabled="true">
-								<span class="partners-cta-label">Partnership deck</span>
-								<span class="partners-cta-stamp" aria-hidden="true">Coming soon</span>
-							</span>
-						)}
-						<p class="partners-cta-note">
-							{DECK_READY
-								? 'Tiers, perks, audience stats — one PDF.'
-								: 'Brochure lands soon. In the meantime, drop Filip a line.'}
-						</p>
-					</div>
-				</div>
-			</div>
-		</section>
 
 		{mediaPartners.length > 0 && (
 			<section class="media-partners" aria-labelledby="media-partners-title">
@@ -96,371 +64,42 @@ const tickerTopics = [
 				</div>
 			</section>
 		)}
+		<!-- BODY -->
+		<section class="partners-body" aria-label="Partnership contact">
+			<div class="partners-inner">
+				<div class="partners-block">
+					<div class="contact-card">
+						<div class="contact-role">{FILIP.role}</div>
+						<div class="contact-name">{FILIP.name}</div>
+						<a class="contact-email" href={`mailto:${FILIP.email}`}>{FILIP.email}</a>
+					</div>
+
+					<div class="partners-cta-wrap">
+						{DECK_READY ? (
+							<a class="partners-cta" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
+								<span>See partnership deck</span>
+								<span class="partners-cta-arrow" aria-hidden="true">→</span>
+							</a>
+						) : (
+							<span class="partners-cta partners-cta-soon" aria-disabled="true">
+								<span class="partners-cta-label">Partnership deck</span>
+								<span class="partners-cta-stamp" aria-hidden="true">Coming soon</span>
+							</span>
+						)}
+						<p class="partners-cta-note">
+							{DECK_READY
+								? 'Tiers, perks, and audience stats in one PDF.'
+								: 'Brochure coming soon. In the meantime, email Filip.'}
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
 	</main>
 	<Footer />
 </BaseLayout>
 
 <style lang="scss">
-	.partners-page {
-		display: flex;
-		flex-direction: column;
-	}
-
-	/* ===================== BODY ===================== */
-	.partners-body {
-		position: relative;
-		padding: 7rem 3rem 8rem;
-		background: var(--color-bg);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
-	}
-
-	.partners-inner {
-		position: relative;
-		z-index: 1;
-		max-width: 1080px;
-		margin: 0 auto;
-	}
-
-	.partners-block {
-		display: grid;
-		grid-template-columns: minmax(260px, 1fr) auto;
-		align-items: center;
-		gap: 3.2rem;
-		padding: 3.2rem 2.8rem;
-		position: relative;
-		border: 1px solid rgba(255, 255, 255, 0.08);
-		background:
-			linear-gradient(180deg, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
-			rgba(255, 255, 255, 0.02);
-		border-radius: 1px;
-
-		&::before {
-			content: '';
-			position: absolute;
-			top: -1px;
-			left: -1px;
-			width: 60px;
-			height: 60px;
-			border-top: 2px solid rgba(204, 0, 0, 0.55);
-			border-left: 2px solid rgba(204, 0, 0, 0.55);
-			pointer-events: none;
-		}
-
-		&::after {
-			content: '';
-			position: absolute;
-			bottom: -1px;
-			right: -1px;
-			width: 60px;
-			height: 60px;
-			border-bottom: 2px solid rgba(204, 0, 0, 0.55);
-			border-right: 2px solid rgba(204, 0, 0, 0.55);
-			pointer-events: none;
-		}
-	}
-
-	.contact-card {
-		display: flex;
-		flex-direction: column;
-		gap: 0.55rem;
-		padding: 1.6rem 1.6rem 1.6rem;
-		background: rgba(0, 0, 0, 0.3);
-		border: 1px solid rgba(240, 237, 230, 0.08);
-		border-radius: 1px;
-		min-width: 0;
-	}
-
-	.contact-role {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.6rem;
-		letter-spacing: 0.32em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.65);
-	}
-
-	.contact-name {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: 1.5rem;
-		letter-spacing: 0.06em;
-		color: var(--color-text);
-	}
-
-	.contact-email {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.9rem;
-		letter-spacing: 0.04em;
-		color: rgba(240, 237, 230, 0.9);
-		text-decoration: none;
-		border-bottom: 1px dashed rgba(204, 0, 0, 0.5);
-		padding-bottom: 1px;
-		margin-top: 0.8rem;
-		align-self: flex-start;
-		transition: color 0.2s, border-color 0.2s;
-		word-break: break-all;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent);
-			border-color: var(--color-accent);
-			outline: none;
-		}
-	}
-
-	.partners-cta-wrap {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 1.4rem;
-	}
-
-	.partners-cta {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.9rem;
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.85rem;
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
-		background: #8B1818;
-		color: #F5EBDC;
-		border: 2px solid #8B1818;
-		border-radius: 1px;
-		padding: 1.05rem 2.4rem;
-		text-decoration: none;
-		position: relative;
-		overflow: hidden;
-		transform: rotate(-1.5deg);
-		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
-		transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-		white-space: nowrap;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background-image: var(--noise-stamp);
-			background-size: 80px 30px;
-			mix-blend-mode: multiply;
-			pointer-events: none;
-		}
-
-		&:hover,
-		&:focus-visible {
-			background: var(--color-accent-hot);
-			transform: rotate(-1.5deg) translateY(-1px);
-			box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
-			outline: none;
-		}
-
-		&:active {
-			transform: rotate(-1.5deg) translateY(0);
-		}
-	}
-
-	.partners-cta-arrow {
-		font-size: 0.95rem;
-		transition: transform 0.25s;
-
-		.partners-cta:hover & {
-			transform: translateX(3px);
-		}
-	}
-
-	.partners-cta-soon {
-		background: rgba(80, 60, 50, 0.55);
-		border-color: rgba(120, 90, 80, 0.6);
-		color: rgba(240, 237, 230, 0.8);
-		cursor: not-allowed;
-		gap: 0.7rem;
-		padding: 0.95rem 1.6rem 0.95rem 2.4rem;
-
-		&::after {
-			content: '';
-			position: absolute;
-			top: 50%;
-			left: 1.2rem;
-			width: 8px;
-			height: 8px;
-			border-radius: 50%;
-			background: rgba(204, 0, 0, 0.7);
-			box-shadow: 0 0 8px rgba(204, 0, 0, 0.55);
-			transform: translateY(-50%);
-			animation: deckPulse 2s ease-in-out infinite;
-		}
-
-		&:hover,
-		&:focus-visible {
-			background: rgba(80, 60, 50, 0.55);
-			transform: rotate(-1.5deg);
-			box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
-		}
-	}
-
-	.partners-cta-label {
-		opacity: 0.92;
-	}
-
-	.partners-cta-stamp {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.6rem;
-		letter-spacing: 0.28em;
-		text-transform: uppercase;
-		padding: 0.22rem 0.55rem;
-		background: rgba(204, 0, 0, 0.78);
-		color: #F5EBDC;
-		border: 1px solid rgba(0, 0, 0, 0.35);
-		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
-		border-radius: 1px;
-		transform: rotate(3deg);
-	}
-
-	@keyframes deckPulse {
-		0%, 100% { opacity: 0.6; }
-		50% { opacity: 1; }
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.partners-cta-soon::after { animation: none; }
-	}
-
-	.partners-cta-note {
-		font-family: 'IM Fell English', serif;
-		font-style: italic;
-		font-size: 0.95rem;
-		color: rgba(240, 237, 230, 0.55);
-		max-width: 32ch;
-		text-align: center;
-		margin: 0;
-	}
-
-	/* ===================== RESPONSIVE ===================== */
-	@media (max-width: 900px) {
-		.partners-body { padding: 5.5rem 1.5rem 6.5rem; }
-		.partners-block {
-			grid-template-columns: 1fr;
-			gap: 2.4rem;
-			padding: 2.4rem 1.8rem 2.6rem;
-		}
-		.partners-cta-wrap { align-items: stretch; }
-		.partners-cta { justify-content: center; }
-		.partners-cta-soon {
-			flex-wrap: wrap;
-			gap: 0.55rem;
-			padding: 0.9rem 1.2rem 0.9rem 2rem;
-			white-space: normal;
-			&::after { left: 0.9rem; }
-		}
-		.partners-cta-stamp {
-			font-size: 0.55rem;
-			letter-spacing: 0.24em;
-			padding: 0.2rem 0.45rem;
-		}
-		.partners-cta-note { max-width: none; }
-	}
-
-	@media (max-width: 600px) {
-		.partners-body { padding: 4.5rem 1.1rem 5.5rem; }
-	}
-
-	/* ===================== MEDIA PARTNERS ===================== */
-	.media-partners {
-		position: relative;
-		padding: 0 3rem 8rem;
-		background: var(--color-bg);
-	}
-
-	.media-inner {
-		max-width: 1080px;
-		margin: 0 auto;
-	}
-
-	.media-head {
-		margin-bottom: 2.6rem;
-	}
-
-	.media-title {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(2rem, 4.5vw, 3.2rem);
-		line-height: 0.95;
-		letter-spacing: 0.03em;
-		color: var(--color-text);
-		margin: 0;
-
-		.red {
-			color: rgba(204, 0, 0, 0.85);
-		}
-	}
-
-	.media-grid {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-		gap: 14px;
-	}
-
-	// Logos ship for light backgrounds (dark wordmarks, white cut-outs), so
-	// each sits on an off-white plate instead of the dark section bg.
-	.media-item {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 130px;
-		padding: 1.8rem 2rem;
-		background: #f0ede6;
-		border: 1px solid rgba(0, 0, 0, 0.18);
-		border-radius: 2px;
-		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
-		transition: transform 0.2s, box-shadow 0.2s;
-
-		a {
-			width: 100%;
-			height: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		img {
-			display: block;
-			max-width: 100%;
-			max-height: 56px;
-			width: auto;
-			height: auto;
-			object-fit: contain;
-			opacity: 0.92;
-			transition: opacity 0.2s;
-		}
-
-		&:has(a:hover),
-		&:has(a:focus-visible) {
-			transform: translateY(-2px);
-			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), 0 2px 0 rgba(0, 0, 0, 0.25);
-		}
-
-		&:hover img,
-		a:focus-visible img {
-			opacity: 1;
-		}
-	}
-
-	@media (max-width: 900px) {
-		.media-partners { padding: 0 1.5rem 6.5rem; }
-		.media-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-		.media-item { min-height: 110px; padding: 1.4rem 1.2rem; }
-	}
-
-	@media (max-width: 600px) {
-		.media-partners { padding: 0 1.1rem 5.5rem; }
-		.media-grid { grid-template-columns: repeat(2, 1fr); }
-	}
+	@use './partners';
 </style>

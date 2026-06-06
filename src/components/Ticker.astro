@@ -17,46 +17,5 @@ const doubled = [...items, ...items];
 </div>
 
 <style lang="scss">
-	.ticker-wrap {
-		position: relative;
-		z-index: 20;
-		background: #A01818;
-		overflow: hidden;
-		padding: 0.7rem 0;
-		border-top: 1px solid rgba(255, 255, 255, 0.08);
-		border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-
-		// SC 2.2.2 — pause on pointer hover so users can read a topic.
-		&:hover .ticker {
-			animation-play-state: paused;
-		}
-	}
-
-	.ticker {
-		display: flex;
-		white-space: nowrap;
-		animation: ticker 30s linear infinite;
-	}
-
-	.ticker-item {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: var(--ticker-font-size, 0.85rem);
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		color: #F5EBDC;
-		padding: 0 3rem;
-	}
-
-	.ticker-sep {
-		color: rgba(245, 235, 220, 0.45);
-	}
-
-	@keyframes ticker {
-		from { transform: translateX(0); }
-		to { transform: translateX(-50%); }
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.ticker { animation: none; }
-	}
+	@use './Ticker';
 </style>

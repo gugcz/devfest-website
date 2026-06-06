@@ -1,0 +1,54 @@
+	.hero-bg {
+		position: absolute;
+		inset: 0;
+		background:
+			radial-gradient(ellipse 40% 60% at 15% 80%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
+			#050505;
+		z-index: 0;
+	}
+
+	.hero-photo {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		width: 60%;
+		background-image: url('/hero-detective.jpg');
+		background-size: cover;
+		background-position: center;
+		mask-image: linear-gradient(
+			to right,
+			transparent 0%,
+			rgba(0, 0, 0, 0.35) 12%,
+			rgba(0, 0, 0, 0.85) 30%,
+			#000 55%
+		);
+		-webkit-mask-image: linear-gradient(
+			to right,
+			transparent 0%,
+			rgba(0, 0, 0, 0.35) 12%,
+			rgba(0, 0, 0, 0.85) 30%,
+			#000 55%
+		);
+		opacity: var(--hero-photo-opacity, 0.85);
+		pointer-events: none;
+		z-index: 1;
+
+		@media (max-width: 900px) {
+			width: 100%;
+			background-position: 38% center;
+			opacity: var(--hero-photo-opacity-mobile, 0.55);
+			mask-image: linear-gradient(
+				to bottom,
+				rgba(0, 0, 0, 0.7) 0%,
+				rgba(0, 0, 0, 0.55) 45%,
+				rgba(0, 0, 0, 0.2) 100%
+			);
+			-webkit-mask-image: linear-gradient(
+				to bottom,
+				rgba(0, 0, 0, 0.7) 0%,
+				rgba(0, 0, 0, 0.55) 45%,
+				rgba(0, 0, 0, 0.2) 100%
+			);
+		}
+	}

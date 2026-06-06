@@ -15,14 +15,25 @@
 
 .eyebrow {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.85rem;
-	letter-spacing: 0.28em;
+	font-size: 0.8rem;
+	letter-spacing: 0.3em;
 	text-transform: uppercase;
-	// --color-accent (#CC0000) at 0.85 opacity over the near-black page bg
-	// blends to ~#ae0101, which only hits 2.72:1 against #050505 — fails
-	// WCAG 1.4.3 AA (4.5:1). Use the hot accent at full opacity instead.
+	color: rgba(240, 237, 230, 0.62);
+	margin-bottom: 1rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.7rem;
+}
+
+// Case-file index tag — mirrors .section-no on the home page.
+.eyebrowNo {
+	// --color-accent (#CC0000) at lower opacity fails WCAG 1.4.3 AA over the
+	// near-black bg; use the hot accent at full opacity.
 	color: var(--color-accent-hot);
-	margin-bottom: 0.6rem;
+	font-variant-numeric: tabular-nums;
+	padding: 0.22em 0.5em;
+	border: 1px solid rgba(204, 0, 0, 0.4);
+	letter-spacing: 0.16em;
 }
 
 .heading {
@@ -122,16 +133,117 @@
 	}
 }
 
+// Loading status line under the heading — mono "retrieving" caption with a
+// pulsing accent dot + trailing dots. Reads as a case-file being pulled.
+.loadingStatus {
+	font-family: 'Share Tech Mono', monospace;
+	font-size: 0.82rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+	margin-top: 0.9rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+}
+
+.loadingDot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--color-accent-hot);
+	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
+	flex-shrink: 0;
+	animation: skelPulse 1.3s ease-in-out infinite;
+}
+
+.loadingDots {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+
+	span {
+		width: 3px;
+		height: 3px;
+		border-radius: 50%;
+		background: currentColor;
+		opacity: 0.3;
+		animation: skelPulse 1.3s ease-in-out infinite;
+	}
+
+	span:nth-child(2) { animation-delay: 0.18s; }
+	span:nth-child(3) { animation-delay: 0.36s; }
+}
+
+// Skeleton evidence slip — the cream .ticket card with redacted, shimmering
+// placeholder bars where the real content will develop in.
 .skeleton {
-	background:
-		linear-gradient(
-			90deg,
-			rgba(26, 18, 8, 0.05) 0%,
-			rgba(26, 18, 8, 0.12) 50%,
-			rgba(26, 18, 8, 0.05) 100%
-		),
-		var(--color-cream);
-	background-size: 200% 100%, 100% 100%;
+	pointer-events: none;
+}
+
+.skelTop {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.75rem;
+}
+
+.skelBar {
+	display: block;
+	position: relative;
+	z-index: 1;
+	border-radius: 1px;
+	background: linear-gradient(
+		90deg,
+		rgba(26, 18, 8, 0.10) 0%,
+		rgba(26, 18, 8, 0.26) 50%,
+		rgba(26, 18, 8, 0.10) 100%
+	);
+	background-size: 200% 100%;
+	animation: shimmer 1.6s linear infinite;
+}
+
+.skelTitle { height: 1.5rem; width: 55%; }
+.skelBadge { height: 1.15rem; width: 4.2rem; flex-shrink: 0; }
+.skelText { height: 0.75rem; width: 100%; }
+.skelTextShort { width: 78%; }
+
+.skelRows {
+	display: flex;
+	flex-direction: column;
+	margin-top: 0.5rem;
+	position: relative;
+	z-index: 1;
+}
+
+.skelRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.7rem 0;
+	border-top: 1px dashed rgba(26, 18, 8, 0.28);
+
+	&:first-child {
+		border-top: none;
+		padding-top: 0.3rem;
+	}
+}
+
+.skelRowLabel { height: 0.85rem; width: 42%; }
+.skelRowPrice { height: 1.15rem; width: 24%; }
+
+.skelBtn {
+	height: 2.7rem;
+	margin-top: auto;
+	border-radius: 1px;
+	background: linear-gradient(
+		90deg,
+		rgba(139, 24, 24, 0.25) 0%,
+		rgba(139, 24, 24, 0.5) 50%,
+		rgba(139, 24, 24, 0.25) 100%
+	);
+	background-size: 200% 100%;
 	animation: shimmer 1.6s linear infinite;
 }
 
@@ -474,8 +586,13 @@
 }
 
 @keyframes shimmer {
-	0% { background-position: 200% 0, 0 0; }
-	100% { background-position: -200% 0, 0 0; }
+	0% { background-position: 200% 0; }
+	100% { background-position: -200% 0; }
+}
+
+@keyframes skelPulse {
+	0%, 100% { opacity: 0.3; transform: scale(0.85); }
+	50% { opacity: 1; transform: scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -495,12 +612,16 @@
 		transform: none;
 	}
 
-	.skeleton {
+	.skelBar,
+	.loadingDot,
+	.loadingDots span {
 		animation: none;
-		background:
-			rgba(26, 18, 8, 0.08),
-			var(--color-cream);
 	}
+
+	.skelBar { background: rgba(26, 18, 8, 0.16); }
+	.skelBtn { background: rgba(139, 24, 24, 0.4); }
+	.loadingDot,
+	.loadingDots span { opacity: 1; }
 }
 
 @media (max-width: 600px) {

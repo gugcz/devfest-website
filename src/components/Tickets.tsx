@@ -15,9 +15,9 @@ import s from './Tickets.module.scss';
 // returns in the release `description` so marketing copy stays in repo,
 // not in the ti.to admin.
 const GROUP_DESCRIPTIONS: Record<string, string> = {
-	'early bird': 'First on the scene. Lowest price of the year while seats are still warm.',
-	regular: 'Standard ticket. The investigation is in full swing — secure your seat before the trail cools.',
-	'lazy bird': 'Final call. Late price, same full access — claim a seat before doors close on the case.',
+	'early bird': 'The lowest ticket price of the year. Limited early availability.',
+	regular: 'Standard pricing while the wave lasts — secure your seat early.',
+	'lazy bird': 'Last chance to grab a ticket. Late pricing, same full access.',
 };
 
 function groupDescription(groupName: string, fallback: string | null): string | null {
@@ -116,7 +116,9 @@ export default function Tickets() {
 		return (
 			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
 				<header className={s.header}>
-					<p className={s.eyebrow}>Tickets</p>
+					<p className={s.eyebrow}>
+						Tickets
+					</p>
 					<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
 				</header>
 				<div className={s.empty} role="alert">
@@ -130,12 +132,41 @@ export default function Tickets() {
 		return (
 			<section id="tickets" className={s.tickets} aria-busy={true} aria-labelledby="tickets-heading">
 				<header className={s.header}>
-					<p className={s.eyebrow}>Tickets</p>
+					<p className={s.eyebrow}>
+						Tickets
+					</p>
 					<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
+					<p className={s.loadingStatus} role="status">
+						<span className={s.loadingDot} aria-hidden="true" />
+						Loading tickets
+						<span className={s.loadingDots} aria-hidden="true">
+							<span />
+							<span />
+							<span />
+						</span>
+					</p>
 				</header>
 				<ul className={s.list} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
-						<li key={i} className={`${s.ticket} ${s.skeleton}`} />
+						<li key={i} className={`${s.ticket} ${s.skeleton}`}>
+							<div className={s.skelTop}>
+								<span className={`${s.skelBar} ${s.skelTitle}`} />
+								<span className={`${s.skelBar} ${s.skelBadge}`} />
+							</div>
+							<span className={`${s.skelBar} ${s.skelText}`} />
+							<span className={`${s.skelBar} ${s.skelText} ${s.skelTextShort}`} />
+							<div className={s.skelRows}>
+								<div className={s.skelRow}>
+									<span className={`${s.skelBar} ${s.skelRowLabel}`} />
+									<span className={`${s.skelBar} ${s.skelRowPrice}`} />
+								</div>
+								<div className={s.skelRow}>
+									<span className={`${s.skelBar} ${s.skelRowLabel}`} />
+									<span className={`${s.skelBar} ${s.skelRowPrice}`} />
+								</div>
+							</div>
+							<span className={`${s.skelBar} ${s.skelBtn}`} />
+						</li>
 					))}
 				</ul>
 			</section>
@@ -150,7 +181,9 @@ export default function Tickets() {
 		return (
 			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
 				<header className={s.header}>
-					<p className={s.eyebrow}>Tickets</p>
+					<p className={s.eyebrow}>
+						Tickets
+					</p>
 					<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
 					<p className={s.subheading}>Tickets are not yet available.</p>
 				</header>

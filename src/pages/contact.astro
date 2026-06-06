@@ -5,11 +5,11 @@ import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
 
 const tickerTopics = [
-	'Drop a Line',
-	'Send a Wire',
-	'Knock on the Door',
-	'Leave a Note',
-	'Make the Call',
+	'General',
+	'Tickets',
+	'Partnerships',
+	'Speakers',
+	'Press',
 ];
 ---
 
@@ -19,9 +19,9 @@ const tickerTopics = [
 >
 	<main class="contact-page">
 		<SubpageHero
-			label="The address book"
-			titleHtml={'Send us<br /><span class="red">a wire.</span>'}
-			lede="Pick the right desk. We'll get back faster than the last tram out of Prague."
+			label="Contact"
+			titleHtml={'Get in<br /><span class="red">touch.</span>'}
+			lede="Pick the right inbox and we'll get back to you as soon as we can."
 			titleId="contact-title"
 		/>
 
@@ -32,7 +32,6 @@ const tickerTopics = [
 			<div class="contact-inner">
 				<div class="contact-grid">
 					<article class="contact-card">
-						<span class="card-label">File N&deg; 01</span>
 						<h2 class="card-title">General questions</h2>
 						<p class="card-desc">Tickets, billing, production, or anything else.</p>
 						<ul class="card-emails">
@@ -43,7 +42,6 @@ const tickerTopics = [
 					</article>
 
 					<article class="contact-card">
-						<span class="card-label">File N&deg; 02</span>
 						<h2 class="card-title">Partners &amp; sales</h2>
 						<p class="card-desc">Partnerships, sponsorships, and media collaborations.</p>
 						<ul class="card-emails">
@@ -55,7 +53,6 @@ const tickerTopics = [
 					</article>
 
 					<article class="contact-card">
-						<span class="card-label">File N&deg; 03</span>
 						<h2 class="card-title">Speakers &amp; lineup</h2>
 						<p class="card-desc">Call for Proposals questions and speaker travel.</p>
 						<ul class="card-emails">
@@ -73,145 +70,5 @@ const tickerTopics = [
 </BaseLayout>
 
 <style lang="scss">
-	.contact-page {
-		display: flex;
-		flex-direction: column;
-	}
-
-	/* ===================== BODY ===================== */
-	.contact-body {
-		position: relative;
-		padding: 7rem 3rem 8rem;
-		background: var(--color-bg);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
-	}
-
-	.contact-inner {
-		position: relative;
-		z-index: 1;
-		max-width: 1080px;
-		margin: 0 auto;
-	}
-
-	.contact-grid {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 2rem;
-	}
-
-	.contact-card {
-		position: relative;
-		background: var(--color-near-black);
-		border: 1px solid rgba(240, 237, 230, 0.08);
-		border-top: 2px solid rgba(204, 0, 0, 0.5);
-		padding: 2.2rem 2rem 2.1rem;
-		display: flex;
-		flex-direction: column;
-		gap: 1.2rem;
-		transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-			pointer-events: none;
-			mix-blend-mode: overlay;
-		}
-
-		&:hover {
-			border-color: rgba(204, 0, 0, 0.45);
-			transform: translateY(-2px);
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-		}
-	}
-
-	.card-label {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.6rem;
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.65);
-	}
-
-	.card-title {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: 1.7rem;
-		line-height: 1;
-		letter-spacing: 0.04em;
-		color: var(--color-text);
-		margin: 0;
-	}
-
-	.card-desc {
-		font-family: 'IM Fell English', serif;
-		font-style: italic;
-		font-size: 0.98rem;
-		line-height: 1.55;
-		color: var(--color-grey);
-		margin: 0 0 0.4rem;
-		flex: 1;
-	}
-
-	.card-emails {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 1.2rem;
-	}
-
-	.card-emails li {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-	}
-
-	.email-name {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.62rem;
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.65);
-	}
-
-	.email-link {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.85rem;
-		letter-spacing: 0.04em;
-		color: var(--color-text);
-		text-decoration: none;
-		border-bottom: 1px dashed rgba(204, 0, 0, 0.5);
-		padding-bottom: 1px;
-		align-self: flex-start;
-		word-break: break-all;
-		transition: color 0.2s, border-color 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent);
-			border-color: var(--color-accent);
-		}
-	}
-
-	/* ===================== RESPONSIVE ===================== */
-	@media (max-width: 900px) {
-		.contact-body { padding: 5.5rem 1.5rem 6.5rem; }
-		.contact-grid { grid-template-columns: 1fr; gap: 1.6rem; }
-	}
-
-	@media (max-width: 600px) {
-		.contact-body { padding: 4.5rem 1.1rem 5.5rem; }
-		.contact-card { padding: 1.8rem 1.5rem 1.7rem; }
-		.card-title { font-size: 1.5rem; }
-	}
+	@use './contact';
 </style>
