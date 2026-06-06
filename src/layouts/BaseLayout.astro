@@ -158,6 +158,9 @@ const jsonLd = JSON.stringify(
 
 		<!-- Structured Data -->
 		{!noindex && <script type="application/ld+json" set:html={jsonLd} />}
+
+		<!-- Page-specific <head> extras (e.g. FAQPage JSON-LD) -->
+		<slot name="head" />
 	</head>
 	<body class={bodyClass}>
 		<a href="#main-content" class="skip-link">Skip to main content</a>
