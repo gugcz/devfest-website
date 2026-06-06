@@ -4,11 +4,6 @@ import Footer from '../components/Footer.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
 import { fetchOg } from '../lib/og';
-import { listPressKit } from '../lib/press-kit';
-
-// Press-kit downloads are read from public/press-kit/ at build time — drop a
-// file in that folder and it shows up here automatically.
-const pressKit = await listPressKit();
 
 // A media mention is just a URL. Outlet, title, image, description and date
 // are all read from the article's Open Graph tags at build time. Any field set
@@ -116,41 +111,21 @@ const tickerTopics = [
 					</div>
 
 					<!-- PRESS KIT -->
-					{pressKit.length > 0 && (
-						<section class="press-section" aria-labelledby="presskit-heading">
-							<header class="section-head">
-								<span class="section-file">File N&deg; 02</span>
-								<h2 id="presskit-heading" class="section-title">Press kit</h2>
-							</header>
-							<p class="kit-note">
-								Logos and wordmarks for the 2026 edition. Keep the red dot intact and give the mark room to breathe. Missing a format? Wire the press desk.
-							</p>
-							<ul class="presskit-grid">
-								{pressKit.map((a) => (
-									<li class="kit-item">
-										<a class="kit-link" href={a.href} download>
-											<span class={`kit-preview${a.darkPreview ? ' kit-preview--dark' : ''}`}>
-												{a.isImage ? (
-													<img src={a.href} alt="" loading="lazy" decoding="async" />
-												) : (
-													<span class="kit-badge">{a.ext}</span>
-												)}
-											</span>
-											<span class="kit-meta">
-												<span class="kit-meta-text">
-													<span class="kit-label">{a.label}</span>
-													<span class="kit-spec">{a.ext} &middot; {a.sizeLabel}</span>
-												</span>
-												<span class="kit-dl" aria-hidden="true">&darr;</span>
-											</span>
-										</a>
-									</li>
-								))}
-							</ul>
-						</section>
-					)}
+					<section class="press-section" aria-labelledby="presskit-heading">
+						<header class="section-head">
+							<span class="section-file">File N&deg; 02</span>
+							<h2 id="presskit-heading" class="section-title">Press kit</h2>
+						</header>
+						<p class="kit-note">
+							Logos and wordmarks for the 2026 edition. Keep the red dot intact and give the mark room to breathe.
+						</p>
+						<a class="kit-cta" href="/press/downloads">
+							<span class="kit-cta-label">Open the press kit</span>
+							<span class="kit-cta-arrow" aria-hidden="true">&rarr;</span>
+						</a>
+					</section>
 
-				<!-- MEDIA COVERAGE -->
+								<!-- MEDIA COVERAGE -->
 				<section class="press-section" aria-labelledby="coverage-heading">
 					<header class="section-head">
 						<span class="section-file">File N&deg; 03</span>
@@ -330,7 +305,7 @@ const tickerTopics = [
 		}
 	}
 
-	/* ===================== PRESS KIT GRID ===================== */
+	/* ===================== PRESS KIT CTA ===================== */
 	.kit-note {
 		font-family: 'IM Fell English', serif;
 		font-style: italic;
@@ -338,117 +313,55 @@ const tickerTopics = [
 		line-height: 1.6;
 		color: var(--color-grey);
 		max-width: 60ch;
-		margin: -0.6rem 0 1.8rem;
+		margin: -0.6rem 0 1.6rem;
 	}
 
-	.presskit-grid {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-		gap: 1.1rem;
-	}
-
-	.kit-link {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		background: var(--color-near-black);
-		border: 1px solid rgba(240, 237, 230, 0.08);
-		border-left: 2px solid rgba(204, 0, 0, 0.5);
+	.kit-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.9rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.8rem;
+		letter-spacing: 0.28em;
+		text-transform: uppercase;
+		background: #8b1818;
+		color: #f5ebdc;
+		border: 2px solid #8b1818;
+		border-radius: 1px;
+		padding: 0.95rem 2rem;
 		text-decoration: none;
-		transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+		position: relative;
+		overflow: hidden;
+		transform: rotate(-1.5deg);
+		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+		transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background-image: var(--noise-stamp);
+			background-size: 80px 30px;
+			mix-blend-mode: multiply;
+			pointer-events: none;
+		}
 
 		&:hover,
 		&:focus-visible {
-			border-color: rgba(204, 0, 0, 0.45);
-			transform: translateY(-2px);
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+			background: var(--color-accent-hot);
+			transform: rotate(-1.5deg) translateY(-1px);
+			box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
 			outline: none;
-
-			.kit-label { color: var(--color-accent-hot); }
-			.kit-dl { color: var(--color-accent-hot); transform: translateY(2px); }
 		}
+
+		&:active { transform: rotate(-1.5deg) translateY(0); }
 	}
 
-	.kit-preview {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 92px;
-		border-bottom: 1px solid rgba(240, 237, 230, 0.08);
-		background-color: #d8d4cc;
-		background-image:
-			linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
-			linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%),
-			linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%);
-		background-size: 14px 14px;
-		background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+	.kit-cta-arrow {
+		font-size: 0.95rem;
+		transition: transform 0.25s;
 
-		img {
-			max-width: 100%;
-			max-height: 100%;
-			object-fit: contain;
-			padding: 14px 22px;
-			display: block;
-		}
-	}
-
-	/* White / light marks + source files read better on a dark tile. */
-	.kit-preview--dark {
-		background: #0d0d0d;
-		background-image: none;
-	}
-
-	.kit-badge {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.72rem;
-		letter-spacing: 0.16em;
-		color: rgba(240, 237, 230, 0.85);
-		padding: 0.3rem 0.6rem;
-		border: 1px solid rgba(240, 237, 230, 0.25);
-		border-radius: 1px;
-	}
-
-	.kit-meta {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.8rem;
-		padding: 0.7rem 0.85rem;
-	}
-
-	.kit-meta-text {
-		display: flex;
-		flex-direction: column;
-		gap: 0.28rem;
-		min-width: 0;
-	}
-
-	.kit-label {
-		font-family: 'IM Fell English', serif;
-		font-size: 0.98rem;
-		line-height: 1.25;
-		color: var(--color-text);
-		transition: color 0.2s;
-	}
-
-	.kit-spec {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.58rem;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
-	}
-
-	.kit-dl {
-		flex-shrink: 0;
-		font-size: 1rem;
-		color: rgba(240, 237, 230, 0.55);
-		transition: color 0.2s, transform 0.2s;
+		.kit-cta:hover & { transform: translateX(3px); }
 	}
 
 	/* ===================== SECTIONS ===================== */
@@ -620,7 +533,7 @@ const tickerTopics = [
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.kit-dl,
+		.kit-cta-arrow,
 		.coverage-arrow,
 		.coverage-thumb img { transition: none; }
 	}
