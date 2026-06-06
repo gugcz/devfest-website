@@ -8,6 +8,7 @@ export interface OgData {
 	description?: string;
 	siteName?: string;
 	title?: string;
+	publishedTime?: string; // ISO 8601, from article:published_time
 }
 
 const META_RE = /<meta\b[^>]*>/gi;
@@ -68,6 +69,11 @@ export async function fetchOg(url: string): Promise<OgData> {
 				data.siteName = decodeEntities(content);
 			} else if (key === 'og:title' && !data.title) {
 				data.title = decodeEntities(content);
+			} else if (
+				(key === 'article:published_time' || key === 'article:modified_time') &&
+				!data.publishedTime
+			) {
+				data.publishedTime = content;
 			}
 		}
 		return data;

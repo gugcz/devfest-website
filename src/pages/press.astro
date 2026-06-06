@@ -22,15 +22,26 @@ interface PressRelease {
 	lang: 'EN' | 'CZ';
 }
 
+// A media mention is just a URL. Outlet, title, image, description and date
+// are all read from the article's Open Graph tags at build time. Any field set
+// here wins over the scraped value — use that to pin a source that blocks
+// scraping or ships a poor preview.
 interface MediaMention {
+	href: string;
+	outlet?: string;
+	title?: string;
+	date?: string; // ISO — overrides article:published_time
+	dateLabel?: string;
+	image?: string;
+	description?: string;
+}
+
+interface ResolvedMention {
+	href: string;
 	outlet: string;
 	title: string;
-	date: string; // ISO
-	dateLabel: string;
-	href: string;
-	// Optional manual overrides. Left unset, they're filled from the article's
-	// Open Graph tags at build time (see enrichment below). Set them to pin a
-	// value when a source blocks scraping or ships a poor preview.
+	date?: string;
+	dateLabel?: string;
 	image?: string;
 	description?: string;
 }
@@ -38,24 +49,37 @@ interface MediaMention {
 const pressReleases: readonly PressRelease[] = [];
 
 const mediaCoverageRaw: readonly MediaMention[] = [
-	{
-		outlet: 'Dotekománie.cz',
-		title: 'Případ otevřen: DevFest.cz 2026 spouští prodej vstupenek a odhaluje detektivní téma',
-		date: '2026-06-03',
-		dateLabel: 'Jun 3, 2026',
-		href: 'https://dotekomanie.cz/2026/06/pripad-otevren-devfest-cz-2026-spousti-prodej-vstupenek-a-odhaluje-detektivni-tema/',
-	},
+	{ href: 'https://dotekomanie.cz/2026/06/pripad-otevren-devfest-cz-2026-spousti-prodej-vstupenek-a-odhaluje-detektivni-tema/' },
 ];
 
-// Enrich each entry with Open Graph image + description at build time. Manual
-// fields win; missing ones are scraped. fetchOg never throws, so a dead/blocked
-// source just yields a text-only card instead of failing the build.
-const mediaCoverage = await Promise.all(
-	mediaCoverageRaw.map(async (m) => {
-		if (m.image && m.description) return m;
+const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+function hostname(url: string): string {
+	try {
+		return new URL(url).hostname.replace(/^www\./, '');
+	} catch {
+		return url;
+	}
+}
+
+// Resolve each entry from its Open Graph tags at build time. fetchOg never
+// throws (returns {} on failure), so a dead/blocked source degrades to a
+// hostname + bare-link card instead of breaking the build.
+const mediaCoverage: ResolvedMention[] = await Promise.all(
+	mediaCoverageRaw.map(async (m): Promise<ResolvedMention> => {
 		const og = await fetchOg(m.href);
+		const iso = m.date ?? og.publishedTime;
+		let dateLabel = m.dateLabel;
+		if (!dateLabel && iso) {
+			const d = new Date(iso);
+			if (!Number.isNaN(d.getTime())) dateLabel = DATE_FMT.format(d);
+		}
 		return {
-			...m,
+			href: m.href,
+			outlet: m.outlet ?? og.siteName ?? hostname(m.href),
+			title: m.title ?? og.title ?? m.href,
+			date: iso ? iso.slice(0, 10) : undefined,
+			dateLabel,
 			image: m.image ?? og.image,
 			description: m.description ?? og.description,
 		};
@@ -182,7 +206,7 @@ const tickerTopics = [
 											<span class="coverage-title">{m.title}</span>
 											{m.description && <span class="coverage-desc">{m.description}</span>}
 											<span class="coverage-meta">
-												<time datetime={m.date}>{m.dateLabel}</time>
+												{m.dateLabel && <time datetime={m.date}>{m.dateLabel}</time>}
 												<span class="coverage-arrow" aria-hidden="true"> ↗</span>
 											</span>
 										</span>
