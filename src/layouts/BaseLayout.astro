@@ -130,10 +130,21 @@ const jsonLd = JSON.stringify(
 		<link rel="manifest" href="/site.webmanifest" />
 		<link rel="sitemap" href="/sitemap-index.xml" />
 
-		<!-- Google Fonts -->
+		<!-- Google Fonts — loaded non-render-blocking (media swap) with a noscript fallback -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IM+Fell+English:ital@0;1&family=Share+Tech+Mono&family=Special+Elite&display=swap" rel="stylesheet" />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IM+Fell+English:ital@0;1&family=Share+Tech+Mono&family=Special+Elite&display=swap"
+			media="print"
+			onload="this.media='all'"
+		/>
+		<noscript>
+			<link
+				rel="stylesheet"
+				href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IM+Fell+English:ital@0;1&family=Share+Tech+Mono&family=Special+Elite&display=swap"
+			/>
+		</noscript>
 
 		<!-- Open Graph / Facebook -->
 		<meta property="og:type" content="website" />
