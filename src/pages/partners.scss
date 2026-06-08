@@ -270,6 +270,114 @@
 		.partners-body { padding: 4.5rem 1.1rem 5.5rem; }
 	}
 
+	/* ===================== SILVER PARTNERS ===================== */
+	.silver-partners {
+		position: relative;
+		padding: 7rem 3rem 0;
+		background: var(--color-bg);
+	}
+
+	.silver-inner {
+		max-width: 1080px;
+		margin: 0 auto;
+	}
+
+	.silver-head {
+		margin-bottom: 2.6rem;
+	}
+
+	.silver-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(2rem, 4.5vw, 3.2rem);
+		line-height: 0.95;
+		letter-spacing: 0.03em;
+		color: var(--color-text);
+		margin: 0;
+
+		.red {
+			color: var(--color-accent-hot);
+		}
+	}
+
+	.silver-grid {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 14px;
+	}
+
+	// Silver logos ship light (white cut-outs), so cards stay dark with a
+	// faint silver-tinted edge — the opposite plate from media partners.
+	.silver-item {
+		position: relative;
+		display: flex;
+		min-height: 150px;
+		border: 1px solid rgba(214, 217, 224, 0.18);
+		background:
+			linear-gradient(180deg, rgba(214, 217, 224, 0.05) 0%, transparent 60%),
+			rgba(255, 255, 255, 0.02);
+		border-radius: 2px;
+		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+		transition: transform 0.2s, box-shadow 0.2s;
+
+		a,
+		.silver-lockup {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 1.4rem;
+			padding: 1.8rem 2rem;
+			text-decoration: none;
+		}
+
+		.silver-logo {
+			display: block;
+			width: auto;
+			height: auto;
+			max-width: 100%;
+			max-height: 72px;
+			object-fit: contain;
+			opacity: 0.95;
+			transition: opacity 0.2s;
+		}
+
+		.silver-name {
+			font-family: 'Bebas Neue', sans-serif;
+			font-size: 1.8rem;
+			letter-spacing: 0.08em;
+			color: var(--color-text);
+		}
+
+		&:has(a:hover),
+		&:has(a:focus-visible) {
+			transform: translateY(-2px);
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), 0 2px 0 rgba(0, 0, 0, 0.25);
+		}
+
+		&:hover .silver-logo,
+		a:focus-visible .silver-logo {
+			opacity: 1;
+		}
+	}
+
+	@media (max-width: 900px) {
+		.silver-partners { padding: 5rem 1.5rem 0; }
+		.silver-item { min-height: 130px; }
+		.silver-item .silver-logo { max-height: 60px; }
+		.silver-item .silver-name { font-size: 1.6rem; }
+	}
+
+	@media (max-width: 600px) {
+		.silver-partners { padding: 4rem 1.1rem 0; }
+		.silver-grid { grid-template-columns: 1fr; }
+		.silver-item a,
+		.silver-item .silver-lockup { flex-direction: column; gap: 1rem; }
+	}
+
 	/* ===================== MEDIA PARTNERS ===================== */
 	.media-partners {
 		position: relative;

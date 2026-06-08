@@ -8,6 +8,13 @@ const DECK_READY = true;
 const PRESENTATION_URL = 'https://canva.link/828fiq93km2hwds';
 const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.cz' };
 
+// Silver partners — logos live in public/partners/silver/.
+// Logos ship light (for the dark card), paired with a wordmark.
+// Add an entry per partner: { name, logo, url? }. `url` optional.
+const silverPartners: { name: string; logo: string; url?: string }[] = [
+	{ name: 'Applifting', logo: '/partners/silver/applifting.svg', url: 'https://www.applifting.io/' },
+];
+
 // Media partners — logos live in public/partners/media/.
 // Add an entry per partner: { name, logo, url? }. `url` optional.
 const mediaPartners: { name: string; logo: string; url?: string }[] = [
@@ -37,6 +44,35 @@ const tickerTopics = [
 		/>
 
 		<Ticker items={tickerTopics} fontSize="0.7rem" />
+
+		{silverPartners.length > 0 && (
+			<section class="silver-partners" aria-labelledby="silver-partners-title">
+				<div class="silver-inner">
+					<div class="silver-head">
+						<h2 id="silver-partners-title" class="silver-title">
+							Silver <span class="red">partner</span>
+						</h2>
+					</div>
+					<ul class="silver-grid">
+						{silverPartners.map((p) => (
+							<li class="silver-item">
+								{p.url ? (
+									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+										<img class="silver-logo" src={p.logo} alt="" loading="lazy" />
+										<span class="silver-name">{p.name}</span>
+									</a>
+								) : (
+									<div class="silver-lockup">
+										<img class="silver-logo" src={p.logo} alt="" loading="lazy" />
+										<span class="silver-name">{p.name}</span>
+									</div>
+								)}
+							</li>
+						))}
+					</ul>
+				</div>
+			</section>
+		)}
 
 		{mediaPartners.length > 0 && (
 			<section class="media-partners" aria-labelledby="media-partners-title">
