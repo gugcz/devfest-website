@@ -9,10 +9,10 @@ const PRESENTATION_URL = 'https://canva.link/828fiq93km2hwds';
 const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.cz' };
 
 // Silver partners — logos live in public/partners/silver/.
-// Logos ship light (for the dark card), paired with a wordmark.
+// Full wordmarks ship light (white cut-out) for the dark card.
 // Add an entry per partner: { name, logo, url? }. `url` optional.
 const silverPartners: { name: string; logo: string; url?: string }[] = [
-	{ name: 'Applifting', logo: '/partners/silver/applifting.svg', url: 'https://www.applifting.io/' },
+	{ name: 'Applifting', logo: '/partners/silver/applifting.png', url: 'https://www.applifting.io/' },
 ];
 
 // Media partners — logos live in public/partners/media/.
@@ -58,14 +58,10 @@ const tickerTopics = [
 							<li class="silver-item">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<img class="silver-logo" src={p.logo} alt="" loading="lazy" />
-										<span class="silver-name">{p.name}</span>
+										<img class="silver-logo" src={p.logo} alt={p.name} loading="lazy" />
 									</a>
 								) : (
-									<div class="silver-lockup">
-										<img class="silver-logo" src={p.logo} alt="" loading="lazy" />
-										<span class="silver-name">{p.name}</span>
-									</div>
+									<img class="silver-logo" src={p.logo} alt={p.name} loading="lazy" />
 								)}
 							</li>
 						))}
