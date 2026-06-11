@@ -86,6 +86,12 @@ export interface ReleaseStatus {
  * Map a ti.to release to a display status. Sold-out wins over the raw
  * `sale_status` so the UI stays consistent if ti.to flips only the
  * `sold_out` flag without updating the derived status.
+ *
+ * `paused` covers two different realities: a wave taken off sale
+ * mid-flight, and a future wave the organizer keeps toggled off in
+ * ti.to instead of scheduling a `start_at` (so it never gets the
+ * `upcoming` flag). Zero tickets sold tells them apart — a wave that
+ * never sold anything reads "Coming soon" to visitors, not "Paused".
  */
 export function releaseStatus(release: TitoRelease): ReleaseStatus {
 	if (release.sold_out || release.sale_status === 'sold_out') {
@@ -95,6 +101,9 @@ export function releaseStatus(release: TitoRelease): ReleaseStatus {
 		case 'on_sale':
 			return { label: 'On sale', tone: 'on-sale', purchasable: true };
 		case 'paused':
+			if ((release.tickets_count ?? release.quantity_sold ?? 0) === 0) {
+				return { label: 'Coming soon', tone: 'soon', purchasable: false };
+			}
 			return { label: 'Paused', tone: 'paused', purchasable: false };
 		case 'not_yet_on_sale':
 			return { label: 'Coming soon', tone: 'soon', purchasable: false };
