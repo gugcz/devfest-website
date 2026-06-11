@@ -351,6 +351,79 @@
 		to   { transform: translateX(-50%); }
 	}
 
+	/* ===================== CALL FOR SPEAKERS ===================== */
+	#speakers {
+		position: relative;
+		padding: 8rem 3rem;
+		width: 100%;
+		overflow: hidden;
+		background: var(--color-bg);
+		border-top: 1px solid rgba(204, 0, 0, 0.18);
+		border-bottom: 1px solid rgba(204, 0, 0, 0.18);
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background:
+				radial-gradient(ellipse 50% 60% at 15% 8%, rgba(204, 0, 0, 0.1) 0%, transparent 60%),
+				radial-gradient(ellipse 45% 65% at 88% 96%, rgba(139, 24, 24, 0.09) 0%, transparent 60%);
+			pointer-events: none;
+			z-index: 0;
+		}
+	}
+
+	.speakers-inner {
+		position: relative;
+		z-index: 1;
+		max-width: 620px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+
+		.section-label {
+			justify-content: center;
+
+			// trailing hairline reads off-centre on a centred eyebrow
+			&::after { display: none; }
+		}
+
+		.section-title {
+			margin-bottom: 1.6rem;
+		}
+	}
+
+	.speakers-lede {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 1.05rem;
+		line-height: 1.75;
+		color: var(--color-grey);
+		max-width: 480px;
+		margin: 0 auto 2.6rem;
+	}
+
+	.speakers-cta-group {
+		display: flex;
+		align-items: center;
+		gap: 1.6rem;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.speakers-tag {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.74rem;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: var(--color-accent-hot);
+		padding: 0.42em 0.8em;
+		border: 1px solid rgba(204, 0, 0, 0.4);
+		white-space: nowrap;
+	}
+
 	/* ===================== SHARED SECTION ===================== */
 	#newsletter {
 		padding: 8rem 3rem;
@@ -493,6 +566,7 @@
 		.hero-meta { gap: 2.2rem; }
 		.hero-countdown { padding: 1.6rem 1.2rem 1.4rem; }
 		#newsletter { padding: 6.5rem 1.5rem; }
+		#speakers { padding: 6.5rem 1.5rem; }
 		#gallery { padding: 6.5rem 0 6rem; }
 		.gallery-head { padding: 0 1.5rem; margin-bottom: 3.5rem; }
 		.gallery-marquee { padding: 1.8rem 0; }
@@ -523,6 +597,7 @@
 		.btn-ghost { font-size: 0.85rem; }
 		.section-label::after { flex-basis: 32px; }
 		#newsletter { padding: 5rem 1.1rem; }
+		#speakers { padding: 5rem 1.1rem; }
 	}
 
 	@media (max-width: 380px) {
@@ -532,6 +607,7 @@
 		.btn-primary { padding: 0.85rem 1.4rem; font-size: 0.82rem; letter-spacing: 0.18em; }
 		.btn-ghost { font-size: 0.82rem; letter-spacing: 0.18em; }
 		#newsletter { padding: 4.5rem 0.85rem; }
+		#speakers { padding: 4.5rem 0.85rem; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {

@@ -77,6 +77,28 @@ const tickerTopics = [
 		<!-- TICKER -->
 		<Ticker items={tickerTopics} />
 
+		<!-- CALL FOR SPEAKERS -->
+		<section id="speakers" aria-labelledby="speakers-title">
+			<div class="speakers-inner">
+				<p class="section-label">Call for speakers</p>
+				<h2 id="speakers-title" class="section-title">
+					Wanted: <span class="red">your talk.</span>
+				</h2>
+				<p class="speakers-lede">
+					The DevFest.cz 2026 stage is now taking submissions. Got a story worth telling&mdash;AI, Android, web, cloud, Flutter, security, open source? Make your case.
+				</p>
+				<div class="speakers-cta-group">
+					<a
+						href="https://sessionize.com/devfest-cz-2026"
+						class="btn-primary"
+						target="_blank"
+						rel="noopener"
+					>Submit a talk</a>
+					<span class="speakers-tag">CFP open now</span>
+				</div>
+			</div>
+		</section>
+
 		<!-- TICKETS -->
 		<Tickets client:visible />
 
