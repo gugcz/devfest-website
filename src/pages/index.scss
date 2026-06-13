@@ -218,7 +218,7 @@
 		position: relative;
 		padding: 8.5rem 0 8rem;
 		background:
-			linear-gradient(180deg, var(--color-bg) 0%, var(--color-near-black) 12%, var(--color-near-black) 88%, var(--color-bg) 100%);
+			linear-gradient(180deg, var(--color-bg) 0%, var(--color-near-black) 28%, var(--color-near-black) 72%, var(--color-bg) 100%);
 		overflow: hidden;
 		border-top: 1px solid rgba(204, 0, 0, 0.18);
 		border-bottom: 1px solid rgba(204, 0, 0, 0.18);
@@ -429,7 +429,7 @@
 		padding: 8rem 3rem;
 		position: relative;
 		width: 100%;
-		background: var(--color-near-black);
+		background: var(--color-bg);
 	}
 
 	.newsletter-inner {
