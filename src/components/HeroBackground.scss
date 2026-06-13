@@ -19,16 +19,20 @@
 		mask-image: linear-gradient(
 			to right,
 			transparent 0%,
-			rgba(0, 0, 0, 0.35) 12%,
-			rgba(0, 0, 0, 0.85) 30%,
-			#000 55%
+			rgba(0, 0, 0, 0.08) 6%,
+			rgba(0, 0, 0, 0.28) 15%,
+			rgba(0, 0, 0, 0.62) 26%,
+			rgba(0, 0, 0, 0.88) 38%,
+			#000 56%
 		);
 		-webkit-mask-image: linear-gradient(
 			to right,
 			transparent 0%,
-			rgba(0, 0, 0, 0.35) 12%,
-			rgba(0, 0, 0, 0.85) 30%,
-			#000 55%
+			rgba(0, 0, 0, 0.08) 6%,
+			rgba(0, 0, 0, 0.28) 15%,
+			rgba(0, 0, 0, 0.62) 26%,
+			rgba(0, 0, 0, 0.88) 38%,
+			#000 56%
 		);
 		opacity: var(--hero-photo-opacity, 0.85);
 		pointer-events: none;
