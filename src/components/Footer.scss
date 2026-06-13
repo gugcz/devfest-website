@@ -246,3 +246,12 @@
 	.copyright {
 		font-size: inherit;
 	}
+
+	.opensource {
+		font-size: inherit;
+
+		&::before {
+			content: '\00b7';
+			margin: 0 0.6em;
+		}
+	}
