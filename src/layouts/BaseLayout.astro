@@ -26,10 +26,19 @@ const ogImageAlt = "DevFest.cz 2026 conference banner";
 // claim to BE the event. WebSite + Organization render sitewide.
 const isHome = Astro.url.pathname === "/";
 
-// `offers.url` points to the on-site #tickets anchor so the schema stays
-// valid even if ti.to slugs change. `price` is the lowest-tier (early-bird)
-// VAT-inclusive figure used for Google Event rich results — must match the
-// customer-facing price rendered by Tickets.tsx. Bump when the wave changes.
+// `offers[].url` points to the on-site #tickets anchor so the schema stays
+// valid even if ti.to slugs change. Prices are VAT-inclusive CZK figures
+// (gross = ti.to net × 1.21 Czech VAT) and must match the customer-facing
+// prices rendered by Tickets.tsx via priceDisplay(). The event is priced in
+// CZK on ti.to (see #182) — do NOT use EUR here. Only Early Bird is on sale;
+// Regular/Lazy Bird are paused ("Coming soon") so they carry a price but no
+// `availability` per Google's "not yet on sale → omit availability" guidance.
+// Bump these figures when a wave opens/closes (source of truth: ti.to/RTDB).
+const organizer = {
+	"@type": "Organization",
+	"name": "GUG.cz, z.s.",
+	"url": "https://gug.cz"
+};
 const eventSchema = {
 	"@context": "https://schema.org",
 	"@type": "Event",
@@ -43,6 +52,7 @@ const eventSchema = {
 	"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
 	"eventStatus": "https://schema.org/EventScheduled",
 	"inLanguage": "en",
+	"keywords": "developer conference, technology conference, Prague, web development, Android, Flutter, AI, cybersecurity, DevFest",
 	"location": {
 		"@type": "Place",
 		"name": "Prague",
@@ -53,19 +63,38 @@ const eventSchema = {
 			"addressCountry": "CZ"
 		}
 	},
-	"organizer": {
-		"@type": "Organization",
-		"name": "GUG.cz, z.s.",
-		"url": "https://gug.cz"
-	},
-	"offers": {
-		"@type": "Offer",
-		"url": `${siteUrl}/#tickets`,
-		"price": "84",
-		"priceCurrency": "EUR",
-		"availability": "https://schema.org/InStock",
-		"validFrom": "2026-05-20T00:00:00+02:00"
-	}
+	"organizer": organizer,
+	"offers": [
+		{
+			"@type": "Offer",
+			"name": "Early Bird",
+			"description": "Limited early-access tickets at the lowest price of the event.",
+			"url": `${siteUrl}/#tickets`,
+			"price": "2099",
+			"priceCurrency": "CZK",
+			"availability": "https://schema.org/InStock",
+			"validFrom": "2026-05-20T00:00:00+02:00",
+			"seller": organizer
+		},
+		{
+			"@type": "Offer",
+			"name": "Regular",
+			"description": "Standard-wave tickets — opens after Early Bird sells out.",
+			"url": `${siteUrl}/#tickets`,
+			"price": "2999",
+			"priceCurrency": "CZK",
+			"seller": organizer
+		},
+		{
+			"@type": "Offer",
+			"name": "Lazy Bird",
+			"description": "Last-chance tickets at late pricing — same full conference access.",
+			"url": `${siteUrl}/#tickets`,
+			"price": "3599",
+			"priceCurrency": "CZK",
+			"seller": organizer
+		}
+	]
 };
 
 const organizationSchema = {
