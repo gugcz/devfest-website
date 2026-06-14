@@ -30,10 +30,12 @@ const isHome = Astro.url.pathname === "/";
 // valid even if ti.to slugs change. Prices are VAT-inclusive CZK figures
 // (gross = ti.to net × 1.21 Czech VAT) and must match the customer-facing
 // prices rendered by Tickets.tsx via priceDisplay(). The event is priced in
-// CZK on ti.to (see #182) — do NOT use EUR here. Only Early Bird is on sale;
-// Regular/Lazy Bird are paused ("Coming soon") so they carry a price but no
-// `availability` per Google's "not yet on sale → omit availability" guidance.
-// Bump these figures when a wave opens/closes (source of truth: ti.to/RTDB).
+// CZK on ti.to (see #182) — do NOT use EUR here. Only list waves that are
+// actually on sale: future waves (Regular/Lazy Bird) are paused with no
+// scheduled start date, so they carry no honest `availability`/`validFrom`
+// and are omitted entirely until they open (avoids Google's missing-field
+// warning). Add an Offer here when a wave opens; remove it when it ends
+// (source of truth: ti.to/RTDB).
 const organizer = {
 	"@type": "Organization",
 	"name": "GUG.cz, z.s.",
@@ -74,24 +76,6 @@ const eventSchema = {
 			"priceCurrency": "CZK",
 			"availability": "https://schema.org/InStock",
 			"validFrom": "2026-05-20T00:00:00+02:00",
-			"seller": organizer
-		},
-		{
-			"@type": "Offer",
-			"name": "Regular",
-			"description": "Standard-wave tickets — opens after Early Bird sells out.",
-			"url": `${siteUrl}/#tickets`,
-			"price": "2999",
-			"priceCurrency": "CZK",
-			"seller": organizer
-		},
-		{
-			"@type": "Offer",
-			"name": "Lazy Bird",
-			"description": "Last-chance tickets at late pricing — same full conference access.",
-			"url": `${siteUrl}/#tickets`,
-			"price": "3599",
-			"priceCurrency": "CZK",
 			"seller": organizer
 		}
 	]
