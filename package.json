@@ -9,17 +9,22 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "a11y": "node scripts/a11y.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.3",
     "@astrojs/sitemap": "^3.7.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "astro": "^6.1.6",
+    "astro": "^6.1.10",
     "firebase": "^12.12.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "sass": "^1.99.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
+    "playwright": "^1.60.0"
   }
 }
