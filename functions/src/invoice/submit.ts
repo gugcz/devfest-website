@@ -19,7 +19,7 @@ const MAX_TICKETS = 50;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function resolveAllowedOrigin(requestOrigin: string | undefined): string {
-	const configured = WEBSITE_ORIGIN.value();
+	const configured = WEBSITE_ORIGIN;
 	if (!requestOrigin) return configured;
 	if (requestOrigin === configured) return requestOrigin;
 	// Allow local dev origins so the form works against `npm run dev`.

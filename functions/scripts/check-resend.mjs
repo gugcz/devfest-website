@@ -8,6 +8,7 @@
  * and TEST_EMAIL.
  */
 import { sendEmail, buildDiscountEmail } from '../lib/invoice/email.js';
+import { INVOICE_FROM_EMAIL, INVOICE_FROM_NAME } from '../lib/invoice/params.js';
 
 function need(keys) {
 	const missing = keys.filter((k) => !process.env[k]);
@@ -15,7 +16,7 @@ function need(keys) {
 }
 
 async function main() {
-	need(['RESEND_API_KEY', 'INVOICE_FROM_EMAIL', 'TEST_EMAIL']);
+	need(['RESEND_API_KEY', 'TEST_EMAIL']);
 
 	const mail = buildDiscountEmail({
 		code: 'TEST-CODE-123',
@@ -27,14 +28,14 @@ async function main() {
 	const result = await sendEmail(
 		{
 			apiKey: process.env.RESEND_API_KEY,
-			fromEmail: process.env.INVOICE_FROM_EMAIL,
-			fromName: process.env.INVOICE_FROM_NAME || 'DevFest.cz',
+			fromEmail: INVOICE_FROM_EMAIL,
+			fromName: INVOICE_FROM_NAME,
 		},
 		{ to: process.env.TEST_EMAIL, subject: `[TEST] ${mail.subject}`, text: mail.text, html: mail.html },
 	);
 
 	if (!result.sent) throw new Error(result.reason || 'not sent');
-	console.log(`✓ Resend sent to ${process.env.TEST_EMAIL} (from ${process.env.INVOICE_FROM_EMAIL})`);
+	console.log(`✓ Resend sent to ${process.env.TEST_EMAIL} (from ${INVOICE_FROM_EMAIL})`);
 	console.log('Resend: READY ✅  (check the inbox/spam)');
 }
 

@@ -162,31 +162,25 @@ The browser never touches Firestore — it POSTs to `submitInvoiceRequest`, so t
 
 > **Why a poller, not a webhook:** iDoklad has no webhooks (every integration polls). So payment is detected by an hourly scheduled check of each outstanding invoice's `PaymentStatus`, not pushed. A paid invoice is therefore claimed up to ~1 h after payment.
 
-### Secrets & params
+### Secrets & config
+
+All credentials are secrets (Secret Manager) — set each once:
 
 ```bash
-# iDoklad OAuth (iDoklad → Settings → API → client credentials)
-firebase functions:secrets:set IDOKLAD_CLIENT_ID
+firebase functions:secrets:set IDOKLAD_CLIENT_ID      # iDoklad → Settings → API
 firebase functions:secrets:set IDOKLAD_CLIENT_SECRET
-
-# Non-secret params (functions/.env)
-echo 'INVOICE_RELEASE_MATCH=company funded'  >> functions/.env
-echo 'INVOICE_VAT_RATE=21'                    >> functions/.env   # 21 → iDoklad VatRateType.Basic; 0 → Zero
-echo 'INVOICE_DUE_DAYS=14'                    >> functions/.env
-echo 'WEBSITE_ORIGIN=https://devfest.cz'      >> functions/.env
-# echo 'IDOKLAD_APP_ID=...'                   >> functions/.env   # only if your iDoklad setup requires application_id
-
-# Optional — email the discount code (else it's Slack-only). Leave empty to skip.
-echo 'RESEND_API_KEY='          >> functions/.env   # set to a real key to enable
-echo 'INVOICE_FROM_EMAIL=devfest@gug.cz' >> functions/.env   # domain must be verified in Resend
-echo 'INVOICE_FROM_NAME=DevFest.cz'      >> functions/.env
+firebase functions:secrets:set RESEND_API_KEY         # discount-code email (Slack fallback if empty)
 ```
 
-This flow reuses the tickets-domain `TITO_API_TOKEN`, `TITO_ACCOUNT_SLUG`, `TITO_EVENT_SLUG`, and `SLACK_WEBHOOK_URL` — set those as above before deploying.
+Plus the tickets-domain secrets `TITO_API_TOKEN` and `SLACK_WEBHOOK_URL`, and the string params `TITO_ACCOUNT_SLUG` / `TITO_EVENT_SLUG` (`functions/.env`).
+
+Everything else is a **code constant** in `functions/src/invoice/params.ts` (no env, nothing to set): `INVOICE_RELEASE_MATCH` (`company funded`), `INVOICE_VAT_RATE` (`21`), `INVOICE_DUE_DAYS` (`14`), `INVOICE_FROM_EMAIL` (`devfest@gug.cz`), `INVOICE_FROM_NAME`, `WEBSITE_ORIGIN`. Change them there and redeploy.
+
+The invoice **price is taken automatically** from the active ti.to release whose title contains `INVOICE_RELEASE_MATCH` — there is no manual price anywhere.
 
 ### Wiring
 
-- **iDoklad OAuth:** iDoklad → Settings → API, create client credentials (Client Credentials Flow), and copy the client id/secret into the secrets above. The token is issued by `https://identity.idoklad.cz/server/v2/connect/token` (scope `idoklad_api`), lasts ~2 h, has no refresh, and is cached in-process. No webhook to configure — payment is polled.
+- **iDoklad OAuth:** iDoklad → Settings → API, create client credentials and copy the client id/secret into the secrets above. The token is issued by `https://identity.idoklad.cz/server/connect/token` (scope `idoklad_api`) — this v1 endpoint needs only client id + secret (no `application_id`/Developer-portal app); lasts ~2 h, no refresh, cached in-process. No webhook to configure — payment is polled.
 - **Invoice email** is sent by iDoklad itself (`POST /Mails/IssuedInvoice/Send`, PDF attached); the company pays by bank transfer using the variable symbol on the invoice. If iDoklad can't send mail, the run still succeeds and the invoice number is posted to Slack to relay manually.
 - **Invoice fields** are seeded from iDoklad's `GET /IssuedInvoices/Default` template (currency, payment option, numeric sequence, dates) and overridden with the partner, line, and maturity — so account-specific ids are never hardcoded. The contact's `CountryId` likewise comes from `GET /Contacts/Default` (the form's free-text country is stored but not mapped to an iDoklad country id; foreign companies are handled manually).
 - **ti.to** must have release(s) whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`). Their price drives the invoice amount and the 100%-off code is scoped to them.

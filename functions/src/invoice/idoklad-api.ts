@@ -41,7 +41,6 @@ export function isPaidStatus(status: number | null | undefined): boolean {
 export interface IdokladConfig {
 	clientId: string;
 	clientSecret: string;
-	appId?: string;
 }
 
 export interface IdokladContactInput {
@@ -87,7 +86,6 @@ async function getToken(cfg: IdokladConfig): Promise<string> {
 	form.set('client_id', cfg.clientId);
 	form.set('client_secret', cfg.clientSecret);
 	form.set('scope', 'idoklad_api');
-	if (cfg.appId) form.set('application_id', cfg.appId);
 
 	const res = await fetch(TOKEN_URL, {
 		method: 'POST',

@@ -23,7 +23,6 @@ import {
 	TITO_EVENT_SLUG,
 } from '../tickets/params.js';
 import {
-	IDOKLAD_APP_ID,
 	IDOKLAD_CLIENT_ID,
 	IDOKLAD_CLIENT_SECRET,
 	INVOICE_FROM_EMAIL,
@@ -54,7 +53,7 @@ export const pollPaidInvoices = onSchedule(
 		schedule: 'every 1 hours',
 		timeZone: 'Europe/Prague',
 		region: REGION,
-		secrets: [IDOKLAD_CLIENT_ID, IDOKLAD_CLIENT_SECRET, TITO_API_TOKEN, SLACK_WEBHOOK_URL],
+		secrets: [IDOKLAD_CLIENT_ID, IDOKLAD_CLIENT_SECRET, RESEND_API_KEY, TITO_API_TOKEN, SLACK_WEBHOOK_URL],
 		memory: '256MiB',
 		timeoutSeconds: 300,
 	},
@@ -65,7 +64,6 @@ export const pollPaidInvoices = onSchedule(
 		const idokladCfg: IdokladConfig = {
 			clientId: IDOKLAD_CLIENT_ID.value(),
 			clientSecret: IDOKLAD_CLIENT_SECRET.value(),
-			appId: IDOKLAD_APP_ID.value() || undefined,
 		};
 		const titoCfg: TitoConfig = {
 			token: TITO_API_TOKEN.value(),
@@ -100,10 +98,10 @@ async function completeInvoice(
 ): Promise<void> {
 	const { id, data } = record;
 
-	const releases = await resolveCompanyFundedReleases(titoCfg, INVOICE_RELEASE_MATCH.value());
+	const releases = await resolveCompanyFundedReleases(titoCfg, INVOICE_RELEASE_MATCH);
 	const releaseIds = releases.map((r) => r.id);
 	if (releaseIds.length === 0) {
-		throw new Error(`No ti.to release matched "${INVOICE_RELEASE_MATCH.value()}"`);
+		throw new Error(`No ti.to release matched "${INVOICE_RELEASE_MATCH}"`);
 	}
 
 	const code = buildDiscountCode(data.companyName, id.slice(-6));
@@ -125,8 +123,8 @@ async function completeInvoice(
 		const result = await sendEmail(
 			{
 				apiKey: RESEND_API_KEY.value(),
-				fromEmail: INVOICE_FROM_EMAIL.value(),
-				fromName: INVOICE_FROM_NAME.value(),
+				fromEmail: INVOICE_FROM_EMAIL,
+				fromName: INVOICE_FROM_NAME,
 			},
 			{ to: data.email, subject: mail.subject, text: mail.text, html: mail.html },
 		);

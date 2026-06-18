@@ -23,7 +23,6 @@ import {
 } from '../tickets/params.js';
 import { releaseTitle } from '../tickets/tito-api.js';
 import {
-	IDOKLAD_APP_ID,
 	IDOKLAD_CLIENT_ID,
 	IDOKLAD_CLIENT_SECRET,
 	INVOICE_DUE_DAYS,
@@ -69,24 +68,24 @@ export const processInvoiceRequest = onDocumentCreated(
 				eventSlug: TITO_EVENT_SLUG.value(),
 			};
 
-			// 1. Resolve the company-funded release for price.
-			const releases = await resolveCompanyFundedReleases(titoCfg, INVOICE_RELEASE_MATCH.value());
+			// 1. Resolve the company-funded release — price comes straight
+			//    from ti.to (no manual pricing anywhere).
+			const releases = await resolveCompanyFundedReleases(titoCfg, INVOICE_RELEASE_MATCH);
 			const release = pickPricingRelease(releases);
 			if (!release) {
 				throw new Error(
-					`No ti.to release matched "${INVOICE_RELEASE_MATCH.value()}" — cannot price invoice`,
+					`No ti.to release matched "${INVOICE_RELEASE_MATCH}" — cannot price invoice`,
 				);
 			}
 
-			const vatRate = Number(INVOICE_VAT_RATE.value()) || 0;
-			const dueDays = Number(INVOICE_DUE_DAYS.value()) || 14;
+			const vatRate = INVOICE_VAT_RATE;
+			const dueDays = INVOICE_DUE_DAYS;
 			const unitPriceNet = releaseNetUnitPrice(release, vatRate);
 
 			// 2. Contact (company).
 			const idokladCfg: IdokladConfig = {
 				clientId: IDOKLAD_CLIENT_ID.value(),
 				clientSecret: IDOKLAD_CLIENT_SECRET.value(),
-				appId: IDOKLAD_APP_ID.value() || undefined,
 			};
 			const contactId = await findOrCreateContact(idokladCfg, {
 				companyName: doc.companyName,
