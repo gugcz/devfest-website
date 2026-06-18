@@ -109,7 +109,7 @@ Remaining steps (do 1–3 before turning on enforcement):
 
 1. **Register the key in Firebase App Check.** GCP console (project
    `devfest-cz-app`) → Security → reCAPTCHA holds the **score-based website key**
-   (`6Lf…zV92P`); add `devfest.cz` and any preview domains to its allowed
+   (`6Ld…WChra`); add `devfest.cz` and any preview domains to its allowed
    domains. Then Firebase console → App Check → Apps: register the web app and
    point it at that reCAPTCHA Enterprise key. (Per-environment override: set
    `PUBLIC_FIREBASE_APPCHECK_SITE_KEY` in `.env` to use a different key ID.)
