@@ -11,6 +11,7 @@
 import { logger } from 'firebase-functions/v2';
 import { onRequest } from 'firebase-functions/v2/https';
 
+import { db } from '../lib/admin.js';
 import { SLACK_WEBHOOK_URL, TITO_WEBHOOK_SECRET } from './params.js';
 import { postToSlack, type SlackPayload } from './slack-client.js';
 import {
@@ -25,6 +26,54 @@ import {
 const REGION = 'europe-west1';
 
 const NOTIFY_EVENT: TitoWebhookEvent = 'registration.finished';
+
+// ti.to signs the body but adds no timestamp/nonce, so a captured valid POST
+// could be replayed verbatim. Dedup on the registration reference for a day so
+// a replay is acked (200) without re-posting to Slack.
+const DEDUP_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Claim a registration reference for processing. Returns `true` only the first
+ * time a reference is seen within the window (RTDB transaction, server-only
+ * path — root rules deny client access). Returns `true` as a fail-open default
+ * if the reference is missing or the dedup store errors, so a transient RTDB
+ * issue never drops a real notification.
+ */
+function dedupRef(reference: string) {
+	const key = reference.replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 256);
+	return db().ref(`webhookDedup/registrations/${key}`);
+}
+
+async function claimRegistrationReference(reference: string | undefined): Promise<boolean> {
+	if (!reference) return true;
+	try {
+		const result = await dedupRef(reference).transaction((current: { at?: number } | null) => {
+			const now = Date.now();
+			if (current && typeof current.at === 'number' && now - current.at < DEDUP_WINDOW_MS) {
+				return undefined; // abort — already seen recently
+			}
+			return { at: now };
+		});
+		return result.committed;
+	} catch (err) {
+		logger.error('titoWebhook dedup check failed — proceeding', err);
+		return true;
+	}
+}
+
+/**
+ * Undo a claim so a retry can re-process. Called when Slack delivery fails
+ * after we claimed the reference — otherwise ti.to's retry would be deduped
+ * away and the notification lost.
+ */
+async function releaseRegistrationReference(reference: string | undefined): Promise<void> {
+	if (!reference) return;
+	try {
+		await dedupRef(reference).remove();
+	} catch (err) {
+		logger.error('titoWebhook dedup release failed', err);
+	}
+}
 
 function formatPrice(price: string | null | undefined, currency: string | null | undefined): string | null {
 	if (!price) return null;
@@ -162,6 +211,14 @@ export const titoWebhook = onRequest(
 			return;
 		}
 
+		// Replay guard: ack duplicates without re-posting to Slack.
+		const reference = payload.registration_reference ?? payload.reference;
+		if (!(await claimRegistrationReference(reference))) {
+			logger.info('titoWebhook duplicate delivery ignored', { reference });
+			res.status(200).send('duplicate');
+			return;
+		}
+
 		try {
 			const message = buildSlackMessage(payload);
 			await postToSlack(SLACK_WEBHOOK_URL.value(), message);
@@ -172,6 +229,8 @@ export const titoWebhook = onRequest(
 			res.status(200).send('ok');
 		} catch (err) {
 			logger.error('titoWebhook failed to notify Slack', err);
+			// Undo the dedup claim so ti.to's retry isn't silently deduped away.
+			await releaseRegistrationReference(reference);
 			// 500 lets ti.to retry the delivery.
 			res.status(500).send('Slack post failed');
 		}

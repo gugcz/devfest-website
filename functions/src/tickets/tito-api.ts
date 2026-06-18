@@ -102,6 +102,13 @@ export function releaseTitle(r: TitoRelease): string {
  *
  * The synthetic `sale_status` (computed via `deriveSaleStatus`) is added
  * by `projectRelease` so the browser does not need to know the flag set.
+ *
+ * Deliberately NOT projected: `quantity`, `quantity_sold`, `tickets_count`.
+ * `/tickets` is world-readable, so publishing raw inventory/sold counts would
+ * leak per-wave sales velocity and remaining capacity to anyone polling RTDB.
+ * The browser only needs to know whether a paused wave has ever sold a ticket
+ * (to tell "Paused" from "Coming soon"), so we emit a single coarse
+ * `has_sales` boolean instead — see `projectRelease`.
  */
 export const RELEASE_FIELDS = [
 	'id',
@@ -113,9 +120,6 @@ export const RELEASE_FIELDS = [
 	'tax_exclusive',
 	'tax_description',
 	'currency',
-	'quantity',
-	'quantity_sold',
-	'tickets_count',
 	'state_name',
 	'sold_out',
 	'off_sale',
@@ -135,6 +139,8 @@ export function projectRelease(release: TitoRelease): Record<string, unknown> {
 		out[key] = value === undefined ? null : value;
 	}
 	out.sale_status = deriveSaleStatus(release);
+	// Coarse boolean instead of raw counts — see RELEASE_FIELDS note.
+	out.has_sales = (release.tickets_count ?? release.quantity_sold ?? 0) > 0;
 	return out;
 }
 
