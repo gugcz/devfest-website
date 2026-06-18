@@ -1,0 +1,145 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import InvoiceForm from '../components/InvoiceForm';
+---
+
+<BaseLayout
+	title="Company invoice — DevFest.cz 2026"
+	description="Buy DevFest.cz 2026 tickets on a company invoice. Request an invoice, pay by bank transfer, and receive a code to claim your tickets."
+>
+	<main class="invoice-page">
+		<SubpageHero
+			label="The paper trail"
+			titleHtml={'Buy on<br /><span class="red">a company invoice.</span>'}
+			lede="Need an invoice before you can pay? Request one here. We'll bill your company, and once it's settled you'll get a code to claim your tickets on ti.to."
+			titleId="invoice-title"
+		/>
+
+		<section class="invoice-body" aria-labelledby="invoice-form-heading">
+			<div class="invoice-inner">
+				<div class="invoice-intro">
+					<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
+					<ol class="steps">
+						<li><span class="step-no">01</span> Fill in your company billing details below.</li>
+						<li><span class="step-no">02</span> We email you an invoice, payable by bank transfer.</li>
+						<li><span class="step-no">03</span> Pay it — then we send a 100%-off code to redeem your tickets on ti.to.</li>
+					</ol>
+					<p class="intro-note">
+						Paying by card instead? Skip this and buy directly on{' '}
+						<a href="/#tickets" class="intro-link">the tickets page</a>.
+					</p>
+				</div>
+
+				<InvoiceForm client:load />
+			</div>
+		</section>
+	</main>
+	<Footer />
+</BaseLayout>
+
+<style lang="scss">
+	.invoice-page {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.invoice-body {
+		position: relative;
+		padding: 6rem 3rem 8rem;
+		background: var(--color-bg);
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
+			pointer-events: none;
+			z-index: 0;
+		}
+	}
+
+	.invoice-inner {
+		position: relative;
+		z-index: 1;
+		max-width: 720px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+	}
+
+	.invoice-intro {
+		display: flex;
+		flex-direction: column;
+		gap: 1.4rem;
+	}
+
+	.intro-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 1.9rem;
+		letter-spacing: 0.04em;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	.steps {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.9rem;
+	}
+
+	.steps li {
+		font-family: 'IM Fell English', serif;
+		font-size: 1.05rem;
+		line-height: 1.5;
+		color: var(--color-grey);
+		display: flex;
+		align-items: baseline;
+		gap: 0.9rem;
+	}
+
+	.step-no {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.7rem;
+		letter-spacing: 0.2em;
+		color: rgba(204, 0, 0, 0.8);
+		flex-shrink: 0;
+	}
+
+	.intro-note {
+		font-family: 'Special Elite', cursive;
+		font-size: 0.9rem;
+		font-style: italic;
+		color: rgba(240, 237, 230, 0.6);
+		margin: 0;
+	}
+
+	.intro-link {
+		color: rgba(240, 237, 230, 0.85);
+		text-decoration: none;
+		border-bottom: 1px dashed rgba(204, 0, 0, 0.6);
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			border-color: var(--color-accent-hot);
+		}
+	}
+
+	@media (max-width: 900px) {
+		.invoice-body {
+			padding: 5rem 1.5rem 6.5rem;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.invoice-body {
+			padding: 4rem 1.1rem 5.5rem;
+		}
+	}
+</style>

@@ -127,6 +127,72 @@ Remaining steps (do 1–3 before turning on enforcement):
 
 Only releases that are on sale or sold out are displayed. Archived, secret, expired, upcoming, paused (`off_sale` / `locked`) releases are dropped server-side before writing to RTDB, with the same predicate applied again client-side as defence-in-depth. A single `sale_status` string is synthesised from ti.to's flag set (`sold_out`, `off_sale`, `expired`, `upcoming`, `archived`, `locked`) — see `functions/src/tickets/tito-api.ts::deriveSaleStatus`.
 
+## Company invoices — iDoklad invoice-first flow
+
+Some companies must pay by bank transfer against a real invoice before they can attend — ti.to only takes cards. The `/invoice` page lets them request an invoice; once it's paid we mint a 100%-off ti.to code so they can claim the tickets they already paid for.
+
+```
+Browser  /invoice  (InvoiceForm, client:load)
+  └─> submitInvoiceRequest (callable, validates) → Firestore invoices/{id} (status: pending)
+
+Firestore onCreate
+  └─> processInvoiceRequest (europe-west1)
+        ├─ ti.to:   read company-funded release → price (CZK, no FX)
+        ├─ iDoklad: find/create contact → create issued invoice → email it (PDF attached)
+        └─ invoices/{id} = { status: invoiced, idokladInvoiceId, variableSymbol, … }
+
+Cloud Scheduler (hourly) — iDoklad has NO webhooks
+  └─> pollPaidInvoices (europe-west1)
+        ├─ for each `invoiced` doc → GET iDoklad PaymentStatus
+        └─ if paid:
+             ├─ ti.to: create 100%-off discount_code scoped to company-funded releases
+             ├─ email the code (Resend, optional) + post to Slack
+             └─ invoices/{id} = { status: completed, discountCode, discountLink }
+```
+
+The browser never touches Firestore — it calls the `submitInvoiceRequest` callable, so the `invoices` collection stays server-only and input is validated before reaching iDoklad.
+
+### Functions
+
+| Name | Trigger | Purpose |
+| ---- | ------- | ------- |
+| `submitInvoiceRequest` | Callable (App Check enforced) | Validate the form (honeypot) and write `invoices/{id}` |
+| `processInvoiceRequest` | Firestore onCreate `invoices/{id}` | Create the iDoklad contact + issued invoice and email it |
+| `pollPaidInvoices` | Cloud Scheduler, hourly | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
+
+> **Why a poller, not a webhook:** iDoklad has no webhooks (every integration polls). So payment is detected by an hourly scheduled check of each outstanding invoice's `PaymentStatus`, not pushed. A paid invoice is therefore claimed up to ~1 h after payment.
+
+### Secrets & config
+
+All credentials are secrets (Secret Manager) — set each once:
+
+```bash
+firebase functions:secrets:set IDOKLAD_CLIENT_ID      # iDoklad → Settings → API
+firebase functions:secrets:set IDOKLAD_CLIENT_SECRET
+firebase functions:secrets:set RESEND_API_KEY         # discount-code email (Slack fallback if empty)
+```
+
+Plus the tickets-domain secrets `TITO_API_TOKEN` and `SLACK_WEBHOOK_URL`, and the string params `TITO_ACCOUNT_SLUG` / `TITO_EVENT_SLUG` (`functions/.env`).
+
+Everything else is a **code constant** in `functions/src/invoice/params.ts` (no env, nothing to set): `INVOICE_RELEASE_MATCH` (`company funded`), `INVOICE_VAT_RATE` (`21`), `INVOICE_DUE_DAYS` (`14`), `INVOICE_FROM_EMAIL` (`devfest@gug.cz`), `INVOICE_FROM_NAME`. Change them there and redeploy.
+
+The invoice **price is taken automatically** from the active ti.to release whose title contains `INVOICE_RELEASE_MATCH` — there is no manual price anywhere.
+
+### Wiring
+
+- **iDoklad OAuth:** iDoklad → Settings → API, create client credentials and copy the client id/secret into the secrets above. The token is issued by `https://identity.idoklad.cz/server/connect/token` (scope `idoklad_api`) — this v1 endpoint needs only client id + secret (no `application_id`/Developer-portal app); lasts ~2 h, no refresh, cached in-process. No webhook to configure — payment is polled.
+- **Invoice email** is sent by iDoklad itself (`POST /Mails/IssuedInvoice/Send`, PDF attached); the company pays by bank transfer using the variable symbol on the invoice. If iDoklad can't send mail, the run still succeeds and the invoice number is posted to Slack to relay manually.
+- **Invoice fields** are seeded from iDoklad's `GET /IssuedInvoices/Default` template (currency, payment option, numeric sequence, dates) and overridden with the partner, line, and maturity — so account-specific ids are never hardcoded. The contact's `CountryId` likewise comes from `GET /Contacts/Default` (the form's free-text country is stored but not mapped to an iDoklad country id; foreign companies are handled manually).
+- **ti.to** must have release(s) whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`). Their price drives the invoice amount and the 100%-off code is scoped to them.
+- **Frontend call:** the form invokes the `submitInvoiceRequest` **callable** via the Functions SDK (`getFunctions(app, 'europe-west1')` → `httpsCallable`). No endpoint URL to configure — the SDK resolves it from the Firebase config and the same FirebaseApp that App Check is initialised on.
+- **App Check (abuse protection):** `submitInvoiceRequest` is a callable with `enforceAppCheck: true`. The Functions SDK auto-attaches the App Check token (reCAPTCHA Enterprise) and the framework rejects any request without a valid one *before* the handler runs — so bots/curl can't trigger invoices or emails. The callable protocol also handles CORS. For local dev, set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN` and register the printed debug token (App Check → Apps → Manage debug tokens).
+
+### Firestore rules
+
+> **One-time setup:** the project currently uses only RTDB. Create a **Firestore database (Native mode)** in the Firebase console once, or `submitInvoiceRequest` writes (and the `processInvoiceRequest` trigger) will fail.
+
+`firestore.rules` denies all client access to `invoices` (company PII; written/read only by Cloud Functions via the Admin SDK, which bypasses rules). It is **not** wired into `firebase.json` on purpose — the Firestore ruleset is project-global and the project is shared with the mobile app, so auto-deploying would clobber the app's rules. Merge the `invoices` block into the project's live ruleset in the Firebase console (same manual approach as `database.rules.json`).
+
 ## Project Structure
 
 ```
@@ -144,6 +210,7 @@ tsconfig.json
 | Route | Description |
 |-------|-------------|
 | `/` | Landing page with countdown and newsletter signup |
+| `/invoice` | Request a company invoice to buy tickets by bank transfer |
 | `/privacy-policy` | GDPR privacy policy |
 | `/newsletter-subscription-thank-you` | Post-signup confirmation |
 

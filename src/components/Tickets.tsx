@@ -278,6 +278,13 @@ export default function Tickets() {
 					<span aria-hidden="true">{' ↘︎'}</span>
 				</a>
 			</p>
+			<div className={s.invoice}>
+				<span className={s.invoiceLabel}>Buying for a company?</span>
+				<a className={s.cta} href="/invoice" aria-label="Request a company invoice">
+					Get a company invoice
+					<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
+				</a>
+			</div>
 		</section>
 	);
 }

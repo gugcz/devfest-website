@@ -511,6 +511,23 @@
 	color: rgba(240, 237, 230, 0.65);
 }
 
+.invoice {
+	margin-top: 2.4rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.9rem;
+	text-align: center;
+}
+
+.invoiceLabel {
+	font-family: 'Share Tech Mono', monospace;
+	font-size: 0.7rem;
+	letter-spacing: 0.25em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+}
+
 .footnoteLink {
 	color: var(--color-text);
 	text-decoration: none;

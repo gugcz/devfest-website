@@ -69,6 +69,15 @@ export function getDb(): Database {
 	return databaseInstance;
 }
 
+/**
+ * The initialised FirebaseApp (App Check already wired). Used by callers
+ * that need a Firebase product on the same app — e.g. `getFunctions(app)`
+ * for `httpsCallable`, which auto-attaches the App Check token.
+ */
+export function getFirebaseApp(): FirebaseApp {
+	return getApp();
+}
+
 let analyticsInstance: Analytics | null = null;
 export async function initAnalytics(): Promise<void> {
 	if (analyticsInstance) return;
