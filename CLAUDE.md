@@ -102,7 +102,7 @@ Deploy steps, secret setup, and ti.to/Slack wiring live in [README.md](README.md
 
 ### Invoice (iDoklad) pipeline
 
-Invoice-first B2B flow: a company requests a faktura on `/invoice`, pays it by bank transfer, and gets a 100%-off ti.to code to claim the tickets it already paid for. Reuses the tickets-domain ti.to client + Slack client; stores state in **Firestore** `invoices/{id}` (not RTDB — it holds company PII).
+Invoice-first B2B flow: a company requests an invoice on `/invoice`, pays it by bank transfer, and gets a 100%-off ti.to code to claim the tickets it already paid for. Reuses the tickets-domain ti.to client + Slack client; stores state in **Firestore** `invoices/{id}` (not RTDB — it holds company PII).
 
 ```
 functions/src/invoice/

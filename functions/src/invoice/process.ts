@@ -114,16 +114,16 @@ export const processInvoiceRequest = onDocumentCreated(
 			let invoiceEmailSent = false;
 			try {
 				await sendInvoiceByEmail(idokladCfg, invoice.id, {
-					subject: 'Faktura za vstupenky DevFest.cz 2026',
+					subject: 'Your DevFest.cz 2026 invoice',
 					body: [
-						`Dobrý den,`,
+						`Hi,`,
 						``,
-						`děkujeme za objednávku ${doc.countTickets} vstupenek na DevFest.cz 2026.`,
-						`V příloze najdete fakturu k úhradě bankovním převodem.`,
+						`thank you for your order of ${doc.countTickets} ticket(s) for DevFest.cz 2026.`,
+						`Attached is your invoice, payable by bank transfer.`,
 						``,
-						`Po zaplacení vám zašleme slevový kód pro vyzvednutí vstupenek na ti.to.`,
+						`Once it's paid we'll send you a discount code to claim your tickets on ti.to.`,
 						``,
-						`Tým DevFest.cz`,
+						`The DevFest.cz team`,
 					].join('\n'),
 				});
 				invoiceEmailSent = true;
@@ -144,18 +144,18 @@ export const processInvoiceRequest = onDocumentCreated(
 
 			const linkNote = invoiceEmailSent
 				? ''
-				: `\n⚠️ e-mail se nepodařilo odeslat — pošlete fakturu ${invoice.number ?? invoice.id} ručně`;
+				: `\n⚠️ email could not be sent — send invoice ${invoice.number ?? invoice.id} manually`;
 			await notify(
 				slackUrl,
-				`${doc.companyName} — vystavena faktura ${invoice.number ?? invoice.id} ` +
-					`(${doc.countTickets}× vstupenka, VS ${invoice.variableSymbol ?? '—'})${linkNote}`,
+				`${doc.companyName} — invoice ${invoice.number ?? invoice.id} issued ` +
+					`(${doc.countTickets}× ticket, VS ${invoice.variableSymbol ?? '—'})${linkNote}`,
 			);
 			logger.info('processInvoiceRequest invoiced', { id, invoiceId: invoice.id });
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
 			logger.error('processInvoiceRequest failed', err);
 			await updateInvoice(id, { status: 'error', errorMessage: message });
-			await notify(slackUrl, `❌ ${doc.companyName} — chyba při vystavení faktury: ${message}`);
+			await notify(slackUrl, `❌ ${doc.companyName} — invoice creation failed: ${message}`);
 		}
 	},
 );

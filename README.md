@@ -129,7 +129,7 @@ Only releases that are on sale or sold out are displayed. Archived, secret, expi
 
 ## Company invoices — iDoklad invoice-first flow
 
-Some companies must pay by bank transfer against a real invoice (faktura) before they can attend — ti.to only takes cards. The `/invoice` page lets them request a faktura; once it's paid we mint a 100%-off ti.to code so they can claim the tickets they already paid for.
+Some companies must pay by bank transfer against a real invoice before they can attend — ti.to only takes cards. The `/invoice` page lets them request an invoice; once it's paid we mint a 100%-off ti.to code so they can claim the tickets they already paid for.
 
 ```
 Browser  /invoice  (InvoiceForm, client:load)
@@ -210,7 +210,7 @@ tsconfig.json
 | Route | Description |
 |-------|-------------|
 | `/` | Landing page with countdown and newsletter signup |
-| `/invoice` | Request a company invoice (faktura) to buy tickets by bank transfer |
+| `/invoice` | Request a company invoice to buy tickets by bank transfer |
 | `/privacy-policy` | GDPR privacy policy |
 | `/newsletter-subscription-thank-you` | Post-signup confirmation |
 

@@ -10,7 +10,7 @@ import { logger } from 'firebase-functions/v2';
 
 import { postToSlack } from '../tickets/slack-client.js';
 
-const PREFIX = '🧾 FAKTURY';
+const PREFIX = '🧾 INVOICES';
 
 export async function notify(webhookUrl: string, text: string): Promise<void> {
 	if (!webhookUrl) return;

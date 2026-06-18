@@ -83,7 +83,7 @@ export const pollPaidInvoices = onSchedule(
 			} catch (err) {
 				const message = err instanceof Error ? err.message : String(err);
 				logger.error('pollPaidInvoices: failed to complete invoice', { id: record.id, message });
-				await notify(slackUrl, `❌ ${record.data.companyName} — chyba po zaplacení: ${message}`);
+				await notify(slackUrl, `❌ ${record.data.companyName} — post-payment processing failed: ${message}`);
 			}
 		}
 		logger.info('pollPaidInvoices done', { checked: awaiting.length, completed });
@@ -142,12 +142,12 @@ async function completeInvoice(
 	});
 
 	const emailNote = discountEmailSent
-		? 'kód odeslán e-mailem'
-		: `⚠️ e-mail neodeslán — pošlete kód ručně: ${created.code} (${link})`;
+		? 'code emailed'
+		: `⚠️ email not sent — send code manually: ${created.code} (${link})`;
 	await notify(
 		slackUrl,
-		`${data.companyName} — zaplaceno, vygenerován kód ${created.code} ` +
-			`pro ${data.countTickets}× vstupenku; ${emailNote}`,
+		`${data.companyName} — paid, code ${created.code} generated ` +
+			`for ${data.countTickets}× ticket; ${emailNote}`,
 	);
 	logger.info('completeInvoice completed', { id, code: created.code });
 }
