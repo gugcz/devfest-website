@@ -17,7 +17,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 				<h2>1. Who we are</h2>
 				<p>
 					DevFest.cz 2026 is organised by GUG.cz, z.s. (formerly GDG Czech Republic),
-					a volunteer community group. For privacy-related enquiries, contact us at
+					a registered association (zapsaný spolek) and the data controller for the
+					personal data described here. For privacy-related enquiries, contact us at
 					<a href="mailto:devfest@gug.cz">devfest@gug.cz</a>.
 				</p>
 			</section>
@@ -62,6 +63,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 					Because this is a security measure, it runs regardless of your cookie choice.
 					Legal basis: legitimate interests (GDPR Art. 6(1)(f)).
 				</p>
+
+				<h3>e) Company invoice requests</h3>
+				<p>
+					If you request a company invoice (faktura) via the
+					<a href="/invoice">company invoice form</a>, we collect your company name,
+					registration number (IČO), VAT identification number (DIČ, if provided),
+					billing address (street, city, ZIP, country), contact email, and the number of
+					tickets requested. We use this data to issue the invoice, process your payment,
+					and send you a discount code to claim your tickets on ti.to. The request is
+					stored in Google Firestore, the invoice is issued through iDoklad, and the
+					discount code is created in ti.to. Legal basis: performance of a contract
+					(GDPR Art. 6(1)(b)) and compliance with our legal accounting and tax
+					obligations (GDPR Art. 6(1)(c)). Issued invoices and related accounting
+					records are retained for up to 10 years, as required by Czech tax and
+					accounting law.
+				</p>
 			</section>
 
 			<section>
@@ -99,10 +116,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			<section>
 				<h2>4. Data sharing</h2>
 				<p>
-					We do not sell your data. We share it only with the processors listed above
-					(SmartEmailing, Google Firebase, Google reCAPTCHA) under data processing agreements,
-					and only to the extent necessary to provide the services described.
+					We do not sell your data. We share it only with the processors listed below, under
+					data processing agreements and only to the extent necessary to provide the
+					services described:
 				</p>
+				<ul>
+					<li>SmartEmailing — newsletter delivery</li>
+					<li>Google Firebase (Hosting, Analytics, Firestore) — website hosting, analytics, and storage of invoice requests</li>
+					<li>Google reCAPTCHA Enterprise (via Firebase App Check) — bot protection</li>
+					<li>iDoklad (Solitea a.s. / Seyfor, <a href="https://www.idoklad.cz" target="_blank" rel="noopener noreferrer">idoklad.cz</a>) — issuing company invoices</li>
+					<li>ti.to — ticket sales and discount-code redemption</li>
+				</ul>
 			</section>
 
 			<section>

@@ -1,0 +1,225 @@
+.wrapper {
+	width: 100%;
+	max-width: 720px;
+	margin: 0 auto;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.4rem;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1.2rem 1.4rem;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.45rem;
+}
+
+.fieldWide {
+	grid-column: 1 / -1;
+}
+
+.label {
+	font-family: 'Share Tech Mono', monospace;
+	font-size: 0.62rem;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.65);
+}
+
+.optional {
+	color: rgba(240, 237, 230, 0.4);
+	letter-spacing: 0.1em;
+}
+
+.input {
+	width: 100%;
+	padding: 0.8rem 0.9rem;
+	min-height: 2.75rem;
+	background: var(--color-near-black);
+	border: 1px solid rgba(240, 237, 230, 0.12);
+	border-bottom: 2px solid rgba(204, 0, 0, 0.4);
+	border-radius: 1px;
+	color: var(--color-text);
+	font-family: 'Special Elite', cursive;
+	font-size: 0.98rem;
+	letter-spacing: 0.01em;
+	transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+
+	&::placeholder {
+		color: rgba(240, 237, 230, 0.4);
+		font-style: italic;
+	}
+
+	&:focus {
+		outline: none;
+		border-color: rgba(204, 0, 0, 0.5);
+		border-bottom-color: var(--color-accent);
+		background: rgba(204, 0, 0, 0.04);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 2px;
+	}
+}
+
+.honeypot {
+	position: absolute;
+	left: -9999px;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.estimate {
+	font-family: 'IM Fell English', serif;
+	font-size: 1.05rem;
+	color: var(--color-text);
+	margin: 0;
+	padding: 0.9rem 1.1rem;
+	background: rgba(204, 0, 0, 0.06);
+	border-left: 2px solid rgba(204, 0, 0, 0.5);
+
+	strong {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 1.4rem;
+		letter-spacing: 0.03em;
+	}
+}
+
+.estimateNote {
+	font-style: italic;
+	font-size: 0.85rem;
+	color: var(--color-grey);
+}
+
+.consent {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.65rem;
+	cursor: pointer;
+	padding: 0.25rem 0;
+
+	input[type='checkbox'] {
+		flex-shrink: 0;
+		width: 1.4rem;
+		height: 1.4rem;
+		margin-top: 0.1em;
+		accent-color: var(--color-accent);
+		cursor: pointer;
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 3px;
+			border-radius: 2px;
+		}
+	}
+
+	span {
+		font-family: 'Special Elite', cursive;
+		font-size: 0.9rem;
+		line-height: 1.55;
+		color: rgba(240, 237, 230, 0.78);
+	}
+}
+
+.consentLink {
+	color: rgba(240, 237, 230, 0.85);
+	text-decoration: none;
+	border-bottom: 1px dashed rgba(204, 0, 0, 0.6);
+	transition: border-color 0.2s, color 0.2s;
+
+	&:hover,
+	&:focus-visible {
+		color: var(--color-accent-hot);
+		border-color: var(--color-accent-hot);
+	}
+}
+
+.button {
+	align-self: flex-start;
+	padding: 1.1rem 2.4rem;
+	background: #8b1818;
+	color: #f5ebdc;
+	border: 2px solid #8b1818;
+	border-radius: 1px;
+	font-family: 'Share Tech Mono', monospace;
+	font-size: 0.9rem;
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+
+	&:hover:not(:disabled) {
+		background: var(--color-accent-hot);
+		transform: translateY(-1px);
+		box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
+	}
+
+	&:focus-visible {
+		outline: 3px solid #f5ebdc;
+		outline-offset: 3px;
+	}
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+}
+
+.message {
+	font-family: 'Special Elite', cursive;
+	font-style: italic;
+	font-size: 0.95rem;
+	margin: 0;
+	min-height: 1.2em;
+	color: rgba(240, 237, 230, 0.7);
+
+	&[data-tone='error'] {
+		color: rgba(220, 110, 110, 0.95);
+	}
+}
+
+.success {
+	padding: 2rem;
+	background: var(--color-near-black);
+	border: 1px solid rgba(240, 237, 230, 0.1);
+	border-top: 2px solid rgba(204, 0, 0, 0.55);
+}
+
+.successTitle {
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: 1.8rem;
+	letter-spacing: 0.04em;
+	color: var(--color-text);
+	margin: 0 0 0.8rem;
+}
+
+.successBody {
+	font-family: 'IM Fell English', serif;
+	font-size: 1.05rem;
+	line-height: 1.6;
+	color: var(--color-grey);
+	margin: 0;
+}
+
+@media (max-width: 600px) {
+	.grid {
+		grid-template-columns: 1fr;
+	}
+
+	.button {
+		width: 100%;
+		text-align: center;
+	}
+}

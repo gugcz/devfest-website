@@ -127,6 +127,77 @@ Remaining steps (do 1–3 before turning on enforcement):
 
 Only releases that are on sale or sold out are displayed. Archived, secret, expired, upcoming, paused (`off_sale` / `locked`) releases are dropped server-side before writing to RTDB, with the same predicate applied again client-side as defence-in-depth. A single `sale_status` string is synthesised from ti.to's flag set (`sold_out`, `off_sale`, `expired`, `upcoming`, `archived`, `locked`) — see `functions/src/tickets/tito-api.ts::deriveSaleStatus`.
 
+## Company invoices — iDoklad invoice-first flow
+
+Some companies must pay by bank transfer against a real invoice (faktura) before they can attend — ti.to only takes cards. The `/invoice` page lets them request a faktura; once it's paid we mint a 100%-off ti.to code so they can claim the tickets they already paid for.
+
+```
+Browser  /invoice  (InvoiceForm, client:load)
+  └─> POST  submitInvoiceRequest (HTTPS, validates) → Firestore invoices/{id} (status: pending)
+
+Firestore onCreate
+  └─> processInvoiceRequest (europe-west1)
+        ├─ ti.to:   read company-funded release → price (CZK, no FX)
+        ├─ iDoklad: find/create contact → create issued invoice → email it (PDF attached)
+        └─ invoices/{id} = { status: invoiced, idokladInvoiceId, variableSymbol, … }
+
+Cloud Scheduler (hourly) — iDoklad has NO webhooks
+  └─> pollPaidInvoices (europe-west1)
+        ├─ for each `invoiced` doc → GET iDoklad PaymentStatus
+        └─ if paid:
+             ├─ ti.to: create 100%-off discount_code scoped to company-funded releases
+             ├─ email the code (Resend, optional) + post to Slack
+             └─ invoices/{id} = { status: completed, discountCode, discountLink }
+```
+
+The browser never touches Firestore — it POSTs to `submitInvoiceRequest`, so the `invoices` collection stays server-only and input is validated before reaching iDoklad.
+
+### Functions
+
+| Name | Trigger | Purpose |
+| ---- | ------- | ------- |
+| `submitInvoiceRequest` | HTTPS, public | Validate the form (CORS + honeypot) and write `invoices/{id}` |
+| `processInvoiceRequest` | Firestore onCreate `invoices/{id}` | Create the iDoklad contact + issued invoice and email it |
+| `pollPaidInvoices` | Cloud Scheduler, hourly | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
+
+> **Why a poller, not a webhook:** iDoklad has no webhooks (every integration polls). So payment is detected by an hourly scheduled check of each outstanding invoice's `PaymentStatus`, not pushed. A paid invoice is therefore claimed up to ~1 h after payment.
+
+### Secrets & params
+
+```bash
+# iDoklad OAuth (iDoklad → Settings → API → client credentials)
+firebase functions:secrets:set IDOKLAD_CLIENT_ID
+firebase functions:secrets:set IDOKLAD_CLIENT_SECRET
+
+# Non-secret params (functions/.env)
+echo 'INVOICE_RELEASE_MATCH=company funded'  >> functions/.env
+echo 'INVOICE_VAT_RATE=21'                    >> functions/.env   # 21 → iDoklad VatRateType.Basic; 0 → Zero
+echo 'INVOICE_DUE_DAYS=14'                    >> functions/.env
+echo 'WEBSITE_ORIGIN=https://devfest.cz'      >> functions/.env
+# echo 'IDOKLAD_APP_ID=...'                   >> functions/.env   # only if your iDoklad setup requires application_id
+
+# Optional — email the discount code (else it's Slack-only). Leave empty to skip.
+echo 'RESEND_API_KEY='          >> functions/.env   # set to a real key to enable
+echo 'INVOICE_FROM_EMAIL=devfest@gug.cz' >> functions/.env   # domain must be verified in Resend
+echo 'INVOICE_FROM_NAME=DevFest.cz'      >> functions/.env
+```
+
+This flow reuses the tickets-domain `TITO_API_TOKEN`, `TITO_ACCOUNT_SLUG`, `TITO_EVENT_SLUG`, and `SLACK_WEBHOOK_URL` — set those as above before deploying.
+
+### Wiring
+
+- **iDoklad OAuth:** iDoklad → Settings → API, create client credentials (Client Credentials Flow), and copy the client id/secret into the secrets above. The token is issued by `https://identity.idoklad.cz/server/v2/connect/token` (scope `idoklad_api`), lasts ~2 h, has no refresh, and is cached in-process. No webhook to configure — payment is polled.
+- **Invoice email** is sent by iDoklad itself (`POST /Mails/IssuedInvoice/Send`, PDF attached); the company pays by bank transfer using the variable symbol on the invoice. If iDoklad can't send mail, the run still succeeds and the invoice number is posted to Slack to relay manually.
+- **Invoice fields** are seeded from iDoklad's `GET /IssuedInvoices/Default` template (currency, payment option, numeric sequence, dates) and overridden with the partner, line, and maturity — so account-specific ids are never hardcoded. The contact's `CountryId` likewise comes from `GET /Contacts/Default` (the form's free-text country is stored but not mapped to an iDoklad country id; foreign companies are handled manually).
+- **ti.to** must have release(s) whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`). Their price drives the invoice amount and the 100%-off code is scoped to them.
+- **Frontend endpoint:** the form posts to the `submitInvoiceRequest` URL. Override per-environment with `PUBLIC_INVOICE_ENDPOINT` (e.g. the emulator URL during local dev); the default targets `https://europe-west1-devfest-cz-app.cloudfunctions.net/submitInvoiceRequest`.
+
+### Firestore rules
+
+> **One-time setup:** the project currently uses only RTDB. Create a **Firestore database (Native mode)** in the Firebase console once, or `submitInvoiceRequest` writes (and the `processInvoiceRequest` trigger) will fail.
+
+`firestore.rules` denies all client access to `invoices` (company PII; written/read only by Cloud Functions via the Admin SDK, which bypasses rules). It is **not** wired into `firebase.json` on purpose — the Firestore ruleset is project-global and the project is shared with the mobile app, so auto-deploying would clobber the app's rules. Merge the `invoices` block into the project's live ruleset in the Firebase console (same manual approach as `database.rules.json`).
+
 ## Project Structure
 
 ```
@@ -144,6 +215,7 @@ tsconfig.json
 | Route | Description |
 |-------|-------------|
 | `/` | Landing page with countdown and newsletter signup |
+| `/invoice` | Request a company invoice (faktura) to buy tickets by bank transfer |
 | `/privacy-policy` | GDPR privacy policy |
 | `/newsletter-subscription-thank-you` | Post-signup confirmation |
 

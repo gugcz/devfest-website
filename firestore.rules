@@ -1,0 +1,35 @@
+rules_version = '2';
+
+// Firestore security rules for the `invoices` collection.
+//
+// ⚠️ NOT wired into firebase.json on purpose. The Firebase project
+// (devfest-cz-app) is SHARED with the mobile app repo, and a Firestore
+// ruleset is project-global and monolithic — running `firebase deploy
+// --only firestore:rules` with this file would OVERWRITE whatever rules
+// the app repo maintains. Same hazard as database.rules.json.
+//
+// HOW TO APPLY: open the Firebase console → Firestore → Rules and MERGE
+// the `match /invoices/{id}` block below into the project's existing
+// ruleset. Do not blindly paste this whole file unless this repo owns the
+// project's Firestore rules outright.
+//
+// WHY DENY-ALL: the `invoices` collection holds company PII (name, address,
+// IČO/DIČ, email) and is written/read ONLY by Cloud Functions via the
+// Admin SDK, which bypasses these rules. No browser client ever touches
+// Firestore directly — the public form POSTs to `submitInvoiceRequest`.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Company invoice requests — no client access whatsoever.
+    match /invoices/{invoiceId} {
+      allow read, write: if false;
+    }
+
+    // Default for everything else in THIS standalone file. When merging
+    // into a shared ruleset, drop this catch-all and keep the app's own
+    // matches.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
