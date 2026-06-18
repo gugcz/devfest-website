@@ -9,10 +9,6 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "check": "npm run build && node --env-file=.env scripts/check-all.mjs",
-    "check:idoklad": "npm run build && node --env-file=.env scripts/check-idoklad.mjs",
-    "check:tito": "npm run build && node --env-file=.env scripts/check-tito.mjs",
-    "check:resend": "npm run build && node --env-file=.env scripts/check-resend.mjs",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "deploy": "firebase deploy --only functions",

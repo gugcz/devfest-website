@@ -268,15 +268,6 @@ export async function getInvoicePaymentStatus(
 	return inv.PaymentStatus ?? 0;
 }
 
-/**
- * Read-only credential check: proves the OAuth token + API access work
- * without creating anything (fetches the issued-invoice Default template).
- * Throws on failure. Useful for a pre-deploy smoke test / health check.
- */
-export async function verifyCredentials(cfg: IdokladConfig): Promise<void> {
-	await apiJson(cfg, 'GET', '/IssuedInvoices/Default');
-}
-
 // ── date helpers ──────────────────────────────────────────────────────────
 
 function addDays(d: Date, n: number): Date {
