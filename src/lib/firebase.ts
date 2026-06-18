@@ -1,5 +1,5 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
+import { getToken, initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
 import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
 import { getDatabase, type Database } from 'firebase/database';
 
@@ -67,6 +67,24 @@ let databaseInstance: Database | null = null;
 export function getDb(): Database {
 	if (!databaseInstance) databaseInstance = getDatabase(getApp());
 	return databaseInstance;
+}
+
+/**
+ * Current App Check token, to attach as `X-Firebase-AppCheck` on calls to
+ * our own HTTPS functions (e.g. `submitInvoiceRequest`). Returns null when
+ * App Check is unavailable (SSR, no site key, or init failed) so callers
+ * can still POST — enforcement lives server-side.
+ */
+export async function getAppCheckToken(): Promise<string | null> {
+	getApp(); // ensures initAppCheck() has run
+	if (!appCheckInstance) return null;
+	try {
+		const { token } = await getToken(appCheckInstance, /* forceRefresh */ false);
+		return token;
+	} catch (err) {
+		console.warn('[firebase] App Check token failed:', err);
+		return null;
+	}
 }
 
 let analyticsInstance: Analytics | null = null;

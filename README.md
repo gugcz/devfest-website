@@ -185,6 +185,7 @@ The invoice **price is taken automatically** from the active ti.to release whose
 - **Invoice fields** are seeded from iDoklad's `GET /IssuedInvoices/Default` template (currency, payment option, numeric sequence, dates) and overridden with the partner, line, and maturity — so account-specific ids are never hardcoded. The contact's `CountryId` likewise comes from `GET /Contacts/Default` (the form's free-text country is stored but not mapped to an iDoklad country id; foreign companies are handled manually).
 - **ti.to** must have release(s) whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`). Their price drives the invoice amount and the 100%-off code is scoped to them.
 - **Frontend endpoint:** the form posts to the `submitInvoiceRequest` URL. Override per-environment with `PUBLIC_INVOICE_ENDPOINT` (e.g. the emulator URL during local dev); the default targets `https://europe-west1-devfest-cz-app.cloudfunctions.net/submitInvoiceRequest`.
+- **App Check (abuse protection):** `submitInvoiceRequest` requires a valid Firebase App Check token (reCAPTCHA Enterprise). The form attaches `X-Firebase-AppCheck`; the function verifies it via the Admin SDK and rejects missing/invalid tokens with 401 — so bots/curl can't trigger invoices or emails. Verification is manual (not the `enforceAppCheck` option) so the CORS preflight still works. For local dev, set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN` and register the printed debug token (App Check → Apps → Manage debug tokens).
 
 ### Firestore rules
 

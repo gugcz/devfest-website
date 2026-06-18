@@ -6,11 +6,19 @@
  * Keeping the write server-side means Firestore stays locked to clients
  * (firestore.rules denies all) and untrusted input is validated before it
  * ever reaches iDoklad.
+ *
+ * Abuse protection: every request must carry a valid Firebase App Check
+ * token (`X-Firebase-AppCheck`), verified here. We verify manually rather
+ * than via the `enforceAppCheck` option so the CORS preflight (OPTIONS,
+ * which carries no token) is still answered. This blocks bots/curl that
+ * can't mint a reCAPTCHA-Enterprise attestation.
  */
 
+import { getAppCheck } from 'firebase-admin/app-check';
 import { logger } from 'firebase-functions/v2';
 import { onRequest } from 'firebase-functions/v2/https';
 
+import '../lib/admin.js'; // ensure the Admin app is initialized for getAppCheck()
 import { WEBSITE_ORIGIN } from './params.js';
 import { createInvoiceRequest, type InvoiceRequestInput } from './firestore.js';
 
@@ -87,7 +95,7 @@ export const submitInvoiceRequest = onRequest(
 		res.set('Access-Control-Allow-Origin', origin);
 		res.set('Vary', 'Origin');
 		res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-		res.set('Access-Control-Allow-Headers', 'Content-Type');
+		res.set('Access-Control-Allow-Headers', 'Content-Type, X-Firebase-AppCheck');
 		res.set('Access-Control-Max-Age', '3600');
 
 		if (req.method === 'OPTIONS') {
@@ -96,6 +104,20 @@ export const submitInvoiceRequest = onRequest(
 		}
 		if (req.method !== 'POST') {
 			res.status(405).json({ ok: false, error: 'method_not_allowed' });
+			return;
+		}
+
+		// App Check: reject anything without a valid attestation token.
+		const appCheckToken = req.header('X-Firebase-AppCheck');
+		if (!appCheckToken) {
+			res.status(401).json({ ok: false, error: 'app_check_required' });
+			return;
+		}
+		try {
+			await getAppCheck().verifyToken(appCheckToken);
+		} catch {
+			logger.warn('submitInvoiceRequest App Check verification failed');
+			res.status(401).json({ ok: false, error: 'app_check_invalid' });
 			return;
 		}
 

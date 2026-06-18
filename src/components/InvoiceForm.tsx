@@ -115,9 +115,20 @@ export default function InvoiceForm() {
 		setStatus('submitting');
 		setMessage('Sending your request…');
 		try {
+			// Attach a Firebase App Check token so the endpoint can reject
+			// non-browser (bot/curl) traffic. Best-effort: if it can't be
+			// obtained, the request still goes (server decides whether to reject).
+			const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+			try {
+				const { getAppCheckToken } = await import('../lib/firebase');
+				const appCheckToken = await getAppCheckToken();
+				if (appCheckToken) headers['X-Firebase-AppCheck'] = appCheckToken;
+			} catch {
+				/* App Check unavailable — proceed without the header. */
+			}
 			const res = await fetch(ENDPOINT, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers,
 				body: JSON.stringify({ ...fields, website: honeypot }),
 			});
 			if (res.ok) {
@@ -131,11 +142,14 @@ export default function InvoiceForm() {
 				return;
 			}
 			const data = (await res.json().catch(() => ({}))) as { error?: string };
+			const err = data.error ?? '';
 			setStatus('error');
 			setMessage(
-				data.error?.startsWith('invalid_')
-					? `Please check the ${data.error.replace('invalid_', '')} field.`
-					: 'Something went wrong. Please try again or email devfest@gug.cz.',
+				err.startsWith('invalid_')
+					? `Please check the ${err.replace('invalid_', '')} field.`
+					: err.startsWith('app_check')
+						? 'Could not verify your browser. Reload the page and try again, or email devfest@gug.cz.'
+						: 'Something went wrong. Please try again or email devfest@gug.cz.',
 			);
 		} catch {
 			setStatus('error');
