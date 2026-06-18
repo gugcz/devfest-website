@@ -26,7 +26,7 @@ function getApp(): FirebaseApp {
 // reCAPTCHA Enterprise key ID. Public, like the Firebase `apiKey` above — safe
 // to commit. Used as the default App Check key; PUBLIC_FIREBASE_APPCHECK_SITE_KEY
 // overrides it (e.g. a separate key per environment).
-const APPCHECK_SITE_KEY = '6LftoSYtAAAAAC3KOtITOv99JybWgVfkSq-zV92P';
+const APPCHECK_SITE_KEY = '6LdOhSYtAAAAALPcqSZIJoT7i7c6B5SOiByWChra';
 
 let appCheckInstance: AppCheck | null = null;
 /**
