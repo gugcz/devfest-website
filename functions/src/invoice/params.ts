@@ -38,5 +38,5 @@ export const INVOICE_VAT_RATE = 21;
 export const INVOICE_DUE_DAYS = 14;
 
 // Discount-code email sender. The domain MUST be verified in Resend.
-export const INVOICE_FROM_EMAIL = 'devfest@gug.cz';
+export const INVOICE_FROM_EMAIL = 'noreply@devfest.cz';
 export const INVOICE_FROM_NAME = 'DevFest.cz';
