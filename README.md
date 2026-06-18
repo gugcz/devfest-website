@@ -91,6 +91,38 @@ Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 
 While the Tickets section is hidden on the site, `/tickets` is locked down (`.read: false`) so the cache cannot be pulled from outside. The Cloud Functions still write to it via the Admin SDK (which bypasses rules). When the site is ready to launch, flip `tickets.".read"` to `true` and re-deploy / re-paste the rules.
 
+### App Check
+
+App Check attests that RTDB reads come from the real site, not a scraper. The
+web client uses **reCAPTCHA Enterprise** in `src/lib/firebase.ts` with the key
+committed (`APPCHECK_SITE_KEY` — public, like the Firebase `apiKey`). App Check
+tokens already attach to RTDB reads; reads keep working until you toggle
+enforcement on, so it's safe to ship before enforcing.
+
+**Scope.** Only the public surface needs it: RTDB `/tickets`, which the browser
+reads directly. The `titoWebhook` function is called by ti.to (an external
+server that cannot mint an App Check token) and is already protected by an HMAC
+signature — **do not** enforce App Check on it. The scheduled functions take no
+public traffic, so App Check is irrelevant there.
+
+Remaining steps (do 1–3 before turning on enforcement):
+
+1. **Register the key in Firebase App Check.** GCP console (project
+   `devfest-cz-app`) → Security → reCAPTCHA holds the **score-based website key**
+   (`6Lf…zV92P`); add `devfest.cz` and any preview domains to its allowed
+   domains. Then Firebase console → App Check → Apps: register the web app and
+   point it at that reCAPTCHA Enterprise key. (Per-environment override: set
+   `PUBLIC_FIREBASE_APPCHECK_SITE_KEY` in `.env` to use a different key ID.)
+2. **Local dev.** Set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN=true` in `.env`, load
+   the site, copy the debug token from the console, and register it under
+   App Check → Apps → Manage debug tokens. Leave this empty in production.
+3. **Watch metrics.** With tokens flowing but enforcement still off, App Check →
+   APIs shows the verified-vs-unverified split for Realtime Database. Wait until
+   nearly all real traffic is verified.
+4. **Enforce.** Once the metrics look clean, turn on enforcement for **Realtime
+   Database** in App Check → APIs. This is a console toggle — no code or
+   `database.rules.json` change. Leave Cloud Functions enforcement off.
+
 ### Filtering
 
 Only releases that are on sale or sold out are displayed. Archived, secret, expired, upcoming, paused (`off_sale` / `locked`) releases are dropped server-side before writing to RTDB, with the same predicate applied again client-side as defence-in-depth. A single `sale_status` string is synthesised from ti.to's flag set (`sold_out`, `off_sale`, `expired`, `upcoming`, `archived`, `locked`) — see `functions/src/tickets/tito-api.ts::deriveSaleStatus`.

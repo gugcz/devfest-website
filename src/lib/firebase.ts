@@ -1,4 +1,5 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
 import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
 import { getDatabase, type Database } from 'firebase/database';
 
@@ -15,8 +16,51 @@ const firebaseConfig = {
 
 let appInstance: FirebaseApp | null = null;
 function getApp(): FirebaseApp {
-	if (!appInstance) appInstance = initializeApp(firebaseConfig);
+	if (!appInstance) {
+		appInstance = initializeApp(firebaseConfig);
+		initAppCheck(appInstance);
+	}
 	return appInstance;
+}
+
+// reCAPTCHA Enterprise key ID. Public, like the Firebase `apiKey` above — safe
+// to commit. Used as the default App Check key; PUBLIC_FIREBASE_APPCHECK_SITE_KEY
+// overrides it (e.g. a separate key per environment).
+const APPCHECK_SITE_KEY = '6LftoSYtAAAAAC3KOtITOv99JybWgVfkSq-zV92P';
+
+let appCheckInstance: AppCheck | null = null;
+/**
+ * Initialise Firebase App Check (reCAPTCHA Enterprise) so RTDB reads carry an
+ * attestation token. Runs once, on the same FirebaseApp every consumer uses,
+ * so the token is in place before `getDb()` issues any read.
+ *
+ * No-ops on the server and whenever no site key is configured. App Check tokens
+ * attach to RTDB reads as soon as this runs, but reads keep working until
+ * enforcement is switched on for Realtime Database in the Firebase console.
+ */
+function initAppCheck(app: FirebaseApp): void {
+	if (appCheckInstance) return;
+	if (typeof window === 'undefined') return;
+
+	const siteKey = import.meta.env.PUBLIC_FIREBASE_APPCHECK_SITE_KEY ?? APPCHECK_SITE_KEY;
+	if (!siteKey) return;
+
+	// Local dev / preview: register a debug token so reCAPTCHA isn't required on
+	// localhost. `true` makes the SDK print a token to the console (paste it into
+	// App Check → Apps → Manage debug tokens); a string reuses that token.
+	const debugToken = import.meta.env.PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN;
+	if (debugToken) {
+		self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken === 'true' ? true : debugToken;
+	}
+
+	try {
+		appCheckInstance = initializeAppCheck(app, {
+			provider: new ReCaptchaEnterpriseProvider(siteKey),
+			isTokenAutoRefresh: true,
+		});
+	} catch (err) {
+		console.warn('[firebase] App Check init failed:', err);
+	}
 }
 
 let databaseInstance: Database | null = null;

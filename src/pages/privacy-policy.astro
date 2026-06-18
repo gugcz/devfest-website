@@ -11,7 +11,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			<a href="/" class="back-link">&#8592; Back</a>
 
 			<h1 class="policy-title">Privacy Policy</h1>
-			<p class="policy-meta">GUG.cz, z.s. · Last updated: April 2026</p>
+			<p class="policy-meta">GUG.cz, z.s. · Last updated: June 2026</p>
 
 			<section>
 				<h2>1. Who we are</h2>
@@ -48,6 +48,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 					(IP address, browser, requested URL). These are retained for up to 30 days for
 					security purposes. Legal basis: legitimate interests (GDPR Art. 6(1)(f)).
 				</p>
+
+				<h3>d) Bot protection (reCAPTCHA)</h3>
+				<p>
+					To protect our ticketing data from automated scraping and abuse, the site uses
+					Google reCAPTCHA Enterprise (via Firebase App Check). reCAPTCHA runs in the background to
+					tell humans from bots, analysing signals such as your interactions with the page,
+					device and browser information, and IP address. This data is shared with Google and
+					processed under the
+					<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a>
+					and
+					<a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
+					Because this is a security measure, it runs regardless of your cookie choice.
+					Legal basis: legitimate interests (GDPR Art. 6(1)(f)).
+				</p>
 			</section>
 
 			<section>
@@ -73,6 +87,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 							<td>Google Analytics — only set after consent</td>
 							<td>2 years</td>
 						</tr>
+						<tr>
+							<th scope="row"><code>_GRECAPTCHA</code></th>
+							<td>Google reCAPTCHA — bot protection (set for security, not consent-gated)</td>
+							<td>6 months</td>
+						</tr>
 					</tbody>
 				</table>
 			</section>
@@ -81,8 +100,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 				<h2>4. Data sharing</h2>
 				<p>
 					We do not sell your data. We share it only with the processors listed above
-					(SmartEmailing, Google Firebase) under data processing agreements, and only to the
-					extent necessary to provide the services described.
+					(SmartEmailing, Google Firebase, Google reCAPTCHA) under data processing agreements,
+					and only to the extent necessary to provide the services described.
 				</p>
 			</section>
 
