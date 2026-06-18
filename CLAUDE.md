@@ -120,11 +120,11 @@ functions/src/invoice/
 
 | Name | Trigger | Effect |
 | ---- | ------- | ------ |
-| `submitInvoiceRequest` | `onRequest` (`invoker: 'public'`) | Validate form (CORS + honeypot), write `invoices/{id}` (status `pending`) |
+| `submitInvoiceRequest` | `onCall` (`enforceAppCheck: true`) | Validate form (honeypot), write `invoices/{id}` (status `pending`) |
 | `processInvoiceRequest` | `onDocumentCreated('invoices/{id}')` | Price from ti.to → iDoklad contact + invoice → email it → status `invoiced` |
 | `pollPaidInvoices` | `onSchedule('every 1 hours', Europe/Prague)` | For each `invoiced` doc, check iDoklad `PaymentStatus`; on paid mint 100%-off ti.to code + deliver → status `completed` |
 
-Browser side: `src/components/InvoiceForm.tsx` (page `src/pages/invoice.astro`) POSTs JSON to `submitInvoiceRequest` — it never touches Firestore directly. `PUBLIC_INVOICE_ENDPOINT` overrides the endpoint per-environment.
+Browser side: `src/components/InvoiceForm.tsx` (page `src/pages/invoice.astro`) calls the `submitInvoiceRequest` **callable** via the Functions SDK (`getFunctions(getFirebaseApp(), 'europe-west1')` → `httpsCallable`) — it never touches Firestore directly. No endpoint URL config.
 
 Conventions / gotchas:
 - **iDoklad has NO webhooks** — every integration polls. So payment is detected by `pollPaidInvoices` (hourly), which lists `status == 'invoiced'` docs and GETs each invoice's `PaymentStatus` (enum: Unpaid=0, **Paid=1**, PartialPaid=2, **Overpaid=3**). Completion flips the doc to `completed`, so each paid invoice is processed exactly once. There is no paid-webhook endpoint.
@@ -134,7 +134,7 @@ Conventions / gotchas:
 - **Invoice email** via `POST /Mails/IssuedInvoice/Send` (`SendToPartner: true`, `SendAttachment: true`) — PDF attached, company pays by bank transfer using the variable symbol. Failure is tolerated and Slack-relayed.
 - **ti.to discount code** uses Admin API v3 `POST /discount_codes` with the body wrapped under `discount_code` (`type: 'PercentOffDiscountCode'`, `value: '100.0'`, `release_ids`). Scope = every release whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`).
 - **Firestore is server-only.** `firestore.rules` denies all client access; the Admin SDK bypasses it. Like `database.rules.json`, it is **not** wired into `firebase.json` (shared project — auto-deploy would clobber the app's ruleset). `lib/admin.ts` exposes `firestore()` alongside `db()`. The project must have a Firestore database provisioned (it previously used only RTDB).
-- **App Check on `submitInvoiceRequest`.** The public submit endpoint verifies a Firebase App Check token (reCAPTCHA Enterprise) via `getAppCheck().verifyToken()` and 401s without it — blocks bots/curl from minting invoices/emails. Verified **manually** (not the `enforceAppCheck` option) so the CORS preflight `OPTIONS` (which carries no token) is still answered. The browser attaches the token via `getAppCheckToken()` in `src/lib/firebase.ts`. Do **not** enforce App Check on `titoWebhook` (external caller, HMAC-protected) or the schedulers.
+- **App Check on `submitInvoiceRequest`.** It's a **callable** (`onCall`) with `enforceAppCheck: true` — the client Functions SDK auto-attaches the App Check token (reCAPTCHA Enterprise) and the framework rejects missing/invalid before the handler, blocking bots/curl from minting invoices/emails. The callable protocol handles CORS (no manual headers/preflight). `src/lib/firebase.ts` exposes `getFirebaseApp()` so the form can `getFunctions(app)` on the App-Check-initialised app. Do **not** enforce App Check on `titoWebhook` (external HMAC caller) or the schedulers.
 - Discount-code email via Resend (`POST https://api.resend.com/emails`, `from` must be a verified-domain sender) is **optional** (`RESEND_API_KEY` is a string param defaulting to empty); when unset the code is still posted to Slack + stored on the doc.
 
 ### Styling Conventions

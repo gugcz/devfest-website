@@ -10,11 +10,8 @@ import {
 } from '../lib/tito';
 import s from './InvoiceForm.module.scss';
 
-// Cloud Function endpoint. Override per-environment with
-// PUBLIC_INVOICE_ENDPOINT (e.g. an emulator URL during local dev).
-const ENDPOINT =
-	import.meta.env.PUBLIC_INVOICE_ENDPOINT ??
-	'https://europe-west1-devfest-cz-app.cloudfunctions.net/submitInvoiceRequest';
+// Cloud Functions region the callable is deployed to.
+const FUNCTIONS_REGION = 'europe-west1';
 
 // Must match INVOICE_RELEASE_MATCH on the function side.
 const COMPANY_RELEASE_MATCH = 'company funded';
@@ -114,46 +111,34 @@ export default function InvoiceForm() {
 		}
 		setStatus('submitting');
 		setMessage('Sending your request…');
+		const recipient = fields.email;
 		try {
-			// Attach a Firebase App Check token so the endpoint can reject
-			// non-browser (bot/curl) traffic. Best-effort: if it can't be
-			// obtained, the request still goes (server decides whether to reject).
-			const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-			try {
-				const { getAppCheckToken } = await import('../lib/firebase');
-				const appCheckToken = await getAppCheckToken();
-				if (appCheckToken) headers['X-Firebase-AppCheck'] = appCheckToken;
-			} catch {
-				/* App Check unavailable — proceed without the header. */
-			}
-			const res = await fetch(ENDPOINT, {
-				method: 'POST',
-				headers,
-				body: JSON.stringify({ ...fields, website: honeypot }),
-			});
-			if (res.ok) {
-				setStatus('success');
-				setMessage(
-					`Request received. We'll email the invoice to ${fields.email}. ` +
-						`Once it's paid, you'll get a code to claim your ticket(s) on ti.to.`,
-				);
-				setFields(EMPTY);
-				setConsented(false);
-				return;
-			}
-			const data = (await res.json().catch(() => ({}))) as { error?: string };
-			const err = data.error ?? '';
+			// Callable: the Functions SDK auto-attaches the Firebase App Check
+			// token, and the function enforces it server-side (enforceAppCheck).
+			const [{ getFirebaseApp }, { getFunctions, httpsCallable }] = await Promise.all([
+				import('../lib/firebase'),
+				import('firebase/functions'),
+			]);
+			const submit = httpsCallable(getFunctions(getFirebaseApp(), FUNCTIONS_REGION), 'submitInvoiceRequest');
+			await submit({ ...fields, website: honeypot });
+			setStatus('success');
+			setMessage(
+				`Request received. We'll email the invoice to ${recipient}. ` +
+					`Once it's paid, you'll get a code to claim your ticket(s) on ti.to.`,
+			);
+			setFields(EMPTY);
+			setConsented(false);
+		} catch (e) {
+			const code = (e as { code?: string }).code ?? '';
+			const field = (e as { message?: string }).message ?? '';
 			setStatus('error');
 			setMessage(
-				err.startsWith('invalid_')
-					? `Please check the ${err.replace('invalid_', '')} field.`
-					: err.startsWith('app_check')
+				code === 'functions/invalid-argument'
+					? `Please check the ${field} field.`
+					: code === 'functions/unauthenticated' || code === 'functions/failed-precondition'
 						? 'Could not verify your browser. Reload the page and try again, or email devfest@gug.cz.'
 						: 'Something went wrong. Please try again or email devfest@gug.cz.',
 			);
-		} catch {
-			setStatus('error');
-			setMessage('Network error. Please try again or email devfest@gug.cz.');
 		}
 	}
 

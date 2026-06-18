@@ -133,7 +133,7 @@ Some companies must pay by bank transfer against a real invoice before they can 
 
 ```
 Browser  /invoice  (InvoiceForm, client:load)
-  └─> POST  submitInvoiceRequest (HTTPS, validates) → Firestore invoices/{id} (status: pending)
+  └─> submitInvoiceRequest (callable, validates) → Firestore invoices/{id} (status: pending)
 
 Firestore onCreate
   └─> processInvoiceRequest (europe-west1)
@@ -150,13 +150,13 @@ Cloud Scheduler (hourly) — iDoklad has NO webhooks
              └─ invoices/{id} = { status: completed, discountCode, discountLink }
 ```
 
-The browser never touches Firestore — it POSTs to `submitInvoiceRequest`, so the `invoices` collection stays server-only and input is validated before reaching iDoklad.
+The browser never touches Firestore — it calls the `submitInvoiceRequest` callable, so the `invoices` collection stays server-only and input is validated before reaching iDoklad.
 
 ### Functions
 
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
-| `submitInvoiceRequest` | HTTPS, public | Validate the form (CORS + honeypot) and write `invoices/{id}` |
+| `submitInvoiceRequest` | Callable (App Check enforced) | Validate the form (honeypot) and write `invoices/{id}` |
 | `processInvoiceRequest` | Firestore onCreate `invoices/{id}` | Create the iDoklad contact + issued invoice and email it |
 | `pollPaidInvoices` | Cloud Scheduler, hourly | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
 
@@ -174,7 +174,7 @@ firebase functions:secrets:set RESEND_API_KEY         # discount-code email (Sla
 
 Plus the tickets-domain secrets `TITO_API_TOKEN` and `SLACK_WEBHOOK_URL`, and the string params `TITO_ACCOUNT_SLUG` / `TITO_EVENT_SLUG` (`functions/.env`).
 
-Everything else is a **code constant** in `functions/src/invoice/params.ts` (no env, nothing to set): `INVOICE_RELEASE_MATCH` (`company funded`), `INVOICE_VAT_RATE` (`21`), `INVOICE_DUE_DAYS` (`14`), `INVOICE_FROM_EMAIL` (`devfest@gug.cz`), `INVOICE_FROM_NAME`, `WEBSITE_ORIGIN`. Change them there and redeploy.
+Everything else is a **code constant** in `functions/src/invoice/params.ts` (no env, nothing to set): `INVOICE_RELEASE_MATCH` (`company funded`), `INVOICE_VAT_RATE` (`21`), `INVOICE_DUE_DAYS` (`14`), `INVOICE_FROM_EMAIL` (`devfest@gug.cz`), `INVOICE_FROM_NAME`. Change them there and redeploy.
 
 The invoice **price is taken automatically** from the active ti.to release whose title contains `INVOICE_RELEASE_MATCH` — there is no manual price anywhere.
 
@@ -184,8 +184,8 @@ The invoice **price is taken automatically** from the active ti.to release whose
 - **Invoice email** is sent by iDoklad itself (`POST /Mails/IssuedInvoice/Send`, PDF attached); the company pays by bank transfer using the variable symbol on the invoice. If iDoklad can't send mail, the run still succeeds and the invoice number is posted to Slack to relay manually.
 - **Invoice fields** are seeded from iDoklad's `GET /IssuedInvoices/Default` template (currency, payment option, numeric sequence, dates) and overridden with the partner, line, and maturity — so account-specific ids are never hardcoded. The contact's `CountryId` likewise comes from `GET /Contacts/Default` (the form's free-text country is stored but not mapped to an iDoklad country id; foreign companies are handled manually).
 - **ti.to** must have release(s) whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`). Their price drives the invoice amount and the 100%-off code is scoped to them.
-- **Frontend endpoint:** the form posts to the `submitInvoiceRequest` URL. Override per-environment with `PUBLIC_INVOICE_ENDPOINT` (e.g. the emulator URL during local dev); the default targets `https://europe-west1-devfest-cz-app.cloudfunctions.net/submitInvoiceRequest`.
-- **App Check (abuse protection):** `submitInvoiceRequest` requires a valid Firebase App Check token (reCAPTCHA Enterprise). The form attaches `X-Firebase-AppCheck`; the function verifies it via the Admin SDK and rejects missing/invalid tokens with 401 — so bots/curl can't trigger invoices or emails. Verification is manual (not the `enforceAppCheck` option) so the CORS preflight still works. For local dev, set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN` and register the printed debug token (App Check → Apps → Manage debug tokens).
+- **Frontend call:** the form invokes the `submitInvoiceRequest` **callable** via the Functions SDK (`getFunctions(app, 'europe-west1')` → `httpsCallable`). No endpoint URL to configure — the SDK resolves it from the Firebase config and the same FirebaseApp that App Check is initialised on.
+- **App Check (abuse protection):** `submitInvoiceRequest` is a callable with `enforceAppCheck: true`. The Functions SDK auto-attaches the App Check token (reCAPTCHA Enterprise) and the framework rejects any request without a valid one *before* the handler runs — so bots/curl can't trigger invoices or emails. The callable protocol also handles CORS. For local dev, set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN` and register the printed debug token (App Check → Apps → Manage debug tokens).
 
 ### Firestore rules
 

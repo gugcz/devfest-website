@@ -1,39 +1,27 @@
 /**
- * `submitInvoiceRequest` — public HTTPS endpoint the browser invoice form
- * POSTs to. Validates input and writes a `pending` doc to Firestore; the
+ * `submitInvoiceRequest` — callable the browser invoice form invokes.
+ * Validates input and writes a `pending` doc to Firestore; the
  * `processInvoiceRequest` Firestore trigger does the iDoklad work.
  *
  * Keeping the write server-side means Firestore stays locked to clients
  * (firestore.rules denies all) and untrusted input is validated before it
  * ever reaches iDoklad.
  *
- * Abuse protection: every request must carry a valid Firebase App Check
- * token (`X-Firebase-AppCheck`), verified here. We verify manually rather
- * than via the `enforceAppCheck` option so the CORS preflight (OPTIONS,
- * which carries no token) is still answered. This blocks bots/curl that
- * can't mint a reCAPTCHA-Enterprise attestation.
+ * Abuse protection: `enforceAppCheck: true` makes the callable reject any
+ * request without a valid Firebase App Check token (reCAPTCHA Enterprise)
+ * before the handler runs — the client SDK attaches the token automatically,
+ * so bots/curl that can't mint an attestation are blocked. The callable
+ * protocol also handles CORS, so there's nothing to wire by hand.
  */
 
-import { getAppCheck } from 'firebase-admin/app-check';
+import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
-import { onRequest } from 'firebase-functions/v2/https';
 
-import '../lib/admin.js'; // ensure the Admin app is initialized for getAppCheck()
-import { WEBSITE_ORIGIN } from './params.js';
 import { createInvoiceRequest, type InvoiceRequestInput } from './firestore.js';
 
 const REGION = 'europe-west1';
 const MAX_TICKETS = 50;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function resolveAllowedOrigin(requestOrigin: string | undefined): string {
-	const configured = WEBSITE_ORIGIN;
-	if (!requestOrigin) return configured;
-	if (requestOrigin === configured) return requestOrigin;
-	// Allow local dev origins so the form works against `npm run dev`.
-	if (/^http:\/\/localhost(:\d+)?$/.test(requestOrigin)) return requestOrigin;
-	return configured;
-}
 
 type ValidationResult =
 	| { ok: true; value: InvoiceRequestInput }
@@ -83,66 +71,35 @@ function validate(body: Record<string, unknown>): ValidationResult {
 	};
 }
 
-export const submitInvoiceRequest = onRequest(
+export const submitInvoiceRequest = onCall(
 	{
 		region: REGION,
+		enforceAppCheck: true,
 		memory: '256MiB',
 		timeoutSeconds: 30,
-		invoker: 'public',
 	},
-	async (req, res) => {
-		const origin = resolveAllowedOrigin(req.header('origin'));
-		res.set('Access-Control-Allow-Origin', origin);
-		res.set('Vary', 'Origin');
-		res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-		res.set('Access-Control-Allow-Headers', 'Content-Type, X-Firebase-AppCheck');
-		res.set('Access-Control-Max-Age', '3600');
-
-		if (req.method === 'OPTIONS') {
-			res.status(204).send('');
-			return;
-		}
-		if (req.method !== 'POST') {
-			res.status(405).json({ ok: false, error: 'method_not_allowed' });
-			return;
-		}
-
-		// App Check: reject anything without a valid attestation token.
-		const appCheckToken = req.header('X-Firebase-AppCheck');
-		if (!appCheckToken) {
-			res.status(401).json({ ok: false, error: 'app_check_required' });
-			return;
-		}
-		try {
-			await getAppCheck().verifyToken(appCheckToken);
-		} catch {
-			logger.warn('submitInvoiceRequest App Check verification failed');
-			res.status(401).json({ ok: false, error: 'app_check_invalid' });
-			return;
-		}
-
-		const body = (req.body ?? {}) as Record<string, unknown>;
+	async (request) => {
+		const body = (request.data ?? {}) as Record<string, unknown>;
 
 		// Honeypot: bots fill hidden fields. Pretend success, write nothing.
 		if (str(body.website)) {
 			logger.info('submitInvoiceRequest honeypot tripped');
-			res.status(200).json({ ok: true });
-			return;
+			return { ok: true };
 		}
 
 		const result = validate(body);
 		if (!result.ok) {
-			res.status(400).json({ ok: false, error: `invalid_${result.error}` });
-			return;
+			// `message` carries the offending field so the form can point at it.
+			throw new HttpsError('invalid-argument', result.error);
 		}
 
 		try {
 			const id = await createInvoiceRequest(result.value);
 			logger.info('submitInvoiceRequest created invoice request', { id });
-			res.status(201).json({ ok: true, id });
+			return { ok: true, id };
 		} catch (err) {
 			logger.error('submitInvoiceRequest failed to write doc', err);
-			res.status(500).json({ ok: false, error: 'internal' });
+			throw new HttpsError('internal', 'internal');
 		}
 	},
 );
