@@ -34,9 +34,14 @@ export interface TitoRelease {
 	/** Free-text tax label set by organizer (e.g. "VAT 21%"). */
 	tax_description?: string | null;
 	currency: string | null;
-	quantity: number | null;
-	quantity_sold: number;
-	tickets_count?: number;
+	/**
+	 * Coarse "has this wave ever sold a ticket?" flag, computed server-side.
+	 * Replaces the raw `quantity` / `quantity_sold` / `tickets_count` counts,
+	 * which are intentionally NOT published to the world-readable `/tickets`
+	 * cache (they'd leak sales velocity). See
+	 * `functions/src/tickets/tito-api.ts::projectRelease`.
+	 */
+	has_sales?: boolean;
 	/** Synthetic status computed by the Cloud Function from ti.to flags. */
 	sale_status: TitoSaleStatus;
 	state_name?: string | null;
@@ -101,7 +106,7 @@ export function releaseStatus(release: TitoRelease): ReleaseStatus {
 		case 'on_sale':
 			return { label: 'On sale', tone: 'on-sale', purchasable: true };
 		case 'paused':
-			if ((release.tickets_count ?? release.quantity_sold ?? 0) === 0) {
+			if (!release.has_sales) {
 				return { label: 'Coming soon', tone: 'soon', purchasable: false };
 			}
 			return { label: 'Paused', tone: 'paused', purchasable: false };

@@ -7,21 +7,31 @@
  * (firestore.rules denies all) and untrusted input is validated before it
  * ever reaches iDoklad.
  *
- * Abuse protection: `enforceAppCheck: true` makes the callable reject any
- * request without a valid Firebase App Check token (reCAPTCHA Enterprise)
- * before the handler runs — the client SDK attaches the token automatically,
- * so bots/curl that can't mint an attestation are blocked. The callable
- * protocol also handles CORS, so there's nothing to wire by hand.
+ * Abuse protection (layered, because App Check alone is attestation, not a
+ * throttle):
+ *   - `enforceAppCheck: true` rejects any request without a valid Firebase
+ *     App Check token (reCAPTCHA Enterprise) before the handler runs — blocks
+ *     bots/curl that can't mint an attestation.
+ *   - a per-(IČO + email) sliding-window rate limit caps how many invoices +
+ *     emails one company can drive (cost / sending-reputation abuse).
+ *   - `maxInstances` caps fan-out on the shared billing project.
+ * (Token replay protection — `consumeAppCheckToken` + limited-use client
+ * tokens — is intentionally NOT enabled: low-threat site, not worth the
+ * client/server coupling.)
+ * The callable protocol also handles CORS, so there's nothing to wire by hand.
  */
 
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
 
-import { createInvoiceRequest, type InvoiceRequestInput } from './firestore.js';
+import { checkInvoiceRateLimit, createInvoiceRequest, type InvoiceRequestInput } from './firestore.js';
 
 const REGION = 'europe-west1';
 const MAX_TICKETS = 50;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// At most this many submissions per (company, email) inside the window.
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 
 type ValidationResult =
 	| { ok: true; value: InvoiceRequestInput }
@@ -75,6 +85,7 @@ export const submitInvoiceRequest = onCall(
 	{
 		region: REGION,
 		enforceAppCheck: true,
+		maxInstances: 10,
 		memory: '256MiB',
 		timeoutSeconds: 30,
 	},
@@ -91,6 +102,19 @@ export const submitInvoiceRequest = onCall(
 		if (!result.ok) {
 			// `message` carries the offending field so the form can point at it.
 			throw new HttpsError('invalid-argument', result.error);
+		}
+
+		// Throttle per (company, email) so one valid App Check token can't drive
+		// unbounded invoice + email creation.
+		const allowed = await checkInvoiceRateLimit({
+			registrationNumberIC: result.value.registrationNumberIC,
+			email: result.value.email,
+			max: RATE_LIMIT_MAX,
+			windowMs: RATE_LIMIT_WINDOW_MS,
+		});
+		if (!allowed) {
+			logger.warn('submitInvoiceRequest rate limited', { ic: result.value.registrationNumberIC });
+			throw new HttpsError('resource-exhausted', 'rate_limited');
 		}
 
 		try {

@@ -89,7 +89,7 @@ Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 
 `database.rules.json` documents the required rules. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.json` and run `firebase deploy --only database`.
 
-While the Tickets section is hidden on the site, `/tickets` is locked down (`.read: false`) so the cache cannot be pulled from outside. The Cloud Functions still write to it via the Admin SDK (which bypasses rules). When the site is ready to launch, flip `tickets.".read"` to `true` and re-deploy / re-paste the rules.
+`/tickets` is publicly readable (`tickets.".read": true`) so the browser `Tickets.tsx` subscriber can render live release data; the root default and all writes stay `false`. The Cloud Functions write the cache via the Admin SDK (which bypasses rules). Note the projected cache deliberately omits raw inventory counts (`quantity` / `quantity_sold` / `tickets_count`) and ships only a coarse `has_sales` boolean, so public reads can't derive per-wave sales velocity — see `functions/src/tickets/tito-api.ts::projectRelease`.
 
 ### App Check
 

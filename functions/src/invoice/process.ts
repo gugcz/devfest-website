@@ -154,8 +154,11 @@ export const processInvoiceRequest = onDocumentCreated(
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
 			logger.error('processInvoiceRequest failed', err);
+			// errorMessage stays in Firestore (server-only, deny-all rules). The
+			// Slack channel gets a generic line — upstream error bodies can echo
+			// submitted PII (IČO/DIČ/address), so they don't belong there.
 			await updateInvoice(id, { status: 'error', errorMessage: message });
-			await notify(slackUrl, `❌ ${doc.companyName} — invoice creation failed: ${message}`);
+			await notify(slackUrl, `❌ ${doc.companyName} — invoice creation failed (id ${id}); see logs`);
 		}
 	},
 );

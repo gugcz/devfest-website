@@ -11,5 +11,10 @@
  *   3. Append `export * from './<domain>/index.js';` below.
  */
 
+// Side-effect import: applies setGlobalOptions before any function is defined.
+// Must stay the first import so the defaults are in place when the domain
+// modules' function factories run.
+import './options.js';
+
 export * from './tickets/index.js';
 export * from './invoice/index.js';

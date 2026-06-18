@@ -43,7 +43,13 @@ import {
 	type TitoConfig,
 } from './tito-discount.js';
 import { buildDiscountEmail, sendEmail } from './email.js';
-import { listAwaitingPayment, updateInvoice, type InvoiceRecord } from './firestore.js';
+import {
+	claimInvoiceForProcessing,
+	listAwaitingPayment,
+	releaseInvoiceClaim,
+	updateInvoice,
+	type InvoiceRecord,
+} from './firestore.js';
 import { notify } from './slack.js';
 
 const REGION = 'europe-west1';
@@ -74,16 +80,35 @@ export const pollPaidInvoices = onSchedule(
 
 		let completed = 0;
 		for (const record of awaiting) {
+			if (record.data.idokladInvoiceId == null) continue;
+
+			let status: number;
 			try {
-				if (record.data.idokladInvoiceId == null) continue;
-				const status = await getInvoicePaymentStatus(idokladCfg, record.data.idokladInvoiceId);
-				if (!isPaidStatus(status)) continue;
-				await completeInvoice(record, idokladCfg, titoCfg, slackUrl);
+				status = await getInvoicePaymentStatus(idokladCfg, record.data.idokladInvoiceId);
+			} catch (err) {
+				const message = err instanceof Error ? err.message : String(err);
+				logger.error('pollPaidInvoices: payment status check failed', { id: record.id, message });
+				continue;
+			}
+			if (!isPaidStatus(status)) continue;
+
+			// Atomically claim invoiced→processing so the code is minted once
+			// even if a previous run already picked this doc up.
+			if (!(await claimInvoiceForProcessing(record.id))) continue;
+
+			try {
+				await completeInvoice(record, titoCfg, slackUrl);
 				completed += 1;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : String(err);
 				logger.error('pollPaidInvoices: failed to complete invoice', { id: record.id, message });
-				await notify(slackUrl, `❌ ${record.data.companyName} — post-payment processing failed: ${message}`);
+				// Revert to `invoiced` so the next poll retries. Safe to re-run:
+				// the code is persisted the instant it's minted, so completeInvoice
+				// never mints a second one.
+				await releaseInvoiceClaim(record.id, message);
+				// Keep upstream error detail in logs only — don't echo (potential
+				// PII) into the Slack channel.
+				await notify(slackUrl, `❌ ${record.data.companyName} — post-payment processing failed (id ${record.id}); see logs`);
 			}
 		}
 		logger.info('pollPaidInvoices done', { checked: awaiting.length, completed });
@@ -92,31 +117,42 @@ export const pollPaidInvoices = onSchedule(
 
 async function completeInvoice(
 	record: InvoiceRecord,
-	idokladCfg: IdokladConfig,
 	titoCfg: TitoConfig,
 	slackUrl: string,
 ): Promise<void> {
 	const { id, data } = record;
 
-	const releases = await resolveCompanyFundedReleases(titoCfg, INVOICE_RELEASE_MATCH);
-	const releaseIds = releases.map((r) => r.id);
-	if (releaseIds.length === 0) {
-		throw new Error(`No ti.to release matched "${INVOICE_RELEASE_MATCH}"`);
-	}
+	// Idempotent mint: if a code was already created on a prior (partial) run,
+	// reuse it instead of minting a second one. The code is deterministic, so a
+	// re-mint would otherwise collide on ti.to.
+	let code = data.discountCode ?? null;
+	let link = data.discountLink ?? null;
 
-	const code = buildDiscountCode(data.companyName, id.slice(-6));
-	const created = await createDiscountCode(titoCfg, {
-		code,
-		quantity: data.countTickets,
-		releaseIds,
-	});
-	const link = discountRedeemUrl(titoCfg, created.code);
+	if (!code) {
+		const releases = await resolveCompanyFundedReleases(titoCfg, INVOICE_RELEASE_MATCH);
+		const releaseIds = releases.map((r) => r.id);
+		if (releaseIds.length === 0) {
+			throw new Error(`No ti.to release matched "${INVOICE_RELEASE_MATCH}"`);
+		}
+
+		const created = await createDiscountCode(titoCfg, {
+			code: buildDiscountCode(data.companyName, id.slice(-6)),
+			quantity: data.countTickets,
+			releaseIds,
+		});
+		code = created.code;
+		link = discountRedeemUrl(titoCfg, created.code);
+
+		// Persist the code BEFORE attempting delivery, so a later failure never
+		// re-mints — the next run sees the code and skips creation.
+		await updateInvoice(id, { discountCode: code, discountLink: link });
+	}
 
 	let discountEmailSent = false;
 	try {
 		const mail = buildDiscountEmail({
-			code: created.code,
-			link,
+			code,
+			link: link ?? '',
 			ticketCount: data.countTickets,
 			companyName: data.companyName,
 		});
@@ -135,7 +171,7 @@ async function completeInvoice(
 
 	await updateInvoice(id, {
 		status: 'completed',
-		discountCode: created.code,
+		discountCode: code,
 		discountLink: link,
 		discountEmailSent,
 		errorMessage: null,
@@ -143,11 +179,11 @@ async function completeInvoice(
 
 	const emailNote = discountEmailSent
 		? 'code emailed'
-		: `⚠️ email not sent — send code manually: ${created.code} (${link})`;
+		: `⚠️ email not sent — send code manually: ${code} (${link})`;
 	await notify(
 		slackUrl,
-		`${data.companyName} — paid, code ${created.code} generated ` +
+		`${data.companyName} — paid, code ${code} generated ` +
 			`for ${data.countTickets}× ticket; ${emailNote}`,
 	);
-	logger.info('completeInvoice completed', { id, code: created.code });
+	logger.info('completeInvoice completed', { id, code });
 }
