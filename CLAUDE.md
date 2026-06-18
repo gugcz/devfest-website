@@ -53,6 +53,8 @@ Static Astro components (`.astro`) for layout and non-interactive UI. React comp
 
 Firebase Analytics is initialized **only after cookie consent** — it listens for the `cookie-consent-accepted` custom event. Firebase Realtime Database is configured but not currently used. Deployment targets the `devfest-public` site in the `devfest-cz-app` project via `firebase.json`.
 
+App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCHECK_SITE_KEY` in `src/lib/firebase.ts`; `PUBLIC_FIREBASE_APPCHECK_SITE_KEY` overrides it — `src/env.d.ts` types it, `.env.example` documents it). The key is public like the Firebase `apiKey`. Tokens already attach to RTDB reads, but reads keep working until **enforcement** is toggled on for Realtime Database in the Firebase console (do that only after metrics show real traffic is verified). It runs unconditionally, **not** gated on cookie consent, because RTDB reads in `Tickets.tsx` fire on mount before any consent — App Check is a security mechanism (legitimate interest), not analytics. Only RTDB `/tickets` is in scope; `titoWebhook` (external ti.to caller, HMAC-protected) must stay out. See README "App Check".
+
 ### ti.to Tickets pipeline
 
 Visitor browsers read ticket data from RTDB `/tickets`. The static build never calls ti.to. Cloud Functions own all ti.to traffic.

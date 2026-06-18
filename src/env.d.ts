@@ -1,0 +1,25 @@
+/// <reference types="astro/client" />
+
+interface ImportMetaEnv {
+	/**
+	 * reCAPTCHA Enterprise key ID for Firebase App Check. App Check stays inert
+	 * (no token attached to RTDB reads) while this is unset.
+	 */
+	readonly PUBLIC_FIREBASE_APPCHECK_SITE_KEY?: string;
+	/**
+	 * Local-only App Check debug token. Set to `true` to make the SDK print a
+	 * token in the browser console (register it under App Check → Apps → Manage
+	 * debug tokens), or paste an already-registered token string. Never set in
+	 * production.
+	 */
+	readonly PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN?: string;
+}
+
+interface ImportMeta {
+	readonly env: ImportMetaEnv;
+}
+
+interface Window {
+	/** Firebase App Check debug-token hook (dev only). */
+	FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string;
+}
