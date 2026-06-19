@@ -3,24 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
+import { silverPartners, mediaPartners } from '../lib/partners';
 
 const DECK_READY = true;
 const PRESENTATION_URL = 'https://canva.link/828fiq93km2hwds';
 const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.cz' };
-
-// Silver partners — logos live in public/partners/silver/.
-// Full wordmarks ship light (white cut-out) for the dark card.
-// Add an entry per partner: { name, logo, url? }. `url` optional.
-const silverPartners: { name: string; logo: string; url?: string }[] = [
-	{ name: 'Applifting', logo: '/partners/silver/applifting.png', url: 'https://www.applifting.io/' },
-];
-
-// Media partners — logos live in public/partners/media/.
-// Add an entry per partner: { name, logo, url? }. `url` optional.
-const mediaPartners: { name: string; logo: string; url?: string }[] = [
-	{ name: 'White Whale Media', logo: '/partners/media/whitewhalemedia.svg', url: 'https://www.whitewhale.media/' },
-	{ name: 'Dotěkománie', logo: '/partners/media/dotekomanie.avif', url: 'https://dotekomanie.cz/' },
-];
 
 const tickerTopics = [
 	'Reach Developers',
