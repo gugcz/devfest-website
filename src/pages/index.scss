@@ -217,22 +217,8 @@
 	#gallery {
 		position: relative;
 		padding: 8.5rem 0 8rem;
-		background:
-			linear-gradient(180deg, var(--color-bg) 0%, var(--color-near-black) 28%, var(--color-near-black) 72%, var(--color-bg) 100%);
+		background: var(--color-bg);
 		overflow: hidden;
-		border-top: 1px solid rgba(204, 0, 0, 0.18);
-		border-bottom: 1px solid rgba(204, 0, 0, 0.18);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background:
-				radial-gradient(ellipse 55% 70% at 85% 15%, rgba(204, 0, 0, 0.09) 0%, transparent 62%),
-				radial-gradient(ellipse 45% 65% at 8% 92%, rgba(139, 24, 24, 0.08) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
 
 		// faint horizontal "evidence rail" line behind photos
 		&::after {
@@ -263,7 +249,15 @@
 		padding: 0 3rem;
 		display: flex;
 		flex-direction: column;
-		align-items: flex-start;
+		align-items: center;
+		text-align: center;
+
+		.section-label {
+			justify-content: center;
+
+			// trailing hairline reads off-centre on a centred eyebrow
+			&::after { display: none; }
+		}
 	}
 
 	.gallery-head .section-title {
@@ -277,7 +271,7 @@
 		line-height: 1.7;
 		color: var(--color-grey);
 		max-width: 520px;
-		margin: 0;
+		margin: 0 auto;
 	}
 
 	.gallery-marquee {
@@ -358,19 +352,6 @@
 		width: 100%;
 		overflow: hidden;
 		background: var(--color-bg);
-		border-top: 1px solid rgba(204, 0, 0, 0.18);
-		border-bottom: 1px solid rgba(204, 0, 0, 0.18);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background:
-				radial-gradient(ellipse 50% 60% at 15% 8%, rgba(204, 0, 0, 0.1) 0%, transparent 60%),
-				radial-gradient(ellipse 45% 65% at 88% 96%, rgba(139, 24, 24, 0.09) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
 	}
 
 	.speakers-inner {
@@ -518,6 +499,115 @@
 		margin-bottom: 2.6rem;
 	}
 
+	/* ===================== PARTNERS ===================== */
+	// Deliberately quiet: a thin band, no cards, no loud display title — just an
+	// eyebrow over a muted logo row so it sits under the gallery without
+	// competing with the hero / newsletter for attention.
+	#partners {
+		position: relative;
+		padding: 4.5rem 3rem;
+		width: 100%;
+		background: var(--color-bg);
+	}
+
+	.partners-inner {
+		position: relative;
+		z-index: 1;
+		max-width: 1080px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	#partners .section-label {
+		justify-content: center;
+		margin-bottom: 2rem;
+
+		// trailing hairline reads off-centre on a centred eyebrow
+		&::after { display: none; }
+	}
+
+	.partners-row {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 2.4rem 3.4rem;
+	}
+
+	// No card — logos float on the section bg, dimmed and slightly desaturated
+	// so they read as a supporting credit, not a billboard. Brighten on hover.
+	.partners-item {
+		display: flex;
+		align-items: center;
+
+		a {
+			display: inline-flex;
+			align-items: center;
+		}
+
+		.partners-logo {
+			display: block;
+			width: auto;
+			height: auto;
+			max-height: 56px;
+			max-width: 220px;
+			object-fit: contain;
+			opacity: 0.55;
+			filter: grayscale(0.4);
+			transition: opacity 0.2s, filter 0.2s;
+		}
+
+		a:hover .partners-logo,
+		a:focus-visible .partners-logo {
+			opacity: 1;
+			filter: grayscale(0);
+		}
+
+		a:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 6px;
+		}
+	}
+
+	// Inline "See all" sits in the same row as the logos — quiet mono link.
+	.partners-more a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.74rem;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.62);
+		text-decoration: none;
+		transition: color 0.2s, gap 0.2s;
+
+		.btn-ghost-arrow { transition: transform 0.25s; }
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			gap: 0.7rem;
+			outline: none;
+		}
+
+		&:hover .btn-ghost-arrow,
+		&:focus-visible .btn-ghost-arrow {
+			transform: translate(2px, 2px);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 4px;
+		}
+	}
+
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 1240px) {
 		.hero-grid {
@@ -567,6 +657,8 @@
 		.hero-countdown { padding: 1.6rem 1.2rem 1.4rem; }
 		#newsletter { padding: 6.5rem 1.5rem; }
 		#speakers { padding: 6.5rem 1.5rem; }
+		#partners { padding: 4rem 1.5rem; }
+		.partners-row { gap: 2rem 2.6rem; }
 		#gallery { padding: 6.5rem 0 6rem; }
 		.gallery-head { padding: 0 1.5rem; margin-bottom: 3.5rem; }
 		.gallery-marquee { padding: 1.8rem 0; }
@@ -598,6 +690,9 @@
 		.section-label::after { flex-basis: 32px; }
 		#newsletter { padding: 5rem 1.1rem; }
 		#speakers { padding: 5rem 1.1rem; }
+		#partners { padding: 3.5rem 1.1rem; }
+		.partners-row { gap: 1.8rem 2.2rem; }
+		.partners-item .partners-logo { max-height: 46px; max-width: 180px; }
 	}
 
 	@media (max-width: 380px) {
@@ -608,6 +703,7 @@
 		.btn-ghost { font-size: 0.82rem; letter-spacing: 0.18em; }
 		#newsletter { padding: 4.5rem 0.85rem; }
 		#speakers { padding: 4.5rem 0.85rem; }
+		#partners { padding: 3rem 0.85rem; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {
