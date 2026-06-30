@@ -25,3 +25,11 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEVFEST_CZ_APP }}
           projectId: devfest-cz-app
           expires: 3d
+          # Pin firebase-tools: 15.x (`latest`) intermittently retries the
+          # release POST after a "premature close" on the googleapis
+          # connection and then fails with 400 FAILED_PRECONDITION "supplied
+          # version is the current active version" even though the deploy
+          # already landed. 13.35.1 is the Firebase-recommended known-good
+          # pin. Revisit once upstream fixes the non-idempotent retry.
+          # https://github.com/firebase/firebase-tools/issues/8386
+          firebaseToolsVersion: "13.35.1"
