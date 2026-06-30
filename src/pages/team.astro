@@ -1,4 +1,6 @@
 ---
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
 import SubpageHero from '../components/SubpageHero.astro';
@@ -104,6 +106,41 @@ const team: TeamMember[] = [
 	},
 ];
 
+// ─── IMAGE OPTIMISATION ────────────────────────────────────────────────────
+// The source webps live in `src/assets/team` so the build can resize them and
+// emit modern AVIF variants (vs. serving the raw 700px masters from `public`).
+// `import.meta.glob` pulls the metadata for every source; we key it by filename
+// so the roster above can keep referencing simple paths.
+const sources = import.meta.glob<{ default: ImageMetadata }>('../assets/team/*.webp', {
+	eager: true,
+});
+const sourceByFile = new Map<string, ImageMetadata>(
+	Object.entries(sources).map(([path, mod]) => [path.split('/').pop() as string, mod.default])
+);
+
+// Cards render ~220–340px wide (2-col on mobile); these widths cover that range
+// up to ~2× DPR. `sizes` lets the browser pick the smallest variant that fits.
+const MUGSHOT_WIDTHS = [240, 360, 480, 600, 720];
+const MUGSHOT_SIZES = '(max-width: 600px) 45vw, 260px';
+
+const optimiseMugshot = (file?: string) => {
+	if (!file) return undefined;
+	const src = sourceByFile.get(file.split('/').pop() as string);
+	if (!src) return undefined;
+	return getImage({ src, widths: MUGSHOT_WIDTHS, format: 'avif' });
+};
+
+// Precompute optimised base + colour variants for each member. The colour layer
+// is only revealed on hover, so its URLs are handed to `data-*` attributes and
+// fetched lazily by the inline script — the initial grid pays for B&W only.
+const cards = await Promise.all(
+	team.map(async (member) => ({
+		member,
+		base: await optimiseMugshot(member.photo),
+		color: await optimiseMugshot(member.photoColor ?? member.photo),
+	}))
+);
+
 // Two-letter monogram fallback when a member has no photo.
 const initials = (name: string): string =>
 	name
@@ -165,15 +202,17 @@ const tickerTopics = [
 		<section class="team-body" aria-label="Organising team">
 			<div class="team-inner">
 				<ul class="crew-grid reveal">
-					{team.map((member, i) => (
+					{cards.map(({ member, base, color }, i) => (
 						<li>
 							<article class="crew-card">
 								<div class="mugshot">
-									{member.photo ? (
+									{base ? (
 										<>
 											<img
 												class="mugshot-base"
-												src={member.photo}
+												src={base.src}
+												srcset={base.srcSet.attribute}
+												sizes={MUGSHOT_SIZES}
 												alt={member.name}
 												loading="lazy"
 												decoding="async"
@@ -182,10 +221,11 @@ const tickerTopics = [
 											/>
 											<img
 												class="mugshot-color"
-												src={member.photoColor ?? member.photo}
+												data-src={color?.src}
+												data-srcset={color?.srcSet.attribute}
+												sizes={MUGSHOT_SIZES}
 												alt=""
 												aria-hidden="true"
-												loading="lazy"
 												decoding="async"
 												width="700"
 												height="875"
@@ -240,10 +280,25 @@ const tickerTopics = [
 	// Anchor each card's colour-bleed reveal at the cursor: track the pointer
 	// over the mugshot and feed its position into the radial mask via CSS vars.
 	// The expansion itself is driven by CSS (:hover → --bleed).
+	//
+	// The colour layer is heavy and only ever shown on hover/focus, so its real
+	// source lives in data-* attributes and is fetched on first interaction —
+	// keeping the colour photos (~half the page weight) off the initial load.
 	const mugshots = document.querySelectorAll<HTMLElement>('.mugshot');
 	mugshots.forEach((mugshot) => {
-		const color = mugshot.querySelector<HTMLElement>('.mugshot-color');
+		const color = mugshot.querySelector<HTMLImageElement>('.mugshot-color');
 		if (!color) return;
+
+		const loadColor = () => {
+			if (color.src) return; // already loaded
+			if (color.dataset.srcset) color.srcset = color.dataset.srcset;
+			if (color.dataset.src) color.src = color.dataset.src;
+		};
+		// Mouse: load when the pointer first enters. Keyboard: load when focus
+		// moves into the card (only cards with links are focusable).
+		mugshot.addEventListener('pointerenter', loadColor, { once: true });
+		mugshot.closest('.crew-card')?.addEventListener('focusin', loadColor, { once: true });
+
 		mugshot.addEventListener(
 			'pointermove',
 			(event) => {
