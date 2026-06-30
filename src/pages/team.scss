@@ -1,0 +1,293 @@
+	.team-page {
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* ===================== ROSTER SECTION ===================== */
+	// Lit-room atmosphere matching partners / press / faq: a central spotlight
+	// pool with a faint red radial bleeding from the top-right, over page black.
+	.team-body {
+		position: relative;
+		padding: var(--section-y) var(--gutter);
+		background:
+			radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
+			var(--lit),
+			var(--color-bg);
+		border-top: 1px solid var(--rule-soft);
+	}
+
+	.team-inner {
+		max-width: var(--maxw);
+		margin: 0 auto;
+	}
+
+	.crew-grid {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+		gap: 14px;
+	}
+
+	/* ===================== CARD ===================== */
+	// Flat film-noir panel matching the redesign's card idiom: sharp edges, a
+	// raked corner light, an inset matte hairline that warms to red on hover,
+	// and a red-glow lift. The mugshot colour-bleed reveal is the team flourish.
+	.crew-card {
+		position: relative;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		height: 100%;
+		padding: 1rem 1rem 1.25rem;
+		border: 0;
+		border-radius: 0;
+		background:
+			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
+			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
+		transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+		// Inset matte frame — neutral at rest, warms to red on hover.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 9px;
+			border: 1px solid var(--matte);
+			pointer-events: none;
+			z-index: 4;
+			transition: border-color 0.25s ease;
+		}
+
+		&:hover,
+		&:focus-within {
+			transform: translateY(-4px);
+			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+		}
+
+		&:hover::before,
+		&:focus-within::before {
+			border-color: var(--matte-red);
+		}
+	}
+
+	/* ===================== MUGSHOT ===================== */
+	// Animatable bleed radius — drives the radial colour reveal. Browsers
+	// without @property support skip the transition and just swap on hover.
+	@property --bleed {
+		syntax: '<percentage>';
+		inherits: false;
+		initial-value: 0%;
+	}
+
+	.mugshot {
+		position: relative;
+		aspect-ratio: 4 / 5;
+		width: 100%;
+		overflow: hidden;
+		background: var(--panel-lit);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	// Two stacked copies of the photo: a black-and-white base, and a colour
+	// layer on top revealed through an expanding, grainy DIFFUSION mask anchored
+	// at the cursor (see the JS in team.astro).
+	.mugshot-base,
+	.mugshot-color {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	// Neutral B&W at rest — same grade as the global `.film` utility.
+	.mugshot-base {
+		filter: grayscale(1) contrast(1.12) brightness(0.82);
+	}
+
+	.mugshot-color {
+		// --mx / --my (cursor position) set per-card by JS; --bleed animates the
+		// reveal radius. Two composited masks make the colour spread as a grainy
+		// diffusion rather than a clean circle: a wide-feathered radial front
+		// intersected with tiling fractal-noise.
+		--mx: 50%;
+		--my: 50%;
+		--bleed: 0%;
+		--diffuse-radial: radial-gradient(
+			circle at var(--mx) var(--my),
+			#000 calc(var(--bleed) * 0.3),
+			rgba(0, 0, 0, 0.65) calc(var(--bleed) * 0.62),
+			rgba(0, 0, 0, 0.25) calc(var(--bleed) * 0.85),
+			transparent var(--bleed)
+		);
+		--diffuse-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 0.45'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23d)'/%3E%3C/svg%3E");
+
+		-webkit-mask-image: var(--diffuse-radial), var(--diffuse-noise);
+		mask-image: var(--diffuse-radial), var(--diffuse-noise);
+		-webkit-mask-size: 100% 100%, 180px 180px;
+		mask-size: 100% 100%, 180px 180px;
+		-webkit-mask-repeat: no-repeat, repeat;
+		mask-repeat: no-repeat, repeat;
+		-webkit-mask-position: center, center;
+		mask-position: center, center;
+		-webkit-mask-composite: source-in;
+		mask-composite: intersect;
+		transition: --bleed 0.7s ease-out;
+	}
+
+	.crew-card:hover .mugshot-color,
+	.crew-card:focus-within .mugshot-color {
+		--bleed: 165%;
+	}
+
+	.monogram {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(2.6rem, 8vw, 3.4rem);
+		letter-spacing: 0.06em;
+		color: rgba(242, 239, 233, 0.32);
+		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+		user-select: none;
+	}
+
+	// Flat case-file chip — the redesign's red mono label, pinned to the photo.
+	.file-tag {
+		position: absolute;
+		z-index: 5;
+		top: 0.6rem;
+		left: 0.6rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.58rem;
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: var(--on-accent);
+		background: var(--color-accent);
+		padding: 0.3rem 0.55rem;
+	}
+
+	/* ===================== INFO ===================== */
+	.crew-info {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		flex: 1;
+		padding: 0 0.25rem;
+	}
+
+	.crew-name {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 1.55rem;
+		line-height: 1;
+		letter-spacing: 0.04em;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	// Noir codename — the member's "position" under their name. Two-line reserve
+	// keeps the links row aligned across cards with long/short codenames.
+	.crew-alias {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.62rem;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		line-height: 1.4;
+		// accent-hot (not --color-accent) clears WCAG AA on the dark panel
+		// (~4.96:1 vs ~3.3:1 for #CC0000) at this small size.
+		color: var(--color-accent-hot);
+		margin-top: 0.2rem;
+		min-height: 2.8em;
+	}
+
+	.crew-links {
+		list-style: none;
+		margin: 0.6rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.crew-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2rem;
+		height: 2rem;
+		color: rgba(242, 239, 233, 0.6);
+		border: 1px solid var(--rule);
+		border-radius: var(--radius);
+		transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+
+		svg {
+			width: 1rem;
+			height: 1rem;
+			display: block;
+		}
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-text);
+			border-color: var(--rule-red);
+			background: rgba(204, 0, 0, 0.1);
+			box-shadow: var(--glow-red-soft);
+			transform: translateY(-1px);
+			outline: none;
+		}
+	}
+
+	/* ===================== NOTE ===================== */
+	.team-note {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 1.05rem;
+		line-height: 1.7;
+		color: var(--color-grey);
+		text-align: center;
+		max-width: 52ch;
+		margin: 3.4rem auto 0;
+
+		a {
+			color: var(--color-text);
+			text-decoration: underline dashed;
+			text-decoration-color: var(--rule-red);
+			text-underline-offset: 4px;
+			transition: color 0.2s, text-decoration-color 0.2s;
+
+			&:hover,
+			&:focus-visible {
+				color: var(--color-accent-hot);
+				text-decoration-color: var(--color-accent-hot);
+			}
+		}
+	}
+
+	/* ===================== RESPONSIVE ===================== */
+	@media (max-width: 600px) {
+		.crew-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 10px;
+		}
+		.crew-card {
+			padding: 0.8rem 0.8rem 1rem;
+			gap: 0.85rem;
+		}
+		.crew-name {
+			font-size: 1.4rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.crew-card,
+		.crew-card::before,
+		.mugshot-color,
+		.crew-link {
+			transition: none;
+		}
+	}

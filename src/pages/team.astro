@@ -1,0 +1,263 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+
+// ─── TEAM ROSTER ──────────────────────────────────────────────────────────
+// Each member has two photos of the SAME shot: a black-and-white base
+// (`photo`) and a colour version (`photoColor`). The card shows the B&W base
+// at rest; on hover the colour "bleeds" in from the cursor (see team.scss).
+// `alias` is the noir codename used as the kicker; `role` is the real role.
+type LinkKind = 'linkedin' | 'github' | 'web' | 'instagram' | 'email';
+
+interface TeamLink {
+	kind: LinkKind;
+	url: string;
+}
+
+interface TeamMember {
+	name: string;
+	alias: string;
+	role?: string;
+	photo?: string;
+	photoColor?: string;
+	links?: TeamLink[];
+}
+
+const team: TeamMember[] = [
+	{
+		name: 'Daniel Macho',
+		alias: 'The Boss / The Scenic Artist',
+		role: 'Lead Organiser',
+		photo: '/team/daniel-macho-bw.webp',
+		photoColor: '/team/daniel-macho.webp',
+		links: [
+			{ kind: 'linkedin', url: 'https://www.linkedin.com/in/daniel-macho-8ab0477a/' },
+			{ kind: 'github', url: 'https://github.com/lordwiccar' },
+			{ kind: 'instagram', url: 'https://www.instagram.com/beluha.k.vasim.sluzbam/' },
+			{ kind: 'email', url: 'mailto:daniel.macho@gug.cz' },
+		],
+	},
+	{
+		name: 'Lucie Jurystová',
+		alias: 'The Fixer',
+		photo: '/team/lucie-jurystova-bw.webp',
+		photoColor: '/team/lucie-jurystova.webp',
+	},
+	{
+		name: 'Adéla Janovská',
+		alias: 'Chief of Logistics',
+		role: 'Production Coordinator',
+		photo: '/team/adela-janovska-bw.webp',
+		photoColor: '/team/adela-janovska.webp',
+	},
+	{
+		name: 'Filip Goszler',
+		alias: 'The Negotiator',
+		role: 'Partnerships',
+		photo: '/team/filip-goszler-bw.webp',
+		photoColor: '/team/filip-goszler.webp',
+	},
+	{
+		name: 'Eliška Čejpová',
+		alias: 'Whisperer Hunter',
+		photo: '/team/eliska-cejpova-bw.webp',
+		photoColor: '/team/eliska-cejpova.webp',
+	},
+	{
+		name: 'Dominik Šimoník',
+		alias: 'Switchboard Operator',
+		role: 'Web & App',
+		photo: '/team/dominik-simonik-bw.webp',
+		photoColor: '/team/dominik-simonik.webp',
+		links: [
+			{ kind: 'linkedin', url: 'https://www.linkedin.com/in/dominik-simonik/' },
+			{ kind: 'github', url: 'https://github.com/ryzizub' },
+			{ kind: 'web', url: 'https://ryzizub.com/' },
+			{ kind: 'email', url: 'mailto:dominik.simonik@gug.cz' },
+		],
+	},
+	{
+		name: 'Eliška Zezulková',
+		alias: 'The Gatekeeper',
+		role: 'Ticketing',
+		photo: '/team/eliska-zezulkova-bw.webp',
+		photoColor: '/team/eliska-zezulkova.webp',
+		links: [
+			{ kind: 'linkedin', url: 'https://www.linkedin.com/in/eli%C5%A1ka-zezulkov%C3%A1-3a24b9b9/' },
+			{ kind: 'email', url: 'mailto:eliska.zezulkova@gug.cz' },
+		],
+	},
+	{
+		name: 'Tereza Goszlerová',
+		alias: 'Head Bookkeeper',
+		role: 'Finance',
+		photo: '/team/tereza-goszlerova-bw.webp',
+		photoColor: '/team/tereza-goszlerova.webp',
+	},
+	{
+		name: 'Petr Vobr',
+		alias: 'Private Eye',
+		photo: '/team/petr-vobr-bw.webp',
+		photoColor: '/team/petr-vobr.webp',
+	},
+];
+
+// Two-letter monogram fallback when a member has no photo.
+const initials = (name: string): string =>
+	name
+		.split(/\s+/)
+		.filter(Boolean)
+		.map((word) => word[0] ?? '')
+		.slice(0, 2)
+		.join('')
+		.toUpperCase();
+
+// Single-path icons (fill: currentColor) keyed by link kind.
+const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
+	linkedin: {
+		label: 'LinkedIn',
+		icon: '<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>',
+	},
+	github: {
+		label: 'GitHub',
+		icon: '<path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>',
+	},
+	web: {
+		label: 'Website',
+		icon: '<path d="M19.902 4.098a3.75 3.75 0 0 0-5.304 0l-4.5 4.5a3.75 3.75 0 0 0 1.035 6.037.75.75 0 0 1-.646 1.353 5.25 5.25 0 0 1-1.449-8.45l4.5-4.5a5.25 5.25 0 1 1 7.424 7.424l-1.757 1.757a.75.75 0 1 1-1.06-1.06l1.757-1.757a3.75 3.75 0 0 0 0-5.304Zm-7.389 4.267a.75.75 0 0 1 1-.353 5.25 5.25 0 0 1 1.449 8.45l-4.5 4.5a5.25 5.25 0 1 1-7.424-7.424l1.757-1.757a.75.75 0 1 1 1.06 1.06l-1.757 1.757a3.75 3.75 0 1 0 5.304 5.304l4.5-4.5a3.75 3.75 0 0 0-1.035-6.037.75.75 0 0 1-.354-1Z"/>',
+	},
+	instagram: {
+		label: 'Instagram',
+		icon: '<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>',
+	},
+	email: {
+		label: 'Email',
+		icon: '<path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z"/><path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z"/>',
+	},
+};
+
+const tickerTopics = [
+	'Crack the Case',
+	'Run the Show',
+	'Mind the Stage',
+	'Work the Floor',
+	'Keep the Lights On',
+];
+---
+
+<BaseLayout
+	title="Team — DevFest.cz 2026"
+	description="Meet the crew behind DevFest.cz 2026 — the organisers running Prague's largest community developer conference."
+>
+	<main class="team-page">
+		<SubpageHero
+			label="The usual suspects"
+			titleHtml={'The crew<br /><span class="red">on the case.</span>'}
+			lede="DevFest.cz is run by volunteers who'd rather be debugging. Every talk, every coffee, every neon-lit corridor is wired together by the people below."
+			titleId="team-title"
+		/>
+
+		<Ticker items={tickerTopics} fontSize="0.7rem" />
+
+		<!-- ROSTER -->
+		<section class="team-body" aria-label="Organising team">
+			<div class="team-inner">
+				<ul class="crew-grid reveal">
+					{team.map((member, i) => (
+						<li>
+							<article class="crew-card">
+								<div class="mugshot">
+									{member.photo ? (
+										<>
+											<img
+												class="mugshot-base"
+												src={member.photo}
+												alt={member.name}
+												loading="lazy"
+												decoding="async"
+												width="700"
+												height="875"
+											/>
+											<img
+												class="mugshot-color"
+												src={member.photoColor ?? member.photo}
+												alt=""
+												aria-hidden="true"
+												loading="lazy"
+												decoding="async"
+												width="700"
+												height="875"
+											/>
+										</>
+									) : (
+										<span class="monogram" aria-hidden="true">{initials(member.name)}</span>
+									)}
+									<span class="file-tag" aria-hidden="true">N&deg; {String(i + 1).padStart(2, '0')}</span>
+								</div>
+								<div class="crew-info">
+									<h2 class="crew-name">{member.name}</h2>
+									<span class="crew-alias">{member.alias}</span>
+									{member.links && member.links.length > 0 && (
+										<ul class="crew-links">
+											{member.links.map((link) => {
+												const meta = LINK_META[link.kind];
+												const external = link.kind !== 'email';
+												return (
+													<li>
+														<a
+															class="crew-link"
+															href={link.url}
+															aria-label={`${member.name} — ${meta.label}`}
+															title={meta.label}
+															{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+														>
+															<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" set:html={meta.icon} />
+														</a>
+													</li>
+												);
+											})}
+										</ul>
+									)}
+								</div>
+							</article>
+						</li>
+					))}
+				</ul>
+
+				<p class="team-note">
+					Want in on the case? We&rsquo;re always recruiting accomplices &mdash;{' '}
+					<a href="/contact">drop us a wire</a>.
+				</p>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</BaseLayout>
+
+<script>
+	// Anchor each card's colour-bleed reveal at the cursor: track the pointer
+	// over the mugshot and feed its position into the radial mask via CSS vars.
+	// The expansion itself is driven by CSS (:hover → --bleed).
+	const mugshots = document.querySelectorAll<HTMLElement>('.mugshot');
+	mugshots.forEach((mugshot) => {
+		const color = mugshot.querySelector<HTMLElement>('.mugshot-color');
+		if (!color) return;
+		mugshot.addEventListener(
+			'pointermove',
+			(event) => {
+				const rect = mugshot.getBoundingClientRect();
+				const x = ((event.clientX - rect.left) / rect.width) * 100;
+				const y = ((event.clientY - rect.top) / rect.height) * 100;
+				color.style.setProperty('--mx', `${x}%`);
+				color.style.setProperty('--my', `${y}%`);
+			},
+			{ passive: true }
+		);
+	});
+</script>
+
+<style lang="scss">
+	@use './team';
+</style>

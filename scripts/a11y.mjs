@@ -11,6 +11,7 @@ const DIST = path.resolve('dist');
 const PORT = 4321;
 const PATHS = [
 	'/',
+	'/team/',
 	'/partners/',
 	'/contact/',
 	'/faq/',
