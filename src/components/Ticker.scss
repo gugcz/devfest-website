@@ -1,11 +1,14 @@
+// Quiet topic marquee — a thin dark strip, NOT a glowing red neon sign. It
+// runs under the hero as a supporting band; the red is reserved for the
+// separators so it credits the topics without out-shouting the CTAs/tickets.
 .ticker-wrap {
 	position: relative;
 	z-index: 20;
-	background: #A01818;
+	background: var(--color-near-black);
 	overflow: hidden;
-	padding: 0.7rem 0;
-	border-top: 1px solid rgba(255, 255, 255, 0.08);
-	border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+	padding: 0.65rem 0;
+	border-top: 1px solid var(--rule);
+	border-bottom: 1px solid var(--rule);
 
 	// SC 2.2.2 — pause on pointer hover so users can read a topic.
 	&:hover .ticker {
@@ -16,20 +19,20 @@
 .ticker {
 	display: flex;
 	white-space: nowrap;
-	animation: ticker 30s linear infinite;
+	animation: ticker 38s linear infinite;
 }
 
 .ticker-item {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: var(--ticker-font-size, 0.85rem);
-	letter-spacing: 0.2em;
+	font-size: var(--ticker-font-size, 0.76rem);
+	letter-spacing: 0.24em;
 	text-transform: uppercase;
-	color: #F5EBDC;
-	padding: 0 3rem;
+	color: rgba(240, 237, 230, 0.5);
+	padding: 0 2.6rem;
 }
 
 .ticker-sep {
-	color: rgba(245, 235, 220, 0.45);
+	color: rgba(204, 0, 0, 0.55);
 }
 
 @keyframes ticker {

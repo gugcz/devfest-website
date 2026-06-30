@@ -8,14 +8,20 @@ interface Props {
 	titleId?: string;
 }
 
-const { label, titleHtml, lede, titleId = 'subpage-hero-title' } = Astro.props;
+const {
+	label,
+	titleHtml,
+	lede,
+	titleId = 'subpage-hero-title',
+} = Astro.props;
 ---
 
-<section class="subpage-hero" aria-labelledby={titleId}>
+<section class="subpage-hero scene" aria-labelledby={titleId}>
 	<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} />
+	<div class="scene-vignette" aria-hidden="true"></div>
 
 	<div class="hero-content">
-		<div class="section-label">{label}</div>
+		<p class="section-label"><span>{label}</span></p>
 		<h1 id={titleId} class="hero-title" set:html={titleHtml} />
 		<p class="hero-lede">{lede}</p>
 	</div>

@@ -6,17 +6,10 @@
 	/* ===================== BODY ===================== */
 	.faq-body {
 		position: relative;
-		padding: 6.5rem 1.5rem 8rem;
-		background: var(--color-bg);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: radial-gradient(ellipse 50% 55% at 85% 10%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
+		padding: var(--section-y) var(--gutter);
+		// Pool of light dropped behind the case files — a lit interrogation desk.
+		background: var(--lit);
+		border-top: 1px solid var(--rule-soft);
 	}
 
 	.faq-inner {
@@ -31,23 +24,38 @@
 		margin-top: 4rem;
 	}
 
-	.faq-cat {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.78rem;
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.7);
+	// Editorial section header — eyebrow category label, a hairline rule that
+	// runs across the column, and a small mono count anchoring the right edge.
+	.faq-head {
 		display: flex;
 		align-items: center;
 		gap: 1.2rem;
 		margin-bottom: 1.8rem;
+	}
 
-		&::after {
-			content: '';
-			flex: 1;
-			height: 1px;
-			background: rgba(204, 0, 0, 0.35);
-		}
+	.faq-cat {
+		flex: 0 0 auto;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.78rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.62);
+		margin: 0;
+	}
+
+	.faq-head-rule {
+		flex: 1 1 auto;
+		height: 1px;
+		background: linear-gradient(to right, var(--rule-red), transparent);
+	}
+
+	.faq-head-count {
+		flex: 0 0 auto;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.72rem;
+		letter-spacing: 0.18em;
+		color: var(--color-accent-hot);
+		font-variant-numeric: tabular-nums;
 	}
 
 	.faq-list {
@@ -57,29 +65,25 @@
 	}
 
 	/* ===================== ITEM (native <details>) ===================== */
+	// Lit dark file — resting depth shadow, red edge-light warming in on hover.
 	.faq-item {
 		position: relative;
-		background: var(--color-near-black);
-		border: 1px solid rgba(240, 237, 230, 0.08);
-		border-top: 2px solid rgba(204, 0, 0, 0.5);
-		transition: border-color 0.2s, box-shadow 0.2s;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-			pointer-events: none;
-			mix-blend-mode: overlay;
-		}
+		background: var(--panel-lit);
+		border: 1px solid var(--rule);
+		border-radius: var(--radius);
+		box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+		transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 
 		&:hover {
-			border-color: rgba(204, 0, 0, 0.45);
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+			border-color: var(--rule-red);
+			background: var(--panel-lit-2);
+			box-shadow: var(--glow-red-soft), 0 22px 46px rgba(0, 0, 0, 0.6);
 		}
 
 		&[open] {
-			border-color: rgba(204, 0, 0, 0.55);
+			border-color: var(--rule-red);
+			background: var(--panel-hover);
+			box-shadow: var(--glow-red-soft), 0 18px 40px rgba(0, 0, 0, 0.55);
 		}
 	}
 
@@ -91,7 +95,7 @@
 		display: flex;
 		align-items: baseline;
 		gap: 1.1rem;
-		padding: 1.35rem 1.6rem;
+		padding: 1.6rem;
 
 		// Strip the default disclosure triangle (WebKit + the rest).
 		&::-webkit-details-marker {
@@ -110,7 +114,7 @@
 		font-size: 0.62rem;
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.5);
+		color: var(--color-accent-hot);
 		// Nudge the mono label onto the cap-height of the Bebas question.
 		transform: translateY(-0.15em);
 		white-space: nowrap;
@@ -131,25 +135,32 @@
 		font-family: 'Share Tech Mono', monospace;
 		font-size: 1.4rem;
 		line-height: 1;
-		color: var(--color-accent);
+		color: var(--color-accent-hot);
 		transition: transform 0.2s ease, color 0.2s;
 		transform-origin: center;
 	}
 
+	// Open question lights up like neon — the active file in the spotlight.
 	.faq-item[open] .faq-q-text {
 		color: var(--color-accent-hot);
+		text-shadow: var(--glow-red);
 	}
 
 	.faq-item[open] .faq-marker {
 		transform: rotate(45deg); // + → ×
 		color: var(--color-accent-hot);
+		text-shadow: var(--glow-red);
 	}
 
 	/* ===================== ANSWER ===================== */
+	// Editorial pull — the open answer is indented behind a red hairline,
+	// reading like a margin note set off from the question above it.
 	.faq-a {
 		position: relative;
 		z-index: 1;
-		padding: 0 1.6rem 1.6rem;
+		margin: 0 1.6rem 1.6rem;
+		padding-left: 1.4rem;
+		border-left: 2px solid var(--rule-red);
 	}
 
 	.faq-a :global(p) {
@@ -157,20 +168,21 @@
 		font-size: 1rem;
 		line-height: 1.85;
 		letter-spacing: 0.01em;
-		color: rgba(240, 237, 230, 0.85);
+		color: rgba(240, 237, 230, 0.72);
 		margin: 0;
 	}
 
 	.faq-a :global(a) {
 		color: var(--color-accent-hot);
 		text-decoration: none;
-		border-bottom: 1px solid rgba(204, 0, 0, 0.65);
+		border-bottom: 1px solid var(--rule-red);
 		transition: border-color 0.2s, color 0.2s;
 
 		&:hover,
 		&:focus-visible {
-			color: #ff4444;
+			color: var(--color-accent-hot);
 			border-color: var(--color-accent-hot);
+			text-shadow: var(--glow-red-soft);
 		}
 	}
 
@@ -178,7 +190,7 @@
 	.faq-cta {
 		margin-top: 4.5rem;
 		padding-top: 3rem;
-		border-top: 1px solid var(--color-border);
+		border-top: 1px solid var(--rule);
 		text-align: center;
 	}
 
@@ -187,48 +199,21 @@
 		font-style: italic;
 		font-size: 1.15rem;
 		color: var(--color-grey);
-		margin: 0 0 1.2rem;
-	}
-
-	.faq-cta-link {
-		display: inline-block;
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.85rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: var(--color-text);
-		text-decoration: none;
-		border-bottom: 1px dashed rgba(204, 0, 0, 0.6);
-		padding-bottom: 2px;
-		transition: color 0.2s, border-color 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			border-color: var(--color-accent-hot);
-		}
+		margin: 0 0 1.6rem;
 	}
 
 	/* ===================== RESPONSIVE ===================== */
-	@media (max-width: 900px) {
-		.faq-body {
-			padding: 5rem 1.5rem 6.5rem;
-		}
-	}
-
 	@media (max-width: 600px) {
-		.faq-body {
-			padding: 4rem 1.1rem 5.5rem;
-		}
 		.faq-q {
-			padding: 1.15rem 1.2rem;
+			padding: 1.3rem 1.2rem;
 			gap: 0.8rem;
 		}
 		.faq-q-text {
 			font-size: 1.25rem;
 		}
 		.faq-a {
-			padding: 0 1.2rem 1.3rem;
+			margin: 0 1.2rem 1.3rem;
+			padding-left: 1.1rem;
 		}
 		// Hide the file number on narrow screens so long questions don't
 		// crush against the marker.

@@ -136,22 +136,20 @@
 	}
 
 	.nav-link--cta {
-		padding: 0.55rem 1.2rem;
-		background: #8B1818;
-		color: #F5EBDC;
-		border: 2px solid #8B1818;
-		border-radius: 1px;
-		transform: rotate(-1.5deg);
-		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
-		transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+		padding: 0.6rem 1.35rem;
+		background: var(--color-accent);
+		color: var(--on-accent);
+		border: 1px solid var(--color-accent);
+		border-radius: var(--radius);
+		transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 	}
 
 	.nav-link--cta:hover,
 	.nav-link--cta:focus-visible {
 		background: var(--color-accent-hot);
-		color: #F5EBDC;
-		transform: rotate(-1.5deg) translateY(-1px);
-		box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
+		border-color: var(--color-accent-hot);
+		color: var(--on-accent);
+		box-shadow: 0 6px 18px rgba(204, 0, 0, 0.32);
 	}
 
 	/* ===================== MOBILE TOGGLE ===================== */

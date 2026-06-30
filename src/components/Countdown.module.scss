@@ -33,79 +33,38 @@
 	position: relative;
 	width: clamp(2.6rem, 3.4vw, 4.2rem);
 	height: clamp(3.8rem, 5.1vw, 6rem);
-	background: var(--color-cream);
-	border-radius: 2px 2px 0 0;
-	transform: rotate(var(--card-tilt, 0deg));
-	box-shadow:
-		0 2px 6px rgba(0, 0, 0, 0.55),
-		0 1px 2px rgba(0, 0, 0, 0.35),
-		inset 0 0 0 1px rgba(0, 0, 0, 0.06);
-	overflow: visible;
-
-	// fine paper grain
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: inherit;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='64' height='64' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-		background-size: 64px 64px;
-		mix-blend-mode: multiply;
-		pointer-events: none;
-		z-index: 2;
-	}
-
-	// deckled bottom edge
-	&::after {
-		content: '';
-		position: absolute;
-		bottom: -3px;
-		left: -1px;
-		right: -1px;
-		height: 5px;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='5' viewBox='0 0 40 5'%3E%3Cpath d='M0 2 Q5 0 10 2 Q15 4.5 20 2 Q25 0 30 2.5 Q35 5 40 2' stroke='%23E8E0CC' stroke-width='3' fill='none'/%3E%3C/svg%3E");
-		background-repeat: repeat-x;
-		background-size: 40px 5px;
-		pointer-events: none;
-		z-index: 5;
-	}
+	background: var(--panel-2);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	overflow: hidden;
+	transition: border-color 0.3s ease;
 }
 
+// Slim flat red header strip carrying the unit code — a clean ticket-stub
+// header in place of the rubber-stamped block.
 .cardStamp {
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
-	height: 24%;
-	background: rgba(180, 30, 30, 0.78);
+	height: 26%;
+	background: var(--color-accent);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 2px 2px 0 0;
-	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
-	overflow: hidden;
 	z-index: 3;
-
-	// stamp ink turbulence
-	&::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='20'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='80' height='20' filter='url(%23t)' opacity='0.10'/%3E%3C/svg%3E");
-		background-size: 80px 20px;
-		mix-blend-mode: multiply;
-		pointer-events: none;
-	}
+	// Red header bleeds a little neon light.
+	box-shadow: 0 0 14px rgba(204, 0, 0, 0.5);
 }
 
 .cardStampText {
 	position: relative;
 	z-index: 1;
 	font-family: 'Share Tech Mono', monospace;
-	font-size: clamp(0.7rem, 1.1vw, 0.85rem);
-	letter-spacing: 0.22em;
+	font-size: clamp(0.62rem, 1vw, 0.78rem);
+	letter-spacing: 0.18em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.92);
+	color: var(--on-accent);
 	user-select: none;
 }
 
@@ -114,17 +73,13 @@
 	top: 62%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-family: 'Special Elite', cursive;
-	font-size: clamp(2rem, 2.8vw, 3.2rem);
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: clamp(2.2rem, 3vw, 3.6rem);
 	line-height: 1;
-	letter-spacing: 0.02em;
-	color: #1A1208;
+	letter-spacing: 0.04em;
+	color: var(--color-text);
 	user-select: none;
 	z-index: 4;
-	text-shadow:
-		0 0.5px 0 rgba(26, 18, 8, 0.18),
-		0.4px 0 0 rgba(26, 18, 8, 0.12),
-		0 0 1.5px rgba(26, 18, 8, 0.28);
 }
 
 .label {
@@ -153,10 +108,10 @@
 }
 
 @keyframes cardJolt {
-	0%   { transform: rotate(var(--card-tilt, 0deg)) translateY(0); }
-	20%  { transform: rotate(var(--card-tilt, 0deg)) translateY(2px); }
-	50%  { transform: rotate(var(--card-tilt, 0deg)) translateY(-1px); }
-	100% { transform: rotate(var(--card-tilt, 0deg)) translateY(0); }
+	0%   { transform: translateY(0); }
+	20%  { transform: translateY(2px); }
+	50%  { transform: translateY(-1px); }
+	100% { transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {

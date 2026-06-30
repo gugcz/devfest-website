@@ -2,70 +2,93 @@
 		position: relative;
 		// Floor max() keeps height stable across pages even when content
 		// lengths differ (e.g. partners lede longer than contact lede).
-		min-height: max(580px, 65vh);
+		min-height: max(560px, 62vh);
 		display: flex;
 		align-items: center;
 		overflow: hidden;
-		padding: 8rem 3rem 6.5rem;
+		// Editorial section rhythm — top clears the fixed header, gutter
+		// matches every other page edge. Bottom hairline stitches the hero
+		// into the flat layout grid below it.
+		padding: calc(var(--section-y) + 1.5rem) var(--gutter) var(--section-y);
+		border-bottom: 1px solid var(--rule-soft);
 	}
 
 	.hero-content {
 		position: relative;
 		z-index: 10;
-		max-width: 1080px;
+		max-width: var(--maxw);
 		width: 100%;
 		margin: 0 auto;
 	}
 
+	// Atmosphere overlays sit between the photo and the content.
+	.scene-vignette { z-index: 3; }
+
+	// Mono eyebrow with a trailing red hairline — matches the homepage tag.
 	.section-label {
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.72rem;
-		letter-spacing: 0.34em;
+		font-size: 0.74rem;
+		letter-spacing: 0.32em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.6);
-		margin-bottom: 2.2rem;
+		color: rgba(240, 237, 230, 0.62);
+		margin-bottom: 1.8rem;
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+
+		&::after {
+			content: '';
+			flex: 0 0 64px;
+			height: 1px;
+			background: linear-gradient(to right, var(--rule-red), transparent);
+		}
 	}
 
 	.hero-title {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(2.8rem, 7vw, 5.5rem);
-		line-height: 0.92;
-		letter-spacing: 0.02em;
+		font-family: 'Special Elite', cursive;
+		font-size: var(--fs-hero);
+		line-height: 1.04;
+		letter-spacing: 0.01em;
+		text-transform: uppercase;
 		color: var(--color-text);
-		margin: 0 0 2rem;
-		filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.8));
+		margin: 0 0 1.8rem;
+		max-width: 18ch;
+		// Legibility scrim over the photo — kept as a shadow, not an emboss.
+		text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7);
 	}
 
 	// set:html injects unscoped markup; :global lets the page-provided
-	// <span class="red"> inside the title still pick up the accent color.
+	// <span class="red"> inside the title light up like neon.
 	:global(.subpage-hero .hero-title .red) {
 		color: var(--color-accent-hot);
+		text-shadow: var(--glow-red);
 	}
 
 	.hero-lede {
 		font-family: 'IM Fell English', serif;
 		font-style: italic;
-		font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+		font-size: clamp(1.08rem, 1.6vw, 1.3rem);
 		line-height: 1.75;
 		color: var(--color-grey);
-		max-width: 60ch;
+		max-width: 56ch;
 		margin: 0;
-		border-left: 2px solid rgba(180, 50, 50, 0.45);
+		border-left: 2px solid var(--rule-red);
 		padding-left: 1.4rem;
 	}
 
 	@media (max-width: 900px) {
 		.subpage-hero {
-			padding: 6.5rem 1.5rem 5rem;
+			padding: calc(var(--section-y) - 1rem) var(--gutter);
 			min-height: max(440px, 52vh);
 		}
 	}
 
 	@media (max-width: 600px) {
 		.subpage-hero {
-			padding: 5.5rem 1.1rem 4.5rem;
+			padding: calc(var(--section-y) - 1.5rem) var(--gutter);
 			min-height: max(380px, 46vh);
 		}
+		.hero-title { max-width: none; }
 		.hero-lede {
 			font-size: 1rem;
 			padding-left: 1.1rem;

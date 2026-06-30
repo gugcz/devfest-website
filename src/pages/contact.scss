@@ -6,9 +6,12 @@
 	/* ===================== BODY ===================== */
 	.contact-body {
 		position: relative;
-		padding: 7rem 3rem 8rem;
-		background: var(--color-bg);
+		padding: var(--section-y) var(--gutter);
+		// Pool of light dropped behind the contact desks — the lit scene.
+		background: var(--lit);
+		border-top: 1px solid var(--rule-soft);
 
+		// Faint red wash bleeding in from the corner, layered over the pool of light.
 		&::before {
 			content: '';
 			position: absolute;
@@ -22,7 +25,7 @@
 	.contact-inner {
 		position: relative;
 		z-index: 1;
-		max-width: 1080px;
+		max-width: var(--maxw);
 		margin: 0 auto;
 	}
 
@@ -30,50 +33,107 @@
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 2rem;
+		counter-reset: card;
 	}
 
+	// Lamp-lit dossier: a single-source-lit panel (warm light pooling top-left,
+	// falling to near-black) with an inset "matte" frame like a mounted evidence
+	// print, a flat red case-file tab, and a big outlined index behind the copy.
 	.contact-card {
 		position: relative;
-		background: var(--color-near-black);
-		border: 1px solid rgba(240, 237, 230, 0.08);
-		border-top: 2px solid rgba(204, 0, 0, 0.5);
-		padding: 2.2rem 2rem 2.1rem;
+		overflow: hidden;
+		background:
+			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
+			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+		border: 0;
+		border-radius: 0;
+		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
+		padding: 2.6rem 2.1rem 2.1rem;
+		min-height: 300px;
 		display: flex;
 		flex-direction: column;
-		gap: 1.2rem;
-		transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+		gap: 1.1rem;
+		counter-increment: card;
+		transition: transform 0.25s ease, box-shadow 0.25s ease;
 
+		// Inset matte frame — a whisper-faint mounted-print hairline. Warms a
+		// touch on hover (still restrained).
 		&::before {
 			content: '';
 			position: absolute;
-			inset: 0;
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+			inset: 9px;
+			border: 1px solid var(--matte);
 			pointer-events: none;
-			mix-blend-mode: overlay;
+			z-index: 2;
+			transition: border-color 0.25s ease;
 		}
 
 		&:hover {
-			border-color: rgba(204, 0, 0, 0.45);
-			transform: translateY(-2px);
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+			transform: translateY(-4px);
+			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+		}
+
+		&:hover::before {
+			border-color: var(--matte-red);
 		}
 	}
 
+	// Oversized outlined index — anchored top-right, behind the copy.
+	.card-no {
+		position: absolute;
+		top: 0.9rem;
+		right: 1rem;
+		z-index: 0;
+		pointer-events: none;
+		line-height: 1;
+
+		&::before {
+			content: counter(card, decimal-leading-zero);
+			font-family: 'Bebas Neue', sans-serif;
+			font-size: 5.5rem;
+			line-height: 0.8;
+			letter-spacing: 0.02em;
+			color: transparent;
+			-webkit-text-stroke: 1px rgba(204, 0, 0, 0.32);
+			transition: -webkit-text-stroke-color 0.25s ease, text-shadow 0.25s ease;
+		}
+	}
+
+	.contact-card:hover .card-no::before {
+		-webkit-text-stroke-color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
+	}
+
+	// Category label = flat red case-file tab.
 	.card-label {
+		position: relative;
+		z-index: 1;
+		align-self: flex-start;
+		background: var(--color-accent);
+		color: var(--on-accent);
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.6rem;
-		letter-spacing: 0.3em;
+		font-size: 0.62rem;
+		letter-spacing: 0.26em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.65);
+		padding: 0.42rem 0.72rem;
+	}
+
+	// Keep the copy above the outlined index numeral.
+	.card-title,
+	.card-desc,
+	.card-emails {
+		position: relative;
+		z-index: 1;
 	}
 
 	.card-title {
 		font-family: 'Bebas Neue', sans-serif;
-		font-size: 1.7rem;
+		font-size: var(--fs-card-title);
 		line-height: 1;
 		letter-spacing: 0.04em;
 		color: var(--color-text);
 		margin: 0;
+		max-width: 10ch;
 	}
 
 	.card-desc {
@@ -88,8 +148,9 @@
 
 	.card-emails {
 		list-style: none;
-		padding: 0;
-		margin: 0;
+		padding: 1.2rem 0 0;
+		margin: 0.4rem 0 0;
+		border-top: 1px solid var(--rule);
 		display: flex;
 		flex-direction: column;
 		gap: 1.2rem;
@@ -118,27 +179,50 @@
 		display: inline-flex;
 		align-items: center;
 		min-height: 2.75rem;
-		text-decoration: underline dashed;
-		text-decoration-color: rgba(204, 0, 0, 0.5);
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-decoration-color: var(--rule-red);
 		text-underline-offset: 4px;
 		word-break: break-all;
 		transition: color 0.2s, text-decoration-color 0.2s;
+
+		&::after {
+			content: '\2197';
+			margin-left: 0.5rem;
+			text-decoration: none;
+			display: inline-block;
+			transition: transform 0.25s;
+		}
 
 		&:hover,
 		&:focus-visible {
 			color: var(--color-accent-hot);
 			text-decoration-color: var(--color-accent-hot);
+			// Red reads as light — subtle neon halation on the address.
+			text-shadow: var(--glow-red-soft);
+		}
+
+		&:hover::after,
+		&:focus-visible::after {
+			transform: translate(2px, -2px);
 		}
 	}
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		.contact-body { padding: 5.5rem 1.5rem 6.5rem; }
 		.contact-grid { grid-template-columns: 1fr; gap: 1.6rem; }
 	}
 
 	@media (max-width: 600px) {
-		.contact-body { padding: 4.5rem 1.1rem 5.5rem; }
 		.contact-card { padding: 1.8rem 1.5rem 1.7rem; }
 		.card-title { font-size: 1.5rem; }
+	}
+
+	/* ===================== REDUCED MOTION ===================== */
+	@media (prefers-reduced-motion: reduce) {
+		.contact-card {
+			transition: border-color 0.2s, box-shadow 0.2s;
+
+			&:hover { transform: none; }
+		}
 	}

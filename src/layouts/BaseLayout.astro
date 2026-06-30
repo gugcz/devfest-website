@@ -125,6 +125,12 @@ const jsonLd = JSON.stringify(
 		<meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)" />
 		<meta name="color-scheme" content="dark" />
 		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
+		<!--
+			Mark JS available ASAP so scroll-reveal elements only start hidden
+			when we can actually reveal them — no-JS / crawlers get the
+			fully-visible render.
+		-->
+		<script is:inline>document.documentElement.classList.add('js');</script>
 
 		<title>{title}</title>
 		<meta name="description" content={description} />
@@ -201,6 +207,34 @@ const jsonLd = JSON.stringify(
 		<Menu />
 		<div id="main-content"><slot /></div>
 		<CookieBanner />
+
+		<script>
+			// Cinematic atmosphere behaviours — all degrade gracefully and respect
+			// reduced-motion (CSS already neutralises the visual side).
+			const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+			// 1) Scroll reveal — fade/rise sections as they enter the frame.
+			const reveals = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+			if (reveals.length) {
+				if (reduce || !('IntersectionObserver' in window)) {
+					reveals.forEach((el) => el.classList.add('is-visible'));
+				} else {
+					const io = new IntersectionObserver(
+						(entries, obs) => {
+							for (const e of entries) {
+								if (e.isIntersecting) {
+									e.target.classList.add('is-visible');
+									obs.unobserve(e.target);
+								}
+							}
+						},
+						{ rootMargin: '0px 0px -12% 0px', threshold: 0.12 }
+					);
+					reveals.forEach((el) => io.observe(el));
+				}
+			}
+
+		</script>
 	</body>
 </html>
 

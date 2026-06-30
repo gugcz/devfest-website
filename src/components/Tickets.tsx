@@ -119,7 +119,7 @@ export default function Tickets() {
 					<p className={s.eyebrow}>
 						Tickets
 					</p>
-					<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
+					<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
 				</header>
 				<div className={s.empty} role="alert">
 					<p>Tickets are temporarily unavailable. Please check back soon.</p>
@@ -135,7 +135,7 @@ export default function Tickets() {
 					<p className={s.eyebrow}>
 						Tickets
 					</p>
-					<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
+					<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
 					<p className={s.loadingStatus} role="status">
 						<span className={s.loadingDot} aria-hidden="true" />
 						Loading tickets
@@ -184,7 +184,7 @@ export default function Tickets() {
 					<p className={s.eyebrow}>
 						Tickets
 					</p>
-					<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
+					<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
 					<p className={s.subheading}>Tickets are not yet available.</p>
 				</header>
 				<div className={s.empty}>
@@ -207,7 +207,7 @@ export default function Tickets() {
 		<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
 			<header className={s.header}>
 				<p className={s.eyebrow}>Tickets</p>
-				<h2 id="tickets-heading" className={s.heading}>DevFest 2026 tickets</h2>
+				<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
 				<p className={s.subheading}>Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>
 			</header>
 			<ul className={s.list} role="list">

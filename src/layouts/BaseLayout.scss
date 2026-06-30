@@ -3,16 +3,59 @@
 		--color-near-black: #0D0D0D;
 		--color-dark: #1A1A1A;
 		--color-mid: #2E2E2E;
-		--color-grey: #888;
-		--color-text: #F0EDE6;
+		--color-grey: #8C8C8C;
+		--color-text: #F2EFE9;
 		--color-cream: #E8E0CC;
 		--color-accent: #CC0000;
 		--color-accent-hot: #FF1111;
 		--color-surface: rgba(255, 255, 255, 0.03);
 		--color-border: rgba(255, 255, 255, 0.08);
-		// Shared turbulence noise — overlaid on stamp-style buttons via
-		// background-image + mix-blend-mode: multiply.
-		--noise-stamp: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='80' height='30' filter='url(%23t)' opacity='0.16'/%3E%3C/svg%3E");
+
+		/* ============ editorial-noir design tokens ============ */
+		// Content column + consistent page gutter / section rhythm.
+		--maxw: 1200px;
+		--gutter: clamp(1.25rem, 5vw, 3rem);
+		--section-y: clamp(4.5rem, 8vw, 8.5rem);
+		// Sharp corners — a hint of softening, never pill-shaped.
+		--radius: 2px;
+
+		// Display type scale — one source of truth so headline sizes stay
+		// consistent across every page/section.
+		--fs-hero: clamp(2.6rem, 6vw, 5rem);      // subpage hero headline
+		--fs-h2: clamp(2.2rem, 4.8vw, 4rem);      // in-page section headline
+		--fs-card-title: 1.85rem;                 // dossier card title
+
+		// Hairline rules — the structural backbone of the flat layout.
+		--rule: rgba(240, 237, 230, 0.13);
+		--rule-soft: rgba(240, 237, 230, 0.06);
+		--rule-strong: rgba(240, 237, 230, 0.22);
+		--rule-red: rgba(204, 0, 0, 0.55);
+		// Whisper-faint line for the dossier matte frame (tune subtlety here).
+		--matte: rgba(240, 237, 230, 0.035);
+		--matte-red: rgba(204, 0, 0, 0.28);
+
+		// Flat dark panels replace the cream paper slips.
+		--panel: #0C0B0B;
+		--panel-2: #111010;
+		--panel-hover: #161413;
+
+		// Ink on the red CTA.
+		--on-accent: #F7EFE6;
+
+		/* ============ cinematic film-noir atmosphere (v3) ============ */
+		// Red used as LIGHT — layered halation for glowing accents (ember/neon).
+		--glow-red: 0 0 16px rgba(204, 0, 0, 0.55), 0 0 38px rgba(204, 0, 0, 0.28);
+		--glow-red-soft: 0 0 22px rgba(204, 0, 0, 0.32);
+		--glow-red-hot: 0 0 14px rgba(255, 40, 40, 0.7), 0 0 40px rgba(204, 0, 0, 0.45);
+
+		// Very dark surfaces that catch a pool of light (replace flat --panel in scenes).
+		--panel-lit: #0A0908;
+		--panel-lit-2: #0E0C0B;
+
+		// Soft pool of light dropped behind content in a lit section.
+		--lit: radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%);
+		// Cinematic edge-darkening frame.
+		--vignette: radial-gradient(ellipse 120% 105% at 50% 42%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
 	}
 
 	*, *::before, *::after {
@@ -90,17 +133,16 @@
 			display: none;
 		}
 
-		// film grain (matches inspiration). Keep light so axe-core contrast
-		// readings stay within WCAG limits — overlay layers compound on text.
-		&::before {
+		// Cinematic vignette — darkens the frame edges so every section reads
+		// like a film still. Decorative only: sits below nav/cookie/status
+		// chrome (z 10000+) and gentle enough to keep edge text within AA.
+		&::after {
 			content: '';
 			position: fixed;
 			inset: 0;
-			z-index: 9999;
+			z-index: 9998;
 			pointer-events: none;
-			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-			opacity: 0.18;
-			mix-blend-mode: soft-light;
+			background: var(--vignette);
 		}
 	}
 
@@ -134,6 +176,199 @@
 			white-space: normal;
 			outline: 2px solid var(--color-accent);
 		}
+	}
+
+	/* ===================== EDITORIAL PRIMITIVES ===================== */
+	// Shared, theme-wide building blocks for the flat editorial-noir layout.
+	// Defined globally (BaseLayout is `is:global`) so every .astro page can use
+	// them without re-declaring the rubber-stamp CTA in eight scoped files.
+
+	// Centered content column at --maxw with the consistent page gutter.
+	.u-container {
+		width: 100%;
+		max-width: var(--maxw);
+		margin-inline: auto;
+		padding-inline: var(--gutter);
+	}
+
+	// Full-bleed hairline divider that stitches stacked sections into a grid.
+	.u-rule {
+		border: 0;
+		border-top: 1px solid var(--rule-soft);
+	}
+
+	// Mono eyebrow with a trailing red hairline — the editorial section tag.
+	.eyebrow {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.78rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.62);
+		display: inline-flex;
+		align-items: center;
+		gap: 0.9rem;
+
+		&::after {
+			content: '';
+			flex: 0 0 56px;
+			height: 1px;
+			background: linear-gradient(to right, var(--rule-red), transparent);
+		}
+	}
+
+	// Case-file index tag — small hairline-boxed number beside an eyebrow.
+	.index-no {
+		color: var(--color-accent-hot);
+		font-variant-numeric: tabular-nums;
+		padding: 0.22em 0.5em;
+		border: 1px solid rgba(204, 0, 0, 0.4);
+		letter-spacing: 0.16em;
+	}
+
+	/* ---- Flat CTAs — successors to the rotated rubber stamps ---- */
+	.btn-primary {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.7rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.84rem;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: var(--on-accent);
+		background: var(--color-accent);
+		border: 1px solid var(--color-accent);
+		border-radius: var(--radius);
+		padding: 1.05rem 2.4rem;
+		text-decoration: none;
+		cursor: pointer;
+		position: relative;
+		transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+
+		&:hover {
+			background: var(--color-accent-hot);
+			border-color: var(--color-accent-hot);
+			transform: translateY(-2px);
+			// Red reads as light — neon halation on hover.
+			box-shadow: var(--glow-red), 0 12px 30px rgba(204, 0, 0, 0.3);
+		}
+
+		&:active { transform: translateY(0); }
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 3px;
+		}
+	}
+
+	// Outline counterpart — pairs with the filled primary.
+	.btn-ghost {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.6rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.84rem;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: var(--color-text);
+		text-decoration: none;
+		cursor: pointer;
+		padding: 1.05rem 1.8rem;
+		border: 1px solid var(--rule-strong);
+		border-radius: var(--radius);
+		background: transparent;
+		transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, gap 0.2s ease;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			border-color: var(--rule-red);
+			background: rgba(204, 0, 0, 0.06);
+			box-shadow: var(--glow-red-soft);
+			gap: 0.85rem;
+			outline: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 3px;
+		}
+	}
+
+	.btn-ghost-arrow {
+		transition: transform 0.25s ease;
+	}
+
+	.btn-ghost:hover .btn-ghost-arrow,
+	.btn-ghost:focus-visible .btn-ghost-arrow {
+		transform: translate(2px, 2px);
+	}
+
+	/* ===================== CINEMATIC ATMOSPHERE ===================== */
+	// Reusable lighting/texture primitives for the film-noir scenes. Decorative
+	// layers are pointer-events:none and kept below text so contrast holds.
+
+	// Pool of light behind a section's content. Content must sit above it
+	// (position: relative; z-index: 1 on the inner wrapper).
+	.lit { position: relative; }
+	.lit > .lit-glow {
+		position: absolute;
+		inset: 0;
+		background: var(--lit);
+		pointer-events: none;
+		z-index: 0;
+	}
+
+	// Full-bleed scene vignette — stronger than the global frame, scoped to a
+	// section for "film still" framing.
+	.scene { position: relative; }
+	.scene > .scene-vignette {
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(ellipse 92% 82% at 50% 44%, transparent 36%, rgba(0, 0, 0, 0.62) 100%);
+		pointer-events: none;
+		z-index: 1;
+	}
+
+	// Photographic grade for imagery — high-contrast B&W with an optional warm
+	// red lift toward neon highlights.
+	.film { filter: grayscale(1) contrast(1.12) brightness(0.82); }
+	.film--neon { filter: grayscale(0.82) contrast(1.16) brightness(0.8) sepia(0.22) hue-rotate(-12deg) saturate(1.5); }
+
+	// Red TEXT that reads as neon light (pair with the accent color).
+	.neon {
+		color: var(--color-accent-hot);
+		text-shadow: var(--glow-red);
+	}
+
+	// Box / border that glows red — CTAs and lit edges.
+	.glow-box { box-shadow: var(--glow-red-soft); }
+
+	// Scroll reveal — only hidden when JS is present (the inline `js` class on
+	// <html>); no-JS / SEO render fully visible. IntersectionObserver toggles
+	// .is-visible.
+	.js .reveal {
+		opacity: 0;
+		transform: translateY(26px);
+		transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+	.js .reveal.is-visible {
+		opacity: 1;
+		transform: none;
+	}
+
+	@keyframes ember-pulse {
+		0%, 100% { opacity: 0.6; transform: scale(0.88); }
+		50% { opacity: 1; transform: scale(1.12); }
+	}
+	@keyframes neon-flicker {
+		0%, 18%, 22%, 80%, 100% { opacity: 1; }
+		20%, 82% { opacity: 0.74; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.js .reveal { opacity: 1; transform: none; transition: none; }
 	}
 
 	@keyframes fadeIn {

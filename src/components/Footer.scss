@@ -109,7 +109,7 @@
 		letter-spacing: 0.04em;
 		color: rgba(240, 237, 230, 0.78);
 		text-decoration: none;
-		border-bottom: 1px dashed transparent;
+		border-bottom: 1px solid transparent;
 		padding-bottom: 1px;
 		transition: color 0.2s ease, border-color 0.2s ease;
 
@@ -163,7 +163,7 @@
 		font-size: 0.95rem;
 		color: rgba(240, 237, 230, 0.88);
 		text-decoration: none;
-		border-bottom: 1px dashed rgba(240, 237, 230, 0.5);
+		border-bottom: 1px solid rgba(240, 237, 230, 0.4);
 		padding-bottom: 1px;
 		transition: color 0.2s ease, border-color 0.2s ease;
 
@@ -223,7 +223,9 @@
 		&:hover,
 		&:focus-visible {
 			color: var(--color-accent-hot);
-			background: rgba(240, 237, 230, 0.06);
+			background: rgba(204, 0, 0, 0.08);
+			box-shadow: var(--glow-red-soft);
+			text-shadow: var(--glow-red-soft);
 		}
 
 		&:focus-visible {

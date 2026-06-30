@@ -2,147 +2,89 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 0.85rem;
+	gap: 1rem;
 	width: 100%;
 }
 
-// evidence form — paper slip + overhanging rubber-stamp button
+// Flat field + button pair — a single hairline-bordered control group.
 .form {
 	display: flex;
-	align-items: center;
+	align-items: stretch;
 	gap: 0;
 	max-width: 480px;
 	width: 100%;
 	position: relative;
-	padding-right: 10px;
 }
 
 .paper {
 	flex: 1;
 	position: relative;
-	background:
-		radial-gradient(
-			ellipse 30% 60% at 88% 50%,
-			rgba(139, 90, 43, 0.08) 0%,
-			transparent 70%
-		),
-		var(--color-cream);
-	padding: 6px;
-	box-shadow:
-		0 3px 8px rgba(0, 0, 0, 0.55),
-		0 1px 2px rgba(0, 0, 0, 0.4),
-		inset 0 0 0 1px rgba(0, 0, 0, 0.06);
-	border-radius: 1px;
+	background: var(--panel-2);
+	border: 1px solid var(--rule);
+	border-right: none;
+	border-radius: var(--radius) 0 0 var(--radius);
+	transition: border-color 0.2s ease;
 
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='64' height='64' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-		background-size: 64px 64px;
-		mix-blend-mode: multiply;
-		pointer-events: none;
-	}
-
-	&::after {
-		content: '';
-		position: absolute;
-		bottom: -3px;
-		left: -1px;
-		right: -1px;
-		height: 5px;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='5' viewBox='0 0 40 5'%3E%3Cpath d='M0 2 Q5 0 10 2 Q15 4.5 20 2 Q25 0 30 2.5 Q35 5 40 2' stroke='%23E8E0CC' stroke-width='3' fill='none'/%3E%3C/svg%3E");
-		background-repeat: repeat-x;
-		background-size: 40px 5px;
-		pointer-events: none;
+	&:focus-within {
+		border-color: var(--rule-red);
+		box-shadow: var(--glow-red-soft);
 	}
 }
 
 .input {
-	flex: 1;
-	padding: 0.85rem 1rem;
-	min-height: 2.75rem;
+	width: 100%;
+	padding: 0.95rem 1.1rem;
+	min-height: 3rem;
 	background: transparent;
 	border: none;
-	border-bottom: 1px dashed rgba(26, 18, 8, 0.7);
-	border-radius: 0;
-	color: #1A1208;
+	border-radius: inherit;
+	color: var(--color-text);
 	font-family: 'Special Elite', cursive;
 	font-size: 1rem;
 	letter-spacing: 0.02em;
-	transition: border-color 0.3s, background 0.3s, box-shadow 0.2s;
-	position: relative;
-	z-index: 1;
 
 	&::placeholder {
-		color: rgba(26, 18, 8, 0.55);
+		color: rgba(240, 237, 230, 0.45);
 		font-style: italic;
 	}
 
 	&:focus {
 		outline: none;
-		border-bottom-color: var(--color-accent);
-		background: rgba(204, 0, 0, 0.05);
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--color-accent);
-		outline-offset: 2px;
-		border-bottom-color: var(--color-accent);
+		outline: none;
 	}
 }
 
 .button {
-	padding: 1.25rem 2rem;
-	margin: -6px -10px -6px 0;
-	background: #8B1818;
-	color: #F5EBDC;
-	border: 2px solid #8B1818;
-	border-radius: 1px;
+	padding: 0.95rem 2rem;
+	background: var(--color-accent);
+	color: var(--on-accent);
+	border: 1px solid var(--color-accent);
+	border-radius: 0 var(--radius) var(--radius) 0;
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.9rem;
-	letter-spacing: 0.24em;
+	font-size: 0.84rem;
+	letter-spacing: 0.22em;
 	text-transform: uppercase;
 	cursor: pointer;
-	transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 	white-space: nowrap;
-	position: relative;
-	z-index: 2;
-	transform: rotate(-1.5deg);
-	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
-	overflow: hidden;
-
-	// stamp ink turbulence
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='80' height='30' filter='url(%23t)' opacity='0.16'/%3E%3C/svg%3E");
-		background-size: 80px 30px;
-		mix-blend-mode: multiply;
-		pointer-events: none;
-	}
 
 	&:hover:not(:disabled) {
 		background: var(--color-accent-hot);
-		transform: rotate(-1.5deg) translateY(-1px);
-		box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
-	}
-
-	&:active:not(:disabled) {
-		transform: rotate(-1.5deg) translateY(0);
+		border-color: var(--color-accent-hot);
+		box-shadow: var(--glow-red), 0 8px 22px rgba(204, 0, 0, 0.28);
 	}
 
 	&:focus-visible {
-		outline: 3px solid #F5EBDC;
+		outline: 2px solid var(--color-accent-hot);
 		outline-offset: 3px;
 	}
 
 	&:disabled {
-		opacity: 0.65;
+		opacity: 0.55;
 		cursor: not-allowed;
-		transform: rotate(-1.5deg);
-		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
 	}
 }
 
@@ -194,7 +136,7 @@
 .consentLink {
 	color: rgba(240, 237, 230, 0.85);
 	text-decoration: none;
-	border-bottom: 1px dashed rgba(204, 0, 0, 0.6);
+	border-bottom: 1px solid var(--rule-red);
 	transition: border-color 0.2s, color 0.2s;
 
 	&:hover,
@@ -219,12 +161,17 @@
 	.form {
 		flex-direction: column;
 		max-width: 100%;
-		padding-right: 0;
 		gap: 0.6rem;
 	}
 
 	.paper {
 		width: 100%;
+		border-right: 1px solid var(--rule);
+		border-radius: var(--radius);
+
+		&:focus-within {
+			border-color: var(--rule-red);
+		}
 	}
 
 	.input {
@@ -233,16 +180,7 @@
 
 	.button {
 		width: 100%;
-		margin: 0;
-		padding: 1.05rem 2rem;
-		transform: rotate(-1deg);
-
-		&:hover {
-			transform: rotate(-1deg) translateY(-1px);
-		}
-		&:active,
-		&:disabled {
-			transform: rotate(-1deg);
-		}
+		padding: 1rem 2rem;
+		border-radius: var(--radius);
 	}
 }

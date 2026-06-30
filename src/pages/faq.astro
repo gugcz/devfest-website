@@ -97,10 +97,12 @@ const faqGroups: FaqGroup[] = [
 	},
 ];
 
-// Running item number across all groups → "N° 01" labels.
+// Running item number across all groups → "N° 01" labels, plus a per-group
+// count (zero-padded) for the editorial section header ("04 entries").
 let fileCounter = 0;
 const groupsForDisplay = faqGroups.map((group) => ({
 	...group,
+	count: String(group.items.length).padStart(2, '0'),
 	items: group.items.map((item) => {
 		fileCounter += 1;
 		return { ...item, num: String(fileCounter).padStart(2, '0') };
@@ -148,13 +150,18 @@ const faqJsonLd = JSON.stringify(faqSchema);
 		<section class="faq-body" aria-labelledby="faq-title">
 			<div class="faq-inner">
 				{groupsForDisplay.map((group) => (
-					<div class="faq-group">
-						<h2 class="faq-cat" id={`faq-cat-${group.id}`}>{group.label}</h2>
+					<div class="faq-group reveal">
+						<div class="faq-head">
+							<h2 class="faq-cat" id={`faq-cat-${group.id}`}>{group.label}</h2>
+							<span class="faq-head-rule" aria-hidden="true"></span>
+							<span class="faq-head-count" aria-hidden="true">{group.count}</span>
+						</div>
 
 						<div class="faq-list">
 							{group.items.map((item) => (
 								<details class="faq-item">
 									<summary class="faq-q">
+										<span class="faq-num" aria-hidden="true">N&#176; {item.num}</span>
 										<span class="faq-q-text">{item.q}</span>
 										<span class="faq-marker" aria-hidden="true">+</span>
 									</summary>
@@ -168,9 +175,12 @@ const faqJsonLd = JSON.stringify(faqSchema);
 				))}
 
 				<!-- STILL STUCK -->
-				<aside class="faq-cta">
+				<aside class="faq-cta reveal">
 					<p class="faq-cta-text">Still have a question?</p>
-					<a href="/contact" class="faq-cta-link">Contact us &#8594;</a>
+					<a href="/contact" class="btn-ghost">
+						Contact us
+						<span class="btn-ghost-arrow" aria-hidden="true">&#8600;</span>
+					</a>
 				</aside>
 			</div>
 		</section>

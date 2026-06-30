@@ -27,7 +27,15 @@ const pressKit = await listPressKit();
 				<a class="back-link" href="/press">&larr; Back to press</a>
 
 				{pressKit.length > 0 ? (
-					<ul class="presskit-grid">
+					<>
+					<div class="section-head">
+						<p class="section-label">
+							Asset library
+							<span class="section-no">{String(pressKit.length).padStart(2, '0')}</span>
+						</p>
+						<h2 class="section-title">Download <span class="red">files.</span></h2>
+					</div>
+					<ul class="presskit-grid reveal">
 						{pressKit.map((a) => (
 							<li class="kit-item">
 								<a class="kit-link" href={a.href} download>
@@ -49,6 +57,7 @@ const pressKit = await listPressKit();
 							</li>
 						))}
 					</ul>
+					</>
 				) : (
 					<div class="empty-state" role="status">
 						<span class="empty-stamp" aria-hidden="true">Coming soon</span>

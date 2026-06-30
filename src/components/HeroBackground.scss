@@ -2,7 +2,9 @@
 		position: absolute;
 		inset: 0;
 		background:
-			radial-gradient(ellipse 40% 60% at 15% 80%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
+			// distant neon — a red light source glowing in the alley.
+			radial-gradient(ellipse 36% 50% at 12% 78%, rgba(204, 0, 0, 0.16) 0%, transparent 62%),
+			radial-gradient(ellipse 30% 40% at 70% 18%, rgba(204, 0, 0, 0.07) 0%, transparent 60%),
 			#050505;
 		z-index: 0;
 	}
@@ -16,23 +18,28 @@
 		background-image: url('/hero-detective.webp');
 		background-size: cover;
 		background-position: center;
+		// Cinematic grade — push the detective plate to high-contrast B&W noir.
+		filter: grayscale(1) contrast(1.12) brightness(0.84);
+		// Long, gentle left-to-right fade — the photo dissolves into the dark
+		// over its whole width so there's no visible seam where it meets the
+		// content side. Only fully opaque near the right edge.
 		mask-image: linear-gradient(
 			to right,
 			transparent 0%,
-			rgba(0, 0, 0, 0.08) 6%,
-			rgba(0, 0, 0, 0.28) 15%,
-			rgba(0, 0, 0, 0.62) 26%,
-			rgba(0, 0, 0, 0.88) 38%,
-			#000 56%
+			rgba(0, 0, 0, 0.04) 14%,
+			rgba(0, 0, 0, 0.16) 30%,
+			rgba(0, 0, 0, 0.42) 50%,
+			rgba(0, 0, 0, 0.74) 72%,
+			#000 92%
 		);
 		-webkit-mask-image: linear-gradient(
 			to right,
 			transparent 0%,
-			rgba(0, 0, 0, 0.08) 6%,
-			rgba(0, 0, 0, 0.28) 15%,
-			rgba(0, 0, 0, 0.62) 26%,
-			rgba(0, 0, 0, 0.88) 38%,
-			#000 56%
+			rgba(0, 0, 0, 0.04) 14%,
+			rgba(0, 0, 0, 0.16) 30%,
+			rgba(0, 0, 0, 0.42) 50%,
+			rgba(0, 0, 0, 0.74) 72%,
+			#000 92%
 		);
 		opacity: var(--hero-photo-opacity, 0.85);
 		pointer-events: none;
