@@ -6,88 +6,23 @@
 	/* ===================== BODY ===================== */
 	.press-body {
 		position: relative;
-		padding: 7rem 3rem 8rem;
-		background: var(--color-bg);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
+		padding: var(--section-y) var(--gutter);
+		// Pool of light dropped behind the press desk — a lit briefing room.
+		background: var(--lit);
+		border-top: 1px solid var(--rule-soft);
 	}
 
 	.press-inner {
 		position: relative;
 		z-index: 1;
-		max-width: 1080px;
+		max-width: var(--maxw);
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
 		gap: 5rem;
 	}
 
-	/* ===================== DESK ===================== */
-	.press-desk {
-		max-width: 560px;
-	}
-
-	.contact-card {
-		position: relative;
-		background: var(--color-near-black);
-		border: 1px solid rgba(240, 237, 230, 0.08);
-		border-top: 2px solid rgba(204, 0, 0, 0.5);
-		padding: 2.2rem 2rem 2.1rem;
-		display: flex;
-		flex-direction: column;
-		gap: 1.2rem;
-		transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-			pointer-events: none;
-			mix-blend-mode: overlay;
-		}
-
-		&:hover {
-			border-color: rgba(204, 0, 0, 0.45);
-			transform: translateY(-2px);
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-		}
-	}
-
-	.card-label {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.6rem;
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.65);
-	}
-
-	.card-title {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: 1.7rem;
-		line-height: 1;
-		letter-spacing: 0.04em;
-		color: var(--color-text);
-		margin: 0;
-	}
-
-	.card-desc {
-		font-family: 'IM Fell English', serif;
-		font-style: italic;
-		font-size: 0.98rem;
-		line-height: 1.55;
-		color: var(--color-grey);
-		margin: 0 0 0.4rem;
-		flex: 1;
-	}
-
+	/* ===================== EMAILS ===================== */
 	.card-emails {
 		list-style: none;
 		padding: 0;
@@ -120,117 +55,74 @@
 		display: inline-flex;
 		align-items: center;
 		min-height: 2.75rem;
-		text-decoration: underline dashed;
-		text-decoration-color: rgba(204, 0, 0, 0.5);
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-decoration-color: var(--rule-red);
 		text-underline-offset: 4px;
 		word-break: break-all;
-		transition: color 0.2s, text-decoration-color 0.2s;
+		transition: color 0.2s, text-decoration-color 0.2s, text-shadow 0.2s;
 
 		&:hover,
 		&:focus-visible {
 			color: var(--color-accent-hot);
 			text-decoration-color: var(--color-accent-hot);
+			text-shadow: var(--glow-red-soft);
 			outline: none;
 		}
-	}
-
-	/* ===================== PRESS KIT CTA ===================== */
-	.kit-note {
-		font-family: 'IM Fell English', serif;
-		font-style: italic;
-		font-size: 1rem;
-		line-height: 1.6;
-		color: var(--color-grey);
-		max-width: 60ch;
-		margin: -0.6rem 0 1.6rem;
-	}
-
-	.kit-cta {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.9rem;
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.8rem;
-		letter-spacing: 0.28em;
-		text-transform: uppercase;
-		background: #8b1818;
-		color: #f5ebdc;
-		border: 2px solid #8b1818;
-		border-radius: 1px;
-		padding: 0.95rem 2rem;
-		text-decoration: none;
-		position: relative;
-		overflow: hidden;
-		transform: rotate(-1.5deg);
-		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
-		transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background-image: var(--noise-stamp);
-			background-size: 80px 30px;
-			mix-blend-mode: multiply;
-			pointer-events: none;
-		}
-
-		&:hover,
-		&:focus-visible {
-			background: var(--color-accent-hot);
-			transform: rotate(-1.5deg) translateY(-1px);
-			box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
-			outline: none;
-		}
-
-		&:active { transform: rotate(-1.5deg) translateY(0); }
-	}
-
-	.kit-cta-arrow {
-		font-size: 0.95rem;
-		transition: transform 0.25s;
-
-		.kit-cta:hover & { transform: translateX(3px); }
 	}
 
 	/* ===================== SECTIONS ===================== */
 	.section-head {
-		display: flex;
-		align-items: baseline;
-		gap: 1.2rem;
 		margin-bottom: 2rem;
 		padding-bottom: 1.1rem;
-		border-bottom: 1px solid rgba(240, 237, 230, 0.1);
+		border-bottom: 1px solid var(--rule);
 	}
 
-	.section-file {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.6rem;
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
-		white-space: nowrap;
-	}
-
+	// Poster headline — typewriter (Special Elite) to match the noir key art,
+	// with the accent word lit up like neon.
 	.section-title {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: 2rem;
-		line-height: 1;
-		letter-spacing: 0.04em;
+		font-family: 'Special Elite', cursive;
+		font-size: var(--fs-h2);
+		line-height: 1.05;
+		letter-spacing: 0.01em;
+		text-transform: uppercase;
 		color: var(--color-text);
 		margin: 0;
+		text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+
+		.red {
+			color: var(--color-accent-hot);
+			text-shadow: var(--glow-red);
+		}
 	}
 
 	/* ===================== EMPTY STATE ===================== */
+	// Lamp-lit dossier (no tab/index): single-source lit panel + inset matte frame.
 	.empty-state {
 		position: relative;
-		border: 1px dashed rgba(240, 237, 230, 0.18);
-		background: rgba(255, 255, 255, 0.015);
+		overflow: hidden;
+		border: 0;
+		border-radius: 0;
+		// Warm light pooling top-left, falling to near-black.
+		background:
+			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
+			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
 		padding: 2.6rem 2.2rem;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 1.1rem;
+
+		// Inset matte frame — a mounted-print hairline.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 9px;
+			border: 1px solid var(--matte);
+			pointer-events: none;
+			z-index: 2;
+		}
 	}
 
 	.empty-stamp {
@@ -238,12 +130,12 @@
 		font-size: 0.6rem;
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
-		color: #f5ebdc;
-		padding: 0.3rem 0.7rem;
-		background: rgba(204, 0, 0, 0.7);
-		border: 1px solid rgba(0, 0, 0, 0.35);
-		border-radius: 1px;
-		transform: rotate(-2deg);
+		color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
+		padding: 0.4rem 0.75rem;
+		background: transparent;
+		border: 1px solid rgba(204, 0, 0, 0.4);
+		border-radius: var(--radius);
 	}
 
 	.empty-line {
@@ -264,30 +156,82 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.4rem;
+		counter-reset: card;
 	}
 
+	.coverage-row {
+		counter-increment: card;
+	}
+
+	// Lamp-lit dossier: a single-source-lit panel (warm light pooling top-left,
+	// falling to near-black) with an inset "matte" frame like a mounted evidence
+	// print. The outlined index numeral rides the text column's top-right corner.
 	.coverage-card {
 		position: relative;
+		overflow: hidden;
 		display: grid;
 		grid-template-columns: 220px 1fr;
 		gap: 1.5rem;
-		padding: 1.1rem;
-		background: var(--color-near-black);
-		border: 1px solid rgba(240, 237, 230, 0.08);
-		border-left: 2px solid rgba(204, 0, 0, 0.5);
+		padding: 1.4rem;
+		// Warm light pooling top-left, falling to near-black.
+		background:
+			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
+			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+		border: 0;
+		border-radius: 0;
+		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
+		min-height: 200px;
 		text-decoration: none;
-		transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+		transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+		// Inset matte frame — a mounted-print hairline. Warms to red on hover.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 9px;
+			border: 1px solid var(--matte);
+			pointer-events: none;
+			z-index: 2;
+			transition: border-color 0.25s ease;
+		}
 
 		&:hover,
 		&:focus-visible {
-			border-color: rgba(204, 0, 0, 0.45);
-			transform: translateY(-2px);
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+			transform: translateY(-4px);
+			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
 			outline: none;
 
-			.coverage-title { color: var(--color-accent-hot); }
-			.coverage-thumb img { transform: scale(1.04); }
-			.coverage-arrow { transform: translateX(3px); }
+			&::before { border-color: var(--matte-red); }
+			.card-no::before {
+				-webkit-text-stroke-color: var(--color-accent-hot);
+				text-shadow: var(--glow-red-soft);
+			}
+			.coverage-title { color: var(--color-accent-hot); text-shadow: var(--glow-red-soft); }
+			.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
+			.coverage-arrow { transform: translate(2px, -2px); }
+			.coverage-read { color: var(--color-accent-hot); }
+		}
+	}
+
+	// Oversized outlined index — anchored to the text column's top-right so it
+	// never collides with the thumbnail. Smaller than the desk slab (denser row).
+	.coverage-text .card-no {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 0;
+		pointer-events: none;
+		line-height: 1;
+
+		&::before {
+			content: counter(card, decimal-leading-zero);
+			font-family: 'Bebas Neue', sans-serif;
+			font-size: 3.4rem;
+			line-height: 0.8;
+			letter-spacing: 0.02em;
+			color: transparent;
+			-webkit-text-stroke: 1px rgba(204, 0, 0, 0.4);
+			transition: -webkit-text-stroke-color 0.25s ease, text-shadow 0.25s ease;
 		}
 	}
 
@@ -295,33 +239,48 @@
 		position: relative;
 		overflow: hidden;
 		aspect-ratio: 16 / 9;
-		background: #0a0a0a;
-		border: 1px solid rgba(240, 237, 230, 0.08);
+		background: var(--panel-lit-2);
+		border: 1px solid var(--rule);
 
 		img {
 			width: 100%;
 			height: 100%;
 			object-fit: cover;
 			display: block;
-			filter: grayscale(0.35) contrast(1.05);
-			transition: transform 0.3s ease;
+			filter: grayscale(0.4) contrast(1.05);
+			transition: transform 0.3s ease, filter 0.3s ease;
 		}
 	}
 
 	.coverage-text {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
 		min-width: 0;
-		align-self: center;
+		// Keep clear of the outlined corner index.
+		padding-right: 2.4rem;
+
+		// Keep the copy above the outlined index numeral.
+		> .coverage-outlet,
+		> .coverage-title,
+		> .coverage-desc,
+		> .coverage-meta {
+			position: relative;
+			z-index: 1;
+		}
 	}
 
+	// Publication name = flat red case-file tab.
 	.coverage-outlet {
+		align-self: flex-start;
+		background: var(--color-accent);
+		color: var(--on-accent);
 		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.6rem;
-		letter-spacing: 0.24em;
+		font-size: 0.62rem;
+		letter-spacing: 0.26em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.6);
+		padding: 0.42rem 0.72rem;
 	}
 
 	.coverage-title {
@@ -332,12 +291,23 @@
 		transition: color 0.2s;
 	}
 
+	// Arrow affordance riding the title link (\2197 north-east arrow).
+	.coverage-arrow {
+		display: inline-block;
+		margin-left: 0.4rem;
+		color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
+		transition: transform 0.25s;
+	}
+
 	.coverage-desc {
 		font-family: 'IM Fell English', serif;
 		font-style: italic;
 		font-size: 0.92rem;
 		line-height: 1.5;
 		color: var(--color-grey);
+		// Push the meta row to the card foot for aligned baselines.
+		flex: 1;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		line-clamp: 2;
@@ -345,10 +315,15 @@
 		overflow: hidden;
 	}
 
+	// Hairline divider above the read/date meta row.
 	.coverage-meta {
-		display: inline-flex;
+		display: flex;
 		align-items: center;
-		margin-top: 0.2rem;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: 0.8rem;
+		padding-top: 0.9rem;
+		border-top: 1px solid var(--rule);
 		font-family: 'Share Tech Mono', monospace;
 		font-size: 0.66rem;
 		letter-spacing: 0.12em;
@@ -356,34 +331,205 @@
 		white-space: nowrap;
 	}
 
-	.coverage-arrow {
+	.coverage-read {
+		text-transform: uppercase;
+		letter-spacing: 0.2em;
+		color: rgba(240, 237, 230, 0.62);
+		transition: color 0.2s;
+	}
+
+	.coverage-date {
+		color: rgba(240, 237, 230, 0.5);
+	}
+
+	/* ===================== PRESS DESK CARDS ===================== */
+	.desk-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 2rem;
+		counter-reset: card;
+	}
+
+	// Lamp-lit dossier: a single-source-lit panel (warm light pooling top-left,
+	// falling to near-black) with an inset "matte" frame like a mounted evidence
+	// print, a flat red case-file tab, and a big outlined index behind the copy.
+	.desk-card {
+		position: relative;
+		overflow: hidden;
+		// Warm light pooling top-left, falling to near-black.
+		background:
+			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
+			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+		border: 0;
+		border-radius: 0;
+		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
+		padding: 2.5rem 2.1rem 2.1rem;
+		min-height: 260px;
+		display: flex;
+		flex-direction: column;
+		gap: 1.1rem;
+		counter-increment: card;
+		transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+		// Inset matte frame — a mounted-print hairline. Warms to red on hover.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 9px;
+			border: 1px solid var(--matte);
+			pointer-events: none;
+			z-index: 2;
+			transition: border-color 0.25s ease;
+		}
+
+		&:hover {
+			transform: translateY(-4px);
+			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+		}
+
+		&:hover::before {
+			border-color: var(--matte-red);
+		}
+	}
+
+	// Oversized outlined index — the slab's anchor, sits behind the copy.
+	.desk-card .card-no {
+		position: absolute;
+		top: 0.7rem;
+		right: 1.1rem;
+		z-index: 0;
+		pointer-events: none;
+		line-height: 1;
+
+		&::before {
+			content: counter(card, decimal-leading-zero);
+			font-family: 'Bebas Neue', sans-serif;
+			font-size: 5rem;
+			line-height: 0.8;
+			letter-spacing: 0.02em;
+			color: transparent;
+			-webkit-text-stroke: 1px rgba(204, 0, 0, 0.4);
+			transition: -webkit-text-stroke-color 0.25s ease, text-shadow 0.25s ease;
+		}
+	}
+
+	.desk-card:hover .card-no::before {
+		-webkit-text-stroke-color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
+	}
+
+	// Keep the copy above the outlined index numeral.
+	.desk-card > .card-label,
+	.desk-card > .card-title,
+	.desk-card > .card-desc,
+	.desk-card > .card-foot {
+		position: relative;
+		z-index: 1;
+	}
+
+	// Category label = flat red case-file tab.
+	.card-label {
+		align-self: flex-start;
+		background: var(--color-accent);
+		color: var(--on-accent);
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.62rem;
+		letter-spacing: 0.26em;
+		text-transform: uppercase;
+		padding: 0.42rem 0.72rem;
+	}
+
+	.card-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: var(--fs-card-title);
+		line-height: 1;
+		letter-spacing: 0.04em;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	.card-desc {
+		font-family: 'IM Fell English', serif;
+		font-style: italic;
+		font-size: 0.98rem;
+		line-height: 1.55;
+		color: var(--color-grey);
+		margin: 0 0 0.4rem;
+		// Pin the action row to the card bottom for aligned baselines.
+		flex: 1;
+	}
+
+	// Hairline divider above the press-kit action.
+	.card-foot {
+		padding-top: 1.2rem;
+		margin-top: 0.4rem;
+		border-top: 1px solid var(--rule);
+	}
+
+	.kit-link {
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.85rem;
+		letter-spacing: 0.04em;
+		color: var(--color-text);
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-decoration-color: var(--rule-red);
+		text-underline-offset: 4px;
+		transition: color 0.2s, text-decoration-color 0.2s, text-shadow 0.2s;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			text-decoration-color: var(--color-accent-hot);
+			text-shadow: var(--glow-red-soft);
+			outline: none;
+		}
+
+		&:hover .kit-link-arrow,
+		&:focus-visible .kit-link-arrow {
+			transform: translate(2px, -2px);
+		}
+	}
+
+	.kit-link-arrow {
 		display: inline-block;
+		margin-left: 0.5rem;
+		color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
+		text-decoration: none;
 		transition: transform 0.25s;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.kit-cta-arrow,
 		.coverage-arrow,
-		.coverage-thumb img { transition: none; }
+		.coverage-thumb img,
+		.kit-link-arrow { transition: none; }
+
+		.coverage-card:hover,
+		.coverage-card:focus-visible,
+		.desk-card:hover { transform: none; }
 	}
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		.press-body { padding: 5.5rem 1.5rem 6.5rem; }
 		.press-inner { gap: 4rem; }
-		.press-desk { max-width: none; }
+		.desk-grid { grid-template-columns: 1fr; gap: 1.6rem; }
 	}
 
 	@media (max-width: 600px) {
-		.press-body { padding: 4.5rem 1.1rem 5.5rem; }
-		.contact-card { padding: 1.8rem 1.5rem 1.7rem; }
-		.card-title { font-size: 1.5rem; }
-		.section-title { font-size: 1.7rem; }
-		.section-head { gap: 0.8rem; }
+		.section-head { margin-bottom: 1.6rem; }
 
 		.coverage-card {
 			grid-template-columns: 1fr;
 			gap: 1rem;
+			padding: 1.5rem 1.4rem;
 		}
+		// Keep a little clearance so the outlined index never sits on the title.
+		.coverage-text { padding-right: 2rem; }
 		.coverage-title { font-size: 1.05rem; }
+		.desk-card { padding: 1.8rem 1.5rem 1.7rem; }
+		.card-title { font-size: 1.5rem; }
 	}

@@ -6,23 +6,16 @@
 	/* ===================== BODY ===================== */
 	.press-body {
 		position: relative;
-		padding: 6rem 3rem 8rem;
-		background: var(--color-bg);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
+		padding: var(--section-y) var(--gutter);
+		// Pool of light dropped behind the asset grid — a lit evidence table.
+		background: var(--lit);
+		border-top: 1px solid var(--rule-soft);
 	}
 
 	.press-inner {
 		position: relative;
 		z-index: 1;
-		max-width: 1080px;
+		max-width: var(--maxw);
 		margin: 0 auto;
 	}
 
@@ -33,9 +26,9 @@
 		font-size: 0.7rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.65);
+		color: rgba(240, 237, 230, 0.62);
 		text-decoration: none;
-		border-bottom: 1px dashed rgba(204, 0, 0, 0.5);
+		border-bottom: 1px solid var(--rule-red);
 		padding-bottom: 2px;
 		transition: color 0.2s, border-color 0.2s;
 
@@ -43,7 +36,68 @@
 		&:focus-visible {
 			color: var(--color-accent-hot);
 			border-color: var(--color-accent-hot);
-			outline: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 3px;
+		}
+	}
+
+	/* ===================== SECTION HEAD ===================== */
+	// Left-aligned editorial header — eyebrow + trailing hairline + Bebas title,
+	// matching the homepage section rhythm so the asset grid reads as a section.
+	.section-head {
+		margin-bottom: 2rem;
+		text-align: left;
+	}
+
+	.section-label {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 0.9rem;
+		margin: 0 0 1rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.72rem;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.62);
+
+		&::after {
+			content: '';
+			flex: 1 1 auto;
+			height: 1px;
+			background: linear-gradient(to right, var(--rule-red), transparent);
+		}
+	}
+
+	// Case-file count — small hairline-boxed accent tag (red text = AA via hot).
+	.section-no {
+		flex: 0 0 auto;
+		color: var(--color-accent-hot);
+		font-variant-numeric: tabular-nums;
+		padding: 0.22em 0.5em;
+		border: 1px solid rgba(204, 0, 0, 0.4);
+		letter-spacing: 0.16em;
+	}
+
+	// Large poster headline — typewriter Special Elite, matching the homepage
+	// section titles. Bebas stays for small card labels / numerics below.
+	.section-title {
+		font-family: 'Special Elite', cursive;
+		font-size: clamp(2rem, 4vw, 3rem);
+		line-height: 1.05;
+		letter-spacing: 0.01em;
+		text-transform: uppercase;
+		color: var(--color-text);
+		text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+		margin: 0;
+
+		// Red word reads as neon light.
+		.red {
+			color: var(--color-accent-hot);
+			text-shadow: var(--glow-red);
 		}
 	}
 
@@ -57,26 +111,59 @@
 		gap: 1.1rem;
 	}
 
+	// Lamp-lit dossier (dense tile variant): a single-source-lit slab (warm light
+	// pooling top-left, falling to near-black) framed by an inset "matte" frame
+	// like a mounted evidence print. No tab / index (the grid is too dense); the
+	// matte hairline replaces the old corner registration brackets and warms to
+	// red on hover.
 	.kit-link {
 		position: relative;
 		display: flex;
 		flex-direction: column;
+		min-height: 168px;
 		overflow: hidden;
-		background: var(--color-near-black);
-		border: 1px solid rgba(240, 237, 230, 0.08);
-		border-left: 2px solid rgba(204, 0, 0, 0.5);
+		// Lit from the top-left like a slab under a desk lamp.
+		background:
+			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
+			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+		border: 0;
+		border-radius: 0;
+		box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 		text-decoration: none;
-		transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+		transition: transform 0.2s, box-shadow 0.2s;
+
+		// Inset matte frame — a mounted-print hairline (tighter inset for the
+		// dense grid). Warms to red on hover.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 7px;
+			border: 1px solid var(--matte);
+			pointer-events: none;
+			z-index: 2;
+			transition: border-color 0.2s ease;
+		}
 
 		&:hover,
 		&:focus-visible {
-			border-color: rgba(204, 0, 0, 0.45);
-			transform: translateY(-2px);
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-			outline: none;
+			transform: translateY(-4px);
+			// Lit from within — red halation on hover.
+			box-shadow:
+				var(--glow-red-soft),
+				0 22px 46px rgba(0, 0, 0, 0.6);
 
-			.kit-label { color: var(--color-accent-hot); }
+			.kit-label { color: var(--color-accent-hot); text-shadow: var(--glow-red-soft); }
 			.kit-dl { color: var(--color-accent-hot); transform: translateY(2px); }
+		}
+
+		&:hover::before,
+		&:focus-visible::before {
+			border-color: var(--matte-red);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 3px;
 		}
 	}
 
@@ -85,15 +172,8 @@
 		align-items: center;
 		justify-content: center;
 		height: 92px;
-		border-bottom: 1px solid rgba(240, 237, 230, 0.08);
-		background-color: #d8d4cc;
-		background-image:
-			linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
-			linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%),
-			linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%);
-		background-size: 14px 14px;
-		background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+		border-bottom: 1px solid var(--rule);
+		background: var(--color-cream);
 
 		img {
 			max-width: 100%;
@@ -106,8 +186,7 @@
 
 	/* White / light marks + source files read better on a dark tile. */
 	.kit-preview--dark {
-		background: #0d0d0d;
-		background-image: none;
+		background: var(--panel-lit-2);
 	}
 
 	.kit-badge {
@@ -116,11 +195,12 @@
 		letter-spacing: 0.16em;
 		color: rgba(240, 237, 230, 0.85);
 		padding: 0.3rem 0.6rem;
-		border: 1px solid rgba(240, 237, 230, 0.25);
-		border-radius: 1px;
+		border: 1px solid var(--rule-strong);
+		border-radius: var(--radius);
 	}
 
 	.kit-meta {
+		flex: 1;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -159,15 +239,40 @@
 	}
 
 	/* ===================== EMPTY STATE ===================== */
+	// Lamp-lit dossier (no tab / index) — matches the asset tiles' single-source
+	// lighting and inset matte frame.
 	.empty-state {
 		position: relative;
-		border: 1px dashed rgba(240, 237, 230, 0.18);
-		background: rgba(255, 255, 255, 0.015);
+		overflow: hidden;
+		border: 0;
+		border-radius: 0;
+		// Single-source lamp: warm light pooling top-left, falling to near-black.
+		background:
+			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
+			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
 		padding: 2.6rem 2.2rem;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 1.1rem;
+
+		// Inset matte frame — a mounted-print hairline.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 9px;
+			border: 1px solid var(--matte);
+			pointer-events: none;
+			z-index: 2;
+		}
+	}
+
+	// Keep the empty-state copy above the matte-frame layer.
+	.empty-stamp,
+	.empty-line {
+		position: relative;
+		z-index: 1;
 	}
 
 	.empty-stamp {
@@ -175,19 +280,20 @@
 		font-size: 0.6rem;
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
-		color: #f5ebdc;
+		// Red tag glows faintly like neon in the dark.
+		color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
 		padding: 0.3rem 0.7rem;
-		background: rgba(204, 0, 0, 0.7);
-		border: 1px solid rgba(0, 0, 0, 0.35);
-		border-radius: 1px;
-		transform: rotate(-2deg);
+		background: transparent;
+		border: 1px solid var(--rule-red);
+		border-radius: var(--radius);
 	}
 
 	.empty-line {
 		font-family: 'IM Fell English', serif;
 		font-style: italic;
 		font-size: 1.02rem;
-		line-height: 1.6;
+		line-height: 1.7;
 		color: var(--color-grey);
 		max-width: 56ch;
 		margin: 0;
@@ -196,26 +302,36 @@
 	.inline-link {
 		color: var(--color-text);
 		text-decoration: none;
-		border-bottom: 1px dashed rgba(204, 0, 0, 0.5);
+		border-bottom: 1px solid var(--rule-red);
 
 		&:hover,
 		&:focus-visible {
 			color: var(--color-accent-hot);
 			border-color: var(--color-accent-hot);
-			outline: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 3px;
 		}
 	}
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		.press-body { padding: 5rem 1.5rem 6.5rem; }
+		.press-body { padding: clamp(3.5rem, 7vw, 5rem) var(--gutter); }
 	}
 
 	@media (max-width: 600px) {
-		.press-body { padding: 4rem 1.1rem 5.5rem; }
+		.press-body { padding: clamp(3rem, 9vw, 4rem) var(--gutter); }
+		.kit-link { min-height: 0; }
+		.section-head { margin-bottom: 1.6rem; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.kit-link,
-		.kit-dl { transition: none; }
+		// Drop the lift, but keep the matte-frame warm-to-red colour cue.
+		.kit-link { transition: box-shadow 0.2s; }
+		.kit-dl { transition: color 0.2s; }
+
+		.kit-link:hover,
+		.kit-link:focus-visible { transform: none; }
 	}

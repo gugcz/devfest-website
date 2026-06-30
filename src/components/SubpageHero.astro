@@ -6,18 +6,32 @@ interface Props {
 	titleHtml: string;
 	lede: string;
 	titleId?: string;
+	/** Right-aligned masthead dateline; defaults to the event line. */
+	meta?: string;
 }
 
-const { label, titleHtml, lede, titleId = 'subpage-hero-title' } = Astro.props;
+const {
+	label,
+	titleHtml,
+	lede,
+	titleId = 'subpage-hero-title',
+	meta = 'DevFest.cz · Prague · 30.10.2026',
+} = Astro.props;
 ---
 
-<section class="subpage-hero" aria-labelledby={titleId}>
+<section class="subpage-hero scene" aria-labelledby={titleId}>
 	<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} />
+	<div class="scene-vignette" aria-hidden="true"></div>
 
 	<div class="hero-content">
-		<div class="section-label">{label}</div>
+		<p class="section-label"><span>{label}</span></p>
 		<h1 id={titleId} class="hero-title" set:html={titleHtml} />
 		<p class="hero-lede">{lede}</p>
+
+		<div class="hero-foot" aria-hidden="true">
+			<span class="hero-foot-rule"></span>
+			<span class="hero-foot-meta">{meta}</span>
+		</div>
 	</div>
 </section>
 

@@ -84,7 +84,7 @@ const tickerTopics = [
 	<main class="press-page">
 		<SubpageHero
 			label="Press"
-			titleHtml={'Press &amp;<br /><span class="red">media.</span>'}
+			titleHtml={'In the<br /><span class="red">news.</span>'}
 			lede="Covering DevFest.cz 2026? Find the key facts, our logos, and someone to talk to. We're glad to help journalists, bloggers, and media partners."
 			titleId="press-title"
 		/>
@@ -101,7 +101,7 @@ const tickerTopics = [
 					</header>
 
 					{mediaCoverage.length > 0 ? (
-						<ul class="coverage-list">
+						<ul class="coverage-list reveal">
 							{mediaCoverage.map((m) => (
 								<li class="coverage-row">
 									<a class="coverage-card" href={m.href} target="_blank" rel="noopener noreferrer">
@@ -111,12 +111,16 @@ const tickerTopics = [
 											</span>
 										)}
 										<span class="coverage-text">
+											<span class="card-no" aria-hidden="true"></span>
 											<span class="coverage-outlet">{m.outlet}</span>
-											<span class="coverage-title">{m.title}</span>
+											<span class="coverage-title">
+												{m.title}
+												<span class="coverage-arrow" aria-hidden="true">↗</span>
+											</span>
 											{m.description && <span class="coverage-desc">{m.description}</span>}
 											<span class="coverage-meta">
-												{m.dateLabel && <time datetime={m.date}>{m.dateLabel}</time>}
-												<span class="coverage-arrow" aria-hidden="true"> ↗</span>
+												<span class="coverage-read">Read article</span>
+												{m.dateLabel && <time class="coverage-date" datetime={m.date}>{m.dateLabel}</time>}
 											</span>
 										</span>
 									</a>
@@ -133,34 +137,37 @@ const tickerTopics = [
 						</div>
 					)}
 				</section>
-					<!-- MEDIA ENQUIRIES -->
-					<section class="press-section" aria-labelledby="enquiries-heading">
+					<!-- DESK: MEDIA ENQUIRIES + PRESS KIT -->
+					<section class="press-section" aria-labelledby="desk-heading">
 						<header class="section-head">
-							<h2 id="enquiries-heading" class="section-title">Media enquiries</h2>
+							<h2 id="desk-heading" class="section-title">Press desk</h2>
 						</header>
-						<p class="kit-note">
-							Interviews, quotes, press passes, fact-checks, and media partnerships.
-						</p>
-						<ul class="card-emails">
-							<li>
-								<span class="email-name">Press desk</span>
-								<a class="email-link" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
-							</li>
-						</ul>
-					</section>
+						<div class="desk-grid reveal">
+							<!-- MEDIA ENQUIRIES -->
+							<article class="desk-card" aria-labelledby="enquiries-heading">
+								<span class="card-no" aria-hidden="true"></span>
+								<span class="card-label">Media enquiries</span>
+								<h3 id="enquiries-heading" class="card-title">Talk to us</h3>
+								<p class="card-desc">Interviews, quotes, press passes, fact-checks, and media partnerships.</p>
+								<ul class="card-emails">
+									<li>
+										<span class="email-name">Press desk</span>
+										<a class="email-link" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
+									</li>
+								</ul>
+							</article>
 
-					<!-- PRESS KIT -->
-					<section class="press-section" aria-labelledby="presskit-heading">
-						<header class="section-head">
-							<h2 id="presskit-heading" class="section-title">Press kit</h2>
-						</header>
-						<p class="kit-note">
-							Logos and wordmarks for the 2026 edition. Please keep the logo intact and give it room to breathe.
-						</p>
-						<a class="kit-cta" href="/press/downloads">
-							<span class="kit-cta-label">Open the press kit</span>
-							<span class="kit-cta-arrow" aria-hidden="true">&rarr;</span>
-						</a>
+							<!-- PRESS KIT -->
+							<article class="desk-card" aria-labelledby="presskit-heading">
+								<span class="card-no" aria-hidden="true"></span>
+								<span class="card-label">Press kit</span>
+								<h3 id="presskit-heading" class="card-title">Logos &amp; wordmarks</h3>
+								<p class="card-desc">Logos and wordmarks for the 2026 edition. Please keep the logo intact and give it room to breathe.</p>
+								<div class="card-foot">
+									<a class="kit-link" href="/press/downloads">Open the press kit<span class="kit-link-arrow" aria-hidden="true">↗</span></a>
+								</div>
+							</article>
+						</div>
 					</section>
 
 			</div>

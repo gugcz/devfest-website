@@ -31,8 +31,9 @@ const tickerTopics = [
 
 	<main class="page">
 		<!-- HERO -->
-		<section id="hero">
+		<section id="hero" class="scene">
 			<HeroBackground photoOpacity={0.85} mobilePhotoOpacity={0.55} />
+			<div class="scene-vignette" aria-hidden="true"></div>
 
 			<div class="hero-grid">
 				<div class="hero-content">
@@ -83,7 +84,7 @@ const tickerTopics = [
 
 		<!-- CALL FOR SPEAKERS -->
 		<section id="speakers" aria-labelledby="speakers-title">
-			<div class="speakers-inner">
+			<div class="speakers-inner reveal">
 				<p class="section-label">Call for speakers</p>
 				<h2 id="speakers-title" class="section-title">
 					Wanted: <span class="red">your talk.</span>
@@ -106,7 +107,7 @@ const tickerTopics = [
 		<!-- PARTNERS — quiet silver+ strip; media partners live on /partners only -->
 		{silverPartners.length > 0 && (
 			<section id="partners" aria-labelledby="partners-title">
-				<div class="partners-inner">
+				<div class="partners-inner reveal">
 					<p id="partners-title" class="section-label">Partners</p>
 
 					<ul class="partners-row">
@@ -135,9 +136,9 @@ const tickerTopics = [
 
 		<!-- GALLERY — photos from past editions -->
 		<section id="gallery" aria-labelledby="gallery-title">
-			<div class="gallery-head">
+			<div class="gallery-head reveal">
 				<p class="section-label">Past editions</p>
-				<h2 id="gallery-title" class="section-title">Past <span class="red">DevFests</span></h2>
+				<h2 id="gallery-title" class="section-title">Look <span class="red">back.</span></h2>
 				<p class="gallery-lede">
 					A look back at past editions of DevFest.cz &mdash; and the community that makes them.
 				</p>
@@ -168,7 +169,7 @@ const tickerTopics = [
 
 		<!-- NEWSLETTER -->
 		<section id="newsletter">
-			<div class="newsletter-inner">
+			<div class="newsletter-inner reveal">
 				<p class="section-label">Newsletter</p>
 				<h2 class="section-title">Be the first<br /><span class="red">to know.</span></h2>
 				<p class="newsletter-lede">

@@ -18,7 +18,7 @@ import InvoiceForm from '../components/InvoiceForm';
 		/>
 
 		<section class="invoice-body" aria-labelledby="invoice-form-heading">
-			<div class="invoice-inner">
+			<div class="invoice-inner reveal">
 				<div class="invoice-intro">
 					<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
 					<ol class="steps">
@@ -47,17 +47,10 @@ import InvoiceForm from '../components/InvoiceForm';
 
 	.invoice-body {
 		position: relative;
-		padding: 6rem 3rem 8rem;
-		background: var(--color-bg);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
+		padding: var(--section-y) var(--gutter);
+		// Pool of light dropped behind the billing desk — a lit noir scene.
+		background: var(--lit);
+		border-top: 1px solid var(--rule-soft);
 	}
 
 	.invoice-inner {
@@ -78,7 +71,7 @@ import InvoiceForm from '../components/InvoiceForm';
 
 	.intro-title {
 		font-family: 'Bebas Neue', sans-serif;
-		font-size: 1.9rem;
+		font-size: var(--fs-card-title);
 		letter-spacing: 0.04em;
 		color: var(--color-text);
 		margin: 0;
@@ -107,7 +100,9 @@ import InvoiceForm from '../components/InvoiceForm';
 		font-family: 'Share Tech Mono', monospace;
 		font-size: 0.7rem;
 		letter-spacing: 0.2em;
-		color: rgba(204, 0, 0, 0.8);
+		// Red reads as light — the step numbers glow like neon markers.
+		color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
 		flex-shrink: 0;
 	}
 
@@ -122,24 +117,39 @@ import InvoiceForm from '../components/InvoiceForm';
 	.intro-link {
 		color: rgba(240, 237, 230, 0.85);
 		text-decoration: none;
-		border-bottom: 1px dashed rgba(204, 0, 0, 0.6);
+		border-bottom: 1px solid var(--rule-red);
+		transition: border-color 0.2s, color 0.2s;
+
+		&::after {
+			content: '\2197';
+			margin-left: 0.4rem;
+			border-bottom: none;
+			display: inline-block;
+			transition: transform 0.25s;
+		}
 
 		&:hover,
 		&:focus-visible {
 			color: var(--color-accent-hot);
 			border-color: var(--color-accent-hot);
+			// Red TEXT reads as neon — subtle halation on hover.
+			text-shadow: var(--glow-red-soft);
+		}
+
+		&:hover::after,
+		&:focus-visible::after {
+			transform: translate(2px, -2px);
 		}
 	}
 
-	@media (max-width: 900px) {
-		.invoice-body {
-			padding: 5rem 1.5rem 6.5rem;
+	@media (prefers-reduced-motion: reduce) {
+		.intro-link::after {
+			transition: none;
 		}
-	}
 
-	@media (max-width: 600px) {
-		.invoice-body {
-			padding: 4rem 1.1rem 5.5rem;
+		.intro-link:hover::after,
+		.intro-link:focus-visible::after {
+			transform: none;
 		}
 	}
 </style>

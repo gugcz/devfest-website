@@ -25,7 +25,7 @@ const tickerTopics = [
 	<main class="partners-page">
 		<SubpageHero
 			label="Partners"
-			titleHtml={'Powered by<br /><span class="red">our partners.</span>'}
+			titleHtml={'In good<br /><span class="red">company.</span>'}
 			lede="DevFest.cz is a non-profit, community-run conference. Our partners make it possible — funding the venue, the talks, and everything in between."
 			titleId="partners-title"
 		/>
@@ -36,6 +36,7 @@ const tickerTopics = [
 			<section class="silver-partners" aria-labelledby="silver-partners-title">
 				<div class="silver-inner">
 					<div class="silver-head">
+						<span class="eyebrow">Supporters</span>
 						<h2 id="silver-partners-title" class="silver-title">
 							Silver <span class="red">partner</span>
 						</h2>
@@ -61,6 +62,7 @@ const tickerTopics = [
 			<section class="media-partners" aria-labelledby="media-partners-title">
 				<div class="media-inner">
 					<div class="media-head">
+						<span class="eyebrow">Press</span>
 						<h2 id="media-partners-title" class="media-title">
 							Media <span class="red">partners</span>
 						</h2>
@@ -82,32 +84,44 @@ const tickerTopics = [
 			</section>
 		)}
 		<!-- BODY -->
-		<section class="partners-body" aria-label="Partnership contact">
+		<section class="partners-body" aria-labelledby="partners-cta-title">
 			<div class="partners-inner">
-				<div class="partners-block">
-					<div class="contact-card">
-						<div class="contact-role">{FILIP.role}</div>
-						<div class="contact-name">{FILIP.name}</div>
-						<a class="contact-email" href={`mailto:${FILIP.email}`}>{FILIP.email}</a>
+				<span class="eyebrow">Get in touch</span>
+				<div class="partners-block reveal">
+					<span class="card-no" aria-hidden="true"></span>
+					<div class="partners-block-main">
+						<span class="card-label">{FILIP.role}</span>
+						<h2 id="partners-cta-title" class="card-title">Become a partner</h2>
+						<p class="card-desc">
+							Tell us what you're after — brand reach, hiring, or backing the
+							community — and we'll find the tier that fits.
+						</p>
 					</div>
 
-					<div class="partners-cta-wrap">
-						{DECK_READY ? (
-							<a class="partners-cta" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
-								<span>See partnership deck</span>
-								<span class="partners-cta-arrow" aria-hidden="true">→</span>
-							</a>
-						) : (
-							<span class="partners-cta partners-cta-soon" aria-disabled="true">
-								<span class="partners-cta-label">Partnership deck</span>
-								<span class="partners-cta-stamp" aria-hidden="true">Coming soon</span>
-							</span>
-						)}
-						<p class="partners-cta-note">
-							{DECK_READY
-								? 'Tiers, perks, and audience stats in one PDF.'
-								: 'Brochure coming soon. In the meantime, email Filip.'}
-						</p>
+					<div class="partners-block-action">
+						<div class="partners-contact">
+							<span class="contact-name">{FILIP.name}</span>
+							<a class="email-link" href={`mailto:${FILIP.email}`}>{FILIP.email}</a>
+						</div>
+
+						<div class="partners-cta-wrap">
+							{DECK_READY ? (
+								<a class="btn-primary partners-cta" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
+									<span>See partnership deck</span>
+									<span class="partners-cta-arrow" aria-hidden="true">→</span>
+								</a>
+							) : (
+								<span class="partners-cta-soon" aria-disabled="true">
+									<span class="partners-cta-label">Partnership deck</span>
+									<span class="partners-cta-stamp" aria-hidden="true">Coming soon</span>
+								</span>
+							)}
+							<p class="partners-cta-note">
+								{DECK_READY
+									? 'Tiers, perks, and audience stats in one PDF.'
+									: 'Brochure coming soon. In the meantime, email Filip.'}
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>

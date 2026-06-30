@@ -19,7 +19,12 @@
 .field {
 	display: flex;
 	flex-direction: column;
-	gap: 0.45rem;
+	gap: 0.5rem;
+
+	// Tighten label/field rhythm: the mono label warms as the field takes focus.
+	&:focus-within .label {
+		color: rgba(240, 237, 230, 0.82);
+	}
 }
 
 .fieldWide {
@@ -31,7 +36,8 @@
 	font-size: 0.62rem;
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.65);
+	color: rgba(240, 237, 230, 0.62);
+	transition: color 0.2s ease;
 }
 
 .optional {
@@ -39,19 +45,19 @@
 	letter-spacing: 0.1em;
 }
 
+// Lit dark field — hairline border that warms to red and glows on focus.
 .input {
 	width: 100%;
-	padding: 0.8rem 0.9rem;
+	padding: 0.85rem 0.95rem;
 	min-height: 2.75rem;
-	background: var(--color-near-black);
-	border: 1px solid rgba(240, 237, 230, 0.12);
-	border-bottom: 2px solid rgba(204, 0, 0, 0.4);
-	border-radius: 1px;
+	background: var(--panel-lit-2);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
 	color: var(--color-text);
 	font-family: 'Special Elite', cursive;
 	font-size: 0.98rem;
 	letter-spacing: 0.01em;
-	transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 
 	&::placeholder {
 		color: rgba(240, 237, 230, 0.4);
@@ -60,13 +66,14 @@
 
 	&:focus {
 		outline: none;
-		border-color: rgba(204, 0, 0, 0.5);
-		border-bottom-color: var(--color-accent);
-		background: rgba(204, 0, 0, 0.04);
+		border-color: var(--rule-red);
+		background: var(--panel-hover);
+		// Red reads as light — soft halation pools around the focused field.
+		box-shadow: var(--glow-red-soft);
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--color-accent);
+		outline: 2px solid var(--color-accent-hot);
 		outline-offset: 2px;
 	}
 }
@@ -80,16 +87,48 @@
 	pointer-events: none;
 }
 
+// Estimate callout — lamp-lit dossier: a single-source-lit panel (warm light
+// pooling top-left, falling to near-black) with an inset "matte" frame like a
+// mounted evidence print. No tab/index — this is a single inline readout.
 .estimate {
+	position: relative;
+	overflow: hidden;
 	font-family: 'IM Fell English', serif;
 	font-size: 1.05rem;
 	color: var(--color-text);
 	margin: 0;
-	padding: 0.9rem 1.1rem;
-	background: rgba(204, 0, 0, 0.06);
-	border-left: 2px solid rgba(204, 0, 0, 0.5);
+	padding: 1.3rem 1.5rem;
+	background:
+		radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
+		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+	border: 0;
+	border-radius: 0;
+	box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+	// Inset matte frame — a mounted-print hairline. Warms to red on hover.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 9px;
+		border: 1px solid var(--matte);
+		pointer-events: none;
+		z-index: 2;
+		transition: border-color 0.25s ease;
+	}
+
+	&:hover {
+		transform: translateY(-4px);
+		box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+	}
+
+	&:hover::before {
+		border-color: var(--matte-red);
+	}
 
 	strong {
+		position: relative;
+		z-index: 1;
 		font-family: 'Bebas Neue', sans-serif;
 		font-size: 1.4rem;
 		letter-spacing: 0.03em;
@@ -132,47 +171,69 @@
 	}
 }
 
+// Functional link underline — solid hairline, red on hover, with arrow affordance.
 .consentLink {
 	color: rgba(240, 237, 230, 0.85);
 	text-decoration: none;
-	border-bottom: 1px dashed rgba(204, 0, 0, 0.6);
+	border-bottom: 1px solid var(--rule-red);
 	transition: border-color 0.2s, color 0.2s;
+
+	&::after {
+		content: '\2197';
+		margin-left: 0.35rem;
+		border-bottom: none;
+		display: inline-block;
+		transition: transform 0.25s;
+	}
 
 	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);
 		border-color: var(--color-accent-hot);
+		// Red TEXT reads as neon — subtle halation on hover.
+		text-shadow: var(--glow-red-soft);
+	}
+
+	&:hover::after,
+	&:focus-visible::after {
+		transform: translate(2px, -2px);
 	}
 }
 
+// Flat red CTA — matches the NewsletterForm button recipe. No rotation, no stamp ink.
 .button {
 	align-self: flex-start;
-	padding: 1.1rem 2.4rem;
-	background: #8b1818;
-	color: #f5ebdc;
-	border: 2px solid #8b1818;
-	border-radius: 1px;
+	padding: 1.05rem 2.4rem;
+	background: var(--color-accent);
+	color: var(--on-accent);
+	border: 1px solid var(--color-accent);
+	border-radius: var(--radius);
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.9rem;
-	letter-spacing: 0.24em;
+	font-size: 0.84rem;
+	letter-spacing: 0.22em;
 	text-transform: uppercase;
 	cursor: pointer;
-	transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
 	&:hover:not(:disabled) {
 		background: var(--color-accent-hot);
-		transform: translateY(-1px);
-		box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
+		border-color: var(--color-accent-hot);
+		transform: translateY(-2px);
+		// Red reads as light — neon halation on hover.
+		box-shadow: var(--glow-red), 0 8px 22px rgba(204, 0, 0, 0.28);
+	}
+
+	&:active:not(:disabled) {
+		transform: translateY(0);
 	}
 
 	&:focus-visible {
-		outline: 3px solid #f5ebdc;
+		outline: 2px solid var(--color-accent-hot);
 		outline-offset: 3px;
 	}
 
 	&:disabled {
-		opacity: 0.6;
+		opacity: 0.55;
 		cursor: not-allowed;
 	}
 }
@@ -190,19 +251,59 @@
 	}
 }
 
+// Success panel — lamp-lit dossier: single-source-lit panel (warm light pooling
+// top-left, falling to near-black) with an inset "matte" frame like a mounted
+// evidence print. No tab/index: this is a single confirmation, not a grid.
 .success {
-	padding: 2rem;
-	background: var(--color-near-black);
-	border: 1px solid rgba(240, 237, 230, 0.1);
-	border-top: 2px solid rgba(204, 0, 0, 0.55);
+	position: relative;
+	overflow: hidden;
+	padding: 2.4rem 2.2rem 2.2rem;
+	background:
+		radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
+		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+	border: 0;
+	border-radius: 0;
+	box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+	// Inset matte frame — a mounted-print hairline. Warms to red on hover.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 9px;
+		border: 1px solid var(--matte);
+		pointer-events: none;
+		z-index: 2;
+		transition: border-color 0.25s ease;
+	}
+
+	&:hover {
+		transform: translateY(-4px);
+		box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+	}
+
+	&:hover::before {
+		border-color: var(--matte-red);
+	}
+}
+
+// Keep the confirmation copy above the inset matte frame.
+.successTitle,
+.successBody {
+	position: relative;
+	z-index: 1;
 }
 
 .successTitle {
 	font-family: 'Bebas Neue', sans-serif;
-	font-size: 1.8rem;
+	font-size: var(--fs-card-title);
+	line-height: 1;
 	letter-spacing: 0.04em;
 	color: var(--color-text);
-	margin: 0 0 0.8rem;
+	margin: 0 0 1.2rem;
+	padding-bottom: 1.2rem;
+	// Editorial hairline divider under the confirmation head.
+	border-bottom: 1px solid var(--rule);
 }
 
 .successBody {
@@ -221,5 +322,21 @@
 	.button {
 		width: 100%;
 		text-align: center;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.button:hover:not(:disabled) {
+		transform: none;
+	}
+
+	// Panels keep their matte-frame/box-shadow colour transitions, but don't lift.
+	.estimate,
+	.success {
+		transition: box-shadow 0.2s ease;
+
+		&:hover {
+			transform: none;
+		}
 	}
 }

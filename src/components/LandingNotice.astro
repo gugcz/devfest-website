@@ -16,7 +16,7 @@ const { code, headline, subtext, backLabel = 'Back to homepage' } = Astro.props;
 	{code && <p class="code">{code}</p>}
 	<p class="headline">{headline}</p>
 	<p class="subtext">{subtext}</p>
-	<a class="back-link" href="/">
+	<a class="back-link btn-ghost" href="/">
 		<span class="back-arrow" aria-hidden="true">&#8592;</span>
 		{backLabel}
 	</a>

@@ -4,7 +4,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		padding: 4rem 1.5rem 6rem;
+		padding: var(--section-y) var(--gutter);
 		gap: 1.5rem;
 		text-align: center;
 		position: relative;
@@ -21,19 +21,27 @@
 		height: auto;
 	}
 
+	// Case-file code line — mono red, the editorial dossier marker.
+	// Neon-red treatment: the marker glows under the noir lighting.
 	.code {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(4rem, 14vw, 8rem);
-		letter-spacing: 0.16em;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: clamp(1.4rem, 4vw, 2.2rem);
+		letter-spacing: 0.34em;
+		text-transform: uppercase;
 		color: var(--color-accent-hot);
+		text-shadow: var(--glow-red);
 		line-height: 1;
 		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
 	}
 
+	// Large poster headline — typewriter (Special Elite) to match the
+	// cinematic-noir display scale used across the relit subpages.
 	.headline {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(2rem, 6vw, 3.5rem);
-		letter-spacing: 0.08em;
+		font-family: 'Special Elite', cursive;
+		font-size: var(--fs-hero);
+		text-transform: uppercase;
+		letter-spacing: 0.01em;
+		line-height: 1.05;
 		color: var(--color-text);
 		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 	}
@@ -42,58 +50,16 @@
 		font-family: 'IM Fell English', serif;
 		font-size: 1.25rem;
 		font-style: italic;
-		line-height: 1.6;
-		max-width: 380px;
-		color: var(--color-cream);
+		line-height: 1.7;
+		max-width: 420px;
+		color: var(--color-grey);
 		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
 	}
 
+	// Layout-only wrapper around the global .btn-ghost CTA.
 	.back-link {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.85rem;
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
-		color: #F5EBDC;
-		text-decoration: none;
-		background: #8B1818;
-		border: 2px solid #8B1818;
-		border-radius: 1px;
-		padding: 0.95rem 2.2rem;
-		transform: rotate(-1.5deg);
-		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
-		transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
 		margin-top: 0.5rem;
-		position: relative;
-		overflow: hidden;
 		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background-image: var(--noise-stamp);
-			background-size: 80px 30px;
-			mix-blend-mode: multiply;
-			pointer-events: none;
-		}
-
-		&:hover {
-			background: var(--color-accent-hot);
-			transform: rotate(-1.5deg) translateY(-1px);
-			box-shadow: 0 4px 14px rgba(204, 0, 0, 0.5), 0 2px 0 rgba(0, 0, 0, 0.25);
-		}
-
-		&:active {
-			transform: rotate(-1.5deg) translateY(0);
-		}
-
-		&:focus-visible {
-			outline: 3px solid #F5EBDC;
-			outline-offset: 3px;
-		}
 	}
 
 	.back-arrow {
@@ -105,10 +71,13 @@
 		}
 	}
 
+	// Red hairline — successor to the decorative gradient rule, now a
+	// faint glowing filament in the noir scene.
 	.decoration-line {
-		width: 40px;
+		width: 56px;
 		height: 1px;
-		background: linear-gradient(90deg, transparent, rgba(204, 0, 0, 0.4), transparent);
+		background: var(--rule-red);
+		box-shadow: var(--glow-red-soft);
 		margin-top: 1rem;
 		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
 	}

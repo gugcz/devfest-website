@@ -8,13 +8,15 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 1.2rem;
-		padding: 0.9rem 1.2rem 0.9rem 1.4rem;
-		background: #0D0D0D;
-		border: 1px solid rgba(240, 237, 230, 0.35);
+		padding: 1.1rem 1.2rem 0.9rem 1.4rem;
+		background: var(--panel-lit);
+		border: 1px solid var(--rule);
 		border-left: 2px solid var(--color-accent);
+		border-radius: var(--radius);
 		z-index: 10000;
 		transition: opacity 0.3s, transform 0.3s;
-		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+		// Lit-in-the-dark: depth shadow + faint red halation so the notice glows.
+		box-shadow: var(--glow-red-soft), 0 10px 30px rgba(0, 0, 0, 0.6);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -23,17 +25,18 @@
 		}
 	}
 
+	// Editorial tag — plain mono eyebrow, no skeuomorphism.
 	.cookie-banner::before {
 		content: 'EVIDENCE LOG';
 		position: absolute;
 		top: -8px;
-		left: 12px;
+		left: 14px;
 		padding: 0 6px;
 		font-family: 'Share Tech Mono', monospace;
 		font-size: 0.7rem;
-		letter-spacing: 0.32em;
+		letter-spacing: 0.3em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.72);
+		color: rgba(240, 237, 230, 0.62);
 		background: var(--color-bg);
 	}
 
@@ -52,9 +55,9 @@
 	}
 
 	.cookie-link {
-		color: #F0EDE6;
+		color: var(--color-text);
 		text-decoration: none;
-		border-bottom: 1px dashed rgba(204, 0, 0, 0.6);
+		border-bottom: 1px solid var(--rule-red);
 		transition: color 0.2s, border-color 0.2s;
 	}
 
@@ -62,6 +65,7 @@
 	.cookie-link:focus-visible {
 		color: var(--color-accent-hot);
 		border-color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
 	}
 
 	.cookie-link:focus-visible {
@@ -76,76 +80,27 @@
 		flex-shrink: 0;
 	}
 
+	// Compact sizing overrides on top of global .btn-primary / .btn-ghost.
 	.cookie-btn {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.85rem;
+		font-size: 0.8rem;
 		letter-spacing: 0.22em;
-		text-transform: uppercase;
-		cursor: pointer;
-		transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
 		white-space: nowrap;
 		min-height: 2.75rem;
 		min-width: 2.75rem;
 	}
 
-	.cookie-btn:focus-visible {
-		outline: 3px solid #F5EBDC;
-		outline-offset: 3px;
-	}
-
 	.cookie-btn--accept {
-		padding: 0.55rem 1.1rem;
-		color: #F5EBDC;
-		background: #8B1818;
-		border: 2px solid #8B1818;
-		border-radius: 1px;
-		transform: rotate(-1.5deg);
-		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
-		position: relative;
-		overflow: hidden;
-	}
-
-	.cookie-btn--accept::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background-image: var(--noise-stamp);
-		background-size: 80px 30px;
-		mix-blend-mode: multiply;
-		pointer-events: none;
-	}
-
-	.cookie-btn--accept:hover {
-		background: var(--color-accent-hot);
-		transform: rotate(-1.5deg) translateY(-1px);
-		box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+		padding: 0.55rem 1.4rem;
 	}
 
 	.cookie-btn--decline {
-		padding: 0.7rem 0.8rem;
-		color: rgba(240, 237, 230, 0.75);
-		background: transparent;
-		border: 1px solid transparent;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
+		padding: 0.55rem 1rem;
 	}
 
-	.cookie-btn--decline::before {
-		content: '▶';
-		font-size: 0.75rem;
-		color: rgba(240, 237, 230, 0.85);
-	}
-
-	.cookie-btn--decline:hover,
-	.cookie-btn--decline:focus-visible {
-		color: var(--color-text);
-		border-color: rgba(240, 237, 230, 0.45);
-	}
-
-	.cookie-btn--decline:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 3px;
+	@media (prefers-reduced-motion: reduce) {
+		.cookie-btn--accept:hover {
+			transform: none;
+		}
 	}
 
 	@media (max-width: 500px) {
