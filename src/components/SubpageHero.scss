@@ -76,38 +76,11 @@
 		padding-left: 1.4rem;
 	}
 
-	// Masthead dateline — a hairline rule that runs to a small mono tag,
-	// anchoring the hero and giving every subpage a newspaper-banner foot.
-	.hero-foot {
-		display: flex;
-		align-items: center;
-		gap: 1.4rem;
-		margin-top: 3rem;
-		max-width: 760px;
-	}
-
-	.hero-foot-rule {
-		flex: 1 1 auto;
-		height: 1px;
-		background: linear-gradient(to right, var(--rule-strong), var(--rule-soft));
-	}
-
-	.hero-foot-meta {
-		flex: 0 0 auto;
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.72rem;
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.5);
-		white-space: nowrap;
-	}
-
 	@media (max-width: 900px) {
 		.subpage-hero {
 			padding: calc(var(--section-y) - 1rem) var(--gutter);
 			min-height: max(440px, 52vh);
 		}
-		.hero-foot { margin-top: 2.4rem; }
 	}
 
 	@media (max-width: 600px) {
@@ -120,5 +93,4 @@
 			font-size: 1rem;
 			padding-left: 1.1rem;
 		}
-		.hero-foot-meta { font-size: 0.66rem; letter-spacing: 0.16em; }
 	}

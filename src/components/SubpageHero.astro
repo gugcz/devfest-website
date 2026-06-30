@@ -6,8 +6,6 @@ interface Props {
 	titleHtml: string;
 	lede: string;
 	titleId?: string;
-	/** Right-aligned masthead dateline; defaults to the event line. */
-	meta?: string;
 }
 
 const {
@@ -15,7 +13,6 @@ const {
 	titleHtml,
 	lede,
 	titleId = 'subpage-hero-title',
-	meta = 'DevFest.cz · Prague · 30.10.2026',
 } = Astro.props;
 ---
 
@@ -27,11 +24,6 @@ const {
 		<p class="section-label"><span>{label}</span></p>
 		<h1 id={titleId} class="hero-title" set:html={titleHtml} />
 		<p class="hero-lede">{lede}</p>
-
-		<div class="hero-foot" aria-hidden="true">
-			<span class="hero-foot-rule"></span>
-			<span class="hero-foot-meta">{meta}</span>
-		</div>
 	</div>
 </section>
 
