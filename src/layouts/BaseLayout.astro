@@ -31,7 +31,8 @@ const isHome = Astro.url.pathname === "/";
 // (gross = ti.to net × 1.21 Czech VAT) and must match the customer-facing
 // prices rendered by Tickets.tsx via priceDisplay(). The event is priced in
 // CZK on ti.to (see #182) — do NOT use EUR here. Only list waves that are
-// actually on sale: future waves (Regular/Lazy Bird) are paused with no
+// actually on sale: Early Bird has ended and Regular is now live, so Regular
+// is the sole listed Offer. Future waves (Lazy Bird) are paused with no
 // scheduled start date, so they carry no honest `availability`/`validFrom`
 // and are omitted entirely until they open (avoids Google's missing-field
 // warning). Add an Offer here when a wave opens; remove it when it ends
@@ -69,13 +70,13 @@ const eventSchema = {
 	"offers": [
 		{
 			"@type": "Offer",
-			"name": "Early Bird",
-			"description": "Limited early-access tickets at the lowest price of the event.",
+			"name": "Regular",
+			"description": "Standard conference admission.",
 			"url": `${siteUrl}/#tickets`,
-			"price": "2099",
+			"price": "2999",
 			"priceCurrency": "CZK",
 			"availability": "https://schema.org/InStock",
-			"validFrom": "2026-05-20T00:00:00+02:00",
+			"validFrom": "2026-07-01T00:00:00+02:00",
 			"seller": organizer
 		}
 	]

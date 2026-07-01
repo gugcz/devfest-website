@@ -203,6 +203,12 @@ export default function Tickets() {
 		);
 	}
 
+	// A paused wave that already sold tickets is always an earlier wave
+	// (future waves have no sales → "Coming soon"). So once any wave is on
+	// sale, that paused wave has been superseded — it reads "Ended", not
+	// "Paused". See releaseStatus().
+	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
+
 	return (
 		<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
 			<header className={s.header}>
@@ -212,7 +218,7 @@ export default function Tickets() {
 			</header>
 			<ul className={s.list} role="list">
 				{groupReleases(releases).map((group) => {
-					const statuses = group.variants.map((v) => releaseStatus(v.release));
+					const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
 					const anyPurchasable = statuses.some((st) => st.purchasable);
 					// When no variant is buyable, pick a non-sold-out summary if one
 					// exists so a "Paused" or "Coming soon" wave isn't labeled "Sold
