@@ -92,13 +92,20 @@ export interface ReleaseStatus {
  * `sale_status` so the UI stays consistent if ti.to flips only the
  * `sold_out` flag without updating the derived status.
  *
- * `paused` covers two different realities: a wave taken off sale
- * mid-flight, and a future wave the organizer keeps toggled off in
- * ti.to instead of scheduling a `start_at` (so it never gets the
- * `upcoming` flag). Zero tickets sold tells them apart — a wave that
- * never sold anything reads "Coming soon" to visitors, not "Paused".
+ * `paused` covers three realities, disambiguated here:
+ * - A future wave the organizer keeps toggled off in ti.to instead of
+ *   scheduling a `start_at` (so it never gets the `upcoming` flag). It
+ *   has never sold a ticket → "Coming soon".
+ * - An earlier wave taken off sale *because a later wave has opened* —
+ *   it already sold tickets and a newer wave is now on sale. It is
+ *   closed for good → "Ended" (pass `opts.laterWaveOnSale`).
+ * - A wave genuinely interrupted mid-flight with no later wave live —
+ *   it sold tickets and may resume → "Paused".
  */
-export function releaseStatus(release: TitoRelease): ReleaseStatus {
+export function releaseStatus(
+	release: TitoRelease,
+	opts?: { laterWaveOnSale?: boolean },
+): ReleaseStatus {
 	if (release.sold_out || release.sale_status === 'sold_out') {
 		return { label: 'Sold out', tone: 'sold-out', purchasable: false };
 	}
@@ -108,6 +115,9 @@ export function releaseStatus(release: TitoRelease): ReleaseStatus {
 		case 'paused':
 			if (!release.has_sales) {
 				return { label: 'Coming soon', tone: 'soon', purchasable: false };
+			}
+			if (opts?.laterWaveOnSale) {
+				return { label: 'Ended', tone: 'ended', purchasable: false };
 			}
 			return { label: 'Paused', tone: 'paused', purchasable: false };
 		case 'not_yet_on_sale':
