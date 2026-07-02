@@ -67,7 +67,7 @@
 	.hero-lede {
 		font-family: 'IM Fell English', serif;
 		font-style: italic;
-		font-size: clamp(1.08rem, 1.6vw, 1.3rem);
+		font-size: clamp(1.18rem, 1.7vw, 1.4rem);
 		line-height: 1.75;
 		color: var(--color-grey);
 		max-width: 56ch;
@@ -90,7 +90,7 @@
 		}
 		.hero-title { max-width: none; }
 		.hero-lede {
-			font-size: 1rem;
+			font-size: 1.12rem;
 			padding-left: 1.1rem;
 		}
 	}

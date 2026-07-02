@@ -30,6 +30,10 @@
 		--rule-soft: rgba(240, 237, 230, 0.06);
 		--rule-strong: rgba(240, 237, 230, 0.22);
 		--rule-red: rgba(204, 0, 0, 0.55);
+		// Perceivable boundary for interactive form controls — clears WCAG 1.4.11
+		// (>=3:1 over the dark field fills). Kept separate from --rule so decorative
+		// grouping hairlines stay whisper-faint.
+		--field-border: rgba(240, 237, 230, 0.4);
 		// Whisper-faint line for the dossier matte frame (tune subtlety here).
 		--matte: rgba(240, 237, 230, 0.035);
 		--matte-red: rgba(204, 0, 0, 0.28);

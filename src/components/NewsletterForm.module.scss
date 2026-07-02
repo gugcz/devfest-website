@@ -20,13 +20,15 @@
 	flex: 1;
 	position: relative;
 	background: var(--panel-2);
-	border: 1px solid var(--rule);
+	border: 1px solid var(--field-border);
 	border-right: none;
 	border-radius: var(--radius) 0 0 var(--radius);
 	transition: border-color 0.2s ease;
 
 	&:focus-within {
-		border-color: var(--rule-red);
+		// accent-hot gives the focused field a >=3:1 boundary (WCAG 1.4.11) — the
+		// inner input carries no border of its own, so this wrapper is the cue.
+		border-color: var(--color-accent-hot);
 		box-shadow: var(--glow-red-soft);
 	}
 }
@@ -44,7 +46,7 @@
 	letter-spacing: 0.02em;
 
 	&::placeholder {
-		color: rgba(240, 237, 230, 0.45);
+		color: rgba(240, 237, 230, 0.62);
 		font-style: italic;
 	}
 
@@ -52,8 +54,11 @@
 		outline: none;
 	}
 
+	// Keyboard focus must show a visible ring — WCAG 2.4.7. (Was outline:none,
+	// which suppressed the global accent-hot ring and left no real focus cue.)
 	&:focus-visible {
-		outline: none;
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 2px;
 	}
 }
 

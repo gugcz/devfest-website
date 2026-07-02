@@ -33,15 +33,15 @@
 
 .label {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.62rem;
-	letter-spacing: 0.22em;
+	font-size: 0.72rem;
+	letter-spacing: 0.16em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.62);
 	transition: color 0.2s ease;
 }
 
 .optional {
-	color: rgba(240, 237, 230, 0.4);
+	color: rgba(240, 237, 230, 0.55);
 	letter-spacing: 0.1em;
 }
 
@@ -51,7 +51,7 @@
 	padding: 0.85rem 0.95rem;
 	min-height: 2.75rem;
 	background: var(--panel-lit-2);
-	border: 1px solid var(--rule);
+	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	color: var(--color-text);
 	font-family: 'Special Elite', cursive;
@@ -60,13 +60,15 @@
 	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 
 	&::placeholder {
-		color: rgba(240, 237, 230, 0.4);
+		color: rgba(240, 237, 230, 0.55);
 		font-style: italic;
 	}
 
 	&:focus {
 		outline: none;
-		border-color: var(--rule-red);
+		// accent-hot (not --rule-red) keeps the focused boundary >=3:1 for pointer
+		// focus too — WCAG 1.4.11. Keyboard focus additionally gets the ring below.
+		border-color: var(--color-accent-hot);
 		background: var(--panel-hover);
 		// Red reads as light — soft halation pools around the focused field.
 		box-shadow: var(--glow-red-soft);
