@@ -419,7 +419,8 @@
 .ctaSecondary {
 	background: transparent;
 	color: var(--color-text);
-	border: 1px solid var(--rule-strong);
+	// >=3:1 boundary for this ghost button — WCAG 1.4.11.
+	border: 1px solid var(--field-border);
 	box-shadow: none;
 
 	&:hover {

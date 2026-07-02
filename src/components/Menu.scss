@@ -49,10 +49,14 @@
 			visibility 0s linear 0s;
 	}
 
-	.brand:hover,
+	.brand:hover {
+		opacity: 0.85;
+	}
+
+	// Keep the global accent-hot :focus-visible ring — WCAG 2.4.7. (The brand
+	// logo is the first tab stop in the header; opacity alone == the hover look.)
 	.brand:focus-visible {
 		opacity: 0.85;
-		outline: none;
 	}
 
 	// Home + at top: hero owns brand identity, hide nav logo to avoid duplication.

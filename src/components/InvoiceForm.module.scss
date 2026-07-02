@@ -51,7 +51,7 @@
 	padding: 0.85rem 0.95rem;
 	min-height: 2.75rem;
 	background: var(--panel-lit-2);
-	border: 1px solid var(--rule);
+	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	color: var(--color-text);
 	font-family: 'Special Elite', cursive;
@@ -66,7 +66,9 @@
 
 	&:focus {
 		outline: none;
-		border-color: var(--rule-red);
+		// accent-hot (not --rule-red) keeps the focused boundary >=3:1 for pointer
+		// focus too — WCAG 1.4.11. Keyboard focus additionally gets the ring below.
+		border-color: var(--color-accent-hot);
 		background: var(--panel-hover);
 		// Red reads as light — soft halation pools around the focused field.
 		box-shadow: var(--glow-red-soft);
