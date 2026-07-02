@@ -118,6 +118,35 @@
 		white-space: nowrap;
 	}
 
+	// Small orientation note under a value (e.g. "near Prague") — keeps the
+	// venue name short on the hairline row while still anchoring it for people
+	// who don't know Libčice.
+	.meta-sub {
+		display: block;
+		margin-top: 0.2rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.72rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--color-grey);
+	}
+
+	// Place value links out to the venue on the map — keep it reading as text,
+	// only warm to the accent on hover/focus.
+	.meta-value--link {
+		text-decoration: none;
+		transition: color 0.2s ease;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot, var(--color-accent));
+
+			.meta-sub {
+				color: inherit;
+			}
+		}
+	}
+
 	.hero-cta-group {
 		margin-top: 3.5rem;
 		display: flex;
@@ -509,6 +538,14 @@
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 1240px) {
+		// Single-column hero: content + countdown stack taller than the
+		// viewport, so drop the 100vh/centred layout and give real vertical
+		// padding — otherwise the countdown butts against the hero's
+		// border-bottom line with no gap (tablet landscape ~1024px).
+		#hero {
+			min-height: auto;
+			padding: 7rem var(--gutter) 5rem;
+		}
 		.hero-grid {
 			grid-template-columns: 1fr;
 			gap: 4rem;
