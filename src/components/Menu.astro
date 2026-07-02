@@ -11,7 +11,6 @@ const isHome = currentPath === '/';
 // On the home page #tickets is a same-page anchor; from subpages we need
 // to send the visitor back to / first so the section actually exists.
 const ticketsHref = isHome ? '#tickets' : '/#tickets';
-const speakersHref = isHome ? '#speakers' : '/#speakers';
 
 const links: readonly NavLink[] = [
 	{ href: '/team', label: 'Team' },
@@ -20,7 +19,6 @@ const links: readonly NavLink[] = [
 	{ href: '/faq', label: 'FAQ' },
 	{ href: '/contact', label: 'Contact' },
 	{ href: 'https://2025.devfest.cz', label: '2025 Edition', external: true },
-	{ href: speakersHref, label: 'Speak' },
 	{ href: ticketsHref, label: 'Tickets', cta: true },
 ];
 
