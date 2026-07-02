@@ -31,7 +31,7 @@ const team: TeamMember[] = [
 	{
 		name: 'Daniel Macho',
 		alias: 'The Boss / The Scenic Artist',
-		role: 'Lead Organiser',
+		role: 'Lead Org',
 		photo: '/team/daniel-macho-bw.webp',
 		photoColor: '/team/daniel-macho.webp',
 		links: [
@@ -44,26 +44,28 @@ const team: TeamMember[] = [
 	{
 		name: 'Lucie Jurystová',
 		alias: 'The Fixer',
+		role: 'Deputy Lead Org',
 		photo: '/team/lucie-jurystova-bw.webp',
 		photoColor: '/team/lucie-jurystova.webp',
 	},
 	{
 		name: 'Adéla Janovská',
 		alias: 'Chief of Logistics',
-		role: 'Production Coordinator',
+		role: 'Production',
 		photo: '/team/adela-janovska-bw.webp',
 		photoColor: '/team/adela-janovska.webp',
 	},
 	{
 		name: 'Filip Goszler',
 		alias: 'The Negotiator',
-		role: 'Partnerships',
+		role: 'Partners',
 		photo: '/team/filip-goszler-bw.webp',
 		photoColor: '/team/filip-goszler.webp',
 	},
 	{
 		name: 'Eliška Čejpová',
 		alias: 'Whisperer Hunter',
+		role: 'Speakers',
 		photo: '/team/eliska-cejpova-bw.webp',
 		photoColor: '/team/eliska-cejpova.webp',
 	},
@@ -83,7 +85,7 @@ const team: TeamMember[] = [
 	{
 		name: 'Eliška Zezulková',
 		alias: 'The Gatekeeper',
-		role: 'Ticketing',
+		role: 'Tickets & Registration',
 		photo: '/team/eliska-zezulkova-bw.webp',
 		photoColor: '/team/eliska-zezulkova.webp',
 		links: [
@@ -101,6 +103,7 @@ const team: TeamMember[] = [
 	{
 		name: 'Petr Vobr',
 		alias: 'Private Eye',
+		role: 'Festival & Game',
 		photo: '/team/petr-vobr-bw.webp',
 		photoColor: '/team/petr-vobr.webp',
 	},
@@ -240,8 +243,8 @@ const tickerTopics = [
 									<h2 class="crew-name">{member.name}</h2>
 									{member.role ? (
 										<span class="crew-role" data-swap>
-											<span class="crew-role-line crew-role-alias">{member.alias}</span>
-											<span class="crew-role-line crew-role-real" aria-hidden="true">{member.role}</span>
+											<span class="crew-role-line crew-role-real">{member.role}</span>
+											<span class="crew-role-line crew-role-alias" aria-hidden="true">{member.alias}</span>
 										</span>
 									) : (
 										<span class="crew-role">

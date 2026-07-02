@@ -190,8 +190,8 @@
 		margin: 0;
 	}
 
-	// The member's "position" under their name. At rest it shows the noir
-	// codename (alias); on hover it cross-fades to the real role. Both lines are
+	// The member's "position" under their name. At rest it shows the real role;
+	// on hover it cross-fades to the noir codename (alias). Both lines are
 	// stacked in one grid cell so they overlap; the two-line reserve keeps the
 	// links row aligned across cards with long/short text.
 	.crew-role {
@@ -210,29 +210,32 @@
 		transition: opacity 0.35s ease, transform 0.35s ease;
 	}
 
-	// accent-hot (not --color-accent) clears WCAG AA on the dark panel
-	// (~4.96:1 vs ~3.3:1 for #CC0000) at this small size.
+	// Real role — the default, plain-text position.
+	.crew-role-real {
+		color: var(--color-text);
+	}
+
+	// Noir codename. accent-hot (not --color-accent) clears WCAG AA on the dark
+	// panel (~4.96:1 vs ~3.3:1 for #CC0000) at this small size. On swap cards
+	// it's hidden until hover — the reveal that pairs with the colour-bleed photo.
 	.crew-role-alias {
 		color: var(--color-accent-hot);
 	}
 
-	// Real role, hidden until the card is hovered/focused. Brighter text reads
-	// as the mask coming off — the reveal that pairs with the colour-bleed photo.
-	.crew-role-real {
-		color: var(--color-text);
+	.crew-role[data-swap] .crew-role-alias {
 		opacity: 0;
 		transform: translateY(0.25em);
 	}
 
-	// Cross-fade: alias out, real in — only on cards that carry a real role.
-	.crew-card:hover .crew-role[data-swap] .crew-role-alias,
-	.crew-card:focus-within .crew-role[data-swap] .crew-role-alias {
+	// Cross-fade: real out, alias in — only on cards that carry a real role.
+	.crew-card:hover .crew-role[data-swap] .crew-role-real,
+	.crew-card:focus-within .crew-role[data-swap] .crew-role-real {
 		opacity: 0;
 		transform: translateY(-0.25em);
 	}
 
-	.crew-card:hover .crew-role[data-swap] .crew-role-real,
-	.crew-card:focus-within .crew-role[data-swap] .crew-role-real {
+	.crew-card:hover .crew-role[data-swap] .crew-role-alias,
+	.crew-card:focus-within .crew-role[data-swap] .crew-role-alias {
 		opacity: 1;
 		transform: translateY(0);
 	}
