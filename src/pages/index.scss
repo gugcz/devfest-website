@@ -118,6 +118,19 @@
 		white-space: nowrap;
 	}
 
+	// Small orientation note under a value (e.g. "near Prague") — keeps the
+	// venue name short on the hairline row while still anchoring it for people
+	// who don't know Libčice.
+	.meta-sub {
+		display: block;
+		margin-top: 0.2rem;
+		font-family: 'Share Tech Mono', monospace;
+		font-size: 0.72rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--color-grey);
+	}
+
 	.hero-cta-group {
 		margin-top: 3.5rem;
 		display: flex;
