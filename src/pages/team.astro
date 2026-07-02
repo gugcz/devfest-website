@@ -238,7 +238,16 @@ const tickerTopics = [
 								</div>
 								<div class="crew-info">
 									<h2 class="crew-name">{member.name}</h2>
-									<span class="crew-alias">{member.alias}</span>
+									{member.role ? (
+										<span class="crew-role" data-swap>
+											<span class="crew-role-line crew-role-alias">{member.alias}</span>
+											<span class="crew-role-line crew-role-real" aria-hidden="true">{member.role}</span>
+										</span>
+									) : (
+										<span class="crew-role">
+											<span class="crew-role-line crew-role-alias">{member.alias}</span>
+										</span>
+									)}
 									{member.links && member.links.length > 0 && (
 										<ul class="crew-links">
 											{member.links.map((link) => {
