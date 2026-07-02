@@ -190,19 +190,54 @@
 		margin: 0;
 	}
 
-	// Noir codename — the member's "position" under their name. Two-line reserve
-	// keeps the links row aligned across cards with long/short codenames.
-	.crew-alias {
+	// The member's "position" under their name. At rest it shows the real role;
+	// on hover it cross-fades to the noir codename (alias). Both lines are
+	// stacked in one grid cell so they overlap; the two-line reserve keeps the
+	// links row aligned across cards with long/short text.
+	.crew-role {
+		display: grid;
 		font-family: 'Share Tech Mono', monospace;
 		font-size: 0.62rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		line-height: 1.4;
-		// accent-hot (not --color-accent) clears WCAG AA on the dark panel
-		// (~4.96:1 vs ~3.3:1 for #CC0000) at this small size.
-		color: var(--color-accent-hot);
 		margin-top: 0.2rem;
 		min-height: 2.8em;
+	}
+
+	.crew-role-line {
+		grid-area: 1 / 1; // overlap both lines in the same cell
+		transition: opacity 0.35s ease, transform 0.35s ease;
+	}
+
+	// Real role — the default, plain-text position.
+	.crew-role-real {
+		color: var(--color-text);
+	}
+
+	// Noir codename. accent-hot (not --color-accent) clears WCAG AA on the dark
+	// panel (~4.96:1 vs ~3.3:1 for #CC0000) at this small size. On swap cards
+	// it's hidden until hover — the reveal that pairs with the colour-bleed photo.
+	.crew-role-alias {
+		color: var(--color-accent-hot);
+	}
+
+	.crew-role[data-swap] .crew-role-alias {
+		opacity: 0;
+		transform: translateY(0.25em);
+	}
+
+	// Cross-fade: real out, alias in — only on cards that carry a real role.
+	.crew-card:hover .crew-role[data-swap] .crew-role-real,
+	.crew-card:focus-within .crew-role[data-swap] .crew-role-real {
+		opacity: 0;
+		transform: translateY(-0.25em);
+	}
+
+	.crew-card:hover .crew-role[data-swap] .crew-role-alias,
+	.crew-card:focus-within .crew-role[data-swap] .crew-role-alias {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	.crew-links {
@@ -287,6 +322,7 @@
 		.crew-card,
 		.crew-card::before,
 		.mugshot-color,
+		.crew-role-line,
 		.crew-link {
 			transition: none;
 		}
