@@ -131,6 +131,22 @@
 		color: var(--color-grey);
 	}
 
+	// Place value links out to the venue on the map — keep it reading as text,
+	// only warm to the accent on hover/focus.
+	.meta-value--link {
+		text-decoration: none;
+		transition: color 0.2s ease;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot, var(--color-accent));
+
+			.meta-sub {
+				color: inherit;
+			}
+		}
+	}
+
 	.hero-cta-group {
 		margin-top: 3.5rem;
 		display: flex;
