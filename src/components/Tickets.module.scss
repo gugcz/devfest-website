@@ -267,7 +267,7 @@
 
 .badgeEnded {
 	background: transparent;
-	color: rgba(240, 237, 230, 0.45);
+	color: rgba(240, 237, 230, 0.6);
 	border-color: var(--rule);
 }
 
@@ -330,10 +330,10 @@
 
 .variantVat {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.68rem;
+	font-size: 0.72rem;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.5);
+	color: rgba(240, 237, 230, 0.6);
 	line-height: 1;
 }
 
@@ -402,7 +402,7 @@
 
 .ctaDisabled {
 	cursor: not-allowed;
-	color: rgba(240, 237, 230, 0.4);
+	color: rgba(240, 237, 230, 0.55);
 	background: transparent;
 	border-color: var(--rule);
 	box-shadow: none;
@@ -410,7 +410,7 @@
 	&:hover {
 		background: transparent;
 		border-color: var(--rule);
-		color: rgba(240, 237, 230, 0.4);
+		color: rgba(240, 237, 230, 0.55);
 		transform: none;
 		box-shadow: none;
 	}

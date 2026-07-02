@@ -33,15 +33,15 @@
 
 .label {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.62rem;
-	letter-spacing: 0.22em;
+	font-size: 0.72rem;
+	letter-spacing: 0.16em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.62);
 	transition: color 0.2s ease;
 }
 
 .optional {
-	color: rgba(240, 237, 230, 0.4);
+	color: rgba(240, 237, 230, 0.55);
 	letter-spacing: 0.1em;
 }
 
@@ -60,7 +60,7 @@
 	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 
 	&::placeholder {
-		color: rgba(240, 237, 230, 0.4);
+		color: rgba(240, 237, 230, 0.55);
 		font-style: italic;
 	}
 
