@@ -538,6 +538,14 @@
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 1240px) {
+		// Single-column hero: content + countdown stack taller than the
+		// viewport, so drop the 100vh/centred layout and give real vertical
+		// padding — otherwise the countdown butts against the hero's
+		// border-bottom line with no gap (tablet landscape ~1024px).
+		#hero {
+			min-height: auto;
+			padding: 7rem var(--gutter) 5rem;
+		}
 		.hero-grid {
 			grid-template-columns: 1fr;
 			gap: 4rem;
