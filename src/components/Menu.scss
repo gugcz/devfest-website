@@ -277,6 +277,11 @@
 		}
 	}
 
+	// Disable *animation* under reduced-motion, but NOT the functional
+	// transforms. `transform: none` here used to override the drawer's
+	// off-canvas `translateX(100%)`, pinning it open with no way to close
+	// (Samsung "Remove animations" toggle triggers this). Kill transitions
+	// only — positioning transforms must survive.
 	@media (prefers-reduced-motion: reduce) {
 		.site-header,
 		.nav-list,
@@ -286,6 +291,5 @@
 		.site-header[data-home='true'][data-state='top'] .brand,
 		.nav-toggle-bars span {
 			transition: none;
-			transform: none;
 		}
 	}
