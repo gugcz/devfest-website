@@ -111,8 +111,8 @@
 		align-self: flex-start;
 		background: var(--color-accent);
 		color: var(--on-accent);
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.62rem;
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 0.75rem;
 		letter-spacing: 0.26em;
 		text-transform: uppercase;
 		padding: 0.42rem 0.72rem;
@@ -163,15 +163,15 @@
 	}
 
 	.email-name {
-		font-family: 'Share Tech Mono', monospace;
-		font-size: 0.62rem;
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 0.75rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.65);
 	}
 
 	.email-link {
-		font-family: 'Share Tech Mono', monospace;
+		font-family: 'JetBrains Mono', monospace;
 		font-size: 0.85rem;
 		letter-spacing: 0.04em;
 		color: var(--color-text);
