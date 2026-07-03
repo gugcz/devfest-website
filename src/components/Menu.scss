@@ -159,6 +159,12 @@
 	.nav-toggle {
 		display: none;
 		align-items: center;
+		// Stay above the open drawer. The drawer (.nav-list) is fixed and
+		// paints above this static button by default, covering the toggle
+		// with its empty top-padding — the X becomes invisible and untappable,
+		// so the drawer can't be closed. Lift the toggle so the X stays live.
+		position: relative;
+		z-index: 2;
 		gap: 0.6rem;
 		padding: 0.6rem 0.95rem 0.6rem 0.75rem;
 		min-height: 2.75rem;
@@ -222,6 +228,9 @@
 			top: 0;
 			right: 0;
 			bottom: 0;
+			// Below the toggle (z-index: 2) so the close (X) button stays
+			// tappable while the drawer is open.
+			z-index: 1;
 			width: min(86vw, 320px);
 			flex-direction: column;
 			align-items: stretch;
@@ -277,6 +286,11 @@
 		}
 	}
 
+	// Disable *animation* under reduced-motion, but NOT the functional
+	// transforms. `transform: none` here used to override the drawer's
+	// off-canvas `translateX(100%)`, pinning it open with no way to close
+	// (Samsung "Remove animations" toggle triggers this). Kill transitions
+	// only — positioning transforms must survive.
 	@media (prefers-reduced-motion: reduce) {
 		.site-header,
 		.nav-list,
@@ -286,6 +300,5 @@
 		.site-header[data-home='true'][data-state='top'] .brand,
 		.nav-toggle-bars span {
 			transition: none;
-			transform: none;
 		}
 	}
