@@ -50,7 +50,8 @@
 .subheading {
 	font-family: 'IM Fell English', serif;
 	font-style: italic;
-	font-size: 1.05rem;
+	font-size: clamp(1.18rem, 1.7vw, 1.4rem);
+	line-height: 1.6;
 	color: var(--color-grey);
 	margin-top: 0.9rem;
 }
@@ -230,7 +231,7 @@
 // Flat mono pill — no rotation, no ink texture.
 .badge {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.7rem;
+	font-size: 0.75rem;
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
 	padding: 0.34rem 0.6rem;
@@ -330,7 +331,7 @@
 
 .variantVat {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.72rem;
+	font-size: 0.75rem;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -468,7 +469,7 @@
 
 .invoiceLabel {
 	font-family: 'Share Tech Mono', monospace;
-	font-size: 0.7rem;
+	font-size: 0.75rem;
 	letter-spacing: 0.25em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
