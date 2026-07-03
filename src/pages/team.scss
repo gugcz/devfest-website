@@ -155,21 +155,6 @@
 		user-select: none;
 	}
 
-	// Flat case-file chip — the redesign's red mono label, pinned to the photo.
-	.file-tag {
-		position: absolute;
-		z-index: 5;
-		top: 0.6rem;
-		left: 0.6rem;
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 0.75rem;
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
-		color: var(--on-accent);
-		background: var(--color-accent);
-		padding: 0.3rem 0.55rem;
-	}
-
 	/* ===================== INFO ===================== */
 	.crew-info {
 		position: relative;

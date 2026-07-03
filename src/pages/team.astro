@@ -205,7 +205,7 @@ const tickerTopics = [
 		<section class="team-body" aria-label="Organising team">
 			<div class="team-inner">
 				<ul class="crew-grid reveal">
-					{cards.map(({ member, base, color }, i) => (
+					{cards.map(({ member, base, color }) => (
 						<li>
 							<article class="crew-card">
 								<div class="mugshot">
@@ -237,7 +237,6 @@ const tickerTopics = [
 									) : (
 										<span class="monogram" aria-hidden="true">{initials(member.name)}</span>
 									)}
-									<span class="file-tag" aria-hidden="true">N&deg; {String(i + 1).padStart(2, '0')}</span>
 								</div>
 								<div class="crew-info">
 									<h2 class="crew-name">{member.name}</h2>
