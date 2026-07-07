@@ -18,3 +18,4 @@ import './options.js';
 
 export * from './tickets/index.js';
 export * from './invoice/index.js';
+export * from './speakers/index.js';
