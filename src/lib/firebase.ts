@@ -2,6 +2,7 @@ import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
 import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
 import { getDatabase, type Database } from 'firebase/database';
+import { getFirestore, type Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyB7lXxnVicSWTtUe9CbVUarm2MwFVRMucU',
@@ -67,6 +68,18 @@ let databaseInstance: Database | null = null;
 export function getDb(): Database {
 	if (!databaseInstance) databaseInstance = getDatabase(getApp());
 	return databaseInstance;
+}
+
+let firestoreInstance: Firestore | null = null;
+/**
+ * Cloud Firestore on the shared App-Check app. Backs the public-read `speakers`
+ * collection that `Speakers.tsx` subscribes to. Like `getDb()`, the App Check
+ * token attaches to reads automatically; enforcement stays off in the console
+ * until traffic is verified.
+ */
+export function getFirestoreDb(): Firestore {
+	if (!firestoreInstance) firestoreInstance = getFirestore(getApp());
+	return firestoreInstance;
 }
 
 /**

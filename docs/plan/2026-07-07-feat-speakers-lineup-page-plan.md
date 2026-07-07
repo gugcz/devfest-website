@@ -211,7 +211,7 @@ verification surface.
 
 ### Phase 2: Firestore read plumbing (rules + client SDK + browser lib)
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** Open scoped public read on `speakers` (leaving `invoices`/default
   deny-all), initialize the client Firestore SDK on the existing App-Check app,
   and add the browser-safe speakers types + link-icon map + helpers.
