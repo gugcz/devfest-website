@@ -64,6 +64,11 @@ async function syncSpeakers(): Promise<SyncResult> {
 	const freshIds = new Set(speakers.map((s) => s.id));
 	const plan = computeDeletePlan(existingIds, freshIds);
 
+	// One atomic batch = one consistent snapshot for the live `onSnapshot`
+	// subscriber. NOTE: a WriteBatch hard-caps at 500 ops, so
+	// speakers.length + toDelete.length must stay < 500 — trivially true at the
+	// expected ~30–60 speakers. Chunk into multiple batches if the roster ever
+	// approaches that ceiling.
 	const batch = firestore().batch();
 	for (const speaker of speakers) {
 		batch.set(collection.doc(speaker.id), speaker);

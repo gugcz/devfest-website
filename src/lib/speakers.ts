@@ -12,6 +12,10 @@
  * Canonical social-link kinds. The Cloud Function maps each Sessionize
  * `linkType` to one of these; unknown types collapse to `web` (a globe) so a
  * link never renders without an icon.
+ *
+ * ⚠️ Keep in sync with `functions/src/speakers/sessionize-api.ts` (its
+ * `SpeakerLinkKind` + `KIND_LABEL`) — the two live across the src/ ↔ functions/
+ * build boundary and share no package. Adding a kind means editing both.
  */
 export type SpeakerLinkKind =
 	| 'linkedin'
@@ -94,10 +98,22 @@ function isString(value: unknown): value is string {
 	return typeof value === 'string';
 }
 
+/** http(s)-only scheme re-check at the render boundary — defense-in-depth over
+ * the Cloud Function's write-time `sanitizeLinkUrl` (the collection is
+ * client-write-blocked, but this module renders directly into an `href`). */
+function isSafeHref(url: string): boolean {
+	try {
+		const { protocol } = new URL(url);
+		return protocol === 'http:' || protocol === 'https:';
+	} catch {
+		return false;
+	}
+}
+
 function coerceLink(raw: unknown): SpeakerLink | null {
 	if (typeof raw !== 'object' || raw === null) return null;
 	const { kind, url, label } = raw as Record<string, unknown>;
-	if (!isString(url) || !isString(label)) return null;
+	if (!isString(url) || !isString(label) || !isSafeHref(url)) return null;
 	const safeKind: SpeakerLinkKind = KNOWN_KINDS.has(kind as SpeakerLinkKind)
 		? (kind as SpeakerLinkKind)
 		: 'web';
