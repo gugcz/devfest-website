@@ -230,7 +230,7 @@ verification surface.
 
 ### Phase 3: Speakers page, island, styles, nav
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** The `Speakers.tsx` island (live `onSnapshot`, loading/ready/empty/
   error states, per-card fallback matrix), the `/speakers` Astro page + SCSS
   reusing the `/team` grid + colour-bleed treatment, a nav entry, and a
