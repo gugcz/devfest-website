@@ -1,61 +1,57 @@
-// Speaker lineup — a deliberately DIFFERENT treatment from /team's crew cards.
-// Team = light panel, mugshot above an info block, cursor colour-bleed reveal.
-// Speakers = full-bleed grayscale PORTRAIT with an overlaid caption + gradient
-// scrim, a lineup index number, and a restrained editorial hover (subtle zoom
-// + desaturation lift + red edge). Same film-noir system (grayscale, red
-// accent, the four brand fonts) — its own, more professional identity.
-// Global tokens (--color-*, --rule*, --glow-red-soft, --radius) come from
-// BaseLayout.
+// Speaker lineup — clickable cards that open a detail dialog. Distinct from
+// /team: a clean uncovered grayscale portrait with the caption in a panel
+// BELOW the photo (no text over the image), a lineup index, and a restrained
+// hover (subtle zoom + desaturation lift + red edge). Same film-noir system
+// (grayscale, red accent, brand fonts). Global tokens come from BaseLayout.
 
 .grid {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 	gap: 18px;
 }
 
-/* ===================== CARD ===================== */
+/* ===================== CARD (button) ===================== */
 .card {
-	position: relative;
-	aspect-ratio: 4 / 5;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
 	overflow: hidden;
-	background: #0a0909;
+	background:
+		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
+		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 82%);
 	border: 1px solid var(--rule);
-	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
-	transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-
-	// Thin inset frame — neutral at rest, warms to red on hover; the noir-system
-	// tell that ties this back to the rest of the site.
-	&::after {
-		content: '';
-		position: absolute;
-		inset: 8px;
-		border: 1px solid rgba(240, 237, 230, 0.1);
-		pointer-events: none;
-		z-index: 3;
-		transition: border-color 0.35s ease;
-	}
+	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+	transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
 
 	&:hover,
-	&:focus-within {
+	&:focus-visible {
 		transform: translateY(-5px);
 		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft), 0 26px 56px rgba(0, 0, 0, 0.72);
+		box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
 	}
 
-	&:hover::after,
-	&:focus-within::after {
-		border-color: rgba(204, 0, 0, 0.55);
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 2px;
 	}
 }
 
-/* ===================== PORTRAIT ===================== */
-.portrait {
-	position: absolute;
-	inset: 0;
+/* ===================== MEDIA ===================== */
+.media {
+	position: relative;
+	display: block;
+	aspect-ratio: 4 / 5;
 	overflow: hidden;
+	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #070606 72%);
 }
 
 .photo {
@@ -65,14 +61,13 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	// Refined B&W at rest; hover lifts most of the way to colour + a slow push-in.
 	filter: grayscale(1) contrast(1.06) brightness(0.9);
 	transform: scale(1.01);
 	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
 }
 
 .card:hover .photo,
-.card:focus-within .photo {
+.card:focus-visible .photo {
 	transform: scale(1.06);
 	filter: grayscale(0.15) contrast(1.05) brightness(1);
 }
@@ -87,58 +82,32 @@
 	font-size: clamp(3rem, 12vw, 4.4rem);
 	letter-spacing: 0.08em;
 	color: rgba(242, 239, 233, 0.26);
-	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #070606 70%);
 	user-select: none;
 }
 
-// Bottom-up gradient so the overlaid caption stays legible over any photo,
-// plus a faint top darkening to seat the index number.
-.scrim {
-	position: absolute;
-	inset: 0;
-	z-index: 1;
-	pointer-events: none;
-	background:
-		linear-gradient(to top, rgba(3, 3, 3, 0.92) 0%, rgba(3, 3, 3, 0.72) 22%, rgba(3, 3, 3, 0.12) 52%, transparent 72%),
-		linear-gradient(to bottom, rgba(3, 3, 3, 0.45) 0%, transparent 26%);
-	transition: opacity 0.35s ease;
+/* ===================== BODY (caption below photo) ===================== */
+.body {
+	display: flex;
+	flex-direction: column;
+	padding: 0.9rem 1.05rem 1.1rem;
 }
 
-/* ===================== INDEX ===================== */
 .index {
-	position: absolute;
-	top: 0.85rem;
-	left: 1rem;
-	z-index: 2;
 	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.72rem;
+	font-size: 0.7rem;
 	font-variant-numeric: tabular-nums;
 	letter-spacing: 0.22em;
 	color: var(--color-accent-hot);
-	text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
-}
-
-/* ===================== CAPTION ===================== */
-.caption {
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	z-index: 2;
-	padding: 1rem 1.15rem 1.15rem;
-	display: flex;
-	flex-direction: column;
+	margin-bottom: 0.35rem;
 }
 
 .name {
 	font-family: 'Bebas Neue', sans-serif;
-	font-size: 1.72rem;
-	line-height: 1.02;
+	font-size: 1.52rem;
+	line-height: 1.04;
 	letter-spacing: 0.03em;
-	color: #f6f3ee;
-	margin: 0;
-	text-shadow: 0 2px 14px rgba(0, 0, 0, 0.75);
-	// Uncontrolled external text — cap at two lines so long names stay aligned.
+	color: var(--color-text);
+	// Uncontrolled external text — cap at two lines for aligned card heights.
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
@@ -149,13 +118,10 @@
 .tagline {
 	font-family: 'JetBrains Mono', monospace;
 	font-size: 0.72rem;
-	letter-spacing: 0.08em;
+	letter-spacing: 0.05em;
 	line-height: 1.45;
-	margin: 0.4rem 0 0;
-	color: rgba(240, 237, 230, 0.82);
-	text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
-	// Sessionize taglines are free text — clamp so a paragraph doesn't blow the
-	// overlay out of the portrait.
+	margin-top: 0.35rem;
+	color: var(--color-grey);
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
@@ -163,60 +129,35 @@
 	overflow: hidden;
 }
 
-/* ===================== LINKS ===================== */
-// Present but understated at rest; the row lifts in and brightens on hover /
-// focus so the resting card reads as a clean editorial portrait.
-.links {
-	list-style: none;
-	margin: 0.85rem 0 0;
-	padding: 0;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.4rem;
-	opacity: 0.72;
-	transform: translateY(0.35rem);
-	transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.card:hover .links,
-.card:focus-within .links {
-	opacity: 1;
-	transform: translateY(0);
-}
-
-.link {
+.more {
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
-	width: 1.95rem;
-	height: 1.95rem;
-	color: rgba(246, 243, 238, 0.82);
-	background: rgba(0, 0, 0, 0.4);
-	border: 1px solid rgba(240, 237, 230, 0.22);
-	border-radius: var(--radius);
-	backdrop-filter: blur(2px);
-	transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+	gap: 0.35rem;
+	margin-top: 0.7rem;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.68rem;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.55);
+	transition: color 0.25s ease;
+}
 
-	svg {
-		width: 0.98rem;
-		height: 0.98rem;
-		display: block;
-	}
+.moreArrow {
+	transition: transform 0.25s ease;
+}
 
-	&:hover,
-	&:focus-visible {
-		color: #fff;
-		border-color: var(--rule-red);
-		background: rgba(204, 0, 0, 0.35);
-		box-shadow: var(--glow-red-soft);
-		transform: translateY(-1px);
-		outline: none;
-	}
+.card:hover .more,
+.card:focus-visible .more {
+	color: var(--color-accent-hot);
+}
+
+.card:hover .moreArrow,
+.card:focus-visible .moreArrow {
+	transform: translateX(3px);
 }
 
 /* ===================== "MORE SOON" TILE ===================== */
 // Closes the grid with a teaser tile so the lineup never reads as "complete".
-// Same portrait footprint as a card, but a flat dashed placeholder.
 .moreCard {
 	position: relative;
 	aspect-ratio: 4 / 5;
@@ -349,31 +290,26 @@
 		gap: 12px;
 	}
 	.name {
-		font-size: 1.5rem;
+		font-size: 1.4rem;
 	}
-	.caption {
-		padding: 0.85rem 0.9rem 0.95rem;
-	}
-	// Touch has no hover — keep the links fully visible.
-	.links {
-		opacity: 1;
-		transform: none;
+	.body {
+		padding: 0.75rem 0.8rem 0.9rem;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.card,
 	.photo,
-	.links,
-	.link,
-	.scrim,
+	.moreArrow,
+	.more,
+	.moreCard,
 	.loadingDot,
 	.loadingDots span {
 		transition: none;
 		animation: none;
 	}
 	.card:hover .photo,
-	.card:focus-within .photo {
+	.card:focus-visible .photo {
 		transform: none;
 	}
 }

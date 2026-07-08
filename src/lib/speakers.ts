@@ -36,6 +36,11 @@ export interface SpeakerLink {
 	label: string;
 }
 
+/** A talk this speaker is giving (title only — used in the detail view). */
+export interface SpeakerSession {
+	name: string;
+}
+
 export interface Speaker {
 	/** Sessionize speaker GUID — also the Firestore doc id. */
 	id: string;
@@ -44,9 +49,13 @@ export interface Speaker {
 	fullName: string;
 	/** May be empty — the card omits the tagline line when so. */
 	tagLine: string;
+	/** Full Sessionize bio; may be empty. Shown in the detail view. */
+	bio: string;
 	/** Absolute BunnyCDN URL; may be empty (→ monogram fallback). */
 	profilePicture: string;
 	links: SpeakerLink[];
+	/** Talks by this speaker; may be empty. Shown in the detail view. */
+	sessions: SpeakerSession[];
 }
 
 const KNOWN_KINDS = new Set<SpeakerLinkKind>([
@@ -122,6 +131,15 @@ function coerceLink(raw: unknown): SpeakerLink | null {
 	return { kind: safeKind, url, label };
 }
 
+function coerceSession(raw: unknown): SpeakerSession | null {
+	if (isString(raw)) return raw.trim() ? { name: raw } : null;
+	if (typeof raw === 'object' && raw !== null) {
+		const name = (raw as Record<string, unknown>).name;
+		if (isString(name) && name.trim()) return { name };
+	}
+	return null;
+}
+
 /**
  * Defensively coerce a Firestore document into a `Speaker`. The collection is
  * written only by `refreshSessionize`, but the client still normalizes so a
@@ -131,12 +149,17 @@ export function speakerFromDoc(id: string, data: Record<string, unknown>): Speak
 	const links = Array.isArray(data.links)
 		? (data.links.map(coerceLink).filter(Boolean) as SpeakerLink[])
 		: [];
+	const sessions = Array.isArray(data.sessions)
+		? (data.sessions.map(coerceSession).filter(Boolean) as SpeakerSession[])
+		: [];
 	return {
 		id,
 		order: typeof data.order === 'number' ? data.order : Number.MAX_SAFE_INTEGER,
 		fullName: isString(data.fullName) ? data.fullName : '',
 		tagLine: isString(data.tagLine) ? data.tagLine : '',
+		bio: isString(data.bio) ? data.bio : '',
 		profilePicture: isString(data.profilePicture) ? data.profilePicture : '',
 		links,
+		sessions,
 	};
 }

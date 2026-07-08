@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { initials, SPEAKER_ICON_PATHS, speakerFromDoc, type Speaker } from '../lib/speakers';
+import { initials, speakerFromDoc, type Speaker } from '../lib/speakers';
+import SpeakerDetail from './SpeakerDetail';
 import s from './Speakers.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
@@ -11,7 +12,7 @@ interface State {
 
 const INITIAL: State = { status: 'loading', speakers: [] };
 
-function SpeakerCard({ speaker }: { speaker: Speaker }) {
+function SpeakerCard({ speaker, onOpen }: { speaker: Speaker; onOpen: (speaker: Speaker) => void }) {
 	// A present-but-broken CDN URL (404 / timeout) falls back to the monogram,
 	// same as a speaker with no photo at all.
 	const [imageFailed, setImageFailed] = useState(false);
@@ -20,13 +21,18 @@ function SpeakerCard({ speaker }: { speaker: Speaker }) {
 
 	return (
 		<li>
-			<article className={s.card}>
-				<div className={s.portrait}>
+			<button
+				type="button"
+				className={s.card}
+				onClick={() => onOpen(speaker)}
+				aria-label={`View ${speaker.fullName}'s profile`}
+			>
+				<span className={s.media}>
 					{showPhoto ? (
 						<img
 							className={s.photo}
 							src={speaker.profilePicture}
-							alt={speaker.fullName}
+							alt=""
 							loading="lazy"
 							decoding="async"
 							width={400}
@@ -38,42 +44,26 @@ function SpeakerCard({ speaker }: { speaker: Speaker }) {
 							{initials(speaker.fullName) || '?'}
 						</span>
 					)}
-					<span className={s.scrim} aria-hidden="true" />
+				</span>
+				<span className={s.body}>
 					<span className={s.index} aria-hidden="true">
 						{index}
 					</span>
-					<div className={s.caption}>
-						<h3 className={s.name}>{speaker.fullName}</h3>
-						{speaker.tagLine && <p className={s.tagline}>{speaker.tagLine}</p>}
-						{speaker.links.length > 0 && (
-							<ul className={s.links}>
-								{speaker.links.map((link) => (
-									<li key={`${link.kind}-${link.url}`}>
-										<a
-											className={s.link}
-											href={link.url}
-											aria-label={`${speaker.fullName} — ${link.label}`}
-											title={link.label}
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-												<path d={SPEAKER_ICON_PATHS[link.kind]} />
-											</svg>
-										</a>
-									</li>
-								))}
-							</ul>
-						)}
-					</div>
-				</div>
-			</article>
+					<span className={s.name}>{speaker.fullName}</span>
+					{speaker.tagLine && <span className={s.tagline}>{speaker.tagLine}</span>}
+					<span className={s.more}>
+						View profile
+						<span className={s.moreArrow} aria-hidden="true">→</span>
+					</span>
+				</span>
+			</button>
 		</li>
 	);
 }
 
 export default function Speakers() {
 	const [state, setState] = useState<State>(INITIAL);
+	const [selected, setSelected] = useState<Speaker | null>(null);
 
 	useEffect(() => {
 		let unsubscribe: (() => void) | null = null;
@@ -109,6 +99,15 @@ export default function Speakers() {
 		};
 	}, []);
 
+	// If the live list changes while a speaker is open, keep the dialog in sync
+	// (or close it if that speaker is gone).
+	useEffect(() => {
+		if (!selected) return;
+		const fresh = state.speakers.find((sp) => sp.id === selected.id);
+		if (fresh && fresh !== selected) setSelected(fresh);
+		else if (!fresh && state.status === 'ready') setSelected(null);
+	}, [state.speakers, state.status, selected]);
+
 	if (state.status === 'error') {
 		return (
 			<div className={s.status} role="alert">
@@ -140,21 +139,24 @@ export default function Speakers() {
 	}
 
 	return (
-		<ul className={s.grid} role="list">
-			{state.speakers.map((speaker) => (
-				<SpeakerCard key={speaker.id} speaker={speaker} />
-			))}
-			<li>
-				<article className={s.moreCard} aria-label="More speakers to be announced">
-					<span className={s.moreDots} aria-hidden="true">
-						<span />
-						<span />
-						<span />
-					</span>
-					<span className={s.moreKicker}>Case open</span>
-					<p className={s.moreText}>More speakers announced soon</p>
-				</article>
-			</li>
-		</ul>
+		<>
+			<ul className={s.grid} role="list">
+				{state.speakers.map((speaker) => (
+					<SpeakerCard key={speaker.id} speaker={speaker} onOpen={setSelected} />
+				))}
+				<li>
+					<article className={s.moreCard} aria-label="More speakers to be announced">
+						<span className={s.moreDots} aria-hidden="true">
+							<span />
+							<span />
+							<span />
+						</span>
+						<span className={s.moreKicker}>Case open</span>
+						<p className={s.moreText}>More speakers announced soon</p>
+					</article>
+				</li>
+			</ul>
+			{selected && <SpeakerDetail speaker={selected} onClose={() => setSelected(null)} />}
+		</>
 	);
 }

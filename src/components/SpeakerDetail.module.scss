@@ -1,0 +1,274 @@
+// Speaker detail dialog — film-noir modal opened from a lineup card.
+
+.overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1.2rem;
+	background: rgba(3, 3, 3, 0.78);
+	backdrop-filter: blur(4px);
+	animation: overlayIn 0.2s ease;
+}
+
+@keyframes overlayIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.dialog {
+	position: relative;
+	display: flex;
+	width: 100%;
+	max-width: 760px;
+	max-height: 88vh;
+	overflow: hidden;
+	background:
+		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
+		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 82%);
+	border: 1px solid var(--rule-red);
+	box-shadow: var(--glow-red-soft), 0 30px 70px rgba(0, 0, 0, 0.72);
+	outline: none;
+	animation: dialogIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dialogIn {
+	from {
+		opacity: 0;
+		transform: translateY(14px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* ===================== CLOSE ===================== */
+.close {
+	position: absolute;
+	top: 0.7rem;
+	right: 0.7rem;
+	z-index: 3;
+	width: 2.3rem;
+	height: 2.3rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: rgba(246, 243, 238, 0.85);
+	background: rgba(0, 0, 0, 0.45);
+	border: 1px solid rgba(240, 237, 230, 0.22);
+	border-radius: var(--radius);
+	cursor: pointer;
+	transition: color 0.2s, border-color 0.2s, background 0.2s;
+
+	svg {
+		width: 1.1rem;
+		height: 1.1rem;
+	}
+
+	&:hover,
+	&:focus-visible {
+		color: #fff;
+		border-color: var(--rule-red);
+		background: rgba(204, 0, 0, 0.35);
+		outline: none;
+	}
+}
+
+/* ===================== MEDIA ===================== */
+.media {
+	position: relative;
+	flex: 0 0 40%;
+	max-width: 300px;
+	overflow: hidden;
+	background: var(--panel-lit);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.photo {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center 22%;
+	filter: grayscale(1) contrast(1.06) brightness(0.92);
+}
+
+.monogram {
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: clamp(3rem, 10vw, 4.6rem);
+	letter-spacing: 0.08em;
+	color: rgba(242, 239, 233, 0.26);
+	user-select: none;
+}
+
+/* ===================== CONTENT ===================== */
+.content {
+	flex: 1;
+	min-width: 0;
+	padding: 2rem 2rem 2.2rem;
+	overflow-y: auto;
+}
+
+.kicker {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.7rem;
+	letter-spacing: 0.28em;
+	text-transform: uppercase;
+	color: var(--color-accent-hot);
+	margin: 0 0 0.5rem;
+}
+
+.name {
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: clamp(2.1rem, 4vw, 2.9rem);
+	line-height: 1;
+	letter-spacing: 0.03em;
+	color: var(--color-text);
+	margin: 0;
+}
+
+.tag {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.8rem;
+	letter-spacing: 0.05em;
+	line-height: 1.5;
+	color: var(--color-grey);
+	margin: 0.6rem 0 0;
+}
+
+/* ===================== LINKS ===================== */
+.links {
+	list-style: none;
+	margin: 1.1rem 0 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+}
+
+.link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.1rem;
+	height: 2.1rem;
+	color: rgba(246, 243, 238, 0.78);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+
+	svg {
+		width: 1.02rem;
+		height: 1.02rem;
+		display: block;
+	}
+
+	&:hover,
+	&:focus-visible {
+		color: #fff;
+		border-color: var(--rule-red);
+		background: rgba(204, 0, 0, 0.28);
+		box-shadow: var(--glow-red-soft);
+		transform: translateY(-1px);
+		outline: none;
+	}
+}
+
+/* ===================== BIO ===================== */
+.bio {
+	margin-top: 1.4rem;
+	border-top: 1px solid var(--rule-soft);
+	padding-top: 1.2rem;
+
+	p {
+		font-family: 'IM Fell English', serif;
+		font-size: 1.02rem;
+		line-height: 1.75;
+		color: rgba(240, 237, 230, 0.9);
+		margin: 0 0 0.9rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
+
+/* ===================== SESSIONS ===================== */
+.sessions {
+	margin-top: 1.4rem;
+	border-top: 1px solid var(--rule-soft);
+	padding-top: 1.2rem;
+}
+
+.sessionsTitle {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.72rem;
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+	margin: 0 0 0.7rem;
+}
+
+.sessionsList {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.55rem;
+
+	li {
+		position: relative;
+		padding-left: 1.1rem;
+		font-family: 'IM Fell English', serif;
+		font-size: 1.05rem;
+		line-height: 1.45;
+		color: var(--color-text);
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 0.62em;
+			width: 6px;
+			height: 6px;
+			background: var(--color-accent-hot);
+		}
+	}
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 620px) {
+	.dialog {
+		flex-direction: column;
+		max-height: 90vh;
+		overflow-y: auto;
+	}
+	.media {
+		flex: 0 0 auto;
+		max-width: none;
+		width: 100%;
+		height: 260px;
+	}
+	.content {
+		padding: 1.5rem 1.3rem 1.7rem;
+		overflow-y: visible;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.overlay,
+	.dialog {
+		animation: none;
+	}
+}
