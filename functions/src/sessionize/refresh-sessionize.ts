@@ -21,7 +21,7 @@ import { SESSIONIZE_ENDPOINT_ID } from './params.js';
 import {
 	computeDeletePlan,
 	extractSpeakers,
-	fetchAll,
+	fetchSpeakersPayload,
 	normalizeSpeakers,
 	type SpeakerDoc,
 } from './sessionize-api.js';
@@ -53,9 +53,9 @@ async function syncSessionize(): Promise<SyncResult> {
 		throw new Error('Missing config: set the SESSIONIZE_ENDPOINT_ID secret.');
 	}
 
-	logger.info('Fetching Sessionize All-data view');
-	const all = await fetchAll(endpointId);
-	const speakers: SpeakerDoc[] = normalizeSpeakers(extractSpeakers(all));
+	logger.info('Fetching Sessionize speakers');
+	const payload = await fetchSpeakersPayload(endpointId);
+	const speakers: SpeakerDoc[] = normalizeSpeakers(extractSpeakers(payload));
 
 	const collection = firestore().collection(SPEAKERS_COLLECTION);
 

@@ -5,14 +5,19 @@
  * fetches the All-data view once a day and mirrors it into public-read
  * Firestore; the browser never calls Sessionize directly.
  *
- * Endpoint: https://sessionize.com/api/v2/<id>/view/All  (no auth, GET,
- * server-cached ~5 min). Unlike the Speakers view (a bare array), the All view
- * returns an OBJECT — `{ sessions, speakers, rooms, categories, questions }`.
- * The id MUST be a JSON-format "All data" endpoint; an embed id returns HTML.
+ * Endpoint: https://sessionize.com/api/v2/<id>/view/<View>  (no auth, GET,
+ * server-cached ~5 min). Sessionize endpoints are provisioned per-view, so a
+ * given id serves only the view(s) it was created for; requesting a view the
+ * endpoint doesn't expose returns a 400 HTML page. We only need the speaker
+ * records, and BOTH the "All data" view (an OBJECT `{ speakers, sessions,
+ * rooms, categories, questions }`) and the "Speakers" view (a bare ARRAY of the
+ * same speaker objects) carry them — so `fetchSpeakersPayload` tries All first,
+ * falls back to Speakers, and `extractSpeakers` accepts either shape. The id
+ * MUST be a JSON-format endpoint; an embed id returns HTML, not JSON.
  *
- * Scope today: only the `speakers` array is mirrored (into the `speakers`
- * collection). `sessions` / `rooms` / `categories` are present on the wire but
- * not yet persisted — add a collection + guarded sync when they're needed.
+ * Scope: only speakers are mirrored (into the `speakers` collection). The All
+ * view's `sessions` / `rooms` / `categories` are ignored — add a collection +
+ * guarded sync when they're needed.
  *
  * The fetch/validate/normalize and delete-guard logic below are pure and
  * exported so the highest-risk paths (a truncated response must never wipe the
@@ -235,15 +240,20 @@ export function validateSpeakers(raw: unknown): SessionizeSpeaker[] {
 }
 
 /**
- * Pull the validated `speakers` array out of the All-data envelope. Throws when
- * the payload is not the expected object (e.g. an embed id returned HTML, or a
- * truncated body), so the caller aborts without writing.
+ * Pull the validated speaker list out of a Sessionize payload, accepting either
+ * shape: the "All data" view returns an OBJECT (`{ speakers, sessions, … }`);
+ * the "Speakers" view returns a bare ARRAY of the same speaker objects. Throws
+ * on anything else (e.g. an embed id returned HTML, or a truncated body) so the
+ * caller aborts without writing.
  */
-export function extractSpeakers(all: unknown): SessionizeSpeaker[] {
-	if (typeof all !== 'object' || all === null || Array.isArray(all)) {
-		throw new Error('Sessionize All payload is not an object');
+export function extractSpeakers(payload: unknown): SessionizeSpeaker[] {
+	if (Array.isArray(payload)) {
+		return validateSpeakers(payload);
 	}
-	return validateSpeakers((all as SessionizeAll).speakers);
+	if (typeof payload === 'object' && payload !== null) {
+		return validateSpeakers((payload as SessionizeAll).speakers);
+	}
+	throw new Error('Sessionize payload is neither an array nor an object');
 }
 
 /**
@@ -275,23 +285,52 @@ export function normalizeSpeakers(raw: SessionizeSpeaker[]): SpeakerDoc[] {
 }
 
 /**
- * Fetch + parse the All-data view. Throws on non-200, network error, timeout,
- * or a body that is not JSON so the caller can abort without touching
- * Firestore.
+ * Extract the bare endpoint id from the configured secret. Tolerates the value
+ * being pasted as a full Sessionize URL (e.g.
+ * `https://sessionize.com/api/v2/h826z24u` or `.../h826z24u/view/All`) rather
+ * than just `h826z24u` — the base + `/view/<View>` are always added here, so a
+ * URL in the secret would otherwise double the path and 400.
  */
-export async function fetchAll(endpointId: string): Promise<unknown> {
-	const url = `${SESSIONIZE_API_BASE}/${endpointId}/view/All`;
-	// Fail fast on a hung connection rather than riding the 120s function
-	// timeout; AbortSignal.timeout rejects the fetch, which the caller treats
-	// as a sync abort (no partial write).
-	const res = await fetch(url, {
+export function parseEndpointId(raw: string | null | undefined): string {
+	const trimmed = (raw ?? '').trim();
+	if (!trimmed) return '';
+	// Full Sessionize URL, with or without a trailing /view/<View>.
+	const match = trimmed.match(/sessionize\.com\/api\/v2\/([^/\s?#]+)/i);
+	if (match) return match[1];
+	// Bare id, possibly with a trailing "/view/…", query, or slash.
+	return trimmed.replace(/[/?#].*$/, '');
+}
+
+/** GET one Sessionize view. Fails fast on a hung connection rather than riding
+ * the 120s function timeout. */
+async function fetchView(endpointId: string, view: string): Promise<Response> {
+	return fetch(`${SESSIONIZE_API_BASE}/${endpointId}/view/${view}`, {
 		headers: { Accept: 'application/json' },
 		signal: AbortSignal.timeout(15_000),
 	});
+}
 
+/**
+ * Fetch + parse the speaker payload. Sessionize endpoints are provisioned
+ * per-view, so the configured id may serve the "All data" view, the "Speakers"
+ * view, or both — try All first and fall back to Speakers on a non-OK response.
+ * Throws on network error, timeout, both views failing, or a body that is not
+ * JSON, so the caller aborts without touching Firestore.
+ */
+export async function fetchSpeakersPayload(rawEndpointId: string): Promise<unknown> {
+	const endpointId = parseEndpointId(rawEndpointId);
+	if (!endpointId) throw new Error('Missing or empty Sessionize endpoint id');
+
+	let res = await fetchView(endpointId, 'All');
 	if (!res.ok) {
-		const body = await res.text().catch(() => '');
-		throw new Error(`Sessionize API ${res.status} ${res.statusText}: ${body.slice(0, 300)}`);
+		const allStatus = res.status;
+		res = await fetchView(endpointId, 'Speakers');
+		if (!res.ok) {
+			const body = await res.text().catch(() => '');
+			throw new Error(
+				`Sessionize API failed for id "${endpointId}" (All=${allStatus}, Speakers=${res.status} ${res.statusText}): ${body.slice(0, 200)}`,
+			);
+		}
 	}
 
 	try {
