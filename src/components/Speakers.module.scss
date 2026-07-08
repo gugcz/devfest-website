@@ -214,6 +214,69 @@
 	}
 }
 
+/* ===================== "MORE SOON" TILE ===================== */
+// Closes the grid with a teaser tile so the lineup never reads as "complete".
+// Same portrait footprint as a card, but a flat dashed placeholder.
+.moreCard {
+	position: relative;
+	aspect-ratio: 4 / 5;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.7rem;
+	padding: 1.2rem;
+	text-align: center;
+	background: radial-gradient(120% 120% at 50% 20%, #141010 0%, #070606 72%);
+	border: 1px dashed rgba(204, 0, 0, 0.4);
+	transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+
+	&:hover {
+		transform: translateY(-5px);
+		border-color: var(--rule-red);
+		box-shadow: var(--glow-red-soft);
+	}
+}
+
+.moreDots {
+	display: inline-flex;
+	gap: 0.34rem;
+
+	span {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--color-accent-hot);
+		opacity: 0.35;
+		animation: skelPulse 1.4s ease-in-out infinite;
+	}
+
+	span:nth-child(2) {
+		animation-delay: 0.2s;
+	}
+	span:nth-child(3) {
+		animation-delay: 0.4s;
+	}
+}
+
+.moreKicker {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.68rem;
+	letter-spacing: 0.28em;
+	text-transform: uppercase;
+	color: var(--color-accent-hot);
+}
+
+.moreText {
+	font-family: 'IM Fell English', serif;
+	font-style: italic;
+	font-size: 1.12rem;
+	line-height: 1.5;
+	color: var(--color-grey);
+	margin: 0;
+	max-width: 22ch;
+}
+
 /* ===================== STATES ===================== */
 .status {
 	text-align: center;

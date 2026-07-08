@@ -144,6 +144,17 @@ export default function Speakers() {
 			{state.speakers.map((speaker) => (
 				<SpeakerCard key={speaker.id} speaker={speaker} />
 			))}
+			<li>
+				<article className={s.moreCard} aria-label="More speakers to be announced">
+					<span className={s.moreDots} aria-hidden="true">
+						<span />
+						<span />
+						<span />
+					</span>
+					<span className={s.moreKicker}>Case open</span>
+					<p className={s.moreText}>More speakers announced soon</p>
+				</article>
+			</li>
 		</ul>
 	);
 }
