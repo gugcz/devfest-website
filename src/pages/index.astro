@@ -79,8 +79,11 @@ const tickerTopics = [
 		<!-- TICKETS -->
 		<Tickets client:visible />
 
-		<!-- SPEAKERS TEASER — auto-rotating lineup spotlight; hides until data loads -->
-		<SpeakersTeaser client:visible />
+		<!-- SPEAKERS TEASER — auto-rotating lineup spotlight; hides until data loads.
+		     client:load (not visible): the island renders nothing until Firestore
+		     resolves, so a client:visible observer would never fire on the
+		     zero-height placeholder. -->
+		<SpeakersTeaser client:load />
 
 		<!-- CALL FOR SPEAKERS — hidden: CFP closed
 		<section id="speakers" aria-labelledby="speakers-title">

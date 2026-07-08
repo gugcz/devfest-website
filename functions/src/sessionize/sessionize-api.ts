@@ -90,12 +90,20 @@ export interface SpeakerLink {
 	label: string;
 }
 
+/** A talk resolved to its title. The All view gives a speaker only session ids;
+ * the titles live in the payload's top-level `sessions[]`, joined here. */
+export interface SpeakerSession {
+	id: string;
+	name: string;
+}
+
 /**
  * The document written to Firestore `speakers/{id}` — the FULL Sessionize
  * speaker record. `links` is the sanitized + kind-mapped form (raw link URLs
- * are never persisted, so a `javascript:` href can't reach the DOM). The
- * relational arrays (`sessions` / `categories` / `questionAnswers`) are stored
- * as-is for downstream use; nothing renders them yet.
+ * are never persisted, so a `javascript:` href can't reach the DOM). `sessions`
+ * are resolved to `{ id, name }` (title joined from the All payload). The other
+ * relational arrays (`categories` / `questionAnswers`) are stored as-is for
+ * downstream use; nothing renders them yet.
  */
 export interface SpeakerDoc {
 	/** Sessionize speaker GUID — also the Firestore doc id. */
@@ -112,7 +120,7 @@ export interface SpeakerDoc {
 	profilePicture: string;
 	isTopSpeaker: boolean;
 	links: SpeakerLink[];
-	sessions: unknown[];
+	sessions: SpeakerSession[];
 	categories: unknown[];
 	questionAnswers: unknown[];
 }
@@ -257,12 +265,70 @@ export function extractSpeakers(payload: unknown): SessionizeSpeaker[] {
 }
 
 /**
+ * Build an id→title map from the All payload's top-level `sessions[]`. In the
+ * All view a speaker carries only session ids (e.g. `[1282231]`); their titles
+ * live here. Returns an empty map for the Speakers view (a bare array), which
+ * already inlines `{ id, name }` on each speaker.
+ */
+export function buildSessionTitleMap(payload: unknown): Map<string, string> {
+	const map = new Map<string, string>();
+	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
+	const sessions = (payload as SessionizeAll).sessions;
+	if (!Array.isArray(sessions)) return map;
+	for (const entry of sessions) {
+		if (typeof entry !== 'object' || entry === null) continue;
+		const record = entry as Record<string, unknown>;
+		if (record.id == null) continue;
+		const title =
+			(typeof record.title === 'string' && record.title) ||
+			(typeof record.name === 'string' && record.name) ||
+			'';
+		if (title) map.set(String(record.id), title.trim());
+	}
+	return map;
+}
+
+/**
+ * Resolve a speaker's `sessions` to `{ id, name }`, handling both wire shapes:
+ * bare ids (All view) looked up in `titles`, or inlined `{ id, name/title }`
+ * objects (Speakers view). Sessions whose title can't be resolved are dropped.
+ */
+function resolveSessions(raw: unknown, titles: Map<string, string>): SpeakerSession[] {
+	if (!Array.isArray(raw)) return [];
+	const out: SpeakerSession[] = [];
+	for (const item of raw) {
+		if (typeof item === 'number' || typeof item === 'string') {
+			const id = String(item);
+			const name = titles.get(id);
+			if (name) out.push({ id, name });
+			continue;
+		}
+		if (typeof item === 'object' && item !== null) {
+			const record = item as Record<string, unknown>;
+			const id = record.id != null ? String(record.id) : '';
+			const inline =
+				(typeof record.name === 'string' && record.name) ||
+				(typeof record.title === 'string' && record.title) ||
+				'';
+			const name = inline.trim() || (id ? titles.get(id) : undefined);
+			if (name) out.push({ id, name });
+		}
+	}
+	return out;
+}
+
+/**
  * Project one raw speaker into the persisted FULL doc shape. `order` is the
  * array index (unique per sync); missing scalars become empty strings / false
  * so the doc shape stays stable and `orderBy('order')` never omits a speaker.
- * Relational arrays are stored as-is.
+ * `sessions` are resolved to titles via `titles`; other relational arrays are
+ * stored as-is.
  */
-export function normalizeSpeaker(raw: SessionizeSpeaker, index: number): SpeakerDoc {
+export function normalizeSpeaker(
+	raw: SessionizeSpeaker,
+	index: number,
+	titles: Map<string, string>,
+): SpeakerDoc {
 	return {
 		id: (raw.id as string).trim(),
 		order: index,
@@ -274,14 +340,17 @@ export function normalizeSpeaker(raw: SessionizeSpeaker, index: number): Speaker
 		profilePicture: asString(raw.profilePicture),
 		isTopSpeaker: raw.isTopSpeaker === true,
 		links: normalizeLinks(raw.links),
-		sessions: asArray(raw.sessions),
+		sessions: resolveSessions(raw.sessions, titles),
 		categories: asArray(raw.categories),
 		questionAnswers: asArray(raw.questionAnswers),
 	};
 }
 
-export function normalizeSpeakers(raw: SessionizeSpeaker[]): SpeakerDoc[] {
-	return raw.map(normalizeSpeaker);
+export function normalizeSpeakers(
+	raw: SessionizeSpeaker[],
+	titles: Map<string, string> = new Map(),
+): SpeakerDoc[] {
+	return raw.map((speaker, index) => normalizeSpeaker(speaker, index, titles));
 }
 
 /**
