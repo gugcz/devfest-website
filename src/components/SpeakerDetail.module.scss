@@ -29,7 +29,10 @@
 	display: flex;
 	width: 100%;
 	max-width: 760px;
-	max-height: 88vh;
+	// Fixed height on desktop so the dialog doesn't resize between speakers with
+	// longer/shorter bios — the content column scrolls instead. Mobile (below)
+	// reverts to content height.
+	height: min(78vh, 620px);
 	overflow: hidden;
 	background:
 		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
@@ -253,6 +256,7 @@
 @media (max-width: 620px) {
 	.dialog {
 		flex-direction: column;
+		height: auto;
 		max-height: 90vh;
 		overflow-y: auto;
 	}
