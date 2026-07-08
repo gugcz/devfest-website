@@ -10,7 +10,6 @@ const MAX_TILES = 11;
 function Thumb({ speaker }: { speaker: Speaker }) {
 	const [imageFailed, setImageFailed] = useState(false);
 	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
-	const index = String(speaker.order + 1).padStart(2, '0');
 
 	return (
 		<a className={s.tile} href="/speakers" aria-label={`${speaker.fullName} — see the full lineup`}>
@@ -33,9 +32,6 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 				)}
 			</span>
 			<span className={s.meta}>
-				<span className={s.index} aria-hidden="true">
-					{index}
-				</span>
 				<span className={s.tname}>{speaker.fullName}</span>
 			</span>
 		</a>
