@@ -1,7 +1,9 @@
 /**
- * Scheduled trigger that mirrors the Sessionize speaker lineup into the
- * public-read Firestore `speakers` collection. The website reads `speakers`
- * directly so visitor traffic never hits Sessionize.
+ * Scheduled trigger that mirrors Sessionize into public-read Firestore. Fetches
+ * the All-data view and (today) writes the `speakers` array into the `speakers`
+ * collection; the website reads it directly so visitor traffic never hits
+ * Sessionize. Sessions / rooms / categories are on the wire but not yet
+ * persisted — add a collection + guarded sync when they're needed.
  *
  * The write is a single atomic batch (upserts + guarded deletes) so a live
  * `onSnapshot` subscriber never streams a half-synced state. A truncated or
@@ -18,15 +20,15 @@ import { postToSlack } from '../tickets/slack-client.js';
 import { SESSIONIZE_ENDPOINT_ID } from './params.js';
 import {
 	computeDeletePlan,
-	fetchSpeakers,
+	extractSpeakers,
+	fetchAll,
 	normalizeSpeakers,
-	validateSpeakers,
 	type SpeakerDoc,
 } from './sessionize-api.js';
 
 const REGION = 'europe-west1';
 const SPEAKERS_COLLECTION = 'speakers';
-const SLACK_PREFIX = '🎤 SPEAKERS';
+const SLACK_PREFIX = '🎤 SESSIONIZE';
 
 /** Best-effort Slack alert — never masks the caller's real error. */
 async function notify(text: string): Promise<void> {
@@ -35,7 +37,7 @@ async function notify(text: string): Promise<void> {
 	try {
 		await postToSlack(webhookUrl, { text: `${SLACK_PREFIX} — ${text}` });
 	} catch (err) {
-		logger.warn('speakers Slack notify failed', err);
+		logger.warn('sessionize Slack notify failed', err);
 	}
 }
 
@@ -45,15 +47,15 @@ interface SyncResult {
 	deletesWithheld: boolean;
 }
 
-async function syncSpeakers(): Promise<SyncResult> {
+async function syncSessionize(): Promise<SyncResult> {
 	const endpointId = SESSIONIZE_ENDPOINT_ID.value();
 	if (!endpointId) {
 		throw new Error('Missing config: set the SESSIONIZE_ENDPOINT_ID secret.');
 	}
 
-	logger.info('Fetching Sessionize speakers');
-	const raw = await fetchSpeakers(endpointId);
-	const speakers: SpeakerDoc[] = normalizeSpeakers(validateSpeakers(raw));
+	logger.info('Fetching Sessionize All-data view');
+	const all = await fetchAll(endpointId);
+	const speakers: SpeakerDoc[] = normalizeSpeakers(extractSpeakers(all));
 
 	const collection = firestore().collection(SPEAKERS_COLLECTION);
 
@@ -98,10 +100,10 @@ async function syncSpeakers(): Promise<SyncResult> {
 }
 
 /**
- * Daily scheduled refresh. Sessionize server-caches the Speakers view ~5 min;
+ * Daily scheduled refresh. Sessionize server-caches the All-data view ~5 min;
  * one request per day is trivial load.
  */
-export const refreshSpeakers = onSchedule(
+export const refreshSessionize = onSchedule(
 	{
 		schedule: 'every day 06:00',
 		timeZone: 'Europe/Prague',
@@ -113,7 +115,7 @@ export const refreshSpeakers = onSchedule(
 	},
 	async () => {
 		try {
-			await syncSpeakers();
+			await syncSessionize();
 		} catch (err) {
 			// Alert best-effort, then rethrow the ORIGINAL error so the failure
 			// surfaces in logs / retries and yesterday's data stays intact.

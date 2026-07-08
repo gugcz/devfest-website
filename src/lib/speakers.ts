@@ -1,11 +1,13 @@
 /**
  * Browser-safe speaker types + presentation helpers.
  *
- * The daily `refreshSpeakers` Cloud Function (functions/src/speakers/) writes
- * documents into the public-read Firestore `speakers` collection; the shapes
- * here mirror that `SpeakerDoc`. This module is browser-safe: types, the
- * kind→icon map, and pure helpers only — no Firebase import (the island wires
- * the live read via `getFirestoreDb()`).
+ * The daily `refreshSessionize` Cloud Function (functions/src/sessionize/)
+ * writes documents into the public-read Firestore `speakers` collection; the
+ * shapes here mirror the subset of that `SpeakerDoc` the UI renders (the doc
+ * also carries the full Sessionize record — bio, sessions, etc. — which the
+ * page ignores for now). Browser-safe: types, the kind→icon map, and pure
+ * helpers only — no Firebase import (the island wires the read via
+ * `getFirestoreDb()`).
  */
 
 /**
@@ -13,7 +15,7 @@
  * `linkType` to one of these; unknown types collapse to `web` (a globe) so a
  * link never renders without an icon.
  *
- * ⚠️ Keep in sync with `functions/src/speakers/sessionize-api.ts` (its
+ * ⚠️ Keep in sync with `functions/src/sessionize/sessionize-api.ts` (its
  * `SpeakerLinkKind` + `KIND_LABEL`) — the two live across the src/ ↔ functions/
  * build boundary and share no package. Adding a kind means editing both.
  */
@@ -122,7 +124,7 @@ function coerceLink(raw: unknown): SpeakerLink | null {
 
 /**
  * Defensively coerce a Firestore document into a `Speaker`. The collection is
- * written only by `refreshSpeakers`, but the client still normalizes so a
+ * written only by `refreshSessionize`, but the client still normalizes so a
  * partially-shaped doc renders (or degrades) instead of throwing in the island.
  */
 export function speakerFromDoc(id: string, data: Record<string, unknown>): Speaker {
