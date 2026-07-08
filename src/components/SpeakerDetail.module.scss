@@ -3,7 +3,9 @@
 .overlay {
 	position: fixed;
 	inset: 0;
-	z-index: 200;
+	// Above the fixed site header (z-index 10001) so the close button and dialog
+	// are never covered by the top bar.
+	z-index: 10050;
 	display: flex;
 	align-items: center;
 	justify-content: center;

@@ -1,23 +1,25 @@
-// Home-page speaker spotlight — a single card that auto-rotates through the
-// lineup. Same film-noir system as the rest of the site; a compact teaser that
-// points at the full /speakers page.
+// Home-page "lineup wall" — a grid of grayscale speaker mugshots (a noir
+// suspects board) linking to /speakers. Same film-noir system as the site.
 
 .teaser {
 	width: 100%;
 	padding: var(--section-y) var(--gutter);
 	border-top: 1px solid var(--rule-soft);
-	background: var(--lit);
+	background:
+		radial-gradient(ellipse 50% 60% at 88% 10%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
+		var(--lit),
+		var(--color-bg);
 }
 
 .inner {
-	max-width: 920px;
+	max-width: var(--maxw);
 	margin: 0 auto;
 }
 
 /* ===================== HEAD ===================== */
 .head {
 	text-align: center;
-	margin-bottom: 2.2rem;
+	margin-bottom: 2.4rem;
 }
 
 .eyebrow {
@@ -44,59 +46,43 @@
 	color: var(--color-accent);
 }
 
-/* ===================== SPOTLIGHT ===================== */
-.spotlightLink {
-	display: block;
+.lede {
+	font-family: 'IM Fell English', serif;
+	font-style: italic;
+	font-size: 1.05rem;
+	line-height: 1.6;
+	color: var(--color-grey);
+	margin: 0.8rem 0 0;
+}
+
+/* ===================== WALL ===================== */
+// Many mugshots at once — dense on desktop, still readable on mobile.
+.wall {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 14px;
+}
+
+/* ===================== TILE ===================== */
+.tile {
+	display: flex;
+	flex-direction: column;
 	text-decoration: none;
 	color: inherit;
 	outline: none;
-
-	&:focus-visible .spotlight {
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft), 0 22px 48px rgba(0, 0, 0, 0.66);
-	}
 }
 
-.spotlight {
-	display: flex;
-	align-items: stretch;
-	gap: 1.4rem;
-	padding: 1.1rem;
-	background:
-		radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 46%),
-		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
-	border: 1px solid var(--rule);
-	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
-	transition: border-color 0.3s ease, box-shadow 0.3s ease;
-	animation: teaserFade 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-
-	.spotlightLink:hover & {
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft), 0 22px 48px rgba(0, 0, 0, 0.66);
-	}
-}
-
-@keyframes teaserFade {
-	from {
-		opacity: 0;
-		transform: translateY(8px);
-	}
-	to {
-		opacity: 1;
-		transform: none;
-	}
-}
-
-.portrait {
+.thumb {
 	position: relative;
-	flex: 0 0 auto;
-	width: 132px;
+	display: block;
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
-	background: var(--panel-lit);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #070606 72%);
+	border: 1px solid var(--rule);
+	transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .photo {
@@ -106,152 +92,142 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	filter: grayscale(1) contrast(1.06) brightness(0.9);
+	filter: grayscale(1) contrast(1.06) brightness(0.88);
+	transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
 }
 
 .monogram {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	font-family: 'Bebas Neue', sans-serif;
 	font-size: 2.4rem;
 	letter-spacing: 0.06em;
-	color: rgba(242, 239, 233, 0.28);
+	color: rgba(242, 239, 233, 0.24);
 	user-select: none;
 }
 
-.info {
+.tile:hover .thumb,
+.tile:focus-visible .thumb {
+	border-color: var(--rule-red);
+	box-shadow: var(--glow-red-soft);
+	transform: translateY(-3px);
+}
+
+.tile:hover .photo,
+.tile:focus-visible .photo {
+	transform: scale(1.05);
+	filter: grayscale(0.15) contrast(1.05) brightness(1);
+}
+
+.tile:focus-visible .thumb {
+	outline: 2px solid var(--color-accent-hot);
+	outline-offset: 2px;
+}
+
+.meta {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	min-width: 0;
+	padding: 0.55rem 0.15rem 0;
 }
 
-.kicker {
+.index {
 	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.68rem;
-	letter-spacing: 0.26em;
-	text-transform: uppercase;
+	font-size: 0.64rem;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.2em;
 	color: var(--color-accent-hot);
-	margin-bottom: 0.5rem;
+	margin-bottom: 0.2rem;
 }
 
-.name {
+.tname {
 	font-family: 'Bebas Neue', sans-serif;
-	font-size: clamp(1.8rem, 3.4vw, 2.5rem);
-	line-height: 1;
+	font-size: 1.12rem;
+	line-height: 1.05;
 	letter-spacing: 0.03em;
 	color: var(--color-text);
-	margin: 0;
-}
-
-.tag {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.76rem;
-	letter-spacing: 0.06em;
-	line-height: 1.5;
-	color: var(--color-grey);
-	margin: 0.5rem 0 0;
+	// Reserve two lines so tile captions align across the wall.
+	min-height: 2.1em;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
+	transition: color 0.25s ease;
 }
 
-/* ===================== FOOT (progress + counter + CTA) ===================== */
-.foot {
+.tile:hover .tname,
+.tile:focus-visible .tname {
+	color: var(--color-accent-hot);
+}
+
+/* ===================== "+N MORE" TILE ===================== */
+.moreTile {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	gap: 1rem;
-	margin-top: 1.1rem;
-}
-
-.progress {
-	flex: 1;
-	height: 2px;
-	background: rgba(240, 237, 230, 0.12);
-	overflow: hidden;
-}
-
-.bar {
-	display: block;
-	width: 100%;
-	height: 100%;
-	background: var(--color-accent-hot);
-	transform: scaleX(0);
-	transform-origin: left center;
-	animation-name: teaserProgress;
-	animation-timing-function: linear;
-	animation-fill-mode: forwards;
-}
-
-@keyframes teaserProgress {
-	to {
-		transform: scaleX(1);
-	}
-}
-
-.counter {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.72rem;
-	font-variant-numeric: tabular-nums;
-	letter-spacing: 0.16em;
-	color: rgba(240, 237, 230, 0.55);
-	flex-shrink: 0;
-}
-
-.cta {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.4rem;
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.76rem;
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	justify-content: center;
+	gap: 0.15rem;
+	aspect-ratio: 4 / 5;
 	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
-	padding-bottom: 2px;
-	flex-shrink: 0;
-	transition: color 0.2s ease;
+	text-align: center;
+	background: radial-gradient(120% 120% at 50% 20%, #141010 0%, #070606 72%);
+	border: 1px dashed rgba(204, 0, 0, 0.42);
+	transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 
 	&:hover,
 	&:focus-visible {
-		color: var(--color-accent-hot);
+		border-color: var(--rule-red);
+		box-shadow: var(--glow-red-soft);
+		transform: translateY(-3px);
+		outline: none;
 	}
 }
 
-.ctaArrow {
-	font-size: 0.9em;
+.moreNum {
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: 2.2rem;
+	line-height: 1;
+	letter-spacing: 0.03em;
+	color: var(--color-text);
+}
+
+.moreLabel {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.64rem;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+}
+
+.moreArrow {
+	margin-top: 0.4rem;
+	color: var(--color-accent-hot);
+	font-size: 0.9rem;
 }
 
 /* ===================== RESPONSIVE ===================== */
-@media (max-width: 560px) {
-	.spotlight {
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		gap: 1rem;
+@media (max-width: 600px) {
+	.wall {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 10px;
 	}
-	.portrait {
-		width: 150px;
-	}
-	.info {
-		align-items: center;
-	}
-	.foot {
-		flex-wrap: wrap;
-	}
-	.progress {
-		order: 3;
-		flex-basis: 100%;
+	.tname {
+		font-size: 1rem;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.spotlight {
-		animation: none;
+	.thumb,
+	.photo,
+	.tname,
+	.moreTile {
+		transition: none;
 	}
-	.bar {
-		animation: none;
-		transform: scaleX(1);
+	.tile:hover .photo,
+	.tile:focus-visible .photo {
+		transform: none;
 	}
 }

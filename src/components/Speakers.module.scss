@@ -11,6 +11,12 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 	gap: 18px;
+
+	// Each grid cell stretches its card to the row height, and the card fills the
+	// cell, so every card in a row is exactly the same height.
+	> li {
+		display: flex;
+	}
 }
 
 /* ===================== CARD (button) ===================== */
@@ -18,6 +24,7 @@
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+	height: 100%;
 	margin: 0;
 	padding: 0;
 	text-align: left;
@@ -89,6 +96,7 @@
 .body {
 	display: flex;
 	flex-direction: column;
+	flex: 1 1 auto;
 	padding: 0.9rem 1.05rem 1.1rem;
 }
 
@@ -107,7 +115,8 @@
 	line-height: 1.04;
 	letter-spacing: 0.03em;
 	color: var(--color-text);
-	// Uncontrolled external text — cap at two lines for aligned card heights.
+	// Reserve two lines so 1- and 2-line names keep the same card height.
+	min-height: 2.08em;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
@@ -122,6 +131,8 @@
 	line-height: 1.45;
 	margin-top: 0.35rem;
 	color: var(--color-grey);
+	// Always rendered + two-line reserve → every card's caption block matches.
+	min-height: 2.9em;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
@@ -133,7 +144,9 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.35rem;
-	margin-top: 0.7rem;
+	// Pin to the bottom of the caption so the CTA aligns across all cards.
+	margin-top: auto;
+	padding-top: 0.7rem;
 	font-family: 'JetBrains Mono', monospace;
 	font-size: 0.68rem;
 	letter-spacing: 0.16em;

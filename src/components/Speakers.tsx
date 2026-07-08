@@ -50,7 +50,9 @@ function SpeakerCard({ speaker, onOpen }: { speaker: Speaker; onOpen: (speaker: 
 						{index}
 					</span>
 					<span className={s.name}>{speaker.fullName}</span>
-					{speaker.tagLine && <span className={s.tagline}>{speaker.tagLine}</span>}
+					{/* Always rendered (even when empty) so every card reserves the same
+					    two-line slot and card heights stay uniform across the grid. */}
+					<span className={s.tagline}>{speaker.tagLine}</span>
 					<span className={s.more}>
 						View profile
 						<span className={s.moreArrow} aria-hidden="true">→</span>
