@@ -99,7 +99,7 @@ export default function SpeakersTeaser() {
 					<h2 id="lineup-teaser-title" className={s.heading}>
 						The <span className={s.red}>speakers.</span>
 					</h2>
-					<p className={s.lede}>{speakers.length} confirmed so far — more names on the wall soon.</p>
+					<p className={s.lede}>New names hit the wall as they&rsquo;re confirmed.</p>
 				</div>
 
 				<ul className={s.wall} role="list">
