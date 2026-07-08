@@ -52,13 +52,38 @@
 	}
 }
 
-/* ===================== MEDIA ===================== */
+/* ===================== MEDIA (evidence photo) ===================== */
 .media {
 	position: relative;
 	display: block;
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
-	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #070606 72%);
+	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #060505 74%);
+
+	// Red crop-brackets: top-left (::before) and bottom-right (::after).
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		width: 18px;
+		height: 18px;
+		border: 2px solid var(--color-accent-hot);
+		z-index: 3;
+		opacity: 0.85;
+		transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+	}
+	&::before {
+		top: 9px;
+		left: 9px;
+		border-right: 0;
+		border-bottom: 0;
+	}
+	&::after {
+		right: 9px;
+		bottom: 9px;
+		border-left: 0;
+		border-top: 0;
+	}
 }
 
 .photo {
@@ -68,15 +93,44 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	filter: grayscale(1) contrast(1.06) brightness(0.9);
-	transform: scale(1.01);
+	// Duotone: hard B&W at rest, lifts toward colour + pushes in on hover.
+	filter: grayscale(1) contrast(1.14) brightness(0.84);
+	transform: scale(1.02);
 	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+}
+
+// Scanlines + a faint red interrogation-spotlight vignette over the photo.
+.grain {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background:
+		repeating-linear-gradient(0deg, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.15) 2px 3px),
+		radial-gradient(120% 100% at 50% 6%, rgba(204, 0, 0, 0.15) 0%, transparent 46%),
+		linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
+	opacity: 0.68;
+	transition: opacity 0.3s ease;
 }
 
 .card:hover .photo,
 .card:focus-visible .photo {
 	transform: scale(1.06);
-	filter: grayscale(0.15) contrast(1.05) brightness(1);
+	filter: grayscale(0.12) contrast(1.06) brightness(1);
+}
+
+.card:hover .media::before,
+.card:hover .media::after,
+.card:focus-visible .media::before,
+.card:focus-visible .media::after {
+	opacity: 1;
+	width: 24px;
+	height: 24px;
+}
+
+.card:hover .grain,
+.card:focus-visible .grain {
+	opacity: 0.4;
 }
 
 .monogram {
@@ -94,10 +148,15 @@
 
 /* ===================== BODY (caption below photo) ===================== */
 .body {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	flex: 1 1 auto;
-	padding: 0.9rem 1.05rem 1.1rem;
+	margin: 0.85rem 0.9rem 0.9rem;
+	padding: 0.15rem 0 0.15rem 0.7rem;
+	// Red file-rule down the left of the caption plate.
+	border-left: 2px solid var(--rule-red);
+	background: linear-gradient(90deg, rgba(204, 0, 0, 0.08) 0%, rgba(10, 9, 9, 0) 72%);
 }
 
 .index {

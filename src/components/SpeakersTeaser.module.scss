@@ -1,12 +1,14 @@
-// Home-page "lineup wall" — a grid of grayscale speaker mugshots (a noir
-// suspects board) linking to /speakers. Same film-noir system as the site.
+// Home-page "case wall" — speaker mugshots styled as evidence photographs: red
+// corner crop-brackets, a scanline + grain overlay, a duotone portrait, and a
+// red-ruled file plate for the name. A distinctly noir lineup, not plain boxes.
 
 .teaser {
+	position: relative;
 	width: 100%;
 	padding: var(--section-y) var(--gutter);
 	border-top: 1px solid var(--rule-soft);
 	background:
-		radial-gradient(ellipse 50% 60% at 88% 10%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
+		radial-gradient(ellipse 60% 70% at 50% -10%, rgba(204, 0, 0, 0.07) 0%, transparent 60%),
 		var(--lit),
 		var(--color-bg);
 }
@@ -19,16 +21,27 @@
 /* ===================== HEAD ===================== */
 .head {
 	text-align: center;
-	margin-bottom: 2.4rem;
+	margin-bottom: 2.6rem;
 }
 
 .eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.7rem;
 	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.78rem;
-	letter-spacing: 0.3em;
+	font-size: 0.76rem;
+	letter-spacing: 0.32em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.62);
-	margin: 0 0 0.9rem;
+	margin: 0 0 1rem;
+
+	&::before,
+	&::after {
+		content: '';
+		width: 26px;
+		height: 1px;
+		background: var(--rule-red);
+	}
 }
 
 .heading {
@@ -56,14 +69,13 @@
 }
 
 /* ===================== WALL ===================== */
-// Many mugshots at once — dense on desktop, still readable on mobile.
 .wall {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-	gap: 14px;
+	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+	gap: 20px 16px;
 }
 
 /* ===================== TILE ===================== */
@@ -80,9 +92,35 @@
 	display: block;
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
-	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #070606 72%);
-	border: 1px solid var(--rule);
-	transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #060505 74%);
+	// Faint red hairline frame; corner brackets sit on top.
+	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.14);
+	transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+	// Red crop-brackets: top-left (::before) and bottom-right (::after).
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		width: 16px;
+		height: 16px;
+		border: 2px solid var(--color-accent-hot);
+		z-index: 3;
+		opacity: 0.85;
+		transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+	}
+	&::before {
+		top: 7px;
+		left: 7px;
+		border-right: 0;
+		border-bottom: 0;
+	}
+	&::after {
+		right: 7px;
+		bottom: 7px;
+		border-left: 0;
+		border-top: 0;
+	}
 }
 
 .photo {
@@ -92,8 +130,10 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	filter: grayscale(1) contrast(1.06) brightness(0.88);
-	transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
+	// Duotone: hard B&W at rest, lifts toward colour + pushes in on hover.
+	filter: grayscale(1) contrast(1.14) brightness(0.82);
+	transform: scale(1.02);
+	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
 }
 
 .monogram {
@@ -103,45 +143,75 @@
 	align-items: center;
 	justify-content: center;
 	font-family: 'Bebas Neue', sans-serif;
-	font-size: 2.4rem;
+	font-size: 2.6rem;
 	letter-spacing: 0.06em;
 	color: rgba(242, 239, 233, 0.24);
 	user-select: none;
 }
 
+// Scanlines + a faint red interrogation-spotlight vignette over the photo.
+.grain {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background:
+		repeating-linear-gradient(0deg, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.16) 2px 3px),
+		radial-gradient(120% 100% at 50% 8%, rgba(204, 0, 0, 0.16) 0%, transparent 46%),
+		linear-gradient(to top, rgba(3, 3, 3, 0.55) 0%, transparent 42%);
+	opacity: 0.7;
+	transition: opacity 0.3s ease;
+}
+
 .tile:hover .thumb,
 .tile:focus-visible .thumb {
-	border-color: var(--rule-red);
-	box-shadow: var(--glow-red-soft);
 	transform: translateY(-3px);
+	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.5), var(--glow-red-soft);
 }
 
 .tile:hover .photo,
 .tile:focus-visible .photo {
-	transform: scale(1.05);
-	filter: grayscale(0.15) contrast(1.05) brightness(1);
+	transform: scale(1.07);
+	filter: grayscale(0.1) contrast(1.06) brightness(1);
+}
+
+.tile:hover .thumb::before,
+.tile:hover .thumb::after,
+.tile:focus-visible .thumb::before,
+.tile:focus-visible .thumb::after {
+	opacity: 1;
+	width: 22px;
+	height: 22px;
+}
+
+.tile:hover .grain,
+.tile:focus-visible .grain {
+	opacity: 0.42;
 }
 
 .tile:focus-visible .thumb {
 	outline: 2px solid var(--color-accent-hot);
-	outline-offset: 2px;
+	outline-offset: 3px;
 }
 
-.meta {
-	display: flex;
-	flex-direction: column;
-	padding: 0.55rem 0.15rem 0;
+/* ===================== NAME PLATE ===================== */
+.plate {
+	position: relative;
+	margin-top: 10px;
+	padding: 0.42rem 0.1rem 0.42rem 0.7rem;
+	border-left: 2px solid var(--rule-red);
+	background: linear-gradient(90deg, rgba(204, 0, 0, 0.09) 0%, rgba(10, 9, 9, 0) 70%);
 }
 
 .tname {
-	font-family: 'Bebas Neue', sans-serif;
-	font-size: 1.12rem;
-	line-height: 1.05;
-	letter-spacing: 0.03em;
-	color: var(--color-text);
-	// Reserve two lines so tile captions align across the wall.
-	min-height: 2.1em;
 	display: -webkit-box;
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: 1.16rem;
+	line-height: 1.06;
+	letter-spacing: 0.035em;
+	color: var(--color-text);
+	// Reserve two lines so plates align across the wall.
+	min-height: 2.12em;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
 	-webkit-box-orient: vertical;
@@ -154,32 +224,33 @@
 	color: var(--color-accent-hot);
 }
 
-/* ===================== "+N MORE" TILE ===================== */
+/* ===================== "+N MORE" / ALL TILE ===================== */
 .moreTile {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 0.15rem;
+	gap: 0.2rem;
 	aspect-ratio: 4 / 5;
 	text-decoration: none;
 	text-align: center;
-	background: radial-gradient(120% 120% at 50% 20%, #141010 0%, #070606 72%);
-	border: 1px dashed rgba(204, 0, 0, 0.42);
-	transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+	background:
+		repeating-linear-gradient(0deg, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.14) 2px 3px),
+		radial-gradient(120% 120% at 50% 20%, #171010 0%, #060505 74%);
+	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.4);
+	transition: box-shadow 0.3s ease, transform 0.3s ease;
 
 	&:hover,
 	&:focus-visible {
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft);
 		transform: translateY(-3px);
+		box-shadow: inset 0 0 0 1px var(--rule-red), var(--glow-red-soft);
 		outline: none;
 	}
 }
 
 .moreNum {
 	font-family: 'Bebas Neue', sans-serif;
-	font-size: 2.2rem;
+	font-size: 2.4rem;
 	line-height: 1;
 	letter-spacing: 0.03em;
 	color: var(--color-text);
@@ -187,34 +258,42 @@
 
 .moreLabel {
 	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.64rem;
-	letter-spacing: 0.22em;
+	font-size: 0.62rem;
+	letter-spacing: 0.24em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
 }
 
 .moreArrow {
-	margin-top: 0.4rem;
+	margin-top: 0.45rem;
 	color: var(--color-accent-hot);
-	font-size: 0.9rem;
+	font-size: 0.95rem;
 }
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 600px) {
 	.wall {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 10px;
+		gap: 14px 10px;
 	}
 	.tname {
-		font-size: 1rem;
+		font-size: 1.02rem;
+	}
+	.thumb::before,
+	.thumb::after {
+		width: 12px;
+		height: 12px;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.thumb,
 	.photo,
+	.grain,
 	.tname,
-	.moreTile {
+	.moreTile,
+	.thumb::before,
+	.thumb::after {
 		transition: none;
 	}
 	.tile:hover .photo,

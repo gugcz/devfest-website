@@ -44,6 +44,7 @@ function SpeakerCard({ speaker, onOpen }: { speaker: Speaker; onOpen: (speaker: 
 							{initials(speaker.fullName) || '?'}
 						</span>
 					)}
+					<span className={s.grain} aria-hidden="true" />
 				</span>
 				<span className={s.body}>
 					<span className={s.index} aria-hidden="true">

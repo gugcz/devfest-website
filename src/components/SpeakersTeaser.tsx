@@ -30,8 +30,9 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 						{initials(speaker.fullName) || '?'}
 					</span>
 				)}
+				<span className={s.grain} aria-hidden="true" />
 			</span>
-			<span className={s.meta}>
+			<span className={s.plate}>
 				<span className={s.tname}>{speaker.fullName}</span>
 			</span>
 		</a>
