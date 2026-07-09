@@ -11,6 +11,7 @@ const DIST = path.resolve('dist');
 const PORT = 4321;
 const PATHS = [
 	'/',
+	'/speakers/',
 	'/team/',
 	'/partners/',
 	'/contact/',
@@ -249,7 +250,12 @@ async function run() {
 	for (const urlPath of PATHS) {
 		const url = `http://127.0.0.1:${PORT}${urlPath}`;
 		const start = Date.now();
-		await page.goto(url, { waitUntil: 'networkidle' });
+		// 'networkidle' never fires on pages that hold a live realtime listener
+		// (the Firestore speakers wall, the RTDB tickets cache keep a channel
+		// open), so load the DOM, then wait for idle only briefly and fall
+		// through — enough for islands to hydrate without hanging 30s.
+		await page.goto(url, { waitUntil: 'domcontentloaded' });
+		await page.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
 		const results = await new AxeBuilder({ page }).withTags(tags).analyze();
 
 		// axe blind spots: our own control-contrast pass + surfaced incompletes.

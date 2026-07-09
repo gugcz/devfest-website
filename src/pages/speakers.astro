@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Speakers from '../components/Speakers.tsx';
+---
+
+<BaseLayout
+	title="Speakers — DevFest.cz 2026"
+	description="Meet the speakers taking the stage at DevFest.cz 2026 — Prague's largest community developer conference."
+>
+	<main class="speakers-page">
+		<SubpageHero
+			label="On the record"
+			titleHtml={'The voices<br /><span class="red">on the stand.</span>'}
+			lede="The developers, makers and researchers stepping up to the mic at DevFest.cz 2026. The lineup grows as speakers are confirmed."
+			titleId="speakers-title"
+		/>
+
+		<section class="speakers-body" aria-label="Speaker lineup">
+			<div class="speakers-inner">
+				<header class="speakers-header">
+					<p class="speakers-eyebrow">The lineup</p>
+					<h2 class="speakers-heading">Who&rsquo;s talking</h2>
+				</header>
+
+				<!-- The grid hydrates client-side from Firestore; keep a static note
+				     for crawlers and no-JS visitors. -->
+				<Speakers client:load />
+
+				<noscript>
+					<p class="speakers-noscript">
+						The speaker lineup loads with JavaScript enabled. Please turn it on, or
+						check back soon.
+					</p>
+				</noscript>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</BaseLayout>
+
+<style lang="scss">
+	@use './speakers';
+</style>

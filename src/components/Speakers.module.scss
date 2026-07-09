@@ -1,0 +1,380 @@
+// Speaker lineup — clickable cards that open a detail dialog. Distinct from
+// /team: a clean uncovered grayscale portrait with the caption in a panel
+// BELOW the photo (no text over the image), a lineup index, and a restrained
+// hover (subtle zoom + desaturation lift + red edge). Same film-noir system
+// (grayscale, red accent, brand fonts). Global tokens come from BaseLayout.
+
+.grid {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 18px;
+
+	// Each grid cell stretches its card to the row height, and the card fills the
+	// cell, so every card in a row is exactly the same height.
+	> li {
+		display: flex;
+	}
+}
+
+/* ===================== CARD (button) ===================== */
+.card {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+	overflow: hidden;
+	background:
+		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
+		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 82%);
+	border: 1px solid var(--rule);
+	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+	transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
+
+	&:hover,
+	&:focus-visible {
+		transform: translateY(-5px);
+		border-color: var(--rule-red);
+		box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 2px;
+	}
+}
+
+/* ===================== MEDIA (evidence photo) ===================== */
+.media {
+	position: relative;
+	display: block;
+	aspect-ratio: 4 / 5;
+	overflow: hidden;
+	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #060505 74%);
+
+	// Red crop-brackets: top-left (::before) and bottom-right (::after).
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		width: 18px;
+		height: 18px;
+		border: 2px solid var(--color-accent-hot);
+		z-index: 3;
+		opacity: 0.85;
+		transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+	}
+	&::before {
+		top: 9px;
+		left: 9px;
+		border-right: 0;
+		border-bottom: 0;
+	}
+	&::after {
+		right: 9px;
+		bottom: 9px;
+		border-left: 0;
+		border-top: 0;
+	}
+}
+
+.photo {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center 22%;
+	// Duotone: hard B&W at rest, lifts toward colour + pushes in on hover.
+	filter: grayscale(1) contrast(1.14) brightness(0.84);
+	transform: scale(1.02);
+	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+}
+
+// A faint red interrogation-spotlight vignette over the photo (no scanlines).
+.grain {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background:
+		radial-gradient(120% 100% at 50% 6%, rgba(204, 0, 0, 0.15) 0%, transparent 46%),
+		linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
+	opacity: 0.8;
+	transition: opacity 0.3s ease;
+}
+
+.card:hover .photo,
+.card:focus-visible .photo {
+	transform: scale(1.06);
+	filter: grayscale(0.12) contrast(1.06) brightness(1);
+}
+
+.card:hover .media::before,
+.card:hover .media::after,
+.card:focus-visible .media::before,
+.card:focus-visible .media::after {
+	opacity: 1;
+	width: 24px;
+	height: 24px;
+}
+
+.card:hover .grain,
+.card:focus-visible .grain {
+	opacity: 0.4;
+}
+
+.monogram {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: clamp(3rem, 12vw, 4.4rem);
+	letter-spacing: 0.08em;
+	color: rgba(242, 239, 233, 0.26);
+	user-select: none;
+}
+
+/* ===================== BODY (caption below photo) ===================== */
+.body {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	// Flush to the card edges (aligned with the photo above) — no inset gap
+	// around the red tint. Red file-rule sits on the left edge.
+	padding: 0.85rem 1rem 0.95rem;
+	border-left: 2px solid var(--rule-red);
+	background: linear-gradient(90deg, rgba(204, 0, 0, 0.07) 0%, rgba(10, 9, 9, 0) 72%);
+}
+
+// Matches /team's .crew-name.
+.name {
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: 1.55rem;
+	line-height: 1;
+	letter-spacing: 0.04em;
+	color: var(--color-text);
+	// Reserve two lines so 1- and 2-line names keep the same card height.
+	min-height: 2em;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+// Matches /team's .crew-role.
+.tagline {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.75rem;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	line-height: 1.4;
+	margin-top: 0.2rem;
+	color: var(--color-grey);
+	// Always rendered + two-line reserve → every card's caption block matches.
+	min-height: 2.8em;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.more {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	// Pin to the bottom of the caption so the CTA aligns across all cards.
+	margin-top: auto;
+	padding-top: 0.7rem;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.68rem;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.55);
+	transition: color 0.25s ease;
+}
+
+.moreArrow {
+	transition: transform 0.25s ease;
+}
+
+.card:hover .more,
+.card:focus-visible .more {
+	color: var(--color-accent-hot);
+}
+
+.card:hover .moreArrow,
+.card:focus-visible .moreArrow {
+	transform: translateX(3px);
+}
+
+/* ===================== "MORE SOON" TILE ===================== */
+// Closes the grid with a teaser tile so the lineup never reads as "complete".
+.moreCard {
+	position: relative;
+	aspect-ratio: 4 / 5;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.7rem;
+	padding: 1.2rem;
+	text-align: center;
+	background: radial-gradient(120% 120% at 50% 20%, #141010 0%, #070606 72%);
+	border: 1px dashed rgba(204, 0, 0, 0.4);
+	transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+
+	&:hover {
+		transform: translateY(-5px);
+		border-color: var(--rule-red);
+		box-shadow: var(--glow-red-soft);
+	}
+}
+
+.moreDots {
+	display: inline-flex;
+	gap: 0.34rem;
+
+	span {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--color-accent-hot);
+		opacity: 0.35;
+		animation: skelPulse 1.4s ease-in-out infinite;
+	}
+
+	span:nth-child(2) {
+		animation-delay: 0.2s;
+	}
+	span:nth-child(3) {
+		animation-delay: 0.4s;
+	}
+}
+
+.moreKicker {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.68rem;
+	letter-spacing: 0.28em;
+	text-transform: uppercase;
+	color: var(--color-accent-hot);
+}
+
+.moreText {
+	font-family: 'IM Fell English', serif;
+	font-style: italic;
+	font-size: 1.12rem;
+	line-height: 1.5;
+	color: var(--color-grey);
+	margin: 0;
+	max-width: 22ch;
+}
+
+/* ===================== STATES ===================== */
+.status {
+	text-align: center;
+	font-family: 'IM Fell English', serif;
+	font-style: italic;
+	font-size: 1.2rem;
+	line-height: 1.7;
+	color: var(--color-grey);
+	max-width: 52ch;
+	margin: 2rem auto 0;
+}
+
+.loadingStatus {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.82rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+}
+
+.loadingDot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--color-accent-hot);
+	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
+	flex-shrink: 0;
+	animation: skelPulse 1.3s ease-in-out infinite;
+}
+
+.loadingDots {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+
+	span {
+		width: 3px;
+		height: 3px;
+		border-radius: 50%;
+		background: currentColor;
+		opacity: 0.3;
+		animation: skelPulse 1.3s ease-in-out infinite;
+	}
+
+	span:nth-child(2) {
+		animation-delay: 0.18s;
+	}
+	span:nth-child(3) {
+		animation-delay: 0.36s;
+	}
+}
+
+@keyframes skelPulse {
+	0%,
+	100% {
+		opacity: 0.3;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 600px) {
+	.grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
+	.name {
+		font-size: 1.4rem;
+	}
+	.body {
+		padding: 0.75rem 0.8rem 0.9rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card,
+	.photo,
+	.moreArrow,
+	.more,
+	.moreCard,
+	.loadingDot,
+	.loadingDots span {
+		transition: none;
+		animation: none;
+	}
+	.card:hover .photo,
+	.card:focus-visible .photo {
+		transform: none;
+	}
+}

@@ -1,0 +1,335 @@
+// Home-page "case wall" — speaker mugshots styled as evidence photographs: red
+// corner crop-brackets, a scanline + grain overlay, a duotone portrait, and a
+// red-ruled file plate for the name. A distinctly noir lineup, not plain boxes.
+
+.teaser {
+	position: relative;
+	width: 100%;
+	padding: var(--section-y) var(--gutter);
+	border-top: 1px solid var(--rule-soft);
+	background:
+		radial-gradient(ellipse 60% 70% at 50% -10%, rgba(204, 0, 0, 0.07) 0%, transparent 60%),
+		var(--lit),
+		var(--color-bg);
+}
+
+.inner {
+	max-width: var(--maxw);
+	margin: 0 auto;
+}
+
+/* ===================== HEAD ===================== */
+.head {
+	text-align: center;
+	margin-bottom: 2.6rem;
+}
+
+.eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.7rem;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.76rem;
+	letter-spacing: 0.32em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.62);
+	margin: 0 0 1rem;
+
+	&::before,
+	&::after {
+		content: '';
+		width: 26px;
+		height: 1px;
+		background: var(--rule-red);
+	}
+}
+
+.heading {
+	font-family: 'Special Elite', cursive;
+	font-size: var(--fs-h2);
+	letter-spacing: 0.01em;
+	line-height: 1.05;
+	text-transform: uppercase;
+	color: var(--color-text);
+	text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+	margin: 0;
+}
+
+.red {
+	color: var(--color-accent);
+}
+
+.lede {
+	font-family: 'IM Fell English', serif;
+	font-style: italic;
+	font-size: 1.05rem;
+	line-height: 1.6;
+	color: var(--color-grey);
+	margin: 0.8rem 0 0;
+}
+
+/* ===================== WALL ===================== */
+.wall {
+	list-style: none;
+	// Fixed 4-up single row at every width; capped + centered so there's space
+	// on the left and right on wide desktops.
+	margin: 0 auto;
+	padding: 0;
+	max-width: 880px;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 18px 16px;
+	// Re-keyed on each rotation → replays this crossfade as the set changes.
+	animation: wallFade 0.55s ease;
+}
+
+@keyframes wallFade {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* ===================== TILE ===================== */
+.tile {
+	display: flex;
+	flex-direction: column;
+	text-decoration: none;
+	color: inherit;
+	outline: none;
+}
+
+.thumb {
+	position: relative;
+	display: block;
+	aspect-ratio: 4 / 5;
+	overflow: hidden;
+	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #060505 74%);
+	// Faint red hairline frame; corner brackets sit on top.
+	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.14);
+	transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+	// Red crop-brackets: top-left (::before) and bottom-right (::after).
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		width: 16px;
+		height: 16px;
+		border: 2px solid var(--color-accent-hot);
+		z-index: 3;
+		opacity: 0.85;
+		transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+	}
+	&::before {
+		top: 7px;
+		left: 7px;
+		border-right: 0;
+		border-bottom: 0;
+	}
+	&::after {
+		right: 7px;
+		bottom: 7px;
+		border-left: 0;
+		border-top: 0;
+	}
+}
+
+.photo {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center 22%;
+	// Duotone: hard B&W at rest, lifts toward colour + pushes in on hover.
+	filter: grayscale(1) contrast(1.14) brightness(0.82);
+	transform: scale(1.02);
+	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
+}
+
+.monogram {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: 2.6rem;
+	letter-spacing: 0.06em;
+	color: rgba(242, 239, 233, 0.24);
+	user-select: none;
+}
+
+// A faint red interrogation-spotlight vignette over the photo (no scanlines).
+.grain {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background:
+		radial-gradient(120% 100% at 50% 8%, rgba(204, 0, 0, 0.16) 0%, transparent 46%),
+		linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
+	opacity: 0.8;
+	transition: opacity 0.3s ease;
+}
+
+.tile:hover .thumb,
+.tile:focus-visible .thumb {
+	transform: translateY(-3px);
+	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.5), var(--glow-red-soft);
+}
+
+.tile:hover .photo,
+.tile:focus-visible .photo {
+	transform: scale(1.07);
+	filter: grayscale(0.1) contrast(1.06) brightness(1);
+}
+
+.tile:hover .thumb::before,
+.tile:hover .thumb::after,
+.tile:focus-visible .thumb::before,
+.tile:focus-visible .thumb::after {
+	opacity: 1;
+	width: 22px;
+	height: 22px;
+}
+
+.tile:hover .grain,
+.tile:focus-visible .grain {
+	opacity: 0.42;
+}
+
+.tile:focus-visible .thumb {
+	outline: 2px solid var(--color-accent-hot);
+	outline-offset: 3px;
+}
+
+/* ===================== NAME PLATE ===================== */
+.plate {
+	position: relative;
+	margin-top: 10px;
+	padding: 0.42rem 0.1rem 0.42rem 0.7rem;
+	border-left: 2px solid var(--rule-red);
+	background: linear-gradient(90deg, rgba(204, 0, 0, 0.09) 0%, rgba(10, 9, 9, 0) 70%);
+}
+
+.tname {
+	display: -webkit-box;
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: 1.16rem;
+	line-height: 1.06;
+	letter-spacing: 0.035em;
+	color: var(--color-text);
+	// Reserve two lines so plates align across the wall.
+	min-height: 2.12em;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	transition: color 0.25s ease;
+}
+
+.tile:hover .tname,
+.tile:focus-visible .tname {
+	color: var(--color-accent-hot);
+}
+
+/* ===================== FOOT — all-speakers link ===================== */
+.foot {
+	margin-top: 2rem;
+	text-align: center;
+}
+
+.allLink {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.82rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--color-text);
+	text-decoration: none;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--rule-red);
+	transition: color 0.2s ease;
+
+	&:hover {
+		color: var(--color-accent-hot);
+	}
+
+	&:focus-visible {
+		color: var(--color-accent-hot);
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 4px;
+	}
+}
+
+.allArrow {
+	font-size: 0.9em;
+	transition: transform 0.2s ease;
+}
+
+.allLink:hover .allArrow,
+.allLink:focus-visible .allArrow {
+	transform: translate(2px, -2px);
+}
+
+/* ===================== RESPONSIVE ===================== */
+// Phone + tablet: keep the single row (4 across), just tighten spacing/sizing.
+@media (max-width: 720px) {
+	.wall {
+		gap: 10px 8px;
+	}
+	.plate {
+		margin-top: 7px;
+		padding: 0.32rem 0.1rem 0.32rem 0.5rem;
+	}
+	.tname {
+		font-size: 0.92rem;
+		letter-spacing: 0.02em;
+	}
+	.thumb::before,
+	.thumb::after {
+		width: 11px;
+		height: 11px;
+		top: 5px;
+		left: 5px;
+	}
+	.thumb::after {
+		top: auto;
+		left: auto;
+		right: 5px;
+		bottom: 5px;
+	}
+}
+
+@media (max-width: 430px) {
+	.tname {
+		font-size: 0.8rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.wall {
+		animation: none;
+	}
+	.thumb,
+	.photo,
+	.grain,
+	.tname,
+	.allArrow,
+	.thumb::before,
+	.thumb::after {
+		transition: none;
+	}
+	.tile:hover .photo,
+	.tile:focus-visible .photo {
+		transform: none;
+	}
+}
