@@ -36,9 +36,11 @@ export interface SpeakerLink {
 	label: string;
 }
 
-/** A talk this speaker is giving (title only — used in the detail view). */
+/** A talk this speaker is giving — used in the detail view. */
 export interface SpeakerSession {
 	name: string;
+	/** Talk abstract; may be empty. */
+	description: string;
 }
 
 export interface Speaker {
@@ -132,10 +134,13 @@ function coerceLink(raw: unknown): SpeakerLink | null {
 }
 
 function coerceSession(raw: unknown): SpeakerSession | null {
-	if (isString(raw)) return raw.trim() ? { name: raw } : null;
+	if (isString(raw)) return raw.trim() ? { name: raw, description: '' } : null;
 	if (typeof raw === 'object' && raw !== null) {
-		const name = (raw as Record<string, unknown>).name;
-		if (isString(name) && name.trim()) return { name };
+		const record = raw as Record<string, unknown>;
+		const name = record.name;
+		if (isString(name) && name.trim()) {
+			return { name, description: isString(record.description) ? record.description : '' };
+		}
 	}
 	return null;
 }

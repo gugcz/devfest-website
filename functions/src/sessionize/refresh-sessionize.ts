@@ -19,7 +19,7 @@ import { SLACK_WEBHOOK_URL } from '../tickets/params.js';
 import { postToSlack } from '../tickets/slack-client.js';
 import { SESSIONIZE_ENDPOINT_ID } from './params.js';
 import {
-	buildSessionTitleMap,
+	buildSessionMap,
 	computeDeletePlan,
 	extractSpeakers,
 	fetchSpeakersPayload,
@@ -56,8 +56,8 @@ async function syncSessionize(): Promise<SyncResult> {
 
 	logger.info('Fetching Sessionize speakers');
 	const payload = await fetchSpeakersPayload(endpointId);
-	const sessionTitles = buildSessionTitleMap(payload);
-	const speakers: SpeakerDoc[] = normalizeSpeakers(extractSpeakers(payload), sessionTitles);
+	const sessionMap = buildSessionMap(payload);
+	const speakers: SpeakerDoc[] = normalizeSpeakers(extractSpeakers(payload), sessionMap);
 
 	const collection = firestore().collection(SPEAKERS_COLLECTION);
 

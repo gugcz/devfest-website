@@ -140,7 +140,12 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 							<h3 className={s.sessionsTitle}>Talks</h3>
 							<ul className={s.sessionsList}>
 								{speaker.sessions.map((session, i) => (
-									<li key={i}>{session.name}</li>
+									<li key={i}>
+										<p className={s.sessionName}>{session.name}</p>
+										{session.description && (
+											<p className={s.sessionDesc}>{session.description}</p>
+										)}
+									</li>
 								))}
 							</ul>
 						</div>
