@@ -17,7 +17,6 @@ function SpeakerCard({ speaker, onOpen }: { speaker: Speaker; onOpen: (speaker: 
 	// same as a speaker with no photo at all.
 	const [imageFailed, setImageFailed] = useState(false);
 	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
-	const index = String(speaker.order + 1).padStart(2, '0');
 
 	return (
 		<li>
@@ -47,9 +46,6 @@ function SpeakerCard({ speaker, onOpen }: { speaker: Speaker; onOpen: (speaker: 
 					<span className={s.grain} aria-hidden="true" />
 				</span>
 				<span className={s.body}>
-					<span className={s.index} aria-hidden="true">
-						{index}
-					</span>
 					<span className={s.name}>{speaker.fullName}</span>
 					{/* Always rendered (even when empty) so every card reserves the same
 					    two-line slot and card heights stay uniform across the grid. */}

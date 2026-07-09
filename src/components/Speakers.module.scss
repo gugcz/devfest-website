@@ -99,17 +99,16 @@
 	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
 }
 
-// Scanlines + a faint red interrogation-spotlight vignette over the photo.
+// A faint red interrogation-spotlight vignette over the photo (no scanlines).
 .grain {
 	position: absolute;
 	inset: 0;
 	z-index: 2;
 	pointer-events: none;
 	background:
-		repeating-linear-gradient(0deg, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.15) 2px 3px),
 		radial-gradient(120% 100% at 50% 6%, rgba(204, 0, 0, 0.15) 0%, transparent 46%),
 		linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
-	opacity: 0.68;
+	opacity: 0.8;
 	transition: opacity 0.3s ease;
 }
 
@@ -157,15 +156,6 @@
 	// Red file-rule down the left of the caption plate.
 	border-left: 2px solid var(--rule-red);
 	background: linear-gradient(90deg, rgba(204, 0, 0, 0.08) 0%, rgba(10, 9, 9, 0) 72%);
-}
-
-.index {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.7rem;
-	font-variant-numeric: tabular-nums;
-	letter-spacing: 0.22em;
-	color: var(--color-accent-hot);
-	margin-bottom: 0.35rem;
 }
 
 .name {
