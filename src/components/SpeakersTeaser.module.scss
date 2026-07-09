@@ -149,17 +149,16 @@
 	user-select: none;
 }
 
-// Scanlines + a faint red interrogation-spotlight vignette over the photo.
+// A faint red interrogation-spotlight vignette over the photo (no scanlines).
 .grain {
 	position: absolute;
 	inset: 0;
 	z-index: 2;
 	pointer-events: none;
 	background:
-		repeating-linear-gradient(0deg, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.16) 2px 3px),
 		radial-gradient(120% 100% at 50% 8%, rgba(204, 0, 0, 0.16) 0%, transparent 46%),
-		linear-gradient(to top, rgba(3, 3, 3, 0.55) 0%, transparent 42%);
-	opacity: 0.7;
+		linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
+	opacity: 0.8;
 	transition: opacity 0.3s ease;
 }
 
@@ -234,9 +233,7 @@
 	aspect-ratio: 4 / 5;
 	text-decoration: none;
 	text-align: center;
-	background:
-		repeating-linear-gradient(0deg, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.14) 2px 3px),
-		radial-gradient(120% 120% at 50% 20%, #171010 0%, #060505 74%);
+	background: radial-gradient(120% 120% at 50% 20%, #171010 0%, #060505 74%);
 	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.4);
 	transition: box-shadow 0.3s ease, transform 0.3s ease;
 
