@@ -259,10 +259,14 @@
 	border-bottom: 1px solid var(--rule-red);
 	transition: color 0.2s ease;
 
-	&:hover,
+	&:hover {
+		color: var(--color-accent-hot);
+	}
+
 	&:focus-visible {
 		color: var(--color-accent-hot);
-		outline: none;
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 4px;
 	}
 }
 
