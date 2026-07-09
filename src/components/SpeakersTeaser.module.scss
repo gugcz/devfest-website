@@ -71,11 +71,14 @@
 /* ===================== WALL ===================== */
 .wall {
 	list-style: none;
-	margin: 0;
+	// Fixed 4-up single row at every width; capped + centered so there's space
+	// on the left and right on wide desktops.
+	margin: 0 auto;
 	padding: 0;
+	max-width: 880px;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-	gap: 20px 16px;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 18px 16px;
 	// Re-keyed on each rotation → replays this crossfade as the set changes.
 	animation: wallFade 0.55s ease;
 }
@@ -274,18 +277,37 @@
 }
 
 /* ===================== RESPONSIVE ===================== */
-@media (max-width: 600px) {
+// Phone + tablet: keep the single row (4 across), just tighten spacing/sizing.
+@media (max-width: 720px) {
 	.wall {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 14px 10px;
+		gap: 10px 8px;
+	}
+	.plate {
+		margin-top: 7px;
+		padding: 0.32rem 0.1rem 0.32rem 0.5rem;
 	}
 	.tname {
-		font-size: 1.02rem;
+		font-size: 0.92rem;
+		letter-spacing: 0.02em;
 	}
 	.thumb::before,
 	.thumb::after {
-		width: 12px;
-		height: 12px;
+		width: 11px;
+		height: 11px;
+		top: 5px;
+		left: 5px;
+	}
+	.thumb::after {
+		top: auto;
+		left: auto;
+		right: 5px;
+		bottom: 5px;
+	}
+}
+
+@media (max-width: 430px) {
+	.tname {
+		font-size: 0.8rem;
 	}
 }
 

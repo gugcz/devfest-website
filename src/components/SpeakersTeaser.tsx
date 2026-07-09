@@ -6,7 +6,7 @@ type Status = 'loading' | 'ready' | 'empty' | 'error';
 
 // Speakers shown at once on the home wall; the visible set rotates through the
 // full roster over time (rotation kicks in once there are more than this).
-const WALL_SIZE = 5;
+const WALL_SIZE = 4;
 const ROTATE_MS = 5000;
 
 function usePrefersReducedMotion(): boolean {
