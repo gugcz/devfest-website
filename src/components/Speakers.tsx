@@ -12,7 +12,15 @@ interface State {
 
 const INITIAL: State = { status: 'loading', speakers: [] };
 
-function SpeakerCard({ speaker, onOpen }: { speaker: Speaker; onOpen: (speaker: Speaker) => void }) {
+function SpeakerCard({
+	speaker,
+	onOpen,
+	priority,
+}: {
+	speaker: Speaker;
+	onOpen: (speaker: Speaker) => void;
+	priority: boolean;
+}) {
 	// A present-but-broken CDN URL (404 / timeout) falls back to the monogram,
 	// same as a speaker with no photo at all.
 	const [imageFailed, setImageFailed] = useState(false);
@@ -32,7 +40,8 @@ function SpeakerCard({ speaker, onOpen }: { speaker: Speaker; onOpen: (speaker: 
 							className={s.photo}
 							src={speaker.profilePicture}
 							alt=""
-							loading="lazy"
+							loading={priority ? 'eager' : 'lazy'}
+							fetchPriority={priority ? 'high' : 'auto'}
 							decoding="async"
 							width={400}
 							height={500}
@@ -140,8 +149,8 @@ export default function Speakers() {
 	return (
 		<>
 			<ul className={s.grid} role="list">
-				{state.speakers.map((speaker) => (
-					<SpeakerCard key={speaker.id} speaker={speaker} onOpen={setSelected} />
+				{state.speakers.map((speaker, i) => (
+					<SpeakerCard key={speaker.id} speaker={speaker} onOpen={setSelected} priority={i < 4} />
 				))}
 				<li>
 					<article className={s.moreCard} aria-label="More speakers to be announced">
