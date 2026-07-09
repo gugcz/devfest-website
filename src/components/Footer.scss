@@ -60,6 +60,9 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.6rem;
+		// Short section labels stay on a single line so the flanking rules always
+		// frame the text instead of drifting to the column edges when it wraps.
+		white-space: nowrap;
 
 		&::before,
 		&::after {
@@ -74,6 +77,19 @@
 			&::after {
 				flex-basis: 20px;
 			}
+		}
+	}
+
+	// The brand heading is the full site name, not a short section label. It must
+	// be free to wrap under large accessibility text / zoom (WCAG 1.4.4 resize),
+	// which the fixed flanking rules can't survive — they'd pin to the column
+	// edges while the name wraps in the middle. Let it wrap and drop the rules.
+	.col-brand .col-title {
+		white-space: normal;
+
+		&::before,
+		&::after {
+			content: none;
 		}
 	}
 
