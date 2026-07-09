@@ -4,8 +4,22 @@ import s from './SpeakersTeaser.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
 
-// Tiles shown on the home wall before collapsing the rest into a "+N more" tile.
-const MAX_TILES = 11;
+// Speakers shown at once on the home wall; the visible set rotates through the
+// full roster over time (rotation kicks in once there are more than this).
+const WALL_SIZE = 5;
+const ROTATE_MS = 5000;
+
+function usePrefersReducedMotion(): boolean {
+	const [reduce, setReduce] = useState(false);
+	useEffect(() => {
+		const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+		const update = () => setReduce(mql.matches);
+		update();
+		mql.addEventListener('change', update);
+		return () => mql.removeEventListener('change', update);
+	}, []);
+	return reduce;
+}
 
 function Thumb({ speaker }: { speaker: Speaker }) {
 	const [imageFailed, setImageFailed] = useState(false);
@@ -40,13 +54,16 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 }
 
 /**
- * Home-page "lineup wall": a grid of grayscale speaker mugshots (a noir suspects
- * board) linking to the full /speakers page. Renders nothing until Firestore is
- * ready, so the home page stays clean before the lineup is announced.
+ * Home-page "case wall": a small set of speaker mugshots that rotates through
+ * the full roster over time, plus a link to the full /speakers page. Renders
+ * nothing until Firestore is ready so the home page stays clean pre-announce.
  */
 export default function SpeakersTeaser() {
 	const [speakers, setSpeakers] = useState<Speaker[]>([]);
 	const [status, setStatus] = useState<Status>('loading');
+	const [offset, setOffset] = useState(0);
+	const [paused, setPaused] = useState(false);
+	const reduceMotion = usePrefersReducedMotion();
 
 	useEffect(() => {
 		let unsubscribe: (() => void) | null = null;
@@ -83,13 +100,38 @@ export default function SpeakersTeaser() {
 		};
 	}, []);
 
-	if (status !== 'ready' || speakers.length === 0) return null;
+	const total = speakers.length;
+	const size = Math.min(WALL_SIZE, total);
+	const canRotate = total > WALL_SIZE;
 
-	const shown = speakers.slice(0, MAX_TILES);
-	const remaining = speakers.length - shown.length;
+	// Advance the visible window through the roster (wrapping) so the wall keeps
+	// changing. Paused on hover/focus and when reduced motion is preferred.
+	useEffect(() => {
+		if (status !== 'ready' || !canRotate || paused || reduceMotion) return;
+		const id = setInterval(() => {
+			setOffset((o) => (o + size) % total);
+		}, ROTATE_MS);
+		return () => clearInterval(id);
+	}, [status, canRotate, paused, reduceMotion, size, total]);
+
+	// Keep the window valid if the roster shrinks between syncs.
+	useEffect(() => {
+		if (total > 0 && offset >= total) setOffset(0);
+	}, [total, offset]);
+
+	if (status !== 'ready' || total === 0) return null;
+
+	const shown = Array.from({ length: size }, (_, i) => speakers[(offset + i) % total]);
 
 	return (
-		<section className={s.teaser} aria-labelledby="lineup-teaser-title">
+		<section
+			className={s.teaser}
+			aria-labelledby="lineup-teaser-title"
+			onMouseEnter={() => setPaused(true)}
+			onMouseLeave={() => setPaused(false)}
+			onFocus={() => setPaused(true)}
+			onBlur={() => setPaused(false)}
+		>
 			<div className={s.inner}>
 				<div className={s.head}>
 					<p className={s.eyebrow}>Now speaking</p>
@@ -99,20 +141,20 @@ export default function SpeakersTeaser() {
 					<p className={s.lede}>New names hit the wall as they&rsquo;re confirmed.</p>
 				</div>
 
-				<ul className={s.wall} role="list">
+				<ul className={s.wall} role="list" key={offset}>
 					{shown.map((speaker) => (
 						<li key={speaker.id}>
 							<Thumb speaker={speaker} />
 						</li>
 					))}
-					<li>
-						<a className={s.moreTile} href="/speakers" aria-label="See the full speaker lineup">
-							<span className={s.moreNum}>{remaining > 0 ? `+${remaining}` : 'All'}</span>
-							<span className={s.moreLabel}>{remaining > 0 ? 'more' : 'the lineup'}</span>
-							<span className={s.moreArrow} aria-hidden="true">↗</span>
-						</a>
-					</li>
 				</ul>
+
+				<div className={s.foot}>
+					<a className={s.allLink} href="/speakers">
+						See all speakers
+						<span className={s.allArrow} aria-hidden="true">↗</span>
+					</a>
+				</div>
 			</div>
 		</section>
 	);

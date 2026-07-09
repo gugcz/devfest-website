@@ -76,6 +76,19 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 	gap: 20px 16px;
+	// Re-keyed on each rotation → replays this crossfade as the set changes.
+	animation: wallFade 0.55s ease;
+}
+
+@keyframes wallFade {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
 }
 
 /* ===================== TILE ===================== */
@@ -223,48 +236,41 @@
 	color: var(--color-accent-hot);
 }
 
-/* ===================== "+N MORE" / ALL TILE ===================== */
-.moreTile {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 0.2rem;
-	aspect-ratio: 4 / 5;
-	text-decoration: none;
+/* ===================== FOOT — all-speakers link ===================== */
+.foot {
+	margin-top: 2rem;
 	text-align: center;
-	background: radial-gradient(120% 120% at 50% 20%, #171010 0%, #060505 74%);
-	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.4);
-	transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.allLink {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.82rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--color-text);
+	text-decoration: none;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--rule-red);
+	transition: color 0.2s ease;
 
 	&:hover,
 	&:focus-visible {
-		transform: translateY(-3px);
-		box-shadow: inset 0 0 0 1px var(--rule-red), var(--glow-red-soft);
+		color: var(--color-accent-hot);
 		outline: none;
 	}
 }
 
-.moreNum {
-	font-family: 'Bebas Neue', sans-serif;
-	font-size: 2.4rem;
-	line-height: 1;
-	letter-spacing: 0.03em;
-	color: var(--color-text);
+.allArrow {
+	font-size: 0.9em;
+	transition: transform 0.2s ease;
 }
 
-.moreLabel {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.62rem;
-	letter-spacing: 0.24em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
-}
-
-.moreArrow {
-	margin-top: 0.45rem;
-	color: var(--color-accent-hot);
-	font-size: 0.95rem;
+.allLink:hover .allArrow,
+.allLink:focus-visible .allArrow {
+	transform: translate(2px, -2px);
 }
 
 /* ===================== RESPONSIVE ===================== */
@@ -284,11 +290,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.wall {
+		animation: none;
+	}
 	.thumb,
 	.photo,
 	.grain,
 	.tname,
-	.moreTile,
+	.allArrow,
 	.thumb::before,
 	.thumb::after {
 		transition: none;
