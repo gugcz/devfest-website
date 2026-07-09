@@ -158,14 +158,15 @@
 	background: linear-gradient(90deg, rgba(204, 0, 0, 0.08) 0%, rgba(10, 9, 9, 0) 72%);
 }
 
+// Matches /team's .crew-name.
 .name {
 	font-family: 'Bebas Neue', sans-serif;
-	font-size: 1.52rem;
-	line-height: 1.04;
-	letter-spacing: 0.03em;
+	font-size: 1.55rem;
+	line-height: 1;
+	letter-spacing: 0.04em;
 	color: var(--color-text);
 	// Reserve two lines so 1- and 2-line names keep the same card height.
-	min-height: 2.08em;
+	min-height: 2em;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
@@ -173,15 +174,17 @@
 	overflow: hidden;
 }
 
+// Matches /team's .crew-role.
 .tagline {
 	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.72rem;
-	letter-spacing: 0.05em;
-	line-height: 1.45;
-	margin-top: 0.35rem;
+	font-size: 0.75rem;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	line-height: 1.4;
+	margin-top: 0.2rem;
 	color: var(--color-grey);
 	// Always rendered + two-line reserve → every card's caption block matches.
-	min-height: 2.9em;
+	min-height: 2.8em;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
