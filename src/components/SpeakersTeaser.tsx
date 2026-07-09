@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { initials, speakerFromDoc, type Speaker } from '../lib/speakers';
 import s from './SpeakersTeaser.module.scss';
 
@@ -8,6 +8,17 @@ type Status = 'loading' | 'ready' | 'empty' | 'error';
 // full roster over time (rotation kicks in once there are more than this).
 const WALL_SIZE = 4;
 const ROTATE_MS = 5000;
+
+// Fisher-Yates: fresh shuffled copy so the wall starts on a random set each load
+// (rather than always the first four by `order`) and rotates in a random sequence.
+function shuffle<T>(items: readonly T[]): T[] {
+	const out = items.slice();
+	for (let i = out.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[out[i], out[j]] = [out[j], out[i]];
+	}
+	return out;
+}
 
 function usePrefersReducedMotion(): boolean {
 	const [reduce, setReduce] = useState(false);
@@ -100,7 +111,12 @@ export default function SpeakersTeaser() {
 		};
 	}, []);
 
-	const total = speakers.length;
+	// Shuffle once per roster so the starting window — and rotation order — is
+	// random on every load. Keyed on the id set so it only reshuffles when the
+	// roster actually changes, not on every re-render or rotation tick.
+	const displaySpeakers = useMemo(() => shuffle(speakers), [speakers.map((sp) => sp.id).join('|')]);
+
+	const total = displaySpeakers.length;
 	const size = Math.min(WALL_SIZE, total);
 	const canRotate = total > WALL_SIZE;
 
@@ -121,7 +137,7 @@ export default function SpeakersTeaser() {
 
 	if (status !== 'ready' || total === 0) return null;
 
-	const shown = Array.from({ length: size }, (_, i) => speakers[(offset + i) % total]);
+	const shown = Array.from({ length: size }, (_, i) => displaySpeakers[(offset + i) % total]);
 
 	return (
 		<section
