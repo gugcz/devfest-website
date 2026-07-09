@@ -151,11 +151,11 @@
 	display: flex;
 	flex-direction: column;
 	flex: 1 1 auto;
-	margin: 0.85rem 0.9rem 0.9rem;
-	padding: 0.15rem 0 0.15rem 0.7rem;
-	// Red file-rule down the left of the caption plate.
+	// Flush to the card edges (aligned with the photo above) — no inset gap
+	// around the red tint. Red file-rule sits on the left edge.
+	padding: 0.85rem 1rem 0.95rem;
 	border-left: 2px solid var(--rule-red);
-	background: linear-gradient(90deg, rgba(204, 0, 0, 0.08) 0%, rgba(10, 9, 9, 0) 72%);
+	background: linear-gradient(90deg, rgba(204, 0, 0, 0.07) 0%, rgba(10, 9, 9, 0) 72%);
 }
 
 // Matches /team's .crew-name.
