@@ -92,7 +92,7 @@ export default function SpeakersTeaser() {
 		<section className={s.teaser} aria-labelledby="lineup-teaser-title">
 			<div className={s.inner}>
 				<div className={s.head}>
-					<p className={s.eyebrow}>On the bill</p>
+					<p className={s.eyebrow}>Now speaking</p>
 					<h2 id="lineup-teaser-title" className={s.heading}>
 						The <span className={s.red}>speakers.</span>
 					</h2>
