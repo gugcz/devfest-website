@@ -308,6 +308,135 @@
 		.card-title { font-size: 1.6rem; }
 	}
 
+	/* ===================== GOLD PARTNERS ===================== */
+	// Headline tier — same lamp-lit dossier slab as silver, sized up so the
+	// top-tier sponsor reads as the marquee: taller tile, larger logo cap, wide
+	// showcase columns.
+	.gold-partners {
+		position: relative;
+		padding: var(--section-y) var(--gutter) 0;
+		background: var(--color-bg);
+	}
+
+	.gold-inner {
+		max-width: var(--maxw);
+		margin: 0 auto;
+	}
+
+	.gold-head {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		margin-bottom: 2.6rem;
+	}
+
+	// Poster headline — typewriter (Special Elite) to match the noir key art.
+	.gold-title {
+		font-family: 'Special Elite', cursive;
+		font-size: var(--fs-h2);
+		line-height: 1.05;
+		letter-spacing: 0.01em;
+		text-transform: uppercase;
+		color: var(--color-text);
+		margin: 0;
+		text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+
+		.red {
+			color: var(--color-accent-hot);
+			text-shadow: var(--glow-red);
+		}
+	}
+
+	.gold-grid {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 14px;
+	}
+
+	// Same lamp-lit dossier slab as .silver-item — the only tier difference is a
+	// gentle size bump (taller tile, larger logo cap) and the heading above.
+	.gold-item {
+		position: relative;
+		overflow: hidden;
+		display: flex;
+		min-height: 176px;
+		border: 0;
+		border-radius: 0;
+		background:
+			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
+			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+		// Inset matte frame — a mounted-print hairline. Warms to red on hover.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 9px;
+			border: 1px solid var(--matte);
+			pointer-events: none;
+			z-index: 2;
+			transition: border-color 0.25s ease;
+		}
+
+		a,
+		.gold-logo {
+			margin: auto;
+		}
+
+		a {
+			position: relative;
+			z-index: 1;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 1.8rem 2.4rem;
+			text-decoration: none;
+		}
+
+		.gold-logo {
+			display: block;
+			width: auto;
+			height: auto;
+			max-width: 78%;
+			max-height: 68px;
+			object-fit: contain;
+			opacity: 0.95;
+			transition: opacity 0.2s;
+		}
+
+		&:has(a:hover),
+		&:has(a:focus-visible) {
+			transform: translateY(-4px);
+			// Red edge-light catches the wordmark on hover.
+			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+		}
+
+		&:has(a:hover)::before,
+		&:has(a:focus-visible)::before {
+			border-color: var(--matte-red);
+		}
+
+		&:hover .gold-logo,
+		a:focus-visible .gold-logo {
+			opacity: 1;
+		}
+	}
+
+	@media (max-width: 900px) {
+		.gold-item { min-height: 150px; }
+		.gold-item .gold-logo { max-height: 56px; }
+	}
+
+	@media (max-width: 600px) {
+		.gold-grid { grid-template-columns: 1fr; }
+	}
+
 	/* ===================== SILVER PARTNERS ===================== */
 	.silver-partners {
 		position: relative;
@@ -570,6 +699,7 @@
 			&:hover { transform: none; }
 		}
 
+		.gold-item,
 		.silver-item,
 		.media-item {
 			&:has(a:hover),
