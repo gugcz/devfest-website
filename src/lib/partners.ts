@@ -5,6 +5,12 @@
 // { name, logo, url? } — `url` optional.
 export type Partner = { name: string; logo: string; url?: string };
 
+// Gold tier — headline sponsors, shown above silver on /partners and first in
+// the homepage "silver+" strip. Wordmarks ship light (cut-out) for the dark card.
+export const goldPartners: Partner[] = [
+	{ name: 'Wrike', logo: '/partners/gold/wrike.png', url: 'https://www.wrike.com/' },
+];
+
 // Silver tier (and above). Full wordmarks ship light (white cut-out) for the
 // dark card. The homepage shows these "silver+" partners — media is excluded.
 export const silverPartners: Partner[] = [

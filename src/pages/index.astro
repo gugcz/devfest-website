@@ -7,7 +7,10 @@ import HeroBackground from '../components/HeroBackground.astro';
 import Ticker from '../components/Ticker.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
-import { silverPartners } from '../lib/partners';
+import { goldPartners, silverPartners } from '../lib/partners';
+
+// Homepage "silver+" strip — gold headline partners first, then silver.
+const homePartners = [...goldPartners, ...silverPartners];
 
 const tickerTopics = [
 	'AI & Machine Learning',
@@ -109,13 +112,13 @@ const tickerTopics = [
 		-->
 
 		<!-- PARTNERS — quiet silver+ strip; media partners live on /partners only -->
-		{silverPartners.length > 0 && (
+		{homePartners.length > 0 && (
 			<section id="partners" aria-labelledby="partners-title">
 				<div class="partners-inner reveal">
 					<p id="partners-title" class="section-label">Partners</p>
 
 					<ul class="partners-row">
-						{silverPartners.map((p) => (
+						{homePartners.map((p) => (
 							<li class="partners-item">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
