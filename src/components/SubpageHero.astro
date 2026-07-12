@@ -6,6 +6,14 @@ interface Props {
 	titleHtml: string;
 	lede: string;
 	titleId?: string;
+	/**
+	 * Keyword-rich, plain-text heading rendered visually-hidden at the START of
+	 * the <h1>, ahead of the decorative noir title. Gives the page's most
+	 * important heading real ranking terms ("DevFest.cz 2026 Speakers") for
+	 * crawlers + screen readers without disturbing the visual design. Omit to
+	 * fall back to the decorative title alone.
+	 */
+	seoHeading?: string;
 }
 
 const {
@@ -13,6 +21,7 @@ const {
 	titleHtml,
 	lede,
 	titleId = 'subpage-hero-title',
+	seoHeading,
 } = Astro.props;
 ---
 
@@ -22,7 +31,10 @@ const {
 
 	<div class="hero-content">
 		<p class="section-label"><span>{label}</span></p>
-		<h1 id={titleId} class="hero-title" set:html={titleHtml} />
+		<h1 id={titleId} class="hero-title">
+			{seoHeading && <span class="sr-only">{seoHeading} — </span>}
+			<span set:html={titleHtml} />
+		</h1>
 		<p class="hero-lede">{lede}</p>
 	</div>
 </section>
