@@ -177,9 +177,7 @@ export interface SessionSpeakerRef {
 	/** Sessionize speaker GUID — matches a `speakers/{id}` doc. */
 	id: string;
 	fullName: string;
-	/** Speaker tagline; may be empty. */
 	tagLine: string;
-	/** Absolute BunnyCDN URL; may be empty. */
 	profilePicture: string;
 }
 
@@ -197,15 +195,11 @@ export interface SessionDoc {
 	/** Index in the Sessionize array; stable tiebreaker for `startsAt` sorts. */
 	order: number;
 	title: string;
-	/** Talk abstract; may be empty. */
 	description: string;
-	/** ISO 8601 local start; may be empty before scheduling. */
+	/** ISO 8601 local start / end; may be empty before scheduling. */
 	startsAt: string;
-	/** ISO 8601 local end; may be empty before scheduling. */
 	endsAt: string;
-	/** Room name; may be empty before scheduling. */
 	room: string;
-	/** Room id (stringified); may be empty. */
 	roomId: string;
 	isServiceSession: boolean;
 	isPlenumSession: boolean;
@@ -214,9 +208,7 @@ export interface SessionDoc {
 	speakers: SessionSpeakerRef[];
 	categoryItems: unknown[];
 	questionAnswers: unknown[];
-	/** Live-stream URL; may be empty. */
 	liveUrl: string;
-	/** Recording URL; may be empty. */
 	recordingUrl: string;
 }
 
@@ -466,11 +458,9 @@ export function normalizeSpeakers(
 }
 
 // ── Sessions ────────────────────────────────────────────────────────────────
-// The mirror image of the speaker path above: sessions carry speaker refs,
-// speakers carry session refs. Sessions live only in the All view; the Speakers
-// view (a bare array) has none, so the extract/normalize helpers below tolerate
-// an absent/empty session set (returning []) — the delete-guard, not a throw,
-// is what protects the live `sessions` collection from a truncated fetch.
+// Mirror of the speaker path above. Sessions live only in the All view, so the
+// helpers below tolerate an absent/empty set (returning []) — the delete-guard,
+// not a throw, protects the live `sessions` collection from a truncated fetch.
 
 /** The speaker fields embedded on each session doc. */
 interface SpeakerSummary {

@@ -54,9 +54,8 @@ interface CollectionSync {
 	upserted: number;
 	deleted: number;
 	deletesWithheld: boolean;
-	/** Fresh id count this run — surfaced in the delete-guard alert. */
+	/** Id counts surfaced in the delete-guard alert. */
 	freshCount: number;
-	/** Existing id count before the write — surfaced in the delete-guard alert. */
 	existingCount: number;
 }
 
