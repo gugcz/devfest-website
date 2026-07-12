@@ -443,22 +443,26 @@ function resolveSessions(raw: unknown, sessionMap: Map<string, SessionDetail>): 
  * array index (unique per sync); missing scalars become empty strings / false
  * so the doc shape stays stable and `orderBy('order')` never omits a speaker.
  * `sessions` are resolved via `sessionMap`; other relational arrays are stored
- * as-is.
+ * as-is. `profilePicture` is overridden with the Firebase Storage mirror URL
+ * from `imageMap` when present (see `mirror-images.ts`), so the browser serves
+ * photos off Firebase instead of Sessionize's CDN.
  */
 export function normalizeSpeaker(
 	raw: SessionizeSpeaker,
 	index: number,
 	sessionMap: Map<string, SessionDetail>,
+	imageMap: Map<string, string> = new Map(),
 ): SpeakerDoc {
+	const id = (raw.id as string).trim();
 	return {
-		id: (raw.id as string).trim(),
+		id,
 		order: index,
 		firstName: asString(raw.firstName),
 		lastName: asString(raw.lastName),
 		fullName: asString(raw.fullName),
 		bio: asString(raw.bio),
 		tagLine: asString(raw.tagLine),
-		profilePicture: asString(raw.profilePicture),
+		profilePicture: imageMap.get(id) || asString(raw.profilePicture),
 		isTopSpeaker: raw.isTopSpeaker === true,
 		links: normalizeLinks(raw.links),
 		sessions: resolveSessions(raw.sessions, sessionMap),
@@ -470,8 +474,9 @@ export function normalizeSpeaker(
 export function normalizeSpeakers(
 	raw: SessionizeSpeaker[],
 	sessionMap: Map<string, SessionDetail> = new Map(),
+	imageMap: Map<string, string> = new Map(),
 ): SpeakerDoc[] {
-	return raw.map((speaker, index) => normalizeSpeaker(speaker, index, sessionMap));
+	return raw.map((speaker, index) => normalizeSpeaker(speaker, index, sessionMap, imageMap));
 }
 
 // ── Sessions ────────────────────────────────────────────────────────────────
@@ -491,8 +496,13 @@ interface SpeakerSummary {
  * `speakers[]`, so a session's speaker refs resolve to name/photo. Object-only
  * like `buildSessionMap`: sessions live only in the All view, so the bare
  * Speakers-view array never needs a summary map. Empty map when absent.
+ * `profilePicture` uses the Firebase Storage mirror URL from `imageMap` when
+ * present, so session speaker refs point at Firebase like the speaker docs do.
  */
-export function buildSpeakerSummaryMap(payload: unknown): Map<string, SpeakerSummary> {
+export function buildSpeakerSummaryMap(
+	payload: unknown,
+	imageMap: Map<string, string> = new Map(),
+): Map<string, SpeakerSummary> {
 	const map = new Map<string, SpeakerSummary>();
 	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
 	const speakers = (payload as SessionizeAll).speakers;
@@ -501,10 +511,11 @@ export function buildSpeakerSummaryMap(payload: unknown): Map<string, SpeakerSum
 		if (typeof entry !== 'object' || entry === null) continue;
 		const record = entry as Record<string, unknown>;
 		if (record.id == null) continue;
-		map.set(String(record.id), {
+		const id = String(record.id);
+		map.set(id, {
 			fullName: asString(record.fullName),
 			tagLine: asString(record.tagLine),
-			profilePicture: asString(record.profilePicture),
+			profilePicture: imageMap.get(id) || asString(record.profilePicture),
 		});
 	}
 	return map;
