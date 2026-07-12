@@ -90,10 +90,15 @@ const organizationSchema = {
 	"name": "DevFest.cz",
 	"url": siteUrl,
 	"logo": `${siteUrl}/logo.png`,
+	// Mirror the social profiles linked in Footer.astro so Google can tie the
+	// site's Organization entity to its verified profiles. Keep this list in
+	// sync with the Footer socials.
 	"sameAs": [
 		"https://x.com/devfest_cz",
 		"https://www.facebook.com/DevFestCZ",
-		"https://bsky.app/profile/devfest.cz"
+		"https://bsky.app/profile/devfest.cz",
+		"https://www.linkedin.com/company/gugcz/",
+		"https://www.youtube.com/@gug_cz"
 	]
 };
 
@@ -104,10 +109,54 @@ const websiteSchema = {
 	"url": siteUrl
 };
 
+// BreadcrumbList for subpages: a two-level Home → <Page> trail so Google can
+// render breadcrumb rich results instead of a bare URL. Human-readable page
+// names are mapped from the first path segment; unknown routes fall back to a
+// title-cased slug. Home is omitted (it needs no trail) and noindex pages skip
+// schema entirely via the render guard below.
+const pageNames = {
+	"speakers": "Speakers",
+	"sessions": "Sessions",
+	"team": "Team",
+	"partners": "Partners",
+	"press": "Press",
+	"contact": "Contact",
+	"faq": "FAQ",
+	"invoice": "Company Invoice",
+	"privacy-policy": "Privacy Policy"
+};
+const slug = Astro.url.pathname.replace(/^\/+|\/+$/g, "").split("/")[0];
+const breadcrumbName =
+	pageNames[slug] ??
+	slug
+		.split("-")
+		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+		.join(" ");
+const breadcrumbSchema = !isHome && slug
+	? {
+			"@context": "https://schema.org",
+			"@type": "BreadcrumbList",
+			"itemListElement": [
+				{
+					"@type": "ListItem",
+					"position": 1,
+					"name": "Home",
+					"item": siteUrl
+				},
+				{
+					"@type": "ListItem",
+					"position": 2,
+					"name": breadcrumbName,
+					"item": canonicalUrl
+				}
+			]
+		}
+	: null;
+
 const jsonLd = JSON.stringify(
 	isHome
 		? [eventSchema, organizationSchema, websiteSchema]
-		: [organizationSchema, websiteSchema]
+		: [organizationSchema, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])]
 );
 ---
 
@@ -183,7 +232,7 @@ const jsonLd = JSON.stringify(
 
 		<!-- Twitter -->
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:site" content="@devfestcz" />
+		<meta name="twitter:site" content="@devfest_cz" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImage} />
