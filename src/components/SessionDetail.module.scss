@@ -1,0 +1,264 @@
+// Session detail dialog — film-noir modal opened from a docket card. Shares the
+// overlay/close/animation language with SpeakerDetail, but is a single content
+// column (no portrait rail): slot + abstract + the talk's speakers.
+
+.overlay {
+	position: fixed;
+	inset: 0;
+	// Above the fixed site header (z-index 10001).
+	z-index: 10050;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1.2rem;
+	background: rgba(3, 3, 3, 0.78);
+	backdrop-filter: blur(4px);
+	animation: overlayIn 0.2s ease;
+}
+
+@keyframes overlayIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.dialog {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: 640px;
+	max-height: min(84vh, 680px);
+	overflow: hidden;
+	background:
+		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
+		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 82%);
+	border: 1px solid var(--rule-red);
+	box-shadow: var(--glow-red-soft), 0 30px 70px rgba(0, 0, 0, 0.72);
+	outline: none;
+	animation: dialogIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dialogIn {
+	from {
+		opacity: 0;
+		transform: translateY(14px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* ===================== CLOSE ===================== */
+.close {
+	position: absolute;
+	top: 0.7rem;
+	right: 0.7rem;
+	z-index: 3;
+	width: 2.3rem;
+	height: 2.3rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: rgba(246, 243, 238, 0.85);
+	background: rgba(0, 0, 0, 0.45);
+	border: 1px solid rgba(240, 237, 230, 0.22);
+	border-radius: var(--radius);
+	cursor: pointer;
+	transition: color 0.2s, border-color 0.2s, background 0.2s;
+
+	svg {
+		width: 1.1rem;
+		height: 1.1rem;
+	}
+
+	&:hover,
+	&:focus-visible {
+		color: #fff;
+		border-color: var(--rule-red);
+		background: rgba(204, 0, 0, 0.35);
+		outline: none;
+	}
+}
+
+/* ===================== CONTENT ===================== */
+.content {
+	flex: 1;
+	min-width: 0;
+	padding: 2rem 2rem 2.2rem;
+	// Leave room for the close button on the first line.
+	padding-right: 3.4rem;
+	overflow-y: auto;
+}
+
+.kicker {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.7rem;
+	letter-spacing: 0.28em;
+	text-transform: uppercase;
+	color: var(--color-accent-hot);
+	margin: 0 0 0.5rem;
+}
+
+.title {
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: clamp(1.9rem, 3.6vw, 2.6rem);
+	line-height: 1.04;
+	letter-spacing: 0.02em;
+	color: var(--color-text);
+	margin: 0;
+}
+
+/* ===================== META (slot / room) ===================== */
+.meta {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1.1rem;
+	margin: 0.8rem 0 0;
+	padding: 0;
+}
+
+.metaItem {
+	position: relative;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.74rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-grey);
+
+	& + .metaItem::before {
+		content: '';
+		position: absolute;
+		left: -0.6rem;
+		top: 50%;
+		width: 3px;
+		height: 3px;
+		transform: translateY(-50%);
+		background: var(--color-accent-hot);
+	}
+}
+
+/* ===================== ABSTRACT ===================== */
+.abstract {
+	margin-top: 1.4rem;
+	border-top: 1px solid var(--rule-soft);
+	padding-top: 1.2rem;
+
+	p {
+		font-family: 'IM Fell English', serif;
+		font-size: 1.02rem;
+		line-height: 1.75;
+		color: rgba(240, 237, 230, 0.9);
+		margin: 0 0 0.9rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
+
+/* ===================== SPEAKERS ===================== */
+.speakers {
+	margin-top: 1.4rem;
+	border-top: 1px solid var(--rule-soft);
+	padding-top: 1.2rem;
+}
+
+.speakersTitle {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.72rem;
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+	margin: 0 0 0.9rem;
+}
+
+.speakersList {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.9rem;
+}
+
+.speaker {
+	display: flex;
+	align-items: center;
+	gap: 0.85rem;
+}
+
+.avatar {
+	position: relative;
+	flex-shrink: 0;
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	overflow: hidden;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--panel-lit);
+	border: 1px solid var(--rule);
+}
+
+.avatarImg {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center 22%;
+	filter: grayscale(1) contrast(1.06) brightness(0.92);
+}
+
+.avatarMono {
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: 1.1rem;
+	letter-spacing: 0.04em;
+	color: rgba(242, 239, 233, 0.4);
+	user-select: none;
+}
+
+.speakerText {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.speakerName {
+	font-family: 'Bebas Neue', sans-serif;
+	font-size: 1.3rem;
+	line-height: 1.1;
+	letter-spacing: 0.03em;
+	color: var(--color-text);
+}
+
+.speakerTag {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.72rem;
+	letter-spacing: 0.04em;
+	line-height: 1.45;
+	color: var(--color-grey);
+	margin-top: 0.15rem;
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 620px) {
+	.content {
+		padding: 1.5rem 1.3rem 1.7rem;
+		padding-right: 3rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.overlay,
+	.dialog {
+		animation: none;
+	}
+}

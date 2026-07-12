@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Sessions from '../components/Sessions.tsx';
+---
+
+<BaseLayout
+	title="Sessions — DevFest.cz 2026"
+	description="The talks and sessions on the agenda at DevFest.cz 2026 — Prague's largest community developer conference."
+>
+	<main class="sessions-page">
+		<SubpageHero
+			label="Case files"
+			titleHtml={'The talks<br /><span class="red">on the docket.</span>'}
+			lede="Every session on the DevFest.cz 2026 agenda, with the speakers behind it. The docket grows as talks are confirmed."
+			titleId="sessions-title"
+		/>
+
+		<section class="sessions-body" aria-label="Session agenda">
+			<div class="sessions-inner">
+				<header class="sessions-header">
+					<p class="sessions-eyebrow">The agenda</p>
+					<h2 class="sessions-heading">What&rsquo;s on</h2>
+				</header>
+
+				<!-- The grid hydrates client-side from Firestore; keep a static note
+				     for crawlers and no-JS visitors. -->
+				<Sessions client:load />
+
+				<noscript>
+					<p class="sessions-noscript">
+						The session agenda loads with JavaScript enabled. Please turn it on, or
+						check back soon.
+					</p>
+				</noscript>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</BaseLayout>
+
+<style lang="scss">
+	@use './sessions';
+</style>
