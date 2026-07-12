@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { initials, speakerFromDoc, type Speaker } from '../lib/speakers';
-import { type Session, type SessionSpeakerRef } from '../lib/sessions';
+import { visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
 import SpeakerDetail from './SpeakerDetail';
 import s from './SessionDetail.module.scss';
 
@@ -134,6 +134,7 @@ export default function SessionDetail({ session, onClose }: { session: Session; 
 	}, [onClose]);
 
 	const abstractParagraphs = session.description.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
+	const tagCategories = visitorCategories(session);
 
 	return (
 		<>
@@ -169,9 +170,9 @@ export default function SessionDetail({ session, onClose }: { session: Session; 
 						</ul>
 					)}
 
-					{session.categories.length > 0 && (
+					{tagCategories.length > 0 && (
 						<ul className={s.tags}>
-							{session.categories.flatMap((category) =>
+							{tagCategories.flatMap((category) =>
 								category.values.map((value) => (
 									<li key={`${category.name}-${value}`} className={s.tag}>
 										{value}

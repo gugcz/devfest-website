@@ -6,6 +6,7 @@ import {
 	isDisplayableSession,
 	matchesFilters,
 	sessionFromDoc,
+	visitorCategories,
 	type Session,
 	type SessionFilters,
 } from '../lib/sessions';
@@ -57,7 +58,7 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 	const names = session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
 	// Lead the card with the primary track (falls back to the room, then a generic
 	// label).
-	const kicker = session.categories[0]?.values[0] || session.room || 'Talk';
+	const kicker = visitorCategories(session)[0]?.values[0] || session.room || 'Talk';
 
 	return (
 		<li>
