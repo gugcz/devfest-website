@@ -470,18 +470,15 @@ interface SpeakerSummary {
 }
 
 /**
- * Build a speaker-GUID → summary map from the payload's top-level `speakers[]`.
- * Accepts either payload shape (the All object or the bare Speakers array) so a
- * session's speaker refs resolve to name/photo. Returns an empty map when no
- * speakers are present.
+ * Build a speaker-GUID → summary map from the All payload's top-level
+ * `speakers[]`, so a session's speaker refs resolve to name/photo. Object-only
+ * like `buildSessionMap`: sessions live only in the All view, so the bare
+ * Speakers-view array never needs a summary map. Empty map when absent.
  */
 export function buildSpeakerSummaryMap(payload: unknown): Map<string, SpeakerSummary> {
 	const map = new Map<string, SpeakerSummary>();
-	const speakers = Array.isArray(payload)
-		? payload
-		: typeof payload === 'object' && payload !== null
-			? (payload as SessionizeAll).speakers
-			: null;
+	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
+	const speakers = (payload as SessionizeAll).speakers;
 	if (!Array.isArray(speakers)) return map;
 	for (const entry of speakers) {
 		if (typeof entry !== 'object' || entry === null) continue;
@@ -542,11 +539,11 @@ export function extractSessions(payload: unknown): SessionizeSession[] {
 }
 
 /**
- * Resolve a session's `speakers` to `SessionSpeakerRef` summaries, handling both
- * wire shapes: bare GUID strings (All view) looked up in `speakerMap`, or
- * inlined `{ id, name }` objects (grouped views). Refs are deduped on id;
- * unresolved ids still keep the link (id + best-effort name) since the id alone
- * cross-references a `speakers/{id}` doc.
+ * Resolve a session's `speakers` to `SessionSpeakerRef` summaries. The All view
+ * gives bare GUID strings, looked up in `speakerMap`; an inlined `{ id, name }`
+ * object is also tolerated (mirrors the sibling `resolveSessions`) so a
+ * malformed entry degrades to id + best-effort name instead of vanishing. Refs
+ * are deduped on id; the id alone cross-references a `speakers/{id}` doc.
  */
 function resolveSessionSpeakers(
 	raw: unknown,

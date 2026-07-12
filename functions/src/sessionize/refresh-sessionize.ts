@@ -49,16 +49,6 @@ async function notify(text: string): Promise<void> {
 	}
 }
 
-interface CollectionSync {
-	collection: string;
-	upserted: number;
-	deleted: number;
-	deletesWithheld: boolean;
-	/** Id counts surfaced in the delete-guard alert. */
-	freshCount: number;
-	existingCount: number;
-}
-
 /**
  * Mirror one set of docs into a collection as a single atomic batch (upserts +
  * guarded deletes). NOTE: a WriteBatch hard-caps at 500 ops, so
@@ -66,7 +56,7 @@ interface CollectionSync {
  * expected ~30–80 speakers/sessions. Chunk into multiple batches if either set
  * ever approaches that ceiling.
  */
-async function commitCollection(name: string, docs: { id: string }[]): Promise<CollectionSync> {
+async function commitCollection(name: string, docs: { id: string }[]): Promise<void> {
 	const collection = firestore().collection(name);
 
 	// listDocuments() returns refs without reading document bodies — cheap way
@@ -85,29 +75,18 @@ async function commitCollection(name: string, docs: { id: string }[]): Promise<C
 	}
 	await batch.commit();
 
-	const result: CollectionSync = {
-		collection: name,
-		upserted: docs.length,
-		deleted: plan.toDelete.length,
-		deletesWithheld: plan.withheld,
-		freshCount: freshIds.size,
-		existingCount: existingIds.length,
-	};
-
 	logger.info(
-		`Wrote /${name} (upserted=${result.upserted}, deleted=${result.deleted}, withheld=${result.deletesWithheld})`,
+		`Wrote /${name} (upserted=${docs.length}, deleted=${plan.toDelete.length}, withheld=${plan.withheld})`,
 	);
 
 	if (plan.withheld) {
 		await notify(
-			`Delete guard tripped on /${name} — held stale deletes (fresh=${result.freshCount}, existing=${result.existingCount}). Possible truncated Sessionize response.`,
+			`Delete guard tripped on /${name} — held stale deletes (fresh=${freshIds.size}, existing=${existingIds.length}). Possible truncated Sessionize response.`,
 		);
 	}
-
-	return result;
 }
 
-async function syncSessionize(): Promise<CollectionSync[]> {
+async function syncSessionize(): Promise<void> {
 	const endpointId = SESSIONIZE_ENDPOINT_ID.value();
 	if (!endpointId) {
 		throw new Error('Missing config: set the SESSIONIZE_ENDPOINT_ID secret.');
@@ -127,10 +106,8 @@ async function syncSessionize(): Promise<CollectionSync[]> {
 	// failed fetch aborts before either collection is touched. `extractSessions`
 	// tolerates an empty set (Speakers-view fallback), and the delete-guard keeps
 	// a truncated run from wiping the live /sessions collection.
-	const speakersResult = await commitCollection(SPEAKERS_COLLECTION, speakers);
-	const sessionsResult = await commitCollection(SESSIONS_COLLECTION, sessions);
-
-	return [speakersResult, sessionsResult];
+	await commitCollection(SPEAKERS_COLLECTION, speakers);
+	await commitCollection(SESSIONS_COLLECTION, sessions);
 }
 
 /**
