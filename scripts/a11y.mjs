@@ -12,6 +12,7 @@ const PORT = 4321;
 const PATHS = [
 	'/',
 	'/speakers/',
+	'/sessions/',
 	'/team/',
 	'/partners/',
 	'/contact/',
