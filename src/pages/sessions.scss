@@ -1,0 +1,58 @@
+.sessions-page {
+	display: flex;
+	flex-direction: column;
+}
+
+/* ===================== AGENDA SECTION ===================== */
+// Same lit-room atmosphere as /speakers: a central spotlight pool with a faint
+// red radial bleeding from the top-right, over page black.
+.sessions-body {
+	position: relative;
+	padding: var(--section-y) var(--gutter);
+	background:
+		radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
+		var(--lit),
+		var(--color-bg);
+	border-top: 1px solid var(--rule-soft);
+}
+
+.sessions-inner {
+	max-width: var(--maxw);
+	margin: 0 auto;
+}
+
+.sessions-header {
+	text-align: center;
+	margin-bottom: 2.6rem;
+}
+
+.sessions-eyebrow {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.78rem;
+	letter-spacing: 0.3em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.62);
+	margin: 0 0 1rem;
+}
+
+.sessions-heading {
+	font-family: 'Special Elite', cursive;
+	font-size: var(--fs-h2);
+	letter-spacing: 0.01em;
+	line-height: 1.05;
+	text-transform: uppercase;
+	color: var(--color-text);
+	text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+	margin: 0;
+}
+
+.sessions-noscript {
+	font-family: 'IM Fell English', serif;
+	font-style: italic;
+	font-size: 1.2rem;
+	line-height: 1.7;
+	color: var(--color-grey);
+	text-align: center;
+	max-width: 52ch;
+	margin: 2rem auto 0;
+}

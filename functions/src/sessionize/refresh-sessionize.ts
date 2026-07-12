@@ -1,16 +1,21 @@
 /**
  * Scheduled trigger that mirrors Sessionize into public-read Firestore. Fetches
- * the All-data view and (today) writes the `speakers` array into the `speakers`
- * collection; the website reads it directly so visitor traffic never hits
- * Sessionize. Sessions / rooms / categories are on the wire but not yet
- * persisted — add a collection + guarded sync when they're needed.
+ * the All-data view once a day and writes two cross-referenced collections so
+ * the website reads them live and visitor traffic never hits Sessionize:
+ *   - `speakers` — each speaker doc embeds its `sessions[]`.
+ *   - `sessions` — each session doc embeds its `speakers[]`.
+ * The All view's `rooms` / `categories` are on the wire but not yet persisted —
+ * add a collection + guarded sync when they're needed.
  *
- * The write is a single atomic batch (upserts + guarded deletes) so a live
- * `onSnapshot` subscriber never streams a half-synced state. A truncated or
- * malformed Sessionize response aborts before any write — see
- * `sessionize-api.ts` for the validation + delete-guard rationale.
+ * Each collection is written as its own atomic batch (upserts + guarded
+ * deletes) so a live `onSnapshot` subscriber never streams a half-synced state.
+ * A truncated or malformed Sessionize response aborts before any write — see
+ * `sessionize-api.ts` for the validation + delete-guard rationale. Sessions are
+ * only present in the All view; a Speakers-view fallback yields an empty session
+ * set, which the delete-guard preserves rather than wipes.
  */
 
+import { FieldValue } from 'firebase-admin/firestore';
 import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
@@ -19,16 +24,20 @@ import { SLACK_WEBHOOK_URL } from '../tickets/params.js';
 import { postToSlack } from '../tickets/slack-client.js';
 import { SESSIONIZE_ENDPOINT_ID } from './params.js';
 import {
+	buildCategoryMap,
 	buildSessionMap,
+	buildSpeakerSummaryMap,
 	computeDeletePlan,
+	extractSessions,
 	extractSpeakers,
-	fetchSpeakersPayload,
+	fetchSessionizePayload,
+	normalizeSessions,
 	normalizeSpeakers,
-	type SpeakerDoc,
 } from './sessionize-api.js';
 
 const REGION = 'europe-west1';
 const SPEAKERS_COLLECTION = 'speakers';
+const SESSIONS_COLLECTION = 'sessions';
 const SLACK_PREFIX = '🎤 SESSIONIZE';
 
 /** Best-effort Slack alert — never masks the caller's real error. */
@@ -42,63 +51,70 @@ async function notify(text: string): Promise<void> {
 	}
 }
 
-interface SyncResult {
-	upserted: number;
-	deleted: number;
-	deletesWithheld: boolean;
-}
-
-async function syncSessionize(): Promise<SyncResult> {
-	const endpointId = SESSIONIZE_ENDPOINT_ID.value();
-	if (!endpointId) {
-		throw new Error('Missing config: set the SESSIONIZE_ENDPOINT_ID secret.');
-	}
-
-	logger.info('Fetching Sessionize speakers');
-	const payload = await fetchSpeakersPayload(endpointId);
-	const sessionMap = buildSessionMap(payload);
-	const speakers: SpeakerDoc[] = normalizeSpeakers(extractSpeakers(payload), sessionMap);
-
-	const collection = firestore().collection(SPEAKERS_COLLECTION);
+/**
+ * Mirror one typed set of docs into a collection as a single atomic batch
+ * (upserts + guarded deletes). Generic over the doc shape so the caller passes
+ * `SpeakerDoc[]` / `SessionDoc[]` and the write is type-checked end to end.
+ * Each doc is stamped with a server-side `syncedAt` (mirrors the invoice
+ * domain's `createdAt`/`updatedAt`) so consumers can gauge mirror staleness.
+ *
+ * NOTE: a WriteBatch hard-caps at 500 ops, so docs.length + toDelete.length
+ * must stay < 500 — trivially true at the expected ~30–80 speakers/sessions.
+ * Chunk into multiple batches if either set ever approaches that ceiling.
+ */
+async function commitCollection<T extends { id: string }>(name: string, docs: T[]): Promise<void> {
+	const collection = firestore().collection(name);
 
 	// listDocuments() returns refs without reading document bodies — cheap way
 	// to diff the current id set against the fresh one.
 	const existingRefs = await collection.listDocuments();
 	const existingIds = existingRefs.map((ref) => ref.id);
-	const freshIds = new Set(speakers.map((s) => s.id));
+	const freshIds = new Set(docs.map((d) => d.id));
 	const plan = computeDeletePlan(existingIds, freshIds);
 
-	// One atomic batch = one consistent snapshot for the live `onSnapshot`
-	// subscriber. NOTE: a WriteBatch hard-caps at 500 ops, so
-	// speakers.length + toDelete.length must stay < 500 — trivially true at the
-	// expected ~30–60 speakers. Chunk into multiple batches if the roster ever
-	// approaches that ceiling.
 	const batch = firestore().batch();
-	for (const speaker of speakers) {
-		batch.set(collection.doc(speaker.id), speaker);
+	for (const doc of docs) {
+		batch.set(collection.doc(doc.id), { ...doc, syncedAt: FieldValue.serverTimestamp() });
 	}
 	for (const id of plan.toDelete) {
 		batch.delete(collection.doc(id));
 	}
 	await batch.commit();
 
-	const result: SyncResult = {
-		upserted: speakers.length,
-		deleted: plan.toDelete.length,
-		deletesWithheld: plan.withheld,
-	};
-
 	logger.info(
-		`Wrote /${SPEAKERS_COLLECTION} (upserted=${result.upserted}, deleted=${result.deleted}, withheld=${result.deletesWithheld})`,
+		`Wrote /${name} (upserted=${docs.length}, deleted=${plan.toDelete.length}, withheld=${plan.withheld})`,
 	);
 
 	if (plan.withheld) {
 		await notify(
-			`Delete guard tripped — held stale-speaker deletes (fresh=${freshIds.size}, existing=${existingIds.length}). Possible truncated Sessionize response.`,
+			`Delete guard tripped on /${name} — held stale deletes (fresh=${freshIds.size}, existing=${existingIds.length}). Possible truncated Sessionize response.`,
 		);
 	}
+}
 
-	return result;
+async function syncSessionize(): Promise<void> {
+	const endpointId = SESSIONIZE_ENDPOINT_ID.value();
+	if (!endpointId) {
+		throw new Error('Missing config: set the SESSIONIZE_ENDPOINT_ID secret.');
+	}
+
+	logger.info('Fetching Sessionize data');
+	const payload = await fetchSessionizePayload(endpointId);
+
+	// Speakers embed their sessions; sessions embed their speakers.
+	const sessionMap = buildSessionMap(payload);
+	const speakers = normalizeSpeakers(extractSpeakers(payload), sessionMap);
+
+	const speakerMap = buildSpeakerSummaryMap(payload);
+	const categoryMap = buildCategoryMap(payload);
+	const sessions = normalizeSessions(extractSessions(payload), speakerMap, categoryMap);
+
+	// Speakers first: `extractSpeakers` throws on an empty/invalid roster, so a
+	// failed fetch aborts before either collection is touched. `extractSessions`
+	// tolerates an empty set (Speakers-view fallback), and the delete-guard keeps
+	// a truncated run from wiping the live /sessions collection.
+	await commitCollection(SPEAKERS_COLLECTION, speakers);
+	await commitCollection(SESSIONS_COLLECTION, sessions);
 }
 
 /**

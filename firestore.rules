@@ -1,7 +1,7 @@
 rules_version = '2';
 
-// Firestore security rules for the `invoices` (deny-all) and `speakers`
-// (public-read) collections.
+// Firestore security rules for the `invoices` (deny-all) and `speakers` +
+// `sessions` (public-read) collections.
 //
 // ⚠️ NOT wired into firebase.json on purpose. The Firebase project
 // (devfest-cz-app) is SHARED with the mobile app repo, and a Firestore
@@ -9,20 +9,22 @@ rules_version = '2';
 // --only firestore:rules` with this file would OVERWRITE whatever rules
 // the app repo maintains. Same hazard as database.rules.json.
 //
-// HOW TO APPLY: open the Firebase console → Firestore → Rules and MERGE
-// BOTH the `match /invoices/{id}` and `match /speakers/{id}` blocks below
-// into the project's existing ruleset. Do not blindly paste this whole file
-// unless this repo owns the project's Firestore rules outright.
+// HOW TO APPLY: open the Firebase console → Firestore → Rules and MERGE the
+// `match /invoices/{id}`, `match /speakers/{id}`, and `match /sessions/{id}`
+// blocks below into the project's existing ruleset. Do not blindly paste this
+// whole file unless this repo owns the project's Firestore rules outright.
 //
-// ⚠️ PII SAFETY: `speakers` is deliberately world-READABLE. Keep that read
-// scoped to `speakers` only — never widen it to a parent path or the
-// catch-all, or it would expose the PII in `invoices` (name, address,
-// IČO/DIČ, email). `invoices` and the default must stay deny-all.
+// ⚠️ PII SAFETY: `speakers` and `sessions` are deliberately world-READABLE.
+// Keep those reads scoped to those two collections only — never widen to a
+// parent path or the catch-all, or it would expose the PII in `invoices`
+// (name, address, IČO/DIČ, email). `invoices` and the default must stay
+// deny-all.
 //
 // WHY: `invoices` holds company PII and is written/read ONLY by Cloud
-// Functions via the Admin SDK (which bypasses these rules). `speakers` is a
-// public, non-sensitive lineup mirror the browser reads live; it is written
-// ONLY by the Admin SDK (`refreshSpeakers`), so client writes stay blocked.
+// Functions via the Admin SDK (which bypasses these rules). `speakers` and
+// `sessions` are a public, non-sensitive lineup mirror the browser reads
+// live; both are written ONLY by the Admin SDK (`refreshSessionize`), so
+// client writes stay blocked.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -32,8 +34,16 @@ service cloud.firestore {
     }
 
     // Public speaker lineup — world-readable, client writes blocked.
-    // Cloud Functions (`refreshSpeakers`) write via the Admin SDK.
+    // Cloud Functions (`refreshSessionize`) write via the Admin SDK.
     match /speakers/{speakerId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Public session schedule — world-readable, client writes blocked.
+    // Cloud Functions (`refreshSessionize`) write via the Admin SDK. Each
+    // doc embeds only a speaker summary (name, tagline, photo) — no PII.
+    match /sessions/{sessionId} {
       allow read: if true;
       allow write: if false;
     }
