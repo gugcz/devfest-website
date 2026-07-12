@@ -44,13 +44,17 @@
 	letter-spacing: 0.02em;
 	color: var(--color-text);
 	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 90%);
-	border: 1px solid var(--rule);
+	// --field-border (not --rule) keeps the field boundary >=3:1 over the dark
+	// fill — WCAG 1.4.11, matching the invoice inputs.
+	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	padding: 0.7rem 0.9rem 0.7rem 2.5rem;
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
+	// 0.55 (not 0.4) lifts the placeholder — the field's only visible label — to
+	// >=4.5:1 for normal text (WCAG 1.4.3).
 	&::placeholder {
-		color: rgba(240, 237, 230, 0.4);
+		color: rgba(240, 237, 230, 0.55);
 	}
 
 	&:focus-visible {
@@ -141,7 +145,13 @@
 	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);
-		outline: none;
+	}
+
+	// Keyboard focus needs more than the colour swap (2.4.7 / 1.4.1) — the
+	// underline is always on, so give it a real ring like the other controls.
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 3px;
 	}
 }
 

@@ -226,6 +226,83 @@ async function scanSuppressedFocus() {
 	return hits;
 }
 
+// ─── Gated ready-state coverage ────────────────────────────────────────────
+// The lineup (Firestore speakers/sessions) and ticket cache (RTDB) sit behind
+// App Check + read rules that block CI, so a plain build only ever renders the
+// "temporarily unavailable" error state. `npm run a11y` builds with A11Y_MOCK=1
+// (astro.config.mjs → scripts/a11y-mocks/) so the components hydrate from
+// fixtures and the real content — cards, filters, ticket waves, detail dialogs —
+// gets audited. Two extra concerns then need driving that a static pass misses:
+//
+//  1. client:visible islands (Tickets on /) don't hydrate until scrolled into
+//     view — `hydrateIslands` scrolls the page and waits for aria-busy to clear.
+//  2. The speaker/session detail dialogs only exist after a click — `MODAL_FLOWS`
+//     opens each and axe re-runs scoped to the dialog.
+
+async function hydrateIslands(page) {
+	// Trigger client:visible islands, then settle at the top again.
+	await page.evaluate(async () => {
+		const step = Math.max(1, Math.floor(window.innerHeight * 0.8));
+		for (let y = 0; y <= document.body.scrollHeight; y += step) window.scrollTo(0, y);
+		window.scrollTo(0, 0);
+	});
+	// Wait for every island to leave its loading state (bounded — some pages have
+	// none, and the empty/error states never set aria-busy).
+	await page
+		.waitForFunction(() => !document.querySelector('[aria-busy="true"]'), { timeout: 6000 })
+		.catch(() => {});
+	await page.waitForTimeout(250);
+}
+
+// Detail dialogs reached by clicking a card. Each flow reloads first for a clean
+// state, opens the dialog, and axe re-runs scoped to `[role="dialog"]`.
+const MODAL_FLOWS = {
+	'/speakers/': [
+		{
+			label: 'speaker detail dialog',
+			open: (p) => p.click('button[aria-label^="View "]'),
+		},
+	],
+	'/sessions/': [
+		{
+			label: 'session detail dialog',
+			open: (p) => p.click('button[aria-label^="View details for "]'),
+		},
+		{
+			label: 'session → speaker dialog',
+			open: async (p) => {
+				await p.click('button[aria-label^="View details for "]');
+				await p.waitForSelector('[role="dialog"]');
+				await p.click('[role="dialog"] button[aria-label^="View "]');
+			},
+		},
+	],
+};
+
+async function auditModals(page, urlPath, url, tags) {
+	const flows = MODAL_FLOWS[urlPath];
+	if (!flows) return [];
+	const found = [];
+	for (const flow of flows) {
+		await page.goto(url, { waitUntil: 'domcontentloaded' });
+		await page.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
+		await hydrateIslands(page);
+		try {
+			await flow.open(page);
+			await page.waitForSelector('[role="dialog"]', { timeout: 3000 });
+			await page.waitForTimeout(200);
+			const res = await new AxeBuilder({ page })
+				.withTags(tags)
+				.include('[role="dialog"]')
+				.analyze();
+			if (res.violations.length) found.push({ urlPath: `${urlPath} [${flow.label}]`, violations: res.violations });
+		} catch (err) {
+			console.log(`  ⚠ ${urlPath} [${flow.label}] — flow error: ${err}`);
+		}
+	}
+	return found;
+}
+
 async function run() {
 	if (!existsSync(DIST)) {
 		console.error('dist/ missing. Run `npm run build` first.');
@@ -257,6 +334,9 @@ async function run() {
 		// through — enough for islands to hydrate without hanging 30s.
 		await page.goto(url, { waitUntil: 'domcontentloaded' });
 		await page.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
+		// Under the mock build, drive client:visible islands (Tickets on /) to
+		// their ready state before axe samples the DOM.
+		await hydrateIslands(page);
 		const results = await new AxeBuilder({ page }).withTags(tags).analyze();
 
 		// axe blind spots: our own control-contrast pass + surfaced incompletes.
@@ -269,9 +349,16 @@ async function run() {
 			}
 		}
 
+		// Detail dialogs (speaker / session) only exist after a click.
+		const modalFails = await auditModals(page, urlPath, url, tags);
+		for (const m of modalFails) {
+			totalViolations += m.violations.length;
+			failures.push(m);
+		}
+
 		const elapsed = Date.now() - start;
 		const pageFails = fails.length;
-		if (results.violations.length === 0 && pageFails === 0) {
+		if (results.violations.length === 0 && pageFails === 0 && modalFails.length === 0) {
 			console.log(`  ✓ ${urlPath} (${elapsed}ms)`);
 			continue;
 		}
@@ -282,6 +369,7 @@ async function run() {
 		const parts = [];
 		if (results.violations.length) parts.push(`${results.violations.length} axe`);
 		if (pageFails) parts.push(`${pageFails} control-contrast`);
+		if (modalFails.length) parts.push(`${modalFails.reduce((n, m) => n + m.violations.length, 0)} modal`);
 		console.log(`  ✘ ${urlPath} — ${parts.join(', ')} (${elapsed}ms)`);
 	}
 
