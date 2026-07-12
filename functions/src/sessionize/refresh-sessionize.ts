@@ -4,8 +4,11 @@
  * the website reads them live and visitor traffic never hits Sessionize:
  *   - `speakers` — each speaker doc embeds its `sessions[]`.
  *   - `sessions` — each session doc embeds its `speakers[]`.
- * The All view's `rooms` / `categories` are on the wire but not yet persisted —
- * add a collection + guarded sync when they're needed.
+ * Speaker photos are mirrored into Firebase Storage first (see
+ * `mirror-images.ts`) and the stored URLs are written onto both collections, so
+ * every asset the website serves is cached on Firebase, not Sessionize's CDN.
+ * The All view's `rooms` is on the wire but not yet persisted — add a collection
+ * + guarded sync when it's needed.
  *
  * Each collection is written as its own atomic batch (upserts + guarded
  * deletes) so a live `onSnapshot` subscriber never streams a half-synced state.
@@ -22,6 +25,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { firestore } from '../lib/admin.js';
 import { SLACK_WEBHOOK_URL } from '../tickets/params.js';
 import { postToSlack } from '../tickets/slack-client.js';
+import { mirrorSpeakerImages } from './mirror-images.js';
 import { SESSIONIZE_ENDPOINT_ID } from './params.js';
 import {
 	buildCategoryMap,
@@ -101,11 +105,19 @@ async function syncSessionize(): Promise<void> {
 	logger.info('Fetching Sessionize data');
 	const payload = await fetchSessionizePayload(endpointId);
 
+	// Mirror speaker photos into Firebase Storage and serve those URLs, so every
+	// asset is cached on Firebase (not Sessionize's CDN). Best-effort: any id not
+	// in the map falls back to its raw Sessionize URL. Done before normalization
+	// so both the speaker docs and the sessions' embedded speaker refs get the
+	// Firebase URL.
+	const rawSpeakers = extractSpeakers(payload);
+	const imageMap = await mirrorSpeakerImages(rawSpeakers);
+
 	// Speakers embed their sessions; sessions embed their speakers.
 	const sessionMap = buildSessionMap(payload);
-	const speakers = normalizeSpeakers(extractSpeakers(payload), sessionMap);
+	const speakers = normalizeSpeakers(rawSpeakers, sessionMap, imageMap);
 
-	const speakerMap = buildSpeakerSummaryMap(payload);
+	const speakerMap = buildSpeakerSummaryMap(payload, imageMap);
 	const categoryMap = buildCategoryMap(payload);
 	const sessions = normalizeSessions(extractSessions(payload), speakerMap, categoryMap);
 
@@ -127,8 +139,11 @@ export const refreshSessionize = onSchedule(
 		timeZone: 'Europe/Prague',
 		region: REGION,
 		secrets: [SESSIONIZE_ENDPOINT_ID, SLACK_WEBHOOK_URL],
-		timeoutSeconds: 120,
-		memory: '256MiB',
+		// Higher than a plain fetch needs: the first run downloads the whole
+		// speaker roster into Storage. Steady-state runs are far quicker (only
+		// changed photos re-download).
+		timeoutSeconds: 300,
+		memory: '512MiB',
 		retryCount: 1,
 	},
 	async () => {
