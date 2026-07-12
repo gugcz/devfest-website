@@ -15,6 +15,7 @@
  * set, which the delete-guard preserves rather than wipes.
  */
 
+import { FieldValue } from 'firebase-admin/firestore';
 import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
@@ -50,13 +51,17 @@ async function notify(text: string): Promise<void> {
 }
 
 /**
- * Mirror one set of docs into a collection as a single atomic batch (upserts +
- * guarded deletes). NOTE: a WriteBatch hard-caps at 500 ops, so
- * docs.length + toDelete.length must stay < 500 — trivially true at the
- * expected ~30–80 speakers/sessions. Chunk into multiple batches if either set
- * ever approaches that ceiling.
+ * Mirror one typed set of docs into a collection as a single atomic batch
+ * (upserts + guarded deletes). Generic over the doc shape so the caller passes
+ * `SpeakerDoc[]` / `SessionDoc[]` and the write is type-checked end to end.
+ * Each doc is stamped with a server-side `syncedAt` (mirrors the invoice
+ * domain's `createdAt`/`updatedAt`) so consumers can gauge mirror staleness.
+ *
+ * NOTE: a WriteBatch hard-caps at 500 ops, so docs.length + toDelete.length
+ * must stay < 500 — trivially true at the expected ~30–80 speakers/sessions.
+ * Chunk into multiple batches if either set ever approaches that ceiling.
  */
-async function commitCollection(name: string, docs: { id: string }[]): Promise<void> {
+async function commitCollection<T extends { id: string }>(name: string, docs: T[]): Promise<void> {
 	const collection = firestore().collection(name);
 
 	// listDocuments() returns refs without reading document bodies — cheap way
@@ -68,7 +73,7 @@ async function commitCollection(name: string, docs: { id: string }[]): Promise<v
 
 	const batch = firestore().batch();
 	for (const doc of docs) {
-		batch.set(collection.doc(doc.id), doc);
+		batch.set(collection.doc(doc.id), { ...doc, syncedAt: FieldValue.serverTimestamp() });
 	}
 	for (const id of plan.toDelete) {
 		batch.delete(collection.doc(id));

@@ -146,7 +146,8 @@ interface SessionDetail {
  * are never persisted, so a `javascript:` href can't reach the DOM). `sessions`
  * are resolved to `{ id, name }` (title joined from the All payload). The other
  * relational arrays (`categories` / `questionAnswers`) are stored as-is for
- * downstream use; nothing renders them yet.
+ * downstream use; nothing renders them yet. The writer additionally stamps a
+ * server-side `syncedAt` Timestamp on the persisted doc (see `commitCollection`).
  */
 export interface SpeakerDoc {
 	/** Sessionize speaker GUID — also the Firestore doc id. */
@@ -187,7 +188,8 @@ export interface SessionSpeakerRef {
  * (cross-reference to the `speakers` collection). `categoryItems` /
  * `questionAnswers` are stored as-is for downstream use; nothing renders them
  * yet. Service sessions (breaks, lunch) are kept with an empty `speakers[]` and
- * `isServiceSession: true` so consumers can filter them out.
+ * `isServiceSession: true` so consumers can filter them out. The writer stamps a
+ * server-side `syncedAt` Timestamp on the persisted doc (see `commitCollection`).
  */
 export interface SessionDoc {
 	/** Sessionize session id (stringified) — also the Firestore doc id. */
