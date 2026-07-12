@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { initials } from '../lib/speakers';
-import { formatSessionTime, type Session, type SessionSpeakerRef } from '../lib/sessions';
+import { type Session, type SessionSpeakerRef } from '../lib/sessions';
 import s from './SessionDetail.module.scss';
 
 function SpeakerAvatar({ speaker }: { speaker: SessionSpeakerRef }) {
@@ -26,8 +26,8 @@ function SpeakerAvatar({ speaker }: { speaker: SessionSpeakerRef }) {
 }
 
 /**
- * Accessible session detail dialog: schedule slot, abstract, and the talk's
- * speakers. Traps focus, closes on Esc / backdrop click, locks body scroll, and
+ * Accessible session detail dialog: room, abstract, and the talk's speakers.
+ * Traps focus, closes on Esc / backdrop click, locks body scroll, and
  * restores focus to the triggering card on close (mirrors `SpeakerDetail`).
  */
 export default function SessionDetail({ session, onClose }: { session: Session; onClose: () => void }) {
@@ -81,7 +81,6 @@ export default function SessionDetail({ session, onClose }: { session: Session; 
 		};
 	}, [onClose]);
 
-	const when = formatSessionTime(session.startsAt, session.endsAt);
 	const abstractParagraphs = session.description.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
 
 	return (
@@ -111,10 +110,9 @@ export default function SessionDetail({ session, onClose }: { session: Session; 
 						{session.title}
 					</h2>
 
-					{(when || session.room) && (
+					{session.room && (
 						<ul className={s.meta}>
-							{when && <li className={s.metaItem}>{when}</li>}
-							{session.room && <li className={s.metaItem}>{session.room}</li>}
+							<li className={s.metaItem}>{session.room}</li>
 						</ul>
 					)}
 
