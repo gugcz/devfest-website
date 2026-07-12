@@ -118,6 +118,18 @@ export default function SessionDetail({ session, onClose }: { session: Session; 
 						</ul>
 					)}
 
+					{session.categories.length > 0 && (
+						<ul className={s.tags}>
+							{session.categories.flatMap((category) =>
+								category.values.map((value) => (
+									<li key={`${category.name}-${value}`} className={s.tag}>
+										{value}
+									</li>
+								)),
+							)}
+						</ul>
+					)}
+
 					{abstractParagraphs.length > 0 && (
 						<div className={s.abstract}>
 							{abstractParagraphs.map((paragraph, i) => (

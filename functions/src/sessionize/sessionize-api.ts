@@ -183,13 +183,28 @@ export interface SessionSpeakerRef {
 }
 
 /**
+ * A resolved Sessionize category group on a session, e.g.
+ * `{ name: 'Track', values: ['Web', 'AI/ML'] }`. Sessionize gives a session only
+ * a flat `categoryItems` array of item ids; `buildCategoryMap` + the payload's
+ * top-level `categories[]` resolve those ids to their group + label. Backs the
+ * website's session filters (track / level / format facets).
+ */
+export interface SessionCategory {
+	/** Category group title (e.g. `Track`, `Level`, `Format`). */
+	name: string;
+	/** The item labels this session is tagged with in that group. */
+	values: string[];
+}
+
+/**
  * The document written to Firestore `sessions/{id}` — the Sessionize session
  * record with its `speakers[]` resolved to `SessionSpeakerRef` summaries
- * (cross-reference to the `speakers` collection). `categoryItems` /
- * `questionAnswers` are stored as-is for downstream use; nothing renders them
- * yet. Service sessions (breaks, lunch) are kept with an empty `speakers[]` and
- * `isServiceSession: true` so consumers can filter them out. The writer stamps a
- * server-side `syncedAt` Timestamp on the persisted doc (see `commitCollection`).
+ * (cross-reference to the `speakers` collection) and `categoryItems` resolved to
+ * `categories` (group + labels, for the website's filters). `questionAnswers` is
+ * stored as-is for downstream use; nothing renders it yet. Service sessions
+ * (breaks, lunch) are kept with an empty `speakers[]` and `isServiceSession:
+ * true` so consumers can filter them out. The writer stamps a server-side
+ * `syncedAt` Timestamp on the persisted doc (see `commitCollection`).
  */
 export interface SessionDoc {
 	/** Sessionize session id (stringified) — also the Firestore doc id. */
@@ -208,7 +223,7 @@ export interface SessionDoc {
 	/** Sessionize workflow status (e.g. `Accepted`); may be empty. */
 	status: string;
 	speakers: SessionSpeakerRef[];
-	categoryItems: unknown[];
+	categories: SessionCategory[];
 	questionAnswers: unknown[];
 	liveUrl: string;
 	recordingUrl: string;
@@ -577,16 +592,93 @@ function resolveSessionSpeakers(
 	return out;
 }
 
+/** A category item resolved to its group title + label. */
+interface CategoryItem {
+	group: string;
+	name: string;
+}
+
+/**
+ * Build an itemId → { group, name } map from the All payload's top-level
+ * `categories[]` (`[{ title, items: [{ id, name }] }]`). A session carries only
+ * a flat `categoryItems` id array; this map resolves each id to its label and
+ * the group it belongs to (Track / Level / Format …). Empty map when the event
+ * has no categories configured, or for a non-All payload.
+ */
+export function buildCategoryMap(payload: unknown): Map<string, CategoryItem> {
+	const map = new Map<string, CategoryItem>();
+	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
+	const categories = (payload as SessionizeAll).categories;
+	if (!Array.isArray(categories)) return map;
+	for (const group of categories) {
+		if (typeof group !== 'object' || group === null) continue;
+		const record = group as Record<string, unknown>;
+		const groupName = asString(record.title) || asString(record.name);
+		const items = record.items;
+		if (!Array.isArray(items)) continue;
+		for (const item of items) {
+			if (typeof item !== 'object' || item === null) continue;
+			const itemRecord = item as Record<string, unknown>;
+			if (itemRecord.id == null) continue;
+			const name = asString(itemRecord.name) || asString(itemRecord.title);
+			if (!name) continue;
+			map.set(String(itemRecord.id), { group: groupName, name });
+		}
+	}
+	return map;
+}
+
+/**
+ * Resolve a session's flat `categoryItems` id array into grouped
+ * `SessionCategory[]`, preserving first-seen group order and deduping labels
+ * within a group. Ids not present in `categoryMap` are skipped. Also tolerates
+ * already-inlined `{ name }` / group objects defensively.
+ */
+function resolveSessionCategories(
+	raw: unknown,
+	categoryMap: Map<string, CategoryItem>,
+): SessionCategory[] {
+	if (!Array.isArray(raw)) return [];
+	const groups = new Map<string, Set<string>>();
+	const order: string[] = [];
+	const add = (group: string, name: string) => {
+		if (!name) return;
+		let set = groups.get(group);
+		if (!set) {
+			set = new Set<string>();
+			groups.set(group, set);
+			order.push(group);
+		}
+		set.add(name);
+	};
+	for (const item of raw) {
+		if (typeof item === 'number' || typeof item === 'string') {
+			const resolved = categoryMap.get(String(item));
+			if (resolved) add(resolved.group, resolved.name);
+			continue;
+		}
+		if (typeof item === 'object' && item !== null) {
+			const record = item as Record<string, unknown>;
+			const resolved = record.id != null ? categoryMap.get(String(record.id)) : undefined;
+			const name = resolved?.name || asString(record.name) || asString(record.title);
+			add(resolved?.group ?? '', name);
+		}
+	}
+	return order.map((group) => ({ name: group, values: Array.from(groups.get(group) ?? []) }));
+}
+
 /**
  * Project one raw session into the persisted doc shape. `order` is the array
  * index (stable tiebreaker for `startsAt` sorts); missing scalars become empty
- * strings / false so the doc shape stays stable. `speakers` are resolved via
- * `speakerMap`; `categoryItems` / `questionAnswers` are stored as-is.
+ * strings / false so the doc shape stays stable. `speakers` / `categoryItems`
+ * are resolved via `speakerMap` / `categoryMap`; `questionAnswers` is stored
+ * as-is.
  */
 export function normalizeSession(
 	raw: SessionizeSession,
 	index: number,
 	speakerMap: Map<string, SpeakerSummary>,
+	categoryMap: Map<string, CategoryItem>,
 ): SessionDoc {
 	return {
 		id: String(raw.id).trim(),
@@ -601,7 +693,7 @@ export function normalizeSession(
 		isPlenumSession: raw.isPlenumSession === true,
 		status: asString(raw.status),
 		speakers: resolveSessionSpeakers(raw.speakers, speakerMap),
-		categoryItems: asArray(raw.categoryItems),
+		categories: resolveSessionCategories(raw.categoryItems, categoryMap),
 		questionAnswers: asArray(raw.questionAnswers),
 		liveUrl: asString(raw.liveUrl),
 		recordingUrl: asString(raw.recordingUrl),
@@ -611,8 +703,9 @@ export function normalizeSession(
 export function normalizeSessions(
 	raw: SessionizeSession[],
 	speakerMap: Map<string, SpeakerSummary> = new Map(),
+	categoryMap: Map<string, CategoryItem> = new Map(),
 ): SessionDoc[] {
-	return raw.map((session, index) => normalizeSession(session, index, speakerMap));
+	return raw.map((session, index) => normalizeSession(session, index, speakerMap, categoryMap));
 }
 
 /**

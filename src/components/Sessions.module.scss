@@ -4,6 +4,151 @@
 // file-rule instead of a portrait, with the speakers stacked at the foot.
 // Global tokens come from BaseLayout.
 
+/* ===================== FILTER BAR ===================== */
+.filters {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-bottom: 2.2rem;
+	padding-bottom: 1.6rem;
+	border-bottom: 1px solid var(--rule-soft);
+}
+
+.searchRow {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+.search {
+	position: relative;
+	flex: 1 1 260px;
+	display: flex;
+	align-items: center;
+}
+
+.searchIcon {
+	position: absolute;
+	left: 0.85rem;
+	width: 1.05rem;
+	height: 1.05rem;
+	color: rgba(240, 237, 230, 0.5);
+	pointer-events: none;
+}
+
+.searchInput {
+	width: 100%;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.86rem;
+	letter-spacing: 0.02em;
+	color: var(--color-text);
+	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 90%);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	padding: 0.7rem 0.9rem 0.7rem 2.5rem;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+	&::placeholder {
+		color: rgba(240, 237, 230, 0.4);
+	}
+
+	&:focus-visible {
+		outline: none;
+		border-color: var(--rule-red);
+		box-shadow: var(--glow-red-soft);
+	}
+}
+
+.count {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.72rem;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.55);
+	white-space: nowrap;
+}
+
+.facet {
+	display: flex;
+	align-items: baseline;
+	gap: 0.85rem;
+	flex-wrap: wrap;
+}
+
+.facetLabel {
+	flex-shrink: 0;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.66rem;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: var(--color-accent-hot);
+	min-width: 4.5rem;
+}
+
+.chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.chip {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.74rem;
+	letter-spacing: 0.04em;
+	color: var(--color-grey);
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid var(--rule);
+	border-radius: 999px;
+	padding: 0.38rem 0.85rem;
+	cursor: pointer;
+	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+
+	&:hover,
+	&:focus-visible {
+		color: var(--color-text);
+		border-color: var(--rule-red);
+		outline: none;
+	}
+
+	&:focus-visible {
+		box-shadow: var(--glow-red-soft);
+	}
+}
+
+.chipOn {
+	color: #fff;
+	background: rgba(204, 0, 0, 0.28);
+	border-color: var(--rule-red);
+}
+
+.clear,
+.clearInline {
+	align-self: flex-start;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.7rem;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	transition: color 0.2s ease;
+
+	&:hover,
+	&:focus-visible {
+		color: var(--color-accent-hot);
+		outline: none;
+	}
+}
+
+.clearInline {
+	margin-top: 1rem;
+}
+
 .grid {
 	list-style: none;
 	margin: 0;

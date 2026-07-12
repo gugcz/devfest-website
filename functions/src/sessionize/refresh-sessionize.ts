@@ -24,6 +24,7 @@ import { SLACK_WEBHOOK_URL } from '../tickets/params.js';
 import { postToSlack } from '../tickets/slack-client.js';
 import { SESSIONIZE_ENDPOINT_ID } from './params.js';
 import {
+	buildCategoryMap,
 	buildSessionMap,
 	buildSpeakerSummaryMap,
 	computeDeletePlan,
@@ -105,7 +106,8 @@ async function syncSessionize(): Promise<void> {
 	const speakers = normalizeSpeakers(extractSpeakers(payload), sessionMap);
 
 	const speakerMap = buildSpeakerSummaryMap(payload);
-	const sessions = normalizeSessions(extractSessions(payload), speakerMap);
+	const categoryMap = buildCategoryMap(payload);
+	const sessions = normalizeSessions(extractSessions(payload), speakerMap, categoryMap);
 
 	// Speakers first: `extractSpeakers` throws on an empty/invalid roster, so a
 	// failed fetch aborts before either collection is touched. `extractSessions`

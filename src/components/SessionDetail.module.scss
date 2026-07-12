@@ -143,6 +143,27 @@
 	}
 }
 
+/* ===================== TAGS ===================== */
+.tags {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+	margin: 1rem 0 0;
+	padding: 0;
+}
+
+.tag {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.7rem;
+	letter-spacing: 0.04em;
+	color: var(--color-grey);
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid var(--rule);
+	border-radius: 999px;
+	padding: 0.32rem 0.75rem;
+}
+
 /* ===================== ABSTRACT ===================== */
 .abstract {
 	margin-top: 1.4rem;
