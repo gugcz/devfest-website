@@ -8,15 +8,25 @@
  * Endpoint: https://sessionize.com/api/v2/<id>/view/<View>  (no auth, GET,
  * server-cached ~5 min). Sessionize endpoints are provisioned per-view, so a
  * given id serves only the view(s) it was created for; requesting a view the
- * endpoint doesn't expose returns a 400 HTML page. We only need the speaker
- * records, and BOTH the "All data" view (an OBJECT `{ speakers, sessions,
- * rooms, categories, questions }`) and the "Speakers" view (a bare ARRAY of the
- * same speaker objects) carry them — so `fetchSpeakersPayload` tries All first,
- * falls back to Speakers, and `extractSpeakers` accepts either shape. The id
- * MUST be a JSON-format endpoint; an embed id returns HTML, not JSON.
+ * endpoint doesn't expose returns a 400 HTML page. We need the speaker AND
+ * session records: the "All data" view (an OBJECT `{ speakers, sessions, rooms,
+ * categories, questions }`) carries both, while the "Speakers" view (a bare
+ * ARRAY of speaker objects) carries only speakers — so `fetchSessionizePayload`
+ * tries All first, falls back to Speakers, and `extractSpeakers` /
+ * `extractSessions` accept whatever the payload holds. The id MUST be a
+ * JSON-format endpoint; an embed id returns HTML, not JSON.
  *
- * Scope: only speakers are mirrored (into the `speakers` collection). The All
- * view's `sessions` / `rooms` / `categories` are ignored — add a collection +
+ * Scope: two collections are mirrored, cross-referenced so each side embeds a
+ * summary of the other:
+ *   - `speakers` — the full speaker record, each carrying `sessions[]`
+ *     ({ id, name, description }) resolved from the payload's top-level
+ *     `sessions[]` via `buildSessionMap`.
+ *   - `sessions` — the session record, each carrying `speakers[]`
+ *     ({ id, fullName, tagLine, profilePicture }) resolved from the payload's
+ *     top-level `speakers[]` via `buildSpeakerSummaryMap`.
+ * Sessions are only present in the All view; a Speakers-view fallback yields an
+ * empty session set, which the delete-guard preserves rather than wipes. The
+ * All view's `rooms` / `categories` are still ignored — add a collection +
  * guarded sync when they're needed.
  *
  * The fetch/validate/normalize and delete-guard logic below are pure and
@@ -54,7 +64,32 @@ export interface SessionizeSpeaker {
 	[key: string]: unknown;
 }
 
-/** The All-data envelope. Only `speakers` is consumed today. */
+/**
+ * Raw Sessionize session from the All view. In the All view a session's
+ * `speakers` is an array of speaker GUID strings (grouped views may inline
+ * `{ id, name }` objects instead — `resolveSessionSpeakers` handles both). Only
+ * the fields we normalize are typed; the index signature keeps it open.
+ */
+export interface SessionizeSession {
+	id?: string | number | null;
+	title?: string | null;
+	description?: string | null;
+	startsAt?: string | null;
+	endsAt?: string | null;
+	room?: string | null;
+	roomId?: string | number | null;
+	isServiceSession?: boolean | null;
+	isPlenumSession?: boolean | null;
+	status?: string | null;
+	speakers?: unknown[] | null;
+	categoryItems?: unknown[] | null;
+	questionAnswers?: unknown[] | null;
+	liveUrl?: string | null;
+	recordingUrl?: string | null;
+	[key: string]: unknown;
+}
+
+/** The All-data envelope. Only `speakers` + `sessions` are consumed today. */
 export interface SessionizeAll {
 	speakers?: unknown;
 	sessions?: unknown;
@@ -131,6 +166,58 @@ export interface SpeakerDoc {
 	sessions: SpeakerSession[];
 	categories: unknown[];
 	questionAnswers: unknown[];
+}
+
+/**
+ * Compact speaker summary embedded on each session doc — the reverse of
+ * `SpeakerSession`. Resolved from the payload's top-level `speakers[]` so a
+ * sessions consumer can render presenter names/photos without a second read.
+ */
+export interface SessionSpeakerRef {
+	/** Sessionize speaker GUID — matches a `speakers/{id}` doc. */
+	id: string;
+	fullName: string;
+	/** Speaker tagline; may be empty. */
+	tagLine: string;
+	/** Absolute BunnyCDN URL; may be empty. */
+	profilePicture: string;
+}
+
+/**
+ * The document written to Firestore `sessions/{id}` — the Sessionize session
+ * record with its `speakers[]` resolved to `SessionSpeakerRef` summaries
+ * (cross-reference to the `speakers` collection). `categoryItems` /
+ * `questionAnswers` are stored as-is for downstream use; nothing renders them
+ * yet. Service sessions (breaks, lunch) are kept with an empty `speakers[]` and
+ * `isServiceSession: true` so consumers can filter them out.
+ */
+export interface SessionDoc {
+	/** Sessionize session id (stringified) — also the Firestore doc id. */
+	id: string;
+	/** Index in the Sessionize array; stable tiebreaker for `startsAt` sorts. */
+	order: number;
+	title: string;
+	/** Talk abstract; may be empty. */
+	description: string;
+	/** ISO 8601 local start; may be empty before scheduling. */
+	startsAt: string;
+	/** ISO 8601 local end; may be empty before scheduling. */
+	endsAt: string;
+	/** Room name; may be empty before scheduling. */
+	room: string;
+	/** Room id (stringified); may be empty. */
+	roomId: string;
+	isServiceSession: boolean;
+	isPlenumSession: boolean;
+	/** Sessionize workflow status (e.g. `Accepted`); may be empty. */
+	status: string;
+	speakers: SessionSpeakerRef[];
+	categoryItems: unknown[];
+	questionAnswers: unknown[];
+	/** Live-stream URL; may be empty. */
+	liveUrl: string;
+	/** Recording URL; may be empty. */
+	recordingUrl: string;
 }
 
 /** Human-readable label per kind, used when a link has no title. */
@@ -378,6 +465,167 @@ export function normalizeSpeakers(
 	return raw.map((speaker, index) => normalizeSpeaker(speaker, index, sessionMap));
 }
 
+// ── Sessions ────────────────────────────────────────────────────────────────
+// The mirror image of the speaker path above: sessions carry speaker refs,
+// speakers carry session refs. Sessions live only in the All view; the Speakers
+// view (a bare array) has none, so the extract/normalize helpers below tolerate
+// an absent/empty session set (returning []) — the delete-guard, not a throw,
+// is what protects the live `sessions` collection from a truncated fetch.
+
+/** The speaker fields embedded on each session doc. */
+interface SpeakerSummary {
+	fullName: string;
+	tagLine: string;
+	profilePicture: string;
+}
+
+/**
+ * Build a speaker-GUID → summary map from the payload's top-level `speakers[]`.
+ * Accepts either payload shape (the All object or the bare Speakers array) so a
+ * session's speaker refs resolve to name/photo. Returns an empty map when no
+ * speakers are present.
+ */
+export function buildSpeakerSummaryMap(payload: unknown): Map<string, SpeakerSummary> {
+	const map = new Map<string, SpeakerSummary>();
+	const speakers = Array.isArray(payload)
+		? payload
+		: typeof payload === 'object' && payload !== null
+			? (payload as SessionizeAll).speakers
+			: null;
+	if (!Array.isArray(speakers)) return map;
+	for (const entry of speakers) {
+		if (typeof entry !== 'object' || entry === null) continue;
+		const record = entry as Record<string, unknown>;
+		if (record.id == null) continue;
+		map.set(String(record.id), {
+			fullName: asString(record.fullName),
+			tagLine: asString(record.tagLine),
+			profilePicture: asString(record.profilePicture),
+		});
+	}
+	return map;
+}
+
+/**
+ * Validate the sessions array from the All payload. Unlike `validateSpeakers`,
+ * an ABSENT or EMPTY set is allowed (returns []): sessions are missing whenever
+ * the endpoint served the Speakers view instead of All, and an event may have
+ * no scheduled sessions yet — the delete-guard preserves the collection in both
+ * cases. A present-but-malformed body still throws so garbage never mirrors.
+ */
+export function validateSessions(raw: unknown): SessionizeSession[] {
+	if (raw == null) return [];
+	if (!Array.isArray(raw)) {
+		throw new Error('Sessionize sessions is not an array');
+	}
+	const seenIds = new Set<string>();
+	for (const entry of raw) {
+		if (typeof entry !== 'object' || entry === null) {
+			throw new Error('Sessionize sessions contains a non-object entry');
+		}
+		const id = (entry as SessionizeSession).id;
+		if ((typeof id !== 'string' && typeof id !== 'number') || String(id).trim() === '') {
+			throw new Error('Sessionize sessions contains a session without an id');
+		}
+		// Doc id = session id, so a duplicate would silently overwrite one session
+		// in the write batch (and collide its `order`). Abort instead of dropping.
+		const key = String(id).trim();
+		if (seenIds.has(key)) {
+			throw new Error(`Sessionize sessions contains a duplicate session id: ${key}`);
+		}
+		seenIds.add(key);
+	}
+	return raw as SessionizeSession[];
+}
+
+/**
+ * Pull the validated session list out of a Sessionize payload. Only the All
+ * view (an OBJECT) carries sessions; the Speakers view (a bare ARRAY) has none,
+ * so returns [] for it rather than throwing — the run still syncs speakers.
+ */
+export function extractSessions(payload: unknown): SessionizeSession[] {
+	if (Array.isArray(payload)) return [];
+	if (typeof payload === 'object' && payload !== null) {
+		return validateSessions((payload as SessionizeAll).sessions);
+	}
+	return [];
+}
+
+/**
+ * Resolve a session's `speakers` to `SessionSpeakerRef` summaries, handling both
+ * wire shapes: bare GUID strings (All view) looked up in `speakerMap`, or
+ * inlined `{ id, name }` objects (grouped views). Refs are deduped on id;
+ * unresolved ids still keep the link (id + best-effort name) since the id alone
+ * cross-references a `speakers/{id}` doc.
+ */
+function resolveSessionSpeakers(
+	raw: unknown,
+	speakerMap: Map<string, SpeakerSummary>,
+): SessionSpeakerRef[] {
+	if (!Array.isArray(raw)) return [];
+	const out: SessionSpeakerRef[] = [];
+	const seen = new Set<string>();
+	for (const item of raw) {
+		let id = '';
+		let inlineName = '';
+		if (typeof item === 'number' || typeof item === 'string') {
+			id = String(item);
+		} else if (typeof item === 'object' && item !== null) {
+			const record = item as Record<string, unknown>;
+			id = record.id != null ? String(record.id) : '';
+			inlineName = asString(record.name) || asString(record.fullName);
+		}
+		if (!id || seen.has(id)) continue;
+		seen.add(id);
+		const summary = speakerMap.get(id);
+		out.push({
+			id,
+			fullName: summary?.fullName || inlineName,
+			tagLine: summary?.tagLine ?? '',
+			profilePicture: summary?.profilePicture ?? '',
+		});
+	}
+	return out;
+}
+
+/**
+ * Project one raw session into the persisted doc shape. `order` is the array
+ * index (stable tiebreaker for `startsAt` sorts); missing scalars become empty
+ * strings / false so the doc shape stays stable. `speakers` are resolved via
+ * `speakerMap`; `categoryItems` / `questionAnswers` are stored as-is.
+ */
+export function normalizeSession(
+	raw: SessionizeSession,
+	index: number,
+	speakerMap: Map<string, SpeakerSummary>,
+): SessionDoc {
+	return {
+		id: String(raw.id).trim(),
+		order: index,
+		title: asString(raw.title),
+		description: asString(raw.description),
+		startsAt: asString(raw.startsAt),
+		endsAt: asString(raw.endsAt),
+		room: asString(raw.room),
+		roomId: raw.roomId != null ? String(raw.roomId).trim() : '',
+		isServiceSession: raw.isServiceSession === true,
+		isPlenumSession: raw.isPlenumSession === true,
+		status: asString(raw.status),
+		speakers: resolveSessionSpeakers(raw.speakers, speakerMap),
+		categoryItems: asArray(raw.categoryItems),
+		questionAnswers: asArray(raw.questionAnswers),
+		liveUrl: asString(raw.liveUrl),
+		recordingUrl: asString(raw.recordingUrl),
+	};
+}
+
+export function normalizeSessions(
+	raw: SessionizeSession[],
+	speakerMap: Map<string, SpeakerSummary> = new Map(),
+): SessionDoc[] {
+	return raw.map((session, index) => normalizeSession(session, index, speakerMap));
+}
+
 /**
  * Extract the bare endpoint id from the configured secret. Tolerates the value
  * being pasted as a full Sessionize URL (e.g.
@@ -405,13 +653,15 @@ async function fetchView(endpointId: string, view: string): Promise<Response> {
 }
 
 /**
- * Fetch + parse the speaker payload. Sessionize endpoints are provisioned
- * per-view, so the configured id may serve the "All data" view, the "Speakers"
- * view, or both — try All first and fall back to Speakers on a non-OK response.
- * Throws on network error, timeout, both views failing, or a body that is not
- * JSON, so the caller aborts without touching Firestore.
+ * Fetch + parse the full Sessionize payload. Sessionize endpoints are
+ * provisioned per-view, so the configured id may serve the "All data" view, the
+ * "Speakers" view, or both — try All first and fall back to Speakers on a
+ * non-OK response. Only the All view carries sessions; a Speakers-view fallback
+ * yields speakers but no sessions. Throws on network error, timeout, both views
+ * failing, or a body that is not JSON, so the caller aborts without touching
+ * Firestore.
  */
-export async function fetchSpeakersPayload(rawEndpointId: string): Promise<unknown> {
+export async function fetchSessionizePayload(rawEndpointId: string): Promise<unknown> {
 	const endpointId = parseEndpointId(rawEndpointId);
 	if (!endpointId) throw new Error('Missing or empty Sessionize endpoint id');
 
