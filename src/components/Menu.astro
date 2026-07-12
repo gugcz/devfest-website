@@ -193,8 +193,9 @@ const isCurrent = (href: string) => {
 		}
 	});
 
-	// Reset open state when crossing the desktop breakpoint
-	const mql = window.matchMedia('(min-width: 760px)');
+	// Reset open state when crossing to the horizontal-nav breakpoint
+	// (must match the drawer breakpoint in Menu.scss).
+	const mql = window.matchMedia('(min-width: 1241px)');
 	mql.addEventListener('change', (ev) => {
 		if (ev.matches) setOpen(false);
 	});

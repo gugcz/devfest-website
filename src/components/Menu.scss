@@ -218,7 +218,11 @@
 		}
 	}
 
-	@media (max-width: 760px) {
+	// Collapse to the drawer for tablets + narrow laptops. The 8-link nav needs
+	// ~1180px to lay out horizontally without clipping (brand + links + gaps +
+	// padding), so anything below that overflowed the header. Hamburger covers
+	// the whole tablet range; the full horizontal nav only shows once it fits.
+	@media (max-width: 1240px) {
 		.nav-toggle {
 			display: inline-flex;
 		}
