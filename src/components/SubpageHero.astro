@@ -6,6 +6,9 @@ interface Props {
 	titleHtml: string;
 	lede: string;
 	titleId?: string;
+	/** Visually-hidden keyword text prepended to the <h1>, ahead of the
+	 * decorative title (e.g. "DevFest.cz 2026 Speakers"). Omit to skip. */
+	seoHeading?: string;
 }
 
 const {
@@ -13,6 +16,7 @@ const {
 	titleHtml,
 	lede,
 	titleId = 'subpage-hero-title',
+	seoHeading,
 } = Astro.props;
 ---
 
@@ -22,7 +26,10 @@ const {
 
 	<div class="hero-content">
 		<p class="section-label"><span>{label}</span></p>
-		<h1 id={titleId} class="hero-title" set:html={titleHtml} />
+		<h1 id={titleId} class="hero-title">
+			{seoHeading && <span class="sr-only">{seoHeading} — </span>}
+			<span set:html={titleHtml} />
+		</h1>
 		<p class="hero-lede">{lede}</p>
 	</div>
 </section>

@@ -182,6 +182,20 @@
 		}
 	}
 
+	// Visually hidden, but kept in the a11y tree + crawlable HTML.
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
 	/* ===================== EDITORIAL PRIMITIVES ===================== */
 	// Shared, theme-wide building blocks for the flat editorial-noir layout.
 	// Defined globally (BaseLayout is `is:global`) so every .astro page can use

@@ -18,7 +18,9 @@ const {
 } = Astro.props;
 
 const ogImage = `${siteUrl}/og-image.jpg`;
-const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+// Strip the trailing slash (root would be `https://devfest.cz/`) to match the
+// no-slash URLs the sitemap + JSON-LD use under `trailingSlash: 'never'`.
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, "") || siteUrl;
 const ogImageAlt = "DevFest.cz 2026 conference banner";
 
 // Event schema follows https://developers.google.com/search/docs/appearance/structured-data/event
@@ -79,6 +81,8 @@ const eventSchema = {
 			"priceCurrency": "CZK",
 			"availability": "https://schema.org/InStock",
 			"validFrom": "2026-07-01T00:00:00+02:00",
+			// Bump if a later wave supersedes the Regular price before the event.
+			"priceValidUntil": "2026-10-30",
 			"seller": organizer
 		}
 	]
@@ -90,10 +94,21 @@ const organizationSchema = {
 	"name": "DevFest.cz",
 	"url": siteUrl,
 	"logo": `${siteUrl}/logo.png`,
+	"description":
+		"DevFest.cz is Prague's community-run developer conference & festival — Web, Mobile, Cybersecurity, and AI/ML.",
+	"parentOrganization": organizer,
+	"contactPoint": {
+		"@type": "ContactPoint",
+		"email": "devfest@gug.cz",
+		"contactType": "customer support"
+	},
+	// Keep in sync with the Footer socials.
 	"sameAs": [
 		"https://x.com/devfest_cz",
 		"https://www.facebook.com/DevFestCZ",
-		"https://bsky.app/profile/devfest.cz"
+		"https://bsky.app/profile/devfest.cz",
+		"https://www.linkedin.com/company/gugcz/",
+		"https://www.youtube.com/@gug_cz"
 	]
 };
 
@@ -104,10 +119,51 @@ const websiteSchema = {
 	"url": siteUrl
 };
 
+// Home → <Page> breadcrumb trail for subpages. Names map from the first path
+// segment; unknown routes fall back to a title-cased slug.
+const pageNames = {
+	"speakers": "Speakers",
+	"sessions": "Sessions",
+	"team": "Team",
+	"partners": "Partners",
+	"press": "Press",
+	"contact": "Contact",
+	"faq": "FAQ",
+	"invoice": "Company Invoice",
+	"privacy-policy": "Privacy Policy"
+};
+const slug = Astro.url.pathname.replace(/^\/+|\/+$/g, "").split("/")[0];
+const breadcrumbName =
+	pageNames[slug] ??
+	slug
+		.split("-")
+		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+		.join(" ");
+const breadcrumbSchema = !isHome && slug
+	? {
+			"@context": "https://schema.org",
+			"@type": "BreadcrumbList",
+			"itemListElement": [
+				{
+					"@type": "ListItem",
+					"position": 1,
+					"name": "Home",
+					"item": siteUrl
+				},
+				{
+					"@type": "ListItem",
+					"position": 2,
+					"name": breadcrumbName,
+					"item": canonicalUrl
+				}
+			]
+		}
+	: null;
+
 const jsonLd = JSON.stringify(
 	isHome
 		? [eventSchema, organizationSchema, websiteSchema]
-		: [organizationSchema, websiteSchema]
+		: [organizationSchema, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])]
 );
 ---
 
@@ -183,7 +239,7 @@ const jsonLd = JSON.stringify(
 
 		<!-- Twitter -->
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:site" content="@devfestcz" />
+		<meta name="twitter:site" content="@devfest_cz" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImage} />
