@@ -18,11 +18,8 @@ const {
 } = Astro.props;
 
 const ogImage = `${siteUrl}/og-image.jpg`;
-// Strip any trailing slash so the self-referential canonical matches the
-// no-trailing-slash URLs everything else advertises: astro.config's
-// `trailingSlash: 'never'`, the sitemap entries, and the JSON-LD `url` fields.
-// `new URL('/', siteUrl)` yields `https://devfest.cz/` for the root, so the
-// replace is what keeps the home canonical consistent with the rest.
+// Strip the trailing slash (root would be `https://devfest.cz/`) to match the
+// no-slash URLs the sitemap + JSON-LD use under `trailingSlash: 'never'`.
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, "") || siteUrl;
 const ogImageAlt = "DevFest.cz 2026 conference banner";
 
@@ -84,9 +81,7 @@ const eventSchema = {
 			"priceCurrency": "CZK",
 			"availability": "https://schema.org/InStock",
 			"validFrom": "2026-07-01T00:00:00+02:00",
-			// Google recommends priceValidUntil on Offer; the Regular price holds
-			// until the event itself (a later wave may supersede it earlier — bump
-			// this if/when that Offer is added).
+			// Bump if a later wave supersedes the Regular price before the event.
 			"priceValidUntil": "2026-10-30",
 			"seller": organizer
 		}
@@ -101,17 +96,13 @@ const organizationSchema = {
 	"logo": `${siteUrl}/logo.png`,
 	"description":
 		"DevFest.cz is Prague's community-run developer conference & festival — Web, Mobile, Cybersecurity, and AI/ML.",
-	// The brand is run by GUG.cz, z.s. (the Event's organizer); link the two
-	// entities so Google can reconcile them instead of treating them as unrelated.
 	"parentOrganization": organizer,
 	"contactPoint": {
 		"@type": "ContactPoint",
 		"email": "devfest@gug.cz",
 		"contactType": "customer support"
 	},
-	// Mirror the social profiles linked in Footer.astro so Google can tie the
-	// site's Organization entity to its verified profiles. Keep this list in
-	// sync with the Footer socials.
+	// Keep in sync with the Footer socials.
 	"sameAs": [
 		"https://x.com/devfest_cz",
 		"https://www.facebook.com/DevFestCZ",
@@ -128,11 +119,8 @@ const websiteSchema = {
 	"url": siteUrl
 };
 
-// BreadcrumbList for subpages: a two-level Home → <Page> trail so Google can
-// render breadcrumb rich results instead of a bare URL. Human-readable page
-// names are mapped from the first path segment; unknown routes fall back to a
-// title-cased slug. Home is omitted (it needs no trail) and noindex pages skip
-// schema entirely via the render guard below.
+// Home → <Page> breadcrumb trail for subpages. Names map from the first path
+// segment; unknown routes fall back to a title-cased slug.
 const pageNames = {
 	"speakers": "Speakers",
 	"sessions": "Sessions",

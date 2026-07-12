@@ -4,12 +4,9 @@ import sitemap from '@astrojs/sitemap';
 
 import react from '@astrojs/react';
 
-// Build timestamp for sitemap <lastmod> — a genuine crawl signal Google reads.
-// Stamped once at config-load so every URL shares the same build date.
 const BUILD_DATE = new Date().toISOString();
 
-// Per-URL priority: the homepage leads, the primary content pages sit high, and
-// legal/utility pages are deprioritised. Anything unlisted falls back to 0.6.
+// Per-URL sitemap priority; anything unlisted falls back to 0.6.
 const PRIORITY = {
     'https://devfest.cz': 1.0,
     'https://devfest.cz/speakers': 0.9,

@@ -182,10 +182,7 @@
 		}
 	}
 
-	// Screen-reader-only utility: keeps keyword-rich text in the accessibility
-	// tree + crawlable HTML while hiding it visually. Same clip technique as the
-	// skip-link but permanent (no focus reveal). Used for descriptive <h1> text
-	// that sits behind the decorative noir headlines / logo.
+	// Visually hidden, but kept in the a11y tree + crawlable HTML.
 	.sr-only {
 		position: absolute;
 		width: 1px;
