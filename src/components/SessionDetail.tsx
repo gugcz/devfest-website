@@ -1,7 +1,27 @@
-import { useEffect, useRef } from 'react';
-import { initials } from '../lib/speakers';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { initials, speakerFromDoc, type Speaker } from '../lib/speakers';
 import { type Session, type SessionSpeakerRef } from '../lib/sessions';
+import SpeakerDetail from './SpeakerDetail';
 import s from './SessionDetail.module.scss';
+
+/**
+ * A session only embeds a lightweight speaker summary (id, name, tagline,
+ * photo). Widen it to a `Speaker` so the row can open `SpeakerDetail` instantly;
+ * `openSpeaker` then enriches it (bio, links, talks) from the `speakers/{id}`
+ * doc in the background.
+ */
+function speakerFromRef(ref: SessionSpeakerRef): Speaker {
+	return {
+		id: ref.id,
+		order: 0,
+		fullName: ref.fullName,
+		tagLine: ref.tagLine,
+		bio: '',
+		profilePicture: ref.profilePicture,
+		links: [],
+		sessions: [],
+	};
+}
 
 function SpeakerAvatar({ speaker }: { speaker: SessionSpeakerRef }) {
 	// Broken/absent CDN URL degrades to the monogram, same as the speaker cards.
@@ -33,6 +53,36 @@ function SpeakerAvatar({ speaker }: { speaker: SessionSpeakerRef }) {
 export default function SessionDetail({ session, onClose }: { session: Session; onClose: () => void }) {
 	const dialogRef = useRef<HTMLDivElement>(null);
 
+	// A speaker sub-dialog stacked on top of this one. Opened from a speaker row,
+	// seeded from the embedded ref for an instant render, then enriched below.
+	const [activeSpeaker, setActiveSpeaker] = useState<Speaker | null>(null);
+	// Read inside the (mount-time) key handler so it can bail while the speaker
+	// dialog is on top — that dialog owns Esc / focus-trap when open.
+	const speakerOpenRef = useRef(false);
+	speakerOpenRef.current = activeSpeaker !== null;
+
+	const closeSpeaker = useCallback(() => setActiveSpeaker(null), []);
+
+	const openSpeaker = useCallback(async (ref: SessionSpeakerRef) => {
+		// Open immediately with what the session already knows; fill in the rich
+		// fields once the speaker doc arrives.
+		setActiveSpeaker(speakerFromRef(ref));
+		try {
+			const [{ getFirestoreDb }, { doc, getDoc }] = await Promise.all([
+				import('../lib/firebase'),
+				import('firebase/firestore'),
+			]);
+			const snap = await getDoc(doc(getFirestoreDb(), 'speakers', ref.id));
+			if (!snap.exists()) return;
+			const full = speakerFromDoc(snap.id, snap.data());
+			// Only replace if the same speaker is still open (user may have closed it
+			// or opened another before the fetch resolved).
+			setActiveSpeaker((current) => (current && current.id === full.id ? full : current));
+		} catch (err) {
+			console.warn('[session-detail] Failed to load speaker profile:', err);
+		}
+	}, []);
+
 	useEffect(() => {
 		const previouslyFocused = document.activeElement as HTMLElement | null;
 		const previousOverflow = document.body.style.overflow;
@@ -51,6 +101,8 @@ export default function SessionDetail({ session, onClose }: { session: Session; 
 		dialog?.querySelector<HTMLElement>('[data-autofocus]')?.focus();
 
 		const onKeyDown = (event: KeyboardEvent) => {
+			// The stacked speaker dialog handles keys while it's open.
+			if (speakerOpenRef.current) return;
 			if (event.key === 'Escape') {
 				event.stopPropagation();
 				onClose();
@@ -84,6 +136,7 @@ export default function SessionDetail({ session, onClose }: { session: Session; 
 	const abstractParagraphs = session.description.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
 
 	return (
+		<>
 		<div
 			className={s.overlay}
 			onMouseDown={(event) => {
@@ -143,16 +196,24 @@ export default function SessionDetail({ session, onClose }: { session: Session; 
 							</h3>
 							<ul className={s.speakersList}>
 								{session.speakers.map((speaker) => (
-									<li key={speaker.id} className={s.speaker}>
-										<span className={s.avatar}>
-											<SpeakerAvatar speaker={speaker} />
-										</span>
-										<span className={s.speakerText}>
-											<span className={s.speakerName}>{speaker.fullName}</span>
-											{speaker.tagLine && (
-												<span className={s.speakerTag}>{speaker.tagLine}</span>
-											)}
-										</span>
+									<li key={speaker.id}>
+										<button
+											type="button"
+											className={s.speaker}
+											onClick={() => openSpeaker(speaker)}
+											aria-label={`View ${speaker.fullName}'s profile`}
+										>
+											<span className={s.avatar}>
+												<SpeakerAvatar speaker={speaker} />
+											</span>
+											<span className={s.speakerText}>
+												<span className={s.speakerName}>{speaker.fullName}</span>
+												{speaker.tagLine && (
+													<span className={s.speakerTag}>{speaker.tagLine}</span>
+												)}
+											</span>
+											<span className={s.speakerGo} aria-hidden="true">→</span>
+										</button>
 									</li>
 								))}
 							</ul>
@@ -161,5 +222,7 @@ export default function SessionDetail({ session, onClose }: { session: Session; 
 				</div>
 			</div>
 		</div>
+		{activeSpeaker && <SpeakerDetail speaker={activeSpeaker} onClose={closeSpeaker} />}
+		</>
 	);
 }
