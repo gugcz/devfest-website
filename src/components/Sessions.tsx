@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { initials } from '../lib/speakers';
 import {
 	collectFacets,
-	formatSessionTime,
 	hasActiveFilters,
 	isDisplayableSession,
 	matchesFilters,
@@ -55,10 +54,9 @@ function SpeakerStack({ session }: { session: Session }) {
 }
 
 function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: Session) => void }) {
-	const when = formatSessionTime(session.startsAt, session.endsAt);
 	const names = session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
-	// No schedule yet, so lead the card with the primary track (falls back to the
-	// room, then a generic label) instead of a time slot.
+	// Lead the card with the primary track (falls back to the room, then a generic
+	// label).
 	const kicker = session.categories[0]?.values[0] || session.room || 'Talk';
 
 	return (
@@ -71,7 +69,6 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 			>
 				<span className={s.top}>
 					<span className={s.kicker}>{kicker}</span>
-					{when && <span className={s.when}>{when}</span>}
 				</span>
 
 				<span className={s.title}>{session.title}</span>
