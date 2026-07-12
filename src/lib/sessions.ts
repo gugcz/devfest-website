@@ -117,6 +117,16 @@ export interface SessionFacet {
 	values: string[];
 }
 
+/** Category groups that exist in Sessionize for the CFP but carry no meaning
+ * for visitors (e.g. speakers' preferred talk length) — never shown as facets
+ * or tags. */
+const HIDDEN_CATEGORIES = new Set(['talk length']);
+
+/** Categories worth surfacing to visitors (facet chips, detail-modal tags). */
+export function visitorCategories(session: Session): SessionCategory[] {
+	return session.categories.filter((c) => !HIDDEN_CATEGORIES.has(c.name.toLowerCase()));
+}
+
 /**
  * Collect the filter facets present across a session list — one per category
  * group, with the distinct values that actually occur (so the UI never offers a
@@ -126,7 +136,7 @@ export function collectFacets(sessions: Session[]): SessionFacet[] {
 	const groups = new Map<string, Set<string>>();
 	const order: string[] = [];
 	for (const session of sessions) {
-		for (const category of session.categories) {
+		for (const category of visitorCategories(session)) {
 			let set = groups.get(category.name);
 			if (!set) {
 				set = new Set<string>();
@@ -143,13 +153,13 @@ export function collectFacets(sessions: Session[]): SessionFacet[] {
 export type SessionFilters = Record<string, string[]>;
 
 /** Lowercased haystack for the free-text search: title, abstract, speaker names,
- * category values. */
+ * visitor-facing category values. */
 function searchHaystack(session: Session): string {
 	return [
 		session.title,
 		session.description,
 		...session.speakers.map((s) => s.fullName),
-		...session.categories.flatMap((c) => c.values),
+		...visitorCategories(session).flatMap((c) => c.values),
 	]
 		.join(' ')
 		.toLowerCase();
