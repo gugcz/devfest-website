@@ -16,6 +16,21 @@ export function getFirestore() {
 	return { __mock: 'firestore' };
 }
 
+// src/lib/firebase.ts initializes Firestore with a persistent local cache. The
+// cache settings are irrelevant to the axe sweep, so return the same handle
+// getFirestore() would and treat the cache builders as inert config objects.
+export function initializeFirestore() {
+	return { __mock: 'firestore' };
+}
+
+export function persistentLocalCache() {
+	return { __cache: 'persistent' };
+}
+
+export function persistentMultipleTabManager() {
+	return { __tabManager: 'multiple' };
+}
+
 export function collection(_db, path) {
 	return { __path: path };
 }
