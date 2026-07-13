@@ -46,8 +46,8 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
-      - name: Build site
-        run: npm run build
-
+      # `npm run a11y` builds with A11Y_MOCK=1 (fixture-hydrated lineup + tickets,
+      # see scripts/a11y-mocks/) so the gated ready-state content is audited, then
+      # runs the axe sweep over the built site.
       - name: Run axe-core audit
         run: npm run a11y
