@@ -124,13 +124,35 @@ function auditControls() {
 		fg.g * fg.a + bg[1] * (1 - fg.a),
 		fg.b * fg.a + bg[2] * (1 - fg.a),
 	];
-	// Nearest ancestor with a solid background-color. A gradient/image anywhere
-	// up the chain = "can't flatten" → caller treats as manual-review, not pass.
+	// A pure gradient (no url()) of fully-opaque stops is still deterministic:
+	// the lightest stop is the worst case for light-on-dark contrast, so flatten
+	// against it instead of punting. Returns null for image layers / translucent
+	// stops (genuinely can't flatten → manual review).
+	const gradientLightest = (bgImage) => {
+		if (!/gradient\(/.test(bgImage) || /\burl\(/.test(bgImage)) return null;
+		const tokens = bgImage.match(/rgba?\([^)]*\)/g);
+		if (!tokens) return null;
+		let best = null;
+		for (const tok of tokens) {
+			const c = parse(tok);
+			if (!c || c.a < 1) return null; // translucent stop — needs the layer beneath
+			const rgb = [c.r, c.g, c.b];
+			if (!best || relLum(rgb) > relLum(best)) best = rgb;
+		}
+		return best;
+	};
+	// Nearest ancestor with a flattenable background — a solid colour, or a
+	// gradient reducible to its lightest opaque stop. An image layer up the chain
+	// = "can't flatten" → caller treats as manual-review, not pass.
 	const effectiveBg = (el) => {
 		let node = el;
 		while (node && node !== document.documentElement) {
 			const cs = getComputedStyle(node);
-			if (cs.backgroundImage && cs.backgroundImage !== 'none') return { unknown: true };
+			if (cs.backgroundImage && cs.backgroundImage !== 'none') {
+				const g = gradientLightest(cs.backgroundImage);
+				if (g) return { rgb: g };
+				return { unknown: true };
+			}
 			const c = parse(cs.backgroundColor);
 			if (c && c.a >= 1) return { rgb: [c.r, c.g, c.b] };
 			node = node.parentElement;
