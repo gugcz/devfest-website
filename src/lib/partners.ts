@@ -21,4 +21,5 @@ export const silverPartners: Partner[] = [
 export const mediaPartners: Partner[] = [
 	{ name: 'White Whale Media', logo: '/partners/media/whitewhalemedia.svg', url: 'https://www.whitewhale.media/' },
 	{ name: 'Dotěkománie', logo: '/partners/media/dotekomanie.avif', url: 'https://dotekomanie.cz/' },
+	{ name: 'Smartmania.cz', logo: '/partners/media/smartmania.svg', url: 'https://smartmania.cz/' },
 ];
