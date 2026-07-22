@@ -3,7 +3,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
-import { goldPartners, silverPartners, mediaPartners } from '../lib/partners';
+import { partnerTiers, mediaPartners } from '../lib/partners';
+
+const activeTiers = partnerTiers.filter((t) => t.partners.length > 0);
 
 const DECK_READY = true;
 const PRESENTATION_URL = 'https://canva.link/828fiq93km2hwds';
@@ -33,55 +35,30 @@ const tickerTopics = [
 
 		<Ticker items={tickerTopics} fontSize="0.7rem" />
 
-		{goldPartners.length > 0 && (
-			<section class="gold-partners" aria-labelledby="gold-partners-title">
-				<div class="gold-inner">
-					<div class="gold-head">
-						<h2 id="gold-partners-title" class="gold-title">
-							Gold <span class="red">partner</span>
+		{activeTiers.map((tier) => (
+			<section class={`tier-partners tier-${tier.id}`} aria-labelledby={`${tier.id}-partners-title`}>
+				<div class="tier-inner">
+					<div class="tier-head">
+						<h2 id={`${tier.id}-partners-title`} class="tier-title">
+							{tier.label} <span class="red">{tier.partners.length === 1 ? 'partner' : 'partners'}</span>
 						</h2>
 					</div>
-					<ul class="gold-grid">
-						{goldPartners.map((p) => (
-							<li class="gold-item">
+					<ul class="tier-grid">
+						{tier.partners.map((p) => (
+							<li class="tier-item">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<img class="gold-logo" src={p.logo} alt={p.name} loading="lazy" />
+										<img class="tier-logo" src={p.logo} alt={p.name} loading="lazy" />
 									</a>
 								) : (
-									<img class="gold-logo" src={p.logo} alt={p.name} loading="lazy" />
+									<img class="tier-logo" src={p.logo} alt={p.name} loading="lazy" />
 								)}
 							</li>
 						))}
 					</ul>
 				</div>
 			</section>
-		)}
-
-		{silverPartners.length > 0 && (
-			<section class="silver-partners" aria-labelledby="silver-partners-title">
-				<div class="silver-inner">
-					<div class="silver-head">
-						<h2 id="silver-partners-title" class="silver-title">
-							Silver <span class="red">partner</span>
-						</h2>
-					</div>
-					<ul class="silver-grid">
-						{silverPartners.map((p) => (
-							<li class="silver-item">
-								{p.url ? (
-									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<img class="silver-logo" src={p.logo} alt={p.name} loading="lazy" />
-									</a>
-								) : (
-									<img class="silver-logo" src={p.logo} alt={p.name} loading="lazy" />
-								)}
-							</li>
-						))}
-					</ul>
-				</div>
-			</section>
-		)}
+		))}
 
 		{mediaPartners.length > 0 && (
 			<section class="media-partners" aria-labelledby="media-partners-title">
