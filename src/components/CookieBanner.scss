@@ -36,7 +36,7 @@
 		left: 14px;
 		padding: 0 6px;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -51,7 +51,7 @@
 
 	.cookie-text {
 		font-family: var(--font-special-elite), cursive;
-		font-size: 0.95rem;
+		font-size: var(--fs-ui);
 		line-height: 1.55;
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.7);
@@ -85,7 +85,7 @@
 
 	// Compact sizing overrides on top of global .btn-primary / .btn-ghost.
 	.cookie-btn {
-		font-size: 0.8rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		white-space: nowrap;
 		min-height: 2.75rem;

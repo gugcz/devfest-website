@@ -19,7 +19,7 @@
 
 .eyebrow {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.78rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.62);
@@ -103,7 +103,7 @@
 // pulsing accent dot + trailing dots.
 .loadingStatus {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -235,7 +235,7 @@
 
 .variantLabel {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.84rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.04em;
 	color: rgba(240, 237, 230, 0.78);
 }
@@ -250,7 +250,7 @@
 
 .variantPrice {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.7rem;
+	font-size: var(--fs-figure);
 	letter-spacing: 0.04em;
 	line-height: 1;
 	color: var(--color-text);
@@ -258,7 +258,7 @@
 
 .variantVat {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.75rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -268,7 +268,7 @@
 // Flat red CTA — matches the global .btn-primary recipe.
 .cta {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
 	color: var(--on-accent);
@@ -325,7 +325,7 @@
 }
 
 .ctaArrow {
-	font-size: 0.9rem;
+	font-size: var(--fs-ui);
 	color: inherit;
 	transition: transform 0.25s;
 
@@ -339,7 +339,7 @@
 	text-align: center;
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.05rem;
+	font-size: var(--fs-body-lg);
 	letter-spacing: 0.01em;
 	color: rgba(240, 237, 230, 0.62);
 }
@@ -355,7 +355,7 @@
 
 .invoiceLabel {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.75rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.25em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -394,7 +394,7 @@
 	color: rgba(240, 237, 230, 0.78);
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.05rem;
+	font-size: var(--fs-body-lg);
 	line-height: 1.7;
 }
 

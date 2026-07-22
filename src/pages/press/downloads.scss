@@ -23,7 +23,7 @@
 		display: inline-block;
 		margin-bottom: 2.6rem;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.7rem;
+		font-size: var(--fs-label-sm);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -59,7 +59,7 @@
 		gap: 0.9rem;
 		margin: 0 0 1rem;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.72rem;
+		font-size: var(--fs-label-sm);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -187,7 +187,7 @@
 
 	.kit-badge {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.72rem;
+		font-size: var(--fs-label-sm);
 		letter-spacing: 0.16em;
 		color: rgba(240, 237, 230, 0.85);
 		padding: 0.3rem 0.6rem;
@@ -213,7 +213,7 @@
 
 	.kit-label {
 		font-family: var(--font-im-fell-english), serif;
-		font-size: 0.98rem;
+		font-size: var(--fs-body);
 		line-height: 1.25;
 		color: var(--color-text);
 		transition: color 0.2s;
@@ -221,7 +221,7 @@
 
 	.kit-spec {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.68rem;
+		font-size: var(--fs-label-xs);
 		letter-spacing: 0.12em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.7);
@@ -229,7 +229,7 @@
 
 	.kit-dl {
 		flex-shrink: 0;
-		font-size: 1rem;
+		font-size: var(--fs-body);
 		color: rgba(240, 237, 230, 0.55);
 		transition: color 0.2s, transform 0.2s;
 	}
@@ -260,7 +260,7 @@
 
 	.empty-stamp {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.6rem;
+		font-size: var(--fs-label-xs);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		// Red tag glows faintly like neon in the dark.
@@ -275,7 +275,7 @@
 	.empty-line {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.02rem;
+		font-size: var(--fs-body);
 		line-height: 1.7;
 		color: var(--color-grey);
 		max-width: 56ch;

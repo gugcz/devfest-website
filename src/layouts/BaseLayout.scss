@@ -42,6 +42,28 @@
 		// reads as subordinate to the live one at a glance.
 		--fs-title-compact: 1.5rem;
 
+		// ── THE RAMP ────────────────────────────────────────────────────────
+		// Fifteen steps, and every literal font-size in the codebase is one of
+		// them. Before this there were 43 distinct values — ten of them inside
+		// the 0.60–0.78rem label band alone, which is not drift around a ramp
+		// but the absence of one. Pick the nearest step; do not introduce a
+		// new value without adding it here and to DESIGN.md.
+		--fs-label-xs: 0.68rem;   // micro mono: avatar counts, kit tags
+		--fs-label-sm: 0.74rem;   // mono: counts, chips, inline clears
+		--fs-label: 0.78rem;      // mono: eyebrows, section labels
+		--fs-label-lg: 0.84rem;   // mono: nav, buttons, email links
+		--fs-ui: 0.95rem;         // small UI prose, help text
+		--fs-body: 1rem;          // long-form reading copy
+		--fs-body-lg: 1.05rem;    // footnotes, short ledes
+		--fs-lede: 1.2rem;        // section ledes, status prose
+		--fs-title-sm: 1.4rem;    // small titles, mobile record titles
+		// 1.5rem  → --fs-title-compact (above)
+		--fs-figure: 1.7rem;      // ledger row figures
+		// 1.85rem → --fs-card-title (above)
+		--fs-exhibit: 2.4rem;     // hollow ledger exhibit numeral
+		--fs-monogram: 3.4rem;    // initials in an empty photo well
+		--fs-folio: 5.5rem;       // oversized outlined folio numeral
+
 		// Hairline rules — the structural backbone of the flat layout.
 		--rule: rgba(240, 237, 230, 0.13);
 		--rule-soft: rgba(240, 237, 230, 0.06);

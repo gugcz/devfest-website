@@ -73,7 +73,7 @@
 		&::before {
 			content: counter(card, decimal-leading-zero);
 			font-family: var(--font-bebas-neue), sans-serif;
-			font-size: 5.5rem;
+			font-size: var(--fs-folio);
 			line-height: 0.8;
 			letter-spacing: 0.02em;
 			color: transparent;
@@ -107,7 +107,7 @@
 		background: var(--color-accent);
 		color: var(--on-accent);
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.26em;
 		text-transform: uppercase;
 		padding: 0.42rem 0.72rem;
@@ -125,7 +125,7 @@
 	.card-desc {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.08rem;
+		font-size: var(--fs-body-lg);
 		line-height: 1.55;
 		color: var(--color-grey);
 		margin: 0;
@@ -154,14 +154,14 @@
 
 	.contact-name {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: 1.5rem;
+		font-size: var(--fs-title-compact);
 		letter-spacing: 0.06em;
 		color: var(--color-text);
 	}
 
 	.email-link {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.85rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.04em;
 		color: var(--color-text);
 		align-self: flex-start;
@@ -212,7 +212,7 @@
 	}
 
 	.partners-cta-arrow {
-		font-size: 0.95rem;
+		font-size: var(--fs-ui);
 		transition: transform 0.25s;
 
 		.partners-cta:hover & {
@@ -226,7 +226,7 @@
 		align-items: center;
 		gap: 0.7rem;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.85rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.75);
@@ -243,7 +243,7 @@
 
 	.partners-cta-stamp {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.28em;
 		text-transform: uppercase;
 		padding: 0.22rem 0.55rem;
@@ -255,7 +255,7 @@
 	.partners-cta-note {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.05rem;
+		font-size: var(--fs-body-lg);
 		color: var(--color-grey);
 		max-width: 34ch;
 		text-align: left;
@@ -283,7 +283,7 @@
 			white-space: normal;
 		}
 		.partners-cta-stamp {
-			font-size: 0.75rem;
+			font-size: var(--fs-label);
 			letter-spacing: 0.24em;
 			padding: 0.2rem 0.45rem;
 		}
@@ -292,7 +292,7 @@
 
 	@media (max-width: 600px) {
 		.partners-block { padding: 1.8rem 1.5rem 2rem; }
-		.card-title { font-size: 1.6rem; }
+		.card-title { font-size: var(--fs-figure); }
 	}
 
 	/* ===================== SPONSOR TIERS ===================== */

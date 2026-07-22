@@ -28,7 +28,7 @@
 
 .sessions-eyebrow {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.78rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.62);
@@ -49,7 +49,7 @@
 .sessions-noscript {
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.2rem;
+	font-size: var(--fs-lede);
 	line-height: 1.7;
 	color: var(--color-grey);
 	text-align: center;

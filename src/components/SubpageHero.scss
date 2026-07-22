@@ -27,7 +27,7 @@
 	// Mono eyebrow with a trailing red hairline — matches the homepage tag.
 	.section-label {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.32em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -90,7 +90,7 @@
 		}
 		.hero-title { max-width: none; }
 		.hero-lede {
-			font-size: 1.12rem;
+			font-size: var(--fs-lede);
 			padding-left: 1.1rem;
 		}
 	}

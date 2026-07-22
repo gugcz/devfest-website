@@ -40,7 +40,7 @@
 
 	.email-name {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.65);
@@ -48,7 +48,7 @@
 
 	.email-link {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.85rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.04em;
 		color: var(--color-text);
 		align-self: flex-start;
@@ -114,7 +114,7 @@
 
 	.empty-stamp {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		color: var(--color-accent-hot);
@@ -128,7 +128,7 @@
 	.empty-line {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.12rem;
+		font-size: var(--fs-lede);
 		line-height: 1.6;
 		color: var(--color-grey);
 		max-width: 56ch;
@@ -217,7 +217,7 @@
 		&::before {
 			content: counter(card, decimal-leading-zero);
 			font-family: var(--font-bebas-neue), sans-serif;
-			font-size: 3.4rem;
+			font-size: var(--fs-monogram);
 			line-height: 0.8;
 			letter-spacing: 0.02em;
 			color: transparent;
@@ -268,7 +268,7 @@
 		background: var(--color-accent);
 		color: var(--on-accent);
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.26em;
 		text-transform: uppercase;
 		padding: 0.42rem 0.72rem;
@@ -276,7 +276,7 @@
 
 	.coverage-title {
 		font-family: var(--font-im-fell-english), serif;
-		font-size: 1.15rem;
+		font-size: var(--fs-lede);
 		line-height: 1.35;
 		color: var(--color-text);
 		transition: color 0.2s;
@@ -294,7 +294,7 @@
 	.coverage-desc {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1rem;
+		font-size: var(--fs-body);
 		line-height: 1.5;
 		color: var(--color-grey);
 		// Push the meta row to the card foot for aligned baselines.
@@ -316,7 +316,7 @@
 		padding-top: 0.9rem;
 		border-top: 1px solid var(--rule);
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.12em;
 		color: rgba(240, 237, 230, 0.5);
 		white-space: nowrap;
@@ -404,7 +404,7 @@
 		&::before {
 			content: counter(card, decimal-leading-zero);
 			font-family: var(--font-bebas-neue), sans-serif;
-			font-size: 2.4rem;
+			font-size: var(--fs-exhibit);
 			line-height: 0.85;
 			letter-spacing: 0.02em;
 			font-variant-numeric: tabular-nums;
@@ -435,7 +435,7 @@
 		background: var(--color-accent);
 		color: var(--on-accent);
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.26em;
 		text-transform: uppercase;
 		padding: 0.42rem 0.72rem;
@@ -453,7 +453,7 @@
 	.card-desc {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.05rem;
+		font-size: var(--fs-body-lg);
 		line-height: 1.55;
 		color: var(--color-grey);
 		margin: 0 0 0.4rem;
@@ -470,7 +470,7 @@
 
 	.kit-link {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.85rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.04em;
 		color: var(--color-text);
 		display: inline-flex;
@@ -530,7 +530,7 @@
 		}
 		// Keep a little clearance so the outlined index never sits on the title.
 		.coverage-text { padding-right: 2rem; }
-		.coverage-title { font-size: 1.05rem; }
+		.coverage-title { font-size: var(--fs-body-lg); }
 		.desk-card { padding: 1.8rem 1.5rem 1.7rem; }
-		.card-title { font-size: 1.5rem; }
+		.card-title { font-size: var(--fs-title-compact); }
 	}

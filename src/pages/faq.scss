@@ -36,7 +36,7 @@
 	.faq-cat {
 		flex: 0 0 auto;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.78rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -52,7 +52,7 @@
 	.faq-head-count {
 		flex: 0 0 auto;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.18em;
 		color: var(--color-accent-hot);
 		font-variant-numeric: tabular-nums;
@@ -130,7 +130,7 @@
 	.faq-num {
 		flex: 0 0 auto;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
 		color: var(--color-accent-hot);
@@ -142,7 +142,7 @@
 	.faq-q-text {
 		flex: 1;
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: 1.4rem;
+		font-size: var(--fs-title-sm);
 		line-height: 1.05;
 		letter-spacing: 0.03em;
 		color: var(--color-text);
@@ -152,7 +152,7 @@
 	.faq-marker {
 		flex: 0 0 auto;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 1.4rem;
+		font-size: var(--fs-title-sm);
 		line-height: 1;
 		color: var(--color-accent-hot);
 		transition: transform 0.2s ease, color 0.2s;
@@ -197,7 +197,7 @@
 
 	.faq-a :global(p) {
 		font-family: var(--font-special-elite), cursive;
-		font-size: 1rem;
+		font-size: var(--fs-body);
 		line-height: 1.85;
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.72);
@@ -229,7 +229,7 @@
 	.faq-cta-text {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.15rem;
+		font-size: var(--fs-lede);
 		color: var(--color-grey);
 		margin: 0 0 1.6rem;
 	}
@@ -241,7 +241,7 @@
 			gap: 0.8rem;
 		}
 		.faq-q-text {
-			font-size: 1.25rem;
+			font-size: var(--fs-lede);
 		}
 		.faq-a {
 			margin: 0 1.2rem 1.3rem;

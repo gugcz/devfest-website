@@ -170,7 +170,7 @@
 
 	.crew-name {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: 1.55rem;
+		font-size: var(--fs-title-compact);
 		line-height: 1;
 		letter-spacing: 0.04em;
 		color: var(--color-text);
@@ -184,7 +184,7 @@
 	.crew-role {
 		display: grid;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		line-height: 1.4;
@@ -268,7 +268,7 @@
 	.team-note {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.15rem;
+		font-size: var(--fs-lede);
 		line-height: 1.7;
 		color: var(--color-grey);
 		text-align: center;
@@ -301,7 +301,7 @@
 			gap: 0.85rem;
 		}
 		.crew-name {
-			font-size: 1.4rem;
+			font-size: var(--fs-title-sm);
 		}
 	}
 

@@ -43,7 +43,7 @@
 		.section-label {
 			margin-bottom: 0.4rem;
 			gap: 0.8rem;
-			font-size: 0.76rem;
+			font-size: var(--fs-label);
 
 			&::after { flex: 0 0 32px; }
 		}
@@ -103,7 +103,7 @@
 
 	.meta-label {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.24em;
 		text-transform: uppercase;
 		color: var(--color-grey);
@@ -112,7 +112,7 @@
 
 	.meta-value {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: 1.5rem;
+		font-size: var(--fs-title-compact);
 		letter-spacing: 0.06em;
 		color: var(--color-text);
 		white-space: nowrap;
@@ -125,7 +125,7 @@
 		display: block;
 		margin-top: 0.2rem;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
 		color: var(--color-grey);
@@ -191,7 +191,7 @@
 	.gallery-lede {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.18rem;
+		font-size: var(--fs-lede);
 		line-height: 1.7;
 		color: var(--color-grey);
 		max-width: 520px;
@@ -295,7 +295,7 @@
 	.speakers-lede {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.18rem;
+		font-size: var(--fs-lede);
 		line-height: 1.75;
 		color: var(--color-grey);
 		max-width: 480px;
@@ -312,7 +312,7 @@
 
 	.speakers-tag {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: var(--color-accent-hot);
@@ -360,7 +360,7 @@
 	/* ===================== SHARED SECTION FURNITURE ===================== */
 	.section-label {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.78rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -420,7 +420,7 @@
 	.newsletter-lede {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.18rem;
+		font-size: var(--fs-lede);
 		line-height: 1.75;
 		color: var(--color-grey);
 		max-width: 520px;
@@ -509,7 +509,7 @@
 		align-items: center;
 		gap: 0.45rem;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -602,10 +602,10 @@
 		.gallery-head { padding: 0 1.1rem; margin-bottom: 2.8rem; }
 		.gallery-track { gap: 1rem; }
 		.gallery-track img { height: 200px; width: 300px; }
-		.gallery-lede { font-size: 1.05rem; }
+		.gallery-lede { font-size: var(--fs-body-lg); }
 		.hero-content { gap: 1.5rem; }
 		.hero-subtitle {
-			font-size: 1rem;
+			font-size: var(--fs-body);
 			padding-left: 1.1rem;
 			max-width: 28ch;
 			line-height: 1.65;
@@ -615,7 +615,7 @@
 		// jammed against the edge).
 		.hero-meta { gap: 1.1rem 2rem; justify-content: center; }
 		.meta-item { padding: 0; border-left: none; align-items: center; }
-		.meta-value { font-size: 1.25rem; }
+		.meta-value { font-size: var(--fs-lede); }
 		.hero-cta-group { gap: 0.7rem; margin-top: 2.6rem; }
 		.section-label::after { flex-basis: 32px; }
 	}

@@ -97,7 +97,7 @@
 		grid-row: 1;
 		grid-column: 1;
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: 2.4rem;
+		font-size: var(--fs-exhibit);
 		line-height: 0.85;
 		letter-spacing: 0.02em;
 		font-variant-numeric: tabular-nums;
@@ -129,7 +129,7 @@
 		grid-column: 3;
 		justify-self: end;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.74rem;
+		font-size: var(--fs-label-sm);
 		letter-spacing: 0.24em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.72);
@@ -164,7 +164,7 @@
 	.card-desc {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.08rem;
+		font-size: var(--fs-body-lg);
 		line-height: 1.55;
 		color: var(--color-grey);
 		margin: 0.7rem 0 0;
@@ -207,7 +207,7 @@
 
 	.email-name {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.65);
@@ -215,7 +215,7 @@
 
 	.email-link {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.85rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.04em;
 		color: var(--color-text);
 		align-self: flex-start;

@@ -88,12 +88,48 @@ typography:
     fontWeight: 400
     lineHeight: 1.2
     letterSpacing: "0.3em"
+  label-xs:
+    fontFamily: "'JetBrains Mono', monospace"
+    fontSize: "0.68rem"
+    fontWeight: 400
+    lineHeight: 1.2
+    letterSpacing: "0.22em"
   label-sm:
     fontFamily: "'JetBrains Mono', monospace"
     fontSize: "0.74rem"
     fontWeight: 400
     lineHeight: 1.2
     letterSpacing: "0.24em"
+  ui:
+    fontFamily: "'JetBrains Mono', monospace"
+    fontSize: "0.95rem"
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: "0.02em"
+  body-lg:
+    fontFamily: "'IM Fell English', serif"
+    fontSize: "1.05rem"
+    fontWeight: 400
+    lineHeight: 1.7
+    letterSpacing: "normal"
+  title-sm:
+    fontFamily: "'Bebas Neue', sans-serif"
+    fontSize: "1.4rem"
+    fontWeight: 400
+    lineHeight: 1.06
+    letterSpacing: "0.02em"
+  monogram:
+    fontFamily: "'Bebas Neue', sans-serif"
+    fontSize: "3.4rem"
+    fontWeight: 400
+    lineHeight: 1
+    letterSpacing: "0.04em"
+  folio:
+    fontFamily: "'Bebas Neue', sans-serif"
+    fontSize: "5.5rem"
+    fontWeight: 400
+    lineHeight: 0.8
+    letterSpacing: "0.02em"
   label-lg:
     fontFamily: "'JetBrains Mono', monospace"
     fontSize: "0.84rem"
@@ -232,6 +268,32 @@ Achromatic near-black through bone-white, plus a single red that behaves as mark
 **Label / Mono Font:** JetBrains Mono (with `monospace` fallback)
 
 **Character:** A typewritten case report annotated in a monospaced hand, with a literary aside in italic serif and hard condensed numerals for anything countable. Every face is loaded at a single weight — hierarchy is built from size, letter-spacing, case, colour, and which face is used, never from weight.
+
+### The ramp
+
+**Fifteen steps, declared once in `:root`, and every literal `font-size` in the codebase is one of them.** Before this the repo carried **43** distinct values — ten of them inside the `0.60`–`0.78rem` label band alone, which is not drift around a ramp but the absence of one.
+
+| Token | Size | Job |
+|---|---|---|
+| `--fs-label-xs` | `0.68rem` | micro mono: avatar counts, kit tags |
+| `--fs-label-sm` | `0.74rem` | mono: counts, chips, inline clears |
+| `--fs-label` | `0.78rem` | mono: eyebrows, section labels |
+| `--fs-label-lg` | `0.84rem` | mono: nav, buttons, email links |
+| `--fs-ui` | `0.95rem` | small UI prose, help text |
+| `--fs-body` | `1rem` | long-form reading copy |
+| `--fs-body-lg` | `1.05rem` | footnotes, short ledes |
+| `--fs-lede` | `1.2rem` | section ledes, status prose |
+| `--fs-title-sm` | `1.4rem` | small titles, mobile record titles |
+| `--fs-title-compact` | `1.5rem` | compact ledger record title |
+| `--fs-figure` | `1.7rem` | ledger row figures |
+| `--fs-card-title` | `1.85rem` | dossier and detail titles |
+| `--fs-exhibit` | `2.4rem` | hollow ledger exhibit numeral |
+| `--fs-monogram` | `3.4rem` | initials in an empty photo well |
+| `--fs-folio` | `5.5rem` | oversized outlined folio numeral |
+
+Three fluid steps sit alongside them and are *not* literals: `--fs-hero` `clamp(2.6rem, 6vw, 5rem)`, `--fs-h2` `clamp(2.2rem, 4.8vw, 4rem)`, and the full record title `clamp(1.85rem, 3.2vw, 2.6rem)`.
+
+**The Nearest-Step Rule.** Reach for the nearest existing token. Introducing a new value means adding it here *and* to `:root` — a ramp with exceptions is a ramp that describes nothing, which is exactly the state this replaced.
 
 ### Hierarchy
 - **Display** (Special Elite, `clamp(2.6rem, 6vw, 5rem)`, `1.04`, uppercase, `0.01em`): subpage hero headlines. Always carries `text-shadow: 0 2px 18px rgba(0,0,0,0.7)` when it sits over photography — a legibility scrim, never an emboss.

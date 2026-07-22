@@ -126,7 +126,7 @@
 
 .kicker {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.7rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.28em;
 	text-transform: uppercase;
 	color: var(--color-accent-hot);
@@ -144,7 +144,7 @@
 
 .tag {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.8rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.05em;
 	line-height: 1.5;
 	color: var(--color-grey);
@@ -197,7 +197,7 @@
 
 	p {
 		font-family: var(--font-im-fell-english), serif;
-		font-size: 1.02rem;
+		font-size: var(--fs-body);
 		line-height: 1.75;
 		color: rgba(240, 237, 230, 0.9);
 		margin: 0 0 0.9rem;
@@ -217,7 +217,7 @@
 
 .sessionsTitle {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.72rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.24em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -250,7 +250,7 @@
 
 .sessionName {
 	font-family: var(--font-im-fell-english), serif;
-	font-size: 1.05rem;
+	font-size: var(--fs-body-lg);
 	line-height: 1.4;
 	color: var(--color-text);
 	margin: 0;
@@ -258,7 +258,7 @@
 
 .sessionDesc {
 	font-family: var(--font-im-fell-english), serif;
-	font-size: 0.95rem;
+	font-size: var(--fs-ui);
 	line-height: 1.65;
 	color: rgba(240, 237, 230, 0.7);
 	margin: 0.4rem 0 0;

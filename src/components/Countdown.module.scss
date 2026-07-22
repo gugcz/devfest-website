@@ -146,11 +146,11 @@
 		height: 22%;
 	}
 	.cardStampText {
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.16em;
 	}
 	.label {
-		font-size: 0.78rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.22em;
 	}
 }
@@ -167,7 +167,7 @@
 		height: 2.15rem;
 	}
 	.digit {
-		font-size: 1.2rem;
+		font-size: var(--fs-lede);
 	}
 	.cardStamp {
 		height: 18%;
@@ -176,7 +176,7 @@
 		display: none;
 	}
 	.label {
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.18em;
 	}
 }

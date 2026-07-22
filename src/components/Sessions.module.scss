@@ -40,7 +40,7 @@
 .searchInput {
 	width: 100%;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.86rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.02em;
 	color: var(--color-text);
 	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 90%);
@@ -66,7 +66,7 @@
 
 .count {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.72rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.55);
@@ -83,7 +83,7 @@
 .facetLabel {
 	flex-shrink: 0;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.66rem;
+	font-size: var(--fs-label-xs);
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
 	color: var(--color-accent-hot);
@@ -98,7 +98,7 @@
 
 .chip {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.74rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.04em;
 	color: var(--color-grey);
 	background: rgba(255, 255, 255, 0.02);
@@ -133,7 +133,7 @@
 .clearInline {
 	align-self: flex-start;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.7rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -285,7 +285,7 @@
 
 .kicker {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.68rem;
+	font-size: var(--fs-label-xs);
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
 	color: var(--color-accent-hot);
@@ -297,7 +297,7 @@
 /* ===================== TITLE + EXCERPT ===================== */
 .title {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.5rem;
+	font-size: var(--fs-title-compact);
 	line-height: 1.06;
 	letter-spacing: 0.02em;
 	color: var(--color-text);
@@ -311,7 +311,7 @@
 
 .excerpt {
 	font-family: var(--font-im-fell-english), serif;
-	font-size: 0.98rem;
+	font-size: var(--fs-body);
 	line-height: 1.6;
 	color: rgba(240, 237, 230, 0.72);
 	margin-top: 0.55rem;
@@ -363,7 +363,7 @@
 .avatarMono,
 .avatarMore {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 0.85rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.04em;
 	color: rgba(242, 239, 233, 0.66);
 	filter: none;
@@ -371,14 +371,14 @@
 
 .avatarMore {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.62rem;
+	font-size: var(--fs-label-xs);
 	color: var(--color-accent-hot);
 	background: rgba(204, 0, 0, 0.14);
 }
 
 .names {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.72rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.02em;
 	line-height: 1.4;
 	color: var(--color-grey);
@@ -429,7 +429,7 @@
 
 .moreKicker {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.68rem;
+	font-size: var(--fs-label-xs);
 	letter-spacing: 0.28em;
 	text-transform: uppercase;
 	color: var(--color-accent-hot);
@@ -438,7 +438,7 @@
 .moreText {
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.12rem;
+	font-size: var(--fs-lede);
 	line-height: 1.5;
 	color: var(--color-grey);
 	margin: 0;
@@ -450,7 +450,7 @@
 	text-align: center;
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.2rem;
+	font-size: var(--fs-lede);
 	line-height: 1.7;
 	color: var(--color-grey);
 	max-width: 52ch;
@@ -462,7 +462,7 @@
 	align-items: center;
 	gap: 0.55rem;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -528,7 +528,7 @@
 
 @media (max-width: 600px) {
 	.title {
-		font-size: 1.4rem;
+		font-size: var(--fs-title-sm);
 	}
 }
 

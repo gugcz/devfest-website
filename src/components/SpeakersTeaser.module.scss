@@ -29,7 +29,7 @@
 	align-items: center;
 	gap: 0.7rem;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.76rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.32em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.62);
@@ -62,7 +62,7 @@
 .lede {
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.05rem;
+	font-size: var(--fs-body-lg);
 	line-height: 1.6;
 	color: var(--color-grey);
 	margin: 0.8rem 0 0;
@@ -164,7 +164,7 @@
 	align-items: center;
 	justify-content: center;
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 2.6rem;
+	font-size: var(--fs-exhibit);
 	letter-spacing: 0.06em;
 	color: rgba(242, 239, 233, 0.24);
 	user-select: none;
@@ -226,7 +226,7 @@
 .tname {
 	display: -webkit-box;
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.16rem;
+	font-size: var(--fs-lede);
 	line-height: 1.06;
 	letter-spacing: 0.035em;
 	color: var(--color-text);
@@ -255,7 +255,7 @@
 	align-items: center;
 	gap: 0.5rem;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
 	color: var(--color-text);
@@ -296,7 +296,7 @@
 		padding: 0.32rem 0.1rem 0.32rem 0.5rem;
 	}
 	.tname {
-		font-size: 0.92rem;
+		font-size: var(--fs-ui);
 		letter-spacing: 0.02em;
 	}
 	.thumb::before,
@@ -316,7 +316,7 @@
 
 @media (max-width: 430px) {
 	.tname {
-		font-size: 0.8rem;
+		font-size: var(--fs-label-lg);
 	}
 }
 

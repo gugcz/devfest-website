@@ -98,7 +98,7 @@
 
 	.nav-link {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.82rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		// Pure text color → WCAG AA contrast against scrim (≥4.5:1)
@@ -173,7 +173,7 @@
 		border: 1px solid rgba(204, 0, 0, 0.45);
 		color: var(--color-text);
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.78rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		cursor: pointer;
@@ -265,7 +265,7 @@
 			width: 100%;
 			padding: 1.2rem 0;
 			min-height: 3rem;
-			font-size: 0.95rem;
+			font-size: var(--fs-ui);
 			letter-spacing: 0.24em;
 		}
 
