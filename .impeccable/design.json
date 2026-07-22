@@ -109,6 +109,21 @@
           "oklch(95.4% 0.017 62)"
         ]
       },
+      "light-warm": {
+        "role": "tertiary",
+        "displayName": "Lamp Warm",
+        "canonical": "oklch(94.2% 0.043 76)",
+        "tonalRamp": [
+          "oklch(15% 0.020 76)",
+          "oklch(26% 0.026 76)",
+          "oklch(38% 0.032 76)",
+          "oklch(52% 0.038 76)",
+          "oklch(66% 0.042 76)",
+          "oklch(80% 0.044 76)",
+          "oklch(94.2% 0.043 76)",
+          "oklch(98% 0.018 76)"
+        ]
+      },
       "cream": {
         "role": "neutral",
         "displayName": "Dossier Cream",
@@ -153,6 +168,10 @@
       "numeric": {
         "displayName": "Numeric",
         "purpose": "Countdown digits, hero meta values, folio numerals. Condensed, tabular where counted."
+      },
+      "exhibit": {
+        "displayName": "Exhibit",
+        "purpose": "The hollow exhibit number in a ledger's index column. Outline only (transparent fill + 1px red stroke), lighting to Flashbulb Red on the lit entry. 1.9rem under 720px. Decorative by construction, aria-hidden at every call site."
       },
       "figure": {
         "displayName": "Figure",

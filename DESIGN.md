@@ -26,6 +26,7 @@ colors:
   field-border: "rgba(240, 237, 230, 0.4)"
   matte: "rgba(240, 237, 230, 0.035)"
   matte-red: "rgba(204, 0, 0, 0.28)"
+  light-warm: "#FFECD6"
 typography:
   display:
     fontFamily: "'Special Elite', cursive"
@@ -75,6 +76,12 @@ typography:
     fontWeight: 400
     lineHeight: 1
     letterSpacing: "0.04em"
+  exhibit:
+    fontFamily: "'Bebas Neue', sans-serif"
+    fontSize: "2.4rem"
+    fontWeight: 400
+    lineHeight: 0.85
+    letterSpacing: "0.02em"
   label:
     fontFamily: "'JetBrains Mono', monospace"
     fontSize: "0.78rem"
@@ -205,6 +212,10 @@ Achromatic near-black through bone-white, plus a single red that behaves as mark
 - **Rule** (`rgba(240,237,230,0.13)`), **Rule Soft** (`0.06`), **Rule Strong** (`0.22`): the three hairline weights that build the entire layout grid. Soft stitches sections; base separates items; strong bounds interactive chrome such as the ghost button.
 - **Field Border** (`rgba(240,237,230,0.4)`): deliberately separate from the decorative rules so form controls clear WCAG 1.4.11 (≥3:1) while grouping hairlines stay whisper-faint. Never substitute `--rule` on an input.
 
+### Light
+
+- **Lamp Warm** (`#FFECD6`): not a surface colour — the colour of the light source itself. It appears only inside gradients (`--lamp`, the hover washes, `--lit`) at very low alpha, typically `0.026`–`0.075`, and the alpha is what varies between layers, never the hue. Nothing in the system is ever *filled* with this colour.
+
 ### Named Rules
 
 **The One Mark Rule.** At most one red-lit element commands any given viewport. If a headline already has a lit word, the CTA in that same frame is the ghost variant, not the filled one. Red coverage stays under ~10% of any screen — its scarcity is the entire reason it works.
@@ -230,6 +241,7 @@ Achromatic near-black through bone-white, plus a single red that behaves as mark
 - **Lede** (IM Fell English italic, `clamp(1.18rem, 1.7vw, 1.4rem)`, `1.7`, Ash Grey, max ~56ch): the sentence directly under a headline. Frequently set with a `2px solid var(--rule-red)` left border and `1.4rem` of padding — the pull-quote gesture of the system.
 - **Body** (Special Elite, `1rem`, `1.85`, `rgba(240,237,230,0.78)`, max `70ch`): long-form reading copy — FAQ answers, privacy policy, form help. The generous `1.85` line-height and 70ch measure are what make a distressed typewriter face survive at paragraph length; do not tighten either.
 - **Numeric** (Bebas Neue, `clamp(2.2rem, 3vw, 3.6rem)`, `0.04em`): countdown digits, prices, oversized folio numerals. Also at `1.5rem` for hero meta values (date, venue).
+- **Exhibit** (Bebas Neue, `2.4rem`, `0.85` leading; `1.9rem` under 720px): the hollow exhibit number in a ledger's index column. Set in outline only — `color: transparent` with `-webkit-text-stroke: 1px rgba(204,0,0,0.5)` — lighting to Flashbulb Red on the lit entry. Decorative by construction and `aria-hidden` at every call site.
 - **Label** (JetBrains Mono, `0.75–0.84rem`, `0.18em`–`0.32em`, uppercase, `rgba(240,237,230,0.62)`): eyebrows, nav links, button text, meta labels, index numbers, ticker items. The widest tracking in the system — this face is what makes data read as data.
 
 ### Named Rules
