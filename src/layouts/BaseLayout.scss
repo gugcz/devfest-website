@@ -43,7 +43,7 @@
 		--fs-title-compact: 1.5rem;
 
 		// ── THE RAMP ────────────────────────────────────────────────────────
-		// Fifteen steps, and every literal font-size in the codebase is one of
+		// Sixteen steps, and every font-size in the codebase goes through one of
 		// them. Before this there were 43 distinct values — ten of them inside
 		// the 0.60–0.78rem label band alone, which is not drift around a ramp
 		// but the absence of one. Pick the nearest step; do not introduce a
@@ -61,6 +61,7 @@
 		--fs-figure: 1.7rem;      // ledger row figures
 		// 1.85rem → --fs-card-title (above)
 		--fs-exhibit: 2.4rem;     // hollow ledger exhibit numeral
+		--fs-exhibit-sm: 1.9rem;  // …its step for the narrow index column
 		--fs-monogram: 3.4rem;    // initials in an empty photo well
 		--fs-folio: 5.5rem;       // oversized outlined folio numeral
 
@@ -235,7 +236,7 @@
 		// mono at 0.22em tracking stays comfortably legible at this size, and
 		// the skip link is the first thing a keyboard user meets — it should be
 		// set in the system's own voice, not an orphan value.
-		font-size: 0.84rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		text-decoration: none;
@@ -293,7 +294,7 @@
 	// Mono eyebrow with a trailing red hairline — the editorial section tag.
 	.eyebrow {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.78rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -325,7 +326,7 @@
 		justify-content: center;
 		gap: 0.7rem;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.84rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: var(--on-accent);
@@ -361,7 +362,7 @@
 		justify-content: center;
 		gap: 0.6rem;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.84rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: var(--color-text);
@@ -563,7 +564,7 @@
 	// lost with them. It costs no container, so it comes back here.
 	.record-index {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: 2.4rem;
+		font-size: var(--fs-exhibit);
 		line-height: 0.85;
 		letter-spacing: 0.02em;
 		font-variant-numeric: tabular-nums;
@@ -583,7 +584,7 @@
 
 	@media (max-width: 720px) {
 		.record-index {
-			font-size: 1.9rem;
+			font-size: var(--fs-exhibit-sm);
 		}
 	}
 
@@ -605,7 +606,7 @@
 
 	.record-note {
 		font-family: var(--font-special-elite), cursive;
-		font-size: 0.98rem;
+		font-size: var(--fs-body);
 		line-height: 1.65;
 		color: rgba(240, 237, 230, 0.72);
 		max-width: 46ch;
@@ -652,7 +653,7 @@
 
 	.record-row-label {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.84rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.04em;
 		color: rgba(240, 237, 230, 0.78);
 	}
@@ -667,7 +668,7 @@
 
 	.record-figure {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: 1.7rem;
+		font-size: var(--fs-figure);
 		letter-spacing: 0.04em;
 		line-height: 1;
 		color: var(--color-text);
@@ -675,7 +676,7 @@
 
 	.record-row-note {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.6);
@@ -685,7 +686,7 @@
 	// Status word. Never a pill, never a filled chip — a mono word on a rule.
 	.record-status {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.74rem;
+		font-size: var(--fs-label-sm);
 		letter-spacing: 0.24em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.72);

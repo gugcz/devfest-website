@@ -384,7 +384,7 @@
       },
       {
         "name": "The Nearest-Step Rule",
-        "body": "Fifteen font-size steps are declared once in :root and every literal font-size in the codebase is one of them. Reach for the nearest existing token; introducing a new value means adding it to :root and to DESIGN.md. The repo previously carried 43 distinct values, ten of them inside the 0.60-0.78rem label band alone — a ramp with exceptions is a ramp that describes nothing.",
+        "body": "Sixteen font-size steps are declared once in :root and every font-size in the codebase goes through one of them, BaseLayout included. Reach for the nearest existing token; introducing a new value means adding it to :root and to DESIGN.md. The repo previously carried 43 distinct values, ten of them inside the 0.60-0.78rem label band alone — a ramp with exceptions is a ramp that describes nothing.",
         "section": "typography"
       },
       {

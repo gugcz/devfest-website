@@ -271,7 +271,7 @@ Achromatic near-black through bone-white, plus a single red that behaves as mark
 
 ### The ramp
 
-**Fifteen steps, declared once in `:root`, and every literal `font-size` in the codebase is one of them.** Before this the repo carried **43** distinct values — ten of them inside the `0.60`–`0.78rem` label band alone, which is not drift around a ramp but the absence of one.
+**Sixteen steps, declared once in `:root`, and every `font-size` in the codebase goes through one of them — `BaseLayout.scss` included.** Before this the repo carried **43** distinct values — ten of them inside the `0.60`–`0.78rem` label band alone, which is not drift around a ramp but the absence of one.
 
 | Token | Size | Job |
 |---|---|---|
@@ -288,6 +288,7 @@ Achromatic near-black through bone-white, plus a single red that behaves as mark
 | `--fs-figure` | `1.7rem` | ledger row figures |
 | `--fs-card-title` | `1.85rem` | dossier and detail titles |
 | `--fs-exhibit` | `2.4rem` | hollow ledger exhibit numeral |
+| `--fs-exhibit-sm` | `1.9rem` | the exhibit numeral in the narrow (≤720px) index column |
 | `--fs-monogram` | `3.4rem` | initials in an empty photo well |
 | `--fs-folio` | `5.5rem` | oversized outlined folio numeral |
 
