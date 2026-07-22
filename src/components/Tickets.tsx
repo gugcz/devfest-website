@@ -201,7 +201,7 @@ export default function Tickets() {
 				<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
 				<p className={s.subheading}>Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>
 			</header>
-			<ul className="ledger" role="list">
+			<ul className="ledger ledger--lamp" role="list">
 				{groupReleases(releases).map((group, i) => {
 					const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
 					const anyPurchasable = statuses.some((st) => st.purchasable);

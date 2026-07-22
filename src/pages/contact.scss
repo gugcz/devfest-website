@@ -32,9 +32,21 @@
 	// The three desks are a ledger, not a card row: one entry each, stacked
 	// and ruled, sharing the site-wide record grid.
 	.contact-grid {
+		position: relative;
 		display: block;
 		counter-reset: card;
-		border-top: 1px solid var(--rule-strong);
+		border-top: 3px solid var(--rule-strong);
+		box-shadow: 0 3px 0 -2px var(--rule);
+
+		// Same single lamp the ticket ledger sits under.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: -2rem calc(-1 * var(--gutter));
+			background: var(--lamp);
+			pointer-events: none;
+			z-index: -1;
+		}
 	}
 
 	.contact-card {
@@ -78,21 +90,31 @@
 		}
 	}
 
-	// Running index in the ledger's left column — mono, not an oversized
-	// outlined numeral floating behind the copy.
+	// Outlined dossier numeral in the ledger's left column — same exhibit
+	// number the ticket ledger uses. Decorative (hollow type carries no
+	// contrast); the desk's real name is its title.
 	.card-no {
 		grid-row: 1;
 		grid-column: 1;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.82rem;
-		letter-spacing: 0.16em;
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: 2.4rem;
+		line-height: 0.85;
+		letter-spacing: 0.02em;
 		font-variant-numeric: tabular-nums;
-		color: rgba(240, 237, 230, 0.68);
-		padding-top: 0.6rem;
+		color: transparent;
+		-webkit-text-stroke: 1px rgba(204, 0, 0, 0.5);
+		padding-top: 0.15rem;
+		transition: -webkit-text-stroke-color 0.25s ease, text-shadow 0.25s ease;
 
 		&::before {
 			content: counter(card, decimal-leading-zero);
 		}
+	}
+
+	.contact-card:hover .card-no,
+	.contact-card:focus-within .card-no {
+		-webkit-text-stroke-color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
 	}
 
 	.contact-card:hover .card-no::before {

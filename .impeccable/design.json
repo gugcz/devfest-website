@@ -195,6 +195,16 @@
         "purpose": "The most emissive moment on a screen. At most once per view."
       },
       {
+        "name": "film-grain",
+        "value": "body::before — SVG feTurbulence tile, opacity 0.06, mix-blend-mode: screen, z 9999",
+        "purpose": "The emulsion the whole site is shot on. Screen not overlay: overlay leaves near-black untouched, so grain is invisible on the #050505 ground. Static, never animated."
+      },
+      {
+        "name": "lamp",
+        "value": "radial-gradient(125% 115% at 0% 0%, rgba(255,236,214,0.065) 0%, transparent 48%), linear-gradient(158deg, rgba(22,18,16,0.55) 0%, rgba(7,6,6,0) 76%)",
+        "purpose": "One raking light source, high and left, applied at SECTION scale so entries sit in a lit room. Never per element — objects do not each carry their own lamp."
+      },
+      {
         "name": "lit-pool",
         "value": "radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%)",
         "purpose": "Background (not box-shadow) pool of warm light behind a lit section's content."

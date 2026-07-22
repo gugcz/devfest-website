@@ -75,6 +75,13 @@
 
 		// Soft pool of light dropped behind content in a lit section.
 		--lit: radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%);
+		// Single-source raking light — one lamp, high and to the left, falling
+		// off to near-black. This is the noir light that used to sit on every
+		// card; it belongs to the ROOM, so it is applied at section scale.
+		// Objects don't each carry their own lamp.
+		--lamp:
+			radial-gradient(125% 115% at 0% 0%, rgba(255, 236, 214, 0.065) 0%, transparent 48%),
+			linear-gradient(158deg, rgba(22, 18, 16, 0.55) 0%, rgba(7, 6, 6, 0) 76%);
 		// Cinematic edge-darkening frame.
 		--vignette: radial-gradient(ellipse 120% 105% at 50% 42%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
 	}
@@ -152,6 +159,31 @@
 		&.no-overlay::before,
 		&.no-overlay::after {
 			display: none;
+		}
+
+		// Film grain — the emulsion the whole site is shot on. Restored: the
+		// stacking-order comments elsewhere in this file still referenced a
+		// grain layer at z 9999 that no longer existed, which is a large part
+		// of why the page had stopped reading as film.
+		//
+		// Static, not animated: a still frame has static grain, and animating
+		// a full-viewport overlay costs a repaint every frame for nothing.
+		// Decorative only — pointer-events: none, and at 0.05 over `overlay`
+		// it does not move any text/background pair off its measured ratio.
+		&::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			z-index: 9999;
+			pointer-events: none;
+			// `screen`, not `overlay`. Overlay leaves near-black almost
+			// untouched, so on a #050505 ground the grain was invisible —
+			// which is exactly how it reads in dark footage anyway: grain is
+			// the emulsion catching light, so it lifts rather than darkens.
+			opacity: 0.06;
+			mix-blend-mode: screen;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+			background-size: 220px 220px;
 		}
 
 		// Cinematic vignette — darkens the frame edges so every section reads
@@ -364,10 +396,27 @@
 	// rule weight instead).
 
 	.ledger {
+		position: relative;
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		border-top: 1px solid var(--rule-strong);
+		// Double rule at the head — a printed ledger opens on a thick/thin
+		// pair, not a single hairline. This one detail does more period work
+		// than any amount of panel chrome.
+		border-top: 3px solid var(--rule-strong);
+		box-shadow: 0 3px 0 -2px var(--rule);
+	}
+
+	// The room the ledger sits in. One lamp, high and to the left, so entries
+	// are lit rather than floating on flat black. Bleeds past the content
+	// column so the falloff is never a visible rectangle.
+	.ledger--lamp::before {
+		content: '';
+		position: absolute;
+		inset: -2rem calc(-1 * var(--gutter));
+		background: var(--lamp);
+		pointer-events: none;
+		z-index: -1;
 	}
 
 	.record {
@@ -487,20 +536,33 @@
 	// Ledger columns ---------------------------------------------------------
 
 	// Running index. Tabular so the column stays optically straight.
+	// Outlined dossier numeral. The exhibit number on a case file is set big
+	// and hollow — it was the loudest period device on the old cards and got
+	// lost with them. It costs no container, so it comes back here.
 	.record-index {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.82rem;
-		letter-spacing: 0.16em;
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: 2.4rem;
+		line-height: 0.85;
+		letter-spacing: 0.02em;
 		font-variant-numeric: tabular-nums;
-		// 0.68 keeps the index legible as real content (>=4.5:1 on the ground)
-		// while still sitting behind the title in the reading order.
-		color: rgba(240, 237, 230, 0.68);
-		padding-top: 0.6rem;
-		transition: color 0.3s ease;
+		color: transparent;
+		-webkit-text-stroke: 1px rgba(204, 0, 0, 0.5);
+		padding-top: 0.15rem;
+		transition: -webkit-text-stroke-color 0.3s ease, text-shadow 0.3s ease;
 	}
 
+	// Hollow type carries no contrast, so it is decorative by construction and
+	// is marked aria-hidden at every call site; the entry's real name is its
+	// title. Any index that must be READ stays solid mono.
 	.record--lit .record-index {
-		color: var(--color-accent-hot);
+		-webkit-text-stroke-color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
+	}
+
+	@media (max-width: 720px) {
+		.record-index {
+			font-size: 1.9rem;
+		}
 	}
 
 	.record-body {

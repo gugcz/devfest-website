@@ -256,6 +256,14 @@ Two depth systems, applied in one direction only: **the scene is lit, the object
 
 Depth at rest comes from lighting the room — `--lit` drops a soft elliptical pool of warm light behind a section's content, `--vignette` darkens every frame edge globally (`body::after`, `z-index: 9998`), and `.scene > .scene-vignette` applies a stronger per-section version for "film still" framing. Black drop shadows give cards physical weight against the ground (`0 10px 28px rgba(0,0,0,0.45)`). Nothing red glows until it is touched.
 
+**The atmosphere layer.** Three fixed, decorative, `pointer-events: none` layers give the page its film stock. All three are `aria-hidden` by construction and none of them move any text/background pair off its measured contrast ratio.
+
+- **Film grain** (`body::before`, z 9999): an SVG `feTurbulence` tile at `opacity: 0.06`, `mix-blend-mode: screen`. **Screen, not overlay** — overlay leaves near-black essentially untouched, so on the `#050505` ground the grain is invisible. Grain is emulsion catching light; it lifts. Static, not animated: a still frame has static grain, and animating a full-viewport overlay costs a repaint per frame for nothing.
+- **Vignette** (`body::after`, z 9998): `--vignette`, edge-darkening so every section reads as a film still.
+- **The lamp** (`--lamp`): one raking light source, high and to the left, falling off to near-black. Applied at **section** scale (`.ledger--lamp` and the page-level ledger containers), never per element — the room is lit, objects are not each carrying their own lamp. It bleeds `var(--gutter)` past the content column so the falloff is never a visible rectangle.
+
+Without these the system reads as a modern data table rather than a case file. The structure is austere on purpose; the atmosphere is what makes it noir.
+
 **Shadow Vocabulary**
 - **Card weight** (`box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45)`): resting weight for evidence cards. Deepens to `0 22px 46px rgba(0,0,0,0.6)` on hover.
 - **Text scrim** (`text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6)`): under headlines that sit over photography or a lit pool.
@@ -306,7 +314,8 @@ Components are **tactile and confident**: they lift, warm, and light when touche
 
 - **Ledger:** opens on a `1px solid var(--rule-strong)` top rule. No fill, no padding, no enclosure.
 - **Record:** a three-column grid — `3.25rem` index / `minmax(0, 1fr)` body / `minmax(13.5rem, auto)` data-and-action — with `clamp(1.6rem, 2.6vw, 2.4rem)` vertical padding and a `1px solid var(--rule)` bottom rule. The third column carries a **floor**, not `auto`: without it a record holding a CTA sizes its column wider than its neighbours and the right-hand figure axis wobbles row to row, which is the one thing a ruled table may never do.
-- **Columns:** `.record-index` (mono, tabular, 68% Bone), `.record-body` (title + note + optional `.record-table`), `.record-data` (status word, then action).
+- **Columns:** `.record-index` (the exhibit number — Bebas at `2.4rem`, hollow, `-webkit-text-stroke: 1px rgba(204,0,0,0.5)`, lighting to Flashbulb Red on the lit entry), `.record-body` (title + note + optional `.record-table`), `.record-data` (status word, then action). Hollow type carries no contrast, so the index is decorative by construction and is `aria-hidden` at every call site; an index that must be *read* stays solid mono.
+- **The head:** a ledger opens on a **double rule** — `3px` `--rule-strong` with a `1px` `--rule` beneath it via `box-shadow: 0 3px 0 -2px`. Printed ledgers and forms open on a thick/thin pair, and this one detail does more period work than any amount of panel chrome.
 - **The pull (`.record--pull`):** hover or focus-within translates the entry `0.6rem` right and draws a red hairline along its bottom rule, left to right, over `0.4s cubic-bezier(0.16, 1, 0.3, 1)` — a file being drawn out of the drawer. This replaces the card's hover-lift entirely.
 - **The lit entry (`.record--lit`):** the one record that matters. An angled warm gradient plus a low red pool bleeds `var(--gutter)` past the content column on both sides so the emphasis reads as a lamp falling across the page, never as a highlighted rectangle. Its own bottom rule goes `--rule-red`, and its index lights to Flashbulb Red. **It gets no side bar** — a thick accent border down one edge is the accent-tab cliché this language exists to replace, and the ledger marks things with rules.
 - **The closed entry (`.record--closed`):** a finished item. Its bottom rule softens to `--rule-soft` and **nothing else changes**. Full text contrast is retained.

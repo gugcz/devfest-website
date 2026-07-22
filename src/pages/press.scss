@@ -335,9 +335,20 @@
 
 	/* ===================== PRESS DESK CARDS ===================== */
 	.desk-grid {
+		position: relative;
 		display: block;
 		counter-reset: card;
-		border-top: 1px solid var(--rule-strong);
+		border-top: 3px solid var(--rule-strong);
+		box-shadow: 0 3px 0 -2px var(--rule);
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: -2rem calc(-1 * var(--gutter));
+			background: var(--lamp);
+			pointer-events: none;
+			z-index: -1;
+		}
 	}
 
 	// Press desks are ledger entries, same as the contact desks.
@@ -392,18 +403,20 @@
 
 		&::before {
 			content: counter(card, decimal-leading-zero);
-			font-family: var(--font-jetbrains-mono), monospace;
-			font-size: 0.82rem;
-			line-height: 1;
-			letter-spacing: 0.16em;
+			font-family: var(--font-bebas-neue), sans-serif;
+			font-size: 2.4rem;
+			line-height: 0.85;
+			letter-spacing: 0.02em;
 			font-variant-numeric: tabular-nums;
-			color: rgba(240, 237, 230, 0.68);
-			transition: color 0.25s ease;
+			color: transparent;
+			-webkit-text-stroke: 1px rgba(204, 0, 0, 0.5);
+			transition: -webkit-text-stroke-color 0.25s ease, text-shadow 0.25s ease;
 		}
 	}
 
 	.desk-card:hover .card-no::before {
-		color: var(--color-accent-hot);
+		-webkit-text-stroke-color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
 	}
 
 	// Keep the copy above the outlined index numeral.

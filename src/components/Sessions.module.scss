@@ -162,12 +162,24 @@
 	margin-top: 1rem;
 }
 
-// The programme is a ledger of talks, not a card wall.
+// The programme is a ledger of talks, not a card wall — opened by a printed
+// thick/thin rule pair and lit by the same single lamp as every other ledger.
 .grid {
+	position: relative;
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	border-top: 1px solid var(--rule-strong);
+	border-top: 3px solid var(--rule-strong);
+	box-shadow: 0 3px 0 -2px var(--rule);
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: -2rem calc(-1 * var(--gutter));
+		background: var(--lamp);
+		pointer-events: none;
+		z-index: -1;
+	}
 }
 
 /* ===================== RECORD (button) ===================== */
