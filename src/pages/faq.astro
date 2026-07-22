@@ -1,105 +1,30 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Footer from '../components/Footer.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
 
 // ─────────────────────────────────────────────────────────────────────────
-// FAQ CONTENT — single source of truth.
+// FAQ CONTENT — single source of truth: the `faq` content collection
+// (`src/content/faq.json`, schema in `src/content.config.ts`).
 //
 // A living list: we know a handful of things for certain now and will add
 // more over time. The rendered accordion, the running item numbers,
-// and the FAQPage JSON-LD (Google rich results) all DERIVE from this array,
-// so adding or editing a Q&A means touching only here.
+// and the FAQPage JSON-LD (Google rich results) all DERIVE from that data,
+// so adding or editing a Q&A means touching only the JSON.
 //
 //   • `a` may contain inline HTML (links, <strong>, …). It is rendered with
 //     set:html for display and reused verbatim in the structured data.
-//   • Add / remove / reorder groups and items freely.
+//   • Add / remove groups and items freely; `order` fixes the group sequence
+//     (getCollection() does not preserve file order), items keep array order.
 // ─────────────────────────────────────────────────────────────────────────
-interface FaqItem {
-	q: string;
-	a: string;
-}
-interface FaqGroup {
-	id: string;
-	label: string;
-	items: FaqItem[];
-}
-
-const faqGroups: FaqGroup[] = [
-	{
-		id: 'basics',
-		label: 'Essentials',
-		items: [
-			{
-				q: 'When and where is DevFest.cz 2026?',
-				a: 'DevFest.cz 2026 takes place on <strong>30 October 2026</strong> at <strong>Uhelný Mlýn</strong> — a converted industrial mill in Libčice nad Vltavou, just outside Prague — fully in person. Capacity is strictly capped to keep the day focused, so grab a <a href="/#tickets">ticket</a> early.',
-			},
-			{
-				q: 'How do I get to the venue?',
-				a: 'Uhelný Mlýn is at <a href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8" target="_blank" rel="noopener noreferrer"><strong>Areál Šroubáren 860, 252 66 Libčice nad Vltavou</strong></a>, just north of Prague. Take a train toward Kralupy nad Vltavou from <strong>Praha-Bubny</strong> (or Praha-Podbaba) and get off at <strong>Libčice nad Vltavou</strong> — roughly a 30-minute ride, with trains about every 30 minutes. From the station it is a short walk (about 0.7 km) to the venue.',
-			},
-			{
-				q: 'Who organises DevFest.cz?',
-				a: "It's run by GUG.cz, z.s. — a Czech developer community. DevFest.cz is a volunteer-driven community event.",
-			},
-			{
-				q: 'What language are the talks in?',
-				a: 'All talks are in English.',
-			},
-		],
-	},
-	{
-		id: 'tickets',
-		label: 'Tickets',
-		items: [
-			{
-				q: 'How much do tickets cost?',
-				a: 'Tickets are sold in three waves — <strong>Early Bird</strong>, <strong>Regular</strong>, and <strong>Lazy Bird</strong> — with the price rising each wave. Early Bird tickets start from <strong>2 099 Kč (VAT included)</strong>. Live pricing for the current wave is always shown in the <a href="/#tickets">Tickets</a> section on the home page.',
-			},
-			{
-				q: 'What ticket types are available?',
-				a: 'Each wave offers two options: <strong>Individual</strong> (personal purchase) and <strong>Company funded</strong> (priced for employer-reimbursed purchases). Both grant full access to the conference.',
-			},
-			{
-				q: 'How do I get tickets?',
-				a: 'Live availability and pricing are shown in the <a href="/#tickets">Tickets</a> section on the home page. Tickets are released in waves — the earlier you grab one, the better the price.',
-			},
-			{
-				q: 'Can I get an invoice for my company?',
-				a: 'Tickets are sold through ti.to, which emails a receipt as soon as you buy. For specific company billing details, contact <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>.',
-			},
-		],
-	},
-	{
-		id: 'program',
-		label: 'Program & speakers',
-		items: [
-			{
-				q: 'Will the talks be recorded?',
-				a: "Yes — talk recordings are published after the conference. We'll announce them via the <a href=\"/#newsletter\">newsletter</a> and our social channels.",
-			},
-			{
-				q: 'How can I become a speaker?',
-				a: "The Call for Proposals is now closed — submissions are no longer accepted for DevFest.cz 2026. The lineup will be announced soon. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>.",
-			},
-		],
-	},
-	{
-		id: 'involved',
-		label: 'Get involved',
-		items: [
-			{
-				q: 'How can my company become a partner?',
-				a: 'See the <a href="/partners">Partners</a> page for what we offer, or write to <a href="mailto:filip.goszler@gug.cz">filip.goszler@gug.cz</a>.',
-			},
-			{
-				q: 'How do I stay updated?',
-				a: 'Drop your email in the form on the <a href="/#newsletter">home page</a> and follow us on social media — ticket drops and program news land there first.',
-			},
-		],
-	},
-];
+const faqGroups = (await getCollection('faq'))
+	.sort((a, b) => a.data.order - b.data.order)
+	.map((entry) => ({
+		id: entry.id,
+		label: entry.data.label,
+		items: entry.data.items,
+	}));
 
 // Running item number across all groups → "N° 01" labels, plus a per-group
 // count (zero-padded) for the editorial section header ("04 entries").
@@ -190,7 +115,6 @@ const faqJsonLd = JSON.stringify(faqSchema);
 			</div>
 		</section>
 	</main>
-	<Footer />
 </BaseLayout>
 
 <style lang="scss">

@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+
 interface Props {
 	code?: string;
 	headline: string;
@@ -11,7 +14,14 @@ const { code, headline, subtext, backLabel = 'Back to homepage' } = Astro.props;
 
 <main class="landing">
 	<h1 class="title">
-		<img src="/logo.png" alt="DevFest.cz 2026" class="logo" />
+		<Image
+			src={logo}
+			alt="DevFest.cz 2026"
+			class="logo"
+			priority
+			widths={[280, 520, 560, 1040]}
+			sizes="(max-width: 467px) 280px, (max-width: 867px) 60vw, 520px"
+		/>
 	</h1>
 	{code && <p class="code">{code}</p>}
 	<p class="headline">{headline}</p>

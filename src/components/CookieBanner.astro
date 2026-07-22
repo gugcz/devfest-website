@@ -14,17 +14,6 @@
 
 <script>
 	const CONSENT_KEY = 'cookie-consent';
-	const banner = document.getElementById('cookie-banner');
-
-	function hideBanner() {
-		banner?.setAttribute('aria-hidden', 'true');
-		banner?.classList.add('cookie-banner--hidden');
-	}
-
-	function showBanner() {
-		banner?.setAttribute('aria-hidden', 'false');
-		banner?.classList.remove('cookie-banner--hidden');
-	}
 
 	function getConsent(): string | null {
 		try { return localStorage.getItem(CONSENT_KEY); } catch { return null; }
@@ -36,6 +25,9 @@
 
 	async function loadAnalytics() {
 		try {
+			// `initAnalytics()` is idempotent (module-level `analyticsInstance`
+			// guard) and the module itself stays cached across soft navigations,
+			// so re-running this per page-load never double-initialises Analytics.
 			const mod = await import('../lib/firebase');
 			await mod.initAnalytics();
 		} catch (err) {
@@ -43,33 +35,50 @@
 		}
 	}
 
-	// Banner starts hidden — reveal only if no decision yet
-	const stored = getConsent();
-	if (stored) {
-		if (stored === 'accepted') {
+	// Bundled module scripts run once per document; <ClientRouter /> swaps the
+	// banner markup on every soft navigation, so re-bind on `astro:page-load`
+	// (which also covers the initial load — it replaces DOMContentLoaded).
+	document.addEventListener('astro:page-load', () => {
+		const banner = document.getElementById('cookie-banner');
+
+		const hideBanner = () => {
+			banner?.setAttribute('aria-hidden', 'true');
+			banner?.classList.add('cookie-banner--hidden');
+		};
+
+		const showBanner = () => {
+			banner?.setAttribute('aria-hidden', 'false');
+			banner?.classList.remove('cookie-banner--hidden');
+		};
+
+		// Banner starts hidden — reveal only if no decision yet
+		const stored = getConsent();
+		if (stored) {
+			if (stored === 'accepted') {
+				loadAnalytics();
+				window.dispatchEvent(new Event('cookie-consent-accepted'));
+			}
+		} else {
+			showBanner();
+		}
+
+		document.getElementById('cookie-accept')?.addEventListener('click', () => {
+			setConsent('accepted');
+			hideBanner();
 			loadAnalytics();
 			window.dispatchEvent(new Event('cookie-consent-accepted'));
-		}
-	} else {
-		showBanner();
-	}
+		});
 
-	document.getElementById('cookie-accept')?.addEventListener('click', () => {
-		setConsent('accepted');
-		hideBanner();
-		loadAnalytics();
-		window.dispatchEvent(new Event('cookie-consent-accepted'));
-	});
+		document.getElementById('cookie-decline')?.addEventListener('click', () => {
+			setConsent('declined');
+			hideBanner();
+		});
 
-	document.getElementById('cookie-decline')?.addEventListener('click', () => {
-		setConsent('declined');
-		hideBanner();
-	});
-
-	banner?.addEventListener('keydown', (e) => {
-		if (e.key === 'Escape' && !banner.classList.contains('cookie-banner--hidden')) {
-			(document.getElementById('cookie-decline') as HTMLButtonElement | null)?.click();
-		}
+		banner?.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && !banner.classList.contains('cookie-banner--hidden')) {
+				(document.getElementById('cookie-decline') as HTMLButtonElement | null)?.click();
+			}
+		});
 	});
 </script>
 

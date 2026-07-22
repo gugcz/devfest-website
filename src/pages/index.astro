@@ -1,16 +1,39 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import logo from '../assets/logo.png';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Countdown from '../components/Countdown';
 import NewsletterForm from '../components/NewsletterForm';
-import Footer from '../components/Footer.astro';
 import HeroBackground from '../components/HeroBackground.astro';
 import Ticker from '../components/Ticker.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
-import { showcasePartners } from '../lib/partners';
+import { getShowcasePartners } from '../lib/partners';
 
 // Homepage "silver+" strip — every sponsor tier in ladder order, top tier first.
-const homePartners = showcasePartners;
+const homePartners = await getShowcasePartners();
+
+// Partner logo masters live in `src/assets/partners/<tier>/` so the build can
+// resize them; the `partners` collection still stores plain path strings, so glob
+// the sources and key them by filename (same pattern as team.astro).
+const logoSources = import.meta.glob<{ default: ImageMetadata }>('../assets/partners/**/*', {
+	eager: true,
+});
+const logoByFile = new Map<string, ImageMetadata>(
+	Object.entries(logoSources).map(([path, mod]) => [path.split('/').pop() as string, mod.default])
+);
+const logoFor = (logo: string): ImageMetadata =>
+	logoByFile.get(logo.split('/').pop() as string) as ImageMetadata;
+
+// SVG wordmarks stay vector (`format="svg"` copies them through unchanged);
+// rasters get a srcset sized for the strip's 220×56 cap up to ~2× DPR.
+const STRIP_WIDTHS = [220, 330, 440];
+const STRIP_SIZES = '220px';
+const sizing = (img: ImageMetadata) =>
+	img.format === 'svg'
+		? ({ format: 'svg', layout: 'none' } as const)
+		: ({ widths: STRIP_WIDTHS, sizes: STRIP_SIZES } as const);
 
 const tickerTopics = [
 	'AI & Machine Learning',
@@ -42,7 +65,14 @@ const tickerTopics = [
 			<div class="hero-grid">
 				<div class="hero-content">
 					<h1 class="hero-title">
-						<img src="/logo.png" alt="" class="hero-logo" width="420" height="84" />
+						<Image
+							src={logo}
+							alt=""
+							class="hero-logo"
+							priority
+							widths={[280, 560, 620, 1240]}
+							sizes="(max-width: 500px) 280px, (max-width: 1107px) 56vw, 620px"
+						/>
 						<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026.</span>
 					</h1>
 
@@ -80,7 +110,16 @@ const tickerTopics = [
 
 				<aside class="hero-countdown" aria-label="Time until doors open">
 					<div class="section-label">Doors open in</div>
-					<Countdown client:load />
+					{/*
+						transition:persist keeps this island (and its 1s interval)
+						alive across soft navigations instead of remounting it from
+						the INITIAL_TIME placeholder. Persistence needs a matching
+						persisted element on BOTH the outgoing and incoming page, and
+						the countdown only exists here — so it helps on same-page
+						client-side navigations (e.g. back/forward to `/`), not on
+						`/` → `/team`, where the island is torn down as usual.
+					*/}
+					<Countdown client:load transition:persist />
 				</aside>
 			</div>
 		</section>
@@ -131,10 +170,10 @@ const tickerTopics = [
 							<li class="partners-item">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<img class="partners-logo" src={p.logo} alt={p.name} loading="lazy" />
+										<Image class="partners-logo" src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
 									</a>
 								) : (
-									<img class="partners-logo" src={p.logo} alt={p.name} loading="lazy" />
+									<Image class="partners-logo" src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
 								)}
 							</li>
 						))}
@@ -195,7 +234,6 @@ const tickerTopics = [
 			</div>
 		</section>
 	</main>
-	<Footer />
 </BaseLayout>
 
 <style lang="scss">
@@ -203,8 +241,12 @@ const tickerTopics = [
 </style>
 
 <script>
-	const track = document.querySelector<HTMLElement>('.gallery-track');
-	if (track) {
+	// Bundled module scripts execute once per document, so with <ClientRouter />
+	// this has to re-run per navigation. `astro:page-load` covers the initial
+	// load as well, so it replaces (never supplements) DOMContentLoaded.
+	document.addEventListener('astro:page-load', () => {
+		const track = document.querySelector<HTMLElement>('.gallery-track');
+		if (!track) return;
 		const all = Array.from(track.children) as HTMLElement[];
 		const unique = all.slice(0, all.length / 2);
 		for (let i = unique.length - 1; i > 0; i--) {
@@ -213,5 +255,5 @@ const tickerTopics = [
 		}
 		const shuffled = [...unique, ...unique.map((n) => n.cloneNode(true) as HTMLElement)];
 		track.replaceChildren(...shuffled);
-	}
+	});
 </script>

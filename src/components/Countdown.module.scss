@@ -60,7 +60,7 @@
 .cardStampText {
 	position: relative;
 	z-index: 1;
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: clamp(0.75rem, 1vw, 0.78rem);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
@@ -73,7 +73,7 @@
 	top: 62%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-family: 'Bebas Neue', sans-serif;
+	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: clamp(2.2rem, 3vw, 3.6rem);
 	line-height: 1;
 	letter-spacing: 0.04em;
@@ -83,7 +83,7 @@
 }
 
 .label {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: clamp(0.78rem, 1vw, 0.9rem);
 	letter-spacing: 0.28em;
 	text-transform: uppercase;

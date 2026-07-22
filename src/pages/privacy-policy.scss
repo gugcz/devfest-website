@@ -15,7 +15,7 @@
 	}
 
 	.back-link {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.9rem;
 		letter-spacing: 0.08em;
 		color: rgba(240, 237, 230, 0.85);
@@ -39,7 +39,7 @@
 	}
 
 	.policy-title {
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-hero);
 		letter-spacing: 0.06em;
 		color: var(--color-text);
@@ -66,7 +66,7 @@
 	// rule above the Bebas head, echoing the masthead eyebrow without adding
 	// any card chrome — the page is a legal doc and stays calm.
 	h2 {
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: 1.45rem;
 		letter-spacing: 0.08em;
 		color: var(--color-accent-hot);
@@ -89,7 +89,7 @@
 	}
 
 	h3 {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.95rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
@@ -99,7 +99,7 @@
 	}
 
 	p {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: 1rem;
 		line-height: 1.85;
 		letter-spacing: 0.01em;
@@ -111,7 +111,7 @@
 	}
 
 	ul {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: 1rem;
 		line-height: 1.85;
 		letter-spacing: 0.01em;
@@ -144,7 +144,7 @@
 	}
 
 	code {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.9rem;
 		// Lit surface for inline code — matches the noir panel tone used across
 		// the relit subpages instead of the old flat --panel-2.
@@ -157,7 +157,7 @@
 	table {
 		width: 100%;
 		border-collapse: collapse;
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: 0.95rem;
 		color: rgba(240, 237, 230, 0.78);
 		margin-top: 1.4rem;
@@ -169,7 +169,7 @@
 	}
 
 	th {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.85rem;
 		text-align: left;
 		letter-spacing: 0.14em;
@@ -182,7 +182,7 @@
 
 	// Row headers read as body copy and share the soft per-row divider.
 	tbody th {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: 0.95rem;
 		text-transform: none;
 		letter-spacing: 0.01em;

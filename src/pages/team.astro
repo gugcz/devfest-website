@@ -1,117 +1,24 @@
 ---
 import { getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Footer from '../components/Footer.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
 
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
-// Each member has two photos of the SAME shot: a black-and-white base
-// (`photo`) and a colour version (`photoColor`). The card shows the B&W base
-// at rest; on hover the colour "bleeds" in from the cursor (see team.scss).
-// `alias` is the noir codename used as the kicker; `role` is the real role.
+// The roster lives in the `team` content collection (`src/content/team.json`,
+// schema in `src/content.config.ts`). Each member has two photos of the SAME
+// shot: a black-and-white base (`photo`) and a colour version (`photoColor`).
+// The card shows the B&W base at rest; on hover the colour "bleeds" in from
+// the cursor (see team.scss). `alias` is the noir codename used as the kicker;
+// `role` is the real role. `order` fixes the seniority sequence — getCollection()
+// does not preserve the order of the source file.
 type LinkKind = 'linkedin' | 'github' | 'web' | 'instagram' | 'email';
 
-interface TeamLink {
-	kind: LinkKind;
-	url: string;
-}
-
-interface TeamMember {
-	name: string;
-	alias: string;
-	role?: string;
-	photo?: string;
-	photoColor?: string;
-	links?: TeamLink[];
-}
-
-const team: TeamMember[] = [
-	{
-		name: 'Daniel Macho',
-		alias: 'The Boss / The Scenic Artist',
-		role: 'Lead Org',
-		photo: '/team/daniel-macho-bw.webp',
-		photoColor: '/team/daniel-macho.webp',
-		links: [
-			{ kind: 'linkedin', url: 'https://www.linkedin.com/in/daniel-macho-8ab0477a/' },
-			{ kind: 'github', url: 'https://github.com/lordwiccar' },
-			{ kind: 'instagram', url: 'https://www.instagram.com/beluha.k.vasim.sluzbam/' },
-			{ kind: 'email', url: 'mailto:daniel.macho@gug.cz' },
-		],
-	},
-	{
-		name: 'Lucie Jurystová',
-		alias: 'The Fixer',
-		role: 'Deputy Lead Org',
-		photo: '/team/lucie-jurystova-bw.webp',
-		photoColor: '/team/lucie-jurystova.webp',
-		links: [{ kind: 'linkedin', url: 'https://www.linkedin.com/in/luciejurystova/' }],
-	},
-	{
-		name: 'Adéla Janovská',
-		alias: 'Chief of Logistics',
-		role: 'Production',
-		photo: '/team/adela-janovska-bw.webp',
-		photoColor: '/team/adela-janovska.webp',
-		links: [{ kind: 'linkedin', url: 'https://www.linkedin.com/in/adela-janovska/' }],
-	},
-	{
-		name: 'Filip Goszler',
-		alias: 'The Negotiator',
-		role: 'Partners',
-		photo: '/team/filip-goszler-bw.webp',
-		photoColor: '/team/filip-goszler.webp',
-		links: [{ kind: 'linkedin', url: 'https://www.linkedin.com/in/filipgoszler/' }],
-	},
-	{
-		name: 'Eliška Čejpová',
-		alias: 'Whisperer Hunter',
-		role: 'Speakers',
-		photo: '/team/eliska-cejpova-bw.webp',
-		photoColor: '/team/eliska-cejpova.webp',
-		links: [{ kind: 'linkedin', url: 'https://www.linkedin.com/in/eliskacejpova/' }],
-	},
-	{
-		name: 'Dominik Šimoník',
-		alias: 'Switchboard Operator',
-		role: 'Web & App',
-		photo: '/team/dominik-simonik-bw.webp',
-		photoColor: '/team/dominik-simonik.webp',
-		links: [
-			{ kind: 'linkedin', url: 'https://www.linkedin.com/in/dominik-simonik/' },
-			{ kind: 'github', url: 'https://github.com/ryzizub' },
-			{ kind: 'web', url: 'https://ryzizub.com/' },
-			{ kind: 'email', url: 'mailto:dominik.simonik@gug.cz' },
-		],
-	},
-	{
-		name: 'Eliška Zezulková',
-		alias: 'The Gatekeeper',
-		role: 'Tickets & Registration',
-		photo: '/team/eliska-zezulkova-bw.webp',
-		photoColor: '/team/eliska-zezulkova.webp',
-		links: [
-			{ kind: 'linkedin', url: 'https://www.linkedin.com/in/eli%C5%A1ka-zezulkov%C3%A1-3a24b9b9/' },
-			{ kind: 'email', url: 'mailto:eliska.zezulkova@gug.cz' },
-		],
-	},
-	{
-		name: 'Tereza Goszlerová',
-		alias: 'Head Bookkeeper',
-		role: 'Finance',
-		photo: '/team/tereza-goszlerova-bw.webp',
-		photoColor: '/team/tereza-goszlerova.webp',
-	},
-	{
-		name: 'Petr Vobr',
-		alias: 'Private Eye',
-		role: 'Festival',
-		photo: '/team/petr-vobr-bw.webp',
-		photoColor: '/team/petr-vobr.webp',
-	},
-];
+const team = (await getCollection('team'))
+	.sort((a, b) => a.data.order - b.data.order)
+	.map((entry) => entry.data);
 
 // ─── IMAGE OPTIMISATION ────────────────────────────────────────────────────
 // The source webps live in `src/assets/team` so the build can resize them and
@@ -289,7 +196,6 @@ const tickerTopics = [
 			</div>
 		</section>
 	</main>
-	<Footer />
 </BaseLayout>
 
 <script>
@@ -300,32 +206,38 @@ const tickerTopics = [
 	// The colour layer is heavy and only ever shown on hover/focus, so its real
 	// source lives in data-* attributes and is fetched on first interaction —
 	// keeping the colour photos (~half the page weight) off the initial load.
-	const mugshots = document.querySelectorAll<HTMLElement>('.mugshot');
-	mugshots.forEach((mugshot) => {
-		const color = mugshot.querySelector<HTMLImageElement>('.mugshot-color');
-		if (!color) return;
+	//
+	// Bundled module scripts run once per document, so under <ClientRouter />
+	// the binding has to happen on `astro:page-load` — it fires on the initial
+	// load and after every soft navigation, replacing DOMContentLoaded.
+	document.addEventListener('astro:page-load', () => {
+		const mugshots = document.querySelectorAll<HTMLElement>('.mugshot');
+		mugshots.forEach((mugshot) => {
+			const color = mugshot.querySelector<HTMLImageElement>('.mugshot-color');
+			if (!color) return;
 
-		const loadColor = () => {
-			if (color.src) return; // already loaded
-			if (color.dataset.srcset) color.srcset = color.dataset.srcset;
-			if (color.dataset.src) color.src = color.dataset.src;
-		};
-		// Mouse: load when the pointer first enters. Keyboard: load when focus
-		// moves into the card (only cards with links are focusable).
-		mugshot.addEventListener('pointerenter', loadColor, { once: true });
-		mugshot.closest('.crew-card')?.addEventListener('focusin', loadColor, { once: true });
+			const loadColor = () => {
+				if (color.src) return; // already loaded
+				if (color.dataset.srcset) color.srcset = color.dataset.srcset;
+				if (color.dataset.src) color.src = color.dataset.src;
+			};
+			// Mouse: load when the pointer first enters. Keyboard: load when focus
+			// moves into the card (only cards with links are focusable).
+			mugshot.addEventListener('pointerenter', loadColor, { once: true });
+			mugshot.closest('.crew-card')?.addEventListener('focusin', loadColor, { once: true });
 
-		mugshot.addEventListener(
-			'pointermove',
-			(event) => {
-				const rect = mugshot.getBoundingClientRect();
-				const x = ((event.clientX - rect.left) / rect.width) * 100;
-				const y = ((event.clientY - rect.top) / rect.height) * 100;
-				color.style.setProperty('--mx', `${x}%`);
-				color.style.setProperty('--my', `${y}%`);
-			},
-			{ passive: true }
-		);
+			mugshot.addEventListener(
+				'pointermove',
+				(event) => {
+					const rect = mugshot.getBoundingClientRect();
+					const x = ((event.clientX - rect.left) / rect.width) * 100;
+					const y = ((event.clientY - rect.top) / rect.height) * 100;
+					color.style.setProperty('--mx', `${x}%`);
+					color.style.setProperty('--my', `${y}%`);
+				},
+				{ passive: true }
+			);
+		});
 	});
 </script>
 

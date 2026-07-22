@@ -22,7 +22,7 @@
 	.back-link {
 		display: inline-block;
 		margin-bottom: 2.6rem;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.7rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
@@ -58,7 +58,7 @@
 		justify-content: flex-start;
 		gap: 0.9rem;
 		margin: 0 0 1rem;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.72rem;
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
@@ -85,7 +85,7 @@
 	// Large poster headline — typewriter Special Elite, matching the homepage
 	// section titles. Bebas stays for small card labels / numerics below.
 	.section-title {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: clamp(2rem, 4vw, 3rem);
 		line-height: 1.05;
 		letter-spacing: 0.01em;
@@ -190,7 +190,7 @@
 	}
 
 	.kit-badge {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.72rem;
 		letter-spacing: 0.16em;
 		color: rgba(240, 237, 230, 0.85);
@@ -216,7 +216,7 @@
 	}
 
 	.kit-label {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-size: 0.98rem;
 		line-height: 1.25;
 		color: var(--color-text);
@@ -224,7 +224,7 @@
 	}
 
 	.kit-spec {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.68rem;
 		letter-spacing: 0.12em;
 		text-transform: uppercase;
@@ -276,7 +276,7 @@
 	}
 
 	.empty-stamp {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.6rem;
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
@@ -290,7 +290,7 @@
 	}
 
 	.empty-line {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1.02rem;
 		line-height: 1.7;

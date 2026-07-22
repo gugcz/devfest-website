@@ -87,7 +87,7 @@
 
 		&::before {
 			content: counter(card, decimal-leading-zero);
-			font-family: 'Bebas Neue', sans-serif;
+			font-family: var(--font-bebas-neue), sans-serif;
 			font-size: 5.5rem;
 			line-height: 0.8;
 			letter-spacing: 0.02em;
@@ -121,7 +121,7 @@
 		align-self: flex-start;
 		background: var(--color-accent);
 		color: var(--on-accent);
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.26em;
 		text-transform: uppercase;
@@ -129,7 +129,7 @@
 	}
 
 	.card-title {
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-card-title);
 		line-height: 1;
 		letter-spacing: 0.04em;
@@ -138,7 +138,7 @@
 	}
 
 	.card-desc {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1.08rem;
 		line-height: 1.55;
@@ -168,14 +168,14 @@
 	}
 
 	.contact-name {
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: 1.5rem;
 		letter-spacing: 0.06em;
 		color: var(--color-text);
 	}
 
 	.email-link {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.85rem;
 		letter-spacing: 0.04em;
 		color: var(--color-text);
@@ -240,7 +240,7 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.7rem;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.85rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
@@ -257,7 +257,7 @@
 	}
 
 	.partners-cta-stamp {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.28em;
 		text-transform: uppercase;
@@ -268,7 +268,7 @@
 	}
 
 	.partners-cta-note {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1.05rem;
 		color: var(--color-grey);
@@ -336,7 +336,7 @@
 
 	// Poster headline — typewriter (Special Elite) to match the noir key art.
 	.tier-title {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-h2);
 		line-height: 1.05;
 		letter-spacing: 0.01em;
@@ -479,7 +479,7 @@
 
 	// Poster headline — typewriter (Special Elite) to match the noir key art.
 	.media-title {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-h2);
 		line-height: 1.05;
 		letter-spacing: 0.01em;

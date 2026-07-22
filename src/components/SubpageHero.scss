@@ -26,7 +26,7 @@
 
 	// Mono eyebrow with a trailing red hairline — matches the homepage tag.
 	.section-label {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.32em;
 		text-transform: uppercase;
@@ -45,7 +45,7 @@
 	}
 
 	.hero-title {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-hero);
 		line-height: 1.04;
 		letter-spacing: 0.01em;
@@ -65,7 +65,7 @@
 	}
 
 	.hero-lede {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: clamp(1.18rem, 1.7vw, 1.4rem);
 		line-height: 1.75;

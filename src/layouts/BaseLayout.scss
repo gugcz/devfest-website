@@ -11,6 +11,19 @@
 		--color-surface: rgba(255, 255, 255, 0.03);
 		--color-border: rgba(255, 255, 255, 0.08);
 
+		/* ============ brand typefaces ============ */
+		// The four brand faces are self-hosted via the Astro Fonts API. Each
+		// `--font-*` custom property below is injected into :root by the
+		// matching <Font /> in BaseLayout.astro; the family names it resolves to
+		// are build-time hashes, so stylesheets must go through the variable and
+		// never through a literal 'Bebas Neue' / 'JetBrains Mono' / … string.
+		// Declared families and weights live in astro.config.mjs (`fonts`).
+		// Only these four are allowed — never introduce a fifth.
+		//   --font-bebas-neue        display / headline
+		//   --font-im-fell-english   editorial serif (roman + italic)
+		//   --font-jetbrains-mono    labels, meta, UI mono
+		//   --font-special-elite     body
+
 		/* ============ editorial-noir design tokens ============ */
 		// Content column + consistent page gutter / section rhythm.
 		--maxw: 1200px;
@@ -126,7 +139,7 @@
 		flex-direction: column;
 		background: var(--color-bg);
 		color: var(--color-text);
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 
@@ -159,7 +172,7 @@
 		padding: 0.7rem 1.1rem;
 		background: #050505;
 		color: #F0EDE6;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.9rem;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
@@ -217,7 +230,7 @@
 
 	// Mono eyebrow with a trailing red hairline — the editorial section tag.
 	.eyebrow {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.78rem;
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
@@ -249,7 +262,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.7rem;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.84rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
@@ -285,7 +298,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.6rem;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.84rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;

@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Footer from '../components/Footer.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import InvoiceForm from '../components/InvoiceForm';
 ---
@@ -37,7 +36,6 @@ import InvoiceForm from '../components/InvoiceForm';
 			</div>
 		</section>
 	</main>
-	<Footer />
 </BaseLayout>
 
 <style lang="scss">
@@ -71,7 +69,7 @@ import InvoiceForm from '../components/InvoiceForm';
 	}
 
 	.intro-title {
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-card-title);
 		letter-spacing: 0.04em;
 		color: var(--color-text);
@@ -88,7 +86,7 @@ import InvoiceForm from '../components/InvoiceForm';
 	}
 
 	.steps li {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-size: 1.05rem;
 		line-height: 1.5;
 		color: var(--color-grey);
@@ -98,7 +96,7 @@ import InvoiceForm from '../components/InvoiceForm';
 	}
 
 	.step-no {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.7rem;
 		letter-spacing: 0.2em;
 		// Red reads as light — the step numbers glow like neon markers.
@@ -108,7 +106,7 @@ import InvoiceForm from '../components/InvoiceForm';
 	}
 
 	.intro-note {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: 0.9rem;
 		font-style: italic;
 		color: rgba(240, 237, 230, 0.6);
