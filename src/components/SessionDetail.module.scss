@@ -159,8 +159,9 @@
 	letter-spacing: 0.04em;
 	color: var(--color-grey);
 	background: rgba(255, 255, 255, 0.02);
+	// Square, per the Two-Pixel Rule — pills belong to a different product.
 	border: 1px solid var(--rule);
-	border-radius: 999px;
+	border-radius: var(--radius);
 	padding: 0.32rem 0.75rem;
 }
 

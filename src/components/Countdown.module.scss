@@ -29,13 +29,17 @@
 	gap: 4px;
 }
 
+// A ticket stub, and the one place a bounded rectangle is the actual subject:
+// the shape IS the object being depicted, not a container wrapped around
+// content. It keeps its edge — but the edge is a hairline on a dark well, not
+// a card border with a radius pretending to be a surface.
 .card {
 	position: relative;
 	width: clamp(2.6rem, 3.4vw, 4.2rem);
 	height: clamp(3.8rem, 5.1vw, 6rem);
 	background: var(--panel-2);
 	border: 1px solid var(--rule);
-	border-radius: var(--radius);
+	border-radius: 0;
 	overflow: hidden;
 	transition: border-color 0.3s ease;
 }

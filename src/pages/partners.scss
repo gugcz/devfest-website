@@ -46,34 +46,19 @@
 		padding: 3.2rem 2.8rem;
 		min-height: 240px;
 		border: 0;
+		border-top: 1px solid var(--rule-red);
+		border-bottom: 1px solid var(--rule);
 		border-radius: 0;
-		background:
-			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
-			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
-		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
+		// The partnership pitch is the lit entry of this page — light carries
+		// it, not a mounted panel with a shadow.
+		background: linear-gradient(
+			104deg,
+			rgba(255, 244, 232, 0.07) 0%,
+			rgba(255, 240, 226, 0.032) 36%,
+			transparent 86%
+		);
 		counter-reset: card;
 		counter-increment: card;
-		transition: transform 0.25s ease, box-shadow 0.25s ease;
-
-		// Inset matte frame — a mounted-print hairline. Warms to red on hover.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 9px;
-			border: 1px solid var(--matte);
-			pointer-events: none;
-			z-index: 2;
-			transition: border-color 0.25s ease;
-		}
-
-		&:hover {
-			transform: translateY(-4px);
-			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
-		}
-
-		&:hover::before {
-			border-color: var(--matte-red);
-		}
 	}
 
 	// Oversized outlined index — anchored top-right, behind the copy.
@@ -351,13 +336,18 @@
 		}
 	}
 
+	// Contact sheet, not a tile grid: logos sit in cells of one ruled sheet,
+	// sharing hairlines with their neighbours. No panel fill, no drop shadow,
+	// no floating tiles — the grid itself is the only structure.
 	.tier-grid {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(var(--tier-col), 1fr));
-		gap: 14px;
+		gap: 0;
+		border-top: 1px solid var(--rule);
+		border-left: 1px solid var(--rule);
 	}
 
 	.tier-item {
@@ -366,22 +356,26 @@
 		display: flex;
 		min-height: var(--tier-tile);
 		border: 0;
+		border-right: 1px solid var(--rule);
+		border-bottom: 1px solid var(--rule);
 		border-radius: 0;
-		background:
-			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
-			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
-		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		background: transparent;
+		transition: background 0.28s ease;
 
-		// Inset matte frame — a mounted-print hairline. Warms to red on hover.
+		// The cell lights rather than lifts.
 		&::before {
 			content: '';
 			position: absolute;
-			inset: 9px;
-			border: 1px solid var(--matte);
+			inset: 0;
+			background: linear-gradient(
+				104deg,
+				rgba(255, 244, 232, 0.07) 0%,
+				rgba(255, 240, 226, 0.03) 42%,
+				transparent 86%
+			);
+			opacity: 0;
 			pointer-events: none;
-			z-index: 2;
-			transition: border-color 0.25s ease;
+			transition: opacity 0.28s ease;
 		}
 
 		a,
@@ -414,14 +408,8 @@
 
 		&:has(a:hover),
 		&:has(a:focus-visible) {
-			transform: translateY(-4px);
-			// Red edge-light catches the wordmark on hover.
-			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
-		}
-
-		&:has(a:hover)::before,
-		&:has(a:focus-visible)::before {
-			border-color: var(--matte-red);
+			// The cell under the cursor is the one the lamp is over.
+			&::before { opacity: 1; }
 		}
 
 		&:hover .tier-logo,
@@ -500,7 +488,9 @@
 		padding: 0;
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-		gap: 14px;
+		gap: 0;
+		border-top: 1px solid var(--rule);
+		border-left: 1px solid var(--rule);
 	}
 
 	// Media logos ship for light backgrounds (dark wordmarks), so each keeps the
@@ -516,22 +506,19 @@
 		justify-content: center;
 		min-height: 150px;
 		padding: 1.8rem 2rem;
+		// The cream fill is functional, not decorative: media wordmarks ship
+		// dark and are illegible on the page ground. It stays; the shadow,
+		// the mounted matte frame and the lift do not.
 		background: var(--color-cream);
 		border: 0;
+		border-right: 1px solid var(--rule);
+		border-bottom: 1px solid var(--rule);
 		border-radius: 0;
-		box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		transition: filter 0.25s ease;
 
-		// Inset matte frame — red at rest so it stays visible on the cream plate,
-		// warming to hot red on hover.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 9px;
-			border: 1px solid var(--matte-red);
-			pointer-events: none;
-			z-index: 2;
-			transition: border-color 0.25s ease;
+		&:hover,
+		&:focus-within {
+			filter: brightness(1.06);
 		}
 
 		a {
@@ -553,18 +540,6 @@
 			object-fit: contain;
 			opacity: 0.92;
 			transition: opacity 0.2s;
-		}
-
-		&:has(a:hover),
-		&:has(a:focus-visible) {
-			transform: translateY(-4px);
-			// Cream plate stays for dark logos; hover gains a soft red halation.
-			box-shadow: var(--glow-red-soft), 0 22px 46px rgba(0, 0, 0, 0.6);
-		}
-
-		&:has(a:hover)::before,
-		&:has(a:focus-visible)::before {
-			border-color: var(--color-accent-hot);
 		}
 
 		&:hover img,

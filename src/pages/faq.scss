@@ -66,36 +66,55 @@
 
 	/* ===================== ITEM (native <details>) ===================== */
 	// Lit dark file — resting depth shadow, red edge-light warming in on hover.
+	// A question is a ruled entry, not a bordered panel: hairline between
+	// items, nothing enclosing them. Open state is carried by light bleeding
+	// past the column and by the lit question text — never by a box.
 	.faq-item {
 		position: relative;
-		background: var(--panel-lit);
-		border: 1px solid var(--rule);
-		border-radius: var(--radius);
-		box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-		transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+		border-bottom: 1px solid var(--rule);
+		transition: background 0.3s ease;
 
-		&:hover {
-			border-color: var(--rule-red);
-			background: var(--panel-lit-2);
-			box-shadow: var(--glow-red-soft), 0 22px 46px rgba(0, 0, 0, 0.6);
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0 calc(-1 * var(--gutter));
+			background: linear-gradient(
+				104deg,
+				rgba(255, 244, 232, 0.06) 0%,
+				rgba(255, 240, 226, 0.028) 38%,
+				transparent 82%
+			);
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.3s ease;
+			z-index: -1;
+		}
+
+		&:hover::before {
+			opacity: 0.55;
 		}
 
 		&[open] {
-			border-color: var(--rule-red);
-			background: var(--panel-hover);
-			box-shadow: var(--glow-red-soft), 0 18px 40px rgba(0, 0, 0, 0.55);
+			border-bottom-color: var(--rule-red);
+		}
+
+		&[open]::before {
+			opacity: 1;
 		}
 	}
 
+	// Same column geometry as the global .record so questions line up with
+	// every other ledger on the site: index, body, marker.
 	.faq-q {
 		position: relative;
 		z-index: 1;
 		list-style: none;
 		cursor: pointer;
-		display: flex;
+		display: grid;
+		grid-template-columns: 3.25rem minmax(0, 1fr) auto;
 		align-items: baseline;
-		gap: 1.1rem;
-		padding: 1.6rem;
+		column-gap: clamp(1.25rem, 3vw, 2.75rem);
+		padding: 1.5rem 0;
 
 		// Strip the default disclosure triangle (WebKit + the rest).
 		&::-webkit-details-marker {
@@ -158,9 +177,22 @@
 	.faq-a {
 		position: relative;
 		z-index: 1;
-		margin: 0 1.6rem 1.6rem;
+		// Sits in the body column, under its own question — the answer is
+		// margin-set against the red hairline, aligned to the ledger grid.
+		margin: 0 0 1.8rem calc(3.25rem + clamp(1.25rem, 3vw, 2.75rem));
 		padding-left: 1.4rem;
 		border-left: 2px solid var(--rule-red);
+	}
+
+	@media (max-width: 720px) {
+		.faq-q {
+			grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+			column-gap: 1.1rem;
+		}
+
+		.faq-a {
+			margin-left: calc(2.4rem + 1.1rem);
+		}
 	}
 
 	.faq-a :global(p) {

@@ -21,19 +21,23 @@
 		margin: 0 auto;
 	}
 
+	// Contact sheet of mugshots — one ruled sheet, cells sharing hairlines.
+	// The crew is a wall of case photographs, not a row of profile cards.
 	.crew-grid {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-		gap: 14px;
+		gap: 0;
+		border-top: 1px solid var(--rule);
+		border-left: 1px solid var(--rule);
 	}
 
-	/* ===================== CARD ===================== */
-	// Flat film-noir panel matching the redesign's card idiom: sharp edges, a
-	// raked corner light, an inset matte hairline that warms to red on hover,
-	// and a red-glow lift. The mugshot colour-bleed reveal is the team flourish.
+	/* ===================== CELL ===================== */
+	// No panel, no shadow, no matte frame, no lift. The photograph is the
+	// artifact; the cell is just its place on the sheet. The cursor
+	// colour-bleed on the mugshot stays — that is the team's one flourish.
 	.crew-card {
 		position: relative;
 		overflow: hidden;
@@ -43,33 +47,31 @@
 		height: 100%;
 		padding: 1rem 1rem 1.25rem;
 		border: 0;
+		border-right: 1px solid var(--rule);
+		border-bottom: 1px solid var(--rule);
 		border-radius: 0;
-		background:
-			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
-			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
-		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
-		transition: transform 0.25s ease, box-shadow 0.25s ease;
+		background: transparent;
 
-		// Inset matte frame — neutral at rest, warms to red on hover.
+		// The cell under the cursor is the one the lamp is over.
 		&::before {
 			content: '';
 			position: absolute;
-			inset: 9px;
-			border: 1px solid var(--matte);
+			inset: 0;
+			background: linear-gradient(
+				104deg,
+				rgba(255, 244, 232, 0.07) 0%,
+				rgba(255, 240, 226, 0.03) 42%,
+				transparent 86%
+			);
+			opacity: 0;
 			pointer-events: none;
-			z-index: 4;
-			transition: border-color 0.25s ease;
-		}
-
-		&:hover,
-		&:focus-within {
-			transform: translateY(-4px);
-			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+			z-index: 0;
+			transition: opacity 0.28s ease;
 		}
 
 		&:hover::before,
 		&:focus-within::before {
-			border-color: var(--matte-red);
+			opacity: 1;
 		}
 	}
 

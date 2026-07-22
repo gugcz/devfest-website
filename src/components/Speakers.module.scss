@@ -32,18 +32,15 @@
 	color: inherit;
 	cursor: pointer;
 	overflow: hidden;
-	background:
-		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
-		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 82%);
-	border: 1px solid var(--rule);
-	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-	transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
+	// The photograph is the artifact — it carries its own crop-bracket frame.
+	// Wrapping it in a bordered, shadowed panel put a card around a card.
+	background: transparent;
+	border: 0;
+	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 
 	&:hover,
 	&:focus-visible {
-		transform: translateY(-5px);
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+		transform: translateY(-3px);
 	}
 
 	&:focus-visible {
@@ -70,19 +67,24 @@
 		border: 2px solid var(--color-accent-hot);
 		z-index: 3;
 		opacity: 0.85;
-		transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+		// The brackets open by scaling from their own corner, not by animating
+		// width/height — same gesture, composited instead of re-laying out.
+		transform: scale(1);
+		transition: opacity 0.3s ease, transform 0.3s ease;
 	}
 	&::before {
 		top: 9px;
 		left: 9px;
 		border-right: 0;
 		border-bottom: 0;
+		transform-origin: top left;
 	}
 	&::after {
 		right: 9px;
 		bottom: 9px;
 		border-left: 0;
 		border-top: 0;
+		transform-origin: bottom right;
 	}
 }
 
@@ -123,8 +125,8 @@
 .card:focus-visible .media::before,
 .card:focus-visible .media::after {
 	opacity: 1;
-	width: 24px;
-	height: 24px;
+	// 18px → 24px, expressed as scale so the frame opens on the compositor.
+	transform: scale(1.333);
 }
 
 .card:hover .grain,
@@ -151,11 +153,13 @@
 	display: flex;
 	flex-direction: column;
 	flex: 1 1 auto;
-	// Flush to the card edges (aligned with the photo above) — no inset gap
-	// around the red tint. Red file-rule sits on the left edge.
-	padding: 0.85rem 1rem 0.95rem;
-	border-left: 2px solid var(--rule-red);
-	background: linear-gradient(90deg, rgba(204, 0, 0, 0.07) 0%, rgba(10, 9, 9, 0) 72%);
+	// The name plate hangs under the photograph on a red hairline — the file
+	// caption. A 2px coloured left border is the side-tab cliché; a 1px rule
+	// under the plate says the same thing in the ledger's own vocabulary.
+	padding: 0.8rem 0 0;
+	margin-top: 0.7rem;
+	border-top: 1px solid var(--rule-red);
+	background: none;
 }
 
 // Matches /team's .crew-name.

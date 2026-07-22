@@ -99,34 +99,20 @@
 	font-size: 1.05rem;
 	color: var(--color-text);
 	margin: 0;
-	padding: 1.3rem 1.5rem;
-	background:
-		radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
-		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+	// A readout, not a panel: ruled top and bottom, lit from the left. A
+	// figure the visitor reads once does not need a mounted frame — and it
+	// certainly should not lift when the pointer crosses it.
+	padding: 1.2rem 0;
+	background: linear-gradient(
+		104deg,
+		rgba(255, 244, 232, 0.05) 0%,
+		rgba(255, 240, 226, 0.022) 40%,
+		transparent 84%
+	);
 	border: 0;
+	border-top: 1px solid var(--rule);
+	border-bottom: 1px solid var(--rule);
 	border-radius: 0;
-	box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
-	transition: transform 0.25s ease, box-shadow 0.25s ease;
-
-	// Inset matte frame — a mounted-print hairline. Warms to red on hover.
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 9px;
-		border: 1px solid var(--matte);
-		pointer-events: none;
-		z-index: 2;
-		transition: border-color 0.25s ease;
-	}
-
-	&:hover {
-		transform: translateY(-4px);
-		box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
-	}
-
-	&:hover::before {
-		border-color: var(--matte-red);
-	}
 
 	strong {
 		position: relative;
@@ -256,37 +242,22 @@
 // Success panel — lamp-lit dossier: single-source-lit panel (warm light pooling
 // top-left, falling to near-black) with an inset "matte" frame like a mounted
 // evidence print. No tab/index: this is a single confirmation, not a grid.
+// Confirmation — the lit entry treatment, since this is the one thing on the
+// page that matters once it appears. Light and a red rule carry it; no panel,
+// no matte frame, and no hover response at all (nothing here is interactive).
 .success {
 	position: relative;
-	overflow: hidden;
-	padding: 2.4rem 2.2rem 2.2rem;
-	background:
-		radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
-		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+	padding: 2.4rem 0 2.2rem;
+	background: linear-gradient(
+		104deg,
+		rgba(255, 244, 232, 0.075) 0%,
+		rgba(255, 240, 226, 0.038) 34%,
+		transparent 88%
+	);
 	border: 0;
+	border-top: 1px solid var(--rule-red);
+	border-bottom: 1px solid var(--rule);
 	border-radius: 0;
-	box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
-	transition: transform 0.25s ease, box-shadow 0.25s ease;
-
-	// Inset matte frame — a mounted-print hairline. Warms to red on hover.
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 9px;
-		border: 1px solid var(--matte);
-		pointer-events: none;
-		z-index: 2;
-		transition: border-color 0.25s ease;
-	}
-
-	&:hover {
-		transform: translateY(-4px);
-		box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
-	}
-
-	&:hover::before {
-		border-color: var(--matte-red);
-	}
 }
 
 // Keep the confirmation copy above the inset matte frame.

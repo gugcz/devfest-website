@@ -97,31 +97,19 @@
 
 	/* ===================== EMPTY STATE ===================== */
 	// Lamp-lit dossier (no tab/index): single-source lit panel + inset matte frame.
+	// A ruled note opening on the ledger's strong rule, not a mounted panel.
 	.empty-state {
 		position: relative;
-		overflow: hidden;
 		border: 0;
+		border-top: 1px solid var(--rule-strong);
 		border-radius: 0;
-		// Warm light pooling top-left, falling to near-black.
-		background:
-			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
-			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
-		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
-		padding: 2.6rem 2.2rem;
+		background: transparent;
+		padding: 2.2rem 0 0;
+		max-width: 52ch;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 1.1rem;
-
-		// Inset matte frame — a mounted-print hairline.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 9px;
-			border: 1px solid var(--matte);
-			pointer-events: none;
-			z-index: 2;
-		}
 	}
 
 	.empty-stamp {
@@ -162,42 +150,46 @@
 		counter-increment: card;
 	}
 
-	// Lamp-lit dossier: a single-source-lit panel (warm light pooling top-left,
-	// falling to near-black) with an inset "matte" frame like a mounted evidence
-	// print. The outlined index numeral rides the text column's top-right corner.
+	// A clipping in the press ledger: thumbnail left, headline and outlet
+	// right, hairline below. No mounted panel, no lift.
 	.coverage-card {
 		position: relative;
-		overflow: hidden;
 		display: grid;
 		grid-template-columns: 220px 1fr;
-		gap: 1.5rem;
-		padding: 1.4rem;
-		// Warm light pooling top-left, falling to near-black.
-		background:
-			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
-			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+		gap: 1.8rem;
+		padding: clamp(1.4rem, 2.4vw, 2rem) 0;
+		background: transparent;
 		border: 0;
+		border-bottom: 1px solid var(--rule);
 		border-radius: 0;
-		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
-		min-height: 200px;
 		text-decoration: none;
-		transition: transform 0.25s ease, box-shadow 0.25s ease;
+		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 
-		// Inset matte frame — a mounted-print hairline. Warms to red on hover.
+		// Light washes in from the left when the clipping is reached.
 		&::before {
 			content: '';
 			position: absolute;
-			inset: 9px;
-			border: 1px solid var(--matte);
+			inset: 0 calc(-1 * var(--gutter));
+			background: linear-gradient(
+				104deg,
+				rgba(255, 244, 232, 0.06) 0%,
+				rgba(255, 240, 226, 0.026) 38%,
+				transparent 82%
+			);
+			opacity: 0;
 			pointer-events: none;
-			z-index: 2;
-			transition: border-color 0.25s ease;
+			z-index: -1;
+			transition: opacity 0.3s ease;
+		}
+
+		&:hover::before,
+		&:focus-visible::before {
+			opacity: 1;
 		}
 
 		&:hover,
 		&:focus-visible {
-			transform: translateY(-4px);
-			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+			transform: translateX(0.6rem);
 			outline: none;
 
 			&::before { border-color: var(--matte-red); }
@@ -343,78 +335,75 @@
 
 	/* ===================== PRESS DESK CARDS ===================== */
 	.desk-grid {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 2rem;
+		display: block;
 		counter-reset: card;
+		border-top: 1px solid var(--rule-strong);
 	}
 
-	// Lamp-lit dossier: a single-source-lit panel (warm light pooling top-left,
-	// falling to near-black) with an inset "matte" frame like a mounted evidence
-	// print, a flat red case-file tab, and a big outlined index behind the copy.
+	// Press desks are ledger entries, same as the contact desks.
 	.desk-card {
 		position: relative;
-		overflow: hidden;
-		// Warm light pooling top-left, falling to near-black.
-		background:
-			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
-			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
+		display: grid;
+		grid-template-columns: 3.25rem minmax(0, 1fr);
+		align-items: start;
+		column-gap: clamp(1.25rem, 3vw, 2.75rem);
+		row-gap: 0.9rem;
+		background: transparent;
 		border: 0;
+		border-bottom: 1px solid var(--rule);
 		border-radius: 0;
-		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
-		padding: 2.5rem 2.1rem 2.1rem;
-		min-height: 260px;
-		display: flex;
-		flex-direction: column;
-		gap: 1.1rem;
+		padding: clamp(1.6rem, 2.6vw, 2.4rem) 0;
 		counter-increment: card;
-		transition: transform 0.25s ease, box-shadow 0.25s ease;
+		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 
-		// Inset matte frame — a mounted-print hairline. Warms to red on hover.
 		&::before {
 			content: '';
 			position: absolute;
-			inset: 9px;
-			border: 1px solid var(--matte);
+			inset: 0 calc(-1 * var(--gutter));
+			background: linear-gradient(
+				104deg,
+				rgba(255, 244, 232, 0.06) 0%,
+				rgba(255, 240, 226, 0.026) 38%,
+				transparent 82%
+			);
+			opacity: 0;
 			pointer-events: none;
-			z-index: 2;
-			transition: border-color 0.25s ease;
+			z-index: -1;
+			transition: opacity 0.3s ease;
 		}
 
-		&:hover {
-			transform: translateY(-4px);
-			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+		&:hover,
+		&:focus-within {
+			transform: translateX(0.6rem);
 		}
 
-		&:hover::before {
-			border-color: var(--matte-red);
+		&:hover::before,
+		&:focus-within::before {
+			opacity: 1;
 		}
 	}
 
-	// Oversized outlined index — the slab's anchor, sits behind the copy.
+	// Running index in the ledger's left column.
 	.desk-card .card-no {
-		position: absolute;
-		top: 0.7rem;
-		right: 1.1rem;
-		z-index: 0;
+		grid-row: 1;
+		grid-column: 1;
 		pointer-events: none;
 		line-height: 1;
 
 		&::before {
 			content: counter(card, decimal-leading-zero);
-			font-family: var(--font-bebas-neue), sans-serif;
-			font-size: 5rem;
-			line-height: 0.8;
-			letter-spacing: 0.02em;
-			color: transparent;
-			-webkit-text-stroke: 1px rgba(204, 0, 0, 0.4);
-			transition: -webkit-text-stroke-color 0.25s ease, text-shadow 0.25s ease;
+			font-family: var(--font-jetbrains-mono), monospace;
+			font-size: 0.82rem;
+			line-height: 1;
+			letter-spacing: 0.16em;
+			font-variant-numeric: tabular-nums;
+			color: rgba(240, 237, 230, 0.68);
+			transition: color 0.25s ease;
 		}
 	}
 
 	.desk-card:hover .card-no::before {
-		-webkit-text-stroke-color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
+		color: var(--color-accent-hot);
 	}
 
 	// Keep the copy above the outlined index numeral.
@@ -422,6 +411,7 @@
 	.desk-card > .card-title,
 	.desk-card > .card-desc,
 	.desk-card > .card-foot {
+		grid-column: 2;
 		position: relative;
 		z-index: 1;
 	}

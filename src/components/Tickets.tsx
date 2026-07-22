@@ -129,26 +129,28 @@ export default function Tickets() {
 						</span>
 					</p>
 				</header>
-				<ul className={s.list} role="list" aria-hidden="true">
+				<ul className={s.skelLedger} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
-						<li key={i} className={`${s.ticket} ${s.skeleton}`}>
-							<div className={s.skelTop}>
+						<li key={i} className={s.skelRecord}>
+							<span className={`${s.skelBar} ${s.skelIndex}`} />
+							<div className={s.skelCol}>
 								<span className={`${s.skelBar} ${s.skelTitle}`} />
+								<span className={`${s.skelBar} ${s.skelText}`} />
+								<div className={s.skelRows}>
+									<div className={s.skelRow}>
+										<span className={`${s.skelBar} ${s.skelRowLabel}`} />
+										<span className={`${s.skelBar} ${s.skelRowPrice}`} />
+									</div>
+									<div className={s.skelRow}>
+										<span className={`${s.skelBar} ${s.skelRowLabel}`} />
+										<span className={`${s.skelBar} ${s.skelRowPrice}`} />
+									</div>
+								</div>
+							</div>
+							<div className={`${s.skelCol} ${s.skelColRight}`}>
 								<span className={`${s.skelBar} ${s.skelBadge}`} />
+								{i === 1 && <span className={`${s.skelBar} ${s.skelBtn}`} />}
 							</div>
-							<span className={`${s.skelBar} ${s.skelText}`} />
-							<span className={`${s.skelBar} ${s.skelText} ${s.skelTextShort}`} />
-							<div className={s.skelRows}>
-								<div className={s.skelRow}>
-									<span className={`${s.skelBar} ${s.skelRowLabel}`} />
-									<span className={`${s.skelBar} ${s.skelRowPrice}`} />
-								</div>
-								<div className={s.skelRow}>
-									<span className={`${s.skelBar} ${s.skelRowLabel}`} />
-									<span className={`${s.skelBar} ${s.skelRowPrice}`} />
-								</div>
-							</div>
-							<span className={`${s.skelBar} ${s.skelBtn}`} />
 						</li>
 					))}
 				</ul>
@@ -199,8 +201,8 @@ export default function Tickets() {
 				<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
 				<p className={s.subheading}>Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>
 			</header>
-			<ul className={s.list} role="list">
-				{groupReleases(releases).map((group) => {
+			<ul className="ledger" role="list">
+				{groupReleases(releases).map((group, i) => {
 					const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
 					const anyPurchasable = statuses.some((st) => st.purchasable);
 					// When no variant is buyable, pick a non-sold-out summary if one
@@ -209,38 +211,29 @@ export default function Tickets() {
 					const summary: ReleaseStatus | null = anyPurchasable
 						? null
 						: statuses.find((st) => st.tone !== 'sold-out') ?? statuses[0];
-					return (
-						<li
-							key={group.name}
-							className={`${s.ticket} ${!anyPurchasable ? s.isInactive : ''}`}
-						>
-							<div className={s.ticketTop}>
-								<h3 className={s.ticketTitle}>{group.name}</h3>
-							</div>
-							{(() => {
-								const description = groupDescription(group.name, group.description);
-								return description && (
-									<p className={s.ticketDescription}>{description}</p>
-								);
-							})()}
-							<ul className={s.variants}>
-								{group.variants.map(({ release, variantLabel }) => {
-									const label = variantLabel || releaseTitle(release);
-									const price = priceDisplay(release);
-									return (
-										<li key={release.id} className={s.variant}>
-											<span className={s.variantLabel}>{label}</span>
-											<span className={s.variantPriceBlock}>
-												<span className={s.variantPrice}>{price?.primary}</span>
-												{price?.secondary && (
-													<span className={s.variantVat}>{price.secondary}</span>
-												)}
-											</span>
-										</li>
-									);
-								})}
-							</ul>
-							{anyPurchasable ? (
+					// The buyable wave is the lit entry — light carries the emphasis,
+					// so closed waves stay at full text contrast (WCAG 1.4.3) instead
+					// of being dimmed out of readability.
+					//
+					// A settled wave also collapses to a single line: its name, what it
+					// cost, and its state. Sales copy and the per-variant breakdown only
+					// earn their height on a wave you can still buy — giving a closed
+					// wave the same room is what made the section read as long.
+					const cls = [
+						'record',
+						anyPurchasable ? 'record--lit record--pull' : 'record--closed record--compact',
+					].join(' ');
+					const indexEl = (
+						<span className="record-index" aria-hidden="true">
+							{String(i + 1).padStart(2, '0')}
+						</span>
+					);
+					const statusEl = (
+						<div className="record-data">
+							<span className={`record-status ${anyPurchasable ? 'record-status--live' : ''}`}>
+								{anyPurchasable ? 'On sale' : summary?.label ?? 'Unavailable'}
+							</span>
+							{anyPurchasable && (
 								<a
 									className={s.cta}
 									href={eventUrl(accountSlug, eventSlug)}
@@ -251,11 +244,62 @@ export default function Tickets() {
 									Get tickets
 									<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
 								</a>
-							) : (
-								<span className={`${s.cta} ${s.ctaDisabled}`} aria-disabled="true">
-									{summary?.label ?? 'Unavailable'}
-								</span>
 							)}
+						</div>
+					);
+
+					if (!anyPurchasable) {
+						const prices = group.variants
+							.map(({ release }) => priceDisplay(release)?.primary)
+							.filter((p): p is string => Boolean(p));
+						const unique = Array.from(new Set(prices));
+						return (
+							<li key={group.name} className={cls}>
+								{indexEl}
+								<div className="record-body">
+									<h3 className="record-title">{group.name}</h3>
+									{unique.length > 0 && (
+										<span className="record-summary">
+											<span className="record-figure">{unique[0]}</span>
+											{unique.length > 1 && <span className="record-row-note">and up</span>}
+										</span>
+									)}
+								</div>
+								{statusEl}
+							</li>
+						);
+					}
+
+					return (
+						<li key={group.name} className={cls}>
+							{indexEl}
+
+							<div className="record-body">
+								<h3 className="record-title">{group.name}</h3>
+								{(() => {
+									const description = groupDescription(group.name, group.description);
+									return description && <p className="record-note">{description}</p>;
+								})()}
+								<ul className={s.variants}>
+									{group.variants.map(({ release, variantLabel }) => {
+										const label = variantLabel || releaseTitle(release);
+										const price = priceDisplay(release);
+										return (
+											<li key={release.id} className={s.variant}>
+												<span className={s.variantLabel}>{label}</span>
+												<span className={s.variantPriceBlock}>
+													<span className={s.variantPrice}>{price?.primary}</span>
+													{price?.secondary && (
+														<span className={s.variantVat}>{price.secondary}</span>
+													)}
+												</span>
+											</li>
+										);
+									})}
+								</ul>
+							</div>
+
+							{statusEl}
 						</li>
 					);
 				})}

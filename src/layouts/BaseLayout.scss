@@ -37,6 +37,10 @@
 		--fs-hero: clamp(2.6rem, 6vw, 5rem);      // subpage hero headline
 		--fs-h2: clamp(2.2rem, 4.8vw, 4rem);      // in-page section headline
 		--fs-card-title: 1.85rem;                 // dossier card title
+		// Title of a compact (one-line) ledger record — a deliberate step below
+		// the full record's clamp(1.85rem, 3.2vw, 2.6rem) so a settled entry
+		// reads as subordinate to the live one at a glance.
+		--fs-title-compact: 1.5rem;
 
 		// Hairline rules — the structural backbone of the flat layout.
 		--rule: rgba(240, 237, 230, 0.13);
@@ -173,8 +177,12 @@
 		background: #050505;
 		color: #F0EDE6;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.9rem;
-		letter-spacing: 0.16em;
+		// On the label-lg step (0.84rem) rather than a one-off 0.9rem. Uppercase
+		// mono at 0.22em tracking stays comfortably legible at this size, and
+		// the skip link is the first thing a keyboard user meets — it should be
+		// set in the system's own voice, not an orphan value.
+		font-size: 0.84rem;
+		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		text-decoration: none;
 		border: 1px solid rgba(204, 0, 0, 0.5);
@@ -336,6 +344,292 @@
 		transform: translate(2px, 2px);
 	}
 
+	/* ===================== LEDGER RECORDS ===================== */
+	// THE CONTAINER LANGUAGE. Replaces the bordered card everywhere.
+	//
+	// A case file is not a stack of cards — it is a ruled ledger. Entries are
+	// separated by hairlines and aligned to a shared column grid; nothing is
+	// enclosed. Four-sided borders, corner radii and drop shadows are gone:
+	// the rule does the work the box used to do, and light (not a border)
+	// carries emphasis.
+	//
+	//   .ledger          the ruled list; opens with a strong rule
+	//   .record          one entry: [index] [body] [data/action]
+	//   .record--lit     the entry that matters — a pool of light, full-bleed
+	//   .record--closed  an entry that is finished — quieter rule, NOT dimmed
+	//
+	// Deliberately absent: background fills on ordinary records, hover lift,
+	// and any opacity-based "inactive" state (opacity drops secondary text
+	// under 4.5:1 and fails WCAG 1.4.3 — status is carried by a label and the
+	// rule weight instead).
+
+	.ledger {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		border-top: 1px solid var(--rule-strong);
+	}
+
+	.record {
+		position: relative;
+		display: grid;
+		// The third column has a floor so every record's body ends on the same
+		// x. With `auto`, a record carrying a CTA sized its column wider than
+		// its neighbours and the ledger's right-hand figure axis wobbled row
+		// to row — the one thing a ruled table may never do.
+		grid-template-columns: 3.25rem minmax(0, 1fr) minmax(13.5rem, auto);
+		align-items: start;
+		column-gap: clamp(1.25rem, 3vw, 2.75rem);
+		row-gap: 0.9rem;
+		padding: clamp(1.6rem, 2.6vw, 2.4rem) 0;
+		border-bottom: 1px solid var(--rule);
+		// translate only — no reflow, and nothing to composite on the ground.
+		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	// The mark: a red hairline drawn along the record's own bottom rule,
+	// left to right, when the entry is pulled. Replaces the hover lift.
+	.record::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1px;
+		height: 1px;
+		background: var(--color-accent);
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	// Only interactive records react. A record that is merely information
+	// does not pretend to be clickable.
+	.record--pull:hover,
+	.record--pull:focus-within {
+		transform: translateX(0.6rem);
+	}
+
+	.record--pull:hover::after,
+	.record--pull:focus-within::after {
+		transform: scaleX(1);
+	}
+
+	// The lit entry. Light bleeds past the content column on both sides, so
+	// the emphasis reads as a lamp falling across the page rather than a
+	// highlighted box. Angled, and fading out well before the right edge, so
+	// it never resolves into a rectangle.
+	.record--lit::before {
+		content: '';
+		position: absolute;
+		inset: 0 calc(-1 * var(--gutter));
+		background:
+			linear-gradient(
+				104deg,
+				rgba(255, 244, 232, 0.075) 0%,
+				rgba(255, 240, 226, 0.038) 34%,
+				rgba(255, 236, 220, 0.012) 62%,
+				transparent 88%
+			),
+			radial-gradient(ellipse 62% 120% at 12% 50%, rgba(204, 0, 0, 0.09), transparent 70%);
+		pointer-events: none;
+		z-index: -1;
+	}
+
+	// The lit entry is marked with a RULE, not a side tab. A thick coloured
+	// bar down one edge is the accent-border cliché this whole language exists
+	// to avoid — and the ledger's own vocabulary is rules, so the mark belongs
+	// on the entry's rule. Light plus a red rule plus the lit index is already
+	// three signals; a fourth was decoration.
+	.record--lit {
+		border-bottom-color: var(--rule-red);
+	}
+
+	// A finished entry keeps full text contrast; only its rule softens.
+	.record--closed {
+		border-bottom-color: var(--rule-soft);
+	}
+
+	// A compact entry — one line. Used for records that are settled: the
+	// visitor needs to see that the wave existed and what it cost, not to read
+	// its sales copy. Height is hierarchy: giving a closed wave the same room
+	// as a buyable one is what made the ledger read as long.
+	.record--compact {
+		padding: 1.05rem 0;
+		align-items: baseline;
+	}
+
+	.record--compact .record-body {
+		flex-direction: row;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		flex-wrap: wrap;
+	}
+
+	.record--compact .record-title {
+		font-size: var(--fs-title-compact);
+		letter-spacing: 0.06em;
+	}
+
+	.record--compact .record-index {
+		padding-top: 0.15rem;
+	}
+
+	// The figure sits on the same right-hand axis the full records use, so a
+	// mixed ledger still reads down one edge.
+	.record-summary {
+		display: flex;
+		align-items: baseline;
+		gap: 0.6rem;
+		white-space: nowrap;
+	}
+
+	// Ledger columns ---------------------------------------------------------
+
+	// Running index. Tabular so the column stays optically straight.
+	.record-index {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: 0.82rem;
+		letter-spacing: 0.16em;
+		font-variant-numeric: tabular-nums;
+		// 0.68 keeps the index legible as real content (>=4.5:1 on the ground)
+		// while still sitting behind the title in the reading order.
+		color: rgba(240, 237, 230, 0.68);
+		padding-top: 0.6rem;
+		transition: color 0.3s ease;
+	}
+
+	.record--lit .record-index {
+		color: var(--color-accent-hot);
+	}
+
+	.record-body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+		min-width: 0;
+	}
+
+	.record-title {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: clamp(1.85rem, 3.2vw, 2.6rem);
+		letter-spacing: 0.05em;
+		line-height: 1;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	.record-note {
+		font-family: var(--font-special-elite), cursive;
+		font-size: 0.98rem;
+		line-height: 1.65;
+		color: rgba(240, 237, 230, 0.72);
+		max-width: 46ch;
+		margin: 0;
+	}
+
+	// Right-hand column — the datum and the action.
+	.record-data {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 0.9rem;
+		text-align: right;
+	}
+
+	// Detail table inside a record — label left, figure right, hairline between.
+	// Reads as one entry's detail, so it uses the faintest rule in the system;
+	// anything heavier and the rows start competing with the records themselves.
+	.record-table {
+		list-style: none;
+		margin: 0.6rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		// Full body width on purpose: the figures then stack into a single
+		// right-hand axis that lines up with the status column above them,
+		// so the whole ledger reads down one edge instead of two ragged ones.
+		width: 100%;
+	}
+
+	.record-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding: 0.7rem 0;
+		border-top: 1px solid var(--rule-soft);
+
+		&:first-child {
+			border-top: none;
+			padding-top: 0.2rem;
+		}
+	}
+
+	.record-row-label {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: 0.84rem;
+		letter-spacing: 0.04em;
+		color: rgba(240, 237, 230, 0.78);
+	}
+
+	.record-row-value {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 0.15rem;
+		text-align: right;
+	}
+
+	.record-figure {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: 1.7rem;
+		letter-spacing: 0.04em;
+		line-height: 1;
+		color: var(--color-text);
+	}
+
+	.record-row-note {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: 0.75rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.6);
+		line-height: 1;
+	}
+
+	// Status word. Never a pill, never a filled chip — a mono word on a rule.
+	.record-status {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: 0.74rem;
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.72);
+		padding-bottom: 0.3rem;
+		border-bottom: 1px solid var(--rule-strong);
+		white-space: nowrap;
+	}
+
+	.record-status--live {
+		color: var(--color-accent-hot);
+		border-bottom-color: var(--color-accent);
+	}
+
+	@media (max-width: 720px) {
+		.record {
+			grid-template-columns: 2.4rem minmax(0, 1fr);
+			row-gap: 1.2rem;
+		}
+
+		.record-data {
+			grid-column: 2;
+			align-items: flex-start;
+			text-align: left;
+			width: 100%;
+		}
+
+	}
+
 	/* ===================== CINEMATIC ATMOSPHERE ===================== */
 	// Reusable lighting/texture primitives for the film-noir scenes. Decorative
 	// layers are pointer-events:none and kept below text so contrast holds.
@@ -400,6 +694,24 @@
 
 	@media (prefers-reduced-motion: reduce) {
 		.js .reveal { opacity: 1; transform: none; transition: none; }
+
+		// The ledger's pull and its red mark are both motion. Without them the
+		// entry still resolves: focus keeps its ring, the lit record keeps its
+		// light and marker bar.
+		.record,
+		.record::after {
+			transition: none;
+		}
+
+		.record--pull:hover,
+		.record--pull:focus-within {
+			transform: none;
+		}
+
+		.record--pull:hover::after,
+		.record--pull:focus-within::after {
+			transform: scaleX(1);
+		}
 	}
 
 	@keyframes fadeIn {

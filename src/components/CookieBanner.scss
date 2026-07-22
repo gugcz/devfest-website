@@ -10,8 +10,11 @@
 		gap: 1.2rem;
 		padding: 1.1rem 1.2rem 0.9rem 1.4rem;
 		background: var(--panel-lit);
+		// Floating chrome legitimately needs a bounded surface — it sits over
+		// the page, not in it. What it does not need is a 2px accent bar down
+		// one edge; the red hairline on top marks it in the ledger's voice.
 		border: 1px solid var(--rule);
-		border-left: 2px solid var(--color-accent);
+		border-top: 1px solid var(--rule-red);
 		border-radius: var(--radius);
 		z-index: 10000;
 		transition: opacity 0.3s, transform 0.3s;
