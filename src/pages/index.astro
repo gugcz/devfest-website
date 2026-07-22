@@ -7,10 +7,10 @@ import HeroBackground from '../components/HeroBackground.astro';
 import Ticker from '../components/Ticker.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
-import { goldPartners, silverPartners } from '../lib/partners';
+import { showcasePartners } from '../lib/partners';
 
-// Homepage "silver+" strip — gold headline partners first, then silver.
-const homePartners = [...goldPartners, ...silverPartners];
+// Homepage "silver+" strip — every sponsor tier in ladder order, top tier first.
+const homePartners = showcasePartners;
 
 const tickerTopics = [
 	'AI & Machine Learning',
