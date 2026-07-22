@@ -22,9 +22,8 @@ export const diamondPartners: Partner[] = [
 // Platinum tier.
 export const platinumPartners: Partner[] = [
 	// White cut-out — their 2023 identity makes the pure-white logo the primary
-	// mark, which is also what the dark tile needs. Derived from the supplied
-	// blue-plate asset (kept alongside as ceska-sporitelna.webp).
-	{ name: 'Česká spořitelna', logo: '/partners/platinum/ceska-sporitelna-white.webp', url: 'https://www.csas.cz/' },
+	// mark, which is also what the dark tile needs.
+	{ name: 'Česká spořitelna', logo: '/partners/platinum/ceska-sporitelna.webp', url: 'https://www.csas.cz/' },
 ];
 
 // Gold tier.
