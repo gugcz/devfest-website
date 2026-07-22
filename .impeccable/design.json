@@ -1,0 +1,440 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-22T00:00:00.000Z",
+  "title": "Design System: DevFest.cz 2026",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Case Red",
+        "canonical": "oklch(50.8% 0.207 29.2)",
+        "tonalRamp": [
+          "oklch(15% 0.075 29.2)",
+          "oklch(26% 0.115 29.2)",
+          "oklch(37% 0.160 29.2)",
+          "oklch(50.8% 0.207 29.2)",
+          "oklch(61% 0.210 29.2)",
+          "oklch(72% 0.170 29.2)",
+          "oklch(84% 0.100 29.2)",
+          "oklch(95% 0.035 29.2)"
+        ]
+      },
+      "accent-hot": {
+        "role": "primary",
+        "displayName": "Flashbulb Red",
+        "canonical": "oklch(61.4% 0.243 29.9)",
+        "tonalRamp": [
+          "oklch(15% 0.085 29.9)",
+          "oklch(26% 0.130 29.9)",
+          "oklch(37% 0.180 29.9)",
+          "oklch(49% 0.225 29.9)",
+          "oklch(61.4% 0.243 29.9)",
+          "oklch(73% 0.185 29.9)",
+          "oklch(85% 0.110 29.9)",
+          "oklch(95% 0.038 29.9)"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Cellar Black",
+        "canonical": "oklch(6.5% 0 0)",
+        "tonalRamp": [
+          "oklch(6.5% 0 0)",
+          "oklch(11% 0 0)",
+          "oklch(17% 0 0)",
+          "oklch(25% 0 0)",
+          "oklch(40% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(82% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "panel-lit": {
+        "role": "neutral",
+        "displayName": "Interrogation Panel",
+        "canonical": "oklch(9.4% 0.004 40)",
+        "tonalRamp": [
+          "oklch(9.4% 0.004 40)",
+          "oklch(13% 0.005 40)",
+          "oklch(18% 0.006 40)",
+          "oklch(26% 0.007 40)",
+          "oklch(40% 0.008 40)",
+          "oklch(63% 0.008 40)",
+          "oklch(82% 0.006 40)",
+          "oklch(95% 0.004 40)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Bone",
+        "canonical": "oklch(95.2% 0.011 85)",
+        "tonalRamp": [
+          "oklch(15% 0.010 85)",
+          "oklch(26% 0.011 85)",
+          "oklch(38% 0.012 85)",
+          "oklch(52% 0.013 85)",
+          "oklch(66% 0.013 85)",
+          "oklch(80% 0.012 85)",
+          "oklch(88% 0.012 85)",
+          "oklch(95.2% 0.011 85)"
+        ]
+      },
+      "grey": {
+        "role": "neutral",
+        "displayName": "Ash Grey",
+        "canonical": "oklch(64.5% 0 0)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(26% 0 0)",
+          "oklch(38% 0 0)",
+          "oklch(52% 0 0)",
+          "oklch(64.5% 0 0)",
+          "oklch(76% 0 0)",
+          "oklch(86% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "on-accent": {
+        "role": "neutral",
+        "displayName": "Warm Bone",
+        "canonical": "oklch(95.4% 0.017 62)",
+        "tonalRamp": [
+          "oklch(15% 0.014 62)",
+          "oklch(26% 0.016 62)",
+          "oklch(38% 0.018 62)",
+          "oklch(52% 0.019 62)",
+          "oklch(66% 0.019 62)",
+          "oklch(80% 0.018 62)",
+          "oklch(88% 0.018 62)",
+          "oklch(95.4% 0.017 62)"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Dossier Cream",
+        "canonical": "oklch(90.1% 0.036 92)",
+        "tonalRamp": [
+          "oklch(15% 0.030 92)",
+          "oklch(26% 0.033 92)",
+          "oklch(38% 0.036 92)",
+          "oklch(52% 0.038 92)",
+          "oklch(66% 0.038 92)",
+          "oklch(78% 0.037 92)",
+          "oklch(90.1% 0.036 92)",
+          "oklch(96% 0.020 92)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Subpage hero headlines. Typewriter, uppercase, always over a legibility text-shadow when set on photography."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "In-page section headlines. One word may be lit red with --glow-red."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Dossier and detail titles. Token: --fs-card-title."
+      },
+      "title-compact": {
+        "displayName": "Title Compact",
+        "purpose": "Title of a one-line ledger record. Token: --fs-title-compact. A deliberate step below the full record title so a settled entry reads as subordinate to the live one."
+      },
+      "lede": {
+        "displayName": "Lede",
+        "purpose": "Italic serif sentence under a headline, often with a 2px red left border. Max ~56ch."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Long-form reading copy (FAQ, privacy, help). 1.85 line-height and 70ch measure are what make a distressed typewriter face legible at length."
+      },
+      "numeric": {
+        "displayName": "Numeric",
+        "purpose": "Countdown digits, hero meta values, folio numerals. Condensed, tabular where counted."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "A figure inside a ledger record's detail table — prices, counts, times. Introduced with the .record-table primitive; sits a step below Numeric so a row's value never outweighs its record's title."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Eyebrows, nav, buttons, meta labels, index tags, ticker. Never used for a sentence."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-weight",
+        "value": "0 10px 28px rgba(0, 0, 0, 0.45)",
+        "purpose": "Resting physical weight for evidence cards against the near-black ground."
+      },
+      {
+        "name": "card-weight-hover",
+        "value": "0 22px 46px rgba(0, 0, 0, 0.6)",
+        "purpose": "Deepened black shadow paired with translateY(-4px) on card hover."
+      },
+      {
+        "name": "text-scrim",
+        "value": "0 2px 18px rgba(0, 0, 0, 0.6)",
+        "purpose": "Legibility scrim under headlines set over photography or a lit pool. Never an emboss."
+      },
+      {
+        "name": "glow-red-soft",
+        "value": "0 0 22px rgba(204, 0, 0, 0.32)",
+        "purpose": "Hover halation on secondary surfaces — ghost buttons, focused fields, card edges."
+      },
+      {
+        "name": "glow-red",
+        "value": "0 0 16px rgba(204, 0, 0, 0.55), 0 0 38px rgba(204, 0, 0, 0.28)",
+        "purpose": "Primary CTA hover and the .neon treatment on a lit headline word."
+      },
+      {
+        "name": "glow-red-hot",
+        "value": "0 0 14px rgba(255, 40, 40, 0.7), 0 0 40px rgba(204, 0, 0, 0.45)",
+        "purpose": "The most emissive moment on a screen. At most once per view."
+      },
+      {
+        "name": "lit-pool",
+        "value": "radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%)",
+        "purpose": "Background (not box-shadow) pool of warm light behind a lit section's content."
+      },
+      {
+        "name": "vignette",
+        "value": "radial-gradient(ellipse 120% 105% at 50% 42%, transparent 50%, rgba(0, 0, 0, 0.45) 100%)",
+        "purpose": "Global cinematic edge-darkening on body::after at z-index 9998, pointer-events: none."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-state",
+        "value": "ease 0.2s",
+        "purpose": "Colour, border, and background state changes on interactive elements."
+      },
+      {
+        "name": "ease-transform",
+        "value": "ease 0.3s",
+        "purpose": "Transform and shadow changes — card lift, border warm, brackets opening."
+      },
+      {
+        "name": "ease-cinematic",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Signature curve. Scroll reveals (0.8s) and photographic push-in (0.7s)."
+      },
+      {
+        "name": "reveal",
+        "value": "opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) from translateY(26px)",
+        "purpose": "IntersectionObserver scroll reveal. Only applied when JS is present; no-JS renders fully visible."
+      },
+      {
+        "name": "entrance-stagger",
+        "value": "fadeInUp 1s ease, delays 0.2s / 0.4s / 0.6s / 0.8s",
+        "purpose": "Hero content cascade — title, subtitle, meta, CTA group."
+      },
+      {
+        "name": "ticker-loop",
+        "value": "translateX(0) → translateX(-50%) over 38s linear infinite",
+        "purpose": "Topic marquee. Pauses on hover (WCAG 2.2.2), disabled under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      { "name": "hero-collapse", "value": "900px" },
+      { "name": "mobile", "value": "600px" },
+      { "name": "narrow", "value": "500px" },
+      { "name": "tiny", "value": "380px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one CTA that matters on a screen — filled Case Red, lifts and haloes on hover.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#tickets\">Get tickets</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.7rem; font-family: 'JetBrains Mono', monospace; font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; color: #F7EFE6; background: #CC0000; border: 1px solid #CC0000; border-radius: 2px; padding: 1.05rem 2.4rem; text-decoration: none; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; } .ds-btn-primary:hover { background: #FF1111; border-color: #FF1111; transform: translateY(-2px); box-shadow: 0 0 16px rgba(204,0,0,0.55), 0 0 38px rgba(204,0,0,0.28), 0 12px 30px rgba(204,0,0,0.3); } .ds-btn-primary:active { transform: translateY(0); } .ds-btn-primary:focus-visible { outline: 2px solid #FF1111; outline-offset: 3px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Outline counterpart to the primary. Warms to red and widens its gap so the trailing arrow drifts.",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#newsletter\">Stay in the loop<span class=\"ds-btn-ghost-arrow\" aria-hidden=\"true\">&#8600;</span></a>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; font-family: 'JetBrains Mono', monospace; font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; color: #F2EFE9; text-decoration: none; cursor: pointer; padding: 1.05rem 1.8rem; border: 1px solid rgba(240,237,230,0.22); border-radius: 2px; background: transparent; transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, gap 0.2s ease; } .ds-btn-ghost-arrow { transition: transform 0.25s ease; } .ds-btn-ghost:hover, .ds-btn-ghost:focus-visible { color: #FF1111; border-color: rgba(204,0,0,0.55); background: rgba(204,0,0,0.06); box-shadow: 0 0 22px rgba(204,0,0,0.32); gap: 0.85rem; } .ds-btn-ghost:hover .ds-btn-ghost-arrow, .ds-btn-ghost:focus-visible .ds-btn-ghost-arrow { transform: translate(2px, 2px); } .ds-btn-ghost:focus-visible { outline: 2px solid #FF1111; outline-offset: 3px; }"
+    },
+    {
+      "name": "Eyebrow + Index Tag",
+      "kind": "chip",
+      "refersTo": "index-tag",
+      "description": "The tab of the file: mono uppercase label, boxed red index number, and a red hairline fading to nothing.",
+      "html": "<p class=\"ds-eyebrow\"><span class=\"ds-index-no\">N&#176; 01</span>Tickets</p>",
+      "css": ".ds-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(240,237,230,0.62); display: inline-flex; align-items: center; gap: 0.9rem; margin: 0; } .ds-eyebrow::after { content: ''; flex: 0 0 56px; height: 1px; background: linear-gradient(to right, rgba(204,0,0,0.55), transparent); } .ds-index-no { color: #FF1111; font-variant-numeric: tabular-nums; padding: 0.22em 0.5em; border: 1px solid rgba(204,0,0,0.4); letter-spacing: 0.16em; }"
+    },
+    {
+      "name": "Section Headline",
+      "kind": "custom",
+      "refersTo": "headline",
+      "description": "Typewriter poster headline with exactly one word lit red — the system's one-mark gesture.",
+      "html": "<h2 class=\"ds-heading\">Be the first<br /><span class=\"ds-red\">to know.</span></h2>",
+      "css": ".ds-heading { font-family: 'Special Elite', cursive; font-size: clamp(2.2rem, 4.8vw, 4rem); line-height: 1.05; letter-spacing: 0.01em; text-transform: uppercase; color: #F2EFE9; text-shadow: 0 2px 18px rgba(0,0,0,0.6); margin: 0; } .ds-red { color: #FF1111; text-shadow: 0 0 16px rgba(204,0,0,0.55), 0 0 38px rgba(204,0,0,0.28); }"
+    },
+    {
+      "name": "Ledger Record",
+      "kind": "custom",
+      "refersTo": "record",
+      "description": "THE container language. A ruled entry — index, body, data/action — replacing the card everywhere. Hover pulls it right and marks its rule in red. The lit entry is marked by light and rules, never by a side bar.",
+      "html": "<ul class=\"ds-ledger\"><li class=\"ds-record ds-record--closed\"><span class=\"ds-record-index\">01</span><div class=\"ds-record-body\"><h3 class=\"ds-record-title\">Early bird</h3><p class=\"ds-record-note\">The lowest ticket price of the year.</p></div><div class=\"ds-record-data\"><span class=\"ds-record-status\">Ended</span></div></li><li class=\"ds-record ds-record--lit ds-record--pull\"><span class=\"ds-record-index\">02</span><div class=\"ds-record-body\"><h3 class=\"ds-record-title\">Regular</h3><p class=\"ds-record-note\">Standard pricing while the wave lasts.</p></div><div class=\"ds-record-data\"><span class=\"ds-record-status ds-record-status--live\">On sale</span></div></li></ul>",
+      "css": ".ds-ledger { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(240,237,230,0.22); } .ds-record { position: relative; display: grid; grid-template-columns: 3.25rem minmax(0,1fr) minmax(9rem,auto); align-items: start; column-gap: 2rem; padding: 1.8rem 0; border-bottom: 1px solid rgba(240,237,230,0.13); transition: transform 0.32s cubic-bezier(0.16,1,0.3,1); } .ds-record::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: #CC0000; transform: scaleX(0); transform-origin: left center; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); } .ds-record--pull:hover { transform: translateX(0.6rem); } .ds-record--pull:hover::after { transform: scaleX(1); } .ds-record--lit { border-bottom-color: rgba(204,0,0,0.55); background: linear-gradient(104deg, rgba(255,244,232,0.075) 0%, rgba(255,240,226,0.038) 34%, transparent 88%); } .ds-record--lit .ds-record-index { color: #FF1111; } .ds-record--closed { border-bottom-color: rgba(240,237,230,0.06); } .ds-record-index { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; letter-spacing: 0.16em; font-variant-numeric: tabular-nums; color: rgba(240,237,230,0.68); padding-top: 0.6rem; } .ds-record-body { display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; } .ds-record-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 0.05em; line-height: 1; color: #F2EFE9; margin: 0; } .ds-record-note { font-family: 'Special Elite', cursive; font-size: 0.98rem; line-height: 1.65; color: rgba(240,237,230,0.72); max-width: 46ch; margin: 0; } .ds-record-data { display: flex; flex-direction: column; align-items: flex-end; gap: 0.9rem; } .ds-record-status { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(240,237,230,0.72); padding-bottom: 0.3rem; border-bottom: 1px solid rgba(240,237,230,0.22); white-space: nowrap; } .ds-record-status--live { color: #FF1111; border-bottom-color: #CC0000; }"
+    },
+    {
+      "name": "Field + Submit Group",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Newsletter control group — the wrapper is the visible field, so focus styling lives on it, not the bare input.",
+      "html": "<form class=\"ds-form\"><span class=\"ds-field\"><input class=\"ds-input\" type=\"email\" placeholder=\"your@email.cz\" aria-label=\"Email\" /></span><button class=\"ds-submit\" type=\"button\">Notify me</button></form>",
+      "css": ".ds-form { display: flex; align-items: stretch; gap: 0; max-width: 480px; width: 100%; } .ds-field { flex: 1; background: #111010; border: 1px solid rgba(240,237,230,0.4); border-right: none; border-radius: 2px 0 0 2px; transition: border-color 0.2s ease; } .ds-field:focus-within { border-color: #FF1111; box-shadow: 0 0 22px rgba(204,0,0,0.32); } .ds-input { width: 100%; padding: 0.95rem 1.1rem; min-height: 3rem; background: transparent; border: none; border-radius: inherit; color: #F2EFE9; font-family: 'Special Elite', cursive; font-size: 1rem; letter-spacing: 0.02em; } .ds-input::placeholder { color: rgba(240,237,230,0.62); font-style: italic; } .ds-input:focus { outline: none; } .ds-input:focus-visible { outline: 2px solid #FF1111; outline-offset: 2px; } .ds-submit { padding: 0.95rem 2rem; background: #CC0000; color: #F7EFE6; border: 1px solid #CC0000; border-radius: 0 2px 2px 0; font-family: 'JetBrains Mono', monospace; font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer; white-space: nowrap; transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; } .ds-submit:hover { background: #FF1111; border-color: #FF1111; box-shadow: 0 0 16px rgba(204,0,0,0.55), 0 8px 22px rgba(204,0,0,0.28); } .ds-submit:focus-visible { outline: 2px solid #FF1111; outline-offset: 3px; }"
+    },
+    {
+      "name": "Navigation Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Fixed-header link on a solid near-black band. Mono, wide-tracked, 2.75rem touch height.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\">Speakers</a><a class=\"ds-nav-link\" href=\"#\">Tickets</a><a class=\"ds-nav-link\" href=\"#\">Partners</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 2rem; background: #050505; padding: 0.75rem 1.5rem; } .ds-nav-link { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; letter-spacing: 0.22em; text-transform: uppercase; color: #F2EFE9; text-decoration: none; display: inline-flex; align-items: center; padding: 0.6rem 0.2rem; min-height: 2.75rem; text-shadow: 0 1px 6px rgba(0,0,0,0.7); transition: color 0.2s; } .ds-nav-link:hover, .ds-nav-link:focus-visible { color: #FF1111; } .ds-nav-link:focus-visible { outline: 2px solid #FF1111; outline-offset: 3px; }"
+    },
+    {
+      "name": "Countdown Card",
+      "kind": "custom",
+      "refersTo": "countdown-card",
+      "description": "Ticket-stub digit card: red header strip carrying the unit code, condensed numeral below.",
+      "html": "<div class=\"ds-count\"><span class=\"ds-count-stamp\">DD</span><span class=\"ds-count-digit\">9</span></div>",
+      "css": ".ds-count { position: relative; width: clamp(2.6rem, 3.4vw, 4.2rem); height: clamp(3.8rem, 5.1vw, 6rem); background: #111010; border: 1px solid rgba(240,237,230,0.13); border-radius: 2px; overflow: hidden; } .ds-count-stamp { position: absolute; top: 0; left: 0; right: 0; height: 26%; background: #CC0000; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; letter-spacing: 0.18em; text-transform: uppercase; color: #F7EFE6; box-shadow: 0 0 14px rgba(204,0,0,0.5); } .ds-count-digit { position: absolute; top: 62%; left: 50%; transform: translate(-50%, -50%); font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 3vw, 3.6rem); line-height: 1; letter-spacing: 0.04em; color: #F2EFE9; }"
+    },
+    {
+      "name": "Evidence Photograph",
+      "kind": "custom",
+      "refersTo": "card-evidence",
+      "description": "Speaker/team portrait as a case photograph: 4:5 frame, hard B&W, red crop brackets, spotlight gradient.",
+      "html": "<a class=\"ds-plate\" href=\"#\"><span class=\"ds-thumb\"><span class=\"ds-monogram\">DM</span><span class=\"ds-spot\"></span></span><span class=\"ds-plate-name\">Speaker Name</span></a>",
+      "css": ".ds-plate { display: inline-flex; flex-direction: column; width: 200px; text-decoration: none; color: inherit; } .ds-thumb { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #060505 74%); box-shadow: inset 0 0 0 1px rgba(204,0,0,0.14); transition: box-shadow 0.3s ease, transform 0.3s ease; } .ds-thumb::before, .ds-thumb::after { content: ''; position: absolute; width: 16px; height: 16px; border: 2px solid #FF1111; z-index: 3; opacity: 0.85; transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease; } .ds-thumb::before { top: 7px; left: 7px; border-right: 0; border-bottom: 0; } .ds-thumb::after { right: 7px; bottom: 7px; border-left: 0; border-top: 0; } .ds-monogram { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem; letter-spacing: 0.06em; color: rgba(242,239,233,0.24); } .ds-spot { position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0.8; background: radial-gradient(120% 100% at 50% 8%, rgba(204,0,0,0.16) 0%, transparent 46%), linear-gradient(to top, rgba(3,3,3,0.5) 0%, transparent 40%); transition: opacity 0.3s ease; } .ds-plate:hover .ds-thumb { transform: translateY(-3px); box-shadow: inset 0 0 0 1px rgba(204,0,0,0.5), 0 0 22px rgba(204,0,0,0.32); } .ds-plate:hover .ds-thumb::before, .ds-plate:hover .ds-thumb::after { opacity: 1; width: 22px; height: 22px; } .ds-plate:hover .ds-spot { opacity: 0.42; } .ds-plate-name { margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(204,0,0,0.55); font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; letter-spacing: 0.18em; text-transform: uppercase; color: #F2EFE9; } .ds-plate:focus-visible .ds-thumb { outline: 2px solid #FF1111; outline-offset: 3px; }"
+    },
+    {
+      "name": "Topic Ticker",
+      "kind": "custom",
+      "refersTo": "label",
+      "description": "Thin marquee band between sections. Supporting, never a neon sign; pauses on hover.",
+      "html": "<div class=\"ds-ticker-wrap\"><div class=\"ds-ticker\"><span class=\"ds-ticker-item\">AI &amp; Machine Learning</span><span class=\"ds-ticker-sep\">&#8226;</span><span class=\"ds-ticker-item\">Android &amp; Kotlin</span><span class=\"ds-ticker-sep\">&#8226;</span><span class=\"ds-ticker-item\">Web Technologies</span></div></div>",
+      "css": ".ds-ticker-wrap { position: relative; background: #0D0D0D; overflow: hidden; padding: 0.65rem 0; border-top: 1px solid rgba(240,237,230,0.13); border-bottom: 1px solid rgba(240,237,230,0.13); } .ds-ticker { display: flex; align-items: center; white-space: nowrap; } .ds-ticker-item { font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(240,237,230,0.62); padding: 0 2.6rem; } .ds-ticker-sep { color: rgba(204,0,0,0.55); } .ds-ticker-wrap:hover .ds-ticker { animation-play-state: paused; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Case File",
+    "overview": "Every screen is a page from an open case file. Hairlines are the file's ruling; the mono eyebrow is its tab; the small boxed number beside it (N° 01) is its stamp. Sections do not sit in cards floating on a canvas — they are stacked entries stitched together by full-bleed 1px rules, indexed, labelled, and filed. The visitor is reading evidence, in order, toward a decision.\n\nThe world it is filed in is film noir, but noir as lighting, not as costume. Surfaces are near-black (#050505 page, #0A0908–#111010 panels) and almost never lit evenly: a soft elliptical pool (--lit) falls behind the content of an important section, a vignette darkens every frame edge, and photography is graded hard to black-and-white (grayscale(1) contrast(1.12) brightness(0.82)). Nothing is glossy, nothing is textured, nothing is rotated. The atmosphere is achieved entirely with light and contrast on flat surfaces.\n\nRed is the investigator's marker, and it is rationed. It appears as a hairline that fades to nothing beside an eyebrow, a boxed index number, a single lit word inside a typewriter headline, the fill of the one CTA that matters, and the halation that blooms when the visitor touches something. It never fills a panel, never becomes a background, and never has company: the palette is achromatic plus one red, and the system has no second hue for any purpose, including status.\n\nThis world was reached by deletion. An earlier skeuomorphic layer — rotated rubber stamps, cream paper slips, deckled edges, simulated grain and tape — was stripped out and must not return; the current system is its deliberate replacement, not a stage on the way back to it.",
+    "keyCharacteristics": [
+      "Near-black ground, hairline structure, 2px corners — flat by construction.",
+      "Four typefaces, single weights each; hierarchy comes from size, tracking, case, and face-pairing, never from font-weight.",
+      "Typewriter (Special Elite) headlines, uppercase, with one word lit in red.",
+      "Achromatic + one red. No second accent hue anywhere, including status states.",
+      "Depth is lighting, not elevation: pools, vignettes, and state-triggered halation.",
+      "Interactive elements move: translateY(-2px), warm to hot red, and glow on hover."
+    ],
+    "rules": [
+      {
+        "name": "The One Mark Rule",
+        "body": "At most one red-lit element commands any given viewport. If a headline already has a lit word, the CTA in that same frame is the ghost variant, not the filled one. Red coverage stays under ~10% of any screen — its scarcity is the entire reason it works.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single-Hue Rule",
+        "body": "The palette is achromatic plus one red. There is no second chromatic colour in the system for any purpose. Status — sold out, paused, coming soon, error, disabled — is expressed through opacity (0.5 for inactive), hairline weight, and an explicit mono label. Never introduce green for success or amber for warning.",
+        "section": "colors"
+      },
+      {
+        "name": "The Field Border Rule",
+        "body": "Anything a visitor can type into or toggle uses --field-border; anything purely decorative uses a --rule weight. Mixing them fails contrast in one direction and shouts in the other.",
+        "section": "colors"
+      },
+      {
+        "name": "The Four Faces Rule",
+        "body": "Bebas Neue, IM Fell English, JetBrains Mono, Special Elite. Adding a fifth typeface is a brand violation, not a design decision. They are loaded from one Google Fonts link in BaseLayout.astro; there are no --font-* custom properties, so families are written literally at each rule.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Weight Rule",
+        "body": "Every face ships one weight (JetBrains Mono carries 400/500 but 500 is effectively unused). If a heading needs more presence, increase size, tracking, or switch face — never reach for font-weight: 700, which will silently synthesise a fake bold.",
+        "section": "typography"
+      },
+      {
+        "name": "The Mono-Is-Data Rule",
+        "body": "JetBrains Mono is for things that are catalogued: labels, numbers, dates, nav, buttons, eyebrows. It is never used for a sentence. Special Elite is never used for a label.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline Grid Rule",
+        "body": "Structure is drawn with 1px rules, never with boxes. If a region needs separating, give it a --rule-soft border, not a background change and not a card.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat-At-Rest Rule",
+        "body": "No element glows until the visitor touches it. Red halation is a state, never decoration. Black shadow carries physical weight; red shadow carries attention — never swap their jobs.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Lit Section Rule",
+        "body": "A section that gets --lit must put its content above it (position: relative; z-index: 1 on the inner wrapper) and the glow layer must be pointer-events: none. Lighting never intercepts a click.",
+        "section": "elevation"
+      },
+      {
+        "name": "The No-Dimming Rule",
+        "body": "A finished, sold-out, closed or unavailable item is never expressed with opacity. Dropping a record to opacity: 0.5 takes its secondary text from ~4.8:1 to ~2.5:1 against the ground — a straight WCAG 1.4.3 failure on content that is still meant to be read. State is carried by an explicit mono status word, a softened rule weight, and the absence of the lit treatment. Only genuinely disabled controls (exempt from 1.4.3) may dim.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Height-Is-Hierarchy Rule",
+        "body": "A record's height is a claim about its importance. Settled entries — ended, sold out, not yet open — collapse to a single compact line carrying name, figure and status; explanatory copy and detail tables are dropped rather than hidden. Giving every record equal room makes a ledger read long and flattens the one entry that matters.",
+        "section": "components"
+      },
+      {
+        "name": "The No-Card Rule",
+        "body": "Content is not enclosed. Grouping is done with hairlines and a shared column grid, emphasis with light. A four-sided border around a block of content carries no information the content doesn't already carry, and is the strongest tell of generic interface design. Borders survive only where they bound an interactive control or draw a table's cells.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Bounded-Surface Test",
+        "body": "Four cases legitimately keep an edge, and they share one test: the boundary does a job the content cannot do without it. Floating chrome (modal dialogs, the cookie banner) sits over the page and needs separating from what is behind it. The countdown stub's rectangle IS the depicted object. Media partner plates need a cream fill because dark wordmarks are illegible on the ground. Interactive controls need a perceivable edge for WCAG 1.4.11. Anything failing that test is a card.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Two-Pixel Rule",
+        "body": "Nothing in this system is more rounded than 2px. Pills, rounded cards, and border-radius: 8px+ belong to a different product.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do build structure from hairlines: --rule-soft to stitch sections, --rule to separate items, --rule-strong to bound interactive chrome.",
+      "Do keep red under ~10% of any viewport, and only one red-lit element commanding each frame (The One Mark Rule).",
+      "Do use --field-border on every control a visitor can type into or toggle, so it clears WCAG 1.4.11.",
+      "Do light sections with --lit pools and .scene-vignette framing, and put content above them with position: relative; z-index: 1.",
+      "Do grade every photograph to hard B&W (grayscale(1) contrast(~1.12) brightness(~0.82)) and dissolve it with a gradient mask rather than cutting it at a hard edge.",
+      "Do build hierarchy from size, tracking, case, and face choice — the four faces are single-weight.",
+      "Do set long-form copy in Special Elite at 1rem / 1.85 with a 70ch measure, and keep ledes in italic IM Fell English under ~56ch.",
+      "Do give every interactive element a visible 2px solid var(--color-accent-hot) focus ring at 3px offset, and a 2.75rem minimum touch target.",
+      "Do neutralise every animation under prefers-reduced-motion: reduce, and make marquees pausable on hover."
+    ],
+    "donts": [
+      "Don't build a card. No four-sided border, corner radius, panel fill and drop shadow around a block of content, and no repeat(auto-fit, minmax(280px, 1fr)) grid of equal-height panels. Use a .ledger of .records, or a contact sheet.",
+      "Don't express \"unavailable\" with opacity on content (The No-Dimming Rule).",
+      "Don't use a filled coloured chip for status. Status is a mono word on a rule; the red fill belongs to the one CTA on the page.",
+      "Don't give a record a hover-lift. The pull is horizontal and the mark is a rule.",
+      "Don't run a coloured bar down one side of anything — no border-left/border-right above 1px, and no inset box-shadow imitating one. The 2px red left border on ledes and quoted answers is the one sanctioned exception, and it marks a quotation, not a state.",
+      "Don't rotate elements for \"authenticity\", or simulate paper, tape, torn/deckled edges, coffee stains, or applied grain texture. That layer was deliberately removed.",
+      "Don't exceed --radius: 2px on any rectangular surface. No pills, no rounded cards.",
+      "Don't introduce a second chromatic hue — no green for success, no amber for warning, no blue for information. Status is opacity, hairline weight, and a mono label.",
+      "Don't add a fifth typeface, and don't reach for font-weight: 700 on faces that ship one weight (it synthesises a fake bold).",
+      "Don't let anything glow red at rest. Halation is a hover/focus/live state only.",
+      "Don't fill a large area with red, or place red text on a red ground; Case Red is a fixture and Flashbulb Red is it lit, not background colours.",
+      "Don't use Special Elite for labels or JetBrains Mono for sentences (The Mono-Is-Data Rule).",
+      "Don't make the fixed header translucent or variable-height — it is solid #050505 at constant padding, for iOS Safari stability.",
+      "Don't use overflow-x: hidden on html; it turns html into a scroll container on iOS Safari and breaks position: fixed chrome. Use overflow-x: clip."
+    ]
+  }
+}
