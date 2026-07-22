@@ -1,0 +1,103 @@
+[
+	{
+		"id": "daniel-macho",
+		"order": 1,
+		"name": "Daniel Macho",
+		"alias": "The Boss / The Scenic Artist",
+		"role": "Lead Org",
+		"photo": "/team/daniel-macho-bw.webp",
+		"photoColor": "/team/daniel-macho.webp",
+		"links": [
+			{ "kind": "linkedin", "url": "https://www.linkedin.com/in/daniel-macho-8ab0477a/" },
+			{ "kind": "github", "url": "https://github.com/lordwiccar" },
+			{ "kind": "instagram", "url": "https://www.instagram.com/beluha.k.vasim.sluzbam/" },
+			{ "kind": "email", "url": "mailto:daniel.macho@gug.cz" }
+		]
+	},
+	{
+		"id": "lucie-jurystova",
+		"order": 2,
+		"name": "Lucie Jurystová",
+		"alias": "The Fixer",
+		"role": "Deputy Lead Org",
+		"photo": "/team/lucie-jurystova-bw.webp",
+		"photoColor": "/team/lucie-jurystova.webp",
+		"links": [{ "kind": "linkedin", "url": "https://www.linkedin.com/in/luciejurystova/" }]
+	},
+	{
+		"id": "adela-janovska",
+		"order": 3,
+		"name": "Adéla Janovská",
+		"alias": "Chief of Logistics",
+		"role": "Production",
+		"photo": "/team/adela-janovska-bw.webp",
+		"photoColor": "/team/adela-janovska.webp",
+		"links": [{ "kind": "linkedin", "url": "https://www.linkedin.com/in/adela-janovska/" }]
+	},
+	{
+		"id": "filip-goszler",
+		"order": 4,
+		"name": "Filip Goszler",
+		"alias": "The Negotiator",
+		"role": "Partners",
+		"photo": "/team/filip-goszler-bw.webp",
+		"photoColor": "/team/filip-goszler.webp",
+		"links": [{ "kind": "linkedin", "url": "https://www.linkedin.com/in/filipgoszler/" }]
+	},
+	{
+		"id": "eliska-cejpova",
+		"order": 5,
+		"name": "Eliška Čejpová",
+		"alias": "Whisperer Hunter",
+		"role": "Speakers",
+		"photo": "/team/eliska-cejpova-bw.webp",
+		"photoColor": "/team/eliska-cejpova.webp",
+		"links": [{ "kind": "linkedin", "url": "https://www.linkedin.com/in/eliskacejpova/" }]
+	},
+	{
+		"id": "dominik-simonik",
+		"order": 6,
+		"name": "Dominik Šimoník",
+		"alias": "Switchboard Operator",
+		"role": "Web & App",
+		"photo": "/team/dominik-simonik-bw.webp",
+		"photoColor": "/team/dominik-simonik.webp",
+		"links": [
+			{ "kind": "linkedin", "url": "https://www.linkedin.com/in/dominik-simonik/" },
+			{ "kind": "github", "url": "https://github.com/ryzizub" },
+			{ "kind": "web", "url": "https://ryzizub.com/" },
+			{ "kind": "email", "url": "mailto:dominik.simonik@gug.cz" }
+		]
+	},
+	{
+		"id": "eliska-zezulkova",
+		"order": 7,
+		"name": "Eliška Zezulková",
+		"alias": "The Gatekeeper",
+		"role": "Tickets & Registration",
+		"photo": "/team/eliska-zezulkova-bw.webp",
+		"photoColor": "/team/eliska-zezulkova.webp",
+		"links": [
+			{ "kind": "linkedin", "url": "https://www.linkedin.com/in/eli%C5%A1ka-zezulkov%C3%A1-3a24b9b9/" },
+			{ "kind": "email", "url": "mailto:eliska.zezulkova@gug.cz" }
+		]
+	},
+	{
+		"id": "tereza-goszlerova",
+		"order": 8,
+		"name": "Tereza Goszlerová",
+		"alias": "Head Bookkeeper",
+		"role": "Finance",
+		"photo": "/team/tereza-goszlerova-bw.webp",
+		"photoColor": "/team/tereza-goszlerova.webp"
+	},
+	{
+		"id": "petr-vobr",
+		"order": 9,
+		"name": "Petr Vobr",
+		"alias": "Private Eye",
+		"role": "Festival",
+		"photo": "/team/petr-vobr-bw.webp",
+		"photoColor": "/team/petr-vobr.webp"
+	}
+]

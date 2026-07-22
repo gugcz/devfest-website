@@ -23,7 +23,7 @@
 }
 
 .ticker-item {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--ticker-font-size, 0.76rem);
 	letter-spacing: 0.2em;
 	text-transform: uppercase;

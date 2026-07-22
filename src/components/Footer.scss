@@ -5,7 +5,7 @@
 		padding: 4.5rem 2.5rem 2.4rem;
 		border-top: 1px solid rgba(240, 237, 230, 0.08);
 		background: #030303;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		color: rgba(240, 237, 230, 0.65);
 
 		@media (max-width: 700px) {
@@ -50,7 +50,7 @@
 	}
 
 	.col-title {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.78rem;
 		letter-spacing: 0.24em;
 		text-transform: uppercase;
@@ -94,7 +94,7 @@
 	}
 
 	.brand-tagline {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 0.92rem;
 		line-height: 1.55;
@@ -120,7 +120,7 @@
 	}
 
 	.footer-link {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.88rem;
 		letter-spacing: 0.04em;
 		color: rgba(240, 237, 230, 0.78);
@@ -191,7 +191,7 @@
 	}
 
 	.email {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: 0.95rem;
 		color: rgba(240, 237, 230, 0.88);
 		text-decoration: none;
@@ -216,7 +216,7 @@
 	}
 
 	.org {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.85rem;
 		line-height: 1.6;
 		color: rgba(240, 237, 230, 0.65);

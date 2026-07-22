@@ -1,0 +1,82 @@
+[
+	{
+		"id": "make",
+		"tier": "diamond",
+		"order": 1,
+		"name": "Make",
+		"logo": "/partners/diamond/make.png",
+		"url": "https://www.make.com/"
+	},
+	{
+		"id": "gdg",
+		"tier": "diamond",
+		"order": 2,
+		"name": "GDG",
+		"logo": "/partners/diamond/gdg.png",
+		"url": "https://gdg.community.dev/"
+	},
+	{
+		"id": "ceska-sporitelna",
+		"tier": "platinum",
+		"order": 1,
+		"name": "Česká spořitelna",
+		"logo": "/partners/platinum/ceska-sporitelna.webp",
+		"url": "https://www.csas.cz/"
+	},
+	{
+		"id": "wrike",
+		"tier": "gold",
+		"order": 1,
+		"name": "Wrike",
+		"logo": "/partners/gold/wrike.png",
+		"url": "https://www.wrike.com/"
+	},
+	{
+		"id": "apify",
+		"tier": "gold",
+		"order": 2,
+		"name": "Apify",
+		"logo": "/partners/gold/apify.svg",
+		"url": "https://apify.com/"
+	},
+	{
+		"id": "alma-career",
+		"tier": "gold",
+		"order": 3,
+		"name": "Alma Career",
+		"logo": "/partners/gold/alma.png",
+		"url": "https://www.almacareer.com/"
+	},
+	{
+		"id": "applifting",
+		"tier": "silver",
+		"order": 1,
+		"name": "Applifting",
+		"logo": "/partners/silver/applifting.png",
+		"url": "https://www.applifting.io/"
+	},
+	{
+		"id": "white-whale-media",
+		"tier": "media",
+		"order": 1,
+		"name": "White Whale Media",
+		"logo": "/partners/media/whitewhalemedia.svg",
+		"url": "https://www.whitewhale.media/"
+	},
+	{
+		"id": "dotekomanie",
+		"tier": "media",
+		"order": 2,
+		"name": "Dotěkománie",
+		"logo": "/partners/media/dotekomanie.avif",
+		"url": "https://dotekomanie.cz/"
+	},
+	{
+		"id": "smartmania",
+		"tier": "media",
+		"order": 3,
+		"name": "Smartmania.cz",
+		"logo": "/partners/media/smartmania.svg",
+		"url": "https://smartmania.cz/"
+	}
+]

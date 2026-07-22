@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+
 interface NavLink {
 	href: string;
 	label: string;
@@ -35,7 +38,17 @@ const isCurrent = (href: string) => {
 
 <header id="site-header" class="site-header" data-state="top" data-home={isHome ? 'true' : 'false'}>
 	<a href="/" class="brand" aria-label="DevFest.cz 2026 — home">
-		<img src="/logo.png" alt="DevFest.cz 2026" class="brand-logo" width="210" height="42" />
+		<!-- Header sits above the fold on every page, so it loads eagerly; the
+		     intrinsic width/height come from the source (5:1), and `widths` caps
+		     the srcset at the 210px CSS maximum up to 2× DPR. -->
+		<Image
+			src={logo}
+			alt="DevFest.cz 2026"
+			class="brand-logo"
+			loading="eager"
+			widths={[210, 420]}
+			sizes="210px"
+		/>
 	</a>
 
 	<nav class="nav" aria-label="Primary">
@@ -74,130 +87,150 @@ const isCurrent = (href: string) => {
 </header>
 
 <script>
-	const header = document.getElementById('site-header');
-	const toggle = document.getElementById('nav-toggle');
-	const list = document.getElementById('nav-list');
+	// Bundled module scripts run once per document, but <ClientRouter /> replaces
+	// the header on every soft navigation — so re-bind on `astro:page-load`
+	// (fires on the initial load too, replacing DOMContentLoaded). The
+	// window/document/matchMedia listeners below would otherwise pile up across
+	// navigations while pointing at a detached header, so they're all registered
+	// with an AbortController that is aborted right before the next swap.
+	document.addEventListener('astro:page-load', () => {
+		const ac = new AbortController();
+		const { signal } = ac;
+		document.addEventListener('astro:before-swap', () => ac.abort(), { once: true });
 
-	// Scroll state — sets data-state for brand reveal on home page
-	const onScrollState = () => {
-		if (!header) return;
-		header.dataset.state = window.scrollY > 24 ? 'scrolled' : 'top';
-	};
-	onScrollState();
-	window.addEventListener('scroll', onScrollState, { passive: true });
+		const header = document.getElementById('site-header');
+		const toggle = document.getElementById('nav-toggle');
+		const list = document.getElementById('nav-list');
 
-	// Hide-on-scroll-down, show-on-scroll-up. Avoids the "partial shrink"
-	// look on Chrome mobile where the browser URL bar collapses gradually;
-	// instead nav fully slides out of view, lining up with the disappearing
-	// browser chrome.
-	let lastY = 0;
-	let delta = 0;
-	let hidden = false;
-	let raf = false;
-	const HIDE_THRESHOLD = 10;
-	const MIN_SCROLL_Y = 80;
-	// Only auto-hide on touch / small-viewport devices — on desktop the
-	// fixed nav stays visible so the user can jump sections without scroll-up.
-	const hideMql = window.matchMedia('(max-width: 760px)');
-	// Safari (macOS + iOS) collapses its own URL bar on scroll — stacking a
-	// second hide animation on top looks broken, so skip auto-hide there.
-	// Match `Safari` UA token while excluding the Chromium-family browsers
-	// that also include `Safari` in their string (Chrome, Edge, Firefox iOS).
-	const ua = navigator.userAgent;
-	const isSafari = /Safari/.test(ua) && !/(Chrome|CriOS|FxiOS|EdgiOS|Edg\/|Android)/.test(ua);
-	const onScrollHide = () => {
-		const y = window.scrollY;
-		if (header) {
-			const diff = y - lastY;
-			delta += diff;
-			// Reset direction accumulator when scroll direction flips so the
-			// next gesture isn't fighting leftover delta from the previous one.
-			if ((diff > 0 && delta < 0) || (diff < 0 && delta > 0)) delta = diff;
-			// Don't hide while the drawer is open — the user needs the toggle.
-			const drawerOpen = toggle?.getAttribute('aria-expanded') === 'true';
-			const canHide = hideMql.matches && !isSafari;
-			if (canHide && delta > HIDE_THRESHOLD && y > MIN_SCROLL_Y && !hidden && !drawerOpen) {
-				header.dataset.hidden = 'true';
-				hidden = true;
-				delta = 0;
-			} else if ((!canHide || delta < -HIDE_THRESHOLD) && hidden) {
+		// Scroll state — sets data-state for brand reveal on home page
+		const onScrollState = () => {
+			if (!header) return;
+			header.dataset.state = window.scrollY > 24 ? 'scrolled' : 'top';
+		};
+		onScrollState();
+		window.addEventListener('scroll', onScrollState, { passive: true, signal });
+
+		// Hide-on-scroll-down, show-on-scroll-up. Avoids the "partial shrink"
+		// look on Chrome mobile where the browser URL bar collapses gradually;
+		// instead nav fully slides out of view, lining up with the disappearing
+		// browser chrome.
+		let lastY = 0;
+		let delta = 0;
+		let hidden = false;
+		let raf = false;
+		const HIDE_THRESHOLD = 10;
+		const MIN_SCROLL_Y = 80;
+		// Only auto-hide on touch / small-viewport devices — on desktop the
+		// fixed nav stays visible so the user can jump sections without scroll-up.
+		const hideMql = window.matchMedia('(max-width: 760px)');
+		// Safari (macOS + iOS) collapses its own URL bar on scroll — stacking a
+		// second hide animation on top looks broken, so skip auto-hide there.
+		// Match `Safari` UA token while excluding the Chromium-family browsers
+		// that also include `Safari` in their string (Chrome, Edge, Firefox iOS).
+		const ua = navigator.userAgent;
+		const isSafari = /Safari/.test(ua) && !/(Chrome|CriOS|FxiOS|EdgiOS|Edg\/|Android)/.test(ua);
+		const onScrollHide = () => {
+			const y = window.scrollY;
+			if (header) {
+				const diff = y - lastY;
+				delta += diff;
+				// Reset direction accumulator when scroll direction flips so the
+				// next gesture isn't fighting leftover delta from the previous one.
+				if ((diff > 0 && delta < 0) || (diff < 0 && delta > 0)) delta = diff;
+				// Don't hide while the drawer is open — the user needs the toggle.
+				const drawerOpen = toggle?.getAttribute('aria-expanded') === 'true';
+				const canHide = hideMql.matches && !isSafari;
+				if (canHide && delta > HIDE_THRESHOLD && y > MIN_SCROLL_Y && !hidden && !drawerOpen) {
+					header.dataset.hidden = 'true';
+					hidden = true;
+					delta = 0;
+				} else if ((!canHide || delta < -HIDE_THRESHOLD) && hidden) {
+					header.dataset.hidden = 'false';
+					hidden = false;
+					delta = 0;
+				}
+			}
+			lastY = y;
+			raf = false;
+		};
+		// Restore visibility if user resizes from mobile → desktop while hidden.
+		hideMql.addEventListener(
+			'change',
+			(ev) => {
+				if (!ev.matches && header && hidden) {
+					header.dataset.hidden = 'false';
+					hidden = false;
+					delta = 0;
+				}
+			},
+			{ signal }
+		);
+		window.addEventListener(
+			'scroll',
+			() => {
+				if (!raf) {
+					requestAnimationFrame(onScrollHide);
+					raf = true;
+				}
+			},
+			{ passive: true, signal }
+		);
+
+		// Mobile drawer toggle — make non-drawer regions inert when open so
+		// keyboard focus and AT navigation stay within the menu.
+		const inertTargets = (): Element[] =>
+			Array.from(document.querySelectorAll('#main-content, footer, #cookie-banner'));
+
+		const setOpen = (open: boolean) => {
+			if (!toggle || !list) return;
+			toggle.setAttribute('aria-expanded', String(open));
+			toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+			list.dataset.open = String(open);
+			document.body.style.overflow = open ? 'hidden' : '';
+			// Force header visible when the drawer opens — user needs the toggle.
+			if (open && header) {
 				header.dataset.hidden = 'false';
 				hidden = false;
 				delta = 0;
 			}
-		}
-		lastY = y;
-		raf = false;
-	};
-	// Restore visibility if user resizes from mobile → desktop while hidden.
-	hideMql.addEventListener('change', (ev) => {
-		if (!ev.matches && header && hidden) {
-			header.dataset.hidden = 'false';
-			hidden = false;
-			delta = 0;
-		}
-	});
-	window.addEventListener(
-		'scroll',
-		() => {
-			if (!raf) {
-				requestAnimationFrame(onScrollHide);
-				raf = true;
+			for (const el of inertTargets()) {
+				if (open) {
+					el.setAttribute('inert', '');
+				} else {
+					el.removeAttribute('inert');
+				}
 			}
-		},
-		{ passive: true }
-	);
+		};
 
-	// Mobile drawer toggle — make non-drawer regions inert when open so
-	// keyboard focus and AT navigation stay within the menu.
-	const inertTargets = (): Element[] =>
-		Array.from(document.querySelectorAll('#main-content, footer, #cookie-banner'));
+		toggle?.addEventListener('click', () => {
+			const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+			setOpen(!isOpen);
+		});
 
-	const setOpen = (open: boolean) => {
-		if (!toggle || !list) return;
-		toggle.setAttribute('aria-expanded', String(open));
-		toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-		list.dataset.open = String(open);
-		document.body.style.overflow = open ? 'hidden' : '';
-		// Force header visible when the drawer opens — user needs the toggle.
-		if (open && header) {
-			header.dataset.hidden = 'false';
-			hidden = false;
-			delta = 0;
-		}
-		for (const el of inertTargets()) {
-			if (open) {
-				el.setAttribute('inert', '');
-			} else {
-				el.removeAttribute('inert');
-			}
-		}
-	};
+		// Close drawer when a link is followed
+		list?.addEventListener('click', (e) => {
+			const target = e.target as HTMLElement;
+			if (target.closest('a')) setOpen(false);
+		});
 
-	toggle?.addEventListener('click', () => {
-		const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-		setOpen(!isOpen);
-	});
+		// Close on Escape
+		document.addEventListener(
+			'keydown',
+			(e) => {
+				if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+					setOpen(false);
+					toggle.focus();
+				}
+			},
+			{ signal }
+		);
 
-	// Close drawer when a link is followed
-	list?.addEventListener('click', (e) => {
-		const target = e.target as HTMLElement;
-		if (target.closest('a')) setOpen(false);
-	});
-
-	// Close on Escape
-	document.addEventListener('keydown', (e) => {
-		if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
-			setOpen(false);
-			toggle.focus();
-		}
-	});
-
-	// Reset open state when crossing to the horizontal-nav breakpoint
-	// (must match the drawer breakpoint in Menu.scss).
-	const mql = window.matchMedia('(min-width: 1241px)');
-	mql.addEventListener('change', (ev) => {
-		if (ev.matches) setOpen(false);
+		// Reset open state when crossing to the horizontal-nav breakpoint
+		// (must match the drawer breakpoint in Menu.scss).
+		const mql = window.matchMedia('(min-width: 1241px)');
+		mql.addEventListener('change', (ev) => {
+			if (ev.matches) setOpen(false);
+		}, { signal });
 	});
 </script>
 

@@ -1,11 +1,40 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Footer from '../components/Footer.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
-import { partnerTiers, mediaPartners } from '../lib/partners';
+import { getPartnerTiers, getMediaPartners } from '../lib/partners';
 
-const activeTiers = partnerTiers.filter((t) => t.partners.length > 0);
+const activeTiers = (await getPartnerTiers()).filter((t) => t.partners.length > 0);
+const mediaPartners = await getMediaPartners();
+
+// ─── LOGO OPTIMISATION ─────────────────────────────────────────────────────
+// The masters live in `src/assets/partners/<tier>/` so the build can resize
+// them and emit modern formats (assets in `public/` are served untouched).
+// The `partners` collection still stores plain path strings, so — same pattern
+// as team.astro — we glob the sources and key them by filename.
+const logoSources = import.meta.glob<{ default: ImageMetadata }>('../assets/partners/**/*', {
+	eager: true,
+});
+const logoByFile = new Map<string, ImageMetadata>(
+	Object.entries(logoSources).map(([path, mod]) => [path.split('/').pop() as string, mod.default])
+);
+const logoFor = (logo: string): ImageMetadata =>
+	logoByFile.get(logo.split('/').pop() as string) as ImageMetadata;
+
+// SVG wordmarks stay vector — `format="svg"` makes astro:assets copy them
+// through unchanged (rasterising a logo would be a downgrade); rasters get a
+// real srcset. Widths cover the tile caps in partners.scss up to ~2× DPR.
+const TIER_WIDTHS = [200, 300, 400, 600, 800];
+const TIER_SIZES = '(max-width: 900px) 200px, 400px';
+const MEDIA_WIDTHS = [160, 260, 320, 520];
+const MEDIA_SIZES = '(max-width: 900px) 160px, 260px';
+
+const sizing = (img: ImageMetadata, widths: number[], sizes: string) =>
+	img.format === 'svg'
+		? ({ format: 'svg', layout: 'none' } as const)
+		: ({ widths, sizes } as const);
 
 const DECK_READY = true;
 const PRESENTATION_URL = 'https://canva.link/828fiq93km2hwds';
@@ -48,10 +77,10 @@ const tickerTopics = [
 							<li class="tier-item">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<img class="tier-logo" src={p.logo} alt={p.name} loading="lazy" />
+										<Image class="tier-logo" src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), TIER_WIDTHS, TIER_SIZES)} />
 									</a>
 								) : (
-									<img class="tier-logo" src={p.logo} alt={p.name} loading="lazy" />
+									<Image class="tier-logo" src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), TIER_WIDTHS, TIER_SIZES)} />
 								)}
 							</li>
 						))}
@@ -73,10 +102,10 @@ const tickerTopics = [
 							<li class="media-item">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<img src={p.logo} alt={p.name} loading="lazy" />
+										<Image src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), MEDIA_WIDTHS, MEDIA_SIZES)} />
 									</a>
 								) : (
-									<img src={p.logo} alt={p.name} loading="lazy" />
+									<Image src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), MEDIA_WIDTHS, MEDIA_SIZES)} />
 								)}
 							</li>
 						))}
@@ -129,7 +158,6 @@ const tickerTopics = [
 		</section>
 
 	</main>
-	<Footer />
 </BaseLayout>
 
 <style lang="scss">

@@ -17,7 +17,7 @@
 }
 
 .eyebrow {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.78rem;
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
@@ -38,7 +38,7 @@
 }
 
 .heading {
-	font-family: 'Special Elite', cursive;
+	font-family: var(--font-special-elite), cursive;
 	font-size: var(--fs-h2);
 	letter-spacing: 0.01em;
 	line-height: 1.05;
@@ -48,7 +48,7 @@
 }
 
 .subheading {
-	font-family: 'IM Fell English', serif;
+	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
 	font-size: clamp(1.18rem, 1.7vw, 1.4rem);
 	line-height: 1.6;
@@ -101,7 +101,7 @@
 // Loading status line under the heading — mono "retrieving" caption with a
 // pulsing accent dot + trailing dots.
 .loadingStatus {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.82rem;
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
@@ -221,7 +221,7 @@
 }
 
 .ticketTitle {
-	font-family: 'Bebas Neue', sans-serif;
+	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-card-title);
 	letter-spacing: 0.06em;
 	line-height: 1.05;
@@ -230,7 +230,7 @@
 
 // Flat mono pill — no rotation, no ink texture.
 .badge {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.75rem;
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
@@ -273,7 +273,7 @@
 }
 
 .ticketDescription {
-	font-family: 'Special Elite', cursive;
+	font-family: var(--font-special-elite), cursive;
 	font-style: italic;
 	font-size: 0.98rem;
 	line-height: 1.55;
@@ -307,7 +307,7 @@
 }
 
 .variantLabel {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.84rem;
 	letter-spacing: 0.04em;
 	color: rgba(240, 237, 230, 0.78);
@@ -322,7 +322,7 @@
 }
 
 .variantPrice {
-	font-family: 'Bebas Neue', sans-serif;
+	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: 1.7rem;
 	letter-spacing: 0.04em;
 	line-height: 1;
@@ -330,7 +330,7 @@
 }
 
 .variantVat {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.75rem;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
@@ -348,7 +348,7 @@
 }
 
 .priceAmount {
-	font-family: 'Bebas Neue', sans-serif;
+	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: 2.8rem;
 	letter-spacing: 0.04em;
 	line-height: 1;
@@ -356,7 +356,7 @@
 }
 
 .priceNote {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.78rem;
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
@@ -365,7 +365,7 @@
 
 // Flat red CTA — matches the global .btn-primary recipe.
 .cta {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.82rem;
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
@@ -451,7 +451,7 @@
 .footnote {
 	margin-top: 2rem;
 	text-align: center;
-	font-family: 'IM Fell English', serif;
+	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
 	font-size: 1.05rem;
 	letter-spacing: 0.01em;
@@ -468,7 +468,7 @@
 }
 
 .invoiceLabel {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.75rem;
 	letter-spacing: 0.25em;
 	text-transform: uppercase;
@@ -508,7 +508,7 @@
 	border: 1px solid var(--rule);
 	border-radius: var(--radius);
 	color: rgba(240, 237, 230, 0.75);
-	font-family: 'IM Fell English', serif;
+	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
 	font-size: 1.05rem;
 	line-height: 1.6;

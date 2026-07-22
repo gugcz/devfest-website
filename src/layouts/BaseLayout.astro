@@ -1,5 +1,8 @@
 ---
+import { Font } from 'astro:assets';
+import { ClientRouter } from 'astro:transitions';
 import CookieBanner from '../components/CookieBanner.astro';
+import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
 
 interface Props {
@@ -7,6 +10,7 @@ interface Props {
 	description?: string;
 	noindex?: boolean;
 	bodyClass?: string;
+	showFooter?: boolean;
 }
 
 const siteUrl = "https://devfest.cz";
@@ -15,6 +19,7 @@ const {
 	description = "DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026. Tickets on sale now.",
 	noindex = false,
 	bodyClass = "",
+	showFooter = true,
 } = Astro.props;
 
 const ogImage = `${siteUrl}/og-image.jpg`;
@@ -189,7 +194,20 @@ const jsonLd = JSON.stringify(
 			when we can actually reveal them — no-JS / crawlers get the
 			fully-visible render.
 		-->
-		<script is:inline>document.documentElement.classList.add('js');</script>
+		<!--
+			ClientRouter's swap rebuilds <html>'s attributes from the incoming
+			document, which never carries `js` (the class is added by script, and
+			the fetched document's scripts don't run). Re-apply it in
+			`astro:after-swap` — before paint, so `.js .reveal` never flashes its
+			no-JS (always-visible) state. The listener lives on `document`, which
+			survives navigations, so registering it once here is enough.
+		-->
+		<script is:inline>
+			document.documentElement.classList.add('js');
+			document.addEventListener('astro:after-swap', () =>
+				document.documentElement.classList.add('js')
+			);
+		</script>
 
 		<title>{title}</title>
 		<meta name="description" content={description} />
@@ -208,21 +226,25 @@ const jsonLd = JSON.stringify(
 		<link rel="manifest" href="/site.webmanifest" />
 		<link rel="sitemap" href="/sitemap-index.xml" />
 
-		<!-- Google Fonts — loaded non-render-blocking (media swap) with a noscript fallback -->
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			rel="stylesheet"
-			href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IM+Fell+English:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Special+Elite&display=swap"
-			media="print"
-			onload="this.media='all'"
-		/>
-		<noscript>
-			<link
-				rel="stylesheet"
-				href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IM+Fell+English:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Special+Elite&display=swap"
-			/>
-		</noscript>
+		{/*
+			Self-hosted brand fonts (Astro Fonts API — see the `fonts` array in
+			astro.config.mjs). Served from our own origin, so no visitor IP
+			reaches Google's font CDN before the cookie banner is answered, and
+			there is no third-party round-trip in the critical path. Each <Font />
+			emits the @font-face block plus the `cssVariable` BaseLayout.scss
+			consumes — the resolved family names are build-time hashes, so CSS
+			must never name a face literally.
+
+			`preload` is deliberate, not blanket: only the faces that paint above
+			the fold everywhere get the hint (Special Elite is the body face set
+			on <body>; Bebas Neue is the display face). Preloading all four would
+			make them compete for bandwidth and delay the two that actually
+			gate first paint. This comment is stripped from the built HTML.
+		*/}
+		<Font cssVariable="--font-special-elite" preload />
+		<Font cssVariable="--font-bebas-neue" preload />
+		<Font cssVariable="--font-im-fell-english" />
+		<Font cssVariable="--font-jetbrains-mono" />
 
 		<!-- Open Graph / Facebook -->
 		<meta property="og:type" content="website" />
@@ -250,6 +272,23 @@ const jsonLd = JSON.stringify(
 
 		<!-- Page-specific <head> extras (e.g. FAQPage JSON-LD) -->
 		<slot name="head" />
+
+		{/*
+			Client-side routing: same-origin navigations swap the <body> in place
+			instead of reloading the document, so islands/styles/fonts survive and
+			the View Transitions API animates the swap where supported. Browsers
+			without the native API fall back to a plain DOM swap (no animation) —
+			navigation still works.
+
+			Consequence: ClientRouter turns `prefetchAll` on by default, so the
+			explicit `prefetch.prefetchAll` in astro.config.mjs is now redundant;
+			`defaultStrategy: 'hover'` still matters and stays.
+
+			Every inline <script> in this project is wrapped in an
+			`astro:page-load` handler because bundled module scripts execute only
+			once per document.
+		*/}
+		<ClientRouter />
 	</head>
 	<body class={bodyClass}>
 		<a href="#main-content" class="skip-link">Skip to main content</a>
@@ -265,38 +304,49 @@ const jsonLd = JSON.stringify(
 		<div class="status-bar-cover" aria-hidden="true"></div>
 		<Menu />
 		<div id="main-content"><slot /></div>
+		{showFooter && <Footer />}
 		<CookieBanner />
 
 		<script>
 			// Cinematic atmosphere behaviours — all degrade gracefully and respect
 			// reduced-motion (CSS already neutralises the visual side).
-			const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			//
+			// Bundled module scripts run once per document, so with <ClientRouter />
+			// this has to re-run per navigation. `astro:page-load` fires on the
+			// initial load AND after every soft navigation, so it replaces (never
+			// supplements) a DOMContentLoaded listener.
+			document.addEventListener('astro:page-load', () => {
+				const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-			// 1) Scroll reveal — fade/rise sections as they enter the frame.
-			const reveals = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
-			if (reveals.length) {
+				// 1) Scroll reveal — fade/rise sections as they enter the frame.
+				const reveals = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+				if (!reveals.length) return;
+
 				if (reduce || !('IntersectionObserver' in window)) {
 					reveals.forEach((el) => el.classList.add('is-visible'));
-				} else {
-					const io = new IntersectionObserver(
-						(entries, obs) => {
-							for (const e of entries) {
-								if (e.isIntersecting) {
-									e.target.classList.add('is-visible');
-									obs.unobserve(e.target);
-								}
-							}
-						},
-						// threshold 0 (not 0.12): a tall single-column .reveal grid on
-						// mobile can exceed viewport/0.12 in height, so a 12% ratio is
-						// never reached and the block stays invisible. Fire as soon as
-						// any pixel crosses the -12% bottom line instead.
-						{ rootMargin: '0px 0px -12% 0px', threshold: 0 }
-					);
-					reveals.forEach((el) => io.observe(el));
+					return;
 				}
-			}
 
+				const io = new IntersectionObserver(
+					(entries, obs) => {
+						for (const e of entries) {
+							if (e.isIntersecting) {
+								e.target.classList.add('is-visible');
+								obs.unobserve(e.target);
+							}
+						}
+					},
+					// threshold 0 (not 0.12): a tall single-column .reveal grid on
+					// mobile can exceed viewport/0.12 in height, so a 12% ratio is
+					// never reached and the block stays invisible. Fire as soon as
+					// any pixel crosses the -12% bottom line instead.
+					{ rootMargin: '0px 0px -12% 0px', threshold: 0 }
+				);
+				reveals.forEach((el) => io.observe(el));
+				// Drop the observer before the next swap so it doesn't keep the
+				// outgoing document's elements alive.
+				document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+			});
 		</script>
 	</body>
 </html>

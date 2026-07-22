@@ -32,7 +32,7 @@
 		top: -8px;
 		left: 14px;
 		padding: 0 6px;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
@@ -47,7 +47,7 @@
 	}
 
 	.cookie-text {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: 0.95rem;
 		line-height: 1.55;
 		letter-spacing: 0.01em;

@@ -28,7 +28,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.7rem;
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.76rem;
 	letter-spacing: 0.32em;
 	text-transform: uppercase;
@@ -45,7 +45,7 @@
 }
 
 .heading {
-	font-family: 'Special Elite', cursive;
+	font-family: var(--font-special-elite), cursive;
 	font-size: var(--fs-h2);
 	letter-spacing: 0.01em;
 	line-height: 1.05;
@@ -60,7 +60,7 @@
 }
 
 .lede {
-	font-family: 'IM Fell English', serif;
+	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
 	font-size: 1.05rem;
 	line-height: 1.6;
@@ -158,7 +158,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-family: 'Bebas Neue', sans-serif;
+	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: 2.6rem;
 	letter-spacing: 0.06em;
 	color: rgba(242, 239, 233, 0.24);
@@ -220,7 +220,7 @@
 
 .tname {
 	display: -webkit-box;
-	font-family: 'Bebas Neue', sans-serif;
+	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: 1.16rem;
 	line-height: 1.06;
 	letter-spacing: 0.035em;
@@ -249,7 +249,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.82rem;
 	letter-spacing: 0.2em;
 	text-transform: uppercase;

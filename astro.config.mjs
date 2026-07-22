@@ -1,6 +1,6 @@
 // @ts-check
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 import react from '@astrojs/react';
@@ -42,6 +42,52 @@ const a11yMockAlias = a11yMock
 export default defineConfig({
     site: 'https://devfest.cz',
     trailingSlash: 'never',
+    // Self-hosted, build-time-optimised replacements for the four brand faces
+    // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
+    // Weights/styles mirror exactly what that css2 URL requested. Only the four
+    // brand fonts are allowed — never add a fifth family here.
+    fonts: [
+        {
+            provider: fontProviders.google(),
+            name: 'Bebas Neue',
+            cssVariable: '--font-bebas-neue',
+            weights: [400],
+            styles: ['normal'],
+            subsets: ['latin', 'latin-ext'],
+        },
+        {
+            provider: fontProviders.google(),
+            name: 'IM Fell English',
+            cssVariable: '--font-im-fell-english',
+            weights: [400],
+            styles: ['normal', 'italic'],
+        },
+        {
+            provider: fontProviders.google(),
+            name: 'JetBrains Mono',
+            cssVariable: '--font-jetbrains-mono',
+            weights: [400, 500],
+            styles: ['normal'],
+            subsets: ['latin', 'latin-ext'],
+        },
+        {
+            provider: fontProviders.google(),
+            name: 'Special Elite',
+            cssVariable: '--font-special-elite',
+            weights: [400],
+            styles: ['normal'],
+        },
+    ],
+    image: {
+        layout: 'constrained',
+        // responsiveStyles defaults to false — without it the `layout` prop
+        // emits srcset/sizes but no resize CSS, so images ignore the layout.
+        responsiveStyles: true,
+    },
+    prefetch: {
+        prefetchAll: true,
+        defaultStrategy: 'hover',
+    },
     integrations: [
         sitemap({
             filter: (page) =>

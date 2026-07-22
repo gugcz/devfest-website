@@ -24,7 +24,7 @@
 	// Case-file code line — mono red, the editorial dossier marker.
 	// Neon-red treatment: the marker glows under the noir lighting.
 	.code {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: clamp(1.4rem, 4vw, 2.2rem);
 		letter-spacing: 0.34em;
 		text-transform: uppercase;
@@ -37,7 +37,7 @@
 	// Large poster headline — typewriter (Special Elite) to match the
 	// cinematic-noir display scale used across the relit subpages.
 	.headline {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-hero);
 		text-transform: uppercase;
 		letter-spacing: 0.01em;
@@ -47,7 +47,7 @@
 	}
 
 	.subtext {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-size: 1.25rem;
 		font-style: italic;
 		line-height: 1.7;

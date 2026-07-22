@@ -35,7 +35,7 @@
 
 	.faq-cat {
 		flex: 0 0 auto;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.78rem;
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
@@ -51,7 +51,7 @@
 
 	.faq-head-count {
 		flex: 0 0 auto;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.18em;
 		color: var(--color-accent-hot);
@@ -110,7 +110,7 @@
 
 	.faq-num {
 		flex: 0 0 auto;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
@@ -122,7 +122,7 @@
 
 	.faq-q-text {
 		flex: 1;
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: 1.4rem;
 		line-height: 1.05;
 		letter-spacing: 0.03em;
@@ -132,7 +132,7 @@
 
 	.faq-marker {
 		flex: 0 0 auto;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 1.4rem;
 		line-height: 1;
 		color: var(--color-accent-hot);
@@ -164,7 +164,7 @@
 	}
 
 	.faq-a :global(p) {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: 1rem;
 		line-height: 1.85;
 		letter-spacing: 0.01em;
@@ -195,7 +195,7 @@
 	}
 
 	.faq-cta-text {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1.15rem;
 		color: var(--color-grey);

@@ -63,7 +63,7 @@
 	}
 
 	.hero-subtitle {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: clamp(1.15rem, 1.7vw, 1.4rem);
 		color: var(--color-grey);
@@ -102,7 +102,7 @@
 	}
 
 	.meta-label {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.24em;
 		text-transform: uppercase;
@@ -111,7 +111,7 @@
 	}
 
 	.meta-value {
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: 1.5rem;
 		letter-spacing: 0.06em;
 		color: var(--color-text);
@@ -124,7 +124,7 @@
 	.meta-sub {
 		display: block;
 		margin-top: 0.2rem;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
@@ -189,7 +189,7 @@
 	}
 
 	.gallery-lede {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1.18rem;
 		line-height: 1.7;
@@ -293,7 +293,7 @@
 	}
 
 	.speakers-lede {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1.18rem;
 		line-height: 1.75;
@@ -311,7 +311,7 @@
 	}
 
 	.speakers-tag {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
@@ -359,7 +359,7 @@
 
 	/* ===================== SHARED SECTION FURNITURE ===================== */
 	.section-label {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.78rem;
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
@@ -402,7 +402,7 @@
 	// Poster headline — typewriter (Special Elite) to match the noir key art,
 	// with the accent word lit up like neon.
 	.section-title {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-h2);
 		line-height: 1.05;
 		letter-spacing: 0.01em;
@@ -418,7 +418,7 @@
 	}
 
 	.newsletter-lede {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1.18rem;
 		line-height: 1.75;
@@ -508,7 +508,7 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.45rem;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;

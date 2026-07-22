@@ -32,7 +32,7 @@
 }
 
 .label {
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.75rem;
 	letter-spacing: 0.16em;
 	text-transform: uppercase;
@@ -54,7 +54,7 @@
 	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	color: var(--color-text);
-	font-family: 'Special Elite', cursive;
+	font-family: var(--font-special-elite), cursive;
 	font-size: 0.98rem;
 	letter-spacing: 0.01em;
 	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
@@ -95,7 +95,7 @@
 .estimate {
 	position: relative;
 	overflow: hidden;
-	font-family: 'IM Fell English', serif;
+	font-family: var(--font-im-fell-english), serif;
 	font-size: 1.05rem;
 	color: var(--color-text);
 	margin: 0;
@@ -131,7 +131,7 @@
 	strong {
 		position: relative;
 		z-index: 1;
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: 1.4rem;
 		letter-spacing: 0.03em;
 	}
@@ -166,7 +166,7 @@
 	}
 
 	span {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: 0.9rem;
 		line-height: 1.55;
 		color: rgba(240, 237, 230, 0.78);
@@ -210,7 +210,7 @@
 	color: var(--on-accent);
 	border: 1px solid var(--color-accent);
 	border-radius: var(--radius);
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: 0.84rem;
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
@@ -241,7 +241,7 @@
 }
 
 .message {
-	font-family: 'Special Elite', cursive;
+	font-family: var(--font-special-elite), cursive;
 	font-style: italic;
 	font-size: 0.95rem;
 	margin: 0;
@@ -297,7 +297,7 @@
 }
 
 .successTitle {
-	font-family: 'Bebas Neue', sans-serif;
+	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-card-title);
 	line-height: 1;
 	letter-spacing: 0.04em;
@@ -309,7 +309,7 @@
 }
 
 .successBody {
-	font-family: 'IM Fell English', serif;
+	font-family: var(--font-im-fell-english), serif;
 	font-size: 1.05rem;
 	line-height: 1.6;
 	color: var(--color-grey);

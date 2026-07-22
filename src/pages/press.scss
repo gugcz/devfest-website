@@ -39,7 +39,7 @@
 	}
 
 	.email-name {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
@@ -47,7 +47,7 @@
 	}
 
 	.email-link {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.85rem;
 		letter-spacing: 0.04em;
 		color: var(--color-text);
@@ -80,7 +80,7 @@
 	// Poster headline — typewriter (Special Elite) to match the noir key art,
 	// with the accent word lit up like neon.
 	.section-title {
-		font-family: 'Special Elite', cursive;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-h2);
 		line-height: 1.05;
 		letter-spacing: 0.01em;
@@ -125,7 +125,7 @@
 	}
 
 	.empty-stamp {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
@@ -138,7 +138,7 @@
 	}
 
 	.empty-line {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1.12rem;
 		line-height: 1.6;
@@ -224,7 +224,7 @@
 
 		&::before {
 			content: counter(card, decimal-leading-zero);
-			font-family: 'Bebas Neue', sans-serif;
+			font-family: var(--font-bebas-neue), sans-serif;
 			font-size: 3.4rem;
 			line-height: 0.8;
 			letter-spacing: 0.02em;
@@ -275,7 +275,7 @@
 		align-self: flex-start;
 		background: var(--color-accent);
 		color: var(--on-accent);
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.26em;
 		text-transform: uppercase;
@@ -283,7 +283,7 @@
 	}
 
 	.coverage-title {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-size: 1.15rem;
 		line-height: 1.35;
 		color: var(--color-text);
@@ -300,7 +300,7 @@
 	}
 
 	.coverage-desc {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1rem;
 		line-height: 1.5;
@@ -323,7 +323,7 @@
 		margin-top: 0.8rem;
 		padding-top: 0.9rem;
 		border-top: 1px solid var(--rule);
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.12em;
 		color: rgba(240, 237, 230, 0.5);
@@ -402,7 +402,7 @@
 
 		&::before {
 			content: counter(card, decimal-leading-zero);
-			font-family: 'Bebas Neue', sans-serif;
+			font-family: var(--font-bebas-neue), sans-serif;
 			font-size: 5rem;
 			line-height: 0.8;
 			letter-spacing: 0.02em;
@@ -431,7 +431,7 @@
 		align-self: flex-start;
 		background: var(--color-accent);
 		color: var(--on-accent);
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.26em;
 		text-transform: uppercase;
@@ -439,7 +439,7 @@
 	}
 
 	.card-title {
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-card-title);
 		line-height: 1;
 		letter-spacing: 0.04em;
@@ -448,7 +448,7 @@
 	}
 
 	.card-desc {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1.05rem;
 		line-height: 1.55;
@@ -466,7 +466,7 @@
 	}
 
 	.kit-link {
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.85rem;
 		letter-spacing: 0.04em;
 		color: var(--color-text);

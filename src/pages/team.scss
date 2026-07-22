@@ -147,7 +147,7 @@
 	}
 
 	.monogram {
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: clamp(2.6rem, 8vw, 3.4rem);
 		letter-spacing: 0.06em;
 		color: rgba(242, 239, 233, 0.32);
@@ -167,7 +167,7 @@
 	}
 
 	.crew-name {
-		font-family: 'Bebas Neue', sans-serif;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: 1.55rem;
 		line-height: 1;
 		letter-spacing: 0.04em;
@@ -181,7 +181,7 @@
 	// links row aligned across cards with long/short text.
 	.crew-role {
 		display: grid;
-		font-family: 'JetBrains Mono', monospace;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: 0.75rem;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
@@ -264,7 +264,7 @@
 
 	/* ===================== NOTE ===================== */
 	.team-note {
-		font-family: 'IM Fell English', serif;
+		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
 		font-size: 1.15rem;
 		line-height: 1.7;
