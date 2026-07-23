@@ -121,15 +121,71 @@ export function getFirebaseApp(): FirebaseApp {
 	return getApp();
 }
 
+const DENIED_CONSENT = {
+	ad_storage: 'denied',
+	ad_user_data: 'denied',
+	ad_personalization: 'denied',
+	analytics_storage: 'denied',
+} as const;
+
+/**
+ * Push a raw gtag command onto the shared dataLayer. gtag.js only recognises
+ * consent/config commands from the `arguments` object its canonical shim pushes
+ * — a plain array is silently ignored (verified: the consent default is skipped
+ * and `_ga` still gets written). So this mirrors Google's snippet exactly,
+ * forwarding `arguments` rather than a rest array. Declared param-less (keeps
+ * `arguments` unambiguous) and cast for variadic call sites.
+ */
+const gtag = function (): void {
+	const w = window as unknown as { dataLayer?: unknown[] };
+	w.dataLayer = w.dataLayer ?? [];
+	// eslint-disable-next-line prefer-rest-params
+	w.dataLayer.push(arguments);
+} as (...args: unknown[]) => void;
+
 let analyticsInstance: Analytics | null = null;
+/**
+ * Initialise Firebase Analytics (GA4) in Google Consent Mode with consent
+ * DENIED by default, so GA4 boots cookieless: no `client_id`, no storage, only
+ * aggregated identifier-free pings. That lets us count traffic from every
+ * visitor — including those who never accept — while the ePrivacy-relevant
+ * identifiers stay off until `grantAnalyticsConsent()`.
+ *
+ * The `consent: 'default'` command must land in the dataLayer *ahead of* the
+ * `config` command that `getAnalytics` pushes, or GA4 writes `_ga` before the
+ * default applies. Firebase's own `setConsent` does not guarantee that ordering
+ * (verified: it leaves `_ga` set), so we push the default straight onto the
+ * dataLayer via the gtag shim before `getAnalytics()` runs.
+ *
+ * `ad_*` stay denied permanently (we only ever measure analytics, never ads),
+ * matching the cookie-banner copy. Idempotent; no-ops on the server and where
+ * Analytics is unsupported.
+ */
 export async function initAnalytics(): Promise<void> {
 	if (analyticsInstance) return;
 	try {
 		const supported = await isSupported();
-		if (supported) {
-			analyticsInstance = getAnalytics(getApp());
-		}
+		if (!supported) return;
+		gtag('consent', 'default', DENIED_CONSENT);
+		analyticsInstance = getAnalytics(getApp());
 	} catch (err) {
 		console.warn('[firebase] Analytics init failed:', err);
+	}
+}
+
+/**
+ * Upgrade Analytics consent to granted after the visitor accepts. Runs as a
+ * gtag `consent: 'update'` (post-init), flipping GA4 from cookieless pings to
+ * full measurement (`client_id` + storage). Only `analytics_storage` flips —
+ * ad consent stays denied, since we never collect for advertising. Ensures the
+ * SDK is initialised first so the update always lands on a live gtag.
+ */
+export async function grantAnalyticsConsent(): Promise<void> {
+	await initAnalytics();
+	if (!analyticsInstance) return;
+	try {
+		gtag('consent', 'update', { analytics_storage: 'granted' });
+	} catch (err) {
+		console.warn('[firebase] Analytics consent grant failed:', err);
 	}
 }
