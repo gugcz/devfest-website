@@ -51,7 +51,13 @@ Static Astro components (`.astro`) for layout and non-interactive UI. React comp
 
 ### Firebase Integration (`src/lib/firebase.ts`)
 
-Firebase Analytics is initialized **only after cookie consent** — it listens for the `cookie-consent-accepted` custom event. Firebase Realtime Database is configured but not currently used. Deployment targets the `devfest-public` site in the `devfest-cz-app` project via `firebase.json`.
+Firebase Analytics (GA4) runs in **Google Consent Mode** for every visitor, not just those who accept. `initAnalytics()` pushes a gtag `consent: 'default'` with **everything denied** onto the dataLayer *before* `getAnalytics()`, so GA4 boots cookieless — no `_ga` / `client_id`, no storage, only aggregated identifier-free pings. That yields basic traffic numbers from visitors who decline or never decide, which is the ePrivacy-exempt part. On accept, `grantAnalyticsConsent()` sends `consent: 'update'` with `analytics_storage: 'granted'` and GA4 switches to full measurement. `ad_*` stay denied permanently — we never collect for advertising.
+
+Gotchas (both verified in-browser; getting either wrong silently writes `_ga` with consent denied):
+- The `consent: 'default'` command **must** land in the dataLayer ahead of the `config` command. Firebase's own `setConsent()` does **not** guarantee that ordering, which is why `firebase.ts` pushes the default via its own gtag shim instead.
+- gtag.js only honours commands pushed as an **`arguments` object** (Google's canonical snippet). A plain array is silently ignored — the consent default gets skipped and cookies are written anyway. The `gtag` shim in `firebase.ts` forwards `arguments` for this reason; don't "clean it up" into a rest array.
+
+Firebase Realtime Database is configured but not currently used. Deployment targets the `devfest-public` site in the `devfest-cz-app` project via `firebase.json`.
 
 App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCHECK_SITE_KEY` in `src/lib/firebase.ts`; `PUBLIC_FIREBASE_APPCHECK_SITE_KEY` overrides it — `src/env.d.ts` types it, `.env.example` documents it). The key is public like the Firebase `apiKey`. Tokens already attach to RTDB reads, but reads keep working until **enforcement** is toggled on for Realtime Database in the Firebase console (do that only after metrics show real traffic is verified). It runs unconditionally, **not** gated on cookie consent, because RTDB reads in `Tickets.tsx` fire on mount before any consent — App Check is a security mechanism (legitimate interest), not analytics. Only RTDB `/tickets` is in scope; `titoWebhook` (external ti.to caller, HMAC-protected) must stay out. See README "App Check".
 

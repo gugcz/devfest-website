@@ -23,15 +23,28 @@
 		try { localStorage.setItem(CONSENT_KEY, value); } catch {}
 	}
 
-	async function loadAnalytics() {
+	// Boot Analytics in cookieless Consent Mode (consent denied by default).
+	// Safe for every visitor — GA4 sends only aggregated identifier-free pings,
+	// setting no cookie / `client_id` until they accept. `initAnalytics()` is
+	// idempotent (module-level guard) and the module stays cached across soft
+	// navigations, so re-running per page-load never re-initialises Analytics.
+	async function startAnalytics() {
 		try {
-			// `initAnalytics()` is idempotent (module-level `analyticsInstance`
-			// guard) and the module itself stays cached across soft navigations,
-			// so re-running this per page-load never double-initialises Analytics.
 			const mod = await import('../lib/firebase');
 			await mod.initAnalytics();
 		} catch (err) {
-			console.warn('[cookie-banner] Failed to load analytics:', err);
+			console.warn('[cookie-banner] Failed to start analytics:', err);
+		}
+	}
+
+	// Upgrade consent to granted after the visitor accepts — flips GA4 from
+	// cookieless pings to full measurement.
+	async function grantAnalyticsConsent() {
+		try {
+			const mod = await import('../lib/firebase');
+			await mod.grantAnalyticsConsent();
+		} catch (err) {
+			console.warn('[cookie-banner] Failed to grant analytics consent:', err);
 		}
 	}
 
@@ -51,21 +64,23 @@
 			banner?.classList.remove('cookie-banner--hidden');
 		};
 
+		// Analytics starts for everyone in cookieless mode; identifiers stay off
+		// until (and unless) the visitor accepts.
+		startAnalytics();
+
 		// Banner starts hidden — reveal only if no decision yet
 		const stored = getConsent();
-		if (stored) {
-			if (stored === 'accepted') {
-				loadAnalytics();
-				window.dispatchEvent(new Event('cookie-consent-accepted'));
-			}
-		} else {
+		if (stored === 'accepted') {
+			grantAnalyticsConsent();
+			window.dispatchEvent(new Event('cookie-consent-accepted'));
+		} else if (!stored) {
 			showBanner();
 		}
 
 		document.getElementById('cookie-accept')?.addEventListener('click', () => {
 			setConsent('accepted');
 			hideBanner();
-			loadAnalytics();
+			grantAnalyticsConsent();
 			window.dispatchEvent(new Event('cookie-consent-accepted'));
 		});
 
