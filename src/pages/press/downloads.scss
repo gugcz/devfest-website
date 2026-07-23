@@ -20,7 +20,12 @@
 	}
 
 	.back-link {
-		display: inline-block;
+		// Standalone nav link, not a link in a sentence, so SC 2.5.8's inline
+		// exception doesn't apply — it measured 154×19. Matches the touch row
+		// the privacy-policy back-link already uses.
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
 		margin-bottom: 2.6rem;
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label-sm);

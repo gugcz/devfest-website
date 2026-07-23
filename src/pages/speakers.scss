@@ -46,6 +46,16 @@
 	margin: 0;
 }
 
+// Said once for the whole contact sheet, in the mono catalogue voice.
+.speakers-hint {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label);
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.5);
+	margin: 1rem 0 0;
+}
+
 .speakers-noscript {
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;

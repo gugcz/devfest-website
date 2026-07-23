@@ -247,6 +247,7 @@ Achromatic near-black through bone-white, plus a single red that behaves as mark
 - **Warm Bone** (`#F7EFE6`): text on the red CTA only — very slightly warmer than Bone so it reads as ink printed on red, not white knocked out of it.
 - **Rule** (`rgba(240,237,230,0.13)`), **Rule Soft** (`0.06`), **Rule Strong** (`0.22`): the three hairline weights that build the entire layout grid. Soft stitches sections; base separates items; strong bounds interactive chrome such as the ghost button.
 - **Field Border** (`rgba(240,237,230,0.4)`): deliberately separate from the decorative rules so form controls clear WCAG 1.4.11 (≥3:1) while grouping hairlines stay whisper-faint. Never substitute `--rule` on an input.
+- **Error Red** (`rgba(220,110,110,0.95)`, `--color-error`): form-error prose only, and the one place a red other than the two accents is permitted. It is Case Red desaturated far enough to reach ~5.7:1 on a panel, where Case Red itself sits at ~3.3:1 and fails 1.4.3 as small copy. It is a *text* colour: never a fill, a rule, a border or a mark. Both form surfaces use it; nothing else may.
 
 ### Light
 

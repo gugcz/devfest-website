@@ -1,69 +1,92 @@
-// Speaker lineup — clickable cards that open a detail dialog. Distinct from
-// /team: a clean uncovered grayscale portrait with the caption in a panel
-// BELOW the photo (no text over the image), a lineup index, and a restrained
-// hover (subtle zoom + desaturation lift + red edge). Same film-noir system
-// (grayscale, red accent, brand fonts). Global tokens come from BaseLayout.
+// Speaker lineup — a contact sheet of evidence prints, the same primitive
+// /team and the partners logo wall use: one ruled sheet, cells sharing
+// hairlines, nothing floating and nothing lifting. What was here before was an
+// auto-fill card grid with a hover-lift, a red crop-bracket on every frame and
+// a "View profile →" chip repeated once per speaker — the generic profile-card
+// pattern wearing noir paint. The sheet is the object; the cells are places on
+// it. Global tokens come from BaseLayout.
 
 .grid {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-	gap: 18px;
+	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+	// gap: 0 — cells share hairlines, so the grid reads as one sheet.
+	gap: 0;
+	border-top: 1px solid var(--rule);
+	border-left: 1px solid var(--rule);
 
-	// Each grid cell stretches its card to the row height, and the card fills the
-	// cell, so every card in a row is exactly the same height.
 	> li {
 		display: flex;
 	}
 }
 
-/* ===================== CARD (button) ===================== */
+/* ===================== CELL (button) ===================== */
 .card {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-	height: 100%;
 	margin: 0;
-	padding: 0;
+	padding: 1rem 1rem 1.25rem;
 	text-align: left;
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
-	overflow: hidden;
-	// The photograph is the artifact — it carries its own crop-bracket frame.
-	// Wrapping it in a bordered, shadowed panel put a card around a card.
 	background: transparent;
 	border: 0;
-	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+	border-right: 1px solid var(--rule);
+	border-bottom: 1px solid var(--rule);
+	border-radius: 0;
 
-	&:hover,
-	&:focus-visible {
-		transform: translateY(-3px);
+	// The cell under the cursor is the one the lamp is over — the system's
+	// single hover gesture. No lift: frames on a contact sheet don't rise.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			104deg,
+			rgba(255, 244, 232, 0.07) 0%,
+			rgba(255, 240, 226, 0.03) 42%,
+			transparent 86%
+		);
+		opacity: 0;
+		pointer-events: none;
+		z-index: 0;
+		transition: opacity 0.28s ease;
+	}
+
+	&:hover::before,
+	&:focus-visible::before {
+		opacity: 1;
 	}
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 2px;
+		outline-offset: -2px;
 	}
 }
 
-/* ===================== MEDIA (evidence photo) ===================== */
+/* ===================== MEDIA (evidence print) ===================== */
 .media {
 	position: relative;
 	display: block;
+	z-index: 1;
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
-	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #060505 74%);
-	// A mounted print: bone keyline for the print's own border, shadow to put
-	// it ON something. Without these the photograph floats on flat black and
-	// stops reading as a physical object in the file.
+	background: var(--panel-lit);
+	// Mounted print: bone keyline for the print's own border, shadow to sit it
+	// ON the sheet rather than floating on flat black.
 	box-shadow:
 		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
-		0 12px 28px rgba(0, 0, 0, 0.55);
+		0 10px 24px rgba(0, 0, 0, 0.5);
 
-	// Red crop-brackets: top-left (::before) and bottom-right (::after).
+	// Red crop-brackets, top-left (::before) and bottom-right (::after) — a
+	// GESTURE, not decoration. Printing them on every frame at rest put twenty
+	// red marks in one viewport and broke The One Mark Rule; they now open only
+	// on the frame being pointed at, which is what framing a face actually is.
 	&::before,
 	&::after {
 		content: '';
@@ -72,10 +95,10 @@
 		height: 18px;
 		border: 2px solid var(--color-accent-hot);
 		z-index: 3;
-		opacity: 0.85;
-		// The brackets open by scaling from their own corner, not by animating
-		// width/height — same gesture, composited instead of re-laying out.
-		transform: scale(1);
+		opacity: 0;
+		// Scale from the corner rather than animating width/height — the same
+		// opening gesture, composited instead of triggering layout.
+		transform: scale(0.7);
 		transition: opacity 0.3s ease, transform 0.3s ease;
 	}
 	&::before {
@@ -101,22 +124,30 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	// Duotone: hard B&W at rest, lifts toward colour + pushes in on hover.
+	// Hard B&W at rest, lifting toward colour on hover.
 	filter: grayscale(1) contrast(1.14) brightness(0.84);
 	transform: scale(1.02);
 	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
 }
 
-// A faint red interrogation-spotlight vignette over the photo (no scanlines).
-.grain {
+// Always-on bottom scrim so the print sits into its own shadow.
+.scrim {
 	position: absolute;
 	inset: 0;
 	z-index: 2;
 	pointer-events: none;
-	background:
-		radial-gradient(120% 100% at 50% 6%, rgba(204, 0, 0, 0.15) 0%, transparent 46%),
-		linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
-	opacity: 0.8;
+	background: linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
+}
+
+// The red interrogation wash rides on hover only — at rest it was a red mark
+// on every single face, which is not what an accent is for.
+.vignette {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background: radial-gradient(120% 100% at 50% 6%, rgba(204, 0, 0, 0.16) 0%, transparent 46%);
+	opacity: 0;
 	transition: opacity 0.3s ease;
 }
 
@@ -131,13 +162,12 @@
 .card:focus-visible .media::before,
 .card:focus-visible .media::after {
 	opacity: 1;
-	// 18px → 24px, expressed as scale so the frame opens on the compositor.
-	transform: scale(1.333);
+	transform: scale(1);
 }
 
-.card:hover .grain,
-.card:focus-visible .grain {
-	opacity: 0.4;
+.card:hover .vignette,
+.card:focus-visible .vignette {
+	opacity: 1;
 }
 
 .monogram {
@@ -147,150 +177,99 @@
 	align-items: center;
 	justify-content: center;
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(3rem, 12vw, 4.4rem);
+	font-size: var(--fs-monogram);
 	letter-spacing: 0.08em;
 	color: rgba(242, 239, 233, 0.26);
 	user-select: none;
 }
 
-/* ===================== BODY (caption below photo) ===================== */
+/* ===================== CAPTION ===================== */
+// The file caption under the print, hung on a red hairline. Names and roles
+// are NOT clamped or height-matched: cells in a `gap: 0` grid already stretch
+// to the row, so the sheet stays square without truncating anybody's name.
 .body {
 	position: relative;
+	z-index: 1;
 	display: flex;
 	flex-direction: column;
-	flex: 1 1 auto;
-	// The name plate hangs under the photograph on a red hairline — the file
-	// caption. A 2px coloured left border is the side-tab cliché; a 1px rule
-	// under the plate says the same thing in the ledger's own vocabulary.
 	padding: 0.8rem 0 0;
-	margin-top: 0.7rem;
+	margin-top: 0.75rem;
 	border-top: 1px solid var(--rule-red);
 	background: none;
 }
 
-// Matches /team's .crew-name.
 .name {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-title-compact);
-	line-height: 1;
+	line-height: 1.05;
 	letter-spacing: 0.04em;
 	color: var(--color-text);
-	// Reserve two lines so 1- and 2-line names keep the same card height.
-	min-height: 2em;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+	transition: color 0.25s ease;
 }
 
-// Matches /team's .crew-role.
 .tagline {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label);
 	letter-spacing: 0.16em;
 	text-transform: uppercase;
-	line-height: 1.4;
-	margin-top: 0.2rem;
+	line-height: 1.45;
+	margin-top: 0.35rem;
 	color: var(--color-grey);
-	// Always rendered + two-line reserve → every card's caption block matches.
-	min-height: 2.8em;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
 }
 
-.more {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.35rem;
-	// Pin to the bottom of the caption so the CTA aligns across all cards.
-	margin-top: auto;
-	padding-top: 0.7rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.16em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
-	transition: color 0.25s ease;
-}
-
-.moreArrow {
-	transition: transform 0.25s ease;
-}
-
-.card:hover .more,
-.card:focus-visible .more {
+// The name is the affordance — it lights with the frame it belongs to. The
+// per-card "View profile →" chip it replaces said the same thing once per
+// speaker; the sheet says it once, in the section header.
+.card:hover .name,
+.card:focus-visible .name {
 	color: var(--color-accent-hot);
 }
 
-.card:hover .moreArrow,
-.card:focus-visible .moreArrow {
-	transform: translateX(3px);
-}
-
-/* ===================== "MORE SOON" TILE ===================== */
-// Closes the grid with a teaser tile so the lineup never reads as "complete".
+/* ===================== END OF ROLL ===================== */
+// Closes the sheet so the lineup never reads as complete. An unexposed frame,
+// not a dashed placeholder tile with pulsing dots.
 .moreCard {
 	position: relative;
-	aspect-ratio: 4 / 5;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 0.7rem;
-	padding: 1.2rem;
-	text-align: center;
-	background: radial-gradient(120% 120% at 50% 20%, #141010 0%, #070606 72%);
-	border: 1px dashed rgba(204, 0, 0, 0.4);
-	transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-
-	&:hover {
-		transform: translateY(-5px);
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft);
-	}
+	justify-content: flex-end;
+	width: 100%;
+	padding: 1rem 1rem 1.25rem;
+	border-right: 1px solid var(--rule);
+	border-bottom: 1px solid var(--rule);
+	background: transparent;
 }
 
-.moreDots {
-	display: inline-flex;
-	gap: 0.34rem;
+.moreFrame {
+	position: relative;
+	aspect-ratio: 4 / 5;
+	background: var(--panel-lit);
+	box-shadow: inset 0 0 0 1px var(--rule);
+}
 
-	span {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--color-accent-hot);
-		opacity: 0.35;
-		animation: skelPulse 1.4s ease-in-out infinite;
-	}
-
-	span:nth-child(2) {
-		animation-delay: 0.2s;
-	}
-	span:nth-child(3) {
-		animation-delay: 0.4s;
-	}
+.moreBody {
+	padding: 0.8rem 0 0;
+	margin-top: 0.75rem;
+	border-top: 1px solid var(--rule);
 }
 
 .moreKicker {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.28em;
-	text-transform: uppercase;
-	color: var(--color-accent-hot);
+	display: block;
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-title-compact);
+	line-height: 1.05;
+	letter-spacing: 0.04em;
+	color: var(--color-grey);
 }
 
 .moreText {
-	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
-	font-size: var(--fs-lede);
-	line-height: 1.5;
-	color: var(--color-grey);
-	margin: 0;
-	max-width: 22ch;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label);
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	line-height: 1.45;
+	margin: 0.35rem 0 0;
+	color: rgba(240, 237, 230, 0.5);
 }
 
 /* ===================== STATES ===================== */
@@ -326,28 +305,6 @@
 	animation: skelPulse 1.3s ease-in-out infinite;
 }
 
-.loadingDots {
-	display: inline-flex;
-	align-items: center;
-	gap: 3px;
-
-	span {
-		width: 3px;
-		height: 3px;
-		border-radius: 50%;
-		background: currentColor;
-		opacity: 0.3;
-		animation: skelPulse 1.3s ease-in-out infinite;
-	}
-
-	span:nth-child(2) {
-		animation-delay: 0.18s;
-	}
-	span:nth-child(3) {
-		animation-delay: 0.36s;
-	}
-}
-
 @keyframes skelPulse {
 	0%,
 	100% {
@@ -359,27 +316,49 @@
 }
 
 /* ===================== RESPONSIVE ===================== */
+// The sheet stays a sheet at every width — `gap` is never reintroduced, or the
+// cells go back to floating with orphaned hairlines on two sides.
 @media (max-width: 600px) {
 	.grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 12px;
 	}
-	.name {
+	.card,
+	.moreCard {
+		padding: 0.7rem 0.7rem 0.9rem;
+	}
+	.name,
+	.moreKicker {
 		font-size: var(--fs-title-sm);
 	}
-	.body {
-		padding: 0.75rem 0.8rem 0.9rem;
+	.body,
+	.moreBody {
+		padding-top: 0.6rem;
+		margin-top: 0.6rem;
+	}
+	.media::before,
+	.media::after {
+		width: 12px;
+		height: 12px;
+		top: 6px;
+		left: 6px;
+	}
+	.media::after {
+		top: auto;
+		left: auto;
+		right: 6px;
+		bottom: 6px;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.card,
+	.card::before,
 	.photo,
-	.moreArrow,
-	.more,
-	.moreCard,
-	.loadingDot,
-	.loadingDots span {
+	.name,
+	.vignette,
+	.media::before,
+	.media::after,
+	.loadingDot {
 		transition: none;
 		animation: none;
 	}

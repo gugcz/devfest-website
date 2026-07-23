@@ -190,7 +190,14 @@
 		}
 	}
 
+	// A standalone contact link in an <address>, not a link inside a sentence,
+	// so SC 2.5.8's inline exception doesn't cover it — it measured 117×17.
+	// inline-flex + a 2.75rem row gives it a real touch target without moving
+	// the underline off the text.
 	.email {
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-ui);
 		color: rgba(240, 237, 230, 0.88);
@@ -254,7 +261,8 @@
 		justify-content: center;
 		width: 2.5rem;
 		height: 2.5rem;
-		border-radius: 4px;
+		// The Two-Pixel Rule — nothing in this system is rounder than 2px.
+		border-radius: var(--radius);
 		transition: color 0.25s ease, background 0.25s ease;
 
 		&:hover,

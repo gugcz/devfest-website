@@ -297,9 +297,11 @@
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 600px) {
+		// `gap` is never reintroduced here: the cells carry only right/bottom
+		// hairlines, so any gap orphans them and the sheet falls back apart into
+		// floating tiles ruled on two sides — exactly the card grid it replaced.
 		.crew-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
-			gap: 10px;
 		}
 		.crew-card {
 			padding: 0.8rem 0.8rem 1rem;

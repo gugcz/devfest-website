@@ -138,8 +138,10 @@
 
 	input[type='checkbox'] {
 		flex-shrink: 0;
-		width: 1.4rem;
-		height: 1.4rem;
+		// 1.5rem is the system value (and the newsletter's). At 1.4rem this
+		// rendered 22px, under SC 2.5.8's 24px minimum target size.
+		width: 1.5rem;
+		height: 1.5rem;
 		margin-top: 0.1em;
 		accent-color: var(--color-accent);
 		cursor: pointer;
@@ -235,7 +237,7 @@
 	color: rgba(240, 237, 230, 0.7);
 
 	&[data-tone='error'] {
-		color: rgba(220, 110, 110, 0.95);
+		color: var(--color-error);
 	}
 }
 

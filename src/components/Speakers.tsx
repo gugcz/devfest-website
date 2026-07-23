@@ -53,20 +53,46 @@ function SpeakerCard({
 							{initials(speaker.fullName) || '?'}
 						</span>
 					)}
-					<span className={s.grain} aria-hidden="true" />
+					<span className={s.scrim} aria-hidden="true" />
+					<span className={s.vignette} aria-hidden="true" />
 				</span>
 				<span className={s.body}>
 					<span className={s.name}>{speaker.fullName}</span>
-					{/* Always rendered (even when empty) so every card reserves the same
-					    two-line slot and card heights stay uniform across the grid. */}
-					<span className={s.tagline}>{speaker.tagLine}</span>
-					<span className={s.more}>
-						View profile
-						<span className={s.moreArrow} aria-hidden="true">→</span>
-					</span>
+					{speaker.tagLine && <span className={s.tagline}>{speaker.tagLine}</span>}
 				</span>
 			</button>
 		</li>
+	);
+}
+
+/**
+ * The sheet itself, separated from the Firestore wiring so it can be rendered
+ * from fixtures.
+ */
+export function SpeakerLineup({
+	speakers,
+	onOpen,
+}: {
+	speakers: Speaker[];
+	onOpen: (speaker: Speaker) => void;
+}) {
+	return (
+		<ul className={s.grid} role="list">
+			{speakers.map((speaker, i) => (
+				<SpeakerCard key={speaker.id} speaker={speaker} onOpen={onOpen} priority={i < 4} />
+			))}
+			{/* Closes the sheet on an unexposed frame so the lineup never reads as
+			    final. */}
+			<li>
+				<div className={s.moreCard}>
+					<span className={s.moreFrame} aria-hidden="true" />
+					<span className={s.moreBody}>
+						<span className={s.moreKicker}>Still developing</span>
+						<p className={s.moreText}>More names to come</p>
+					</span>
+				</div>
+			</li>
+		</ul>
 	);
 }
 
@@ -100,12 +126,7 @@ export default function Speakers() {
 		return (
 			<p className={s.loadingStatus} role="status">
 				<span className={s.loadingDot} aria-hidden="true" />
-				Loading lineup
-				<span className={s.loadingDots} aria-hidden="true">
-					<span />
-					<span />
-					<span />
-				</span>
+				Developing the lineup
 			</p>
 		);
 	}
@@ -120,22 +141,7 @@ export default function Speakers() {
 
 	return (
 		<>
-			<ul className={s.grid} role="list">
-				{state.speakers.map((speaker, i) => (
-					<SpeakerCard key={speaker.id} speaker={speaker} onOpen={setSelected} priority={i < 4} />
-				))}
-				<li>
-					<article className={s.moreCard} aria-label="More speakers to be announced">
-						<span className={s.moreDots} aria-hidden="true">
-							<span />
-							<span />
-							<span />
-						</span>
-						<span className={s.moreKicker}>Case open</span>
-						<p className={s.moreText}>More speakers announced soon</p>
-					</article>
-				</li>
-			</ul>
+			<SpeakerLineup speakers={state.speakers} onOpen={setSelected} />
 			{selected && <SpeakerDetail speaker={selected} onClose={() => setSelected(null)} />}
 		</>
 	);

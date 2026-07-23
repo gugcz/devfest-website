@@ -8,6 +8,11 @@
 		--color-cream: #E8E0CC;
 		--color-accent: #CC0000;
 		--color-accent-hot: #FF1111;
+		// Form-error text only. Not a second hue: it is the accent desaturated
+		// far enough to clear AA as small body copy on a panel (~5.7:1, where
+		// --color-accent lands at ~3.3:1 and fails 1.4.3). Never use it as an
+		// accent, a fill or a rule — it exists so error prose stays readable.
+		--color-error: rgba(220, 110, 110, 0.95);
 		--color-surface: rgba(255, 255, 255, 0.03);
 		--color-border: rgba(255, 255, 255, 0.08);
 
