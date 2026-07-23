@@ -21,9 +21,13 @@
 	margin: 0 auto;
 }
 
+// Left-set to match /speakers — see the note there on why not every head on
+// the site is centred any more.
 .sessions-header {
-	text-align: center;
-	margin-bottom: 2.6rem;
+	text-align: left;
+	margin-bottom: 3.2rem;
+	border-bottom: 1px solid var(--rule-soft);
+	padding-bottom: 1.6rem;
 }
 
 .sessions-eyebrow {

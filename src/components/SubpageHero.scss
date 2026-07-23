@@ -44,15 +44,19 @@
 		}
 	}
 
+	// The page's one piece of poster-scale type. Nothing else on a subpage is
+	// allowed at --fs-display; a second one would cancel this one out.
+	// Leading tightens as the size grows, the way a one-sheet is set — at 8.5rem
+	// the 1.04 that suited 5rem opens into a gap.
 	.hero-title {
 		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-hero);
-		line-height: 1.04;
-		letter-spacing: 0.01em;
+		font-size: var(--fs-display);
+		line-height: 0.92;
+		letter-spacing: -0.005em;
 		text-transform: uppercase;
 		color: var(--color-text);
 		margin: 0 0 1.8rem;
-		max-width: 18ch;
+		max-width: 14ch;
 		// Legibility scrim over the photo — kept as a shadow, not an emboss.
 		text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7);
 	}
@@ -76,17 +80,22 @@
 		padding-left: 1.4rem;
 	}
 
+	// The hero centres its content, so when the block grows taller than the
+	// padding box it overflows EQUALLY in both directions and the top padding
+	// stops protecting anything — at poster scale the eyebrow ended up behind
+	// the 65px fixed header. Both breakpoints therefore keep a top padding that
+	// clears the header on its own AND a min-height the content fits inside.
 	@media (max-width: 900px) {
 		.subpage-hero {
-			padding: calc(var(--section-y) - 1rem) var(--gutter);
-			min-height: max(440px, 52vh);
+			padding: calc(var(--section-y) + 2rem) var(--gutter) var(--section-y);
+			min-height: max(520px, 60vh);
 		}
 	}
 
 	@media (max-width: 600px) {
 		.subpage-hero {
-			padding: calc(var(--section-y) - 1.5rem) var(--gutter);
-			min-height: max(380px, 46vh);
+			padding: calc(var(--section-y) + 1.5rem) var(--gutter) var(--section-y);
+			min-height: max(480px, 58vh);
 		}
 		.hero-title { max-width: none; }
 		.hero-lede {

@@ -195,7 +195,10 @@ export default function Tickets() {
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
 
 	return (
-		<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
+		<section id="tickets" className={`${s.tickets} rake`} aria-labelledby="tickets-heading">
+			{/* Red raking light, swept by the scroll itself. Purely decorative and
+			    enhancement-only — see the `.rake` rules in BaseLayout.scss. */}
+			<span className="rake-beam" aria-hidden="true" />
 			<header className={s.header}>
 				<p className={s.eyebrow}>Tickets</p>
 				<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>

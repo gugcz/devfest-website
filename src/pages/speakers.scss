@@ -21,9 +21,16 @@
 	margin: 0 auto;
 }
 
+// Left-set, against a centred head on the home teaser and the gallery. Every
+// section on the site was centre-headed; a head centred over a left-aligned
+// grid is the template move, and thirteen of them in a row is the reason the
+// scroll read as one long generated block.
 .speakers-header {
-	text-align: center;
-	margin-bottom: 2.6rem;
+	text-align: left;
+	margin-bottom: 3.2rem;
+	// Hangs off the same hairline the sheet below starts on.
+	border-bottom: 1px solid var(--rule-soft);
+	padding-bottom: 1.6rem;
 }
 
 .speakers-eyebrow {

@@ -33,14 +33,31 @@
 		// Content column + consistent page gutter / section rhythm.
 		--maxw: 1200px;
 		--gutter: clamp(1.25rem, 5vw, 3rem);
+		// Three densities, not one. Thirteen sections all set at --section-y gave
+		// the scroll a single tempo, and a single tempo is what makes a long page
+		// read as generated. Tight is a cut, base is the normal beat, wide is a
+		// held shot before something that matters.
+		--section-y-tight: clamp(2.75rem, 4.6vw, 4.75rem);
 		--section-y: clamp(4.5rem, 8vw, 8.5rem);
+		--section-y-wide: clamp(7rem, 12.5vw, 13.5rem);
 		// Sharp corners — a hint of softening, never pill-shaped.
 		--radius: 2px;
 
 		// Display type scale — one source of truth so headline sizes stay
 		// consistent across every page/section.
-		--fs-hero: clamp(2.6rem, 6vw, 5rem);      // subpage hero headline
+		// Poster scale. Used at most ONCE per page — the subpage hero title, and
+		// nothing else. Every headline on the site sat inside one octave, so
+		// nothing ever read as loud; a noir one-sheet runs the title an order of
+		// magnitude over the body and that contrast IS the genre. One per page is
+		// the whole rule: a second one cancels the first.
+		--fs-display: clamp(3.4rem, 11.5vw, 8.5rem);
+		--fs-hero: clamp(2.6rem, 6vw, 5rem);      // in-page hero headline
 		--fs-h2: clamp(2.2rem, 4.8vw, 4rem);      // in-page section headline
+		// Sub-section headline: dialog names, press-kit section titles, session
+		// detail heads. Three files were each carrying their own fluid clamp in
+		// this band (2.0–2.9rem) because the ramp had no step between --fs-h2
+		// and --fs-card-title. Endpoints are ramp steps: 1.9 → 2.4.
+		--fs-h3: clamp(1.9rem, 4vw, 2.4rem);
 		--fs-card-title: 1.85rem;                 // dossier card title
 		// Title of a compact (one-line) ledger record — a deliberate step below
 		// the full record's clamp(1.85rem, 3.2vw, 2.6rem) so a settled entry
@@ -763,14 +780,65 @@
 	// Scroll reveal — only hidden when JS is present (the inline `js` class on
 	// <html>); no-JS / SEO render fully visible. IntersectionObserver toggles
 	// .is-visible.
+	// THE BLIND. Every section used to arrive by opacity + translateY(26px),
+	// which is the default entrance of every template on the internet and says
+	// nothing about this film. A shutter opening upward does, it costs two
+	// declarations, and it runs entirely on the compositor.
+	//
+	// Deliberately an ANIMATION with no fill-mode rather than a transition:
+	// `clip-path` clips fixed-position descendants and creates a stacking
+	// context, so a persisted end state (`forwards`/`both`) would permanently
+	// box every revealed section. With no fill, `clip-path` reverts to `none`
+	// the moment the animation ends and the element is left completely
+	// unclipped. Opacity is a plain transition for exactly the same reason —
+	// it has to survive the animation, so it cannot live in the keyframes.
+	//
+	// The horizontal insets are -100vw and the vertical rest state is -8rem so
+	// the lamp washes that bleed past the gutter (`inset: -2rem calc(-1 *
+	// var(--gutter))`) are never cropped mid-animation.
 	.js .reveal {
 		opacity: 0;
-		transform: translateY(26px);
-		transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+		transition: opacity 0.55s ease;
 	}
 	.js .reveal.is-visible {
 		opacity: 1;
-		transform: none;
+		animation: blind-open 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	@keyframes blind-open {
+		from { clip-path: inset(-8rem -100vw 100% -100vw); }
+		to   { clip-path: inset(-8rem -100vw -8rem -100vw); }
+	}
+
+	// Prints develop one after another rather than all at once. `--i` is set
+	// per item by the grid that owns them; anything without it starts at zero,
+	// so this is inert wherever it isn't wired up. Capped at 10 steps so a long
+	// roster never leaves the last face waiting.
+	//
+	// Two owners with different timing needs, one class. Astro grids sit inside
+	// a `.reveal` and must wait for it; React grids (speakers, the home wall)
+	// render after `astro:page-load` has already run the observer, so they are
+	// never inside a `.reveal` and simply develop on first paint. Suppressing
+	// the animation only while a reveal is still closed covers both — otherwise
+	// an Astro grid would develop behind an opacity-0 parent and be over before
+	// anyone saw it.
+	.js .develop {
+		animation: print-develop 0.75s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+		animation-delay: calc(min(var(--i, 0), 10) * 55ms);
+	}
+	.js .reveal:not(.is-visible) .develop {
+		animation: none;
+	}
+
+	@keyframes print-develop {
+		from {
+			opacity: 0;
+			clip-path: inset(0 0 100% 0);
+		}
+		to {
+			opacity: 1;
+			clip-path: inset(0 0 0 0);
+		}
 	}
 
 	@keyframes ember-pulse {
@@ -782,8 +850,74 @@
 		20%, 82% { opacity: 0.74; }
 	}
 
+	// RED AS LIGHT. Everywhere else in the system red is a colour applied to a
+	// noun — it marks, but it never does anything. Here it is a light source:
+	// a raking beam that crosses the section as the section crosses the
+	// viewport, driven by the scroll itself rather than by a timer.
+	//
+	// Strictly an enhancement. `animation-timeline` ships in Chromium (2023)
+	// and Safari (2025) but is still behind a flag in Firefox, so this is
+	// wrapped in @supports and the unlit section below is the real design —
+	// nothing here carries meaning, contrast or state.
+	@supports (animation-timeline: view()) {
+		@media (prefers-reduced-motion: no-preference) {
+			.rake {
+				position: relative;
+			}
+
+			// The Lit Section Rule: the beam is a positioned element, so without
+			// this every static sibling after it would paint underneath the
+			// light instead of in it.
+			.rake > *:not(.rake-beam) {
+				position: relative;
+				z-index: 1;
+			}
+
+			.rake > .rake-beam {
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
+				z-index: 0;
+				background: linear-gradient(
+					104deg,
+					transparent 34%,
+					rgba(204, 0, 0, 0.13) 50%,
+					transparent 66%
+				);
+				background-size: 260% 100%;
+				background-repeat: no-repeat;
+				animation: rake-sweep linear both;
+				animation-timeline: view();
+				animation-range: entry 0% exit 100%;
+			}
+		}
+	}
+
+	@keyframes rake-sweep {
+		from { background-position: -70% 0; }
+		to   { background-position: 170% 0; }
+	}
+
+	// The lineup print morphing into the dialog photo. Slower than a default
+	// cross-fade and on the system's own easing, so it reads as a camera move
+	// rather than a UI transition.
+	::view-transition-old(speaker-portrait),
+	::view-transition-new(speaker-portrait) {
+		animation-duration: 0.42s;
+		animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	// The page underneath shouldn't cross-fade while the portrait travels — a
+	// full-page dissolve behind a moving element reads as a glitch.
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation-duration: 0.24s;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
-		.js .reveal { opacity: 1; transform: none; transition: none; }
+		.js .reveal { opacity: 1; transition: none; animation: none; }
+		.js .reveal.is-visible .develop { animation: none; }
+		.rake > .rake-beam { display: none; }
 
 		// The ledger's pull and its red mark are both motion. Without them the
 		// entry still resolves: focus keeps its ring, the lit record keeps its

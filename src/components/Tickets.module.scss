@@ -2,7 +2,9 @@
 	width: 100%;
 	max-width: var(--maxw);
 	margin: 0 auto;
-	padding: var(--section-y) var(--gutter);
+	// A held shot. Tickets are what the page is for; the sections either side
+	// of it run at the normal beat, so the extra air reads as emphasis.
+	padding: var(--section-y-wide) var(--gutter);
 	position: relative;
 	z-index: 1;
 	border-top: 1px solid var(--rule-soft);

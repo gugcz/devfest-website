@@ -27,6 +27,45 @@
 	}
 }
 
+// Carries `--i` for the develop stagger; the class exists so the index can be
+// set without styling the bare <li>.
+.cell {
+	display: flex;
+}
+
+/* ===================== THE LEAD FRAME ===================== */
+// The first-announced speaker takes two columns and two rows. Ten prints at
+// identical size is a list, not a lineup — nothing is the subject, so the eye
+// has nowhere to land and the grid reads as filler. One large frame gives the
+// page a subject and gives every other frame a reason to be smaller.
+//
+// Two rows rather than a taller single row: the span then measures exactly two
+// normal cells plus the row gap, so the lead's bottom edge lands level with
+// its neighbours' instead of pushing the row and knocking the whole sheet out.
+@media (min-width: 900px) {
+	.grid > li:first-child {
+		grid-column: span 2;
+		grid-row: span 2;
+	}
+
+	.grid > li:first-child .card {
+		height: 100%;
+	}
+
+	// The print fills whatever height the two-row span resolves to, so the
+	// fixed 4/5 has to go — at double width it would be double height and
+	// overshoot the span.
+	.grid > li:first-child .media {
+		aspect-ratio: auto;
+		flex: 1 1 auto;
+		min-height: 0;
+	}
+
+	.grid > li:first-child .name {
+		font-size: var(--fs-card-title);
+	}
+}
+
 /* ===================== PRINT + CAPTION ===================== */
 .card {
 	position: relative;

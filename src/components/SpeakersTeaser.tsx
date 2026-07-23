@@ -38,7 +38,11 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
 
 	return (
-		<a className={s.tile} href="/speakers" aria-label={`${speaker.fullName} — see the full lineup`}>
+		<a
+			className={`${s.tile} develop`}
+			href="/speakers"
+			aria-label={`${speaker.fullName} — see the full lineup`}
+		>
 			<span className={s.thumb}>
 				{showPhoto ? (
 					<img
@@ -141,8 +145,10 @@ export default function SpeakersTeaser() {
 				</div>
 
 				<ul className={s.wall} role="list" key={offset}>
-					{shown.map((speaker) => (
-						<li key={speaker.id}>
+					{shown.map((speaker, i) => (
+						// `--i` staggers the develop animation, so a rotation deals the
+						// new set out one print at a time instead of swapping all four.
+						<li key={speaker.id} style={{ '--i': i } as React.CSSProperties}>
 							<Thumb speaker={speaker} />
 						</li>
 					))}

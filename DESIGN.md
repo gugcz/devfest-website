@@ -293,9 +293,20 @@ Achromatic near-black through bone-white, plus a single red that behaves as mark
 | `--fs-monogram` | `3.4rem` | initials in an empty photo well |
 | `--fs-folio` | `5.5rem` | oversized outlined folio numeral |
 
-Three fluid steps sit alongside them and are *not* literals: `--fs-hero` `clamp(2.6rem, 6vw, 5rem)`, `--fs-h2` `clamp(2.2rem, 4.8vw, 4rem)`, and the full record title `clamp(1.85rem, 3.2vw, 2.6rem)`.
+Fluid steps sit alongside them and are *not* literals:
 
-**The Nearest-Step Rule.** Reach for the nearest existing token. Introducing a new value means adding it here *and* to `:root` — a ramp with exceptions is a ramp that describes nothing, which is exactly the state this replaced.
+| Token | Value | Job |
+|---|---|---|
+| `--fs-display` | `clamp(3.4rem, 11.5vw, 8.5rem)` | poster scale — the subpage hero title, **once per page** |
+| `--fs-hero` | `clamp(2.6rem, 6vw, 5rem)` | in-page hero headline |
+| `--fs-h2` | `clamp(2.2rem, 4.8vw, 4rem)` | in-page section headline |
+| `--fs-h3` | `clamp(1.9rem, 4vw, 2.4rem)` | sub-section: dialog names, press-kit section titles, session detail heads |
+
+**The One-Poster Rule.** `--fs-display` appears at most **once per page**, on the subpage hero title and nothing else. Every headline on the site used to sit inside a single octave, so nothing ever read as loud; a noir one-sheet runs its title an order of magnitude over the body and that contrast *is* the genre. A second display-scale element on the same page cancels the first. Leading tightens as size grows (`0.92` at display scale) — the `1.04` that suited 5rem opens into a gap at 8.5rem.
+
+Note the knock-on: the hero centres its content, so once the title grows past the padding box the block overflows **equally in both directions** and top padding stops protecting anything. Both mobile breakpoints therefore carry a top padding that clears the 65px fixed header on its own *and* a `min-height` the content fits inside.
+
+**The Nearest-Step Rule.** Reach for the nearest existing token. Introducing a new value means adding it here *and* to `:root` — a ramp with exceptions is a ramp that describes nothing, which is exactly the state this replaced. `--fs-h3` was added rather than tolerated as drift: three files were each carrying their own clamp in the 2.0–2.9rem band because the ramp had no step between `--fs-h2` and `--fs-card-title`.
 
 ### Hierarchy
 - **Display** (Special Elite, `clamp(2.6rem, 6vw, 5rem)`, `1.04`, uppercase, `0.01em`): subpage hero headlines. Always carries `text-shadow: 0 2px 18px rgba(0,0,0,0.7)` when it sits over photography — a legibility scrim, never an emboss.
@@ -318,7 +329,21 @@ Three fluid steps sit alongside them and are *not* literals: `--fs-hero` `clamp(
 
 ## Layout
 
-A single centred column at `--maxw: 1200px` with `--gutter: clamp(1.25rem, 5vw, 3rem)`, applied through the `.u-container` primitive. Sections stack full-bleed and are separated by `1px solid var(--rule-soft)` top/bottom borders — the hairlines, not margins, are what make the page read as a filed document. Vertical rhythm is one token: `--section-y: clamp(4.5rem, 8vw, 8.5rem)` as section padding.
+A single centred column at `--maxw: 1200px` with `--gutter: clamp(1.25rem, 5vw, 3rem)`, applied through the `.u-container` primitive. Sections stack full-bleed and are separated by `1px solid var(--rule-soft)` top/bottom borders — the hairlines, not margins, are what make the page read as a filed document.
+
+### Vertical rhythm — three densities
+
+Vertical rhythm is **three** tokens, not one:
+
+| Token | Value | Reads as |
+| --- | --- | --- |
+| `--section-y-tight` | `clamp(2.75rem, 4.6vw, 4.75rem)` | a cut — a single line and a CTA (call for speakers, newsletter) |
+| `--section-y` | `clamp(4.5rem, 8vw, 8.5rem)` | the normal beat — every content section |
+| `--section-y-wide` | `clamp(7rem, 12.5vw, 13.5rem)` | a held shot — tickets, the past-editions gallery |
+
+**The Tempo Rule.** Thirteen sections all set at `--section-y` gave the scroll a single tempo, and a single tempo is the structural signature of generated layout — more than any individual component. Emphasis here is *relative*: a wide section only reads as emphasis because its neighbours don't. Never set two adjacent sections wide, and never promote a section to wide because its content is long — length is what the normal beat is for.
+
+Heads are no longer uniformly centred either. `/speakers` and `/sessions` are left-set over their left-reading grids; the home teaser and gallery stay centred. A head centred over a left-aligned grid is the template move.
 
 The homepage hero is the one asymmetric layout: `grid-template-columns: minmax(0, 1fr) auto` with a `6rem` gap, content left and the countdown right, at `min-height: 100vh`. Subpage heroes use `min-height: max(560px, 62vh)` with a floor so page-to-page height stays stable regardless of lede length. Card regions use `repeat(auto-fit, minmax(280px, 1fr))` with a `1.4rem` gap — the grid decides its own column count rather than being told at breakpoints.
 
@@ -419,6 +444,12 @@ Speaker, team and teaser photographs are evidence prints, and they carry their m
 
 Category labels (contact desks, press desks) are **folder divider tabs**: an angled leading edge via `clip-path: polygon(0.62rem 0, …)`, red keyline, accent-hot mono. The **shape** carries the case-file signal so the red stays rationed — the tab fills solid `--color-accent` only for the desk under the pointer, rather than spending the accent fill three times on one page.
 
+### The lead frame (photograph grids)
+
+The first cell of `/speakers` and `/team` spans **two columns and two rows** from 900px up. N identical prints is a list, not a lineup: nothing is the subject, the eye has nowhere to land, and the grid reads as filler. One large frame gives the page a subject and gives every other frame a reason to be smaller. It is also honest — the first team card is the Lead Org, the first speaker is the first announced.
+
+Two rows rather than one tall row: the span then measures exactly two normal cells plus the row gap, so the lead's bottom edge lands level with its neighbours' instead of knocking the sheet out. The lead's print drops its fixed `4/5` (at double width it would be double height and overshoot the span) and takes `flex: 1 1 auto` — and its **caption must be `flex: 0 0 auto`**, or caption and print split the free space and leave a dead band where the photograph should be.
+
 ### Contact sheet (grids of artifacts)
 
 Logo walls and image grids use a single ruled sheet, not tiles: `gap: 0`, container `border-top` + `border-left`, each cell `border-right` + `border-bottom`, all `--rule`. Cells are transparent; the one under the cursor lights with the same angled warm gradient. Nothing lifts.
@@ -444,7 +475,20 @@ Portraits and stills are treated as case photographs: `4 / 5` frame, `grayscale(
 A thin `--near-black` band bounded top and bottom by `--rule`, scrolling mono topics at `0.76rem / 0.2em` in 62% Bone with `rgba(204,0,0,0.55)` separators, on a 38s linear loop. It pauses on hover (WCAG 2.2.2) and is disabled entirely under `prefers-reduced-motion`. It is a supporting band, never a glowing neon sign.
 
 ### Motion
-Standard easing is `ease` at `0.2s` for colour/border state and `0.3s` for transform and shadow. The signature curve is `cubic-bezier(0.16, 1, 0.3, 1)` — used for scroll reveals (`opacity` + `translateY(26px)`, `0.8s`) and photo pushes. Entrances stagger by `0.2s` (`fadeInUp` at `0.2s / 0.4s / 0.6s / 0.8s` down the hero). Every one of these is neutralised under `prefers-reduced-motion: reduce`, and reveals fall back to fully visible when JS is absent so no-JS and crawler renders show complete content.
+Standard easing is `ease` at `0.2s` for colour/border state and `0.3s` for transform and shadow. The signature curve is `cubic-bezier(0.16, 1, 0.3, 1)`; entrances use `cubic-bezier(0.22, 1, 0.36, 1)`. Every one of these is neutralised under `prefers-reduced-motion: reduce`, and reveals fall back to fully visible when JS is absent so no-JS and crawler renders show complete content.
+
+**The Blind** (`blind-open`, `0.9s`) is the site's one entrance. Sections arrive as a shutter opening upward — `clip-path: inset(… 100% …)` → open — not by `opacity + translateY`, which is the default entrance of every template on the internet and says nothing about this film.
+
+Two implementation constraints, both load-bearing:
+
+- It is an **animation with no fill-mode**, never a transition. `clip-path` clips fixed-position descendants and creates a stacking context, so a persisted end state (`forwards` / `both`) would permanently box every revealed section. With no fill, `clip-path` reverts to `none` the instant the animation ends. Opacity therefore lives in a plain transition, because it has to survive the animation.
+- Horizontal insets are `-100vw` and the vertical rest state `-8rem`, so lamp washes that bleed past the gutter are never cropped mid-animation.
+
+**Develop** (`print-develop`, `0.75s`) staggers photographs so a grid deals its prints out one at a time rather than snapping in as a block. `--i` is set per item by the owning grid and capped at 10 steps × 55ms. Suppressed only while an enclosing `.reveal` is still closed, which covers both owners: Astro grids wait for their reveal, React grids (rendered after `astro:page-load`) develop on first paint.
+
+**The Rake** is red used as *light* rather than as a colour applied to a noun: a beam that crosses a section as the section crosses the viewport, driven by `animation-timeline: view()`. Strictly an enhancement — `animation-timeline` ships in Chromium and Safari but is still behind a flag in Firefox, so it sits inside `@supports` and carries no meaning, contrast or state. The Lit Section Rule applies: `.rake > *:not(.rake-beam)` is lifted to `z-index: 1` so content sits *in* the light, not under it.
+
+**The Portrait Morph** carries the clicked lineup print into the speaker dialog's photo via the View Transitions API. A `view-transition-name` must be on exactly one element per capture, and the name must already be painted before the capture — so opening is deliberately two renders (paint the name on the card, then start the transition in an effect) and the name is handed over *inside* the transition callback, wrapped in `flushSync` so the DOM has actually changed before the second capture. See `usePortraitMorph` in `Speakers.tsx`.
 
 ## Do's and Don'ts
 

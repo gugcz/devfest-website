@@ -96,6 +96,18 @@ export const SPEAKER_ICON_PATHS: Record<SpeakerLinkKind, string> = {
 	web: 'M19.902 4.098a3.75 3.75 0 0 0-5.304 0l-4.5 4.5a3.75 3.75 0 0 0 1.035 6.037.75.75 0 0 1-.646 1.353 5.25 5.25 0 0 1-1.449-8.45l4.5-4.5a5.25 5.25 0 1 1 7.424 7.424l-1.757 1.757a.75.75 0 1 1-1.06-1.06l1.757-1.757a3.75 3.75 0 0 0 0-5.304Zm-7.389 4.267a.75.75 0 0 1 1-.353 5.25 5.25 0 0 1 1.449 8.45l-4.5 4.5a5.25 5.25 0 1 1-7.424-7.424l1.757-1.757a.75.75 0 1 1 1.06 1.06l-1.757 1.757a3.75 3.75 0 1 0 5.304 5.304l4.5-4.5a3.75 3.75 0 0 0-1.035-6.037.75.75 0 0 1-.354-1Z',
 };
 
+/**
+ * Shared `view-transition-name` for the lineup print and the dialog photo, so
+ * the browser morphs one into the other. Lives here rather than in either
+ * component because both need it and importing it across them would make
+ * Speakers ⇄ SpeakerDetail a cycle.
+ *
+ * A view-transition-name must be on exactly ONE element per capture: if the
+ * card and the dialog both carry it the browser skips the transition. See
+ * `usePortraitMorph` in Speakers.tsx for the hand-off.
+ */
+export const PORTRAIT_TRANSITION = 'speaker-portrait';
+
 /** Two-letter monogram fallback when a speaker has no usable photo. */
 export function initials(name: string): string {
 	return name

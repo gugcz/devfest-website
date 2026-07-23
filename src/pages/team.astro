@@ -117,9 +117,11 @@ const tickerTopics = [
 		<section class="team-body" aria-label="Organising team">
 			<div class="team-inner">
 				<ul class="crew-grid reveal">
-					{cards.map(({ member, base, color }) => (
-						<li>
-							<article class="crew-card">
+					{cards.map(({ member, base, color }, i) => (
+						/* `--i` staggers the develop animation — see `.develop` in
+						   BaseLayout.scss. */
+						<li style={`--i: ${i}`}>
+							<article class="crew-card develop">
 								<div class="mugshot">
 									{base ? (
 										<>

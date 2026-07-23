@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { initials, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
+import { initials, PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
 import s from './SpeakerDetail.module.scss';
 
 /**
@@ -83,7 +83,9 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 					</svg>
 				</button>
 
-				<div className={s.media}>
+				{/* Receives the morph from the lineup print — see usePortraitMorph
+				    in Speakers.tsx for why the name lives here only while open. */}
+				<div className={s.media} style={{ viewTransitionName: PORTRAIT_TRANSITION }}>
 					{showPhoto ? (
 						<img
 							className={s.photo}

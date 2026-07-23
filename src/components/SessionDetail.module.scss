@@ -106,7 +106,7 @@
 
 .title {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.9rem, 3.6vw, 2.6rem);
+	font-size: var(--fs-h3);
 	line-height: 1.04;
 	letter-spacing: 0.02em;
 	color: var(--color-text);

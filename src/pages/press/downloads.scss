@@ -91,7 +91,7 @@
 	// section titles. Bebas stays for small card labels / numerics below.
 	.section-title {
 		font-family: var(--font-special-elite), cursive;
-		font-size: clamp(2rem, 4vw, 3rem);
+		font-size: var(--fs-h3);
 		line-height: 1.05;
 		letter-spacing: 0.01em;
 		text-transform: uppercase;

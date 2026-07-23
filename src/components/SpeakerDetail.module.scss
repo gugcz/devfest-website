@@ -110,7 +110,7 @@
 
 .monogram {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(3rem, 10vw, 4.6rem);
+	font-size: var(--fs-monogram);
 	letter-spacing: 0.08em;
 	color: rgba(242, 239, 233, 0.26);
 	user-select: none;
@@ -135,7 +135,7 @@
 
 .name {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(2.1rem, 4vw, 2.9rem);
+	font-size: var(--fs-h3);
 	line-height: 1;
 	letter-spacing: 0.03em;
 	color: var(--color-text);

@@ -36,6 +36,42 @@
 		gap: clamp(2rem, 3.4vw, 3rem) clamp(1.4rem, 2.4vw, 2.2rem);
 	}
 
+	/* ===================== THE LEAD FRAME ===================== */
+	// The lead organiser takes two columns and two rows. Eighteen identical
+	// mugshots is a roster with no subject; one large frame gives the page
+	// somewhere to start and is honest about who runs the thing — the first
+	// card is the Lead Org. Two rows rather than one tall one so the span
+	// measures exactly two cells plus the gap and the sheet stays level.
+	@media (min-width: 900px) {
+		.crew-grid > li:first-child {
+			grid-column: span 2;
+			grid-row: span 2;
+		}
+
+		.crew-grid > li:first-child .crew-card {
+			height: 100%;
+		}
+
+		// The print fills the resolved span height, so the fixed 4/5 has to go:
+		// at double width it would be double height and overshoot.
+		.crew-grid > li:first-child .mugshot {
+			aspect-ratio: auto;
+			flex: 1 1 auto;
+			min-height: 0;
+		}
+
+		// …and the caption must NOT grow, or it splits the free space with the
+		// print (both carry flex: 1 otherwise) and leaves a dead band under the
+		// lead's name where the photograph should be.
+		.crew-grid > li:first-child .crew-info {
+			flex: 0 0 auto;
+		}
+
+		.crew-grid > li:first-child .crew-name {
+			font-size: var(--fs-card-title);
+		}
+	}
+
 	/* ===================== PRINT + CAPTION ===================== */
 	// No panel, no shadow on the container, no matte frame, no lift. The
 	// photograph is the artifact and there is nothing around it. The cursor

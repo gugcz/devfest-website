@@ -88,7 +88,7 @@
 
 .label {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: clamp(0.78rem, 1vw, 0.9rem);
+	font-size: clamp(0.78rem, 1vw, 0.95rem);
 	letter-spacing: 0.28em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.55);
@@ -139,7 +139,7 @@
 		--card-tilt: 0deg;
 	}
 	.digit {
-		font-size: clamp(1.3rem, 5.4vw, 1.85rem);
+		font-size: clamp(1.4rem, 5.4vw, 1.85rem);
 		top: 60%;
 	}
 	.cardStamp {
