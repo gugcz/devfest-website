@@ -105,7 +105,7 @@ export default function Tickets() {
 					<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
 				</header>
 				<div className={s.empty} role="alert">
-					<p>Tickets are temporarily unavailable. Please check back soon.</p>
+					<p>The box office isn't answering. Reload, or buy direct on ti.to.</p>
 				</div>
 			</section>
 		);
@@ -170,7 +170,7 @@ export default function Tickets() {
 						Tickets
 					</p>
 					<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
-					<p className={s.subheading}>Tickets are not yet available.</p>
+					<p className={s.subheading}>The box office is closed. It opens with the first wave.</p>
 				</header>
 				<div className={s.empty}>
 					<p>Subscribe above to be notified when tickets go on sale.</p>

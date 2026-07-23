@@ -91,7 +91,7 @@ export default function Speakers() {
 	if (state.status === 'error') {
 		return (
 			<div className={s.status} role="alert">
-				<p>The lineup is temporarily unavailable. Please check back soon.</p>
+				<p>The lineup won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
 			</div>
 		);
 	}

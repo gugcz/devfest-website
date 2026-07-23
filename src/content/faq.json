@@ -41,7 +41,7 @@
 			},
 			{
 				"q": "Can I get an invoice for my company?",
-				"a": "Tickets are sold through ti.to, which emails a receipt as soon as you buy. For specific company billing details, contact <a href=\"mailto:devfest@gug.cz\">devfest@gug.cz</a>."
+				"a": "Yes. Request one on the <a href=\"/invoice\">invoice page</a> \u2014 we issue a proper invoice, you pay by bank transfer, and we send back a code that covers the tickets in full. If you can pay by card, ti.to emails a receipt the moment you buy."
 			}
 		]
 	},
