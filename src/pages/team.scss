@@ -21,58 +21,35 @@
 		margin: 0 auto;
 	}
 
-	// Contact sheet of mugshots — one ruled sheet, cells sharing hairlines.
-	// The crew is a wall of case photographs, not a row of profile cards.
+	// Mugshots laid out on the page — no cell, no panel, no rule around
+	// anybody. A ruled sheet (`gap: 0`, cells sharing hairlines) still draws a
+	// complete rectangle around every photograph, and a grid of outlined
+	// rectangles reads as exactly that however the edges are shared. The
+	// mugshot carries its own mount (bone keyline + shadow); alignment and an
+	// even rhythm do the rest. See Speakers.module.scss for the same note.
 	.crew-grid {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-		gap: 0;
-		border-top: 1px solid var(--rule);
-		border-left: 1px solid var(--rule);
+		grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+		gap: clamp(2rem, 3.4vw, 3rem) clamp(1.4rem, 2.4vw, 2.2rem);
 	}
 
-	/* ===================== CELL ===================== */
-	// No panel, no shadow, no matte frame, no lift. The photograph is the
-	// artifact; the cell is just its place on the sheet. The cursor
+	/* ===================== PRINT + CAPTION ===================== */
+	// No panel, no shadow on the container, no matte frame, no lift. The
+	// photograph is the artifact and there is nothing around it. The cursor
 	// colour-bleed on the mugshot stays — that is the team's one flourish.
 	.crew-card {
 		position: relative;
-		overflow: hidden;
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 0.9rem;
 		height: 100%;
-		padding: 1rem 1rem 1.25rem;
+		padding: 0;
 		border: 0;
-		border-right: 1px solid var(--rule);
-		border-bottom: 1px solid var(--rule);
 		border-radius: 0;
 		background: transparent;
-
-		// The cell under the cursor is the one the lamp is over.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.07) 0%,
-				rgba(255, 240, 226, 0.03) 42%,
-				transparent 86%
-			);
-			opacity: 0;
-			pointer-events: none;
-			z-index: 0;
-			transition: opacity 0.28s ease;
-		}
-
-		&:hover::before,
-		&:focus-within::before {
-			opacity: 1;
-		}
 	}
 
 	/* ===================== MUGSHOT ===================== */
@@ -170,7 +147,7 @@
 		flex-direction: column;
 		gap: 0.35rem;
 		flex: 1;
-		padding: 0 0.25rem;
+		padding: 0;
 	}
 
 	.crew-name {
@@ -297,15 +274,11 @@
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 600px) {
-		// `gap` is never reintroduced here: the cells carry only right/bottom
-		// hairlines, so any gap orphans them and the sheet falls back apart into
-		// floating tiles ruled on two sides — exactly the card grid it replaced.
 		.crew-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 		.crew-card {
-			padding: 0.8rem 0.8rem 1rem;
-			gap: 0.85rem;
+			gap: 0.75rem;
 		}
 		.crew-name {
 			font-size: var(--fs-title-sm);
@@ -314,7 +287,6 @@
 
 	@media (prefers-reduced-motion: reduce) {
 		.crew-card,
-		.crew-card::before,
 		.mugshot-color,
 		.crew-role-line,
 		.crew-link {

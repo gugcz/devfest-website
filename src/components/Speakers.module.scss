@@ -1,71 +1,51 @@
-// Speaker lineup — a contact sheet of evidence prints, the same primitive
-// /team and the partners logo wall use: one ruled sheet, cells sharing
-// hairlines, nothing floating and nothing lifting. What was here before was an
-// auto-fill card grid with a hover-lift, a red crop-bracket on every frame and
-// a "View profile →" chip repeated once per speaker — the generic profile-card
-// pattern wearing noir paint. The sheet is the object; the cells are places on
-// it. Global tokens come from BaseLayout.
+// Speaker lineup — prints laid out on the page, and nothing else. No cell, no
+// panel, no rule around anybody.
+//
+// This has now been wrong twice in the same direction. First it was an
+// auto-fill CARD grid: hover-lift, a red crop-bracket burned onto every frame,
+// a "View profile →" chip once per speaker. Replacing that with a ruled
+// contact sheet (`gap: 0`, cells sharing hairlines) fixed the card but kept
+// the box — shared edges still draw a complete rectangle around every single
+// photograph, and a grid of outlined rectangles reads as a grid of outlined
+// rectangles no matter how the edges are shared.
+//
+// A photograph does not need a container. It already carries its own mount —
+// a bone keyline for the print's border and a shadow that sits it on the page
+// — so the only thing a cell border could add is a second rectangle around the
+// first. Alignment and even rhythm make the grid; the prints ARE the grid.
 
 .grid {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-	// gap: 0 — cells share hairlines, so the grid reads as one sheet.
-	gap: 0;
-	border-top: 1px solid var(--rule);
-	border-left: 1px solid var(--rule);
+	grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+	gap: clamp(2rem, 3.4vw, 3rem) clamp(1.4rem, 2.4vw, 2.2rem);
 
 	> li {
 		display: flex;
 	}
 }
 
-/* ===================== CELL (button) ===================== */
+/* ===================== PRINT + CAPTION ===================== */
 .card {
 	position: relative;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 	margin: 0;
-	padding: 1rem 1rem 1.25rem;
+	padding: 0;
 	text-align: left;
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
 	background: transparent;
 	border: 0;
-	border-right: 1px solid var(--rule);
-	border-bottom: 1px solid var(--rule);
 	border-radius: 0;
-
-	// The cell under the cursor is the one the lamp is over — the system's
-	// single hover gesture. No lift: frames on a contact sheet don't rise.
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			104deg,
-			rgba(255, 244, 232, 0.07) 0%,
-			rgba(255, 240, 226, 0.03) 42%,
-			transparent 86%
-		);
-		opacity: 0;
-		pointer-events: none;
-		z-index: 0;
-		transition: opacity 0.28s ease;
-	}
-
-	&:hover::before,
-	&:focus-visible::before {
-		opacity: 1;
-	}
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: -2px;
+		outline-offset: 4px;
 	}
 }
 
@@ -184,17 +164,18 @@
 }
 
 /* ===================== CAPTION ===================== */
-// The file caption under the print, hung on a red hairline. Names and roles
-// are NOT clamped or height-matched: cells in a `gap: 0` grid already stretch
-// to the row, so the sheet stays square without truncating anybody's name.
+// Sits directly under the print on space alone. The red hairline that used to
+// hang it was one more drawn line repeated once per speaker; the bottom edge
+// of the photograph already ends the picture. Names and roles are NOT clamped
+// or height-matched — grid rows stretch, so the row below still starts level
+// however long a name runs.
 .body {
 	position: relative;
 	z-index: 1;
 	display: flex;
 	flex-direction: column;
-	padding: 0.8rem 0 0;
-	margin-top: 0.75rem;
-	border-top: 1px solid var(--rule-red);
+	padding: 0;
+	margin-top: 0.9rem;
 	background: none;
 }
 
@@ -232,25 +213,26 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-end;
 	width: 100%;
-	padding: 1rem 1rem 1.25rem;
-	border-right: 1px solid var(--rule);
-	border-bottom: 1px solid var(--rule);
+	padding: 0;
 	background: transparent;
 }
 
+// Carries the SAME mount as a real print — bone keyline, same shadow — so it
+// reads as a frame that hasn't been exposed yet rather than as an outlined
+// empty box sitting among borderless photographs.
 .moreFrame {
 	position: relative;
 	aspect-ratio: 4 / 5;
 	background: var(--panel-lit);
-	box-shadow: inset 0 0 0 1px var(--rule);
+	box-shadow:
+		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
+		0 10px 24px rgba(0, 0, 0, 0.5);
 }
 
 .moreBody {
-	padding: 0.8rem 0 0;
-	margin-top: 0.75rem;
-	border-top: 1px solid var(--rule);
+	padding: 0;
+	margin-top: 0.9rem;
 }
 
 .moreKicker {
@@ -316,15 +298,9 @@
 }
 
 /* ===================== RESPONSIVE ===================== */
-// The sheet stays a sheet at every width — `gap` is never reintroduced, or the
-// cells go back to floating with orphaned hairlines on two sides.
 @media (max-width: 600px) {
 	.grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-	.card,
-	.moreCard {
-		padding: 0.7rem 0.7rem 0.9rem;
 	}
 	.name,
 	.moreKicker {
@@ -332,8 +308,7 @@
 	}
 	.body,
 	.moreBody {
-		padding-top: 0.6rem;
-		margin-top: 0.6rem;
+		margin-top: 0.7rem;
 	}
 	.media::before,
 	.media::after {
@@ -352,7 +327,6 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.card,
-	.card::before,
 	.photo,
 	.name,
 	.vignette,
