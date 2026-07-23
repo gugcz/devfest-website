@@ -429,16 +429,30 @@
 		z-index: 1;
 	}
 
-	// Category label = flat red case-file tab.
+	// Folder divider tab — same treatment as the contact desks so the site has
+	// one tab, not two. Shape carries the case-file signal; the red fills in
+	// only for the desk under the pointer.
 	.card-label {
+		justify-self: start;
 		align-self: flex-start;
-		background: var(--color-accent);
-		color: var(--on-accent);
+		background: rgba(204, 0, 0, 0.08);
+		border: 1px solid var(--rule-red);
+		color: var(--color-accent-hot);
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.26em;
+		font-size: var(--fs-label-sm);
+		letter-spacing: 0.24em;
 		text-transform: uppercase;
-		padding: 0.42rem 0.72rem;
+		padding: 0.4rem 0.85rem 0.36rem 1.15rem;
+		clip-path: polygon(0.62rem 0, 100% 0, 100% 100%, 0 100%);
+		white-space: nowrap;
+		transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+	}
+
+	.desk-card:hover .card-label,
+	.desk-card:focus-within .card-label {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--on-accent);
 	}
 
 	.card-title {

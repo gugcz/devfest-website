@@ -109,8 +109,13 @@
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
 	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #060505 74%);
-	// Faint red hairline frame; corner brackets sit on top.
-	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.14);
+	// A mounted print. The bone keyline is the print's own white border and the
+	// shadow puts it ON something — stripping both left the photograph floating
+	// on flat black, which is when it stopped reading as an object in the file.
+	box-shadow:
+		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
+		inset 0 0 0 2px rgba(204, 0, 0, 0.12),
+		0 12px 28px rgba(0, 0, 0, 0.55);
 	transition: box-shadow 0.3s ease, transform 0.3s ease;
 
 	// Red crop-brackets: top-left (::before) and bottom-right (::after).
@@ -186,7 +191,11 @@
 .tile:hover .thumb,
 .tile:focus-visible .thumb {
 	transform: translateY(-3px);
-	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.5), var(--glow-red-soft);
+	box-shadow:
+		inset 0 0 0 1px rgba(240, 237, 230, 0.22),
+		inset 0 0 0 2px rgba(204, 0, 0, 0.5),
+		var(--glow-red-soft),
+		0 18px 36px rgba(0, 0, 0, 0.6);
 }
 
 .tile:hover .photo,

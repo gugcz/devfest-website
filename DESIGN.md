@@ -397,6 +397,27 @@ Components are **tactile and confident**: they lift, warm, and light when touche
 - **The compact entry (`.record--compact`):** a settled item collapsed to one line — index, title at `1.5rem`, a single `.record-summary` figure on the shared right axis, status. Explanatory copy and detail tables are dropped, not hidden: a wave you cannot buy needs to show that it existed and what it cost, not to sell itself. **Height is hierarchy** — giving every record equal room is what makes a ledger read long and flattens the one entry that matters. A three-wave ticket ledger runs ~454px with one full entry and two compact, against ~1839px with three full ones.
 - **`.record-table`:** the detail rows inside a record — label left, `.record-figure` right, `--rule-soft` between, full body width so figures stack into one right-hand axis.
 
+### Ticket stub (objects, not rows)
+
+**A ticket is an object, and objects are not rendered as ledger rows.** This is the same exception the countdown already holds — the bounded rectangle *is* the depicted thing — and it is the one place the ledger was applied wrongly and had to be taken back.
+
+Horizontal and short by design (~150px), so the height won by killing the card grid is kept: a real stub is wide, not tall.
+
+- **Counterfoil** (`4.75rem`): punch hole and a serial set **vertically**, the way it is printed down a torn edge.
+- **Perforation** (`.stubPerf`): round holes from a repeating radial-gradient — *not* a dashed border. A dashed rule is drafting-tool vocabulary; perforation is punched paper. Notches bite the edge where the tear line meets it.
+- **Live pass** (`.stubLive`): a red **ADMIT ONE** band across the head. This is the section's one red fill, so it lands on exactly one stub.
+- **Spent pass** (`.stubSpent`): cancelled with a hollow **VOID** on the counterfoil — where a real ticket is cancelled — never overprinted across the copy, which would take live text off its contrast.
+
+**The Object Test.** Before choosing a container, ask what the content *is*. A list of records (questions, sessions, desks) is a **ledger**. A thing you hold (a pass, a photograph, a logo plate, a downloadable asset) is an **object** and keeps its edges. Applying one container language to both is what made tickets read as a bank statement.
+
+### Mounted print (photographs)
+
+Speaker, team and teaser photographs are evidence prints, and they carry their mount: a bone keyline (`inset 0 0 0 1px rgba(240,237,230,0.16)`) for the print's own border, plus a real drop shadow so the print sits *on* something. Crop-brackets ride on top. Stripping the mount left photographs floating on flat black, which is exactly when they stopped reading as objects.
+
+### Case-file tab
+
+Category labels (contact desks, press desks) are **folder divider tabs**: an angled leading edge via `clip-path: polygon(0.62rem 0, …)`, red keyline, accent-hot mono. The **shape** carries the case-file signal so the red stays rationed — the tab fills solid `--color-accent` only for the desk under the pointer, rather than spending the accent fill three times on one page.
+
 ### Contact sheet (grids of artifacts)
 
 Logo walls and image grids use a single ruled sheet, not tiles: `gap: 0`, container `border-top` + `border-left`, each cell `border-right` + `border-bottom`, all `--rule`. Cells are transparent; the one under the cursor lights with the same angled warm gradient. Nothing lifts.
@@ -439,6 +460,8 @@ Standard easing is `ease` at `0.2s` for colour/border state and `0.3s` for trans
 
 ### Don't:
 - **Don't** build a card. No four-sided border, corner radius, panel fill and drop shadow around a block of content, and no `repeat(auto-fit, minmax(280px, 1fr))` grid of equal-height panels. Use a `.ledger` of `.record`s, or a contact sheet. This is the system's hardest rule: the card grid is what made the old build read as generic.
+- **Don't** flatten an object into a ledger row (**The Object Test**). A pass, a photograph, a logo plate and a downloadable asset keep their edges; only lists of records become rows. Over-applying the ledger is how tickets came to read as a bank statement.
+- **Don't** strip the material along with the container. Removing the card is not the same as removing the light, the mount, the grain or the tab — that mistake is what drained the noir out of the first ledger pass.
 - **Don't** express "unavailable" with `opacity` on content (**The No-Dimming Rule**).
 - **Don't** use a filled coloured chip for status. Status is a mono word on a rule; the red fill belongs to the one CTA on the page.
 - **Don't** give a record a hover-lift (`translateY(-4px)` + deeper shadow). The pull is horizontal and the mark is a rule.

@@ -267,10 +267,22 @@
       }
     ],
     "breakpoints": [
-      { "name": "hero-collapse", "value": "900px" },
-      { "name": "mobile", "value": "600px" },
-      { "name": "narrow", "value": "500px" },
-      { "name": "tiny", "value": "380px" }
+      {
+        "name": "hero-collapse",
+        "value": "900px"
+      },
+      {
+        "name": "mobile",
+        "value": "600px"
+      },
+      {
+        "name": "narrow",
+        "value": "500px"
+      },
+      {
+        "name": "tiny",
+        "value": "380px"
+      }
     ]
   },
   "components": [
@@ -368,6 +380,11 @@
     ],
     "rules": [
       {
+        "name": "The Object Test",
+        "body": "Before choosing a container, ask what the content IS. A list of records (questions, sessions, desks) is a ledger of rows. A thing you hold (a pass, a photograph, a logo plate, a downloadable asset) is an object and keeps its edges. Applying one container language to both is what made tickets read as a bank statement instead of a festival pass.",
+        "section": "components"
+      },
+      {
         "name": "The One Mark Rule",
         "body": "At most one red-lit element commands any given viewport. If a headline already has a lit word, the CTA in that same frame is the ghost variant, not the filled one. Red coverage stays under ~10% of any screen — its scarcity is the entire reason it works.",
         "section": "colors"
@@ -456,6 +473,8 @@
     ],
     "donts": [
       "Don't build a card. No four-sided border, corner radius, panel fill and drop shadow around a block of content, and no repeat(auto-fit, minmax(280px, 1fr)) grid of equal-height panels. Use a .ledger of .records, or a contact sheet.",
+      "Don't flatten an object into a ledger row (The Object Test). A pass, a photograph, a logo plate and a downloadable asset keep their edges; only lists of records become rows.",
+      "Don't strip the material along with the container. Removing the card is not the same as removing the light, the mount, the grain or the tab.",
       "Don't express \"unavailable\" with opacity on content (The No-Dimming Rule).",
       "Don't use a filled coloured chip for status. Status is a mono word on a rule; the red fill belongs to the one CTA on the page.",
       "Don't give a record a hover-lift. The pull is horizontal and the mark is a rule.",

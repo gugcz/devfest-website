@@ -90,6 +90,11 @@
 		width: 100%;
 		overflow: hidden;
 		background: var(--panel-lit);
+		// Mounted print — bone keyline plus a shadow so the photograph sits on
+		// the sheet rather than floating on flat black.
+		box-shadow:
+			inset 0 0 0 1px rgba(240, 237, 230, 0.16),
+			0 10px 24px rgba(0, 0, 0, 0.5);
 		display: flex;
 		align-items: center;
 		justify-content: center;

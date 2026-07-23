@@ -201,7 +201,7 @@ export default function Tickets() {
 				<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
 				<p className={s.subheading}>Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>
 			</header>
-			<ul className="ledger ledger--lamp" role="list">
+			<ul className={s.stubs} role="list">
 				{groupReleases(releases).map((group, i) => {
 					const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
 					const anyPurchasable = statuses.some((st) => st.purchasable);
@@ -211,95 +211,82 @@ export default function Tickets() {
 					const summary: ReleaseStatus | null = anyPurchasable
 						? null
 						: statuses.find((st) => st.tone !== 'sold-out') ?? statuses[0];
-					// The buyable wave is the lit entry — light carries the emphasis,
-					// so closed waves stay at full text contrast (WCAG 1.4.3) instead
-					// of being dimmed out of readability.
-					//
-					// A settled wave also collapses to a single line: its name, what it
-					// cost, and its state. Sales copy and the per-variant breakdown only
-					// earn their height on a wave you can still buy — giving a closed
-					// wave the same room is what made the section read as long.
-					const cls = [
-						'record',
-						anyPurchasable ? 'record--lit record--pull' : 'record--closed record--compact',
-					].join(' ');
-					const indexEl = (
-						<span className="record-index" aria-hidden="true">
-							{String(i + 1).padStart(2, '0')}
-						</span>
-					);
-					const statusEl = (
-						<div className="record-data">
-							<span className={`record-status ${anyPurchasable ? 'record-status--live' : ''}`}>
-								{anyPurchasable ? 'On sale' : summary?.label ?? 'Unavailable'}
-							</span>
-							{anyPurchasable && (
-								<a
-									className={s.cta}
-									href={eventUrl(accountSlug, eventSlug)}
-									target="_blank"
-									rel="noopener noreferrer"
-									aria-label={`Get ${group.name} tickets on ti.to`}
-								>
-									Get tickets
-									<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
-								</a>
-							)}
-						</div>
-					);
-
-					if (!anyPurchasable) {
-						const prices = group.variants
-							.map(({ release }) => priceDisplay(release)?.primary)
-							.filter((p): p is string => Boolean(p));
-						const unique = Array.from(new Set(prices));
-						return (
-							<li key={group.name} className={cls}>
-								{indexEl}
-								<div className="record-body">
-									<h3 className="record-title">{group.name}</h3>
-									{unique.length > 0 && (
-										<span className="record-summary">
-											<span className="record-figure">{unique[0]}</span>
-											{unique.length > 1 && <span className="record-row-note">and up</span>}
-										</span>
-									)}
-								</div>
-								{statusEl}
-							</li>
-						);
-					}
-
+					// A wave is a pass, so it renders as a stub. The live one carries the
+					// red admission band; a settled one is cancelled on its counterfoil,
+					// which keeps every word of copy at full contrast (WCAG 1.4.3) rather
+					// than overprinting VOID across live text.
+					const prices = group.variants
+						.map(({ release }) => priceDisplay(release))
+						.filter((p): p is NonNullable<typeof p> => Boolean(p));
+					const lead = prices[0];
+					const manyPrices = new Set(prices.map((p) => p.primary)).size > 1;
+					const description = groupDescription(group.name, group.description);
+					const serial = `N${'\u00B0'} ${String(i + 1).padStart(2, '0')}`;
 					return (
-						<li key={group.name} className={cls}>
-							{indexEl}
+						<li
+							key={group.name}
+							className={`${s.stub} ${anyPurchasable ? s.stubLive : s.stubSpent}`}
+						>
+							<span className={s.stubPerf} aria-hidden="true" />
+							<span className={`${s.stubNotch} ${s.stubNotchTop}`} aria-hidden="true" />
+							<span className={`${s.stubNotch} ${s.stubNotchBottom}`} aria-hidden="true" />
+							{anyPurchasable && (
+								<span className={s.stubBand} aria-hidden="true">
+									<span>Admit one</span>
+									<span>On sale</span>
+								</span>
+							)}
 
-							<div className="record-body">
-								<h3 className="record-title">{group.name}</h3>
-								{(() => {
-									const description = groupDescription(group.name, group.description);
-									return description && <p className="record-note">{description}</p>;
-								})()}
-								<ul className={s.variants}>
-									{group.variants.map(({ release, variantLabel }) => {
-										const label = variantLabel || releaseTitle(release);
-										const price = priceDisplay(release);
-										return (
-											<li key={release.id} className={s.variant}>
-												<span className={s.variantLabel}>{label}</span>
-												<span className={s.variantPriceBlock}>
-													<span className={s.variantPrice}>{price?.primary}</span>
-													{price?.secondary && (
-														<span className={s.variantVat}>{price.secondary}</span>
-													)}
-												</span>
-											</li>
-										);
-									})}
+							<span className={s.stubCounterfoil}>
+								<span className={s.stubPunch} aria-hidden="true" />
+								{anyPurchasable ? (
+									<span className={s.stubSerial} aria-hidden="true">{serial}</span>
+								) : (
+									<span className={s.stubVoid} aria-hidden="true">Void</span>
+								)}
+							</span>
+
+							<div className={s.stubBody}>
+								<h3 className={s.stubTitle}>{group.name}</h3>
+								{anyPurchasable && description && <p className={s.stubNote}>{description}</p>}
+								<ul className={s.stubGrants}>
+									{group.variants.map(({ release, variantLabel }, vi) => (
+										<li key={release.id}>
+											{vi > 0 && (
+												<span className={s.stubGrantSep} aria-hidden="true">{'/ '}</span>
+											)}
+											{variantLabel || releaseTitle(release)}
+										</li>
+									))}
 								</ul>
 							</div>
 
-							{statusEl}
+							<div className={s.stubEnd}>
+								{lead && (
+									<span>
+										<span className={s.stubPrice}>
+											{manyPrices ? `${lead.primary}+` : lead.primary}
+										</span>
+										{lead.secondary && (
+											<span className={s.stubVat}>{' '}{lead.secondary}</span>
+										)}
+									</span>
+								)}
+								{anyPurchasable ? (
+									<a
+										className={s.cta}
+										href={eventUrl(accountSlug, eventSlug)}
+										target="_blank"
+										rel="noopener noreferrer"
+										aria-label={`Get ${group.name} tickets on ti.to`}
+									>
+										Get tickets
+										<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
+									</a>
+								) : (
+									<span className="record-status">{summary?.label ?? 'Unavailable'}</span>
+								)}
+							</div>
 						</li>
 					);
 				})}

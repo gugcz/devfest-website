@@ -122,8 +122,13 @@
 		text-shadow: var(--glow-red-soft);
 	}
 
-	// Category tab — a mono word on a rule, matching .record-status. The red
-	// fill is reserved for the one CTA on a page; a desk label is not that.
+	// Folder divider tab. The angled leading edge is the case-file device the
+	// whole system is named after, and flattening every category label to a
+	// mono word on a rule left nothing on the site actually tabbed.
+	//
+	// The SHAPE carries the signal; the red stays rationed. A dark tab with a
+	// red keyline reads as a tab without spending the accent fill three times
+	// on one page — it fills solid only for the desk you are pointing at.
 	.card-label {
 		grid-row: 1;
 		grid-column: 3;
@@ -132,17 +137,20 @@
 		font-size: var(--fs-label-sm);
 		letter-spacing: 0.24em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.72);
-		padding-bottom: 0.3rem;
-		border-bottom: 1px solid var(--rule-strong);
+		color: var(--color-accent-hot);
+		background: rgba(204, 0, 0, 0.08);
+		border: 1px solid var(--rule-red);
+		padding: 0.4rem 0.85rem 0.36rem 1.15rem;
+		clip-path: polygon(0.62rem 0, 100% 0, 100% 100%, 0 100%);
 		white-space: nowrap;
-		transition: color 0.25s ease, border-color 0.25s ease;
+		transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 	}
 
 	.contact-card:hover .card-label,
 	.contact-card:focus-within .card-label {
-		color: var(--color-accent-hot);
-		border-bottom-color: var(--color-accent);
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--on-accent);
 	}
 
 	// Body column: title, description, then the addresses.

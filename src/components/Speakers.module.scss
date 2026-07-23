@@ -56,6 +56,12 @@
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
 	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #060505 74%);
+	// A mounted print: bone keyline for the print's own border, shadow to put
+	// it ON something. Without these the photograph floats on flat black and
+	// stops reading as a physical object in the file.
+	box-shadow:
+		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
+		0 12px 28px rgba(0, 0, 0, 0.55);
 
 	// Red crop-brackets: top-left (::before) and bottom-right (::after).
 	&::before,

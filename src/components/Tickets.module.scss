@@ -57,9 +57,274 @@
 	margin-top: 0.9rem;
 }
 
-// Ticket waves render as global .ledger / .record entries (BaseLayout.scss).
-// What remains here is the skeleton, which mirrors that ruled geometry so the
-// loading state doesn't briefly draw a card grid that no longer exists.
+/* ===================== TICKET STUBS ===================== */
+// A ticket is an OBJECT, not a row. The ledger is the right container for a
+// list of records — questions, sessions, desks — but a pass is a physical
+// thing you tear, punch and hand over, and rendering it as a table row strips
+// the one quality that makes it read as purchasable.
+//
+// This is the same exception DESIGN.md already grants the countdown: the
+// bounded rectangle IS the depicted object, not a box drawn around content.
+// Horizontal and short by design, so the height won by collapsing the old
+// card grid is kept — a real stub is wide, not tall.
+//
+//   [ serial · punch ][ perforation ][ wave + what's included ][ price · buy ]
+
+.stubs {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1.1rem;
+}
+
+.stub {
+	position: relative;
+	display: grid;
+	grid-template-columns: 4.75rem minmax(0, 1fr) auto;
+	align-items: center;
+	column-gap: clamp(1.4rem, 3vw, 2.6rem);
+	min-height: 9.5rem;
+	padding: 1.5rem 1.75rem 1.5rem 0;
+	background:
+		linear-gradient(104deg, rgba(255, 244, 232, 0.05) 0%, rgba(255, 240, 226, 0.02) 42%, transparent 86%),
+		var(--panel-lit);
+	border: 1px solid var(--rule);
+	border-radius: 0;
+	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.32s ease;
+}
+
+// The tear line. Round holes, not a dashed border — a dashed rule is
+// drafting-tool vocabulary; perforation is punched paper.
+.stubPerf {
+	position: absolute;
+	top: 0.55rem;
+	bottom: 0.55rem;
+	left: 4.75rem;
+	width: 2px;
+	background-image: radial-gradient(
+		circle at 1px 3px,
+		rgba(240, 237, 230, 0.34) 0 1.5px,
+		transparent 1.6px
+	);
+	background-size: 2px 9px;
+	background-repeat: repeat-y;
+	pointer-events: none;
+}
+
+// Bite taken out of the edge where the tear line meets it.
+.stubNotch {
+	position: absolute;
+	left: 4.75rem;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background: var(--color-bg);
+	border: 1px solid var(--rule);
+	transform: translateX(-50%);
+	pointer-events: none;
+}
+
+.stubNotchTop { top: -8px; clip-path: inset(50% 0 0 0); }
+.stubNotchBottom { bottom: -8px; clip-path: inset(0 0 50% 0); }
+
+// The tear-off counterfoil: serial set vertically, the way it is printed on a
+// real stub so it reads down the torn edge.
+.stubCounterfoil {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.7rem;
+	height: 100%;
+	padding-left: 0.5rem;
+}
+
+.stubSerial {
+	writing-mode: vertical-rl;
+	text-orientation: mixed;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-xs);
+	letter-spacing: 0.32em;
+	text-transform: uppercase;
+	font-variant-numeric: tabular-nums;
+	color: rgba(240, 237, 230, 0.55);
+	white-space: nowrap;
+}
+
+.stubPunch {
+	width: 11px;
+	height: 11px;
+	border-radius: 50%;
+	border: 1px solid rgba(240, 237, 230, 0.28);
+	flex-shrink: 0;
+}
+
+/* ---- body ---- */
+.stubBody {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	min-width: 0;
+	padding-left: 0.3rem;
+}
+
+.stubTitle {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: clamp(1.85rem, 3.2vw, 2.6rem);
+	letter-spacing: 0.05em;
+	line-height: 1;
+	color: var(--color-text);
+	margin: 0;
+}
+
+.stubNote {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-ui);
+	line-height: 1.55;
+	color: rgba(240, 237, 230, 0.72);
+	max-width: 44ch;
+	margin: 0;
+}
+
+// Admission line — what the pass grants, set as one mono row.
+.stubGrants {
+	list-style: none;
+	margin: 0.15rem 0 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.55rem;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-sm);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+}
+
+.stubGrantSep {
+	color: var(--rule-red);
+}
+
+/* ---- price + action ---- */
+.stubEnd {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.75rem;
+	text-align: right;
+}
+
+.stubPrice {
+	font-family: var(--font-bebas-neue), sans-serif;
+	// The documented `numeric` role verbatim — a price on a pass is the same
+	// register as a countdown digit, so it uses that step rather than a
+	// one-off clamp endpoint.
+	font-size: clamp(2.2rem, 3vw, 3.6rem);
+	letter-spacing: 0.04em;
+	line-height: 0.9;
+	color: var(--color-text);
+}
+
+.stubVat {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-xs);
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+}
+
+/* ---- the live pass ---- */
+// Red overprint band across the head of the stub — the ADMIT ONE bar. This is
+// the one red fill in the section, so it lands on exactly one stub.
+.stubLive {
+	border-color: var(--rule-red);
+	background:
+		linear-gradient(104deg, rgba(255, 244, 232, 0.085) 0%, rgba(255, 240, 226, 0.04) 38%, transparent 88%),
+		radial-gradient(ellipse 60% 120% at 8% 50%, rgba(204, 0, 0, 0.1), transparent 72%),
+		var(--panel-lit);
+	box-shadow: var(--glow-red-soft);
+
+	&:hover {
+		transform: translateY(-2px);
+		border-color: var(--color-accent);
+	}
+}
+
+.stubBand {
+	position: absolute;
+	top: 0;
+	left: 4.75rem;
+	right: 0;
+	height: 1.55rem;
+	background: var(--color-accent);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 0.9rem;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-xs);
+	letter-spacing: 0.3em;
+	text-transform: uppercase;
+	color: var(--on-accent);
+	pointer-events: none;
+}
+
+.stubLive .stubBody,
+.stubLive .stubEnd {
+	padding-top: 1.5rem;
+}
+
+/* ---- a spent pass ---- */
+// VOID lands on the counterfoil, where a real ticket is cancelled — not
+// overprinted across the copy, which would take live text off its contrast.
+.stubSpent {
+	border-style: solid;
+	border-color: var(--rule-soft);
+	background: var(--panel-lit-2);
+}
+
+.stubVoid {
+	writing-mode: vertical-rl;
+	text-orientation: mixed;
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-figure);
+	letter-spacing: 0.22em;
+	color: transparent;
+	-webkit-text-stroke: 1px rgba(204, 0, 0, 0.55);
+	white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+	.stub {
+		grid-template-columns: 3.25rem minmax(0, 1fr);
+		row-gap: 1.1rem;
+		padding: 1.3rem 1.2rem 1.3rem 0;
+	}
+
+	.stubPerf,
+	.stubNotch,
+	.stubBand { left: 3.25rem; }
+
+	.stubEnd {
+		grid-column: 2;
+		align-items: flex-start;
+		text-align: left;
+		width: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stub,
+	.stubLive:hover {
+		transition: none;
+		transform: none;
+	}
+}
+
+// The loading skeleton mirrors the stub geometry so nothing reflows on load.
 .skelLedger {
 	list-style: none;
 	padding: 0;
