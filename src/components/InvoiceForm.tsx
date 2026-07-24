@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
+	fetchTickets,
 	filterDisplayable,
 	formatPrice,
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
-	type TicketsCache,
 	type TitoRelease,
 } from '../lib/tito';
 import s from './InvoiceForm.module.scss';
@@ -58,31 +58,20 @@ export default function InvoiceForm() {
 	const [message, setMessage] = useState('');
 	const [release, setRelease] = useState<TitoRelease | null>(null);
 
-	// Read the company-funded price from the public RTDB cache for an
-	// estimate. The authoritative price is computed server-side at invoice
-	// time — this is display only.
+	// Read the company-funded price from the cached `/api/tickets` endpoint for an
+	// estimate. The authoritative price is computed server-side at invoice time —
+	// this is display only, so failures are ignored.
 	useEffect(() => {
-		let cancelled = false;
-		(async () => {
-			try {
-				const [{ getDb }, { onValue, ref }] = await Promise.all([
-					import('../lib/firebase'),
-					import('firebase/database'),
-				]);
-				if (cancelled) return;
-				const ticketsRef = ref(getDb(), 'tickets');
-				onValue(ticketsRef, (snap) => {
-					const data = snap.val() as TicketsCache | null;
-					if (!data) return;
-					setRelease(findCompanyRelease(filterDisplayable(data.releases ?? [])));
-				});
-			} catch {
-				// Estimate is optional; ignore failures.
-			}
-		})();
-		return () => {
-			cancelled = true;
-		};
+		const ac = new AbortController();
+		fetchTickets(ac.signal)
+			.then((data) => {
+				if (!data) return;
+				setRelease(findCompanyRelease(filterDisplayable(data.releases ?? [])));
+			})
+			.catch(() => {
+				// Estimate is optional; ignore failures (including aborts).
+			});
+		return () => ac.abort();
 	}, []);
 
 	const estimate = useMemo(() => {

@@ -6,3 +6,4 @@
 export { refreshTitoCache } from './refresh-cache.js';
 export { titoWebhook } from './notify-purchase.js';
 export { weeklyTicketStatus, thursdayTicketStatus } from './weekly-status.js';
+export { ticketsApi } from './tickets-api.js';

@@ -6,8 +6,21 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
+import { SPEAKERS, SESSIONS, TICKETS } from './a11y-mocks/fixtures.mjs';
 
 const DIST = path.resolve('dist');
+
+// The islands fetch their data from cached `/api/*` endpoints (Hosting rewrites
+// them to Cloud Functions in production). CI has no functions, so the harness
+// serves the same shapes from fixtures so the grids, ticket waves, and modal
+// flows get audited.
+const API_FIXTURES = {
+	'/api/lineup': JSON.stringify({
+		speakers: SPEAKERS.map((s) => ({ id: s.id, ...s.data })),
+		sessions: SESSIONS.map((s) => ({ id: s.id, ...s.data })),
+	}),
+	'/api/tickets': JSON.stringify(TICKETS),
+};
 const PORT = 4321;
 const PATHS = [
 	'/',
@@ -58,6 +71,12 @@ function resolveFile(reqUrl) {
 
 async function startServer() {
 	const server = createServer(async (req, res) => {
+		const reqPath = (req.url ?? '/').split('?')[0];
+		if (reqPath in API_FIXTURES) {
+			res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+			res.end(API_FIXTURES[reqPath]);
+			return;
+		}
 		const file = resolveFile(req.url ?? '/');
 		if (!file) {
 			res.writeHead(404, { 'Content-Type': 'text/plain' });

@@ -1,15 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import { initials } from '../lib/speakers';
+import { initials, type Speaker } from '../lib/speakers';
 import {
 	collectFacets,
 	hasActiveFilters,
-	isDisplayableSession,
 	matchesFilters,
-	sessionFromDoc,
 	visitorCategories,
 	type Session,
 	type SessionFilters,
 } from '../lib/sessions';
+import { fetchLineup } from '../lib/lineup';
 import SessionDetail from './SessionDetail';
 import s from './Sessions.module.scss';
 
@@ -87,52 +86,28 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 
 export default function Sessions() {
 	const [state, setState] = useState<State>(INITIAL);
+	// Full speaker profiles keyed by id, from the same /api/lineup fetch, so the
+	// session → speaker drill-down in SessionDetail renders from data already on
+	// the page instead of a second read.
+	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
 	const [selected, setSelected] = useState<Session | null>(null);
 	const [query, setQuery] = useState('');
 	const [filters, setFilters] = useState<SessionFilters>({});
 
 	useEffect(() => {
-		let unsubscribe: (() => void) | null = null;
-		let cancelled = false;
-		(async () => {
-			try {
-				const [{ getFirestoreDb }, { collection, onSnapshot, orderBy, query: fsQuery }] =
-					await Promise.all([import('../lib/firebase'), import('firebase/firestore')]);
-				if (cancelled) return;
-				const db = getFirestoreDb();
-				const sessionsQuery = fsQuery(collection(db, 'sessions'), orderBy('order'));
-				unsubscribe = onSnapshot(
-					sessionsQuery,
-					(snapshot) => {
-						const sessions = snapshot.docs
-							.map((doc) => sessionFromDoc(doc.id, doc.data()))
-							.filter(isDisplayableSession);
-						setState({ status: sessions.length > 0 ? 'ready' : 'empty', sessions });
-					},
-					(err) => {
-						console.warn('[sessions] Failed to read sessions from Firestore:', err);
-						setState((prev) => ({ ...prev, status: 'error' }));
-					},
-				);
-			} catch (err) {
-				console.warn('[sessions] Failed to load Firebase modules:', err);
-				if (!cancelled) setState((prev) => ({ ...prev, status: 'error' }));
-			}
-		})();
-		return () => {
-			cancelled = true;
-			unsubscribe?.();
-		};
+		const ac = new AbortController();
+		fetchLineup(ac.signal)
+			.then(({ sessions, speakers }) => {
+				setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
+				setState({ status: sessions.length > 0 ? 'ready' : 'empty', sessions });
+			})
+			.catch((err) => {
+				if (ac.signal.aborted) return;
+				console.warn('[sessions] Failed to load lineup:', err);
+				setState((prev) => ({ ...prev, status: 'error' }));
+			});
+		return () => ac.abort();
 	}, []);
-
-	// If the live list changes while a session is open, keep the dialog in sync
-	// (or close it if that session is gone).
-	useEffect(() => {
-		if (!selected) return;
-		const fresh = state.sessions.find((se) => se.id === selected.id);
-		if (fresh && fresh !== selected) setSelected(fresh);
-		else if (!fresh && state.status === 'ready') setSelected(null);
-	}, [state.sessions, state.status, selected]);
 
 	const facets = useMemo(() => collectFacets(state.sessions), [state.sessions]);
 	const filtered = useMemo(
@@ -265,7 +240,13 @@ export default function Sessions() {
 					)}
 				</ul>
 			)}
-			{selected && <SessionDetail session={selected} onClose={() => setSelected(null)} />}
+			{selected && (
+				<SessionDetail
+					session={selected}
+					speakersById={speakersById}
+					onClose={() => setSelected(null)}
+				/>
+			)}
 		</>
 	);
 }

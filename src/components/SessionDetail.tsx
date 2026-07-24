@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { initials, speakerFromDoc, type Speaker } from '../lib/speakers';
+import { initials, type Speaker } from '../lib/speakers';
 import { visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
 import SpeakerDetail from './SpeakerDetail';
 import s from './SessionDetail.module.scss';
 
 /**
  * A session only embeds a lightweight speaker summary (id, name, tagline,
- * photo). Widen it to a `Speaker` so the row can open `SpeakerDetail` instantly;
- * `openSpeaker` then enriches it (bio, links, talks) from the `speakers/{id}`
- * doc in the background.
+ * photo). Widen it to a `Speaker` so the row can open `SpeakerDetail` even when
+ * the full profile isn't in the `speakersById` map (fallback).
  */
 function speakerFromRef(ref: SessionSpeakerRef): Speaker {
 	return {
@@ -50,7 +49,15 @@ function SpeakerAvatar({ speaker }: { speaker: SessionSpeakerRef }) {
  * Traps focus, closes on Esc / backdrop click, locks body scroll, and
  * restores focus to the triggering card on close (mirrors `SpeakerDetail`).
  */
-export default function SessionDetail({ session, onClose }: { session: Session; onClose: () => void }) {
+export default function SessionDetail({
+	session,
+	speakersById,
+	onClose,
+}: {
+	session: Session;
+	speakersById: Record<string, Speaker>;
+	onClose: () => void;
+}) {
 	const dialogRef = useRef<HTMLDivElement>(null);
 
 	// A speaker sub-dialog stacked on top of this one. Opened from a speaker row,
@@ -63,25 +70,14 @@ export default function SessionDetail({ session, onClose }: { session: Session; 
 
 	const closeSpeaker = useCallback(() => setActiveSpeaker(null), []);
 
-	const openSpeaker = useCallback(async (ref: SessionSpeakerRef) => {
-		// Open immediately with what the session already knows; fill in the rich
-		// fields once the speaker doc arrives.
-		setActiveSpeaker(speakerFromRef(ref));
-		try {
-			const [{ getFirestoreDb }, { doc, getDoc }] = await Promise.all([
-				import('../lib/firebase'),
-				import('firebase/firestore'),
-			]);
-			const snap = await getDoc(doc(getFirestoreDb(), 'speakers', ref.id));
-			if (!snap.exists()) return;
-			const full = speakerFromDoc(snap.id, snap.data());
-			// Only replace if the same speaker is still open (user may have closed it
-			// or opened another before the fetch resolved).
-			setActiveSpeaker((current) => (current && current.id === full.id ? full : current));
-		} catch (err) {
-			console.warn('[session-detail] Failed to load speaker profile:', err);
-		}
-	}, []);
+	const openSpeaker = useCallback(
+		(ref: SessionSpeakerRef) => {
+			// Prefer the full profile (bio, links, talks) from the lineup fetch; fall
+			// back to the session's embedded summary if it isn't in the map.
+			setActiveSpeaker(speakersById[ref.id] ?? speakerFromRef(ref));
+		},
+		[speakersById],
+	);
 
 	useEffect(() => {
 		const previouslyFocused = document.activeElement as HTMLElement | null;

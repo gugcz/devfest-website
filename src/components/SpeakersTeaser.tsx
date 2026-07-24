@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { initials, speakerFromDoc, type Speaker } from '../lib/speakers';
+import { initials, type Speaker } from '../lib/speakers';
+import { fetchLineup } from '../lib/lineup';
 import s from './SpeakersTeaser.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
@@ -67,7 +68,8 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 /**
  * Home-page "case wall": a small set of speaker mugshots that rotates through
  * the full roster over time, plus a link to the full /speakers page. Renders
- * nothing until Firestore is ready so the home page stays clean pre-announce.
+ * nothing until the lineup fetch resolves (and on an empty roster) so the home
+ * page stays clean pre-announce.
  */
 export default function SpeakersTeaser() {
 	const [speakers, setSpeakers] = useState<Speaker[]>([]);
@@ -77,38 +79,18 @@ export default function SpeakersTeaser() {
 	const reduceMotion = usePrefersReducedMotion();
 
 	useEffect(() => {
-		let unsubscribe: (() => void) | null = null;
-		let cancelled = false;
-		(async () => {
-			try {
-				const [{ getFirestoreDb }, { collection, onSnapshot, orderBy, query }] = await Promise.all([
-					import('../lib/firebase'),
-					import('firebase/firestore'),
-				]);
-				if (cancelled) return;
-				const db = getFirestoreDb();
-				const speakersQuery = query(collection(db, 'speakers'), orderBy('order'));
-				unsubscribe = onSnapshot(
-					speakersQuery,
-					(snapshot) => {
-						const next = snapshot.docs.map((doc) => speakerFromDoc(doc.id, doc.data()));
-						setSpeakers(next);
-						setStatus(next.length > 0 ? 'ready' : 'empty');
-					},
-					(err) => {
-						console.warn('[speakers-teaser] Failed to read speakers from Firestore:', err);
-						setStatus('error');
-					},
-				);
-			} catch (err) {
-				console.warn('[speakers-teaser] Failed to load Firebase modules:', err);
-				if (!cancelled) setStatus('error');
-			}
-		})();
-		return () => {
-			cancelled = true;
-			unsubscribe?.();
-		};
+		const ac = new AbortController();
+		fetchLineup(ac.signal)
+			.then(({ speakers: next }) => {
+				setSpeakers(next);
+				setStatus(next.length > 0 ? 'ready' : 'empty');
+			})
+			.catch((err) => {
+				if (ac.signal.aborted) return;
+				console.warn('[speakers-teaser] Failed to load lineup:', err);
+				setStatus('error');
+			});
+		return () => ac.abort();
 	}, []);
 
 	// Shuffle once per roster so the starting window — and rotation order — is

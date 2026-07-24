@@ -96,9 +96,6 @@ export const SPEAKERS = [
 	},
 ];
 
-/** Firestore `speakers/{id}` lookup for the session-detail speaker enrichment. */
-export const SPEAKERS_BY_ID = Object.fromEntries(SPEAKERS.map((s) => [s.id, s]));
-
 /** Firestore `sessions` collection — raw docs (pre-ordered by `order`). */
 export const SESSIONS = [
 	{

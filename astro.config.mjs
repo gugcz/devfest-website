@@ -22,18 +22,17 @@ const PRIORITY = {
     'https://devfest.cz/privacy-policy': 0.3,
 };
 
-// Accessibility-audit mock mode. The public lineup (Firestore speakers /
-// sessions) and ticket cache (RTDB) are gated behind App Check + read rules
-// that block CI, so the axe sweep only ever sees the "temporarily unavailable"
-// error state. Under A11Y_MOCK=1, swap the Firebase read modules for the fixture
-// replayers in scripts/a11y-mocks/ so the hydrated content gets audited. Off by
-// default — a normal build never resolves these aliases.
+// Accessibility-audit mock mode. All page data (speakers, sessions, tickets) is
+// fetched from cached `/api/*` endpoints, which scripts/a11y.mjs serves from
+// fixtures — no Firebase SDK on the content path. The one Firebase module still
+// pulled in is App Check (reCAPTCHA Enterprise), which `initAnalytics` triggers
+// on every page load; under A11Y_MOCK=1 we alias `firebase/app-check` to a
+// no-op so headless CI doesn't try to load reCAPTCHA. Off by default — a normal
+// build never resolves this alias.
 const a11yMock = process.env.A11Y_MOCK === '1';
 const mock = (rel) => fileURLToPath(new URL(rel, import.meta.url));
 const a11yMockAlias = a11yMock
     ? {
-          'firebase/firestore': mock('./scripts/a11y-mocks/firestore.mjs'),
-          'firebase/database': mock('./scripts/a11y-mocks/database.mjs'),
           'firebase/app-check': mock('./scripts/a11y-mocks/app-check.mjs'),
       }
     : {};

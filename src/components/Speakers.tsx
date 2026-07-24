@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { initials, speakerFromDoc, type Speaker } from '../lib/speakers';
+import { initials, type Speaker } from '../lib/speakers';
+import { fetchLineup } from '../lib/lineup';
 import SpeakerDetail from './SpeakerDetail';
 import s from './Speakers.module.scss';
 
@@ -74,47 +75,18 @@ export default function Speakers() {
 	const [selected, setSelected] = useState<Speaker | null>(null);
 
 	useEffect(() => {
-		let unsubscribe: (() => void) | null = null;
-		let cancelled = false;
-		(async () => {
-			try {
-				const [{ getFirestoreDb }, { collection, onSnapshot, orderBy, query }] = await Promise.all([
-					import('../lib/firebase'),
-					import('firebase/firestore'),
-				]);
-				if (cancelled) return;
-				const db = getFirestoreDb();
-				const speakersQuery = query(collection(db, 'speakers'), orderBy('order'));
-				unsubscribe = onSnapshot(
-					speakersQuery,
-					(snapshot) => {
-						const speakers = snapshot.docs.map((doc) => speakerFromDoc(doc.id, doc.data()));
-						setState({ status: speakers.length > 0 ? 'ready' : 'empty', speakers });
-					},
-					(err) => {
-						console.warn('[speakers] Failed to read speakers from Firestore:', err);
-						setState((prev) => ({ ...prev, status: 'error' }));
-					},
-				);
-			} catch (err) {
-				console.warn('[speakers] Failed to load Firebase modules:', err);
-				if (!cancelled) setState((prev) => ({ ...prev, status: 'error' }));
-			}
-		})();
-		return () => {
-			cancelled = true;
-			unsubscribe?.();
-		};
+		const ac = new AbortController();
+		fetchLineup(ac.signal)
+			.then(({ speakers }) => {
+				setState({ status: speakers.length > 0 ? 'ready' : 'empty', speakers });
+			})
+			.catch((err) => {
+				if (ac.signal.aborted) return;
+				console.warn('[speakers] Failed to load lineup:', err);
+				setState((prev) => ({ ...prev, status: 'error' }));
+			});
+		return () => ac.abort();
 	}, []);
-
-	// If the live list changes while a speaker is open, keep the dialog in sync
-	// (or close it if that speaker is gone).
-	useEffect(() => {
-		if (!selected) return;
-		const fresh = state.speakers.find((sp) => sp.id === selected.id);
-		if (fresh && fresh !== selected) setSelected(fresh);
-		else if (!fresh && state.status === 'ready') setSelected(null);
-	}, [state.speakers, state.status, selected]);
 
 	if (state.status === 'error') {
 		return (
