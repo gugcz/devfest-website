@@ -780,37 +780,24 @@
 	// Scroll reveal — only hidden when JS is present (the inline `js` class on
 	// <html>); no-JS / SEO render fully visible. IntersectionObserver toggles
 	// .is-visible.
-	// THE BLIND. Every section used to arrive by opacity + translateY(26px),
-	// which is the default entrance of every template on the internet and says
-	// nothing about this film. A shutter opening upward does, it costs two
-	// declarations, and it runs entirely on the compositor.
 	//
-	// Deliberately an ANIMATION with no fill-mode rather than a transition:
-	// `clip-path` clips fixed-position descendants and creates a stacking
-	// context, so a persisted end state (`forwards`/`both`) would permanently
-	// box every revealed section. With no fill, `clip-path` reverts to `none`
-	// the moment the animation ends and the element is left completely
-	// unclipped. Opacity is a plain transition for exactly the same reason —
-	// it has to survive the animation, so it cannot live in the keyframes.
-	//
-	// The horizontal insets are -100vw and the vertical rest state is -8rem so
-	// the lamp washes that bleed past the gutter (`inset: -2rem calc(-1 *
-	// var(--gutter))`) are never cropped mid-animation.
+	// A quiet fade with a short rise. Both properties are compositor-cheap and,
+	// unlike the clip-path shutter this replaced, a transform never clips or
+	// boxes anything — and because the resting state is `transform: none` there
+	// is no lingering containing block once the reveal settles. The observer
+	// (see BaseLayout.astro) fires it early, before the section is fully in
+	// view, so it reads as already-there rather than arriving late.
 	.js .reveal {
 		opacity: 0;
-		transition: opacity 0.55s ease;
+		transform: translateY(16px);
+		transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 	.js .reveal.is-visible {
 		opacity: 1;
-		animation: blind-open 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+		transform: none;
 	}
 
-	@keyframes blind-open {
-		from { clip-path: inset(-8rem -100vw 100% -100vw); }
-		to   { clip-path: inset(-8rem -100vw -8rem -100vw); }
-	}
-
-	// Prints develop one after another rather than all at once. `--i` is set
+	// Prints fade in one after another rather than all at once. `--i` is set
 	// per item by the grid that owns them; anything without it starts at zero,
 	// so this is inert wherever it isn't wired up. Capped at 10 steps so a long
 	// roster never leaves the last face waiting.
@@ -818,27 +805,21 @@
 	// Two owners with different timing needs, one class. Astro grids sit inside
 	// a `.reveal` and must wait for it; React grids (speakers, the home wall)
 	// render after `astro:page-load` has already run the observer, so they are
-	// never inside a `.reveal` and simply develop on first paint. Suppressing
+	// never inside a `.reveal` and simply fade in on first paint. Suppressing
 	// the animation only while a reveal is still closed covers both — otherwise
-	// an Astro grid would develop behind an opacity-0 parent and be over before
+	// an Astro grid would fade behind an opacity-0 parent and be over before
 	// anyone saw it.
 	.js .develop {
-		animation: print-develop 0.75s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+		animation: print-fade 0.6s ease backwards;
 		animation-delay: calc(min(var(--i, 0), 10) * 55ms);
 	}
 	.js .reveal:not(.is-visible) .develop {
 		animation: none;
 	}
 
-	@keyframes print-develop {
-		from {
-			opacity: 0;
-			clip-path: inset(0 0 100% 0);
-		}
-		to {
-			opacity: 1;
-			clip-path: inset(0 0 0 0);
-		}
+	@keyframes print-fade {
+		from { opacity: 0; transform: translateY(12px); }
+		to   { opacity: 1; transform: none; }
 	}
 
 	@keyframes ember-pulse {
@@ -875,7 +856,14 @@
 
 			.rake > .rake-beam {
 				position: absolute;
-				inset: 0;
+				// Full-bleed. The tickets section is a max-width, centred column,
+				// so a beam at `inset: 0` stopped at 1200px and left the page
+				// black on both sides — the light read as a padded box. The
+				// horizontal inset breaks it out to the viewport edges;
+				// `50% - 50vw` is zero on a full-width `.rake` (speakers) and
+				// negative on a centred one (tickets). Safe from horizontal
+				// scroll because html carries `overflow-x: clip`.
+				inset: 0 calc(50% - 50vw);
 				pointer-events: none;
 				z-index: 0;
 				background: linear-gradient(
@@ -915,8 +903,8 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.js .reveal { opacity: 1; transition: none; animation: none; }
-		.js .reveal.is-visible .develop { animation: none; }
+		.js .reveal { opacity: 1; transform: none; transition: none; }
+		.js .develop { animation: none; }
 		.rake > .rake-beam { display: none; }
 
 		// The ledger's pull and its red mark are both motion. Without them the

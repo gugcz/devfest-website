@@ -339,8 +339,12 @@ const jsonLd = JSON.stringify(
 					// threshold 0 (not 0.12): a tall single-column .reveal grid on
 					// mobile can exceed viewport/0.12 in height, so a 12% ratio is
 					// never reached and the block stays invisible. Fire as soon as
-					// any pixel crosses the -12% bottom line instead.
-					{ rootMargin: '0px 0px -12% 0px', threshold: 0 }
+					// any pixel crosses the line instead.
+					//
+					// Positive bottom margin grows the root downward, so a section
+					// reveals ~15% of viewport height BEFORE it reaches the fold —
+					// it reads as already there rather than arriving late.
+					{ rootMargin: '0px 0px 15% 0px', threshold: 0 }
 				);
 				reveals.forEach((el) => io.observe(el));
 				// Drop the observer before the next swap so it doesn't keep the
