@@ -297,14 +297,14 @@ Fluid steps sit alongside them and are *not* literals:
 
 | Token | Value | Job |
 |---|---|---|
-| `--fs-display` | `clamp(3.4rem, 11.5vw, 8.5rem)` | poster scale — the subpage hero title, **once per page** |
+| `--fs-display` | `clamp(2.6rem, 6.5vw, 5rem)` | poster scale — the subpage hero title, **once per page** |
 | `--fs-hero` | `clamp(2.6rem, 6vw, 5rem)` | in-page hero headline |
 | `--fs-h2` | `clamp(2.2rem, 4.8vw, 4rem)` | in-page section headline |
 | `--fs-h3` | `clamp(1.9rem, 4vw, 2.4rem)` | sub-section: dialog names, press-kit section titles, session detail heads |
 
-**The One-Poster Rule.** `--fs-display` appears at most **once per page**, on the subpage hero title and nothing else. Every headline on the site used to sit inside a single octave, so nothing ever read as loud; a noir one-sheet runs its title an order of magnitude over the body and that contrast *is* the genre. A second display-scale element on the same page cancels the first. Leading tightens as size grows (`0.92` at display scale) — the `1.04` that suited 5rem opens into a gap at 8.5rem.
+**The One-Poster Rule.** `--fs-display` appears at most **once per page**, on the subpage hero title and nothing else. Every headline on the site used to sit inside a single octave, so nothing ever read as loud; a noir one-sheet runs its title over the body and that contrast *is* the genre. A second display-scale element on the same page cancels the first. It is deliberately restrained (`5rem` cap, not the `8.5rem` first tried): the louder size filled the hero and pushed the fold down so the page always needed a scroll to reach its content. It stays the biggest thing on the page without owning the viewport.
 
-Note the knock-on: the hero centres its content, so once the title grows past the padding box the block overflows **equally in both directions** and top padding stops protecting anything. Both mobile breakpoints therefore carry a top padding that clears the 65px fixed header on its own *and* a `min-height` the content fits inside.
+Note the knock-on: the hero centres its content, so if the title ever grows past the padding box the block overflows **equally in both directions** and top padding stops protecting anything. The hero's top padding therefore clears the 65px fixed header on its own — independent of `min-height` — so the eyebrow never hides behind the header.
 
 **The Nearest-Step Rule.** Reach for the nearest existing token. Introducing a new value means adding it here *and* to `:root` — a ramp with exceptions is a ramp that describes nothing, which is exactly the state this replaced. `--fs-h3` was added rather than tolerated as drift: three files were each carrying their own clamp in the 2.0–2.9rem band because the ramp had no step between `--fs-h2` and `--fs-card-title`.
 

@@ -47,10 +47,15 @@
 		// consistent across every page/section.
 		// Poster scale. Used at most ONCE per page — the subpage hero title, and
 		// nothing else. Every headline on the site sat inside one octave, so
-		// nothing ever read as loud; a noir one-sheet runs the title an order of
-		// magnitude over the body and that contrast IS the genre. One per page is
-		// the whole rule: a second one cancels the first.
-		--fs-display: clamp(3.4rem, 11.5vw, 8.5rem);
+		// nothing ever read as loud; a noir one-sheet runs the title over the
+		// body and that contrast IS the genre. One per page is the whole rule: a
+		// second one cancels the first.
+		//
+		// First cut was clamp(3.4rem, 11.5vw, 8.5rem) — loud, but it filled the
+		// hero and pushed the fold down so the page content always needed a
+		// scroll to reach. Dialled back to a size that still reads as the
+		// biggest thing on the page without owning the whole viewport.
+		--fs-display: clamp(2.6rem, 6.5vw, 5rem);
 		--fs-hero: clamp(2.6rem, 6vw, 5rem);      // in-page hero headline
 		--fs-h2: clamp(2.2rem, 4.8vw, 4rem);      // in-page section headline
 		// Sub-section headline: dialog names, press-kit section titles, session
