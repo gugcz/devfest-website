@@ -96,6 +96,11 @@ export default defineConfig({
         // emits srcset/sizes but no resize CSS, so images ignore the layout.
         responsiveStyles: true,
     },
+    // ⚠️ prefetchAll hovers every internal link. The on-demand /speakers and
+    // /sessions routes are served by a Cloud Function, so any link to them MUST
+    // carry `data-astro-prefetch="false"` (see Menu.astro, SpeakersTeaser.tsx) —
+    // otherwise a hover triggers an SSR invocation + Firestore read on a cache
+    // miss. Add the opt-out on any new link to those two routes.
     prefetch: {
         prefetchAll: true,
         defaultStrategy: 'hover',

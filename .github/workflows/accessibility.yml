@@ -9,6 +9,7 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'scripts/a11y.mjs'
+      - 'scripts/a11y-mocks/**'
       - '.github/workflows/accessibility.yml'
   push:
     branches: [2026]

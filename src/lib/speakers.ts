@@ -6,8 +6,9 @@
  * shapes here mirror the subset of that `SpeakerDoc` the UI renders (the doc
  * also carries the full Sessionize record — bio, sessions, etc. — which the
  * page ignores for now). Browser-safe: types, the kind→icon map, and pure
- * helpers only — no Firebase import (the island wires the read via
- * `getFirestoreDb()`).
+ * helpers only — no Firebase import. The read now happens server-side via the
+ * Admin SDK (`src/lib/lineup-data.ts`), and the parsed `Speaker[]` reaches the
+ * island as props.
  */
 
 /**

@@ -10,24 +10,16 @@ export const prerender = false;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Speakers from '../components/Speakers.tsx';
-import { adminFirestore } from '../lib/firebase-admin';
 import { applyContentCache } from '../lib/ssr-cache';
-import { speakerFromDoc, type Speaker } from '../lib/speakers';
+import { readSpeakers } from '../lib/lineup-data';
 
-let speakers: Speaker[] = [];
-let ok = false;
-try {
-	const snap = await adminFirestore().collection('speakers').orderBy('order').get();
-	speakers = snap.docs.map((doc) => speakerFromDoc(doc.id, doc.data()));
-	ok = speakers.length > 0;
-} catch (err) {
-	console.error('[speakers] SSR Firestore read failed:', err);
-}
+const { speakers, failed } = await readSpeakers();
 
-// Cache a populated render at the edge; never cache a failed/empty one (503 so a
-// transient blip isn't indexed or pinned at the CDN).
-applyContentCache(Astro.response, ok);
-if (!ok) Astro.response.status = 503;
+// Edge-cache only a populated render. An empty (healthy, pre-announce) read and a
+// failed read both stay uncached so the lineup shows as soon as it lands; only a
+// thrown read is a 503 (an empty collection is a valid 200 "announced soon").
+applyContentCache(Astro.response, !failed && speakers.length > 0);
+if (failed) Astro.response.status = 503;
 ---
 
 <BaseLayout
@@ -53,7 +45,7 @@ if (!ok) Astro.response.status = 503;
 				<!-- The grid is server-rendered from Firestore (Admin SDK); the island
 				     hydrates from these props for the detail dialog. Present in the
 				     HTML with or without JavaScript. -->
-				<Speakers client:load speakers={speakers} failed={!ok} />
+				<Speakers client:load speakers={speakers} failed={failed} />
 			</div>
 		</section>
 	</main>

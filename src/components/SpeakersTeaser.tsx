@@ -69,8 +69,9 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 
 /**
  * Home-page "case wall": a small set of speaker mugshots that rotates through
- * the full roster over time, plus a link to the full /speakers page. Renders
- * nothing until Firestore is ready so the home page stays clean pre-announce.
+ * the full roster over time, plus a link to the full /speakers page. The roster
+ * is read at build time (Admin SDK) and passed in as a prop; renders nothing on
+ * an empty roster so the home page stays clean pre-announce.
  */
 export default function SpeakersTeaser({ speakers }: { speakers: Speaker[] }) {
 	const [offset, setOffset] = useState(0);

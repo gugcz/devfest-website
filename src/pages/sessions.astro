@@ -1,47 +1,27 @@
 ---
 // Rendered on demand so the schedule ships in the server HTML — the Admin SDK
 // read below bypasses App Check, so mobile never waits on a reCAPTCHA token (the
-// old client Firestore read is gone). Under A11Y_MOCK the route prerenders
-// instead, so the static axe harness gets a fixture-filled file to audit.
-// Literal `false` — Astro's prerender detection is static; a non-literal silently
-// falls back to prerendering. The axe build (A11Y_MOCK) runs this handler via
-// scripts/a11y.mjs with the firebase-admin reads aliased to fixtures.
+// old client Firestore read is gone). Must stay a literal `false`: Astro's
+// prerender detection is static, so a non-literal silently falls back to
+// prerendering. The axe build (A11Y_MOCK) runs this handler via scripts/a11y.mjs
+// with the firebase-admin reads aliased to fixtures.
 export const prerender = false;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Sessions from '../components/Sessions.tsx';
-import { adminFirestore } from '../lib/firebase-admin';
 import { applyContentCache } from '../lib/ssr-cache';
-import { isDisplayableSession, sessionFromDoc, type Session } from '../lib/sessions';
-import { speakerFromDoc, type Speaker } from '../lib/speakers';
+import { readSessions, readSpeakersById } from '../lib/lineup-data';
 
-let sessions: Session[] = [];
-let ok = false;
-try {
-	const snap = await adminFirestore().collection('sessions').orderBy('order').get();
-	sessions = snap.docs.map((doc) => sessionFromDoc(doc.id, doc.data())).filter(isDisplayableSession);
-	ok = sessions.length > 0;
-} catch (err) {
-	console.error('[sessions] SSR Firestore read failed:', err);
-}
+const { sessions, failed } = await readSessions();
+// Full speaker profiles for the session → speaker drill-down (best-effort; a
+// failure degrades it to the embedded summary and never 503s the page).
+const speakersById = await readSpeakersById();
 
-// Best-effort: full speaker profiles (bio/links/talks) keyed by id, so the
-// session → speaker drill-down in SessionDetail enriches its stacked dialog from
-// props instead of a client Firestore read. Independent of `ok` — a failure here
-// only degrades the drill-down to the embedded summary, it doesn't 503 the page.
-let speakersById: Record<string, Speaker> = {};
-try {
-	const snap = await adminFirestore().collection('speakers').orderBy('order').get();
-	speakersById = Object.fromEntries(
-		snap.docs.map((doc) => [doc.id, speakerFromDoc(doc.id, doc.data())]),
-	);
-} catch (err) {
-	console.warn('[sessions] SSR speaker-profile read failed; drill-down uses summaries:', err);
-}
-
-applyContentCache(Astro.response, ok);
-if (!ok) Astro.response.status = 503;
+// Edge-cache only a populated render; an empty (healthy) or failed read stays
+// uncached, and only a thrown read is a 503 (empty is a valid "announced soon").
+applyContentCache(Astro.response, !failed && sessions.length > 0);
+if (failed) Astro.response.status = 503;
 ---
 
 <BaseLayout
@@ -67,7 +47,7 @@ if (!ok) Astro.response.status = 503;
 				<!-- The grid is server-rendered from Firestore (Admin SDK); the island
 				     hydrates from these props for search, filters and the detail
 				     dialog. Present in the HTML with or without JavaScript. -->
-				<Sessions client:load sessions={sessions} speakersById={speakersById} failed={!ok} />
+				<Sessions client:load sessions={sessions} speakersById={speakersById} failed={failed} />
 			</div>
 		</section>
 	</main>

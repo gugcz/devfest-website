@@ -15,6 +15,10 @@
  * cost ceiling; `minInstances: 1` keeps one instance warm so a cache miss never
  * pays a cold start (the whole point of the fix).
  */
+// ⚠️ The staged ./server bundle is compiled by the ROOT toolchain but runs
+// against ssr/package.json's node_modules — keep the shared deps (astro,
+// @astrojs/node, react, react-dom, firebase-admin) version-paired with the root
+// package.json, or a one-sided bump causes silent runtime version skew.
 import { onRequest } from 'firebase-functions/v2/https';
 import { handler as astroHandler } from './server/entry.mjs';
 
