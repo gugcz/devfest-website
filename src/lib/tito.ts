@@ -64,6 +64,17 @@ export interface TicketsCache {
 }
 
 /**
+ * Fetch the cached ti.to roadmap from the `/api/tickets` endpoint (Hosting
+ * rewrites it to the `ticketsApi` Cloud Function, which reads RTDB via the Admin
+ * SDK — no Firebase SDK / App Check on this path). Throws on a non-OK response.
+ */
+export async function fetchTickets(signal?: AbortSignal): Promise<TicketsCache | null> {
+	const res = await fetch('/api/tickets', { signal });
+	if (!res.ok) throw new Error(`tickets fetch failed: ${res.status}`);
+	return (await res.json()) as TicketsCache | null;
+}
+
+/**
  * Filter to releases that should be shown publicly. Mirrors the
  * `isWebsiteVisible()` rule applied server-side in
  * `functions/src/tickets/tito-api.ts`; kept here as defence-in-depth so

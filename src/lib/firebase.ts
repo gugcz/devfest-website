@@ -1,14 +1,6 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
 import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
-import { getDatabase, type Database } from 'firebase/database';
-import {
-	getFirestore,
-	initializeFirestore,
-	persistentLocalCache,
-	persistentMultipleTabManager,
-	type Firestore,
-} from 'firebase/firestore';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyB7lXxnVicSWTtUe9CbVUarm2MwFVRMucU',
@@ -37,13 +29,13 @@ const APPCHECK_SITE_KEY = '6LdOhSYtAAAAALPcqSZIJoT7i7c6B5SOiByWChra';
 
 let appCheckInstance: AppCheck | null = null;
 /**
- * Initialise Firebase App Check (reCAPTCHA Enterprise) so RTDB reads carry an
- * attestation token. Runs once, on the same FirebaseApp every consumer uses,
- * so the token is in place before `getDb()` issues any read.
+ * Initialise Firebase App Check (reCAPTCHA Enterprise). Runs once, on the same
+ * FirebaseApp every consumer uses, so the token is in place before the App-Check-
+ * enforced `submitInvoiceRequest` callable fires. No content read goes through
+ * the Firebase SDK anymore (speakers/sessions/tickets all fetch cached `/api/*`
+ * endpoints), so this only matters for the invoice callable.
  *
- * No-ops on the server and whenever no site key is configured. App Check tokens
- * attach to RTDB reads as soon as this runs, but reads keep working until
- * enforcement is switched on for Realtime Database in the Firebase console.
+ * No-ops on the server and whenever no site key is configured.
  */
 function initAppCheck(app: FirebaseApp): void {
 	if (appCheckInstance) return;
@@ -70,47 +62,6 @@ function initAppCheck(app: FirebaseApp): void {
 	}
 }
 
-let databaseInstance: Database | null = null;
-export function getDb(): Database {
-	if (!databaseInstance) databaseInstance = getDatabase(getApp());
-	return databaseInstance;
-}
-
-let firestoreInstance: Firestore | null = null;
-/**
- * Cloud Firestore on the shared App-Check app. Backs the public-read `speakers`
- * and `sessions` collections that `Speakers.tsx` / `Sessions.tsx` subscribe to.
- * Like `getDb()`, the App Check token attaches to reads automatically;
- * enforcement stays off in the console until traffic is verified.
- *
- * Persistence: enable the IndexedDB-backed local cache so a returning visitor
- * renders the lineup/schedule instantly from cache (and offline), then the
- * `onSnapshot` listeners reconcile with the server in the background.
- * `persistentMultipleTabManager` keeps that cache consistent across tabs.
- * `initializeFirestore` must run before any `getFirestore(app)` on this app —
- * `getFirestoreDb()` is the sole entry point and is memoized, so that holds.
- *
- * The persistent cache needs IndexedDB (browser only). During SSR, or if
- * `initializeFirestore` throws (private-mode quirks, no IndexedDB), fall back
- * to the default in-memory cache so reads still work — same defensive posture
- * as `initAppCheck`.
- */
-export function getFirestoreDb(): Firestore {
-	if (firestoreInstance) return firestoreInstance;
-	if (typeof window === 'undefined') {
-		firestoreInstance = getFirestore(getApp());
-		return firestoreInstance;
-	}
-	try {
-		firestoreInstance = initializeFirestore(getApp(), {
-			localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
-		});
-	} catch (err) {
-		console.warn('[firebase] Firestore persistent cache unavailable, using memory cache:', err);
-		firestoreInstance = getFirestore(getApp());
-	}
-	return firestoreInstance;
-}
 
 /**
  * The initialised FirebaseApp (App Check already wired). Used by callers

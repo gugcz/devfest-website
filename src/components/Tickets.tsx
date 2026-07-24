@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import {
 	eventUrl,
+	fetchTickets,
 	filterDisplayable,
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
 	type ReleaseStatus,
-	type TicketsCache,
 	type TitoRelease,
 } from '../lib/tito';
 import s from './Tickets.module.scss';
@@ -69,47 +69,30 @@ export default function Tickets() {
 	const [state, setState] = useState<State>(INITIAL);
 
 	useEffect(() => {
-		let unsubscribe: (() => void) | null = null;
-		let cancelled = false;
-		(async () => {
-			try {
-				const [{ getDb }, { onValue, ref }] = await Promise.all([
-					import('../lib/firebase'),
-					import('firebase/database'),
-				]);
-				if (cancelled) return;
-				const db = getDb();
-				const ticketsRef = ref(db, 'tickets');
-				unsubscribe = onValue(
-					ticketsRef,
-					(snapshot) => {
-						const data = snapshot.val() as TicketsCache | null;
-						if (!data) {
-							setState({ status: 'empty', releases: [], accountSlug: '', eventSlug: '' });
-							return;
-						}
-						const visible = filterDisplayable(data.releases ?? []);
-						setState({
-							status: visible.length > 0 ? 'ready' : 'empty',
-							releases: visible,
-							accountSlug: data.accountSlug ?? '',
-							eventSlug: data.eventSlug ?? '',
-						});
-					},
-					(err) => {
-						console.warn('[tickets] Failed to read /tickets from RTDB:', err);
-						setState((prev) => ({ ...prev, status: 'error' }));
-					},
-				);
-			} catch (err) {
-				console.warn('[tickets] Failed to load Firebase modules:', err);
-				if (!cancelled) setState((prev) => ({ ...prev, status: 'error' }));
-			}
-		})();
-		return () => {
-			cancelled = true;
-			unsubscribe?.();
-		};
+		// Plain fetch of the CDN-cached `ticketsApi` endpoint (Hosting rewrites
+		// /api/tickets → the function, which reads RTDB via the Admin SDK) — no
+		// Firebase SDK / App Check on this path.
+		const ac = new AbortController();
+		fetchTickets(ac.signal)
+			.then((data) => {
+				if (!data) {
+					setState({ status: 'empty', releases: [], accountSlug: '', eventSlug: '' });
+					return;
+				}
+				const visible = filterDisplayable(data.releases ?? []);
+				setState({
+					status: visible.length > 0 ? 'ready' : 'empty',
+					releases: visible,
+					accountSlug: data.accountSlug ?? '',
+					eventSlug: data.eventSlug ?? '',
+				});
+			})
+			.catch((err) => {
+				if (ac.signal.aborted) return;
+				console.warn('[tickets] Failed to load tickets:', err);
+				setState((prev) => ({ ...prev, status: 'error' }));
+			});
+		return () => ac.abort();
 	}, []);
 
 	if (state.status === 'error') {

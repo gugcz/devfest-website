@@ -9,6 +9,10 @@
     ],
     "cleanUrls": true,
     "trailingSlash": false,
+    "rewrites": [
+      { "source": "/api/lineup", "function": { "functionId": "lineupApi", "region": "europe-west1", "pinTag": true } },
+      { "source": "/api/tickets", "function": { "functionId": "ticketsApi", "region": "europe-west1", "pinTag": true } }
+    ],
     "headers": [
       {
         "source": "**",
