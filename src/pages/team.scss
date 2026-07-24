@@ -36,41 +36,6 @@
 		gap: clamp(2rem, 3.4vw, 3rem) clamp(1.4rem, 2.4vw, 2.2rem);
 	}
 
-	/* ===================== THE LEAD FRAME ===================== */
-	// The lead organiser takes two columns and two rows. Eighteen identical
-	// mugshots is a roster with no subject; one large frame gives the page
-	// somewhere to start and is honest about who runs the thing — the first
-	// card is the Lead Org. Two rows rather than one tall one so the span
-	// measures exactly two cells plus the gap and the sheet stays level.
-	@media (min-width: 900px) {
-		.crew-grid > li:first-child {
-			grid-column: span 2;
-			grid-row: span 2;
-		}
-
-		// The lead keeps the SAME 4/5 as every sibling — a bigger print, not a
-		// differently-shaped one. Filling the two-row span stretched it across
-		// a caption band as well as two photo-rows, so it came out at ~2:3
-		// against the grid's 4/5 and read as stretched. It now stays 4/5 and the
-		// whole card centres in the taller span, balanced against the 2×2 beside
-		// it.
-		.crew-grid > li:first-child .crew-card {
-			height: 100%;
-			justify-content: center;
-		}
-
-		// The base .crew-info is flex: 1 (it pushes the links row to the card
-		// bottom on normal cells). On the centred lead that growth would eat the
-		// free space and defeat justify-content: center, so pin it.
-		.crew-grid > li:first-child .crew-info {
-			flex: 0 0 auto;
-		}
-
-		.crew-grid > li:first-child .crew-name {
-			font-size: var(--fs-card-title);
-		}
-	}
-
 	/* ===================== PRINT + CAPTION ===================== */
 	// No panel, no shadow on the container, no matte frame, no lift. The
 	// photograph is the artifact and there is nothing around it. The cursor

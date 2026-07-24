@@ -33,37 +33,6 @@
 	display: flex;
 }
 
-/* ===================== THE LEAD FRAME ===================== */
-// The first-announced speaker takes two columns and two rows. Ten prints at
-// identical size is a list, not a lineup — nothing is the subject, so the eye
-// has nowhere to land and the grid reads as filler. One large frame gives the
-// page a subject and gives every other frame a reason to be smaller.
-//
-// Two rows rather than a taller single row: the span then measures exactly two
-// normal cells plus the row gap, so the lead's bottom edge lands level with
-// its neighbours' instead of pushing the row and knocking the whole sheet out.
-@media (min-width: 900px) {
-	.grid > li:first-child {
-		grid-column: span 2;
-		grid-row: span 2;
-	}
-
-	// The lead keeps the SAME 4/5 as every sibling — it is a bigger print, not
-	// a differently-shaped one. Letting it fill the two-row span stretched the
-	// photo across a caption band as well as two photo-rows, so it came out at
-	// ~2:3 (0.65) against the grid's 0.80 and read as stretched. Instead the
-	// print stays 4/5 and the whole card centres in the taller span, so the
-	// feature sits balanced against the 2×2 of small prints beside it.
-	.grid > li:first-child .card {
-		height: 100%;
-		justify-content: center;
-	}
-
-	.grid > li:first-child .name {
-		font-size: var(--fs-card-title);
-	}
-}
-
 /* ===================== PRINT + CAPTION ===================== */
 .card {
 	position: relative;

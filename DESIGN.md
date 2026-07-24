@@ -444,11 +444,7 @@ Speaker, team and teaser photographs are evidence prints, and they carry their m
 
 Category labels (contact desks, press desks) are **folder divider tabs**: an angled leading edge via `clip-path: polygon(0.62rem 0, …)`, red keyline, accent-hot mono. The **shape** carries the case-file signal so the red stays rationed — the tab fills solid `--color-accent` only for the desk under the pointer, rather than spending the accent fill three times on one page.
 
-### The lead frame (photograph grids)
-
-The first cell of `/speakers` and `/team` spans **two columns and two rows** from 900px up. N identical prints is a list, not a lineup: nothing is the subject, the eye has nowhere to land, and the grid reads as filler. One large frame gives the page a subject and gives every other frame a reason to be smaller. It is also honest — the first team card is the Lead Org, the first speaker is the first announced.
-
-Two rows rather than one tall row: the span then measures exactly two normal cells plus the row gap, so the lead's bottom edge lands level with its neighbours' instead of knocking the sheet out. The lead's print drops its fixed `4/5` (at double width it would be double height and overshoot the span) and takes `flex: 1 1 auto` — and its **caption must be `flex: 0 0 auto`**, or caption and print split the free space and leave a dead band where the photograph should be.
+**The Equal-Prints Rule.** No photograph in a lineup or roster is bigger than another. A featured 2×2 lead cell was tried on `/speakers` and `/team` and pulled: no one attendee, speaker or organiser is elevated over the rest, and a single enlarged print forces an off-grid crop ratio besides. Every print in these grids is the same size; hierarchy comes from order, not scale.
 
 ### Contact sheet (grids of artifacts)
 
