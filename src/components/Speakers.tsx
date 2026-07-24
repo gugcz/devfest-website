@@ -1,16 +1,7 @@
-import { useEffect, useState } from 'react';
-import { initials, speakerFromDoc, type Speaker } from '../lib/speakers';
+import { useState } from 'react';
+import { initials, type Speaker } from '../lib/speakers';
 import SpeakerDetail from './SpeakerDetail';
 import s from './Speakers.module.scss';
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
-	speakers: Speaker[];
-}
-
-const INITIAL: State = { status: 'loading', speakers: [] };
 
 function SpeakerCard({
 	speaker,
@@ -69,54 +60,12 @@ function SpeakerCard({
 	);
 }
 
-export default function Speakers() {
-	const [state, setState] = useState<State>(INITIAL);
+export default function Speakers({ speakers, failed }: { speakers: Speaker[]; failed: boolean }) {
 	const [selected, setSelected] = useState<Speaker | null>(null);
 
-	useEffect(() => {
-		let unsubscribe: (() => void) | null = null;
-		let cancelled = false;
-		(async () => {
-			try {
-				const [{ getFirestoreDb }, { collection, onSnapshot, orderBy, query }] = await Promise.all([
-					import('../lib/firebase'),
-					import('firebase/firestore'),
-				]);
-				if (cancelled) return;
-				const db = getFirestoreDb();
-				const speakersQuery = query(collection(db, 'speakers'), orderBy('order'));
-				unsubscribe = onSnapshot(
-					speakersQuery,
-					(snapshot) => {
-						const speakers = snapshot.docs.map((doc) => speakerFromDoc(doc.id, doc.data()));
-						setState({ status: speakers.length > 0 ? 'ready' : 'empty', speakers });
-					},
-					(err) => {
-						console.warn('[speakers] Failed to read speakers from Firestore:', err);
-						setState((prev) => ({ ...prev, status: 'error' }));
-					},
-				);
-			} catch (err) {
-				console.warn('[speakers] Failed to load Firebase modules:', err);
-				if (!cancelled) setState((prev) => ({ ...prev, status: 'error' }));
-			}
-		})();
-		return () => {
-			cancelled = true;
-			unsubscribe?.();
-		};
-	}, []);
-
-	// If the live list changes while a speaker is open, keep the dialog in sync
-	// (or close it if that speaker is gone).
-	useEffect(() => {
-		if (!selected) return;
-		const fresh = state.speakers.find((sp) => sp.id === selected.id);
-		if (fresh && fresh !== selected) setSelected(fresh);
-		else if (!fresh && state.status === 'ready') setSelected(null);
-	}, [state.speakers, state.status, selected]);
-
-	if (state.status === 'error') {
+	// Data arrives server-rendered as props — no loading state. `failed` reflects
+	// a server-side read error (the on-demand route also returns 503 for it).
+	if (failed) {
 		return (
 			<div className={s.status} role="alert">
 				<p>The lineup is temporarily unavailable. Please check back soon.</p>
@@ -124,21 +73,7 @@ export default function Speakers() {
 		);
 	}
 
-	if (state.status === 'loading') {
-		return (
-			<p className={s.loadingStatus} role="status">
-				<span className={s.loadingDot} aria-hidden="true" />
-				Loading lineup
-				<span className={s.loadingDots} aria-hidden="true">
-					<span />
-					<span />
-					<span />
-				</span>
-			</p>
-		);
-	}
-
-	if (state.status === 'empty') {
+	if (speakers.length === 0) {
 		return (
 			<div className={s.status}>
 				<p>Lineup announced soon.</p>
@@ -149,7 +84,7 @@ export default function Speakers() {
 	return (
 		<>
 			<ul className={s.grid} role="list">
-				{state.speakers.map((speaker, i) => (
+				{speakers.map((speaker, i) => (
 					<SpeakerCard key={speaker.id} speaker={speaker} onOpen={setSelected} priority={i < 4} />
 				))}
 				<li>

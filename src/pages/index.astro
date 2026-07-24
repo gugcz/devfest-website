@@ -10,9 +10,23 @@ import Ticker from '../components/Ticker.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
 import { getShowcasePartners } from '../lib/partners';
+import { adminFirestore } from '../lib/firebase-admin';
+import { speakerFromDoc, type Speaker } from '../lib/speakers';
 
 // Homepage "silver+" strip — every sponsor tier in ladder order, top tier first.
 const homePartners = await getShowcasePartners();
+
+// Speaker teaser roster, read at build via the Admin SDK (bypasses App Check) so
+// the home page carries no client Firestore read. `/` stays prerendered — the
+// wall is a rotating preview, deploy-fresh is fine (the live /speakers page is
+// on-demand). A failed build read degrades to an empty roster (teaser hides).
+let teaserSpeakers: Speaker[] = [];
+try {
+	const snap = await adminFirestore().collection('speakers').orderBy('order').get();
+	teaserSpeakers = snap.docs.map((doc) => speakerFromDoc(doc.id, doc.data()));
+} catch (err) {
+	console.warn('[teaser] build-time speaker read failed; teaser hidden:', err);
+}
 
 // Partner logo masters live in `src/assets/partners/<tier>/` so the build can
 // resize them; the `partners` collection still stores plain path strings, so glob
@@ -130,11 +144,10 @@ const tickerTopics = [
 		<!-- TICKETS -->
 		<Tickets client:visible />
 
-		<!-- SPEAKERS TEASER — auto-rotating lineup spotlight; hides until data loads.
-		     client:load (not visible): the island renders nothing until Firestore
-		     resolves, so a client:visible observer would never fire on the
-		     zero-height placeholder. -->
-		<SpeakersTeaser client:load />
+		<!-- SPEAKERS TEASER — auto-rotating lineup spotlight; hides when the roster
+		     is empty. Roster is baked at build (above) and passed as a prop, so no
+		     client Firestore read. client:load hydrates the rotation/interaction. -->
+		<SpeakersTeaser client:load speakers={teaserSpeakers} />
 
 		<!-- CALL FOR SPEAKERS — hidden: CFP closed
 		<section id="speakers" aria-labelledby="speakers-title">

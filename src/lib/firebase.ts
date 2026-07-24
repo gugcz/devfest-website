@@ -2,13 +2,6 @@ import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
 import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
 import { getDatabase, type Database } from 'firebase/database';
-import {
-	getFirestore,
-	initializeFirestore,
-	persistentLocalCache,
-	persistentMultipleTabManager,
-	type Firestore,
-} from 'firebase/firestore';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyB7lXxnVicSWTtUe9CbVUarm2MwFVRMucU',
@@ -74,42 +67,6 @@ let databaseInstance: Database | null = null;
 export function getDb(): Database {
 	if (!databaseInstance) databaseInstance = getDatabase(getApp());
 	return databaseInstance;
-}
-
-let firestoreInstance: Firestore | null = null;
-/**
- * Cloud Firestore on the shared App-Check app. Backs the public-read `speakers`
- * and `sessions` collections that `Speakers.tsx` / `Sessions.tsx` subscribe to.
- * Like `getDb()`, the App Check token attaches to reads automatically;
- * enforcement stays off in the console until traffic is verified.
- *
- * Persistence: enable the IndexedDB-backed local cache so a returning visitor
- * renders the lineup/schedule instantly from cache (and offline), then the
- * `onSnapshot` listeners reconcile with the server in the background.
- * `persistentMultipleTabManager` keeps that cache consistent across tabs.
- * `initializeFirestore` must run before any `getFirestore(app)` on this app —
- * `getFirestoreDb()` is the sole entry point and is memoized, so that holds.
- *
- * The persistent cache needs IndexedDB (browser only). During SSR, or if
- * `initializeFirestore` throws (private-mode quirks, no IndexedDB), fall back
- * to the default in-memory cache so reads still work — same defensive posture
- * as `initAppCheck`.
- */
-export function getFirestoreDb(): Firestore {
-	if (firestoreInstance) return firestoreInstance;
-	if (typeof window === 'undefined') {
-		firestoreInstance = getFirestore(getApp());
-		return firestoreInstance;
-	}
-	try {
-		firestoreInstance = initializeFirestore(getApp(), {
-			localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
-		});
-	} catch (err) {
-		console.warn('[firebase] Firestore persistent cache unavailable, using memory cache:', err);
-		firestoreInstance = getFirestore(getApp());
-	}
-	return firestoreInstance;
 }
 
 /**

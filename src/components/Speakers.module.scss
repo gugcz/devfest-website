@@ -295,59 +295,6 @@
 	margin: 2rem auto 0;
 }
 
-.loadingStatus {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.55rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
-	letter-spacing: 0.18em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
-}
-
-.loadingDot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: var(--color-accent-hot);
-	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
-	flex-shrink: 0;
-	animation: skelPulse 1.3s ease-in-out infinite;
-}
-
-.loadingDots {
-	display: inline-flex;
-	align-items: center;
-	gap: 3px;
-
-	span {
-		width: 3px;
-		height: 3px;
-		border-radius: 50%;
-		background: currentColor;
-		opacity: 0.3;
-		animation: skelPulse 1.3s ease-in-out infinite;
-	}
-
-	span:nth-child(2) {
-		animation-delay: 0.18s;
-	}
-	span:nth-child(3) {
-		animation-delay: 0.36s;
-	}
-}
-
-@keyframes skelPulse {
-	0%,
-	100% {
-		opacity: 0.3;
-	}
-	50% {
-		opacity: 1;
-	}
-}
-
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 600px) {
 	.grid {
@@ -367,9 +314,7 @@
 	.photo,
 	.moreArrow,
 	.more,
-	.moreCard,
-	.loadingDot,
-	.loadingDots span {
+	.moreCard {
 		transition: none;
 		animation: none;
 	}

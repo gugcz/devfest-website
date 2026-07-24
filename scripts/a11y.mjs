@@ -4,10 +4,18 @@ import { createServer } from 'node:http';
 import { readFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 
-const DIST = path.resolve('dist');
+// The Node adapter emits prerendered/static output under dist/client and the
+// on-demand SSR handler under dist/server. /speakers + /sessions are on-demand
+// (no static file), so the server below serves dist/client statically and falls
+// through to the SSR handler for them. Under A11Y_MOCK that handler's Firebase
+// reads are aliased to fixtures (astro.config.mjs), so the on-demand grids render
+// deterministically for the sweep.
+const DIST = path.resolve('dist', 'client');
+const SSR_ENTRY = path.resolve('dist', 'server', 'entry.mjs');
 const PORT = 4321;
 const PATHS = [
 	'/',
@@ -57,22 +65,33 @@ function resolveFile(reqUrl) {
 }
 
 async function startServer() {
+	// The Node adapter's middleware handler renders the on-demand routes. Load it
+	// once and fall through to it whenever there's no static file to serve.
+	const { handler: ssrHandler } = await import(pathToFileURL(SSR_ENTRY).href);
 	const server = createServer(async (req, res) => {
 		const file = resolveFile(req.url ?? '/');
-		if (!file) {
-			res.writeHead(404, { 'Content-Type': 'text/plain' });
-			res.end('not found');
+		if (file) {
+			try {
+				const data = await readFile(file);
+				const ext = path.extname(file).toLowerCase();
+				res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
+				res.end(data);
+			} catch (err) {
+				res.writeHead(500, { 'Content-Type': 'text/plain' });
+				res.end(String(err));
+			}
 			return;
 		}
-		try {
-			const data = await readFile(file);
-			const ext = path.extname(file).toLowerCase();
-			res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
-			res.end(data);
-		} catch (err) {
-			res.writeHead(500, { 'Content-Type': 'text/plain' });
-			res.end(String(err));
-		}
+		// No static file → on-demand route. The site is trailingSlash:'never', so
+		// strip a trailing slash first (PATHS uses '/speakers/') — otherwise the
+		// handler 301s and the sweep would sample the redirect stub, not the grid.
+		if (req.url && req.url.length > 1) req.url = req.url.replace(/\/($|\?)/, '$1');
+		// Let the Astro SSR handler render it (client assets it references are
+		// served statically above).
+		ssrHandler(req, res, () => {
+			res.writeHead(404, { 'Content-Type': 'text/plain' });
+			res.end('not found');
+		});
 	});
 	await new Promise((resolve) => server.listen(PORT, '127.0.0.1', resolve));
 	return server;
@@ -326,8 +345,8 @@ async function auditModals(page, urlPath, url, tags) {
 }
 
 async function run() {
-	if (!existsSync(DIST)) {
-		console.error('dist/ missing. Run `npm run build` first.');
+	if (!existsSync(DIST) || !existsSync(SSR_ENTRY)) {
+		console.error('dist/client or dist/server missing. Run `npm run build` first.');
 		process.exit(2);
 	}
 

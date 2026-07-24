@@ -4,6 +4,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 import react from '@astrojs/react';
+import node from '@astrojs/node';
 
 const BUILD_DATE = new Date().toISOString();
 
@@ -24,15 +25,20 @@ const PRIORITY = {
 
 // Accessibility-audit mock mode. The public lineup (Firestore speakers /
 // sessions) and ticket cache (RTDB) are gated behind App Check + read rules
-// that block CI, so the axe sweep only ever sees the "temporarily unavailable"
-// error state. Under A11Y_MOCK=1, swap the Firebase read modules for the fixture
-// replayers in scripts/a11y-mocks/ so the hydrated content gets audited. Off by
-// default — a normal build never resolves these aliases.
+// that block CI, so the axe sweep would only ever see the "temporarily
+// unavailable" error state. Under A11Y_MOCK=1 we swap the Firebase read modules
+// for the fixture replayers in scripts/a11y-mocks/ so the built output serves
+// deterministic content: `firebase-admin` backs the server-side speaker/session
+// reads (the on-demand /speakers + /sessions handler and the build-time homepage
+// teaser); `firebase/database` + `firebase/app-check` back the client Tickets
+// island. scripts/a11y.mjs then runs that built SSR handler so the on-demand
+// grids get audited. Off by default — a normal build never resolves these aliases.
 const a11yMock = process.env.A11Y_MOCK === '1';
 const mock = (rel) => fileURLToPath(new URL(rel, import.meta.url));
 const a11yMockAlias = a11yMock
     ? {
-          'firebase/firestore': mock('./scripts/a11y-mocks/firestore.mjs'),
+          'firebase-admin/app': mock('./scripts/a11y-mocks/firebase-admin.mjs'),
+          'firebase-admin/firestore': mock('./scripts/a11y-mocks/firebase-admin.mjs'),
           'firebase/database': mock('./scripts/a11y-mocks/database.mjs'),
           'firebase/app-check': mock('./scripts/a11y-mocks/app-check.mjs'),
       }
@@ -42,6 +48,12 @@ const a11yMockAlias = a11yMock
 export default defineConfig({
     site: 'https://devfest.cz',
     trailingSlash: 'never',
+    // Node adapter for on-demand rendering. Output stays 'static' (default) —
+    // only the routes that `export const prerender = false` (speakers, sessions)
+    // render on demand; everything else prerenders. Middleware mode emits a
+    // Connect-style handler at dist/server/entry.mjs that the `renderPages`
+    // Cloud Function wraps (see ssr/ + firebase.json rewrites).
+    adapter: node({ mode: 'middleware' }),
     // Self-hosted, build-time-optimised replacements for the four brand faces
     // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
     // Weights/styles mirror exactly what that css2 URL requested. Only the four

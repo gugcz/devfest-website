@@ -69,6 +69,10 @@ const isCurrent = (href: string) => {
 		<ul id="nav-list" class="nav-list" data-open="false">
 			{links.map(({ href, label, external, cta }) => {
 				const current = isCurrent(href);
+				// /speakers and /sessions render on demand (a Cloud Function) — keep
+				// them out of hover-prefetch so a mere hover can't trigger an SSR
+				// invocation + Firestore read on a cache miss.
+				const noPrefetch = href === '/speakers' || href === '/sessions';
 				return (
 					<li>
 						<a
@@ -76,6 +80,7 @@ const isCurrent = (href: string) => {
 							class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
 							{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
 							{...(current ? { 'aria-current': 'page' } : {})}
+							{...(noPrefetch ? { 'data-astro-prefetch': 'false' } : {})}
 						>
 							{label}
 						</a>

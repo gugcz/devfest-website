@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { initials, speakerFromDoc, type Speaker } from '../lib/speakers';
+import { initials, type Speaker } from '../lib/speakers';
 import s from './SpeakersTeaser.module.scss';
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
 
 // Speakers shown at once on the home wall; the visible set rotates through the
 // full roster over time (rotation kicks in once there are more than this).
@@ -37,7 +35,12 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
 
 	return (
-		<a className={s.tile} href="/speakers" aria-label={`${speaker.fullName} — see the full lineup`}>
+		<a
+			className={s.tile}
+			href="/speakers"
+			data-astro-prefetch="false"
+			aria-label={`${speaker.fullName} — see the full lineup`}
+		>
 			<span className={s.thumb}>
 				{showPhoto ? (
 					<img
@@ -69,47 +72,10 @@ function Thumb({ speaker }: { speaker: Speaker }) {
  * the full roster over time, plus a link to the full /speakers page. Renders
  * nothing until Firestore is ready so the home page stays clean pre-announce.
  */
-export default function SpeakersTeaser() {
-	const [speakers, setSpeakers] = useState<Speaker[]>([]);
-	const [status, setStatus] = useState<Status>('loading');
+export default function SpeakersTeaser({ speakers }: { speakers: Speaker[] }) {
 	const [offset, setOffset] = useState(0);
 	const [paused, setPaused] = useState(false);
 	const reduceMotion = usePrefersReducedMotion();
-
-	useEffect(() => {
-		let unsubscribe: (() => void) | null = null;
-		let cancelled = false;
-		(async () => {
-			try {
-				const [{ getFirestoreDb }, { collection, onSnapshot, orderBy, query }] = await Promise.all([
-					import('../lib/firebase'),
-					import('firebase/firestore'),
-				]);
-				if (cancelled) return;
-				const db = getFirestoreDb();
-				const speakersQuery = query(collection(db, 'speakers'), orderBy('order'));
-				unsubscribe = onSnapshot(
-					speakersQuery,
-					(snapshot) => {
-						const next = snapshot.docs.map((doc) => speakerFromDoc(doc.id, doc.data()));
-						setSpeakers(next);
-						setStatus(next.length > 0 ? 'ready' : 'empty');
-					},
-					(err) => {
-						console.warn('[speakers-teaser] Failed to read speakers from Firestore:', err);
-						setStatus('error');
-					},
-				);
-			} catch (err) {
-				console.warn('[speakers-teaser] Failed to load Firebase modules:', err);
-				if (!cancelled) setStatus('error');
-			}
-		})();
-		return () => {
-			cancelled = true;
-			unsubscribe?.();
-		};
-	}, []);
 
 	// Shuffle once per roster so the starting window — and rotation order — is
 	// random on every load. Keyed on the id set so it only reshuffles when the
@@ -123,19 +89,19 @@ export default function SpeakersTeaser() {
 	// Advance the visible window through the roster (wrapping) so the wall keeps
 	// changing. Paused on hover/focus and when reduced motion is preferred.
 	useEffect(() => {
-		if (status !== 'ready' || !canRotate || paused || reduceMotion) return;
+		if (!canRotate || paused || reduceMotion) return;
 		const id = setInterval(() => {
 			setOffset((o) => (o + size) % total);
 		}, ROTATE_MS);
 		return () => clearInterval(id);
-	}, [status, canRotate, paused, reduceMotion, size, total]);
+	}, [canRotate, paused, reduceMotion, size, total]);
 
-	// Keep the window valid if the roster shrinks between syncs.
+	// Keep the window valid if the roster shrinks (e.g. an empty roster).
 	useEffect(() => {
 		if (total > 0 && offset >= total) setOffset(0);
 	}, [total, offset]);
 
-	if (status !== 'ready' || total === 0) return null;
+	if (total === 0) return null;
 
 	const shown = Array.from({ length: size }, (_, i) => displaySpeakers[(offset + i) % total]);
 
@@ -166,7 +132,7 @@ export default function SpeakersTeaser() {
 				</ul>
 
 				<div className={s.foot}>
-					<a className={s.allLink} href="/speakers">
+					<a className={s.allLink} href="/speakers" data-astro-prefetch="false">
 						See all speakers
 						<span className={s.allArrow} aria-hidden="true">↗</span>
 					</a>
