@@ -22,6 +22,15 @@ jobs:
       # The channel id is stable per PR, so re-pushes update it in place; it
       # auto-expires after 7 days. The preview URL is printed in this step's
       # logs (action-hosting-deploy's auto PR comment is not reproduced here).
+      #
+      # HOSTING ONLY — this deploys static content, never the Cloud Functions.
+      # The /api/* rewrites in firebase.json intentionally carry NO `pinTag`, so a
+      # channel deploy does not build/deploy lineupApi/ticketsApi (that would run
+      # the functions predeploy `tsc` — not installed here — and could push PR
+      # function code toward production). Preview /api/* calls hit the already-
+      # deployed PRODUCTION functions; before their first prod deploy they 404 and
+      # the islands show their "unavailable" state. Functions deploy only via
+      # firebase-functions-merge.yml. To verify SSR-function CHANGES, run locally.
       - name: Deploy to Firebase Hosting (preview channel)
         uses: w9jds/firebase-action@v15.22.3
         with:
