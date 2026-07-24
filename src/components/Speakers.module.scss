@@ -48,17 +48,15 @@
 		grid-row: span 2;
 	}
 
+	// The lead keeps the SAME 4/5 as every sibling — it is a bigger print, not
+	// a differently-shaped one. Letting it fill the two-row span stretched the
+	// photo across a caption band as well as two photo-rows, so it came out at
+	// ~2:3 (0.65) against the grid's 0.80 and read as stretched. Instead the
+	// print stays 4/5 and the whole card centres in the taller span, so the
+	// feature sits balanced against the 2×2 of small prints beside it.
 	.grid > li:first-child .card {
 		height: 100%;
-	}
-
-	// The print fills whatever height the two-row span resolves to, so the
-	// fixed 4/5 has to go — at double width it would be double height and
-	// overshoot the span.
-	.grid > li:first-child .media {
-		aspect-ratio: auto;
-		flex: 1 1 auto;
-		min-height: 0;
+		justify-content: center;
 	}
 
 	.grid > li:first-child .name {

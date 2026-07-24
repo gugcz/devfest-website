@@ -48,21 +48,20 @@
 			grid-row: span 2;
 		}
 
+		// The lead keeps the SAME 4/5 as every sibling — a bigger print, not a
+		// differently-shaped one. Filling the two-row span stretched it across
+		// a caption band as well as two photo-rows, so it came out at ~2:3
+		// against the grid's 4/5 and read as stretched. It now stays 4/5 and the
+		// whole card centres in the taller span, balanced against the 2×2 beside
+		// it.
 		.crew-grid > li:first-child .crew-card {
 			height: 100%;
+			justify-content: center;
 		}
 
-		// The print fills the resolved span height, so the fixed 4/5 has to go:
-		// at double width it would be double height and overshoot.
-		.crew-grid > li:first-child .mugshot {
-			aspect-ratio: auto;
-			flex: 1 1 auto;
-			min-height: 0;
-		}
-
-		// …and the caption must NOT grow, or it splits the free space with the
-		// print (both carry flex: 1 otherwise) and leaves a dead band under the
-		// lead's name where the photograph should be.
+		// The base .crew-info is flex: 1 (it pushes the links row to the card
+		// bottom on normal cells). On the centred lead that growth would eat the
+		// free space and defeat justify-content: center, so pin it.
 		.crew-grid > li:first-child .crew-info {
 			flex: 0 0 auto;
 		}
