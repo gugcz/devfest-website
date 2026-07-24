@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { initials, PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
+import { useReturnFocus } from '../lib/useReturnFocus';
 import s from './SpeakerDetail.module.scss';
 
 /**
@@ -11,9 +12,11 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 	const dialogRef = useRef<HTMLDivElement>(null);
 	const [imageFailed, setImageFailed] = useState(false);
 	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
+	// Restores focus to the trigger on close — but only for keyboard closes, so a
+	// pointer close never leaves a lingering focus ring on the card/row.
+	const setKeyboardClose = useReturnFocus();
 
 	useEffect(() => {
-		const previouslyFocused = document.activeElement as HTMLElement | null;
 		const previousOverflow = document.body.style.overflow;
 		document.body.style.overflow = 'hidden';
 
@@ -32,6 +35,7 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 		const onKeyDown = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') {
 				event.stopPropagation();
+				setKeyboardClose(true);
 				onClose();
 				return;
 			}
@@ -56,9 +60,8 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 		return () => {
 			document.removeEventListener('keydown', onKeyDown, true);
 			document.body.style.overflow = previousOverflow;
-			previouslyFocused?.focus?.();
 		};
-	}, [onClose]);
+	}, [onClose, setKeyboardClose]);
 
 	const bioParagraphs = speaker.bio.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
 
@@ -66,7 +69,10 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 		<div
 			className={s.overlay}
 			onMouseDown={(event) => {
-				if (event.target === event.currentTarget) onClose();
+				if (event.target === event.currentTarget) {
+					setKeyboardClose(false);
+					onClose();
+				}
 			}}
 		>
 			<div
@@ -77,7 +83,18 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 				ref={dialogRef}
 				tabIndex={-1}
 			>
-				<button className={s.close} type="button" onClick={onClose} aria-label="Close" data-autofocus>
+				<button
+					className={s.close}
+					type="button"
+					onClick={(event) => {
+						// event.detail === 0 when the button was activated by keyboard
+						// (Enter/Space); ≥1 for a real pointer click.
+						setKeyboardClose(event.detail === 0);
+						onClose();
+					}}
+					aria-label="Close"
+					data-autofocus
+				>
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
 						<path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
 					</svg>

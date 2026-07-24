@@ -49,15 +49,6 @@
 		background: linear-gradient(to right, var(--rule-red), transparent);
 	}
 
-	.faq-head-count {
-		flex: 0 0 auto;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.18em;
-		color: var(--color-accent-hot);
-		font-variant-numeric: tabular-nums;
-	}
-
 	.faq-list {
 		display: flex;
 		flex-direction: column;
@@ -103,15 +94,16 @@
 		}
 	}
 
-	// Same column geometry as the global .record so questions line up with
-	// every other ledger on the site: index, body, marker.
+	// Question text + toggle marker. The leading 3.25rem index column went with
+	// the removed "N° 01" numeral — without it the text was crushed into that
+	// narrow track and wrapped one word per line.
 	.faq-q {
 		position: relative;
 		z-index: 1;
 		list-style: none;
 		cursor: pointer;
 		display: grid;
-		grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: baseline;
 		column-gap: clamp(1.25rem, 3vw, 2.75rem);
 		padding: 1.5rem 0;
@@ -125,18 +117,6 @@
 			outline: 2px solid var(--color-accent-hot);
 			outline-offset: -2px;
 		}
-	}
-
-	.faq-num {
-		flex: 0 0 auto;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: var(--color-accent-hot);
-		// Nudge the mono label onto the cap-height of the Bebas question.
-		transform: translateY(-0.15em);
-		white-space: nowrap;
 	}
 
 	.faq-q-text {
@@ -177,22 +157,11 @@
 	.faq-a {
 		position: relative;
 		z-index: 1;
-		// Sits in the body column, under its own question — the answer is
-		// margin-set against the red hairline, aligned to the ledger grid.
-		margin: 0 0 1.8rem calc(3.25rem + clamp(1.25rem, 3vw, 2.75rem));
+		// Under its own question, set off from it as a margin note behind the
+		// red hairline. No longer offset by the removed index column.
+		margin: 0 0 1.8rem;
 		padding-left: 1.4rem;
 		border-left: 2px solid var(--rule-red);
-	}
-
-	@media (max-width: 720px) {
-		.faq-q {
-			grid-template-columns: 2.4rem minmax(0, 1fr) auto;
-			column-gap: 1.1rem;
-		}
-
-		.faq-a {
-			margin-left: calc(2.4rem + 1.1rem);
-		}
 	}
 
 	.faq-a :global(p) {
@@ -246,11 +215,6 @@
 		.faq-a {
 			margin: 0 1.2rem 1.3rem;
 			padding-left: 1.1rem;
-		}
-		// Hide the file number on narrow screens so long questions don't
-		// crush against the marker.
-		.faq-num {
-			display: none;
 		}
 	}
 

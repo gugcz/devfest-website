@@ -84,14 +84,12 @@ const faqJsonLd = JSON.stringify(faqSchema);
 						<div class="faq-head">
 							<h2 class="faq-cat" id={`faq-cat-${group.id}`}>{group.label}</h2>
 							<span class="faq-head-rule" aria-hidden="true"></span>
-							<span class="faq-head-count" aria-hidden="true">{group.count}</span>
 						</div>
 
 						<div class="faq-list">
 							{group.items.map((item) => (
 								<details class="faq-item">
 									<summary class="faq-q">
-										<span class="faq-num" aria-hidden="true">N&#176; {item.num}</span>
 										<span class="faq-q-text">{item.q}</span>
 										<span class="faq-marker" aria-hidden="true">+</span>
 									</summary>

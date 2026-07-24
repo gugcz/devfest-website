@@ -34,7 +34,6 @@
 	.contact-grid {
 		position: relative;
 		display: block;
-		counter-reset: card;
 		border-top: 3px solid var(--rule-strong);
 		box-shadow: 0 3px 0 -2px var(--rule);
 
@@ -49,20 +48,20 @@
 		}
 	}
 
+	// One inbox, one ruled entry. No exhibit numeral and no far-right folder
+	// tab: numbering three inboxes said nothing, and a red chip pinned to the
+	// opposite edge from its own title read as decoration, not a label. The
+	// category name is a plain mono eyebrow sitting directly above the title.
 	.contact-card {
 		position: relative;
-		display: grid;
-		grid-template-columns: 3.25rem minmax(0, 1fr) minmax(13.5rem, auto);
-		align-items: start;
-		column-gap: clamp(1.25rem, 3vw, 2.75rem);
-		row-gap: 0.9rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
 		padding: clamp(1.6rem, 2.6vw, 2.4rem) 0;
 		border-bottom: 1px solid var(--rule);
-		counter-increment: card;
 		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 
-		// Light washes in from the left when the entry is pulled — the same
-		// gesture the ticket ledger uses, so a "desk" and a "wave" behave alike.
+		// Light washes in from the left when the entry is pulled.
 		&::before {
 			content: '';
 			position: absolute;
@@ -90,74 +89,14 @@
 		}
 	}
 
-	// Outlined dossier numeral in the ledger's left column — same exhibit
-	// number the ticket ledger uses. Decorative (hollow type carries no
-	// contrast); the desk's real name is its title.
-	.card-no {
-		grid-row: 1;
-		grid-column: 1;
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-exhibit);
-		line-height: 0.85;
-		letter-spacing: 0.02em;
-		font-variant-numeric: tabular-nums;
-		color: transparent;
-		-webkit-text-stroke: 1px rgba(204, 0, 0, 0.5);
-		padding-top: 0.15rem;
-		transition: -webkit-text-stroke-color 0.25s ease, text-shadow 0.25s ease;
-
-		&::before {
-			content: counter(card, decimal-leading-zero);
-		}
-	}
-
-	.contact-card:hover .card-no,
-	.contact-card:focus-within .card-no {
-		-webkit-text-stroke-color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
-	}
-
-	.contact-card:hover .card-no::before {
-		-webkit-text-stroke-color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
-	}
-
-	// Folder divider tab. The angled leading edge is the case-file device the
-	// whole system is named after, and flattening every category label to a
-	// mono word on a rule left nothing on the site actually tabbed.
-	//
-	// The SHAPE carries the signal; the red stays rationed. A dark tab with a
-	// red keyline reads as a tab without spending the accent fill three times
-	// on one page — it fills solid only for the desk you are pointing at.
+	// Category eyebrow — plain mono label above the title, not a tab.
 	.card-label {
-		grid-row: 1;
-		grid-column: 3;
-		justify-self: end;
+		align-self: flex-start;
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label-sm);
 		letter-spacing: 0.24em;
 		text-transform: uppercase;
 		color: var(--color-accent-hot);
-		background: rgba(204, 0, 0, 0.08);
-		border: 1px solid var(--rule-red);
-		padding: 0.4rem 0.85rem 0.36rem 1.15rem;
-		clip-path: polygon(0.62rem 0, 100% 0, 100% 100%, 0 100%);
-		white-space: nowrap;
-		transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-	}
-
-	.contact-card:hover .card-label,
-	.contact-card:focus-within .card-label {
-		background: var(--color-accent);
-		border-color: var(--color-accent);
-		color: var(--on-accent);
-	}
-
-	// Body column: title, description, then the addresses.
-	.card-title,
-	.card-desc,
-	.card-emails {
-		grid-column: 2;
 	}
 
 	.card-title {
@@ -187,24 +126,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
-	}
-
-	@media (max-width: 720px) {
-		.contact-card {
-			grid-template-columns: 2.4rem minmax(0, 1fr);
-		}
-
-		.card-label {
-			grid-column: 2;
-			grid-row: auto;
-			justify-self: start;
-		}
-
-		.card-title,
-		.card-desc,
-		.card-emails {
-			grid-column: 2;
-		}
 	}
 
 	.card-emails li {

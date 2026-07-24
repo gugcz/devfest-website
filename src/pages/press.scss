@@ -143,11 +143,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.4rem;
-		counter-reset: card;
-	}
-
-	.coverage-row {
-		counter-increment: card;
 	}
 
 	// A clipping in the press ledger: thumbnail left, headline and outlet
@@ -193,36 +188,10 @@
 			outline: none;
 
 			&::before { border-color: var(--matte-red); }
-			.card-no::before {
-				-webkit-text-stroke-color: var(--color-accent-hot);
-				text-shadow: var(--glow-red-soft);
-			}
 			.coverage-title { color: var(--color-accent-hot); text-shadow: var(--glow-red-soft); }
 			.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
 			.coverage-arrow { transform: translate(2px, -2px); }
 			.coverage-read { color: var(--color-accent-hot); }
-		}
-	}
-
-	// Oversized outlined index — anchored to the text column's top-right so it
-	// never collides with the thumbnail. Smaller than the desk slab (denser row).
-	.coverage-text .card-no {
-		position: absolute;
-		top: 0;
-		right: 0;
-		z-index: 0;
-		pointer-events: none;
-		line-height: 1;
-
-		&::before {
-			content: counter(card, decimal-leading-zero);
-			font-family: var(--font-bebas-neue), sans-serif;
-			font-size: var(--fs-monogram);
-			line-height: 0.8;
-			letter-spacing: 0.02em;
-			color: transparent;
-			-webkit-text-stroke: 1px rgba(204, 0, 0, 0.4);
-			transition: -webkit-text-stroke-color 0.25s ease, text-shadow 0.25s ease;
 		}
 	}
 
@@ -249,10 +218,7 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		min-width: 0;
-		// Keep clear of the outlined corner index.
-		padding-right: 2.4rem;
 
-		// Keep the copy above the outlined index numeral.
 		> .coverage-outlet,
 		> .coverage-title,
 		> .coverage-desc,
@@ -337,7 +303,6 @@
 	.desk-grid {
 		position: relative;
 		display: block;
-		counter-reset: card;
 		border-top: 3px solid var(--rule-strong);
 		box-shadow: 0 3px 0 -2px var(--rule);
 
@@ -351,20 +316,21 @@
 		}
 	}
 
-	// Press desks are ledger entries, same as the contact desks.
+	// Ruled entries, like the contact desks. No exhibit numeral (it numbered two
+	// desks, which said nothing) and no far-right folder tab — the category name
+	// is a plain mono eyebrow above the title. This also fixes the email row,
+	// which used to fall into the vanished 3.25rem numeral column and wrap
+	// character by character.
 	.desk-card {
 		position: relative;
-		display: grid;
-		grid-template-columns: 3.25rem minmax(0, 1fr);
-		align-items: start;
-		column-gap: clamp(1.25rem, 3vw, 2.75rem);
-		row-gap: 0.9rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
 		background: transparent;
 		border: 0;
 		border-bottom: 1px solid var(--rule);
 		border-radius: 0;
 		padding: clamp(1.6rem, 2.6vw, 2.4rem) 0;
-		counter-increment: card;
 		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 
 		&::before {
@@ -394,65 +360,23 @@
 		}
 	}
 
-	// Running index in the ledger's left column.
-	.desk-card .card-no {
-		grid-row: 1;
-		grid-column: 1;
-		pointer-events: none;
-		line-height: 1;
-
-		&::before {
-			content: counter(card, decimal-leading-zero);
-			font-family: var(--font-bebas-neue), sans-serif;
-			font-size: var(--fs-exhibit);
-			line-height: 0.85;
-			letter-spacing: 0.02em;
-			font-variant-numeric: tabular-nums;
-			color: transparent;
-			-webkit-text-stroke: 1px rgba(204, 0, 0, 0.5);
-			transition: -webkit-text-stroke-color 0.25s ease, text-shadow 0.25s ease;
-		}
-	}
-
-	.desk-card:hover .card-no::before {
-		-webkit-text-stroke-color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
-	}
-
-	// Keep the copy above the outlined index numeral.
 	.desk-card > .card-label,
 	.desk-card > .card-title,
 	.desk-card > .card-desc,
-	.desk-card > .card-foot {
-		grid-column: 2;
+	.desk-card > .card-foot,
+	.desk-card > .card-emails {
 		position: relative;
 		z-index: 1;
 	}
 
-	// Folder divider tab — same treatment as the contact desks so the site has
-	// one tab, not two. Shape carries the case-file signal; the red fills in
-	// only for the desk under the pointer.
+	// Category eyebrow — plain mono label above the title, not a tab.
 	.card-label {
-		justify-self: start;
 		align-self: flex-start;
-		background: rgba(204, 0, 0, 0.08);
-		border: 1px solid var(--rule-red);
 		color: var(--color-accent-hot);
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label-sm);
 		letter-spacing: 0.24em;
 		text-transform: uppercase;
-		padding: 0.4rem 0.85rem 0.36rem 1.15rem;
-		clip-path: polygon(0.62rem 0, 100% 0, 100% 100%, 0 100%);
-		white-space: nowrap;
-		transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-	}
-
-	.desk-card:hover .card-label,
-	.desk-card:focus-within .card-label {
-		background: var(--color-accent);
-		border-color: var(--color-accent);
-		color: var(--on-accent);
 	}
 
 	.card-title {
