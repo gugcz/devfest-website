@@ -1,0 +1,4 @@
+# Staged Astro SSR output (copied from ../dist/server by the firebase.json
+# predeploy at deploy time) and installed function deps — both build artifacts.
+server/
+node_modules/

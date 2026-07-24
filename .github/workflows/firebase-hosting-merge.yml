@@ -1,4 +1,6 @@
-# Deploys the production Hosting site on every push to the release branch.
+# Deploys the production Hosting site + the on-demand SSR function (renderPages,
+# codebase website-ssr) on every push to the release branch. The site build runs
+# on the Node-22 runner below; the SSR function only serves /speakers + /sessions.
 name: Deploy to Firebase Hosting on merge
 on:
   push:
@@ -19,9 +21,15 @@ jobs:
       # Node 21 container. This avoids the intermittent "Premature close"
       # keep-alive failure that breaks FirebaseExtended/action-hosting-deploy
       # when it runs firebase-tools on the runner's security-patched Node.
-      - name: Deploy to Firebase Hosting (live)
+      - name: Deploy SSR function + Hosting (live)
         uses: w9jds/firebase-action@v15.22.3
         with:
-          args: deploy --only hosting --project devfest-cz-app
+          # Functions before hosting: the /speakers + /sessions rewrites target
+          # renderPages, so it must exist before Hosting publishes — firebase
+          # deploys functions ahead of hosting within one invocation. The website
+          # build ran above (Node 22 runner); the website-ssr predeploy only
+          # stages dist/server (cp), which is safe in this action's Node 21 image
+          # (astro never runs here — the function ships the pre-built handler).
+          args: deploy --only functions:website-ssr,hosting --project devfest-cz-app
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEVFEST_CZ_APP }}

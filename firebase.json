@@ -1,7 +1,7 @@
 {
   "hosting": {
     "site": "devfest-public",
-    "public": "dist",
+    "public": "dist/client",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -9,6 +9,10 @@
     ],
     "cleanUrls": true,
     "trailingSlash": false,
+    "rewrites": [
+      { "source": "/speakers", "function": { "functionId": "renderPages", "region": "europe-west1", "pinTag": true } },
+      { "source": "/sessions", "function": { "functionId": "renderPages", "region": "europe-west1", "pinTag": true } }
+    ],
     "headers": [
       {
         "source": "**",
@@ -48,6 +52,21 @@
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    },
+    {
+      "source": "ssr",
+      "codebase": "website-ssr",
+      "runtime": "nodejs22",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "rm -rf \"$RESOURCE_DIR/server\" && cp -r \"$RESOURCE_DIR/../dist/server\" \"$RESOURCE_DIR/server\""
       ]
     }
   ]

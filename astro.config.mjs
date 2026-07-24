@@ -116,6 +116,13 @@ export default defineConfig({
         react(),
     ],
     vite: {
+        // Keep firebase-admin out of the SSR bundle. It has native/gRPC bits and
+        // ships protobuf assets that don't survive bundling; the renderPages
+        // function installs it from ssr/package.json instead. (Under A11Y_MOCK the
+        // resolve.alias below intercepts it with a fixture replayer first.)
+        ssr: {
+            external: ['firebase-admin'],
+        },
         resolve: {
             alias: a11yMockAlias,
         },

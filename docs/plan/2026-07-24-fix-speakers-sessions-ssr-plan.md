@@ -308,7 +308,7 @@ The non-mock Phase-1 "no static file" check is therefore conditional on
 
 ### Phase 2: Production deploy wiring (function + rewrite + hosting path + CI)
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** Package the Astro Node handler as the 2nd-gen `renderPages` function
   (`minInstances:1`, `maxInstances:10`, region `europe-west1`), point Hosting at
   `dist/client`, add the two rewrites, and deploy the function + hosting together

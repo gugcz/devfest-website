@@ -1,0 +1,18 @@
+{
+  "name": "devfest-ssr",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Firebase 2nd-gen function that serves the on-demand /speakers and /sessions routes by wrapping the pre-built Astro Node SSR handler (staged into ./server by the firebase.json predeploy). See docs/plan/2026-07-24-fix-speakers-sessions-ssr-plan.md.",
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.0.2",
+    "astro": "^7.1.0",
+    "firebase-admin": "^13.10.0",
+    "firebase-functions": "^7.2.5",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  }
+}
