@@ -8,11 +8,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # DevFest Website
 
-Conference landing page for DevFest.cz 2026, built with Astro 6 and deployed to Firebase Hosting.
+Conference landing page for DevFest.cz 2026, built with Astro 7 and deployed to Firebase Hosting.
 
 ## Tech Stack
 
-- **Framework:** Astro 6 with React islands (`@astrojs/react`)
+- **Framework:** Astro 7 with React 19 islands (`@astrojs/react` 6)
 - **Language:** TypeScript (strict mode)
 - **Styling:** SCSS with CSS Modules for React components, global styles in `BaseLayout.astro`
 - **Node:** >= 22.12.0
@@ -24,8 +24,9 @@ Conference landing page for DevFest.cz 2026, built with Astro 6 and deployed to 
 | `npm run dev`     | Start dev server         |
 | `npm run build`   | Build for production     |
 | `npm run preview` | Preview production build |
+| `npm run a11y`    | Mock-data build + axe accessibility audit (`scripts/a11y.mjs`, `@axe-core/playwright`) |
 
-No lint or test scripts are configured — TypeScript strict mode provides type safety.
+No lint script is configured — TypeScript strict mode provides type safety. The only automated check is `npm run a11y` (axe against an `A11Y_MOCK=1` build; see "Browser data access").
 
 ## PR conventions
 
@@ -37,16 +38,28 @@ No lint or test scripts are configured — TypeScript strict mode provides type 
 
 Pages under `src/pages/` using Astro file-based routing:
 - `/` — Main landing page (hero, countdown timer, newsletter form, footer)
+- `/speakers` — Speaker lineup (`Speakers` island reads `/api/lineup`; `SpeakerDetail` is an in-island detail view, not a route)
+- `/sessions` — Session schedule (`Sessions` island reads `/api/lineup`; `SessionDetail` is an in-island detail view)
+- `/invoice` — Company invoice request (`InvoiceForm` island → `submitInvoiceCallable`)
+- `/partners` — Sponsors/partners (`src/lib/partners.ts`)
+- `/press` and `/press/downloads` — Press kit (`src/lib/press-kit.ts`)
+- `/contact` — Contact page
+- `/faq` — Frequently asked questions
+- `/team` — Organizing team
 - `/privacy-policy` — GDPR privacy policy
 - `/newsletter-subscription-thank-you` — Post-signup confirmation
 - `/thank-you` — Post-purchase confirmation (configure as ti.to event "thank you URL")
+- `/404` — Not-found page
 
 ### Component Model
 
 Static Astro components (`.astro`) for layout and non-interactive UI. React components (`.tsx`) with `client:load` for interactive features:
 - `Countdown.tsx` — Live countdown to October 30, 2026, 9:00 AM CET; updates every second
 - `NewsletterForm.tsx` — SmartEmailing integration for email capture with GDPR consent checkbox
-- `Footer.tsx` — Social links (X, Facebook, Bluesky, LinkedIn, YouTube)
+- `Speakers.tsx` / `SpeakersTeaser.tsx` / `Sessions.tsx` — Lineup islands; `fetch('/api/lineup')` (never the Firebase SDK), parse via `src/lib/lineup.ts`. `SpeakerDetail.tsx` / `SessionDetail.tsx` render the in-island detail views.
+- `Tickets.tsx` — Ticket roadmap; `fetch('/api/tickets')`, helpers in `src/lib/tito.ts`
+- `InvoiceForm.tsx` — `/invoice` form; calls the `submitInvoiceCallable` callable via the Functions SDK (App Check attached)
+- `Footer.astro` — Social links (X, Facebook, Bluesky, LinkedIn, YouTube)
 - `CookieBanner.astro` — Cookie consent stored in localStorage; dispatches `cookie-consent-accepted` DOM event
 
 ### Firebase Integration (`src/lib/firebase.ts`)
@@ -57,7 +70,7 @@ Gotchas (both verified in-browser; getting either wrong silently writes `_ga` wi
 - The `consent: 'default'` command **must** land in the dataLayer ahead of the `config` command. Firebase's own `setConsent()` does **not** guarantee that ordering, which is why `firebase.ts` pushes the default via its own gtag shim instead.
 - gtag.js only honours commands pushed as an **`arguments` object** (Google's canonical snippet). A plain array is silently ignored — the consent default gets skipped and cookies are written anyway. The `gtag` shim in `firebase.ts` forwards `arguments` for this reason; don't "clean it up" into a rest array.
 
-Firebase Realtime Database is configured but not currently used. Deployment targets the `devfest-public` site in the `devfest-cz-app` project via `firebase.json`.
+Firebase Realtime Database holds the ti.to `/tickets` cache (written hourly by `refreshTicketsScheduled`, served to the browser via `/api/tickets` — see below); Firestore holds `speakers`/`sessions` (Sessionize sync) and `invoices`. Deployment targets the `devfest-public` site in the `devfest-cz-app` project via `firebase.json`.
 
 App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCHECK_SITE_KEY` in `src/lib/firebase.ts`; `PUBLIC_FIREBASE_APPCHECK_SITE_KEY` overrides it — `src/env.d.ts` types it, `.env.example` documents it). The key is public like the Firebase `apiKey`. It initialises on load (whenever `getApp()` first runs — `initAnalytics` triggers it), **not** gated on cookie consent — App Check is a security mechanism (legitimate interest), not analytics. **No browser content read goes through the Firebase SDK anymore** (speakers/sessions/tickets all fetch the cached `/api/*` endpoints below), so App Check only matters for the App-Check-enforced `submitInvoiceCallable` callable; `ticketsWebhook` (external ti.to caller, HMAC-protected) must stay out. See README "App Check".
 
@@ -77,7 +90,7 @@ App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCH
 
 ### ti.to Tickets pipeline
 
-Visitor browsers read ticket data from RTDB `/tickets`. The static build never calls ti.to. Cloud Functions own all ti.to traffic.
+Visitor browsers read ticket data from the cached `/api/tickets` endpoint (`ticketsApi`), which serves the RTDB `/tickets` cache — never the Firebase SDK (see "Browser data access"). The static build never calls ti.to. Cloud Functions own all ti.to traffic.
 
 ```
 functions/src/
@@ -119,6 +132,35 @@ Conventions / gotchas:
 - The Firebase project (`devfest-cz-app`) is **shared with the mobile app repo**, which deploys its own functions to the same project. To keep deploys isolated, this repo declares `"codebase": "website"` in `firebase.json`. The app repo must use a **different** codebase name (e.g. `app`) and **different function names**, otherwise deploys overwrite each other. `firebase deploy --only functions` only touches codebases declared in the local `firebase.json`.
 
 Deploy steps, secret setup, and ti.to/Slack wiring live in [README.md](README.md).
+
+### Sessionize → lineup pipeline
+
+Speaker/session data comes from **Sessionize**. Visitor browsers never hit Sessionize: a daily scheduled function mirrors it into public-read **Firestore** (`speakers` + `sessions`), and the browser reads those through the cached `/api/lineup` endpoint (see "Browser data access").
+
+```
+functions/src/
+├── sessionize/
+│   ├── index.ts               # domain barrel
+│   ├── params.ts              # SESSIONIZE_ENDPOINT_ID secret (reuses tickets SLACK_WEBHOOK_URL)
+│   ├── sessionize-api.ts      # fetch + validate + normalize; buildSessionMap/…; computeDeletePlan (delete-guard)
+│   ├── mirror-images.ts       # mirror speaker photos → Firebase Storage `speakers/{id}` (idempotent)
+│   └── refresh-sessionize.ts  # `refreshSessionizeScheduled`
+└── lineup/
+    ├── index.ts               # domain barrel
+    └── lineup-api.ts          # `lineupApi`
+```
+
+| Name | Trigger | Effect |
+| ---- | ------- | ------ |
+| `refreshSessionizeScheduled` | `onSchedule('every day 06:00', Europe/Prague)` | Fetch Sessionize "All data" → mirror photos to Storage → write Firestore `speakers` + `sessions` |
+| `lineupApi` | `onRequest` (`invoker: 'public'`) | Serve `{ speakers, sessions }` from Firestore behind `/api/lineup` (1h edge TTL) |
+
+Conventions / gotchas:
+- **Cross-referenced collections.** `speakers` docs embed their `sessions[]`; `sessions` docs embed their `speakers[]`. Each collection is written as its own atomic `WriteBatch` (upserts + guarded deletes) so a live reader never sees a half-synced state. Batch hard-caps at 500 ops — fine at the expected ~30–80 docs.
+- **Delete-guard.** `computeDeletePlan` withholds deletes when a fetch looks truncated/empty so a bad Sessionize response can't wipe the live collections; a withheld run pings Slack (`🎤 SESSIONIZE`). `extractSpeakers` throws on an empty roster, aborting before any write; an empty session set (Speakers-view fallback) is preserved, not wiped.
+- **Photos on Firebase, not Sessionize's CDN.** `mirror-images.ts` uploads each `profilePicture` to Storage and writes the Firebase download-token URL onto both collections. Idempotent (re-downloads only when the source URL changed); best-effort (per-speaker failure falls back to the raw Sessionize URL).
+- `SESSIONIZE_ENDPOINT_ID` must be a **JSON API** endpoint id (or full URL) exposing the "All data" / "Speakers" view — an embed id returns HTML. `parseEndpointId` accepts either the bare id or a URL.
+- Browser side: `src/lib/lineup.ts` `fetch('/api/lineup')` → `Speakers`/`Sessions`/`SpeakersTeaser`. `lineupApi` returns raw docs (`{ id, ...doc }`) so the browser parses them with `speakerFromDoc`/`sessionFromDoc` (`src/lib/speakers.ts`, `src/lib/sessions.ts`) and no parsing is duplicated in `functions/`.
 
 ### Invoice (iDoklad) pipeline
 
