@@ -5,8 +5,8 @@
  * writes documents into the public-read Firestore `sessions` collection, each
  * embedding a summary of its presenters (`speakers[]`). The shapes here mirror
  * the subset of that `SessionDoc` the UI renders. Browser-safe: types and pure
- * helpers only — no Firebase import (the island wires the read via
- * `getFirestoreDb()`).
+ * helpers only — no Firebase import (the island reads the cached `/api/lineup`
+ * endpoint via `fetchLineup` / `fetchAgenda` in `lineup.ts`, not the SDK).
  *
  * ⚠️ Persisted shape lives in `functions/src/sessionize/sessionize-api.ts`
  * (`SessionDoc` / `SessionSpeakerRef`) — the two live across the src/ ↔

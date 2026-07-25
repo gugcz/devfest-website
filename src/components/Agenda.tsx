@@ -56,8 +56,17 @@ function timeRange(session: Session): string {
 	return `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}`;
 }
 
+/** Comma-joined presenter names, empties dropped. */
+function speakerNames(session: Session): string {
+	return session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
+}
+
 /* ============================ GRID ============================ */
 
+// Each session is placed by its absolute grid row in its room column. Two
+// sessions overlapping in the SAME room would render on top of each other —
+// lane-splitting is an explicit non-goal (conference rooms run sequentially;
+// parallel tracks are different rooms). Add it only if real data ever overlaps.
 function AgendaGrid({
 	partition,
 	range,
@@ -151,9 +160,7 @@ function AgendaGrid({
 							<span className={s.cellTime}>{timeRange(session)}</span>
 							<span className={s.cellTitle}>{session.title}</span>
 							{session.speakers.length > 0 && (
-								<span className={s.cellSpeakers}>
-									{session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ')}
-								</span>
+								<span className={s.cellSpeakers}>{speakerNames(session)}</span>
 							)}
 						</button>
 					);
@@ -166,18 +173,23 @@ function AgendaGrid({
 /* ============================ LIST ============================ */
 
 function AgendaList({
-	sessions,
+	partition,
 	onOpen,
 }: {
-	sessions: Session[];
+	partition: AgendaPartition;
 	onOpen: (session: Session) => void;
 }) {
-	const timed = [...sessions].filter((session) => placement(session) !== null).sort(byStart);
+	// Same timed set the grid places, from the one memoized partition (bands +
+	// every room column, incl. Room-TBA) so the two layouts never drift.
+	const timed = [
+		...partition.bands,
+		...partition.columns.flatMap((room) => partition.byRoom.get(room) ?? []),
+	].sort(byStart);
 	return (
 		<ul className={s.list} role="list">
 			{timed.map((session) => {
 				const band = isBand(session);
-				const names = session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
+				const names = speakerNames(session);
 				const room = session.room.trim();
 				const body = (
 					<>
@@ -281,7 +293,7 @@ export default function Agenda() {
 			<p className={s.tzNote}>All times Prague (CET)</p>
 
 			{asList ? (
-				<AgendaList sessions={state.sessions} onOpen={setSelected} />
+				<AgendaList partition={partition} onOpen={setSelected} />
 			) : (
 				<AgendaGrid partition={partition} range={range} onOpen={setSelected} />
 			)}

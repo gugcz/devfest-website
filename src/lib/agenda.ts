@@ -19,12 +19,12 @@
 import type { Session } from './sessions';
 
 /** Assumed length of a session whose `endsAt` is missing or not after its start. */
-export const FALLBACK_DURATION_MIN = 30;
+const FALLBACK_DURATION_MIN = 30;
 /** Floor on a rendered span so a lightning talk stays tall enough to read/tap. */
-export const MIN_SPAN_MIN = 15;
+const MIN_SPAN_MIN = 15;
 
 /** Column key used for talks that are timed but have no room assigned yet. */
-export const ROOM_TBA = 'Room TBA';
+const ROOM_TBA = 'Room TBA';
 
 const TIME_RE = /T(\d{2}):(\d{2})/;
 
@@ -57,7 +57,7 @@ export function formatClock(iso: string): string {
 }
 
 /** True when a session has a usable start time (and therefore a grid position). */
-export function isTimed(session: Session): boolean {
+function isTimed(session: Session): boolean {
 	return parseLocalMinutes(session.startsAt) !== null;
 }
 
@@ -120,7 +120,7 @@ export function dayRange(sessions: Session[]): { start: number; end: number } | 
  * non-band talks sorted by start. Talks with no room are excluded (they get the
  * {@link ROOM_TBA} column instead, added by {@link partitionAgenda}).
  */
-export function roomColumns(sessions: Session[]): string[] {
+function roomColumns(sessions: Session[]): string[] {
 	const seen = new Set<string>();
 	const columns: string[] = [];
 	for (const session of [...sessions].sort(byStart)) {

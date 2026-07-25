@@ -423,6 +423,44 @@ async function run() {
 		console.log(`  ✘ ${urlPath} — ${parts.join(', ')} (${elapsed}ms)`);
 	}
 
+	// Mobile pass: below 760px the /agenda grid collapses to AgendaList — a
+	// distinct DOM (list rows, not grid cells) the desktop sweep never renders.
+	// Audit it once at a phone width, including the detail dialog opened from a
+	// list row.
+	{
+		const mobile = await browser.newContext({
+			reducedMotion: 'reduce',
+			viewport: { width: 375, height: 812 },
+		});
+		const mp = await mobile.newPage();
+		const urlPath = '/agenda/ [mobile list]';
+		const url = `http://127.0.0.1:${PORT}/agenda/`;
+		await mp.goto(url, { waitUntil: 'domcontentloaded' });
+		await mp.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
+		await hydrateIslands(mp);
+		const results = await new AxeBuilder({ page: mp }).withTags(tags).analyze();
+		// The list rows open the same SessionDetail dialog as the grid cells.
+		let modalViolations = 0;
+		try {
+			await mp.click('[data-agenda-open]');
+			await mp.waitForSelector('[role="dialog"]', { timeout: 3000 });
+			await mp.waitForTimeout(200);
+			const modalRes = await new AxeBuilder({ page: mp }).withTags(tags).include('[role="dialog"]').analyze();
+			modalViolations = modalRes.violations.length;
+			if (modalViolations) failures.push({ urlPath: '/agenda/ [mobile list dialog]', violations: modalRes.violations });
+		} catch (err) {
+			console.log(`  ⚠ ${urlPath} — dialog flow error: ${err}`);
+		}
+		if (results.violations.length === 0 && modalViolations === 0) {
+			console.log(`  ✓ ${urlPath}`);
+		} else {
+			totalViolations += results.violations.length + modalViolations;
+			if (results.violations.length) failures.push({ urlPath, violations: results.violations });
+			console.log(`  ✘ ${urlPath} — ${results.violations.length + modalViolations} axe`);
+		}
+		await mobile.close();
+	}
+
 	await browser.close();
 	server.close();
 

@@ -1,7 +1,9 @@
 // Agenda timetable — the /sessions film-noir system rendered against a clock.
 // Desktop: a proportional time × room CSS grid (rooms as columns, 5-min rows).
-// Mobile / single-room: a time-ordered list. All colours, rules, radii, and
-// fonts come from BaseLayout tokens — no raw hex/px colours, no fifth font.
+// Mobile / single-room: a time-ordered list. Colours, rules, radii, and fonts
+// come from BaseLayout tokens (no fifth font); the only literals are the card
+// gradient's `#070606` end-stop and the grain/glow rgba()s, both copied verbatim
+// from Sessions.module.scss so the cards match /sessions exactly.
 
 /* ===================== TZ NOTE ===================== */
 .tzNote {

@@ -211,9 +211,29 @@ export const SESSIONS = [
 		},
 	},
 	{
+		id: 'ses-lightning',
+		data: {
+			// No endsAt → exercises the fallback-duration + min-span path in
+			// src/lib/agenda.ts so it renders (and gets audited), not just the
+			// happy path where every session has a valid end.
+			order: 5,
+			title: 'Lightning talk: shipping on Friday',
+			description: 'A five-minute war story.',
+			startsAt: '2026-10-30T11:00:00',
+			endsAt: '',
+			room: 'Main Hall',
+			isServiceSession: false,
+			isPlenumSession: false,
+			speakers: [
+				{ id: 'sp-alan', fullName: 'Alan Turing', tagLine: '', profilePicture: '' },
+			],
+			categories: [{ name: 'Track', values: ['Web'] }],
+		},
+	},
+	{
 		id: 'ses-unscheduled',
 		data: {
-			order: 5,
+			order: 6,
 			title: 'Workshop: hands-on debugging (time TBA)',
 			description: 'A late-addition workshop still being slotted into the grid.',
 			startsAt: '',
