@@ -8,7 +8,7 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 
 ## Tech Stack
 
-- **Framework:** [Astro](https://astro.build/) 6
+- **Framework:** [Astro](https://astro.build/) 7
 - **Language:** TypeScript (strict mode)
 - **Styling:** Sass
 - **UI:** React 19 (interactive islands)
@@ -29,11 +29,14 @@ npm run build
 
 # Preview production build
 npm run preview
+
+# Accessibility audit (mock-data build + axe)
+npm run a11y
 ```
 
 ## ti.to Tickets — Cloud Functions + RTDB cache
 
-The "Get your ticket" section is rendered client-side from a Firebase Realtime Database cache. The static build never calls ti.to, and a scheduled Cloud Function keeps the cache fresh.
+The "Get your ticket" section is rendered client-side from a Firebase Realtime Database cache. The static build never calls ti.to, a scheduled Cloud Function keeps the cache fresh, and the browser reads it through a cached HTTP endpoint (`/api/tickets`) — **not** the Firebase SDK. (Reading RTDB with the client SDK blocked the first read on an App Check token, ~30s on mobile; a plain `fetch()` avoids that. See "Browser data access" in [CLAUDE.md](CLAUDE.md).)
 
 ```
 Cloud Scheduler (every 1 h, Europe/Prague)
@@ -43,7 +46,8 @@ Cloud Scheduler (every 1 h, Europe/Prague)
 
 Browser
   └─> Tickets.tsx (client:load)
-        └─ subscribe RTDB /tickets via firebase/database onValue
+        └─ fetch /api/tickets  ─→  Hosting rewrite  ─→  Cloud Function `ticketsApi` (europe-west1)
+                                                              └─ read RTDB /tickets via Admin SDK (cached, 5-min edge TTL)
 ```
 
 The Blaze plan is required for scheduled functions and Secret Manager.
@@ -76,6 +80,7 @@ The default Cloud Functions service account has the IAM needed to write RTDB; no
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
 | `refreshTicketsScheduled` | Cloud Scheduler, hourly | Sync ti.to releases → RTDB `/tickets` |
+| `ticketsApi` | HTTPS, public (`/api/tickets`) | Serve the cached `/tickets` roadmap as JSON for the browser to `fetch()` (5-min edge TTL) |
 | `ticketsWebhook` | HTTPS, public | Verifies `Tito-Signature` and posts purchase notifications to Slack |
 | `weeklyTicketStatusScheduled` | Cloud Scheduler, Mondays `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |
 | `thursdayTicketStatusScheduled` | Cloud Scheduler, Thursdays `18:00 Europe/Prague` | Same handler as `weeklyTicketStatusScheduled` — second weekly status report |
@@ -89,23 +94,28 @@ Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 
 `database.rules.json` documents the required rules. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.json` and run `firebase deploy --only database`.
 
-`/tickets` is publicly readable (`tickets.".read": true`) so the browser `Tickets.tsx` subscriber can render live release data; the root default and all writes stay `false`. The Cloud Functions write the cache via the Admin SDK (which bypasses rules). Note the projected cache deliberately omits raw inventory counts (`quantity` / `quantity_sold` / `tickets_count`) and ships only a coarse `has_sales` boolean, so public reads can't derive per-wave sales velocity — see `functions/src/tickets/tito-api.ts::projectRelease`.
+`/tickets` is read by the `ticketsApi` function via the Admin SDK (which bypasses rules), so its `tickets.".read": true` is no longer required for the website — the browser hits `/api/tickets`, not RTDB. The rule is kept harmless; the root default and all writes stay `false`, and the Cloud Functions write the cache via the Admin SDK. Note the projected cache deliberately omits raw inventory counts (`quantity` / `quantity_sold` / `tickets_count`) and ships only a coarse `has_sales` boolean, so a reader can't derive per-wave sales velocity — see `functions/src/tickets/tito-api.ts::projectRelease`.
 
 ### App Check
 
-App Check attests that RTDB reads come from the real site, not a scraper. The
-web client uses **reCAPTCHA Enterprise** in `src/lib/firebase.ts` with the key
-committed (`APPCHECK_SITE_KEY` — public, like the Firebase `apiKey`). App Check
-tokens already attach to RTDB reads; reads keep working until you toggle
-enforcement on, so it's safe to ship before enforcing.
+App Check attests that requests come from the real site, not a scraper or bot.
+The web client uses **reCAPTCHA Enterprise** in `src/lib/firebase.ts` with the
+key committed (`APPCHECK_SITE_KEY` — public, like the Firebase `apiKey`). It
+initialises on page load and its token auto-attaches to the Firebase SDK calls
+the browser still makes.
 
-**Scope.** Only the public surface needs it: RTDB `/tickets`, which the browser
-reads directly. The `ticketsWebhook` function is called by ti.to (an external
-server that cannot mint an App Check token) and is already protected by an HMAC
-signature — **do not** enforce App Check on it. The scheduled functions take no
-public traffic, so App Check is irrelevant there.
+**Scope.** The browser no longer reads any content through the Firebase SDK —
+speakers, sessions and tickets all go through the cached `/api/*` endpoints (see
+"Browser data access" in [CLAUDE.md](CLAUDE.md)), which don't involve App Check.
+The **only** App-Check-gated surface left is the **`submitInvoiceCallable`**
+callable behind the `/invoice` form, and it is already enforced **in code**
+(`enforceAppCheck: true` — see the invoice section below), so there is no RTDB or
+Firestore enforcement toggle to flip. `ticketsWebhook` is called by ti.to (an
+external server that can't mint an App Check token) and is protected by an HMAC
+signature — **do not** enforce App Check on it; the schedulers take no public
+traffic either.
 
-Remaining steps (do 1–3 before turning on enforcement):
+Setup (needed so the invoice callable and any future App-Check surface pass):
 
 1. **Register the key in Firebase App Check.** GCP console (project
    `devfest-cz-app`) → Security → reCAPTCHA holds the **score-based website key**
@@ -116,16 +126,44 @@ Remaining steps (do 1–3 before turning on enforcement):
 2. **Local dev.** Set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN=true` in `.env`, load
    the site, copy the debug token from the console, and register it under
    App Check → Apps → Manage debug tokens. Leave this empty in production.
-3. **Watch metrics.** With tokens flowing but enforcement still off, App Check →
-   APIs shows the verified-vs-unverified split for Realtime Database. Wait until
-   nearly all real traffic is verified.
-4. **Enforce.** Once the metrics look clean, turn on enforcement for **Realtime
-   Database** in App Check → APIs. This is a console toggle — no code or
-   `database.rules.json` change. Leave Cloud Functions enforcement off.
+3. **Watch metrics.** App Check → APIs shows the verified-vs-unverified split for
+   Cloud Functions; confirm real invoice submissions are verified.
 
 ### Filtering
 
-Only releases that are on sale or sold out are displayed. Archived, secret, expired, upcoming, paused (`off_sale` / `locked`) releases are dropped server-side before writing to RTDB, with the same predicate applied again client-side as defence-in-depth. A single `sale_status` string is synthesised from ti.to's flag set (`sold_out`, `off_sale`, `expired`, `upcoming`, `archived`, `locked`) — see `functions/src/tickets/tito-api.ts::deriveSaleStatus`.
+Only **`secret`** (invite-only / private-link) releases are dropped — server-side before writing to RTDB (`isWebsiteVisible`), with the same predicate applied again client-side as defence-in-depth. Every other state (on-sale, sold-out, paused via `off_sale` / `locked`, upcoming, expired, archived) is persisted so the UI can render the full pricing-wave roadmap: `Tickets.tsx` maps each release to a badge (On sale / Sold out / Paused / Coming soon / Ended / Unavailable) and disables the Buy CTA for non-purchasable waves. A single `sale_status` string is synthesised from ti.to's flag set (`sold_out`, `off_sale`, `expired`, `upcoming`, `archived`, `locked`) — see `functions/src/tickets/tito-api.ts::deriveSaleStatus`.
+
+## Speakers & Sessions — Sessionize → Firestore → `/api/lineup`
+
+The `/speakers` and `/sessions` pages render client-side from **Firestore**, which a daily Cloud Function mirrors from **Sessionize**. Visitor browsers never touch Sessionize, and — like tickets — read through the cached `/api/lineup` endpoint, not the Firebase SDK.
+
+```
+Cloud Scheduler (every day 06:00, Europe/Prague)
+  └─> Cloud Function `refreshSessionizeScheduled` (europe-west1)
+        ├─ fetch  Sessionize "All data" JSON view (SESSIONIZE_ENDPOINT_ID)
+        ├─ mirror speaker photos → Firebase Storage `speakers/{id}` (idempotent)
+        └─ write  Firestore `speakers` + `sessions` (cross-referenced, atomic batches)
+
+Browser
+  └─> Speakers.tsx / Sessions.tsx (client:load)
+        └─ fetch /api/lineup  ─→  Hosting rewrite  ─→  Cloud Function `lineupApi` (europe-west1)
+                                                            └─ read Firestore speakers+sessions via Admin SDK (cached, 1-h edge TTL)
+```
+
+### Functions
+
+| Name | Trigger | Purpose |
+| ---- | ------- | ------- |
+| `refreshSessionizeScheduled` | Cloud Scheduler, daily 06:00 | Sync Sessionize → Storage photos + Firestore `speakers`/`sessions` |
+| `lineupApi` | HTTPS, public (`/api/lineup`) | Serve `{ speakers, sessions }` as JSON for the browser to `fetch()` (1-h edge TTL) |
+
+### Config
+
+```bash
+firebase functions:secrets:set SESSIONIZE_ENDPOINT_ID   # Sessionize JSON API endpoint id (or full URL)
+```
+
+Must be a **JSON API** endpoint exposing the "All data" / "Speakers" view (an embed id returns HTML). Reuses the tickets-domain `SLACK_WEBHOOK_URL` for failure alerts. A truncated/empty Sessionize response is refused before any write (delete-guard), so a bad fetch can't wipe the live lineup. Photos are re-served from Firebase Storage (download-token URLs, publicly readable) so no asset depends on Sessionize's CDN. Requires the same **Firestore database** the invoice flow needs.
 
 ## Company invoices — iDoklad invoice-first flow
 
@@ -189,7 +227,7 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 ### Firestore rules
 
-> **One-time setup:** the project currently uses only RTDB. Create a **Firestore database (Native mode)** in the Firebase console once, or `submitInvoiceCallable` writes (and the `processInvoiceTrigger` trigger) will fail.
+> **One-time setup:** create a **Firestore database (Native mode)** in the Firebase console once. It backs both the `invoices` collection and the Sessionize `speakers`/`sessions` sync — without it `submitInvoiceCallable` / `processInvoiceTrigger` and `refreshSessionizeScheduled` all fail. (RTDB, used only for the ticket cache, is separate.)
 
 `firestore.rules` denies all client access to `invoices` (company PII; written/read only by Cloud Functions via the Admin SDK, which bypasses rules). It is **not** wired into `firebase.json` on purpose — the Firestore ruleset is project-global and the project is shared with the mobile app, so auto-deploying would clobber the app's rules. Merge the `invoices` block into the project's live ruleset in the Firebase console (same manual approach as `database.rules.json`).
 
@@ -198,9 +236,11 @@ The invoice **price is taken automatically** from the active ti.to release whose
 ```
 src/
   pages/        # File-based routing (.astro pages)
-  components/   # Reusable UI components
+  components/   # Reusable UI components (Astro + React islands)
   layouts/      # Page layouts
+  lib/          # Browser helpers (firebase, lineup, tito, speakers, sessions, …)
 public/         # Static assets (images, favicon, etc.)
+functions/      # Cloud Functions (tickets, sessionize, lineup, invoice)
 astro.config.mjs
 tsconfig.json
 ```
@@ -210,9 +250,17 @@ tsconfig.json
 | Route | Description |
 |-------|-------------|
 | `/` | Landing page with countdown and newsletter signup |
+| `/speakers` | Speaker lineup (reads `/api/lineup`) |
+| `/sessions` | Session schedule (reads `/api/lineup`) |
 | `/invoice` | Request a company invoice to buy tickets by bank transfer |
+| `/partners` | Sponsors & partners |
+| `/press`, `/press/downloads` | Press kit and downloadable assets |
+| `/team` | Organizing team |
+| `/contact` | Contact page |
+| `/faq` | Frequently asked questions |
 | `/privacy-policy` | GDPR privacy policy |
 | `/newsletter-subscription-thank-you` | Post-signup confirmation |
+| `/thank-you` | Post-purchase confirmation (ti.to "thank you URL") |
 
 ## Links
 
