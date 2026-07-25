@@ -3,7 +3,7 @@
  *
  * The collection is server-only (Admin SDK bypasses rules; client access
  * is denied in firestore.rules). The browser never touches Firestore — it
- * POSTs to `submitInvoiceRequest`, which writes the doc here.
+ * POSTs to `submitInvoiceCallable`, which writes the doc here.
  *
  * Lifecycle (status):
  *   pending    → form submitted, nothing sent yet
@@ -22,7 +22,7 @@ import { firestore } from '../lib/admin.js';
 export const INVOICES_COLLECTION = 'invoices';
 
 /**
- * Per-(company, email) throttle counters for `submitInvoiceRequest`. Like the
+ * Per-(company, email) throttle counters for `submitInvoiceCallable`. Like the
  * invoices collection, this is server-only — the catch-all deny in
  * firestore.rules covers it (no explicit client access anywhere).
  */
@@ -30,7 +30,7 @@ export const INVOICE_RATE_LIMITS_COLLECTION = 'invoiceRateLimits';
 
 export type InvoiceStatus = 'pending' | 'invoiced' | 'processing' | 'completed' | 'error';
 
-/** The validated payload written by `submitInvoiceRequest`. */
+/** The validated payload written by `submitInvoiceCallable`. */
 export interface InvoiceRequestInput {
 	companyName: string;
 	registrationNumberIC: string;
@@ -81,7 +81,7 @@ export interface InvoiceRecord {
 
 /**
  * Invoices that have been issued but not yet paid — the work-list for the
- * `pollPaidInvoices` scheduler (iDoklad has no webhooks). Bounded so a
+ * `pollPaidInvoicesScheduled` scheduler (iDoklad has no webhooks). Bounded so a
  * backlog can't blow up a single run.
  */
 export async function listAwaitingPayment(limit = 50): Promise<InvoiceRecord[]> {

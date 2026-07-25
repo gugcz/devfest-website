@@ -8,9 +8,9 @@
  * lands before the domain modules load.
  *
  * `maxInstances` is a cost ceiling: this codebase shares a billing project
- * with the mobile-app team, so a retry storm or the public `titoWebhook` flood
+ * with the mobile-app team, so a retry storm or the public `ticketsWebhook` flood
  * path must not be able to fan out unboundedly. Per-function overrides (e.g.
- * the tighter cap on `submitInvoiceRequest`) still win where set.
+ * the tighter cap on `submitInvoiceCallable`) still win where set.
  */
 
 import { setGlobalOptions } from 'firebase-functions/v2';

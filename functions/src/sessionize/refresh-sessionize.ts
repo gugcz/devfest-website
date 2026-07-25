@@ -133,7 +133,7 @@ async function syncSessionize(): Promise<void> {
  * Daily scheduled refresh. Sessionize server-caches the All-data view ~5 min;
  * one request per day is trivial load.
  */
-export const refreshSessionize = onSchedule(
+export const refreshSessionizeScheduled = onSchedule(
 	{
 		schedule: 'every day 06:00',
 		timeZone: 'Europe/Prague',

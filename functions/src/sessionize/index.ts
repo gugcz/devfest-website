@@ -3,4 +3,4 @@
  * Add a new export here when a new Sessionize-sync function is created.
  */
 
-export { refreshSessionize } from './refresh-sessionize.js';
+export { refreshSessionizeScheduled } from './refresh-sessionize.js';

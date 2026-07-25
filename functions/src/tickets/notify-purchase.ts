@@ -1,5 +1,5 @@
 /**
- * `titoWebhook` — receives ti.to webhook deliveries, verifies the HMAC
+ * `ticketsWebhook` — receives ti.to webhook deliveries, verifies the HMAC
  * signature, and posts a Slack notification when a registration finishes.
  *
  * Configure ti.to → Customize → Webhook Endpoints with the deployed URL
@@ -56,7 +56,7 @@ async function claimRegistrationReference(reference: string | undefined): Promis
 		});
 		return result.committed;
 	} catch (err) {
-		logger.error('titoWebhook dedup check failed — proceeding', err);
+		logger.error('ticketsWebhook dedup check failed — proceeding', err);
 		return true;
 	}
 }
@@ -71,7 +71,7 @@ async function releaseRegistrationReference(reference: string | undefined): Prom
 	try {
 		await dedupRef(reference).remove();
 	} catch (err) {
-		logger.error('titoWebhook dedup release failed', err);
+		logger.error('ticketsWebhook dedup release failed', err);
 	}
 }
 
@@ -153,7 +153,7 @@ function buildSlackMessage(payload: TitoWebhookPayload): SlackPayload {
 	};
 }
 
-export const titoWebhook = onRequest(
+export const ticketsWebhook = onRequest(
 	{
 		region: REGION,
 		secrets: [TITO_WEBHOOK_SECRET, SLACK_WEBHOOK_URL],
@@ -173,7 +173,7 @@ export const titoWebhook = onRequest(
 		const eventName = (req.header(TITO_EVENT_HEADER) ?? '').trim() as TitoWebhookEvent;
 
 		if (!signature || !eventName) {
-			logger.warn('titoWebhook missing signature or event header', {
+			logger.warn('ticketsWebhook missing signature or event header', {
 				hasSignature: Boolean(signature),
 				hasEvent: Boolean(eventName),
 			});
@@ -183,13 +183,13 @@ export const titoWebhook = onRequest(
 
 		const rawBody: Buffer | undefined = (req as unknown as { rawBody?: Buffer }).rawBody;
 		if (!rawBody) {
-			logger.error('titoWebhook missing rawBody — cannot verify signature');
+			logger.error('ticketsWebhook missing rawBody — cannot verify signature');
 			res.status(400).send('Missing body');
 			return;
 		}
 
 		if (!verifyTitoSignature(TITO_WEBHOOK_SECRET.value(), rawBody, signature)) {
-			logger.warn('titoWebhook signature mismatch', { event: eventName });
+			logger.warn('ticketsWebhook signature mismatch', { event: eventName });
 			res.status(401).send('Invalid signature');
 			return;
 		}
@@ -197,7 +197,7 @@ export const titoWebhook = onRequest(
 		// Only post to Slack for registration.finished; ack everything else
 		// with 200 so ti.to doesn't keep retrying.
 		if (eventName !== NOTIFY_EVENT) {
-			logger.debug('titoWebhook ignored event', { event: eventName });
+			logger.debug('ticketsWebhook ignored event', { event: eventName });
 			res.status(200).send('ignored');
 			return;
 		}
@@ -206,7 +206,7 @@ export const titoWebhook = onRequest(
 		try {
 			payload = (req.body ?? JSON.parse(rawBody.toString('utf8'))) as TitoWebhookPayload;
 		} catch (err) {
-			logger.error('titoWebhook failed to parse body', err);
+			logger.error('ticketsWebhook failed to parse body', err);
 			res.status(400).send('Bad JSON');
 			return;
 		}
@@ -214,7 +214,7 @@ export const titoWebhook = onRequest(
 		// Replay guard: ack duplicates without re-posting to Slack.
 		const reference = payload.registration_reference ?? payload.reference;
 		if (!(await claimRegistrationReference(reference))) {
-			logger.info('titoWebhook duplicate delivery ignored', { reference });
+			logger.info('ticketsWebhook duplicate delivery ignored', { reference });
 			res.status(200).send('duplicate');
 			return;
 		}
@@ -222,13 +222,13 @@ export const titoWebhook = onRequest(
 		try {
 			const message = buildSlackMessage(payload);
 			await postToSlack(SLACK_WEBHOOK_URL.value(), message);
-			logger.info('titoWebhook posted to Slack', {
+			logger.info('ticketsWebhook posted to Slack', {
 				event: eventName,
 				reference: payload.registration_reference ?? payload.reference ?? null,
 			});
 			res.status(200).send('ok');
 		} catch (err) {
-			logger.error('titoWebhook failed to notify Slack', err);
+			logger.error('ticketsWebhook failed to notify Slack', err);
 			// Undo the dedup claim so ti.to's retry isn't silently deduped away.
 			await releaseRegistrationReference(reference);
 			// 500 lets ti.to retry the delivery.

@@ -1,7 +1,7 @@
 /**
- * `submitInvoiceRequest` — callable the browser invoice form invokes.
+ * `submitInvoiceCallable` — callable the browser invoice form invokes.
  * Validates input and writes a `pending` doc to Firestore; the
- * `processInvoiceRequest` Firestore trigger does the iDoklad work.
+ * `processInvoiceTrigger` Firestore trigger does the iDoklad work.
  *
  * Keeping the write server-side means Firestore stays locked to clients
  * (firestore.rules denies all) and untrusted input is validated before it
@@ -81,7 +81,7 @@ function validate(body: Record<string, unknown>): ValidationResult {
 	};
 }
 
-export const submitInvoiceRequest = onCall(
+export const submitInvoiceCallable = onCall(
 	{
 		region: REGION,
 		enforceAppCheck: true,
@@ -94,7 +94,7 @@ export const submitInvoiceRequest = onCall(
 
 		// Honeypot: bots fill hidden fields. Pretend success, write nothing.
 		if (str(body.website)) {
-			logger.info('submitInvoiceRequest honeypot tripped');
+			logger.info('submitInvoiceCallable honeypot tripped');
 			return { ok: true };
 		}
 
@@ -113,16 +113,16 @@ export const submitInvoiceRequest = onCall(
 			windowMs: RATE_LIMIT_WINDOW_MS,
 		});
 		if (!allowed) {
-			logger.warn('submitInvoiceRequest rate limited', { ic: result.value.registrationNumberIC });
+			logger.warn('submitInvoiceCallable rate limited', { ic: result.value.registrationNumberIC });
 			throw new HttpsError('resource-exhausted', 'rate_limited');
 		}
 
 		try {
 			const id = await createInvoiceRequest(result.value);
-			logger.info('submitInvoiceRequest created invoice request', { id });
+			logger.info('submitInvoiceCallable created invoice request', { id });
 			return { ok: true, id };
 		} catch (err) {
-			logger.error('submitInvoiceRequest failed to write doc', err);
+			logger.error('submitInvoiceCallable failed to write doc', err);
 			throw new HttpsError('internal', 'internal');
 		}
 	},

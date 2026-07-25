@@ -54,7 +54,7 @@ async function syncTickets(): Promise<SyncResult> {
  * Hourly scheduled refresh. ti.to advertises a 60 req/min rate limit per
  * token; one request per hour is well under that.
  */
-export const refreshTitoCache = onSchedule(
+export const refreshTicketsScheduled = onSchedule(
 	{
 		schedule: 'every 1 hours',
 		timeZone: 'Europe/Prague',

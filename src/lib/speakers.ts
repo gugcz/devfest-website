@@ -1,7 +1,7 @@
 /**
  * Browser-safe speaker types + presentation helpers.
  *
- * The daily `refreshSessionize` Cloud Function (functions/src/sessionize/)
+ * The daily `refreshSessionizeScheduled` Cloud Function (functions/src/sessionize/)
  * writes documents into the public-read Firestore `speakers` collection; the
  * shapes here mirror the subset of that `SpeakerDoc` the UI renders (the doc
  * also carries the full Sessionize record — bio, sessions, etc. — which the
@@ -159,7 +159,7 @@ function coerceSession(raw: unknown): SpeakerSession | null {
 
 /**
  * Defensively coerce a Firestore document into a `Speaker`. The collection is
- * written only by `refreshSessionize`, but the client still normalizes so a
+ * written only by `refreshSessionizeScheduled`, but the client still normalizes so a
  * partially-shaped doc renders (or degrades) instead of throwing in the island.
  */
 export function speakerFromDoc(id: string, data: Record<string, unknown>): Speaker {

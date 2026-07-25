@@ -1,7 +1,7 @@
 /**
  * Sessionize "All data" client + pure normalization helpers.
  *
- * Sessionize is the org's source of truth. The `refreshSessionize` scheduler
+ * Sessionize is the org's source of truth. The `refreshSessionizeScheduled` scheduler
  * fetches the All-data view once a day and mirrors it into public-read
  * Firestore; the browser never calls Sessionize directly.
  *

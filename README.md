@@ -37,7 +37,7 @@ The "Get your ticket" section is rendered client-side from a Firebase Realtime D
 
 ```
 Cloud Scheduler (every 1 h, Europe/Prague)
-  └─> Cloud Function `refreshTitoCache` (europe-west1)
+  └─> Cloud Function `refreshTicketsScheduled` (europe-west1)
         ├─ fetch  https://api.tito.io/v3/<acc>/<evt>/releases
         └─ write  RTDB /tickets = { releases, accountSlug, eventSlug, fetchedAt }
 
@@ -75,13 +75,13 @@ The default Cloud Functions service account has the IAM needed to write RTDB; no
 
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
-| `refreshTitoCache` | Cloud Scheduler, hourly | Sync ti.to releases → RTDB `/tickets` |
-| `titoWebhook` | HTTPS, public | Verifies `Tito-Signature` and posts purchase notifications to Slack |
-| `weeklyTicketStatus` | Cloud Scheduler, Mondays `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |
-| `thursdayTicketStatus` | Cloud Scheduler, Thursdays `18:00 Europe/Prague` | Same handler as `weeklyTicketStatus` — second weekly status report |
+| `refreshTicketsScheduled` | Cloud Scheduler, hourly | Sync ti.to releases → RTDB `/tickets` |
+| `ticketsWebhook` | HTTPS, public | Verifies `Tito-Signature` and posts purchase notifications to Slack |
+| `weeklyTicketStatusScheduled` | Cloud Scheduler, Mondays `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |
+| `thursdayTicketStatusScheduled` | Cloud Scheduler, Thursdays `18:00 Europe/Prague` | Same handler as `weeklyTicketStatusScheduled` — second weekly status report |
 
 Wire up the webhook in ti.to → Customize → Webhook Endpoints:
-1. Paste the deployed `titoWebhook` URL.
+1. Paste the deployed `ticketsWebhook` URL.
 2. Copy ti.to's security token into `TITO_WEBHOOK_SECRET` (Secret Manager).
 3. Subscribe to `registration.finished` — that event fires once per completed order and already lists every ticket in the registration, so subscribing to `ticket.completed` as well would double-post.
 
@@ -100,7 +100,7 @@ tokens already attach to RTDB reads; reads keep working until you toggle
 enforcement on, so it's safe to ship before enforcing.
 
 **Scope.** Only the public surface needs it: RTDB `/tickets`, which the browser
-reads directly. The `titoWebhook` function is called by ti.to (an external
+reads directly. The `ticketsWebhook` function is called by ti.to (an external
 server that cannot mint an App Check token) and is already protected by an HMAC
 signature — **do not** enforce App Check on it. The scheduled functions take no
 public traffic, so App Check is irrelevant there.
@@ -133,16 +133,16 @@ Some companies must pay by bank transfer against a real invoice before they can 
 
 ```
 Browser  /invoice  (InvoiceForm, client:load)
-  └─> submitInvoiceRequest (callable, validates) → Firestore invoices/{id} (status: pending)
+  └─> submitInvoiceCallable (callable, validates) → Firestore invoices/{id} (status: pending)
 
 Firestore onCreate
-  └─> processInvoiceRequest (europe-west1)
+  └─> processInvoiceTrigger (europe-west1)
         ├─ ti.to:   read company-funded release → price (CZK, no FX)
         ├─ iDoklad: find/create contact → create issued invoice → email it (PDF attached)
         └─ invoices/{id} = { status: invoiced, idokladInvoiceId, variableSymbol, … }
 
 Cloud Scheduler (hourly) — iDoklad has NO webhooks
-  └─> pollPaidInvoices (europe-west1)
+  └─> pollPaidInvoicesScheduled (europe-west1)
         ├─ for each `invoiced` doc → GET iDoklad PaymentStatus
         └─ if paid:
              ├─ ti.to: create 100%-off discount_code scoped to company-funded releases
@@ -150,15 +150,15 @@ Cloud Scheduler (hourly) — iDoklad has NO webhooks
              └─ invoices/{id} = { status: completed, discountCode, discountLink }
 ```
 
-The browser never touches Firestore — it calls the `submitInvoiceRequest` callable, so the `invoices` collection stays server-only and input is validated before reaching iDoklad.
+The browser never touches Firestore — it calls the `submitInvoiceCallable` callable, so the `invoices` collection stays server-only and input is validated before reaching iDoklad.
 
 ### Functions
 
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
-| `submitInvoiceRequest` | Callable (App Check enforced) | Validate the form (honeypot) and write `invoices/{id}` |
-| `processInvoiceRequest` | Firestore onCreate `invoices/{id}` | Create the iDoklad contact + issued invoice and email it |
-| `pollPaidInvoices` | Cloud Scheduler, hourly | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
+| `submitInvoiceCallable` | Callable (App Check enforced) | Validate the form (honeypot) and write `invoices/{id}` |
+| `processInvoiceTrigger` | Firestore onCreate `invoices/{id}` | Create the iDoklad contact + issued invoice and email it |
+| `pollPaidInvoicesScheduled` | Cloud Scheduler, hourly | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
 
 > **Why a poller, not a webhook:** iDoklad has no webhooks (every integration polls). So payment is detected by an hourly scheduled check of each outstanding invoice's `PaymentStatus`, not pushed. A paid invoice is therefore claimed up to ~1 h after payment.
 
@@ -184,12 +184,12 @@ The invoice **price is taken automatically** from the active ti.to release whose
 - **Invoice email** is sent by iDoklad itself (`POST /Mails/IssuedInvoice/Send`, PDF attached); the company pays by bank transfer using the variable symbol on the invoice. If iDoklad can't send mail, the run still succeeds and the invoice number is posted to Slack to relay manually.
 - **Invoice fields** are seeded from iDoklad's `GET /IssuedInvoices/Default` template (currency, payment option, numeric sequence, dates) and overridden with the partner, line, and maturity — so account-specific ids are never hardcoded. The contact's `CountryId` likewise comes from `GET /Contacts/Default` (the form's free-text country is stored but not mapped to an iDoklad country id; foreign companies are handled manually).
 - **ti.to** must have release(s) whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`). Their price drives the invoice amount and the 100%-off code is scoped to them.
-- **Frontend call:** the form invokes the `submitInvoiceRequest` **callable** via the Functions SDK (`getFunctions(app, 'europe-west1')` → `httpsCallable`). No endpoint URL to configure — the SDK resolves it from the Firebase config and the same FirebaseApp that App Check is initialised on.
-- **App Check (abuse protection):** `submitInvoiceRequest` is a callable with `enforceAppCheck: true`. The Functions SDK auto-attaches the App Check token (reCAPTCHA Enterprise) and the framework rejects any request without a valid one *before* the handler runs — so bots/curl can't trigger invoices or emails. The callable protocol also handles CORS. For local dev, set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN` and register the printed debug token (App Check → Apps → Manage debug tokens).
+- **Frontend call:** the form invokes the `submitInvoiceCallable` **callable** via the Functions SDK (`getFunctions(app, 'europe-west1')` → `httpsCallable`). No endpoint URL to configure — the SDK resolves it from the Firebase config and the same FirebaseApp that App Check is initialised on.
+- **App Check (abuse protection):** `submitInvoiceCallable` is a callable with `enforceAppCheck: true`. The Functions SDK auto-attaches the App Check token (reCAPTCHA Enterprise) and the framework rejects any request without a valid one *before* the handler runs — so bots/curl can't trigger invoices or emails. The callable protocol also handles CORS. For local dev, set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN` and register the printed debug token (App Check → Apps → Manage debug tokens).
 
 ### Firestore rules
 
-> **One-time setup:** the project currently uses only RTDB. Create a **Firestore database (Native mode)** in the Firebase console once, or `submitInvoiceRequest` writes (and the `processInvoiceRequest` trigger) will fail.
+> **One-time setup:** the project currently uses only RTDB. Create a **Firestore database (Native mode)** in the Firebase console once, or `submitInvoiceCallable` writes (and the `processInvoiceTrigger` trigger) will fail.
 
 `firestore.rules` denies all client access to `invoices` (company PII; written/read only by Cloud Functions via the Admin SDK, which bypasses rules). It is **not** wired into `firebase.json` on purpose — the Firestore ruleset is project-global and the project is shared with the mobile app, so auto-deploying would clobber the app's rules. Merge the `invoices` block into the project's live ruleset in the Firebase console (same manual approach as `database.rules.json`).
 

@@ -4,7 +4,7 @@
  *
  * Same pattern as `lineupApi`: the browser used to read RTDB `/tickets` with the
  * Firebase SDK (which pulls in App Check); it now hits this plain HTTP endpoint
- * instead, so no Firebase SDK / App Check on the content path. `refreshTitoCache`
+ * instead, so no Firebase SDK / App Check on the content path. `refreshTicketsScheduled`
  * writes `/tickets` hourly via the Admin SDK; this only reads it.
  *
  * Caching: served behind the Hosting rewrite `/api/tickets` with a short
@@ -19,7 +19,7 @@ import { onRequest } from 'firebase-functions/v2/https';
 import { db } from '../lib/admin.js';
 
 const REGION = 'europe-west1';
-// The RTDB path `refreshTitoCache` writes (see refresh-cache.ts).
+// The RTDB path `refreshTicketsScheduled` writes (see refresh-cache.ts).
 const TICKETS_PATH = 'tickets';
 
 // Shorter than the lineup: a sold-out wave should surface within minutes.

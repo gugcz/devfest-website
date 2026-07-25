@@ -30,7 +30,7 @@ import { firestore } from '../lib/admin.js';
 const REGION = 'europe-west1';
 
 // Edge cache (shared): 1h fresh, then served stale for a day while revalidating —
-// matches the daily cadence of `refreshSessionize`. `max-age=0` keeps browsers
+// matches the daily cadence of `refreshSessionizeScheduled`. `max-age=0` keeps browsers
 // revalidating so a redeploy/purge shows promptly.
 const CACHE_CONTROL = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400';
 
