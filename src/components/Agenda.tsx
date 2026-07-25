@@ -66,17 +66,12 @@ function pragueNow(): { date: string; minutes: number } {
 
 /**
  * Minutes-of-day for "now", or `null` when it's not the event day (so the grid
- * shows no live line off-event). Ticks every 30s. Supports a `?now=HH:MM`
- * preview override so the event-day UI can be QA'd before the event — the
- * override also bypasses the date check.
+ * shows no live line off-event). Ticks every 30s.
  */
 function useNowMinutes(eventDate: string): number | null {
 	const [nowMin, setNowMin] = useState<number | null>(null);
 	useEffect(() => {
 		const compute = (): number | null => {
-			const override = new URLSearchParams(window.location.search).get('now');
-			const m = override && /^(\d{1,2}):(\d{2})$/.exec(override);
-			if (m) return Number(m[1]) * 60 + Number(m[2]);
 			if (!eventDate) return null;
 			const { date, minutes } = pragueNow();
 			return date === eventDate ? minutes : null;
