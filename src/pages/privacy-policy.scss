@@ -16,7 +16,7 @@
 
 	.back-link {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.9rem;
+		font-size: var(--fs-ui);
 		letter-spacing: 0.08em;
 		color: rgba(240, 237, 230, 0.85);
 		text-decoration: none;
@@ -67,7 +67,7 @@
 	// any card chrome — the page is a legal doc and stays calm.
 	h2 {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: 1.45rem;
+		font-size: var(--fs-title-sm);
 		letter-spacing: 0.08em;
 		color: var(--color-accent-hot);
 		// Soft red halation on the section heads — just enough neon glow to read
@@ -90,7 +90,7 @@
 
 	h3 {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.95rem;
+		font-size: var(--fs-ui);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.75);
@@ -100,7 +100,7 @@
 
 	p {
 		font-family: var(--font-special-elite), cursive;
-		font-size: 1rem;
+		font-size: var(--fs-body);
 		line-height: 1.85;
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.78);
@@ -112,7 +112,7 @@
 
 	ul {
 		font-family: var(--font-special-elite), cursive;
-		font-size: 1rem;
+		font-size: var(--fs-body);
 		line-height: 1.85;
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.78);
@@ -145,7 +145,7 @@
 
 	code {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.9rem;
+		font-size: var(--fs-ui);
 		// Lit surface for inline code — matches the noir panel tone used across
 		// the relit subpages instead of the old flat --panel-2.
 		background: var(--panel-lit-2);
@@ -158,7 +158,7 @@
 		width: 100%;
 		border-collapse: collapse;
 		font-family: var(--font-special-elite), cursive;
-		font-size: 0.95rem;
+		font-size: var(--fs-ui);
 		color: rgba(240, 237, 230, 0.78);
 		margin-top: 1.4rem;
 	}
@@ -170,7 +170,7 @@
 
 	th {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.85rem;
+		font-size: var(--fs-label-lg);
 		text-align: left;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
@@ -183,7 +183,7 @@
 	// Row headers read as body copy and share the soft per-row divider.
 	tbody th {
 		font-family: var(--font-special-elite), cursive;
-		font-size: 0.95rem;
+		font-size: var(--fs-ui);
 		text-transform: none;
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.85);

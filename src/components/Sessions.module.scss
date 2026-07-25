@@ -40,7 +40,7 @@
 .searchInput {
 	width: 100%;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.86rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.02em;
 	color: var(--color-text);
 	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 90%);
@@ -66,7 +66,7 @@
 
 .count {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.72rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.55);
@@ -83,7 +83,7 @@
 .facetLabel {
 	flex-shrink: 0;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.66rem;
+	font-size: var(--fs-label-xs);
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
 	color: var(--color-accent-hot);
@@ -98,13 +98,16 @@
 
 .chip {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.74rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.04em;
 	color: var(--color-grey);
 	background: rgba(255, 255, 255, 0.02);
-	border: 1px solid var(--rule);
-	border-radius: 999px;
-	padding: 0.38rem 0.85rem;
+	// Square, per the Two-Pixel Rule — a pill is a different product's shape.
+	// The boundary uses --field-border so an interactive filter clears WCAG
+	// 1.4.11 (>=3:1) rather than sitting on a decorative hairline.
+	border: 1px solid var(--field-border);
+	border-radius: var(--radius);
+	padding: 0.42rem 0.85rem;
 	cursor: pointer;
 	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 
@@ -130,7 +133,7 @@
 .clearInline {
 	align-self: flex-start;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.7rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -159,65 +162,130 @@
 	margin-top: 1rem;
 }
 
+// The programme is a ledger of talks, not a card wall — opened by a printed
+// thick/thin rule pair and lit by the same single lamp as every other ledger.
 .grid {
+	position: relative;
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-	gap: 18px;
+	border-top: 3px solid var(--rule-strong);
+	box-shadow: 0 3px 0 -2px var(--rule);
 
-	> li {
-		display: flex;
+	&::before {
+		content: '';
+		position: absolute;
+		inset: -2rem calc(-1 * var(--gutter));
+		background: var(--lamp);
+		pointer-events: none;
+		z-index: -1;
 	}
 }
 
-/* ===================== CARD (button) ===================== */
+/* ===================== RECORD (button) ===================== */
+// Was a panel with a 2px red left border, a drop shadow and a hover lift —
+// three of the tells this language exists to remove. Now a ruled entry that
+// pulls right and marks its own rule when reached.
 .card {
-	display: flex;
-	flex-direction: column;
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: start;
+	column-gap: clamp(1.25rem, 3vw, 2.75rem);
+	row-gap: 0.7rem;
 	width: 100%;
-	height: 100%;
 	margin: 0;
-	padding: 1.15rem 1.25rem 1.1rem;
+	padding: clamp(1.3rem, 2.2vw, 1.9rem) 0;
 	text-align: left;
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
-	overflow: hidden;
-	background:
-		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
-		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 82%);
-	border: 1px solid var(--rule);
-	border-left: 2px solid var(--rule-red);
-	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-	transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
+	background: transparent;
+	border: 0;
+	border-bottom: 1px solid var(--rule);
+	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+
+	// Light washes in from the left, and the entry's own rule takes the mark.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0 calc(-1 * var(--gutter));
+		background: linear-gradient(
+			104deg,
+			rgba(255, 244, 232, 0.06) 0%,
+			rgba(255, 240, 226, 0.026) 38%,
+			transparent 82%
+		);
+		opacity: 0;
+		pointer-events: none;
+		z-index: -1;
+		transition: opacity 0.3s ease;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1px;
+		height: 1px;
+		background: var(--color-accent);
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	}
 
 	&:hover,
 	&:focus-visible {
-		transform: translateY(-5px);
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
+		transform: translateX(0.6rem);
+	}
+
+	&:hover::before,
+	&:focus-visible::before {
+		opacity: 1;
+	}
+
+	&:hover::after,
+	&:focus-visible::after {
+		transform: scaleX(1);
 	}
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 2px;
+		outline-offset: 4px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card {
+		transition: none;
+
+		&:hover,
+		&:focus-visible { transform: none; }
+
+		&::after { transition: none; }
 	}
 }
 
 /* ===================== TOP META ROW ===================== */
+// Track / time kicker sits in the body column above the title.
 .top {
+	grid-column: 1;
 	display: flex;
 	align-items: baseline;
-	justify-content: space-between;
-	gap: 0.75rem;
-	margin-bottom: 0.75rem;
+	justify-content: flex-start;
+	gap: 0.9rem;
+	margin-bottom: 0.6rem;
+}
+
+.title,
+.excerpt {
+	grid-column: 1;
 }
 
 .kicker {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.68rem;
+	font-size: var(--fs-label-xs);
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
 	color: var(--color-accent-hot);
@@ -229,7 +297,7 @@
 /* ===================== TITLE + EXCERPT ===================== */
 .title {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.5rem;
+	font-size: var(--fs-title-compact);
 	line-height: 1.06;
 	letter-spacing: 0.02em;
 	color: var(--color-text);
@@ -243,7 +311,7 @@
 
 .excerpt {
 	font-family: var(--font-im-fell-english), serif;
-	font-size: 0.98rem;
+	font-size: var(--fs-body);
 	line-height: 1.6;
 	color: rgba(240, 237, 230, 0.72);
 	margin-top: 0.55rem;
@@ -255,13 +323,17 @@
 }
 
 /* ===================== FOOT (speakers) ===================== */
+// Right-hand column of the record: who is giving the talk. Sits on the same
+// axis every other ledger uses for its data.
 .foot {
+	grid-column: 2;
+	grid-row: 1 / span 3;
 	display: flex;
 	align-items: center;
-	gap: 0.6rem;
-	// Pin to the bottom so the speaker row aligns across cards of unequal text.
-	margin-top: auto;
-	padding-top: 0.95rem;
+	justify-content: flex-end;
+	gap: 0.7rem;
+	max-width: 15rem;
+	padding-top: 0.15rem;
 }
 
 .stack {
@@ -291,7 +363,7 @@
 .avatarMono,
 .avatarMore {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 0.85rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.04em;
 	color: rgba(242, 239, 233, 0.66);
 	filter: none;
@@ -299,14 +371,14 @@
 
 .avatarMore {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.62rem;
+	font-size: var(--fs-label-xs);
 	color: var(--color-accent-hot);
 	background: rgba(204, 0, 0, 0.14);
 }
 
 .names {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.72rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.02em;
 	line-height: 1.4;
 	color: var(--color-grey);
@@ -318,25 +390,20 @@
 }
 
 /* ===================== "MORE SOON" TILE ===================== */
+// The programme's open end — a closing note on the ledger, not a dashed
+// placeholder tile. A dashed box is drafting-tool vocabulary; the ledger says
+// "more to come" by leaving its last rule open and setting the note in the
+// same mono voice every other status word uses.
 .moreCard {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 0.7rem;
-	min-height: 190px;
-	padding: 1.4rem;
-	text-align: center;
-	background: radial-gradient(120% 120% at 50% 20%, #141010 0%, #070606 72%);
-	border: 1px dashed rgba(204, 0, 0, 0.4);
-	transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-
-	&:hover {
-		transform: translateY(-5px);
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft);
-	}
+	align-items: flex-start;
+	gap: 0.6rem;
+	padding: clamp(1.3rem, 2.2vw, 1.9rem) 0;
+	text-align: left;
+	background: transparent;
+	border: 0;
 }
 
 .moreDots {
@@ -362,7 +429,7 @@
 
 .moreKicker {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.68rem;
+	font-size: var(--fs-label-xs);
 	letter-spacing: 0.28em;
 	text-transform: uppercase;
 	color: var(--color-accent-hot);
@@ -371,7 +438,7 @@
 .moreText {
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.12rem;
+	font-size: var(--fs-lede);
 	line-height: 1.5;
 	color: var(--color-grey);
 	margin: 0;
@@ -383,7 +450,7 @@
 	text-align: center;
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.2rem;
+	font-size: var(--fs-lede);
 	line-height: 1.7;
 	color: var(--color-grey);
 	max-width: 52ch;
@@ -395,7 +462,7 @@
 	align-items: center;
 	gap: 0.55rem;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -444,13 +511,24 @@
 }
 
 /* ===================== RESPONSIVE ===================== */
-@media (max-width: 600px) {
-	.grid {
-		grid-template-columns: 1fr;
-		gap: 12px;
+@media (max-width: 720px) {
+	// The speaker column folds under the body rather than squeezing the title.
+	.card {
+		grid-template-columns: minmax(0, 1fr);
 	}
+
+	.foot {
+		grid-column: 1;
+		grid-row: auto;
+		justify-content: flex-start;
+		max-width: none;
+		padding-top: 0.4rem;
+	}
+}
+
+@media (max-width: 600px) {
 	.title {
-		font-size: 1.4rem;
+		font-size: var(--fs-title-sm);
 	}
 }
 

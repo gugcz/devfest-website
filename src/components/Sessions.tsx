@@ -134,7 +134,7 @@ export default function Sessions() {
 	if (state.status === 'error') {
 		return (
 			<div className={s.status} role="alert">
-				<p>The sessions list is temporarily unavailable. Please check back soon.</p>
+				<p>The programme won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
 			</div>
 		);
 	}

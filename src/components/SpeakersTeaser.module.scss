@@ -1,6 +1,7 @@
-// Home-page "case wall" — speaker mugshots styled as evidence photographs: red
-// corner crop-brackets, a scanline + grain overlay, a duotone portrait, and a
-// red-ruled file plate for the name. A distinctly noir lineup, not plain boxes.
+// Home-page lineup wall — the same contact sheet /speakers and /team use, cut
+// down to four frames. It was a row of four tiles at EVERY width, which on a
+// 375px phone left 78×97px faces: too small to recognise anybody, which is the
+// entire job of a speaker teaser. Two-up on phones, four-up from 600px.
 
 .teaser {
 	position: relative;
@@ -29,7 +30,7 @@
 	align-items: center;
 	gap: 0.7rem;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.76rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.32em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.62);
@@ -62,58 +63,81 @@
 .lede {
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.05rem;
+	font-size: var(--fs-body-lg);
 	line-height: 1.6;
 	color: var(--color-grey);
 	margin: 0.8rem 0 0;
 }
 
 /* ===================== WALL ===================== */
+// Prints on the page — no cell, no rule around anybody. See the note at the
+// head of Speakers.module.scss: a ruled grid still draws a full rectangle
+// around every photograph, and the print's own mount is the only edge it needs.
 .wall {
 	list-style: none;
-	// Fixed 4-up single row at every width; capped + centered so there's space
-	// on the left and right on wide desktops.
 	margin: 0 auto;
 	padding: 0;
 	max-width: 880px;
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: 18px 16px;
+	// Two-up on phones so a face is actually legible; four-up from 600px.
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: clamp(2rem, 3.4vw, 3rem) clamp(1.4rem, 2.4vw, 2.2rem);
 	// Re-keyed on each rotation → replays this crossfade as the set changes.
 	animation: wallFade 0.55s ease;
+
+	> li {
+		display: flex;
+	}
+}
+
+@media (min-width: 600px) {
+	.wall {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
 }
 
 @keyframes wallFade {
 	from {
 		opacity: 0;
-		transform: translateY(6px);
 	}
 	to {
 		opacity: 1;
-		transform: none;
 	}
 }
 
-/* ===================== TILE ===================== */
+/* ===================== PRINT + PLATE ===================== */
 .tile {
+	position: relative;
 	display: flex;
 	flex-direction: column;
+	width: 100%;
+	padding: 0;
 	text-decoration: none;
 	color: inherit;
 	outline: none;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 4px;
+	}
 }
 
 .thumb {
 	position: relative;
 	display: block;
+	z-index: 1;
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
-	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #060505 74%);
-	// Faint red hairline frame; corner brackets sit on top.
-	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.14);
-	transition: box-shadow 0.3s ease, transform 0.3s ease;
+	background: var(--panel-lit);
+	// Mounted print: bone keyline plus a shadow so it sits on the sheet. The
+	// second, RED inset keyline this used to carry put a red mark on every
+	// frame before anyone touched anything.
+	box-shadow:
+		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
+		0 10px 24px rgba(0, 0, 0, 0.5);
 
-	// Red crop-brackets: top-left (::before) and bottom-right (::after).
+	// Crop-brackets open only on the frame being pointed at — a gesture, not
+	// decoration (see Speakers.module.scss for the same reasoning).
 	&::before,
 	&::after {
 		content: '';
@@ -122,20 +146,23 @@
 		height: 16px;
 		border: 2px solid var(--color-accent-hot);
 		z-index: 3;
-		opacity: 0.85;
-		transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+		opacity: 0;
+		transform: scale(0.7);
+		transition: opacity 0.3s ease, transform 0.3s ease;
 	}
 	&::before {
 		top: 7px;
 		left: 7px;
 		border-right: 0;
 		border-bottom: 0;
+		transform-origin: top left;
 	}
 	&::after {
 		right: 7px;
 		bottom: 7px;
 		border-left: 0;
 		border-top: 0;
+		transform-origin: bottom right;
 	}
 }
 
@@ -146,7 +173,6 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	// Duotone: hard B&W at rest, lifts toward colour + pushes in on hover.
 	filter: grayscale(1) contrast(1.14) brightness(0.82);
 	transform: scale(1.02);
 	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
@@ -159,29 +185,30 @@
 	align-items: center;
 	justify-content: center;
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 2.6rem;
+	font-size: var(--fs-monogram);
 	letter-spacing: 0.06em;
 	color: rgba(242, 239, 233, 0.24);
 	user-select: none;
 }
 
-// A faint red interrogation-spotlight vignette over the photo (no scanlines).
-.grain {
+// Always-on bottom scrim so the print sits into its own shadow.
+.scrim {
 	position: absolute;
 	inset: 0;
 	z-index: 2;
 	pointer-events: none;
-	background:
-		radial-gradient(120% 100% at 50% 8%, rgba(204, 0, 0, 0.16) 0%, transparent 46%),
-		linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
-	opacity: 0.8;
-	transition: opacity 0.3s ease;
+	background: linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
 }
 
-.tile:hover .thumb,
-.tile:focus-visible .thumb {
-	transform: translateY(-3px);
-	box-shadow: inset 0 0 0 1px rgba(204, 0, 0, 0.5), var(--glow-red-soft);
+// Red interrogation wash — hover only.
+.vignette {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background: radial-gradient(120% 100% at 50% 8%, rgba(204, 0, 0, 0.16) 0%, transparent 46%);
+	opacity: 0;
+	transition: opacity 0.3s ease;
 }
 
 .tile:hover .photo,
@@ -195,42 +222,32 @@
 .tile:focus-visible .thumb::before,
 .tile:focus-visible .thumb::after {
 	opacity: 1;
-	width: 22px;
-	height: 22px;
+	transform: scale(1);
 }
 
-.tile:hover .grain,
-.tile:focus-visible .grain {
-	opacity: 0.42;
-}
-
-.tile:focus-visible .thumb {
-	outline: 2px solid var(--color-accent-hot);
-	outline-offset: 3px;
+.tile:hover .vignette,
+.tile:focus-visible .vignette {
+	opacity: 1;
 }
 
 /* ===================== NAME PLATE ===================== */
+// Space, not a rule. This has been a 2px red left border (the side-tab cliché)
+// and then a red top hairline; both were a drawn line repeated once per face.
+// The bottom edge of the print already ends the picture.
 .plate {
 	position: relative;
-	margin-top: 10px;
-	padding: 0.42rem 0.1rem 0.42rem 0.7rem;
-	border-left: 2px solid var(--rule-red);
-	background: linear-gradient(90deg, rgba(204, 0, 0, 0.09) 0%, rgba(10, 9, 9, 0) 70%);
+	z-index: 1;
+	margin-top: 0.9rem;
+	padding: 0;
 }
 
 .tname {
-	display: -webkit-box;
+	display: block;
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.16rem;
-	line-height: 1.06;
+	font-size: var(--fs-lede);
+	line-height: 1.1;
 	letter-spacing: 0.035em;
 	color: var(--color-text);
-	// Reserve two lines so plates align across the wall.
-	min-height: 2.12em;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
 	transition: color 0.25s ease;
 }
 
@@ -249,13 +266,16 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
+	// WCAG 2.2 SC 2.5.8: the link measured 190×23, one pixel under the 24px
+	// minimum target size.
+	min-height: 2.75rem;
+	padding: 0 0.25rem;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
 	color: var(--color-text);
 	text-decoration: none;
-	padding-bottom: 4px;
 	border-bottom: 1px solid var(--rule-red);
 	transition: color 0.2s ease;
 
@@ -281,37 +301,22 @@
 }
 
 /* ===================== RESPONSIVE ===================== */
-// Phone + tablet: keep the single row (4 across), just tighten spacing/sizing.
-@media (max-width: 720px) {
-	.wall {
-		gap: 10px 8px;
-	}
+@media (max-width: 600px) {
 	.plate {
-		margin-top: 7px;
-		padding: 0.32rem 0.1rem 0.32rem 0.5rem;
-	}
-	.tname {
-		font-size: 0.92rem;
-		letter-spacing: 0.02em;
+		margin-top: 0.7rem;
 	}
 	.thumb::before,
 	.thumb::after {
-		width: 11px;
-		height: 11px;
-		top: 5px;
-		left: 5px;
+		width: 12px;
+		height: 12px;
+		top: 6px;
+		left: 6px;
 	}
 	.thumb::after {
 		top: auto;
 		left: auto;
-		right: 5px;
-		bottom: 5px;
-	}
-}
-
-@media (max-width: 430px) {
-	.tname {
-		font-size: 0.8rem;
+		right: 6px;
+		bottom: 6px;
 	}
 }
 
@@ -319,9 +324,9 @@
 	.wall {
 		animation: none;
 	}
-	.thumb,
+	.tile,
 	.photo,
-	.grain,
+	.vignette,
 	.tname,
 	.allArrow,
 	.thumb::before,

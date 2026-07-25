@@ -105,7 +105,7 @@ export default function Tickets() {
 					<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
 				</header>
 				<div className={s.empty} role="alert">
-					<p>Tickets are temporarily unavailable. Please check back soon.</p>
+					<p>The box office isn't answering. Reload, or buy direct on ti.to.</p>
 				</div>
 			</section>
 		);
@@ -129,26 +129,28 @@ export default function Tickets() {
 						</span>
 					</p>
 				</header>
-				<ul className={s.list} role="list" aria-hidden="true">
+				<ul className={s.skelLedger} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
-						<li key={i} className={`${s.ticket} ${s.skeleton}`}>
-							<div className={s.skelTop}>
+						<li key={i} className={s.skelRecord}>
+							<span className={`${s.skelBar} ${s.skelIndex}`} />
+							<div className={s.skelCol}>
 								<span className={`${s.skelBar} ${s.skelTitle}`} />
+								<span className={`${s.skelBar} ${s.skelText}`} />
+								<div className={s.skelRows}>
+									<div className={s.skelRow}>
+										<span className={`${s.skelBar} ${s.skelRowLabel}`} />
+										<span className={`${s.skelBar} ${s.skelRowPrice}`} />
+									</div>
+									<div className={s.skelRow}>
+										<span className={`${s.skelBar} ${s.skelRowLabel}`} />
+										<span className={`${s.skelBar} ${s.skelRowPrice}`} />
+									</div>
+								</div>
+							</div>
+							<div className={`${s.skelCol} ${s.skelColRight}`}>
 								<span className={`${s.skelBar} ${s.skelBadge}`} />
+								{i === 1 && <span className={`${s.skelBar} ${s.skelBtn}`} />}
 							</div>
-							<span className={`${s.skelBar} ${s.skelText}`} />
-							<span className={`${s.skelBar} ${s.skelText} ${s.skelTextShort}`} />
-							<div className={s.skelRows}>
-								<div className={s.skelRow}>
-									<span className={`${s.skelBar} ${s.skelRowLabel}`} />
-									<span className={`${s.skelBar} ${s.skelRowPrice}`} />
-								</div>
-								<div className={s.skelRow}>
-									<span className={`${s.skelBar} ${s.skelRowLabel}`} />
-									<span className={`${s.skelBar} ${s.skelRowPrice}`} />
-								</div>
-							</div>
-							<span className={`${s.skelBar} ${s.skelBtn}`} />
 						</li>
 					))}
 				</ul>
@@ -168,7 +170,7 @@ export default function Tickets() {
 						Tickets
 					</p>
 					<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
-					<p className={s.subheading}>Tickets are not yet available.</p>
+					<p className={s.subheading}>The box office is closed. It opens with the first wave.</p>
 				</header>
 				<div className={s.empty}>
 					<p>Subscribe above to be notified when tickets go on sale.</p>
@@ -193,14 +195,17 @@ export default function Tickets() {
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
 
 	return (
-		<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
+		<section id="tickets" className={`${s.tickets} rake`} aria-labelledby="tickets-heading">
+			{/* Red raking light, swept by the scroll itself. Purely decorative and
+			    enhancement-only — see the `.rake` rules in BaseLayout.scss. */}
+			<span className="rake-beam" aria-hidden="true" />
 			<header className={s.header}>
 				<p className={s.eyebrow}>Tickets</p>
 				<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
 				<p className={s.subheading}>Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>
 			</header>
-			<ul className={s.list} role="list">
-				{groupReleases(releases).map((group) => {
+			<ul className={s.stubs} role="list">
+				{groupReleases(releases).map((group, i) => {
 					const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
 					const anyPurchasable = statuses.some((st) => st.purchasable);
 					// When no variant is buyable, pick a non-sold-out summary if one
@@ -209,53 +214,82 @@ export default function Tickets() {
 					const summary: ReleaseStatus | null = anyPurchasable
 						? null
 						: statuses.find((st) => st.tone !== 'sold-out') ?? statuses[0];
+					// A wave is a pass, so it renders as a stub. The live one carries the
+					// red admission band; a settled one is cancelled on its counterfoil,
+					// which keeps every word of copy at full contrast (WCAG 1.4.3) rather
+					// than overprinting VOID across live text.
+					const prices = group.variants
+						.map(({ release }) => priceDisplay(release))
+						.filter((p): p is NonNullable<typeof p> => Boolean(p));
+					const lead = prices[0];
+					const manyPrices = new Set(prices.map((p) => p.primary)).size > 1;
+					const description = groupDescription(group.name, group.description);
+					const serial = `N${'\u00B0'} ${String(i + 1).padStart(2, '0')}`;
 					return (
 						<li
 							key={group.name}
-							className={`${s.ticket} ${!anyPurchasable ? s.isInactive : ''}`}
+							className={`${s.stub} ${anyPurchasable ? s.stubLive : s.stubSpent}`}
 						>
-							<div className={s.ticketTop}>
-								<h3 className={s.ticketTitle}>{group.name}</h3>
-							</div>
-							{(() => {
-								const description = groupDescription(group.name, group.description);
-								return description && (
-									<p className={s.ticketDescription}>{description}</p>
-								);
-							})()}
-							<ul className={s.variants}>
-								{group.variants.map(({ release, variantLabel }) => {
-									const label = variantLabel || releaseTitle(release);
-									const price = priceDisplay(release);
-									return (
-										<li key={release.id} className={s.variant}>
-											<span className={s.variantLabel}>{label}</span>
-											<span className={s.variantPriceBlock}>
-												<span className={s.variantPrice}>{price?.primary}</span>
-												{price?.secondary && (
-													<span className={s.variantVat}>{price.secondary}</span>
-												)}
-											</span>
-										</li>
-									);
-								})}
-							</ul>
-							{anyPurchasable ? (
-								<a
-									className={s.cta}
-									href={eventUrl(accountSlug, eventSlug)}
-									target="_blank"
-									rel="noopener noreferrer"
-									aria-label={`Get ${group.name} tickets on ti.to`}
-								>
-									Get tickets
-									<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
-								</a>
-							) : (
-								<span className={`${s.cta} ${s.ctaDisabled}`} aria-disabled="true">
-									{summary?.label ?? 'Unavailable'}
+							<span className={s.stubPerf} aria-hidden="true" />
+							<span className={`${s.stubNotch} ${s.stubNotchTop}`} aria-hidden="true" />
+							<span className={`${s.stubNotch} ${s.stubNotchBottom}`} aria-hidden="true" />
+							{anyPurchasable && (
+								<span className={s.stubBand} aria-hidden="true">
+									<span>Admit one</span>
+									<span>On sale</span>
 								</span>
 							)}
+
+							<span className={s.stubCounterfoil}>
+								<span className={s.stubPunch} aria-hidden="true" />
+								{anyPurchasable ? (
+									<span className={s.stubSerial} aria-hidden="true">{serial}</span>
+								) : (
+									<span className={s.stubVoid} aria-hidden="true">Void</span>
+								)}
+							</span>
+
+							<div className={s.stubBody}>
+								<h3 className={s.stubTitle}>{group.name}</h3>
+								{anyPurchasable && description && <p className={s.stubNote}>{description}</p>}
+								<ul className={s.stubGrants}>
+									{group.variants.map(({ release, variantLabel }, vi) => (
+										<li key={release.id}>
+											{vi > 0 && (
+												<span className={s.stubGrantSep} aria-hidden="true">{'/ '}</span>
+											)}
+											{variantLabel || releaseTitle(release)}
+										</li>
+									))}
+								</ul>
+							</div>
+
+							<div className={s.stubEnd}>
+								{lead && (
+									<span>
+										<span className={s.stubPrice}>
+											{manyPrices ? `${lead.primary}+` : lead.primary}
+										</span>
+										{lead.secondary && (
+											<span className={s.stubVat}>{' '}{lead.secondary}</span>
+										)}
+									</span>
+								)}
+								{anyPurchasable ? (
+									<a
+										className={s.cta}
+										href={eventUrl(accountSlug, eventSlug)}
+										target="_blank"
+										rel="noopener noreferrer"
+										aria-label={`Get ${group.name} tickets on ti.to`}
+									>
+										Get tickets
+										<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
+									</a>
+								) : (
+									<span className="record-status">{summary?.label ?? 'Unavailable'}</span>
+								)}
+							</div>
 						</li>
 					);
 				})}

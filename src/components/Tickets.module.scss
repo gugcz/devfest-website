@@ -1,24 +1,27 @@
 .tickets {
 	width: 100%;
-	max-width: 1000px;
+	max-width: var(--maxw);
 	margin: 0 auto;
-	padding: var(--section-y) var(--gutter);
+	// A held shot. Tickets are what the page is for; the sections either side
+	// of it run at the normal beat, so the extra air reads as emphasis.
+	padding: var(--section-y-wide) var(--gutter);
 	position: relative;
 	z-index: 1;
 	border-top: 1px solid var(--rule-soft);
-	// Pool of light behind the evidence slips — a lit interrogation table.
-	background: var(--lit);
 	animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
+// Left-set like a file header: the ledger below it is a left-reading column,
+// so a centred head would leave the whole section hanging off its own axis.
 .header {
-	text-align: center;
-	margin-bottom: 3rem;
+	text-align: left;
+	margin-bottom: 2.6rem;
+	max-width: 46ch;
 }
 
 .eyebrow {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.78rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.62);
@@ -56,45 +59,310 @@
 	margin-top: 0.9rem;
 }
 
-.list {
+/* ===================== TICKET STUBS ===================== */
+// A ticket is an OBJECT, not a row. The ledger is the right container for a
+// list of records — questions, sessions, desks — but a pass is a physical
+// thing you tear, punch and hand over, and rendering it as a table row strips
+// the one quality that makes it read as purchasable.
+//
+// This is the same exception DESIGN.md already grants the countdown: the
+// bounded rectangle IS the depicted object, not a box drawn around content.
+// Horizontal and short by design, so the height won by collapsing the old
+// card grid is kept — a real stub is wide, not tall.
+//
+//   [ serial · punch ][ perforation ][ wave + what's included ][ price · buy ]
+
+.stubs {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1.1rem;
+}
+
+.stub {
+	position: relative;
+	display: grid;
+	grid-template-columns: 4.75rem minmax(0, 1fr) auto;
+	align-items: center;
+	column-gap: clamp(1.4rem, 3vw, 2.6rem);
+	min-height: 9.5rem;
+	padding: 1.5rem 1.75rem 1.5rem 0;
+	background:
+		linear-gradient(104deg, rgba(255, 244, 232, 0.05) 0%, rgba(255, 240, 226, 0.02) 42%, transparent 86%),
+		var(--panel-lit);
+	border: 1px solid var(--rule);
+	border-radius: 0;
+	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.32s ease;
+}
+
+// The tear line. Round holes, not a dashed border — a dashed rule is
+// drafting-tool vocabulary; perforation is punched paper.
+.stubPerf {
+	position: absolute;
+	top: 0.55rem;
+	bottom: 0.55rem;
+	left: 4.75rem;
+	width: 2px;
+	background-image: radial-gradient(
+		circle at 1px 3px,
+		rgba(240, 237, 230, 0.34) 0 1.5px,
+		transparent 1.6px
+	);
+	background-size: 2px 9px;
+	background-repeat: repeat-y;
+	pointer-events: none;
+}
+
+// Bite taken out of the edge where the tear line meets it.
+.stubNotch {
+	position: absolute;
+	left: 4.75rem;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background: var(--color-bg);
+	border: 1px solid var(--rule);
+	transform: translateX(-50%);
+	pointer-events: none;
+}
+
+.stubNotchTop { top: -8px; clip-path: inset(50% 0 0 0); }
+.stubNotchBottom { bottom: -8px; clip-path: inset(0 0 50% 0); }
+
+// The tear-off counterfoil: serial set vertically, the way it is printed on a
+// real stub so it reads down the torn edge.
+.stubCounterfoil {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.7rem;
+	height: 100%;
+	padding-left: 0.5rem;
+}
+
+.stubSerial {
+	writing-mode: vertical-rl;
+	text-orientation: mixed;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-xs);
+	letter-spacing: 0.32em;
+	text-transform: uppercase;
+	font-variant-numeric: tabular-nums;
+	color: rgba(240, 237, 230, 0.55);
+	white-space: nowrap;
+}
+
+.stubPunch {
+	width: 11px;
+	height: 11px;
+	border-radius: 50%;
+	border: 1px solid rgba(240, 237, 230, 0.28);
+	flex-shrink: 0;
+}
+
+/* ---- body ---- */
+.stubBody {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	min-width: 0;
+	padding-left: 0.3rem;
+}
+
+.stubTitle {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: clamp(1.85rem, 3.2vw, 2.6rem);
+	letter-spacing: 0.05em;
+	line-height: 1;
+	color: var(--color-text);
+	margin: 0;
+}
+
+.stubNote {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-ui);
+	line-height: 1.55;
+	color: rgba(240, 237, 230, 0.72);
+	max-width: 44ch;
+	margin: 0;
+}
+
+// Admission line — what the pass grants, set as one mono row.
+.stubGrants {
+	list-style: none;
+	margin: 0.15rem 0 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.55rem;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-sm);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+}
+
+.stubGrantSep {
+	color: var(--rule-red);
+}
+
+/* ---- price + action ---- */
+.stubEnd {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.75rem;
+	text-align: right;
+}
+
+.stubPrice {
+	font-family: var(--font-bebas-neue), sans-serif;
+	// The documented `numeric` role verbatim — a price on a pass is the same
+	// register as a countdown digit, so it uses that step rather than a
+	// one-off clamp endpoint.
+	font-size: clamp(2.2rem, 3vw, 3.6rem);
+	letter-spacing: 0.04em;
+	line-height: 0.9;
+	color: var(--color-text);
+}
+
+.stubVat {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-xs);
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+}
+
+/* ---- the live pass ---- */
+// Red overprint band across the head of the stub — the ADMIT ONE bar. This is
+// the one red fill in the section, so it lands on exactly one stub.
+.stubLive {
+	border-color: var(--rule-red);
+	background:
+		linear-gradient(104deg, rgba(255, 244, 232, 0.085) 0%, rgba(255, 240, 226, 0.04) 38%, transparent 88%),
+		radial-gradient(ellipse 60% 120% at 8% 50%, rgba(204, 0, 0, 0.1), transparent 72%),
+		var(--panel-lit);
+	box-shadow: var(--glow-red-soft);
+
+	&:hover {
+		transform: translateY(-2px);
+		border-color: var(--color-accent);
+	}
+}
+
+.stubBand {
+	position: absolute;
+	top: 0;
+	left: 4.75rem;
+	right: 0;
+	height: 1.55rem;
+	background: var(--color-accent);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 0.9rem;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-xs);
+	letter-spacing: 0.3em;
+	text-transform: uppercase;
+	color: var(--on-accent);
+	pointer-events: none;
+}
+
+.stubLive .stubBody,
+.stubLive .stubEnd {
+	padding-top: 1.5rem;
+}
+
+/* ---- a spent pass ---- */
+// VOID lands on the counterfoil, where a real ticket is cancelled — not
+// overprinted across the copy, which would take live text off its contrast.
+.stubSpent {
+	border-style: solid;
+	border-color: var(--rule-soft);
+	background: var(--panel-lit-2);
+}
+
+.stubVoid {
+	writing-mode: vertical-rl;
+	text-orientation: mixed;
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-figure);
+	letter-spacing: 0.22em;
+	color: transparent;
+	-webkit-text-stroke: 1px rgba(204, 0, 0, 0.55);
+	white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+	.stub {
+		grid-template-columns: 3.25rem minmax(0, 1fr);
+		row-gap: 1.1rem;
+		padding: 1.3rem 1.2rem 1.3rem 0;
+	}
+
+	.stubPerf,
+	.stubNotch,
+	.stubBand { left: 3.25rem; }
+
+	.stubEnd {
+		grid-column: 2;
+		align-items: flex-start;
+		text-align: left;
+		width: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stub,
+	.stubLive:hover {
+		transition: none;
+		transform: none;
+	}
+}
+
+// The loading skeleton mirrors the stub geometry so nothing reflows on load.
+.skelLedger {
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-	gap: 1.4rem;
+	border-top: 1px solid var(--rule-strong);
 }
 
-// Flat dark evidence card — hairline border that warms to red and lifts on
-// hover. No paper, rotation, grain or deckled edge.
-.ticket {
-	position: relative;
+.skelRecord {
+	display: grid;
+	grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+	align-items: start;
+	column-gap: clamp(1.25rem, 3vw, 2.75rem);
+	row-gap: 0.9rem;
+	padding: clamp(1.6rem, 2.6vw, 2.4rem) 0;
+	border-bottom: 1px solid var(--rule);
+}
+
+.skelCol {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
-	padding: 1.9rem 1.7rem;
-	background: var(--panel-lit);
-	border: 1px solid var(--rule);
-	border-radius: var(--radius);
-	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-	transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-	min-height: 220px;
+	gap: 0.9rem;
+	min-width: 0;
+}
 
-	&:hover:not(.isInactive):not(.skeleton) {
-		border-color: var(--rule-red);
-		transform: translateY(-4px);
-		// Lit from within — red edge light on hover.
-		box-shadow: var(--glow-red-soft), 0 22px 46px rgba(0, 0, 0, 0.6);
+.skelColRight {
+	align-items: flex-end;
+}
+
+@media (max-width: 720px) {
+	.skelRecord {
+		grid-template-columns: 2.4rem minmax(0, 1fr);
 	}
 
-	&.isInactive {
-		opacity: 0.5;
-	}
-
-	// card-level CTA sticks to bottom + stretches across the card
-	> .cta {
-		margin-top: auto;
-		align-self: stretch;
+	.skelColRight {
+		grid-column: 2;
+		align-items: flex-start;
 	}
 }
 
@@ -102,7 +370,7 @@
 // pulsing accent dot + trailing dots.
 .loadingStatus {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -140,23 +408,11 @@
 	span:nth-child(3) { animation-delay: 0.36s; }
 }
 
-// Skeleton card — the dark .ticket with shimmering placeholder bars.
-.skeleton {
-	pointer-events: none;
-}
-
-.skelTop {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 0.75rem;
-}
-
+// Shimmering placeholder bars laid into the ledger geometry above.
 .skelBar {
 	display: block;
 	position: relative;
 	z-index: 1;
-	border-radius: 1px;
 	background: linear-gradient(
 		90deg,
 		rgba(240, 237, 230, 0.05) 0%,
@@ -167,9 +423,10 @@
 	animation: shimmer 1.6s linear infinite;
 }
 
-.skelTitle { height: 1.6rem; width: 55%; }
-.skelBadge { height: 1.2rem; width: 4.2rem; flex-shrink: 0; }
-.skelText { height: 0.75rem; width: 100%; }
+.skelIndex { height: 0.85rem; width: 1.5rem; margin-top: 0.35rem; }
+.skelTitle { height: 2.2rem; width: 62%; }
+.skelBadge { height: 0.9rem; width: 5.2rem; flex-shrink: 0; }
+.skelText { height: 0.75rem; width: 100%; max-width: 34ch; }
 .skelTextShort { width: 78%; }
 
 .skelRows {
@@ -199,7 +456,7 @@
 
 .skelBtn {
 	height: 2.9rem;
-	margin-top: auto;
+	width: 11rem;
 	border-radius: var(--radius);
 	background: linear-gradient(
 		90deg,
@@ -211,104 +468,41 @@
 	animation: shimmer 1.6s linear infinite;
 }
 
-.ticketTop {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 0.75rem;
-	position: relative;
-	z-index: 1;
-}
+// Wave title, note and status now come from the global .record-* columns.
+// Status is a mono word on a rule (.record-status), not a filled pill — a
+// coloured chip per state was the last piece of generic-UI vocabulary here.
 
-.ticketTitle {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-card-title);
-	letter-spacing: 0.06em;
-	line-height: 1.05;
-	color: var(--color-text);
-}
-
-// Flat mono pill — no rotation, no ink texture.
-.badge {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.75rem;
-	letter-spacing: 0.2em;
-	text-transform: uppercase;
-	padding: 0.34rem 0.6rem;
-	border-radius: var(--radius);
-	white-space: nowrap;
-	position: relative;
-	z-index: 2;
-	border: 1px solid transparent;
-}
-
-.badgeOnSale {
-	background: var(--color-accent);
-	color: var(--on-accent);
-	box-shadow: var(--glow-red-soft);
-}
-
-.badgeSoldOut {
-	background: transparent;
-	color: rgba(240, 237, 230, 0.6);
-	border-color: var(--rule-strong);
-}
-
-.badgePaused {
-	background: transparent;
-	color: rgba(240, 237, 230, 0.72);
-	border-color: rgba(204, 0, 0, 0.4);
-}
-
-.badgeSoon {
-	background: transparent;
-	color: rgba(240, 237, 230, 0.6);
-	border-color: var(--rule-strong);
-}
-
-.badgeEnded {
-	background: transparent;
-	color: rgba(240, 237, 230, 0.6);
-	border-color: var(--rule);
-}
-
-.ticketDescription {
-	font-family: var(--font-special-elite), cursive;
-	font-style: italic;
-	font-size: 0.98rem;
-	line-height: 1.55;
-	color: rgba(240, 237, 230, 0.7);
-	position: relative;
-	z-index: 1;
-}
-
+// The two purchase options inside a wave, set as a ruled sub-table: label
+// left, price right, separated by the faintest hairline in the system so the
+// pair reads as one entry's detail rather than two more records.
 .variants {
 	list-style: none;
-	margin: 0.4rem 0 0;
+	margin: 0.5rem 0 0;
 	padding: 0;
 	display: flex;
 	flex-direction: column;
 	position: relative;
 	z-index: 1;
+	max-width: 34rem;
 }
 
 .variant {
 	display: flex;
 	align-items: baseline;
 	justify-content: space-between;
-	gap: 1rem;
-	padding: 0.8rem 0;
-	border-top: 1px solid var(--rule);
+	gap: 1.5rem;
+	padding: 0.7rem 0;
+	border-top: 1px solid var(--rule-soft);
 
 	&:first-child {
 		border-top: none;
-		padding-top: 0.3rem;
+		padding-top: 0.2rem;
 	}
 }
 
 .variantLabel {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.84rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.04em;
 	color: rgba(240, 237, 230, 0.78);
 }
@@ -323,7 +517,7 @@
 
 .variantPrice {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.7rem;
+	font-size: var(--fs-figure);
 	letter-spacing: 0.04em;
 	line-height: 1;
 	color: var(--color-text);
@@ -331,42 +525,17 @@
 
 .variantVat {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.75rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
 	line-height: 1;
 }
 
-.ticketPrice {
-	margin-top: auto;
-	display: flex;
-	align-items: baseline;
-	gap: 0.5rem;
-	position: relative;
-	z-index: 1;
-}
-
-.priceAmount {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 2.8rem;
-	letter-spacing: 0.04em;
-	line-height: 1;
-	color: var(--color-text);
-}
-
-.priceNote {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.78rem;
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
-}
-
 // Flat red CTA — matches the global .btn-primary recipe.
 .cta {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
 	color: var(--on-accent);
@@ -401,22 +570,6 @@
 	}
 }
 
-.ctaDisabled {
-	cursor: not-allowed;
-	color: rgba(240, 237, 230, 0.55);
-	background: transparent;
-	border-color: var(--rule);
-	box-shadow: none;
-
-	&:hover {
-		background: transparent;
-		border-color: var(--rule);
-		color: rgba(240, 237, 230, 0.55);
-		transform: none;
-		box-shadow: none;
-	}
-}
-
 .ctaSecondary {
 	background: transparent;
 	color: var(--color-text);
@@ -439,7 +592,7 @@
 }
 
 .ctaArrow {
-	font-size: 0.9rem;
+	font-size: var(--fs-ui);
 	color: inherit;
 	transition: transform 0.25s;
 
@@ -453,7 +606,7 @@
 	text-align: center;
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.05rem;
+	font-size: var(--fs-body-lg);
 	letter-spacing: 0.01em;
 	color: rgba(240, 237, 230, 0.62);
 }
@@ -469,7 +622,7 @@
 
 .invoiceLabel {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.75rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.25em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -494,24 +647,22 @@
 	}
 }
 
+// Empty / error notice — a ruled note in the ledger's own column, not a
+// bordered alert box. Opens on the same strong rule the ledger would have.
 .empty {
-	text-align: center;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	gap: 1rem;
-	padding: 2rem 1.6rem;
-	max-width: 440px;
-	margin: 0 auto;
+	align-items: flex-start;
+	gap: 1.2rem;
+	padding: 2.2rem 0 0;
+	max-width: 46ch;
 	position: relative;
-	background: var(--panel);
-	border: 1px solid var(--rule);
-	border-radius: var(--radius);
-	color: rgba(240, 237, 230, 0.75);
+	border-top: 1px solid var(--rule-strong);
+	color: rgba(240, 237, 230, 0.78);
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.05rem;
-	line-height: 1.6;
+	font-size: var(--fs-body-lg);
+	line-height: 1.7;
 }
 
 @keyframes fadeInUp {
@@ -537,17 +688,14 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.tickets,
-	.ticket,
 	.cta {
 		animation: none;
 		transition: none;
 	}
 
-	.ticket,
 	.cta,
 	.cta:hover,
 	.cta:active,
-	.ctaDisabled,
 	.ctaSecondary:hover {
 		transform: none;
 	}
@@ -564,15 +712,10 @@
 	.loadingDots span { opacity: 1; }
 }
 
-@media (max-width: 600px) {
-	.list {
-		grid-template-columns: 1fr;
-		gap: 1.2rem;
-	}
-
-	.ticket {
-		max-width: 360px;
-		margin: 0 auto;
+@media (max-width: 720px) {
+	// The action stops being a right-column item and takes the full measure
+	// of the entry, so the buy target stays the widest thing on the row.
+	.cta {
 		width: 100%;
 	}
 }

@@ -4,7 +4,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		padding: var(--section-y) var(--gutter);
+		padding: var(--section-y-tight) var(--gutter);
 		gap: 1.5rem;
 		text-align: center;
 		position: relative;
@@ -48,7 +48,7 @@
 
 	.subtext {
 		font-family: var(--font-im-fell-english), serif;
-		font-size: 1.25rem;
+		font-size: var(--fs-lede);
 		font-style: italic;
 		line-height: 1.7;
 		max-width: 420px;
@@ -63,7 +63,7 @@
 	}
 
 	.back-arrow {
-		font-size: 0.85rem;
+		font-size: var(--fs-label-lg);
 		transition: transform 0.25s;
 
 		.back-link:hover & {

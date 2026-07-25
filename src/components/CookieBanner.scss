@@ -10,8 +10,11 @@
 		gap: 1.2rem;
 		padding: 1.1rem 1.2rem 0.9rem 1.4rem;
 		background: var(--panel-lit);
+		// Floating chrome legitimately needs a bounded surface — it sits over
+		// the page, not in it. What it does not need is a 2px accent bar down
+		// one edge; the red hairline on top marks it in the ledger's voice.
 		border: 1px solid var(--rule);
-		border-left: 2px solid var(--color-accent);
+		border-top: 1px solid var(--rule-red);
 		border-radius: var(--radius);
 		z-index: 10000;
 		transition: opacity 0.3s, transform 0.3s;
@@ -33,7 +36,7 @@
 		left: 14px;
 		padding: 0 6px;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -48,7 +51,7 @@
 
 	.cookie-text {
 		font-family: var(--font-special-elite), cursive;
-		font-size: 0.95rem;
+		font-size: var(--fs-ui);
 		line-height: 1.55;
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.7);
@@ -82,7 +85,7 @@
 
 	// Compact sizing overrides on top of global .btn-primary / .btn-ghost.
 	.cookie-btn {
-		font-size: 0.8rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		white-space: nowrap;
 		min-height: 2.75rem;

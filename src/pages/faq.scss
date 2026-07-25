@@ -36,7 +36,7 @@
 	.faq-cat {
 		flex: 0 0 auto;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.78rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -49,15 +49,6 @@
 		background: linear-gradient(to right, var(--rule-red), transparent);
 	}
 
-	.faq-head-count {
-		flex: 0 0 auto;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
-		letter-spacing: 0.18em;
-		color: var(--color-accent-hot);
-		font-variant-numeric: tabular-nums;
-	}
-
 	.faq-list {
 		display: flex;
 		flex-direction: column;
@@ -66,36 +57,56 @@
 
 	/* ===================== ITEM (native <details>) ===================== */
 	// Lit dark file — resting depth shadow, red edge-light warming in on hover.
+	// A question is a ruled entry, not a bordered panel: hairline between
+	// items, nothing enclosing them. Open state is carried by light bleeding
+	// past the column and by the lit question text — never by a box.
 	.faq-item {
 		position: relative;
-		background: var(--panel-lit);
-		border: 1px solid var(--rule);
-		border-radius: var(--radius);
-		box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-		transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+		border-bottom: 1px solid var(--rule);
+		transition: background 0.3s ease;
 
-		&:hover {
-			border-color: var(--rule-red);
-			background: var(--panel-lit-2);
-			box-shadow: var(--glow-red-soft), 0 22px 46px rgba(0, 0, 0, 0.6);
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0 calc(-1 * var(--gutter));
+			background: linear-gradient(
+				104deg,
+				rgba(255, 244, 232, 0.06) 0%,
+				rgba(255, 240, 226, 0.028) 38%,
+				transparent 82%
+			);
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.3s ease;
+			z-index: -1;
+		}
+
+		&:hover::before {
+			opacity: 0.55;
 		}
 
 		&[open] {
-			border-color: var(--rule-red);
-			background: var(--panel-hover);
-			box-shadow: var(--glow-red-soft), 0 18px 40px rgba(0, 0, 0, 0.55);
+			border-bottom-color: var(--rule-red);
+		}
+
+		&[open]::before {
+			opacity: 1;
 		}
 	}
 
+	// Question text + toggle marker. The leading 3.25rem index column went with
+	// the removed "N° 01" numeral — without it the text was crushed into that
+	// narrow track and wrapped one word per line.
 	.faq-q {
 		position: relative;
 		z-index: 1;
 		list-style: none;
 		cursor: pointer;
-		display: flex;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: baseline;
-		gap: 1.1rem;
-		padding: 1.6rem;
+		column-gap: clamp(1.25rem, 3vw, 2.75rem);
+		padding: 1.5rem 0;
 
 		// Strip the default disclosure triangle (WebKit + the rest).
 		&::-webkit-details-marker {
@@ -108,22 +119,10 @@
 		}
 	}
 
-	.faq-num {
-		flex: 0 0 auto;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: var(--color-accent-hot);
-		// Nudge the mono label onto the cap-height of the Bebas question.
-		transform: translateY(-0.15em);
-		white-space: nowrap;
-	}
-
 	.faq-q-text {
 		flex: 1;
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: 1.4rem;
+		font-size: var(--fs-title-sm);
 		line-height: 1.05;
 		letter-spacing: 0.03em;
 		color: var(--color-text);
@@ -133,7 +132,7 @@
 	.faq-marker {
 		flex: 0 0 auto;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 1.4rem;
+		font-size: var(--fs-title-sm);
 		line-height: 1;
 		color: var(--color-accent-hot);
 		transition: transform 0.2s ease, color 0.2s;
@@ -158,14 +157,16 @@
 	.faq-a {
 		position: relative;
 		z-index: 1;
-		margin: 0 1.6rem 1.6rem;
+		// Under its own question, set off from it as a margin note behind the
+		// red hairline. No longer offset by the removed index column.
+		margin: 0 0 1.8rem;
 		padding-left: 1.4rem;
 		border-left: 2px solid var(--rule-red);
 	}
 
 	.faq-a :global(p) {
 		font-family: var(--font-special-elite), cursive;
-		font-size: 1rem;
+		font-size: var(--fs-body);
 		line-height: 1.85;
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.72);
@@ -197,7 +198,7 @@
 	.faq-cta-text {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.15rem;
+		font-size: var(--fs-lede);
 		color: var(--color-grey);
 		margin: 0 0 1.6rem;
 	}
@@ -209,16 +210,11 @@
 			gap: 0.8rem;
 		}
 		.faq-q-text {
-			font-size: 1.25rem;
+			font-size: var(--fs-lede);
 		}
 		.faq-a {
 			margin: 0 1.2rem 1.3rem;
 			padding-left: 1.1rem;
-		}
-		// Hide the file number on narrow screens so long questions don't
-		// crush against the marker.
-		.faq-num {
-			display: none;
 		}
 	}
 

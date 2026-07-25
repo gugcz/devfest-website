@@ -100,12 +100,12 @@ const tickerTopics = [
 
 <BaseLayout
 	title="Team — DevFest.cz 2026"
-	description="Meet the crew behind DevFest.cz 2026 — the organisers running Prague's largest community developer conference."
+	description="Meet the crew behind DevFest.cz 2026 — the organisers running Prague's community-built developer conference."
 >
 	<main class="team-page">
 		<SubpageHero
 			label="The usual suspects"
-			titleHtml={'The crew<br /><span class="red">on the case.</span>'}
+			titleHtml={'The crew on<br />the <span class="red">case</span>.'}
 			lede="DevFest.cz is run by volunteers who'd rather be debugging. Every talk, every coffee, every neon-lit corridor is wired together by the people below."
 			seoHeading="DevFest.cz 2026 Team"
 			titleId="team-title"
@@ -117,9 +117,11 @@ const tickerTopics = [
 		<section class="team-body" aria-label="Organising team">
 			<div class="team-inner">
 				<ul class="crew-grid reveal">
-					{cards.map(({ member, base, color }) => (
-						<li>
-							<article class="crew-card">
+					{cards.map(({ member, base, color }, i) => (
+						/* `--i` staggers the develop animation — see `.develop` in
+						   BaseLayout.scss. */
+						<li style={`--i: ${i}`}>
+							<article class="crew-card develop">
 								<div class="mugshot">
 									{base ? (
 										<>

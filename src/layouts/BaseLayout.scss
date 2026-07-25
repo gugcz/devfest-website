@@ -8,6 +8,11 @@
 		--color-cream: #E8E0CC;
 		--color-accent: #CC0000;
 		--color-accent-hot: #FF1111;
+		// Form-error text only. Not a second hue: it is the accent desaturated
+		// far enough to clear AA as small body copy on a panel (~5.7:1, where
+		// --color-accent lands at ~3.3:1 and fails 1.4.3). Never use it as an
+		// accent, a fill or a rule — it exists so error prose stays readable.
+		--color-error: rgba(220, 110, 110, 0.95);
 		--color-surface: rgba(255, 255, 255, 0.03);
 		--color-border: rgba(255, 255, 255, 0.08);
 
@@ -28,15 +33,64 @@
 		// Content column + consistent page gutter / section rhythm.
 		--maxw: 1200px;
 		--gutter: clamp(1.25rem, 5vw, 3rem);
+		// Three densities, not one. Thirteen sections all set at --section-y gave
+		// the scroll a single tempo, and a single tempo is what makes a long page
+		// read as generated. Tight is a cut, base is the normal beat, wide is a
+		// held shot before something that matters.
+		--section-y-tight: clamp(2.75rem, 4.6vw, 4.75rem);
 		--section-y: clamp(4.5rem, 8vw, 8.5rem);
+		--section-y-wide: clamp(7rem, 12.5vw, 13.5rem);
 		// Sharp corners — a hint of softening, never pill-shaped.
 		--radius: 2px;
 
 		// Display type scale — one source of truth so headline sizes stay
 		// consistent across every page/section.
-		--fs-hero: clamp(2.6rem, 6vw, 5rem);      // subpage hero headline
+		// Poster scale. Used at most ONCE per page — the subpage hero title, and
+		// nothing else. Every headline on the site sat inside one octave, so
+		// nothing ever read as loud; a noir one-sheet runs the title over the
+		// body and that contrast IS the genre. One per page is the whole rule: a
+		// second one cancels the first.
+		//
+		// First cut was clamp(3.4rem, 11.5vw, 8.5rem) — loud, but it filled the
+		// hero and pushed the fold down so the page content always needed a
+		// scroll to reach. Dialled back to a size that still reads as the
+		// biggest thing on the page without owning the whole viewport.
+		--fs-display: clamp(2.6rem, 6.5vw, 5rem);
+		--fs-hero: clamp(2.6rem, 6vw, 5rem);      // in-page hero headline
 		--fs-h2: clamp(2.2rem, 4.8vw, 4rem);      // in-page section headline
+		// Sub-section headline: dialog names, press-kit section titles, session
+		// detail heads. Three files were each carrying their own fluid clamp in
+		// this band (2.0–2.9rem) because the ramp had no step between --fs-h2
+		// and --fs-card-title. Endpoints are ramp steps: 1.9 → 2.4.
+		--fs-h3: clamp(1.9rem, 4vw, 2.4rem);
 		--fs-card-title: 1.85rem;                 // dossier card title
+		// Title of a compact (one-line) ledger record — a deliberate step below
+		// the full record's clamp(1.85rem, 3.2vw, 2.6rem) so a settled entry
+		// reads as subordinate to the live one at a glance.
+		--fs-title-compact: 1.5rem;
+
+		// ── THE RAMP ────────────────────────────────────────────────────────
+		// Sixteen steps, and every font-size in the codebase goes through one of
+		// them. Before this there were 43 distinct values — ten of them inside
+		// the 0.60–0.78rem label band alone, which is not drift around a ramp
+		// but the absence of one. Pick the nearest step; do not introduce a
+		// new value without adding it here and to DESIGN.md.
+		--fs-label-xs: 0.68rem;   // micro mono: avatar counts, kit tags
+		--fs-label-sm: 0.74rem;   // mono: counts, chips, inline clears
+		--fs-label: 0.78rem;      // mono: eyebrows, section labels
+		--fs-label-lg: 0.84rem;   // mono: nav, buttons, email links
+		--fs-ui: 0.95rem;         // small UI prose, help text
+		--fs-body: 1rem;          // long-form reading copy
+		--fs-body-lg: 1.05rem;    // footnotes, short ledes
+		--fs-lede: 1.2rem;        // section ledes, status prose
+		--fs-title-sm: 1.4rem;    // small titles, mobile record titles
+		// 1.5rem  → --fs-title-compact (above)
+		--fs-figure: 1.7rem;      // ledger row figures
+		// 1.85rem → --fs-card-title (above)
+		--fs-exhibit: 2.4rem;     // hollow ledger exhibit numeral
+		--fs-exhibit-sm: 1.9rem;  // …its step for the narrow index column
+		--fs-monogram: 3.4rem;    // initials in an empty photo well
+		--fs-folio: 5.5rem;       // oversized outlined folio numeral
 
 		// Hairline rules — the structural backbone of the flat layout.
 		--rule: rgba(240, 237, 230, 0.13);
@@ -71,6 +125,13 @@
 
 		// Soft pool of light dropped behind content in a lit section.
 		--lit: radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%);
+		// Single-source raking light — one lamp, high and to the left, falling
+		// off to near-black. This is the noir light that used to sit on every
+		// card; it belongs to the ROOM, so it is applied at section scale.
+		// Objects don't each carry their own lamp.
+		--lamp:
+			radial-gradient(125% 115% at 0% 0%, rgba(255, 236, 214, 0.065) 0%, transparent 48%),
+			linear-gradient(158deg, rgba(22, 18, 16, 0.55) 0%, rgba(7, 6, 6, 0) 76%);
 		// Cinematic edge-darkening frame.
 		--vignette: radial-gradient(ellipse 120% 105% at 50% 42%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
 	}
@@ -150,6 +211,31 @@
 			display: none;
 		}
 
+		// Film grain — the emulsion the whole site is shot on. Restored: the
+		// stacking-order comments elsewhere in this file still referenced a
+		// grain layer at z 9999 that no longer existed, which is a large part
+		// of why the page had stopped reading as film.
+		//
+		// Static, not animated: a still frame has static grain, and animating
+		// a full-viewport overlay costs a repaint every frame for nothing.
+		// Decorative only — pointer-events: none, and at 0.05 over `overlay`
+		// it does not move any text/background pair off its measured ratio.
+		&::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			z-index: 9999;
+			pointer-events: none;
+			// `screen`, not `overlay`. Overlay leaves near-black almost
+			// untouched, so on a #050505 ground the grain was invisible —
+			// which is exactly how it reads in dark footage anyway: grain is
+			// the emulsion catching light, so it lifts rather than darkens.
+			opacity: 0.06;
+			mix-blend-mode: screen;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+			background-size: 220px 220px;
+		}
+
 		// Cinematic vignette — darkens the frame edges so every section reads
 		// like a film still. Decorative only: sits below nav/cookie/status
 		// chrome (z 10000+) and gentle enough to keep edge text within AA.
@@ -173,8 +259,12 @@
 		background: #050505;
 		color: #F0EDE6;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.9rem;
-		letter-spacing: 0.16em;
+		// On the label-lg step (0.84rem) rather than a one-off 0.9rem. Uppercase
+		// mono at 0.22em tracking stays comfortably legible at this size, and
+		// the skip link is the first thing a keyboard user meets — it should be
+		// set in the system's own voice, not an orphan value.
+		font-size: var(--fs-label-lg);
+		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		text-decoration: none;
 		border: 1px solid rgba(204, 0, 0, 0.5);
@@ -231,7 +321,7 @@
 	// Mono eyebrow with a trailing red hairline — the editorial section tag.
 	.eyebrow {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.78rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.62);
@@ -263,7 +353,7 @@
 		justify-content: center;
 		gap: 0.7rem;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.84rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: var(--on-accent);
@@ -299,7 +389,7 @@
 		justify-content: center;
 		gap: 0.6rem;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.84rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: var(--color-text);
@@ -334,6 +424,322 @@
 	.btn-ghost:hover .btn-ghost-arrow,
 	.btn-ghost:focus-visible .btn-ghost-arrow {
 		transform: translate(2px, 2px);
+	}
+
+	/* ===================== LEDGER RECORDS ===================== */
+	// THE CONTAINER LANGUAGE. Replaces the bordered card everywhere.
+	//
+	// A case file is not a stack of cards — it is a ruled ledger. Entries are
+	// separated by hairlines and aligned to a shared column grid; nothing is
+	// enclosed. Four-sided borders, corner radii and drop shadows are gone:
+	// the rule does the work the box used to do, and light (not a border)
+	// carries emphasis.
+	//
+	//   .ledger          the ruled list; opens with a strong rule
+	//   .record          one entry: [index] [body] [data/action]
+	//   .record--lit     the entry that matters — a pool of light, full-bleed
+	//   .record--closed  an entry that is finished — quieter rule, NOT dimmed
+	//
+	// Deliberately absent: background fills on ordinary records, hover lift,
+	// and any opacity-based "inactive" state (opacity drops secondary text
+	// under 4.5:1 and fails WCAG 1.4.3 — status is carried by a label and the
+	// rule weight instead).
+
+	.ledger {
+		position: relative;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		// Double rule at the head — a printed ledger opens on a thick/thin
+		// pair, not a single hairline. This one detail does more period work
+		// than any amount of panel chrome.
+		border-top: 3px solid var(--rule-strong);
+		box-shadow: 0 3px 0 -2px var(--rule);
+	}
+
+	// The room the ledger sits in. One lamp, high and to the left, so entries
+	// are lit rather than floating on flat black. Bleeds past the content
+	// column so the falloff is never a visible rectangle.
+	.ledger--lamp::before {
+		content: '';
+		position: absolute;
+		inset: -2rem calc(-1 * var(--gutter));
+		background: var(--lamp);
+		pointer-events: none;
+		z-index: -1;
+	}
+
+	.record {
+		position: relative;
+		display: grid;
+		// The third column has a floor so every record's body ends on the same
+		// x. With `auto`, a record carrying a CTA sized its column wider than
+		// its neighbours and the ledger's right-hand figure axis wobbled row
+		// to row — the one thing a ruled table may never do.
+		grid-template-columns: 3.25rem minmax(0, 1fr) minmax(13.5rem, auto);
+		align-items: start;
+		column-gap: clamp(1.25rem, 3vw, 2.75rem);
+		row-gap: 0.9rem;
+		padding: clamp(1.6rem, 2.6vw, 2.4rem) 0;
+		border-bottom: 1px solid var(--rule);
+		// translate only — no reflow, and nothing to composite on the ground.
+		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	// The mark: a red hairline drawn along the record's own bottom rule,
+	// left to right, when the entry is pulled. Replaces the hover lift.
+	.record::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1px;
+		height: 1px;
+		background: var(--color-accent);
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	// Only interactive records react. A record that is merely information
+	// does not pretend to be clickable.
+	.record--pull:hover,
+	.record--pull:focus-within {
+		transform: translateX(0.6rem);
+	}
+
+	.record--pull:hover::after,
+	.record--pull:focus-within::after {
+		transform: scaleX(1);
+	}
+
+	// The lit entry. Light bleeds past the content column on both sides, so
+	// the emphasis reads as a lamp falling across the page rather than a
+	// highlighted box. Angled, and fading out well before the right edge, so
+	// it never resolves into a rectangle.
+	.record--lit::before {
+		content: '';
+		position: absolute;
+		inset: 0 calc(-1 * var(--gutter));
+		background:
+			linear-gradient(
+				104deg,
+				rgba(255, 244, 232, 0.075) 0%,
+				rgba(255, 240, 226, 0.038) 34%,
+				rgba(255, 236, 220, 0.012) 62%,
+				transparent 88%
+			),
+			radial-gradient(ellipse 62% 120% at 12% 50%, rgba(204, 0, 0, 0.09), transparent 70%);
+		pointer-events: none;
+		z-index: -1;
+	}
+
+	// The lit entry is marked with a RULE, not a side tab. A thick coloured
+	// bar down one edge is the accent-border cliché this whole language exists
+	// to avoid — and the ledger's own vocabulary is rules, so the mark belongs
+	// on the entry's rule. Light plus a red rule plus the lit index is already
+	// three signals; a fourth was decoration.
+	.record--lit {
+		border-bottom-color: var(--rule-red);
+	}
+
+	// A finished entry keeps full text contrast; only its rule softens.
+	.record--closed {
+		border-bottom-color: var(--rule-soft);
+	}
+
+	// A compact entry — one line. Used for records that are settled: the
+	// visitor needs to see that the wave existed and what it cost, not to read
+	// its sales copy. Height is hierarchy: giving a closed wave the same room
+	// as a buyable one is what made the ledger read as long.
+	.record--compact {
+		padding: 1.05rem 0;
+		align-items: baseline;
+	}
+
+	.record--compact .record-body {
+		flex-direction: row;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		flex-wrap: wrap;
+	}
+
+	.record--compact .record-title {
+		font-size: var(--fs-title-compact);
+		letter-spacing: 0.06em;
+	}
+
+	.record--compact .record-index {
+		padding-top: 0.15rem;
+	}
+
+	// The figure sits on the same right-hand axis the full records use, so a
+	// mixed ledger still reads down one edge.
+	.record-summary {
+		display: flex;
+		align-items: baseline;
+		gap: 0.6rem;
+		white-space: nowrap;
+	}
+
+	// Ledger columns ---------------------------------------------------------
+
+	// Running index. Tabular so the column stays optically straight.
+	// Outlined dossier numeral. The exhibit number on a case file is set big
+	// and hollow — it was the loudest period device on the old cards and got
+	// lost with them. It costs no container, so it comes back here.
+	.record-index {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-exhibit);
+		line-height: 0.85;
+		letter-spacing: 0.02em;
+		font-variant-numeric: tabular-nums;
+		color: transparent;
+		-webkit-text-stroke: 1px rgba(204, 0, 0, 0.5);
+		padding-top: 0.15rem;
+		transition: -webkit-text-stroke-color 0.3s ease, text-shadow 0.3s ease;
+	}
+
+	// Hollow type carries no contrast, so it is decorative by construction and
+	// is marked aria-hidden at every call site; the entry's real name is its
+	// title. Any index that must be READ stays solid mono.
+	.record--lit .record-index {
+		-webkit-text-stroke-color: var(--color-accent-hot);
+		text-shadow: var(--glow-red-soft);
+	}
+
+	@media (max-width: 720px) {
+		.record-index {
+			font-size: var(--fs-exhibit-sm);
+		}
+	}
+
+	.record-body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+		min-width: 0;
+	}
+
+	.record-title {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: clamp(1.85rem, 3.2vw, 2.6rem);
+		letter-spacing: 0.05em;
+		line-height: 1;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	.record-note {
+		font-family: var(--font-special-elite), cursive;
+		font-size: var(--fs-body);
+		line-height: 1.65;
+		color: rgba(240, 237, 230, 0.72);
+		max-width: 46ch;
+		margin: 0;
+	}
+
+	// Right-hand column — the datum and the action.
+	.record-data {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 0.9rem;
+		text-align: right;
+	}
+
+	// Detail table inside a record — label left, figure right, hairline between.
+	// Reads as one entry's detail, so it uses the faintest rule in the system;
+	// anything heavier and the rows start competing with the records themselves.
+	.record-table {
+		list-style: none;
+		margin: 0.6rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		// Full body width on purpose: the figures then stack into a single
+		// right-hand axis that lines up with the status column above them,
+		// so the whole ledger reads down one edge instead of two ragged ones.
+		width: 100%;
+	}
+
+	.record-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding: 0.7rem 0;
+		border-top: 1px solid var(--rule-soft);
+
+		&:first-child {
+			border-top: none;
+			padding-top: 0.2rem;
+		}
+	}
+
+	.record-row-label {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label-lg);
+		letter-spacing: 0.04em;
+		color: rgba(240, 237, 230, 0.78);
+	}
+
+	.record-row-value {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 0.15rem;
+		text-align: right;
+	}
+
+	.record-figure {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-figure);
+		letter-spacing: 0.04em;
+		line-height: 1;
+		color: var(--color-text);
+	}
+
+	.record-row-note {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label);
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.6);
+		line-height: 1;
+	}
+
+	// Status word. Never a pill, never a filled chip — a mono word on a rule.
+	.record-status {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label-sm);
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.72);
+		padding-bottom: 0.3rem;
+		border-bottom: 1px solid var(--rule-strong);
+		white-space: nowrap;
+	}
+
+	.record-status--live {
+		color: var(--color-accent-hot);
+		border-bottom-color: var(--color-accent);
+	}
+
+	@media (max-width: 720px) {
+		.record {
+			grid-template-columns: 2.4rem minmax(0, 1fr);
+			row-gap: 1.2rem;
+		}
+
+		.record-data {
+			grid-column: 2;
+			align-items: flex-start;
+			text-align: left;
+			width: 100%;
+		}
+
 	}
 
 	/* ===================== CINEMATIC ATMOSPHERE ===================== */
@@ -379,14 +785,46 @@
 	// Scroll reveal — only hidden when JS is present (the inline `js` class on
 	// <html>); no-JS / SEO render fully visible. IntersectionObserver toggles
 	// .is-visible.
+	//
+	// A quiet fade with a short rise. Both properties are compositor-cheap and,
+	// unlike the clip-path shutter this replaced, a transform never clips or
+	// boxes anything — and because the resting state is `transform: none` there
+	// is no lingering containing block once the reveal settles. The observer
+	// (see BaseLayout.astro) fires it early, before the section is fully in
+	// view, so it reads as already-there rather than arriving late.
 	.js .reveal {
 		opacity: 0;
-		transform: translateY(26px);
-		transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+		transform: translateY(16px);
+		transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 	.js .reveal.is-visible {
 		opacity: 1;
 		transform: none;
+	}
+
+	// Prints fade in one after another rather than all at once. `--i` is set
+	// per item by the grid that owns them; anything without it starts at zero,
+	// so this is inert wherever it isn't wired up. Capped at 10 steps so a long
+	// roster never leaves the last face waiting.
+	//
+	// Two owners with different timing needs, one class. Astro grids sit inside
+	// a `.reveal` and must wait for it; React grids (speakers, the home wall)
+	// render after `astro:page-load` has already run the observer, so they are
+	// never inside a `.reveal` and simply fade in on first paint. Suppressing
+	// the animation only while a reveal is still closed covers both — otherwise
+	// an Astro grid would fade behind an opacity-0 parent and be over before
+	// anyone saw it.
+	.js .develop {
+		animation: print-fade 0.6s ease backwards;
+		animation-delay: calc(min(var(--i, 0), 10) * 55ms);
+	}
+	.js .reveal:not(.is-visible) .develop {
+		animation: none;
+	}
+
+	@keyframes print-fade {
+		from { opacity: 0; transform: translateY(12px); }
+		to   { opacity: 1; transform: none; }
 	}
 
 	@keyframes ember-pulse {
@@ -398,8 +836,99 @@
 		20%, 82% { opacity: 0.74; }
 	}
 
+	// RED AS LIGHT. Everywhere else in the system red is a colour applied to a
+	// noun — it marks, but it never does anything. Here it is a light source:
+	// a raking beam that crosses the section as the section crosses the
+	// viewport, driven by the scroll itself rather than by a timer.
+	//
+	// Strictly an enhancement. `animation-timeline` ships in Chromium (2023)
+	// and Safari (2025) but is still behind a flag in Firefox, so this is
+	// wrapped in @supports and the unlit section below is the real design —
+	// nothing here carries meaning, contrast or state.
+	@supports (animation-timeline: view()) {
+		@media (prefers-reduced-motion: no-preference) {
+			.rake {
+				position: relative;
+			}
+
+			// The Lit Section Rule: the beam is a positioned element, so without
+			// this every static sibling after it would paint underneath the
+			// light instead of in it.
+			.rake > *:not(.rake-beam) {
+				position: relative;
+				z-index: 1;
+			}
+
+			.rake > .rake-beam {
+				position: absolute;
+				// Full-bleed. The tickets section is a max-width, centred column,
+				// so a beam at `inset: 0` stopped at 1200px and left the page
+				// black on both sides — the light read as a padded box. The
+				// horizontal inset breaks it out to the viewport edges;
+				// `50% - 50vw` is zero on a full-width `.rake` (speakers) and
+				// negative on a centred one (tickets). Safe from horizontal
+				// scroll because html carries `overflow-x: clip`.
+				inset: 0 calc(50% - 50vw);
+				pointer-events: none;
+				z-index: 0;
+				background: linear-gradient(
+					104deg,
+					transparent 34%,
+					rgba(204, 0, 0, 0.13) 50%,
+					transparent 66%
+				);
+				background-size: 260% 100%;
+				background-repeat: no-repeat;
+				animation: rake-sweep linear both;
+				animation-timeline: view();
+				animation-range: entry 0% exit 100%;
+			}
+		}
+	}
+
+	@keyframes rake-sweep {
+		from { background-position: -70% 0; }
+		to   { background-position: 170% 0; }
+	}
+
+	// The lineup print morphing into the dialog photo. Slower than a default
+	// cross-fade and on the system's own easing, so it reads as a camera move
+	// rather than a UI transition.
+	::view-transition-old(speaker-portrait),
+	::view-transition-new(speaker-portrait) {
+		animation-duration: 0.42s;
+		animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	// The page underneath shouldn't cross-fade while the portrait travels — a
+	// full-page dissolve behind a moving element reads as a glitch.
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation-duration: 0.24s;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.js .reveal { opacity: 1; transform: none; transition: none; }
+		.js .develop { animation: none; }
+		.rake > .rake-beam { display: none; }
+
+		// The ledger's pull and its red mark are both motion. Without them the
+		// entry still resolves: focus keeps its ring, the lit record keeps its
+		// light and marker bar.
+		.record,
+		.record::after {
+			transition: none;
+		}
+
+		.record--pull:hover,
+		.record--pull:focus-within {
+			transform: none;
+		}
+
+		.record--pull:hover::after,
+		.record--pull:focus-within::after {
+			transform: scaleX(1);
+		}
 	}
 
 	@keyframes fadeIn {

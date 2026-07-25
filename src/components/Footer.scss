@@ -51,7 +51,7 @@
 
 	.col-title {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.78rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.24em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.85);
@@ -96,7 +96,7 @@
 	.brand-tagline {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 0.92rem;
+		font-size: var(--fs-ui);
 		line-height: 1.55;
 		color: rgba(240, 237, 230, 0.6);
 		max-width: 32ch;
@@ -121,7 +121,7 @@
 
 	.footer-link {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.88rem;
+		font-size: var(--fs-ui);
 		letter-spacing: 0.04em;
 		color: rgba(240, 237, 230, 0.78);
 		text-decoration: none;
@@ -152,7 +152,7 @@
 		column-gap: 1.4rem;
 		row-gap: 0.7rem;
 		margin: 0;
-		font-size: 0.88rem;
+		font-size: var(--fs-ui);
 
 		@media (max-width: 500px) {
 			justify-content: center;
@@ -160,7 +160,7 @@
 		}
 
 		dt {
-			font-size: 0.75rem;
+			font-size: var(--fs-label);
 			letter-spacing: 0.2em;
 			text-transform: uppercase;
 			color: rgba(240, 237, 230, 0.62);
@@ -190,9 +190,16 @@
 		}
 	}
 
+	// A standalone contact link in an <address>, not a link inside a sentence,
+	// so SC 2.5.8's inline exception doesn't cover it — it measured 117×17.
+	// inline-flex + a 2.75rem row gives it a real touch target without moving
+	// the underline off the text.
 	.email {
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
 		font-family: var(--font-special-elite), cursive;
-		font-size: 0.95rem;
+		font-size: var(--fs-ui);
 		color: rgba(240, 237, 230, 0.88);
 		text-decoration: none;
 		border-bottom: 1px solid rgba(240, 237, 230, 0.4);
@@ -217,7 +224,7 @@
 
 	.org {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.85rem;
+		font-size: var(--fs-label-lg);
 		line-height: 1.6;
 		color: rgba(240, 237, 230, 0.65);
 		max-width: 34ch;
@@ -254,7 +261,8 @@
 		justify-content: center;
 		width: 2.5rem;
 		height: 2.5rem;
-		border-radius: 4px;
+		// The Two-Pixel Rule — nothing in this system is rounder than 2px.
+		border-radius: var(--radius);
 		transition: color 0.25s ease, background 0.25s ease;
 
 		&:hover,
@@ -277,7 +285,7 @@
 		justify-content: center;
 		align-items: center;
 		text-align: center;
-		font-size: 0.78rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.06em;
 		color: rgba(240, 237, 230, 0.55);
 	}

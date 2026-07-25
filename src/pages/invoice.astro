@@ -11,7 +11,7 @@ import InvoiceForm from '../components/InvoiceForm';
 	<main class="invoice-page">
 		<SubpageHero
 			label="The paper trail"
-			titleHtml={'Buy on<br /><span class="red">a company invoice.</span>'}
+			titleHtml={'Buy on a company<br /><span class="red">invoice</span>.'}
 			lede="Need an invoice before you can pay? Request one here. We'll bill your company, and once it's settled you'll get a code to claim your tickets on ti.to."
 			seoHeading="DevFest.cz 2026 Company Invoice"
 			titleId="invoice-title"
@@ -87,7 +87,7 @@ import InvoiceForm from '../components/InvoiceForm';
 
 	.steps li {
 		font-family: var(--font-im-fell-english), serif;
-		font-size: 1.05rem;
+		font-size: var(--fs-body-lg);
 		line-height: 1.5;
 		color: var(--color-grey);
 		display: flex;
@@ -97,7 +97,7 @@ import InvoiceForm from '../components/InvoiceForm';
 
 	.step-no {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.7rem;
+		font-size: var(--fs-label-sm);
 		letter-spacing: 0.2em;
 		// Red reads as light — the step numbers glow like neon markers.
 		color: var(--color-accent-hot);
@@ -107,7 +107,7 @@ import InvoiceForm from '../components/InvoiceForm';
 
 	.intro-note {
 		font-family: var(--font-special-elite), cursive;
-		font-size: 0.9rem;
+		font-size: var(--fs-ui);
 		font-style: italic;
 		color: rgba(240, 237, 230, 0.6);
 		margin: 0;

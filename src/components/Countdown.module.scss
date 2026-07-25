@@ -29,13 +29,17 @@
 	gap: 4px;
 }
 
+// A ticket stub, and the one place a bounded rectangle is the actual subject:
+// the shape IS the object being depicted, not a container wrapped around
+// content. It keeps its edge — but the edge is a hairline on a dark well, not
+// a card border with a radius pretending to be a surface.
 .card {
 	position: relative;
 	width: clamp(2.6rem, 3.4vw, 4.2rem);
 	height: clamp(3.8rem, 5.1vw, 6rem);
 	background: var(--panel-2);
 	border: 1px solid var(--rule);
-	border-radius: var(--radius);
+	border-radius: 0;
 	overflow: hidden;
 	transition: border-color 0.3s ease;
 }
@@ -84,7 +88,7 @@
 
 .label {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: clamp(0.78rem, 1vw, 0.9rem);
+	font-size: clamp(0.78rem, 1vw, 0.95rem);
 	letter-spacing: 0.28em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.55);
@@ -135,18 +139,18 @@
 		--card-tilt: 0deg;
 	}
 	.digit {
-		font-size: clamp(1.3rem, 5.4vw, 1.85rem);
+		font-size: clamp(1.4rem, 5.4vw, 1.85rem);
 		top: 60%;
 	}
 	.cardStamp {
 		height: 22%;
 	}
 	.cardStampText {
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.16em;
 	}
 	.label {
-		font-size: 0.78rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.22em;
 	}
 }
@@ -163,7 +167,7 @@
 		height: 2.15rem;
 	}
 	.digit {
-		font-size: 1.2rem;
+		font-size: var(--fs-lede);
 	}
 	.cardStamp {
 		height: 18%;
@@ -172,7 +176,7 @@
 		display: none;
 	}
 	.label {
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.18em;
 	}
 }

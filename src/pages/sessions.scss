@@ -21,14 +21,18 @@
 	margin: 0 auto;
 }
 
+// Left-set to match /speakers — see the note there on why not every head on
+// the site is centred any more.
 .sessions-header {
-	text-align: center;
-	margin-bottom: 2.6rem;
+	text-align: left;
+	margin-bottom: 3.2rem;
+	border-bottom: 1px solid var(--rule-soft);
+	padding-bottom: 1.6rem;
 }
 
 .sessions-eyebrow {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.78rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.62);
@@ -49,7 +53,7 @@
 .sessions-noscript {
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.2rem;
+	font-size: var(--fs-lede);
 	line-height: 1.7;
 	color: var(--color-grey);
 	text-align: center;

@@ -29,131 +29,103 @@
 		margin: 0 auto;
 	}
 
+	// The three desks are a ledger, not a card row: one entry each, stacked
+	// and ruled, sharing the site-wide record grid.
 	.contact-grid {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 2rem;
-		counter-reset: card;
-	}
-
-	// Lamp-lit dossier: a single-source-lit panel (warm light pooling top-left,
-	// falling to near-black) with an inset "matte" frame like a mounted evidence
-	// print, a flat red case-file tab, and a big outlined index behind the copy.
-	.contact-card {
 		position: relative;
-		overflow: hidden;
-		background:
-			radial-gradient(120% 115% at 0% 0%, rgba(255, 236, 214, 0.07) 0%, transparent 46%),
-			linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 78%);
-		border: 0;
-		border-radius: 0;
-		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.62);
-		padding: 2.6rem 2.1rem 2.1rem;
-		min-height: 300px;
-		display: flex;
-		flex-direction: column;
-		gap: 1.1rem;
-		counter-increment: card;
-		transition: transform 0.25s ease, box-shadow 0.25s ease;
+		display: block;
+		border-top: 3px solid var(--rule-strong);
+		box-shadow: 0 3px 0 -2px var(--rule);
 
-		// Inset matte frame — a whisper-faint mounted-print hairline. Warms a
-		// touch on hover (still restrained).
+		// Same single lamp the ticket ledger sits under.
 		&::before {
 			content: '';
 			position: absolute;
-			inset: 9px;
-			border: 1px solid var(--matte);
+			inset: -2rem calc(-1 * var(--gutter));
+			background: var(--lamp);
 			pointer-events: none;
-			z-index: 2;
-			transition: border-color 0.25s ease;
-		}
-
-		&:hover {
-			transform: translateY(-4px);
-			box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
-		}
-
-		&:hover::before {
-			border-color: var(--matte-red);
+			z-index: -1;
 		}
 	}
 
-	// Oversized outlined index — anchored top-right, behind the copy.
-	.card-no {
-		position: absolute;
-		top: 0.9rem;
-		right: 1rem;
-		z-index: 0;
-		pointer-events: none;
-		line-height: 1;
+	// One inbox, one ruled entry. No exhibit numeral and no far-right folder
+	// tab: numbering three inboxes said nothing, and a red chip pinned to the
+	// opposite edge from its own title read as decoration, not a label. The
+	// category name is a plain mono eyebrow sitting directly above the title.
+	.contact-card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+		padding: clamp(1.6rem, 2.6vw, 2.4rem) 0;
+		border-bottom: 1px solid var(--rule);
+		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 
+		// Light washes in from the left when the entry is pulled.
 		&::before {
-			content: counter(card, decimal-leading-zero);
-			font-family: var(--font-bebas-neue), sans-serif;
-			font-size: 5.5rem;
-			line-height: 0.8;
-			letter-spacing: 0.02em;
-			color: transparent;
-			-webkit-text-stroke: 1px rgba(204, 0, 0, 0.32);
-			transition: -webkit-text-stroke-color 0.25s ease, text-shadow 0.25s ease;
+			content: '';
+			position: absolute;
+			inset: 0 calc(-1 * var(--gutter));
+			background: linear-gradient(
+				104deg,
+				rgba(255, 244, 232, 0.06) 0%,
+				rgba(255, 240, 226, 0.026) 38%,
+				transparent 82%
+			);
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.3s ease;
+			z-index: -1;
+		}
+
+		&:hover,
+		&:focus-within {
+			transform: translateX(0.6rem);
+		}
+
+		&:hover::before,
+		&:focus-within::before {
+			opacity: 1;
 		}
 	}
 
-	.contact-card:hover .card-no::before {
-		-webkit-text-stroke-color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
-	}
-
-	// Category label = flat red case-file tab.
+	// Category eyebrow — plain mono label above the title, not a tab.
 	.card-label {
-		position: relative;
-		z-index: 1;
 		align-self: flex-start;
-		background: var(--color-accent);
-		color: var(--on-accent);
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
-		letter-spacing: 0.26em;
+		font-size: var(--fs-label-sm);
+		letter-spacing: 0.24em;
 		text-transform: uppercase;
-		padding: 0.42rem 0.72rem;
-	}
-
-	// Keep the copy above the outlined index numeral.
-	.card-title,
-	.card-desc,
-	.card-emails {
-		position: relative;
-		z-index: 1;
+		color: var(--color-accent-hot);
 	}
 
 	.card-title {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-card-title);
+		font-size: clamp(1.85rem, 3.2vw, 2.6rem);
 		line-height: 1;
-		letter-spacing: 0.04em;
+		letter-spacing: 0.05em;
 		color: var(--color-text);
 		margin: 0;
-		max-width: 10ch;
 	}
 
 	.card-desc {
 		font-family: var(--font-im-fell-english), serif;
 		font-style: italic;
-		font-size: 1.08rem;
+		font-size: var(--fs-body-lg);
 		line-height: 1.55;
 		color: var(--color-grey);
-		margin: 0 0 0.4rem;
-		flex: 1;
+		margin: 0.7rem 0 0;
+		max-width: 46ch;
 	}
 
 	.card-emails {
 		list-style: none;
-		padding: 1.2rem 0 0;
-		margin: 0.4rem 0 0;
-		border-top: 1px solid var(--rule);
+		padding: 0.9rem 0 0;
+		margin: 0.9rem 0 0;
+		border-top: 1px solid var(--rule-soft);
 		display: flex;
 		flex-direction: column;
-		gap: 1.2rem;
+		gap: 1rem;
 	}
 
 	.card-emails li {
@@ -164,7 +136,7 @@
 
 	.email-name {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.75rem;
+		font-size: var(--fs-label);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.65);
@@ -172,7 +144,7 @@
 
 	.email-link {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.85rem;
+		font-size: var(--fs-label-lg);
 		letter-spacing: 0.04em;
 		color: var(--color-text);
 		align-self: flex-start;
@@ -208,21 +180,14 @@
 		}
 	}
 
-	/* ===================== RESPONSIVE ===================== */
-	@media (max-width: 900px) {
-		.contact-grid { grid-template-columns: 1fr; gap: 1.6rem; }
-	}
-
-	@media (max-width: 600px) {
-		.contact-card { padding: 1.8rem 1.5rem 1.7rem; }
-		.card-title { font-size: 1.5rem; }
-	}
-
 	/* ===================== REDUCED MOTION ===================== */
 	@media (prefers-reduced-motion: reduce) {
 		.contact-card {
-			transition: border-color 0.2s, box-shadow 0.2s;
+			transition: none;
 
-			&:hover { transform: none; }
+			&:hover,
+			&:focus-within { transform: none; }
+
+			&::before { transition: none; }
 		}
 	}

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { initials, type Speaker } from '../lib/speakers';
 import { visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
+import { useReturnFocus } from '../lib/useReturnFocus';
 import SpeakerDetail from './SpeakerDetail';
 import s from './SessionDetail.module.scss';
 
@@ -59,6 +60,9 @@ export default function SessionDetail({
 	onClose: () => void;
 }) {
 	const dialogRef = useRef<HTMLDivElement>(null);
+	// Restores focus to the trigger on close — keyboard closes only, so a pointer
+	// close never leaves a lingering focus ring on the session card.
+	const setKeyboardClose = useReturnFocus();
 
 	// A speaker sub-dialog stacked on top of this one. Opened from a speaker row,
 	// seeded from the embedded ref for an instant render, then enriched below.
@@ -80,7 +84,6 @@ export default function SessionDetail({
 	);
 
 	useEffect(() => {
-		const previouslyFocused = document.activeElement as HTMLElement | null;
 		const previousOverflow = document.body.style.overflow;
 		document.body.style.overflow = 'hidden';
 
@@ -101,6 +104,7 @@ export default function SessionDetail({
 			if (speakerOpenRef.current) return;
 			if (event.key === 'Escape') {
 				event.stopPropagation();
+				setKeyboardClose(true);
 				onClose();
 				return;
 			}
@@ -125,9 +129,8 @@ export default function SessionDetail({
 		return () => {
 			document.removeEventListener('keydown', onKeyDown, true);
 			document.body.style.overflow = previousOverflow;
-			previouslyFocused?.focus?.();
 		};
-	}, [onClose]);
+	}, [onClose, setKeyboardClose]);
 
 	const abstractParagraphs = session.description.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
 	const tagCategories = visitorCategories(session);
@@ -137,7 +140,10 @@ export default function SessionDetail({
 		<div
 			className={s.overlay}
 			onMouseDown={(event) => {
-				if (event.target === event.currentTarget) onClose();
+				if (event.target === event.currentTarget) {
+					setKeyboardClose(false);
+					onClose();
+				}
 			}}
 		>
 			<div
@@ -148,7 +154,16 @@ export default function SessionDetail({
 				ref={dialogRef}
 				tabIndex={-1}
 			>
-				<button className={s.close} type="button" onClick={onClose} aria-label="Close" data-autofocus>
+				<button
+					className={s.close}
+					type="button"
+					onClick={(event) => {
+						setKeyboardClose(event.detail === 0);
+						onClose();
+					}}
+					aria-label="Close"
+					data-autofocus
+				>
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
 						<path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
 					</svg>

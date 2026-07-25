@@ -1,66 +1,78 @@
-// Speaker lineup — clickable cards that open a detail dialog. Distinct from
-// /team: a clean uncovered grayscale portrait with the caption in a panel
-// BELOW the photo (no text over the image), a lineup index, and a restrained
-// hover (subtle zoom + desaturation lift + red edge). Same film-noir system
-// (grayscale, red accent, brand fonts). Global tokens come from BaseLayout.
+// Speaker lineup — prints laid out on the page, and nothing else. No cell, no
+// panel, no rule around anybody.
+//
+// This has now been wrong twice in the same direction. First it was an
+// auto-fill CARD grid: hover-lift, a red crop-bracket burned onto every frame,
+// a "View profile →" chip once per speaker. Replacing that with a ruled
+// contact sheet (`gap: 0`, cells sharing hairlines) fixed the card but kept
+// the box — shared edges still draw a complete rectangle around every single
+// photograph, and a grid of outlined rectangles reads as a grid of outlined
+// rectangles no matter how the edges are shared.
+//
+// A photograph does not need a container. It already carries its own mount —
+// a bone keyline for the print's border and a shadow that sits it on the page
+// — so the only thing a cell border could add is a second rectangle around the
+// first. Alignment and even rhythm make the grid; the prints ARE the grid.
 
 .grid {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-	gap: 18px;
+	grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+	gap: clamp(2rem, 3.4vw, 3rem) clamp(1.4rem, 2.4vw, 2.2rem);
 
-	// Each grid cell stretches its card to the row height, and the card fills the
-	// cell, so every card in a row is exactly the same height.
 	> li {
 		display: flex;
 	}
 }
 
-/* ===================== CARD (button) ===================== */
+// Carries `--i` for the develop stagger; the class exists so the index can be
+// set without styling the bare <li>.
+.cell {
+	display: flex;
+}
+
+/* ===================== PRINT + CAPTION ===================== */
 .card {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-	height: 100%;
 	margin: 0;
 	padding: 0;
 	text-align: left;
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
-	overflow: hidden;
-	background:
-		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
-		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 82%);
-	border: 1px solid var(--rule);
-	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-	transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
-
-	&:hover,
-	&:focus-visible {
-		transform: translateY(-5px);
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft), 0 26px 54px rgba(0, 0, 0, 0.7);
-	}
+	background: transparent;
+	border: 0;
+	border-radius: 0;
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 2px;
+		outline-offset: 4px;
 	}
 }
 
-/* ===================== MEDIA (evidence photo) ===================== */
+/* ===================== MEDIA (evidence print) ===================== */
 .media {
 	position: relative;
 	display: block;
+	z-index: 1;
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
-	background: radial-gradient(120% 120% at 50% 20%, #17110f 0%, #060505 74%);
+	background: var(--panel-lit);
+	// Mounted print: bone keyline for the print's own border, shadow to sit it
+	// ON the sheet rather than floating on flat black.
+	box-shadow:
+		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
+		0 10px 24px rgba(0, 0, 0, 0.5);
 
-	// Red crop-brackets: top-left (::before) and bottom-right (::after).
+	// Red crop-brackets, top-left (::before) and bottom-right (::after) — a
+	// GESTURE, not decoration. Printing them on every frame at rest put twenty
+	// red marks in one viewport and broke The One Mark Rule; they now open only
+	// on the frame being pointed at, which is what framing a face actually is.
 	&::before,
 	&::after {
 		content: '';
@@ -69,20 +81,25 @@
 		height: 18px;
 		border: 2px solid var(--color-accent-hot);
 		z-index: 3;
-		opacity: 0.85;
-		transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+		opacity: 0;
+		// Scale from the corner rather than animating width/height — the same
+		// opening gesture, composited instead of triggering layout.
+		transform: scale(0.7);
+		transition: opacity 0.3s ease, transform 0.3s ease;
 	}
 	&::before {
 		top: 9px;
 		left: 9px;
 		border-right: 0;
 		border-bottom: 0;
+		transform-origin: top left;
 	}
 	&::after {
 		right: 9px;
 		bottom: 9px;
 		border-left: 0;
 		border-top: 0;
+		transform-origin: bottom right;
 	}
 }
 
@@ -93,22 +110,30 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	// Duotone: hard B&W at rest, lifts toward colour + pushes in on hover.
+	// Hard B&W at rest, lifting toward colour on hover.
 	filter: grayscale(1) contrast(1.14) brightness(0.84);
 	transform: scale(1.02);
 	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
 }
 
-// A faint red interrogation-spotlight vignette over the photo (no scanlines).
-.grain {
+// Always-on bottom scrim so the print sits into its own shadow.
+.scrim {
 	position: absolute;
 	inset: 0;
 	z-index: 2;
 	pointer-events: none;
-	background:
-		radial-gradient(120% 100% at 50% 6%, rgba(204, 0, 0, 0.15) 0%, transparent 46%),
-		linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
-	opacity: 0.8;
+	background: linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
+}
+
+// The red interrogation wash rides on hover only — at rest it was a red mark
+// on every single face, which is not what an accent is for.
+.vignette {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background: radial-gradient(120% 100% at 50% 6%, rgba(204, 0, 0, 0.16) 0%, transparent 46%);
+	opacity: 0;
 	transition: opacity 0.3s ease;
 }
 
@@ -123,13 +148,12 @@
 .card:focus-visible .media::before,
 .card:focus-visible .media::after {
 	opacity: 1;
-	width: 24px;
-	height: 24px;
+	transform: scale(1);
 }
 
-.card:hover .grain,
-.card:focus-visible .grain {
-	opacity: 0.4;
+.card:hover .vignette,
+.card:focus-visible .vignette {
+	opacity: 1;
 }
 
 .monogram {
@@ -139,148 +163,101 @@
 	align-items: center;
 	justify-content: center;
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(3rem, 12vw, 4.4rem);
+	font-size: var(--fs-monogram);
 	letter-spacing: 0.08em;
 	color: rgba(242, 239, 233, 0.26);
 	user-select: none;
 }
 
-/* ===================== BODY (caption below photo) ===================== */
+/* ===================== CAPTION ===================== */
+// Sits directly under the print on space alone. The red hairline that used to
+// hang it was one more drawn line repeated once per speaker; the bottom edge
+// of the photograph already ends the picture. Names and roles are NOT clamped
+// or height-matched — grid rows stretch, so the row below still starts level
+// however long a name runs.
 .body {
 	position: relative;
+	z-index: 1;
 	display: flex;
 	flex-direction: column;
-	flex: 1 1 auto;
-	// Flush to the card edges (aligned with the photo above) — no inset gap
-	// around the red tint. Red file-rule sits on the left edge.
-	padding: 0.85rem 1rem 0.95rem;
-	border-left: 2px solid var(--rule-red);
-	background: linear-gradient(90deg, rgba(204, 0, 0, 0.07) 0%, rgba(10, 9, 9, 0) 72%);
+	padding: 0;
+	margin-top: 0.9rem;
+	background: none;
 }
 
-// Matches /team's .crew-name.
 .name {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.55rem;
-	line-height: 1;
+	font-size: var(--fs-title-compact);
+	line-height: 1.05;
 	letter-spacing: 0.04em;
 	color: var(--color-text);
-	// Reserve two lines so 1- and 2-line names keep the same card height.
-	min-height: 2em;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-
-// Matches /team's .crew-role.
-.tagline {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.75rem;
-	letter-spacing: 0.16em;
-	text-transform: uppercase;
-	line-height: 1.4;
-	margin-top: 0.2rem;
-	color: var(--color-grey);
-	// Always rendered + two-line reserve → every card's caption block matches.
-	min-height: 2.8em;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-
-.more {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.35rem;
-	// Pin to the bottom of the caption so the CTA aligns across all cards.
-	margin-top: auto;
-	padding-top: 0.7rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.68rem;
-	letter-spacing: 0.16em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
 	transition: color 0.25s ease;
 }
 
-.moreArrow {
-	transition: transform 0.25s ease;
+.tagline {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label);
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	line-height: 1.45;
+	margin-top: 0.35rem;
+	color: var(--color-grey);
 }
 
-.card:hover .more,
-.card:focus-visible .more {
+// The name is the affordance — it lights with the frame it belongs to. The
+// per-card "View profile →" chip it replaces said the same thing once per
+// speaker; the sheet says it once, in the section header.
+.card:hover .name,
+.card:focus-visible .name {
 	color: var(--color-accent-hot);
 }
 
-.card:hover .moreArrow,
-.card:focus-visible .moreArrow {
-	transform: translateX(3px);
-}
-
-/* ===================== "MORE SOON" TILE ===================== */
-// Closes the grid with a teaser tile so the lineup never reads as "complete".
+/* ===================== END OF ROLL ===================== */
+// Closes the sheet so the lineup never reads as complete. An unexposed frame,
+// not a dashed placeholder tile with pulsing dots.
 .moreCard {
 	position: relative;
-	aspect-ratio: 4 / 5;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 0.7rem;
-	padding: 1.2rem;
-	text-align: center;
-	background: radial-gradient(120% 120% at 50% 20%, #141010 0%, #070606 72%);
-	border: 1px dashed rgba(204, 0, 0, 0.4);
-	transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-
-	&:hover {
-		transform: translateY(-5px);
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft);
-	}
+	width: 100%;
+	padding: 0;
+	background: transparent;
 }
 
-.moreDots {
-	display: inline-flex;
-	gap: 0.34rem;
+// Carries the SAME mount as a real print — bone keyline, same shadow — so it
+// reads as a frame that hasn't been exposed yet rather than as an outlined
+// empty box sitting among borderless photographs.
+.moreFrame {
+	position: relative;
+	aspect-ratio: 4 / 5;
+	background: var(--panel-lit);
+	box-shadow:
+		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
+		0 10px 24px rgba(0, 0, 0, 0.5);
+}
 
-	span {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--color-accent-hot);
-		opacity: 0.35;
-		animation: skelPulse 1.4s ease-in-out infinite;
-	}
-
-	span:nth-child(2) {
-		animation-delay: 0.2s;
-	}
-	span:nth-child(3) {
-		animation-delay: 0.4s;
-	}
+.moreBody {
+	padding: 0;
+	margin-top: 0.9rem;
 }
 
 .moreKicker {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.68rem;
-	letter-spacing: 0.28em;
-	text-transform: uppercase;
-	color: var(--color-accent-hot);
+	display: block;
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-title-compact);
+	line-height: 1.05;
+	letter-spacing: 0.04em;
+	color: var(--color-grey);
 }
 
 .moreText {
-	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
-	font-size: 1.12rem;
-	line-height: 1.5;
-	color: var(--color-grey);
-	margin: 0;
-	max-width: 22ch;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label);
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	line-height: 1.45;
+	margin: 0.35rem 0 0;
+	color: rgba(240, 237, 230, 0.5);
 }
 
 /* ===================== STATES ===================== */
@@ -288,7 +265,7 @@
 	text-align: center;
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: 1.2rem;
+	font-size: var(--fs-lede);
 	line-height: 1.7;
 	color: var(--color-grey);
 	max-width: 52ch;
@@ -300,7 +277,7 @@
 	align-items: center;
 	gap: 0.55rem;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -314,28 +291,6 @@
 	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
 	flex-shrink: 0;
 	animation: skelPulse 1.3s ease-in-out infinite;
-}
-
-.loadingDots {
-	display: inline-flex;
-	align-items: center;
-	gap: 3px;
-
-	span {
-		width: 3px;
-		height: 3px;
-		border-radius: 50%;
-		background: currentColor;
-		opacity: 0.3;
-		animation: skelPulse 1.3s ease-in-out infinite;
-	}
-
-	span:nth-child(2) {
-		animation-delay: 0.18s;
-	}
-	span:nth-child(3) {
-		animation-delay: 0.36s;
-	}
 }
 
 @keyframes skelPulse {
@@ -352,24 +307,38 @@
 @media (max-width: 600px) {
 	.grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 12px;
 	}
-	.name {
-		font-size: 1.4rem;
+	.name,
+	.moreKicker {
+		font-size: var(--fs-title-sm);
 	}
-	.body {
-		padding: 0.75rem 0.8rem 0.9rem;
+	.body,
+	.moreBody {
+		margin-top: 0.7rem;
+	}
+	.media::before,
+	.media::after {
+		width: 12px;
+		height: 12px;
+		top: 6px;
+		left: 6px;
+	}
+	.media::after {
+		top: auto;
+		left: auto;
+		right: 6px;
+		bottom: 6px;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.card,
 	.photo,
-	.moreArrow,
-	.more,
-	.moreCard,
-	.loadingDot,
-	.loadingDots span {
+	.name,
+	.vignette,
+	.media::before,
+	.media::after,
+	.loadingDot {
 		transition: none;
 		animation: none;
 	}

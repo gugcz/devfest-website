@@ -97,7 +97,7 @@
 
 .kicker {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.7rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.28em;
 	text-transform: uppercase;
 	color: var(--color-accent-hot);
@@ -106,7 +106,7 @@
 
 .title {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.9rem, 3.6vw, 2.6rem);
+	font-size: var(--fs-h3);
 	line-height: 1.04;
 	letter-spacing: 0.02em;
 	color: var(--color-text);
@@ -126,7 +126,7 @@
 .metaItem {
 	position: relative;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.74rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	color: var(--color-grey);
@@ -155,12 +155,13 @@
 
 .tag {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.7rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.04em;
 	color: var(--color-grey);
 	background: rgba(255, 255, 255, 0.02);
+	// Square, per the Two-Pixel Rule — pills belong to a different product.
 	border: 1px solid var(--rule);
-	border-radius: 999px;
+	border-radius: var(--radius);
 	padding: 0.32rem 0.75rem;
 }
 
@@ -172,7 +173,7 @@
 
 	p {
 		font-family: var(--font-im-fell-english), serif;
-		font-size: 1.02rem;
+		font-size: var(--fs-body);
 		line-height: 1.75;
 		color: rgba(240, 237, 230, 0.9);
 		margin: 0 0 0.9rem;
@@ -192,7 +193,7 @@
 
 .speakersTitle {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.72rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.24em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -243,7 +244,7 @@
 	margin-left: auto;
 	padding-left: 0.6rem;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.95rem;
+	font-size: var(--fs-ui);
 	color: rgba(240, 237, 230, 0.4);
 	transition: color 0.24s ease, transform 0.24s ease;
 }
@@ -280,7 +281,7 @@
 
 .avatarMono {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.1rem;
+	font-size: var(--fs-body-lg);
 	letter-spacing: 0.04em;
 	color: rgba(242, 239, 233, 0.4);
 	user-select: none;
@@ -294,7 +295,7 @@
 
 .speakerName {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.3rem;
+	font-size: var(--fs-title-sm);
 	line-height: 1.1;
 	letter-spacing: 0.03em;
 	color: var(--color-text);
@@ -302,7 +303,7 @@
 
 .speakerTag {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.72rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.04em;
 	line-height: 1.45;
 	color: var(--color-grey);
