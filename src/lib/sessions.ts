@@ -47,6 +47,10 @@ export interface Session {
 	room: string;
 	/** Breaks / lunch / registration — carry no speakers; filtered from the grid. */
 	isServiceSession: boolean;
+	/** Keynote / plenary — a single-track session everyone attends. Rendered as a
+	 * full-width band on the agenda, like a service session. Mirrors
+	 * `SessionDoc.isPlenumSession` (functions/src/sessionize/sessionize-api.ts). */
+	isPlenumSession: boolean;
 	speakers: SessionSpeakerRef[];
 	/** Resolved Sessionize categories (Track / Level / Format …); may be empty. */
 	categories: SessionCategory[];
@@ -105,6 +109,7 @@ export function sessionFromDoc(id: string, data: Record<string, unknown>): Sessi
 		endsAt: asStr(data.endsAt),
 		room: asStr(data.room),
 		isServiceSession: data.isServiceSession === true,
+		isPlenumSession: data.isPlenumSession === true,
 		speakers,
 		categories,
 	};
@@ -199,4 +204,15 @@ function isHostSession(session: Session): boolean {
  * slots, and any doc left title-less by a partial sync. */
 export function isDisplayableSession(session: Session): boolean {
 	return !session.isServiceSession && !isHostSession(session) && session.title.trim().length > 0;
+}
+
+/**
+ * The agenda counterpart of {@link isDisplayableSession}. Deliberately keeps
+ * service + plenum sessions (breaks / lunch / registration / keynote) — the
+ * timetable renders them as full-width bands — and only drops docs left
+ * title-less by a partial sync. `/sessions` uses `isDisplayableSession`
+ * (talks only); `/agenda` uses this.
+ */
+export function isAgendaSession(session: Session): boolean {
+	return session.title.trim().length > 0;
 }

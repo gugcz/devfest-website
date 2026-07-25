@@ -9,7 +9,7 @@
  * place.
  */
 import { speakerFromDoc, type Speaker } from './speakers';
-import { isDisplayableSession, sessionFromDoc, type Session } from './sessions';
+import { isAgendaSession, isDisplayableSession, sessionFromDoc, type Session } from './sessions';
 
 export interface Lineup {
 	speakers: Speaker[];
@@ -31,14 +31,34 @@ function parseDocs<T>(raw: unknown, parse: (id: string, data: Record<string, unk
 	});
 }
 
-/** Fetch and parse the lineup. Throws on a non-OK response so callers can show
- * their error state; an empty (but healthy) response parses to empty arrays. */
-export async function fetchLineup(signal?: AbortSignal): Promise<Lineup> {
+async function fetchDocs(signal?: AbortSignal): Promise<{ speakers: unknown; sessions: unknown }> {
 	const res = await fetch(ENDPOINT, { signal });
 	if (!res.ok) throw new Error(`lineup fetch failed: ${res.status}`);
-	const data = (await res.json()) as { speakers?: unknown; sessions?: unknown };
+	return (await res.json()) as { speakers?: unknown; sessions?: unknown };
+}
+
+/** Fetch and parse the lineup for `/sessions`. Throws on a non-OK response so
+ * callers can show their error state; an empty (but healthy) response parses to
+ * empty arrays. Service sessions are dropped via `isDisplayableSession`. */
+export async function fetchLineup(signal?: AbortSignal): Promise<Lineup> {
+	const data = await fetchDocs(signal);
 	return {
 		speakers: parseDocs(data.speakers, speakerFromDoc),
 		sessions: parseDocs(data.sessions, sessionFromDoc).filter(isDisplayableSession),
+	};
+}
+
+/**
+ * Same `/api/lineup` read as {@link fetchLineup}, but for the `/agenda`
+ * timetable: sessions are filtered by `isAgendaSession`, which KEEPS service +
+ * plenum sessions (breaks / lunch / registration / keynote) so they can render
+ * as full-width bands. `fetchLineup` is left untouched so `/sessions` still
+ * hides them.
+ */
+export async function fetchAgenda(signal?: AbortSignal): Promise<Lineup> {
+	const data = await fetchDocs(signal);
+	return {
+		speakers: parseDocs(data.speakers, speakerFromDoc),
+		sessions: parseDocs(data.sessions, sessionFromDoc).filter(isAgendaSession),
 	};
 }
