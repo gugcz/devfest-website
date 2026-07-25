@@ -189,8 +189,14 @@ export function hasActiveFilters(query: string, filters: SessionFilters): boolea
 	return query.trim().length > 0 || Object.values(filters).some((v) => v.length > 0);
 }
 
-/** Only real talks belong in the public grid — drop service slots and any
- * doc left title-less by a partial sync. */
+/** Emcee/host slots come from Sessionize titled exactly "HOST" (no abstract,
+ * no track) — they carry the day's host as a "speaker" but aren't talks. */
+function isHostSession(session: Session): boolean {
+	return session.title.trim().toUpperCase() === 'HOST';
+}
+
+/** Only real talks belong in the public grid — drop service slots, host/emcee
+ * slots, and any doc left title-less by a partial sync. */
 export function isDisplayableSession(session: Session): boolean {
-	return !session.isServiceSession && session.title.trim().length > 0;
+	return !session.isServiceSession && !isHostSession(session) && session.title.trim().length > 0;
 }
