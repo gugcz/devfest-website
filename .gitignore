@@ -31,5 +31,5 @@ firestore-debug.log*
 # Claude Code worktrees + local IDE configs
 .claude/
 
-# impeccable local cache (design hook)
-.impeccable/hook.cache.json
+# impeccable local tooling (design hook cache, sidecar, critiques)
+.impeccable/
