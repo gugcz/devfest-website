@@ -26,6 +26,7 @@ const PATHS = [
 	'/',
 	'/speakers/',
 	'/sessions/',
+	'/agenda/',
 	'/team/',
 	'/partners/',
 	'/contact/',
@@ -316,6 +317,14 @@ const MODAL_FLOWS = {
 				await p.waitForSelector('[role="dialog"]');
 				await p.click('[role="dialog"] button[aria-label^="View "]');
 			},
+		},
+	],
+	'/agenda/': [
+		{
+			// A timetable cell opens the same SessionDetail dialog. Cells carry a
+			// hashed CSS-module class, so target the stable data hook instead.
+			label: 'agenda session dialog',
+			open: (p) => p.click('[data-agenda-open]'),
 		},
 	],
 };

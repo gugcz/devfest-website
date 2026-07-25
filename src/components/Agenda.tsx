@@ -146,6 +146,7 @@ function AgendaGrid({
 							style={{ gridColumn: colIndex, gridRow }}
 							onClick={() => onOpen(session)}
 							aria-label={talkLabel(session)}
+							data-agenda-open
 						>
 							<span className={s.cellTime}>{timeRange(session)}</span>
 							<span className={s.cellTitle}>{session.title}</span>
@@ -199,6 +200,7 @@ function AgendaList({
 								className={s.item}
 								onClick={() => onOpen(session)}
 								aria-label={talkLabel(session)}
+								data-agenda-open
 							>
 								{body}
 							</button>

@@ -189,7 +189,7 @@ PHASE 2: Agenda island + page + nav link + cross-links  **Status:** Done
   - Reciprocal cross-links: "See the schedule →" on /sessions, "Browse all talks →" on /agenda (reuse .btn-ghost).
   DEPENDS ON: Phase 1
 
-PHASE 3: a11y harness coverage + full verification
+PHASE 3: a11y harness coverage + full verification  **Status:** Done
   - scripts/a11y.mjs: add `/agenda/` to the `PATHS` array; add a `MODAL_FLOWS['/agenda/']` entry that opens a grid cell and re-runs axe scoped to [role="dialog"].
   - scripts/a11y-mocks/fixtures.mjs: add TIMED sessions (multi-room + at least one service/plenum band, so the fetchLineup-drops / fetchAgenda-keeps divergence is exercised); fix the stale file header that still describes the old firebase/firestore onSnapshot aliasing (data now serves over /api/*).
   - Run build + a11y + the manual matrix (desktop grid, mobile list, single-room degrade, partial-schedule, empty/coming-soon, deep-link, modal, TZ label, keyboard/SR order).
