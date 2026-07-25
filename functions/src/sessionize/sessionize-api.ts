@@ -141,12 +141,14 @@ interface SessionDetail {
 }
 
 /**
- * The document written to Firestore `speakers/{id}` — the FULL Sessionize
- * speaker record. `links` is the sanitized + kind-mapped form (raw link URLs
- * are never persisted, so a `javascript:` href can't reach the DOM). `sessions`
- * are resolved to `{ id, name }` (title joined from the All payload). The other
- * relational arrays (`categories` / `questionAnswers`) are stored as-is for
- * downstream use; nothing renders them yet. The writer additionally stamps a
+ * The document written to Firestore `speakers/{id}` — a projection of the
+ * Sessionize speaker record. `links` is the sanitized + kind-mapped form (raw
+ * link URLs are never persisted, so a `javascript:` href can't reach the DOM).
+ * `sessions` are resolved to `{ id, name }` (title joined from the All payload).
+ * Only fields the public site renders are persisted — the raw `categories` and
+ * `questionAnswers` relational arrays are deliberately dropped, since this doc
+ * is served verbatim by the public `/api/lineup` endpoint and `questionAnswers`
+ * can carry private speaker survey data. The writer additionally stamps a
  * server-side `syncedAt` Timestamp on the persisted doc (see `commitCollection`).
  */
 export interface SpeakerDoc {
@@ -165,8 +167,6 @@ export interface SpeakerDoc {
 	isTopSpeaker: boolean;
 	links: SpeakerLink[];
 	sessions: SpeakerSession[];
-	categories: unknown[];
-	questionAnswers: unknown[];
 }
 
 /**
@@ -200,8 +200,9 @@ export interface SessionCategory {
  * The document written to Firestore `sessions/{id}` — the Sessionize session
  * record with its `speakers[]` resolved to `SessionSpeakerRef` summaries
  * (cross-reference to the `speakers` collection) and `categoryItems` resolved to
- * `categories` (group + labels, for the website's filters). `questionAnswers` is
- * stored as-is for downstream use; nothing renders it yet. Service sessions
+ * `categories` (group + labels, for the website's filters). The raw
+ * `questionAnswers` array is deliberately dropped — this doc is served verbatim
+ * by the public `/api/lineup` endpoint and nothing renders it. Service sessions
  * (breaks, lunch) are kept with an empty `speakers[]` and `isServiceSession:
  * true` so consumers can filter them out. The writer stamps a server-side
  * `syncedAt` Timestamp on the persisted doc (see `commitCollection`).
@@ -224,7 +225,6 @@ export interface SessionDoc {
 	status: string;
 	speakers: SessionSpeakerRef[];
 	categories: SessionCategory[];
-	questionAnswers: unknown[];
 	liveUrl: string;
 	recordingUrl: string;
 }
@@ -312,10 +312,6 @@ function normalizeLinks(links: SessionizeLink[] | null | undefined): SpeakerLink
 
 function asString(value: unknown): string {
 	return typeof value === 'string' ? value.trim() : '';
-}
-
-function asArray(value: unknown): unknown[] {
-	return Array.isArray(value) ? value : [];
 }
 
 /**
@@ -439,11 +435,12 @@ function resolveSessions(raw: unknown, sessionMap: Map<string, SessionDetail>): 
 }
 
 /**
- * Project one raw speaker into the persisted FULL doc shape. `order` is the
+ * Project one raw speaker into the persisted doc shape. `order` is the
  * array index (unique per sync); missing scalars become empty strings / false
  * so the doc shape stays stable and `orderBy('order')` never omits a speaker.
- * `sessions` are resolved via `sessionMap`; other relational arrays are stored
- * as-is. `profilePicture` is overridden with the Firebase Storage mirror URL
+ * `sessions` are resolved via `sessionMap`; the raw `categories` /
+ * `questionAnswers` arrays are dropped (not rendered, and this doc is public).
+ * `profilePicture` is overridden with the Firebase Storage mirror URL
  * from `imageMap` when present (see `mirror-images.ts`), so the browser serves
  * photos off Firebase instead of Sessionize's CDN.
  */
@@ -466,8 +463,6 @@ export function normalizeSpeaker(
 		isTopSpeaker: raw.isTopSpeaker === true,
 		links: normalizeLinks(raw.links),
 		sessions: resolveSessions(raw.sessions, sessionMap),
-		categories: asArray(raw.categories),
-		questionAnswers: asArray(raw.questionAnswers),
 	};
 }
 
@@ -682,8 +677,8 @@ function resolveSessionCategories(
  * Project one raw session into the persisted doc shape. `order` is the array
  * index (stable tiebreaker for `startsAt` sorts); missing scalars become empty
  * strings / false so the doc shape stays stable. `speakers` / `categoryItems`
- * are resolved via `speakerMap` / `categoryMap`; `questionAnswers` is stored
- * as-is.
+ * are resolved via `speakerMap` / `categoryMap`; the raw `questionAnswers`
+ * array is dropped (not rendered, and this doc is public).
  */
 export function normalizeSession(
 	raw: SessionizeSession,
@@ -705,7 +700,6 @@ export function normalizeSession(
 		status: asString(raw.status),
 		speakers: resolveSessionSpeakers(raw.speakers, speakerMap),
 		categories: resolveSessionCategories(raw.categoryItems, categoryMap),
-		questionAnswers: asArray(raw.questionAnswers),
 		liveUrl: asString(raw.liveUrl),
 		recordingUrl: asString(raw.recordingUrl),
 	};
