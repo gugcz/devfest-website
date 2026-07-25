@@ -7,6 +7,6 @@
  * Add a new export here when a new invoice-related function is created.
  */
 
-export { submitInvoiceRequest } from './submit.js';
-export { processInvoiceRequest } from './process.js';
-export { pollPaidInvoices } from './poll.js';
+export { submitInvoiceCallable } from './submit.js';
+export { processInvoiceTrigger } from './process.js';
+export { pollPaidInvoicesScheduled } from './poll.js';

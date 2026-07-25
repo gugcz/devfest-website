@@ -1,5 +1,5 @@
 /**
- * `pollPaidInvoices` — scheduled payment poller.
+ * `pollPaidInvoicesScheduled` — scheduled payment poller.
  *
  * iDoklad has NO webhooks, so we cannot be pushed a "paid" event. Instead
  * this runs hourly, lists the invoices still awaiting payment, and asks
@@ -54,7 +54,7 @@ import { notify } from './slack.js';
 
 const REGION = 'europe-west1';
 
-export const pollPaidInvoices = onSchedule(
+export const pollPaidInvoicesScheduled = onSchedule(
 	{
 		schedule: 'every 1 hours',
 		timeZone: 'Europe/Prague',
@@ -87,7 +87,7 @@ export const pollPaidInvoices = onSchedule(
 				status = await getInvoicePaymentStatus(idokladCfg, record.data.idokladInvoiceId);
 			} catch (err) {
 				const message = err instanceof Error ? err.message : String(err);
-				logger.error('pollPaidInvoices: payment status check failed', { id: record.id, message });
+				logger.error('pollPaidInvoicesScheduled: payment status check failed', { id: record.id, message });
 				continue;
 			}
 			if (!isPaidStatus(status)) continue;
@@ -101,7 +101,7 @@ export const pollPaidInvoices = onSchedule(
 				completed += 1;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : String(err);
-				logger.error('pollPaidInvoices: failed to complete invoice', { id: record.id, message });
+				logger.error('pollPaidInvoicesScheduled: failed to complete invoice', { id: record.id, message });
 				// Revert to `invoiced` so the next poll retries. Safe to re-run:
 				// the code is persisted the instant it's minted, so completeInvoice
 				// never mints a second one.
@@ -111,7 +111,7 @@ export const pollPaidInvoices = onSchedule(
 				await notify(slackUrl, `❌ ${record.data.companyName} — post-payment processing failed (id ${record.id}); see logs`);
 			}
 		}
-		logger.info('pollPaidInvoices done', { checked: awaiting.length, completed });
+		logger.info('pollPaidInvoicesScheduled done', { checked: awaiting.length, completed });
 	},
 );
 

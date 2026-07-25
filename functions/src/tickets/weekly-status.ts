@@ -165,13 +165,13 @@ async function runTicketStatus(): Promise<void> {
 }
 
 /** Monday at 09:00 Europe/Prague. Fetches live data from ti.to (no RTDB). */
-export const weeklyTicketStatus = onSchedule(
+export const weeklyTicketStatusScheduled = onSchedule(
 	{ ...SCHEDULE_OPTS, schedule: 'every monday 09:00' },
 	runTicketStatus,
 );
 
 /** Thursday at 18:00 Europe/Prague. Fetches live data from ti.to (no RTDB). */
-export const thursdayTicketStatus = onSchedule(
+export const thursdayTicketStatusScheduled = onSchedule(
 	{ ...SCHEDULE_OPTS, schedule: 'every thursday 18:00' },
 	runTicketStatus,
 );

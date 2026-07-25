@@ -31,7 +31,7 @@ let appCheckInstance: AppCheck | null = null;
 /**
  * Initialise Firebase App Check (reCAPTCHA Enterprise). Runs once, on the same
  * FirebaseApp every consumer uses, so the token is in place before the App-Check-
- * enforced `submitInvoiceRequest` callable fires. No content read goes through
+ * enforced `submitInvoiceCallable` callable fires. No content read goes through
  * the Firebase SDK anymore (speakers/sessions/tickets all fetch cached `/api/*`
  * endpoints), so this only matters for the invoice callable.
  *

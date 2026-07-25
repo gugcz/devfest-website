@@ -23,7 +23,7 @@ rules_version = '2';
 // WHY: `invoices` holds company PII and is written/read ONLY by Cloud
 // Functions via the Admin SDK (which bypasses these rules). `speakers` and
 // `sessions` are a public, non-sensitive lineup mirror the browser reads
-// live; both are written ONLY by the Admin SDK (`refreshSessionize`), so
+// live; both are written ONLY by the Admin SDK (`refreshSessionizeScheduled`), so
 // client writes stay blocked.
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -34,14 +34,14 @@ service cloud.firestore {
     }
 
     // Public speaker lineup — world-readable, client writes blocked.
-    // Cloud Functions (`refreshSessionize`) write via the Admin SDK.
+    // Cloud Functions (`refreshSessionizeScheduled`) write via the Admin SDK.
     match /speakers/{speakerId} {
       allow read: if true;
       allow write: if false;
     }
 
     // Public session schedule — world-readable, client writes blocked.
-    // Cloud Functions (`refreshSessionize`) write via the Admin SDK. Each
+    // Cloud Functions (`refreshSessionizeScheduled`) write via the Admin SDK. Each
     // doc embeds only a speaker summary (name, tagline, photo) — no PII.
     match /sessions/{sessionId} {
       allow read: if true;

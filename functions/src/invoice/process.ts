@@ -1,5 +1,5 @@
 /**
- * `processInvoiceRequest` — Firestore onCreate trigger for `invoices/{id}`.
+ * `processInvoiceTrigger` — Firestore onCreate trigger for `invoices/{id}`.
  *
  * Runs the invoice half of the pipeline:
  *   1. resolve the active company-funded ti.to release (for price)
@@ -9,7 +9,7 @@
  *   5. record everything + notify Slack
  *
  * The payment half (generate + deliver the 100%-off code) is driven later
- * by the `pollPaidInvoices` scheduler — iDoklad has no webhooks.
+ * by the `pollPaidInvoicesScheduled` scheduler — iDoklad has no webhooks.
  */
 
 import { logger } from 'firebase-functions/v2';
@@ -46,7 +46,7 @@ import { notify } from './slack.js';
 
 const REGION = 'europe-west1';
 
-export const processInvoiceRequest = onDocumentCreated(
+export const processInvoiceTrigger = onDocumentCreated(
 	{
 		region: REGION,
 		document: 'invoices/{invoiceId}',
@@ -128,7 +128,7 @@ export const processInvoiceRequest = onDocumentCreated(
 				});
 				invoiceEmailSent = true;
 			} catch (mailErr) {
-				logger.warn('processInvoiceRequest: iDoklad email failed', mailErr);
+				logger.warn('processInvoiceTrigger: iDoklad email failed', mailErr);
 			}
 
 			// 5. Persist + notify.
@@ -150,10 +150,10 @@ export const processInvoiceRequest = onDocumentCreated(
 				`${doc.companyName} — invoice ${invoice.number ?? invoice.id} issued ` +
 					`(${doc.countTickets}× ticket, VS ${invoice.variableSymbol ?? '—'})${linkNote}`,
 			);
-			logger.info('processInvoiceRequest invoiced', { id, invoiceId: invoice.id });
+			logger.info('processInvoiceTrigger invoiced', { id, invoiceId: invoice.id });
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
-			logger.error('processInvoiceRequest failed', err);
+			logger.error('processInvoiceTrigger failed', err);
 			// errorMessage stays in Firestore (server-only, deny-all rules). The
 			// Slack channel gets a generic line — upstream error bodies can echo
 			// submitted PII (IČO/DIČ/address), so they don't belong there.

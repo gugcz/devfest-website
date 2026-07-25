@@ -1,7 +1,7 @@
 /**
  * Browser-safe session types + presentation helpers.
  *
- * The daily `refreshSessionize` Cloud Function (functions/src/sessionize/)
+ * The daily `refreshSessionizeScheduled` Cloud Function (functions/src/sessionize/)
  * writes documents into the public-read Firestore `sessions` collection, each
  * embedding a summary of its presenters (`speakers[]`). The shapes here mirror
  * the subset of that `SessionDoc` the UI renders. Browser-safe: types and pure
@@ -86,7 +86,7 @@ function coerceCategory(raw: unknown): SessionCategory | null {
 
 /**
  * Defensively coerce a Firestore document into a `Session`. The collection is
- * written only by `refreshSessionize`, but the client still normalizes so a
+ * written only by `refreshSessionizeScheduled`, but the client still normalizes so a
  * partially-shaped doc renders (or degrades) instead of throwing in the island.
  */
 export function sessionFromDoc(id: string, data: Record<string, unknown>): Session {

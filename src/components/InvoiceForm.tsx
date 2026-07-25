@@ -108,7 +108,7 @@ export default function InvoiceForm() {
 				import('../lib/firebase'),
 				import('firebase/functions'),
 			]);
-			const submit = httpsCallable(getFunctions(getFirebaseApp(), FUNCTIONS_REGION), 'submitInvoiceRequest');
+			const submit = httpsCallable(getFunctions(getFirebaseApp(), FUNCTIONS_REGION), 'submitInvoiceCallable');
 			await submit({ ...fields, website: honeypot });
 			setStatus('success');
 			setMessage(
