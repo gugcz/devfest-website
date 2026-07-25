@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Speaker } from '../lib/speakers';
-import type { Session } from '../lib/sessions';
+import { initials, type Speaker } from '../lib/speakers';
+import { visitorCategories, type Session } from '../lib/sessions';
 import {
 	byStart,
 	dayRange,
+	eventDateISO,
 	formatClock,
 	formatMinutes,
 	isBand,
+	nowState,
 	partitionAgenda,
 	placement,
 	type AgendaPartition,
@@ -42,6 +44,50 @@ function useIsNarrow(): boolean {
 	return narrow;
 }
 
+/** Current wall-clock in Europe/Prague as { date: 'YYYY-MM-DD', minutes }.
+ * Uses Intl (not the raw Date fields) so it's the event-local time, not the
+ * visitor's zone. */
+function pragueNow(): { date: string; minutes: number } {
+	const parts = new Intl.DateTimeFormat('en-CA', {
+		timeZone: 'Europe/Prague',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hourCycle: 'h23',
+	}).formatToParts(new Date());
+	const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
+	return {
+		date: `${get('year')}-${get('month')}-${get('day')}`,
+		minutes: Number(get('hour')) * 60 + Number(get('minute')),
+	};
+}
+
+/**
+ * Minutes-of-day for "now", or `null` when it's not the event day (so the grid
+ * shows no live line off-event). Ticks every 30s. Supports a `?now=HH:MM`
+ * preview override so the event-day UI can be QA'd before the event — the
+ * override also bypasses the date check.
+ */
+function useNowMinutes(eventDate: string): number | null {
+	const [nowMin, setNowMin] = useState<number | null>(null);
+	useEffect(() => {
+		const compute = (): number | null => {
+			const override = new URLSearchParams(window.location.search).get('now');
+			const m = override && /^(\d{1,2}):(\d{2})$/.exec(override);
+			if (m) return Number(m[1]) * 60 + Number(m[2]);
+			if (!eventDate) return null;
+			const { date, minutes } = pragueNow();
+			return date === eventDate ? minutes : null;
+		};
+		setNowMin(compute());
+		const id = setInterval(() => setNowMin(compute()), 30_000);
+		return () => clearInterval(id);
+	}, [eventDate]);
+	return nowMin;
+}
+
 /** Accessible label for a talk cell — omits the room clause when unassigned. */
 function talkLabel(session: Session): string {
 	const time = formatClock(session.startsAt);
@@ -61,6 +107,75 @@ function speakerNames(session: Session): string {
 	return session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
 }
 
+/** Up to three visitor-facing category values (Track / Level / …) for a talk. */
+function talkTags(session: Session): string[] {
+	return visitorCategories(session)
+		.flatMap((category) => category.values)
+		.slice(0, 3);
+}
+
+/** Small speaker photos (up to three, overlapping) with a monogram fallback —
+ * the /sessions card stack sized down for the timetable. Decorative: the names
+ * carry the accessible info, so this is aria-hidden. */
+function TalkAvatars({ session }: { session: Session }) {
+	const shown = session.speakers.slice(0, 3);
+	if (shown.length === 0) return null;
+	return (
+		<span className={s.avatars} aria-hidden="true">
+			{shown.map((sp) =>
+				sp.profilePicture ? (
+					<img
+						key={sp.id}
+						className={s.avatar}
+						src={sp.profilePicture}
+						alt=""
+						loading="lazy"
+						decoding="async"
+						width={24}
+						height={24}
+						onError={(e) => {
+							(e.currentTarget as HTMLImageElement).style.visibility = 'hidden';
+						}}
+					/>
+				) : (
+					<span key={sp.id} className={`${s.avatar} ${s.avatarMono}`}>
+						{initials(sp.fullName) || '?'}
+					</span>
+				),
+			)}
+		</span>
+	);
+}
+
+/** Tag pills for a talk's categories; renders nothing when there are none. */
+function TalkTags({ session }: { session: Session }) {
+	const tags = talkTags(session);
+	if (tags.length === 0) return null;
+	return (
+		<span className={s.tags}>
+			{tags.map((tag) => (
+				<span key={tag} className={s.tag}>
+					{tag}
+				</span>
+			))}
+		</span>
+	);
+}
+
+/** "Live now" (pulsing) or "Coming up" badge; nothing when neither applies. */
+function NowBadge({ live, coming }: { live: boolean; coming: boolean }) {
+	if (live) {
+		return (
+			<span className={`${s.badge} ${s.badgeLive}`}>
+				<span className={s.liveDot} aria-hidden="true" />
+				Live now
+			</span>
+		);
+	}
+	if (coming) return <span className={`${s.badge} ${s.badgeComing}`}>Coming up</span>;
+	return null;
+}
+
 /* ============================ GRID ============================ */
 
 // Each session is placed by its absolute grid row in its room column. Two
@@ -70,10 +185,16 @@ function speakerNames(session: Session): string {
 function AgendaGrid({
 	partition,
 	range,
+	liveIds,
+	comingUpIds,
+	nowMin,
 	onOpen,
 }: {
 	partition: AgendaPartition;
 	range: { start: number; end: number };
+	liveIds: Set<string>;
+	comingUpIds: Set<string>;
+	nowMin: number | null;
 	onOpen: (session: Session) => void;
 }) {
 	const { columns, bands, byRoom } = partition;
@@ -137,34 +258,51 @@ function AgendaGrid({
 						return (
 							<div
 								key={session.id}
-								className={s.band}
+								className={`${s.band} ${liveIds.has(session.id) ? s.bandLive : ''}`}
 								style={{ gridColumn: '2 / -1', gridRow }}
 							>
 								<span className={s.bandTime}>{timeRange(session)}</span>
 								<span className={s.bandTitle}>{session.title}</span>
+								<NowBadge live={liveIds.has(session.id)} coming={false} />
 							</div>
 						);
 					}
 
 					const colIndex = columns.indexOf(room) + 2;
+					const live = liveIds.has(session.id);
 					return (
 						<button
 							key={session.id}
 							type="button"
-							className={s.cell}
+							className={`${s.cell} ${live ? s.cellLive : ''}`}
 							style={{ gridColumn: colIndex, gridRow }}
 							onClick={() => onOpen(session)}
 							aria-label={talkLabel(session)}
 							data-agenda-open
 						>
-							<span className={s.cellTime}>{timeRange(session)}</span>
+							<span className={s.cellHead}>
+								<span className={s.cellTime}>{timeRange(session)}</span>
+								<NowBadge live={live} coming={comingUpIds.has(session.id)} />
+							</span>
 							<span className={s.cellTitle}>{session.title}</span>
+							<TalkTags session={session} />
 							{session.speakers.length > 0 && (
-								<span className={s.cellSpeakers}>{speakerNames(session)}</span>
+								<span className={s.cellFoot}>
+									<TalkAvatars session={session} />
+									<span className={s.cellSpeakers}>{speakerNames(session)}</span>
+								</span>
 							)}
 						</button>
 					);
 				})}
+
+				{/* Current-time line — event day only (or ?now= preview). Decorative
+				    overlay; the "Now" text conveys it to AT. */}
+				{nowMin !== null && nowMin >= range.start && nowMin <= range.end && (
+					<div className={s.nowLine} style={{ gridColumn: '1 / -1', gridRow: rowFor(nowMin) }}>
+						<span className={s.nowLabel}>Now</span>
+					</div>
+				)}
 			</div>
 		</div>
 	);
@@ -174,9 +312,13 @@ function AgendaGrid({
 
 function AgendaList({
 	partition,
+	liveIds,
+	comingUpIds,
 	onOpen,
 }: {
 	partition: AgendaPartition;
+	liveIds: Set<string>;
+	comingUpIds: Set<string>;
 	onOpen: (session: Session) => void;
 }) {
 	// Same timed set the grid places, from the one memoized partition (bands +
@@ -191,13 +333,21 @@ function AgendaList({
 				const band = isBand(session);
 				const names = speakerNames(session);
 				const room = session.room.trim();
+				const live = liveIds.has(session.id);
 				const body = (
 					<>
 						<span className={s.itemTime}>{timeRange(session)}</span>
 						<span className={s.itemMain}>
-							<span className={s.itemTitle}>{session.title}</span>
+							<span className={s.itemTitleRow}>
+								<span className={s.itemTitle}>{session.title}</span>
+								<NowBadge live={live} coming={!band && comingUpIds.has(session.id)} />
+							</span>
+							{!band && <TalkTags session={session} />}
 							{!band && (room || names) && (
-								<span className={s.itemMeta}>{[room, names].filter(Boolean).join(' · ')}</span>
+								<span className={s.itemFoot}>
+									<TalkAvatars session={session} />
+									<span className={s.itemMeta}>{[room, names].filter(Boolean).join(' · ')}</span>
+								</span>
 							)}
 						</span>
 					</>
@@ -205,11 +355,11 @@ function AgendaList({
 				return (
 					<li key={session.id}>
 						{band ? (
-							<div className={`${s.item} ${s.itemBand}`}>{body}</div>
+							<div className={`${s.item} ${s.itemBand} ${live ? s.itemLive : ''}`}>{body}</div>
 						) : (
 							<button
 								type="button"
-								className={s.item}
+								className={`${s.item} ${live ? s.itemLive : ''}`}
 								onClick={() => onOpen(session)}
 								aria-label={talkLabel(session)}
 								data-agenda-open
@@ -249,6 +399,11 @@ export default function Agenda() {
 
 	const partition = useMemo(() => partitionAgenda(state.sessions), [state.sessions]);
 	const range = useMemo(() => dayRange(state.sessions), [state.sessions]);
+	// Event-day "now" line + live/coming-up badges (hooks must run before the
+	// early returns below).
+	const eventDate = useMemo(() => eventDateISO(state.sessions), [state.sessions]);
+	const nowMin = useNowMinutes(eventDate);
+	const now = useMemo(() => nowState(state.sessions, nowMin), [state.sessions, nowMin]);
 
 	if (state.status === 'error') {
 		return (
@@ -293,9 +448,21 @@ export default function Agenda() {
 			<p className={s.tzNote}>All times Prague (CET)</p>
 
 			{asList ? (
-				<AgendaList partition={partition} onOpen={setSelected} />
+				<AgendaList
+					partition={partition}
+					liveIds={now.liveIds}
+					comingUpIds={now.comingUpIds}
+					onOpen={setSelected}
+				/>
 			) : (
-				<AgendaGrid partition={partition} range={range} onOpen={setSelected} />
+				<AgendaGrid
+					partition={partition}
+					range={range}
+					liveIds={now.liveIds}
+					comingUpIds={now.comingUpIds}
+					nowMin={nowMin}
+					onOpen={setSelected}
+				/>
 			)}
 
 			{partition.unscheduled.length > 0 && (

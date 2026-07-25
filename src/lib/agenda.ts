@@ -188,3 +188,62 @@ export function partitionAgenda(sessions: Session[]): AgendaPartition {
 
 	return { columns: finalColumns, bands, byRoom, roomTba, unscheduled };
 }
+
+/** Event date (`YYYY-MM-DD`) taken from the first timed session, or '' when
+ * nothing is scheduled. Single-day assumption (see the module header). */
+export function eventDateISO(sessions: Session[]): string {
+	for (const session of sessions) {
+		const match = /^(\d{4}-\d{2}-\d{2})/.exec(session.startsAt);
+		if (match) return match[1];
+	}
+	return '';
+}
+
+/** Which sessions are happening now, and — during a pause — which start next. */
+export interface NowState {
+	/** Session ids currently spanning `nowMin` (talks and bands). */
+	liveIds: Set<string>;
+	/** When no talk is live (a pause/break), the id(s) of the next talk(s) to
+	 * start; empty while a talk is live or when nothing is scheduled. */
+	comingUpIds: Set<string>;
+}
+
+/**
+ * Classify sessions against the current minute-of-day. A session is "live" when
+ * `nowMin` falls in its [start, end). "Coming up" only applies during a pause —
+ * when no talk is live — and marks the next talk(s) to start (bands never count
+ * as coming up). `nowMin === null` (not event day) yields empty sets.
+ */
+export function nowState(sessions: Session[], nowMin: number | null): NowState {
+	const liveIds = new Set<string>();
+	const comingUpIds = new Set<string>();
+	if (nowMin === null) return { liveIds, comingUpIds };
+
+	let talkLive = false;
+	for (const session of sessions) {
+		const place = placement(session);
+		if (!place) continue;
+		if (place.startMin <= nowMin && nowMin < place.endMin) {
+			liveIds.add(session.id);
+			if (!isBand(session)) talkLive = true;
+		}
+	}
+
+	if (!talkLive) {
+		let soonest = Number.POSITIVE_INFINITY;
+		for (const session of sessions) {
+			if (isBand(session)) continue;
+			const place = placement(session);
+			if (place && place.startMin > nowMin && place.startMin < soonest) soonest = place.startMin;
+		}
+		if (Number.isFinite(soonest)) {
+			for (const session of sessions) {
+				if (isBand(session)) continue;
+				const place = placement(session);
+				if (place && place.startMin === soonest) comingUpIds.add(session.id);
+			}
+		}
+	}
+
+	return { liveIds, comingUpIds };
+}
