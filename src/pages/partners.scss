@@ -473,11 +473,12 @@
 		border-left: 1px solid var(--rule);
 	}
 
-	// Same dark, transparent cell as the tier logos — no cream plate. The cream
-	// was there because media wordmarks ship dark and vanish on the page ground;
-	// three bright cream blocks on a black page read as a different site. The
-	// logos are lightened instead (see `img` below) so media and tiers are one
-	// wall on one background.
+	// Media wordmarks ship dark (made for light backgrounds), so they need a
+	// light plate — inverting them instead flattened the raster logo to a white
+	// blob and mangled the multi-tone marks. The plate stays; what changed is
+	// scale: the grid is now content-width (flex, above), so it's a tidy strip
+	// of logo cells, not the full-width band of big cream blocks that read as a
+	// different site.
 	.media-item {
 		position: relative;
 		overflow: hidden;
@@ -488,32 +489,16 @@
 		max-width: 100%;
 		min-height: 150px;
 		padding: 1.8rem 2rem;
-		background: transparent;
+		background: var(--color-cream);
 		border: 0;
 		border-right: 1px solid var(--rule);
 		border-bottom: 1px solid var(--rule);
 		border-radius: 0;
-		transition: background 0.25s ease;
+		transition: filter 0.25s ease;
 
-		// Lamp wash on hover, matching the tier cells.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.07) 0%,
-				rgba(255, 240, 226, 0.03) 42%,
-				transparent 86%
-			);
-			opacity: 0;
-			pointer-events: none;
-			transition: opacity 0.28s ease;
-		}
-
-		&:hover::before,
-		&:focus-within::before {
-			opacity: 1;
+		&:hover,
+		&:focus-within {
+			filter: brightness(1.06);
 		}
 
 		a {
@@ -527,25 +512,19 @@
 		}
 
 		img {
-			position: relative;
-			z-index: 1;
 			display: block;
 			max-width: 100%;
 			max-height: 56px;
 			width: auto;
 			height: auto;
 			object-fit: contain;
-			// Dark wordmarks → clean light silhouettes on the dark cell, so they
-			// sit with the tier logos instead of needing a cream plate.
-			filter: brightness(0) invert(0.9);
-			opacity: 0.85;
-			transition: opacity 0.2s, filter 0.2s;
+			opacity: 0.92;
+			transition: opacity 0.2s;
 		}
 
 		&:hover img,
 		a:focus-visible img {
 			opacity: 1;
-			filter: brightness(0) invert(1);
 		}
 	}
 
