@@ -1,12 +1,12 @@
-.sessions-page {
+.agenda-page {
 	display: flex;
 	flex-direction: column;
 }
 
-/* ===================== AGENDA SECTION ===================== */
-// Same lit-room atmosphere as /speakers: a central spotlight pool with a faint
+/* ===================== TIMETABLE SECTION ===================== */
+// Same lit-room atmosphere as /sessions: a central spotlight pool with a faint
 // red radial bleeding from the top-right, over page black.
-.sessions-body {
+.agenda-body {
 	position: relative;
 	padding: var(--section-y) var(--gutter);
 	background:
@@ -16,34 +16,26 @@
 	border-top: 1px solid var(--rule-soft);
 }
 
-.sessions-inner {
+.agenda-inner {
 	max-width: var(--maxw);
 	margin: 0 auto;
 }
 
-// Left-set to match /speakers — see the note there on why not every head on
-// the site is centred any more.
-.sessions-header {
-	text-align: left;
-	margin-bottom: 3.2rem;
-	border-bottom: 1px solid var(--rule-soft);
-	padding-bottom: 1.6rem;
+.agenda-header {
+	text-align: center;
+	margin-bottom: 2.6rem;
 }
 
-.sessions-crosslink {
-	margin: 1.6rem 0 0;
-}
-
-.sessions-eyebrow {
+.agenda-eyebrow {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
+	font-size: 0.78rem;
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.62);
 	margin: 0 0 1rem;
 }
 
-.sessions-heading {
+.agenda-heading {
 	font-family: var(--font-special-elite), cursive;
 	font-size: var(--fs-h2);
 	letter-spacing: 0.01em;
@@ -54,13 +46,17 @@
 	margin: 0;
 }
 
-.sessions-noscript {
+.agenda-noscript {
 	font-family: var(--font-im-fell-english), serif;
 	font-style: italic;
-	font-size: var(--fs-lede);
+	font-size: 1.2rem;
 	line-height: 1.7;
 	color: var(--color-grey);
 	text-align: center;
 	max-width: 52ch;
 	margin: 2rem auto 0;
+
+	a {
+		color: var(--color-accent-hot);
+	}
 }

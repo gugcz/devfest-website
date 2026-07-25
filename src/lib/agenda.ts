@@ -43,13 +43,17 @@ export function parseLocalMinutes(iso: string): number | null {
 	return hours * 60 + minutes;
 }
 
-/** Wall-clock label (`09:00`) for an event-local ISO string; `''` when unset. */
-export function formatClock(iso: string): string {
-	const total = parseLocalMinutes(iso);
-	if (total === null) return '';
+/** Wall-clock label (`09:00`) for minutes-from-midnight. */
+export function formatMinutes(total: number): string {
 	const hours = Math.floor(total / 60);
 	const minutes = total % 60;
 	return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
+/** Wall-clock label (`09:00`) for an event-local ISO string; `''` when unset. */
+export function formatClock(iso: string): string {
+	const total = parseLocalMinutes(iso);
+	return total === null ? '' : formatMinutes(total);
 }
 
 /** True when a session has a usable start time (and therefore a grid position). */

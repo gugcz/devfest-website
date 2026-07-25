@@ -182,7 +182,7 @@ PHASE 1: Data layer + pure agenda helpers (non-visual; fully code-reviewable)  *
   - Verify against live /api/lineup: confirm `startsAt` wire shape (naive local vs. offset) and that `isPlenumSession` is present on real docs.
   DEPENDS ON: nothing
 
-PHASE 2: Agenda island + page + nav link + cross-links
+PHASE 2: Agenda island + page + nav link + cross-links  **Status:** Done
   - src/components/Agenda.tsx (+ Agenda.module.scss): four-state machine mirrored from Sessions.tsx; fetchAgenda; runtime empty states ("Schedule announced soon" when no sessions, "Full schedule coming soon" + /sessions link when sessions exist but none timed); desktop CSS-Grid proportional grid (rooms × 5-min snap), full-width non-interactive bands (z-index under cells), Room-TBA column, "Not yet scheduled" list; single-room → list layout; mobile (<=760px) → time-ordered room-labeled list. Talk cells are <button> opening SessionDetail. "All times Prague (CET)" label. 4-font + design-token mandates above; prefers-reduced-motion honored.
   - src/pages/agenda.astro: BaseLayout + SubpageHero (static seoHeading) + <Agenda client:load /> + <noscript> note (pattern from sessions.astro).
   - src/components/Menu.astro: add the "Agenda" link to the `links` array, adjacent to `/sessions` (always visible — page degrades gracefully).
