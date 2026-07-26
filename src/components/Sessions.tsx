@@ -21,6 +21,18 @@ interface State {
 
 const INITIAL: State = { status: 'loading', sessions: [] };
 
+/** Fisher–Yates shuffle — returns a new array so the source order stays intact.
+ * Sessions are randomized once per page load so no track/room gets a permanent
+ * top-of-grid advantage. */
+function shuffle<T>(items: T[]): T[] {
+	const out = items.slice();
+	for (let i = out.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[out[i], out[j]] = [out[j], out[i]];
+	}
+	return out;
+}
+
 /** Up to three overlapping speaker avatars, monogram fallback per speaker. */
 function SpeakerStack({ session }: { session: Session }) {
 	const shown = session.speakers.slice(0, 3);
@@ -99,7 +111,8 @@ export default function Sessions() {
 		fetchLineup(ac.signal)
 			.then(({ sessions, speakers }) => {
 				setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
-				setState({ status: sessions.length > 0 ? 'ready' : 'empty', sessions });
+				const ordered = shuffle(sessions);
+				setState({ status: ordered.length > 0 ? 'ready' : 'empty', sessions: ordered });
 			})
 			.catch((err) => {
 				if (ac.signal.aborted) return;
