@@ -4,14 +4,17 @@
  * The public lineup (speakers / sessions) and ticket cache live behind Firebase
  * reads that are blocked from CI (App Check + IP rules), so the axe sweep would
  * only ever see the "temporarily unavailable" error state — never the real,
- * hydrated content. Under `A11Y_MOCK=1`, astro.config.mjs aliases
- * `firebase/firestore` / `firebase/database` / `firebase/app-check` to the mock
- * modules beside this file, which replay these fixtures into the components'
- * `onSnapshot` / `onValue` callbacks so the ready-state UI (cards, filters,
- * detail dialogs, ticket waves) renders deterministically and gets audited.
+ * hydrated content. The islands now fetch the cached `/api/lineup` + `/api/tickets`
+ * endpoints (no Firebase SDK on the read path); under `A11Y_MOCK=1` the audit
+ * server (`scripts/a11y.mjs`) serves these fixtures from those routes so the
+ * ready-state UI (session cards, the agenda grid, filters, detail dialogs, ticket
+ * waves) renders deterministically and gets audited. The only Firebase module
+ * still aliased to a mock is `firebase/app-check` (App Check inits on load).
  *
  * Shapes mirror the raw Firestore/RTDB documents the parsers expect
- * (`speakerFromDoc`, `sessionFromDoc`, `TicketsCache`).
+ * (`speakerFromDoc`, `sessionFromDoc`, `TicketsCache`). Sessions carry
+ * `startsAt`/`endsAt`/`room` so the /agenda timetable is exercised, including a
+ * service band (dropped by /sessions, kept by /agenda) and an unscheduled talk.
  */
 
 // Inline SVG portrait — loads with no network so the <img> render path (not the
@@ -96,17 +99,44 @@ export const SPEAKERS = [
 	},
 ];
 
-/** Firestore `sessions` collection — raw docs (pre-ordered by `order`). */
+/** Firestore `sessions` collection — raw docs (pre-ordered by `order`).
+ *
+ * Scheduled on a single day (2026-10-30, event-local ISO, no offset — the wire
+ * shape verified against live /api/lineup) so the /agenda grid renders: a plenum
+ * keynote and a lunch band (full-width), two timed talks across two rooms, a
+ * timed talk with no room (Room-TBA column), and one untimed talk (Not-yet-
+ * scheduled list). The lunch band is a service session — dropped by /sessions,
+ * kept by /agenda — exercising the fetchLineup / fetchAgenda divergence. */
 export const SESSIONS = [
+	{
+		id: 'ses-keynote',
+		data: {
+			order: 0,
+			title: 'Opening Keynote',
+			description: 'Where the community is headed in 2026.',
+			startsAt: '2026-10-30T09:00:00',
+			endsAt: '2026-10-30T09:45:00',
+			room: 'Main Hall',
+			isServiceSession: false,
+			isPlenumSession: true,
+			speakers: [
+				{ id: 'sp-katherine', fullName: 'Katherine Johnson', tagLine: 'Orbital mechanics', profilePicture: PORTRAIT },
+			],
+			categories: [],
+		},
+	},
 	{
 		id: 'ses-resilient',
 		data: {
-			order: 0,
+			order: 1,
 			title: 'Building Resilient Systems',
 			description:
 				'Real systems fail in surprising ways. This talk walks through patterns for graceful degradation.\n\nWe cover timeouts, retries with backoff, circuit breakers, and how to test them.',
+			startsAt: '2026-10-30T10:00:00',
+			endsAt: '2026-10-30T10:45:00',
 			room: 'Main Hall',
 			isServiceSession: false,
+			isPlenumSession: false,
 			speakers: [
 				{
 					id: 'sp-ada',
@@ -123,13 +153,38 @@ export const SESSIONS = [
 		},
 	},
 	{
+		id: 'ses-future-web',
+		data: {
+			order: 2,
+			title: 'The Future of Web',
+			description: '',
+			startsAt: '2026-10-30T10:00:00',
+			endsAt: '2026-10-30T10:30:00',
+			room: 'Room B',
+			isServiceSession: false,
+			isPlenumSession: false,
+			speakers: [
+				{
+					id: 'sp-margaret',
+					fullName: 'Margaret Hamilton',
+					tagLine: 'Software engineering',
+					profilePicture: '',
+				},
+			],
+			categories: [{ name: 'Track', values: ['Web'] }],
+		},
+	},
+	{
 		id: 'ses-ai-edge',
 		data: {
-			order: 1,
+			order: 3,
 			title: 'AI at the Edge',
 			description: 'Running inference on-device: quantization, latency budgets, and privacy wins.',
+			startsAt: '2026-10-30T11:00:00',
+			endsAt: '2026-10-30T11:45:00',
 			room: '',
 			isServiceSession: false,
+			isPlenumSession: false,
 			speakers: [
 				{ id: 'sp-grace', fullName: 'Grace Hopper', tagLine: 'Compiler pioneer', profilePicture: '' },
 				{ id: 'sp-alan', fullName: 'Alan Turing', tagLine: '', profilePicture: '' },
@@ -141,20 +196,53 @@ export const SESSIONS = [
 		},
 	},
 	{
-		id: 'ses-future-web',
+		id: 'ses-lunch',
 		data: {
-			order: 2,
-			title: 'The Future of Web',
+			order: 4,
+			title: 'Lunch',
 			description: '',
+			startsAt: '2026-10-30T12:00:00',
+			endsAt: '2026-10-30T13:00:00',
+			room: '',
+			isServiceSession: true,
+			isPlenumSession: false,
+			speakers: [],
+			categories: [],
+		},
+	},
+	{
+		id: 'ses-lightning',
+		data: {
+			// No endsAt → exercises the fallback-duration + min-span path in
+			// src/lib/agenda.ts so it renders (and gets audited), not just the
+			// happy path where every session has a valid end.
+			order: 5,
+			title: 'Lightning talk: shipping on Friday',
+			description: 'A five-minute war story.',
+			startsAt: '2026-10-30T11:00:00',
+			endsAt: '',
+			room: 'Main Hall',
+			isServiceSession: false,
+			isPlenumSession: false,
+			speakers: [
+				{ id: 'sp-alan', fullName: 'Alan Turing', tagLine: '', profilePicture: '' },
+			],
+			categories: [{ name: 'Track', values: ['Web'] }],
+		},
+	},
+	{
+		id: 'ses-unscheduled',
+		data: {
+			order: 6,
+			title: 'Workshop: hands-on debugging (time TBA)',
+			description: 'A late-addition workshop still being slotted into the grid.',
+			startsAt: '',
+			endsAt: '',
 			room: 'Room B',
 			isServiceSession: false,
+			isPlenumSession: false,
 			speakers: [
-				{
-					id: 'sp-margaret',
-					fullName: 'Margaret Hamilton',
-					tagLine: 'Software engineering',
-					profilePicture: '',
-				},
+				{ id: 'sp-grace', fullName: 'Grace Hopper', tagLine: 'Compiler pioneer', profilePicture: '' },
 			],
 			categories: [{ name: 'Track', values: ['Web'] }],
 		},

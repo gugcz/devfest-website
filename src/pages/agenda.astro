@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Agenda from '../components/Agenda.tsx';
+---
+
+<BaseLayout
+	title="Agenda — DevFest.cz 2026"
+	description="The full timetable for DevFest.cz 2026 — every talk, room, and time slot for Prague's largest community developer conference."
+>
+	<main class="agenda-page">
+		<SubpageHero
+			label="Running order"
+			titleHtml={'The day<br /><span class="red">on a timeline.</span>'}
+			lede="Every talk mapped to its room and time slot. Compare the tracks, plan your day — the grid fills in as the schedule is confirmed."
+			seoHeading="DevFest.cz 2026 Agenda & Schedule"
+			titleId="agenda-title"
+		/>
+
+		<section class="agenda-body" aria-label="Conference timetable">
+			<div class="agenda-inner">
+				<header class="agenda-header">
+					<p class="agenda-eyebrow">The schedule</p>
+					<h2 class="agenda-heading">When &amp; where</h2>
+				</header>
+
+				<!-- The timetable hydrates client-side from /api/lineup; keep a static
+				     note for crawlers and no-JS visitors. -->
+				<Agenda client:load />
+
+				<noscript>
+					<p class="agenda-noscript">
+						The agenda loads with JavaScript enabled. Please turn it on, or see the
+						<a href="/sessions">full list of talks</a>.
+					</p>
+				</noscript>
+			</div>
+		</section>
+	</main>
+</BaseLayout>
+
+<style lang="scss">
+	@use './agenda';
+</style>
