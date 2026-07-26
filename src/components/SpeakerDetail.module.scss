@@ -112,7 +112,10 @@
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-monogram);
 	letter-spacing: 0.08em;
-	color: rgba(242, 239, 233, 0.26);
+	// 0.5 → #7E7E7C on --panel-lit (#0A0908) = 4.87:1, clearing both the
+	// large-text (3:1) and full AA (4.5:1) thresholds; 0.26 was 2.07:1 and
+	// failed axe when the session→speaker drill-down hit a photo-less speaker.
+	color: rgba(242, 239, 233, 0.5);
 	user-select: none;
 }
 
