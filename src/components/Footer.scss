@@ -154,9 +154,18 @@
 		margin: 0;
 		font-size: var(--fs-ui);
 
+		// Single-column mobile footer: the two-column term/value grid is sized by
+		// its widest value (the venue, which wraps), so the terms hug the left
+		// edge and every value lands right of centre while the rest of the
+		// footer is centred. Stack term over value instead.
 		@media (max-width: 500px) {
-			justify-content: center;
-			grid-template-columns: auto auto;
+			grid-template-columns: 1fr;
+			justify-items: center;
+			row-gap: 0.35rem;
+
+			dd + dt {
+				margin-top: 1rem;
+			}
 		}
 
 		dt {
@@ -236,6 +245,9 @@
 
 	.org-link {
 		display: inline;
+		// The legal name plus its external-link arrow is one unit — let the line
+		// break before it rather than splitting "GUG.cz," from "z.s.".
+		white-space: nowrap;
 		// Inline-in-prose link: a persistent underline distinguishes it without
 		// relying on colour alone — WCAG 1.4.1.
 		text-decoration: underline;
@@ -288,6 +300,13 @@
 		font-size: var(--fs-label);
 		letter-spacing: 0.06em;
 		color: rgba(240, 237, 230, 0.55);
+
+		// Both halves wrap at phone widths, which leaves the middot separator
+		// dangling and the row visually off-centre. Stack them instead.
+		@media (max-width: 500px) {
+			flex-direction: column;
+			gap: 0.7rem;
+		}
 	}
 
 	.copyright {
@@ -300,5 +319,11 @@
 		&::before {
 			content: '\00b7';
 			margin: 0 0.6em;
+		}
+
+		@media (max-width: 500px) {
+			&::before {
+				content: none;
+			}
 		}
 	}
