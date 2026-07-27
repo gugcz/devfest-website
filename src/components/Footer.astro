@@ -62,7 +62,7 @@ const SITEMAP = [
 									{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
 								>
 									{label}
-									{external && <span class="ext" aria-hidden="true"> &#8599;</span>}
+									{external && <span class="ext" aria-hidden="true">&#160;&#8599;</span>}
 								</a>
 							</li>
 						))
@@ -93,13 +93,13 @@ const SITEMAP = [
 			<section class="col col-organizer" aria-labelledby="footer-organizer">
 				<h2 id="footer-organizer" class="col-title">Organizer</h2>
 				<p class="org">
-					Organized with &#9829; by
+					Organized with &#9829; by{' '}
 					<a
 						class="footer-link org-link"
 						href="https://gug.cz"
 						target="_blank"
 						rel="noopener noreferrer"
-					>GUG.cz, z.s.<span class="ext" aria-hidden="true"> &#8599;</span></a>
+					>GUG.cz, z.s.<span class="ext" aria-hidden="true">&#160;&#8599;</span></a>
 				</p>
 				<nav class="socials" aria-label="Follow DevFest.cz on social media">
 					{
@@ -131,7 +131,7 @@ const SITEMAP = [
 					href="https://github.com/gugcz/devfest-website"
 					target="_blank"
 					rel="noopener noreferrer"
-				>Open source<span class="ext" aria-hidden="true"> &#8599;</span></a>
+				>Open source<span class="ext" aria-hidden="true">&#160;&#8599;</span></a>
 			</small>
 		</div>
 	</div>
