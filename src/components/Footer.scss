@@ -64,18 +64,29 @@
 		// frame the text instead of drifting to the column edges when it wraps.
 		white-space: nowrap;
 
+		// `width`, not `flex-basis`: WebKit leaves a flex item's `flex-basis` out
+		// of the flex container's max-content width, so the shrink-to-fit heading
+		// measured 56px narrower than it draws. Centred, that pushed the rules +
+		// text half that distance past centre on iOS — the "titles drift right"
+		// bug. An explicit `width` is counted everywhere.
 		&::before,
 		&::after {
 			content: '';
-			flex: 0 0 28px;
+			flex: none;
+			width: 28px;
 			height: 1px;
 			background: rgba(204, 0, 0, 0.35);
 		}
 
 		@media (max-width: 500px) {
+			// Centre by stretching to the column and centring the contents, so
+			// nothing here depends on the heading's intrinsic width at all.
+			align-self: stretch;
+			justify-content: center;
+
 			&::before,
 			&::after {
-				flex-basis: 20px;
+				width: 20px;
 			}
 		}
 	}
