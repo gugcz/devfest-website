@@ -45,14 +45,27 @@ async function loadTickets(): Promise<TicketsCache> {
 	return payload;
 }
 
-export const ticketsApi = onRequest({ region: REGION, invoker: 'public' }, async (req, res) => {
-	try {
-		const payload = await loadTickets();
-		res.set('Cache-Control', CACHE_CONTROL);
-		res.json(payload);
-	} catch (err) {
-		logger.error('ticketsApi read failed', err);
-		res.set('Cache-Control', 'no-store');
-		res.status(503).json(EMPTY);
-	}
-});
+export const ticketsApi = onRequest(
+	{
+		region: REGION,
+		invoker: 'public',
+		memory: '256MiB',
+		timeoutSeconds: 30,
+		// Keep one instance warm — same reasoning as `lineupApi`, and it matters more
+		// here: the 5min `s-maxage` means the CDN revalidates far more often, so
+		// without a warm instance a visitor regularly eats the cold start while the
+		// ticket roadmap (and the `/invoice` price estimate) sits empty.
+		minInstances: 1,
+	},
+	async (req, res) => {
+		try {
+			const payload = await loadTickets();
+			res.set('Cache-Control', CACHE_CONTROL);
+			res.json(payload);
+		} catch (err) {
+			logger.error('ticketsApi read failed', err);
+			res.set('Cache-Control', 'no-store');
+			res.status(503).json(EMPTY);
+		}
+	},
+);
