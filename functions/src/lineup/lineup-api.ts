@@ -68,16 +68,31 @@ async function loadLineup(): Promise<LineupPayload> {
 	return payload;
 }
 
-export const lineupApi = onRequest({ region: REGION, invoker: 'public' }, async (req, res) => {
-	try {
-		const payload = await loadLineup();
-		res.set('Cache-Control', CACHE_CONTROL);
-		res.json(payload);
-	} catch (err) {
-		logger.error('lineupApi read failed', err);
-		// Never cache an error — the browser falls back to its "unavailable" state
-		// and a retry can hit a healthy instance.
-		res.set('Cache-Control', 'no-store');
-		res.status(503).json({ speakers: [], sessions: [] });
-	}
-});
+export const lineupApi = onRequest(
+	{
+		region: REGION,
+		invoker: 'public',
+		memory: '256MiB',
+		timeoutSeconds: 30,
+		// Keep one instance warm. A cold start here is a container boot + Node/Admin
+		// SDK init on the critical path of the first uncached lineup fetch — seconds
+		// of blank speaker/session grid for whoever trips the CDN revalidation. The
+		// long `s-maxage` means traffic is bursty and sparse, which is exactly the
+		// shape that would otherwise cold-start almost every time. The warm instance
+		// also preserves the in-instance memo below between bursts.
+		minInstances: 1,
+	},
+	async (req, res) => {
+		try {
+			const payload = await loadLineup();
+			res.set('Cache-Control', CACHE_CONTROL);
+			res.json(payload);
+		} catch (err) {
+			logger.error('lineupApi read failed', err);
+			// Never cache an error — the browser falls back to its "unavailable" state
+			// and a retry can hit a healthy instance.
+			res.set('Cache-Control', 'no-store');
+			res.status(503).json({ speakers: [], sessions: [] });
+		}
+	},
+);
