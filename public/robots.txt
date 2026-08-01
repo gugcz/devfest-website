@@ -1,4 +1,42 @@
+# Everything here is public conference information — a lineup, a schedule, and
+# ticket details we want people to find. Nothing is disallowed.
 User-agent: *
+Allow: /
+
+# AI crawlers are allowed ON PURPOSE, listed explicitly rather than left to the
+# wildcard above so the choice is visible and easy to reverse.
+#
+# Assistants are now a real discovery path for "developer conference in Prague"
+# style questions, and the answer they give is only as good as what they were
+# allowed to read. Blocking them would not protect anything — this is the same
+# content we publish for Google — it would just mean being described from a
+# third party's stale summary instead of from our own pages. Third-party
+# listings already carry the WRONG venue for 2026, which is exactly the failure
+# mode.
+#
+# To opt out later, change the relevant Allow to Disallow.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://devfest.cz/sitemap-index.xml

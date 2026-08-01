@@ -7,11 +7,13 @@ import react from '@astrojs/react';
 
 const BUILD_DATE = new Date().toISOString();
 
-// Per-URL sitemap priority; anything unlisted falls back to 0.6.
+// Per-URL sitemap priority; anything unlisted falls through to PRIORITY_PREFIX
+// and then to 0.6.
 const PRIORITY = {
     'https://devfest.cz': 1.0,
     'https://devfest.cz/speakers': 0.9,
     'https://devfest.cz/sessions': 0.9,
+    'https://devfest.cz/agenda': 0.9,
     'https://devfest.cz/partners': 0.8,
     'https://devfest.cz/faq': 0.7,
     'https://devfest.cz/team': 0.7,
@@ -21,6 +23,24 @@ const PRIORITY = {
     'https://devfest.cz/press/downloads': 0.5,
     'https://devfest.cz/privacy-policy': 0.3,
 };
+
+// Prefix rules for the generated detail routes — there is one URL per speaker
+// and per talk, so they can't be listed individually. Ranked below their index
+// pages but above the boilerplate: a speaker page is the thing most likely to
+// answer a long-tail query, but the lineup page is the one worth ranking for
+// the head term. Longest matching prefix wins.
+const PRIORITY_PREFIX = {
+    'https://devfest.cz/speakers/': 0.7,
+    'https://devfest.cz/sessions/': 0.7,
+};
+
+function priorityFor(url) {
+    if (PRIORITY[url] !== undefined) return PRIORITY[url];
+    const match = Object.keys(PRIORITY_PREFIX)
+        .filter((prefix) => url.startsWith(prefix))
+        .sort((a, b) => b.length - a.length)[0];
+    return match ? PRIORITY_PREFIX[match] : 0.6;
+}
 
 // Accessibility-audit mock mode. All page data (speakers, sessions, tickets) is
 // fetched from cached `/api/*` endpoints, which scripts/a11y.mjs serves from
@@ -96,7 +116,7 @@ export default defineConfig({
                 item.lastmod = BUILD_DATE;
                 item.changefreq = 'weekly';
                 const url = item.url.replace(/\/$/, '');
-                item.priority = PRIORITY[url] ?? 0.6;
+                item.priority = priorityFor(url);
                 return item;
             },
         }),
