@@ -115,6 +115,25 @@ export function sessionFromDoc(id: string, data: Record<string, unknown>): Sessi
 	};
 }
 
+/**
+ * Fisher–Yates shuffle — returns a new array so the source order stays intact.
+ * Sessions are randomised so no track or room keeps a permanent top-of-grid
+ * advantage.
+ *
+ * Called at BUILD time (sessions.astro), not per page load: the grid is
+ * prerendered now, and re-rolling after hydration would re-order a grid the
+ * visitor is already reading. The daily rebuild re-rolls it, which is often
+ * enough to keep the advantage from sticking.
+ */
+export function shuffle<T>(items: readonly T[]): T[] {
+	const out = items.slice();
+	for (let i = out.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[out[i], out[j]] = [out[j], out[i]];
+	}
+	return out;
+}
+
 /** A filter facet: one category group and every distinct value seen across the
  * session list, in first-seen order. */
 export interface SessionFacet {

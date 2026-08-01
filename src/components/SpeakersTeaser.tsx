@@ -76,12 +76,17 @@ function Thumb({ speaker }: { speaker: Speaker }) {
  * nothing until the lineup fetch resolves (and on an empty roster) so the home
  * page stays clean pre-announce.
  */
-export default function SpeakersTeaser() {
-	const [speakers, setSpeakers] = useState<Speaker[]>([]);
-	const [status, setStatus] = useState<Status>('loading');
+export default function SpeakersTeaser({ initialSpeakers = [] }: { initialSpeakers?: Speaker[] }) {
+	// Seeded from the build-time lineup (src/lib/lineup-build.ts) so the home
+	// page carries real speaker names in its HTML instead of an empty island.
+	const [speakers, setSpeakers] = useState<Speaker[]>(initialSpeakers);
+	const [status, setStatus] = useState<Status>(initialSpeakers.length > 0 ? 'ready' : 'loading');
 	const [offset, setOffset] = useState(0);
 	const [paused, setPaused] = useState(false);
 	const reduceMotion = usePrefersReducedMotion();
+	// Whether the build handed us a roster. Captured once — a later fetch must
+	// not flip it, or the wall would re-order under the visitor.
+	const [seeded] = useState(() => initialSpeakers.length > 0);
 
 	useEffect(() => {
 		const ac = new AbortController();
@@ -93,15 +98,24 @@ export default function SpeakersTeaser() {
 			.catch((err) => {
 				if (ac.signal.aborted) return;
 				console.warn('[speakers-teaser] Failed to load lineup:', err);
-				setStatus('error');
+				// Prerendered faces beat a blank slot.
+				if (!seeded) setStatus('error');
 			});
 		return () => ac.abort();
-	}, []);
+	}, [seeded]);
 
 	// Shuffle once per roster so the starting window — and rotation order — is
-	// random on every load. Keyed on the id set so it only reshuffles when the
-	// roster actually changes, not on every re-render or rotation tick.
-	const displaySpeakers = useMemo(() => shuffle(speakers), [speakers.map((sp) => sp.id).join('|')]);
+	// random. Keyed on the id set so it only reshuffles when the roster actually
+	// changes, not on every re-render or rotation tick.
+	//
+	// Skipped when seeded: index.astro already randomised the build-time roster,
+	// and rolling again here would make the client render disagree with the
+	// server HTML — a hydration mismatch React resolves by discarding the markup
+	// (and the visitor sees the wall jump).
+	const displaySpeakers = useMemo(
+		() => (seeded ? speakers : shuffle(speakers)),
+		[seeded, speakers.map((sp) => sp.id).join('|')],
+	);
 
 	const total = displaySpeakers.length;
 	const size = Math.min(WALL_SIZE, total);

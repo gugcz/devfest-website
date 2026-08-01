@@ -1,0 +1,60 @@
+# Rebuilds and redeploys the live site once a day so the prerendered lineup
+# keeps up with Sessionize.
+#
+# The speaker/session content is baked into the HTML at build time
+# (src/lib/lineup-build.ts) so crawlers see it, which means a static site only
+# learns about a new speaker when it is rebuilt. `refreshSessionizeScheduled`
+# writes Firestore at 06:00 Europe/Prague; this runs after it and republishes.
+#
+# Visitors are never stuck on stale data in the meantime — the islands re-fetch
+# /api/lineup on mount. This job is what keeps the *indexable* copy current, and
+# what mints a page for each newly announced speaker and session.
+name: Scheduled rebuild
+
+on:
+  schedule:
+    # 06:00 UTC — 07:00 Prague in winter, 08:00 in summer. Both land after the
+    # 06:00 Europe/Prague Sessionize sync regardless of DST. GitHub's scheduler
+    # only accepts UTC, so the gap is deliberately generous rather than exact.
+    - cron: "0 6 * * *"
+  # Manual trigger for "a speaker was just confirmed, publish now".
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scheduled-rebuild
+  cancel-in-progress: false
+
+jobs:
+  rebuild_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Schedules always run against the default branch's workflow file, but
+          # the site ships from the release branch — check that out explicitly.
+          ref: "2026"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      # The build soft-fails when /api/lineup is unreachable, which would
+      # produce a site with no prerendered speakers and no detail pages. Publishing
+      # that would drop live, indexed content. This step refuses the deploy so the
+      # previous release stays up and tomorrow's run recovers.
+      - name: Verify the lineup made it into the build
+        run: npm run verify:build
+
+      # Same deploy path as firebase-hosting-merge.yml — hosting only, never
+      # functions (the /api/* rewrites carry no pinTag on purpose).
+      - name: Deploy to Firebase Hosting (live)
+        uses: w9jds/firebase-action@v15.22.3
+        with:
+          args: deploy --only hosting --project devfest-cz-app
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEVFEST_CZ_APP }}

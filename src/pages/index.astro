@@ -10,6 +10,15 @@ import Ticker from '../components/Ticker.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
 import { getShowcasePartners } from '../lib/partners';
+import { getBuildLineup } from '../lib/lineup-build';
+import { shuffle } from '../lib/sessions';
+
+// Speaker wall: prerendered so the home page carries real names in its HTML
+// rather than an island that renders nothing until a fetch resolves. Shuffled
+// here because the island keeps whatever order it is given — rolling again on
+// the client would disagree with this server render and cost a hydration pass.
+const { speakers } = await getBuildLineup();
+const teaserSpeakers = shuffle(speakers);
 
 // Homepage "silver+" strip — every sponsor tier in ladder order, top tier first.
 const homePartners = await getShowcasePartners();
@@ -142,11 +151,13 @@ const tickerTopics = [
 		<!-- TICKETS -->
 		<Tickets client:visible />
 
-		<!-- SPEAKERS TEASER — auto-rotating lineup spotlight; hides until data loads.
-		     client:load (not visible): the island renders nothing until Firestore
-		     resolves, so a client:visible observer would never fire on the
+		<!-- SPEAKERS TEASER — auto-rotating lineup spotlight, prerendered from the
+		     build snapshot and refreshed from /api/lineup on mount. Hides itself
+		     only when there is no roster at all.
+		     client:load (not visible): with an empty build snapshot the island
+		     renders nothing, so a client:visible observer would never fire on the
 		     zero-height placeholder. -->
-		<SpeakersTeaser client:load />
+		<SpeakersTeaser client:load initialSpeakers={teaserSpeakers} />
 
 		<!-- CALL FOR SPEAKERS — hidden: CFP closed
 		<section id="speakers" aria-labelledby="speakers-title">

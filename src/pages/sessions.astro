@@ -2,6 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Sessions from '../components/Sessions.tsx';
+import { shuffle } from '../lib/sessions';
+import { getBuildLineup } from '../lib/lineup-build';
+
+// Prerender the grid so talk titles and abstracts are in the served HTML.
+//
+// The randomisation that used to run per page load now runs here, once per
+// build: the island keeps whatever order it is handed unless the set of talks
+// actually changed, so a visitor never watches the grid re-order under them.
+// The daily rebuild re-rolls it, which is enough to stop any one track keeping
+// the top of the grid.
+const { sessions, speakers } = await getBuildLineup();
+const shuffledSessions = shuffle(sessions);
 ---
 
 <BaseLayout
@@ -30,16 +42,14 @@ import Sessions from '../components/Sessions.tsx';
 					</p>
 				</header>
 
-				<!-- The grid hydrates client-side from Firestore; keep a static note
-				     for crawlers and no-JS visitors. -->
-				<Sessions client:load />
-
-				<noscript>
-					<p class="sessions-noscript">
-						The session agenda loads with JavaScript enabled. Please turn it on, or
-						check back soon.
-					</p>
-				</noscript>
+				<!-- Server-rendered from the build snapshot, then hydrated and
+				     refreshed from /api/lineup. No <noscript> fallback needed: the
+				     grid is in the HTML whether or not scripts run. -->
+				<Sessions
+					client:load
+					initialSessions={shuffledSessions}
+					initialSpeakers={speakers}
+				/>
 			</div>
 		</section>
 	</main>

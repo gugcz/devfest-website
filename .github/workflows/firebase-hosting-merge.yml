@@ -15,6 +15,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # The speaker/session lineup is baked into the HTML at build time, and the
+      # build soft-fails when /api/lineup is unreachable. Refuse to publish a
+      # build that lost content the API is still serving — the previous release
+      # stays live instead. See scripts/verify-lineup-build.mjs.
+      - name: Verify the lineup made it into the build
+        run: npm run verify:build
       # Deploy with w9jds/firebase-action, which runs firebase-tools inside a
       # Node 21 container. This avoids the intermittent "Premature close"
       # keep-alive failure that breaks FirebaseExtended/action-hosting-deploy

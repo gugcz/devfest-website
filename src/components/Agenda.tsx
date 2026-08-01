@@ -371,9 +371,23 @@ function AgendaList({
 
 /* ============================ ROOT ============================ */
 
-export default function Agenda() {
-	const [state, setState] = useState<State>(INITIAL);
-	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
+export default function Agenda({
+	initialSessions = [],
+	initialSpeakers = [],
+}: {
+	initialSessions?: Session[];
+	initialSpeakers?: Speaker[];
+}) {
+	// Seeded from the build-time lineup (src/lib/lineup-build.ts) so the
+	// timetable ships in the server-rendered HTML — the schedule is indexable and
+	// paints without a loading pass. The agenda is ordered by start time, so
+	// unlike the sessions grid there is nothing here to re-roll.
+	const [state, setState] = useState<State>(() =>
+		initialSessions.length > 0 ? { status: 'ready', sessions: initialSessions } : INITIAL,
+	);
+	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>(() =>
+		Object.fromEntries(initialSpeakers.map((sp) => [sp.id, sp])),
+	);
 	const [selected, setSelected] = useState<Session | null>(null);
 	const isNarrow = useIsNarrow();
 
@@ -387,7 +401,9 @@ export default function Agenda() {
 			.catch((err) => {
 				if (ac.signal.aborted) return;
 				console.warn('[agenda] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
+				// Keep a prerendered timetable on screen rather than replacing it
+				// with an error panel.
+				setState((prev) => (prev.sessions.length > 0 ? prev : { ...prev, status: 'error' }));
 			});
 		return () => ac.abort();
 	}, []);

@@ -2,6 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Agenda from '../components/Agenda.tsx';
+import { getBuildLineup } from '../lib/lineup-build';
+
+// Prerender the timetable so every talk, room and time slot is in the served
+// HTML. `agendaSessions` keeps the service/plenum bands (breaks, lunch,
+// registration) that `/sessions` drops — the grid renders them as full-width
+// rows. The island re-fetches on mount, so a stale build still self-corrects.
+const { agendaSessions, speakers } = await getBuildLineup();
 ---
 
 <BaseLayout
@@ -24,16 +31,14 @@ import Agenda from '../components/Agenda.tsx';
 					<h2 class="agenda-heading">When &amp; where</h2>
 				</header>
 
-				<!-- The timetable hydrates client-side from /api/lineup; keep a static
-				     note for crawlers and no-JS visitors. -->
-				<Agenda client:load />
-
-				<noscript>
-					<p class="agenda-noscript">
-						The agenda loads with JavaScript enabled. Please turn it on, or see the
-						<a href="/sessions">full list of talks</a>.
-					</p>
-				</noscript>
+				<!-- Server-rendered from the build snapshot, then hydrated and
+				     refreshed from /api/lineup. No <noscript> fallback needed: the
+				     timetable is in the HTML whether or not scripts run. -->
+				<Agenda
+					client:load
+					initialSessions={agendaSessions}
+					initialSpeakers={speakers}
+				/>
 			</div>
 		</section>
 	</main>

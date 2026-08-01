@@ -2,6 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Speakers from '../components/Speakers.tsx';
+import { getBuildLineup } from '../lib/lineup-build';
+
+// Prerender the roster: the island receives it as initial state, so the names,
+// taglines and photos are in the served HTML instead of appearing only after a
+// client-side fetch. The island still re-fetches /api/lineup on mount, so a
+// visitor sees live data even if the build snapshot has aged.
+const { speakers } = await getBuildLineup();
 ---
 
 <BaseLayout
@@ -29,16 +36,10 @@ import Speakers from '../components/Speakers.tsx';
 					<p class="speakers-hint">Pick a face for the full record</p>
 				</header>
 
-				<!-- The grid hydrates client-side from Firestore; keep a static note
-				     for crawlers and no-JS visitors. -->
-				<Speakers client:load />
-
-				<noscript>
-					<p class="speakers-noscript">
-						The speaker lineup loads with JavaScript enabled. Please turn it on, or
-						check back soon.
-					</p>
-				</noscript>
+				<!-- Server-rendered from the build snapshot, then hydrated and
+				     refreshed from /api/lineup. No <noscript> fallback needed: the
+				     grid is in the HTML whether or not scripts run. -->
+				<Speakers client:load initialSpeakers={speakers} />
 			</div>
 		</section>
 	</main>

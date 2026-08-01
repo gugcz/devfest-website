@@ -209,8 +209,14 @@ export function SpeakerLineup({
 	);
 }
 
-export default function Speakers() {
-	const [state, setState] = useState<State>(INITIAL);
+export default function Speakers({ initialSpeakers = [] }: { initialSpeakers?: Speaker[] }) {
+	// Seeded from the build-time lineup (see src/lib/lineup-build.ts) so the
+	// server-rendered HTML carries the real roster — crawlers and no-JS visitors
+	// get the names, and there is no loading flash before hydration. Falls back
+	// to the fetch-on-mount path when the build had no data.
+	const [state, setState] = useState<State>(() =>
+		initialSpeakers.length > 0 ? { status: 'ready', speakers: initialSpeakers } : INITIAL,
+	);
 	const [selected, setSelected] = useState<Speaker | null>(null);
 	const { morphId, open, close } = usePortraitMorph(selected, setSelected);
 
@@ -223,7 +229,9 @@ export default function Speakers() {
 			.catch((err) => {
 				if (ac.signal.aborted) return;
 				console.warn('[speakers] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
+				// Prerendered names already on screen beat an error panel — only
+				// surface the failure when there is nothing to fall back to.
+				setState((prev) => (prev.speakers.length > 0 ? prev : { ...prev, status: 'error' }));
 			});
 		return () => ac.abort();
 	}, []);

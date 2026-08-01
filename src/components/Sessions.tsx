@@ -4,6 +4,7 @@ import {
 	collectFacets,
 	hasActiveFilters,
 	matchesFilters,
+	shuffle,
 	visitorCategories,
 	type Session,
 	type SessionFilters,
@@ -21,16 +22,11 @@ interface State {
 
 const INITIAL: State = { status: 'loading', sessions: [] };
 
-/** Fisher–Yates shuffle — returns a new array so the source order stays intact.
- * Sessions are randomized once per page load so no track/room gets a permanent
- * top-of-grid advantage. */
-function shuffle<T>(items: T[]): T[] {
-	const out = items.slice();
-	for (let i = out.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[out[i], out[j]] = [out[j], out[i]];
-	}
-	return out;
+/** True when both lists hold exactly the same session ids, in any order. */
+function sameSessions(a: Session[], b: Session[]): boolean {
+	if (a.length !== b.length) return false;
+	const ids = new Set(a.map((session) => session.id));
+	return b.every((session) => ids.has(session.id));
 }
 
 /** Up to three overlapping speaker avatars, monogram fallback per speaker. */
@@ -98,12 +94,25 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 	);
 }
 
-export default function Sessions() {
-	const [state, setState] = useState<State>(INITIAL);
+export default function Sessions({
+	initialSessions = [],
+	initialSpeakers = [],
+}: {
+	initialSessions?: Session[];
+	initialSpeakers?: Speaker[];
+}) {
+	// Seeded from the build-time lineup (src/lib/lineup-build.ts) so the grid is
+	// in the server-rendered HTML: titles and abstracts reach crawlers, and there
+	// is no loading state before hydration.
+	const [state, setState] = useState<State>(() =>
+		initialSessions.length > 0 ? { status: 'ready', sessions: initialSessions } : INITIAL,
+	);
 	// Full speaker profiles keyed by id, from the same /api/lineup fetch, so the
 	// session → speaker drill-down in SessionDetail renders from data already on
 	// the page instead of a second read.
-	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
+	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>(() =>
+		Object.fromEntries(initialSpeakers.map((sp) => [sp.id, sp])),
+	);
 	const [selected, setSelected] = useState<Session | null>(null);
 	const [query, setQuery] = useState('');
 	const [filters, setFilters] = useState<SessionFilters>({});
@@ -113,13 +122,21 @@ export default function Sessions() {
 		fetchLineup(ac.signal)
 			.then(({ sessions, speakers }) => {
 				setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
-				const ordered = shuffle(sessions);
-				setState({ status: ordered.length > 0 ? 'ready' : 'empty', sessions: ordered });
+				setState((prev) => {
+					// Same talks as the prerendered grid → keep the order already on
+					// screen. Re-shuffling identical data would rearrange a grid the
+					// visitor is mid-read of, for no gain. Only a genuine change
+					// (a talk added or pulled since the build) re-rolls the order.
+					if (sameSessions(prev.sessions, sessions)) return prev;
+					const ordered = shuffle(sessions);
+					return { status: ordered.length > 0 ? 'ready' : 'empty', sessions: ordered };
+				});
 			})
 			.catch((err) => {
 				if (ac.signal.aborted) return;
 				console.warn('[sessions] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
+				// A prerendered grid on screen beats an error panel.
+				setState((prev) => (prev.sessions.length > 0 ? prev : { ...prev, status: 'error' }));
 			});
 		return () => ac.abort();
 	}, []);

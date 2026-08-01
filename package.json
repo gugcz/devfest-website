@@ -10,6 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "verify:build": "node scripts/verify-lineup-build.mjs",
     "a11y": "A11Y_MOCK=1 astro build && node scripts/a11y.mjs"
   },
   "dependencies": {
