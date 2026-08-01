@@ -55,8 +55,17 @@
 		"links": [{ "kind": "linkedin", "url": "https://www.linkedin.com/in/eliskacejpova/" }]
 	},
 	{
-		"id": "dominik-simonik",
+		"id": "vera-milotova",
 		"order": 6,
+		"name": "Věra Milotová",
+		"alias": "The Press Agent",
+		"role": "PR & Marketing",
+		"photo": "/team/vera-milotova-bw.webp",
+		"photoColor": "/team/vera-milotova.webp"
+	},
+	{
+		"id": "dominik-simonik",
+		"order": 7,
 		"name": "Dominik Šimoník",
 		"alias": "Switchboard Operator",
 		"role": "Web & App",
@@ -71,7 +80,7 @@
 	},
 	{
 		"id": "eliska-zezulkova",
-		"order": 7,
+		"order": 8,
 		"name": "Eliška Zezulková",
 		"alias": "The Gatekeeper",
 		"role": "Tickets & Registration",
@@ -84,7 +93,7 @@
 	},
 	{
 		"id": "tereza-goszlerova",
-		"order": 8,
+		"order": 9,
 		"name": "Tereza Goszlerová",
 		"alias": "Head Bookkeeper",
 		"role": "Finance",
@@ -93,7 +102,7 @@
 	},
 	{
 		"id": "petr-vobr",
-		"order": 9,
+		"order": 10,
 		"name": "Petr Vobr",
 		"alias": "Private Eye",
 		"role": "Festival",
