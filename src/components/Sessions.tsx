@@ -78,6 +78,8 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 				className={s.card}
 				onClick={() => onOpen(session)}
 				aria-label={`View details for ${session.title}`}
+				data-track="view_session"
+				data-track-session={session.title}
 			>
 				<span className={s.top}>
 					<span className={s.kicker}>{kicker}</span>

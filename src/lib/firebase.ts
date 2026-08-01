@@ -1,6 +1,6 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
-import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
+import { getAnalytics, isSupported, logEvent, type Analytics } from 'firebase/analytics';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyB7lXxnVicSWTtUe9CbVUarm2MwFVRMucU',
@@ -138,5 +138,33 @@ export async function grantAnalyticsConsent(): Promise<void> {
 		gtag('consent', 'update', { analytics_storage: 'granted' });
 	} catch (err) {
 		console.warn('[firebase] Analytics consent grant failed:', err);
+	}
+}
+
+/** GA4 event parameters. Keys must be snake_case to survive into GA4 reports. */
+export type TrackParams = Record<string, string | number | boolean>;
+
+/**
+ * Report a GA4 event.
+ *
+ * Runs for **every** visitor, not just those who accepted cookies: under
+ * Consent Mode a denied visitor still sends the event as an identifier-free
+ * ping, so conversion *counts* stay complete while attribution (which needs
+ * `client_id`) only exists for accepted visitors. That is the whole reason
+ * `initAnalytics()` boots cookieless rather than waiting on the banner.
+ *
+ * Fire-and-forget: it awaits `initAnalytics()` (idempotent, already resolved
+ * after the first page load) and swallows every failure, so a click handler
+ * must never `await` it — analytics must not sit in front of a navigation.
+ * GA4 sends over `sendBeacon`, so an event fired immediately before a
+ * same-tab navigation still lands.
+ */
+export async function trackEvent(name: string, params: TrackParams = {}): Promise<void> {
+	try {
+		await initAnalytics();
+		if (!analyticsInstance) return;
+		logEvent(analyticsInstance, name, params);
+	} catch (err) {
+		console.warn(`[firebase] Analytics event "${name}" failed:`, err);
 	}
 }

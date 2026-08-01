@@ -132,6 +132,8 @@ function SpeakerCard({
 				className={`${s.card} develop`}
 				onClick={() => onOpen(speaker)}
 				aria-label={`View ${speaker.fullName}'s profile`}
+				data-track="view_speaker"
+				data-track-speaker={speaker.fullName}
 				style={
 					morphing ? ({ viewTransitionName: PORTRAIT_TRANSITION } as React.CSSProperties) : undefined
 				}

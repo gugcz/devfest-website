@@ -1,0 +1,35 @@
+---
+// Fires one GA4 event when the page it sits on is shown. Used on the
+// post-conversion pages (/thank-you, /newsletter-subscription-thank-you),
+// which are the only reliable completion signals we have: both flows hand off
+// to a third party (ti.to, SmartEmailing) and come back here, so the submit
+// event on the form measures intent and this one measures completion.
+//
+// The event name travels through a data attribute rather than a script
+// interpolation because Astro hoists and bundles <script> — it is shared
+// module code, not per-instance template output, so it cannot close over props.
+interface Props {
+	/** GA4 event name, e.g. `generate_lead`. */
+	event: string;
+}
+
+const { event } = Astro.props;
+---
+
+<span data-conversion-event={event} hidden></span>
+
+<script>
+	// Bundled once per document, but these pages are reachable by soft
+	// navigation too, so the ping hangs off `astro:page-load` (which also covers
+	// the initial hard load from ti.to / SmartEmailing). The lookup is scoped to
+	// the marker element, so every other page in the session is a no-op.
+	document.addEventListener('astro:page-load', () => {
+		const marker = document.querySelector<HTMLElement>('[data-conversion-event]');
+		const name = marker?.dataset.conversionEvent;
+		if (!name) return;
+
+		import('../lib/firebase')
+			.then((mod) => mod.trackEvent(name))
+			.catch(() => {});
+	});
+</script>

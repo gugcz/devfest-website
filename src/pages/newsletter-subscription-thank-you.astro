@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ConversionPing from '../components/ConversionPing.astro';
 import LandingNotice from '../components/LandingNotice.astro';
 ---
 
@@ -12,4 +13,7 @@ import LandingNotice from '../components/LandingNotice.astro';
 		headline="You're on the list."
 		subtext="We'll reach out when tickets drop. Stay tuned."
 	/>
+	{/* SmartEmailing redirects here after a confirmed sign-up — the completion
+	    half of the `newsletter_submit` event fired by NewsletterForm. */}
+	<ConversionPing event="generate_lead" />
 </BaseLayout>

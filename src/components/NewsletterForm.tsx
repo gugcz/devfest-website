@@ -30,6 +30,15 @@ export default function NewsletterForm() {
 			emailInput.focus();
 			return;
 		}
+		// Validation passed, so the form is about to POST to SmartEmailing and
+		// navigate away. Fire-and-forget (no await): GA4 uses sendBeacon, which
+		// survives the unload, and blocking the submit on analytics would be worse
+		// than losing the odd event. The matching conversion is counted on
+		// /newsletter-subscription-thank-you — this one measures intent, that one
+		// measures completion, and the gap between them is the drop-off.
+		import('../lib/firebase')
+			.then((mod) => mod.trackEvent('newsletter_submit'))
+			.catch(() => {});
 		setMessage('Submitting your email…');
 	}
 

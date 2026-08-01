@@ -179,6 +179,9 @@ export default function Tickets() {
 						href={eventUrl(accountSlug, eventSlug)}
 						target="_blank"
 						rel="noopener noreferrer"
+						data-track="select_content"
+						data-track-content-type="cta"
+						data-track-item-id="tito_event"
 					>
 						Visit ti.to event
 						<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
@@ -282,6 +285,9 @@ export default function Tickets() {
 										target="_blank"
 										rel="noopener noreferrer"
 										aria-label={`Get ${group.name} tickets on ti.to`}
+										data-track="begin_checkout"
+										data-track-wave={group.name}
+										data-track-price={lead?.primary ?? ''}
 									>
 										Get tickets
 										<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
@@ -303,7 +309,14 @@ export default function Tickets() {
 			</p>
 			<div className={s.invoice}>
 				<span className={s.invoiceLabel}>Buying for a company?</span>
-				<a className={s.cta} href="/invoice" aria-label="Request a company invoice">
+				<a
+					className={s.cta}
+					href="/invoice"
+					aria-label="Request a company invoice"
+					data-track="select_content"
+					data-track-content-type="cta"
+					data-track-item-id="company_invoice"
+				>
 					Get a company invoice
 					<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
 				</a>

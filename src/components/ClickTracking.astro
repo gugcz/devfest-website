@@ -1,0 +1,56 @@
+---
+// Script-only component: a single delegated click listener that turns
+// `data-track` attributes into GA4 events. Rendered once from BaseLayout.
+//
+// Why delegation rather than a handler per CTA: the tracked elements live
+// across .astro markup AND React islands, and <ClientRouter /> swaps the body
+// on every soft navigation. One capture-phase listener on `document` covers
+// all of it and never needs re-binding.
+//
+// Markup contract:
+//   <a href="…" data-track="begin_checkout" data-track-wave="regular">
+// → trackEvent('begin_checkout', { wave: 'regular' })
+// Every `data-track-*` attribute becomes a GA4 parameter with dashes turned
+// into underscores, because GA4 only accepts snake_case parameter keys.
+---
+
+<script>
+	const ATTR = 'data-track';
+	const PARAM_PREFIX = 'data-track-';
+
+	/** `data-track-item-name="X"` → `{ item_name: 'X' }` */
+	function paramsFrom(el: Element): Record<string, string> {
+		const params: Record<string, string> = {};
+		for (const { name, value } of Array.from(el.attributes)) {
+			if (!name.startsWith(PARAM_PREFIX)) continue;
+			params[name.slice(PARAM_PREFIX.length).replace(/-/g, '_')] = value;
+		}
+		return params;
+	}
+
+	// Registered at module scope, NOT inside `astro:page-load`: bundled module
+	// scripts run once per document, and a soft navigation reuses the document.
+	// The listener is on `document` and matches by delegation, so it keeps
+	// working across swaps — re-binding per page-load would stack duplicates and
+	// double-count every event.
+	//
+	// Capture phase so a handler that calls stopPropagation() (the speaker /
+	// session cards intercept their own clicks) can't swallow the measurement.
+	document.addEventListener(
+		'click',
+		(event) => {
+			const target = (event.target as Element | null)?.closest?.(`[${ATTR}]`);
+			if (!target) return;
+			const name = target.getAttribute(ATTR);
+			if (!name) return;
+
+			// Dynamic import keeps the Firebase chunk out of the initial bundle —
+			// same reason CookieBanner.astro imports it lazily. Failures are
+			// swallowed: analytics must never break a navigation.
+			import('../lib/firebase')
+				.then((mod) => mod.trackEvent(name, paramsFrom(target)))
+				.catch(() => {});
+		},
+		{ capture: true }
+	);
+</script>

@@ -104,12 +104,15 @@ export default function InvoiceForm() {
 		try {
 			// Callable: the Functions SDK auto-attaches the Firebase App Check
 			// token, and the function enforces it server-side (enforceAppCheck).
-			const [{ getFirebaseApp }, { getFunctions, httpsCallable }] = await Promise.all([
+			const [{ getFirebaseApp, trackEvent }, { getFunctions, httpsCallable }] = await Promise.all([
 				import('../lib/firebase'),
 				import('firebase/functions'),
 			]);
 			const submit = httpsCallable(getFunctions(getFirebaseApp(), FUNCTIONS_REGION), 'submitInvoiceCallable');
 			await submit({ ...fields, website: honeypot });
+			// Only on the resolved callable — a rejected submit is not a lead.
+			// Ticket count is the value signal here; no company PII is reported.
+			void trackEvent('invoice_request', { quantity: fields.countTickets });
 			setStatus('success');
 			setMessage(
 				`Request received. We'll email the invoice to ${recipient}. ` +

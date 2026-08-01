@@ -1,6 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
+import ClickTracking from '../components/ClickTracking.astro';
 import CookieBanner from '../components/CookieBanner.astro';
 import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
@@ -306,6 +307,7 @@ const jsonLd = JSON.stringify(
 		<div id="main-content"><slot /></div>
 		{showFooter && <Footer />}
 		<CookieBanner />
+		<ClickTracking />
 
 		<script>
 			// Cinematic atmosphere behaviours — all degrade gracefully and respect

@@ -77,6 +77,13 @@ const isCurrent = (href: string) => {
 							class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
 							{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
 							{...(current ? { 'aria-current': 'page' } : {})}
+							{...(cta
+								? {
+										'data-track': 'select_content',
+										'data-track-content-type': 'cta',
+										'data-track-item-id': 'nav_tickets',
+									}
+								: {})}
 						>
 							{label}
 						</a>
