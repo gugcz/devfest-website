@@ -71,12 +71,37 @@ const description =
 	`${speaker.fullName} is speaking at DevFest.cz 2026 in Prague on 30 October 2026.`;
 
 const showPhoto = Boolean(speaker.profilePicture);
+
+// Person schema — the thing that lets a search engine understand this page is
+// about a human rather than an article that mentions one. `sameAs` hands it the
+// speaker's own profiles so it can reconcile this page with the rest of their
+// web presence; `performerIn` ties them back to the conference.
+const siteUrl = 'https://devfest.cz';
+const personSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'Person',
+	name: speaker.fullName,
+	url: `${siteUrl}${Astro.url.pathname.replace(/\/$/, '')}`,
+	...(speaker.tagLine ? { jobTitle: speaker.tagLine } : {}),
+	...(speaker.bio ? { description: speaker.bio } : {}),
+	...(speaker.profilePicture ? { image: speaker.profilePicture } : {}),
+	...(speaker.links.length > 0 ? { sameAs: speaker.links.map((link) => link.url) } : {}),
+	performerIn: {
+		'@type': 'Event',
+		name: 'DevFest.cz 2026',
+		url: siteUrl,
+		startDate: '2026-10-30T09:00:00+01:00',
+	},
+};
+const personJsonLd = JSON.stringify(personSchema);
 ---
 
 <BaseLayout
 	title={`${speaker.fullName} — Speaker at DevFest.cz 2026`}
 	description={description}
+	breadcrumb={speaker.fullName}
 >
+	<script type="application/ld+json" slot="head" set:html={personJsonLd} />
 	<main class="speaker-page">
 		<SubpageHero
 			label="Speaker"

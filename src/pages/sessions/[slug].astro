@@ -88,9 +88,64 @@ const TIME_FMT = new Intl.DateTimeFormat('en-GB', {
 const startsAt = session.startsAt ? new Date(session.startsAt) : null;
 const whenLabel =
 	startsAt && !Number.isNaN(startsAt.getTime()) ? TIME_FMT.format(startsAt) : '';
+
+// Event schema for the talk, tied to the conference by `superEvent`.
+//
+// Emitted ONLY once the talk is scheduled: `startDate` is required on an Event,
+// and Sessionize leaves it empty until the timetable is fixed, so publishing
+// early would mean publishing invalid structured data on every session page.
+// The rest of the page's schema (breadcrumb, Organization, WebSite) renders
+// from BaseLayout either way, and this appears on its own once the schedule
+// lands — no follow-up edit needed.
+const siteUrl = 'https://devfest.cz';
+const canonical = `${siteUrl}${Astro.url.pathname.replace(/\/$/, '')}`;
+const venue = {
+	'@type': 'Place',
+	name: 'Uhelný Mlýn',
+	address: {
+		'@type': 'PostalAddress',
+		streetAddress: 'Areál Šroubáren 860',
+		postalCode: '252 66',
+		addressLocality: 'Libčice nad Vltavou',
+		addressRegion: 'Central Bohemia',
+		addressCountry: 'CZ',
+	},
+	geo: { '@type': 'GeoCoordinates', latitude: 50.197439, longitude: 14.371092 },
+};
+const sessionJsonLd = session.startsAt
+	? JSON.stringify({
+			'@context': 'https://schema.org',
+			'@type': 'Event',
+			name: session.title,
+			url: canonical,
+			startDate: session.startsAt,
+			...(session.endsAt ? { endDate: session.endsAt } : {}),
+			...(session.description ? { description: session.description } : {}),
+			eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+			eventStatus: 'https://schema.org/EventScheduled',
+			inLanguage: 'en',
+			location: venue,
+			organizer: { '@type': 'Organization', name: 'GUG.cz, z.s.', url: 'https://gug.cz' },
+			superEvent: { '@type': 'Event', name: 'DevFest.cz 2026', url: siteUrl },
+			...(presenters.length > 0
+				? {
+						performer: presenters.map(({ ref, path }) => ({
+							'@type': 'Person',
+							name: ref.fullName,
+							...(path ? { url: `${siteUrl}${path}` } : {}),
+						})),
+					}
+				: {}),
+		})
+	: null;
 ---
 
-<BaseLayout title={`${session.title} — DevFest.cz 2026`} description={description}>
+<BaseLayout
+	title={`${session.title} — DevFest.cz 2026`}
+	description={description}
+	breadcrumb={session.title}
+>
+	{sessionJsonLd && <script type="application/ld+json" slot="head" set:html={sessionJsonLd} />}
 	<main class="session-page">
 		<SubpageHero
 			label={track || 'Session'}
