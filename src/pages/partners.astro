@@ -4,10 +4,16 @@ import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
-import { getPartnerTiers, getMediaPartners } from '../lib/partners';
+import { getPartnerTiers, getMediaPartners, getCommunityPartners } from '../lib/partners';
 
 const activeTiers = (await getPartnerTiers()).filter((t) => t.partners.length > 0);
-const mediaPartners = await getMediaPartners();
+
+// Off-ladder rows, rendered below the tiers as cream logo plates. Same markup
+// and styling for both — only the heading differs — so they share one loop.
+const plateRows = [
+	{ id: 'media', label: 'Media', partners: await getMediaPartners() },
+	{ id: 'community', label: 'Community', partners: await getCommunityPartners() },
+].filter((row) => row.partners.length > 0);
 
 // ─── LOGO OPTIMISATION ─────────────────────────────────────────────────────
 // The masters live in `src/assets/partners/<tier>/` so the build can resize
@@ -28,8 +34,8 @@ const logoFor = (logo: string): ImageMetadata =>
 // real srcset. Widths cover the tile caps in partners.scss up to ~2× DPR.
 const TIER_WIDTHS = [200, 300, 400, 600, 800];
 const TIER_SIZES = '(max-width: 900px) 200px, 400px';
-const MEDIA_WIDTHS = [160, 260, 320, 520];
-const MEDIA_SIZES = '(max-width: 900px) 160px, 260px';
+const PLATE_WIDTHS = [160, 260, 320, 520];
+const PLATE_SIZES = '(max-width: 900px) 160px, 260px';
 
 const sizing = (img: ImageMetadata, widths: number[], sizes: string) =>
 	img.format === 'svg'
@@ -89,30 +95,30 @@ const tickerTopics = [
 			</section>
 		))}
 
-		{mediaPartners.length > 0 && (
-			<section class="media-partners" aria-labelledby="media-partners-title">
-				<div class="media-inner">
-					<div class="media-head">
-						<h2 id="media-partners-title" class="media-title">
-							Media <span class="red">partners</span>
+		{plateRows.map((row) => (
+			<section class="plate-partners" aria-labelledby={`${row.id}-partners-title`}>
+				<div class="plate-inner">
+					<div class="plate-head">
+						<h2 id={`${row.id}-partners-title`} class="plate-title">
+							{row.label} <span class="red">partners</span>
 						</h2>
 					</div>
-					<ul class="media-grid">
-						{mediaPartners.map((p) => (
-							<li class="media-item">
+					<ul class="plate-grid">
+						{row.partners.map((p) => (
+							<li class="plate-item">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<Image src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), MEDIA_WIDTHS, MEDIA_SIZES)} />
+										<Image src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), PLATE_WIDTHS, PLATE_SIZES)} />
 									</a>
 								) : (
-									<Image src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), MEDIA_WIDTHS, MEDIA_SIZES)} />
+									<Image src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), PLATE_WIDTHS, PLATE_SIZES)} />
 								)}
 							</li>
 						))}
 					</ul>
 				</div>
 			</section>
-		)}
+		))}
 		<!-- BODY -->
 		<section class="partners-body" aria-labelledby="partners-cta-title">
 			<div class="partners-inner">

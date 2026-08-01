@@ -269,7 +269,7 @@
 	// silver). Tiers differ only in scale: the higher the tier, the taller the
 	// tile, the larger the logo cap, and the wider the showcase columns — see
 	// the $tiers ladder below. Wordmarks ship light (white cut-outs) for the
-	// dark card; media partners get the cream plate further down instead.
+	// dark card; the off-ladder rows get the cream plate further down instead.
 	.tier-partners {
 		position: relative;
 		padding: var(--section-y) var(--gutter) 0;
@@ -423,21 +423,27 @@
 		.tier-item { flex: 1 1 100%; }
 	}
 
-	/* ===================== MEDIA PARTNERS ===================== */
-	.media-partners {
+	/* ============ OFF-LADDER PLATE ROWS (media, community) ============ */
+	.plate-partners {
 		position: relative;
 		// Bottom padding so the last logo row has breathing room before the
 		// partnership block below (it was 0, leaving the tiles flush).
 		padding: var(--section-y) var(--gutter);
 		background: var(--color-bg);
+
+		// Stacked plate rows would otherwise double up the section padding
+		// between them; one section's worth of air is plenty.
+		+ .plate-partners {
+			padding-top: 0;
+		}
 	}
 
-	.media-inner {
+	.plate-inner {
 		max-width: var(--maxw);
 		margin: 0 auto;
 	}
 
-	.media-head {
+	.plate-head {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
@@ -445,7 +451,7 @@
 	}
 
 	// Poster headline — typewriter (Special Elite) to match the noir key art.
-	.media-title {
+	.plate-title {
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-h2);
 		line-height: 1.05;
@@ -461,7 +467,7 @@
 		}
 	}
 
-	.media-grid {
+	.plate-grid {
 		list-style: none;
 		margin: 0;
 		padding: 0;
@@ -479,7 +485,7 @@
 	// scale: the grid is now content-width (flex, above), so it's a tidy strip
 	// of logo cells, not the full-width band of big cream blocks that read as a
 	// different site.
-	.media-item {
+	.plate-item {
 		position: relative;
 		overflow: hidden;
 		display: flex;
@@ -529,12 +535,12 @@
 	}
 
 	@media (max-width: 900px) {
-		.media-item { flex-basis: 160px; min-height: 130px; padding: 1.4rem 1.2rem; }
+		.plate-item { flex-basis: 160px; min-height: 130px; padding: 1.4rem 1.2rem; }
 	}
 
 	@media (max-width: 600px) {
-		.media-grid { width: 100%; }
-		.media-item { flex: 1 1 0; }
+		.plate-grid { width: 100%; }
+		.plate-item { flex: 1 1 0; }
 	}
 
 	/* ===================== REDUCED MOTION ===================== */
@@ -546,7 +552,7 @@
 		}
 
 		.tier-item,
-		.media-item {
+		.plate-item {
 			&:has(a:hover),
 			&:has(a:focus-visible) {
 				transform: none;

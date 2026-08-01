@@ -52,11 +52,12 @@ const team = defineCollection({
 });
 
 // Partners — one flat list; `tier` places each logo on the sponsor ladder.
-// `media` is deliberately outside the ladder (shown only on /partners).
+// `media` and `community` are deliberately outside the ladder (shown only on
+// /partners, each as its own plate row).
 const partners = defineCollection({
 	loader: file('src/content/partners.json'),
 	schema: z.object({
-		tier: z.enum(['diamond', 'platinum', 'gold', 'silver', 'media']),
+		tier: z.enum(['diamond', 'platinum', 'gold', 'silver', 'media', 'community']),
 		order: z.number().int(),
 		name: z.string(),
 		logo: z.string(),

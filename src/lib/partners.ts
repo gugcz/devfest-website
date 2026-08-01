@@ -10,7 +10,8 @@ import { getCollection } from 'astro:content';
 
 export type Partner = { name: string; logo: string; url?: string };
 
-// Ladder tiers only — `media` is a tier in the schema but never part of the ladder.
+// Ladder tiers only — `media` and `community` are tiers in the schema but never
+// part of the ladder.
 export type PartnerTierId = 'diamond' | 'platinum' | 'gold' | 'silver';
 
 export type PartnerTier = {
@@ -21,7 +22,8 @@ export type PartnerTier = {
 };
 
 // Ordered top tier first — drives both the /partners tier sections and the
-// homepage strip. Media partners are deliberately not part of this ladder.
+// homepage strip. Media and community partners are deliberately not part of
+// this ladder.
 const TIER_LADDER: { id: PartnerTierId; label: string }[] = [
 	{ id: 'diamond', label: 'Diamond' },
 	{ id: 'platinum', label: 'Platinum' },
@@ -49,3 +51,6 @@ export const getShowcasePartners = async (): Promise<Partner[]> =>
 
 /** Media partners — only shown on the dedicated /partners page, never the homepage. */
 export const getMediaPartners = (): Promise<Partner[]> => byTier('media');
+
+/** Community partners — same deal as media: /partners only, off the ladder. */
+export const getCommunityPartners = (): Promise<Partner[]> => byTier('community');
