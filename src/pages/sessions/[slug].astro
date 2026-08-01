@@ -1,0 +1,215 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SubpageHero from '../../components/SubpageHero.astro';
+import { getBuildLineup } from '../../lib/lineup-build';
+import { sessionSlugs, speakerSlugs } from '../../lib/slug';
+import { initials, type Speaker } from '../../lib/speakers';
+import { visitorCategories, type Session } from '../../lib/sessions';
+
+// One page per talk. The abstract is the single richest piece of long-tail
+// keyword text this site has, and until now it existed only inside a dialog on
+// /sessions — unlinkable, unshareable and invisible to search.
+export async function getStaticPaths() {
+	const { speakers, sessions } = await getBuildLineup();
+	const slugs = sessionSlugs(sessions);
+	const peopleSlugs = speakerSlugs(speakers);
+	const speakerById = new Map(speakers.map((sp) => [sp.id, sp]));
+
+	return sessions.map((session) => ({
+		params: { slug: slugs.get(session.id)! },
+		props: {
+			session,
+			// The session doc embeds a speaker summary; pair it with the full
+			// profile where we have one so the page can show a real tagline.
+			presenters: session.speakers.map((ref) => ({
+				ref,
+				profile: speakerById.get(ref.id) ?? null,
+				path: peopleSlugs.has(ref.id) ? `/speakers/${peopleSlugs.get(ref.id)}` : null,
+			})),
+		},
+	}));
+}
+
+interface Presenter {
+	ref: Session['speakers'][number];
+	profile: Speaker | null;
+	path: string | null;
+}
+
+interface Props {
+	session: Session;
+	presenters: Presenter[];
+}
+
+const { session, presenters } = Astro.props;
+
+const escapeHtml = (value: string) =>
+	value
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
+
+const categories = visitorCategories(session);
+const track = categories[0]?.values[0] ?? '';
+const names = presenters.map(({ ref }) => ref.fullName).filter(Boolean);
+
+// Talk titles are already long; the hero renders the whole thing rather than
+// splitting a phrase in red the way the fixed page titles do — an arbitrary
+// split mid-sentence reads as a typo, not as emphasis.
+const titleHtml = escapeHtml(session.title);
+
+const abstract = session.description.replace(/\s+/g, ' ').trim();
+const byline = names.length > 0 ? `${names.join(' & ')} at DevFest.cz 2026.` : 'DevFest.cz 2026.';
+const description =
+	abstract.length > 0
+		? `${byline} ${abstract}`.slice(0, 155).trimEnd().replace(/[,;:]$/, '') +
+			(`${byline} ${abstract}`.length > 155 ? '…' : '')
+		: `${byline} A talk at Prague's community-built developer conference on 30 October 2026.`;
+
+const lede =
+	names.length > 0
+		? `${names.join(' & ')}${track ? ` · ${track}` : ''}`
+		: track || 'A talk at DevFest.cz 2026.';
+
+const abstractParagraphs = session.description.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
+
+// Scheduling is filled in by Sessionize closer to the event; until then these
+// are empty strings and the block simply doesn't render.
+const TIME_FMT = new Intl.DateTimeFormat('en-GB', {
+	weekday: 'long',
+	day: 'numeric',
+	month: 'long',
+	hour: '2-digit',
+	minute: '2-digit',
+	hourCycle: 'h23',
+	timeZone: 'Europe/Prague',
+});
+const startsAt = session.startsAt ? new Date(session.startsAt) : null;
+const whenLabel =
+	startsAt && !Number.isNaN(startsAt.getTime()) ? TIME_FMT.format(startsAt) : '';
+---
+
+<BaseLayout title={`${session.title} — DevFest.cz 2026`} description={description}>
+	<main class="session-page">
+		<SubpageHero
+			label={track || 'Session'}
+			titleHtml={titleHtml}
+			lede={lede}
+			seoHeading={`${session.title} — DevFest.cz 2026 session`}
+			titleId="session-title"
+		/>
+
+		<section class="session-body" aria-labelledby="session-title">
+			<div class="session-inner">
+				<div class="session-main">
+					{abstractParagraphs.length > 0 ? (
+						<div class="session-abstract">
+							{abstractParagraphs.map((paragraph) => (
+								<p>{paragraph}</p>
+							))}
+						</div>
+					) : (
+						<p class="session-abstract-pending">
+							The abstract for this talk lands closer to the event.
+						</p>
+					)}
+
+					<p class="session-back">
+						<a class="btn-ghost" href="/sessions">
+							All sessions
+							<span class="btn-ghost-arrow" aria-hidden="true">&rarr;</span>
+						</a>
+					</p>
+				</div>
+
+				<aside class="session-aside" aria-label="Session details">
+					{presenters.length > 0 && (
+						<div class="session-block">
+							<h2 class="session-block-title">
+								{presenters.length === 1 ? 'Speaker' : 'Speakers'}
+							</h2>
+							<ul class="session-people" role="list">
+								{presenters.map(({ ref, profile, path }) => {
+									const tagLine = profile?.tagLine || ref.tagLine;
+									const photo = profile?.profilePicture || ref.profilePicture;
+									const body = (
+										<>
+											<span class="session-person-media">
+												{photo ? (
+													<img
+														class="session-person-photo"
+														src={photo}
+														alt=""
+														width="56"
+														height="56"
+														loading="lazy"
+														decoding="async"
+													/>
+												) : (
+													<span class="session-person-mono" aria-hidden="true">
+														{initials(ref.fullName) || '?'}
+													</span>
+												)}
+											</span>
+											<span class="session-person-text">
+												<span class="session-person-name">{ref.fullName}</span>
+												{tagLine && <span class="session-person-tag">{tagLine}</span>}
+											</span>
+										</>
+									);
+									return (
+										<li>
+											{path ? (
+												<a class="session-person session-person--link" href={path}>
+													{body}
+												</a>
+											) : (
+												<span class="session-person">{body}</span>
+											)}
+										</li>
+									);
+								})}
+							</ul>
+						</div>
+					)}
+
+					{(whenLabel || session.room) && (
+						<div class="session-block">
+							<h2 class="session-block-title">When &amp; where</h2>
+							<dl class="session-facts">
+								{whenLabel && (
+									<>
+										<dt>Time</dt>
+										<dd>{whenLabel}</dd>
+									</>
+								)}
+								{session.room && (
+									<>
+										<dt>Room</dt>
+										<dd>{session.room}</dd>
+									</>
+								)}
+							</dl>
+						</div>
+					)}
+
+					{categories.length > 0 && (
+						<div class="session-block">
+							<h2 class="session-block-title">Filed under</h2>
+							<ul class="session-tags" role="list">
+								{categories.flatMap((category) =>
+									category.values.map((value) => <li class="session-tag">{value}</li>)
+								)}
+							</ul>
+						</div>
+					)}
+				</aside>
+			</div>
+		</section>
+	</main>
+</BaseLayout>
+
+<style lang="scss">
+	@use './detail';
+</style>

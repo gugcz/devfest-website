@@ -293,3 +293,33 @@
 		animation: none;
 	}
 }
+
+/* ===================== PERMALINK ===================== */
+// The dialog is a shortcut to /speakers/<slug>, so it says so. Without this the
+// full profile is reachable only by guessing the URL or middle-clicking the
+// card behind the overlay.
+.permalink {
+	margin: 1.4rem 0 0;
+	border-top: 1px solid var(--rule-soft);
+	padding-top: 1.2rem;
+
+	a {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label-sm);
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--color-grey);
+		text-decoration: none;
+		transition: color 0.2s ease;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: 3px;
+		}
+	}
+}

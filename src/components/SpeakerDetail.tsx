@@ -8,7 +8,17 @@ import s from './SpeakerDetail.module.scss';
  * Traps focus, closes on Esc / backdrop click, locks body scroll, and restores
  * focus to the triggering card on close.
  */
-export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; onClose: () => void }) {
+export default function SpeakerDetail({
+	speaker,
+	href = null,
+	onClose,
+}: {
+	speaker: Speaker;
+	/** Canonical page for this speaker — surfaced as a permalink so the dialog
+	 * is a shortcut to a real address rather than a dead end. */
+	href?: string | null;
+	onClose: () => void;
+}) {
 	const dialogRef = useRef<HTMLDivElement>(null);
 	const [imageFailed, setImageFailed] = useState(false);
 	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
@@ -152,6 +162,15 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 								<p key={i}>{paragraph}</p>
 							))}
 						</div>
+					)}
+
+					{href && (
+						<p className={s.permalink}>
+							<a href={href}>
+								Open full profile
+								<span aria-hidden="true">{' →'}</span>
+							</a>
+						</p>
 					)}
 
 					{speaker.sessions.length > 0 && (

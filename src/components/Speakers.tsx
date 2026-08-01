@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { initials, PORTRAIT_TRANSITION, type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
+import { speakerPath, speakerSlugs } from '../lib/slug';
 import SpeakerDetail from './SpeakerDetail';
 import s from './Speakers.module.scss';
 
@@ -105,14 +106,25 @@ function usePortraitMorph(
 	return { morphId, open, close };
 }
 
+/**
+ * Modifier keys / non-primary buttons mean the visitor is asking the BROWSER to
+ * handle the link (new tab, new window, download) — never intercept those.
+ */
+function wantsDefaultNavigation(event: React.MouseEvent): boolean {
+	return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+}
+
 function SpeakerCard({
 	speaker,
+	href,
 	onOpen,
 	priority,
 	index,
 	morphing,
 }: {
 	speaker: Speaker;
+	/** Canonical page for this speaker; null only if the slug map somehow lacks them. */
+	href: string | null;
 	onOpen: (speaker: Speaker) => void;
 	priority: boolean;
 	index: number;
@@ -127,10 +139,21 @@ function SpeakerCard({
 		// `--i` staggers the develop animation; see the `.develop` rules in
 		// BaseLayout.scss.
 		<li className={s.cell} style={{ '--i': index } as React.CSSProperties}>
-			<button
-				type="button"
+			{/*
+				A real <a> to a real page, not a button. The dialog stays the default
+				experience — the click is intercepted — but the card is now something
+				a crawler can follow, a visitor can middle-click, and a speaker can
+				copy out of the address bar. Modified clicks fall through to the
+				browser so "open in new tab" keeps working.
+			*/}
+			<a
 				className={`${s.card} develop`}
-				onClick={() => onOpen(speaker)}
+				href={href ?? undefined}
+				onClick={(event) => {
+					if (wantsDefaultNavigation(event)) return;
+					event.preventDefault();
+					onOpen(speaker);
+				}}
 				aria-label={`View ${speaker.fullName}'s profile`}
 				data-track="view_speaker"
 				data-track-speaker={speaker.fullName}
@@ -163,7 +186,7 @@ function SpeakerCard({
 					<span className={s.name}>{speaker.fullName}</span>
 					{speaker.tagLine && <span className={s.tagline}>{speaker.tagLine}</span>}
 				</span>
-			</button>
+			</a>
 		</li>
 	);
 }
@@ -182,12 +205,20 @@ export function SpeakerLineup({
 	/** Id of the speaker whose dialog is open — that card carries the morph. */
 	openId?: string | null;
 }) {
+	// Derived from the same roster the build used, with the same function, so the
+	// hrefs here match the pages `getStaticPaths` emitted. A speaker confirmed
+	// since the last build gets a link to a page that does not exist yet — the
+	// click opens the dialog anyway, so only a middle-click would notice, and the
+	// daily rebuild closes the gap.
+	const slugs = useMemo(() => speakerSlugs(speakers), [speakers]);
+
 	return (
 		<ul className={s.grid} role="list">
 			{speakers.map((speaker, i) => (
 				<SpeakerCard
 					key={speaker.id}
 					speaker={speaker}
+					href={speakerPath(slugs, speaker.id)}
 					onOpen={onOpen}
 					priority={i < 4}
 					index={i}
@@ -264,7 +295,13 @@ export default function Speakers({ initialSpeakers = [] }: { initialSpeakers?: S
 	return (
 		<>
 			<SpeakerLineup speakers={state.speakers} onOpen={open} openId={morphId} />
-			{selected && <SpeakerDetail speaker={selected} onClose={close} />}
+			{selected && (
+				<SpeakerDetail
+					speaker={selected}
+					href={speakerPath(speakerSlugs(state.speakers), selected.id)}
+					onClose={close}
+				/>
+			)}
 		</>
 	);
 }

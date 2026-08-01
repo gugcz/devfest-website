@@ -53,10 +53,14 @@ function SpeakerAvatar({ speaker }: { speaker: SessionSpeakerRef }) {
 export default function SessionDetail({
 	session,
 	speakersById,
+	href = null,
 	onClose,
 }: {
 	session: Session;
 	speakersById: Record<string, Speaker>;
+	/** Canonical page for this talk — surfaced as a permalink so the dialog is a
+	 * shortcut to a real address rather than a dead end. */
+	href?: string | null;
 	onClose: () => void;
 }) {
 	const dialogRef = useRef<HTMLDivElement>(null);
@@ -199,6 +203,15 @@ export default function SessionDetail({
 								<p key={i}>{paragraph}</p>
 							))}
 						</div>
+					)}
+
+					{href && (
+						<p className={s.permalink}>
+							<a href={href}>
+								Open full session page
+								<span aria-hidden="true">{' →'}</span>
+							</a>
+						</p>
 					)}
 
 					{session.speakers.length > 0 && (

@@ -10,6 +10,7 @@ import {
 	type SessionFilters,
 } from '../lib/sessions';
 import { fetchLineup } from '../lib/lineup';
+import { sessionPath, sessionSlugs } from '../lib/slug';
 import SessionDetail from './SessionDetail';
 import s from './Sessions.module.scss';
 
@@ -61,7 +62,24 @@ function SpeakerStack({ session }: { session: Session }) {
 	);
 }
 
-function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: Session) => void }) {
+/**
+ * Modifier keys / non-primary buttons mean the visitor is asking the BROWSER to
+ * handle the link (new tab, new window) — never intercept those.
+ */
+function wantsDefaultNavigation(event: React.MouseEvent): boolean {
+	return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+}
+
+function SessionCard({
+	session,
+	href,
+	onOpen,
+}: {
+	session: Session;
+	/** Canonical page for this talk. */
+	href: string | null;
+	onOpen: (session: Session) => void;
+}) {
 	const names = session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
 	// Lead the card with the primary track (falls back to the room, then a generic
 	// label).
@@ -69,10 +87,19 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 
 	return (
 		<li>
-			<button
-				type="button"
+			{/*
+				A real <a> to /sessions/<slug>: crawlable, middle-clickable, and
+				copyable out of the address bar. The dialog stays the default
+				experience by intercepting the plain click.
+			*/}
+			<a
 				className={s.card}
-				onClick={() => onOpen(session)}
+				href={href ?? undefined}
+				onClick={(event) => {
+					if (wantsDefaultNavigation(event)) return;
+					event.preventDefault();
+					onOpen(session);
+				}}
 				aria-label={`View details for ${session.title}`}
 				data-track="view_session"
 				data-track-session={session.title}
@@ -89,7 +116,7 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 					{session.speakers.length > 0 && <SpeakerStack session={session} />}
 					<span className={s.names}>{names || 'Speaker to be announced'}</span>
 				</span>
-			</button>
+			</a>
 		</li>
 	);
 }
@@ -141,6 +168,11 @@ export default function Sessions({
 		return () => ac.abort();
 	}, []);
 
+	// Same derivation the build used for `getStaticPaths`, over the same data, so
+	// every card href resolves to a page that exists. A talk added since the last
+	// build links to a page that isn't there yet; the click opens the dialog
+	// regardless, and the daily rebuild closes the gap.
+	const slugs = useMemo(() => sessionSlugs(state.sessions), [state.sessions]);
 	const facets = useMemo(() => collectFacets(state.sessions), [state.sessions]);
 	const filtered = useMemo(
 		() => state.sessions.filter((session) => matchesFilters(session, query, filters)),
@@ -255,7 +287,12 @@ export default function Sessions({
 			) : (
 				<ul className={s.grid} role="list">
 					{filtered.map((session) => (
-						<SessionCard key={session.id} session={session} onOpen={setSelected} />
+						<SessionCard
+							key={session.id}
+							session={session}
+							href={sessionPath(slugs, session.id)}
+							onOpen={setSelected}
+						/>
 					))}
 					{!active && (
 						<li>
@@ -276,6 +313,7 @@ export default function Sessions({
 				<SessionDetail
 					session={selected}
 					speakersById={speakersById}
+					href={sessionPath(slugs, selected.id)}
 					onClose={() => setSelected(null)}
 				/>
 			)}

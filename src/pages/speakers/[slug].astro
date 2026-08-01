@@ -1,0 +1,182 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SubpageHero from '../../components/SubpageHero.astro';
+import { getBuildLineup } from '../../lib/lineup-build';
+import { sessionSlugs, speakerSlugs } from '../../lib/slug';
+import { initials, SPEAKER_ICON_PATHS, type Speaker } from '../../lib/speakers';
+import { visitorCategories, type Session } from '../../lib/sessions';
+
+// One page per speaker. Before these existed the only way to read a speaker's
+// bio was to open a dialog on /speakers, which meant no shareable address, no
+// per-speaker search result, and nothing for a speaker to link to when they
+// announce their talk. The lineup cards still open the dialog — these pages are
+// what that dialog is a shortcut TO.
+export async function getStaticPaths() {
+	const { speakers, sessions } = await getBuildLineup();
+	const slugs = speakerSlugs(speakers);
+	const talkSlugs = sessionSlugs(sessions);
+
+	return speakers.map((speaker) => ({
+		params: { slug: slugs.get(speaker.id)! },
+		props: {
+			speaker,
+			// Prefer the `sessions` collection over the speaker doc's embedded
+			// `sessions[]`: only the former carries ids, and without an id there is
+			// no session page to link to.
+			talks: sessions
+				.filter((session) => session.speakers.some((sp) => sp.id === speaker.id))
+				.map((session) => ({ session, path: `/sessions/${talkSlugs.get(session.id)}` })),
+		},
+	}));
+}
+
+interface Props {
+	speaker: Speaker;
+	talks: Array<{ session: Session; path: string }>;
+}
+
+const { speaker, talks } = Astro.props;
+
+const escapeHtml = (value: string) =>
+	value
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
+
+// Surname in red, matching how every other hero on the site splits its title.
+const nameParts = speaker.fullName.trim().split(/\s+/);
+const titleHtml =
+	nameParts.length > 1
+		? `${escapeHtml(nameParts.slice(0, -1).join(' '))}<br /><span class="red">${escapeHtml(
+				nameParts[nameParts.length - 1],
+			)}</span>`
+		: escapeHtml(speaker.fullName);
+
+const bioParagraphs = speaker.bio.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
+
+// The hero lede has to say something: the tagline if there is one, otherwise a
+// line built from what the speaker is actually doing at the event.
+const lede =
+	speaker.tagLine ||
+	(talks.length > 0
+		? `Speaking at DevFest.cz 2026 on ${talks.map(({ session }) => session.title).join(', ')}.`
+		: 'Speaking at DevFest.cz 2026 in Prague on 30 October 2026.');
+
+// Meta description: tagline + first sentence of the bio, trimmed to a length
+// Google will actually render rather than truncate.
+const summary = [speaker.tagLine, bioParagraphs[0]].filter(Boolean).join(' — ').replace(/\s+/g, ' ');
+const description =
+	(summary.length > 155 ? `${summary.slice(0, 152).trimEnd()}…` : summary) ||
+	`${speaker.fullName} is speaking at DevFest.cz 2026 in Prague on 30 October 2026.`;
+
+const showPhoto = Boolean(speaker.profilePicture);
+---
+
+<BaseLayout
+	title={`${speaker.fullName} — Speaker at DevFest.cz 2026`}
+	description={description}
+>
+	<main class="speaker-page">
+		<SubpageHero
+			label="Speaker"
+			titleHtml={titleHtml}
+			lede={lede}
+			seoHeading={`${speaker.fullName} — DevFest.cz 2026 speaker`}
+			titleId="speaker-title"
+		/>
+
+		<section class="speaker-body" aria-labelledby="speaker-title">
+			<div class="speaker-inner">
+				<div class="speaker-aside">
+					<div class="speaker-print">
+						{showPhoto ? (
+							<img
+								class="speaker-photo"
+								src={speaker.profilePicture}
+								alt={`Portrait of ${speaker.fullName}`}
+								width="400"
+								height="500"
+								decoding="async"
+							/>
+						) : (
+							<span class="speaker-monogram" aria-hidden="true">
+								{initials(speaker.fullName) || '?'}
+							</span>
+						)}
+					</div>
+
+					{speaker.links.length > 0 && (
+						<ul class="speaker-links" role="list">
+							{speaker.links.map((link) => (
+								<li>
+									<a
+										class="speaker-link"
+										href={link.url}
+										aria-label={`${speaker.fullName} — ${link.label}`}
+										title={link.label}
+										target="_blank"
+										rel="noopener noreferrer"
+										data-track="select_content"
+										data-track-content-type="speaker_link"
+										data-track-item-id={link.kind}
+									>
+										<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+											<path d={SPEAKER_ICON_PATHS[link.kind]} />
+										</svg>
+									</a>
+								</li>
+							))}
+						</ul>
+					)}
+				</div>
+
+				<div class="speaker-main">
+					{bioParagraphs.length > 0 && (
+						<div class="speaker-bio">
+							{bioParagraphs.map((paragraph) => (
+								<p>{paragraph}</p>
+							))}
+						</div>
+					)}
+
+					{talks.length > 0 && (
+						<section class="speaker-talks" aria-labelledby="speaker-talks-title">
+							<h2 id="speaker-talks-title" class="speaker-talks-title">
+								At DevFest.cz 2026
+							</h2>
+							<ul class="speaker-talk-list" role="list">
+								{talks.map(({ session, path }) => (
+									<li class="speaker-talk">
+										<a class="speaker-talk-link" href={path}>
+											<span class="speaker-talk-name">{session.title}</span>
+											{visitorCategories(session)[0]?.values[0] && (
+												<span class="speaker-talk-track">
+													{visitorCategories(session)[0].values[0]}
+												</span>
+											)}
+										</a>
+										{session.description && (
+											<p class="speaker-talk-desc">{session.description}</p>
+										)}
+									</li>
+								))}
+							</ul>
+						</section>
+					)}
+
+					<p class="speaker-back">
+						<a class="btn-ghost" href="/speakers">
+							All speakers
+							<span class="btn-ghost-arrow" aria-hidden="true">&rarr;</span>
+						</a>
+					</p>
+				</div>
+			</div>
+		</section>
+	</main>
+</BaseLayout>
+
+<style lang="scss">
+	@use './detail';
+</style>

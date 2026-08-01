@@ -187,6 +187,9 @@
 // three of the tells this language exists to remove. Now a ruled entry that
 // pulls right and marks its own rule when reached.
 .card {
+	// The card is an <a> to /sessions/<slug> whose click is intercepted to open
+	// the dialog — so it needs the anchor reset a <button> gave for free.
+	text-decoration: none;
 	position: relative;
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto;

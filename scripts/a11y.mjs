@@ -298,22 +298,28 @@ async function hydrateIslands(page) {
 
 // Detail dialogs reached by clicking a card. Each flow reloads first for a clean
 // state, opens the dialog, and axe re-runs scoped to `[role="dialog"]`.
+//
+// The lineup cards are <a> elements, not buttons: they point at the real
+// /speakers/<slug> and /sessions/<slug> pages so the lineup is crawlable, and
+// intercept the plain click to open the dialog instead. The speaker row nested
+// INSIDE the session dialog stays a <button> — it swaps one dialog for another
+// rather than navigating anywhere.
 const MODAL_FLOWS = {
 	'/speakers/': [
 		{
 			label: 'speaker detail dialog',
-			open: (p) => p.click('button[aria-label^="View "]'),
+			open: (p) => p.click('a[aria-label^="View "]'),
 		},
 	],
 	'/sessions/': [
 		{
 			label: 'session detail dialog',
-			open: (p) => p.click('button[aria-label^="View details for "]'),
+			open: (p) => p.click('a[aria-label^="View details for "]'),
 		},
 		{
 			label: 'session → speaker dialog',
 			open: async (p) => {
-				await p.click('button[aria-label^="View details for "]');
+				await p.click('a[aria-label^="View details for "]');
 				await p.waitForSelector('[role="dialog"]');
 				await p.click('[role="dialog"] button[aria-label^="View "]');
 			},

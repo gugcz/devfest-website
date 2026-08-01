@@ -1,0 +1,212 @@
+// Session detail page — the standalone, shareable version of the session
+// dialog. The abstract is the subject, so it gets the wide column and the
+// reading measure; the metadata (who, when, which track) sits in a quiet rail
+// beside it rather than competing for the top of the page.
+
+.session-body {
+	padding: var(--section-y) var(--gutter);
+}
+
+.session-inner {
+	max-width: var(--maxw);
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+	gap: clamp(2rem, 5vw, 4.5rem);
+	align-items: start;
+}
+
+/* ===================== ABSTRACT ===================== */
+.session-main {
+	min-width: 0;
+}
+
+.session-abstract {
+	max-width: 66ch;
+
+	p {
+		font-family: var(--font-im-fell-english), serif;
+		font-size: var(--fs-body-lg);
+		line-height: 1.85;
+		color: var(--color-cream);
+		margin: 0 0 1.3rem;
+	}
+
+	p:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.session-abstract-pending {
+	font-family: var(--font-im-fell-english), serif;
+	font-style: italic;
+	font-size: var(--fs-lede);
+	line-height: 1.7;
+	color: var(--color-grey);
+	margin: 0;
+	max-width: 52ch;
+}
+
+.session-back {
+	margin: clamp(2.5rem, 5vw, 3.5rem) 0 0;
+}
+
+/* ===================== METADATA RAIL ===================== */
+.session-aside {
+	display: grid;
+	gap: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.session-block {
+	padding-top: 1.4rem;
+	border-top: 1px solid var(--rule-soft);
+}
+
+.session-block-title {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label);
+	letter-spacing: 0.32em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.62);
+	margin: 0 0 1.2rem;
+}
+
+.session-people {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 1rem;
+}
+
+.session-person {
+	display: flex;
+	align-items: center;
+	gap: 0.9rem;
+	text-decoration: none;
+	color: inherit;
+}
+
+.session-person--link:focus-visible {
+	outline: 2px solid var(--color-accent-hot);
+	outline-offset: 4px;
+}
+
+.session-person-media {
+	position: relative;
+	flex: 0 0 56px;
+	width: 56px;
+	height: 56px;
+	overflow: hidden;
+	background: var(--panel-lit);
+	box-shadow: inset 0 0 0 1px rgba(240, 237, 230, 0.16);
+}
+
+.session-person-photo {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center 22%;
+	filter: grayscale(1) contrast(1.14) brightness(0.84);
+	transition: filter 0.4s ease;
+
+	.session-person--link:hover &,
+	.session-person--link:focus-visible & {
+		// The one place colour returns on this page — it marks the thing you can
+		// actually click through to.
+		filter: grayscale(0) contrast(1.05) brightness(0.95);
+	}
+}
+
+.session-person-mono {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: 1.3rem;
+	letter-spacing: 0.06em;
+	color: rgba(240, 237, 230, 0.28);
+}
+
+.session-person-text {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	min-width: 0;
+}
+
+.session-person-name {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-ui);
+	line-height: 1.3;
+	color: var(--color-text);
+	transition: color 0.2s ease;
+
+	.session-person--link:hover &,
+	.session-person--link:focus-visible & {
+		color: var(--color-accent-hot);
+	}
+}
+
+.session-person-tag {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-xs);
+	line-height: 1.5;
+	color: var(--color-grey);
+}
+
+.session-facts {
+	margin: 0;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 0.5rem 1.2rem;
+
+	dt {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label-sm);
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--color-grey);
+	}
+
+	dd {
+		margin: 0;
+		font-family: var(--font-im-fell-english), serif;
+		font-size: var(--fs-body);
+		color: var(--color-cream);
+	}
+}
+
+.session-tags {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.session-tag {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-sm);
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--color-grey);
+	border: 1px solid var(--rule);
+	padding: 0.35rem 0.7rem;
+}
+
+@media (max-width: 860px) {
+	.session-inner {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.4rem;
+	}
+
+	// Who is giving the talk matters more on a phone than a long abstract the
+	// visitor has to scroll past to find out.
+	.session-aside {
+		order: -1;
+	}
+}

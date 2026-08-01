@@ -14,6 +14,7 @@ import {
 	type AgendaPartition,
 } from '../lib/agenda';
 import { fetchAgenda } from '../lib/lineup';
+import { sessionPath, sessionSlugs } from '../lib/slug';
 import SessionDetail from './SessionDetail';
 import s from './Agenda.module.scss';
 
@@ -507,6 +508,7 @@ export default function Agenda({
 				<SessionDetail
 					session={selected}
 					speakersById={speakersById}
+					href={sessionPath(sessionSlugs(state.sessions), selected.id)}
 					onClose={() => setSelected(null)}
 				/>
 			)}
