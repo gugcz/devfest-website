@@ -78,5 +78,13 @@
 		"name": "Smartmania.cz",
 		"logo": "/partners/media/smartmania.svg",
 		"url": "https://smartmania.cz/"
+	},
+	{
+		"id": "junior-guru",
+		"tier": "community",
+		"order": 1,
+		"name": "junior.guru",
+		"logo": "/partners/community/junior-guru.svg",
+		"url": "https://junior.guru/"
 	}
 ]
