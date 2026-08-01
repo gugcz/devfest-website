@@ -16,6 +16,14 @@
 		"url": "https://gdg.community.dev/"
 	},
 	{
+		"id": "google-cloud",
+		"tier": "diamond",
+		"order": 3,
+		"name": "Google Cloud",
+		"logo": "/partners/diamond/google-cloud.svg",
+		"url": "https://cloud.google.com/"
+	},
+	{
 		"id": "ceska-sporitelna",
 		"tier": "platinum",
 		"order": 1,
