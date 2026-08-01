@@ -18,6 +18,12 @@ interface Props {
 	 * name, a talk's title. Without it the leaf falls back to a title-cased
 	 * slug, which reads badly for anything but a short one-word segment. */
 	breadcrumb?: string;
+	/** Site-root-relative path to a page-specific Open Graph card, e.g.
+	 * `/og/speakers/abdel-sghiouar.png`. Defaults to the brand banner. */
+	ogImagePath?: string;
+	/** Alt text for the card above — required whenever `ogImagePath` is set, or
+	 * the preview describes the wrong image to anyone reading it aloud. */
+	ogImageAltText?: string;
 }
 
 const siteUrl = "https://devfest.cz";
@@ -28,13 +34,19 @@ const {
 	bodyClass = "",
 	showFooter = true,
 	breadcrumb,
+	ogImagePath,
+	ogImageAltText,
 } = Astro.props;
 
-const ogImage = `${siteUrl}/og-image.jpg`;
+// Per-page card where one exists (speakers, sessions — see src/lib/og-card.ts),
+// otherwise the brand banner. Sharing the one banner everywhere meant a preview
+// that said nothing about what was being shared.
+const ogImage = ogImagePath ? `${siteUrl}${ogImagePath}` : `${siteUrl}/og-image.jpg`;
+const ogImageType = ogImagePath?.endsWith(".png") ? "image/png" : "image/jpeg";
 // Strip the trailing slash (root would be `https://devfest.cz/`) to match the
 // no-slash URLs the sitemap + JSON-LD use under `trailingSlash: 'never'`.
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, "") || siteUrl;
-const ogImageAlt = "DevFest.cz 2026 conference banner";
+const ogImageAlt = ogImageAltText ?? "DevFest.cz 2026 conference banner";
 
 // Event schema follows https://developers.google.com/search/docs/appearance/structured-data/event
 // Only rendered on the home page so subpages (privacy, contact, etc.) don't
@@ -335,7 +347,7 @@ const jsonLd = JSON.stringify(
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={ogImage} />
-		<meta property="og:image:type" content="image/jpeg" />
+		<meta property="og:image:type" content={ogImageType} />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta property="og:image:alt" content={ogImageAlt} />

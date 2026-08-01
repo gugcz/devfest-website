@@ -144,6 +144,8 @@ const sessionJsonLd = session.startsAt
 	title={`${session.title} — DevFest.cz 2026`}
 	description={description}
 	breadcrumb={session.title}
+	ogImagePath={`/og/sessions/${Astro.params.slug}.png`}
+	ogImageAltText={`${session.title} — a talk at DevFest.cz 2026`}
 >
 	{sessionJsonLd && <script type="application/ld+json" slot="head" set:html={sessionJsonLd} />}
 	<main class="session-page">

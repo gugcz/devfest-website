@@ -100,6 +100,8 @@ const personJsonLd = JSON.stringify(personSchema);
 	title={`${speaker.fullName} — Speaker at DevFest.cz 2026`}
 	description={description}
 	breadcrumb={speaker.fullName}
+	ogImagePath={`/og/speakers/${Astro.params.slug}.png`}
+	ogImageAltText={`${speaker.fullName} — speaking at DevFest.cz 2026`}
 >
 	<script type="application/ld+json" slot="head" set:html={personJsonLd} />
 	<main class="speaker-page">
