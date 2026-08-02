@@ -125,6 +125,7 @@
 	min-width: 0;
 	padding: 2rem 2rem 2.2rem;
 	overflow-y: auto;
+	overscroll-behavior: contain;
 }
 
 .kicker {
@@ -272,8 +273,15 @@
 	.dialog {
 		flex-direction: column;
 		height: auto;
-		max-height: 90vh;
+		// Bounded by the overlay box, not by `vh`. On iOS Safari the fixed
+		// overlay tracks the *visible* viewport while `vh` stays pinned to the
+		// toolbar-hidden one, so `90vh` could stand taller than the overlay it
+		// sits in — the tail of a long bio ended up below the reachable area
+		// with no way to scroll to it.
+		max-height: 100%;
 		overflow-y: auto;
+		// The dialog owns the scroll; don't hand leftover momentum to the page.
+		overscroll-behavior: contain;
 	}
 	.media {
 		flex: 0 0 auto;

@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { initials, type Speaker } from '../lib/speakers';
 import { visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
 import { useReturnFocus } from '../lib/useReturnFocus';
+import { useScrollLock } from '../lib/useScrollLock';
 import SpeakerDetail from './SpeakerDetail';
 import s from './SessionDetail.module.scss';
 
@@ -63,6 +65,7 @@ export default function SessionDetail({
 	// Restores focus to the trigger on close — keyboard closes only, so a pointer
 	// close never leaves a lingering focus ring on the session card.
 	const setKeyboardClose = useReturnFocus();
+	useScrollLock();
 
 	// A speaker sub-dialog stacked on top of this one. Opened from a speaker row,
 	// seeded from the embedded ref for an instant render, then enriched below.
@@ -84,9 +87,6 @@ export default function SessionDetail({
 	);
 
 	useEffect(() => {
-		const previousOverflow = document.body.style.overflow;
-		document.body.style.overflow = 'hidden';
-
 		const dialog = dialogRef.current;
 		const focusables = (): HTMLElement[] =>
 			dialog
@@ -128,14 +128,18 @@ export default function SessionDetail({
 		document.addEventListener('keydown', onKeyDown, true);
 		return () => {
 			document.removeEventListener('keydown', onKeyDown, true);
-			document.body.style.overflow = previousOverflow;
 		};
 	}, [onClose, setKeyboardClose]);
 
 	const abstractParagraphs = session.description.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
 	const tagCategories = visitorCategories(session);
 
-	return (
+	if (typeof document === 'undefined') return null;
+
+	// Portalled into <body> for the same reason as SpeakerDetail: an ancestor
+	// stacking context on the page would otherwise cap the overlay below the
+	// fixed header and the footer. See the note there.
+	return createPortal(
 		<>
 		<div
 			className={s.overlay}
@@ -235,6 +239,7 @@ export default function SessionDetail({
 			</div>
 		</div>
 		{activeSpeaker && <SpeakerDetail speaker={activeSpeaker} onClose={closeSpeaker} />}
-		</>
+		</>,
+		document.body,
 	);
 }

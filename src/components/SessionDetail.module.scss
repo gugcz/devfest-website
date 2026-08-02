@@ -31,7 +31,11 @@
 	flex-direction: column;
 	width: 100%;
 	max-width: 640px;
-	max-height: min(84vh, 680px);
+	// `100%` (the overlay box), not `vh`: on iOS Safari the fixed overlay tracks
+	// the visible viewport while `vh` stays pinned to the toolbar-hidden one, so
+	// a `vh` cap can stand taller than the overlay and push the tail of a long
+	// abstract out of reach.
+	max-height: min(100%, 680px);
 	overflow: hidden;
 	background:
 		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
@@ -93,6 +97,8 @@
 	// Leave room for the close button on the first line.
 	padding-right: 3.4rem;
 	overflow-y: auto;
+	// The dialog owns the scroll; don't hand leftover momentum to the page.
+	overscroll-behavior: contain;
 }
 
 .kicker {

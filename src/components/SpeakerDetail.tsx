@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { initials, PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
 import { useReturnFocus } from '../lib/useReturnFocus';
+import { useScrollLock } from '../lib/useScrollLock';
 import s from './SpeakerDetail.module.scss';
 
 /**
@@ -15,11 +17,9 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 	// Restores focus to the trigger on close — but only for keyboard closes, so a
 	// pointer close never leaves a lingering focus ring on the card/row.
 	const setKeyboardClose = useReturnFocus();
+	useScrollLock();
 
 	useEffect(() => {
-		const previousOverflow = document.body.style.overflow;
-		document.body.style.overflow = 'hidden';
-
 		const dialog = dialogRef.current;
 		const focusables = (): HTMLElement[] =>
 			dialog
@@ -59,13 +59,19 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 		document.addEventListener('keydown', onKeyDown, true);
 		return () => {
 			document.removeEventListener('keydown', onKeyDown, true);
-			document.body.style.overflow = previousOverflow;
 		};
 	}, [onClose, setKeyboardClose]);
 
 	const bioParagraphs = speaker.bio.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
 
-	return (
+	if (typeof document === 'undefined') return null;
+
+	// Rendered into <body>, not in place. The lineup sits inside a `.rake`
+	// section, whose direct children get `position: relative; z-index: 1`
+	// (BaseLayout.scss) for the raking-light sweep — that is a stacking context,
+	// so an in-place overlay is capped at z-index 1 no matter what it asks for
+	// and paints *under* the fixed header (10001) and the footer (2).
+	return createPortal(
 		<div
 			className={s.overlay}
 			onMouseDown={(event) => {
@@ -171,6 +177,7 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 					)}
 				</div>
 			</div>
-		</div>
+		</div>,
+		document.body,
 	);
 }
