@@ -88,6 +88,8 @@ const isCurrent = (href: string) => {
 </header>
 
 <script>
+	import { currentScrollY, isScrollLocked, lockScroll } from '../lib/scroll-lock';
+
 	// Bundled module scripts run once per document, but <ClientRouter /> replaces
 	// the header on every soft navigation — so re-bind on `astro:page-load`
 	// (fires on the initial load too, replacing DOMContentLoaded). The
@@ -103,10 +105,13 @@ const isCurrent = (href: string) => {
 		const toggle = document.getElementById('nav-toggle');
 		const list = document.getElementById('nav-list');
 
-		// Scroll state — sets data-state for brand reveal on home page
+		// Scroll state — sets data-state for brand reveal on home page.
+		// `currentScrollY()`, not `window.scrollY`: an open overlay pins the body
+		// and the live value reads 0, which would drop the brand behind the
+		// overlay and pop it back on close.
 		const onScrollState = () => {
 			if (!header) return;
-			header.dataset.state = window.scrollY > 24 ? 'scrolled' : 'top';
+			header.dataset.state = currentScrollY() > 24 ? 'scrolled' : 'top';
 		};
 		onScrollState();
 		window.addEventListener('scroll', onScrollState, { passive: true, signal });
@@ -131,6 +136,15 @@ const isCurrent = (href: string) => {
 		const ua = navigator.userAgent;
 		const isSafari = /Safari/.test(ua) && !/(Chrome|CriOS|FxiOS|EdgiOS|Edg\/|Android)/.test(ua);
 		const onScrollHide = () => {
+			// Sit out entirely while an overlay holds the page. The lock parks the
+			// body at scroll 0 and puts it back on release, and feeding those two
+			// jumps through the delta accumulator would read as a hard scroll down
+			// and slide the nav away just as the overlay closes. Leaving `lastY`
+			// untouched means the release lands as a zero delta.
+			if (isScrollLocked()) {
+				raf = false;
+				return;
+			}
 			const y = window.scrollY;
 			if (header) {
 				const diff = y - lastY;
@@ -182,12 +196,24 @@ const isCurrent = (href: string) => {
 		const inertTargets = (): Element[] =>
 			Array.from(document.querySelectorAll('#main-content, footer, #cookie-banner'));
 
+		// Release for the drawer's scroll lock; null whenever the drawer is shut.
+		let releaseScroll: (() => void) | null = null;
+
 		const setOpen = (open: boolean) => {
 			if (!toggle || !list) return;
 			toggle.setAttribute('aria-expanded', String(open));
 			toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 			list.dataset.open = String(open);
-			document.body.style.overflow = open ? 'hidden' : '';
+			// Same lock the detail dialogs use. The `body { overflow: hidden }` this
+			// replaces never actually held: `html { overflow-x: clip }` stops the
+			// overflow propagating to the viewport, so the page scrolled behind the
+			// open drawer in every browser. See `scroll-lock.ts`.
+			if (open) {
+				releaseScroll ??= lockScroll();
+			} else {
+				releaseScroll?.();
+				releaseScroll = null;
+			}
 			// Force header visible when the drawer opens — user needs the toggle.
 			if (open && header) {
 				header.dataset.hidden = 'false';
