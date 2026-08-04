@@ -1,6 +1,6 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
-import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
+import { getAnalytics, isSupported, logEvent, type Analytics } from 'firebase/analytics';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyB7lXxnVicSWTtUe9CbVUarm2MwFVRMucU',
@@ -95,6 +95,7 @@ const gtag = function (): void {
 } as (...args: unknown[]) => void;
 
 let analyticsInstance: Analytics | null = null;
+let analyticsInit: Promise<void> | null = null;
 /**
  * Initialise Firebase Analytics (GA4) in Google Consent Mode with consent
  * DENIED by default, so GA4 boots cookieless: no `client_id`, no storage, only
@@ -111,16 +112,58 @@ let analyticsInstance: Analytics | null = null;
  * `ad_*` stay denied permanently (we only ever measure analytics, never ads),
  * matching the cookie-banner copy. Idempotent; no-ops on the server and where
  * Analytics is unsupported.
+ *
+ * The in-flight promise is memoised, not just the resolved instance: callers
+ * overlap (the banner boots Analytics while a stored `accepted` grants consent
+ * in the same tick), and a plain `if (analyticsInstance)` guard is checked
+ * *before* the first `await`, so both callers would sail past it and push the
+ * consent default twice.
  */
-export async function initAnalytics(): Promise<void> {
-	if (analyticsInstance) return;
+export function initAnalytics(): Promise<void> {
+	analyticsInit ??= (async () => {
+		try {
+			const supported = await isSupported();
+			if (!supported) return;
+			gtag('consent', 'default', DENIED_CONSENT);
+			analyticsInstance = getAnalytics(getApp());
+		} catch (err) {
+			console.warn('[firebase] Analytics init failed:', err);
+		}
+	})();
+	return analyticsInit;
+}
+
+let initialPageViewSeen = false;
+/**
+ * Record a `page_view` for the current URL.
+ *
+ * GA4's own `config` command fires exactly one `page_view`, for the document
+ * that loaded it. `<ClientRouter />` then swaps every subsequent page in via
+ * `history.pushState` without a document load, and GA4's enhanced-measurement
+ * "page changes based on browser history events" does not cover it (verified:
+ * `history.pushState` is left un-patched, and three navigations produced a
+ * single `/g/collect` hit pinned to the entry URL). So every page after the
+ * first went uncounted; this sends them explicitly.
+ *
+ * The first call is therefore swallowed — it corresponds to the document load
+ * that `config` already reported, and re-sending it would double-count the
+ * entry page. Runs for every visitor: under denied consent the hit is the same
+ * cookieless identifier-free ping GA4 already sends.
+ */
+export async function trackPageView(): Promise<void> {
+	await initAnalytics();
+	if (!analyticsInstance) return;
+	if (!initialPageViewSeen) {
+		initialPageViewSeen = true;
+		return;
+	}
 	try {
-		const supported = await isSupported();
-		if (!supported) return;
-		gtag('consent', 'default', DENIED_CONSENT);
-		analyticsInstance = getAnalytics(getApp());
+		logEvent(analyticsInstance, 'page_view', {
+			page_location: window.location.href,
+			page_title: document.title,
+		});
 	} catch (err) {
-		console.warn('[firebase] Analytics init failed:', err);
+		console.warn('[firebase] page_view failed:', err);
 	}
 }
 
