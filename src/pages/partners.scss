@@ -265,7 +265,7 @@
 	}
 
 	/* ===================== SPONSOR TIERS ===================== */
-	// One lamp-lit dossier slab shared by every sponsor tier (diamond →
+	// One lamp-lit dossier slab shared by every sponsor tier (platinum →
 	// silver). Tiers differ only in scale: the higher the tier, the taller the
 	// tile, the larger the logo cap, and the wider the showcase columns — see
 	// the $tiers ladder below. Wordmarks ship light (white cut-outs) for the
@@ -399,8 +399,8 @@
 	// Tier scale ladder: column min-width, tile height, logo cap — the last two
 	// repeated for the 900px breakpoint. Top tier reads as the marquee.
 	$tiers: (
-		'diamond': (320px, 208px, 84px, 176px, 68px),
-		'platinum': (300px, 192px, 76px, 164px, 62px),
+		'platinum': (320px, 208px, 84px, 176px, 68px),
+		'diamond': (300px, 192px, 76px, 164px, 62px),
 		'gold': (280px, 176px, 68px, 150px, 56px),
 		'silver': (280px, 150px, 58px, 130px, 48px),
 	);

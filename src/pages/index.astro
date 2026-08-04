@@ -9,10 +9,12 @@ import HeroBackground from '../components/HeroBackground.astro';
 import Ticker from '../components/Ticker.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
-import { getShowcasePartners } from '../lib/partners';
+import { getActivePartnerTiers } from '../lib/partners';
 
-// Homepage "silver+" strip — every sponsor tier in ladder order, top tier first.
-const homePartners = await getShowcasePartners();
+// Homepage "silver+" strip — one labelled row per tier, top tier first, so the
+// ladder reads the same here as it does on /partners (row scale steps down with
+// the tier via the `.tier-<id>` hook in index.scss).
+const homeTiers = await getActivePartnerTiers();
 
 // Partner logo masters live in `src/assets/partners/<tier>/` so the build can
 // resize them; the `partners` collection still stores plain path strings, so glob
@@ -27,9 +29,10 @@ const logoFor = (logo: string): ImageMetadata =>
 	logoByFile.get(logo.split('/').pop() as string) as ImageMetadata;
 
 // SVG wordmarks stay vector (`format="svg"` copies them through unchanged);
-// rasters get a srcset sized for the strip's 220×56 cap up to ~2× DPR.
-const STRIP_WIDTHS = [220, 330, 440];
-const STRIP_SIZES = '220px';
+// rasters get a srcset sized for the widest strip cap (top tier, 260px) up to
+// ~2× DPR — one list for every tier, the CSS cap does the per-tier scaling.
+const STRIP_WIDTHS = [260, 390, 520];
+const STRIP_SIZES = '260px';
 const sizing = (img: ImageMetadata) =>
 	img.format === 'svg'
 		? ({ format: 'svg', layout: 'none' } as const)
@@ -159,32 +162,39 @@ const tickerTopics = [
 		</section>
 		-->
 
-		<!-- PARTNERS — quiet silver+ strip; media partners live on /partners only -->
-		{homePartners.length > 0 && (
+		<!-- PARTNERS — quiet silver+ strip, one row per tier; media partners live on /partners only -->
+		{homeTiers.length > 0 && (
 			<section id="partners" aria-labelledby="partners-title">
 				<div class="partners-inner reveal">
 					<p id="partners-title" class="section-label">Partners</p>
 
-					<ul class="partners-row">
-						{homePartners.map((p) => (
-							<li class="partners-item">
-								{p.url ? (
-									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<Image class="partners-logo" src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
-									</a>
-								) : (
-									<Image class="partners-logo" src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
-								)}
-							</li>
+					<div class="partners-tiers">
+						{homeTiers.map((tier) => (
+							<div class={`partners-tier tier-${tier.id}`}>
+								<p class="partners-tier-label">{tier.label}</p>
+								<ul class="partners-row">
+									{tier.partners.map((p) => (
+										<li class="partners-item">
+											{p.url ? (
+												<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+													<Image class="partners-logo" src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
+												</a>
+											) : (
+												<Image class="partners-logo" src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
+											)}
+										</li>
+									))}
+								</ul>
+							</div>
 						))}
+					</div>
 
-						<li class="partners-more">
-							<a href="/partners">
-								See all
-								<span class="btn-ghost-arrow" aria-hidden="true">&#8600;</span>
-							</a>
-						</li>
-					</ul>
+					<p class="partners-more">
+						<a href="/partners">
+							See all
+							<span class="btn-ghost-arrow" aria-hidden="true">&#8600;</span>
+						</a>
+					</p>
 				</div>
 			</section>
 		)}

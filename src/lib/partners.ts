@@ -25,8 +25,8 @@ export type PartnerTier = {
 // homepage strip. Media and community partners are deliberately not part of
 // this ladder.
 const TIER_LADDER: { id: PartnerTierId; label: string }[] = [
-	{ id: 'diamond', label: 'Diamond' },
 	{ id: 'platinum', label: 'Platinum' },
+	{ id: 'diamond', label: 'Diamond' },
 	{ id: 'gold', label: 'Gold' },
 	{ id: 'silver', label: 'Silver' },
 ];
@@ -45,9 +45,9 @@ export const getPartnerTiers = async (): Promise<PartnerTier[]> =>
 		TIER_LADDER.map(async ({ id, label }) => ({ id, label, partners: await byTier(id) }))
 	);
 
-/** Flat "silver+" list in tier order — what the homepage teaser shows. */
-export const getShowcasePartners = async (): Promise<Partner[]> =>
-	(await getPartnerTiers()).flatMap((t) => t.partners);
+/** The ladder minus empty tiers — both the /partners sections and the homepage strip. */
+export const getActivePartnerTiers = async (): Promise<PartnerTier[]> =>
+	(await getPartnerTiers()).filter((t) => t.partners.length > 0);
 
 /** Media partners — only shown on the dedicated /partners page, never the homepage. */
 export const getMediaPartners = (): Promise<Partner[]> => byTier('media');

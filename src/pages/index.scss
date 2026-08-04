@@ -1,3 +1,5 @@
+@use 'sass:list';
+
 	.page {
 		flex: 1;
 		display: flex;
@@ -432,8 +434,12 @@
 	}
 
 	/* ===================== PARTNERS ===================== */
-	// Quiet supporting strip: an eyebrow over a muted logo row, hairline-set off
-	// from the sections above and below so it credits without shouting.
+	// Quiet supporting strip: an eyebrow over muted logo rows, hairline-set off
+	// from the sections above and below so it credits without shouting. One row
+	// per tier, top tier first — the same ladder /partners renders, at strip
+	// scale: each row carries a hairline-ruled tier caption and steps its logo
+	// cap (and brightness) down a notch, so the hierarchy reads without the
+	// dossier tiles.
 	#partners {
 		position: relative;
 		padding: 4.5rem var(--gutter);
@@ -461,6 +467,44 @@
 		&::after { display: none; }
 	}
 
+	.partners-tiers {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2.8rem;
+		width: 100%;
+	}
+
+	.partners-tier {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.1rem;
+		width: 100%;
+	}
+
+	// Tier caption: mono eyebrow between two hairlines, centred like the row it
+	// labels. Rules are capped so a one-logo row doesn't get a runway.
+	.partners-tier-label {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+		margin: 0;
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label);
+		letter-spacing: 0.28em;
+		text-transform: uppercase;
+		color: var(--tier-label-color);
+
+		&::before,
+		&::after {
+			content: '';
+			flex: 0 0 40px;
+			height: 1px;
+			background: var(--rule);
+		}
+	}
+
 	.partners-row {
 		list-style: none;
 		margin: 0;
@@ -469,7 +513,7 @@
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: center;
-		gap: 2.4rem 3.4rem;
+		gap: 2rem 3.4rem;
 	}
 
 	// No card — logos float on the section bg, dimmed + desaturated so they read
@@ -487,10 +531,10 @@
 			display: block;
 			width: auto;
 			height: auto;
-			max-height: 56px;
-			max-width: 220px;
+			max-height: var(--strip-logo-h);
+			max-width: var(--strip-logo-w);
 			object-fit: contain;
-			opacity: 0.55;
+			opacity: var(--strip-logo-opacity);
 			filter: grayscale(0.4);
 			transition: opacity 0.2s, filter 0.2s;
 		}
@@ -507,7 +551,38 @@
 		}
 	}
 
-	// Inline "See all" sits in the same row as the logos — quiet mono link.
+	// Strip scale ladder: logo cap (height, width), resting opacity, caption
+	// brightness — the top tier reads biggest and brightest, silver quietest.
+	// Same ordering as the $tiers ladder in partners.scss; the tier ids come
+	// from PartnerTierId in src/lib/partners.ts. Caption alpha bottoms out at
+	// 0.55 — below that the mono caption drops under 4.5:1 on --color-bg (axe
+	// caught 0.46 at 4.11:1), so the ladder dims the logos, not the labels.
+	$strip-tiers: (
+		'platinum': (64px, 260px, 0.72, 0.72),
+		'diamond': (54px, 225px, 0.62, 0.66),
+		'gold': (44px, 190px, 0.56, 0.60),
+		'silver': (38px, 170px, 0.52, 0.55),
+	);
+
+	@each $name, $scale in $strip-tiers {
+		.partners-tier.tier-#{$name} {
+			--strip-logo-h: #{list.nth($scale, 1)};
+			--strip-logo-w: #{list.nth($scale, 2)};
+			--strip-logo-opacity: #{list.nth($scale, 3)};
+			--tier-label-color: #{rgba(240, 237, 230, list.nth($scale, 4))};
+
+			@media (max-width: 600px) {
+				--strip-logo-h: #{list.nth($scale, 1) * 0.8};
+				--strip-logo-w: #{list.nth($scale, 2) * 0.78};
+			}
+		}
+	}
+
+	// Quiet mono link under the ladder.
+	.partners-more {
+		margin: 2.6rem 0 0;
+	}
+
 	.partners-more a {
 		display: inline-flex;
 		align-items: center;
