@@ -4,9 +4,9 @@ import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
-import { getPartnerTiers, getMediaPartners, getCommunityPartners } from '../lib/partners';
+import { getActivePartnerTiers, getMediaPartners, getCommunityPartners } from '../lib/partners';
 
-const activeTiers = (await getPartnerTiers()).filter((t) => t.partners.length > 0);
+const activeTiers = await getActivePartnerTiers();
 
 // Off-ladder rows, rendered below the tiers as cream logo plates. Same markup
 // and styling for both — only the heading differs — so they share one loop.
