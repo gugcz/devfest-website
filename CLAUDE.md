@@ -60,7 +60,7 @@ Static Astro components (`.astro`) for layout and non-interactive UI. React comp
 - `Tickets.tsx` — Ticket roadmap; `fetch('/api/tickets')`, helpers in `src/lib/tito.ts`
 - `InvoiceForm.tsx` — `/invoice` form; calls the `submitInvoiceCallable` callable via the Functions SDK (App Check attached)
 - `Footer.astro` — Social links (X, Facebook, Bluesky, LinkedIn, YouTube)
-- `CookieBanner.astro` — Cookie consent stored in localStorage; dispatches `cookie-consent-accepted` DOM event
+- `CookieBanner.astro` — Cookie consent stored in localStorage; also the analytics bootstrap (calls `trackPageView()` on every `astro:page-load`)
 
 ### Firebase Integration (`src/lib/firebase.ts`)
 
@@ -69,6 +69,9 @@ Firebase Analytics (GA4) runs in **Google Consent Mode** for every visitor, not 
 Gotchas (both verified in-browser; getting either wrong silently writes `_ga` with consent denied):
 - The `consent: 'default'` command **must** land in the dataLayer ahead of the `config` command. Firebase's own `setConsent()` does **not** guarantee that ordering, which is why `firebase.ts` pushes the default via its own gtag shim instead.
 - gtag.js only honours commands pushed as an **`arguments` object** (Google's canonical snippet). A plain array is silently ignored — the consent default gets skipped and cookies are written anyway. The `gtag` shim in `firebase.ts` forwards `arguments` for this reason; don't "clean it up" into a rest array.
+- `initAnalytics()` memoises its **in-flight promise**, not just the resolved instance. Callers overlap (the banner boots Analytics while a stored `accepted` grants consent in the same tick), and an `if (analyticsInstance)` guard sits before the first `await`, so both callers would push the consent default twice.
+
+**Page views under `<ClientRouter />`.** GA4's `config` fires exactly one `page_view` — for the document that loaded it. Soft navigations go through `history.pushState`, and GA4 enhanced measurement's "page changes based on browser history events" does **not** pick them up (verified: `history.pushState` stays un-patched; three navigations produced one `/g/collect` hit, pinned to the entry URL). So `firebase.ts` exports `trackPageView()` and `CookieBanner.astro` calls it on every `astro:page-load`; it swallows the first call (the document load `config` already reported) and sends the rest with an explicit `page_location`/`page_title`. Without it every page after the entry page is uncounted.
 
 Firebase Realtime Database holds the ti.to `/tickets` cache (written hourly by `refreshTicketsScheduled`, served to the browser via `/api/tickets` — see below); Firestore holds `speakers`/`sessions` (Sessionize sync) and `invoices`. Deployment targets the `devfest-public` site in the `devfest-cz-app` project via `firebase.json`.
 

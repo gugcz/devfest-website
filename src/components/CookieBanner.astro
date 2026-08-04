@@ -23,17 +23,19 @@
 		try { localStorage.setItem(CONSENT_KEY, value); } catch {}
 	}
 
-	// Boot Analytics in cookieless Consent Mode (consent denied by default).
-	// Safe for every visitor — GA4 sends only aggregated identifier-free pings,
-	// setting no cookie / `client_id` until they accept. `initAnalytics()` is
-	// idempotent (module-level guard) and the module stays cached across soft
-	// navigations, so re-running per page-load never re-initialises Analytics.
-	async function startAnalytics() {
+	// Boot Analytics in cookieless Consent Mode (consent denied by default) and
+	// record the page view. Safe for every visitor — GA4 sends only aggregated
+	// identifier-free pings, setting no cookie / `client_id` until they accept.
+	// `trackPageView()` initialises Analytics on first use (idempotent) and
+	// swallows the initial call, which GA4's own `config` already reported; the
+	// rest are the `<ClientRouter />` soft navigations GA4 cannot see by itself.
+	// The module stays cached across soft navigations, so both guards hold.
+	async function trackPageView() {
 		try {
 			const mod = await import('../lib/firebase');
-			await mod.initAnalytics();
+			await mod.trackPageView();
 		} catch (err) {
-			console.warn('[cookie-banner] Failed to start analytics:', err);
+			console.warn('[cookie-banner] Failed to track page view:', err);
 		}
 	}
 
@@ -66,13 +68,12 @@
 
 		// Analytics starts for everyone in cookieless mode; identifiers stay off
 		// until (and unless) the visitor accepts.
-		startAnalytics();
+		trackPageView();
 
 		// Banner starts hidden — reveal only if no decision yet
 		const stored = getConsent();
 		if (stored === 'accepted') {
 			grantAnalyticsConsent();
-			window.dispatchEvent(new Event('cookie-consent-accepted'));
 		} else if (!stored) {
 			showBanner();
 		}
@@ -81,7 +82,6 @@
 			setConsent('accepted');
 			hideBanner();
 			grantAnalyticsConsent();
-			window.dispatchEvent(new Event('cookie-consent-accepted'));
 		});
 
 		document.getElementById('cookie-decline')?.addEventListener('click', () => {
