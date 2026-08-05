@@ -153,6 +153,14 @@
 		// canvas color — backs the iOS Safari URL bar tint and prevents
 		// a white flash during rubber-band scroll past the body edges.
 		background: var(--color-bg);
+		// Reserve the scrollbar gutter permanently. Opening an overlay takes the
+		// body out of flow (see `lib/scroll-lock.ts`), the document stops being
+		// scrollable, and a classic scrollbar would vanish — measured as a 15px
+		// reflow of the whole page. That is worst on /speakers, where the dialog
+		// opens inside a view transition, so the reflow lands in the middle of
+		// the portrait morph as a page-wide ghost. Platforms with overlay
+		// scrollbars (macOS, iOS, Android) reserve nothing and are unaffected.
+		scrollbar-gutter: stable;
 		// Horizontal overflow clipped via `overflow-x: clip` only — NOT
 		// `overflow-x: hidden`. `hidden` turns html into a scroll
 		// container on iOS Safari, which anchors `position: fixed`

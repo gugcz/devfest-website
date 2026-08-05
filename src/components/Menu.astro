@@ -88,7 +88,7 @@ const isCurrent = (href: string) => {
 </header>
 
 <script>
-	import { currentScrollY, isScrollLocked, lockScroll } from '../lib/scroll-lock';
+	import { isScrollLocked, lockScroll } from '../lib/scroll-lock';
 
 	// Bundled module scripts run once per document, but <ClientRouter /> replaces
 	// the header on every soft navigation — so re-bind on `astro:page-load`
@@ -105,13 +105,14 @@ const isCurrent = (href: string) => {
 		const toggle = document.getElementById('nav-toggle');
 		const list = document.getElementById('nav-list');
 
-		// Scroll state — sets data-state for brand reveal on home page.
-		// `currentScrollY()`, not `window.scrollY`: an open overlay pins the body
-		// and the live value reads 0, which would drop the brand behind the
-		// overlay and pop it back on close.
+		// Scroll state — sets data-state for brand reveal on home page. Sits out
+		// while an overlay holds the page, like the hide handler below: the lock
+		// parks scrollY at 0, which would otherwise drop the brand behind the
+		// overlay and pop it back on close. Frozen for the duration, and correct
+		// again on release, which fires its own scroll event once unlocked.
 		const onScrollState = () => {
-			if (!header) return;
-			header.dataset.state = currentScrollY() > 24 ? 'scrolled' : 'top';
+			if (!header || isScrollLocked()) return;
+			header.dataset.state = window.scrollY > 24 ? 'scrolled' : 'top';
 		};
 		onScrollState();
 		window.addEventListener('scroll', onScrollState, { passive: true, signal });

@@ -64,20 +64,16 @@ function disengage(restoreScroll: boolean): void {
 	if (restoreScroll) window.scrollTo({ top: y, left: 0, behavior: 'instant' });
 }
 
-/** True while any overlay holds the page. */
+/**
+ * True while any overlay holds the page.
+ *
+ * Scroll-driven chrome must consult this and sit out while it's true. Pinning
+ * the body parks `window.scrollY` at 0 and fires a scroll event on the way in
+ * and out, so a handler that reacts to either jump acts on a position the user
+ * never scrolled to. One rule, applied by every such handler — see `Menu.astro`.
+ */
 export function isScrollLocked(): boolean {
 	return locks > 0;
-}
-
-/**
- * The scroll offset the page is really at: the frozen one while locked, the
- * live one otherwise. Scroll-driven chrome (the header's brand reveal and
- * hide-on-scroll) has to read this rather than `window.scrollY`, which reports
- * 0 under a lock and would otherwise flip the header's state behind the overlay
- * and again on release.
- */
-export function currentScrollY(): number {
-	return locks > 0 ? lockedAt : window.scrollY;
 }
 
 /**
@@ -92,6 +88,10 @@ export function lockScroll(): () => void {
 		if (released) return;
 		released = true;
 		if (--locks > 0) return;
+		// Clamp: a release that outlived an `astro:before-swap` reset would
+		// otherwise drive the counter negative, and a negative counter never
+		// re-enters `locks++ === 0` — the lock would be dead for the session.
+		locks = 0;
 		disengage(true);
 	};
 }
