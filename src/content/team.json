@@ -108,5 +108,14 @@
 		"role": "Festival",
 		"photo": "/team/petr-vobr-bw.webp",
 		"photoColor": "/team/petr-vobr.webp"
+	},
+	{
+		"id": "rosta-navratil",
+		"order": 11,
+		"name": "Rostislav Navrátil",
+		"alias": "Private eye's Legman",
+		"role": "Festival Sidekick",
+		"photo": "/team/rosta-navratil-bw.webp",
+		"photoColor": "/team/rosta-navratil.webp"
 	}
 ]
