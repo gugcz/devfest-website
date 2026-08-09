@@ -578,6 +578,49 @@
 		}
 	}
 
+	// Phones: square the strip up to the left. A centred caption works while the
+	// row under it is wide enough to be a row, but below 600px each tier
+	// collapses to one or two logos, so the caption stops reading as a caption
+	// and starts reading as a label adrift out to the right — every other block
+	// on a phone (the hero, the ticket board, all of /partners) hangs off the
+	// left edge. Caption, logos, eyebrow and the "See all" link share that axis
+	// here, and the hairlines run out to the column edge the way
+	// `.section-head` sets a left-aligned header.
+	@media (max-width: 600px) {
+		.partners-inner {
+			align-items: flex-start;
+			text-align: left;
+		}
+
+		#partners .section-label {
+			align-self: stretch;
+			justify-content: flex-start;
+
+			// left-set, so the trailing hairline reads true again
+			&::after {
+				display: block;
+				flex: 1 1 auto;
+			}
+		}
+
+		.partners-tier {
+			align-items: flex-start;
+		}
+
+		// The leading hairline would butt straight into the page edge, so the
+		// left-set caption keeps only its trailing rule.
+		.partners-tier-label {
+			align-self: stretch;
+
+			&::before { display: none; }
+			&::after { flex: 1 1 auto; }
+		}
+
+		.partners-row {
+			justify-content: flex-start;
+		}
+	}
+
 	// Quiet mono link under the ladder.
 	.partners-more {
 		margin: 2.6rem 0 0;
