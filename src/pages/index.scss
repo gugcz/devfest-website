@@ -47,7 +47,7 @@
 			gap: 0.8rem;
 			font-size: var(--fs-label);
 
-			&::after { flex: 0 0 32px; }
+			&::after { width: 32px; }
 		}
 	}
 
@@ -375,9 +375,13 @@
 		gap: 0.9rem;
 		margin-bottom: 2rem;
 
+		// Real `width`, not a bare `flex-basis` — see `.partners-tier-label`: a
+		// basis is not folded into fit-content sizing by every engine, so a
+		// centred eyebrow measured without its rule paints off its own axis.
 		&::after {
 			content: '';
-			flex: 0 0 56px;
+			flex: none;
+			width: 56px;
 			height: 1px;
 			background: linear-gradient(to right, var(--rule-red), transparent);
 		}
@@ -496,10 +500,19 @@
 		text-transform: uppercase;
 		color: var(--tier-label-color);
 
+		// The rules carry a real `width`, not a bare `flex-basis`. The caption is
+		// sized to fit its content (the tier column centres it), and WebKit does
+		// not fold an item's flex-basis into that fit-content measurement — it
+		// measures these empty pseudo-elements as 0 wide, then paints them 40px
+		// wide anyway. The caption ends up centred as if it were 80px narrower
+		// than it draws, i.e. sitting ~40px right of the logos under it (visible
+		// on iOS Safari, never in Chromium). An explicit width is measured by
+		// every engine, so the box it is centred by is the box it paints.
 		&::before,
 		&::after {
 			content: '';
-			flex: 0 0 40px;
+			flex: none;
+			width: 40px;
 			height: 1px;
 			background: var(--rule);
 		}
