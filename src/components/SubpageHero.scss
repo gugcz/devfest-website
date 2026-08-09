@@ -38,7 +38,8 @@
 
 		&::after {
 			content: '';
-			flex: 0 0 64px;
+			flex: none;
+			width: 64px;
 			height: 1px;
 			background: linear-gradient(to right, var(--rule-red), transparent);
 		}

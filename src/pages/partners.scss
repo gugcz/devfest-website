@@ -326,11 +326,18 @@
 		border-left: 1px solid var(--rule);
 	}
 
+	// The column width is a real `width`, not a bare `flex-basis`. The grid
+	// above is `width: fit-content`, and a flex-basis is not folded into that
+	// measurement by every engine (WebKit measures these cells at their logo's
+	// intrinsic width), which would size the ruled box narrower than the cells
+	// it is supposed to enclose. The ≤600px override below still swaps in its
+	// own basis; a basis always wins over `width`.
 	.tier-item {
 		position: relative;
 		overflow: hidden;
 		display: flex;
-		flex: 0 0 var(--tier-col);
+		flex: none;
+		width: var(--tier-col);
 		max-width: 100%;
 		min-height: var(--tier-tile);
 		border: 0;
@@ -491,7 +498,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		flex: 0 0 220px;
+		// Real `width` rather than a bare basis, same reason as `.tier-item`.
+		flex: none;
+		width: 220px;
 		max-width: 100%;
 		min-height: 150px;
 		padding: 1.8rem 2rem;
@@ -535,7 +544,9 @@
 	}
 
 	@media (max-width: 900px) {
-		.plate-item { flex-basis: 160px; min-height: 130px; padding: 1.4rem 1.2rem; }
+		// `width`, not `flex-basis` — the grid is `width: fit-content`, so the
+		// cell the box is measured from has to be the cell that gets laid out.
+		.plate-item { width: 160px; min-height: 130px; padding: 1.4rem 1.2rem; }
 	}
 
 	@media (max-width: 600px) {

@@ -329,9 +329,13 @@
 		align-items: center;
 		gap: 0.9rem;
 
+		// Real `width`, not a bare `flex-basis` — an inline-flex box is always
+		// sized to fit its content, and a basis is not folded into that
+		// measurement by every engine, so the box would come out a rule short.
 		&::after {
 			content: '';
-			flex: 0 0 56px;
+			flex: none;
+			width: 56px;
 			height: 1px;
 			background: linear-gradient(to right, var(--rule-red), transparent);
 		}
