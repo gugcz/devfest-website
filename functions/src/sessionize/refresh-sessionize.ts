@@ -33,6 +33,7 @@ import {
 	buildSpeakerSummaryMap,
 	computeDeletePlan,
 	extractSessions,
+	describeError,
 	extractSpeakers,
 	fetchSessionizePayload,
 	normalizeSessions,
@@ -83,7 +84,14 @@ async function commitCollection<T extends { id: string }>(name: string, docs: T[
 	for (const id of plan.toDelete) {
 		batch.delete(collection.doc(id));
 	}
-	await batch.commit();
+	// Name the stage on the way out: a raw Firestore error (`5 NOT_FOUND`,
+	// `7 PERMISSION_DENIED`) reads identically to a Sessionize one in the Slack
+	// alert, and the two have completely different fixes.
+	try {
+		await batch.commit();
+	} catch (err) {
+		throw new Error(`Firestore write to /${name} failed: ${describeError(err)}`, { cause: err });
+	}
 
 	logger.info(
 		`Wrote /${name} (upserted=${docs.length}, deleted=${plan.toDelete.length}, withheld=${plan.withheld})`,
@@ -152,7 +160,13 @@ export const refreshSessionizeScheduled = onSchedule(
 		} catch (err) {
 			// Alert best-effort, then rethrow the ORIGINAL error so the failure
 			// surfaces in logs / retries and yesterday's data stays intact.
-			await notify(`Sync failed: ${(err as Error).message}`);
+			// `describeError` unwraps the `cause`, because the bare message is
+			// routinely useless on its own (undici reports every network fault as
+			// `fetch failed`) and the alert is read without the logs at hand. The
+			// tail spells out the blast radius so nobody debugs a no-op.
+			await notify(
+				`Sync failed: ${describeError(err)} — live speakers/sessions left untouched, retry at 06:00 Europe/Prague.`,
+			);
 			throw err;
 		}
 	},

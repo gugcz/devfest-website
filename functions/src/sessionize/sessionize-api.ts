@@ -746,17 +746,24 @@ const RETRY_BASE_DELAY_MS = 1_000;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * Flatten a fetch rejection into something diagnosable. `fetch failed` on its
- * own says nothing; undici hides the actual reason (`ENOTFOUND`,
- * `UND_ERR_CONNECT_TIMEOUT`, `ECONNRESET`, …) one level down in `cause`, and an
- * `AbortSignal.timeout` abort arrives as a `TimeoutError`.
+ * Flatten an error into one diagnosable line, for logs and the Slack alert.
+ * A bare `message` is often useless on its own — undici reports every
+ * network-level failure as `fetch failed` and hides the actual reason
+ * (`ENOTFOUND`, `UND_ERR_CONNECT_TIMEOUT`, `ECONNRESET`, …) one level down in
+ * `cause`; Firestore/Storage errors likewise carry their status in `code`. So
+ * append whichever of those exists. (An `AbortSignal.timeout` abort needs no
+ * unwrapping — its own message already names the timeout.)
  */
-export function describeFetchError(err: unknown): string {
-	const error = err as { name?: string; message?: string; cause?: unknown };
+export function describeError(err: unknown): string {
+	const error = err as { message?: string; code?: string | number; cause?: unknown };
 	const message = error?.message || String(err);
 	const cause = error?.cause as { code?: string; message?: string } | undefined;
-	const detail = cause?.code || cause?.message;
-	return detail ? `${message} (${detail})` : message;
+	const detail = cause?.code || cause?.message || error?.code;
+	if (detail == null) return message;
+	// gRPC errors already lead with their code ("7 PERMISSION_DENIED: …") — don't
+	// echo it back in the suffix.
+	const text = String(detail);
+	return message.includes(text) ? message : `${message} (${text})`;
 }
 
 /** Retry-worthy HTTP status: Sessionize rate-limiting or a server-side hiccup.
@@ -790,14 +797,14 @@ async function fetchView(endpointId: string, view: string): Promise<Response> {
 			lastError = err;
 			if (attempt === FETCH_ATTEMPTS) break;
 			logger.warn(
-				`Sessionize ${view} view fetch failed (attempt ${attempt}/${FETCH_ATTEMPTS}), retrying: ${describeFetchError(err)}`,
+				`Sessionize ${view} view fetch failed (attempt ${attempt}/${FETCH_ATTEMPTS}), retrying: ${describeError(err)}`,
 			);
 		}
 		await sleep(RETRY_BASE_DELAY_MS * 2 ** (attempt - 1));
 	}
 
 	throw new Error(
-		`Sessionize ${view} view unreachable after ${FETCH_ATTEMPTS} attempts: ${describeFetchError(lastError)}`,
+		`Sessionize ${view} view unreachable after ${FETCH_ATTEMPTS} attempts: ${describeError(lastError)}`,
 		{ cause: lastError },
 	);
 }
