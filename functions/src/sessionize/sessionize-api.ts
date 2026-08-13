@@ -34,6 +34,9 @@
  * live collection) are reviewable in isolation — this package ships no tests.
  */
 
+import { describeError } from '../lib/errors.js';
+import { errorBody, fetchWithRetry } from '../lib/http.js';
+
 const SESSIONIZE_API_BASE = 'https://sessionize.com/api/v2';
 
 /** Raw Sessionize link as returned by the All view. */
@@ -730,13 +733,19 @@ export function parseEndpointId(raw: string | null | undefined): string {
 	return trimmed.replace(/[/?#].*$/, '');
 }
 
-/** GET one Sessionize view. Fails fast on a hung connection rather than riding
- * the 120s function timeout. */
+/**
+ * GET one Sessionize view. Retries transient faults via `fetchWithRetry`,
+ * because this sync runs once a day: the blip that cost a whole day of lineup
+ * freshness in production was a ~10.7s connect timeout here. A non-OK response
+ * comes back as-is, so the caller can fall back to the Speakers view on the
+ * deterministic 400 an endpoint returns for a view it doesn't serve.
+ */
 async function fetchView(endpointId: string, view: string): Promise<Response> {
-	return fetch(`${SESSIONIZE_API_BASE}/${endpointId}/view/${view}`, {
-		headers: { Accept: 'application/json' },
-		signal: AbortSignal.timeout(15_000),
-	});
+	return fetchWithRetry(
+		`${SESSIONIZE_API_BASE}/${endpointId}/view/${view}`,
+		{ headers: { Accept: 'application/json' } },
+		{ label: `Sessionize ${view} view` },
+	);
 }
 
 /**
@@ -744,9 +753,10 @@ async function fetchView(endpointId: string, view: string): Promise<Response> {
  * provisioned per-view, so the configured id may serve the "All data" view, the
  * "Speakers" view, or both — try All first and fall back to Speakers on a
  * non-OK response. Only the All view carries sessions; a Speakers-view fallback
- * yields speakers but no sessions. Throws on network error, timeout, both views
- * failing, or a body that is not JSON, so the caller aborts without touching
- * Firestore.
+ * yields speakers but no sessions. Each view is fetched with retries (see
+ * `fetchView`), so a transient blip no longer costs the day's sync. Throws when
+ * a view stays unreachable, both views fail, or the body is not JSON, so the
+ * caller aborts without touching Firestore.
  */
 export async function fetchSessionizePayload(rawEndpointId: string): Promise<unknown> {
 	const endpointId = parseEndpointId(rawEndpointId);
@@ -757,9 +767,8 @@ export async function fetchSessionizePayload(rawEndpointId: string): Promise<unk
 		const allStatus = res.status;
 		res = await fetchView(endpointId, 'Speakers');
 		if (!res.ok) {
-			const body = await res.text().catch(() => '');
 			throw new Error(
-				`Sessionize API failed for id "${endpointId}" (All=${allStatus}, Speakers=${res.status} ${res.statusText}): ${body.slice(0, 200)}`,
+				`Sessionize API rejected both views for id "${endpointId}" (All=${allStatus}, Speakers=${res.status} ${res.statusText}): ${await errorBody(res, 200)}`,
 			);
 		}
 	}
@@ -767,7 +776,12 @@ export async function fetchSessionizePayload(rawEndpointId: string): Promise<unk
 	try {
 		return await res.json();
 	} catch (err) {
-		throw new Error(`Sessionize response was not valid JSON: ${(err as Error).message}`);
+		// Almost always an HTML page from an embed id rather than a JSON endpoint —
+		// say so, since the message otherwise reads as a Sessionize outage.
+		throw new Error(
+			`Sessionize response was not valid JSON (is "${endpointId}" a JSON API endpoint id?): ${describeError(err)}`,
+			{ cause: err },
+		);
 	}
 }
 

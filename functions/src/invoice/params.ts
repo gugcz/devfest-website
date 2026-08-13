@@ -11,7 +11,8 @@
  *
  * ti.to credentials (`TITO_API_TOKEN`, `TITO_ACCOUNT_SLUG`,
  * `TITO_EVENT_SLUG`) and `SLACK_WEBHOOK_URL` are owned by the tickets
- * domain — import them from `../tickets/params.js`, do NOT redeclare.
+ * domain — import them from `../tickets/params.js` (or `../lib/params.js` for
+ * `SLACK_WEBHOOK_URL`, which every domain shares), do NOT redeclare.
  */
 
 import { defineSecret } from 'firebase-functions/params';

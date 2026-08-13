@@ -12,13 +12,11 @@
 import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
-import {
-	SLACK_WEBHOOK_URL,
-	TITO_ACCOUNT_SLUG,
-	TITO_API_TOKEN,
-	TITO_EVENT_SLUG,
-} from './params.js';
-import { postToSlack, type SlackPayload } from './slack-client.js';
+import { SLACK_WEBHOOK_URL } from '../lib/params.js';
+import { runBackground } from '../lib/run.js';
+import { postToSlack, type SlackPayload } from '../lib/slack.js';
+import { SCHEDULED } from '../options.js';
+import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from './params.js';
 import {
 	deriveSaleStatus,
 	fetchAllReleases,
@@ -26,8 +24,6 @@ import {
 	type DerivedSaleStatus,
 	type TitoRelease,
 } from './tito-api.js';
-
-const REGION = 'europe-west1';
 
 interface ReleaseSummary {
 	title: string;
@@ -134,13 +130,15 @@ function buildSlackMessage(summary: Summary): SlackPayload {
 
 /** Shared cron options for both status-report schedules. */
 const SCHEDULE_OPTS = {
-	timeZone: 'Europe/Prague',
-	region: REGION,
+	...SCHEDULED,
 	secrets: [SLACK_WEBHOOK_URL, TITO_API_TOKEN],
-	timeoutSeconds: 120,
-	memory: '256MiB' as const,
-	retryCount: 1,
 };
+
+/** Shared alerting identity for both schedules — they run the same handler. */
+const BACKGROUND = {
+	domain: 'tickets',
+	failureNote: 'no sales summary was posted for this slot; ticket sales are unaffected',
+} as const;
 
 /** Fetch live releases from ti.to and post a sales summary to Slack. */
 async function runTicketStatus(): Promise<void> {
@@ -167,11 +165,11 @@ async function runTicketStatus(): Promise<void> {
 /** Monday at 09:00 Europe/Prague. Fetches live data from ti.to (no RTDB). */
 export const weeklyTicketStatusScheduled = onSchedule(
 	{ ...SCHEDULE_OPTS, schedule: 'every monday 09:00' },
-	runTicketStatus,
+	() => runBackground({ ...BACKGROUND, name: 'weeklyTicketStatusScheduled' }, runTicketStatus),
 );
 
 /** Thursday at 18:00 Europe/Prague. Fetches live data from ti.to (no RTDB). */
 export const thursdayTicketStatusScheduled = onSchedule(
 	{ ...SCHEDULE_OPTS, schedule: 'every thursday 18:00' },
-	runTicketStatus,
+	() => runBackground({ ...BACKGROUND, name: 'thursdayTicketStatusScheduled' }, runTicketStatus),
 );

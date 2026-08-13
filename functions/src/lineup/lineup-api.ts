@@ -22,12 +22,11 @@
  * `sessionFromDoc` parsers (src/lib/) and no parsing logic is duplicated here.
  */
 
-import { logger } from 'firebase-functions/v2';
 import { onRequest } from 'firebase-functions/v2/https';
 
 import { firestore } from '../lib/admin.js';
-
-const REGION = 'europe-west1';
+import { cachedJsonEndpoint } from '../lib/cached-endpoint.js';
+import { CACHED_ENDPOINT } from '../options.js';
 
 // Edge cache (shared): 1h fresh, then served stale for a day while revalidating —
 // matches the daily cadence of `refreshSessionizeScheduled`. `max-age=0` keeps browsers
@@ -49,50 +48,26 @@ interface LineupPayload {
 	sessions: LineupDoc[];
 }
 
-let memo: { at: number; payload: LineupPayload } | null = null;
-
 async function readCollection(name: string): Promise<LineupDoc[]> {
 	const snap = await firestore().collection(name).orderBy('order').get();
 	return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
 
 async function loadLineup(): Promise<LineupPayload> {
-	const now = Date.now();
-	if (memo && now - memo.at < MEMO_TTL_MS) return memo.payload;
 	const [speakers, sessions] = await Promise.all([
 		readCollection('speakers'),
 		readCollection('sessions'),
 	]);
-	const payload: LineupPayload = { speakers, sessions };
-	memo = { at: now, payload };
-	return payload;
+	return { speakers, sessions };
 }
 
 export const lineupApi = onRequest(
-	{
-		region: REGION,
-		invoker: 'public',
-		memory: '256MiB',
-		timeoutSeconds: 30,
-		// Keep one instance warm. A cold start here is a container boot + Node/Admin
-		// SDK init on the critical path of the first uncached lineup fetch — seconds
-		// of blank speaker/session grid for whoever trips the CDN revalidation. The
-		// long `s-maxage` means traffic is bursty and sparse, which is exactly the
-		// shape that would otherwise cold-start almost every time. The warm instance
-		// also preserves the in-instance memo below between bursts.
-		minInstances: 1,
-	},
-	async (req, res) => {
-		try {
-			const payload = await loadLineup();
-			res.set('Cache-Control', CACHE_CONTROL);
-			res.json(payload);
-		} catch (err) {
-			logger.error('lineupApi read failed', err);
-			// Never cache an error — the browser falls back to its "unavailable" state
-			// and a retry can hit a healthy instance.
-			res.set('Cache-Control', 'no-store');
-			res.status(503).json({ speakers: [], sessions: [] });
-		}
-	},
+	CACHED_ENDPOINT,
+	cachedJsonEndpoint<LineupPayload>({
+		name: 'lineupApi',
+		cacheControl: CACHE_CONTROL,
+		memoTtlMs: MEMO_TTL_MS,
+		fallback: { speakers: [], sessions: [] },
+		load: loadLineup,
+	}),
 );

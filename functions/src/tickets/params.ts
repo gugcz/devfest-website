@@ -23,6 +23,6 @@ export const TITO_EVENT_SLUG = defineString('TITO_EVENT_SLUG', { default: '' });
 // Customize → Webhook Endpoints.
 export const TITO_WEBHOOK_SECRET = defineSecret('TITO_WEBHOOK_SECRET');
 
-// Slack incoming webhook URL — used by `ticketsWebhook` to post purchase
-// notifications. Create one at https://api.slack.com/apps → Incoming Webhooks.
-export const SLACK_WEBHOOK_URL = defineSecret('SLACK_WEBHOOK_URL');
+// The Slack webhook every domain posts to lives in `lib/params.ts` — it is not
+// a tickets-domain secret, and importing it from here made sessionize/invoice
+// depend on this module.
