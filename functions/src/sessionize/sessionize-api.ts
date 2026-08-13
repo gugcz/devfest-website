@@ -34,6 +34,8 @@
  * live collection) are reviewable in isolation — this package ships no tests.
  */
 
+import { logger } from 'firebase-functions/v2';
+
 const SESSIONIZE_API_BASE = 'https://sessionize.com/api/v2';
 
 /** Raw Sessionize link as returned by the All view. */
@@ -730,13 +732,74 @@ export function parseEndpointId(raw: string | null | undefined): string {
 	return trimmed.replace(/[/?#].*$/, '');
 }
 
-/** GET one Sessionize view. Fails fast on a hung connection rather than riding
- * the 120s function timeout. */
+/** Per-attempt ceiling. Fails fast on a hung connection rather than riding the
+ * function timeout. */
+const FETCH_TIMEOUT_MS = 15_000;
+/** Attempts per view before giving up. The sync runs once a day, so a single
+ * transient blip (undici surfaces DNS/connect/reset failures as a bare
+ * `TypeError: fetch failed`) would otherwise cost a whole day of freshness —
+ * observed in production as a ~10.7s connect timeout against sessionize.com. */
+const FETCH_ATTEMPTS = 3;
+/** Backoff before attempt N+1: 1s, then 2s. */
+const RETRY_BASE_DELAY_MS = 1_000;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Flatten a fetch rejection into something diagnosable. `fetch failed` on its
+ * own says nothing; undici hides the actual reason (`ENOTFOUND`,
+ * `UND_ERR_CONNECT_TIMEOUT`, `ECONNRESET`, …) one level down in `cause`, and an
+ * `AbortSignal.timeout` abort arrives as a `TimeoutError`.
+ */
+export function describeFetchError(err: unknown): string {
+	const error = err as { name?: string; message?: string; cause?: unknown };
+	const message = error?.message || String(err);
+	const cause = error?.cause as { code?: string; message?: string } | undefined;
+	const detail = cause?.code || cause?.message;
+	return detail ? `${message} (${detail})` : message;
+}
+
+/** Retry-worthy HTTP status: Sessionize rate-limiting or a server-side hiccup.
+ * A 4xx (e.g. 400 for a view this endpoint doesn't serve) is deterministic — it
+ * must fall through to the Speakers-view fallback immediately, not burn retries. */
+function isTransientStatus(status: number): boolean {
+	return status === 429 || status >= 500;
+}
+
+/**
+ * GET one Sessionize view, retrying transient network failures and 429/5xx
+ * responses with a short backoff. Returns the last response when every attempt
+ * came back non-OK (the caller decides between the Speakers fallback and
+ * throwing); throws only when no attempt produced a response at all.
+ */
 async function fetchView(endpointId: string, view: string): Promise<Response> {
-	return fetch(`${SESSIONIZE_API_BASE}/${endpointId}/view/${view}`, {
-		headers: { Accept: 'application/json' },
-		signal: AbortSignal.timeout(15_000),
-	});
+	const url = `${SESSIONIZE_API_BASE}/${endpointId}/view/${view}`;
+	let lastError: unknown;
+
+	for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt++) {
+		try {
+			const res = await fetch(url, {
+				headers: { Accept: 'application/json' },
+				signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+			});
+			if (res.ok || !isTransientStatus(res.status) || attempt === FETCH_ATTEMPTS) return res;
+			logger.warn(
+				`Sessionize ${view} view returned ${res.status} (attempt ${attempt}/${FETCH_ATTEMPTS}), retrying`,
+			);
+		} catch (err) {
+			lastError = err;
+			if (attempt === FETCH_ATTEMPTS) break;
+			logger.warn(
+				`Sessionize ${view} view fetch failed (attempt ${attempt}/${FETCH_ATTEMPTS}), retrying: ${describeFetchError(err)}`,
+			);
+		}
+		await sleep(RETRY_BASE_DELAY_MS * 2 ** (attempt - 1));
+	}
+
+	throw new Error(
+		`Sessionize ${view} view unreachable after ${FETCH_ATTEMPTS} attempts: ${describeFetchError(lastError)}`,
+		{ cause: lastError },
+	);
 }
 
 /**
@@ -744,9 +807,10 @@ async function fetchView(endpointId: string, view: string): Promise<Response> {
  * provisioned per-view, so the configured id may serve the "All data" view, the
  * "Speakers" view, or both — try All first and fall back to Speakers on a
  * non-OK response. Only the All view carries sessions; a Speakers-view fallback
- * yields speakers but no sessions. Throws on network error, timeout, both views
- * failing, or a body that is not JSON, so the caller aborts without touching
- * Firestore.
+ * yields speakers but no sessions. Each view is fetched with retries (see
+ * `fetchView`), so a transient blip no longer costs the day's sync. Throws when
+ * a view stays unreachable, both views fail, or the body is not JSON, so the
+ * caller aborts without touching Firestore.
  */
 export async function fetchSessionizePayload(rawEndpointId: string): Promise<unknown> {
 	const endpointId = parseEndpointId(rawEndpointId);
