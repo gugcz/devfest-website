@@ -13,8 +13,10 @@ import { onRequest } from 'firebase-functions/v2/https';
 
 import { db } from '../lib/admin.js';
 import { describeError } from '../lib/errors.js';
-import { SLACK_WEBHOOK_URL, TITO_WEBHOOK_SECRET } from './params.js';
-import { postToSlack, type SlackPayload } from './slack-client.js';
+import { SLACK_WEBHOOK_URL } from '../lib/params.js';
+import { postToSlack, type SlackPayload } from '../lib/slack.js';
+import { WEBHOOK } from '../options.js';
+import { TITO_WEBHOOK_SECRET } from './params.js';
 import {
 	TITO_EVENT_HEADER,
 	TITO_SIGNATURE_HEADER,
@@ -23,8 +25,6 @@ import {
 	type TitoWebhookEvent,
 	type TitoWebhookPayload,
 } from './tito-webhook.js';
-
-const REGION = 'europe-west1';
 
 const NOTIFY_EVENT: TitoWebhookEvent = 'registration.finished';
 
@@ -156,13 +156,11 @@ function buildSlackMessage(payload: TitoWebhookPayload): SlackPayload {
 
 export const ticketsWebhook = onRequest(
 	{
-		region: REGION,
+		// Public per the preset: ti.to has no OIDC token and authenticates by HMAC
+		// instead (`verifyTitoSignature` below). Body parsing is fine for our use;
+		// the HMAC reads `req.rawBody`.
+		...WEBHOOK,
 		secrets: [TITO_WEBHOOK_SECRET, SLACK_WEBHOOK_URL],
-		memory: '256MiB',
-		timeoutSeconds: 30,
-		// ti.to needs to reach this without an OIDC token.
-		invoker: 'public',
-		// Body parsing is fine for our use; we read `req.rawBody` for HMAC.
 	},
 	async (req, res) => {
 		if (req.method !== 'POST') {

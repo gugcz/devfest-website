@@ -25,9 +25,9 @@ import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
 
 import { describeError } from '../lib/errors.js';
+import { CALLABLE } from '../options.js';
 import { checkInvoiceRateLimit, createInvoiceRequest, type InvoiceRequestInput } from './firestore.js';
 
-const REGION = 'europe-west1';
 const MAX_TICKETS = 50;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // At most this many submissions per (company, email) inside the window.
@@ -84,11 +84,14 @@ function validate(body: Record<string, unknown>): ValidationResult {
 
 export const submitInvoiceCallable = onCall(
 	{
-		region: REGION,
+		...CALLABLE,
+		// App Check (reCAPTCHA Enterprise) is the gate that stops a bot minting
+		// invoices and emails: the framework rejects a missing/invalid token before
+		// the handler runs.
 		enforceAppCheck: true,
+		// Tighter than the project ceiling — a human filling in a company form does
+		// not need ten concurrent instances, and each one issues real invoices.
 		maxInstances: 10,
-		memory: '256MiB',
-		timeoutSeconds: 30,
 	},
 	async (request) => {
 		const body = (request.data ?? {}) as Record<string, unknown>;

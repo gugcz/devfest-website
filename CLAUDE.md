@@ -92,9 +92,15 @@ App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCH
 - The endpoints return raw docs (`{ id, ...fields }` / the RTDB cache verbatim); the browser reuses the existing `speakerFromDoc` / `sessionFromDoc` / `filterDisplayable` parsers so shape logic isn't duplicated in `functions/`.
 - **a11y:** `scripts/a11y.mjs` serves `/api/lineup` + `/api/tickets` from `scripts/a11y-mocks/fixtures.mjs` (the islands `fetch` them, no SDK). The only Firebase module still mocked under `A11Y_MOCK` is `firebase/app-check` (App Check inits on load via analytics).
 
-### Backend failures & outbound HTTP (`functions/src/lib/`)
+### Backend conventions (`functions/src/lib/`, `functions/src/options.ts`)
 
-Every domain shares two modules. The rule of thumb: **the failure text is a product surface** — it lands in a Slack alert (`🎤 SESSIONIZE`, `🧾 INVOICES`), in an invoice doc's `errorMessage`, and in Cloud Logging, and it is usually all a responder has.
+Every domain builds on the same shared layer. The rule of thumb behind most of it: **the failure text is a product surface** — it lands in a Slack alert (`🎤 SESSIONIZE`, `🎟️ TICKETS`, `🧾 INVOICES`), in an invoice doc's `errorMessage`, and in Cloud Logging, and it is usually all a responder has.
+
+- **`options.ts`** — `setGlobalOptions` (the `maxInstances` cost ceiling for the shared billing project) plus one option preset per function kind: `SCHEDULED`, `CACHED_ENDPOINT`, `WEBHOOK`, `CALLABLE`, `TRIGGER`. Spread a preset and override only what is genuinely specific (`{ ...SCHEDULED, schedule, secrets }`); never restate `region`/`timeZone`, which were previously copy-pasted into nine files. `CACHED_ENDPOINT` carries `minInstances: 1` and `WEBHOOK` deliberately does not — rare deliveries don't justify an always-warm instance.
+- **`lib/run.ts`** — `runBackground({ name, domain, failureNote }, handler)` wraps **every** scheduled job (and any trigger that should alert). It logs start/finish with a duration, logs the failure with the unwrapped cause, alerts Slack, and rethrows so the platform still counts the failure and the scheduler's own `retryCount` retry still happens. `failureNote` states the blast radius ("live speakers/sessions left untouched") — an alert that doesn't say whether anyone must act tonight is half an alert.
+  - **Alerts fire on state change, not per failure.** The first failure after a healthy run alerts, further consecutive failures only log, and the run that recovers posts a "recovered" line — so an hours-long upstream outage is two messages, not twenty-four, and a hourly job can't train the channel to ignore it. Streak state lives in RTDB `ops/health/{functionName}` (Admin SDK only; the root deny in `database.rules.json` already covers it). Every health read/write is best-effort and degrades to "assume healthy", which over-alerts rather than going silent.
+- **`lib/slack.ts`** — `postToSlack` is the raw webhook call (throws; used where the caller handles delivery itself, e.g. the ti.to purchase webhook and the status reports). `notify(domain, webhookUrl, text)` is the best-effort one everything else uses: it prefixes by domain from the one prefix table, never throws, and logs a failed delivery so a lost alert can't look like a delivered one. A function that alerts must list `SLACK_WEBHOOK_URL` in its `secrets`.
+- **`lib/cached-endpoint.ts`** — `cachedJsonEndpoint({ name, cacheControl, memoTtlMs, fallback, load })` is the shared body of the public `/api/*` endpoints: per-instance memo, `Cache-Control` on success, and a `no-store` 503 with an empty payload on a failed read (never cache an error). `lineupApi`/`ticketsApi` differ only in their TTLs and their `load`.
 
 - **`lib/errors.ts`** — `describeError(err)` unwraps the real reason, which is never in `message`: undici reports every network fault as `fetch failed` and hides `ENOTFOUND` / `UND_ERR_CONNECT_TIMEOUT` / `ECONNRESET` in `cause`, and gRPC (Firestore/RTDB) carries its status in `code`. `stageError(stage, err)` labels which step failed, keeping the original as `cause` — without it a Slack line can't distinguish "Sessionize is down" from "our Firestore write was denied". Use it at any boundary a responder would otherwise have to guess at (both the Firestore and RTDB cache writes do). **Use these instead of `err.message` or `err instanceof Error ? … : String(err)` in any log, alert, or persisted error.**
 - **`lib/http.ts`** — `fetchWithRetry(url, init, { label, … })` is the only outbound HTTP in `functions/`; a bare `fetch()` in this directory is a bug. It adds a per-attempt timeout (15s default, 30s for iDoklad) — a plain `fetch` has none, so a hung upstream rides the whole function timeout — plus bounded retries (3 attempts, 1s/2s backoff) on network faults and 429/5xx. 4xx never retries: it's deterministic, and `fetchSessionizePayload` depends on seeing the 400 immediately to fall back to the Speakers view. Non-OK responses are returned, not thrown, so status handling stays with the caller.
@@ -108,13 +114,13 @@ Visitor browsers read ticket data from the cached `/api/tickets` endpoint (`tick
 ```
 functions/src/
 ├── index.ts                # top barrel — `export * from './<domain>/index.js'`
-├── lib/admin.ts            # Admin SDK singleton (`db()` returns RTDB)
+├── options.ts              # setGlobalOptions + REGION + per-kind option presets
+├── lib/                    # shared by every domain — see "Backend conventions"
 └── tickets/
     ├── index.ts            # domain barrel
-    ├── params.ts           # secrets + string params (single source of truth)
+    ├── params.ts           # ti.to secrets + string params (single source of truth)
     ├── tito-api.ts         # ti.to HTTP client + `projectRelease()`
     ├── tito-webhook.ts     # `verifyTitoSignature` + header constants + payload type
-    ├── slack-client.ts     # `postToSlack()`
     ├── refresh-cache.ts    # `refreshTicketsScheduled`
     ├── notify-purchase.ts  # `ticketsWebhook`
     └── weekly-status.ts    # `weeklyTicketStatusScheduled` + `thursdayTicketStatusScheduled` (shared handler)
@@ -135,7 +141,7 @@ Browser side: `src/components/Tickets.tsx` (and `InvoiceForm.tsx`'s price estima
 
 Conventions / gotchas:
 - New function in existing domain: add file → re-export in `tickets/index.ts`. New domain: new folder same shape + `export * from './<domain>/index.js'` in `src/index.ts`.
-- `params.ts` is the single source of truth for secrets/strings. Don't duplicate the table elsewhere.
+- `params.ts` is the single source of truth for this domain's secrets/strings. Don't duplicate the table elsewhere. Params more than one domain needs (`SLACK_WEBHOOK_URL`) live in `lib/params.ts` instead — a domain must never import a param from a sibling domain.
 - TS imports inside `functions/` use `.js` suffixes (NodeNext module resolution).
 - `ticketsWebhook` reads `req.rawBody` (Buffer) for HMAC, not `req.body`.
 - ti.to Admin API v3.0 (stable; v3.1 is beta and we don't opt in) returns releases as a flag set (`sold_out`, `off_sale`, `expired`, `upcoming`, `archived`, `locked`, `secret`) plus `state_name`. There is **no** `sale_status` or `accessibility` field on the wire. `functions/src/tickets/tito-api.ts::deriveSaleStatus` synthesises a single `sale_status` string from those flags (`on_sale` / `sold_out` / `paused` / `not_yet_on_sale` / `ended` / `archived`) so the rest of the codebase has one stable thing to switch on. Sale window dates are `start_at` / `end_at` (not `sales_start` / `sales_end`).
@@ -154,7 +160,7 @@ Speaker/session data comes from **Sessionize**. Visitor browsers never hit Sessi
 functions/src/
 ├── sessionize/
 │   ├── index.ts               # domain barrel
-│   ├── params.ts              # SESSIONIZE_ENDPOINT_ID secret (reuses tickets SLACK_WEBHOOK_URL)
+│   ├── params.ts              # SESSIONIZE_ENDPOINT_ID secret (Slack webhook comes from `lib/params.ts`)
 │   ├── sessionize-api.ts      # fetch + validate + normalize; buildSessionMap/…; computeDeletePlan (delete-guard)
 │   ├── mirror-images.ts       # mirror speaker photos → Firebase Storage `speakers/{id}` (idempotent)
 │   └── refresh-sessionize.ts  # `refreshSessionizeScheduled`
@@ -182,11 +188,10 @@ Invoice-first B2B flow: a company requests an invoice on `/invoice`, pays it by 
 ```
 functions/src/invoice/
 ├── index.ts            # domain barrel
-├── params.ts           # iDoklad OAuth + invoice business params (reuses tickets params for ti.to/Slack)
+├── params.ts           # iDoklad OAuth + invoice business params (ti.to params from `tickets/`, Slack from `lib/`)
 ├── idoklad-api.ts      # iDoklad v3 client: OAuth token cache, contacts, invoices, mail send, payment status
 ├── tito-discount.ts    # resolve company-funded releases + create 100%-off discount_code
 ├── email.ts            # optional Resend HTTP sender (discount-code email)
-├── slack.ts            # best-effort Slack notify (reuses tickets/slack-client.js)
 ├── firestore.ts        # invoices collection model + helpers
 ├── submit.ts           # `submitInvoiceCallable`
 ├── process.ts          # `processInvoiceTrigger`

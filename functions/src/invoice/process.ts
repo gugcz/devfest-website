@@ -15,13 +15,11 @@
 import { logger } from 'firebase-functions/v2';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 
-import {
-	SLACK_WEBHOOK_URL,
-	TITO_ACCOUNT_SLUG,
-	TITO_API_TOKEN,
-	TITO_EVENT_SLUG,
-} from '../tickets/params.js';
 import { describeError } from '../lib/errors.js';
+import { SLACK_WEBHOOK_URL } from '../lib/params.js';
+import { notify } from '../lib/slack.js';
+import { TRIGGER } from '../options.js';
+import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from '../tickets/params.js';
 import { releaseTitle } from '../tickets/tito-api.js';
 import {
 	IDOKLAD_CLIENT_ID,
@@ -43,17 +41,13 @@ import {
 	type TitoConfig,
 } from './tito-discount.js';
 import { updateInvoice, type InvoiceDoc } from './firestore.js';
-import { notify } from './slack.js';
 
-const REGION = 'europe-west1';
 
 export const processInvoiceTrigger = onDocumentCreated(
 	{
-		region: REGION,
+		...TRIGGER,
 		document: 'invoices/{invoiceId}',
 		secrets: [IDOKLAD_CLIENT_ID, IDOKLAD_CLIENT_SECRET, TITO_API_TOKEN, SLACK_WEBHOOK_URL],
-		memory: '256MiB',
-		timeoutSeconds: 120,
 	},
 	async (event) => {
 		const snap = event.data;
@@ -149,6 +143,7 @@ export const processInvoiceTrigger = onDocumentCreated(
 				? ''
 				: `\n⚠️ email could not be sent — send invoice ${invoice.number ?? invoice.id} manually`;
 			await notify(
+				'invoices',
 				slackUrl,
 				`${doc.companyName} — invoice ${invoice.number ?? invoice.id} issued ` +
 					`(${doc.countTickets}× ticket, VS ${invoice.variableSymbol ?? '—'})${linkNote}`,
@@ -161,7 +156,11 @@ export const processInvoiceTrigger = onDocumentCreated(
 			// Slack channel gets a generic line — upstream error bodies can echo
 			// submitted PII (IČO/DIČ/address), so they don't belong there.
 			await updateInvoice(id, { status: 'error', errorMessage: message });
-			await notify(slackUrl, `❌ ${doc.companyName} — invoice creation failed (id ${id}); see logs`);
+			await notify(
+				'invoices',
+				slackUrl,
+				`❌ ${doc.companyName} — invoice creation failed (id ${id}); see logs`,
+			);
 		}
 	},
 );

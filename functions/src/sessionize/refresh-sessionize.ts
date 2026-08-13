@@ -23,9 +23,11 @@ import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { firestore } from '../lib/admin.js';
-import { describeError, stageError } from '../lib/errors.js';
-import { SLACK_WEBHOOK_URL } from '../tickets/params.js';
-import { postToSlack } from '../tickets/slack-client.js';
+import { stageError } from '../lib/errors.js';
+import { SLACK_WEBHOOK_URL } from '../lib/params.js';
+import { runBackground } from '../lib/run.js';
+import { notify } from '../lib/slack.js';
+import { SCHEDULED } from '../options.js';
 import { mirrorSpeakerImages } from './mirror-images.js';
 import { SESSIONIZE_ENDPOINT_ID } from './params.js';
 import {
@@ -40,23 +42,8 @@ import {
 	normalizeSpeakers,
 } from './sessionize-api.js';
 
-const REGION = 'europe-west1';
 const SPEAKERS_COLLECTION = 'speakers';
 const SESSIONS_COLLECTION = 'sessions';
-const SLACK_PREFIX = '🎤 SESSIONIZE';
-
-/** Best-effort Slack alert — never masks the caller's real error. */
-async function notify(text: string): Promise<void> {
-	const webhookUrl = SLACK_WEBHOOK_URL.value();
-	if (!webhookUrl) return;
-	try {
-		await postToSlack(webhookUrl, { text: `${SLACK_PREFIX} — ${text}` });
-	} catch (err) {
-		// The alert is the only channel a human watches, so a swallowed delivery
-		// failure has to name itself in the log — otherwise the sync looks alerted.
-		logger.warn(`sessionize Slack notify failed: ${describeError(err)}`, err);
-	}
-}
 
 /**
  * Mirror one typed set of docs into a collection as a single atomic batch
@@ -100,8 +87,12 @@ async function commitCollection<T extends { id: string }>(name: string, docs: T[
 	);
 
 	if (plan.withheld) {
+		// Not a failure — the guard did its job — but a human should check whether
+		// Sessionize really lost those records, so it alerts on its own.
 		await notify(
-			`Delete guard tripped on /${name} — held stale deletes (fresh=${freshIds.size}, existing=${existingIds.length}). Possible truncated Sessionize response.`,
+			'sessionize',
+			SLACK_WEBHOOK_URL.value(),
+			`⚠️ Delete guard tripped on /${name} — held stale deletes (fresh=${freshIds.size}, existing=${existingIds.length}). Possible truncated Sessionize response.`,
 		);
 	}
 }
@@ -145,31 +136,24 @@ async function syncSessionize(): Promise<void> {
  */
 export const refreshSessionizeScheduled = onSchedule(
 	{
+		...SCHEDULED,
 		schedule: 'every day 06:00',
-		timeZone: 'Europe/Prague',
-		region: REGION,
 		secrets: [SESSIONIZE_ENDPOINT_ID, SLACK_WEBHOOK_URL],
-		// Higher than a plain fetch needs: the first run downloads the whole
+		// Both raised above the shared defaults: the first run downloads the whole
 		// speaker roster into Storage. Steady-state runs are far quicker (only
 		// changed photos re-download).
 		timeoutSeconds: 300,
 		memory: '512MiB',
-		retryCount: 1,
 	},
-	async () => {
-		try {
-			await syncSessionize();
-		} catch (err) {
-			// Alert best-effort, then rethrow the ORIGINAL error so the failure
-			// surfaces in logs / retries and yesterday's data stays intact.
-			// `describeError` unwraps the `cause`, because the bare message is
-			// routinely useless on its own (undici reports every network fault as
-			// `fetch failed`) and the alert is read without the logs at hand. The
-			// tail spells out the blast radius so nobody debugs a no-op.
-			await notify(
-				`Sync failed: ${describeError(err)} — live speakers/sessions left untouched, retry at 06:00 Europe/Prague.`,
-			);
-			throw err;
-		}
-	},
+	() =>
+		runBackground(
+			{
+				name: 'refreshSessionizeScheduled',
+				domain: 'sessionize',
+				// Yesterday's mirror stays live and correct, so this is a
+				// freshness problem, not an outage — nobody needs to act tonight.
+				failureNote: 'live speakers/sessions left untouched, next run 06:00 Europe/Prague',
+			},
+			syncSessionize,
+		),
 );

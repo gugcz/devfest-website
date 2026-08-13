@@ -9,18 +9,15 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { db } from '../lib/admin.js';
 import { stageError } from '../lib/errors.js';
+import { SLACK_WEBHOOK_URL } from '../lib/params.js';
+import { runBackground } from '../lib/run.js';
+import { SCHEDULED } from '../options.js';
 import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from './params.js';
 import { fetchAllReleases, isWebsiteVisible, projectRelease } from './tito-api.js';
 
-const REGION = 'europe-west1';
 const TICKETS_PATH = 'tickets';
 
-interface SyncResult {
-	count: number;
-	fetchedAt: number;
-}
-
-async function syncTickets(): Promise<SyncResult> {
+async function syncTickets(): Promise<void> {
 	const token = TITO_API_TOKEN.value();
 	const accountSlug = TITO_ACCOUNT_SLUG.value();
 	const eventSlug = TITO_EVENT_SLUG.value();
@@ -53,8 +50,6 @@ async function syncTickets(): Promise<SyncResult> {
 	logger.info(
 		`Wrote /${TICKETS_PATH} (visible=${releases.length}, dropped=${raw.length - releases.length}, fetchedAt=${payload.fetchedAt})`,
 	);
-
-	return { count: releases.length, fetchedAt: payload.fetchedAt };
 }
 
 /**
@@ -63,15 +58,19 @@ async function syncTickets(): Promise<SyncResult> {
  */
 export const refreshTicketsScheduled = onSchedule(
 	{
+		...SCHEDULED,
 		schedule: 'every 1 hours',
-		timeZone: 'Europe/Prague',
-		region: REGION,
-		secrets: [TITO_API_TOKEN],
-		timeoutSeconds: 120,
-		memory: '256MiB',
-		retryCount: 1,
+		secrets: [TITO_API_TOKEN, SLACK_WEBHOOK_URL],
 	},
-	async () => {
-		await syncTickets();
-	},
+	() =>
+		runBackground(
+			{
+				name: 'refreshTicketsScheduled',
+				domain: 'tickets',
+				// The site keeps serving the previous cache, so a failed run degrades
+				// to stale prices rather than an empty ticket roadmap.
+				failureNote: '`/tickets` cache left at its previous contents, retry within the hour',
+			},
+			syncTickets,
+		),
 );
