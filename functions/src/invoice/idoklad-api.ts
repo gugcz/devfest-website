@@ -22,6 +22,11 @@
  * partner + line + maturity and POST back.
  */
 
+import { logger } from 'firebase-functions/v2';
+
+import { describeError } from '../lib/errors.js';
+import { errorBody, fetchWithRetry } from '../lib/http.js';
+
 const TOKEN_URL = 'https://identity.idoklad.cz/server/connect/token';
 const API_BASE = 'https://api.idoklad.cz/v3';
 
@@ -87,17 +92,22 @@ async function getToken(cfg: IdokladConfig): Promise<string> {
 	form.set('client_secret', cfg.clientSecret);
 	form.set('scope', 'idoklad_api');
 
-	const res = await fetch(TOKEN_URL, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-			Accept: 'application/json',
+	// Retryable despite being a POST: minting a second token costs nothing, while
+	// failing here fails every call behind it.
+	const res = await fetchWithRetry(
+		TOKEN_URL,
+		{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				Accept: 'application/json',
+			},
+			body: form.toString(),
 		},
-		body: form.toString(),
-	});
+		{ label: 'iDoklad OAuth token', retryUnsafe: true },
+	);
 	if (!res.ok) {
-		const body = await res.text().catch(() => '');
-		throw new Error(`iDoklad OAuth ${res.status} ${res.statusText}: ${body.slice(0, 300)}`);
+		throw new Error(`iDoklad OAuth ${res.status} ${res.statusText}: ${await errorBody(res)}`);
 	}
 	const data = (await res.json()) as { access_token: string; expires_in: number };
 	cachedToken = { token: data.access_token, expiresAt: now + (data.expires_in ?? 3600) * 1000 };
@@ -115,15 +125,23 @@ async function apiFetch(
 	body?: unknown,
 ): Promise<Response> {
 	const token = await getToken(cfg);
-	return fetch(`${API_BASE}${path}`, {
-		method,
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-			Accept: 'application/json',
+	// GETs retry, POSTs deliberately don't — `fetchWithRetry` enforces that, and it
+	// matters most here: a replayed `POST /IssuedInvoices` bills a company twice
+	// and iDoklad offers no idempotency key to lean on. 30s per attempt, since
+	// invoice creation is heavier than a plain read.
+	return fetchWithRetry(
+		`${API_BASE}${path}`,
+		{
+			method,
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+			},
+			body: body === undefined ? undefined : JSON.stringify(body),
 		},
-		body: body === undefined ? undefined : JSON.stringify(body),
-	});
+		{ label: `iDoklad ${method} ${path}`, timeoutMs: 30_000 },
+	);
 }
 
 async function apiJson<T = any>(
@@ -134,8 +152,8 @@ async function apiJson<T = any>(
 ): Promise<T> {
 	const res = await apiFetch(cfg, method, path, body);
 	if (!res.ok) {
-		const detail = await res.text().catch(() => '');
-		throw new Error(`iDoklad ${method} ${path} ${res.status} ${res.statusText}: ${detail.slice(0, 300)}`);
+		const detail = await errorBody(res);
+		throw new Error(`iDoklad ${method} ${path} ${res.status} ${res.statusText}: ${detail}`);
 	}
 	return unwrap<T>(await res.json());
 }
@@ -169,8 +187,11 @@ async function findContactByIco(cfg: IdokladConfig, ico: string): Promise<number
 		const items = Array.isArray(page?.Items) ? page.Items : [];
 		const match = items.find((c) => String(c.IdentificationNumber ?? '').trim() === ico);
 		return match ? match.Id : null;
-	} catch {
-		// Non-fatal: fall through to create.
+	} catch (err) {
+		// Non-fatal: fall through to create. Logged rather than swallowed silently —
+		// the symptom is a duplicate iDoklad contact, whose cause is otherwise
+		// invisible.
+		logger.warn(`iDoklad contact lookup by IČO failed, creating a new one: ${describeError(err)}`);
 		return null;
 	}
 }

@@ -25,6 +25,8 @@ import { getStorage } from 'firebase-admin/storage';
 import { logger } from 'firebase-functions/v2';
 
 import { adminApp } from '../lib/admin.js';
+import { describeError } from '../lib/errors.js';
+import { fetchWithRetry } from '../lib/http.js';
 import type { SessionizeSpeaker } from './sessionize-api.js';
 
 const STORAGE_PREFIX = 'speakers';
@@ -83,10 +85,14 @@ async function mirrorOne(bucket: BucketLike, speakerId: string, sourceUrl: strin
 		// (re)upload below.
 	}
 
-	const res = await fetch(sourceUrl, {
-		headers: { Accept: 'image/*' },
-		signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-	});
+	// Two attempts, not the default three: a photo that stays unreachable just
+	// falls back to the Sessionize CDN URL, so it isn't worth holding the roster
+	// up for — the sync waits on every one of these.
+	const res = await fetchWithRetry(
+		sourceUrl,
+		{ headers: { Accept: 'image/*' } },
+		{ label: `speaker photo ${speakerId}`, attempts: 2, timeoutMs: FETCH_TIMEOUT_MS },
+	);
 	if (!res.ok) throw new Error(`download ${res.status} ${res.statusText}`);
 	const contentType = res.headers.get('content-type') || 'image/jpeg';
 	if (!contentType.startsWith('image/')) throw new Error(`unexpected content-type ${contentType}`);
@@ -145,7 +151,10 @@ export async function mirrorSpeakerImages(
 	try {
 		bucket = getStorage(adminApp).bucket() as unknown as BucketLike;
 	} catch (err) {
-		logger.warn('sessionize image mirror: Storage unavailable, using source URLs', err);
+		logger.warn(
+			`sessionize image mirror: Storage unavailable, using source URLs: ${describeError(err)}`,
+			err,
+		);
 		return map;
 	}
 
@@ -162,7 +171,10 @@ export async function mirrorSpeakerImages(
 			map.set(id, await mirrorOne(bucket, id, url));
 			mirrored += 1;
 		} catch (err) {
-			logger.warn(`sessionize image mirror failed for ${id}; using source URL`, err);
+			logger.warn(
+				`sessionize image mirror failed for ${id}, using source URL: ${describeError(err)}`,
+				err,
+			);
 		}
 	});
 

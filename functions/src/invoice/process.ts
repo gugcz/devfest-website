@@ -21,6 +21,7 @@ import {
 	TITO_API_TOKEN,
 	TITO_EVENT_SLUG,
 } from '../tickets/params.js';
+import { describeError } from '../lib/errors.js';
 import { releaseTitle } from '../tickets/tito-api.js';
 import {
 	IDOKLAD_CLIENT_ID,
@@ -128,7 +129,9 @@ export const processInvoiceTrigger = onDocumentCreated(
 				});
 				invoiceEmailSent = true;
 			} catch (mailErr) {
-				logger.warn('processInvoiceTrigger: iDoklad email failed', mailErr);
+				// Non-fatal: the invoice exists, it just wasn't mailed. The Slack line
+				// below tells the organizer to send it manually — this names why.
+				logger.warn(`processInvoiceTrigger: iDoklad email failed: ${describeError(mailErr)}`, mailErr);
 			}
 
 			// 5. Persist + notify.
@@ -152,8 +155,8 @@ export const processInvoiceTrigger = onDocumentCreated(
 			);
 			logger.info('processInvoiceTrigger invoiced', { id, invoiceId: invoice.id });
 		} catch (err) {
-			const message = err instanceof Error ? err.message : String(err);
-			logger.error('processInvoiceTrigger failed', err);
+			const message = describeError(err);
+			logger.error(`processInvoiceTrigger failed: ${message}`, err);
 			// errorMessage stays in Firestore (server-only, deny-all rules). The
 			// Slack channel gets a generic line — upstream error bodies can echo
 			// submitted PII (IČO/DIČ/address), so they don't belong there.

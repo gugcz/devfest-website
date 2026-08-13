@@ -16,6 +16,8 @@
 import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
+import { describeError } from '../lib/errors.js';
+
 import {
 	SLACK_WEBHOOK_URL,
 	TITO_ACCOUNT_SLUG,
@@ -86,7 +88,7 @@ export const pollPaidInvoicesScheduled = onSchedule(
 			try {
 				status = await getInvoicePaymentStatus(idokladCfg, record.data.idokladInvoiceId);
 			} catch (err) {
-				const message = err instanceof Error ? err.message : String(err);
+				const message = describeError(err);
 				logger.error('pollPaidInvoicesScheduled: payment status check failed', { id: record.id, message });
 				continue;
 			}
@@ -100,7 +102,7 @@ export const pollPaidInvoicesScheduled = onSchedule(
 				await completeInvoice(record, titoCfg, slackUrl);
 				completed += 1;
 			} catch (err) {
-				const message = err instanceof Error ? err.message : String(err);
+				const message = describeError(err);
 				logger.error('pollPaidInvoicesScheduled: failed to complete invoice', { id: record.id, message });
 				// Revert to `invoiced` so the next poll retries. Safe to re-run:
 				// the code is persisted the instant it's minted, so completeInvoice
@@ -166,7 +168,9 @@ async function completeInvoice(
 		);
 		discountEmailSent = result.sent;
 	} catch (mailErr) {
-		logger.warn('completeInvoice: discount email failed', mailErr);
+		// Non-fatal: the code is already persisted and still goes out via Slack.
+		// Named so an undelivered email isn't mistaken for an unminted code.
+		logger.warn(`completeInvoice: discount email failed: ${describeError(mailErr)}`, mailErr);
 	}
 
 	await updateInvoice(id, {

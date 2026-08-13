@@ -23,6 +23,7 @@ import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { firestore } from '../lib/admin.js';
+import { describeError, stageError } from '../lib/errors.js';
 import { SLACK_WEBHOOK_URL } from '../tickets/params.js';
 import { postToSlack } from '../tickets/slack-client.js';
 import { mirrorSpeakerImages } from './mirror-images.js';
@@ -33,7 +34,6 @@ import {
 	buildSpeakerSummaryMap,
 	computeDeletePlan,
 	extractSessions,
-	describeError,
 	extractSpeakers,
 	fetchSessionizePayload,
 	normalizeSessions,
@@ -52,7 +52,9 @@ async function notify(text: string): Promise<void> {
 	try {
 		await postToSlack(webhookUrl, { text: `${SLACK_PREFIX} — ${text}` });
 	} catch (err) {
-		logger.warn('sessionize Slack notify failed', err);
+		// The alert is the only channel a human watches, so a swallowed delivery
+		// failure has to name itself in the log — otherwise the sync looks alerted.
+		logger.warn(`sessionize Slack notify failed: ${describeError(err)}`, err);
 	}
 }
 
@@ -90,7 +92,7 @@ async function commitCollection<T extends { id: string }>(name: string, docs: T[
 	try {
 		await batch.commit();
 	} catch (err) {
-		throw new Error(`Firestore write to /${name} failed: ${describeError(err)}`, { cause: err });
+		throw stageError(`Firestore write to /${name}`, err);
 	}
 
 	logger.info(

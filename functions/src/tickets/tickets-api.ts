@@ -17,6 +17,7 @@ import { logger } from 'firebase-functions/v2';
 import { onRequest } from 'firebase-functions/v2/https';
 
 import { db } from '../lib/admin.js';
+import { describeError } from '../lib/errors.js';
 
 const REGION = 'europe-west1';
 // The RTDB path `refreshTicketsScheduled` writes (see refresh-cache.ts).
@@ -63,7 +64,7 @@ export const ticketsApi = onRequest(
 			res.set('Cache-Control', CACHE_CONTROL);
 			res.json(payload);
 		} catch (err) {
-			logger.error('ticketsApi read failed', err);
+			logger.error(`ticketsApi read failed: ${describeError(err)}`, err);
 			res.set('Cache-Control', 'no-store');
 			res.status(503).json(EMPTY);
 		}

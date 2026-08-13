@@ -8,6 +8,7 @@
 
 import { logger } from 'firebase-functions/v2';
 
+import { describeError } from '../lib/errors.js';
 import { postToSlack } from '../tickets/slack-client.js';
 
 const PREFIX = '🧾 INVOICES';
@@ -17,6 +18,8 @@ export async function notify(webhookUrl: string, text: string): Promise<void> {
 	try {
 		await postToSlack(webhookUrl, { text: `${PREFIX} — ${text}` });
 	} catch (err) {
-		logger.warn('invoice Slack notify failed', err);
+		// Swallowed on purpose — but named, so a lost alert doesn't look like a
+		// delivered one when someone asks why nobody was told.
+		logger.warn(`invoice Slack notify failed: ${describeError(err)}`, err);
 	}
 }

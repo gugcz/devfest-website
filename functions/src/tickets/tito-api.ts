@@ -19,6 +19,8 @@
  *     `sales_end`).
  */
 
+import { errorBody, fetchWithRetry } from '../lib/http.js';
+
 const TITO_API_BASE = 'https://api.tito.io/v3';
 
 export type DerivedSaleStatus =
@@ -162,16 +164,22 @@ export function isWebsiteVisible(release: TitoRelease): boolean {
 
 export async function fetchAllReleases(params: FetchReleasesParams): Promise<TitoRelease[]> {
 	const url = `${TITO_API_BASE}/${params.accountSlug}/${params.eventSlug}/releases?per_page=100`;
-	const res = await fetch(url, {
-		headers: {
-			Authorization: `Token token=${params.token}`,
-			Accept: 'application/json',
+	// Read-only, so it retries transient faults: this backs the hourly cache
+	// refresh and both status reports, and a blip there means stale ticket data on
+	// the site or a status report that silently never arrives.
+	const res = await fetchWithRetry(
+		url,
+		{
+			headers: {
+				Authorization: `Token token=${params.token}`,
+				Accept: 'application/json',
+			},
 		},
-	});
+		{ label: 'ti.to releases' },
+	);
 
 	if (!res.ok) {
-		const body = await res.text().catch(() => '');
-		throw new Error(`ti.to API ${res.status} ${res.statusText}: ${body.slice(0, 300)}`);
+		throw new Error(`ti.to releases ${res.status} ${res.statusText}: ${await errorBody(res)}`);
 	}
 
 	const data = (await res.json()) as TitoReleasesPage;

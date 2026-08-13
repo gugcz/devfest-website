@@ -8,6 +8,7 @@ import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { db } from '../lib/admin.js';
+import { stageError } from '../lib/errors.js';
 import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from './params.js';
 import { fetchAllReleases, isWebsiteVisible, projectRelease } from './tito-api.js';
 
@@ -42,7 +43,13 @@ async function syncTickets(): Promise<SyncResult> {
 		releases,
 	};
 
-	await db().ref(TICKETS_PATH).set(payload);
+	// Label the write: a raw RTDB error is otherwise indistinguishable from a
+	// ti.to one in the log, and only one of those is ours to fix.
+	try {
+		await db().ref(TICKETS_PATH).set(payload);
+	} catch (err) {
+		throw stageError(`RTDB write to /${TICKETS_PATH}`, err);
+	}
 	logger.info(
 		`Wrote /${TICKETS_PATH} (visible=${releases.length}, dropped=${raw.length - releases.length}, fetchedAt=${payload.fetchedAt})`,
 	);

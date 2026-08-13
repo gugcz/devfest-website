@@ -12,6 +12,7 @@ import { logger } from 'firebase-functions/v2';
 import { onRequest } from 'firebase-functions/v2/https';
 
 import { db } from '../lib/admin.js';
+import { describeError } from '../lib/errors.js';
 import { SLACK_WEBHOOK_URL, TITO_WEBHOOK_SECRET } from './params.js';
 import { postToSlack, type SlackPayload } from './slack-client.js';
 import {
@@ -56,7 +57,7 @@ async function claimRegistrationReference(reference: string | undefined): Promis
 		});
 		return result.committed;
 	} catch (err) {
-		logger.error('ticketsWebhook dedup check failed — proceeding', err);
+		logger.error(`ticketsWebhook dedup check failed, proceeding: ${describeError(err)}`, err);
 		return true;
 	}
 }
@@ -71,7 +72,7 @@ async function releaseRegistrationReference(reference: string | undefined): Prom
 	try {
 		await dedupRef(reference).remove();
 	} catch (err) {
-		logger.error('ticketsWebhook dedup release failed', err);
+		logger.error(`ticketsWebhook dedup release failed: ${describeError(err)}`, err);
 	}
 }
 
@@ -206,7 +207,7 @@ export const ticketsWebhook = onRequest(
 		try {
 			payload = (req.body ?? JSON.parse(rawBody.toString('utf8'))) as TitoWebhookPayload;
 		} catch (err) {
-			logger.error('ticketsWebhook failed to parse body', err);
+			logger.error(`ticketsWebhook failed to parse body: ${describeError(err)}`, err);
 			res.status(400).send('Bad JSON');
 			return;
 		}
@@ -228,7 +229,7 @@ export const ticketsWebhook = onRequest(
 			});
 			res.status(200).send('ok');
 		} catch (err) {
-			logger.error('ticketsWebhook failed to notify Slack', err);
+			logger.error(`ticketsWebhook failed to notify Slack: ${describeError(err)}`, err);
 			// Undo the dedup claim so ti.to's retry isn't silently deduped away.
 			await releaseRegistrationReference(reference);
 			// 500 lets ti.to retry the delivery.

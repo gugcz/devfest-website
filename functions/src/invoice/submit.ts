@@ -24,6 +24,7 @@
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
 
+import { describeError } from '../lib/errors.js';
 import { checkInvoiceRateLimit, createInvoiceRequest, type InvoiceRequestInput } from './firestore.js';
 
 const REGION = 'europe-west1';
@@ -122,7 +123,7 @@ export const submitInvoiceCallable = onCall(
 			logger.info('submitInvoiceCallable created invoice request', { id });
 			return { ok: true, id };
 		} catch (err) {
-			logger.error('submitInvoiceCallable failed to write doc', err);
+			logger.error(`submitInvoiceCallable failed to write doc: ${describeError(err)}`, err);
 			throw new HttpsError('internal', 'internal');
 		}
 	},

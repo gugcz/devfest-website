@@ -9,6 +9,8 @@
  * Docs: https://resend.com/docs/api-reference/emails/send-email
  */
 
+import { errorBody, fetchWithRetry } from '../lib/http.js';
+
 const RESEND_SEND_URL = 'https://api.resend.com/emails';
 
 export interface EmailConfig {
@@ -34,26 +36,31 @@ export async function sendEmail(cfg: EmailConfig, msg: EmailMessage): Promise<Se
 		return { sent: false, reason: 'no RESEND_API_KEY configured' };
 	}
 
-	const res = await fetch(RESEND_SEND_URL, {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${cfg.apiKey}`,
-			'Content-Type': 'application/json',
+	// One attempt only (the shared helper pins a POST to one): a replay the first
+	// attempt actually delivered sends the company a second copy of its code.
+	const res = await fetchWithRetry(
+		RESEND_SEND_URL,
+		{
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${cfg.apiKey}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				// Resend expects `from` as "Name <email@domain>"; the domain must
+				// be verified in the Resend dashboard.
+				from: `${cfg.fromName} <${cfg.fromEmail}>`,
+				to: msg.to,
+				subject: msg.subject,
+				html: msg.html,
+				text: msg.text,
+			}),
 		},
-		body: JSON.stringify({
-			// Resend expects `from` as "Name <email@domain>"; the domain must
-			// be verified in the Resend dashboard.
-			from: `${cfg.fromName} <${cfg.fromEmail}>`,
-			to: msg.to,
-			subject: msg.subject,
-			html: msg.html,
-			text: msg.text,
-		}),
-	});
+		{ label: 'Resend send' },
+	);
 
 	if (!res.ok) {
-		const body = await res.text().catch(() => '');
-		throw new Error(`Resend ${res.status} ${res.statusText}: ${body.slice(0, 300)}`);
+		throw new Error(`Resend ${res.status} ${res.statusText}: ${await errorBody(res)}`);
 	}
 	return { sent: true };
 }

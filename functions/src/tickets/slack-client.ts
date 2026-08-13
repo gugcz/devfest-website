@@ -7,6 +7,8 @@
  * Docs: https://api.slack.com/messaging/webhooks
  */
 
+import { errorBody, fetchWithRetry } from '../lib/http.js';
+
 export interface SlackTextPayload {
 	text: string;
 }
@@ -19,14 +21,20 @@ export interface SlackBlocksPayload {
 export type SlackPayload = SlackTextPayload | SlackBlocksPayload;
 
 export async function postToSlack(webhookUrl: string, payload: SlackPayload): Promise<void> {
-	const res = await fetch(webhookUrl, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(payload),
-	});
+	// `retryUnsafe` on a POST is deliberate here and nowhere else: the worst case
+	// is a duplicate line in the channel, while a dropped one is an alert (or a
+	// purchase notification) nobody ever sees.
+	const res = await fetchWithRetry(
+		webhookUrl,
+		{
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload),
+		},
+		{ label: 'Slack webhook', retryUnsafe: true },
+	);
 
 	if (!res.ok) {
-		const body = await res.text().catch(() => '');
-		throw new Error(`Slack webhook ${res.status} ${res.statusText}: ${body.slice(0, 300)}`);
+		throw new Error(`Slack webhook ${res.status} ${res.statusText}: ${await errorBody(res)}`);
 	}
 }

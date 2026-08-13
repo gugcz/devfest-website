@@ -26,6 +26,7 @@ import { logger } from 'firebase-functions/v2';
 import { onRequest } from 'firebase-functions/v2/https';
 
 import { firestore } from '../lib/admin.js';
+import { describeError } from '../lib/errors.js';
 
 const REGION = 'europe-west1';
 
@@ -88,7 +89,7 @@ export const lineupApi = onRequest(
 			res.set('Cache-Control', CACHE_CONTROL);
 			res.json(payload);
 		} catch (err) {
-			logger.error('lineupApi read failed', err);
+			logger.error(`lineupApi read failed: ${describeError(err)}`, err);
 			// Never cache an error — the browser falls back to its "unavailable" state
 			// and a retry can hit a healthy instance.
 			res.set('Cache-Control', 'no-store');

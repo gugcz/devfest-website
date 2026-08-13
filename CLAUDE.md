@@ -92,6 +92,15 @@ App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCH
 - The endpoints return raw docs (`{ id, ...fields }` / the RTDB cache verbatim); the browser reuses the existing `speakerFromDoc` / `sessionFromDoc` / `filterDisplayable` parsers so shape logic isn't duplicated in `functions/`.
 - **a11y:** `scripts/a11y.mjs` serves `/api/lineup` + `/api/tickets` from `scripts/a11y-mocks/fixtures.mjs` (the islands `fetch` them, no SDK). The only Firebase module still mocked under `A11Y_MOCK` is `firebase/app-check` (App Check inits on load via analytics).
 
+### Backend failures & outbound HTTP (`functions/src/lib/`)
+
+Every domain shares two modules. The rule of thumb: **the failure text is a product surface** — it lands in a Slack alert (`🎤 SESSIONIZE`, `🧾 INVOICES`), in an invoice doc's `errorMessage`, and in Cloud Logging, and it is usually all a responder has.
+
+- **`lib/errors.ts`** — `describeError(err)` unwraps the real reason, which is never in `message`: undici reports every network fault as `fetch failed` and hides `ENOTFOUND` / `UND_ERR_CONNECT_TIMEOUT` / `ECONNRESET` in `cause`, and gRPC (Firestore/RTDB) carries its status in `code`. `stageError(stage, err)` labels which step failed, keeping the original as `cause` — without it a Slack line can't distinguish "Sessionize is down" from "our Firestore write was denied". Use it at any boundary a responder would otherwise have to guess at (both the Firestore and RTDB cache writes do). **Use these instead of `err.message` or `err instanceof Error ? … : String(err)` in any log, alert, or persisted error.**
+- **`lib/http.ts`** — `fetchWithRetry(url, init, { label, … })` is the only outbound HTTP in `functions/`; a bare `fetch()` in this directory is a bug. It adds a per-attempt timeout (15s default, 30s for iDoklad) — a plain `fetch` has none, so a hung upstream rides the whole function timeout — plus bounded retries (3 attempts, 1s/2s backoff) on network faults and 429/5xx. 4xx never retries: it's deterministic, and `fetchSessionizePayload` depends on seeing the 400 immediately to fall back to the Speakers view. Non-OK responses are returned, not thrown, so status handling stays with the caller.
+  - **Retries are off for anything that isn't idempotent, enforced in the helper, not by convention.** A retried `POST /IssuedInvoices` bills a company twice; a retried discount code or Resend send duplicates money/mail. `GET`/`HEAD` retry automatically; a non-GET is pinned to one attempt *even if the caller passes `attempts`*, unless it passes `retryUnsafe`. Only two calls do: the Slack webhook (a duplicate line beats a lost alert) and the iDoklad OAuth token (a second token costs nothing).
+  - `errorBody(res)` reads a failed response's body for the message — capped, never throws.
+
 ### ti.to Tickets pipeline
 
 Visitor browsers read ticket data from the cached `/api/tickets` endpoint (`ticketsApi`), which serves the RTDB `/tickets` cache — never the Firebase SDK (see "Browser data access"). The static build never calls ti.to. Cloud Functions own all ti.to traffic.

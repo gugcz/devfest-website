@@ -34,7 +34,8 @@
  * live collection) are reviewable in isolation — this package ships no tests.
  */
 
-import { logger } from 'firebase-functions/v2';
+import { describeError } from '../lib/errors.js';
+import { errorBody, fetchWithRetry } from '../lib/http.js';
 
 const SESSIONIZE_API_BASE = 'https://sessionize.com/api/v2';
 
@@ -732,80 +733,18 @@ export function parseEndpointId(raw: string | null | undefined): string {
 	return trimmed.replace(/[/?#].*$/, '');
 }
 
-/** Per-attempt ceiling. Fails fast on a hung connection rather than riding the
- * function timeout. */
-const FETCH_TIMEOUT_MS = 15_000;
-/** Attempts per view before giving up. The sync runs once a day, so a single
- * transient blip (undici surfaces DNS/connect/reset failures as a bare
- * `TypeError: fetch failed`) would otherwise cost a whole day of freshness —
- * observed in production as a ~10.7s connect timeout against sessionize.com. */
-const FETCH_ATTEMPTS = 3;
-/** Backoff before attempt N+1: 1s, then 2s. */
-const RETRY_BASE_DELAY_MS = 1_000;
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 /**
- * Flatten an error into one diagnosable line, for logs and the Slack alert.
- * A bare `message` is often useless on its own — undici reports every
- * network-level failure as `fetch failed` and hides the actual reason
- * (`ENOTFOUND`, `UND_ERR_CONNECT_TIMEOUT`, `ECONNRESET`, …) one level down in
- * `cause`; Firestore/Storage errors likewise carry their status in `code`. So
- * append whichever of those exists. (An `AbortSignal.timeout` abort needs no
- * unwrapping — its own message already names the timeout.)
- */
-export function describeError(err: unknown): string {
-	const error = err as { message?: string; code?: string | number; cause?: unknown };
-	const message = error?.message || String(err);
-	const cause = error?.cause as { code?: string; message?: string } | undefined;
-	const detail = cause?.code || cause?.message || error?.code;
-	if (detail == null) return message;
-	// gRPC errors already lead with their code ("7 PERMISSION_DENIED: …") — don't
-	// echo it back in the suffix.
-	const text = String(detail);
-	return message.includes(text) ? message : `${message} (${text})`;
-}
-
-/** Retry-worthy HTTP status: Sessionize rate-limiting or a server-side hiccup.
- * A 4xx (e.g. 400 for a view this endpoint doesn't serve) is deterministic — it
- * must fall through to the Speakers-view fallback immediately, not burn retries. */
-function isTransientStatus(status: number): boolean {
-	return status === 429 || status >= 500;
-}
-
-/**
- * GET one Sessionize view, retrying transient network failures and 429/5xx
- * responses with a short backoff. Returns the last response when every attempt
- * came back non-OK (the caller decides between the Speakers fallback and
- * throwing); throws only when no attempt produced a response at all.
+ * GET one Sessionize view. Retries transient faults via `fetchWithRetry`,
+ * because this sync runs once a day: the blip that cost a whole day of lineup
+ * freshness in production was a ~10.7s connect timeout here. A non-OK response
+ * comes back as-is, so the caller can fall back to the Speakers view on the
+ * deterministic 400 an endpoint returns for a view it doesn't serve.
  */
 async function fetchView(endpointId: string, view: string): Promise<Response> {
-	const url = `${SESSIONIZE_API_BASE}/${endpointId}/view/${view}`;
-	let lastError: unknown;
-
-	for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt++) {
-		try {
-			const res = await fetch(url, {
-				headers: { Accept: 'application/json' },
-				signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-			});
-			if (res.ok || !isTransientStatus(res.status) || attempt === FETCH_ATTEMPTS) return res;
-			logger.warn(
-				`Sessionize ${view} view returned ${res.status} (attempt ${attempt}/${FETCH_ATTEMPTS}), retrying`,
-			);
-		} catch (err) {
-			lastError = err;
-			if (attempt === FETCH_ATTEMPTS) break;
-			logger.warn(
-				`Sessionize ${view} view fetch failed (attempt ${attempt}/${FETCH_ATTEMPTS}), retrying: ${describeError(err)}`,
-			);
-		}
-		await sleep(RETRY_BASE_DELAY_MS * 2 ** (attempt - 1));
-	}
-
-	throw new Error(
-		`Sessionize ${view} view unreachable after ${FETCH_ATTEMPTS} attempts: ${describeError(lastError)}`,
-		{ cause: lastError },
+	return fetchWithRetry(
+		`${SESSIONIZE_API_BASE}/${endpointId}/view/${view}`,
+		{ headers: { Accept: 'application/json' } },
+		{ label: `Sessionize ${view} view` },
 	);
 }
 
@@ -828,9 +767,8 @@ export async function fetchSessionizePayload(rawEndpointId: string): Promise<unk
 		const allStatus = res.status;
 		res = await fetchView(endpointId, 'Speakers');
 		if (!res.ok) {
-			const body = await res.text().catch(() => '');
 			throw new Error(
-				`Sessionize API failed for id "${endpointId}" (All=${allStatus}, Speakers=${res.status} ${res.statusText}): ${body.slice(0, 200)}`,
+				`Sessionize API rejected both views for id "${endpointId}" (All=${allStatus}, Speakers=${res.status} ${res.statusText}): ${await errorBody(res, 200)}`,
 			);
 		}
 	}
@@ -838,7 +776,12 @@ export async function fetchSessionizePayload(rawEndpointId: string): Promise<unk
 	try {
 		return await res.json();
 	} catch (err) {
-		throw new Error(`Sessionize response was not valid JSON: ${(err as Error).message}`);
+		// Almost always an HTML page from an embed id rather than a JSON endpoint —
+		// say so, since the message otherwise reads as a Sessionize outage.
+		throw new Error(
+			`Sessionize response was not valid JSON (is "${endpointId}" a JSON API endpoint id?): ${describeError(err)}`,
+			{ cause: err },
+		);
 	}
 }
 

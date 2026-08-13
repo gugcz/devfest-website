@@ -12,6 +12,7 @@
  * flat-ish body wrapped under `discount_code`).
  */
 
+import { errorBody, fetchWithRetry } from '../lib/http.js';
 import { fetchAllReleases, type TitoRelease, deriveSaleStatus } from '../tickets/tito-api.js';
 
 const TITO_API_BASE = 'https://api.tito.io/v3';
@@ -90,28 +91,35 @@ export async function createDiscountCode(
 	input: { code: string; quantity: number; releaseIds: number[] },
 ): Promise<CreatedDiscountCode> {
 	const url = `${TITO_API_BASE}/${cfg.accountSlug}/${cfg.eventSlug}/discount_codes`;
-	const res = await fetch(url, {
-		method: 'POST',
-		headers: {
-			Authorization: `Token token=${cfg.token}`,
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			discount_code: {
-				code: input.code,
-				type: 'PercentOffDiscountCode',
-				value: '100.0',
-				quantity: input.quantity,
-				release_ids: input.releaseIds,
-				only_show_attached: true,
+	// One attempt only (the shared helper pins a POST to one): the code is
+	// deterministic, so a replay either collides on ti.to or mints a second
+	// 100%-off code for the same company.
+	const res = await fetchWithRetry(
+		url,
+		{
+			method: 'POST',
+			headers: {
+				Authorization: `Token token=${cfg.token}`,
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
 			},
-		}),
-	});
+			body: JSON.stringify({
+				discount_code: {
+					code: input.code,
+					type: 'PercentOffDiscountCode',
+					value: '100.0',
+					quantity: input.quantity,
+					release_ids: input.releaseIds,
+					only_show_attached: true,
+				},
+			}),
+		},
+		{ label: 'ti.to discount_codes' },
+	);
 
 	if (!res.ok) {
-		const body = await res.text().catch(() => '');
-		throw new Error(`ti.to discount_codes ${res.status} ${res.statusText}: ${body.slice(0, 300)}`);
+		const body = await errorBody(res);
+		throw new Error(`ti.to discount_codes ${res.status} ${res.statusText}: ${body}`);
 	}
 
 	const data = (await res.json()) as { id?: number; code?: string; discount_code?: { id: number; code: string } };
