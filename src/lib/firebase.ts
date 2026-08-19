@@ -94,8 +94,13 @@ const GRANTED_CONSENT = { ...DENIED_CONSENT, analytics_storage: 'granted' } as c
  *
  * `PUBLIC_ANALYTICS_ALLOWED_HOSTS` (comma-separated) overrides the list — set it
  * to a preview host when you deliberately want to verify measurement there.
+ *
+ * The two Firebase Hosting default domains are the *live* site too (Hosting
+ * always serves them), so they stay in. Preview channels are a different
+ * hostname (`devfest-public--<channel>.web.app`), not a subdomain of these, so
+ * the exact/subdomain match below keeps them out.
  */
-const ANALYTICS_HOSTS = ['devfest.cz'];
+const ANALYTICS_HOSTS = ['devfest.cz', 'devfest-public.web.app', 'devfest-public.firebaseapp.com'];
 
 function isAnalyticsHost(): boolean {
 	const override = import.meta.env.PUBLIC_ANALYTICS_ALLOWED_HOSTS ?? '';
