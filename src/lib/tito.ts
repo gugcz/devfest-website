@@ -172,6 +172,20 @@ export function formatPrice(price: string | null, currency: string | null): stri
  */
 export const FALLBACK_VAT_RATE = 0.21;
 
+/**
+ * Gross (tax-inclusive) unit price as a number, or `null` when the release is
+ * free or carries no usable price. The single source of the VAT assumption
+ * shared by `priceDisplay`, the invoice estimate and the GA4 ecommerce events:
+ * ti.to's Admin API exposes no tax rate on a release, so a tax-exclusive one is
+ * grossed up with `FALLBACK_VAT_RATE`.
+ */
+export function grossPrice(release: TitoRelease): number | null {
+	if (release.price == null) return null;
+	const price = Number(release.price);
+	if (!Number.isFinite(price) || price === 0) return null;
+	return release.tax_exclusive === false ? price : price * (1 + FALLBACK_VAT_RATE);
+}
+
 export interface PriceDisplay {
 	/** Primary amount shown — gross when known, else net. */
 	primary: string;
@@ -200,7 +214,7 @@ export function priceDisplay(release: TitoRelease): PriceDisplay | null {
 
 	const currency = release.currency;
 	const label = (release.tax_description ?? '').trim() || 'VAT';
-	const gross = release.tax_exclusive === false ? price : price * (1 + FALLBACK_VAT_RATE);
+	const gross = grossPrice(release) ?? price;
 
 	return {
 		primary: formatAmount(gross, currency),

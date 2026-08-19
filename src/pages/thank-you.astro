@@ -13,3 +13,18 @@ import LandingNotice from '../components/LandingNotice.astro';
 		subtext="Ticket confirmed. Check your inbox for the receipt and QR code. See you in Prague on 30 October 2026."
 	/>
 </BaseLayout>
+
+<script>
+	import { trackConversion } from '../lib/analytics';
+
+	// ti.to's configured "thank you URL" — reached only after a completed ticket
+	// purchase, and the one signal we get, since checkout itself happens on ti.to.
+	// Deliberately NOT GA4's `purchase`: that event is defined by
+	// `transaction_id` + `value` + `items`, and ti.to's redirect carries none of
+	// them, so a `purchase` here would be revenue-less and impossible to
+	// de-duplicate. Mark this custom event as a key event in GA4 → Admin → Events
+	// and pair it with `begin_checkout` for the drop-off rate.
+	document.addEventListener('astro:page-load', () => {
+		trackConversion('/thank-you', 'ticket_purchase_confirmed');
+	});
+</script>

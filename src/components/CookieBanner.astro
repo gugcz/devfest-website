@@ -13,23 +13,19 @@
 </div>
 
 <script>
-	const CONSENT_KEY = 'cookie-consent';
+	// Consent storage lives in `src/lib/consent.ts` because `src/lib/firebase.ts`
+	// reads the same decision to seed the GA4 Consent Mode default. Static import
+	// (not dynamic): the module is a few lines of localStorage access and pulls in
+	// no Firebase code.
+	import { readConsent, storeConsent } from '../lib/consent';
 
-	function getConsent(): string | null {
-		try { return localStorage.getItem(CONSENT_KEY); } catch { return null; }
-	}
-
-	function setConsent(value: string): void {
-		try { localStorage.setItem(CONSENT_KEY, value); } catch {}
-	}
-
-	// Boot Analytics in cookieless Consent Mode (consent denied by default) and
-	// record the page view. Safe for every visitor — GA4 sends only aggregated
-	// identifier-free pings, setting no cookie / `client_id` until they accept.
-	// `trackPageView()` initialises Analytics on first use (idempotent) and
-	// swallows the initial call, which GA4's own `config` already reported; the
-	// rest are the `<ClientRouter />` soft navigations GA4 cannot see by itself.
-	// The module stays cached across soft navigations, so both guards hold.
+	// Boot Analytics in Consent Mode and record the page view. Safe for every
+	// visitor — an undecided one gets only aggregated identifier-free pings, with
+	// no cookie / `client_id` until they accept. `trackPageView()` initialises
+	// Analytics on first use (idempotent) and swallows the initial call, which
+	// GA4's own `config` already reported; the rest are the `<ClientRouter />`
+	// soft navigations GA4 cannot see by itself. The module stays cached across
+	// soft navigations, so both guards hold.
 	async function trackPageView() {
 		try {
 			const mod = await import('../lib/firebase');
@@ -40,7 +36,8 @@
 	}
 
 	// Upgrade consent to granted after the visitor accepts — flips GA4 from
-	// cookieless pings to full measurement.
+	// cookieless pings to full measurement and re-sends the current page's
+	// `page_view`, which had already gone out cookieless at `config` time.
 	async function grantAnalyticsConsent() {
 		try {
 			const mod = await import('../lib/firebase');
@@ -66,26 +63,25 @@
 			banner?.classList.remove('cookie-banner--hidden');
 		};
 
-		// Analytics starts for everyone in cookieless mode; identifiers stay off
-		// until (and unless) the visitor accepts.
+		// Analytics starts for everyone; identifiers stay off until (and unless)
+		// the visitor accepts. A stored `accepted` needs no call here —
+		// `initAnalytics()` reads it and boots GA4 straight into granted, so the
+		// document-load `page_view` is already attributed.
 		trackPageView();
 
 		// Banner starts hidden — reveal only if no decision yet
-		const stored = getConsent();
-		if (stored === 'accepted') {
-			grantAnalyticsConsent();
-		} else if (!stored) {
+		if (!readConsent()) {
 			showBanner();
 		}
 
 		document.getElementById('cookie-accept')?.addEventListener('click', () => {
-			setConsent('accepted');
+			storeConsent('accepted');
 			hideBanner();
 			grantAnalyticsConsent();
 		});
 
 		document.getElementById('cookie-decline')?.addEventListener('click', () => {
-			setConsent('declined');
+			storeConsent('declined');
 			hideBanner();
 		});
 

@@ -1,6 +1,7 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
 import { getAnalytics, isSupported, logEvent, type Analytics } from 'firebase/analytics';
+import { readConsent } from './consent';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyB7lXxnVicSWTtUe9CbVUarm2MwFVRMucU',
@@ -80,6 +81,39 @@ const DENIED_CONSENT = {
 } as const;
 
 /**
+ * Consent state for a visitor who has already accepted. Only `analytics_storage`
+ * flips — `ad_*` stay denied permanently, since we never collect for advertising.
+ */
+const GRANTED_CONSENT = { ...DENIED_CONSENT, analytics_storage: 'granted' } as const;
+
+/**
+ * Hosts that report into the production GA4 property. The measurement ID is
+ * committed, so without this gate `npm run dev` and every Firebase Hosting
+ * preview channel (`*.web.app`) would mix development traffic into the live
+ * numbers. Matches the host itself and any subdomain of it.
+ *
+ * `PUBLIC_ANALYTICS_ALLOWED_HOSTS` (comma-separated) overrides the list — set it
+ * to a preview host when you deliberately want to verify measurement there.
+ *
+ * The two Firebase Hosting default domains are the *live* site too (Hosting
+ * always serves them), so they stay in. Preview channels are a different
+ * hostname (`devfest-public--<channel>.web.app`), not a subdomain of these, so
+ * the exact/subdomain match below keeps them out.
+ */
+const ANALYTICS_HOSTS = ['devfest.cz', 'devfest-public.web.app', 'devfest-public.firebaseapp.com'];
+
+function isAnalyticsHost(): boolean {
+	const override = import.meta.env.PUBLIC_ANALYTICS_ALLOWED_HOSTS ?? '';
+	const configured = override
+		.split(',')
+		.map((h) => h.trim().toLowerCase())
+		.filter(Boolean);
+	const allowed = configured.length > 0 ? configured : ANALYTICS_HOSTS;
+	const host = window.location.hostname.toLowerCase();
+	return allowed.some((h) => host === h || host.endsWith(`.${h}`));
+}
+
+/**
  * Push a raw gtag command onto the shared dataLayer. gtag.js only recognises
  * consent/config commands from the `arguments` object its canonical shim pushes
  * — a plain array is silently ignored (verified: the consent default is skipped
@@ -96,12 +130,22 @@ const gtag = function (): void {
 
 let analyticsInstance: Analytics | null = null;
 let analyticsInit: Promise<void> | null = null;
+/** Whether GA4 is currently measuring with storage (a `client_id`). */
+let consentGranted = false;
 /**
- * Initialise Firebase Analytics (GA4) in Google Consent Mode with consent
- * DENIED by default, so GA4 boots cookieless: no `client_id`, no storage, only
+ * Initialise Firebase Analytics (GA4) in Google Consent Mode. GA4 boots
+ * cookieless for an undecided visitor: no `client_id`, no storage, only
  * aggregated identifier-free pings. That lets us count traffic from every
  * visitor — including those who never accept — while the ePrivacy-relevant
  * identifiers stay off until `grantAnalyticsConsent()`.
+ *
+ * The default is **seeded from the stored decision**, not hardcoded to denied.
+ * A returning visitor who already accepted must boot straight into granted:
+ * gtag processes the dataLayer in order, so a later `consent: 'update'` cannot
+ * retroactively attribute the `page_view` that the `config` command already
+ * sent. Booting denied and upgrading afterwards left every accepted visitor's
+ * entry page_view without a `client_id` — for a single-page visit that means no
+ * attributed session at all.
  *
  * The `consent: 'default'` command must land in the dataLayer *ahead of* the
  * `config` command that `getAnalytics` pushes, or GA4 writes `_ga` before the
@@ -110,8 +154,8 @@ let analyticsInit: Promise<void> | null = null;
  * dataLayer via the gtag shim before `getAnalytics()` runs.
  *
  * `ad_*` stay denied permanently (we only ever measure analytics, never ads),
- * matching the cookie-banner copy. Idempotent; no-ops on the server and where
- * Analytics is unsupported.
+ * matching the cookie-banner copy. Idempotent; no-ops on the server, off the
+ * production hosts, and where Analytics is unsupported.
  *
  * The in-flight promise is memoised, not just the resolved instance: callers
  * overlap (the banner boots Analytics while a stored `accepted` grants consent
@@ -122,9 +166,22 @@ let analyticsInit: Promise<void> | null = null;
 export function initAnalytics(): Promise<void> {
 	analyticsInit ??= (async () => {
 		try {
+			if (typeof window === 'undefined') return;
+			// App Check is a security mechanism (legitimate interest), not
+			// analytics: it initialises on load in *every* environment and
+			// regardless of cookie consent, so the token is ready before the
+			// invoice callable fires. Hence before both gates below.
+			getApp();
+			if (!isAnalyticsHost()) {
+				console.info(
+					`[firebase] Analytics off on ${window.location.hostname} (not a production host)`,
+				);
+				return;
+			}
 			const supported = await isSupported();
 			if (!supported) return;
-			gtag('consent', 'default', DENIED_CONSENT);
+			consentGranted = readConsent() === 'accepted';
+			gtag('consent', 'default', consentGranted ? GRANTED_CONSENT : DENIED_CONSENT);
 			analyticsInstance = getAnalytics(getApp());
 		} catch (err) {
 			console.warn('[firebase] Analytics init failed:', err);
@@ -133,7 +190,27 @@ export function initAnalytics(): Promise<void> {
 	return analyticsInit;
 }
 
-let initialPageViewSeen = false;
+/**
+ * Send one `page_view`. Split out of `trackPageView` because consent grants
+ * need it too (see `grantAnalyticsConsent`). `page_referrer` is explicit: on a
+ * soft navigation the browser sends no referrer of its own, so without it GA4
+ * would attribute the hit as if the visitor arrived from nowhere.
+ */
+function sendPageView(referrer: string | undefined): void {
+	if (!analyticsInstance) return;
+	try {
+		logEvent(analyticsInstance, 'page_view', {
+			page_location: window.location.href,
+			page_title: document.title,
+			...(referrer ? { page_referrer: referrer } : {}),
+		});
+	} catch (err) {
+		console.warn('[firebase] page_view failed:', err);
+	}
+}
+
+/** URL of the last page reported, or `null` before the first report. */
+let lastPageLocation: string | null = null;
 /**
  * Record a `page_view` for the current URL.
  *
@@ -147,23 +224,35 @@ let initialPageViewSeen = false;
  *
  * The first call is therefore swallowed — it corresponds to the document load
  * that `config` already reported, and re-sending it would double-count the
- * entry page. Runs for every visitor: under denied consent the hit is the same
- * cookieless identifier-free ping GA4 already sends.
+ * entry page. Every later call reports the previous URL as `page_referrer`, so
+ * the in-site path stays visible in GA4. Runs for every visitor: under denied
+ * consent the hit is the same cookieless identifier-free ping GA4 already sends.
  */
 export async function trackPageView(): Promise<void> {
 	await initAnalytics();
 	if (!analyticsInstance) return;
-	if (!initialPageViewSeen) {
-		initialPageViewSeen = true;
-		return;
-	}
+	const previous = lastPageLocation;
+	lastPageLocation = window.location.href;
+	if (previous === null) return;
+	sendPageView(previous);
+}
+
+/**
+ * Send a GA4 event. Boots Analytics first (idempotent) and never throws —
+ * conversion tracking must not be able to break the click or form submit it is
+ * attached to. Runs for every visitor: under denied consent it is the same
+ * cookieless, identifier-free ping GA4 already sends for page views.
+ */
+export async function trackEvent(
+	name: string,
+	params?: Record<string, unknown>,
+): Promise<void> {
+	await initAnalytics();
+	if (!analyticsInstance) return;
 	try {
-		logEvent(analyticsInstance, 'page_view', {
-			page_location: window.location.href,
-			page_title: document.title,
-		});
+		logEvent(analyticsInstance, name, params);
 	} catch (err) {
-		console.warn('[firebase] page_view failed:', err);
+		console.warn(`[firebase] event ${name} failed:`, err);
 	}
 }
 
@@ -173,13 +262,29 @@ export async function trackPageView(): Promise<void> {
  * full measurement (`client_id` + storage). Only `analytics_storage` flips —
  * ad consent stays denied, since we never collect for advertising. Ensures the
  * SDK is initialised first so the update always lands on a live gtag.
+ *
+ * A `page_view` for the current page follows the update. The one GA4 sent at
+ * `config` time went out under denied consent — cookieless, with no
+ * `client_id` — and gtag never re-sends it, so without this the visitor's
+ * consent would produce nothing at all unless they happened to navigate again.
+ *
+ * No-ops when consent is already granted (a returning visitor boots straight
+ * into granted via the seeded default), which is what keeps the re-sent
+ * `page_view` to at most one per visitor.
  */
 export async function grantAnalyticsConsent(): Promise<void> {
 	await initAnalytics();
 	if (!analyticsInstance) return;
+	if (consentGranted) return;
+	consentGranted = true;
 	try {
 		gtag('consent', 'update', { analytics_storage: 'granted' });
 	} catch (err) {
 		console.warn('[firebase] Analytics consent grant failed:', err);
+		return;
 	}
+	// Real document referrer here (not `lastPageLocation`): this re-reports the
+	// current page, it is not a navigation.
+	sendPageView(document.referrer || undefined);
+	lastPageLocation = window.location.href;
 }

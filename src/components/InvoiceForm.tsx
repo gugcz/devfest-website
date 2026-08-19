@@ -3,11 +3,13 @@ import {
 	fetchTickets,
 	filterDisplayable,
 	formatPrice,
+	grossPrice,
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
 	type TitoRelease,
 } from '../lib/tito';
+import { track } from '../lib/analytics';
 import s from './InvoiceForm.module.scss';
 
 // Cloud Functions region the callable is deployed to.
@@ -77,14 +79,17 @@ export default function InvoiceForm() {
 	const estimate = useMemo(() => {
 		if (!release) return null;
 		const display = priceDisplay(release);
-		if (!display || release.price == null) return null;
-		const price = Number(release.price);
-		if (!Number.isFinite(price) || price === 0) return null;
-		const grossEach = release.tax_exclusive === false ? price : price * 1.21;
+		// `grossPrice` holds the shared VAT assumption (ti.to exposes no tax rate);
+		// it returns null for exactly the free / unpriced cases we skip here.
+		const grossEach = grossPrice(release);
+		if (!display || grossEach == null) return null;
 		const total = grossEach * fields.countTickets;
 		return {
 			each: display.primary,
 			total: formatPrice(String(total), release.currency),
+			/** Numeric total + currency for the GA4 `generate_lead` value. */
+			amount: Math.round(total * 100) / 100,
+			currency: (release.currency ?? 'CZK').toUpperCase(),
 		};
 	}, [release, fields.countTickets]);
 
@@ -110,6 +115,16 @@ export default function InvoiceForm() {
 			]);
 			const submit = httpsCallable(getFunctions(getFirebaseApp(), FUNCTIONS_REGION), 'submitInvoiceCallable');
 			await submit({ ...fields, website: honeypot });
+			// GA4's recommended event for a B2B enquiry. This is the conversion for
+			// the company path — the ti.to checkout never happens here (the company
+			// pays the invoice and claims tickets with a 100%-off code), so nothing
+			// downstream would otherwise mark it. `value`/`currency` go together or
+			// not at all; the estimate is missing only when the price lookup failed.
+			track('generate_lead', {
+				...(estimate ? { currency: estimate.currency, value: estimate.amount } : {}),
+				lead_source: 'company_invoice',
+				quantity: fields.countTickets,
+			});
 			setStatus('success');
 			setMessage(
 				`Request received. We'll email the invoice to ${recipient}. ` +

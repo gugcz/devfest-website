@@ -13,6 +13,13 @@ interface ImportMetaEnv {
 	 * production.
 	 */
 	readonly PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN?: string;
+	/**
+	 * Comma-separated hosts allowed to report into the production GA4 property,
+	 * overriding the built-in `devfest.cz` list. Analytics stays off everywhere
+	 * else (localhost, `*.web.app` preview channels) so development traffic can't
+	 * pollute live numbers; set this to a preview host to measure there on purpose.
+	 */
+	readonly PUBLIC_ANALYTICS_ALLOWED_HOSTS?: string;
 }
 
 interface ImportMeta {
