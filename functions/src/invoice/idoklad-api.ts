@@ -72,6 +72,8 @@ export interface CreatedInvoice {
 	id: number;
 	number: string | null;
 	variableSymbol: string | null;
+	/** Maturity we asked for, `YYYY-MM-DD` — quoted back in the covering email. */
+	dueDate: string;
 }
 
 // ── Token cache (in-process, per warm instance) ─────────────────────────
@@ -255,6 +257,7 @@ export async function createInvoice(
 		id: created.Id,
 		number: created.DocumentNumber ?? null,
 		variableSymbol: created.VariableSymbol ?? null,
+		dueDate: isoDate(maturity),
 	};
 }
 
