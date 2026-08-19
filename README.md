@@ -231,6 +231,16 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 `firestore.rules` denies all client access to `invoices` (company PII; written/read only by Cloud Functions via the Admin SDK, which bypasses rules). It is **not** wired into `firebase.json` on purpose — the Firestore ruleset is project-global and the project is shared with the mobile app, so auto-deploying would clobber the app's rules. Merge the `invoices` block into the project's live ruleset in the Firebase console (same manual approach as `database.rules.json`).
 
+## Analytics (GA4)
+
+Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Architecture and the gotchas behind it are in [CLAUDE.md](CLAUDE.md#firebase-integration-srclibfirebasets); this section is the console-side setup, which is **not** in the repo.
+
+- **Mark the conversions as key events.** GA4 → Admin → Events → mark as key event: `ticket_purchase_confirmed` (ti.to purchase completed), `sign_up` (newsletter), `generate_lead` (company invoice request). `begin_checkout` is a recommended ecommerce event and needs no marking; pair it with `ticket_purchase_confirmed` for the checkout drop-off rate.
+- **No revenue in reports.** ti.to's thank-you redirect carries no order id or amount, so `ticket_purchase_confirmed` deliberately isn't GA4's `purchase` and carries no value. Ticket revenue lives in ti.to, not GA4. `begin_checkout` and `generate_lead` do carry `value` (gross CZK), so *intent* is measurable.
+- **Consent Mode is already the source of truth** — do not add a second GA4 tag or a GTM container. A visitor who declines still produces cookieless, identifier-free pings by design; those are aggregate-only and cannot be attributed to a user or a session.
+- **Development traffic is excluded in code**, not by a GA4 filter: measurement is limited to `devfest.cz` and its subdomains, so `npm run dev` and `*.web.app` preview channels send nothing. To measure a preview deliberately, build it with `PUBLIC_ANALYTICS_ALLOWED_HOSTS=<host>`.
+- **Verifying a change** needs a real host: use GA4 DebugView, or the browser devtools Network tab filtered to `/g/collect`. Check which host the hits go to — EEA traffic can be routed to `region1.google-analytics.com`, which is why the CSP `connect-src` in `firebase.json` allows `https://*.google-analytics.com` rather than just `www.`.
+
 ## Project Structure
 
 ```

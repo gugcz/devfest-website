@@ -13,3 +13,15 @@ import LandingNotice from '../components/LandingNotice.astro';
 		subtext="We'll reach out when tickets drop. Stay tuned."
 	/>
 </BaseLayout>
+
+<script>
+	import { trackConversion } from '../lib/analytics';
+
+	// The newsletter form is a native POST to SmartEmailing, which redirects back
+	// here — so this page load *is* the successful signup, and it is the only
+	// moment GA4 can observe it (an event fired in the form's submit handler races
+	// the unload). Mark `sign_up` as a key event in GA4 → Admin → Events.
+	document.addEventListener('astro:page-load', () => {
+		trackConversion('/newsletter-subscription-thank-you', 'sign_up', { method: 'newsletter' });
+	});
+</script>

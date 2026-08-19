@@ -3,12 +3,14 @@ import {
 	eventUrl,
 	fetchTickets,
 	filterDisplayable,
+	grossPrice,
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
 	type ReleaseStatus,
 	type TitoRelease,
 } from '../lib/tito';
+import { track } from '../lib/analytics';
 import s from './Tickets.module.scss';
 
 // Static copy keyed by lowercased group name. Overrides whatever ti.to
@@ -63,6 +65,44 @@ function groupReleases(releases: TitoRelease[]): ReleaseGroup[] {
 		group.variants.push({ release, variantLabel });
 	}
 	return Array.from(map.values());
+}
+
+/**
+ * Report the click on a wave's Buy CTA as GA4's recommended `begin_checkout`.
+ * Checkout happens on ti.to, on a domain we don't measure, so this is the last
+ * thing GA4 can see of a ticket sale — the outbound click itself is invisible to
+ * it otherwise. Items carry only the buyable variants of the wave, priced gross
+ * (what the visitor actually pays), matching the figure on the stub.
+ */
+function trackBeginCheckout(group: ReleaseGroup, statuses: ReleaseStatus[]): void {
+	const items = group.variants
+		.filter((_, i) => statuses[i]?.purchasable)
+		.map(({ release, variantLabel }) => {
+			const price = grossPrice(release);
+			return {
+				item_id: release.slug,
+				item_name: releaseTitle(release),
+				item_category: group.name,
+				...(variantLabel ? { item_variant: variantLabel } : {}),
+				...(price != null ? { price: round2(price) } : {}),
+				quantity: 1,
+			};
+		});
+	// `value` is the wave's lead price — the figure printed on the stub, and what
+	// one ticket costs. Summing the variants would be wrong: they are alternatives
+	// (Individual *or* Company funded), not a cart. GA4 ignores `value` without a
+	// `currency`, so the two are sent together or not at all (free / unpriced wave).
+	const value = items.find((i) => typeof i.price === 'number')?.price;
+	const currency = group.variants.find(({ release }) => release.currency)?.release.currency;
+	track('begin_checkout', {
+		...(value != null ? { currency: (currency ?? 'CZK').toUpperCase(), value } : {}),
+		items,
+	});
+}
+
+/** Two decimals — GA4 rejects nothing here, but long VAT floats are noise. */
+function round2(n: number): number {
+	return Math.round(n * 100) / 100;
 }
 
 export default function Tickets() {
@@ -282,6 +322,7 @@ export default function Tickets() {
 										target="_blank"
 										rel="noopener noreferrer"
 										aria-label={`Get ${group.name} tickets on ti.to`}
+										onClick={() => trackBeginCheckout(group, statuses)}
 									>
 										Get tickets
 										<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
