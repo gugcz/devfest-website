@@ -16,6 +16,11 @@ on:
       - "functions/**"
       - "firebase.json"
       - ".github/workflows/firebase-functions-merge.yml"
+  # Manual re-deploy, no code change needed. Firebase pins each secret to the
+  # version resolved at deploy time, so a rotated secret (e.g. a new
+  # RESEND_API_KEY version) only reaches the functions on the next deploy —
+  # run this workflow from the Actions tab after adding the new version.
+  workflow_dispatch:
 
 jobs:
   deploy_functions:
