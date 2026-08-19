@@ -181,6 +181,7 @@ async function completeInvoice(
 			link: link ?? '',
 			ticketCount: data.countTickets,
 			companyName: data.companyName,
+			invoiceNumber: data.idokladInvoiceNumber,
 		});
 		const result = await sendEmail(
 			{

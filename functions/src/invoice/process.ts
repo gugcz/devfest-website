@@ -40,6 +40,7 @@ import {
 	resolveCompanyFundedReleases,
 	type TitoConfig,
 } from './tito-discount.js';
+import { buildInvoiceEmail, formatDueDate } from './email.js';
 import { updateInvoice, type InvoiceDoc } from './firestore.js';
 
 
@@ -105,21 +106,21 @@ export const processInvoiceTrigger = onDocumentCreated(
 				},
 			});
 
-			// 4. Email the invoice via iDoklad (PDF attached).
+			// 4. Email the invoice via iDoklad (PDF attached). Copy lives in
+			//    `email.ts` next to the discount-code message, so the two mails a
+			//    company receives read as one voice.
 			let invoiceEmailSent = false;
 			try {
+				const mail = buildInvoiceEmail({
+					companyName: doc.companyName,
+					ticketCount: doc.countTickets,
+					invoiceNumber: invoice.number,
+					variableSymbol: invoice.variableSymbol,
+					dueDate: formatDueDate(invoice.dueDate),
+				});
 				await sendInvoiceByEmail(idokladCfg, invoice.id, {
-					subject: 'Your DevFest.cz 2026 invoice',
-					body: [
-						`Hi,`,
-						``,
-						`thank you for your order of ${doc.countTickets} ticket(s) for DevFest.cz 2026.`,
-						`Attached is your invoice, payable by bank transfer.`,
-						``,
-						`Once it's paid we'll send you a discount code to claim your tickets on ti.to.`,
-						``,
-						`The DevFest.cz team`,
-					].join('\n'),
+					subject: mail.subject,
+					body: mail.body,
 				});
 				invoiceEmailSent = true;
 			} catch (mailErr) {
