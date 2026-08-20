@@ -391,6 +391,20 @@
 			transition: opacity 0.2s;
 		}
 
+		// A plated logo (see `plated` in the partners collection) is a boxed
+		// lockup: the padding and the background are baked into the file. The
+		// cut-out caps above measure a wordmark's letter height, so applied to
+		// a plate they render a small chip adrift in the cell — visibly the
+		// case on mobile, where the cell goes full-width but the cap does not.
+		// A plate is sized to the cell instead: it takes the width the cell's
+		// own padding leaves it, and the height cap only stops a very tall
+		// lockup from touching the rules.
+		.tier-logo.is-plated {
+			width: 100%;
+			max-width: 100%;
+			max-height: calc(var(--tier-logo) * 1.6);
+		}
+
 		&:has(a:hover),
 		&:has(a:focus-visible) {
 			// The cell under the cursor is the one the lamp is over.
