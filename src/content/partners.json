@@ -94,5 +94,13 @@
 		"name": "junior.guru",
 		"logo": "/partners/community/junior-guru.svg",
 		"url": "https://junior.guru/"
+	},
+	{
+		"id": "satoshi-labs",
+		"tier": "community",
+		"order": 2,
+		"name": "SatoshiLabs",
+		"logo": "/partners/community/satoshi-labs.svg",
+		"url": "https://satoshilabs.com/"
 	}
 ]
