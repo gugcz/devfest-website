@@ -62,6 +62,11 @@ const partners = defineCollection({
 		name: z.string(),
 		logo: z.string(),
 		url: z.string().optional(),
+		// `true` when the logo file ships with its own background plate (a
+		// brand that mandates the boxed lockup) instead of the transparent
+		// cut-out the tiles assume. Such a mark carries its own padding, so the
+		// pages size it to the cell rather than to the wordmark height ladder.
+		plated: z.boolean().optional(),
 	}),
 });
 

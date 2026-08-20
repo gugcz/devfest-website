@@ -29,7 +29,8 @@
 		"order": 1,
 		"name": "Česká spořitelna",
 		"logo": "/partners/platinum/ceska-sporitelna.webp",
-		"url": "https://www.csas.cz/"
+		"url": "https://www.csas.cz/",
+		"plated": true
 	},
 	{
 		"id": "wrike",

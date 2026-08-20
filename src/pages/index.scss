@@ -552,6 +552,20 @@
 			transition: opacity 0.2s, filter 0.2s;
 		}
 
+		// Same reasoning as `.tier-logo.is-plated` on /partners: a boxed lockup
+		// carries its own padding, so the wordmark height cap under-sizes it.
+		// The strip has no cell to fill, so it just gets a taller cap.
+		//
+		// The strip's desaturation is meant for cut-out marks, where it reads as
+		// dimming. A plate has a brand colour as its background, and greying
+		// that turns the whole block muddy rather than quiet — so a plated logo
+		// keeps its colour and is held back by opacity alone.
+		.partners-logo.is-plated {
+			max-height: calc(var(--strip-logo-h) * 1.45);
+			filter: none;
+			opacity: calc(var(--strip-logo-opacity) + 0.16);
+		}
+
 		a:hover .partners-logo,
 		a:focus-visible .partners-logo {
 			opacity: 1;

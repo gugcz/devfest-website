@@ -34,6 +34,12 @@ const logoFor = (logo: string): ImageMetadata =>
 // real srcset. Widths cover the tile caps in partners.scss up to ~2× DPR.
 const TIER_WIDTHS = [200, 300, 400, 600, 800];
 const TIER_SIZES = '(max-width: 900px) 200px, 400px';
+// A plated logo is laid out at the cell's full content width (see
+// `.tier-logo.is-plated`), which is wider than a cut-out wordmark renders — and
+// `sizes` is what fixes an `w`-descriptor image's layout width, so it has to
+// describe the plate, not the wordmark, or the plate renders at the wordmark's
+// width no matter what the CSS says.
+const TIER_SIZES_PLATED = '(max-width: 900px) 78vw, 260px';
 const PLATE_WIDTHS = [160, 260, 320, 520];
 const PLATE_SIZES = '(max-width: 900px) 160px, 260px';
 
@@ -83,10 +89,10 @@ const tickerTopics = [
 							<li class="tier-item">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<Image class="tier-logo" src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), TIER_WIDTHS, TIER_SIZES)} />
+										<Image class={`tier-logo${p.plated ? ' is-plated' : ''}`} src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), TIER_WIDTHS, p.plated ? TIER_SIZES_PLATED : TIER_SIZES)} />
 									</a>
 								) : (
-									<Image class="tier-logo" src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), TIER_WIDTHS, TIER_SIZES)} />
+									<Image class={`tier-logo${p.plated ? ' is-plated' : ''}`} src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), TIER_WIDTHS, p.plated ? TIER_SIZES_PLATED : TIER_SIZES)} />
 								)}
 							</li>
 						))}

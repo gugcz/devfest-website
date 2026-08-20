@@ -8,7 +8,7 @@
 // and match by filename, so `logo` stays a plain path string.
 import { getCollection } from 'astro:content';
 
-export type Partner = { name: string; logo: string; url?: string };
+export type Partner = { name: string; logo: string; url?: string; plated?: boolean };
 
 // Ladder tiers only — `media` and `community` are tiers in the schema but never
 // part of the ladder.
@@ -36,7 +36,7 @@ const byTier = async (tier: string): Promise<Partner[]> => {
 	const entries = await getCollection('partners', (entry) => entry.data.tier === tier);
 	return entries
 		.sort((a, b) => a.data.order - b.data.order)
-		.map(({ data }) => ({ name: data.name, logo: data.logo, url: data.url }));
+		.map(({ data }) => ({ name: data.name, logo: data.logo, url: data.url, plated: data.plated }));
 };
 
 /** Full sponsor ladder, top tier first (empty tiers included — filter at the call site). */
