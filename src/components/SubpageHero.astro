@@ -2,30 +2,46 @@
 import HeroBackground from './HeroBackground.astro';
 
 interface Props {
-	label: string;
 	titleHtml: string;
 	lede: string;
 	titleId?: string;
 	/** Visually-hidden keyword text prepended to the <h1>, ahead of the
 	 * decorative title (e.g. "DevFest.cz 2026 Speakers"). Omit to skip. */
 	seoHeading?: string;
+	/**
+	 * Whether the key-art plate sits behind the title.
+	 *
+	 * Ten pages opening on the same photograph in the same crop is the thing
+	 * that makes a site read as one template stamped ten times, however good
+	 * the photograph is. The pages that are ABOUT the event (lineup, schedule,
+	 * crew, partners, press) keep it; the transactional ones (contact, FAQ,
+	 * invoice, downloads) get a type-only plate — black ground, one headline —
+	 * so the scroll has two kinds of opening instead of one.
+	 */
+	photo?: boolean;
+	/** `background-position` for the key-art plate — see HeroBackground. */
+	focus?: string;
 }
 
 const {
-	label,
 	titleHtml,
 	lede,
 	titleId = 'subpage-hero-title',
 	seoHeading,
+	photo = true,
+	focus = 'center',
 } = Astro.props;
 ---
 
-<section class="subpage-hero scene" aria-labelledby={titleId}>
-	<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} />
-	<div class="scene-vignette" aria-hidden="true"></div>
+<section class:list={['subpage-hero', 'scene', { 'subpage-hero--plain': !photo }]} aria-labelledby={titleId}>
+	{photo && (
+		<>
+			<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} focus={focus} />
+			<div class="scene-vignette" aria-hidden="true"></div>
+		</>
+	)}
 
 	<div class="hero-content">
-		<p class="section-label"><span>{label}</span></p>
 		<h1 id={titleId} class="hero-title">
 			{seoHeading && <span class="sr-only">{seoHeading} — </span>}
 			<span set:html={titleHtml} />

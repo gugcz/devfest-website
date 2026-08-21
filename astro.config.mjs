@@ -37,6 +37,31 @@ const a11yMockAlias = a11yMock
       }
     : {};
 
+// `/api/lineup` and `/api/tickets` are Firebase Hosting rewrites in production
+// (see CLAUDE.md "Browser data access"). A dev server has no rewrite table, so
+// those fetches 404 and every data-backed island — the lineup, the agenda
+// timetable, the ticket waves — renders its "unavailable" state instead of the
+// UI you are working on. Serve the audit's fixtures from the same routes so
+// `npm run dev` shows real content.
+//
+// Same payloads the axe sweep uses, from one module, so local and CI can't
+// disagree about what the endpoints return.
+//
+// Opt out with `DEVFEST_LIVE_API=1 npm run dev` to hit the deployed functions
+// instead — needed when you are changing the functions themselves.
+const devApiMocks = () => ({
+    name: 'devfest:dev-api-fixtures',
+    apply: 'serve',
+    async configureServer(server) {
+        if (process.env.DEVFEST_LIVE_API === '1') return;
+        const { apiFixtureMiddleware } = await import('./scripts/a11y-mocks/api.mjs');
+        // Ahead of Astro's own middleware, which would answer /api/* with a 404
+        // page before we ever see the request.
+        server.middlewares.use(apiFixtureMiddleware);
+        server.config.logger.info('  \x1b[2m/api/* served from fixtures (DEVFEST_LIVE_API=1 to use the deployed functions)\x1b[0m');
+    },
+});
+
 // https://astro.build/config
 export default defineConfig({
     site: 'https://devfest.cz',
@@ -103,6 +128,7 @@ export default defineConfig({
         react(),
     ],
     vite: {
+        plugins: [devApiMocks()],
         resolve: {
             alias: a11yMockAlias,
         },

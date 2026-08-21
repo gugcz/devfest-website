@@ -11,172 +11,76 @@
 	animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
-// Left-set like a file header: the ledger below it is a left-reading column,
-// so a centred head would leave the whole section hanging off its own axis.
-.header {
-	text-align: left;
-	margin-bottom: 2.6rem;
-	max-width: 46ch;
-}
+// Head layout, title and note all come from `.head-split` / `.display
+// head-title` / `.head-note` in BaseLayout.scss — shared with the speakers
+// teaser and the /contact desks, which each used to keep a copy of the grid.
 
-.eyebrow {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.3em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.62);
-	margin-bottom: 1.4rem;
-	display: inline-flex;
-	align-items: center;
-	gap: 0.7rem;
-}
-
-// Case-file index tag — mirrors .section-no on the home page.
-.eyebrowNo {
-	color: var(--color-accent-hot);
-	font-variant-numeric: tabular-nums;
-	padding: 0.22em 0.5em;
-	border: 1px solid rgba(204, 0, 0, 0.4);
-	letter-spacing: 0.16em;
-}
-
-.heading {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-h2);
-	letter-spacing: 0.01em;
-	line-height: 1.05;
-	text-transform: uppercase;
-	color: var(--color-text);
-	text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
-}
-
-.subheading {
-	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
-	font-size: clamp(1.18rem, 1.7vw, 1.4rem);
-	line-height: 1.6;
-	color: var(--color-grey);
-	margin-top: 0.9rem;
-}
-
-/* ===================== TICKET STUBS ===================== */
-// A ticket is an OBJECT, not a row. The ledger is the right container for a
-// list of records — questions, sessions, desks — but a pass is a physical
-// thing you tear, punch and hand over, and rendering it as a table row strips
-// the one quality that makes it read as purchasable.
+/* ===================== TICKET WAVES ===================== */
+// A row per wave, and nothing pretending to be paper. The previous treatment
+// drew a literal ticket: punched perforation holes, two cut-out notches, a
+// vertical serial down a counterfoil, a hollow VOID overprint and a filled
+// ADMIT ONE band — five decorative objects per row, three rows deep, wrapped
+// around a name and a price. It is the clearest example on the site of theme
+// applied as ornament, and it is the first thing that reads as generated.
 //
-// This is the same exception DESIGN.md already grants the countdown: the
-// bounded rectangle IS the depicted object, not a box drawn around content.
-// Horizontal and short by design, so the height won by collapsing the old
-// card grid is kept — a real stub is wide, not tall.
-//
-//   [ serial · punch ][ perforation ][ wave + what's included ][ price · buy ]
+//   [ index · state ][ wave + what's included ][ price · buy ]
 
+// An open field, not a ruled ledger — `.field` / `.field-row--holds` in
+// BaseLayout.scss owns the rhythm and the warm reach state. A wave CONTAINS its
+// control (the Buy CTA) rather than being one, so it warms and pulls; it does
+// not take the red field the rows which ARE links use.
+//
+//   [ index · state ][ wave + what's included ][ price · buy ]
 .stubs {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 1.1rem;
+	position: relative;
 }
 
 .stub {
-	position: relative;
 	display: grid;
-	grid-template-columns: 4.75rem minmax(0, 1fr) auto;
-	align-items: center;
-	column-gap: clamp(1.4rem, 3vw, 2.6rem);
-	min-height: 9.5rem;
-	padding: 1.5rem 1.75rem 1.5rem 0;
-	background:
-		linear-gradient(104deg, rgba(255, 244, 232, 0.05) 0%, rgba(255, 240, 226, 0.02) 42%, transparent 86%),
-		var(--panel-lit);
-	border: 1px solid var(--rule);
-	border-radius: 0;
-	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.32s ease;
+	grid-template-columns: 4rem minmax(0, 1fr) minmax(13rem, auto);
+	align-items: start;
+	column-gap: clamp(1.4rem, 3vw, 3rem);
 }
 
-// The tear line. Round holes, not a dashed border — a dashed rule is
-// drafting-tool vocabulary; perforation is punched paper.
-.stubPerf {
-	position: absolute;
-	top: 0.55rem;
-	bottom: 0.55rem;
-	left: 4.75rem;
-	width: 2px;
-	background-image: radial-gradient(
-		circle at 1px 3px,
-		rgba(240, 237, 230, 0.34) 0 1.5px,
-		transparent 1.6px
-	);
-	background-size: 2px 9px;
-	background-repeat: repeat-y;
-	pointer-events: none;
-}
-
-// Bite taken out of the edge where the tear line meets it.
-.stubNotch {
-	position: absolute;
-	left: 4.75rem;
-	width: 15px;
-	height: 15px;
-	border-radius: 50%;
-	background: var(--color-bg);
-	border: 1px solid var(--rule);
-	transform: translateX(-50%);
-	pointer-events: none;
-}
-
-.stubNotchTop { top: -8px; clip-path: inset(50% 0 0 0); }
-.stubNotchBottom { bottom: -8px; clip-path: inset(0 0 50% 0); }
-
-// The tear-off counterfoil: serial set vertically, the way it is printed on a
-// real stub so it reads down the torn edge.
-.stubCounterfoil {
+/* ---- index + state ---- */
+.stubMeta {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 0.7rem;
-	height: 100%;
-	padding-left: 0.5rem;
+	gap: 0.6rem;
+	padding-top: 0.35rem;
 }
 
 .stubSerial {
-	writing-mode: vertical-rl;
-	text-orientation: mixed;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.32em;
-	text-transform: uppercase;
+	font-size: var(--fs-label-lg);
+	letter-spacing: 0.16em;
 	font-variant-numeric: tabular-nums;
-	color: rgba(240, 237, 230, 0.55);
-	white-space: nowrap;
+	color: rgba(240, 237, 230, 0.4);
 }
 
-.stubPunch {
-	width: 11px;
-	height: 11px;
-	border-radius: 50%;
-	border: 1px solid rgba(240, 237, 230, 0.28);
-	flex-shrink: 0;
+.stubState {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-sm);
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: var(--color-accent-hot);
+	white-space: nowrap;
 }
 
 /* ---- body ---- */
 .stubBody {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: 0.6rem;
 	min-width: 0;
-	padding-left: 0.3rem;
 }
 
 .stubTitle {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.85rem, 3.2vw, 2.6rem);
-	letter-spacing: 0.05em;
-	line-height: 1;
+	font-size: var(--fs-row);
+	letter-spacing: var(--track-display);
+	line-height: var(--lh-display);
+	text-transform: uppercase;
 	color: var(--color-text);
 	margin: 0;
 }
@@ -186,7 +90,7 @@
 	font-size: var(--fs-ui);
 	line-height: 1.55;
 	color: rgba(240, 237, 230, 0.72);
-	max-width: 44ch;
+	max-width: 46ch;
 	margin: 0;
 }
 
@@ -215,17 +119,24 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
-	gap: 0.75rem;
+	gap: 1rem;
 	text-align: right;
+}
+
+// The price and its VAT note sat side by side, so the figure's right edge
+// landed ~150px short of the CTA's and the column read as two ragged axes
+// instead of one. Stacked, everything in this column ends on the same x.
+.stubPriceGroup {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.35rem;
 }
 
 .stubPrice {
 	font-family: var(--font-bebas-neue), sans-serif;
-	// The documented `numeric` role verbatim — a price on a pass is the same
-	// register as a countdown digit, so it uses that step rather than a
-	// one-off clamp endpoint.
-	font-size: clamp(2.2rem, 3vw, 3.6rem);
-	letter-spacing: 0.04em;
+	font-size: var(--fs-row-figure);
+	letter-spacing: 0.02em;
 	line-height: 0.9;
 	color: var(--color-text);
 }
@@ -238,110 +149,77 @@
 	color: rgba(240, 237, 230, 0.6);
 }
 
-/* ---- the live pass ---- */
-// Red overprint band across the head of the stub — the ADMIT ONE bar. This is
-// the one red fill in the section, so it lands on exactly one stub.
-.stubLive {
-	border-color: var(--rule-red);
-	background:
-		linear-gradient(104deg, rgba(255, 244, 232, 0.085) 0%, rgba(255, 240, 226, 0.04) 38%, transparent 88%),
-		radial-gradient(ellipse 60% 120% at 8% 50%, rgba(204, 0, 0, 0.1), transparent 72%),
-		var(--panel-lit);
-	box-shadow: var(--glow-red-soft);
-
-	&:hover {
-		transform: translateY(-2px);
-		border-color: var(--color-accent);
-	}
-}
-
-.stubBand {
+/* ---- the live wave ---- */
+// The buyable wave is marked by a lit ground that bleeds past the column —
+// light, not a box, and the only mark it has: it used to also recolour a rule
+// that no longer exists. Exactly one wave is on sale at a time, so this fires
+// once.
+//
+// On ::after because `.field-row--holds::before` is the shared reach wash.
+.stubLive::after {
+	content: '';
 	position: absolute;
-	top: 0;
-	left: 4.75rem;
-	right: 0;
-	height: 1.55rem;
-	background: var(--color-accent);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0 0.9rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.3em;
-	text-transform: uppercase;
-	color: var(--on-accent);
+	inset: 0 calc(-1 * var(--gutter));
+	background:
+		linear-gradient(104deg, rgba(255, 244, 232, 0.06) 0%, rgba(255, 240, 226, 0.025) 40%, transparent 84%),
+		radial-gradient(ellipse 55% 130% at 6% 50%, rgba(204, 0, 0, 0.08), transparent 74%);
 	pointer-events: none;
+	z-index: -1;
+	// Feathered for the same reason the reach wash is — nothing encloses this
+	// row, so an un-masked full-bleed box shows its own edges as hard steps.
+	-webkit-mask-image: var(--field-feather);
+	mask-image: var(--field-feather);
 }
 
-.stubLive .stubBody,
-.stubLive .stubEnd {
-	padding-top: 1.5rem;
-}
-
-/* ---- a spent pass ---- */
-// VOID lands on the counterfoil, where a real ticket is cancelled — not
-// overprinted across the copy, which would take live text off its contrast.
+/* ---- a spent wave ---- */
+// Keeps full text contrast — a settled wave is quieter by rule weight and by
+// its status word, never by dimming its copy (WCAG 1.4.3).
 .stubSpent {
-	border-style: solid;
-	border-color: var(--rule-soft);
-	background: var(--panel-lit-2);
-}
-
-.stubVoid {
-	writing-mode: vertical-rl;
-	text-orientation: mixed;
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-figure);
-	letter-spacing: 0.22em;
-	color: transparent;
-	-webkit-text-stroke: 1px rgba(204, 0, 0, 0.55);
-	white-space: nowrap;
+	// No mark of its own — a settled wave is simply the one without the lit
+	// ground, and its status word says so in words.
 }
 
 @media (max-width: 720px) {
+	// One column, all three cells stacked. A two-column mobile grid put the
+	// body into the 2.5rem index track and the price on top of it.
 	.stub {
-		grid-template-columns: 3.25rem minmax(0, 1fr);
+		grid-template-columns: minmax(0, 1fr);
 		row-gap: 1.1rem;
-		padding: 1.3rem 1.2rem 1.3rem 0;
 	}
 
-	.stubPerf,
-	.stubNotch,
-	.stubBand { left: 3.25rem; }
+	.stubMeta {
+		flex-direction: row;
+		align-items: baseline;
+		gap: 0.9rem;
+		padding-top: 0;
+	}
 
 	.stubEnd {
-		grid-column: 2;
-		align-items: flex-start;
+		flex-direction: row;
+		align-items: baseline;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 0.9rem 1.25rem;
 		text-align: left;
 		width: 100%;
 	}
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.stub,
-	.stubLive:hover {
-		transition: none;
-		transform: none;
-	}
-}
-
 // The loading skeleton mirrors the stub geometry so nothing reflows on load.
+// Mirrors the open field it stands in for — no opening rule, no row hairlines.
 .skelLedger {
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	border-top: 1px solid var(--rule-strong);
 }
 
 .skelRecord {
 	display: grid;
-	grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+	grid-template-columns: 4rem minmax(0, 1fr) minmax(13rem, auto);
 	align-items: start;
-	column-gap: clamp(1.25rem, 3vw, 2.75rem);
+	column-gap: clamp(1.4rem, 3vw, 3rem);
 	row-gap: 0.9rem;
-	padding: clamp(1.6rem, 2.6vw, 2.4rem) 0;
-	border-bottom: 1px solid var(--rule);
+	padding: clamp(2.25rem, 3.6vw, 3.25rem) 0;
 }
 
 .skelCol {
@@ -357,11 +235,10 @@
 
 @media (max-width: 720px) {
 	.skelRecord {
-		grid-template-columns: 2.4rem minmax(0, 1fr);
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.skelColRight {
-		grid-column: 2;
 		align-items: flex-start;
 	}
 }
@@ -427,7 +304,6 @@
 .skelTitle { height: 2.2rem; width: 62%; }
 .skelBadge { height: 0.9rem; width: 5.2rem; flex-shrink: 0; }
 .skelText { height: 0.75rem; width: 100%; max-width: 34ch; }
-.skelTextShort { width: 78%; }
 
 .skelRows {
 	display: flex;
@@ -472,65 +348,6 @@
 // Status is a mono word on a rule (.record-status), not a filled pill — a
 // coloured chip per state was the last piece of generic-UI vocabulary here.
 
-// The two purchase options inside a wave, set as a ruled sub-table: label
-// left, price right, separated by the faintest hairline in the system so the
-// pair reads as one entry's detail rather than two more records.
-.variants {
-	list-style: none;
-	margin: 0.5rem 0 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	position: relative;
-	z-index: 1;
-	max-width: 34rem;
-}
-
-.variant {
-	display: flex;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: 1.5rem;
-	padding: 0.7rem 0;
-	border-top: 1px solid var(--rule-soft);
-
-	&:first-child {
-		border-top: none;
-		padding-top: 0.2rem;
-	}
-}
-
-.variantLabel {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.04em;
-	color: rgba(240, 237, 230, 0.78);
-}
-
-.variantPriceBlock {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
-	gap: 0.15rem;
-	text-align: right;
-}
-
-.variantPrice {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-figure);
-	letter-spacing: 0.04em;
-	line-height: 1;
-	color: var(--color-text);
-}
-
-.variantVat {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
-	line-height: 1;
-}
 
 // Flat red CTA — matches the global .btn-primary recipe.
 .cta {
@@ -591,33 +408,25 @@
 	}
 }
 
-.ctaArrow {
-	font-size: var(--fs-ui);
-	color: inherit;
-	transition: transform 0.25s;
-
-	.cta:hover & {
-		transform: translate(2px, -1px);
-	}
-}
-
 .footnote {
 	margin-top: 2rem;
-	text-align: center;
+	// Left, like everything else. It was the only centred line on the homepage.
+	text-align: left;
 	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
 	font-size: var(--fs-body-lg);
 	letter-spacing: 0.01em;
 	color: rgba(240, 237, 230, 0.62);
 }
 
+// Left, on the page's own axis. Centred it was the second centred block in a
+// left-set section, sitting directly under a footnote that was also centred.
 .invoice {
 	margin-top: 2.4rem;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: flex-start;
 	gap: 0.9rem;
-	text-align: center;
+	text-align: left;
 }
 
 .invoiceLabel {
@@ -660,7 +469,6 @@
 	border-top: 1px solid var(--rule-strong);
 	color: rgba(240, 237, 230, 0.78);
 	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
 	font-size: var(--fs-body-lg);
 	line-height: 1.7;
 }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { initials, PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
 import { useReturnFocus } from '../lib/useReturnFocus';
 import s from './SpeakerDetail.module.scss';
@@ -65,24 +66,20 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 
 	const bioParagraphs = speaker.bio.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
 
-	return (
+	// Portalled to <body>. The sheet is rendered from inside an island that sits
+	// in `<main>`, and any positioned ancestor with a z-index traps it in that
+	// stacking context — on /speakers the fixed site header (z-index 10001) drew
+	// straight over the sheet's own 10060 and hid its Close control.
+	return createPortal(
 		<div
-			className={s.overlay}
-			onMouseDown={(event) => {
-				if (event.target === event.currentTarget) {
-					setKeyboardClose(false);
-					onClose();
-				}
-			}}
+			className={s.sheet}
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="speaker-detail-name"
+			ref={dialogRef}
+			tabIndex={-1}
 		>
-			<div
-				className={s.dialog}
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="speaker-detail-name"
-				ref={dialogRef}
-				tabIndex={-1}
-			>
+			<div className={s.bar}>
 				<button
 					className={s.close}
 					type="button"
@@ -92,14 +89,16 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 						setKeyboardClose(event.detail === 0);
 						onClose();
 					}}
-					aria-label="Close"
 					data-autofocus
 				>
+					Close
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
 						<path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
 					</svg>
 				</button>
+			</div>
 
+			<div className={s.content}>
 				{/* Receives the morph from the lineup print — see usePortraitMorph
 				    in Speakers.tsx for why the name lives here only while open. */}
 				<div className={s.media} style={{ viewTransitionName: PORTRAIT_TRANSITION }}>
@@ -118,7 +117,7 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 					)}
 				</div>
 
-				<div className={s.content}>
+				<div>
 					<p className={s.kicker}>Speaker</p>
 					<h2 id="speaker-detail-name" className={s.name}>
 						{speaker.fullName}
@@ -157,9 +156,9 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 					{speaker.sessions.length > 0 && (
 						<div className={s.sessions}>
 							<h3 className={s.sessionsTitle}>Talks</h3>
-							<ul className={s.sessionsList}>
+							<ul className="field">
 								{speaker.sessions.map((session, i) => (
-									<li key={i}>
+									<li key={i} className={`field-row ${s.sessionRow}`}>
 										<p className={s.sessionName}>{session.name}</p>
 										{session.description && (
 											<p className={s.sessionDesc}>{session.description}</p>
@@ -171,6 +170,7 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 					)}
 				</div>
 			</div>
-		</div>
+		</div>,
+		document.body,
 	);
 }

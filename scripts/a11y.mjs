@@ -6,21 +6,14 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
-import { SPEAKERS, SESSIONS, TICKETS } from './a11y-mocks/fixtures.mjs';
+import { API_FIXTURES } from './a11y-mocks/api.mjs';
 
 const DIST = path.resolve('dist');
 
 // The islands fetch their data from cached `/api/*` endpoints (Hosting rewrites
 // them to Cloud Functions in production). CI has no functions, so the harness
-// serves the same shapes from fixtures so the grids, ticket waves, and modal
-// flows get audited.
-const API_FIXTURES = {
-	'/api/lineup': JSON.stringify({
-		speakers: SPEAKERS.map((s) => ({ id: s.id, ...s.data })),
-		sessions: SESSIONS.map((s) => ({ id: s.id, ...s.data })),
-	}),
-	'/api/tickets': JSON.stringify(TICKETS),
-};
+// serves the same shapes from fixtures — shared with the dev server, so the two
+// can never drift (see `a11y-mocks/api.mjs`).
 const PORT = 4321;
 const PATHS = [
 	'/',

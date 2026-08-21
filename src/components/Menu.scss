@@ -1,25 +1,75 @@
+	// A bar, not a navigation. Three slots — mark, stamp, actions — and the
+	// nine destinations live behind one control at every width. The inline
+	// nine-link list was the densest object on the site and it competed with
+	// the poster type underneath it for attention it did not deserve.
 	.site-header {
 		position: fixed;
 		top: 0;
 		left: 0;
 		right: 0;
 		// Sits above the .status-bar-cover (z=10000) and the film-grain
-		// / scanline body overlays so nav content stays opaque across
-		// the full stacking order.
+		// body overlay so nav content stays opaque across the full
+		// stacking order.
 		z-index: 10001;
-		display: flex;
+		display: grid;
+		// Stamp centred against the VIEWPORT, not against whatever the two
+		// side slots happen to measure — equal side tracks are what keep it
+		// optically centred when the brand is wider than the actions.
+		grid-template-columns: 1fr auto 1fr;
 		align-items: center;
-		justify-content: space-between;
 		gap: 1.5rem;
 		// Constant padding — height stays fixed across scroll states so
 		// nav doesn't reflow / jump when the scroll handler flips data-state.
-		padding: 0.75rem 3rem;
-		// Solid opaque background across all scroll states — fixed nav
-		// stays readable, no gradient bleed at any scroll position, no
-		// transparent zones for page content to leak through on iOS
-		// Safari URL-bar transitions.
-		background: #050505;
+		padding: 0.85rem clamp(1rem, 3vw, 2.25rem);
+		// The ground and the scrim are painted by the two pseudo-elements
+		// below, so the swap between them can be crossfaded. The bar itself
+		// carries no background.
+		background: transparent;
 		transition: transform 0.3s ease;
+	}
+
+	// ── THE BAR'S GROUND ───────────────────────────────────────────────────
+	// Scrolled: a solid panel. Nav sits over page content at every scroll
+	// position, so it must be opaque — no gradient bleed, and no transparent
+	// zone for content to leak through during an iOS Safari URL-bar transition.
+	.site-header::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: #050505;
+		opacity: 1;
+		pointer-events: none;
+		z-index: -1;
+		transition: opacity 0.3s ease;
+	}
+
+	// At the top of the page the bar sits on the hero, and the plate reads
+	// through it: the panel fades out and a top-down scrim takes over. Only the
+	// scrim, not nothing — the controls (the stamp, the toggle) are cream and
+	// mono on whatever part of the photograph happens to be behind them, and
+	// the crop differs per page.
+	.site-header::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			180deg,
+			rgba(5, 5, 5, 0.6) 0%,
+			rgba(5, 5, 5, 0.34) 58%,
+			rgba(5, 5, 5, 0) 100%
+		);
+		opacity: 0;
+		pointer-events: none;
+		z-index: -1;
+		transition: opacity 0.3s ease;
+	}
+
+	.site-header[data-state='top']::before {
+		opacity: 0;
+	}
+
+	.site-header[data-state='top']::after {
+		opacity: 1;
 	}
 
 	// Hide-on-scroll-down: full slide-up so nav doesn't look "shrunk" while
@@ -36,10 +86,10 @@
 	.brand {
 		display: inline-flex;
 		align-items: center;
+		justify-self: start;
 		text-decoration: none;
 		color: var(--color-text);
 		flex-shrink: 0;
-		filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.85));
 		opacity: 1;
 		transform: translateY(0);
 		// Reveal/hide: fade + slide; visibility delay handled per-state.
@@ -50,17 +100,17 @@
 	}
 
 	.brand:hover {
-		opacity: 0.85;
+		opacity: 0.7;
 	}
 
 	// Keep the global accent-hot :focus-visible ring — WCAG 2.4.7. (The brand
 	// logo is the first tab stop in the header; opacity alone == the hover look.)
 	.brand:focus-visible {
-		opacity: 0.85;
+		opacity: 0.7;
 	}
 
 	// Home + at top: hero owns brand identity, hide nav logo to avoid duplication.
-	// visibility: hidden keeps the flex slot so nav doesn't jump left on state flip.
+	// visibility: hidden keeps the grid slot so nothing jumps on the state flip.
 	.site-header[data-home='true'][data-state='top'] .brand {
 		opacity: 0;
 		visibility: hidden;
@@ -75,126 +125,123 @@
 
 	.brand-logo {
 		display: block;
-		height: clamp(30px, 4.6vw, 42px);
+		height: clamp(26px, 3.4vw, 34px);
 		width: auto;
-		// no max-width cap — SVG aspect 5:1 keeps width sensible;
-		// capping at 220px was clipping the "2026" character on intermediate viewports
 	}
 
-	/* ===================== NAV ===================== */
+	/* ===================== EVENT STAMP ===================== */
+	.header-stamp {
+		margin: 0;
+		justify-self: center;
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label-lg);
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: var(--color-text);
+		white-space: nowrap;
+		opacity: 1;
+		transform: translateY(0);
+		transition:
+			opacity 0.4s ease,
+			transform 0.4s ease,
+			visibility 0s linear 0s;
+
+		span {
+			color: var(--color-accent-hot);
+			padding: 0 0.35em;
+		}
+	}
+
+	// At the top of the page the bar is a scrim over the hero, and the hero is
+	// already saying where and when — the stamp arrives as you scroll away from
+	// it, the same way the mark does on the home page. `visibility: hidden`
+	// keeps the centre grid slot so the bar never reflows on the state flip.
+	.site-header[data-state='top'] .header-stamp {
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transform: translateY(-6px);
+		transition:
+			opacity 0.4s ease,
+			transform 0.4s ease,
+			visibility 0s linear 0.4s;
+	}
+
+	/* ===================== ACTIONS ===================== */
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		justify-self: end;
+	}
+
+	.header-cta {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label-lg);
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		text-decoration: none;
+		color: var(--on-accent);
+		background: var(--color-accent);
+		border: 1px solid var(--color-accent);
+		border-radius: var(--radius);
+		padding: 0.72rem 1.5rem;
+		min-height: 2.75rem; // touch target — WCAG 2.5.5
+		display: inline-flex;
+		align-items: center;
+		transition: background 0.2s ease, border-color 0.2s ease;
+	}
+
+	.header-cta:hover,
+	.header-cta:focus-visible {
+		background: var(--color-accent-hot);
+		border-color: var(--color-accent-hot);
+	}
+
 	.nav {
 		display: flex;
 		align-items: center;
 	}
 
-	.nav-list {
-		display: flex;
-		align-items: center;
-		gap: 2rem;
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.nav-link {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
-		// Pure text color → WCAG AA contrast against scrim (≥4.5:1)
-		color: var(--color-text);
-		text-decoration: none;
+	/* ===================== TOGGLE ===================== */
+	.nav-toggle {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.45rem;
-		padding: 0.6rem 0.2rem;
-		min-height: 2.75rem; // touch target — WCAG 2.5.5
-		position: relative;
-		transition: color 0.2s;
-		text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
-	}
-
-	.nav-link:hover,
-	.nav-link:focus-visible {
-		color: var(--color-accent-hot);
-	}
-
-	// Underline = real text-decoration so it tracks text width when the
-	// web font finishes loading (no FOUT-driven width animation).
-	// Default transparent so links don't look pre-marked.
-	.nav-link:not(.nav-link--cta) {
-		text-decoration: underline 1px solid transparent;
-		text-underline-offset: 0.5rem;
-		transition: text-decoration-color 0.2s ease, color 0.2s ease;
-	}
-
-	.nav-link:not(.nav-link--cta):hover,
-	.nav-link:not(.nav-link--cta):focus-visible,
-	.nav-link--current:not(.nav-link--cta) {
-		text-decoration-color: var(--color-accent-hot);
-	}
-
-	.nav-link--current:not(.nav-link--cta) {
-		color: var(--color-accent-hot);
-	}
-
-	.nav-link--cta {
-		padding: 0.6rem 1.35rem;
-		background: var(--color-accent);
-		color: var(--on-accent);
-		border: 1px solid var(--color-accent);
-		border-radius: var(--radius);
-		transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-	}
-
-	.nav-link--cta:hover,
-	.nav-link--cta:focus-visible {
-		background: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-		color: var(--on-accent);
-		box-shadow: 0 6px 18px rgba(204, 0, 0, 0.32);
-	}
-
-	/* ===================== MOBILE TOGGLE ===================== */
-	.nav-toggle {
-		display: none;
-		align-items: center;
-		// Stay above the open drawer. The drawer (.nav-list) is fixed and
-		// paints above this static button by default, covering the toggle
-		// with its empty top-padding — the X becomes invisible and untappable,
-		// so the drawer can't be closed. Lift the toggle so the X stays live.
+		// Stay above the open panel so the X remains live.
 		position: relative;
 		z-index: 2;
-		gap: 0.6rem;
-		padding: 0.6rem 0.95rem 0.6rem 0.75rem;
+		gap: 0.65rem;
+		padding: 0.72rem 1.15rem;
 		min-height: 2.75rem;
 		min-width: 2.75rem;
-		background: rgba(5, 5, 5, 0.55);
-		border: 1px solid rgba(204, 0, 0, 0.45);
+		background: transparent;
+		border: 1px solid var(--rule-strong);
+		border-radius: var(--radius);
 		color: var(--color-text);
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.22em;
+		font-size: var(--fs-label-lg);
+		letter-spacing: 0.2em;
 		text-transform: uppercase;
 		cursor: pointer;
-		text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
 		transition: border-color 0.2s, color 0.2s, background 0.2s;
 	}
 
 	.nav-toggle:hover,
 	.nav-toggle:focus-visible {
-		border-color: var(--color-accent-hot);
-		color: var(--color-accent-hot);
-		background: rgba(5, 5, 5, 0.85);
+		border-color: var(--color-text);
 		outline: none;
+	}
+
+	.nav-toggle[aria-expanded='true'] {
+		border-color: var(--color-text);
 	}
 
 	.nav-toggle-bars {
 		display: inline-flex;
 		flex-direction: column;
 		justify-content: space-between;
-		width: 18px;
-		height: 12px;
+		width: 17px;
+		height: 11px;
 
 		span {
 			display: block;
@@ -206,77 +253,162 @@
 	}
 
 	.nav-toggle[aria-expanded='true'] .nav-toggle-bars {
-		span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+		span:nth-child(1) { transform: translateY(4.75px) rotate(45deg); }
 		span:nth-child(2) { opacity: 0; }
-		span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+		span:nth-child(3) { transform: translateY(-4.75px) rotate(-45deg); }
+	}
+
+	/* ===================== FULL-SCREEN PANEL ===================== */
+	.nav-panel {
+		position: fixed;
+		inset: 0;
+		// Below the toggle (z-index: 2) so the close (X) stays tappable.
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 2rem;
+		padding:
+			calc(5.75rem + env(safe-area-inset-top))
+			clamp(1.25rem, 5vw, 4.5rem)
+			calc(2rem + env(safe-area-inset-bottom));
+		background: #050505;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		// Closed state must be inert to the pointer AND out of the a11y tree.
+		// `visibility` does both and still animates, where `opacity: 0` alone
+		// would leave nine invisible links tabbable across every page.
+		visibility: hidden;
+		opacity: 0;
+		transform: translateY(-1.25rem);
+		transition:
+			opacity 0.28s ease,
+			transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+			visibility 0s linear 0.32s;
+	}
+
+	.nav-panel[data-open='true'] {
+		visibility: visible;
+		opacity: 1;
+		transform: none;
+		transition:
+			opacity 0.24s ease,
+			transform 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+			visibility 0s linear 0s;
+	}
+
+	.nav-list {
+		display: flex;
+		flex-direction: column;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		max-width: var(--maxw);
+		margin-inline: auto;
+	}
+
+	// Destination set at poster scale. Bebas is condensed enough that nine
+	// items still fit a laptop viewport at 4rem+.
+	.nav-link {
+		font-family: var(--font-bebas-neue), sans-serif;
+		// Sized so all nine destinations plus the footing line fit a 900px-tall
+		// laptop viewport without the panel needing to scroll.
+		font-size: clamp(1.9rem, 4.6vw, 3.4rem);
+		line-height: 1;
+		letter-spacing: 0.01em;
+		text-transform: uppercase;
+		color: var(--color-text);
+		text-decoration: none;
+		display: block;
+		padding: clamp(0.3rem, 0.8vw, 0.5rem) 0;
+		transition: color 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.nav-link:hover,
+	.nav-link:focus-visible {
+		color: var(--color-accent-hot);
+		transform: translateX(0.75rem);
+	}
+
+	// The current page keeps the accent but not the offset — it is a state,
+	// not a hover.
+	.nav-link--current {
+		color: var(--color-accent-hot);
+	}
+
+	// Tickets is already a filled button in the bar; inside the panel it is
+	// just the last destination, so it drops the fill and takes the accent.
+	.nav-link--cta {
+		color: var(--color-accent-hot);
+	}
+
+	.nav-foot {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem 2rem;
+		width: 100%;
+		max-width: var(--maxw);
+		margin-inline: auto;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--rule-soft);
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label-lg);
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+	}
+
+	.nav-foot-line {
+		margin: 0;
+		color: rgba(240, 237, 230, 0.6);
+	}
+
+	.nav-foot-mail {
+		color: var(--color-text);
+		text-decoration: underline 1px solid var(--rule-strong);
+		text-underline-offset: 0.4rem;
+		transition: color 0.2s, text-decoration-color 0.2s;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			text-decoration-color: var(--color-accent-hot);
+		}
 	}
 
 	/* ===================== RESPONSIVE ===================== */
-	@media (max-width: 900px) {
-		.site-header {
-			padding: 0.65rem 1.5rem;
+	// The stamp is the first thing to go: it is a decorative duplicate of the
+	// hero meta, and the bar must never wrap.
+	@media (max-width: 860px) {
+		.header-stamp {
+			display: none;
 		}
+
+		.site-header {
+			grid-template-columns: 1fr auto;
+		}
+
+		// The brand is NOT re-shown here. It used to be, on the grounds that a
+		// bar holding two right-aligned buttons over an empty half read as a
+		// layout fault — but that made the home page's top state differ between
+		// a phone and a desktop, and the hero wordmark sits a few hundred
+		// pixels below either way. Mobile now follows the same rule as every
+		// other width: hero owns the mark at the top, the bar takes it over on
+		// scroll.
 	}
 
-	// Collapse to the drawer for tablets + narrow laptops. The 8-link nav needs
-	// ~1180px to lay out horizontally without clipping (brand + links + gaps +
-	// padding), so anything below that overflowed the header. Hamburger covers
-	// the whole tablet range; the full horizontal nav only shows once it fits.
-	@media (max-width: 1240px) {
-		.nav-toggle {
-			display: inline-flex;
-		}
-
-		.nav-list {
-			position: fixed;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			// Below the toggle (z-index: 2) so the close (X) button stays
-			// tappable while the drawer is open.
-			z-index: 1;
-			width: min(86vw, 320px);
-			flex-direction: column;
-			align-items: stretch;
-			gap: 0;
-			// Extra top padding via safe-area so the first link clears the
-			// notch / iOS in-app browser URL bar when the drawer opens.
-			padding: calc(6rem + env(safe-area-inset-top)) 1.8rem calc(2rem + env(safe-area-inset-bottom));
-			background: #0A0A0A;
-			border-left: 1px solid rgba(204, 0, 0, 0.3);
-			transform: translateX(100%);
-			transition: transform 0.28s ease;
-			box-shadow: -20px 0 40px rgba(0, 0, 0, 0.5);
-		}
-
-		.nav-list[data-open='true'] {
-			transform: translateX(0);
-		}
-
-		.nav-list li {
-			border-bottom: 1px dashed rgba(240, 237, 230, 0.14);
-		}
-
-		.nav-list li:last-child {
-			border-bottom: none;
-		}
-
-		.nav-link {
-			width: 100%;
-			padding: 1.2rem 0;
-			min-height: 3rem;
-			font-size: var(--fs-ui);
-			letter-spacing: 0.24em;
-		}
-
-		.nav-link--cta {
-			margin-top: 1.4rem;
-			justify-content: center;
-			padding: 0.95rem 1.2rem;
-		}
-
-		.nav-link:not(.nav-link--cta)::after {
+	@media (max-width: 600px) {
+		.nav-toggle-label {
+			// Below this width the word and the Tickets button start fighting
+			// for the same 40px. The bars carry the meaning; the button keeps
+			// its aria-label either way.
 			display: none;
+		}
+
+		.nav-toggle {
+			padding: 0.72rem 0.9rem;
 		}
 	}
 
@@ -286,23 +418,48 @@
 		}
 
 		.brand-logo {
-			height: 26px;
+			height: 24px;
+		}
+
+		.header-cta {
+			padding: 0.72rem 1rem;
+			letter-spacing: 0.14em;
+		}
+	}
+
+	// Short viewports (landscape phones): the nine-item list has to scroll, so
+	// give it a smaller step and let the panel do the scrolling.
+	@media (max-height: 620px) {
+		.nav-link {
+			font-size: clamp(1.5rem, 4.5vh, 2.2rem);
+		}
+
+		.nav-panel {
+			padding-top: calc(5rem + env(safe-area-inset-top));
 		}
 	}
 
 	// Disable *animation* under reduced-motion, but NOT the functional
-	// transforms. `transform: none` here used to override the drawer's
-	// off-canvas `translateX(100%)`, pinning it open with no way to close
-	// (Samsung "Remove animations" toggle triggers this). Kill transitions
-	// only — positioning transforms must survive.
+	// visibility switch. `transform: none` here used to override the drawer's
+	// off-canvas position, pinning it open with no way to close (Samsung
+	// "Remove animations" toggle triggers this). Kill transitions only.
 	@media (prefers-reduced-motion: reduce) {
+		.site-header::before,
+		.site-header::after,
 		.site-header,
-		.nav-list,
+		.nav-panel,
 		.nav-link,
-		.nav-link--cta,
+		.header-cta,
 		.brand,
 		.site-header[data-home='true'][data-state='top'] .brand,
+		.header-stamp,
+		.site-header[data-state='top'] .header-stamp,
 		.nav-toggle-bars span {
 			transition: none;
+		}
+
+		.nav-link:hover,
+		.nav-link:focus-visible {
+			transform: none;
 		}
 	}

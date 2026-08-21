@@ -89,9 +89,7 @@
 	pointer-events: none;
 }
 
-// Estimate callout — lamp-lit dossier: a single-source-lit panel (warm light
-// pooling top-left, falling to near-black) with an inset "matte" frame like a
-// mounted evidence print. No tab/index — this is a single inline readout.
+// Estimate readout.
 .estimate {
 	position: relative;
 	overflow: hidden;
@@ -181,7 +179,6 @@
 		color: var(--color-accent-hot);
 		border-color: var(--color-accent-hot);
 		// Red TEXT reads as neon — subtle halation on hover.
-		text-shadow: var(--glow-red-soft);
 	}
 
 	&:hover::after,
@@ -241,9 +238,6 @@
 	}
 }
 
-// Success panel — lamp-lit dossier: single-source-lit panel (warm light pooling
-// top-left, falling to near-black) with an inset "matte" frame like a mounted
-// evidence print. No tab/index: this is a single confirmation, not a grid.
 // Confirmation — the lit entry treatment, since this is the one thing on the
 // page that matters once it appears. Light and a red rule carry it; no panel,
 // no matte frame, and no hover response at all (nothing here is interactive).
@@ -262,7 +256,7 @@
 	border-radius: 0;
 }
 
-// Keep the confirmation copy above the inset matte frame.
+// Keep the confirmation copy above the lit ground.
 .successTitle,
 .successBody {
 	position: relative;
@@ -305,7 +299,7 @@
 		transform: none;
 	}
 
-	// Panels keep their matte-frame/box-shadow colour transitions, but don't lift.
+	// Controls keep their colour transitions, but don't lift.
 	.estimate,
 	.success {
 		transition: box-shadow 0.2s ease;

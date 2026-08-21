@@ -26,9 +26,15 @@ interface State {
 
 const INITIAL: State = { status: 'loading', sessions: [] };
 
-/** 5-minute grid snap + row height (px per snap unit) for the proportional grid. */
+/** 5-minute grid snap + row height (px per snap unit) for the proportional grid.
+ *
+ * ROW_PX sets how much room a talk gets, and therefore how big its type can be.
+ * At 15 a 30-minute talk was 90px tall and its contents needed 98 — already
+ * clipping, with everything set at the smallest steps on the ramp to try to fit.
+ * 24 gives a half-hour talk 144px, which carries the title at a readable size
+ * with its time, tags and speakers under it. */
 const SNAP_MIN = 5;
-const ROW_PX = 15;
+const ROW_PX = 24;
 
 /** Track the mobile breakpoint. Matches `Menu.astro`'s `(max-width: 760px)` —
  * the site has no shared breakpoint token, so the literal is kept in sync. */
@@ -231,6 +237,28 @@ function AgendaGrid({
 					</div>
 				))}
 
+				{/* The sheet's own ruling, behind the entries: one vertical hairline
+				    per room column, one horizontal hairline per hour. Without them
+				    an unscheduled slot is a hole in black rather than an empty cell
+				    on a timetable. Decorative — the times and rooms are already in
+				    the ticks, the head cells and every talk's aria-label. */}
+				{columns.map((room, i) => (
+					<div
+						key={`col-${room}`}
+						className={s.colRule}
+						style={{ gridColumn: i + 2, gridRow: '2 / -1' }}
+						aria-hidden="true"
+					/>
+				))}
+				{ticks.map((min) => (
+					<div
+						key={`rule-${min}`}
+						className={s.hourRule}
+						style={{ gridColumn: '1 / -1', gridRow: rowFor(min) }}
+						aria-hidden="true"
+					/>
+				))}
+
 				{/* Time gutter ticks */}
 				{ticks.map((min) => (
 					<div
@@ -323,7 +351,7 @@ function AgendaList({
 		...partition.columns.flatMap((room) => partition.byRoom.get(room) ?? []),
 	].sort(byStart);
 	return (
-		<ul className={s.list} role="list">
+		<ul className={`field ${s.list}`} role="list">
 			{timed.map((session) => {
 				const band = isBand(session);
 				const names = speakerNames(session);
@@ -350,11 +378,11 @@ function AgendaList({
 				return (
 					<li key={session.id}>
 						{band ? (
-							<div className={`${s.item} ${s.itemBand} ${live ? s.itemLive : ''}`}>{body}</div>
+							<div className={`field-row ${s.item} ${s.itemBand} ${live ? s.itemLive : ''}`}>{body}</div>
 						) : (
 							<button
 								type="button"
-								className={`${s.item} ${live ? s.itemLive : ''}`}
+								className={`field-row field-row--link ${s.item} ${live ? s.itemLive : ''}`}
 								onClick={() => onOpen(session)}
 								aria-label={talkLabel(session)}
 								data-agenda-open
@@ -427,10 +455,7 @@ export default function Agenda() {
 		return (
 			<div className={s.status}>
 				<p>The full schedule lands closer to the event.</p>
-				<a className="btn-ghost" href="/sessions">
-					Browse all talks
-					<span className="btn-ghost-arrow" aria-hidden="true">→</span>
-				</a>
+				<a className="btn-ghost" href="/sessions">Browse all talks</a>
 			</div>
 		);
 	}
@@ -463,12 +488,12 @@ export default function Agenda() {
 			{partition.unscheduled.length > 0 && (
 				<section className={s.unscheduled} aria-label="Not yet scheduled">
 					<h3 className={s.unscheduledHead}>Not yet scheduled</h3>
-					<ul className={s.unscheduledList} role="list">
+					<ul className={`field ${s.unscheduledList}`} role="list">
 						{partition.unscheduled.map((session) => (
 							<li key={session.id}>
 								<button
 									type="button"
-									className={s.unscheduledItem}
+									className={`field-row field-row--link ${s.unscheduledItem}`}
 									onClick={() => setSelected(session)}
 									aria-label={`View details for ${session.title}`}
 								>
@@ -479,13 +504,6 @@ export default function Agenda() {
 					</ul>
 				</section>
 			)}
-
-			<div className={s.crosslink}>
-				<a className="btn-ghost" href="/sessions">
-					Browse all talks
-					<span className="btn-ghost-arrow" aria-hidden="true">→</span>
-				</a>
-			</div>
 
 			{selected && (
 				<SessionDetail

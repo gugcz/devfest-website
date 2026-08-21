@@ -8,7 +8,12 @@
 // red radial bleeding from the top-right, over page black.
 .sessions-body {
 	position: relative;
-	padding: var(--section-y) var(--gutter);
+	// A full section gap, top and bottom — the same air the homepage's sections
+	// run at. It was --section-y-tight back when the subpage heroes were ~830px
+	// tall and a full gap pushed the first heading off a 760px laptop; the
+	// heroes are 430-620px now, so the reason is gone and the tight top just
+	// made every subpage read denser than the page it was reached from.
+	padding: var(--section-y) var(--gutter) var(--section-y);
 	background:
 		radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
 		var(--lit),
@@ -23,9 +28,12 @@
 
 // Left-set to match /speakers — see the note there on why not every head on
 // the site is centred any more.
+// 4rem below the head, the gap the homepage's section heads run at. The
+// subpages were closing that gap to 3.2rem, so the same lockup read tighter
+// here than on the page it was reached from.
 .sessions-header {
 	text-align: left;
-	margin-bottom: 3.2rem;
+	margin-bottom: 4rem;
 	border-bottom: 1px solid var(--rule-soft);
 	padding-bottom: 1.6rem;
 }
@@ -44,19 +52,17 @@
 }
 
 .sessions-heading {
-	font-family: var(--font-special-elite), cursive;
+	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-h2);
-	letter-spacing: 0.01em;
-	line-height: 1.05;
+	letter-spacing: var(--track-display);
+	line-height: var(--lh-display);
 	text-transform: uppercase;
 	color: var(--color-text);
-	text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
 	margin: 0;
 }
 
 .sessions-noscript {
 	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
 	font-size: var(--fs-lede);
 	line-height: 1.7;
 	color: var(--color-grey);

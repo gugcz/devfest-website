@@ -6,9 +6,15 @@
 	/* ===================== BODY ===================== */
 	.press-body {
 		position: relative;
-		padding: var(--section-y) var(--gutter);
+		// A full section gap, top and bottom — the same air the homepage's
+		// sections run at. It was --section-y-tight back when the subpage
+		// heroes were ~830px tall and a full gap pushed the first heading off a
+		// 760px laptop; the heroes are 430-620px now, so the reason is gone and
+		// the tight top just made every subpage read denser than the page it
+		// was reached from.
+		padding: var(--section-y) var(--gutter) var(--section-y);
 		// Pool of light dropped behind the asset grid — a lit evidence table.
-		background: var(--lit);
+		background: var(--lit), var(--color-bg);
 		border-top: 1px solid var(--rule-soft);
 	}
 
@@ -52,8 +58,9 @@
 	/* ===================== SECTION HEAD ===================== */
 	// Left-aligned editorial header — eyebrow + trailing hairline + Bebas title,
 	// matching the homepage section rhythm so the asset grid reads as a section.
+	// 4rem, matching the homepage and /press.
 	.section-head {
-		margin-bottom: 2rem;
+		margin-bottom: 4rem;
 		text-align: left;
 	}
 
@@ -73,36 +80,36 @@
 			content: '';
 			flex: 1 1 auto;
 			height: 1px;
-			background: linear-gradient(to right, var(--rule-red), transparent);
+			background: var(--rule-soft);
 		}
 	}
 
 	// Case-file count — small hairline-boxed accent tag (red text = AA via hot).
+	// A plain mono count, not a hairline-boxed numeral. The boxed version was
+	// the `.index-no` case-file tag, which no other page still runs.
 	.section-no {
 		flex: 0 0 auto;
-		color: var(--color-accent-hot);
+		color: rgba(240, 237, 230, 0.55);
 		font-variant-numeric: tabular-nums;
-		padding: 0.22em 0.5em;
-		border: 1px solid rgba(204, 0, 0, 0.4);
 		letter-spacing: 0.16em;
 	}
 
-	// Large poster headline — typewriter Special Elite, matching the homepage
-	// section titles. Bebas stays for small card labels / numerics below.
+	// The page's section head, so it runs at --fs-h2 like every other one on the
+	// site ("In the press", "What's on", "Who's talking", "When & where"). It was
+	// the only full-width subpage head still at --fs-h3, which made /downloads
+	// read a size quieter than the page it is reached from.
 	.section-title {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-h3);
-		line-height: 1.05;
-		letter-spacing: 0.01em;
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-h2);
+		line-height: var(--lh-display);
+		letter-spacing: var(--track-display);
 		text-transform: uppercase;
 		color: var(--color-text);
-		text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
 		margin: 0;
 
 		// Red word reads as neon light.
 		.red {
 			color: var(--color-accent-hot);
-			text-shadow: var(--glow-red);
 		}
 	}
 
@@ -158,7 +165,7 @@
 
 		&:hover,
 		&:focus-visible {
-			.kit-label { color: var(--color-accent-hot); text-shadow: var(--glow-red-soft); }
+			.kit-label { color: var(--color-accent-hot); }
 			.kit-dl { color: var(--color-accent-hot); transform: translateY(2px); }
 		}
 
@@ -195,9 +202,8 @@
 		font-size: var(--fs-label-sm);
 		letter-spacing: 0.16em;
 		color: rgba(240, 237, 230, 0.85);
-		padding: 0.3rem 0.6rem;
-		border: 1px solid var(--rule-strong);
-		border-radius: var(--radius);
+		// No box: the format is a label on the tile, not a chip.
+		letter-spacing: 0.22em;
 	}
 
 	.kit-meta {
@@ -216,10 +222,16 @@
 		min-width: 0;
 	}
 
+	// The asset's name is the tile's title, so it is set like one: Bebas,
+	// uppercase, on the tile step /agenda's timetable cells use. It was IM Fell
+	// at body size, which read as a caption under the preview rather than as
+	// the thing being downloaded.
 	.kit-label {
-		font-family: var(--font-im-fell-english), serif;
-		font-size: var(--fs-body);
-		line-height: 1.25;
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-title-sm);
+		line-height: 1.06;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
 		color: var(--color-text);
 		transition: color 0.2s;
 	}
@@ -270,16 +282,14 @@
 		text-transform: uppercase;
 		// Red tag glows faintly like neon in the dark.
 		color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
-		padding: 0.3rem 0.7rem;
+		padding: 0;
 		background: transparent;
-		border: 1px solid var(--rule-red);
-		border-radius: var(--radius);
+		// A plain mono word, not a boxed stamp — matches /press.
+		border: 0;
 	}
 
 	.empty-line {
 		font-family: var(--font-im-fell-english), serif;
-		font-style: italic;
 		font-size: var(--fs-body);
 		line-height: 1.7;
 		color: var(--color-grey);
@@ -312,7 +322,7 @@
 	@media (max-width: 600px) {
 		.press-body { padding: clamp(3rem, 9vw, 4rem) var(--gutter); }
 		.kit-link { min-height: 0; }
-		.section-head { margin-bottom: 1.6rem; }
+		.section-head { margin-bottom: 2.4rem; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {

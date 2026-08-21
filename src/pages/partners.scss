@@ -5,115 +5,6 @@
 		flex-direction: column;
 	}
 
-	/* ===================== BODY ===================== */
-	.partners-body {
-		position: relative;
-		padding: var(--section-y) var(--gutter);
-		// Pool of light dropped behind the contact panel — a lit desk in the dark.
-		background: var(--lit);
-		border-top: 1px solid var(--rule-soft);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
-	}
-
-	.partners-inner {
-		position: relative;
-		z-index: 1;
-		max-width: var(--maxw);
-		margin: 0 auto;
-		display: flex;
-		flex-direction: column;
-		gap: 1.6rem;
-	}
-
-	// Lamp-lit dossier: a single-source-lit panel (warm light pooling top-left,
-	// falling to near-black) with an inset "matte" frame like a mounted evidence
-	// print, a flat red case-file tab, and a big outlined index behind the copy.
-	.partners-block {
-		position: relative;
-		overflow: hidden;
-		display: grid;
-		grid-template-columns: minmax(260px, 1fr) minmax(260px, auto);
-		align-items: stretch;
-		gap: 3.2rem;
-		padding: 3.2rem 2.8rem;
-		min-height: 240px;
-		border: 0;
-		border-top: 1px solid var(--rule-red);
-		border-bottom: 1px solid var(--rule);
-		border-radius: 0;
-		// The partnership pitch is the lit entry of this page — light carries
-		// it, not a mounted panel with a shadow.
-		background: linear-gradient(
-			104deg,
-			rgba(255, 244, 232, 0.07) 0%,
-			rgba(255, 240, 226, 0.032) 36%,
-			transparent 86%
-		);
-	}
-
-	.partners-block-main,
-	.partners-block-action {
-		position: relative;
-		z-index: 1;
-	}
-
-	.partners-block-main {
-		display: flex;
-		flex-direction: column;
-		gap: 1.1rem;
-		min-width: 0;
-	}
-
-	// Category eyebrow — plain mono label above the title, not a filled tab.
-	.card-label {
-		align-self: flex-start;
-		color: var(--color-accent-hot);
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.26em;
-		text-transform: uppercase;
-	}
-
-	.card-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-card-title);
-		line-height: 1;
-		letter-spacing: 0.04em;
-		color: var(--color-text);
-		margin: 0;
-	}
-
-	.card-desc {
-		font-family: var(--font-im-fell-english), serif;
-		font-style: italic;
-		font-size: var(--fs-body-lg);
-		line-height: 1.55;
-		color: var(--color-grey);
-		margin: 0;
-		flex: 1;
-		max-width: 38ch;
-	}
-
-	// Right column: contact line stacked over the deck CTA, separated from the
-	// main copy by a hairline on wide screens (and above the CTA on stack).
-	.partners-block-action {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		gap: 1.6rem;
-		padding-left: 3.2rem;
-		border-left: 1px solid var(--rule);
-		min-width: 0;
-	}
-
 	.partners-contact {
 		display: flex;
 		flex-direction: column;
@@ -142,7 +33,7 @@
 		text-decoration-color: var(--rule-red);
 		text-underline-offset: 4px;
 		word-break: break-all;
-		transition: color 0.2s, text-decoration-color 0.2s, text-shadow 0.2s;
+		transition: color 0.2s, text-decoration-color 0.2s;
 
 		&::after {
 			content: '\2197';
@@ -157,7 +48,6 @@
 			color: var(--color-accent-hot);
 			text-decoration-color: var(--color-accent-hot);
 			// Address lights up like neon under the lamp.
-			text-shadow: var(--glow-red-soft);
 		}
 
 		&:hover::after,
@@ -166,28 +56,6 @@
 		}
 	}
 
-	.partners-cta-wrap {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1.1rem;
-		padding-top: 1.4rem;
-		border-top: 1px solid var(--rule);
-	}
-
-	// Layout-only tweaks; the flat red recipe comes from global .btn-primary.
-	.partners-cta {
-		white-space: nowrap;
-	}
-
-	.partners-cta-arrow {
-		font-size: var(--fs-ui);
-		transition: transform 0.25s;
-
-		.partners-cta:hover & {
-			transform: translateX(3px);
-		}
-	}
 
 	// Flat "Coming soon" placeholder — outline, no rotation, no stamp ink.
 	.partners-cta-soon {
@@ -221,31 +89,10 @@
 		border-radius: var(--radius);
 	}
 
-	.partners-cta-note {
-		font-family: var(--font-im-fell-english), serif;
-		font-style: italic;
-		font-size: var(--fs-body-lg);
-		color: var(--color-grey);
-		max-width: 34ch;
-		text-align: left;
-		margin: 0;
-	}
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		.partners-block {
-			grid-template-columns: 1fr;
-			gap: 2.2rem;
-			padding: 2.4rem 1.8rem 2.6rem;
-		}
-		// On stack the action column sits below the copy, so the divider moves
-		// from the left edge to the top.
-		.partners-block-action {
-			padding-left: 0;
-			padding-top: 2.2rem;
-			border-left: none;
-			border-top: 1px solid var(--rule);
-		}
+
 		.partners-cta-soon {
 			flex-wrap: wrap;
 			gap: 0.55rem;
@@ -256,12 +103,6 @@
 			letter-spacing: 0.24em;
 			padding: 0.2rem 0.45rem;
 		}
-		.partners-cta-note { max-width: none; }
-	}
-
-	@media (max-width: 600px) {
-		.partners-block { padding: 1.8rem 1.5rem 2rem; }
-		.card-title { font-size: var(--fs-figure); }
 	}
 
 	/* ===================== SPONSOR TIERS ===================== */
@@ -281,68 +122,67 @@
 		margin: 0 auto;
 	}
 
+	// The tier name on its own. It used to carry a mono "03 partners" caption
+	// beside it — six sections down one page each announcing how few they had.
 	.tier-head {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		margin-bottom: 2.6rem;
+		margin-bottom: clamp(2rem, 4vw, 3rem);
 	}
 
 	// Poster headline — typewriter (Special Elite) to match the noir key art.
 	.tier-title {
-		font-family: var(--font-special-elite), cursive;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-h2);
-		line-height: 1.05;
-		letter-spacing: 0.01em;
+		line-height: var(--lh-display);
+		letter-spacing: var(--track-display);
 		text-transform: uppercase;
 		color: var(--color-text);
 		margin: 0;
-		text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
 
 		.red {
 			color: var(--color-accent-hot);
-			text-shadow: var(--glow-red);
 		}
 	}
 
 	// Contact sheet, not a tile grid: logos sit in cells of one ruled sheet,
 	// sharing hairlines with their neighbours. No panel fill, no drop shadow,
 	// no floating tiles — the grid itself is the only structure.
-	// A wrapping flex row sized to its content (`width: fit-content`), NOT a
-	// full-width grid. Two things this buys: the container's top/left rule runs
-	// only as wide as the logos it holds (no hairline hanging over empty space),
-	// and every edge is a single 1px line — top+left from the container,
-	// right+bottom from the cells — so the box is always closed. (The earlier
-	// collapsed-margin grid left the bottom edge open.)
+	//
+	// The sheet spans the content column and the cells GROW to fill each row
+	// (`flex: 1 1 var(--tier-col)` below). It used to be `width: fit-content`
+	// so the ruled box never hung over empty space — but with three ~300px
+	// cells that left the sheet occupying a third of a 1440 page, with the
+	// tier headline floating over dead space beside it. Growing cells close
+	// every row by construction, so the box stays closed either way.
+	// The rules belong to the CELLS, not to the sheet. Drawing the top and left
+	// edges on the grid meant a tier that doesn't fill its row hung a hairline
+	// over empty space — platinum drew 1296px of line for a 612px cell.
 	.tier-grid {
 		list-style: none;
 		margin: 0;
-		padding: 0;
+		// The cells' -1px bottom margin puts the last row's bottom border 1px
+		// outside the container, where the next section's opaque ground paints
+		// over it. This gives that pixel back.
+		padding: 0 0 1px;
 		display: flex;
 		flex-wrap: wrap;
-		width: fit-content;
-		max-width: 100%;
-		border-top: 1px solid var(--rule);
-		border-left: 1px solid var(--rule);
+		width: 100%;
 	}
 
-	// The column width is a real `width`, not a bare `flex-basis`. The grid
-	// above is `width: fit-content`, and a flex-basis is not folded into that
-	// measurement by every engine (WebKit measures these cells at their logo's
-	// intrinsic width), which would size the ruled box narrower than the cells
-	// it is supposed to enclose. The ≤600px override below still swaps in its
-	// own basis; a basis always wins over `width`.
+	// `--tier-col` is the FLOOR, not the width: cells grow to share the row so
+	// the sheet always reaches both edges of the content column. The cap stops
+	// a one-partner tier from stretching a single logo across 1300px.
 	.tier-item {
 		position: relative;
 		overflow: hidden;
 		display: flex;
-		flex: none;
-		width: var(--tier-col);
-		max-width: 100%;
+		flex: 1 1 var(--tier-col);
+		max-width: min(100%, calc(var(--tier-col) * 1.8));
 		min-height: var(--tier-tile);
-		border: 0;
-		border-right: 1px solid var(--rule);
-		border-bottom: 1px solid var(--rule);
+		// A box around each logo. The -1px pulls neighbours onto a shared
+		// hairline, so a row of cells still reads as one ruled sheet rather
+		// than as a strip of 2px-doubled boxes.
+		border: 1px solid var(--rule);
+		margin: 0 -1px -1px 0;
 		border-radius: 0;
 		background: transparent;
 		transition: background 0.28s ease;
@@ -420,10 +260,10 @@
 	// Tier scale ladder: column min-width, tile height, logo cap — the last two
 	// repeated for the 900px breakpoint. Top tier reads as the marquee.
 	$tiers: (
-		'platinum': (320px, 208px, 84px, 176px, 68px),
-		'diamond': (300px, 192px, 76px, 164px, 62px),
-		'gold': (280px, 176px, 68px, 150px, 56px),
-		'silver': (280px, 150px, 58px, 130px, 48px),
+		'platinum': (340px, 260px, 96px, 190px, 72px),
+		'diamond': (320px, 234px, 86px, 176px, 66px),
+		'gold': (300px, 210px, 76px, 160px, 60px),
+		'silver': (290px, 186px, 64px, 140px, 52px),
 	);
 
 	@each $name, $scale in $tiers {
@@ -465,39 +305,39 @@
 	}
 
 	.plate-head {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		margin-bottom: 2.6rem;
+		margin-bottom: clamp(2rem, 4vw, 3rem);
 	}
 
 	// Poster headline — typewriter (Special Elite) to match the noir key art.
 	.plate-title {
-		font-family: var(--font-special-elite), cursive;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-h2);
-		line-height: 1.05;
-		letter-spacing: 0.01em;
+		line-height: var(--lh-display);
+		letter-spacing: var(--track-display);
 		text-transform: uppercase;
 		color: var(--color-text);
 		margin: 0;
-		text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
 
 		.red {
 			color: var(--color-accent-hot);
-			text-shadow: var(--glow-red);
 		}
 	}
 
+	// Same ruled contact sheet as the tier grids, but its cells are CREAM, so
+	// the rule has to invert: `--rule` is cream at 13%, which on a cream plate
+	// is invisible and let a row of logos read as one continuous band instead
+	// of one cell per partner.
 	.plate-grid {
+		--plate-rule: rgba(5, 5, 5, 0.14);
+
 		list-style: none;
 		margin: 0;
-		padding: 0;
+		// See `.tier-grid` — reclaims the last row's bottom border.
+		padding: 0 0 1px;
 		display: flex;
 		flex-wrap: wrap;
 		width: fit-content;
 		max-width: 100%;
-		border-top: 1px solid var(--rule);
-		border-left: 1px solid var(--rule);
 	}
 
 	// Media wordmarks ship dark (made for light backgrounds), so they need a
@@ -513,15 +353,20 @@
 		align-items: center;
 		justify-content: center;
 		// Real `width` rather than a bare basis, same reason as `.tier-item`.
+		//
+		// Sized just under silver — the bottom rung of the sponsor ladder is
+		// 290×186 with a 64px logo cap, and these sit a step below it without
+		// dropping to a different order of size. They were 220×150, which read
+		// as a footnote strip beside the tiers rather than as the last row of
+		// the same wall.
 		flex: none;
-		width: 220px;
+		width: 265px;
 		max-width: 100%;
-		min-height: 150px;
-		padding: 1.8rem 2rem;
+		min-height: 172px;
+		padding: 1.9rem 2.1rem;
 		background: var(--color-cream);
-		border: 0;
-		border-right: 1px solid var(--rule);
-		border-bottom: 1px solid var(--rule);
+		border: 1px solid var(--plate-rule);
+		margin: 0 -1px -1px 0;
 		border-radius: 0;
 		transition: filter 0.25s ease;
 
@@ -543,7 +388,8 @@
 		img {
 			display: block;
 			max-width: 100%;
-			max-height: 56px;
+			// Silver caps its logo at 64px; this lands one step under.
+			max-height: 60px;
 			width: auto;
 			height: auto;
 			object-fit: contain;
@@ -560,21 +406,48 @@
 	@media (max-width: 900px) {
 		// `width`, not `flex-basis` — the grid is `width: fit-content`, so the
 		// cell the box is measured from has to be the cell that gets laid out.
-		.plate-item { width: 160px; min-height: 130px; padding: 1.4rem 1.2rem; }
+		// Silver drops to a 140px tile / 52px cap here; same one-step-under.
+		.plate-item {
+			width: 200px;
+			min-height: 148px;
+			padding: 1.5rem 1.5rem;
+
+			img {
+				max-height: 50px;
+			}
+		}
 	}
 
 	@media (max-width: 600px) {
 		.plate-grid { width: 100%; }
-		.plate-item { flex: 1 1 0; }
+
+		// Two per row, never N. `flex: 1 1 0` shared the row between however
+		// many partners a category had, so a three-partner row put each
+		// wordmark in a 116px cell — with padding, ~68px to render a logo that
+		// is mostly type. Two-up gives each mark real width and the rows stay
+		// the same height whatever the count.
+		.plate-item {
+			flex: 1 1 calc(50% - 1px);
+			width: auto;
+			max-width: none;
+			min-height: 132px;
+			padding: 1.2rem 1rem;
+
+			img {
+				max-height: 44px;
+				// An odd count leaves one cell alone on the last row, and it
+				// grows to close the sheet (same rule the tier cells follow).
+				// Without a cap the lone mark then rendered at ~350px against
+				// its 175px neighbours — the widest logo on the page belonging
+				// to the smallest tier.
+				max-width: 190px;
+			}
+		}
 	}
 
 	/* ===================== REDUCED MOTION ===================== */
 	@media (prefers-reduced-motion: reduce) {
-		.partners-block {
-			transition: border-color 0.2s, box-shadow 0.2s;
 
-			&:hover { transform: none; }
-		}
 
 		.tier-item,
 		.plate-item {
@@ -591,9 +464,60 @@
 			transform: none;
 		}
 
-		.partners-cta-arrow,
-		.partners-cta:hover .partners-cta-arrow {
-			transition: none;
-			transform: none;
+	}
+
+	/* ===================== CLOSING STATEMENT ===================== */
+	// Contact block on the accent field. Ink inverts globally via
+	// `.band--accent` in BaseLayout.scss; only the partner-specific bits
+	// (the named contact, the disabled deck stamp) are restated here.
+	.partners-contact {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		margin: 0;
+	}
+
+	.contact-name {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label);
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		// Full cream. On the red field a dimmed label measures 3.25:1 and
+		// fails 1.4.3 — see the ink table in BaseLayout.scss.
+		color: var(--on-accent);
+	}
+
+	:global(.band--accent) .email-link {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-ui);
+		color: var(--on-accent);
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 4px;
+		text-decoration-color: rgba(247, 239, 230, 0.85);
+		word-break: break-word;
+		transition: text-decoration-color 0.2s;
+
+		&:hover,
+		&:focus-visible {
+			text-decoration-color: var(--on-accent);
 		}
+	}
+
+	.partners-cta-soon {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.7rem;
+		padding: 1.25rem 2rem;
+		border: 1px dashed rgba(247, 239, 230, 0.45);
+		border-radius: var(--radius);
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label-lg);
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: var(--on-accent);
+	}
+
+	.partners-cta-stamp {
+		color: var(--on-accent);
 	}

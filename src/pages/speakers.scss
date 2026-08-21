@@ -8,7 +8,12 @@
 // radial bleeding from the top-right, over page black.
 .speakers-body {
 	position: relative;
-	padding: var(--section-y) var(--gutter);
+	// A full section gap, top and bottom — the same air the homepage's sections
+	// run at. It was --section-y-tight back when the subpage heroes were ~830px
+	// tall and a full gap pushed the first heading off a 760px laptop; the
+	// heroes are 430-620px now, so the reason is gone and the tight top just
+	// made every subpage read denser than the page it was reached from.
+	padding: var(--section-y) var(--gutter) var(--section-y);
 	background:
 		radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
 		var(--lit),
@@ -25,9 +30,11 @@
 // section on the site was centre-headed; a head centred over a left-aligned
 // grid is the template move, and thirteen of them in a row is the reason the
 // scroll read as one long generated block.
+// 4rem below the head — see the note on `.sessions-header`; the two pages
+// share this lockup and must share its rhythm.
 .speakers-header {
 	text-align: left;
-	margin-bottom: 3.2rem;
+	margin-bottom: 4rem;
 	// Hangs off the same hairline the sheet below starts on.
 	border-bottom: 1px solid var(--rule-soft);
 	padding-bottom: 1.6rem;
@@ -43,13 +50,12 @@
 }
 
 .speakers-heading {
-	font-family: var(--font-special-elite), cursive;
+	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-h2);
-	letter-spacing: 0.01em;
-	line-height: 1.05;
+	letter-spacing: var(--track-display);
+	line-height: var(--lh-display);
 	text-transform: uppercase;
 	color: var(--color-text);
-	text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
 	margin: 0;
 }
 
@@ -65,7 +71,6 @@
 
 .speakers-noscript {
 	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
 	font-size: var(--fs-lede);
 	line-height: 1.7;
 	color: var(--color-grey);

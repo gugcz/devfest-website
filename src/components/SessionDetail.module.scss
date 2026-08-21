@@ -1,51 +1,36 @@
-// Session detail dialog — film-noir modal opened from a docket card. Shares the
-// overlay/close/animation language with SpeakerDetail, but is a single content
-// column (no portrait rail): slot + abstract + the talk's speakers.
+// Session detail — a SHEET, not a dialog box.
+//
+// It used to be a 640px panel with a 1px red border, a red glow, bordered
+// chips for the tags, hairline dividers between every block and a boxed close
+// button: the enclosed-card language the redesign removed everywhere else,
+// still running in the one place a visitor reaches by clicking. It also set the
+// session title at --fs-h3 (41.6px) — smaller than the 54px row that opened it,
+// so the detail view of a thing was smaller than the summary of it.
+//
+// Now the page turns to the session: a full-bleed sheet on the same ground a
+// section uses, poster title, no border anywhere, and the speakers rendered as
+// open-field rows (`.field` / `.field-row--link` in BaseLayout.scss) so they
+// behave exactly like every other row on the site.
 
-.overlay {
+.sheet {
 	position: fixed;
 	inset: 0;
 	// Above the fixed site header (z-index 10001).
 	z-index: 10050;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 1.2rem;
-	background: rgba(3, 3, 3, 0.78);
-	backdrop-filter: blur(4px);
-	animation: overlayIn 0.2s ease;
-}
-
-@keyframes overlayIn {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
-.dialog {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	max-width: 640px;
-	max-height: min(84vh, 680px);
-	overflow: hidden;
+	overflow-y: auto;
+	overscroll-behavior: contain;
 	background:
-		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
-		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 82%);
-	border: 1px solid var(--rule-red);
-	box-shadow: var(--glow-red-soft), 0 30px 70px rgba(0, 0, 0, 0.72);
+		radial-gradient(ellipse 50% 60% at 88% 8%, rgba(204, 0, 0, 0.06) 0%, transparent 60%),
+		var(--lit),
+		var(--color-bg);
 	outline: none;
-	animation: dialogIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+	animation: sheetIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes dialogIn {
+@keyframes sheetIn {
 	from {
 		opacity: 0;
-		transform: translateY(14px) scale(0.98);
+		transform: translateY(1.5rem);
 	}
 	to {
 		opacity: 1;
@@ -53,130 +38,133 @@
 	}
 }
 
-/* ===================== CLOSE ===================== */
+/* ===================== TOP BAR ===================== */
+// Sticky, so the way out is reachable from the bottom of a long abstract.
+// Transparent — a solid bar would be a second header stacked on the site's own.
+.bar {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	display: flex;
+	justify-content: flex-end;
+	width: 100%;
+	max-width: var(--maxw);
+	margin: 0 auto;
+	padding: clamp(1.1rem, 2.5vh, 2rem) var(--gutter) 0;
+}
+
+// A mono word and a cross, not a bordered square. Every other control in this
+// language is type on the ground.
 .close {
-	position: absolute;
-	top: 0.7rem;
-	right: 0.7rem;
-	z-index: 3;
-	width: 2.3rem;
-	height: 2.3rem;
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
-	color: rgba(246, 243, 238, 0.85);
-	background: rgba(0, 0, 0, 0.45);
-	border: 1px solid rgba(240, 237, 230, 0.22);
-	border-radius: var(--radius);
+	gap: 0.6rem;
+	min-height: 2.75rem;
+	padding: 0;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-lg);
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.7);
+	background: none;
+	border: 0;
 	cursor: pointer;
-	transition: color 0.2s, border-color 0.2s, background 0.2s;
+	transition: color 0.2s;
 
 	svg {
-		width: 1.1rem;
-		height: 1.1rem;
+		width: 1rem;
+		height: 1rem;
 	}
 
 	&:hover,
 	&:focus-visible {
-		color: #fff;
-		border-color: var(--rule-red);
-		background: rgba(204, 0, 0, 0.35);
-		outline: none;
+		color: var(--color-accent-hot);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 4px;
 	}
 }
 
 /* ===================== CONTENT ===================== */
 .content {
-	flex: 1;
-	min-width: 0;
-	padding: 2rem 2rem 2.2rem;
-	// Leave room for the close button on the first line.
-	padding-right: 3.4rem;
-	overflow-y: auto;
+	width: 100%;
+	max-width: var(--maxw);
+	margin: 0 auto;
+	padding: clamp(1.5rem, 4vh, 3rem) var(--gutter) var(--section-y);
 }
 
+// Muted, not accent-hot. Red is spent on the reach state of the rows below;
+// a red label at the top competes with the one thing the colour is for.
 .kicker {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-sm);
 	letter-spacing: 0.28em;
 	text-transform: uppercase;
-	color: var(--color-accent-hot);
-	margin: 0 0 0.5rem;
+	color: rgba(240, 237, 230, 0.55);
+	margin: 0 0 clamp(0.75rem, 1.5vw, 1.1rem);
 }
 
+// The sheet's one headline, at the section step. It was --fs-h3 — a size below
+// the row that opened it.
 .title {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-h3);
-	line-height: 1.04;
-	letter-spacing: 0.02em;
+	font-size: var(--fs-h2);
+	line-height: var(--lh-display);
+	letter-spacing: var(--track-display);
+	text-transform: uppercase;
 	color: var(--color-text);
+	text-wrap: balance;
 	margin: 0;
 }
 
-/* ===================== META (slot / room) ===================== */
+/* ===================== META (room · track · level) ===================== */
+// One mono line of plain labels. These were bordered chips — a pill is a
+// different product's vocabulary, and the redesign took them off every other
+// surface already.
 .meta {
 	list-style: none;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.5rem 1.1rem;
-	margin: 0.8rem 0 0;
+	align-items: baseline;
+	gap: 0.5rem clamp(1.1rem, 2.4vw, 2rem);
+	margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
 	padding: 0;
 }
 
 .metaItem {
 	position: relative;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.08em;
+	font-size: var(--fs-label-lg);
+	letter-spacing: 0.16em;
 	text-transform: uppercase;
-	color: var(--color-grey);
+	color: rgba(240, 237, 230, 0.55);
 
 	& + .metaItem::before {
 		content: '';
 		position: absolute;
-		left: -0.6rem;
+		left: calc(-1 * clamp(0.55rem, 1.2vw, 1rem));
 		top: 50%;
 		width: 3px;
 		height: 3px;
 		transform: translateY(-50%);
-		background: var(--color-accent-hot);
+		background: rgba(240, 237, 230, 0.3);
 	}
 }
 
-/* ===================== TAGS ===================== */
-.tags {
-	list-style: none;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.45rem;
-	margin: 1rem 0 0;
-	padding: 0;
-}
-
-.tag {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.04em;
-	color: var(--color-grey);
-	background: rgba(255, 255, 255, 0.02);
-	// Square, per the Two-Pixel Rule — pills belong to a different product.
-	border: 1px solid var(--rule);
-	border-radius: var(--radius);
-	padding: 0.32rem 0.75rem;
-}
-
 /* ===================== ABSTRACT ===================== */
+// No rule above it. The measure and the change of face are the separation.
 .abstract {
-	margin-top: 1.4rem;
-	border-top: 1px solid var(--rule-soft);
-	padding-top: 1.2rem;
+	margin-top: clamp(2.5rem, 5vw, 4rem);
+	max-width: 56ch;
 
 	p {
 		font-family: var(--font-im-fell-english), serif;
-		font-size: var(--fs-body);
-		line-height: 1.75;
-		color: rgba(240, 237, 230, 0.9);
-		margin: 0 0 0.9rem;
+		font-size: var(--fs-lede);
+		line-height: 1.7;
+		color: rgba(240, 237, 230, 0.85);
+		margin: 0 0 1.1rem;
 
 		&:last-child {
 			margin-bottom: 0;
@@ -186,9 +174,7 @@
 
 /* ===================== SPEAKERS ===================== */
 .speakers {
-	margin-top: 1.4rem;
-	border-top: 1px solid var(--rule-soft);
-	padding-top: 1.2rem;
+	margin-top: clamp(3rem, 6vw, 5rem);
 }
 
 .speakersTitle {
@@ -196,70 +182,40 @@
 	font-size: var(--fs-label-sm);
 	letter-spacing: 0.24em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
-	margin: 0 0 0.9rem;
+	color: rgba(240, 237, 230, 0.55);
+	margin: 0 0 clamp(1rem, 2vw, 1.5rem);
+	padding-bottom: clamp(0.9rem, 1.8vw, 1.25rem);
+	border-bottom: 1px solid var(--rule-soft);
 }
 
-.speakersList {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 0.35rem;
-}
-
-// A speaker row is a button that opens the stacked speaker dialog.
+// A speaker row is an open-field row that opens the stacked speaker sheet —
+// the rhythm, the red reach field, the ink inversion and the focus ring all
+// come from `.field-row--link`. It was a rounded, bordered button with a
+// background fill on hover.
 .speaker {
 	display: flex;
 	align-items: center;
-	gap: 0.85rem;
+	gap: clamp(1rem, 2.2vw, 1.6rem);
 	width: 100%;
 	margin: 0;
-	padding: 0.55rem;
 	text-align: left;
 	font: inherit;
 	color: inherit;
-	background: none;
-	border: 1px solid transparent;
-	border-radius: var(--radius);
 	cursor: pointer;
-	transition: background 0.24s ease, border-color 0.24s ease;
+	// Shorter than a full row — a name and a tagline, no meta beneath.
+	--field-step: clamp(1.1rem, 2vw, 1.5rem);
 
-	&:hover,
-	&:focus-visible {
-		background: rgba(255, 255, 255, 0.025);
-		border-color: var(--rule-red);
+	// Not ink: the portrait has to stay a photograph on the red field.
+	&:hover .avatar {
+		border-color: #B00000;
 	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 2px;
-	}
-}
-
-// Chevron affordance, mirrors the speaker-card "View profile →" arrow.
-.speakerGo {
-	flex-shrink: 0;
-	margin-left: auto;
-	padding-left: 0.6rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-ui);
-	color: rgba(240, 237, 230, 0.4);
-	transition: color 0.24s ease, transform 0.24s ease;
-}
-
-.speaker:hover .speakerGo,
-.speaker:focus-visible .speakerGo {
-	color: var(--color-accent-hot);
-	transform: translateX(3px);
 }
 
 .avatar {
 	position: relative;
 	flex-shrink: 0;
-	width: 46px;
-	height: 46px;
+	width: clamp(52px, 5vw, 64px);
+	aspect-ratio: 1;
 	border-radius: 50%;
 	overflow: hidden;
 	display: inline-flex;
@@ -267,6 +223,7 @@
 	justify-content: center;
 	background: var(--panel-lit);
 	border: 1px solid var(--rule);
+	transition: border-color 0.28s ease;
 }
 
 .avatarImg {
@@ -292,45 +249,34 @@
 .speakerText {
 	display: flex;
 	flex-direction: column;
+	gap: 0.2rem;
 	min-width: 0;
 }
 
 .speakerName {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-title-sm);
-	line-height: 1.1;
-	letter-spacing: 0.03em;
+	font-size: var(--fs-row-sm);
+	line-height: 1.06;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
 	color: var(--color-text);
 }
 
 .speakerTag {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.04em;
+	font-size: var(--fs-label);
+	letter-spacing: 0.06em;
 	line-height: 1.45;
-	color: var(--color-grey);
-	margin-top: 0.15rem;
-}
-
-/* ===================== RESPONSIVE ===================== */
-@media (max-width: 620px) {
-	.content {
-		padding: 1.5rem 1.3rem 1.7rem;
-		padding-right: 3rem;
-	}
+	color: rgba(240, 237, 230, 0.55);
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.overlay,
-	.dialog {
+	.sheet {
 		animation: none;
 	}
-	.speaker,
-	.speakerGo {
+
+	.close,
+	.avatar {
 		transition: none;
-	}
-	.speaker:hover .speakerGo,
-	.speaker:focus-visible .speakerGo {
-		transform: none;
 	}
 }

@@ -2,14 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
+import Desk from '../components/Desk.astro';
+import Closer from '../components/Closer.astro';
+import { EVENT_TOPICS } from '../lib/ticker';
 
-const tickerTopics = [
-	'General',
-	'Tickets',
-	'Partnerships',
-	'Speakers',
-	'Press',
-];
 ---
 
 <BaseLayout
@@ -18,56 +14,66 @@ const tickerTopics = [
 >
 	<main class="contact-page">
 		<SubpageHero
-			label="Contact"
-			titleHtml={'Get in <span class="red">touch</span>.'}
+			titleHtml={'Get in <span class="red">touch.</span>'}
 			lede="Pick the right inbox and we'll get back to you as soon as we can."
 			seoHeading="Contact DevFest.cz 2026"
 			titleId="contact-title"
+			photo={false}
 		/>
 
-		<Ticker items={tickerTopics} fontSize="0.7rem" />
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
 
 		<!-- CARDS -->
-		<section class="contact-body" aria-label="Contact desks">
+		<section class="contact-body" aria-labelledby="desks-heading">
 			<div class="contact-inner">
-				<div class="contact-grid reveal">
-					<article class="contact-card">
-						<span class="card-label">General</span>
-						<h2 class="card-title">General questions</h2>
-						<p class="card-desc">Tickets, billing, production, or anything else.</p>
-						<ul class="card-emails">
-							<li>
-								<a class="email-link" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
-							</li>
-						</ul>
-					</article>
+				<!-- Every other subpage opens its body on a head; this one used to
+				     drop straight from the ticker onto the first desk, so the list
+				     had no owner and the wide page had nothing in its right half.
+				     Two columns, not a stacked eyebrow/title/lede lockup — that
+				     shape is the hero's, one screen up. -->
+				<header class="head-split head-split--ruled">
+					<h2 id="desks-heading" class="display head-title">Three <span class="red">desks.</span></h2>
+					<p class="head-note">
+						Not sure which one? Take the general desk &mdash; it reaches the whole crew.
+					</p>
+				</header>
 
-					<article class="contact-card">
-						<span class="card-label">Partnerships</span>
-						<h2 class="card-title">Partners &amp; sales</h2>
-						<p class="card-desc">Partnerships, sponsorships, and media collaborations.</p>
-						<ul class="card-emails">
-							<li>
-								<span class="email-name">Filip Goszler &mdash; Lead</span>
-								<a class="email-link" href="mailto:filip.goszler@gug.cz">filip.goszler@gug.cz</a>
-							</li>
-						</ul>
-					</article>
-
-					<article class="contact-card">
-						<span class="card-label">Speakers</span>
-						<h2 class="card-title">Speakers &amp; lineup</h2>
-						<p class="card-desc">Call for Proposals questions and speaker travel.</p>
-						<ul class="card-emails">
-							<li>
-								<a class="email-link" href="mailto:devfest-speakers@gug.cz">devfest-speakers@gug.cz</a>
-							</li>
-						</ul>
-					</article>
+				<div class="field contact-grid reveal">
+					<Desk
+						label="General"
+						title="General questions"
+						titleId="desk-general"
+						desc="Tickets, billing, production, or anything else."
+						contacts={[{ email: 'devfest@gug.cz' }]}
+					/>
+					<Desk
+						label="Partnerships"
+						title="Partners & sales"
+						titleId="desk-partners"
+						desc="Partnerships, sponsorships, and media collaborations."
+						contacts={[{ name: 'Filip Goszler — Lead', email: 'filip.goszler@gug.cz' }]}
+					/>
+					<Desk
+						label="Speakers"
+						title="Speakers & lineup"
+						titleId="desk-speakers"
+						desc="Call for Proposals questions and speaker travel."
+						contacts={[{ email: 'devfest-speakers@gug.cz' }]}
+					/>
 				</div>
 
 			</div>
 		</section>
+
+		<Closer
+			eyebrow="Or skip the inbox"
+			titleHtml={'Just come<br />to the <span class="red">show</span>.'}
+			note="Tickets are on sale now, and the newsletter carries every announcement first."
+			tone="accent"
+			titleId="contact-closer"
+			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/#newsletter', label: 'Join the newsletter', kind: 'ghost' }]}
+		/>
 	</main>
 </BaseLayout>
 

@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
+import Closer from '../components/Closer.astro';
+import { EVENT_TOPICS } from '../lib/ticker';
 
 // ─────────────────────────────────────────────────────────────────────────
 // FAQ CONTENT — single source of truth: the `faq` content collection
@@ -38,8 +40,6 @@ const groupsForDisplay = faqGroups.map((group) => ({
 	}),
 }));
 
-const tickerTopics = ['Who', 'What', 'When', 'Where', 'Why', 'How'];
-
 // FAQPage structured data — flattened from the same source so it can never
 // drift from what's rendered. https://developers.google.com/search/docs/appearance/structured-data/faqpage
 const faqSchema = {
@@ -67,29 +67,32 @@ const faqJsonLd = JSON.stringify(faqSchema);
 
 	<main class="faq-page">
 		<SubpageHero
-			label="FAQ"
-			titleHtml={'Questions,<br /><span class="red">answered</span>.'}
+			titleHtml={'Questions,<br /><span class="red">answered.</span>'}
 			lede="Answers to the questions we hear most. Can't find yours? Get in touch."
 			seoHeading="DevFest.cz 2026 FAQ"
 			titleId="faq-title"
+			photo={false}
 		/>
 
-		<Ticker items={tickerTopics} fontSize="0.7rem" />
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
 
 		<!-- FILES -->
 		<section class="faq-body" aria-labelledby="faq-title">
 			<div class="faq-inner">
 				{groupsForDisplay.map((group) => (
 					<div class="faq-group reveal">
+						{/* Category pinned in its own column beside the questions —
+						    an editorial two-column split rather than a caption stacked
+						    over a narrow centred list. */}
 						<div class="faq-head">
 							<h2 class="faq-cat" id={`faq-cat-${group.id}`}>{group.label}</h2>
-							<span class="faq-head-rule" aria-hidden="true"></span>
 						</div>
 
-						<div class="faq-list">
+						<div class="field faq-list">
 							{group.items.map((item) => (
 								<details class="faq-item">
-									<summary class="faq-q">
+									<summary class="field-row field-row--link faq-q">
 										<span class="faq-q-text">{item.q}</span>
 										<span class="faq-marker" aria-hidden="true">+</span>
 									</summary>
@@ -102,16 +105,17 @@ const faqJsonLd = JSON.stringify(faqSchema);
 					</div>
 				))}
 
-				<!-- STILL STUCK -->
-				<aside class="faq-cta reveal">
-					<p class="faq-cta-text">Still have a question?</p>
-					<a href="/contact" class="btn-ghost">
-						Contact us
-						<span class="btn-ghost-arrow" aria-hidden="true">&#8600;</span>
-					</a>
-				</aside>
 			</div>
 		</section>
+
+		<Closer
+			eyebrow="Still stuck"
+			titleHtml={'Ask us<br /><span class="red">directly</span>.'}
+			note="If the answer is not here, one of the desks will have it."
+			tone="accent"
+			titleId="faq-closer"
+			actions={[{ href: '/contact', label: 'Contact us' }, { href: '/#tickets', label: 'Get tickets', kind: 'ghost' }]}
+		/>
 	</main>
 </BaseLayout>
 

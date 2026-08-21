@@ -1,25 +1,25 @@
+	// Full-width bar along the bottom edge, not a floating labelled box. The
+	// old treatment was a 580px card with a red top rule, a red halation and a
+	// notched "EVIDENCE LOG" tab sitting on its border — four devices on a
+	// consent notice, which is the one piece of chrome that should ask for the
+	// least attention on the page.
 	.cookie-banner {
 		position: fixed;
-		bottom: 1.5rem;
-		left: 50%;
-		transform: translateX(-50%);
-		width: min(calc(100vw - 2rem), 580px);
+		bottom: 0;
+		left: 0;
+		right: 0;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1.2rem;
-		padding: 1.1rem 1.2rem 0.9rem 1.4rem;
-		background: var(--panel-lit);
-		// Floating chrome legitimately needs a bounded surface — it sits over
-		// the page, not in it. What it does not need is a 2px accent bar down
-		// one edge; the red hairline on top marks it in the ledger's voice.
-		border: 1px solid var(--rule);
-		border-top: 1px solid var(--rule-red);
-		border-radius: var(--radius);
+		gap: 1.25rem 2.5rem;
+		flex-wrap: wrap;
+		padding:
+			1rem clamp(1rem, 4vw, 2.5rem)
+			calc(1rem + env(safe-area-inset-bottom));
+		background: #0A0908;
+		border-top: 1px solid var(--rule);
 		z-index: 10000;
 		transition: opacity 0.3s, transform 0.3s;
-		// Lit-in-the-dark: depth shadow + faint red halation so the notice glows.
-		box-shadow: var(--glow-red-soft), 0 10px 30px rgba(0, 0, 0, 0.6);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -28,25 +28,10 @@
 		}
 	}
 
-	// Editorial tag — plain mono eyebrow, no skeuomorphism.
-	.cookie-banner::before {
-		content: 'EVIDENCE LOG';
-		position: absolute;
-		top: -8px;
-		left: 14px;
-		padding: 0 6px;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.62);
-		background: var(--color-bg);
-	}
-
 	.cookie-banner--hidden {
 		opacity: 0;
 		pointer-events: none;
-		transform: translateX(-50%) translateY(8px);
+		transform: translateY(100%);
 	}
 
 	.cookie-text {
@@ -55,6 +40,8 @@
 		line-height: 1.55;
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.7);
+		margin: 0;
+		max-width: 78ch;
 	}
 
 	.cookie-link {
@@ -68,7 +55,6 @@
 	.cookie-link:focus-visible {
 		color: var(--color-accent-hot);
 		border-color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
 	}
 
 	.cookie-link:focus-visible {

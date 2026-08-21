@@ -1,0 +1,249 @@
+---
+/**
+ * A DESK — one inbox in an open field of them.
+ *
+ * /contact ran three of these and /press ran two, and both pages kept their own
+ * copy of the same eight class names (`card-head`, `card-label`, `card-title`,
+ * `card-desc`, `card-emails`, `email-name`, `email-link`, `card-foot`). The
+ * copies had already drifted: the address was `--fs-ui` on one page and
+ * `--fs-body-lg` on the other, the label was accent-hot on one and muted on the
+ * other, and the two-column split was 0.95/1.05 against 1.15/0.85. This is that
+ * component, once.
+ *
+ * A desk CONTAINS its controls (the addresses) rather than being one, so it
+ * takes `.field-row--holds` — the warm wash and pull — never the red reach
+ * field, which promises a click. See "Open-field rows" in CLAUDE.md.
+ */
+interface Contact {
+	/** Optional person or team above the address ("Filip Goszler — Lead"). */
+	name?: string;
+	email: string;
+}
+
+interface Props {
+	/** Mono eyebrow above the title ("General", "Press kit"). */
+	label: string;
+	/** The desk name. Rendered as the heading at `level`. */
+	title: string;
+	/** `id` for the heading, so the caller can `aria-labelledby` it. */
+	titleId?: string;
+	/** Heading level — /contact's desks are h2 under an h1, /press's are h3. */
+	level?: 2 | 3;
+	/** One line on what the desk handles. */
+	desc: string;
+	/** Addresses, on the row's right axis. */
+	contacts?: Contact[];
+	/** A link instead of addresses (the press kit desk points at a page). */
+	action?: { href: string; label: string };
+}
+
+const { label, title, titleId, level = 2, desc, contacts = [], action } = Astro.props;
+const Heading = `h${level}` as 'h2' | 'h3';
+---
+
+<article class="field-row field-row--short field-row--holds desk" aria-labelledby={titleId}>
+	<div class="desk-head">
+		<span class="desk-label">{label}</span>
+		<Heading id={titleId} class="desk-title">{title}</Heading>
+		<p class="desk-desc">{desc}</p>
+	</div>
+
+	<div class="desk-body">
+		{contacts.length > 0 && (
+			<ul class="desk-contacts">
+				{contacts.map((c) => (
+					<li>
+						{c.name && <span class="desk-contact-name">{c.name}</span>}
+						<a class="desk-email" href={`mailto:${c.email}`}>{c.email}</a>
+					</li>
+				))}
+			</ul>
+		)}
+
+		{action && <a class="desk-action" href={action.href}>{action.label}</a>}
+	</div>
+</article>
+
+<style lang="scss">
+	// Same 1.15/0.85 split the section heads use, so the desk name and the
+	// section title share a left edge and a measure.
+	.desk {
+		display: grid;
+		grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+		align-items: start;
+		gap: 1rem clamp(2rem, 5vw, 5rem);
+	}
+
+	// Everything that describes the desk — label, name, what it handles. The
+	// blurb used to head the RIGHT column, which left the left one holding a
+	// title above 120px of black on a 190px row.
+	.desk-head {
+		display: flex;
+		flex-direction: column;
+		gap: 0.8rem;
+		min-width: 0;
+	}
+
+	// The action column, and only the action: the address, set on the row's
+	// right edge. Same axis the ticket waves end their prices and CTAs on.
+	.desk-body {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		text-align: right;
+		min-width: 0;
+	}
+
+	// Muted, not red: the accent on every row of a list is not a highlight, it
+	// is texture — and red is now what the reach state is for.
+	.desk-label {
+		align-self: flex-start;
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label-sm);
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.55);
+	}
+
+	// Short-list scale. At --fs-h3 (41.6px) the desk names sat a size below
+	// every other row on the site while the row ran 190px tall around them.
+	.desk-title {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-row);
+		line-height: var(--lh-display);
+		letter-spacing: var(--track-display);
+		text-transform: uppercase;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	.desk-desc {
+		font-family: var(--font-special-elite), cursive;
+		font-size: var(--fs-lede);
+		line-height: 1.6;
+		color: rgba(240, 237, 230, 0.7);
+		margin: 0.2rem 0 0;
+		// Special Elite is wide. Held to a measure so the blurb reads as a block
+		// under its desk name rather than a single stripe across the column.
+		max-width: 34ch;
+	}
+
+	.desk-contacts {
+		list-style: none;
+		padding: 0;
+		// Level with the desk name across the gutter — nothing sits above it in
+		// this column.
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 1rem;
+		width: 100%;
+	}
+
+	// Two rows, and the first keeps its height whether or not the desk names a
+	// person. Without the reserve, desks with a lone address started it on the
+	// left column's LABEL line and desks with a named lead started it on the
+	// TITLE line — the same column, two axes, down one list.
+	.desk-contacts li {
+		display: grid;
+		grid-template-rows: minmax(1rem, auto) auto;
+		justify-items: end;
+		row-gap: 0.8rem;
+	}
+
+	.desk-contact-name {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label);
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.65);
+	}
+
+	// The address is the point of the desk — it was set at label scale, smaller
+	// than the blurb beside it.
+	.desk-email,
+	.desk-action {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-body-lg);
+		letter-spacing: 0.04em;
+		color: var(--color-text);
+		align-self: flex-end;
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-decoration-color: var(--rule-red);
+		text-underline-offset: 4px;
+		word-break: break-all;
+		transition: color 0.2s, text-decoration-color 0.2s;
+
+		&::after {
+			content: '\2197';
+			margin-left: 0.5rem;
+			text-decoration: none;
+			display: inline-block;
+			transition: transform 0.25s;
+		}
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			text-decoration-color: var(--color-accent-hot);
+		}
+
+		&:hover::after,
+		&:focus-visible::after {
+			transform: translate(2px, -2px);
+		}
+	}
+
+	.desk-action {
+		word-break: normal;
+
+		&::after {
+			content: '\2192';
+		}
+	}
+
+	// One column below the tablet breakpoint — two 1.15/0.85 tracks put the
+	// blurb and the address into ~150px each. With one column the address is no
+	// longer opposite anything, so the right axis goes away with it.
+	@media (max-width: 860px) {
+		.desk {
+			grid-template-columns: 1fr;
+			gap: 1.25rem;
+		}
+
+		.desk-body {
+			align-items: flex-start;
+			text-align: left;
+		}
+
+		.desk-contacts,
+		.desk-contacts li {
+			justify-items: start;
+			align-items: flex-start;
+		}
+
+		.desk-contacts li {
+			grid-template-rows: auto auto;
+			row-gap: 0.4rem;
+		}
+
+		.desk-email,
+		.desk-action {
+			align-self: flex-start;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.desk-email,
+		.desk-action,
+		.desk-email::after,
+		.desk-action::after {
+			transition: none;
+		}
+	}
+</style>

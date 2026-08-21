@@ -1,7 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+import Closer from '../components/Closer.astro';
 import Speakers from '../components/Speakers.tsx';
+import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
 <BaseLayout
@@ -10,12 +13,14 @@ import Speakers from '../components/Speakers.tsx';
 >
 	<main class="speakers-page">
 		<SubpageHero
-			label="On the record"
-			titleHtml={'The voices on<br />the <span class="red">stand</span>.'}
+			titleHtml={'The voices on<br />the <span class="red">stand.</span>'}
 			lede="The developers, makers and researchers stepping up to the mic at DevFest.cz 2026. The lineup grows as speakers are confirmed."
 			seoHeading="DevFest.cz 2026 Speakers"
 			titleId="speakers-title"
+			focus="68% 42%"
 		/>
+
+		<Ticker items={EVENT_TOPICS} size="sm" />
 
 		<section class="speakers-body rake" aria-label="Speaker lineup">
 			<!-- Red raking light swept by the scroll; decorative, enhancement-only. -->
@@ -41,6 +46,15 @@ import Speakers from '../components/Speakers.tsx';
 				</noscript>
 			</div>
 		</section>
+
+		<Closer
+			eyebrow="Be there"
+			titleHtml={'See them<br />in the <span class="red">room</span>.'}
+			note="One day, one mill, the whole lineup on stage."
+			tone="accent"
+			titleId="speakers-closer"
+			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/sessions', label: 'Browse the talks', kind: 'ghost' }]}
+		/>
 	</main>
 </BaseLayout>
 

@@ -14,13 +14,15 @@
 // — so the only thing a cell border could add is a second rectangle around the
 // first. Alignment and even rhythm make the grid; the prints ARE the grid.
 
+// A 210px floor laid the lineup out as six-plus small columns on a 1440
+// page. Faces are the content here; give them room.
 .grid {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-	gap: clamp(2rem, 3.4vw, 3rem) clamp(1.4rem, 2.4vw, 2.2rem);
+	grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+	gap: clamp(2.5rem, 4.5vw, 4rem) clamp(1.5rem, 2.6vw, 2.5rem);
 
 	> li {
 		display: flex;
@@ -187,9 +189,10 @@
 
 .name {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-title-compact);
+	font-size: clamp(1.55rem, 1.9vw, 2rem);
 	line-height: 1.05;
-	letter-spacing: 0.04em;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
 	color: var(--color-text);
 	transition: color 0.25s ease;
 }
@@ -241,12 +244,16 @@
 	margin-top: 0.9rem;
 }
 
+// Same step as a real speaker's name — this card sits in the same grid and
+// its caption has to land on the same optical line. It was left on
+// --fs-title-compact when the names went up, so it read a size small.
 .moreKicker {
 	display: block;
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-title-compact);
+	font-size: clamp(1.55rem, 1.9vw, 2rem);
 	line-height: 1.05;
-	letter-spacing: 0.04em;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
 	color: var(--color-grey);
 }
 
@@ -264,7 +271,6 @@
 .status {
 	text-align: center;
 	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
 	font-size: var(--fs-lede);
 	line-height: 1.7;
 	color: var(--color-grey);

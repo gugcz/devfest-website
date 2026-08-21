@@ -162,32 +162,17 @@
 	margin-top: 1rem;
 }
 
-// The programme is a ledger of talks, not a card wall — opened by a printed
-// thick/thin rule pair and lit by the same single lamp as every other ledger.
+// The programme is an open field of talks — `.field` / `.field-row--link` in
+// BaseLayout.scss owns the rhythm and the red reach state; this file owns only
+// what is specific to a talk: the two-column grid and the type.
 .grid {
 	position: relative;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	border-top: 3px solid var(--rule-strong);
-	box-shadow: 0 3px 0 -2px var(--rule);
-
-	&::before {
-		content: '';
-		position: absolute;
-		inset: -2rem calc(-1 * var(--gutter));
-		background: var(--lamp);
-		pointer-events: none;
-		z-index: -1;
-	}
 }
 
 /* ===================== RECORD (button) ===================== */
 // Was a panel with a 2px red left border, a drop shadow and a hover lift —
-// three of the tells this language exists to remove. Now a ruled entry that
-// pulls right and marks its own rule when reached.
+// three of the tells this language exists to remove.
 .card {
-	position: relative;
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto;
 	align-items: start;
@@ -195,75 +180,25 @@
 	row-gap: 0.7rem;
 	width: 100%;
 	margin: 0;
-	padding: clamp(1.3rem, 2.2vw, 1.9rem) 0;
 	text-align: left;
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
-	background: transparent;
-	border: 0;
-	border-bottom: 1px solid var(--rule);
-	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 
-	// Light washes in from the left, and the entry's own rule takes the mark.
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0 calc(-1 * var(--gutter));
-		background: linear-gradient(
-			104deg,
-			rgba(255, 244, 232, 0.06) 0%,
-			rgba(255, 240, 226, 0.026) 38%,
-			transparent 82%
-		);
-		opacity: 0;
-		pointer-events: none;
-		z-index: -1;
-		transition: opacity 0.3s ease;
-	}
+	// Exceptions to the primitive's "every ink goes cream" rule: these two are
+	// not ink, they are objects that have to stay legible ON the field. Hover
+	// only — focus draws a ring, it does not paint the field (see
+	// `.field-row--link` in BaseLayout.scss).
+	&:hover {
+		.avatar {
+			border-color: #B00000;
+			filter: grayscale(1) contrast(1.06) brightness(0.98);
+		}
 
-	&::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: -1px;
-		height: 1px;
-		background: var(--color-accent);
-		transform: scaleX(0);
-		transform-origin: left center;
-		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-	}
-
-	&:hover,
-	&:focus-visible {
-		transform: translateX(0.6rem);
-	}
-
-	&:hover::before,
-	&:focus-visible::before {
-		opacity: 1;
-	}
-
-	&:hover::after,
-	&:focus-visible::after {
-		transform: scaleX(1);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 4px;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.card {
-		transition: none;
-
-		&:hover,
-		&:focus-visible { transform: none; }
-
-		&::after { transition: none; }
+		.avatarMore {
+			color: #1A0000;
+			background: #F7EFE6;
+		}
 	}
 }
 
@@ -283,23 +218,32 @@
 	grid-column: 1;
 }
 
+// The track, muted rather than accent-red. Red on every row of a thirty-row
+// list is not a highlight — the homepage spends its accent on one thing per
+// section (the on-sale wave), and this was spending it thirty times.
 .kicker {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
-	color: var(--color-accent-hot);
+	color: rgba(240, 237, 230, 0.55);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
 /* ===================== TITLE + EXCERPT ===================== */
+// The homepage sets a ruled row's title at 54px (see `.stubTitle` in
+// Tickets.module.scss) — this list is the same container language and was
+// running less than half that, which made /sessions read as a different site's
+// component. Not matched exactly: three ticket waves can carry 54px, thirty
+// talks cannot, so this lands a step below and stays scannable down a long list.
 .title {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-title-compact);
+	font-size: var(--fs-row-sm);
 	line-height: 1.06;
 	letter-spacing: 0.02em;
+	text-transform: uppercase;
 	color: var(--color-text);
 	// Reserve up to three lines so short/long titles keep card heights close.
 	display: -webkit-box;
@@ -400,10 +344,7 @@
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 0.6rem;
-	padding: clamp(1.3rem, 2.2vw, 1.9rem) 0;
 	text-align: left;
-	background: transparent;
-	border: 0;
 }
 
 .moreDots {
@@ -437,7 +378,6 @@
 
 .moreText {
 	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
 	font-size: var(--fs-lede);
 	line-height: 1.5;
 	color: var(--color-grey);
@@ -449,7 +389,6 @@
 .status {
 	text-align: center;
 	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
 	font-size: var(--fs-lede);
 	line-height: 1.7;
 	color: var(--color-grey);

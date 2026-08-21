@@ -189,3 +189,88 @@
 		border-radius: var(--radius);
 	}
 }
+
+/* ===================== ON THE ACCENT FIELD ===================== */
+// The home newsletter now sits on the red band. Every control here is
+// red-on-red or dark-on-red by default: the filled button disappears into the
+// ground, and the dark field reads as a hole punched in it. Ink measurements
+// for #CC0000 are in BaseLayout.scss — nothing dimmer than full cream is
+// allowed for text, and control boundaries need 3:1.
+:global(.band--accent) {
+	.wrapper {
+		align-items: flex-start;
+	}
+
+	.paper {
+		// Opaque, not rgba: a translucent fill leaves the contrast checker
+		// resolving the placeholder against the band red instead of the field,
+		// and the real ratio then depends on a blend nothing can measure.
+		background: #9A0000;
+		border-color: rgba(247, 239, 230, 0.85);
+
+		&:focus-within {
+			border-color: var(--on-accent);
+			box-shadow: none;
+		}
+	}
+
+	.input {
+		color: var(--on-accent);
+
+		&::placeholder {
+			// Full cream — 7.8:1 on the field, and still 5.2:1 if a checker
+			// resolves it against the band red behind it.
+			color: var(--on-accent);
+			opacity: 1;
+		}
+
+		&:focus-visible {
+			outline-color: var(--on-accent);
+		}
+	}
+
+	// Inverted: cream fill, dark ink. A red button on a red field is invisible.
+	.button {
+		background: var(--on-accent);
+		border-color: var(--on-accent);
+		color: #1A0000;
+
+		&:hover:not(:disabled) {
+			background: #FFFFFF;
+			border-color: #FFFFFF;
+			box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+		}
+
+		&:focus-visible {
+			outline-color: var(--on-accent);
+		}
+	}
+
+	.consent input[type='checkbox'] {
+		accent-color: #1A0000;
+
+		&:focus-visible {
+			outline-color: var(--on-accent);
+		}
+	}
+
+	.consent span {
+		color: var(--on-accent);
+	}
+
+	.consentLink {
+		color: var(--on-accent);
+		border-bottom-color: rgba(247, 239, 230, 0.85);
+
+		&:hover,
+		&:focus-visible {
+			color: var(--on-accent);
+			border-bottom-color: var(--on-accent);
+		}
+	}
+
+	.message {
+		color: var(--on-accent);
+		text-align: left;
+	}
+}

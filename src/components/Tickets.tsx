@@ -138,11 +138,8 @@ export default function Tickets() {
 	if (state.status === 'error') {
 		return (
 			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
-				<header className={s.header}>
-					<p className={s.eyebrow}>
-						Tickets
-					</p>
-					<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
+				<header className="head-split">
+					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 				</header>
 				<div className={s.empty} role="alert">
 					<p>The box office isn't answering. Reload, or buy direct on ti.to.</p>
@@ -154,11 +151,8 @@ export default function Tickets() {
 	if (state.status === 'loading') {
 		return (
 			<section id="tickets" className={s.tickets} aria-busy={true} aria-labelledby="tickets-heading">
-				<header className={s.header}>
-					<p className={s.eyebrow}>
-						Tickets
-					</p>
-					<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
+				<header className="head-split">
+					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 					<p className={s.loadingStatus} role="status">
 						<span className={s.loadingDot} aria-hidden="true" />
 						Loading tickets
@@ -169,9 +163,9 @@ export default function Tickets() {
 						</span>
 					</p>
 				</header>
-				<ul className={s.skelLedger} role="list" aria-hidden="true">
+				<ul className={`field ${s.skelLedger}`} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
-						<li key={i} className={s.skelRecord}>
+						<li key={i} className={`field-row field-row--short ${s.skelRecord}`}>
 							<span className={`${s.skelBar} ${s.skelIndex}`} />
 							<div className={s.skelCol}>
 								<span className={`${s.skelBar} ${s.skelTitle}`} />
@@ -205,12 +199,9 @@ export default function Tickets() {
 		if (!hasEvent) return null;
 		return (
 			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
-				<header className={s.header}>
-					<p className={s.eyebrow}>
-						Tickets
-					</p>
-					<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
-					<p className={s.subheading}>The box office is closed. It opens with the first wave.</p>
+				<header className="head-split">
+					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
+					<p className="head-note">The box office is closed. It opens with the first wave.</p>
 				</header>
 				<div className={s.empty}>
 					<p>Subscribe above to be notified when tickets go on sale.</p>
@@ -221,7 +212,6 @@ export default function Tickets() {
 						rel="noopener noreferrer"
 					>
 						Visit ti.to event
-						<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
 					</a>
 				</div>
 			</section>
@@ -239,12 +229,15 @@ export default function Tickets() {
 			{/* Red raking light, swept by the scroll itself. Purely decorative and
 			    enhancement-only — see the `.rake` rules in BaseLayout.scss. */}
 			<span className="rake-beam" aria-hidden="true" />
-			<header className={s.header}>
-				<p className={s.eyebrow}>Tickets</p>
-				<h2 id="tickets-heading" className={s.heading}>Get your pass</h2>
-				<p className={s.subheading}>Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>
+			{/* Title left, lede right — see the note on `.header`. The mono
+			    "Tickets" eyebrow above it was the page's THIRD "tickets" in one
+			    viewport (the nav button, this label, and the row CTA), and the
+			    stack under it was the shape the speakers teaser was also using. */}
+			<header className="head-split">
+				<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
+				<p className="head-note">Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>
 			</header>
-			<ul className={s.stubs} role="list">
+			<ul className={`field ${s.stubs}`} role="list">
 				{groupReleases(releases).map((group, i) => {
 					const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
 					const anyPurchasable = statuses.some((st) => st.purchasable);
@@ -264,29 +257,20 @@ export default function Tickets() {
 					const lead = prices[0];
 					const manyPrices = new Set(prices.map((p) => p.primary)).size > 1;
 					const description = groupDescription(group.name, group.description);
-					const serial = `N${'\u00B0'} ${String(i + 1).padStart(2, '0')}`;
+					const serial = String(i + 1).padStart(2, '0');
 					return (
 						<li
 							key={group.name}
-							className={`${s.stub} ${anyPurchasable ? s.stubLive : s.stubSpent}`}
+							className={`field-row field-row--short field-row--holds ${s.stub} ${anyPurchasable ? s.stubLive : s.stubSpent}`}
 						>
-							<span className={s.stubPerf} aria-hidden="true" />
-							<span className={`${s.stubNotch} ${s.stubNotchTop}`} aria-hidden="true" />
-							<span className={`${s.stubNotch} ${s.stubNotchBottom}`} aria-hidden="true" />
-							{anyPurchasable && (
-								<span className={s.stubBand} aria-hidden="true">
-									<span>Admit one</span>
-									<span>On sale</span>
-								</span>
-							)}
-
-							<span className={s.stubCounterfoil}>
-								<span className={s.stubPunch} aria-hidden="true" />
-								{anyPurchasable ? (
-									<span className={s.stubSerial} aria-hidden="true">{serial}</span>
-								) : (
-									<span className={s.stubVoid} aria-hidden="true">Void</span>
-								)}
+							{/* Index and state on one mono line at the head of the row.
+							    This replaces a punched perforation, two cut-out notches,
+							    a vertical serial, a VOID overprint and a filled ADMIT ONE
+							    band — six pieces of ticket cosplay per wave, three waves
+							    deep, for information that is two words long. */}
+							<span className={s.stubMeta}>
+								<span className={s.stubSerial} aria-hidden="true">{serial}</span>
+								{anyPurchasable && <span className={s.stubState}>On sale</span>}
 							</span>
 
 							<div className={s.stubBody}>
@@ -306,12 +290,12 @@ export default function Tickets() {
 
 							<div className={s.stubEnd}>
 								{lead && (
-									<span>
+									<span className={s.stubPriceGroup}>
 										<span className={s.stubPrice}>
 											{manyPrices ? `${lead.primary}+` : lead.primary}
 										</span>
 										{lead.secondary && (
-											<span className={s.stubVat}>{' '}{lead.secondary}</span>
+											<span className={s.stubVat}>{lead.secondary}</span>
 										)}
 									</span>
 								)}
@@ -325,7 +309,6 @@ export default function Tickets() {
 										onClick={() => trackBeginCheckout(group, statuses)}
 									>
 										Get tickets
-										<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
 									</a>
 								) : (
 									<span className="record-status">{summary?.label ?? 'Unavailable'}</span>
@@ -339,14 +322,12 @@ export default function Tickets() {
 				Not ready yet?{' '}
 				<a href="#newsletter" className={s.footnoteLink}>
 					Notify me when the next wave drops
-					<span aria-hidden="true">{' ↘︎'}</span>
 				</a>
 			</p>
 			<div className={s.invoice}>
 				<span className={s.invoiceLabel}>Buying for a company?</span>
 				<a className={s.cta} href="/invoice" aria-label="Request a company invoice">
 					Get a company invoice
-					<span className={s.ctaArrow} aria-hidden="true">&#8599;</span>
 				</a>
 			</div>
 		</section>

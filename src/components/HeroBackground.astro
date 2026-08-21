@@ -2,16 +2,31 @@
 interface Props {
 	photoOpacity?: number;
 	mobilePhotoOpacity?: number;
+	/**
+	 * Which part of the plate the frame sits on, as a `background-position`.
+	 *
+	 * One photograph carries every hero on the site, and five pages running the
+	 * identical crop is what made them read as one template with the words
+	 * swapped. Re-framing is the cheapest honest variation available: same
+	 * scene, different shot.
+	 */
+	focus?: string;
+	mobileFocus?: string;
 }
 
-const { photoOpacity = 0.85, mobilePhotoOpacity = 0.55 } = Astro.props;
+const {
+	photoOpacity = 0.85,
+	mobilePhotoOpacity = 0.55,
+	focus = 'center',
+	mobileFocus = '38% center',
+} = Astro.props;
 ---
 
 <div class="hero-bg" aria-hidden="true"></div>
 <div
 	class="hero-photo"
 	aria-hidden="true"
-	style={`--hero-photo-opacity:${photoOpacity};--hero-photo-opacity-mobile:${mobilePhotoOpacity};`}
+	style={`--hero-photo-opacity:${photoOpacity};--hero-photo-opacity-mobile:${mobilePhotoOpacity};--hero-photo-pos:${focus};--hero-photo-pos-mobile:${mobileFocus};`}
 ></div>
 
 <style lang="scss">

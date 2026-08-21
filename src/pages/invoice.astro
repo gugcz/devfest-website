@@ -1,7 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+import Closer from '../components/Closer.astro';
 import InvoiceForm from '../components/InvoiceForm';
+import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
 <BaseLayout
@@ -10,12 +13,14 @@ import InvoiceForm from '../components/InvoiceForm';
 >
 	<main class="invoice-page">
 		<SubpageHero
-			label="The paper trail"
-			titleHtml={'Buy on a company<br /><span class="red">invoice</span>.'}
+			titleHtml={'Buy on a company<br /><span class="red">invoice.</span>'}
 			lede="Need an invoice before you can pay? Request one here. We'll bill your company, and once it's settled you'll get a code to claim your tickets on ti.to."
 			seoHeading="DevFest.cz 2026 Company Invoice"
 			titleId="invoice-title"
+			photo={false}
 		/>
+
+		<Ticker items={EVENT_TOPICS} size="sm" />
 
 		<section class="invoice-body" aria-labelledby="invoice-form-heading">
 			<div class="invoice-inner reveal">
@@ -35,6 +40,15 @@ import InvoiceForm from '../components/InvoiceForm';
 				<InvoiceForm client:load />
 			</div>
 		</section>
+
+		<Closer
+			eyebrow="Paying by card"
+			titleHtml={'Skip the<br /><span class="red">paperwork</span>.'}
+			note="Individual tickets check out on ti.to in a minute, no invoice needed."
+			tone="accent"
+			titleId="invoice-closer"
+			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/faq', label: 'Read the FAQ', kind: 'ghost' }]}
+		/>
 	</main>
 </BaseLayout>
 
@@ -46,9 +60,9 @@ import InvoiceForm from '../components/InvoiceForm';
 
 	.invoice-body {
 		position: relative;
-		padding: var(--section-y) var(--gutter);
+		padding: var(--section-y) var(--gutter) var(--section-y);
 		// Pool of light dropped behind the billing desk — a lit noir scene.
-		background: var(--lit);
+		background: var(--lit), var(--color-bg);
 		border-top: 1px solid var(--rule-soft);
 	}
 
@@ -68,10 +82,15 @@ import InvoiceForm from '../components/InvoiceForm';
 		gap: 1.4rem;
 	}
 
+	// --fs-h3, the step every other secondary head on the site runs at (the
+	// contact desks, the press desks). At --fs-card-title it was the smallest
+	// heading on any subpage — 31px under a 137px hero.
 	.intro-title {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-card-title);
-		letter-spacing: 0.04em;
+		font-size: var(--fs-h3);
+		line-height: var(--lh-display);
+		letter-spacing: var(--track-display);
+		text-transform: uppercase;
 		color: var(--color-text);
 		margin: 0;
 	}
@@ -101,7 +120,6 @@ import InvoiceForm from '../components/InvoiceForm';
 		letter-spacing: 0.2em;
 		// Red reads as light — the step numbers glow like neon markers.
 		color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
 		flex-shrink: 0;
 	}
 
@@ -132,7 +150,6 @@ import InvoiceForm from '../components/InvoiceForm';
 			color: var(--color-accent-hot);
 			border-color: var(--color-accent-hot);
 			// Red TEXT reads as neon — subtle halation on hover.
-			text-shadow: var(--glow-red-soft);
 		}
 
 		&:hover::after,

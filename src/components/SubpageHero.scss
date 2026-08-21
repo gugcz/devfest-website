@@ -1,16 +1,38 @@
+	// Every subpage opens here, so this component decides whether the site
+	// reads as one designed thing or as eight instances of a template. It gets
+	// exactly three elements — tag, title, one line of copy — and the title
+	// does all the work.
+	// The hero is sized so the first content row is ALWAYS visible without
+	// scrolling. It used to run 640–860px tall against a 900px viewport — and
+	// on a 760px laptop three pages showed literally zero content below it, so
+	// every visit opened on a scroll.
+	//
+	// Height came from padding (192 top + 144 bottom) and the title, never from
+	// min-height, which is why the min-height alone was the wrong dial. Top
+	// padding now only has to clear the fixed header; the content is
+	// bottom-aligned, so the frame closes under the title instead of around it.
 	.subpage-hero {
 		position: relative;
-		// Floor max() keeps height stable across pages even when content
-		// lengths differ (e.g. partners lede longer than contact lede).
-		min-height: max(440px, 52vh);
+		min-height: max(360px, 44vh);
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
 		overflow: hidden;
-		// Editorial section rhythm — top clears the fixed header, gutter
-		// matches every other page edge. Bottom hairline stitches the hero
-		// into the flat layout grid below it.
-		padding: calc(var(--section-y) + 1rem) var(--gutter) var(--section-y);
+		// 7.5rem, not 5.5: the mono kicker that used to sit above the title was
+		// also carrying the clearance under the fixed header. Without it the
+		// display type started ~16px below the bar and read as jammed into it.
+		padding:
+			calc(7.5rem + env(safe-area-inset-top))
+			var(--gutter)
+			var(--section-y-tight);
 		border-bottom: 1px solid var(--rule-soft);
+	}
+
+	// Type-only opening. No photo, so the frame can be shorter and the
+	// headline carries the whole plate — one accent hairline along the bottom
+	// keeps it stitched to the content below.
+	.subpage-hero--plain {
+		min-height: max(320px, 36vh);
+		background: var(--color-bg);
 	}
 
 	.hero-content {
@@ -24,80 +46,49 @@
 	// Atmosphere overlays sit between the photo and the content.
 	.scene-vignette { z-index: 3; }
 
-	// Mono eyebrow with a trailing red hairline — matches the homepage tag.
-	.section-label {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.32em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.62);
-		margin-bottom: 1.8rem;
-		display: flex;
-		align-items: center;
-		gap: 0.9rem;
-
-		&::after {
-			content: '';
-			flex: none;
-			width: 64px;
-			height: 1px;
-			background: linear-gradient(to right, var(--rule-red), transparent);
-		}
-	}
-
 	// The page's one piece of poster-scale type. Nothing else on a subpage is
 	// allowed at --fs-display; a second one would cancel this one out.
 	.hero-title {
-		font-family: var(--font-special-elite), cursive;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-display);
-		line-height: 0.98;
-		letter-spacing: 0;
+		line-height: var(--lh-display);
+		letter-spacing: var(--track-display);
 		text-transform: uppercase;
 		color: var(--color-text);
-		margin: 0 0 1.8rem;
-		max-width: 16ch;
-		// Legibility scrim over the photo — kept as a shadow, not an emboss.
-		text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7);
+		margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+		max-width: 18ch;
+		text-wrap: balance;
 	}
 
 	// set:html injects unscoped markup; :global lets the page-provided
-	// <span class="red"> inside the title light up like neon.
+	// <span class="red"> take the accent. Flat — the halation that used to sit
+	// here fired on every page title at once, which is not emphasis.
 	:global(.subpage-hero .hero-title .red) {
 		color: var(--color-accent-hot);
-		text-shadow: var(--glow-red);
 	}
 
+	// One line, typewriter, no border. The italic serif with a red rule down
+	// its left edge was the third element of the repeated lockup.
 	.hero-lede {
-		font-family: var(--font-im-fell-english), serif;
-		font-style: italic;
-		font-size: clamp(1.18rem, 1.7vw, 1.4rem);
-		line-height: 1.75;
-		color: var(--color-grey);
-		max-width: 56ch;
+		font-family: var(--font-special-elite), cursive;
+		font-size: var(--fs-lede);
+		line-height: 1.6;
+		color: rgba(240, 237, 230, 0.7);
+		max-width: 46ch;
 		margin: 0;
-		border-left: 2px solid var(--rule-red);
-		padding-left: 1.4rem;
 	}
 
-	// The hero centres its content, so if the block ever grows taller than the
-	// padding box it overflows EQUALLY in both directions — the top padding must
-	// clear the 65px fixed header on its own so the eyebrow never hides behind
-	// it, independent of min-height.
 	@media (max-width: 900px) {
 		.subpage-hero {
-			padding: calc(var(--section-y) + 1rem) var(--gutter) var(--section-y);
-			min-height: max(400px, 46vh);
+			min-height: max(340px, 40vh);
+			padding: calc(6.5rem + env(safe-area-inset-top)) var(--gutter) var(--section-y-tight);
 		}
 	}
 
 	@media (max-width: 600px) {
 		.subpage-hero {
-			padding: calc(var(--section-y) + 1rem) var(--gutter) var(--section-y);
-			min-height: max(360px, 42vh);
+			min-height: max(300px, 36vh);
 		}
+
 		.hero-title { max-width: none; }
-		.hero-lede {
-			font-size: var(--fs-lede);
-			padding-left: 1.1rem;
-		}
 	}
