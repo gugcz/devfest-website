@@ -240,9 +240,7 @@
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-body-lg);
 	letter-spacing: 0.04em;
-	// 0.66 clears WCAG AA 4.5:1 on --panel-lit (#0A0908) and matches the
-	// grid-card monogram; 0.4 blended to #676562 (3.42:1) and failed axe.
-	color: rgba(242, 239, 233, 0.66);
+	color: var(--ink-monogram-sm);
 	user-select: none;
 }
 

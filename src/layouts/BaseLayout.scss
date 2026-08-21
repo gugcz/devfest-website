@@ -117,6 +117,17 @@
 		--panel-lit: #0A0908;
 		--panel-lit-2: #0E0C0B;
 
+		// Initials standing in for a photograph that is missing or failed to
+		// load, on --panel-lit. Four files each picked their own alpha (0.24 /
+		// 0.26 / 0.32 / 0.32) and EVERY one of them measured under the 3:1 that
+		// applies to the large plate: CI caught the speaker sheet's at 2.58:1
+		// the first time a fixture photo didn't load. One value, measured once.
+		//
+		//   0.46 → #757370 → 4.21:1   the large plate (--fs-monogram, 54px)
+		//   0.66 → #A3A19C → 7.71:1   the small avatar (label scale → 4.5:1)
+		--ink-monogram: rgba(242, 239, 233, 0.46);
+		--ink-monogram-sm: rgba(242, 239, 233, 0.66);
+
 		// Soft pool of light dropped behind content in a lit section.
 		--lit: radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%);
 		// Feathers a full-bleed row wash so the box does not show its own top

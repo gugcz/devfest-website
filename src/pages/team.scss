@@ -150,7 +150,7 @@
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: clamp(2.6rem, 8vw, 3.4rem);
 		letter-spacing: 0.06em;
-		color: rgba(242, 239, 233, 0.32);
+		color: var(--ink-monogram);
 		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
 		user-select: none;
 	}

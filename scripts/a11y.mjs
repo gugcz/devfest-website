@@ -311,6 +311,20 @@ const MODAL_FLOWS = {
 				await p.click('[role="dialog"] button[aria-label^="View "]');
 			},
 		},
+		{
+			// The SAME sheet with no photograph, so the fallback initials plate
+			// is audited on every run. Pinned to a named speaker on purpose: the
+			// flow above takes whichever speaker happens to be first, and when
+			// that one had a photo the monogram was never scanned — which is how
+			// a 2.58:1 plate (3:1 required at 54px) survived local runs and only
+			// surfaced in CI. `sp-alan` is the fixture with `profilePicture: ''`.
+			label: 'session → speaker dialog (no photo)',
+			open: async (p) => {
+				await p.click('button[aria-label="View details for AI at the Edge"]');
+				await p.waitForSelector('[role="dialog"]');
+				await p.click('[role="dialog"] button[aria-label="View Alan Turing\'s profile"]');
+			},
+		},
 	],
 	'/agenda/': [
 		{
