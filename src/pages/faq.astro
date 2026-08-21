@@ -65,7 +65,7 @@ const faqJsonLd = JSON.stringify(faqSchema);
 >
 	<script type="application/ld+json" slot="head" set:html={faqJsonLd} />
 
-	<main class="faq-page">
+	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Questions,<br /><span class="red">answered.</span>'}
 			lede="Answers to the questions we hear most. Can't find yours? Get in touch."
@@ -78,8 +78,8 @@ const faqJsonLd = JSON.stringify(faqSchema);
 
 
 		<!-- FILES -->
-		<section class="faq-body" aria-labelledby="faq-title">
-			<div class="faq-inner">
+		<section class="band band--lit" aria-labelledby="faq-title">
+			<div class="band-inner">
 				{groupsForDisplay.map((group) => (
 					<div class="faq-group reveal">
 						{/* Category pinned in its own column beside the questions —

@@ -1,11 +1,5 @@
 @use 'sass:list';
 
-	.page {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-	}
-
 	/* ===================== HERO ===================== */
 	// One column, not two. The statement is the page — a countdown parked
 	// beside it at equal weight halved the width the headline could run to,
@@ -471,6 +465,9 @@
 			filter: grayscale(0);
 		}
 
+		// Wider than --focus-gap-lg on purpose: a partner wordmark carries its
+		// own whitespace inside the image box, so a 4px ring lands ON the
+		// logo's margin rather than around the mark you can see.
 		a:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
 			outline-offset: 6px;
@@ -529,7 +526,7 @@
 
 		&:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
-			outline-offset: 4px;
+			outline-offset: var(--focus-gap-lg);
 		}
 	}
 

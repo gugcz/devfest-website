@@ -104,6 +104,21 @@
 		// Ink on the red CTA.
 		--on-accent: #F7EFE6;
 
+		// How far the focus ring stands off the control it marks. The ring
+		// itself is always `2px solid var(--color-accent-hot)`; only the gap
+		// changes, and it changes for ONE reason — how much visible edge the
+		// control already has. Thirty call sites had picked 2px, 3px or 4px
+		// with nothing saying which applied where.
+		//
+		//   tight  the control has its own boundary to sit against: a filled
+		//          button, a bordered input, a row already painting a field
+		//   (base) the default — type-on-ground controls inside flowing text
+		//   lg     the control stands alone on open ground with nothing
+		//          adjacent, so the ring needs air to read as a ring
+		--focus-gap-tight: 2px;
+		--focus-gap: 3px;
+		--focus-gap-lg: 4px;
+
 		/* ============ cinematic film-noir atmosphere ============ */
 		// Red used as LIGHT — halation for accents. Deliberately dialled back
 		// from the old values: the glow used to sit on every red word on the
@@ -112,6 +127,15 @@
 		// red TEXT is flat.
 		--glow-red: 0 0 14px rgba(204, 0, 0, 0.4), 0 0 34px rgba(204, 0, 0, 0.18);
 		--glow-red-soft: 0 0 18px rgba(204, 0, 0, 0.22);
+
+		// A photograph is MOUNTED, not floated: a bone keyline just inside the
+		// edge and a shadow under it, so the print sits on the sheet instead of
+		// hovering on flat black. Four frames carried their own copy of this
+		// pair — the speaker sheet's plate, the /team mugshot, the lineup thumb
+		// and the "more speakers" tile.
+		--print-mount:
+			inset 0 0 0 1px rgba(240, 237, 230, 0.16),
+			0 10px 24px rgba(0, 0, 0, 0.5);
 
 		// Very dark surfaces that catch a pool of light (replace flat --panel in scenes).
 		--panel-lit: #0A0908;
@@ -187,7 +211,7 @@
 
 	:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 3px;
+		outline-offset: var(--focus-gap);
 		border-radius: 2px;
 	}
 
@@ -409,6 +433,79 @@
 		.head-split--ruled { padding-bottom: 1.2rem; }
 	}
 
+	// A MOUNTED PRINT — the photograph well, at the one aspect the site crops to.
+	// The speaker sheet's plate and the /team mugshot are the same object and had
+	// the same eight declarations written out twice; the two frames that are not
+	// quite this (the lineup thumb, the "more speakers" tile) lay out differently
+	// and keep their own box, but take the mount from `--print-mount` so the
+	// keyline and shadow can no longer drift apart.
+	.print {
+		position: relative;
+		aspect-ratio: 4 / 5;
+		width: 100%;
+		overflow: hidden;
+		background: var(--panel-lit);
+		box-shadow: var(--print-mount);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	// Every page's <main>. A column, so a short page still pushes the footer to
+	// the bottom of the viewport. Ten pages each declared this same two-line
+	// rule under their own name (`.faq-page`, `.team-page`, `.agenda-page`, …).
+	.page-stack {
+		display: flex;
+		flex-direction: column;
+	}
+
+	// The ONE-column section head, closed by a hairline — `.head-split` is the
+	// two-column variant, for a head that has something to say on its right.
+	// Compose the title with `.display` + `.head-title` and the label with
+	// `.eyebrow`; this class is only the rhythm and the rule.
+	//
+	// /agenda, /sessions and /speakers each kept their own `-header` /
+	// `-eyebrow` / `-heading` trio with identical bodies while these globals sat
+	// unused beside them, and they had already drifted apart at the edges.
+	.head-stack {
+		margin-bottom: 4rem;
+		padding-bottom: 1.6rem;
+		border-bottom: 1px solid var(--rule-soft);
+	}
+
+	.head-stack .eyebrow {
+		margin: 0 0 1rem;
+	}
+
+	// The crosslink under a stacked head — /agenda and /sessions each point at
+	// the other from here.
+	.head-stack-link {
+		margin: 1.6rem 0 0;
+	}
+
+	@media (max-width: 600px) {
+		.head-stack {
+			margin-bottom: 2.4rem;
+			padding-bottom: 1.2rem;
+		}
+	}
+
+	// The prose a data-backed page falls back to when there is no JavaScript, or
+	// when the lineup endpoint is unreachable. Left-set like everything else —
+	// two of the three copies of this were centred and one was not.
+	.fallback-note {
+		font-family: var(--font-im-fell-english), serif;
+		font-size: var(--fs-lede);
+		line-height: 1.7;
+		color: var(--color-grey);
+		max-width: 52ch;
+		margin: 2rem 0 0;
+
+		a {
+			color: var(--color-accent-hot);
+		}
+	}
+
 	/* ---- Bands ---- */
 	// Full-bleed grounds. The site was one uninterrupted #050505 from the top of
 	// every page to the bottom of it, so nothing marked where a section started
@@ -433,6 +530,26 @@
 	.band--accent {
 		background: var(--color-accent);
 		color: var(--on-accent);
+	}
+
+	// A LIT ground: the spotlight pool dropped behind the content, closed by a
+	// hairline at the top. This is what every subpage body sits on, and seven
+	// pages each held their own copy of it.
+	.band--lit {
+		background: var(--lit), var(--color-bg);
+		border-top: 1px solid var(--rule-soft);
+	}
+
+	// The same room with a faint red bleed from the top-right corner. Carried by
+	// the pages that are about PEOPLE and the programme — /speakers, /sessions,
+	// /agenda, /team — so the lineup pages read a shade warmer than the
+	// administrative ones (/press, /faq, /contact, /press/downloads).
+	.band--lit-red {
+		background:
+			radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
+			var(--lit),
+			var(--color-bg);
+		border-top: 1px solid var(--rule-soft);
 	}
 
 	.band-inner {
@@ -611,7 +728,7 @@
 
 		&:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
-			outline-offset: 3px;
+			outline-offset: var(--focus-gap);
 		}
 	}
 
@@ -645,7 +762,7 @@
 
 		&:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
-			outline-offset: 3px;
+			outline-offset: var(--focus-gap);
 		}
 	}
 
@@ -753,7 +870,7 @@
 		// 1.4.11 asks of a focus indicator.
 		&:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
-			outline-offset: 2px;
+			outline-offset: var(--focus-gap-tight);
 		}
 
 		// …but red on red is not a ring, so a row that is both hovered and

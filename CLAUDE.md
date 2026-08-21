@@ -405,7 +405,25 @@ other, and the two-column split was 0.95/1.05 against 1.15/0.85.
 | `Desk.astro` | one inbox: label, name, blurb, addresses on the right axis (or one `action` link). `/contact` runs three, `/press` two. Takes `.field-row--holds` — a desk CONTAINS its controls |
 | `.field` / `.field-row` | the open-field list and row, above |
 | `.head-split` / `.head-title` / `.head-note` | the two-column section head — statement left, one line right. Used by the ticket section, the speakers teaser, the gallery and the `/contact` desks. `--ruled` closes it with a hairline. Compose the title with `.display` |
+| `.head-stack` | the ONE-column section head, closed by a hairline. `/agenda`, `/sessions` and `/speakers` each kept their own `-header` / `-eyebrow` / `-heading` trio with identical bodies while `.eyebrow` / `.display` / `.head-title` sat unused beside them |
+| `.page-stack` | every page's `<main>`. Ten pages each declared the same two-line flex column under their own name |
+| `.band--lit` / `.band--lit-red` | the subpage ground: the spotlight pool over page black, closed by a hairline at the top. `--lit-red` adds the faint red bleed from the top-right and belongs to the pages about PEOPLE and the programme (`/speakers`, `/sessions`, `/agenda`, `/team`); the administrative pages take the plain pool |
+| `.print` | the mounted photograph well at 4:5 — bone keyline, shadow, `--panel-lit` ground. The speaker sheet's plate and the `/team` mugshot were the same eight declarations written twice |
+| `Sheet.module.scss` | the detail-view chrome: ground, entry, sticky bar, close, content measure, kicker, title, block label. `SessionDetail` and `SpeakerDetail` import it alongside their own module and keep only what a session / a speaker actually has |
+| `.fallback-note` | the no-JS / endpoint-down prose on a data-backed page |
 | `SubpageHero.astro`, `Ticker.astro`, `Closer.astro` | already components; see below |
+
+**Tokens exist so a measured value is decided once.** `--print-mount` (the
+keyline + shadow under a photograph), `--ink-monogram` / `--ink-monogram-sm`
+(the initials shown when a photograph is missing) and `--focus-gap-tight` /
+`--focus-gap` / `--focus-gap-lg` all replaced a value that four to thirty call
+sites had each picked for themselves. Two of those were not merely untidy: every
+copy of the monogram alpha measured under the 3:1 it needed, and the focus ring
+stood off at three different distances with nothing saying which applied where.
+The focus scale is chosen by ONE question — how much visible edge the control
+already has (`tight` it has its own boundary, base is type on the ground, `lg`
+it stands alone in open space). Two deliberate exceptions carry a comment
+saying why: the agenda cell's inset ring, and the partner logo's wider gap.
 
 **`Closer.astro` — every page ends on a statement.** Eyebrow, one `--fs-h2`
 line, a note and one or two actions, on `tone="accent" | "raised" | "plain"`.

@@ -4,6 +4,7 @@ import { initials, type Speaker } from '../lib/speakers';
 import { visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
 import { useReturnFocus } from '../lib/useReturnFocus';
 import SpeakerDetail from './SpeakerDetail';
+import sheet from './Sheet.module.scss';
 import s from './SessionDetail.module.scss';
 
 /**
@@ -142,16 +143,16 @@ export default function SessionDetail({
 	return createPortal(
 		<>
 			<div
-				className={s.sheet}
+				className={sheet.sheet}
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby="session-detail-title"
 				ref={dialogRef}
 				tabIndex={-1}
 			>
-				<div className={s.bar}>
+				<div className={sheet.bar}>
 					<button
-						className={s.close}
+						className={sheet.close}
 						type="button"
 						onClick={(event) => {
 							setKeyboardClose(event.detail === 0);
@@ -166,9 +167,9 @@ export default function SessionDetail({
 					</button>
 				</div>
 
-				<div className={s.content}>
-					<p className={s.kicker}>Session</p>
-					<h2 id="session-detail-title" className={s.title}>
+				<div className={sheet.content}>
+					<p className={sheet.kicker}>Session</p>
+					<h2 id="session-detail-title" className={sheet.title}>
 						{session.title}
 					</h2>
 
@@ -199,7 +200,7 @@ export default function SessionDetail({
 
 					{session.speakers.length > 0 && (
 						<div className={s.speakers}>
-							<h3 className={s.speakersTitle}>
+							<h3 className={sheet.blockTitle}>
 								{session.speakers.length > 1 ? 'Speakers' : 'Speaker'}
 							</h3>
 							<ul className="field">

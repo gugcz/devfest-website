@@ -213,11 +213,11 @@
 	}
 
 	&:hover,
+	// INSET, not one of the --focus-gap steps: this cell butts against its
+	// neighbours in the timetable grid, so a ring outside the box would sit on
+	// top of the cell next door.
 	&:focus-visible {
 		border-top-color: var(--rule-red);
-	}
-
-	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: -2px;
 	}

@@ -1,32 +1,4 @@
-	.team-page {
-		display: flex;
-		flex-direction: column;
-	}
-
 	/* ===================== ROSTER SECTION ===================== */
-	// Lit-room atmosphere matching partners / press / faq: a central spotlight
-	// pool with a faint red radial bleeding from the top-right, over page black.
-	.team-body {
-		position: relative;
-		// A full section gap, top and bottom — the same air the homepage's
-		// sections run at. It was --section-y-tight back when the subpage
-		// heroes were ~830px tall and a full gap pushed the first heading off a
-		// 760px laptop; the heroes are 430-620px now, so the reason is gone and
-		// the tight top just made every subpage read denser than the page it
-		// was reached from.
-		padding: var(--section-y) var(--gutter) var(--section-y);
-		background:
-			radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
-			var(--lit),
-			var(--color-bg);
-		border-top: 1px solid var(--rule-soft);
-	}
-
-	.team-inner {
-		max-width: var(--maxw);
-		margin: 0 auto;
-	}
-
 	// Mugshots laid out on the page — no cell, no panel, no rule around
 	// anybody. A ruled sheet (`gap: 0`, cells sharing hairlines) still draws a
 	// complete rectangle around every photograph, and a grid of outlined
@@ -77,25 +49,12 @@
 		initial-value: 0%;
 	}
 
-	.mugshot {
-		position: relative;
-		aspect-ratio: 4 / 5;
-		width: 100%;
-		overflow: hidden;
-		background: var(--panel-lit);
-		// Mounted print — bone keyline plus a shadow so the photograph sits on
-		// the sheet rather than floating on flat black.
-		box-shadow:
-			inset 0 0 0 1px rgba(240, 237, 230, 0.16),
-			0 10px 24px rgba(0, 0, 0, 0.5);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
 	// Two stacked copies of the photo: a black-and-white base, and a colour
 	// layer on top revealed through an expanding, grainy DIFFUSION mask anchored
 	// at the cursor (see the JS in team.astro).
+	// `.mugshot` itself carries no rules any more — the frame is the global
+	// `.print` primitive. The class stays on the element as the JS hook the
+	// colour-bleed script queries (see the bottom of team.astro).
 	.mugshot-base,
 	.mugshot-color {
 		position: absolute;

@@ -1,30 +1,4 @@
-	.faq-page {
-		display: flex;
-		flex-direction: column;
-	}
-
 	/* ===================== BODY ===================== */
-	.faq-body {
-		position: relative;
-		// A full section gap, top and bottom — the same air the homepage's
-		// sections run at. It was --section-y-tight back when the subpage
-		// heroes were ~830px tall and a full gap pushed the first heading off a
-		// 760px laptop; the heroes are 430-620px now, so the reason is gone and
-		// the tight top just made every subpage read denser than the page it
-		// was reached from.
-		padding: var(--section-y) var(--gutter) var(--section-y);
-		// Pool of light dropped behind the case files — a lit interrogation desk.
-		background: var(--lit), var(--color-bg);
-		border-top: 1px solid var(--rule-soft);
-	}
-
-	.faq-inner {
-		position: relative;
-		z-index: 1;
-		max-width: var(--maxw);
-		margin: 0 auto;
-	}
-
 	/* ===================== GROUP ===================== */
 	// Category on the left, its questions on the right. The list used to sit
 	// in an 820px column centred on a 1440 page, with the category as a small

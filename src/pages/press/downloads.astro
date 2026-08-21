@@ -16,7 +16,7 @@ const pressKit = await listPressKit();
 	title="Press kit — DevFest.cz 2026"
 	description="Download the DevFest.cz 2026 press kit — official logos, wordmarks, and vector source files for media use."
 >
-	<main class="downloads-page">
+	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Logos &amp; <span class="red">assets.</span>'}
 			lede="Official DevFest.cz 2026 logos and wordmarks. Please keep the logo intact, give it room to breathe, and don't recolour it. Missing a format? Email the press desk."
@@ -27,8 +27,8 @@ const pressKit = await listPressKit();
 
 		<Ticker items={EVENT_TOPICS} size="sm" />
 
-		<section class="press-body" aria-label="Press kit downloads">
-			<div class="press-inner">
+		<section class="band band--lit press-body" aria-label="Press kit downloads">
+			<div class="band-inner">
 				<a class="back-link" href="/press">&larr; Back to press</a>
 
 				{pressKit.length > 0 ? (

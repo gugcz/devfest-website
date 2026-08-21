@@ -1,42 +1,19 @@
-	.press-page {
-		display: flex;
-		flex-direction: column;
-	}
-
 	/* ===================== BODY ===================== */
-	.press-body {
-		position: relative;
-		// A full section gap, top and bottom — the same air the homepage's
-		// sections run at. It was --section-y-tight back when the subpage
-		// heroes were ~830px tall and a full gap pushed the first heading off a
-		// 760px laptop; the heroes are 430-620px now, so the reason is gone and
-		// the tight top just made every subpage read denser than the page it
-		// was reached from.
-		padding: var(--section-y) var(--gutter) var(--section-y);
-		// Pool of light dropped behind the press desk — a lit briefing room.
-		background: var(--lit), var(--color-bg);
-		border-top: 1px solid var(--rule-soft);
-	}
-
-	// Two sections stacked inside one body, so they sit a SECTION apart. At
-	// 5rem the coverage list and the press desk read as one long block with a
-	// heading dropped into the middle of it.
-	.press-inner {
-		position: relative;
-		z-index: 1;
-		max-width: var(--maxw);
-		margin: 0 auto;
-		display: flex;
-		flex-direction: column;
-		gap: var(--section-y);
-	}
-
 	/* ===================== EMAILS ===================== */
 
 
 	/* ===================== SECTIONS ===================== */
 	// 4rem, the homepage's section-head gap. At 2rem this page was running its
 	// heads at half the site's spacing while carrying the same 112px title.
+	// Measure and centring come from `.band-inner`; this adds the one thing that
+	// is this page's own — two sections stacked inside one body, a SECTION apart.
+	// At 5rem the coverage list and the press desk read as one long block.
+	.press-inner {
+		display: flex;
+		flex-direction: column;
+		gap: var(--section-y);
+	}
+
 	.section-head {
 		margin-bottom: 4rem;
 		padding-bottom: 1.1rem;

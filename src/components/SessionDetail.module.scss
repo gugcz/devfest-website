@@ -1,123 +1,7 @@
-// Session detail — a SHEET, not a dialog box.
-//
-// It used to be a 640px panel with a 1px red border, a red glow, bordered
-// chips for the tags, hairline dividers between every block and a boxed close
-// button: the enclosed-card language the redesign removed everywhere else,
-// still running in the one place a visitor reaches by clicking. It also set the
-// session title at --fs-h3 (41.6px) — smaller than the 54px row that opened it,
-// so the detail view of a thing was smaller than the summary of it.
-//
-// Now the page turns to the session: a full-bleed sheet on the same ground a
-// section uses, poster title, no border anywhere, and the speakers rendered as
-// open-field rows (`.field` / `.field-row--link` in BaseLayout.scss) so they
-// behave exactly like every other row on the site.
-
-.sheet {
-	position: fixed;
-	inset: 0;
-	// Above the fixed site header (z-index 10001).
-	z-index: 10050;
-	overflow-y: auto;
-	overscroll-behavior: contain;
-	background:
-		radial-gradient(ellipse 50% 60% at 88% 8%, rgba(204, 0, 0, 0.06) 0%, transparent 60%),
-		var(--lit),
-		var(--color-bg);
-	outline: none;
-	animation: sheetIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes sheetIn {
-	from {
-		opacity: 0;
-		transform: translateY(1.5rem);
-	}
-	to {
-		opacity: 1;
-		transform: none;
-	}
-}
-
-/* ===================== TOP BAR ===================== */
-// Sticky, so the way out is reachable from the bottom of a long abstract.
-// Transparent — a solid bar would be a second header stacked on the site's own.
-.bar {
-	position: sticky;
-	top: 0;
-	z-index: 2;
-	display: flex;
-	justify-content: flex-end;
-	width: 100%;
-	max-width: var(--maxw);
-	margin: 0 auto;
-	padding: clamp(1.1rem, 2.5vh, 2rem) var(--gutter) 0;
-}
-
-// A mono word and a cross, not a bordered square. Every other control in this
-// language is type on the ground.
-.close {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.6rem;
-	min-height: 2.75rem;
-	padding: 0;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.7);
-	background: none;
-	border: 0;
-	cursor: pointer;
-	transition: color 0.2s;
-
-	svg {
-		width: 1rem;
-		height: 1rem;
-	}
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 4px;
-	}
-}
-
-/* ===================== CONTENT ===================== */
-.content {
-	width: 100%;
-	max-width: var(--maxw);
-	margin: 0 auto;
-	padding: clamp(1.5rem, 4vh, 3rem) var(--gutter) var(--section-y);
-}
-
-// Muted, not accent-hot. Red is spent on the reach state of the rows below;
-// a red label at the top competes with the one thing the colour is for.
-.kicker {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.28em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
-	margin: 0 0 clamp(0.75rem, 1.5vw, 1.1rem);
-}
-
-// The sheet's one headline, at the section step. It was --fs-h3 — a size below
-// the row that opened it.
-.title {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-h2);
-	line-height: var(--lh-display);
-	letter-spacing: var(--track-display);
-	text-transform: uppercase;
-	color: var(--color-text);
-	text-wrap: balance;
-	margin: 0;
-}
+// Session detail — what this sheet holds. The chrome (ground, entry, sticky
+// bar, close, content measure, kicker, title, block label) is
+// `Sheet.module.scss`, shared with SpeakerDetail; this file is only the parts
+// a SESSION has: the meta line, the abstract measure and the speaker rows.
 
 /* ===================== META (room · track · level) ===================== */
 // One mono line of plain labels. These were bordered chips — a pill is a
@@ -175,17 +59,6 @@
 /* ===================== SPEAKERS ===================== */
 .speakers {
 	margin-top: clamp(3rem, 6vw, 5rem);
-}
-
-.speakersTitle {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.24em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
-	margin: 0 0 clamp(1rem, 2vw, 1.5rem);
-	padding-bottom: clamp(0.9rem, 1.8vw, 1.25rem);
-	border-bottom: 1px solid var(--rule-soft);
 }
 
 // A speaker row is an open-field row that opens the stacked speaker sheet —
@@ -269,11 +142,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.sheet {
-		animation: none;
-	}
-
-	.close,
 	.avatar {
 		transition: none;
 	}

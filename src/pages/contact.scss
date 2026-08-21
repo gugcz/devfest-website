@@ -1,38 +1,16 @@
-	.contact-page {
-		display: flex;
-		flex-direction: column;
-	}
-
 	/* ===================== BODY ===================== */
-	.contact-body {
-		position: relative;
-		// A full section gap, top and bottom — the same air the homepage's
-		// sections run at. It was --section-y-tight back when the subpage
-		// heroes were ~830px tall and a full gap pushed the first heading off a
-		// 760px laptop; the heroes are 430-620px now, so the reason is gone and
-		// the tight top just made every subpage read denser than the page it
-		// was reached from.
-		padding: var(--section-y) var(--gutter) var(--section-y);
-		// Pool of light dropped behind the contact desks — the lit scene.
-		background: var(--lit), var(--color-bg);
-		border-top: 1px solid var(--rule-soft);
-
-		// Faint red wash bleeding in from the corner, layered over the pool of light.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
-	}
-
-	.contact-inner {
-		position: relative;
-		z-index: 1;
-		max-width: var(--maxw);
-		margin: 0 auto;
+	// Ground, padding and measure come from `.band .band--lit` / `.band-inner`.
+	// This section adds one thing of its own: the faint red bleed from the
+	// top-right corner, on a ::before so it layers OVER the pool of light rather
+	// than replacing it (which is what `.band--lit-red` does for the lineup
+	// pages, where nothing else has to sit between the two layers).
+	.contact-body::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
+		pointer-events: none;
+		z-index: 0;
 	}
 
 	// An open field of desks — `.field` in BaseLayout.scss; the desks themselves

@@ -11,7 +11,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 	title="Sessions — DevFest.cz 2026"
 	description="The talks and sessions on the agenda at DevFest.cz 2026 — Prague's community-built developer conference."
 >
-	<main class="sessions-page">
+	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'The talks on<br />the <span class="red">docket.</span>'}
 			lede="Every talk confirmed for DevFest.cz 2026, with the speakers behind it. Search or filter by track to find your thing — the full schedule lands closer to the event."
@@ -22,12 +22,12 @@ import { EVENT_TOPICS } from '../lib/ticker';
 
 		<Ticker items={EVENT_TOPICS} size="sm" />
 
-		<section class="sessions-body" aria-label="Session list">
-			<div class="sessions-inner">
-				<header class="sessions-header">
-					<p class="sessions-eyebrow">The sessions</p>
-					<h2 class="sessions-heading">What&rsquo;s on</h2>
-					<p class="sessions-crosslink">
+		<section class="band band--lit-red" aria-label="Session list">
+			<div class="band-inner">
+				<header class="head-stack">
+					<p class="eyebrow">The sessions</p>
+					<h2 class="display head-title">What&rsquo;s on</h2>
+					<p class="head-stack-link">
 						<a class="btn-ghost" href="/agenda">See the schedule</a>
 					</p>
 				</header>
@@ -37,7 +37,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 				<Sessions client:load />
 
 				<noscript>
-					<p class="sessions-noscript">
+					<p class="fallback-note">
 						The session agenda loads with JavaScript enabled. Please turn it on, or
 						check back soon.
 					</p>

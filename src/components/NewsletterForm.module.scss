@@ -58,7 +58,7 @@
 	// which suppressed the global accent-hot ring and left no real focus cue.)
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 2px;
+		outline-offset: var(--focus-gap-tight);
 	}
 }
 
@@ -84,7 +84,7 @@
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 3px;
+		outline-offset: var(--focus-gap);
 	}
 
 	&:disabled {
@@ -124,7 +124,7 @@
 
 		&:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
-			outline-offset: 3px;
+			outline-offset: var(--focus-gap);
 			border-radius: 2px;
 		}
 	}

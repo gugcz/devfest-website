@@ -1,0 +1,153 @@
+// THE SHEET — the chrome both detail views share.
+//
+// A detail view is not a dialog box. It is the page turning to one thing:
+// full-bleed on the section ground, a poster title, no border anywhere, and a
+// mono `Close ✕` in a sticky bar. `SessionDetail` and `SpeakerDetail` are the
+// same object with different contents, and they were carrying two copies of
+// every part of that — the ground, the entry animation, the bar, the close
+// control, the content measure, the kicker, the title rule and the block
+// label. Copies drift; this is the file that stops them.
+//
+// A caller imports this module alongside its own and composes:
+//
+//   import sheet from './Sheet.module.scss';
+//   import s from './SpeakerDetail.module.scss';
+//   <div className={`${sheet.sheet} ${s.stacked}`}>
+//
+// and keeps only what is genuinely its own (the portrait grid, the meta line,
+// the abstract measure).
+
+.sheet {
+	position: fixed;
+	inset: 0;
+	// Above the fixed site header (z-index 10001). A sheet opened FROM another
+	// sheet raises this — see `.stacked` in SpeakerDetail.module.scss.
+	z-index: var(--sheet-z, 10050);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	background:
+		radial-gradient(ellipse 50% 60% at 88% 8%, rgba(204, 0, 0, 0.06) 0%, transparent 60%),
+		var(--lit),
+		var(--color-bg);
+	outline: none;
+	animation: sheetIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes sheetIn {
+	from {
+		opacity: 0;
+		transform: translateY(1.5rem);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* ===================== TOP BAR ===================== */
+// Sticky, so the way out is reachable from the bottom of a long abstract.
+// Transparent — a solid bar would be a second header stacked on the site's own.
+.bar {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	display: flex;
+	justify-content: flex-end;
+	width: 100%;
+	max-width: var(--maxw);
+	margin: 0 auto;
+	padding: clamp(1.1rem, 2.5vh, 2rem) var(--gutter) 0;
+}
+
+// A mono word and a cross, not a bordered square. Every other control in this
+// language is type on the ground.
+.close {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6rem;
+	min-height: 2.75rem;
+	padding: 0;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-lg);
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.7);
+	background: none;
+	border: 0;
+	cursor: pointer;
+	transition: color 0.2s;
+
+	svg {
+		width: 1rem;
+		height: 1rem;
+	}
+
+	&:hover,
+	&:focus-visible {
+		color: var(--color-accent-hot);
+	}
+
+	// --focus-gap-lg: this control sits on open ground with no adjacent edge,
+	// so the ring stands off it. See the focus-offset scale in BaseLayout.scss.
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-lg);
+	}
+}
+
+/* ===================== CONTENT ===================== */
+// The measure and the page inset. A caller that needs a column split composes
+// its own grid on top (SpeakerDetail's portrait/person split).
+.content {
+	width: 100%;
+	max-width: var(--maxw);
+	margin: 0 auto;
+	padding: clamp(1.5rem, 4vh, 3rem) var(--gutter) var(--section-y);
+}
+
+// Muted, not accent-hot. Red is spent on the reach state of the rows below;
+// a red label at the top competes with the one thing the colour is for.
+.kicker {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-sm);
+	letter-spacing: 0.28em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.55);
+	margin: 0 0 clamp(0.75rem, 1.5vw, 1.1rem);
+}
+
+// The sheet's one headline, at the section step. Both sheets used to set this
+// at --fs-h3 (41.6px) — a size BELOW the 54px row that opened them, so the
+// detail view of a thing was smaller than the summary of it.
+.title {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-h2);
+	line-height: var(--lh-display);
+	letter-spacing: var(--track-display);
+	text-transform: uppercase;
+	color: var(--color-text);
+	text-wrap: balance;
+	margin: 0;
+}
+
+// The mono label that opens a block inside the sheet ("Speakers", "Talks").
+.blockTitle {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-sm);
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.55);
+	margin: 0 0 clamp(1rem, 2vw, 1.5rem);
+	padding-bottom: clamp(0.9rem, 1.8vw, 1.25rem);
+	border-bottom: 1px solid var(--rule-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sheet {
+		animation: none;
+	}
+
+	.close {
+		transition: none;
+	}
+}

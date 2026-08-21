@@ -127,7 +127,7 @@
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 4px;
+		outline-offset: var(--focus-gap-lg);
 	}
 }
 
@@ -141,9 +141,7 @@
 	// Mounted print: bone keyline plus a shadow so it sits on the sheet. The
 	// second, RED inset keyline this used to carry put a red mark on every
 	// frame before anyone touched anything.
-	box-shadow:
-		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
-		0 10px 24px rgba(0, 0, 0, 0.5);
+	box-shadow: var(--print-mount);
 
 	// Crop-brackets open only on the frame being pointed at — a gesture, not
 	// decoration (see Speakers.module.scss for the same reasoning).
@@ -290,7 +288,7 @@
 	&:focus-visible {
 		color: var(--color-accent-hot);
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 4px;
+		outline-offset: var(--focus-gap-lg);
 	}
 }
 

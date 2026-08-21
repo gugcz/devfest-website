@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { initials, PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
 import { useReturnFocus } from '../lib/useReturnFocus';
+import sheet from './Sheet.module.scss';
 import s from './SpeakerDetail.module.scss';
 
 /**
@@ -72,16 +73,16 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 	// straight over the sheet's own 10060 and hid its Close control.
 	return createPortal(
 		<div
-			className={s.sheet}
+			className={`${sheet.sheet} ${s.stacked}`}
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="speaker-detail-name"
 			ref={dialogRef}
 			tabIndex={-1}
 		>
-			<div className={s.bar}>
+			<div className={sheet.bar}>
 				<button
-					className={s.close}
+					className={sheet.close}
 					type="button"
 					onClick={(event) => {
 						// event.detail === 0 when the button was activated by keyboard
@@ -98,10 +99,10 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 				</button>
 			</div>
 
-			<div className={s.content}>
+			<div className={`${sheet.content} ${s.split}`}>
 				{/* Receives the morph from the lineup print — see usePortraitMorph
 				    in Speakers.tsx for why the name lives here only while open. */}
-				<div className={s.media} style={{ viewTransitionName: PORTRAIT_TRANSITION }}>
+				<div className="print" style={{ viewTransitionName: PORTRAIT_TRANSITION }}>
 					{showPhoto ? (
 						<img
 							className={s.photo}
@@ -118,8 +119,8 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 				</div>
 
 				<div>
-					<p className={s.kicker}>Speaker</p>
-					<h2 id="speaker-detail-name" className={s.name}>
+					<p className={sheet.kicker}>Speaker</p>
+					<h2 id="speaker-detail-name" className={sheet.title}>
 						{speaker.fullName}
 					</h2>
 					{speaker.tagLine && <p className={s.tag}>{speaker.tagLine}</p>}
@@ -155,7 +156,7 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 
 					{speaker.sessions.length > 0 && (
 						<div className={s.sessions}>
-							<h3 className={s.sessionsTitle}>Talks</h3>
+							<h3 className={sheet.blockTitle}>Talks</h3>
 							<ul className="field">
 								{speaker.sessions.map((session, i) => (
 									<li key={i} className={`field-row ${s.sessionRow}`}>

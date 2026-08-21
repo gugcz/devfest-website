@@ -53,7 +53,7 @@
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 4px;
+		outline-offset: var(--focus-gap-lg);
 	}
 }
 
@@ -67,9 +67,7 @@
 	background: var(--panel-lit);
 	// Mounted print: bone keyline for the print's own border, shadow to sit it
 	// ON the sheet rather than floating on flat black.
-	box-shadow:
-		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
-		0 10px 24px rgba(0, 0, 0, 0.5);
+	box-shadow: var(--print-mount);
 
 	// Red crop-brackets, top-left (::before) and bottom-right (::after) — a
 	// GESTURE, not decoration. Printing them on every frame at rest put twenty
@@ -234,9 +232,7 @@
 	position: relative;
 	aspect-ratio: 4 / 5;
 	background: var(--panel-lit);
-	box-shadow:
-		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
-		0 10px 24px rgba(0, 0, 0, 0.5);
+	box-shadow: var(--print-mount);
 }
 
 .moreBody {
