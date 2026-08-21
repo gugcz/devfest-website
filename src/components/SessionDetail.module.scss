@@ -63,6 +63,17 @@
 	}
 }
 
+// Below the split breakpoint the COLUMN is the measure: the page inset already
+// holds the line to a readable length, so a 56ch cap only subtracts from it and
+// leaves a void down the right that justification cannot fill (the cap binds
+// ~100px short of the content box at ~600px). Above it, the cap is what keeps a
+// 1440 column from setting a 150-character line.
+@media (max-width: 860px) {
+	.abstract {
+		max-width: none;
+	}
+}
+
 /* ===================== SPEAKERS ===================== */
 .speakers {
 	margin-top: clamp(3rem, 6vw, 5rem);
