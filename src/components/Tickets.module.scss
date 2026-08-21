@@ -203,6 +203,52 @@
 		text-align: left;
 		width: 100%;
 	}
+
+	// On a phone the three waves stack into one viewport, and at desktop
+	// weights they arrive as three identical 42px titles over three identical
+	// 40px figures — the same poster twice over, with the buyable one told
+	// apart only by a raking wash that a phone screen barely resolves. The
+	// live wave keeps the poster scale; the settled ones drop a step.
+	//
+	// Hierarchy here is SIZE and AIR, never alpha: every word stays at full
+	// contrast (WCAG 1.4.3), which is the same rule the desktop `.stubSpent`
+	// follows.
+	// Two classes so the step outranks `.field-row--short`, which sets the
+	// same variable at equal specificity from the global sheet.
+	.stub.stubSpent {
+		--field-step: 1.6rem;
+	}
+
+	.stubSpent .stubTitle {
+		font-size: var(--fs-h3);
+	}
+
+	.stubSpent .stubPrice {
+		font-size: var(--fs-h3);
+	}
+
+	// The admission line repeats verbatim on every wave — "Individual /
+	// Company funded" is a property of the event, not of a wave, so printing
+	// it three times is the crowding, not information. It stays on the wave
+	// a visitor can actually buy.
+	.stubSpent .stubGrants {
+		display: none;
+	}
+
+	// The column is left-set on mobile (`.stubEnd`), so the figure and its VAT
+	// note have to be too — flex-end left the note hanging under the middle of
+	// the price.
+	.stubPriceGroup {
+		align-items: flex-start;
+	}
+
+	// The one lit row has to carry across a phone's contrast: the desktop
+	// wash is a raking highlight read at arm's length on a large panel.
+	.stubLive::after {
+		background:
+			linear-gradient(104deg, rgba(255, 244, 232, 0.1) 0%, rgba(255, 240, 226, 0.045) 42%, transparent 86%),
+			radial-gradient(ellipse 70% 130% at 4% 50%, rgba(204, 0, 0, 0.14), transparent 72%);
+	}
 }
 
 // The loading skeleton mirrors the stub geometry so nothing reflows on load.
