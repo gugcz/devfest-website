@@ -26,6 +26,15 @@
 		grid-template-columns: 1fr;
 		gap: clamp(1.75rem, 4vw, 2.5rem);
 	}
+
+	// Stacked, the plate is no longer sized by a 0.38fr column — it takes the
+	// full content measure. On a phone that is ~350px; on a foldable (or any
+	// tablet-width window under this breakpoint) it is ~800px wide at 4:5, so
+	// the portrait alone filled the screen and the name sat below the fold.
+	// Cap it at the phone size and let it stop growing.
+	.plate {
+		max-width: 22rem;
+	}
 }
 
 .photo {
