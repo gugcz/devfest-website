@@ -46,7 +46,9 @@
 
 /* ===================== TOP BAR ===================== */
 // Sticky, so the way out is reachable from the bottom of a long abstract.
-// Transparent — a solid bar would be a second header stacked on the site's own.
+// Full-bleed, NOT measure-width: the bar is sticky over scrolling copy, so it
+// needs a scrim that runs to both viewport edges. The close still lands on the
+// measure's right axis because the inset is padding, not `max-width`.
 .bar {
 	position: sticky;
 	top: 0;
@@ -54,9 +56,24 @@
 	display: flex;
 	justify-content: flex-end;
 	width: 100%;
-	max-width: var(--maxw);
-	margin: 0 auto;
-	padding: clamp(1.1rem, 2.5vh, 2rem) var(--gutter) 0;
+	padding: clamp(1.1rem, 2.5vh, 2rem) max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter)))
+		clamp(0.9rem, 2vh, 1.5rem);
+}
+
+// The scrim. Without it the title and the abstract scroll straight through the
+// `Close ✕`, which is the one control that must stay readable from anywhere in
+// a long sheet. A flat plate would kill the sheet's own ground (the red bleed
+// sits at 88% 8%, i.e. right under this bar), so it is a blur plus a feathered
+// dark wash that fades out before it can draw an edge across the page.
+.bar::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background: linear-gradient(180deg, rgba(5, 5, 5, 0.92) 0%, rgba(5, 5, 5, 0.72) 55%, transparent 100%);
+	backdrop-filter: blur(6px);
+	mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
 }
 
 // A mono word and a cross, not a bordered square. Every other control in this
