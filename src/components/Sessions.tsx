@@ -75,7 +75,7 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 		<li>
 			<button
 				type="button"
-				className={s.card}
+				className={`field-row field-row--link ${s.card}`}
 				onClick={() => onOpen(session)}
 				aria-label={`View details for ${session.title}`}
 			>
@@ -234,13 +234,13 @@ export default function Sessions() {
 					</button>
 				</div>
 			) : (
-				<ul className={s.grid} role="list">
+				<ul className={`field ${s.grid}`} role="list">
 					{filtered.map((session) => (
 						<SessionCard key={session.id} session={session} onOpen={setSelected} />
 					))}
 					{!active && (
 						<li>
-							<article className={s.moreCard} aria-label="More sessions to be announced">
+							<article className={`field-row ${s.moreCard}`} aria-label="More sessions to be announced">
 								<span className={s.moreDots} aria-hidden="true">
 									<span />
 									<span />

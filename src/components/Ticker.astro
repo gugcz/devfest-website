@@ -1,17 +1,21 @@
 ---
 interface Props {
 	items: readonly string[];
-	fontSize?: string;
+	/** Type scale for the running band. `lg` is the homepage statement band;
+	 * `sm` is the quieter subpage variant. */
+	size?: 'lg' | 'sm';
 }
 
-const { items, fontSize = '0.85rem' } = Astro.props;
+const { items, size = 'lg' } = Astro.props;
 const doubled = [...items, ...items];
 ---
 
-<div class="ticker-wrap" aria-hidden="true" style={`--ticker-font-size:${fontSize};`}>
+<div class={`ticker-wrap ticker-wrap--${size}`} aria-hidden="true">
 	<div class="ticker">
 		{doubled.map((item) => (
-			<span class="ticker-item">{item} <span class="ticker-sep">///</span></span>
+			<span class="ticker-item">
+				{item}<span class="ticker-sep">&bull;</span>
+			</span>
 		))}
 	</div>
 </div>

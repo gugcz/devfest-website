@@ -5,6 +5,8 @@ import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
+import Closer from '../components/Closer.astro';
+import { EVENT_TOPICS } from '../lib/ticker';
 
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
 // The roster lives in the `team` content collection (`src/content/team.json`,
@@ -35,7 +37,7 @@ const sourceByFile = new Map<string, ImageMetadata>(
 // Cards render ~220–340px wide (2-col on mobile); these widths cover that range
 // up to ~2× DPR. `sizes` lets the browser pick the smallest variant that fits.
 const MUGSHOT_WIDTHS = [240, 360, 480, 600, 720];
-const MUGSHOT_SIZES = '(max-width: 600px) 45vw, 260px';
+const MUGSHOT_SIZES = '(max-width: 600px) 45vw, 300px';
 
 const optimiseMugshot = (file?: string) => {
 	if (!file) return undefined;
@@ -89,40 +91,34 @@ const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
 	},
 };
 
-const tickerTopics = [
-	'Crack the Case',
-	'Run the Show',
-	'Mind the Stage',
-	'Work the Floor',
-	'Keep the Lights On',
-];
 ---
 
 <BaseLayout
 	title="Team — DevFest.cz 2026"
 	description="Meet the crew behind DevFest.cz 2026 — the organisers running Prague's community-built developer conference."
 >
-	<main class="team-page">
+	<main class="page-stack">
 		<SubpageHero
-			label="The usual suspects"
-			titleHtml={'The crew on<br />the <span class="red">case</span>.'}
+			titleHtml={'The crew on<br />the <span class="red">case.</span>'}
 			lede="DevFest.cz is run by volunteers who'd rather be debugging. Every talk, every coffee, every neon-lit corridor is wired together by the people below."
 			seoHeading="DevFest.cz 2026 Team"
 			titleId="team-title"
+			focus="46% 30%"
 		/>
 
-		<Ticker items={tickerTopics} fontSize="0.7rem" />
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
 
 		<!-- ROSTER -->
-		<section class="team-body" aria-label="Organising team">
-			<div class="team-inner">
+		<section class="band band--lit-red" aria-label="Organising team">
+			<div class="band-inner">
 				<ul class="crew-grid reveal">
 					{cards.map(({ member, base, color }, i) => (
 						/* `--i` staggers the develop animation — see `.develop` in
 						   BaseLayout.scss. */
 						<li style={`--i: ${i}`}>
 							<article class="crew-card develop">
-								<div class="mugshot">
+								<div class="print mugshot">
 									{base ? (
 										<>
 											<img
@@ -190,13 +186,17 @@ const tickerTopics = [
 						</li>
 					))}
 				</ul>
-
-				<p class="team-note">
-					Want in on the case? We&rsquo;re always recruiting accomplices &mdash;{' '}
-					<a href="/contact">drop us a wire</a>.
-				</p>
 			</div>
 		</section>
+
+		<Closer
+			eyebrow="Join us"
+			titleHtml={'Want in<br />on the <span class="red">case</span>?'}
+			note="DevFest.cz is run by volunteers. We are always recruiting accomplices."
+			tone="accent"
+			titleId="team-closer"
+			actions={[{ href: 'mailto:devfest@gug.cz', label: 'Drop us a wire' }, { href: '/contact', label: 'Other desks', kind: 'ghost' }]}
+		/>
 	</main>
 </BaseLayout>
 

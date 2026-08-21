@@ -1,29 +1,34 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+import Closer from '../components/Closer.astro';
 import Speakers from '../components/Speakers.tsx';
+import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
 <BaseLayout
 	title="Speakers — DevFest.cz 2026"
 	description="Meet the speakers taking the stage at DevFest.cz 2026 — Prague's community-built developer conference."
 >
-	<main class="speakers-page">
+	<main class="page-stack">
 		<SubpageHero
-			label="On the record"
-			titleHtml={'The voices on<br />the <span class="red">stand</span>.'}
+			titleHtml={'The voices on<br />the <span class="red">stand.</span>'}
 			lede="The developers, makers and researchers stepping up to the mic at DevFest.cz 2026. The lineup grows as speakers are confirmed."
 			seoHeading="DevFest.cz 2026 Speakers"
 			titleId="speakers-title"
+			focus="68% 42%"
 		/>
 
-		<section class="speakers-body rake" aria-label="Speaker lineup">
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
+		<section class="band band--lit-red rake" aria-label="Speaker lineup">
 			<!-- Red raking light swept by the scroll; decorative, enhancement-only. -->
 			<span class="rake-beam" aria-hidden="true"></span>
-			<div class="speakers-inner">
-				<header class="speakers-header">
-					<p class="speakers-eyebrow">The lineup</p>
-					<h2 class="speakers-heading">Who&rsquo;s talking</h2>
+			<div class="band-inner">
+				<header class="head-stack">
+					<p class="eyebrow">The lineup</p>
+					<h2 class="display head-title">Who&rsquo;s talking</h2>
 					<!-- The one affordance line for the whole sheet. It used to be a
 					     "View profile →" chip printed on every single card. -->
 					<p class="speakers-hint">Pick a face for the full record</p>
@@ -34,13 +39,22 @@ import Speakers from '../components/Speakers.tsx';
 				<Speakers client:load />
 
 				<noscript>
-					<p class="speakers-noscript">
+					<p class="fallback-note">
 						The speaker lineup loads with JavaScript enabled. Please turn it on, or
 						check back soon.
 					</p>
 				</noscript>
 			</div>
 		</section>
+
+		<Closer
+			eyebrow="Be there"
+			titleHtml={'See them<br />in the <span class="red">room</span>.'}
+			note="One day, one mill, the whole lineup on stage."
+			tone="accent"
+			titleId="speakers-closer"
+			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/sessions', label: 'Browse the talks', kind: 'ghost' }]}
+		/>
 	</main>
 </BaseLayout>
 

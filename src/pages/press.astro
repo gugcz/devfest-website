@@ -2,7 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
+import Closer from '../components/Closer.astro';
 import { fetchOg } from '../lib/og';
+import { EVENT_TOPICS } from '../lib/ticker';
 
 // A media mention is just a URL. Outlet, title, image, description and date
 // are all read from the article's Open Graph tags at build time. Any field set
@@ -67,34 +69,26 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 	})
 );
 
-const tickerTopics = [
-	'Press Kit',
-	'Media Enquiries',
-	'Logos',
-	'Coverage',
-	'Interviews',
-	'Fact Sheet',
-];
 ---
 
 <BaseLayout
 	title="Press — DevFest.cz 2026"
 	description="Press room for DevFest.cz 2026 — media enquiries, press kit, official releases, and coverage of Prague's developer conference."
 >
-	<main class="press-page">
+	<main class="page-stack">
 		<SubpageHero
-			label="Press"
-			titleHtml={'In the <span class="red">news</span>.'}
+			titleHtml={'In the <span class="red">news.</span>'}
 			lede="Covering DevFest.cz 2026? Find the key facts, our logos, and someone to talk to. We're glad to help journalists, bloggers, and media partners."
 			seoHeading="DevFest.cz 2026 Press & Media"
 			titleId="press-title"
 		/>
 
-		<Ticker items={tickerTopics} fontSize="0.7rem" />
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
 
 		<!-- IN THE PRESS + DESK + PRESS KIT -->
-		<section class="press-body" aria-label="Press desk and press kit">
-			<div class="press-inner">
+		<section class="band band--lit" aria-label="Press coverage">
+			<div class="band-inner">
 								<!-- MEDIA COVERAGE -->
 				<section class="press-section" aria-labelledby="coverage-heading">
 					<header class="section-head">
@@ -102,10 +96,10 @@ const tickerTopics = [
 					</header>
 
 					{mediaCoverage.length > 0 ? (
-						<ul class="coverage-list reveal">
+						<ul class="field coverage-list reveal">
 							{mediaCoverage.map((m) => (
 								<li class="coverage-row">
-									<a class="coverage-card" href={m.href} target="_blank" rel="noopener noreferrer">
+									<a class="field-row field-row--link coverage-card" href={m.href} target="_blank" rel="noopener noreferrer">
 										{m.image && (
 											<span class="coverage-thumb">
 												<img src={m.image} alt="" loading="lazy" decoding="async" width="400" height="225" />
@@ -113,13 +107,13 @@ const tickerTopics = [
 										)}
 										<span class="coverage-text">
 											<span class="coverage-outlet">{m.outlet}</span>
-											<span class="coverage-title">
-												{m.title}
-												<span class="coverage-arrow" aria-hidden="true">↗</span>
-											</span>
+											<span class="coverage-title">{m.title}</span>
 											{m.description && <span class="coverage-desc">{m.description}</span>}
 											<span class="coverage-meta">
-												<span class="coverage-read">Read article</span>
+												<span class="coverage-read">
+													Read article
+													<span class="coverage-arrow" aria-hidden="true">↗</span>
+												</span>
 												{m.dateLabel && <time class="coverage-date" datetime={m.date}>{m.dateLabel}</time>}
 											</span>
 										</span>
@@ -137,39 +131,17 @@ const tickerTopics = [
 						</div>
 					)}
 				</section>
-					<!-- DESK: MEDIA ENQUIRIES + PRESS KIT -->
-					<section class="press-section" aria-labelledby="desk-heading">
-						<header class="section-head">
-							<h2 id="desk-heading" class="section-title">Press desk</h2>
-						</header>
-						<div class="desk-grid reveal">
-							<!-- MEDIA ENQUIRIES -->
-							<article class="desk-card" aria-labelledby="enquiries-heading">
-								<span class="card-label">Media enquiries</span>
-								<h3 id="enquiries-heading" class="card-title">Talk to us</h3>
-								<p class="card-desc">Interviews, quotes, press passes, fact-checks, and media partnerships.</p>
-								<ul class="card-emails">
-									<li>
-										<span class="email-name">Press desk</span>
-										<a class="email-link" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
-									</li>
-								</ul>
-							</article>
-
-							<!-- PRESS KIT -->
-							<article class="desk-card" aria-labelledby="presskit-heading">
-								<span class="card-label">Press kit</span>
-								<h3 id="presskit-heading" class="card-title">Logos &amp; wordmarks</h3>
-								<p class="card-desc">Logos and wordmarks for the 2026 edition. Please keep the logo intact and give it room to breathe.</p>
-								<div class="card-foot">
-									<a class="kit-link" href="/press/downloads">Open the press kit<span class="kit-link-arrow" aria-hidden="true">↗</span></a>
-								</div>
-							</article>
-						</div>
-					</section>
-
 			</div>
 		</section>
+
+		<Closer
+			eyebrow="Press kit"
+			titleHtml={'Take the<br /><span class="red">assets</span>.'}
+			note="Logos and wordmarks for the 2026 edition, ready to drop into a story."
+			tone="accent"
+			titleId="press-closer"
+			actions={[{ href: '/press/downloads', label: 'Open the press kit' }, { href: 'mailto:devfest@gug.cz', label: 'Email the desk', kind: 'ghost' }]}
+		/>
 	</main>
 </BaseLayout>
 

@@ -1,39 +1,27 @@
-	.team-page {
-		display: flex;
-		flex-direction: column;
-	}
-
 	/* ===================== ROSTER SECTION ===================== */
-	// Lit-room atmosphere matching partners / press / faq: a central spotlight
-	// pool with a faint red radial bleeding from the top-right, over page black.
-	.team-body {
-		position: relative;
-		padding: var(--section-y) var(--gutter);
-		background:
-			radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
-			var(--lit),
-			var(--color-bg);
-		border-top: 1px solid var(--rule-soft);
-	}
-
-	.team-inner {
-		max-width: var(--maxw);
-		margin: 0 auto;
-	}
-
 	// Mugshots laid out on the page — no cell, no panel, no rule around
 	// anybody. A ruled sheet (`gap: 0`, cells sharing hairlines) still draws a
 	// complete rectangle around every photograph, and a grid of outlined
 	// rectangles reads as exactly that however the edges are shared. The
 	// mugshot carries its own mount (bone keyline + shadow); alignment and an
 	// even rhythm do the rest. See Speakers.module.scss for the same note.
+	// Four across at most, not five-plus. At a 210px floor the roster laid out
+	// as six small columns of 4:5 prints, which is a contact sheet — fine for a
+	// hundred faces, wrong for eleven organisers, and the reason the page read
+	// as dense rather than spacious. Four per row is the balance: the faces stay
+	// recognisable without any one of them running to 400px.
 	.crew-grid {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-		gap: clamp(2rem, 3.4vw, 3rem) clamp(1.4rem, 2.4vw, 2.2rem);
+		// 240, not 300: at 300 four cards needed 1312px of a 1296px column, so
+		// auto-fill dropped to three and each mugshot rendered 407px wide —
+		// portrait-gallery scale for what is a crew roster. 240 lands four per
+		// row at 294px each, and still degrades to three and two as the column
+		// narrows.
+		grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+		gap: clamp(2.5rem, 4.5vw, 4rem) clamp(1.5rem, 2.6vw, 2.5rem);
 	}
 
 	/* ===================== PRINT + CAPTION ===================== */
@@ -61,25 +49,12 @@
 		initial-value: 0%;
 	}
 
-	.mugshot {
-		position: relative;
-		aspect-ratio: 4 / 5;
-		width: 100%;
-		overflow: hidden;
-		background: var(--panel-lit);
-		// Mounted print — bone keyline plus a shadow so the photograph sits on
-		// the sheet rather than floating on flat black.
-		box-shadow:
-			inset 0 0 0 1px rgba(240, 237, 230, 0.16),
-			0 10px 24px rgba(0, 0, 0, 0.5);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
 	// Two stacked copies of the photo: a black-and-white base, and a colour
 	// layer on top revealed through an expanding, grainy DIFFUSION mask anchored
 	// at the cursor (see the JS in team.astro).
+	// `.mugshot` itself carries no rules any more — the frame is the global
+	// `.print` primitive. The class stays on the element as the JS hook the
+	// colour-bleed script queries (see the bottom of team.astro).
 	.mugshot-base,
 	.mugshot-color {
 		position: absolute;
@@ -134,7 +109,7 @@
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: clamp(2.6rem, 8vw, 3.4rem);
 		letter-spacing: 0.06em;
-		color: rgba(242, 239, 233, 0.32);
+		color: var(--ink-monogram);
 		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
 		user-select: none;
 	}
@@ -152,9 +127,10 @@
 
 	.crew-name {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-title-compact);
+		font-size: clamp(1.6rem, 2vw, 2.1rem);
 		line-height: 1;
-		letter-spacing: 0.04em;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
 		color: var(--color-text);
 		margin: 0;
 	}
@@ -247,30 +223,7 @@
 	}
 
 	/* ===================== NOTE ===================== */
-	.team-note {
-		font-family: var(--font-im-fell-english), serif;
-		font-style: italic;
-		font-size: var(--fs-lede);
-		line-height: 1.7;
-		color: var(--color-grey);
-		text-align: center;
-		max-width: 52ch;
-		margin: 3.4rem auto 0;
 
-		a {
-			color: var(--color-text);
-			text-decoration: underline dashed;
-			text-decoration-color: var(--rule-red);
-			text-underline-offset: 4px;
-			transition: color 0.2s, text-decoration-color 0.2s;
-
-			&:hover,
-			&:focus-visible {
-				color: var(--color-accent-hot);
-				text-decoration-color: var(--color-accent-hot);
-			}
-		}
-	}
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 600px) {

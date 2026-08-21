@@ -52,39 +52,57 @@ const isCurrent = (href: string) => {
 		/>
 	</a>
 
-	<nav class="nav" aria-label="Primary">
-		<button
-			id="nav-toggle"
-			class="nav-toggle"
-			type="button"
-			aria-expanded="false"
-			aria-controls="nav-list"
-			aria-label="Open menu"
-		>
-			<span class="nav-toggle-bars" aria-hidden="true">
-				<span></span><span></span><span></span>
-			</span>
-			<span class="nav-toggle-label">Menu</span>
-		</button>
+	<!-- Event stamp. The where/when belongs in the bar, not three scrolls down.
+	     Decorative duplicate of the hero meta, so it stays out of the a11y tree. -->
+	<p class="header-stamp" aria-hidden="true">Prague <span>&middot;</span> 30 Oct 2026</p>
 
-		<ul id="nav-list" class="nav-list" data-open="false">
-			{links.map(({ href, label, external, cta }) => {
-				const current = isCurrent(href);
-				return (
-					<li>
-						<a
-							href={href}
-							class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
-							{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-							{...(current ? { 'aria-current': 'page' } : {})}
-						>
-							{label}
-						</a>
-					</li>
-				);
-			})}
-		</ul>
-	</nav>
+	<div class="header-actions">
+		<a href={ticketsHref} class="header-cta">Tickets</a>
+
+		<nav class="nav" aria-label="Primary">
+			<button
+				id="nav-toggle"
+				class="nav-toggle"
+				type="button"
+				aria-expanded="false"
+				aria-controls="nav-list"
+				aria-label="Open menu"
+			>
+				<span class="nav-toggle-bars" aria-hidden="true">
+					<span></span><span></span><span></span>
+				</span>
+				<span class="nav-toggle-label">Menu</span>
+			</button>
+
+			<!-- Full-screen overlay at every width. Nine links laid out inline was
+			     the densest thing on the page; behind one control they get poster
+			     scale instead. -->
+			<div id="nav-list" class="nav-panel" data-open="false">
+				<ul class="nav-list">
+					{links.map(({ href, label, external, cta }) => {
+						const current = isCurrent(href);
+						return (
+							<li>
+								<a
+									href={href}
+									class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
+									{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+									{...(current ? { 'aria-current': 'page' } : {})}
+								>
+									{label}
+								</a>
+							</li>
+						);
+					})}
+				</ul>
+
+				<div class="nav-foot">
+					<p class="nav-foot-line">30 October 2026 &mdash; Uhelný Mlýn, near Prague</p>
+					<a class="nav-foot-mail" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
+				</div>
+			</div>
+		</nav>
+	</div>
 </header>
 
 <script>
@@ -226,11 +244,11 @@ const isCurrent = (href: string) => {
 			{ signal }
 		);
 
-		// Reset open state when crossing to the horizontal-nav breakpoint
-		// (must match the drawer breakpoint in Menu.scss).
-		const mql = window.matchMedia('(min-width: 1241px)');
-		mql.addEventListener('change', (ev) => {
-			if (ev.matches) setOpen(false);
+		// The panel is a full-screen overlay at every width, so there is no
+		// breakpoint to reset it against — but an orientation flip while it is
+		// open can leave the page scrolled behind it. Close on resize instead.
+		window.addEventListener('resize', () => {
+			if (toggle?.getAttribute('aria-expanded') === 'true') setOpen(false);
 		}, { signal });
 	});
 </script>

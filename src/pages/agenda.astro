@@ -1,27 +1,35 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+import Closer from '../components/Closer.astro';
 import Agenda from '../components/Agenda.tsx';
+import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
 <BaseLayout
 	title="Agenda — DevFest.cz 2026"
 	description="The full timetable for DevFest.cz 2026 — every talk, room, and time slot for Prague's largest community developer conference."
 >
-	<main class="agenda-page">
+	<main class="page-stack">
 		<SubpageHero
-			label="Running order"
 			titleHtml={'The day<br /><span class="red">on a timeline.</span>'}
 			lede="Every talk mapped to its room and time slot. Compare the tracks, plan your day — the grid fills in as the schedule is confirmed."
 			seoHeading="DevFest.cz 2026 Agenda & Schedule"
 			titleId="agenda-title"
+			focus="82% 60%"
 		/>
 
-		<section class="agenda-body" aria-label="Conference timetable">
-			<div class="agenda-inner">
-				<header class="agenda-header">
-					<p class="agenda-eyebrow">The schedule</p>
-					<h2 class="agenda-heading">When &amp; where</h2>
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
+		<section class="band band--lit-red" aria-label="Conference timetable">
+			<div class="band-inner">
+				<header class="head-stack">
+					<p class="eyebrow">The schedule</p>
+					<h2 class="display head-title">When &amp; where</h2>
+					<p class="head-stack-link">
+						<a class="btn-ghost" href="/sessions">Browse all talks</a>
+					</p>
 				</header>
 
 				<!-- The timetable hydrates client-side from /api/lineup; keep a static
@@ -29,13 +37,22 @@ import Agenda from '../components/Agenda.tsx';
 				<Agenda client:load />
 
 				<noscript>
-					<p class="agenda-noscript">
+					<p class="fallback-note">
 						The agenda loads with JavaScript enabled. Please turn it on, or see the
 						<a href="/sessions">full list of talks</a>.
 					</p>
 				</noscript>
 			</div>
 		</section>
+
+		<Closer
+			eyebrow="Be there"
+			titleHtml={'Doors open<br /><span class="red">30 October</span>.'}
+			note="Uhelný Mlýn, near Prague. Nine in the morning to eight at night."
+			tone="accent"
+			titleId="agenda-closer"
+			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/speakers', label: 'Meet the speakers', kind: 'ghost' }]}
+		/>
 	</main>
 </BaseLayout>
 

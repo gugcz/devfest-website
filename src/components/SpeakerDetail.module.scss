@@ -1,101 +1,31 @@
-// Speaker detail dialog — film-noir modal opened from a lineup card.
+// Speaker detail — what this sheet holds. The chrome (ground, entry, sticky
+// bar, close, content measure, kicker, title, block label) is
+// `Sheet.module.scss`, shared with SessionDetail; this file is only the parts
+// a SPEAKER has: the portrait plate, the identity block, the social glyphs,
+// the bio measure and the talk rows.
 
-.overlay {
-	position: fixed;
-	inset: 0;
-	// Above the fixed site header (z-index 10001) so the close button and dialog
-	// are never covered by the top bar.
-	z-index: 10050;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 1.2rem;
-	background: rgba(3, 3, 3, 0.78);
-	backdrop-filter: blur(4px);
-	animation: overlayIn 0.2s ease;
+// Raises the shared sheet one step. A speaker opened FROM a session stacks on
+// top of that session's sheet, so it cannot share its z-index.
+.stacked {
+	--sheet-z: 10060;
 }
 
-@keyframes overlayIn {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
+/* ===================== CONTENT ===================== */
+// Portrait left, the person right — the plate is evidence, so it keeps real
+// size rather than shrinking to an avatar in a header. Composed ON TOP of the
+// shared `.content`, which owns the measure and the page inset.
+.split {
+	display: grid;
+	grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
+	align-items: start;
+	gap: clamp(2rem, 5vw, 5rem);
 }
 
-.dialog {
-	position: relative;
-	display: flex;
-	width: 100%;
-	max-width: 760px;
-	// Fixed height on desktop so the dialog doesn't resize between speakers with
-	// longer/shorter bios — the content column scrolls instead. Mobile (below)
-	// reverts to content height.
-	height: min(78vh, 620px);
-	overflow: hidden;
-	background:
-		radial-gradient(120% 90% at 0% 0%, rgba(255, 236, 214, 0.06) 0%, transparent 44%),
-		linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 82%);
-	border: 1px solid var(--rule-red);
-	box-shadow: var(--glow-red-soft), 0 30px 70px rgba(0, 0, 0, 0.72);
-	outline: none;
-	animation: dialogIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes dialogIn {
-	from {
-		opacity: 0;
-		transform: translateY(14px) scale(0.98);
+@media (max-width: 860px) {
+	.split {
+		grid-template-columns: 1fr;
+		gap: clamp(1.75rem, 4vw, 2.5rem);
 	}
-	to {
-		opacity: 1;
-		transform: none;
-	}
-}
-
-/* ===================== CLOSE ===================== */
-.close {
-	position: absolute;
-	top: 0.7rem;
-	right: 0.7rem;
-	z-index: 3;
-	width: 2.3rem;
-	height: 2.3rem;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	color: rgba(246, 243, 238, 0.85);
-	background: rgba(0, 0, 0, 0.45);
-	border: 1px solid rgba(240, 237, 230, 0.22);
-	border-radius: var(--radius);
-	cursor: pointer;
-	transition: color 0.2s, border-color 0.2s, background 0.2s;
-
-	svg {
-		width: 1.1rem;
-		height: 1.1rem;
-	}
-
-	&:hover,
-	&:focus-visible {
-		color: #fff;
-		border-color: var(--rule-red);
-		background: rgba(204, 0, 0, 0.35);
-		outline: none;
-	}
-}
-
-/* ===================== MEDIA ===================== */
-.media {
-	position: relative;
-	flex: 0 0 40%;
-	max-width: 300px;
-	overflow: hidden;
-	background: var(--panel-lit);
-	display: flex;
-	align-items: center;
-	justify-content: center;
 }
 
 .photo {
@@ -104,106 +34,79 @@
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	object-position: center 22%;
-	filter: grayscale(1) contrast(1.06) brightness(0.92);
+	object-position: center 20%;
+	filter: grayscale(1) contrast(1.12) brightness(0.82);
 }
 
 .monogram {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-monogram);
-	letter-spacing: 0.08em;
-	// 0.5 → #7E7E7C on --panel-lit (#0A0908) = 4.87:1, clearing both the
-	// large-text (3:1) and full AA (4.5:1) thresholds; 0.26 was 2.07:1 and
-	// failed axe when the session→speaker drill-down hit a photo-less speaker.
-	color: rgba(242, 239, 233, 0.5);
+	letter-spacing: 0.06em;
+	color: var(--ink-monogram);
 	user-select: none;
 }
 
-/* ===================== CONTENT ===================== */
-.content {
-	flex: 1;
-	min-width: 0;
-	padding: 2rem 2rem 2.2rem;
-	overflow-y: auto;
-}
-
-.kicker {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.28em;
-	text-transform: uppercase;
-	color: var(--color-accent-hot);
-	margin: 0 0 0.5rem;
-}
-
-.name {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-h3);
-	line-height: 1;
-	letter-spacing: 0.03em;
-	color: var(--color-text);
-	margin: 0;
-}
-
+/* ===================== IDENTITY ===================== */
 .tag {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-lg);
-	letter-spacing: 0.05em;
-	line-height: 1.5;
-	color: var(--color-grey);
-	margin: 0.6rem 0 0;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.55);
+	margin: clamp(1rem, 2vw, 1.5rem) 0 0;
 }
 
 /* ===================== LINKS ===================== */
+// Bare glyphs on the ground. They were boxed squares, which is the panel
+// vocabulary again, one box per social account.
 .links {
 	list-style: none;
-	margin: 1.1rem 0 0;
-	padding: 0;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.45rem;
+	gap: clamp(1rem, 2vw, 1.5rem);
+	margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+	padding: 0;
 }
 
 .link {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 2.1rem;
-	height: 2.1rem;
-	color: rgba(246, 243, 238, 0.78);
-	border: 1px solid var(--rule);
-	border-radius: var(--radius);
-	transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+	width: 2.75rem;
+	height: 2.75rem;
+	margin-left: -0.6rem;
+	color: rgba(240, 237, 230, 0.6);
+	transition: color 0.2s, transform 0.2s;
 
 	svg {
-		width: 1.02rem;
-		height: 1.02rem;
+		width: 1.25rem;
+		height: 1.25rem;
 		display: block;
 	}
 
 	&:hover,
 	&:focus-visible {
-		color: #fff;
-		border-color: var(--rule-red);
-		background: rgba(204, 0, 0, 0.28);
-		box-shadow: var(--glow-red-soft);
-		transform: translateY(-1px);
-		outline: none;
+		color: var(--color-accent-hot);
+		transform: translateY(-2px);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
 	}
 }
 
 /* ===================== BIO ===================== */
 .bio {
-	margin-top: 1.4rem;
-	border-top: 1px solid var(--rule-soft);
-	padding-top: 1.2rem;
+	margin-top: clamp(2rem, 4vw, 3rem);
+	max-width: 56ch;
 
 	p {
 		font-family: var(--font-im-fell-english), serif;
-		font-size: var(--fs-body);
-		line-height: 1.75;
-		color: rgba(240, 237, 230, 0.9);
-		margin: 0 0 0.9rem;
+		font-size: var(--fs-lede);
+		line-height: 1.7;
+		color: rgba(240, 237, 230, 0.85);
+		margin: 0 0 1.1rem;
 
 		&:last-child {
 			margin-bottom: 0;
@@ -211,85 +114,44 @@
 	}
 }
 
-/* ===================== SESSIONS ===================== */
+/* ===================== TALKS ===================== */
 .sessions {
-	margin-top: 1.4rem;
-	border-top: 1px solid var(--rule-soft);
-	padding-top: 1.2rem;
+	margin-top: clamp(2.5rem, 5vw, 4rem);
 }
 
-.sessionsTitle {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.24em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
-	margin: 0 0 0.7rem;
-}
-
-.sessionsList {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 1.1rem;
-
-	li {
-		position: relative;
-		padding-left: 1.1rem;
-
-		&::before {
-			content: '';
-			position: absolute;
-			left: 0;
-			top: 0.55em;
-			width: 6px;
-			height: 6px;
-			background: var(--color-accent-hot);
-		}
-	}
+// Open-field rows. They are not controls here — a talk in this list has no
+// detail view of its own to open — so they take no reach state at all, which is
+// exactly why they carry `.field-row` and neither modifier.
+.sessionRow {
+	--field-step: clamp(1.1rem, 2vw, 1.5rem);
 }
 
 .sessionName {
-	font-family: var(--font-im-fell-english), serif;
-	font-size: var(--fs-body-lg);
-	line-height: 1.4;
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-row-sm);
+	line-height: 1.06;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
 	color: var(--color-text);
 	margin: 0;
 }
 
 .sessionDesc {
-	font-family: var(--font-im-fell-english), serif;
+	font-family: var(--font-special-elite), cursive;
 	font-size: var(--fs-ui);
-	line-height: 1.65;
-	color: rgba(240, 237, 230, 0.7);
-	margin: 0.4rem 0 0;
-}
-
-/* ===================== RESPONSIVE ===================== */
-@media (max-width: 620px) {
-	.dialog {
-		flex-direction: column;
-		height: auto;
-		max-height: 90vh;
-		overflow-y: auto;
-	}
-	.media {
-		flex: 0 0 auto;
-		max-width: none;
-		width: 100%;
-		height: 260px;
-	}
-	.content {
-		padding: 1.5rem 1.3rem 1.7rem;
-		overflow-y: visible;
-	}
+	line-height: 1.6;
+	color: rgba(240, 237, 230, 0.6);
+	max-width: 56ch;
+	margin: 0.5rem 0 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.overlay,
-	.dialog {
-		animation: none;
+	.link {
+		transition: none;
+	}
+
+	.link:hover,
+	.link:focus-visible {
+		transform: none;
 	}
 }

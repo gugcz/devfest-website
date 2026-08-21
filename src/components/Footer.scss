@@ -2,28 +2,52 @@
 		position: relative;
 		width: 100%;
 		z-index: 2;
-		padding: 4.5rem 2.5rem 2.4rem;
-		border-top: 1px solid rgba(240, 237, 230, 0.08);
+		padding: var(--section-y-tight) var(--gutter) 2.4rem;
+		border-top: 1px solid var(--rule-soft);
 		background: #030303;
 		font-family: var(--font-jetbrains-mono), monospace;
 		color: rgba(240, 237, 230, 0.65);
-
-		@media (max-width: 700px) {
-			padding: 3.5rem 1.5rem 2rem;
-		}
 	}
 
 	.footer-inner {
-		max-width: 1200px;
+		max-width: var(--maxw);
 		margin: 0 auto;
+	}
+
+	/* ---- the mark ---- */
+	// The brand asset itself. Typesetting the name in Bebas produced a second
+	// wordmark that disagreed with the one in the header — wrong glyph, wrong
+	// dot, wrong proportions.
+	//
+	// It heads the brand column instead of getting a row of its own: that row
+	// paired the mark with a date/place line the Event column already carried
+	// word for word, and the column under it opened with a mono heading
+	// spelling out the name the logo was already saying.
+	.footer-logo-link {
+		display: inline-flex;
+		line-height: 0;
+		transition: opacity 0.2s ease;
+
+		&:hover,
+		&:focus-visible {
+			opacity: 0.75;
+		}
+	}
+
+	.footer-logo {
+		display: block;
+		width: clamp(190px, 18vw, 260px);
+		height: auto;
 	}
 
 	.footer-grid {
 		display: grid;
 		grid-template-columns: 1.4fr 1fr 1fr 1.4fr;
 		gap: 3.5rem;
-		padding-bottom: 3.5rem;
-		border-bottom: 1px solid rgba(240, 237, 230, 0.06);
+		// No top rule: the grid IS the footer's first row now, and the footer
+		// already opens on its own hairline.
+		padding: 0 0 clamp(2.5rem, 5vw, 3.5rem);
+		border-bottom: 1px solid var(--rule-soft);
 
 		@media (max-width: 960px) {
 			grid-template-columns: 1fr 1fr;
@@ -57,56 +81,12 @@
 		color: rgba(240, 237, 230, 0.85);
 		font-weight: normal;
 		margin: 0;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.6rem;
-		// Short section labels stay on a single line so the flanking rules always
-		// frame the text instead of drifting to the column edges when it wraps.
-		white-space: nowrap;
-
-		// `width`, not `flex-basis`: WebKit leaves a flex item's `flex-basis` out
-		// of the flex container's max-content width, so the shrink-to-fit heading
-		// measured 56px narrower than it draws. Centred, that pushed the rules +
-		// text half that distance past centre on iOS — the "titles drift right"
-		// bug. An explicit `width` is counted everywhere.
-		&::before,
-		&::after {
-			content: '';
-			flex: none;
-			width: 28px;
-			height: 1px;
-			background: rgba(204, 0, 0, 0.35);
-		}
-
-		@media (max-width: 500px) {
-			// Centre by stretching to the column and centring the contents, so
-			// nothing here depends on the heading's intrinsic width at all.
-			align-self: stretch;
-			justify-content: center;
-
-			&::before,
-			&::after {
-				width: 20px;
-			}
-		}
-	}
-
-	// The brand heading is the full site name, not a short section label. It must
-	// be free to wrap under large accessibility text / zoom (WCAG 1.4.4 resize),
-	// which the fixed flanking rules can't survive — they'd pin to the column
-	// edges while the name wraps in the middle. Let it wrap and drop the rules.
-	.col-brand .col-title {
-		white-space: normal;
-
-		&::before,
-		&::after {
-			content: none;
-		}
+		// Plain. Each of the four column heads used to be flanked by a pair of
+		// red hairlines — twelve decorative elements in a row of four labels.
 	}
 
 	.brand-tagline {
-		font-family: var(--font-im-fell-english), serif;
-		font-style: italic;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-ui);
 		line-height: 1.55;
 		color: rgba(240, 237, 230, 0.6);
@@ -148,7 +128,7 @@
 
 		&:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
-			outline-offset: 3px;
+			outline-offset: var(--focus-gap);
 		}
 	}
 
@@ -234,7 +214,7 @@
 
 		&:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
-			outline-offset: 3px;
+			outline-offset: var(--focus-gap);
 		}
 	}
 
@@ -293,12 +273,11 @@
 			color: var(--color-accent-hot);
 			background: rgba(204, 0, 0, 0.08);
 			box-shadow: var(--glow-red-soft);
-			text-shadow: var(--glow-red-soft);
 		}
 
 		&:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
-			outline-offset: 2px;
+			outline-offset: var(--focus-gap-tight);
 		}
 	}
 

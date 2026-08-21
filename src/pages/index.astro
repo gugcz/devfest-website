@@ -10,6 +10,7 @@ import Ticker from '../components/Ticker.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
 import { getActivePartnerTiers } from '../lib/partners';
+import { EVENT_TOPICS } from '../lib/ticker';
 
 // Homepage "silver+" strip — one labelled row per tier, top tier first, so the
 // ladder reads the same here as it does on /partners (row scale steps down with
@@ -29,24 +30,40 @@ const logoFor = (logo: string): ImageMetadata =>
 	logoByFile.get(logo.split('/').pop() as string) as ImageMetadata;
 
 // SVG wordmarks stay vector (`format="svg"` copies them through unchanged);
-// rasters get a srcset sized for the widest strip cap (top tier, 260px) up to
+// rasters get a srcset sized for the widest strip cap (top tier, 330px) up to
 // ~2× DPR — one list for every tier, the CSS cap does the per-tier scaling.
-const STRIP_WIDTHS = [260, 390, 520];
-const STRIP_SIZES = '260px';
+const STRIP_WIDTHS = [330, 495, 660];
+const STRIP_SIZES = '330px';
 const sizing = (img: ImageMetadata) =>
 	img.format === 'svg'
 		? ({ format: 'svg', layout: 'none' } as const)
 		: ({ widths: STRIP_WIDTHS, sizes: STRIP_SIZES } as const);
 
-const tickerTopics = [
-	'AI & Machine Learning',
-	'Android & Kotlin',
-	'Web Technologies',
-	'Cloud & DevOps',
-	'Flutter & Dart',
-	'Security',
-	'Open Source',
+// The facts band. Three figures, and deliberately NOT the date or the venue:
+// both already sit in the hero's footing strip a screen above, in the header
+// stamp, and in the footer. Repeating them here spent the band's whole budget
+// restating what the visitor had just read.
+//
+// Both come from the partner deck, so the site and the deck quote the same
+// event — neither is derivable from the repo, so they have to be kept in step
+// with it by hand. Three tiles is the hard cap: a fourth pushes the row under
+// the 320px-per-column floor and the labels start wrapping (see `.facts` in
+// BaseLayout.scss).
+//
+// Labels are length-constrained. Uppercase mono at this tracking fits ~33
+// characters on one line at 1280; past that a label breaks onto two and the row
+// stops reading as a row. Check any new wording at 1280, not just at 1440.
+// Two, not three. The middle slot had no fact strong enough to stand beside
+// these: a bare tracks count is the smallest mark in the row and reads as a
+// rank rather than a quantity, and everything else worth saying (side
+// programme, community-run, inclusive) is a phrase, not a figure. Two tiles
+// take half the row each, which is what lets the figures run at --fs-stat's
+// top end.
+const facts = [
+	{ figure: '350+', label: 'Medior & senior developers, CEE' },
+	{ figure: '11th', label: 'Edition. Based in Prague.' },
 ];
+
 ---
 
 <BaseLayout>
@@ -59,60 +76,61 @@ const tickerTopics = [
 		fetchpriority="high"
 	/>
 
-	<main class="page">
+	<main class="page-stack">
 		<!-- HERO -->
 		<section id="hero" class="scene">
 			<HeroBackground photoOpacity={0.85} mobilePhotoOpacity={0.55} />
 			<div class="scene-vignette" aria-hidden="true"></div>
 
-			<div class="hero-grid">
-				<div class="hero-content">
-					<h1 class="hero-title">
-						<Image
-							src={logo}
-							alt=""
-							class="hero-logo"
-							priority
-							widths={[280, 560, 620, 1240]}
-							sizes="(max-width: 500px) 280px, (max-width: 1107px) 56vw, 620px"
-						/>
-						<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026.</span>
-					</h1>
+			<div class="hero-inner">
+				<h1 class="hero-title">
+					<Image
+						src={logo}
+						alt=""
+						class="hero-logo"
+						priority
+						widths={[280, 560, 620, 1240]}
+						sizes="(max-width: 700px) 82vw, 560px"
+					/>
+					<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026.</span>
+				</h1>
 
-					<p class="hero-subtitle">
-						Prague&rsquo;s most original conference is back—and it&rsquo;s brought a few mysteries with it.
-					</p>
+				<p class="hero-statement display">
+					Prague&rsquo;s most original<br />conference is <span class="red">back.</span>
+				</p>
 
-					<div class="hero-meta">
-						<div class="meta-item">
-							<span class="meta-label">Date</span>
-							<span class="meta-value">30. 10. 2026</span>
-						</div>
-						<div class="meta-item">
-							<span class="meta-label">Place</span>
+				<p class="hero-note">And it&rsquo;s brought a few mysteries with it.</p>
+
+				<div class="hero-actions">
+					<a href="#tickets" class="btn-primary">Get tickets</a>
+					<a href="#newsletter" class="btn-ghost">Stay in the loop</a>
+				</div>
+			</div>
+
+			<!-- Full-bleed footing strip. The date, the venue and the clock are
+			     data, so they sit on one line at the base of the frame instead of
+			     taking a second column away from the statement. -->
+			<div class="hero-foot">
+				<dl class="hero-meta">
+					<div class="meta-item">
+						<dt class="meta-label">Date</dt>
+						<dd class="meta-value">30. 10. 2026</dd>
+					</div>
+					<div class="meta-item">
+						<dt class="meta-label">Place</dt>
+						<dd class="meta-value">
 							<a
-								class="meta-value meta-value--link"
+								class="meta-value--link"
 								href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
 								target="_blank"
 								rel="noopener noreferrer"
-							>
-								Uhelný Mlýn
-								<span class="meta-sub">near Prague</span>
-							</a>
-						</div>
+							>Uhelný Mlýn<span class="meta-sub">near Prague</span></a>
+						</dd>
 					</div>
+				</dl>
 
-					<div class="hero-cta-group">
-						<a href="#tickets" class="btn-primary">Get tickets</a>
-						<a href="#newsletter" class="btn-ghost">
-							Stay in the loop
-							<span class="btn-ghost-arrow" aria-hidden="true">&#8600;</span>
-						</a>
-					</div>
-				</div>
-
-				<aside class="hero-countdown" aria-label="Time until doors open">
-					<div class="section-label">Doors open in</div>
+				<div class="hero-clock" aria-label="Time until doors open">
+					<p class="meta-label">Doors open in</p>
 					{/*
 						transition:persist keeps this island (and its 1s interval)
 						alive across soft navigations instead of remounting it from
@@ -123,12 +141,30 @@ const tickerTopics = [
 						`/` → `/team`, where the island is torn down as usual.
 					*/}
 					<Countdown client:load transition:persist />
-				</aside>
+				</div>
 			</div>
 		</section>
 
 		<!-- TICKER -->
-		<Ticker items={tickerTopics} />
+		<Ticker items={EVENT_TOPICS} />
+
+		<!-- THE FACTS — what the event IS, in four figures instead of a paragraph -->
+		<section id="facts" aria-labelledby="facts-title">
+			<div class="u-container facts-inner reveal">
+				<h2 id="facts-title" class="facts-head display">
+					One day.<br />One <span class="red">mill.</span>
+				</h2>
+
+				<dl class="facts">
+					{facts.map((f) => (
+						<div class="fact">
+							<dt class="fact-label">{f.label}</dt>
+							<dd class="fact-figure" set:html={f.figure} />
+						</div>
+					))}
+				</dl>
+			</div>
+		</section>
 
 		<!-- TICKETS -->
 		<Tickets client:visible />
@@ -141,13 +177,13 @@ const tickerTopics = [
 
 		<!-- CALL FOR SPEAKERS — hidden: CFP closed
 		<section id="speakers" aria-labelledby="speakers-title">
-			<div class="speakers-inner reveal">
-				<p class="section-label">Call for speakers</p>
-				<h2 id="speakers-title" class="section-title">
+			<div class="u-container speakers-inner reveal">
+				<p class="eyebrow">Call for speakers</p>
+				<h2 id="speakers-title" class="display" style="font-size: var(--fs-h2)">
 					Wanted: <span class="red">your talk.</span>
 				</h2>
 				<p class="speakers-lede">
-					The DevFest.cz 2026 stage is now taking submissions. Got a story worth telling&mdash;AI, Android, web, cloud, Flutter, security, open source? Make your case.
+					Got a story worth telling? Make your case.
 				</p>
 				<div class="speakers-cta-group">
 					<a
@@ -166,7 +202,7 @@ const tickerTopics = [
 		{homeTiers.length > 0 && (
 			<section id="partners" aria-labelledby="partners-title">
 				<div class="partners-inner reveal">
-					<p id="partners-title" class="section-label">Partners</p>
+					<p id="partners-title" class="eyebrow partners-eyebrow">Accomplices<span class="sr-only"> — partners</span></p>
 
 					<div class="partners-tiers">
 						{homeTiers.map((tier) => (
@@ -190,10 +226,7 @@ const tickerTopics = [
 					</div>
 
 					<p class="partners-more">
-						<a href="/partners">
-							See all
-							<span class="btn-ghost-arrow" aria-hidden="true">&#8600;</span>
-						</a>
+						<a href="/partners">See all partners</a>
 					</p>
 				</div>
 			</section>
@@ -201,11 +234,10 @@ const tickerTopics = [
 
 		<!-- GALLERY — photos from past editions -->
 		<section id="gallery" aria-labelledby="gallery-title">
-			<div class="gallery-head reveal">
-				<p class="section-label">Past editions</p>
-				<h2 id="gallery-title" class="section-title">Look <span class="red">back</span>.</h2>
-				<p class="gallery-lede">
-					A look back at past editions of DevFest.cz &mdash; and the community that makes them.
+			<div class="u-container head-split gallery-head reveal">
+				<h2 id="gallery-title" class="display head-title">Look <span class="red">back.</span></h2>
+				<p class="head-note">
+					Past editions of DevFest.cz &mdash; and the community that makes them.
 				</p>
 			</div>
 
@@ -232,15 +264,19 @@ const tickerTopics = [
 			</div>
 		</section>
 
-		<!-- NEWSLETTER -->
-		<section id="newsletter">
-			<div class="newsletter-inner reveal">
-				<p class="section-label">Newsletter</p>
-				<h2 class="section-title">Be the first to <span class="red">know</span>.</h2>
-				<p class="newsletter-lede">
-					Lineup drops, wave changes, and the odd thing we can't announce yet. Leave your address.
-				</p>
-				<NewsletterForm client:visible />
+		<!-- NEWSLETTER — the home page's one red field, matching the closing
+		     statement every subpage ends on -->
+		<section id="newsletter" class="band band--accent">
+			<div class="band-inner newsletter-inner reveal">
+				<div class="newsletter-head">
+					<h2 class="newsletter-title display">Follow the<br /><span class="red">leads.</span></h2>
+					<p class="newsletter-lede">
+						Lineup drops, wave changes, and the odd thing we can&rsquo;t announce yet.
+					</p>
+				</div>
+				<div class="newsletter-form">
+					<NewsletterForm client:visible />
+				</div>
 			</div>
 		</section>
 	</main>

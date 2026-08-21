@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { initials, type Speaker } from '../lib/speakers';
 import { visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
 import { useReturnFocus } from '../lib/useReturnFocus';
 import SpeakerDetail from './SpeakerDetail';
+import sheet from './Sheet.module.scss';
 import s from './SessionDetail.module.scss';
 
 /**
@@ -135,57 +137,52 @@ export default function SessionDetail({
 	const abstractParagraphs = session.description.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
 	const tagCategories = visitorCategories(session);
 
-	return (
+	// Portalled to <body> for the same reason SpeakerDetail is: rendered from an
+	// island inside `<main>`, a positioned ancestor traps the sheet in that
+	// stacking context and the fixed site header draws over it.
+	return createPortal(
 		<>
-		<div
-			className={s.overlay}
-			onMouseDown={(event) => {
-				if (event.target === event.currentTarget) {
-					setKeyboardClose(false);
-					onClose();
-				}
-			}}
-		>
 			<div
-				className={s.dialog}
+				className={sheet.sheet}
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby="session-detail-title"
 				ref={dialogRef}
 				tabIndex={-1}
 			>
-				<button
-					className={s.close}
-					type="button"
-					onClick={(event) => {
-						setKeyboardClose(event.detail === 0);
-						onClose();
-					}}
-					aria-label="Close"
-					data-autofocus
-				>
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-						<path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-					</svg>
-				</button>
+				<div className={sheet.bar}>
+					<button
+						className={sheet.close}
+						type="button"
+						onClick={(event) => {
+							setKeyboardClose(event.detail === 0);
+							onClose();
+						}}
+						data-autofocus
+					>
+						Close
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+							<path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+						</svg>
+					</button>
+				</div>
 
-				<div className={s.content}>
-					<p className={s.kicker}>Session</p>
-					<h2 id="session-detail-title" className={s.title}>
+				<div className={sheet.content}>
+					<p className={sheet.kicker}>Session</p>
+					<h2 id="session-detail-title" className={sheet.title}>
 						{session.title}
 					</h2>
 
-					{session.room && (
+					{/* Room, track and level on ONE mono line. The tags used to be a
+					    second row of bordered chips under the room — a pill is a
+					    different product's vocabulary and the redesign took them off
+					    every other surface already. */}
+					{(session.room || tagCategories.length > 0) && (
 						<ul className={s.meta}>
-							<li className={s.metaItem}>{session.room}</li>
-						</ul>
-					)}
-
-					{tagCategories.length > 0 && (
-						<ul className={s.tags}>
+							{session.room && <li className={s.metaItem}>{session.room}</li>}
 							{tagCategories.flatMap((category) =>
 								category.values.map((value) => (
-									<li key={`${category.name}-${value}`} className={s.tag}>
+									<li key={`${category.name}-${value}`} className={s.metaItem}>
 										{value}
 									</li>
 								)),
@@ -203,15 +200,15 @@ export default function SessionDetail({
 
 					{session.speakers.length > 0 && (
 						<div className={s.speakers}>
-							<h3 className={s.speakersTitle}>
+							<h3 className={sheet.blockTitle}>
 								{session.speakers.length > 1 ? 'Speakers' : 'Speaker'}
 							</h3>
-							<ul className={s.speakersList}>
+							<ul className="field">
 								{session.speakers.map((speaker) => (
 									<li key={speaker.id}>
 										<button
 											type="button"
-											className={s.speaker}
+											className={`field-row field-row--link ${s.speaker}`}
 											onClick={() => openSpeaker(speaker)}
 											aria-label={`View ${speaker.fullName}'s profile`}
 										>
@@ -224,7 +221,6 @@ export default function SessionDetail({
 													<span className={s.speakerTag}>{speaker.tagLine}</span>
 												)}
 											</span>
-											<span className={s.speakerGo} aria-hidden="true">→</span>
 										</button>
 									</li>
 								))}
@@ -233,8 +229,8 @@ export default function SessionDetail({
 					)}
 				</div>
 			</div>
-		</div>
-		{activeSpeaker && <SpeakerDetail speaker={activeSpeaker} onClose={closeSpeaker} />}
-		</>
+			{activeSpeaker && <SpeakerDetail speaker={activeSpeaker} onClose={closeSpeaker} />}
+		</>,
+		document.body,
 	);
 }

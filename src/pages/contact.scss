@@ -1,193 +1,28 @@
-	.contact-page {
-		display: flex;
-		flex-direction: column;
-	}
-
 	/* ===================== BODY ===================== */
-	.contact-body {
-		position: relative;
-		padding: var(--section-y) var(--gutter);
-		// Pool of light dropped behind the contact desks — the lit scene.
-		background: var(--lit);
-		border-top: 1px solid var(--rule-soft);
-
-		// Faint red wash bleeding in from the corner, layered over the pool of light.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
-			pointer-events: none;
-			z-index: 0;
-		}
+	// Ground, padding and measure come from `.band .band--lit` / `.band-inner`.
+	// This section adds one thing of its own: the faint red bleed from the
+	// top-right corner, on a ::before so it layers OVER the pool of light rather
+	// than replacing it (which is what `.band--lit-red` does for the lineup
+	// pages, where nothing else has to sit between the two layers).
+	.contact-body::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
+		pointer-events: none;
+		z-index: 0;
 	}
 
-	.contact-inner {
-		position: relative;
-		z-index: 1;
-		max-width: var(--maxw);
-		margin: 0 auto;
-	}
-
-	// The three desks are a ledger, not a card row: one entry each, stacked
-	// and ruled, sharing the site-wide record grid.
+	// An open field of desks — `.field` in BaseLayout.scss; the desks themselves
+	// are `<Desk>` (src/components/Desk.astro).
+	//
+	// No lamp of its own. It used to carry `--lamp` on a full-bleed
+	// ::before inset -2rem/-gutter, which is a RECTANGLE floating inside the
+	// section: the token's warm raking layer lifts #050505 to about #0E0C0B at
+	// its top-left, so the box drew a hard horizontal step across the whole
+	// page. --lamp belongs to the ROOM and is applied at section scale; the
+	// section's own --lit pool is that light here.
 	.contact-grid {
 		position: relative;
 		display: block;
-		border-top: 3px solid var(--rule-strong);
-		box-shadow: 0 3px 0 -2px var(--rule);
-
-		// Same single lamp the ticket ledger sits under.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: -2rem calc(-1 * var(--gutter));
-			background: var(--lamp);
-			pointer-events: none;
-			z-index: -1;
-		}
-	}
-
-	// One inbox, one ruled entry. No exhibit numeral and no far-right folder
-	// tab: numbering three inboxes said nothing, and a red chip pinned to the
-	// opposite edge from its own title read as decoration, not a label. The
-	// category name is a plain mono eyebrow sitting directly above the title.
-	.contact-card {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		gap: 0.7rem;
-		padding: clamp(1.6rem, 2.6vw, 2.4rem) 0;
-		border-bottom: 1px solid var(--rule);
-		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-
-		// Light washes in from the left when the entry is pulled.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0 calc(-1 * var(--gutter));
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.06) 0%,
-				rgba(255, 240, 226, 0.026) 38%,
-				transparent 82%
-			);
-			opacity: 0;
-			pointer-events: none;
-			transition: opacity 0.3s ease;
-			z-index: -1;
-		}
-
-		&:hover,
-		&:focus-within {
-			transform: translateX(0.6rem);
-		}
-
-		&:hover::before,
-		&:focus-within::before {
-			opacity: 1;
-		}
-	}
-
-	// Category eyebrow — plain mono label above the title, not a tab.
-	.card-label {
-		align-self: flex-start;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-sm);
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
-		color: var(--color-accent-hot);
-	}
-
-	.card-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: clamp(1.85rem, 3.2vw, 2.6rem);
-		line-height: 1;
-		letter-spacing: 0.05em;
-		color: var(--color-text);
-		margin: 0;
-	}
-
-	.card-desc {
-		font-family: var(--font-im-fell-english), serif;
-		font-style: italic;
-		font-size: var(--fs-body-lg);
-		line-height: 1.55;
-		color: var(--color-grey);
-		margin: 0.7rem 0 0;
-		max-width: 46ch;
-	}
-
-	.card-emails {
-		list-style: none;
-		padding: 0.9rem 0 0;
-		margin: 0.9rem 0 0;
-		border-top: 1px solid var(--rule-soft);
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	.card-emails li {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-	}
-
-	.email-name {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.65);
-	}
-
-	.email-link {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.04em;
-		color: var(--color-text);
-		align-self: flex-start;
-		display: inline-flex;
-		align-items: center;
-		min-height: 2.75rem;
-		text-decoration: underline;
-		text-decoration-thickness: 1px;
-		text-decoration-color: var(--rule-red);
-		text-underline-offset: 4px;
-		word-break: break-all;
-		transition: color 0.2s, text-decoration-color 0.2s;
-
-		&::after {
-			content: '\2197';
-			margin-left: 0.5rem;
-			text-decoration: none;
-			display: inline-block;
-			transition: transform 0.25s;
-		}
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			text-decoration-color: var(--color-accent-hot);
-			// Red reads as light — subtle neon halation on the address.
-			text-shadow: var(--glow-red-soft);
-		}
-
-		&:hover::after,
-		&:focus-visible::after {
-			transform: translate(2px, -2px);
-		}
-	}
-
-	/* ===================== REDUCED MOTION ===================== */
-	@media (prefers-reduced-motion: reduce) {
-		.contact-card {
-			transition: none;
-
-			&:hover,
-			&:focus-within { transform: none; }
-
-			&::before { transition: none; }
-		}
 	}

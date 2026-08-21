@@ -17,7 +17,7 @@
 		width: 60%;
 		background-image: url('/hero-detective.webp');
 		background-size: cover;
-		background-position: center;
+		background-position: var(--hero-photo-pos, center);
 		// Cinematic grade — push the detective plate to high-contrast B&W noir.
 		filter: grayscale(1) contrast(1.12) brightness(0.84);
 		// Long, gentle left-to-right fade — the photo dissolves into the dark
@@ -47,7 +47,7 @@
 
 		@media (max-width: 900px) {
 			width: 100%;
-			background-position: 38% center;
+			background-position: var(--hero-photo-pos-mobile, 38% center);
 			opacity: var(--hero-photo-opacity-mobile, 0.55);
 			mask-image: linear-gradient(
 				to bottom,

@@ -6,21 +6,14 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
-import { SPEAKERS, SESSIONS, TICKETS } from './a11y-mocks/fixtures.mjs';
+import { API_FIXTURES } from './a11y-mocks/api.mjs';
 
 const DIST = path.resolve('dist');
 
 // The islands fetch their data from cached `/api/*` endpoints (Hosting rewrites
 // them to Cloud Functions in production). CI has no functions, so the harness
-// serves the same shapes from fixtures so the grids, ticket waves, and modal
-// flows get audited.
-const API_FIXTURES = {
-	'/api/lineup': JSON.stringify({
-		speakers: SPEAKERS.map((s) => ({ id: s.id, ...s.data })),
-		sessions: SESSIONS.map((s) => ({ id: s.id, ...s.data })),
-	}),
-	'/api/tickets': JSON.stringify(TICKETS),
-};
+// serves the same shapes from fixtures — shared with the dev server, so the two
+// can never drift (see `a11y-mocks/api.mjs`).
 const PORT = 4321;
 const PATHS = [
 	'/',
@@ -316,6 +309,20 @@ const MODAL_FLOWS = {
 				await p.click('button[aria-label^="View details for "]');
 				await p.waitForSelector('[role="dialog"]');
 				await p.click('[role="dialog"] button[aria-label^="View "]');
+			},
+		},
+		{
+			// The SAME sheet with no photograph, so the fallback initials plate
+			// is audited on every run. Pinned to a named speaker on purpose: the
+			// flow above takes whichever speaker happens to be first, and when
+			// that one had a photo the monogram was never scanned — which is how
+			// a 2.58:1 plate (3:1 required at 54px) survived local runs and only
+			// surfaced in CI. `sp-alan` is the fixture with `profilePicture: ''`.
+			label: 'session → speaker dialog (no photo)',
+			open: async (p) => {
+				await p.click('button[aria-label="View details for AI at the Edge"]');
+				await p.waitForSelector('[role="dialog"]');
+				await p.click('[role="dialog"] button[aria-label="View Alan Turing\'s profile"]');
 			},
 		},
 	],

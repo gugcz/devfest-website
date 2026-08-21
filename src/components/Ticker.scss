@@ -1,38 +1,71 @@
-// Quiet topic marquee — a thin dark strip, NOT a glowing red neon sign. It
-// runs under the hero as a supporting band; the red is reserved for the
-// separators so it credits the topics without out-shouting the CTAs/tickets.
+// Running band of topics, set at display scale. It used to be a 0.76rem mono
+// strip with `///` separators — small, busy, and the separator glyph read as
+// filler. At Bebas scale the same words become a graphic element: the band is
+// the transition between two sections instead of a caption between them.
 .ticker-wrap {
 	position: relative;
 	z-index: 20;
-	background: var(--color-near-black);
 	overflow: hidden;
-	padding: 0.65rem 0;
-	border-top: 1px solid var(--rule);
-	border-bottom: 1px solid var(--rule);
+	background: var(--color-bg);
+	border-top: 1px solid var(--rule-soft);
+	border-bottom: 1px solid var(--rule-soft);
+	padding: var(--ticker-pad) 0;
 
-	// SC 2.2.2 — pause on pointer hover so users can read a topic.
+	// SC 2.2.2 — pause on pointer hover so a topic can be read.
 	&:hover .ticker {
 		animation-play-state: paused;
 	}
 }
 
+.ticker-wrap--lg {
+	--ticker-pad: clamp(1.1rem, 2.2vw, 1.9rem);
+	--ticker-size: clamp(2.2rem, 5.5vw, 4.5rem);
+	--ticker-gap: clamp(1.2rem, 2.5vw, 2.2rem);
+}
+
+.ticker-wrap--sm {
+	--ticker-pad: clamp(0.75rem, 1.4vw, 1.1rem);
+	--ticker-size: clamp(1.4rem, 2.6vw, 2.1rem);
+	--ticker-gap: clamp(0.9rem, 1.8vw, 1.5rem);
+}
+
 .ticker {
 	display: flex;
+	align-items: center;
 	white-space: nowrap;
-	animation: ticker 38s linear infinite;
+	animation: ticker 46s linear infinite;
 }
 
 .ticker-item {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--ticker-font-size, 0.76rem);
-	letter-spacing: 0.2em;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--ticker-gap);
+	padding-right: var(--ticker-gap);
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--ticker-size);
+	line-height: 1;
+	letter-spacing: 0.02em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.62);
-	padding: 0 2.6rem;
+	// Outlined, not solid. Nine topics set solid at 4rem would out-shout the
+	// section headline on either side of the band; hollow keeps the scale and
+	// gives back the weight.
+	color: transparent;
+	// 0.56, not 0.45: the stroke blends to #6f6d6a on the band's #050505, which
+	// is 3.95:1. The `lg` band gets away with that as large text, but `sm`
+	// bottoms out at its 1.4rem floor (22.4px) on a phone, where 4.5:1 applies
+	// — and 22px at 3.95:1 is genuinely hard to read. 0.56 measures 5.6:1 and
+	// the band stays hollow.
+	-webkit-text-stroke: 1px rgba(240, 237, 230, 0.56);
 }
 
 .ticker-sep {
-	color: rgba(204, 0, 0, 0.55);
+	// The dot is the only solid ink in the band, so it carries the accent and
+	// does the pacing the outline can't.
+	color: var(--color-accent);
+	-webkit-text-stroke: 0;
+	font-size: 0.5em;
+	line-height: 1;
+	transform: translateY(-0.15em);
 }
 
 @keyframes ticker {

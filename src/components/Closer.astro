@@ -1,0 +1,83 @@
+---
+/**
+ * The closing statement every page ends on.
+ *
+ * The subpages used to stop at their last list row and hand straight over to
+ * the footer — no ending, and on the thin pages (contact, downloads) that left
+ * two thirds of the viewport empty before the footer arrived. This is the one
+ * place per page where the type goes back up to section scale and the visitor
+ * is told what to do next.
+ *
+ * `tone="accent"` puts it on the red field. At most ONE accent band per page,
+ * and only for the page's actual next step — used on every page it stops
+ * marking anything.
+ */
+interface Action {
+	href: string;
+	label: string;
+	/** Filled (primary) or outlined (ghost). First action should be filled. */
+	kind?: 'primary' | 'ghost';
+	external?: boolean;
+}
+
+interface Props {
+	eyebrow?: string;
+	/** Allows a <span class="red"> accent word; rendered with set:html. */
+	titleHtml: string;
+	note?: string;
+	actions: readonly Action[];
+	tone?: 'accent' | 'raised' | 'plain';
+	titleId?: string;
+}
+
+const {
+	eyebrow,
+	titleHtml,
+	note,
+	actions,
+	tone = 'raised',
+	titleId,
+} = Astro.props;
+
+const toneClass = tone === 'accent' ? ' band--accent' : tone === 'raised' ? ' band--raised' : '';
+---
+
+<section class={`band${toneClass} closer-band`} aria-labelledby={titleId}>
+	<div class="band-inner closer reveal">
+		<div>
+			{eyebrow && <p class="eyebrow closer-eyebrow">{eyebrow}</p>}
+			<h2 id={titleId} class="display closer-title" set:html={titleHtml} />
+		</div>
+
+		<div class="closer-side">
+			{note && <p class="closer-note">{note}</p>}
+			<div class="closer-actions">
+				{actions.map(({ href, label, kind = 'primary', external }) => (
+					<a
+						href={href}
+						class={kind === 'primary' ? 'btn-primary' : 'btn-ghost'}
+						{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+					>
+						{label}
+					</a>
+				))}
+			</div>
+		</div>
+	</div>
+</section>
+
+<style lang="scss">
+	.closer-band {
+		border-top: 1px solid var(--rule-soft);
+	}
+
+	// The accent field carries its own edge — a hairline on a red ground reads
+	// as a seam, not as structure.
+	.closer-band:global(.band--accent) {
+		border-top: 0;
+	}
+
+	.closer-eyebrow {
+		margin-bottom: clamp(1.1rem, 2vw, 1.6rem);
+	}
+</style>

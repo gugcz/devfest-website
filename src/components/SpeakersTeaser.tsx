@@ -136,12 +136,19 @@ export default function SpeakersTeaser() {
 			onBlur={() => setPaused(false)}
 		>
 			<div className={s.inner}>
-				<div className={s.head}>
-					<p className={s.eyebrow}>Now speaking</p>
-					<h2 id="lineup-teaser-title" className={s.heading}>
-						The <span className={s.red}>speakers.</span>
+				{/* Title left, the lede and the way out right — NOT the
+				    eyebrow-over-title-over-lede stack the ticket section and the
+				    facts band were also running. Three sections sharing one head
+				    shape down one page is what reads as a template, and the
+				    stack left the right half of every section empty. */}
+				<div className="head-split head-split--ruled">
+					<h2 id="lineup-teaser-title" className="display head-title">
+						The <span className="red">speakers.</span>
 					</h2>
-					<p className={s.lede}>New names hit the wall as they&rsquo;re confirmed.</p>
+					<div className={s.headSide}>
+						<p className="head-note">New names hit the wall as they&rsquo;re confirmed.</p>
+						<a className={s.allLink} href="/speakers">See all speakers</a>
+					</div>
 				</div>
 
 				<ul className={s.wall} role="list" key={offset}>
@@ -153,13 +160,6 @@ export default function SpeakersTeaser() {
 						</li>
 					))}
 				</ul>
-
-				<div className={s.foot}>
-					<a className={s.allLink} href="/speakers">
-						See all speakers
-						<span className={s.allArrow} aria-hidden="true">↗</span>
-					</a>
-				</div>
 			</div>
 		</section>
 	);

@@ -1,32 +1,34 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+import Closer from '../components/Closer.astro';
 import Sessions from '../components/Sessions.tsx';
+import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
 <BaseLayout
 	title="Sessions — DevFest.cz 2026"
 	description="The talks and sessions on the agenda at DevFest.cz 2026 — Prague's community-built developer conference."
 >
-	<main class="sessions-page">
+	<main class="page-stack">
 		<SubpageHero
-			label="Case files"
-			titleHtml={'The talks on<br />the <span class="red">docket</span>.'}
+			titleHtml={'The talks on<br />the <span class="red">docket.</span>'}
 			lede="Every talk confirmed for DevFest.cz 2026, with the speakers behind it. Search or filter by track to find your thing — the full schedule lands closer to the event."
 			seoHeading="DevFest.cz 2026 Sessions & Talks"
 			titleId="sessions-title"
+			focus="28% 55%"
 		/>
 
-		<section class="sessions-body" aria-label="Session list">
-			<div class="sessions-inner">
-				<header class="sessions-header">
-					<p class="sessions-eyebrow">The sessions</p>
-					<h2 class="sessions-heading">What&rsquo;s on</h2>
-					<p class="sessions-crosslink">
-						<a class="btn-ghost" href="/agenda">
-							See the schedule
-							<span class="btn-ghost-arrow" aria-hidden="true">&rarr;</span>
-						</a>
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
+		<section class="band band--lit-red" aria-label="Session list">
+			<div class="band-inner">
+				<header class="head-stack">
+					<p class="eyebrow">The sessions</p>
+					<h2 class="display head-title">What&rsquo;s on</h2>
+					<p class="head-stack-link">
+						<a class="btn-ghost" href="/agenda">See the schedule</a>
 					</p>
 				</header>
 
@@ -35,13 +37,22 @@ import Sessions from '../components/Sessions.tsx';
 				<Sessions client:load />
 
 				<noscript>
-					<p class="sessions-noscript">
+					<p class="fallback-note">
 						The session agenda loads with JavaScript enabled. Please turn it on, or
 						check back soon.
 					</p>
 				</noscript>
 			</div>
 		</section>
+
+		<Closer
+			eyebrow="Be there"
+			titleHtml={'Pick your<br /><span class="red">day</span>.'}
+			note="Every talk, mapped to a room and a time slot."
+			tone="accent"
+			titleId="sessions-closer"
+			actions={[{ href: '/agenda', label: 'See the schedule' }, { href: '/#tickets', label: 'Get tickets', kind: 'ghost' }]}
+		/>
 	</main>
 </BaseLayout>
 

@@ -1,58 +1,4 @@
-.speakers-page {
-	display: flex;
-	flex-direction: column;
-}
-
 /* ===================== LINEUP SECTION ===================== */
-// Same lit-room atmosphere as /team: a central spotlight pool with a faint red
-// radial bleeding from the top-right, over page black.
-.speakers-body {
-	position: relative;
-	padding: var(--section-y) var(--gutter);
-	background:
-		radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
-		var(--lit),
-		var(--color-bg);
-	border-top: 1px solid var(--rule-soft);
-}
-
-.speakers-inner {
-	max-width: var(--maxw);
-	margin: 0 auto;
-}
-
-// Left-set, against a centred head on the home teaser and the gallery. Every
-// section on the site was centre-headed; a head centred over a left-aligned
-// grid is the template move, and thirteen of them in a row is the reason the
-// scroll read as one long generated block.
-.speakers-header {
-	text-align: left;
-	margin-bottom: 3.2rem;
-	// Hangs off the same hairline the sheet below starts on.
-	border-bottom: 1px solid var(--rule-soft);
-	padding-bottom: 1.6rem;
-}
-
-.speakers-eyebrow {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.3em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.62);
-	margin: 0 0 1rem;
-}
-
-.speakers-heading {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-h2);
-	letter-spacing: 0.01em;
-	line-height: 1.05;
-	text-transform: uppercase;
-	color: var(--color-text);
-	text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
-	margin: 0;
-}
-
 // Said once for the whole contact sheet, in the mono catalogue voice.
 .speakers-hint {
 	font-family: var(--font-jetbrains-mono), monospace;
@@ -61,15 +7,4 @@
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.5);
 	margin: 1rem 0 0;
-}
-
-.speakers-noscript {
-	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
-	font-size: var(--fs-lede);
-	line-height: 1.7;
-	color: var(--color-grey);
-	text-align: center;
-	max-width: 52ch;
-	margin: 2rem auto 0;
 }

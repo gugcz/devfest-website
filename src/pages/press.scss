@@ -1,78 +1,12 @@
-	.press-page {
-		display: flex;
-		flex-direction: column;
-	}
-
 	/* ===================== BODY ===================== */
-	.press-body {
-		position: relative;
-		padding: var(--section-y) var(--gutter);
-		// Pool of light dropped behind the press desk — a lit briefing room.
-		background: var(--lit);
-		border-top: 1px solid var(--rule-soft);
-	}
-
-	.press-inner {
-		position: relative;
-		z-index: 1;
-		max-width: var(--maxw);
-		margin: 0 auto;
-		display: flex;
-		flex-direction: column;
-		gap: 5rem;
-	}
-
 	/* ===================== EMAILS ===================== */
-	.card-emails {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 1.2rem;
-	}
 
-	.card-emails li {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-	}
-
-	.email-name {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.65);
-	}
-
-	.email-link {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.04em;
-		color: var(--color-text);
-		align-self: flex-start;
-		display: inline-flex;
-		align-items: center;
-		min-height: 2.75rem;
-		text-decoration: underline;
-		text-decoration-thickness: 1px;
-		text-decoration-color: var(--rule-red);
-		text-underline-offset: 4px;
-		word-break: break-all;
-		transition: color 0.2s, text-decoration-color 0.2s, text-shadow 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			text-decoration-color: var(--color-accent-hot);
-			text-shadow: var(--glow-red-soft);
-		}
-	}
 
 	/* ===================== SECTIONS ===================== */
+	// 4rem, the homepage's section-head gap. At 2rem this page was running its
+	// heads at half the site's spacing while carrying the same 112px title.
 	.section-head {
-		margin-bottom: 2rem;
+		margin-bottom: 4rem;
 		padding-bottom: 1.1rem;
 		border-bottom: 1px solid var(--rule);
 	}
@@ -80,24 +14,21 @@
 	// Poster headline — typewriter (Special Elite) to match the noir key art,
 	// with the accent word lit up like neon.
 	.section-title {
-		font-family: var(--font-special-elite), cursive;
+		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-h2);
-		line-height: 1.05;
-		letter-spacing: 0.01em;
+		line-height: var(--lh-display);
+		letter-spacing: var(--track-display);
 		text-transform: uppercase;
 		color: var(--color-text);
 		margin: 0;
-		text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
 
 		.red {
 			color: var(--color-accent-hot);
-			text-shadow: var(--glow-red);
 		}
 	}
 
 	/* ===================== EMPTY STATE ===================== */
-	// Lamp-lit dossier (no tab/index): single-source lit panel + inset matte frame.
-	// A ruled note opening on the ledger's strong rule, not a mounted panel.
+	// A ruled note opening on a strong rule, not a mounted panel.
 	.empty-state {
 		position: relative;
 		border: 0;
@@ -118,16 +49,15 @@
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
 		color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
-		padding: 0.4rem 0.75rem;
+		padding: 0;
 		background: transparent;
-		border: 1px solid rgba(204, 0, 0, 0.4);
-		border-radius: var(--radius);
+		// A plain mono word, not a boxed stamp. A bordered non-interactive
+		// label is the chip vocabulary the redesign removed everywhere else.
+		border: 0;
 	}
 
 	.empty-line {
 		font-family: var(--font-im-fell-english), serif;
-		font-style: italic;
 		font-size: var(--fs-lede);
 		line-height: 1.6;
 		color: var(--color-grey);
@@ -136,62 +66,26 @@
 	}
 
 	/* ===================== MEDIA COVERAGE CARDS ===================== */
+	// An open field of clippings — `.field` in BaseLayout.scss.
 	.coverage-list {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 1.4rem;
+		position: relative;
 	}
 
-	// A clipping in the press ledger: thumbnail left, headline and outlet
-	// right, hairline below. No mounted panel, no lift.
+	// A clipping: thumbnail left, headline and outlet right. No mounted panel,
+	// no lift, no rule. The whole entry is the link, so it takes the shared red
+	// reach field (`.field-row--link`); this file owns only its grid and type.
 	.coverage-card {
-		position: relative;
 		display: grid;
 		grid-template-columns: 220px 1fr;
 		gap: 1.8rem;
-		padding: clamp(1.4rem, 2.4vw, 2rem) 0;
-		background: transparent;
-		border: 0;
-		border-bottom: 1px solid var(--rule);
-		border-radius: 0;
 		text-decoration: none;
-		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 
-		// Light washes in from the left when the clipping is reached.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0 calc(-1 * var(--gutter));
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.06) 0%,
-				rgba(255, 240, 226, 0.026) 38%,
-				transparent 82%
-			);
-			opacity: 0;
-			pointer-events: none;
-			z-index: -1;
-			transition: opacity 0.3s ease;
-		}
-
-		&:hover::before,
-		&:focus-visible::before {
-			opacity: 1;
-		}
-
-		&:hover,
-		&:focus-visible {
-			transform: translateX(0.6rem);
-			outline: none;
-
-			&::before { border-color: var(--matte-red); }
-			.coverage-title { color: var(--color-accent-hot); text-shadow: var(--glow-red-soft); }
+		// Not ink: a hairline inside the row, and the off-site arrow's motion.
+		// Hover only — focus draws a ring, it does not paint the field.
+		&:hover {
+			.coverage-meta { border-top-color: rgba(247, 239, 230, 0.4); }
 			.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
 			.coverage-arrow { transform: translate(2px, -2px); }
-			.coverage-read { color: var(--color-accent-hot); }
 		}
 	}
 
@@ -228,38 +122,47 @@
 		}
 	}
 
-	// Publication name = flat red case-file tab.
+	// Publication name — a plain mono eyebrow above the headline, identical to
+	// `.card-label` on the press desks. It used to be a filled red tab, which
+	// put an accent field on every row of the list; the site spends its red
+	// once per section, and a filled chip is not in this vocabulary either.
+	// Muted at rest, full cream on the reach field. It was accent-hot on every
+	// clipping at once, which is the accent as texture — and now that reaching a
+	// clipping paints the whole row red, a resting red label competes with the
+	// one state the colour is for.
 	.coverage-outlet {
 		align-self: flex-start;
-		background: var(--color-accent);
-		color: var(--on-accent);
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.26em;
+		font-size: var(--fs-label-sm);
+		letter-spacing: 0.24em;
 		text-transform: uppercase;
-		padding: 0.42rem 0.72rem;
+		color: rgba(240, 237, 230, 0.55);
 	}
 
+	// The headline is the row's title, so it is set like every other row's
+	// title: Bebas, uppercase, on the long-list step the session rows use. It
+	// was IM Fell at lede size — around 22px against the 54px rows elsewhere, so
+	// the same container language read as a different site's component.
 	.coverage-title {
-		font-family: var(--font-im-fell-english), serif;
-		font-size: var(--fs-lede);
-		line-height: 1.35;
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-row-sm);
+		line-height: 1.06;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
 		color: var(--color-text);
-		transition: color 0.2s;
 	}
 
-	// Arrow affordance riding the title link (\2197 north-east arrow).
+	// Off-site marker (\2197 north-east arrow), riding the mono "Read article"
+	// line rather than the headline. On the headline it scaled with the Bebas
+	// row title and became a 40px glyph mid-sentence.
 	.coverage-arrow {
 		display: inline-block;
-		margin-left: 0.4rem;
-		color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
+		margin-left: 0.35rem;
 		transition: transform 0.25s;
 	}
 
 	.coverage-desc {
 		font-family: var(--font-im-fell-english), serif;
-		font-style: italic;
 		font-size: var(--fs-body);
 		line-height: 1.5;
 		color: var(--color-grey);
@@ -299,176 +202,25 @@
 		color: rgba(240, 237, 230, 0.5);
 	}
 
-	/* ===================== PRESS DESK CARDS ===================== */
-	.desk-grid {
-		position: relative;
-		display: block;
-		border-top: 3px solid var(--rule-strong);
-		box-shadow: 0 3px 0 -2px var(--rule);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: -2rem calc(-1 * var(--gutter));
-			background: var(--lamp);
-			pointer-events: none;
-			z-index: -1;
-		}
-	}
-
-	// Ruled entries, like the contact desks. No exhibit numeral (it numbered two
-	// desks, which said nothing) and no far-right folder tab — the category name
-	// is a plain mono eyebrow above the title. This also fixes the email row,
-	// which used to fall into the vanished 3.25rem numeral column and wrap
-	// character by character.
-	.desk-card {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		gap: 0.7rem;
-		background: transparent;
-		border: 0;
-		border-bottom: 1px solid var(--rule);
-		border-radius: 0;
-		padding: clamp(1.6rem, 2.6vw, 2.4rem) 0;
-		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0 calc(-1 * var(--gutter));
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.06) 0%,
-				rgba(255, 240, 226, 0.026) 38%,
-				transparent 82%
-			);
-			opacity: 0;
-			pointer-events: none;
-			z-index: -1;
-			transition: opacity 0.3s ease;
-		}
-
-		&:hover,
-		&:focus-within {
-			transform: translateX(0.6rem);
-		}
-
-		&:hover::before,
-		&:focus-within::before {
-			opacity: 1;
-		}
-	}
-
-	.desk-card > .card-label,
-	.desk-card > .card-title,
-	.desk-card > .card-desc,
-	.desk-card > .card-foot,
-	.desk-card > .card-emails {
-		position: relative;
-		z-index: 1;
-	}
-
-	// Category eyebrow — plain mono label above the title, not a tab.
-	.card-label {
-		align-self: flex-start;
-		color: var(--color-accent-hot);
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-sm);
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
-	}
-
-	.card-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-card-title);
-		line-height: 1;
-		letter-spacing: 0.04em;
-		color: var(--color-text);
-		margin: 0;
-	}
-
-	.card-desc {
-		font-family: var(--font-im-fell-english), serif;
-		font-style: italic;
-		font-size: var(--fs-body-lg);
-		line-height: 1.55;
-		color: var(--color-grey);
-		margin: 0 0 0.4rem;
-		// Pin the action row to the card bottom for aligned baselines.
-		flex: 1;
-	}
-
-	// Hairline divider above the press-kit action.
-	.card-foot {
-		padding-top: 1.2rem;
-		margin-top: 0.4rem;
-		border-top: 1px solid var(--rule);
-	}
-
-	.kit-link {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.04em;
-		color: var(--color-text);
-		display: inline-flex;
-		align-items: center;
-		min-height: 2.75rem;
-		text-decoration: underline;
-		text-decoration-thickness: 1px;
-		text-decoration-color: var(--rule-red);
-		text-underline-offset: 4px;
-		transition: color 0.2s, text-decoration-color 0.2s, text-shadow 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			text-decoration-color: var(--color-accent-hot);
-			text-shadow: var(--glow-red-soft);
-		}
-
-		&:hover .kit-link-arrow,
-		&:focus-visible .kit-link-arrow {
-			transform: translate(2px, -2px);
-		}
-	}
-
-	.kit-link-arrow {
-		display: inline-block;
-		margin-left: 0.5rem;
-		color: var(--color-accent-hot);
-		text-shadow: var(--glow-red-soft);
-		text-decoration: none;
-		transition: transform 0.25s;
-	}
-
 	@media (prefers-reduced-motion: reduce) {
 		.coverage-arrow,
-		.coverage-thumb img,
-		.kit-link-arrow { transition: none; }
+		.coverage-thumb img { transition: none; }
 
-		.coverage-card:hover,
-		.coverage-card:focus-visible,
-		.desk-card:hover { transform: none; }
 	}
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		.press-inner { gap: 4rem; }
-		.desk-grid { grid-template-columns: 1fr; gap: 1.6rem; }
 	}
 
 	@media (max-width: 600px) {
-		.section-head { margin-bottom: 1.6rem; }
+		.section-head { margin-bottom: 2.4rem; }
 
+		// Flush to the content column, like every other ruled row. The side
+		// padding was left over from the mounted-panel version and inset the
+		// entry from the rule it sits on.
 		.coverage-card {
 			grid-template-columns: 1fr;
 			gap: 1rem;
-			padding: 1.5rem 1.4rem;
+			padding: 1.5rem 0;
 		}
-		// Keep a little clearance so the outlined index never sits on the title.
-		.coverage-text { padding-right: 2rem; }
-		.coverage-title { font-size: var(--fs-body-lg); }
-		.desk-card { padding: 1.8rem 1.5rem 1.7rem; }
-		.card-title { font-size: var(--fs-title-compact); }
 	}

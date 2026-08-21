@@ -20,64 +20,31 @@
 }
 
 /* ===================== HEAD ===================== */
-.head {
-	text-align: center;
-	margin-bottom: 2.6rem;
+// Two columns on one baseline: the statement left, the lede and the way out
+// right — `.head-split` in BaseLayout.scss, shared with the ticket section and
+// the /contact desks. Stacked as eyebrow-over-title-over-lede this was the
+// identical shape those two were using, three sections down one page.
+.headSide {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: clamp(1rem, 2vw, 1.5rem);
+	padding-bottom: 0.35rem;
 }
 
-.eyebrow {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.7rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.32em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.62);
-	margin: 0 0 1rem;
-
-	&::before,
-	&::after {
-		content: '';
-		width: 26px;
-		height: 1px;
-		background: var(--rule-red);
-	}
-}
-
-.heading {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-h2);
-	letter-spacing: 0.01em;
-	line-height: 1.05;
-	text-transform: uppercase;
-	color: var(--color-text);
-	text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
-	margin: 0;
-}
-
-.red {
-	color: var(--color-accent);
-}
-
-.lede {
-	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
-	font-size: var(--fs-body-lg);
-	line-height: 1.6;
-	color: var(--color-grey);
-	margin: 0.8rem 0 0;
-}
 
 /* ===================== WALL ===================== */
 // Prints on the page — no cell, no rule around anybody. See the note at the
 // head of Speakers.module.scss: a ruled grid still draws a full rectangle
 // around every photograph, and the print's own mount is the only edge it needs.
+// Left-set and full width, like the head above it and every other section on
+// the page. Centred inside an 880px cap it started at x=280 while every
+// headline on the homepage starts at x=72 — the one block that didn't sit on
+// the page's own left edge.
 .wall {
 	list-style: none;
-	margin: 0 auto;
+	margin: 0;
 	padding: 0;
-	max-width: 880px;
 	display: grid;
 	// Two-up on phones so a face is actually legible; four-up from 600px.
 	grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -118,7 +85,7 @@
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 4px;
+		outline-offset: var(--focus-gap-lg);
 	}
 }
 
@@ -132,9 +99,7 @@
 	// Mounted print: bone keyline plus a shadow so it sits on the sheet. The
 	// second, RED inset keyline this used to carry put a red mark on every
 	// frame before anyone touched anything.
-	box-shadow:
-		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
-		0 10px 24px rgba(0, 0, 0, 0.5);
+	box-shadow: var(--print-mount);
 
 	// Crop-brackets open only on the frame being pointed at — a gesture, not
 	// decoration (see Speakers.module.scss for the same reasoning).
@@ -187,7 +152,7 @@
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-monogram);
 	letter-spacing: 0.06em;
-	color: rgba(242, 239, 233, 0.24);
+	color: var(--ink-monogram);
 	user-select: none;
 }
 
@@ -257,11 +222,6 @@
 }
 
 /* ===================== FOOT — all-speakers link ===================== */
-.foot {
-	margin-top: 2rem;
-	text-align: center;
-}
-
 .allLink {
 	display: inline-flex;
 	align-items: center;
@@ -286,18 +246,8 @@
 	&:focus-visible {
 		color: var(--color-accent-hot);
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 4px;
+		outline-offset: var(--focus-gap-lg);
 	}
-}
-
-.allArrow {
-	font-size: 0.9em;
-	transition: transform 0.2s ease;
-}
-
-.allLink:hover .allArrow,
-.allLink:focus-visible .allArrow {
-	transform: translate(2px, -2px);
 }
 
 /* ===================== RESPONSIVE ===================== */
@@ -328,7 +278,6 @@
 	.photo,
 	.vignette,
 	.tname,
-	.allArrow,
 	.thumb::before,
 	.thumb::after {
 		transition: none;

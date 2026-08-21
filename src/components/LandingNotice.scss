@@ -29,30 +29,28 @@
 		letter-spacing: 0.34em;
 		text-transform: uppercase;
 		color: var(--color-accent-hot);
-		text-shadow: var(--glow-red);
 		line-height: 1;
 		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
 	}
 
-	// Large poster headline — typewriter (Special Elite) to match the
-	// cinematic-noir display scale used across the relit subpages.
+	// Poster headline, Bebas — the same display voice every other page uses.
 	.headline {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-hero);
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-h2);
 		text-transform: uppercase;
-		letter-spacing: 0.01em;
-		line-height: 1.05;
+		letter-spacing: var(--track-display);
+		line-height: var(--lh-display);
 		color: var(--color-text);
+		margin: 0;
 		animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 	}
 
 	.subtext {
-		font-family: var(--font-im-fell-english), serif;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-lede);
-		font-style: italic;
-		line-height: 1.7;
-		max-width: 420px;
-		color: var(--color-grey);
+		line-height: 1.6;
+		max-width: 42ch;
+		color: rgba(240, 237, 230, 0.7);
 		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
 	}
 
@@ -62,33 +60,12 @@
 		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
 	}
 
-	.back-arrow {
-		font-size: var(--fs-label-lg);
-		transition: transform 0.25s;
-
-		.back-link:hover & {
-			transform: translateX(-2px);
-		}
-	}
-
-	// Red hairline — successor to the decorative gradient rule, now a
-	// faint glowing filament in the noir scene.
-	.decoration-line {
-		width: 56px;
-		height: 1px;
-		background: var(--rule-red);
-		box-shadow: var(--glow-red-soft);
-		margin-top: 1rem;
-		animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
-	}
-
 	@media (prefers-reduced-motion: reduce) {
 		.title,
 		.code,
 		.headline,
 		.subtext,
-		.back-link,
-		.decoration-line {
+		.back-link {
 			animation: none;
 		}
 
@@ -98,7 +75,4 @@
 			transform: none;
 		}
 
-		.back-arrow {
-			transition: none;
-		}
 	}

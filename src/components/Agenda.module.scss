@@ -1,14 +1,17 @@
-// Agenda timetable — the /sessions film-noir system rendered against a clock.
-// Desktop: a proportional time × room CSS grid (rooms as columns, 5-min rows).
-// Mobile / single-room: a time-ordered list. Colours, rules, radii, and fonts
-// come from BaseLayout tokens (no fifth font); the only literals are the card
-// gradient's `#070606` end-stop and the grain/glow rgba()s, both copied verbatim
-// from Sessions.module.scss so the cards match /sessions exactly.
+// Agenda timetable — the site's ruled-sheet language rendered against a clock.
+// Desktop: a proportional time × room grid (rooms as columns, 5-min rows) drawn
+// as ONE ruled sheet: hour hairlines run the full width, a hairline separates
+// each room column, and a talk is a lit block with a spine, not a floating card.
+// Mobile / single-room: the same ledger every other list on the site uses.
+//
+// This page was the last one still speaking the old language — rounded panels
+// with four-sided borders, drop shadows, pill tags and a red timestamp on every
+// cell. See CLAUDE.md "Ruled rows" and "Red is spent once per list".
 
 /* ===================== TZ NOTE ===================== */
 .tzNote {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.72rem;
+	font-size: var(--fs-label);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.55);
@@ -24,15 +27,43 @@
 	-webkit-overflow-scrolling: touch;
 }
 
+// gap: 0 — the sheet is continuous and the rules do the separating. With a 4px
+// gap the cells read as tiles scattered on black instead of entries on a
+// timetable.
 .grid {
 	display: grid;
 	position: relative;
-	gap: 4px;
+	gap: 0;
 	min-width: min-content;
 	padding-bottom: 0.5rem;
 }
 
-// Sticky room-name header row.
+/* ---- the sheet's own ruling ---- */
+// Full-width hairline at each hour, and a vertical hairline down each room
+// column. Both are decorative overlays behind the entries (z-index 0), so an
+// empty slot still reads as part of the sheet rather than as a hole.
+.hourRule {
+	align-self: start;
+	height: 0;
+	border-top: 1px solid var(--rule-soft);
+	pointer-events: none;
+	z-index: 0;
+}
+
+.colRule {
+	border-left: 1px solid var(--rule-soft);
+	pointer-events: none;
+	z-index: 0;
+}
+
+// Room names: a mono label on a rule. It was set in Special Elite (the body
+// face) on a gradient panel with a red under-edge and a corner radius.
+//
+// `top: 0`, NOT an offset clearing the fixed site header: `.scroller` is the
+// sticky containing block (an `overflow-x: auto` box computes `overflow-y` to
+// `auto` too) and it never scrolls vertically, so any positive `top` just
+// shunts the header row down over the first hour of the sheet instead of
+// pinning it anywhere.
 .headCell {
 	position: sticky;
 	top: 0;
@@ -40,72 +71,68 @@
 	grid-row: 1;
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	text-align: center;
-	font-family: var(--font-special-elite), cursive;
-	font-size: 0.95rem;
-	letter-spacing: 0.02em;
+	font-family: var(--font-jetbrains-mono), monospace;
+	// A room name heads a 409px column; at label size it was the same step as
+	// the meta inside the cells under it.
+	font-size: var(--fs-ui);
+	letter-spacing: 0.2em;
 	text-transform: uppercase;
-	color: var(--color-text);
-	background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
-	border: 1px solid var(--rule);
-	border-bottom-color: var(--rule-red);
-	border-radius: var(--radius);
-	padding: 0.6rem 0.5rem;
+	color: rgba(240, 237, 230, 0.78);
+	background: transparent;
+	border-bottom: 1px solid var(--rule-strong);
+	padding: 1rem 0.9rem 0.8rem;
 }
 
 .headCorner {
 	grid-column: 1;
 	background: transparent;
-	border: none;
+	border-bottom: 1px solid var(--rule-strong);
 }
 
-// Hour ticks in the time gutter.
+// Hour ticks in the time gutter. The hairline is drawn by `.hourRule` across
+// the whole sheet now, so the tick is just the numeral.
 .tick {
 	grid-column: 1;
 	align-self: start;
+	position: relative;
+	z-index: 1;
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-variant-numeric: tabular-nums;
-	font-size: 0.72rem;
-	letter-spacing: 0.06em;
+	font-size: var(--fs-label-lg);
+	letter-spacing: 0.1em;
 	color: rgba(240, 237, 230, 0.5);
-	padding-top: 2px;
-	// A hairline pulling the eye across to the columns.
-	border-top: 1px solid var(--rule-soft);
+	padding: 0.35rem 0.9rem 0 0;
 }
 
 /* ===================== BAND (break / lunch / keynote) ===================== */
+// A band is the whole day stopping, so it is a full-width strip, not a tile:
+// ruled top and bottom, faintly lifted, mono. The dashed border and the
+// diagonal hatch fill went with the rest of the panel chrome.
 .band {
 	display: flex;
 	align-items: center;
-	gap: 0.9rem;
-	z-index: 1;
+	gap: 1.1rem;
+	z-index: 2;
 	padding: 0.35rem 0.9rem;
 	overflow: hidden;
-	background: repeating-linear-gradient(
-		135deg,
-		rgba(240, 237, 230, 0.04) 0,
-		rgba(240, 237, 230, 0.04) 10px,
-		transparent 10px,
-		transparent 20px
-	);
-	border: 1px dashed var(--rule);
-	border-radius: var(--radius);
+	background: rgba(240, 237, 230, 0.022);
+	border-top: 1px solid var(--rule);
+	border-bottom: 1px solid var(--rule);
 }
 
 .bandTime {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-variant-numeric: tabular-nums;
-	font-size: 0.72rem;
-	letter-spacing: 0.04em;
+	font-size: var(--fs-label-lg);
+	letter-spacing: 0.1em;
 	color: rgba(240, 237, 230, 0.55);
 	flex-shrink: 0;
 }
 
 .bandTitle {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.74rem;
-	letter-spacing: 0.16em;
+	font-size: var(--fs-ui);
+	letter-spacing: 0.18em;
 	text-transform: uppercase;
 	color: var(--color-cream);
 	white-space: nowrap;
@@ -114,55 +141,119 @@
 }
 
 /* ===================== CELL (talk button) ===================== */
+// A talk is a lit block ruled at its START time, running down to its end — the
+// one thing a timetable has to show, carried on the time axis where the reader
+// is already looking. Flat: no radius, no four-sided border, no drop shadow.
+// Reached, it lights and its bottom rule draws red, the same mark the ticket
+// ledger and the session rows use.
+//
+// The mark is a TOP rule, not a left spine. A bar down one edge of a block is
+// the shape this language exists to avoid (CLAUDE.md bans it, naming these very
+// cards), and it stays the tell in a neutral colour as much as in red — the
+// fill already shows how far the talk runs, so the bar was carrying nothing.
 .cell {
+	position: relative;
 	z-index: 2;
 	display: flex;
 	flex-direction: column;
-	gap: 0.2rem;
+	gap: 0.35rem;
 	min-height: 0;
 	margin: 0;
-	padding: 0.5rem 0.6rem;
+	padding: 0.7rem 0.9rem 0.85rem;
 	text-align: left;
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
 	overflow: hidden;
-	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 88%);
-	border: 1px solid var(--rule);
-	border-left: 2px solid var(--rule-red);
-	border-radius: var(--radius);
-	transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+	background: rgba(240, 237, 230, 0.032);
+	border: 0;
+	border-top: 1px solid var(--rule-strong);
+	border-radius: 0;
+	transition: background 0.24s ease, border-color 0.24s ease;
 
-	&:hover,
-	&:focus-visible {
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft);
-		outline: none;
+	// Light washes in from the left when the entry is reached.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			104deg,
+			rgba(255, 244, 232, 0.07) 0%,
+			rgba(255, 240, 226, 0.03) 42%,
+			transparent 86%
+		);
+		opacity: 0;
+		pointer-events: none;
+		z-index: 0;
+		transition: opacity 0.28s ease;
 	}
 
+	// …and its own bottom rule takes the mark.
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 1px;
+		background: var(--color-accent);
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	&:hover::before,
+	&:focus-visible::before {
+		opacity: 1;
+	}
+
+	&:hover::after,
+	&:focus-visible::after {
+		transform: scaleX(1);
+	}
+
+	&:hover,
+	// INSET, not one of the --focus-gap steps: this cell butts against its
+	// neighbours in the timetable grid, so a ring outside the box would sit on
+	// top of the cell next door.
 	&:focus-visible {
+		border-top-color: var(--rule-red);
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 2px;
+		outline-offset: -2px;
+	}
+
+	// Keep the copy above the light layer.
+	> * {
+		position: relative;
+		z-index: 1;
 	}
 }
 
+// Muted, like the ticket ledger's serial. It was accent-hot on every cell of
+// the sheet, which is the accent spent thirty times over — red belongs to the
+// session that is actually on now.
 .cellTime {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-variant-numeric: tabular-nums;
-	font-size: 0.68rem;
-	letter-spacing: 0.04em;
-	color: var(--color-accent-hot);
+	// The ticket ledger sets its serial at --fs-label-lg; this is the same
+	// index role.
+	font-size: var(--fs-label-lg);
+	letter-spacing: 0.1em;
+	color: rgba(240, 237, 230, 0.55);
 }
 
 .cellTitle {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.02rem;
-	line-height: 1.08;
+	font-size: var(--fs-card-title);
+	line-height: 1.04;
 	letter-spacing: 0.02em;
+	text-transform: uppercase;
 	color: var(--color-text);
+	// Two lines, not three: at this size a third line is 32px, which is a fifth
+	// of a half-hour cell and pushed the speakers out of every short talk.
 	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	line-clamp: 3;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 }
@@ -170,9 +261,9 @@
 .cellSpeakers {
 	min-width: 0;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.64rem;
-	letter-spacing: 0.02em;
-	line-height: 1.3;
+	font-size: var(--fs-label);
+	letter-spacing: 0.04em;
+	line-height: 1.35;
 	color: var(--color-grey);
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
@@ -185,20 +276,35 @@
 .tags {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.3rem;
+	// Wide enough for the separator dot between labels to sit in.
+	gap: 0.2rem 1.1rem;
 }
 
+// A plain mono label, not a boxed chip. It used to be a bordered, rounded,
+// filled tag — a pill is a different product's vocabulary, and this one was
+// repeated two or three times on EVERY cell and every mobile row, which is a
+// decoration applied without variation. It also has to match the session sheet,
+// where the tags are one mono line beside the room: a talk should not change
+// shape when the visitor opens it.
 .tag {
+	position: relative;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.58rem;
-	letter-spacing: 0.08em;
+	font-size: var(--fs-label-sm);
+	letter-spacing: 0.16em;
 	text-transform: uppercase;
-	color: var(--color-grey);
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid var(--rule);
-	border-radius: 999px;
-	padding: 0.1rem 0.5rem;
+	color: rgba(240, 237, 230, 0.55);
 	white-space: nowrap;
+
+	& + .tag::before {
+		content: '';
+		position: absolute;
+		left: -0.55rem;
+		top: 50%;
+		width: 3px;
+		height: 3px;
+		transform: translateY(-50%);
+		background: rgba(240, 237, 230, 0.3);
+	}
 }
 
 .cellFoot,
@@ -215,13 +321,13 @@
 	flex-shrink: 0;
 
 	.avatar + .avatar {
-		margin-left: -8px;
+		margin-left: -9px;
 	}
 }
 
 .avatar {
-	width: 22px;
-	height: 22px;
+	width: 26px;
+	height: 26px;
 	border-radius: 50%;
 	object-fit: cover;
 	object-position: center 22%;
@@ -236,64 +342,45 @@
 
 .avatarMono {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 0.58rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.02em;
-	color: rgba(242, 239, 233, 0.66);
+	color: var(--ink-monogram-sm);
 	filter: none;
 }
 
 /* ===================== LIST (mobile / single-room) ===================== */
+// The same open field as /sessions, /faq and the ticket waves — `.field` in
+// BaseLayout.scss.
 .list {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
+	gap: 0;
 }
 
 .item {
 	display: flex;
 	align-items: flex-start;
-	gap: 1rem;
+	gap: clamp(1rem, 3vw, 2rem);
 	width: 100%;
 	margin: 0;
-	padding: 0.85rem 1rem;
 	text-align: left;
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
-	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 88%);
-	border: 1px solid var(--rule);
-	border-left: 2px solid var(--rule-red);
-	border-radius: var(--radius);
-	transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-	&:hover,
-	&:focus-visible {
-		border-color: var(--rule-red);
-		box-shadow: var(--glow-red-soft);
-		outline: none;
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 2px;
-	}
 }
 
-// Non-interactive band row in the list.
+// A band is information, not a control — it takes no reach field and no mark.
 .itemBand {
 	cursor: default;
-	border-left-color: var(--rule);
-	border-style: dashed;
-	background: repeating-linear-gradient(
-		135deg,
-		rgba(240, 237, 230, 0.04) 0,
-		rgba(240, 237, 230, 0.04) 10px,
-		transparent 10px,
-		transparent 20px
-	);
+	background: rgba(240, 237, 230, 0.022);
+
+	&::before { content: none; }
+
+	&:hover {
+		.itemTime,
+		.itemTitle,
+		.itemMeta {
+			color: inherit;
+		}
+	}
 }
 
 .itemTime {
@@ -301,95 +388,91 @@
 	min-width: 5.5rem;
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-variant-numeric: tabular-nums;
-	font-size: 0.74rem;
-	letter-spacing: 0.03em;
-	color: var(--color-accent-hot);
-	padding-top: 0.15rem;
+	font-size: var(--fs-label-lg);
+	letter-spacing: 0.1em;
+	color: rgba(240, 237, 230, 0.55);
+	// Drops the mono time onto the Bebas title's cap-height. A band's title is
+	// mono at label size, so there it sits on the first line already.
+	padding-top: 0.5rem;
 
 	.itemBand & {
-		color: rgba(240, 237, 230, 0.55);
+		padding-top: 0;
 	}
 }
 
 .itemMain {
 	display: flex;
 	flex-direction: column;
-	gap: 0.25rem;
+	gap: 0.45rem;
 	min-width: 0;
+	flex: 1;
 }
 
+// The long-list row step, shared with the session rows, the FAQ questions and
+// the press clippings. It ran at 20px, half of what the same construct is set
+// at everywhere else.
 .itemTitle {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: 1.25rem;
-	line-height: 1.08;
+	font-size: var(--fs-row-sm);
+	line-height: 1.06;
 	letter-spacing: 0.02em;
+	text-transform: uppercase;
 	color: var(--color-text);
 
 	.itemBand & {
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: 0.8rem;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
+		font-size: var(--fs-ui);
+		letter-spacing: 0.18em;
 		color: var(--color-cream);
 	}
 }
 
 .itemMeta {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.7rem;
-	letter-spacing: 0.02em;
+	font-size: var(--fs-label);
+	letter-spacing: 0.04em;
 	line-height: 1.4;
 	color: var(--color-grey);
 }
 
 /* ===================== NOT-YET-SCHEDULED ===================== */
 .unscheduled {
-	margin-top: 2.6rem;
-	padding-top: 1.6rem;
-	border-top: 1px solid var(--rule-soft);
+	margin-top: clamp(2.6rem, 5vw, 4rem);
 }
 
 .unscheduledHead {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.7rem;
-	letter-spacing: 0.22em;
+	font-size: var(--fs-label);
+	letter-spacing: 0.24em;
 	text-transform: uppercase;
-	color: var(--color-accent-hot);
-	margin: 0 0 1rem;
+	color: rgba(240, 237, 230, 0.55);
+	margin: 0 0 1.2rem;
 }
 
+// A short open field of its own rather than a wrap of bordered chips. The one
+// rule kept anywhere in a list: this section has no head of its own beyond a
+// mono caption, so the hairline is the caption's underline, not a row rule.
 .unscheduledList {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.6rem;
+	border-top: 1px solid var(--rule-strong);
 }
 
+// Rhythm, reach field, ink inversion and focus ring come from
+// `.field-row--link` in BaseLayout.scss; only the type is local.
 .unscheduledItem {
-	font-family: var(--font-im-fell-english), serif;
-	font-size: 0.98rem;
-	color: var(--color-grey);
+	display: block;
+	width: 100%;
+	font-family: var(--font-bebas-neue), sans-serif;
+	// The long-list row step, shared with /sessions, the FAQ and the press
+	// clippings — this is the same open field, so it is set the same way.
+	font-size: var(--fs-row-sm);
+	line-height: 1.06;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--color-text);
 	text-align: left;
-	background: rgba(255, 255, 255, 0.02);
-	border: 1px solid var(--rule);
-	border-radius: var(--radius);
-	padding: 0.5rem 0.85rem;
 	cursor: pointer;
-	transition: color 0.2s ease, border-color 0.2s ease;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-text);
-		border-color: var(--rule-red);
-		outline: none;
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 2px;
-	}
+	// Shorter than a full row: these are titles alone, with no meta under them.
+	--field-step: clamp(1.1rem, 2vw, 1.5rem);
 }
 
 /* ===================== NOW LINE + LIVE / COMING-UP ===================== */
@@ -409,13 +492,12 @@
 	top: -0.62rem;
 	left: 0;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.56rem;
+	font-size: var(--fs-label-sm);
 	letter-spacing: 0.16em;
 	text-transform: uppercase;
 	color: var(--on-accent);
 	background: var(--color-accent-hot);
-	padding: 0.05rem 0.38rem;
-	border-radius: var(--radius);
+	padding: 0.05rem 0.4rem;
 }
 
 // Time + badge row at the top of a cell.
@@ -430,88 +512,82 @@
 	display: flex;
 	align-items: baseline;
 	justify-content: space-between;
-	gap: 0.5rem;
+	gap: 0.75rem;
 }
 
+// A status word on a rule — never a filled pill. Same shape as the ticket
+// ledger's "On sale".
 .badge {
 	flex-shrink: 0;
 	display: inline-flex;
 	align-items: center;
-	gap: 0.28rem;
+	gap: 0.3rem;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.54rem;
-	letter-spacing: 0.13em;
+	font-size: var(--fs-label-sm);
+	letter-spacing: 0.16em;
 	text-transform: uppercase;
-	padding: 0.1rem 0.42rem;
-	border-radius: 999px;
+	padding-bottom: 0.22rem;
 	white-space: nowrap;
 }
 
 .badgeLive {
-	color: var(--on-accent);
-	background: var(--color-accent);
-	border: 1px solid var(--color-accent-hot);
+	color: var(--color-accent-hot);
+	border-bottom: 1px solid var(--color-accent);
 }
 
 .badgeComing {
-	color: var(--color-cream);
-	background: rgba(255, 255, 255, 0.04);
-	border: 1px solid var(--rule-strong);
+	color: rgba(240, 237, 230, 0.72);
+	border-bottom: 1px solid var(--rule-strong);
 }
 
 .liveDot {
 	width: 5px;
 	height: 5px;
 	border-radius: 50%;
-	background: var(--on-accent);
+	background: var(--color-accent-hot);
 	animation: agendaLivePulse 1.4s ease-out infinite;
 }
 
 @keyframes agendaLivePulse {
 	0% {
-		box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+		box-shadow: 0 0 0 0 rgba(255, 17, 17, 0.6);
 	}
 	70% {
-		box-shadow: 0 0 0 5px rgba(255, 255, 255, 0);
+		box-shadow: 0 0 0 5px rgba(255, 17, 17, 0);
 	}
 	100% {
-		box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+		box-shadow: 0 0 0 0 rgba(255, 17, 17, 0);
 	}
 }
 
-// The session on now gets a stronger red edge + glow.
-.cellLive,
-.itemLive {
-	border-color: var(--rule-red);
+// The session on now is the ONE entry that gets the accent: the rule it opens
+// on goes red, and it keeps a faint glow.
+.cellLive {
+	border-top-color: var(--color-accent);
 	box-shadow: var(--glow-red-soft);
 }
 
+.itemLive {
+	border-bottom-color: var(--rule-red);
+}
+
 .bandLive {
-	border-style: solid;
 	border-color: var(--rule-red);
 }
 
-/* ===================== CROSS-LINK ===================== */
-.crosslink {
-	display: flex;
-	justify-content: center;
-	margin-top: 2.8rem;
-}
-
 /* ===================== STATES ===================== */
+// Left-set, like every other block on the site.
 .status {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: flex-start;
 	gap: 1.4rem;
-	text-align: center;
 	font-family: var(--font-im-fell-english), serif;
-	font-style: italic;
-	font-size: 1.2rem;
+	font-size: var(--fs-lede);
 	line-height: 1.7;
 	color: var(--color-grey);
 	max-width: 52ch;
-	margin: 2rem auto 0;
+	margin: 1rem 0 0;
 
 	p {
 		margin: 0;
@@ -523,7 +599,7 @@
 	align-items: center;
 	gap: 0.55rem;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: 0.82rem;
+	font-size: var(--fs-label-lg);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.6);
@@ -580,5 +656,12 @@
 	.liveDot {
 		transition: none;
 		animation: none;
+	}
+
+	// The cell's red rule mark is motion. Without it the cell still resolves:
+	// focus keeps its ring, and the live entry keeps its spine. The list rows
+	// take their reduced-motion handling from `.field-row--link`.
+	.cell::after {
+		transition: none;
 	}
 }

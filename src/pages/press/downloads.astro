@@ -1,7 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SubpageHero from '../../components/SubpageHero.astro';
+import Ticker from '../../components/Ticker.astro';
+import Closer from '../../components/Closer.astro';
 import { listPressKit } from '../../lib/press-kit';
+import { EVENT_TOPICS } from '../../lib/ticker';
 
 // Downloads are read from public/press-kit/ at build time — drop a file in
 // that folder and it shows up here automatically (label, type and size are
@@ -13,17 +16,19 @@ const pressKit = await listPressKit();
 	title="Press kit — DevFest.cz 2026"
 	description="Download the DevFest.cz 2026 press kit — official logos, wordmarks, and vector source files for media use."
 >
-	<main class="downloads-page">
+	<main class="page-stack">
 		<SubpageHero
-			label="Press kit"
-			titleHtml={'Logos &amp; <span class="red">assets</span>.'}
+			titleHtml={'Logos &amp; <span class="red">assets.</span>'}
 			lede="Official DevFest.cz 2026 logos and wordmarks. Please keep the logo intact, give it room to breathe, and don't recolour it. Missing a format? Email the press desk."
 			seoHeading="DevFest.cz 2026 Press Kit & Brand Assets"
 			titleId="downloads-title"
+			photo={false}
 		/>
 
-		<section class="press-body" aria-label="Press kit downloads">
-			<div class="press-inner">
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
+		<section class="band band--lit press-body" aria-label="Press kit downloads">
+			<div class="band-inner">
 				<a class="back-link" href="/press">&larr; Back to press</a>
 
 				{pressKit.length > 0 ? (
@@ -33,7 +38,7 @@ const pressKit = await listPressKit();
 							Asset library
 							<span class="section-no">{String(pressKit.length).padStart(2, '0')}</span>
 						</p>
-						<h2 class="section-title">Download <span class="red">files</span>.</h2>
+						<h2 class="section-title">Download <span class="red">files.</span></h2>
 					</div>
 					<ul class="presskit-grid reveal">
 						{pressKit.map((a) => (
@@ -69,6 +74,15 @@ const pressKit = await listPressKit();
 				)}
 			</div>
 		</section>
+
+		<Closer
+			eyebrow="Missing something"
+			titleHtml={'Ask the<br /><span class="red">press desk</span>.'}
+			note="Need a format we have not published, or a quote for a story? Write to us."
+			tone="accent"
+			titleId="downloads-closer"
+			actions={[{ href: 'mailto:devfest@gug.cz', label: 'Email the desk' }, { href: '/press', label: 'Back to press', kind: 'ghost' }]}
+		/>
 	</main>
 </BaseLayout>
 

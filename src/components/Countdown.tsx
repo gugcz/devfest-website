@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import s from './Countdown.module.scss';
 
 const TARGET = new Date('2026-10-30T09:00:00+01:00').getTime();
@@ -25,53 +25,12 @@ function calcTimeLeft(): TimeLeft {
 	};
 }
 
-const UNITS: { key: keyof TimeLeft; label: string; code: string }[] = [
-	{ key: 'days', label: 'Days', code: 'DD' },
-	{ key: 'hours', label: 'Hours', code: 'HR' },
-	{ key: 'minutes', label: 'Minutes', code: 'MN' },
-	{ key: 'seconds', label: 'Seconds', code: 'SC' },
+const UNITS: { key: keyof TimeLeft; label: string }[] = [
+	{ key: 'days', label: 'Days' },
+	{ key: 'hours', label: 'Hrs' },
+	{ key: 'minutes', label: 'Min' },
+	{ key: 'seconds', label: 'Sec' },
 ];
-
-interface StampDigitProps {
-	value: string;
-	idx: number;
-	code: string;
-}
-
-function StampDigit({ value, idx, code }: StampDigitProps) {
-	const [prev, setPrev] = useState(value);
-	const [animKey, setAnimKey] = useState(0);
-	const settleTimeoutRef = useRef<number | undefined>(undefined);
-
-	useEffect(() => {
-		if (value !== prev) {
-			setAnimKey((k) => k + 1);
-			window.clearTimeout(settleTimeoutRef.current);
-			settleTimeoutRef.current = window.setTimeout(() => setPrev(value), 220);
-		}
-		return () => window.clearTimeout(settleTimeoutRef.current);
-	}, [value, prev]);
-
-	const stamping = value !== prev;
-	const tilt = idx % 2 === 0 ? '-0.45deg' : '0.5deg';
-
-	return (
-		<div
-			className={`${s.card} ${stamping ? s.cardJolting : ''}`}
-			style={{ '--card-tilt': tilt } as React.CSSProperties}
-		>
-			<div className={s.cardStamp} aria-hidden="true">
-				<span className={s.cardStampText}>{code}</span>
-			</div>
-			<span
-				className={`${s.digit} ${stamping ? s.digitStamping : ''}`}
-				key={animKey}
-			>
-				{value}
-			</span>
-		</div>
-	);
-}
 
 const INITIAL_TIME: TimeLeft = { days: '000', hours: '00', minutes: '00', seconds: '00' };
 
@@ -84,21 +43,23 @@ export default function Countdown() {
 		return () => clearInterval(id);
 	}, []);
 
-	// Animated digits are decorative — screen readers get the static
-	// "doors open" sentence below. A per-second aria-label would spam AT
-	// without adding value, since the exact date is already given.
+	// The clock is decorative — screen readers get the static "doors open"
+	// sentence instead. A per-second aria-label would spam AT without adding
+	// value, since the exact date is already given.
+	//
+	// Set as one continuous readout (069:22:43:21) rather than four bordered
+	// stubs: the stub carried a red header strip and a stamped-in digit
+	// animation per tick, which read as chrome around the number instead of
+	// the number itself.
 	return (
 		<>
 			<span className={s.srOnly}>Doors open on 30 October 2026 at 9:00 AM Central European Time.</span>
 			<div className={s.countdown} aria-hidden="true">
-				{UNITS.map(({ key, label, code }) => (
+				{UNITS.map(({ key, label }, i) => (
 					<Fragment key={key}>
+						{i > 0 && <span className={s.sep}>:</span>}
 						<div className={s.unit}>
-							<div className={s.cards}>
-								{time[key].split('').map((d, idx) => (
-									<StampDigit key={`${key}-${idx}`} value={d} idx={idx} code={code} />
-								))}
-							</div>
+							<span className={s.value}>{time[key]}</span>
 							<span className={s.label}>{label}</span>
 						</div>
 					</Fragment>
