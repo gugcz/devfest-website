@@ -49,6 +49,13 @@
 // Full-bleed, NOT measure-width: the bar is sticky over scrolling copy, so it
 // needs a scrim that runs to both viewport edges. The close still lands on the
 // measure's right axis because the inset is padding, not `max-width`.
+//
+// That inset is `(100% - --maxw) / 2` and NOT `… + --gutter`: the page's own
+// column is the full --maxw (`.band` carries the gutter, `.band-inner` carries
+// the cap), so a list row's right edge sits exactly --maxw/2 from centre. Add a
+// gutter on top and the Close closes one gutter inside the row that opened the
+// sheet. The `max()` keeps the plain gutter once the viewport is narrower than
+// the measure.
 .bar {
 	position: sticky;
 	top: 0;
@@ -56,7 +63,7 @@
 	display: flex;
 	justify-content: flex-end;
 	width: 100%;
-	padding: clamp(1.1rem, 2.5vh, 2rem) max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter)))
+	padding: clamp(1.1rem, 2.5vh, 2rem) max(var(--gutter), calc((100% - var(--maxw)) / 2))
 		clamp(0.9rem, 2vh, 1.5rem);
 }
 
@@ -117,7 +124,12 @@
 // its own grid on top (SpeakerDetail's portrait/person split).
 .content {
 	width: 100%;
-	max-width: var(--maxw);
+	// The gutter is INSIDE this box, so the cap has to carry it: a plain
+	// `max-width: var(--maxw)` here is 1440 MINUS two gutters of column, which
+	// left the sheet's ink one gutter inside the row that opened it. The page's
+	// own bands put the padding on the outer box and the cap on `.band-inner`;
+	// this is the one-box equivalent, and it agrees with `.bar` above.
+	max-width: calc(var(--maxw) + 2 * var(--gutter));
 	margin: 0 auto;
 	padding: clamp(1.5rem, 4vh, 3rem) var(--gutter) var(--section-y);
 }
