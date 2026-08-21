@@ -66,10 +66,10 @@ const devApiMocks = () => ({
 export default defineConfig({
     site: 'https://devfest.cz',
     trailingSlash: 'never',
-    // Self-hosted, build-time-optimised replacements for the four brand faces
+    // Self-hosted, build-time-optimised replacements for the three brand faces
     // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
     // Weights/styles mirror exactly what that css2 URL requested. Only the four
-    // brand fonts are allowed — never add a fifth family here.
+    // brand fonts are allowed — never add a fourth family here.
     fonts: [
         {
             provider: fontProviders.google(),
@@ -78,13 +78,6 @@ export default defineConfig({
             weights: [400],
             styles: ['normal'],
             subsets: ['latin', 'latin-ext'],
-        },
-        {
-            provider: fontProviders.google(),
-            name: 'IM Fell English',
-            cssVariable: '--font-im-fell-english',
-            weights: [400],
-            styles: ['normal', 'italic'],
         },
         {
             provider: fontProviders.google(),

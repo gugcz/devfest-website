@@ -57,7 +57,7 @@
 	}
 
 	.empty-line {
-		font-family: var(--font-im-fell-english), serif;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-lede);
 		line-height: 1.6;
 		color: var(--color-grey);
@@ -141,7 +141,7 @@
 
 	// The headline is the row's title, so it is set like every other row's
 	// title: Bebas, uppercase, on the long-list step the session rows use. It
-	// was IM Fell at lede size — around 22px against the 54px rows elsewhere, so
+	// was reading-copy at lede size — around 22px against the 54px rows elsewhere, so
 	// the same container language read as a different site's component.
 	.coverage-title {
 		font-family: var(--font-bebas-neue), sans-serif;
@@ -162,7 +162,7 @@
 	}
 
 	.coverage-desc {
-		font-family: var(--font-im-fell-english), serif;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-body);
 		line-height: 1.5;
 		color: var(--color-grey);

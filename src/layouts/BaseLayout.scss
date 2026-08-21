@@ -12,17 +12,16 @@
 		--color-error: rgba(220, 110, 110, 0.95);
 
 		/* ============ brand typefaces ============ */
-		// The four brand faces are self-hosted via the Astro Fonts API. Each
+		// The three brand faces are self-hosted via the Astro Fonts API. Each
 		// `--font-*` custom property below is injected into :root by the
 		// matching <Font /> in BaseLayout.astro; the family names it resolves to
 		// are build-time hashes, so stylesheets must go through the variable and
 		// never through a literal 'Bebas Neue' / 'JetBrains Mono' / … string.
 		// Declared families and weights live in astro.config.mjs (`fonts`).
-		// Only these four are allowed — never introduce a fifth.
+		// Only these three are allowed — never introduce a fourth.
 		//   --font-bebas-neue        display / headline
-		//   --font-im-fell-english   editorial serif (roman + italic)
 		//   --font-jetbrains-mono    labels, meta, UI mono
-		//   --font-special-elite     body
+		//   --font-special-elite     body and long-form reading copy
 
 		/* ============ layout tokens ============ */
 		// Wider canvas than the old 1200px column. Poster-scale display type needs
@@ -494,7 +493,7 @@
 	// when the lineup endpoint is unreachable. Left-set like everything else —
 	// two of the three copies of this were centred and one was not.
 	.fallback-note {
-		font-family: var(--font-im-fell-english), serif;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-lede);
 		line-height: 1.7;
 		color: var(--color-grey);

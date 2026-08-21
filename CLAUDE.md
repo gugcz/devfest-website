@@ -244,14 +244,13 @@ Conventions / gotchas:
 - Global CSS variables (colors, type ramp, rhythm) live in `BaseLayout.scss`; React components use co-located `.module.scss` files.
 - Dark noir palette: `#050505` ground, `#F2EFE9` ink, `#CC0000` / `#FF1111` accent, film-grain + vignette overlays on `body`.
 
-**Type roles — do not mix them up.** Four faces, each with one job:
+**Type roles — do not mix them up.** Three faces, each with one job:
 
 | Face | Role |
 | ---- | ---- |
 | **Bebas Neue** | Every headline at `--fs-h3` and above: hero statement, section titles, nav destinations, figures, prices, the footer wordmark. It is condensed, which is why the poster scale works — a three-word statement fits the column at 8rem. |
-| **Special Elite** | Body and lede copy. The brand's typewriter voice, kept as texture in the prose, never as a headline (it is wide; it wrapped a three-word title over three lines at `--fs-h2`). |
+| **Special Elite** | Body, lede and long-form reading copy (session abstracts, coverage summaries, legal prose). The brand's typewriter voice, kept as texture in the prose, never as a headline (it is wide; it wrapped a three-word title over three lines at `--fs-h2`). |
 | **JetBrains Mono** | Labels, eyebrows, meta, counts, buttons, status words. |
-| **IM Fell English** | Long-form reading copy only (session abstracts, coverage summaries, legal prose), set **roman**. |
 
 **Rules the redesign exists to keep.** These are the patterns that made the
 site read as generated; re-introducing any of them undoes the pass:
