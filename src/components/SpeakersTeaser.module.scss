@@ -19,48 +19,6 @@
 	margin: 0 auto;
 }
 
-/* ===================== MASTHEAD ===================== */
-// A newspaper masthead band, because that is what the campaign's speaker
-// announcements ARE on socials: a front page with a masthead, a volume number
-// and a dateline. Nothing on the site spoke that language.
-//
-// Rules top and bottom — a masthead is closed by rules; this is not the ledger
-// opening the redesign took off the LISTS. The head below it therefore runs
-// without `--ruled`, or the section would open on three hairlines.
-.masthead {
-	display: flex;
-	align-items: baseline;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	gap: 0.5rem clamp(1rem, 3vw, 2rem);
-	margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
-	padding: clamp(0.7rem, 1.4vw, 1rem) 0;
-	border-top: 1px solid var(--rule);
-	border-bottom: 1px solid var(--rule);
-}
-
-// Bebas at --fs-h3 — the bottom of the face's documented range, and a clear
-// step under the --fs-h2 statement beneath it. A masthead that matched the
-// headline would be two titles stacked.
-.mastheadName {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-h3);
-	line-height: 1;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	color: var(--color-text);
-}
-
-// The dateline. 0.55 is the muted-mono floor that still clears 4.5:1 on the
-// section ground — see the note on the tier captions in index.scss.
-.mastheadMeta {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.24em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
-}
-
 /* ===================== HEAD ===================== */
 // Two columns on one baseline: the statement left, the lede and the way out
 // right — `.head-split` in BaseLayout.scss, shared with the ticket section and

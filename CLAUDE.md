@@ -432,25 +432,6 @@ footer, which read as unfinished and left the thin pages (contact, downloads)
 mostly empty. `/privacy-policy` is the deliberate exception — a legal document
 does not get a CTA.
 
-**The masthead is the one print device, and it belongs to the lineup.** The
-campaign's speaker announcements on LinkedIn are full newspaper front pages —
-masthead, `VOL. #11`, dateline, boxed talk title — and the site had no print
-vocabulary anywhere, which was the widest gap between the two. `SpeakersTeaser`
-opens on that band: `.masthead` / `.mastheadName` / `.mastheadMeta`, Bebas at
-`--fs-h3` left, muted mono dateline right, closed by a hairline top and bottom.
-
-- Those rules are a MASTHEAD, not the ledger opening the redesign took off the
-  lists. They are also why the head under it runs `head-split` **without**
-  `--ruled` — a masthead band plus a head rule is three hairlines in 200px.
-- `--fs-h3` is deliberate: the bottom of Bebas's documented range, and a clear
-  step under the `--fs-h2` statement beneath it. A masthead at the headline's
-  size is two titles stacked.
-- It is called *The DevFest Chronicle*, not the posts' literal
-  `PRESS · CHRONICLE` — the site has a `/press` destination and the two would
-  read as the same thing.
-- **One masthead per page.** It marks the lineup; repeated on every section it
-  is the eyebrow-with-a-hairline all over again.
-
 **One photograph, five crops.** `HeroBackground` takes a `focus`
 (`background-position`), passed through by `SubpageHero`. Five subpages running
 the identical crop of `/hero-detective.webp` is what made them read as one
