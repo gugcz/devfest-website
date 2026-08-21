@@ -102,7 +102,7 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 			<div className={`${sheet.content} ${s.split}`}>
 				{/* Receives the morph from the lineup print — see usePortraitMorph
 				    in Speakers.tsx for why the name lives here only while open. */}
-				<div className="print" style={{ viewTransitionName: PORTRAIT_TRANSITION }}>
+				<div className={`print ${s.plate}`} style={{ viewTransitionName: PORTRAIT_TRANSITION }}>
 					{showPhoto ? (
 						<img
 							className={s.photo}
