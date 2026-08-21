@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
-import Desk from '../components/Desk.astro';
 import Closer from '../components/Closer.astro';
 import { fetchOg } from '../lib/og';
 import { EVENT_TOPICS } from '../lib/ticker';
@@ -88,8 +87,8 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 
 
 		<!-- IN THE PRESS + DESK + PRESS KIT -->
-		<section class="band band--lit" aria-label="Press desk and press kit">
-			<div class="band-inner press-inner">
+		<section class="band band--lit" aria-label="Press coverage">
+			<div class="band-inner">
 								<!-- MEDIA COVERAGE -->
 				<section class="press-section" aria-labelledby="coverage-heading">
 					<header class="section-head">
@@ -132,31 +131,6 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 						</div>
 					)}
 				</section>
-					<!-- DESK: MEDIA ENQUIRIES + PRESS KIT -->
-					<section class="press-section" aria-labelledby="desk-heading">
-						<header class="section-head">
-							<h2 id="desk-heading" class="section-title">Press desk</h2>
-						</header>
-						<div class="field desk-grid reveal">
-							<Desk
-								label="Media enquiries"
-								title="Talk to us"
-								titleId="enquiries-heading"
-								level={3}
-								desc="Interviews, quotes, press passes, fact-checks, and media partnerships."
-								contacts={[{ name: 'Press desk', email: 'devfest@gug.cz' }]}
-							/>
-							<Desk
-								label="Press kit"
-								title="Logos & wordmarks"
-								titleId="presskit-heading"
-								level={3}
-								desc="Logos and wordmarks for the 2026 edition. Please keep the logo intact and give it room to breathe."
-								action={{ href: '/press/downloads', label: 'Open the press kit' }}
-							/>
-						</div>
-					</section>
-
 			</div>
 		</section>
 

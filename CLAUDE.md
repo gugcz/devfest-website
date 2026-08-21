@@ -402,7 +402,7 @@ other, and the two-column split was 0.95/1.05 against 1.15/0.85.
 
 | | |
 | --- | --- |
-| `Desk.astro` | one inbox: label, name, blurb, addresses on the right axis (or one `action` link). `/contact` runs three, `/press` two. Takes `.field-row--holds` — a desk CONTAINS its controls |
+| `Desk.astro` | one inbox: label, name, blurb, addresses on the right axis (or one `action` link). `/contact` runs three. Takes `.field-row--holds` — a desk CONTAINS its controls. `/press` used to run two and dropped them: its press-kit link and desk address were already the closing red band's two actions |
 | `.field` / `.field-row` | the open-field list and row, above |
 | `.head-split` / `.head-title` / `.head-note` | the two-column section head — statement left, one line right. Used by the ticket section, the speakers teaser, the gallery and the `/contact` desks. `--ruled` closes it with a hairline. Compose the title with `.display` |
 | `.head-stack` | the ONE-column section head, closed by a hairline. `/agenda`, `/sessions` and `/speakers` each kept their own `-header` / `-eyebrow` / `-heading` trio with identical bodies while `.eyebrow` / `.display` / `.head-title` sat unused beside them |

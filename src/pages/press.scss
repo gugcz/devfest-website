@@ -5,15 +5,6 @@
 	/* ===================== SECTIONS ===================== */
 	// 4rem, the homepage's section-head gap. At 2rem this page was running its
 	// heads at half the site's spacing while carrying the same 112px title.
-	// Measure and centring come from `.band-inner`; this adds the one thing that
-	// is this page's own — two sections stacked inside one body, a SECTION apart.
-	// At 5rem the coverage list and the press desk read as one long block.
-	.press-inner {
-		display: flex;
-		flex-direction: column;
-		gap: var(--section-y);
-	}
-
 	.section-head {
 		margin-bottom: 4rem;
 		padding-bottom: 1.1rem;
@@ -211,14 +202,6 @@
 		color: rgba(240, 237, 230, 0.5);
 	}
 
-	/* ===================== PRESS DESK CARDS ===================== */
-	// An open field of desks — `.field` in BaseLayout.scss; the desks themselves
-	// are `<Desk>` (src/components/Desk.astro), shared with /contact.
-	.desk-grid {
-		position: relative;
-		display: block;
-	}
-
 	@media (prefers-reduced-motion: reduce) {
 		.coverage-arrow,
 		.coverage-thumb img { transition: none; }
@@ -227,8 +210,6 @@
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		.press-inner { gap: var(--section-y-tight); }
-		.desk-grid { grid-template-columns: 1fr; gap: 1.6rem; }
 	}
 
 	@media (max-width: 600px) {

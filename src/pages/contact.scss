@@ -14,7 +14,7 @@
 	}
 
 	// An open field of desks — `.field` in BaseLayout.scss; the desks themselves
-	// are `<Desk>` (src/components/Desk.astro), shared with /press.
+	// are `<Desk>` (src/components/Desk.astro).
 	//
 	// No lamp of its own. It used to carry `--lamp` on a full-bleed
 	// ::before inset -2rem/-gutter, which is a RECTANGLE floating inside the
