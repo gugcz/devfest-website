@@ -97,12 +97,13 @@
 		margin-bottom: 0.8rem;
 	}
 
-	// Long-form legal prose is the one place the typewriter face is the wrong
-	// tool: it is a texture, and eight screens of it is hard reading. IM Fell
-	// roman is a real text serif and is already the site's long-copy face
-	// (session abstracts, press summaries).
+	// Long-form legal prose runs on the typewriter face like the rest of the
+	// site's reading copy. It is a texture, and eight screens of it is hard
+	// reading, so this page buys the readability back with rhythm rather than
+	// with a fourth face: a looser line-height and a measure tightened to 62ch
+	// (Special Elite is wide, so 70ch overran a comfortable line).
 	p {
-		font-family: var(--font-im-fell-english), serif;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-body);
 		line-height: 1.85;
 		letter-spacing: 0.01em;
@@ -110,18 +111,18 @@
 		margin-bottom: 1rem;
 		// Comfortable reading measure — keeps legal copy from running to
 		// the full column width on wide viewports.
-		max-width: 70ch;
+		max-width: 62ch;
 	}
 
 	ul {
-		font-family: var(--font-im-fell-english), serif;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-body);
 		line-height: 1.85;
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.78);
 		padding-left: 1.4rem;
 		margin-bottom: 1rem;
-		max-width: 70ch;
+		max-width: 62ch;
 	}
 
 	li + li {
@@ -160,7 +161,7 @@
 	table {
 		width: 100%;
 		border-collapse: collapse;
-		font-family: var(--font-im-fell-english), serif;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-ui);
 		color: rgba(240, 237, 230, 0.78);
 		margin-top: 1.4rem;
@@ -185,7 +186,7 @@
 
 	// Row headers read as body copy and share the soft per-row divider.
 	tbody th {
-		font-family: var(--font-im-fell-english), serif;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-ui);
 		text-transform: none;
 		letter-spacing: 0.01em;

@@ -197,8 +197,8 @@
 	}
 
 	// The asset's name is the tile's title, so it is set like one: Bebas,
-	// uppercase, on the tile step /agenda's timetable cells use. It was IM Fell
-	// at body size, which read as a caption under the preview rather than as
+	// uppercase, on the tile step /agenda's timetable cells use. It was reading
+	// copy at body size, which read as a caption under the preview rather than as
 	// the thing being downloaded.
 	.kit-label {
 		font-family: var(--font-bebas-neue), sans-serif;
@@ -263,7 +263,7 @@
 	}
 
 	.empty-line {
-		font-family: var(--font-im-fell-english), serif;
+		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-body);
 		line-height: 1.7;
 		color: var(--color-grey);
