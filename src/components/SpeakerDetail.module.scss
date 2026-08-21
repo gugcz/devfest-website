@@ -130,6 +130,16 @@
 	}
 }
 
+// Below the split breakpoint the COLUMN is the measure — see the same note in
+// SessionDetail.module.scss. Stacked, the bio has only the page inset holding
+// it, so a 56ch cap binds short of the content box and leaves a void down the
+// right that justification cannot fill.
+@media (max-width: 860px) {
+	.bio {
+		max-width: none;
+	}
+}
+
 /* ===================== TALKS ===================== */
 .sessions {
 	margin-top: clamp(2.5rem, 5vw, 4rem);
@@ -159,6 +169,16 @@
 	color: rgba(240, 237, 230, 0.6);
 	max-width: 56ch;
 	margin: 0.5rem 0 0;
+	// Same measure treatment as the bio above it — two blocks of the same face
+	// in one sheet, one justified and one ragged, reads as a fault.
+	text-align: justify;
+	hyphens: auto;
+}
+
+@media (max-width: 860px) {
+	.sessionDesc {
+		max-width: none;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
