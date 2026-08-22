@@ -7,6 +7,7 @@ import Speakers from '../components/Speakers.tsx';
 import { EVENT_TOPICS } from '../lib/ticker';
 import { getBuildLineup } from '../lib/lineup-build';
 import { pageUrl, speakersSchema } from '../lib/lineup-schema';
+import { ldJson } from '../lib/json-ld';
 
 // Read the lineup at build time so the speaker names are IN the HTML, not only
 // in what the island fetches after hydration — see `src/lib/lineup-build.ts`.
@@ -20,7 +21,7 @@ const jsonLd = speakersSchema(speakers, url);
 	title="Speakers — DevFest.cz 2026"
 	description="Meet the speakers taking the stage at DevFest.cz 2026 — Prague's community-built developer conference."
 >
-	{jsonLd && <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />}
+	{jsonLd && <script type="application/ld+json" slot="head" set:html={ldJson(jsonLd)} />}
 
 	<main class="page-stack">
 		<SubpageHero

@@ -239,7 +239,12 @@ export default function Speakers({ initialSpeakers = [] }: { initialSpeakers?: S
 			.catch((err) => {
 				if (ac.signal.aborted) return;
 				console.warn('[speakers] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
+			// A failed refetch must not delete what the server already rendered.
+			// These pages ship the lineup in their HTML now, so falling straight
+			// into the error state would take a fully-painted grid off the screen
+			// a moment after it appeared — and hand a JS-rendering crawler an
+			// error string in place of the content it was just given.
+				setState((prev) => (prev.speakers.length > 0 ? prev : { ...prev, status: 'error' }));
 			});
 		return () => ac.abort();
 	}, []);

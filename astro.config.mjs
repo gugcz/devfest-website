@@ -52,7 +52,24 @@ const a11yMockAlias = a11yMock
 // instead — needed when you are changing the functions themselves.
 const devApiMocks = () => ({
     name: 'devfest:dev-api-fixtures',
+    // `apply: 'serve'` excludes the whole plugin from a build, which is what
+    // makes the flag below trustworthy.
     apply: 'serve',
+    // The build-time lineup read (src/lib/lineup-build.ts) has to make the SAME
+    // fixtures-or-live decision this plugin makes, or a page pre-renders one
+    // thing while its island fetches another. It cannot infer that on its own:
+    // `import.meta.env.DEV` is derived from `process.env.NODE_ENV`, so a shell
+    // exporting NODE_ENV=development makes a production `astro build` look like
+    // a dev server and publish these fixtures as the real lineup. Handing the
+    // decision down as a define means the dev server is the only thing that can
+    // turn it on.
+    config() {
+        return {
+            define: {
+                __DEVFEST_API_FIXTURES__: JSON.stringify(process.env.DEVFEST_LIVE_API !== '1'),
+            },
+        };
+    },
     async configureServer(server) {
         if (process.env.DEVFEST_LIVE_API === '1') return;
         const { apiFixtureMiddleware } = await import('./scripts/a11y-mocks/api.mjs');

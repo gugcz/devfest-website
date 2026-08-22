@@ -2,13 +2,17 @@
 User-agent: *
 Allow: /
 
-# The cached JSON endpoints behind the lineup and ticket islands. They never
-# return a page, so a crawler spending requests on them gains nothing.
-Disallow: /api/
-
-# NOTE: the post-conversion pages (/thank-you, /newsletter-subscription-thank-you)
-# are deliberately NOT disallowed here. They carry `noindex` in the markup, and a
-# crawler has to be allowed to fetch a page to see that — blocking them here
-# would leave the URLs indexable-by-reference instead of dropped.
+# NOTE — deliberately NO `Disallow: /api/`.
+#
+# The lineup islands fetch /api/lineup on mount, and a renderer that executes
+# JavaScript (Googlebot does) indexes the DOM it ends up with. Blocking the
+# endpoint means that fetch fails during rendering, and what gets indexed is
+# whatever the page falls back to rather than the lineup. The pages now also
+# pre-render the lineup into their HTML, but the crawl budget saved by hiding
+# two CDN-cached JSON URLs is not worth putting that at risk.
+#
+# The post-conversion pages (/thank-you, /newsletter-subscription-thank-you)
+# are not disallowed either: they carry `noindex`, and a crawler has to be
+# allowed to fetch a page to see that.
 
 Sitemap: https://devfest.cz/sitemap-index.xml

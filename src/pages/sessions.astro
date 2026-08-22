@@ -7,11 +7,12 @@ import Sessions from '../components/Sessions.tsx';
 import { EVENT_TOPICS } from '../lib/ticker';
 import { getBuildLineup } from '../lib/lineup-build';
 import { pageUrl, sessionsSchema } from '../lib/lineup-schema';
+import { ldJson } from '../lib/json-ld';
 
 // Talk titles in the static HTML rather than only after hydration — see
 // `src/lib/lineup-build.ts`. An unreachable endpoint yields an empty programme,
 // which is the page exactly as it shipped before.
-const { sessions, speakers } = await getBuildLineup();
+const { sessions } = await getBuildLineup();
 const url = pageUrl('/sessions');
 const jsonLd = sessionsSchema(sessions, url, { name: 'DevFest.cz 2026 sessions' });
 ---
@@ -20,7 +21,7 @@ const jsonLd = sessionsSchema(sessions, url, { name: 'DevFest.cz 2026 sessions' 
 	title="Sessions — DevFest.cz 2026"
 	description="The talks and sessions on the agenda at DevFest.cz 2026 — Prague's community-built developer conference."
 >
-	{jsonLd && <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />}
+	{jsonLd && <script type="application/ld+json" slot="head" set:html={ldJson(jsonLd)} />}
 
 	<main class="page-stack">
 		<SubpageHero
@@ -45,7 +46,7 @@ const jsonLd = sessionsSchema(sessions, url, { name: 'DevFest.cz 2026 sessions' 
 
 				<!-- Server-rendered from the build-time lineup, then refetched on
 				     mount so the programme stays current between deploys. -->
-				<Sessions client:load initialSessions={sessions} initialSpeakers={speakers} />
+				<Sessions client:load initialSessions={sessions} />
 
 				{sessions.length === 0 && (
 					<noscript>

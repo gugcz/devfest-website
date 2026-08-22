@@ -5,6 +5,7 @@ import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import { EVENT_TOPICS } from '../lib/ticker';
+import { ldJson } from '../lib/json-ld';
 
 // ─────────────────────────────────────────────────────────────────────────
 // FAQ CONTENT — single source of truth: the `faq` content collection
@@ -56,7 +57,10 @@ const faqSchema = {
 		}))
 	),
 };
-const faqJsonLd = JSON.stringify(faqSchema);
+// `ldJson`, not `JSON.stringify`: the answers carry inline HTML by design, so
+// this block is the one most likely to contain a `<` that would otherwise be
+// written into the script element verbatim.
+const faqJsonLd = ldJson(faqSchema);
 ---
 
 <BaseLayout

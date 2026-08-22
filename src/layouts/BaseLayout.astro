@@ -4,7 +4,17 @@ import { ClientRouter } from 'astro:transitions';
 import CookieBanner from '../components/CookieBanner.astro';
 import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
-import { eventSchema, ID, organizationSchema, ref, SITE_URL, websiteSchema } from '../lib/event';
+import {
+	eventSchema,
+	eventStubSchema,
+	ID,
+	organizationSchema,
+	parentOrganizationSchema,
+	ref,
+	SITE_URL,
+	websiteSchema,
+} from '../lib/event';
+import { ldJson } from '../lib/json-ld';
 
 interface Props {
 	title?: string;
@@ -33,9 +43,11 @@ const ogImageAlt = "DevFest.cz 2026 conference banner";
 // them live in `src/lib/event.ts` so the lineup pages can reference the SAME
 // nodes by `@id` instead of describing a second, competing event.
 //
-// The Event node is only emitted on the home page — a subpage claiming to BE
-// the event would compete with it — while Organization + WebSite render
-// sitewide.
+// The full Event node is only emitted on the home page — a subpage claiming to
+// BE the event would compete with it. Subpages still emit a minimal stub,
+// because `WebPage.about` (and, on the lineup pages, every `performerIn` /
+// `superEvent`) references `#event`, and an `@id` no node in the document
+// defines resolves to nothing. Organization + WebSite render sitewide.
 const isHome = Astro.url.pathname === "/";
 
 // A WebPage node per document, tied into the site graph. It is what gives every
@@ -96,12 +108,13 @@ const breadcrumbSchema = !isHome && slug
 // One `@graph`, not a bare array of disconnected objects: the nodes cross-
 // reference each other by `@id`, which is what lets a crawler resolve them into
 // a single entity rather than four sightings of similar-looking things.
-const jsonLd = JSON.stringify({
+const jsonLd = ldJson({
 	"@context": "https://schema.org",
 	"@graph": [
+		parentOrganizationSchema,
 		organizationSchema,
 		websiteSchema,
-		...(isHome ? [eventSchema] : []),
+		isHome ? eventSchema : eventStubSchema,
 		webPageSchema,
 		...(breadcrumbSchema ? [breadcrumbSchema] : [])
 	]

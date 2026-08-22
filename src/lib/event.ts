@@ -19,6 +19,9 @@ export const OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 /** Stable node identifiers — the whole point of the graph. */
 export const ID = {
 	organization: `${SITE_URL}/#organization`,
+	/** GUG.cz, z.s. — the legal entity that runs the event, distinct from the
+	 * DevFest.cz brand it runs it under. */
+	parentOrganization: `${SITE_URL}/#gug`,
 	website: `${SITE_URL}/#website`,
 	event: `${SITE_URL}/#event`,
 	place: `${SITE_URL}/#venue`,
@@ -33,9 +36,20 @@ export const EVENT_END = '2026-10-30T20:00:00+01:00';
 export const EVENT_DESCRIPTION =
 	"DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML.";
 
-/** GUG.cz runs the event; DevFest.cz is the brand it runs it under. */
+/**
+ * GUG.cz runs the event; DevFest.cz is the brand it runs it under.
+ *
+ * It gets its own node rather than being inlined, because it is the value of
+ * three different properties (`Event.organizer`, `Offer.seller`,
+ * `Organization.parentOrganization`) and three inline copies of the same
+ * organisation are three organisations as far as a consumer is concerned.
+ * `organizer` in particular must stay GUG.cz: the site says throughout that the
+ * event is run by GUG.cz, and structured data that disagrees with the visible
+ * page is worse than no structured data.
+ */
 export const parentOrganizationSchema = {
 	'@type': 'Organization',
+	'@id': ID.parentOrganization,
 	name: 'GUG.cz, z.s.',
 	url: 'https://gug.cz',
 };
@@ -66,7 +80,7 @@ export const organizationSchema = {
 	image: OG_IMAGE,
 	description:
 		"DevFest.cz is Prague's community-run developer conference & festival — Web, Mobile, Cybersecurity, and AI/ML.",
-	parentOrganization: parentOrganizationSchema,
+	parentOrganization: ref(ID.parentOrganization),
 	contactPoint: {
 		'@type': 'ContactPoint',
 		email: 'devfest@gug.cz',
@@ -118,7 +132,7 @@ const offers = [
 		validFrom: '2026-07-01T00:00:00+02:00',
 		// Bump if a later wave supersedes the Regular price before the event.
 		priceValidUntil: '2026-10-30',
-		seller: parentOrganizationSchema,
+		seller: ref(ID.parentOrganization),
 	},
 ];
 
@@ -160,6 +174,33 @@ export const eventSchema = {
 	keywords:
 		'developer conference, technology conference, Prague, Czech Republic, web development, Android, Flutter, AI, machine learning, cybersecurity, DevFest',
 	location: placeSchema,
-	organizer: ref(ID.organization),
+	organizer: ref(ID.parentOrganization),
 	offers,
+};
+
+/**
+ * The Event as it appears on every page that is not the home page.
+ *
+ * Something has to define `#event` there. `WebPage.about`, the speakers'
+ * `performerIn` and every talk's `superEvent` reference it, and an `@id` that
+ * no node in the document defines is a dangling pointer — a consumer resolves
+ * `@id` within a document, not across a site, so those references would name an
+ * entity the page never describes.
+ *
+ * Deliberately minimal: enough to identify the event and to resolve `#venue`
+ * (which the talk graphs reference the same way), and nothing that would make a
+ * subpage compete with the home page for BEING the event — no offers, no
+ * description, no image.
+ */
+export const eventStubSchema = {
+	'@type': 'Event',
+	'@id': ID.event,
+	name: EVENT_NAME,
+	url: SITE_URL,
+	startDate: EVENT_START,
+	endDate: EVENT_END,
+	eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+	eventStatus: 'https://schema.org/EventScheduled',
+	location: placeSchema,
+	organizer: ref(ID.parentOrganization),
 };

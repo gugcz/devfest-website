@@ -41,13 +41,21 @@ const ENDPOINT = process.env.LINEUP_BUILD_ENDPOINT ?? 'https://devfest.cz/api/li
  * `scripts/a11y-mocks/api.mjs` (see astro.config.mjs). Read the same module
  * directly here rather than fetching production, so what the page pre-renders
  * locally matches what the island fetches locally.
+ *
+ * `__DEVFEST_API_FIXTURES__` is defined by that same dev-server plugin and by
+ * nothing else, which is the point. Do NOT re-derive dev-ness here from
+ * `import.meta.env.DEV` or `NODE_ENV`: both resolve from `process.env.NODE_ENV`
+ * (Vite sets `DEV` from it even for a build), so any shell exporting
+ * NODE_ENV=development would make a production build publish these fixtures as
+ * the real lineup — Ada Lovelace and Alan Turing in the HTML and the JSON-LD,
+ * exit code 0. A `apply: 'serve'` plugin cannot run during a build, so a flag
+ * it defines cannot be true during one.
  */
-const useFixtures =
-	process.env.A11Y_MOCK === '1' || (isDev() && process.env.DEVFEST_LIVE_API !== '1');
+declare const __DEVFEST_API_FIXTURES__: boolean | undefined;
 
-function isDev(): boolean {
-	return process.env.NODE_ENV === 'development' || import.meta.env?.DEV === true;
-}
+const useFixtures =
+	process.env.A11Y_MOCK === '1' ||
+	(typeof __DEVFEST_API_FIXTURES__ !== 'undefined' && __DEVFEST_API_FIXTURES__ === true);
 
 interface WireDoc {
 	id?: unknown;
@@ -62,19 +70,45 @@ function parseDocs<T>(raw: unknown, parse: (id: string, data: Record<string, unk
 	});
 }
 
-async function readRaw(): Promise<{ speakers?: unknown; sessions?: unknown }> {
-	if (useFixtures) {
-		const { API_FIXTURES } = await import('../../scripts/a11y-mocks/api.mjs');
-		return JSON.parse(API_FIXTURES['/api/lineup']);
-	}
-	// A hung endpoint must not hang the build; the fallback is a page that
-	// renders exactly as it did before this module existed.
+async function fetchOnce(): Promise<{ speakers?: unknown; sessions?: unknown }> {
+	// A hung endpoint must not hang the build.
 	const res = await fetch(ENDPOINT, { signal: AbortSignal.timeout(15_000) });
 	if (!res.ok) throw new Error(`lineup build fetch failed: ${res.status}`);
 	return (await res.json()) as { speakers?: unknown; sessions?: unknown };
 }
 
-/** One read per build, shared by the four pages that pre-render the lineup. */
+async function readRaw(): Promise<{ speakers?: unknown; sessions?: unknown }> {
+	if (useFixtures) {
+		const { API_FIXTURES } = await import('../../scripts/a11y-mocks/api.mjs');
+		return JSON.parse(API_FIXTURES['/api/lineup']);
+	}
+	// One retry. `cachedJsonEndpoint` answers a failed read with a 503 and the
+	// function is `minInstances: 1`, so the common failure here is a single
+	// blip rather than a sustained outage — and the cost of losing this read is
+	// a whole deploy's worth of missing structured data.
+	try {
+		return await fetchOnce();
+	} catch (err) {
+		console.warn(`[lineup-build] ${describe(err)} — retrying once`);
+		return await fetchOnce();
+	}
+}
+
+function describe(err: unknown): string {
+	if (!(err instanceof Error)) return String(err);
+	// undici reports every network fault as "fetch failed" and hides the real
+	// reason (ENOTFOUND, UND_ERR_CONNECT_TIMEOUT, …) in `cause`. Same reasoning
+	// as `functions/src/lib/errors.ts`, which is not importable from here.
+	const cause = (err as { cause?: unknown }).cause as
+		| { code?: unknown; errors?: Array<{ code?: unknown }> }
+		| undefined;
+	// A refused connection arrives as an AggregateError whose per-address errors
+	// carry the code, so read through that too.
+	const code = cause?.code ?? cause?.errors?.find((e) => e?.code)?.code;
+	return code ? `${err.message} (${String(code)})` : err.message;
+}
+
+/** One read per build, shared by `/speakers`, `/sessions` and `/agenda`. */
 let inflight: Promise<BuildLineup> | null = null;
 
 export function getBuildLineup(): Promise<BuildLineup> {
@@ -89,11 +123,26 @@ export function getBuildLineup(): Promise<BuildLineup> {
 			};
 		})
 		.catch((err) => {
-			console.warn(
-				`[lineup-build] Pre-render skipped, pages will hydrate from /api/lineup: ${
-					err instanceof Error ? err.message : String(err)
-				}`
+			// Loud, and fatal in CI. A silent fallback here is a green deploy that
+			// quietly drops every speaker and talk out of the HTML *and* deletes
+			// the ItemList graphs — the exact symptom Search Console reports as
+			// items disappearing, with nothing in the build log to explain it. The
+			// only automated check on a PR is `npm run a11y`, which runs against
+			// fixtures and can never catch this.
+			//
+			// Set LINEUP_BUILD_OPTIONAL=1 to ship anyway (an urgent hosting deploy
+			// while `/api/lineup` is down is a legitimate thing to want).
+			const reason = describe(err);
+			console.error(
+				`\n[lineup-build] ✗ Could not read ${ENDPOINT}: ${reason}\n` +
+					`[lineup-build]   /speakers, /sessions and /agenda will ship WITHOUT their\n` +
+					`[lineup-build]   pre-rendered lineup and WITHOUT their structured data.\n`
 			);
+			if (process.env.CI && process.env.LINEUP_BUILD_OPTIONAL !== '1') {
+				throw new Error(
+					`lineup pre-render failed in CI: ${reason} (set LINEUP_BUILD_OPTIONAL=1 to deploy without it)`
+				);
+			}
 			return EMPTY;
 		});
 	return inflight;

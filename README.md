@@ -135,7 +135,13 @@ Only **`secret`** (invite-only / private-link) releases are dropped — server-s
 
 ## Speakers & Sessions — Sessionize → Firestore → `/api/lineup`
 
-The `/speakers` and `/sessions` pages render client-side from **Firestore**, which a daily Cloud Function mirrors from **Sessionize**. Visitor browsers never touch Sessionize, and — like tickets — read through the cached `/api/lineup` endpoint, not the Firebase SDK.
+The `/speakers`, `/sessions` and `/agenda` pages are **pre-rendered at build time and then refreshed client-side** from **Firestore**, which a daily Cloud Function mirrors from **Sessionize**. Visitor browsers never touch Sessionize, and — like tickets — read through the cached `/api/lineup` endpoint, not the Firebase SDK.
+
+The build reads that same endpoint once (`src/lib/lineup-build.ts`) so the speaker names and talk titles are in the static HTML for crawlers; the islands' own fetch replaces the snapshot on mount. Consequences worth knowing:
+
+- **The deploy is on a daily cron** (`firebase-hosting-merge.yml`, 07:00 UTC) as well as on merge, because the baked-in copy — including its JSON-LD — is only as fresh as the last build.
+- **A failed build-time read is fatal in CI**, so a deploy can't silently ship those pages without their content and structured data. `LINEUP_BUILD_OPTIONAL=1` overrides that when you need to deploy while `/api/lineup` is down.
+- `npm run dev` and `A11Y_MOCK=1` builds read the local fixtures instead of the deployed function (`DEVFEST_LIVE_API=1` opts back in); `LINEUP_BUILD_ENDPOINT` overrides the URL. See `.env.example`.
 
 ```
 Cloud Scheduler (every day 06:00, Europe/Prague)

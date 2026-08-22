@@ -12,7 +12,8 @@
  * an unscheduled talk is listed as a plain `ListItem` with its name and nothing
  * more, which is valid and true.
  */
-import { ID, ref, SITE_URL, placeSchema } from './event';
+import { toAbsoluteIso } from './agenda';
+import { ID, ref, SITE_URL } from './event';
 import type { Session } from './sessions';
 import { visitorCategories } from './sessions';
 import type { Speaker } from './speakers';
@@ -61,21 +62,28 @@ function talkSchema(session: Session) {
 		'@type': 'Event',
 		name: session.title,
 		...(session.description ? { description: clamp(session.description) } : {}),
-		startDate: session.startsAt,
-		...(session.endsAt ? { endDate: session.endsAt } : {}),
+		// Absolute, not the naive Sessionize string: schema.org dates are instants
+		// (see `toAbsoluteIso`). The conference's own Event node is
+		// offset-qualified, so a naive child would contradict its own parent.
+		startDate: toAbsoluteIso(session.startsAt),
+		...(session.endsAt ? { endDate: toAbsoluteIso(session.endsAt) } : {}),
 		eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
 		eventStatus: 'https://schema.org/EventScheduled',
 		inLanguage: 'en',
 		superEvent: ref(ID.event),
 		organizer: ref(ID.organization),
+		// A room is a Place INSIDE the venue; a talk with no room yet is simply at
+		// the venue. Referencing `#venue` rather than re-emitting it matters: an
+		// unassigned programme would otherwise repeat the identical venue node,
+		// `@id` and all, once per talk — and two definitions of one `@id` is a
+		// worse statement than one.
 		location: session.room
 			? {
 					'@type': 'Place',
 					name: session.room,
 					containedInPlace: ref(ID.place),
-					address: placeSchema.address,
 				}
-			: placeSchema,
+			: ref(ID.place),
 		...(session.speakers.length
 			? {
 					performer: session.speakers.map((speaker) => ({
@@ -102,16 +110,25 @@ export function sessionsSchema(
 	{ name, ordered = false }: { name: string; ordered?: boolean }
 ) {
 	if (!sessions.length) return null;
+	// An undated session sorts BEFORE every dated one under a plain string
+	// compare (empty string is smallest), which is the opposite of the truth —
+	// so they go last, and `ItemListOrderAscending` is only claimed when every
+	// item actually carries a date to be ascending by.
 	const items = ordered
-		? [...sessions].sort((a, b) => a.startsAt.localeCompare(b.startsAt))
+		? [...sessions].sort((a, b) => {
+				if (!a.startsAt) return b.startsAt ? 1 : 0;
+				if (!b.startsAt) return -1;
+				return a.startsAt.localeCompare(b.startsAt);
+			})
 		: sessions;
+	const chronological = ordered && items.every((session) => Boolean(session.startsAt));
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'ItemList',
 		name,
 		url,
 		numberOfItems: items.length,
-		itemListOrder: ordered
+		itemListOrder: chronological
 			? 'https://schema.org/ItemListOrderAscending'
 			: 'https://schema.org/ItemListUnordered',
 		itemListElement: items.map((session, i) => ({

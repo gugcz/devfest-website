@@ -7,23 +7,43 @@ import Agenda from '../components/Agenda.tsx';
 import { EVENT_TOPICS } from '../lib/ticker';
 import { getBuildLineup } from '../lib/lineup-build';
 import { pageUrl, sessionsSchema } from '../lib/lineup-schema';
+import { ldJson } from '../lib/json-ld';
+import { isDisplayableSession } from '../lib/sessions';
 
 // The timetable is this page's entire content, so without a build-time read the
 // indexable HTML is a heading and a loading line — see `src/lib/lineup-build.ts`.
 // `agenda` keeps the service + plenum sessions the grid renders as bands.
-const { agenda, speakers } = await getBuildLineup();
+const { agenda } = await getBuildLineup();
 const url = pageUrl('/agenda');
-const jsonLd = sessionsSchema(agenda, url, {
-	name: 'DevFest.cz 2026 schedule',
-	ordered: true,
-});
+
+// Until Sessionize has slotted anything, the island's own `dayRange()` returns
+// null and it renders "the full schedule lands closer to the event" — so
+// pre-rendering the sessions would serialise the whole programme into the
+// page's props blob to produce a 162-byte empty state. Hand it the data only
+// once there is a grid to draw with it.
+const scheduled = agenda.filter((session) => Boolean(session.startsAt));
+const hasSchedule = scheduled.length > 0;
+
+// The schema describes the PROGRAMME, so it takes the same talks-only filter
+// `/sessions` uses: `isAgendaSession` deliberately keeps lunch, breaks and the
+// emcee's "HOST" rows because the grid draws them as bands, but publishing them
+// as programme entries states that "HOST" is a talk at this conference. And it
+// only describes what the page actually shows — an ItemList of talks on a page
+// rendering "schedule lands closer to the event" is structured data about
+// content that is not there.
+const jsonLd = hasSchedule
+	? sessionsSchema(scheduled.filter(isDisplayableSession), url, {
+			name: 'DevFest.cz 2026 schedule',
+			ordered: true,
+		})
+	: null;
 ---
 
 <BaseLayout
 	title="Agenda — DevFest.cz 2026"
 	description="The full timetable for DevFest.cz 2026 — every talk, room, and time slot for Prague's largest community developer conference."
 >
-	{jsonLd && <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />}
+	{jsonLd && <script type="application/ld+json" slot="head" set:html={ldJson(jsonLd)} />}
 
 	<main class="page-stack">
 		<SubpageHero
@@ -48,9 +68,9 @@ const jsonLd = sessionsSchema(agenda, url, {
 
 				<!-- Server-rendered from the build-time lineup, then refetched on
 				     mount so the grid stays current between deploys. -->
-				<Agenda client:load initialSessions={agenda} initialSpeakers={speakers} />
+				<Agenda client:load initialSessions={hasSchedule ? agenda : []} />
 
-				{agenda.length === 0 && (
+				{!hasSchedule && (
 					<noscript>
 						<p class="fallback-note">
 							The agenda loads with JavaScript enabled. Please turn it on, or see the

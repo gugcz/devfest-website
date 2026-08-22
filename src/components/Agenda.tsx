@@ -408,17 +408,12 @@ function AgendaList({
 
 /* ============================ ROOT ============================ */
 
-export default function Agenda({
-	initialSessions = [],
-	initialSpeakers = [],
-}: {
-	initialSessions?: Session[];
-	initialSpeakers?: Speaker[];
-}) {
+export default function Agenda({ initialSessions = [] }: { initialSessions?: Session[] }) {
 	const [state, setState] = useState<State>(() => initialState(initialSessions));
-	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>(() =>
-		Object.fromEntries(initialSpeakers.map((sp) => [sp.id, sp])),
-	);
+	// Deliberately not seeded from the pre-render — see the same note in
+	// Sessions.tsx. The grid renders speaker names from each session's own
+	// embedded `speakers[]` refs; this map is for the detail sheet only.
+	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
 	const [selected, setSelected] = useState<Session | null>(null);
 	const isNarrow = useIsNarrow();
 
@@ -432,7 +427,12 @@ export default function Agenda({
 			.catch((err) => {
 				if (ac.signal.aborted) return;
 				console.warn('[agenda] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
+			// A failed refetch must not delete what the server already rendered.
+			// These pages ship the lineup in their HTML now, so falling straight
+			// into the error state would take a fully-painted grid off the screen
+			// a moment after it appeared — and hand a JS-rendering crawler an
+			// error string in place of the content it was just given.
+				setState((prev) => (prev.sessions.length > 0 ? prev : { ...prev, status: 'error' }));
 			});
 		return () => ac.abort();
 	}, []);

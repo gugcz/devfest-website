@@ -109,20 +109,18 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 	);
 }
 
-export default function Sessions({
-	initialSessions = [],
-	initialSpeakers = [],
-}: {
-	initialSessions?: Session[];
-	initialSpeakers?: Speaker[];
-}) {
+export default function Sessions({ initialSessions = [] }: { initialSessions?: Session[] }) {
 	const [state, setState] = useState<State>(() => initialState(initialSessions));
 	// Full speaker profiles keyed by id, from the same /api/lineup fetch, so the
 	// session → speaker drill-down in SessionDetail renders from data already on
 	// the page instead of a second read.
-	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>(() =>
-		Object.fromEntries(initialSpeakers.map((sp) => [sp.id, sp])),
-	);
+	// Not seeded from the pre-render on purpose: nothing in the server-rendered
+	// markup reads this map — it is only consulted when a visitor opens a
+	// session and then a speaker inside it, by which point the mount fetch has
+	// filled it. Seeding it would serialise every bio and link into the page's
+	// props blob to be read by nothing. `SessionDetail` already covers the
+	// pre-fetch window through `speakerFromRef`.
+	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
 	const [selected, setSelected] = useState<Session | null>(null);
 	const [query, setQuery] = useState('');
 	const [filters, setFilters] = useState<SessionFilters>({});
@@ -138,7 +136,12 @@ export default function Sessions({
 			.catch((err) => {
 				if (ac.signal.aborted) return;
 				console.warn('[sessions] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
+			// A failed refetch must not delete what the server already rendered.
+			// These pages ship the lineup in their HTML now, so falling straight
+			// into the error state would take a fully-painted grid off the screen
+			// a moment after it appeared — and hand a JS-rendering crawler an
+			// error string in place of the content it was just given.
+				setState((prev) => (prev.sessions.length > 0 ? prev : { ...prev, status: 'error' }));
 			});
 		return () => ac.abort();
 	}, []);

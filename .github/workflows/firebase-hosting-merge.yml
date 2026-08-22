@@ -1,9 +1,23 @@
-# Deploys the production Hosting site on every push to the release branch.
+# Deploys the production Hosting site on every push to the release branch, and
+# once a day regardless.
+#
+# The daily run is not busywork: `/speakers`, `/sessions` and `/agenda` bake the
+# lineup and its JSON-LD into their HTML at build time (see
+# src/lib/lineup-build.ts), while `refreshSessionizeScheduled` updates Firestore
+# every morning at 06:00 Prague. Without a rebuild, a withdrawn speaker or a
+# moved room stays in the published structured data until somebody happens to
+# merge something. The build is deterministic apart from that lineup read, so a
+# scheduled run redeploys the same commit with fresh data.
 name: Deploy to Firebase Hosting on merge
 on:
   push:
     branches:
       - "2026"
+  schedule:
+    # 07:00 UTC — after the 06:00 Europe/Prague Sessionize sync in either DST
+    # state, so the rebuild always picks up that morning's lineup.
+    - cron: "0 7 * * *"
+  workflow_dispatch:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest

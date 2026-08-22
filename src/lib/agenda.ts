@@ -18,6 +18,45 @@
  */
 import type { Session } from './sessions';
 
+/** The event's zone. Sessionize's naive strings are wall-clock times in it. */
+const EVENT_TIME_ZONE = 'Europe/Prague';
+
+/**
+ * Turns an event-local ISO string into an absolute one by appending the event
+ * zone's UTC offset for that date (`2026-10-30T09:00:00` → `…+01:00`).
+ *
+ * The rest of this module deliberately never resolves these strings to an
+ * instant — the timetable only needs wall-clock minutes, and building a `Date`
+ * from a naive string reinterprets it in the visitor's zone. Structured data is
+ * the one place that inverts: schema.org `startDate` means an absolute instant,
+ * so publishing the naive string lets any consumer that defaults to UTC read
+ * the whole programme an hour off from the conference's own `startDate`, which
+ * IS offset-qualified.
+ *
+ * The offset is derived, never hardcoded: Sessionize dates move, and the
+ * Czech Republic is +01:00 or +02:00 depending on where the date falls
+ * relative to DST. Inputs that already carry an offset (or `Z`) are returned
+ * untouched, and anything unparseable is returned untouched too — emitting the
+ * original string is wrong-ish, emitting a guessed offset is wrong.
+ *
+ * The one ambiguity this cannot resolve is a wall-clock time inside the hour
+ * that DST repeats or skips; a single-day October conference is nowhere near
+ * it (Czech DST ends 2026-10-25, the event is the 30th).
+ */
+export function toAbsoluteIso(iso: string): string {
+	if (!iso || /([Zz]|[+-]\d{2}:?\d{2})$/.test(iso)) return iso;
+	const instant = new Date(`${iso}Z`);
+	if (Number.isNaN(instant.getTime())) return iso;
+	const zoneName = new Intl.DateTimeFormat('en-US', {
+		timeZone: EVENT_TIME_ZONE,
+		timeZoneName: 'longOffset',
+	})
+		.formatToParts(instant)
+		.find((part) => part.type === 'timeZoneName')?.value;
+	const offset = /GMT([+-]\d{2}:\d{2})/.exec(zoneName ?? '');
+	return offset ? `${iso}${offset[1]}` : iso;
+}
+
 /** Assumed length of a session whose `endsAt` is missing or not after its start. */
 const FALLBACK_DURATION_MIN = 30;
 /** Floor on a rendered span so a lightning talk stays tall enough to read/tap. */
