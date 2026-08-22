@@ -41,7 +41,6 @@
 // No rule above it. The measure and the change of face are the separation.
 .abstract {
 	margin-top: clamp(2.5rem, 5vw, 4rem);
-	max-width: 56ch;
 
 	p {
 		font-family: var(--font-special-elite), cursive;
@@ -49,6 +48,13 @@
 		line-height: 1.7;
 		color: rgba(240, 237, 230, 0.85);
 		margin: 0 0 1.1rem;
+		// The measure sits on the PARAGRAPH, never on the wrapper: `ch` is the
+		// width of a `0` in the element's OWN font, and the wrapper inherits the
+		// body's 1rem while this prose is set at --fs-lede. On the wrapper the
+		// cap measured 48 characters instead of 56 and left a void down the
+		// right. Here it also needs no breakpoint — it stops binding by itself
+		// once the column is narrower than the measure.
+		max-width: 56ch;
 		// Justified, with hyphenation. Special Elite is a wide typewriter face,
 		// so a 56ch measure leaves a deep ragged void down the right — on a
 		// phone that reads as a broken column rather than a measure. Hyphens
@@ -60,17 +66,6 @@
 		&:last-child {
 			margin-bottom: 0;
 		}
-	}
-}
-
-// Below the split breakpoint the COLUMN is the measure: the page inset already
-// holds the line to a readable length, so a 56ch cap only subtracts from it and
-// leaves a void down the right that justification cannot fill (the cap binds
-// ~100px short of the content box at ~600px). Above it, the cap is what keeps a
-// 1440 column from setting a 150-character line.
-@media (max-width: 860px) {
-	.abstract {
-		max-width: none;
 	}
 }
 

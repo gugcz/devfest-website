@@ -108,7 +108,6 @@
 /* ===================== BIO ===================== */
 .bio {
 	margin-top: clamp(2rem, 4vw, 3rem);
-	max-width: 56ch;
 
 	p {
 		font-family: var(--font-special-elite), cursive;
@@ -116,6 +115,9 @@
 		line-height: 1.7;
 		color: rgba(240, 237, 230, 0.85);
 		margin: 0 0 1.1rem;
+		// On the paragraph, not the wrapper — see the note in
+		// SessionDetail.module.scss.
+		max-width: 56ch;
 		// Justified, with hyphenation. Special Elite is a wide typewriter face,
 		// so a 56ch measure leaves a deep ragged void down the right — on a
 		// phone that reads as a broken column rather than a measure. Hyphens
@@ -127,16 +129,6 @@
 		&:last-child {
 			margin-bottom: 0;
 		}
-	}
-}
-
-// Below the split breakpoint the COLUMN is the measure — see the same note in
-// SessionDetail.module.scss. Stacked, the bio has only the page inset holding
-// it, so a 56ch cap binds short of the content box and leaves a void down the
-// right that justification cannot fill.
-@media (max-width: 860px) {
-	.bio {
-		max-width: none;
 	}
 }
 
@@ -173,12 +165,6 @@
 	// in one sheet, one justified and one ragged, reads as a fault.
 	text-align: justify;
 	hyphens: auto;
-}
-
-@media (max-width: 860px) {
-	.sessionDesc {
-		max-width: none;
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {
