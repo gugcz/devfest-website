@@ -140,14 +140,28 @@
 	}
 
 	// The headline is the row's title, so it is set like every other row's
-	// title: Bebas, uppercase, on the long-list step the session rows use. It
-	// was reading-copy at lede size — around 22px against the 54px rows elsewhere, so
+	// title: uppercase, on the long-list step the session rows use. It was
+	// reading-copy at lede size — around 22px against the 54px rows elsewhere, so
 	// the same container language read as a different site's component.
+	//
+	// THE ONE ROW TITLE THAT IS NOT BEBAS, and the reason is Czech. This text is
+	// scraped from the article's OG tags, so it arrives in whatever language the
+	// outlet writes in — every clipping so far is Czech, and the accents read as
+	// wrong at 54px Bebas. Bebas Neue's latin-ext file does carry ř/ě/č/š/ž/ů,
+	// but its accented caps are cramped against the cap height of a condensed
+	// display face, so a headline alternates crowded and clean caps and looks
+	// like a font that fell back mid-word. JetBrains Mono is the only brand face
+	// that sets a Czech title cleanly (Special Elite and IM Fell English really
+	// do have no latin-ext subset — see `.coverage-desc`). Mono advances ~0.6em
+	// against Bebas's ~0.42em, so the step is scaled to ~0.6× --fs-row-sm: that
+	// is the largest size at which both current headlines still set on two
+	// lines, which is what the Bebas step gave them.
 	.coverage-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-row-sm);
-		line-height: 1.06;
-		letter-spacing: 0.02em;
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-weight: 500;
+		font-size: clamp(1.45rem, 2.5vw, 2.1rem);
+		line-height: 1.2;
+		letter-spacing: 0;
 		text-transform: uppercase;
 		color: var(--color-text);
 	}
@@ -161,8 +175,12 @@
 		transition: transform 0.25s;
 	}
 
+	// Mono, not Special Elite, for the same reason as the title: this is scraped
+	// Czech. Special Elite ships a `latin` subset only — Google publishes no
+	// latin-ext for it — so every ř/ě/č/š/ž/ů in an OG description fell through
+	// to the Arial fallback mid-word, which is what a Czech reader sees first.
 	.coverage-desc {
-		font-family: var(--font-special-elite), cursive;
+		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-body);
 		line-height: 1.5;
 		color: var(--color-grey);
