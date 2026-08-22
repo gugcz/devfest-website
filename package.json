@@ -10,7 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "a11y": "A11Y_MOCK=1 astro build && node scripts/a11y.mjs"
+    "a11y": "A11Y_MOCK=1 astro build --outDir dist-a11y && node scripts/a11y.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.0",

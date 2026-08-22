@@ -21,6 +21,8 @@ import type { Session } from './sessions';
 /** The event's zone. Sessionize's naive strings are wall-clock times in it. */
 const EVENT_TIME_ZONE = 'Europe/Prague';
 
+const TIME_RE = /T(\d{2}):(\d{2})/;
+
 /**
  * Turns an event-local ISO string into an absolute one by appending the event
  * zone's UTC offset for that date (`2026-10-30T09:00:00` → `…+01:00`).
@@ -45,6 +47,9 @@ const EVENT_TIME_ZONE = 'Europe/Prague';
  */
 export function toAbsoluteIso(iso: string): string {
 	if (!iso || /([Zz]|[+-]\d{2}:?\d{2})$/.test(iso)) return iso;
+	// A date with no time takes no offset — `2026-10-30+01:00` is not ISO 8601
+	// and is neither a schema.org Date nor a DateTime. Hand it back unchanged.
+	if (!TIME_RE.test(iso)) return iso;
 	const instant = new Date(`${iso}Z`);
 	if (Number.isNaN(instant.getTime())) return iso;
 	const zoneName = new Intl.DateTimeFormat('en-US', {
@@ -57,6 +62,19 @@ export function toAbsoluteIso(iso: string): string {
 	return offset ? `${iso}${offset[1]}` : iso;
 }
 
+/**
+ * True when a session carries a time the timetable can actually place it at.
+ *
+ * The one predicate for "is this scheduled": the grid, the `/agenda` gate and
+ * the structured data must agree. A non-empty but timeless `startsAt` (a bare
+ * date) is the case that splits them — `parseLocalMinutes` refuses it, so a
+ * truthiness check would publish a talk as a dated `Event` on a page that
+ * renders it as unscheduled.
+ */
+export function isScheduled(session: Session): boolean {
+	return parseLocalMinutes(session.startsAt) !== null;
+}
+
 /** Assumed length of a session whose `endsAt` is missing or not after its start. */
 const FALLBACK_DURATION_MIN = 30;
 /** Floor on a rendered span so a lightning talk stays tall enough to read/tap. */
@@ -64,8 +82,6 @@ const MIN_SPAN_MIN = 15;
 
 /** Column key used for talks that are timed but have no room assigned yet. */
 const ROOM_TBA = 'Room TBA';
-
-const TIME_RE = /T(\d{2}):(\d{2})/;
 
 /**
  * Minutes from midnight for the wall-clock time in an event-local ISO string,

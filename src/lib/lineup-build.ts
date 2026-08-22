@@ -70,28 +70,64 @@ function parseDocs<T>(raw: unknown, parse: (id: string, data: Record<string, unk
 	});
 }
 
+/** Thrown for a non-OK response, carrying the status so the retry can judge it. */
+class HttpStatusError extends Error {
+	constructor(readonly status: number) {
+		super(`lineup build fetch failed: ${status}`);
+	}
+}
+
 async function fetchOnce(): Promise<{ speakers?: unknown; sessions?: unknown }> {
 	// A hung endpoint must not hang the build.
 	const res = await fetch(ENDPOINT, { signal: AbortSignal.timeout(15_000) });
-	if (!res.ok) throw new Error(`lineup build fetch failed: ${res.status}`);
+	if (!res.ok) throw new HttpStatusError(res.status);
 	return (await res.json()) as { speakers?: unknown; sessions?: unknown };
 }
 
+const ATTEMPTS = 3;
+/** Backoff before attempt N+1: 1s, then 2s. */
+const RETRY_BASE_DELAY_MS = 1_000;
+
+/** A 4xx is deterministic — a wrong URL or a removed route does not heal. */
+function isRetryable(err: unknown): boolean {
+	if (!(err instanceof HttpStatusError)) return true; // network fault / bad body
+	return err.status === 429 || err.status >= 500;
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function readRaw(): Promise<{ speakers?: unknown; sessions?: unknown }> {
 	if (useFixtures) {
+		// A dev server takes this path constantly and says so in its own banner;
+		// a BUILD taking it means A11Y_MOCK is set, and a fixture-backed build
+		// that reaches `dist/` publishes invented people as the lineup. Say so.
+		if (typeof __DEVFEST_API_FIXTURES__ === 'undefined') {
+			console.warn(
+				`\n[lineup-build] ⚠ A11Y_MOCK=1 — pre-rendering the lineup from FIXTURES.\n` +
+					`[lineup-build]   This output must not be deployed (\`npm run a11y\` builds to dist-a11y).\n`
+			);
+		}
 		const { API_FIXTURES } = await import('../../scripts/a11y-mocks/api.mjs');
 		return JSON.parse(API_FIXTURES['/api/lineup']);
 	}
-	// One retry. `cachedJsonEndpoint` answers a failed read with a 503 and the
-	// function is `minInstances: 1`, so the common failure here is a single
-	// blip rather than a sustained outage — and the cost of losing this read is
-	// a whole deploy's worth of missing structured data.
-	try {
-		return await fetchOnce();
-	} catch (err) {
-		console.warn(`[lineup-build] ${describe(err)} — retrying once`);
-		return await fetchOnce();
+	// Same shape as `functions/src/lib/http.ts`: 3 attempts, 1s/2s backoff, and
+	// no retry on a 4xx. The read is a CI-fatal gate now, so a retry that fires
+	// 3ms later — before a cold start finishes or a CDN revalidation race
+	// settles — turns transient faults into red builds without absorbing any of
+	// them. A GET is idempotent, so retrying is free.
+	let lastError: unknown;
+	for (let attempt = 1; attempt <= ATTEMPTS; attempt += 1) {
+		try {
+			return await fetchOnce();
+		} catch (err) {
+			lastError = err;
+			if (attempt === ATTEMPTS || !isRetryable(err)) break;
+			const delay = RETRY_BASE_DELAY_MS * attempt;
+			console.warn(`[lineup-build] ${describe(err)} — retrying in ${delay}ms (${attempt}/${ATTEMPTS - 1})`);
+			await sleep(delay);
+		}
 	}
+	throw lastError;
 }
 
 function describe(err: unknown): string {
@@ -138,9 +174,19 @@ export function getBuildLineup(): Promise<BuildLineup> {
 					`[lineup-build]   /speakers, /sessions and /agenda will ship WITHOUT their\n` +
 					`[lineup-build]   pre-rendered lineup and WITHOUT their structured data.\n`
 			);
-			if (process.env.CI && process.env.LINEUP_BUILD_OPTIONAL !== '1') {
-				throw new Error(
-					`lineup pre-render failed in CI: ${reason} (set LINEUP_BUILD_OPTIONAL=1 to deploy without it)`
+			if (process.env.CI) {
+				if (process.env.LINEUP_BUILD_OPTIONAL !== '1') {
+					throw new Error(
+						`lineup pre-render failed in CI: ${reason} — re-run this workflow with the ` +
+							`\`skip_lineup\` input (or set LINEUP_BUILD_OPTIONAL=1) to deploy without it`
+					);
+				}
+				// A green run whose log says "✓ Complete" forty lines after the
+				// banner is how a LINEUP_BUILD_OPTIONAL left switched on goes
+				// unnoticed for a month. An annotation surfaces in the run summary.
+				console.log(
+					`::warning title=Lineup pre-render skipped::${reason} — /speakers, /sessions and /agenda ` +
+						`shipped without their pre-rendered lineup and structured data`
 				);
 			}
 			return EMPTY;

@@ -12,7 +12,7 @@
  * an unscheduled talk is listed as a plain `ListItem` with its name and nothing
  * more, which is valid and true.
  */
-import { toAbsoluteIso } from './agenda';
+import { isScheduled, toAbsoluteIso } from './agenda';
 import { ID, ref, SITE_URL } from './event';
 import type { Session } from './sessions';
 import { visitorCategories } from './sessions';
@@ -71,7 +71,10 @@ function talkSchema(session: Session) {
 		eventStatus: 'https://schema.org/EventScheduled',
 		inLanguage: 'en',
 		superEvent: ref(ID.event),
-		organizer: ref(ID.organization),
+		// GUG.cz, like the conference Event itself — see `event.ts`. Pointing a
+		// talk at the DevFest.cz brand node instead would state that every talk at
+		// the conference is run by a different organisation than the conference.
+		organizer: ref(ID.parentOrganization),
 		// A room is a Place INSIDE the venue; a talk with no room yet is simply at
 		// the venue. Referencing `#venue` rather than re-emitting it matters: an
 		// unassigned programme would otherwise repeat the identical venue node,
@@ -116,12 +119,12 @@ export function sessionsSchema(
 	// item actually carries a date to be ascending by.
 	const items = ordered
 		? [...sessions].sort((a, b) => {
-				if (!a.startsAt) return b.startsAt ? 1 : 0;
-				if (!b.startsAt) return -1;
+				if (!isScheduled(a)) return isScheduled(b) ? 1 : 0;
+				if (!isScheduled(b)) return -1;
 				return a.startsAt.localeCompare(b.startsAt);
 			})
 		: sessions;
-	const chronological = ordered && items.every((session) => Boolean(session.startsAt));
+	const chronological = ordered && items.every(isScheduled);
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'ItemList',
@@ -135,7 +138,7 @@ export function sessionsSchema(
 			'@type': 'ListItem',
 			position: i + 1,
 			// A talk with no slot yet is a name on a list, not a dated Event.
-			...(session.startsAt ? { item: talkSchema(session) } : { name: session.title }),
+			...(isScheduled(session) ? { item: talkSchema(session) } : { name: session.title }),
 		})),
 	};
 }

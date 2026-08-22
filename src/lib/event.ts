@@ -140,9 +140,11 @@ const offers = [
  * The event node. Follows
  * https://developers.google.com/search/docs/appearance/structured-data/event
  *
- * `performer` and `subEvent` are filled in on the pages that actually know the
- * lineup (see `lineupSchema`), so the home page emits the event without them
- * rather than claiming a lineup it does not render.
+ * It carries no `performer` or `subEvent`: the home page does not render the
+ * lineup, and the pages that do describe their talks and speakers in their own
+ * `ItemList` graphs (`src/lib/lineup-schema.ts`), each pointing back here by
+ * `@id`. An Event node claiming a lineup the page never shows would be the
+ * structured data disagreeing with the page again.
  */
 export const eventSchema = {
 	'@type': 'Event',
@@ -162,6 +164,9 @@ export const eventSchema = {
 		'@type': 'Audience',
 		audienceType: 'Software developers, engineers and technology professionals',
 	},
+	// `about` expects a Thing, not a string — a bare Text value is out of range
+	// even though validators tolerate it. `keywords` below is the property that
+	// does take plain text.
 	about: [
 		'Software development',
 		'Web development',
@@ -170,7 +175,7 @@ export const eventSchema = {
 		'Machine learning',
 		'Cybersecurity',
 		'Cloud computing',
-	],
+	].map((name) => ({ '@type': 'Thing', name })),
 	keywords:
 		'developer conference, technology conference, Prague, Czech Republic, web development, Android, Flutter, AI, machine learning, cybersecurity, DevFest',
 	location: placeSchema,

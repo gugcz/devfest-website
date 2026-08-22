@@ -9,6 +9,7 @@ import { getBuildLineup } from '../lib/lineup-build';
 import { pageUrl, sessionsSchema } from '../lib/lineup-schema';
 import { ldJson } from '../lib/json-ld';
 import { isDisplayableSession } from '../lib/sessions';
+import { isScheduled } from '../lib/agenda';
 
 // The timetable is this page's entire content, so without a build-time read the
 // indexable HTML is a heading and a loading line — see `src/lib/lineup-build.ts`.
@@ -21,7 +22,7 @@ const url = pageUrl('/agenda');
 // pre-rendering the sessions would serialise the whole programme into the
 // page's props blob to produce a 162-byte empty state. Hand it the data only
 // once there is a grid to draw with it.
-const scheduled = agenda.filter((session) => Boolean(session.startsAt));
+const scheduled = agenda.filter(isScheduled);
 const hasSchedule = scheduled.length > 0;
 
 // The schema describes the PROGRAMME, so it takes the same talks-only filter

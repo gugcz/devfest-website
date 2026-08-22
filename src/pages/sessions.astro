@@ -13,8 +13,19 @@ import { ldJson } from '../lib/json-ld';
 // `src/lib/lineup-build.ts`. An unreachable endpoint yields an empty programme,
 // which is the page exactly as it shipped before.
 const { sessions } = await getBuildLineup();
+
+// Rotate the running order once per build, so no track or room keeps a
+// permanent top-of-grid advantage. This used to happen in the island on every
+// page load; it cannot any more, because the grid is server-rendered and a
+// per-load shuffle would differ between the server's HTML and the client's
+// first render. Per deploy is a fair substitute — the hosting workflow also
+// redeploys daily (see .github/workflows/firebase-hosting-merge.yml).
+const rotated = sessions
+	.map((session) => ({ session, sort: Math.random() }))
+	.sort((a, b) => a.sort - b.sort)
+	.map(({ session }) => session);
 const url = pageUrl('/sessions');
-const jsonLd = sessionsSchema(sessions, url, { name: 'DevFest.cz 2026 sessions' });
+const jsonLd = sessionsSchema(rotated, url, { name: 'DevFest.cz 2026 sessions' });
 ---
 
 <BaseLayout
@@ -46,9 +57,9 @@ const jsonLd = sessionsSchema(sessions, url, { name: 'DevFest.cz 2026 sessions' 
 
 				<!-- Server-rendered from the build-time lineup, then refetched on
 				     mount so the programme stays current between deploys. -->
-				<Sessions client:load initialSessions={sessions} />
+				<Sessions client:load initialSessions={rotated} />
 
-				{sessions.length === 0 && (
+				{rotated.length === 0 && (
 					<noscript>
 						<p class="fallback-note">
 							The session agenda loads with JavaScript enabled. Please turn it on, or

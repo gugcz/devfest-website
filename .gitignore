@@ -1,5 +1,8 @@
 # build output
 dist/
+# fixture-backed build for the a11y sweep — deliberately NOT dist/, which is
+# what firebase deploys (see scripts/a11y.mjs)
+dist-a11y/
 # generated types
 .astro/
 

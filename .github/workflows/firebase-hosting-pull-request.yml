@@ -14,7 +14,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Non-fatal lineup read, unlike the production deploy. This channel is a
+      # throwaway preview: failing every open PR because `/api/lineup` blipped
+      # would be a red build about something the PR did not touch, protecting
+      # nothing. The banner still prints in the log.
       - run: npm run build
+        env:
+          LINEUP_BUILD_OPTIONAL: "1"
       # Deploy to a per-PR preview channel with w9jds/firebase-action, which
       # runs firebase-tools inside a Node 21 container. This avoids the
       # intermittent "Premature close" keep-alive failure that breaks

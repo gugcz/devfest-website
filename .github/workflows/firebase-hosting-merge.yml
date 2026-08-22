@@ -16,8 +16,19 @@ on:
   schedule:
     # 07:00 UTC — after the 06:00 Europe/Prague Sessionize sync in either DST
     # state, so the rebuild always picks up that morning's lineup.
+    #
+    # CAVEAT: GitHub disables scheduled workflows after 60 days with no repo
+    # activity, and re-enabling is a manual click. A conference repo goes quiet
+    # for months, and the quiet stretch is exactly when this cron is the only
+    # thing correcting a withdrawn speaker in the published structured data. If
+    # it stops, the site does not break — it just freezes at the last deploy.
     - cron: "0 7 * * *"
   workflow_dispatch:
+    inputs:
+      skip_lineup:
+        description: "Deploy even if the build-time /api/lineup read fails (ships the lineup pages without their pre-rendered content and structured data)"
+        type: boolean
+        default: false
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -28,7 +39,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # A failed build-time lineup read is fatal here on purpose (see
+      # src/lib/lineup-build.ts) — a green deploy that silently drops every
+      # speaker and talk from the HTML is worse than a red one. Re-run this
+      # workflow from the Actions tab with `skip_lineup` when the endpoint is
+      # down and the deploy cannot wait.
       - run: npm run build
+        env:
+          LINEUP_BUILD_OPTIONAL: ${{ inputs.skip_lineup && '1' || '' }}
       # Deploy with w9jds/firebase-action, which runs firebase-tools inside a
       # Node 21 container. This avoids the intermittent "Premature close"
       # keep-alive failure that breaks FirebaseExtended/action-hosting-deploy

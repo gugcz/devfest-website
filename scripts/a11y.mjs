@@ -8,7 +8,12 @@ import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 import { API_FIXTURES } from './a11y-mocks/api.mjs';
 
-const DIST = path.resolve('dist');
+// NOT `dist/`. `firebase.json` deploys `dist`, and an `A11Y_MOCK=1` build fills
+// the lineup pages with fixture people — in the HTML *and* in the JSON-LD, since
+// they are pre-rendered now. Sharing the directory made `npm run a11y` followed
+// by a hosting deploy publish Ada Lovelace as the speaker roster, exit code 0.
+// Keep this in step with the `--outDir` in package.json's `a11y` script.
+const DIST = path.resolve('dist-a11y');
 
 // The islands fetch their data from cached `/api/*` endpoints (Hosting rewrites
 // them to Cloud Functions in production). CI has no functions, so the harness
@@ -362,7 +367,7 @@ async function auditModals(page, urlPath, url, tags) {
 
 async function run() {
 	if (!existsSync(DIST)) {
-		console.error('dist/ missing. Run `npm run build` first.');
+		console.error('dist-a11y/ missing. Run `npm run a11y`, which builds it first.');
 		process.exit(2);
 	}
 

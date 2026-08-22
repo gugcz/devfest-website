@@ -124,18 +124,24 @@ function usePortraitMorph(
 function SpeakerCard({
 	speaker,
 	onOpen,
-	priority,
 	index,
 	morphing,
 }: {
 	speaker: Speaker;
 	onOpen: (speaker: Speaker) => void;
-	priority: boolean;
 	index: number;
 	morphing: boolean;
 }) {
 	// A present-but-broken CDN URL (404 / timeout) falls back to the monogram,
 	// same as a speaker with no photo at all.
+	//
+	// Every photo below is lazy and normal-priority. The first four used to be
+	// eager/high: that was written when this grid could only appear after
+	// hydration AND the /api/lineup round-trip, so the hint cost nothing at first
+	// paint. The island is server-rendered now, so those four <img> tags sit in
+	// the initial HTML where the preload scanner finds them — half a megabyte of
+	// unresized cross-origin photographs, none of them above the fold on any
+	// viewport, racing the hero and the brand fonts.
 	const [imageFailed, setImageFailed] = useState(false);
 	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
 
@@ -158,8 +164,8 @@ function SpeakerCard({
 							className={s.photo}
 							src={speaker.profilePicture}
 							alt=""
-							loading={priority ? 'eager' : 'lazy'}
-							fetchPriority={priority ? 'high' : 'auto'}
+							loading="lazy"
+							fetchPriority="auto"
 							decoding="async"
 							width={400}
 							height={500}
@@ -203,7 +209,6 @@ export function SpeakerLineup({
 					key={speaker.id}
 					speaker={speaker}
 					onOpen={onOpen}
-					priority={i < 4}
 					index={i}
 					morphing={speaker.id === openId}
 				/>

@@ -7,6 +7,18 @@ import react from '@astrojs/react';
 
 const BUILD_DATE = new Date().toISOString();
 
+// The only pages whose bytes change between two builds of the same commit: the
+// lineup is read at build time (src/lib/lineup-build.ts) and the hosting
+// workflow redeploys daily. Everything else is static, so stamping it with the
+// build instant would have every URL claim it changed today, every day —
+// Google's stated position is that it discounts `lastmod` when a site's dates
+// are not trustworthy, which spends the signal on the pages that do change.
+const LINEUP_PAGES = new Set([
+    'https://devfest.cz/speakers',
+    'https://devfest.cz/sessions',
+    'https://devfest.cz/agenda',
+]);
+
 // Per-URL sitemap priority; anything unlisted falls back to 0.6.
 const PRIORITY = {
     'https://devfest.cz': 1.0,
@@ -63,11 +75,24 @@ const devApiMocks = () => ({
     // a dev server and publish these fixtures as the real lineup. Handing the
     // decision down as a define means the dev server is the only thing that can
     // turn it on.
+    //
+    // The same hook wires up DEVFEST_LIVE_API=1. With the fixtures stepped
+    // aside a dev server still has no Hosting rewrite table, so `/api/*` would
+    // simply 404 and the islands would silently keep whatever the build-time
+    // read left them — the flag would look like it worked while the browser
+    // never reached a function. Proxy the routes to the deployed site so the
+    // flag means what it says.
     config() {
+        const live = process.env.DEVFEST_LIVE_API === '1';
         return {
-            define: {
-                __DEVFEST_API_FIXTURES__: JSON.stringify(process.env.DEVFEST_LIVE_API !== '1'),
-            },
+            define: { __DEVFEST_API_FIXTURES__: JSON.stringify(!live) },
+            ...(live && {
+                server: {
+                    proxy: {
+                        '/api': { target: 'https://devfest.cz', changeOrigin: true, secure: true },
+                    },
+                },
+            }),
         };
     },
     async configureServer(server) {
@@ -76,7 +101,7 @@ const devApiMocks = () => ({
         // Ahead of Astro's own middleware, which would answer /api/* with a 404
         // page before we ever see the request.
         server.middlewares.use(apiFixtureMiddleware);
-        server.config.logger.info('  \x1b[2m/api/* served from fixtures (DEVFEST_LIVE_API=1 to use the deployed functions)\x1b[0m');
+        server.config.logger.info('  \x1b[2m/api/* served from fixtures (DEVFEST_LIVE_API=1 to proxy the deployed functions)\x1b[0m');
     },
 });
 
@@ -129,9 +154,15 @@ export default defineConfig({
                 !page.includes('/newsletter-subscription-thank-you') &&
                 !page.includes('/thank-you'),
             serialize(item) {
-                item.lastmod = BUILD_DATE;
-                item.changefreq = 'weekly';
                 const url = item.url.replace(/\/$/, '');
+                if (LINEUP_PAGES.has(url)) {
+                    item.lastmod = BUILD_DATE;
+                    item.changefreq = 'daily';
+                } else {
+                    // No `lastmod` at all rather than a date we'd be inventing —
+                    // omitting it is honest and costs nothing.
+                    item.changefreq = 'monthly';
+                }
                 item.priority = PRIORITY[url] ?? 0.6;
                 return item;
             },

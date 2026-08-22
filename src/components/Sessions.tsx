@@ -23,10 +23,11 @@ interface State {
  * Server-render state — see `src/lib/lineup-build.ts` for why the island is
  * handed the programme as a prop instead of only fetching it on mount.
  *
- * Deliberately NOT shuffled: `shuffle()` is `Math.random()`, so shuffling here
- * would give the server and the hydrating client two different orders and React
- * would throw the whole tree away. The source order is fine for the pre-render;
- * the mount refetch below shuffles as it always did.
+ * Nothing is shuffled here: `shuffle()` is `Math.random()`, so shuffling in the
+ * island would give the server and the hydrating client two different orders
+ * and React would throw the whole tree away. The rotation still happens — the
+ * PAGE shuffles once at build time (`sessions.astro`), so the order changes per
+ * deploy, and the daily hosting rebuild makes that a daily rotation.
  */
 function initialState(sessions: Session[]): State {
 	return sessions.length > 0
@@ -34,9 +35,17 @@ function initialState(sessions: Session[]): State {
 		: { status: 'loading', sessions: [] };
 }
 
+/** Same sessions, in some order — ignoring order, which is the point. */
+function sameRoster(a: Session[], b: Session[]): boolean {
+	if (a.length !== b.length) return false;
+	const ids = new Set(a.map((session) => session.id));
+	return b.every((session) => ids.has(session.id));
+}
+
 /** Fisher–Yates shuffle — returns a new array so the source order stays intact.
- * Sessions are randomized once per page load so no track/room gets a permanent
- * top-of-grid advantage. */
+ * Only reached when the refetched roster differs from the pre-rendered one; the
+ * per-deploy rotation that keeps any one track/room off the top of the grid is
+ * done by the page (see `sessions.astro`). */
 function shuffle<T>(items: T[]): T[] {
 	const out = items.slice();
 	for (let i = out.length - 1; i > 0; i--) {
@@ -130,8 +139,15 @@ export default function Sessions({ initialSessions = [] }: { initialSessions?: S
 		fetchLineup(ac.signal)
 			.then(({ sessions, speakers }) => {
 				setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
-				const ordered = shuffle(sessions);
-				setState({ status: ordered.length > 0 ? 'ready' : 'empty', sessions: ordered });
+				setState((prev) => {
+					// Keep the order the visitor is already reading. Re-shuffling a
+					// grid that is on screen and identical in content is a content
+					// jump on the page's main list — and it lands right around the
+					// moment someone reaches for a card.
+					if (sameRoster(prev.sessions, sessions)) return prev;
+					const ordered = shuffle(sessions);
+					return { status: ordered.length > 0 ? 'ready' : 'empty', sessions: ordered };
+				});
 			})
 			.catch((err) => {
 				if (ac.signal.aborted) return;
