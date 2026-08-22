@@ -48,18 +48,17 @@
 		line-height: 1.7;
 		color: rgba(240, 237, 230, 0.85);
 		margin: 0 0 1.1rem;
-		// The measure sits on the PARAGRAPH, never on the wrapper: `ch` is the
-		// width of a `0` in the element's OWN font, and the wrapper inherits the
-		// body's 1rem while this prose is set at --fs-lede. On the wrapper the
-		// cap measured 48 characters instead of 56 and left a void down the
-		// right. Here it also needs no breakpoint — it stops binding by itself
-		// once the column is narrower than the measure.
-		max-width: 56ch;
-		// Justified, with hyphenation. Special Elite is a wide typewriter face,
-		// so a 56ch measure leaves a deep ragged void down the right — on a
-		// phone that reads as a broken column rather than a measure. Hyphens
-		// are not optional here: justification without them opens rivers at
-		// this width.
+		// THE COLUMN IS THE MEASURE — there is no character cap on sheet prose.
+		// A capped line stopped roughly half way across a sheet whose title,
+		// block rules and speaker rows all run the full column, and that
+		// unfilled right half read as a layout fault rather than as a margin.
+		// The abstract is one of three things a session sheet holds; it lines
+		// up with the other two.
+		//
+		// The trade is real and deliberate: at 1440 this sets ~108 characters,
+		// well past the 45-75 a measure is usually held to. Justification with
+		// hyphens is what keeps it even — at this width it costs almost no
+		// word-space adjustment, so the block reads as a slab, not as rivers.
 		text-align: justify;
 		hyphens: auto;
 
