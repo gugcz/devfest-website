@@ -53,24 +53,23 @@ export const SCHEDULED = {
 
 /**
  * The public, CDN-cached `/api/*` endpoints (`lineupApi`, `ticketsApi`).
- * `minInstances: 1` keeps one instance warm: a cold start here lands on the
- * critical path of a visitor's first uncached fetch, and the long edge TTLs make
- * traffic bursty enough that most misses would otherwise cold-start. It also
- * keeps each endpoint's in-instance memo alive between bursts.
+ * Scale-to-zero: no `minInstances`. A warm instance removes the cold start on a
+ * CDN revalidation, but it is billed around the clock for a conference site
+ * whose traffic does not justify it. The long edge TTLs mean visitors are served
+ * from the CDN anyway, and a cold start only lands on the rare revalidating
+ * request.
  */
 export const CACHED_ENDPOINT = {
 	region: REGION,
 	invoker: 'public',
 	memory: '256MiB',
 	timeoutSeconds: 30,
-	minInstances: 1,
 } satisfies Partial<HttpsOptions>;
 
 /**
  * Public webhook receivers (`ticketsWebhook`). Public like the cached endpoints
- * — the external caller has no OIDC token, it authenticates by HMAC — but
- * deliberately WITHOUT `minInstances`: deliveries are rare, so a warm instance
- * would be paid for around the clock to save a cold start nobody is waiting on.
+ * — the external caller has no OIDC token, it authenticates by HMAC. Also
+ * scale-to-zero: deliveries are rare and nobody waits on a cold start.
  */
 export const WEBHOOK = {
 	region: REGION,
