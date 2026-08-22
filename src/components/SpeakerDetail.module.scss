@@ -115,14 +115,9 @@
 		line-height: 1.7;
 		color: rgba(240, 237, 230, 0.85);
 		margin: 0 0 1.1rem;
-		// On the paragraph, not the wrapper — see the note in
-		// SessionDetail.module.scss.
-		max-width: 56ch;
-		// Justified, with hyphenation. Special Elite is a wide typewriter face,
-		// so a 56ch measure leaves a deep ragged void down the right — on a
-		// phone that reads as a broken column rather than a measure. Hyphens
-		// are not optional here: justification without them opens rivers at
-		// this width.
+		// No character cap — the column is the measure, same rule as the session
+		// sheet's abstract (see the note there). Here the split already sets
+		// that column: the bio fills the 0.62fr beside the portrait.
 		text-align: justify;
 		hyphens: auto;
 
