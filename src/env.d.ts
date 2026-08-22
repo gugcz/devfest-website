@@ -30,3 +30,12 @@ interface Window {
 	/** Firebase App Check debug-token hook (dev only). */
 	FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string;
 }
+
+/**
+ * The `/api/*` fixtures (plain JS, shared with `scripts/a11y.mjs` and the dev
+ * server). `src/lib/lineup-build.ts` imports them so a local pre-render matches
+ * what the islands fetch locally.
+ */
+declare module '../../scripts/a11y-mocks/api.mjs' {
+	export const API_FIXTURES: Record<string, string>;
+}

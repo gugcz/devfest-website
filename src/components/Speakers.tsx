@@ -12,7 +12,23 @@ interface State {
 	speakers: Speaker[];
 }
 
-const INITIAL: State = { status: 'loading', speakers: [] };
+/**
+ * Server-render state.
+ *
+ * Astro renders this island's HTML at build time, so handing it the lineup as a
+ * prop is what puts speaker names into the static document instead of a
+ * "loading" line (see `src/lib/lineup-build.ts`). The mount effect below still
+ * refetches `/api/lineup`, so a visitor gets the live roster and the pre-render
+ * is only ever the crawler's copy.
+ *
+ * With no pre-render (a build with no network, the first deploy) this is the
+ * loading state the component always had.
+ */
+function initialState(speakers: Speaker[]): State {
+	return speakers.length > 0
+		? { status: 'ready', speakers }
+		: { status: 'loading', speakers: [] };
+}
 
 /**
  * Shared `view-transition-name` for the print the visitor clicked and the photo
@@ -207,8 +223,10 @@ export function SpeakerLineup({
 	);
 }
 
-export default function Speakers() {
-	const [state, setState] = useState<State>(INITIAL);
+export default function Speakers({ initialSpeakers = [] }: { initialSpeakers?: Speaker[] }) {
+	// Lazy initialiser: the prop is only read on the first render, so a refetch
+	// can never be clobbered by it.
+	const [state, setState] = useState<State>(() => initialState(initialSpeakers));
 	const [selected, setSelected] = useState<Speaker | null>(null);
 	const { morphId, open, close } = usePortraitMorph(selected, setSelected);
 

@@ -5,12 +5,23 @@ import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import Sessions from '../components/Sessions.tsx';
 import { EVENT_TOPICS } from '../lib/ticker';
+import { getBuildLineup } from '../lib/lineup-build';
+import { pageUrl, sessionsSchema } from '../lib/lineup-schema';
+
+// Talk titles in the static HTML rather than only after hydration — see
+// `src/lib/lineup-build.ts`. An unreachable endpoint yields an empty programme,
+// which is the page exactly as it shipped before.
+const { sessions, speakers } = await getBuildLineup();
+const url = pageUrl('/sessions');
+const jsonLd = sessionsSchema(sessions, url, { name: 'DevFest.cz 2026 sessions' });
 ---
 
 <BaseLayout
 	title="Sessions — DevFest.cz 2026"
 	description="The talks and sessions on the agenda at DevFest.cz 2026 — Prague's community-built developer conference."
 >
+	{jsonLd && <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />}
+
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'The talks on<br />the <span class="red">docket.</span>'}
@@ -32,16 +43,18 @@ import { EVENT_TOPICS } from '../lib/ticker';
 					</p>
 				</header>
 
-				<!-- The grid hydrates client-side from Firestore; keep a static note
-				     for crawlers and no-JS visitors. -->
-				<Sessions client:load />
+				<!-- Server-rendered from the build-time lineup, then refetched on
+				     mount so the programme stays current between deploys. -->
+				<Sessions client:load initialSessions={sessions} initialSpeakers={speakers} />
 
-				<noscript>
-					<p class="fallback-note">
-						The session agenda loads with JavaScript enabled. Please turn it on, or
-						check back soon.
-					</p>
-				</noscript>
+				{sessions.length === 0 && (
+					<noscript>
+						<p class="fallback-note">
+							The session agenda loads with JavaScript enabled. Please turn it on, or
+							check back soon.
+						</p>
+					</noscript>
+				)}
 			</div>
 		</section>
 

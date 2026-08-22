@@ -5,12 +5,23 @@ import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import Speakers from '../components/Speakers.tsx';
 import { EVENT_TOPICS } from '../lib/ticker';
+import { getBuildLineup } from '../lib/lineup-build';
+import { pageUrl, speakersSchema } from '../lib/lineup-schema';
+
+// Read the lineup at build time so the speaker names are IN the HTML, not only
+// in what the island fetches after hydration — see `src/lib/lineup-build.ts`.
+// A failed read returns an empty roster, which is the page as it shipped before.
+const { speakers } = await getBuildLineup();
+const url = pageUrl('/speakers');
+const jsonLd = speakersSchema(speakers, url);
 ---
 
 <BaseLayout
 	title="Speakers — DevFest.cz 2026"
 	description="Meet the speakers taking the stage at DevFest.cz 2026 — Prague's community-built developer conference."
 >
+	{jsonLd && <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />}
+
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'The voices on<br />the <span class="red">stand.</span>'}
@@ -34,16 +45,18 @@ import { EVENT_TOPICS } from '../lib/ticker';
 					<p class="speakers-hint">Pick a face for the full record</p>
 				</header>
 
-				<!-- The grid hydrates client-side from Firestore; keep a static note
-				     for crawlers and no-JS visitors. -->
-				<Speakers client:load />
+				<!-- Server-rendered from the build-time lineup, then refetched on
+				     mount so the roster stays current between deploys. -->
+				<Speakers client:load initialSpeakers={speakers} />
 
-				<noscript>
-					<p class="fallback-note">
-						The speaker lineup loads with JavaScript enabled. Please turn it on, or
-						check back soon.
-					</p>
-				</noscript>
+				{speakers.length === 0 && (
+					<noscript>
+						<p class="fallback-note">
+							The speaker lineup loads with JavaScript enabled. Please turn it on, or
+							check back soon.
+						</p>
+					</noscript>
+				)}
 			</div>
 		</section>
 

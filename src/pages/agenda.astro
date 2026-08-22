@@ -5,12 +5,26 @@ import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import Agenda from '../components/Agenda.tsx';
 import { EVENT_TOPICS } from '../lib/ticker';
+import { getBuildLineup } from '../lib/lineup-build';
+import { pageUrl, sessionsSchema } from '../lib/lineup-schema';
+
+// The timetable is this page's entire content, so without a build-time read the
+// indexable HTML is a heading and a loading line — see `src/lib/lineup-build.ts`.
+// `agenda` keeps the service + plenum sessions the grid renders as bands.
+const { agenda, speakers } = await getBuildLineup();
+const url = pageUrl('/agenda');
+const jsonLd = sessionsSchema(agenda, url, {
+	name: 'DevFest.cz 2026 schedule',
+	ordered: true,
+});
 ---
 
 <BaseLayout
 	title="Agenda — DevFest.cz 2026"
 	description="The full timetable for DevFest.cz 2026 — every talk, room, and time slot for Prague's largest community developer conference."
 >
+	{jsonLd && <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />}
+
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'The day<br /><span class="red">on a timeline.</span>'}
@@ -32,16 +46,18 @@ import { EVENT_TOPICS } from '../lib/ticker';
 					</p>
 				</header>
 
-				<!-- The timetable hydrates client-side from /api/lineup; keep a static
-				     note for crawlers and no-JS visitors. -->
-				<Agenda client:load />
+				<!-- Server-rendered from the build-time lineup, then refetched on
+				     mount so the grid stays current between deploys. -->
+				<Agenda client:load initialSessions={agenda} initialSpeakers={speakers} />
 
-				<noscript>
-					<p class="fallback-note">
-						The agenda loads with JavaScript enabled. Please turn it on, or see the
-						<a href="/sessions">full list of talks</a>.
-					</p>
-				</noscript>
+				{agenda.length === 0 && (
+					<noscript>
+						<p class="fallback-note">
+							The agenda loads with JavaScript enabled. Please turn it on, or see the
+							<a href="/sessions">full list of talks</a>.
+						</p>
+					</noscript>
+				)}
 			</div>
 		</section>
 

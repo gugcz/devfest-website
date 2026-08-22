@@ -1,0 +1,100 @@
+/**
+ * Build-time read of the speaker/session lineup.
+ *
+ * Why this exists: `/speakers`, `/sessions` and `/agenda` are three of the most
+ * search-valuable pages on the site — speaker names and talk titles are exactly
+ * what people search for — and until now their HTML contained a heading and a
+ * "loading" paragraph. Everything else arrived from `/api/lineup` after
+ * hydration. Googlebot renders JavaScript and would eventually see it; nothing
+ * else in the crawler population reliably does (Bing, Slack/social unfurls, the
+ * LLM crawlers), and even Google indexes the pre-render first.
+ *
+ * So the same endpoint the browser hits is read once at build time and passed
+ * into the islands as their initial state. Astro server-renders `client:load`
+ * components, so the lineup lands in the static HTML; the island's own
+ * `fetch('/api/lineup')` still runs on mount and replaces the snapshot, which is
+ * what keeps a visitor current between deploys. The snapshot is only ever as
+ * fresh as the last build — that is fine for crawlers and invisible to humans.
+ *
+ * Failure is never fatal: a build with no network (or a cold `/api/*` after a
+ * first deploy) falls back to empty arrays, which is precisely the state these
+ * pages shipped in before.
+ */
+import { speakerFromDoc, type Speaker } from './speakers';
+import { isAgendaSession, isDisplayableSession, sessionFromDoc, type Session } from './sessions';
+
+export interface BuildLineup {
+	speakers: Speaker[];
+	/** Visitor-facing talks — service sessions dropped (`/sessions`). */
+	sessions: Session[];
+	/** Timetable sessions — breaks/keynotes kept (`/agenda`). */
+	agenda: Session[];
+}
+
+const EMPTY: BuildLineup = { speakers: [], sessions: [], agenda: [] };
+
+/** Overridable so a preview build can point at another origin. */
+const ENDPOINT = process.env.LINEUP_BUILD_ENDPOINT ?? 'https://devfest.cz/api/lineup';
+
+/**
+ * The dev server and the a11y build already serve `/api/*` from
+ * `scripts/a11y-mocks/api.mjs` (see astro.config.mjs). Read the same module
+ * directly here rather than fetching production, so what the page pre-renders
+ * locally matches what the island fetches locally.
+ */
+const useFixtures =
+	process.env.A11Y_MOCK === '1' || (isDev() && process.env.DEVFEST_LIVE_API !== '1');
+
+function isDev(): boolean {
+	return process.env.NODE_ENV === 'development' || import.meta.env?.DEV === true;
+}
+
+interface WireDoc {
+	id?: unknown;
+	[field: string]: unknown;
+}
+
+function parseDocs<T>(raw: unknown, parse: (id: string, data: Record<string, unknown>) => T): T[] {
+	if (!Array.isArray(raw)) return [];
+	return raw.map((item) => {
+		const doc = (item ?? {}) as WireDoc;
+		return parse(typeof doc.id === 'string' ? doc.id : '', doc as Record<string, unknown>);
+	});
+}
+
+async function readRaw(): Promise<{ speakers?: unknown; sessions?: unknown }> {
+	if (useFixtures) {
+		const { API_FIXTURES } = await import('../../scripts/a11y-mocks/api.mjs');
+		return JSON.parse(API_FIXTURES['/api/lineup']);
+	}
+	// A hung endpoint must not hang the build; the fallback is a page that
+	// renders exactly as it did before this module existed.
+	const res = await fetch(ENDPOINT, { signal: AbortSignal.timeout(15_000) });
+	if (!res.ok) throw new Error(`lineup build fetch failed: ${res.status}`);
+	return (await res.json()) as { speakers?: unknown; sessions?: unknown };
+}
+
+/** One read per build, shared by the four pages that pre-render the lineup. */
+let inflight: Promise<BuildLineup> | null = null;
+
+export function getBuildLineup(): Promise<BuildLineup> {
+	inflight ??= readRaw()
+		.then((data) => {
+			const speakers = parseDocs(data.speakers, speakerFromDoc);
+			const all = parseDocs(data.sessions, sessionFromDoc);
+			return {
+				speakers,
+				sessions: all.filter(isDisplayableSession),
+				agenda: all.filter(isAgendaSession),
+			};
+		})
+		.catch((err) => {
+			console.warn(
+				`[lineup-build] Pre-render skipped, pages will hydrate from /api/lineup: ${
+					err instanceof Error ? err.message : String(err)
+				}`
+			);
+			return EMPTY;
+		});
+	return inflight;
+}

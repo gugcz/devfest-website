@@ -24,7 +24,16 @@ interface State {
 	sessions: Session[];
 }
 
-const INITIAL: State = { status: 'loading', sessions: [] };
+/**
+ * Server-render state — see `src/lib/lineup-build.ts`. The timetable is the
+ * page's whole content, so without this the static HTML of `/agenda` is a
+ * heading and the word "Loading".
+ */
+function initialState(sessions: Session[]): State {
+	return sessions.length > 0
+		? { status: 'ready', sessions }
+		: { status: 'loading', sessions: [] };
+}
 
 /** 5-minute grid snap + row height (px per snap unit) for the proportional grid.
  *
@@ -399,9 +408,17 @@ function AgendaList({
 
 /* ============================ ROOT ============================ */
 
-export default function Agenda() {
-	const [state, setState] = useState<State>(INITIAL);
-	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
+export default function Agenda({
+	initialSessions = [],
+	initialSpeakers = [],
+}: {
+	initialSessions?: Session[];
+	initialSpeakers?: Speaker[];
+}) {
+	const [state, setState] = useState<State>(() => initialState(initialSessions));
+	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>(() =>
+		Object.fromEntries(initialSpeakers.map((sp) => [sp.id, sp])),
+	);
 	const [selected, setSelected] = useState<Session | null>(null);
 	const isNarrow = useIsNarrow();
 

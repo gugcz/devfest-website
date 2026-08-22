@@ -476,4 +476,17 @@ for no reason a visitor could see. Don't re-add the exception. Subpages carry
 
 ### SEO & Metadata
 
-`BaseLayout.astro` handles all meta tags, Open Graph/Twitter Card, and JSON-LD structured data (Event + WebSite schemas). Sitemap auto-generated via `@astrojs/sitemap`.
+`BaseLayout.astro` handles all meta tags, Open Graph/Twitter Card, and the sitewide JSON-LD. Sitemap auto-generated via `@astrojs/sitemap` (per-URL `PRIORITY` table in `astro.config.mjs`).
+
+**One entity graph, not a pile of objects.** Every fact about the event, the venue, the organisation and the ticket offers lives in **`src/lib/event.ts`**, which mints each node at a stable `@id` (`…/#event`, `…/#organization`, `…/#website`, `…/#venue`). Pages emit a single `@graph` and reference those nodes with `{'@id': …}` instead of restating them — a subpage that re-describes the event describes a *second* event as far as a crawler is concerned. `BaseLayout` renders Organization + WebSite + a per-URL `WebPage` sitewide, the `Event` **only** on `/`, and a BreadcrumbList on subpages. Change a fact once, in `event.ts`.
+
+**The lineup pages are pre-rendered, and that is an SEO fix, not a perf one.** `/speakers`, `/sessions` and `/agenda` are the pages people search for by name (a speaker, a talk title), and their HTML used to be a heading plus "Loading". `src/lib/lineup-build.ts` reads the same `/api/lineup` endpoint **at build time**, memoised across the pages, and hands the result to the islands as `initialSpeakers` / `initialSessions`; Astro server-renders `client:load` components, so the names land in the static document. The island's own mount fetch still runs and replaces the snapshot, so a visitor always sees the live roster and the pre-render is only ever the crawler's copy. A failed build-time read logs and falls back to empty arrays — exactly the state these pages shipped in before.
+
+Two things constrain that:
+- **Never shuffle in the initial state.** `Sessions`/`SpeakersTeaser` shuffle with `Math.random()`; doing that in the server-render gives the client a different order and React throws the tree away. The pre-render keeps source order; the mount refetch shuffles as before. (`SpeakersTeaser` on `/` is deliberately left un-pre-rendered for the same reason — the home page is content-rich already.)
+- **The snapshot is only as fresh as the last build.** Sessionize syncs daily; the static copy does not. That is invisible to humans (hydration corrects it) and irrelevant to a crawler that re-crawls anyway.
+- Locally and under `A11Y_MOCK=1` the build-time read comes from `scripts/a11y-mocks/api.mjs`, the same fixtures the dev server answers `/api/*` with, so a pre-render can never disagree with what the island then fetches. `DEVFEST_LIVE_API=1` (or a plain production build) hits the deployed function; `LINEUP_BUILD_ENDPOINT` overrides the URL.
+
+`src/lib/lineup-schema.ts` builds the page-level graphs from that same data: an `ItemList` of `Person` for `/speakers`, and an `ItemList` of talks for `/sessions` (unordered — the list is shuffled) and `/agenda` (time-ordered). **A talk becomes a schema.org `Event` only once it has a real `startsAt`**; Google requires `startDate`, and synthesising one from the conference's own start would be a fabricated fact, so an unscheduled talk is listed as a plain `ListItem` carrying its name. `/team` emits its crew the same way (`ItemList` of `Person`, tied to the Organization node).
+
+`robots.txt` allows everything public and disallows only `/api/` (JSON, never a page). The post-conversion pages are **deliberately not** disallowed — they carry `noindex`, and a crawler has to be allowed to fetch a page to see that.

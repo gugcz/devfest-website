@@ -1,4 +1,14 @@
+# https://devfest.cz — everything public is crawlable.
 User-agent: *
 Allow: /
+
+# The cached JSON endpoints behind the lineup and ticket islands. They never
+# return a page, so a crawler spending requests on them gains nothing.
+Disallow: /api/
+
+# NOTE: the post-conversion pages (/thank-you, /newsletter-subscription-thank-you)
+# are deliberately NOT disallowed here. They carry `noindex` in the markup, and a
+# crawler has to be allowed to fetch a page to see that — blocking them here
+# would leave the URLs indexable-by-reference instead of dropped.
 
 Sitemap: https://devfest.cz/sitemap-index.xml

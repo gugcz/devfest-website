@@ -4,6 +4,7 @@ import { ClientRouter } from 'astro:transitions';
 import CookieBanner from '../components/CookieBanner.astro';
 import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
+import { eventSchema, ID, organizationSchema, ref, SITE_URL, websiteSchema } from '../lib/event';
 
 interface Props {
 	title?: string;
@@ -13,7 +14,7 @@ interface Props {
 	showFooter?: boolean;
 }
 
-const siteUrl = "https://devfest.cz";
+const siteUrl = SITE_URL;
 const {
 	title = "DevFest.cz 2026 — Prague Developer Conference",
 	description = "DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026. Tickets on sale now.",
@@ -28,100 +29,27 @@ const ogImage = `${siteUrl}/og-image.jpg`;
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, "") || siteUrl;
 const ogImageAlt = "DevFest.cz 2026 conference banner";
 
-// Event schema follows https://developers.google.com/search/docs/appearance/structured-data/event
-// Only rendered on the home page so subpages (privacy, contact, etc.) don't
-// claim to BE the event. WebSite + Organization render sitewide.
+// Structured data. The event / organisation / website nodes and every fact in
+// them live in `src/lib/event.ts` so the lineup pages can reference the SAME
+// nodes by `@id` instead of describing a second, competing event.
+//
+// The Event node is only emitted on the home page — a subpage claiming to BE
+// the event would compete with it — while Organization + WebSite render
+// sitewide.
 const isHome = Astro.url.pathname === "/";
 
-// `offers[].url` points to the on-site #tickets anchor so the schema stays
-// valid even if ti.to slugs change. Prices are VAT-inclusive CZK figures
-// (gross = ti.to net × 1.21 Czech VAT) and must match the customer-facing
-// prices rendered by Tickets.tsx via priceDisplay(). The event is priced in
-// CZK on ti.to (see #182) — do NOT use EUR here. Only list waves that are
-// actually on sale: Early Bird has ended and Regular is now live, so Regular
-// is the sole listed Offer. Future waves (Lazy Bird) are paused with no
-// scheduled start date, so they carry no honest `availability`/`validFrom`
-// and are omitted entirely until they open (avoids Google's missing-field
-// warning). Add an Offer here when a wave opens; remove it when it ends
-// (source of truth: ti.to/RTDB).
-const organizer = {
-	"@type": "Organization",
-	"name": "GUG.cz, z.s.",
-	"url": "https://gug.cz"
-};
-const eventSchema = {
-	"@context": "https://schema.org",
-	"@type": "Event",
-	"name": "DevFest.cz 2026",
-	"description":
-		"DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML.",
-	"image": [ogImage],
-	"url": siteUrl,
-	"startDate": "2026-10-30T09:00:00+01:00",
-	"endDate": "2026-10-30T20:00:00+01:00",
-	"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-	"eventStatus": "https://schema.org/EventScheduled",
+// A WebPage node per document, tied into the site graph. It is what gives every
+// URL a typed entity to hang its title, description and breadcrumb from.
+const webPageSchema = {
+	"@type": "WebPage",
+	"@id": `${canonicalUrl}#webpage`,
+	"url": canonicalUrl,
+	"name": title,
+	"description": description,
 	"inLanguage": "en",
-	"keywords": "developer conference, technology conference, Prague, web development, Android, Flutter, AI, cybersecurity, DevFest",
-	"location": {
-		"@type": "Place",
-		"name": "Uhelný Mlýn",
-		"address": {
-			"@type": "PostalAddress",
-			"streetAddress": "Areál Šroubáren 860",
-			"postalCode": "252 66",
-			"addressLocality": "Libčice nad Vltavou",
-			"addressRegion": "Central Bohemia",
-			"addressCountry": "CZ"
-		}
-	},
-	"organizer": organizer,
-	"offers": [
-		{
-			"@type": "Offer",
-			"name": "Regular",
-			"description": "Standard conference admission.",
-			"url": `${siteUrl}/#tickets`,
-			"price": "2999",
-			"priceCurrency": "CZK",
-			"availability": "https://schema.org/InStock",
-			"validFrom": "2026-07-01T00:00:00+02:00",
-			// Bump if a later wave supersedes the Regular price before the event.
-			"priceValidUntil": "2026-10-30",
-			"seller": organizer
-		}
-	]
-};
-
-const organizationSchema = {
-	"@context": "https://schema.org",
-	"@type": "Organization",
-	"name": "DevFest.cz",
-	"url": siteUrl,
-	"logo": `${siteUrl}/logo.png`,
-	"description":
-		"DevFest.cz is Prague's community-run developer conference & festival — Web, Mobile, Cybersecurity, and AI/ML.",
-	"parentOrganization": organizer,
-	"contactPoint": {
-		"@type": "ContactPoint",
-		"email": "devfest@gug.cz",
-		"contactType": "customer support"
-	},
-	// Keep in sync with the Footer socials.
-	"sameAs": [
-		"https://x.com/devfest_cz",
-		"https://www.facebook.com/DevFestCZ",
-		"https://bsky.app/profile/devfest.cz",
-		"https://www.linkedin.com/company/gugcz/",
-		"https://www.youtube.com/@gug_cz"
-	]
-};
-
-const websiteSchema = {
-	"@context": "https://schema.org",
-	"@type": "WebSite",
-	"name": "DevFest.cz",
-	"url": siteUrl
+	"isPartOf": ref(ID.website),
+	"about": ref(ID.event),
+	"primaryImageOfPage": { "@type": "ImageObject", "url": ogImage }
 };
 
 // Home → <Page> breadcrumb trail for subpages. Names map from the first path
@@ -146,8 +74,8 @@ const breadcrumbName =
 		.join(" ");
 const breadcrumbSchema = !isHome && slug
 	? {
-			"@context": "https://schema.org",
 			"@type": "BreadcrumbList",
+			"@id": `${canonicalUrl}#breadcrumb`,
 			"itemListElement": [
 				{
 					"@type": "ListItem",
@@ -165,11 +93,19 @@ const breadcrumbSchema = !isHome && slug
 		}
 	: null;
 
-const jsonLd = JSON.stringify(
-	isHome
-		? [eventSchema, organizationSchema, websiteSchema]
-		: [organizationSchema, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])]
-);
+// One `@graph`, not a bare array of disconnected objects: the nodes cross-
+// reference each other by `@id`, which is what lets a crawler resolve them into
+// a single entity rather than four sightings of similar-looking things.
+const jsonLd = JSON.stringify({
+	"@context": "https://schema.org",
+	"@graph": [
+		organizationSchema,
+		websiteSchema,
+		...(isHome ? [eventSchema] : []),
+		webPageSchema,
+		...(breadcrumbSchema ? [breadcrumbSchema] : [])
+	]
+});
 ---
 
 <html lang="en">
@@ -188,7 +124,18 @@ const jsonLd = JSON.stringify(
 		<meta name="theme-color" content="#050505" media="(prefers-color-scheme: light)" />
 		<meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)" />
 		<meta name="color-scheme" content="dark" />
-		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
+		<!--
+			The max-* directives are opt-ins, not defaults: without
+			`max-image-preview:large` Google shows a thumbnail-sized image (or none)
+			in Discover and image-rich results, and `max-snippet:-1` lifts the cap on
+			text snippet length. Both only apply to indexable pages.
+		-->
+		<meta
+			name="robots"
+			content={noindex
+				? "noindex, nofollow"
+				: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"}
+		/>
 		<!--
 			Mark JS available ASAP so scroll-reveal elements only start hidden
 			when we can actually reveal them — no-JS / crawlers get the

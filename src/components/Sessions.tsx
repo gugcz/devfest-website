@@ -19,7 +19,20 @@ interface State {
 	sessions: Session[];
 }
 
-const INITIAL: State = { status: 'loading', sessions: [] };
+/**
+ * Server-render state — see `src/lib/lineup-build.ts` for why the island is
+ * handed the programme as a prop instead of only fetching it on mount.
+ *
+ * Deliberately NOT shuffled: `shuffle()` is `Math.random()`, so shuffling here
+ * would give the server and the hydrating client two different orders and React
+ * would throw the whole tree away. The source order is fine for the pre-render;
+ * the mount refetch below shuffles as it always did.
+ */
+function initialState(sessions: Session[]): State {
+	return sessions.length > 0
+		? { status: 'ready', sessions }
+		: { status: 'loading', sessions: [] };
+}
 
 /** Fisher–Yates shuffle — returns a new array so the source order stays intact.
  * Sessions are randomized once per page load so no track/room gets a permanent
@@ -96,12 +109,20 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 	);
 }
 
-export default function Sessions() {
-	const [state, setState] = useState<State>(INITIAL);
+export default function Sessions({
+	initialSessions = [],
+	initialSpeakers = [],
+}: {
+	initialSessions?: Session[];
+	initialSpeakers?: Speaker[];
+}) {
+	const [state, setState] = useState<State>(() => initialState(initialSessions));
 	// Full speaker profiles keyed by id, from the same /api/lineup fetch, so the
 	// session → speaker drill-down in SessionDetail renders from data already on
 	// the page instead of a second read.
-	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
+	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>(() =>
+		Object.fromEntries(initialSpeakers.map((sp) => [sp.id, sp])),
+	);
 	const [selected, setSelected] = useState<Session | null>(null);
 	const [query, setQuery] = useState('');
 	const [filters, setFilters] = useState<SessionFilters>({});

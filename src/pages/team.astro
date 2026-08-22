@@ -7,6 +7,7 @@ import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import { EVENT_TOPICS } from '../lib/ticker';
+import { ID, ref, SITE_URL } from '../lib/event';
 
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
 // The roster lives in the `team` content collection (`src/content/team.json`,
@@ -67,6 +68,40 @@ const initials = (name: string): string =>
 		.join('')
 		.toUpperCase();
 
+// ─── STRUCTURED DATA ───────────────────────────────────────────────────────
+// The organising crew as an `ItemList` of `Person` nodes, each tied to the
+// sitewide Organization by `@id` (see src/lib/event.ts) rather than restating
+// it. Real people with real profiles are exactly the kind of entity Google
+// wants to resolve, and the page already renders every fact used here.
+//
+// `alias` is a noir codename, not a name the person goes by, so it stays out of
+// the schema; `role` is the real one. Email links become `email`, everything
+// else is a profile URL and belongs in `sameAs`.
+const teamSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'ItemList',
+	name: 'DevFest.cz 2026 organising team',
+	url: `${SITE_URL}/team`,
+	numberOfItems: team.length,
+	itemListElement: team.map((member, i) => {
+		const profiles = member.links?.filter((link) => link.kind !== 'email') ?? [];
+		const mail = member.links?.find((link) => link.kind === 'email');
+		return {
+			'@type': 'ListItem',
+			position: i + 1,
+			item: {
+				'@type': 'Person',
+				name: member.name,
+				jobTitle: member.role,
+				worksFor: ref(ID.organization),
+				memberOf: ref(ID.organization),
+				...(mail ? { email: mail.url.replace(/^mailto:/, '') } : {}),
+				...(profiles.length ? { sameAs: profiles.map((link) => link.url) } : {}),
+			},
+		};
+	}),
+};
+
 // Single-path icons (fill: currentColor) keyed by link kind.
 const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
 	linkedin: {
@@ -97,6 +132,8 @@ const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
 	title="Team — DevFest.cz 2026"
 	description="Meet the crew behind DevFest.cz 2026 — the organisers running Prague's community-built developer conference."
 >
+	<script type="application/ld+json" slot="head" set:html={JSON.stringify(teamSchema)} />
+
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'The crew on<br />the <span class="red">case.</span>'}
