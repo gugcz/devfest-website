@@ -48,24 +48,12 @@
 		line-height: 1.7;
 		color: rgba(240, 237, 230, 0.85);
 		margin: 0 0 1.1rem;
-		// The measure sits on the PARAGRAPH, not on the wrapper around it. `ch`
-		// is the width of a `0` in the element's OWN font, and the wrapper is a
-		// bare `div` inheriting the body's 1rem while the prose is set at
-		// --fs-lede — 23px at 1440. So the cap was measuring a font two thirds
-		// the size of the one it capped: 547px, 48 characters, a column that
-		// stopped 42% into a sheet whose title runs the full 1296px, with the
-		// justification below opening rivers to fill the short line. That void
-		// down the right is the whole bug. On the paragraph the cap resolves at
-		// the reading size — 788px, 65 characters, 61% of the column.
-		//
-		// It also removes the breakpoint this file used to carry: a measure in
-		// its own font stops binding by itself the moment the column is
-		// narrower than it is (under ~700px the page inset alone holds the
-		// line), which is what a `max-width: none` under 860px was hand-rolling
-		// while the cap measured the wrong font. Kept, it would now only fire
-		// in the 700-860 band and do the opposite of its intent — 774px of
-		// Special Elite is an 85-character line, and a long line is worse than
-		// air down the right.
+		// The measure sits on the PARAGRAPH, never on the wrapper: `ch` is the
+		// width of a `0` in the element's OWN font, and the wrapper inherits the
+		// body's 1rem while this prose is set at --fs-lede. On the wrapper the
+		// cap measured 48 characters instead of 56 and left a void down the
+		// right. Here it also needs no breakpoint — it stops binding by itself
+		// once the column is narrower than the measure.
 		max-width: 56ch;
 		// Justified, with hyphenation. Special Elite is a wide typewriter face,
 		// so a 56ch measure leaves a deep ragged void down the right — on a
