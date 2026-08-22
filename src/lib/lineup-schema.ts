@@ -12,7 +12,7 @@
  * an unscheduled talk is listed as a plain `ListItem` with its name and nothing
  * more, which is valid and true.
  */
-import { isScheduled, toAbsoluteIso } from './agenda';
+import { isScheduled, parseLocalMinutes, toAbsoluteIso } from './agenda';
 import { ID, ref, SITE_URL } from './event';
 import type { Session } from './sessions';
 import { visitorCategories } from './sessions';
@@ -22,7 +22,12 @@ import type { Speaker } from './speakers';
 function clamp(text: string, max = 320): string {
 	const flat = text.replace(/\s+/g, ' ').trim();
 	if (flat.length <= max) return flat;
-	return `${flat.slice(0, max - 1).trimEnd()}…`;
+	// By code point, not by UTF-16 unit: `slice` will happily cut between the
+	// halves of a surrogate pair, and an emoji is a common last character in a
+	// conference bio. A lone surrogate is well-formed JSON but not well-formed
+	// text, and strict consumers reject or mangle the whole description.
+	const cut = Array.from(flat).slice(0, max - 1).join('').trimEnd();
+	return `${cut}…`;
 }
 
 function personSchema(speaker: Speaker) {
@@ -38,7 +43,12 @@ function personSchema(speaker: Speaker) {
 }
 
 /** `ItemList` of the confirmed speakers, for `/speakers`. */
-export function speakersSchema(speakers: Speaker[], url: string) {
+export function speakersSchema(all: Speaker[], url: string) {
+	// `speakerFromDoc` defaults a missing `fullName` to '' so a half-synced doc
+	// degrades in the grid (it renders a '?' monogram) instead of throwing. The
+	// graph cannot degrade the same way: `name` is what makes a Person node mean
+	// anything, and an empty one asserts a performer nobody can identify.
+	const speakers = all.filter((speaker) => speaker.fullName.trim().length > 0);
 	if (!speakers.length) return null;
 	return {
 		'@context': 'https://schema.org',
@@ -56,8 +66,30 @@ export function speakersSchema(speakers: Speaker[], url: string) {
 	};
 }
 
+/**
+ * The talk's absolute end, or null when it cannot be stated honestly.
+ *
+ * `startDate` is gated by `isScheduled`, so `endDate` must be too: a bare-date
+ * or malformed `endsAt` passes through `toAbsoluteIso` untouched, which would
+ * put a naive end beside an offset-qualified start inside one Event — a
+ * consumer resolving the end against UTC then reads the talk as finishing
+ * hours before it began. An end that does not follow the start is dropped for
+ * the same reason; the grid has `FALLBACK_DURATION_MIN` for that case, but
+ * inventing a duration in structured data would be inventing a fact.
+ */
+function talkEnd(session: Session): string | null {
+	if (parseLocalMinutes(session.endsAt) === null) return null;
+	const end = toAbsoluteIso(session.endsAt);
+	const startsAt = Date.parse(toAbsoluteIso(session.startsAt));
+	const endsAt = Date.parse(end);
+	if (Number.isNaN(endsAt)) return null;
+	if (!Number.isNaN(startsAt) && endsAt <= startsAt) return null;
+	return end;
+}
+
 function talkSchema(session: Session) {
 	const tags = visitorCategories(session).flatMap((category) => category.values);
+	const endDate = talkEnd(session);
 	return {
 		'@type': 'Event',
 		name: session.title,
@@ -66,7 +98,7 @@ function talkSchema(session: Session) {
 		// (see `toAbsoluteIso`). The conference's own Event node is
 		// offset-qualified, so a naive child would contradict its own parent.
 		startDate: toAbsoluteIso(session.startsAt),
-		...(session.endsAt ? { endDate: toAbsoluteIso(session.endsAt) } : {}),
+		...(endDate ? { endDate } : {}),
 		eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
 		eventStatus: 'https://schema.org/EventScheduled',
 		inLanguage: 'en',
@@ -104,8 +136,9 @@ function talkSchema(session: Session) {
  * `ItemList` of the programme, for `/sessions` and `/agenda`.
  *
  * `ordered` is what separates the two: the agenda is a timetable, so its list
- * carries a real order; the session list is deliberately shuffled per visitor,
- * so claiming an order there would be meaningless.
+ * carries a real order. The session list has no meaningful one — `sessions.astro`
+ * rotates it once per build so no track or room keeps the top of the grid — so
+ * it stays `ItemListUnordered`.
  */
 export function sessionsSchema(
 	sessions: Session[],

@@ -16,10 +16,15 @@
  * what keeps a visitor current between deploys. The snapshot is only ever as
  * fresh as the last build — that is fine for crawlers and invisible to humans.
  *
- * Failure is never fatal: a build with no network (or a cold `/api/*` after a
- * first deploy) falls back to empty arrays, which is precisely the state these
- * pages shipped in before.
+ * A failed read is loud, and on a CI build it is FATAL (see the catch at the
+ * bottom of this file): a green deploy that silently drops every speaker and
+ * talk out of the HTML and deletes the `ItemList` graphs is worse than a red
+ * one. `LINEUP_BUILD_OPTIONAL=1` — which the PR-preview workflow sets, and the
+ * production workflow exposes as its `skip_lineup` input — downgrades it to the
+ * warning-and-empty-arrays behaviour, i.e. exactly the state these pages
+ * shipped in before this module existed. Outside CI it is always a warning.
  */
+import { parseDocs } from './lineup';
 import { speakerFromDoc, type Speaker } from './speakers';
 import { isAgendaSession, isDisplayableSession, sessionFromDoc, type Session } from './sessions';
 
@@ -56,19 +61,6 @@ declare const __DEVFEST_API_FIXTURES__: boolean | undefined;
 const useFixtures =
 	process.env.A11Y_MOCK === '1' ||
 	(typeof __DEVFEST_API_FIXTURES__ !== 'undefined' && __DEVFEST_API_FIXTURES__ === true);
-
-interface WireDoc {
-	id?: unknown;
-	[field: string]: unknown;
-}
-
-function parseDocs<T>(raw: unknown, parse: (id: string, data: Record<string, unknown>) => T): T[] {
-	if (!Array.isArray(raw)) return [];
-	return raw.map((item) => {
-		const doc = (item ?? {}) as WireDoc;
-		return parse(typeof doc.id === 'string' ? doc.id : '', doc as Record<string, unknown>);
-	});
-}
 
 /** Thrown for a non-OK response, carrying the status so the retry can judge it. */
 class HttpStatusError extends Error {
@@ -140,11 +132,23 @@ function describe(err: unknown): string {
 		| undefined;
 	// A refused connection arrives as an AggregateError whose per-address errors
 	// carry the code, so read through that too.
-	const code = cause?.code ?? cause?.errors?.find((e) => e?.code)?.code;
+	// `errors` is only an array on an AggregateError; anything else reaching this
+	// path would make `.find` throw from inside the handler that is supposed to
+	// be producing the failure message.
+	const aggregated = Array.isArray(cause?.errors) ? cause.errors.find((e) => e?.code) : undefined;
+	const code = cause?.code ?? aggregated?.code;
 	return code ? `${err.message} (${String(code)})` : err.message;
 }
 
-/** One read per build, shared by `/speakers`, `/sessions` and `/agenda`. */
+/**
+ * One read per build, shared by `/speakers`, `/sessions` and `/agenda`.
+ *
+ * Only a SUCCESSFUL read is memoised. A build renders every page in one pass,
+ * so the difference is invisible there — but `astro dev` keeps this module for
+ * the whole session, and caching the failure meant one blip with
+ * `DEVFEST_LIVE_API=1` left every later render (and every edit-reload) with no
+ * pre-rendered lineup and no explanation until the server was restarted.
+ */
 let inflight: Promise<BuildLineup> | null = null;
 
 export function getBuildLineup(): Promise<BuildLineup> {
@@ -189,6 +193,7 @@ export function getBuildLineup(): Promise<BuildLineup> {
 						`shipped without their pre-rendered lineup and structured data`
 				);
 			}
+			inflight = null;
 			return EMPTY;
 		});
 	return inflight;

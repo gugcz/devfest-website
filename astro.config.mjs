@@ -1,4 +1,5 @@
 // @ts-check
+import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
@@ -7,12 +8,27 @@ import react from '@astrojs/react';
 
 const BUILD_DATE = new Date().toISOString();
 
-// The only pages whose bytes change between two builds of the same commit: the
+// Date of the commit being deployed — the honest `lastmod` for every page whose
+// content lives in the repo. A scheduled rebuild redeploys the same commit, so
+// this does NOT move on a no-op redeploy the way BUILD_DATE would; it moves
+// when something was actually merged. Falls back to the build instant outside a
+// git checkout (a source tarball, a container without git).
+const SOURCE_DATE = (() => {
+    try {
+        return execSync('git log -1 --format=%cI', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    } catch {
+        return BUILD_DATE;
+    }
+})();
+
+// The only pages whose bytes change between two builds of the SAME commit: the
 // lineup is read at build time (src/lib/lineup-build.ts) and the hosting
-// workflow redeploys daily. Everything else is static, so stamping it with the
-// build instant would have every URL claim it changed today, every day —
-// Google's stated position is that it discounts `lastmod` when a site's dates
-// are not trustworthy, which spends the signal on the pages that do change.
+// workflow redeploys daily. They get the build instant; everything else gets
+// the commit date. Stamping every URL with the build instant would have the
+// whole site claim it changed today, every day — Google's stated position is
+// that it discounts `lastmod` when a site's dates are not trustworthy — and
+// omitting it entirely would leave the pages that DO change in a deploy with no
+// signal at all.
 const LINEUP_PAGES = new Set([
     'https://devfest.cz/speakers',
     'https://devfest.cz/sessions',
@@ -62,6 +78,18 @@ const a11yMockAlias = a11yMock
 //
 // Opt out with `DEVFEST_LIVE_API=1 npm run dev` to hit the deployed functions
 // instead — needed when you are changing the functions themselves.
+/** Origin of the deployed `/api/*`, honouring the same override the build-time
+ * lineup read uses (`src/lib/lineup-build.ts`). */
+const liveApiOrigin = () => {
+    const endpoint = process.env.LINEUP_BUILD_ENDPOINT;
+    if (!endpoint) return 'https://devfest.cz';
+    try {
+        return new URL(endpoint).origin;
+    } catch {
+        return 'https://devfest.cz';
+    }
+};
+
 const devApiMocks = () => ({
     name: 'devfest:dev-api-fixtures',
     // `apply: 'serve'` excludes the whole plugin from a build, which is what
@@ -88,8 +116,13 @@ const devApiMocks = () => ({
             define: { __DEVFEST_API_FIXTURES__: JSON.stringify(!live) },
             ...(live && {
                 server: {
+                    // Same origin the build-time read uses, so the pre-render and
+                    // the island's fetch can never come from two different
+                    // deployments — pointing LINEUP_BUILD_ENDPOINT at a preview
+                    // channel while the browser silently read production is a
+                    // difference you cannot see on screen.
                     proxy: {
-                        '/api': { target: 'https://devfest.cz', changeOrigin: true, secure: true },
+                        '/api': { target: liveApiOrigin(), changeOrigin: true, secure: true },
                     },
                 },
             }),
@@ -159,8 +192,7 @@ export default defineConfig({
                     item.lastmod = BUILD_DATE;
                     item.changefreq = 'daily';
                 } else {
-                    // No `lastmod` at all rather than a date we'd be inventing —
-                    // omitting it is honest and costs nothing.
+                    item.lastmod = SOURCE_DATE;
                     item.changefreq = 'monthly';
                 }
                 item.priority = PRIORITY[url] ?? 0.6;

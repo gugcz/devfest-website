@@ -14,26 +14,9 @@ import {
 	type AgendaPartition,
 } from '../lib/agenda';
 import { fetchAgenda } from '../lib/lineup';
+import { usePrerenderedFetch } from './usePrerenderedFetch';
 import SessionDetail from './SessionDetail';
 import s from './Agenda.module.scss';
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
-	sessions: Session[];
-}
-
-/**
- * Server-render state — see `src/lib/lineup-build.ts`. The timetable is the
- * page's whole content, so without this the static HTML of `/agenda` is a
- * heading and the word "Loading".
- */
-function initialState(sessions: Session[]): State {
-	return sessions.length > 0
-		? { status: 'ready', sessions }
-		: { status: 'loading', sessions: [] };
-}
 
 /** 5-minute grid snap + row height (px per snap unit) for the proportional grid.
  *
@@ -409,7 +392,7 @@ function AgendaList({
 /* ============================ ROOT ============================ */
 
 export default function Agenda({ initialSessions = [] }: { initialSessions?: Session[] }) {
-	const [state, setState] = useState<State>(() => initialState(initialSessions));
+
 	// Deliberately not seeded from the pre-render — see the same note in
 	// Sessions.tsx. The grid renders speaker names from each session's own
 	// embedded `speakers[]` refs; this map is for the detail sheet only.
@@ -417,33 +400,23 @@ export default function Agenda({ initialSessions = [] }: { initialSessions?: Ses
 	const [selected, setSelected] = useState<Session | null>(null);
 	const isNarrow = useIsNarrow();
 
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchAgenda(ac.signal)
-			.then(({ sessions, speakers }) => {
-				setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
-				setState({ status: sessions.length > 0 ? 'ready' : 'empty', sessions });
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[agenda] Failed to load lineup:', err);
-			// A failed refetch must not delete what the server already rendered.
-			// These pages ship the lineup in their HTML now, so falling straight
-			// into the error state would take a fully-painted grid off the screen
-			// a moment after it appeared — and hand a JS-rendering crawler an
-			// error string in place of the content it was just given.
-				setState((prev) => (prev.sessions.length > 0 ? prev : { ...prev, status: 'error' }));
-			});
-		return () => ac.abort();
-	}, []);
+	const state = usePrerenderedFetch<Session>({
+		initial: initialSessions,
+		label: 'agenda',
+		load: async (signal) => {
+			const { sessions, speakers } = await fetchAgenda(signal);
+			setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
+			return sessions;
+		},
+	});
 
-	const partition = useMemo(() => partitionAgenda(state.sessions), [state.sessions]);
-	const range = useMemo(() => dayRange(state.sessions), [state.sessions]);
+	const partition = useMemo(() => partitionAgenda(state.items), [state.items]);
+	const range = useMemo(() => dayRange(state.items), [state.items]);
 	// Event-day "now" line + live/coming-up badges (hooks must run before the
 	// early returns below).
-	const eventDate = useMemo(() => eventDateISO(state.sessions), [state.sessions]);
+	const eventDate = useMemo(() => eventDateISO(state.items), [state.items]);
 	const nowMin = useNowMinutes(eventDate);
-	const now = useMemo(() => nowState(state.sessions, nowMin), [state.sessions, nowMin]);
+	const now = useMemo(() => nowState(state.items, nowMin), [state.items, nowMin]);
 
 	if (state.status === 'error') {
 		return (

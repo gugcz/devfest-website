@@ -23,7 +23,13 @@ interface WireDoc {
 	[field: string]: unknown;
 }
 
-function parseDocs<T>(raw: unknown, parse: (id: string, data: Record<string, unknown>) => T): T[] {
+/** Shared with the build-time read in `lineup-build.ts` — one parser for one
+ * wire format, so a change at the endpoint cannot be fixed in the browser and
+ * missed in the pre-render. */
+export function parseDocs<T>(
+	raw: unknown,
+	parse: (id: string, data: Record<string, unknown>) => T
+): T[] {
 	if (!Array.isArray(raw)) return [];
 	return raw.map((item) => {
 		const doc = (item ?? {}) as WireDoc;

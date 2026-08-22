@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { initials, type Speaker } from '../lib/speakers';
 import {
 	collectFacets,
@@ -10,42 +10,15 @@ import {
 } from '../lib/sessions';
 import { fetchLineup } from '../lib/lineup';
 import SessionDetail from './SessionDetail';
+import { usePrerenderedFetch } from './usePrerenderedFetch';
 import s from './Sessions.module.scss';
 
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
-	sessions: Session[];
-}
-
-/**
- * Server-render state — see `src/lib/lineup-build.ts` for why the island is
- * handed the programme as a prop instead of only fetching it on mount.
- *
- * Nothing is shuffled here: `shuffle()` is `Math.random()`, so shuffling in the
- * island would give the server and the hydrating client two different orders
- * and React would throw the whole tree away. The rotation still happens — the
- * PAGE shuffles once at build time (`sessions.astro`), so the order changes per
- * deploy, and the daily hosting rebuild makes that a daily rotation.
- */
-function initialState(sessions: Session[]): State {
-	return sessions.length > 0
-		? { status: 'ready', sessions }
-		: { status: 'loading', sessions: [] };
-}
-
-/** Same sessions, in some order — ignoring order, which is the point. */
-function sameRoster(a: Session[], b: Session[]): boolean {
-	if (a.length !== b.length) return false;
-	const ids = new Set(a.map((session) => session.id));
-	return b.every((session) => ids.has(session.id));
-}
-
 /** Fisher–Yates shuffle — returns a new array so the source order stays intact.
- * Only reached when the refetched roster differs from the pre-rendered one; the
+ * Only reached when the refetched roster differs from the one on screen; the
  * per-deploy rotation that keeps any one track/room off the top of the grid is
- * done by the page (see `sessions.astro`). */
+ * done by the page (see `sessions.astro`), because a per-load shuffle in the
+ * island would differ from the server-rendered order and React would throw the
+ * whole tree away. */
 function shuffle<T>(items: T[]): T[] {
 	const out = items.slice();
 	for (let i = out.length - 1; i > 0; i--) {
@@ -53,6 +26,24 @@ function shuffle<T>(items: T[]): T[] {
 		[out[i], out[j]] = [out[j], out[i]];
 	}
 	return out;
+}
+
+/**
+ * Keep the running order the visitor is already reading, but keep the FRESH
+ * sessions: re-shuffling an identical, visible grid is a content jump on the
+ * page's main list, and returning the old array instead would pin the page to
+ * the build-time snapshot and silently drop a room or slot change the endpoint
+ * has already published.
+ *
+ * Only an unchanged roster is re-ordered; anything else is a new list and gets
+ * a fresh rotation.
+ */
+function keepRunningOrder(next: Session[], current: Session[]): Session[] {
+	const rank = new Map(current.map((session, i) => [session.id, i]));
+	if (next.length !== rank.size || !next.every((session) => rank.has(session.id))) {
+		return shuffle(next);
+	}
+	return [...next].sort((a, b) => (rank.get(a.id) ?? 0) - (rank.get(b.id) ?? 0));
 }
 
 /** Up to three overlapping speaker avatars, monogram fallback per speaker. */
@@ -119,7 +110,7 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 }
 
 export default function Sessions({ initialSessions = [] }: { initialSessions?: Session[] }) {
-	const [state, setState] = useState<State>(() => initialState(initialSessions));
+
 	// Full speaker profiles keyed by id, from the same /api/lineup fetch, so the
 	// session → speaker drill-down in SessionDetail renders from data already on
 	// the page instead of a second read.
@@ -134,38 +125,21 @@ export default function Sessions({ initialSessions = [] }: { initialSessions?: S
 	const [query, setQuery] = useState('');
 	const [filters, setFilters] = useState<SessionFilters>({});
 
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchLineup(ac.signal)
-			.then(({ sessions, speakers }) => {
-				setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
-				setState((prev) => {
-					// Keep the order the visitor is already reading. Re-shuffling a
-					// grid that is on screen and identical in content is a content
-					// jump on the page's main list — and it lands right around the
-					// moment someone reaches for a card.
-					if (sameRoster(prev.sessions, sessions)) return prev;
-					const ordered = shuffle(sessions);
-					return { status: ordered.length > 0 ? 'ready' : 'empty', sessions: ordered };
-				});
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[sessions] Failed to load lineup:', err);
-			// A failed refetch must not delete what the server already rendered.
-			// These pages ship the lineup in their HTML now, so falling straight
-			// into the error state would take a fully-painted grid off the screen
-			// a moment after it appeared — and hand a JS-rendering crawler an
-			// error string in place of the content it was just given.
-				setState((prev) => (prev.sessions.length > 0 ? prev : { ...prev, status: 'error' }));
-			});
-		return () => ac.abort();
-	}, []);
+	const state = usePrerenderedFetch<Session>({
+		initial: initialSessions,
+		label: 'sessions',
+		order: keepRunningOrder,
+		load: async (signal) => {
+			const { sessions, speakers } = await fetchLineup(signal);
+			setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
+			return sessions;
+		},
+	});
 
-	const facets = useMemo(() => collectFacets(state.sessions), [state.sessions]);
+	const facets = useMemo(() => collectFacets(state.items), [state.items]);
 	const filtered = useMemo(
-		() => state.sessions.filter((session) => matchesFilters(session, query, filters)),
-		[state.sessions, query, filters],
+		() => state.items.filter((session) => matchesFilters(session, query, filters)),
+		[state.items, query, filters],
 	);
 	const active = hasActiveFilters(query, filters);
 
