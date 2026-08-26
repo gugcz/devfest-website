@@ -24,6 +24,14 @@
 		"url": "https://cloud.google.com/"
 	},
 	{
+		"id": "seyfor",
+		"tier": "diamond",
+		"order": 4,
+		"name": "Seyfor",
+		"logo": "/partners/diamond/seyfor.svg",
+		"url": "https://www.seyfor.com/"
+	},
+	{
 		"id": "ceska-sporitelna",
 		"tier": "platinum",
 		"order": 1,
@@ -55,6 +63,22 @@
 		"name": "Alma Career",
 		"logo": "/partners/gold/alma.png",
 		"url": "https://www.almacareer.com/"
+	},
+	{
+		"id": "aricoma",
+		"tier": "gold",
+		"order": 4,
+		"name": "Aricoma",
+		"logo": "/partners/gold/aricoma.svg",
+		"url": "https://www.aricoma.com/"
+	},
+	{
+		"id": "second-foundation",
+		"tier": "gold",
+		"order": 5,
+		"name": "Second Foundation",
+		"logo": "/partners/gold/second-foundation.svg",
+		"url": "https://www.second-foundation.eu/"
 	},
 	{
 		"id": "applifting",
