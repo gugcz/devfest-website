@@ -103,5 +103,13 @@
 		"name": "SatoshiLabs",
 		"logo": "/partners/community/satoshi-labs.svg",
 		"url": "https://satoshilabs.com/"
+	},
+	{
+		"id": "jetbrains",
+		"tier": "community",
+		"order": 3,
+		"name": "JetBrains",
+		"logo": "/partners/community/jetbrains.svg",
+		"url": "https://www.jetbrains.com/"
 	}
 ]
