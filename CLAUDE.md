@@ -269,6 +269,27 @@ Primitives in `BaseLayout.scss`: `.u-container`, `.u-prose`, `.eyebrow`,
 `.closer` / `.closer-title` / `.closer-note` / `.closer-actions`,
 `.btn-primary` / `.btn-ghost`, and the `.ledger` / `.record` family.
 
+**A section that is an in-page anchor target takes `.anchor-target`.** An anchor
+jump aligns the target's TOP EDGE, and every section here opens with
+`--section-y*` of air — so "Get tickets" landed the ticket section's first pixel
+under the bar and left its own 216px of held air filling the screen (the title
+sat 312px down a 900px viewport with nothing above it). `scroll-padding-top`
+cannot fix that: it only clears the bar, and clearing it harder makes the hole
+bigger — the air is *inside* the target. `.anchor-target` cancels the section's
+opening air with a negative `scroll-margin-top`, reading `--anchor-air` (default
+`--section-y`; `Tickets.module.scss` sets `--section-y-wide`). The air still
+exists for anyone scrolling INTO the section; it just isn't what a jump lands
+on. Consequence: a jump starts inside the section, so its top rule / band edge
+is above the viewport — deliberate. Callers: `#tickets`, `#newsletter`.
+
+**The bar's height is a token, not a guess.** `--header-h` = `--header-pad-y` × 2
++ `--header-tap` (71px — the actions sit at the 2.75rem WCAG 2.5.5 tap minimum
+and are the tallest thing in the bar; the brand logo caps at 34px). `Menu.scss`
+builds the bar out of those same two tokens and `html { scroll-padding-top }` is
+`calc(var(--header-h) + 1.5rem)`, so the offset anchors clear can't drift away
+from the bar it describes. It replaced a hardcoded `6rem` that stood 25px clear
+of a 71px bar.
+
 **Open-field rows — every list on the site is the same open field.** A list of
 entries is never a stack of cards, and it is no longer a ruled ledger either:
 the thick/thin opening rule plus a hairline under every row is a TABLE, and it

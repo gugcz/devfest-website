@@ -20,7 +20,9 @@
 		gap: 1.5rem;
 		// Constant padding — height stays fixed across scroll states so
 		// nav doesn't reflow / jump when the scroll handler flips data-state.
-		padding: 0.85rem clamp(1rem, 3vw, 2.25rem);
+		// Vertical comes from `--header-pad-y` because `--header-h` is derived
+		// from it: anchor offsets measure this bar, so the two can't drift.
+		padding: var(--header-pad-y) clamp(1rem, 3vw, 2.25rem);
 		// The ground and the scrim are painted by the two pseudo-elements
 		// below, so the swap between them can be crossfaded. The bar itself
 		// carries no background.
@@ -186,7 +188,9 @@
 		border: 1px solid var(--color-accent);
 		border-radius: var(--radius);
 		padding: 0.72rem 1.5rem;
-		min-height: 2.75rem; // touch target — WCAG 2.5.5
+		// Touch target — WCAG 2.5.5. It is also the tallest thing in the bar,
+		// so it is what `--header-h` is built from.
+		min-height: var(--header-tap);
 		display: inline-flex;
 		align-items: center;
 		transition: background 0.2s ease, border-color 0.2s ease;
@@ -212,8 +216,8 @@
 		z-index: 2;
 		gap: 0.65rem;
 		padding: 0.72rem 1.15rem;
-		min-height: 2.75rem;
-		min-width: 2.75rem;
+		min-height: var(--header-tap);
+		min-width: var(--header-tap);
 		background: transparent;
 		border: 1px solid var(--rule-strong);
 		border-radius: var(--radius);

@@ -137,7 +137,7 @@ export default function Tickets() {
 
 	if (state.status === 'error') {
 		return (
-			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
+			<section id="tickets" className={`${s.tickets} anchor-target`} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 				</header>
@@ -150,7 +150,7 @@ export default function Tickets() {
 
 	if (state.status === 'loading') {
 		return (
-			<section id="tickets" className={s.tickets} aria-busy={true} aria-labelledby="tickets-heading">
+			<section id="tickets" className={`${s.tickets} anchor-target`} aria-busy={true} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 					<p className={s.loadingStatus} role="status">
@@ -198,7 +198,7 @@ export default function Tickets() {
 	if (state.status === 'empty') {
 		if (!hasEvent) return null;
 		return (
-			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
+			<section id="tickets" className={`${s.tickets} anchor-target`} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 					<p className="head-note">The box office is closed. It opens with the first wave.</p>
@@ -225,7 +225,7 @@ export default function Tickets() {
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
 
 	return (
-		<section id="tickets" className={`${s.tickets} rake`} aria-labelledby="tickets-heading">
+		<section id="tickets" className={`${s.tickets} anchor-target rake`} aria-labelledby="tickets-heading">
 			{/* Red raking light, swept by the scroll itself. Purely decorative and
 			    enhancement-only — see the `.rake` rules in BaseLayout.scss. */}
 			<span className="rake-beam" aria-hidden="true" />
