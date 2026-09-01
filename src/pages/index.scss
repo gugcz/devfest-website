@@ -577,6 +577,26 @@
 	@media (max-width: 600px) {
 		.hero-inner {
 			padding-block: clamp(0.5rem, 1.5vh, 1.25rem) clamp(1rem, 3vh, 2rem);
+			// Sit the block on the footing strip instead of centring it in the
+			// leftover height. On a tall phone (390x844) the statement is short
+			// enough that `justify-content: center` left ~100px of empty frame
+			// above the wordmark AND below the CTAs, so the whole lockup floated
+			// mid-screen with no edge to read it against — the poster reads as a
+			// centred card. Bottom-set, the hero is one block rising off the
+			// strip, which is the desktop composition too.
+			justify-content: flex-end;
+		}
+
+		// Poster scale, on a phone too. `--fs-hero`'s vw term only overtakes its
+		// 2.5rem floor at 421px, so EVERY phone got the same 40px — under the
+		// 46.4px `--fs-h2` floor the sections below run at, which inverted the
+		// page's hierarchy: the section heads were bigger than the statement
+		// they sit under. Scoped here so the desktop ramp is untouched.
+		.hero-statement {
+			font-size: clamp(2.6rem, 12vw, 3.5rem);
+			// One word narrower: at 12vw the old 14ch measure let "conference"
+			// run past the gutter before the wrap point.
+			max-width: 12ch;
 		}
 
 		// The flavour line is the one element in the hero that carries no data.
@@ -602,6 +622,14 @@
 			.btn-ghost {
 				width: 100%;
 				padding-block: 1rem;
+				// Full-width, so the centred label was the only thing on the
+				// phone hero sitting on its own axis — wordmark, statement,
+				// flavour line and the whole footing strip are flush left, and
+				// two centred labels in the middle of that column read as a
+				// mis-set block. Left-set with a short inline inset (not 2.8rem:
+				// the label should land near the same edge as the type above it).
+				justify-content: flex-start;
+				padding-inline: 1.35rem;
 			}
 		}
 
