@@ -642,6 +642,55 @@
 		}
 	}
 
+	// Phones whose VISIBLE height is under ~630px. The layout viewport lies here:
+	// an iPhone SE 2/3 or 8 reports 375x667, but with Safari's bars on screen
+	// `100svh` is ~553px, and an SE 1st gen is 320x568. Below ~624px the hero
+	// stopped shrinking — the statement hit the floor of its `clamp()`, and the
+	// stacked CTAs and the footing strip are fixed — so the block bottomed out at
+	// ~633px and the clock fell under the fold. This rule takes the floor down to
+	// 541px: the flavour line goes — the same trade the landscape rule makes, and
+	// it is the one element in the hero carrying no data — and the insets around
+	// the wordmark, the CTAs and the strip are trimmed. Calibrated on the
+	// tightest case (375x553, 12px to spare): the statement and the wordmark keep
+	// the sizes the <=680px rule already gives them, because dropping the flavour
+	// line alone buys back more than shrinking the type would. The date, the
+	// venue and the clock stay whole.
+	//
+	// `pointer: coarse`, like the landscape rule below: a desktop at 400% zoom is
+	// 320x256 CSS px and would otherwise match, and dropping `.hero-note` because
+	// of zoom is the 1.4.10 reflow fault this PR already fixed once.
+	@media (max-width: 600px) and (max-height: 630px) and (pointer: coarse) {
+		.hero-inner {
+			padding-block: 0.35rem 0.6rem;
+		}
+
+		.hero-title {
+			margin-bottom: 0.7rem;
+		}
+
+		.hero-note {
+			display: none;
+		}
+
+		.hero-actions {
+			margin-top: 0.85rem;
+
+			// 45.6px tall, still clear of the 44px touch minimum.
+			.btn-primary,
+			.btn-ghost {
+				padding-block: 0.8rem;
+			}
+		}
+
+		.hero-foot {
+			padding-top: 0.7rem;
+		}
+
+		.hero-clock {
+			gap: 0.4rem;
+		}
+	}
+
 	// Landscape phones (<=500px of height). The full block — wordmark, poster
 	// statement, flavour line, two stacked CTAs and the footing strip — cannot
 	// fit 375px of height with 71px of it already spent clearing the header
