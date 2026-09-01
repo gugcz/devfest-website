@@ -44,18 +44,18 @@
 		line-height: 0;
 		// Height-aware: the gap under the wordmark is one of the four vertical
 		// insets that decide whether the footing strip clears the fold. `min()`
-		// against a vh term lets a short viewport take the small value while a
+		// against an svh term lets a short viewport take the small value while a
 		// tall desktop keeps the poster spacing.
-		margin: 0 0 clamp(0.9rem, min(3.5vw, 3vh), 2.75rem);
+		margin: 0 0 clamp(0.9rem, min(3.5vw, 3svh), 2.75rem);
 		filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.9));
 		animation: fadeInUp 0.9s ease 0.1s both;
 	}
 
 	.hero-logo {
 		// The wordmark is ~5:1, so its WIDTH is what spends vertical budget.
-		// Capping it against vh as well keeps a 900px-tall desktop from giving
+		// Capping it against svh as well keeps a 900px-tall desktop from giving
 		// 112px of the hero's height to the mark alone.
-		width: clamp(220px, min(44vw, 44vh), 560px);
+		width: clamp(220px, min(44vw, 44svh), 560px);
 		max-width: 100%;
 		height: auto;
 		display: block;
@@ -67,10 +67,10 @@
 		// Hero-local, height-aware override of --fs-hero. The token is purely
 		// width-driven (`clamp(3rem, 9.5vw, 8.5rem)`), so at 1440x900 it set two
 		// lines at 136px and pushed the footing strip 116px below the fold. The
-		// vh term is what makes the statement yield when the viewport is short
+		// svh term is what makes the statement yield when the viewport is short
 		// rather than wide-and-short; on a tall screen `9.5vw` still wins and
 		// the poster scale is unchanged.
-		font-size: clamp(2.5rem, min(9.5vw, 13vh), 8.5rem);
+		font-size: clamp(2.5rem, min(9.5vw, 13svh), 8.5rem);
 		max-width: 18ch;
 		// `balance` fights the explicit <br>; the line breaks are art-directed.
 		text-wrap: initial;
@@ -82,7 +82,7 @@
 	// already the brand's voice, and the border was the site's most-repeated
 	// decoration.
 	.hero-note {
-		margin-top: clamp(0.8rem, min(2.5vw, 2vh), 1.9rem);
+		margin-top: clamp(0.8rem, min(2.5vw, 2svh), 1.9rem);
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-lede);
 		line-height: 1.6;
@@ -92,7 +92,7 @@
 	}
 
 	.hero-actions {
-		margin-top: clamp(1.25rem, min(4.5vw, 4vh), 3.5rem);
+		margin-top: clamp(1.25rem, min(4.5vw, 4svh), 3.5rem);
 		display: flex;
 		gap: 0.9rem;
 		align-items: center;
@@ -651,7 +651,12 @@
 	// and the statement runs at UI scale on a wider measure. The date, venue
 	// and clock — the data this whole change exists to surface — stay above the
 	// fold.
-	@media (orientation: landscape) and (max-height: 500px) {
+	// `pointer: coarse` keeps this off a zoomed desktop: at 400% zoom the
+	// viewport is 320x256 CSS px, which is landscape under 500px tall, and the
+	// rule would drop `.hero-note` — removing content because of zoom is a
+	// 1.4.10 reflow fault. A mouse pointer never matches `coarse`, so the
+	// zoomed window keeps the line and simply grows taller.
+	@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
 		#hero {
 			padding-top: calc(4rem + env(safe-area-inset-top));
 		}
