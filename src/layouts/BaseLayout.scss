@@ -36,6 +36,23 @@
 		--section-y: clamp(6rem, 10vw, 11rem);
 		--section-y-wide: clamp(8.5rem, 15vw, 17rem);
 
+		// The fixed bar's height, stated once. It is its constant vertical
+		// padding plus the tallest thing in it — the actions, which sit at the
+		// 2.75rem WCAG 2.5.5 tap minimum (the brand logo caps at 34px, so it
+		// never wins). `Menu.scss` builds the bar out of these same two tokens,
+		// so the measurement anchors offset against can't drift away from the
+		// bar it describes.
+		--header-pad-y: 0.85rem;
+		--header-tap: 2.75rem;
+		--header-h: calc(var(--header-pad-y) * 2 + var(--header-tap));
+		// The smallest phones run a tighter bar. It changes here, on the token,
+		// so `--header-h` follows it down (71.2px → 66.4px) instead of going on
+		// asserting the wider bar — `Menu.scss` used to override .site-header's
+		// padding directly and left every anchor offset 4.8px out under 380px.
+		@media (max-width: 380px) {
+			--header-pad-y: 0.7rem;
+		}
+
 		// Sharp corners — a hint of softening, never pill-shaped.
 		--radius: 2px;
 
@@ -170,8 +187,10 @@
 		scroll-behavior: smooth;
 		// Fixed site header sits on top of the page. Without this, in-page
 		// anchor jumps (#tickets, #newsletter, …) park the target's first
-		// pixel under the header and the section title is clipped.
-		scroll-padding-top: 6rem;
+		// pixel under the header and the section title is clipped. Derived
+		// from the bar's own height rather than guessed — the hardcoded 6rem
+		// this replaces stood 25px clear of a 71px bar.
+		scroll-padding-top: calc(var(--header-h) + 1.5rem);
 		// keep keyboard-focused elements clear of the fixed cookie banner
 		scroll-padding-bottom: 8rem;
 		// canvas color — backs the iOS Safari URL bar tint and prevents
@@ -505,6 +524,34 @@
 		}
 	}
 
+	/* ---- Anchor targets ---- */
+	// AN IN-PAGE JUMP LANDS ON THE SECTION HEAD, NOT ON THE SECTION BOX.
+	// Every section here opens with `--section-y*` of air, and an anchor jump
+	// aligns the target's TOP EDGE — so "Get tickets" put the ticket section's
+	// first pixel under the bar and left the section's own 216px of held air
+	// filling the screen: the title landed 312px down a 900px viewport with
+	// nothing above it. That reads as a jump that missed, not as emphasis.
+	// `scroll-padding-top` can't fix it (it only clears the bar, and clearing
+	// it harder makes the hole bigger); the air is inside the target.
+	//
+	// So a section that IS an anchor target cancels its own opening air and
+	// declares how much that is. The air still exists — it is what someone
+	// scrolling INTO the section sees; it just isn't what a jump lands on.
+	// Cost: the jump starts inside the section, so its top rule / band edge
+	// sits above the viewport. That's the right trade — the visitor asked for
+	// the tickets, not for the boundary above them.
+	// `--section-air` is the section's OWN opening padding, declared by the
+	// section that owns it (`.band` sets it for every band; `.tickets` widens
+	// it) and read back here. It is one value, not two: a section states its
+	// air once and its padding is built from the same variable, so changing the
+	// padding later cannot leave this offset stale — which would bring this bug
+	// back silently, with no build error and nothing wrong anywhere except on
+	// the jump. The fallback is for an anchor target that is neither a band nor
+	// sets its own air.
+	.anchor-target {
+		scroll-margin-top: calc(-1 * var(--section-air, var(--section-y)));
+	}
+
 	/* ---- Bands ---- */
 	// Full-bleed grounds. The site was one uninterrupted #050505 from the top of
 	// every page to the bottom of it, so nothing marked where a section started
@@ -519,7 +566,12 @@
 	.band {
 		position: relative;
 		width: 100%;
-		padding: var(--section-y) var(--gutter);
+		// The opening air is declared as `--section-air` and the padding reads
+		// it, so every band is anchorable for free: add `.anchor-target` and
+		// the offset already knows how much air there is to cancel. A band that
+		// wants a different beat overrides the variable, not the padding.
+		--section-air: var(--section-y);
+		padding: var(--section-air) var(--gutter);
 		background: var(--color-bg);
 	}
 

@@ -268,6 +268,11 @@ Primitives in `BaseLayout.scss`: `.u-container`, `.u-prose`, `.eyebrow`,
 `.band` (+ `--raised`, `--accent`, `--tight`, `--wide`) with `.band-inner`,
 `.closer` / `.closer-title` / `.closer-note` / `.closer-actions`,
 `.btn-primary` / `.btn-ghost`, and the `.ledger` / `.record` family.
+`.anchor-target` (`#tickets`, `#newsletter`) cancels a section's own opening air
+with a negative `scroll-margin-top` reading `--section-air`, the variable the
+section's padding is built from — `scroll-padding-top` can't do it, the air is
+inside the target. `--header-h` is the single source for the bar height:
+`Menu.scss` and `html { scroll-padding-top }` both read it.
 
 **Open-field rows — every list on the site is the same open field.** A list of
 entries is never a stack of cards, and it is no longer a ruled ledger either:

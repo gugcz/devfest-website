@@ -20,7 +20,9 @@
 		gap: 1.5rem;
 		// Constant padding — height stays fixed across scroll states so
 		// nav doesn't reflow / jump when the scroll handler flips data-state.
-		padding: 0.85rem clamp(1rem, 3vw, 2.25rem);
+		// Vertical comes from `--header-pad-y` because `--header-h` is derived
+		// from it: anchor offsets measure this bar, so the two can't drift.
+		padding: var(--header-pad-y) clamp(1rem, 3vw, 2.25rem);
 		// The ground and the scrim are painted by the two pseudo-elements
 		// below, so the swap between them can be crossfaded. The bar itself
 		// carries no background.
@@ -176,6 +178,9 @@
 	}
 
 	.header-cta {
+		// `--header-h` asserts the bar is one tap-target tall; a wrapped label
+		// would make that a lie and pull every anchor offset out with it.
+		white-space: nowrap;
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label-lg);
 		letter-spacing: 0.2em;
@@ -186,7 +191,9 @@
 		border: 1px solid var(--color-accent);
 		border-radius: var(--radius);
 		padding: 0.72rem 1.5rem;
-		min-height: 2.75rem; // touch target — WCAG 2.5.5
+		// Touch target — WCAG 2.5.5. It is also the tallest thing in the bar,
+		// so it is what `--header-h` is built from.
+		min-height: var(--header-tap);
 		display: inline-flex;
 		align-items: center;
 		transition: background 0.2s ease, border-color 0.2s ease;
@@ -212,8 +219,8 @@
 		z-index: 2;
 		gap: 0.65rem;
 		padding: 0.72rem 1.15rem;
-		min-height: 2.75rem;
-		min-width: 2.75rem;
+		min-height: var(--header-tap);
+		min-width: var(--header-tap);
 		background: transparent;
 		border: 1px solid var(--rule-strong);
 		border-radius: var(--radius);
@@ -268,8 +275,11 @@
 		flex-direction: column;
 		justify-content: space-between;
 		gap: 2rem;
+		// Clears the bar, measured off the bar: `--header-h` is what the bar
+		// actually is, so this can't drift from it the way the 5.75rem literal
+		// it replaces already had.
 		padding:
-			calc(5.75rem + env(safe-area-inset-top))
+			calc(var(--header-h) + 1.3rem + env(safe-area-inset-top))
 			clamp(1.25rem, 5vw, 4.5rem)
 			calc(2rem + env(safe-area-inset-bottom));
 		background: #050505;
@@ -413,8 +423,14 @@
 	}
 
 	@media (max-width: 380px) {
+		// Horizontal only. The bar is also tighter VERTICALLY here, but that is
+		// a change to `--header-pad-y` and it is made where the token lives
+		// (BaseLayout.scss, on :root) — overriding the padding directly would
+		// shrink the bar while `--header-h` went on asserting the old height,
+		// which is exactly the drift the token exists to prevent. This file's
+		// styles are scoped, so a :root rule here would not reach `html`.
 		.site-header {
-			padding: 0.7rem 0.85rem;
+			padding-inline: 0.85rem;
 		}
 
 		.brand-logo {
@@ -435,7 +451,7 @@
 		}
 
 		.nav-panel {
-			padding-top: calc(5rem + env(safe-area-inset-top));
+			padding-top: calc(var(--header-h) + 0.55rem + env(safe-area-inset-top));
 		}
 	}
 
