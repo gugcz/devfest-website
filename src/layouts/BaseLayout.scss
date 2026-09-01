@@ -45,6 +45,13 @@
 		--header-pad-y: 0.85rem;
 		--header-tap: 2.75rem;
 		--header-h: calc(var(--header-pad-y) * 2 + var(--header-tap));
+		// The smallest phones run a tighter bar. It changes here, on the token,
+		// so `--header-h` follows it down (71.2px → 66.4px) instead of going on
+		// asserting the wider bar — `Menu.scss` used to override .site-header's
+		// padding directly and left every anchor offset 4.8px out under 380px.
+		@media (max-width: 380px) {
+			--header-pad-y: 0.7rem;
+		}
 
 		// Sharp corners — a hint of softening, never pill-shaped.
 		--radius: 2px;
@@ -533,8 +540,16 @@
 	// Cost: the jump starts inside the section, so its top rule / band edge
 	// sits above the viewport. That's the right trade — the visitor asked for
 	// the tickets, not for the boundary above them.
+	// `--section-air` is the section's OWN opening padding, declared by the
+	// section that owns it (`.band` sets it for every band; `.tickets` widens
+	// it) and read back here. It is one value, not two: a section states its
+	// air once and its padding is built from the same variable, so changing the
+	// padding later cannot leave this offset stale — which would bring this bug
+	// back silently, with no build error and nothing wrong anywhere except on
+	// the jump. The fallback is for an anchor target that is neither a band nor
+	// sets its own air.
 	.anchor-target {
-		scroll-margin-top: calc(-1 * var(--anchor-air, var(--section-y)));
+		scroll-margin-top: calc(-1 * var(--section-air, var(--section-y)));
 	}
 
 	/* ---- Bands ---- */
@@ -551,7 +566,12 @@
 	.band {
 		position: relative;
 		width: 100%;
-		padding: var(--section-y) var(--gutter);
+		// The opening air is declared as `--section-air` and the padding reads
+		// it, so every band is anchorable for free: add `.anchor-target` and
+		// the offset already knows how much air there is to cancel. A band that
+		// wants a different beat overrides the variable, not the padding.
+		--section-air: var(--section-y);
+		padding: var(--section-air) var(--gutter);
 		background: var(--color-bg);
 	}
 

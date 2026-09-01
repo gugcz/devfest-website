@@ -178,6 +178,9 @@
 	}
 
 	.header-cta {
+		// `--header-h` asserts the bar is one tap-target tall; a wrapped label
+		// would make that a lie and pull every anchor offset out with it.
+		white-space: nowrap;
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label-lg);
 		letter-spacing: 0.2em;
@@ -272,8 +275,11 @@
 		flex-direction: column;
 		justify-content: space-between;
 		gap: 2rem;
+		// Clears the bar, measured off the bar: `--header-h` is what the bar
+		// actually is, so this can't drift from it the way the 5.75rem literal
+		// it replaces already had.
 		padding:
-			calc(5.75rem + env(safe-area-inset-top))
+			calc(var(--header-h) + 1.3rem + env(safe-area-inset-top))
 			clamp(1.25rem, 5vw, 4.5rem)
 			calc(2rem + env(safe-area-inset-bottom));
 		background: #050505;
@@ -417,8 +423,14 @@
 	}
 
 	@media (max-width: 380px) {
+		// Horizontal only. The bar is also tighter VERTICALLY here, but that is
+		// a change to `--header-pad-y` and it is made where the token lives
+		// (BaseLayout.scss, on :root) — overriding the padding directly would
+		// shrink the bar while `--header-h` went on asserting the old height,
+		// which is exactly the drift the token exists to prevent. This file's
+		// styles are scoped, so a :root rule here would not reach `html`.
 		.site-header {
-			padding: 0.7rem 0.85rem;
+			padding-inline: 0.85rem;
 		}
 
 		.brand-logo {
@@ -439,7 +451,7 @@
 		}
 
 		.nav-panel {
-			padding-top: calc(5rem + env(safe-area-inset-top));
+			padding-top: calc(var(--header-h) + 0.55rem + env(safe-area-inset-top));
 		}
 	}
 

@@ -105,6 +105,15 @@ function round2(n: number): number {
 	return Math.round(n * 100) / 100;
 }
 
+/**
+ * Every render path is the same `#tickets` section, so its class list is stated
+ * once. `anchor-target` (BaseLayout.scss) is what makes "Get tickets" land on
+ * the heading instead of on the section's opening air — hand-repeated on each
+ * state, the next state added would silently drop it and the anchor would break
+ * only in that state.
+ */
+const sectionClass = `${s.tickets} anchor-target`;
+
 export default function Tickets() {
 	const [state, setState] = useState<State>(INITIAL);
 
@@ -137,7 +146,7 @@ export default function Tickets() {
 
 	if (state.status === 'error') {
 		return (
-			<section id="tickets" className={`${s.tickets} anchor-target`} aria-labelledby="tickets-heading">
+			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 				</header>
@@ -150,7 +159,7 @@ export default function Tickets() {
 
 	if (state.status === 'loading') {
 		return (
-			<section id="tickets" className={`${s.tickets} anchor-target`} aria-busy={true} aria-labelledby="tickets-heading">
+			<section id="tickets" className={sectionClass} aria-busy={true} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 					<p className={s.loadingStatus} role="status">
@@ -198,7 +207,7 @@ export default function Tickets() {
 	if (state.status === 'empty') {
 		if (!hasEvent) return null;
 		return (
-			<section id="tickets" className={`${s.tickets} anchor-target`} aria-labelledby="tickets-heading">
+			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 					<p className="head-note">The box office is closed. It opens with the first wave.</p>
@@ -225,7 +234,7 @@ export default function Tickets() {
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
 
 	return (
-		<section id="tickets" className={`${s.tickets} anchor-target rake`} aria-labelledby="tickets-heading">
+		<section id="tickets" className={`${sectionClass} rake`} aria-labelledby="tickets-heading">
 			{/* Red raking light, swept by the scroll itself. Purely decorative and
 			    enhancement-only — see the `.rake` rules in BaseLayout.scss. */}
 			<span className="rake-beam" aria-hidden="true" />

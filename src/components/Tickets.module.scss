@@ -4,11 +4,12 @@
 	margin: 0 auto;
 	// A held shot. Tickets are what the page is for; the sections either side
 	// of it run at the normal beat, so the extra air reads as emphasis.
-	padding: var(--section-y-wide) var(--gutter);
 	// …and #tickets is the site's most-followed anchor, so the held air is
 	// also what a jump would land on. `.anchor-target` (BaseLayout.scss)
-	// cancels it; this says how much there is to cancel.
-	--anchor-air: var(--section-y-wide);
+	// cancels `--section-air`; stating it here and building the padding from
+	// it keeps the two from ever disagreeing.
+	--section-air: var(--section-y-wide);
+	padding: var(--section-air) var(--gutter);
 	position: relative;
 	z-index: 1;
 	border-top: 1px solid var(--rule-soft);

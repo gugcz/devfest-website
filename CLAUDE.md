@@ -276,19 +276,33 @@ under the bar and left its own 216px of held air filling the screen (the title
 sat 312px down a 900px viewport with nothing above it). `scroll-padding-top`
 cannot fix that: it only clears the bar, and clearing it harder makes the hole
 bigger — the air is *inside* the target. `.anchor-target` cancels the section's
-opening air with a negative `scroll-margin-top`, reading `--anchor-air` (default
-`--section-y`; `Tickets.module.scss` sets `--section-y-wide`). The air still
-exists for anyone scrolling INTO the section; it just isn't what a jump lands
-on. Consequence: a jump starts inside the section, so its top rule / band edge
-is above the viewport — deliberate. Callers: `#tickets`, `#newsletter`.
+opening air with a negative `scroll-margin-top`, reading **`--section-air`** —
+the variable the section's own `padding` is built from, so the two can never
+disagree. `.band` sets it (`--section-y`) and builds its padding from it, so
+every band is anchorable for free; `Tickets.module.scss` widens it to
+`--section-y-wide`. State the air once and read it twice — a section that
+restates the amount next to its padding goes stale silently, with no build
+error and nothing visibly wrong except on the jump, i.e. this bug returns
+unnoticed. The air still exists for anyone scrolling INTO the section; it just
+isn't what a jump lands on. Consequence: a jump starts inside the section, so
+its top rule / band edge is above the viewport — deliberate. Callers:
+`#tickets`, `#newsletter`. In `Tickets.tsx` the class list is one `sectionClass`
+const, not repeated per render state — a new state would drop it and break the
+anchor in that state alone.
 
 **The bar's height is a token, not a guess.** `--header-h` = `--header-pad-y` × 2
 + `--header-tap` (71px — the actions sit at the 2.75rem WCAG 2.5.5 tap minimum
 and are the tallest thing in the bar; the brand logo caps at 34px). `Menu.scss`
-builds the bar out of those same two tokens and `html { scroll-padding-top }` is
-`calc(var(--header-h) + 1.5rem)`, so the offset anchors clear can't drift away
-from the bar it describes. It replaced a hardcoded `6rem` that stood 25px clear
-of a 71px bar.
+builds the bar out of those same two tokens, `html { scroll-padding-top }` is
+`calc(var(--header-h) + 1.5rem)` and `.nav-panel` clears the bar with
+`calc(var(--header-h) + 1.3rem)`, so nothing that measures the bar can drift
+away from it. It replaced a hardcoded `6rem` that stood 25px clear of a 71px
+bar. Two rules keep the token honest: the under-380px tighter bar changes
+`--header-pad-y` on `:root` (in `BaseLayout.scss` — `Menu.scss` is scoped, and
+overriding `.site-header`'s padding there shrank the bar while the token went on
+asserting the old height, leaving anchors 4.8px out), and `.header-cta` carries
+`white-space: nowrap` so a longer label can't wrap the bar taller than the tap
+minimum the token is built from.
 
 **Open-field rows — every list on the site is the same open field.** A list of
 entries is never a stack of cards, and it is no longer a ruled ledger either:
