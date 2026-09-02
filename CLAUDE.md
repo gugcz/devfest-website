@@ -273,6 +273,15 @@ with a negative `scroll-margin-top` reading `--section-air`, the variable the
 section's padding is built from — `scroll-padding-top` can't do it, the air is
 inside the target. `--header-h` is the single source for the bar height:
 `Menu.scss` and `html { scroll-padding-top }` both read it.
+The CSS only decides WHERE a jump lands; `src/lib/anchor.ts` (wired from
+`BaseLayout.astro`'s `astro:page-load`) keeps it landed while the islands
+resolve and grow the page above the target — without it a deep-linked
+`/#newsletter` ended up ~1000px past the heading. Two things there are not
+tidy-uppable: the click handler must NOT check `event.defaultPrevented`
+(ClientRouter cancels same-page hash links to scroll them itself), and the hold
+must be armed BEFORE the landing, because Chromium and WebKit defer the initial
+fragment scroll and then animate it through `scroll-behavior: smooth`.
+`npm run anchors` measures every landing in Chromium, WebKit and Firefox.
 
 **Open-field rows — every list on the site is the same open field.** A list of
 entries is never a stack of cards, and it is no longer a ruled ledger either:

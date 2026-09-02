@@ -307,6 +307,8 @@ const jsonLd = JSON.stringify(
 		<CookieBanner />
 
 		<script>
+			import { keepAnchorLanded } from '../lib/anchor';
+
 			// Cinematic atmosphere behaviours — all degrade gracefully and respect
 			// reduced-motion (CSS already neutralises the visual side).
 			//
@@ -315,6 +317,10 @@ const jsonLd = JSON.stringify(
 			// initial load AND after every soft navigation, so it replaces (never
 			// supplements) a DOMContentLoaded listener.
 			document.addEventListener('astro:page-load', () => {
+				// An anchor jump is resolved against a page that hasn't finished
+				// loading its islands; hold the landing while it settles.
+				keepAnchorLanded();
+
 				const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 				// 1) Scroll reveal — fade/rise sections as they enter the frame.
