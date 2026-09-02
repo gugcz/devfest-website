@@ -368,7 +368,9 @@
 
 	@media (max-width: 1000px) {
 		.newsletter-inner {
-			grid-template-columns: 1fr;
+			// minmax(0, …) — a bare `1fr` track floors at its min-content
+			// width, which under text zoom is the widest word in the title.
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 

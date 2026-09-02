@@ -11,10 +11,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1.25rem 2.5rem;
+		gap: 1.25rem min(2.5rem, 12.5vw);
 		flex-wrap: wrap;
 		padding:
-			1rem clamp(1rem, 4vw, 2.5rem)
+			1rem min(clamp(1rem, 4vw, 2.5rem), 5vw)
 			calc(1rem + env(safe-area-inset-bottom));
 		background: #0A0908;
 		border-top: 1px solid var(--rule);
@@ -65,7 +65,11 @@
 	.cookie-actions {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
+		// Wraps under text-only zoom — two mono buttons at a 32px root are
+		// wider than a 320px viewport side by side, and the pair is the last
+		// thing on the page that may be cut off.
+		flex-wrap: wrap;
+		gap: min(1rem, 5vw);
 		flex-shrink: 0;
 	}
 
@@ -74,16 +78,18 @@
 		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		white-space: nowrap;
-		min-height: 2.75rem;
-		min-width: 2.75rem;
+		// Physical touch target — px, not rem, so it does not double with the
+		// root font (WCAG 2.5.5 is about the pointer, not the type size).
+		min-height: 44px;
+		min-width: 44px;
 	}
 
 	.cookie-btn--accept {
-		padding: 0.55rem 1.4rem;
+		padding: 0.55rem min(1.4rem, 7vw);
 	}
 
 	.cookie-btn--decline {
-		padding: 0.55rem 1rem;
+		padding: 0.55rem min(1rem, 5vw);
 	}
 
 	@media (prefers-reduced-motion: reduce) {

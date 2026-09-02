@@ -114,6 +114,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			<section>
 				<h2>3. Cookies</h2>
 				<p>We use the following cookies:</p>
+				<!-- A data table is one of the things WCAG 1.4.10 exempts from
+				     single-column reflow: it needs two dimensions to be read at
+				     all. So the TABLE scrolls sideways, not the page. Focusable
+				     because a scrollable region must be reachable by keyboard
+				     (WCAG 2.1.1); labelled because it is now a landmark. -->
+				<div class="table-scroll" role="region" aria-label="Cookies we set" tabindex="0">
 				<table>
 					<caption class="sr-only">List of cookies we set, their purpose, and retention period.</caption>
 					<thead>
@@ -141,6 +147,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 						</tr>
 					</tbody>
 				</table>
+				</div>
 			</section>
 
 			<section>

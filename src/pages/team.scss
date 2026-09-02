@@ -141,6 +141,10 @@
 	// links row aligned across cards with long/short text.
 	.crew-role {
 		display: grid;
+		// One overlapping cell, allowed to be narrower than the role it holds
+		// — the two lines are stacked in the same cell, so an `auto` track
+		// floored at the longer one's min-content width under text zoom.
+		grid-template-columns: minmax(0, 1fr);
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label);
 		letter-spacing: 0.16em;
