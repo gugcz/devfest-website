@@ -206,7 +206,10 @@
 		font-size: var(--fs-label);
 		letter-spacing: 0.12em;
 		color: rgba(240, 237, 230, 0.5);
-		white-space: nowrap;
+		// Outlet and date sit on one line while they fit and wrap when they do
+		// not. `white-space: nowrap` pinned them to one line at any text size,
+		// and at a 32px root that pair is wider than a phone viewport.
+		flex-wrap: wrap;
 	}
 
 	.coverage-read {

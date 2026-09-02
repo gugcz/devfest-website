@@ -27,7 +27,13 @@
 		// Wider canvas than the old 1200px column. Poster-scale display type needs
 		// room to run, and the reference conference sites all sit near 1440.
 		--maxw: 1440px;
-		--gutter: clamp(1.25rem, 5vw, 4.5rem);
+		// The `min()` ceiling is what keeps the page reflowable under text-only
+		// zoom (WCAG 1.4.4 / 1.4.10). Every term but the ceiling is rem- or
+		// clamp-derived, so at a 32px root the 1.25rem floor doubles to 40px and
+		// two gutters ate a quarter of a 320px viewport. 6vw never exceeds the
+		// clamp at any width the clamp is actually doing work (6vw of 1440 is
+		// 86px against the 72px cap), so nothing moves at a 16px root.
+		--gutter: min(clamp(1.25rem, 5vw, 4.5rem), 6.25vw);
 
 		// Three densities, not one. A single tempo across every section is what
 		// makes a long page read as generated. Tight is a cut, base is the normal
@@ -38,12 +44,16 @@
 
 		// The fixed bar's height, stated once. It is its constant vertical
 		// padding plus the tallest thing in it — the actions, which sit at the
-		// 2.75rem WCAG 2.5.5 tap minimum (the brand logo caps at 34px, so it
+		// 44px WCAG 2.5.5 tap minimum (the brand logo caps at 34px, so it
 		// never wins). `Menu.scss` builds the bar out of these same two tokens,
 		// so the measurement anchors offset against can't drift away from the
 		// bar it describes.
 		--header-pad-y: 0.85rem;
-		--header-tap: 2.75rem;
+		// 44px, not 2.75rem: the target is a physical one, so it must not scale
+		// with the root font — under a text-only zoom 88px of button height is
+		// not a bigger target, only a bar with no room left at 320px. Identical
+		// at a 16px root, so `--header-h` is unchanged there.
+		--header-tap: 44px;
 		--header-h: calc(var(--header-pad-y) * 2 + var(--header-tap));
 		// The smallest phones run a tighter bar. It changes here, on the token,
 		// so `--header-h` follows it down (71.2px → 66.4px) instead of going on
@@ -246,6 +256,13 @@
 		font-family: var(--font-special-elite), cursive;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
+		// Inherited by everything. Under text-only zoom a single long word —
+		// a Bebas closer title, a speaker's name, a mono role — is routinely
+		// wider than a 320px column, and an unbroken word is what widens the
+		// document (WCAG 1.4.10). `break-word`, not `anywhere`: it only breaks
+		// a word that has no other way to fit, so nothing changes at a 16px
+		// root where the words already fit.
+		overflow-wrap: break-word;
 
 		// Opt-out so terminal pages (404, post-submit) can render plain text
 		// against solid bg — axe-core sometimes mis-samples through blend overlays.
@@ -441,7 +458,8 @@
 
 	@media (max-width: 860px) {
 		.head-split {
-			grid-template-columns: 1fr;
+			// minmax(0, …) — see `.closer`: a bare `1fr` floors at min-content.
+			grid-template-columns: minmax(0, 1fr);
 			align-items: start;
 		}
 	}
@@ -696,7 +714,10 @@
 
 	@media (max-width: 900px) {
 		.closer {
-			grid-template-columns: 1fr;
+			// `minmax(0, 1fr)`, not `1fr`: a bare `1fr` track floors at its
+			// min-content width, so one wide CTA drags the whole closer past
+			// the viewport under text zoom instead of wrapping inside it.
+			grid-template-columns: minmax(0, 1fr);
 			align-items: start;
 		}
 	}
@@ -760,7 +781,21 @@
 		border-radius: var(--radius);
 		// Larger than the old 1.05/2.4 — at poster type scale a small CTA reads
 		// as an afterthought next to the headline it is supposed to answer.
-		padding: 1.25rem 2.8rem;
+		// The horizontal term carries a viewport ceiling: the label itself must
+		// grow with the root font (1.4.4), but 2.8rem of padding per side must
+		// not — at a 32px root that was 180px of air inside a 320px viewport,
+		// and it is what pushed every `.closer` off the page. 7vw is above
+		// 2.8rem from 640px up, so desktop and 100% zoom are untouched.
+		padding: 1.25rem min(2.8rem, 14vw);
+		// A button is never wider than the column it sits in; the label wraps.
+		max-width: 100%;
+		// `anywhere` rather than the inherited `break-word`: a button's label is
+		// an anonymous flex item, whose automatic minimum size is its
+		// min-content width, and only `anywhere` shrinks that. Without it a
+		// one-word CTA still forced the button past the column under text zoom.
+		// No effect at a 16px root — the button is sized by its max-content
+		// width whenever the column can hold it.
+		overflow-wrap: anywhere;
 		text-decoration: none;
 		cursor: pointer;
 		position: relative;
@@ -796,7 +831,11 @@
 		color: var(--color-text);
 		text-decoration: none;
 		cursor: pointer;
-		padding: 1.25rem 2rem;
+		// Viewport-capped horizontal padding — same reason as .btn-primary.
+		padding: 1.25rem min(2rem, 10vw);
+		max-width: 100%;
+		// See .btn-primary.
+		overflow-wrap: anywhere;
 		border: 1px solid var(--rule-strong);
 		border-radius: var(--radius);
 		background: transparent;

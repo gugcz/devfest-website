@@ -293,7 +293,11 @@
 	letter-spacing: 0.16em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.55);
-	white-space: nowrap;
+	// No `white-space: nowrap`, and a zero flex floor: a one-word track label
+	// ("ARCHITECTURE") is 216px of mono at a 32px root, which is most of a
+	// phone viewport. `.tags` already wraps between labels; this lets a single
+	// label break inside itself when even one does not fit.
+	min-width: 0;
 
 	& + .tag::before {
 		content: '';
@@ -358,7 +362,7 @@
 .item {
 	display: flex;
 	align-items: flex-start;
-	gap: clamp(1rem, 3vw, 2rem);
+	gap: min(clamp(1rem, 3vw, 2rem), 5vw);
 	width: 100%;
 	margin: 0;
 	text-align: left;
@@ -384,8 +388,11 @@
 }
 
 .itemTime {
-	flex-shrink: 0;
-	min-width: 5.5rem;
+	// No `flex-shrink: 0`: at a 32px root the mono time range measures 207px,
+	// which on a 320px viewport left the title 43px and still overran the row.
+	// It gives way and wraps onto two lines instead; `min-width` keeps it a
+	// column rather than letting the title crowd it at normal sizes.
+	min-width: min(5.5rem, 27.5vw);
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-variant-numeric: tabular-nums;
 	font-size: var(--fs-label-lg);
@@ -433,6 +440,7 @@
 	letter-spacing: 0.04em;
 	line-height: 1.4;
 	color: var(--color-grey);
+	min-width: 0;
 }
 
 /* ===================== NOT-YET-SCHEDULED ===================== */
@@ -513,6 +521,13 @@
 	align-items: baseline;
 	justify-content: space-between;
 	gap: 0.75rem;
+	// The badge drops under the title rather than pushing it off the row when
+	// the type is zoomed.
+	flex-wrap: wrap;
+
+	> :first-child {
+		min-width: 0;
+	}
 }
 
 // A status word on a rule — never a filled pill. Same shape as the ticket

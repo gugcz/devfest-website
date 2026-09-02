@@ -383,7 +383,9 @@
 
 .skelBtn {
 	height: 2.9rem;
-	width: 11rem;
+	// The placeholder stands in for a button, so it is bounded by its column
+	// the same way one is — 11rem is 352px at a 32px root.
+	width: min(11rem, 100%);
 	border-radius: var(--radius);
 	background: linear-gradient(
 		90deg,
