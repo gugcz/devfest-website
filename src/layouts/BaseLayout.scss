@@ -30,9 +30,11 @@
 		// The `min()` ceiling is what keeps the page reflowable under text-only
 		// zoom (WCAG 1.4.4 / 1.4.10). Every term but the ceiling is rem- or
 		// clamp-derived, so at a 32px root the 1.25rem floor doubles to 40px and
-		// two gutters ate a quarter of a 320px viewport. 6vw never exceeds the
-		// clamp at any width the clamp is actually doing work (6vw of 1440 is
-		// 86px against the 72px cap), so nothing moves at a 16px root.
+		// two gutters ate a quarter of a 320px viewport. 6.25vw never falls
+		// below the clamp at any width from 320px up — it equals the 1.25rem
+		// floor exactly at 320px, sits above the 5vw fluid band everywhere
+		// after, and is 90px at 1440 against the 72px cap — so nothing moves
+		// at a 16px root.
 		--gutter: min(clamp(1.25rem, 5vw, 4.5rem), 6.25vw);
 
 		// Three densities, not one. A single tempo across every section is what
@@ -784,8 +786,9 @@
 		// The horizontal term carries a viewport ceiling: the label itself must
 		// grow with the root font (1.4.4), but 2.8rem of padding per side must
 		// not — at a 32px root that was 180px of air inside a 320px viewport,
-		// and it is what pushed every `.closer` off the page. 7vw is above
-		// 2.8rem from 640px up, so desktop and 100% zoom are untouched.
+		// and it is what pushed every `.closer` off the page. 14vw equals
+		// 2.8rem exactly at 320px and is above it at every width after, so
+		// desktop and 100% zoom are untouched.
 		padding: 1.25rem min(2.8rem, 14vw);
 		// A button is never wider than the column it sits in; the label wraps.
 		max-width: 100%;
