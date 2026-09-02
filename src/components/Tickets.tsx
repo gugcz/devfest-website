@@ -11,6 +11,7 @@ import {
 	type TitoRelease,
 } from '../lib/tito';
 import { track } from '../lib/analytics';
+import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Tickets.module.scss';
 
 // Static copy keyed by lowercased group name. Overrides whatever ti.to
@@ -150,9 +151,9 @@ export default function Tickets() {
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 				</header>
-				<div className={s.empty} role="alert">
+				<ErrorState>
 					<p>The box office isn't answering. Reload, or buy direct on ti.to.</p>
-				</div>
+				</ErrorState>
 			</section>
 		);
 	}
@@ -162,15 +163,7 @@ export default function Tickets() {
 			<section id="tickets" className={sectionClass} aria-busy={true} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
-					<p className={s.loadingStatus} role="status">
-						<span className={s.loadingDot} aria-hidden="true" />
-						Loading tickets
-						<span className={s.loadingDots} aria-hidden="true">
-							<span />
-							<span />
-							<span />
-						</span>
-					</p>
+					<LoadingState label="Opening the box office" />
 				</header>
 				<ul className={`field ${s.skelLedger}`} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
@@ -212,17 +205,11 @@ export default function Tickets() {
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 					<p className="head-note">The box office is closed. It opens with the first wave.</p>
 				</header>
-				<div className={s.empty}>
+				<EmptyState
+					action={{ href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true }}
+				>
 					<p>Subscribe above to be notified when tickets go on sale.</p>
-					<a
-						className={`${s.cta} ${s.ctaSecondary}`}
-						href={eventUrl(accountSlug, eventSlug)}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Visit ti.to event
-					</a>
-				</div>
+				</EmptyState>
 			</section>
 		);
 	}

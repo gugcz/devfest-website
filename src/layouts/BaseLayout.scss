@@ -119,9 +119,15 @@
 		--rule-soft: rgba(240, 237, 230, 0.06);
 		--rule-strong: rgba(240, 237, 230, 0.22);
 		--rule-red: rgba(204, 0, 0, 0.55);
-		// Perceivable boundary for interactive form controls — clears WCAG 1.4.11
-		// (>=3:1 over the dark field fills). Kept separate from --rule so decorative
-		// grouping hairlines stay whisper-faint.
+		// THE control-edge token. Perceivable boundary for anything a visitor can
+		// operate — text fields, and equally the outlined buttons: .btn-ghost,
+		// .nav-toggle, the cookie banner's Decline, .crew-link. Measures 3.33:1 on
+		// #050505, clearing WCAG 1.4.11 (non-text contrast, 3:1); the ones that
+		// used --rule-strong (0.22 = 1.74:1) and --rule (0.13 = 1.30:1) did not.
+		// Kept separate from --rule / --rule-strong on purpose: those are the
+		// decorative grouping hairlines (.band--raised, .head-split--ruled, the
+		// section rules) and they stay whisper-faint — raising THEM to 3:1 would
+		// repaint every structural line on the site. One value, four controls.
 		--field-border: rgba(240, 237, 230, 0.4);
 
 		// Flat dark panels replace the cream paper slips.
@@ -345,6 +351,16 @@
 			white-space: normal;
 			outline: 2px solid var(--color-accent);
 		}
+	}
+
+	// The skip link's destination. `tabindex="-1"` (BaseLayout.astro) makes it a
+	// valid focus target so the link moves FOCUS and not just the fragment; the
+	// ring is suppressed because the target is a whole page region, not a
+	// control, and a 100vw outline reads as a rendering fault rather than as
+	// "you are here". Every control inside it keeps its own ring.
+	#main-content:focus,
+	#main-content:focus-visible {
+		outline: none;
 	}
 
 	// Visually hidden, but kept in the a11y tree + crawlable HTML.
@@ -839,7 +855,8 @@
 		max-width: 100%;
 		// See .btn-primary.
 		overflow-wrap: anywhere;
-		border: 1px solid var(--rule-strong);
+		// Control edge, not a decorative hairline — see --field-border.
+		border: 1px solid var(--field-border);
 		border-radius: var(--radius);
 		background: transparent;
 		transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, gap 0.2s ease;
@@ -1028,15 +1045,18 @@
 		}
 	}
 
-	// Status word. Never a pill, never a filled chip — a mono word on a rule.
+	// Status word. Never a pill, never a filled chip — and no longer on a rule
+	// either. It renders in the ticket wave's action slot, in place of the
+	// "Get tickets" link, and an underlined mono word sitting exactly where a
+	// link would sit promises a click that a sold-out or paused wave cannot
+	// honour. The word is the status; the mono voice and the tracking already
+	// separate it from the prose around it.
 	.record-status {
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label-sm);
 		letter-spacing: 0.24em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.72);
-		padding-bottom: 0.3rem;
-		border-bottom: 1px solid var(--rule-strong);
 		white-space: nowrap;
 	}
 

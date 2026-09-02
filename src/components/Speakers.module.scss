@@ -263,48 +263,6 @@
 	color: rgba(240, 237, 230, 0.5);
 }
 
-/* ===================== STATES ===================== */
-.status {
-	text-align: center;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.7;
-	color: var(--color-grey);
-	max-width: 52ch;
-	margin: 2rem auto 0;
-}
-
-.loadingStatus {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.55rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.18em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
-}
-
-.loadingDot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: var(--color-accent-hot);
-	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
-	flex-shrink: 0;
-	animation: skelPulse 1.3s ease-in-out infinite;
-}
-
-@keyframes skelPulse {
-	0%,
-	100% {
-		opacity: 0.3;
-	}
-	50% {
-		opacity: 1;
-	}
-}
-
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 600px) {
 	.grid {
@@ -339,8 +297,7 @@
 	.name,
 	.vignette,
 	.media::before,
-	.media::after,
-	.loadingDot {
+	.media::after {
 		transition: none;
 		animation: none;
 	}

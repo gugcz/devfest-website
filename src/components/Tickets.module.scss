@@ -294,48 +294,6 @@
 	}
 }
 
-// Loading status line under the heading — mono "retrieving" caption with a
-// pulsing accent dot + trailing dots.
-.loadingStatus {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.18em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
-	margin-top: 0.9rem;
-	display: inline-flex;
-	align-items: center;
-	gap: 0.55rem;
-}
-
-.loadingDot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: var(--color-accent-hot);
-	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
-	flex-shrink: 0;
-	animation: skelPulse 1.3s ease-in-out infinite;
-}
-
-.loadingDots {
-	display: inline-flex;
-	align-items: center;
-	gap: 3px;
-
-	span {
-		width: 3px;
-		height: 3px;
-		border-radius: 50%;
-		background: currentColor;
-		opacity: 0.3;
-		animation: skelPulse 1.3s ease-in-out infinite;
-	}
-
-	span:nth-child(2) { animation-delay: 0.18s; }
-	span:nth-child(3) { animation-delay: 0.36s; }
-}
-
 // Shimmering placeholder bars laid into the ledger geometry above.
 .skelBar {
 	display: block;
@@ -440,27 +398,6 @@
 	}
 }
 
-.ctaSecondary {
-	background: transparent;
-	color: var(--color-text);
-	// >=3:1 boundary for this ghost button — WCAG 1.4.11.
-	border: 1px solid var(--field-border);
-	box-shadow: none;
-
-	&:hover {
-		background: rgba(204, 0, 0, 0.06);
-		border-color: var(--rule-red);
-		color: var(--color-accent-hot);
-		transform: translateY(-2px);
-		box-shadow: none;
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
-}
-
 .footnote {
 	margin-top: 2rem;
 	// Left, like everything else. It was the only centred line on the homepage.
@@ -509,23 +446,6 @@
 	}
 }
 
-// Empty / error notice — a ruled note in the ledger's own column, not a
-// bordered alert box. Opens on the same strong rule the ledger would have.
-.empty {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 1.2rem;
-	padding: 2.2rem 0 0;
-	max-width: 46ch;
-	position: relative;
-	border-top: 1px solid var(--rule-strong);
-	color: rgba(240, 237, 230, 0.78);
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body-lg);
-	line-height: 1.7;
-}
-
 @keyframes fadeInUp {
 	from {
 		opacity: 0;
@@ -542,11 +462,6 @@
 	100% { background-position: -200% 0; }
 }
 
-@keyframes skelPulse {
-	0%, 100% { opacity: 0.3; transform: scale(0.85); }
-	50% { opacity: 1; transform: scale(1); }
-}
-
 @media (prefers-reduced-motion: reduce) {
 	.tickets,
 	.cta {
@@ -556,21 +471,16 @@
 
 	.cta,
 	.cta:hover,
-	.cta:active,
-	.ctaSecondary:hover {
+	.cta:active {
 		transform: none;
 	}
 
-	.skelBar,
-	.loadingDot,
-	.loadingDots span {
+	.skelBar {
 		animation: none;
 	}
 
 	.skelBar { background: rgba(240, 237, 230, 0.1); }
 	.skelBtn { background: rgba(204, 0, 0, 0.35); }
-	.loadingDot,
-	.loadingDots span { opacity: 1; }
 }
 
 @media (max-width: 720px) {

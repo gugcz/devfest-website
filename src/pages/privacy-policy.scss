@@ -65,11 +65,16 @@
 	// Section head with an editorial eyebrow rhythm: a short red hairline
 	// rule above the Bebas head, echoing the masthead eyebrow without adding
 	// any card chrome — the page is a legal doc and stays calm.
+	// Cream, not red. Every section head on a 5000px legal document set in the
+	// accent is the accent used as a heading colour, which is the "red spent
+	// once per list" rule broken about a dozen times down one page. The short
+	// red rule above each head (::before) is kept — one mark carries the
+	// section break; the words do not need to carry it too.
 	h2 {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-title-sm);
 		letter-spacing: 0.08em;
-		color: var(--color-accent-hot);
+		color: var(--color-text);
 		// Soft red halation on the section heads — just enough neon glow to read
 		// as lit, not a spotlit poster title (this stays a calm legal doc).
 		margin-bottom: 1.4rem;

@@ -80,13 +80,16 @@
 	flex-wrap: wrap;
 }
 
+// One of these opens every filter group, so red here is the accent set three
+// times in a 60px band before the visitor has touched anything. Resting label
+// = muted mono; the red in this section belongs to the row under the pointer.
 .facetLabel {
 	flex-shrink: 0;
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-xs);
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
-	color: var(--color-accent-hot);
+	color: rgba(240, 237, 230, 0.55);
 	min-width: 4.5rem;
 }
 
@@ -313,11 +316,13 @@
 	filter: none;
 }
 
+// The "+2" overflow chip rides in the speaker stack, so a red fill here is the
+// accent once per row over thirty rows — texture, not a highlight. It sits in
+// the same well as the monogram beside it and now reads in the same ink.
 .avatarMore {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-xs);
-	color: var(--color-accent-hot);
-	background: rgba(204, 0, 0, 0.14);
+	color: var(--ink-monogram-sm);
 }
 
 .names {
@@ -355,7 +360,7 @@
 		width: 6px;
 		height: 6px;
 		border-radius: 50%;
-		background: var(--color-accent-hot);
+		background: rgba(240, 237, 230, 0.55);
 		opacity: 0.35;
 		animation: skelPulse 1.4s ease-in-out infinite;
 	}
@@ -368,12 +373,15 @@
 	}
 }
 
+// The programme's open end. /speakers already closes its roll in muted ink
+// ("End of roll"); this one was the same statement in red, which made the one
+// row that is NOT a session the loudest thing in the list.
 .moreKicker {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-xs);
 	letter-spacing: 0.28em;
 	text-transform: uppercase;
-	color: var(--color-accent-hot);
+	color: rgba(240, 237, 230, 0.55);
 }
 
 .moreText {
@@ -386,59 +394,6 @@
 }
 
 /* ===================== STATES ===================== */
-.status {
-	text-align: center;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.7;
-	color: var(--color-grey);
-	max-width: 52ch;
-	margin: 2rem auto 0;
-}
-
-.loadingStatus {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.55rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.18em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
-}
-
-.loadingDot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: var(--color-accent-hot);
-	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
-	flex-shrink: 0;
-	animation: skelPulse 1.3s ease-in-out infinite;
-}
-
-.loadingDots {
-	display: inline-flex;
-	align-items: center;
-	gap: 3px;
-
-	span {
-		width: 3px;
-		height: 3px;
-		border-radius: 50%;
-		background: currentColor;
-		opacity: 0.3;
-		animation: skelPulse 1.3s ease-in-out infinite;
-	}
-
-	span:nth-child(2) {
-		animation-delay: 0.18s;
-	}
-	span:nth-child(3) {
-		animation-delay: 0.36s;
-	}
-}
-
 @keyframes skelPulse {
 	0%,
 	100% {
@@ -474,8 +429,6 @@
 @media (prefers-reduced-motion: reduce) {
 	.card,
 	.moreCard,
-	.loadingDot,
-	.loadingDots span,
 	.moreDots span {
 		transition: none;
 		animation: none;
