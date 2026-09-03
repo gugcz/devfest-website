@@ -24,8 +24,12 @@
 	grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
 	gap: clamp(2.5rem, 4.5vw, 4rem) clamp(1.5rem, 2.6vw, 2.5rem);
 
+	// `min-width: 0`, or a flex item's `auto` minimum lets a single long word
+	// (a Czech surname at Bebas display size) push the track wider than its
+	// share and shove the print next to it out of alignment.
 	> li {
 		display: flex;
+		min-width: 0;
 	}
 }
 
@@ -172,14 +176,21 @@
 /* ===================== CAPTION ===================== */
 // Sits directly under the print on space alone. The red hairline that used to
 // hang it was one more drawn line repeated once per speaker; the bottom edge
-// of the photograph already ends the picture. Names and roles are NOT clamped
-// or height-matched — grid rows stretch, so the row below still starts level
-// however long a name runs.
+// of the photograph already ends the picture.
+//
+// The caption IS measured, though — it was not, and a long Czech name ran past
+// the print and into the frame beside it. Two things hold the grid even: the
+// name is clamped to two lines and allowed to break inside a word (Bebas at
+// 2rem sets a 20-character surname wider than a 280px column, and a word with
+// nowhere to break overflows in silence), and the role line reserves its two
+// lines whether or not a speaker has one — otherwise a captionless speaker
+// pulls the whole row up and the prints stop landing on one baseline.
 .body {
 	position: relative;
 	z-index: 1;
 	display: flex;
 	flex-direction: column;
+	min-width: 0;
 	padding: 0;
 	margin-top: 0.9rem;
 	background: none;
@@ -193,6 +204,14 @@
 	text-transform: uppercase;
 	color: var(--color-text);
 	transition: color 0.25s ease;
+	// Two lines is a full name on two words at this step; a third is a name
+	// that has to be read in the sheet instead.
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	overflow-wrap: anywhere;
 }
 
 .tagline {
@@ -203,6 +222,15 @@
 	line-height: 1.45;
 	margin-top: 0.35rem;
 	color: var(--color-grey);
+	// Two lines held open, clamped at two: the role is a caption, not a bio,
+	// and every caption in the sheet has to occupy the same band.
+	min-height: calc(2 * 1.45em);
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	overflow-wrap: anywhere;
 }
 
 // The name is the affordance — it lights with the frame it belongs to. The
@@ -251,6 +279,7 @@
 	letter-spacing: 0.03em;
 	text-transform: uppercase;
 	color: var(--color-grey);
+	overflow-wrap: anywhere;
 }
 
 .moreText {
@@ -261,6 +290,9 @@
 	line-height: 1.45;
 	margin: 0.35rem 0 0;
 	color: rgba(240, 237, 230, 0.5);
+	// Same reserved caption band as a speaker's role line — this card sits in
+	// the same grid row and has to end on the same line.
+	min-height: calc(2 * 1.45em);
 }
 
 /* ===================== RESPONSIVE ===================== */

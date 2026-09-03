@@ -10,6 +10,20 @@ import { EVENT_TOPICS } from '../../lib/ticker';
 // that folder and it shows up here automatically (label, type and size are
 // derived per entry; the preview tile is chosen from the mark's own pixels).
 const pressKit = await listPressKit();
+
+// The sheet is RULED, so a short last row is a hole in the ruling rather than a
+// little extra air: at three and four columns ten assets left one or two cells
+// of the bottom row unbordered, and the grid only resolved at the one width
+// where the count happened to divide. The column counts are fixed per
+// breakpoint below (they were `auto-fill`, so nothing here could know them),
+// which lets the page work out at build time how many blank cells each count
+// needs and emit exactly those — the sheet always closes on a full row.
+const KIT_COLS = [2, 3, 4];
+const fillersFor = (cols: number) => (cols - (pressKit.length % cols)) % cols;
+const fillers = Array.from(
+	{ length: Math.max(0, ...KIT_COLS.map(fillersFor)) },
+	(_, i) => KIT_COLS.filter((cols) => i < fillersFor(cols)),
+);
 ---
 
 <BaseLayout
@@ -60,6 +74,12 @@ const pressKit = await listPressKit();
 									</span>
 								</a>
 							</li>
+						))}
+						{fillers.map((cols) => (
+							<li
+								class={`kit-item kit-filler ${cols.map((c) => `kit-filler--c${c}`).join(' ')}`}
+								aria-hidden="true"
+							/>
 						))}
 					</ul>
 					</>

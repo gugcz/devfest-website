@@ -38,12 +38,18 @@ const INITIAL: State = { status: 'loading', sessions: [] };
 const SNAP_MIN = 5;
 const ROW_PX = 24;
 
-/** Track the mobile breakpoint. Matches `Menu.astro`'s `(max-width: 760px)` —
- * the site has no shared breakpoint token, so the literal is kept in sync. */
+/** Track the width below which the timetable becomes the time-ordered list.
+ *
+ * NOT the site's phone breakpoint: this one is about the room columns, not the
+ * page. A column is `minmax(9.5rem, 1fr)`, so from 1024 down a four-room day
+ * renders ~150px columns and the Bebas titles truncate mid-word inside them —
+ * the table survives, but nothing in it can be read. The list carries the same
+ * day at those widths with the titles at full `--fs-row-sm`, so the grid is
+ * only used where its columns are legible. */
 function useIsNarrow(): boolean {
 	const [narrow, setNarrow] = useState(false);
 	useEffect(() => {
-		const mql = window.matchMedia('(max-width: 760px)');
+		const mql = window.matchMedia('(max-width: 1024px)');
 		const update = () => setNarrow(mql.matches);
 		update();
 		mql.addEventListener('change', update);
