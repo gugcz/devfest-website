@@ -71,7 +71,8 @@
 		"alias": "The Press Agent",
 		"role": "PR & Marketing",
 		"photo": "/team/vera-milotova-bw.webp",
-		"photoColor": "/team/vera-milotova.webp"
+		"photoColor": "/team/vera-milotova.webp",
+		"links": [{ "kind": "linkedin", "url": "https://www.linkedin.com/in/verkamilotova/" }]
 	},
 	{
 		"id": "dominik-simonik",
