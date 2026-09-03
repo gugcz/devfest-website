@@ -1,5 +1,5 @@
 /**
- * `node --test` coverage for the three DEVF-43 fixes in the iDoklad client:
+ * `node --test` coverage for the three fixes in the iDoklad client:
  * a reused contact is updated from the submitted form data, a `Send` names an
  * explicit recipient when it is not, and a 200 with `IsSuccess: false` is a
  * failure rather than a silent success.

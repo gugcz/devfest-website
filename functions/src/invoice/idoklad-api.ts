@@ -228,7 +228,7 @@ export interface ResolvedContact {
  * orders. Contacts without an IČO are always created fresh.
  *
  * A reused contact is **updated** from the submitted form data first. It used
- * not to be, and that is the DEVF-43 incident in one line: the same company
+ * not to be, and that is the failure this fix came from, in one line: the same company
  * ordered twice from two different people, the second request reused the
  * contact created by the first, and `SendToPartner` mailed the invoice to the
  * first person's inbox while the pipeline recorded a success.
@@ -396,7 +396,7 @@ export interface InvoiceMailResult {
  *
  * Throws on a refusal (`IsSuccess: false`) and logs the verdict either way.
  * Nothing about this call used to be logged, which is why "did the mail go
- * out at all?" was unanswerable from Cloud Logging during DEVF-43.
+ * out at all?" was unanswerable from Cloud Logging when it mattered.
  */
 export async function sendInvoiceByEmail(
 	cfg: IdokladConfig,

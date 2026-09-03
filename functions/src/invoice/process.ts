@@ -119,7 +119,7 @@ export const processInvoiceTrigger = onDocumentCreated(
 					variableSymbol: invoice.variableSymbol,
 					dueDate: formatDueDate(invoice.dueDate),
 				});
-				// Belt for the DEVF-43 failure mode: when we could NOT prove the
+				// Belt for that failure mode: when we could NOT prove the
 				// contact carries the submitted address, name it explicitly so the
 				// person who filled the form gets the invoice regardless. When the
 				// contact IS in sync, `SendToPartner` already goes there — adding it
