@@ -25,7 +25,12 @@ interface Props {
 	/** Allows a <span class="red"> accent word; rendered with set:html. */
 	titleHtml: string;
 	note?: string;
-	actions: readonly Action[];
+	/**
+	 * The closing actions as plain links. Omit them and pass an `actions` slot
+	 * instead when a control has to be an island (the invitation pages resolve
+	 * their ti.to href client-side and report the click).
+	 */
+	actions?: readonly Action[];
 	tone?: 'accent' | 'raised' | 'plain';
 	titleId?: string;
 }
@@ -34,7 +39,7 @@ const {
 	eyebrow,
 	titleHtml,
 	note,
-	actions,
+	actions = [],
 	tone = 'raised',
 	titleId,
 } = Astro.props;
@@ -52,6 +57,7 @@ const toneClass = tone === 'accent' ? ' band--accent' : tone === 'raised' ? ' ba
 		<div class="closer-side">
 			{note && <p class="closer-note">{note}</p>}
 			<div class="closer-actions">
+				<slot name="actions" />
 				{actions.map(({ href, label, kind = 'primary', external }) => (
 					<a
 						href={href}
