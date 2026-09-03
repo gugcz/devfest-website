@@ -116,8 +116,11 @@ async function getToken(cfg: IdokladConfig): Promise<string> {
 	return cachedToken.token;
 }
 
-function unwrap<T = any>(json: any): T {
-	return json && typeof json === 'object' && 'Data' in json ? (json.Data as T) : (json as T);
+function unwrap<T>(json: unknown): T {
+	if (json && typeof json === 'object' && 'Data' in json) {
+		return (json as { Data: unknown }).Data as T;
+	}
+	return json as T;
 }
 
 async function apiFetch(

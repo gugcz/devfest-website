@@ -39,7 +39,6 @@ import { errorBody, fetchWithRetry } from '../lib/http.js';
 
 const SESSIONIZE_API_BASE = 'https://sessionize.com/api/v2';
 
-/** Raw Sessionize link as returned by the All view. */
 export interface SessionizeLink {
 	title?: string | null;
 	url?: string | null;
@@ -121,7 +120,6 @@ export type SpeakerLinkKind =
 	| 'mastodon'
 	| 'web';
 
-/** Normalized link persisted on the speaker doc. */
 export interface SpeakerLink {
 	kind: SpeakerLinkKind;
 	url: string;
@@ -193,9 +191,7 @@ export interface SessionSpeakerRef {
  * website's session filters (track / level / format facets).
  */
 export interface SessionCategory {
-	/** Category group title (e.g. `Track`, `Level`, `Format`). */
 	name: string;
-	/** The item labels this session is tagged with in that group. */
 	values: string[];
 }
 
@@ -482,7 +478,6 @@ export function normalizeSpeakers(
 // helpers below tolerate an absent/empty set (returning []) — the delete-guard,
 // not a throw, protects the live `sessions` collection from a truncated fetch.
 
-/** The speaker fields embedded on each session doc. */
 interface SpeakerSummary {
 	fullName: string;
 	tagLine: string;
