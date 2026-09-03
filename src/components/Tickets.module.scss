@@ -94,6 +94,19 @@
 	margin: 0;
 }
 
+// Sale window — the wave's ti.to `end_at`, when the organizer set one.
+// Muted mono like every other per-row label: red is spent once per list
+// (the live wave's "On sale" state), so a deadline on every row must not
+// compete with it.
+.stubDeadline {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-sm);
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.55);
+	margin: 0;
+}
+
 // Admission line — what the pass grants, set as one mono row.
 .stubGrants {
 	list-style: none;

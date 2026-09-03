@@ -267,7 +267,7 @@ export const TICKETS = {
 			sold_out: false,
 			has_sales: true,
 			start_at: null,
-			end_at: null,
+			end_at: '2026-09-30T23:59:59+02:00',
 		},
 		{
 			id: 2,
@@ -281,7 +281,7 @@ export const TICKETS = {
 			sold_out: false,
 			has_sales: true,
 			start_at: null,
-			end_at: null,
+			end_at: '2026-09-30T23:59:59+02:00',
 		},
 		{
 			id: 3,
@@ -309,7 +309,7 @@ export const TICKETS = {
 			sold_out: true,
 			has_sales: true,
 			start_at: null,
-			end_at: null,
+			end_at: '2026-08-31T23:59:59+02:00',
 		},
 	],
 };

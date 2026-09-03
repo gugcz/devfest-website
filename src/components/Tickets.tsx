@@ -7,6 +7,7 @@ import {
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
+	waveDeadline,
 	type ReleaseStatus,
 	type TitoRelease,
 } from '../lib/tito';
@@ -257,6 +258,10 @@ export default function Tickets() {
 					const lead = prices[0];
 					const manyPrices = new Set(prices.map((p) => p.primary)).size > 1;
 					const description = groupDescription(group.name, group.description);
+					// ti.to's sale window. Most releases still carry no `end_at`, so
+					// this is null far more often than not — the line is simply absent
+					// then, never an empty slot or an "Invalid Date".
+					const deadline = waveDeadline(group.variants.map((v) => v.release));
 					const serial = String(i + 1).padStart(2, '0');
 					return (
 						<li
@@ -276,6 +281,11 @@ export default function Tickets() {
 							<div className={s.stubBody}>
 								<h3 className={s.stubTitle}>{group.name}</h3>
 								{anyPurchasable && description && <p className={s.stubNote}>{description}</p>}
+								{deadline && (
+									<p className={s.stubDeadline}>
+										<time dateTime={deadline.iso}>{deadline.label}</time>
+									</p>
+								)}
 								<ul className={s.stubGrants}>
 									{group.variants.map(({ release, variantLabel }, vi) => (
 										<li key={release.id}>
