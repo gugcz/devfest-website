@@ -1,0 +1,124 @@
+---
+/**
+ * A NEXT STEP — one thing to do, in an open field of them.
+ *
+ * `/thank-you`, `/newsletter-subscription-thank-you` and `/404` all end on the
+ * same question ("what now?") and all three used to answer it with one link
+ * home. They now answer it with a field of these. It is a component rather
+ * than a class name repeated on three pages for the reason `Desk.astro` is:
+ * the copies drift (see "Shared components, not shared class names" in
+ * CLAUDE.md).
+ *
+ * A step CONTAINS its controls rather than being one, so it takes
+ * `.field-row--holds` — the warm wash and pull — never the red reach field,
+ * which promises the row itself is clickable.
+ */
+interface Action {
+	href: string;
+	label: string;
+	/** Filled (primary) or outlined (ghost). Default ghost — a field of filled
+	 * red buttons is the accent as texture. */
+	kind?: 'primary' | 'ghost';
+	external?: boolean;
+	/** `download` on the calendar file, so it saves rather than renders. */
+	download?: boolean;
+}
+
+interface Props {
+	title: string;
+	/** One or two lines on what this is. May contain inline HTML (links). */
+	noteHtml: string;
+	actions: readonly Action[];
+}
+
+const { title, noteHtml, actions } = Astro.props;
+---
+
+<li class="field-row field-row--short field-row--holds step">
+	<div class="step-head">
+		<h3 class="step-title">{title}</h3>
+		<p class="step-note" set:html={noteHtml} />
+	</div>
+
+	<div class="step-actions">
+		{actions.map(({ href, label, kind = 'ghost', external, download }) => (
+			<a
+				class={kind === 'primary' ? 'btn-primary' : 'btn-ghost'}
+				href={href}
+				{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+				{...(download ? { download: true } : {})}
+			>
+				{label}
+			</a>
+		))}
+	</div>
+</li>
+
+<style lang="scss">
+	// The 1.15/0.85 split the desks and the section heads use, so a step's
+	// title shares its left edge and its measure with everything else.
+	.step {
+		display: grid;
+		grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+		align-items: start;
+		gap: 1rem clamp(2rem, 5vw, 5rem);
+	}
+
+	.step-head {
+		display: flex;
+		flex-direction: column;
+		gap: 0.9rem;
+		min-width: 0;
+	}
+
+	// The short-list row step (--fs-row, 72px) — these lists are three or four
+	// entries long, the same length as the ticket waves and the contact desks.
+	.step-title {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-row);
+		line-height: 1.02;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	.step-note {
+		font-family: var(--font-special-elite), cursive;
+		font-size: var(--fs-body);
+		line-height: 1.7;
+		color: rgba(240, 237, 230, 0.72);
+		max-width: 46ch;
+		margin: 0;
+	}
+
+	.step-note :global(a) {
+		color: var(--color-accent-hot);
+		text-decoration: none;
+		border-bottom: 1px solid var(--rule-red);
+		transition: border-color 0.2s, color 0.2s;
+
+		&:hover,
+		&:focus-visible {
+			border-color: var(--color-accent-hot);
+		}
+	}
+
+	.step-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.9rem;
+		justify-content: flex-end;
+		align-items: flex-start;
+	}
+
+	@media (max-width: 900px) {
+		.step {
+			grid-template-columns: 1fr;
+		}
+
+		.step-actions {
+			justify-content: flex-start;
+		}
+	}
+</style>

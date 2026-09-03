@@ -1,17 +1,81 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import LandingNotice from '../components/LandingNotice.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+import NextStep from '../components/NextStep.astro';
+import Closer from '../components/Closer.astro';
+import { EVENT_TOPICS } from '../lib/ticker';
+
+// The page used to dead-end: one line of confirmation and a link back to the
+// homepage the visitor had just come from. Someone who has just handed over
+// their address is the most engaged visitor the site gets — this page points
+// them at the three things they can actually do today.
+const STEPS = [
+	{
+		title: 'Get your ticket',
+		noteHtml:
+			'The newsletter tells you when a wave opens; it does not hold you a seat. ' +
+			'The current wave is on sale now.',
+		actions: [{ href: '/#tickets', label: 'See the waves', kind: 'primary' as const }],
+	},
+	{
+		title: 'Read the programme',
+		noteHtml:
+			'Talks and speakers go up as they are confirmed &mdash; both pages read straight from the schedule.',
+		actions: [{ href: '/sessions', label: 'See the sessions' }],
+	},
+	{
+		title: 'Buying for a team?',
+		noteHtml:
+			'Companies pay by invoice and claim their tickets afterwards with a code. Request one in a minute.',
+		actions: [{ href: '/invoice', label: 'Request an invoice' }],
+	},
+];
 ---
 
 <BaseLayout
-	title="Subscribed · DevFest.cz 2026"
+	title="Subscribed — DevFest.cz 2026"
 	description="You're subscribed to DevFest.cz 2026 updates. We'll let you know when tickets drop."
 	noindex
 >
-	<LandingNotice
-		headline="You're on the list."
-		subtext="We'll reach out when tickets drop. Stay tuned."
-	/>
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={"You're on the <span class=\"red\">list.</span>"}
+			lede="Every announcement — waves opening, speakers confirmed, the schedule going live — reaches you first, and no more than a handful of times a year."
+			seoHeading="Subscribed to DevFest.cz 2026 updates"
+			titleId="newsletter-thanks-title"
+			photo={false}
+		/>
+
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
+		<section class="band band--lit" aria-labelledby="newsletter-next-heading">
+			<div class="band-inner">
+				<header class="head-stack">
+					<p class="eyebrow">While you wait</p>
+					<h2 id="newsletter-next-heading" class="display head-title">
+						Three <span class="red">places</span> to go.
+					</h2>
+				</header>
+
+				<ul class="field reveal">
+					{STEPS.map((step) => <NextStep {...step} />)}
+				</ul>
+			</div>
+		</section>
+
+		<Closer
+			eyebrow="One more thing"
+			titleHtml={'Come for the<br /><span class="red">people</span>.'}
+			note="The lineup is what those mails will be about. Here is who is confirmed so far."
+			tone="accent"
+			titleId="newsletter-thanks-closer"
+			actions={[
+				{ href: '/speakers', label: 'See the speakers' },
+				{ href: '/faq', label: 'Read the FAQ', kind: 'ghost' },
+			]}
+		/>
+	</main>
 </BaseLayout>
 
 <script>
