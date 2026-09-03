@@ -25,7 +25,7 @@
 //
 //   [ index · state ][ wave + what's included ][ price · buy ]
 
-// An open field, not a ruled ledger — `.field` / `.field-row--holds` in
+// An open field, not a ruled table — `.field` / `.field-row--holds` in
 // BaseLayout.scss owns the rhythm and the warm reach state. A wave CONTAINS its
 // control (the Buy CTA) rather than being one, so it warms and pulls; it does
 // not take the red field the rows which ARE links use.
@@ -253,7 +253,7 @@
 
 // The loading skeleton mirrors the stub geometry so nothing reflows on load.
 // Mirrors the open field it stands in for — no opening rule, no row hairlines.
-.skelLedger {
+.skelField {
 	list-style: none;
 	padding: 0;
 	margin: 0;
@@ -331,7 +331,7 @@
 	span:nth-child(3) { animation-delay: 0.36s; }
 }
 
-// Shimmering placeholder bars laid into the ledger geometry above.
+// Shimmering placeholder bars laid into the field geometry above.
 .skelBar {
 	display: block;
 	position: relative;
@@ -502,8 +502,8 @@
 	}
 }
 
-// Empty / error notice — a ruled note in the ledger's own column, not a
-// bordered alert box. Opens on the same strong rule the ledger would have.
+// Empty / error notice — a ruled note in the field's own column, not a
+// bordered alert box. Opens on the same strong rule the rows sit on.
 .empty {
 	display: flex;
 	flex-direction: column;

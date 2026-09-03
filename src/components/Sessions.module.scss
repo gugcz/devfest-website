@@ -169,7 +169,7 @@
 	position: relative;
 }
 
-/* ===================== RECORD (button) ===================== */
+/* ===================== ROW (button) ===================== */
 // Was a panel with a 2px red left border, a drop shadow and a hover lift —
 // three of the tells this language exists to remove.
 .card {
@@ -267,8 +267,8 @@
 }
 
 /* ===================== FOOT (speakers) ===================== */
-// Right-hand column of the record: who is giving the talk. Sits on the same
-// axis every other ledger uses for its data.
+// Right-hand column of the row: who is giving the talk. Sits on the same
+// axis every other field row uses for its data.
 .foot {
 	grid-column: 2;
 	grid-row: 1 / span 3;
@@ -334,10 +334,10 @@
 }
 
 /* ===================== "MORE SOON" TILE ===================== */
-// The programme's open end — a closing note on the ledger, not a dashed
-// placeholder tile. A dashed box is drafting-tool vocabulary; the ledger says
-// "more to come" by leaving its last rule open and setting the note in the
-// same mono voice every other status word uses.
+// The programme's open end — a closing note at the foot of the field, not a
+// dashed placeholder tile. A dashed box is drafting-tool vocabulary; the field
+// says "more to come" by setting the note in the same mono voice every other
+// status word uses.
 .moreCard {
 	position: relative;
 	display: flex;

@@ -2,7 +2,7 @@
 // Desktop: a proportional time × room grid (rooms as columns, 5-min rows) drawn
 // as ONE ruled sheet: hour hairlines run the full width, a hairline separates
 // each room column, and a talk is a lit block with a spine, not a floating card.
-// Mobile / single-room: the same ledger every other list on the site uses.
+// Mobile / single-room: the same open field every other list on the site uses.
 //
 // This page was the last one still speaking the old language — rounded panels
 // with four-sided borders, drop shadows, pill tags and a red timestamp on every
@@ -145,7 +145,7 @@
 // one thing a timetable has to show, carried on the time axis where the reader
 // is already looking. Flat: no radius, no four-sided border, no drop shadow.
 // Reached, it lights and its bottom rule draws red, the same mark the ticket
-// ledger and the session rows use.
+// waves and the session rows use.
 //
 // The mark is a TOP rule, not a left spine. A bar down one edge of a block is
 // the shape this language exists to avoid (CLAUDE.md bans it, naming these very
@@ -229,13 +229,13 @@
 	}
 }
 
-// Muted, like the ticket ledger's serial. It was accent-hot on every cell of
+// Muted, like the ticket wave's serial. It was accent-hot on every cell of
 // the sheet, which is the accent spent thirty times over — red belongs to the
 // session that is actually on now.
 .cellTime {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-variant-numeric: tabular-nums;
-	// The ticket ledger sets its serial at --fs-label-lg; this is the same
+	// The ticket waves set their serial at --fs-label-lg; this is the same
 	// index role.
 	font-size: var(--fs-label-lg);
 	letter-spacing: 0.1em;
@@ -516,7 +516,7 @@
 }
 
 // A status word on a rule — never a filled pill. Same shape as the ticket
-// ledger's "On sale".
+// wave's "On sale".
 .badge {
 	flex-shrink: 0;
 	display: inline-flex;

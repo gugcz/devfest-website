@@ -163,7 +163,7 @@ export default function Tickets() {
 						</span>
 					</p>
 				</header>
-				<ul className={`field ${s.skelLedger}`} role="list" aria-hidden="true">
+				<ul className={`field ${s.skelField}`} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
 						<li key={i} className={`field-row field-row--short ${s.skelRecord}`}>
 							<span className={`${s.skelBar} ${s.skelIndex}`} />
