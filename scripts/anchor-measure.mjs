@@ -111,8 +111,9 @@ async function measure(page, heading) {
  * the real height over it — this sweep is what keeps that true rather than
  * true-on-the-day-it-was-measured.
  *
- * Chromium only, and no anchor jumps: this measures layout, not scrolling, and
- * the widths x roots x routes matrix is already 168 page loads.
+ * Chromium only, and no anchor jumps: this measures layout, not scrolling. The
+ * routes x widths x roots matrix is 168 checks, but only 14 page loads — the
+ * widths are a viewport resize inside one document, not a reload.
  */
 const HEADER_WIDTHS = [320, 360, 375, 768, 1024, 1440];
 const HEADER_ROOTS = [16, 32];
@@ -135,18 +136,47 @@ const HEADER_ROUTES = [
 
 async function headerSweep(port) {
 	const browser = await chromium.launch();
+	const ctx = await browser.newContext({ viewport: { width: HEADER_WIDTHS[0], height: 800 } });
+	const page = await ctx.newPage();
+	// The fixture server delays `/api/*` by 400ms on purpose — that latency is
+	// what the anchor half of this file measures, and this half has no use for
+	// it: the bar's height owes nothing to the lineup. Answer those from the
+	// same fixtures with no delay, and `load` is a sufficient wait instead of
+	// `networkidle`. Answered, not aborted: an aborted fetch renders the
+	// islands' "unavailable" state, and the standing-overflow report below is
+	// about the real page, not that one (aborting invented three 320px rows).
+	await page.route('**/api/**', (route) => {
+		const body = API_FIXTURES[new URL(route.request().url()).pathname];
+		if (body === undefined) return route.continue();
+		return route.fulfill({ status: 200, contentType: 'application/json; charset=utf-8', body });
+	});
 	const bad = [];
 	const warn = [];
 	let checks = 0;
-	for (const width of HEADER_WIDTHS) {
-		const ctx = await browser.newContext({ viewport: { width, height: 800 } });
-		const page = await ctx.newPage();
-		for (const route of HEADER_ROUTES) {
-			await page.goto(`http://localhost:${port}${route}`);
-			await page.waitForLoadState('networkidle');
+	// Route outside, width inside: the widths are a viewport resize, not a new
+	// document, so one `page.goto` per route covers all six (84 -> 14 loads).
+	for (const route of HEADER_ROUTES) {
+		// The first width has to be in place BEFORE the load, so that the
+		// document the root-16 assertion below sees is one the observer has only
+		// ever seen at that width.
+		await page.setViewportSize({ width: HEADER_WIDTHS[0], height: 800 });
+		await page.goto(`http://localhost:${port}${route}`, { waitUntil: 'load' });
+		for (const [index, width] of HEADER_WIDTHS.entries()) {
+			if (index > 0) await page.setViewportSize({ width, height: 800 });
 			for (const root of HEADER_ROOTS) {
+				// `--header-h` MUST NOT BE WRITTEN AT A 16px ROOT.
+				//
+				// The drift check below passes whether or not the property was
+				// written, so on its own it does not cover “the offsets #310
+				// established cannot move”. This does — but only on a virgin
+				// document: once the root-32 pass has forced a write, the observer
+				// is obliged to write the corrected value back when the root
+				// returns to 16, so a later width would fail an emptiness check
+				// for the right reason. Hence the first width, first root, right
+				// after the load, once per route.
+				const virgin = index === 0 && root === HEADER_ROOTS[0];
 				const result = await page.evaluate(
-					async (rootPx) => {
+					async ({ rootPx, virgin }) => {
 						// A text-only zoom, which is what wraps the actions.
 						document.documentElement.style.fontSize = `${rootPx}px`;
 						// Two frames: one for the layout the root change causes, one for
@@ -165,6 +195,9 @@ async function headerSweep(port) {
 						const out = {
 							declared,
 							actual: header ? header.getBoundingClientRect().height : 0,
+							// The inline property is the observer's only footprint: empty
+							// means it decided the formula was already right.
+							written: virgin ? document.documentElement.style.getPropertyValue('--header-h') : null,
 							// DEVF-31: the wrap exists to keep the bar inside 320px at a
 							// 32px root. Guard it here rather than trusting it stayed fixed.
 							scrollWidth: document.documentElement.scrollWidth,
@@ -173,23 +206,25 @@ async function headerSweep(port) {
 						document.documentElement.style.fontSize = '';
 						return out;
 					},
-					root
+					{ rootPx: root, virgin }
 				);
 				checks++;
 				const drift = Math.abs(result.declared - result.actual);
 				if (drift > 1) bad.push({ route, width, root, ...result, kind: `--header-h off by ${drift.toFixed(1)}px` });
+				if (virgin && result.written !== '')
+					bad.push({ route, width, root, ...result, kind: `--header-h written at root ${root} ("${result.written}")` });
 				// Reported, not asserted. At a 32px root the running band's strip
 				// (`.ticker-item`, `Ticker.astro`) measures past the viewport on every
 				// page that carries it — 1069px inside 1024px — and it did so before
 				// this measurement existed. `html { overflow-x: clip }` means nothing
 				// actually scrolls, so it is a standing overflow, not a live bug; it is
-				// printed so it can't be discovered twice.
+				// printed so it can't be discovered twice. Tracked as DEVF-49.
 				if (result.scrollWidth > result.innerWidth)
 					warn.push({ route, width, root, ...result, kind: `overflow ${result.scrollWidth} > ${result.innerWidth}` });
 			}
 		}
-		await ctx.close();
 	}
+	await ctx.close();
 	await browser.close();
 	return { bad, warn, checks };
 }
@@ -264,7 +299,7 @@ for (const r of rows) {
 console.log(bad === 0 ? '\nAll anchor landings within 0-60px of the bar.' : `\n${bad} landing(s) out of range.`);
 
 console.log(
-	`\nheader: ${header.checks} checks (${HEADER_ROUTES.length} routes x ${HEADER_WIDTHS.length} widths x roots ${HEADER_ROOTS.join('/')}px)`
+	`\nheader: ${header.checks} checks (${HEADER_ROUTES.length} routes x ${HEADER_WIDTHS.length} widths x roots ${HEADER_ROOTS.join('/')}px, ${HEADER_ROUTES.length} page loads)`
 );
 for (const b of [...header.bad, ...header.warn]) {
 	console.log(
