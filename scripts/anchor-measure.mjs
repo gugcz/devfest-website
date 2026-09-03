@@ -174,21 +174,20 @@ async function headerSweep(port) {
 	// it: the bar's height owes nothing to the lineup. Answer those from the
 	// same fixtures with no delay, and `load` is a sufficient wait instead of
 	// `networkidle`. Answered, not aborted: an aborted fetch renders the
-	// islands' "unavailable" state, and the standing-overflow report below is
-	// about the real page, not that one (aborting invented three 320px rows).
+	// islands' "unavailable" state, and the overflow assert below is about the
+	// real page, not that one (aborting invented three 320px rows).
 	// Two consequences, harmless today but worth naming: an `/api/**` path with
 	// no fixture falls through to the fixture server, which 404s it into the
 	// same "unavailable" state (no such path exists right now), and `load` does
 	// not guarantee a rendered island. Neither touches the asserts — the bar's
-	// height owes nothing to the data — but if the standing-overflow rows below
-	// ever flicker, this is the reason.
+	// height owes nothing to the data — but if the overflow assert below ever
+	// flickers, this is the reason.
 	await page.route('**/api/**', (route) => {
 		const body = API_FIXTURES[new URL(route.request().url()).pathname];
 		if (body === undefined) return route.continue();
 		return route.fulfill({ status: 200, contentType: 'application/json; charset=utf-8', body });
 	});
 	const bad = [];
-	const warn = [];
 	let checks = 0;
 	// Route outside, width inside: the widths are a viewport resize, not a new
 	// document, so one `page.goto` per route covers all six (84 -> 14 loads).
@@ -254,20 +253,26 @@ async function headerSweep(port) {
 				if (drift > 1) bad.push({ route, width, root, ...result, kind: `--header-h off by ${drift.toFixed(1)}px` });
 				if (virgin && result.written !== '')
 					bad.push({ route, width, root, ...result, kind: `--header-h written at root ${root} ("${result.written}")` });
-				// Reported, not asserted. At a 32px root the running band's strip
-				// (`.ticker-item`, `Ticker.astro`) measures past the viewport on every
-				// page that carries it — 1069px inside 1024px — and it did so before
-				// this measurement existed. `html { overflow-x: clip }` means nothing
-				// actually scrolls, so it is a standing overflow, not a live bug; it is
-				// printed so it can't be discovered twice. Tracked as DEVF-49.
+				// ASSERTED, not merely reported (DEVF-49). This started as a printed
+				// warning because it was red on arrival: at a 32px root every route
+				// carrying a footer measured 1069px inside 1024px. The cause was the
+				// footer's `white-space: nowrap` organizer link, not — as the first
+				// reading had it — the running band, whose strip is inside
+				// `overflow: hidden` and never reaches the document at all.
+				//
+				// It is an assert because `html { overflow-x: clip }` means a
+				// regression here is INVISIBLE: nothing scrolls, so the only symptom
+				// is this number. Note that `clip` is also why the number survives to
+				// be read — `overflow-x: hidden` would make html a scroll container
+				// and report `scrollWidth === innerWidth` however far the content ran.
 				if (result.scrollWidth > result.innerWidth)
-					warn.push({ route, width, root, ...result, kind: `overflow ${result.scrollWidth} > ${result.innerWidth}` });
+					bad.push({ route, width, root, ...result, kind: `overflow ${result.scrollWidth} > ${result.innerWidth}` });
 			}
 		}
 	}
 	await ctx.close();
 	await browser.close();
-	return { bad, warn, checks };
+	return { bad, checks };
 }
 
 const server = await startServer();
@@ -343,7 +348,7 @@ console.log(bad === 0 ? '\nAll anchor landings within 0-60px of the bar.' : `\n$
 console.log(
 	`\nheader: ${header.checks} checks (${HEADER_ROUTES.length} routes x ${HEADER_WIDTHS.length} widths x roots ${HEADER_ROOTS.join('/')}px, ${HEADER_ROUTES.length} page loads)`
 );
-for (const b of [...header.bad, ...header.warn]) {
+for (const b of header.bad) {
 	console.log(
 		`  ${b.route.padEnd(28)} ${String(b.width).padStart(4)}px  root ${String(b.root).padStart(2)}  declared ${b.declared.toFixed(1)}  actual ${b.actual.toFixed(1)}  <-- ${b.kind}`
 	);
@@ -355,7 +360,7 @@ console.log(
 );
 console.log(
 	header.bad.length === 0
-		? `--header-h within 1px of the real bar everywhere${header.warn.length ? ` (${header.warn.length} standing overflow(s) above, not asserted)` : ''}.`
+		? '--header-h within 1px of the real bar everywhere, and no route overflows its viewport.'
 		: `${header.bad.length} header check(s) failed.`
 );
 

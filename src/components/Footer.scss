@@ -225,9 +225,24 @@
 
 	.org-link {
 		display: inline;
-		// The legal name plus its external-link arrow is one unit — let the line
-		// break before it rather than splitting "GUG.cz," from "z.s.".
-		white-space: nowrap;
+		// The legal name and its arrow are held together by the NBSPs in the
+		// markup, so the line still breaks BEFORE the link rather than splitting
+		// "GUG.cz," from "z.s.". What is gone is `white-space: nowrap`, which
+		// made the phrase ONE unbreakable token: at a 32px root it measured
+		// 267px inside a ~222px column and — nothing between it and `html`
+		// clips — 45px past the viewport at 1024px, on all 13 routes that carry
+		// a footer. That was the standing `document.scrollWidth > innerWidth`
+		// the anchors sweep reported (DEVF-49). It had been read as the running
+		// band's, but the ticker strip sits inside `overflow: hidden` and never
+		// reaches the document at all.
+		//
+		// `anywhere`, not `break-word`: only `anywhere` also lowers the
+		// min-content contribution, which is what keeps the column from being
+		// pushed wider in the first place. It is a last resort, not the wrap —
+		// the phrase stays on one line at every width at a 16px root, and gives
+		// way only at 1024px/32px, where it breaks at its own NBSP with the
+		// arrow still on "z.s.".
+		overflow-wrap: anywhere;
 		// Inline-in-prose link: a persistent underline distinguishes it without
 		// relying on colour alone — WCAG 1.4.1.
 		text-decoration: underline;
