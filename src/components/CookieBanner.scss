@@ -11,10 +11,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1.25rem 2.5rem;
+		gap: 1.25rem min(2.5rem, 12.5vw);
 		flex-wrap: wrap;
 		padding:
-			1rem clamp(1rem, 4vw, 2.5rem)
+			1rem min(clamp(1rem, 4vw, 2.5rem), 5vw)
 			calc(1rem + env(safe-area-inset-bottom));
 		background: #0A0908;
 		border-top: 1px solid var(--rule);
@@ -65,25 +65,38 @@
 	.cookie-actions {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
+		// Wraps under text-only zoom — two mono buttons at a 32px root are
+		// wider than a 320px viewport side by side, and the pair is the last
+		// thing on the page that may be cut off.
+		flex-wrap: wrap;
+		gap: min(1rem, 5vw);
 		flex-shrink: 0;
 	}
 
 	// Compact sizing overrides on top of global .btn-primary / .btn-ghost.
+	//
+	// The two choices are PEERS. Consent is not a call to action with an escape
+	// hatch beside it, and the pair used to be read as one: a solid red Accept
+	// at 1.4rem of side padding against a Decline at 1rem whose only boundary
+	// measured 1.74:1. Accept keeps the accent fill (it is the affirmative
+	// answer, and the fill is how the banner is findable at all), but every
+	// other dimension is now shared — same type, same tracking, same padding,
+	// same height, and the same minimum footprint so the shorter word does not
+	// make the smaller target. The boundary comes from --field-border via
+	// .btn-ghost, which clears 1.4.11 at 3.33:1.
 	.cookie-btn {
 		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		white-space: nowrap;
-		min-height: 2.75rem;
-		min-width: 2.75rem;
-	}
-
-	.cookie-btn--accept {
-		padding: 0.55rem 1.4rem;
-	}
-
-	.cookie-btn--decline {
-		padding: 0.55rem 1rem;
+		// Physical touch target — px, not rem, so it does not double with the
+		// root font (WCAG 2.5.5 is about the pointer, not the type size).
+		min-height: 44px;
+		// The shared minimum footprint: the shorter word is not the smaller
+		// target. Well past 44px, so it carries 2.5.5 on the width too.
+		min-width: 9rem;
+		padding: 0.55rem min(1.4rem, 7vw);
+		justify-content: center;
+		flex: 0 0 auto;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -100,6 +113,13 @@
 		}
 		.cookie-actions {
 			align-self: stretch;
-			justify-content: space-between;
+		}
+		// Below 500px the pair splits the row evenly rather than sitting at the
+		// two ends — equal width is the same peer-weighting rule, expressed in
+		// the space a phone actually has.
+		.cookie-btn {
+			flex: 1 1 0;
+			min-width: 0;
+			padding-inline: 0.75rem;
 		}
 	}

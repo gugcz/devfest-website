@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { initials, PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
+import { PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
 import { useReturnFocus } from '../lib/useReturnFocus';
+import SpeakerPhoto from './SpeakerPhoto';
 import sheet from './Sheet.module.scss';
 import s from './SpeakerDetail.module.scss';
 
@@ -12,8 +13,6 @@ import s from './SpeakerDetail.module.scss';
  */
 export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; onClose: () => void }) {
 	const dialogRef = useRef<HTMLDivElement>(null);
-	const [imageFailed, setImageFailed] = useState(false);
-	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
 	// Restores focus to the trigger on close — but only for keyboard closes, so a
 	// pointer close never leaves a lingering focus ring on the card/row.
 	const setKeyboardClose = useReturnFocus();
@@ -103,19 +102,12 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 				{/* Receives the morph from the lineup print — see usePortraitMorph
 				    in Speakers.tsx for why the name lives here only while open. */}
 				<div className={`print ${s.plate}`} style={{ viewTransitionName: PORTRAIT_TRANSITION }}>
-					{showPhoto ? (
-						<img
-							className={s.photo}
-							src={speaker.profilePicture}
-							alt=""
-							decoding="async"
-							onError={() => setImageFailed(true)}
-						/>
-					) : (
-						<span className={s.monogram} aria-hidden="true">
-							{initials(speaker.fullName) || '?'}
-						</span>
-					)}
+					<SpeakerPhoto
+						speaker={speaker}
+						photoClass={s.photo}
+						monogramClass={s.monogram}
+						eager
+					/>
 				</div>
 
 				<div>

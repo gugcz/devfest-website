@@ -11,9 +11,21 @@
 	border-bottom: 1px solid var(--rule-soft);
 	padding: var(--ticker-pad) 0;
 
-	// SC 2.2.2 — pause on pointer hover so a topic can be read.
-	&:hover .ticker {
+	// SC 2.2.2 — the strip is the pause control. Hover covers the pointer, and
+	// :focus-within covers the keyboard (the wrap carries tabindex="0" for
+	// exactly this; see Ticker.astro). Both stop the scroll so a topic can be
+	// read, with no visible chrome added to 15 routes.
+	&:hover .ticker,
+	&:focus-within .ticker {
 		animation-play-state: paused;
+	}
+
+	// The strip stands alone on open ground between the hero and the body, so
+	// the ring takes the `lg` stand-off. Focus is reachable now, so it has to
+	// be visible.
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: calc(-1 * var(--focus-gap-lg));
 	}
 }
 

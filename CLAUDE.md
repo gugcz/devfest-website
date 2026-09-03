@@ -268,6 +268,20 @@ Primitives in `BaseLayout.scss`: `.u-container`, `.u-prose`, `.eyebrow`,
 `.band` (+ `--raised`, `--accent`, `--tight`, `--wide`) with `.band-inner`,
 `.closer` / `.closer-title` / `.closer-note` / `.closer-actions`,
 `.btn-primary` / `.btn-ghost`, and the `.ledger` / `.record` family.
+`.anchor-target` (`#tickets`, `#newsletter`) cancels a section's own opening air
+with a negative `scroll-margin-top` reading `--section-air`, the variable the
+section's padding is built from — `scroll-padding-top` can't do it, the air is
+inside the target. `--header-h` is the single source for the bar height:
+`Menu.scss` and `html { scroll-padding-top }` both read it.
+The CSS only decides WHERE a jump lands; `src/lib/anchor.ts` (wired from
+`BaseLayout.astro`'s `astro:page-load`) keeps it landed while the islands
+resolve and grow the page above the target — without it a deep-linked
+`/#newsletter` ended up ~1000px past the heading. Two things there are not
+tidy-uppable: the click handler must NOT check `event.defaultPrevented`
+(ClientRouter cancels same-page hash links to scroll them itself), and the hold
+must be armed BEFORE the landing, because Chromium and WebKit defer the initial
+fragment scroll and then animate it through `scroll-behavior: smooth`.
+`npm run anchors` measures every landing in Chromium, WebKit and Firefox.
 
 **Open-field rows — every list on the site is the same open field.** A list of
 entries is never a stack of cards, and it is no longer a ruled ledger either:
@@ -412,7 +426,18 @@ other, and the two-column split was 0.95/1.05 against 1.15/0.85.
 | `NextStep.astro` | one thing to do, in an open field of them — title, note, and its controls on the right axis. `/thank-you`, `/newsletter-subscription-thank-you` and `/404` all end on "what now?" and all three used to answer it with one link home. Takes `.field-row--holds` — a step CONTAINS its controls |
 | `.logo-grid` / `.logo-cell` | the partner wall: ONE track size for every partner on the page (`/partners`). See "Partner wall" below |
 | `.fallback-note` | the no-JS / endpoint-down prose on a data-backed page |
+| `DataState.tsx` | the three non-ready states of a data-backed island — `LoadingState` / `ErrorState` / `EmptyState`. `/speakers`, `/sessions`, `/agenda` and the ticket waves each kept a private copy and they had drifted: two centred and two left-set, two with animated trailing dots, one opening on a hairline, and only `/agenda` offering a next action. Left-set (matching `.fallback-note`), `role="status"` on loading and `role="alert"` on failure, and an **empty state always offers somewhere to go** |
+| `SpeakerPhoto.tsx` | a speaker's photograph, or their initials. Owns ONE decision — no URL, or a URL that fails to load, both land on the monogram — while the caller passes its own classes for the shape. `/sessions` and `/agenda` used to `visibility: hidden` the broken `<img>`, so the same speaker with the same dead CDN URL rendered as initials on `/speakers` and as a hole on the other two |
 | `SubpageHero.astro`, `Ticker.astro`, `Closer.astro` | already components; see below |
+
+**`--field-border` is THE control-edge token.** Every boundary a visitor can
+operate goes through it — text fields, `.btn-ghost`, `.nav-toggle`, the cookie
+banner's `Decline`, `.crew-link` — because it measures 3.33:1 on `#050505` and
+clears WCAG 1.4.11. `--rule` (1.30:1) and `--rule-strong` (1.74:1) do not, and
+they stay where they are: they are the decorative grouping hairlines
+(`.band--raised`, `.head-split--ruled`, the section rules), and raising THEM to
+3:1 would repaint every structural line on the site. Do not reach for a rule
+token to outline a control.
 
 **Tokens exist so a measured value is decided once.** `--print-mount` (the
 keyline + shadow under a photograph), `--ink-monogram` / `--ink-monogram-sm`
@@ -439,6 +464,15 @@ the identical crop of `/hero-detective.webp` is what made them read as one
 template with the words swapped; each page now frames a different part of the
 plate. `SubpageHero` also takes `photo={false}` — contact, FAQ, invoice and
 press/downloads open on type alone, so the scroll has two kinds of opening.
+
+**The ticker is its own pause control (WCAG 2.2.2).** The strip carries
+`tabindex="0"` + an `aria-label` naming the topics, and `Ticker.scss` pauses the
+animation on `:hover` **and** `:focus-within`. `prefers-reduced-motion` still
+stops it, but that is a user-agent setting, not the mechanism the SC asks for.
+The focusable child is what makes `:focus-within` possible at all — the topics
+are non-interactive text — so the strip is the labelled element and the doubled
+topic list inside it is `aria-hidden` (it would otherwise be announced twice).
+No visible pause button: this is chrome on all 15 routes.
 
 **The running band (`Ticker`) runs under EVERY hero.** One shared line of the
 conference's topics (`EVENT_TOPICS`, `src/lib/ticker.ts`) sits between the hero
@@ -530,6 +564,21 @@ no answer at all. One open item, not more — four open answers is the page's
 whole content unfolded. A section must also not reuse the hero's
 `aria-labelledby`: two regions with one accessible name is `landmark-unique`,
 which was the site's only axe violation.
+
+**The skip link's target carries `tabindex="-1"`.** `#main-content` is a `div`,
+and without it `Enter` on the skip link moves the document fragment but leaves
+focus in the header — the next `Tab` lands back in the nav and the only
+keyboard-only affordance on the site does nothing. The ring is suppressed on
+that element alone (a 100vw outline reads as a rendering fault, and it is a page
+region, not a control); every control inside keeps its own.
+
+**The cookie banner is second in the DOM, right after the skip link,** and its
+`Escape` handler is on `document`. Both are the same defect: the banner used to
+sit after the footer with a handler bound to itself, so the key only worked once
+focus was already inside it — about 40 tab stops away. Its two choices are
+peer-weighted: `Accept` keeps the accent fill (it is how the bar is findable),
+every other dimension — type, tracking, padding, height, minimum footprint — is
+shared, so the shorter word is not the smaller target.
 
 ### SEO & Metadata
 

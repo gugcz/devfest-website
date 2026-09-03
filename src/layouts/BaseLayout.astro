@@ -291,6 +291,13 @@ const jsonLd = JSON.stringify(
 	</head>
 	<body class={bodyClass}>
 		<a href="#main-content" class="skip-link">Skip to main content</a>
+		{/*
+			Second in the DOM, not last. The banner is the one consent surface on
+			the site and it used to sit after the footer, so reaching either
+			choice from the skip link took ~40 tab stops — long enough that the
+			only realistic way to dismiss it was the mouse.
+		*/}
+		<CookieBanner />
 		<!--
 			Status-bar scrim — paints brand-dark behind iOS Safari's
 			translucent status bar / notch zone. Uses the
@@ -302,11 +309,19 @@ const jsonLd = JSON.stringify(
 		-->
 		<div class="status-bar-cover" aria-hidden="true"></div>
 		<Menu />
-		<div id="main-content"><slot /></div>
+		{/*
+			`tabindex="-1"` is what makes the skip link actually skip. Without it
+			the browser moves the document fragment but leaves focus in the
+			header, so the next Tab lands back in the nav — the link changed the
+			URL and nothing else. A non-focusable div cannot receive programmatic
+			focus; -1 makes it a valid target without adding a tab stop.
+		*/}
+		<div id="main-content" tabindex="-1"><slot /></div>
 		{showFooter && <Footer />}
-		<CookieBanner />
 
 		<script>
+			import { keepAnchorLanded } from '../lib/anchor';
+
 			// Cinematic atmosphere behaviours — all degrade gracefully and respect
 			// reduced-motion (CSS already neutralises the visual side).
 			//
@@ -315,6 +330,10 @@ const jsonLd = JSON.stringify(
 			// initial load AND after every soft navigation, so it replaces (never
 			// supplements) a DOMContentLoaded listener.
 			document.addEventListener('astro:page-load', () => {
+				// An anchor jump is resolved against a page that hasn't finished
+				// loading its islands; hold the landing while it settles.
+				keepAnchorLanded();
+
 				const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 				// 1) Scroll reveal — fade/rise sections as they enter the frame.
