@@ -109,7 +109,12 @@ export default defineConfig({
         sitemap({
             filter: (page) =>
                 !page.includes('/newsletter-subscription-thank-you') &&
-                !page.includes('/thank-you'),
+                !page.includes('/thank-you') &&
+                // The team's personal invitation pages are unlisted: `noindex`,
+                // out of the sitemap, and linked from nowhere on the site. All
+                // three together are what "secret" means here — see
+                // src/pages/invite/[member].astro.
+                !page.includes('/invite/'),
             serialize(item) {
                 item.lastmod = BUILD_DATE;
                 item.changefreq = 'weekly';
