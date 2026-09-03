@@ -117,5 +117,14 @@
 		"role": "Festival Sidekick",
 		"photo": "/team/rosta-navratil-bw.webp",
 		"photoColor": "/team/rosta-navratil.webp"
+	},
+	{
+		"id": "katy-sramkova",
+		"order": 12,
+		"name": "Katy Šrámková",
+		"alias": "Logistics Girl Friday",
+		"role": "Production Assistant",
+		"photo": "/team/katy-sramkova-bw.webp",
+		"photoColor": "/team/katy-sramkova.webp"
 	}
 ]
