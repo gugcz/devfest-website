@@ -76,9 +76,23 @@ function targetOf(hash: string): HTMLElement | null {
  * `scroll-margin-top`. Memoised per element — `drift` runs every frame for the
  * length of the hold, precisely while the islands hydrate, and two
  * `getComputedStyle` reads a frame force layout for no new information. Both
- * values are viewport-dependent, so the memo is dropped on `resize`.
+ * values are viewport-dependent, so the memo is dropped on `resize` — and by
+ * `invalidateAnchorOffsets` for the changes a `resize` never announces.
  */
 let landingOffset: { el: HTMLElement; px: number } | null = null;
+
+/**
+ * Drop the memoised landing offset.
+ *
+ * `scroll-padding-top` is derived from `--header-h`, and `Menu.astro` writes
+ * that property from a `ResizeObserver` measurement of the real bar. That write
+ * fires no `resize` event, so without this the hold would spend the rest of its
+ * four seconds correcting the landing to the offset that was true BEFORE the
+ * bar was measured — actively pulling the target back off the corrected one.
+ */
+export function invalidateAnchorOffsets(): void {
+	landingOffset = null;
+}
 
 function offsetOf(el: HTMLElement): number {
 	if (landingOffset?.el === el) return landingOffset.px;
@@ -190,9 +204,7 @@ export function keepAnchorLanded(): void {
 
 	// Both halves of the landing offset are viewport-dependent, so a resize
 	// invalidates the memo `drift` reads every frame.
-	window.addEventListener('resize', () => {
-		landingOffset = null;
-	});
+	window.addEventListener('resize', invalidateAnchorOffsets);
 
 	// An in-page jump. `hashchange` covers the first click and back/forward
 	// between anchors; the click handler covers re-clicking the hash the page is

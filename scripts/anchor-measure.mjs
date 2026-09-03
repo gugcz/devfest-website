@@ -101,6 +101,99 @@ async function measure(page, heading) {
 	}, heading);
 }
 
+/**
+ * THE BAR'S OWN HEIGHT IS AN INVARIANT, SO IT IS A CHECK.
+ *
+ * `--header-h` is what every anchor offset is measured against, and the CSS
+ * formula behind it stopped describing the bar once `.header-actions` was
+ * allowed to wrap (DEVF-31 / #311): at a 32px root the property was out by 39px
+ * at 320px and 141px at 1024px. `Menu.astro` now measures the bar and writes
+ * the real height over it — this sweep is what keeps that true rather than
+ * true-on-the-day-it-was-measured.
+ *
+ * Chromium only, and no anchor jumps: this measures layout, not scrolling, and
+ * the widths x roots x routes matrix is already 168 page loads.
+ */
+const HEADER_WIDTHS = [320, 360, 375, 768, 1024, 1440];
+const HEADER_ROOTS = [16, 32];
+const HEADER_ROUTES = [
+	'/',
+	'/speakers/',
+	'/sessions/',
+	'/agenda/',
+	'/team/',
+	'/partners/',
+	'/contact/',
+	'/faq/',
+	'/press/',
+	'/press/downloads/',
+	'/invoice/',
+	'/privacy-policy/',
+	'/thank-you/',
+	'/404.html',
+];
+
+async function headerSweep(port) {
+	const browser = await chromium.launch();
+	const bad = [];
+	const warn = [];
+	let checks = 0;
+	for (const width of HEADER_WIDTHS) {
+		const ctx = await browser.newContext({ viewport: { width, height: 800 } });
+		const page = await ctx.newPage();
+		for (const route of HEADER_ROUTES) {
+			await page.goto(`http://localhost:${port}${route}`);
+			await page.waitForLoadState('networkidle');
+			for (const root of HEADER_ROOTS) {
+				const result = await page.evaluate(
+					async (rootPx) => {
+						// A text-only zoom, which is what wraps the actions.
+						document.documentElement.style.fontSize = `${rootPx}px`;
+						// Two frames: one for the layout the root change causes, one for
+						// the `requestAnimationFrame` the observer writes its value in.
+						await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+						await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+						const header = document.querySelector('.site-header');
+						// `--header-h` is unregistered, so its computed value is a token
+						// stream — lay an element out against it to read it as pixels.
+						const probe = document.createElement('div');
+						probe.style.cssText =
+							'position:absolute;top:0;left:0;width:0;height:var(--header-h);visibility:hidden;pointer-events:none';
+						document.body.appendChild(probe);
+						const declared = probe.getBoundingClientRect().height;
+						probe.remove();
+						const out = {
+							declared,
+							actual: header ? header.getBoundingClientRect().height : 0,
+							// DEVF-31: the wrap exists to keep the bar inside 320px at a
+							// 32px root. Guard it here rather than trusting it stayed fixed.
+							scrollWidth: document.documentElement.scrollWidth,
+							innerWidth: window.innerWidth,
+						};
+						document.documentElement.style.fontSize = '';
+						return out;
+					},
+					root
+				);
+				checks++;
+				const drift = Math.abs(result.declared - result.actual);
+				if (drift > 1) bad.push({ route, width, root, ...result, kind: `--header-h off by ${drift.toFixed(1)}px` });
+				// Reported, not asserted. At a 32px root the running band's strip
+				// (`.ticker-item`, `Ticker.astro`) measures past the viewport on every
+				// page that carries it — 1069px inside 1024px — and it did so before
+				// this measurement existed. `html { overflow-x: clip }` means nothing
+				// actually scrolls, so it is a standing overflow, not a live bug; it is
+				// printed so it can't be discovered twice.
+				if (result.scrollWidth > result.innerWidth)
+					warn.push({ route, width, root, ...result, kind: `overflow ${result.scrollWidth} > ${result.innerWidth}` });
+			}
+		}
+		await ctx.close();
+	}
+	await browser.close();
+	return { bad, warn, checks };
+}
+
 const server = await startServer();
 const rows = [];
 for (const [engineName, engine] of Object.entries(ENGINES)) {
@@ -153,6 +246,7 @@ for (const [engineName, engine] of Object.entries(ENGINES)) {
 		await browser.close();
 	}
 }
+const header = await headerSweep(PORT);
 await new Promise((r) => server.close(r));
 
 // An anchor jump should land the heading just clear of the bar. The in-page
@@ -168,4 +262,19 @@ for (const r of rows) {
 	);
 }
 console.log(bad === 0 ? '\nAll anchor landings within 0-60px of the bar.' : `\n${bad} landing(s) out of range.`);
-process.exit(bad === 0 ? 0 : 1);
+
+console.log(
+	`\nheader: ${header.checks} checks (${HEADER_ROUTES.length} routes x ${HEADER_WIDTHS.length} widths x roots ${HEADER_ROOTS.join('/')}px)`
+);
+for (const b of [...header.bad, ...header.warn]) {
+	console.log(
+		`  ${b.route.padEnd(28)} ${String(b.width).padStart(4)}px  root ${String(b.root).padStart(2)}  declared ${b.declared.toFixed(1)}  actual ${b.actual.toFixed(1)}  <-- ${b.kind}`
+	);
+}
+console.log(
+	header.bad.length === 0
+		? `--header-h within 1px of the real bar everywhere${header.warn.length ? ` (${header.warn.length} standing overflow(s) above, not asserted)` : ''}.`
+		: `${header.bad.length} header check(s) failed.`
+);
+
+process.exit(bad === 0 && header.bad.length === 0 ? 0 : 1);
