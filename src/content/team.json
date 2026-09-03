@@ -41,7 +41,8 @@
 		"alias": "Logistics Girl Friday",
 		"role": "Production Assistant",
 		"photo": "/team/katy-sramkova-bw.webp",
-		"photoColor": "/team/katy-sramkova.webp"
+		"photoColor": "/team/katy-sramkova.webp",
+		"links": [{ "kind": "linkedin", "url": "https://www.linkedin.com/in/katysramkova/" }]
 	},
 	{
 		"id": "filip-goszler",
