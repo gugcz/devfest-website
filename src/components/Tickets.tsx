@@ -7,6 +7,7 @@ import {
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
+	waveDeadline,
 	type ReleaseStatus,
 	type TitoRelease,
 } from '../lib/tito';
@@ -253,6 +254,18 @@ export default function Tickets() {
 					const lead = prices[0];
 					const manyPrices = new Set(prices.map((p) => p.primary)).size > 1;
 					const description = groupDescription(group.name, group.description);
+					// ti.to's sale window, and ONLY for a wave a visitor can still buy
+					// into: the deadline is fed the purchasable variants, judged by the
+					// same `releaseStatus()` that prints the badge, never by `end_at`
+					// itself. Otherwise the two disagree — production has an Early bird
+					// closed by hand ahead of its window, so the row read "Ended" beside
+					// "Ends Oct 15". A closed, sold-out or upcoming wave shows no date.
+					// Most releases still carry no `end_at` either, so this is null far
+					// more often than not — the line is simply absent then, never an
+					// empty slot or an "Invalid Date".
+					const deadline = waveDeadline(
+						group.variants.filter((_, vi) => statuses[vi].purchasable).map((v) => v.release),
+					);
 					const serial = String(i + 1).padStart(2, '0');
 					return (
 						<li
@@ -272,6 +285,11 @@ export default function Tickets() {
 							<div className={s.stubBody}>
 								<h3 className={s.stubTitle}>{group.name}</h3>
 								{anyPurchasable && description && <p className={s.stubNote}>{description}</p>}
+								{deadline && (
+									<p className={s.stubDeadline}>
+										<time dateTime={deadline.iso}>{deadline.label}</time>
+									</p>
+								)}
 								<ul className={s.stubGrants}>
 									{group.variants.map(({ release, variantLabel }, vi) => (
 										<li key={release.id}>
