@@ -78,9 +78,15 @@ const faqJsonLd = JSON.stringify(faqSchema);
 
 
 		<!-- FILES -->
-		<section class="band band--lit" aria-labelledby="faq-title">
+		{/* Its own heading, not the hero's `faq-title`: two <section>s carrying
+		    the same accessible name are two regions with one name, which is the
+		    `landmark-unique` axe violation this page used to be the only holder
+		    of. The heading is visually hidden — the category heads inside the
+		    list are what a sighted visitor reads as structure. */}
+		<section class="band band--lit" aria-labelledby="faq-list-heading">
 			<div class="band-inner">
-				{groupsForDisplay.map((group) => (
+				<h2 id="faq-list-heading" class="sr-only">All questions</h2>
+				{groupsForDisplay.map((group, groupIndex) => (
 					<div class="faq-group reveal">
 						{/* Category pinned in its own column beside the questions —
 						    an editorial two-column split rather than a caption stacked
@@ -90,8 +96,14 @@ const faqJsonLd = JSON.stringify(faqSchema);
 						</div>
 
 						<div class="field faq-list">
-							{group.items.map((item) => (
-								<details class="faq-item">
+							{group.items.map((item, itemIndex) => (
+								/* The first question opens on arrival. Every <details>
+								   collapsed meant the page a speaker and a journalist
+								   both land on showed no answer at all — a list of
+								   questions and nothing else. One open item is enough
+								   to show what an answer looks like; opening more would
+								   bury the rest of the list. */
+								<details class="faq-item" open={groupIndex === 0 && itemIndex === 0}>
 									<summary class="field-row field-row--link faq-q">
 										<span class="faq-q-text">{item.q}</span>
 										<span class="faq-marker" aria-hidden="true">+</span>

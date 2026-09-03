@@ -78,6 +78,34 @@
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap-tight);
 	}
+
+	// An invalid field used to be pixel-identical to a valid one — nine
+	// required fields and nothing on the page said which of them was wrong.
+	// accent-hot (4.96:1 on the page ground) carries the boundary at 1.4.11,
+	// and the message under the field carries the reason: colour is never the
+	// only channel.
+	&[aria-invalid='true'] {
+		border-color: var(--color-accent-hot);
+		background: var(--panel-lit-2);
+	}
+}
+
+// The per-field message. Mono, like every other label on the site — the error
+// is a label, not prose, and it sits in the same column as the field's own.
+.error {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label);
+	line-height: 1.5;
+	letter-spacing: 0.06em;
+	color: var(--color-accent-hot);
+}
+
+// The consent row plus its own message, which cannot live inside the <label>
+// (it would be read as part of the checkbox's name).
+.consentBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
 }
 
 .honeypot {
@@ -202,7 +230,7 @@
 	cursor: pointer;
 	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
-	&:hover:not(:disabled) {
+	&:hover:not([aria-disabled='true']) {
 		background: var(--color-accent-hot);
 		border-color: var(--color-accent-hot);
 		transform: translateY(-2px);
@@ -210,7 +238,7 @@
 		box-shadow: var(--glow-red), 0 8px 22px rgba(204, 0, 0, 0.28);
 	}
 
-	&:active:not(:disabled) {
+	&:active:not([aria-disabled='true']) {
 		transform: translateY(0);
 	}
 
@@ -219,9 +247,12 @@
 		outline-offset: var(--focus-gap);
 	}
 
-	&:disabled {
+	// Only the in-flight state dims. The button is never `disabled`: that
+	// takes it out of the tab order, and a keyboard visitor who had missed the
+	// consent box got a control that could not be reached and did not say why.
+	&[aria-disabled='true'] {
 		opacity: 0.55;
-		cursor: not-allowed;
+		cursor: progress;
 	}
 }
 
@@ -295,7 +326,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.button:hover:not(:disabled) {
+	.button:hover:not([aria-disabled='true']) {
 		transform: none;
 	}
 

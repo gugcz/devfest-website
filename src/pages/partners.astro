@@ -31,22 +31,61 @@ const logoFor = (logo: string): ImageMetadata =>
 
 // SVG wordmarks stay vector — `format="svg"` makes astro:assets copy them
 // through unchanged (rasterising a logo would be a downgrade); rasters get a
-// real srcset. Widths cover the tile caps in partners.scss up to ~2× DPR.
-const TIER_WIDTHS = [200, 300, 400, 600, 800];
-const TIER_SIZES = '(max-width: 900px) 200px, 400px';
-// A plated logo is laid out at the cell's full content width (see
-// `.tier-logo.is-plated`), which is wider than a cut-out wordmark renders — and
-// `sizes` is what fixes an `w`-descriptor image's layout width, so it has to
-// describe the plate, not the wordmark, or the plate renders at the wordmark's
-// width no matter what the CSS says.
-const TIER_SIZES_PLATED = '(max-width: 900px) 78vw, 260px';
-const PLATE_WIDTHS = [160, 260, 320, 520];
-const PLATE_SIZES = '(max-width: 900px) 160px, 260px';
+// real srcset sized to the box the mark actually renders in.
+//
+// ─── OPTICAL NORMALISATION ────────────────────────────────────────────────
+// Every cell is the same size now (see `.logo-grid` in partners.scss), but
+// equal cells do not make equal-looking logos: a cap on WIDTH renders a square
+// glyph as a huge block beside a wordmark, and a cap on HEIGHT renders that
+// same wordmark as a hairline of type. What reads as "the same weight" is
+// roughly equal ink AREA, so each mark is given a box of the same area, shaped
+// to its own aspect ratio, and only then clamped so nothing touches the cell's
+// edges. A 5:1 wordmark lands at ~190×38, a square glyph at ~76×76.
+const LOGO_AREA = 7200;
+const LOGO_MAX_W = 230;
+const LOGO_MAX_H = 76;
+// A plated mark (the `plated` flag in the partners collection) ships with its
+// own padding and background baked into the file, so the same area cap would
+// render the ink inside it far too small. It gets a larger box and fills the
+// cell's width.
+const PLATE_SCALE = 2.1;
 
-const sizing = (img: ImageMetadata, widths: number[], sizes: string) =>
-	img.format === 'svg'
-		? ({ format: 'svg', layout: 'none' } as const)
-		: ({ widths, sizes } as const);
+const opticalBox = (img: ImageMetadata, plated = false) => {
+	const ratio = img.width && img.height ? img.width / img.height : 3;
+	const area = LOGO_AREA * (plated ? PLATE_SCALE : 1);
+	const maxW = plated ? 240 : LOGO_MAX_W;
+	const maxH = plated ? 120 : LOGO_MAX_H;
+	let height = Math.sqrt(area / ratio);
+	let width = height * ratio;
+	if (width > maxW) {
+		width = maxW;
+		height = width / ratio;
+	}
+	if (height > maxH) {
+		height = maxH;
+		width = height * ratio;
+	}
+	return { width: Math.round(width), height: Math.round(height) };
+};
+
+// One call site's worth of per-logo props: the optical box as custom
+// properties, plus a srcset that matches it (an `w`-descriptor image needs
+// `sizes` to state its real layout width, or the browser picks the wrong file).
+const logoProps = (logo: string, plated = false) => {
+	const img = logoFor(logo);
+	const box = opticalBox(img, plated);
+	const shared = {
+		src: img,
+		style: `--logo-w:${box.width}px;--logo-h:${box.height}px`,
+	};
+	return img.format === 'svg'
+		? { ...shared, format: 'svg' as const, layout: 'none' as const }
+		: {
+				...shared,
+				widths: [box.width, box.width * 2, box.width * 3],
+				sizes: `${box.width}px`,
+			};
+};
 
 const DECK_READY = true;
 const PRESENTATION_URL = 'https://canva.link/828fiq93km2hwds';
@@ -77,26 +116,26 @@ const tickerTopics = [
 		<Ticker items={tickerTopics} size="sm" />
 
 		{activeTiers.map((tier) => (
-			<section class={`tier-partners tier-${tier.id}`} aria-labelledby={`${tier.id}-partners-title`}>
-				<div class="tier-inner">
+			<section class="logo-wall" aria-labelledby={`${tier.id}-partners-title`}>
+				<div class="wall-inner">
 					{/* Tier name alone at poster scale. Six sections each headed
 					    "<Tier> partners" with the second word in red was the same
 					    lockup six times down one page, so the heading is just the
 					    name — the logos under it are the count. */}
-					<div class="tier-head">
-						<h2 id={`${tier.id}-partners-title`} class="tier-title">
+					<div class="wall-head">
+						<h2 id={`${tier.id}-partners-title`} class="wall-title">
 							{tier.label}<span class="sr-only"> partners</span>
 						</h2>
 					</div>
-					<ul class="tier-grid">
+					<ul class="logo-grid">
 						{tier.partners.map((p) => (
-							<li class="tier-item">
+							<li class="logo-cell">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<Image class={`tier-logo${p.plated ? ' is-plated' : ''}`} src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), TIER_WIDTHS, p.plated ? TIER_SIZES_PLATED : TIER_SIZES)} />
+										<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo, p.plated)} />
 									</a>
 								) : (
-									<Image class={`tier-logo${p.plated ? ' is-plated' : ''}`} src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), TIER_WIDTHS, p.plated ? TIER_SIZES_PLATED : TIER_SIZES)} />
+									<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo, p.plated)} />
 								)}
 							</li>
 						))}
@@ -106,22 +145,26 @@ const tickerTopics = [
 		))}
 
 		{plateRows.map((row) => (
-			<section class="plate-partners" aria-labelledby={`${row.id}-partners-title`}>
-				<div class="plate-inner">
-					<div class="plate-head">
-						<h2 id={`${row.id}-partners-title`} class="plate-title">
+			<section class="logo-wall" aria-labelledby={`${row.id}-partners-title`}>
+				<div class="wall-inner">
+					<div class="wall-head">
+						<h2 id={`${row.id}-partners-title`} class="wall-title">
 							{row.label}<span class="sr-only"> partners</span>
 						</h2>
 					</div>
-					<ul class="plate-grid">
+					{/* The SAME grid module as the tiers — one cell size for every
+					    partner on the page. Only the ground differs: these marks
+					    ship dark (they are made for light backgrounds), so their
+					    cells are cream. */}
+					<ul class="logo-grid logo-grid--plated">
 						{row.partners.map((p) => (
-							<li class="plate-item">
+							<li class="logo-cell">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<Image src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), PLATE_WIDTHS, PLATE_SIZES)} />
+										<Image class="logo" alt={p.name} loading="lazy" {...logoProps(p.logo)} />
 									</a>
 								) : (
-									<Image src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo), PLATE_WIDTHS, PLATE_SIZES)} />
+									<Image class="logo" alt={p.name} loading="lazy" {...logoProps(p.logo)} />
 								)}
 							</li>
 						))}

@@ -423,6 +423,8 @@ other, and the two-column split was 0.95/1.05 against 1.15/0.85.
 | `.band--lit` / `.band--lit-red` | the subpage ground: the spotlight pool over page black, closed by a hairline at the top. `--lit-red` adds the faint red bleed from the top-right and belongs to the pages about PEOPLE and the programme (`/speakers`, `/sessions`, `/agenda`, `/team`); the administrative pages take the plain pool |
 | `.print` | the mounted photograph well at 4:5 — bone keyline, shadow, `--panel-lit` ground. The speaker sheet's plate and the `/team` mugshot were the same eight declarations written twice |
 | `Sheet.module.scss` | the detail-view chrome: ground, entry, sticky bar, close, content measure, kicker, title, block label. `SessionDetail` and `SpeakerDetail` import it alongside their own module and keep only what a session / a speaker actually has |
+| `NextStep.astro` | one thing to do, in an open field of them — title, note, and its controls on the right axis. `/thank-you`, `/newsletter-subscription-thank-you` and `/404` all end on "what now?" and all three used to answer it with one link home. Takes `.field-row--holds` — a step CONTAINS its controls |
+| `.logo-grid` / `.logo-cell` | the partner wall: ONE track size for every partner on the page (`/partners`). See "Partner wall" below |
 | `.fallback-note` | the no-JS / endpoint-down prose on a data-backed page |
 | `DataState.tsx` | the three non-ready states of a data-backed island — `LoadingState` / `ErrorState` / `EmptyState`. `/speakers`, `/sessions`, `/agenda` and the ticket waves each kept a private copy and they had drifted: two centred and two left-set, two with animated trailing dots, one opening on a hairline, and only `/agenda` offering a next action. Left-set (matching `.fallback-note`), `role="status"` on loading and `role="alert"` on failure, and an **empty state always offers somewhere to go** |
 | `SpeakerPhoto.tsx` | a speaker's photograph, or their initials. Owns ONE decision — no URL, or a URL that fails to load, both land on the monogram — while the caller passes its own classes for the shape. `/sessions` and `/agenda` used to `visibility: hidden` the broken `<img>`, so the same speaker with the same dead CDN URL rendered as initials on `/speakers` and as a hole on the other two |
@@ -507,6 +509,61 @@ bar of two right-aligned buttons over an empty half looked like a layout fault
 — but that made the home page's top state differ between a phone and a desktop
 for no reason a visitor could see. Don't re-add the exception. Subpages carry
 `data-home="false"`, so their mark is never hidden.
+
+**The partner wall is one grid module.** `/partners` used to size the cell per
+tier, and `--tier-col` was a FLOOR rather than a width, so cells grew to close
+their row: one page rendered a 611px platinum cell, three full-width diamond
+cells, a 520px silver one and 264px media plates — four cell modules on one
+wall, and a cell's size said more about how many partners share its tier than
+about the tier. `.logo-grid` is `repeat(auto-fill, minmax(min(100%, --cell-min),
+1fr))` at one size for every partner; the tier is carried by its heading and by
+the order of the sections, which is what a ladder is for. A tier that does not
+fill its last row leaves the rest of the row empty — the rules belong to the
+CELLS, so nothing hangs a hairline over dead space.
+
+Equal cells do not make equal-looking logos, so `opticalBox()` in
+`partners.astro` gives each mark a box of equal ink **area** shaped to its own
+aspect ratio (a 5:1 wordmark ≈190×38, a square glyph ≈76×76) and passes it as
+`--logo-w` / `--logo-h`; the raster `sizes` follows that box. Capping width
+renders a glyph as a block beside a wordmark; capping height renders the
+wordmark as a hairline of type. `plated` stays a per-partner flag (the file
+ships with its own background baked in) and gets a larger box — it is **not** a
+tier-level inversion, which would move the legibility risk onto the tier that
+pays. The media/community rows keep the cream ground: those marks ship dark.
+
+**Forms say which field is wrong, in the field.** `InvoiceForm.tsx` is the
+pattern: one `validate()` holding every rule, errors shown on blur or on the
+first submit attempt and cleared as they are fixed, `aria-invalid` on the
+control, `aria-describedby` pointing at a mono `--color-accent-hot` message
+under it (colour is never the only channel), and a failed submit focusing the
+first field that needs fixing. **A submit button is never `disabled` for a
+missing input** — that takes it out of the tab order and explains nothing;
+it stays reachable and answers on activation. `aria-disabled` covers only the
+in-flight state, so the button's states key off `[aria-disabled='true']`, not
+`:disabled`.
+
+**A component declared in a render body remounts its subtree every render.**
+`TextField` lives at module scope in `InvoiceForm.tsx` for that reason — inside
+the component, every keystroke unmounted the input and the caret left the field.
+
+**`/thank-you`, `/newsletter-subscription-thank-you` and `/404` are on the
+system.** They were 73 lines of one centred template with the words swapped,
+and one of them is where someone lands after paying. All three run
+`SubpageHero photo={false}` → `Ticker` → a `.band--lit` field of `NextStep`
+rows → `Closer`, and their titles take the site's em-dash separator like every
+other page. `/thank-you` carries the four things that belong on it and nowhere
+else (calendar, venue, what happens next, share) and ships an `@media print`
+block: it is the page someone prints as proof of purchase, and the site's cream
+ink on `#050505` prints as invisible text. Event facts for the calendar links
+live in `src/lib/event.ts`, alongside the `.ics` in `public/` — keep them in
+step with the Event JSON-LD in `BaseLayout.astro`.
+
+**A `<details>` list opens with its first item open.** `/faq` had every question
+collapsed on arrival, so the page a speaker and a journalist both land on showed
+no answer at all. One open item, not more — four open answers is the page's
+whole content unfolded. A section must also not reuse the hero's
+`aria-labelledby`: two regions with one accessible name is `landmark-unique`,
+which was the site's only axe violation.
 
 **The skip link's target carries `tabindex="-1"`.** `#main-content` is a `div`,
 and without it `Enter` on the skip link moves the document fragment but leaves

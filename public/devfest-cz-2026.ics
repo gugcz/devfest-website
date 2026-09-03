@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//GUG.cz//DevFest.cz 2026//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:devfest-cz-2026@devfest.cz
+DTSTAMP:20260101T000000Z
+DTSTART:20261030T080000Z
+DTEND:20261030T190000Z
+SUMMARY:DevFest.cz 2026
+DESCRIPTION:Prague's developer conference & festival — Web\, Mobile\, Cybersecurity\, AI/ML. https://devfest.cz
+LOCATION:Uhelný Mlýn\, Libčice nad Vltavou\, Czech Republic
+URL:https://devfest.cz
+END:VEVENT
+END:VCALENDAR
