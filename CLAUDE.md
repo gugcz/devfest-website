@@ -6,6 +6,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Do not add a `## Test plan` section to PR descriptions.** The maintainer verifies changes manually and the checklist adds noise. Keep PR bodies to Summary / Why / Follow-up only.
 
+## Real customer data never enters this repository
+
+**This repository is public.** Anything committed here is world-readable the
+moment it is pushed, and a rewritten branch does not take it back: an orphaned
+commit stays reachable by SHA until GitHub garbage-collects it, so the only
+reliable control is not writing the data in the first place.
+
+Never put real customer, partner or attendee data anywhere in this repo — that
+includes places that are easy to forget because they are not application code:
+
+| surface | rule |
+| --- | --- |
+| test fixtures and mocks | invented data only, never a payload copied from a real request, log line or support ticket |
+| doc comments and examples (`CLAUDE.md`, `README.md`, code comments) | never illustrate a format with a real value — not even a masked or partially redacted one |
+| commit messages and branch names | describe the behaviour, never the customer who hit it |
+| PR titles and bodies | same — "a company", not the company |
+| internal identifiers | issue trackers, ticket ids, invoice numbers, Firestore/RTDB document ids, iDoklad contact ids and external order ids all stay out of the code and its history |
+
+Data covered: company and person names, email addresses, phone numbers, postal
+addresses, VAT / IČO / DIČ numbers, invoice and order numbers, discount codes,
+and any id that maps back to one of those in a system we or the customer runs.
+Masking is not an exemption: a masked address still carries its domain, and a
+redacted string sitting next to a bug description still tells a reader which
+customer the bug happened to.
+
+Use invented stand-ins instead, and keep them obviously fake so nobody has to
+guess later: `Acme Example s.r.o.`, IČO `12345678`, `billing@example.com`,
+`ops@example.com`, ids like `4242` / `1001`. Prefer the reserved
+`example.com` / `example.org` domains over a real one you made up.
+
+When a real value is genuinely needed to reproduce something, keep it in the
+issue tracker or the incident thread — not in the repository — and write the
+code and its history so they read correctly without it.
+
 # DevFest Website
 
 Conference landing page for DevFest.cz 2026, built with Astro 7 and deployed to Firebase Hosting.
