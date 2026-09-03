@@ -258,10 +258,18 @@ export default function Tickets() {
 					const lead = prices[0];
 					const manyPrices = new Set(prices.map((p) => p.primary)).size > 1;
 					const description = groupDescription(group.name, group.description);
-					// ti.to's sale window. Most releases still carry no `end_at`, so
-					// this is null far more often than not — the line is simply absent
-					// then, never an empty slot or an "Invalid Date".
-					const deadline = waveDeadline(group.variants.map((v) => v.release));
+					// ti.to's sale window, and ONLY for a wave a visitor can still buy
+					// into: the deadline is fed the purchasable variants, judged by the
+					// same `releaseStatus()` that prints the badge, never by `end_at`
+					// itself. Otherwise the two disagree — production has an Early bird
+					// closed by hand ahead of its window, so the row read "Ended" beside
+					// "Ends Oct 15". A closed, sold-out or upcoming wave shows no date.
+					// Most releases still carry no `end_at` either, so this is null far
+					// more often than not — the line is simply absent then, never an
+					// empty slot or an "Invalid Date".
+					const deadline = waveDeadline(
+						group.variants.filter((_, vi) => statuses[vi].purchasable).map((v) => v.release),
+					);
 					const serial = String(i + 1).padStart(2, '0');
 					return (
 						<li
