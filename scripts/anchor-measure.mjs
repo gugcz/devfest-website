@@ -112,11 +112,20 @@ async function measure(page, heading) {
  * true-on-the-day-it-was-measured.
  *
  * Chromium only, and no anchor jumps: this measures layout, not scrolling. The
- * routes x widths x roots matrix is 168 checks, but only 14 page loads — the
+ * routes x widths x roots matrix is 660 checks, but only 15 page loads — the
  * widths are a viewport resize inside one document, not a reload.
+ *
+ * THE RASTER IS DENSE ON PURPOSE. It ran 320/360/375/768/1024/1440 x 16/32 and
+ * that sample missed a real fault by landing either side of it: the first fix
+ * for DEVF-49 let the organizer link wrap, which severed the legal name
+ * mid-word ("GUG.cz, z" / ".s.") — but only between 1060px and 1260px, and only
+ * at a 32px root. Six widths straddled the band and reported green. The
+ * intermediate roots earn their place the same way: 20 and 24 are the common
+ * browser settings, and a threshold expressed in `em` (see `Footer.scss`)
+ * crosses somewhere between 16 and 32, not at either end.
  */
-const HEADER_WIDTHS = [320, 360, 375, 768, 1024, 1440];
-const HEADER_ROOTS = [16, 32];
+const HEADER_WIDTHS = [320, 360, 375, 500, 768, 960, 1024, 1100, 1200, 1280, 1440];
+const HEADER_ROOTS = [16, 20, 24, 32];
 const HEADER_ROUTES = [
 	'/',
 	'/speakers/',
@@ -131,6 +140,7 @@ const HEADER_ROUTES = [
 	'/invoice/',
 	'/privacy-policy/',
 	'/thank-you/',
+	'/newsletter-subscription-thank-you/',
 	'/404.html',
 ];
 
@@ -187,15 +197,36 @@ async function headerSweep(port) {
 		if (body === undefined) return route.continue();
 		return route.fulfill({ status: 200, contentType: 'application/json; charset=utf-8', body });
 	});
+	// THE ROOT IS ENLARGED THE WAY A READER ENLARGES IT — the browser's own
+	// default font size, over CDP, not `html { font-size: 32px }` from script.
+	//
+	// The two are not the same simulation, and the difference decides a check
+	// rather than merely being tidy: a media query's `em` resolves against the
+	// INITIAL value of font-size, i.e. this browser setting. An inline style on
+	// `<html>` moves `rem` and leaves every `em` query where it was, so the
+	// footer's `60em` collapse (`Footer.scss`) would never fire here and this
+	// sweep would report an overflow the real zoomed reader does not have.
+	// Measured both ways on the same page: `matchMedia('(max-width: 60em)')` at
+	// 1024px is false under the inline style and true under this.
+	//
+	// `standard` only. `fixed` is the monospace default, which nothing on this
+	// site reads (every element inherits a font-size), and moving it would
+	// simulate a setting the reader did not change.
+	const cdp = await ctx.newCDPSession(page);
+	await cdp.send('Page.enable');
+	const setRootFontSize = (px) => cdp.send('Page.setFontSizes', { fontSizes: { standard: px } });
 	const bad = [];
 	let checks = 0;
 	// Route outside, width inside: the widths are a viewport resize, not a new
-	// document, so one `page.goto` per route covers all six (84 -> 14 loads).
+	// document, so one `page.goto` per route covers all eleven (165 -> 15 loads).
 	for (const route of HEADER_ROUTES) {
 		// The first width has to be in place BEFORE the load, so that the
 		// document the root-16 assertion below sees is one the observer has only
 		// ever seen at that width.
 		await page.setViewportSize({ width: HEADER_WIDTHS[0], height: 800 });
+		// …and so does the root, for the same reason: the document must load at
+		// the size the virgin assertion below is about.
+		await setRootFontSize(16);
 		await page.goto(`http://localhost:${port}${route}`, { waitUntil: 'load' });
 		for (const [index, width] of HEADER_WIDTHS.entries()) {
 			if (index > 0) await page.setViewportSize({ width, height: 800 });
@@ -215,10 +246,11 @@ async function headerSweep(port) {
 				// it to [32, 16] and the indexed form would assert emptiness at a
 				// 32px root and fail for a reason that isn't a regression.
 				const virgin = index === 0 && root === 16;
+				// A text-only zoom, which is what wraps the actions — set as the
+				// browser's own default size, not from script. See `setRootFontSize`.
+				await setRootFontSize(root);
 				const result = await page.evaluate(
 					async ({ rootPx, virgin }) => {
-						// A text-only zoom, which is what wraps the actions.
-						document.documentElement.style.fontSize = `${rootPx}px`;
 						// Two frames: one for the layout the root change causes, one for
 						// the `requestAnimationFrame` the observer writes its value in.
 						await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -242,13 +274,19 @@ async function headerSweep(port) {
 							// 32px root. Guard it here rather than trusting it stayed fixed.
 							scrollWidth: document.documentElement.scrollWidth,
 							innerWidth: window.innerWidth,
+							// The simulation asserts itself: a CDP setting that silently
+							// stopped applying would turn every root but 16 into a rerun of
+							// the 16px pass, and 495 of these checks would go green for the
+							// wrong reason.
+							rootPx: parseFloat(getComputedStyle(document.documentElement).fontSize),
 						};
-						document.documentElement.style.fontSize = '';
 						return out;
 					},
 					{ rootPx: root, virgin }
 				);
 				checks++;
+				if (Math.abs(result.rootPx - root) > 0.5)
+					bad.push({ route, width, root, ...result, kind: `root is ${result.rootPx}px, asked for ${root}px` });
 				const drift = Math.abs(result.declared - result.actual);
 				if (drift > 1) bad.push({ route, width, root, ...result, kind: `--header-h off by ${drift.toFixed(1)}px` });
 				if (virgin && result.written !== '')
@@ -256,15 +294,29 @@ async function headerSweep(port) {
 				// ASSERTED, not merely reported (DEVF-49). This started as a printed
 				// warning because it was red on arrival: at a 32px root every route
 				// carrying a footer measured 1069px inside 1024px. The cause was the
-				// footer's `white-space: nowrap` organizer link, not — as the first
-				// reading had it — the running band, whose strip is inside
-				// `overflow: hidden` and never reaches the document at all.
+				// footer's organizer link, one `white-space: nowrap` token too wide
+				// for its column — not, as the first reading had it, the running
+				// band, whose strip is inside `overflow: hidden` and never reaches
+				// the document at all. The fix is the footer's `em` breakpoints:
+				// the column gets wider instead of the name getting broken.
 				//
 				// It is an assert because `html { overflow-x: clip }` means a
 				// regression here is INVISIBLE: nothing scrolls, so the only symptom
 				// is this number. Note that `clip` is also why the number survives to
 				// be read — `overflow-x: hidden` would make html a scroll container
 				// and report `scrollWidth === innerWidth` however far the content ran.
+				//
+				// WHICH IS ALSO HOW TO FAKE A PASS, so read a green run with that in
+				// mind. Any ancestor between the offending box and `<html>` that
+				// carries `overflow: hidden` or `clip` becomes the scroll container
+				// for everything under it, and its overflow stops propagating to the
+				// document — this number goes quiet while the content still runs off
+				// the side of it. That is exactly the "wrap another clip around it"
+				// non-fix DEVF-49 was told not to accept, and this check cannot tell
+				// it apart from a real repair. If a row goes green after a change
+				// that only added an `overflow` somewhere, it did not get fixed. The
+				// same blindness is why the metric is `documentElement.scrollWidth`
+				// and not some element's: only the document's is clip-free today.
 				if (result.scrollWidth > result.innerWidth)
 					bad.push({ route, width, root, ...result, kind: `overflow ${result.scrollWidth} > ${result.innerWidth}` });
 			}
