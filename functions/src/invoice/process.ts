@@ -83,7 +83,7 @@ export const processInvoiceTrigger = onDocumentCreated(
 				clientId: IDOKLAD_CLIENT_ID.value(),
 				clientSecret: IDOKLAD_CLIENT_SECRET.value(),
 			};
-			const contactId = await findOrCreateContact(idokladCfg, {
+			const contact = await findOrCreateContact(idokladCfg, {
 				companyName: doc.companyName,
 				identificationNumber: doc.registrationNumberIC,
 				vatIdentificationNumber: doc.registrationNumberDIC,
@@ -92,6 +92,7 @@ export const processInvoiceTrigger = onDocumentCreated(
 				postalCode: doc.zip,
 				email: doc.email,
 			});
+			const contactId = contact.id;
 
 			// 3. Invoice.
 			const invoice = await createInvoice(idokladCfg, {
@@ -118,11 +119,20 @@ export const processInvoiceTrigger = onDocumentCreated(
 					variableSymbol: invoice.variableSymbol,
 					dueDate: formatDueDate(invoice.dueDate),
 				});
-				await sendInvoiceByEmail(idokladCfg, invoice.id, {
+				// Belt for the DEVF-43 failure mode: when we could NOT prove the
+				// contact carries the submitted address, name it explicitly so the
+				// person who filled the form gets the invoice regardless. When the
+				// contact IS in sync, `SendToPartner` already goes there — adding it
+				// again would only mail the same customer twice.
+				const result = await sendInvoiceByEmail(idokladCfg, invoice.id, {
 					subject: mail.subject,
 					body: mail.body,
+					otherRecipients: contact.emailSynced ? [] : [doc.email],
 				});
-				invoiceEmailSent = true;
+				// Only iDoklad's own `IsSuccess: true` counts as sent. An
+				// unconfirmed send is reported as unsent, so Slack asks for a manual
+				// send instead of quietly claiming delivery.
+				invoiceEmailSent = result.confirmed;
 			} catch (mailErr) {
 				// Non-fatal: the invoice exists, it just wasn't mailed. The Slack line
 				// below tells the organizer to send it manually — this names why.

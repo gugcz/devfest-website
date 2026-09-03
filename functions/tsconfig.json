@@ -13,5 +13,7 @@
     "declaration": false,
     "sourceMap": true
   },
-  "include": ["src/**/*"]
+  // Tests are compiled separately (tsconfig.test.json) so they are never deployed.
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.ts"]
 }
