@@ -140,7 +140,7 @@ function TalkAvatars({ session }: { session: Session }) {
 					/>
 				) : (
 					<span key={sp.id} className={`${s.avatar} ${s.avatarMono}`}>
-						{initials(sp.fullName) || '?'}
+						{initials(sp.fullName)}
 					</span>
 				),
 			)}

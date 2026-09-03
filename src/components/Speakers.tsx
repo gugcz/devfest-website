@@ -151,7 +151,7 @@ function SpeakerCard({
 						/>
 					) : (
 						<span className={s.monogram} aria-hidden="true">
-							{initials(speaker.fullName) || '?'}
+							{initials(speaker.fullName)}
 						</span>
 					)}
 					<span className={s.scrim} aria-hidden="true" />

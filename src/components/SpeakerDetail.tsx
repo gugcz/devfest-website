@@ -113,7 +113,7 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 						/>
 					) : (
 						<span className={s.monogram} aria-hidden="true">
-							{initials(speaker.fullName) || '?'}
+							{initials(speaker.fullName)}
 						</span>
 					)}
 				</div>

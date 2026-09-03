@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { initials, type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
+import { shuffle } from '../lib/shuffle';
 import s from './SpeakersTeaser.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
@@ -9,17 +10,6 @@ type Status = 'loading' | 'ready' | 'empty' | 'error';
 // full roster over time (rotation kicks in once there are more than this).
 const WALL_SIZE = 4;
 const ROTATE_MS = 5000;
-
-// Fisher-Yates: fresh shuffled copy so the wall starts on a random set each load
-// (rather than always the first four by `order`) and rotates in a random sequence.
-function shuffle<T>(items: readonly T[]): T[] {
-	const out = items.slice();
-	for (let i = out.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[out[i], out[j]] = [out[j], out[i]];
-	}
-	return out;
-}
 
 function usePrefersReducedMotion(): boolean {
 	const [reduce, setReduce] = useState(false);
@@ -57,7 +47,7 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 					/>
 				) : (
 					<span className={s.monogram} aria-hidden="true">
-						{initials(speaker.fullName) || '?'}
+						{initials(speaker.fullName)}
 					</span>
 				)}
 				<span className={s.scrim} aria-hidden="true" />

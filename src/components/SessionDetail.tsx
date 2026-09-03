@@ -42,7 +42,7 @@ function SpeakerAvatar({ speaker }: { speaker: SessionSpeakerRef }) {
 		/>
 	) : (
 		<span className={s.avatarMono} aria-hidden="true">
-			{initials(speaker.fullName) || '?'}
+			{initials(speaker.fullName)}
 		</span>
 	);
 }
