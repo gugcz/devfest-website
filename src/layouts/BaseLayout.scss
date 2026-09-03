@@ -1247,3 +1247,108 @@
 		z-index: 10000;
 		pointer-events: none;
 	}
+
+	/* ===================== PRINT ===================== */
+	// The site ships cream ink on #050505. Printed, that is invisible text on
+	// white — or, if the browser honours the backgrounds, page after page of
+	// black toner. Every route can be printed or saved to PDF (a company files
+	// its /invoice request, a DPO keeps /privacy-policy, a visitor keeps their
+	// /thank-you as proof of purchase), so this is ONE sitewide sheet rather
+	// than a per-page block: the ground goes white, the ink goes black, the
+	// atmosphere drops out, and outbound links print their address so a paper
+	// copy still carries them.
+	//
+	// It started life inside thank-you.astro as an `is:global` block restyling
+	// the LAYOUT from a page — the copies-drift problem the styling conventions
+	// exist to stop. It belongs here.
+	//
+	// The grounds are cleared by a blanket rule, not by listing the classes
+	// that carry one: a page's own section backgrounds live in ten page and
+	// module stylesheets, and a list of them silently goes stale the next time
+	// a section is added (which is exactly how /invoice printed its form on
+	// black while /thank-you printed clean).
+	@media print {
+		html,
+		body {
+			background: #FFFFFF !important;
+			color: #050505 !important;
+		}
+
+		// Ink as well as ground: the muted alphas this site is built on (a form
+		// label at 0.55, a meta line at 0.62) print as pale grey on white and
+		// are the same defect as cream-on-white, one step less obvious. Every
+		// element is taken to near-black here and the roles below take what is
+		// darker still.
+		*,
+		*::before,
+		*::after {
+			color: #1A1A1A !important;
+			background-color: transparent !important;
+			background-image: none !important;
+			box-shadow: none !important;
+			text-shadow: none !important;
+			filter: none !important;
+		}
+
+		// Atmosphere, chrome and the closing red band: nothing that is texture
+		// rather than content survives onto paper.
+		body::before,
+		body::after,
+		.scene-vignette,
+		.status-bar-cover,
+		.ticker-wrap,
+		.site-header,
+		.footer,
+		.cookie-banner,
+		.band--accent {
+			display: none !important;
+		}
+
+		.band,
+		.subpage-hero {
+			padding-block: 1rem !important;
+		}
+
+		// Ink by ROLE, not by page, so a new section inherits it.
+		h1,
+		h2,
+		h3,
+		h4,
+		.hero-title,
+		.hero-lede,
+		.display,
+		.head-title,
+		.head-note,
+		.eyebrow,
+		.red,
+		.field-row,
+		.u-prose,
+		a {
+			color: #050505 !important;
+		}
+
+		// A form printed to be filled in on paper needs its fields to be
+		// visible boxes, which on a white ground means a drawn edge.
+		input,
+		select,
+		textarea,
+		.btn-primary,
+		.btn-ghost {
+			color: #050505 !important;
+			border: 1px solid #050505 !important;
+		}
+
+		// A printed link is a dead end without its address.
+		a[href^='http']::after,
+		a[href^='mailto:']::after {
+			content: ' (' attr(href) ')';
+			font-family: var(--font-jetbrains-mono), monospace;
+			font-size: 0.75em;
+		}
+
+		// …but not where the link IS its address, or the line prints twice.
+		a[href^='mailto:'].email-link::after,
+		.field-row a[href^='mailto:']::after {
+			content: none;
+		}
+	}

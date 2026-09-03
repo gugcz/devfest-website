@@ -54,11 +54,13 @@
 			gap: 2.8rem;
 		}
 
+		// Stacks, but stays LEFT-SET. Every block on the site is left-set at
+		// every other width, and the footer was the one surface that centred
+		// itself below 500px — so the phone was the only place the site changed
+		// its mind about where a column starts.
 		@media (max-width: 500px) {
 			grid-template-columns: 1fr;
 			gap: 2.6rem;
-			text-align: center;
-			justify-items: center;
 		}
 	}
 
@@ -67,10 +69,6 @@
 		flex-direction: column;
 		gap: 1.2rem;
 		min-width: 0;
-
-		@media (max-width: 500px) {
-			align-items: center;
-		}
 	}
 
 	.col-title {
@@ -91,10 +89,6 @@
 		line-height: 1.55;
 		color: rgba(240, 237, 230, 0.6);
 		max-width: 32ch;
-
-		@media (max-width: 500px) {
-			margin: 0 auto;
-		}
 	}
 
 	.contact {
@@ -146,12 +140,11 @@
 		font-size: var(--fs-ui);
 
 		// Single-column mobile footer: the two-column term/value grid is sized by
-		// its widest value (the venue, which wraps), so the terms hug the left
-		// edge and every value lands right of centre while the rest of the
-		// footer is centred. Stack term over value instead.
+		// its widest value (the venue, which wraps), so at phone widths the
+		// values land far off the label they belong to. Stack term over value
+		// instead — both still left-set, like the rest of the footer.
 		@media (max-width: 500px) {
 			grid-template-columns: 1fr;
-			justify-items: center;
 			row-gap: 0.35rem;
 
 			dd + dt {
@@ -228,10 +221,6 @@
 		line-height: 1.6;
 		color: rgba(240, 237, 230, 0.65);
 		max-width: 34ch;
-
-		@media (max-width: 500px) {
-			margin: 0 auto;
-		}
 	}
 
 	.org-link {
@@ -251,10 +240,6 @@
 		align-items: center;
 		gap: 0.6rem;
 		flex-wrap: wrap;
-
-		@media (max-width: 500px) {
-			justify-content: center;
-		}
 	}
 
 	.social-link {

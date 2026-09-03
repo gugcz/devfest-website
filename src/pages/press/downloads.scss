@@ -90,15 +90,54 @@
 	/* ===================== GRID ===================== */
 	// Contact sheet of downloadable assets — one ruled sheet, cells sharing
 	// hairlines, rather than a grid of floating slabs.
+	// Fixed column counts, not `auto-fill`: the sheet is ruled, so the page has
+	// to know how many cells a row holds in order to close a short last row with
+	// blank ones (see the filler note in downloads.astro). The steps are the
+	// ones auto-fill was already picking at a 270px floor — 2 from ~700, 3 from
+	// ~1000, 4 from 1280 — minus the fifth column it took at 1920, which made
+	// the tiles smaller than the marks in them.
 	.presskit-grid {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+		grid-template-columns: minmax(0, 1fr);
 		gap: 0;
 		border-top: 1px solid var(--rule);
 		border-left: 1px solid var(--rule);
+
+		@media (min-width: 700px) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		@media (min-width: 1000px) {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+
+		@media (min-width: 1280px) {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+	}
+
+	// A blank cell of the sheet: the ruling and the row height, nothing else.
+	// Shown only at the column count that needs it.
+	.kit-filler {
+		display: none;
+		min-height: 168px;
+		border-right: 1px solid var(--rule);
+		border-bottom: 1px solid var(--rule);
+	}
+
+	@media (min-width: 700px) and (max-width: 999px) {
+		.kit-filler--c2 { display: block; }
+	}
+
+	@media (min-width: 1000px) and (max-width: 1279px) {
+		.kit-filler--c3 { display: block; }
+	}
+
+	@media (min-width: 1280px) {
+		.kit-filler--c4 { display: block; }
 	}
 
 	.kit-link {

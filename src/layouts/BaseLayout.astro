@@ -220,6 +220,14 @@ const jsonLd = JSON.stringify(
 		)}
 
 		<!-- Favicon -->
+		<!--
+			`favicon.ico` first, and it is a real file now: the two WebP icons
+			below are both `media`-gated, so anything that does not evaluate a
+			colour-scheme query (feed readers, link unfurlers, older browsers,
+			and every request for the well-known /favicon.ico path) fell through
+			to a 404. The .ico carries 16/32/48 from the same mark.
+		-->
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" type="image/webp" href="/favicon-light.webp" media="(prefers-color-scheme: light)" />
 		<link rel="icon" type="image/webp" href="/favicon-dark.webp" media="(prefers-color-scheme: dark)" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />

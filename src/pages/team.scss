@@ -20,8 +20,19 @@
 		// portrait-gallery scale for what is a crew roster. 240 lands four per
 		// row at 294px each, and still degrades to three and two as the column
 		// narrows.
-		grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
-		gap: clamp(2.5rem, 4.5vw, 4rem) clamp(1.5rem, 2.6vw, 2.5rem);
+		//
+		// The floor is also a CEILING on the column count: a bare 240px minimum
+		// let a 1920 page lay eleven organisers out five across, which leaves
+		// the eleventh alone with four empty slots beside it. `max()` raises the
+		// track minimum to a quarter of the row whenever a quarter is wider than
+		// 240px, so auto-fill can never fit a fifth column. Four is the balance
+		// the comment above describes; this is what holds it at every width.
+		--crew-col-gap: clamp(1.5rem, 2.6vw, 2.5rem);
+		grid-template-columns: repeat(
+			auto-fill,
+			minmax(min(max(240px, (100% - 3 * var(--crew-col-gap)) / 4), 100%), 1fr)
+		);
+		gap: clamp(2.5rem, 4.5vw, 4rem) var(--crew-col-gap);
 	}
 
 	/* ===================== PRINT + CAPTION ===================== */
@@ -187,6 +198,28 @@
 	.crew-card:focus-within .crew-role[data-swap] .crew-role-alias {
 		opacity: 1;
 		transform: translateY(0);
+	}
+
+	// The pointer-less path. The swap above is the whole reason the codename
+	// exists on the card, and it is reachable by hover or by `:focus-within` —
+	// neither of which a phone has (and a card whose member carries no links has
+	// nothing inside it to focus in the first place). So on a device with no
+	// hover the two lines stop sharing a cell and simply both print: the card
+	// says the same thing, in one state instead of two.
+	@media (hover: none) {
+		.crew-role[data-swap] {
+			grid-template-rows: auto auto;
+		}
+
+		.crew-role[data-swap] .crew-role-line {
+			grid-area: auto;
+			transition: none;
+		}
+
+		.crew-role[data-swap] .crew-role-alias {
+			opacity: 1;
+			transform: none;
+		}
 	}
 
 	.crew-links {
