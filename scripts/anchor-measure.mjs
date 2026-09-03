@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { chromium, webkit, firefox } from 'playwright';
@@ -134,6 +134,37 @@ const HEADER_ROUTES = [
 	'/404.html',
 ];
 
+/**
+ * `src/lib/anchor.ts` MUST BE EXACTLY ONE CHUNK.
+ *
+ * Two importers pull it in (`BaseLayout.astro` and `Menu.astro`), and if the
+ * bundler ever emits a copy per importer, `invalidateAnchorOffsets()` clears a
+ * different module than the one holding the memo — a silent no-op, with the
+ * deep-link hold reading a stale offset. This is an assert rather than the
+ * one-off grep it started as, because a one-off grep is the same class of
+ * silent no-op: the obvious probe (`landingOffset`) returns ZERO files, since
+ * esbuild renames local identifiers. `performance.getEntriesByType('navigation')`
+ * is the only occurrence in `src/`, and esbuild renames neither a property name
+ * nor a string literal, so it survives minification.
+ *
+ * The ARGUMENT is part of the probe, not decoration: bare `getEntriesByType`
+ * also matches react-dom's own chunk (`client.*.js` calls it for its resource
+ * timings), which would make the count 2 and the assert permanently red.
+ * The quote style is not fixed either — the minifier rewrites `'navigation'`
+ * as a template literal — hence the character class.
+ */
+const CHUNK_PROBE = /getEntriesByType\(\s*['"`]navigation['"`]\s*\)/;
+
+async function countProbeChunks() {
+	const dir = path.join(DIST, '_astro');
+	const files = (await readdir(dir)).filter((f) => f.endsWith('.js'));
+	const hits = [];
+	for (const f of files) {
+		if (CHUNK_PROBE.test(await readFile(path.join(dir, f), 'utf8'))) hits.push(f);
+	}
+	return hits;
+}
+
 async function headerSweep(port) {
 	const browser = await chromium.launch();
 	const ctx = await browser.newContext({ viewport: { width: HEADER_WIDTHS[0], height: 800 } });
@@ -145,6 +176,12 @@ async function headerSweep(port) {
 	// `networkidle`. Answered, not aborted: an aborted fetch renders the
 	// islands' "unavailable" state, and the standing-overflow report below is
 	// about the real page, not that one (aborting invented three 320px rows).
+	// Two consequences, harmless today but worth naming: an `/api/**` path with
+	// no fixture falls through to the fixture server, which 404s it into the
+	// same "unavailable" state (no such path exists right now), and `load` does
+	// not guarantee a rendered island. Neither touches the asserts — the bar's
+	// height owes nothing to the data — but if the standing-overflow rows below
+	// ever flicker, this is the reason.
 	await page.route('**/api/**', (route) => {
 		const body = API_FIXTURES[new URL(route.request().url()).pathname];
 		if (body === undefined) return route.continue();
@@ -174,7 +211,11 @@ async function headerSweep(port) {
 				// returns to 16, so a later width would fail an emptiness check
 				// for the right reason. Hence the first width, first root, right
 				// after the load, once per route.
-				const virgin = index === 0 && root === HEADER_ROOTS[0];
+				// Literal 16, not `HEADER_ROOTS[0]`: the claim is about the 16px
+				// root itself, so it must not hang on the array's order — reorder
+				// it to [32, 16] and the indexed form would assert emptiness at a
+				// 32px root and fail for a reason that isn't a regression.
+				const virgin = index === 0 && root === 16;
 				const result = await page.evaluate(
 					async ({ rootPx, virgin }) => {
 						// A text-only zoom, which is what wraps the actions.
@@ -281,6 +322,7 @@ for (const [engineName, engine] of Object.entries(ENGINES)) {
 		await browser.close();
 	}
 }
+const chunks = await countProbeChunks();
 const header = await headerSweep(PORT);
 await new Promise((r) => server.close(r));
 
@@ -307,9 +349,14 @@ for (const b of [...header.bad, ...header.warn]) {
 	);
 }
 console.log(
+	`\nanchor chunk: ${chunks.length} file(s) in dist/_astro carry the module (${chunks.join(', ') || 'none'})${
+		chunks.length === 1 ? '' : '  <-- must be exactly 1'
+	}`
+);
+console.log(
 	header.bad.length === 0
 		? `--header-h within 1px of the real bar everywhere${header.warn.length ? ` (${header.warn.length} standing overflow(s) above, not asserted)` : ''}.`
 		: `${header.bad.length} header check(s) failed.`
 );
 
-process.exit(bad === 0 && header.bad.length === 0 ? 0 : 1);
+process.exit(bad === 0 && header.bad.length === 0 && chunks.length === 1 ? 0 : 1);
