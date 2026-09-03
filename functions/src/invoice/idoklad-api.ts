@@ -278,18 +278,18 @@ async function syncContactDetails(
 	if (Object.keys(patch).length === 1) return false;
 
 	try {
+		// The update goes to the COLLECTION with `Id` in the body. `/Contacts/{id}`
+		// answers 405 `UnsupportedApiVersion` on every write verb, so a per-id path
+		// never updates anything — it only ever lands in the catch below, which
+		// reports every reused company as unsynced.
+		//
 		// The PATCH answers with the stored contact — read the address back rather
 		// than assuming the write landed. iDoklad can normalise or silently drop an
 		// `Email` it doesn't like, and a HTTP-200-shaped "success" would otherwise
 		// report the contact as synced, leave `OtherRecipients` empty, and mail the
 		// invoice to whoever the contact was created with. That is exactly the
 		// incident this belt exists for.
-		const updated = await apiJson<{ Email?: string | null }>(
-			cfg,
-			'PATCH',
-			`/Contacts/${id}`,
-			patch,
-		);
+		const updated = await apiJson<{ Email?: string | null }>(cfg, 'PATCH', '/Contacts', patch);
 		if (!email) return false;
 		const stored = typeof updated?.Email === 'string' ? updated.Email.trim() : '';
 		if (stored.toLowerCase() === email.toLowerCase()) return true;

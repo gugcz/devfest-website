@@ -34,9 +34,14 @@ const realFetch = globalThis.fetch;
 let calls: RecordedCall[] = [];
 
 /**
- * Install a fetch stub. `routes` is keyed by `"<METHOD> <path-prefix>"`; the
- * OAuth token endpoint is always answered so the client's token cache behaves
- * the same whether or not a given test is the first to run.
+ * Install a fetch stub. `routes` is keyed by `"<METHOD> <path>"`, matched
+ * EXACTLY unless the key ends in `*` (then it is a prefix). Exact matching is
+ * the point: `PATCH /Contacts/{id}` answers 405 at iDoklad, and a prefix-keyed
+ * stub happily answered both that and the collection path, so the tests passed
+ * against a URL that can never work. An unmatched call throws.
+ *
+ * The OAuth token endpoint is always answered so the client's token cache
+ * behaves the same whether or not a given test is the first to run.
  */
 function mockFetch(routes: Record<string, Handler>) {
 	globalThis.fetch = (async (url: any, init: any = {}) => {
@@ -56,8 +61,9 @@ function mockFetch(routes: Record<string, Handler>) {
 		calls.push(call);
 
 		const key = Object.keys(routes).find((k) => {
-			const [m, prefix] = k.split(' ');
-			return m === method && path.startsWith(prefix);
+			const [m, pattern] = k.split(' ');
+			if (m !== method) return false;
+			return pattern.endsWith('*') ? path.startsWith(pattern.slice(0, -1)) : path === pattern;
 		});
 		if (!key) throw new Error(`unstubbed iDoklad call: ${method} ${path}`);
 		const { status = 200, json } = routes[key](call);
@@ -96,8 +102,8 @@ describe('findOrCreateContact', () => {
 
 	it('updates the email + address of a contact matched by IČO', async () => {
 		mockFetch({
-			'GET /Contacts?': found(4242, '12345678'),
-			'PATCH /Contacts/': (call) => ({
+			'GET /Contacts?*': found(4242, '12345678'),
+			'PATCH /Contacts': (call) => ({
 				json: { IsSuccess: true, Data: { Id: 4242, Email: call.body.Email } },
 			}),
 		});
@@ -106,8 +112,10 @@ describe('findOrCreateContact', () => {
 
 		assert.deepEqual(contact, { id: 4242, emailSynced: true });
 		const patch = calls.find((c) => c.method === 'PATCH');
-		assert.ok(patch, 'expected a PATCH /Contacts/{id}');
-		assert.equal(patch.path, '/Contacts/4242');
+		assert.ok(patch, 'expected a PATCH /Contacts');
+		// The collection path with `Id` in the body — `/Contacts/4242` is a 405.
+		assert.equal(patch.path, '/Contacts');
+		assert.equal(patch.body.Id, 4242);
 		assert.equal(patch.body.Email, 'billing@example.com');
 		assert.equal(patch.body.Street, 'Example 1');
 		assert.equal(patch.body.City, 'Praha');
@@ -116,8 +124,8 @@ describe('findOrCreateContact', () => {
 
 	it('accepts an address iDoklad echoes back in a different case', async () => {
 		mockFetch({
-			'GET /Contacts?': found(4242, '12345678'),
-			'PATCH /Contacts/': () => ({
+			'GET /Contacts?*': found(4242, '12345678'),
+			'PATCH /Contacts': () => ({
 				json: { IsSuccess: true, Data: { Id: 4242, Email: ' Billing@Example.com ' } },
 			}),
 		});
@@ -129,11 +137,11 @@ describe('findOrCreateContact', () => {
 
 	it('reports unsynced when the PATCH succeeds but drops the submitted email', async () => {
 		mockFetch({
-			'GET /Contacts?': found(4242, '12345678'),
+			'GET /Contacts?*': found(4242, '12345678'),
 			// A 200 with `IsSuccess: true` whose stored contact carries the OLD
 			// address — the shape the incident had: the write "succeeded" and the
 			// invoice still went to whoever ordered first.
-			'PATCH /Contacts/': () => ({
+			'PATCH /Contacts': () => ({
 				json: { IsSuccess: true, Data: { Id: 4242, Email: 'first.orderer@example.com' } },
 			}),
 		});
@@ -145,8 +153,8 @@ describe('findOrCreateContact', () => {
 
 	it('reports unsynced when the PATCH response carries no email at all', async () => {
 		mockFetch({
-			'GET /Contacts?': found(4242, '12345678'),
-			'PATCH /Contacts/': () => ({ json: { IsSuccess: true, Data: { Id: 4242 } } }),
+			'GET /Contacts?*': found(4242, '12345678'),
+			'PATCH /Contacts': () => ({ json: { IsSuccess: true, Data: { Id: 4242 } } }),
 		});
 
 		const contact = await findOrCreateContact(CFG, acme);
@@ -156,8 +164,8 @@ describe('findOrCreateContact', () => {
 
 	it('does not wipe fields the form left blank', async () => {
 		mockFetch({
-			'GET /Contacts?': found(1, '12345678'),
-			'PATCH /Contacts/': (call) => ({
+			'GET /Contacts?*': found(1, '12345678'),
+			'PATCH /Contacts': (call) => ({
 				json: { IsSuccess: true, Data: { Id: 1, Email: call.body.Email } },
 			}),
 		});
@@ -178,8 +186,8 @@ describe('findOrCreateContact', () => {
 
 	it('reports the contact as unsynced when the update fails, without throwing', async () => {
 		mockFetch({
-			'GET /Contacts?': found(7, '12345678'),
-			'PATCH /Contacts/': () => ({ status: 500, json: { IsSuccess: false, Message: 'boom' } }),
+			'GET /Contacts?*': found(7, '12345678'),
+			'PATCH /Contacts': () => ({ status: 500, json: { IsSuccess: false, Message: 'boom' } }),
 		});
 
 		const contact = await findOrCreateContact(CFG, {
@@ -193,7 +201,7 @@ describe('findOrCreateContact', () => {
 
 	it('creates a contact when no IČO matches', async () => {
 		mockFetch({
-			'GET /Contacts?': () => ({ json: { IsSuccess: true, Data: { Items: [] } } }),
+			'GET /Contacts?*': () => ({ json: { IsSuccess: true, Data: { Items: [] } } }),
 			'GET /Contacts/Default': () => ({ json: { IsSuccess: true, Data: { CountryId: 2 } } }),
 			'POST /Contacts': () => ({ json: { IsSuccess: true, Data: { Id: 99 } } }),
 		});
@@ -278,7 +286,7 @@ describe('sendInvoiceByEmail', () => {
 describe('unwrap', () => {
 	it('fails a read whose envelope says IsSuccess: false', async () => {
 		mockFetch({
-			'GET /IssuedInvoices/': () => ({ json: { IsSuccess: false, Message: 'Not found' } }),
+			'GET /IssuedInvoices/*': () => ({ json: { IsSuccess: false, Message: 'Not found' } }),
 		});
 
 		await assert.rejects(() => getInvoicePaymentStatus(CFG, 1), IdokladApiError);
@@ -286,7 +294,7 @@ describe('unwrap', () => {
 
 	it('peels Data on a successful envelope', async () => {
 		mockFetch({
-			'GET /IssuedInvoices/': () => ({ json: { IsSuccess: true, Data: { PaymentStatus: 1 } } }),
+			'GET /IssuedInvoices/*': () => ({ json: { IsSuccess: true, Data: { PaymentStatus: 1 } } }),
 		});
 
 		assert.equal(await getInvoicePaymentStatus(CFG, 1), 1);
@@ -294,7 +302,7 @@ describe('unwrap', () => {
 
 	it('joins a Message list into the thrown error', async () => {
 		mockFetch({
-			'GET /IssuedInvoices/': () => ({ json: { IsSuccess: false, Message: ['a', 'b'] } }),
+			'GET /IssuedInvoices/*': () => ({ json: { IsSuccess: false, Message: ['a', 'b'] } }),
 		});
 
 		await assert.rejects(() => getInvoicePaymentStatus(CFG, 1), /a; b/);
