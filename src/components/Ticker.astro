@@ -10,8 +10,29 @@ const { items, size = 'lg' } = Astro.props;
 const doubled = [...items, ...items];
 ---
 
-<div class={`ticker-wrap ticker-wrap--${size}`} aria-hidden="true">
-	<div class="ticker">
+{/*
+	WCAG 2.2.2 (pause, stop, hide): the band auto-scrolls for longer than 5s, so
+	a visitor must be able to stop it. `prefers-reduced-motion` already kills the
+	animation, but it is a user-agent setting, not the mechanism the SC asks for
+	— and the band now runs under the hero on every route.
+
+	So: paused on `:hover` and on `:focus-within` (Ticker.scss). `:focus-within`
+	needs a focusable descendant and the topics are non-interactive text, hence
+	`tabindex="0"` + `aria-label` on the strip itself — a keyboard user Tabs to
+	it, the band stops, and it shows the standard focus ring. No visible pause
+	button: this is chrome that appears on 15 routes.
+
+	The strip is the labelled element, so the topic list inside is `aria-hidden`
+	— it is doubled to make the loop seamless and would otherwise be announced
+	twice. The label carries the meaning.
+*/}
+<div
+	class={`ticker-wrap ticker-wrap--${size}`}
+	tabindex="0"
+	role="group"
+	aria-label={`Conference topics: ${items.join(', ')}`}
+>
+	<div class="ticker" aria-hidden="true">
 		{doubled.map((item) => (
 			<span class="ticker-item">
 				{item}<span class="ticker-sep">&bull;</span>

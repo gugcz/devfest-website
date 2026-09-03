@@ -293,7 +293,11 @@
 	letter-spacing: 0.16em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.55);
-	white-space: nowrap;
+	// No `white-space: nowrap`, and a zero flex floor: a one-word track label
+	// ("ARCHITECTURE") is 216px of mono at a 32px root, which is most of a
+	// phone viewport. `.tags` already wraps between labels; this lets a single
+	// label break inside itself when even one does not fit.
+	min-width: 0;
 
 	& + .tag::before {
 		content: '';
@@ -358,7 +362,7 @@
 .item {
 	display: flex;
 	align-items: flex-start;
-	gap: clamp(1rem, 3vw, 2rem);
+	gap: min(clamp(1rem, 3vw, 2rem), 5vw);
 	width: 100%;
 	margin: 0;
 	text-align: left;
@@ -384,8 +388,18 @@
 }
 
 .itemTime {
-	flex-shrink: 0;
-	min-width: 5.5rem;
+	// The time is the one thing in the row that must give way under a text-only
+	// zoom. Dropping `flex-shrink: 0` was not enough on its own: `.itemMain` is
+	// `flex: 1` (basis 0), so it never competes for the row — it takes what the
+	// time leaves, and at a 32px root the mono range measures 208px of a 320px
+	// viewport, which left the title 57px (17 lines) and the meta 16px. So the
+	// time is capped instead, and wraps after its en dash. 8rem is 40vw of 320,
+	// so at a 16px root the cap sits 24px clear of the 104px the range actually
+	// measures and never bites; at a 32px root it is what makes it give way.
+	// `min-width` keeps it a column rather than letting the title crowd it at
+	// normal sizes.
+	min-width: min(5.5rem, 27.5vw);
+	max-width: min(8rem, 40vw);
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-variant-numeric: tabular-nums;
 	font-size: var(--fs-label-lg);
@@ -433,6 +447,7 @@
 	letter-spacing: 0.04em;
 	line-height: 1.4;
 	color: var(--color-grey);
+	min-width: 0;
 }
 
 /* ===================== NOT-YET-SCHEDULED ===================== */
@@ -513,6 +528,13 @@
 	align-items: baseline;
 	justify-content: space-between;
 	gap: 0.75rem;
+	// The badge drops under the title rather than pushing it off the row when
+	// the type is zoomed.
+	flex-wrap: wrap;
+
+	> :first-child {
+		min-width: 0;
+	}
 }
 
 // A status word on a rule — never a filled pill. Same shape as the ticket
@@ -576,67 +598,6 @@
 }
 
 /* ===================== STATES ===================== */
-// Left-set, like every other block on the site.
-.status {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 1.4rem;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.7;
-	color: var(--color-grey);
-	max-width: 52ch;
-	margin: 1rem 0 0;
-
-	p {
-		margin: 0;
-	}
-}
-
-.loadingStatus {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.55rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.18em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
-}
-
-.loadingDot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: var(--color-accent-hot);
-	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
-	flex-shrink: 0;
-	animation: agendaPulse 1.3s ease-in-out infinite;
-}
-
-.loadingDots {
-	display: inline-flex;
-	align-items: center;
-	gap: 3px;
-
-	span {
-		width: 3px;
-		height: 3px;
-		border-radius: 50%;
-		background: currentColor;
-		opacity: 0.3;
-		animation: agendaPulse 1.3s ease-in-out infinite;
-	}
-
-	span:nth-child(2) {
-		animation-delay: 0.18s;
-	}
-	span:nth-child(3) {
-		animation-delay: 0.36s;
-	}
-}
-
 @keyframes agendaPulse {
 	0%,
 	100% {
@@ -651,8 +612,6 @@
 	.cell,
 	.item,
 	.unscheduledItem,
-	.loadingDot,
-	.loadingDots span,
 	.liveDot {
 		transition: none;
 		animation: none;

@@ -65,11 +65,16 @@
 	// Section head with an editorial eyebrow rhythm: a short red hairline
 	// rule above the Bebas head, echoing the masthead eyebrow without adding
 	// any card chrome — the page is a legal doc and stays calm.
+	// Cream, not red. Every section head on a 5000px legal document set in the
+	// accent is the accent used as a heading colour, which is the "red spent
+	// once per list" rule broken about a dozen times down one page. The short
+	// red rule above each head (::before) is kept — one mark carries the
+	// section break; the words do not need to carry it too.
 	h2 {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-title-sm);
 		letter-spacing: 0.08em;
-		color: var(--color-accent-hot);
+		color: var(--color-text);
 		// Soft red halation on the section heads — just enough neon glow to read
 		// as lit, not a spotlit poster title (this stays a calm legal doc).
 		margin-bottom: 1.4rem;
@@ -164,7 +169,8 @@
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-ui);
 		color: rgba(240, 237, 230, 0.78);
-		margin-top: 1.4rem;
+		// The rhythm above the table now lives on `.table-scroll`.
+		margin-top: 0;
 	}
 
 	// Column heads: mono caps with a firmer hairline under the whole head row.
@@ -210,6 +216,24 @@
 		clip: rect(0, 0, 0, 0);
 		white-space: nowrap;
 		border: 0;
+	}
+
+	// The table keeps its natural column widths and takes its own horizontal
+	// scroll when they no longer fit. Forcing the cells to break instead
+	// (`overflow-wrap: anywhere`) re-flowed the columns at a 16px root too and
+	// split `_GRECAPTCHA` mid-word on desktop; a cookie name is not prose.
+	.table-scroll {
+		overflow-x: auto;
+		// `overflow` makes this a block formatting context, so the table's own
+		// top margin no longer collapses with the paragraph above it — carry
+		// the margin on the wrapper instead and the rhythm is unchanged.
+		margin-top: 1.4rem;
+		// The focus ring belongs to the scroll box, which has no boundary of
+		// its own to sit against.
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: var(--focus-gap-lg);
+		}
 	}
 
 	td {

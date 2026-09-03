@@ -11,6 +11,7 @@ import {
 	type TitoRelease,
 } from '../lib/tito';
 import { track } from '../lib/analytics';
+import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Tickets.module.scss';
 
 // Static copy keyed by lowercased group name. Overrides whatever ti.to
@@ -105,6 +106,15 @@ function round2(n: number): number {
 	return Math.round(n * 100) / 100;
 }
 
+/**
+ * Every render path is the same `#tickets` section, so its class list is stated
+ * once. `anchor-target` (BaseLayout.scss) is what makes "Get tickets" land on
+ * the heading instead of on the section's opening air — hand-repeated on each
+ * state, the next state added would silently drop it and the anchor would break
+ * only in that state.
+ */
+const sectionClass = `${s.tickets} anchor-target`;
+
 export default function Tickets() {
 	const [state, setState] = useState<State>(INITIAL);
 
@@ -137,31 +147,23 @@ export default function Tickets() {
 
 	if (state.status === 'error') {
 		return (
-			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
+			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 				</header>
-				<div className={s.empty} role="alert">
+				<ErrorState>
 					<p>The box office isn't answering. Reload, or buy direct on ti.to.</p>
-				</div>
+				</ErrorState>
 			</section>
 		);
 	}
 
 	if (state.status === 'loading') {
 		return (
-			<section id="tickets" className={s.tickets} aria-busy={true} aria-labelledby="tickets-heading">
+			<section id="tickets" className={sectionClass} aria-busy={true} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
-					<p className={s.loadingStatus} role="status">
-						<span className={s.loadingDot} aria-hidden="true" />
-						Loading tickets
-						<span className={s.loadingDots} aria-hidden="true">
-							<span />
-							<span />
-							<span />
-						</span>
-					</p>
+					<LoadingState label="Opening the box office" />
 				</header>
 				<ul className={`field ${s.skelLedger}`} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
@@ -198,22 +200,16 @@ export default function Tickets() {
 	if (state.status === 'empty') {
 		if (!hasEvent) return null;
 		return (
-			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
+			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 					<p className="head-note">The box office is closed. It opens with the first wave.</p>
 				</header>
-				<div className={s.empty}>
+				<EmptyState
+					action={{ href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true }}
+				>
 					<p>Subscribe above to be notified when tickets go on sale.</p>
-					<a
-						className={`${s.cta} ${s.ctaSecondary}`}
-						href={eventUrl(accountSlug, eventSlug)}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Visit ti.to event
-					</a>
-				</div>
+				</EmptyState>
 			</section>
 		);
 	}
@@ -225,7 +221,7 @@ export default function Tickets() {
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
 
 	return (
-		<section id="tickets" className={`${s.tickets} rake`} aria-labelledby="tickets-heading">
+		<section id="tickets" className={`${sectionClass} rake`} aria-labelledby="tickets-heading">
 			{/* Red raking light, swept by the scroll itself. Purely decorative and
 			    enhancement-only — see the `.rake` rules in BaseLayout.scss. */}
 			<span className="rake-beam" aria-hidden="true" />

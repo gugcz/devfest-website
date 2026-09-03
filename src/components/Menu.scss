@@ -15,12 +15,19 @@
 		// Stamp centred against the VIEWPORT, not against whatever the two
 		// side slots happen to measure — equal side tracks are what keep it
 		// optically centred when the brand is wider than the actions.
-		grid-template-columns: 1fr auto 1fr;
+		// `minmax(0, 1fr)` rather than `1fr`: the side tracks floor at their
+		// min-content width otherwise, and under text-only zoom that is what
+		// pushed the bar past the viewport instead of letting the mark shrink.
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
 		align-items: center;
-		gap: 1.5rem;
+		gap: min(1.5rem, 7.5vw);
 		// Constant padding — height stays fixed across scroll states so
 		// nav doesn't reflow / jump when the scroll handler flips data-state.
-		padding: 0.85rem clamp(1rem, 3vw, 2.25rem);
+		// Vertical comes from `--header-pad-y` because `--header-h` is derived
+		// from it: anchor offsets measure this bar, so the two can't drift.
+		// Viewport ceiling on the inline term: at a 32px root the 1rem floor
+		// doubles, and the bar has no room to give away at 320px.
+		padding: var(--header-pad-y) min(clamp(1rem, 3vw, 2.25rem), 5vw);
 		// The ground and the scrim are painted by the two pseudo-elements
 		// below, so the swap between them can be crossfaded. The bar itself
 		// carries no background.
@@ -87,6 +94,7 @@
 		display: inline-flex;
 		align-items: center;
 		justify-self: start;
+		min-width: 0;
 		text-decoration: none;
 		color: var(--color-text);
 		flex-shrink: 0;
@@ -127,6 +135,11 @@
 		display: block;
 		height: clamp(26px, 3.4vw, 34px);
 		width: auto;
+		// The mark gives way before the bar overflows. Its height is already in
+		// px so it does not grow with the root font; this only bounds it when
+		// the zoomed Tickets / Menu controls have taken the rest of the row.
+		max-width: 100%;
+		object-fit: contain;
 	}
 
 	/* ===================== EVENT STAMP ===================== */
@@ -171,11 +184,20 @@
 	.header-actions {
 		display: flex;
 		align-items: center;
-		gap: 0.6rem;
+		// Under text-only zoom the Tickets button and the toggle cannot both
+		// fit one 320px row — the bar wraps to two lines rather than running
+		// off the side. At a 16px root they never come close to wrapping.
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: min(0.6rem, 3vw);
 		justify-self: end;
+		min-width: 0;
 	}
 
 	.header-cta {
+		// `--header-h` asserts the bar is one tap-target tall; a wrapped label
+		// would make that a lie and pull every anchor offset out with it.
+		white-space: nowrap;
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label-lg);
 		letter-spacing: 0.2em;
@@ -185,8 +207,11 @@
 		background: var(--color-accent);
 		border: 1px solid var(--color-accent);
 		border-radius: var(--radius);
-		padding: 0.72rem 1.5rem;
-		min-height: 2.75rem; // touch target — WCAG 2.5.5
+		padding: 0.72rem min(1.5rem, 7.5vw);
+		// Touch target — WCAG 2.5.5. It is also the tallest thing in the bar,
+		// so it is what `--header-h` is built from. The token is a physical
+		// 44px, not 2.75rem — see BaseLayout.scss.
+		min-height: var(--header-tap);
 		display: inline-flex;
 		align-items: center;
 		transition: background 0.2s ease, border-color 0.2s ease;
@@ -210,12 +235,15 @@
 		// Stay above the open panel so the X remains live.
 		position: relative;
 		z-index: 2;
-		gap: 0.65rem;
-		padding: 0.72rem 1.15rem;
-		min-height: 2.75rem;
-		min-width: 2.75rem;
+		gap: min(0.65rem, 3.25vw);
+		padding: 0.72rem min(1.15rem, 5.75vw);
+		// Physical touch target — the token is px, not rem. See .header-cta.
+		min-height: var(--header-tap);
+		min-width: var(--header-tap);
 		background: transparent;
-		border: 1px solid var(--rule-strong);
+		// The site's ONLY navigation control at every width — there is no
+		// horizontal nav breakpoint — so its boundary has to clear 1.4.11.
+		border: 1px solid var(--field-border);
 		border-radius: var(--radius);
 		color: var(--color-text);
 		font-family: var(--font-jetbrains-mono), monospace;
@@ -268,9 +296,12 @@
 		flex-direction: column;
 		justify-content: space-between;
 		gap: 2rem;
+		// Clears the bar, measured off the bar: `--header-h` is what the bar
+		// actually is, so this can't drift from it the way the 5.75rem literal
+		// it replaces already had.
 		padding:
-			calc(5.75rem + env(safe-area-inset-top))
-			clamp(1.25rem, 5vw, 4.5rem)
+			calc(var(--header-h) + 1.3rem + env(safe-area-inset-top))
+			min(clamp(1.25rem, 5vw, 4.5rem), 6.25vw)
 			calc(2rem + env(safe-area-inset-bottom));
 		background: #050505;
 		overflow-y: auto;
@@ -387,7 +418,7 @@
 		}
 
 		.site-header {
-			grid-template-columns: 1fr auto;
+			grid-template-columns: minmax(0, 1fr) auto;
 		}
 
 		// The brand is NOT re-shown here. It used to be, on the grounds that a
@@ -408,13 +439,19 @@
 		}
 
 		.nav-toggle {
-			padding: 0.72rem 0.9rem;
+			padding: 0.72rem min(0.9rem, 4.5vw);
 		}
 	}
 
 	@media (max-width: 380px) {
+		// Horizontal only. The bar is also tighter VERTICALLY here, but that is
+		// a change to `--header-pad-y` and it is made where the token lives
+		// (BaseLayout.scss, on :root) — overriding the padding directly would
+		// shrink the bar while `--header-h` went on asserting the old height,
+		// which is exactly the drift the token exists to prevent. This file's
+		// styles are scoped, so a :root rule here would not reach `html`.
 		.site-header {
-			padding: 0.7rem 0.85rem;
+			padding-inline: min(0.85rem, 4.25vw);
 		}
 
 		.brand-logo {
@@ -422,7 +459,7 @@
 		}
 
 		.header-cta {
-			padding: 0.72rem 1rem;
+			padding: 0.72rem min(1rem, 5vw);
 			letter-spacing: 0.14em;
 		}
 	}
@@ -435,7 +472,7 @@
 		}
 
 		.nav-panel {
-			padding-top: calc(5rem + env(safe-area-inset-top));
+			padding-top: calc(var(--header-h) + 0.55rem + env(safe-area-inset-top));
 		}
 	}
 
