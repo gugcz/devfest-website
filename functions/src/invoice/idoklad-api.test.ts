@@ -97,7 +97,9 @@ describe('findOrCreateContact', () => {
 	it('updates the email + address of a contact matched by IČO', async () => {
 		mockFetch({
 			'GET /Contacts?': found(4242, '12345678'),
-			'PATCH /Contacts/': () => ({ json: { IsSuccess: true, Data: { Id: 4242 } } }),
+			'PATCH /Contacts/': (call) => ({
+				json: { IsSuccess: true, Data: { Id: 4242, Email: call.body.Email } },
+			}),
 		});
 
 		const contact = await findOrCreateContact(CFG, acme);
@@ -112,10 +114,52 @@ describe('findOrCreateContact', () => {
 		assert.equal(patch.body.PostalCode, '11000');
 	});
 
+	it('accepts an address iDoklad echoes back in a different case', async () => {
+		mockFetch({
+			'GET /Contacts?': found(4242, '12345678'),
+			'PATCH /Contacts/': () => ({
+				json: { IsSuccess: true, Data: { Id: 4242, Email: ' Billing@Example.com ' } },
+			}),
+		});
+
+		const contact = await findOrCreateContact(CFG, acme);
+
+		assert.deepEqual(contact, { id: 4242, emailSynced: true });
+	});
+
+	it('reports unsynced when the PATCH succeeds but drops the submitted email', async () => {
+		mockFetch({
+			'GET /Contacts?': found(4242, '12345678'),
+			// A 200 with `IsSuccess: true` whose stored contact carries the OLD
+			// address — the shape the incident had: the write "succeeded" and the
+			// invoice still went to whoever ordered first.
+			'PATCH /Contacts/': () => ({
+				json: { IsSuccess: true, Data: { Id: 4242, Email: 'first.orderer@example.com' } },
+			}),
+		});
+
+		const contact = await findOrCreateContact(CFG, acme);
+
+		assert.deepEqual(contact, { id: 4242, emailSynced: false });
+	});
+
+	it('reports unsynced when the PATCH response carries no email at all', async () => {
+		mockFetch({
+			'GET /Contacts?': found(4242, '12345678'),
+			'PATCH /Contacts/': () => ({ json: { IsSuccess: true, Data: { Id: 4242 } } }),
+		});
+
+		const contact = await findOrCreateContact(CFG, acme);
+
+		assert.deepEqual(contact, { id: 4242, emailSynced: false });
+	});
+
 	it('does not wipe fields the form left blank', async () => {
 		mockFetch({
 			'GET /Contacts?': found(1, '12345678'),
-			'PATCH /Contacts/': () => ({ json: { IsSuccess: true, Data: { Id: 1 } } }),
+			'PATCH /Contacts/': (call) => ({
+				json: { IsSuccess: true, Data: { Id: 1, Email: call.body.Email } },
+			}),
 		});
 
 		await findOrCreateContact(CFG, {

@@ -278,8 +278,27 @@ async function syncContactDetails(
 	if (Object.keys(patch).length === 1) return false;
 
 	try {
-		await apiJson(cfg, 'PATCH', `/Contacts/${id}`, patch);
-		return email !== '';
+		// The PATCH answers with the stored contact — read the address back rather
+		// than assuming the write landed. iDoklad can normalise or silently drop an
+		// `Email` it doesn't like, and a HTTP-200-shaped "success" would otherwise
+		// report the contact as synced, leave `OtherRecipients` empty, and mail the
+		// invoice to whoever the contact was created with. That is exactly the
+		// incident this belt exists for.
+		const updated = await apiJson<{ Email?: string | null }>(
+			cfg,
+			'PATCH',
+			`/Contacts/${id}`,
+			patch,
+		);
+		if (!email) return false;
+		const stored = typeof updated?.Email === 'string' ? updated.Email.trim() : '';
+		if (stored.toLowerCase() === email.toLowerCase()) return true;
+		logger.warn(
+			`iDoklad contact ${id} did not take the submitted email (stored ` +
+				`${stored ? maskEmail(stored) : '—'}, submitted ${maskEmail(email)}) — ` +
+				`falling back to an explicit recipient`,
+		);
+		return false;
 	} catch (err) {
 		logger.warn(
 			`iDoklad contact ${id} update failed — the invoice mail may go to the stored ` +

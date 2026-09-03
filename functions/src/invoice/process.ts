@@ -147,17 +147,29 @@ export const processInvoiceTrigger = onDocumentCreated(
 				idokladInvoiceNumber: invoice.number,
 				variableSymbol: invoice.variableSymbol,
 				invoiceEmailSent,
+				// Whether iDoklad's contact is proven to carry the submitted address.
+				// A `false` here is the trace of the belt having to fire: the doc says
+				// so afterwards, not only a log line nobody reads.
+				contactEmailSynced: contact.emailSynced,
 				errorMessage: null,
 			});
 
 			const linkNote = invoiceEmailSent
 				? ''
 				: `\n⚠️ email could not be sent — send invoice ${invoice.number ?? invoice.id} manually`;
+			// The contact update is best-effort, so its failure was previously visible
+			// only in Cloud Logging. Say it here: the mail still goes out (named
+			// recipient), but the iDoklad contact holds a stale address someone has
+			// to fix by hand, or the next invoice repeats the fault.
+			const contactNote = contact.emailSynced
+				? ''
+				: `\n⚠️ iDoklad contact ${contactId} does not carry the submitted address — ` +
+					`invoice mailed to an explicitly named recipient; fix the contact in iDoklad`;
 			await notify(
 				'invoices',
 				slackUrl,
 				`${doc.companyName} — invoice ${invoice.number ?? invoice.id} issued ` +
-					`(${doc.countTickets}× ticket, VS ${invoice.variableSymbol ?? '—'})${linkNote}`,
+					`(${doc.countTickets}× ticket, VS ${invoice.variableSymbol ?? '—'})${linkNote}${contactNote}`,
 			);
 			logger.info('processInvoiceTrigger invoiced', { id, invoiceId: invoice.id });
 		} catch (err) {
