@@ -34,6 +34,15 @@ npm run preview
 npm run a11y
 ```
 
+`npm run dev` has no Firebase Hosting rewrite table, so it serves `/api/lineup`
+and `/api/tickets` from the audit fixtures (`scripts/a11y-mocks/api.mjs`) —
+without that the lineup, agenda and ticket sections would all render their
+"unavailable" state locally. `npm run a11y` serves the same fixtures, so CI and
+a laptop can't disagree about what the endpoints return.
+
+Set `DEVFEST_LIVE_API=1 npm run dev` to skip the fixtures and hit the deployed
+functions instead. That is what you want when changing the functions themselves.
+
 ## ti.to Tickets — Cloud Functions + RTDB cache
 
 The "Get your ticket" section is rendered client-side from a Firebase Realtime Database cache. The static build never calls ti.to, a scheduled Cloud Function keeps the cache fresh, and the browser reads it through a cached HTTP endpoint (`/api/tickets`) — **not** the Firebase SDK. (Reading RTDB with the client SDK blocked the first read on an App Check token, ~30s on mobile; a plain `fetch()` avoids that. See "Browser data access" in [CLAUDE.md](CLAUDE.md).)
@@ -263,6 +272,7 @@ tsconfig.json
 | `/` | Landing page with countdown and newsletter signup |
 | `/speakers` | Speaker lineup (reads `/api/lineup`) |
 | `/sessions` | Session schedule (reads `/api/lineup`) |
+| `/agenda` | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day (reads `/api/lineup`) |
 | `/invoice` | Request a company invoice to buy tickets by bank transfer |
 | `/partners` | Sponsors & partners |
 | `/press`, `/press/downloads` | Press kit and downloadable assets |
@@ -272,6 +282,7 @@ tsconfig.json
 | `/privacy-policy` | GDPR privacy policy |
 | `/newsletter-subscription-thank-you` | Post-signup confirmation |
 | `/thank-you` | Post-purchase confirmation (ti.to "thank you URL") |
+| `/404` | Not-found page |
 
 ## Links
 

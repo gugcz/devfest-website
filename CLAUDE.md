@@ -2,10 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## PR conventions
-
-- **Do not add a `## Test plan` section to PR descriptions.** The maintainer verifies changes manually and the checklist adds noise. Keep PR bodies to Summary / Why / Follow-up only.
-
 # DevFest Website
 
 Conference landing page for DevFest.cz 2026, built with Astro 7 and deployed to Firebase Hosting.
@@ -34,7 +30,7 @@ No lint script is configured — TypeScript strict mode provides type safety. Th
 
 ## PR conventions
 
-- **No "Test plan" sections in PR bodies.** This repo has no automated test suite and reviewers verify visually against deploy previews. PR descriptions should cover Summary / Why / Behavior / Files only — skip the test checklist entirely.
+- **No `## Test plan` section in PR bodies.** This repo has no automated test suite; the maintainer verifies changes visually against the deploy preview, so a prescriptive checklist is noise. Cover Summary / Why / Behavior / Files and stop there.
 
 ## Architecture
 
@@ -44,6 +40,7 @@ Pages under `src/pages/` using Astro file-based routing:
 - `/` — Main landing page (hero, countdown timer, newsletter form, footer)
 - `/speakers` — Speaker lineup (`Speakers` island reads `/api/lineup`; `SpeakerDetail` is an in-island detail view, not a route)
 - `/sessions` — Session schedule (`Sessions` island reads `/api/lineup`; `SessionDetail` is an in-island detail view)
+- `/agenda` — Timetable of the conference day (`Agenda` island reads `/api/lineup` via `fetchAgenda`; room grid on wide screens, time-ordered list on a phone or a single-room day). Helpers in `src/lib/agenda.ts`
 - `/invoice` — Company invoice request (`InvoiceForm` island → `submitInvoiceCallable`)
 - `/partners` — Sponsors/partners (`src/lib/partners.ts`)
 - `/press` and `/press/downloads` — Press kit (`src/lib/press-kit.ts`)
@@ -61,6 +58,7 @@ Static Astro components (`.astro`) for layout and non-interactive UI. React comp
 - `Countdown.tsx` — Live countdown to October 30, 2026, 9:00 AM CET; updates every second
 - `NewsletterForm.tsx` — SmartEmailing integration for email capture with GDPR consent checkbox
 - `Speakers.tsx` / `SpeakersTeaser.tsx` / `Sessions.tsx` — Lineup islands; `fetch('/api/lineup')` (never the Firebase SDK), parse via `src/lib/lineup.ts`. `SpeakerDetail.tsx` / `SessionDetail.tsx` render the in-island detail views.
+- `Agenda.tsx` — `/agenda` timetable island; the same `/api/lineup` read through `fetchAgenda`, which KEEPS the service + plenum sessions (breaks, lunch, registration, keynote) that `/sessions` hides. Time math is framework-free in `src/lib/agenda.ts` — Sessionize emits event-LOCAL ISO strings with no offset, so the wall clock is read off the string and never through a `Date`. Rows open the shared `SessionDetail` sheet.
 - `Tickets.tsx` — Ticket roadmap; `fetch('/api/tickets')`, helpers in `src/lib/tito.ts`
 - `InvoiceForm.tsx` — `/invoice` form; calls the `submitInvoiceCallable` callable via the Functions SDK (App Check attached)
 - `Footer.astro` — Social links (X, Facebook, Bluesky, LinkedIn, YouTube)
@@ -155,7 +153,7 @@ Functions exposed (region `europe-west1`):
 | `weeklyTicketStatusScheduled` | `onSchedule('every monday 09:00', Europe/Prague)` | Fetch live releases from ti.to and post sales summary to Slack |
 | `thursdayTicketStatusScheduled` | `onSchedule('every thursday 18:00', Europe/Prague)` | Same handler as `weeklyTicketStatusScheduled` — second weekly status report |
 
-Browser side: `src/components/Tickets.tsx` (and `InvoiceForm.tsx`'s price estimate) read the roadmap by `fetch()`ing the cached **`/api/tickets`** endpoint (`ticketsApi`), NOT the RTDB SDK — see "Browser data access" above. `src/lib/tito.ts` holds browser-safe helpers (types, `fetchTickets`, `filterDisplayable`, `checkoutUrl`, `formatPrice`). RTDB rules in `database.rules.json` (not wired into `firebase.json` — paste manually in console).
+Browser side: `src/components/Tickets.tsx` (and `InvoiceForm.tsx`'s price estimate) read the roadmap by `fetch()`ing the cached **`/api/tickets`** endpoint (`ticketsApi`), NOT the RTDB SDK — see "Browser data access" above. `src/lib/tito.ts` holds browser-safe helpers (types, `fetchTickets`, `filterDisplayable`, `eventUrl`, `formatPrice`). RTDB rules in `database.rules.json` (not wired into `firebase.json` — paste manually in console).
 
 `/tickets` is read only by `ticketsApi` (Admin SDK, bypasses rules), so `tickets.\".read\"` no longer needs to be public for the website — the browser hits `/api/tickets`, not RTDB. Writes remain blocked for everyone; Cloud Functions write via Admin SDK. The root `.read`/`.write` default stays `false`. **Reminder:** `database.rules.json` is not wired into `firebase.json` — paste rule changes into the Firebase console manually.
 
@@ -166,7 +164,7 @@ Conventions / gotchas:
 - `ticketsWebhook` reads `req.rawBody` (Buffer) for HMAC, not `req.body`.
 - ti.to Admin API v3.0 (stable; v3.1 is beta and we don't opt in) returns releases as a flag set (`sold_out`, `off_sale`, `expired`, `upcoming`, `archived`, `locked`, `secret`) plus `state_name`. There is **no** `sale_status` or `accessibility` field on the wire. `functions/src/tickets/tito-api.ts::deriveSaleStatus` synthesises a single `sale_status` string from those flags (`on_sale` / `sold_out` / `paused` / `not_yet_on_sale` / `ended` / `archived`) so the rest of the codebase has one stable thing to switch on. Sale window dates are `start_at` / `end_at` (not `sales_start` / `sales_end`).
 - Visibility is enforced **at write time** in `refresh-cache.ts` via `isWebsiteVisible()` (`functions/src/tickets/tito-api.ts`). Only `secret` releases are dropped — every other state (on-sale, sold-out, paused via `off_sale`/`locked`, upcoming, expired, archived) is persisted so the UI can render the full pricing-wave roadmap. `Tickets.tsx` maps each `sale_status` to a badge (On sale / Sold out / Paused / Coming soon / Ended / Unavailable) and disables the Buy CTA when no variant in a group is purchasable. A `paused` release with zero tickets sold renders "Coming soon" instead of "Paused" (`releaseStatus()` in `src/lib/tito.ts`) — future waves are kept `off_sale` in ti.to with no scheduled `start_at`, so they never get the `upcoming` flag; visitors should read them as not-yet-started, not interrupted. The browser's `filterDisplayable` (`src/lib/tito.ts`) mirrors the same `secret`-only drop as defence-in-depth.
-- Surviving releases render either an "On sale" badge + Buy CTA (`releaseStatus()` returns `purchasable: true`) or a dimmed "Sold out" badge + disabled CTA. Buy URL pattern: `https://ti.to/<account>/<event>/with/<release-slug>`.
+- Surviving releases render either an "On sale" badge + Buy CTA (`releaseStatus()` returns `purchasable: true`) or a dimmed "Sold out" badge + disabled CTA. The Buy CTA points at the ti.to event itself (`eventUrl()` — `https://ti.to/<account>/<event>`), not a per-release deep link, so a visitor lands on the full box office.
 - Default Cloud Functions service account has the IAM to write RTDB; no explicit creds needed at runtime.
 - The Firebase project (`devfest-cz-app`) is **shared with the mobile app repo**, which deploys its own functions to the same project. To keep deploys isolated, this repo declares `"codebase": "website"` in `firebase.json`. The app repo must use a **different** codebase name (e.g. `app`) and **different function names**, otherwise deploys overwrite each other. `firebase deploy --only functions` only touches codebases declared in the local `firebase.json`.
 
@@ -405,7 +403,7 @@ other, and the two-column split was 0.95/1.05 against 1.15/0.85.
 | `.field` / `.field-row` | the open-field list and row, above |
 | `.head-split` / `.head-title` / `.head-note` | the two-column section head — statement left, one line right. Used by the ticket section, the speakers teaser, the gallery and the `/contact` desks. `--ruled` closes it with a hairline. Compose the title with `.display` |
 | `.head-stack` | the ONE-column section head, closed by a hairline. `/agenda`, `/sessions` and `/speakers` each kept their own `-header` / `-eyebrow` / `-heading` trio with identical bodies while `.eyebrow` / `.display` / `.head-title` sat unused beside them |
-| `.page-stack` | every page's `<main>`. Ten pages each declared the same two-line flex column under their own name |
+| `.page-stack` | every page's `<main>`. Each page used to declare the same two-line flex column under its own name |
 | `.band--lit` / `.band--lit-red` | the subpage ground: the spotlight pool over page black, closed by a hairline at the top. `--lit-red` adds the faint red bleed from the top-right and belongs to the pages about PEOPLE and the programme (`/speakers`, `/sessions`, `/agenda`, `/team`); the administrative pages take the plain pool |
 | `.print` | the mounted photograph well at 4:5 — bone keyline, shadow, `--panel-lit` ground. The speaker sheet's plate and the `/team` mugshot were the same eight declarations written twice |
 | `Sheet.module.scss` | the detail-view chrome: ground, entry, sticky bar, close, content measure, kicker, title, block label. `SessionDetail` and `SpeakerDetail` import it alongside their own module and keep only what a session / a speaker actually has |
@@ -440,7 +438,7 @@ press/downloads open on type alone, so the scroll has two kinds of opening.
 
 **The running band (`Ticker`) runs under EVERY hero.** One shared line of the
 conference's topics (`EVENT_TOPICS`, `src/lib/ticker.ts`) sits between the hero
-and the body on the homepage and on all nine subpages; `/partners` is the one
+and the body on the homepage and on every subpage; `/partners` is the one
 exception and keeps its own partnering-specific list. This reverses an earlier
 call that scoped the band to `/` + `/partners` on the grounds that a repeated
 strip under five heroes reads as a template — the strip is now what carries the
@@ -454,7 +452,7 @@ reintroduce a tonal step between a subpage hero and its body — the running ban
 marks that boundary.
 
 The header (`Menu.astro`) is a three-slot bar — mark, event stamp, actions —
-with all nine destinations behind one toggle at **every** width, opening a
+with every destination behind one toggle at **every** width, opening a
 full-screen panel. There is no horizontal nav breakpoint any more.
 
 **The bar is transparent at the top of the page and solid once scrolled.** Two
