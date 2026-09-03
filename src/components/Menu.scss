@@ -241,7 +241,9 @@
 		min-height: var(--header-tap);
 		min-width: var(--header-tap);
 		background: transparent;
-		border: 1px solid var(--rule-strong);
+		// The site's ONLY navigation control at every width — there is no
+		// horizontal nav breakpoint — so its boundary has to clear 1.4.11.
+		border: 1px solid var(--field-border);
 		border-radius: var(--radius);
 		color: var(--color-text);
 		font-family: var(--font-jetbrains-mono), monospace;

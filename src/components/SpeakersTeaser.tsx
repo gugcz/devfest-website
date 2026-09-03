@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { initials, type Speaker } from '../lib/speakers';
+import { type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
+import SpeakerPhoto from './SpeakerPhoto';
 import s from './SpeakersTeaser.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
@@ -34,9 +35,6 @@ function usePrefersReducedMotion(): boolean {
 }
 
 function Thumb({ speaker }: { speaker: Speaker }) {
-	const [imageFailed, setImageFailed] = useState(false);
-	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
-
 	return (
 		<a
 			className={`${s.tile} develop`}
@@ -44,22 +42,13 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 			aria-label={`${speaker.fullName} — see the full lineup`}
 		>
 			<span className={s.thumb}>
-				{showPhoto ? (
-					<img
-						className={s.photo}
-						src={speaker.profilePicture}
-						alt=""
-						loading="lazy"
-						decoding="async"
-						width={220}
-						height={275}
-						onError={() => setImageFailed(true)}
-					/>
-				) : (
-					<span className={s.monogram} aria-hidden="true">
-						{initials(speaker.fullName) || '?'}
-					</span>
-				)}
+				<SpeakerPhoto
+					speaker={speaker}
+					photoClass={s.photo}
+					monogramClass={s.monogram}
+					width={220}
+					height={275}
+				/>
 				<span className={s.scrim} aria-hidden="true" />
 				<span className={s.vignette} aria-hidden="true" />
 			</span>
