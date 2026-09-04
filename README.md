@@ -10,10 +10,12 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 
 - **Framework:** [Astro](https://astro.build/) 7
 - **Language:** TypeScript (strict mode)
-- **Styling:** Sass — the design system is documented in [docs/design-system.md](docs/design-system.md)
+- **Styling:** Sass — the design system is documented in [DESIGN.md](DESIGN.md)
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** >= 22.12.0
+
+The visual system (type, color, layout, motion) is documented in [DESIGN.md](DESIGN.md) and is binding — check it before styling anything.
 
 ## Getting Started
 

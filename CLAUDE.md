@@ -36,40 +36,6 @@ When a real value is genuinely needed to reproduce something, keep it in the
 issue tracker or the incident thread — not in the repository — and write the
 code and its history so they read correctly without it.
 
-## Real customer data never enters this repository
-
-**This repository is public.** Anything committed here is world-readable the
-moment it is pushed, and a rewritten branch does not take it back: an orphaned
-commit stays reachable by SHA until GitHub garbage-collects it, so the only
-reliable control is not writing the data in the first place.
-
-Never put real customer, partner or attendee data anywhere in this repo — that
-includes places that are easy to forget because they are not application code:
-
-| surface | rule |
-| --- | --- |
-| test fixtures and mocks | invented data only, never a payload copied from a real request, log line or support ticket |
-| doc comments and examples (`CLAUDE.md`, `README.md`, code comments) | never illustrate a format with a real value — not even a masked or partially redacted one |
-| commit messages and branch names | describe the behaviour, never the customer who hit it |
-| PR titles and bodies | same — "a company", not the company |
-| internal identifiers | issue trackers, ticket ids, invoice numbers, Firestore/RTDB document ids, iDoklad contact ids and external order ids all stay out of the code and its history |
-
-Data covered: company and person names, email addresses, phone numbers, postal
-addresses, VAT / IČO / DIČ numbers, invoice and order numbers, discount codes,
-and any id that maps back to one of those in a system we or the customer runs.
-Masking is not an exemption: a masked address still carries its domain, and a
-redacted string sitting next to a bug description still tells a reader which
-customer the bug happened to.
-
-Use invented stand-ins instead, and keep them obviously fake so nobody has to
-guess later: `Acme Example s.r.o.`, IČO `12345678`, `billing@example.com`,
-`ops@example.com`, ids like `4242` / `1001`. Prefer the reserved
-`example.com` / `example.org` domains over a real one you made up.
-
-When a real value is genuinely needed to reproduce something, keep it in the
-issue tracker or the incident thread — not in the repository — and write the
-code and its history so they read correctly without it.
-
 # DevFest Website
 
 Conference landing page for DevFest.cz 2026, built with Astro 7 and deployed to Firebase Hosting.
@@ -97,7 +63,6 @@ Pages under `src/pages/` using Astro file-based routing:
 - `/` — Main landing page (hero, countdown timer, newsletter form, footer)
 - `/speakers` — Speaker lineup (`Speakers` island reads `/api/lineup`; `SpeakerDetail` is an in-island detail view, not a route)
 - `/sessions` — Session schedule (`Sessions` island reads `/api/lineup`; `SessionDetail` is an in-island detail view)
-- `/agenda` — Timetable of the conference day (`Agenda` island reads `/api/lineup` via `fetchAgenda`; room grid on wide screens, time-ordered list on a phone or a single-room day). Helpers in `src/lib/agenda.ts`
 - `/invoice` — Company invoice request (`InvoiceForm` island → `submitInvoiceCallable`)
 - `/partners` — Sponsors/partners (`src/lib/partners.ts`)
 - `/press` and `/press/downloads` — Press kit (`src/lib/press-kit.ts`)
@@ -115,7 +80,6 @@ Static Astro components (`.astro`) for layout and non-interactive UI. React comp
 - `Countdown.tsx` — Live countdown to October 30, 2026, 9:00 AM CET; updates every second
 - `NewsletterForm.tsx` — SmartEmailing integration for email capture with GDPR consent checkbox
 - `Speakers.tsx` / `SpeakersTeaser.tsx` / `Sessions.tsx` — Lineup islands; `fetch('/api/lineup')` (never the Firebase SDK), parse via `src/lib/lineup.ts`. `SpeakerDetail.tsx` / `SessionDetail.tsx` render the in-island detail views.
-- `Agenda.tsx` — `/agenda` timetable island; the same `/api/lineup` read through `fetchAgenda`, which KEEPS the service + plenum sessions (breaks, lunch, registration, keynote) that `/sessions` hides. Time math is framework-free in `src/lib/agenda.ts` — Sessionize emits event-LOCAL ISO strings with no offset, so the wall clock is read off the string and never through a `Date`. Rows open the shared `SessionDetail` sheet.
 - `Tickets.tsx` — Ticket roadmap; `fetch('/api/tickets')`, helpers in `src/lib/tito.ts`
 - `InvoiceForm.tsx` — `/invoice` form; calls the `submitInvoiceCallable` callable via the Functions SDK (App Check attached)
 - `Footer.astro` — Social links (X, Facebook, Bluesky, LinkedIn, YouTube)
@@ -154,7 +118,7 @@ App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCH
 
 ### Browser data access (cached `/api/*` functions)
 
-**Every browser read of DB-backed data goes through a cached HTTP Cloud Function, never the Firebase client SDK.** A client Firestore/RTDB read blocks on an App Check (reCAPTCHA) token before the first read, which cost ~30s on mobile. A plain `fetch()` to an `/api/*` endpoint has no such wait, and stays compatible with enforcing App Check on Firestore/RTDB later (the functions read via the Admin SDK, which bypasses App Check + rules).
+**Every browser read of DB-backed data goes through a cached HTTP Cloud Function, never the Firebase client SDK.** This was a fix for a ~30s mobile load: the old client Firestore/RTDB reads blocked on an App Check (reCAPTCHA) token before the first read. A plain `fetch()` to an `/api/*` endpoint has no such wait, and stays compatible with enforcing App Check on Firestore/RTDB later (the functions read via the Admin SDK, which bypasses App Check + rules).
 
 | Endpoint (Hosting rewrite) | Function | Reads | Browser caller |
 | -------------------------- | -------- | ----- | -------------- |
@@ -162,7 +126,7 @@ App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCH
 | `/api/tickets` | `ticketsApi` (`functions/src/tickets/tickets-api.ts`) | RTDB `/tickets` | `src/lib/tito.ts::fetchTickets` → `Tickets`/`InvoiceForm` |
 
 - Both are 2nd-gen `onRequest` (`invoker: 'public'`, region `europe-west1`, in the `website` functions codebase — deployed by `firebase-functions-merge.yml`). Two-layer caching: a `Cache-Control` `s-maxage` so Firebase Hosting's CDN answers most requests from the edge, plus a short in-instance memo so a warm instance coalesces revalidation reads. Lineup TTL is 1h (daily data); tickets 5min (sold-out surfaces faster). A failed read → `no-store` + 503; the browser shows its "unavailable" state.
-- **Both scale to zero** (256MiB, 30s, no `minInstances`): the edge TTLs serve almost every visitor, so a cold start only lands on the rare revalidating request, and `minInstances: 1` would bill two always-on containers around the clock. If that latency ever matters, `ticketsApi` (5min TTL, revalidating far more often) is the one worth keeping warm.
+- **Both scale to zero** (256MiB, 30s, no `minInstances`). They used to run `minInstances: 1` so a CDN revalidation never paid a cold start, but that billed two always-on containers around the clock for a conference site — the edge TTLs already serve almost every visitor, so a cold start only lands on the rare revalidating request. If latency there ever matters again, `ticketsApi` (5min TTL, revalidates far more often) is the one worth keeping warm.
 - **Deploy split (no `pinTag`):** the `/api/*` rewrites carry **no** `pinTag`, so hosting deploys (live + PR preview) are pure hosting and never build/deploy the functions — that keeps preview channels from pushing PR function code toward production, and avoids running the functions predeploy `tsc` in the hosting-deploy container (which has no `functions/` devDeps). `lineupApi`/`ticketsApi` deploy **only** via `firebase-functions-merge.yml`; the rewrites route to whatever version is live. A first deploy can briefly 404 `/api/*` until the functions land (graceful — the island shows its unavailable state, a reload recovers), and a PR preview hits the **production** functions (so verify function CHANGES locally, not on the preview).
 - The endpoints return raw docs (`{ id, ...fields }` / the RTDB cache verbatim); the browser reuses the existing `speakerFromDoc` / `sessionFromDoc` / `filterDisplayable` parsers so shape logic isn't duplicated in `functions/`.
 - **Local + a11y both serve these routes from fixtures.** A dev server has no Hosting rewrite table, so `/api/*` would 404 and every data-backed island would render its "unavailable" state. `scripts/a11y-mocks/api.mjs` holds the payloads (built from `fixtures.mjs`) and is imported by **both** `scripts/a11y.mjs` (the axe sweep) and `astro.config.mjs` (a `apply: 'serve'` Vite plugin that answers `/api/*` on `npm run dev`) — one module, so CI and a laptop can't disagree about what the endpoints return. Set `DEVFEST_LIVE_API=1 npm run dev` to skip the fixtures and hit the deployed functions instead; that is what you want when changing the functions themselves. The only Firebase module still mocked under `A11Y_MOCK` is `firebase/app-check` (App Check inits on load via analytics).
@@ -171,7 +135,7 @@ App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCH
 
 Every domain builds on the same shared layer. The rule of thumb behind most of it: **the failure text is a product surface** — it lands in a Slack alert (`🎤 SESSIONIZE`, `🎟️ TICKETS`, `🧾 INVOICES`), in an invoice doc's `errorMessage`, and in Cloud Logging, and it is usually all a responder has.
 
-- **`options.ts`** — `setGlobalOptions` (the `maxInstances` cost ceiling for the shared billing project) plus one option preset per function kind: `SCHEDULED`, `CACHED_ENDPOINT`, `WEBHOOK`, `CALLABLE`, `TRIGGER`. Spread a preset and override only what is genuinely specific (`{ ...SCHEDULED, schedule, secrets }`); never restate `region`/`timeZone`. No preset sets `minInstances` — every function scales to zero so nothing is billed while idle.
+- **`options.ts`** — `setGlobalOptions` (the `maxInstances` cost ceiling for the shared billing project) plus one option preset per function kind: `SCHEDULED`, `CACHED_ENDPOINT`, `WEBHOOK`, `CALLABLE`, `TRIGGER`. Spread a preset and override only what is genuinely specific (`{ ...SCHEDULED, schedule, secrets }`); never restate `region`/`timeZone`, which were previously copy-pasted into nine files. No preset sets `minInstances` — every function scales to zero so nothing is billed while idle.
 - **`lib/run.ts`** — `runBackground({ name, domain, failureNote }, handler)` wraps **every** scheduled job (and any trigger that should alert). It logs start/finish with a duration, logs the failure with the unwrapped cause, alerts Slack, and rethrows so the platform still counts the failure and the scheduler's own `retryCount` retry still happens. `failureNote` states the blast radius ("live speakers/sessions left untouched") — an alert that doesn't say whether anyone must act tonight is half an alert.
   - **Alerts fire on state change, not per failure.** The first failure after a healthy run alerts, further consecutive failures only log, and the run that recovers posts a "recovered" line — so an hours-long upstream outage is two messages, not twenty-four, and a hourly job can't train the channel to ignore it. Streak state lives in RTDB `ops/health/{functionName}` (Admin SDK only; the root deny in `database.rules.json` already covers it). Every health read/write is best-effort and degrades to "assume healthy", which over-alerts rather than going silent.
 - **`lib/slack.ts`** — `postToSlack` is the raw webhook call (throws; used where the caller handles delivery itself, e.g. the ti.to purchase webhook and the status reports). `notify(domain, webhookUrl, text)` is the best-effort one everything else uses: it prefixes by domain from the one prefix table, never throws, and logs a failed delivery so a lost alert can't look like a delivered one. A function that alerts must list `SLACK_WEBHOOK_URL` in its `secrets`.
@@ -210,9 +174,9 @@ Functions exposed (region `europe-west1`):
 | `weeklyTicketStatusScheduled` | `onSchedule('every monday 09:00', Europe/Prague)` | Fetch live releases from ti.to and post sales summary to Slack |
 | `thursdayTicketStatusScheduled` | `onSchedule('every thursday 18:00', Europe/Prague)` | Same handler as `weeklyTicketStatusScheduled` — second weekly status report |
 
-Browser side: `src/components/Tickets.tsx` (and `InvoiceForm.tsx`'s price estimate) read the roadmap by `fetch()`ing the cached **`/api/tickets`** endpoint (`ticketsApi`), NOT the RTDB SDK — see "Browser data access" above. `src/lib/tito.ts` holds browser-safe helpers (types, `fetchTickets`, `filterDisplayable`, `eventUrl`, `formatPrice`). RTDB rules in `database.rules.json` (not wired into `firebase.json` — paste manually in console).
+Browser side: `src/components/Tickets.tsx` (and `InvoiceForm.tsx`'s price estimate) read the roadmap by `fetch()`ing the cached **`/api/tickets`** endpoint (`ticketsApi`), NOT the RTDB SDK — see "Browser data access" above. `src/lib/tito.ts` holds browser-safe helpers (types, `fetchTickets`, `filterDisplayable`, `checkoutUrl`, `formatPrice`). RTDB rules in `database.rules.json` (not wired into `firebase.json` — paste manually in console).
 
-`/tickets` is read only by `ticketsApi` (Admin SDK, bypasses rules), so `tickets.\".read\"` does not need to be public for the website — the browser hits `/api/tickets`, not RTDB. Writes remain blocked for everyone; Cloud Functions write via Admin SDK. The root `.read`/`.write` default stays `false`. **Reminder:** `database.rules.json` is not wired into `firebase.json` — paste rule changes into the Firebase console manually.
+`/tickets` is read only by `ticketsApi` (Admin SDK, bypasses rules), so `tickets.\".read\"` no longer needs to be public for the website — the browser hits `/api/tickets`, not RTDB. Writes remain blocked for everyone; Cloud Functions write via Admin SDK. The root `.read`/`.write` default stays `false`. **Reminder:** `database.rules.json` is not wired into `firebase.json` — paste rule changes into the Firebase console manually.
 
 Conventions / gotchas:
 - New function in existing domain: add file → re-export in `tickets/index.ts`. New domain: new folder same shape + `export * from './<domain>/index.js'` in `src/index.ts`.
@@ -221,7 +185,7 @@ Conventions / gotchas:
 - `ticketsWebhook` reads `req.rawBody` (Buffer) for HMAC, not `req.body`.
 - ti.to Admin API v3.0 (stable; v3.1 is beta and we don't opt in) returns releases as a flag set (`sold_out`, `off_sale`, `expired`, `upcoming`, `archived`, `locked`, `secret`) plus `state_name`. There is **no** `sale_status` or `accessibility` field on the wire. `functions/src/tickets/tito-api.ts::deriveSaleStatus` synthesises a single `sale_status` string from those flags (`on_sale` / `sold_out` / `paused` / `not_yet_on_sale` / `ended` / `archived`) so the rest of the codebase has one stable thing to switch on. Sale window dates are `start_at` / `end_at` (not `sales_start` / `sales_end`).
 - Visibility is enforced **at write time** in `refresh-cache.ts` via `isWebsiteVisible()` (`functions/src/tickets/tito-api.ts`). Only `secret` releases are dropped — every other state (on-sale, sold-out, paused via `off_sale`/`locked`, upcoming, expired, archived) is persisted so the UI can render the full pricing-wave roadmap. `Tickets.tsx` maps each `sale_status` to a badge (On sale / Sold out / Paused / Coming soon / Ended / Unavailable) and disables the Buy CTA when no variant in a group is purchasable. A `paused` release with zero tickets sold renders "Coming soon" instead of "Paused" (`releaseStatus()` in `src/lib/tito.ts`) — future waves are kept `off_sale` in ti.to with no scheduled `start_at`, so they never get the `upcoming` flag; visitors should read them as not-yet-started, not interrupted. The browser's `filterDisplayable` (`src/lib/tito.ts`) mirrors the same `secret`-only drop as defence-in-depth.
-- Surviving releases render either an "On sale" badge + Buy CTA (`releaseStatus()` returns `purchasable: true`) or a dimmed "Sold out" badge + disabled CTA. The Buy CTA points at the ti.to event itself (`eventUrl()` — `https://ti.to/<account>/<event>`), not a per-release deep link, so a visitor lands on the full box office.
+- Surviving releases render either an "On sale" badge + Buy CTA (`releaseStatus()` returns `purchasable: true`) or a dimmed "Sold out" badge + disabled CTA. Buy URL pattern: `https://ti.to/<account>/<event>/with/<release-slug>`.
 - Default Cloud Functions service account has the IAM to write RTDB; no explicit creds needed at runtime.
 - The Firebase project (`devfest-cz-app`) is **shared with the mobile app repo**, which deploys its own functions to the same project. To keep deploys isolated, this repo declares `"codebase": "website"` in `firebase.json`. The app repo must use a **different** codebase name (e.g. `app`) and **different function names**, otherwise deploys overwrite each other. `firebase deploy --only functions` only touches codebases declared in the local `firebase.json`.
 
@@ -293,87 +257,17 @@ Conventions / gotchas:
 - **`invoiceEmailSent: true` requires iDoklad's own `IsSuccess: true`.** `sendInvoiceByEmail` returns `{ confirmed, message, recipients }`; an envelope with no verdict counts as unconfirmed, so Slack asks for a manual send rather than claiming a delivery nobody can prove. It also logs the verdict on every call (`isSuccess`, `idokladMessage`, masked recipients) — nothing about this call used to be logged, which is why "did the mail go out at all?" was unanswerable from Cloud Logging. Addresses go through `maskEmail` (`billing@example.com` → `b*****g@example.com`): diagnostic, not a plain-text copy of customer contact details. Use `idokladMessage`, not `message` — `message` is the firebase logger's own field and silently overwrites it.
 - **Invoice email** via `POST /Mails/IssuedInvoice/Send` (`SendToPartner: true`, `SendAttachment: true`) — PDF attached, company pays by bank transfer using the variable symbol. Failure is tolerated and Slack-relayed. Subject + covering text come from `buildInvoiceEmail` (`email.ts`) and stay **plain text**: iDoklad drops `EmailBody` into its own mail template, so HTML we send isn't guaranteed to survive.
 - **ti.to discount code** uses Admin API v3 `POST /discount_codes` with the body wrapped under `discount_code` (`type: 'PercentOffDiscountCode'`, `value: '100.0'`, `release_ids`). Scope = every release whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`).
-- **Firestore is server-only.** `firestore.rules` denies all client access; the Admin SDK bypasses it. Like `database.rules.json`, it is **not** wired into `firebase.json` (shared project — auto-deploy would clobber the app's ruleset). `lib/admin.ts` exposes `firestore()` alongside `db()`. The project must have a Firestore database provisioned.
+- **Firestore is server-only.** `firestore.rules` denies all client access; the Admin SDK bypasses it. Like `database.rules.json`, it is **not** wired into `firebase.json` (shared project — auto-deploy would clobber the app's ruleset). `lib/admin.ts` exposes `firestore()` alongside `db()`. The project must have a Firestore database provisioned (it previously used only RTDB).
 - **App Check on `submitInvoiceCallable`.** It's a **callable** (`onCall`) with `enforceAppCheck: true` — the client Functions SDK auto-attaches the App Check token (reCAPTCHA Enterprise) and the framework rejects missing/invalid before the handler, blocking bots/curl from minting invoices/emails. The callable protocol handles CORS (no manual headers/preflight). `src/lib/firebase.ts` exposes `getFirebaseApp()` so the form can `getFunctions(app)` on the App-Check-initialised app. Do **not** enforce App Check on `ticketsWebhook` (external HMAC caller) or the schedulers.
 - Discount-code email via Resend (`POST https://api.resend.com/emails`, `from` must be a verified-domain sender) is **optional** (`RESEND_API_KEY` is a string param defaulting to empty); when unset the code is still posted to Slack + stored on the doc. `reply_to` is the organisers' address — the `from` is a no-reply sender.
 - **Both mails' copy lives in `email.ts`** (`buildInvoiceEmail`, `buildDiscountEmail`) so the two messages a company receives read as one voice; the branded HTML shell is `email-template.ts`. That file is email HTML, not web HTML — nested `<table role="presentation">`, inline styles, hex colours (Outlook drops `rgba()`), pixel widths, a VML `roundrect` behind the CTA, and no webfonts (most clients ignore `@font-face`, and a half-applied brand face is worse than a consistent system stack). Every interpolation goes through `escapeHtml`/`escapeAttr`. The dark palette mirrors `BaseLayout.scss` and declares `color-scheme: dark` so auto-inverting clients leave it alone. The plain-text alternative is a real fallback (same code, link and steps), not a stripped copy — it also helps spam scoring.
 
 ### Styling
 
-The design system — type roles, the `BaseLayout.scss` primitives, and the rules
-a change must not break — lives in [docs/design-system.md](docs/design-system.md).
-Global CSS variables are in `BaseLayout.scss`; React components use co-located
-`.module.scss` files.
-
-**The partner wall is one grid module.** `/partners` used to size the cell per
-tier, and `--tier-col` was a FLOOR rather than a width, so cells grew to close
-their row: one page rendered a 611px platinum cell, three full-width diamond
-cells, a 520px silver one and 264px media plates — four cell modules on one
-wall, and a cell's size said more about how many partners share its tier than
-about the tier. `.logo-grid` is `repeat(auto-fill, minmax(min(100%, --cell-min),
-1fr))` at one size for every partner; the tier is carried by its heading and by
-the order of the sections, which is what a ladder is for. A tier that does not
-fill its last row leaves the rest of the row empty — the rules belong to the
-CELLS, so nothing hangs a hairline over dead space.
-
-Equal cells do not make equal-looking logos, so `opticalBox()` in
-`partners.astro` gives each mark a box of equal ink **area** shaped to its own
-aspect ratio (a 5:1 wordmark ≈190×38, a square glyph ≈76×76) and passes it as
-`--logo-w` / `--logo-h`; the raster `sizes` follows that box. Capping width
-renders a glyph as a block beside a wordmark; capping height renders the
-wordmark as a hairline of type. `plated` stays a per-partner flag (the file
-ships with its own background baked in) and gets a larger box — it is **not** a
-tier-level inversion, which would move the legibility risk onto the tier that
-pays. The media/community rows keep the cream ground: those marks ship dark.
-
-**Forms say which field is wrong, in the field.** `InvoiceForm.tsx` is the
-pattern: one `validate()` holding every rule, errors shown on blur or on the
-first submit attempt and cleared as they are fixed, `aria-invalid` on the
-control, `aria-describedby` pointing at a mono `--color-accent-hot` message
-under it (colour is never the only channel), and a failed submit focusing the
-first field that needs fixing. **A submit button is never `disabled` for a
-missing input** — that takes it out of the tab order and explains nothing;
-it stays reachable and answers on activation. `aria-disabled` covers only the
-in-flight state, so the button's states key off `[aria-disabled='true']`, not
-`:disabled`.
-
-**A component declared in a render body remounts its subtree every render.**
-`TextField` lives at module scope in `InvoiceForm.tsx` for that reason — inside
-the component, every keystroke unmounted the input and the caret left the field.
-
-**`/thank-you`, `/newsletter-subscription-thank-you` and `/404` are on the
-system.** They were 73 lines of one centred template with the words swapped,
-and one of them is where someone lands after paying. All three run
-`SubpageHero photo={false}` → `Ticker` → a `.band--lit` field of `NextStep`
-rows → `Closer`, and their titles take the site's em-dash separator like every
-other page. `/thank-you` carries the four things that belong on it and nowhere
-else (calendar, venue, what happens next, share) and ships an `@media print`
-block: it is the page someone prints as proof of purchase, and the site's cream
-ink on `#050505` prints as invisible text. Event facts for the calendar links
-live in `src/lib/event.ts`, alongside the `.ics` in `public/` — keep them in
-step with the Event JSON-LD in `BaseLayout.astro`.
-
-**A `<details>` list opens with its first item open.** `/faq` had every question
-collapsed on arrival, so the page a speaker and a journalist both land on showed
-no answer at all. One open item, not more — four open answers is the page's
-whole content unfolded. A section must also not reuse the hero's
-`aria-labelledby`: two regions with one accessible name is `landmark-unique`,
-which was the site's only axe violation.
-
-**The skip link's target carries `tabindex="-1"`.** `#main-content` is a `div`,
-and without it `Enter` on the skip link moves the document fragment but leaves
-focus in the header — the next `Tab` lands back in the nav and the only
-keyboard-only affordance on the site does nothing. The ring is suppressed on
-that element alone (a 100vw outline reads as a rendering fault, and it is a page
-region, not a control); every control inside keeps its own.
-
-**The cookie banner is second in the DOM, right after the skip link,** and its
-`Escape` handler is on `document`. Both are the same defect: the banner used to
-sit after the footer with a handler bound to itself, so the key only worked once
-focus was already inside it — about 40 tab stops away. Its two choices are
-peer-weighted: `Accept` keeps the accent fill (it is how the bar is findable),
-every other dimension — type, tracking, padding, height, minimum footprint — is
-shared, so the shorter word is not the smaller target.
+The design system — values, tokens, binding [MUST]/[CURRENT] rules, and the
+rationale behind them — lives in [DESIGN.md](DESIGN.md); treat it as the
+source of truth. Global CSS variables are in `BaseLayout.scss`; React
+components use co-located `.module.scss` files.
 
 ### SEO & Metadata
 
