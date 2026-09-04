@@ -436,7 +436,15 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 - **[MUST] Astro (`.astro`) for layout and non-interactive UI; React (`.tsx`)
   islands only where behaviour is needed** — `Countdown`, `NewsletterForm`,
   `Speakers`, `SpeakersTeaser`, `Sessions`, `Agenda`, `Tickets`, `InvoiceForm`.
-  Islands mount `client:load`.
+- **[CURRENT] Mount strategy is `client:load` by default**
+  (`Countdown`, `SpeakersTeaser`, `Speakers`, `Sessions`, `Agenda`,
+  `InvoiceForm`). `Tickets` and `NewsletterForm` use `client:visible`
+  (`index.astro:170`, `278`) — both sit below the fold. **[MUST] An island
+  whose first render is empty until data resolves takes `client:load`, not
+  `client:visible`** — a zero-height placeholder never crosses the
+  intersection threshold, so the observer never fires. `SpeakersTeaser`
+  is `client:load` for exactly this reason (`index.astro:172–176`), even
+  though it also sits below the fold.
 - **[MUST] Styling location:** React islands import a co-located CSS Module
   (`import s from './X.module.scss'`); Astro components use a sibling `.scss` or
   the global primitives; page styles live in `src/pages/<page>.scss`.
@@ -459,7 +467,7 @@ Primitives, all in `BaseLayout.scss`:
 | `.page-stack` | 456 | every page's `<main>` |
 | `.band` (+ `--accent` 529, `--lit` 537, `--lit-red` 546) / `.band-inner` | 519 | a section's ground. `--accent` **at most once per page**; `--lit` is the subpage ground, `--lit-red` the variant for pages about people and the programme |
 | `.eyebrow` | 345 | plain mono section label — no decoration, no trailing hairline |
-| `.display` (+ `.red`, `.hollow`) | 360 | poster headline |
+| `.display` (+ `.red`) | 360 | poster headline |
 | `.head-split` / `.head-title` / `.head-note` (+ `--ruled` 400) | 392 | two-column section head: statement left, one line right |
 | `.head-stack` | 469 | the one-column section head, closed by a hairline |
 | `.print` | 441 | the mounted photograph well at 4:5 |
@@ -485,6 +493,128 @@ per page; section heads are left-set; no accent bars down the left edge of a
 block; lists carry **no rules** — separation is air and type scale; detail views
 are full-bleed sheets, not dialog boxes; `Closer.astro` ends every page except
 `/privacy-policy`.
+
+## Anatomy of a page
+
+**[MUST] A subpage is this sequence, in this order:** `SubpageHero` → `Ticker`
+→ one or more `.band` sections → `Closer` → `Footer`. Every subpage under
+`src/pages/` (`speakers`, `sessions`, `agenda`, `team`, `faq`, `contact`,
+`invoice`, `press`, `press/downloads`) follows it; `privacy-policy` is the one
+deliberate exception (below). `/` (home) and `/partners` are the two pages
+that don't run `SubpageHero`/`Ticker` and are out of scope here.
+
+```astro
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+import Closer from '../components/Closer.astro';
+import { EVENT_TOPICS } from '../lib/ticker';
+---
+<BaseLayout title="…" description="…">
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={'…'}
+			lede="…"
+			seoHeading="…"
+			titleId="…"
+			focus="68% 42%"
+			<!-- photo={false} instead of focus, for a type-only opener -->
+		/>
+		<Ticker items={EVENT_TOPICS} size="sm" />
+		<section class="band band--lit-red" aria-label="…">
+			<div class="band-inner">
+				<header class="head-stack">
+					<p class="eyebrow">…</p>
+					<h2 class="display head-title">…</h2>
+				</header>
+				<!-- .field / .field-row list, or a component grid -->
+			</div>
+		</section>
+		<Closer tone="accent" titleHtml={'…'} note="…" actions={[…]} titleId="…" />
+	</main>
+</BaseLayout>
+```
+
+Decision criteria — each one picked per page, not by copying the nearest
+existing page:
+
+- **`photo` crop vs `photo={false}`.** `SubpageHero` shows the shared
+  `/hero-detective.webp` plate at a per-page `focus` crop by default
+  (`speakers`, `sessions`, `agenda`, `team`, `press`). `photo={false}` opens
+  on type alone — used where the page's own content starts immediately below
+  the fold and a repeated photo would compete with it: `faq`, `contact`,
+  `invoice`, `press/downloads` (`faq.astro:74`, `contact.astro:21`,
+  `invoice.astro:20`, `downloads.astro:25`). **[MUST]** a new subpage picks
+  its own `focus` crop rather than reusing another page's — see Images &
+  media.
+- **`.band--lit` vs `.band--lit-red`.** `--lit-red` is for pages **about
+  people and the live programme** — `speakers`, `sessions`, `agenda`, `team`
+  (`speakers.astro:25`, `sessions.astro:25`, `agenda.astro:25`,
+  `team.astro:113`). `--lit` (no red bleed) is for **administrative /
+  transactional** pages — `faq`, `contact`, `press`
+  (`faq.astro:81`, `contact.astro:28`, `press.astro:90`). The test for a new
+  page: does it show the humans or the schedule of the conference, or does it
+  process a request? The former gets `--lit-red`.
+- **`.band--accent`.** At most once per page, for the page's next step — a
+  conversion moment, not a content section. The only two call sites are the
+  home page newsletter capture (`index.astro:269`) and the partners CTA
+  (`partners.astro:133`). A `Closer` with `tone="accent"` is the more common
+  way to close on red; reach for a full `.band--accent` section only when the
+  accent band itself contains an interactive form, not just a closing
+  statement.
+- **`.head-split` vs `.head-stack`.** `.head-split` (statement left, one line
+  right, optional `--ruled` hairline) is for a section that pairs a heading
+  with a secondary fact — a count, a link, a note (`contact.astro:35`,
+  `index.astro:237` gallery). `.head-stack` (one column, closed by a
+  hairline) is for a section that is just a heading before a list
+  (`speakers.astro:29`, `sessions.astro:27`, `agenda.astro:27`). If there is
+  nothing to put in the right column, it's `.head-stack`.
+- **`--fs-row` vs `--fs-row-sm`.** **[CURRENT]** no numeric cutoff is stated
+  in code — the existing split is three ticket waves / three contact desks /
+  two press desks at `--fs-row` (72px) against sessions / FAQ / clippings /
+  agenda at `--fs-row-sm` (54px). Treat **more than ~4 rows** as the signal to
+  drop to `--fs-row-sm`; a row count decided ahead of time, not by how it
+  looks once built, is what the existing pages did. See Open points.
+- **`Closer` tone.** Pass `tone="accent"` explicitly — every subpage
+  (`speakers`, `sessions`, `agenda`, `team`, `faq`, `contact`, `invoice`,
+  `press`, `press/downloads`) does, for a red closing band with the page's
+  final CTA. `tone` defaults to `'raised'` and a `tone="plain"` also exists,
+  but see Open points: no page passes either, and `band--raised` has no
+  matching CSS, so both are currently dead paths — don't rely on the
+  default. `privacy-policy` is the only page with **no** `Closer` at all: a
+  legal document doesn't get a CTA.
+
+## Iconography
+
+**[MUST] No icon library.** `package.json` has no `lucide`, `heroicons`,
+`feather` or similar — six inline `<svg>` elements exist in the whole
+codebase and all six are the `Footer.astro` social-platform marks (X,
+Facebook, Bluesky, LinkedIn, YouTube), each `aria-hidden="true"` beside a
+visible text link. Don't add an icon package for a UI glyph.
+
+**[MUST] Any other glyph is text, not an image or icon font** — `Close ✕`
+(`Sheet.module.scss:5`), `→` in link labels. No emoji anywhere in UI copy.
+
+## Voice
+
+**[CURRENT]** No single stated rule; inferred from the copy that exists —
+worth confirming as a decision, not just a pattern:
+
+- Mono labels (eyebrows, buttons, row meta) are short — one to three words
+  — written in sentence case in source and capitalised by CSS
+  `text-transform: uppercase` (`BaseLayout.scss:292`, `349`, `690`, …), never
+  typed in caps. Typing caps in the source would read as shouting to a
+  screen reader, which ignores the CSS transform.
+- Ledes (`--fs-lede`) run one to two sentences, no italic — see CLAUDE.md
+  "One lede shape" for why.
+- Copy is UI-English throughout (`src/pages/**/*.astro`); Czech appears only
+  in `src/pages/press/**` clippings content, which is quoted source material,
+  not site voice. **[MUST]** don't introduce a third mixed-language block
+  without the same justification.
+- Prices are CZK, formatted by `formatPrice` (`src/lib/tito.ts:157`); dates
+  go through `Intl.DateTimeFormat` (`Agenda.tsx:57`) rather than a
+  hand-written string.
 
 ## Accessibility
 
@@ -573,3 +703,9 @@ each needs a decision, none is fixed by this PR.
 10. **This file overlaps `CLAUDE.md` → "Styling Conventions".** The split is
     intended (values here, rationale there) but not enforced by anything, so the
     two can drift. If a rule is edited in one, check the other.
+11. **`Closer`'s `tone="raised"` default renders `band--raised`, which has no
+    CSS** (`Closer.astro:42`; the class is never defined in
+    `BaseLayout.scss`). Pre-existing, not introduced by this document.
+    Currently harmless — every `Closer` call site passes `tone="accent"`
+    explicitly — but the default itself is dead and would silently render
+    unstyled if a future page omitted `tone`.
