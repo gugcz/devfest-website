@@ -1,16 +1,10 @@
 ---
 /**
- * The closing statement every page ends on.
+ * The closing statement every page ends on — the one place per page where the
+ * type goes back up to section scale and the visitor is told what to do next.
  *
- * The subpages used to stop at their last list row and hand straight over to
- * the footer — no ending, and on the thin pages (contact, downloads) that left
- * two thirds of the viewport empty before the footer arrived. This is the one
- * place per page where the type goes back up to section scale and the visitor
- * is told what to do next.
- *
- * `tone="accent"` puts it on the red field. At most ONE accent band per page,
- * and only for the page's actual next step — used on every page it stops
- * marking anything.
+ * `tone="accent"` puts it on the red field: at most ONE accent band per page, and
+ * only for the page's actual next step.
  */
 interface Action {
 	href: string;

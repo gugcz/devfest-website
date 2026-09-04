@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { initials, type Speaker } from '../lib/speakers';
+import { type Speaker } from '../lib/speakers';
 import { visitorCategories, type Session } from '../lib/sessions';
 import {
 	byStart,
@@ -15,6 +15,8 @@ import {
 } from '../lib/agenda';
 import { fetchAgenda } from '../lib/lineup';
 import SessionDetail from './SessionDetail';
+import SpeakerPhoto from './SpeakerPhoto';
+import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Agenda.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
@@ -36,12 +38,18 @@ const INITIAL: State = { status: 'loading', sessions: [] };
 const SNAP_MIN = 5;
 const ROW_PX = 24;
 
-/** Track the mobile breakpoint. Matches `Menu.astro`'s `(max-width: 760px)` —
- * the site has no shared breakpoint token, so the literal is kept in sync. */
+/** Track the width below which the timetable becomes the time-ordered list.
+ *
+ * NOT the site's phone breakpoint: this one is about the room columns, not the
+ * page. A column is `minmax(9.5rem, 1fr)`, so from 1024 down a four-room day
+ * renders ~150px columns and the Bebas titles truncate mid-word inside them —
+ * the table survives, but nothing in it can be read. The list carries the same
+ * day at those widths with the titles at full `--fs-row-sm`, so the grid is
+ * only used where its columns are legible. */
 function useIsNarrow(): boolean {
 	const [narrow, setNarrow] = useState(false);
 	useEffect(() => {
-		const mql = window.matchMedia('(max-width: 760px)');
+		const mql = window.matchMedia('(max-width: 1024px)');
 		const update = () => setNarrow(mql.matches);
 		update();
 		mql.addEventListener('change', update);
@@ -123,27 +131,16 @@ function TalkAvatars({ session }: { session: Session }) {
 	if (shown.length === 0) return null;
 	return (
 		<span className={s.avatars} aria-hidden="true">
-			{shown.map((sp) =>
-				sp.profilePicture ? (
-					<img
-						key={sp.id}
-						className={s.avatar}
-						src={sp.profilePicture}
-						alt=""
-						loading="lazy"
-						decoding="async"
-						width={24}
-						height={24}
-						onError={(e) => {
-							(e.currentTarget as HTMLImageElement).style.visibility = 'hidden';
-						}}
-					/>
-				) : (
-					<span key={sp.id} className={`${s.avatar} ${s.avatarMono}`}>
-						{initials(sp.fullName) || '?'}
-					</span>
-				),
-			)}
+			{shown.map((sp) => (
+				<SpeakerPhoto
+					key={sp.id}
+					speaker={sp}
+					photoClass={s.avatar}
+					monogramClass={`${s.avatar} ${s.avatarMono}`}
+					width={24}
+					height={24}
+				/>
+			))}
 		</span>
 	);
 }
@@ -430,33 +427,22 @@ export default function Agenda() {
 
 	if (state.status === 'error') {
 		return (
-			<div className={s.status} role="alert">
-				<p>The agenda is temporarily unavailable. Please check back soon.</p>
-			</div>
+			<ErrorState>
+				<p>The agenda won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
+			</ErrorState>
 		);
 	}
 
 	if (state.status === 'loading') {
-		return (
-			<p className={s.loadingStatus} role="status">
-				<span className={s.loadingDot} aria-hidden="true" />
-				Loading agenda
-				<span className={s.loadingDots} aria-hidden="true">
-					<span />
-					<span />
-					<span />
-				</span>
-			</p>
-		);
+		return <LoadingState label="Developing the agenda" />;
 	}
 
 	// No sessions at all, or none scheduled yet → the schedule isn't published.
 	if (state.status === 'empty' || range === null) {
 		return (
-			<div className={s.status}>
+			<EmptyState action={{ href: '/sessions', label: 'Browse all talks' }}>
 				<p>The full schedule lands closer to the event.</p>
-				<a className="btn-ghost" href="/sessions">Browse all talks</a>
-			</div>
+			</EmptyState>
 		);
 	}
 

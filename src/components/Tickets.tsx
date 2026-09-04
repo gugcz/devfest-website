@@ -7,10 +7,12 @@ import {
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
+	waveDeadline,
 	type ReleaseStatus,
 	type TitoRelease,
 } from '../lib/tito';
 import { track } from '../lib/analytics';
+import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Tickets.module.scss';
 
 // Static copy keyed by lowercased group name. Overrides whatever ti.to
@@ -105,6 +107,15 @@ function round2(n: number): number {
 	return Math.round(n * 100) / 100;
 }
 
+/**
+ * Every render path is the same `#tickets` section, so its class list is stated
+ * once. `anchor-target` (BaseLayout.scss) is what makes "Get tickets" land on
+ * the heading instead of on the section's opening air — hand-repeated on each
+ * state, the next state added would silently drop it and the anchor would break
+ * only in that state.
+ */
+const sectionClass = `${s.tickets} anchor-target`;
+
 export default function Tickets() {
 	const [state, setState] = useState<State>(INITIAL);
 
@@ -137,35 +148,27 @@ export default function Tickets() {
 
 	if (state.status === 'error') {
 		return (
-			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
+			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 				</header>
-				<div className={s.empty} role="alert">
+				<ErrorState>
 					<p>The box office isn't answering. Reload, or buy direct on ti.to.</p>
-				</div>
+				</ErrorState>
 			</section>
 		);
 	}
 
 	if (state.status === 'loading') {
 		return (
-			<section id="tickets" className={s.tickets} aria-busy={true} aria-labelledby="tickets-heading">
+			<section id="tickets" className={sectionClass} aria-busy={true} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
-					<p className={s.loadingStatus} role="status">
-						<span className={s.loadingDot} aria-hidden="true" />
-						Loading tickets
-						<span className={s.loadingDots} aria-hidden="true">
-							<span />
-							<span />
-							<span />
-						</span>
-					</p>
+					<LoadingState label="Opening the box office" />
 				</header>
-				<ul className={`field ${s.skelLedger}`} role="list" aria-hidden="true">
+				<ul className={`field ${s.skelField}`} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
-						<li key={i} className={`field-row field-row--short ${s.skelRecord}`}>
+						<li key={i} className={`field-row field-row--short ${s.skelRow}`}>
 							<span className={`${s.skelBar} ${s.skelIndex}`} />
 							<div className={s.skelCol}>
 								<span className={`${s.skelBar} ${s.skelTitle}`} />
@@ -198,22 +201,16 @@ export default function Tickets() {
 	if (state.status === 'empty') {
 		if (!hasEvent) return null;
 		return (
-			<section id="tickets" className={s.tickets} aria-labelledby="tickets-heading">
+			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
 				<header className="head-split">
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 					<p className="head-note">The box office is closed. It opens with the first wave.</p>
 				</header>
-				<div className={s.empty}>
+				<EmptyState
+					action={{ href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true }}
+				>
 					<p>Subscribe above to be notified when tickets go on sale.</p>
-					<a
-						className={`${s.cta} ${s.ctaSecondary}`}
-						href={eventUrl(accountSlug, eventSlug)}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Visit ti.to event
-					</a>
-				</div>
+				</EmptyState>
 			</section>
 		);
 	}
@@ -225,7 +222,7 @@ export default function Tickets() {
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
 
 	return (
-		<section id="tickets" className={`${s.tickets} rake`} aria-labelledby="tickets-heading">
+		<section id="tickets" className={`${sectionClass} rake`} aria-labelledby="tickets-heading">
 			{/* Red raking light, swept by the scroll itself. Purely decorative and
 			    enhancement-only — see the `.rake` rules in BaseLayout.scss. */}
 			<span className="rake-beam" aria-hidden="true" />
@@ -257,6 +254,18 @@ export default function Tickets() {
 					const lead = prices[0];
 					const manyPrices = new Set(prices.map((p) => p.primary)).size > 1;
 					const description = groupDescription(group.name, group.description);
+					// ti.to's sale window, and ONLY for a wave a visitor can still buy
+					// into: the deadline is fed the purchasable variants, judged by the
+					// same `releaseStatus()` that prints the badge, never by `end_at`
+					// itself. Otherwise the two disagree — production has an Early bird
+					// closed by hand ahead of its window, so the row read "Ended" beside
+					// "Ends Oct 15". A closed, sold-out or upcoming wave shows no date.
+					// Most releases still carry no `end_at` either, so this is null far
+					// more often than not — the line is simply absent then, never an
+					// empty slot or an "Invalid Date".
+					const deadline = waveDeadline(
+						group.variants.filter((_, vi) => statuses[vi].purchasable).map((v) => v.release),
+					);
 					const serial = String(i + 1).padStart(2, '0');
 					return (
 						<li
@@ -276,6 +285,11 @@ export default function Tickets() {
 							<div className={s.stubBody}>
 								<h3 className={s.stubTitle}>{group.name}</h3>
 								{anyPurchasable && description && <p className={s.stubNote}>{description}</p>}
+								{deadline && (
+									<p className={s.stubDeadline}>
+										<time dateTime={deadline.iso}>{deadline.label}</time>
+									</p>
+								)}
 								<ul className={s.stubGrants}>
 									{group.variants.map(({ release, variantLabel }, vi) => (
 										<li key={release.id}>

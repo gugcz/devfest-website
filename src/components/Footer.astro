@@ -33,6 +33,9 @@ const SOCIALS = [
 const SITEMAP = [
 	{ href: '/', label: 'Home' },
 	{ href: '/#tickets', label: 'Tickets' },
+	// The B2B revenue path was linked from nowhere — not the menu, not here —
+	// so a company that needed an invoice had to already know the URL.
+	{ href: '/invoice', label: 'Company invoice' },
 	{ href: '/#newsletter', label: 'Newsletter' },
 	{ href: '/press', label: 'Press' },
 	{ href: 'https://2025.devfest.cz', label: "Last year's edition", external: true },
@@ -117,7 +120,7 @@ const SITEMAP = [
 						href="https://gug.cz"
 						target="_blank"
 						rel="noopener noreferrer"
-					>GUG.cz, z.s.<span class="ext" aria-hidden="true">&#160;&#8599;</span></a>
+					>GUG.cz,&#160;z.s.<span class="ext" aria-hidden="true">&#160;&#8599;</span></a>
 				</p>
 				<nav class="socials" aria-label="Follow DevFest.cz on social media">
 					{

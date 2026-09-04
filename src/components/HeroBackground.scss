@@ -20,9 +20,8 @@
 		background-position: var(--hero-photo-pos, center);
 		// Cinematic grade — push the detective plate to high-contrast B&W noir.
 		filter: grayscale(1) contrast(1.12) brightness(0.84);
-		// Long, gentle left-to-right fade — the photo dissolves into the dark
-		// over its whole width so there's no visible seam where it meets the
-		// content side. Only fully opaque near the right edge.
+		// Long left-to-right fade so the photo dissolves into the dark with no visible
+		// seam where it meets the content side.
 		mask-image: linear-gradient(
 			to right,
 			transparent 0%,

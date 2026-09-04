@@ -47,9 +47,9 @@
 		}
 	}
 
-	// Bundled module scripts run once per document; <ClientRouter /> swaps the
-	// banner markup on every soft navigation, so re-bind on `astro:page-load`
-	// (which also covers the initial load — it replaces DOMContentLoaded).
+	// Re-bind on `astro:page-load`, never DOMContentLoaded: bundled module scripts
+	// run once per document, but <ClientRouter /> swaps the banner markup on every
+	// soft navigation. `astro:page-load` covers the initial load too.
 	document.addEventListener('astro:page-load', () => {
 		const banner = document.getElementById('cookie-banner');
 
@@ -84,12 +84,20 @@
 			storeConsent('declined');
 			hideBanner();
 		});
+	});
 
-		banner?.addEventListener('keydown', (e) => {
-			if (e.key === 'Escape' && !banner.classList.contains('cookie-banner--hidden')) {
-				(document.getElementById('cookie-decline') as HTMLButtonElement | null)?.click();
-			}
-		});
+	// Escape dismisses the banner (as a decline) from ANYWHERE on the page. It
+	// used to be bound to the banner element, so it only fired once focus was
+	// already inside it — which is the reachability problem, not a solution to
+	// it. Bound to `document` once at module scope, not inside the
+	// `astro:page-load` handler: that handler re-runs on every soft navigation
+	// and would stack a listener per page. The banner element is looked up when
+	// the key is pressed, so it always acts on the current document's banner.
+	document.addEventListener('keydown', (e) => {
+		if (e.key !== 'Escape') return;
+		const banner = document.getElementById('cookie-banner');
+		if (!banner || banner.classList.contains('cookie-banner--hidden')) return;
+		(document.getElementById('cookie-decline') as HTMLButtonElement | null)?.click();
 	});
 </script>
 
