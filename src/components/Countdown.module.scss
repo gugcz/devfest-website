@@ -76,6 +76,15 @@
 	}
 }
 
+// Reserves the days digit's own width at its longest (three figures, the
+// stretch above 99 days) so the 100 → 99 rollover doesn't nudge the suffix
+// and everything after it — a printed leading zero would do the same job
+// but read as part of the count.
+.valueDays {
+	min-width: 3ch;
+	text-align: right;
+}
+
 .unitCompact {
 	flex-direction: row;
 	align-items: baseline;

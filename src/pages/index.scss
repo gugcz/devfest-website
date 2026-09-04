@@ -36,7 +36,13 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		// Bottom-set, not centred: centring split the leftover height evenly
+		// above AND below the block, which is what pushed the whole thing ~100px
+		// lower than the mock and spread the air across every gap instead of
+		// spending it in one place. Bottom-set collects it all above the mark,
+		// where the photograph is, and leaves the rhythm below (mark → statement
+		// → set → action) exactly what each clamp() already specifies.
+		justify-content: flex-end;
 		align-items: flex-start;
 	}
 
@@ -214,18 +220,6 @@
 		margin: 0;
 	}
 
-	// Small orientation note under a value — keeps the venue name short while
-	// still anchoring it for people who don't know Libčice.
-	.meta-sub {
-		display: block;
-		margin-top: 0.4rem;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
-	}
-
 	.meta-value--link {
 		color: inherit;
 		text-decoration: none;
@@ -234,10 +228,6 @@
 		&:hover,
 		&:focus-visible {
 			color: var(--color-accent-hot);
-
-			.meta-sub {
-				color: inherit;
-			}
 		}
 	}
 
@@ -606,13 +596,14 @@
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
+		// Back to 100svh (the base rule, unset here). Auto height let the hero
+		// shrink under the viewport whenever its content fell short of a full
+		// screen — which put the running ticker's OWN topic set back in the
+		// fold, 100px under the strip, in the same hollow face the mock keeps
+		// off-screen. `.hero-actions .btn-ghost` below is what pays for it: the
+		// content that used to overflow a fixed-height frame is now one control
+		// shorter, so nothing needs a hard-coded `hero-inner` height to fit.
 		#hero {
-			// Auto height, not 100svh. Pinned to the base of a full-viewport
-			// frame, the date/venue/clock strip sat exactly where the consent
-			// bar lands on first load — the event's most important data, hidden
-			// behind chrome. Let the hero size to its content and the strip
-			// scrolls into view under the CTAs instead.
-			min-height: auto;
 			padding: calc(5.5rem + env(safe-area-inset-top)) var(--gutter) 0;
 		}
 
@@ -627,6 +618,12 @@
 
 		.hero-actions {
 			margin-top: clamp(1.5rem, 4.2vh, 2.5rem);
+		}
+
+		// "Stay in the loop" has its own section further down; on the phone it
+		// is the one control in the fold that isn't the primary decision.
+		.hero-actions .btn-ghost {
+			display: none;
 		}
 
 		.hero-foot {

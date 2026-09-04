@@ -12,6 +12,14 @@ interface Props {
 	 */
 	focus?: string;
 	mobileFocus?: string;
+	/**
+	 * Opt-in `background-size` for the phone crop, e.g. `auto 130%`. The plate
+	 * is a square and the phone frame is 9:19.5, so a bare `cover` at some
+	 * focus points still leaves the subject too small to read at arm's length
+	 * — `mobileFocus` alone repositions the crop, this scales it. Left unset,
+	 * the phone crop stays `cover` like every other hero.
+	 */
+	mobileZoom?: string;
 }
 
 const {
@@ -19,6 +27,7 @@ const {
 	mobilePhotoOpacity = 0.55,
 	focus = 'center',
 	mobileFocus = '38% center',
+	mobileZoom,
 } = Astro.props;
 ---
 
@@ -26,7 +35,7 @@ const {
 <div
 	class="hero-photo"
 	aria-hidden="true"
-	style={`--hero-photo-opacity:${photoOpacity};--hero-photo-opacity-mobile:${mobilePhotoOpacity};--hero-photo-pos:${focus};--hero-photo-pos-mobile:${mobileFocus};`}
+	style={`--hero-photo-opacity:${photoOpacity};--hero-photo-opacity-mobile:${mobilePhotoOpacity};--hero-photo-pos:${focus};--hero-photo-pos-mobile:${mobileFocus};${mobileZoom ? `--hero-photo-size-mobile:${mobileZoom};` : ''}`}
 ></div>
 
 <style lang="scss">

@@ -205,6 +205,19 @@
 		display: none;
 	}
 
+	// The toggle is the only bordered box left on the hero's first screen once
+	// the CTA above hands the accent to the hero's own button — a boxed
+	// control beside an unboxed one reads as two systems. Border comes back on
+	// hover/focus (below) and once the bar goes solid.
+	#site-header[data-home='true'][data-state='top'] .nav-toggle {
+		border-color: transparent;
+	}
+
+	#site-header[data-home='true'][data-state='top'] .nav-toggle:hover,
+	#site-header[data-home='true'][data-state='top'] .nav-toggle:focus-visible {
+		border-color: var(--color-text);
+	}
+
 	.nav {
 		display: flex;
 		align-items: center;

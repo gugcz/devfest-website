@@ -14,11 +14,11 @@ function calcTimeLeft(): TimeLeft {
 	const diff = TARGET - Date.now();
 
 	if (diff <= 0) {
-		return { days: '000', hours: '00', minutes: '00', seconds: '00' };
+		return { days: '0', hours: '00', minutes: '00', seconds: '00' };
 	}
 
 	return {
-		days: String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(3, '0'),
+		days: String(Math.floor(diff / (1000 * 60 * 60 * 24))),
 		hours: String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0'),
 		minutes: String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0'),
 		seconds: String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0'),
@@ -32,7 +32,7 @@ const UNITS: { key: keyof TimeLeft; label: string; suffix: string }[] = [
 	{ key: 'seconds', label: 'Sec', suffix: 's' },
 ];
 
-const INITIAL_TIME: TimeLeft = { days: '000', hours: '00', minutes: '00', seconds: '00' };
+const INITIAL_TIME: TimeLeft = { days: '0', hours: '00', minutes: '00', seconds: '00' };
 
 interface Props {
 	/**
@@ -69,7 +69,7 @@ export default function Countdown({ compact = false }: Props) {
 					<Fragment key={key}>
 						{!compact && i > 0 && <span className={s.sep}>:</span>}
 						<div className={`${s.unit} ${compact ? s.unitCompact : ''}`}>
-							<span className={s.value}>{time[key]}</span>
+							<span className={`${s.value} ${compact && key === 'days' ? s.valueDays : ''}`}>{time[key]}</span>
 							<span className={s.label}>{compact ? suffix : label}</span>
 						</div>
 					</Fragment>

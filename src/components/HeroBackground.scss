@@ -49,6 +49,7 @@
 
 		@media (max-width: 900px) {
 			width: 100%;
+			background-size: var(--hero-photo-size-mobile, cover);
 			background-position: var(--hero-photo-pos-mobile, 38% center);
 			opacity: var(--hero-photo-opacity-mobile, 0.55);
 			mask-image: linear-gradient(
