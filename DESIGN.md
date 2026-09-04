@@ -47,19 +47,19 @@ All tokens are declared in `BaseLayout.scss` `:root`.
 | `--color-accent` | `#CC0000` | 6 | the accent — CTA fill, red bands, the reach field |
 | `--color-accent-hot` | `#FF1111` | 7 | focus rings, live status, figures on a facts band |
 | `--color-error` | `rgba(220,110,110,0.95)` | 12 | **form-error text only** |
-| `--on-accent` | `#F7EFE6` | 104 | ink on the red field |
+| `--on-accent` | `#F7EFE6` | 139 | ink on the red field |
 
-Surfaces: `--panel` `#0C0B0B` (99), `--panel-2` `#111010` (100), `--panel-hover`
-`#161413` (101), `--panel-lit` `#0A0908` (140), `--panel-lit-2` `#0E0C0B` (141).
+Surfaces: `--panel` `#0C0B0B` (134), `--panel-2` `#111010` (135), `--panel-hover`
+`#161413` (136), `--panel-lit` `#0A0908` (175), `--panel-lit-2` `#0E0C0B` (176).
 
-Hairlines: `--rule` `rgba(240,237,230,0.13)` (89), `--rule-soft` `0.06` (90),
-`--rule-strong` `0.22` (91), `--rule-red` `rgba(204,0,0,0.55)` (92),
-`--field-border` `rgba(240,237,230,0.4)` (96).
+Hairlines: `--rule` `rgba(240,237,230,0.13)` (118), `--rule-soft` `0.06` (119),
+`--rule-strong` `0.22` (120), `--rule-red` `rgba(204,0,0,0.55)` (121),
+`--field-border` `rgba(240,237,230,0.4)` (131).
 
-Atmosphere: `--glow-red` / `--glow-red-soft` (127–128), `--lit` (155),
-`--vignette` (160), `--field-feather` (158), `--print-mount` (135–137),
+Atmosphere: `--glow-red` / `--glow-red-soft` (162–163), `--lit` (190),
+`--vignette` (195), `--field-feather` (193), `--print-mount` (170–172),
 `--ink-monogram` `0.46` → 4.21:1 and `--ink-monogram-sm` `0.66` → 7.71:1
-(151–152, ratios measured in the source comment at 149–150).
+(186–187, ratios measured in the source comment at 184–185).
 
 **[MUST] `--color-accent` is never small text.** `#CC0000` on `#050505` is
 ~3.3:1 and fails 1.4.3 for body copy (`BaseLayout.scss:8–12`). Where it may and
@@ -78,7 +78,7 @@ rule (`BaseLayout.scss:8–12`).
 
 **[MUST] `--field-border` is the boundary of an interactive form control**
 (WCAG 1.4.11, ≥3:1). Decorative grouping hairlines stay at `--rule`
-(`BaseLayout.scss:93–96`).
+(`BaseLayout.scss:122–131`).
 
 **[MUST] Measured ink on `#CC0000`** — hierarchy on the accent field comes from
 SIZE, never from dimming:
@@ -137,45 +137,45 @@ nearest; do not introduce a new value without adding it here. **[CURRENT]** the
 code does not hold this line yet — 14 declarations bypass the ramp with an
 absolute literal today, plus a handful more that inherit or compute off one.
 See Open points for the full list and the same claim's other copy, in a source
-comment at `BaseLayout.scss:69`.
+comment at `BaseLayout.scss:98`.
 
-Poster scale (Bebas), `BaseLayout.scss:52–66`:
-
-| Token | Value | Line | Use |
-| --- | --- | --- | --- |
-| `--fs-display` | `clamp(3rem, 9.5vw, 9rem)` | 52 | the subpage `<h1>` — **one per page** |
-| `--fs-hero` | `clamp(3rem, 9.5vw, 8.5rem)` | 53 | home hero statement |
-| `--fs-h2` | `clamp(2.9rem, 8vw, 7rem)` | 54 | section headline |
-| `--fs-stat` | `clamp(3.4rem, 10vw, 9.5rem)` | 55 | figure in a facts band |
-| `--fs-h3` | `clamp(1.8rem, 3.4vw, 2.6rem)` | 56 | sub-section headline |
-| `--fs-card-title` | `1.95rem` | 57 | card / dossier title |
-| `--fs-title-compact` | `1.6rem` | 58 | compact record title |
-| `--fs-row` | `clamp(2.6rem, 5.2vw, 4.5rem)` | 64 | row title, **short** list (waves, desks) |
-| `--fs-row-sm` | `clamp(2.2rem, 4vw, 3.4rem)` | 65 | row title, **long** list (sessions, FAQ, clippings) |
-| `--fs-row-figure` | `clamp(2.5rem, 4.2vw, 4rem)` | 66 | the figure opposite a row title |
-
-Text scale, `BaseLayout.scss:71–81`:
+Poster scale (Bebas), `BaseLayout.scss:81–95`:
 
 | Token | Value | Line | Use |
 | --- | --- | --- | --- |
-| `--fs-label-xs` | `0.68rem` | 71 | micro mono: avatar counts, kit tags |
-| `--fs-label-sm` | `0.74rem` | 72 | mono: counts, chips, inline clears |
-| `--fs-label` | `0.78rem` | 73 | mono: eyebrows, section labels |
-| `--fs-label-lg` | `0.84rem` | 74 | mono: nav, buttons, email links |
-| `--fs-ui` | `0.95rem` | 75 | small UI prose, help text |
-| `--fs-body` | `1.05rem` | 76 | long-form reading copy |
-| `--fs-body-lg` | `1.15rem` | 77 | footnotes, short ledes |
-| `--fs-lede` | `clamp(1.2rem, 1.6vw, 1.5rem)` | 78 | section ledes, status prose |
-| `--fs-title-sm` | `1.45rem` | 79 | small titles, mobile record titles |
-| `--fs-figure` | `1.9rem` | 80 | row figures — **no call sites today**, see Open points |
-| `--fs-monogram` | `3.4rem` | 81 | initials in an empty photo well |
+| `--fs-display` | `clamp(3rem, 9.5vw, 9rem)` | 81 | the subpage `<h1>` — **one per page** |
+| `--fs-hero` | `clamp(3rem, 9.5vw, 8.5rem)` | 82 | home hero statement |
+| `--fs-h2` | `clamp(2.9rem, 8vw, 7rem)` | 83 | section headline |
+| `--fs-stat` | `clamp(3.4rem, 10vw, 9.5rem)` | 84 | figure in a facts band |
+| `--fs-h3` | `clamp(1.8rem, 3.4vw, 2.6rem)` | 85 | sub-section headline |
+| `--fs-card-title` | `1.95rem` | 86 | card / dossier title |
+| `--fs-title-compact` | `1.6rem` | 87 | compact record title |
+| `--fs-row` | `clamp(2.6rem, 5.2vw, 4.5rem)` | 93 | row title, **short** list (waves, desks) |
+| `--fs-row-sm` | `clamp(2.2rem, 4vw, 3.4rem)` | 94 | row title, **long** list (sessions, FAQ, clippings) |
+| `--fs-row-figure` | `clamp(2.5rem, 4.2vw, 4rem)` | 95 | the figure opposite a row title |
 
-**[MUST]** Display type is set through `--lh-display` (`0.84`, line 85) and
-`--track-display` (`0.005em`, line 86) — never a per-file `line-height` — and
+Text scale, `BaseLayout.scss:100–110`:
+
+| Token | Value | Line | Use |
+| --- | --- | --- | --- |
+| `--fs-label-xs` | `0.68rem` | 100 | micro mono: avatar counts, kit tags |
+| `--fs-label-sm` | `0.74rem` | 101 | mono: counts, chips, inline clears |
+| `--fs-label` | `0.78rem` | 102 | mono: eyebrows, section labels |
+| `--fs-label-lg` | `0.84rem` | 103 | mono: nav, buttons, email links |
+| `--fs-ui` | `0.95rem` | 104 | small UI prose, help text |
+| `--fs-body` | `1.05rem` | 105 | long-form reading copy |
+| `--fs-body-lg` | `1.15rem` | 106 | footnotes, short ledes |
+| `--fs-lede` | `clamp(1.2rem, 1.6vw, 1.5rem)` | 107 | section ledes, status prose |
+| `--fs-title-sm` | `1.45rem` | 108 | small titles, mobile record titles |
+| `--fs-figure` | `1.9rem` | 109 | row figures — **no call sites today**, see Open points |
+| `--fs-monogram` | `3.4rem` | 110 | initials in an empty photo well |
+
+**[MUST]** Display type is set through `--lh-display` (`0.84`, line 114) and
+`--track-display` (`0.005em`, line 115) — never a per-file `line-height` — and
 carries **no `text-shadow`**.
 
 **[CURRENT]** Mono labels are uppercase at `0.22em`–`0.24em` tracking
-(`.btn-primary` 703, `.record-status` 941, `.skip-link` 292).
+(`.btn-primary` 787, `.record-status` 1054, `.skip-link` 322).
 
 ## Spacing & layout
 
@@ -189,12 +189,12 @@ carries **no `text-shadow`**.
 | `--radius` | `2px` | 40 | **[MUST]** sharp corners — never pill-shaped |
 | `--focus-gap-tight` / `--focus-gap` / `--focus-gap-lg` | `2px` / `3px` / `4px` | 117–119 | focus-ring standoff, see Accessibility |
 
-**[MUST] Three section densities, not one** (`BaseLayout.scss:32–34`) — a single
+**[MUST] Three section densities, not one** (`BaseLayout.scss:43–45`) — a single
 tempo across every section is what makes a long page read as generated.
 
 **[MUST] Row rhythm is the `--field-step` variable on the row**, not a value
 each caller picks, because the padding is simultaneously the rhythm and the band
-the reach field fills (`BaseLayout.scss:802–821`): `clamp(1.9rem, 2.8vw, 2.5rem)`
+the reach field fills (`BaseLayout.scss:913–932`): `clamp(1.9rem, 2.8vw, 2.5rem)`
 default, `clamp(2.25rem, 3.6vw, 3.25rem)` for `--short`. Vertical only — a row
 has no horizontal padding at any width.
 
@@ -223,7 +223,7 @@ bar with all destinations behind one toggle at **every** width
 
 **[CURRENT]** One behavioural breakpoint lives in JS, not CSS: the header
 auto-hide-on-scroll is limited to `matchMedia('(max-width: 760px)')`
-(`Menu.astro:144`). `760px` is in no stylesheet — see Open points.
+(`Menu.astro:217`). `760px` is in no stylesheet — see Open points.
 
 ## Z-index & layering
 
@@ -235,36 +235,36 @@ rather than picking its own number.
 | `10060` | a sheet stacked on another sheet (speaker opened from a session) | `SpeakerDetail.module.scss:10` (`--sheet-z`) |
 | `10050` | detail sheet (default `--sheet-z`) | `Sheet.module.scss:25` |
 | `10001` | fixed site header | `Menu.scss:13` |
-| `10001` | `.skip-link` | `BaseLayout.scss:295` |
+| `10001` | `.skip-link` | `BaseLayout.scss:339` |
 | `10000` | cookie banner | `CookieBanner.scss:21` |
-| `10000` | `.status-bar-cover` (iOS safe-area paint) | `BaseLayout.scss:1133` |
-| `9999` | film-grain overlay (`body::before`, `pointer-events: none`) | `BaseLayout.scss:251` |
-| `9998` | vignette overlay (`body::after`, `pointer-events: none`) | `BaseLayout.scss:270` |
+| `10000` | `.status-bar-cover` (iOS safe-area paint) | `BaseLayout.scss:1247` |
+| `9999` | film-grain overlay (`body::before`, `pointer-events: none`) | `BaseLayout.scss:295` |
+| `9998` | vignette overlay (`body::after`, `pointer-events: none`) | `BaseLayout.scss:314` |
 | `20` | `Ticker` running band | `Ticker.scss:7` |
 | `10` | subpage hero content over its photograph | `SubpageHero.scss:40` |
 | `0`–`4` | in-component ordering only (Agenda columns, Speakers grid, Tickets wave) | local modules |
-| `-1` | a row's full-bleed reach field / wash, under the row's own content | `BaseLayout.scss:838`, `901` |
+| `-1` | a row's full-bleed reach field / wash, under the row's own content | `BaseLayout.scss:949`, `1012` |
 
 **[MUST] A sheet is portalled to `document.body`** (`createPortal`,
-`SpeakerDetail.tsx:71–73`). It renders from inside an island in `<main>`, and any
+`SpeakerDetail.tsx:69–73`). It renders from inside an island in `<main>`, and any
 positioned ancestor with a z-index traps it in that stacking context — on
 `/speakers` the fixed header (10001) drew straight over the sheet's 10060.
 
 **[MUST] A row that paints a `z-index: -1` layer needs `isolation: isolate`.**
 Without its own stacking context the field paints behind the *section's*
-background and vanishes (`BaseLayout.scss:808–810`). `.field-row` sets it; a row
+background and vanishes (`BaseLayout.scss:919–921`). `.field-row` sets it; a row
 adding a SECOND full-bleed layer (the on-sale wave's lit ground, the open FAQ
 wash) must use `::after` or a lower z-index, because `--link` / `--holds`
 already own `::before`.
 
 **[MUST] Any full-bleed `::before` on a row is feathered** with
-`mask-image: var(--field-feather)` (`BaseLayout.scss:158`, applied at 908–909) —
+`mask-image: var(--field-feather)` (`BaseLayout.scss:193`, applied at 1019–1020) —
 an un-masked `inset: 0 calc(-1 * var(--gutter))` box shows its own top and bottom
 edges as hard horizontal steps across the page. The red reach field is the one
 deliberate exception: it is meant to read as a band with edges.
 
 **[MUST] Decorative overlays are `pointer-events: none`** and sit below the
-chrome (grain 9999 / vignette 9998, `BaseLayout.scss:245–273`).
+chrome (grain 9999 / vignette 9998, `BaseLayout.scss:290–317`).
 
 ## Motion
 
@@ -273,20 +273,20 @@ its call site. The de-facto scale, by frequency:
 
 | Duration | Where |
 | --- | --- |
-| `0.2s` (dominant, ~96 uses) | the standard control transition: buttons, inputs, links (`BaseLayout.scss:713`, `757`) |
-| `0.28s` | the row reach field's colour + opacity fade (`BaseLayout.scss:829`, `839`) |
-| `0.3s` | the warm wash opacity, cookie banner (`BaseLayout.scss:902`, `CookieBanner.scss:22`) |
-| `0.32s` | the row pull (`translateX`) and the sheet entry (`BaseLayout.scss:887`, `Sheet.module.scss:33`) |
-| `0.6s` | scroll reveal (`BaseLayout.scss:977`) |
-| `1s` / `1.2s` | staged page-entry fades (`Tickets.module.scss:11`, `LandingNotice.scss:15–60`) |
-| `1.3s` / `1.4s` / `1.6s` infinite | skeleton pulse and shimmer while data loads (`Sessions.module.scss:417`, `Tickets.module.scss:346`) |
-| `46s` linear infinite | the `Ticker` marquee (`Ticker.scss:36`) |
+| `0.2s` (dominant, ~96 uses) | the standard control transition: buttons, inputs, links (`BaseLayout.scss:821`, `862`) |
+| `0.28s` | the row reach field's colour + opacity fade (`BaseLayout.scss:940`, `950`) |
+| `0.3s` | the warm wash opacity, cookie banner (`BaseLayout.scss:1013`, `CookieBanner.scss:22`) |
+| `0.32s` | the row pull (`translateX`) and the sheet entry (`BaseLayout.scss:998`, `Sheet.module.scss:33`) |
+| `0.6s` | scroll reveal (`BaseLayout.scss:1091`) |
+| `1s` / `1.2s` | staged page-entry fades (`Tickets.module.scss:16`; the `LandingNotice.scss` component this cited has since been removed — see Open points) |
+| `1.3s` / `1.4s` / `1.6s` infinite | skeleton pulse and shimmer while data loads (`Sessions.module.scss:365`, `Tickets.module.scss:322`; the generic loading spinner's `1.3s` pulse now lives in `DataState.module.scss:55`) |
+| `46s` linear infinite | the `Ticker` marquee (`Ticker.scss:48`) |
 
 | Easing | Where |
 | --- | --- |
 | `ease` | the default for control transitions (~96 uses) |
 | `cubic-bezier(0.16, 1, 0.3, 1)` | the house "arrive" curve — sheet entry, row pull, staged fades (14 uses) |
-| `cubic-bezier(0.22, 1, 0.36, 1)` | scroll reveal only (`BaseLayout.scss:977`) |
+| `cubic-bezier(0.22, 1, 0.36, 1)` | scroll reveal only (`BaseLayout.scss:1091`) |
 | `linear` | marquee and shimmer, where any easing would read as a stutter |
 | `ease-in-out` | skeleton pulses |
 
@@ -294,29 +294,29 @@ Rules:
 
 - **[MUST] Every animation and transition has a `prefers-reduced-motion: reduce`
   opt-out.** 23 stylesheets carry one today; a new animation must add its own. That
-  includes `scroll-behavior` (`BaseLayout.scss:195–199`), the row transitions and
-  transforms (`923–935`), the ticker (`Ticker.scss:76`) and the sheet
+  includes `scroll-behavior` (`BaseLayout.scss:205–213`), the row transitions and
+  transforms (`1034–1046`), the ticker (`Ticker.scss:88`) and the sheet
   (`Sheet.module.scss:174`).
 - **[MUST] Scroll reveal is JS-gated.** `.reveal` is only hidden under the
-  inline `.js` class on `<html>` (`BaseLayout.scss:974`), so a no-JS or crawler
+  inline `.js` class on `<html>` (`BaseLayout.scss:1088`), so a no-JS or crawler
   render shows everything. Never hide content on `opacity: 0` without that gate.
 - **[MUST] Animate compositor-cheap properties** — `opacity` and `transform`.
   The reveal's resting state is `transform: none` so it leaves no containing
-  block behind (`BaseLayout.scss:968–973`).
+  block behind (`BaseLayout.scss:1088–1096`).
 - **[MUST] No `translateX` on the red reach field.** Dragging a band that runs to
-  both viewport edges reads as a rendering fault (`BaseLayout.scss:824–827`); the
+  both viewport edges reads as a rendering fault (`BaseLayout.scss:934–938`); the
   pull belongs to the warm wash only.
 - **[CURRENT]** The full-viewport grain is deliberately static, not animated — a
   still frame has static grain and animating it costs a repaint per frame
-  (`BaseLayout.scss:243–245`).
+  (`BaseLayout.scss:287–289`).
 
 ## Component states
 
 **[MUST] Hover paints, focus rings.** Never paint the reach field on `:focus`:
 focus legitimately persists after a sheet closes, and a stuck red band is
-indistinguishable from a rendering fault (`BaseLayout.scss:842–852`).
+indistinguishable from a rendering fault (`BaseLayout.scss:953–960`).
 
-`.btn-primary` (`BaseLayout.scss:696–734`):
+`.btn-primary` (`BaseLayout.scss:787–838`):
 
 | State | Treatment |
 | --- | --- |
@@ -326,13 +326,13 @@ indistinguishable from a rendering fault (`BaseLayout.scss:842–852`).
 | focus-visible | `2px solid var(--color-accent-hot)` at `--focus-gap` |
 | disabled | not styled globally — see the form buttons below |
 
-`.btn-ghost` (`BaseLayout.scss:735–777`): transparent fill, `--rule-strong`
+`.btn-ghost` (`BaseLayout.scss:841–877`): transparent fill, `--rule-strong`
 border; hover/focus brighten the border to `--color-text` and open `gap`
 `0.6rem → 0.85rem`; focus-visible adds the same ring at `--focus-gap`.
 
-**[MUST] On `.band--accent` both buttons invert** (`BaseLayout.scss:574–599`) —
+**[MUST] On `.band--accent` both buttons invert** (`BaseLayout.scss:662–686`) —
 a red button on a red field is invisible — and focus-visible inverts to cream
-(`600–606`).
+(`688–690`).
 
 `.field-row` reach states — **[MUST] which one applies is decided by whether the
 row IS the control**, because a red band under something you cannot click
@@ -340,8 +340,8 @@ promises a click:
 
 | The row | Rest | Hover | Focus |
 | --- | --- | --- | --- |
-| **IS** the control (`--link`: sessions, FAQ, clippings, agenda entries — a real `<button>` / `<a>` / `<summary>`) | field at `opacity: 0` | `::before` inset `0 calc(-1 * var(--gutter))`, `--color-accent`, opacity → 1 over `0.28s`; **every** ink goes full cream `#F7EFE6` (`860–866`) | ring `2px solid --color-accent-hot` at `--focus-gap-tight` (4.96:1); if hovered **and** focused the ring inverts to `#F7EFE6` — red on red is not a ring (`870–879`) |
-| **CONTAINS** a control (`--holds`: ticket waves, contact/press desks) | wash at `opacity: 0` | feathered `104deg` warm wash → 1, plus `translateX(0.6rem)`; also fires on `:focus-within` (`912–920`) | the inner control carries the ring |
+| **IS** the control (`--link`: sessions, FAQ, clippings, agenda entries — a real `<button>` / `<a>` / `<summary>`) | field at `opacity: 0` | `::before` inset `0 calc(-1 * var(--gutter))`, `--color-accent`, opacity → 1 over `0.28s`; **every** ink goes full cream `#F7EFE6` (`971–977`) | ring `2px solid --color-accent-hot` at `--focus-gap-tight` (4.96:1); if hovered **and** focused the ring inverts to `#F7EFE6` — red on red is not a ring (`981–990`) |
+| **CONTAINS** a control (`--holds`: ticket waves, contact/press desks) | wash at `opacity: 0` | feathered `104deg` warm wash → 1, plus `translateX(0.6rem)`; also fires on `:focus-within` (`1023–1031`) | the inner control carries the ring |
 
 **[MUST] Red is spent once per list, not once per row.** A resting per-row label
 is muted mono `rgba(240,237,230,0.55)`; a resting red label competes with the one
@@ -354,21 +354,23 @@ be open at once; four permanent red bands is the accent as texture. An open
 question is marked by the feathered warm wash and its turned marker.
 
 **[MUST] No opacity-based "inactive" state on content.** Dimming secondary text
-under 4.5:1 fails 1.4.3 — status is a word, not a fade (`BaseLayout.scss:160–162`).
+under 4.5:1 fails 1.4.3 — status is a word, not a fade (`BaseLayout.scss:899–902`).
 
 **[CURRENT] Disabled controls** use `opacity: 0.55` + `cursor: not-allowed`
-(`NewsletterForm.module.scss:90–93`, `InvoiceForm.module.scss:222–225`), and
+(`NewsletterForm.module.scss:90–93`, `InvoiceForm.module.scss:253–256`), and
 hover/active are gated behind `:not(:disabled)`. A non-purchasable ticket wave
 disables its CTA rather than hiding it; `/partners` marks a not-yet-live CTA with
-`aria-disabled="true"` on a `<span>` (`partners.astro:159`) rather than a
+`aria-disabled="true"` on a `<span>` (`partners.astro:202`) rather than a
 disabled button. See Open points.
 
 **Loading / empty / error states [CURRENT]:** data-backed islands render a
-skeleton (`skelPulse` / `shimmer`, `Tickets.module.scss:313–346`), then either
-content or a `role="alert"` status block (`Speakers.tsx:231`, `Sessions.tsx:149`,
-`Agenda.tsx:433`, `Tickets.tsx:144`). **[MUST]** Every data-backed page also
-ships a `.fallback-note` (`BaseLayout.scss:495`) for the no-JS / endpoint-down
-case — except `/` (`Tickets`), which has none. See Open points.
+skeleton (`shimmer`, `Tickets.module.scss:310–322`; `skelPulse`,
+`Sessions.module.scss:365`), then either content or a `role="alert"` status
+block, now shared by all four islands in `DataState.tsx:41` (`ErrorState`,
+imported by `Speakers.tsx`, `Sessions.tsx`, `Agenda.tsx`, `Tickets.tsx`).
+**[MUST]** Every data-backed page also ships a `.fallback-note`
+(`BaseLayout.scss:550`) for the no-JS / endpoint-down case — except `/`
+(`Tickets`), which has none. See Open points.
 
 ## Forms & errors
 
@@ -389,49 +391,50 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   `3rem` (`NewsletterForm.module.scss:39`).
 - **[MUST] Error text is `--color-error`**, carried on a `data-tone="error"`
   message element that reserves `min-height: 1.2em` so the layout does not jump
-  when it appears (`InvoiceForm.module.scss:233–238`,
+  when it appears (`InvoiceForm.module.scss:259–269`,
   `NewsletterForm.module.scss:154–161`).
 - **[MUST] Status messages are announced.** `aria-live="polite"` on the message
-  region (`InvoiceForm.tsx:327`, `NewsletterForm.tsx:93`), `role="status"` on the
-  success block (`InvoiceForm.tsx:152`), and inputs point at their help text with
+  region (`InvoiceForm.tsx:425`, `NewsletterForm.tsx:93`), `role="status"` on the
+  success block (`InvoiceForm.tsx:304`), and inputs point at their help text with
   `aria-describedby` (`NewsletterForm.tsx:59`, `68`).
 - **[CURRENT] Validation is native**, not a validation library: `required` on
   each field plus type/pattern, with a spam honeypot field hidden via
-  `.honeypot` (`InvoiceForm.tsx:286–291`). There is no per-field inline error
+  `.honeypot` (`InvoiceForm.tsx:358–366`). There is no per-field inline error
   message and no `aria-invalid` anywhere in `src` — see Open points.
 - **[MUST] On the red band the whole form inverts**
-  (`NewsletterForm.module.scss:195–272`): opaque `#9A0000` field fill, cream
+  (`NewsletterForm.module.scss:199–276`): opaque `#9A0000` field fill, cream
   boundary at 85%, cream-filled button with dark ink.
 
 ## Images & media
 
-- **[MUST] The photograph well is 4:5.** `.print` (`BaseLayout.scss:441–443`) is
+- **[MUST] The photograph well is 4:5.** `.print` (`BaseLayout.scss:496–506`) is
   the mounted plate: `--print-mount` keyline + shadow on `--panel-lit`. The
   speaker grid and teaser use the same ratio
-  (`Speakers.module.scss:65`, `233`, `SpeakersTeaser.module.scss:96`).
+  (`Speakers.module.scss:65`, `261`, `SpeakersTeaser.module.scss:96`).
 - **[CURRENT] Other ratios in use:** `16 / 9` press clippings
-  (`press.scss:95`), `3 / 2` gallery (`index.scss:264`), `1` the session sheet's
+  (`press.scss:95`), `3 / 2` gallery (`index.scss:277`), `1` the session sheet's
   speaker thumb (`SessionDetail.module.scss:103`).
 - **[MUST] Portraits crop `object-fit: cover; object-position: center 22%`** —
-  faces sit high in the frame (`Speakers.module.scss:111–112`,
-  `Sessions.module.scss:297–298`, `Agenda.module.scss:332–333`,
+  faces sit high in the frame (`Speakers.module.scss:115–116`,
+  `Sessions.module.scss:300–301`, `Agenda.module.scss:336–337`,
   `SpeakersTeaser.module.scss:139–140`). The sheet plate uses `center 20%`
-  (`SpeakerDetail.module.scss:45–46`).
+  (`SpeakerDetail.module.scss:46`).
 - **[MUST] Partner and press logos are `object-fit: contain`** — never cropped
-  (`partners.scss:224`, `390`, `index.scss:446`, `downloads.scss:163`).
+  (`partners.scss:235`, `index.scss:461`, `downloads.scss:202`).
 - **[MUST] A missing photograph falls back to initials**, not an empty box, at
   `--ink-monogram` / `--ink-monogram-sm` — both measured (4.21:1 / 7.71:1). Every
   hand-picked alpha before the token measured *under* the 3:1 the plate needs
-  (`BaseLayout.scss:143–152`).
+  (`BaseLayout.scss:178–187`).
 - **[MUST] Every `<img>` below the fold is `loading="lazy" decoding="async"`**
   and carries intrinsic `width`/`height`; above-the-fold marks are `eager`
-  (`Menu.astro:49`, `Speakers.tsx:145–147`). Local assets go through Astro's
+  (`Menu.astro:49`, `SpeakerPhoto.tsx:48–58`, used by `Speakers.tsx` and
+  `SpeakersTeaser.tsx`). Local assets go through Astro's
   `<Image>` (`astro:assets`) with `layout: 'constrained'` and
   `responsiveStyles: true` (`astro.config.mjs:98–103`).
 - **[MUST] Decorative images take `alt=""`** (`press.astro:105`,
-  `downloads.astro:49`).
+  `downloads.astro:63`).
 - **[CURRENT]** Site imagery is `.webp`; the OG card is `.jpg` at 1200×630
-  (`BaseLayout.astro:255–259`). One hero plate, `/hero-detective.webp`, is
+  (`BaseLayout.astro:263–267`). One hero plate, `/hero-detective.webp`, is
   reframed per page through `HeroBackground`'s `focus` prop — **[MUST]** a new
   subpage picks its own crop rather than reusing another page's.
 
@@ -443,7 +446,7 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 - **[CURRENT] Mount strategy is `client:load` by default**
   (`Countdown`, `SpeakersTeaser`, `Speakers`, `Sessions`, `Agenda`,
   `InvoiceForm`). `Tickets` and `NewsletterForm` use `client:visible`
-  (`index.astro:170`, `278`) — both sit below the fold. **[MUST] An island
+  (`index.astro:170`, `280`) — both sit below the fold. **[MUST] An island
   whose first render is empty until data resolves takes `client:load`, not
   `client:visible`** — a zero-height placeholder never crosses the
   intersection threshold, so the observer never fires. `SpeakersTeaser`
@@ -467,23 +470,23 @@ Primitives, all in `BaseLayout.scss`:
 
 | Class | Line | What it is |
 | --- | --- | --- |
-| `.u-container` | 332 | centred column at `--maxw` with the page gutter |
-| `.page-stack` | 456 | every page's `<main>` |
-| `.band` (+ `--accent` 529, `--lit` 537, `--lit-red` 546) / `.band-inner` | 519 | a section's ground. `--accent` **at most once per page**; `--lit` is the subpage ground, `--lit-red` the variant for pages about people and the programme |
-| `.eyebrow` | 345 | plain mono section label — no decoration, no trailing hairline |
-| `.display` (+ `.red`) | 360 | poster headline |
-| `.head-split` / `.head-title` / `.head-note` (+ `--ruled` 400) | 392 | two-column section head: statement left, one line right |
-| `.head-stack` | 469 | the one-column section head, closed by a hairline |
-| `.print` | 441 | the mounted photograph well at 4:5 |
-| `.fallback-note` | 495 | the no-JS / endpoint-down prose |
-| `.closer` family | 608 | the closing statement (see `Closer.astro`) |
-| `.facts` / `.fact` / `.fact-figure` / `.fact-label` | 656 | a figures band |
-| `.btn-primary` / `.btn-ghost` | 696 / 735 | the two buttons |
-| `.field` / `.field-row` (+ `--short` 819, `--link` 828, `--holds` 886) | 793 / 805 | the open-field list and row |
-| `.record-status` | 938 | the last survivor of the retired `.ledger` / `.record` family |
-| `.scene` / `.reveal` / `.develop` | 955 / 974 / 996 | lighting and scroll reveal, `.js`-gated, reduced-motion-disabled |
-| `.skip-link` / `.sr-only` | 278 / 313 | see Accessibility |
-| `.status-bar-cover` | 1126 | iOS safe-area paint |
+| `.u-container` | 386 | centred column at `--maxw` with the page gutter |
+| `.page-stack` | 511 | every page's `<main>` |
+| `.band` (+ `--accent` 617, `--lit` 625, `--lit-red` 634) / `.band-inner` | 602 | a section's ground. `--accent` **at most once per page**; `--lit` is the subpage ground, `--lit-red` the variant for pages about people and the programme |
+| `.eyebrow` | 399 | plain mono section label — no decoration, no trailing hairline |
+| `.display` (+ `.red`) | 414 | poster headline |
+| `.head-split` / `.head-title` / `.head-note` (+ `--ruled` 454) | 446 | two-column section head: statement left, one line right |
+| `.head-stack` | 524 | the one-column section head, closed by a hairline |
+| `.print` | 496 | the mounted photograph well at 4:5 |
+| `.fallback-note` | 550 | the no-JS / endpoint-down prose |
+| `.closer` family | 696 | the closing statement (see `Closer.astro`) |
+| `.facts` / `.fact` / `.fact-figure` / `.fact-label` | 747 | a figures band |
+| `.btn-primary` / `.btn-ghost` | 787 / 841 | the two buttons |
+| `.field` / `.field-row` (+ `--short` 930, `--link` 939, `--holds` 997) | 904 / 916 | the open-field list and row |
+| `.record-status` | 1054 | the last survivor of the retired `.ledger` / `.record` family |
+| `.scene` / `.reveal` / `.develop` | 1069 / 1088 / 1110 | lighting and scroll reveal, `.js`-gated, reduced-motion-disabled |
+| `.skip-link` / `.sr-only` | 322 / 367 | see Accessibility |
+| `.status-bar-cover` | 1240 | iOS safe-area paint |
 
 Shared components: `Desk.astro` (one inbox), `SubpageHero.astro`,
 `HeroBackground.astro` (takes a `focus` crop), `Ticker.astro` (the running band
@@ -549,7 +552,7 @@ existing page:
   on type alone — used where the page's own content starts immediately below
   the fold and a repeated photo would compete with it: `faq`, `contact`,
   `invoice`, `press/downloads` (`faq.astro:74`, `contact.astro:21`,
-  `invoice.astro:20`, `downloads.astro:25`). **[MUST]** a new subpage picks
+  `invoice.astro:20`, `downloads.astro:39`). **[MUST]** a new subpage picks
   its own `focus` crop rather than reusing another page's — see Images &
   media.
 - **`.band--lit` vs `.band--lit-red`.** `--lit-red` is for pages **about
@@ -557,13 +560,13 @@ existing page:
   (`speakers.astro:25`, `sessions.astro:25`, `agenda.astro:25`,
   `team.astro:113`). `--lit` (no red bleed) is for **administrative /
   transactional** pages — `faq`, `contact`, `press`
-  (`faq.astro:81`, `contact.astro:28`, `press.astro:90`). The test for a new
+  (`faq.astro:86`, `contact.astro:28`, `press.astro:90`). The test for a new
   page: does it show the humans or the schedule of the conference, or does it
   process a request? The former gets `--lit-red`.
 - **`.band--accent`.** At most once per page, for the page's next step — a
   conversion moment, not a content section. The only two call sites are the
-  home page newsletter capture (`index.astro:269`) and the partners CTA
-  (`partners.astro:133`). A `Closer` with `tone="accent"` is the more common
+  home page newsletter capture (`index.astro:271`) and the partners CTA
+  (`partners.astro:176`). A `Closer` with `tone="accent"` is the more common
   way to close on red; reach for a full `.band--accent` section only when the
   accent band itself contains an interactive form, not just a closing
   statement.
@@ -607,7 +610,7 @@ worth confirming as a decision, not just a pattern:
 
 - Mono labels (eyebrows, buttons, row meta) are short — one to three words
   — written in sentence case in source and capitalised by CSS
-  `text-transform: uppercase` (`BaseLayout.scss:292`, `349`, `690`, …), never
+  `text-transform: uppercase` (`BaseLayout.scss:403`, `781`, `1058`, …), never
   typed in caps. Typing caps in the source would read as shouting to a
   screen reader, which ignores the CSS transform.
 - Ledes (`--fs-lede`) run one to two sentences, no italic — see CLAUDE.md
@@ -617,7 +620,7 @@ worth confirming as a decision, not just a pattern:
   not site voice. **[MUST]** don't introduce a third mixed-language block
   without the same justification.
 - Prices are CZK, formatted by `formatPrice` (`src/lib/tito.ts:157`); dates
-  go through `Intl.DateTimeFormat` (`Agenda.tsx:57`) rather than a
+  go through `Intl.DateTimeFormat` (`Agenda.tsx:65`) rather than a
   hand-written string.
 
 ## Accessibility
@@ -639,25 +642,25 @@ touches markup or styles.
   var(--color-accent-hot) }`. The gap is chosen by ONE question — how much
   visible edge the control already has: `--focus-gap-tight` it has its own
   boundary, `--focus-gap` type on the ground, `--focus-gap-lg` it stands alone in
-  open space (`BaseLayout.scss:106–119`). Two deliberate exceptions carry a
+  open space (`BaseLayout.scss:141–154`). Two deliberate exceptions carry a
   comment saying why: the agenda cell's inset ring and the partner logo's wider
   gap.
 - **[MUST] Semantics before ARIA.** A row that IS a control is a real
   `<button>` / `<a>` / `<summary>` — which is also what decides `--link` vs
   `--holds`.
 - **[MUST] `.skip-link` is the first focusable element on every page**
-  (`BaseLayout.astro:293`), hidden with `clip-path: inset(50%)` and revealed on
-  `:focus` (`BaseLayout.scss:278–311`).
+  (`BaseLayout.astro:301`), hidden with `clip-path: inset(50%)` and revealed on
+  `:focus` (`BaseLayout.scss:322–354`).
   `html { scroll-padding-top: 6rem; scroll-padding-bottom: 8rem }`
-  (`BaseLayout.scss:174–176`) keeps an anchored or focused target clear of the
+  (`BaseLayout.scss:211–213`) keeps an anchored or focused target clear of the
   fixed header and cookie banner.
 - **[MUST] `.sr-only`** for text that must stay in the a11y tree and the
-  crawlable HTML but not on screen (`BaseLayout.scss:313`).
+  crawlable HTML but not on screen (`BaseLayout.scss:367`).
 - **[MUST] Sheets return focus** to the row that opened them
   (`src/lib/useReturnFocus.ts`) and close on Esc.
 - **[MUST] Reduced motion** — see Motion above.
 - **[MUST] `html` clips horizontal overflow with `overflow-x: clip`, never
-  `hidden`** (`BaseLayout.scss:180–192`): `hidden` turns `html` into a scroll
+  `hidden`** (`BaseLayout.scss:217–229`): `hidden` turns `html` into a scroll
   container on iOS Safari, which breaks `position: fixed` and `env()` safe-area
   insets.
 
@@ -675,29 +678,29 @@ each needs a decision, none is fixed by this PR.
 2. **No z-index scale.** The layer numbers (9998 / 9999 / 10000 / 10001 / 10050 /
    10060) are literals spread across six files, and **two different elements both
    sit at `10000`** — the cookie banner (`CookieBanner.scss:21`) and
-   `.status-bar-cover` (`BaseLayout.scss:1133`) — so their order is source order,
+   `.status-bar-cover` (`BaseLayout.scss:1247`) — so their order is source order,
    not a decision. `.skip-link` and the site header likewise share `10001`.
-3. **Disabled state contradicts the no-dimming rule.** `BaseLayout.scss:160–162`
+3. **Disabled state contradicts the no-dimming rule.** `BaseLayout.scss:899–902`
    bans opacity-based inactive states because dimming fails 1.4.3, yet both form
-   buttons use `opacity: 0.55` (`NewsletterForm.module.scss:90`,
-   `InvoiceForm.module.scss:222`). WCAG exempts disabled controls, so this is
+   buttons use `opacity: 0.55` (`NewsletterForm.module.scss:91`,
+   `InvoiceForm.module.scss:254`). WCAG exempts disabled controls, so this is
    probably fine — but the document currently states a rule the code breaks, and
    one of the two should change.
 4. **Three ways to say "not available".** A disabled `<button>`, an
-   `aria-disabled="true"` `<span>` (`partners.astro:159`), and a `.record-status`
+   `aria-disabled="true"` `<span>` (`partners.astro:202`), and a `.record-status`
    word. No rule says which applies when.
 5. **No `aria-invalid` anywhere in `src`.** Form errors are announced through a
    single `aria-live` region; individual invalid fields are not marked, and there
    is no per-field inline error. Acceptable for a two-form site, but it should be
    a stated decision rather than an omission.
-6. **`--fs-figure` (`BaseLayout.scss:80`) has zero call sites.** Either it is
+6. **`--fs-figure` (`BaseLayout.scss:109`) has zero call sites.** Either it is
    dead and should be deleted, or something is using a literal `1.9rem` where it
    should use the token. `--panel-2` and `--panel-hover` are each used in exactly
    one file, which is close to the same question.
 7. **One `min-width` query.** `SpeakersTeaser.module.scss:60` is the only
    mobile-first query in a codebase that is otherwise entirely `max-width`.
 8. **A behavioural breakpoint outside the CSS set.** The header auto-hide uses
-   `760px` in JS (`Menu.astro:144`); no stylesheet uses that value, and the
+   `760px` in JS (`Menu.astro:217`); no stylesheet uses that value, and the
    nearest CSS breakpoints are `720px` and `860px`.
 9. **Special Elite declares no `subsets`** (`astro.config.mjs:96`) while the
    other two request `latin` + `latin-ext`. The site ships Czech copy; a face
@@ -717,16 +720,27 @@ each needs a decision, none is fixed by this PR.
     unstyled if a future page omitted `tone`.
 12. **The font-size ramp is stated as [MUST] but broken at 19 call sites: 14**
     **absolute literals** (`Countdown.module.scss:33,47,72,84`,
-    `LandingNotice.scss:28`, `Menu.scss:317,434`, `Speakers.module.scss:190,249`,
-    `faq.scss:33`, `index.scss:135`, `press.scss:162`, `team.scss:110,130`),
-    **2 relative** (`Footer.scss:136`, `0.85em`; `Ticker.scss:66`, `0.5em`),
-    **2 inherited** (`Footer.scss:303,307`), and **1 on its own token**
-    (`Ticker.scss:45`, `--ticker-size`). The same "every
+    `Menu.scss:348,471`, `Speakers.module.scss:201,277`,
+    `faq.scss:33`, `press.scss:162`, `team.scss:121,141`; the `index.scss:135`
+    site this counted no longer exists — see below), **2 relative**
+    (`Footer.scss:153`, `0.85em`; `Ticker.scss:78`, `0.5em`),
+    **2 inherited** (`Footer.scss:321,325`), and **1 on its own token**
+    (`Ticker.scss:57`, `--ticker-size`). The same "every
     `font-size` goes through one of these steps" claim is repeated in a source
-    comment at `BaseLayout.scss:69` and is equally untrue there — worth fixing
+    comment at `BaseLayout.scss:98` and is equally untrue there — worth fixing
     next time that file is touched, not on its own. Either these get folded
     into the ramp as named steps, or downgraded to `[CURRENT]` literals with a
     reason each.
+    **[UNRESOLVED — flagged, not guessed]** Two of the cited call sites no
+    longer back this count after the rebase, rather than having simply moved:
+    `LandingNotice.scss` (component + stylesheet) was deleted in `d38c5187`
+    and replaced by `NextStep.astro`, which uses `var(--fs-row)` /
+    `var(--fs-body)` — no literal, so that count-of-14 entry has no current
+    home. `index.scss:135` is now `font-size: var(--fs-label);` (not a
+    literal); the file does have four literal `font-size` declarations today
+    (`index.scss:598,643,666,756`, all `.hero-statement` / `.meta-value`
+    breakpoint overrides), any/all of which may be what this site meant to
+    count, but which one(s) requires a decision, not a relocation.
 13. **`/` has no `.fallback-note`.** `agenda`, `sessions` and `speakers` each
     ship one for the no-JS / endpoint-down case; the home page's `Tickets`
     island does not. Either add one, or state the exception in the MUST
