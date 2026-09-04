@@ -62,7 +62,11 @@ export function firstName(name: string): string {
 export interface InviteCopy {
 	/** Poster headline, with the accent word wrapped — rendered with set:html. */
 	titleHtml: string;
-	/** Same headline as flat text, for <title> and OG. */
+	/**
+	 * Same headline as flat text, for <title> and OG. No full stop: the
+	 * document title appends " — DevFest.cz 2026", and a sentence period
+	 * immediately before an em dash reads as a typo.
+	 */
 	titleFlat: string;
 	/** Three short paragraphs: what this is → what DevFest is → take it. */
 	body: [string, string, string];
@@ -76,7 +80,7 @@ export function inviteCopy(member: { name: string; role?: string }): InviteCopy 
 	const first = firstName(member.name);
 	return {
 		titleHtml: `${first} is putting you<br />on the <span class="red">list.</span>`,
-		titleFlat: `${first} is putting you on the list.`,
+		titleFlat: `${first} is putting you on the list`,
 		body: [
 			"This isn't a mailing list. I picked the people I actually want in the room, and you're one of them.",
 			`DevFest is the Czech Google developer community's day of the year — talks from people who ship things, and the corridor conversations that are the real reason anyone shows up. ${INVITE_EVENT.date}, ${INVITE_EVENT.city}.`,
