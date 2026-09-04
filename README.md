@@ -15,6 +15,8 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 - **Backend:** Firebase
 - **Node:** >= 22.12.0
 
+The visual system (type, color, layout, motion) is documented in [DESIGN.md](DESIGN.md) and is binding — check it before styling anything.
+
 ## Getting Started
 
 ```bash

@@ -279,33 +279,11 @@ Conventions / gotchas:
 
 ### Styling Conventions
 
-- Global CSS variables (colors, type ramp, rhythm) live in `BaseLayout.scss`; React components use co-located `.module.scss` files.
-- Dark noir palette: `#050505` ground, `#F2EFE9` ink, `#CC0000` / `#FF1111` accent, film-grain + vignette overlays on `body`.
+Visual system — values, tokens, and binding [MUST]/[CURRENT] rules — is documented
+in [DESIGN.md](DESIGN.md); treat it as the source of truth, not this file.
+This file holds decisions, product context, and the *why*; `DESIGN.md` holds
+the *what* and the *how*. If a rule changes, check both.
 
-**Type roles — do not mix them up.** Three faces, each with one job:
-
-| Face | Role |
-| ---- | ---- |
-| **Bebas Neue** | Every headline at `--fs-h3` and above: hero statement, section titles, nav destinations, figures, prices, the footer wordmark. It is condensed, which is why the poster scale works — a three-word statement fits the column at 8rem. |
-| **Special Elite** | Body, lede and long-form reading copy (session abstracts, coverage summaries, legal prose). The brand's typewriter voice, kept as texture in the prose, never as a headline (it is wide; it wrapped a three-word title over three lines at `--fs-h2`). |
-| **JetBrains Mono** | Labels, eyebrows, meta, counts, buttons, status words. |
-
-**Rules the redesign exists to keep.** These are the patterns that made the
-site read as generated; re-introducing any of them undoes the pass:
-
-- **No decorated eyebrow.** `.eyebrow` is a plain mono label. It used to carry a trailing red gradient hairline, and it appeared on every section of every page — a decoration repeated without variation is the loudest "template" signal there is. Same for the flanking-rule pairs that used to sit on the footer column heads and the partner tier captions.
-- **Red text is flat.** `--glow-red` is for things that respond to a pointer (`.btn-primary:hover`) and for live status. It is not a text-shadow on every accent word. `.neon` no longer glows.
-- **One lede shape, and it is not the old one.** Ledes are Special Elite, short, no italic, no red left border. The italic-serif-with-an-accent-bar lede was the third element of the repeated lockup.
-- **One display element per page** at `--fs-display` (the subpage `<h1>`). Sections run at `--fs-h2`.
-- **Section heads are left-set.** Centred eyebrow-over-title-over-lede stacks are what made six different sections read as the same section.
-- **Accent bars down the left edge of a block are banned** — they were on the hero lede, the FAQ answer and every agenda card at once.
-- Poster type is set through `--lh-display` / `--track-display`, never with a per-file line-height, and carries no `text-shadow`.
-
-Primitives in `BaseLayout.scss`: `.u-container`, `.u-prose`, `.eyebrow`,
-`.display` (+ `.red`, `.hollow`), `.facts` / `.fact-figure` / `.fact-label`,
-`.band` (+ `--raised`, `--accent`, `--tight`, `--wide`) with `.band-inner`,
-`.closer` / `.closer-title` / `.closer-note` / `.closer-actions`,
-`.btn-primary` / `.btn-ghost`, and the `.ledger` / `.record` family.
 `.anchor-target` (`#tickets`, `#newsletter`) cancels a section's own opening air
 with a negative `scroll-margin-top` reading `--section-air`, the variable the
 section's padding is built from — `scroll-padding-top` can't do it, the air is
@@ -321,188 +299,6 @@ must be armed BEFORE the landing, because Chromium and WebKit defer the initial
 fragment scroll and then animate it through `scroll-behavior: smooth`.
 `npm run anchors` measures every landing in Chromium, WebKit and Firefox.
 
-**Open-field rows — every list on the site is the same open field.** A list of
-entries is never a stack of cards, and it is no longer a ruled ledger either:
-the thick/thin opening rule plus a hairline under every row is a TABLE, and it
-was the one device stamped on six pages, which is what made them read as one
-generated component. There are no rules in a list any more. Separation is air
-and type scale; the reach state is what marks an entry.
-
-**This is a real primitive now — `.field` / `.field-row` in `BaseLayout.scss`,
-used by class name from both `.astro` pages and `.tsx` islands.** It replaced
-the dead `.ledger` / `.record` family (only `.record-status` survives). Six
-files used to keep their own copy of the rhythm, the reach states, the
-`isolation`, the feather mask and the focus ring, and the copies had already
-drifted. A caller now owns only its own grid and type:
-
-```
-<ul class="field …">                            (the list)
-  <li class="field-row field-row--link …">       (the row IS the control)
-  <li class="field-row field-row--short field-row--holds …">   (…CONTAINS one)
-```
-
-`--field-step` on a row overrides the padding rhythm where a row is title-only
-(the agenda's unscheduled list). The spec the primitive implements:
-
-| | value |
-| --- | --- |
-| opening | **none.** No `border-top`, no `box-shadow` pair. The section head above the list (and its own hairline, if it has one) is the list's top edge |
-| row rule | **none.** No `border-bottom`, no `border-top`, on any row |
-| lamp | **none — the list carries no light of its own.** `--lamp` on a `::before` inset `-2rem / -gutter` is a full-bleed RECTANGLE inside the section, and the token's warm raking layer lifts `#050505` to about `#0E0C0B` at its top-left, so it drew a hard horizontal step across the whole page 32px above the first rule and another below the last. `--lamp` belongs to the ROOM: the section's `--lit` pool is the light. |
-| row padding | fluid, `clamp(…) 0` — no horizontal padding at any breakpoint, including mobile. This is what gives the reach field a band to fill, so it is the rhythm too: `clamp(2.25rem, 3.6vw, 3.25rem)` short list, `clamp(1.9rem, 2.8vw, 2.5rem)` long |
-| title | Bebas, uppercase. `--fs-row` (**72px**) for a short list (three ticket waves, three contact desks, two press desks), `--fs-row-sm` (**54px**) for a long one (sessions, FAQ, press clippings, agenda). `--fs-row-figure` for the figure opposite a title |
-
-**The reach state depends on whether the row IS the control.** Two states, and
-the difference is not decorative — a red band under something you cannot click
-promises a click:
-
-| the row | reach |
-| --- | --- |
-| **IS** the control — sessions, FAQ questions, press clippings, agenda entries (the whole entry is a `<button>` / `<a>` / `<summary>`) | `::before` inset `0 calc(-1 * var(--gutter))`, `background: var(--color-accent)`, `opacity` 0 → 1 over 0.28s. Every ink in the row goes **full cream `#F7EFE6`**. **No `translateX`** — dragging a band that runs to the viewport edge reads as a rendering fault |
-| **CONTAINS** a control — ticket waves (Buy CTA), contact desks and the press desk (addresses) | the warm `104deg` wash at `opacity` 0 → 1, plus `translateX(0.6rem)` |
-
-**Any full-bleed `::before` on a row must be feathered.** With no rules to close
-it, an un-masked `inset: 0 calc(-1 * var(--gutter))` box shows its own top and
-bottom edges as hard horizontal steps across the page — the same fault the
-per-list `--lamp` box had. Warm washes and permanent lit grounds (the on-sale
-wave) carry
-`mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%)`.
-The red reach field is the exception: it is meant to read as a band with edges.
-
-**Rows need `isolation: isolate`.** The field/wash sits at `z-index: -1`, which
-without a stacking context on the row itself paints behind the *section's*
-background and disappears. `.field-row` sets it; a row that adds a SECOND
-full-bleed layer of its own (the on-sale ticket wave's lit ground, the open
-FAQ item's wash) must use `::after`, or a lower `z-index`, because
-`.field-row--link` / `--holds` already own `::before`.
-
-**HOVER paints the field; FOCUS draws a ring instead.** Focus legitimately
-persists — closing a session sheet with Esc returns focus to the row that opened
-it, which is correct for keyboard and AT users. While focus also painted the
-field, that left a full-bleed red band with a cream rectangle round it sitting on
-the page after the sheet was gone, indistinguishable from a stuck highlight. The
-ring is `outline: 2px solid var(--color-accent-hot)` at offset `2px` (4.96:1 on
-`#050505`, clear of the 3:1 in 1.4.11); a row that is both hovered and focused
-inverts it to `#F7EFE6`, because red on red is not a ring.
-
-**Detail views are SHEETS, not dialog boxes.** `SessionDetail` and
-`SpeakerDetail` were 640px panels with a red keyline and glow, bordered chips for
-the tags, hairline dividers between every block and a boxed close button — the
-enclosed-card language the redesign removed everywhere else, still running in the
-one place a visitor reaches by clicking. They also set their title at `--fs-h3`,
-smaller than the 54px row that opened them. A sheet is full-bleed on the section
-ground, poster title at `--fs-h2`, no border anywhere, a mono `Close ✕` in a
-sticky top bar, and its lists are `.field` rows like everything else.
-
-Both are **portalled to `document.body`** (`createPortal`). They render from
-inside an island in `<main>`, and any positioned ancestor with a z-index traps
-them in that stacking context — on `/speakers` the fixed site header (z-index
-10001) drew straight over the sheet's own 10060 and hid its Close.
-
-**Red is spent once per list, not once per row.** A track kicker on every
-session, a `+` marker on every FAQ question and a red outlet label on every
-press clipping were each the accent repeated thirty times, which makes it
-texture. The resting state of a per-row label is muted mono
-(`rgba(240, 237, 230, 0.55)`). Now that reaching a row paints it red, this rule
-is stricter, not looser: a resting red label competes with the one state the
-colour is for. The single exception is a persistent mark on the ONE row that is
-genuinely different — the on-sale ticket wave, which carries a lit ground (not
-red text) because it is the only buyable one.
-
-**An OPEN `<details>` does not hold the red field.** FAQ items are independent,
-several can be open at once, and four permanent red bands down one page is the
-accent as texture again. An open question is marked by the feathered warm wash
-and its turned marker; red stays under the pointer.
-
-**Bands — red is a FIELD, not only an accent.** The site used to be one
-uninterrupted `#050505` from the top of every page to the bottom, so nothing
-marked where a section began and the whole scroll read as one block. A section
-that wants its own ground gets `.band` plus a modifier:
-
-| | ground | use |
-| --- | --- | --- |
-| `.band` | `--color-bg` | the default |
-| `.band--raised` | `#0B0A0A` + hairlines | a section lifted one step out of the dark |
-| `.band--accent` | `--color-accent` | **at most one per page**, for the page's next step |
-
-**Ink on `#CC0000` is measured, and alpha is not free** — hierarchy on the
-accent field comes from SIZE, never from dimming:
-
-| ink | ratio | verdict |
-| --- | --- | --- |
-| cream `#F7EFE6` | 5.17:1 | anything, including body copy |
-| cream at 85% | 3.95:1 | control boundaries only (1.4.11) |
-| cream at 80% | 3.58:1 | fails body copy |
-| near-black `#1A0000` | 3.42:1 | large text only — the accent word |
-| black `#000000` | 3.57:1 | large text only |
-
-So every label, paragraph and link on a red band is **full cream**, the accent
-word inside a `.display` is `#1A0000`, and any form control on that ground
-inverts (cream fill, dark ink — a red button on red is invisible). Translucent
-field fills are banned there too: a contrast checker resolves the placeholder
-against the band behind an `rgba()` fill, so `NewsletterForm.module.scss` uses
-an opaque `#9A0000`.
-
-**Shared components, not shared class names.** Anything that appears on more
-than one page is a component or a global primitive — never a copied block. The
-copies always drift: `/contact` and `/press` each kept their own `card-head` /
-`card-label` / `card-title` / `card-desc` / `card-emails` / `email-link`, and by
-the time they were merged the address was `--fs-ui` on one page and
-`--fs-body-lg` on the other, the label was accent-hot on one and muted on the
-other, and the two-column split was 0.95/1.05 against 1.15/0.85.
-
-| | |
-| --- | --- |
-| `Desk.astro` | one inbox: label, name, blurb, addresses on the right axis (or one `action` link). `/contact` runs three. Takes `.field-row--holds` — a desk CONTAINS its controls. `/press` used to run two and dropped them: its press-kit link and desk address were already the closing red band's two actions |
-| `.field` / `.field-row` | the open-field list and row, above |
-| `.head-split` / `.head-title` / `.head-note` | the two-column section head — statement left, one line right. Used by the ticket section, the speakers teaser, the gallery and the `/contact` desks. `--ruled` closes it with a hairline. Compose the title with `.display` |
-| `.head-stack` | the ONE-column section head, closed by a hairline. `/agenda`, `/sessions` and `/speakers` each kept their own `-header` / `-eyebrow` / `-heading` trio with identical bodies while `.eyebrow` / `.display` / `.head-title` sat unused beside them |
-| `.page-stack` | every page's `<main>`. Ten pages each declared the same two-line flex column under their own name |
-| `.band--lit` / `.band--lit-red` | the subpage ground: the spotlight pool over page black, closed by a hairline at the top. `--lit-red` adds the faint red bleed from the top-right and belongs to the pages about PEOPLE and the programme (`/speakers`, `/sessions`, `/agenda`, `/team`); the administrative pages take the plain pool |
-| `.print` | the mounted photograph well at 4:5 — bone keyline, shadow, `--panel-lit` ground. The speaker sheet's plate and the `/team` mugshot were the same eight declarations written twice |
-| `Sheet.module.scss` | the detail-view chrome: ground, entry, sticky bar, close, content measure, kicker, title, block label. `SessionDetail` and `SpeakerDetail` import it alongside their own module and keep only what a session / a speaker actually has |
-| `NextStep.astro` | one thing to do, in an open field of them — title, note, and its controls on the right axis. `/thank-you`, `/newsletter-subscription-thank-you` and `/404` all end on "what now?" and all three used to answer it with one link home. Takes `.field-row--holds` — a step CONTAINS its controls |
-| `.logo-grid` / `.logo-cell` | the partner wall: ONE track size for every partner on the page (`/partners`). See "Partner wall" below |
-| `.fallback-note` | the no-JS / endpoint-down prose on a data-backed page |
-| `DataState.tsx` | the three non-ready states of a data-backed island — `LoadingState` / `ErrorState` / `EmptyState`. `/speakers`, `/sessions`, `/agenda` and the ticket waves each kept a private copy and they had drifted: two centred and two left-set, two with animated trailing dots, one opening on a hairline, and only `/agenda` offering a next action. Left-set (matching `.fallback-note`), `role="status"` on loading and `role="alert"` on failure, and an **empty state always offers somewhere to go** |
-| `SpeakerPhoto.tsx` | a speaker's photograph, or their initials. Owns ONE decision — no URL, or a URL that fails to load, both land on the monogram — while the caller passes its own classes for the shape. `/sessions` and `/agenda` used to `visibility: hidden` the broken `<img>`, so the same speaker with the same dead CDN URL rendered as initials on `/speakers` and as a hole on the other two |
-| `SubpageHero.astro`, `Ticker.astro`, `Closer.astro` | already components; see below |
-
-**`--field-border` is THE control-edge token.** Every boundary a visitor can
-operate goes through it — text fields, `.btn-ghost`, `.nav-toggle`, the cookie
-banner's `Decline`, `.crew-link` — because it measures 3.33:1 on `#050505` and
-clears WCAG 1.4.11. `--rule` (1.30:1) and `--rule-strong` (1.74:1) do not, and
-they stay where they are: they are the decorative grouping hairlines
-(`.band--raised`, `.head-split--ruled`, the section rules), and raising THEM to
-3:1 would repaint every structural line on the site. Do not reach for a rule
-token to outline a control.
-
-**Tokens exist so a measured value is decided once.** `--print-mount` (the
-keyline + shadow under a photograph), `--ink-monogram` / `--ink-monogram-sm`
-(the initials shown when a photograph is missing) and `--focus-gap-tight` /
-`--focus-gap` / `--focus-gap-lg` all replaced a value that four to thirty call
-sites had each picked for themselves. Two of those were not merely untidy: every
-copy of the monogram alpha measured under the 3:1 it needed, and the focus ring
-stood off at three different distances with nothing saying which applied where.
-The focus scale is chosen by ONE question — how much visible edge the control
-already has (`tight` it has its own boundary, base is type on the ground, `lg`
-it stands alone in open space). Two deliberate exceptions carry a comment
-saying why: the agenda cell's inset ring, and the partner logo's wider gap.
-
-**`Closer.astro` — every page ends on a statement.** Eyebrow, one `--fs-h2`
-line, a note and one or two actions, on `tone="accent" | "raised" | "plain"`.
-The subpages used to stop at their last list row and hand straight to the
-footer, which read as unfinished and left the thin pages (contact, downloads)
-mostly empty. `/privacy-policy` is the deliberate exception — a legal document
-does not get a CTA.
-
-**One photograph, five crops.** `HeroBackground` takes a `focus`
-(`background-position`), passed through by `SubpageHero`. Five subpages running
-the identical crop of `/hero-detective.webp` is what made them read as one
-template with the words swapped; each page now frames a different part of the
-plate. `SubpageHero` also takes `photo={false}` — contact, FAQ, invoice and
-press/downloads open on type alone, so the scroll has two kinds of opening.
-
 **The ticker is its own pause control (WCAG 2.2.2).** The strip carries
 `tabindex="0"` + an `aria-label` naming the topics, and `Ticker.scss` pauses the
 animation on `:hover` **and** `:focus-within`. `prefers-reduced-motion` still
@@ -512,41 +308,14 @@ are non-interactive text — so the strip is the labelled element and the double
 topic list inside it is `aria-hidden` (it would otherwise be announced twice).
 No visible pause button: this is chrome on all 15 routes.
 
-**The running band (`Ticker`) runs under EVERY hero.** One shared line of the
-conference's topics (`EVENT_TOPICS`, `src/lib/ticker.ts`) sits between the hero
-and the body on the homepage and on all nine subpages; `/partners` is the one
-exception and keeps its own partnering-specific list. This reverses an earlier
-call that scoped the band to `/` + `/partners` on the grounds that a repeated
-strip under five heroes reads as a template — the strip is now what carries the
-break between hero and content on every page, which is the job the subpage
-bodies' raised ground was briefly doing instead. Consequence to keep in mind:
-the subpage silhouettes ARE deliberately alike now, so variation has to come
-from the hero crops and the body layouts rather than from the page skeleton.
+Behavioral components not yet covered by `DESIGN.md`:
 
-**Subpage bodies sit on `--color-bg`, the same ground `/partners` uses.** Do not
-reintroduce a tonal step between a subpage hero and its body — the running band
-marks that boundary.
-
-The header (`Menu.astro`) is a three-slot bar — mark, event stamp, actions —
-with all nine destinations behind one toggle at **every** width, opening a
-full-screen panel. There is no horizontal nav breakpoint any more.
-
-**The bar is transparent at the top of the page and solid once scrolled.** Two
-crossfading pseudo-elements do it: `::before` is the solid `#050505` panel,
-`::after` a top-down scrim, swapped on `[data-state='top']`. The event stamp
-follows the same state — hidden at the top (the hero already says where and
-when), revealed on scroll, via `visibility` so the centre grid slot never
-reflows. Scrolled the bar MUST stay opaque: it sits over page content, and a
-transparent zone leaks during an iOS Safari URL-bar transition.
-
-**The brand mark follows that state on the home page, at EVERY width.** At the
-top of `/` the hero wordmark owns the identity, so the bar's mark is hidden
-(`visibility`, so the grid slot holds and nothing jumps); scrolling hands it to
-the bar. Phones used to be exempt — the mark was re-shown under 860px because a
-bar of two right-aligned buttons over an empty half looked like a layout fault
-— but that made the home page's top state differ between a phone and a desktop
-for no reason a visitor could see. Don't re-add the exception. Subpages carry
-`data-home="false"`, so their mark is never hidden.
+| | |
+| --- | --- |
+| `NextStep.astro` | one thing to do, in an open field of them — title, note, and its controls on the right axis. `/thank-you`, `/newsletter-subscription-thank-you` and `/404` all end on "what now?" and all three used to answer it with one link home. Takes `.field-row--holds` — a step CONTAINS its controls |
+| `.logo-grid` / `.logo-cell` | the partner wall: ONE track size for every partner on the page (`/partners`). See "Partner wall" below |
+| `DataState.tsx` | the three non-ready states of a data-backed island — `LoadingState` / `ErrorState` / `EmptyState`. `/speakers`, `/sessions`, `/agenda` and the ticket waves each kept a private copy and they had drifted: two centred and two left-set, two with animated trailing dots, one opening on a hairline, and only `/agenda` offering a next action. Left-set (matching `.fallback-note`), `role="status"` on loading and `role="alert"` on failure, and an **empty state always offers somewhere to go** |
+| `SpeakerPhoto.tsx` | a speaker's photograph, or their initials. Owns ONE decision — no URL, or a URL that fails to load, both land on the monogram — while the caller passes its own classes for the shape. `/sessions` and `/agenda` used to `visibility: hidden` the broken `<img>`, so the same speaker with the same dead CDN URL rendered as initials on `/speakers` and as a hole on the other two |
 
 **The partner wall is one grid module.** `/partners` used to size the cell per
 tier, and `--tier-col` was a FLOOR rather than a width, so cells grew to close
