@@ -1,28 +1,18 @@
 /**
- * Outbound HTTP shared by every domain: Sessionize, ti.to, iDoklad, Slack,
- * Resend.
+ * Outbound HTTP shared by every domain: Sessionize, ti.to, iDoklad, Slack, Resend.
+ * A bare `fetch()` in `functions/` is a bug — it has no timeout, so a hung upstream
+ * rides the whole function timeout (up to 300s on a scheduler), and no retry, so a
+ * single connect-level blip costs a whole run (observed: a bare `fetch failed` at
+ * ~10.7s killed a day's Sessionize sync).
  *
- * Two things every one of those calls needs and none of them used to have
- * consistently:
+ * **Retries are off for anything that isn't idempotent**, enforced here rather than
+ * by convention: a retried POST can mint a second invoice, discount code or email.
+ * `GET`/`HEAD` retry automatically; everything else needs `retryUnsafe`, which only
+ * a Slack line and an OAuth token fetch pass.
  *
- *  1. **A timeout.** A plain `fetch()` has none, so a hung upstream connection
- *     rides the whole function timeout (up to 300s on the schedulers) before
- *     failing — burning the invocation and, on a scheduler, the retry window.
- *  2. **Retries on transient faults.** A single blip used to cost a whole run.
- *     Observed in production: `refreshSessionizeScheduled` died ~10.7s in with
- *     a bare `fetch failed` — undici's shape for a connect-level fault, timed
- *     to its 10s connect timeout — and the day's lineup never synced.
- *
- * **Retries are off by default for anything that isn't idempotent.** Retrying a
- * POST can mint a second invoice, a second discount code, or a second email —
- * failures where the second attempt costs real money. `GET`/`HEAD` retry
- * automatically; everything else retries only when the caller passes
- * `retryUnsafe`, which it should do only when a duplicate is harmless (a Slack
- * line, an OAuth token fetch).
- *
- * Failures throw with the label, the attempt count, and the unwrapped cause, so
- * the Slack alert reads `ti.to releases unreachable after 3 attempts: fetch
- * failed (UND_ERR_CONNECT_TIMEOUT)` instead of `fetch failed`.
+ * Failures throw with the label, attempt count and unwrapped cause, so an alert
+ * reads `ti.to releases unreachable after 3 attempts: fetch failed
+ * (UND_ERR_CONNECT_TIMEOUT)` instead of `fetch failed`.
  */
 
 import { logger } from 'firebase-functions/v2';

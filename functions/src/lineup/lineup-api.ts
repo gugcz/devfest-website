@@ -1,21 +1,14 @@
 /**
- * `lineupApi` — public HTTP endpoint that serves the speaker + session lineup as
- * JSON for the website to `fetch()`.
+ * `lineupApi` — public HTTP endpoint serving the speaker + session lineup as JSON.
  *
- * Why this exists: the browser used to read the `speakers` / `sessions` Firestore
- * collections with the client SDK, which blocks the first read on an App Check
- * (reCAPTCHA Enterprise) token — slow on mobile (~30s observed). Reading here via
- * the Admin SDK (which bypasses App Check + rules) and having the browser hit a
- * plain HTTP endpoint instead removes that token wait entirely, and stays
- * compatible with enforcing App Check on Firestore later.
+ * The browser must NOT read Firestore with the client SDK: that blocks the first
+ * read on an App Check (reCAPTCHA Enterprise) token, which cost ~30s on mobile.
+ * Reading here via the Admin SDK (which bypasses App Check + rules) removes the
+ * wait, and keeps enforcing App Check on Firestore later an option.
  *
- * Two layers of caching keep Firestore reads and function invocations low:
- *  - **CDN**: served behind the Hosting rewrite `/api/lineup` with a `s-maxage`
- *    `Cache-Control`, so most requests are answered from the edge and the
- *    function runs only on a cache miss / revalidation.
- *  - **In-instance memo**: a warm instance coalesces the burst of revalidation
- *    reads it sees so they don't each hit Firestore. Short TTL — the CDN is the
- *    real cache; the memo only smooths bursts.
+ * Two caching layers keep reads and invocations low: a `s-maxage` `Cache-Control`
+ * so Hosting's CDN answers most requests from the edge, plus a short in-instance
+ * memo so a warm instance coalesces the revalidation burst.
  *
  * The wire shape is `{ speakers: [{ id, ...doc }], sessions: [{ id, ...doc }] }`
  * — raw docs, so the browser reuses its existing `speakerFromDoc` /
