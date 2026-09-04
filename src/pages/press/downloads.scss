@@ -1,8 +1,6 @@
 	/* ===================== BODY ===================== */
 	.back-link {
-		// Standalone nav link, not a link in a sentence, so SC 2.5.8's inline
-		// exception doesn't apply — it measured 154×19. Matches the touch row
-		// the privacy-policy back-link already uses.
+		// Standalone nav link, so SC 2.5.8's inline exception does not apply (154x19).
 		display: inline-flex;
 		align-items: center;
 		min-height: 2.75rem;
@@ -30,9 +28,7 @@
 	}
 
 	/* ===================== SECTION HEAD ===================== */
-	// Left-aligned editorial header — eyebrow + trailing hairline + Bebas title,
-	// matching the homepage section rhythm so the asset grid reads as a section.
-	// 4rem, matching the homepage and /press.
+	// Left-set editorial head at the homepage section rhythm.
 	.section-head {
 		margin-bottom: 4rem;
 		text-align: left;
@@ -58,9 +54,7 @@
 		}
 	}
 
-	// Case-file count — small hairline-boxed accent tag (red text = AA via hot).
-	// A plain mono count, not a hairline-boxed numeral. The boxed version was
-	// the `.index-no` case-file tag, which no other page still runs.
+	// A plain mono count, never a hairline-boxed numeral.
 	.section-no {
 		flex: 0 0 auto;
 		color: rgba(240, 237, 230, 0.55);
@@ -68,10 +62,7 @@
 		letter-spacing: 0.16em;
 	}
 
-	// The page's section head, so it runs at --fs-h2 like every other one on the
-	// site ("In the press", "What's on", "Who's talking", "When & where"). It was
-	// the only full-width subpage head still at --fs-h3, which made /downloads
-	// read a size quieter than the page it is reached from.
+	// The page's section head, so it runs at --fs-h2 like every other one on the site.
 	.section-title {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-h2);
@@ -81,7 +72,6 @@
 		color: var(--color-text);
 		margin: 0;
 
-		// Red word reads as neon light.
 		.red {
 			color: var(--color-accent-hot);
 		}
@@ -90,15 +80,54 @@
 	/* ===================== GRID ===================== */
 	// Contact sheet of downloadable assets — one ruled sheet, cells sharing
 	// hairlines, rather than a grid of floating slabs.
+	// Fixed column counts, not `auto-fill`: the sheet is ruled, so the page has
+	// to know how many cells a row holds in order to close a short last row with
+	// blank ones (see the filler note in downloads.astro). The steps are the
+	// ones auto-fill was already picking at a 270px floor — 2 from ~700, 3 from
+	// ~1000, 4 from 1280 — minus the fifth column it took at 1920, which made
+	// the tiles smaller than the marks in them.
 	.presskit-grid {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+		grid-template-columns: minmax(0, 1fr);
 		gap: 0;
 		border-top: 1px solid var(--rule);
 		border-left: 1px solid var(--rule);
+
+		@media (min-width: 700px) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		@media (min-width: 1000px) {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+
+		@media (min-width: 1280px) {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+	}
+
+	// A blank cell of the sheet: the ruling and the row height, nothing else.
+	// Shown only at the column count that needs it.
+	.kit-filler {
+		display: none;
+		min-height: 168px;
+		border-right: 1px solid var(--rule);
+		border-bottom: 1px solid var(--rule);
+	}
+
+	@media (min-width: 700px) and (max-width: 999px) {
+		.kit-filler--c2 { display: block; }
+	}
+
+	@media (min-width: 1000px) and (max-width: 1279px) {
+		.kit-filler--c3 { display: block; }
+	}
+
+	@media (min-width: 1280px) {
+		.kit-filler--c4 { display: block; }
 	}
 
 	.kit-link {
@@ -196,10 +225,8 @@
 		min-width: 0;
 	}
 
-	// The asset's name is the tile's title, so it is set like one: Bebas,
-	// uppercase, on the tile step /agenda's timetable cells use. It was reading
-	// copy at body size, which read as a caption under the preview rather than as
-	// the thing being downloaded.
+	// The asset's name is the tile's title, so it is set like one: Bebas, uppercase,
+	// on the tile step /agenda's cells use.
 	.kit-label {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-title-sm);
@@ -226,8 +253,7 @@
 	}
 
 	/* ===================== EMPTY STATE ===================== */
-	// Lamp-lit dossier (no tab / index) — matches the asset tiles' single-source
-	// lighting and inset matte frame.
+	// Lamp-lit dossier — matches the asset tiles' lighting and inset matte frame.
 	.empty-state {
 		position: relative;
 		border: 0;
@@ -254,7 +280,6 @@
 		font-size: var(--fs-label-xs);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
-		// Red tag glows faintly like neon in the dark.
 		color: var(--color-accent-hot);
 		padding: 0;
 		background: transparent;
@@ -300,7 +325,7 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		// Drop the lift, but keep the matte-frame warm-to-red colour cue.
+		// Drop the lift, keep the matte-frame colour cue.
 		.kit-link { transition: box-shadow 0.2s; }
 		.kit-dl { transition: color 0.2s; }
 

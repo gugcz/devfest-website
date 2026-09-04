@@ -1,17 +1,104 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import LandingNotice from '../components/LandingNotice.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+import NextStep from '../components/NextStep.astro';
+import Closer from '../components/Closer.astro';
+import { EVENT_TOPICS } from '../lib/ticker';
+import { EVENT, googleCalendarUrl } from '../lib/event';
+
+// The one page on the site a visitor reaches AFTER paying, and it used to say
+// four words and offer a link home. Four things belong here and nowhere else:
+// the date in their calendar, the venue on a map, what happens next, and a way
+// to say they are coming. Built out of the site's own composition — hero,
+// running band, open field of steps, closer — not a bespoke centred stack.
+const shareText = `I'm going to ${EVENT.name} on ${EVENT.dateLabel}.`;
+const shareUrl = EVENT.url;
+
+const STEPS = [
+	{
+		title: 'Put it in your calendar',
+		noteHtml: `${EVENT.dateLabel}, ${EVENT.timeLabel}. One day, one venue.`,
+		actions: [
+			{ href: EVENT.icsUrl, label: 'Download .ics', kind: 'primary' as const, download: true },
+			{ href: googleCalendarUrl(), label: 'Google Calendar', external: true },
+		],
+	},
+	{
+		title: 'Find the venue',
+		noteHtml:
+			`${EVENT.venue} &mdash; ${EVENT.address}. Half an hour north of Prague; ` +
+			'getting there is covered in the <a href="/faq">FAQ</a>.',
+		actions: [{ href: EVENT.mapUrl, label: 'Open in maps', external: true }],
+	},
+	{
+		title: 'What happens next',
+		noteHtml:
+			'Your ticket and receipt arrive by email from ti.to &mdash; check spam if nothing lands ' +
+			'within an hour. The programme goes up on the sessions and agenda pages as talks are confirmed.',
+		actions: [{ href: '/sessions', label: 'See the programme' }],
+	},
+	{
+		title: 'Bring someone with you',
+		noteHtml:
+			'Half the value of a conference is who you go with. Tell the people you would want in the room.',
+		actions: [
+			{
+				href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+				label: 'Share on LinkedIn',
+				external: true,
+			},
+			{
+				href: `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
+				label: 'Share on X',
+				external: true,
+			},
+		],
+	},
+];
 ---
 
 <BaseLayout
-	title="Ticket confirmed · DevFest.cz 2026"
+	title="Ticket confirmed — DevFest.cz 2026"
 	description="Your DevFest.cz 2026 ticket is confirmed. See you in Prague on 30 October 2026."
 	noindex
 >
-	<LandingNotice
-		headline="You're in."
-		subtext="Ticket confirmed. Check your inbox for the receipt and QR code. See you in Prague on 30 October 2026."
-	/>
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={"You're <span class=\"red\">in.</span>"}
+			lede={`Ticket confirmed. The receipt and your QR code are on their way to your inbox — see you at ${EVENT.venue} on ${EVENT.dateLabel}.`}
+			seoHeading="DevFest.cz 2026 ticket confirmed"
+			titleId="thank-you-title"
+			photo={false}
+		/>
+
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
+		<section class="band band--lit" aria-labelledby="next-heading">
+			<div class="band-inner">
+				<header class="head-stack">
+					<p class="eyebrow">Before you close this tab</p>
+					<h2 id="next-heading" class="display head-title">Four <span class="red">things.</span></h2>
+				</header>
+
+				<ul class="field reveal">
+					{STEPS.map((step) => <NextStep {...step} />)}
+				</ul>
+			</div>
+		</section>
+
+		<Closer
+			eyebrow="Until October"
+			titleHtml={'See who you<br />came <span class="red">for</span>.'}
+			note="The lineup grows as speakers are confirmed. Newsletter subscribers hear first."
+			tone="accent"
+			titleId="thank-you-closer"
+			actions={[
+				{ href: '/speakers', label: 'See the speakers' },
+				{ href: '/#newsletter', label: 'Join the newsletter', kind: 'ghost' },
+			]}
+		/>
+	</main>
 </BaseLayout>
 
 <script>

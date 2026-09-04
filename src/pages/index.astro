@@ -266,7 +266,9 @@ const facts = [
 
 		<!-- NEWSLETTER — the home page's one red field, matching the closing
 		     statement every subpage ends on -->
-		<section id="newsletter" class="band band--accent">
+		<!-- `anchor-target`: the hero's "Stay in the loop" jumps here, and the
+		     band opens with `--section-y` of air a jump would otherwise land on. -->
+		<section id="newsletter" class="band band--accent anchor-target">
 			<div class="band-inner newsletter-inner reveal">
 				<div class="newsletter-head">
 					<h2 class="newsletter-title display">Follow the<br /><span class="red">leads.</span></h2>
@@ -287,9 +289,8 @@ const facts = [
 </style>
 
 <script>
-	// Bundled module scripts execute once per document, so with <ClientRouter />
-	// this has to re-run per navigation. `astro:page-load` covers the initial
-	// load as well, so it replaces (never supplements) DOMContentLoaded.
+	// Re-bind on `astro:page-load`, never DOMContentLoaded: bundled module scripts
+	// run once per document and <ClientRouter /> swaps the page.
 	document.addEventListener('astro:page-load', () => {
 		const track = document.querySelector<HTMLElement>('.gallery-track');
 		if (!track) return;
