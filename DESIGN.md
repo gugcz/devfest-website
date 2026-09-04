@@ -134,7 +134,7 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:73–97`
 
 **The ramp [MUST].** Every `font-size` goes through one of these steps. Pick the
 nearest; do not introduce a new value without adding it here. **[CURRENT]** the
-code does not hold this line yet — 14 declarations bypass the ramp with an
+code does not hold this line yet — 15 declarations bypass the ramp with an
 absolute literal today, plus a handful more that inherit or compute off one.
 See Open points for the full list and the same claim's other copy, in a source
 comment at `BaseLayout.scss:69`.
@@ -713,12 +713,13 @@ each needs a decision, none is fixed by this PR.
     Currently harmless — every `Closer` call site passes `tone="accent"`
     explicitly — but the default itself is dead and would silently render
     unstyled if a future page omitted `tone`.
-12. **The font-size ramp is stated as [MUST] but broken at 19 call sites: 14**
+12. **The font-size ramp is stated as [MUST] but broken at 19 call sites: 15**
     **absolute literals** (`Countdown.module.scss:33,47,72,84`,
     `LandingNotice.scss:28`, `Menu.scss:317,434`, `Speakers.module.scss:190,249`,
-    `faq.scss:33`, `index.scss:135`, `press.scss:162`, `team.scss:110,130`),
-    **4 relative/inherited** (`Footer.scss:136,303,307`, `Ticker.scss:66`), and
-    **1 on its own token** (`Ticker.scss:45`, `--ticker-size`). The same "every
+    `faq.scss:33`, `index.scss:135`, `press.scss:162`, `team.scss:110,130`,
+    `Ticker.scss:66`), **1 relative** (`Footer.scss:136`, `0.85em`),
+    **2 inherited** (`Footer.scss:303,307`), and **1 on its own token**
+    (`Ticker.scss:45`, `--ticker-size`). The same "every
     `font-size` goes through one of these steps" claim is repeated in a source
     comment at `BaseLayout.scss:69` and is equally untrue there — worth fixing
     next time that file is touched, not on its own. Either these get folded
