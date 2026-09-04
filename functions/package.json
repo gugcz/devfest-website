@@ -8,6 +8,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
+    "test": "tsc -p tsconfig.test.json && node --test \"lib-test/**/*.test.js\"",
     "build:watch": "tsc -w",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
@@ -16,7 +17,7 @@
   },
   "dependencies": {
     "firebase-admin": "^14.2.0",
-    "firebase-functions": "^7.3.0"
+    "firebase-functions": "^7.3.2"
   },
   "overrides": {
     "brace-expansion": "^5.0.9"

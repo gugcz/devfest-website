@@ -1,14 +1,9 @@
 /**
- * Parameters shared by more than one domain.
+ * Parameters shared by more than one domain. Domain-specific config stays in
+ * `<domain>/params.ts`; a domain must never import a param from a sibling domain.
  *
- * Domain-specific config stays in `<domain>/params.ts` — this file holds only
- * what several domains genuinely share, so nobody has to import a secret from
- * a sibling domain to use it. (Every domain alerts to the same Slack channel;
- * `SLACK_WEBHOOK_URL` used to live in `tickets/params.ts`, which made the
- * sessionize and invoice domains depend on the tickets domain for it.)
- *
- * The param NAME is what binds to Secret Manager, so moving a definition
- * between files changes nothing about deployment or the stored secret.
+ * The param NAME is what binds to Secret Manager, so moving a definition between
+ * files changes nothing about deployment or the stored secret.
  */
 
 import { defineSecret } from 'firebase-functions/params';

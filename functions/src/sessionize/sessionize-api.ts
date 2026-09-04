@@ -1,37 +1,24 @@
 /**
- * Sessionize "All data" client + pure normalization helpers.
+ * Sessionize "All data" client + pure normalization helpers. Sessionize is the
+ * org's source of truth; `refreshSessionizeScheduled` mirrors it into public-read
+ * Firestore once a day and the browser never calls Sessionize directly.
  *
- * Sessionize is the org's source of truth. The `refreshSessionizeScheduled` scheduler
- * fetches the All-data view once a day and mirrors it into public-read
- * Firestore; the browser never calls Sessionize directly.
+ * Endpoint: https://sessionize.com/api/v2/<id>/view/<View> (no auth, GET,
+ * server-cached ~5 min). Endpoints are provisioned per-view, so a given id serves
+ * only the view(s) it was created for and any other view returns a 400 HTML page.
+ * The "All data" view is an OBJECT (`{ speakers, sessions, rooms, categories,
+ * questions }`); the "Speakers" view is a bare ARRAY of speakers. So
+ * `fetchSessionizePayload` tries All first and falls back to Speakers, and the
+ * extractors accept either. The id MUST be a JSON endpoint — an embed id is HTML.
  *
- * Endpoint: https://sessionize.com/api/v2/<id>/view/<View>  (no auth, GET,
- * server-cached ~5 min). Sessionize endpoints are provisioned per-view, so a
- * given id serves only the view(s) it was created for; requesting a view the
- * endpoint doesn't expose returns a 400 HTML page. We need the speaker AND
- * session records: the "All data" view (an OBJECT `{ speakers, sessions, rooms,
- * categories, questions }`) carries both, while the "Speakers" view (a bare
- * ARRAY of speaker objects) carries only speakers — so `fetchSessionizePayload`
- * tries All first, falls back to Speakers, and `extractSpeakers` /
- * `extractSessions` accept whatever the payload holds. The id MUST be a
- * JSON-format endpoint; an embed id returns HTML, not JSON.
+ * Two cross-referenced collections are mirrored: `speakers` (each carrying
+ * `sessions[]`) and `sessions` (each carrying `speakers[]`). Sessions exist only
+ * in the All view; a Speakers-view fallback yields an empty session set, which the
+ * delete-guard preserves rather than wipes. `rooms` is still ignored.
  *
- * Scope: two collections are mirrored, cross-referenced so each side embeds a
- * summary of the other:
- *   - `speakers` — the full speaker record, each carrying `sessions[]`
- *     ({ id, name, description }) resolved from the payload's top-level
- *     `sessions[]` via `buildSessionMap`.
- *   - `sessions` — the session record, each carrying `speakers[]`
- *     ({ id, fullName, tagLine, profilePicture }) resolved from the payload's
- *     top-level `speakers[]` via `buildSpeakerSummaryMap`.
- * Sessions are only present in the All view; a Speakers-view fallback yields an
- * empty session set, which the delete-guard preserves rather than wipes. The
- * All view's `rooms` / `categories` are still ignored — add a collection +
- * guarded sync when they're needed.
- *
- * The fetch/validate/normalize and delete-guard logic below are pure and
- * exported so the highest-risk paths (a truncated response must never wipe the
- * live collection) are reviewable in isolation — this package ships no tests.
+ * The fetch/validate/normalize and delete-guard logic is pure and exported so the
+ * highest-risk path — a truncated response must never wipe a live collection —
+ * stays reviewable; this package ships no tests.
  */
 
 import { describeError } from '../lib/errors.js';
@@ -39,7 +26,6 @@ import { errorBody, fetchWithRetry } from '../lib/http.js';
 
 const SESSIONIZE_API_BASE = 'https://sessionize.com/api/v2';
 
-/** Raw Sessionize link as returned by the All view. */
 export interface SessionizeLink {
 	title?: string | null;
 	url?: string | null;
@@ -121,7 +107,6 @@ export type SpeakerLinkKind =
 	| 'mastodon'
 	| 'web';
 
-/** Normalized link persisted on the speaker doc. */
 export interface SpeakerLink {
 	kind: SpeakerLinkKind;
 	url: string;
@@ -193,9 +178,7 @@ export interface SessionSpeakerRef {
  * website's session filters (track / level / format facets).
  */
 export interface SessionCategory {
-	/** Category group title (e.g. `Track`, `Level`, `Format`). */
 	name: string;
-	/** The item labels this session is tagged with in that group. */
 	values: string[];
 }
 
@@ -482,7 +465,6 @@ export function normalizeSpeakers(
 // helpers below tolerate an absent/empty set (returning []) — the delete-guard,
 // not a throw, protects the live `sessions` collection from a truncated fetch.
 
-/** The speaker fields embedded on each session doc. */
 interface SpeakerSummary {
 	fullName: string;
 	tagLine: string;
@@ -735,8 +717,8 @@ export function parseEndpointId(raw: string | null | undefined): string {
 
 /**
  * GET one Sessionize view. Retries transient faults via `fetchWithRetry`,
- * because this sync runs once a day: the blip that cost a whole day of lineup
- * freshness in production was a ~10.7s connect timeout here. A non-OK response
+ * because this sync runs once a day and a ~10.7s connect timeout here has cost a
+ * whole day of lineup freshness in production. A non-OK response
  * comes back as-is, so the caller can fall back to the Speakers view on the
  * deterministic 400 an endpoint returns for a view it doesn't serve.
  */
@@ -754,7 +736,7 @@ async function fetchView(endpointId: string, view: string): Promise<Response> {
  * "Speakers" view, or both — try All first and fall back to Speakers on a
  * non-OK response. Only the All view carries sessions; a Speakers-view fallback
  * yields speakers but no sessions. Each view is fetched with retries (see
- * `fetchView`), so a transient blip no longer costs the day's sync. Throws when
+ * `fetchView`), so a transient blip does not cost the day's sync. Throws when
  * a view stays unreachable, both views fail, or the body is not JSON, so the
  * caller aborts without touching Firestore.
  */

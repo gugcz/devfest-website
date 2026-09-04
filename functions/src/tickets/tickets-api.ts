@@ -1,16 +1,11 @@
 /**
- * `ticketsApi` — public HTTP endpoint that serves the cached ti.to release
- * roadmap as JSON for the website to `fetch()`.
+ * `ticketsApi` — public HTTP endpoint serving the cached ti.to release roadmap as
+ * JSON. Same pattern as `lineupApi`: the browser hits this instead of RTDB, so no
+ * Firebase SDK and no App Check sit on the content path.
+ * `refreshTicketsScheduled` writes `/tickets` hourly; this only reads it.
  *
- * Same pattern as `lineupApi`: the browser used to read RTDB `/tickets` with the
- * Firebase SDK (which pulls in App Check); it now hits this plain HTTP endpoint
- * instead, so no Firebase SDK / App Check on the content path. `refreshTicketsScheduled`
- * writes `/tickets` hourly via the Admin SDK; this only reads it.
- *
- * Caching: served behind the Hosting rewrite `/api/tickets` with a short
- * `s-maxage` (tickets sell out mid-sale, so a tighter TTL than the daily lineup),
- * plus an in-instance memo to coalesce revalidation reads. The underlying RTDB
- * cache itself only changes hourly, so the edge TTL adds little real staleness.
+ * A tighter edge TTL than the lineup (tickets sell out mid-sale), plus the
+ * in-instance memo to coalesce revalidation reads.
  */
 
 import { onRequest } from 'firebase-functions/v2/https';
