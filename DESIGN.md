@@ -133,7 +133,12 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:73–97`
   Elite declares no `subsets` (`astro.config.mjs:96`) — see Open points.
 
 **The ramp [MUST].** Every `font-size` goes through one of these steps. Pick the
-nearest; do not introduce a new value without adding it here.
+nearest; do not introduce a new value without adding it here. **[CURRENT]** the
+code does not hold this line yet — 19 declarations bypass the ramp with a
+literal (`Countdown.module.scss:33,47,72,84`, `Menu.scss:317,434`,
+`Speakers.module.scss:190,249`, `team.scss:110,130`, `faq.scss:33`,
+`press.scss:162`, `index.scss:135`, `LandingNotice.scss:28`,
+`Ticker.scss:66`). See Open points.
 
 Poster scale (Bebas), `BaseLayout.scss:52–66`:
 
@@ -364,7 +369,7 @@ skeleton (`skelPulse` / `shimmer`, `Tickets.module.scss:313–346`), then either
 content or a `role="alert"` status block (`Speakers.tsx:231`, `Sessions.tsx:149`,
 `Agenda.tsx:433`, `Tickets.tsx:144`). **[MUST]** Every data-backed page also
 ships a `.fallback-note` (`BaseLayout.scss:495`) for the no-JS / endpoint-down
-case.
+case — except `/` (`Tickets`), which has none. See Open points.
 
 ## Forms & errors
 
@@ -709,3 +714,13 @@ each needs a decision, none is fixed by this PR.
     Currently harmless — every `Closer` call site passes `tone="accent"`
     explicitly — but the default itself is dead and would silently render
     unstyled if a future page omitted `tone`.
+12. **The font-size ramp is stated as [MUST] but broken at 19 call sites**
+    (`Countdown.module.scss:33,47,72,84`, `Menu.scss:317,434`,
+    `Speakers.module.scss:190,249`, `team.scss:110,130`, `faq.scss:33`,
+    `press.scss:162`, `index.scss:135`, `LandingNotice.scss:28`,
+    `Ticker.scss:66`). Either these get folded into the ramp as named steps, or
+    downgraded to `[CURRENT]` literals with a reason each.
+13. **`/` has no `.fallback-note`.** `agenda`, `sessions` and `speakers` each
+    ship one for the no-JS / endpoint-down case; the home page's `Tickets`
+    island does not. Either add one, or state the exception in the MUST
+    instead of leaving the home page silently uncovered.
