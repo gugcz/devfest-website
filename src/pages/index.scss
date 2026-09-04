@@ -30,7 +30,13 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		// Bottom-set, not centred: centring split the leftover height evenly
+		// above AND below the block, which is what pushed the whole thing ~100px
+		// lower than the mock and spread the air across every gap instead of
+		// spending it in one place. Bottom-set collects it all above the mark,
+		// where the photograph is, and leaves the rhythm below (mark → statement
+		// → set → action) exactly what each clamp() already specifies.
+		justify-content: flex-end;
 		align-items: flex-start;
 	}
 
@@ -237,10 +243,6 @@
 		&:hover,
 		&:focus-visible {
 			color: var(--color-accent-hot);
-
-			.meta-sub {
-				color: inherit;
-			}
 		}
 	}
 
@@ -588,6 +590,13 @@
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
+		// Back to 100svh (the base rule, unset here). Auto height let the hero
+		// shrink under the viewport whenever its content fell short of a full
+		// screen — which put the running ticker's OWN topic set back in the
+		// fold, 100px under the strip, in the same hollow face the mock keeps
+		// off-screen. `.hero-actions .btn-ghost` below is what pays for it: the
+		// content that used to overflow a fixed-height frame is now one control
+		// shorter, so nothing needs a hard-coded `hero-inner` height to fit.
 		#hero {
 			// Back to a full-viewport frame. This used to be `min-height: auto`
 			// so the footing strip scrolled in under the CTAs instead of landing
@@ -616,6 +625,12 @@
 
 		.hero-actions {
 			margin-top: clamp(1.5rem, 4.2vh, 2.5rem);
+		}
+
+		// "Stay in the loop" has its own section further down; on the phone it
+		// is the one control in the fold that isn't the primary decision.
+		.hero-actions .btn-ghost {
+			display: none;
 		}
 
 		.hero-foot {
