@@ -1,8 +1,6 @@
 	/* ===================== BODY ===================== */
 	.back-link {
-		// Standalone nav link, not a link in a sentence, so SC 2.5.8's inline
-		// exception doesn't apply — it measured 154×19. Matches the touch row
-		// the privacy-policy back-link already uses.
+		// Standalone nav link, so SC 2.5.8's inline exception does not apply (154x19).
 		display: inline-flex;
 		align-items: center;
 		min-height: 2.75rem;
@@ -30,9 +28,7 @@
 	}
 
 	/* ===================== SECTION HEAD ===================== */
-	// Left-aligned editorial header — eyebrow + trailing hairline + Bebas title,
-	// matching the homepage section rhythm so the asset grid reads as a section.
-	// 4rem, matching the homepage and /press.
+	// Left-set editorial head at the homepage section rhythm.
 	.section-head {
 		margin-bottom: 4rem;
 		text-align: left;
@@ -58,9 +54,7 @@
 		}
 	}
 
-	// Case-file count — small hairline-boxed accent tag (red text = AA via hot).
-	// A plain mono count, not a hairline-boxed numeral. The boxed version was
-	// the `.index-no` case-file tag, which no other page still runs.
+	// A plain mono count, never a hairline-boxed numeral.
 	.section-no {
 		flex: 0 0 auto;
 		color: rgba(240, 237, 230, 0.55);
@@ -68,10 +62,7 @@
 		letter-spacing: 0.16em;
 	}
 
-	// The page's section head, so it runs at --fs-h2 like every other one on the
-	// site ("In the press", "What's on", "Who's talking", "When & where"). It was
-	// the only full-width subpage head still at --fs-h3, which made /downloads
-	// read a size quieter than the page it is reached from.
+	// The page's section head, so it runs at --fs-h2 like every other one on the site.
 	.section-title {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-h2);
@@ -81,15 +72,13 @@
 		color: var(--color-text);
 		margin: 0;
 
-		// Red word reads as neon light.
 		.red {
 			color: var(--color-accent-hot);
 		}
 	}
 
 	/* ===================== GRID ===================== */
-	// Contact sheet of downloadable assets — one ruled sheet, cells sharing
-	// hairlines, rather than a grid of floating slabs.
+	// Contact sheet of downloadable assets — one ruled sheet, cells sharing hairlines.
 	.presskit-grid {
 		list-style: none;
 		margin: 0;
@@ -196,10 +185,8 @@
 		min-width: 0;
 	}
 
-	// The asset's name is the tile's title, so it is set like one: Bebas,
-	// uppercase, on the tile step /agenda's timetable cells use. It was reading
-	// copy at body size, which read as a caption under the preview rather than as
-	// the thing being downloaded.
+	// The asset's name is the tile's title, so it is set like one: Bebas, uppercase,
+	// on the tile step /agenda's cells use.
 	.kit-label {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-title-sm);
@@ -226,8 +213,7 @@
 	}
 
 	/* ===================== EMPTY STATE ===================== */
-	// Lamp-lit dossier (no tab / index) — matches the asset tiles' single-source
-	// lighting and inset matte frame.
+	// Lamp-lit dossier — matches the asset tiles' lighting and inset matte frame.
 	.empty-state {
 		position: relative;
 		border: 0;
@@ -254,7 +240,6 @@
 		font-size: var(--fs-label-xs);
 		letter-spacing: 0.3em;
 		text-transform: uppercase;
-		// Red tag glows faintly like neon in the dark.
 		color: var(--color-accent-hot);
 		padding: 0;
 		background: transparent;
@@ -300,7 +285,7 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		// Drop the lift, but keep the matte-frame warm-to-red colour cue.
+		// Drop the lift, keep the matte-frame colour cue.
 		.kit-link { transition: box-shadow 0.2s; }
 		.kit-dl { transition: color 0.2s; }
 

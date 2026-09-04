@@ -101,11 +101,8 @@
 	}
 
 	/* ===================== SPONSOR TIERS ===================== */
-	// One lamp-lit dossier slab shared by every sponsor tier (platinum →
-	// silver). Tiers differ only in scale: the higher the tier, the taller the
-	// tile, the larger the logo cap, and the wider the showcase columns — see
-	// the $tiers ladder below. Wordmarks ship light (white cut-outs) for the
-	// dark card; the off-ladder rows get the cream plate further down instead.
+	// One lamp-lit slab shared by every sponsor tier; tiers differ only in scale —
+	// see the $tiers ladder below. Wordmarks ship light for the dark card.
 	.tier-partners {
 		position: relative;
 		padding: var(--section-y) var(--gutter) 0;
@@ -117,8 +114,7 @@
 		margin: 0 auto;
 	}
 
-	// The tier name on its own. It used to carry a mono "03 partners" caption
-	// beside it — six sections down one page each announcing how few they had.
+	// The tier name on its own — never a "03 partners" count beside it.
 	.tier-head {
 		margin-bottom: clamp(2rem, 4vw, 3rem);
 	}
@@ -138,34 +134,23 @@
 		}
 	}
 
-	// Contact sheet, not a tile grid: logos sit in cells of one ruled sheet,
-	// sharing hairlines with their neighbours. No panel fill, no drop shadow,
-	// no floating tiles — the grid itself is the only structure.
-	//
-	// The sheet spans the content column and the cells GROW to fill each row
-	// (`flex: 1 1 var(--tier-col)` below). It used to be `width: fit-content`
-	// so the ruled box never hung over empty space — but with three ~300px
-	// cells that left the sheet occupying a third of a 1440 page, with the
-	// tier headline floating over dead space beside it. Growing cells close
-	// every row by construction, so the box stays closed either way.
-	// The rules belong to the CELLS, not to the sheet. Drawing the top and left
-	// edges on the grid meant a tier that doesn't fill its row hung a hairline
-	// over empty space — platinum drew 1296px of line for a 612px cell.
+	// Contact sheet, not a tile grid: logos sit in cells of one ruled sheet and share
+	// hairlines with their neighbours. Cells GROW to fill each row, so the sheet
+	// always closes; the rules belong to the CELLS, or a tier that doesn't fill its
+	// row hangs a hairline over empty space.
 	.tier-grid {
 		list-style: none;
 		margin: 0;
-		// The cells' -1px bottom margin puts the last row's bottom border 1px
-		// outside the container, where the next section's opaque ground paints
-		// over it. This gives that pixel back.
+		// The cells' -1px bottom margin puts the last row's border outside the container,
+		// where the next section paints over it. This gives that pixel back.
 		padding: 0 0 1px;
 		display: flex;
 		flex-wrap: wrap;
 		width: 100%;
 	}
 
-	// `--tier-col` is the FLOOR, not the width: cells grow to share the row so
-	// the sheet always reaches both edges of the content column. The cap stops
-	// a one-partner tier from stretching a single logo across 1300px.
+	// `--tier-col` is the FLOOR, not the width; the cap stops a one-partner tier from
+	// stretching a single logo across 1300px.
 	.tier-item {
 		position: relative;
 		overflow: hidden;
@@ -173,9 +158,8 @@
 		flex: 1 1 var(--tier-col);
 		max-width: min(100%, calc(var(--tier-col) * 1.8));
 		min-height: var(--tier-tile);
-		// A box around each logo. The -1px pulls neighbours onto a shared
-		// hairline, so a row of cells still reads as one ruled sheet rather
-		// than as a strip of 2px-doubled boxes.
+		// The -1px pulls neighbours onto a shared hairline, so a row reads as one ruled
+		// sheet rather than a strip of 2px-doubled boxes.
 		border: 1px solid var(--rule);
 		margin: 0 -1px -1px 0;
 		border-radius: 0;
@@ -226,14 +210,9 @@
 			transition: opacity 0.2s;
 		}
 
-		// A plated logo (see `plated` in the partners collection) is a boxed
-		// lockup: the padding and the background are baked into the file. The
-		// cut-out caps above measure a wordmark's letter height, so applied to
-		// a plate they render a small chip adrift in the cell — visibly the
-		// case on mobile, where the cell goes full-width but the cap does not.
-		// A plate is sized to the cell instead: it takes the width the cell's
-		// own padding leaves it, and the height cap only stops a very tall
-		// lockup from touching the rules.
+		// A plated logo is a boxed lockup with its padding baked in, so the cut-out
+		// letter-height cap renders it as a small chip adrift in the cell. A plate is
+		// sized to the cell instead; the height cap only stops a very tall lockup.
 		.tier-logo.is-plated {
 			width: 100%;
 			max-width: 100%;
@@ -252,8 +231,7 @@
 		}
 	}
 
-	// Tier scale ladder: column min-width, tile height, logo cap — the last two
-	// repeated for the 900px breakpoint. Top tier reads as the marquee.
+	// Tier scale ladder: column min-width, tile height, logo cap.
 	$tiers: (
 		'platinum': (340px, 260px, 96px, 190px, 72px),
 		'diamond': (320px, 234px, 86px, 176px, 66px),
@@ -282,13 +260,11 @@
 	/* ============ OFF-LADDER PLATE ROWS (media, community) ============ */
 	.plate-partners {
 		position: relative;
-		// Bottom padding so the last logo row has breathing room before the
-		// partnership block below (it was 0, leaving the tiles flush).
+		// Bottom padding so the last logo row clears the partnership block below.
 		padding: var(--section-y) var(--gutter);
 		background: var(--color-bg);
 
-		// Stacked plate rows would otherwise double up the section padding
-		// between them; one section's worth of air is plenty.
+		// Stacked plate rows would otherwise double up the section padding between them.
 		+ .plate-partners {
 			padding-top: 0;
 		}
@@ -318,10 +294,8 @@
 		}
 	}
 
-	// Same ruled contact sheet as the tier grids, but its cells are CREAM, so
-	// the rule has to invert: `--rule` is cream at 13%, which on a cream plate
-	// is invisible and let a row of logos read as one continuous band instead
-	// of one cell per partner.
+	// Same ruled contact sheet as the tier grids, but the cells are CREAM, so the rule
+	// inverts — `--rule` is cream at 13% and invisible on a cream plate.
 	.plate-grid {
 		--plate-rule: rgba(5, 5, 5, 0.14);
 
@@ -335,25 +309,16 @@
 		max-width: 100%;
 	}
 
-	// Media wordmarks ship dark (made for light backgrounds), so they need a
-	// light plate — inverting them instead flattened the raster logo to a white
-	// blob and mangled the multi-tone marks. The plate stays; what changed is
-	// scale: the grid is now content-width (flex, above), so it's a tidy strip
-	// of logo cells, not the full-width band of big cream blocks that read as a
-	// different site.
+	// Media wordmarks ship dark, so they need a light plate: inverting them flattens the
+	// raster logos to a white blob. The grid is content-width, so it stays a strip.
 	.plate-item {
 		position: relative;
 		overflow: hidden;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		// Real `width` rather than a bare basis, same reason as `.tier-item`.
-		//
-		// Sized just under silver — the bottom rung of the sponsor ladder is
-		// 290×186 with a 64px logo cap, and these sit a step below it without
-		// dropping to a different order of size. They were 220×150, which read
-		// as a footnote strip beside the tiers rather than as the last row of
-		// the same wall.
+		// Real `width` rather than a bare basis, same reason as `.tier-item`. Sized just
+		// under silver (290x186 / 64px cap) so these read as the last row of the same wall.
 		flex: none;
 		width: 265px;
 		max-width: 100%;
@@ -399,9 +364,8 @@
 	}
 
 	@media (max-width: 900px) {
-		// `width`, not `flex-basis` — the grid is `width: fit-content`, so the
-		// cell the box is measured from has to be the cell that gets laid out.
-		// Silver drops to a 140px tile / 52px cap here; same one-step-under.
+		// `width`, not `flex-basis` — the grid is `width: fit-content`, so the measured box
+		// has to be the cell that gets laid out.
 		.plate-item {
 			width: 200px;
 			min-height: 148px;
@@ -416,11 +380,8 @@
 	@media (max-width: 600px) {
 		.plate-grid { width: 100%; }
 
-		// Two per row, never N. `flex: 1 1 0` shared the row between however
-		// many partners a category had, so a three-partner row put each
-		// wordmark in a 116px cell — with padding, ~68px to render a logo that
-		// is mostly type. Two-up gives each mark real width and the rows stay
-		// the same height whatever the count.
+		// Two per row, never N: `flex: 1 1 0` gave a three-partner row ~68px of usable
+		// width per wordmark.
 		.plate-item {
 			flex: 1 1 calc(50% - 1px);
 			width: auto;
@@ -430,11 +391,8 @@
 
 			img {
 				max-height: 44px;
-				// An odd count leaves one cell alone on the last row, and it
-				// grows to close the sheet (same rule the tier cells follow).
-				// Without a cap the lone mark then rendered at ~350px against
-				// its 175px neighbours — the widest logo on the page belonging
-				// to the smallest tier.
+				// An odd count leaves one cell alone on the last row and it grows to close the sheet;
+				// without a cap that lone mark rendered at ~350px against its 175px neighbours.
 				max-width: 190px;
 			}
 		}
@@ -462,9 +420,7 @@
 	}
 
 	/* ===================== CLOSING STATEMENT ===================== */
-	// Contact block on the accent field. Ink inverts globally via
-	// `.band--accent` in BaseLayout.scss; only the partner-specific bits
-	// (the named contact, the disabled deck stamp) are restated here.
+	// Contact block on the accent field; ink inverts globally via `.band--accent`.
 	.partners-contact {
 		display: flex;
 		flex-direction: column;
@@ -477,8 +433,7 @@
 		font-size: var(--fs-label);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
-		// Full cream. On the red field a dimmed label measures 3.25:1 and
-		// fails 1.4.3 — see the ink table in BaseLayout.scss.
+		// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
 		color: var(--on-accent);
 	}
 

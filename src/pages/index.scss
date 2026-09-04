@@ -1,10 +1,8 @@
 @use 'sass:list';
 
 	/* ===================== HERO ===================== */
-	// One column, not two. The statement is the page — a countdown parked
-	// beside it at equal weight halved the width the headline could run to,
-	// which is the whole reason the old hero read small. The data (date, venue,
-	// clock) moved to a footing strip along the base of the frame.
+	// One column, not two. The statement is the page; the data (date, venue, clock)
+	// sits in a footing strip along the base of the frame.
 	#hero {
 		position: relative;
 		min-height: 100svh;
@@ -12,11 +10,7 @@
 		flex-direction: column;
 		justify-content: flex-end;
 		overflow: hidden;
-		// 5.5rem clears the 71px header bar with room to spare. It was 7rem,
-		// sized back when the bar was an opaque panel the mark had to sit well
-		// clear of; the bar is a scrim at the top of the page now and the hero
-		// photo runs under it, so the extra 24px was just a gap above the
-		// wordmark.
+		// 5.5rem clears the 71px header bar; the bar is a scrim and the photo runs under it.
 		padding: calc(5.5rem + env(safe-area-inset-top)) var(--gutter) 0;
 		border-bottom: 1px solid var(--rule-soft);
 	}
@@ -27,11 +21,7 @@
 		width: 100%;
 		max-width: var(--maxw);
 		margin: 0 auto;
-		// The statement block sits low in the frame with the photo above and
-		// beside it — a poster, not a centred card. The top inset is small: the
-		// block is centred in the leftover space anyway, so this padding only
-		// ever pushed the wordmark further down on top of the section's own
-		// clearance.
+		// The statement block sits low in the frame — a poster, not a centred card.
 		padding-block: clamp(1rem, 3vh, 2.5rem) clamp(3rem, 7vh, 5.5rem);
 		flex: 1;
 		display: flex;
@@ -54,20 +44,16 @@
 		display: block;
 	}
 
-	// THE statement. Poster scale, set tight, three words of accent — this is
-	// the one thing on the page that has to land before anything is read.
+	// THE statement. Poster scale, set tight; the one thing that must land first.
 	.hero-statement {
 		font-size: var(--fs-hero);
 		max-width: 18ch;
-		// `balance` fights the explicit <br>; the line breaks are art-directed.
+		// `balance` fights the explicit <br> — the line breaks are art-directed.
 		text-wrap: initial;
 		animation: fadeInUp 0.9s ease 0.25s both;
 	}
 
-	// The second clause of the old subtitle, kept as its own quiet line. No
-	// red border, no italic serif — the typewriter face at reading size is
-	// already the brand's voice, and the border was the site's most-repeated
-	// decoration.
+	// A quiet second line. No red border and no italic serif.
 	.hero-note {
 		margin-top: clamp(1.25rem, 2.5vw, 1.9rem);
 		font-family: var(--font-special-elite), cursive;
@@ -88,8 +74,7 @@
 	}
 
 	/* ---- footing strip ---- */
-	// Full-bleed row along the base of the hero: identity data on the left,
-	// the clock on the right, one hairline above.
+	// Full-bleed row along the base of the hero, one hairline above.
 	.hero-foot {
 		position: relative;
 		z-index: 10;
@@ -140,8 +125,7 @@
 		margin: 0;
 	}
 
-	// Small orientation note under a value — keeps the venue name short while
-	// still anchoring it for people who don't know Libčice.
+	// Keeps the venue name short while still anchoring it for people who don't know Libčice.
 	.meta-sub {
 		display: block;
 		margin-top: 0.4rem;
@@ -175,17 +159,14 @@
 	}
 
 	/* ===================== FACTS ===================== */
-	// Figures instead of a paragraph. Head on the left, the four facts on a
-	// grid to its right — an asymmetric split so the page doesn't open with a
-	// third centred column-of-three.
+	// Figures instead of a paragraph, on an asymmetric split.
 	#facts {
 		padding: var(--section-y) 0;
 		background: var(--color-bg);
 	}
 
-	// Head above, figures across the full column. Side by side, the three facts
-	// were sharing ~250px each and every label broke onto two or three lines —
-	// a mono label at 0.2em tracking needs real width to stay on one line.
+	// Head above, figures across the full column: side by side, every mono label
+	// broke onto two or three lines.
 	.facts-inner {
 		display: block;
 	}
@@ -197,22 +178,19 @@
 	}
 
 	/* ===================== GALLERY ===================== */
-	// A held shot. This is the one place the past editions get to breathe.
+	// A held shot — the one place the past editions get to breathe.
 	#gallery {
 		position: relative;
-		// Wide at the top (the held shot), normal at the bottom: the red
-		// newsletter field supplies its own separation, so the full 216px under
-		// it was just a hole between the last photo and the band.
+		// Wide at the top, normal at the bottom: the red newsletter field below supplies
+		// its own separation.
 		padding: var(--section-y-wide) 0 var(--section-y);
 		background: var(--color-bg);
 		overflow: hidden;
 		border-top: 1px solid var(--rule-soft);
 	}
 
-	// Layout, title and lede come from `.head-split` / `.display head-title` /
-	// `.head-note` in BaseLayout.scss — the same head the ticket section, the
-	// speakers teaser and the /contact desks run. Only the stacking is local:
-	// the head has to sit above the marquee that starts under it.
+	// Layout, title and lede come from `.head-split`; only the stacking is local, so
+	// the head sits above the marquee starting under it.
 	.gallery-head {
 		position: relative;
 		z-index: 2;
@@ -253,9 +231,7 @@
 		will-change: transform;
 	}
 
-	// Flat B&W press photos that develop into colour on hover. The bordered,
-	// shadowed, lifting tile is gone — a frame around every photo in a row of
-	// forty-four is forty-four frames.
+	// Flat B&W press photos that develop into colour on hover. No frame per photo.
 	.gallery-track img {
 		display: block;
 		height: clamp(240px, 30vw, 420px);
@@ -278,8 +254,7 @@
 	}
 
 	/* ===================== CALL FOR SPEAKERS ===================== */
-	// Currently commented out in index.astro (CFP closed) — kept in sync so
-	// re-enabling it doesn't re-introduce the old template.
+	// Currently commented out in index.astro (CFP closed) — kept in sync.
 	#speakers {
 		position: relative;
 		padding: var(--section-y-tight) var(--gutter);
@@ -322,14 +297,12 @@
 	}
 
 	/* ===================== NEWSLETTER ===================== */
-	// Ground, padding and container come from `.band.band--accent`; only the
-	// two-column split belongs to this section.
+	// Ground and container come from `.band--accent`; only the split is local.
 	#newsletter {
 		position: relative;
 	}
 
-	// Title left, form right — the form is the point of the section, so it
-	// gets its own column instead of sitting under a centred stack.
+	// Title left, form right — the form is the point of the section.
 	.newsletter-inner {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -347,8 +320,7 @@
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-lede);
 		line-height: 1.6;
-		// Full cream — see the measured ink table in BaseLayout.scss; anything
-		// dimmer fails 1.4.3 on the red ground.
+		// Full cream — see the measured ink table in BaseLayout.scss; dimmer fails 1.4.3 on red.
 		color: var(--on-accent);
 		max-width: 32ch;
 	}
@@ -360,8 +332,7 @@
 	}
 
 	/* ===================== PARTNERS ===================== */
-	// Quiet supporting strip: an eyebrow over muted logo rows. One row per
-	// tier, top tier first — the same ladder /partners renders, at strip scale.
+	// Quiet supporting strip: one row per tier, top tier first, at strip scale.
 	#partners {
 		position: relative;
 		padding: var(--section-y-tight) var(--gutter);
@@ -370,9 +341,7 @@
 		border-top: 1px solid var(--rule-soft);
 	}
 
-	// Left-set, like every other section on the page. Centred, it was the last
-	// block still sitting on its own axis while every headline started at the
-	// page's left edge.
+	// Left-set, like every other section on the page.
 	.partners-inner {
 		position: relative;
 		z-index: 1;
@@ -404,8 +373,7 @@
 		width: 100%;
 	}
 
-	// Tier caption: a plain mono word. The pair of flanking hairlines it used
-	// to carry made four rows of captions read as four small tables.
+	// Tier caption: a plain mono word, never flanked by hairlines.
 	.partners-tier-label {
 		margin: 0;
 		font-family: var(--font-jetbrains-mono), monospace;
@@ -426,8 +394,7 @@
 		gap: clamp(2rem, 3.5vw, 2.75rem) clamp(2.5rem, 5vw, 4.5rem);
 	}
 
-	// No card — logos float on the section bg, dimmed + desaturated so they read
-	// as a supporting credit, not a billboard. Brighten on hover.
+	// No card — logos float on the section bg, dimmed and desaturated, brightening on hover.
 	.partners-item {
 		display: flex;
 		align-items: center;
@@ -449,10 +416,8 @@
 			transition: opacity 0.2s, filter 0.2s;
 		}
 
-		// A boxed lockup carries its own padding, so the wordmark height cap
-		// under-sizes it; the strip has no cell to fill, so it just gets a
-		// taller cap. Desaturating a brand-coloured plate turns the whole block
-		// muddy rather than quiet, so a plated logo is held back by opacity.
+		// A boxed lockup carries its own padding, so the wordmark cap under-sizes it; and
+		// desaturating a brand-coloured plate goes muddy, so a plated logo is held back by opacity.
 		.partners-logo.is-plated {
 			max-height: calc(var(--strip-logo-h) * 1.45);
 			filter: none;
@@ -465,21 +430,18 @@
 			filter: grayscale(0);
 		}
 
-		// Wider than --focus-gap-lg on purpose: a partner wordmark carries its
-		// own whitespace inside the image box, so a 4px ring lands ON the
-		// logo's margin rather than around the mark you can see.
+		// Wider than --focus-gap-lg on purpose: a wordmark carries its own whitespace, so a
+		// 4px ring lands on the image margin rather than around the visible mark.
 		a:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
 			outline-offset: 6px;
 		}
 	}
 
-	// Strip scale ladder: logo cap (height, width), resting opacity, caption
-	// brightness — the top tier reads biggest and brightest, silver quietest.
-	// Same ordering as the $tiers ladder in partners.scss; the tier ids come
-	// from PartnerTierId in src/lib/partners.ts. Caption alpha bottoms out at
-	// 0.55 — below that the mono caption drops under 4.5:1 on --color-bg (axe
-	// caught 0.46 at 4.11:1), so the ladder dims the logos, not the labels.
+	// Strip-scale ladder — logo cap, resting opacity, caption brightness — in the same
+	// order as $tiers in partners.scss; ids come from PartnerTierId. Caption alpha
+	// bottoms out at 0.55: below that the mono caption drops under 4.5:1 (axe caught
+	// 0.46 at 4.11:1), so the ladder dims the logos, never the labels.
 	$strip-tiers: (
 		'platinum': (84px, 330px, 0.78, 0.72),
 		'diamond': (72px, 290px, 0.70, 0.66),
@@ -501,7 +463,6 @@
 		}
 	}
 
-	// Quiet mono link under the ladder.
 	.partners-more {
 		margin: clamp(2rem, 4vw, 3rem) 0 0;
 	}
@@ -533,11 +494,8 @@
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
 		#hero {
-			// Auto height, not 100svh. Pinned to the base of a full-viewport
-			// frame, the date/venue/clock strip sat exactly where the consent
-			// bar lands on first load — the event's most important data, hidden
-			// behind chrome. Let the hero size to its content and the strip
-			// scrolls into view under the CTAs instead.
+			// Auto height, not 100svh: pinned to the base of a full-viewport frame, the
+			// date/venue/clock strip sat exactly where the consent bar lands on first load.
 			min-height: auto;
 			padding: calc(5.5rem + env(safe-area-inset-top)) var(--gutter) 0;
 		}
@@ -562,8 +520,7 @@
 		.hero-actions {
 			gap: 0.7rem;
 
-			// Two CTAs side by side at 375px leaves each one too narrow to read
-			// its own label; stack them full-width instead.
+			// Two CTAs side by side at 375px are too narrow to read their own labels.
 			.btn-primary,
 			.btn-ghost {
 				width: 100%;

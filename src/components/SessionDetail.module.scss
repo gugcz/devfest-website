@@ -1,12 +1,7 @@
-// Session detail — what this sheet holds. The chrome (ground, entry, sticky
-// bar, close, content measure, kicker, title, block label) is
-// `Sheet.module.scss`, shared with SpeakerDetail; this file is only the parts
-// a SESSION has: the meta line, the abstract measure and the speaker rows.
+// Session detail. The chrome is `Sheet.module.scss`, shared with SpeakerDetail;
+// this file holds only the meta line, the abstract measure and the speaker rows.
 
-/* ===================== META (room · track · level) ===================== */
-// One mono line of plain labels. These were bordered chips — a pill is a
-// different product's vocabulary, and the redesign took them off every other
-// surface already.
+// One mono line of plain labels — never bordered chips.
 .meta {
 	list-style: none;
 	display: flex;
@@ -37,8 +32,7 @@
 	}
 }
 
-/* ===================== ABSTRACT ===================== */
-// No rule above it. The measure and the change of face are the separation.
+// No rule above it: the measure and the change of face are the separation.
 .abstract {
 	margin-top: clamp(2.5rem, 5vw, 4rem);
 
@@ -48,17 +42,9 @@
 		line-height: 1.7;
 		color: rgba(240, 237, 230, 0.85);
 		margin: 0 0 1.1rem;
-		// THE COLUMN IS THE MEASURE — there is no character cap on sheet prose.
-		// A capped line stopped roughly half way across a sheet whose title,
-		// block rules and speaker rows all run the full column, and that
-		// unfilled right half read as a layout fault rather than as a margin.
-		// The abstract is one of three things a session sheet holds; it lines
-		// up with the other two.
-		//
-		// The trade is real and deliberate: at 1440 this sets ~108 characters,
-		// well past the 45-75 a measure is usually held to. Justification with
-		// hyphens is what keeps it even — at this width it costs almost no
-		// word-space adjustment, so the block reads as a slab, not as rivers.
+		// THE COLUMN IS THE MEASURE — no character cap on sheet prose, so the
+		// abstract lines up with the title, rules and rows around it. At 1440 that
+		// is ~108 characters; justification with hyphens is what keeps it even.
 		text-align: justify;
 		hyphens: auto;
 
@@ -68,15 +54,12 @@
 	}
 }
 
-/* ===================== SPEAKERS ===================== */
 .speakers {
 	margin-top: clamp(3rem, 6vw, 5rem);
 }
 
-// A speaker row is an open-field row that opens the stacked speaker sheet —
-// the rhythm, the red reach field, the ink inversion and the focus ring all
-// come from `.field-row--link`. It was a rounded, bordered button with a
-// background fill on hover.
+// A speaker row is a `.field-row--link` — rhythm, red reach field, ink
+// inversion and focus ring all come from the primitive.
 .speaker {
 	display: flex;
 	align-items: center;

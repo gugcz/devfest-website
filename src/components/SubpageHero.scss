@@ -1,25 +1,13 @@
-	// Every subpage opens here, so this component decides whether the site
-	// reads as one designed thing or as eight instances of a template. It gets
-	// exactly three elements — tag, title, one line of copy — and the title
-	// does all the work.
-	// The hero is sized so the first content row is ALWAYS visible without
-	// scrolling. It used to run 640–860px tall against a 900px viewport — and
-	// on a 760px laptop three pages showed literally zero content below it, so
-	// every visit opened on a scroll.
-	//
-	// Height came from padding (192 top + 144 bottom) and the title, never from
-	// min-height, which is why the min-height alone was the wrong dial. Top
-	// padding now only has to clear the fixed header; the content is
-	// bottom-aligned, so the frame closes under the title instead of around it.
+	// Every subpage opens here: tag, title, one line of copy, and the title does
+	// all the work. Sized so the first content row is ALWAYS visible without
+	// scrolling — height comes from the padding and the title, not min-height.
 	.subpage-hero {
 		position: relative;
 		min-height: max(360px, 44vh);
 		display: flex;
 		align-items: flex-end;
 		overflow: hidden;
-		// 7.5rem, not 5.5: the mono kicker that used to sit above the title was
-		// also carrying the clearance under the fixed header. Without it the
-		// display type started ~16px below the bar and read as jammed into it.
+		// 7.5rem, not 5.5: this padding is the only clearance under the fixed header.
 		padding:
 			calc(7.5rem + env(safe-area-inset-top))
 			var(--gutter)
@@ -27,9 +15,8 @@
 		border-bottom: 1px solid var(--rule-soft);
 	}
 
-	// Type-only opening. No photo, so the frame can be shorter and the
-	// headline carries the whole plate — one accent hairline along the bottom
-	// keeps it stitched to the content below.
+	// Type-only opening — no photo, so the frame is shorter and the headline
+	// carries the plate.
 	.subpage-hero--plain {
 		min-height: max(320px, 36vh);
 		background: var(--color-bg);
@@ -43,11 +30,9 @@
 		margin: 0 auto;
 	}
 
-	// Atmosphere overlays sit between the photo and the content.
 	.scene-vignette { z-index: 3; }
 
-	// The page's one piece of poster-scale type. Nothing else on a subpage is
-	// allowed at --fs-display; a second one would cancel this one out.
+	// The page's one piece of poster-scale type. Never a second --fs-display on a subpage.
 	.hero-title {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-display);
@@ -60,15 +45,13 @@
 		text-wrap: balance;
 	}
 
-	// set:html injects unscoped markup; :global lets the page-provided
-	// <span class="red"> take the accent. Flat — the halation that used to sit
-	// here fired on every page title at once, which is not emphasis.
+	// set:html injects unscoped markup; :global lets the page's <span class="red"> take
+	// the accent. Flat — no halation.
 	:global(.subpage-hero .hero-title .red) {
 		color: var(--color-accent-hot);
 	}
 
-	// One line, typewriter, no border. The italic serif with a red rule down
-	// its left edge was the third element of the repeated lockup.
+	// One line, typewriter, no border and no accent bar.
 	.hero-lede {
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-lede);

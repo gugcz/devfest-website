@@ -1,7 +1,5 @@
-// Home-page lineup wall — the same contact sheet /speakers and /team use, cut
-// down to four frames. It was a row of four tiles at EVERY width, which on a
-// 375px phone left 78×97px faces: too small to recognise anybody, which is the
-// entire job of a speaker teaser. Two-up on phones, four-up from 600px.
+// Home-page lineup wall — the same prints /speakers and /team use, cut to four
+// frames. Two-up on phones (four-up at 375px left 78x97px faces), four-up from 600px.
 
 .teaser {
 	position: relative;
@@ -20,10 +18,7 @@
 }
 
 /* ===================== HEAD ===================== */
-// Two columns on one baseline: the statement left, the lede and the way out
-// right — `.head-split` in BaseLayout.scss, shared with the ticket section and
-// the /contact desks. Stacked as eyebrow-over-title-over-lede this was the
-// identical shape those two were using, three sections down one page.
+// Two columns on one baseline — `.head-split`, shared with the ticket section.
 .headSide {
 	display: flex;
 	flex-direction: column;
@@ -34,22 +29,17 @@
 
 
 /* ===================== WALL ===================== */
-// Prints on the page — no cell, no rule around anybody. See the note at the
-// head of Speakers.module.scss: a ruled grid still draws a full rectangle
-// around every photograph, and the print's own mount is the only edge it needs.
-// Left-set and full width, like the head above it and every other section on
-// the page. Centred inside an 880px cap it started at x=280 while every
-// headline on the homepage starts at x=72 — the one block that didn't sit on
-// the page's own left edge.
+// Prints on the page, left-set and full width — no cell, no rule around anybody.
+// See the note at the head of Speakers.module.scss.
 .wall {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
-	// Two-up on phones so a face is actually legible; four-up from 600px.
+	// Two-up on phones so a face is legible; four-up from 600px.
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: clamp(2rem, 3.4vw, 3rem) clamp(1.4rem, 2.4vw, 2.2rem);
-	// Re-keyed on each rotation → replays this crossfade as the set changes.
+	// Re-keyed on each rotation, so the crossfade replays as the set changes.
 	animation: wallFade 0.55s ease;
 
 	> li {
@@ -96,13 +86,11 @@
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
 	background: var(--panel-lit);
-	// Mounted print: bone keyline plus a shadow so it sits on the sheet. The
-	// second, RED inset keyline this used to carry put a red mark on every
-	// frame before anyone touched anything.
+	// Mounted print: bone keyline plus a shadow. Never a second, red inset keyline —
+	// that is a red mark on every frame before anyone touches anything.
 	box-shadow: var(--print-mount);
 
-	// Crop-brackets open only on the frame being pointed at — a gesture, not
-	// decoration (see Speakers.module.scss for the same reasoning).
+	// Crop-brackets open only on the frame being pointed at — a gesture, not decoration.
 	&::before,
 	&::after {
 		content: '';
@@ -196,9 +184,7 @@
 }
 
 /* ===================== NAME PLATE ===================== */
-// Space, not a rule. This has been a 2px red left border (the side-tab cliché)
-// and then a red top hairline; both were a drawn line repeated once per face.
-// The bottom edge of the print already ends the picture.
+// Space, not a rule: the bottom edge of the print already ends the picture.
 .plate {
 	position: relative;
 	z-index: 1;
@@ -226,8 +212,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
-	// WCAG 2.2 SC 2.5.8: the link measured 190×23, one pixel under the 24px
-	// minimum target size.
+	// WCAG 2.2 SC 2.5.8: the link measured 190x23, one pixel under the 24px minimum.
 	min-height: 2.75rem;
 	padding: 0 0.25rem;
 	font-family: var(--font-jetbrains-mono), monospace;

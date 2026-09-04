@@ -26,8 +26,8 @@
 	transition: border-color 0.2s ease;
 
 	&:focus-within {
-		// accent-hot gives the focused field a >=3:1 boundary (WCAG 1.4.11) — the
-		// inner input carries no border of its own, so this wrapper is the cue.
+		// accent-hot gives the focused field a >=3:1 boundary (1.4.11) — the inner input
+		// carries no border of its own, so this wrapper is the cue.
 		border-color: var(--color-accent-hot);
 		box-shadow: var(--glow-red-soft);
 	}
@@ -54,8 +54,7 @@
 		outline: none;
 	}
 
-	// Keyboard focus must show a visible ring — WCAG 2.4.7. (Was outline:none,
-	// which suppressed the global accent-hot ring and left no real focus cue.)
+	// Keyboard focus must show a visible ring — WCAG 2.4.7. Never `outline: none` here.
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap-tight);
@@ -191,20 +190,18 @@
 }
 
 /* ===================== ON THE ACCENT FIELD ===================== */
-// The home newsletter now sits on the red band. Every control here is
-// red-on-red or dark-on-red by default: the filled button disappears into the
-// ground, and the dark field reads as a hole punched in it. Ink measurements
-// for #CC0000 are in BaseLayout.scss — nothing dimmer than full cream is
-// allowed for text, and control boundaries need 3:1.
+// Every control here would otherwise be red-on-red: the filled button disappears
+// into the ground and a dark field reads as a hole punched in it. Ink
+// measurements for #CC0000 are in BaseLayout.scss — text is full cream, control
+// boundaries need 3:1.
 :global(.band--accent) {
 	.wrapper {
 		align-items: flex-start;
 	}
 
 	.paper {
-		// Opaque, not rgba: a translucent fill leaves the contrast checker
-		// resolving the placeholder against the band red instead of the field,
-		// and the real ratio then depends on a blend nothing can measure.
+		// Opaque, not rgba: a contrast checker resolves a translucent fill's placeholder
+		// against the band red behind it, and the real ratio then depends on a blend.
 		background: #9A0000;
 		border-color: rgba(247, 239, 230, 0.85);
 
@@ -218,8 +215,7 @@
 		color: var(--on-accent);
 
 		&::placeholder {
-			// Full cream — 7.8:1 on the field, and still 5.2:1 if a checker
-			// resolves it against the band red behind it.
+			// Full cream — 7.8:1 on the field, 5.2:1 if resolved against the band red.
 			color: var(--on-accent);
 			opacity: 1;
 		}

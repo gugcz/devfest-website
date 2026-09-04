@@ -1,27 +1,12 @@
-// THE SHEET — the chrome both detail views share.
-//
-// A detail view is not a dialog box. It is the page turning to one thing:
-// full-bleed on the section ground, a poster title, no border anywhere, and a
-// mono `Close ✕` in a sticky bar. `SessionDetail` and `SpeakerDetail` are the
-// same object with different contents, and they were carrying two copies of
-// every part of that — the ground, the entry animation, the bar, the close
-// control, the content measure, the kicker, the title rule and the block
-// label. Copies drift; this is the file that stops them.
-//
-// A caller imports this module alongside its own and composes:
-//
-//   import sheet from './Sheet.module.scss';
-//   import s from './SpeakerDetail.module.scss';
-//   <div className={`${sheet.sheet} ${s.stacked}`}>
-//
-// and keeps only what is genuinely its own (the portrait grid, the meta line,
-// the abstract measure).
+// THE SHEET — the chrome both detail views share. A detail view is not a dialog
+// box: full-bleed on the section ground, a poster title, no border anywhere, a
+// mono `Close ✕` in a sticky bar. A caller imports this alongside its own module
+// and keeps only what is genuinely its own.
 
 .sheet {
 	position: fixed;
 	inset: 0;
-	// Above the fixed site header (z-index 10001). A sheet opened FROM another
-	// sheet raises this — see `.stacked` in SpeakerDetail.module.scss.
+	// Above the fixed site header (10001). A sheet opened FROM a sheet raises it.
 	z-index: var(--sheet-z, 10050);
 	overflow-y: auto;
 	overscroll-behavior: contain;
@@ -44,18 +29,10 @@
 	}
 }
 
-/* ===================== TOP BAR ===================== */
 // Sticky, so the way out is reachable from the bottom of a long abstract.
-// Full-bleed, NOT measure-width: the bar is sticky over scrolling copy, so it
-// needs a scrim that runs to both viewport edges. The close still lands on the
-// measure's right axis because the inset is padding, not `max-width`.
-//
-// That inset is `(100% - --maxw) / 2` and NOT `… + --gutter`: the page's own
-// column is the full --maxw (`.band` carries the gutter, `.band-inner` carries
-// the cap), so a list row's right edge sits exactly --maxw/2 from centre. Add a
-// gutter on top and the Close closes one gutter inside the row that opened the
-// sheet. The `max()` keeps the plain gutter once the viewport is narrower than
-// the measure.
+// The inset is `(100% - --maxw) / 2`, NOT `… + --gutter`: `.band` carries the
+// gutter and `.band-inner` the cap, so adding a gutter here would close the
+// sheet one gutter inside the row that opened it.
 .bar {
 	position: sticky;
 	top: 0;
@@ -67,11 +44,8 @@
 		clamp(0.9rem, 2vh, 1.5rem);
 }
 
-// The scrim. Without it the title and the abstract scroll straight through the
-// `Close ✕`, which is the one control that must stay readable from anywhere in
-// a long sheet. A flat plate would kill the sheet's own ground (the red bleed
-// sits at 88% 8%, i.e. right under this bar), so it is a blur plus a feathered
-// dark wash that fades out before it can draw an edge across the page.
+// The scrim keeps `Close ✕` readable over scrolling copy. A flat plate would kill
+// the sheet's own red bleed, so it is a blur plus a feathered wash.
 .bar::before {
 	content: '';
 	position: absolute;
@@ -83,8 +57,7 @@
 	mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
 }
 
-// A mono word and a cross, not a bordered square. Every other control in this
-// language is type on the ground.
+// A mono word and a cross, not a bordered square.
 .close {
 	display: inline-flex;
 	align-items: center;
@@ -111,31 +84,24 @@
 		color: var(--color-accent-hot);
 	}
 
-	// --focus-gap-lg: this control sits on open ground with no adjacent edge,
-	// so the ring stands off it. See the focus-offset scale in BaseLayout.scss.
+	// --focus-gap-lg: this control sits on open ground with no adjacent edge.
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap-lg);
 	}
 }
 
-/* ===================== CONTENT ===================== */
-// The measure and the page inset. A caller that needs a column split composes
-// its own grid on top (SpeakerDetail's portrait/person split).
+// The measure and the page inset; a caller composes its own grid on top.
 .content {
 	width: 100%;
-	// The gutter is INSIDE this box, so the cap has to carry it: a plain
-	// `max-width: var(--maxw)` here is 1440 MINUS two gutters of column, which
-	// left the sheet's ink one gutter inside the row that opened it. The page's
-	// own bands put the padding on the outer box and the cap on `.band-inner`;
-	// this is the one-box equivalent, and it agrees with `.bar` above.
+	// The gutter is INSIDE this box, so the cap carries it — a plain --maxw here
+	// is 1440 minus two gutters and puts the ink inside the row that opened it.
 	max-width: calc(var(--maxw) + 2 * var(--gutter));
 	margin: 0 auto;
 	padding: clamp(1.5rem, 4vh, 3rem) var(--gutter) var(--section-y);
 }
 
-// Muted, not accent-hot. Red is spent on the reach state of the rows below;
-// a red label at the top competes with the one thing the colour is for.
+// Muted, not accent-hot: red is spent on the reach state of the rows below.
 .kicker {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-sm);
@@ -145,9 +111,7 @@
 	margin: 0 0 clamp(0.75rem, 1.5vw, 1.1rem);
 }
 
-// The sheet's one headline, at the section step. Both sheets used to set this
-// at --fs-h3 (41.6px) — a size BELOW the 54px row that opened them, so the
-// detail view of a thing was smaller than the summary of it.
+// The sheet's one headline, at the section step — never below the row that opened it.
 .title {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-h2);
@@ -159,7 +123,6 @@
 	margin: 0;
 }
 
-// The mono label that opens a block inside the sheet ("Speakers", "Talks").
 .blockTitle {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-sm);

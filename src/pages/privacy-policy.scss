@@ -3,9 +3,7 @@
 		padding: 7rem var(--gutter) var(--section-y);
 		position: relative;
 		z-index: 1;
-		// Faint pool of light over the legal column — radial gradient only, no
-		// card chrome. Keeps the page calm/legible while seating it in the noir
-		// scene like the other subpages.
+		// Faint pool of light over the legal column — no card chrome; the page stays calm.
 		background: var(--lit);
 	}
 
@@ -47,8 +45,7 @@
 		margin-bottom: 1rem;
 	}
 
-	// Mono uppercase tag with trailing red hairline — styled by the global
-	// `.eyebrow` primitive; scoped rule only carries the spacing below it.
+	// Styled by the global `.eyebrow`; this rule only carries the spacing below it.
 	.policy-meta {
 		margin-bottom: 4rem;
 	}
@@ -62,16 +59,13 @@
 		}
 	}
 
-	// Section head with an editorial eyebrow rhythm: a short red hairline
-	// rule above the Bebas head, echoing the masthead eyebrow without adding
-	// any card chrome — the page is a legal doc and stays calm.
+	// Section head — no card chrome; this is a legal document and stays calm.
 	h2 {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-title-sm);
 		letter-spacing: 0.08em;
 		color: var(--color-accent-hot);
-		// Soft red halation on the section heads — just enough neon glow to read
-		// as lit, not a spotlit poster title (this stays a calm legal doc).
+		// Just enough halation to read as lit, not a spotlit poster title.
 		margin-bottom: 1.4rem;
 		padding-top: 1.1rem;
 		position: relative;
@@ -97,11 +91,9 @@
 		margin-bottom: 0.8rem;
 	}
 
-	// Long-form legal prose runs on the typewriter face like the rest of the
-	// site's reading copy. It is a texture, and eight screens of it is hard
-	// reading, so this page buys the readability back with rhythm rather than
-	// with a fourth face: a looser line-height and a measure tightened to 62ch
-	// (Special Elite is wide, so 70ch overran a comfortable line).
+	// Long-form legal prose on the typewriter face, like the rest of the site's
+	// reading copy. Eight screens of it is hard reading, so the readability is
+	// bought back with a looser line-height and a 62ch measure, not a fourth face.
 	p {
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-body);
@@ -109,8 +101,7 @@
 		letter-spacing: 0.01em;
 		color: rgba(240, 237, 230, 0.78);
 		margin-bottom: 1rem;
-		// Comfortable reading measure — keeps legal copy from running to
-		// the full column width on wide viewports.
+		// Comfortable reading measure on wide viewports.
 		max-width: 62ch;
 	}
 
@@ -150,8 +141,7 @@
 	code {
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-ui);
-		// Lit surface for inline code — matches the noir panel tone used across
-		// the relit subpages instead of the old flat --panel-2.
+		// Lit surface for inline code — matches the subpage panel tone.
 		background: var(--panel-lit-2);
 		padding: 0.1em 0.35em;
 		border: 1px solid var(--rule);
@@ -167,7 +157,7 @@
 		margin-top: 1.4rem;
 	}
 
-	// Column heads: mono caps with a firmer hairline under the whole head row.
+	// Column heads: mono caps over a firmer hairline.
 	thead th {
 		border-bottom: 1px solid var(--rule-strong);
 	}
@@ -184,7 +174,6 @@
 		vertical-align: top;
 	}
 
-	// Row headers read as body copy and share the soft per-row divider.
 	tbody th {
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-ui);

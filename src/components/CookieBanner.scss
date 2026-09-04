@@ -1,8 +1,5 @@
-	// Full-width bar along the bottom edge, not a floating labelled box. The
-	// old treatment was a 580px card with a red top rule, a red halation and a
-	// notched "EVIDENCE LOG" tab sitting on its border — four devices on a
-	// consent notice, which is the one piece of chrome that should ask for the
-	// least attention on the page.
+	// Full-width bar along the bottom edge, not a floating labelled box — consent is
+	// the one piece of chrome that should ask for the least attention on the page.
 	.cookie-banner {
 		position: fixed;
 		bottom: 0;
