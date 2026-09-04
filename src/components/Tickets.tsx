@@ -166,9 +166,9 @@ export default function Tickets() {
 					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
 					<LoadingState label="Opening the box office" />
 				</header>
-				<ul className={`field ${s.skelLedger}`} role="list" aria-hidden="true">
+				<ul className={`field ${s.skelField}`} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
-						<li key={i} className={`field-row field-row--short ${s.skelRecord}`}>
+						<li key={i} className={`field-row field-row--short ${s.skelRow}`}>
 							<span className={`${s.skelBar} ${s.skelIndex}`} />
 							<div className={s.skelCol}>
 								<span className={`${s.skelBar} ${s.skelTitle}`} />

@@ -15,14 +15,9 @@
 	}
 
 	/* ---- the mark ---- */
-	// The brand asset itself. Typesetting the name in Bebas produced a second
-	// wordmark that disagreed with the one in the header — wrong glyph, wrong
-	// dot, wrong proportions.
-	//
-	// It heads the brand column instead of getting a row of its own: that row
-	// paired the mark with a date/place line the Event column already carried
-	// word for word, and the column under it opened with a mono heading
-	// spelling out the name the logo was already saying.
+	// The brand asset itself — never typeset the name in Bebas, which produces a
+	// second wordmark disagreeing with the header's. It heads the brand column
+	// rather than taking a row of its own.
 	.footer-logo-link {
 		display: inline-flex;
 		line-height: 0;
@@ -44,8 +39,8 @@
 		display: grid;
 		grid-template-columns: 1.4fr 1fr 1fr 1.4fr;
 		gap: 3.5rem;
-		// No top rule: the grid IS the footer's first row now, and the footer
-		// already opens on its own hairline.
+		// No top rule: the grid is the footer's first row and the footer already opens
+		// on its own hairline.
 		padding: 0 0 clamp(2.5rem, 5vw, 3.5rem);
 		border-bottom: 1px solid var(--rule-soft);
 
@@ -102,8 +97,7 @@
 		color: rgba(240, 237, 230, 0.85);
 		font-weight: normal;
 		margin: 0;
-		// Plain. Each of the four column heads used to be flanked by a pair of
-		// red hairlines — twelve decorative elements in a row of four labels.
+		// Plain. Never flank a column head with a pair of hairlines.
 	}
 
 	.brand-tagline {
@@ -188,8 +182,7 @@
 			color: rgba(240, 237, 230, 0.82);
 			letter-spacing: 0.04em;
 
-			// Venue links out to the map — read as the muted meta text with a
-			// hairline underline, warm to the accent on hover/focus.
+			// Venue links out to the map — muted meta with a hairline underline.
 			a {
 				color: inherit;
 				text-decoration: none;
@@ -206,10 +199,8 @@
 		}
 	}
 
-	// A standalone contact link in an <address>, not a link inside a sentence,
-	// so SC 2.5.8's inline exception doesn't cover it — it measured 117×17.
-	// inline-flex + a 2.75rem row gives it a real touch target without moving
-	// the underline off the text.
+	// A standalone contact link in an <address>, so SC 2.5.8's inline exception does
+	// not cover it (117x17). inline-flex + a 2.75rem row gives a real touch target.
 	.email {
 		display: inline-flex;
 		align-items: center;
@@ -261,8 +252,7 @@
 		// between 1060px and 1260px at a 32px root, because NBSP is not a break
 		// opportunity and `anywhere` ignores word boundaries entirely.
 		white-space: nowrap;
-		// Inline-in-prose link: a persistent underline distinguishes it without
-		// relying on colour alone — WCAG 1.4.1.
+		// Inline-in-prose link: a persistent underline distinguishes it without colour alone (1.4.1).
 		text-decoration: underline;
 		text-decoration-color: var(--rule-red);
 		text-underline-offset: 3px;
@@ -282,7 +272,7 @@
 		justify-content: center;
 		width: 2.5rem;
 		height: 2.5rem;
-		// The Two-Pixel Rule — nothing in this system is rounder than 2px.
+		// Nothing in this system is rounder than 2px.
 		border-radius: var(--radius);
 		transition: color 0.25s ease, background 0.25s ease;
 

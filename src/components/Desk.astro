@@ -1,22 +1,10 @@
 ---
 /**
- * A DESK — one inbox in an open field of them.
+ * A DESK — one inbox in an open field of them. Rendered by /contact.
  *
- * /contact ran three of these and /press ran two, and both pages kept their own
- * copy of the same eight class names (`card-head`, `card-label`, `card-title`,
- * `card-desc`, `card-emails`, `email-name`, `email-link`, `card-foot`). The
- * copies had already drifted: the address was `--fs-ui` on one page and
- * `--fs-body-lg` on the other, the label was accent-hot on one and muted on the
- * other, and the two-column split was 0.95/1.05 against 1.15/0.85. This is that
- * component, once.
- *
- * /press has since dropped its two desks: the press kit link and the desk
- * address were already the closing red band's two actions, so the section was
- * saying the same thing twice on one screen. Only /contact renders it today.
- *
- * A desk CONTAINS its controls (the addresses) rather than being one, so it
- * takes `.field-row--holds` — the warm wash and pull — never the red reach
- * field, which promises a click. See "Open-field rows" in CLAUDE.md.
+ * A desk CONTAINS its controls (the addresses) rather than being one, so it takes
+ * `.field-row--holds` — the warm wash and pull — never the red reach field, which
+ * promises a click.
  */
 interface Contact {
 	/** Optional person or team above the address ("Filip Goszler — Lead"). */
@@ -69,8 +57,8 @@ const Heading = `h${level}` as 'h2' | 'h3';
 </article>
 
 <style lang="scss">
-	// Same 1.15/0.85 split the section heads use, so the desk name and the
-	// section title share a left edge and a measure.
+	// Same 1.15/0.85 split the section heads use, so the desk name and the section
+	// title share a left edge and a measure.
 	.desk {
 		display: grid;
 		grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
@@ -78,9 +66,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 		gap: 1rem clamp(2rem, 5vw, 5rem);
 	}
 
-	// Everything that describes the desk — label, name, what it handles. The
-	// blurb used to head the RIGHT column, which left the left one holding a
-	// title above 120px of black on a 190px row.
+	// Everything that describes the desk — label, name, what it handles.
 	.desk-head {
 		display: flex;
 		flex-direction: column;
@@ -88,8 +74,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 		min-width: 0;
 	}
 
-	// The action column, and only the action: the address, set on the row's
-	// right edge. Same axis the ticket waves end their prices and CTAs on.
+	// The action column: the address, on the same right axis the ticket waves end on.
 	.desk-body {
 		display: flex;
 		flex-direction: column;
@@ -98,8 +83,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 		min-width: 0;
 	}
 
-	// Muted, not red: the accent on every row of a list is not a highlight, it
-	// is texture — and red is now what the reach state is for.
+	// Muted, not red — a resting accent on every row of a list is texture.
 	.desk-label {
 		align-self: flex-start;
 		font-family: var(--font-jetbrains-mono), monospace;
@@ -109,8 +93,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 		color: rgba(240, 237, 230, 0.55);
 	}
 
-	// Short-list scale. At --fs-h3 (41.6px) the desk names sat a size below
-	// every other row on the site while the row ran 190px tall around them.
+	// Short-list scale: at --fs-h3 the desk names sat a size below every other row.
 	.desk-title {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-row);
@@ -127,16 +110,14 @@ const Heading = `h${level}` as 'h2' | 'h3';
 		line-height: 1.6;
 		color: rgba(240, 237, 230, 0.7);
 		margin: 0.2rem 0 0;
-		// Special Elite is wide. Held to a measure so the blurb reads as a block
-		// under its desk name rather than a single stripe across the column.
+		// Special Elite is wide. Held to a measure so the blurb reads as a block.
 		max-width: 34ch;
 	}
 
 	.desk-contacts {
 		list-style: none;
 		padding: 0;
-		// Level with the desk name across the gutter — nothing sits above it in
-		// this column.
+		// Level with the desk name across the gutter.
 		margin: 0;
 		display: flex;
 		flex-direction: column;
@@ -146,9 +127,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 	}
 
 	// Two rows, and the first keeps its height whether or not the desk names a
-	// person. Without the reserve, desks with a lone address started it on the
-	// left column's LABEL line and desks with a named lead started it on the
-	// TITLE line — the same column, two axes, down one list.
+	// person — without the reserve, addresses start on two different axes down one list.
 	.desk-contacts li {
 		display: grid;
 		grid-template-rows: minmax(1rem, auto) auto;
@@ -164,8 +143,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 		color: rgba(240, 237, 230, 0.65);
 	}
 
-	// The address is the point of the desk — it was set at label scale, smaller
-	// than the blurb beside it.
+	// The address is the point of the desk, so it is not set below the blurb beside it.
 	.desk-email,
 	.desk-action {
 		font-family: var(--font-jetbrains-mono), monospace;
@@ -211,9 +189,8 @@ const Heading = `h${level}` as 'h2' | 'h3';
 		}
 	}
 
-	// One column below the tablet breakpoint — two 1.15/0.85 tracks put the
-	// blurb and the address into ~150px each. With one column the address is no
-	// longer opposite anything, so the right axis goes away with it.
+	// One column below the tablet breakpoint — two tracks put the blurb and the
+	// address into ~150px each, and the right axis goes away with the split.
 	@media (max-width: 860px) {
 		.desk {
 			grid-template-columns: 1fr;

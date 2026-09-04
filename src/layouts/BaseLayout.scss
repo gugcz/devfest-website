@@ -5,27 +5,14 @@
 		--color-cream: #E8E0CC;
 		--color-accent: #CC0000;
 		--color-accent-hot: #FF1111;
-		// Form-error text only. Not a second hue: it is the accent desaturated
-		// far enough to clear AA as small body copy on a panel (~5.7:1, where
-		// --color-accent lands at ~3.3:1 and fails 1.4.3). Never use it as an
-		// accent, a fill or a rule — it exists so error prose stays readable.
+		// Form-error text only: the accent desaturated far enough to clear AA as
+		// small copy (~5.7:1). Never use it as an accent, a fill or a rule.
 		--color-error: rgba(220, 110, 110, 0.95);
 
-		/* ============ brand typefaces ============ */
-		// The three brand faces are self-hosted via the Astro Fonts API. Each
-		// `--font-*` custom property below is injected into :root by the
-		// matching <Font /> in BaseLayout.astro; the family names it resolves to
-		// are build-time hashes, so stylesheets must go through the variable and
-		// never through a literal 'Bebas Neue' / 'JetBrains Mono' / … string.
-		// Declared families and weights live in astro.config.mjs (`fonts`).
-		// Only these three are allowed — never introduce a fourth.
-		//   --font-bebas-neue        display / headline
-		//   --font-jetbrains-mono    labels, meta, UI mono
-		//   --font-special-elite     body and long-form reading copy
+		// Injected into :root by the matching <Font /> in BaseLayout.astro; the
+		// families resolve to build-time hashes, so never write a literal
+		// 'Bebas Neue' string. Only these three faces — never add a fourth.
 
-		/* ============ layout tokens ============ */
-		// Wider canvas than the old 1200px column. Poster-scale display type needs
-		// room to run, and the reference conference sites all sit near 1440.
 		--maxw: 1440px;
 		// The `min()` ceiling is what keeps the page reflowable under text-only
 		// zoom (WCAG 1.4.4 / 1.4.10). Every term but the ceiling is rem- or
@@ -37,9 +24,7 @@
 		// at a 16px root.
 		--gutter: min(clamp(1.25rem, 5vw, 4.5rem), 6.25vw);
 
-		// Three densities, not one. A single tempo across every section is what
-		// makes a long page read as generated. Tight is a cut, base is the normal
-		// beat, wide is a held shot before something that matters.
+		// Three densities: tight is a cut, base the normal beat, wide a held shot.
 		--section-y-tight: clamp(3.75rem, 6vw, 6.5rem);
 		--section-y: clamp(6rem, 10vw, 11rem);
 		--section-y-wide: clamp(8.5rem, 15vw, 17rem);
@@ -68,35 +53,23 @@
 		// Sharp corners — a hint of softening, never pill-shaped.
 		--radius: 2px;
 
-		/* ============ type ============ */
-		// THE POSTER SCALE. Bebas Neue is the display face at every size above
-		// --fs-h3: it is condensed, so a three-word statement fits the column at
-		// 8rem where the typewriter face wraps at 4rem. Special Elite keeps the
-		// brand's typewriter voice in body copy and mid-size headings — it is a
-		// texture, not a headline face.
-		// Subpage <h1>, once per page. Capped at 9rem, not 11: a two-line title
-		// at 176px is 296px of type on its own, which pushed the whole hero to
-		// 830px and left nothing above the fold on a 760px laptop. Still a clear
-		// step above --fs-h2 (7rem), so the hierarchy holds.
+		// THE POSTER SCALE. Bebas above --fs-h3, Special Elite as body texture.
+		// --fs-display caps at 9rem: 11rem left nothing above a 760px fold.
 		--fs-display: clamp(3rem, 9.5vw, 9rem);
 		--fs-hero: clamp(3rem, 9.5vw, 8.5rem);      // home hero statement
 		--fs-h2: clamp(2.9rem, 8vw, 7rem);          // section headline
 		--fs-stat: clamp(3.4rem, 10vw, 9.5rem);     // figure in a facts band
 		--fs-h3: clamp(1.8rem, 3.4vw, 2.6rem);      // sub-section headline
 		--fs-card-title: 1.95rem;                   // card / dossier title
-		--fs-title-compact: 1.6rem;                 // compact ledger record title
+		--fs-title-compact: 1.6rem;                 // compact field row title
 
-		// Open-field row titles. The lists carry no rules any more, so the
-		// title is what separates one entry from the next — it has to be a
-		// poster line, not a heading. Two steps only: a short list can afford
-		// 72px, a thirty-row one would become a scroll at that size.
+		// Row titles carry the separation: 72px for a short list, 54px for a long one.
 		--fs-row: clamp(2.6rem, 5.2vw, 4.5rem);     // row title, short list (waves, desks)
 		--fs-row-sm: clamp(2.2rem, 4vw, 3.4rem);    // row title, long list (sessions, FAQ, clippings)
 		--fs-row-figure: clamp(2.5rem, 4.2vw, 4rem); // the figure opposite a row title
 
 		// ── THE RAMP ────────────────────────────────────────────────────────
-		// Every font-size in the codebase goes through one of these steps. Pick
-		// the nearest step; do not introduce a new value without adding it here.
+		// Every font-size goes through a step below; never add one outside it.
 		--fs-label-xs: 0.68rem;   // micro mono: avatar counts, kit tags
 		--fs-label-sm: 0.74rem;   // mono: counts, chips, inline clears
 		--fs-label: 0.78rem;      // mono: eyebrows, section labels
@@ -105,16 +78,13 @@
 		--fs-body: 1.05rem;       // long-form reading copy
 		--fs-body-lg: 1.15rem;    // footnotes, short ledes
 		--fs-lede: clamp(1.2rem, 1.6vw, 1.5rem);  // section ledes, status prose
-		--fs-title-sm: 1.45rem;   // small titles, mobile record titles
-		--fs-figure: 1.9rem;      // ledger row figures
+		--fs-title-sm: 1.45rem;   // small titles, mobile field-row titles
 		--fs-monogram: 3.4rem;    // initials in an empty photo well
 
-		// Display type is set tight — condensed caps at poster scale need the
-		// leading pulled in or the block reads as a list of lines, not a slab.
+		// Condensed caps at poster scale need the leading pulled in.
 		--lh-display: 0.84;
 		--track-display: 0.005em;
 
-		// Hairline rules — the structural backbone of the flat layout.
 		--rule: rgba(240, 237, 230, 0.13);
 		--rule-soft: rgba(240, 237, 230, 0.06);
 		--rule-strong: rgba(240, 237, 230, 0.22);
@@ -130,68 +100,38 @@
 		// repaint every structural line on the site. One value, four controls.
 		--field-border: rgba(240, 237, 230, 0.4);
 
-		// Flat dark panels replace the cream paper slips.
 		--panel: #0C0B0B;
 		--panel-2: #111010;
 		--panel-hover: #161413;
 
-		// Ink on the red CTA.
 		--on-accent: #F7EFE6;
 
-		// How far the focus ring stands off the control it marks. The ring
-		// itself is always `2px solid var(--color-accent-hot)`; only the gap
-		// changes, and it changes for ONE reason — how much visible edge the
-		// control already has. Thirty call sites had picked 2px, 3px or 4px
-		// with nothing saying which applied where.
-		//
-		//   tight  the control has its own boundary to sit against: a filled
-		//          button, a bordered input, a row already painting a field
-		//   (base) the default — type-on-ground controls inside flowing text
-		//   lg     the control stands alone on open ground with nothing
-		//          adjacent, so the ring needs air to read as a ring
+		// Focus-ring stand-off. The ring is always 2px solid --color-accent-hot; the gap
+		// tracks how much visible edge the control already has.
 		--focus-gap-tight: 2px;
 		--focus-gap: 3px;
 		--focus-gap-lg: 4px;
 
-		/* ============ cinematic film-noir atmosphere ============ */
-		// Red used as LIGHT — halation for accents. Deliberately dialled back
-		// from the old values: the glow used to sit on every red word on the
-		// page, and a highlight that is applied everywhere is not a highlight.
-		// It now belongs to interactive things (CTA hover, live status) only —
-		// red TEXT is flat.
+		// Red as LIGHT — interactive things only (CTA hover, live status). Red TEXT is flat.
 		--glow-red: 0 0 14px rgba(204, 0, 0, 0.4), 0 0 34px rgba(204, 0, 0, 0.18);
 		--glow-red-soft: 0 0 18px rgba(204, 0, 0, 0.22);
 
-		// A photograph is MOUNTED, not floated: a bone keyline just inside the
-		// edge and a shadow under it, so the print sits on the sheet instead of
-		// hovering on flat black. Four frames carried their own copy of this
-		// pair — the speaker sheet's plate, the /team mugshot, the lineup thumb
-		// and the "more speakers" tile.
+		// A photograph is MOUNTED, not floated: keyline just inside the edge plus a shadow.
 		--print-mount:
 			inset 0 0 0 1px rgba(240, 237, 230, 0.16),
 			0 10px 24px rgba(0, 0, 0, 0.5);
 
-		// Very dark surfaces that catch a pool of light (replace flat --panel in scenes).
 		--panel-lit: #0A0908;
 		--panel-lit-2: #0E0C0B;
 
-		// Initials standing in for a photograph that is missing or failed to
-		// load, on --panel-lit. Four files each picked their own alpha (0.24 /
-		// 0.26 / 0.32 / 0.32) and EVERY one of them measured under the 3:1 that
-		// applies to the large plate: CI caught the speaker sheet's at 2.58:1
-		// the first time a fixture photo didn't load. One value, measured once.
-		//
-		//   0.46 → #757370 → 4.21:1   the large plate (--fs-monogram, 54px)
-		//   0.66 → #A3A19C → 7.71:1   the small avatar (label scale → 4.5:1)
+		// Initials standing in for a missing photograph, on --panel-lit. Measured
+		// 4.21:1 on the large plate and 7.71:1 at label scale — never dim further.
 		--ink-monogram: rgba(242, 239, 233, 0.46);
 		--ink-monogram-sm: rgba(242, 239, 233, 0.66);
 
-		// Soft pool of light dropped behind content in a lit section.
 		--lit: radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%);
-		// Feathers a full-bleed row wash so the box does not show its own top
-		// and bottom edges as hard steps across the page. See `.field-row--holds`.
+		// Feathers a full-bleed row wash so its top and bottom edges do not step across the page.
 		--field-feather: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
-		// Cinematic edge-darkening frame.
 		--vignette: radial-gradient(ellipse 120% 105% at 50% 42%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
 	}
 
@@ -211,19 +151,10 @@
 		scroll-padding-top: calc(var(--header-h) + 1.5rem);
 		// keep keyboard-focused elements clear of the fixed cookie banner
 		scroll-padding-bottom: 8rem;
-		// canvas color — backs the iOS Safari URL bar tint and prevents
-		// a white flash during rubber-band scroll past the body edges.
+		// Canvas colour — prevents a white flash during iOS rubber-band scroll.
 		background: var(--color-bg);
-		// Horizontal overflow clipped via `overflow-x: clip` only — NOT
-		// `overflow-x: hidden`. `hidden` turns html into a scroll
-		// container on iOS Safari, which anchors `position: fixed`
-		// elements to the html box instead of the layout viewport
-		// (so fixed top:0 lands below the iOS status bar / notch and
-		// `env(safe-area-inset-top)` reports 0). `clip` (Safari 15.4+)
-		// hides overflow without becoming a scroll container, leaving
-		// viewport-fit=cover + env() working as specced. On older
-		// browsers without `clip` support we accept potential horizontal
-		// overflow rather than break top-chrome rendering.
+		// `clip`, never `hidden`: `hidden` makes html a scroll container on iOS Safari,
+		// which anchors position:fixed to the html box and breaks env(safe-area-inset-*).
 		@supports (overflow-x: clip) {
 			overflow-x: clip;
 		}
@@ -240,7 +171,6 @@
 		color: var(--color-text);
 	}
 
-	// global focus-visible: WCAG 2.4.7 + 2.4.13
 	:focus {
 		outline: none;
 	}
@@ -252,10 +182,8 @@
 	}
 
 	body {
-		// `100vh` (not `100dvh`) — dynamic viewport units reflow the body
-		// box when iOS Safari's URL bar collapses, which can shift where
-		// the layout viewport's top edge sits and cause `position: fixed;
-		// top: 0` to render below the system status bar instead of behind it.
+		// `100vh`, not `100dvh`: dynamic units reflow the body box when iOS Safari's
+		// URL bar collapses, pushing `position: fixed; top: 0` below the status bar.
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
@@ -272,41 +200,28 @@
 		// root where the words already fit.
 		overflow-wrap: break-word;
 
-		// Opt-out so terminal pages (404, post-submit) can render plain text
-		// against solid bg — axe-core sometimes mis-samples through blend overlays.
+		// Opt-out for terminal pages — axe-core mis-samples through blend overlays.
 		&.no-overlay::before,
 		&.no-overlay::after {
 			display: none;
 		}
 
-		// Film grain — the emulsion the whole site is shot on. Restored: the
-		// stacking-order comments elsewhere in this file still referenced a
-		// grain layer at z 9999 that no longer existed, which is a large part
-		// of why the page had stopped reading as film.
-		//
-		// Static, not animated: a still frame has static grain, and animating
-		// a full-viewport overlay costs a repaint every frame for nothing.
-		// Decorative only — pointer-events: none, and at 0.05 over `overlay`
-		// it does not move any text/background pair off its measured ratio.
+		// Film grain. Static, not animated — a full-viewport overlay repaints every frame.
 		&::before {
 			content: '';
 			position: fixed;
 			inset: 0;
 			z-index: 9999;
 			pointer-events: none;
-			// `screen`, not `overlay`. Overlay leaves near-black almost
-			// untouched, so on a #050505 ground the grain was invisible —
-			// which is exactly how it reads in dark footage anyway: grain is
-			// the emulsion catching light, so it lifts rather than darkens.
+			// `screen`, not `overlay`: overlay leaves near-black almost untouched, so
+			// on a #050505 ground the grain was invisible.
 			opacity: 0.06;
 			mix-blend-mode: screen;
 			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 			background-size: 220px 220px;
 		}
 
-		// Cinematic vignette — darkens the frame edges so every section reads
-		// like a film still. Decorative only: sits below nav/cookie/status
-		// chrome (z 10000+) and gentle enough to keep edge text within AA.
+		// Decorative: below the nav/cookie chrome (z 10000+) and gentle enough to keep edge text AA.
 		&::after {
 			content: '';
 			position: fixed;
@@ -317,8 +232,6 @@
 		}
 	}
 
-	// Visually hidden until focused — clip-path technique keeps it out
-	// of layout and avoids the slide-in jump that translateY produced.
 	.skip-link {
 		position: absolute;
 		top: 0;
@@ -327,10 +240,6 @@
 		background: #050505;
 		color: #F0EDE6;
 		font-family: var(--font-jetbrains-mono), monospace;
-		// On the label-lg step (0.84rem) rather than a one-off 0.9rem. Uppercase
-		// mono at 0.22em tracking stays comfortably legible at this size, and
-		// the skip link is the first thing a keyboard user meets — it should be
-		// set in the system's own voice, not an orphan value.
 		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
@@ -377,12 +286,7 @@
 		border: 0;
 	}
 
-	/* ===================== EDITORIAL PRIMITIVES ===================== */
-	// Shared, theme-wide building blocks for the flat editorial-noir layout.
-	// Defined globally (BaseLayout is `is:global`) so every .astro page can use
-	// them without re-declaring the rubber-stamp CTA in eight scoped files.
 
-	// Centered content column at --maxw with the consistent page gutter.
 	.u-container {
 		width: 100%;
 		max-width: var(--maxw);
@@ -390,12 +294,7 @@
 		padding-inline: var(--gutter);
 	}
 
-	// Mono eyebrow — the section tag.
-	//
-	// It used to carry a trailing red gradient hairline. Every section on every
-	// page opened with the identical eyebrow-plus-hairline lockup, and a
-	// decoration repeated without variation is the single loudest "generated
-	// template" signal on a page. The label now does its job with type alone.
+	// Mono eyebrow — a plain label. Never give it a trailing hairline or any other decoration.
 	.eyebrow {
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label);
@@ -407,10 +306,7 @@
 		gap: 0.75rem;
 	}
 
-	/* ---- Display type ---- */
-	// THE headline class. Bebas Neue, set tight and huge — this is the whole
-	// visual identity of the page, so it carries no shadow, no glow and no
-	// gradient. Size comes from whichever --fs-* the caller sets.
+	// THE headline class. No shadow, no glow, no gradient; size comes from the caller's --fs-*.
 	.display {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-weight: 400;
@@ -419,30 +315,16 @@
 		text-transform: uppercase;
 		color: var(--color-text);
 		margin: 0;
-		// Condensed caps at 7rem+ set the wrong way on their own; balance keeps
-		// a two/three-line statement from leaving one orphan word.
 		text-wrap: balance;
 	}
 
-	// Accent word inside a display line. FLAT red — the glow that used to sit
-	// here fired on every headline on the site at once.
+	// Accent word inside a display line. FLAT red — never a glow.
 	.display .red,
 	:where(h1, h2, h3) .red {
 		color: var(--color-accent-hot);
 	}
 
-	/* ===================== SPLIT SECTION HEAD ===================== */
-	// Statement left, the supporting line right. The ticket section, the
-	// speakers teaser and the /contact desks each kept their own copy of this
-	// same grid — and stacking it as eyebrow-over-title-over-lede in a 40rem
-	// column, which is what it replaced, gave three sections down one page the
-	// identical silhouette and the identical empty right half. That repetition
-	// is the single loudest "generated" signal on a page.
-	//
-	//   .head-split          the two-column head
-	//   .head-split--ruled   …closed by a hairline (a head over a list)
-	//   .head-title          the statement — compose with `.display`
-	//   .head-note           the line beside it
+	// Statement left, one supporting line right; `--ruled` closes it with a hairline.
 	.head-split {
 		display: grid;
 		grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
@@ -456,8 +338,7 @@
 		border-bottom: 1px solid var(--rule-soft);
 	}
 
-	// Sections run at --fs-h2; --fs-display is reserved for the ONE display
-	// element per page (a subpage <h1>).
+	// Sections run at --fs-h2; --fs-display is the ONE display element per page.
 	.head-title {
 		font-size: var(--fs-h2);
 	}
@@ -467,10 +348,8 @@
 		font-size: var(--fs-lede);
 		line-height: 1.6;
 		color: rgba(240, 237, 230, 0.7);
-		// Sits on the title's baseline rather than hanging below it.
 		margin: 0 0 0.35rem;
-		// Special Elite is wide; longer than this and the right column stops
-		// reading as a line beside the statement and becomes a paragraph.
+		// Special Elite is wide; longer and this stops reading as a line and becomes a paragraph.
 		max-width: 34ch;
 	}
 
@@ -487,12 +366,6 @@
 		.head-split--ruled { padding-bottom: 1.2rem; }
 	}
 
-	// A MOUNTED PRINT — the photograph well, at the one aspect the site crops to.
-	// The speaker sheet's plate and the /team mugshot are the same object and had
-	// the same eight declarations written out twice; the two frames that are not
-	// quite this (the lineup thumb, the "more speakers" tile) lay out differently
-	// and keep their own box, but take the mount from `--print-mount` so the
-	// keyline and shadow can no longer drift apart.
 	.print {
 		position: relative;
 		aspect-ratio: 4 / 5;
@@ -505,22 +378,12 @@
 		justify-content: center;
 	}
 
-	// Every page's <main>. A column, so a short page still pushes the footer to
-	// the bottom of the viewport. Ten pages each declared this same two-line
-	// rule under their own name (`.faq-page`, `.team-page`, `.agenda-page`, …).
 	.page-stack {
 		display: flex;
 		flex-direction: column;
 	}
 
-	// The ONE-column section head, closed by a hairline — `.head-split` is the
-	// two-column variant, for a head that has something to say on its right.
-	// Compose the title with `.display` + `.head-title` and the label with
-	// `.eyebrow`; this class is only the rhythm and the rule.
-	//
-	// /agenda, /sessions and /speakers each kept their own `-header` /
-	// `-eyebrow` / `-heading` trio with identical bodies while these globals sat
-	// unused beside them, and they had already drifted apart at the edges.
+	// The one-column section head. Compose the title with `.display` + `.head-title`.
 	.head-stack {
 		margin-bottom: 4rem;
 		padding-bottom: 1.6rem;
@@ -531,8 +394,6 @@
 		margin: 0 0 1rem;
 	}
 
-	// The crosslink under a stacked head — /agenda and /sessions each point at
-	// the other from here.
 	.head-stack-link {
 		margin: 1.6rem 0 0;
 	}
@@ -544,9 +405,7 @@
 		}
 	}
 
-	// The prose a data-backed page falls back to when there is no JavaScript, or
-	// when the lineup endpoint is unreachable. Left-set like everything else —
-	// two of the three copies of this were centred and one was not.
+	// The prose a data-backed page falls back to with no JS or a dead endpoint.
 	.fallback-note {
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-lede);
@@ -611,26 +470,20 @@
 		background: var(--color-bg);
 	}
 
-	// RED AS A FIELD. Used at most once per page, for the thing the page wants
-	// the visitor to do. Ink is the cream --on-accent (7.9:1 on #CC0000); black
-	// ink on this ground is 2.3:1 and must never be used.
+	// RED AS A FIELD. At most once per page, for the thing the page wants the
+	// visitor to do. Ink is cream --on-accent; black ink is 2.3:1 here.
 	.band--accent {
 		background: var(--color-accent);
 		color: var(--on-accent);
 	}
 
-	// A LIT ground: the spotlight pool dropped behind the content, closed by a
-	// hairline at the top. This is what every subpage body sits on, and seven
-	// pages each held their own copy of it.
+	// The subpage ground: a spotlight pool closed by a hairline at the top. `--lit-red`
+	// adds a faint red bleed and belongs to the pages about PEOPLE and the programme.
 	.band--lit {
 		background: var(--lit), var(--color-bg);
 		border-top: 1px solid var(--rule-soft);
 	}
 
-	// The same room with a faint red bleed from the top-right corner. Carried by
-	// the pages that are about PEOPLE and the programme — /speakers, /sessions,
-	// /agenda, /team — so the lineup pages read a shade warmer than the
-	// administrative ones (/press, /faq, /contact, /press/downloads).
 	.band--lit-red {
 		background:
 			radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
@@ -647,14 +500,9 @@
 		margin-inline: auto;
 	}
 
-	// Controls sitting on the red field invert: the filled CTA becomes cream,
-	// the ghost outlines in cream. A red button on a red ground is invisible.
-	// Measured ink on #CC0000 — alpha is not free here, so hierarchy on this
-	// field comes from SIZE, not from dimming:
-	//   cream #F7EFE6      5.17:1  — everything readable
-	//   cream at 80%       3.58:1  — fails body copy (4.5), UI boundaries only
-	//   near-black #1A0000 3.42:1  — large text only (the accent word)
-	// Any label or paragraph on this ground is therefore full cream.
+	// Controls on the red field invert — a red button on red is invisible. Measured
+	// ink on #CC0000: cream #F7EFE6 5.17:1, cream at 80% 3.58:1 (boundaries only),
+	// near-black #1A0000 3.42:1 (large text only). Hierarchy from SIZE, never dimming.
 	.band--accent .eyebrow { color: var(--on-accent); }
 	.band--accent .display { color: var(--on-accent); }
 	.band--accent .display .red { color: #1A0000; }
@@ -673,8 +521,7 @@
 
 	.band--accent .btn-ghost {
 		color: var(--on-accent);
-		// 3.95:1 on the red ground — a control boundary must clear 3:1 (WCAG
-		// 1.4.11), and the 0.5 alpha this replaces measured 2.5:1.
+		// 3.95:1 on the red ground — a control boundary must clear 3:1 (1.4.11).
 		border-color: rgba(247, 239, 230, 0.85);
 
 		&:hover,
@@ -689,10 +536,6 @@
 		outline-color: var(--on-accent);
 	}
 
-	/* ---- Closing statement ---- */
-	// Every page ends on one. The subpages used to trail off into the footer
-	// after their last list row, which is why several of them read as unfinished
-	// as well as small.
 	.closer {
 		display: grid;
 		grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
@@ -740,15 +583,9 @@
 		}
 	}
 
-	/* ---- Facts band ---- */
-	// Big figure over a small mono label, laid on a wide grid. The reference
-	// conference sites all lead with one of these, and it is the fastest way to
-	// state what the event IS without a paragraph.
 	.facts {
 		display: grid;
-		// 320px floor, not 200: below that a mono label at this tracking cannot
-		// hold one line, so the grid drops to two columns (and then one) rather
-		// than keeping three cramped ones.
+		// 320px floor: below it a mono label at this tracking cannot hold one line.
 		grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
 		gap: clamp(2.5rem, 5vw, 4.5rem) clamp(1.75rem, 3vw, 3rem);
 	}
@@ -774,16 +611,13 @@
 	.fact-label {
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label-lg);
-		// 0.14em, not 0.2em: uppercase mono at wide tracking eats ~10% more
-		// width per character, which is the difference between these labels
-		// sitting on one line and breaking onto two.
+		// 0.14em, not 0.2em: wider tracking breaks these labels onto two lines.
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.6);
 		line-height: 1.5;
 	}
 
-	/* ---- Flat CTAs — successors to the rotated rubber stamps ---- */
 	.btn-primary {
 		display: inline-flex;
 		align-items: center;
@@ -824,8 +658,7 @@
 			background: var(--color-accent-hot);
 			border-color: var(--color-accent-hot);
 			transform: translateY(-2px);
-			// Red reads as light — halation on hover. This is one of the two
-			// places the glow survives: it marks the thing you can act on.
+			// Halation on hover — one of the two places the glow survives.
 			box-shadow: var(--glow-red), 0 12px 30px rgba(204, 0, 0, 0.28);
 		}
 
@@ -837,7 +670,6 @@
 		}
 	}
 
-	// Outline counterpart — pairs with the filled primary.
 	.btn-ghost {
 		display: inline-flex;
 		align-items: center;
@@ -876,30 +708,14 @@
 		}
 	}
 
-	/* ===================== OPEN-FIELD ROWS ===================== */
-	// THE CONTAINER LANGUAGE. Replaces the bordered card, and replaces the
-	// ruled ledger that replaced it.
-	//
-	// A list of entries is not a stack of cards, and it is not a table either.
-	// The thick/thin opening rule plus a hairline under every row was one
-	// device stamped on six pages, which is what made them read as one
-	// generated component. There are no rules in a list: separation is air and
-	// type scale, and the REACH STATE is what marks an entry.
-	//
-	//   .field              the list — no rules, no light of its own
-	//   .field-row          one entry; own stacking context, fluid step
-	//   .field-row--link    the row IS the control → full-bleed red field
-	//   .field-row--holds   the row CONTAINS a control → warm wash + pull
+	// THE CONTAINER LANGUAGE for every list on the site. There are no rules in a
+	// list: separation is air and type scale, and the REACH STATE marks an entry.
+	//   .field-row--link    the row IS the control -> full-bleed red field
+	//   .field-row--holds   the row CONTAINS a control -> warm wash + pull
 	//   .field-row--short   the 72px-title step (short lists)
-	//
-	// Callers own their own grid (columns, gaps, order) and their own type;
-	// this primitive owns only the rhythm and the two reach states, because
-	// those are the parts that drifted when six files each kept a copy.
-	//
-	// Deliberately absent: any border, any `--lamp` box (it belongs to the
-	// ROOM — see the section `--lit` pool), and any opacity-based "inactive"
-	// state (dimming secondary text under 4.5:1 fails WCAG 1.4.3 — status is
-	// carried by a label instead).
+	// Callers own their grid and type. Never add a border, a per-list `--lamp` box
+	// (light belongs to the section `--lit` pool) or an opacity-based inactive
+	// state (dimming under 4.5:1 fails WCAG 1.4.3).
 
 	.field {
 		position: relative;
@@ -910,14 +726,11 @@
 		flex-direction: column;
 	}
 
-	// The padding is the rhythm AND the band the reach field fills, so the two
-	// cannot be set independently — that is why the step is a variable on the
-	// row rather than a value each caller picks.
+	// The step is the rhythm AND the band the reach field fills — hence one variable.
 	.field-row {
 		--field-step: clamp(1.9rem, 2.8vw, 2.5rem);
 		position: relative;
-		// Without a stacking context of its own, the z-index:-1 field below
-		// paints behind the SECTION's background and disappears.
+		// Without its own stacking context the z-index:-1 field paints behind the section bg.
 		isolation: isolate;
 		padding: var(--field-step) 0;
 		background: transparent;
@@ -925,17 +738,12 @@
 		border-radius: 0;
 	}
 
-	// Short lists (three ticket waves, three contact desks) can carry the 72px
-	// title, so they get the wider step to match.
+	// Short lists carry the 72px title, so they take the wider step.
 	.field-row--short {
 		--field-step: clamp(2.25rem, 3.6vw, 3.25rem);
 	}
 
-	/* ---- reach: the row IS the control ---- */
-	// The whole entry is a <button> / <a> / <summary>, so the accent is
-	// promising something that can actually be clicked. No translateX with it:
-	// dragging a band that runs to both edges of the viewport reads as a
-	// rendering fault, not as emphasis.
+	// No translateX here: dragging a band that runs to both viewport edges reads as a fault.
 	.field-row--link {
 		transition: color 0.28s ease;
 
@@ -950,24 +758,14 @@
 			transition: opacity 0.28s ease;
 		}
 
-		// HOVER paints the field. FOCUS DOES NOT — it draws a ring instead.
-		//
-		// Focus legitimately persists: closing a session dialog with Esc returns
-		// focus to the row that opened it, which is correct for keyboard and AT
-		// users. When focus also painted the field, that left a full-bleed red
-		// band with a cream rectangle around it sitting on the page after the
-		// dialog was gone — indistinguishable from a stuck highlight. A ring is
-		// what a resting focus state should look like.
+		// HOVER paints the field; FOCUS draws a ring. Focus persists after a sheet closes,
+		// and a full-bleed red band left behind reads as a stuck highlight.
 		&:hover::before {
 			opacity: 1;
 		}
 
-		// Every ink on the field goes FULL CREAM. Hierarchy on #CC0000 comes
-		// from size, never from dimming: cream is 5.17:1, and every muted
-		// rgba() a row sets at rest fails against it. The descendant selector
-		// is blunt on purpose — "everything" is the rule. A caller that needs
-		// an exception (an avatar border, an inverted chip) overrides it with
-		// its own class, which outranks this.
+		// Every ink goes FULL CREAM — muted rgba() fails on #CC0000. Blunt on purpose;
+		// a caller needing an exception overrides it with its own class.
 		&:hover {
 			color: #F7EFE6;
 
@@ -976,24 +774,19 @@
 			}
 		}
 
-		// accent-hot on the #050505 ground: 4.96:1, well clear of the 3:1 that
-		// 1.4.11 asks of a focus indicator.
+		// accent-hot on #050505 is 4.96:1, clear of the 3:1 in 1.4.11.
 		&:focus-visible {
 			outline: 2px solid var(--color-accent-hot);
 			outline-offset: var(--focus-gap-tight);
 		}
 
-		// …but red on red is not a ring, so a row that is both hovered and
-		// focused (pointer over a keyboard-focused row) inverts it to cream.
+		// Red on red is not a ring, so hover + focus inverts it to cream.
 		&:hover:focus-visible {
 			outline-color: #F7EFE6;
 		}
 	}
 
-	/* ---- reach: the row CONTAINS a control ---- */
-	// A ticket wave holds a Buy CTA; a contact desk holds an address. A red
-	// band under a row that does nothing when clicked promises a click, so
-	// these warm and pull instead.
+	// A red band under a row that isn't clickable promises a click, so it warms and pulls.
 	.field-row--holds {
 		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -1011,11 +804,8 @@
 			pointer-events: none;
 			z-index: -1;
 			transition: opacity 0.3s ease;
-			// Feathered. With no rules to close the row, an un-masked
-			// full-bleed box shows its own top and bottom edges as hard
-			// horizontal steps across the page — the same fault the per-list
-			// `--lamp` box had. The red field above is the deliberate
-			// exception: it is meant to read as a band with edges.
+			// Feathered: an un-masked full-bleed box shows its top and bottom edges as steps
+			// across the page. The red field above is the exception — it reads as a band.
 			-webkit-mask-image: var(--field-feather);
 			mask-image: var(--field-feather);
 		}
@@ -1060,12 +850,6 @@
 		white-space: nowrap;
 	}
 
-	/* ===================== CINEMATIC ATMOSPHERE ===================== */
-	// Reusable lighting/texture primitives for the film-noir scenes. Decorative
-	// layers are pointer-events:none and kept below text so contrast holds.
-
-	// Full-bleed scene vignette — stronger than the global frame, scoped to a
-	// section for "film still" framing.
 	.scene { position: relative; }
 	.scene > .scene-vignette {
 		position: absolute;
@@ -1075,16 +859,7 @@
 		z-index: 1;
 	}
 
-	// Scroll reveal — only hidden when JS is present (the inline `js` class on
-	// <html>); no-JS / SEO render fully visible. IntersectionObserver toggles
-	// .is-visible.
-	//
-	// A quiet fade with a short rise. Both properties are compositor-cheap and,
-	// unlike the clip-path shutter this replaced, a transform never clips or
-	// boxes anything — and because the resting state is `transform: none` there
-	// is no lingering containing block once the reveal settles. The observer
-	// (see BaseLayout.astro) fires it early, before the section is fully in
-	// view, so it reads as already-there rather than arriving late.
+	// Scroll reveal, hidden only when JS is present, so a no-JS render is fully visible.
 	.js .reveal {
 		opacity: 0;
 		transform: translateY(16px);
@@ -1095,18 +870,8 @@
 		transform: none;
 	}
 
-	// Prints fade in one after another rather than all at once. `--i` is set
-	// per item by the grid that owns them; anything without it starts at zero,
-	// so this is inert wherever it isn't wired up. Capped at 10 steps so a long
-	// roster never leaves the last face waiting.
-	//
-	// Two owners with different timing needs, one class. Astro grids sit inside
-	// a `.reveal` and must wait for it; React grids (speakers, the home wall)
-	// render after `astro:page-load` has already run the observer, so they are
-	// never inside a `.reveal` and simply fade in on first paint. Suppressing
-	// the animation only while a reveal is still closed covers both — otherwise
-	// an Astro grid would fade behind an opacity-0 parent and be over before
-	// anyone saw it.
+	// Staggered fade; `--i` is set by the owning grid. Suppressed while a parent
+	// `.reveal` is closed, or an Astro grid animates behind an opacity-0 parent.
 	.js .develop {
 		animation: print-fade 0.6s ease backwards;
 		animation-delay: calc(min(var(--i, 0), 10) * 55ms);
@@ -1129,14 +894,7 @@
 		20%, 82% { opacity: 0.74; }
 	}
 
-	// RED AS LIGHT. Everywhere else in the system red is a colour applied to a
-	// noun — it marks, but it never does anything. Here it is a light source:
-	// a raking beam that crosses the section as the section crosses the
-	// viewport, driven by the scroll itself rather than by a timer.
-	//
-	// Strictly an enhancement. `animation-timeline` ships in Chromium (2023)
-	// and Safari (2025) but is still behind a flag in Firefox, so this is
-	// wrapped in @supports and the unlit section below is the real design —
+	// Enhancement only — `animation-timeline` is still flagged off in Firefox, so
 	// nothing here carries meaning, contrast or state.
 	@supports (animation-timeline: view()) {
 		@media (prefers-reduced-motion: no-preference) {
@@ -1144,9 +902,7 @@
 				position: relative;
 			}
 
-			// The Lit Section Rule: the beam is a positioned element, so without
-			// this every static sibling after it would paint underneath the
-			// light instead of in it.
+			// The beam is positioned, so siblings need one too or they paint underneath it.
 			.rake > *:not(.rake-beam) {
 				position: relative;
 				z-index: 1;
@@ -1154,13 +910,8 @@
 
 			.rake > .rake-beam {
 				position: absolute;
-				// Full-bleed. The tickets section is a max-width, centred column,
-				// so a beam at `inset: 0` stopped at 1200px and left the page
-				// black on both sides — the light read as a padded box. The
-				// horizontal inset breaks it out to the viewport edges;
-				// `50% - 50vw` is zero on a full-width `.rake` (speakers) and
-				// negative on a centred one (tickets). Safe from horizontal
-				// scroll because html carries `overflow-x: clip`.
+				// Full-bleed: at `inset: 0` the beam stops at a centred column's max-width.
+				// `50% - 50vw` is zero on a full-width `.rake`; html carries `overflow-x: clip`.
 				inset: 0 calc(50% - 50vw);
 				pointer-events: none;
 				z-index: 0;
@@ -1184,17 +935,14 @@
 		to   { background-position: 170% 0; }
 	}
 
-	// The lineup print morphing into the dialog photo. Slower than a default
-	// cross-fade and on the system's own easing, so it reads as a camera move
-	// rather than a UI transition.
+	// The lineup print morphing into the sheet photo — a camera move, not a UI transition.
 	::view-transition-old(speaker-portrait),
 	::view-transition-new(speaker-portrait) {
 		animation-duration: 0.42s;
 		animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
-	// The page underneath shouldn't cross-fade while the portrait travels — a
-	// full-page dissolve behind a moving element reads as a glitch.
+	// No full-page dissolve behind the travelling portrait — it reads as a glitch.
 	::view-transition-old(root),
 	::view-transition-new(root) {
 		animation-duration: 0.24s;
@@ -1226,17 +974,9 @@
 		to { transform: translateX(-50%); }
 	}
 
-	// Status-bar scrim. iOS Safari ignores `viewport-fit=cover` in some
-	// browser modes and anchors `position: fixed; top: 0` *below* the
-	// safe-area inset, leaving the area behind the translucent status
-	// bar showing scrolled page content. Pulling the cover UP by
-	// `env(safe-area-inset-top)` with matching height paints exactly
-	// the inset zone — never overlaps the nav header below. Confirmed
-	// on iPhone Pro (Dynamic Island).
-	//
-	// `z-index: 10000` sits above the film-grain (9999) and scanline
-	// (9998) body overlays so mix-blend-mode doesn't desaturate / hide
-	// the cover. On desktop env == 0 → zero-height cover → invisible.
+	// Status-bar scrim. iOS Safari ignores `viewport-fit=cover` in some modes and anchors
+	// `position: fixed; top: 0` BELOW the safe-area inset, leaving content behind the
+	// translucent status bar. z-index 10000 keeps it above the grain so blending can't hide it.
 	.status-bar-cover {
 		position: fixed;
 		top: calc(-1 * env(safe-area-inset-top));

@@ -1,18 +1,13 @@
-	/* ===================== BODY ===================== */
-	/* ===================== EMAILS ===================== */
 
-
-	/* ===================== SECTIONS ===================== */
-	// 4rem, the homepage's section-head gap. At 2rem this page was running its
-	// heads at half the site's spacing while carrying the same 112px title.
+	// 4rem, the homepage's section-head gap — this page ran its heads at half the
+	// site's spacing while carrying the same title size.
 	.section-head {
 		margin-bottom: 4rem;
 		padding-bottom: 1.1rem;
 		border-bottom: 1px solid var(--rule);
 	}
 
-	// Poster headline — typewriter (Special Elite) to match the noir key art,
-	// with the accent word lit up like neon.
+	// Poster headline — typewriter, to match the noir key art.
 	.section-title {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-h2);
@@ -27,7 +22,6 @@
 		}
 	}
 
-	/* ===================== EMPTY STATE ===================== */
 	// A ruled note opening on a strong rule, not a mounted panel.
 	.empty-state {
 		position: relative;
@@ -51,8 +45,7 @@
 		color: var(--color-accent-hot);
 		padding: 0;
 		background: transparent;
-		// A plain mono word, not a boxed stamp. A bordered non-interactive
-		// label is the chip vocabulary the redesign removed everywhere else.
+		// A plain mono word, never a boxed stamp.
 		border: 0;
 	}
 
@@ -65,23 +58,20 @@
 		margin: 0;
 	}
 
-	/* ===================== MEDIA COVERAGE CARDS ===================== */
-	// An open field of clippings — `.field` in BaseLayout.scss.
+	// An open field of clippings.
 	.coverage-list {
 		position: relative;
 	}
 
-	// A clipping: thumbnail left, headline and outlet right. No mounted panel,
-	// no lift, no rule. The whole entry is the link, so it takes the shared red
-	// reach field (`.field-row--link`); this file owns only its grid and type.
+	// A clipping: thumbnail left, headline and outlet right. The whole entry is the
+	// link, so it takes `.field-row--link`; this file owns only its grid and type.
 	.coverage-card {
 		display: grid;
 		grid-template-columns: 220px 1fr;
 		gap: 1.8rem;
 		text-decoration: none;
 
-		// Not ink: a hairline inside the row, and the off-site arrow's motion.
-		// Hover only — focus draws a ring, it does not paint the field.
+		// Not ink: a hairline inside the row, and the off-site arrow's motion. Hover only.
 		&:hover {
 			.coverage-meta { border-top-color: rgba(247, 239, 230, 0.4); }
 			.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
@@ -122,14 +112,9 @@
 		}
 	}
 
-	// Publication name — a plain mono eyebrow above the headline, identical to
-	// `.card-label` on the press desks. It used to be a filled red tab, which
-	// put an accent field on every row of the list; the site spends its red
-	// once per section, and a filled chip is not in this vocabulary either.
-	// Muted at rest, full cream on the reach field. It was accent-hot on every
-	// clipping at once, which is the accent as texture — and now that reaching a
-	// clipping paints the whole row red, a resting red label competes with the
-	// one state the colour is for.
+	// Publication name — a plain mono eyebrow, muted at rest and full cream on the
+	// reach field. Never a filled tab: a resting red label competes with the one
+	// state the colour is for.
 	.coverage-outlet {
 		align-self: flex-start;
 		font-family: var(--font-jetbrains-mono), monospace;
@@ -139,23 +124,10 @@
 		color: rgba(240, 237, 230, 0.55);
 	}
 
-	// The headline is the row's title, so it is set like every other row's
-	// title: uppercase, on the long-list step the session rows use. It was
-	// reading-copy at lede size — around 22px against the 54px rows elsewhere, so
-	// the same container language read as a different site's component.
-	//
-	// THE ONE ROW TITLE THAT IS NOT BEBAS, and the reason is Czech. This text is
-	// scraped from the article's OG tags, so it arrives in whatever language the
-	// outlet writes in — every clipping so far is Czech, and the accents read as
-	// wrong at 54px Bebas. Bebas Neue's latin-ext file does carry ř/ě/č/š/ž/ů,
-	// but its accented caps are cramped against the cap height of a condensed
-	// display face, so a headline alternates crowded and clean caps and looks
-	// like a font that fell back mid-word. JetBrains Mono is the only brand face
-	// that sets a Czech title cleanly (Special Elite and IM Fell English really
-	// do have no latin-ext subset — see `.coverage-desc`). Mono advances ~0.6em
-	// against Bebas's ~0.42em, so the step is scaled to ~0.6× --fs-row-sm: that
-	// is the largest size at which both current headlines still set on two
-	// lines, which is what the Bebas step gave them.
+	// THE ONE ROW TITLE THAT IS NOT BEBAS, because it is scraped Czech from the
+	// article's OG tags: Bebas's accented caps read as a mid-word fallback, and
+	// JetBrains Mono is the only brand face that sets Czech cleanly. It advances
+	// ~0.6em against Bebas's ~0.42em, hence the ~0.6x --fs-row-sm step.
 	.coverage-title {
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-weight: 500;
@@ -166,19 +138,16 @@
 		color: var(--color-text);
 	}
 
-	// Off-site marker (\2197 north-east arrow), riding the mono "Read article"
-	// line rather than the headline. On the headline it scaled with the Bebas
-	// row title and became a 40px glyph mid-sentence.
+	// Off-site marker on the mono "Read article" line, not the headline — on the
+	// headline it scaled with the row title and became a 40px glyph mid-sentence.
 	.coverage-arrow {
 		display: inline-block;
 		margin-left: 0.35rem;
 		transition: transform 0.25s;
 	}
 
-	// Mono, not Special Elite, for the same reason as the title: this is scraped
-	// Czech. Special Elite ships a `latin` subset only — Google publishes no
-	// latin-ext for it — so every ř/ě/č/š/ž/ů in an OG description fell through
-	// to the Arial fallback mid-word, which is what a Czech reader sees first.
+	// Mono, not Special Elite, for the same reason as the title: Special Elite ships
+	// a `latin` subset only, so every ř/ě/č in scraped Czech falls back mid-word.
 	.coverage-desc {
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-body);
@@ -229,16 +198,13 @@
 
 	}
 
-	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
 	}
 
 	@media (max-width: 600px) {
 		.section-head { margin-bottom: 2.4rem; }
 
-		// Flush to the content column, like every other ruled row. The side
-		// padding was left over from the mounted-panel version and inset the
-		// entry from the rule it sits on.
+		// Flush to the content column — the side padding inset the entry from its rule.
 		.coverage-card {
 			grid-template-columns: 1fr;
 			gap: 1rem;

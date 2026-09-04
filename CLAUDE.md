@@ -2,10 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## PR conventions
-
-- **Do not add a `## Test plan` section to PR descriptions.** The maintainer verifies changes manually and the checklist adds noise. Keep PR bodies to Summary / Why / Follow-up only.
-
 ## Real customer data never enters this repository
 
 **This repository is public.** Anything committed here is world-readable the
@@ -46,59 +42,27 @@ Conference landing page for DevFest.cz 2026, built with Astro 7 and deployed to 
 
 ## Tech Stack
 
-- **Framework:** Astro 7 with React 19 islands (`@astrojs/react` 6)
-- **Language:** TypeScript (strict mode)
-- **Styling:** SCSS with CSS Modules for React components, global styles in `BaseLayout.astro`
-- **Node:** >= 22.12.0
+Astro 7 with React 19 islands (`@astrojs/react` 6), TypeScript in strict mode,
+SCSS (CSS Modules for React components, globals in `BaseLayout.astro`), Node >=
+22.12.0.
 
-## Commands
-
-| Command           | Action                   |
-| ----------------- | ------------------------ |
-| `npm run dev`     | Start dev server         |
-| `npm run build`   | Build for production     |
-| `npm run preview` | Preview production build |
-| `npm run a11y`    | Mock-data build + axe accessibility audit (`scripts/a11y.mjs`, `@axe-core/playwright`) |
-
-`npm run dev` serves `/api/lineup` and `/api/tickets` from the audit fixtures, so
-the lineup, agenda and ticket waves render locally — see "Browser data access".
-`DEVFEST_LIVE_API=1 npm run dev` hits the deployed functions instead.
-
-No lint script is configured — TypeScript strict mode provides type safety. Two automated checks exist: `npm run a11y` (axe against an `A11Y_MOCK=1` build; see "Browser data access") and `npm test` **inside `functions/`** (`node --test` over `src/**/*.test.ts`). The function tests compile through their own `tsconfig.test.json` into `lib-test/`, because the deploy `tsconfig.json` excludes `*.test.ts` — a test file must never ship in a function bundle. They stub `globalThis.fetch`, so they never touch iDoklad/ti.to.
+Commands, local setup, deploys and secrets are in [README.md](README.md). There is
+no lint script — strict TypeScript is the type safety. Automated checks: `npm run
+a11y` (axe against an `A11Y_MOCK=1` build) and `npm test` inside `functions/`
+(`node --test`, stubs `globalThis.fetch`, never touches iDoklad/ti.to). The function
+tests compile through their own `tsconfig.test.json` into `lib-test/`, because the
+deploy `tsconfig.json` excludes `*.test.ts` — a test file must never ship in a
+function bundle.
 
 ## PR conventions
 
-- **No "Test plan" sections in PR bodies.** This repo has no automated test suite and reviewers verify visually against deploy previews. PR descriptions should cover Summary / Why / Behavior / Files only — skip the test checklist entirely.
+- **No `## Test plan` section in PR bodies.** This repo has no automated test suite; the maintainer verifies changes visually against the deploy preview, so a prescriptive checklist is noise. Cover Summary / Why / Behavior / Files and stop there.
 
 ## Architecture
 
 ### Pages & Routing
 
-Pages under `src/pages/` using Astro file-based routing:
-- `/` — Main landing page (hero, countdown timer, newsletter form, footer)
-- `/speakers` — Speaker lineup (`Speakers` island reads `/api/lineup`; `SpeakerDetail` is an in-island detail view, not a route)
-- `/sessions` — Session schedule (`Sessions` island reads `/api/lineup`; `SessionDetail` is an in-island detail view)
-- `/invoice` — Company invoice request (`InvoiceForm` island → `submitInvoiceCallable`)
-- `/partners` — Sponsors/partners (`src/lib/partners.ts`)
-- `/press` and `/press/downloads` — Press kit (`src/lib/press-kit.ts`)
-- `/contact` — Contact page
-- `/faq` — Frequently asked questions
-- `/team` — Organizing team
-- `/privacy-policy` — GDPR privacy policy
-- `/newsletter-subscription-thank-you` — Post-signup confirmation
-- `/thank-you` — Post-purchase confirmation (configure as ti.to event "thank you URL")
-- `/404` — Not-found page
-
-### Component Model
-
-Static Astro components (`.astro`) for layout and non-interactive UI. React components (`.tsx`) with `client:load` for interactive features:
-- `Countdown.tsx` — Live countdown to October 30, 2026, 9:00 AM CET; updates every second
-- `NewsletterForm.tsx` — SmartEmailing integration for email capture with GDPR consent checkbox
-- `Speakers.tsx` / `SpeakersTeaser.tsx` / `Sessions.tsx` — Lineup islands; `fetch('/api/lineup')` (never the Firebase SDK), parse via `src/lib/lineup.ts`. `SpeakerDetail.tsx` / `SessionDetail.tsx` render the in-island detail views.
-- `Tickets.tsx` — Ticket roadmap; `fetch('/api/tickets')`, helpers in `src/lib/tito.ts`
-- `InvoiceForm.tsx` — `/invoice` form; calls the `submitInvoiceCallable` callable via the Functions SDK (App Check attached)
-- `Footer.astro` — Social links (X, Facebook, Bluesky, LinkedIn, YouTube)
-- `CookieBanner.astro` — Cookie consent stored in localStorage; also the analytics bootstrap (calls `trackPageView()` on every `astro:page-load`)
+File-based Astro routing under `src/pages/` — full route list in [README.md](README.md#key-pages). React islands (`.tsx`, `client:load`) live in `src/components/` alongside their static Astro counterparts.
 
 ### Firebase Integration (`src/lib/firebase.ts`)
 
@@ -163,31 +127,7 @@ Every domain builds on the same shared layer. The rule of thumb behind most of i
 
 ### ti.to Tickets pipeline
 
-Visitor browsers read ticket data from the cached `/api/tickets` endpoint (`ticketsApi`), which serves the RTDB `/tickets` cache — never the Firebase SDK (see "Browser data access"). The static build never calls ti.to. Cloud Functions own all ti.to traffic.
-
-```
-functions/src/
-├── index.ts                # top barrel — `export * from './<domain>/index.js'`
-├── options.ts              # setGlobalOptions + REGION + per-kind option presets
-├── lib/                    # shared by every domain — see "Backend conventions"
-└── tickets/
-    ├── index.ts            # domain barrel
-    ├── params.ts           # ti.to secrets + string params (single source of truth)
-    ├── tito-api.ts         # ti.to HTTP client + `projectRelease()`
-    ├── tito-webhook.ts     # `verifyTitoSignature` + header constants + payload type
-    ├── refresh-cache.ts    # `refreshTicketsScheduled`
-    ├── notify-purchase.ts  # `ticketsWebhook`
-    └── weekly-status.ts    # `weeklyTicketStatusScheduled` + `thursdayTicketStatusScheduled` (shared handler)
-```
-
-Functions exposed (region `europe-west1`):
-
-| Name | Trigger | Effect |
-| ---- | ------- | ------ |
-| `refreshTicketsScheduled` | `onSchedule('every 1 hours')` | Fetch releases → write RTDB `/tickets` |
-| `ticketsWebhook` | `onRequest` (`invoker: 'public'`) | Verify `Tito-Signature` HMAC, post `registration.finished` to Slack (other events 200-acked and ignored) |
-| `weeklyTicketStatusScheduled` | `onSchedule('every monday 09:00', Europe/Prague)` | Fetch live releases from ti.to and post sales summary to Slack |
-| `thursdayTicketStatusScheduled` | `onSchedule('every thursday 18:00', Europe/Prague)` | Same handler as `weeklyTicketStatusScheduled` — second weekly status report |
+Visitor browsers read ticket data from the cached `/api/tickets` endpoint (`ticketsApi`), which serves the RTDB `/tickets` cache — never the Firebase SDK (see "Browser data access"). The static build never calls ti.to. Cloud Functions own all ti.to traffic. Function names, triggers and schedules are catalogued in [README.md](README.md) — this section covers only the gotchas, not the inventory.
 
 Browser side: `src/components/Tickets.tsx` (and `InvoiceForm.tsx`'s price estimate) read the roadmap by `fetch()`ing the cached **`/api/tickets`** endpoint (`ticketsApi`), NOT the RTDB SDK — see "Browser data access" above. `src/lib/tito.ts` holds browser-safe helpers (types, `fetchTickets`, `filterDisplayable`, `checkoutUrl`, `formatPrice`). RTDB rules in `database.rules.json` (not wired into `firebase.json` — paste manually in console).
 
@@ -208,25 +148,7 @@ Deploy steps, secret setup, and ti.to/Slack wiring live in [README.md](README.md
 
 ### Sessionize → lineup pipeline
 
-Speaker/session data comes from **Sessionize**. Visitor browsers never hit Sessionize: a daily scheduled function mirrors it into public-read **Firestore** (`speakers` + `sessions`), and the browser reads those through the cached `/api/lineup` endpoint (see "Browser data access").
-
-```
-functions/src/
-├── sessionize/
-│   ├── index.ts               # domain barrel
-│   ├── params.ts              # SESSIONIZE_ENDPOINT_ID secret (Slack webhook comes from `lib/params.ts`)
-│   ├── sessionize-api.ts      # fetch + validate + normalize; buildSessionMap/…; computeDeletePlan (delete-guard)
-│   ├── mirror-images.ts       # mirror speaker photos → Firebase Storage `speakers/{id}` (idempotent)
-│   └── refresh-sessionize.ts  # `refreshSessionizeScheduled`
-└── lineup/
-    ├── index.ts               # domain barrel
-    └── lineup-api.ts          # `lineupApi`
-```
-
-| Name | Trigger | Effect |
-| ---- | ------- | ------ |
-| `refreshSessionizeScheduled` | `onSchedule('every day 06:00', Europe/Prague)` | Fetch Sessionize "All data" → mirror photos to Storage → write Firestore `speakers` + `sessions` |
-| `lineupApi` | `onRequest` (`invoker: 'public'`) | Serve `{ speakers, sessions }` from Firestore behind `/api/lineup` (1h edge TTL) |
+Speaker/session data comes from **Sessionize**. Visitor browsers never hit Sessionize: a daily scheduled function mirrors it into public-read **Firestore** (`speakers` + `sessions`), and the browser reads those through the cached `/api/lineup` endpoint (see "Browser data access"). Function names and schedule are catalogued in [README.md](README.md).
 
 Conventions / gotchas:
 - **Cross-referenced collections.** `speakers` docs embed their `sessions[]`; `sessions` docs embed their `speakers[]`. Each collection is written as its own atomic `WriteBatch` (upserts + guarded deletes) so a live reader never sees a half-synced state. Batch hard-caps at 500 ops — fine at the expected ~30–80 docs.
@@ -237,27 +159,7 @@ Conventions / gotchas:
 
 ### Invoice (iDoklad) pipeline
 
-Invoice-first B2B flow: a company requests an invoice on `/invoice`, pays it by bank transfer, and gets a 100%-off ti.to code to claim the tickets it already paid for. Reuses the tickets-domain ti.to client + Slack client; stores state in **Firestore** `invoices/{id}` (not RTDB — it holds company PII).
-
-```
-functions/src/invoice/
-├── index.ts            # domain barrel
-├── params.ts           # iDoklad OAuth + invoice business params (ti.to params from `tickets/`, Slack from `lib/`)
-├── idoklad-api.ts      # iDoklad v3 client: OAuth token cache, contacts, invoices, mail send, payment status
-├── tito-discount.ts    # resolve company-funded releases + create 100%-off discount_code
-├── email.ts            # optional Resend HTTP sender + both mails' copy (invoice + discount code)
-├── email-template.ts   # branded HTML shell for the discount-code mail (BRAND facts, blocks, escaping)
-├── firestore.ts        # invoices collection model + helpers
-├── submit.ts           # `submitInvoiceCallable`
-├── process.ts          # `processInvoiceTrigger`
-└── poll.ts             # `pollPaidInvoicesScheduled`
-```
-
-| Name | Trigger | Effect |
-| ---- | ------- | ------ |
-| `submitInvoiceCallable` | `onCall` (`enforceAppCheck: true`) | Validate form (honeypot), write `invoices/{id}` (status `pending`) |
-| `processInvoiceTrigger` | `onDocumentCreated('invoices/{id}')` | Price from ti.to → iDoklad contact + invoice → email it → status `invoiced` |
-| `pollPaidInvoicesScheduled` | `onSchedule('every 1 hours', Europe/Prague)` | For each `invoiced` doc, check iDoklad `PaymentStatus`; on paid mint 100%-off ti.to code + deliver → status `completed` |
+Invoice-first B2B flow: a company requests an invoice on `/invoice`, pays it by bank transfer, and gets a 100%-off ti.to code to claim the tickets it already paid for. Reuses the tickets-domain ti.to client + Slack client; stores state in **Firestore** `invoices/{id}` (not RTDB — it holds company PII). Function names and triggers are catalogued in [README.md](README.md).
 
 Browser side: `src/components/InvoiceForm.tsx` (page `src/pages/invoice.astro`) calls the `submitInvoiceCallable` **callable** via the Functions SDK (`getFunctions(getFirebaseApp(), 'europe-west1')` → `httpsCallable`) — it never touches Firestore directly. No endpoint URL config.
 
@@ -277,115 +179,12 @@ Conventions / gotchas:
 - Discount-code email via Resend (`POST https://api.resend.com/emails`, `from` must be a verified-domain sender) is **optional** (`RESEND_API_KEY` is a string param defaulting to empty); when unset the code is still posted to Slack + stored on the doc. `reply_to` is the organisers' address — the `from` is a no-reply sender.
 - **Both mails' copy lives in `email.ts`** (`buildInvoiceEmail`, `buildDiscountEmail`) so the two messages a company receives read as one voice; the branded HTML shell is `email-template.ts`. That file is email HTML, not web HTML — nested `<table role="presentation">`, inline styles, hex colours (Outlook drops `rgba()`), pixel widths, a VML `roundrect` behind the CTA, and no webfonts (most clients ignore `@font-face`, and a half-applied brand face is worse than a consistent system stack). Every interpolation goes through `escapeHtml`/`escapeAttr`. The dark palette mirrors `BaseLayout.scss` and declares `color-scheme: dark` so auto-inverting clients leave it alone. The plain-text alternative is a real fallback (same code, link and steps), not a stripped copy — it also helps spam scoring.
 
-### Styling Conventions
+### Styling
 
-Visual system — values, tokens, and binding [MUST]/[CURRENT] rules — is documented
-in [DESIGN.md](DESIGN.md); treat it as the source of truth, not this file.
-This file holds decisions, product context, and the *why*; `DESIGN.md` holds
-the *what* and the *how*. If a rule changes, check both.
-
-`.anchor-target` (`#tickets`, `#newsletter`) cancels a section's own opening air
-with a negative `scroll-margin-top` reading `--section-air`, the variable the
-section's padding is built from — `scroll-padding-top` can't do it, the air is
-inside the target. `--header-h` is the single source for the bar height:
-`Menu.scss` and `html { scroll-padding-top }` both read it.
-The CSS only decides WHERE a jump lands; `src/lib/anchor.ts` (wired from
-`BaseLayout.astro`'s `astro:page-load`) keeps it landed while the islands
-resolve and grow the page above the target — without it a deep-linked
-`/#newsletter` ended up ~1000px past the heading. Two things there are not
-tidy-uppable: the click handler must NOT check `event.defaultPrevented`
-(ClientRouter cancels same-page hash links to scroll them itself), and the hold
-must be armed BEFORE the landing, because Chromium and WebKit defer the initial
-fragment scroll and then animate it through `scroll-behavior: smooth`.
-`npm run anchors` measures every landing in Chromium, WebKit and Firefox.
-
-**The ticker is its own pause control (WCAG 2.2.2).** The strip carries
-`tabindex="0"` + an `aria-label` naming the topics, and `Ticker.scss` pauses the
-animation on `:hover` **and** `:focus-within`. `prefers-reduced-motion` still
-stops it, but that is a user-agent setting, not the mechanism the SC asks for.
-The focusable child is what makes `:focus-within` possible at all — the topics
-are non-interactive text — so the strip is the labelled element and the doubled
-topic list inside it is `aria-hidden` (it would otherwise be announced twice).
-No visible pause button: this is chrome on all 15 routes.
-
-Behavioral components not yet covered by `DESIGN.md`:
-
-| | |
-| --- | --- |
-| `NextStep.astro` | one thing to do, in an open field of them — title, note, and its controls on the right axis. `/thank-you`, `/newsletter-subscription-thank-you` and `/404` all end on "what now?" and all three used to answer it with one link home. Takes `.field-row--holds` — a step CONTAINS its controls |
-| `.logo-grid` / `.logo-cell` | the partner wall: ONE track size for every partner on the page (`/partners`). See "Partner wall" below |
-| `DataState.tsx` | the three non-ready states of a data-backed island — `LoadingState` / `ErrorState` / `EmptyState`. `/speakers`, `/sessions`, `/agenda` and the ticket waves each kept a private copy and they had drifted: two centred and two left-set, two with animated trailing dots, one opening on a hairline, and only `/agenda` offering a next action. Left-set (matching `.fallback-note`), `role="status"` on loading and `role="alert"` on failure, and an **empty state always offers somewhere to go** |
-| `SpeakerPhoto.tsx` | a speaker's photograph, or their initials. Owns ONE decision — no URL, or a URL that fails to load, both land on the monogram — while the caller passes its own classes for the shape. `/sessions` and `/agenda` used to `visibility: hidden` the broken `<img>`, so the same speaker with the same dead CDN URL rendered as initials on `/speakers` and as a hole on the other two |
-
-**The partner wall is one grid module.** `/partners` used to size the cell per
-tier, and `--tier-col` was a FLOOR rather than a width, so cells grew to close
-their row: one page rendered a 611px platinum cell, three full-width diamond
-cells, a 520px silver one and 264px media plates — four cell modules on one
-wall, and a cell's size said more about how many partners share its tier than
-about the tier. `.logo-grid` is `repeat(auto-fill, minmax(min(100%, --cell-min),
-1fr))` at one size for every partner; the tier is carried by its heading and by
-the order of the sections, which is what a ladder is for. A tier that does not
-fill its last row leaves the rest of the row empty — the rules belong to the
-CELLS, so nothing hangs a hairline over dead space.
-
-Equal cells do not make equal-looking logos, so `opticalBox()` in
-`partners.astro` gives each mark a box of equal ink **area** shaped to its own
-aspect ratio (a 5:1 wordmark ≈190×38, a square glyph ≈76×76) and passes it as
-`--logo-w` / `--logo-h`; the raster `sizes` follows that box. Capping width
-renders a glyph as a block beside a wordmark; capping height renders the
-wordmark as a hairline of type. `plated` stays a per-partner flag (the file
-ships with its own background baked in) and gets a larger box — it is **not** a
-tier-level inversion, which would move the legibility risk onto the tier that
-pays. The media/community rows keep the cream ground: those marks ship dark.
-
-**Forms say which field is wrong, in the field.** `InvoiceForm.tsx` is the
-pattern: one `validate()` holding every rule, errors shown on blur or on the
-first submit attempt and cleared as they are fixed, `aria-invalid` on the
-control, `aria-describedby` pointing at a mono `--color-accent-hot` message
-under it (colour is never the only channel), and a failed submit focusing the
-first field that needs fixing. **A submit button is never `disabled` for a
-missing input** — that takes it out of the tab order and explains nothing;
-it stays reachable and answers on activation. `aria-disabled` covers only the
-in-flight state, so the button's states key off `[aria-disabled='true']`, not
-`:disabled`.
-
-**A component declared in a render body remounts its subtree every render.**
-`TextField` lives at module scope in `InvoiceForm.tsx` for that reason — inside
-the component, every keystroke unmounted the input and the caret left the field.
-
-**`/thank-you`, `/newsletter-subscription-thank-you` and `/404` are on the
-system.** They were 73 lines of one centred template with the words swapped,
-and one of them is where someone lands after paying. All three run
-`SubpageHero photo={false}` → `Ticker` → a `.band--lit` field of `NextStep`
-rows → `Closer`, and their titles take the site's em-dash separator like every
-other page. `/thank-you` carries the four things that belong on it and nowhere
-else (calendar, venue, what happens next, share) and ships an `@media print`
-block: it is the page someone prints as proof of purchase, and the site's cream
-ink on `#050505` prints as invisible text. Event facts for the calendar links
-live in `src/lib/event.ts`, alongside the `.ics` in `public/` — keep them in
-step with the Event JSON-LD in `BaseLayout.astro`.
-
-**A `<details>` list opens with its first item open.** `/faq` had every question
-collapsed on arrival, so the page a speaker and a journalist both land on showed
-no answer at all. One open item, not more — four open answers is the page's
-whole content unfolded. A section must also not reuse the hero's
-`aria-labelledby`: two regions with one accessible name is `landmark-unique`,
-which was the site's only axe violation.
-
-**The skip link's target carries `tabindex="-1"`.** `#main-content` is a `div`,
-and without it `Enter` on the skip link moves the document fragment but leaves
-focus in the header — the next `Tab` lands back in the nav and the only
-keyboard-only affordance on the site does nothing. The ring is suppressed on
-that element alone (a 100vw outline reads as a rendering fault, and it is a page
-region, not a control); every control inside keeps its own.
-
-**The cookie banner is second in the DOM, right after the skip link,** and its
-`Escape` handler is on `document`. Both are the same defect: the banner used to
-sit after the footer with a handler bound to itself, so the key only worked once
-focus was already inside it — about 40 tab stops away. Its two choices are
-peer-weighted: `Accept` keeps the accent fill (it is how the bar is findable),
-every other dimension — type, tracking, padding, height, minimum footprint — is
-shared, so the shorter word is not the smaller target.
+The design system — values, tokens, binding [MUST]/[CURRENT] rules, and the
+rationale behind them — lives in [DESIGN.md](DESIGN.md); treat it as the
+source of truth. Global CSS variables are in `BaseLayout.scss`; React
+components use co-located `.module.scss` files.
 
 ### SEO & Metadata
 

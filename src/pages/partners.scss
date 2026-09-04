@@ -161,9 +161,8 @@
 
 		list-style: none;
 		margin: 0;
-		// The cells' -1px bottom margin puts the last row's bottom border 1px
-		// outside the container, where the next section's opaque ground paints
-		// over it. This gives that pixel back.
+		// The cells' -1px bottom margin puts the last row's border outside the container,
+		// where the next section paints over it. This gives that pixel back.
 		padding: 0 0 1px;
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--cell-min)), 1fr));
@@ -346,8 +345,7 @@
 		font-size: var(--fs-label);
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
-		// Full cream. On the red field a dimmed label measures 3.25:1 and
-		// fails 1.4.3 — see the ink table in BaseLayout.scss.
+		// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
 		color: var(--on-accent);
 	}
 

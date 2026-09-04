@@ -130,8 +130,8 @@ export class IdokladApiError extends Error {
 }
 
 /** `Message` off an iDoklad envelope — a string, or a list of them. */
-function envelopeMessage(json: any): string | null {
-	const raw = json?.Message;
+function envelopeMessage(json: unknown): string | null {
+	const raw = (json as { Message?: unknown } | null)?.Message;
 	if (typeof raw === 'string') return raw.trim() || null;
 	if (Array.isArray(raw)) {
 		const parts = raw.map((m) => (typeof m === 'string' ? m : JSON.stringify(m))).filter(Boolean);
@@ -141,20 +141,17 @@ function envelopeMessage(json: any): string | null {
 }
 
 /**
- * Peel the `{ Data, IsSuccess, Message }` envelope.
- *
- * **`IsSuccess` is the real verdict, not the HTTP status.** iDoklad answers 200
- * for domain-level refusals too (a partner with no email address, a validation
- * error on the payload), and this used to read straight past it: a refused
- * `/Mails/IssuedInvoice/Send` looked exactly like a delivered one and the
- * pipeline recorded `invoiceEmailSent: true` for a mail that never left.
+ * Peel the `{ Data, IsSuccess, Message }` envelope. `IsSuccess` is the real
+ * verdict, not the HTTP status — iDoklad answers 200 for domain-level
+ * refusals too (a partner with no email address, a validation error on the
+ * payload), so a refused call must throw here rather than look delivered.
  */
-function unwrap<T = any>(json: any, context: string): T {
+function unwrap<T = unknown>(json: unknown, context: string): T {
 	if (json && typeof json === 'object') {
-		if ('IsSuccess' in json && json.IsSuccess === false) {
+		if ('IsSuccess' in json && (json as { IsSuccess: unknown }).IsSuccess === false) {
 			throw new IdokladApiError(context, envelopeMessage(json));
 		}
-		if ('Data' in json) return json.Data as T;
+		if ('Data' in json) return (json as { Data: unknown }).Data as T;
 	}
 	return json as T;
 }

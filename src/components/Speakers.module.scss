@@ -1,21 +1,9 @@
-// Speaker lineup — prints laid out on the page, and nothing else. No cell, no
-// panel, no rule around anybody.
-//
-// This has now been wrong twice in the same direction. First it was an
-// auto-fill CARD grid: hover-lift, a red crop-bracket burned onto every frame,
-// a "View profile →" chip once per speaker. Replacing that with a ruled
-// contact sheet (`gap: 0`, cells sharing hairlines) fixed the card but kept
-// the box — shared edges still draw a complete rectangle around every single
-// photograph, and a grid of outlined rectangles reads as a grid of outlined
-// rectangles no matter how the edges are shared.
-//
-// A photograph does not need a container. It already carries its own mount —
-// a bone keyline for the print's border and a shadow that sits it on the page
-// — so the only thing a cell border could add is a second rectangle around the
-// first. Alignment and even rhythm make the grid; the prints ARE the grid.
+// Speaker lineup — prints laid out on the page, and nothing else. A photograph
+// needs no container: it carries its own mount (`--print-mount`), so a cell
+// border only draws a second rectangle around the first. Never wrap a print in
+// a card or a shared-edge contact sheet; alignment and rhythm make the grid.
 
-// A 210px floor laid the lineup out as six-plus small columns on a 1440
-// page. Faces are the content here; give them room.
+// Faces are the content here — a 210px floor laid them out as six small columns.
 .grid {
 	list-style: none;
 	margin: 0;
@@ -33,13 +21,12 @@
 	}
 }
 
-// Carries `--i` for the develop stagger; the class exists so the index can be
-// set without styling the bare <li>.
+// Carries `--i` for the develop stagger; exists so the index can be set without
+// styling the bare <li>.
 .cell {
 	display: flex;
 }
 
-/* ===================== PRINT + CAPTION ===================== */
 .card {
 	position: relative;
 	display: flex;
@@ -61,7 +48,6 @@
 	}
 }
 
-/* ===================== MEDIA (evidence print) ===================== */
 .media {
 	position: relative;
 	display: block;
@@ -69,14 +55,11 @@
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
 	background: var(--panel-lit);
-	// Mounted print: bone keyline for the print's own border, shadow to sit it
-	// ON the sheet rather than floating on flat black.
+	// Mounted print: bone keyline plus a shadow, so it sits ON the sheet.
 	box-shadow: var(--print-mount);
 
-	// Red crop-brackets, top-left (::before) and bottom-right (::after) — a
-	// GESTURE, not decoration. Printing them on every frame at rest put twenty
-	// red marks in one viewport and broke The One Mark Rule; they now open only
-	// on the frame being pointed at, which is what framing a face actually is.
+	// Red crop-brackets — a GESTURE, not decoration. They open only on the frame
+	// being pointed at; at rest they put twenty red marks in one viewport.
 	&::before,
 	&::after {
 		content: '';
@@ -86,8 +69,7 @@
 		border: 2px solid var(--color-accent-hot);
 		z-index: 3;
 		opacity: 0;
-		// Scale from the corner rather than animating width/height — the same
-		// opening gesture, composited instead of triggering layout.
+		// Scale from the corner rather than animating width/height — composited.
 		transform: scale(0.7);
 		transition: opacity 0.3s ease, transform 0.3s ease;
 	}
@@ -129,8 +111,7 @@
 	background: linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
 }
 
-// The red interrogation wash rides on hover only — at rest it was a red mark
-// on every single face, which is not what an accent is for.
+// The red wash rides on hover only: at rest it is a red mark on every face.
 .vignette {
 	position: absolute;
 	inset: 0;
@@ -233,17 +214,14 @@
 	overflow-wrap: anywhere;
 }
 
-// The name is the affordance — it lights with the frame it belongs to. The
-// per-card "View profile →" chip it replaces said the same thing once per
-// speaker; the sheet says it once, in the section header.
+// The name is the affordance — it lights with the frame it belongs to.
 .card:hover .name,
 .card:focus-visible .name {
 	color: var(--color-accent-hot);
 }
 
-/* ===================== END OF ROLL ===================== */
 // Closes the sheet so the lineup never reads as complete. An unexposed frame,
-// not a dashed placeholder tile with pulsing dots.
+// not a dashed placeholder.
 .moreCard {
 	position: relative;
 	display: flex;
@@ -253,9 +231,8 @@
 	background: transparent;
 }
 
-// Carries the SAME mount as a real print — bone keyline, same shadow — so it
-// reads as a frame that hasn't been exposed yet rather than as an outlined
-// empty box sitting among borderless photographs.
+// Carries the SAME mount as a real print, so it reads as an unexposed frame and
+// not as an outlined empty box among borderless photographs.
 .moreFrame {
 	position: relative;
 	aspect-ratio: 4 / 5;
@@ -268,9 +245,7 @@
 	margin-top: 0.9rem;
 }
 
-// Same step as a real speaker's name — this card sits in the same grid and
-// its caption has to land on the same optical line. It was left on
-// --fs-title-compact when the names went up, so it read a size small.
+// Same step as a real speaker's name — this card sits in the same grid.
 .moreKicker {
 	display: block;
 	font-family: var(--font-bebas-neue), sans-serif;
@@ -295,7 +270,6 @@
 	min-height: calc(2 * 1.45em);
 }
 
-/* ===================== RESPONSIVE ===================== */
 @media (max-width: 600px) {
 	.grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));

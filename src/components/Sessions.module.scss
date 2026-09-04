@@ -1,8 +1,6 @@
-// Session docket — clickable text-forward cards that open a detail dialog.
-// Same film-noir system as the speaker lineup (grayscale, red accent, brand
-// fonts, --panel-lit surfaces), but the card leads with the talk title + a red
-// file-rule instead of a portrait, with the speakers stacked at the foot.
-// Global tokens come from BaseLayout.
+// Session docket — the programme as an open field of talks. `.field-row--link`
+// owns the rhythm and the red reach state; this file owns the two-column grid
+// and the type.
 
 /* ===================== FILTER BAR ===================== */
 .filters {
@@ -44,15 +42,13 @@
 	letter-spacing: 0.02em;
 	color: var(--color-text);
 	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 90%);
-	// --field-border (not --rule) keeps the field boundary >=3:1 over the dark
-	// fill — WCAG 1.4.11, matching the invoice inputs.
+	// --field-border (not --rule) keeps the boundary >=3:1 over the dark fill (1.4.11).
 	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	padding: 0.7rem 0.9rem 0.7rem 2.5rem;
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
-	// 0.55 (not 0.4) lifts the placeholder — the field's only visible label — to
-	// >=4.5:1 for normal text (WCAG 1.4.3).
+	// 0.55, not 0.4: the placeholder is the field's only visible label, so 4.5:1 applies.
 	&::placeholder {
 		color: rgba(240, 237, 230, 0.55);
 	}
@@ -105,9 +101,8 @@
 	letter-spacing: 0.04em;
 	color: var(--color-grey);
 	background: rgba(255, 255, 255, 0.02);
-	// Square, per the Two-Pixel Rule — a pill is a different product's shape.
-	// The boundary uses --field-border so an interactive filter clears WCAG
-	// 1.4.11 (>=3:1) rather than sitting on a decorative hairline.
+	// Square, never a pill; the boundary uses --field-border so an interactive filter
+	// clears WCAG 1.4.11.
 	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	padding: 0.42rem 0.85rem;
@@ -153,8 +148,7 @@
 		color: var(--color-accent-hot);
 	}
 
-	// Keyboard focus needs more than the colour swap (2.4.7 / 1.4.1) — the
-	// underline is always on, so give it a real ring like the other controls.
+	// The underline is always on, so keyboard focus needs a real ring (2.4.7 / 1.4.1).
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap);
@@ -165,16 +159,11 @@
 	margin-top: 1rem;
 }
 
-// The programme is an open field of talks — `.field` / `.field-row--link` in
-// BaseLayout.scss owns the rhythm and the red reach state; this file owns only
-// what is specific to a talk: the two-column grid and the type.
 .grid {
 	position: relative;
 }
 
-/* ===================== RECORD (button) ===================== */
-// Was a panel with a 2px red left border, a drop shadow and a hover lift —
-// three of the tells this language exists to remove.
+/* ===================== ROW (button) ===================== */
 .card {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto;
@@ -188,10 +177,8 @@
 	color: inherit;
 	cursor: pointer;
 
-	// Exceptions to the primitive's "every ink goes cream" rule: these two are
-	// not ink, they are objects that have to stay legible ON the field. Hover
-	// only — focus draws a ring, it does not paint the field (see
-	// `.field-row--link` in BaseLayout.scss).
+	// Exceptions to the primitive's "every ink goes cream" rule: these are objects,
+	// not ink, and must stay legible ON the field. Hover only — focus draws a ring.
 	&:hover {
 		.avatar {
 			border-color: #B00000;
@@ -206,7 +193,7 @@
 }
 
 /* ===================== TOP META ROW ===================== */
-// Track / time kicker sits in the body column above the title.
+// Track / time kicker, in the body column above the title.
 .top {
 	grid-column: 1;
 	display: flex;
@@ -221,9 +208,8 @@
 	grid-column: 1;
 }
 
-// The track, muted rather than accent-red. Red on every row of a thirty-row
-// list is not a highlight — the homepage spends its accent on one thing per
-// section (the on-sale wave), and this was spending it thirty times.
+// The track is muted, not accent-red: red on every row of a thirty-row list is
+// not a highlight.
 .kicker {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-sm);
@@ -236,11 +222,8 @@
 }
 
 /* ===================== TITLE + EXCERPT ===================== */
-// The homepage sets a ruled row's title at 54px (see `.stubTitle` in
-// Tickets.module.scss) — this list is the same container language and was
-// running less than half that, which made /sessions read as a different site's
-// component. Not matched exactly: three ticket waves can carry 54px, thirty
-// talks cannot, so this lands a step below and stays scannable down a long list.
+// A step below the 54px a short list carries — thirty talks at that size stop
+// being scannable, but this is the same container language, not a smaller one.
 .title {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-row-sm);
@@ -248,7 +231,7 @@
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
 	color: var(--color-text);
-	// Reserve up to three lines so short/long titles keep card heights close.
+	// Reserve up to three lines so short and long titles keep row heights close.
 	display: -webkit-box;
 	-webkit-line-clamp: 3;
 	line-clamp: 3;
@@ -270,8 +253,7 @@
 }
 
 /* ===================== FOOT (speakers) ===================== */
-// Right-hand column of the record: who is giving the talk. Sits on the same
-// axis every other ledger uses for its data.
+// Right-hand column: who is giving the talk, on the same axis every field row uses.
 .foot {
 	grid-column: 2;
 	grid-row: 1 / span 3;
@@ -287,7 +269,7 @@
 	display: inline-flex;
 	flex-shrink: 0;
 
-	// Overlap the avatars into a stack; each subsequent one slides left.
+	// Overlap the avatars into a stack.
 	.avatar + .avatar {
 		margin-left: -10px;
 	}
@@ -339,10 +321,8 @@
 }
 
 /* ===================== "MORE SOON" TILE ===================== */
-// The programme's open end — a closing note on the ledger, not a dashed
-// placeholder tile. A dashed box is drafting-tool vocabulary; the ledger says
-// "more to come" by leaving its last rule open and setting the note in the
-// same mono voice every other status word uses.
+// The programme's open end — a mono closing note at the foot of the field, never
+// a dashed placeholder tile.
 .moreCard {
 	position: relative;
 	display: flex;

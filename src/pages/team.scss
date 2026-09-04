@@ -1,15 +1,6 @@
-	/* ===================== ROSTER SECTION ===================== */
-	// Mugshots laid out on the page — no cell, no panel, no rule around
-	// anybody. A ruled sheet (`gap: 0`, cells sharing hairlines) still draws a
-	// complete rectangle around every photograph, and a grid of outlined
-	// rectangles reads as exactly that however the edges are shared. The
-	// mugshot carries its own mount (bone keyline + shadow); alignment and an
-	// even rhythm do the rest. See Speakers.module.scss for the same note.
-	// Four across at most, not five-plus. At a 210px floor the roster laid out
-	// as six small columns of 4:5 prints, which is a contact sheet — fine for a
-	// hundred faces, wrong for eleven organisers, and the reason the page read
-	// as dense rather than spacious. Four per row is the balance: the faces stay
-	// recognisable without any one of them running to 400px.
+	// Mugshots laid out on the page — no cell, no panel, no rule around anybody; the
+	// print carries its own mount. Four across at most: at a 210px floor the roster
+	// laid out as six small columns, which is a contact sheet, not a crew.
 	.crew-grid {
 		list-style: none;
 		margin: 0;
@@ -35,10 +26,8 @@
 		gap: clamp(2.5rem, 4.5vw, 4rem) var(--crew-col-gap);
 	}
 
-	/* ===================== PRINT + CAPTION ===================== */
-	// No panel, no shadow on the container, no matte frame, no lift. The
-	// photograph is the artifact and there is nothing around it. The cursor
-	// colour-bleed on the mugshot stays — that is the team's one flourish.
+	// No panel, no shadow, no matte frame, no lift. The cursor colour-bleed on the
+	// mugshot is the team page's one flourish.
 	.crew-card {
 		position: relative;
 		display: flex;
@@ -51,21 +40,17 @@
 		background: transparent;
 	}
 
-	/* ===================== MUGSHOT ===================== */
-	// Animatable bleed radius — drives the radial colour reveal. Browsers
-	// without @property support skip the transition and just swap on hover.
+	// Animatable bleed radius. Without @property support the transition is skipped
+	// and the colour just swaps on hover.
 	@property --bleed {
 		syntax: '<percentage>';
 		inherits: false;
 		initial-value: 0%;
 	}
 
-	// Two stacked copies of the photo: a black-and-white base, and a colour
-	// layer on top revealed through an expanding, grainy DIFFUSION mask anchored
-	// at the cursor (see the JS in team.astro).
-	// `.mugshot` itself carries no rules any more — the frame is the global
-	// `.print` primitive. The class stays on the element as the JS hook the
-	// colour-bleed script queries (see the bottom of team.astro).
+	// Two stacked copies of the photo: a B&W base and a colour layer revealed through
+	// an expanding grainy mask anchored at the cursor. `.mugshot` carries no rules —
+	// the frame is the global `.print`; the class is the JS hook team.astro queries.
 	.mugshot-base,
 	.mugshot-color {
 		position: absolute;
@@ -82,10 +67,8 @@
 	}
 
 	.mugshot-color {
-		// --mx / --my (cursor position) set per-card by JS; --bleed animates the
-		// reveal radius. Two composited masks make the colour spread as a grainy
-		// diffusion rather than a clean circle: a wide-feathered radial front
-		// intersected with tiling fractal-noise.
+		// --mx / --my are set per-card by JS; --bleed animates the reveal radius. Two
+		// composited masks make the colour spread as a grainy diffusion, not a clean circle.
 		--mx: 50%;
 		--my: 50%;
 		--bleed: 0%;
@@ -125,7 +108,6 @@
 		user-select: none;
 	}
 
-	/* ===================== INFO ===================== */
 	.crew-info {
 		position: relative;
 		z-index: 1;
@@ -146,10 +128,8 @@
 		margin: 0;
 	}
 
-	// The member's "position" under their name. At rest it shows the real role;
-	// on hover it cross-fades to the noir codename (alias). Both lines are
-	// stacked in one grid cell so they overlap; the two-line reserve keeps the
-	// links row aligned across cards with long/short text.
+	// Real role at rest, noir codename on hover. Both lines are stacked in one grid
+	// cell; the two-line reserve keeps the links row aligned across cards.
 	.crew-role {
 		display: grid;
 		// One overlapping cell, allowed to be narrower than the role it holds
@@ -170,14 +150,11 @@
 		transition: opacity 0.35s ease, transform 0.35s ease;
 	}
 
-	// Real role — the default, plain-text position.
 	.crew-role-real {
 		color: var(--color-text);
 	}
 
-	// Noir codename. accent-hot (not --color-accent) clears WCAG AA on the dark
-	// panel (~4.96:1 vs ~3.3:1 for #CC0000) at this small size. On swap cards
-	// it's hidden until hover — the reveal that pairs with the colour-bleed photo.
+	// accent-hot, not --color-accent: ~4.96:1 vs ~3.3:1 on the dark panel at this size.
 	.crew-role-alias {
 		color: var(--color-accent-hot);
 	}
@@ -187,7 +164,7 @@
 		transform: translateY(0.25em);
 	}
 
-	// Cross-fade: real out, alias in — only on cards that carry a real role.
+	// Cross-fade, only on cards that carry a real role.
 	.crew-card:hover .crew-role[data-swap] .crew-role-real,
 	.crew-card:focus-within .crew-role[data-swap] .crew-role-real {
 		opacity: 0;
@@ -259,10 +236,6 @@
 		}
 	}
 
-	/* ===================== NOTE ===================== */
-
-
-	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 600px) {
 		.crew-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));

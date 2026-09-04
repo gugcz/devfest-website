@@ -3,8 +3,9 @@ of the codebase and carries its source as `file:line`, so a reviewer can check a
 claim without trusting this file.
 
 The style *rationale* (why the eyebrow lost its hairline, why lists have no
-rules, why detail views are sheets) lives in `CLAUDE.md` → "Styling
-Conventions". This file is the reference: the values, the names, the rules.
+rules, why detail views are sheets) lives in this file, inline with the rules
+it explains; `CLAUDE.md` only points here. This file is the reference: the
+values, the names, the rules.
 
 ## How to read this document
 
@@ -197,6 +198,22 @@ each caller picks, because the padding is simultaneously the rhythm and the band
 the reach field fills (`BaseLayout.scss:913–932`): `clamp(1.9rem, 2.8vw, 2.5rem)`
 default, `clamp(2.25rem, 3.6vw, 3.25rem)` for `--short`. Vertical only — a row
 has no horizontal padding at any width.
+
+**[MUST] `.anchor-target` (`#tickets`, `#newsletter`) cancels a section's own
+opening air with a negative `scroll-margin-top` reading `--section-air`**
+(`BaseLayout.scss:446–447`) — the variable the section's own padding is built
+from, so every band is anchorable for free. `scroll-padding-top` can't do this:
+the air is inside the target, not above it. `--header-h` is the single source
+for the bar height; `Menu.scss` and `html { scroll-padding-top }` both read it.
+The CSS only decides WHERE a jump lands; `src/lib/anchor.ts` (wired from
+`BaseLayout.astro`'s `astro:page-load`) keeps it landed while the islands
+resolve and grow the page above the target — without it a deep-linked
+`/#newsletter` ended up ~1000px past the heading. Two things there are not
+tidy-uppable: the click handler must **not** check `event.defaultPrevented`
+(ClientRouter cancels same-page hash links to scroll them itself), and the hold
+must be armed **before** the landing, because Chromium and WebKit defer the
+initial fragment scroll and then animate it through `scroll-behavior: smooth`.
+`npm run anchors` measures every landing in Chromium, WebKit and Firefox.
 
 ## Breakpoints
 
@@ -401,6 +418,18 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   message element that reserves `min-height: 1.2em` so the layout does not jump
   when it appears (`InvoiceForm.module.scss:259–269`,
   `NewsletterForm.module.scss:154–161`).
+- **[MUST] A submit button is never `disabled` for a missing input** — that
+  takes it out of the tab order and explains nothing. It stays reachable and
+  answers on activation; validation runs on blur and on the first submit
+  attempt and clears as fields are fixed, with a failed submit focusing the
+  first field that needs it (`InvoiceForm.tsx`, `validate()`).
+  `aria-disabled` covers only the in-flight submitting state, so the button's
+  states key off `[aria-disabled='true']`, not `:disabled`
+  (`InvoiceForm.tsx:413–417`).
+- **[MUST] A component declared in a render body remounts its subtree every
+  render.** `TextField` lives at **module scope** in `InvoiceForm.tsx`
+  (`:107–112`) for that reason — declared inside the parent component, every
+  keystroke unmounted the input and the caret left the field.
 - **[MUST] Status messages are announced.** `aria-live="polite"` on the message
   region (`InvoiceForm.tsx:425`, `NewsletterForm.tsx:93`), `role="status"` on the
   success block (`InvoiceForm.tsx:304`), and inputs point at their help text with
@@ -429,6 +458,23 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   (`SpeakerDetail.module.scss:46`).
 - **[MUST] Partner and press logos are `object-fit: contain`** — never cropped
   (`partners.scss:235`, `index.scss:461`, `downloads.scss:202`).
+- **[MUST] The partner wall is one grid module, `.logo-grid` / `.logo-cell`**
+  (`partners.scss:158,172`) — `repeat(auto-fill, minmax(min(100%, --cell-min),
+  1fr))` at one track size for every partner, regardless of tier. Sizing per
+  tier used `--tier-col` as a floor rather than a width, so cells grew to close
+  their row — one page rendered a 611px platinum cell beside 264px media
+  plates, four cell modules on one wall. The tier is carried by its heading and
+  section order instead. A tier that doesn't fill its last row leaves the rest
+  empty — no hairline hangs over dead space.
+- **[MUST] Equal cells don't make equal-looking logos.** `opticalBox()`
+  (`partners.astro:53`) gives each mark a box of equal ink **area** shaped to
+  its own aspect ratio (a 5:1 wordmark ≈190×38, a square glyph ≈76×76) and
+  passes it as `--logo-w` / `--logo-h`; the `sizes` attribute follows the same
+  box. Capping width alone renders a glyph as a block beside a wordmark;
+  capping height alone renders the wordmark as a hairline of type. `plated`
+  stays a per-partner flag (the file ships its own background baked in) and
+  gets a larger box — it is **not** a tier-level inversion, which would move
+  the legibility risk onto the tier that pays.
 - **[MUST] A missing photograph falls back to initials**, not an empty box, at
   `--ink-monogram` / `--ink-monogram-sm` — both measured (4.21:1 / 7.71:1). Every
   hand-picked alpha before the token measured *under* the 3:1 the plate needs
@@ -499,8 +545,26 @@ Primitives, all in `BaseLayout.scss`:
 Shared components: `Desk.astro` (one inbox), `SubpageHero.astro`,
 `HeroBackground.astro` (takes a `focus` crop), `Ticker.astro` (the running band
 under every hero), `Closer.astro`, `Menu.astro`, `Footer.astro`,
-`CookieBanner.astro`, and `Sheet.module.scss` (the shared detail-view chrome for
-`SessionDetail` / `SpeakerDetail`).
+`CookieBanner.astro`, `NextStep.astro`, `DataState.tsx`, `SpeakerPhoto.tsx`, and
+`Sheet.module.scss` (the shared detail-view chrome for `SessionDetail` /
+`SpeakerDetail`).
+
+- **`NextStep.astro`** — one thing to do, in an open field of them: title,
+  note, and its controls on the right axis. `/thank-you`,
+  `/newsletter-subscription-thank-you` and `/404` all end on "what now?" and
+  all three used to answer it with one link home. Takes `.field-row--holds` —
+  a step *contains* its controls, it isn't one.
+- **`DataState.tsx`** (`ErrorState` / `EmptyState`, alongside the loading
+  skeletons above) replaced a private copy kept by each of `/speakers`,
+  `/sessions`, `/agenda` and the ticket waves — the copies had drifted: two
+  centred and two left-set, two with animated trailing dots, one opening on a
+  hairline, and only `/agenda` offering a next action. Left-set (matching
+  `.fallback-note`), and **an empty state always offers somewhere to go**.
+- **`SpeakerPhoto.tsx`** owns one decision — no URL, or a URL that fails to
+  load, both land on the monogram — while the caller passes its own classes
+  for the shape. `/sessions` and `/agenda` used to `visibility: hidden` the
+  broken `<img>` instead, so the same speaker with the same dead CDN URL
+  rendered as initials on `/speakers` and as a hole on the other two.
 
 **Structural rules the redesign exists to keep [MUST]** (full rationale in
 `CLAUDE.md`): no decorated eyebrow; red text is flat; one `--fs-display` element
@@ -591,6 +655,25 @@ existing page:
   agenda at `--fs-row-sm` (54px). Treat **more than ~4 rows** as the signal to
   drop to `--fs-row-sm`; a row count decided ahead of time, not by how it
   looks once built, is what the existing pages did. See Open points.
+- **`/thank-you`, `/newsletter-subscription-thank-you` and `/404` are on the
+  system**, not a one-off template — they were 73 lines of one centred layout
+  with the words swapped, and one of them is where someone lands after paying.
+  All three run `SubpageHero photo={false}` → `Ticker` → a `.band--lit` field
+  of `NextStep` rows → `Closer`, with the site's em-dash title separator like
+  every other page. `/thank-you` additionally carries the four things that
+  belong there and nowhere else (calendar, venue, what happens next, share)
+  and ships an `@media print` block: it's the page someone prints as proof of
+  purchase, and the site's cream ink on `#050505` prints as invisible text.
+  Event facts for the calendar links live in `src/lib/event.ts`, alongside the
+  `.ics` in `public/` — keep them in step with the Event JSON-LD in
+  `BaseLayout.astro`.
+- **A `<details>` list opens with its first item open.** `/faq` had every
+  question collapsed on arrival, so the page a speaker and a journalist both
+  land on showed no answer at all (`faq.astro:106`). One open item, not more —
+  four open answers is the page's whole content unfolded. A section must also
+  not reuse the hero's `aria-labelledby`: two regions with one accessible name
+  is `landmark-unique`, which was the site's only axe violation
+  (`faq.astro:83`).
 - **`Closer` tone.** Pass `tone="accent"` explicitly — every subpage
   (`speakers`, `sessions`, `agenda`, `team`, `faq`, `contact`, `invoice`,
   `press`, `press/downloads`) does, for a red closing band with the page's
@@ -661,7 +744,27 @@ touches markup or styles.
   `:focus` (`BaseLayout.scss:322–354`).
   `html { scroll-padding-top: 6rem; scroll-padding-bottom: 8rem }`
   (`BaseLayout.scss:211–213`) keeps an anchored or focused target clear of the
-  fixed header and cookie banner.
+  fixed header and cookie banner. Its target, `#main-content`, carries
+  `tabindex="-1"` (`BaseLayout.astro:321,327`) — without it, `Enter` on the
+  skip link moves the document fragment but leaves focus in the header, so the
+  next `Tab` lands back in the nav and the only keyboard-only affordance on the
+  site does nothing. The ring is suppressed on that element alone (a 100vw
+  outline reads as a rendering fault, and it's a page region, not a control);
+  every control inside keeps its own.
+- **[MUST] The cookie banner is second in the DOM, right after the skip
+  link**, and its `Escape` handler is on `document`
+  (`CookieBanner.astro:89,96`). Both are the same defect: the banner used to
+  sit after the footer with a handler bound to itself, so the key only worked
+  once focus was already inside it — about 40 tab stops away.
+- **[MUST] The ticker is its own pause control (WCAG 2.2.2).** The strip
+  carries `tabindex="0"` + an `aria-label` naming the topics
+  (`Ticker.astro:31,33`), and `Ticker.scss` pauses the marquee on `:hover`
+  **and** `:focus-within`. `prefers-reduced-motion` still stops it, but that's
+  a user-agent setting, not the mechanism the SC asks for. The focusable child
+  is what makes `:focus-within` possible at all — the topics are
+  non-interactive text — so the strip is the labelled element and the doubled
+  topic list inside it is `aria-hidden` (it would otherwise be announced
+  twice). No visible pause button: this is chrome on all 15 routes.
 - **[MUST] `.sr-only`** for text that must stay in the a11y tree and the
   crawlable HTML but not on screen (`BaseLayout.scss:367`).
 - **[MUST] Sheets return focus** to the row that opened them
@@ -719,11 +822,11 @@ each needs a decision, none is fixed by this PR.
    without `latin-ext` risks fallback glyphs for diacritics. Worth confirming
    against the same class of bug fixed in commit `7b96e4df` (Czech press
    clippings set in a face without the diacritics).
-10. **Split with `CLAUDE.md`.** Values, tokens and binding rules ([MUST] /
-    [CURRENT]) live here, in `DESIGN.md`. Decisions, product context and the
-    *why* behind them live in `CLAUDE.md` → "Styling Conventions", which now
-    just points back here instead of restating the ramp. Nothing enforces the
-    split beyond this line — if a rule changes, check both files.
+10. **Split with `CLAUDE.md`.** Values, tokens, binding rules ([MUST] /
+    [CURRENT]) and their rationale all live here, in `DESIGN.md`. `CLAUDE.md`
+    → "Styling" is a one-paragraph pointer, not a second copy. Nothing
+    enforces the split beyond this line — if a rule changes, check both
+    files.
 11. **`Closer`'s `tone="raised"` default renders `band--raised`, which has no
     CSS** (`Closer.astro:42`; the class is never defined in
     `BaseLayout.scss`). Pre-existing, not introduced by this document.

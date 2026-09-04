@@ -9,6 +9,7 @@ import {
 	type SessionFilters,
 } from '../lib/sessions';
 import { fetchLineup } from '../lib/lineup';
+import { shuffle } from '../lib/shuffle';
 import SessionDetail from './SessionDetail';
 import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
@@ -22,18 +23,6 @@ interface State {
 }
 
 const INITIAL: State = { status: 'loading', sessions: [] };
-
-/** Fisher–Yates shuffle — returns a new array so the source order stays intact.
- * Sessions are randomized once per page load so no track/room gets a permanent
- * top-of-grid advantage. */
-function shuffle<T>(items: T[]): T[] {
-	const out = items.slice();
-	for (let i = out.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[out[i], out[j]] = [out[j], out[i]];
-	}
-	return out;
-}
 
 /** Up to three overlapping speaker avatars, monogram fallback per speaker. */
 function SpeakerStack({ session }: { session: Session }) {

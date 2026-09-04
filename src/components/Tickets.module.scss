@@ -16,24 +16,12 @@
 	animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
-// Head layout, title and note all come from `.head-split` / `.display
-// head-title` / `.head-note` in BaseLayout.scss — shared with the speakers
-// teaser and the /contact desks, which each used to keep a copy of the grid.
+// Head layout, title and note come from `.head-split` / `.head-title` / `.head-note`.
 
 /* ===================== TICKET WAVES ===================== */
-// A row per wave, and nothing pretending to be paper. The previous treatment
-// drew a literal ticket: punched perforation holes, two cut-out notches, a
-// vertical serial down a counterfoil, a hollow VOID overprint and a filled
-// ADMIT ONE band — five decorative objects per row, three rows deep, wrapped
-// around a name and a price. It is the clearest example on the site of theme
-// applied as ornament, and it is the first thing that reads as generated.
-//
-//   [ index · state ][ wave + what's included ][ price · buy ]
-
-// An open field, not a ruled ledger — `.field` / `.field-row--holds` in
-// BaseLayout.scss owns the rhythm and the warm reach state. A wave CONTAINS its
-// control (the Buy CTA) rather than being one, so it warms and pulls; it does
-// not take the red field the rows which ARE links use.
+// An open field, not a ruled table: `.field-row--holds` owns the rhythm and the
+// warm reach state. A wave CONTAINS its control (the Buy CTA) rather than being
+// one, so it never takes the red field the link rows use.
 //
 //   [ index · state ][ wave + what's included ][ price · buy ]
 .stubs {
@@ -141,9 +129,8 @@
 	text-align: right;
 }
 
-// The price and its VAT note sat side by side, so the figure's right edge
-// landed ~150px short of the CTA's and the column read as two ragged axes
-// instead of one. Stacked, everything in this column ends on the same x.
+// Stacked, not side by side: the figure's right edge landed short of the CTA's
+// and the column read as two ragged axes.
 .stubPriceGroup {
 	display: flex;
 	flex-direction: column;
@@ -168,12 +155,9 @@
 }
 
 /* ---- the live wave ---- */
-// The buyable wave is marked by a lit ground that bleeds past the column —
-// light, not a box, and the only mark it has: it used to also recolour a rule
-// that no longer exists. Exactly one wave is on sale at a time, so this fires
-// once.
-//
-// On ::after because `.field-row--holds::before` is the shared reach wash.
+// The buyable wave is marked by a lit ground that bleeds past the column — light,
+// not a box, and its only mark. On ::after, because `.field-row--holds::before`
+// is the shared reach wash.
 .stubLive::after {
 	content: '';
 	position: absolute;
@@ -183,23 +167,20 @@
 		radial-gradient(ellipse 55% 130% at 6% 50%, rgba(204, 0, 0, 0.08), transparent 74%);
 	pointer-events: none;
 	z-index: -1;
-	// Feathered for the same reason the reach wash is — nothing encloses this
-	// row, so an un-masked full-bleed box shows its own edges as hard steps.
+	// Feathered: nothing encloses this row, so an un-masked full-bleed box shows its edges.
 	-webkit-mask-image: var(--field-feather);
 	mask-image: var(--field-feather);
 }
 
 /* ---- a spent wave ---- */
-// Keeps full text contrast — a settled wave is quieter by rule weight and by
-// its status word, never by dimming its copy (WCAG 1.4.3).
+// Keeps full text contrast — a settled wave is quieter by weight and by its status
+// word, never by dimming its copy (WCAG 1.4.3).
 .stubSpent {
-	// No mark of its own — a settled wave is simply the one without the lit
-	// ground, and its status word says so in words.
+	// No mark of its own — it is simply the wave without the lit ground.
 }
 
 @media (max-width: 720px) {
-	// One column, all three cells stacked. A two-column mobile grid put the
-	// body into the 2.5rem index track and the price on top of it.
+	// One column: a two-column mobile grid put the body into the 2.5rem index track.
 	.stub {
 		grid-template-columns: minmax(0, 1fr);
 		row-gap: 1.1rem;
@@ -222,17 +203,10 @@
 		width: 100%;
 	}
 
-	// On a phone the three waves stack into one viewport, and at desktop
-	// weights they arrive as three identical 42px titles over three identical
-	// 40px figures — the same poster twice over, with the buyable one told
-	// apart only by a raking wash that a phone screen barely resolves. The
-	// live wave keeps the poster scale; the settled ones drop a step.
-	//
-	// Hierarchy here is SIZE and AIR, never alpha: every word stays at full
-	// contrast (WCAG 1.4.3), which is the same rule the desktop `.stubSpent`
-	// follows.
-	// Two classes so the step outranks `.field-row--short`, which sets the
-	// same variable at equal specificity from the global sheet.
+	// On a phone the three waves stack into one viewport and arrive as three identical
+	// titles; the live wave keeps the poster scale and the settled ones drop a step.
+	// Hierarchy is SIZE and AIR, never alpha (WCAG 1.4.3). Two classes so the step
+	// outranks `.field-row--short`, which sets the same variable globally.
 	.stub.stubSpent {
 		--field-step: 1.6rem;
 	}
@@ -245,23 +219,18 @@
 		font-size: var(--fs-h3);
 	}
 
-	// The admission line repeats verbatim on every wave — "Individual /
-	// Company funded" is a property of the event, not of a wave, so printing
-	// it three times is the crowding, not information. It stays on the wave
-	// a visitor can actually buy.
+	// The admission line is a property of the event, not of a wave, so it stays only
+	// on the wave a visitor can actually buy.
 	.stubSpent .stubGrants {
 		display: none;
 	}
 
-	// The column is left-set on mobile (`.stubEnd`), so the figure and its VAT
-	// note have to be too — flex-end left the note hanging under the middle of
-	// the price.
+	// The column is left-set on mobile, so the figure and its VAT note must be too.
 	.stubPriceGroup {
 		align-items: flex-start;
 	}
 
-	// The one lit row has to carry across a phone's contrast: the desktop
-	// wash is a raking highlight read at arm's length on a large panel.
+	// The desktop wash is a raking highlight; a phone needs the lit row stated harder.
 	.stubLive::after {
 		background:
 			linear-gradient(104deg, rgba(255, 244, 232, 0.1) 0%, rgba(255, 240, 226, 0.045) 42%, transparent 86%),
@@ -269,15 +238,14 @@
 	}
 }
 
-// The loading skeleton mirrors the stub geometry so nothing reflows on load.
-// Mirrors the open field it stands in for — no opening rule, no row hairlines.
-.skelLedger {
+// The loading skeleton mirrors the field geometry so nothing reflows on load.
+.skelField {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
 
-.skelRecord {
+.skelRow {
 	display: grid;
 	grid-template-columns: 4rem minmax(0, 1fr) minmax(13rem, auto);
 	align-items: start;
@@ -298,7 +266,7 @@
 }
 
 @media (max-width: 720px) {
-	.skelRecord {
+	.skelRow {
 		grid-template-columns: minmax(0, 1fr);
 	}
 
@@ -307,7 +275,7 @@
 	}
 }
 
-// Shimmering placeholder bars laid into the ledger geometry above.
+// Shimmering placeholder bars laid into the field geometry above.
 .skelBar {
 	display: block;
 	position: relative;
@@ -368,12 +336,8 @@
 	animation: shimmer 1.6s linear infinite;
 }
 
-// Wave title, note and status now come from the global .record-* columns.
-// Status is a mono word on a rule (.record-status), not a filled pill — a
-// coloured chip per state was the last piece of generic-UI vocabulary here.
 
-
-// Flat red CTA — matches the global .btn-primary recipe.
+// Flat red CTA — matches the global `.btn-primary` recipe.
 .cta {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-lg);
@@ -413,7 +377,7 @@
 
 .footnote {
 	margin-top: 2rem;
-	// Left, like everything else. It was the only centred line on the homepage.
+	// Left-set, like every other line on the page.
 	text-align: left;
 	font-family: var(--font-special-elite), cursive;
 	font-size: var(--fs-body-lg);
@@ -421,8 +385,7 @@
 	color: rgba(240, 237, 230, 0.62);
 }
 
-// Left, on the page's own axis. Centred it was the second centred block in a
-// left-set section, sitting directly under a footnote that was also centred.
+// Left, on the page's own axis.
 .invoice {
 	margin-top: 2.4rem;
 	display: flex;
@@ -497,8 +460,7 @@
 }
 
 @media (max-width: 720px) {
-	// The action stops being a right-column item and takes the full measure
-	// of the entry, so the buy target stays the widest thing on the row.
+	// The action takes the full measure, so the buy target stays the widest thing on the row.
 	.cta {
 		width: 100%;
 	}

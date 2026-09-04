@@ -1,12 +1,7 @@
-// Agenda timetable — the site's ruled-sheet language rendered against a clock.
-// Desktop: a proportional time × room grid (rooms as columns, 5-min rows) drawn
-// as ONE ruled sheet: hour hairlines run the full width, a hairline separates
-// each room column, and a talk is a lit block with a spine, not a floating card.
-// Mobile / single-room: the same ledger every other list on the site uses.
-//
-// This page was the last one still speaking the old language — rounded panels
-// with four-sided borders, drop shadows, pill tags and a red timestamp on every
-// cell. See CLAUDE.md "Ruled rows" and "Red is spent once per list".
+// Agenda timetable. Desktop: a proportional time × room grid drawn as ONE ruled
+// sheet — hour hairlines run the full width, a hairline separates each room
+// column, and a talk is a lit block, not a floating card. Mobile / single-room:
+// the same open field every other list on the site uses.
 
 /* ===================== TZ NOTE ===================== */
 .tzNote {
@@ -27,9 +22,8 @@
 	-webkit-overflow-scrolling: touch;
 }
 
-// gap: 0 — the sheet is continuous and the rules do the separating. With a 4px
-// gap the cells read as tiles scattered on black instead of entries on a
-// timetable.
+// gap: 0 — the sheet is continuous and the rules do the separating; a gap makes
+// the cells read as tiles scattered on black.
 .grid {
 	display: grid;
 	position: relative;
@@ -39,9 +33,8 @@
 }
 
 /* ---- the sheet's own ruling ---- */
-// Full-width hairline at each hour, and a vertical hairline down each room
-// column. Both are decorative overlays behind the entries (z-index 0), so an
-// empty slot still reads as part of the sheet rather than as a hole.
+// Hour and room hairlines are decorative overlays behind the entries (z 0), so
+// an empty slot still reads as part of the sheet rather than as a hole.
 .hourRule {
 	align-self: start;
 	height: 0;
@@ -56,14 +49,10 @@
 	z-index: 0;
 }
 
-// Room names: a mono label on a rule. It was set in Special Elite (the body
-// face) on a gradient panel with a red under-edge and a corner radius.
-//
-// `top: 0`, NOT an offset clearing the fixed site header: `.scroller` is the
-// sticky containing block (an `overflow-x: auto` box computes `overflow-y` to
-// `auto` too) and it never scrolls vertically, so any positive `top` just
-// shunts the header row down over the first hour of the sheet instead of
-// pinning it anywhere.
+// Room names: a mono label on a rule.
+// `top: 0`, NOT an offset clearing the fixed header: `.scroller` is the sticky
+// containing block and never scrolls vertically, so a positive `top` just
+// shunts the header row down over the first hour of the sheet.
 .headCell {
 	position: sticky;
 	top: 0;
@@ -72,8 +61,7 @@
 	display: flex;
 	align-items: center;
 	font-family: var(--font-jetbrains-mono), monospace;
-	// A room name heads a 409px column; at label size it was the same step as
-	// the meta inside the cells under it.
+	// A room name heads a 409px column; at label size it matched the cell meta under it.
 	font-size: var(--fs-ui);
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
@@ -89,8 +77,7 @@
 	border-bottom: 1px solid var(--rule-strong);
 }
 
-// Hour ticks in the time gutter. The hairline is drawn by `.hourRule` across
-// the whole sheet now, so the tick is just the numeral.
+// The hairline is drawn by `.hourRule` across the sheet, so the tick is the numeral.
 .tick {
 	grid-column: 1;
 	align-self: start;
@@ -105,9 +92,7 @@
 }
 
 /* ===================== BAND (break / lunch / keynote) ===================== */
-// A band is the whole day stopping, so it is a full-width strip, not a tile:
-// ruled top and bottom, faintly lifted, mono. The dashed border and the
-// diagonal hatch fill went with the rest of the panel chrome.
+// A band is the whole day stopping: a full-width strip, ruled top and bottom.
 .band {
 	display: flex;
 	align-items: center;
@@ -141,16 +126,10 @@
 }
 
 /* ===================== CELL (talk button) ===================== */
-// A talk is a lit block ruled at its START time, running down to its end — the
-// one thing a timetable has to show, carried on the time axis where the reader
-// is already looking. Flat: no radius, no four-sided border, no drop shadow.
-// Reached, it lights and its bottom rule draws red, the same mark the ticket
-// ledger and the session rows use.
-//
-// The mark is a TOP rule, not a left spine. A bar down one edge of a block is
-// the shape this language exists to avoid (CLAUDE.md bans it, naming these very
-// cards), and it stays the tell in a neutral colour as much as in red — the
-// fill already shows how far the talk runs, so the bar was carrying nothing.
+// A talk is a lit block ruled at its START time, running down to its end. Flat:
+// no radius, no four-sided border, no drop shadow. Reached, it lights and its
+// bottom rule draws red. The mark is a TOP rule, never a left spine — a bar
+// down one edge is the shape this language exists to avoid.
 .cell {
 	position: relative;
 	z-index: 2;
@@ -214,8 +193,7 @@
 
 	&:hover,
 	// INSET, not one of the --focus-gap steps: this cell butts against its
-	// neighbours in the timetable grid, so a ring outside the box would sit on
-	// top of the cell next door.
+	// neighbours, so a ring outside the box sits on top of the cell next door.
 	&:focus-visible {
 		border-top-color: var(--rule-red);
 		outline: 2px solid var(--color-accent-hot);
@@ -229,14 +207,11 @@
 	}
 }
 
-// Muted, like the ticket ledger's serial. It was accent-hot on every cell of
-// the sheet, which is the accent spent thirty times over — red belongs to the
-// session that is actually on now.
+// Muted, not accent-hot: red belongs to the session that is actually on now.
 .cellTime {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-variant-numeric: tabular-nums;
-	// The ticket ledger sets its serial at --fs-label-lg; this is the same
-	// index role.
+	// Same index role as the ticket wave's serial, so the same step.
 	font-size: var(--fs-label-lg);
 	letter-spacing: 0.1em;
 	color: rgba(240, 237, 230, 0.55);
@@ -249,8 +224,8 @@
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
 	color: var(--color-text);
-	// Two lines, not three: at this size a third line is 32px, which is a fifth
-	// of a half-hour cell and pushed the speakers out of every short talk.
+	// Two lines, not three: a third line is a fifth of a half-hour cell and pushes
+	// the speakers out of every short talk.
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
@@ -280,12 +255,9 @@
 	gap: 0.2rem 1.1rem;
 }
 
-// A plain mono label, not a boxed chip. It used to be a bordered, rounded,
-// filled tag — a pill is a different product's vocabulary, and this one was
-// repeated two or three times on EVERY cell and every mobile row, which is a
-// decoration applied without variation. It also has to match the session sheet,
-// where the tags are one mono line beside the room: a talk should not change
-// shape when the visitor opens it.
+// A plain mono label, never a boxed chip. It must match the session sheet, where
+// the tags are one mono line beside the room — a talk should not change shape
+// when the visitor opens it.
 .tag {
 	position: relative;
 	font-family: var(--font-jetbrains-mono), monospace;
@@ -335,7 +307,7 @@
 	border-radius: 50%;
 	object-fit: cover;
 	object-position: center 22%;
-	// A thin ring separates overlapping photos (--panel ≈ the old #0b0a0a).
+	// A thin ring separates overlapping photos.
 	border: 1.5px solid var(--panel);
 	background: var(--panel-lit);
 	filter: grayscale(1) contrast(1.06) brightness(0.9);
@@ -353,8 +325,7 @@
 }
 
 /* ===================== LIST (mobile / single-room) ===================== */
-// The same open field as /sessions, /faq and the ticket waves — `.field` in
-// BaseLayout.scss.
+// The same open field as /sessions, /faq and the ticket waves.
 .list {
 	gap: 0;
 }
@@ -423,8 +394,7 @@
 }
 
 // The long-list row step, shared with the session rows, the FAQ questions and
-// the press clippings. It ran at 20px, half of what the same construct is set
-// at everywhere else.
+// the press clippings.
 .itemTitle {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-row-sm);
@@ -464,21 +434,18 @@
 	margin: 0 0 1.2rem;
 }
 
-// A short open field of its own rather than a wrap of bordered chips. The one
-// rule kept anywhere in a list: this section has no head of its own beyond a
-// mono caption, so the hairline is the caption's underline, not a row rule.
+// A short open field. The one rule kept anywhere in a list: the hairline is the
+// mono caption's underline, not a row rule.
 .unscheduledList {
 	border-top: 1px solid var(--rule-strong);
 }
 
-// Rhythm, reach field, ink inversion and focus ring come from
-// `.field-row--link` in BaseLayout.scss; only the type is local.
+// Rhythm, reach field, ink inversion and focus ring come from `.field-row--link`.
 .unscheduledItem {
 	display: block;
 	width: 100%;
 	font-family: var(--font-bebas-neue), sans-serif;
-	// The long-list row step, shared with /sessions, the FAQ and the press
-	// clippings — this is the same open field, so it is set the same way.
+	// The long-list row step, shared with /sessions, the FAQ and the press clippings.
 	font-size: var(--fs-row-sm);
 	line-height: 1.06;
 	letter-spacing: 0.02em;
@@ -537,8 +504,7 @@
 	}
 }
 
-// A status word on a rule — never a filled pill. Same shape as the ticket
-// ledger's "On sale".
+// A status word on a rule — never a filled pill.
 .badge {
 	flex-shrink: 0;
 	display: inline-flex;
@@ -582,8 +548,7 @@
 	}
 }
 
-// The session on now is the ONE entry that gets the accent: the rule it opens
-// on goes red, and it keeps a faint glow.
+// The session on now is the ONE entry that gets the accent.
 .cellLive {
 	border-top-color: var(--color-accent);
 	box-shadow: var(--glow-red-soft);
@@ -617,9 +582,7 @@
 		animation: none;
 	}
 
-	// The cell's red rule mark is motion. Without it the cell still resolves:
-	// focus keeps its ring, and the live entry keeps its spine. The list rows
-	// take their reduced-motion handling from `.field-row--link`.
+	// Only the red rule mark is motion; focus keeps its ring and the live entry its spine.
 	.cell::after {
 		transition: none;
 	}
