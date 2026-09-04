@@ -308,12 +308,11 @@ const jsonLd = JSON.stringify(
 
 		<script>
 			// Cinematic atmosphere behaviours — all degrade gracefully and respect
+			// Cinematic atmosphere behaviours — all degrade gracefully and respect
 			// reduced-motion (CSS already neutralises the visual side).
 			//
-			// Bundled module scripts run once per document, so with <ClientRouter />
-			// this has to re-run per navigation. `astro:page-load` fires on the
-			// initial load AND after every soft navigation, so it replaces (never
-			// supplements) a DOMContentLoaded listener.
+			// Re-bind on `astro:page-load`, never DOMContentLoaded: bundled module
+			// scripts run once per document and <ClientRouter /> swaps the page.
 			document.addEventListener('astro:page-load', () => {
 				const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

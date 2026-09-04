@@ -106,12 +106,11 @@ const isCurrent = (href: string) => {
 </header>
 
 <script>
-	// Bundled module scripts run once per document, but <ClientRouter /> replaces
-	// the header on every soft navigation — so re-bind on `astro:page-load`
-	// (fires on the initial load too, replacing DOMContentLoaded). The
-	// window/document/matchMedia listeners below would otherwise pile up across
-	// navigations while pointing at a detached header, so they're all registered
-	// with an AbortController that is aborted right before the next swap.
+	// Re-bind on `astro:page-load`, never DOMContentLoaded: bundled module scripts run
+	// once per document, but <ClientRouter /> swaps the header on every soft
+	// navigation. The window/document/matchMedia listeners below would otherwise
+	// pile up across navigations pointing at a detached header, so they are all
+	// registered with an AbortController aborted right before the next swap.
 	document.addEventListener('astro:page-load', () => {
 		const ac = new AbortController();
 		const { signal } = ac;

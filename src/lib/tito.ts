@@ -1,16 +1,12 @@
 /**
- * ti.to types + pure browser helpers.
- *
- * The actual ti.to API call lives in `functions/src/index.ts` (Cloud
- * Function). This module is browser-safe: types and formatting only.
+ * ti.to types + pure browser helpers. Browser-safe: types and formatting only;
+ * every ti.to API call lives in `functions/src/tickets/tito-api.ts`.
  *
  * Docs: https://ti.to/docs/api/admin/3.0 (we pin to v3.0; v3.1 is beta).
  *
- * The function side projects each release into the shape below before
- * writing to RTDB. We also receive a synthetic `sale_status` field
- * computed server-side from ti.to's flag set (`sold_out`, `off_sale`,
- * `expired`, `upcoming`, `archived`, `locked`) — see
- * `functions/src/tickets/tito-api.ts::deriveSaleStatus`.
+ * The function side projects each release into the shape below before writing it
+ * to RTDB, adding a synthetic `sale_status` derived from ti.to's flag set — see
+ * `deriveSaleStatus` there.
  */
 
 export type TitoSaleStatus =
@@ -35,11 +31,9 @@ export interface TitoRelease {
 	tax_description?: string | null;
 	currency: string | null;
 	/**
-	 * Coarse "has this wave ever sold a ticket?" flag, computed server-side.
-	 * Replaces the raw `quantity` / `quantity_sold` / `tickets_count` counts,
-	 * which are intentionally NOT published to the world-readable `/tickets`
-	 * cache (they'd leak sales velocity). See
-	 * `functions/src/tickets/tito-api.ts::projectRelease`.
+	 * Coarse "has this wave ever sold a ticket?" flag. The raw
+	 * `quantity` / `quantity_sold` / `tickets_count` counts are deliberately NOT
+	 * published to the world-readable `/tickets` cache — they leak sales velocity.
 	 */
 	has_sales?: boolean;
 	/** Synthetic status computed by the Cloud Function from ti.to flags. */
@@ -75,15 +69,10 @@ export async function fetchTickets(signal?: AbortSignal): Promise<TicketsCache |
 }
 
 /**
- * Filter to releases that should be shown publicly. Mirrors the
- * `isWebsiteVisible()` rule applied server-side in
- * `functions/src/tickets/tito-api.ts`; kept here as defence-in-depth so
- * any non-public release that somehow lands in the cache is still
- * dropped at render time.
- *
- * Drop: secret. Keep everything else — `releaseStatus()` maps each
- * state to its own badge (on sale, sold out, paused, coming soon,
- * ended, unavailable) so visitors see the full pricing-wave roadmap.
+ * Filter to releases that should be shown publicly. Mirrors `isWebsiteVisible()`
+ * server-side; kept as defence-in-depth so a non-public release that lands in the
+ * cache is still dropped at render time. Drop only `secret`: `releaseStatus()`
+ * maps every other state to its own badge.
  */
 export function filterDisplayable(releases: TitoRelease[]): TitoRelease[] {
 	return releases.filter((r) => !r.secret);

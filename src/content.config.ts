@@ -2,9 +2,8 @@ import { defineCollection, z } from 'astro:content';
 import { file } from 'astro/loaders';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CONTENT COLLECTIONS — the editorial datasets that used to live inline in the
-// pages (FAQ), or in a hand-written module (partners). Each JSON file is an
-// array of objects whose `id` is the entry key for the `file()` loader.
+// CONTENT COLLECTIONS. Each JSON file is an array of objects whose `id` is the
+// entry key for the `file()` loader.
 //
 // IMPORTANT: `getCollection()` gives no ordering guarantee, so every collection
 // carries an explicit numeric `order` and the consuming page sorts on it.
