@@ -134,7 +134,7 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:73–97`
 
 **The ramp [MUST].** Every `font-size` goes through one of these steps. Pick the
 nearest; do not introduce a new value without adding it here. **[CURRENT]** the
-code does not hold this line yet — 15 declarations bypass the ramp with an
+code does not hold this line yet — 14 declarations bypass the ramp with an
 absolute literal today, plus a handful more that inherit or compute off one.
 See Open points for the full list and the same claim's other copy, in a source
 comment at `BaseLayout.scss:69`.
