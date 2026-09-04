@@ -11,6 +11,7 @@ import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
 import { getActivePartnerTiers } from '../lib/partners';
 import { EVENT_TOPICS } from '../lib/ticker';
+import { TOPICS } from '../lib/topics';
 
 // Homepage "silver+" strip — one labelled row per tier, top tier first, so the
 // ladder reads the same here as it does on /partners (row scale steps down with
@@ -66,7 +67,7 @@ const facts = [
 
 ---
 
-<BaseLayout>
+<BaseLayout description="DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. October 30, 2026. Tickets on sale now.">
 	<!-- Preload the LCP hero background so it isn't discovered only after CSS parse -->
 	<link
 		slot="head"
@@ -79,7 +80,7 @@ const facts = [
 	<main class="page-stack">
 		<!-- HERO -->
 		<section id="hero" class="scene">
-			<HeroBackground photoOpacity={0.85} mobilePhotoOpacity={0.55} />
+			<HeroBackground photoOpacity={0.85} mobilePhotoOpacity={0.55} mobileFocus="42% 88%" />
 			<div class="scene-vignette" aria-hidden="true"></div>
 
 			<div class="hero-inner">
@@ -92,14 +93,25 @@ const facts = [
 						widths={[280, 560, 620, 1240]}
 						sizes="(max-width: 700px) 82vw, 560px"
 					/>
-					<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026.</span>
+					<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference. AI agents, generative UI, cloud & backends, mobile & web accessibility. October 30, 2026.</span>
 				</h1>
 
 				<p class="hero-statement display">
 					Prague&rsquo;s most original<br />conference is <span class="red">back.</span>
 				</p>
 
-				<p class="hero-note">And it&rsquo;s brought a few mysteries with it.</p>
+				<!-- The topic set, set as the statement's own third and fourth
+				     lines — same Bebas face, directly under it — rather than a
+				     caption below the fold. Column flow (down the left column,
+				     then the right) keeps 01 opening the set and 05 closing it. -->
+				<div class="topics-tail">
+					<p class="topics-tail-eyebrow">What we cover</p>
+					<ul class="topics-tail-set">
+						{TOPICS.map((t) => (
+							<li class="topics-tail-row">{t.name}</li>
+						))}
+					</ul>
+				</div>
 
 				<div class="hero-actions">
 					<a href="#tickets" class="btn-primary">Get tickets</a>
@@ -140,7 +152,7 @@ const facts = [
 						client-side navigations (e.g. back/forward to `/`), not on
 						`/` → `/team`, where the island is torn down as usual.
 					*/}
-					<Countdown client:load transition:persist />
+					<Countdown compact client:load transition:persist />
 				</div>
 			</div>
 		</section>
