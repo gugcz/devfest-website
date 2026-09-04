@@ -387,6 +387,54 @@ peer-weighted: `Accept` keeps the accent fill (it is how the bar is findable),
 every other dimension — type, tracking, padding, height, minimum footprint — is
 shared, so the shorter word is not the smaller target.
 
+### Personal invitation pages (`/invite/<member>`)
+
+An unlisted referral channel: one page per person in `src/content/team.json`
+(`src/pages/invite/[member].astro`, eleven pages), written in that member's
+voice, which they share with their own network themselves.
+
+- **Unlisted means three things at once**, and dropping any one of them makes it
+  cosmetic: `noindex` (the `BaseLayout` prop also drops the canonical + JSON-LD),
+  excluded from the sitemap (the `/invite/` clause in `astro.config.mjs`), and
+  **linked from nowhere** — not the menu, not the footer, not `/team`. It is not
+  access control; the URLs are guessable and the content isn't sensitive.
+- **The route slug is the `team.json` entry key** (`id`), so a URL and the roster
+  can't drift apart. Adding a member to the roster ships their invite page.
+- **Copy lives in `src/lib/invite.ts`**, not in the page. It is deliberately
+  GENERIC v1 — the members write their own paragraphs later, and when they do
+  only `body` changes. `roleLine` is the one line that varies between the eleven
+  pages, keyed by `role`; an unrecognised role falls back to the organiser line
+  rather than dropping the sentence.
+- **`InviteCta.tsx` is the only primary action**, and it is an island for two
+  reasons: it resolves the ti.to href client-side from `/api/tickets` (the live
+  wave isn't known at build time), and it reports `begin_checkout` with
+  `invite_member` / `invite_member_name`. That click is the ONLY per-member
+  attribution the channel has — checkout runs on ti.to and its redirect carries
+  no source, and there is no discount code doing the job (no perk in v1). Until
+  the endpoint answers, and if it never does, the href is `/#tickets`: a working
+  link beats a dead primary action.
+- **Visual direction B ("The Plate")**, approved 3 Sep 2026: the portrait owns
+  the right half of the frame and the B&W → colour bleed is the page's only
+  effect. On a phone there is no side-by-side frame, so the **scrim** over the
+  read zone is what keeps the type off the face — a legibility condition, not a
+  finish. Do not lighten it. The base plate is the LCP element (`fetchpriority`
+  high); the colour layer is the enhancement (`low`).
+- `Closer.astro` takes an optional `actions` **slot** so the closing repeat of
+  the CTA can be that same tracked island; its `actions` prop stays the path for
+  every other page.
+- **The header's red `Tickets` action is dropped on `/invite/*`** (`isInvite` in
+  `Menu.astro`), decided 4 Sep 2026: it is a second primary action pointing off
+  the invitation. The mark and the menu toggle stay, so the bar is still a bar
+  and every destination is one click away behind it.
+- **`begin_checkout` fires only on the ti.to click**, never on the `/#tickets`
+  fallback — that one lands on the ticket section whose own Buy CTA sends the
+  event, so reporting both would double-count the wave and file an item-less
+  event against the member. `invite_member` / `invite_member_name` are custom
+  parameters: GA4 reports nothing on them until they are registered as custom
+  dimensions (README, "Analytics (GA4)").
+
 ### SEO & Metadata
 
 `BaseLayout.astro` handles all meta tags, Open Graph/Twitter Card, and JSON-LD structured data (Event + WebSite schemas). Sitemap auto-generated via `@astrojs/sitemap`.
+
+
