@@ -10,7 +10,7 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 
 - **Framework:** [Astro](https://astro.build/) 7
 - **Language:** TypeScript (strict mode)
-- **Styling:** Sass
+- **Styling:** Sass — the design system is documented in [docs/design-system.md](docs/design-system.md)
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** >= 22.12.0
@@ -103,7 +103,7 @@ Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 
 `database.rules.json` documents the required rules. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.json` and run `firebase deploy --only database`.
 
-`/tickets` is read by the `ticketsApi` function via the Admin SDK (which bypasses rules), so its `tickets.".read": true` is no longer required for the website — the browser hits `/api/tickets`, not RTDB. The rule is kept harmless; the root default and all writes stay `false`, and the Cloud Functions write the cache via the Admin SDK. Note the projected cache deliberately omits raw inventory counts (`quantity` / `quantity_sold` / `tickets_count`) and ships only a coarse `has_sales` boolean, so a reader can't derive per-wave sales velocity — see `functions/src/tickets/tito-api.ts::projectRelease`.
+`/tickets` is read by the `ticketsApi` function via the Admin SDK (which bypasses rules), so its `tickets.".read": true` is not required for the website — the browser hits `/api/tickets`, not RTDB. The rule is kept harmless; the root default and all writes stay `false`, and the Cloud Functions write the cache via the Admin SDK. Note the projected cache deliberately omits raw inventory counts (`quantity` / `quantity_sold` / `tickets_count`) and ships only a coarse `has_sales` boolean, so a reader can't derive per-wave sales velocity — see `functions/src/tickets/tito-api.ts::projectRelease`.
 
 ### App Check
 
@@ -113,7 +113,7 @@ key committed (`APPCHECK_SITE_KEY` — public, like the Firebase `apiKey`). It
 initialises on page load and its token auto-attaches to the Firebase SDK calls
 the browser still makes.
 
-**Scope.** The browser no longer reads any content through the Firebase SDK —
+**Scope.** The browser reads no content through the Firebase SDK —
 speakers, sessions and tickets all go through the cached `/api/*` endpoints (see
 "Browser data access" in [CLAUDE.md](CLAUDE.md)), which don't involve App Check.
 The **only** App-Check-gated surface left is the **`submitInvoiceCallable`**
