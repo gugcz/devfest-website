@@ -165,7 +165,7 @@ export default function Tickets() {
 				</header>
 				<ul className={`field ${s.skelField}`} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
-						<li key={i} className={`field-row field-row--short ${s.skelRecord}`}>
+						<li key={i} className={`field-row field-row--short ${s.skelRow}`}>
 							<span className={`${s.skelBar} ${s.skelIndex}`} />
 							<div className={s.skelCol}>
 								<span className={`${s.skelBar} ${s.skelTitle}`} />
