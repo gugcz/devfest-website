@@ -208,22 +208,30 @@ variable set; use a value already in the histogram rather than inventing one.
 | Query | Count | Where |
 | --- | --- | --- |
 | `max-width: 600px` | 18 | the main phone breakpoint |
-| `max-width: 900px` | 13 | wide layout collapse |
-| `max-width: 500px` | 11 | small phone |
-| `max-width: 720px` | 6 | mid collapse |
+| `max-width: 900px` | 10 | wide layout collapse |
+| `max-width: 500px` | 6 | small phone — 2× `500px` + 4× `31.25em` (`Footer.scss:84,169,314,332`) |
+| `max-width: 720px` | 4 | mid collapse |
+| `max-width: 380px` | 3 | narrowest phone |
 | `max-width: 860px` | 4 | header / hero |
-| `max-width: 380px` | 2 | narrowest phone |
 | `max-width: 1000px` | 1 | widest collapse |
-| `max-width: 960px` | 1 | widest collapse |
-| `min-width: 600px` | 1 | `SpeakersTeaser.module.scss:60` — the one min-width in the codebase, see Open points |
+| `max-width: 960px` | 1 | widest collapse (`60em`, `Footer.scss:75`) |
+| `min-width: 700px` … `max-width: 999px` (compound) | 1 | `press/downloads.scss:131` |
+| `min-width: 1000px` … `max-width: 1279px` (compound) | 1 | `press/downloads.scss:135` |
+
+**[CURRENT]** `min-width` is no longer a single outlier: **7** call sites —
+`SpeakersTeaser.module.scss:60` plus the six `press/downloads.scss:109,113,117,131,135,139`
+added by merges since this document's baseline (`7b96e4d`, where the count was
+0). See Open points.
 
 **[MUST]** There is no horizontal-nav breakpoint: `Menu.astro` is a three-slot
 bar with all destinations behind one toggle at **every** width
 (`Menu.scss:1–13`). Do not re-add a desktop nav.
 
-**[CURRENT]** One behavioural breakpoint lives in JS, not CSS: the header
+**[CURRENT]** Two behavioural breakpoints live in JS, not CSS: the header
 auto-hide-on-scroll is limited to `matchMedia('(max-width: 760px)')`
-(`Menu.astro:217`). `760px` is in no stylesheet — see Open points.
+(`Menu.astro:217`), and the agenda view switch uses
+`matchMedia('(max-width: 1024px)')` (`Agenda.tsx:52`). Neither value is in any
+stylesheet — see Open points.
 
 ## Z-index & layering
 
@@ -697,11 +705,15 @@ each needs a decision, none is fixed by this PR.
    dead and should be deleted, or something is using a literal `1.9rem` where it
    should use the token. `--panel-2` and `--panel-hover` are each used in exactly
    one file, which is close to the same question.
-7. **One `min-width` query.** `SpeakersTeaser.module.scss:60` is the only
-   mobile-first query in a codebase that is otherwise entirely `max-width`.
-8. **A behavioural breakpoint outside the CSS set.** The header auto-hide uses
-   `760px` in JS (`Menu.astro:217`); no stylesheet uses that value, and the
-   nearest CSS breakpoints are `720px` and `860px`.
+7. **`min-width` is no longer an outlier.** `SpeakersTeaser.module.scss:60` was
+   the only mobile-first query when this document was written; six more
+   (`press/downloads.scss:109,113,117,131,135,139`) landed via merged PRs since,
+   so the codebase now has 7. Worth deciding whether mobile-first is acceptable
+   there or should be flipped to match the rest.
+8. **Two behavioural breakpoints outside the CSS set.** The header auto-hide
+   uses `760px` in JS (`Menu.astro:217`); no stylesheet uses that value, and the
+   nearest CSS breakpoints are `720px` and `860px`. The agenda view switch adds
+   a second one, `1024px` (`Agenda.tsx:52`), also absent from any stylesheet.
 9. **Special Elite declares no `subsets`** (`astro.config.mjs:96`) while the
    other two request `latin` + `latin-ext`. The site ships Czech copy; a face
    without `latin-ext` risks fallback glyphs for diacritics. Worth confirming
