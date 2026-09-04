@@ -62,31 +62,7 @@ function bundle.
 
 ### Pages & Routing
 
-Pages under `src/pages/` using Astro file-based routing:
-- `/` — Main landing page (hero, countdown timer, newsletter form, footer)
-- `/speakers` — Speaker lineup (`Speakers` island reads `/api/lineup`; `SpeakerDetail` is an in-island detail view, not a route)
-- `/sessions` — Session schedule (`Sessions` island reads `/api/lineup`; `SessionDetail` is an in-island detail view)
-- `/invoice` — Company invoice request (`InvoiceForm` island → `submitInvoiceCallable`)
-- `/partners` — Sponsors/partners (`src/lib/partners.ts`)
-- `/press` and `/press/downloads` — Press kit (`src/lib/press-kit.ts`)
-- `/contact` — Contact page
-- `/faq` — Frequently asked questions
-- `/team` — Organizing team
-- `/privacy-policy` — GDPR privacy policy
-- `/newsletter-subscription-thank-you` — Post-signup confirmation
-- `/thank-you` — Post-purchase confirmation (configure as ti.to event "thank you URL")
-- `/404` — Not-found page
-
-### Component Model
-
-Static Astro components (`.astro`) for layout and non-interactive UI. React components (`.tsx`) with `client:load` for interactive features:
-- `Countdown.tsx` — Live countdown to October 30, 2026, 9:00 AM CET; updates every second
-- `NewsletterForm.tsx` — SmartEmailing integration for email capture with GDPR consent checkbox
-- `Speakers.tsx` / `SpeakersTeaser.tsx` / `Sessions.tsx` — Lineup islands; `fetch('/api/lineup')` (never the Firebase SDK), parse via `src/lib/lineup.ts`. `SpeakerDetail.tsx` / `SessionDetail.tsx` render the in-island detail views.
-- `Tickets.tsx` — Ticket roadmap; `fetch('/api/tickets')`, helpers in `src/lib/tito.ts`
-- `InvoiceForm.tsx` — `/invoice` form; calls the `submitInvoiceCallable` callable via the Functions SDK (App Check attached)
-- `Footer.astro` — Social links (X, Facebook, Bluesky, LinkedIn, YouTube)
-- `CookieBanner.astro` — Cookie consent stored in localStorage; also the analytics bootstrap (calls `trackPageView()` on every `astro:page-load`)
+File-based Astro routing under `src/pages/` — full route list in [README.md](README.md#key-pages). React islands (`.tsx`, `client:load`) live in `src/components/` alongside their static Astro counterparts.
 
 ### Firebase Integration (`src/lib/firebase.ts`)
 
@@ -151,31 +127,7 @@ Every domain builds on the same shared layer. The rule of thumb behind most of i
 
 ### ti.to Tickets pipeline
 
-Visitor browsers read ticket data from the cached `/api/tickets` endpoint (`ticketsApi`), which serves the RTDB `/tickets` cache — never the Firebase SDK (see "Browser data access"). The static build never calls ti.to. Cloud Functions own all ti.to traffic.
-
-```
-functions/src/
-├── index.ts                # top barrel — `export * from './<domain>/index.js'`
-├── options.ts              # setGlobalOptions + REGION + per-kind option presets
-├── lib/                    # shared by every domain — see "Backend conventions"
-└── tickets/
-    ├── index.ts            # domain barrel
-    ├── params.ts           # ti.to secrets + string params (single source of truth)
-    ├── tito-api.ts         # ti.to HTTP client + `projectRelease()`
-    ├── tito-webhook.ts     # `verifyTitoSignature` + header constants + payload type
-    ├── refresh-cache.ts    # `refreshTicketsScheduled`
-    ├── notify-purchase.ts  # `ticketsWebhook`
-    └── weekly-status.ts    # `weeklyTicketStatusScheduled` + `thursdayTicketStatusScheduled` (shared handler)
-```
-
-Functions exposed (region `europe-west1`):
-
-| Name | Trigger | Effect |
-| ---- | ------- | ------ |
-| `refreshTicketsScheduled` | `onSchedule('every 1 hours')` | Fetch releases → write RTDB `/tickets` |
-| `ticketsWebhook` | `onRequest` (`invoker: 'public'`) | Verify `Tito-Signature` HMAC, post `registration.finished` to Slack (other events 200-acked and ignored) |
-| `weeklyTicketStatusScheduled` | `onSchedule('every monday 09:00', Europe/Prague)` | Fetch live releases from ti.to and post sales summary to Slack |
-| `thursdayTicketStatusScheduled` | `onSchedule('every thursday 18:00', Europe/Prague)` | Same handler as `weeklyTicketStatusScheduled` — second weekly status report |
+Visitor browsers read ticket data from the cached `/api/tickets` endpoint (`ticketsApi`), which serves the RTDB `/tickets` cache — never the Firebase SDK (see "Browser data access"). The static build never calls ti.to. Cloud Functions own all ti.to traffic. Function names, triggers and schedules are catalogued in [README.md](README.md) — this section covers only the gotchas, not the inventory.
 
 Browser side: `src/components/Tickets.tsx` (and `InvoiceForm.tsx`'s price estimate) read the roadmap by `fetch()`ing the cached **`/api/tickets`** endpoint (`ticketsApi`), NOT the RTDB SDK — see "Browser data access" above. `src/lib/tito.ts` holds browser-safe helpers (types, `fetchTickets`, `filterDisplayable`, `checkoutUrl`, `formatPrice`). RTDB rules in `database.rules.json` (not wired into `firebase.json` — paste manually in console).
 
@@ -196,25 +148,7 @@ Deploy steps, secret setup, and ti.to/Slack wiring live in [README.md](README.md
 
 ### Sessionize → lineup pipeline
 
-Speaker/session data comes from **Sessionize**. Visitor browsers never hit Sessionize: a daily scheduled function mirrors it into public-read **Firestore** (`speakers` + `sessions`), and the browser reads those through the cached `/api/lineup` endpoint (see "Browser data access").
-
-```
-functions/src/
-├── sessionize/
-│   ├── index.ts               # domain barrel
-│   ├── params.ts              # SESSIONIZE_ENDPOINT_ID secret (Slack webhook comes from `lib/params.ts`)
-│   ├── sessionize-api.ts      # fetch + validate + normalize; buildSessionMap/…; computeDeletePlan (delete-guard)
-│   ├── mirror-images.ts       # mirror speaker photos → Firebase Storage `speakers/{id}` (idempotent)
-│   └── refresh-sessionize.ts  # `refreshSessionizeScheduled`
-└── lineup/
-    ├── index.ts               # domain barrel
-    └── lineup-api.ts          # `lineupApi`
-```
-
-| Name | Trigger | Effect |
-| ---- | ------- | ------ |
-| `refreshSessionizeScheduled` | `onSchedule('every day 06:00', Europe/Prague)` | Fetch Sessionize "All data" → mirror photos to Storage → write Firestore `speakers` + `sessions` |
-| `lineupApi` | `onRequest` (`invoker: 'public'`) | Serve `{ speakers, sessions }` from Firestore behind `/api/lineup` (1h edge TTL) |
+Speaker/session data comes from **Sessionize**. Visitor browsers never hit Sessionize: a daily scheduled function mirrors it into public-read **Firestore** (`speakers` + `sessions`), and the browser reads those through the cached `/api/lineup` endpoint (see "Browser data access"). Function names and schedule are catalogued in [README.md](README.md).
 
 Conventions / gotchas:
 - **Cross-referenced collections.** `speakers` docs embed their `sessions[]`; `sessions` docs embed their `speakers[]`. Each collection is written as its own atomic `WriteBatch` (upserts + guarded deletes) so a live reader never sees a half-synced state. Batch hard-caps at 500 ops — fine at the expected ~30–80 docs.
@@ -225,27 +159,7 @@ Conventions / gotchas:
 
 ### Invoice (iDoklad) pipeline
 
-Invoice-first B2B flow: a company requests an invoice on `/invoice`, pays it by bank transfer, and gets a 100%-off ti.to code to claim the tickets it already paid for. Reuses the tickets-domain ti.to client + Slack client; stores state in **Firestore** `invoices/{id}` (not RTDB — it holds company PII).
-
-```
-functions/src/invoice/
-├── index.ts            # domain barrel
-├── params.ts           # iDoklad OAuth + invoice business params (ti.to params from `tickets/`, Slack from `lib/`)
-├── idoklad-api.ts      # iDoklad v3 client: OAuth token cache, contacts, invoices, mail send, payment status
-├── tito-discount.ts    # resolve company-funded releases + create 100%-off discount_code
-├── email.ts            # optional Resend HTTP sender + both mails' copy (invoice + discount code)
-├── email-template.ts   # branded HTML shell for the discount-code mail (BRAND facts, blocks, escaping)
-├── firestore.ts        # invoices collection model + helpers
-├── submit.ts           # `submitInvoiceCallable`
-├── process.ts          # `processInvoiceTrigger`
-└── poll.ts             # `pollPaidInvoicesScheduled`
-```
-
-| Name | Trigger | Effect |
-| ---- | ------- | ------ |
-| `submitInvoiceCallable` | `onCall` (`enforceAppCheck: true`) | Validate form (honeypot), write `invoices/{id}` (status `pending`) |
-| `processInvoiceTrigger` | `onDocumentCreated('invoices/{id}')` | Price from ti.to → iDoklad contact + invoice → email it → status `invoiced` |
-| `pollPaidInvoicesScheduled` | `onSchedule('every 1 hours', Europe/Prague)` | For each `invoiced` doc, check iDoklad `PaymentStatus`; on paid mint 100%-off ti.to code + deliver → status `completed` |
+Invoice-first B2B flow: a company requests an invoice on `/invoice`, pays it by bank transfer, and gets a 100%-off ti.to code to claim the tickets it already paid for. Reuses the tickets-domain ti.to client + Slack client; stores state in **Firestore** `invoices/{id}` (not RTDB — it holds company PII). Function names and triggers are catalogued in [README.md](README.md).
 
 Browser side: `src/components/InvoiceForm.tsx` (page `src/pages/invoice.astro`) calls the `submitInvoiceCallable` **callable** via the Functions SDK (`getFunctions(getFirebaseApp(), 'europe-west1')` → `httpsCallable`) — it never touches Firestore directly. No endpoint URL config.
 

@@ -253,20 +253,6 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 - **Development traffic is excluded in code**, not by a GA4 filter: measurement is limited to `devfest.cz` (and subdomains) plus the live Hosting default domains `devfest-public.web.app` / `devfest-public.firebaseapp.com`, so `npm run dev` and `devfest-public--<channel>.web.app` preview channels send nothing. To measure a preview deliberately, build it with `PUBLIC_ANALYTICS_ALLOWED_HOSTS=<host>`.
 - **Verifying a change** needs a real host: use GA4 DebugView, or the browser devtools Network tab filtered to `/g/collect`. Check which host the hits go to — EEA traffic can be routed to `region1.google-analytics.com`, which is why the CSP `connect-src` in `firebase.json` allows `https://*.google-analytics.com` rather than just `www.`.
 
-## Project Structure
-
-```
-src/
-  pages/        # File-based routing (.astro pages)
-  components/   # Reusable UI components (Astro + React islands)
-  layouts/      # Page layouts
-  lib/          # Browser helpers (firebase, lineup, tito, speakers, sessions, …)
-public/         # Static assets (images, favicon, etc.)
-functions/      # Cloud Functions (tickets, sessionize, lineup, invoice)
-astro.config.mjs
-tsconfig.json
-```
-
 ## Key Pages
 
 | Route | Description |
