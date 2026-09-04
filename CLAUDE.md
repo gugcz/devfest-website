@@ -49,7 +49,10 @@ SCSS (CSS Modules for React components, globals in `BaseLayout.astro`), Node >=
 Commands, local setup, deploys and secrets are in [README.md](README.md). There is
 no lint script — strict TypeScript is the type safety. Automated checks: `npm run
 a11y` (axe against an `A11Y_MOCK=1` build) and `npm test` inside `functions/`
-(`node --test`, stubs `globalThis.fetch`, never touches iDoklad/ti.to).
+(`node --test`, stubs `globalThis.fetch`, never touches iDoklad/ti.to). The function
+tests compile through their own `tsconfig.test.json` into `lib-test/`, because the
+deploy `tsconfig.json` excludes `*.test.ts` — a test file must never ship in a
+function bundle.
 
 ## PR conventions
 
