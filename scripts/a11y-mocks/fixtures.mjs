@@ -267,7 +267,7 @@ export const TICKETS = {
 			sold_out: false,
 			has_sales: true,
 			start_at: null,
-			end_at: null,
+			end_at: '2026-09-30T23:59:59+02:00',
 		},
 		{
 			id: 2,
@@ -281,7 +281,7 @@ export const TICKETS = {
 			sold_out: false,
 			has_sales: true,
 			start_at: null,
-			end_at: null,
+			end_at: '2026-09-30T23:59:59+02:00',
 		},
 		{
 			id: 3,
@@ -309,7 +309,10 @@ export const TICKETS = {
 			sold_out: true,
 			has_sales: true,
 			start_at: null,
-			end_at: null,
+			// Closed wave that still carries a FUTURE `end_at` — production's
+			// Early bird, shut by hand ahead of its own window. The sweep must
+			// see this render no deadline line at all.
+			end_at: '2026-10-15T23:59:59+02:00',
 		},
 	],
 };
