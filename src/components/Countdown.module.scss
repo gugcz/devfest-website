@@ -62,6 +62,40 @@
 	line-height: 1;
 }
 
+// Compact — one line, unit letters as a suffix on the digits instead of a
+// caption underneath: `069d 22h 43m 21s`. Used where the clock sits under a
+// poster-scale statement and four captioned stubs would out-weigh it.
+.countdownCompact {
+	gap: 0.55rem;
+
+	// Sized to sit beside the footing strip's DATE/PLACE values, not tower
+	// over them — the full four-stub clock is display-scale on its own line;
+	// this one shares a row with the rest of the meta.
+	.value {
+		font-size: clamp(1.3rem, 1.75vw, 1.7rem);
+	}
+}
+
+.unitCompact {
+	flex-direction: row;
+	align-items: baseline;
+	gap: 0.06em;
+
+	.label {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: clamp(1rem, 1.4vw, 1.3rem);
+		letter-spacing: 0.02em;
+		text-transform: lowercase;
+		color: rgba(240, 237, 230, 0.5);
+	}
+}
+
+@media (max-width: 600px) {
+	.countdownCompact .value {
+		font-size: 1.3rem;
+	}
+}
+
 @media (max-width: 600px) {
 	.countdown {
 		gap: 0.35rem;

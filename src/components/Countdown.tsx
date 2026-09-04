@@ -25,16 +25,26 @@ function calcTimeLeft(): TimeLeft {
 	};
 }
 
-const UNITS: { key: keyof TimeLeft; label: string }[] = [
-	{ key: 'days', label: 'Days' },
-	{ key: 'hours', label: 'Hrs' },
-	{ key: 'minutes', label: 'Min' },
-	{ key: 'seconds', label: 'Sec' },
+const UNITS: { key: keyof TimeLeft; label: string; suffix: string }[] = [
+	{ key: 'days', label: 'Days', suffix: 'd' },
+	{ key: 'hours', label: 'Hrs', suffix: 'h' },
+	{ key: 'minutes', label: 'Min', suffix: 'm' },
+	{ key: 'seconds', label: 'Sec', suffix: 's' },
 ];
 
 const INITIAL_TIME: TimeLeft = { days: '000', hours: '00', minutes: '00', seconds: '00' };
 
-export default function Countdown() {
+interface Props {
+	/**
+	 * `069d 22h 43m 21s` on one line instead of four labelled stubs separated
+	 * by colons. The suffix is real rendered text on the unit, not a stylesheet
+	 * `::after` — a generated-content suffix reads fine visually but is
+	 * invisible to anything that inspects the DOM text.
+	 */
+	compact?: boolean;
+}
+
+export default function Countdown({ compact = false }: Props) {
 	const [time, setTime] = useState<TimeLeft>(INITIAL_TIME);
 
 	useEffect(() => {
@@ -54,13 +64,13 @@ export default function Countdown() {
 	return (
 		<>
 			<span className={s.srOnly}>Doors open on 30 October 2026 at 9:00 AM Central European Time.</span>
-			<div className={s.countdown} aria-hidden="true">
-				{UNITS.map(({ key, label }, i) => (
+			<div className={`${s.countdown} ${compact ? s.countdownCompact : ''}`} aria-hidden="true">
+				{UNITS.map(({ key, label, suffix }, i) => (
 					<Fragment key={key}>
-						{i > 0 && <span className={s.sep}>:</span>}
-						<div className={s.unit}>
+						{!compact && i > 0 && <span className={s.sep}>:</span>}
+						<div className={`${s.unit} ${compact ? s.unitCompact : ''}`}>
 							<span className={s.value}>{time[key]}</span>
-							<span className={s.label}>{label}</span>
+							<span className={s.label}>{compact ? suffix : label}</span>
 						</div>
 					</Fragment>
 				))}

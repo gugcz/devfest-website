@@ -1,3 +1,5 @@
+import { TOPICS } from './topics';
+
 /**
  * The running band's copy.
  *
@@ -8,13 +10,8 @@
  *
  * `/partners` is the deliberate exception: that page is about partnering, not
  * about the programme, so it keeps its own list (see `partners.astro`).
+ *
+ * Same five subjects as the hero's topic set (`TOPICS` in `topics.ts`), not a
+ * second list — no product names here either.
  */
-export const EVENT_TOPICS = [
-	'AI & Machine Learning',
-	'Android & Kotlin',
-	'Web Technologies',
-	'Cloud & DevOps',
-	'Flutter & Dart',
-	'Security',
-	'Open Source',
-] as const;
+export const EVENT_TOPICS = TOPICS.map((t) => t.name);

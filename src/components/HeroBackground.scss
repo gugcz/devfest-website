@@ -1,9 +1,11 @@
 	.hero-bg {
 		position: absolute;
 		inset: 0;
+		// One wash, and it answers to the frame: the lamp in the plate sits
+		// upper right, so that's the only light source here. A second bloom in
+		// the lower left answered to nothing in the shot and read as
+		// decoration rather than lighting.
 		background:
-			// distant neon — a red light source glowing in the alley.
-			radial-gradient(ellipse 36% 50% at 12% 78%, rgba(204, 0, 0, 0.16) 0%, transparent 62%),
 			radial-gradient(ellipse 30% 40% at 70% 18%, rgba(204, 0, 0, 0.07) 0%, transparent 60%),
 			#050505;
 		z-index: 0;

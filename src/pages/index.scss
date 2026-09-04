@@ -42,7 +42,10 @@
 
 	.hero-title {
 		line-height: 0;
-		margin: 0 0 clamp(1.75rem, 3.5vw, 2.75rem);
+		// The wordmark PNG carries ~2.8% of transparent margin on its left; left
+		// as-is the mark sits visibly right of the statement's stem below it.
+		transform: translateX(-2.77%);
+		margin: 0 0 clamp(0.6rem, 2vh, 1.5rem);
 		filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.9));
 		animation: fadeInUp 0.9s ease 0.1s both;
 	}
@@ -54,37 +57,90 @@
 		display: block;
 	}
 
-	// THE statement. Poster scale, set tight, three words of accent — this is
-	// the one thing on the page that has to land before anything is read.
+	// THE statement. Poster scale, set tight — the one thing on the page that
+	// has to land before anything is read. Two lines, wide: the topic set
+	// below reads as its third and fourth lines, so nothing here wraps beyond
+	// the art-directed <br>.
 	.hero-statement {
-		font-size: var(--fs-hero);
-		max-width: 18ch;
-		// `balance` fights the explicit <br>; the line breaks are art-directed.
+		font-size: clamp(2.4rem, min(8vw, 10.5svh), 7rem);
+		max-width: none;
 		text-wrap: initial;
 		animation: fadeInUp 0.9s ease 0.25s both;
 	}
 
-	// The second clause of the old subtitle, kept as its own quiet line. No
-	// red border, no italic serif — the typewriter face at reading size is
-	// already the brand's voice, and the border was the site's most-repeated
-	// decoration.
-	.hero-note {
-		margin-top: clamp(1.25rem, 2.5vw, 1.9rem);
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
-		color: rgba(240, 237, 230, 0.7);
-		max-width: 44ch;
+	// The set belongs to the statement — it is the sentence continuing, not a
+	// caption below the fold. Same Bebas face, directly under it.
+	.topics-tail {
+		margin-top: clamp(1rem, 2.4vh, 1.5rem);
+		width: 100%;
 		animation: fadeInUp 0.9s ease 0.4s both;
 	}
 
+	.topics-tail-eyebrow {
+		margin: 0 0 clamp(0.5rem, 1.2vh, 0.85rem);
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: var(--fs-label);
+		letter-spacing: 0.26em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.72);
+	}
+
+	// Column flow, not row flow: down the left column then the right is one
+	// unambiguous reading order — across a two-column grid reads as pairs
+	// instead of a five-item list. Five topics fill 3 + 2, no separators.
+	.topics-tail-set {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-auto-flow: column;
+		grid-template-rows: repeat(3, auto);
+		grid-template-columns: repeat(2, minmax(0, max-content));
+		column-gap: clamp(1.25rem, 3vw, 3rem);
+		row-gap: clamp(0.1rem, 0.5vh, 0.35rem);
+		width: fit-content;
+	}
+
+	// The largest cream type in the fold after the statement — it outranks the
+	// venue and the clock, which is the point of the set.
+	.topics-tail-row {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: clamp(1.4rem, 3vw, 3.2rem);
+		line-height: 1.12;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: rgba(240, 237, 230, 0.96);
+	}
+
 	.hero-actions {
-		margin-top: clamp(2.25rem, 4.5vw, 3.5rem);
+		margin-top: clamp(2.5rem, 9vh, 5.5rem);
 		display: flex;
-		gap: 0.9rem;
+		gap: clamp(1.25rem, 3vw, 2.25rem);
 		align-items: center;
 		flex-wrap: wrap;
 		animation: fadeInUp 0.9s ease 0.55s both;
+	}
+
+	// Optical, not metric: a filled rectangle aligned to the same x as a
+	// letter stem reads as sitting inside the column above it.
+	.hero-actions .btn-primary {
+		transform: translateX(-2px);
+	}
+
+	// One secondary control, one treatment — the outlined pill next to the
+	// filled one reads as a second button of equal weight; the system already
+	// dropped that device everywhere else.
+	.hero-actions .btn-ghost {
+		width: auto;
+		min-height: 44px;
+		border: 0;
+		background: none;
+		padding: 0.55rem 0;
+		justify-content: flex-start;
+		color: rgba(240, 237, 230, 0.78);
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.4em;
 	}
 
 	/* ---- footing strip ---- */
@@ -120,14 +176,32 @@
 		margin: 0;
 	}
 
+	// Lifted from 0.55 to 0.72: at the darker part of the plate this sits on,
+	// 0.55 fell under 4.5:1.
 	.meta-label {
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-label);
 		letter-spacing: 0.26em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
+		color: rgba(240, 237, 230, 0.72);
 		white-space: nowrap;
 		margin: 0;
+	}
+
+	// One grid, three even columns: DATE at 0, PLACE at a third, the clock at
+	// two thirds. `.hero-meta` hands its two items straight to the grid as
+	// `display: contents` so PLACE lands on its own column rather than sharing
+	// a nested two-column half with DATE.
+	@media (min-width: 901px) {
+		.hero-foot {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			align-items: end;
+		}
+
+		.hero-meta {
+			display: contents;
+		}
 	}
 
 	.meta-value {
@@ -543,7 +617,16 @@
 		}
 
 		.hero-statement {
-			max-width: 14ch;
+			font-size: clamp(2rem, 10vw, 2.6rem);
+			max-width: none;
+		}
+
+		.topics-tail-row {
+			font-size: 1.45rem;
+		}
+
+		.hero-actions {
+			margin-top: clamp(1.5rem, 4.2vh, 2.5rem);
 		}
 
 		.hero-foot {
@@ -562,10 +645,9 @@
 		.hero-actions {
 			gap: 0.7rem;
 
-			// Two CTAs side by side at 375px leaves each one too narrow to read
-			// its own label; stack them full-width instead.
-			.btn-primary,
-			.btn-ghost {
+			// The button gets the full-width tap target; the link stays inline —
+			// it isn't a second button of equal weight.
+			.btn-primary {
 				width: 100%;
 			}
 		}
@@ -579,7 +661,7 @@
 	@media (prefers-reduced-motion: reduce) {
 		.hero-title,
 		.hero-statement,
-		.hero-note,
+		.topics-tail,
 		.hero-actions,
 		.hero-foot,
 		.gallery-track { animation: none; }

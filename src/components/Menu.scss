@@ -198,6 +198,13 @@
 		border-color: var(--color-accent-hot);
 	}
 
+	// The home hero carries its own "Get tickets" button, in view whenever the
+	// bar is still transparent — a second route to the same place inside one
+	// screen. It comes back the moment the hero has scrolled away.
+	#site-header[data-home='true'][data-state='top'] .header-cta {
+		display: none;
+	}
+
 	.nav {
 		display: flex;
 		align-items: center;
