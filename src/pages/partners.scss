@@ -319,6 +319,19 @@
 	}
 
 	/* ===================== CLOSING STATEMENT ===================== */
+	// A dark gap before the red field, from the section spacing scale. The
+	// tier/plate sections above end with varying (sometimes zero — stacked
+	// tiers rely on the NEXT section's top padding for their gap) bottom
+	// padding, so the seam can land flush against this section's own
+	// padding-top with no visible dark ground between them. Fixed here, on
+	// this page's own closing section, rather than as a margin on
+	// `.band--accent` itself — that class is shared by every other subpage's
+	// `Closer`, each of which already sits far enough from its own preceding
+	// `.band` (which always carries a full top+bottom `--section-y`).
+	.partners-cta {
+		margin-top: var(--section-y-tight);
+	}
+
 	// Contact block on the accent field. Ink inverts globally via
 	// `.band--accent` in BaseLayout.scss; only the partner-specific bits
 	// (the named contact, the disabled deck stamp) are restated here.
