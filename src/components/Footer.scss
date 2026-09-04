@@ -49,7 +49,30 @@
 		padding: 0 0 clamp(2.5rem, 5vw, 3.5rem);
 		border-bottom: 1px solid var(--rule-soft);
 
-		@media (max-width: 960px) {
+		// THE FOOTER'S BREAKPOINTS ARE THE ONE PLACE ON THE SITE THAT COLLAPSES
+		// BY TYPE SIZE, NOT BY PIXELS — 60em/31.25em, not 960px/500px.
+		//
+		// A media-query `em` resolves against the INITIAL font size (the reader's
+		// browser default), so these thresholds move with a text-only zoom while
+		// the rest of the site's 84 px queries stay put. That is deliberate here
+		// and nowhere else: this grid's contents do not shrink to fit. `.org`
+		// holds the legal name "GUG.cz, z.s. ↗" as one `white-space: nowrap`
+		// token, which at a 32px root measures 267px — wider than the ~222px a
+		// quarter of a 1024px viewport gives it, and nothing between it and
+		// `html` clips, so the document ran 45px past the viewport on every route
+		// that carries a footer (DEVF-49). In `em` the same reader gets the
+		// two-column grid (405px a column) and the name fits, unbroken.
+		//
+		// The values are the old pixels at a 16px root — 60em = 960px,
+		// 31.25em = 500px — so a default-size reader gets byte-identical layout;
+		// only a zoomed one sees the difference.
+		//
+		// Not the alternative that shipped first: letting the name wrap
+		// (`overflow-wrap: anywhere`) breaks INSIDE the word — "GUG.cz, z" /
+		// ".s." between 1060px and 1260px — and a severed legal name is worse
+		// than the overflow it fixed. NBSP does not save it; NBSP is not a break
+		// opportunity, so `anywhere` breaks wherever it likes.
+		@media (max-width: 60em) {
 			grid-template-columns: 1fr 1fr;
 			gap: 2.8rem;
 		}
@@ -58,7 +81,7 @@
 		// every other width, and the footer was the one surface that centred
 		// itself below 500px — so the phone was the only place the site changed
 		// its mind about where a column starts.
-		@media (max-width: 500px) {
+		@media (max-width: 31.25em) {
 			grid-template-columns: 1fr;
 			gap: 2.6rem;
 		}
@@ -143,7 +166,7 @@
 		// its widest value (the venue, which wraps), so at phone widths the
 		// values land far off the label they belong to. Stack term over value
 		// instead — both still left-set, like the rest of the footer.
-		@media (max-width: 500px) {
+		@media (max-width: 31.25em) {
 			grid-template-columns: 1fr;
 			row-gap: 0.35rem;
 
@@ -226,7 +249,17 @@
 	.org-link {
 		display: inline;
 		// The legal name plus its external-link arrow is one unit — let the line
-		// break before it rather than splitting "GUG.cz," from "z.s.".
+		// break before it rather than splitting "GUG.cz," from "z.s.". The NBSPs
+		// in the markup say the same thing a second time, so the unit survives
+		// even if this declaration is ever dropped.
+		//
+		// This is load-bearing, and it is what makes `.footer-grid`'s breakpoints
+		// `em` rather than px (see there): the phrase does not shrink to fit, so
+		// a reader who enlarges type needs a WIDER COLUMN, not a wrap. Do not
+		// "fix" an overflow here by letting the name break — `overflow-wrap:
+		// anywhere` shipped once and severed it mid-word ("GUG.cz, z" / ".s.")
+		// between 1060px and 1260px at a 32px root, because NBSP is not a break
+		// opportunity and `anywhere` ignores word boundaries entirely.
 		white-space: nowrap;
 		// Inline-in-prose link: a persistent underline distinguishes it without
 		// relying on colour alone — WCAG 1.4.1.
@@ -278,7 +311,7 @@
 
 		// Both halves wrap at phone widths, which leaves the middot separator
 		// dangling and the row visually off-centre. Stack them instead.
-		@media (max-width: 500px) {
+		@media (max-width: 31.25em) {
 			flex-direction: column;
 			gap: 0.7rem;
 		}
@@ -296,7 +329,7 @@
 			margin: 0 0.6em;
 		}
 
-		@media (max-width: 500px) {
+		@media (max-width: 31.25em) {
 			&::before {
 				content: none;
 			}
