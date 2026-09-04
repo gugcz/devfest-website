@@ -91,6 +91,11 @@ export default function InviteCta({ memberId, memberName, label, kind = 'primary
 	}, []);
 
 	const onClick = () => {
+		// Only the ti.to click is a checkout. The fallback goes to `/#tickets`,
+		// where the visitor still has to press Buy — which sends its own
+		// `begin_checkout` from `Tickets.tsx`. Reporting both would double-count
+		// the wave and file an item-less event against the member.
+		if (!target.external) return;
 		const items = target.releases.map((release) => {
 			const price = grossPrice(release);
 			return {

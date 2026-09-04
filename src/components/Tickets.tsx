@@ -199,7 +199,12 @@ export default function Tickets() {
 	const hasEvent = Boolean(accountSlug && eventSlug);
 
 	if (state.status === 'empty') {
-		if (!hasEvent) return null;
+		// The section renders even with no event slugs (an empty cache — the state
+		// before `refreshTicketsScheduled` has ever run). Returning null here used
+		// to delete `#tickets` from the document after hydration, and everything
+		// that links to `/#tickets` (the header action, an invitation's fallback
+		// CTA) then dropped the visitor at the top of the home page with no ticket
+		// section anywhere. Without slugs only the ti.to link is dropped.
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
 				<header className="head-split">
@@ -207,7 +212,7 @@ export default function Tickets() {
 					<p className="head-note">The box office is closed. It opens with the first wave.</p>
 				</header>
 				<EmptyState
-					action={{ href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true }}
+					action={hasEvent ? { href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true } : undefined}
 				>
 					<p>Subscribe above to be notified when tickets go on sale.</p>
 				</EmptyState>

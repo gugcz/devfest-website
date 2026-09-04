@@ -422,7 +422,19 @@ voice, which they share with their own network themselves.
 - `Closer.astro` takes an optional `actions` **slot** so the closing repeat of
   the CTA can be that same tracked island; its `actions` prop stays the path for
   every other page.
+- **The header's red `Tickets` action is dropped on `/invite/*`** (`isInvite` in
+  `Menu.astro`), decided 4 Sep 2026: it is a second primary action pointing off
+  the invitation. The mark and the menu toggle stay, so the bar is still a bar
+  and every destination is one click away behind it.
+- **`begin_checkout` fires only on the ti.to click**, never on the `/#tickets`
+  fallback — that one lands on the ticket section whose own Buy CTA sends the
+  event, so reporting both would double-count the wave and file an item-less
+  event against the member. `invite_member` / `invite_member_name` are custom
+  parameters: GA4 reports nothing on them until they are registered as custom
+  dimensions (README, "Analytics (GA4)").
 
 ### SEO & Metadata
 
 `BaseLayout.astro` handles all meta tags, Open Graph/Twitter Card, and JSON-LD structured data (Event + WebSite schemas). Sitemap auto-generated via `@astrojs/sitemap`.
+
+
