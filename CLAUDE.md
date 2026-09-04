@@ -6,6 +6,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Do not add a `## Test plan` section to PR descriptions.** The maintainer verifies changes manually and the checklist adds noise. Keep PR bodies to Summary / Why / Follow-up only.
 
+## Real customer data never enters this repository
+
+**This repository is public.** Anything committed here is world-readable the
+moment it is pushed, and a rewritten branch does not take it back: an orphaned
+commit stays reachable by SHA until GitHub garbage-collects it, so the only
+reliable control is not writing the data in the first place.
+
+Never put real customer, partner or attendee data anywhere in this repo — that
+includes places that are easy to forget because they are not application code:
+
+| surface | rule |
+| --- | --- |
+| test fixtures and mocks | invented data only, never a payload copied from a real request, log line or support ticket |
+| doc comments and examples (`CLAUDE.md`, `README.md`, code comments) | never illustrate a format with a real value — not even a masked or partially redacted one |
+| commit messages and branch names | describe the behaviour, never the customer who hit it |
+| PR titles and bodies | same — "a company", not the company |
+| internal identifiers | issue trackers, ticket ids, invoice numbers, Firestore/RTDB document ids, iDoklad contact ids and external order ids all stay out of the code and its history |
+
+Data covered: company and person names, email addresses, phone numbers, postal
+addresses, VAT / IČO / DIČ numbers, invoice and order numbers, discount codes,
+and any id that maps back to one of those in a system we or the customer runs.
+Masking is not an exemption: a masked address still carries its domain, and a
+redacted string sitting next to a bug description still tells a reader which
+customer the bug happened to.
+
+Use invented stand-ins instead, and keep them obviously fake so nobody has to
+guess later: `Acme Example s.r.o.`, IČO `12345678`, `billing@example.com`,
+`ops@example.com`, ids like `4242` / `1001`. Prefer the reserved
+`example.com` / `example.org` domains over a real one you made up.
+
+When a real value is genuinely needed to reproduce something, keep it in the
+issue tracker or the incident thread — not in the repository — and write the
+code and its history so they read correctly without it.
+
 # DevFest Website
 
 Conference landing page for DevFest.cz 2026, built with Astro 7 and deployed to Firebase Hosting.
@@ -30,7 +64,7 @@ Conference landing page for DevFest.cz 2026, built with Astro 7 and deployed to 
 the lineup, agenda and ticket waves render locally — see "Browser data access".
 `DEVFEST_LIVE_API=1 npm run dev` hits the deployed functions instead.
 
-No lint script is configured — TypeScript strict mode provides type safety. The only automated check is `npm run a11y` (axe against an `A11Y_MOCK=1` build; see "Browser data access").
+No lint script is configured — TypeScript strict mode provides type safety. Two automated checks exist: `npm run a11y` (axe against an `A11Y_MOCK=1` build; see "Browser data access") and `npm test` **inside `functions/`** (`node --test` over `src/**/*.test.ts`). The function tests compile through their own `tsconfig.test.json` into `lib-test/`, because the deploy `tsconfig.json` excludes `*.test.ts` — a test file must never ship in a function bundle. They stub `globalThis.fetch`, so they never touch iDoklad/ti.to.
 
 ## PR conventions
 
@@ -230,8 +264,12 @@ Browser side: `src/components/InvoiceForm.tsx` (page `src/pages/invoice.astro`) 
 Conventions / gotchas:
 - **iDoklad has NO webhooks** — every integration polls. So payment is detected by `pollPaidInvoicesScheduled` (hourly), which lists `status == 'invoiced'` docs and GETs each invoice's `PaymentStatus` (enum: Unpaid=0, **Paid=1**, PartialPaid=2, **Overpaid=3**). Completion flips the doc to `completed`, so each paid invoice is processed exactly once. There is no paid-webhook endpoint.
 - **iDoklad OAuth2 Client Credentials.** Token at `https://identity.idoklad.cz/server/connect/token` (the API itself is `v3`), `application/x-www-form-urlencoded`, `grant_type=client_credentials`, `scope=idoklad_api`. This v1 endpoint needs only `client_id` + `client_secret` from the account (Nastavení → Aplikace → API) — the `/server/v2/connect/token` variant additionally demands an `application_id` from the iDoklad Developer portal, which we deliberately avoid. ~2h token, **no refresh**; `idoklad-api.ts` caches it. API base `https://api.idoklad.cz/v3`. Every response is wrapped in `{ Data, IsSuccess, Message }`; lists wrap `Data` as `{ Items, TotalItems, TotalPages }` — `unwrap()` peels it.
+- **`IsSuccess` is the verdict, not the HTTP status.** iDoklad answers **200** for domain-level refusals (a partner with no email, a payload it won't accept), so `unwrap()` throws `IdokladApiError` with the envelope's `Message` whenever `IsSuccess === false`. Before that it read straight past the flag and a refused call looked identical to a delivered one. Anything reading an iDoklad response must go through `unwrap()`/`apiJson()`; `apiEnvelope()` returns the un-peeled envelope and exists only for the one caller that needs `IsSuccess` itself.
 - **Invoice creation = Default→edit→Post.** `GET /IssuedInvoices/Default` returns a fully-defaulted template (CurrencyId, PaymentOptionId, NumericSequenceId, dates); we override `PartnerId` / `Items` / `DateOfMaturity` and POST it back (dropping the readonly `Prices` block). Same pattern for contacts via `GET /Contacts/Default` (inherits the account `CountryId`; the form's free-text country is stored but not mapped).
 - **Item pricing:** line `UnitPrice` is **net**, `PriceType=WithoutVat (1)`, `VatRateType=Basic (1)` for 21 % (or `Zero (2)` when `INVOICE_VAT_RATE=0`). `releaseNetUnitPrice` backs net out of the ti.to gross. **No FX** — the 2026 event is CZK, so the 2018 EUR→CZK machinery (and the dead `exchangeratesapi.io`) is gone.
+- **A reused contact is updated before the invoice is issued.** `findOrCreateContact` matches on IČO and then PATCHes the submitted email + address onto the match, returning `{ id, emailSynced }`. It used to return the found Id unchanged, which is the failure this guard exists for: when the same company orders twice from two different people, the second request reuses the first's contact and `SendToPartner` mails the invoice to the first person while the pipeline records success. Only non-empty fields are written (a blank optional field must not wipe what iDoklad holds), and a failed PATCH is non-fatal — it reports `emailSynced: false`, which is what the belt below keys on.
+- **`OtherRecipients` is a belt, added only when the contact is NOT in sync.** `process.ts` passes `[doc.email]` when `emailSynced` is false, and nothing when it's true — with the contact updated, `SendToPartner` already goes to that address, and naming it twice would mail the customer two copies of the same invoice.
+- **`invoiceEmailSent: true` requires iDoklad's own `IsSuccess: true`.** `sendInvoiceByEmail` returns `{ confirmed, message, recipients }`; an envelope with no verdict counts as unconfirmed, so Slack asks for a manual send rather than claiming a delivery nobody can prove. It also logs the verdict on every call (`isSuccess`, `idokladMessage`, masked recipients) — nothing about this call used to be logged, which is why "did the mail go out at all?" was unanswerable from Cloud Logging. Addresses go through `maskEmail` (`billing@example.com` → `b*****g@example.com`): diagnostic, not a plain-text copy of customer contact details. Use `idokladMessage`, not `message` — `message` is the firebase logger's own field and silently overwrites it.
 - **Invoice email** via `POST /Mails/IssuedInvoice/Send` (`SendToPartner: true`, `SendAttachment: true`) — PDF attached, company pays by bank transfer using the variable symbol. Failure is tolerated and Slack-relayed. Subject + covering text come from `buildInvoiceEmail` (`email.ts`) and stay **plain text**: iDoklad drops `EmailBody` into its own mail template, so HTML we send isn't guaranteed to survive.
 - **ti.to discount code** uses Admin API v3 `POST /discount_codes` with the body wrapped under `discount_code` (`type: 'PercentOffDiscountCode'`, `value: '100.0'`, `release_ids`). Scope = every release whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`).
 - **Firestore is server-only.** `firestore.rules` denies all client access; the Admin SDK bypasses it. Like `database.rules.json`, it is **not** wired into `firebase.json` (shared project — auto-deploy would clobber the app's ruleset). `lib/admin.ts` exposes `firestore()` alongside `db()`. The project must have a Firestore database provisioned (it previously used only RTDB).
