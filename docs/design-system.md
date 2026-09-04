@@ -182,6 +182,8 @@ diverged.
 | `.print` | the mounted photograph well at 4:5 — bone keyline, shadow, `--panel-lit` ground. Used by the speaker sheet's plate and the `/team` mugshot |
 | `Sheet.module.scss` | the detail-view chrome: ground, entry, sticky bar, close, content measure, kicker, title, block label. `SessionDetail` and `SpeakerDetail` import it alongside their own module and keep only what a session / a speaker actually has |
 | `.fallback-note` | the no-JS / endpoint-down prose on a data-backed page |
+| `DataState.tsx` | the three non-ready states of a data-backed island — `LoadingState` / `ErrorState` / `EmptyState`. Left-set (matching `.fallback-note`), `role="status"` on loading and `role="alert"` on failure, and an **empty state always offers somewhere to go** |
+| `SpeakerPhoto.tsx` | a speaker's photograph, or their initials. Owns ONE decision — no URL, or a URL that fails to load, both land on the monogram — while the caller passes its own classes for the shape |
 | `SubpageHero.astro`, `Ticker.astro`, `Closer.astro` | already components; see below |
 
 **Tokens exist so a measured value is decided once.** Never re-pick a value a

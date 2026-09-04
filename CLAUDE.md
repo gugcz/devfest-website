@@ -36,6 +36,40 @@ When a real value is genuinely needed to reproduce something, keep it in the
 issue tracker or the incident thread — not in the repository — and write the
 code and its history so they read correctly without it.
 
+## Real customer data never enters this repository
+
+**This repository is public.** Anything committed here is world-readable the
+moment it is pushed, and a rewritten branch does not take it back: an orphaned
+commit stays reachable by SHA until GitHub garbage-collects it, so the only
+reliable control is not writing the data in the first place.
+
+Never put real customer, partner or attendee data anywhere in this repo — that
+includes places that are easy to forget because they are not application code:
+
+| surface | rule |
+| --- | --- |
+| test fixtures and mocks | invented data only, never a payload copied from a real request, log line or support ticket |
+| doc comments and examples (`CLAUDE.md`, `README.md`, code comments) | never illustrate a format with a real value — not even a masked or partially redacted one |
+| commit messages and branch names | describe the behaviour, never the customer who hit it |
+| PR titles and bodies | same — "a company", not the company |
+| internal identifiers | issue trackers, ticket ids, invoice numbers, Firestore/RTDB document ids, iDoklad contact ids and external order ids all stay out of the code and its history |
+
+Data covered: company and person names, email addresses, phone numbers, postal
+addresses, VAT / IČO / DIČ numbers, invoice and order numbers, discount codes,
+and any id that maps back to one of those in a system we or the customer runs.
+Masking is not an exemption: a masked address still carries its domain, and a
+redacted string sitting next to a bug description still tells a reader which
+customer the bug happened to.
+
+Use invented stand-ins instead, and keep them obviously fake so nobody has to
+guess later: `Acme Example s.r.o.`, IČO `12345678`, `billing@example.com`,
+`ops@example.com`, ids like `4242` / `1001`. Prefer the reserved
+`example.com` / `example.org` domains over a real one you made up.
+
+When a real value is genuinely needed to reproduce something, keep it in the
+issue tracker or the incident thread — not in the repository — and write the
+code and its history so they read correctly without it.
+
 # DevFest Website
 
 Conference landing page for DevFest.cz 2026, built with Astro 7 and deployed to Firebase Hosting.
@@ -270,6 +304,76 @@ The design system — type roles, the `BaseLayout.scss` primitives, and the rule
 a change must not break — lives in [docs/design-system.md](docs/design-system.md).
 Global CSS variables are in `BaseLayout.scss`; React components use co-located
 `.module.scss` files.
+
+**The partner wall is one grid module.** `/partners` used to size the cell per
+tier, and `--tier-col` was a FLOOR rather than a width, so cells grew to close
+their row: one page rendered a 611px platinum cell, three full-width diamond
+cells, a 520px silver one and 264px media plates — four cell modules on one
+wall, and a cell's size said more about how many partners share its tier than
+about the tier. `.logo-grid` is `repeat(auto-fill, minmax(min(100%, --cell-min),
+1fr))` at one size for every partner; the tier is carried by its heading and by
+the order of the sections, which is what a ladder is for. A tier that does not
+fill its last row leaves the rest of the row empty — the rules belong to the
+CELLS, so nothing hangs a hairline over dead space.
+
+Equal cells do not make equal-looking logos, so `opticalBox()` in
+`partners.astro` gives each mark a box of equal ink **area** shaped to its own
+aspect ratio (a 5:1 wordmark ≈190×38, a square glyph ≈76×76) and passes it as
+`--logo-w` / `--logo-h`; the raster `sizes` follows that box. Capping width
+renders a glyph as a block beside a wordmark; capping height renders the
+wordmark as a hairline of type. `plated` stays a per-partner flag (the file
+ships with its own background baked in) and gets a larger box — it is **not** a
+tier-level inversion, which would move the legibility risk onto the tier that
+pays. The media/community rows keep the cream ground: those marks ship dark.
+
+**Forms say which field is wrong, in the field.** `InvoiceForm.tsx` is the
+pattern: one `validate()` holding every rule, errors shown on blur or on the
+first submit attempt and cleared as they are fixed, `aria-invalid` on the
+control, `aria-describedby` pointing at a mono `--color-accent-hot` message
+under it (colour is never the only channel), and a failed submit focusing the
+first field that needs fixing. **A submit button is never `disabled` for a
+missing input** — that takes it out of the tab order and explains nothing;
+it stays reachable and answers on activation. `aria-disabled` covers only the
+in-flight state, so the button's states key off `[aria-disabled='true']`, not
+`:disabled`.
+
+**A component declared in a render body remounts its subtree every render.**
+`TextField` lives at module scope in `InvoiceForm.tsx` for that reason — inside
+the component, every keystroke unmounted the input and the caret left the field.
+
+**`/thank-you`, `/newsletter-subscription-thank-you` and `/404` are on the
+system.** They were 73 lines of one centred template with the words swapped,
+and one of them is where someone lands after paying. All three run
+`SubpageHero photo={false}` → `Ticker` → a `.band--lit` field of `NextStep`
+rows → `Closer`, and their titles take the site's em-dash separator like every
+other page. `/thank-you` carries the four things that belong on it and nowhere
+else (calendar, venue, what happens next, share) and ships an `@media print`
+block: it is the page someone prints as proof of purchase, and the site's cream
+ink on `#050505` prints as invisible text. Event facts for the calendar links
+live in `src/lib/event.ts`, alongside the `.ics` in `public/` — keep them in
+step with the Event JSON-LD in `BaseLayout.astro`.
+
+**A `<details>` list opens with its first item open.** `/faq` had every question
+collapsed on arrival, so the page a speaker and a journalist both land on showed
+no answer at all. One open item, not more — four open answers is the page's
+whole content unfolded. A section must also not reuse the hero's
+`aria-labelledby`: two regions with one accessible name is `landmark-unique`,
+which was the site's only axe violation.
+
+**The skip link's target carries `tabindex="-1"`.** `#main-content` is a `div`,
+and without it `Enter` on the skip link moves the document fragment but leaves
+focus in the header — the next `Tab` lands back in the nav and the only
+keyboard-only affordance on the site does nothing. The ring is suppressed on
+that element alone (a 100vw outline reads as a rendering fault, and it is a page
+region, not a control); every control inside keeps its own.
+
+**The cookie banner is second in the DOM, right after the skip link,** and its
+`Escape` handler is on `document`. Both are the same defect: the banner used to
+sit after the footer with a handler bound to itself, so the key only worked once
+focus was already inside it — about 40 tab stops away. Its two choices are
+peer-weighted: `Accept` keeps the accent fill (it is how the bar is findable),
+every other dimension — type, tracking, padding, height, minimum footprint — is
+shared, so the shorter word is not the smaller target.
 
 ### SEO & Metadata
 
