@@ -50,7 +50,13 @@ const sources = import.meta.glob<{ default: ImageMetadata }>('../../assets/team/
 const sourceByFile = new Map<string, ImageMetadata>(
 	Object.entries(sources).map(([path, mod]) => [path.split('/').pop() as string, mod.default])
 );
-const PLATE_WIDTHS = [720, 1080, 1440];
+// The masters in `src/assets/team` are 700×875, so nothing wider can be
+// emitted — a desktop plate is that 700px upscaled across 62% of the frame, and
+// asking for 1080/1440/1800 only produced the same single 700w candidate. The
+// widths below are therefore SMALLER ones, which is the saving actually
+// available: with the `sizes` below, a 1× phone takes a 350/525w file instead
+// of the full plate. A sharper desktop plate needs new masters, not new widths.
+const PLATE_WIDTHS = [350, 525, 700];
 const plate = async (file?: string) => {
 	if (!file) return undefined;
 	const src = sourceByFile.get(file.split('/').pop() as string);
@@ -77,7 +83,7 @@ const color = await plate(member.photoColor ?? member.photo);
 						class="plate-base"
 						src={base.src}
 						srcset={base.srcSet.attribute}
-						sizes="100vw"
+						sizes="(max-width: 860px) 100vw, 62vw"
 						alt=""
 						width="700"
 						height="875"
@@ -89,7 +95,7 @@ const color = await plate(member.photoColor ?? member.photo);
 							class="plate-color"
 							src={color.src}
 							srcset={color.srcSet.attribute}
-							sizes="100vw"
+							sizes="(max-width: 860px) 100vw, 62vw"
 							alt=""
 							width="700"
 							height="875"
@@ -309,6 +315,13 @@ const color = await plate(member.photoColor ?? member.photo);
 	// The one effect on the page: the plate settles, then bleeds into colour.
 	// Enhancement only — with no JS the page shows the black-and-white plate,
 	// which is the same photograph `/team` shows at rest.
-	const scene = document.querySelector('[data-bleed]');
-	if (scene) requestAnimationFrame(() => setTimeout(() => scene.classList.add('is-lit'), 260));
+	//
+	// Bundled module scripts run once per document, but <ClientRouter /> swaps
+	// the page on every soft navigation — so this runs on `astro:page-load`
+	// (which fires on the initial load too). Without it, arriving here from
+	// another page leaves the plate black and white forever.
+	document.addEventListener('astro:page-load', () => {
+		const scene = document.querySelector('[data-bleed]');
+		if (scene) requestAnimationFrame(() => setTimeout(() => scene.classList.add('is-lit'), 260));
+	});
 </script>
