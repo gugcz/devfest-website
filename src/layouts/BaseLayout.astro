@@ -220,6 +220,14 @@ const jsonLd = JSON.stringify(
 		)}
 
 		<!-- Favicon -->
+		<!--
+			`favicon.ico` first, and it is a real file now: the two WebP icons
+			below are both `media`-gated, so anything that does not evaluate a
+			colour-scheme query (feed readers, link unfurlers, older browsers,
+			and every request for the well-known /favicon.ico path) fell through
+			to a 404. The .ico carries 16/32/48 from the same mark.
+		-->
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" type="image/webp" href="/favicon-light.webp" media="(prefers-color-scheme: light)" />
 		<link rel="icon" type="image/webp" href="/favicon-dark.webp" media="(prefers-color-scheme: dark)" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -291,6 +299,13 @@ const jsonLd = JSON.stringify(
 	</head>
 	<body class={bodyClass}>
 		<a href="#main-content" class="skip-link">Skip to main content</a>
+		{/*
+			Second in the DOM, not last. The banner is the one consent surface on
+			the site and it used to sit after the footer, so reaching either
+			choice from the skip link took ~40 tab stops — long enough that the
+			only realistic way to dismiss it was the mouse.
+		*/}
+		<CookieBanner />
 		<!--
 			Status-bar scrim — paints brand-dark behind iOS Safari's
 			translucent status bar / notch zone. Uses the
@@ -302,19 +317,30 @@ const jsonLd = JSON.stringify(
 		-->
 		<div class="status-bar-cover" aria-hidden="true"></div>
 		<Menu />
-		<div id="main-content"><slot /></div>
+		{/*
+			`tabindex="-1"` is what makes the skip link actually skip. Without it
+			the browser moves the document fragment but leaves focus in the
+			header, so the next Tab lands back in the nav — the link changed the
+			URL and nothing else. A non-focusable div cannot receive programmatic
+			focus; -1 makes it a valid target without adding a tab stop.
+		*/}
+		<div id="main-content" tabindex="-1"><slot /></div>
 		{showFooter && <Footer />}
-		<CookieBanner />
 
 		<script>
+			import { keepAnchorLanded } from '../lib/anchor';
+
+			// Cinematic atmosphere behaviours — all degrade gracefully and respect
 			// Cinematic atmosphere behaviours — all degrade gracefully and respect
 			// reduced-motion (CSS already neutralises the visual side).
 			//
-			// Bundled module scripts run once per document, so with <ClientRouter />
-			// this has to re-run per navigation. `astro:page-load` fires on the
-			// initial load AND after every soft navigation, so it replaces (never
-			// supplements) a DOMContentLoaded listener.
+			// Re-bind on `astro:page-load`, never DOMContentLoaded: bundled module
+			// scripts run once per document and <ClientRouter /> swaps the page.
 			document.addEventListener('astro:page-load', () => {
+				// An anchor jump is resolved against a page that hasn't finished
+				// loading its islands; hold the landing while it settles.
+				keepAnchorLanded();
+
 				const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 				// 1) Scroll reveal — fade/rise sections as they enter the frame.

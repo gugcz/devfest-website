@@ -1,16 +1,12 @@
 /**
- * Browser-safe session types + presentation helpers.
+ * Browser-safe session types + presentation helpers. The daily
+ * `refreshSessionizeScheduled` function writes the `sessions` collection, each doc
+ * embedding a summary of its presenters; the shapes here mirror the subset the UI
+ * renders. No Firebase import — the island reads the cached `/api/lineup`.
  *
- * The daily `refreshSessionizeScheduled` Cloud Function (functions/src/sessionize/)
- * writes documents into the public-read Firestore `sessions` collection, each
- * embedding a summary of its presenters (`speakers[]`). The shapes here mirror
- * the subset of that `SessionDoc` the UI renders. Browser-safe: types and pure
- * helpers only — no Firebase import (the island reads the cached `/api/lineup`
- * endpoint via `fetchLineup` / `fetchAgenda` in `lineup.ts`, not the SDK).
- *
- * ⚠️ Persisted shape lives in `functions/src/sessionize/sessionize-api.ts`
- * (`SessionDoc` / `SessionSpeakerRef`) — the two live across the src/ ↔
- * functions/ build boundary and share no package. Keep them in sync.
+ * ⚠️ The persisted shape lives in `functions/src/sessionize/sessionize-api.ts`
+ * (`SessionDoc` / `SessionSpeakerRef`). The two sit across the src/ ↔ functions/
+ * build boundary and share no package, so keep them in sync by hand.
  */
 
 /** A presenter embedded on a session — the reverse of a speaker's `sessions[]`.

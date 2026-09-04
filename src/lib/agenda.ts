@@ -1,20 +1,14 @@
 /**
- * Pure, framework-free helpers for the `/agenda` timetable. Isolated from the
- * React island for review clarity — the time math is the highest-risk part of
- * the feature (getting the time zone wrong silently shifts the whole schedule).
- * No test runner exists in this repo (see CLAUDE.md), so the real guard is the
- * manual Prague-vs-foreign-zone check in the plan; keeping the math here keeps
- * it reviewable.
+ * Pure, framework-free helpers for the `/agenda` timetable. The time math lives
+ * here rather than in the island because getting the zone wrong silently shifts
+ * the whole schedule.
  *
- * Time zone: Sessionize emits `startsAt`/`endsAt` as event-LOCAL ISO strings
- * (`2026-10-30T09:00:00`, no offset — verified against live `/api/lineup`). We
- * therefore read the wall-clock `HH:MM` straight off the string and never build
- * a `Date`, which would reinterpret a naive string in the visitor's zone and
- * shift every time. If Sessionize ever starts emitting an offset (`…+02:00`),
- * `parseLocalMinutes` ignores it (the persisted value is already Prague-local);
- * a true cross-zone value would instead need `Intl.DateTimeFormat` pinned to
- * `Europe/Prague`. The event is single-day, so a minutes-from-midnight model is
- * sufficient — the calendar date is not used for placement.
+ * Sessionize emits `startsAt`/`endsAt` as event-LOCAL ISO strings
+ * (`2026-10-30T09:00:00`, no offset), so the wall-clock `HH:MM` is read straight
+ * off the string and never through a `Date`, which would reinterpret a naive
+ * string in the visitor's zone. A true cross-zone value would instead need
+ * `Intl.DateTimeFormat` pinned to `Europe/Prague`. The event is single-day, so
+ * minutes-from-midnight is enough — the calendar date is not used for placement.
  */
 import type { Session } from './sessions';
 

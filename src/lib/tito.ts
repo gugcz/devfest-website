@@ -1,16 +1,12 @@
 /**
- * ti.to types + pure browser helpers.
- *
- * The actual ti.to API call lives in `functions/src/index.ts` (Cloud
- * Function). This module is browser-safe: types and formatting only.
+ * ti.to types + pure browser helpers. Browser-safe: types and formatting only;
+ * every ti.to API call lives in `functions/src/tickets/tito-api.ts`.
  *
  * Docs: https://ti.to/docs/api/admin/3.0 (we pin to v3.0; v3.1 is beta).
  *
- * The function side projects each release into the shape below before
- * writing to RTDB. We also receive a synthetic `sale_status` field
- * computed server-side from ti.to's flag set (`sold_out`, `off_sale`,
- * `expired`, `upcoming`, `archived`, `locked`) — see
- * `functions/src/tickets/tito-api.ts::deriveSaleStatus`.
+ * The function side projects each release into the shape below before writing it
+ * to RTDB, adding a synthetic `sale_status` derived from ti.to's flag set — see
+ * `deriveSaleStatus` there.
  */
 
 export type TitoSaleStatus =
@@ -35,11 +31,9 @@ export interface TitoRelease {
 	tax_description?: string | null;
 	currency: string | null;
 	/**
-	 * Coarse "has this wave ever sold a ticket?" flag, computed server-side.
-	 * Replaces the raw `quantity` / `quantity_sold` / `tickets_count` counts,
-	 * which are intentionally NOT published to the world-readable `/tickets`
-	 * cache (they'd leak sales velocity). See
-	 * `functions/src/tickets/tito-api.ts::projectRelease`.
+	 * Coarse "has this wave ever sold a ticket?" flag. The raw
+	 * `quantity` / `quantity_sold` / `tickets_count` counts are deliberately NOT
+	 * published to the world-readable `/tickets` cache — they leak sales velocity.
 	 */
 	has_sales?: boolean;
 	/** Synthetic status computed by the Cloud Function from ti.to flags. */
@@ -75,15 +69,10 @@ export async function fetchTickets(signal?: AbortSignal): Promise<TicketsCache |
 }
 
 /**
- * Filter to releases that should be shown publicly. Mirrors the
- * `isWebsiteVisible()` rule applied server-side in
- * `functions/src/tickets/tito-api.ts`; kept here as defence-in-depth so
- * any non-public release that somehow lands in the cache is still
- * dropped at render time.
- *
- * Drop: secret. Keep everything else — `releaseStatus()` maps each
- * state to its own badge (on sale, sold out, paused, coming soon,
- * ended, unavailable) so visitors see the full pricing-wave roadmap.
+ * Filter to releases that should be shown publicly. Mirrors `isWebsiteVisible()`
+ * server-side; kept as defence-in-depth so a non-public release that lands in the
+ * cache is still dropped at render time. Drop only `secret`: `releaseStatus()`
+ * maps every other state to its own badge.
  */
 export function filterDisplayable(releases: TitoRelease[]): TitoRelease[] {
 	return releases.filter((r) => !r.secret);
@@ -144,10 +133,6 @@ export function releaseStatus(
 
 export function releaseTitle(release: TitoRelease): string {
 	return release.title ?? release.slug;
-}
-
-export function checkoutUrl(release: TitoRelease, accountSlug: string, eventSlug: string): string {
-	return `https://ti.to/${accountSlug}/${eventSlug}/with/${release.slug}`;
 }
 
 export function eventUrl(accountSlug: string, eventSlug: string): string {
@@ -232,5 +217,78 @@ function formatAmount(numeric: number, currency: string | null): string {
 		}).format(numeric);
 	} catch {
 		return `${numeric} ${code}`;
+	}
+}
+
+/**
+ * Wave end date. ti.to exposes the sale window as `start_at` / `end_at`;
+ * the organizer only recently started filling `end_at` in, so most
+ * releases still carry `null` and every caller must cope with that.
+ *
+ * Returns `null` for a missing, empty or unparseable value — never an
+ * `Invalid Date`, which is what a bare `new Date(release.end_at)` hands
+ * to `Intl` and what puts the literal string "Invalid Date" on the page.
+ */
+export function releaseEnd(release: TitoRelease): Date | null {
+	const raw = release.end_at;
+	if (typeof raw !== 'string' || raw.trim() === '') return null;
+	const date = new Date(raw);
+	return Number.isNaN(date.getTime()) ? null : date;
+}
+
+export interface WaveDeadline {
+	/** Rendered line, e.g. "Ends Sep 30, 2026". */
+	label: string;
+	/** Machine-readable value for `<time dateTime>`. */
+	iso: string;
+}
+
+/**
+ * The deadline for a pricing wave, derived from the variants passed in (a
+ * wave is rendered as one row grouping "— Individual" and "— Company
+ * funded"). Callers pass only the variants that are still buyable, so the
+ * date always speaks for something a visitor can act on — a closed
+ * variant's window must not make a promise for the whole wave.
+ *
+ * The LATEST end date across those variants wins: it is the last moment a
+ * visitor can still buy into the wave, which is the only date the row is
+ * making a promise about. Variants that carry no usable date are ignored,
+ * and a wave where none of them does has no deadline line at all.
+ *
+ * A date that has already passed also yields `null`. The wave's state comes
+ * from ti.to's flags via `releaseStatus()`, and the cache behind them is up
+ * to an hour stale, so a still-buyable wave can briefly carry an elapsed
+ * `end_at`. Rendering it would put "Ended …" next to a live Buy CTA — the
+ * one contradiction this line must never produce.
+ */
+export function waveDeadline(releases: TitoRelease[], now: number = Date.now()): WaveDeadline | null {
+	let latest: Date | null = null;
+	for (const release of releases) {
+		const end = releaseEnd(release);
+		if (end && (!latest || end > latest)) latest = end;
+	}
+	if (!latest || latest.getTime() <= now) return null;
+	return {
+		label: `Ends ${formatWaveDate(latest)}`,
+		iso: latest.toISOString(),
+	};
+}
+
+/**
+ * Short date in the site's one date format (`/press` sets the same
+ * `en-US` short-month shape). Pinned to Europe/Prague: the sale window is
+ * the organizer's, so a visitor abroad must not read a deadline a day off
+ * from the one ti.to enforces.
+ */
+function formatWaveDate(date: Date): string {
+	try {
+		return new Intl.DateTimeFormat('en-US', {
+			month: 'short',
+			day: 'numeric',
+			year: 'numeric',
+			timeZone: 'Europe/Prague',
+		}).format(date);
+	} catch {
+		return date.toISOString().slice(0, 10);
 	}
 }

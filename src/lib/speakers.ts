@@ -108,15 +108,19 @@ export const SPEAKER_ICON_PATHS: Record<SpeakerLinkKind, string> = {
  */
 export const PORTRAIT_TRANSITION = 'speaker-portrait';
 
-/** Two-letter monogram fallback when a speaker has no usable photo. */
+/** Two-letter monogram fallback when a speaker has no usable photo. Falls back
+ * to `?` rather than an empty string, so a nameless entry still renders a mark
+ * instead of collapsing the monogram slot. */
 export function initials(name: string): string {
-	return name
-		.split(/\s+/)
-		.filter(Boolean)
-		.map((word) => word[0] ?? '')
-		.slice(0, 2)
-		.join('')
-		.toUpperCase();
+	return (
+		name
+			.split(/\s+/)
+			.filter(Boolean)
+			.map((word) => word[0] ?? '')
+			.slice(0, 2)
+			.join('')
+			.toUpperCase() || '?'
+	);
 }
 
 function isString(value: unknown): value is string {
