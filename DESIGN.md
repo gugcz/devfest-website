@@ -704,20 +704,22 @@ each needs a decision, none is fixed by this PR.
    without `latin-ext` risks fallback glyphs for diacritics. Worth confirming
    against the same class of bug fixed in commit `7b96e4df` (Czech press
    clippings set in a face without the diacritics).
-10. **This file overlaps `CLAUDE.md` → "Styling Conventions".** The split is
-    intended (values here, rationale there) but not enforced by anything, so the
-    two can drift. If a rule is edited in one, check the other.
+10. **Split with `CLAUDE.md`.** Values, tokens and binding rules ([MUST] /
+    [CURRENT]) live here, in `DESIGN.md`. Decisions, product context and the
+    *why* behind them live in `CLAUDE.md` → "Styling Conventions", which now
+    just points back here instead of restating the ramp. Nothing enforces the
+    split beyond this line — if a rule changes, check both files.
 11. **`Closer`'s `tone="raised"` default renders `band--raised`, which has no
     CSS** (`Closer.astro:42`; the class is never defined in
     `BaseLayout.scss`). Pre-existing, not introduced by this document.
     Currently harmless — every `Closer` call site passes `tone="accent"`
     explicitly — but the default itself is dead and would silently render
     unstyled if a future page omitted `tone`.
-12. **The font-size ramp is stated as [MUST] but broken at 19 call sites: 15**
+12. **The font-size ramp is stated as [MUST] but broken at 19 call sites: 14**
     **absolute literals** (`Countdown.module.scss:33,47,72,84`,
     `LandingNotice.scss:28`, `Menu.scss:317,434`, `Speakers.module.scss:190,249`,
-    `faq.scss:33`, `index.scss:135`, `press.scss:162`, `team.scss:110,130`,
-    `Ticker.scss:66`), **1 relative** (`Footer.scss:136`, `0.85em`),
+    `faq.scss:33`, `index.scss:135`, `press.scss:162`, `team.scss:110,130`),
+    **2 relative** (`Footer.scss:136`, `0.85em`; `Ticker.scss:66`, `0.5em`),
     **2 inherited** (`Footer.scss:303,307`), and **1 on its own token**
     (`Ticker.scss:45`, `--ticker-size`). The same "every
     `font-size` goes through one of these steps" claim is repeated in a source
