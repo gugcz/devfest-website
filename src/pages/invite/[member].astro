@@ -41,6 +41,13 @@ export async function getStaticPaths() {
 const { slug, member } = Astro.props;
 const copy = inviteCopy(member);
 
+// Defaults to production so a plain `npm run build` still emits an unfurl
+// that resolves — the OG image only exists once the built PNG is deployed,
+// so pointing this at a preview build's own origin is opt-in, for verifying
+// the card on that channel before merge (see the issue thread on DEVF-45).
+const SITE_URL = import.meta.env.PUBLIC_SITE_URL ?? 'https://devfest.cz';
+const ogImageUrl = new URL(`/og/invite/${slug}.png`, SITE_URL).href;
+
 // Same optimisation path as `/team`: the masters live in `src/assets/team` so
 // the build can emit sized AVIF variants. Here the plate is full-bleed rather
 // than a card, so the widths go up accordingly.
@@ -71,7 +78,7 @@ const color = await plate(member.photoColor ?? member.photo);
 	title={`${copy.titleFlat} — DevFest.cz 2026`}
 	description={`A personal invitation to DevFest.cz 2026 from ${member.name}. ${INVITE_EVENT.date}, ${INVITE_EVENT.city}.`}
 	noindex
-	ogImage={`https://devfest.cz/og/invite/${slug}.png`}
+	ogImage={ogImageUrl}
 	ogImageAlt={`${member.name} invites you to DevFest.cz 2026`}
 >
 	<main class="page-stack">

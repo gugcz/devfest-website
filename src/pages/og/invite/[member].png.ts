@@ -115,9 +115,10 @@ export const GET: APIRoute = async ({ props }) => {
 	const eyebrow = `${member.alias}${member.role ? ` · ${member.role}` : ''}`;
 	// Same sentence as `copy.titleHtml` in `src/lib/invite.ts`, broken over
 	// three lines — the text column here is narrower than the page's, so the
-	// break is chosen rather than left to wrapping. Red is spent on "list."
-	// only, exactly like the page.
-	const headlineLines = [first, 'is putting you', 'on the '];
+	// break is chosen rather than left to wrapping. The third line's "on the"
+	// and red "list." are inline children of one flex row below, not two
+	// stacked lines. Red is spent on "list." only, exactly like the page.
+	const headlineLines = [first, 'is putting you'];
 
 	const markup = {
 		type: 'div',
@@ -202,13 +203,27 @@ export const GET: APIRoute = async ({ props }) => {
 											props: {
 												style: {
 													display: 'flex',
+													flexDirection: 'row',
+													// satori collapses a trailing-space text node in a flex
+													// row (verified: "on the " + "list." rendered with no
+													// gap at all) — the space is an explicit `gap`, not a
+													// string's trailing space.
+													gap: '0.22em',
 													fontFamily: 'Bebas Neue',
 													fontSize: '86px',
 													lineHeight: 0.92,
 													textTransform: 'uppercase',
-													color: RED_HOT,
 												},
-												children: 'list.',
+												children: [
+													{
+														type: 'div',
+														props: { style: { display: 'flex', color: CREAM }, children: 'on the' },
+													},
+													{
+														type: 'div',
+														props: { style: { display: 'flex', color: RED_HOT }, children: 'list.' },
+													},
+												],
 											},
 										},
 									],

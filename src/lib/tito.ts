@@ -171,6 +171,10 @@ export function releaseTitle(release: TitoRelease): string {
 	return release.title ?? release.slug;
 }
 
+export function checkoutUrl(release: TitoRelease, accountSlug: string, eventSlug: string): string {
+	return `https://ti.to/${accountSlug}/${eventSlug}/with/${release.slug}`;
+}
+
 export function eventUrl(accountSlug: string, eventSlug: string): string {
 	return `https://ti.to/${accountSlug}/${eventSlug}`;
 }
