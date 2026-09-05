@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import logoUrl from '../assets/logo.png?url';
 import {
 	CARD_SIZE,
 	DEFAULT_TRANSFORM,
@@ -17,6 +18,16 @@ import {
 } from '../lib/attending-card';
 import s from './AttendingCard.module.scss';
 
+/** Decodes the brand wordmark once, off the DOM. `decode()` resolves only
+ * once pixels are ready, so a card can never export with the logo half-drawn
+ * or missing because a `<canvas>` draw raced an `<img>` load. */
+async function loadLogo(): Promise<HTMLImageElement> {
+	const img = new Image();
+	img.src = logoUrl;
+	await img.decode();
+	return img;
+}
+
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 2.5;
 const MAX_PHOTO_BYTES = 20 * 1024 * 1024;
@@ -32,7 +43,9 @@ export default function AttendingCard() {
 	const [photoError, setPhotoError] = useState('');
 	const [shareState, setShareState] = useState<ShareState>('idle');
 	const [shareMessage, setShareMessage] = useState('');
-	const [assets, setAssets] = useState<{ fonts: Fonts; palette: Palette } | null>(null);
+	const [assets, setAssets] = useState<{ fonts: Fonts; palette: Palette; logo: HTMLImageElement | null } | null>(
+		null,
+	);
 
 	const dragRef = useRef<{ pointerId: number; startX: number; startY: number; panX: number; panY: number } | null>(
 		null,
@@ -41,14 +54,24 @@ export default function AttendingCard() {
 	// `photo` state lags one render behind the moment we need to release it.
 	const photoRef = useRef<ImageBitmap | null>(null);
 
-	// Astro's `fonts` integration self-hosts Bebas Neue / JetBrains Mono behind
-	// CSS custom properties; `document.fonts.ready` is the load signal for
-	// canvas text, which (unlike CSS) doesn't wait for webfonts on its own.
-	// Colors are read from the same CSS custom properties. Both are read once
+	// Astro's `fonts` integration self-hosts Bebas Neue / JetBrains Mono/
+	// Special Elite behind CSS custom properties; `document.fonts.ready` is
+	// the load signal for canvas text, which (unlike CSS) doesn't wait for
+	// webfonts on its own. Colors are read from the same CSS custom
+	// properties. Fonts, palette and the decoded logo are all gathered once
 	// here, not per-draw: `getComputedStyle` forces a style recalc, and
-	// `draw()` runs on every pointermove while panning.
+	// `draw()` runs on every pointermove while panning. Waiting for the logo
+	// too (not just fonts) is what keeps the very first draw — and so the
+	// very first export, if a visitor is fast — from running without it.
 	useEffect(() => {
-		document.fonts.ready.then(() => setAssets({ fonts: readFonts(), palette: readPalette() }));
+		let cancelled = false;
+		Promise.all([document.fonts.ready, loadLogo().catch(() => null)]).then(([, logo]) => {
+			if (cancelled) return;
+			setAssets({ fonts: readFonts(), palette: readPalette(), logo });
+		});
+		return () => {
+			cancelled = true;
+		};
 	}, []);
 
 	useEffect(() => {
@@ -62,7 +85,7 @@ export default function AttendingCard() {
 		if (!canvas || !assets) return;
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
-		drawAttendingCard(ctx, { name, role, photo, transform }, assets.fonts, assets.palette);
+		drawAttendingCard(ctx, { name, role, photo, transform }, assets.fonts, assets.palette, assets.logo);
 	}, [name, role, photo, transform, assets]);
 
 	useEffect(() => {

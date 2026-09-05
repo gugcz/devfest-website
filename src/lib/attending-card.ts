@@ -119,13 +119,17 @@ export function coverScale(naturalWidth: number, naturalHeight: number, wellSize
 export interface Fonts {
 	bebas: string;
 	mono: string;
+	/** The site's reading/long-form face — used here for the one line of
+	 * actual prose on the card, never as a label or headline. */
+	elite: string;
 }
 
-/** Reads both font stacks once — pair with `readPalette()`, see its doc. */
+/** Reads all three font stacks once — pair with `readPalette()`, see its doc. */
 export function readFonts(): Fonts {
 	return {
 		bebas: resolveFontFamily('--font-bebas-neue'),
 		mono: resolveFontFamily('--font-jetbrains-mono'),
+		elite: resolveFontFamily('--font-special-elite'),
 	};
 }
 
@@ -170,23 +174,30 @@ export function readPalette(): Palette {
  * is sized to fit the remainder with margin to spare, so a longer name or a
  * font-metric surprise doesn't run under the band again.
  */
-const HEADER_BLOCK_HEIGHT = 326; // headline + sub-label + rule, down to the well's top edge
+const HEADER_BLOCK_HEIGHT = 372; // headline + meta label + one Special Elite line + rule, down to the well's top edge
 /** Side of the square photo well — exported so the React island's pan/zoom
  * math (which never touches the canvas directly) can't drift from the draw. */
-export const WELL_SIZE = 620;
-const NAME_BLOCK_HEIGHT = 146; // well bottom to band top, holding name + role
+export const WELL_SIZE = 580;
+const NAME_BLOCK_HEIGHT = 140; // well bottom to band top, holding name + role
 const BAND_HEIGHT = 108;
 // HEADER_BLOCK_HEIGHT + WELL_SIZE + NAME_BLOCK_HEIGHT + BAND_HEIGHT === CARD_SIZE
+
+/** Bottom band's wordmark height — the rest of the band is left to breathe. */
+const LOGO_HEIGHT = 56;
+const BAND_PAD_X = 90;
 
 /**
  * Paints the full 1200×1200 card. Synchronous and side-effect-free beyond the
  * given context, so the caller (the React island) owns scheduling/redraw.
+ * `logo` is a static brand asset, not part of `data` — pass `null` until it
+ * has been decoded (see `AttendingCard.tsx`), never draw it half-loaded.
  */
 export function drawAttendingCard(
 	ctx: CanvasRenderingContext2D,
 	data: CardData,
 	fonts: Fonts,
 	palette: Palette,
+	logo: HTMLImageElement | null,
 ): void {
 	const size = CARD_SIZE;
 	const { bg, ink, red, accent, onAccent, rule, panel, monogramInk, muted } = palette;
@@ -213,7 +224,7 @@ export function drawAttendingCard(
 	const prefix = `I'M `;
 	const totalWidth = ctx.measureText(headline).width;
 	let x = (size - totalWidth) / 2;
-	const headlineY = 210;
+	const headlineY = 160;
 	ctx.textAlign = 'left';
 	ctx.fillStyle = ink;
 	ctx.fillText(prefix, x, headlineY);
@@ -221,17 +232,28 @@ export function drawAttendingCard(
 	ctx.fillStyle = red;
 	ctx.fillText(word, x, headlineY);
 
-	// Sub-label under the headline.
+	// Sub-label under the headline — a mono meta line (label role), not prose.
+	const metaY = headlineY + 46;
 	ctx.textAlign = 'center';
 	ctx.font = `500 26px ${fonts.mono}`;
 	ctx.fillStyle = muted;
-	ctx.fillText('DEVFEST.CZ 2026 · PRAGUE', size / 2, headlineY + 56);
+	ctx.fillText('30 OCT 2026 · PRAGUE', size / 2, metaY);
 
+	// One line of actual reading copy — Special Elite's role on the site is
+	// body/long-form prose, not decoration, so it earns exactly one sentence.
+	const ledeY = metaY + 50;
+	const ledeText = 'Two days of talks, workshops and community in Prague.';
+	const ledeSize = fitFontSize(ctx, ledeText, fonts.elite, 30, size - 220, 22);
+	ctx.font = `${ledeSize}px ${fonts.elite}`;
+	ctx.fillStyle = ink;
+	ctx.fillText(ledeText, size / 2, ledeY);
+
+	const ruleY = ledeY + 40;
 	ctx.strokeStyle = rule;
 	ctx.lineWidth = 2;
 	ctx.beginPath();
-	ctx.moveTo(140, headlineY + 96);
-	ctx.lineTo(size - 140, headlineY + 96);
+	ctx.moveTo(140, ruleY);
+	ctx.lineTo(size - 140, ruleY);
 	ctx.stroke();
 
 	// ── Photo well: a square mount, either the uploaded photo (cover-fit,
@@ -294,13 +316,22 @@ export function drawAttendingCard(
 
 	// ── Bottom accent band — one per card, mirrors `.band--accent`. Fixed
 	// BAND_HEIGHT zone at the card's foot; NAME_BLOCK_HEIGHT above keeps the
-	// name/role baselines clear of it (see the layout budget above).
+	// name/role baselines clear of it (see the layout budget above). The
+	// wordmark carries the "DevFest.cz" identity here, so the band's own text
+	// only needs to add the date/place — no repeated brand name.
 	const bandHeight = BAND_HEIGHT;
+	const bandCenterY = size - bandHeight / 2;
 	ctx.fillStyle = accent;
 	ctx.fillRect(0, size - bandHeight, size, bandHeight);
+
+	if (logo && logo.naturalWidth > 0) {
+		const logoWidth = (logo.naturalWidth / logo.naturalHeight) * LOGO_HEIGHT;
+		ctx.drawImage(logo, BAND_PAD_X, bandCenterY - LOGO_HEIGHT / 2, logoWidth, LOGO_HEIGHT);
+	}
+
 	ctx.font = `500 26px ${fonts.mono}`;
 	ctx.fillStyle = onAccent;
-	ctx.textAlign = 'center';
+	ctx.textAlign = 'right';
 	ctx.textBaseline = 'middle';
-	ctx.fillText('DEVFEST.CZ 2026 — 30 OCT · PRAGUE', size / 2, size - bandHeight / 2);
+	ctx.fillText('30 OCT · PRAGUE', size - BAND_PAD_X, bandCenterY);
 }
