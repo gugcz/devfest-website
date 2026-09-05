@@ -16,13 +16,15 @@
   "dependencies": {
     "@astrojs/react": "^6.0.0",
     "@astrojs/sitemap": "^3.7.2",
+    "@resvg/resvg-js": "^2.6.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "astro": "^7.1.0",
     "firebase": "^12.16.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "sass": "^1.99.0"
+    "sass": "^1.99.0",
+    "satori": "^0.33.4"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",

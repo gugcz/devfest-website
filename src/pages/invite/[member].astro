@@ -71,6 +71,8 @@ const color = await plate(member.photoColor ?? member.photo);
 	title={`${copy.titleFlat} — DevFest.cz 2026`}
 	description={`A personal invitation to DevFest.cz 2026 from ${member.name}. ${INVITE_EVENT.date}, ${INVITE_EVENT.city}.`}
 	noindex
+	ogImage={`https://devfest.cz/og/invite/${slug}.png`}
+	ogImageAlt={`${member.name} invites you to DevFest.cz 2026`}
 >
 	<main class="page-stack">
 		<section class="invite scene" aria-labelledby="invite-title" data-bleed>
