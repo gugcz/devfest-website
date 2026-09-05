@@ -242,7 +242,7 @@ export function drawAttendingCard(
 	// One line of actual reading copy — Special Elite's role on the site is
 	// body/long-form prose, not decoration, so it earns exactly one sentence.
 	const ledeY = metaY + 50;
-	const ledeText = 'Two days of talks, workshops and community in Prague.';
+	const ledeText = 'One day of talks, workshops and community in Prague.';
 	const ledeSize = fitFontSize(ctx, ledeText, fonts.elite, 30, size - 220, 22);
 	ctx.font = `${ledeSize}px ${fonts.elite}`;
 	ctx.fillStyle = ink;
@@ -317,8 +317,9 @@ export function drawAttendingCard(
 	// ── Bottom accent band — one per card, mirrors `.band--accent`. Fixed
 	// BAND_HEIGHT zone at the card's foot; NAME_BLOCK_HEIGHT above keeps the
 	// name/role baselines clear of it (see the layout budget above). The
-	// wordmark carries the "DevFest.cz" identity here, so the band's own text
-	// only needs to add the date/place — no repeated brand name.
+	// wordmark carries the "DevFest.cz" identity as an image; the date/place
+	// already ran once in the header, so the band's own text adds the domain
+	// as a readable fallback instead of repeating it.
 	const bandHeight = BAND_HEIGHT;
 	const bandCenterY = size - bandHeight / 2;
 	ctx.fillStyle = accent;
@@ -333,5 +334,5 @@ export function drawAttendingCard(
 	ctx.fillStyle = onAccent;
 	ctx.textAlign = 'right';
 	ctx.textBaseline = 'middle';
-	ctx.fillText('30 OCT · PRAGUE', size - BAND_PAD_X, bandCenterY);
+	ctx.fillText('DEVFEST.CZ', size - BAND_PAD_X, bandCenterY);
 }
