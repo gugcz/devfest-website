@@ -1,20 +1,22 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	CARD_SIZE,
 	DEFAULT_TRANSFORM,
 	ROLES,
+	WELL_SIZE,
 	clampPan,
 	coverScale,
 	drawAttendingCard,
-	resolveFontFamily,
+	panBounds,
+	readFonts,
+	readPalette,
 	type AttendingRole,
+	type Fonts,
+	type Palette,
 	type PhotoTransform,
 } from '../lib/attending-card';
 import s from './AttendingCard.module.scss';
 
-// Matches the square well in `drawAttendingCard` — kept in sync manually
-// since the draw function is the only other place that needs it.
-const WELL_SIZE = 700;
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 2.5;
 const MAX_PHOTO_BYTES = 20 * 1024 * 1024;
@@ -30,37 +32,38 @@ export default function AttendingCard() {
 	const [photoError, setPhotoError] = useState('');
 	const [shareState, setShareState] = useState<ShareState>('idle');
 	const [shareMessage, setShareMessage] = useState('');
-	const [fontsReady, setFontsReady] = useState(false);
+	const [assets, setAssets] = useState<{ fonts: Fonts; palette: Palette } | null>(null);
 
 	const dragRef = useRef<{ pointerId: number; startX: number; startY: number; panX: number; panY: number } | null>(
 		null,
 	);
+	// Tracks the live bitmap so it can be `.close()`d on replace/unmount —
+	// `photo` state lags one render behind the moment we need to release it.
+	const photoRef = useRef<ImageBitmap | null>(null);
 
 	// Astro's `fonts` integration self-hosts Bebas Neue / JetBrains Mono behind
 	// CSS custom properties; `document.fonts.ready` is the load signal for
 	// canvas text, which (unlike CSS) doesn't wait for webfonts on its own.
+	// Colors are read from the same CSS custom properties. Both are read once
+	// here, not per-draw: `getComputedStyle` forces a style recalc, and
+	// `draw()` runs on every pointermove while panning.
 	useEffect(() => {
-		document.fonts.ready.then(() => setFontsReady(true));
+		document.fonts.ready.then(() => setAssets({ fonts: readFonts(), palette: readPalette() }));
 	}, []);
 
-	const fonts = useMemo(
-		() =>
-			typeof window === 'undefined'
-				? { bebas: 'sans-serif', mono: 'monospace' }
-				: {
-						bebas: resolveFontFamily('--font-bebas-neue'),
-						mono: resolveFontFamily('--font-jetbrains-mono'),
-					},
-		[fontsReady],
-	);
+	useEffect(() => {
+		return () => {
+			photoRef.current?.close();
+		};
+	}, []);
 
 	const draw = useCallback(() => {
 		const canvas = canvasRef.current;
-		if (!canvas) return;
+		if (!canvas || !assets) return;
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
-		drawAttendingCard(ctx, { name, role, photo, transform }, fonts);
-	}, [name, role, photo, transform, fonts]);
+		drawAttendingCard(ctx, { name, role, photo, transform }, assets.fonts, assets.palette);
+	}, [name, role, photo, transform, assets]);
 
 	useEffect(() => {
 		draw();
@@ -82,6 +85,13 @@ export default function AttendingCard() {
 		try {
 			// Decoded fully client-side — the file never leaves the browser.
 			const bitmap = await createImageBitmap(file);
+			if (bitmap.width === 0 || bitmap.height === 0) {
+				bitmap.close();
+				setPhotoError("Couldn't read that image. Try a different file.");
+				return;
+			}
+			photoRef.current?.close();
+			photoRef.current = bitmap;
 			setPhoto(bitmap);
 			setTransform(DEFAULT_TRANSFORM);
 		} catch {
@@ -90,6 +100,8 @@ export default function AttendingCard() {
 	}
 
 	function removePhoto() {
+		photoRef.current?.close();
+		photoRef.current = null;
 		setPhoto(null);
 		setTransform(DEFAULT_TRANSFORM);
 		setPhotoError('');
@@ -101,6 +113,14 @@ export default function AttendingCard() {
 			const scale = coverScale(photo.width, photo.height, WELL_SIZE) * zoom;
 			const clamped = clampPan(prev.panX, prev.panY, photo.width, photo.height, scale, WELL_SIZE);
 			return { zoom, ...clamped };
+		});
+	}
+
+	function updatePan(panX: number, panY: number) {
+		setTransform((prev) => {
+			if (!photo) return prev;
+			const scale = coverScale(photo.width, photo.height, WELL_SIZE) * prev.zoom;
+			return { ...prev, ...clampPan(panX, panY, photo.width, photo.height, scale, WELL_SIZE) };
 		});
 	}
 
@@ -157,7 +177,10 @@ export default function AttendingCard() {
 		document.body.appendChild(a);
 		a.click();
 		a.remove();
-		URL.revokeObjectURL(url);
+		// Revoking synchronously right after `click()` can cancel the download
+		// in Safari/Firefox — the browser hasn't necessarily read the blob URL
+		// yet. Give it a beat first.
+		setTimeout(() => URL.revokeObjectURL(url), 1000);
 	}
 
 	async function handleShare() {
@@ -191,6 +214,16 @@ export default function AttendingCard() {
 		}
 	}
 
+	const nameEmpty = name.trim().length === 0;
+	const exportDisabled = nameEmpty || shareState === 'working';
+	const cardLabel = nameEmpty
+		? `Your DevFest.cz 2026 share card preview, ${role.toLowerCase()}`
+		: `Your DevFest.cz 2026 share card preview, ${name.trim()}, ${role.toLowerCase()}`;
+
+	const panRange = photo
+		? panBounds(photo.width, photo.height, coverScale(photo.width, photo.height, WELL_SIZE) * transform.zoom, WELL_SIZE)
+		: null;
+
 	return (
 		<div className={s.wrapper}>
 			<div className={s.form}>
@@ -203,8 +236,12 @@ export default function AttendingCard() {
 						value={name}
 						onChange={(e) => setName(e.target.value)}
 						autoComplete="name"
+						aria-describedby="attending-name-hint"
 					/>
 				</label>
+				<span id="attending-name-hint" className={s.hint}>
+					Required to download or share — it's your card, after all.
+				</span>
 
 				<fieldset className={s.roleField}>
 					<legend className={s.label}>You're attending as</legend>
@@ -231,11 +268,12 @@ export default function AttendingCard() {
 						type="file"
 						accept="image/*"
 						onChange={handlePhotoChange}
+						aria-describedby="attending-photo-hint"
 					/>
-					<span className={s.hint}>
-						Processed entirely in your browser — never uploaded anywhere. No photo? We'll use your initials instead.
-					</span>
 				</label>
+				<span id="attending-photo-hint" className={s.hint}>
+					Processed entirely in your browser — never uploaded anywhere. No photo? We'll use your initials instead.
+				</span>
 
 				{photoError && (
 					<p className={s.error} role="alert">
@@ -243,7 +281,7 @@ export default function AttendingCard() {
 					</p>
 				)}
 
-				{photo && (
+				{photo && panRange && (
 					<div className={s.field}>
 						<span className={s.label}>Zoom</span>
 						<input
@@ -255,7 +293,29 @@ export default function AttendingCard() {
 							value={transform.zoom}
 							onChange={(e) => updateZoom(Number(e.target.value))}
 						/>
-						<span className={s.hint}>Drag the photo above to reposition it.</span>
+						<span className={s.label}>Position — left/right</span>
+						<input
+							className={s.range}
+							type="range"
+							min={-panRange.maxX}
+							max={panRange.maxX}
+							step={1}
+							disabled={panRange.maxX === 0}
+							value={transform.panX}
+							onChange={(e) => updatePan(Number(e.target.value), transform.panY)}
+						/>
+						<span className={s.label}>Position — up/down</span>
+						<input
+							className={s.range}
+							type="range"
+							min={-panRange.maxY}
+							max={panRange.maxY}
+							step={1}
+							disabled={panRange.maxY === 0}
+							value={transform.panY}
+							onChange={(e) => updatePan(transform.panX, Number(e.target.value))}
+						/>
+						<span className={s.hint}>Drag the photo above to reposition it, or use the sliders.</span>
 						<button type="button" className={s.linkButton} onClick={removePhoto}>
 							Remove photo
 						</button>
@@ -269,7 +329,8 @@ export default function AttendingCard() {
 					width={CARD_SIZE}
 					height={CARD_SIZE}
 					className={s.canvas}
-					aria-label="Your DevFest.cz 2026 share card preview"
+					role="img"
+					aria-label={cardLabel}
 					onPointerDown={handlePointerDown}
 					onPointerMove={handlePointerMove}
 					onPointerUp={handlePointerUp}
@@ -278,10 +339,10 @@ export default function AttendingCard() {
 				/>
 
 				<div className={s.actions}>
-					<button type="button" className="btn-primary" onClick={handleDownload}>
+					<button type="button" className="btn-primary" onClick={handleDownload} disabled={exportDisabled}>
 						Download PNG
 					</button>
-					<button type="button" className="btn-ghost" onClick={handleShare} disabled={shareState === 'working'}>
+					<button type="button" className="btn-ghost" onClick={handleShare} disabled={exportDisabled}>
 						{shareState === 'working' ? 'Sharing…' : 'Share'}
 					</button>
 				</div>

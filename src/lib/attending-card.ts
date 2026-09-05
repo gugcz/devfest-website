@@ -76,6 +76,22 @@ function fitFontSize(
 	return size;
 }
 
+/** The furthest a pan offset (in source-image px) can go while the image
+ * still fully covers a `wellSize`×`wellSize` square at the given scale. */
+export function panBounds(
+	naturalWidth: number,
+	naturalHeight: number,
+	scale: number,
+	wellSize: number,
+): { maxX: number; maxY: number } {
+	const drawWidth = naturalWidth * scale;
+	const drawHeight = naturalHeight * scale;
+	return {
+		maxX: Math.max(0, (drawWidth - wellSize) / 2 / scale),
+		maxY: Math.max(0, (drawHeight - wellSize) / 2 / scale),
+	};
+}
+
 /**
  * Clamps a pan offset (in source-image px, centered) so the image keeps
  * fully covering a `wellSize`×`wellSize` square at the given scale.
@@ -88,10 +104,7 @@ export function clampPan(
 	scale: number,
 	wellSize: number,
 ): { panX: number; panY: number } {
-	const drawWidth = naturalWidth * scale;
-	const drawHeight = naturalHeight * scale;
-	const maxX = Math.max(0, (drawWidth - wellSize) / 2 / scale);
-	const maxY = Math.max(0, (drawHeight - wellSize) / 2 / scale);
+	const { maxX, maxY } = panBounds(naturalWidth, naturalHeight, scale, wellSize);
 	return {
 		panX: Math.min(maxX, Math.max(-maxX, panX)),
 		panY: Math.min(maxY, Math.max(-maxY, panY)),
@@ -103,26 +116,80 @@ export function coverScale(naturalWidth: number, naturalHeight: number, wellSize
 	return wellSize / Math.min(naturalWidth, naturalHeight);
 }
 
-interface Fonts {
+export interface Fonts {
 	bebas: string;
 	mono: string;
 }
+
+/** Reads both font stacks once — pair with `readPalette()`, see its doc. */
+export function readFonts(): Fonts {
+	return {
+		bebas: resolveFontFamily('--font-bebas-neue'),
+		mono: resolveFontFamily('--font-jetbrains-mono'),
+	};
+}
+
+export interface Palette {
+	bg: string;
+	ink: string;
+	red: string;
+	accent: string;
+	onAccent: string;
+	rule: string;
+	panel: string;
+	monogramInk: string;
+	/** Same muted-ink ratio used ad hoc across the site (no dedicated CSS
+	 * custom property for it — `--color-text` at ~0.6 alpha, matching e.g.
+	 * `BaseLayout.scss`'s own repeated `rgba(240, 237, 230, 0.6/0.7)`). */
+	muted: string;
+}
+
+/**
+ * Reads every color the card needs off the page's CSS custom properties, in
+ * one pass. `getComputedStyle` forces a style recalc, so this must be called
+ * once (after fonts are ready) and the result reused across redraws — never
+ * per-frame, which is what made panning janky before.
+ */
+export function readPalette(): Palette {
+	return {
+		bg: cssVar('--color-bg') || '#050505',
+		ink: cssVar('--color-text') || '#F2EFE9',
+		red: cssVar('--color-accent-hot') || '#FF1111',
+		accent: cssVar('--color-accent') || '#CC0000',
+		onAccent: cssVar('--on-accent') || '#F7EFE6',
+		rule: cssVar('--rule') || 'rgba(240, 237, 230, 0.16)',
+		panel: cssVar('--panel-lit') || '#0A0908',
+		monogramInk: cssVar('--ink-monogram') || 'rgba(242, 239, 233, 0.46)',
+		muted: 'rgba(240, 237, 230, 0.6)',
+	};
+}
+
+/**
+ * Vertical budget for the 1200×1200 card, stacked top to bottom. The bottom
+ * band is a fixed zone; everything above it — header, photo well, name/role —
+ * is sized to fit the remainder with margin to spare, so a longer name or a
+ * font-metric surprise doesn't run under the band again.
+ */
+const HEADER_BLOCK_HEIGHT = 326; // headline + sub-label + rule, down to the well's top edge
+/** Side of the square photo well — exported so the React island's pan/zoom
+ * math (which never touches the canvas directly) can't drift from the draw. */
+export const WELL_SIZE = 620;
+const NAME_BLOCK_HEIGHT = 146; // well bottom to band top, holding name + role
+const BAND_HEIGHT = 108;
+// HEADER_BLOCK_HEIGHT + WELL_SIZE + NAME_BLOCK_HEIGHT + BAND_HEIGHT === CARD_SIZE
 
 /**
  * Paints the full 1200×1200 card. Synchronous and side-effect-free beyond the
  * given context, so the caller (the React island) owns scheduling/redraw.
  */
-export function drawAttendingCard(ctx: CanvasRenderingContext2D, data: CardData, fonts: Fonts): void {
+export function drawAttendingCard(
+	ctx: CanvasRenderingContext2D,
+	data: CardData,
+	fonts: Fonts,
+	palette: Palette,
+): void {
 	const size = CARD_SIZE;
-	const bg = cssVar('--color-bg') || '#050505';
-	const ink = cssVar('--color-text') || '#F2EFE9';
-	const red = cssVar('--color-accent-hot') || '#FF1111';
-	const accent = cssVar('--color-accent') || '#CC0000';
-	const onAccent = cssVar('--on-accent') || '#F7EFE6';
-	const rule = cssVar('--rule') || 'rgba(240, 237, 230, 0.16)';
-	const panel = cssVar('--panel-lit') || '#0A0908';
-	const monogramInk = cssVar('--ink-monogram') || 'rgba(242, 239, 233, 0.46)';
-	const muted = 'rgba(240, 237, 230, 0.6)';
+	const { bg, ink, red, accent, onAccent, rule, panel, monogramInk, muted } = palette;
 
 	ctx.clearRect(0, 0, size, size);
 	ctx.fillStyle = bg;
@@ -170,9 +237,9 @@ export function drawAttendingCard(ctx: CanvasRenderingContext2D, data: CardData,
 	// ── Photo well: a square mount, either the uploaded photo (cover-fit,
 	// user pan/zoom) or a monogram fallback — same idea as the site's `.print`
 	// mount + `--ink-monogram`, just drawn on canvas instead of in CSS.
-	const wellSize = 700;
+	const wellSize = WELL_SIZE;
 	const wellX = (size - wellSize) / 2;
-	const wellY = headlineY + 140;
+	const wellY = HEADER_BLOCK_HEIGHT;
 
 	ctx.save();
 	ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
@@ -209,22 +276,26 @@ export function drawAttendingCard(ctx: CanvasRenderingContext2D, data: CardData,
 	ctx.lineWidth = 2;
 	ctx.strokeRect(wellX, wellY, wellSize, wellSize);
 
-	// ── Name + role, under the well.
+	// ── Name + role, under the well. Both baselines sit inside
+	// NAME_BLOCK_HEIGHT with margin, well clear of the band below.
 	const nameText = (data.name.trim() || 'Your name here').toUpperCase();
 	const nameSize = fitFontSize(ctx, nameText, fonts.bebas, 64, size - 200, 36);
 	ctx.font = `${nameSize}px ${fonts.bebas}`;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'alphabetic';
 	ctx.fillStyle = ink;
-	const nameY = wellY + wellSize + 90;
+	const wellBottom = wellY + wellSize;
+	const nameY = wellBottom + 70;
 	ctx.fillText(nameText, size / 2, nameY);
 
 	ctx.font = `500 24px ${fonts.mono}`;
 	ctx.fillStyle = muted;
-	ctx.fillText(data.role.toUpperCase(), size / 2, nameY + 44);
+	ctx.fillText(data.role.toUpperCase(), size / 2, nameY + 40);
 
-	// ── Bottom accent band — one per card, mirrors `.band--accent`.
-	const bandHeight = 108;
+	// ── Bottom accent band — one per card, mirrors `.band--accent`. Fixed
+	// BAND_HEIGHT zone at the card's foot; NAME_BLOCK_HEIGHT above keeps the
+	// name/role baselines clear of it (see the layout budget above).
+	const bandHeight = BAND_HEIGHT;
 	ctx.fillStyle = accent;
 	ctx.fillRect(0, size - bandHeight, size, bandHeight);
 	ctx.font = `500 26px ${fonts.mono}`;
