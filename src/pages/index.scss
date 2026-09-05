@@ -67,7 +67,7 @@
 		// The wordmark is ~5:1, so its WIDTH is what spends vertical budget.
 		// Capping it against svh as well keeps a 900px-tall desktop from giving
 		// 112px of the hero's height to the mark alone.
-		width: clamp(220px, min(44vw, 44svh), 560px);
+		width: clamp(185px, min(44vw, 44svh), 470px);
 		max-width: 100%;
 		height: auto;
 		display: block;
@@ -773,13 +773,13 @@
 			max-width: 12ch;
 		}
 
-		// The flavour line is the one element in the hero that carries no data.
-		// At 375x667 it costs ~70px (two lines plus its inset) — the difference
-		// between the clock clearing the fold and sitting under it — so below
-		// the phone breakpoint it runs at UI size instead of lede size.
-		.hero-note {
+		// The rotor is the one element in the hero that carries no data of its
+		// own (date/venue/clock do). At 375x667 its mono item ran at lede scale
+		// and cost more height than the slot needs — the difference between the
+		// clock clearing the fold and sitting under it — so below the phone
+		// breakpoint it runs at UI size instead.
+		.topics-rotor-item {
 			font-size: var(--fs-ui);
-			max-width: 30ch;
 		}
 
 		.hero-actions {
@@ -798,7 +798,7 @@
 				padding-block: 1rem;
 				// Full-width, so the centred label was the only thing on the
 				// phone hero sitting on its own axis — wordmark, statement,
-				// flavour line and the whole footing strip are flush left, and
+				// topic rotor and the whole footing strip are flush left, and
 				// two centred labels in the middle of that column read as a
 				// mis-set block. Left-set with a short inline inset (not 2.8rem:
 				// the label should land near the same edge as the type above it).
@@ -838,9 +838,8 @@
 			font-size: 2.25rem;
 		}
 
-		.hero-note {
+		.topics-rotor {
 			margin-top: 0.65rem;
-			line-height: 1.45;
 		}
 	}
 
@@ -850,16 +849,16 @@
 	// stopped shrinking — the statement hit the floor of its `clamp()`, and the
 	// stacked CTAs and the footing strip are fixed — so the block bottomed out at
 	// ~633px and the clock fell under the fold. This rule takes the floor down to
-	// 541px: the flavour line goes — the same trade the landscape rule makes, and
+	// 541px: the rotor goes — the same trade the landscape rule makes, and
 	// it is the one element in the hero carrying no data — and the insets around
 	// the wordmark, the CTAs and the strip are trimmed. Calibrated on the
 	// tightest case (375x553, 12px to spare): the statement and the wordmark keep
-	// the sizes the <=680px rule already gives them, because dropping the flavour
-	// line alone buys back more than shrinking the type would. The date, the
+	// the sizes the <=680px rule already gives them, because dropping the rotor
+	// alone buys back more than shrinking the type would. The date, the
 	// venue and the clock stay whole.
 	//
 	// `pointer: coarse`, like the landscape rule below: a desktop at 400% zoom is
-	// 320x256 CSS px and would otherwise match, and dropping `.hero-note` because
+	// 320x256 CSS px and would otherwise match, and dropping `.topics-rotor` because
 	// of zoom is the 1.4.10 reflow fault this PR already fixed once.
 	@media (max-width: 600px) and (max-height: 630px) and (pointer: coarse) {
 		.hero-inner {
@@ -870,7 +869,7 @@
 			margin-bottom: 0.7rem;
 		}
 
-		.hero-note {
+		.topics-rotor {
 			display: none;
 		}
 
@@ -894,19 +893,19 @@
 	}
 
 	// Landscape phones (<=500px of height). The full block — wordmark, poster
-	// statement, flavour line, two stacked CTAs and the footing strip — cannot
+	// statement, topic rotor, two stacked CTAs and the footing strip — cannot
 	// fit 375px of height with 71px of it already spent clearing the header
 	// bar; scaling the type down far enough to make it fit turns the poster
 	// into a caption. So this is the one viewport where the hero is allowed to
-	// compress instead: the flavour line goes, the CTAs go back side by side,
+	// compress instead: the rotor goes, the CTAs go back side by side,
 	// and the statement runs at UI scale on a wider measure. The date, venue
 	// and clock — the data this whole change exists to surface — stay above the
 	// fold.
 	// `pointer: coarse` keeps this off a zoomed desktop: at 400% zoom the
 	// viewport is 320x256 CSS px, which is landscape under 500px tall, and the
-	// rule would drop `.hero-note` — removing content because of zoom is a
+	// rule would drop `.topics-rotor` — removing content because of zoom is a
 	// 1.4.10 reflow fault. A mouse pointer never matches `coarse`, so the
-	// zoomed window keeps the line and simply grows taller.
+	// zoomed window keeps the rotor and simply grows taller.
 	@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
 		#hero {
 			padding-top: calc(4rem + env(safe-area-inset-top));
@@ -929,7 +928,7 @@
 			max-width: 26ch;
 		}
 
-		.hero-note {
+		.topics-rotor {
 			display: none;
 		}
 
