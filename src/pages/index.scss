@@ -67,7 +67,7 @@
 		// The wordmark is ~5:1, so its WIDTH is what spends vertical budget.
 		// Capping it against svh as well keeps a 900px-tall desktop from giving
 		// 112px of the hero's height to the mark alone.
-		width: clamp(185px, min(44vw, 44svh), 470px);
+		width: clamp(173px, min(44vw, 44svh), 439px);
 		max-width: 100%;
 		height: auto;
 		display: block;
