@@ -32,18 +32,27 @@
 		// block is centred in the leftover space anyway, so this padding only
 		// ever pushed the wordmark further down on top of the section's own
 		// clearance.
-		padding-block: clamp(1rem, 3vh, 2.5rem) clamp(3rem, 7vh, 5.5rem);
+		padding-block: clamp(1rem, 3vh, 2.5rem) clamp(2.5rem, 11vh, 8rem);
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		// Bottom-set, not centred: centring split the leftover height evenly
-		// above AND below the block, which is what pushed the whole thing ~100px
-		// lower than the mock and spread the air across every gap instead of
-		// spending it in one place. Bottom-set collects it all above the mark,
-		// where the photograph is, and leaves the rhythm below (mark → statement
-		// → set → action) exactly what each clamp() already specifies.
+		// Bottom-set on the phone (the mobile fold fix this column depends on —
+		// see the `#hero` comment below); hung from the top edge on desktop.
 		justify-content: flex-end;
 		align-items: flex-start;
+	}
+
+	// Hung from the top edge, not centred: the rotor collapsed five lines of
+	// topic type down to one, and a centred column let that height back into
+	// ~520px of dead air above the wordmark instead of retiring it. Top-set
+	// puts the wordmark a step under `MENU` and lets the leftover air pool
+	// below, over the strip — the rhythm the poster wants. Phone keeps the
+	// bottom-set rule: it is what the mobile-fold fix relies on to fill the
+	// frame without an auto-height `#hero`.
+	@media (min-width: 901px) {
+		.hero-inner {
+			justify-content: flex-start;
+		}
 	}
 
 	.hero-title {
@@ -72,54 +81,115 @@
 		max-width: none;
 		text-wrap: initial;
 		animation: fadeInUp 0.9s ease 0.25s both;
+
+		// The sentence meets the figure instead of stopping beside him — a
+		// clean seam between two rectangles (type block, photograph) is what
+		// reads as a caption next to a photo rather than a poster. Nudged past
+		// where the hat brim already reaches so the letterform itself crosses
+		// onto his shoulder.
+		@media (min-width: 901px) {
+			.red {
+				display: inline-block;
+				transform: translateX(0.12em);
+			}
+		}
 	}
 
-	// The set belongs to the statement — it is the sentence continuing, not a
-	// caption below the fold. Same Bebas face, directly under it.
-	.topics-tail {
-		margin-top: clamp(1rem, 2.4vh, 1.5rem);
+	// The set as one rotating subject in a fixed slot instead of five lines
+	// under the statement — motion buys the poster the one thing space
+	// couldn't: it covers all five topics without spending five rows on them.
+	// Tight–loose–tight rhythm: the big pause sits ABOVE the subject (mark and
+	// statement are one cluster, subject and action the next), not below it.
+	.topics-rotor {
+		display: grid;
+		gap: clamp(0.3rem, 0.9vh, 0.5rem);
+		margin: clamp(2rem, 9vh, 6rem) 0 0;
 		width: 100%;
 		animation: fadeInUp 0.9s ease 0.4s both;
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: var(--focus-gap, 0.5rem);
+		}
 	}
 
-	.topics-tail-eyebrow {
-		margin: 0 0 clamp(0.5rem, 1.2vh, 0.85rem);
+	// Indented by its own tracking so the caption starts on the same optical
+	// stem as the name under it — a 10px mono line flush with a 100px headline
+	// reads as a leftover, not as an opening.
+	.topics-rotor-label {
+		margin: 0 0 0 0.26em;
 		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
+		font-size: clamp(0.56rem, 0.66vw, 0.62rem);
 		letter-spacing: 0.26em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.72);
+		color: rgba(240, 237, 230, 0.55);
 	}
 
-	// Column flow, not row flow: down the left column then the right is one
-	// unambiguous reading order — across a two-column grid reads as pairs
-	// instead of a five-item list. Five topics fill 3 + 2, no separators.
-	.topics-tail-set {
-		list-style: none;
-		margin: 0;
-		padding: 0;
+	// Every name occupies the same grid cell, so the slot measures the widest
+	// one and the block's height and width stay constant across the cycle —
+	// nothing else on the page reflows as the subject changes.
+	.topics-rotor-slot {
 		display: grid;
-		grid-auto-flow: column;
-		grid-template-rows: repeat(3, auto);
-		grid-template-columns: repeat(2, minmax(0, max-content));
-		column-gap: clamp(1.25rem, 3vw, 3rem);
-		row-gap: clamp(0.1rem, 0.5vh, 0.35rem);
-		width: fit-content;
+		grid-template-areas: 'slot';
+		justify-items: start;
 	}
 
-	// The largest cream type in the fold after the statement — it outranks the
-	// venue and the clock, which is the point of the set.
-	.topics-tail-row {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: clamp(1.4rem, 3vw, 3.2rem);
-		line-height: 1.12;
-		letter-spacing: 0.02em;
+	// Mono, full ink, one grade under the statement — the subject separates
+	// from the headline by CATEGORY, not by tint. A dimmed cream on the one
+	// thing that moves reads as disabled; two faces is a difference the eye
+	// reads instantly, a tint is not.
+	.topics-rotor-item {
+		grid-area: slot;
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: clamp(1.1rem, 2.15vw, 2.05rem);
+		line-height: 1.15;
+		letter-spacing: 0.035em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.96);
+		opacity: 0;
+		transform: translateY(0.3em);
+		transition: opacity 420ms ease, transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
 	}
 
+	.topics-rotor-item.is-active {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	// Out is faster than in and travels the other way, so the two names are
+	// never both legible mid-swap — a cross-fade of two half-transparent words
+	// reads as a rendering fault, not a change.
+	.topics-rotor-item.is-leaving {
+		opacity: 0;
+		transform: translateY(-0.3em);
+		transition-duration: 260ms;
+	}
+
+	// The full set, unstacked into two mono columns instead of rotating. This
+	// is also what a visitor with `prefers-reduced-motion: reduce` sees — the
+	// script that drives the rotation never starts (see the inline script
+	// below), so this is the deployed reading for them, not a fallback.
+	@media (prefers-reduced-motion: reduce) {
+		.topics-rotor-slot {
+			grid-template-areas: none;
+			grid-auto-flow: column;
+			grid-template-rows: repeat(3, auto);
+			grid-template-columns: repeat(2, minmax(0, max-content));
+			column-gap: clamp(1.25rem, 3vw, 3rem);
+			row-gap: 0.1rem;
+		}
+
+		.topics-rotor-item {
+			grid-area: auto;
+			opacity: 1;
+			transform: none;
+		}
+	}
+
+	// Close under the rotor (~52px at the cap): the big pause in the column
+	// sits above the subject, not below it, so this gap stays tight.
 	.hero-actions {
-		margin-top: clamp(2.5rem, 9vh, 5.5rem);
+		margin-top: clamp(1.5rem, 5vh, 3.25rem);
 		display: flex;
 		gap: clamp(1.25rem, 3vw, 2.25rem);
 		align-items: center;
@@ -144,9 +214,37 @@
 		padding: 0.55rem 0;
 		justify-content: flex-start;
 		color: rgba(240, 237, 230, 0.78);
-		text-decoration: underline;
-		text-decoration-thickness: 1px;
-		text-underline-offset: 0.4em;
+		text-decoration: none;
+	}
+
+	// The control's own label carries the underline instead of the browser's
+	// `text-decoration`, which on tracked-out mono runs to the end of the
+	// inline box — one tracking space past the last glyph — and hangs right.
+	// `::after` with a negative margin pulls the rule back to the letter.
+	.btn-ghost-label {
+		display: inline-block;
+		white-space: nowrap;
+		border-bottom: 1px solid currentColor;
+		padding-bottom: 0.4em;
+
+		&::after {
+			content: '';
+			display: inline-block;
+			margin-left: -0.22em;
+		}
+	}
+
+	// Two controls, two different hit areas otherwise: the ghost stretches to
+	// the filled button's block instead of carrying its own 44px, so the row
+	// reads as one control surface with two labels.
+	@media (min-width: 901px) {
+		.hero-actions .btn-ghost {
+			align-self: stretch;
+			min-height: 0;
+			padding-block: 0;
+			display: inline-flex;
+			align-items: center;
+		}
 	}
 
 	/* ---- footing strip ---- */
@@ -194,19 +292,26 @@
 		margin: 0;
 	}
 
-	// One grid, three even columns: DATE at 0, PLACE at a third, the clock at
-	// two thirds. `.hero-meta` hands its two items straight to the grid as
-	// `display: contents` so PLACE lands on its own column rather than sharing
-	// a nested two-column half with DATE.
+	// One grid, one intent: DATE and PLACE are a single cluster set from the
+	// left edge of the measure, the clock closes it on the right. Three even
+	// columns put PLACE on a third that answered to nothing above it and gave
+	// the clock a second, different alignment inside the last third — two
+	// alignments on one rule. The space this leaves between the cluster and
+	// the clock is the widest on the strip, so it reads as separation.
 	@media (min-width: 901px) {
 		.hero-foot {
-			display: grid;
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-			align-items: end;
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-end;
 		}
 
 		.hero-meta {
-			display: contents;
+			display: flex;
+		}
+
+		.hero-clock {
+			align-items: flex-end;
+			text-align: right;
 		}
 	}
 
@@ -215,6 +320,7 @@
 		font-size: clamp(1.6rem, 2.4vw, 2.2rem);
 		line-height: 1;
 		letter-spacing: 0.04em;
+		text-transform: uppercase;
 		color: var(--color-text);
 		white-space: nowrap;
 		margin: 0;
@@ -612,8 +718,9 @@
 			max-width: none;
 		}
 
-		.topics-tail-row {
-			font-size: 1.45rem;
+		.topics-rotor-item {
+			font-size: 1.15rem;
+			letter-spacing: 0.03em;
 		}
 
 		.hero-actions {
@@ -658,7 +765,7 @@
 	@media (prefers-reduced-motion: reduce) {
 		.hero-title,
 		.hero-statement,
-		.topics-tail,
+		.topics-rotor,
 		.hero-actions,
 		.hero-foot,
 		.gallery-track { animation: none; }

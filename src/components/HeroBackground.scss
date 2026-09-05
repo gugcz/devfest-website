@@ -16,9 +16,9 @@
 		top: 0;
 		bottom: 0;
 		right: 0;
-		width: 60%;
+		width: var(--hero-photo-width, 60%);
 		background-image: url('/hero-detective.webp');
-		background-size: cover;
+		background-size: var(--hero-photo-size, cover);
 		background-position: var(--hero-photo-pos, center);
 		// Cinematic grade — push the detective plate to high-contrast B&W noir.
 		filter: grayscale(1) contrast(1.12) brightness(0.84);
@@ -46,6 +46,29 @@
 		opacity: var(--hero-photo-opacity, 0.85);
 		pointer-events: none;
 		z-index: 1;
+
+		// A shorter dissolve for a frame that widened the plate: the shipped
+		// gradient is still transparent at half its own width, which on a wider
+		// plate turns most of a paid-for photograph into flat black. This one
+		// clears the type column and gets out of the way by 62%.
+		&.hero-photo--tight-mask {
+			mask-image: linear-gradient(
+				to right,
+				transparent 0%,
+				rgba(0, 0, 0, 0.1) 16%,
+				rgba(0, 0, 0, 0.34) 30%,
+				rgba(0, 0, 0, 0.72) 46%,
+				#000 62%
+			);
+			-webkit-mask-image: linear-gradient(
+				to right,
+				transparent 0%,
+				rgba(0, 0, 0, 0.1) 16%,
+				rgba(0, 0, 0, 0.34) 30%,
+				rgba(0, 0, 0, 0.72) 46%,
+				#000 62%
+			);
+		}
 
 		@media (max-width: 900px) {
 			width: 100%;

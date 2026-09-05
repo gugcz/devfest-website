@@ -85,6 +85,10 @@ const facts = [
 				mobilePhotoOpacity={0.55}
 				mobileFocus="42% 100%"
 				mobileZoom="auto 130%"
+				width="74%"
+				size="auto 132%"
+				focus="54% 46%"
+				tightMask
 			/>
 			<div class="scene-vignette" aria-hidden="true"></div>
 
@@ -105,22 +109,27 @@ const facts = [
 					Prague&rsquo;s most original<br />conference is <span class="red">back.</span>
 				</p>
 
-				<!-- The topic set, set as the statement's own third and fourth
-				     lines — same Bebas face, directly under it — rather than a
-				     caption below the fold. Column flow (down the left column,
-				     then the right) keeps 01 opening the set and 05 closing it. -->
-				<div class="topics-tail">
-					<p class="topics-tail-eyebrow">What we cover</p>
-					<ul class="topics-tail-set">
-						{TOPICS.map((t) => (
-							<li class="topics-tail-row">{t.name}</li>
+				<!-- The topic set as one rotating subject in a fixed slot, not five
+				     lines under the statement — the poster keeps its column, the
+				     set still covers all five. The full set stays in the DOM at
+				     all times for SEO and screen readers (`aria-label` on the
+				     group); the rotating slot itself is `aria-hidden` so the
+				     swap is never announced as a live-region update. Hover or
+				     focus on the group holds the current subject (SC 2.2.2);
+				     `prefers-reduced-motion` unstacks the slot into the static
+				     set below instead of starting the rotation. -->
+				<p class="topics-rotor" tabindex="0" role="group" aria-label={`What we cover: ${TOPICS.map((t) => t.name).join(', ')}`}>
+					<span class="topics-rotor-label" aria-hidden="true">What we cover</span>
+					<span class="topics-rotor-slot" data-rotor aria-hidden="true">
+						{TOPICS.map((t, i) => (
+							<span class={`topics-rotor-item${i === 0 ? ' is-active' : ''}`}>{t.name}</span>
 						))}
-					</ul>
-				</div>
+					</span>
+				</p>
 
 				<div class="hero-actions">
 					<a href="#tickets" class="btn-primary">Get tickets</a>
-					<a href="#newsletter" class="btn-ghost">Stay in the loop</a>
+					<a href="#newsletter" class="btn-ghost"><span class="btn-ghost-label">Stay in the loop</span></a>
 				</div>
 			</div>
 
@@ -131,7 +140,7 @@ const facts = [
 				<dl class="hero-meta">
 					<div class="meta-item">
 						<dt class="meta-label">Date</dt>
-						<dd class="meta-value">30. 10. 2026</dd>
+						<dd class="meta-value">30 Oct 2026</dd>
 					</div>
 					<div class="meta-item">
 						<dt class="meta-label">Place</dt>
@@ -157,7 +166,7 @@ const facts = [
 						client-side navigations (e.g. back/forward to `/`), not on
 						`/` → `/team`, where the island is torn down as usual.
 					*/}
-					<Countdown compact client:load transition:persist />
+					<Countdown compact showSeconds={false} client:load transition:persist />
 				</div>
 			</div>
 		</section>
@@ -318,5 +327,51 @@ const facts = [
 		}
 		const shuffled = [...unique, ...unique.map((n) => n.cloneNode(true) as HTMLElement)];
 		track.replaceChildren(...shuffled);
+	});
+
+	// The topic rotor. `prefers-reduced-motion` is checked once here — the
+	// stylesheet already unstacks the slot into the full static set for that
+	// visitor, so the loop below simply never starts and that static reading
+	// is the deployed one, not a fallback.
+	let rotorInterval: ReturnType<typeof setInterval> | undefined;
+
+	document.addEventListener('astro:before-swap', () => {
+		clearInterval(rotorInterval);
+	});
+
+	document.addEventListener('astro:page-load', () => {
+		clearInterval(rotorInterval);
+		const slot = document.querySelector<HTMLElement>('[data-rotor]');
+		if (!slot) return;
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+		const items = [...slot.children] as HTMLElement[];
+		let i = 0;
+		// SC 2.2.2 (Pause, Stop, Hide): the rotation runs longer than 5s, so it
+		// must be stoppable. Pointer over the group or keyboard focus inside it
+		// holds the current subject; there is no separate visible control, so
+		// the group itself carries the focus ring.
+		let paused = false;
+		const group = slot.closest<HTMLElement>('.topics-rotor');
+		group?.addEventListener('mouseenter', () => { paused = true; });
+		group?.addEventListener('mouseleave', () => { paused = false; });
+		group?.addEventListener('focusin', () => { paused = true; });
+		group?.addEventListener('focusout', () => { paused = false; });
+
+		// Out, THEN in — never both at once. Cross-fading two names in one slot
+		// leaves both legible mid-swap, which reads as a rendering fault rather
+		// than a change.
+		rotorInterval = setInterval(() => {
+			if (paused) return;
+			const prev = items[i];
+			prev.classList.remove('is-active');
+			prev.classList.add('is-leaving');
+			i = (i + 1) % items.length;
+			const next = items[i];
+			setTimeout(() => {
+				prev.classList.remove('is-leaving');
+				next.classList.add('is-active');
+			}, 260);
+		}, 2600);
 	});
 </script>
