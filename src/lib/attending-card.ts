@@ -200,7 +200,7 @@ export function drawAttendingCard(
 	logo: HTMLImageElement | null,
 ): void {
 	const size = CARD_SIZE;
-	const { bg, ink, red, accent, onAccent, rule, panel, monogramInk, muted } = palette;
+	const { bg, ink, red, accent, rule, panel, monogramInk, muted } = palette;
 
 	ctx.clearRect(0, 0, size, size);
 	ctx.fillStyle = bg;
@@ -317,9 +317,8 @@ export function drawAttendingCard(
 	// ── Bottom accent band — one per card, mirrors `.band--accent`. Fixed
 	// BAND_HEIGHT zone at the card's foot; NAME_BLOCK_HEIGHT above keeps the
 	// name/role baselines clear of it (see the layout budget above). The
-	// wordmark carries the "DevFest.cz" identity as an image; the date/place
-	// already ran once in the header, so the band's own text adds the domain
-	// as a readable fallback instead of repeating it.
+	// wordmark alone carries the "DevFest.cz" identity here — the right slot
+	// stays empty rather than repeating it as text.
 	const bandHeight = BAND_HEIGHT;
 	const bandCenterY = size - bandHeight / 2;
 	ctx.fillStyle = accent;
@@ -329,10 +328,4 @@ export function drawAttendingCard(
 		const logoWidth = (logo.naturalWidth / logo.naturalHeight) * LOGO_HEIGHT;
 		ctx.drawImage(logo, BAND_PAD_X, bandCenterY - LOGO_HEIGHT / 2, logoWidth, LOGO_HEIGHT);
 	}
-
-	ctx.font = `500 26px ${fonts.mono}`;
-	ctx.fillStyle = onAccent;
-	ctx.textAlign = 'right';
-	ctx.textBaseline = 'middle';
-	ctx.fillText('DEVFEST.CZ', size - BAND_PAD_X, bandCenterY);
 }
