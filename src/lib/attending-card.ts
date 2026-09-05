@@ -10,17 +10,6 @@
 
 export const CARD_SIZE = 1200;
 
-export type AttendingRole = 'Attendee' | 'Speaker' | 'Organizer';
-
-export const ROLES: readonly AttendingRole[] = ['Attendee', 'Speaker', 'Organizer'];
-
-/** The headline's accent word per role — "I'M <word>". */
-const HEADLINE_WORD: Record<AttendingRole, string> = {
-	Attendee: 'ATTENDING',
-	Speaker: 'SPEAKING',
-	Organizer: 'ORGANIZING',
-};
-
 export interface PhotoTransform {
 	/** Multiplier on top of the base cover-fit scale. 1 = just covers the well. */
 	zoom: number;
@@ -33,7 +22,6 @@ export const DEFAULT_TRANSFORM: PhotoTransform = { zoom: 1, panX: 0, panY: 0 };
 
 export interface CardData {
 	name: string;
-	role: AttendingRole;
 	photo: ImageBitmap | null;
 	transform: PhotoTransform;
 }
@@ -178,7 +166,7 @@ const HEADER_BLOCK_HEIGHT = 372; // headline + meta label + one Special Elite li
 /** Side of the square photo well — exported so the React island's pan/zoom
  * math (which never touches the canvas directly) can't drift from the draw. */
 export const WELL_SIZE = 580;
-const NAME_BLOCK_HEIGHT = 140; // well bottom to band top, holding name + role
+const NAME_BLOCK_HEIGHT = 140; // well bottom to band top, holding the name — the card's one remaining focal line here
 const BAND_HEIGHT = 108;
 // HEADER_BLOCK_HEIGHT + WELL_SIZE + NAME_BLOCK_HEIGHT + BAND_HEIGHT === CARD_SIZE
 
@@ -214,14 +202,15 @@ export function drawAttendingCard(
 	ctx.fillStyle = vignette;
 	ctx.fillRect(0, 0, size, size);
 
-	// ── Headline: "I'M <ROLE WORD>" — cream + one red word, no shadow/glow.
-	const word = HEADLINE_WORD[data.role];
-	const headline = `I'M ${word}`;
+	// ── Headline: "I'M ATTENDING" — cream + one red word, no shadow/glow. One
+	// design for every visitor (no role toggle any more — see AttendingCard.tsx).
+	const word = 'ATTENDING';
+	const prefix = `I'M `;
+	const headline = `${prefix}${word}`;
 	const maxHeadlineWidth = size - 180;
 	const headlineSize = fitFontSize(ctx, headline, fonts.bebas, 132, maxHeadlineWidth, 64);
 	ctx.font = `${headlineSize}px ${fonts.bebas}`;
 	ctx.textBaseline = 'alphabetic';
-	const prefix = `I'M `;
 	const totalWidth = ctx.measureText(headline).width;
 	let x = (size - totalWidth) / 2;
 	const headlineY = 160;
@@ -298,8 +287,10 @@ export function drawAttendingCard(
 	ctx.lineWidth = 2;
 	ctx.strokeRect(wellX, wellY, wellSize, wellSize);
 
-	// ── Name + role, under the well. Both baselines sit inside
-	// NAME_BLOCK_HEIGHT with margin, well clear of the band below.
+	// ── Name, under the well — the card's one remaining focal line since the
+	// role toggle is gone. Centered in NAME_BLOCK_HEIGHT (not pinned to its
+	// top edge, which is where the role label used to sit) so it still reads
+	// as the main element rather than stranded near the well.
 	const nameText = (data.name.trim() || 'Your name here').toUpperCase();
 	const nameSize = fitFontSize(ctx, nameText, fonts.bebas, 64, size - 200, 36);
 	ctx.font = `${nameSize}px ${fonts.bebas}`;
@@ -307,12 +298,8 @@ export function drawAttendingCard(
 	ctx.textBaseline = 'alphabetic';
 	ctx.fillStyle = ink;
 	const wellBottom = wellY + wellSize;
-	const nameY = wellBottom + 70;
+	const nameY = wellBottom + NAME_BLOCK_HEIGHT / 2 + nameSize * 0.3;
 	ctx.fillText(nameText, size / 2, nameY);
-
-	ctx.font = `500 24px ${fonts.mono}`;
-	ctx.fillStyle = muted;
-	ctx.fillText(data.role.toUpperCase(), size / 2, nameY + 40);
 
 	// ── Bottom accent band — one per card, mirrors `.band--accent`. Fixed
 	// BAND_HEIGHT zone at the card's foot; NAME_BLOCK_HEIGHT above keeps the

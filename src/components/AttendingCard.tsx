@@ -3,7 +3,6 @@ import logoUrl from '../assets/logo.png?url';
 import {
 	CARD_SIZE,
 	DEFAULT_TRANSFORM,
-	ROLES,
 	WELL_SIZE,
 	clampPan,
 	coverScale,
@@ -11,7 +10,6 @@ import {
 	panBounds,
 	readFonts,
 	readPalette,
-	type AttendingRole,
 	type Fonts,
 	type Palette,
 	type PhotoTransform,
@@ -37,7 +35,6 @@ type ShareState = 'idle' | 'working' | 'done' | 'error';
 export default function AttendingCard() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [name, setName] = useState('');
-	const [role, setRole] = useState<AttendingRole>('Attendee');
 	const [photo, setPhoto] = useState<ImageBitmap | null>(null);
 	const [transform, setTransform] = useState<PhotoTransform>(DEFAULT_TRANSFORM);
 	const [photoError, setPhotoError] = useState('');
@@ -85,8 +82,8 @@ export default function AttendingCard() {
 		if (!canvas || !assets) return;
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
-		drawAttendingCard(ctx, { name, role, photo, transform }, assets.fonts, assets.palette, assets.logo);
-	}, [name, role, photo, transform, assets]);
+		drawAttendingCard(ctx, { name, photo, transform }, assets.fonts, assets.palette, assets.logo);
+	}, [name, photo, transform, assets]);
 
 	useEffect(() => {
 		draw();
@@ -196,7 +193,7 @@ export default function AttendingCard() {
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = `devfest-cz-2026-${role.toLowerCase()}.png`;
+		a.download = 'devfest-cz-2026.png';
 		document.body.appendChild(a);
 		a.click();
 		a.remove();
@@ -212,7 +209,7 @@ export default function AttendingCard() {
 		try {
 			const blob = await toBlob();
 			if (!blob) throw new Error('no-blob');
-			const file = new File([blob], `devfest-cz-2026-${role.toLowerCase()}.png`, { type: 'image/png' });
+			const file = new File([blob], 'devfest-cz-2026.png', { type: 'image/png' });
 			if (navigator.canShare?.({ files: [file] })) {
 				await navigator.share({
 					files: [file],
@@ -240,8 +237,8 @@ export default function AttendingCard() {
 	const nameEmpty = name.trim().length === 0;
 	const exportDisabled = nameEmpty || shareState === 'working';
 	const cardLabel = nameEmpty
-		? `Your DevFest.cz 2026 share card preview, ${role.toLowerCase()}`
-		: `Your DevFest.cz 2026 share card preview, ${name.trim()}, ${role.toLowerCase()}`;
+		? 'Your DevFest.cz 2026 share card preview'
+		: `Your DevFest.cz 2026 share card preview, ${name.trim()}`;
 
 	const panRange = photo
 		? panBounds(photo.width, photo.height, coverScale(photo.width, photo.height, WELL_SIZE) * transform.zoom, WELL_SIZE)
@@ -265,24 +262,6 @@ export default function AttendingCard() {
 				<span id="attending-name-hint" className={s.hint}>
 					Required to download or share — it's your card, after all.
 				</span>
-
-				<fieldset className={s.roleField}>
-					<legend className={s.label}>You're attending as</legend>
-					<div className={s.roleGroup}>
-						{ROLES.map((r) => (
-							<label key={r} className={s.roleOption} data-active={role === r}>
-								<input
-									type="radio"
-									name="attending-role"
-									value={r}
-									checked={role === r}
-									onChange={() => setRole(r)}
-								/>
-								{r}
-							</label>
-						))}
-					</div>
-				</fieldset>
 
 				<label className={s.field}>
 					<span className={s.label}>Photo (optional)</span>
