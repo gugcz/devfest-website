@@ -42,16 +42,25 @@ interface Props {
 	 * invisible to anything that inspects the DOM text.
 	 */
 	compact?: boolean;
+	/**
+	 * Drop the seconds unit — `54D 10H 34M`, one rhythm. Seconds ticking next
+	 * to the hero's own rotating topic is a second, unrelated clock in the
+	 * same shot. Without seconds the display only needs to update once a
+	 * minute; the 15s interval is just slack so a stale minute never survives
+	 * more than that long, not a tick visitors are meant to notice.
+	 */
+	showSeconds?: boolean;
 }
 
-export default function Countdown({ compact = false }: Props) {
+export default function Countdown({ compact = false, showSeconds = true }: Props) {
 	const [time, setTime] = useState<TimeLeft>(INITIAL_TIME);
+	const units = showSeconds ? UNITS : UNITS.filter((u) => u.key !== 'seconds');
 
 	useEffect(() => {
 		setTime(calcTimeLeft());
-		const id = setInterval(() => setTime(calcTimeLeft()), 1000);
+		const id = setInterval(() => setTime(calcTimeLeft()), showSeconds ? 1000 : 15000);
 		return () => clearInterval(id);
-	}, []);
+	}, [showSeconds]);
 
 	// The clock is decorative — screen readers get the static "doors open"
 	// sentence instead. A per-second aria-label would spam AT without adding
@@ -65,7 +74,7 @@ export default function Countdown({ compact = false }: Props) {
 		<>
 			<span className={s.srOnly}>Doors open on 30 October 2026 at 9:00 AM Central European Time.</span>
 			<div className={`${s.countdown} ${compact ? s.countdownCompact : ''}`} aria-hidden="true">
-				{UNITS.map(({ key, label, suffix }, i) => (
+				{units.map(({ key, label, suffix }, i) => (
 					<Fragment key={key}>
 						{!compact && i > 0 && <span className={s.sep}>:</span>}
 						<div className={`${s.unit} ${compact ? s.unitCompact : ''}`}>
