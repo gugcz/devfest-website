@@ -11,6 +11,9 @@ interface Props {
 	noindex?: boolean;
 	bodyClass?: string;
 	showFooter?: boolean;
+	/** Absolute URL — an unfurler will not resolve a relative path. */
+	ogImage?: string;
+	ogImageAlt?: string;
 }
 
 const siteUrl = "https://devfest.cz";
@@ -20,13 +23,14 @@ const {
 	noindex = false,
 	bodyClass = "",
 	showFooter = true,
+	ogImage = `${siteUrl}/og-image.jpg`,
+	ogImageAlt = "DevFest.cz 2026 conference banner",
 } = Astro.props;
 
-const ogImage = `${siteUrl}/og-image.jpg`;
+const ogImageType = ogImage.endsWith(".png") ? "image/png" : "image/jpeg";
 // Strip the trailing slash (root would be `https://devfest.cz/`) to match the
 // no-slash URLs the sitemap + JSON-LD use under `trailingSlash: 'never'`.
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, "") || siteUrl;
-const ogImageAlt = "DevFest.cz 2026 conference banner";
 
 // Event schema follows https://developers.google.com/search/docs/appearance/structured-data/event
 // Only rendered on the home page so subpages (privacy, contact, etc.) don't
@@ -261,7 +265,7 @@ const jsonLd = JSON.stringify(
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={ogImage} />
-		<meta property="og:image:type" content="image/jpeg" />
+		<meta property="og:image:type" content={ogImageType} />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta property="og:image:alt" content={ogImageAlt} />
