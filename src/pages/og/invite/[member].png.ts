@@ -50,6 +50,19 @@ const bebasNeue = fontBuffer('BebasNeue-Regular.ttf');
 const jetBrainsMono = fontBuffer('JetBrainsMono-Regular.ttf');
 const specialElite = fontBuffer('SpecialElite-Regular.ttf');
 
+// Same mark `Menu.astro` / `Footer.astro` render — never a second asset, so
+// the card's logo can't drift from the site's. satori can't read a file off
+// disk, so it goes in as a data URI; the source is a 3000×600 master, and
+// resvg frays a 5× downscale, so sharp pre-shrinks to 2× the drawn size
+// (360×72 → drawn at 180×36) before it ever reaches satori.
+const LOGO_WIDTH = 180;
+const LOGO_HEIGHT = 36;
+const logoDataUri = await sharp(join(root, 'src/assets/logo.png'))
+	.resize(LOGO_WIDTH * 2, LOGO_HEIGHT * 2)
+	.png()
+	.toBuffer()
+	.then((buffer) => `data:image/png;base64,${buffer.toString('base64')}`);
+
 // ─── palette (BaseLayout.scss) ───
 const BG = '#050505';
 const RED_HOT = '#FF1111'; // `.red` on a dark ground
@@ -260,16 +273,12 @@ export const GET: APIRoute = async ({ props }) => {
 						},
 						children: [
 							{
-								type: 'div',
+								type: 'img',
 								props: {
-									style: {
-										display: 'flex',
-										fontFamily: 'Bebas Neue',
-										fontSize: '30px',
-										lineHeight: 1,
-										color: CREAM,
-									},
-									children: 'DEVFEST.CZ',
+									src: logoDataUri,
+									width: LOGO_WIDTH,
+									height: LOGO_HEIGHT,
+									style: { display: 'flex', width: `${LOGO_WIDTH}px`, height: `${LOGO_HEIGHT}px` },
 								},
 							},
 							{
