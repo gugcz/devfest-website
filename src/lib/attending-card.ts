@@ -162,11 +162,11 @@ export function readPalette(): Palette {
  * is sized to fit the remainder with margin to spare, so a longer name or a
  * font-metric surprise doesn't run under the band again.
  */
-const HEADER_BLOCK_HEIGHT = 372; // headline + meta label + one Special Elite line + rule, down to the well's top edge
+const HEADER_BLOCK_HEIGHT = 356; // headline + meta label + rule, down to the well's top edge
 /** Side of the square photo well — exported so the React island's pan/zoom
  * math (which never touches the canvas directly) can't drift from the draw. */
-export const WELL_SIZE = 580;
-const NAME_BLOCK_HEIGHT = 140; // well bottom to band top, holding the name — the card's one remaining focal line here
+export const WELL_SIZE = 520;
+const NAME_BLOCK_HEIGHT = 216; // well bottom to band top, holding the name — the card's one remaining focal line here
 const BAND_HEIGHT = 108;
 // HEADER_BLOCK_HEIGHT + WELL_SIZE + NAME_BLOCK_HEIGHT + BAND_HEIGHT === CARD_SIZE
 
@@ -188,7 +188,7 @@ export function drawAttendingCard(
 	logo: HTMLImageElement | null,
 ): void {
 	const size = CARD_SIZE;
-	const { bg, ink, red, accent, rule, panel, monogramInk, muted } = palette;
+	const { bg, ink, red, accent, rule, panel, monogramInk } = palette;
 
 	ctx.clearRect(0, 0, size, size);
 	ctx.fillStyle = bg;
@@ -221,23 +221,15 @@ export function drawAttendingCard(
 	ctx.fillStyle = red;
 	ctx.fillText(word, x, headlineY);
 
-	// Sub-label under the headline — a mono meta line (label role), not prose.
-	const metaY = headlineY + 46;
+	// Sub-label under the headline — a mono meta line, sized to stay legible at
+	// social-feed scale (a 1200px card renders ~500px wide there).
+	const metaY = headlineY + 64;
 	ctx.textAlign = 'center';
-	ctx.font = `500 26px ${fonts.mono}`;
-	ctx.fillStyle = muted;
+	ctx.font = `500 44px ${fonts.mono}`;
+	ctx.fillStyle = ink;
 	ctx.fillText('30 OCT 2026 · PRAGUE', size / 2, metaY);
 
-	// One line of actual reading copy — Special Elite's role on the site is
-	// body/long-form prose, not decoration, so it earns exactly one sentence.
-	const ledeY = metaY + 50;
-	const ledeText = 'One day of talks, workshops and community in Prague.';
-	const ledeSize = fitFontSize(ctx, ledeText, fonts.elite, 30, size - 220, 22);
-	ctx.font = `${ledeSize}px ${fonts.elite}`;
-	ctx.fillStyle = ink;
-	ctx.fillText(ledeText, size / 2, ledeY);
-
-	const ruleY = ledeY + 40;
+	const ruleY = metaY + 56;
 	ctx.strokeStyle = rule;
 	ctx.lineWidth = 2;
 	ctx.beginPath();
@@ -292,7 +284,7 @@ export function drawAttendingCard(
 	// top edge, which is where the role label used to sit) so it still reads
 	// as the main element rather than stranded near the well.
 	const nameText = (data.name.trim() || 'Your name here').toUpperCase();
-	const nameSize = fitFontSize(ctx, nameText, fonts.bebas, 64, size - 200, 36);
+	const nameSize = fitFontSize(ctx, nameText, fonts.bebas, 96, size - 200, 56);
 	ctx.font = `${nameSize}px ${fonts.bebas}`;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'alphabetic';
