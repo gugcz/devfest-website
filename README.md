@@ -267,7 +267,6 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/team` | Organizing team |
 | `/contact` | Contact page |
 | `/faq` | Frequently asked questions |
-| `/attending` | "I'm attending" share-card generator (client-side canvas → PNG) |
 | `/privacy-policy` | GDPR privacy policy |
 | `/newsletter-subscription-thank-you` | Post-signup confirmation |
 | `/thank-you` | Post-purchase confirmation (ti.to "thank you URL") |
