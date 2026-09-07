@@ -8,6 +8,7 @@ import {
 	formatClock,
 	formatMinutes,
 	gridPlacements,
+	idleSpans,
 	isBand,
 	nowState,
 	partitionAgenda,
@@ -33,15 +34,28 @@ const INITIAL: State = { status: 'loading', sessions: [] };
 
 /** 5-minute grid snap + row height (px per snap unit) for the proportional grid.
  *
- * ROW_PX sets how much room a talk gets, and therefore how big its type can be.
- * At 15 a 30-minute talk was 90px tall and its contents needed 98 — already
+ * ROW_REM sets how much room a talk gets, and therefore how big its type can be.
+ * At 15px a 30-minute talk was 90px tall and its contents needed 98 — already
  * clipping, with everything set at the smallest steps on the ramp to try to fit.
- * 26 gives a half-hour talk 156px, which carries the title at a readable size
- * with its time, tags and speakers under it — and, at the short end, leaves a
- * 20-minute lightning talk the 104px its four lines actually measure. At 24 that
- * cell was 96px and clipped its speaker row. */
+ * 1.625rem gives a half-hour talk 156px at the default root, which carries the
+ * title at a readable size with its time, tags and speakers under it — and, at
+ * the short end, leaves a 20-minute talk the 104px its lines actually measure.
+ *
+ * In `rem`, NOT px: the row is the container for text, so it has to grow with
+ * the text. At a 32px root (a 200% text-only zoom) fixed 26px rows left eight
+ * cells overflowing their slot and one with no room for its title at all. */
 const SNAP_MIN = 5;
-const ROW_PX = 26;
+const ROW_REM = 1.625;
+
+/** Below this many minutes a cell has no room for the full stack.
+ *
+ * A 20-minute talk is 4 rows — 104px — and the full cell (time, a two-line Bebas
+ * title, tags, a 26px avatar row) measures 164. The cell is a flex column, so the
+ * title, the only thing in it that can give, was shrinking to 3px: those talks
+ * rendered with NO title at all, just a time and a speaker. Short talks get the
+ * compact stack instead: the time and the title on one line, the speakers under
+ * it, no tags. */
+const COMPACT_SPAN_MIN = 30;
 
 /** Track the width below which the timetable becomes the time-ordered list.
  *
@@ -213,7 +227,7 @@ function AgendaGrid({
 	// One header row (sticky room names) + the timed body rows.
 	const gridStyle = {
 		gridTemplateColumns: `4.25rem repeat(${columns.length}, minmax(9.5rem, 1fr))`,
-		gridTemplateRows: `auto repeat(${totalRows}, ${ROW_PX}px)`,
+		gridTemplateRows: `auto repeat(${totalRows}, ${ROW_REM}rem)`,
 	} as const;
 
 	// Body row for a minutes value (row 1 is the header, body starts at row 2).
@@ -224,6 +238,14 @@ function AgendaGrid({
 	const lastHour = Math.floor(range.end / 60);
 	const ticks: number[] = [];
 	for (let h = firstHour; h <= lastHour; h += 1) ticks.push(h * 60);
+
+	// Dead time — no room has anything on. Hatched, so an unscheduled stretch
+	// reads as the day being quiet rather than as a hole in the sheet.
+	const idle = idleSpans(
+		[...bands, ...columns.flatMap((column) => byRoom.get(column.key) ?? [])],
+		range,
+		placements,
+	);
 
 	// Talks + bands in one time-sorted list so DOM (reading) order matches the
 	// mobile list and screen-reader order, independent of visual placement.
@@ -246,17 +268,40 @@ function AgendaGrid({
 					</div>
 				))}
 
-				{/* The sheet's only ruling: one hairline per hour, behind the
-				    entries. The rooms are separated by the column gap, not by a
-				    vertical rule — a rule tall enough to divide the columns also
-				    ran straight through every full-width band. Decorative: the
-				    times and rooms are in the ticks, the head cells and every
-				    talk's aria-label. */}
+				{/* The sheet's ruling, behind everything (z 0): a hairline down
+				    each room column and one across each hour. Both are closed over
+				    by the entries and by the hatched dead-time strips, which are
+				    opaque — an earlier version left the strips translucent and the
+				    column rule ran straight through every full-width band.
+				    Decorative: the times and rooms are in the ticks, the head cells
+				    and every talk's aria-label. */}
+				{columns.slice(1).map((column, i) => (
+					<div
+						key={`col-${column.key}`}
+						className={s.colRule}
+						style={{ gridColumn: i + 3, gridRow: '2 / -1' }}
+						aria-hidden="true"
+					/>
+				))}
 				{ticks.map((min) => (
 					<div
 						key={`rule-${min}`}
 						className={s.hourRule}
 						style={{ gridColumn: '1 / -1', gridRow: rowFor(min) }}
+						aria-hidden="true"
+					/>
+				))}
+
+				{/* Dead time, hatched across every room. Opaque, so it closes over
+				    the column rules rather than letting them run through it. */}
+				{idle.map((span) => (
+					<div
+						key={`idle-${span.startMin}`}
+						className={s.idle}
+						style={{
+							gridColumn: '2 / -1',
+							gridRow: `${rowFor(span.startMin)} / ${rowFor(span.endMin)}`,
+						}}
 						aria-hidden="true"
 					/>
 				))}
@@ -295,6 +340,34 @@ function AgendaGrid({
 
 					const colIndex = columns.findIndex((c) => c.key === column?.key) + 2;
 					const live = liveIds.has(session.id);
+					const compact = place.spanMin < COMPACT_SPAN_MIN;
+
+					if (compact) {
+						return (
+							<button
+								key={session.id}
+								type="button"
+								className={`${s.cell} ${s.cellCompact} ${live ? s.cellLive : ''}`}
+								style={{ gridColumn: colIndex, gridRow }}
+								onClick={() => onOpen(session)}
+								aria-label={talkLabel(session, column?.label ?? '')}
+								data-agenda-open
+							>
+								<span className={s.cellHead}>
+									<span className={s.cellTime}>{timeRange(session)}</span>
+									<span className={s.cellTitle}>{session.title}</span>
+									<NowBadge live={live} coming={comingUpIds.has(session.id)} />
+								</span>
+								{session.speakers.length > 0 && (
+									<span className={s.cellFoot}>
+										<TalkAvatars session={session} />
+										<span className={s.cellSpeakers}>{speakerNames(session)}</span>
+									</span>
+								)}
+							</button>
+						);
+					}
+
 					return (
 						<button
 							key={session.id}

@@ -1,8 +1,8 @@
-// Agenda timetable. Desktop: a proportional time × room grid — an hour hairline
-// per hour, the room columns parted by a gap rather than a rule, a talk a lit
-// block (not a floating card), and the day's stops struck through as hatched
-// full-width strips. Mobile / single-room: the same open field every other list
-// on the site uses.
+// Agenda timetable. Desktop: a proportional time × room grid ruled by the hour
+// and down each room, where a talk is an opaque panel in its column and every
+// minute nobody is on — a break, a lunch, an unfilled stretch — is struck
+// through as a hatched full-width strip. Mobile / single-room: the same open
+// field every other list on the site uses.
 
 /* ===================== TZ NOTE ===================== */
 .tzNote {
@@ -32,22 +32,51 @@
 	display: grid;
 	position: relative;
 	row-gap: 0;
-	column-gap: 6px;
+	column-gap: 10px;
 	min-width: min-content;
 	padding-bottom: 0.5rem;
 }
 
 /* ---- the sheet's own ruling ---- */
 // The hour hairline is a decorative overlay behind the entries (z 0).
-// Dashed, and fainter than `--rule-soft`: with the vertical rules gone this is
-// the only line crossing an empty stretch, and drawn solid an hour of nothing
-// read as ruled content. It is a tick mark for the numeral beside it, no more.
+// Dashed and faint: it is a tick mark for the numeral beside it, not a line of
+// content. Drawn solid at `--rule-soft` an hour of nothing read as ruled.
 .hourRule {
 	align-self: start;
 	height: 0;
 	border-top: 1px dashed rgba(240, 237, 230, 0.07);
 	pointer-events: none;
 	z-index: 0;
+}
+
+// One hairline BETWEEN the rooms — not one per column, which put a stray rule
+// down the left edge of the sheet. Everything that can sit on top of it (a talk
+// panel, a band, a dead-time strip) is opaque, so it never cuts through content.
+.colRule {
+	border-left: 1px solid var(--rule-soft);
+	pointer-events: none;
+	z-index: 0;
+}
+
+/* ---- dead time ---- */
+// The hatch is the sheet saying "nobody is on". It is the same fill as a band,
+// without the label, and it is opaque so it closes over the ruling underneath.
+.idle,
+.band {
+	background:
+		repeating-linear-gradient(
+			135deg,
+			rgba(240, 237, 230, 0.05) 0,
+			rgba(240, 237, 230, 0.05) 1px,
+			transparent 1px,
+			transparent 8px
+		),
+		var(--panel-lit);
+}
+
+.idle {
+	z-index: 1;
+	pointer-events: none;
 }
 
 // Room names: a mono label on a rule.
@@ -67,14 +96,16 @@
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
 	color: rgba(240, 237, 230, 0.78);
-	background: transparent;
+	// Filled, not transparent: the header is the one row that must stay legible
+	// while the sheet scrolls under it.
+	background: var(--panel);
 	border-bottom: 1px solid var(--rule-strong);
 	padding: 1rem 0.9rem 0.8rem;
 }
 
 .headCorner {
 	grid-column: 1;
-	background: transparent;
+	background: var(--panel);
 	border-bottom: 1px solid var(--rule-strong);
 }
 
@@ -104,19 +135,10 @@
 	z-index: 2;
 	padding: 0.5rem 0.9rem 0.35rem;
 	overflow: hidden;
-	// Hatched, and ruled on ONE edge. The strip is the day stopping, so it is
-	// drawn as struck-through time rather than as another lit block; and its old
-	// bottom rule sat 1px above the next cell's top rule, doubling every
-	// boundary on the sheet.
-	background:
-		repeating-linear-gradient(
-			135deg,
-			rgba(240, 237, 230, 0.03) 0,
-			rgba(240, 237, 230, 0.03) 1px,
-			transparent 1px,
-			transparent 8px
-		),
-		rgba(240, 237, 230, 0.016);
+	// Hatched like dead time (shared fill above) and ruled on ONE edge: a break is
+	// the day stopping, so it is struck through rather than drawn as another
+	// panel. Its old bottom rule sat 1px above the next entry's top rule, which
+	// doubled every boundary on the sheet.
 	border-top: 1px solid var(--rule);
 }
 
@@ -141,10 +163,10 @@
 }
 
 /* ===================== CELL (talk button) ===================== */
-// A talk is a lit block ruled at its START time, running down to its end. Flat:
-// no radius, no four-sided border, no drop shadow. Reached, it lights and its
-// bottom rule draws red. The mark is a TOP rule, never a left spine — a bar
-// down one edge is the shape this language exists to avoid.
+// A talk is an opaque panel filling its slot in the room column, from its start
+// time down to its end. Flat: `--radius` (2px), no drop shadow, and its boundary
+// is a hairline box, not a bar down one edge — a left spine is the shape this
+// language exists to avoid. Reached, it lights and its bottom rule draws red.
 .cell {
 	position: relative;
 	z-index: 2;
@@ -159,10 +181,10 @@
 	color: inherit;
 	cursor: pointer;
 	overflow: hidden;
-	background: rgba(240, 237, 230, 0.032);
-	border: 0;
+	background: var(--panel-2);
+	border: 1px solid var(--rule);
 	border-top: 1px solid var(--rule-strong);
-	border-radius: 0;
+	border-radius: var(--radius);
 	transition: background 0.24s ease, border-color 0.24s ease;
 
 	// Light washes in from the left when the entry is reached.
@@ -232,6 +254,16 @@
 	color: rgba(240, 237, 230, 0.55);
 }
 
+// Nothing in the cell may shrink except the title, and the title clamps rather
+// than collapsing: in a short cell the flex column used to squeeze it to 3px,
+// which rendered a talk with no title at all.
+.cellTime,
+.cellHead,
+.tags,
+.cellFoot {
+	flex-shrink: 0;
+}
+
 .cellTitle {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-card-title);
@@ -246,6 +278,31 @@
 	line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
+}
+
+// A short talk (< 30 min) carries the time and the title on ONE line, with the
+// speakers under it — the full stack does not fit in four rows, and a Bebas
+// title at card size cannot be read on one line of a 104px cell anyway.
+.cellCompact {
+	justify-content: flex-start;
+
+	.cellHead {
+		align-items: baseline;
+		justify-content: flex-start;
+		gap: 0.7rem;
+		min-width: 0;
+	}
+
+	.cellTitle {
+		// The UI step, not a display step: here the title is one line sharing a
+		// row with the time, so it takes the ramp's smallest prose size rather
+		// than the card-title step it uses when it has the cell to itself.
+		font-size: var(--fs-ui);
+		line-height: 1.1;
+		-webkit-line-clamp: 1;
+		line-clamp: 1;
+		min-width: 0;
+	}
 }
 
 .cellSpeakers {

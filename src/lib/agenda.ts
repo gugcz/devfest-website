@@ -225,6 +225,46 @@ export function gridPlacements(sessions: Session[]): Map<string, Placement> {
 	return placements;
 }
 
+/** A stretch of the day with nothing on it in ANY room, in minutes. */
+export interface IdleSpan {
+	startMin: number;
+	endMin: number;
+}
+
+/**
+ * The stretches of `range` that no session occupies — the sheet's dead time.
+ *
+ * The grid draws these hatched, the way it draws a break: on a proportional
+ * timetable an empty half-hour is otherwise indistinguishable from a half-hour
+ * whose talks simply haven't been announced, and the ruling made free time read
+ * as scheduled. A room sitting idle while another room runs a talk is NOT dead
+ * time — only a span where the whole day is quiet counts.
+ */
+export function idleSpans(
+	sessions: Session[],
+	range: { start: number; end: number },
+	placements: Map<string, Placement>,
+): IdleSpan[] {
+	const busy: IdleSpan[] = [];
+	for (const session of sessions) {
+		const place = placements.get(session.id);
+		if (!place) continue;
+		busy.push({ startMin: place.startMin, endMin: place.endMin });
+	}
+	busy.sort((a, b) => a.startMin - b.startMin);
+
+	const spans: IdleSpan[] = [];
+	let cursor = range.start;
+	for (const span of busy) {
+		if (span.startMin > cursor) spans.push({ startMin: cursor, endMin: Math.min(span.startMin, range.end) });
+		if (span.endMin > cursor) cursor = span.endMin;
+		if (cursor >= range.end) break;
+	}
+	if (cursor < range.end) spans.push({ startMin: cursor, endMin: range.end });
+
+	return spans.filter((span) => span.endMin > span.startMin);
+}
+
 /**
  * The day's time bounds across every timed session (bands included), or `null`
  * when nothing is scheduled. `start` is the earliest start; `end` is the latest
