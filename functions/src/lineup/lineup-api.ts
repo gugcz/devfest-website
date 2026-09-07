@@ -21,10 +21,22 @@ import { firestore } from '../lib/admin.js';
 import { cachedJsonEndpoint } from '../lib/cached-endpoint.js';
 import { CACHED_ENDPOINT } from '../options.js';
 
-// Edge cache (shared): 1h fresh, then served stale for a day while revalidating —
-// matches the daily cadence of `refreshSessionizeScheduled`. `max-age=0` keeps browsers
-// revalidating so a redeploy/purge shows promptly.
-const CACHE_CONTROL = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400';
+// Edge cache (shared): 1h fresh, then a SHORT stale window while revalidating.
+//
+// The stale window used to be a day (`stale-while-revalidate=86400`), on the
+// reasoning that `refreshSessionizeScheduled` only runs daily. That backfired the
+// first time the schedule landed: Hosting `Vary`s on `accept-encoding`, so the
+// compressed variant every real browser asks for is its own cache entry, and that
+// entry kept being served stale — the site showed a lineup with no times (`/agenda`
+// rendered its "schedule lands closer to the event" empty state) while the origin
+// had the full timetable. A day-long stale window means any sync — a new talk, a
+// room change, the schedule itself — can be invisible for a day with nothing in the
+// logs to show for it, and no way to force it out but a hosting redeploy.
+//
+// 5 minutes still absorbs the revalidation burst (that is what the in-instance memo
+// below is for) and keeps the edge answering essentially every request, but bounds
+// how long a stale lineup can survive. `max-age=0` keeps browsers revalidating.
+const CACHE_CONTROL = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=300';
 
 // In-instance memo TTL. Deliberately short: the CDN `s-maxage` above is the real
 // cache, this only stops a warm instance re-reading Firestore for every
