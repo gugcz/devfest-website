@@ -40,8 +40,8 @@ const INITIAL: State = { status: 'loading', sessions: [] };
  * At 15px a 30-minute talk was 90px tall and its contents needed 98 — already
  * clipping, with everything set at the smallest steps on the ramp to try to fit.
  * 1.625rem gives a half-hour talk 156px at the default root, which carries the
- * title at a readable size with its time, tags and speakers under it — and, at
- * the short end, leaves a 20-minute talk the 104px its lines actually measure.
+ * title at a readable size with its time, tags and speakers under it. It is the
+ * row's MINIMUM: a row grows past it when the talk in it needs the space.
  *
  * In `rem`, NOT px: the row is the container for text, so it has to grow with
  * the text. At a 32px root (a 200% text-only zoom) fixed 26px rows left eight
@@ -57,22 +57,6 @@ const ROW_REM = 1.625;
  * rows is that one line plus its padding. Talks stay proportional — the point of
  * the sheet is comparing them. */
 const NON_TALK_ROWS = 2;
-
-/** Below this many minutes a cell has no room for the full stack.
- *
- * A 20-minute talk is 4 rows — 104px — and the full cell (time, a two-line Bebas
- * title, tags, a 26px avatar row) measures 164. The cell is a flex column, so the
- * title, the only thing in it that can give, was shrinking to 3px: those talks
- * rendered with NO title at all, just a time and a speaker. Short talks get the
- * compact stack instead: the time and the title on one line, the speakers under
- * it, no tags. */
-const COMPACT_SPAN_MIN = 30;
-
-/** Below this, the meta line cannot carry a 26px avatar row: a 15-minute cell is
- * 78px, and the title line plus that row measures 86. Those cells keep the time,
- * the title and the topic; the speakers are in the sheet the cell opens, and in
- * its aria-label. */
-const TITLE_ONLY_SPAN_MIN = 20;
 
 /** Track the width below which the timetable becomes the time-ordered list.
  *
@@ -253,7 +237,11 @@ function AgendaGrid({
 	// One header row (sticky room names) + the timed body rows.
 	const gridStyle = {
 		gridTemplateColumns: `4.25rem repeat(${columns.length}, minmax(9.5rem, 1fr))`,
-		gridTemplateRows: `auto repeat(${scale.totalRows}, ${ROW_REM}rem)`,
+		// `minmax(…, auto)`, not a fixed height: the row is the container for a
+		// talk's title, and a title is never cut to fit its slot. A 20-minute talk
+		// whose title runs to three lines grows the rows it spans, and because
+		// every column shares those rows the tracks stay aligned.
+		gridTemplateRows: `auto repeat(${scale.totalRows}, minmax(${ROW_REM}rem, auto))`,
 	} as const;
 
 	// Hour ticks down the time gutter — never one inside a compressed strip,
@@ -358,39 +346,6 @@ function AgendaGrid({
 
 					const colIndex = columns.findIndex((c) => c.key === column?.key) + 2;
 					const live = liveIds.has(session.id);
-					const compact = place.spanMin < COMPACT_SPAN_MIN;
-
-					if (compact) {
-						return (
-							<button
-								key={session.id}
-								type="button"
-								className={`${s.cell} ${s.cellCompact} ${live ? s.cellLive : ''}`}
-								style={{ gridColumn: colIndex, gridRow }}
-								onClick={() => onOpen(session)}
-								aria-label={talkLabel(session, column?.label ?? '')}
-								data-agenda-open
-							>
-								<span className={s.cellHead}>
-									<span className={s.cellTime}>{timeRange(session)}</span>
-									<span className={s.cellTitle}>{session.title}</span>
-									<NowBadge live={live} coming={comingUpIds.has(session.id)} />
-								</span>
-								{/* One meta line: the topic always, the speakers when the cell
-								    is tall enough to carry a 26px avatar row. */}
-								<span className={s.cellFoot}>
-									<TalkTags session={session} />
-									{place.spanMin >= TITLE_ONLY_SPAN_MIN && session.speakers.length > 0 && (
-										<>
-											<TalkAvatars session={session} />
-											<span className={s.cellSpeakers}>{speakerNames(session)}</span>
-										</>
-									)}
-								</span>
-							</button>
-						);
-					}
-
 					return (
 						<button
 							key={session.id}

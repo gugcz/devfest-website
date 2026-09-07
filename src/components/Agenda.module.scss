@@ -271,52 +271,9 @@
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
 	color: var(--color-text);
-	// Two lines, not three: a third line is a fifth of a half-hour cell and pushes
-	// the speakers out of every short talk.
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-
-// A short talk (< 30 min) carries the time and the title on ONE line, with the
-// speakers under it — the full stack does not fit in four rows, and a Bebas
-// title at card size cannot be read on one line of a 104px cell anyway.
-.cellCompact {
-	justify-content: flex-start;
-
-	.cellHead {
-		align-items: baseline;
-		justify-content: flex-start;
-		gap: 0.7rem;
-		min-width: 0;
-	}
-
-	// Same step as a full cell's title — a talk does not change size because it
-	// is short. It gets one line here instead of two, and truncates.
-	.cellTitle {
-		-webkit-line-clamp: 1;
-		line-clamp: 1;
-		min-width: 0;
-	}
-
-	// Topic and speakers share ONE line, and it does not wrap: a second line of
-	// meta is 16px the cell does not have.
-	.cellFoot {
-		gap: 0.75rem;
-		overflow: hidden;
-	}
-
-	.tags {
-		flex-wrap: nowrap;
-		min-width: 0;
-		overflow: hidden;
-	}
-
-	.tag {
-		white-space: nowrap;
-	}
+	// NOT clamped. The rows grow to their content (see `gridTemplateRows`), so a
+	// title that runs long takes the lines it needs instead of being cut off
+	// mid-phrase — a truncated talk title is the one thing a timetable must not do.
 }
 
 .cellSpeakers {
