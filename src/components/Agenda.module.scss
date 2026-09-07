@@ -93,12 +93,15 @@
 
 /* ===================== BAND (break / lunch / keynote) ===================== */
 // A band is the whole day stopping: a full-width strip, ruled top and bottom.
+// `flex-start`, not `center`: a band is placed at its start time, but it spans
+// its whole length, so a centred label on an 80-minute lunch prints 40 minutes
+// below the hairline it belongs to and reads as the wrong slot.
 .band {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 1.1rem;
 	z-index: 2;
-	padding: 0.35rem 0.9rem;
+	padding: 0.5rem 0.9rem 0.35rem;
 	overflow: hidden;
 	background: rgba(240, 237, 230, 0.022);
 	border-top: 1px solid var(--rule);
@@ -138,7 +141,7 @@
 	gap: 0.35rem;
 	min-height: 0;
 	margin: 0;
-	padding: 0.7rem 0.9rem 0.85rem;
+	padding: 0.7rem 0.9rem 0.7rem;
 	text-align: left;
 	font: inherit;
 	color: inherit;

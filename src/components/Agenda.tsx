@@ -7,12 +7,14 @@ import {
 	eventDateISO,
 	formatClock,
 	formatMinutes,
+	gridPlacements,
 	isBand,
 	nowState,
 	partitionAgenda,
 	placement,
 	roomKey,
 	type AgendaPartition,
+	type Placement,
 } from '../lib/agenda';
 import { fetchAgenda } from '../lib/lineup';
 import SessionDetail from './SessionDetail';
@@ -34,10 +36,12 @@ const INITIAL: State = { status: 'loading', sessions: [] };
  * ROW_PX sets how much room a talk gets, and therefore how big its type can be.
  * At 15 a 30-minute talk was 90px tall and its contents needed 98 — already
  * clipping, with everything set at the smallest steps on the ramp to try to fit.
- * 24 gives a half-hour talk 144px, which carries the title at a readable size
- * with its time, tags and speakers under it. */
+ * 26 gives a half-hour talk 156px, which carries the title at a readable size
+ * with its time, tags and speakers under it — and, at the short end, leaves a
+ * 20-minute lightning talk the 104px its four lines actually measure. At 24 that
+ * cell was 96px and clipped its speaker row. */
 const SNAP_MIN = 5;
-const ROW_PX = 24;
+const ROW_PX = 26;
 
 /** Track the width below which the timetable becomes the time-ordered list.
  *
@@ -187,6 +191,7 @@ function NowBadge({ live, coming }: { live: boolean; coming: boolean }) {
 // parallel tracks are different rooms). Add it only if real data ever overlaps.
 function AgendaGrid({
 	partition,
+	placements,
 	range,
 	liveIds,
 	comingUpIds,
@@ -194,6 +199,8 @@ function AgendaGrid({
 	onOpen,
 }: {
 	partition: AgendaPartition;
+	/** Layout placements with the trailing band capped (see `gridPlacements`). */
+	placements: Map<string, Placement>;
 	range: { start: number; end: number };
 	liveIds: Set<string>;
 	comingUpIds: Set<string>;
@@ -273,7 +280,7 @@ function AgendaGrid({
 				))}
 
 				{placed.map(({ kind, session, column }) => {
-					const place = placement(session);
+					const place = placements.get(session.id);
 					if (!place) return null;
 					const rowStart = rowFor(place.startMin);
 					const rowSpan = Math.max(1, Math.round(place.spanMin / SNAP_MIN));
@@ -424,6 +431,7 @@ export default function Agenda() {
 	}, []);
 
 	const partition = useMemo(() => partitionAgenda(state.sessions), [state.sessions]);
+	const placements = useMemo(() => gridPlacements(state.sessions), [state.sessions]);
 	const range = useMemo(() => dayRange(state.sessions), [state.sessions]);
 	// Event-day "now" line + live/coming-up badges (hooks must run before the
 	// early returns below).
@@ -469,6 +477,7 @@ export default function Agenda() {
 			) : (
 				<AgendaGrid
 					partition={partition}
+					placements={placements}
 					range={range}
 					liveIds={now.liveIds}
 					comingUpIds={now.comingUpIds}

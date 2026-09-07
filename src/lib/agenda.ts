@@ -20,8 +20,19 @@ import type { Session } from './sessions';
 
 /** Assumed length of a session whose `endsAt` is missing or not after its start. */
 const FALLBACK_DURATION_MIN = 30;
+const MINUTES_PER_DAY = 24 * 60;
 /** Floor on a rendered span so a lightning talk stays tall enough to read/tap. */
 const MIN_SPAN_MIN = 15;
+/**
+ * Ceiling on a TRAILING band — one that starts after everything else on the day
+ * has finished (the afterparty, 18:30–00:00). The grid is proportional, so
+ * placed at its true length that band adds five and a half hours of empty ruled
+ * sheet below the last talk and, being flex-centred, floats its own label in the
+ * middle of that void. Capped, the day ends where the day ends; the strip still
+ * prints its real range. Only trailing bands are capped — shortening lunch would
+ * open a gap that reads as free time.
+ */
+const TRAILING_BAND_SPAN_MIN = 30;
 
 /** Label for the column holding talks that are timed but have no room at all. */
 const ROOM_TBA = 'Room TBA';
@@ -103,10 +114,10 @@ export function parseLocalMinutes(iso: string): number | null {
 	return pragueParts(iso)?.minutes ?? null;
 }
 
-/** Wall-clock label (`09:00`) for minutes-from-midnight. Wraps past midnight, so
- * the 1440 an after-midnight end carries reads `00:00`, not `24:00`. */
+/** Wall-clock label (`09:00`) for minutes-from-midnight. Past-midnight values
+ * wrap (the afterparty's 1440 is `00:00`, not `24:00`). */
 export function formatMinutes(total: number): string {
-	const wrapped = ((total % 1440) + 1440) % 1440;
+	const wrapped = ((total % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
 	const hours = Math.floor(wrapped / 60);
 	const minutes = wrapped % 60;
 	return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
@@ -150,14 +161,22 @@ export interface Placement {
  * the rendered span is floored at {@link MIN_SPAN_MIN}.
  */
 export function placement(session: Session): Placement | null {
-	const startMin = parseLocalMinutes(session.startsAt);
-	if (startMin === null) return null;
-	const rawEnd = parseLocalMinutes(session.endsAt);
-	// An end at or before the start is the afterparty running past midnight, so
-	// it belongs on the next day rather than being thrown away for the 30-minute
-	// fallback — which is what cut the party to half an hour on the sheet.
+	const start = pragueParts(session.startsAt);
+	if (start === null) return null;
+	const end = pragueParts(session.endsAt);
+
+	// An end past midnight (the afterparty finishes at 00:00) is a SMALLER
+	// minutes-from-midnight than its start, which read as "no duration" and
+	// silently shrank the session to the fallback. Carry the day difference so
+	// the end stays after the start; `formatMinutes` wraps it back for display.
+	let rawEnd = end?.minutes ?? null;
+	if (end !== null && rawEnd !== null && rawEnd <= start.minutes && end.date > start.date) {
+		rawEnd += MINUTES_PER_DAY;
+	}
+
+	const startMin = start.minutes;
 	const endMin =
-		rawEnd === null ? startMin + FALLBACK_DURATION_MIN : rawEnd > startMin ? rawEnd : rawEnd + 1440;
+		rawEnd !== null && rawEnd > startMin ? rawEnd : startMin + FALLBACK_DURATION_MIN;
 	const spanMin = Math.max(MIN_SPAN_MIN, endMin - startMin);
 	return { startMin, endMin, spanMin };
 }
@@ -172,16 +191,50 @@ export function byStart(a: Session, b: Session): number {
 }
 
 /**
+ * Layout placements for the proportional grid, keyed by session id — the same
+ * as {@link placement} except that a TRAILING band is capped (see
+ * {@link TRAILING_BAND_SPAN_MIN}). Untimed sessions are absent.
+ */
+export function gridPlacements(sessions: Session[]): Map<string, Placement> {
+	const placements = new Map<string, Placement>();
+	for (const session of sessions) {
+		const place = placement(session);
+		if (place) placements.set(session.id, place);
+	}
+
+	for (const session of sessions) {
+		const place = placements.get(session.id);
+		if (!place || !isBand(session) || place.spanMin <= TRAILING_BAND_SPAN_MIN) continue;
+
+		// Trailing = nothing else on the day is still running when it starts.
+		let othersEnd = Number.NEGATIVE_INFINITY;
+		for (const other of sessions) {
+			if (other.id === session.id) continue;
+			const otherPlace = placements.get(other.id);
+			if (otherPlace && otherPlace.endMin > othersEnd) othersEnd = otherPlace.endMin;
+		}
+		if (place.startMin < othersEnd) continue;
+
+		placements.set(session.id, {
+			...place,
+			endMin: place.startMin + TRAILING_BAND_SPAN_MIN,
+			spanMin: TRAILING_BAND_SPAN_MIN,
+		});
+	}
+
+	return placements;
+}
+
+/**
  * The day's time bounds across every timed session (bands included), or `null`
  * when nothing is scheduled. `start` is the earliest start; `end` is the latest
- * layout end (fallback-adjusted).
+ * layout end — from {@link gridPlacements}, so a capped trailing band shortens
+ * the sheet instead of stretching it.
  */
 export function dayRange(sessions: Session[]): { start: number; end: number } | null {
 	let start = Number.POSITIVE_INFINITY;
 	let end = Number.NEGATIVE_INFINITY;
-	for (const session of sessions) {
-		const place = placement(session);
-		if (!place) continue;
+	for (const place of gridPlacements(sessions).values()) {
 		if (place.startMin < start) start = place.startMin;
 		if (place.endMin > end) end = place.endMin;
 	}
