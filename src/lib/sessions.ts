@@ -39,8 +39,12 @@ export interface Session {
 	startsAt: string;
 	/** ISO 8601 end; may be empty before the agenda is scheduled. */
 	endsAt: string;
-	/** Room name; may be empty before the agenda is scheduled. */
+	/** Room name; may be empty — Sessionize leaves it blank on a scheduled
+	 * session and only carries the id (see `roomId`). */
 	room: string;
+	/** Sessionize room id. Present on every scheduled session even when `room`
+	 * is blank, so it — not the name — is what groups the agenda's columns. */
+	roomId: string;
 	/** Breaks / lunch / registration — carry no speakers; filtered from the grid. */
 	isServiceSession: boolean;
 	/** Keynote / plenary — a single-track session everyone attends. Rendered as a
@@ -104,6 +108,7 @@ export function sessionFromDoc(id: string, data: Record<string, unknown>): Sessi
 		startsAt: asStr(data.startsAt),
 		endsAt: asStr(data.endsAt),
 		room: asStr(data.room),
+		roomId: asStr(data.roomId),
 		isServiceSession: data.isServiceSession === true,
 		isPlenumSession: data.isPlenumSession === true,
 		speakers,
