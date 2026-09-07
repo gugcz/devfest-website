@@ -14,7 +14,9 @@
  * Two cross-referenced collections are mirrored: `speakers` (each carrying
  * `sessions[]`) and `sessions` (each carrying `speakers[]`). Sessions exist only
  * in the All view; a Speakers-view fallback yields an empty session set, which the
- * delete-guard preserves rather than wipes. `rooms` is still ignored.
+ * delete-guard preserves rather than wipes. The payload's `rooms[]` is consumed
+ * only as an id → name lookup (`buildRoomMap`); it is not mirrored as its own
+ * collection.
  *
  * The fetch/validate/normalize and delete-guard logic is pure and exported so the
  * highest-risk path — a truncated response must never wipe a live collection —
@@ -78,7 +80,8 @@ export interface SessionizeSession {
 	[key: string]: unknown;
 }
 
-/** The All-data envelope. Only `speakers` + `sessions` are consumed today. */
+/** The All-data envelope. `rooms` + `categories` are consumed as id → label
+ * lookups for the sessions; `questions` is unused. */
 export interface SessionizeAll {
 	speakers?: unknown;
 	sessions?: unknown;
@@ -583,6 +586,32 @@ function resolveSessionSpeakers(
 	return out;
 }
 
+/**
+ * Build a roomId → room name map from the All payload's top-level `rooms[]`
+ * (`[{ id, name, sort }]`).
+ *
+ * A scheduled session carries `roomId` and, depending on how the event is set
+ * up, an EMPTY `room` string — which is what our own event ships. Without this
+ * lookup every talk persisted with `room: ''`, so `/agenda` saw a single
+ * Room-TBA column and fell back to the stacked list on desktop instead of
+ * drawing the time × room grid.
+ */
+export function buildRoomMap(payload: unknown): Map<string, string> {
+	const map = new Map<string, string>();
+	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
+	const rooms = (payload as SessionizeAll).rooms;
+	if (!Array.isArray(rooms)) return map;
+	for (const room of rooms) {
+		if (typeof room !== 'object' || room === null) continue;
+		const record = room as Record<string, unknown>;
+		if (record.id == null) continue;
+		const name = asString(record.name) || asString(record.title);
+		if (!name) continue;
+		map.set(String(record.id), name);
+	}
+	return map;
+}
+
 /** A category item resolved to its group title + label. */
 interface CategoryItem {
 	group: string;
@@ -661,8 +690,8 @@ function resolveSessionCategories(
 /**
  * Project one raw session into the persisted doc shape. `order` is the array
  * index (stable tiebreaker for `startsAt` sorts); missing scalars become empty
- * strings / false so the doc shape stays stable. `speakers` / `categoryItems`
- * are resolved via `speakerMap` / `categoryMap`; the raw `questionAnswers`
+ * strings / false so the doc shape stays stable. `speakers` / `categoryItems` /
+ * `roomId` are resolved via `speakerMap` / `categoryMap` / `roomMap`; the raw `questionAnswers`
  * array is dropped (not rendered, and this doc is public).
  */
 export function normalizeSession(
@@ -670,7 +699,9 @@ export function normalizeSession(
 	index: number,
 	speakerMap: Map<string, SpeakerSummary>,
 	categoryMap: Map<string, CategoryItem>,
+	roomMap: Map<string, string> = new Map(),
 ): SessionDoc {
+	const roomId = raw.roomId != null ? String(raw.roomId).trim() : '';
 	return {
 		id: String(raw.id).trim(),
 		order: index,
@@ -678,8 +709,9 @@ export function normalizeSession(
 		description: asString(raw.description),
 		startsAt: asString(raw.startsAt),
 		endsAt: asString(raw.endsAt),
-		room: asString(raw.room),
-		roomId: raw.roomId != null ? String(raw.roomId).trim() : '',
+		// The inline name when Sessionize sends one, else the `rooms[]` lookup.
+		room: asString(raw.room) || roomMap.get(roomId) || '',
+		roomId,
 		isServiceSession: raw.isServiceSession === true,
 		isPlenumSession: raw.isPlenumSession === true,
 		status: asString(raw.status),
@@ -694,8 +726,11 @@ export function normalizeSessions(
 	raw: SessionizeSession[],
 	speakerMap: Map<string, SpeakerSummary> = new Map(),
 	categoryMap: Map<string, CategoryItem> = new Map(),
+	roomMap: Map<string, string> = new Map(),
 ): SessionDoc[] {
-	return raw.map((session, index) => normalizeSession(session, index, speakerMap, categoryMap));
+	return raw.map((session, index) =>
+		normalizeSession(session, index, speakerMap, categoryMap, roomMap),
+	);
 }
 
 /**

@@ -3,12 +3,18 @@
  * here rather than in the island because getting the zone wrong silently shifts
  * the whole schedule.
  *
- * Sessionize emits `startsAt`/`endsAt` as event-LOCAL ISO strings
- * (`2026-10-30T09:00:00`, no offset), so the wall-clock `HH:MM` is read straight
- * off the string and never through a `Date`, which would reinterpret a naive
- * string in the visitor's zone. A true cross-zone value would instead need
- * `Intl.DateTimeFormat` pinned to `Europe/Prague`. The event is single-day, so
- * minutes-from-midnight is enough — the calendar date is not used for placement.
+ * Two shapes come off the wire and both must land on the Prague wall clock:
+ *
+ * - a NAIVE event-local string (`2026-10-30T09:00:00`, no offset) — read the
+ *   `HH:MM` straight off the string, never through a `Date`, which would
+ *   reinterpret it in the visitor's zone;
+ * - a ZONED string (`2026-10-30T08:00:00Z`, or an explicit offset) — an instant,
+ *   which must go through `Intl.DateTimeFormat` pinned to `Europe/Prague`.
+ *   Reading `HH:MM` off one of these is what put the whole day an hour early:
+ *   the schedule is stored in UTC, so `08:00Z` rendered as 08:00 instead of the
+ *   09:00 the room actually starts at.
+ *
+ * The event is single-day, so minutes-from-midnight is enough for placement.
  */
 import type { Session } from './sessions';
 
@@ -21,20 +27,57 @@ const MIN_SPAN_MIN = 15;
 const ROOM_TBA = 'Room TBA';
 
 const TIME_RE = /T(\d{2}):(\d{2})/;
+const DATE_RE = /^(\d{4}-\d{2}-\d{2})/;
+/** Trailing `Z` or `±HH[:]MM` — the string is an instant, not a wall clock. */
+const ZONED_RE = /(?:Z|[+-]\d{2}:?\d{2})$/i;
+
+const PRAGUE_PARTS = new Intl.DateTimeFormat('en-CA', {
+	timeZone: 'Europe/Prague',
+	year: 'numeric',
+	month: '2-digit',
+	day: '2-digit',
+	hour: '2-digit',
+	minute: '2-digit',
+	hourCycle: 'h23',
+});
 
 /**
- * Minutes from midnight for the wall-clock time in an event-local ISO string,
- * or `null` when the string is empty / unparseable. Reads the `HH:MM` directly
- * (no `Date`) so the result is the Prague wall-clock regardless of the
- * visitor's zone.
+ * The Prague wall clock for an ISO string: `{ date: 'YYYY-MM-DD', minutes }`,
+ * or `null` when the string is empty / unparseable. A naive string is already a
+ * wall clock and is read as-is; a zoned one is converted (see the module header).
+ */
+function pragueParts(iso: string): { date: string; minutes: number } | null {
+	if (!iso) return null;
+
+	if (ZONED_RE.test(iso)) {
+		const at = new Date(iso);
+		if (Number.isNaN(at.getTime())) return null;
+		const parts = PRAGUE_PARTS.formatToParts(at);
+		const get = (type: string) => parts.find((part) => part.type === type)?.value ?? '';
+		const hours = Number(get('hour'));
+		const minutes = Number(get('minute'));
+		if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
+		return {
+			date: `${get('year')}-${get('month')}-${get('day')}`,
+			minutes: hours * 60 + minutes,
+		};
+	}
+
+	const time = TIME_RE.exec(iso);
+	if (!time) return null;
+	const hours = Number(time[1]);
+	const minutes = Number(time[2]);
+	if (hours > 23 || minutes > 59) return null;
+	return { date: DATE_RE.exec(iso)?.[1] ?? '', minutes: hours * 60 + minutes };
+}
+
+/**
+ * Minutes from midnight of the Prague wall clock for an ISO string, or `null`
+ * when the string is empty / unparseable — the visitor's own zone never enters
+ * into it.
  */
 export function parseLocalMinutes(iso: string): number | null {
-	const match = TIME_RE.exec(iso);
-	if (!match) return null;
-	const hours = Number(match[1]);
-	const minutes = Number(match[2]);
-	if (hours > 23 || minutes > 59) return null;
-	return hours * 60 + minutes;
+	return pragueParts(iso)?.minutes ?? null;
 }
 
 /** Wall-clock label (`09:00`) for minutes-from-midnight. */
@@ -183,12 +226,14 @@ export function partitionAgenda(sessions: Session[]): AgendaPartition {
 	return { columns: finalColumns, bands, byRoom, roomTba, unscheduled };
 }
 
-/** Event date (`YYYY-MM-DD`) taken from the first timed session, or '' when
- * nothing is scheduled. Single-day assumption (see the module header). */
+/** Event date (`YYYY-MM-DD`, Prague) taken from the first timed session, or ''
+ * when nothing is scheduled. Single-day assumption (see the module header).
+ * Goes through `pragueParts` so a UTC-stored evening slot can't report the
+ * wrong calendar day and silently kill the live line. */
 export function eventDateISO(sessions: Session[]): string {
 	for (const session of sessions) {
-		const match = /^(\d{4}-\d{2}-\d{2})/.exec(session.startsAt);
-		if (match) return match[1];
+		const date = pragueParts(session.startsAt)?.date;
+		if (date) return date;
 	}
 	return '';
 }
