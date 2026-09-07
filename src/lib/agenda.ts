@@ -23,8 +23,31 @@ const FALLBACK_DURATION_MIN = 30;
 /** Floor on a rendered span so a lightning talk stays tall enough to read/tap. */
 const MIN_SPAN_MIN = 15;
 
-/** Column key used for talks that are timed but have no room assigned yet. */
+/** Label for the column holding talks that are timed but have no room at all. */
 const ROOM_TBA = 'Room TBA';
+
+/**
+ * A grid column: the value talks are grouped by, and what heads the column.
+ *
+ * Grouping is by `roomId`, not by the room NAME. Sessionize sends a scheduled
+ * session an empty `room` and only the id, so keying on the name collapsed the
+ * whole day into one Room-TBA column — which is what made `/agenda` fall back
+ * to the stacked list on desktop. The name is used for the heading whenever
+ * Sessionize does send one; otherwise the columns are numbered in the order
+ * they first appear, which at least tells a visitor the tracks run in parallel.
+ */
+export interface AgendaColumn {
+	key: string;
+	label: string;
+}
+
+/**
+ * The value a talk is grouped by: its room id, falling back to the room name
+ * for data that carries a name and no id. `''` means no room at all.
+ */
+export function roomKey(session: Session): string {
+	return session.roomId.trim() || session.room.trim();
+}
 
 const TIME_RE = /T(\d{2}):(\d{2})/;
 const DATE_RE = /^(\d{4}-\d{2}-\d{2})/;
@@ -80,10 +103,12 @@ export function parseLocalMinutes(iso: string): number | null {
 	return pragueParts(iso)?.minutes ?? null;
 }
 
-/** Wall-clock label (`09:00`) for minutes-from-midnight. */
+/** Wall-clock label (`09:00`) for minutes-from-midnight. Wraps past midnight, so
+ * the 1440 an after-midnight end carries reads `00:00`, not `24:00`. */
 export function formatMinutes(total: number): string {
-	const hours = Math.floor(total / 60);
-	const minutes = total % 60;
+	const wrapped = ((total % 1440) + 1440) % 1440;
+	const hours = Math.floor(wrapped / 60);
+	const minutes = wrapped % 60;
 	return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
@@ -98,9 +123,16 @@ function isTimed(session: Session): boolean {
 	return parseLocalMinutes(session.startsAt) !== null;
 }
 
-/** True when a session renders as a full-width band (break / lunch / keynote). */
+/**
+ * True when a session renders as a full-width band (break / lunch / keynote).
+ *
+ * A plenum session always is one. A service session only is one when it has no
+ * room: a room-scoped placeholder ("TBD Talk" held in one track) is a cell in
+ * its own column — as a band it would stripe across the sheet and bury the real
+ * talk running opposite it.
+ */
 export function isBand(session: Session): boolean {
-	return session.isServiceSession || session.isPlenumSession;
+	return session.isPlenumSession || (session.isServiceSession && !roomKey(session));
 }
 
 /** A session placed on the day's timeline (minutes from midnight). */
@@ -121,7 +153,11 @@ export function placement(session: Session): Placement | null {
 	const startMin = parseLocalMinutes(session.startsAt);
 	if (startMin === null) return null;
 	const rawEnd = parseLocalMinutes(session.endsAt);
-	const endMin = rawEnd !== null && rawEnd > startMin ? rawEnd : startMin + FALLBACK_DURATION_MIN;
+	// An end at or before the start is the afterparty running past midnight, so
+	// it belongs on the next day rather than being thrown away for the 30-minute
+	// fallback — which is what cut the party to half an hour on the sheet.
+	const endMin =
+		rawEnd === null ? startMin + FALLBACK_DURATION_MIN : rawEnd > startMin ? rawEnd : rawEnd + 1440;
 	const spanMin = Math.max(MIN_SPAN_MIN, endMin - startMin);
 	return { startMin, endMin, spanMin };
 }
@@ -153,30 +189,34 @@ export function dayRange(sessions: Session[]): { start: number; end: number } | 
 }
 
 /**
- * Distinct room names for the grid's columns, in first-seen order across timed,
- * non-band talks sorted by start. Talks with no room are excluded (they get the
- * {@link ROOM_TBA} column instead, added by {@link partitionAgenda}).
+ * The grid's columns, in first-seen order across timed, non-band talks sorted
+ * by start. Room-less talks are excluded (they get the {@link ROOM_TBA} column
+ * instead, added by {@link partitionAgenda}). A column with no name from
+ * Sessionize is numbered by its position.
  */
-function roomColumns(sessions: Session[]): string[] {
-	const seen = new Set<string>();
-	const columns: string[] = [];
+function roomColumns(sessions: Session[]): AgendaColumn[] {
+	const labels = new Map<string, string>();
 	for (const session of [...sessions].sort(byStart)) {
 		if (!isTimed(session) || isBand(session)) continue;
-		const room = session.room.trim();
-		if (!room || seen.has(room)) continue;
-		seen.add(room);
-		columns.push(room);
+		const key = roomKey(session);
+		if (!key) continue;
+		const name = session.room.trim();
+		// First seen wins the slot; a later name fills in for an unnamed column.
+		if (!labels.has(key) || (name && !labels.get(key))) labels.set(key, name);
 	}
-	return columns;
+	return Array.from(labels, ([key, name], index) => ({
+		key,
+		label: name || `Room ${index + 1}`,
+	}));
 }
 
 /** The agenda split into its render groups. */
 export interface AgendaPartition {
 	/** Column order for the grid (real rooms, then a `Room TBA` column if used). */
-	columns: string[];
+	columns: AgendaColumn[];
 	/** Timed service / plenum sessions (full-width bands), sorted by start. */
 	bands: Session[];
-	/** Timed talks per room column, each list sorted by start. */
+	/** Timed talks per room column, keyed by the column's `key`, sorted by start. */
 	byRoom: Map<string, Session[]>;
 	/** Timed talks with no room, sorted by start (rendered in the TBA column). */
 	roomTba: Session[];
@@ -192,7 +232,7 @@ export interface AgendaPartition {
 export function partitionAgenda(sessions: Session[]): AgendaPartition {
 	const columns = roomColumns(sessions);
 	const byRoom = new Map<string, Session[]>();
-	for (const room of columns) byRoom.set(room, []);
+	for (const column of columns) byRoom.set(column.key, []);
 
 	const bands: Session[] = [];
 	const roomTba: Session[] = [];
@@ -207,9 +247,9 @@ export function partitionAgenda(sessions: Session[]): AgendaPartition {
 			bands.push(session);
 			continue;
 		}
-		const room = session.room.trim();
-		if (room) {
-			byRoom.get(room)?.push(session);
+		const key = roomKey(session);
+		if (key) {
+			byRoom.get(key)?.push(session);
 		} else {
 			roomTba.push(session);
 		}
@@ -220,7 +260,8 @@ export function partitionAgenda(sessions: Session[]): AgendaPartition {
 	unscheduled.sort((a, b) => a.order - b.order);
 	for (const list of byRoom.values()) list.sort(byStart);
 
-	const finalColumns = roomTba.length > 0 ? [...columns, ROOM_TBA] : columns;
+	const finalColumns =
+		roomTba.length > 0 ? [...columns, { key: ROOM_TBA, label: ROOM_TBA }] : columns;
 	if (roomTba.length > 0) byRoom.set(ROOM_TBA, roomTba);
 
 	return { columns: finalColumns, bands, byRoom, roomTba, unscheduled };

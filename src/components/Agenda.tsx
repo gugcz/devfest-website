@@ -11,6 +11,7 @@ import {
 	nowState,
 	partitionAgenda,
 	placement,
+	roomKey,
 	type AgendaPartition,
 } from '../lib/agenda';
 import { fetchAgenda } from '../lib/lineup';
@@ -97,10 +98,14 @@ function useNowMinutes(eventDate: string): number | null {
 	return nowMin;
 }
 
+/** Column heading per column key — the room name, or its numbered stand-in. */
+function roomLabels(partition: AgendaPartition): Map<string, string> {
+	return new Map(partition.columns.map((column) => [column.key, column.label]));
+}
+
 /** Accessible label for a talk cell — omits the room clause when unassigned. */
-function talkLabel(session: Session): string {
+function talkLabel(session: Session, room: string): string {
 	const time = formatClock(session.startsAt);
-	const room = session.room.trim();
 	return room ? `${session.title} — ${time} in ${room}` : `${session.title} — ${time}`;
 }
 
@@ -215,12 +220,12 @@ function AgendaGrid({
 
 	// Talks + bands in one time-sorted list so DOM (reading) order matches the
 	// mobile list and screen-reader order, independent of visual placement.
-	const talks = columns.flatMap((room) =>
-		(byRoom.get(room) ?? []).map((session) => ({ session, room })),
+	const talks = columns.flatMap((column) =>
+		(byRoom.get(column.key) ?? []).map((session) => ({ session, column })),
 	);
 	const placed = [
-		...bands.map((session) => ({ kind: 'band' as const, session, room: '' })),
-		...talks.map(({ session, room }) => ({ kind: 'talk' as const, session, room })),
+		...bands.map((session) => ({ kind: 'band' as const, session, column: null })),
+		...talks.map(({ session, column }) => ({ kind: 'talk' as const, session, column })),
 	].sort((a, b) => byStart(a.session, b.session));
 
 	return (
@@ -228,9 +233,9 @@ function AgendaGrid({
 			<div className={s.grid} style={gridStyle} role="presentation">
 				{/* Header row: empty time-gutter corner + room names */}
 				<div className={`${s.headCell} ${s.headCorner}`} aria-hidden="true" />
-				{columns.map((room, i) => (
-					<div key={room} className={s.headCell} style={{ gridColumn: i + 2, gridRow: 1 }}>
-						{room}
+				{columns.map((column, i) => (
+					<div key={column.key} className={s.headCell} style={{ gridColumn: i + 2, gridRow: 1 }}>
+						{column.label}
 					</div>
 				))}
 
@@ -239,9 +244,9 @@ function AgendaGrid({
 				    an unscheduled slot is a hole in black rather than an empty cell
 				    on a timetable. Decorative — the times and rooms are already in
 				    the ticks, the head cells and every talk's aria-label. */}
-				{columns.map((room, i) => (
+				{columns.map((column, i) => (
 					<div
-						key={`col-${room}`}
+						key={`col-${column.key}`}
 						className={s.colRule}
 						style={{ gridColumn: i + 2, gridRow: '2 / -1' }}
 						aria-hidden="true"
@@ -267,7 +272,7 @@ function AgendaGrid({
 					</div>
 				))}
 
-				{placed.map(({ kind, session, room }) => {
+				{placed.map(({ kind, session, column }) => {
 					const place = placement(session);
 					if (!place) return null;
 					const rowStart = rowFor(place.startMin);
@@ -288,7 +293,7 @@ function AgendaGrid({
 						);
 					}
 
-					const colIndex = columns.indexOf(room) + 2;
+					const colIndex = columns.findIndex((c) => c.key === column?.key) + 2;
 					const live = liveIds.has(session.id);
 					return (
 						<button
@@ -297,7 +302,7 @@ function AgendaGrid({
 							className={`${s.cell} ${live ? s.cellLive : ''}`}
 							style={{ gridColumn: colIndex, gridRow }}
 							onClick={() => onOpen(session)}
-							aria-label={talkLabel(session)}
+							aria-label={talkLabel(session, column?.label ?? '')}
 							data-agenda-open
 						>
 							<span className={s.cellHead}>
@@ -345,14 +350,15 @@ function AgendaList({
 	// every room column, incl. Room-TBA) so the two layouts never drift.
 	const timed = [
 		...partition.bands,
-		...partition.columns.flatMap((room) => partition.byRoom.get(room) ?? []),
+		...partition.columns.flatMap((column) => partition.byRoom.get(column.key) ?? []),
 	].sort(byStart);
+	const labels = roomLabels(partition);
 	return (
 		<ul className={`field ${s.list}`} role="list">
 			{timed.map((session) => {
 				const band = isBand(session);
 				const names = speakerNames(session);
-				const room = session.room.trim();
+				const room = labels.get(roomKey(session)) ?? '';
 				const live = liveIds.has(session.id);
 				const body = (
 					<>
@@ -381,7 +387,7 @@ function AgendaList({
 								type="button"
 								className={`field-row field-row--link ${s.item} ${live ? s.itemLive : ''}`}
 								onClick={() => onOpen(session)}
-								aria-label={talkLabel(session)}
+								aria-label={talkLabel(session, room)}
 								data-agenda-open
 							>
 								{body}
