@@ -246,19 +246,12 @@ function AgendaGrid({
 					</div>
 				))}
 
-				{/* The sheet's own ruling, behind the entries: one vertical hairline
-				    per room column, one horizontal hairline per hour. Without them
-				    an unscheduled slot is a hole in black rather than an empty cell
-				    on a timetable. Decorative — the times and rooms are already in
-				    the ticks, the head cells and every talk's aria-label. */}
-				{columns.map((column, i) => (
-					<div
-						key={`col-${column.key}`}
-						className={s.colRule}
-						style={{ gridColumn: i + 2, gridRow: '2 / -1' }}
-						aria-hidden="true"
-					/>
-				))}
+				{/* The sheet's only ruling: one hairline per hour, behind the
+				    entries. The rooms are separated by the column gap, not by a
+				    vertical rule — a rule tall enough to divide the columns also
+				    ran straight through every full-width band. Decorative: the
+				    times and rooms are in the ticks, the head cells and every
+				    talk's aria-label. */}
 				{ticks.map((min) => (
 					<div
 						key={`rule-${min}`}

@@ -1,7 +1,8 @@
-// Agenda timetable. Desktop: a proportional time × room grid drawn as ONE ruled
-// sheet — hour hairlines run the full width, a hairline separates each room
-// column, and a talk is a lit block, not a floating card. Mobile / single-room:
-// the same open field every other list on the site uses.
+// Agenda timetable. Desktop: a proportional time × room grid — an hour hairline
+// per hour, the room columns parted by a gap rather than a rule, a talk a lit
+// block (not a floating card), and the day's stops struck through as hatched
+// full-width strips. Mobile / single-room: the same open field every other list
+// on the site uses.
 
 /* ===================== TZ NOTE ===================== */
 .tzNote {
@@ -22,29 +23,29 @@
 	-webkit-overflow-scrolling: touch;
 }
 
-// gap: 0 — the sheet is continuous and the rules do the separating; a gap makes
-// the cells read as tiles scattered on black.
+// The rooms are separated by a column gap, not by a vertical rule: a rule tall
+// enough to divide the columns also cut through every full-width band. The gap
+// is hair-thin on purpose — wide enough to part the tracks, narrow enough that
+// the talks still read as one sheet rather than tiles scattered on black. Rows
+// keep `gap: 0`; a talk butts against the next hour.
 .grid {
 	display: grid;
 	position: relative;
-	gap: 0;
+	row-gap: 0;
+	column-gap: 6px;
 	min-width: min-content;
 	padding-bottom: 0.5rem;
 }
 
 /* ---- the sheet's own ruling ---- */
-// Hour and room hairlines are decorative overlays behind the entries (z 0), so
-// an empty slot still reads as part of the sheet rather than as a hole.
+// The hour hairline is a decorative overlay behind the entries (z 0).
+// Dashed, and fainter than `--rule-soft`: with the vertical rules gone this is
+// the only line crossing an empty stretch, and drawn solid an hour of nothing
+// read as ruled content. It is a tick mark for the numeral beside it, no more.
 .hourRule {
 	align-self: start;
 	height: 0;
-	border-top: 1px solid var(--rule-soft);
-	pointer-events: none;
-	z-index: 0;
-}
-
-.colRule {
-	border-left: 1px solid var(--rule-soft);
+	border-top: 1px dashed rgba(240, 237, 230, 0.07);
 	pointer-events: none;
 	z-index: 0;
 }
@@ -92,7 +93,7 @@
 }
 
 /* ===================== BAND (break / lunch / keynote) ===================== */
-// A band is the whole day stopping: a full-width strip, ruled top and bottom.
+// A band is the whole day stopping: a hatched full-width strip.
 // `flex-start`, not `center`: a band is placed at its start time, but it spans
 // its whole length, so a centred label on an 80-minute lunch prints 40 minutes
 // below the hairline it belongs to and reads as the wrong slot.
@@ -103,9 +104,20 @@
 	z-index: 2;
 	padding: 0.5rem 0.9rem 0.35rem;
 	overflow: hidden;
-	background: rgba(240, 237, 230, 0.022);
+	// Hatched, and ruled on ONE edge. The strip is the day stopping, so it is
+	// drawn as struck-through time rather than as another lit block; and its old
+	// bottom rule sat 1px above the next cell's top rule, doubling every
+	// boundary on the sheet.
+	background:
+		repeating-linear-gradient(
+			135deg,
+			rgba(240, 237, 230, 0.03) 0,
+			rgba(240, 237, 230, 0.03) 1px,
+			transparent 1px,
+			transparent 8px
+		),
+		rgba(240, 237, 230, 0.016);
 	border-top: 1px solid var(--rule);
-	border-bottom: 1px solid var(--rule);
 }
 
 .bandTime {
