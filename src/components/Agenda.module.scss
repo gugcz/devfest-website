@@ -39,12 +39,12 @@
 
 /* ---- the sheet's own ruling ---- */
 // The hour hairline is a decorative overlay behind the entries (z 0).
-// Dashed and faint: it is a tick mark for the numeral beside it, not a line of
-// content. Drawn solid at `--rule-soft` an hour of nothing read as ruled.
+// `--rule-soft` DASHED: solid, the same token read as a line of content across an
+// empty stretch. Dashed it is a tick mark for the numeral beside it, no more.
 .hourRule {
 	align-self: start;
 	height: 0;
-	border-top: 1px dashed rgba(240, 237, 230, 0.07);
+	border-top: 1px dashed var(--rule-soft);
 	pointer-events: none;
 	z-index: 0;
 }
@@ -66,8 +66,8 @@
 	background:
 		repeating-linear-gradient(
 			135deg,
-			rgba(240, 237, 230, 0.05) 0,
-			rgba(240, 237, 230, 0.05) 1px,
+			var(--rule-soft) 0,
+			var(--rule-soft) 1px,
 			transparent 1px,
 			transparent 8px
 		),
