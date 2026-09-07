@@ -7,12 +7,14 @@ import {
 	eventDateISO,
 	formatClock,
 	formatMinutes,
-	gridPlacements,
 	idleSpans,
 	isBand,
 	nowState,
+	nonTalkSpans,
 	partitionAgenda,
 	placement,
+	placements as sessionPlacements,
+	rowScale,
 	roomKey,
 	type AgendaPartition,
 	type Placement,
@@ -47,6 +49,15 @@ const INITIAL: State = { status: 'loading', sessions: [] };
 const SNAP_MIN = 5;
 const ROW_REM = 1.625;
 
+/** Rows a non-talk strip gets, however long it runs.
+ *
+ * Bands and dead time carry one mono line, so drawing them to scale spends the
+ * page on nothing: the afterparty runs 18:30–00:00 and at scale is twenty times
+ * the height of the talk above it, and lunch alone is 80 minutes of hatch. Two
+ * rows is that one line plus its padding. Talks stay proportional — the point of
+ * the sheet is comparing them. */
+const NON_TALK_ROWS = 2;
+
 /** Below this many minutes a cell has no room for the full stack.
  *
  * A 20-minute talk is 4 rows — 104px — and the full cell (time, a two-line Bebas
@@ -56,6 +67,12 @@ const ROW_REM = 1.625;
  * compact stack instead: the time and the title on one line, the speakers under
  * it, no tags. */
 const COMPACT_SPAN_MIN = 30;
+
+/** Below this, the meta line cannot carry a 26px avatar row: a 15-minute cell is
+ * 78px, and the title line plus that row measures 86. Those cells keep the time,
+ * the title and the topic; the speakers are in the sheet the cell opens, and in
+ * its aria-label. */
+const TITLE_ONLY_SPAN_MIN = 20;
 
 /** Track the width below which the timetable becomes the time-ordered list.
  *
@@ -213,7 +230,7 @@ function AgendaGrid({
 	onOpen,
 }: {
 	partition: AgendaPartition;
-	/** Layout placements with the trailing band capped (see `gridPlacements`). */
+	/** Every timed session's placement, keyed by id. */
 	placements: Map<string, Placement>;
 	range: { start: number; end: number };
 	liveIds: Set<string>;
@@ -222,30 +239,31 @@ function AgendaGrid({
 	onOpen: (session: Session) => void;
 }) {
 	const { columns, bands, byRoom } = partition;
-	const totalRows = Math.ceil((range.end - range.start) / SNAP_MIN);
+	const timed = [...bands, ...columns.flatMap((column) => byRoom.get(column.key) ?? [])];
+
+	// Dead time — no room has anything on. Hatched, so an unscheduled stretch
+	// reads as the day being quiet rather than as a hole in the sheet.
+	const idle = idleSpans(timed, range, placements);
+
+	// The sheet runs to scale through the talks and compresses everywhere else,
+	// so a break, a lunch and a five-hour afterparty are all one strip tall.
+	const scale = rowScale(range, nonTalkSpans(timed, range, placements), SNAP_MIN, NON_TALK_ROWS);
+	const rowFor = scale.rowFor;
 
 	// One header row (sticky room names) + the timed body rows.
 	const gridStyle = {
 		gridTemplateColumns: `4.25rem repeat(${columns.length}, minmax(9.5rem, 1fr))`,
-		gridTemplateRows: `auto repeat(${totalRows}, ${ROW_REM}rem)`,
+		gridTemplateRows: `auto repeat(${scale.totalRows}, ${ROW_REM}rem)`,
 	} as const;
 
-	// Body row for a minutes value (row 1 is the header, body starts at row 2).
-	const rowFor = (min: number) => 2 + Math.floor((min - range.start) / SNAP_MIN);
-
-	// Hour ticks down the time gutter.
+	// Hour ticks down the time gutter — never one inside a compressed strip,
+	// where the sheet is no longer to scale and the numeral would lie.
 	const firstHour = Math.ceil(range.start / 60);
 	const lastHour = Math.floor(range.end / 60);
 	const ticks: number[] = [];
-	for (let h = firstHour; h <= lastHour; h += 1) ticks.push(h * 60);
-
-	// Dead time — no room has anything on. Hatched, so an unscheduled stretch
-	// reads as the day being quiet rather than as a hole in the sheet.
-	const idle = idleSpans(
-		[...bands, ...columns.flatMap((column) => byRoom.get(column.key) ?? [])],
-		range,
-		placements,
-	);
+	for (let h = firstHour; h <= lastHour; h += 1) {
+		if (!scale.isCompressed(h * 60)) ticks.push(h * 60);
+	}
 
 	// Talks + bands in one time-sorted list so DOM (reading) order matches the
 	// mobile list and screen-reader order, independent of visual placement.
@@ -321,7 +339,7 @@ function AgendaGrid({
 					const place = placements.get(session.id);
 					if (!place) return null;
 					const rowStart = rowFor(place.startMin);
-					const rowSpan = Math.max(1, Math.round(place.spanMin / SNAP_MIN));
+					const rowSpan = Math.max(1, rowFor(place.endMin) - rowStart);
 					const gridRow = `${rowStart} / span ${rowSpan}`;
 
 					if (kind === 'band') {
@@ -358,12 +376,17 @@ function AgendaGrid({
 									<span className={s.cellTitle}>{session.title}</span>
 									<NowBadge live={live} coming={comingUpIds.has(session.id)} />
 								</span>
-								{session.speakers.length > 0 && (
-									<span className={s.cellFoot}>
-										<TalkAvatars session={session} />
-										<span className={s.cellSpeakers}>{speakerNames(session)}</span>
-									</span>
-								)}
+								{/* One meta line: the topic always, the speakers when the cell
+								    is tall enough to carry a 26px avatar row. */}
+								<span className={s.cellFoot}>
+									<TalkTags session={session} />
+									{place.spanMin >= TITLE_ONLY_SPAN_MIN && session.speakers.length > 0 && (
+										<>
+											<TalkAvatars session={session} />
+											<span className={s.cellSpeakers}>{speakerNames(session)}</span>
+										</>
+									)}
+								</span>
 							</button>
 						);
 					}
@@ -497,7 +520,7 @@ export default function Agenda() {
 	}, []);
 
 	const partition = useMemo(() => partitionAgenda(state.sessions), [state.sessions]);
-	const placements = useMemo(() => gridPlacements(state.sessions), [state.sessions]);
+	const placements = useMemo(() => sessionPlacements(state.sessions), [state.sessions]);
 	const range = useMemo(() => dayRange(state.sessions), [state.sessions]);
 	// Event-day "now" line + live/coming-up badges (hooks must run before the
 	// early returns below).

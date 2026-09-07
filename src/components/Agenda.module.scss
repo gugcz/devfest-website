@@ -293,15 +293,29 @@
 		min-width: 0;
 	}
 
+	// Same step as a full cell's title — a talk does not change size because it
+	// is short. It gets one line here instead of two, and truncates.
 	.cellTitle {
-		// The UI step, not a display step: here the title is one line sharing a
-		// row with the time, so it takes the ramp's smallest prose size rather
-		// than the card-title step it uses when it has the cell to itself.
-		font-size: var(--fs-ui);
-		line-height: 1.1;
 		-webkit-line-clamp: 1;
 		line-clamp: 1;
 		min-width: 0;
+	}
+
+	// Topic and speakers share ONE line, and it does not wrap: a second line of
+	// meta is 16px the cell does not have.
+	.cellFoot {
+		gap: 0.75rem;
+		overflow: hidden;
+	}
+
+	.tags {
+		flex-wrap: nowrap;
+		min-width: 0;
+		overflow: hidden;
+	}
+
+	.tag {
+		white-space: nowrap;
 	}
 }
 

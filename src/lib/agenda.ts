@@ -23,16 +23,6 @@ const FALLBACK_DURATION_MIN = 30;
 const MINUTES_PER_DAY = 24 * 60;
 /** Floor on a rendered span so a lightning talk stays tall enough to read/tap. */
 const MIN_SPAN_MIN = 15;
-/**
- * Ceiling on a TRAILING band — one that starts after everything else on the day
- * has finished (the afterparty, 18:30–00:00). The grid is proportional, so
- * placed at its true length that band adds five and a half hours of empty ruled
- * sheet below the last talk and, being flex-centred, floats its own label in the
- * middle of that void. Capped, the day ends where the day ends; the strip still
- * prints its real range. Only trailing bands are capped — shortening lunch would
- * open a gap that reads as free time.
- */
-const TRAILING_BAND_SPAN_MIN = 30;
 
 /** Label for the column holding talks that are timed but have no room at all. */
 const ROOM_TBA = 'Room TBA';
@@ -190,39 +180,14 @@ export function byStart(a: Session, b: Session): number {
 	return a.order - b.order;
 }
 
-/**
- * Layout placements for the proportional grid, keyed by session id — the same
- * as {@link placement} except that a TRAILING band is capped (see
- * {@link TRAILING_BAND_SPAN_MIN}). Untimed sessions are absent.
- */
-export function gridPlacements(sessions: Session[]): Map<string, Placement> {
-	const placements = new Map<string, Placement>();
+/** Every timed session's placement, keyed by id. Untimed sessions are absent. */
+export function placements(sessions: Session[]): Map<string, Placement> {
+	const map = new Map<string, Placement>();
 	for (const session of sessions) {
 		const place = placement(session);
-		if (place) placements.set(session.id, place);
+		if (place) map.set(session.id, place);
 	}
-
-	for (const session of sessions) {
-		const place = placements.get(session.id);
-		if (!place || !isBand(session) || place.spanMin <= TRAILING_BAND_SPAN_MIN) continue;
-
-		// Trailing = nothing else on the day is still running when it starts.
-		let othersEnd = Number.NEGATIVE_INFINITY;
-		for (const other of sessions) {
-			if (other.id === session.id) continue;
-			const otherPlace = placements.get(other.id);
-			if (otherPlace && otherPlace.endMin > othersEnd) othersEnd = otherPlace.endMin;
-		}
-		if (place.startMin < othersEnd) continue;
-
-		placements.set(session.id, {
-			...place,
-			endMin: place.startMin + TRAILING_BAND_SPAN_MIN,
-			spanMin: TRAILING_BAND_SPAN_MIN,
-		});
-	}
-
-	return placements;
+	return map;
 }
 
 /** A stretch of the day with nothing on it in ANY room, in minutes. */
@@ -268,13 +233,12 @@ export function idleSpans(
 /**
  * The day's time bounds across every timed session (bands included), or `null`
  * when nothing is scheduled. `start` is the earliest start; `end` is the latest
- * layout end — from {@link gridPlacements}, so a capped trailing band shortens
- * the sheet instead of stretching it.
+ * layout end (fallback-adjusted).
  */
 export function dayRange(sessions: Session[]): { start: number; end: number } | null {
 	let start = Number.POSITIVE_INFINITY;
 	let end = Number.NEGATIVE_INFINITY;
-	for (const place of gridPlacements(sessions).values()) {
+	for (const place of placements(sessions).values()) {
 		if (place.startMin < start) start = place.startMin;
 		if (place.endMin > end) end = place.endMin;
 	}
@@ -358,6 +322,108 @@ export function partitionAgenda(sessions: Session[]): AgendaPartition {
 	if (roomTba.length > 0) byRoom.set(ROOM_TBA, roomTba);
 
 	return { columns: finalColumns, bands, byRoom, roomTba, unscheduled };
+}
+
+/**
+ * The spans of the day that carry no talk — every band (break, lunch, keynote,
+ * the afterparty) plus the dead time between them, merged and sorted.
+ *
+ * A band that OVERLAPS a talk is left out: the grid compresses these spans, and
+ * compressing one that a room is running a talk through would drag the talk off
+ * its own start time.
+ */
+export function nonTalkSpans(
+	sessions: Session[],
+	range: { start: number; end: number },
+	placed: Map<string, Placement>,
+): IdleSpan[] {
+	const talks: IdleSpan[] = [];
+	const bands: IdleSpan[] = [];
+	for (const session of sessions) {
+		const place = placed.get(session.id);
+		if (!place) continue;
+		(isBand(session) ? bands : talks).push({ startMin: place.startMin, endMin: place.endMin });
+	}
+
+	const free = bands.filter(
+		(band) => !talks.some((talk) => talk.startMin < band.endMin && talk.endMin > band.startMin),
+	);
+	const spans = [...free, ...idleSpans(sessions, range, placed)].sort((a, b) => a.startMin - b.startMin);
+
+	// Kept SEPARATE, never merged: each strip is compressed on its own, so a run
+	// of consecutive breaks is a strip each rather than one strip's worth of rows
+	// split between them. Overlaps are dropped instead (the mapping below walks
+	// the spans in order and cannot straddle two at once).
+	const ordered: IdleSpan[] = [];
+	for (const span of spans) {
+		const last = ordered[ordered.length - 1];
+		if (last && span.startMin < last.endMin) continue;
+		ordered.push({ ...span });
+	}
+	return ordered;
+}
+
+/** Minutes-to-grid-row mapping for the timetable. */
+export interface RowScale {
+	/** Body rows the sheet needs (the header row is not counted). */
+	totalRows: number;
+	/** Absolute grid row for a minutes value (body rows start at 2). */
+	rowFor(min: number): number;
+	/** True when `min` falls strictly inside a compressed span. */
+	isCompressed(min: number): boolean;
+}
+
+/**
+ * Build the minutes → row mapping.
+ *
+ * The sheet is proportional through the talks and COMPRESSED everywhere else:
+ * each span in `compressed` gets at most `maxSpanRows` rows however long it runs.
+ * Drawn to scale, a 5½-hour afterparty is twenty times the height of the talk
+ * above it and the day's actual content is squeezed into the top third of a page
+ * of empty hatch; an 80-minute lunch does the same on a smaller scale. Every
+ * strip that carries a single line of text gets the height of a single line of
+ * text, and the talks keep the space.
+ *
+ * A span shorter than `maxSpanRows` is left alone rather than stretched up to it
+ * — a five-minute gap should not open to the height of lunch.
+ */
+export function rowScale(
+	range: { start: number; end: number },
+	compressed: IdleSpan[],
+	snapMin: number,
+	maxSpanRows: number,
+): RowScale {
+	const stops = compressed
+		.map((span) => ({
+			...span,
+			rows: Math.min(maxSpanRows, Math.max(1, Math.round((span.endMin - span.startMin) / snapMin))),
+		}))
+		.sort((a, b) => a.startMin - b.startMin);
+
+	const rowFor = (min: number): number => {
+		let rows = 0;
+		let cursor = range.start;
+		for (const stop of stops) {
+			if (min <= stop.startMin) break;
+			rows += Math.max(0, Math.round((stop.startMin - cursor) / snapMin));
+			cursor = stop.startMin;
+			if (min >= stop.endMin) {
+				rows += stop.rows;
+				cursor = stop.endMin;
+				continue;
+			}
+			// Inside a compressed span: scale within the rows it was given.
+			const through = (min - stop.startMin) / (stop.endMin - stop.startMin);
+			return 2 + rows + Math.round(through * stop.rows);
+		}
+		return 2 + rows + Math.max(0, Math.round((min - cursor) / snapMin));
+	};
+
+	return {
+		totalRows: rowFor(range.end) - 2,
+		rowFor,
+		isCompressed: (min) => stops.some((stop) => min > stop.startMin && min < stop.endMin),
+	};
 }
 
 /** Event date (`YYYY-MM-DD`, Prague) taken from the first timed session, or ''
