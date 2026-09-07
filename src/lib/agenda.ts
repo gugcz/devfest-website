@@ -20,6 +20,7 @@ import type { Session } from './sessions';
 
 /** Assumed length of a session whose `endsAt` is missing or not after its start. */
 const FALLBACK_DURATION_MIN = 30;
+const MINUTES_PER_DAY = 24 * 60;
 /** Floor on a rendered span so a lightning talk stays tall enough to read/tap. */
 const MIN_SPAN_MIN = 15;
 
@@ -103,10 +104,10 @@ export function parseLocalMinutes(iso: string): number | null {
 	return pragueParts(iso)?.minutes ?? null;
 }
 
-/** Wall-clock label (`09:00`) for minutes-from-midnight. Wraps past midnight, so
- * the 1440 an after-midnight end carries reads `00:00`, not `24:00`. */
+/** Wall-clock label (`09:00`) for minutes-from-midnight. Past-midnight values
+ * wrap (the afterparty's 1440 is `00:00`, not `24:00`). */
 export function formatMinutes(total: number): string {
-	const wrapped = ((total % 1440) + 1440) % 1440;
+	const wrapped = ((total % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
 	const hours = Math.floor(wrapped / 60);
 	const minutes = wrapped % 60;
 	return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
@@ -150,14 +151,22 @@ export interface Placement {
  * the rendered span is floored at {@link MIN_SPAN_MIN}.
  */
 export function placement(session: Session): Placement | null {
-	const startMin = parseLocalMinutes(session.startsAt);
-	if (startMin === null) return null;
-	const rawEnd = parseLocalMinutes(session.endsAt);
-	// An end at or before the start is the afterparty running past midnight, so
-	// it belongs on the next day rather than being thrown away for the 30-minute
-	// fallback — which is what cut the party to half an hour on the sheet.
+	const start = pragueParts(session.startsAt);
+	if (start === null) return null;
+	const end = pragueParts(session.endsAt);
+
+	// An end past midnight (the afterparty finishes at 00:00) is a SMALLER
+	// minutes-from-midnight than its start, which read as "no duration" and
+	// silently shrank the session to the fallback. Carry the day difference so
+	// the end stays after the start; `formatMinutes` wraps it back for display.
+	let rawEnd = end?.minutes ?? null;
+	if (end !== null && rawEnd !== null && rawEnd <= start.minutes && end.date > start.date) {
+		rawEnd += MINUTES_PER_DAY;
+	}
+
+	const startMin = start.minutes;
 	const endMin =
-		rawEnd === null ? startMin + FALLBACK_DURATION_MIN : rawEnd > startMin ? rawEnd : rawEnd + 1440;
+		rawEnd !== null && rawEnd > startMin ? rawEnd : startMin + FALLBACK_DURATION_MIN;
 	const spanMin = Math.max(MIN_SPAN_MIN, endMin - startMin);
 	return { startMin, endMin, spanMin };
 }
@@ -171,6 +180,56 @@ export function byStart(a: Session, b: Session): number {
 	return a.order - b.order;
 }
 
+/** Every timed session's placement, keyed by id. Untimed sessions are absent. */
+export function placements(sessions: Session[]): Map<string, Placement> {
+	const map = new Map<string, Placement>();
+	for (const session of sessions) {
+		const place = placement(session);
+		if (place) map.set(session.id, place);
+	}
+	return map;
+}
+
+/** A stretch of the day with nothing on it in ANY room, in minutes. */
+export interface IdleSpan {
+	startMin: number;
+	endMin: number;
+}
+
+/**
+ * The stretches of `range` that no session occupies — the sheet's dead time.
+ *
+ * The grid draws these hatched, the way it draws a break: on a proportional
+ * timetable an empty half-hour is otherwise indistinguishable from a half-hour
+ * whose talks simply haven't been announced, and the ruling made free time read
+ * as scheduled. A room sitting idle while another room runs a talk is NOT dead
+ * time — only a span where the whole day is quiet counts.
+ */
+export function idleSpans(
+	sessions: Session[],
+	range: { start: number; end: number },
+	placements: Map<string, Placement>,
+): IdleSpan[] {
+	const busy: IdleSpan[] = [];
+	for (const session of sessions) {
+		const place = placements.get(session.id);
+		if (!place) continue;
+		busy.push({ startMin: place.startMin, endMin: place.endMin });
+	}
+	busy.sort((a, b) => a.startMin - b.startMin);
+
+	const spans: IdleSpan[] = [];
+	let cursor = range.start;
+	for (const span of busy) {
+		if (span.startMin > cursor) spans.push({ startMin: cursor, endMin: Math.min(span.startMin, range.end) });
+		if (span.endMin > cursor) cursor = span.endMin;
+		if (cursor >= range.end) break;
+	}
+	if (cursor < range.end) spans.push({ startMin: cursor, endMin: range.end });
+
+	return spans.filter((span) => span.endMin > span.startMin);
+}
+
 /**
  * The day's time bounds across every timed session (bands included), or `null`
  * when nothing is scheduled. `start` is the earliest start; `end` is the latest
@@ -179,9 +238,7 @@ export function byStart(a: Session, b: Session): number {
 export function dayRange(sessions: Session[]): { start: number; end: number } | null {
 	let start = Number.POSITIVE_INFINITY;
 	let end = Number.NEGATIVE_INFINITY;
-	for (const session of sessions) {
-		const place = placement(session);
-		if (!place) continue;
+	for (const place of placements(sessions).values()) {
 		if (place.startMin < start) start = place.startMin;
 		if (place.endMin > end) end = place.endMin;
 	}
@@ -265,6 +322,108 @@ export function partitionAgenda(sessions: Session[]): AgendaPartition {
 	if (roomTba.length > 0) byRoom.set(ROOM_TBA, roomTba);
 
 	return { columns: finalColumns, bands, byRoom, roomTba, unscheduled };
+}
+
+/**
+ * The spans of the day that carry no talk — every band (break, lunch, keynote,
+ * the afterparty) plus the dead time between them, merged and sorted.
+ *
+ * A band that OVERLAPS a talk is left out: the grid compresses these spans, and
+ * compressing one that a room is running a talk through would drag the talk off
+ * its own start time.
+ */
+export function nonTalkSpans(
+	sessions: Session[],
+	range: { start: number; end: number },
+	placed: Map<string, Placement>,
+): IdleSpan[] {
+	const talks: IdleSpan[] = [];
+	const bands: IdleSpan[] = [];
+	for (const session of sessions) {
+		const place = placed.get(session.id);
+		if (!place) continue;
+		(isBand(session) ? bands : talks).push({ startMin: place.startMin, endMin: place.endMin });
+	}
+
+	const free = bands.filter(
+		(band) => !talks.some((talk) => talk.startMin < band.endMin && talk.endMin > band.startMin),
+	);
+	const spans = [...free, ...idleSpans(sessions, range, placed)].sort((a, b) => a.startMin - b.startMin);
+
+	// Kept SEPARATE, never merged: each strip is compressed on its own, so a run
+	// of consecutive breaks is a strip each rather than one strip's worth of rows
+	// split between them. Overlaps are dropped instead (the mapping below walks
+	// the spans in order and cannot straddle two at once).
+	const ordered: IdleSpan[] = [];
+	for (const span of spans) {
+		const last = ordered[ordered.length - 1];
+		if (last && span.startMin < last.endMin) continue;
+		ordered.push({ ...span });
+	}
+	return ordered;
+}
+
+/** Minutes-to-grid-row mapping for the timetable. */
+export interface RowScale {
+	/** Body rows the sheet needs (the header row is not counted). */
+	totalRows: number;
+	/** Absolute grid row for a minutes value (body rows start at 2). */
+	rowFor(min: number): number;
+	/** True when `min` falls strictly inside a compressed span. */
+	isCompressed(min: number): boolean;
+}
+
+/**
+ * Build the minutes → row mapping.
+ *
+ * The sheet is proportional through the talks and COMPRESSED everywhere else:
+ * each span in `compressed` gets at most `maxSpanRows` rows however long it runs.
+ * Drawn to scale, a 5½-hour afterparty is twenty times the height of the talk
+ * above it and the day's actual content is squeezed into the top third of a page
+ * of empty hatch; an 80-minute lunch does the same on a smaller scale. Every
+ * strip that carries a single line of text gets the height of a single line of
+ * text, and the talks keep the space.
+ *
+ * A span shorter than `maxSpanRows` is left alone rather than stretched up to it
+ * — a five-minute gap should not open to the height of lunch.
+ */
+export function rowScale(
+	range: { start: number; end: number },
+	compressed: IdleSpan[],
+	snapMin: number,
+	maxSpanRows: number,
+): RowScale {
+	const stops = compressed
+		.map((span) => ({
+			...span,
+			rows: Math.min(maxSpanRows, Math.max(1, Math.round((span.endMin - span.startMin) / snapMin))),
+		}))
+		.sort((a, b) => a.startMin - b.startMin);
+
+	const rowFor = (min: number): number => {
+		let rows = 0;
+		let cursor = range.start;
+		for (const stop of stops) {
+			if (min <= stop.startMin) break;
+			rows += Math.max(0, Math.round((stop.startMin - cursor) / snapMin));
+			cursor = stop.startMin;
+			if (min >= stop.endMin) {
+				rows += stop.rows;
+				cursor = stop.endMin;
+				continue;
+			}
+			// Inside a compressed span: scale within the rows it was given.
+			const through = (min - stop.startMin) / (stop.endMin - stop.startMin);
+			return 2 + rows + Math.round(through * stop.rows);
+		}
+		return 2 + rows + Math.max(0, Math.round((min - cursor) / snapMin));
+	};
+
+	return {
+		totalRows: rowFor(range.end) - 2,
+		rowFor,
+		isCompressed: (min) => stops.some((stop) => min > stop.startMin && min < stop.endMin),
+	};
 }
 
 /** Event date (`YYYY-MM-DD`, Prague) taken from the first timed session, or ''
