@@ -32,6 +32,7 @@ import { mirrorSpeakerImages } from './mirror-images.js';
 import { SESSIONIZE_ENDPOINT_ID } from './params.js';
 import {
 	buildCategoryMap,
+	buildRoomMap,
 	buildSessionMap,
 	buildSpeakerSummaryMap,
 	computeDeletePlan,
@@ -120,7 +121,10 @@ async function syncSessionize(): Promise<void> {
 
 	const speakerMap = buildSpeakerSummaryMap(payload, imageMap);
 	const categoryMap = buildCategoryMap(payload);
-	const sessions = normalizeSessions(extractSessions(payload), speakerMap, categoryMap);
+	// Sessions carry a `roomId` and (for this event) no inline room name, so the
+	// column names on /agenda come from the payload's top-level `rooms[]`.
+	const roomMap = buildRoomMap(payload);
+	const sessions = normalizeSessions(extractSessions(payload), speakerMap, categoryMap, roomMap);
 
 	// Speakers first: `extractSpeakers` throws on an empty/invalid roster, so a
 	// failed fetch aborts before either collection is touched. `extractSessions`
