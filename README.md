@@ -166,7 +166,7 @@ Browser
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
 | `refreshSessionizeScheduled` | Cloud Scheduler, daily 06:00 | Sync Sessionize → Storage photos + Firestore `speakers`/`sessions` |
-| `lineupApi` | HTTPS, public (`/api/lineup`) | Serve `{ speakers, sessions }` as JSON for the browser to `fetch()` (1-h edge TTL) |
+| `lineupApi` | HTTPS, public (`/api/lineup`) | Serve `{ speakers, sessions }` as JSON for the browser to `fetch()` (15-min edge TTL) |
 
 ### Config
 
