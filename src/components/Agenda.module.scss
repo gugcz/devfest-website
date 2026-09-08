@@ -334,6 +334,21 @@
 	min-width: 0;
 }
 
+// A list row has the width a grid cell does not: the mugshots are sized to the
+// line beside them rather than to the tightest cell on the sheet.
+.itemFoot {
+	gap: 0.6rem;
+
+	.avatar {
+		width: 34px;
+		height: 34px;
+	}
+
+	.avatar + .avatar {
+		margin-left: -11px;
+	}
+}
+
 // Overlapping mugshots, monogram fallback — the /sessions stack, sized down.
 .avatars {
 	display: inline-flex;
@@ -454,13 +469,21 @@
 	}
 }
 
+// The UI step, not the label step. This line is the only thing separating two
+// parallel talks on a phone, and at `--fs-label` (0.78rem) with everything in
+// `--color-grey` the speakers were the smallest, dimmest thing in the row.
 .itemMeta {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.04em;
-	line-height: 1.4;
+	font-size: var(--fs-ui);
+	letter-spacing: 0.02em;
+	line-height: 1.45;
 	color: var(--color-grey);
 	min-width: 0;
+}
+
+// The speakers take the row's ink; the room stays the aside beside them.
+.itemNames {
+	color: var(--color-cream);
 }
 
 /* ===================== NOT-YET-SCHEDULED ===================== */

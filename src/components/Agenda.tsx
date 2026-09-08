@@ -423,7 +423,13 @@ function AgendaList({
 							{!band && (room || names) && (
 								<span className={s.itemFoot}>
 									<TalkAvatars session={session} />
-									<span className={s.itemMeta}>{[room, names].filter(Boolean).join(' · ')}</span>
+									{/* The speakers carry the row's ink, the room stays the aside — on a
+									    phone this line is how you tell two parallel talks apart. */}
+									<span className={s.itemMeta}>
+										{names && <span className={s.itemNames}>{names}</span>}
+										{room && names && <span aria-hidden="true"> · </span>}
+										{room}
+									</span>
 								</span>
 							)}
 						</span>
