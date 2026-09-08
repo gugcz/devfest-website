@@ -10,14 +10,18 @@
 // sentence (`inviteCopy` / `[member].astro`) — the preview is a still of the
 // page, not a second piece of copy.
 //
+// Card content = headline + logo + date, nothing else. Measured against a
+// Slack unfurl thumbnail (~360px wide, ~0.3× this 1200×630 canvas): the
+// eyebrow (19px) and role line (23px) rendered at 5.7px / 6.9px there —
+// texture, not text. HARD RULE: nothing on this card sits below ~40px on the
+// canvas — that's the floor for anything meant to be read at 360px.
+//
 // Two traps proved out in the prototype, both apply here unchanged:
 //   * satori has no `mask-image` — every feathered edge has to be baked into
 //     the plate bitmap by sharp (an alpha ramp composited with `dest-in`)
 //     before the image reaches the layout.
-//   * personal, per-role copy (`roleLine`) is set in Special Elite, never the
-//     member's name — the Bebas TTF in `src/assets/fonts` carries the full
-//     Czech set (verified against #305), but Special Elite does not, and a
-//     name is the one string here that can carry diacritics.
+//   * the Bebas TTF in `src/assets/fonts` carries the full Czech set
+//     (verified against #305) — needed for the headline's first name.
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import satori from 'satori';
@@ -25,7 +29,7 @@ import { Resvg } from '@resvg/resvg-js';
 import sharp from 'sharp';
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
-import { firstName, roleLine, INVITE_EVENT } from '../../../lib/invite';
+import { firstName, INVITE_EVENT } from '../../../lib/invite';
 
 export async function getStaticPaths() {
 	const team = await getCollection('team');
@@ -54,9 +58,9 @@ const specialElite = fontBuffer('SpecialElite-Regular.ttf');
 // the card's logo can't drift from the site's. satori can't read a file off
 // disk, so it goes in as a data URI; the source is a 3000×600 master, and
 // resvg frays a 5× downscale, so sharp pre-shrinks to 2× the drawn size
-// (360×72 → drawn at 180×36) before it ever reaches satori.
-const LOGO_WIDTH = 180;
-const LOGO_HEIGHT = 36;
+// (520×104 → drawn at 260×52) before it ever reaches satori.
+const LOGO_WIDTH = 260;
+const LOGO_HEIGHT = 52;
 const logoDataUri = await sharp(join(root, 'src/assets/logo.png'))
 	.resize(LOGO_WIDTH * 2, LOGO_HEIGHT * 2)
 	.png()
@@ -67,8 +71,6 @@ const logoDataUri = await sharp(join(root, 'src/assets/logo.png'))
 const BG = '#050505';
 const RED_HOT = '#FF1111'; // `.red` on a dark ground
 const CREAM = '#F7EFE6';
-const BONE = 'rgba(247, 239, 230, 0.72)';
-const MUTED = 'rgba(240, 237, 230, 0.55)';
 
 // Crop the same B&W master `/invite` uses down to the "chest" window the
 // studies proved out — centred on the face, wide enough to feather without
@@ -125,7 +127,6 @@ export const GET: APIRoute = async ({ props }) => {
 
 	const plate = member.photo ? await platePng(member.photo) : undefined;
 	const first = firstName(member.name);
-	const eyebrow = `${member.alias}${member.role ? ` · ${member.role}` : ''}`;
 	// Same sentence as `copy.titleHtml` in `src/lib/invite.ts`, broken over
 	// three lines — the text column here is narrower than the page's, so the
 	// break is chosen rather than left to wrapping. The third line's "on the"
@@ -180,21 +181,6 @@ export const GET: APIRoute = async ({ props }) => {
 							{
 								type: 'div',
 								props: {
-									style: {
-										display: 'flex',
-										fontFamily: 'JetBrains Mono',
-										fontSize: '19px',
-										letterSpacing: '0.14em',
-										textTransform: 'uppercase',
-										color: MUTED,
-									},
-									children: eyebrow,
-								},
-							},
-							{ type: 'div', props: { style: { height: '26px', display: 'flex' } } },
-							{
-								type: 'div',
-								props: {
 									style: { display: 'flex', flexDirection: 'column' },
 									children: [
 										...headlineLines.map((line) => ({
@@ -203,7 +189,7 @@ export const GET: APIRoute = async ({ props }) => {
 												style: {
 													display: 'flex',
 													fontFamily: 'Bebas Neue',
-													fontSize: '86px',
+													fontSize: '110px',
 													lineHeight: 0.92,
 													textTransform: 'uppercase',
 													color: CREAM,
@@ -223,7 +209,7 @@ export const GET: APIRoute = async ({ props }) => {
 													// string's trailing space.
 													gap: '0.22em',
 													fontFamily: 'Bebas Neue',
-													fontSize: '86px',
+													fontSize: '110px',
 													lineHeight: 0.92,
 													textTransform: 'uppercase',
 												},
@@ -240,21 +226,6 @@ export const GET: APIRoute = async ({ props }) => {
 											},
 										},
 									],
-								},
-							},
-							{ type: 'div', props: { style: { height: '26px', display: 'flex' } } },
-							{
-								type: 'div',
-								props: {
-									style: {
-										display: 'flex',
-										fontFamily: 'Special Elite',
-										fontSize: '23px',
-										lineHeight: 1.4,
-										color: BONE,
-										width: '500px',
-									},
-									children: roleLine(member.role),
 								},
 							},
 						],
@@ -286,11 +257,11 @@ export const GET: APIRoute = async ({ props }) => {
 								props: {
 									style: {
 										display: 'flex',
-										fontFamily: 'JetBrains Mono',
-										fontSize: '16px',
-										letterSpacing: '0.14em',
+										fontFamily: 'Bebas Neue',
+										fontSize: '46px',
+										letterSpacing: '0.04em',
 										textTransform: 'uppercase',
-										color: MUTED,
+										color: CREAM,
 									},
 									children: INVITE_EVENT.stamp,
 								},

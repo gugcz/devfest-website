@@ -27,6 +27,7 @@ import Closer from '../../components/Closer.astro';
 import InviteCta from '../../components/InviteCta.tsx';
 import { EVENT_TOPICS } from '../../lib/ticker';
 import { INVITE_EVENT, inviteCopy } from '../../lib/invite';
+import { ogCardVersion } from '../../lib/og-version';
 
 export async function getStaticPaths() {
 	const team = await getCollection('team');
@@ -46,7 +47,13 @@ const copy = inviteCopy(member);
 // so pointing this at a preview build's own origin is opt-in, for verifying
 // the card on that channel before merge (see the issue thread on DEVF-45).
 const SITE_URL = import.meta.env.PUBLIC_SITE_URL ?? 'https://devfest.cz';
-const ogImageUrl = new URL(`/og/invite/${slug}.png`, SITE_URL).href;
+// Versioned so Slack (and any other cache honouring the 1-year `max-age`
+// below) sees a changed card instead of replaying its first unfurl forever —
+// see `src/lib/og-version.ts`.
+const ogImageUrl = new URL(
+	`/og/invite/${slug}.png?v=${ogCardVersion(member)}`,
+	SITE_URL
+).href;
 
 // Same optimisation path as `/team`: the masters live in `src/assets/team` so
 // the build can emit sized AVIF variants. Here the plate is full-bleed rather
