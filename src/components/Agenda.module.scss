@@ -337,15 +337,18 @@
 // A list row has the width a grid cell does not: the mugshots are sized to the
 // line beside them rather than to the tightest cell on the sheet.
 .itemFoot {
+	// `flex-start`: the meta is two lines now, and centred against them the photo
+	// floated between the names and the room rather than beside the names.
+	align-items: flex-start;
 	gap: 0.6rem;
 
 	.avatar {
-		width: 34px;
-		height: 34px;
+		width: 40px;
+		height: 40px;
 	}
 
 	.avatar + .avatar {
-		margin-left: -11px;
+		margin-left: -13px;
 	}
 }
 
@@ -417,21 +420,23 @@
 }
 
 .itemTime {
-	// The time is the one thing in the row that must give way under a text-only
-	// zoom. Dropping `flex-shrink: 0` was not enough on its own: `.itemMain` is
-	// `flex: 1` (basis 0), so it never competes for the row — it takes what the
-	// time leaves, and at a 32px root the mono range measures 208px of a 320px
-	// viewport, which left the title 57px (17 lines) and the meta 16px. So the
-	// time is capped instead, and wraps after its en dash. 8rem is 40vw of 320,
-	// so at a 16px root the cap sits 24px clear of the 104px the range actually
-	// measures and never bites; at a 32px root it is what makes it give way.
-	// `min-width` keeps it a column rather than letting the title crowd it at
-	// normal sizes.
-	min-width: min(5.5rem, 27.5vw);
-	max-width: min(8rem, 40vw);
+	// Start over end, always — not a range wrapped by chance. Stacked, the column
+	// is one clock wide instead of two, which is the width the title wanted back
+	// on a phone; and the two times read as a column down the page, so scanning
+	// for "what is on at two" is one eye movement.
+	//
+	// It is still the one thing in the row that must give way under a text-only
+	// zoom: `.itemMain` is `flex: 1` (basis 0), so it never competes for the row —
+	// it takes what the time leaves. At a 32px root one stacked clock measures
+	// 104px of a 320px viewport, so the cap is what makes it give way; `min-width`
+	// keeps it a column rather than letting the title crowd it at normal sizes.
+	display: flex;
+	flex-direction: column;
+	min-width: min(4.25rem, 21vw);
+	max-width: min(5.5rem, 30vw);
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-variant-numeric: tabular-nums;
-	font-size: var(--fs-label-lg);
+	font-size: var(--fs-ui);
 	letter-spacing: 0.1em;
 	color: rgba(240, 237, 230, 0.55);
 	// Drops the mono time onto the Bebas title's cap-height. A band's title is
@@ -469,21 +474,30 @@
 	}
 }
 
-// The UI step, not the label step. This line is the only thing separating two
+// The lede step, not the label step. This line is the only thing separating two
 // parallel talks on a phone, and at `--fs-label` (0.78rem) with everything in
-// `--color-grey` the speakers were the smallest, dimmest thing in the row.
+// `--color-grey` the speakers were the smallest, dimmest thing in the row. Mono
+// also sets small for its size, so it takes the step above the UI one.
 .itemMeta {
+	display: flex;
+	flex-direction: column;
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-ui);
+	font-size: var(--fs-lede);
 	letter-spacing: 0.02em;
-	line-height: 1.45;
+	line-height: 1.35;
 	color: var(--color-grey);
 	min-width: 0;
 }
 
-// The speakers take the row's ink; the room stays the aside beside them.
+// The speakers take the row's ink.
 .itemNames {
 	color: var(--color-cream);
+}
+
+// The room is the aside under them, a step down so the names lead.
+.itemRoom {
+	font-size: var(--fs-ui);
+	color: var(--color-grey);
 }
 
 /* ===================== NOT-YET-SCHEDULED ===================== */

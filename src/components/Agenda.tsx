@@ -135,6 +135,15 @@ function timeRange(session: Session): string {
 	return `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}`;
 }
 
+/** The same range split for the list, where it is set on two lines. The dash
+ * stays on the first line, so the text content is still `09:50–10:30` and a
+ * screen reader reads the range, not two loose numbers. */
+function timeParts(session: Session): { from: string; to: string } | null {
+	const place = placement(session);
+	if (!place) return null;
+	return { from: `${formatMinutes(place.startMin)}–`, to: formatMinutes(place.endMin) };
+}
+
 /** Comma-joined presenter names, empties dropped. */
 function speakerNames(session: Session): string {
 	return session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
@@ -411,9 +420,13 @@ function AgendaList({
 				const names = speakerNames(session);
 				const room = labels.get(roomKey(session)) ?? '';
 				const live = liveIds.has(session.id);
+				const time = timeParts(session);
 				const body = (
 					<>
-						<span className={s.itemTime}>{timeRange(session)}</span>
+						<span className={s.itemTime}>
+							<span>{time?.from}</span>
+							<span>{time?.to}</span>
+						</span>
 						<span className={s.itemMain}>
 							<span className={s.itemTitleRow}>
 								<span className={s.itemTitle}>{session.title}</span>
@@ -423,12 +436,13 @@ function AgendaList({
 							{!band && (room || names) && (
 								<span className={s.itemFoot}>
 									<TalkAvatars session={session} />
-									{/* The speakers carry the row's ink, the room stays the aside — on a
-									    phone this line is how you tell two parallel talks apart. */}
+									{/* The speakers carry the row's ink and the room sits under them, on
+									    its own line: joined by a dot they wrapped mid-phrase on a phone,
+									    which is where this line does its work — telling two parallel
+									    talks apart. */}
 									<span className={s.itemMeta}>
 										{names && <span className={s.itemNames}>{names}</span>}
-										{room && names && <span aria-hidden="true"> · </span>}
-										{room}
+										{room && <span className={s.itemRoom}>{room}</span>}
 									</span>
 								</span>
 							)}
