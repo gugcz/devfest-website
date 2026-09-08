@@ -21,7 +21,7 @@ import { firestore } from '../lib/admin.js';
 import { cachedJsonEndpoint } from '../lib/cached-endpoint.js';
 import { CACHED_ENDPOINT } from '../options.js';
 
-// Edge cache (shared): 1h fresh, then a SHORT stale window while revalidating.
+// Edge cache (shared): 15 min fresh, then a SHORT stale window while revalidating.
 //
 // The stale window used to be a day (`stale-while-revalidate=86400`), on the
 // reasoning that `refreshSessionizeScheduled` only runs daily. That backfired the
@@ -36,7 +36,12 @@ import { CACHED_ENDPOINT } from '../options.js';
 // 5 minutes still absorbs the revalidation burst (that is what the in-instance memo
 // below is for) and keeps the edge answering essentially every request, but bounds
 // how long a stale lineup can survive. `max-age=0` keeps browsers revalidating.
-const CACHE_CONTROL = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=300';
+//
+// The fresh window is 15 min rather than the sync's own daily cadence: a talk edited
+// in Sessionize is usually followed by a forced run of `refreshSessionizeScheduled`,
+// and an hour of edge freshness made that look like nothing had happened. 15 min is
+// still ~4 origin revalidations an hour per edge, which the memo below collapses.
+const CACHE_CONTROL = 'public, max-age=0, s-maxage=900, stale-while-revalidate=300';
 
 // In-instance memo TTL. Deliberately short: the CDN `s-maxage` above is the real
 // cache, this only stops a warm instance re-reading Firestore for every
