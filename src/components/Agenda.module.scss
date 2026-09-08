@@ -23,11 +23,10 @@
 	-webkit-overflow-scrolling: touch;
 }
 
-// The rooms are separated by a column gap, not by a vertical rule: a rule tall
-// enough to divide the columns also cut through every full-width band. The gap
-// is hair-thin on purpose — wide enough to part the tracks, narrow enough that
-// the talks still read as one sheet rather than tiles scattered on black. Rows
-// keep `gap: 0`; a talk butts against the next hour.
+// The rooms are parted by a column gap AND by the hairline `.colRule` draws in
+// it. The gap is narrow on purpose — wide enough to part the tracks, narrow
+// enough that the talks still read as one sheet rather than tiles scattered on
+// black. Rows keep `gap: 0`; a talk butts against the next hour.
 .grid {
 	display: grid;
 	position: relative;
@@ -625,7 +624,11 @@
 		animation: none;
 	}
 
-	// Only the red rule mark is motion; focus keeps its ring and the live entry its spine.
+	// Both of the cell's pseudo-elements animate — the light wash fades in on
+	// `::before`, the red mark draws on `::after` — and a pseudo-element keeps its
+	// own transition, so `.cell { transition: none }` above does not reach either.
+	// Neither carries meaning: focus keeps its ring and the live entry its rule.
+	.cell::before,
 	.cell::after {
 		transition: none;
 	}
