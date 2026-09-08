@@ -19,8 +19,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 				<p>
 					DevFest.cz 2026 is organised by GUG.cz, z.s. (formerly GDG Czech Republic),
 					a registered association (zapsaný spolek) and the data controller for the
-					personal data described here. For privacy-related enquiries, contact us at
-					<a href="mailto:devfest@gug.cz">devfest@gug.cz</a>.
+					personal data described here. For privacy-related enquiries, contact us at <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>.
 				</p>
 			</section>
 
@@ -53,8 +52,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 					basic visitor statistics (GDPR Art. 6(1)(f)).
 				</p>
 				<p>
-					<strong>If you accept:</strong> analytics switches to full measurement and sets the
-					<code>_ga</code> cookies listed below, which give you a random analytics identifier.
+					<strong>If you accept:</strong> analytics switches to full measurement and sets the <code>_ga</code> cookies listed below, which give you a random analytics identifier.
 					That lets us count returning visitors and follow sessions across pages — pages
 					visited, session duration, browser type. We never collect your name, email, or any
 					other information that identifies you personally. Legal basis: consent
@@ -86,18 +84,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 					Google reCAPTCHA Enterprise (via Firebase App Check). reCAPTCHA runs in the background to
 					tell humans from bots, analysing signals such as your interactions with the page,
 					device and browser information, and IP address. This data is shared with Google and
-					processed under the
-					<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a>
-					and
-					<a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
+					processed under the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a> and <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
 					Because this is a security measure, it runs regardless of your cookie choice.
 					Legal basis: legitimate interests (GDPR Art. 6(1)(f)).
 				</p>
 
 				<h3>e) Company invoice requests</h3>
 				<p>
-					If you request a company invoice via the
-					<a href="/invoice">company invoice form</a>, we collect your company name,
+					If you request a company invoice via the <a href="/invoice">company invoice form</a>, we collect your company name,
 					registration number (IČO), VAT identification number (DIČ, if provided),
 					billing address (street, city, ZIP, country), contact email, and the number of
 					tickets requested. We use this data to issue the invoice, process your payment,
@@ -114,6 +108,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			<section>
 				<h2>3. Cookies</h2>
 				<p>We use the following cookies:</p>
+				<!-- A data table is one of the things WCAG 1.4.10 exempts from
+				     single-column reflow: it needs two dimensions to be read at
+				     all. So the TABLE scrolls sideways, not the page. Focusable
+				     because a scrollable region must be reachable by keyboard
+				     (WCAG 2.1.1); labelled because it is now a landmark. -->
+				<div class="table-scroll" role="region" aria-label="Cookies we set" tabindex="0">
 				<table>
 					<caption class="sr-only">List of cookies we set, their purpose, and retention period.</caption>
 					<thead>
@@ -141,6 +141,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 						</tr>
 					</tbody>
 				</table>
+				</div>
 			</section>
 
 			<section>

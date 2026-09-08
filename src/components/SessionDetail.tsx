@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { initials, type Speaker } from '../lib/speakers';
+import { type Speaker } from '../lib/speakers';
 import { visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
 import { useReturnFocus } from '../lib/useReturnFocus';
 import SpeakerDetail from './SpeakerDetail';
+import SpeakerPhoto from './SpeakerPhoto';
 import sheet from './Sheet.module.scss';
 import s from './SessionDetail.module.scss';
 
@@ -26,24 +27,16 @@ function speakerFromRef(ref: SessionSpeakerRef): Speaker {
 }
 
 function SpeakerAvatar({ speaker }: { speaker: SessionSpeakerRef }) {
-	// Broken/absent CDN URL degrades to the monogram, same as the speaker cards.
-	return speaker.profilePicture ? (
-		<img
-			className={s.avatarImg}
-			src={speaker.profilePicture}
-			alt=""
-			loading="lazy"
-			decoding="async"
+	// Broken/absent CDN URL degrades to the monogram — one decision, shared with
+	// every other photo on the site. See SpeakerPhoto.
+	return (
+		<SpeakerPhoto
+			speaker={speaker}
+			photoClass={s.avatarImg}
+			monogramClass={s.avatarMono}
 			width={72}
 			height={72}
-			onError={(e) => {
-				(e.currentTarget as HTMLImageElement).style.display = 'none';
-			}}
 		/>
-	) : (
-		<span className={s.avatarMono} aria-hidden="true">
-			{initials(speaker.fullName) || '?'}
-		</span>
 	);
 }
 

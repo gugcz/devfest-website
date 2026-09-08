@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "a11y": "A11Y_MOCK=1 astro build && node scripts/a11y.mjs"
+    "a11y": "A11Y_MOCK=1 astro build && node scripts/a11y.mjs",
+    "anchors": "A11Y_MOCK=1 astro build && node scripts/anchor-measure.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.0",

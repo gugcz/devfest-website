@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { initials, type Speaker } from '../lib/speakers';
+import { type Speaker } from '../lib/speakers';
 import {
 	collectFacets,
 	hasActiveFilters,
@@ -9,7 +9,10 @@ import {
 	type SessionFilters,
 } from '../lib/sessions';
 import { fetchLineup } from '../lib/lineup';
+import { shuffle } from '../lib/shuffle';
 import SessionDetail from './SessionDetail';
+import SpeakerPhoto from './SpeakerPhoto';
+import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
@@ -21,45 +24,22 @@ interface State {
 
 const INITIAL: State = { status: 'loading', sessions: [] };
 
-/** Fisher–Yates shuffle — returns a new array so the source order stays intact.
- * Sessions are randomized once per page load so no track/room gets a permanent
- * top-of-grid advantage. */
-function shuffle<T>(items: T[]): T[] {
-	const out = items.slice();
-	for (let i = out.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[out[i], out[j]] = [out[j], out[i]];
-	}
-	return out;
-}
-
 /** Up to three overlapping speaker avatars, monogram fallback per speaker. */
 function SpeakerStack({ session }: { session: Session }) {
 	const shown = session.speakers.slice(0, 3);
 	const extra = session.speakers.length - shown.length;
 	return (
 		<span className={s.stack} aria-hidden="true">
-			{shown.map((speaker) =>
-				speaker.profilePicture ? (
-					<img
-						key={speaker.id}
-						className={s.avatar}
-						src={speaker.profilePicture}
-						alt=""
-						loading="lazy"
-						decoding="async"
-						width={40}
-						height={40}
-						onError={(e) => {
-							(e.currentTarget as HTMLImageElement).style.visibility = 'hidden';
-						}}
-					/>
-				) : (
-					<span key={speaker.id} className={`${s.avatar} ${s.avatarMono}`}>
-						{initials(speaker.fullName) || '?'}
-					</span>
-				),
-			)}
+			{shown.map((speaker) => (
+				<SpeakerPhoto
+					key={speaker.id}
+					speaker={speaker}
+					photoClass={s.avatar}
+					monogramClass={`${s.avatar} ${s.avatarMono}`}
+					width={40}
+					height={40}
+				/>
+			))}
 			{extra > 0 && <span className={`${s.avatar} ${s.avatarMore}`}>+{extra}</span>}
 		</span>
 	);
@@ -146,31 +126,21 @@ export default function Sessions() {
 
 	if (state.status === 'error') {
 		return (
-			<div className={s.status} role="alert">
+			<ErrorState>
 				<p>The programme won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
-			</div>
+			</ErrorState>
 		);
 	}
 
 	if (state.status === 'loading') {
-		return (
-			<p className={s.loadingStatus} role="status">
-				<span className={s.loadingDot} aria-hidden="true" />
-				Loading sessions
-				<span className={s.loadingDots} aria-hidden="true">
-					<span />
-					<span />
-					<span />
-				</span>
-			</p>
-		);
+		return <LoadingState label="Developing the programme" />;
 	}
 
 	if (state.status === 'empty') {
 		return (
-			<div className={s.status}>
+			<EmptyState action={{ href: '/#newsletter', label: 'Get notified' }}>
 				<p>Sessions announced soon.</p>
-			</div>
+			</EmptyState>
 		);
 	}
 
@@ -227,12 +197,12 @@ export default function Sessions() {
 			</div>
 
 			{filtered.length === 0 ? (
-				<div className={s.status}>
+				<EmptyState>
 					<p>No sessions match your filters.</p>
 					<button type="button" className={s.clearInline} onClick={clearFilters}>
 						Clear filters
 					</button>
-				</div>
+				</EmptyState>
 			) : (
 				<ul className={`field ${s.grid}`} role="list">
 					{filtered.map((session) => (

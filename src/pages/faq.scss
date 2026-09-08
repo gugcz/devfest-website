@@ -1,9 +1,4 @@
-	/* ===================== BODY ===================== */
-	/* ===================== GROUP ===================== */
-	// Category on the left, its questions on the right. The list used to sit
-	// in an 820px column centred on a 1440 page, with the category as a small
-	// caption above it — a narrow ribbon of content down the middle of a wide
-	// dark page.
+	// Category on the left, its questions on the right.
 	.faq-group {
 		display: grid;
 		grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
@@ -11,23 +6,18 @@
 		align-items: start;
 	}
 
-	// Each group is its own ruled sheet with its own 60px heading, so they sit a
-	// section apart rather than a paragraph apart — four groups at 6rem read as
-	// one 1800px block of questions.
+	// Each group is its own sheet with its own heading, so groups sit a section apart.
 	.faq-group + .faq-group {
 		margin-top: var(--section-y);
 	}
 
-	// Sticky so the category stays beside its questions while a long group
-	// scrolls past — the one thing a pinned column buys over a caption.
+	// Sticky, so the category stays beside its questions while a long group scrolls.
 	.faq-head {
 		position: sticky;
 		top: 7rem;
 	}
 
-	// A step above the questions beside it. At --fs-h3 it landed within a
-	// pixel of the row title's size, so the category stopped reading as the
-	// head of its group and started reading as another entry in it.
+	// A step above the questions: at --fs-h3 the category read as another entry in the list.
 	.faq-cat {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: clamp(2.4rem, 4.2vw, 3.75rem);
@@ -38,8 +28,7 @@
 		margin: 0;
 	}
 
-	// An open field of questions — `.field` in BaseLayout.scss. The category
-	// head beside the group is what gives the list its top edge.
+	// An open field of questions; the category head beside it is the list's top edge.
 	.faq-list {
 		display: flex;
 		flex-direction: column;
@@ -56,15 +45,10 @@
 		}
 	}
 
-	/* ===================== ITEM (native <details>) ===================== */
-	// The REACH FIELD lives on the <summary> (`.field-row--link`), not here: the
-	// question is the control, and a long answer sitting on red is a lot of red
-	// to read against.
-	//
-	// The OPEN item takes a warm wash instead of the field. These are
-	// independent <details>, several can be open at once, and four permanent red
-	// bands down one page is the accent as texture — the exact thing this pass
-	// removes. Red stays spent once, under the pointer.
+	// The REACH FIELD lives on the <summary> (`.field-row--link`), not here — a long
+	// answer sitting on red is a lot of red to read against. An OPEN item takes the
+	// warm wash instead: several <details> can be open at once, and four permanent
+	// red bands down one page is the accent as texture.
 	.faq-item {
 		position: relative;
 		isolation: isolate;
@@ -92,12 +76,8 @@
 		}
 	}
 
-	// Question text + toggle marker. The leading 3.25rem index column went with
-	// the removed "N° 01" numeral — without it the text was crushed into that
-	// narrow track and wrapped one word per line.
-	//
-	// Rhythm, reach field, ink inversion and focus ring all come from
-	// `.field-row--link` in BaseLayout.scss.
+	// Question text + toggle marker. Rhythm, reach field, ink inversion and focus ring
+	// come from `.field-row--link`.
 	.faq-q {
 		z-index: 1;
 		list-style: none;
@@ -113,8 +93,7 @@
 		}
 	}
 
-	// The long-list row step (--fs-row-sm), shared with the session rows and
-	// the press clippings.
+	// The long-list row step, shared with the session rows and the press clippings.
 	.faq-q-text {
 		flex: 1;
 		font-family: var(--font-bebas-neue), sans-serif;
@@ -126,8 +105,7 @@
 		transition: color 0.2s;
 	}
 
-	// Muted at rest; it goes full cream on the red field. Red on twelve markers
-	// at once is not a highlight.
+	// Muted at rest; full cream on the red field. Red on twelve markers is not a highlight.
 	.faq-marker {
 		flex: 0 0 auto;
 		font-family: var(--font-jetbrains-mono), monospace;
@@ -138,24 +116,19 @@
 		transform-origin: center;
 	}
 
-	// The open question holds the red field (above); the marker turns.
+	// The open question holds the wash; the marker turns.
 	.faq-item[open] .faq-marker {
 		transform: rotate(45deg); // + → ×
 	}
 
-	/* ===================== ANSWER ===================== */
-	// Editorial pull — the open answer is indented behind a red hairline,
-	// reading like a margin note set off from the question above it.
+	// The open answer is indented behind a hairline, like a margin note.
 	.faq-a {
 		position: relative;
 		z-index: 1;
-		// Under its own question, set off from it as a margin note behind the
-		// red hairline. No longer offset by the removed index column.
 		margin: 0 0 1.8rem;
 		padding-left: 1.4rem;
-		// Neutral hairline, not a red bar. The accent bar down the left of a
-		// block appeared on the answer, on every agenda card and on every lede
-		// on the site — applied that widely it stops marking anything.
+		// Neutral hairline, never a red bar: an accent bar down the left edge of a block
+		// is banned site-wide.
 		border-left: 1px solid var(--rule);
 	}
 
@@ -181,11 +154,8 @@
 		}
 	}
 
-	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 600px) {
-		// Flush to the content column. The side padding was left over from the
-		// enclosed-panel version and inset each question from the rule it sits
-		// on, so the hairlines ran past the text at both ends.
+		// Flush to the content column — side padding insets each question from the rule it sits on.
 		.faq-q {
 			gap: 0.8rem;
 		}

@@ -1,16 +1,12 @@
 /**
- * Browser-safe session types + presentation helpers.
+ * Browser-safe session types + presentation helpers. The daily
+ * `refreshSessionizeScheduled` function writes the `sessions` collection, each doc
+ * embedding a summary of its presenters; the shapes here mirror the subset the UI
+ * renders. No Firebase import — the island reads the cached `/api/lineup`.
  *
- * The daily `refreshSessionizeScheduled` Cloud Function (functions/src/sessionize/)
- * writes documents into the public-read Firestore `sessions` collection, each
- * embedding a summary of its presenters (`speakers[]`). The shapes here mirror
- * the subset of that `SessionDoc` the UI renders. Browser-safe: types and pure
- * helpers only — no Firebase import (the island reads the cached `/api/lineup`
- * endpoint via `fetchLineup` / `fetchAgenda` in `lineup.ts`, not the SDK).
- *
- * ⚠️ Persisted shape lives in `functions/src/sessionize/sessionize-api.ts`
- * (`SessionDoc` / `SessionSpeakerRef`) — the two live across the src/ ↔
- * functions/ build boundary and share no package. Keep them in sync.
+ * ⚠️ The persisted shape lives in `functions/src/sessionize/sessionize-api.ts`
+ * (`SessionDoc` / `SessionSpeakerRef`). The two sit across the src/ ↔ functions/
+ * build boundary and share no package, so keep them in sync by hand.
  */
 
 /** A presenter embedded on a session — the reverse of a speaker's `sessions[]`.
@@ -43,8 +39,12 @@ export interface Session {
 	startsAt: string;
 	/** ISO 8601 end; may be empty before the agenda is scheduled. */
 	endsAt: string;
-	/** Room name; may be empty before the agenda is scheduled. */
+	/** Room name; may be empty — Sessionize leaves it blank on a scheduled
+	 * session and only carries the id (see `roomId`). */
 	room: string;
+	/** Sessionize room id. Present on every scheduled session even when `room`
+	 * is blank, so it — not the name — is what groups the agenda's columns. */
+	roomId: string;
 	/** Breaks / lunch / registration — carry no speakers; filtered from the grid. */
 	isServiceSession: boolean;
 	/** Keynote / plenary — a single-track session everyone attends. Rendered as a
@@ -108,6 +108,7 @@ export function sessionFromDoc(id: string, data: Record<string, unknown>): Sessi
 		startsAt: asStr(data.startsAt),
 		endsAt: asStr(data.endsAt),
 		room: asStr(data.room),
+		roomId: asStr(data.roomId),
 		isServiceSession: data.isServiceSession === true,
 		isPlenumSession: data.isPlenumSession === true,
 		speakers,

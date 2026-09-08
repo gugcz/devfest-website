@@ -106,6 +106,74 @@ const isCurrent = (href: string) => {
 </header>
 
 <script>
+	import { invalidateAnchorOffsets } from '../lib/anchor';
+
+	/**
+	 * MEASURE THE BAR; DON'T TRUST THE FORMULA.
+	 *
+	 * `--header-h` is stated in CSS as `padding * 2 + tap` (BaseLayout.scss), and
+	 * anchor offsets, the panel's top padding and every future sticky element are
+	 * measured off it. Under a text-only zoom `.header-actions` wraps — that wrap
+	 * is the 320px overflow fix — and a wrapped bar is taller than the formula
+	 * says: at a 32px root the bar ran 39px taller at 320px and 141px taller at
+	 * 1024px while the property still claimed the unwrapped height.
+	 *
+	 * So the real height is measured and written over it. The CSS formula stays:
+	 * it is the value every anchor lands against before this script runs, and it
+	 * is exact at a 16px root, where the bar never wraps.
+	 */
+	const trackHeaderHeight = (header: HTMLElement, signal: AbortSignal) => {
+		const root = document.documentElement;
+
+		// The formula's own value, resolved ONCE and before anything is written.
+		// `--header-h` is an unregistered custom property, so its computed value
+		// is the raw token stream (`calc(0.85rem * 2 + 44px)`), not a length —
+		// laying an element out against it is the only way to read it as pixels.
+		// Needed so the first measurement can be compared against something: at a
+		// 16px root measured == formula, and the 1px threshold below then means
+		// the property is never written at all and the offsets #310 established
+		// cannot move.
+		const probe = document.createElement('div');
+		probe.style.cssText =
+			'position:absolute;top:0;left:0;width:0;height:var(--header-h);visibility:hidden;pointer-events:none';
+		document.body.appendChild(probe);
+		let applied = probe.getBoundingClientRect().height;
+		probe.remove();
+
+		let frame = 0;
+		// Only the last entry matters — an observer that fires twice in a frame is
+		// reporting two steps of one layout, and the second is the settled one.
+		const observer = new ResizeObserver((entries) => {
+			const entry = entries[entries.length - 1];
+			// Border box, not `contentRect`: the bar's own vertical padding is half
+			// of what `--header-h` describes.
+			const height = entry.borderBoxSize?.[0]?.blockSize ?? entry.target.getBoundingClientRect().height;
+			// Sub-pixel noise is not a new height. The threshold is also what keeps
+			// this out of a ResizeObserver loop: the write below is compared against
+			// the value we last wrote, never against a fresh read of the property in
+			// the same callback.
+			if (!(Math.abs(height - applied) > 1)) return;
+			applied = height;
+			cancelAnimationFrame(frame);
+			frame = requestAnimationFrame(() => {
+				root.style.setProperty('--header-h', `${height}px`);
+				// `src/lib/anchor.ts` memoises the landing offset and drops it on
+				// `resize`; a custom-property write fires no such event, so the hold
+				// would go on correcting to the pre-measurement offset.
+				invalidateAnchorOffsets();
+			});
+		});
+		observer.observe(header);
+		signal.addEventListener(
+			'abort',
+			() => {
+				observer.disconnect();
+				cancelAnimationFrame(frame);
+			},
+			{ once: true }
+		);
+	};
+
 	// Bundled module scripts run once per document, but <ClientRouter /> replaces
 	// the header on every soft navigation — so re-bind on `astro:page-load`
 	// (fires on the initial load too, replacing DOMContentLoaded). The
@@ -120,6 +188,11 @@ const isCurrent = (href: string) => {
 		const header = document.getElementById('site-header');
 		const toggle = document.getElementById('nav-toggle');
 		const list = document.getElementById('nav-list');
+
+		// The swap replaces <html>'s attributes, so a written `--header-h` does not
+		// survive a soft navigation — re-measuring per page-load is what restores
+		// it, and it is per-page-correct by construction.
+		if (header) trackHeaderHeight(header, signal);
 
 		// Scroll state — sets data-state for brand reveal on home page
 		const onScrollState = () => {

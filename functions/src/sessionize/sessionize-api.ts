@@ -1,37 +1,26 @@
 /**
- * Sessionize "All data" client + pure normalization helpers.
+ * Sessionize "All data" client + pure normalization helpers. Sessionize is the
+ * org's source of truth; `refreshSessionizeScheduled` mirrors it into public-read
+ * Firestore once a day and the browser never calls Sessionize directly.
  *
- * Sessionize is the org's source of truth. The `refreshSessionizeScheduled` scheduler
- * fetches the All-data view once a day and mirrors it into public-read
- * Firestore; the browser never calls Sessionize directly.
+ * Endpoint: https://sessionize.com/api/v2/<id>/view/<View> (no auth, GET,
+ * server-cached ~5 min). Endpoints are provisioned per-view, so a given id serves
+ * only the view(s) it was created for and any other view returns a 400 HTML page.
+ * The "All data" view is an OBJECT (`{ speakers, sessions, rooms, categories,
+ * questions }`); the "Speakers" view is a bare ARRAY of speakers. So
+ * `fetchSessionizePayload` tries All first and falls back to Speakers, and the
+ * extractors accept either. The id MUST be a JSON endpoint — an embed id is HTML.
  *
- * Endpoint: https://sessionize.com/api/v2/<id>/view/<View>  (no auth, GET,
- * server-cached ~5 min). Sessionize endpoints are provisioned per-view, so a
- * given id serves only the view(s) it was created for; requesting a view the
- * endpoint doesn't expose returns a 400 HTML page. We need the speaker AND
- * session records: the "All data" view (an OBJECT `{ speakers, sessions, rooms,
- * categories, questions }`) carries both, while the "Speakers" view (a bare
- * ARRAY of speaker objects) carries only speakers — so `fetchSessionizePayload`
- * tries All first, falls back to Speakers, and `extractSpeakers` /
- * `extractSessions` accept whatever the payload holds. The id MUST be a
- * JSON-format endpoint; an embed id returns HTML, not JSON.
+ * Two cross-referenced collections are mirrored: `speakers` (each carrying
+ * `sessions[]`) and `sessions` (each carrying `speakers[]`). Sessions exist only
+ * in the All view; a Speakers-view fallback yields an empty session set, which the
+ * delete-guard preserves rather than wipes. The payload's `rooms[]` is consumed
+ * only as an id → name lookup (`buildRoomMap`); it is not mirrored as its own
+ * collection.
  *
- * Scope: two collections are mirrored, cross-referenced so each side embeds a
- * summary of the other:
- *   - `speakers` — the full speaker record, each carrying `sessions[]`
- *     ({ id, name, description }) resolved from the payload's top-level
- *     `sessions[]` via `buildSessionMap`.
- *   - `sessions` — the session record, each carrying `speakers[]`
- *     ({ id, fullName, tagLine, profilePicture }) resolved from the payload's
- *     top-level `speakers[]` via `buildSpeakerSummaryMap`.
- * Sessions are only present in the All view; a Speakers-view fallback yields an
- * empty session set, which the delete-guard preserves rather than wipes. The
- * All view's `rooms` / `categories` are still ignored — add a collection +
- * guarded sync when they're needed.
- *
- * The fetch/validate/normalize and delete-guard logic below are pure and
- * exported so the highest-risk paths (a truncated response must never wipe the
- * live collection) are reviewable in isolation — this package ships no tests.
+ * The fetch/validate/normalize and delete-guard logic is pure and exported so the
+ * highest-risk path — a truncated response must never wipe a live collection —
+ * stays reviewable; this package ships no tests.
  */
 
 import { describeError } from '../lib/errors.js';
@@ -39,7 +28,6 @@ import { errorBody, fetchWithRetry } from '../lib/http.js';
 
 const SESSIONIZE_API_BASE = 'https://sessionize.com/api/v2';
 
-/** Raw Sessionize link as returned by the All view. */
 export interface SessionizeLink {
 	title?: string | null;
 	url?: string | null;
@@ -92,7 +80,8 @@ export interface SessionizeSession {
 	[key: string]: unknown;
 }
 
-/** The All-data envelope. Only `speakers` + `sessions` are consumed today. */
+/** The All-data envelope. `rooms` + `categories` are consumed as id → label
+ * lookups for the sessions; `questions` is unused. */
 export interface SessionizeAll {
 	speakers?: unknown;
 	sessions?: unknown;
@@ -121,7 +110,6 @@ export type SpeakerLinkKind =
 	| 'mastodon'
 	| 'web';
 
-/** Normalized link persisted on the speaker doc. */
 export interface SpeakerLink {
 	kind: SpeakerLinkKind;
 	url: string;
@@ -193,9 +181,7 @@ export interface SessionSpeakerRef {
  * website's session filters (track / level / format facets).
  */
 export interface SessionCategory {
-	/** Category group title (e.g. `Track`, `Level`, `Format`). */
 	name: string;
-	/** The item labels this session is tagged with in that group. */
 	values: string[];
 }
 
@@ -482,7 +468,6 @@ export function normalizeSpeakers(
 // helpers below tolerate an absent/empty set (returning []) — the delete-guard,
 // not a throw, protects the live `sessions` collection from a truncated fetch.
 
-/** The speaker fields embedded on each session doc. */
 interface SpeakerSummary {
 	fullName: string;
 	tagLine: string;
@@ -601,6 +586,32 @@ function resolveSessionSpeakers(
 	return out;
 }
 
+/**
+ * Build a roomId → room name map from the All payload's top-level `rooms[]`
+ * (`[{ id, name, sort }]`).
+ *
+ * A scheduled session carries `roomId` and, depending on how the event is set
+ * up, an EMPTY `room` string — which is what our own event ships. Without this
+ * lookup every talk persisted with `room: ''`, so `/agenda` saw a single
+ * Room-TBA column and fell back to the stacked list on desktop instead of
+ * drawing the time × room grid.
+ */
+export function buildRoomMap(payload: unknown): Map<string, string> {
+	const map = new Map<string, string>();
+	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
+	const rooms = (payload as SessionizeAll).rooms;
+	if (!Array.isArray(rooms)) return map;
+	for (const room of rooms) {
+		if (typeof room !== 'object' || room === null) continue;
+		const record = room as Record<string, unknown>;
+		if (record.id == null) continue;
+		const name = asString(record.name) || asString(record.title);
+		if (!name) continue;
+		map.set(String(record.id), name);
+	}
+	return map;
+}
+
 /** A category item resolved to its group title + label. */
 interface CategoryItem {
 	group: string;
@@ -679,8 +690,8 @@ function resolveSessionCategories(
 /**
  * Project one raw session into the persisted doc shape. `order` is the array
  * index (stable tiebreaker for `startsAt` sorts); missing scalars become empty
- * strings / false so the doc shape stays stable. `speakers` / `categoryItems`
- * are resolved via `speakerMap` / `categoryMap`; the raw `questionAnswers`
+ * strings / false so the doc shape stays stable. `speakers` / `categoryItems` /
+ * `roomId` are resolved via `speakerMap` / `categoryMap` / `roomMap`; the raw `questionAnswers`
  * array is dropped (not rendered, and this doc is public).
  */
 export function normalizeSession(
@@ -688,7 +699,9 @@ export function normalizeSession(
 	index: number,
 	speakerMap: Map<string, SpeakerSummary>,
 	categoryMap: Map<string, CategoryItem>,
+	roomMap: Map<string, string> = new Map(),
 ): SessionDoc {
+	const roomId = raw.roomId != null ? String(raw.roomId).trim() : '';
 	return {
 		id: String(raw.id).trim(),
 		order: index,
@@ -696,8 +709,9 @@ export function normalizeSession(
 		description: asString(raw.description),
 		startsAt: asString(raw.startsAt),
 		endsAt: asString(raw.endsAt),
-		room: asString(raw.room),
-		roomId: raw.roomId != null ? String(raw.roomId).trim() : '',
+		// The inline name when Sessionize sends one, else the `rooms[]` lookup.
+		room: asString(raw.room) || roomMap.get(roomId) || '',
+		roomId,
 		isServiceSession: raw.isServiceSession === true,
 		isPlenumSession: raw.isPlenumSession === true,
 		status: asString(raw.status),
@@ -712,8 +726,11 @@ export function normalizeSessions(
 	raw: SessionizeSession[],
 	speakerMap: Map<string, SpeakerSummary> = new Map(),
 	categoryMap: Map<string, CategoryItem> = new Map(),
+	roomMap: Map<string, string> = new Map(),
 ): SessionDoc[] {
-	return raw.map((session, index) => normalizeSession(session, index, speakerMap, categoryMap));
+	return raw.map((session, index) =>
+		normalizeSession(session, index, speakerMap, categoryMap, roomMap),
+	);
 }
 
 /**
@@ -735,8 +752,8 @@ export function parseEndpointId(raw: string | null | undefined): string {
 
 /**
  * GET one Sessionize view. Retries transient faults via `fetchWithRetry`,
- * because this sync runs once a day: the blip that cost a whole day of lineup
- * freshness in production was a ~10.7s connect timeout here. A non-OK response
+ * because this sync runs once a day and a ~10.7s connect timeout here has cost a
+ * whole day of lineup freshness in production. A non-OK response
  * comes back as-is, so the caller can fall back to the Speakers view on the
  * deterministic 400 an endpoint returns for a view it doesn't serve.
  */
@@ -754,7 +771,7 @@ async function fetchView(endpointId: string, view: string): Promise<Response> {
  * "Speakers" view, or both — try All first and fall back to Speakers on a
  * non-OK response. Only the All view carries sessions; a Speakers-view fallback
  * yields speakers but no sessions. Each view is fetched with retries (see
- * `fetchView`), so a transient blip no longer costs the day's sync. Throws when
+ * `fetchView`), so a transient blip does not cost the day's sync. Throws when
  * a view stays unreachable, both views fail, or the body is not JSON, so the
  * caller aborts without touching Firestore.
  */

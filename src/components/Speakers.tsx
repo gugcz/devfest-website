@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { initials, PORTRAIT_TRANSITION, type Speaker } from '../lib/speakers';
+import { PORTRAIT_TRANSITION, type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
 import SpeakerDetail from './SpeakerDetail';
+import SpeakerPhoto from './SpeakerPhoto';
+import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Speakers.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
@@ -118,11 +120,6 @@ function SpeakerCard({
 	index: number;
 	morphing: boolean;
 }) {
-	// A present-but-broken CDN URL (404 / timeout) falls back to the monogram,
-	// same as a speaker with no photo at all.
-	const [imageFailed, setImageFailed] = useState(false);
-	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
-
 	return (
 		// `--i` staggers the develop animation; see the `.develop` rules in
 		// BaseLayout.scss.
@@ -137,23 +134,14 @@ function SpeakerCard({
 				}
 			>
 				<span className={s.media}>
-					{showPhoto ? (
-						<img
-							className={s.photo}
-							src={speaker.profilePicture}
-							alt=""
-							loading={priority ? 'eager' : 'lazy'}
-							fetchPriority={priority ? 'high' : 'auto'}
-							decoding="async"
-							width={400}
-							height={500}
-							onError={() => setImageFailed(true)}
-						/>
-					) : (
-						<span className={s.monogram} aria-hidden="true">
-							{initials(speaker.fullName) || '?'}
-						</span>
-					)}
+					<SpeakerPhoto
+						speaker={speaker}
+						photoClass={s.photo}
+						monogramClass={s.monogram}
+						width={400}
+						height={500}
+						eager={priority}
+					/>
 					<span className={s.scrim} aria-hidden="true" />
 					<span className={s.vignette} aria-hidden="true" />
 				</span>
@@ -228,26 +216,21 @@ export default function Speakers() {
 
 	if (state.status === 'error') {
 		return (
-			<div className={s.status} role="alert">
+			<ErrorState>
 				<p>The lineup won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
-			</div>
+			</ErrorState>
 		);
 	}
 
 	if (state.status === 'loading') {
-		return (
-			<p className={s.loadingStatus} role="status">
-				<span className={s.loadingDot} aria-hidden="true" />
-				Developing the lineup
-			</p>
-		);
+		return <LoadingState label="Developing the lineup" />;
 	}
 
 	if (state.status === 'empty') {
 		return (
-			<div className={s.status}>
+			<EmptyState action={{ href: '/#newsletter', label: 'Get notified' }}>
 				<p>Lineup announced soon.</p>
-			</div>
+			</EmptyState>
 		);
 	}
 

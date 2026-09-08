@@ -15,14 +15,9 @@
 	}
 
 	/* ---- the mark ---- */
-	// The brand asset itself. Typesetting the name in Bebas produced a second
-	// wordmark that disagreed with the one in the header — wrong glyph, wrong
-	// dot, wrong proportions.
-	//
-	// It heads the brand column instead of getting a row of its own: that row
-	// paired the mark with a date/place line the Event column already carried
-	// word for word, and the column under it opened with a mono heading
-	// spelling out the name the logo was already saying.
+	// The brand asset itself — never typeset the name in Bebas, which produces a
+	// second wordmark disagreeing with the header's. It heads the brand column
+	// rather than taking a row of its own.
 	.footer-logo-link {
 		display: inline-flex;
 		line-height: 0;
@@ -44,21 +39,46 @@
 		display: grid;
 		grid-template-columns: 1.4fr 1fr 1fr 1.4fr;
 		gap: 3.5rem;
-		// No top rule: the grid IS the footer's first row now, and the footer
-		// already opens on its own hairline.
+		// No top rule: the grid is the footer's first row and the footer already opens
+		// on its own hairline.
 		padding: 0 0 clamp(2.5rem, 5vw, 3.5rem);
 		border-bottom: 1px solid var(--rule-soft);
 
-		@media (max-width: 960px) {
+		// THE FOOTER'S BREAKPOINTS ARE THE ONE PLACE ON THE SITE THAT COLLAPSES
+		// BY TYPE SIZE, NOT BY PIXELS — 60em/31.25em, not 960px/500px.
+		//
+		// A media-query `em` resolves against the INITIAL font size (the reader's
+		// browser default), so these thresholds move with a text-only zoom while
+		// the rest of the site's 84 px queries stay put. That is deliberate here
+		// and nowhere else: this grid's contents do not shrink to fit. `.org`
+		// holds the legal name "GUG.cz, z.s. ↗" as one `white-space: nowrap`
+		// token, which at a 32px root measures 267px — wider than the ~222px a
+		// quarter of a 1024px viewport gives it, and nothing between it and
+		// `html` clips, so the document ran 45px past the viewport on every route
+		// that carries a footer (DEVF-49). In `em` the same reader gets the
+		// two-column grid (405px a column) and the name fits, unbroken.
+		//
+		// The values are the old pixels at a 16px root — 60em = 960px,
+		// 31.25em = 500px — so a default-size reader gets byte-identical layout;
+		// only a zoomed one sees the difference.
+		//
+		// Not the alternative that shipped first: letting the name wrap
+		// (`overflow-wrap: anywhere`) breaks INSIDE the word — "GUG.cz, z" /
+		// ".s." between 1060px and 1260px — and a severed legal name is worse
+		// than the overflow it fixed. NBSP does not save it; NBSP is not a break
+		// opportunity, so `anywhere` breaks wherever it likes.
+		@media (max-width: 60em) {
 			grid-template-columns: 1fr 1fr;
 			gap: 2.8rem;
 		}
 
-		@media (max-width: 500px) {
+		// Stacks, but stays LEFT-SET. Every block on the site is left-set at
+		// every other width, and the footer was the one surface that centred
+		// itself below 500px — so the phone was the only place the site changed
+		// its mind about where a column starts.
+		@media (max-width: 31.25em) {
 			grid-template-columns: 1fr;
 			gap: 2.6rem;
-			text-align: center;
-			justify-items: center;
 		}
 	}
 
@@ -67,10 +87,6 @@
 		flex-direction: column;
 		gap: 1.2rem;
 		min-width: 0;
-
-		@media (max-width: 500px) {
-			align-items: center;
-		}
 	}
 
 	.col-title {
@@ -81,8 +97,7 @@
 		color: rgba(240, 237, 230, 0.85);
 		font-weight: normal;
 		margin: 0;
-		// Plain. Each of the four column heads used to be flanked by a pair of
-		// red hairlines — twelve decorative elements in a row of four labels.
+		// Plain. Never flank a column head with a pair of hairlines.
 	}
 
 	.brand-tagline {
@@ -91,10 +106,6 @@
 		line-height: 1.55;
 		color: rgba(240, 237, 230, 0.6);
 		max-width: 32ch;
-
-		@media (max-width: 500px) {
-			margin: 0 auto;
-		}
 	}
 
 	.contact {
@@ -146,12 +157,11 @@
 		font-size: var(--fs-ui);
 
 		// Single-column mobile footer: the two-column term/value grid is sized by
-		// its widest value (the venue, which wraps), so the terms hug the left
-		// edge and every value lands right of centre while the rest of the
-		// footer is centred. Stack term over value instead.
-		@media (max-width: 500px) {
+		// its widest value (the venue, which wraps), so at phone widths the
+		// values land far off the label they belong to. Stack term over value
+		// instead — both still left-set, like the rest of the footer.
+		@media (max-width: 31.25em) {
 			grid-template-columns: 1fr;
-			justify-items: center;
 			row-gap: 0.35rem;
 
 			dd + dt {
@@ -172,8 +182,7 @@
 			color: rgba(240, 237, 230, 0.82);
 			letter-spacing: 0.04em;
 
-			// Venue links out to the map — read as the muted meta text with a
-			// hairline underline, warm to the accent on hover/focus.
+			// Venue links out to the map — muted meta with a hairline underline.
 			a {
 				color: inherit;
 				text-decoration: none;
@@ -190,10 +199,8 @@
 		}
 	}
 
-	// A standalone contact link in an <address>, not a link inside a sentence,
-	// so SC 2.5.8's inline exception doesn't cover it — it measured 117×17.
-	// inline-flex + a 2.75rem row gives it a real touch target without moving
-	// the underline off the text.
+	// A standalone contact link in an <address>, so SC 2.5.8's inline exception does
+	// not cover it (117x17). inline-flex + a 2.75rem row gives a real touch target.
 	.email {
 		display: inline-flex;
 		align-items: center;
@@ -228,19 +235,24 @@
 		line-height: 1.6;
 		color: rgba(240, 237, 230, 0.65);
 		max-width: 34ch;
-
-		@media (max-width: 500px) {
-			margin: 0 auto;
-		}
 	}
 
 	.org-link {
 		display: inline;
 		// The legal name plus its external-link arrow is one unit — let the line
-		// break before it rather than splitting "GUG.cz," from "z.s.".
+		// break before it rather than splitting "GUG.cz," from "z.s.". The NBSPs
+		// in the markup say the same thing a second time, so the unit survives
+		// even if this declaration is ever dropped.
+		//
+		// This is load-bearing, and it is what makes `.footer-grid`'s breakpoints
+		// `em` rather than px (see there): the phrase does not shrink to fit, so
+		// a reader who enlarges type needs a WIDER COLUMN, not a wrap. Do not
+		// "fix" an overflow here by letting the name break — `overflow-wrap:
+		// anywhere` shipped once and severed it mid-word ("GUG.cz, z" / ".s.")
+		// between 1060px and 1260px at a 32px root, because NBSP is not a break
+		// opportunity and `anywhere` ignores word boundaries entirely.
 		white-space: nowrap;
-		// Inline-in-prose link: a persistent underline distinguishes it without
-		// relying on colour alone — WCAG 1.4.1.
+		// Inline-in-prose link: a persistent underline distinguishes it without colour alone (1.4.1).
 		text-decoration: underline;
 		text-decoration-color: var(--rule-red);
 		text-underline-offset: 3px;
@@ -251,10 +263,6 @@
 		align-items: center;
 		gap: 0.6rem;
 		flex-wrap: wrap;
-
-		@media (max-width: 500px) {
-			justify-content: center;
-		}
 	}
 
 	.social-link {
@@ -264,7 +272,7 @@
 		justify-content: center;
 		width: 2.5rem;
 		height: 2.5rem;
-		// The Two-Pixel Rule — nothing in this system is rounder than 2px.
+		// Nothing in this system is rounder than 2px.
 		border-radius: var(--radius);
 		transition: color 0.25s ease, background 0.25s ease;
 
@@ -293,7 +301,7 @@
 
 		// Both halves wrap at phone widths, which leaves the middot separator
 		// dangling and the row visually off-centre. Stack them instead.
-		@media (max-width: 500px) {
+		@media (max-width: 31.25em) {
 			flex-direction: column;
 			gap: 0.7rem;
 		}
@@ -311,7 +319,7 @@
 			margin: 0 0.6em;
 		}
 
-		@media (max-width: 500px) {
+		@media (max-width: 31.25em) {
 			&::before {
 				content: none;
 			}

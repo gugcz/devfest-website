@@ -1,0 +1,95 @@
+// THE loading / failure / empty block for every data-backed island.
+//
+// There were four of these — /speakers, /sessions, /agenda and the ticket
+// waves each kept a private copy — and the copies had drifted the way copies
+// do: two were centred and two left-set, two animated three trailing dots and
+// two didn't, the ticket one opened on a hairline nobody else had, and only
+// /agenda offered the visitor anywhere to go from an empty list. A visitor who
+// hits a cold endpoint twice in one session met two different pages.
+//
+// One treatment now, taking the best of each: /agenda's left-set column and
+// its next-action (the site is left-set everywhere else — see `.fallback-note`,
+// which this deliberately matches), the animated trailing dots from
+// /sessions, and the noir failure voice from /speakers.
+.state {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1.4rem;
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-lede);
+	line-height: 1.7;
+	color: var(--color-grey);
+	max-width: 52ch;
+	margin: 1rem 0 0;
+
+	p {
+		margin: 0;
+	}
+}
+
+// Loading is a status LINE, not a block — it sits in flow next to (or under)
+// the section head while the skeleton, where a section has one, holds the
+// layout. Mono, because it is a status word.
+.loading {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-lg);
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+	margin: 1rem 0 0;
+}
+
+// The one red thing in the set, and it earns it: a live indicator is exactly
+// what --glow-red is reserved for.
+.dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--color-accent-hot);
+	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
+	flex-shrink: 0;
+	animation: statePulse 1.3s ease-in-out infinite;
+}
+
+.dots {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+
+	span {
+		width: 3px;
+		height: 3px;
+		border-radius: 50%;
+		background: currentColor;
+		opacity: 0.3;
+		animation: statePulse 1.3s ease-in-out infinite;
+	}
+
+	span:nth-child(2) {
+		animation-delay: 0.18s;
+	}
+	span:nth-child(3) {
+		animation-delay: 0.36s;
+	}
+}
+
+@keyframes statePulse {
+	0%,
+	100% {
+		opacity: 0.3;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dot,
+	.dots span {
+		animation: none;
+	}
+}

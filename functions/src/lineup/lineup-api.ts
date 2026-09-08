@@ -1,21 +1,14 @@
 /**
- * `lineupApi` — public HTTP endpoint that serves the speaker + session lineup as
- * JSON for the website to `fetch()`.
+ * `lineupApi` — public HTTP endpoint serving the speaker + session lineup as JSON.
  *
- * Why this exists: the browser used to read the `speakers` / `sessions` Firestore
- * collections with the client SDK, which blocks the first read on an App Check
- * (reCAPTCHA Enterprise) token — slow on mobile (~30s observed). Reading here via
- * the Admin SDK (which bypasses App Check + rules) and having the browser hit a
- * plain HTTP endpoint instead removes that token wait entirely, and stays
- * compatible with enforcing App Check on Firestore later.
+ * The browser must NOT read Firestore with the client SDK: that blocks the first
+ * read on an App Check (reCAPTCHA Enterprise) token, which cost ~30s on mobile.
+ * Reading here via the Admin SDK (which bypasses App Check + rules) removes the
+ * wait, and keeps enforcing App Check on Firestore later an option.
  *
- * Two layers of caching keep Firestore reads and function invocations low:
- *  - **CDN**: served behind the Hosting rewrite `/api/lineup` with a `s-maxage`
- *    `Cache-Control`, so most requests are answered from the edge and the
- *    function runs only on a cache miss / revalidation.
- *  - **In-instance memo**: a warm instance coalesces the burst of revalidation
- *    reads it sees so they don't each hit Firestore. Short TTL — the CDN is the
- *    real cache; the memo only smooths bursts.
+ * Two caching layers keep reads and invocations low: a `s-maxage` `Cache-Control`
+ * so Hosting's CDN answers most requests from the edge, plus a short in-instance
+ * memo so a warm instance coalesces the revalidation burst.
  *
  * The wire shape is `{ speakers: [{ id, ...doc }], sessions: [{ id, ...doc }] }`
  * — raw docs, so the browser reuses its existing `speakerFromDoc` /
@@ -28,10 +21,22 @@ import { firestore } from '../lib/admin.js';
 import { cachedJsonEndpoint } from '../lib/cached-endpoint.js';
 import { CACHED_ENDPOINT } from '../options.js';
 
-// Edge cache (shared): 1h fresh, then served stale for a day while revalidating —
-// matches the daily cadence of `refreshSessionizeScheduled`. `max-age=0` keeps browsers
-// revalidating so a redeploy/purge shows promptly.
-const CACHE_CONTROL = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400';
+// Edge cache (shared): 1h fresh, then a SHORT stale window while revalidating.
+//
+// The stale window used to be a day (`stale-while-revalidate=86400`), on the
+// reasoning that `refreshSessionizeScheduled` only runs daily. That backfired the
+// first time the schedule landed: Hosting `Vary`s on `accept-encoding`, so the
+// compressed variant every real browser asks for is its own cache entry, and that
+// entry kept being served stale — the site showed a lineup with no times (`/agenda`
+// rendered its "schedule lands closer to the event" empty state) while the origin
+// had the full timetable. A day-long stale window means any sync — a new talk, a
+// room change, the schedule itself — can be invisible for a day with nothing in the
+// logs to show for it, and no way to force it out but a hosting redeploy.
+//
+// 5 minutes still absorbs the revalidation burst (that is what the in-instance memo
+// below is for) and keeps the edge answering essentially every request, but bounds
+// how long a stale lineup can survive. `max-age=0` keeps browsers revalidating.
+const CACHE_CONTROL = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=300';
 
 // In-instance memo TTL. Deliberately short: the CDN `s-maxage` above is the real
 // cache, this only stops a warm instance re-reading Firestore for every

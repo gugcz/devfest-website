@@ -35,8 +35,18 @@
 		"links": [{ "kind": "linkedin", "url": "https://www.linkedin.com/in/adela-janovska/" }]
 	},
 	{
-		"id": "filip-goszler",
+		"id": "katy-sramkova",
 		"order": 4,
+		"name": "Katy Šrámková",
+		"alias": "Logistics Girl Friday",
+		"role": "Production Assistant",
+		"photo": "/team/katy-sramkova-bw.webp",
+		"photoColor": "/team/katy-sramkova.webp",
+		"links": [{ "kind": "linkedin", "url": "https://www.linkedin.com/in/katysramkova/" }]
+	},
+	{
+		"id": "filip-goszler",
+		"order": 5,
 		"name": "Filip Goszler",
 		"alias": "The Negotiator",
 		"role": "Partners",
@@ -46,7 +56,7 @@
 	},
 	{
 		"id": "eliska-cejpova",
-		"order": 5,
+		"order": 6,
 		"name": "Eliška Čejpová",
 		"alias": "Whisperer Hunter",
 		"role": "Speakers",
@@ -56,16 +66,17 @@
 	},
 	{
 		"id": "vera-milotova",
-		"order": 6,
+		"order": 7,
 		"name": "Věra Milotová",
 		"alias": "The Press Agent",
 		"role": "PR & Marketing",
 		"photo": "/team/vera-milotova-bw.webp",
-		"photoColor": "/team/vera-milotova.webp"
+		"photoColor": "/team/vera-milotova.webp",
+		"links": [{ "kind": "linkedin", "url": "https://www.linkedin.com/in/verkamilotova/" }]
 	},
 	{
 		"id": "dominik-simonik",
-		"order": 7,
+		"order": 8,
 		"name": "Dominik Šimoník",
 		"alias": "Switchboard Operator",
 		"role": "Web & App",
@@ -80,7 +91,7 @@
 	},
 	{
 		"id": "eliska-zezulkova",
-		"order": 8,
+		"order": 9,
 		"name": "Eliška Zezulková",
 		"alias": "The Gatekeeper",
 		"role": "Tickets & Registration",
@@ -93,7 +104,7 @@
 	},
 	{
 		"id": "tereza-goszlerova",
-		"order": 9,
+		"order": 10,
 		"name": "Tereza Goszlerová",
 		"alias": "Head Bookkeeper",
 		"role": "Finance",
@@ -102,7 +113,7 @@
 	},
 	{
 		"id": "petr-vobr",
-		"order": 10,
+		"order": 11,
 		"name": "Petr Vobr",
 		"alias": "Private Eye",
 		"role": "Festival",
@@ -111,7 +122,7 @@
 	},
 	{
 		"id": "rosta-navratil",
-		"order": 11,
+		"order": 12,
 		"name": "Rostislav Navrátil",
 		"alias": "Private eye's Legman",
 		"role": "Festival Sidekick",

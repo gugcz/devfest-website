@@ -1,7 +1,4 @@
-// One continuous readout, not four cards. The stub-with-red-header treatment
-// this replaces put a bordered rectangle, a filled strip and a two-letter code
-// around every pair of digits — four objects of chrome per unit, for a number
-// that is only ever glanced at.
+// One continuous readout, not four cards.
 .countdown {
 	display: flex;
 	align-items: baseline;
@@ -34,22 +31,19 @@
 	line-height: 0.9;
 	letter-spacing: 0.03em;
 	color: var(--color-text);
-	// Tabular so the row doesn't shift width every time a digit changes —
-	// with the seconds ticking, a proportional numeral jitters the whole strip.
+	// Tabular, or a ticking seconds digit jitters the whole strip.
 	font-variant-numeric: tabular-nums;
 	user-select: none;
 }
 
-// The one piece of red in the clock. It sits on the digits' baseline and does
-// the pacing the old header strips were doing with a filled block each.
+// The one piece of red in the clock; it does the pacing.
 .sep {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: clamp(2.4rem, 4vw, 3.6rem);
 	line-height: 0.9;
 	color: var(--color-accent);
 	user-select: none;
-	// Nudge off the alphabetic baseline — a colon set against lining figures
-	// sits low otherwise.
+	// A colon sits low against lining figures.
 	transform: translateY(-0.06em);
 }
 

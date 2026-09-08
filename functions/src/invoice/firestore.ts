@@ -51,6 +51,12 @@ export interface InvoiceDoc extends InvoiceRequestInput {
 	idokladInvoiceNumber?: string | null;
 	variableSymbol?: string | null;
 	invoiceEmailSent?: boolean;
+	/**
+	 * True when the iDoklad contact was proven to carry the address submitted on
+	 * the form. False means the invoice mail named an explicit recipient instead
+	 * and the contact still holds someone else's address.
+	 */
+	contactEmailSynced?: boolean;
 	paidAmount?: string | null;
 	// ti.to
 	discountCode?: string | null;

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { initials, type Speaker } from '../lib/speakers';
+import { type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
+import { shuffle } from '../lib/shuffle';
+import SpeakerPhoto from './SpeakerPhoto';
 import s from './SpeakersTeaser.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
@@ -9,17 +11,6 @@ type Status = 'loading' | 'ready' | 'empty' | 'error';
 // full roster over time (rotation kicks in once there are more than this).
 const WALL_SIZE = 4;
 const ROTATE_MS = 5000;
-
-// Fisher-Yates: fresh shuffled copy so the wall starts on a random set each load
-// (rather than always the first four by `order`) and rotates in a random sequence.
-function shuffle<T>(items: readonly T[]): T[] {
-	const out = items.slice();
-	for (let i = out.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[out[i], out[j]] = [out[j], out[i]];
-	}
-	return out;
-}
 
 function usePrefersReducedMotion(): boolean {
 	const [reduce, setReduce] = useState(false);
@@ -34,9 +25,6 @@ function usePrefersReducedMotion(): boolean {
 }
 
 function Thumb({ speaker }: { speaker: Speaker }) {
-	const [imageFailed, setImageFailed] = useState(false);
-	const showPhoto = Boolean(speaker.profilePicture) && !imageFailed;
-
 	return (
 		<a
 			className={`${s.tile} develop`}
@@ -44,22 +32,13 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 			aria-label={`${speaker.fullName} — see the full lineup`}
 		>
 			<span className={s.thumb}>
-				{showPhoto ? (
-					<img
-						className={s.photo}
-						src={speaker.profilePicture}
-						alt=""
-						loading="lazy"
-						decoding="async"
-						width={220}
-						height={275}
-						onError={() => setImageFailed(true)}
-					/>
-				) : (
-					<span className={s.monogram} aria-hidden="true">
-						{initials(speaker.fullName) || '?'}
-					</span>
-				)}
+				<SpeakerPhoto
+					speaker={speaker}
+					photoClass={s.photo}
+					monogramClass={s.monogram}
+					width={220}
+					height={275}
+				/>
 				<span className={s.scrim} aria-hidden="true" />
 				<span className={s.vignette} aria-hidden="true" />
 			</span>

@@ -1,16 +1,90 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import LandingNotice from '../components/LandingNotice.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+import NextStep from '../components/NextStep.astro';
+import Closer from '../components/Closer.astro';
+import { EVENT_TOPICS } from '../lib/ticker';
+
+// A dead URL is still a visitor who wanted something specific. The page used
+// to state the fault and offer one link home; it now offers the routes people
+// actually arrive looking for. Ordered by what a stale link most often points
+// at: last year's lineup, last year's programme, and tickets.
+const STEPS = [
+	{
+		title: 'The lineup',
+		noteHtml: 'Everyone confirmed so far, with their talks.',
+		actions: [{ href: '/speakers', label: 'See the speakers' }],
+	},
+	{
+		title: 'The programme',
+		noteHtml: 'Talks by track, and the timetable once rooms are assigned.',
+		actions: [
+			{ href: '/sessions', label: 'See the sessions' },
+			{ href: '/agenda', label: 'See the agenda' },
+		],
+	},
+	{
+		title: 'Tickets',
+		noteHtml:
+			'Pricing waves and what each one includes. Companies can pay by ' +
+			'<a href="/invoice">invoice</a> instead.',
+		actions: [{ href: '/#tickets', label: 'Get tickets', kind: 'primary' as const }],
+	},
+	{
+		title: 'Still lost?',
+		noteHtml:
+			'The FAQ answers most of it, and one of the desks answers the rest. ' +
+			'Last year&rsquo;s edition lives on its own site.',
+		actions: [
+			{ href: '/faq', label: 'Read the FAQ' },
+			{ href: '/contact', label: 'Contact us' },
+		],
+	},
+];
 ---
 
 <BaseLayout
-	title="404 · DevFest.cz 2026"
+	title="404 — DevFest.cz 2026"
 	description="The page you're looking for doesn't exist."
 	noindex
 >
-	<LandingNotice
-		code="404"
-		headline="Page not found."
-		subtext="The page you're looking for doesn't exist or has moved."
-	/>
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={'Nothing filed<br />under <span class="red">that.</span>'}
+			lede="404 — the page you asked for doesn't exist, or it moved when the 2026 site replaced the old one."
+			seoHeading="Page not found"
+			titleId="notfound-title"
+			photo={false}
+		/>
+
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
+		<section class="band band--lit" aria-labelledby="notfound-next-heading">
+			<div class="band-inner">
+				<header class="head-stack">
+					<p class="eyebrow">Try one of these</p>
+					<h2 id="notfound-next-heading" class="display head-title">
+						What people <span class="red">came for.</span>
+					</h2>
+				</header>
+
+				<ul class="field reveal">
+					{STEPS.map((step) => <NextStep {...step} />)}
+				</ul>
+			</div>
+		</section>
+
+		<Closer
+			eyebrow="Or start over"
+			titleHtml={'Back to the<br /><span class="red">top</span>.'}
+			note="The homepage carries the date, the venue, the waves and the newsletter."
+			tone="accent"
+			titleId="notfound-closer"
+			actions={[
+				{ href: '/', label: 'Go to the homepage' },
+				{ href: 'https://2025.devfest.cz', label: "2025 edition", kind: 'ghost', external: true },
+			]}
+		/>
+	</main>
 </BaseLayout>

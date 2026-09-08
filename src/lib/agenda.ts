@@ -1,52 +1,115 @@
 /**
- * Pure, framework-free helpers for the `/agenda` timetable. Isolated from the
- * React island for review clarity — the time math is the highest-risk part of
- * the feature (getting the time zone wrong silently shifts the whole schedule).
- * No test runner exists in this repo (see CLAUDE.md), so the real guard is the
- * manual Prague-vs-foreign-zone check in the plan; keeping the math here keeps
- * it reviewable.
+ * Pure, framework-free helpers for the `/agenda` timetable. The time math lives
+ * here rather than in the island because getting the zone wrong silently shifts
+ * the whole schedule.
  *
- * Time zone: Sessionize emits `startsAt`/`endsAt` as event-LOCAL ISO strings
- * (`2026-10-30T09:00:00`, no offset — verified against live `/api/lineup`). We
- * therefore read the wall-clock `HH:MM` straight off the string and never build
- * a `Date`, which would reinterpret a naive string in the visitor's zone and
- * shift every time. If Sessionize ever starts emitting an offset (`…+02:00`),
- * `parseLocalMinutes` ignores it (the persisted value is already Prague-local);
- * a true cross-zone value would instead need `Intl.DateTimeFormat` pinned to
- * `Europe/Prague`. The event is single-day, so a minutes-from-midnight model is
- * sufficient — the calendar date is not used for placement.
+ * Two shapes come off the wire and both must land on the Prague wall clock:
+ *
+ * - a NAIVE event-local string (`2026-10-30T09:00:00`, no offset) — read the
+ *   `HH:MM` straight off the string, never through a `Date`, which would
+ *   reinterpret it in the visitor's zone;
+ * - a ZONED string (`2026-10-30T08:00:00Z`, or an explicit offset) — an instant,
+ *   which must go through `Intl.DateTimeFormat` pinned to `Europe/Prague`.
+ *   Reading `HH:MM` off one of these is what put the whole day an hour early:
+ *   the schedule is stored in UTC, so `08:00Z` rendered as 08:00 instead of the
+ *   09:00 the room actually starts at.
+ *
+ * The event is single-day, so minutes-from-midnight is enough for placement.
  */
 import type { Session } from './sessions';
 
 /** Assumed length of a session whose `endsAt` is missing or not after its start. */
 const FALLBACK_DURATION_MIN = 30;
+const MINUTES_PER_DAY = 24 * 60;
 /** Floor on a rendered span so a lightning talk stays tall enough to read/tap. */
 const MIN_SPAN_MIN = 15;
 
-/** Column key used for talks that are timed but have no room assigned yet. */
+/** Label for the column holding talks that are timed but have no room at all. */
 const ROOM_TBA = 'Room TBA';
 
-const TIME_RE = /T(\d{2}):(\d{2})/;
-
 /**
- * Minutes from midnight for the wall-clock time in an event-local ISO string,
- * or `null` when the string is empty / unparseable. Reads the `HH:MM` directly
- * (no `Date`) so the result is the Prague wall-clock regardless of the
- * visitor's zone.
+ * A grid column: the value talks are grouped by, and what heads the column.
+ *
+ * Grouping is by `roomId`, not by the room NAME. Sessionize sends a scheduled
+ * session an empty `room` and only the id, so keying on the name collapsed the
+ * whole day into one Room-TBA column — which is what made `/agenda` fall back
+ * to the stacked list on desktop. The name is used for the heading whenever
+ * Sessionize does send one; otherwise the columns are numbered in the order
+ * they first appear, which at least tells a visitor the tracks run in parallel.
  */
-export function parseLocalMinutes(iso: string): number | null {
-	const match = TIME_RE.exec(iso);
-	if (!match) return null;
-	const hours = Number(match[1]);
-	const minutes = Number(match[2]);
-	if (hours > 23 || minutes > 59) return null;
-	return hours * 60 + minutes;
+export interface AgendaColumn {
+	key: string;
+	label: string;
 }
 
-/** Wall-clock label (`09:00`) for minutes-from-midnight. */
+/**
+ * The value a talk is grouped by: its room id, falling back to the room name
+ * for data that carries a name and no id. `''` means no room at all.
+ */
+export function roomKey(session: Session): string {
+	return session.roomId.trim() || session.room.trim();
+}
+
+const TIME_RE = /T(\d{2}):(\d{2})/;
+const DATE_RE = /^(\d{4}-\d{2}-\d{2})/;
+/** Trailing `Z` or `±HH[:]MM` — the string is an instant, not a wall clock. */
+const ZONED_RE = /(?:Z|[+-]\d{2}:?\d{2})$/i;
+
+const PRAGUE_PARTS = new Intl.DateTimeFormat('en-CA', {
+	timeZone: 'Europe/Prague',
+	year: 'numeric',
+	month: '2-digit',
+	day: '2-digit',
+	hour: '2-digit',
+	minute: '2-digit',
+	hourCycle: 'h23',
+});
+
+/**
+ * The Prague wall clock for an ISO string: `{ date: 'YYYY-MM-DD', minutes }`,
+ * or `null` when the string is empty / unparseable. A naive string is already a
+ * wall clock and is read as-is; a zoned one is converted (see the module header).
+ */
+function pragueParts(iso: string): { date: string; minutes: number } | null {
+	if (!iso) return null;
+
+	if (ZONED_RE.test(iso)) {
+		const at = new Date(iso);
+		if (Number.isNaN(at.getTime())) return null;
+		const parts = PRAGUE_PARTS.formatToParts(at);
+		const get = (type: string) => parts.find((part) => part.type === type)?.value ?? '';
+		const hours = Number(get('hour'));
+		const minutes = Number(get('minute'));
+		if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
+		return {
+			date: `${get('year')}-${get('month')}-${get('day')}`,
+			minutes: hours * 60 + minutes,
+		};
+	}
+
+	const time = TIME_RE.exec(iso);
+	if (!time) return null;
+	const hours = Number(time[1]);
+	const minutes = Number(time[2]);
+	if (hours > 23 || minutes > 59) return null;
+	return { date: DATE_RE.exec(iso)?.[1] ?? '', minutes: hours * 60 + minutes };
+}
+
+/**
+ * Minutes from midnight of the Prague wall clock for an ISO string, or `null`
+ * when the string is empty / unparseable — the visitor's own zone never enters
+ * into it.
+ */
+export function parseLocalMinutes(iso: string): number | null {
+	return pragueParts(iso)?.minutes ?? null;
+}
+
+/** Wall-clock label (`09:00`) for minutes-from-midnight. Past-midnight values
+ * wrap (the afterparty's 1440 is `00:00`, not `24:00`). */
 export function formatMinutes(total: number): string {
-	const hours = Math.floor(total / 60);
-	const minutes = total % 60;
+	const wrapped = ((total % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
+	const hours = Math.floor(wrapped / 60);
+	const minutes = wrapped % 60;
 	return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
@@ -61,9 +124,16 @@ function isTimed(session: Session): boolean {
 	return parseLocalMinutes(session.startsAt) !== null;
 }
 
-/** True when a session renders as a full-width band (break / lunch / keynote). */
+/**
+ * True when a session renders as a full-width band (break / lunch / keynote).
+ *
+ * A plenum session always is one. A service session only is one when it has no
+ * room: a room-scoped placeholder ("TBD Talk" held in one track) is a cell in
+ * its own column — as a band it would stripe across the sheet and bury the real
+ * talk running opposite it.
+ */
 export function isBand(session: Session): boolean {
-	return session.isServiceSession || session.isPlenumSession;
+	return session.isPlenumSession || (session.isServiceSession && !roomKey(session));
 }
 
 /** A session placed on the day's timeline (minutes from midnight). */
@@ -81,10 +151,22 @@ export interface Placement {
  * the rendered span is floored at {@link MIN_SPAN_MIN}.
  */
 export function placement(session: Session): Placement | null {
-	const startMin = parseLocalMinutes(session.startsAt);
-	if (startMin === null) return null;
-	const rawEnd = parseLocalMinutes(session.endsAt);
-	const endMin = rawEnd !== null && rawEnd > startMin ? rawEnd : startMin + FALLBACK_DURATION_MIN;
+	const start = pragueParts(session.startsAt);
+	if (start === null) return null;
+	const end = pragueParts(session.endsAt);
+
+	// An end past midnight (the afterparty finishes at 00:00) is a SMALLER
+	// minutes-from-midnight than its start, which read as "no duration" and
+	// silently shrank the session to the fallback. Carry the day difference so
+	// the end stays after the start; `formatMinutes` wraps it back for display.
+	let rawEnd = end?.minutes ?? null;
+	if (end !== null && rawEnd !== null && rawEnd <= start.minutes && end.date > start.date) {
+		rawEnd += MINUTES_PER_DAY;
+	}
+
+	const startMin = start.minutes;
+	const endMin =
+		rawEnd !== null && rawEnd > startMin ? rawEnd : startMin + FALLBACK_DURATION_MIN;
 	const spanMin = Math.max(MIN_SPAN_MIN, endMin - startMin);
 	return { startMin, endMin, spanMin };
 }
@@ -98,6 +180,56 @@ export function byStart(a: Session, b: Session): number {
 	return a.order - b.order;
 }
 
+/** Every timed session's placement, keyed by id. Untimed sessions are absent. */
+export function placements(sessions: Session[]): Map<string, Placement> {
+	const map = new Map<string, Placement>();
+	for (const session of sessions) {
+		const place = placement(session);
+		if (place) map.set(session.id, place);
+	}
+	return map;
+}
+
+/** A stretch of the day with nothing on it in ANY room, in minutes. */
+export interface IdleSpan {
+	startMin: number;
+	endMin: number;
+}
+
+/**
+ * The stretches of `range` that no session occupies — the sheet's dead time.
+ *
+ * The grid draws these hatched, the way it draws a break: on a proportional
+ * timetable an empty half-hour is otherwise indistinguishable from a half-hour
+ * whose talks simply haven't been announced, and the ruling made free time read
+ * as scheduled. A room sitting idle while another room runs a talk is NOT dead
+ * time — only a span where the whole day is quiet counts.
+ */
+export function idleSpans(
+	sessions: Session[],
+	range: { start: number; end: number },
+	placements: Map<string, Placement>,
+): IdleSpan[] {
+	const busy: IdleSpan[] = [];
+	for (const session of sessions) {
+		const place = placements.get(session.id);
+		if (!place) continue;
+		busy.push({ startMin: place.startMin, endMin: place.endMin });
+	}
+	busy.sort((a, b) => a.startMin - b.startMin);
+
+	const spans: IdleSpan[] = [];
+	let cursor = range.start;
+	for (const span of busy) {
+		if (span.startMin > cursor) spans.push({ startMin: cursor, endMin: Math.min(span.startMin, range.end) });
+		if (span.endMin > cursor) cursor = span.endMin;
+		if (cursor >= range.end) break;
+	}
+	if (cursor < range.end) spans.push({ startMin: cursor, endMin: range.end });
+
+	return spans.filter((span) => span.endMin > span.startMin);
+}
+
 /**
  * The day's time bounds across every timed session (bands included), or `null`
  * when nothing is scheduled. `start` is the earliest start; `end` is the latest
@@ -106,9 +238,7 @@ export function byStart(a: Session, b: Session): number {
 export function dayRange(sessions: Session[]): { start: number; end: number } | null {
 	let start = Number.POSITIVE_INFINITY;
 	let end = Number.NEGATIVE_INFINITY;
-	for (const session of sessions) {
-		const place = placement(session);
-		if (!place) continue;
+	for (const place of placements(sessions).values()) {
 		if (place.startMin < start) start = place.startMin;
 		if (place.endMin > end) end = place.endMin;
 	}
@@ -116,30 +246,34 @@ export function dayRange(sessions: Session[]): { start: number; end: number } | 
 }
 
 /**
- * Distinct room names for the grid's columns, in first-seen order across timed,
- * non-band talks sorted by start. Talks with no room are excluded (they get the
- * {@link ROOM_TBA} column instead, added by {@link partitionAgenda}).
+ * The grid's columns, in first-seen order across timed, non-band talks sorted
+ * by start. Room-less talks are excluded (they get the {@link ROOM_TBA} column
+ * instead, added by {@link partitionAgenda}). A column with no name from
+ * Sessionize is numbered by its position.
  */
-function roomColumns(sessions: Session[]): string[] {
-	const seen = new Set<string>();
-	const columns: string[] = [];
+function roomColumns(sessions: Session[]): AgendaColumn[] {
+	const labels = new Map<string, string>();
 	for (const session of [...sessions].sort(byStart)) {
 		if (!isTimed(session) || isBand(session)) continue;
-		const room = session.room.trim();
-		if (!room || seen.has(room)) continue;
-		seen.add(room);
-		columns.push(room);
+		const key = roomKey(session);
+		if (!key) continue;
+		const name = session.room.trim();
+		// First seen wins the slot; a later name fills in for an unnamed column.
+		if (!labels.has(key) || (name && !labels.get(key))) labels.set(key, name);
 	}
-	return columns;
+	return Array.from(labels, ([key, name], index) => ({
+		key,
+		label: name || `Room ${index + 1}`,
+	}));
 }
 
 /** The agenda split into its render groups. */
 export interface AgendaPartition {
 	/** Column order for the grid (real rooms, then a `Room TBA` column if used). */
-	columns: string[];
+	columns: AgendaColumn[];
 	/** Timed service / plenum sessions (full-width bands), sorted by start. */
 	bands: Session[];
-	/** Timed talks per room column, each list sorted by start. */
+	/** Timed talks per room column, keyed by the column's `key`, sorted by start. */
 	byRoom: Map<string, Session[]>;
 	/** Timed talks with no room, sorted by start (rendered in the TBA column). */
 	roomTba: Session[];
@@ -155,7 +289,7 @@ export interface AgendaPartition {
 export function partitionAgenda(sessions: Session[]): AgendaPartition {
 	const columns = roomColumns(sessions);
 	const byRoom = new Map<string, Session[]>();
-	for (const room of columns) byRoom.set(room, []);
+	for (const column of columns) byRoom.set(column.key, []);
 
 	const bands: Session[] = [];
 	const roomTba: Session[] = [];
@@ -170,9 +304,9 @@ export function partitionAgenda(sessions: Session[]): AgendaPartition {
 			bands.push(session);
 			continue;
 		}
-		const room = session.room.trim();
-		if (room) {
-			byRoom.get(room)?.push(session);
+		const key = roomKey(session);
+		if (key) {
+			byRoom.get(key)?.push(session);
 		} else {
 			roomTba.push(session);
 		}
@@ -183,18 +317,123 @@ export function partitionAgenda(sessions: Session[]): AgendaPartition {
 	unscheduled.sort((a, b) => a.order - b.order);
 	for (const list of byRoom.values()) list.sort(byStart);
 
-	const finalColumns = roomTba.length > 0 ? [...columns, ROOM_TBA] : columns;
+	const finalColumns =
+		roomTba.length > 0 ? [...columns, { key: ROOM_TBA, label: ROOM_TBA }] : columns;
 	if (roomTba.length > 0) byRoom.set(ROOM_TBA, roomTba);
 
 	return { columns: finalColumns, bands, byRoom, roomTba, unscheduled };
 }
 
-/** Event date (`YYYY-MM-DD`) taken from the first timed session, or '' when
- * nothing is scheduled. Single-day assumption (see the module header). */
+/**
+ * The spans of the day that carry no talk — every band (break, lunch, keynote,
+ * the afterparty) plus the dead time between them, merged and sorted.
+ *
+ * A band that OVERLAPS a talk is left out: the grid compresses these spans, and
+ * compressing one that a room is running a talk through would drag the talk off
+ * its own start time.
+ */
+export function nonTalkSpans(
+	sessions: Session[],
+	range: { start: number; end: number },
+	placed: Map<string, Placement>,
+): IdleSpan[] {
+	const talks: IdleSpan[] = [];
+	const bands: IdleSpan[] = [];
+	for (const session of sessions) {
+		const place = placed.get(session.id);
+		if (!place) continue;
+		(isBand(session) ? bands : talks).push({ startMin: place.startMin, endMin: place.endMin });
+	}
+
+	const free = bands.filter(
+		(band) => !talks.some((talk) => talk.startMin < band.endMin && talk.endMin > band.startMin),
+	);
+	const spans = [...free, ...idleSpans(sessions, range, placed)].sort((a, b) => a.startMin - b.startMin);
+
+	// Kept SEPARATE, never merged: each strip is compressed on its own, so a run
+	// of consecutive breaks is a strip each rather than one strip's worth of rows
+	// split between them. Overlaps are dropped instead (the mapping below walks
+	// the spans in order and cannot straddle two at once).
+	const ordered: IdleSpan[] = [];
+	for (const span of spans) {
+		const last = ordered[ordered.length - 1];
+		if (last && span.startMin < last.endMin) continue;
+		ordered.push({ ...span });
+	}
+	return ordered;
+}
+
+/** Minutes-to-grid-row mapping for the timetable. */
+export interface RowScale {
+	/** Body rows the sheet needs (the header row is not counted). */
+	totalRows: number;
+	/** Absolute grid row for a minutes value (body rows start at 2). */
+	rowFor(min: number): number;
+	/** True when `min` falls strictly inside a compressed span. */
+	isCompressed(min: number): boolean;
+}
+
+/**
+ * Build the minutes → row mapping.
+ *
+ * The sheet is proportional through the talks and COMPRESSED everywhere else:
+ * each span in `compressed` gets at most `maxSpanRows` rows however long it runs.
+ * Drawn to scale, a 5½-hour afterparty is twenty times the height of the talk
+ * above it and the day's actual content is squeezed into the top third of a page
+ * of empty hatch; an 80-minute lunch does the same on a smaller scale. Every
+ * strip that carries a single line of text gets the height of a single line of
+ * text, and the talks keep the space.
+ *
+ * A span shorter than `maxSpanRows` is left alone rather than stretched up to it
+ * — a five-minute gap should not open to the height of lunch.
+ */
+export function rowScale(
+	range: { start: number; end: number },
+	compressed: IdleSpan[],
+	snapMin: number,
+	maxSpanRows: number,
+): RowScale {
+	const stops = compressed
+		.map((span) => ({
+			...span,
+			rows: Math.min(maxSpanRows, Math.max(1, Math.round((span.endMin - span.startMin) / snapMin))),
+		}))
+		.sort((a, b) => a.startMin - b.startMin);
+
+	const rowFor = (min: number): number => {
+		let rows = 0;
+		let cursor = range.start;
+		for (const stop of stops) {
+			if (min <= stop.startMin) break;
+			rows += Math.max(0, Math.round((stop.startMin - cursor) / snapMin));
+			cursor = stop.startMin;
+			if (min >= stop.endMin) {
+				rows += stop.rows;
+				cursor = stop.endMin;
+				continue;
+			}
+			// Inside a compressed span: scale within the rows it was given.
+			const through = (min - stop.startMin) / (stop.endMin - stop.startMin);
+			return 2 + rows + Math.round(through * stop.rows);
+		}
+		return 2 + rows + Math.max(0, Math.round((min - cursor) / snapMin));
+	};
+
+	return {
+		totalRows: rowFor(range.end) - 2,
+		rowFor,
+		isCompressed: (min) => stops.some((stop) => min > stop.startMin && min < stop.endMin),
+	};
+}
+
+/** Event date (`YYYY-MM-DD`, Prague) taken from the first timed session, or ''
+ * when nothing is scheduled. Single-day assumption (see the module header).
+ * Goes through `pragueParts` so a UTC-stored evening slot can't report the
+ * wrong calendar day and silently kill the live line. */
 export function eventDateISO(sessions: Session[]): string {
 	for (const session of sessions) {
-		const match = /^(\d{4}-\d{2}-\d{2})/.exec(session.startsAt);
-		if (match) return match[1];
+		const date = pragueParts(session.startsAt)?.date;
+		if (date) return date;
 	}
 	return '';
 }

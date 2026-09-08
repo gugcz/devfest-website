@@ -66,11 +66,10 @@
 
 	&:focus {
 		outline: none;
-		// accent-hot (not --rule-red) keeps the focused boundary >=3:1 for pointer
-		// focus too — WCAG 1.4.11. Keyboard focus additionally gets the ring below.
+		// accent-hot (not --rule-red) keeps the focused boundary >=3:1 for pointer focus
+		// too (1.4.11); keyboard focus additionally gets the ring below.
 		border-color: var(--color-accent-hot);
 		background: var(--panel-hover);
-		// Red reads as light — soft halation pools around the focused field.
 		box-shadow: var(--glow-red-soft);
 	}
 
@@ -78,6 +77,34 @@
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap-tight);
 	}
+
+	// An invalid field used to be pixel-identical to a valid one — nine
+	// required fields and nothing on the page said which of them was wrong.
+	// accent-hot (4.96:1 on the page ground) carries the boundary at 1.4.11,
+	// and the message under the field carries the reason: colour is never the
+	// only channel.
+	&[aria-invalid='true'] {
+		border-color: var(--color-accent-hot);
+		background: var(--panel-lit-2);
+	}
+}
+
+// The per-field message. Mono, like every other label on the site — the error
+// is a label, not prose, and it sits in the same column as the field's own.
+.error {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label);
+	line-height: 1.5;
+	letter-spacing: 0.06em;
+	color: var(--color-accent-hot);
+}
+
+// The consent row plus its own message, which cannot live inside the <label>
+// (it would be read as part of the checkbox's name).
+.consentBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
 }
 
 .honeypot {
@@ -97,9 +124,8 @@
 	font-size: var(--fs-body-lg);
 	color: var(--color-text);
 	margin: 0;
-	// A readout, not a panel: ruled top and bottom, lit from the left. A
-	// figure the visitor reads once does not need a mounted frame — and it
-	// certainly should not lift when the pointer crosses it.
+	// A readout, not a panel: ruled top and bottom, lit from the left. It must never
+	// lift when the pointer crosses it — nothing here is interactive.
 	padding: 1.2rem 0;
 	background: linear-gradient(
 		104deg,
@@ -136,8 +162,7 @@
 
 	input[type='checkbox'] {
 		flex-shrink: 0;
-		// 1.5rem is the system value (and the newsletter's). At 1.4rem this
-		// rendered 22px, under SC 2.5.8's 24px minimum target size.
+		// 1.5rem is the system value; at 1.4rem this rendered 22px, under SC 2.5.8's 24px.
 		width: 1.5rem;
 		height: 1.5rem;
 		margin-top: 0.1em;
@@ -178,7 +203,6 @@
 	&:focus-visible {
 		color: var(--color-accent-hot);
 		border-color: var(--color-accent-hot);
-		// Red TEXT reads as neon — subtle halation on hover.
 	}
 
 	&:hover::after,
@@ -202,15 +226,14 @@
 	cursor: pointer;
 	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
-	&:hover:not(:disabled) {
+	&:hover:not([aria-disabled='true']) {
 		background: var(--color-accent-hot);
 		border-color: var(--color-accent-hot);
 		transform: translateY(-2px);
-		// Red reads as light — neon halation on hover.
 		box-shadow: var(--glow-red), 0 8px 22px rgba(204, 0, 0, 0.28);
 	}
 
-	&:active:not(:disabled) {
+	&:active:not([aria-disabled='true']) {
 		transform: translateY(0);
 	}
 
@@ -219,9 +242,12 @@
 		outline-offset: var(--focus-gap);
 	}
 
-	&:disabled {
+	// Only the in-flight state dims. The button is never `disabled`: that
+	// takes it out of the tab order, and a keyboard visitor who had missed the
+	// consent box got a control that could not be reached and did not say why.
+	&[aria-disabled='true'] {
 		opacity: 0.55;
-		cursor: not-allowed;
+		cursor: progress;
 	}
 }
 
@@ -238,9 +264,8 @@
 	}
 }
 
-// Confirmation — the lit entry treatment, since this is the one thing on the
-// page that matters once it appears. Light and a red rule carry it; no panel,
-// no matte frame, and no hover response at all (nothing here is interactive).
+// Confirmation — the lit entry treatment. No panel, no matte frame, and no hover
+// response at all, since nothing here is interactive.
 .success {
 	position: relative;
 	padding: 2.4rem 0 2.2rem;
@@ -295,7 +320,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.button:hover:not(:disabled) {
+	.button:hover:not([aria-disabled='true']) {
 		transform: none;
 	}
 

@@ -1,19 +1,13 @@
-// Speaker detail — what this sheet holds. The chrome (ground, entry, sticky
-// bar, close, content measure, kicker, title, block label) is
-// `Sheet.module.scss`, shared with SessionDetail; this file is only the parts
-// a SPEAKER has: the portrait plate, the identity block, the social glyphs,
-// the bio measure and the talk rows.
+// Speaker detail. The chrome is `Sheet.module.scss`, shared with SessionDetail;
+// this file holds the portrait plate, identity, social glyphs, bio and talk rows.
 
-// Raises the shared sheet one step. A speaker opened FROM a session stacks on
-// top of that session's sheet, so it cannot share its z-index.
+// A speaker opened FROM a session stacks on that sheet, so it cannot share its z-index.
 .stacked {
 	--sheet-z: 10060;
 }
 
-/* ===================== CONTENT ===================== */
-// Portrait left, the person right — the plate is evidence, so it keeps real
-// size rather than shrinking to an avatar in a header. Composed ON TOP of the
-// shared `.content`, which owns the measure and the page inset.
+// Portrait left, the person right — the plate keeps real size rather than
+// shrinking to an avatar. Composed on top of the shared `.content`.
 .split {
 	display: grid;
 	grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
@@ -27,11 +21,9 @@
 		gap: clamp(1.75rem, 4vw, 2.5rem);
 	}
 
-	// Stacked, the plate is no longer sized by a 0.38fr column — it takes the
-	// full content measure. On a phone that is ~350px; on a foldable (or any
-	// tablet-width window under this breakpoint) it is ~800px wide at 4:5, so
-	// the portrait alone filled the screen and the name sat below the fold.
-	// Cap it at the phone size and let it stop growing.
+	// Capped: stacked, the plate takes the full content measure, and at a
+	// foldable/tablet width that is ~800px at 4:5 — the portrait alone filled
+	// the screen and pushed the name below the fold.
 	.plate {
 		max-width: 22rem;
 	}
@@ -55,7 +47,6 @@
 	user-select: none;
 }
 
-/* ===================== IDENTITY ===================== */
 .tag {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-lg);
@@ -65,9 +56,7 @@
 	margin: clamp(1rem, 2vw, 1.5rem) 0 0;
 }
 
-/* ===================== LINKS ===================== */
-// Bare glyphs on the ground. They were boxed squares, which is the panel
-// vocabulary again, one box per social account.
+// Bare glyphs on the ground — never boxed squares.
 .links {
 	list-style: none;
 	display: flex;
@@ -105,7 +94,6 @@
 	}
 }
 
-/* ===================== BIO ===================== */
 .bio {
 	margin-top: clamp(2rem, 4vw, 3rem);
 
@@ -115,9 +103,8 @@
 		line-height: 1.7;
 		color: rgba(240, 237, 230, 0.85);
 		margin: 0 0 1.1rem;
-		// No character cap — the column is the measure, same rule as the session
-		// sheet's abstract (see the note there). Here the split already sets
-		// that column: the bio fills the 0.62fr beside the portrait.
+		// No character cap: the 0.62fr column beside the portrait IS the measure,
+		// same rule as the session sheet's abstract.
 		text-align: justify;
 		hyphens: auto;
 
@@ -127,14 +114,12 @@
 	}
 }
 
-/* ===================== TALKS ===================== */
 .sessions {
 	margin-top: clamp(2.5rem, 5vw, 4rem);
 }
 
-// Open-field rows. They are not controls here — a talk in this list has no
-// detail view of its own to open — so they take no reach state at all, which is
-// exactly why they carry `.field-row` and neither modifier.
+// Open-field rows with NO reach state — a talk here opens nothing, so it takes
+// `.field-row` and neither modifier.
 .sessionRow {
 	--field-step: clamp(1.1rem, 2vw, 1.5rem);
 }
@@ -156,8 +141,8 @@
 	color: rgba(240, 237, 230, 0.6);
 	max-width: 56ch;
 	margin: 0.5rem 0 0;
-	// Same measure treatment as the bio above it — two blocks of the same face
-	// in one sheet, one justified and one ragged, reads as a fault.
+	// Same measure treatment as the bio — one justified and one ragged block of
+	// the same face in one sheet reads as a fault.
 	text-align: justify;
 	hyphens: auto;
 }

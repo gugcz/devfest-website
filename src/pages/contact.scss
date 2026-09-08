@@ -1,9 +1,4 @@
-	/* ===================== BODY ===================== */
-	// Ground, padding and measure come from `.band .band--lit` / `.band-inner`.
-	// This section adds one thing of its own: the faint red bleed from the
-	// top-right corner, on a ::before so it layers OVER the pool of light rather
-	// than replacing it (which is what `.band--lit-red` does for the lineup
-	// pages, where nothing else has to sit between the two layers).
+	// Red bleed over the section's pool of light — `.band--lit` supplies the ground.
 	.contact-body::before {
 		content: '';
 		position: absolute;
@@ -13,15 +8,8 @@
 		z-index: 0;
 	}
 
-	// An open field of desks — `.field` in BaseLayout.scss; the desks themselves
-	// are `<Desk>` (src/components/Desk.astro).
-	//
-	// No lamp of its own. It used to carry `--lamp` on a full-bleed
-	// ::before inset -2rem/-gutter, which is a RECTANGLE floating inside the
-	// section: the token's warm raking layer lifts #050505 to about #0E0C0B at
-	// its top-left, so the box drew a hard horizontal step across the whole
-	// page. --lamp belongs to the ROOM and is applied at section scale; the
-	// section's own --lit pool is that light here.
+	// An open field of `.field` rows; the desks are `<Desk>`. No `--lamp` box here:
+	// a full-bleed lamp draws a hard horizontal step across the page.
 	.contact-grid {
 		position: relative;
 		display: block;
