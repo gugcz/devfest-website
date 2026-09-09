@@ -700,9 +700,7 @@
 		// shrink under the viewport whenever its content fell short of a full
 		// screen — which put the running ticker's OWN topic set back in the
 		// fold, 100px under the strip, in the same hollow face the mock keeps
-		// off-screen. `.hero-actions .btn-ghost` below is what pays for it: the
-		// content that used to overflow a fixed-height frame is now one control
-		// shorter, so nothing needs a hard-coded `hero-inner` height to fit.
+		// off-screen.
 		#hero {
 			// Back to a full-viewport frame. This used to be `min-height: auto`
 			// so the footing strip scrolled in under the CTAs instead of landing
