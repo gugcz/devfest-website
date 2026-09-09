@@ -139,16 +139,18 @@
 		justify-items: start;
 	}
 
-	// Mono, full ink, one grade under the statement — the subject separates
-	// from the headline by CATEGORY, not by tint. A dimmed cream on the one
-	// thing that moves reads as disabled; two faces is a difference the eye
-	// reads instantly, a tint is not.
+	// Bebas, full ink, one grade under the statement — the subject reads as
+	// poster type in the same voice as the headline, separated by SCALE, not
+	// by tint or by a second face. A dimmed cream on the one thing that moves
+	// reads as disabled. Bebas is condensed and caps-only, so it carries more
+	// tracking and less leading than the mono it replaced, and takes a bigger
+	// size to hold the same optical weight in the slot.
 	.topics-rotor-item {
 		grid-area: slot;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: clamp(1.1rem, 2.15vw, 2.05rem);
-		line-height: 1.15;
-		letter-spacing: 0.035em;
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: clamp(1.5rem, 2.9vw, 2.75rem);
+		line-height: 1;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: rgba(240, 237, 230, 0.96);
 		opacity: 0;
@@ -170,7 +172,7 @@
 		transition-duration: 260ms;
 	}
 
-	// The full set, unstacked into two mono columns instead of rotating. This
+	// The full set, unstacked into two columns instead of rotating. This
 	// is also what a visitor with `prefers-reduced-motion: reduce` sees — the
 	// script that drives the rotation never starts (see the inline script
 	// below), so this is the deployed reading for them, not a fallback.
@@ -181,7 +183,9 @@
 			grid-template-rows: repeat(3, auto);
 			grid-template-columns: repeat(2, minmax(0, max-content));
 			column-gap: clamp(1.25rem, 3vw, 3rem);
-			row-gap: 0.1rem;
+			// Bebas sets at line-height 1, so the rows need their leading back
+			// here — 0.1rem was tuned against the mono's 1.15.
+			row-gap: 0.35rem;
 		}
 
 		.topics-rotor-item {
