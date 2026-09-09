@@ -2,6 +2,25 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Agents do not merge to `2026` and do not deploy
+
+`2026` is the production branch: a merge into it triggers the Firebase Hosting
+deploy, so a merge IS a deploy to devfest.cz. **No agent merges it, pushes to
+it, or deploys — only the maintainer does.**
+
+An agent's work ends at: branch pushed, PR opened, CI result reported. That is
+a complete delivery, however green the checks are. Specifically:
+
+- Never `git push origin 2026`, never `gh pr merge`, never `firebase deploy`,
+  never dispatch a deploy workflow, never cut a release tag.
+- "push it", "redeploy", "ship it" and a green QA/CI report are **not** merge
+  permission. Only an instruction that names the merge itself is ("merge
+  PR #X", "mergni", "revertni").
+- Permission is granted per PR, once. It does not carry to the next PR, the
+  next round, or a follow-up fix on the same branch.
+- Hand back the **PR preview URL** (`devfest-public--pr-<n>-*.web.app`), never
+  a production URL, unless the maintainer merged it himself.
+
 ## Real customer data never enters this repository
 
 **This repository is public.** Anything committed here is world-readable the
