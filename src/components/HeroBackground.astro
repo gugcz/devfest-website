@@ -12,6 +12,24 @@ interface Props {
 	 */
 	focus?: string;
 	mobileFocus?: string;
+	/**
+	 * Opt-in `background-size` for the phone crop, e.g. `auto 130%`. The plate
+	 * is a square and the phone frame is 9:19.5, so a bare `cover` at some
+	 * focus points still leaves the subject too small to read at arm's length
+	 * — `mobileFocus` alone repositions the crop, this scales it. Left unset,
+	 * the phone crop stays `cover` like every other hero.
+	 */
+	mobileZoom?: string;
+	/** Opt-in desktop `width` for the plate. Defaults to the shipped 60%. */
+	width?: string;
+	/** Opt-in desktop `background-size`. Left unset, the desktop crop stays `cover`. */
+	size?: string;
+	/**
+	 * Shortens the left-to-right dissolve so the plate reaches full opacity by
+	 * 62% of its own width instead of 92% — a fade that stays transparent past
+	 * its own midpoint turns most of a paid-for photograph into flat black.
+	 */
+	tightMask?: boolean;
 }
 
 const {
@@ -19,14 +37,18 @@ const {
 	mobilePhotoOpacity = 0.55,
 	focus = 'center',
 	mobileFocus = '38% center',
+	mobileZoom,
+	width,
+	size,
+	tightMask = false,
 } = Astro.props;
 ---
 
 <div class="hero-bg" aria-hidden="true"></div>
 <div
-	class="hero-photo"
+	class={`hero-photo${tightMask ? ' hero-photo--tight-mask' : ''}`}
 	aria-hidden="true"
-	style={`--hero-photo-opacity:${photoOpacity};--hero-photo-opacity-mobile:${mobilePhotoOpacity};--hero-photo-pos:${focus};--hero-photo-pos-mobile:${mobileFocus};`}
+	style={`--hero-photo-opacity:${photoOpacity};--hero-photo-opacity-mobile:${mobilePhotoOpacity};--hero-photo-pos:${focus};--hero-photo-pos-mobile:${mobileFocus};${mobileZoom ? `--hero-photo-size-mobile:${mobileZoom};` : ''}${width ? `--hero-photo-width:${width};` : ''}${size ? `--hero-photo-size:${size};` : ''}`}
 ></div>
 
 <style lang="scss">

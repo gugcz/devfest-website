@@ -14,34 +14,53 @@ function calcTimeLeft(): TimeLeft {
 	const diff = TARGET - Date.now();
 
 	if (diff <= 0) {
-		return { days: '000', hours: '00', minutes: '00', seconds: '00' };
+		return { days: '0', hours: '00', minutes: '00', seconds: '00' };
 	}
 
 	return {
-		days: String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(3, '0'),
+		days: String(Math.floor(diff / (1000 * 60 * 60 * 24))),
 		hours: String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0'),
 		minutes: String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0'),
 		seconds: String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0'),
 	};
 }
 
-const UNITS: { key: keyof TimeLeft; label: string }[] = [
-	{ key: 'days', label: 'Days' },
-	{ key: 'hours', label: 'Hrs' },
-	{ key: 'minutes', label: 'Min' },
-	{ key: 'seconds', label: 'Sec' },
+const UNITS: { key: keyof TimeLeft; label: string; suffix: string }[] = [
+	{ key: 'days', label: 'Days', suffix: 'd' },
+	{ key: 'hours', label: 'Hrs', suffix: 'h' },
+	{ key: 'minutes', label: 'Min', suffix: 'm' },
+	{ key: 'seconds', label: 'Sec', suffix: 's' },
 ];
 
-const INITIAL_TIME: TimeLeft = { days: '000', hours: '00', minutes: '00', seconds: '00' };
+const INITIAL_TIME: TimeLeft = { days: '0', hours: '00', minutes: '00', seconds: '00' };
 
-export default function Countdown() {
+interface Props {
+	/**
+	 * `069d 22h 43m 21s` on one line instead of four labelled stubs separated
+	 * by colons. The suffix is real rendered text on the unit, not a stylesheet
+	 * `::after` — a generated-content suffix reads fine visually but is
+	 * invisible to anything that inspects the DOM text.
+	 */
+	compact?: boolean;
+	/**
+	 * Drop the seconds unit — `54D 10H 34M`, one rhythm. Seconds ticking next
+	 * to the hero's own rotating topic is a second, unrelated clock in the
+	 * same shot. Without seconds the display only needs to update once a
+	 * minute; the 15s interval is just slack so a stale minute never survives
+	 * more than that long, not a tick visitors are meant to notice.
+	 */
+	showSeconds?: boolean;
+}
+
+export default function Countdown({ compact = false, showSeconds = true }: Props) {
 	const [time, setTime] = useState<TimeLeft>(INITIAL_TIME);
+	const units = showSeconds ? UNITS : UNITS.filter((u) => u.key !== 'seconds');
 
 	useEffect(() => {
 		setTime(calcTimeLeft());
-		const id = setInterval(() => setTime(calcTimeLeft()), 1000);
+		const id = setInterval(() => setTime(calcTimeLeft()), showSeconds ? 1000 : 15000);
 		return () => clearInterval(id);
-	}, []);
+	}, [showSeconds]);
 
 	// The clock is decorative — screen readers get the static "doors open"
 	// sentence instead. A per-second aria-label would spam AT without adding
@@ -54,13 +73,13 @@ export default function Countdown() {
 	return (
 		<>
 			<span className={s.srOnly}>Doors open on 30 October 2026 at 9:00 AM Central European Time.</span>
-			<div className={s.countdown} aria-hidden="true">
-				{UNITS.map(({ key, label }, i) => (
+			<div className={`${s.countdown} ${compact ? s.countdownCompact : ''}`} aria-hidden="true">
+				{units.map(({ key, label, suffix }, i) => (
 					<Fragment key={key}>
-						{i > 0 && <span className={s.sep}>:</span>}
-						<div className={s.unit}>
-							<span className={s.value}>{time[key]}</span>
-							<span className={s.label}>{label}</span>
+						{!compact && i > 0 && <span className={s.sep}>:</span>}
+						<div className={`${s.unit} ${compact ? s.unitCompact : ''}`}>
+							<span className={`${s.value} ${compact && key === 'days' ? s.valueDays : ''}`}>{time[key]}</span>
+							<span className={s.label}>{compact ? suffix : label}</span>
 						</div>
 					</Fragment>
 				))}

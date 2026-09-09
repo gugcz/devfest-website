@@ -1,9 +1,11 @@
 	.hero-bg {
 		position: absolute;
 		inset: 0;
+		// One wash, and it answers to the frame: the lamp in the plate sits
+		// upper right, so that's the only light source here. A second bloom in
+		// the lower left answered to nothing in the shot and read as
+		// decoration rather than lighting.
 		background:
-			// distant neon — a red light source glowing in the alley.
-			radial-gradient(ellipse 36% 50% at 12% 78%, rgba(204, 0, 0, 0.16) 0%, transparent 62%),
 			radial-gradient(ellipse 30% 40% at 70% 18%, rgba(204, 0, 0, 0.07) 0%, transparent 60%),
 			#050505;
 		z-index: 0;
@@ -14,9 +16,9 @@
 		top: 0;
 		bottom: 0;
 		right: 0;
-		width: 60%;
+		width: var(--hero-photo-width, 60%);
 		background-image: url('/hero-detective.webp');
-		background-size: cover;
+		background-size: var(--hero-photo-size, cover);
 		background-position: var(--hero-photo-pos, center);
 		// Cinematic grade — push the detective plate to high-contrast B&W noir.
 		filter: grayscale(1) contrast(1.12) brightness(0.84);
@@ -44,8 +46,32 @@
 		pointer-events: none;
 		z-index: 1;
 
+		// A shorter dissolve for a frame that widened the plate: the shipped
+		// gradient is still transparent at half its own width, which on a wider
+		// plate turns most of a paid-for photograph into flat black. This one
+		// clears the type column and gets out of the way by 62%.
+		&.hero-photo--tight-mask {
+			mask-image: linear-gradient(
+				to right,
+				transparent 0%,
+				rgba(0, 0, 0, 0.1) 16%,
+				rgba(0, 0, 0, 0.34) 30%,
+				rgba(0, 0, 0, 0.72) 46%,
+				#000 62%
+			);
+			-webkit-mask-image: linear-gradient(
+				to right,
+				transparent 0%,
+				rgba(0, 0, 0, 0.1) 16%,
+				rgba(0, 0, 0, 0.34) 30%,
+				rgba(0, 0, 0, 0.72) 46%,
+				#000 62%
+			);
+		}
+
 		@media (max-width: 900px) {
 			width: 100%;
+			background-size: var(--hero-photo-size-mobile, cover);
 			background-position: var(--hero-photo-pos-mobile, 38% center);
 			opacity: var(--hero-photo-opacity-mobile, 0.55);
 			mask-image: linear-gradient(
