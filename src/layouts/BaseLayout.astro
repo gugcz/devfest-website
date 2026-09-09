@@ -26,7 +26,7 @@ const ogImage = `${siteUrl}/og-image.jpg`;
 // Strip the trailing slash (root would be `https://devfest.cz/`) to match the
 // no-slash URLs the sitemap + JSON-LD use under `trailingSlash: 'never'`.
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, "") || siteUrl;
-const ogImageAlt = "DevFest.cz 2026 conference banner";
+const ogImageAlt = "DevFest.cz 2026 — classified mission starts Oct 30, 2026";
 
 // Event schema follows https://developers.google.com/search/docs/appearance/structured-data/event
 // Only rendered on the home page so subpages (privacy, contact, etc.) don't
