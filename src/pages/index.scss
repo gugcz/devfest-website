@@ -743,12 +743,6 @@
 			margin-top: clamp(1.5rem, 4.2vh, 2.5rem);
 		}
 
-		// "Stay in the loop" has its own section further down; on the phone it
-		// is the one control in the fold that isn't the primary decision.
-		.hero-actions .btn-ghost {
-			display: none;
-		}
-
 		.hero-foot {
 			align-items: flex-start;
 			gap: clamp(0.9rem, 2vh, 1.75rem) 2.5rem;
