@@ -148,6 +148,10 @@
 }
 
 .estimateNote {
+	// Its own line, not a tail on the figure: inline, the breakdown wrapped in the
+	// middle of its own parenthesis and the total read as one long run of text.
+	display: block;
+	margin-top: 0.35rem;
 	font-style: italic;
 	font-size: var(--fs-label-lg);
 	color: var(--color-grey);
