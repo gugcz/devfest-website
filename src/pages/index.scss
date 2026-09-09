@@ -226,11 +226,14 @@
 	// `text-decoration`, which on tracked-out mono runs to the end of the
 	// inline box — one tracking space past the last glyph — and hangs right.
 	// `::after` with a negative margin pulls the rule back to the letter.
+	// The gap is 0.2em, not 0.4em: the label is uppercase mono with no
+	// descenders, so a descender-sized drop reads as a rule under the button
+	// rather than an underline on its text.
 	.btn-ghost-label {
 		display: inline-block;
 		white-space: nowrap;
 		border-bottom: 1px solid currentColor;
-		padding-bottom: 0.4em;
+		padding-bottom: 0.2em;
 
 		&::after {
 			content: '';
