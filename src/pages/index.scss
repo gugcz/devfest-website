@@ -309,6 +309,13 @@
 	// the clock a second, different alignment inside the last third — two
 	// alignments on one rule. The space this leaves between the cluster and
 	// the clock is the widest on the strip, so it reads as separation.
+	//
+	// The clock block is placed on the right, but its own contents stay set
+	// from its left edge, so the digits start under the D of DOORS OPEN IN.
+	// An `align-items: flex-end; text-align: right` pair used to sit here and
+	// never applied — a media query adds no specificity, so the later base
+	// `.hero-clock` rule won and the digits were left-set anyway. Keeping the
+	// dead pair meant the file claimed an alignment the page did not have.
 	@media (min-width: 901px) {
 		.hero-foot {
 			display: flex;
@@ -318,11 +325,6 @@
 
 		.hero-meta {
 			display: flex;
-		}
-
-		.hero-clock {
-			align-items: flex-end;
-			text-align: right;
 		}
 	}
 
