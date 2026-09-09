@@ -70,13 +70,19 @@
 	}
 }
 
-// Reserves the days digit's own width at its longest (three figures, the
-// stretch above 99 days) so the 100 → 99 rollover doesn't nudge the suffix
-// and everything after it — a printed leading zero would do the same job
-// but read as part of the count.
+// Reserves the days digit's width so a rollover to one fewer figure doesn't
+// nudge the suffix and everything after it — a printed leading zero would do
+// the same job but read as part of the count.
+//
+// Reserved on the RIGHT of the digits, not the left: the count is set from
+// the left edge of the clock block, directly under its DOORS OPEN IN label,
+// and right-aligning inside the reserve parked the unused figure's width in
+// front of the first digit, pushing the whole readout ~1ch clear of the label
+// above it. Two figures, not three — the count is under 100 days out and only
+// falls, so a third figure is width the readout can never use.
 .valueDays {
-	min-width: 3ch;
-	text-align: right;
+	min-width: 2ch;
+	text-align: left;
 }
 
 .unitCompact {
