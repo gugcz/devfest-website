@@ -48,7 +48,7 @@
 	font-size: var(--fs-label-lg);
 	letter-spacing: 0.16em;
 	font-variant-numeric: tabular-nums;
-	color: rgba(240, 237, 230, 0.4);
+	color: rgba(240, 237, 230, 0.5);
 }
 
 .stubState {
@@ -64,7 +64,10 @@
 .stubBody {
 	display: flex;
 	flex-direction: column;
-	gap: 0.6rem;
+	// Not one uniform gap: the wave was arriving as six evenly spaced lines with
+	// nothing saying which belong together. Title and its sentence sit close, the
+	// fact line takes its own air below (`.stubFacts` margin-top).
+	gap: 0.5rem;
 	min-width: 0;
 }
 
@@ -78,13 +81,28 @@
 	margin: 0;
 }
 
+// Special Elite is a typewriter face — it needs more leading and more size than
+// a neutral sans at the same measure before it reads as a sentence rather than
+// as another label.
 .stubNote {
 	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
-	line-height: 1.55;
-	color: rgba(240, 237, 230, 0.72);
+	font-size: var(--fs-body);
+	line-height: 1.7;
+	color: rgba(240, 237, 230, 0.78);
 	max-width: 46ch;
 	margin: 0;
+}
+
+// The wave's facts on one wrapping line: sale window, then what the pass admits.
+.stubFacts {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	// No punctuation joins the two: on a narrow column the line wraps, and a
+	// joiner then lands stranded at the head of the second line.
+	column-gap: 1.4rem;
+	row-gap: 0.4rem;
+	margin-top: 0.55rem;
 }
 
 // Sale window — the wave's ti.to `end_at`, when the organizer set one.
@@ -94,16 +112,18 @@
 .stubDeadline {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-sm);
-	letter-spacing: 0.14em;
+	// Wide tracking is the mono voice, but two tracked caps lines under a
+	// sentence stopped scanning as words. Pulled back to a readable step.
+	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	color: rgba(240, 237, 230, 0.62);
 	margin: 0;
 }
 
 // Admission line — what the pass grants, set as one mono row.
 .stubGrants {
 	list-style: none;
-	margin: 0.15rem 0 0;
+	margin: 0;
 	padding: 0;
 	display: flex;
 	flex-wrap: wrap;
@@ -111,9 +131,9 @@
 	gap: 0.55rem;
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: var(--fs-label-sm);
-	letter-spacing: 0.12em;
+	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
+	color: rgba(240, 237, 230, 0.62);
 }
 
 .stubGrantSep {
@@ -148,10 +168,10 @@
 
 .stubVat {
 	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.16em;
+	font-size: var(--fs-label-sm);
+	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
+	color: rgba(240, 237, 230, 0.62);
 }
 
 /* ---- the live wave ---- */
@@ -181,9 +201,11 @@
 
 @media (max-width: 720px) {
 	// One column: a two-column mobile grid put the body into the 2.5rem index track.
+	// The copy block and the price/action block are two different things to read;
+	// at 1.1rem they joined the same undifferentiated stack of lines.
 	.stub {
 		grid-template-columns: minmax(0, 1fr);
-		row-gap: 1.1rem;
+		row-gap: 1.9rem;
 	}
 
 	.stubMeta {
@@ -198,7 +220,7 @@
 		align-items: baseline;
 		justify-content: space-between;
 		flex-wrap: wrap;
-		gap: 0.9rem 1.25rem;
+		gap: 1.2rem 1.25rem;
 		text-align: left;
 		width: 100%;
 	}
@@ -209,6 +231,9 @@
 	// outranks `.field-row--short`, which sets the same variable globally.
 	.stub.stubSpent {
 		--field-step: 1.6rem;
+		// A settled wave is a title and a figure; the wide split belongs to the
+		// live wave, which has prose and a fact line between the two.
+		row-gap: 1.1rem;
 	}
 
 	.stubSpent .stubTitle {
@@ -220,9 +245,14 @@
 	}
 
 	// The admission line is a property of the event, not of a wave, so it stays only
-	// on the wave a visitor can actually buy.
+	// on the wave a visitor can actually buy. With nothing left inside it, the fact
+	// line must not keep reserving its air either.
 	.stubSpent .stubGrants {
 		display: none;
+	}
+
+	.stubSpent .stubFacts {
+		margin-top: 0;
 	}
 
 	// The column is left-set on mobile, so the figure and its VAT note must be too.
@@ -245,12 +275,12 @@
 	margin: 0;
 }
 
-.skelRow {
+.skelWave {
 	display: grid;
 	grid-template-columns: 4rem minmax(0, 1fr) minmax(13rem, auto);
 	align-items: start;
 	column-gap: clamp(1.4rem, 3vw, 3rem);
-	row-gap: 0.9rem;
+	row-gap: 1.9rem;
 	padding: clamp(2.25rem, 3.6vw, 3.25rem) 0;
 }
 
@@ -266,7 +296,7 @@
 }
 
 @media (max-width: 720px) {
-	.skelRow {
+	.skelWave {
 		grid-template-columns: minmax(0, 1fr);
 	}
 
@@ -292,33 +322,9 @@
 
 .skelIndex { height: 0.85rem; width: 1.5rem; margin-top: 0.35rem; }
 .skelTitle { height: 2.2rem; width: 62%; }
-.skelBadge { height: 0.9rem; width: 5.2rem; flex-shrink: 0; }
 .skelText { height: 0.75rem; width: 100%; max-width: 34ch; }
-
-.skelRows {
-	display: flex;
-	flex-direction: column;
-	margin-top: 0.5rem;
-	position: relative;
-	z-index: 1;
-}
-
-.skelRow {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1rem;
-	padding: 0.7rem 0;
-	border-top: 1px solid var(--rule);
-
-	&:first-child {
-		border-top: none;
-		padding-top: 0.3rem;
-	}
-}
-
-.skelRowLabel { height: 0.85rem; width: 42%; }
-.skelRowPrice { height: 1.2rem; width: 24%; }
+.skelFacts { height: 0.7rem; width: 100%; max-width: 24ch; }
+.skelPrice { height: 2rem; width: 8rem; flex-shrink: 0; }
 
 .skelBtn {
 	height: 2.9rem;

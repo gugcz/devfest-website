@@ -168,24 +168,15 @@ export default function Tickets() {
 				</header>
 				<ul className={`field ${s.skelField}`} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
-						<li key={i} className={`field-row field-row--short ${s.skelRow}`}>
+						<li key={i} className={`field-row field-row--short ${s.skelWave}`}>
 							<span className={`${s.skelBar} ${s.skelIndex}`} />
 							<div className={s.skelCol}>
 								<span className={`${s.skelBar} ${s.skelTitle}`} />
 								<span className={`${s.skelBar} ${s.skelText}`} />
-								<div className={s.skelRows}>
-									<div className={s.skelRow}>
-										<span className={`${s.skelBar} ${s.skelRowLabel}`} />
-										<span className={`${s.skelBar} ${s.skelRowPrice}`} />
-									</div>
-									<div className={s.skelRow}>
-										<span className={`${s.skelBar} ${s.skelRowLabel}`} />
-										<span className={`${s.skelBar} ${s.skelRowPrice}`} />
-									</div>
-								</div>
+								<span className={`${s.skelBar} ${s.skelFacts}`} />
 							</div>
 							<div className={`${s.skelCol} ${s.skelColRight}`}>
-								<span className={`${s.skelBar} ${s.skelBadge}`} />
+								<span className={`${s.skelBar} ${s.skelPrice}`} />
 								{i === 1 && <span className={`${s.skelBar} ${s.skelBtn}`} />}
 							</div>
 						</li>
@@ -285,21 +276,27 @@ export default function Tickets() {
 							<div className={s.stubBody}>
 								<h3 className={s.stubTitle}>{group.name}</h3>
 								{anyPurchasable && description && <p className={s.stubNote}>{description}</p>}
-								{deadline && (
-									<p className={s.stubDeadline}>
-										<time dateTime={deadline.iso}>{deadline.label}</time>
-									</p>
-								)}
-								<ul className={s.stubGrants}>
-									{group.variants.map(({ release, variantLabel }, vi) => (
-										<li key={release.id}>
-											{vi > 0 && (
-												<span className={s.stubGrantSep} aria-hidden="true">{'/ '}</span>
-											)}
-											{variantLabel || releaseTitle(release)}
-										</li>
-									))}
-								</ul>
+								{/* Deadline and admission line are both mono caps, so stacked they
+								    read as one undifferentiated block of small text. They share a
+								    single wrapping line instead, set off from the prose above by
+								    air — one fact group, not two more rows in the pile. */}
+								<div className={s.stubFacts}>
+									{deadline && (
+										<p className={s.stubDeadline}>
+											<time dateTime={deadline.iso}>{deadline.label}</time>
+										</p>
+									)}
+									<ul className={s.stubGrants}>
+										{group.variants.map(({ release, variantLabel }, vi) => (
+											<li key={release.id}>
+												{vi > 0 && (
+													<span className={s.stubGrantSep} aria-hidden="true">{'/ '}</span>
+												)}
+												{variantLabel || releaseTitle(release)}
+											</li>
+										))}
+									</ul>
+								</div>
 							</div>
 
 							<div className={s.stubEnd}>
