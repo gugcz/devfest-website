@@ -222,43 +222,62 @@ export function drawAttendingCard(
 	}
 
 	// Radial gradient fading to black from ~50% of the card's half-diagonal —
-	// per Danny's mock, on top of the photo/monogram either way.
+	// per Danny's mock, on top of the photo/monogram either way. Runs to pure
+	// black (alpha 1) so the corners match the mock; the mid-card fade is what
+	// keeps the photo itself visible.
 	const vignette = ctx.createRadialGradient(size / 2, size / 2, size * 0.25, size / 2, size / 2, size * 0.72);
 	vignette.addColorStop(0, 'rgba(0,0,0,0)');
-	vignette.addColorStop(1, 'rgba(0,0,0,0.78)');
+	vignette.addColorStop(1, 'rgba(0,0,0,1)');
 	ctx.fillStyle = vignette;
 	ctx.fillRect(0, 0, size, size);
 
-	// Directional scrims behind the text zones — the radial vignette alone
-	// doesn't guarantee contrast (a bright photo's center still shows
-	// through), so headline and name each sit on their own top-down /
-	// bottom-up gradient into solid black at SCRIM_ALPHA (see its doc).
-	const topScrim = ctx.createLinearGradient(0, 0, 0, SAFE_SPACE + 220);
-	topScrim.addColorStop(0, `rgba(0,0,0,${SCRIM_ALPHA})`);
-	topScrim.addColorStop(1, 'rgba(0,0,0,0)');
-	ctx.fillStyle = topScrim;
-	ctx.fillRect(0, 0, size, SAFE_SPACE + 220);
-
-	const bottomScrimTop = size - BAND_HEIGHT - 340;
-	const bottomScrim = ctx.createLinearGradient(0, bottomScrimTop, 0, size - BAND_HEIGHT);
-	bottomScrim.addColorStop(0, 'rgba(0,0,0,0)');
-	bottomScrim.addColorStop(1, `rgba(0,0,0,${SCRIM_ALPHA})`);
-	ctx.fillStyle = bottomScrim;
-	ctx.fillRect(0, bottomScrimTop, size, size - BAND_HEIGHT - bottomScrimTop);
-
-	// ── Headline: "I'M ATTENDING" — cream + one red word, no shadow/glow. One
-	// design for every visitor (no role toggle any more — see AttendingCard.tsx).
-	// Centered, top of card, kept inside the 10% safe space.
+	// ── Text geometry, computed before the scrims so the scrims can be sized
+	// to the actual text zones instead of guessed fixed offsets.
 	const word = 'ATTENDING';
 	const prefix = `I'M `;
 	const headline = `${prefix}${word}`;
 	const maxHeadlineWidth = size - SAFE_SPACE * 2;
 	const headlineSize = fitFontSize(ctx, headline, fonts.bebas, 132, maxHeadlineWidth, 64);
+	const headlineY = SAFE_SPACE + headlineSize * 0.78;
+	const metaY = headlineY + 64;
+
+	const nameText = (data.name.trim() || 'Your name here').toUpperCase();
+	const nameSize = fitFontSize(ctx, nameText, fonts.bebas, 96, size - SAFE_SPACE * 2, 56);
+	const nameY = size - BAND_HEIGHT - SAFE_SPACE;
+
+	// Directional scrims behind the text zones — the radial vignette alone
+	// doesn't guarantee contrast (a bright photo's center still shows
+	// through). Each is a flat SCRIM_ALPHA plateau covering the full text
+	// zone (headline+subtitle on top, name on the bottom), fading to
+	// transparent only past the text — never through it, which is what let a
+	// bright photo wash out the subtitle/name before.
+	const topZoneBottom = metaY + 40; // clear of the mono subtitle's descenders
+	const topFadeEnd = topZoneBottom + 120;
+	ctx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
+	ctx.fillRect(0, 0, size, topZoneBottom);
+	const topFade = ctx.createLinearGradient(0, topZoneBottom, 0, topFadeEnd);
+	topFade.addColorStop(0, `rgba(0,0,0,${SCRIM_ALPHA})`);
+	topFade.addColorStop(1, 'rgba(0,0,0,0)');
+	ctx.fillStyle = topFade;
+	ctx.fillRect(0, topZoneBottom, size, topFadeEnd - topZoneBottom);
+
+	const bottomZoneTop = nameY - nameSize * 0.95; // clear above the name's cap-height
+	const bottomFadeStart = bottomZoneTop - 120;
+	ctx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
+	ctx.fillRect(0, bottomZoneTop, size, size - BAND_HEIGHT - bottomZoneTop);
+	const bottomFade = ctx.createLinearGradient(0, bottomFadeStart, 0, bottomZoneTop);
+	bottomFade.addColorStop(0, 'rgba(0,0,0,0)');
+	bottomFade.addColorStop(1, `rgba(0,0,0,${SCRIM_ALPHA})`);
+	ctx.fillStyle = bottomFade;
+	ctx.fillRect(0, bottomFadeStart, size, bottomZoneTop - bottomFadeStart);
+
+	// ── Headline: "I'M ATTENDING" — cream + one red word, no shadow/glow. One
+	// design for every visitor (no role toggle any more — see AttendingCard.tsx).
+	// Centered, top of card, kept inside the 10% safe space.
 	ctx.font = `${headlineSize}px ${fonts.bebas}`;
 	ctx.textBaseline = 'alphabetic';
 	const totalWidth = ctx.measureText(headline).width;
 	let x = (size - totalWidth) / 2;
-	const headlineY = SAFE_SPACE + headlineSize * 0.78;
 	ctx.textAlign = 'left';
 	ctx.fillStyle = ink;
 	ctx.fillText(prefix, x, headlineY);
@@ -268,7 +287,6 @@ export function drawAttendingCard(
 
 	// Sub-label under the headline — a mono meta line, sized to stay legible at
 	// social-feed scale (a 1200px card renders ~500px wide there).
-	const metaY = headlineY + 64;
 	ctx.textAlign = 'center';
 	ctx.font = `500 44px ${fonts.mono}`;
 	ctx.fillStyle = ink;
@@ -277,25 +295,73 @@ export function drawAttendingCard(
 	// ── Name, bottom of card — the card's one remaining focal line since the
 	// role toggle is gone. Baseline kept inside the 10% safe space, clear of
 	// the band below it.
-	const nameText = (data.name.trim() || 'Your name here').toUpperCase();
-	const nameSize = fitFontSize(ctx, nameText, fonts.bebas, 96, size - SAFE_SPACE * 2, 56);
 	ctx.font = `${nameSize}px ${fonts.bebas}`;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'alphabetic';
 	ctx.fillStyle = ink;
-	const nameY = size - BAND_HEIGHT - SAFE_SPACE;
 	ctx.fillText(nameText, size / 2, nameY);
 
 	// ── Bottom accent band — one per card, mirrors `.band--accent`. Fixed
 	// BAND_HEIGHT zone at the card's foot, edge-to-edge (chrome, not content —
-	// exempt from the safe-space rule above). Wordmark centered per Dominik's
-	// call to put everything in this layout on the center axis.
+	// exempt from the safe-space rule above). Wordmark + "2026" pill centered
+	// as one group per Dominik's call to put everything in this layout on the
+	// center axis; both match the mock's black-on-red treatment.
 	const bandCenterY = size - BAND_HEIGHT / 2;
 	ctx.fillStyle = accent;
 	ctx.fillRect(0, size - BAND_HEIGHT, size, BAND_HEIGHT);
 
 	if (logo && logo.naturalWidth > 0) {
 		const logoWidth = (logo.naturalWidth / logo.naturalHeight) * LOGO_HEIGHT;
-		ctx.drawImage(logo, size / 2 - logoWidth / 2, bandCenterY - LOGO_HEIGHT / 2, logoWidth, LOGO_HEIGHT);
+
+		const pillText = '2026';
+		ctx.font = `600 28px ${fonts.mono}`;
+		const pillTextWidth = ctx.measureText(pillText).width;
+		const pillPaddingX = 18;
+		const pillHeight = 44;
+		const pillWidth = pillTextWidth + pillPaddingX * 2;
+		const pillGap = 20;
+
+		const groupWidth = logoWidth + pillGap + pillWidth;
+		const logoX = size / 2 - groupWidth / 2;
+		const logoY = bandCenterY - LOGO_HEIGHT / 2;
+
+		// The shared wordmark asset is white (built for dark backgrounds
+		// elsewhere on the site); the mock wants it black on the red band. Tint
+		// it on a scratch canvas, not in place: `source-atop` masks to
+		// whatever alpha is already in the destination, and the main canvas
+		// already has the opaque red band under this whole rect, so tinting
+		// directly there would black out the full logo bounding box instead
+		// of just the letters.
+		const tint = document.createElement('canvas');
+		tint.width = Math.ceil(logoWidth);
+		tint.height = LOGO_HEIGHT;
+		const tintCtx = tint.getContext('2d');
+		if (tintCtx) {
+			tintCtx.drawImage(logo, 0, 0, logoWidth, LOGO_HEIGHT);
+			tintCtx.globalCompositeOperation = 'source-atop';
+			tintCtx.fillStyle = '#000000';
+			tintCtx.fillRect(0, 0, logoWidth, LOGO_HEIGHT);
+			ctx.drawImage(tint, logoX, logoY, logoWidth, LOGO_HEIGHT);
+		}
+
+		// "2026" pill, black outline + text on the red band, per Danny's mock.
+		const pillX = logoX + logoWidth + pillGap;
+		const pillY = bandCenterY - pillHeight / 2;
+		const radius = pillHeight / 2;
+		ctx.beginPath();
+		ctx.moveTo(pillX + radius, pillY);
+		ctx.arcTo(pillX + pillWidth, pillY, pillX + pillWidth, pillY + pillHeight, radius);
+		ctx.arcTo(pillX + pillWidth, pillY + pillHeight, pillX, pillY + pillHeight, radius);
+		ctx.arcTo(pillX, pillY + pillHeight, pillX, pillY, radius);
+		ctx.arcTo(pillX, pillY, pillX + pillWidth, pillY, radius);
+		ctx.closePath();
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = '#000000';
+		ctx.stroke();
+		ctx.fillStyle = '#000000';
+		ctx.font = `600 28px ${fonts.mono}`;
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.fillText(pillText, pillX + pillWidth / 2, pillY + pillHeight / 2 + 1);
 	}
 }
