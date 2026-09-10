@@ -53,10 +53,16 @@
 		color: rgba(240, 237, 230, 0.55);
 	}
 
-	&:focus-visible {
+	&:focus {
 		outline: none;
-		border-color: var(--rule-red);
+		// accent-hot (not --rule-red) keeps the focused boundary >=3:1 for pointer focus too (1.4.11).
+		border-color: var(--color-accent-hot);
 		box-shadow: var(--glow-red-soft);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
 	}
 }
 
@@ -113,11 +119,12 @@
 	&:focus-visible {
 		color: var(--color-text);
 		border-color: var(--rule-red);
-		outline: none;
 	}
 
 	&:focus-visible {
 		box-shadow: var(--glow-red-soft);
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
 	}
 }
 
