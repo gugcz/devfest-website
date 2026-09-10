@@ -5,8 +5,8 @@
  *   firebase functions:secrets:set <NAME>
  *
  * The Slack webhook is NOT redefined here — `refresh-sessionize.ts` imports
- * `SLACK_WEBHOOK_URL` from the tickets domain (`tickets/params.ts` is the single
- * source of truth for it; the invoice domain reuses it the same way).
+ * `SLACK_WEBHOOK_URL` from `lib/params.ts`, the single source of truth for
+ * params more than one domain needs.
  */
 
 import { defineSecret } from 'firebase-functions/params';

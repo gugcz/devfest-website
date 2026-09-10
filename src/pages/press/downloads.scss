@@ -253,7 +253,6 @@
 	}
 
 	/* ===================== EMPTY STATE ===================== */
-	// Lamp-lit dossier — matches the asset tiles' lighting and inset matte frame.
 	.empty-state {
 		position: relative;
 		border: 0;
@@ -268,7 +267,6 @@
 		gap: 1.1rem;
 	}
 
-	// Keep the empty-state copy above the matte-frame layer.
 	.empty-stamp,
 	.empty-line {
 		position: relative;
@@ -325,7 +323,6 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		// Drop the lift, keep the matte-frame colour cue.
 		.kit-link { transition: box-shadow 0.2s; }
 		.kit-dl { transition: color 0.2s; }
 

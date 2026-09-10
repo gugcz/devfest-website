@@ -16,8 +16,9 @@ export const TITO_SIGNATURE_HEADER = 'tito-signature';
 export const TITO_EVENT_HEADER = 'x-webhook-name';
 
 /**
- * Webhook event names ti.to emits. Listed for documentation; we cast
- * arbitrary strings to this union with a runtime check.
+ * Webhook event names ti.to emits, listed for documentation/autocomplete.
+ * The `(string & {})` member means any string satisfies this type — ti.to
+ * can add event names without breaking the cast at the call site.
  */
 export type TitoWebhookEvent =
 	| 'ticket.created'

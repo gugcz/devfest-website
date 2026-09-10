@@ -154,10 +154,7 @@ function SpeakerCard({
 	);
 }
 
-/**
- * The sheet itself, separated from the Firestore wiring so it can be rendered
- * from fixtures.
- */
+/** The speaker lineup grid, rendered by `Speakers` below. */
 export function SpeakerLineup({
 	speakers,
 	onOpen,
