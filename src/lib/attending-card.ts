@@ -262,21 +262,16 @@ export function drawAttendingCard(
 	const FADE_LEN = 56;
 	const TEXT_PAD = 20;
 
-	const headlineCapTop = headlineY - headlineSize * 0.74;
-	const topZoneTop = Math.max(0, headlineCapTop - TEXT_PAD);
+	// The top zone runs the plateau flush to the canvas edge (y=0) — there is
+	// no band up here the way the bottom has one, so anything short of the
+	// edge leaves a bare strip of photo above the scrim. The fade stays only
+	// on the inner side, easing the plateau back into the photo below the
+	// subtitle.
 	const topZoneBottom = metaY + 24; // clear of the mono subtitle's descenders
-	const topFadeStart = Math.max(0, topZoneTop - FADE_LEN);
 	const topFadeEnd = topZoneBottom + FADE_LEN;
 
-	if (topZoneTop > topFadeStart) {
-		const topFadeIn = ctx.createLinearGradient(0, topFadeStart, 0, topZoneTop);
-		topFadeIn.addColorStop(0, 'rgba(0,0,0,0)');
-		topFadeIn.addColorStop(1, `rgba(0,0,0,${SCRIM_ALPHA})`);
-		ctx.fillStyle = topFadeIn;
-		ctx.fillRect(0, topFadeStart, size, topZoneTop - topFadeStart);
-	}
 	ctx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
-	ctx.fillRect(0, topZoneTop, size, topZoneBottom - topZoneTop);
+	ctx.fillRect(0, 0, size, topZoneBottom);
 	const topFadeOut = ctx.createLinearGradient(0, topZoneBottom, 0, topFadeEnd);
 	topFadeOut.addColorStop(0, `rgba(0,0,0,${SCRIM_ALPHA})`);
 	topFadeOut.addColorStop(1, 'rgba(0,0,0,0)');
