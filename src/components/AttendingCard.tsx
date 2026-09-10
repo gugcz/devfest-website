@@ -34,8 +34,12 @@ type ShareState = 'idle' | 'working' | 'done' | 'error';
 
 export default function AttendingCard() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const photoTriggerRef = useRef<HTMLButtonElement>(null);
 	const [name, setName] = useState('');
 	const [photo, setPhoto] = useState<ImageBitmap | null>(null);
+	const [photoName, setPhotoName] = useState('');
+	const [photoThumbUrl, setPhotoThumbUrl] = useState('');
 	const [transform, setTransform] = useState<PhotoTransform>(DEFAULT_TRANSFORM);
 	const [photoError, setPhotoError] = useState('');
 	const [shareState, setShareState] = useState<ShareState>('idle');
@@ -50,6 +54,8 @@ export default function AttendingCard() {
 	// Tracks the live bitmap so it can be `.close()`d on replace/unmount —
 	// `photo` state lags one render behind the moment we need to release it.
 	const photoRef = useRef<ImageBitmap | null>(null);
+	// Same lag problem for the thumbnail's object URL.
+	const thumbUrlRef = useRef('');
 
 	// Astro's `fonts` integration self-hosts Bebas Neue / JetBrains Mono/
 	// Special Elite behind CSS custom properties; `document.fonts.ready` is
@@ -74,6 +80,7 @@ export default function AttendingCard() {
 	useEffect(() => {
 		return () => {
 			photoRef.current?.close();
+			if (thumbUrlRef.current) URL.revokeObjectURL(thumbUrlRef.current);
 		};
 	}, []);
 
@@ -112,19 +119,35 @@ export default function AttendingCard() {
 			}
 			photoRef.current?.close();
 			photoRef.current = bitmap;
+			if (thumbUrlRef.current) URL.revokeObjectURL(thumbUrlRef.current);
+			const thumbUrl = URL.createObjectURL(file);
+			thumbUrlRef.current = thumbUrl;
 			setPhoto(bitmap);
+			setPhotoName(file.name);
+			setPhotoThumbUrl(thumbUrl);
 			setTransform(DEFAULT_TRANSFORM);
 		} catch {
 			setPhotoError("Couldn't read that image. Try a different file.");
 		}
 	}
 
+	function triggerPhotoPick() {
+		fileInputRef.current?.click();
+	}
+
 	function removePhoto() {
 		photoRef.current?.close();
 		photoRef.current = null;
+		if (thumbUrlRef.current) URL.revokeObjectURL(thumbUrlRef.current);
+		thumbUrlRef.current = '';
 		setPhoto(null);
+		setPhotoName('');
+		setPhotoThumbUrl('');
 		setTransform(DEFAULT_TRANSFORM);
 		setPhotoError('');
+		// The button that was just clicked unmounts with the picked-state block;
+		// move focus to its replacement so it doesn't silently drop to <body>.
+		requestAnimationFrame(() => photoTriggerRef.current?.focus());
 	}
 
 	function updateZoom(zoom: number) {
@@ -263,16 +286,54 @@ export default function AttendingCard() {
 					Required to download or share — it's your card, after all.
 				</span>
 
-				<label className={s.field}>
-					<span className={s.label}>Photo (optional)</span>
+				<div className={s.field}>
+					<span className={s.label} id="attending-photo-label">
+						Photo (optional)
+					</span>
 					<input
-						className={s.fileInput}
+						ref={fileInputRef}
+						className={s.srOnly}
+						id="attending-photo-input"
 						type="file"
 						accept="image/*"
+						tabIndex={-1}
 						onChange={handlePhotoChange}
 						aria-describedby="attending-photo-hint"
+						aria-labelledby="attending-photo-label"
 					/>
-				</label>
+					{photo ? (
+						<div className={s.photoPicked}>
+							{photoThumbUrl && <img className={s.photoThumb} src={photoThumbUrl} alt="" />}
+							<span className={s.photoName}>{photoName}</span>
+							<button
+								type="button"
+								className={s.linkButton}
+								onClick={triggerPhotoPick}
+								aria-controls="attending-photo-input"
+							>
+								Replace
+							</button>
+							<button
+								type="button"
+								className={s.linkButton}
+								onClick={removePhoto}
+								aria-controls="attending-photo-input"
+							>
+								Remove
+							</button>
+						</div>
+					) : (
+						<button
+							ref={photoTriggerRef}
+							type="button"
+							className={s.fileInput}
+							onClick={triggerPhotoPick}
+							aria-controls="attending-photo-input"
+						>
+							Choose photo…
+						</button>
+					)}
+				</div>
 				<span id="attending-photo-hint" className={s.hint}>
 					Processed entirely in your browser — never uploaded anywhere. No photo? We'll use your initials instead.
 				</span>
