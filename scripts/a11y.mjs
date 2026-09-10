@@ -27,6 +27,7 @@ const PATHS = [
 	'/press/',
 	'/press/downloads/',
 	'/invoice/',
+	'/attending/',
 	'/privacy-policy/',
 	'/newsletter-subscription-thank-you/',
 	'/thank-you/',
