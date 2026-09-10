@@ -221,11 +221,17 @@ export function drawAttendingCard(
 		ctx.fillText(initials(data.name) || '?', size / 2, size / 2 + 20);
 	}
 
-	// Radial gradient fading to black from ~50% of the card's half-diagonal —
-	// per Danny's mock, on top of the photo/monogram either way. Runs to pure
-	// black (alpha 1) so the corners match the mock; the mid-card fade is what
-	// keeps the photo itself visible.
-	const vignette = ctx.createRadialGradient(size / 2, size / 2, size * 0.25, size / 2, size / 2, size * 0.72);
+	// Corner vignette — a circular gradient centered on the card, but tuned so
+	// the inner stop sits just past the edge-midpoint radius (size/2) and the
+	// outer stop sits short of the corner radius (size/√2 half-diagonal, ≈0.707
+	// of size). Points along the horizontal/vertical center lines are exactly
+	// `size/2` from the center at most, so they never reach the inner stop and
+	// stay untouched; the true corners are past the outer stop, so a gradient
+	// stop clamps them to flat, literal black instead of asymptotically
+	// approaching it. A vignette spanning the full half-diagonal (the old
+	// 0.25–0.72 stops) darkened the entire width/height at mid-card too, which
+	// is what was crushing the visible photo band.
+	const vignette = ctx.createRadialGradient(size / 2, size / 2, size * 0.52, size / 2, size / 2, size * 0.6917);
 	vignette.addColorStop(0, 'rgba(0,0,0,0)');
 	vignette.addColorStop(1, 'rgba(0,0,0,1)');
 	ctx.fillStyle = vignette;
@@ -247,22 +253,39 @@ export function drawAttendingCard(
 
 	// Directional scrims behind the text zones — the radial vignette alone
 	// doesn't guarantee contrast (a bright photo's center still shows
-	// through). Each is a flat SCRIM_ALPHA plateau covering the full text
-	// zone (headline+subtitle on top, name on the bottom), fading to
-	// transparent only past the text — never through it, which is what let a
-	// bright photo wash out the subtitle/name before.
-	const topZoneBottom = metaY + 40; // clear of the mono subtitle's descenders
-	const topFadeEnd = topZoneBottom + 120;
+	// through). Each is a flat SCRIM_ALPHA plateau sized to the actual text
+	// bounding box (cap-height to descender, plus a small breathing pad), not
+	// the full strip from the card edge to the text — that oversized plateau
+	// was crushing photo content in the safe-space margin where no text sits.
+	// A short fade runs on either side of the plateau so the edge into the
+	// bare photo isn't a hard cut.
+	const FADE_LEN = 56;
+	const TEXT_PAD = 20;
+
+	const headlineCapTop = headlineY - headlineSize * 0.74;
+	const topZoneTop = Math.max(0, headlineCapTop - TEXT_PAD);
+	const topZoneBottom = metaY + 24; // clear of the mono subtitle's descenders
+	const topFadeStart = Math.max(0, topZoneTop - FADE_LEN);
+	const topFadeEnd = topZoneBottom + FADE_LEN;
+
+	if (topZoneTop > topFadeStart) {
+		const topFadeIn = ctx.createLinearGradient(0, topFadeStart, 0, topZoneTop);
+		topFadeIn.addColorStop(0, 'rgba(0,0,0,0)');
+		topFadeIn.addColorStop(1, `rgba(0,0,0,${SCRIM_ALPHA})`);
+		ctx.fillStyle = topFadeIn;
+		ctx.fillRect(0, topFadeStart, size, topZoneTop - topFadeStart);
+	}
 	ctx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
-	ctx.fillRect(0, 0, size, topZoneBottom);
-	const topFade = ctx.createLinearGradient(0, topZoneBottom, 0, topFadeEnd);
-	topFade.addColorStop(0, `rgba(0,0,0,${SCRIM_ALPHA})`);
-	topFade.addColorStop(1, 'rgba(0,0,0,0)');
-	ctx.fillStyle = topFade;
+	ctx.fillRect(0, topZoneTop, size, topZoneBottom - topZoneTop);
+	const topFadeOut = ctx.createLinearGradient(0, topZoneBottom, 0, topFadeEnd);
+	topFadeOut.addColorStop(0, `rgba(0,0,0,${SCRIM_ALPHA})`);
+	topFadeOut.addColorStop(1, 'rgba(0,0,0,0)');
+	ctx.fillStyle = topFadeOut;
 	ctx.fillRect(0, topZoneBottom, size, topFadeEnd - topZoneBottom);
 
-	const bottomZoneTop = nameY - nameSize * 0.95; // clear above the name's cap-height
-	const bottomFadeStart = bottomZoneTop - 120;
+	const nameCapTop = nameY - nameSize * 0.74;
+	const bottomZoneTop = Math.max(0, nameCapTop - TEXT_PAD);
+	const bottomFadeStart = Math.max(0, bottomZoneTop - FADE_LEN);
 	ctx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
 	ctx.fillRect(0, bottomZoneTop, size, size - BAND_HEIGHT - bottomZoneTop);
 	const bottomFade = ctx.createLinearGradient(0, bottomFadeStart, 0, bottomZoneTop);
