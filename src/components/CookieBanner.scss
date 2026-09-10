@@ -16,7 +16,10 @@
 		background: #0A0908;
 		border-top: 1px solid var(--rule);
 		z-index: 10000;
-		transition: opacity 0.3s, transform 0.3s;
+		// visibility switches only after the opacity/transform fade finishes, so the
+		// hide animation still plays; while hidden it takes the buttons out of the
+		// tab order instead of leaving two focusable stops inside aria-hidden.
+		transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -29,6 +32,8 @@
 		opacity: 0;
 		pointer-events: none;
 		transform: translateY(100%);
+		visibility: hidden;
+		transition-delay: 0s, 0s, 0.3s;
 	}
 
 	.cookie-text {

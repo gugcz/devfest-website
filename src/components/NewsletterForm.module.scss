@@ -172,10 +172,6 @@
 		width: 100%;
 		border-right: 1px solid var(--rule);
 		border-radius: var(--radius);
-
-		&:focus-within {
-			border-color: var(--rule-red);
-		}
 	}
 
 	.input {

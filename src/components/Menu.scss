@@ -263,7 +263,11 @@
 	.nav-toggle:hover,
 	.nav-toggle:focus-visible {
 		border-color: var(--color-text);
-		outline: none;
+	}
+
+	.nav-toggle:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
 	}
 
 	.nav-toggle[aria-expanded='true'] {

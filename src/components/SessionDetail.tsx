@@ -42,8 +42,8 @@ function SpeakerAvatar({ speaker }: { speaker: SessionSpeakerRef }) {
 
 /**
  * Accessible session detail dialog: room, abstract, and the talk's speakers.
- * Traps focus, closes on Esc / backdrop click, locks body scroll, and
- * restores focus to the triggering card on close (mirrors `SpeakerDetail`).
+ * Traps focus, closes on Esc, locks body scroll, and restores focus to the
+ * triggering card on close (mirrors `SpeakerDetail`).
  */
 export default function SessionDetail({
 	session,
