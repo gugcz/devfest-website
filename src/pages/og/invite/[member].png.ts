@@ -258,7 +258,7 @@ export const GET: APIRoute = async ({ props }) => {
 									style: {
 										display: 'flex',
 										fontFamily: 'Bebas Neue',
-										fontSize: '46px',
+										fontSize: '40px',
 										letterSpacing: '0.04em',
 										textTransform: 'uppercase',
 										color: CREAM,
