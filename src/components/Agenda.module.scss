@@ -500,12 +500,15 @@
 // mono caption's underline, not a row rule.
 .unscheduledList {
 	border-top: 1px solid var(--rule-strong);
+	// Inset so the first row's reach field doesn't sit flush against the hairline.
+	padding-top: 14px;
 }
 
 // Rhythm, reach field, ink inversion and focus ring come from `.field-row--link`.
 .unscheduledItem {
 	display: block;
 	width: 100%;
+	box-sizing: border-box;
 	font-family: var(--font-bebas-neue), sans-serif;
 	// The long-list row step, shared with /sessions, the FAQ and the press clippings.
 	font-size: var(--fs-row-sm);
@@ -515,6 +518,9 @@
 	color: var(--color-text);
 	text-align: left;
 	cursor: pointer;
+	// Titles are unbounded-length Sessionize copy — wrap instead of overflowing the row.
+	overflow-wrap: break-word;
+	word-break: break-word;
 	// Shorter than a full row: these are titles alone, with no meta under them.
 	--field-step: clamp(1.1rem, 2vw, 1.5rem);
 }

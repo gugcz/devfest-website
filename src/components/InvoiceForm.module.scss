@@ -68,7 +68,6 @@
 		// too (1.4.11); keyboard focus additionally gets the ring below.
 		border-color: var(--color-accent-hot);
 		background: var(--panel-hover);
-		box-shadow: var(--glow-red-soft);
 	}
 
 	&:focus-visible {

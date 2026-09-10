@@ -112,13 +112,13 @@
 	background: linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
 }
 
-// The red wash rides on hover only: at rest it is a red mark on every face.
+// The darkening wash rides on hover only.
 .vignette {
 	position: absolute;
 	inset: 0;
 	z-index: 2;
 	pointer-events: none;
-	background: radial-gradient(120% 100% at 50% 6%, rgba(204, 0, 0, 0.16) 0%, transparent 46%);
+	background: radial-gradient(120% 100% at 50% 6%, rgba(0, 0, 0, 0.5) 0%, transparent 46%);
 	opacity: 0;
 	transition: opacity 0.3s ease;
 }
