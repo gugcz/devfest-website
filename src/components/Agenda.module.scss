@@ -10,7 +10,7 @@
 	font-size: var(--fs-label);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 	margin: 0 0 1.4rem;
 }
 
@@ -94,7 +94,7 @@
 	font-size: var(--fs-ui);
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.78);
+	color: var(--ink);
 	// Filled, not transparent: the header is the one row that must stay legible
 	// while the sheet scrolls under it.
 	background: var(--panel);
@@ -146,7 +146,7 @@
 	font-variant-numeric: tabular-nums;
 	font-size: var(--fs-label-lg);
 	letter-spacing: 0.1em;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 	flex-shrink: 0;
 }
 
@@ -250,7 +250,7 @@
 	// Same index role as the ticket wave's serial, so the same step.
 	font-size: var(--fs-label-lg);
 	letter-spacing: 0.1em;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 }
 
 // Nothing in the cell may shrink except the title, and the title clamps rather
@@ -306,7 +306,7 @@
 	font-size: var(--fs-label-sm);
 	letter-spacing: 0.16em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 	// No `white-space: nowrap`, and a zero flex floor: a one-word track label
 	// ("ARCHITECTURE") is 216px of mono at a 32px root, which is most of a
 	// phone viewport. `.tags` already wraps between labels; this lets a single
@@ -437,7 +437,7 @@
 	font-variant-numeric: tabular-nums;
 	font-size: var(--fs-ui);
 	letter-spacing: 0.1em;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 	// Drops the mono time onto the Bebas title's cap-height. A band's title is
 	// mono at label size, so there it sits on the first line already.
 	padding-top: 0.5rem;
@@ -509,7 +509,7 @@
 	font-size: var(--fs-label);
 	letter-spacing: 0.24em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 	margin: 0 0 1.2rem;
 }
 
