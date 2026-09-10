@@ -16,7 +16,7 @@
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-ui);
 		letter-spacing: 0.08em;
-		color: rgba(240, 237, 230, 0.85);
+		color: var(--ink-strong);
 		text-decoration: none;
 		margin-bottom: 3.5rem;
 		padding: 0.5rem 0.5rem 0.5rem 0;
@@ -107,7 +107,7 @@
 		font-size: var(--fs-body);
 		line-height: 1.85;
 		letter-spacing: 0.01em;
-		color: rgba(240, 237, 230, 0.78);
+		color: var(--ink);
 		margin-bottom: 1rem;
 		// Comfortable reading measure on wide viewports.
 		max-width: 62ch;
@@ -118,7 +118,7 @@
 		font-size: var(--fs-body);
 		line-height: 1.85;
 		letter-spacing: 0.01em;
-		color: rgba(240, 237, 230, 0.78);
+		color: var(--ink);
 		padding-left: 1.4rem;
 		margin-bottom: 1rem;
 		max-width: 62ch;
@@ -161,7 +161,7 @@
 		border-collapse: collapse;
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-ui);
-		color: rgba(240, 237, 230, 0.78);
+		color: var(--ink);
 		// The rhythm above the table now lives on `.table-scroll`.
 		margin-top: 0;
 	}
@@ -177,7 +177,7 @@
 		text-align: left;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.85);
+		color: var(--ink-strong);
 		font-weight: normal;
 		padding: 0.8rem 1rem;
 		vertical-align: top;
@@ -188,7 +188,7 @@
 		font-size: var(--fs-ui);
 		text-transform: none;
 		letter-spacing: 0.01em;
-		color: rgba(240, 237, 230, 0.85);
+		color: var(--ink-strong);
 		border-bottom: 1px solid var(--rule-soft);
 	}
 

@@ -18,7 +18,7 @@
 	font-size: var(--fs-label-lg);
 	letter-spacing: 0.16em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 
 	& + .metaItem::before {
 		content: '';
@@ -40,7 +40,7 @@
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-lede);
 		line-height: 1.7;
-		color: rgba(240, 237, 230, 0.85);
+		color: var(--ink-strong);
 		margin: 0 0 1.1rem;
 		// THE COLUMN IS THE MEASURE — no character cap on sheet prose, so the
 		// abstract lines up with the title, rules and rows around it. At 1440 that
@@ -133,7 +133,7 @@
 	font-size: var(--fs-label);
 	letter-spacing: 0.06em;
 	line-height: 1.45;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -52,7 +52,7 @@
 	font-size: var(--fs-label-lg);
 	letter-spacing: 0.16em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 	margin: clamp(1rem, 2vw, 1.5rem) 0 0;
 }
 
@@ -101,7 +101,7 @@
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-lede);
 		line-height: 1.7;
-		color: rgba(240, 237, 230, 0.85);
+		color: var(--ink-strong);
 		margin: 0 0 1.1rem;
 		// No character cap: the 0.62fr column beside the portrait IS the measure,
 		// same rule as the session sheet's abstract.

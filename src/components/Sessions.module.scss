@@ -50,7 +50,7 @@
 
 	// 0.55, not 0.4: the placeholder is the field's only visible label, so 4.5:1 applies.
 	&::placeholder {
-		color: rgba(240, 237, 230, 0.55);
+		color: var(--ink-muted);
 	}
 
 	&:focus-visible {
@@ -65,7 +65,7 @@
 	font-size: var(--fs-label-sm);
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 	white-space: nowrap;
 }
 
@@ -85,7 +85,7 @@
 	font-size: var(--fs-label-xs);
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 	min-width: 4.5rem;
 }
 
@@ -215,7 +215,7 @@
 	font-size: var(--fs-label-sm);
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -340,7 +340,7 @@
 		width: 6px;
 		height: 6px;
 		border-radius: 50%;
-		background: rgba(240, 237, 230, 0.55);
+		background: var(--ink-muted);
 		opacity: 0.35;
 		animation: skelPulse 1.4s ease-in-out infinite;
 	}
@@ -361,7 +361,7 @@
 	font-size: var(--fs-label-xs);
 	letter-spacing: 0.28em;
 	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	color: var(--ink-muted);
 }
 
 .moreText {

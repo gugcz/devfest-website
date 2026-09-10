@@ -111,7 +111,7 @@
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-size: var(--fs-title-sm);
 		line-height: 1;
-		color: rgba(240, 237, 230, 0.55);
+		color: var(--ink-muted);
 		transition: transform 0.2s ease, color 0.2s;
 		transform-origin: center;
 	}
