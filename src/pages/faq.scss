@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 	// Category on the left, its questions on the right.
 	.faq-group {
 		display: grid;
@@ -108,8 +109,7 @@
 	// Muted at rest; full cream on the red field. Red on twelve markers is not a highlight.
 	.faq-marker {
 		flex: 0 0 auto;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-title-sm);
+		@include mono(var(--fs-title-sm));
 		line-height: 1;
 		color: var(--ink-muted);
 		transition: transform 0.2s ease, color 0.2s;

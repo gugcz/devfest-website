@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 	.policy {
 		min-height: 100dvh;
 		padding: 7rem var(--gutter) var(--section-y);
@@ -13,9 +14,7 @@
 	}
 
 	.back-link {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-ui);
-		letter-spacing: 0.08em;
+		@include mono(var(--fs-ui), 0.08em);
 		color: var(--ink-strong);
 		text-decoration: none;
 		margin-bottom: 3.5rem;
@@ -88,10 +87,7 @@
 	}
 
 	h3 {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-ui);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		@include mono(var(--fs-ui), 0.08em, uppercase);
 		color: rgba(240, 237, 230, 0.75);
 		margin-top: 1.8rem;
 		margin-bottom: 0.8rem;
@@ -145,8 +141,7 @@
 	}
 
 	code {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-ui);
+		@include mono(var(--fs-ui));
 		// Lit surface for inline code — matches the subpage panel tone.
 		background: var(--panel-lit-2);
 		padding: 0.1em 0.35em;
@@ -170,8 +165,7 @@
 	}
 
 	th {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
+		@include mono(var(--fs-label-lg));
 		text-align: left;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;

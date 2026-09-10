@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 	// Mugshots laid out on the page — no cell, no panel, no rule around anybody; the
 	// print carries its own mount. Four across at most: at a 210px floor the roster
 	// laid out as six small columns, which is a contact sheet, not a crew.
@@ -136,10 +137,7 @@
 		// — the two lines are stacked in the same cell, so an `auto` track
 		// floored at the longer one's min-content width under text zoom.
 		grid-template-columns: minmax(0, 1fr);
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.16em, uppercase);
 		line-height: 1.4;
 		margin-top: 0.2rem;
 		min-height: 2.8em;

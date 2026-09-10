@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 .wrapper {
 	width: 100%;
 	max-width: 720px;
@@ -32,10 +33,7 @@
 }
 
 .label {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.16em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label), 0.16em, uppercase);
 	color: var(--ink-meta);
 	transition: color 0.2s ease;
 }
@@ -92,8 +90,7 @@
 // The per-field message. Mono, like every other label on the site — the error
 // is a label, not prose, and it sits in the same column as the field's own.
 .error {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
+	@include mono(var(--fs-label));
 	line-height: 1.5;
 	letter-spacing: 0.06em;
 	color: var(--color-accent-hot);
@@ -223,10 +220,7 @@
 	color: var(--on-accent);
 	border: 1px solid var(--color-accent);
 	border-radius: var(--radius);
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-lg), 0.22em, uppercase);
 	cursor: pointer;
 	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 

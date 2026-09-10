@@ -53,6 +53,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 </BaseLayout>
 
 <style lang="scss">
+	@use '../styles/type' as *;
 	.invoice-page {
 		display: flex;
 		flex-direction: column;
@@ -113,9 +114,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 	}
 
 	.step-no {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-sm);
-		letter-spacing: 0.2em;
+		@include mono(var(--fs-label-sm), 0.2em);
 		// Red reads as light — the step numbers glow like neon markers.
 		color: var(--color-accent-hot);
 		flex-shrink: 0;

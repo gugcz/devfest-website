@@ -1,0 +1,13 @@
+// Mono label recipe (JetBrains Mono + size + optional tracking/case). Every
+// site passes its own $track/$case — never snap a site's actual value to the
+// nearest one used elsewhere, that's a visual decision, not this refactor's.
+@mixin mono($size, $track: null, $case: null) {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: $size;
+	@if $track {
+		letter-spacing: $track;
+	}
+	@if $case {
+		text-transform: $case;
+	}
+}

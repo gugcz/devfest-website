@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 	.footer {
 		position: relative;
 		width: 100%;
@@ -90,10 +91,7 @@
 	}
 
 	.col-title {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.24em, uppercase);
 		color: var(--ink-strong);
 		font-weight: normal;
 		margin: 0;
@@ -122,9 +120,7 @@
 	}
 
 	.footer-link {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-ui);
-		letter-spacing: 0.04em;
+		@include mono(var(--fs-ui), 0.04em);
 		color: var(--ink);
 		text-decoration: none;
 		border-bottom: 1px solid transparent;
@@ -230,8 +226,7 @@
 	}
 
 	.org {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
+		@include mono(var(--fs-label-lg));
 		line-height: 1.6;
 		color: rgba(240, 237, 230, 0.65);
 		max-width: 34ch;

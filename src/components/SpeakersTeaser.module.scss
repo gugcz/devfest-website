@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 // Home-page lineup wall — the same contact sheet /speakers and /team use, cut
 // down to four frames. It was a row of four tiles at EVERY width, which on a
 // 375px phone left 78×97px faces: too small to recognise anybody, which is the
@@ -230,10 +231,7 @@
 	// minimum target size.
 	min-height: 2.75rem;
 	padding: 0 0.25rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.2em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 	color: var(--color-text);
 	text-decoration: none;
 	border-bottom: 1px solid var(--rule-red);
