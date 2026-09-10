@@ -1,0 +1,8 @@
+// Overlapping-avatar ring. Every site passes its own $width/$color — the ring
+// colour drifts on purpose (panel vs rule vs a one-off near-black), never
+// snap it to the nearest one used elsewhere.
+@mixin avatar-ring($width, $color) {
+	border-radius: 50%;
+	background: var(--panel-lit);
+	border: $width solid $color;
+}

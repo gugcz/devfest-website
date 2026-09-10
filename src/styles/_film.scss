@@ -1,0 +1,6 @@
+// Film-grade recipe (grayscale photo treatment). Every site passes its own
+// measured $contrast/$brightness — never snap a site's actual value to the
+// nearest one used elsewhere, that's a visual decision, not this refactor's.
+@mixin film($contrast, $brightness) {
+	filter: grayscale(1) contrast($contrast) brightness($brightness);
+}

@@ -20,7 +20,7 @@
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap);
 		}
 	}
@@ -144,12 +144,7 @@
 			content: '';
 			position: absolute;
 			inset: 0;
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.07) 0%,
-				rgba(255, 240, 226, 0.03) 42%,
-				transparent 86%
-			);
+			background: var(--wash-warm-lit);
 			opacity: 0;
 			pointer-events: none;
 			z-index: 0;
@@ -168,7 +163,7 @@
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap);
 		}
 	}
@@ -293,7 +288,7 @@
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap);
 		}
 	}

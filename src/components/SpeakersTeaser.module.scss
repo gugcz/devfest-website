@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/film' as *;
 // Home-page lineup wall — the same contact sheet /speakers and /team use, cut
 // down to four frames. It was a row of four tiles at EVERY width, which on a
 // 375px phone left 78×97px faces: too small to recognise anybody, which is the
@@ -85,7 +86,7 @@
 	outline: none;
 
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-lg);
 	}
 }
@@ -139,7 +140,7 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	filter: grayscale(1) contrast(1.14) brightness(0.82);
+	@include film(1.14, 0.82);
 	transform: scale(1.02);
 	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
 }
@@ -150,11 +151,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-monogram);
-	letter-spacing: 0.06em;
-	color: var(--ink-monogram);
-	user-select: none;
+	@include monogram(0.06em);
 }
 
 // Always-on bottom scrim so the print sits into its own shadow.
@@ -243,7 +240,7 @@
 
 	&:focus-visible {
 		color: var(--color-accent-hot);
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-lg);
 	}
 }

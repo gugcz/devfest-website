@@ -1,4 +1,6 @@
 @use '../styles/type' as *;
+@use '../styles/film' as *;
+@use '../styles/avatar' as *;
 // Session detail. The chrome is `Sheet.module.scss`, shared with SpeakerDetail;
 // this file holds only the meta line, the abstract measure and the speaker rows.
 
@@ -73,7 +75,7 @@
 
 	// Not ink: the portrait has to stay a photograph on the red field.
 	&:hover .avatar {
-		border-color: #B00000;
+		border-color: var(--accent-deep);
 	}
 }
 
@@ -82,13 +84,11 @@
 	flex-shrink: 0;
 	width: clamp(52px, 5vw, 64px);
 	aspect-ratio: 1;
-	border-radius: 50%;
 	overflow: hidden;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	background: var(--panel-lit);
-	border: 1px solid var(--rule);
+	@include avatar-ring(1px, var(--rule));
 	transition: border-color 0.28s ease;
 }
 
@@ -99,7 +99,7 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	filter: grayscale(1) contrast(1.06) brightness(0.92);
+	@include film(1.06, 0.92);
 }
 
 .avatarMono {

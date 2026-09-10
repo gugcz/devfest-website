@@ -72,7 +72,7 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-tight);
 	}
 
@@ -171,7 +171,7 @@
 		cursor: pointer;
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap);
 			border-radius: 2px;
 		}
@@ -236,7 +236,7 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap);
 	}
 
@@ -267,6 +267,7 @@
 .success {
 	position: relative;
 	padding: 2.4rem 0 2.2rem;
+	// Brighter than --wash-warm on purpose — a confirmation state, lit deliberately harder.
 	background: linear-gradient(
 		104deg,
 		rgba(255, 244, 232, 0.075) 0%,

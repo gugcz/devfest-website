@@ -1,4 +1,6 @@
 @use '../styles/type' as *;
+@use '../styles/film' as *;
+@use '../styles/avatar' as *;
 // Agenda timetable. Desktop: a proportional time × room grid ruled by the hour
 // and down each room, where a talk is an opaque panel in its column and every
 // minute nobody is on — a break, a lunch, an unfilled stretch — is struck
@@ -186,12 +188,7 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(
-			104deg,
-			rgba(255, 244, 232, 0.07) 0%,
-			rgba(255, 240, 226, 0.03) 42%,
-			transparent 86%
-		);
+		background: var(--wash-warm-lit);
 		opacity: 0;
 		pointer-events: none;
 		z-index: 0;
@@ -227,7 +224,7 @@
 	// neighbours, so a ring outside the box sits on top of the cell next door.
 	&:focus-visible {
 		border-top-color: var(--rule-red);
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: -2px;
 	}
 
@@ -354,13 +351,11 @@
 .avatar {
 	width: 26px;
 	height: 26px;
-	border-radius: 50%;
 	object-fit: cover;
 	object-position: center 22%;
 	// A thin ring separates overlapping photos.
-	border: 1.5px solid var(--panel);
-	background: var(--panel-lit);
-	filter: grayscale(1) contrast(1.06) brightness(0.9);
+	@include avatar-ring(1.5px, var(--panel));
+	@include film(1.06, 0.9);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -616,17 +611,6 @@
 
 .bandLive {
 	border-color: var(--rule-red);
-}
-
-/* ===================== STATES ===================== */
-@keyframes agendaPulse {
-	0%,
-	100% {
-		opacity: 0.3;
-	}
-	50% {
-		opacity: 1;
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {

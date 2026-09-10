@@ -57,7 +57,7 @@
 
 	// Keyboard focus must show a visible ring — WCAG 2.4.7. Never `outline: none` here.
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-tight);
 	}
 }
@@ -80,7 +80,7 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap);
 	}
 
@@ -120,7 +120,7 @@
 		cursor: pointer;
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap);
 			border-radius: 2px;
 		}
@@ -197,7 +197,7 @@
 		// Opaque, not rgba: a contrast checker resolves a translucent fill's placeholder
 		// against the band red behind it, and the real ratio then depends on a blend.
 		background: #9A0000;
-		border-color: rgba(247, 239, 230, 0.85);
+		border-color: var(--field-border-on-accent);
 
 		&:focus-within {
 			border-color: var(--on-accent);
@@ -223,7 +223,7 @@
 	.button {
 		background: var(--on-accent);
 		border-color: var(--on-accent);
-		color: #1A0000;
+		color: var(--ink-on-accent);
 
 		&:hover:not(:disabled) {
 			background: #FFFFFF;
@@ -237,7 +237,7 @@
 	}
 
 	.consent input[type='checkbox'] {
-		accent-color: #1A0000;
+		accent-color: var(--ink-on-accent);
 
 		&:focus-visible {
 			outline-color: var(--on-accent);
@@ -250,7 +250,7 @@
 
 	.consentLink {
 		color: var(--on-accent);
-		border-bottom-color: rgba(247, 239, 230, 0.85);
+		border-bottom-color: var(--field-border-on-accent);
 
 		&:hover,
 		&:focus-visible {

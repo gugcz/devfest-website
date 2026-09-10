@@ -58,12 +58,8 @@
 			content: '';
 			position: absolute;
 			inset: 0 calc(-1 * var(--gutter));
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.06) 0%,
-				rgba(255, 240, 226, 0.028) 38%,
-				transparent 82%
-			);
+			// Was a drifted .028 (nobody chose it) — matches the canonical --wash-warm now.
+			background: var(--wash-warm);
 			opacity: 0;
 			pointer-events: none;
 			transition: opacity 0.3s ease;

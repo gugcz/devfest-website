@@ -114,7 +114,7 @@
 		animation: fadeInUp 0.9s ease 0.4s both;
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap, 0.5rem);
 		}
 	}
@@ -631,7 +631,7 @@
 		// Wider than --focus-gap-lg on purpose: a wordmark carries its own whitespace, so a
 		// 4px ring lands on the image margin rather than around the visible mark.
 		a:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: 6px;
 		}
 	}
@@ -681,7 +681,7 @@
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap-lg);
 		}
 	}

@@ -1,4 +1,6 @@
 @use '../styles/type' as *;
+@use '../styles/film' as *;
+@use '../styles/avatar' as *;
 // Session docket — the programme as an open field of talks. `.field-row--link`
 // owns the rhythm and the red reach state; this file owns the two-column grid
 // and the type.
@@ -60,7 +62,7 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-tight);
 	}
 }
@@ -114,7 +116,7 @@
 
 	&:focus-visible {
 		box-shadow: var(--glow-red-soft);
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-tight);
 	}
 }
@@ -145,7 +147,7 @@
 
 	// The underline is always on, so keyboard focus needs a real ring (2.4.7 / 1.4.1).
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap);
 	}
 }
@@ -176,13 +178,13 @@
 	// not ink, and must stay legible ON the field. Hover only — focus draws a ring.
 	&:hover {
 		.avatar {
-			border-color: #B00000;
+			border-color: var(--accent-deep);
 			filter: grayscale(1) contrast(1.06) brightness(0.98);
 		}
 
 		.avatarMore {
-			color: #1A0000;
-			background: #F7EFE6;
+			color: var(--ink-on-accent);
+			background: var(--on-accent);
 		}
 	}
 }
@@ -270,12 +272,10 @@
 .avatar {
 	width: 30px;
 	height: 30px;
-	border-radius: 50%;
 	object-fit: cover;
 	object-position: center 22%;
-	border: 1.5px solid #0b0a0a;
-	background: var(--panel-lit);
-	filter: grayscale(1) contrast(1.06) brightness(0.9);
+	@include avatar-ring(1.5px, #0b0a0a);
+	@include film(1.06, 0.9);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -331,7 +331,7 @@
 		border-radius: 50%;
 		background: var(--ink-muted);
 		opacity: 0.35;
-		animation: skelPulse 1.4s ease-in-out infinite;
+		animation: pulse-opacity 1.4s ease-in-out infinite;
 	}
 
 	span:nth-child(2) {
@@ -357,17 +357,6 @@
 	color: var(--color-grey);
 	margin: 0;
 	max-width: 22ch;
-}
-
-/* ===================== STATES ===================== */
-@keyframes skelPulse {
-	0%,
-	100% {
-		opacity: 0.3;
-	}
-	50% {
-		opacity: 1;
-	}
 }
 
 /* ===================== RESPONSIVE ===================== */

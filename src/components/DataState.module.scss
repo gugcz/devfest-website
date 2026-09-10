@@ -50,7 +50,7 @@
 	background: var(--color-accent-hot);
 	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
 	flex-shrink: 0;
-	animation: statePulse 1.3s ease-in-out infinite;
+	animation: pulse-opacity 1.3s ease-in-out infinite;
 }
 
 .dots {
@@ -64,7 +64,7 @@
 		border-radius: 50%;
 		background: currentColor;
 		opacity: 0.3;
-		animation: statePulse 1.3s ease-in-out infinite;
+		animation: pulse-opacity 1.3s ease-in-out infinite;
 	}
 
 	span:nth-child(2) {
@@ -72,16 +72,6 @@
 	}
 	span:nth-child(3) {
 		animation-delay: 0.36s;
-	}
-}
-
-@keyframes statePulse {
-	0%,
-	100% {
-		opacity: 0.3;
-	}
-	50% {
-		opacity: 1;
 	}
 }
 

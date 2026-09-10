@@ -119,10 +119,22 @@
 		--focus-gap-tight: 2px;
 		--focus-gap: 3px;
 		--focus-gap-lg: 4px;
+		--focus-ring: 2px solid var(--color-accent-hot);
 
 		// Red as LIGHT — interactive things only (CTA hover, live status). Red TEXT is flat.
 		--glow-red: 0 0 14px rgba(204, 0, 0, 0.4), 0 0 34px rgba(204, 0, 0, 0.18);
 		--glow-red-soft: 0 0 18px rgba(204, 0, 0, 0.22);
+
+		// The 104deg warm wash: row default, and the brighter cell/tile variant.
+		// One-off recipes elsewhere (mobile boosts, a lit confirmation state) keep
+		// their own local gradient — see the comment at each call site.
+		--wash-warm: linear-gradient(104deg, rgba(255, 244, 232, 0.06) 0%, rgba(255, 240, 226, 0.026) 38%, transparent 82%);
+		--wash-warm-lit: linear-gradient(104deg, rgba(255, 244, 232, 0.07) 0%, rgba(255, 240, 226, 0.03) 42%, transparent 86%);
+
+		// Measured ink on #CC0000 (see .band--accent below) that had no token yet.
+		--ink-on-accent: #1A0000;      // 3.42:1, large text only
+		--accent-deep: #B00000;        // unlisted darker accent (session/detail borders)
+		--field-border-on-accent: rgba(247, 239, 230, 0.85); // 3.95:1 control boundary on red
 
 		// A photograph is MOUNTED, not floated: keyline just inside the edge plus a shadow.
 		--print-mount:
@@ -184,7 +196,7 @@
 	}
 
 	:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap);
 		border-radius: 2px;
 	}
@@ -507,12 +519,12 @@
 	// near-black #1A0000 3.42:1 (large text only). Hierarchy from SIZE, never dimming.
 	.band--accent .eyebrow { color: var(--on-accent); }
 	.band--accent .display { color: var(--on-accent); }
-	.band--accent .display .red { color: #1A0000; }
+	.band--accent .display .red { color: var(--ink-on-accent); }
 
 	.band--accent .btn-primary {
 		background: var(--on-accent);
 		border-color: var(--on-accent);
-		color: #1A0000;
+		color: var(--ink-on-accent);
 
 		&:hover {
 			background: #FFFFFF;
@@ -524,7 +536,7 @@
 	.band--accent .btn-ghost {
 		color: var(--on-accent);
 		// 3.95:1 on the red ground — a control boundary must clear 3:1 (1.4.11).
-		border-color: rgba(247, 239, 230, 0.85);
+		border-color: var(--field-border-on-accent);
 
 		&:hover,
 		&:focus-visible {
@@ -663,7 +675,7 @@
 		&:active { transform: translateY(0); }
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap);
 		}
 	}
@@ -698,7 +710,7 @@
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap);
 		}
 	}
@@ -762,22 +774,22 @@
 		// Every ink goes FULL CREAM — muted rgba() fails on #CC0000. Blunt on purpose;
 		// a caller needing an exception overrides it with its own class.
 		&:hover {
-			color: #F7EFE6;
+			color: var(--on-accent);
 
 			*:not(svg):not(path) {
-				color: #F7EFE6;
+				color: var(--on-accent);
 			}
 		}
 
 		// accent-hot on #050505 is 4.96:1, clear of the 3:1 in 1.4.11.
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap-tight);
 		}
 
 		// Red on red is not a ring, so hover + focus inverts it to cream.
 		&:hover:focus-visible {
-			outline-color: #F7EFE6;
+			outline-color: var(--on-accent);
 		}
 	}
 
@@ -789,12 +801,7 @@
 			content: '';
 			position: absolute;
 			inset: 0 calc(-1 * var(--gutter));
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.06) 0%,
-				rgba(255, 240, 226, 0.026) 38%,
-				transparent 82%
-			);
+			background: var(--wash-warm);
 			opacity: 0;
 			pointer-events: none;
 			z-index: -1;
@@ -884,6 +891,13 @@
 	@keyframes neon-flicker {
 		0%, 18%, 22%, 80%, 100% { opacity: 1; }
 		20%, 82% { opacity: 0.74; }
+	}
+
+	// Shared by every loading-state pulse (CSS Modules namespace keyframes per
+	// file, so the one they all want has to live in the global stylesheet).
+	@keyframes pulse-opacity {
+		0%, 100% { opacity: 0.3; }
+		50% { opacity: 1; }
 	}
 
 	// Enhancement only — `animation-timeline` is still flagged off in Firefox, so

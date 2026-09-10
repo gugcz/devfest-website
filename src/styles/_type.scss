@@ -11,3 +11,14 @@
 		text-transform: $case;
 	}
 }
+
+// Monogram recipe (initials in an empty photo well). $size defaults to the
+// shared token; a caller with its own measured size (team.scss's clamp())
+// passes it explicitly — never snapped to --fs-monogram.
+@mixin monogram($tracking, $size: var(--fs-monogram)) {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: $size;
+	letter-spacing: $tracking;
+	color: var(--ink-monogram);
+	user-select: none;
+}
