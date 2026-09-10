@@ -6,6 +6,11 @@
  *
  * A tighter edge TTL than the lineup (tickets sell out mid-sale), plus the
  * in-instance memo to coalesce revalidation reads.
+ *
+ * The one function in this codebase that does NOT scale to zero: `minInstances:
+ * 1` keeps a warm container so a CDN revalidation never pays a cold start. It
+ * revalidates far more often than the lineup (300s TTL vs 900s), and every
+ * revalidating request is a real visitor waiting on the ticket roadmap.
  */
 
 import { onRequest } from 'firebase-functions/v2/https';
@@ -35,7 +40,8 @@ async function loadTickets(): Promise<TicketsCache> {
 }
 
 export const ticketsApi = onRequest(
-	CACHED_ENDPOINT,
+	// Deliberate override of the preset's scale-to-zero — see the file comment.
+	{ ...CACHED_ENDPOINT, minInstances: 1 },
 	cachedJsonEndpoint<TicketsCache>({
 		name: 'ticketsApi',
 		cacheControl: CACHE_CONTROL,
