@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 // Session docket — the programme as an open field of talks. `.field-row--link`
 // owns the rhythm and the red reach state; this file owns the two-column grid
 // and the type.
@@ -37,9 +38,7 @@
 
 .searchInput {
 	width: 100%;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.02em;
+	@include mono(var(--fs-label-lg), 0.02em);
 	color: var(--color-text);
 	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 90%);
 	// --field-border (not --rule) keeps the boundary >=3:1 over the dark fill (1.4.11).
@@ -67,10 +66,7 @@
 }
 
 .count {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-sm), 0.14em, uppercase);
 	color: var(--ink-muted);
 	white-space: nowrap;
 }
@@ -87,10 +83,7 @@
 // = muted mono; the red in this section belongs to the row under the pointer.
 .facetLabel {
 	flex-shrink: 0;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-xs), 0.22em, uppercase);
 	color: var(--ink-muted);
 	min-width: 4.5rem;
 }
@@ -102,9 +95,7 @@
 }
 
 .chip {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.04em;
+	@include mono(var(--fs-label-sm), 0.04em);
 	color: var(--color-grey);
 	background: rgba(255, 255, 255, 0.02);
 	// Square, never a pill; the boundary uses --field-border so an interactive filter
@@ -137,10 +128,7 @@
 .clear,
 .clearInline {
 	align-self: flex-start;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-sm), 0.14em, uppercase);
 	color: rgba(240, 237, 230, 0.6);
 	background: none;
 	border: none;
@@ -218,10 +206,7 @@
 // The track is muted, not accent-red: red on every row of a thirty-row list is
 // not a highlight.
 .kicker {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-sm), 0.22em, uppercase);
 	color: var(--ink-muted);
 	white-space: nowrap;
 	overflow: hidden;
@@ -309,15 +294,12 @@
 // accent once per row over thirty rows — texture, not a highlight. It sits in
 // the same well as the monogram beside it and now reads in the same ink.
 .avatarMore {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
+	@include mono(var(--fs-label-xs));
 	color: var(--ink-monogram-sm);
 }
 
 .names {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.02em;
+	@include mono(var(--fs-label-sm), 0.02em);
 	line-height: 1.4;
 	color: var(--color-grey);
 	display: -webkit-box;
@@ -364,10 +346,7 @@
 // ("End of roll"); this one was the same statement in red, which made the one
 // row that is NOT a session the loudest thing in the list.
 .moreKicker {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.28em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-xs), 0.28em, uppercase);
 	color: var(--ink-muted);
 }
 

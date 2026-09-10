@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 	:root {
 		--color-bg: #050505;
 		--color-grey: #8C8C8C;
@@ -246,10 +247,7 @@
 		padding: 0.7rem 1.1rem;
 		background: #050505;
 		color: #F0EDE6;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-lg), 0.22em, uppercase);
 		text-decoration: none;
 		border: 1px solid rgba(204, 0, 0, 0.5);
 		z-index: 10001;
@@ -303,10 +301,7 @@
 
 	// Mono eyebrow — a plain label. Never give it a trailing hairline or any other decoration.
 	.eyebrow {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.28em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.28em, uppercase);
 		color: var(--ink-muted);
 		display: inline-flex;
 		align-items: center;
@@ -616,8 +611,7 @@
 	.fact-figure .red { color: var(--color-accent-hot); }
 
 	.fact-label {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
+		@include mono(var(--fs-label-lg));
 		// 0.14em, not 0.2em: wider tracking breaks these labels onto two lines.
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
@@ -630,10 +624,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.7rem;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-lg), 0.22em, uppercase);
 		color: var(--on-accent);
 		background: var(--color-accent);
 		border: 1px solid var(--color-accent);
@@ -682,10 +673,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.6rem;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-lg), 0.22em, uppercase);
 		color: var(--color-text);
 		text-decoration: none;
 		cursor: pointer;
@@ -849,10 +837,7 @@
 	// honour. The word is the status; the mono voice and the tracking already
 	// separate it from the prose around it.
 	.record-status {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-sm);
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-sm), 0.24em, uppercase);
 		color: rgba(240, 237, 230, 0.72);
 		white-space: nowrap;
 	}
@@ -1089,8 +1074,7 @@
 		a[href^='http']::after,
 		a[href^='mailto:']::after {
 			content: ' (' attr(href) ')';
-			font-family: var(--font-jetbrains-mono), monospace;
-			font-size: 0.75em;
+			@include mono(0.75em);
 		}
 
 		// …but not where the link IS its address, or the line prints twice.

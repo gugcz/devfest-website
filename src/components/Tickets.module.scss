@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 .tickets {
 	width: 100%;
 	max-width: var(--maxw);
@@ -44,18 +45,13 @@
 }
 
 .stubSerial {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.16em;
+	@include mono(var(--fs-label-lg), 0.16em);
 	font-variant-numeric: tabular-nums;
 	color: rgba(240, 237, 230, 0.5);
 }
 
 .stubState {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-sm), 0.22em, uppercase);
 	color: var(--color-accent-hot);
 	white-space: nowrap;
 }
@@ -110,8 +106,7 @@
 // (the live wave's "On sale" state), so a deadline on every row must not
 // compete with it.
 .stubDeadline {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
+	@include mono(var(--fs-label-sm));
 	// Wide tracking is the mono voice, but two tracked caps lines under a
 	// sentence stopped scanning as words. Pulled back to a readable step.
 	letter-spacing: 0.08em;
@@ -129,10 +124,7 @@
 	flex-wrap: wrap;
 	align-items: baseline;
 	gap: 0.55rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-sm), 0.08em, uppercase);
 	color: var(--ink-meta);
 }
 
@@ -167,10 +159,7 @@
 }
 
 .stubVat {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-sm), 0.1em, uppercase);
 	color: var(--ink-meta);
 }
 
@@ -345,10 +334,7 @@
 
 // Flat red CTA — matches the global `.btn-primary` recipe.
 .cta {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-lg), 0.22em, uppercase);
 	color: var(--on-accent);
 	text-decoration: none;
 	text-align: center;
@@ -402,10 +388,7 @@
 }
 
 .invoiceLabel {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.25em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label), 0.25em, uppercase);
 	color: rgba(240, 237, 230, 0.6);
 }
 

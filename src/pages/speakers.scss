@@ -1,10 +1,8 @@
+@use '../styles/type' as *;
 /* ===================== LINEUP SECTION ===================== */
 // Said once for the whole contact sheet, in the mono catalogue voice.
 .speakers-hint {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label), 0.22em, uppercase);
 	color: rgba(240, 237, 230, 0.5);
 	margin: 1rem 0 0;
 }

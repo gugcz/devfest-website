@@ -57,6 +57,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 </article>
 
 <style lang="scss">
+	@use '../styles/type' as *;
 	// Same 1.15/0.85 split the section heads use, so the desk name and the section
 	// title share a left edge and a measure.
 	.desk {
@@ -86,10 +87,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 	// Muted, not red — a resting accent on every row of a list is texture.
 	.desk-label {
 		align-self: flex-start;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-sm);
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-sm), 0.24em, uppercase);
 		color: var(--ink-muted);
 	}
 
@@ -136,19 +134,14 @@ const Heading = `h${level}` as 'h2' | 'h3';
 	}
 
 	.desk-contact-name {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.22em, uppercase);
 		color: rgba(240, 237, 230, 0.65);
 	}
 
 	// The address is the point of the desk, so it is not set below the blurb beside it.
 	.desk-email,
 	.desk-action {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-body-lg);
-		letter-spacing: 0.04em;
+		@include mono(var(--fs-body-lg), 0.04em);
 		color: var(--color-text);
 		align-self: flex-end;
 		display: inline-flex;

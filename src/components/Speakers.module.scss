@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 // Speaker lineup — prints laid out on the page, and nothing else. A photograph
 // needs no container: it carries its own mount (`--print-mount`), so a cell
 // border only draws a second rectangle around the first. Never wrap a print in
@@ -196,10 +197,7 @@
 }
 
 .tagline {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.16em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label), 0.16em, uppercase);
 	line-height: 1.45;
 	margin-top: 0.35rem;
 	color: var(--color-grey);
@@ -258,10 +256,7 @@
 }
 
 .moreText {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.16em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label), 0.16em, uppercase);
 	line-height: 1.45;
 	margin: 0.35rem 0 0;
 	color: rgba(240, 237, 230, 0.5);
