@@ -68,7 +68,11 @@ export interface InviteCopy {
 	 * immediately before an em dash reads as a typo.
 	 */
 	titleFlat: string;
-	/** Three short paragraphs: what this is → what DevFest is → take it. */
+	/**
+	 * Three short paragraphs: what this is → what DevFest is → take it.
+	 * `body[0]` is the hero lede over the photo — one sentence, ~14 words.
+	 * `body[1]` and `body[2]` render below the fold, in the note band.
+	 */
 	body: [string, string, string];
 	/** The one line that differs between the eleven pages. */
 	roleLine: string;
@@ -82,7 +86,9 @@ export function inviteCopy(member: { name: string; role?: string }): InviteCopy 
 		titleHtml: `${first} is putting you<br />on the <span class="red">list.</span>`,
 		titleFlat: `${first} is putting you on the list`,
 		body: [
-			"This isn't a mailing list. I picked the people I actually want in the room, and you're one of them.",
+			// Hero lede: one sentence, 14 words — the only copy that sits over the
+			// photo, so it has to read at a glance, not carry the pitch.
+			"I picked the people I actually want in the room — you're one of them.",
 			`DevFest is the Czech Google developer community's day of the year — talks from people who ship things, and the corridor conversations that are the real reason anyone shows up. ${INVITE_EVENT.date}, ${INVITE_EVENT.city}.`,
 			"Ticket's yours to take. Come find me there.",
 		],

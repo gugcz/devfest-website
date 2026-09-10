@@ -125,9 +125,11 @@ const color = await plate(member.photoColor ?? member.photo);
 
 			<div class="band-inner">
 				<div class="invite-content">
-					<p class="eyebrow">{member.alias}{member.role ? ` · ${member.role}` : ''}</p>
-					<h1 id="invite-title" class="display invite-title" set:html={copy.titleHtml} />
-					<p class="invite-lede">{copy.body[0]} {copy.body[1]}</p>
+					<div class="invite-hero">
+						<p class="eyebrow">{member.alias}</p>
+						<h1 id="invite-title" class="display invite-title" set:html={copy.titleHtml} />
+					</div>
+					<p class="invite-lede">{copy.body[0]}</p>
 					<div class="invite-actions">
 						<InviteCta
 							client:load
@@ -145,9 +147,13 @@ const color = await plate(member.photoColor ?? member.photo);
 
 		<section class="band" aria-label="From the invitation">
 			<div class="band-inner invite-note">
-				<p>{copy.body[2]}</p>
-				{/* The one line that differs between the eleven pages. */}
-				<p class="invite-quote">“{copy.roleLine}”<br /><span>— {member.name}</span></p>
+				<p>{copy.body[1]} {copy.body[2]}</p>
+				{/* The one line that differs between the eleven pages; the role
+				    lived in the eyebrow before, it lives in the attribution now. */}
+				<p class="invite-quote">
+					“{copy.roleLine}”<br />
+					<span>— {member.name}{member.role ? `, ${member.role}` : ''}</span>
+				</p>
 			</div>
 		</section>
 
@@ -253,10 +259,10 @@ const color = await plate(member.photoColor ?? member.photo);
 
 	.invite-lede {
 		font-family: var(--font-special-elite);
-		font-size: var(--fs-body);
+		font-size: var(--fs-body-lg);
 		line-height: 1.75;
-		max-width: 38ch;
-		color: rgba(240, 237, 230, 0.86);
+		max-width: 34ch;
+		color: var(--color-text);
 		margin-top: clamp(1.25rem, 2vw, 1.75rem);
 	}
 
@@ -298,27 +304,43 @@ const color = await plate(member.photoColor ?? member.photo);
 	}
 
 	@media (max-width: 860px) {
-		// On a phone the plate goes back to full-bleed behind the type, with a
-		// heavier scrim: there is no room for a side-by-side frame.
+		// On a phone the plate goes back to full-bleed, but only behind the top
+		// ~48svh strip that holds the eyebrow + headline -- everything from the
+		// lede down moves onto the page's flat #050505, off the photograph
+		// entirely. Special Elite (the lede's face) never sits over a photo; see
+		// CLAUDE.md.
+		.invite {
+			display: block;
+			min-height: 0;
+		}
+
 		.invite-plate {
 			inset: 0;
-			mask-image: none;
+			mask-image: linear-gradient(180deg, #000 0%, #000 42svh, transparent 52svh);
 		}
 
 		.invite-plate .plate-base {
-			opacity: 0.5;
+			opacity: 0.55;
 		}
 
-		// No side-by-side frame to keep the type off the face, so the scrim has
-		// to do it: a heavy top-down wash over the read zone. This is a
-		// legibility condition — the lede and the CTA sit directly over the
-		// photograph here. Do not lighten it.
+		// The strip's own scrim, for the eyebrow + headline only; solid black
+		// from ~48svh down is what turns the rest of the page into flat ground.
 		.invite::after {
-			background: linear-gradient(180deg, rgba(5, 5, 5, 0.88) 0%, rgba(5, 5, 5, 0.82) 46%, rgba(5, 5, 5, 0.7) 68%, #050505 100%);
+			background: linear-gradient(180deg, rgba(5, 5, 5, 0.75) 0%, rgba(5, 5, 5, 0.85) 30svh, #050505 48svh, #050505 100%);
 		}
 
 		.invite-content {
 			max-width: none;
+		}
+
+		// Pins the eyebrow + headline to the plate strip's height so the lede
+		// that follows always lands past it, on solid ground.
+		.invite-hero {
+			min-height: 48svh;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+			padding-bottom: 1.5rem;
 		}
 
 		.invite-note {

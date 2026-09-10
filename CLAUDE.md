@@ -233,10 +233,18 @@ voice, which they share with their own network themselves.
   link beats a dead primary action.
 - **Visual direction B ("The Plate")**, approved 3 Sep 2026: the portrait owns
   the right half of the frame and the B&W → colour bleed is the page's only
-  effect. On a phone there is no side-by-side frame, so the **scrim** over the
-  read zone is what keeps the type off the face — a legibility condition, not a
-  finish. Do not lighten it. The base plate is the LCP element (`fetchpriority`
-  high); the colour layer is the enhancement (`low`).
+  effect. On a phone there is no side-by-side frame, so the plate becomes a
+  top strip (~48svh) holding only the eyebrow + headline; everything from the
+  lede down sits on flat `#050505`, off the photograph entirely — the scrim
+  in that strip is a legibility condition, not a finish. Do not lighten it.
+  The base plate is the LCP element (`fetchpriority` high); the colour layer
+  is the enhancement (`low`).
+- **Special Elite (the lede's face) never sits over a photograph, on any
+  breakpoint, and never runs past ~2 lines in a block.** It is a texture face
+  at body size — legible over a photo only by luck of the scrim, and past two
+  lines it stops reading as a caption and starts fighting the Bebas headline
+  for attention. This is why the mobile lede moved off the plate strip (see
+  above) rather than the plate growing a heavier scrim to cover it.
 - `Closer.astro` takes an optional `actions` **slot** so the closing repeat of
   the CTA can be that same tracked island; its `actions` prop stays the path for
   every other page.
