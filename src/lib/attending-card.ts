@@ -165,21 +165,70 @@ export function readPalette(): Palette {
  */
 export const WELL_SIZE = CARD_SIZE;
 const SAFE_SPACE = CARD_SIZE * 0.1; // 120px
-const BAND_HEIGHT = 108;
+/** Bottom band, sized to carry the wordmark at a legible size — not just a
+ * chrome strip under the name any more. */
+const BAND_HEIGHT = 168;
 
 /** Bottom band's wordmark height — the rest of the band is left to breathe. */
-const LOGO_HEIGHT = 56;
+const LOGO_HEIGHT = 88;
 
 /**
- * Scrim alpha behind the headline/name text. Chosen so contrast holds even
- * against a pure-white photo, not just the dark mock: mixing white
- * (luminance 1) under a black scrim of this alpha leaves a background
- * luminance of `1 - alpha`. At 0.82 that's 0.18, giving white text on it a
- * ~4.6:1 contrast ratio — above the 4.5:1 AA threshold for normal text, let
- * alone the 3:1 floor for the large (≥40px) text actually used here. A dark
- * photo only ever raises this ratio, so 0.82 is the binding worst case.
+ * Scrim alpha behind each line of text. Chosen so contrast holds even against
+ * a pure-white photo, not just the dark mock: mixing white (luminance 1)
+ * under a black scrim of this alpha leaves a background luminance of
+ * `1 - alpha`. At 0.82 that's 0.18, giving white text on it a ~4.6:1 contrast
+ * ratio — above the 4.5:1 AA threshold for normal text, let alone the 3:1
+ * floor for the large (≥40px) text actually used here. That reasoning covers
+ * the cream text (name/subtitle/"I'M"), but the headline's red word is the
+ * real binding case: red has far lower luminance than white, so its contrast
+ * against the same scrim is much tighter — pixel-measured against a
+ * synthetic solid-white photo (worst case) at 0.82 it was only ~4.76:1, a
+ * ~6% margin above the 4.5:1 floor. 0.88 was chosen empirically (measured,
+ * not derived) to widen that back out — see the attending-card QA round for
+ * numbers. A dark photo only ever raises this ratio. The radial vignette
+ * below darkens most of the card on its own, but not reliably enough
+ * directly under the headline/subtitle/name (they sit inside its clear
+ * center), so each line still gets its own tight scrim.
  */
-const SCRIM_ALPHA = 0.82;
+const SCRIM_ALPHA = 0.88;
+const TEXT_SCRIM_PAD_X = 32;
+const TEXT_SCRIM_PAD_Y = 16;
+
+/** Measures one line of text in `font`, leaving it set on `ctx` for the
+ * caller's own subsequent draw. Uses actual glyph bounds (not font-metric
+ * guesses) so a scrim sized from this hugs the real ink, not an estimate.
+ * `actualBoundingBoxAscent`/`Descent` are defined relative to whatever
+ * `textBaseline` is current at measure time — forced to `'alphabetic'` here
+ * because every caller's `baselineY` (the y passed to `drawTextScrim`) is an
+ * alphabetic baseline. Left as whatever a previous draw call set (e.g. the
+ * no-photo monogram fallback leaves it `'middle'`), the ascent read back too
+ * small and the scrim sat short of the glyphs it was meant to cover. */
+function lineMetrics(
+	ctx: CanvasRenderingContext2D,
+	text: string,
+	font: string,
+): { width: number; ascent: number; descent: number } {
+	ctx.font = font;
+	ctx.textBaseline = 'alphabetic';
+	const m = ctx.measureText(text);
+	return { width: m.width, ascent: m.actualBoundingBoxAscent, descent: m.actualBoundingBoxDescent };
+}
+
+/** Paints a black plate sized to one line's actual glyph bounds plus a small
+ * pad — never the full card width, so it reads as a tight backing under the
+ * letters instead of a horizontal band. */
+function drawTextScrim(
+	ctx: CanvasRenderingContext2D,
+	centerX: number,
+	baselineY: number,
+	metrics: { width: number; ascent: number; descent: number },
+): void {
+	const top = baselineY - metrics.ascent - TEXT_SCRIM_PAD_Y;
+	const height = metrics.ascent + metrics.descent + TEXT_SCRIM_PAD_Y * 2;
+	const width = metrics.width + TEXT_SCRIM_PAD_X * 2;
+	ctx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
+	ctx.fillRect(centerX - width / 2, top, width, height);
+}
 
 /**
  * Paints the full 1200×1200 card. Synchronous and side-effect-free beyond the
@@ -221,17 +270,15 @@ export function drawAttendingCard(
 		ctx.fillText(initials(data.name) || '?', size / 2, size / 2 + 20);
 	}
 
-	// Corner vignette — a circular gradient centered on the card, but tuned so
-	// the inner stop sits just past the edge-midpoint radius (size/2) and the
-	// outer stop sits short of the corner radius (size/√2 half-diagonal, ≈0.707
-	// of size). Points along the horizontal/vertical center lines are exactly
-	// `size/2` from the center at most, so they never reach the inner stop and
-	// stay untouched; the true corners are past the outer stop, so a gradient
-	// stop clamps them to flat, literal black instead of asymptotically
-	// approaching it. A vignette spanning the full half-diagonal (the old
-	// 0.25–0.72 stops) darkened the entire width/height at mid-card too, which
-	// is what was crushing the visible photo band.
-	const vignette = ctx.createRadialGradient(size / 2, size / 2, size * 0.52, size / 2, size / 2, size * 0.6917);
+	// Radial vignette — one circular mask for the whole card, replacing the
+	// old top/bottom horizontal scrims (which read as a band, not a vignette).
+	// Inner stop at 50% of the edge-midpoint radius keeps the card's center
+	// clean photo; by the outer stop (the edge-midpoint radius itself, size/2)
+	// it's already literal black, and canvas clamps anything past the last
+	// stop to that same color, so the corners (farther out, at the
+	// half-diagonal) are pure black too without a separate stop for them.
+	const vignetteRadius = size / 2;
+	const vignette = ctx.createRadialGradient(size / 2, size / 2, vignetteRadius * 0.5, size / 2, size / 2, vignetteRadius);
 	vignette.addColorStop(0, 'rgba(0,0,0,0)');
 	vignette.addColorStop(1, 'rgba(0,0,0,1)');
 	ctx.fillStyle = vignette;
@@ -246,48 +293,24 @@ export function drawAttendingCard(
 	const headlineSize = fitFontSize(ctx, headline, fonts.bebas, 132, maxHeadlineWidth, 64);
 	const headlineY = SAFE_SPACE + headlineSize * 0.78;
 	const metaY = headlineY + 64;
+	const subtitleText = '30 OCT 2026 · PRAGUE';
+	const subtitleFont = `500 44px ${fonts.mono}`;
 
 	const nameText = (data.name.trim() || 'Your name here').toUpperCase();
 	const nameSize = fitFontSize(ctx, nameText, fonts.bebas, 96, size - SAFE_SPACE * 2, 56);
 	const nameY = size - BAND_HEIGHT - SAFE_SPACE;
 
-	// Directional scrims behind the text zones — the radial vignette alone
-	// doesn't guarantee contrast (a bright photo's center still shows
-	// through). Each is a flat SCRIM_ALPHA plateau sized to the actual text
-	// bounding box (cap-height to descender, plus a small breathing pad), not
-	// the full strip from the card edge to the text — that oversized plateau
-	// was crushing photo content in the safe-space margin where no text sits.
-	// A short fade runs on either side of the plateau so the edge into the
-	// bare photo isn't a hard cut.
-	const FADE_LEN = 56;
-	const TEXT_PAD = 20;
-
-	// The top zone runs the plateau flush to the canvas edge (y=0) — there is
-	// no band up here the way the bottom has one, so anything short of the
-	// edge leaves a bare strip of photo above the scrim. The fade stays only
-	// on the inner side, easing the plateau back into the photo below the
-	// subtitle.
-	const topZoneBottom = metaY + 24; // clear of the mono subtitle's descenders
-	const topFadeEnd = topZoneBottom + FADE_LEN;
-
-	ctx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
-	ctx.fillRect(0, 0, size, topZoneBottom);
-	const topFadeOut = ctx.createLinearGradient(0, topZoneBottom, 0, topFadeEnd);
-	topFadeOut.addColorStop(0, `rgba(0,0,0,${SCRIM_ALPHA})`);
-	topFadeOut.addColorStop(1, 'rgba(0,0,0,0)');
-	ctx.fillStyle = topFadeOut;
-	ctx.fillRect(0, topZoneBottom, size, topFadeEnd - topZoneBottom);
-
-	const nameCapTop = nameY - nameSize * 0.74;
-	const bottomZoneTop = Math.max(0, nameCapTop - TEXT_PAD);
-	const bottomFadeStart = Math.max(0, bottomZoneTop - FADE_LEN);
-	ctx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
-	ctx.fillRect(0, bottomZoneTop, size, size - BAND_HEIGHT - bottomZoneTop);
-	const bottomFade = ctx.createLinearGradient(0, bottomFadeStart, 0, bottomZoneTop);
-	bottomFade.addColorStop(0, 'rgba(0,0,0,0)');
-	bottomFade.addColorStop(1, `rgba(0,0,0,${SCRIM_ALPHA})`);
-	ctx.fillStyle = bottomFade;
-	ctx.fillRect(0, bottomFadeStart, size, bottomZoneTop - bottomFadeStart);
+	// Local text scrims — the radial vignette above sits mostly clear near the
+	// card's vertical center, right where the headline/subtitle/name land, so
+	// each line gets its own plate sized to its actual glyph bounds (never the
+	// full card width — that would just reintroduce the horizontal band this
+	// replaces).
+	const headlineMetrics = lineMetrics(ctx, headline, `${headlineSize}px ${fonts.bebas}`);
+	drawTextScrim(ctx, size / 2, headlineY, headlineMetrics);
+	const subtitleMetrics = lineMetrics(ctx, subtitleText, subtitleFont);
+	drawTextScrim(ctx, size / 2, metaY, subtitleMetrics);
+	const nameMetrics = lineMetrics(ctx, nameText, `${nameSize}px ${fonts.bebas}`);
+	drawTextScrim(ctx, size / 2, nameY, nameMetrics);
 
 	// ── Headline: "I'M ATTENDING" — cream + one red word, no shadow/glow. One
 	// design for every visitor (no role toggle any more — see AttendingCard.tsx).
@@ -306,9 +329,9 @@ export function drawAttendingCard(
 	// Sub-label under the headline — a mono meta line, sized to stay legible at
 	// social-feed scale (a 1200px card renders ~500px wide there).
 	ctx.textAlign = 'center';
-	ctx.font = `500 44px ${fonts.mono}`;
+	ctx.font = subtitleFont;
 	ctx.fillStyle = ink;
-	ctx.fillText('30 OCT 2026 · PRAGUE', size / 2, metaY);
+	ctx.fillText(subtitleText, size / 2, metaY);
 
 	// ── Name, bottom of card — the card's one remaining focal line since the
 	// role toggle is gone. Baseline kept inside the 10% safe space, clear of
@@ -332,12 +355,12 @@ export function drawAttendingCard(
 		const logoWidth = (logo.naturalWidth / logo.naturalHeight) * LOGO_HEIGHT;
 
 		const pillText = '2026';
-		ctx.font = `600 28px ${fonts.mono}`;
+		ctx.font = `600 44px ${fonts.mono}`;
 		const pillTextWidth = ctx.measureText(pillText).width;
-		const pillPaddingX = 18;
-		const pillHeight = 44;
+		const pillPaddingX = 28;
+		const pillHeight = 68;
 		const pillWidth = pillTextWidth + pillPaddingX * 2;
-		const pillGap = 20;
+		const pillGap = 28;
 
 		const groupWidth = logoWidth + pillGap + pillWidth;
 		const logoX = size / 2 - groupWidth / 2;
@@ -377,7 +400,7 @@ export function drawAttendingCard(
 		ctx.strokeStyle = '#000000';
 		ctx.stroke();
 		ctx.fillStyle = '#000000';
-		ctx.font = `600 28px ${fonts.mono}`;
+		ctx.font = `600 44px ${fonts.mono}`;
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 		ctx.fillText(pillText, pillX + pillWidth / 2, pillY + pillHeight / 2 + 1);
