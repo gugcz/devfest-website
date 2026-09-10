@@ -8,8 +8,8 @@ import s from './SpeakerDetail.module.scss';
 
 /**
  * Accessible speaker detail dialog: portrait, bio, talks, and social links.
- * Traps focus, closes on Esc / backdrop click, locks body scroll, and restores
- * focus to the triggering card on close.
+ * Traps focus, closes on Esc, locks body scroll, and restores focus to the
+ * triggering card on close.
  */
 export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; onClose: () => void }) {
 	const dialogRef = useRef<HTMLDivElement>(null);

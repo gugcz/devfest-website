@@ -61,7 +61,7 @@
 		display: block;
 	}
 
-	// Neutral B&W at rest — same grade as the global `.film` utility.
+	// Neutral B&W at rest.
 	.mugshot-base {
 		filter: grayscale(1) contrast(1.12) brightness(0.82);
 	}
