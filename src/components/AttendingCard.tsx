@@ -428,7 +428,7 @@ export default function AttendingCard() {
 	}
 
 	const nameEmpty = name.trim().length === 0;
-	const exportDisabled = nameEmpty || shareState === 'working';
+	const exportDisabled = nameEmpty || !hasPhoto || shareState === 'working';
 	const cardLabel = nameEmpty
 		? 'Your DevFest.cz 2026 share card preview'
 		: `Your DevFest.cz 2026 share card preview, ${name.trim()}`;
@@ -482,7 +482,7 @@ export default function AttendingCard() {
 					<div className={s.stepBody}>
 						<div className={s.stepHead} id="attending-step-2-head">
 							<span className={s.stepHeadText}>Your photo</span>
-							<span className={s.statusWord} data-tone="optional">Optional</span>
+							<span className={s.statusWord} data-tone="required">Required</span>
 						</div>
 
 						<input
@@ -563,7 +563,7 @@ export default function AttendingCard() {
 						)}
 
 						<span id="attending-photo-hint" className={s.hint}>
-							Never uploaded — your browser does the whole thing. Skip it and your initials carry the card.
+							Never uploaded — your browser does the whole thing.
 						</span>
 
 						{photoError && (
@@ -682,21 +682,39 @@ export default function AttendingCard() {
 						onPointerCancel={handlePointerUp}
 						data-draggable={photo ? 'true' : 'false'}
 					/>
-					{isDragging && (
+					{isDragging ? (
 						<div className={s.dragOverlay} aria-hidden="true">
 							<span>Drop to replace</span>
 						</div>
+					) : (
+						!hasPhoto && (
+							<div className={s.emptyOverlay} aria-hidden="true">
+								<span>Add a photo to preview your card</span>
+							</div>
+						)
 					)}
 				</div>
 
 				<div className={s.actions}>
-					<button type="button" className="btn-primary" onClick={handleDownload} disabled={exportDisabled}>
+					<button
+						type="button"
+						className="btn-primary"
+						onClick={handleDownload}
+						disabled={exportDisabled}
+						aria-describedby={!hasPhoto ? 'attending-download-hint' : undefined}
+					>
 						Download PNG
 					</button>
 					<button type="button" className="btn-ghost" onClick={handleShare} disabled={exportDisabled}>
 						{shareState === 'working' ? 'Sharing…' : 'Share'}
 					</button>
 				</div>
+
+				{!hasPhoto && (
+					<p id="attending-download-hint" className={s.hint}>
+						Upload a photo to enable the download.
+					</p>
+				)}
 
 				<p className={s.message} role="status" aria-live="polite" data-tone={shareState === 'error' ? 'error' : 'info'}>
 					{shareMessage}

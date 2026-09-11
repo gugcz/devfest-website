@@ -37,15 +37,6 @@ export function resolveFontFamily(cssVariableName: string): string {
 	return cssVar(cssVariableName) || 'sans-serif';
 }
 
-function initials(name: string): string {
-	const parts = name.trim().split(/\s+/).filter(Boolean);
-	if (parts.length === 0) return '';
-	return parts
-		.slice(0, 2)
-		.map((p) => p[0]?.toUpperCase() ?? '')
-		.join('');
-}
-
 /** Shrinks `fontSizePx` until `text` fits within `maxWidth`, down to a floor. */
 function fitFontSize(
 	ctx: CanvasRenderingContext2D,
@@ -180,21 +171,23 @@ const LOGO_HEIGHT = 88;
  * margin at any alpha in this range; the headline's red word is the real
  * binding case, since red's luminance is far lower than white's.
  *
- * The vignette's fade-start has moved twice: 70% of the corner radius (a
- * prior round) put the headline/subtitle/name fully inside the vignette's
- * clear center, so they stopped getting the free extra darkening the
- * vignette's fade zone used to contribute there, and 0.88 measured only
- * ~4.29:1 — under the 4.5:1 AA floor — which is why that round raised this to
- * 0.92. Moving the fade-start again to 40% (see the vignette comment below)
- * brings the headline/subtitle/name back inside the fade zone, so the
- * vignette helps under the text again: pixel-measured (Playwright,
- * `getImageData`, real rendered glyphs) against a synthetic `#f2f0ea` swatch
- * (this card's documented worst case), the red word alone against a flat 0.88
- * scrim now measures ~5.23:1 — comfortably back above the floor — so this
- * eases back to 0.88 rather than staying at 0.92. A dark photo only ever
- * raises this ratio further.
+ * History: 70% of the corner radius (a prior vignette shape) put the
+ * headline/subtitle/name fully inside the vignette's clear center, so 0.88
+ * measured only ~4.29:1 — under the 4.5:1 AA floor — which is why that round
+ * raised this to 0.92. Moving the fade-start to 40% of the corner radius
+ * brought the text back inside the fade zone and let 0.88 ease back down,
+ * measuring ~4.65:1.
+ *
+ * This round's vignette (see the vignette comment below) darkens more, and
+ * starting earlier/closer to center, than either of those — so the same
+ * measurement (Playwright, `getImageData`, real rendered glyphs, against a
+ * synthetic `#f2f0ea` swatch, this card's documented worst case) let this
+ * ease down further, to 0.80: the red word vs. its plate background (the
+ * lightest point along the word, not just one sample) now measures ~4.68:1,
+ * still comfortably above the 4.5:1 floor. A dark photo only ever raises this
+ * ratio further.
  */
-const SCRIM_ALPHA = 0.88;
+const SCRIM_ALPHA = 0.8;
 const TEXT_SCRIM_PAD_X = 32;
 const TEXT_SCRIM_PAD_Y = 16;
 /** Corner rounding on each text scrim plate, so it reads as a glow behind the
@@ -305,51 +298,49 @@ export function drawAttendingCard(
 	logo: HTMLImageElement | null,
 ): void {
 	const size = CARD_SIZE;
-	const { bg, ink, red, accent, panel, monogramInk } = palette;
+	const { bg, ink, red, accent } = palette;
 
 	ctx.clearRect(0, 0, size, size);
+
+	// No photo, no card: a photo is required to export (see AttendingCard.tsx,
+	// which disables Download until one is picked), so there is nothing
+	// finished to preview without one — leave the canvas empty rather than
+	// drawing a placeholder monogram card. The React layer renders its own
+	// empty-state message over the blank canvas.
+	if (!data.photo) return;
+
 	ctx.fillStyle = bg;
 	ctx.fillRect(0, 0, size, size);
 
-	// ── Photo: full-bleed cover-fit across the whole card (or a monogram
-	// fallback on brand background), with user pan/zoom applied the same way
-	// it was on the old framed well — only the well's size/position changed.
-	if (data.photo) {
-		const scale = coverScale(data.photo.width, data.photo.height, size) * data.transform.zoom;
-		const drawWidth = data.photo.width * scale;
-		const drawHeight = data.photo.height * scale;
-		const dx = size / 2 - drawWidth / 2 + data.transform.panX * scale;
-		const dy = size / 2 - drawHeight / 2 + data.transform.panY * scale;
-		ctx.drawImage(data.photo, dx, dy, drawWidth, drawHeight);
-	} else {
-		ctx.fillStyle = panel;
-		ctx.fillRect(0, 0, size, size);
-		ctx.font = `440px ${fonts.bebas}`;
-		ctx.textAlign = 'center';
-		ctx.textBaseline = 'middle';
-		ctx.fillStyle = monogramInk;
-		ctx.fillText(initials(data.name) || '?', size / 2, size / 2 + 20);
-	}
+	// ── Photo: full-bleed cover-fit across the whole card, with user pan/zoom
+	// applied the same way it was on the old framed well — only the well's
+	// size/position changed.
+	const scale = coverScale(data.photo.width, data.photo.height, size) * data.transform.zoom;
+	const drawWidth = data.photo.width * scale;
+	const drawHeight = data.photo.height * scale;
+	const dx = size / 2 - drawWidth / 2 + data.transform.panX * scale;
+	const dy = size / 2 - drawHeight / 2 + data.transform.panY * scale;
+	ctx.drawImage(data.photo, dx, dy, drawWidth, drawHeight);
 
 	// Radial vignette — one circular mask for the whole card, replacing the
 	// old top/bottom horizontal scrims (which read as a band, not a vignette).
-	// Outer stop is the corner distance (the half-diagonal, size/2 * √2) so the
-	// corners are the last pixels to go pure black instead of already being
-	// clamped there at the edge-midpoint radius — a 50%-of-edge-radius fade
-	// left only an oval ~55% of the card width visibly photo (measured two
-	// rounds ago), well short of the ~0.2–0.85 band the mock calls for. A first
-	// attempt at fading from 70% of that radius overcorrected the other way:
-	// on the center axes the fade zone barely reaches past the edge-midpoints,
-	// so it read as corner-only darkening with the photo bleeding to the card
-	// edge top/bottom/left/right-center (measured on real pixels — QA's report
-	// on this same round). Fade now starts at 40% of the corner radius, which
-	// measures a visible band of ~0.22–0.78 on the center axes with the edge
-	// midpoints roughly half-dark — matching the mock's darkened-edge look
-	// while keeping the corners pure black at the same outer stop.
-	const vignetteRadius = (size / 2) * Math.SQRT2;
-	const vignette = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, vignetteRadius);
+	// Earlier rounds parameterised both stops off the corner distance
+	// (size/2 * √2 ≈ 849px): a 50%-of-that fade left only an oval ~55% of the
+	// card width visibly photo, and 70%-of-that overcorrected the other way,
+	// reading as corner-only darkening with the photo bleeding to the card
+	// edge top/bottom/left/right-center (measured on real pixels). This round
+	// switches to absolute distances so the fade behaves the same regardless
+	// of the corner distance: it starts at 300px from center (a quarter of the
+	// card width) and reaches full black at 600px (half the card width) — so
+	// every edge midpoint (600px from center) is already pure black, same as
+	// the corners (849px, past the gradient's last stop, which clamps to it).
+	// Only a ~600px-diameter "spotlight" at the center stays clear, per the
+	// circular-vignette-to-black mock this round is matched against.
+	const vignetteFadeStart = size * 0.25; // 300px
+	const vignetteOuterStop = size / 2; // 600px — edges and corners both black
+	const vignette = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, vignetteOuterStop);
 	vignette.addColorStop(0, 'rgba(0,0,0,0)');
-	vignette.addColorStop(0.4, 'rgba(0,0,0,0)');
+	vignette.addColorStop(vignetteFadeStart / vignetteOuterStop, 'rgba(0,0,0,0)');
 	vignette.addColorStop(1, 'rgba(0,0,0,1)');
 	ctx.fillStyle = vignette;
 	ctx.fillRect(0, 0, size, size);
@@ -368,7 +359,19 @@ export function drawAttendingCard(
 
 	const nameText = (data.name.trim() || 'Your name here').toUpperCase();
 	const nameSize = fitFontSize(ctx, nameText, fonts.bebas, 96, size - SAFE_SPACE * 2, 56);
-	const nameY = size - BAND_HEIGHT - SAFE_SPACE;
+	const nameMetrics = lineMetrics(ctx, nameText, `${nameSize}px ${fonts.bebas}`);
+
+	// Name baseline: moved down from its old fixed `bandTop - SAFE_SPACE`
+	// position to roughly halfway toward the band, per Dominik's ask — but
+	// clamped so the glyphs (baseline + descent) never cross into the band's
+	// footprint with less than a 24px gap. `fitFontSize` shrinks a long name
+	// (e.g. "Grace Hopperschmidt-Wozniakowski") to a smaller floor size, which
+	// also shrinks its descent, so the clamp keeps the same floor for every
+	// name length rather than letting a long name sit closer to the band.
+	const bandTop = size - BAND_HEIGHT;
+	const priorNameY = bandTop - SAFE_SPACE;
+	const nameBandGap = 24;
+	const nameY = Math.min(priorNameY + (bandTop - priorNameY) / 2, bandTop - nameBandGap - nameMetrics.descent);
 
 	// Local text scrims — the radial vignette above sits mostly clear near the
 	// card's vertical center, right where the headline/subtitle/name land, so
@@ -379,7 +382,6 @@ export function drawAttendingCard(
 	drawTextScrim(ctx, size / 2, headlineY, headlineMetrics);
 	const subtitleMetrics = lineMetrics(ctx, subtitleText, subtitleFont);
 	drawTextScrim(ctx, size / 2, metaY, subtitleMetrics);
-	const nameMetrics = lineMetrics(ctx, nameText, `${nameSize}px ${fonts.bebas}`);
 	drawTextScrim(ctx, size / 2, nameY, nameMetrics);
 
 	// ── Headline: "I'M ATTENDING" — cream + one red word, no shadow/glow. One
