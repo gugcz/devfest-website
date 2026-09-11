@@ -46,10 +46,7 @@ const copy = inviteCopy(member);
 // that resolves — the OG image only exists once the built PNG is deployed,
 // so pointing this at a preview build's own origin is opt-in, for verifying
 // the card on that channel before merge (see the issue thread on DEVF-45).
-// TEMPORARY (DEVF-45): pinned to the PR #325 preview channel so the Slack
-// unfurl can be checked before merge. Revert to the PUBLIC_SITE_URL default
-// before merging — production must not point its og:image at a preview.
-const SITE_URL = 'https://devfest-public--pr-325-hjgybc9u.web.app';
+const SITE_URL = import.meta.env.PUBLIC_SITE_URL ?? 'https://devfest.cz';
 // Versioned so Slack (and any other cache honouring the 1-year `max-age`
 // below) sees a changed card instead of replaying its first unfurl forever —
 // see `src/lib/og-version.ts`.
