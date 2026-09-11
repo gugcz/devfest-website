@@ -30,7 +30,7 @@ ships in; if one has drifted, the token name is the durable reference.
 | `src/components/*.module.scss` | co-located CSS Modules for React islands (`import s from './X.module.scss'`) |
 | `src/components/*.astro` + `*.scss` | static components with a sibling stylesheet |
 | `src/pages/*.scss` | page-scoped styles, one file per page |
-| `src/styles/*.scss` | `@use`d mixins, not classes — `_type.scss` (`mono`, `display`, `prose`, `lede`, `monogram`), `_film.scss` (`film`), `_avatar.scss` (`avatar-ring`), `_link.scss` (`link-rule`), `_motion.scss` (`pulse-opacity`). Each parameterizes the per-site drift rather than snapping it to one value — see "Component conventions" |
+| `src/styles/*.scss` | `@use`d mixins, not classes — `_type.scss` (`mono`, `monogram`, `lede`), `_film.scss` (`film`), `_avatar.scss` (`avatar-ring`), `_link.scss` (`link-rule`), `_motion.scss` (`pulse-opacity`). Each parameterizes the per-site drift rather than snapping it to one value — see "Component conventions" |
 
 **[MUST] No Tailwind, no CSS-in-JS, no utility framework.** SCSS + CSS custom
 properties only. There is no `tailwind.config`, no theme object, and no runtime
