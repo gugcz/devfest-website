@@ -26,7 +26,7 @@ async function loadLogo(): Promise<HTMLImageElement> {
 	return img;
 }
 
-const MIN_ZOOM = 1;
+const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 2.5;
 const MAX_PHOTO_BYTES = 20 * 1024 * 1024;
 

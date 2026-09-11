@@ -298,7 +298,7 @@ export function drawAttendingCard(
 	logo: HTMLImageElement | null,
 ): void {
 	const size = CARD_SIZE;
-	const { bg, ink, red, accent } = palette;
+	const { ink, red, accent } = palette;
 
 	ctx.clearRect(0, 0, size, size);
 
@@ -309,7 +309,11 @@ export function drawAttendingCard(
 	// empty-state message over the blank canvas.
 	if (!data.photo) return;
 
-	ctx.fillStyle = bg;
+	// Pure black base, not the `bg` token: below MIN_ZOOM=1 the photo (drawn
+	// next) no longer fully covers the card, and the vignette below already
+	// fades to pure black at its outer stop — filling with anything else would
+	// leave a visible seam between the exposed base and the vignette's edge.
+	ctx.fillStyle = '#000000';
 	ctx.fillRect(0, 0, size, size);
 
 	// ── Photo: full-bleed cover-fit across the whole card, with user pan/zoom
