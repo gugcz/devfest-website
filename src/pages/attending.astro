@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Ticker from '../components/Ticker.astro';
+import Closer from '../components/Closer.astro';
+import AttendingCard from '../components/AttendingCard';
+import { EVENT_TOPICS } from '../lib/ticker';
+---
+
+<BaseLayout
+	title="I'm attending — DevFest.cz 2026"
+	description="Make a DevFest.cz 2026 share card for your feed — add your photo or initials and download or share it."
+>
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={'I’m <span class="red">attending.</span>'}
+			lede="Build a card for your feed. Add your photo (processed on your device only) or let your initials carry it, then download or share."
+			seoHeading="DevFest.cz 2026 — I'm attending"
+			titleId="attending-title"
+			photo={false}
+		/>
+
+		<Ticker items={EVENT_TOPICS} size="sm" />
+
+		<section class="attending-body" aria-labelledby="attending-form-heading">
+			<div class="attending-inner reveal">
+				<h2 id="attending-form-heading" class="sr-only">Build your card</h2>
+				<AttendingCard client:load />
+			</div>
+		</section>
+
+		<Closer
+			eyebrow="Tell everyone"
+			titleHtml={'See you<br />at the <span class="red">show</span>.'}
+			note="Tag @devfestcz when you post it — we reshare our favourites."
+			tone="accent"
+			titleId="attending-closer"
+			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/faq', label: 'Read the FAQ', kind: 'ghost' }]}
+		/>
+	</main>
+</BaseLayout>
+
+<style lang="scss">
+	@use './attending';
+</style>
