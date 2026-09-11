@@ -1,24 +1,5 @@
 @use '../styles/type' as *;
 
-	// 4rem, the homepage's section-head gap — this page ran its heads at half the
-	// site's spacing while carrying the same title size.
-	.section-head {
-		margin-bottom: 4rem;
-		padding-bottom: 1.1rem;
-		border-bottom: 1px solid var(--rule);
-	}
-
-	// Poster headline — typewriter, to match the noir key art.
-	.section-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-h2);
-		line-height: var(--lh-display);
-		letter-spacing: var(--track-display);
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin: 0;
-	}
-
 	// A ruled note opening on a strong rule, not a mounted panel.
 	.empty-state {
 		position: relative;

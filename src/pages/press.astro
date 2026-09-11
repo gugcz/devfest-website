@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
+import SectionHead from '../components/SectionHead.astro';
 import { fetchOg } from '../lib/og';
 import { EVENT_TOPICS } from '../lib/ticker';
 
@@ -92,9 +93,7 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 			<div class="band-inner">
 								<!-- MEDIA COVERAGE -->
 				<section aria-labelledby="coverage-heading">
-					<header class="section-head">
-						<h2 id="coverage-heading" class="section-title">In the press</h2>
-					</header>
+					<SectionHead id="coverage-heading" titleHtml="In the press" />
 
 					{mediaCoverage.length > 0 ? (
 						<ul class="field coverage-list reveal">

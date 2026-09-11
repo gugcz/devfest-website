@@ -1,0 +1,23 @@
+---
+/**
+ * The global one-column section head: `.head-stack` (BaseLayout.scss) around
+ * a `.display.head-title`. `press.astro` and `press/downloads.astro` each
+ * reimplemented this under their own `.section-head`/`.section-title` names,
+ * already diverged from the primitive and from each other — this makes them
+ * use it instead. The `eyebrow` slot is optional (press.astro's head has
+ * none) and takes whatever markup a page's own label needs.
+ */
+interface Props {
+	id?: string;
+	/** Allows a <span class="red"> accent word; rendered with set:html. */
+	titleHtml: string;
+}
+
+const { id, titleHtml } = Astro.props;
+---
+
+<header class="head-stack">
+	<slot name="eyebrow" />
+	<h2 id={id} class="display head-title" set:html={titleHtml} />
+	<slot />
+</header>
