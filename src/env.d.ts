@@ -27,6 +27,13 @@ interface ImportMetaEnv {
 	 * that channel's own build instead of production.
 	 */
 	readonly PUBLIC_SITE_URL?: string;
+	/**
+	 * ti.to discount checkout URL for the invite CTA. Set only outside the repo
+	 * (GitHub Actions secret) — the code that reads it never sees the value.
+	 * Empty by default, in which case `InviteCta` resolves the plain ti.to
+	 * checkout from `/api/tickets`, unchanged.
+	 */
+	readonly PUBLIC_INVITE_DISCOUNT_URL?: string;
 }
 
 interface ImportMeta {

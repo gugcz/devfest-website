@@ -45,6 +45,14 @@ interface Props {
 /** On-site fallback while tickets are loading or the endpoint is down. */
 const FALLBACK_HREF = '/#tickets';
 
+/**
+ * A ti.to discount link for this channel, set outside the repo (GitHub Actions
+ * secret, not committed). When present it always wins the href — the
+ * `/api/tickets` resolution below still runs, but only to build the
+ * `begin_checkout` items/value payload, never to pick the destination.
+ */
+const DISCOUNT_URL = import.meta.env.PUBLIC_INVITE_DISCOUNT_URL || '';
+
 interface Target {
 	href: string;
 	external: boolean;
@@ -52,7 +60,9 @@ interface Target {
 	releases: TitoRelease[];
 }
 
-const INITIAL: Target = { href: FALLBACK_HREF, external: false, releases: [] };
+const INITIAL: Target = DISCOUNT_URL
+	? { href: DISCOUNT_URL, external: true, releases: [] }
+	: { href: FALLBACK_HREF, external: false, releases: [] };
 
 /** Two decimals — long VAT floats are noise in the GA4 payload. */
 function round2(n: number): number {
@@ -76,9 +86,10 @@ export default function InviteCta({ memberId, memberName, label, kind = 'primary
 				// (individual + company-funded of the same wave) the event page is
 				// the honest destination — it lists them both.
 				const href =
-					buyable.length === 1
+					DISCOUNT_URL ||
+					(buyable.length === 1
 						? checkoutUrl(buyable[0], accountSlug, eventSlug)
-						: eventUrl(accountSlug, eventSlug);
+						: eventUrl(accountSlug, eventSlug));
 				// Nothing on sale: the ti.to event page still says so truthfully,
 				// which beats sending an invited guest to an empty anchor.
 				setTarget({ href, external: true, releases: buyable });
