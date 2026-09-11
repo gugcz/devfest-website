@@ -1,0 +1,18 @@
+name: Build site
+description: >
+  Install and build the Astro site. Shared by firebase-hosting-merge.yml and
+  firebase-hosting-pull-request.yml, which were identical through the build
+  step and differed only in the deploy args after it. Callers must check out
+  the repo themselves first — a local composite action can't do it for them
+  (its own definition has to already be on disk to be loaded at all).
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v5
+      with:
+        node-version: 22
+        cache: npm
+    - run: npm ci
+      shell: bash
+    - run: npm run build
+      shell: bash

@@ -16,12 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
+      - uses: ./.github/actions/build-site
       # Deploy to a per-PR preview channel with w9jds/firebase-action, which
       # runs firebase-tools inside a Node 21 container. This avoids the
       # intermittent "Premature close" keep-alive failure that breaks
