@@ -124,7 +124,7 @@ App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCH
 | `/api/tickets` | `ticketsApi` (`functions/src/tickets/tickets-api.ts`) | RTDB `/tickets` | `src/lib/tito.ts::fetchTickets` → `Tickets`/`InvoiceForm` |
 
 - Both are 2nd-gen `onRequest` (`invoker: 'public'`, region `europe-west1`, in the `website` functions codebase — deployed by `firebase-functions-merge.yml`). Two-layer caching: a `Cache-Control` `s-maxage` so Firebase Hosting's CDN answers most requests from the edge, plus a short in-instance memo so a warm instance coalesces revalidation reads. Lineup TTL is 15min (a forced sync should surface in minutes, not an hour); tickets 5min (sold-out surfaces faster). A failed read → `no-store` + 503; the browser shows its "unavailable" state.
-- **Both scale to zero** (256MiB, 30s, no `minInstances`). They used to run `minInstances: 1` so a CDN revalidation never paid a cold start, but that billed two always-on containers around the clock for a conference site — the edge TTLs already serve almost every visitor, so a cold start only lands on the rare revalidating request. If latency there ever matters again, `ticketsApi` (5min TTL, revalidates far more often) is the one worth keeping warm.
+- **`lineupApi` scales to zero; `ticketsApi` runs `minInstances: 1`** (both 256MiB, 30s). Both used to be always-on, which billed two idle containers around the clock — the edge TTLs already serve almost every visitor, so a cold start only lands on a revalidating request. `ticketsApi` keeps one warm container anyway: its 5min TTL revalidates far more often than the lineup's 15min, and the request that pays the cold start is a real visitor waiting on the ticket roadmap. The override lives in `tickets-api.ts`, not in the `CACHED_ENDPOINT` preset.
 - **Deploy split (no `pinTag`):** the `/api/*` rewrites carry **no** `pinTag`, so hosting deploys (live + PR preview) are pure hosting and never build/deploy the functions — that keeps preview channels from pushing PR function code toward production, and avoids running the functions predeploy `tsc` in the hosting-deploy container (which has no `functions/` devDeps). `lineupApi`/`ticketsApi` deploy **only** via `firebase-functions-merge.yml`; the rewrites route to whatever version is live. A first deploy can briefly 404 `/api/*` until the functions land (graceful — the island shows its unavailable state, a reload recovers), and a PR preview hits the **production** functions (so verify function CHANGES locally, not on the preview).
 - The endpoints return raw docs (`{ id, ...fields }` / the RTDB cache verbatim); the browser reuses the existing `speakerFromDoc` / `sessionFromDoc` / `filterDisplayable` parsers so shape logic isn't duplicated in `functions/`.
 - **Local + a11y both serve these routes from fixtures.** A dev server has no Hosting rewrite table, so `/api/*` would 404 and every data-backed island would render its "unavailable" state. `scripts/a11y-mocks/api.mjs` holds the payloads (built from `fixtures.mjs`) and is imported by **both** `scripts/a11y.mjs` (the axe sweep) and `astro.config.mjs` (a `apply: 'serve'` Vite plugin that answers `/api/*` on `npm run dev`) — one module, so CI and a laptop can't disagree about what the endpoints return. Set `DEVFEST_LIVE_API=1 npm run dev` to skip the fixtures and hit the deployed functions instead; that is what you want when changing the functions themselves. The only Firebase module still mocked under `A11Y_MOCK` is `firebase/app-check` (App Check inits on load via analytics).
@@ -133,7 +133,7 @@ App Check (reCAPTCHA Enterprise) runs in `getApp()` with a committed key (`APPCH
 
 Every domain builds on the same shared layer. The rule of thumb behind most of it: **the failure text is a product surface** — it lands in a Slack alert (`🎤 SESSIONIZE`, `🎟️ TICKETS`, `🧾 INVOICES`), in an invoice doc's `errorMessage`, and in Cloud Logging, and it is usually all a responder has.
 
-- **`options.ts`** — `setGlobalOptions` (the `maxInstances` cost ceiling for the shared billing project) plus one option preset per function kind: `SCHEDULED`, `CACHED_ENDPOINT`, `WEBHOOK`, `CALLABLE`, `TRIGGER`. Spread a preset and override only what is genuinely specific (`{ ...SCHEDULED, schedule, secrets }`); never restate `region`/`timeZone`, which were previously copy-pasted into nine files. No preset sets `minInstances` — every function scales to zero so nothing is billed while idle.
+- **`options.ts`** — `setGlobalOptions` (the `maxInstances` cost ceiling for the shared billing project) plus one option preset per function kind: `SCHEDULED`, `CACHED_ENDPOINT`, `WEBHOOK`, `CALLABLE`, `TRIGGER`. Spread a preset and override only what is genuinely specific (`{ ...SCHEDULED, schedule, secrets }`); never restate `region`/`timeZone`, which were previously copy-pasted into nine files. No preset sets `minInstances` — functions scale to zero so nothing is billed while idle, with one deliberate per-function override (`ticketsApi`).
 - **`lib/run.ts`** — `runBackground({ name, domain, failureNote }, handler)` wraps **every** scheduled job (and any trigger that should alert). It logs start/finish with a duration, logs the failure with the unwrapped cause, alerts Slack, and rethrows so the platform still counts the failure and the scheduler's own `retryCount` retry still happens. `failureNote` states the blast radius ("live speakers/sessions left untouched") — an alert that doesn't say whether anyone must act tonight is half an alert.
   - **Alerts fire on state change, not per failure.** The first failure after a healthy run alerts, further consecutive failures only log, and the run that recovers posts a "recovered" line — so an hours-long upstream outage is two messages, not twenty-four, and a hourly job can't train the channel to ignore it. Streak state lives in RTDB `ops/health/{functionName}` (Admin SDK only; the root deny in `database.rules.json` already covers it). Every health read/write is best-effort and degrades to "assume healthy", which over-alerts rather than going silent.
 - **`lib/slack.ts`** — `postToSlack` is the raw webhook call (throws; used where the caller handles delivery itself, e.g. the ti.to purchase webhook and the status reports). `notify(domain, webhookUrl, text)` is the best-effort one everything else uses: it prefixes by domain from the one prefix table, never throws, and logs a failed delivery so a lost alert can't look like a delivered one. A function that alerts must list `SLACK_WEBHOOK_URL` in its `secrets`.
@@ -205,6 +205,62 @@ rationale behind them — lives in [DESIGN.md](DESIGN.md); treat it as the
 source of truth. Global CSS variables are in `BaseLayout.scss`; React
 components use co-located `.module.scss` files.
 
+### Personal invitation pages (`/invite/<member>`)
+
+An unlisted referral channel: one page per person in `src/content/team.json`
+(`src/pages/invite/[member].astro`, eleven pages), written in that member's
+voice, which they share with their own network themselves.
+
+- **Unlisted means three things at once**, and dropping any one of them makes it
+  cosmetic: `noindex` (the `BaseLayout` prop also drops the canonical + JSON-LD),
+  excluded from the sitemap (the `/invite/` clause in `astro.config.mjs`), and
+  **linked from nowhere** — not the menu, not the footer, not `/team`. It is not
+  access control; the URLs are guessable and the content isn't sensitive.
+- **The route slug is the `team.json` entry key** (`id`), so a URL and the roster
+  can't drift apart. Adding a member to the roster ships their invite page.
+- **Copy lives in `src/lib/invite.ts`**, not in the page. It is deliberately
+  GENERIC v1 — the members write their own paragraphs later, and when they do
+  only `body` changes. `roleLine` is the one line that varies between the eleven
+  pages, keyed by `role`; an unrecognised role falls back to the organiser line
+  rather than dropping the sentence.
+- **`InviteCta.tsx` is the only primary action**, and it is an island for two
+  reasons: it resolves the ti.to href client-side from `/api/tickets` (the live
+  wave isn't known at build time), and it reports `begin_checkout` with
+  `invite_member` / `invite_member_name`. That click is the ONLY per-member
+  attribution the channel has — checkout runs on ti.to and its redirect carries
+  no source, and there is no discount code doing the job (no perk in v1). Until
+  the endpoint answers, and if it never does, the href is `/#tickets`: a working
+  link beats a dead primary action.
+- **Visual direction B ("The Plate")**, approved 3 Sep 2026: the portrait owns
+  the right half of the frame and the B&W → colour bleed is the page's only
+  effect. On a phone there is no side-by-side frame, so the plate becomes a
+  top strip (~48svh) holding only the eyebrow + headline; everything from the
+  lede down sits on flat `#050505`, off the photograph entirely — the scrim
+  in that strip is a legibility condition, not a finish. Do not lighten it.
+  The base plate is the LCP element (`fetchpriority` high); the colour layer
+  is the enhancement (`low`).
+- **Special Elite (the lede's face) never sits over a photograph, on any
+  breakpoint, and never runs past ~2 lines in a block.** It is a texture face
+  at body size — legible over a photo only by luck of the scrim, and past two
+  lines it stops reading as a caption and starts fighting the Bebas headline
+  for attention. This is why the mobile lede moved off the plate strip (see
+  above) rather than the plate growing a heavier scrim to cover it.
+- `Closer.astro` takes an optional `actions` **slot** so the closing repeat of
+  the CTA can be that same tracked island; its `actions` prop stays the path for
+  every other page.
+- **The header's red `Tickets` action is dropped on `/invite/*`** (`isInvite` in
+  `Menu.astro`), decided 4 Sep 2026: it is a second primary action pointing off
+  the invitation. The mark and the menu toggle stay, so the bar is still a bar
+  and every destination is one click away behind it.
+- **`begin_checkout` fires only on the ti.to click**, never on the `/#tickets`
+  fallback — that one lands on the ticket section whose own Buy CTA sends the
+  event, so reporting both would double-count the wave and file an item-less
+  event against the member. `invite_member` / `invite_member_name` are custom
+  parameters: GA4 reports nothing on them until they are registered as custom
+  dimensions (README, "Analytics (GA4)").
+
 ### SEO & Metadata
 
 `BaseLayout.astro` handles all meta tags, Open Graph/Twitter Card, and JSON-LD structured data (Event + WebSite schemas). Sitemap auto-generated via `@astrojs/sitemap`.
+
+

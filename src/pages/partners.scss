@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 	.partners-contact {
 		display: flex;
 		flex-direction: column;
@@ -13,9 +14,7 @@
 	}
 
 	.email-link {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.04em;
+		@include mono(var(--fs-label-lg), 0.04em);
 		color: var(--color-text);
 		align-self: flex-start;
 		display: inline-flex;
@@ -55,10 +54,7 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.7rem;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-lg), 0.22em, uppercase);
 		color: rgba(240, 237, 230, 0.75);
 		background: transparent;
 		border: 1px solid var(--rule-strong);
@@ -72,10 +68,7 @@
 	}
 
 	.partners-cta-stamp {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.28em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.28em, uppercase);
 		padding: 0.22rem 0.55rem;
 		color: var(--color-accent-hot);
 		border: 1px solid var(--rule-red);
@@ -341,17 +334,13 @@
 	}
 
 	.contact-name {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.22em, uppercase);
 		// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
 		color: var(--on-accent);
 	}
 
 	:global(.band--accent) .email-link {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-ui);
+		@include mono(var(--fs-ui));
 		color: var(--on-accent);
 		text-decoration: underline;
 		text-decoration-thickness: 1px;
@@ -373,10 +362,7 @@
 		padding: 1.25rem 2rem;
 		border: 1px dashed rgba(247, 239, 230, 0.45);
 		border-radius: var(--radius);
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-lg), 0.22em, uppercase);
 		color: var(--on-accent);
 	}
 

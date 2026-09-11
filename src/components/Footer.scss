@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 	.footer {
 		position: relative;
 		width: 100%;
@@ -90,11 +91,8 @@
 	}
 
 	.col-title {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.85);
+		@include mono(var(--fs-label), 0.24em, uppercase);
+		color: var(--ink-strong);
 		font-weight: normal;
 		margin: 0;
 		// Plain. Never flank a column head with a pair of hairlines.
@@ -122,10 +120,8 @@
 	}
 
 	.footer-link {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-ui);
-		letter-spacing: 0.04em;
-		color: rgba(240, 237, 230, 0.78);
+		@include mono(var(--fs-ui), 0.04em);
+		color: var(--ink);
 		text-decoration: none;
 		border-bottom: 1px solid transparent;
 		padding-bottom: 1px;
@@ -173,7 +169,7 @@
 			font-size: var(--fs-label);
 			letter-spacing: 0.2em;
 			text-transform: uppercase;
-			color: rgba(240, 237, 230, 0.62);
+			color: var(--ink-meta);
 			align-self: center;
 		}
 
@@ -186,7 +182,7 @@
 			a {
 				color: inherit;
 				text-decoration: none;
-				border-bottom: 1px solid rgba(240, 237, 230, 0.4);
+				border-bottom: 1px solid var(--field-border);
 				padding-bottom: 1px;
 				transition: color 0.2s ease, border-color 0.2s ease;
 
@@ -209,7 +205,7 @@
 		font-size: var(--fs-ui);
 		color: rgba(240, 237, 230, 0.88);
 		text-decoration: none;
-		border-bottom: 1px solid rgba(240, 237, 230, 0.4);
+		border-bottom: 1px solid var(--field-border);
 		padding-bottom: 1px;
 		transition: color 0.2s ease, border-color 0.2s ease;
 
@@ -230,8 +226,7 @@
 	}
 
 	.org {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
+		@include mono(var(--fs-label-lg));
 		line-height: 1.6;
 		color: rgba(240, 237, 230, 0.65);
 		max-width: 34ch;
@@ -297,7 +292,7 @@
 		text-align: center;
 		font-size: var(--fs-label);
 		letter-spacing: 0.06em;
-		color: rgba(240, 237, 230, 0.55);
+		color: var(--ink-muted);
 
 		// Both halves wrap at phone widths, which leaves the middot separator
 		// dangling and the row visually off-centre. Stack them instead.

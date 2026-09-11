@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 
 	// 4rem, the homepage's section-head gap — this page ran its heads at half the
 	// site's spacing while carrying the same title size.
@@ -38,10 +39,7 @@
 	}
 
 	.empty-stamp {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.3em, uppercase);
 		color: var(--color-accent-hot);
 		padding: 0;
 		background: transparent;
@@ -117,11 +115,8 @@
 	// state the colour is for.
 	.coverage-outlet {
 		align-self: flex-start;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-sm);
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
+		@include mono(var(--fs-label-sm), 0.24em, uppercase);
+		color: var(--ink-muted);
 	}
 
 	// THE ONE ROW TITLE THAT IS NOT BEBAS, because it is scraped Czech from the
@@ -149,8 +144,7 @@
 	// Mono, not Special Elite, for the same reason as the title: Special Elite ships
 	// a `latin` subset only, so every ř/ě/č in scraped Czech falls back mid-word.
 	.coverage-desc {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-body);
+		@include mono(var(--fs-body));
 		line-height: 1.5;
 		color: var(--color-grey);
 		// Push the meta row to the card foot for aligned baselines.
@@ -171,9 +165,7 @@
 		margin-top: 0.8rem;
 		padding-top: 0.9rem;
 		border-top: 1px solid var(--rule);
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.12em;
+		@include mono(var(--fs-label), 0.12em);
 		color: rgba(240, 237, 230, 0.5);
 		// Outlet and date sit on one line while they fit and wrap when they do
 		// not. `white-space: nowrap` pinned them to one line at any text size,
@@ -184,7 +176,7 @@
 	.coverage-read {
 		text-transform: uppercase;
 		letter-spacing: 0.2em;
-		color: rgba(240, 237, 230, 0.62);
+		color: var(--ink-meta);
 		transition: color 0.2s;
 	}
 

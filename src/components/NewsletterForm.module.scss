@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 .wrapper {
 	display: flex;
 	flex-direction: column;
@@ -46,7 +47,7 @@
 	letter-spacing: 0.02em;
 
 	&::placeholder {
-		color: rgba(240, 237, 230, 0.62);
+		color: var(--ink-meta);
 		font-style: italic;
 	}
 
@@ -67,10 +68,7 @@
 	color: var(--on-accent);
 	border: 1px solid var(--color-accent);
 	border-radius: 0 var(--radius) var(--radius) 0;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-lg), 0.22em, uppercase);
 	cursor: pointer;
 	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 	white-space: nowrap;
@@ -133,12 +131,12 @@
 		font-size: var(--fs-ui);
 		line-height: 1.55;
 		letter-spacing: 0.01em;
-		color: rgba(240, 237, 230, 0.78);
+		color: var(--ink);
 	}
 }
 
 .consentLink {
-	color: rgba(240, 237, 230, 0.85);
+	color: var(--ink-strong);
 	text-decoration: none;
 	border-bottom: 1px solid var(--rule-red);
 	transition: border-color 0.2s, color 0.2s;
@@ -172,10 +170,6 @@
 		width: 100%;
 		border-right: 1px solid var(--rule);
 		border-radius: var(--radius);
-
-		&:focus-within {
-			border-color: var(--rule-red);
-		}
 	}
 
 	.input {

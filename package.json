@@ -10,12 +10,14 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "check": "astro check",
     "a11y": "A11Y_MOCK=1 astro build && node scripts/a11y.mjs",
     "anchors": "A11Y_MOCK=1 astro build && node scripts/anchor-measure.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.0",
     "@astrojs/sitemap": "^3.7.2",
+    "@resvg/resvg-js": "^2.6.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "astro": "^7.2.8",
@@ -23,11 +25,14 @@
     "heic-to": "^1.5.2",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "sass": "^1.99.0"
+    "sass": "^1.99.0",
+    "satori": "^0.33.4"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.4",
     "@axe-core/playwright": "^4.11.3",
-    "playwright": "^1.60.0"
+    "playwright": "^1.60.0",
+    "typescript": "^5.6.3"
   },
   "overrides": {
     "@babel/core": "^7.29.6"

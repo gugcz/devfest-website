@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 // THE loading / failure / empty block for every data-backed island.
 //
 // There were four of these — /speakers, /sessions, /agenda and the ticket
@@ -35,10 +36,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.55rem;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.18em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-lg), 0.18em, uppercase);
 	color: rgba(240, 237, 230, 0.6);
 	margin: 1rem 0 0;
 }

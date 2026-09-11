@@ -1,0 +1,57 @@
+name: Correctness gate
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'astro.config.mjs'
+      - 'tsconfig.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'functions/**'
+      - '.github/workflows/correctness.yml'
+  push:
+    branches: [2026]
+
+permissions:
+  contents: read
+
+jobs:
+  astro-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Pre-existing type debt (never caught — this is the first time `astro
+      # check` runs in CI) keeps this non-blocking for now; see PR description.
+      - name: astro check
+        run: npm run check
+        continue-on-error: true
+
+  functions-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install functions dependencies
+        working-directory: functions
+        run: npm ci
+
+      - name: Run functions test suite
+        working-directory: functions
+        run: npm test

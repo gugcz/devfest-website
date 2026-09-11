@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 // THE SHEET — the chrome both detail views share.
 //
 // A detail view is not a dialog box. It is the page turning to one thing:
@@ -91,11 +92,8 @@
 	gap: 0.6rem;
 	min-height: 2.75rem;
 	padding: 0;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.7);
+	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	color: var(--ink-soft);
 	background: none;
 	border: 0;
 	cursor: pointer;
@@ -137,11 +135,8 @@
 // Muted, not accent-hot. Red is spent on the reach state of the rows below;
 // a red label at the top competes with the one thing the colour is for.
 .kicker {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.28em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	@include mono(var(--fs-label-sm), 0.28em, uppercase);
+	color: var(--ink-muted);
 	margin: 0 0 clamp(0.75rem, 1.5vw, 1.1rem);
 }
 
@@ -161,11 +156,8 @@
 
 // The mono label that opens a block inside the sheet ("Speakers", "Talks").
 .blockTitle {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-sm);
-	letter-spacing: 0.24em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	@include mono(var(--fs-label-sm), 0.24em, uppercase);
+	color: var(--ink-muted);
 	margin: 0 0 clamp(1rem, 2vw, 1.5rem);
 	padding-bottom: clamp(0.9rem, 1.8vw, 1.25rem);
 	border-bottom: 1px solid var(--rule-soft);

@@ -1,3 +1,4 @@
+@use '../../styles/type' as *;
 	/* ===================== BODY ===================== */
 	.back-link {
 		// Standalone nav link, so SC 2.5.8's inline exception does not apply (154x19).
@@ -5,11 +6,8 @@
 		align-items: center;
 		min-height: 2.75rem;
 		margin-bottom: 2.6rem;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-sm);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.62);
+		@include mono(var(--fs-label-sm), 0.22em, uppercase);
+		color: var(--ink-meta);
 		text-decoration: none;
 		border-bottom: 1px solid var(--rule-red);
 		padding-bottom: 2px;
@@ -40,11 +38,8 @@
 		justify-content: flex-start;
 		gap: 0.9rem;
 		margin: 0 0 1rem;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-sm);
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.62);
+		@include mono(var(--fs-label-sm), 0.3em, uppercase);
+		color: var(--ink-meta);
 
 		&::after {
 			content: '';
@@ -57,7 +52,7 @@
 	// A plain mono count, never a hairline-boxed numeral.
 	.section-no {
 		flex: 0 0 auto;
-		color: rgba(240, 237, 230, 0.55);
+		color: var(--ink-muted);
 		font-variant-numeric: tabular-nums;
 		letter-spacing: 0.16em;
 	}
@@ -201,10 +196,8 @@
 	}
 
 	.kit-badge {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-sm);
-		letter-spacing: 0.16em;
-		color: rgba(240, 237, 230, 0.85);
+		@include mono(var(--fs-label-sm), 0.16em);
+		color: var(--ink-strong);
 		// No box: the format is a label on the tile, not a chip.
 		letter-spacing: 0.22em;
 	}
@@ -238,22 +231,18 @@
 	}
 
 	.kit-spec {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-xs);
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.7);
+		@include mono(var(--fs-label-xs), 0.12em, uppercase);
+		color: var(--ink-soft);
 	}
 
 	.kit-dl {
 		flex-shrink: 0;
 		font-size: var(--fs-body);
-		color: rgba(240, 237, 230, 0.55);
+		color: var(--ink-muted);
 		transition: color 0.2s, transform 0.2s;
 	}
 
 	/* ===================== EMPTY STATE ===================== */
-	// Lamp-lit dossier — matches the asset tiles' lighting and inset matte frame.
 	.empty-state {
 		position: relative;
 		border: 0;
@@ -268,7 +257,6 @@
 		gap: 1.1rem;
 	}
 
-	// Keep the empty-state copy above the matte-frame layer.
 	.empty-stamp,
 	.empty-line {
 		position: relative;
@@ -276,10 +264,7 @@
 	}
 
 	.empty-stamp {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-xs);
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-xs), 0.3em, uppercase);
 		color: var(--color-accent-hot);
 		padding: 0;
 		background: transparent;
@@ -325,7 +310,6 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		// Drop the lift, keep the matte-frame colour cue.
 		.kit-link { transition: box-shadow 0.2s; }
 		.kit-dl { transition: color 0.2s; }
 

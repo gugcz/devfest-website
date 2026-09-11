@@ -89,8 +89,6 @@ export const submitInvoiceCallable = onCall(
 		// invoices and emails: the framework rejects a missing/invalid token before
 		// the handler runs.
 		enforceAppCheck: true,
-		// Tighter than the project ceiling — a human filling in a company form does
-		// not need ten concurrent instances, and each one issues real invoices.
 		maxInstances: 10,
 	},
 	async (request) => {

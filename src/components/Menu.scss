@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 	// A bar, not a navigation. Three slots — mark, stamp, actions — and every
 	// destination lives behind one control at every width.
 	.site-header {
@@ -136,10 +137,7 @@
 	.header-stamp {
 		margin: 0;
 		justify-self: center;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-lg), 0.24em, uppercase);
 		color: var(--color-text);
 		white-space: nowrap;
 		opacity: 1;
@@ -185,10 +183,7 @@
 		// `--header-h` asserts the bar is one tap-target tall; a wrapped label
 		// would make that a lie and pull every anchor offset out with it.
 		white-space: nowrap;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-lg), 0.2em, uppercase);
 		text-decoration: none;
 		color: var(--on-accent);
 		background: var(--color-accent);
@@ -252,10 +247,7 @@
 		border: 1px solid var(--field-border);
 		border-radius: var(--radius);
 		color: var(--color-text);
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-lg), 0.2em, uppercase);
 		cursor: pointer;
 		transition: border-color 0.2s, color 0.2s, background 0.2s;
 	}
@@ -263,7 +255,11 @@
 	.nav-toggle:hover,
 	.nav-toggle:focus-visible {
 		border-color: var(--color-text);
-		outline: none;
+	}
+
+	.nav-toggle:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
 	}
 
 	.nav-toggle[aria-expanded='true'] {
@@ -387,10 +383,7 @@
 		margin-inline: auto;
 		padding-top: 1.5rem;
 		border-top: 1px solid var(--rule-soft);
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label-lg), 0.16em, uppercase);
 	}
 
 	.nav-foot-line {

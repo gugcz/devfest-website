@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 @use 'sass:list';
 
 	/* ===================== HERO ===================== */
@@ -123,11 +124,8 @@
 	// reads as a leftover, not as an opening.
 	.topics-rotor-label {
 		margin: 0 0 0 0.26em;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: clamp(0.56rem, 0.66vw, 0.62rem);
-		letter-spacing: 0.26em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
+		@include mono(clamp(0.56rem, 0.66vw, 0.62rem), 0.26em, uppercase);
+		color: var(--ink-muted);
 	}
 
 	// Every name occupies the same grid cell, so the slot measures the widest
@@ -222,7 +220,7 @@
 		background: none;
 		padding: 0.55rem 0;
 		justify-content: flex-start;
-		color: rgba(240, 237, 230, 0.78);
+		color: var(--ink);
 		text-decoration: none;
 	}
 
@@ -294,10 +292,7 @@
 	// Lifted from 0.55 to 0.72: at the darker part of the plate this sits on,
 	// 0.55 fell under 4.5:1.
 	.meta-label {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.26em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.26em, uppercase);
 		color: rgba(240, 237, 230, 0.72);
 		white-space: nowrap;
 		margin: 0;
@@ -343,11 +338,8 @@
 	.meta-sub {
 		display: block;
 		margin-top: 0.4rem;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.55);
+		@include mono(var(--fs-label), 0.18em, uppercase);
+		color: var(--ink-muted);
 	}
 
 	.meta-value--link {
@@ -485,7 +477,7 @@
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-lede);
 		line-height: 1.6;
-		color: rgba(240, 237, 230, 0.7);
+		color: var(--ink-soft);
 		max-width: 40ch;
 		margin: 1.25rem 0 2.5rem;
 	}
@@ -498,10 +490,7 @@
 	}
 
 	.speakers-tag {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.22em, uppercase);
 		color: var(--color-accent-hot);
 		white-space: nowrap;
 	}
@@ -588,10 +577,7 @@
 	// Tier caption: a plain mono word, never flanked by hairlines.
 	.partners-tier-label {
 		margin: 0;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.28em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.28em, uppercase);
 		color: var(--tier-label-color);
 	}
 
@@ -682,11 +668,8 @@
 	.partners-more a {
 		display: inline-flex;
 		align-items: center;
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.62);
+		@include mono(var(--fs-label-lg), 0.22em, uppercase);
+		color: var(--ink-meta);
 		text-decoration: underline 1px solid transparent;
 		text-underline-offset: 0.45rem;
 		transition: color 0.2s, text-decoration-color 0.2s;

@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 	// Mugshots laid out on the page — no cell, no panel, no rule around anybody; the
 	// print carries its own mount. Four across at most: at a 210px floor the roster
 	// laid out as six small columns, which is a contact sheet, not a crew.
@@ -61,7 +62,7 @@
 		display: block;
 	}
 
-	// Neutral B&W at rest — same grade as the global `.film` utility.
+	// Neutral B&W at rest.
 	.mugshot-base {
 		filter: grayscale(1) contrast(1.12) brightness(0.82);
 	}
@@ -136,10 +137,7 @@
 		// — the two lines are stacked in the same cell, so an `auto` track
 		// floored at the longer one's min-content width under text zoom.
 		grid-template-columns: minmax(0, 1fr);
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
+		@include mono(var(--fs-label), 0.16em, uppercase);
 		line-height: 1.4;
 		margin-top: 0.2rem;
 		min-height: 2.8em;
@@ -232,7 +230,11 @@
 			background: rgba(204, 0, 0, 0.1);
 			box-shadow: var(--glow-red-soft);
 			transform: translateY(-1px);
-			outline: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: var(--focus-gap-tight);
 		}
 	}
 

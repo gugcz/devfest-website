@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 // One continuous readout, not four cards.
 .countdown {
 	display: flex;
@@ -48,11 +49,8 @@
 }
 
 .label {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.55);
+	@include mono(var(--fs-label), 0.22em, uppercase);
+	color: var(--ink-muted);
 	line-height: 1;
 }
 
