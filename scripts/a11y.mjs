@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-import { createServer } from 'node:http';
 import { readFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
-import { API_FIXTURES } from './a11y-mocks/api.mjs';
+import { startFixtureServer } from './lib/fixture-server.mjs';
+import { AUDIT_ROUTES } from './routes.mjs';
 
 const DIST = path.resolve('dist');
 
@@ -15,81 +15,7 @@ const DIST = path.resolve('dist');
 // serves the same shapes from fixtures — shared with the dev server, so the two
 // can never drift (see `a11y-mocks/api.mjs`).
 const PORT = 4321;
-const PATHS = [
-	'/',
-	'/speakers/',
-	'/sessions/',
-	'/agenda/',
-	'/team/',
-	'/partners/',
-	'/contact/',
-	'/faq/',
-	'/press/',
-	'/press/downloads/',
-	'/invoice/',
-	'/privacy-policy/',
-	'/newsletter-subscription-thank-you/',
-	'/thank-you/',
-	'/404.html',
-];
-
-const MIME = {
-	'.html': 'text/html; charset=utf-8',
-	'.css': 'text/css; charset=utf-8',
-	'.js': 'text/javascript; charset=utf-8',
-	'.mjs': 'text/javascript; charset=utf-8',
-	'.json': 'application/json; charset=utf-8',
-	'.svg': 'image/svg+xml',
-	'.png': 'image/png',
-	'.jpg': 'image/jpeg',
-	'.jpeg': 'image/jpeg',
-	'.webp': 'image/webp',
-	'.ico': 'image/x-icon',
-	'.woff': 'font/woff',
-	'.woff2': 'font/woff2',
-	'.xml': 'application/xml; charset=utf-8',
-	'.txt': 'text/plain; charset=utf-8',
-};
-
-function resolveFile(reqUrl) {
-	let urlPath = decodeURIComponent(reqUrl.split('?')[0]);
-	if (urlPath.endsWith('/')) urlPath += 'index.html';
-	const candidate = path.join(DIST, urlPath);
-	if (existsSync(candidate)) return candidate;
-	const htmlCandidate = `${candidate}.html`;
-	if (existsSync(htmlCandidate)) return htmlCandidate;
-	const indexCandidate = path.join(candidate, 'index.html');
-	if (existsSync(indexCandidate)) return indexCandidate;
-	return null;
-}
-
-async function startServer() {
-	const server = createServer(async (req, res) => {
-		const reqPath = (req.url ?? '/').split('?')[0];
-		if (reqPath in API_FIXTURES) {
-			res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-			res.end(API_FIXTURES[reqPath]);
-			return;
-		}
-		const file = resolveFile(req.url ?? '/');
-		if (!file) {
-			res.writeHead(404, { 'Content-Type': 'text/plain' });
-			res.end('not found');
-			return;
-		}
-		try {
-			const data = await readFile(file);
-			const ext = path.extname(file).toLowerCase();
-			res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
-			res.end(data);
-		} catch (err) {
-			res.writeHead(500, { 'Content-Type': 'text/plain' });
-			res.end(String(err));
-		}
-	});
-	await new Promise((resolve) => server.listen(PORT, '127.0.0.1', resolve));
-	return server;
-}
+const PATHS = AUDIT_ROUTES;
 
 function formatViolation(v) {
 	const lines = [`  · [${v.impact ?? 'n/a'}] ${v.id}: ${v.help}`];
@@ -289,6 +215,16 @@ async function hydrateIslands(page) {
 	await page.waitForTimeout(250);
 }
 
+// 'networkidle' never fires on pages that hold a live realtime listener (the
+// Firestore speakers wall, the RTDB tickets cache keep a channel open), so
+// load the DOM, then wait for idle only briefly and fall through — enough for
+// islands to hydrate without hanging 30s.
+async function openPage(page, url) {
+	await page.goto(url, { waitUntil: 'domcontentloaded' });
+	await page.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
+	await hydrateIslands(page);
+}
+
 // Detail dialogs reached by clicking a card. Each flow reloads first for a clean
 // state, opens the dialog, and axe re-runs scoped to `[role="dialog"]`.
 const MODAL_FLOWS = {
@@ -341,9 +277,7 @@ async function auditModals(page, urlPath, url, tags) {
 	if (!flows) return [];
 	const found = [];
 	for (const flow of flows) {
-		await page.goto(url, { waitUntil: 'domcontentloaded' });
-		await page.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
-		await hydrateIslands(page);
+		await openPage(page, url);
 		try {
 			await flow.open(page);
 			await page.waitForSelector('[role="dialog"]', { timeout: 3000 });
@@ -366,7 +300,7 @@ async function run() {
 		process.exit(2);
 	}
 
-	const server = await startServer();
+	const server = await startFixtureServer({ port: PORT });
 	const browser = await chromium.launch();
 	// Force reduced motion so on-load fade animations finish instantly.
 	// Otherwise axe samples mid-fade and reports phantom contrast issues.
@@ -385,15 +319,9 @@ async function run() {
 	for (const urlPath of PATHS) {
 		const url = `http://127.0.0.1:${PORT}${urlPath}`;
 		const start = Date.now();
-		// 'networkidle' never fires on pages that hold a live realtime listener
-		// (the Firestore speakers wall, the RTDB tickets cache keep a channel
-		// open), so load the DOM, then wait for idle only briefly and fall
-		// through — enough for islands to hydrate without hanging 30s.
-		await page.goto(url, { waitUntil: 'domcontentloaded' });
-		await page.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
-		// Under the mock build, drive client:visible islands (Tickets on /) to
-		// their ready state before axe samples the DOM.
-		await hydrateIslands(page);
+		// Under the mock build, this also drives client:visible islands (Tickets
+		// on /) to their ready state before axe samples the DOM.
+		await openPage(page, url);
 		const results = await new AxeBuilder({ page }).withTags(tags).analyze();
 
 		// axe blind spots: our own control-contrast pass + surfaced incompletes.
@@ -442,22 +370,13 @@ async function run() {
 		const mp = await mobile.newPage();
 		const urlPath = '/agenda/ [mobile list]';
 		const url = `http://127.0.0.1:${PORT}/agenda/`;
-		await mp.goto(url, { waitUntil: 'domcontentloaded' });
-		await mp.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
-		await hydrateIslands(mp);
+		await openPage(mp, url);
 		const results = await new AxeBuilder({ page: mp }).withTags(tags).analyze();
-		// The list rows open the same SessionDetail dialog as the grid cells.
-		let modalViolations = 0;
-		try {
-			await mp.click('[data-agenda-open]');
-			await mp.waitForSelector('[role="dialog"]', { timeout: 3000 });
-			await mp.waitForTimeout(200);
-			const modalRes = await new AxeBuilder({ page: mp }).withTags(tags).include('[role="dialog"]').analyze();
-			modalViolations = modalRes.violations.length;
-			if (modalViolations) failures.push({ urlPath: '/agenda/ [mobile list dialog]', violations: modalRes.violations });
-		} catch (err) {
-			console.log(`  ⚠ ${urlPath} — dialog flow error: ${err}`);
-		}
+		// The list rows open the same SessionDetail dialog as the grid cells —
+		// the same flow the desktop grid cell uses (MODAL_FLOWS['/agenda/']).
+		const modalFails = await auditModals(mp, '/agenda/', url, tags);
+		const modalViolations = modalFails.reduce((n, m) => n + m.violations.length, 0);
+		for (const m of modalFails) failures.push({ ...m, urlPath: `${urlPath} dialog]` });
 		if (results.violations.length === 0 && modalViolations === 0) {
 			console.log(`  ✓ ${urlPath}`);
 		} else {
