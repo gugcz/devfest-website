@@ -55,14 +55,6 @@ function fitFontSize(
 	return size;
 }
 
-/** The furthest a pan offset (in source-image px) can go while the drawn
- * image stays as close as possible to fully covering a `wellSize`×`wellSize`
- * square, at the given scale. Above 1x the image is larger than the well, so
- * this is how far it can shift before exposing the well's edge. Below 1x
- * (zoomed out) the image is smaller than the well, so this is how far the
- * image itself can shift while staying inside the well — the two cases are
- * the same `abs(well − drawn) / 2` distance, just on opposite sides of the
- * mismatch, which is why one formula covers both. */
 /** Below this many source px, a bound is cover-scale slack, not a real gap
  * worth panning through — snapped to 0 (disabled, "0") rather than left as
  * noise. Cover scale exactly cancels the axis that *is* `min(width, height)`
@@ -75,6 +67,14 @@ function fitFontSize(
  * actually wants pannable (tens of px at the shipped zoom range). */
 const SUBPIXEL_SLACK_PX = 0.5 + 1e-6;
 
+/** The furthest a pan offset (in source-image px) can go while the drawn
+ * image stays as close as possible to fully covering a `wellSize`×`wellSize`
+ * square, at the given scale. Above 1x the image is larger than the well, so
+ * this is how far it can shift before exposing the well's edge. Below 1x
+ * (zoomed out) the image is smaller than the well, so this is how far the
+ * image itself can shift while staying inside the well — the two cases are
+ * the same `abs(well − drawn) / 2` distance, just on opposite sides of the
+ * mismatch, which is why one formula covers both. */
 export function panBounds(
 	naturalWidth: number,
 	naturalHeight: number,
@@ -401,33 +401,22 @@ export function drawAttendingCard(
 	// Only a ~600px-diameter "spotlight" at the center stays clear, per the
 	// circular-vignette-to-black mock this round is matched against.
 	//
-	// Below 1x zoom the drawn photo shrinks below the card, so a fixed 600px
-	// outer stop would clear past the photo's own edge and expose the black
-	// base underneath (which is fine) but leave the photo's visible edge
-	// inside the "clear" zone — the vignette then reads as bleeding onto
-	// nothing, not as framing the photo. Scaling both stops by k = min(zoom,
-	// 1) keeps the outer stop pinned to half the photo's shorter drawn side,
-	// so the photo's own edges/corners are always inside the full-black
-	// region regardless of zoom. Above 1x the photo already covers past the
-	// card edges, so k clamps to 1 and both stops stay at 300/600.
-	const zoomScale = Math.min(data.transform.zoom, 1);
-	const vignetteFadeStart = size * 0.25 * zoomScale; // 300px at zoom >= 1
-	const vignetteOuterStop = (size / 2) * zoomScale; // 600px at zoom >= 1
-	// Below 1x the pan sliders are now unlocked (panBounds allows shifting the
-	// smaller photo inside the well), so the vignette must recenter on the
-	// drawn photo's own center — dx/dy already bake panX/panY into where the
-	// photo lands, so its center is size/2 + pan*scale. At zoom >= 1 the
-	// center stays the card's own center regardless of pan, unchanged from
-	// before — panning there moves which part of the (larger) photo shows,
-	// not where the photo sits, so the vignette must stay put.
-	const vignetteCenterX = zoomScale < 1 ? size / 2 + data.transform.panX * scale : size / 2;
-	const vignetteCenterY = zoomScale < 1 ? size / 2 + data.transform.panY * scale : size / 2;
+	// Locked to the canvas, not the photo: center is always size/2 and both
+	// stops stay at 300/600 regardless of zoom/pan — same center and radii the
+	// vignette already used at 1x. Only the photo drawn above moves under it.
+	// Below 1x zoom the drawn photo (600px at 0.5x) starts out fully inside
+	// this fixed clear center; panBounds still permits shifting it toward an
+	// edge (see its doc), and doing so now shows a hard edge against the
+	// vignette's pure-black ring instead of a soft falloff — the accepted
+	// tradeoff for a shadow that no longer tracks pan/zoom.
+	const vignetteFadeStart = size * 0.25; // 300px
+	const vignetteOuterStop = size / 2; // 600px
 	const vignette = ctx.createRadialGradient(
-		vignetteCenterX,
-		vignetteCenterY,
+		size / 2,
+		size / 2,
 		0,
-		vignetteCenterX,
-		vignetteCenterY,
+		size / 2,
+		size / 2,
 		vignetteOuterStop,
 	);
 	vignette.addColorStop(0, 'rgba(0,0,0,0)');
