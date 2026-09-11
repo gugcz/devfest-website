@@ -55,8 +55,14 @@ function fitFontSize(
 	return size;
 }
 
-/** The furthest a pan offset (in source-image px) can go while the image
- * still fully covers a `wellSize`×`wellSize` square at the given scale. */
+/** The furthest a pan offset (in source-image px) can go while the drawn
+ * image stays as close as possible to fully covering a `wellSize`×`wellSize`
+ * square, at the given scale. Above 1x the image is larger than the well, so
+ * this is how far it can shift before exposing the well's edge. Below 1x
+ * (zoomed out) the image is smaller than the well, so this is how far the
+ * image itself can shift while staying inside the well — the two cases are
+ * the same `abs(well − drawn) / 2` distance, just on opposite sides of the
+ * mismatch, which is why one formula covers both. */
 export function panBounds(
 	naturalWidth: number,
 	naturalHeight: number,
@@ -66,8 +72,8 @@ export function panBounds(
 	const drawWidth = naturalWidth * scale;
 	const drawHeight = naturalHeight * scale;
 	return {
-		maxX: Math.max(0, (drawWidth - wellSize) / 2 / scale),
-		maxY: Math.max(0, (drawHeight - wellSize) / 2 / scale),
+		maxX: Math.abs(drawWidth - wellSize) / 2 / scale,
+		maxY: Math.abs(drawHeight - wellSize) / 2 / scale,
 	};
 }
 
@@ -393,7 +399,23 @@ export function drawAttendingCard(
 	const zoomScale = Math.min(data.transform.zoom, 1);
 	const vignetteFadeStart = size * 0.25 * zoomScale; // 300px at zoom >= 1
 	const vignetteOuterStop = (size / 2) * zoomScale; // 600px at zoom >= 1
-	const vignette = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, vignetteOuterStop);
+	// Below 1x the pan sliders are now unlocked (panBounds allows shifting the
+	// smaller photo inside the well), so the vignette must recenter on the
+	// drawn photo's own center — dx/dy already bake panX/panY into where the
+	// photo lands, so its center is size/2 + pan*scale. At zoom >= 1 the
+	// center stays the card's own center regardless of pan, unchanged from
+	// before — panning there moves which part of the (larger) photo shows,
+	// not where the photo sits, so the vignette must stay put.
+	const vignetteCenterX = zoomScale < 1 ? size / 2 + data.transform.panX * scale : size / 2;
+	const vignetteCenterY = zoomScale < 1 ? size / 2 + data.transform.panY * scale : size / 2;
+	const vignette = ctx.createRadialGradient(
+		vignetteCenterX,
+		vignetteCenterY,
+		0,
+		vignetteCenterX,
+		vignetteCenterY,
+		vignetteOuterStop,
+	);
 	vignette.addColorStop(0, 'rgba(0,0,0,0)');
 	vignette.addColorStop(vignetteFadeStart / vignetteOuterStop, 'rgba(0,0,0,0)');
 	vignette.addColorStop(1, 'rgba(0,0,0,1)');
