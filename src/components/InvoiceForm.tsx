@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent, type InputHTMLAttributes } from 'react';
+import { useMemo, useRef, useState, type FormEvent, type InputHTMLAttributes } from 'react';
 import {
 	fetchTickets,
 	filterDisplayable,
@@ -10,6 +10,7 @@ import {
 	type TitoRelease,
 } from '../lib/tito';
 import { track } from '../lib/analytics';
+import { useRemoteData } from '../lib/useRemoteData';
 import s from './InvoiceForm.module.scss';
 
 // Cloud Functions region the callable is deployed to.
@@ -99,6 +100,16 @@ function findCompanyRelease(releases: TitoRelease[]): TitoRelease | null {
 	return matches.find((r) => releaseStatus(r).purchasable) ?? matches[0];
 }
 
+/** The company-funded release, from the same cached endpoint `Tickets.tsx`
+ * reads — display-only estimate, so a `null` cache resolves to no release
+ * rather than an error. */
+function loadCompanyRelease(signal: AbortSignal): Promise<TitoRelease | null> {
+	return fetchTickets(signal).then((data) => {
+		if (!data) return null;
+		return findCompanyRelease(filterDisplayable(data.releases ?? []));
+	});
+}
+
 /**
  * One text field, wired for assistive tech: `aria-invalid` on the control and
  * `aria-describedby` pointing at the message under it. Nine hand-wired copies
@@ -166,7 +177,6 @@ export default function InvoiceForm() {
 	const [honeypot, setHoneypot] = useState('');
 	const [status, setStatus] = useState<Status>('idle');
 	const [message, setMessage] = useState('');
-	const [release, setRelease] = useState<TitoRelease | null>(null);
 	// Shown errors, not computed ones: a field that has never been touched and
 	// has never been submitted is not "wrong yet", it is just empty.
 	const [errors, setErrors] = useState<Errors>({});
@@ -178,19 +188,11 @@ export default function InvoiceForm() {
 
 	// Read the company-funded price from the cached `/api/tickets` endpoint for an
 	// estimate. The authoritative price is computed server-side at invoice time —
-	// this is display only, so failures are ignored.
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchTickets(ac.signal)
-			.then((data) => {
-				if (!data) return;
-				setRelease(findCompanyRelease(filterDisplayable(data.releases ?? [])));
-			})
-			.catch(() => {
-				// Estimate is optional; ignore failures (including aborts).
-			});
-		return () => ac.abort();
-	}, []);
+	// this is display only, so only `data` is read here; a failed load just
+	// leaves the estimate off.
+	const { data: release } = useRemoteData(loadCompanyRelease, {
+		logLabel: '[invoice] Failed to load ticket price estimate:',
+	});
 
 	const estimate = useMemo(() => {
 		if (!release) return null;

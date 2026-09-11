@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { type Speaker } from '../lib/speakers';
+import { useRemoteData } from '../lib/useRemoteData';
 import { visitorCategories, type Session } from '../lib/sessions';
 import {
 	byStart,
@@ -19,20 +20,11 @@ import {
 	type AgendaPartition,
 	type Placement,
 } from '../lib/agenda';
-import { fetchAgenda } from '../lib/lineup';
+import { fetchAgenda, type Lineup } from '../lib/lineup';
 import SessionDetail from './SessionDetail';
 import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Agenda.module.scss';
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
-	sessions: Session[];
-}
-
-const INITIAL: State = { status: 'loading', sessions: [] };
 
 /** 5-minute grid snap + row height (px per snap unit) for the proportional grid.
  *
@@ -474,36 +466,28 @@ function AgendaList({
 /* ============================ ROOT ============================ */
 
 export default function Agenda() {
-	const [state, setState] = useState<State>(INITIAL);
-	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
+	const { status, data } = useRemoteData<Lineup>(fetchAgenda, {
+		isEmpty: (lineup) => lineup.sessions.length === 0,
+		logLabel: '[agenda] Failed to load lineup:',
+	});
+	const sessions = data?.sessions ?? [];
+	const speakersById = useMemo<Record<string, Speaker>>(
+		() => (data ? Object.fromEntries(data.speakers.map((sp) => [sp.id, sp])) : {}),
+		[data],
+	);
 	const [selected, setSelected] = useState<Session | null>(null);
 	const isNarrow = useIsNarrow();
 
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchAgenda(ac.signal)
-			.then(({ sessions, speakers }) => {
-				setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
-				setState({ status: sessions.length > 0 ? 'ready' : 'empty', sessions });
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[agenda] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
-			});
-		return () => ac.abort();
-	}, []);
-
-	const partition = useMemo(() => partitionAgenda(state.sessions), [state.sessions]);
-	const placements = useMemo(() => sessionPlacements(state.sessions), [state.sessions]);
-	const range = useMemo(() => dayRange(state.sessions), [state.sessions]);
+	const partition = useMemo(() => partitionAgenda(sessions), [sessions]);
+	const placements = useMemo(() => sessionPlacements(sessions), [sessions]);
+	const range = useMemo(() => dayRange(sessions), [sessions]);
 	// Event-day "now" line + live/coming-up badges (hooks must run before the
 	// early returns below).
-	const eventDate = useMemo(() => eventDateISO(state.sessions), [state.sessions]);
+	const eventDate = useMemo(() => eventDateISO(sessions), [sessions]);
 	const nowMin = useNowMinutes(eventDate);
-	const now = useMemo(() => nowState(state.sessions, nowMin), [state.sessions, nowMin]);
+	const now = useMemo(() => nowState(sessions, nowMin), [sessions, nowMin]);
 
-	if (state.status === 'error') {
+	if (status === 'error') {
 		return (
 			<ErrorState>
 				<p>The agenda won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
@@ -511,12 +495,12 @@ export default function Agenda() {
 		);
 	}
 
-	if (state.status === 'loading') {
+	if (status === 'loading') {
 		return <LoadingState label="Developing the agenda" />;
 	}
 
 	// No sessions at all, or none scheduled yet → the schedule isn't published.
-	if (state.status === 'empty' || range === null) {
+	if (status === 'empty' || range === null) {
 		return (
 			<EmptyState action={{ href: '/sessions', label: 'Browse all talks' }}>
 				<p>The full schedule lands closer to the event.</p>

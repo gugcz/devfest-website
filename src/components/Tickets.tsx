@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
 	eventUrl,
 	fetchTickets,
@@ -12,6 +11,7 @@ import {
 	type TitoRelease,
 } from '../lib/tito';
 import { track } from '../lib/analytics';
+import { useRemoteData } from '../lib/useRemoteData';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Tickets.module.scss';
 
@@ -28,16 +28,28 @@ function groupDescription(groupName: string, fallback: string | null): string | 
 	return GROUP_DESCRIPTIONS[groupName.trim().toLowerCase()] ?? fallback;
 }
 
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
+interface TicketsData {
 	releases: TitoRelease[];
 	accountSlug: string;
 	eventSlug: string;
 }
 
-const INITIAL: State = { status: 'loading', releases: [], accountSlug: '', eventSlug: '' };
+const EMPTY_DATA: TicketsData = { releases: [], accountSlug: '', eventSlug: '' };
+
+/** Plain fetch of the CDN-cached `ticketsApi` endpoint (Hosting rewrites
+ * /api/tickets → the function, which reads RTDB via the Admin SDK) — no
+ * Firebase SDK / App Check on this path. A `null` cache (no data written yet)
+ * and a real cache with no publicly-visible releases both read as "empty". */
+function loadTickets(signal: AbortSignal): Promise<TicketsData> {
+	return fetchTickets(signal).then((data) => {
+		if (!data) return EMPTY_DATA;
+		return {
+			releases: filterDisplayable(data.releases ?? []),
+			accountSlug: data.accountSlug ?? '',
+			eventSlug: data.eventSlug ?? '',
+		};
+	});
+}
 
 interface ReleaseGroup {
 	name: string;
@@ -117,36 +129,12 @@ function round2(n: number): number {
 const sectionClass = `${s.tickets} anchor-target`;
 
 export default function Tickets() {
-	const [state, setState] = useState<State>(INITIAL);
+	const { status, data } = useRemoteData(loadTickets, {
+		isEmpty: (d) => d.releases.length === 0,
+		logLabel: '[tickets] Failed to load tickets:',
+	});
 
-	useEffect(() => {
-		// Plain fetch of the CDN-cached `ticketsApi` endpoint (Hosting rewrites
-		// /api/tickets → the function, which reads RTDB via the Admin SDK) — no
-		// Firebase SDK / App Check on this path.
-		const ac = new AbortController();
-		fetchTickets(ac.signal)
-			.then((data) => {
-				if (!data) {
-					setState({ status: 'empty', releases: [], accountSlug: '', eventSlug: '' });
-					return;
-				}
-				const visible = filterDisplayable(data.releases ?? []);
-				setState({
-					status: visible.length > 0 ? 'ready' : 'empty',
-					releases: visible,
-					accountSlug: data.accountSlug ?? '',
-					eventSlug: data.eventSlug ?? '',
-				});
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[tickets] Failed to load tickets:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
-			});
-		return () => ac.abort();
-	}, []);
-
-	if (state.status === 'error') {
+	if (status === 'error') {
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
 				<header className="head-split">
@@ -159,7 +147,7 @@ export default function Tickets() {
 		);
 	}
 
-	if (state.status === 'loading') {
+	if (status === 'loading') {
 		return (
 			<section id="tickets" className={sectionClass} aria-busy={true} aria-labelledby="tickets-heading">
 				<header className="head-split">
@@ -186,10 +174,11 @@ export default function Tickets() {
 		);
 	}
 
-	const { releases, accountSlug, eventSlug } = state;
+	// Non-null here: `status` is 'empty' or 'ready' only once `data` has landed.
+	const { releases, accountSlug, eventSlug } = data ?? EMPTY_DATA;
 	const hasEvent = Boolean(accountSlug && eventSlug);
 
-	if (state.status === 'empty') {
+	if (status === 'empty') {
 		if (!hasEvent) return null;
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
