@@ -401,16 +401,20 @@ export function drawAttendingCard(
 	// Only a ~600px-diameter "spotlight" at the center stays clear, per the
 	// circular-vignette-to-black mock this round is matched against.
 	//
-	// Locked to the canvas, not the photo: center is always size/2 and both
-	// stops stay at 300/600 regardless of zoom/pan — same center and radii the
-	// vignette already used at 1x. Only the photo drawn above moves under it.
-	// Below 1x zoom the drawn photo (600px at 0.5x) starts out fully inside
-	// this fixed clear center; panBounds still permits shifting it toward an
-	// edge (see its doc), and doing so now shows a hard edge against the
-	// vignette's pure-black ring instead of a soft falloff — the accepted
-	// tradeoff for a shadow that no longer tracks pan/zoom.
-	const vignetteFadeStart = size * 0.25; // 300px
-	const vignetteOuterStop = size / 2; // 600px
+	// Locked to the canvas, not the photo: center is always size/2, pan never
+	// shifts it — only the photo drawn above moves under a fixed ring. At
+	// zoom >= 1 both stops stay 300/600, unchanged from before. Below 1x the
+	// drawn photo shrinks below the card, so both stops scale down by
+	// k = min(zoom, 1): a fixed 600px outer stop would clear past the photo's
+	// own edge, leaving the vignette framing empty black instead of the
+	// photo. Scaling brings the outer stop back to the photo's own shorter
+	// drawn side, so at 0.5x zoom with no pan the photo fades to black with
+	// no hard edge; panBounds still permits panning the shrunk photo toward
+	// an edge, which does show a hard edge against the ring — the accepted
+	// tradeoff for a shadow that no longer tracks pan.
+	const vignetteScale = Math.min(data.transform.zoom, 1);
+	const vignetteFadeStart = size * 0.25 * vignetteScale; // 300px at zoom >= 1
+	const vignetteOuterStop = (size / 2) * vignetteScale; // 600px at zoom >= 1
 	const vignette = ctx.createRadialGradient(
 		size / 2,
 		size / 2,
