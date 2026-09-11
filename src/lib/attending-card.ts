@@ -63,6 +63,18 @@ function fitFontSize(
  * image itself can shift while staying inside the well — the two cases are
  * the same `abs(well − drawn) / 2` distance, just on opposite sides of the
  * mismatch, which is why one formula covers both. */
+/** Below this many source px, a bound is cover-scale slack, not a real gap
+ * worth panning through — snapped to 0 (disabled, "0") rather than left as
+ * noise. Cover scale exactly cancels the axis that *is* `min(width, height)`
+ * (`n * (wellSize / n) === wellSize` for that axis), but real photos are
+ * rarely pixel-exact squares: a 1px width/height mismatch leaves the other
+ * axis exactly `scale / 2` source px short of covering, which is real (not
+ * float jitter — deterministic across engines) but sub-pixel, so it should
+ * read the same as the axis that cancelled cleanly. `0.5 + 1e-6` covers the
+ * `0.5`-plus-rounding-error case while staying far below any bound the UI
+ * actually wants pannable (tens of px at the shipped zoom range). */
+const SUBPIXEL_SLACK_PX = 0.5 + 1e-6;
+
 export function panBounds(
 	naturalWidth: number,
 	naturalHeight: number,
@@ -71,9 +83,11 @@ export function panBounds(
 ): { maxX: number; maxY: number } {
 	const drawWidth = naturalWidth * scale;
 	const drawHeight = naturalHeight * scale;
+	const maxX = Math.abs(drawWidth - wellSize) / 2 / scale;
+	const maxY = Math.abs(drawHeight - wellSize) / 2 / scale;
 	return {
-		maxX: Math.abs(drawWidth - wellSize) / 2 / scale,
-		maxY: Math.abs(drawHeight - wellSize) / 2 / scale,
+		maxX: maxX < SUBPIXEL_SLACK_PX ? 0 : maxX,
+		maxY: maxY < SUBPIXEL_SLACK_PX ? 0 : maxY,
 	};
 }
 
