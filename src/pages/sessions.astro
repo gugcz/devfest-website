@@ -4,6 +4,7 @@ import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import Sessions from '../components/Sessions.tsx';
+import NoScriptNote from '../components/NoScriptNote.astro';
 import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
@@ -36,12 +37,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 				     for crawlers and no-JS visitors. -->
 				<Sessions client:load />
 
-				<noscript>
-					<p class="fallback-note">
-						The session agenda loads with JavaScript enabled. Please turn it on, or
-						check back soon.
-					</p>
-				</noscript>
+				<NoScriptNote noteHtml="The session agenda loads with JavaScript enabled. Please turn it on, or check back soon." />
 			</div>
 		</section>
 

@@ -1,0 +1,19 @@
+---
+/**
+ * The "nothing here yet" state — /press's coverage list and /press/downloads'
+ * kit grid, byte-identical apart from copy. Rhymes with `.fallback-note`
+ * (BaseLayout.scss), the noscript equivalent.
+ */
+interface Props {
+	stamp: string;
+	/** May contain inline HTML (a link). */
+	lineHtml: string;
+}
+
+const { stamp, lineHtml } = Astro.props;
+---
+
+<div class="empty-state" role="status">
+	<span class="empty-stamp" aria-hidden="true">{stamp}</span>
+	<p class="empty-line" set:html={lineHtml} />
+</div>

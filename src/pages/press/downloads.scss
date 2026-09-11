@@ -208,44 +208,6 @@
 	}
 
 	/* ===================== EMPTY STATE ===================== */
-	.empty-state {
-		position: relative;
-		border: 0;
-		border-top: 1px solid var(--rule-strong);
-		border-radius: 0;
-		background: transparent;
-		padding: 2.2rem 0 0;
-		max-width: 56ch;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1.1rem;
-	}
-
-	.empty-stamp,
-	.empty-line {
-		position: relative;
-		z-index: 1;
-	}
-
-	.empty-stamp {
-		@include mono(var(--fs-label-xs), 0.3em, uppercase);
-		color: var(--color-accent-hot);
-		padding: 0;
-		background: transparent;
-		// A plain mono word, not a boxed stamp — matches /press.
-		border: 0;
-	}
-
-	.empty-line {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-body);
-		line-height: 1.7;
-		color: var(--color-grey);
-		max-width: 56ch;
-		margin: 0;
-	}
-
 	.inline-link {
 		color: var(--color-text);
 		text-decoration: none;

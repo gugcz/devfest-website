@@ -1,33 +1,5 @@
 @use '../styles/type' as *;
 
-	// A ruled note opening on a strong rule, not a mounted panel.
-	.empty-state {
-		position: relative;
-		border: 0;
-		border-top: 1px solid var(--rule-strong);
-		border-radius: 0;
-		background: transparent;
-		padding: 2.2rem 0 0;
-		max-width: 52ch;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1.1rem;
-	}
-
-	.empty-stamp {
-		@include mono(var(--fs-label), 0.3em, uppercase);
-		color: var(--color-accent-hot);
-		padding: 0;
-		background: transparent;
-		// A plain mono word, never a boxed stamp.
-		border: 0;
-	}
-
-	.empty-line {
-		@include lede(1.6, var(--color-grey), 0, 56ch);
-	}
-
 	// An open field of clippings.
 	.coverage-list {
 		position: relative;

@@ -4,6 +4,7 @@ import SubpageHero from '../../components/SubpageHero.astro';
 import Ticker from '../../components/Ticker.astro';
 import Closer from '../../components/Closer.astro';
 import SectionHead from '../../components/SectionHead.astro';
+import EmptyState from '../../components/EmptyState.astro';
 import { listPressKit } from '../../lib/press-kit';
 import { EVENT_TOPICS } from '../../lib/ticker';
 
@@ -86,13 +87,10 @@ const fillers = Array.from(
 					</ul>
 					</>
 				) : (
-					<div class="empty-state" role="status">
-						<span class="empty-stamp" aria-hidden="true">Coming soon</span>
-						<p class="empty-line">
-							The press kit is being prepared. In the meantime, email the press desk at
-							<a class="inline-link" href="mailto:devfest@gug.cz">devfest@gug.cz</a>.
-						</p>
-					</div>
+					<EmptyState
+						stamp="Coming soon"
+						lineHtml='The press kit is being prepared. In the meantime, email the press desk at <a class="inline-link" href="mailto:devfest@gug.cz">devfest@gug.cz</a>.'
+					/>
 				)}
 			</div>
 		</section>

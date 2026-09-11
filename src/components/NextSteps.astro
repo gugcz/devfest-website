@@ -1,0 +1,46 @@
+---
+/**
+ * The "what now?" section — /404, /thank-you and /newsletter-subscription-
+ * thank-you all close on the same question with the same band + head-stack +
+ * open field of NextStep rows, byte-identical apart from copy. NextStep
+ * already factored the row; this factors the section around it.
+ */
+import NextStep from './NextStep.astro';
+
+interface Action {
+	href: string;
+	label: string;
+	kind?: 'primary' | 'ghost';
+	external?: boolean;
+	download?: boolean;
+}
+
+interface Step {
+	title: string;
+	noteHtml: string;
+	actions: readonly Action[];
+}
+
+interface Props {
+	eyebrow: string;
+	/** Allows a <span class="red"> accent word; rendered with set:html. */
+	titleHtml: string;
+	headingId: string;
+	steps: readonly Step[];
+}
+
+const { eyebrow, titleHtml, headingId, steps } = Astro.props;
+---
+
+<section class="band band--lit" aria-labelledby={headingId}>
+	<div class="band-inner">
+		<header class="head-stack">
+			<p class="eyebrow">{eyebrow}</p>
+			<h2 id={headingId} class="display head-title" set:html={titleHtml} />
+		</header>
+
+		<ul class="field reveal">
+			{steps.map((step) => <NextStep {...step} />)}
+		</ul>
+	</div>
+</section>

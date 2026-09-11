@@ -423,6 +423,39 @@
 		}
 	}
 
+	// The "nothing here yet" state — a ruled note opening on a strong rule,
+	// never a mounted panel. Visually rhymes with `.fallback-note` above.
+	.empty-state {
+		position: relative;
+		border: 0;
+		border-top: 1px solid var(--rule-strong);
+		border-radius: 0;
+		background: transparent;
+		padding: 2.2rem 0 0;
+		max-width: 56ch;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.1rem;
+	}
+
+	.empty-stamp {
+		@include mono(var(--fs-label), 0.3em, uppercase);
+		color: var(--color-accent-hot);
+		padding: 0;
+		background: transparent;
+		// A plain mono word, never a boxed stamp.
+		border: 0;
+	}
+
+	.empty-line {
+		@include lede(1.7, var(--color-grey), 0, 56ch);
+
+		a {
+			color: var(--color-accent-hot);
+		}
+	}
+
 	/* ---- Anchor targets ---- */
 	// AN IN-PAGE JUMP LANDS ON THE SECTION HEAD, NOT ON THE SECTION BOX.
 	// Every section here opens with `--section-y*` of air, and an anchor jump

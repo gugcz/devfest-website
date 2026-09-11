@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
-import NextStep from '../components/NextStep.astro';
+import NextSteps from '../components/NextSteps.astro';
 import Closer from '../components/Closer.astro';
 import { EVENT_TOPICS } from '../lib/ticker';
 import { EVENT, googleCalendarUrl } from '../lib/event';
@@ -74,18 +74,12 @@ const STEPS = [
 
 		<Ticker items={EVENT_TOPICS} size="sm" />
 
-		<section class="band band--lit" aria-labelledby="next-heading">
-			<div class="band-inner">
-				<header class="head-stack">
-					<p class="eyebrow">Before you close this tab</p>
-					<h2 id="next-heading" class="display head-title">Four <span class="red">things.</span></h2>
-				</header>
-
-				<ul class="field reveal">
-					{STEPS.map((step) => <NextStep {...step} />)}
-				</ul>
-			</div>
-		</section>
+		<NextSteps
+			eyebrow="Before you close this tab"
+			titleHtml={'Four <span class="red">things.</span>'}
+			headingId="next-heading"
+			steps={STEPS}
+		/>
 
 		<Closer
 			eyebrow="Until October"
