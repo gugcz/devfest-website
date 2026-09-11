@@ -487,10 +487,7 @@
 	}
 
 	.band--lit-red {
-		background:
-			radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%),
-			var(--lit),
-			var(--color-bg);
+		background: var(--lit), var(--color-bg);
 		border-top: 1px solid var(--rule-soft);
 	}
 

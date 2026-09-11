@@ -30,7 +30,6 @@
 		// accent-hot gives the focused field a >=3:1 boundary (1.4.11) — the inner input
 		// carries no border of its own, so this wrapper is the cue.
 		border-color: var(--color-accent-hot);
-		box-shadow: var(--glow-red-soft);
 	}
 }
 
@@ -84,9 +83,14 @@
 		outline-offset: var(--focus-gap);
 	}
 
+	// Dedicated pair, not a dimmed accent: opacity alone measured ~2.4:1 (WCAG 1.4.3
+	// fail) against the page ground. #9A968D on --panel-hover holds ~6.2:1.
 	&:disabled {
-		opacity: 0.55;
+		opacity: 1;
 		cursor: not-allowed;
+		background: var(--panel-hover);
+		border-color: var(--field-border);
+		color: #9A968D;
 	}
 }
 

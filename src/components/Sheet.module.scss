@@ -26,10 +26,7 @@
 	z-index: var(--sheet-z, 10050);
 	overflow-y: auto;
 	overscroll-behavior: contain;
-	background:
-		radial-gradient(ellipse 50% 60% at 88% 8%, rgba(204, 0, 0, 0.06) 0%, transparent 60%),
-		var(--lit),
-		var(--color-bg);
+	background: var(--lit), var(--color-bg);
 	outline: none;
 	animation: sheetIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }

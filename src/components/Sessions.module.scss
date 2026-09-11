@@ -83,7 +83,7 @@
 // = muted mono; the red in this section belongs to the row under the pointer.
 .facetLabel {
 	flex-shrink: 0;
-	@include mono(var(--fs-label-xs), 0.22em, uppercase);
+	@include mono(var(--fs-label-sm), 0.22em, uppercase);
 	color: var(--ink-muted);
 	min-width: 4.5rem;
 }
@@ -110,12 +110,6 @@
 	&:focus-visible {
 		color: var(--color-text);
 		border-color: var(--rule-red);
-	}
-
-	&:focus-visible {
-		box-shadow: var(--glow-red-soft);
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-tight);
 	}
 }
 
@@ -325,20 +319,14 @@
 	display: inline-flex;
 	gap: 0.34rem;
 
+	// Static: this marks the programme's open end, not a loading state — a
+	// perpetual pulse here promised progress that was never coming.
 	span {
 		width: 6px;
 		height: 6px;
 		border-radius: 50%;
 		background: var(--ink-muted);
-		opacity: 0.35;
-		animation: skelPulse 1.4s ease-in-out infinite;
-	}
-
-	span:nth-child(2) {
-		animation-delay: 0.2s;
-	}
-	span:nth-child(3) {
-		animation-delay: 0.4s;
+		opacity: 0.55;
 	}
 }
 
@@ -346,7 +334,7 @@
 // ("End of roll"); this one was the same statement in red, which made the one
 // row that is NOT a session the loudest thing in the list.
 .moreKicker {
-	@include mono(var(--fs-label-xs), 0.28em, uppercase);
+	@include mono(var(--fs-label-sm), 0.28em, uppercase);
 	color: var(--ink-muted);
 }
 
@@ -357,17 +345,6 @@
 	color: var(--color-grey);
 	margin: 0;
 	max-width: 22ch;
-}
-
-/* ===================== STATES ===================== */
-@keyframes skelPulse {
-	0%,
-	100% {
-		opacity: 0.3;
-	}
-	50% {
-		opacity: 1;
-	}
 }
 
 /* ===================== RESPONSIVE ===================== */

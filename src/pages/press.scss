@@ -123,13 +123,14 @@
 	// article's OG tags: Bebas's accented caps read as a mid-word fallback, and
 	// JetBrains Mono is the only brand face that sets Czech cleanly. It advances
 	// ~0.6em against Bebas's ~0.42em, hence the ~0.6x --fs-row-sm step.
+	// Titles are scraped Czech copy of unbounded length — no uppercase (diacritics
+	// are unreadable set that way) and enough line-height to hold multiple lines.
 	.coverage-title {
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-weight: 500;
 		font-size: clamp(1.45rem, 2.5vw, 2.1rem);
-		line-height: 1.2;
+		line-height: 1.3;
 		letter-spacing: 0;
-		text-transform: uppercase;
 		color: var(--color-text);
 	}
 

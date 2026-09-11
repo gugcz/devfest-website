@@ -9,10 +9,7 @@
 	width: 100%;
 	padding: var(--section-y) var(--gutter);
 	border-top: 1px solid var(--rule-soft);
-	background:
-		radial-gradient(ellipse 60% 70% at 50% -10%, rgba(204, 0, 0, 0.07) 0%, transparent 60%),
-		var(--lit),
-		var(--color-bg);
+	background: var(--lit), var(--color-bg);
 }
 
 .inner {
@@ -152,7 +149,6 @@
 	justify-content: center;
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-monogram);
-	letter-spacing: 0.06em;
 	color: var(--ink-monogram);
 	user-select: none;
 }
@@ -166,13 +162,13 @@
 	background: linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
 }
 
-// Red interrogation wash — hover only.
+// Hover darkening — the existing vignette treatment, no red wash.
 .vignette {
 	position: absolute;
 	inset: 0;
 	z-index: 2;
 	pointer-events: none;
-	background: radial-gradient(120% 100% at 50% 8%, rgba(204, 0, 0, 0.16) 0%, transparent 46%);
+	background: radial-gradient(120% 100% at 50% 8%, rgba(0, 0, 0, 0.5) 0%, transparent 46%);
 	opacity: 0;
 	transition: opacity 0.3s ease;
 }

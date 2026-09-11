@@ -103,7 +103,6 @@
 	.monogram {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: clamp(2.6rem, 8vw, 3.4rem);
-		letter-spacing: 0.06em;
 		color: var(--ink-monogram);
 		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
 		user-select: none;
@@ -228,7 +227,6 @@
 			color: var(--color-text);
 			border-color: var(--rule-red);
 			background: rgba(204, 0, 0, 0.1);
-			box-shadow: var(--glow-red-soft);
 			transform: translateY(-1px);
 		}
 
