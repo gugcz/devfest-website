@@ -269,7 +269,15 @@
 	}
 
 	.inline-link {
-		@include link-rule(var(--color-text));
+		color: var(--color-text);
+		text-decoration: none;
+		border-bottom: 1px solid var(--rule-red);
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-accent-hot);
+			border-color: var(--color-accent-hot);
+		}
 
 		&:focus-visible {
 			outline: var(--focus-ring);
