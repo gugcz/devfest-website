@@ -53,11 +53,12 @@ export const SCHEDULED = {
 
 /**
  * The public, CDN-cached `/api/*` endpoints (`lineupApi`, `ticketsApi`).
- * Scale-to-zero: no `minInstances`. A warm instance removes the cold start on a
- * CDN revalidation, but it is billed around the clock for a conference site
- * whose traffic does not justify it. The long edge TTLs mean visitors are served
- * from the CDN anyway, and a cold start only lands on the rare revalidating
- * request.
+ * Scale-to-zero by default: no `minInstances`. A warm instance removes the cold
+ * start on a CDN revalidation, but it is billed around the clock, and the long
+ * edge TTLs mean visitors are served from the CDN anyway — a cold start only
+ * lands on the rare revalidating request. `ticketsApi` overrides this with
+ * `minInstances: 1`; its 5min TTL revalidates often enough to be worth one warm
+ * container.
  */
 export const CACHED_ENDPOINT = {
 	region: REGION,
