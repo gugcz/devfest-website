@@ -19,7 +19,7 @@ import { describeError } from '../lib/errors.js';
 import { SLACK_WEBHOOK_URL } from '../lib/params.js';
 import { notify } from '../lib/slack.js';
 import { TRIGGER } from '../options.js';
-import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from '../tickets/params.js';
+import { requireTitoConfig, TITO_API_TOKEN } from '../tickets/params.js';
 import { releaseTitle } from '../tickets/tito-api.js';
 import {
 	IDOKLAD_CLIENT_ID,
@@ -38,7 +38,6 @@ import {
 	pickPricingRelease,
 	releaseNetUnitPrice,
 	resolveCompanyFundedReleases,
-	type TitoConfig,
 } from './tito-discount.js';
 import { buildInvoiceEmail, formatDueDate } from './email.js';
 import { updateInvoice, type InvoiceDoc } from './firestore.js';
@@ -58,11 +57,7 @@ export const processInvoiceTrigger = onDocumentCreated(
 		const slackUrl = SLACK_WEBHOOK_URL.value();
 
 		try {
-			const titoCfg: TitoConfig = {
-				token: TITO_API_TOKEN.value(),
-				accountSlug: TITO_ACCOUNT_SLUG.value(),
-				eventSlug: TITO_EVENT_SLUG.value(),
-			};
+			const titoCfg = requireTitoConfig();
 
 			// 1. Resolve the company-funded release — price comes straight
 			//    from ti.to (no manual pricing anywhere).

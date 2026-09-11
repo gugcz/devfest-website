@@ -22,7 +22,7 @@
 	// the ring takes the `lg` stand-off. Focus is reachable now, so it has to
 	// be visible.
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: calc(-1 * var(--focus-gap-lg));
 	}
 }

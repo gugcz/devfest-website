@@ -217,3 +217,16 @@ export function isDisplayableSession(session: Session): boolean {
 export function isAgendaSession(session: Session): boolean {
 	return session.title.trim().length > 0;
 }
+
+/** Split free text on a blank line (`\n\n` or `\r\n\r\n`) into paragraphs,
+ * dropping any that are empty/whitespace-only. Shared by `SpeakerDetail`'s
+ * bio and `SessionDetail`'s abstract — both were doing this split inline. */
+export function paragraphs(text: string): string[] {
+	return text.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
+}
+
+/** Comma-joined presenter names, empties dropped. Shared by `Sessions.tsx`'s
+ * card and `Agenda.tsx`'s grid/list cells — both had this inlined. */
+export function speakerNames(session: Session): string {
+	return session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
+}

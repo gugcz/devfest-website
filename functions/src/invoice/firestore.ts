@@ -15,18 +15,18 @@
 
 import { createHash } from 'node:crypto';
 
-import { FieldValue } from 'firebase-admin/firestore';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 
 import { firestore } from '../lib/admin.js';
 
-export const INVOICES_COLLECTION = 'invoices';
+const INVOICES_COLLECTION = 'invoices';
 
 /**
  * Per-(company, email) throttle counters for `submitInvoiceCallable`. Like the
  * invoices collection, this is server-only — the catch-all deny in
  * firestore.rules covers it (no explicit client access anywhere).
  */
-export const INVOICE_RATE_LIMITS_COLLECTION = 'invoiceRateLimits';
+const INVOICE_RATE_LIMITS_COLLECTION = 'invoiceRateLimits';
 
 export type InvoiceStatus = 'pending' | 'invoiced' | 'processing' | 'completed' | 'error';
 
@@ -58,6 +58,12 @@ export interface InvoiceDoc extends InvoiceRequestInput {
 	 */
 	contactEmailSynced?: boolean;
 	paidAmount?: string | null;
+	/**
+	 * Stamped when a doc is claimed into `processing`. Lets the poller find a
+	 * doc stranded there by a crash between claim and completion (a hard stop
+	 * — timeout, OOM, instance kill — has no code path to release the claim).
+	 */
+	processingSince?: Timestamp;
 	// ti.to
 	discountCode?: string | null;
 	discountLink?: string | null;
@@ -98,6 +104,28 @@ export async function listAwaitingPayment(limit = 50): Promise<InvoiceRecord[]> 
 	return snap.docs.map((doc) => ({ id: doc.id, data: doc.data() as InvoiceDoc }));
 }
 
+/**
+ * Invoices claimed into `processing` long enough ago that the claim is
+ * probably stranded — the run that made it crashed hard (timeout, OOM,
+ * instance kill) between the claim and completion, with no code path in
+ * between to release it. `status` alone has no index requirement; the age
+ * cutoff is applied in memory rather than as a Firestore range filter so this
+ * needs no composite index alongside it.
+ */
+export async function listStrandedProcessing(
+	staleAfterMs: number,
+	limit = 50,
+): Promise<InvoiceRecord[]> {
+	const snap = await invoicesCollection()
+		.where('status', '==', 'processing')
+		.limit(limit)
+		.get();
+	const cutoff = Date.now() - staleAfterMs;
+	return snap.docs
+		.map((doc) => ({ id: doc.id, data: doc.data() as InvoiceDoc }))
+		.filter((r) => (r.data.processingSince?.toMillis() ?? 0) < cutoff);
+}
+
 export async function updateInvoice(id: string, patch: Partial<InvoiceDoc>): Promise<void> {
 	await invoicesCollection()
 		.doc(id)
@@ -105,24 +133,24 @@ export async function updateInvoice(id: string, patch: Partial<InvoiceDoc>): Pro
 }
 
 /**
- * Sliding-window rate limit keyed by (IČO + email), enforced in a single-doc
- * transaction so it needs no composite index. Returns `true` when the request
- * is within budget (and records it), `false` when the caller has exceeded
- * `max` submissions inside `windowMs`.
- *
- * This is the throttle App Check cannot provide: App Check attests the caller
- * is the real site, but a captured/valid token could otherwise drive unbounded
- * invoice + email creation (cost / sending-reputation abuse).
+ * SHA-256 of the (IČO, email) pair the rate limit keys on — equally greppable
+ * as the raw values for correlating a throttle event across log lines, but
+ * identifies nobody. Exported so a "rate limited" log can cite the same key
+ * instead of the IČO itself.
  */
+export function rateLimitKey(registrationNumberIC: string, email: string): string {
+	return createHash('sha256')
+		.update(`${registrationNumberIC.toLowerCase()}|${email.toLowerCase()}`)
+		.digest('hex');
+}
+
 export async function checkInvoiceRateLimit(opts: {
 	registrationNumberIC: string;
 	email: string;
 	max: number;
 	windowMs: number;
 }): Promise<boolean> {
-	const key = createHash('sha256')
-		.update(`${opts.registrationNumberIC.toLowerCase()}|${opts.email.toLowerCase()}`)
-		.digest('hex');
+	const key = rateLimitKey(opts.registrationNumberIC, opts.email);
 	const ref = firestore().collection(INVOICE_RATE_LIMITS_COLLECTION).doc(key);
 	const now = Date.now();
 
@@ -153,7 +181,30 @@ export async function claimInvoiceForProcessing(id: string): Promise<boolean> {
 		const snap = await tx.get(ref);
 		if (!snap.exists) return false;
 		if ((snap.data() as InvoiceDoc).status !== 'invoiced') return false;
-		tx.update(ref, { status: 'processing', updatedAt: FieldValue.serverTimestamp() });
+		tx.update(ref, {
+			status: 'processing',
+			processingSince: FieldValue.serverTimestamp(),
+			updatedAt: FieldValue.serverTimestamp(),
+		});
+		return true;
+	});
+}
+
+/**
+ * Re-claim a doc already sitting in `processing` (see `listStrandedProcessing`)
+ * by bumping its `processingSince` stamp, so a second poller run in the same
+ * window won't also pick it up mid-retry.
+ */
+export async function reclaimStrandedProcessing(id: string): Promise<boolean> {
+	const ref = invoicesCollection().doc(id);
+	return firestore().runTransaction(async (tx) => {
+		const snap = await tx.get(ref);
+		if (!snap.exists) return false;
+		if ((snap.data() as InvoiceDoc).status !== 'processing') return false;
+		tx.update(ref, {
+			processingSince: FieldValue.serverTimestamp(),
+			updatedAt: FieldValue.serverTimestamp(),
+		});
 		return true;
 	});
 }

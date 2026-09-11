@@ -19,24 +19,19 @@ interface Props {
 	title: string;
 	/** `id` for the heading, so the caller can `aria-labelledby` it. */
 	titleId?: string;
-	/** Heading level — /contact's desks are h2 under an h1, /press's are h3. */
-	level?: 2 | 3;
 	/** One line on what the desk handles. */
 	desc: string;
 	/** Addresses, on the row's right axis. */
 	contacts?: Contact[];
-	/** A link instead of addresses (the press kit desk points at a page). */
-	action?: { href: string; label: string };
 }
 
-const { label, title, titleId, level = 2, desc, contacts = [], action } = Astro.props;
-const Heading = `h${level}` as 'h2' | 'h3';
+const { label, title, titleId, desc, contacts = [] } = Astro.props;
 ---
 
 <article class="field-row field-row--short field-row--holds desk" aria-labelledby={titleId}>
 	<div class="desk-head">
 		<span class="desk-label">{label}</span>
-		<Heading id={titleId} class="desk-title">{title}</Heading>
+		<h2 id={titleId} class="desk-title">{title}</h2>
 		<p class="desk-desc">{desc}</p>
 	</div>
 
@@ -51,8 +46,6 @@ const Heading = `h${level}` as 'h2' | 'h3';
 				))}
 			</ul>
 		)}
-
-		{action && <a class="desk-action" href={action.href}>{action.label}</a>}
 	</div>
 </article>
 
@@ -139,8 +132,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 	}
 
 	// The address is the point of the desk, so it is not set below the blurb beside it.
-	.desk-email,
-	.desk-action {
+	.desk-email {
 		@include mono(var(--fs-body-lg), 0.04em);
 		color: var(--color-text);
 		align-self: flex-end;
@@ -174,14 +166,6 @@ const Heading = `h${level}` as 'h2' | 'h3';
 		}
 	}
 
-	.desk-action {
-		word-break: normal;
-
-		&::after {
-			content: '\2192';
-		}
-	}
-
 	// One column below the tablet breakpoint — two tracks put the blurb and the
 	// address into ~150px each, and the right axis goes away with the split.
 	@media (max-width: 860px) {
@@ -206,17 +190,14 @@ const Heading = `h${level}` as 'h2' | 'h3';
 			row-gap: 0.4rem;
 		}
 
-		.desk-email,
-		.desk-action {
+		.desk-email {
 			align-self: flex-start;
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		.desk-email,
-		.desk-action,
-		.desk-email::after,
-		.desk-action::after {
+		.desk-email::after {
 			transition: none;
 		}
 	}

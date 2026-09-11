@@ -1,61 +1,5 @@
 @use '../styles/type' as *;
 
-	// 4rem, the homepage's section-head gap — this page ran its heads at half the
-	// site's spacing while carrying the same title size.
-	.section-head {
-		margin-bottom: 4rem;
-		padding-bottom: 1.1rem;
-		border-bottom: 1px solid var(--rule);
-	}
-
-	// Poster headline — typewriter, to match the noir key art.
-	.section-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-h2);
-		line-height: var(--lh-display);
-		letter-spacing: var(--track-display);
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin: 0;
-
-		.red {
-			color: var(--color-accent-hot);
-		}
-	}
-
-	// A ruled note opening on a strong rule, not a mounted panel.
-	.empty-state {
-		position: relative;
-		border: 0;
-		border-top: 1px solid var(--rule-strong);
-		border-radius: 0;
-		background: transparent;
-		padding: 2.2rem 0 0;
-		max-width: 52ch;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1.1rem;
-	}
-
-	.empty-stamp {
-		@include mono(var(--fs-label), 0.3em, uppercase);
-		color: var(--color-accent-hot);
-		padding: 0;
-		background: transparent;
-		// A plain mono word, never a boxed stamp.
-		border: 0;
-	}
-
-	.empty-line {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
-		color: var(--color-grey);
-		max-width: 56ch;
-		margin: 0;
-	}
-
 	// An open field of clippings.
 	.coverage-list {
 		position: relative;
@@ -188,9 +132,6 @@
 		.coverage-arrow,
 		.coverage-thumb img { transition: none; }
 
-	}
-
-	@media (max-width: 900px) {
 	}
 
 	@media (max-width: 600px) {

@@ -1,4 +1,6 @@
 @use '../styles/type' as *;
+@use '../styles/motion' as *;
+@include pulse-opacity;
 // THE loading / failure / empty block for every data-backed island.
 //
 // There were four of these — /speakers, /sessions, /agenda and the ticket
@@ -17,12 +19,7 @@
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 1.4rem;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.7;
-	color: var(--color-grey);
-	max-width: 52ch;
-	margin: 1rem 0 0;
+	@include lede(1.7, var(--color-grey), 1rem 0 0, 52ch);
 
 	p {
 		margin: 0;
@@ -50,7 +47,7 @@
 	background: var(--color-accent-hot);
 	box-shadow: 0 0 8px rgba(204, 0, 0, 0.8);
 	flex-shrink: 0;
-	animation: statePulse 1.3s ease-in-out infinite;
+	animation: pulse-opacity 1.3s ease-in-out infinite;
 }
 
 .dots {
@@ -64,7 +61,7 @@
 		border-radius: 50%;
 		background: currentColor;
 		opacity: 0.3;
-		animation: statePulse 1.3s ease-in-out infinite;
+		animation: pulse-opacity 1.3s ease-in-out infinite;
 	}
 
 	span:nth-child(2) {
@@ -72,16 +69,6 @@
 	}
 	span:nth-child(3) {
 		animation-delay: 0.36s;
-	}
-}
-
-@keyframes statePulse {
-	0%,
-	100% {
-		opacity: 0.3;
-	}
-	50% {
-		opacity: 1;
 	}
 }
 

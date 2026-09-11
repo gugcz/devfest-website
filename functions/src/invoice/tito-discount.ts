@@ -12,27 +12,22 @@
  * flat-ish body wrapped under `discount_code`).
  */
 
-import { errorBody, fetchWithRetry } from '../lib/http.js';
-import { fetchAllReleases, type TitoRelease, deriveSaleStatus } from '../tickets/tito-api.js';
-
-const TITO_API_BASE = 'https://api.tito.io/v3';
-
-export interface TitoConfig {
-	token: string;
-	accountSlug: string;
-	eventSlug: string;
-}
+import { assertOk, fetchWithRetry } from '../lib/http.js';
+import {
+	fetchAllReleases,
+	titoHeaders,
+	TITO_API_BASE,
+	type TitoCredentials,
+	type TitoRelease,
+	deriveSaleStatus,
+} from '../tickets/tito-api.js';
 
 /** Releases whose title contains the configured match substring. */
 export async function resolveCompanyFundedReleases(
-	cfg: TitoConfig,
+	cfg: TitoCredentials,
 	match: string,
 ): Promise<TitoRelease[]> {
-	const releases = await fetchAllReleases({
-		token: cfg.token,
-		accountSlug: cfg.accountSlug,
-		eventSlug: cfg.eventSlug,
-	});
+	const releases = await fetchAllReleases(cfg);
 	const needle = match.trim().toLowerCase();
 	return releases.filter((r) => (r.title ?? r.slug ?? '').toLowerCase().includes(needle));
 }
@@ -79,7 +74,6 @@ function round2(n: number): number {
 }
 
 export interface CreatedDiscountCode {
-	id: number;
 	code: string;
 }
 
@@ -87,7 +81,7 @@ export interface CreatedDiscountCode {
  * Create a 100%-off discount code scoped to the given release ids.
  */
 export async function createDiscountCode(
-	cfg: TitoConfig,
+	cfg: TitoCredentials,
 	input: { code: string; quantity: number; releaseIds: number[] },
 ): Promise<CreatedDiscountCode> {
 	const url = `${TITO_API_BASE}/${cfg.accountSlug}/${cfg.eventSlug}/discount_codes`;
@@ -98,11 +92,7 @@ export async function createDiscountCode(
 		url,
 		{
 			method: 'POST',
-			headers: {
-				Authorization: `Token token=${cfg.token}`,
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
+			headers: { ...titoHeaders(cfg.token), 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				discount_code: {
 					code: input.code,
@@ -117,20 +107,16 @@ export async function createDiscountCode(
 		{ label: 'ti.to discount_codes' },
 	);
 
-	if (!res.ok) {
-		const body = await errorBody(res);
-		throw new Error(`ti.to discount_codes ${res.status} ${res.statusText}: ${body}`);
-	}
+	await assertOk('ti.to discount_codes', res);
 
-	const data = (await res.json()) as { id?: number; code?: string; discount_code?: { id: number; code: string } };
+	const data = (await res.json()) as { code?: string; discount_code?: { code: string } };
 	// Response may be flat or wrapped; handle both.
-	const id = data.id ?? data.discount_code?.id ?? 0;
 	const code = data.code ?? data.discount_code?.code ?? input.code;
-	return { id, code };
+	return { code };
 }
 
 /** Public redeem link for a discount code. */
-export function discountRedeemUrl(cfg: TitoConfig, code: string): string {
+export function discountRedeemUrl(cfg: TitoCredentials, code: string): string {
 	return `https://ti.to/${cfg.accountSlug}/${cfg.eventSlug}/discount/${encodeURIComponent(code)}`;
 }
 

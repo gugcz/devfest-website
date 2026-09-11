@@ -7,10 +7,13 @@ const FORM_ACTION =
 export default function NewsletterForm() {
 	const [consented, setConsented] = useState(false);
 	const [message, setMessage] = useState('');
-	const formRef = useRef<HTMLFormElement>(null);
+	// A ref to the field this component itself renders below, rather than
+	// `document.getElementById` reaching back out for it — two of these forms
+	// on a page would otherwise fight over the same id.
+	const refFieldRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		const refField = document.getElementById('se-ref-field-id') as HTMLInputElement | null;
+		const refField = refFieldRef.current;
 		if (refField && refField.value.trim() === '') {
 			refField.value = window.location.href;
 		}
@@ -40,10 +43,9 @@ export default function NewsletterForm() {
 				method="post"
 				action={FORM_ACTION}
 				onSubmit={handleSubmit}
-				ref={formRef}
 				noValidate
 			>
-				<label htmlFor="newsletter-email" className={s.srOnly}>
+				<label htmlFor="newsletter-email" className="sr-only">
 					Email address
 				</label>
 				<div className={s.paper}>
@@ -59,17 +61,21 @@ export default function NewsletterForm() {
 						aria-describedby="newsletter-message"
 					/>
 				</div>
+				{/* Never `disabled`: a disabled submit is out of the tab order and
+				    explains nothing, so a keyboard visitor who missed the consent
+				    box had no way to find out why the form would not send — the
+				    same pattern InvoiceForm's submit button uses. It stays
+				    reachable and `handleSubmit` names what is missing. */}
 				<button
 					className={s.button}
 					type="submit"
 					name="_submit"
 					value="Subscribe"
-					disabled={!consented}
 					aria-describedby="newsletter-consent-text"
 				>
 					Notify Me
 				</button>
-				<input type="hidden" name="referrer" id="se-ref-field-id" defaultValue="" />
+				<input type="hidden" name="referrer" id="se-ref-field-id" ref={refFieldRef} defaultValue="" />
 				<input type="hidden" name="sessionid" id="se-sessionid-field" defaultValue="" />
 				<input type="hidden" name="sessionUid" id="se-sessionUid-field" defaultValue="" />
 				<input type="hidden" name="_do" value="webFormHtmlRenderer-webFormForm-submit" />

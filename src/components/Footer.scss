@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/link' as *;
 	.footer {
 		position: relative;
 		width: 100%;
@@ -121,20 +122,11 @@
 
 	.footer-link {
 		@include mono(var(--fs-ui), 0.04em);
-		color: var(--ink);
-		text-decoration: none;
-		border-bottom: 1px solid transparent;
+		@include link-rule(var(--ink), transparent);
 		padding-bottom: 1px;
-		transition: color 0.2s ease, border-color 0.2s ease;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			border-bottom-color: var(--color-accent-hot);
-		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap);
 		}
 	}
@@ -180,17 +172,8 @@
 
 			// Venue links out to the map — muted meta with a hairline underline.
 			a {
-				color: inherit;
-				text-decoration: none;
-				border-bottom: 1px solid var(--field-border);
+				@include link-rule(inherit, var(--field-border));
 				padding-bottom: 1px;
-				transition: color 0.2s ease, border-color 0.2s ease;
-
-				&:hover,
-				&:focus-visible {
-					color: var(--color-accent-hot);
-					border-bottom-color: var(--color-accent-hot);
-				}
 			}
 		}
 	}
@@ -203,20 +186,11 @@
 		min-height: 2.75rem;
 		font-family: var(--font-special-elite), cursive;
 		font-size: var(--fs-ui);
-		color: rgba(240, 237, 230, 0.88);
-		text-decoration: none;
-		border-bottom: 1px solid var(--field-border);
+		@include link-rule(rgba(240, 237, 230, 0.88), var(--field-border));
 		padding-bottom: 1px;
-		transition: color 0.2s ease, border-color 0.2s ease;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			border-bottom-color: var(--color-accent-hot);
-		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap);
 		}
 	}
@@ -279,7 +253,7 @@
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap-tight);
 		}
 	}

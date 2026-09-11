@@ -16,7 +16,7 @@ import { SLACK_WEBHOOK_URL } from '../lib/params.js';
 import { runBackground } from '../lib/run.js';
 import { postToSlack, type SlackPayload } from '../lib/slack.js';
 import { SCHEDULED } from '../options.js';
-import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from './params.js';
+import { requireTitoConfig, TITO_API_TOKEN } from './params.js';
 import {
 	deriveSaleStatus,
 	fetchAllReleases,
@@ -142,17 +142,7 @@ const BACKGROUND = {
 
 /** Fetch live releases from ti.to and post a sales summary to Slack. */
 async function runTicketStatus(): Promise<void> {
-	const token = TITO_API_TOKEN.value();
-	const accountSlug = TITO_ACCOUNT_SLUG.value();
-	const eventSlug = TITO_EVENT_SLUG.value();
-
-	if (!token || !accountSlug || !eventSlug) {
-		throw new Error(
-			'Missing config: TITO_API_TOKEN secret and TITO_ACCOUNT_SLUG / TITO_EVENT_SLUG params must be set.',
-		);
-	}
-
-	const releases = await fetchAllReleases({ token, accountSlug, eventSlug });
+	const releases = await fetchAllReleases(requireTitoConfig());
 	const summary = summarize(releases);
 	await postToSlack(SLACK_WEBHOOK_URL.value(), buildSlackMessage(summary));
 

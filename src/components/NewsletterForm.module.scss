@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/link' as *;
 .wrapper {
 	display: flex;
 	flex-direction: column;
@@ -57,7 +58,7 @@
 
 	// Keyboard focus must show a visible ring — WCAG 2.4.7. Never `outline: none` here.
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-tight);
 	}
 }
@@ -80,7 +81,7 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap);
 	}
 
@@ -88,18 +89,6 @@
 		opacity: 0.55;
 		cursor: not-allowed;
 	}
-}
-
-.srOnly {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
 }
 
 .consent {
@@ -120,7 +109,7 @@
 		cursor: pointer;
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap);
 			border-radius: 2px;
 		}
@@ -136,16 +125,7 @@
 }
 
 .consentLink {
-	color: var(--ink-strong);
-	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
-	transition: border-color 0.2s, color 0.2s;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-	}
+	@include link-rule(var(--ink-strong));
 }
 
 .message {
@@ -159,6 +139,8 @@
 	text-align: center;
 }
 
+// Same threshold as Footer.scss's `31.25em` (see its own comment on why
+// that file uses em) — not converted here, just cross-referenced.
 @media (max-width: 500px) {
 	.form {
 		flex-direction: column;
@@ -197,7 +179,7 @@
 		// Opaque, not rgba: a contrast checker resolves a translucent fill's placeholder
 		// against the band red behind it, and the real ratio then depends on a blend.
 		background: #9A0000;
-		border-color: rgba(247, 239, 230, 0.85);
+		border-color: var(--field-border-on-accent);
 
 		&:focus-within {
 			border-color: var(--on-accent);
@@ -223,7 +205,7 @@
 	.button {
 		background: var(--on-accent);
 		border-color: var(--on-accent);
-		color: #1A0000;
+		color: var(--ink-on-accent);
 
 		&:hover:not(:disabled) {
 			background: #FFFFFF;
@@ -237,7 +219,7 @@
 	}
 
 	.consent input[type='checkbox'] {
-		accent-color: #1A0000;
+		accent-color: var(--ink-on-accent);
 
 		&:focus-visible {
 			outline-color: var(--on-accent);
@@ -250,7 +232,7 @@
 
 	.consentLink {
 		color: var(--on-accent);
-		border-bottom-color: rgba(247, 239, 230, 0.85);
+		border-bottom-color: var(--field-border-on-accent);
 
 		&:hover,
 		&:focus-visible {

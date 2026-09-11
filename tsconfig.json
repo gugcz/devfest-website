@@ -5,7 +5,10 @@
     "**/*"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "node_modules",
+    "functions",
+    ".firebase"
   ],
   "compilerOptions": {
     "jsx": "react-jsx",

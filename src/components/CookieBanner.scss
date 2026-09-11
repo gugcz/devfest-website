@@ -1,3 +1,5 @@
+@use '../styles/link' as *;
+
 	// Full-width bar along the bottom edge, not a floating labelled box — consent is
 	// the one piece of chrome that should ask for the least attention on the page.
 	.cookie-banner {
@@ -47,20 +49,11 @@
 	}
 
 	.cookie-link {
-		color: var(--color-text);
-		text-decoration: none;
-		border-bottom: 1px solid var(--rule-red);
-		transition: color 0.2s, border-color 0.2s;
-	}
-
-	.cookie-link:hover,
-	.cookie-link:focus-visible {
-		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
+		@include link-rule(var(--color-text));
 	}
 
 	.cookie-link:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap);
 	}
 
@@ -107,6 +100,8 @@
 		}
 	}
 
+	// Same threshold as Footer.scss's `31.25em` (see its own comment on why
+	// that file uses em) — not converted here, just cross-referenced.
 	@media (max-width: 500px) {
 		.cookie-banner {
 			flex-direction: column;

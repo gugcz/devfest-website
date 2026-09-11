@@ -2,14 +2,16 @@ import { useEffect, useMemo, useRef, useState, type FormEvent, type InputHTMLAtt
 import {
 	fetchTickets,
 	filterDisplayable,
-	formatPrice,
+	formatAmount,
 	grossPrice,
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
+	round2,
 	type TitoRelease,
 } from '../lib/tito';
 import { track } from '../lib/analytics';
+import { useRemoteData } from '../lib/useRemoteData';
 import s from './InvoiceForm.module.scss';
 
 // Cloud Functions region the callable is deployed to.
@@ -29,7 +31,14 @@ interface Fields {
 	zip: string;
 	country: string;
 	email: string;
-	countTickets: number;
+	/**
+	 * Raw input, not a clamped number: clamping on every keystroke (the prior
+	 * behavior) meant a visitor could never clear the field to type a new
+	 * value, and made the out-of-range error below unreachable. Parsed with
+	 * {@link parseCount} wherever the numeric value is needed; out-of-range or
+	 * unparseable is validated (and surfaced), not silently corrected.
+	 */
+	countTickets: string;
 }
 
 type FieldName = keyof Fields;
@@ -47,8 +56,14 @@ const EMPTY: Fields = {
 	zip: '',
 	country: 'CZ',
 	email: '',
-	countTickets: 1,
+	countTickets: '1',
 };
+
+/** Parse the raw `countTickets` field into a number, or `NaN` for anything
+ * unparseable (including empty, mid-edit). */
+function parseCount(raw: string): number {
+	return Number(raw);
+}
 
 // Deliberately loose: the point of a client-side check here is to say which of
 // the nine fields is wrong before a round trip, not to reject a real company.
@@ -80,7 +95,8 @@ function validate(fields: Fields, consented: boolean): Errors {
 		errors.email = 'That does not look like an email address.';
 	}
 
-	if (!Number.isFinite(fields.countTickets) || fields.countTickets < 1 || fields.countTickets > 50) {
+	const count = parseCount(fields.countTickets);
+	if (!Number.isFinite(count) || count < 1 || count > 50) {
 		errors.countTickets = 'Choose between 1 and 50 tickets.';
 	}
 
@@ -91,12 +107,70 @@ function validate(fields: Fields, consented: boolean): Errors {
 	return errors;
 }
 
-function findCompanyRelease(releases: TitoRelease[]): TitoRelease | null {
+function findCompanyRelease(releases: TitoRelease[], opts: { laterWaveOnSale: boolean }): TitoRelease | null {
 	const matches = releases.filter((r) =>
 		releaseTitle(r).toLowerCase().includes(COMPANY_RELEASE_MATCH),
 	);
 	if (matches.length === 0) return null;
-	return matches.find((r) => releaseStatus(r).purchasable) ?? matches[0];
+	return matches.find((r) => releaseStatus(r, opts).purchasable) ?? matches[0];
+}
+
+/** The company-funded release, from the same cached endpoint `Tickets.tsx`
+ * reads — display-only estimate, so a `null` cache resolves to no release
+ * rather than an error.
+ *
+ * O-R21: derives `laterWaveOnSale` the same way `Tickets.tsx` does and
+ * passes it to `releaseStatus()` — without it, this estimate could treat as
+ * purchasable a wave `Tickets.tsx` already labels "Ended" (a paused wave
+ * that already sold tickets, superseded by a later wave now on sale). A
+ * genuine (small) behavior fix, not pure refactor.
+ */
+function loadCompanyRelease(signal: AbortSignal): Promise<TitoRelease | null> {
+	return fetchTickets(signal).then((data) => {
+		if (!data) return null;
+		const visible = filterDisplayable(data.releases ?? []);
+		const laterWaveOnSale = visible.some((r) => releaseStatus(r).purchasable);
+		return findCompanyRelease(visible, { laterWaveOnSale });
+	});
+}
+
+/** Every field name this form knows about — used to validate a field name
+ * arriving from the server before it's shown to the visitor (see
+ * `fieldFromCallableError` below). */
+const FIELD_NAMES = new Set<FieldName>(Object.keys(EMPTY) as FieldName[]);
+
+/** The shape of a Firebase callable's rejection (`functions/https.HttpsError`,
+ * as received client-side): a `code` (`functions/invalid-argument`, …) and an
+ * optional `details` payload the function set server-side. */
+interface CallableError {
+	code: string;
+	details?: unknown;
+}
+
+function isCallableError(e: unknown): e is CallableError {
+	return typeof e === 'object' && e !== null && typeof (e as { code?: unknown }).code === 'string';
+}
+
+/**
+ * The offending field name from a rejected submit, or `null`.
+ *
+ * Prefers `details.field` — the field name belongs in `details`, not
+ * `message`: `message` is user-facing text a client might show verbatim, and
+ * a validation reason is not guaranteed to BE a bare field name (see O-R19).
+ * Falls back to `message` only when it's actually one of this form's known
+ * field names (the current server sends exactly that), never an arbitrary
+ * sentence — so a future server that starts sending real prose can't put
+ * that prose in front of a visitor.
+ */
+function fieldFromCallableError(error: CallableError): string | null {
+	const details = error.details;
+	if (details && typeof details === 'object' && 'field' in details) {
+		const field = (details as { field?: unknown }).field;
+		if (typeof field === 'string' && FIELD_NAMES.has(field as FieldName)) return field;
+	}
+	const message = (error as { message?: unknown }).message;
+	if (typeof message === 'string' && FIELD_NAMES.has(message as FieldName)) return message;
+	return null;
 }
 
 /**
@@ -166,7 +240,6 @@ export default function InvoiceForm() {
 	const [honeypot, setHoneypot] = useState('');
 	const [status, setStatus] = useState<Status>('idle');
 	const [message, setMessage] = useState('');
-	const [release, setRelease] = useState<TitoRelease | null>(null);
 	// Shown errors, not computed ones: a field that has never been touched and
 	// has never been submitted is not "wrong yet", it is just empty.
 	const [errors, setErrors] = useState<Errors>({});
@@ -175,22 +248,28 @@ export default function InvoiceForm() {
 	// So a failed submit can put the caret in the first field that needs fixing
 	// rather than leaving the visitor to hunt for it.
 	const inputs = useRef<Partial<Record<ErrorKey, HTMLElement | null>>>({});
+	// One stable ref-callback per field, cached across renders: `wire()` used to
+	// return a fresh closure every render, so React detached and reattached
+	// every input's `ref` on every keystroke.
+	const fieldRefs = useRef(new Map<ErrorKey, (el: HTMLElement | null) => void>());
+	function fieldRef(key: ErrorKey): (el: HTMLElement | null) => void {
+		let ref = fieldRefs.current.get(key);
+		if (!ref) {
+			ref = (el) => {
+				inputs.current[key] = el;
+			};
+			fieldRefs.current.set(key, ref);
+		}
+		return ref;
+	}
 
 	// Read the company-funded price from the cached `/api/tickets` endpoint for an
 	// estimate. The authoritative price is computed server-side at invoice time —
-	// this is display only, so failures are ignored.
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchTickets(ac.signal)
-			.then((data) => {
-				if (!data) return;
-				setRelease(findCompanyRelease(filterDisplayable(data.releases ?? [])));
-			})
-			.catch(() => {
-				// Estimate is optional; ignore failures (including aborts).
-			});
-		return () => ac.abort();
-	}, []);
+	// this is display only, so only `data` is read here; a failed load just
+	// leaves the estimate off.
+	const { data: release } = useRemoteData(loadCompanyRelease, {
+		logLabel: '[invoice] Failed to load ticket price estimate:',
+	});
 
 	const estimate = useMemo(() => {
 		if (!release) return null;
@@ -198,27 +277,32 @@ export default function InvoiceForm() {
 		// `grossPrice` holds the shared VAT assumption (ti.to exposes no tax rate);
 		// it returns null for exactly the free / unpriced cases we skip here.
 		const grossEach = grossPrice(release);
-		if (!display || grossEach == null) return null;
-		const total = grossEach * fields.countTickets;
+		const count = parseCount(fields.countTickets);
+		// Mid-edit (empty, or not yet a valid count) shows no estimate rather than
+		// one computed from a stale or nonsense value.
+		if (!display || grossEach == null || !Number.isFinite(count) || count <= 0) return null;
+		const total = grossEach * count;
 		return {
 			each: display.primary,
-			total: formatPrice(String(total), release.currency),
+			total: formatAmount(total, release.currency),
 			/** Numeric total + currency for the GA4 `generate_lead` value. */
-			amount: Math.round(total * 100) / 100,
+			amount: round2(total),
 			currency: (release.currency ?? 'CZK').toUpperCase(),
 		};
 	}, [release, fields.countTickets]);
 
-	/** Re-check after the first failed submit, so an error clears as it is fixed. */
-	function revalidate(next: Fields, nextConsent: boolean) {
+	// Re-check after the first failed submit, so an error clears as it is
+	// fixed — keyed on `fields`/`consented` themselves (not called inline from
+	// `update()`) so it sees every update, including two in the same tick.
+	useEffect(() => {
 		if (!attempted) return;
-		setErrors(validate(next, nextConsent));
-	}
+		setErrors(validate(fields, consented));
+	}, [fields, consented, attempted]);
 
 	function update<K extends keyof Fields>(key: K, value: Fields[K]) {
-		const next = { ...fields, [key]: value };
-		setFields(next);
-		revalidate(next, consented);
+		// Functional update: two fields changing in the same tick (paste-fill,
+		// autofill) each get their own `prev`, so neither overwrites the other.
+		setFields((prev) => ({ ...prev, [key]: value }));
 	}
 
 	/** On blur a single field starts showing its own error — the rest stay quiet. */
@@ -270,7 +354,7 @@ export default function InvoiceForm() {
 			track('generate_lead', {
 				...(estimate ? { currency: estimate.currency, value: estimate.amount } : {}),
 				lead_source: 'company_invoice',
-				quantity: fields.countTickets,
+				quantity: parseCount(fields.countTickets),
 			});
 			setStatus('success');
 			setMessage(
@@ -283,8 +367,9 @@ export default function InvoiceForm() {
 			setTouched({});
 			setAttempted(false);
 		} catch (e) {
-			const code = (e as { code?: string }).code ?? '';
-			const field = (e as { message?: string }).message ?? '';
+			const callableError = isCallableError(e) ? e : null;
+			const code = callableError?.code ?? '';
+			const field = callableError ? fieldFromCallableError(callableError) : null;
 			setStatus('error');
 			setMessage(
 				code === 'functions/invalid-argument'
@@ -315,18 +400,8 @@ export default function InvoiceForm() {
 			name,
 			value: fields[name],
 			error: errorFor(name),
-			inputRef: (el: HTMLInputElement | null) => {
-				inputs.current[name] = el;
-			},
-			onValue: (raw: string) =>
-				update(
-					name,
-					// The count is the one numeric field; clamping on input keeps
-					// the estimate below it from ever showing a nonsense total.
-					(name === 'countTickets'
-						? Math.max(1, Math.min(50, Number(raw) || 1))
-						: raw) as Fields[typeof name],
-				),
+			inputRef: fieldRef(name),
+			onValue: (raw: string) => update(name, raw as Fields[typeof name]),
 			onBlurField: () => blur(name),
 		};
 	}
@@ -378,15 +453,10 @@ export default function InvoiceForm() {
 				<div className={s.consentBlock}>
 					<label className={s.consent}>
 						<input
-							ref={(el) => {
-								inputs.current.consent = el;
-							}}
+							ref={fieldRef('consent')}
 							type="checkbox"
 							checked={consented}
-							onChange={(e) => {
-								setConsented(e.target.checked);
-								revalidate(fields, e.target.checked);
-							}}
+							onChange={(e) => setConsented(e.target.checked)}
 							onBlur={() => blur('consent')}
 							aria-invalid={consentError ? true : undefined}
 							aria-describedby={consentError ? 'invoice-consent-error' : undefined}
@@ -419,10 +489,14 @@ export default function InvoiceForm() {
 					{status === 'submitting' ? 'Sending…' : 'Request invoice'}
 				</button>
 
+				{/* `alert` for an error tone (a validation failure is an interruption,
+				    same as `ErrorState` in DataState.tsx), `status` otherwise — a
+				    validation failure was previously announced exactly as politely as
+				    "Sending your request…", distinguished only by `data-tone`. */}
 				<p
 					className={s.message}
-					role="status"
-					aria-live="polite"
+					role={status === 'error' ? 'alert' : 'status'}
+					aria-live={status === 'error' ? undefined : 'polite'}
 					aria-atomic="true"
 					data-tone={status === 'error' ? 'error' : 'info'}
 				>

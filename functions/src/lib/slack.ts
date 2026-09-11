@@ -16,7 +16,7 @@
 import { logger } from 'firebase-functions/v2';
 
 import { describeError } from './errors.js';
-import { errorBody, fetchWithRetry } from './http.js';
+import { assertOk, fetchWithRetry } from './http.js';
 
 export interface SlackTextPayload {
 	text: string;
@@ -53,9 +53,7 @@ export async function postToSlack(webhookUrl: string, payload: SlackPayload): Pr
 		{ label: 'Slack webhook', retryUnsafe: true },
 	);
 
-	if (!res.ok) {
-		throw new Error(`Slack webhook ${res.status} ${res.statusText}: ${await errorBody(res)}`);
-	}
+	await assertOk('Slack webhook', res);
 }
 
 /**

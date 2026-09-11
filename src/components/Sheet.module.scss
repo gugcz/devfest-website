@@ -112,7 +112,7 @@
 	// --focus-gap-lg: this control sits on open ground with no adjacent edge,
 	// so the ring stands off it. See the focus-offset scale in BaseLayout.scss.
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-lg);
 	}
 }

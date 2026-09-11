@@ -26,7 +26,12 @@ import { logger } from 'firebase-functions/v2';
 
 import { describeError } from '../lib/errors.js';
 import { CALLABLE } from '../options.js';
-import { checkInvoiceRateLimit, createInvoiceRequest, type InvoiceRequestInput } from './firestore.js';
+import {
+	checkInvoiceRateLimit,
+	createInvoiceRequest,
+	rateLimitKey,
+	type InvoiceRequestInput,
+} from './firestore.js';
 
 const MAX_TICKETS = 50;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,6 +45,12 @@ type ValidationResult =
 
 function str(v: unknown): string {
 	return typeof v === 'string' ? v.trim() : '';
+}
+
+/** `message` still carries the field name too, for any caller that isn't
+ * this repo's client (which reads `details.field` first). */
+export function invalidArgument(field: string): HttpsError {
+	return new HttpsError('invalid-argument', field, { field });
 }
 
 function validate(body: Record<string, unknown>): ValidationResult {
@@ -102,8 +113,7 @@ export const submitInvoiceCallable = onCall(
 
 		const result = validate(body);
 		if (!result.ok) {
-			// `message` carries the offending field so the form can point at it.
-			throw new HttpsError('invalid-argument', result.error);
+			throw invalidArgument(result.error);
 		}
 
 		// Throttle per (company, email) so one valid App Check token can't drive
@@ -115,7 +125,9 @@ export const submitInvoiceCallable = onCall(
 			windowMs: RATE_LIMIT_WINDOW_MS,
 		});
 		if (!allowed) {
-			logger.warn('submitInvoiceCallable rate limited', { ic: result.value.registrationNumberIC });
+			logger.warn('submitInvoiceCallable rate limited', {
+				key: rateLimitKey(result.value.registrationNumberIC, result.value.email),
+			});
 			throw new HttpsError('resource-exhausted', 'rate_limited');
 		}
 

@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Speaker } from '../lib/speakers';
-import { visitorCategories, type Session } from '../lib/sessions';
+import { useRemoteData } from '../lib/useRemoteData';
+import { useMediaQuery } from '../lib/useMediaQuery';
+import { speakerNames, visitorCategories, type Session } from '../lib/sessions';
 import {
 	byStart,
 	dayRange,
@@ -14,25 +16,17 @@ import {
 	partitionAgenda,
 	placement,
 	placements as sessionPlacements,
+	pragueParts,
 	rowScale,
 	roomKey,
 	type AgendaPartition,
 	type Placement,
 } from '../lib/agenda';
-import { fetchAgenda } from '../lib/lineup';
+import { fetchAgenda, type Lineup } from '../lib/lineup';
 import SessionDetail from './SessionDetail';
-import SpeakerPhoto from './SpeakerPhoto';
+import SpeakerAvatars from './SpeakerAvatars';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Agenda.module.scss';
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
-	sessions: Session[];
-}
-
-const INITIAL: State = { status: 'loading', sessions: [] };
 
 /** 5-minute grid snap + row height (px per snap unit) for the proportional grid.
  *
@@ -65,38 +59,10 @@ const NON_TALK_ROWS = 2;
  * renders ~150px columns and the Bebas titles truncate mid-word inside them —
  * the table survives, but nothing in it can be read. The list carries the same
  * day at those widths with the titles at full `--fs-row-sm`, so the grid is
- * only used where its columns are legible. */
-function useIsNarrow(): boolean {
-	const [narrow, setNarrow] = useState(false);
-	useEffect(() => {
-		const mql = window.matchMedia('(max-width: 1024px)');
-		const update = () => setNarrow(mql.matches);
-		update();
-		mql.addEventListener('change', update);
-		return () => mql.removeEventListener('change', update);
-	}, []);
-	return narrow;
-}
-
-/** Current wall-clock in Europe/Prague as { date: 'YYYY-MM-DD', minutes }.
- * Uses Intl (not the raw Date fields) so it's the event-local time, not the
- * visitor's zone. */
-function pragueNow(): { date: string; minutes: number } {
-	const parts = new Intl.DateTimeFormat('en-CA', {
-		timeZone: 'Europe/Prague',
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-		hour: '2-digit',
-		minute: '2-digit',
-		hourCycle: 'h23',
-	}).formatToParts(new Date());
-	const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
-	return {
-		date: `${get('year')}-${get('month')}-${get('day')}`,
-		minutes: Number(get('hour')) * 60 + Number(get('minute')),
-	};
-}
+ * only used where its columns are legible. Fed to the shared `useMediaQuery`
+ * below (this component's `useIsNarrow` used to hand-roll its own
+ * `matchMedia` effect for exactly this query). */
+const NARROW_QUERY = '(max-width: 1024px)';
 
 /**
  * Minutes-of-day for "now", or `null` when it's not the event day (so the grid
@@ -107,8 +73,8 @@ function useNowMinutes(eventDate: string): number | null {
 	useEffect(() => {
 		const compute = (): number | null => {
 			if (!eventDate) return null;
-			const { date, minutes } = pragueNow();
-			return date === eventDate ? minutes : null;
+			const parts = pragueParts(new Date().toISOString());
+			return parts && parts.date === eventDate ? parts.minutes : null;
 		};
 		setNowMin(compute());
 		const id = setInterval(() => setNowMin(compute()), 30_000);
@@ -144,11 +110,6 @@ function timeParts(session: Session): { from: string; to: string } | null {
 	return { from: `${formatMinutes(place.startMin)}–`, to: formatMinutes(place.endMin) };
 }
 
-/** Comma-joined presenter names, empties dropped. */
-function speakerNames(session: Session): string {
-	return session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
-}
-
 /** Up to three visitor-facing category values (Track / Level / …) for a talk. */
 function talkTags(session: Session): string[] {
 	return visitorCategories(session)
@@ -160,21 +121,15 @@ function talkTags(session: Session): string[] {
  * the /sessions card stack sized down for the timetable. Decorative: the names
  * carry the accessible info, so this is aria-hidden. */
 function TalkAvatars({ session }: { session: Session }) {
-	const shown = session.speakers.slice(0, 3);
-	if (shown.length === 0) return null;
 	return (
-		<span className={s.avatars} aria-hidden="true">
-			{shown.map((sp) => (
-				<SpeakerPhoto
-					key={sp.id}
-					speaker={sp}
-					photoClass={s.avatar}
-					monogramClass={`${s.avatar} ${s.avatarMono}`}
-					width={24}
-					height={24}
-				/>
-			))}
-		</span>
+		<SpeakerAvatars
+			speakers={session.speakers}
+			max={3}
+			size={24}
+			photoClass={s.avatar}
+			monogramClass={`${s.avatar} ${s.avatarMono}`}
+			wrapperClassName={s.avatars}
+		/>
 	);
 }
 
@@ -270,7 +225,7 @@ function AgendaGrid({
 	const placed = [
 		...bands.map((session) => ({ kind: 'band' as const, session, column: null })),
 		...talks.map(({ session, column }) => ({ kind: 'talk' as const, session, column })),
-	].sort((a, b) => byStart(a.session, b.session));
+	].sort((a, b) => byStart(a.session, b.session, placements));
 
 	return (
 		<div className={s.scroller}>
@@ -397,11 +352,16 @@ function AgendaGrid({
 
 function AgendaList({
 	partition,
+	placements,
 	liveIds,
 	comingUpIds,
 	onOpen,
 }: {
 	partition: AgendaPartition;
+	/** Every timed session's placement, keyed by id — see O-R13: passed
+	 * through so this sort consults the memoised map instead of re-parsing
+	 * each session's start time with `Intl` on every render. */
+	placements: Map<string, Placement>;
 	liveIds: Set<string>;
 	comingUpIds: Set<string>;
 	onOpen: (session: Session) => void;
@@ -411,7 +371,7 @@ function AgendaList({
 	const timed = [
 		...partition.bands,
 		...partition.columns.flatMap((column) => partition.byRoom.get(column.key) ?? []),
-	].sort(byStart);
+	].sort((a, b) => byStart(a, b, placements));
 	const labels = roomLabels(partition);
 	return (
 		<ul className={`field ${s.list}`} role="list">
@@ -474,36 +434,29 @@ function AgendaList({
 /* ============================ ROOT ============================ */
 
 export default function Agenda() {
-	const [state, setState] = useState<State>(INITIAL);
-	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
+	const { status, data } = useRemoteData<Lineup>(fetchAgenda, {
+		isEmpty: (lineup) => lineup.sessions.length === 0,
+		logLabel: '[agenda] Failed to load lineup:',
+	});
+	const sessions = data?.sessions ?? [];
+	const speakersById = useMemo<Record<string, Speaker>>(
+		() => (data ? Object.fromEntries(data.speakers.map((sp) => [sp.id, sp])) : {}),
+		[data],
+	);
 	const [selected, setSelected] = useState<Session | null>(null);
-	const isNarrow = useIsNarrow();
+	const closeSelected = useCallback(() => setSelected(null), []);
+	const isNarrow = useMediaQuery(NARROW_QUERY);
 
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchAgenda(ac.signal)
-			.then(({ sessions, speakers }) => {
-				setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
-				setState({ status: sessions.length > 0 ? 'ready' : 'empty', sessions });
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[agenda] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
-			});
-		return () => ac.abort();
-	}, []);
-
-	const partition = useMemo(() => partitionAgenda(state.sessions), [state.sessions]);
-	const placements = useMemo(() => sessionPlacements(state.sessions), [state.sessions]);
-	const range = useMemo(() => dayRange(state.sessions), [state.sessions]);
+	const partition = useMemo(() => partitionAgenda(sessions), [sessions]);
+	const placements = useMemo(() => sessionPlacements(sessions), [sessions]);
+	const range = useMemo(() => dayRange(sessions), [sessions]);
 	// Event-day "now" line + live/coming-up badges (hooks must run before the
 	// early returns below).
-	const eventDate = useMemo(() => eventDateISO(state.sessions), [state.sessions]);
+	const eventDate = useMemo(() => eventDateISO(sessions), [sessions]);
 	const nowMin = useNowMinutes(eventDate);
-	const now = useMemo(() => nowState(state.sessions, nowMin), [state.sessions, nowMin]);
+	const now = useMemo(() => nowState(sessions, nowMin, placements), [sessions, nowMin, placements]);
 
-	if (state.status === 'error') {
+	if (status === 'error') {
 		return (
 			<ErrorState>
 				<p>The agenda won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
@@ -511,12 +464,12 @@ export default function Agenda() {
 		);
 	}
 
-	if (state.status === 'loading') {
+	if (status === 'loading') {
 		return <LoadingState label="Developing the agenda" />;
 	}
 
 	// No sessions at all, or none scheduled yet → the schedule isn't published.
-	if (state.status === 'empty' || range === null) {
+	if (status === 'empty' || range === null) {
 		return (
 			<EmptyState action={{ href: '/sessions', label: 'Browse all talks' }}>
 				<p>The full schedule lands closer to the event.</p>
@@ -534,6 +487,7 @@ export default function Agenda() {
 			{asList ? (
 				<AgendaList
 					partition={partition}
+					placements={placements}
 					liveIds={now.liveIds}
 					comingUpIds={now.comingUpIds}
 					onOpen={setSelected}
@@ -574,7 +528,7 @@ export default function Agenda() {
 				<SessionDetail
 					session={selected}
 					speakersById={speakersById}
-					onClose={() => setSelected(null)}
+					onClose={closeSelected}
 				/>
 			)}
 		</>

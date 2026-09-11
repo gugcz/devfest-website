@@ -258,7 +258,7 @@
 	}
 
 	.nav-toggle:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-tight);
 	}
 

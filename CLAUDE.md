@@ -83,6 +83,13 @@ function bundle.
 
 File-based Astro routing under `src/pages/` — full route list in [README.md](README.md#key-pages). React islands (`.tsx`, `client:load`) live in `src/components/` alongside their static Astro counterparts.
 
+**Shared building blocks, not copied blocks.** A section repeated on more than one page is a component; a fetch-then-render island is `useRemoteData`; a modal is `useDialog` + `<Sheet>`. Reach for these before writing a new copy:
+
+- `useRemoteData<T>(load)` (`src/lib/useRemoteData.ts`) — the fetch/loading/error/data shape every data-backed island (`Speakers`, `Sessions`, `Agenda`, `SpeakersTeaser`, `Tickets`, `InvoiceForm`) shares.
+- `useDialog` (`src/lib/useDialog.ts`) + `<Sheet>` (`src/components/Sheet.tsx`) — focus trap, Esc-close, autofocus and a refcounted `inert` on `#main-content` (a stacked dialog holds it until every layer closes). `SessionDetail`/`SpeakerDetail` both mount through it.
+- `useMediaQuery` / `usePrefersReducedMotion` (`src/lib/useMediaQuery.ts`) — the two `matchMedia` subscriptions the islands need.
+- Astro components: `Closer` (closing band, now with a default `<slot />` for a page's own contact block), `SectionHead` (the `.head-stack` primitive), `NextSteps` (the "what now?" band + field of `NextStep` rows), `NoScriptNote` (the `<noscript>` fallback under a data-backed island), `EmptyState` (the "nothing here yet" block), `PartnerLogo` (a partner mark's link-wrap + `is-plated` class).
+
 ### Firebase Integration (`src/lib/firebase.ts`)
 
 Firebase Analytics (GA4) runs in **Google Consent Mode** for every visitor, not just those who accept. `initAnalytics()` pushes a gtag `consent: 'default'` onto the dataLayer *before* `getAnalytics()`. For an undecided visitor everything is denied, so GA4 boots cookieless — no `_ga` / `client_id`, no storage, only aggregated identifier-free pings. That yields basic traffic numbers from visitors who decline or never decide, which is the ePrivacy-exempt part. On accept, `grantAnalyticsConsent()` sends `consent: 'update'` with `analytics_storage: 'granted'` and GA4 switches to full measurement. `ad_*` stay denied permanently — we never collect for advertising.
@@ -208,3 +215,5 @@ components use co-located `.module.scss` files.
 ### SEO & Metadata
 
 `BaseLayout.astro` handles all meta tags, Open Graph/Twitter Card, and JSON-LD structured data (Event + WebSite schemas). Sitemap auto-generated via `@astrojs/sitemap`.
+
+

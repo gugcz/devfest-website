@@ -10,11 +10,13 @@ interface TimeLeft {
 	seconds: string;
 }
 
+const EXPIRED_TIME: TimeLeft = { days: '0', hours: '00', minutes: '00', seconds: '00' };
+
 function calcTimeLeft(): TimeLeft {
 	const diff = TARGET - Date.now();
 
 	if (diff <= 0) {
-		return { days: '0', hours: '00', minutes: '00', seconds: '00' };
+		return EXPIRED_TIME;
 	}
 
 	return {
@@ -32,7 +34,7 @@ const UNITS: { key: keyof TimeLeft; label: string; suffix: string }[] = [
 	{ key: 'seconds', label: 'Sec', suffix: 's' },
 ];
 
-const INITIAL_TIME: TimeLeft = { days: '0', hours: '00', minutes: '00', seconds: '00' };
+const INITIAL_TIME: TimeLeft = EXPIRED_TIME;
 
 interface Props {
 	/**
@@ -72,7 +74,7 @@ export default function Countdown({ compact = false, showSeconds = true }: Props
 	// the number itself.
 	return (
 		<>
-			<span className={s.srOnly}>Doors open on 30 October 2026 at 9:00 AM Central European Time.</span>
+			<span className="sr-only">Doors open on 30 October 2026 at 9:00 AM Central European Time.</span>
 			<div className={`${s.countdown} ${compact ? s.countdownCompact : ''}`} aria-hidden="true">
 				{units.map(({ key, label, suffix }, i) => (
 					<Fragment key={key}>

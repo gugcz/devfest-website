@@ -17,7 +17,7 @@
  * Docs: https://resend.com/docs/api-reference/emails/send-email
  */
 
-import { errorBody, fetchWithRetry } from '../lib/http.js';
+import { assertOk, fetchWithRetry } from '../lib/http.js';
 import {
 	BRAND,
 	button,
@@ -82,9 +82,7 @@ export async function sendEmail(cfg: EmailConfig, msg: EmailMessage): Promise<Se
 		{ label: 'Resend send' },
 	);
 
-	if (!res.ok) {
-		throw new Error(`Resend ${res.status} ${res.statusText}: ${await errorBody(res)}`);
-	}
+	await assertOk('Resend send', res);
 	return { sent: true };
 }
 

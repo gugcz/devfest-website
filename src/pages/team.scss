@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/film' as *;
 	// Mugshots laid out on the page — no cell, no panel, no rule around anybody; the
 	// print carries its own mount. Four across at most: at a 210px floor the roster
 	// laid out as six small columns, which is a contact sheet, not a crew.
@@ -64,7 +65,7 @@
 
 	// Neutral B&W at rest.
 	.mugshot-base {
-		filter: grayscale(1) contrast(1.12) brightness(0.82);
+		@include film(1.12, 0.82);
 	}
 
 	.mugshot-color {
@@ -101,12 +102,8 @@
 	}
 
 	.monogram {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: clamp(2.6rem, 8vw, 3.4rem);
-		letter-spacing: 0.06em;
-		color: var(--ink-monogram);
+		@include monogram(0.06em, clamp(2.6rem, 8vw, 3.4rem));
 		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
-		user-select: none;
 	}
 
 	.crew-info {
@@ -233,7 +230,7 @@
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
+			outline: var(--focus-ring);
 			outline-offset: var(--focus-gap-tight);
 		}
 	}

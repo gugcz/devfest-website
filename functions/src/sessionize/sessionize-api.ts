@@ -91,6 +91,17 @@ export interface SessionizeAll {
 }
 
 /**
+ * Read one array-shaped key off the All-view payload, or `[]` if `payload`
+ * isn't the All-view object shape or the key isn't an array (the Speakers
+ * view, a malformed response, etc).
+ */
+function allViewArray(payload: unknown, key: keyof SessionizeAll): unknown[] {
+	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return [];
+	const value = (payload as SessionizeAll)[key];
+	return Array.isArray(value) ? value : [];
+}
+
+/**
  * Canonical link kinds. The browser maps each kind to an icon SVG; unknown
  * Sessionize link types collapse to `web` (a globe) so nothing renders blank.
  *
@@ -304,36 +315,52 @@ function asString(value: unknown): string {
 }
 
 /**
- * Validate the speakers array from the All payload. A truncated / malformed
- * body must abort the sync rather than mirror garbage, so this throws on
- * anything that is not a non-empty array of objects each carrying a unique
- * string `id`.
+ * Shared body of `validateSpeakers`/`validateSessions`: same non-array check,
+ * same non-object-entry check, same duplicate-id `Set` loop — differing only
+ * in whether an empty list is a validation error, whether ids may be numeric,
+ * and the noun used in messages. Kept module-private; the two exported names
+ * stay thin wrappers because `CLAUDE.md` calls this the highest-risk path and
+ * the exported surface is deliberate.
  */
-export function validateSpeakers(raw: unknown): SessionizeSpeaker[] {
+function validateEntities<T extends { id?: unknown }>(
+	raw: unknown,
+	opts: { noun: string; allowEmpty: boolean; numericIds: boolean },
+): T[] {
 	if (!Array.isArray(raw)) {
-		throw new Error('Sessionize speakers is not an array');
+		throw new Error(`Sessionize ${opts.noun} is not an array`);
 	}
-	if (raw.length === 0) {
-		throw new Error('Sessionize speakers array is empty');
+	if (!opts.allowEmpty && raw.length === 0) {
+		throw new Error(`Sessionize ${opts.noun} array is empty`);
 	}
 	const seenIds = new Set<string>();
 	for (const entry of raw) {
 		if (typeof entry !== 'object' || entry === null) {
-			throw new Error('Sessionize speakers contains a non-object entry');
+			throw new Error(`Sessionize ${opts.noun} contains a non-object entry`);
 		}
-		const id = (entry as SessionizeSpeaker).id;
-		if (typeof id !== 'string' || id.trim() === '') {
-			throw new Error('Sessionize speakers contains a speaker without a string id');
+		const id = (entry as T).id;
+		const idIsValid = opts.numericIds
+			? (typeof id === 'string' || typeof id === 'number') && String(id).trim() !== ''
+			: typeof id === 'string' && id.trim() !== '';
+		if (!idIsValid) {
+			throw new Error(`Sessionize ${opts.noun} contains an entry without a valid id`);
 		}
-		// Doc id = speaker id, so a duplicate would silently overwrite one speaker
-		// in the write batch (and collide its `order`). Abort instead of dropping.
-		const key = id.trim();
+		// Doc id = entry id, so a duplicate would silently overwrite one entry in
+		// the write batch (and collide its `order`). Abort instead of dropping.
+		const key = String(id).trim();
 		if (seenIds.has(key)) {
-			throw new Error(`Sessionize speakers contains a duplicate speaker id: ${key}`);
+			throw new Error(`Sessionize ${opts.noun} contains a duplicate id: ${key}`);
 		}
 		seenIds.add(key);
 	}
-	return raw as SessionizeSpeaker[];
+	return raw as T[];
+}
+
+export function validateSpeakers(raw: unknown): SessionizeSpeaker[] {
+	return validateEntities<SessionizeSpeaker>(raw, {
+		noun: 'speakers',
+		allowEmpty: false,
+		numericIds: false,
+	});
 }
 
 /**
@@ -362,9 +389,7 @@ export function extractSpeakers(payload: unknown): SessionizeSpeaker[] {
  */
 export function buildSessionMap(payload: unknown): Map<string, SessionDetail> {
 	const map = new Map<string, SessionDetail>();
-	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
-	const sessions = (payload as SessionizeAll).sessions;
-	if (!Array.isArray(sessions)) return map;
+	const sessions = allViewArray(payload, 'sessions');
 	for (const entry of sessions) {
 		if (typeof entry !== 'object' || entry === null) continue;
 		const record = entry as Record<string, unknown>;
@@ -487,9 +512,7 @@ export function buildSpeakerSummaryMap(
 	imageMap: Map<string, string> = new Map(),
 ): Map<string, SpeakerSummary> {
 	const map = new Map<string, SpeakerSummary>();
-	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
-	const speakers = (payload as SessionizeAll).speakers;
-	if (!Array.isArray(speakers)) return map;
+	const speakers = allViewArray(payload, 'speakers');
 	for (const entry of speakers) {
 		if (typeof entry !== 'object' || entry === null) continue;
 		const record = entry as Record<string, unknown>;
@@ -513,27 +536,11 @@ export function buildSpeakerSummaryMap(
  */
 export function validateSessions(raw: unknown): SessionizeSession[] {
 	if (raw == null) return [];
-	if (!Array.isArray(raw)) {
-		throw new Error('Sessionize sessions is not an array');
-	}
-	const seenIds = new Set<string>();
-	for (const entry of raw) {
-		if (typeof entry !== 'object' || entry === null) {
-			throw new Error('Sessionize sessions contains a non-object entry');
-		}
-		const id = (entry as SessionizeSession).id;
-		if ((typeof id !== 'string' && typeof id !== 'number') || String(id).trim() === '') {
-			throw new Error('Sessionize sessions contains a session without an id');
-		}
-		// Doc id = session id, so a duplicate would silently overwrite one session
-		// in the write batch (and collide its `order`). Abort instead of dropping.
-		const key = String(id).trim();
-		if (seenIds.has(key)) {
-			throw new Error(`Sessionize sessions contains a duplicate session id: ${key}`);
-		}
-		seenIds.add(key);
-	}
-	return raw as SessionizeSession[];
+	return validateEntities<SessionizeSession>(raw, {
+		noun: 'sessions',
+		allowEmpty: true,
+		numericIds: true,
+	});
 }
 
 /**
@@ -598,9 +605,7 @@ function resolveSessionSpeakers(
  */
 export function buildRoomMap(payload: unknown): Map<string, string> {
 	const map = new Map<string, string>();
-	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
-	const rooms = (payload as SessionizeAll).rooms;
-	if (!Array.isArray(rooms)) return map;
+	const rooms = allViewArray(payload, 'rooms');
 	for (const room of rooms) {
 		if (typeof room !== 'object' || room === null) continue;
 		const record = room as Record<string, unknown>;
@@ -627,9 +632,7 @@ interface CategoryItem {
  */
 export function buildCategoryMap(payload: unknown): Map<string, CategoryItem> {
 	const map = new Map<string, CategoryItem>();
-	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
-	const categories = (payload as SessionizeAll).categories;
-	if (!Array.isArray(categories)) return map;
+	const categories = allViewArray(payload, 'categories');
 	for (const group of categories) {
 		if (typeof group !== 'object' || group === null) continue;
 		const record = group as Record<string, unknown>;

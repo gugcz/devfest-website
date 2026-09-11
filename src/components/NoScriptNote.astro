@@ -1,0 +1,16 @@
+---
+/**
+ * The `<noscript>` fallback under agenda/sessions/speakers' data-backed
+ * islands — same `.fallback-note` wrap on all three, only the copy differs.
+ */
+interface Props {
+	/** May contain inline HTML (a link). */
+	noteHtml: string;
+}
+
+const { noteHtml } = Astro.props;
+---
+
+<noscript>
+	<p class="fallback-note" set:html={noteHtml} />
+</noscript>

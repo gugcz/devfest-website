@@ -1,52 +1,38 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { type Speaker } from '../lib/speakers';
 import {
 	collectFacets,
 	hasActiveFilters,
 	matchesFilters,
+	speakerNames,
 	visitorCategories,
 	type Session,
 	type SessionFilters,
 } from '../lib/sessions';
 import { fetchLineup } from '../lib/lineup';
 import { shuffle } from '../lib/shuffle';
+import { useRemoteData } from '../lib/useRemoteData';
 import SessionDetail from './SessionDetail';
-import SpeakerPhoto from './SpeakerPhoto';
+import SpeakerAvatars from './SpeakerAvatars';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
 
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
+interface SessionsData {
 	sessions: Session[];
+	speakers: Speaker[];
 }
 
-const INITIAL: State = { status: 'loading', sessions: [] };
-
-/** Up to three overlapping speaker avatars, monogram fallback per speaker. */
-function SpeakerStack({ session }: { session: Session }) {
-	const shown = session.speakers.slice(0, 3);
-	const extra = session.speakers.length - shown.length;
-	return (
-		<span className={s.stack} aria-hidden="true">
-			{shown.map((speaker) => (
-				<SpeakerPhoto
-					key={speaker.id}
-					speaker={speaker}
-					photoClass={s.avatar}
-					monogramClass={`${s.avatar} ${s.avatarMono}`}
-					width={40}
-					height={40}
-				/>
-			))}
-			{extra > 0 && <span className={`${s.avatar} ${s.avatarMore}`}>+{extra}</span>}
-		</span>
-	);
+/** Shuffled once per fetch — kept in the loaded data, not recomputed on every
+ * render, so the shown order doesn't reshuffle itself on an unrelated re-render. */
+function loadSessions(signal: AbortSignal): Promise<SessionsData> {
+	return fetchLineup(signal).then(({ sessions, speakers }) => ({
+		sessions: shuffle(sessions),
+		speakers,
+	}));
 }
 
 function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: Session) => void }) {
-	const names = session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
+	const names = speakerNames(session);
 	// Lead the card with the primary track (falls back to the room, then a generic
 	// label).
 	const kicker = visitorCategories(session)[0]?.values[0] || session.room || 'Talk';
@@ -68,7 +54,17 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 				{session.description && <span className={s.excerpt}>{session.description}</span>}
 
 				<span className={s.foot}>
-					{session.speakers.length > 0 && <SpeakerStack session={session} />}
+					{session.speakers.length > 0 && (
+						<SpeakerAvatars
+							speakers={session.speakers}
+							max={3}
+							size={40}
+							photoClass={s.avatar}
+							monogramClass={`${s.avatar} ${s.avatarMono}`}
+							wrapperClassName={s.stack}
+							overflowClassName={`${s.avatar} ${s.avatarMore}`}
+						/>
+					)}
 					<span className={s.names}>{names || 'Speaker to be announced'}</span>
 				</span>
 			</button>
@@ -77,35 +73,27 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 }
 
 export default function Sessions() {
-	const [state, setState] = useState<State>(INITIAL);
+	const { status, data } = useRemoteData(loadSessions, {
+		isEmpty: (d) => d.sessions.length === 0,
+		logLabel: '[sessions] Failed to load lineup:',
+	});
+	const sessions = data?.sessions ?? [];
 	// Full speaker profiles keyed by id, from the same /api/lineup fetch, so the
 	// session → speaker drill-down in SessionDetail renders from data already on
 	// the page instead of a second read.
-	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
+	const speakersById = useMemo<Record<string, Speaker>>(
+		() => (data ? Object.fromEntries(data.speakers.map((sp) => [sp.id, sp])) : {}),
+		[data],
+	);
 	const [selected, setSelected] = useState<Session | null>(null);
+	const closeSelected = useCallback(() => setSelected(null), []);
 	const [query, setQuery] = useState('');
 	const [filters, setFilters] = useState<SessionFilters>({});
 
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchLineup(ac.signal)
-			.then(({ sessions, speakers }) => {
-				setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
-				const ordered = shuffle(sessions);
-				setState({ status: ordered.length > 0 ? 'ready' : 'empty', sessions: ordered });
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[sessions] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
-			});
-		return () => ac.abort();
-	}, []);
-
-	const facets = useMemo(() => collectFacets(state.sessions), [state.sessions]);
+	const facets = useMemo(() => collectFacets(sessions), [sessions]);
 	const filtered = useMemo(
-		() => state.sessions.filter((session) => matchesFilters(session, query, filters)),
-		[state.sessions, query, filters],
+		() => sessions.filter((session) => matchesFilters(session, query, filters)),
+		[sessions, query, filters],
 	);
 	const active = hasActiveFilters(query, filters);
 
@@ -124,7 +112,7 @@ export default function Sessions() {
 		setFilters({});
 	};
 
-	if (state.status === 'error') {
+	if (status === 'error') {
 		return (
 			<ErrorState>
 				<p>The programme won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
@@ -132,11 +120,11 @@ export default function Sessions() {
 		);
 	}
 
-	if (state.status === 'loading') {
+	if (status === 'loading') {
 		return <LoadingState label="Developing the programme" />;
 	}
 
-	if (state.status === 'empty') {
+	if (status === 'empty') {
 		return (
 			<EmptyState action={{ href: '/#newsletter', label: 'Get notified' }}>
 				<p>Sessions announced soon.</p>
@@ -227,7 +215,7 @@ export default function Sessions() {
 				<SessionDetail
 					session={selected}
 					speakersById={speakersById}
-					onClose={() => setSelected(null)}
+					onClose={closeSelected}
 				/>
 			)}
 		</>

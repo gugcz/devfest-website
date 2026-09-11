@@ -1,50 +1,22 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-import { createServer } from 'node:http';
-import { readFile, readdir } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { chromium, webkit, firefox } from 'playwright';
+import { startFixtureServer } from './lib/fixture-server.mjs';
+import { AUDIT_ROUTES } from './routes.mjs';
 import { API_FIXTURES } from './a11y-mocks/api.mjs';
 
 const DIST = path.resolve('dist');
 const PORT = 4399;
-const MIME = { '.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.ico':'image/x-icon','.woff':'font/woff','.woff2':'font/woff2','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8' };
 
-function resolveFile(reqUrl) {
-	let urlPath = decodeURIComponent(reqUrl.split('?')[0].split('#')[0]);
-	if (urlPath.endsWith('/')) urlPath += 'index.html';
-	const c = path.join(DIST, urlPath);
-	if (existsSync(c) && !existsSync(path.join(c, 'index.html'))) return c;
-	if (existsSync(`${c}.html`)) return `${c}.html`;
-	if (existsSync(path.join(c, 'index.html'))) return path.join(c, 'index.html');
-	return null;
-}
-
+// Real endpoints answer over the network; a zero-latency fixture would hide
+// the very shift this measures.
 const DELAY_MS = Number(process.env.API_DELAY_MS ?? 400);
 
 async function startServer() {
-	const server = createServer(async (req, res) => {
-		const p = (req.url ?? '/').split('?')[0];
-		if (p in API_FIXTURES) {
-			// Real endpoints answer over the network; a zero-latency fixture would
-			// hide the very shift this measures.
-			await new Promise((r) => setTimeout(r, DELAY_MS));
-			res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
-			res.end(API_FIXTURES[p]);
-			return;
-		}
-		const file = resolveFile(req.url ?? '/');
-		if (!file) { res.writeHead(404); res.end('not found'); return; }
-		res.writeHead(200, {
-			'Content-Type': MIME[path.extname(file)] ?? 'application/octet-stream',
-			// A cached bundle from an earlier build silently invalidates a run.
-			'Cache-Control': 'no-store',
-		});
-		res.end(await readFile(file));
-	});
-	await new Promise((r) => server.listen(PORT, r));
-	return server;
+	// A cached bundle from an earlier build would silently invalidate a run.
+	return startFixtureServer({ port: PORT, delayMs: DELAY_MS, cacheControl: 'no-store' });
 }
 
 const VIEWPORTS = [
@@ -126,23 +98,7 @@ async function measure(page, heading) {
  */
 const HEADER_WIDTHS = [320, 360, 375, 500, 768, 960, 1024, 1100, 1200, 1280, 1440];
 const HEADER_ROOTS = [16, 20, 24, 32];
-const HEADER_ROUTES = [
-	'/',
-	'/speakers/',
-	'/sessions/',
-	'/agenda/',
-	'/team/',
-	'/partners/',
-	'/contact/',
-	'/faq/',
-	'/press/',
-	'/press/downloads/',
-	'/invoice/',
-	'/privacy-policy/',
-	'/thank-you/',
-	'/newsletter-subscription-thank-you/',
-	'/404.html',
-];
+const HEADER_ROUTES = AUDIT_ROUTES;
 
 /**
  * `src/lib/anchor.ts` MUST BE EXACTLY ONE CHUNK.

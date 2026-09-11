@@ -11,3 +11,27 @@
 		text-transform: $case;
 	}
 }
+
+// Monogram recipe (initials in an empty photo well). $size defaults to the
+// shared token; a caller with its own measured size (team.scss's clamp())
+// passes it explicitly — never snapped to --fs-monogram.
+@mixin monogram($tracking, $size: var(--fs-monogram)) {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: $size;
+	letter-spacing: $tracking;
+	color: var(--ink-monogram);
+	user-select: none;
+}
+
+// Lede recipe (Special Elite intro prose). Every site passes its own measured
+// $line-height/$color/$margin — never snapped to one used elsewhere. Some
+// sites set no max-width (the column itself is the measure) — leave it
+// unset there rather than passing a guessed value.
+@mixin lede($line-height, $color, $margin: 0, $max-width: none) {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-lede);
+	line-height: $line-height;
+	color: $color;
+	max-width: $max-width;
+	margin: $margin;
+}

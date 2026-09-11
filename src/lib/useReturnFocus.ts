@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 /**
  * Returns focus to the element that was focused when a dialog opened — but only
@@ -29,7 +29,7 @@ export function useReturnFocus(): (viaKeyboard: boolean) => void {
 		};
 	}, []);
 
-	return (viaKeyboard: boolean) => {
+	return useCallback((viaKeyboard: boolean) => {
 		restoreRef.current = viaKeyboard;
-	};
+	}, []);
 }

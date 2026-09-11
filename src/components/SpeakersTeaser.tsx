@@ -2,26 +2,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
 import { shuffle } from '../lib/shuffle';
+import { useRemoteData } from '../lib/useRemoteData';
+import { usePrefersReducedMotion } from '../lib/useMediaQuery';
 import SpeakerPhoto from './SpeakerPhoto';
 import s from './SpeakersTeaser.module.scss';
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
 
 // Speakers shown at once on the home wall; the visible set rotates through the
 // full roster over time (rotation kicks in once there are more than this).
 const WALL_SIZE = 4;
 const ROTATE_MS = 5000;
 
-function usePrefersReducedMotion(): boolean {
-	const [reduce, setReduce] = useState(false);
-	useEffect(() => {
-		const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
-		const update = () => setReduce(mql.matches);
-		update();
-		mql.addEventListener('change', update);
-		return () => mql.removeEventListener('change', update);
-	}, []);
-	return reduce;
+function loadSpeakers(signal: AbortSignal): Promise<Speaker[]> {
+	return fetchLineup(signal).then(({ speakers }) => speakers);
 }
 
 function Thumb({ speaker }: { speaker: Speaker }) {
@@ -56,26 +48,14 @@ function Thumb({ speaker }: { speaker: Speaker }) {
  * page stays clean pre-announce.
  */
 export default function SpeakersTeaser() {
-	const [speakers, setSpeakers] = useState<Speaker[]>([]);
-	const [status, setStatus] = useState<Status>('loading');
+	const { status, data } = useRemoteData(loadSpeakers, {
+		isEmpty: (list) => list.length === 0,
+		logLabel: '[speakers-teaser] Failed to load lineup:',
+	});
+	const speakers = data ?? [];
 	const [offset, setOffset] = useState(0);
 	const [paused, setPaused] = useState(false);
 	const reduceMotion = usePrefersReducedMotion();
-
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchLineup(ac.signal)
-			.then(({ speakers: next }) => {
-				setSpeakers(next);
-				setStatus(next.length > 0 ? 'ready' : 'empty');
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[speakers-teaser] Failed to load lineup:', err);
-				setStatus('error');
-			});
-		return () => ac.abort();
-	}, []);
 
 	// Shuffle once per roster so the starting window — and rotation order — is
 	// random on every load. Keyed on the id set so it only reshuffles when the
@@ -95,11 +75,6 @@ export default function SpeakersTeaser() {
 		}, ROTATE_MS);
 		return () => clearInterval(id);
 	}, [status, canRotate, paused, reduceMotion, size, total]);
-
-	// Keep the window valid if the roster shrinks between syncs.
-	useEffect(() => {
-		if (total > 0 && offset >= total) setOffset(0);
-	}, [total, offset]);
 
 	if (status !== 'ready' || total === 0) return null;
 

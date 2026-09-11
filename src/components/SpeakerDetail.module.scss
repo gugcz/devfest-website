@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/film' as *;
 // Speaker detail. The chrome is `Sheet.module.scss`, shared with SessionDetail;
 // this file holds the portrait plate, identity, social glyphs, bio and talk rows.
 
@@ -37,15 +38,11 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 20%;
-	filter: grayscale(1) contrast(1.12) brightness(0.82);
+	@include film(1.12, 0.82);
 }
 
 .monogram {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-monogram);
-	letter-spacing: 0.06em;
-	color: var(--ink-monogram);
-	user-select: none;
+	@include monogram(0.06em);
 }
 
 .tag {
@@ -87,7 +84,7 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
+		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-tight);
 	}
 }
@@ -96,11 +93,7 @@
 	margin-top: clamp(2rem, 4vw, 3rem);
 
 	p {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.7;
-		color: var(--ink-strong);
-		margin: 0 0 1.1rem;
+		@include lede(1.7, var(--ink-strong), 0 0 1.1rem);
 		// No character cap: the 0.62fr column beside the portrait IS the measure,
 		// same rule as the session sheet's abstract.
 		text-align: justify;

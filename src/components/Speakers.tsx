@@ -1,20 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { PORTRAIT_TRANSITION, type Speaker } from '../lib/speakers';
-import { fetchLineup } from '../lib/lineup';
+import { fetchLineup, type Lineup } from '../lib/lineup';
+import { useRemoteData } from '../lib/useRemoteData';
+import { REDUCED_MOTION_QUERY } from '../lib/useMediaQuery';
 import SpeakerDetail from './SpeakerDetail';
 import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Speakers.module.scss';
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
-	speakers: Speaker[];
-}
-
-const INITIAL: State = { status: 'loading', speakers: [] };
 
 /**
  * Shared `view-transition-name` for the print the visitor clicked and the photo
@@ -31,7 +24,7 @@ type ViewTransitionDoc = Document & {
 function canMorph(): boolean {
 	if (typeof document === 'undefined') return false;
 	if (typeof (document as ViewTransitionDoc).startViewTransition !== 'function') return false;
-	return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	return !window.matchMedia(REDUCED_MOTION_QUERY).matches;
 }
 
 /**
@@ -155,7 +148,7 @@ function SpeakerCard({
 }
 
 /** The speaker lineup grid, rendered by `Speakers` below. */
-export function SpeakerLineup({
+function SpeakerLineup({
 	speakers,
 	onOpen,
 	openId = null,
@@ -193,25 +186,14 @@ export function SpeakerLineup({
 }
 
 export default function Speakers() {
-	const [state, setState] = useState<State>(INITIAL);
+	const { status, data } = useRemoteData<Lineup>(fetchLineup, {
+		isEmpty: (lineup) => lineup.speakers.length === 0,
+		logLabel: '[speakers] Failed to load lineup:',
+	});
 	const [selected, setSelected] = useState<Speaker | null>(null);
 	const { morphId, open, close } = usePortraitMorph(selected, setSelected);
 
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchLineup(ac.signal)
-			.then(({ speakers }) => {
-				setState({ status: speakers.length > 0 ? 'ready' : 'empty', speakers });
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[speakers] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
-			});
-		return () => ac.abort();
-	}, []);
-
-	if (state.status === 'error') {
+	if (status === 'error') {
 		return (
 			<ErrorState>
 				<p>The lineup won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
@@ -219,11 +201,11 @@ export default function Speakers() {
 		);
 	}
 
-	if (state.status === 'loading') {
+	if (status === 'loading') {
 		return <LoadingState label="Developing the lineup" />;
 	}
 
-	if (state.status === 'empty') {
+	if (status === 'empty') {
 		return (
 			<EmptyState action={{ href: '/#newsletter', label: 'Get notified' }}>
 				<p>Lineup announced soon.</p>
@@ -233,7 +215,7 @@ export default function Speakers() {
 
 	return (
 		<>
-			<SpeakerLineup speakers={state.speakers} onOpen={open} openId={morphId} />
+			<SpeakerLineup speakers={data?.speakers ?? []} onOpen={open} openId={morphId} />
 			{selected && <SpeakerDetail speaker={selected} onClose={close} />}
 		</>
 	);

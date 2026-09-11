@@ -287,8 +287,7 @@ const jsonLd = JSON.stringify(
 			without the native API fall back to a plain DOM swap (no animation) —
 			navigation still works.
 
-			Consequence: ClientRouter turns `prefetchAll` on by default, so the
-			explicit `prefetch.prefetchAll` in astro.config.mjs is now redundant;
+			Consequence: ClientRouter turns `prefetchAll` on by default;
 			`defaultStrategy: 'hover'` still matters and stays.
 
 			Every inline <script> in this project is wrapped in an

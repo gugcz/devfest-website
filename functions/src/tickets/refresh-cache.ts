@@ -12,30 +12,22 @@ import { stageError } from '../lib/errors.js';
 import { SLACK_WEBHOOK_URL } from '../lib/params.js';
 import { runBackground } from '../lib/run.js';
 import { SCHEDULED } from '../options.js';
-import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from './params.js';
+import { requireTitoConfig, TITO_API_TOKEN } from './params.js';
 import { fetchAllReleases, isWebsiteVisible, projectRelease } from './tito-api.js';
 
 const TICKETS_PATH = 'tickets';
 
 async function syncTickets(): Promise<void> {
-	const token = TITO_API_TOKEN.value();
-	const accountSlug = TITO_ACCOUNT_SLUG.value();
-	const eventSlug = TITO_EVENT_SLUG.value();
+	const cfg = requireTitoConfig();
 
-	if (!token || !accountSlug || !eventSlug) {
-		throw new Error(
-			'Missing config: ensure TITO_API_TOKEN secret and TITO_ACCOUNT_SLUG / TITO_EVENT_SLUG params are set.',
-		);
-	}
-
-	logger.info(`Fetching ti.to releases for ${accountSlug}/${eventSlug}`);
-	const raw = await fetchAllReleases({ token, accountSlug, eventSlug });
+	logger.info(`Fetching ti.to releases for ${cfg.accountSlug}/${cfg.eventSlug}`);
+	const raw = await fetchAllReleases(cfg);
 	const visible = raw.filter(isWebsiteVisible);
 	const releases = visible.map(projectRelease);
 
 	const payload = {
-		accountSlug,
-		eventSlug,
+		accountSlug: cfg.accountSlug,
+		eventSlug: cfg.eventSlug,
 		fetchedAt: Date.now(),
 		releases,
 	};

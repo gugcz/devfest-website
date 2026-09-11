@@ -1,3 +1,5 @@
+@use '../styles/type' as *;
+
 	// Every subpage opens here: tag, title, one line of copy, and the title does
 	// all the work. Sized so the first content row is ALWAYS visible without
 	// scrolling — height comes from the padding and the title, not min-height.
@@ -53,12 +55,7 @@
 
 	// One line, typewriter, no border and no accent bar.
 	.hero-lede {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
-		color: var(--ink-soft);
-		max-width: 46ch;
-		margin: 0;
+		@include lede(1.6, var(--ink-soft), 0, 46ch);
 	}
 
 	@media (max-width: 900px) {
