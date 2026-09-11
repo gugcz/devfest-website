@@ -47,13 +47,23 @@ export function cachedJsonEndpoint<T>(
 	spec: CachedEndpointSpec<T>,
 ): (req: Request, res: Response) => Promise<void> {
 	let memo: { at: number; payload: T } | null = null;
+	// Coalesces concurrent misses: N requests that land while the memo is cold
+	// or expired share one upstream read instead of each calling spec.load().
+	// Cleared in `finally` so a rejection is never cached as a pending success.
+	let inflight: Promise<T> | null = null;
 
 	const load = async (): Promise<T> => {
 		const now = Date.now();
 		if (memo && now - memo.at < spec.memoTtlMs) return memo.payload;
-		const payload = await spec.load();
-		memo = { at: now, payload };
-		return payload;
+		if (inflight) return inflight;
+		inflight = spec.load();
+		try {
+			const payload = await inflight;
+			memo = { at: Date.now(), payload };
+			return payload;
+		} finally {
+			inflight = null;
+		}
 	};
 
 	return async (_req, res) => {
