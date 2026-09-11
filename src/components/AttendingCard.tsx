@@ -255,7 +255,7 @@ export default function AttendingCard() {
 				bitmap = await createImageBitmap(file);
 			} catch (err) {
 				if (!heicLike) throw err;
-				const { heicTo } = await import('heic-to');
+				const { heicTo } = await import('heic-to/csp');
 				const converted = await heicTo({ blob: file, type: 'image/png' });
 				thumbBlob = converted;
 				bitmap = await createImageBitmap(converted);
