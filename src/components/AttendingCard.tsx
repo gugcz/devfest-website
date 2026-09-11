@@ -46,6 +46,15 @@ function extLabel(file: File): string {
 	return EXT_BY_MIME[file.type] ?? file.name.split('.').pop()?.toUpperCase() ?? 'IMG';
 }
 
+const HEIC_MIME_RE = /^image\/hei[cf](-sequence)?$/;
+
+/** Chromium reports HEIC/HEIF files as `type === ''`, so the mime check alone
+ * would reject them before decode even gets a chance — the extension is the
+ * only reliable signal there. */
+function isHeicFile(file: File): boolean {
+	return HEIC_MIME_RE.test(file.type) || /\.hei[cf]$/i.test(file.name);
+}
+
 function formatSize(bytes: number): string {
 	return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
@@ -224,7 +233,8 @@ export default function AttendingCard() {
 	// guards, same error strings, whichever route the file arrived by.
 	async function processFile(file: File) {
 		setPhotoError('');
-		if (!file.type.startsWith('image/')) {
+		const heicLike = isHeicFile(file);
+		if (!file.type.startsWith('image/') && !heicLike) {
 			setPhotoError("That's not an image file. JPG, PNG, WebP or HEIC all work.");
 			return;
 		}
@@ -235,7 +245,21 @@ export default function AttendingCard() {
 		setDecoding(file.name);
 		try {
 			// Decoded fully client-side — the file never leaves the browser.
-			const bitmap = await createImageBitmap(file);
+			// Safari/WebKit decode HEIC natively; everywhere else `createImageBitmap`
+			// throws on it, so the libheif wasm fallback only loads for that case.
+			let bitmap: ImageBitmap;
+			// `<img>` can't render a HEIC blob URL on Chromium either, so the
+			// thumbnail row needs the converted blob, not the original file.
+			let thumbBlob: Blob = file;
+			try {
+				bitmap = await createImageBitmap(file);
+			} catch (err) {
+				if (!heicLike) throw err;
+				const { heicTo } = await import('heic-to');
+				const converted = await heicTo({ blob: file, type: 'image/png' });
+				thumbBlob = converted;
+				bitmap = await createImageBitmap(converted);
+			}
 			if (bitmap.width === 0 || bitmap.height === 0) {
 				bitmap.close();
 				setDecoding('');
@@ -245,7 +269,7 @@ export default function AttendingCard() {
 			photoRef.current?.close();
 			photoRef.current = bitmap;
 			if (thumbUrlRef.current) URL.revokeObjectURL(thumbUrlRef.current);
-			const thumbUrl = URL.createObjectURL(file);
+			const thumbUrl = URL.createObjectURL(thumbBlob);
 			thumbUrlRef.current = thumbUrl;
 			setPhoto(bitmap);
 			setPhotoName(file.name);

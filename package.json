@@ -20,6 +20,7 @@
     "@types/react-dom": "^19.2.3",
     "astro": "^7.2.8",
     "firebase": "^12.16.0",
+    "heic-to": "^1.5.2",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "sass": "^1.99.0"
