@@ -180,28 +180,25 @@ const LOGO_HEIGHT = 88;
  * margin at any alpha in this range; the headline's red word is the real
  * binding case, since red's luminance is far lower than white's.
  *
- * Moving the vignette's fade-start out to 70% of the corner radius (so the
- * visible photo band reaches the ~0.2–0.85 the mock calls for) pushed the
- * headline/subtitle/name fully inside the vignette's now-much-larger clear
- * center — they used to pick up a little extra darkening for free from the
- * vignette's fade zone at 0.88, which is why that value measured ~4.97:1 in
- * the prior round but only ~4.29:1 now that the vignette no longer helps
- * there: pixel-measured (Playwright, `getImageData`, real rendered glyphs)
- * against a synthetic `#f2f0ea` swatch (this card's documented worst case),
- * the red word alone against a flat 0.88 scrim is under the 4.5:1 AA floor.
- * 0.92 was chosen empirically off the same measurement (~4.73:1, ~5% margin)
- * to restore it without moving or resizing anything — text position and the
- * visible photo band are unchanged, only the plate gets darker. A dark photo
- * only ever raises this ratio further.
+ * The vignette's fade-start has moved twice: 70% of the corner radius (a
+ * prior round) put the headline/subtitle/name fully inside the vignette's
+ * clear center, so they stopped getting the free extra darkening the
+ * vignette's fade zone used to contribute there, and 0.88 measured only
+ * ~4.29:1 — under the 4.5:1 AA floor — which is why that round raised this to
+ * 0.92. Moving the fade-start again to 40% (see the vignette comment below)
+ * brings the headline/subtitle/name back inside the fade zone, so the
+ * vignette helps under the text again: pixel-measured (Playwright,
+ * `getImageData`, real rendered glyphs) against a synthetic `#f2f0ea` swatch
+ * (this card's documented worst case), the red word alone against a flat 0.88
+ * scrim now measures ~5.23:1 — comfortably back above the floor — so this
+ * eases back to 0.88 rather than staying at 0.92. A dark photo only ever
+ * raises this ratio further.
  */
-const SCRIM_ALPHA = 0.92;
+const SCRIM_ALPHA = 0.88;
 const TEXT_SCRIM_PAD_X = 32;
 const TEXT_SCRIM_PAD_Y = 16;
-/** Corner rounding on each text scrim plate, plus a soft blur feather along
- * its edges so the plate reads as a glow behind the letters instead of a
- * stuck-on rectangle. `SCRIM_FEATHER_PAD` gives the blur room to fall off
- * fully before the offscreen canvas is clipped — too little and the blur
- * clips into a hard edge again, defeating the point. */
+/** Corner rounding on each text scrim plate, so it reads as a glow behind the
+ * letters instead of a stuck-on rectangle. */
 const SCRIM_CORNER_RADIUS = 14;
 /** Kept small on purpose: a Gaussian blur's falloff reaches roughly 2–3× its
  * radius, and `TEXT_SCRIM_PAD_Y` (16px) is the only margin between the plate
@@ -213,7 +210,6 @@ const SCRIM_CORNER_RADIUS = 14;
  * edge feather visible while leaving the text's own footprint at full
  * SCRIM_ALPHA. */
 const SCRIM_FEATHER = 5;
-const SCRIM_FEATHER_PAD = SCRIM_FEATHER * 3;
 
 /** Traces a rounded-rect path — same four-`arcTo` shape already used below
  * for the "2026" pill, pulled out so the text scrims can share it. */
@@ -256,10 +252,14 @@ function lineMetrics(
 
 /** Paints a black plate sized to one line's actual glyph bounds plus a small
  * pad — never the full card width, so it reads as a tight backing under the
- * letters instead of a horizontal band. Rounded corners plus a blurred
- * feather along every edge keep it from reading as a stuck-on rectangle;
- * painted on an offscreen canvas first because `ctx.filter = 'blur()'` would
- * otherwise blur the photo/vignette already under it, not just this plate. */
+ * letters instead of a horizontal band. Rounded corners plus a soft edge
+ * feather keep it from reading as a stuck-on rectangle. Uses `shadowBlur` +
+ * `shadowColor` (zero offset) rather than `ctx.filter = 'blur()'`: WebKit
+ * silently ignores canvas `filter` (confirmed on an exported render — the
+ * plate came out rounded but hard-edged there), while `shadowBlur` is
+ * supported everywhere canvas is. The shadow renders as a blurred copy of the
+ * plate's own shape sitting behind it, so the feather shows up as a soft
+ * boundary the moment the opaque fill on top no longer covers it. */
 function drawTextScrim(
 	ctx: CanvasRenderingContext2D,
 	centerX: number,
@@ -271,18 +271,14 @@ function drawTextScrim(
 	const width = metrics.width + TEXT_SCRIM_PAD_X * 2;
 	const left = centerX - width / 2;
 
-	const off = document.createElement('canvas');
-	off.width = Math.ceil(width + SCRIM_FEATHER_PAD * 2);
-	off.height = Math.ceil(height + SCRIM_FEATHER_PAD * 2);
-	const offCtx = off.getContext('2d');
-	if (!offCtx) return;
-	offCtx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
-	roundRectPath(offCtx, SCRIM_FEATHER_PAD, SCRIM_FEATHER_PAD, width, height, SCRIM_CORNER_RADIUS);
-	offCtx.fill();
-
 	ctx.save();
-	ctx.filter = `blur(${SCRIM_FEATHER}px)`;
-	ctx.drawImage(off, left - SCRIM_FEATHER_PAD, top - SCRIM_FEATHER_PAD);
+	ctx.shadowColor = `rgba(0,0,0,${SCRIM_ALPHA})`;
+	ctx.shadowBlur = SCRIM_FEATHER;
+	ctx.shadowOffsetX = 0;
+	ctx.shadowOffsetY = 0;
+	ctx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
+	roundRectPath(ctx, left, top, width, height, SCRIM_CORNER_RADIUS);
+	ctx.fill();
 	ctx.restore();
 }
 
@@ -331,13 +327,20 @@ export function drawAttendingCard(
 	// Outer stop is the corner distance (the half-diagonal, size/2 * √2) so the
 	// corners are the last pixels to go pure black instead of already being
 	// clamped there at the edge-midpoint radius — a 50%-of-edge-radius fade
-	// left only an oval ~55% of the card width visibly photo (measured on the
-	// previous round), well short of the ~0.2–0.85 band the mock calls for.
-	// Fade starts at 70% of that corner radius, clear inside it.
+	// left only an oval ~55% of the card width visibly photo (measured two
+	// rounds ago), well short of the ~0.2–0.85 band the mock calls for. A first
+	// attempt at fading from 70% of that radius overcorrected the other way:
+	// on the center axes the fade zone barely reaches past the edge-midpoints,
+	// so it read as corner-only darkening with the photo bleeding to the card
+	// edge top/bottom/left/right-center (measured on real pixels — QA's report
+	// on this same round). Fade now starts at 40% of the corner radius, which
+	// measures a visible band of ~0.22–0.78 on the center axes with the edge
+	// midpoints roughly half-dark — matching the mock's darkened-edge look
+	// while keeping the corners pure black at the same outer stop.
 	const vignetteRadius = (size / 2) * Math.SQRT2;
 	const vignette = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, vignetteRadius);
 	vignette.addColorStop(0, 'rgba(0,0,0,0)');
-	vignette.addColorStop(0.7, 'rgba(0,0,0,0)');
+	vignette.addColorStop(0.4, 'rgba(0,0,0,0)');
 	vignette.addColorStop(1, 'rgba(0,0,0,1)');
 	ctx.fillStyle = vignette;
 	ctx.fillRect(0, 0, size, size);
