@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type FormEvent, type InputHTMLAttributes } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent, type InputHTMLAttributes } from 'react';
 import {
 	fetchTickets,
 	filterDisplayable,
@@ -30,7 +30,14 @@ interface Fields {
 	zip: string;
 	country: string;
 	email: string;
-	countTickets: number;
+	/**
+	 * Raw input, not a clamped number: clamping on every keystroke (the prior
+	 * behavior) meant a visitor could never clear the field to type a new
+	 * value, and made the out-of-range error below unreachable. Parsed with
+	 * {@link parseCount} wherever the numeric value is needed; out-of-range or
+	 * unparseable is validated (and surfaced), not silently corrected.
+	 */
+	countTickets: string;
 }
 
 type FieldName = keyof Fields;
@@ -48,8 +55,14 @@ const EMPTY: Fields = {
 	zip: '',
 	country: 'CZ',
 	email: '',
-	countTickets: 1,
+	countTickets: '1',
 };
+
+/** Parse the raw `countTickets` field into a number, or `NaN` for anything
+ * unparseable (including empty, mid-edit). */
+function parseCount(raw: string): number {
+	return Number(raw);
+}
 
 // Deliberately loose: the point of a client-side check here is to say which of
 // the nine fields is wrong before a round trip, not to reject a real company.
@@ -81,7 +94,8 @@ function validate(fields: Fields, consented: boolean): Errors {
 		errors.email = 'That does not look like an email address.';
 	}
 
-	if (!Number.isFinite(fields.countTickets) || fields.countTickets < 1 || fields.countTickets > 50) {
+	const count = parseCount(fields.countTickets);
+	if (!Number.isFinite(count) || count < 1 || count > 50) {
 		errors.countTickets = 'Choose between 1 and 50 tickets.';
 	}
 
@@ -108,6 +122,45 @@ function loadCompanyRelease(signal: AbortSignal): Promise<TitoRelease | null> {
 		if (!data) return null;
 		return findCompanyRelease(filterDisplayable(data.releases ?? []));
 	});
+}
+
+/** Every field name this form knows about — used to validate a field name
+ * arriving from the server before it's shown to the visitor (see
+ * `fieldFromCallableError` below). */
+const FIELD_NAMES = new Set<FieldName>(Object.keys(EMPTY) as FieldName[]);
+
+/** The shape of a Firebase callable's rejection (`functions/https.HttpsError`,
+ * as received client-side): a `code` (`functions/invalid-argument`, …) and an
+ * optional `details` payload the function set server-side. */
+interface CallableError {
+	code: string;
+	details?: unknown;
+}
+
+function isCallableError(e: unknown): e is CallableError {
+	return typeof e === 'object' && e !== null && typeof (e as { code?: unknown }).code === 'string';
+}
+
+/**
+ * The offending field name from a rejected submit, or `null`.
+ *
+ * Prefers `details.field` — the field name belongs in `details`, not
+ * `message`: `message` is user-facing text a client might show verbatim, and
+ * a validation reason is not guaranteed to BE a bare field name (see O-R19).
+ * Falls back to `message` only when it's actually one of this form's known
+ * field names (the current server sends exactly that), never an arbitrary
+ * sentence — so a future server that starts sending real prose can't put
+ * that prose in front of a visitor.
+ */
+function fieldFromCallableError(error: CallableError): string | null {
+	const details = error.details;
+	if (details && typeof details === 'object' && 'field' in details) {
+		const field = (details as { field?: unknown }).field;
+		if (typeof field === 'string' && FIELD_NAMES.has(field as FieldName)) return field;
+	}
+	const message = (error as { message?: unknown }).message;
+	if (typeof message === 'string' && FIELD_NAMES.has(message as FieldName)) return message;
+	return null;
 }
 
 /**
@@ -185,6 +238,20 @@ export default function InvoiceForm() {
 	// So a failed submit can put the caret in the first field that needs fixing
 	// rather than leaving the visitor to hunt for it.
 	const inputs = useRef<Partial<Record<ErrorKey, HTMLElement | null>>>({});
+	// One stable ref-callback per field, cached across renders: `wire()` used to
+	// return a fresh closure every render, so React detached and reattached
+	// every input's `ref` on every keystroke.
+	const fieldRefs = useRef(new Map<ErrorKey, (el: HTMLElement | null) => void>());
+	function fieldRef(key: ErrorKey): (el: HTMLElement | null) => void {
+		let ref = fieldRefs.current.get(key);
+		if (!ref) {
+			ref = (el) => {
+				inputs.current[key] = el;
+			};
+			fieldRefs.current.set(key, ref);
+		}
+		return ref;
+	}
 
 	// Read the company-funded price from the cached `/api/tickets` endpoint for an
 	// estimate. The authoritative price is computed server-side at invoice time —
@@ -200,8 +267,11 @@ export default function InvoiceForm() {
 		// `grossPrice` holds the shared VAT assumption (ti.to exposes no tax rate);
 		// it returns null for exactly the free / unpriced cases we skip here.
 		const grossEach = grossPrice(release);
-		if (!display || grossEach == null) return null;
-		const total = grossEach * fields.countTickets;
+		const count = parseCount(fields.countTickets);
+		// Mid-edit (empty, or not yet a valid count) shows no estimate rather than
+		// one computed from a stale or nonsense value.
+		if (!display || grossEach == null || !Number.isFinite(count) || count <= 0) return null;
+		const total = grossEach * count;
 		return {
 			each: display.primary,
 			total: formatPrice(String(total), release.currency),
@@ -211,16 +281,18 @@ export default function InvoiceForm() {
 		};
 	}, [release, fields.countTickets]);
 
-	/** Re-check after the first failed submit, so an error clears as it is fixed. */
-	function revalidate(next: Fields, nextConsent: boolean) {
+	// Re-check after the first failed submit, so an error clears as it is
+	// fixed — keyed on `fields`/`consented` themselves (not called inline from
+	// `update()`) so it sees every update, including two in the same tick.
+	useEffect(() => {
 		if (!attempted) return;
-		setErrors(validate(next, nextConsent));
-	}
+		setErrors(validate(fields, consented));
+	}, [fields, consented, attempted]);
 
 	function update<K extends keyof Fields>(key: K, value: Fields[K]) {
-		const next = { ...fields, [key]: value };
-		setFields(next);
-		revalidate(next, consented);
+		// Functional update: two fields changing in the same tick (paste-fill,
+		// autofill) each get their own `prev`, so neither overwrites the other.
+		setFields((prev) => ({ ...prev, [key]: value }));
 	}
 
 	/** On blur a single field starts showing its own error — the rest stay quiet. */
@@ -272,7 +344,7 @@ export default function InvoiceForm() {
 			track('generate_lead', {
 				...(estimate ? { currency: estimate.currency, value: estimate.amount } : {}),
 				lead_source: 'company_invoice',
-				quantity: fields.countTickets,
+				quantity: parseCount(fields.countTickets),
 			});
 			setStatus('success');
 			setMessage(
@@ -285,8 +357,9 @@ export default function InvoiceForm() {
 			setTouched({});
 			setAttempted(false);
 		} catch (e) {
-			const code = (e as { code?: string }).code ?? '';
-			const field = (e as { message?: string }).message ?? '';
+			const callableError = isCallableError(e) ? e : null;
+			const code = callableError?.code ?? '';
+			const field = callableError ? fieldFromCallableError(callableError) : null;
 			setStatus('error');
 			setMessage(
 				code === 'functions/invalid-argument'
@@ -317,18 +390,8 @@ export default function InvoiceForm() {
 			name,
 			value: fields[name],
 			error: errorFor(name),
-			inputRef: (el: HTMLInputElement | null) => {
-				inputs.current[name] = el;
-			},
-			onValue: (raw: string) =>
-				update(
-					name,
-					// The count is the one numeric field; clamping on input keeps
-					// the estimate below it from ever showing a nonsense total.
-					(name === 'countTickets'
-						? Math.max(1, Math.min(50, Number(raw) || 1))
-						: raw) as Fields[typeof name],
-				),
+			inputRef: fieldRef(name),
+			onValue: (raw: string) => update(name, raw as Fields[typeof name]),
 			onBlurField: () => blur(name),
 		};
 	}
@@ -380,15 +443,10 @@ export default function InvoiceForm() {
 				<div className={s.consentBlock}>
 					<label className={s.consent}>
 						<input
-							ref={(el) => {
-								inputs.current.consent = el;
-							}}
+							ref={fieldRef('consent')}
 							type="checkbox"
 							checked={consented}
-							onChange={(e) => {
-								setConsented(e.target.checked);
-								revalidate(fields, e.target.checked);
-							}}
+							onChange={(e) => setConsented(e.target.checked)}
 							onBlur={() => blur('consent')}
 							aria-invalid={consentError ? true : undefined}
 							aria-describedby={consentError ? 'invoice-consent-error' : undefined}
@@ -421,10 +479,14 @@ export default function InvoiceForm() {
 					{status === 'submitting' ? 'Sending…' : 'Request invoice'}
 				</button>
 
+				{/* `alert` for an error tone (a validation failure is an interruption,
+				    same as `ErrorState` in DataState.tsx), `status` otherwise — a
+				    validation failure was previously announced exactly as politely as
+				    "Sending your request…", distinguished only by `data-tone`. */}
 				<p
 					className={s.message}
-					role="status"
-					aria-live="polite"
+					role={status === 'error' ? 'alert' : 'status'}
+					aria-live={status === 'error' ? undefined : 'polite'}
 					aria-atomic="true"
 					data-tone={status === 'error' ? 'error' : 'info'}
 				>
