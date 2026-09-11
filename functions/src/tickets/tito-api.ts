@@ -21,7 +21,22 @@
 
 import { assertOk, fetchWithRetry } from '../lib/http.js';
 
-const TITO_API_BASE = 'https://api.tito.io/v3';
+export const TITO_API_BASE = 'https://api.tito.io/v3';
+
+/** Auth + account/event slug — every ti.to Admin API caller needs the same three fields. */
+export interface TitoCredentials {
+	token: string;
+	accountSlug: string;
+	eventSlug: string;
+}
+
+/** Standard headers for a ti.to Admin API call. */
+export function titoHeaders(token: string): Record<string, string> {
+	return {
+		Authorization: `Token token=${token}`,
+		Accept: 'application/json',
+	};
+}
 
 export type DerivedSaleStatus =
 	| 'on_sale'
@@ -58,12 +73,6 @@ export interface TitoRelease {
 	start_at?: string | null;
 	end_at?: string | null;
 	[key: string]: unknown;
-}
-
-export interface FetchReleasesParams {
-	token: string;
-	accountSlug: string;
-	eventSlug: string;
 }
 
 interface TitoReleasesPage {
@@ -162,19 +171,14 @@ export function isWebsiteVisible(release: TitoRelease): boolean {
 	return true;
 }
 
-export async function fetchAllReleases(params: FetchReleasesParams): Promise<TitoRelease[]> {
+export async function fetchAllReleases(params: TitoCredentials): Promise<TitoRelease[]> {
 	const url = `${TITO_API_BASE}/${params.accountSlug}/${params.eventSlug}/releases?per_page=100`;
 	// Read-only, so it retries transient faults: this backs the hourly cache
 	// refresh and both status reports, and a blip there means stale ticket data on
 	// the site or a status report that silently never arrives.
 	const res = await fetchWithRetry(
 		url,
-		{
-			headers: {
-				Authorization: `Token token=${params.token}`,
-				Accept: 'application/json',
-			},
-		},
+		{ headers: titoHeaders(params.token) },
 		{ label: 'ti.to releases' },
 	);
 

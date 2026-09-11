@@ -13,26 +13,21 @@
  */
 
 import { assertOk, fetchWithRetry } from '../lib/http.js';
-import { fetchAllReleases, type TitoRelease, deriveSaleStatus } from '../tickets/tito-api.js';
-
-const TITO_API_BASE = 'https://api.tito.io/v3';
-
-export interface TitoConfig {
-	token: string;
-	accountSlug: string;
-	eventSlug: string;
-}
+import {
+	fetchAllReleases,
+	titoHeaders,
+	TITO_API_BASE,
+	type TitoCredentials,
+	type TitoRelease,
+	deriveSaleStatus,
+} from '../tickets/tito-api.js';
 
 /** Releases whose title contains the configured match substring. */
 export async function resolveCompanyFundedReleases(
-	cfg: TitoConfig,
+	cfg: TitoCredentials,
 	match: string,
 ): Promise<TitoRelease[]> {
-	const releases = await fetchAllReleases({
-		token: cfg.token,
-		accountSlug: cfg.accountSlug,
-		eventSlug: cfg.eventSlug,
-	});
+	const releases = await fetchAllReleases(cfg);
 	const needle = match.trim().toLowerCase();
 	return releases.filter((r) => (r.title ?? r.slug ?? '').toLowerCase().includes(needle));
 }
@@ -86,7 +81,7 @@ export interface CreatedDiscountCode {
  * Create a 100%-off discount code scoped to the given release ids.
  */
 export async function createDiscountCode(
-	cfg: TitoConfig,
+	cfg: TitoCredentials,
 	input: { code: string; quantity: number; releaseIds: number[] },
 ): Promise<CreatedDiscountCode> {
 	const url = `${TITO_API_BASE}/${cfg.accountSlug}/${cfg.eventSlug}/discount_codes`;
@@ -97,11 +92,7 @@ export async function createDiscountCode(
 		url,
 		{
 			method: 'POST',
-			headers: {
-				Authorization: `Token token=${cfg.token}`,
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
+			headers: { ...titoHeaders(cfg.token), 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				discount_code: {
 					code: input.code,
@@ -125,7 +116,7 @@ export async function createDiscountCode(
 }
 
 /** Public redeem link for a discount code. */
-export function discountRedeemUrl(cfg: TitoConfig, code: string): string {
+export function discountRedeemUrl(cfg: TitoCredentials, code: string): string {
 	return `https://ti.to/${cfg.accountSlug}/${cfg.eventSlug}/discount/${encodeURIComponent(code)}`;
 }
 

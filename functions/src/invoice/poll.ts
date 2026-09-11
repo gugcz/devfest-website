@@ -22,7 +22,8 @@ import { runBackground } from '../lib/run.js';
 import { notify } from '../lib/slack.js';
 import { SCHEDULED } from '../options.js';
 
-import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from '../tickets/params.js';
+import { requireTitoConfig, TITO_API_TOKEN } from '../tickets/params.js';
+import type { TitoCredentials } from '../tickets/tito-api.js';
 import {
 	IDOKLAD_CLIENT_ID,
 	IDOKLAD_CLIENT_SECRET,
@@ -41,7 +42,6 @@ import {
 	createDiscountCode,
 	discountRedeemUrl,
 	resolveCompanyFundedReleases,
-	type TitoConfig,
 } from './tito-discount.js';
 import { buildDiscountEmail, sendEmail } from './email.js';
 import {
@@ -99,11 +99,7 @@ async function pollPaidInvoices(): Promise<void> {
 		clientId: IDOKLAD_CLIENT_ID.value(),
 		clientSecret: IDOKLAD_CLIENT_SECRET.value(),
 	};
-	const titoCfg: TitoConfig = {
-		token: TITO_API_TOKEN.value(),
-		accountSlug: TITO_ACCOUNT_SLUG.value(),
-		eventSlug: TITO_EVENT_SLUG.value(),
-	};
+	const titoCfg = requireTitoConfig();
 	const slackUrl = SLACK_WEBHOOK_URL.value();
 
 	let completed = 0;
@@ -151,7 +147,7 @@ async function pollPaidInvoices(): Promise<void> {
 /** Runs `completeInvoice`, releasing the claim and alerting Slack on failure. */
 async function tryCompleteInvoice(
 	record: InvoiceRecord,
-	titoCfg: TitoConfig,
+	titoCfg: TitoCredentials,
 	slackUrl: string,
 ): Promise<boolean> {
 	try {
@@ -180,7 +176,7 @@ async function tryCompleteInvoice(
 
 async function completeInvoice(
 	record: InvoiceRecord,
-	titoCfg: TitoConfig,
+	titoCfg: TitoCredentials,
 	slackUrl: string,
 ): Promise<void> {
 	const { id, data } = record;
