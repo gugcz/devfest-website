@@ -254,12 +254,20 @@ function lineMetrics(
  * pad — never the full card width, so it reads as a tight backing under the
  * letters instead of a horizontal band. Rounded corners plus a soft edge
  * feather keep it from reading as a stuck-on rectangle. Uses `shadowBlur` +
- * `shadowColor` (zero offset) rather than `ctx.filter = 'blur()'`: WebKit
- * silently ignores canvas `filter` (confirmed on an exported render — the
- * plate came out rounded but hard-edged there), while `shadowBlur` is
- * supported everywhere canvas is. The shadow renders as a blurred copy of the
- * plate's own shape sitting behind it, so the feather shows up as a soft
- * boundary the moment the opaque fill on top no longer covers it. */
+ * `shadowColor` rather than `ctx.filter = 'blur()'`: WebKit silently ignores
+ * canvas `filter` (confirmed on an exported render — the plate came out
+ * rounded but hard-edged there), while `shadowBlur` is supported everywhere
+ * canvas is.
+ *
+ * Draws the shadow only, never the opaque fill on top of it: the fill's own
+ * shape is pushed `offset` px outside the canvas (`ctx.canvas.width` is
+ * always enough headroom, since no plate is ever that wide), and
+ * `shadowOffsetX = offset` slides its shadow back to the plate's real
+ * position. Only the blurred silhouette ever lands inside the visible
+ * canvas. Stacking the opaque fill on top used to compound with its own
+ * shadow (visually indistinguishable from black — measured ~0.985 effective
+ * alpha against the intended SCRIM_ALPHA of 0.88); this way SCRIM_ALPHA is
+ * the plate's one and only source of opacity. */
 function drawTextScrim(
 	ctx: CanvasRenderingContext2D,
 	centerX: number,
@@ -270,14 +278,15 @@ function drawTextScrim(
 	const height = metrics.ascent + metrics.descent + TEXT_SCRIM_PAD_Y * 2;
 	const width = metrics.width + TEXT_SCRIM_PAD_X * 2;
 	const left = centerX - width / 2;
+	const offset = ctx.canvas.width;
 
 	ctx.save();
 	ctx.shadowColor = `rgba(0,0,0,${SCRIM_ALPHA})`;
 	ctx.shadowBlur = SCRIM_FEATHER;
-	ctx.shadowOffsetX = 0;
+	ctx.shadowOffsetX = offset;
 	ctx.shadowOffsetY = 0;
-	ctx.fillStyle = `rgba(0,0,0,${SCRIM_ALPHA})`;
-	roundRectPath(ctx, left, top, width, height, SCRIM_CORNER_RADIUS);
+	ctx.fillStyle = 'rgba(0,0,0,1)';
+	roundRectPath(ctx, left - offset, top, width, height, SCRIM_CORNER_RADIUS);
 	ctx.fill();
 	ctx.restore();
 }
