@@ -315,12 +315,6 @@ function asString(value: unknown): string {
 }
 
 /**
- * Validate the speakers array from the All payload. A truncated / malformed
- * body must abort the sync rather than mirror garbage, so this throws on
- * anything that is not a non-empty array of objects each carrying a unique
- * string `id`.
- */
-/**
  * Shared body of `validateSpeakers`/`validateSessions`: same non-array check,
  * same non-object-entry check, same duplicate-id `Set` loop — differing only
  * in whether an empty list is a validation error, whether ids may be numeric,
