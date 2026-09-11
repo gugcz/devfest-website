@@ -16,12 +16,20 @@ interface Props {
 
 const { partner, className, imageProps } = Astro.props;
 const logoClass = `${className}${partner.plated ? ' is-plated' : ''}`;
+// `<Image>`'s props are a discriminated union keyed on `src`'s shape (local
+// asset vs. remote, `format`/`widths` vs. `layout: 'none'`) — a generic bag
+// from three different call sites can't type-check against it structurally,
+// so `class`/`alt`/`loading` are folded into the same object rather than
+// spread alongside it (a typed spread of a `Record` would otherwise read as
+// a possible duplicate of them). Each call site's own `imageProps` builder is
+// still fully typed.
+const image = { class: logoClass, alt: partner.name, loading: 'lazy', ...imageProps } as Parameters<typeof Image>[0];
 ---
 
 {partner.url ? (
 	<a href={partner.url} target="_blank" rel="noopener noreferrer" aria-label={partner.name}>
-		<Image class={logoClass} alt={partner.name} loading="lazy" {...imageProps} />
+		<Image {...image} />
 	</a>
 ) : (
-	<Image class={logoClass} alt={partner.name} loading="lazy" {...imageProps} />
+	<Image {...image} />
 )}
