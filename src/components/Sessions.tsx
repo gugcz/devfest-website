@@ -12,7 +12,7 @@ import { fetchLineup } from '../lib/lineup';
 import { shuffle } from '../lib/shuffle';
 import { useRemoteData } from '../lib/useRemoteData';
 import SessionDetail from './SessionDetail';
-import SpeakerPhoto from './SpeakerPhoto';
+import SpeakerAvatars from './SpeakerAvatars';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
 
@@ -28,27 +28,6 @@ function loadSessions(signal: AbortSignal): Promise<SessionsData> {
 		sessions: shuffle(sessions),
 		speakers,
 	}));
-}
-
-/** Up to three overlapping speaker avatars, monogram fallback per speaker. */
-function SpeakerStack({ session }: { session: Session }) {
-	const shown = session.speakers.slice(0, 3);
-	const extra = session.speakers.length - shown.length;
-	return (
-		<span className={s.stack} aria-hidden="true">
-			{shown.map((speaker) => (
-				<SpeakerPhoto
-					key={speaker.id}
-					speaker={speaker}
-					photoClass={s.avatar}
-					monogramClass={`${s.avatar} ${s.avatarMono}`}
-					width={40}
-					height={40}
-				/>
-			))}
-			{extra > 0 && <span className={`${s.avatar} ${s.avatarMore}`}>+{extra}</span>}
-		</span>
-	);
 }
 
 function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: Session) => void }) {
@@ -74,7 +53,17 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 				{session.description && <span className={s.excerpt}>{session.description}</span>}
 
 				<span className={s.foot}>
-					{session.speakers.length > 0 && <SpeakerStack session={session} />}
+					{session.speakers.length > 0 && (
+						<SpeakerAvatars
+							speakers={session.speakers}
+							max={3}
+							size={40}
+							photoClass={s.avatar}
+							monogramClass={`${s.avatar} ${s.avatarMono}`}
+							wrapperClassName={s.stack}
+							overflowClassName={`${s.avatar} ${s.avatarMore}`}
+						/>
+					)}
 					<span className={s.names}>{names || 'Speaker to be announced'}</span>
 				</span>
 			</button>

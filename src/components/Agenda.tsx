@@ -22,7 +22,7 @@ import {
 } from '../lib/agenda';
 import { fetchAgenda, type Lineup } from '../lib/lineup';
 import SessionDetail from './SessionDetail';
-import SpeakerPhoto from './SpeakerPhoto';
+import SpeakerAvatars from './SpeakerAvatars';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Agenda.module.scss';
 
@@ -152,21 +152,15 @@ function talkTags(session: Session): string[] {
  * the /sessions card stack sized down for the timetable. Decorative: the names
  * carry the accessible info, so this is aria-hidden. */
 function TalkAvatars({ session }: { session: Session }) {
-	const shown = session.speakers.slice(0, 3);
-	if (shown.length === 0) return null;
 	return (
-		<span className={s.avatars} aria-hidden="true">
-			{shown.map((sp) => (
-				<SpeakerPhoto
-					key={sp.id}
-					speaker={sp}
-					photoClass={s.avatar}
-					monogramClass={`${s.avatar} ${s.avatarMono}`}
-					width={24}
-					height={24}
-				/>
-			))}
-		</span>
+		<SpeakerAvatars
+			speakers={session.speakers}
+			max={3}
+			size={24}
+			photoClass={s.avatar}
+			monogramClass={`${s.avatar} ${s.avatarMono}`}
+			wrapperClassName={s.avatars}
+		/>
 	);
 }
 

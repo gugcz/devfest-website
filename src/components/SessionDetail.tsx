@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useCallback, useRef, useState } from 'react';
 import { type Speaker } from '../lib/speakers';
-import { visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
-import { useReturnFocus } from '../lib/useReturnFocus';
+import { paragraphs, visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
+import { useDialog } from '../lib/useDialog';
+import Sheet from './Sheet';
+import SpeakerAvatars from './SpeakerAvatars';
 import SpeakerDetail from './SpeakerDetail';
-import SpeakerPhoto from './SpeakerPhoto';
 import sheet from './Sheet.module.scss';
 import s from './SessionDetail.module.scss';
 
@@ -26,24 +26,11 @@ function speakerFromRef(ref: SessionSpeakerRef): Speaker {
 	};
 }
 
-function SpeakerAvatar({ speaker }: { speaker: SessionSpeakerRef }) {
-	// Broken/absent CDN URL degrades to the monogram — one decision, shared with
-	// every other photo on the site. See SpeakerPhoto.
-	return (
-		<SpeakerPhoto
-			speaker={speaker}
-			photoClass={s.avatarImg}
-			monogramClass={s.avatarMono}
-			width={72}
-			height={72}
-		/>
-	);
-}
-
 /**
  * Accessible session detail dialog: room, abstract, and the talk's speakers.
  * Traps focus, closes on Esc, locks body scroll, and restores focus to the
- * triggering card on close (mirrors `SpeakerDetail`).
+ * triggering card on close (mirrors `SpeakerDetail`) — all via `useDialog`;
+ * `Sheet` owns the portal, bar and Close control.
  */
 export default function SessionDetail({
 	session,
@@ -55,17 +42,14 @@ export default function SessionDetail({
 	onClose: () => void;
 }) {
 	const dialogRef = useRef<HTMLDivElement>(null);
-	// Restores focus to the trigger on close — keyboard closes only, so a pointer
-	// close never leaves a lingering focus ring on the session card.
-	const setKeyboardClose = useReturnFocus();
 
 	// A speaker sub-dialog stacked on top of this one. Opened from a speaker row,
 	// seeded from the embedded ref for an instant render, then enriched below.
 	const [activeSpeaker, setActiveSpeaker] = useState<Speaker | null>(null);
-	// Read inside the (mount-time) key handler so it can bail while the speaker
-	// dialog is on top — that dialog owns Esc / focus-trap when open.
-	const speakerOpenRef = useRef(false);
-	speakerOpenRef.current = activeSpeaker !== null;
+
+	// Bails Esc / Tab handling while the stacked speaker dialog is open — that
+	// dialog owns the keyboard when it's on top.
+	const setKeyboardClose = useDialog(dialogRef, onClose, { enabled: activeSpeaker === null });
 
 	const closeSpeaker = useCallback(() => setActiveSpeaker(null), []);
 
@@ -78,152 +62,86 @@ export default function SessionDetail({
 		[speakersById],
 	);
 
-	useEffect(() => {
-		const previousOverflow = document.body.style.overflow;
-		document.body.style.overflow = 'hidden';
-
-		const dialog = dialogRef.current;
-		const focusables = (): HTMLElement[] =>
-			dialog
-				? Array.from(
-						dialog.querySelectorAll<HTMLElement>(
-							'a[href], button, [tabindex]:not([tabindex="-1"])',
-						),
-					).filter((el) => !el.hasAttribute('disabled'))
-				: [];
-
-		dialog?.querySelector<HTMLElement>('[data-autofocus]')?.focus();
-
-		const onKeyDown = (event: KeyboardEvent) => {
-			// The stacked speaker dialog handles keys while it's open.
-			if (speakerOpenRef.current) return;
-			if (event.key === 'Escape') {
-				event.stopPropagation();
-				setKeyboardClose(true);
-				onClose();
-				return;
-			}
-			if (event.key !== 'Tab') return;
-			const items = focusables();
-			if (items.length === 0) {
-				event.preventDefault();
-				return;
-			}
-			const first = items[0];
-			const last = items[items.length - 1];
-			if (event.shiftKey && document.activeElement === first) {
-				event.preventDefault();
-				last.focus();
-			} else if (!event.shiftKey && document.activeElement === last) {
-				event.preventDefault();
-				first.focus();
-			}
-		};
-
-		document.addEventListener('keydown', onKeyDown, true);
-		return () => {
-			document.removeEventListener('keydown', onKeyDown, true);
-			document.body.style.overflow = previousOverflow;
-		};
-	}, [onClose, setKeyboardClose]);
-
-	const abstractParagraphs = session.description.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
+	const abstractParagraphs = paragraphs(session.description);
 	const tagCategories = visitorCategories(session);
 
-	// Portalled to <body> for the same reason SpeakerDetail is: rendered from an
-	// island inside `<main>`, a positioned ancestor traps the sheet in that
-	// stacking context and the fixed site header draws over it.
-	return createPortal(
+	return (
 		<>
-			<div
-				className={sheet.sheet}
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="session-detail-title"
-				ref={dialogRef}
-				tabIndex={-1}
+			<Sheet
+				dialogRef={dialogRef}
+				ariaLabelledBy="session-detail-title"
+				onCloseClick={(viaKeyboard) => {
+					setKeyboardClose(viaKeyboard);
+					onClose();
+				}}
 			>
-				<div className={sheet.bar}>
-					<button
-						className={sheet.close}
-						type="button"
-						onClick={(event) => {
-							setKeyboardClose(event.detail === 0);
-							onClose();
-						}}
-						data-autofocus
-					>
-						Close
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-							<path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-						</svg>
-					</button>
-				</div>
+				<p className={sheet.kicker}>Session</p>
+				<h2 id="session-detail-title" className={sheet.title}>
+					{session.title}
+				</h2>
 
-				<div className={sheet.content}>
-					<p className={sheet.kicker}>Session</p>
-					<h2 id="session-detail-title" className={sheet.title}>
-						{session.title}
-					</h2>
+				{/* Room, track and level on ONE mono line. The tags used to be a
+				    second row of bordered chips under the room — a pill is a
+				    different product's vocabulary and the redesign took them off
+				    every other surface already. */}
+				{(session.room || tagCategories.length > 0) && (
+					<ul className={s.meta}>
+						{session.room && <li className={s.metaItem}>{session.room}</li>}
+						{tagCategories.flatMap((category) =>
+							category.values.map((value) => (
+								<li key={`${category.name}-${value}`} className={s.metaItem}>
+									{value}
+								</li>
+							)),
+						)}
+					</ul>
+				)}
 
-					{/* Room, track and level on ONE mono line. The tags used to be a
-					    second row of bordered chips under the room — a pill is a
-					    different product's vocabulary and the redesign took them off
-					    every other surface already. */}
-					{(session.room || tagCategories.length > 0) && (
-						<ul className={s.meta}>
-							{session.room && <li className={s.metaItem}>{session.room}</li>}
-							{tagCategories.flatMap((category) =>
-								category.values.map((value) => (
-									<li key={`${category.name}-${value}`} className={s.metaItem}>
-										{value}
-									</li>
-								)),
-							)}
-						</ul>
-					)}
+				{abstractParagraphs.length > 0 && (
+					<div className={s.abstract}>
+						{abstractParagraphs.map((paragraph, i) => (
+							<p key={i}>{paragraph}</p>
+						))}
+					</div>
+				)}
 
-					{abstractParagraphs.length > 0 && (
-						<div className={s.abstract}>
-							{abstractParagraphs.map((paragraph, i) => (
-								<p key={i}>{paragraph}</p>
+				{session.speakers.length > 0 && (
+					<div className={s.speakers}>
+						<h3 className={sheet.blockTitle}>
+							{session.speakers.length > 1 ? 'Speakers' : 'Speaker'}
+						</h3>
+						<ul className="field">
+							{session.speakers.map((speaker) => (
+								<li key={speaker.id}>
+									<button
+										type="button"
+										className={`field-row field-row--link ${s.speaker}`}
+										onClick={() => openSpeaker(speaker)}
+										aria-label={`View ${speaker.fullName}'s profile`}
+									>
+										<span className={s.avatar}>
+											<SpeakerAvatars
+												speakers={[speaker]}
+												max={1}
+												size={72}
+												photoClass={s.avatarImg}
+												monogramClass={s.avatarMono}
+											/>
+										</span>
+										<span className={s.speakerText}>
+											<span className={s.speakerName}>{speaker.fullName}</span>
+											{speaker.tagLine && (
+												<span className={s.speakerTag}>{speaker.tagLine}</span>
+											)}
+										</span>
+									</button>
+								</li>
 							))}
-						</div>
-					)}
-
-					{session.speakers.length > 0 && (
-						<div className={s.speakers}>
-							<h3 className={sheet.blockTitle}>
-								{session.speakers.length > 1 ? 'Speakers' : 'Speaker'}
-							</h3>
-							<ul className="field">
-								{session.speakers.map((speaker) => (
-									<li key={speaker.id}>
-										<button
-											type="button"
-											className={`field-row field-row--link ${s.speaker}`}
-											onClick={() => openSpeaker(speaker)}
-											aria-label={`View ${speaker.fullName}'s profile`}
-										>
-											<span className={s.avatar}>
-												<SpeakerAvatar speaker={speaker} />
-											</span>
-											<span className={s.speakerText}>
-												<span className={s.speakerName}>{speaker.fullName}</span>
-												{speaker.tagLine && (
-													<span className={s.speakerTag}>{speaker.tagLine}</span>
-												)}
-											</span>
-										</button>
-									</li>
-								))}
-							</ul>
-						</div>
-					)}
-				</div>
-			</div>
+						</ul>
+					</div>
+				)}
+			</Sheet>
 			{activeSpeaker && <SpeakerDetail speaker={activeSpeaker} onClose={closeSpeaker} />}
-		</>,
-		document.body,
+		</>
 	);
 }
