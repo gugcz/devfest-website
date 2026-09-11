@@ -47,10 +47,20 @@ import { buildDiscountEmail, sendEmail } from './email.js';
 import {
 	claimInvoiceForProcessing,
 	listAwaitingPayment,
+	listStrandedProcessing,
+	reclaimStrandedProcessing,
 	releaseInvoiceClaim,
 	updateInvoice,
 	type InvoiceRecord,
 } from './firestore.js';
+
+/**
+ * A `processing` doc older than this was almost certainly stranded by a crash
+ * between the claim and completion, not still legitimately in flight — a
+ * single completion (iDoklad status check already done, code mint + one
+ * email) finishes in seconds, nowhere near this long.
+ */
+const STRANDED_PROCESSING_MS = 30 * 60 * 1000;
 
 export const pollPaidInvoicesScheduled = onSchedule(
 	{
@@ -82,7 +92,8 @@ export const pollPaidInvoicesScheduled = onSchedule(
 
 async function pollPaidInvoices(): Promise<void> {
 	const awaiting = await listAwaitingPayment();
-	if (awaiting.length === 0) return;
+	const stranded = await listStrandedProcessing(STRANDED_PROCESSING_MS);
+	if (awaiting.length === 0 && stranded.length === 0) return;
 
 	const idokladCfg: IdokladConfig = {
 		clientId: IDOKLAD_CLIENT_ID.value(),
@@ -116,29 +127,55 @@ async function pollPaidInvoices(): Promise<void> {
 		// even if a previous run already picked this doc up.
 		if (!(await claimInvoiceForProcessing(record.id))) continue;
 
-		try {
-			await completeInvoice(record, titoCfg, slackUrl);
-			completed += 1;
-		} catch (err) {
-			const message = describeError(err);
-			logger.error('pollPaidInvoicesScheduled: failed to complete invoice', {
-				id: record.id,
-				message,
-			});
-			// Revert to `invoiced` so the next poll retries. Safe to re-run:
-			// the code is persisted the instant it's minted, so completeInvoice
-			// never mints a second one.
-			await releaseInvoiceClaim(record.id, message);
-			// Keep upstream error detail in logs only — don't echo (potential
-			// PII) into the Slack channel.
-			await notify(
-				'invoices',
-				slackUrl,
-				`❌ ${record.data.companyName} — post-payment processing failed (id ${record.id}); see logs`,
-			);
-		}
+		if (await tryCompleteInvoice(record, titoCfg, slackUrl)) completed += 1;
 	}
-	logger.info('pollPaidInvoicesScheduled done', { checked: awaiting.length, completed });
+
+	// A doc a previous run claimed into `processing` and then never finished —
+	// a hard stop (timeout, OOM, instance kill) leaves no code path to release
+	// it, and `listAwaitingPayment` above only sees `invoiced` docs, so without
+	// this it is never polled again: the company paid, never gets a code, and
+	// nothing alerts. `completeInvoice` is idempotent (the code is persisted
+	// before delivery), so re-running it here is safe.
+	for (const record of stranded) {
+		if (!(await reclaimStrandedProcessing(record.id))) continue;
+		if (await tryCompleteInvoice(record, titoCfg, slackUrl)) completed += 1;
+	}
+
+	logger.info('pollPaidInvoicesScheduled done', {
+		checked: awaiting.length,
+		stranded: stranded.length,
+		completed,
+	});
+}
+
+/** Runs `completeInvoice`, releasing the claim and alerting Slack on failure. */
+async function tryCompleteInvoice(
+	record: InvoiceRecord,
+	titoCfg: TitoConfig,
+	slackUrl: string,
+): Promise<boolean> {
+	try {
+		await completeInvoice(record, titoCfg, slackUrl);
+		return true;
+	} catch (err) {
+		const message = describeError(err);
+		logger.error('pollPaidInvoicesScheduled: failed to complete invoice', {
+			id: record.id,
+			message,
+		});
+		// Revert to `invoiced` so the next poll retries. Safe to re-run:
+		// the code is persisted the instant it's minted, so completeInvoice
+		// never mints a second one.
+		await releaseInvoiceClaim(record.id, message);
+		// Keep upstream error detail in logs only — don't echo (potential
+		// PII) into the Slack channel.
+		await notify(
+			'invoices',
+			slackUrl,
+			`❌ ${record.data.companyName} — post-payment processing failed (id ${record.id}); see logs`,
+		);
+		return false;
+	}
 }
 
 async function completeInvoice(

@@ -15,7 +15,7 @@
 
 import { createHash } from 'node:crypto';
 
-import { FieldValue } from 'firebase-admin/firestore';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 
 import { firestore } from '../lib/admin.js';
 
@@ -58,6 +58,12 @@ export interface InvoiceDoc extends InvoiceRequestInput {
 	 */
 	contactEmailSynced?: boolean;
 	paidAmount?: string | null;
+	/**
+	 * Stamped when a doc is claimed into `processing`. Lets the poller find a
+	 * doc stranded there by a crash between claim and completion (a hard stop
+	 * — timeout, OOM, instance kill — has no code path to release the claim).
+	 */
+	processingSince?: Timestamp;
 	// ti.to
 	discountCode?: string | null;
 	discountLink?: string | null;
@@ -96,6 +102,28 @@ export async function listAwaitingPayment(limit = 50): Promise<InvoiceRecord[]> 
 		.limit(limit)
 		.get();
 	return snap.docs.map((doc) => ({ id: doc.id, data: doc.data() as InvoiceDoc }));
+}
+
+/**
+ * Invoices claimed into `processing` long enough ago that the claim is
+ * probably stranded — the run that made it crashed hard (timeout, OOM,
+ * instance kill) between the claim and completion, with no code path in
+ * between to release it. `status` alone has no index requirement; the age
+ * cutoff is applied in memory rather than as a Firestore range filter so this
+ * needs no composite index alongside it.
+ */
+export async function listStrandedProcessing(
+	staleAfterMs: number,
+	limit = 50,
+): Promise<InvoiceRecord[]> {
+	const snap = await invoicesCollection()
+		.where('status', '==', 'processing')
+		.limit(limit)
+		.get();
+	const cutoff = Date.now() - staleAfterMs;
+	return snap.docs
+		.map((doc) => ({ id: doc.id, data: doc.data() as InvoiceDoc }))
+		.filter((r) => (r.data.processingSince?.toMillis() ?? 0) < cutoff);
 }
 
 export async function updateInvoice(id: string, patch: Partial<InvoiceDoc>): Promise<void> {
@@ -153,7 +181,30 @@ export async function claimInvoiceForProcessing(id: string): Promise<boolean> {
 		const snap = await tx.get(ref);
 		if (!snap.exists) return false;
 		if ((snap.data() as InvoiceDoc).status !== 'invoiced') return false;
-		tx.update(ref, { status: 'processing', updatedAt: FieldValue.serverTimestamp() });
+		tx.update(ref, {
+			status: 'processing',
+			processingSince: FieldValue.serverTimestamp(),
+			updatedAt: FieldValue.serverTimestamp(),
+		});
+		return true;
+	});
+}
+
+/**
+ * Re-claim a doc already sitting in `processing` (see `listStrandedProcessing`)
+ * by bumping its `processingSince` stamp, so a second poller run in the same
+ * window won't also pick it up mid-retry.
+ */
+export async function reclaimStrandedProcessing(id: string): Promise<boolean> {
+	const ref = invoicesCollection().doc(id);
+	return firestore().runTransaction(async (tx) => {
+		const snap = await tx.get(ref);
+		if (!snap.exists) return false;
+		if ((snap.data() as InvoiceDoc).status !== 'processing') return false;
+		tx.update(ref, {
+			processingSince: FieldValue.serverTimestamp(),
+			updatedAt: FieldValue.serverTimestamp(),
+		});
 		return true;
 	});
 }
