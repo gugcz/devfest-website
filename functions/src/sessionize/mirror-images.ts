@@ -26,7 +26,7 @@ import { logger } from 'firebase-functions/v2';
 
 import { adminApp } from '../lib/admin.js';
 import { describeError } from '../lib/errors.js';
-import { fetchWithRetry } from '../lib/http.js';
+import { assertOk, fetchWithRetry } from '../lib/http.js';
 import type { SessionizeSpeaker } from './sessionize-api.js';
 
 type Bucket = ReturnType<ReturnType<typeof getStorage>['bucket']>;
@@ -85,7 +85,7 @@ async function mirrorOne(bucket: Bucket, speakerId: string, sourceUrl: string): 
 		{ headers: { Accept: 'image/*' } },
 		{ label: `speaker photo ${speakerId}`, attempts: 2, timeoutMs: FETCH_TIMEOUT_MS },
 	);
-	if (!res.ok) throw new Error(`download ${res.status} ${res.statusText}`);
+	await assertOk('download', res);
 	const contentType = res.headers.get('content-type') || 'image/jpeg';
 	if (!contentType.startsWith('image/')) throw new Error(`unexpected content-type ${contentType}`);
 	// Reject an oversize body before buffering when the length is advertised;

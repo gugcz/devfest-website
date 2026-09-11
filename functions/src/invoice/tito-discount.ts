@@ -12,7 +12,7 @@
  * flat-ish body wrapped under `discount_code`).
  */
 
-import { errorBody, fetchWithRetry } from '../lib/http.js';
+import { assertOk, fetchWithRetry } from '../lib/http.js';
 import { fetchAllReleases, type TitoRelease, deriveSaleStatus } from '../tickets/tito-api.js';
 
 const TITO_API_BASE = 'https://api.tito.io/v3';
@@ -116,10 +116,7 @@ export async function createDiscountCode(
 		{ label: 'ti.to discount_codes' },
 	);
 
-	if (!res.ok) {
-		const body = await errorBody(res);
-		throw new Error(`ti.to discount_codes ${res.status} ${res.statusText}: ${body}`);
-	}
+	await assertOk('ti.to discount_codes', res);
 
 	const data = (await res.json()) as { code?: string; discount_code?: { code: string } };
 	// Response may be flat or wrapped; handle both.

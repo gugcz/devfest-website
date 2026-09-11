@@ -60,6 +60,16 @@ export async function errorBody(res: Response, max = 300): Promise<string> {
 	return body.slice(0, max);
 }
 
+/** Build the standard "<label> <status> <statusText>: <body>" text for a failed response. */
+export async function httpError(label: string, res: Response): Promise<Error> {
+	return new Error(`${label} ${res.status} ${res.statusText}: ${await errorBody(res)}`);
+}
+
+/** Throw the standard shape above when `res` is not OK. Leaves the OK case untouched. */
+export async function assertOk(label: string, res: Response): Promise<void> {
+	if (!res.ok) throw await httpError(label, res);
+}
+
 /**
  * `fetch` with a timeout, bounded retries, and a diagnosable failure.
  *

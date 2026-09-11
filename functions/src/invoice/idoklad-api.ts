@@ -25,7 +25,7 @@
 import { logger } from 'firebase-functions/v2';
 
 import { describeError } from '../lib/errors.js';
-import { errorBody, fetchWithRetry } from '../lib/http.js';
+import { assertOk, fetchWithRetry } from '../lib/http.js';
 
 const TOKEN_URL = 'https://identity.idoklad.cz/server/connect/token';
 const API_BASE = 'https://api.idoklad.cz/v3';
@@ -108,9 +108,7 @@ async function getToken(cfg: IdokladConfig): Promise<string> {
 		},
 		{ label: 'iDoklad OAuth token', retryUnsafe: true },
 	);
-	if (!res.ok) {
-		throw new Error(`iDoklad OAuth ${res.status} ${res.statusText}: ${await errorBody(res)}`);
-	}
+	await assertOk('iDoklad OAuth', res);
 	const data = (await res.json()) as { access_token: string; expires_in: number };
 	cachedToken = { token: data.access_token, expiresAt: now + (data.expires_in ?? 3600) * 1000 };
 	return cachedToken.token;
@@ -188,10 +186,7 @@ async function apiEnvelope(
 	body?: unknown,
 ): Promise<any> {
 	const res = await apiFetch(cfg, method, path, body);
-	if (!res.ok) {
-		const detail = await errorBody(res);
-		throw new Error(`iDoklad ${method} ${path} ${res.status} ${res.statusText}: ${detail}`);
-	}
+	await assertOk(`iDoklad ${method} ${path}`, res);
 	return await res.json();
 }
 

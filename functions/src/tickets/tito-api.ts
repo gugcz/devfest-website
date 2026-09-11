@@ -19,7 +19,7 @@
  *     `sales_end`).
  */
 
-import { errorBody, fetchWithRetry } from '../lib/http.js';
+import { assertOk, fetchWithRetry } from '../lib/http.js';
 
 const TITO_API_BASE = 'https://api.tito.io/v3';
 
@@ -178,9 +178,7 @@ export async function fetchAllReleases(params: FetchReleasesParams): Promise<Tit
 		{ label: 'ti.to releases' },
 	);
 
-	if (!res.ok) {
-		throw new Error(`ti.to releases ${res.status} ${res.statusText}: ${await errorBody(res)}`);
-	}
+	await assertOk('ti.to releases', res);
 
 	const data = (await res.json()) as TitoReleasesPage;
 	const releases = data.releases ?? [];
