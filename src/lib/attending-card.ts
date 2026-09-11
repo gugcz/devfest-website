@@ -340,8 +340,19 @@ export function drawAttendingCard(
 	// the corners (849px, past the gradient's last stop, which clamps to it).
 	// Only a ~600px-diameter "spotlight" at the center stays clear, per the
 	// circular-vignette-to-black mock this round is matched against.
-	const vignetteFadeStart = size * 0.25; // 300px
-	const vignetteOuterStop = size / 2; // 600px — edges and corners both black
+	//
+	// Below 1x zoom the drawn photo shrinks below the card, so a fixed 600px
+	// outer stop would clear past the photo's own edge and expose the black
+	// base underneath (which is fine) but leave the photo's visible edge
+	// inside the "clear" zone — the vignette then reads as bleeding onto
+	// nothing, not as framing the photo. Scaling both stops by k = min(zoom,
+	// 1) keeps the outer stop pinned to half the photo's shorter drawn side,
+	// so the photo's own edges/corners are always inside the full-black
+	// region regardless of zoom. Above 1x the photo already covers past the
+	// card edges, so k clamps to 1 and both stops stay at 300/600.
+	const zoomScale = Math.min(data.transform.zoom, 1);
+	const vignetteFadeStart = size * 0.25 * zoomScale; // 300px at zoom >= 1
+	const vignetteOuterStop = (size / 2) * zoomScale; // 600px at zoom >= 1
 	const vignette = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, vignetteOuterStop);
 	vignette.addColorStop(0, 'rgba(0,0,0,0)');
 	vignette.addColorStop(vignetteFadeStart / vignetteOuterStop, 'rgba(0,0,0,0)');
