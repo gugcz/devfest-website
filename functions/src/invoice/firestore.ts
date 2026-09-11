@@ -142,15 +142,25 @@ export async function updateInvoice(id: string, patch: Partial<InvoiceDoc>): Pro
  * is the real site, but a captured/valid token could otherwise drive unbounded
  * invoice + email creation (cost / sending-reputation abuse).
  */
+/**
+ * SHA-256 of the (IČO, email) pair the rate limit keys on — equally greppable
+ * as the raw values for correlating a throttle event across log lines, but
+ * identifies nobody. Exported so a "rate limited" log can cite the same key
+ * instead of the IČO itself.
+ */
+export function rateLimitKey(registrationNumberIC: string, email: string): string {
+	return createHash('sha256')
+		.update(`${registrationNumberIC.toLowerCase()}|${email.toLowerCase()}`)
+		.digest('hex');
+}
+
 export async function checkInvoiceRateLimit(opts: {
 	registrationNumberIC: string;
 	email: string;
 	max: number;
 	windowMs: number;
 }): Promise<boolean> {
-	const key = createHash('sha256')
-		.update(`${opts.registrationNumberIC.toLowerCase()}|${opts.email.toLowerCase()}`)
-		.digest('hex');
+	const key = rateLimitKey(opts.registrationNumberIC, opts.email);
 	const ref = firestore().collection(INVOICE_RATE_LIMITS_COLLECTION).doc(key);
 	const now = Date.now();
 

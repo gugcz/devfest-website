@@ -26,7 +26,12 @@ import { logger } from 'firebase-functions/v2';
 
 import { describeError } from '../lib/errors.js';
 import { CALLABLE } from '../options.js';
-import { checkInvoiceRateLimit, createInvoiceRequest, type InvoiceRequestInput } from './firestore.js';
+import {
+	checkInvoiceRateLimit,
+	createInvoiceRequest,
+	rateLimitKey,
+	type InvoiceRequestInput,
+} from './firestore.js';
 
 const MAX_TICKETS = 50;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -115,7 +120,9 @@ export const submitInvoiceCallable = onCall(
 			windowMs: RATE_LIMIT_WINDOW_MS,
 		});
 		if (!allowed) {
-			logger.warn('submitInvoiceCallable rate limited', { ic: result.value.registrationNumberIC });
+			logger.warn('submitInvoiceCallable rate limited', {
+				key: rateLimitKey(result.value.registrationNumberIC, result.value.email),
+			});
 			throw new HttpsError('resource-exhausted', 'rate_limited');
 		}
 

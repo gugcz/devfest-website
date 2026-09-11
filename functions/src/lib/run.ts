@@ -64,10 +64,20 @@ function healthRef(name: string) {
 	return db().ref(`${HEALTH_PATH}/${name}`);
 }
 
+/** A corrupt/malformed node degrades to "assume healthy", same as a failed read. */
+function isHealthState(value: unknown): value is HealthState {
+	if (typeof value !== 'object' || value === null) return false;
+	const v = value as Record<string, unknown>;
+	return (
+		typeof v.failures === 'number' && typeof v.since === 'number' && typeof v.lastError === 'string'
+	);
+}
+
 async function readHealth(name: string): Promise<HealthState | null> {
 	try {
 		const snap = await healthRef(name).once('value');
-		return (snap.val() as HealthState | null) ?? null;
+		const value: unknown = snap.val();
+		return isHealthState(value) ? value : null;
 	} catch (err) {
 		// Assume healthy: the next failure alerts (possibly a duplicate) rather
 		// than being suppressed by a state read we couldn't make.

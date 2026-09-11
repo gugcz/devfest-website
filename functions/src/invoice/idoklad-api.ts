@@ -109,8 +109,16 @@ async function getToken(cfg: IdokladConfig): Promise<string> {
 		{ label: 'iDoklad OAuth token', retryUnsafe: true },
 	);
 	await assertOk('iDoklad OAuth', res);
-	const data = (await res.json()) as { access_token: string; expires_in: number };
-	cachedToken = { token: data.access_token, expiresAt: now + (data.expires_in ?? 3600) * 1000 };
+	const data = (await res.json()) as unknown;
+	const accessToken = (data as { access_token?: unknown } | null)?.access_token;
+	if (typeof accessToken !== 'string' || !accessToken) {
+		throw new Error('iDoklad OAuth response carried no access_token');
+	}
+	const expiresIn = (data as { expires_in?: unknown } | null)?.expires_in;
+	cachedToken = {
+		token: accessToken,
+		expiresAt: now + (typeof expiresIn === 'number' ? expiresIn : 3600) * 1000,
+	};
 	return cachedToken.token;
 }
 
@@ -123,6 +131,13 @@ export class IdokladApiError extends Error {
 		super(`${context} refused: ${detail ?? 'IsSuccess:false with no Message'}`);
 		this.name = 'IdokladApiError';
 	}
+}
+
+/** The `{ Data, IsSuccess, Message }` shape every iDoklad response wraps. */
+interface IdokladEnvelope {
+	Data?: unknown;
+	IsSuccess?: boolean;
+	Message?: unknown;
 }
 
 /** `Message` off an iDoklad envelope — a string, or a list of them. */
@@ -184,13 +199,13 @@ async function apiEnvelope(
 	method: string,
 	path: string,
 	body?: unknown,
-): Promise<any> {
+): Promise<unknown> {
 	const res = await apiFetch(cfg, method, path, body);
 	await assertOk(`iDoklad ${method} ${path}`, res);
 	return await res.json();
 }
 
-async function apiJson<T = any>(
+async function apiJson<T = unknown>(
 	cfg: IdokladConfig,
 	method: string,
 	path: string,
@@ -345,9 +360,9 @@ export async function createInvoice(
 	cfg: IdokladConfig,
 	input: { contactId: number; dueDays: number; description: string; line: IdokladInvoiceLine },
 ): Promise<CreatedInvoice> {
-	const tpl = await apiJson<Record<string, any>>(cfg, 'GET', '/IssuedInvoices/Default');
+	const tpl = await apiJson<Record<string, unknown>>(cfg, 'GET', '/IssuedInvoices/Default');
 
-	const issue = tpl.DateOfIssue ? new Date(tpl.DateOfIssue) : new Date();
+	const issue = typeof tpl.DateOfIssue === 'string' ? new Date(tpl.DateOfIssue) : new Date();
 	const maturity = addDays(issue, input.dueDays);
 
 	const item = {
@@ -416,9 +431,9 @@ export async function sendInvoiceByEmail(
 	const otherRecipients = (opts.otherRecipients ?? []).map((a) => a.trim()).filter(Boolean);
 	const masked = otherRecipients.map(maskEmail);
 
-	let envelope: any;
+	let envelope: IdokladEnvelope;
 	try {
-		envelope = await apiEnvelope(cfg, 'POST', '/Mails/IssuedInvoice/Send', {
+		envelope = (await apiEnvelope(cfg, 'POST', '/Mails/IssuedInvoice/Send', {
 			DocumentId: invoiceId,
 			SendToPartner: true,
 			SendToSelf: false,
@@ -427,7 +442,7 @@ export async function sendInvoiceByEmail(
 			EmailSubject: opts.subject,
 			EmailBody: opts.body,
 			SendAttachment: true,
-		});
+		})) as IdokladEnvelope;
 	} catch (err) {
 		// Log before rethrowing: the caller records the failure, but only this
 		// frame knows which invoice and which recipients it was for.
