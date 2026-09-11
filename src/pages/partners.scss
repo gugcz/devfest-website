@@ -6,13 +6,6 @@
 		min-width: 0;
 	}
 
-	.contact-name {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-title-compact);
-		letter-spacing: 0.06em;
-		color: var(--color-text);
-	}
-
 	.email-link {
 		@include mono(var(--fs-label-lg), 0.04em);
 		color: var(--color-text);
@@ -281,7 +274,7 @@
 		margin: 0;
 	}
 
-	.contact-name {
+	:global(.band--accent) .contact-name {
 		@include mono(var(--fs-label), 0.22em, uppercase);
 		// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
 		color: var(--on-accent);

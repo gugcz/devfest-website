@@ -22,6 +22,8 @@ interface Props {
 	actions: readonly Action[];
 	tone?: 'accent' | 'raised' | 'plain';
 	titleId?: string;
+	/** Extra class on the outer <section>, for a page's own one-off spacing. */
+	class?: string;
 }
 
 const {
@@ -31,12 +33,13 @@ const {
 	actions,
 	tone = 'raised',
 	titleId,
+	class: className,
 } = Astro.props;
 
 const toneClass = tone === 'accent' ? ' band--accent' : tone === 'raised' ? ' band--raised' : '';
 ---
 
-<section class={`band${toneClass} closer-band`} aria-labelledby={titleId}>
+<section class={`band${toneClass} closer-band${className ? ` ${className}` : ''}`} aria-labelledby={titleId}>
 	<div class="band-inner closer reveal">
 		<div>
 			{eyebrow && <p class="eyebrow closer-eyebrow">{eyebrow}</p>}
@@ -45,6 +48,7 @@ const toneClass = tone === 'accent' ? ' band--accent' : tone === 'raised' ? ' ba
 
 		<div class="closer-side">
 			{note && <p class="closer-note">{note}</p>}
+			<slot />
 			<div class="closer-actions">
 				{actions.map(({ href, label, kind = 'primary', external }) => (
 					<a
