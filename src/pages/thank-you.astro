@@ -41,16 +41,20 @@ const STEPS = [
 	{
 		title: 'Bring someone with you',
 		noteHtml:
-			'Half the value of a conference is who you go with. Tell the people you would want in the room.',
+			'Half the value of a conference is who you go with. Tell the people you would want in the room. ' +
+			'Make yourself an "I\'m attending" card for socials in a minute.',
 		actions: [
+			{ href: '/attending/', label: 'Make your card', kind: 'primary' as const },
 			{
 				href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
 				label: 'Share on LinkedIn',
+				kind: 'ghost' as const,
 				external: true,
 			},
 			{
 				href: `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
 				label: 'Share on X',
+				kind: 'ghost' as const,
 				external: true,
 			},
 		],
