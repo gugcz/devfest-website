@@ -19,14 +19,14 @@ import { FieldValue } from 'firebase-admin/firestore';
 
 import { firestore } from '../lib/admin.js';
 
-export const INVOICES_COLLECTION = 'invoices';
+const INVOICES_COLLECTION = 'invoices';
 
 /**
  * Per-(company, email) throttle counters for `submitInvoiceCallable`. Like the
  * invoices collection, this is server-only — the catch-all deny in
  * firestore.rules covers it (no explicit client access anywhere).
  */
-export const INVOICE_RATE_LIMITS_COLLECTION = 'invoiceRateLimits';
+const INVOICE_RATE_LIMITS_COLLECTION = 'invoiceRateLimits';
 
 export type InvoiceStatus = 'pending' | 'invoiced' | 'processing' | 'completed' | 'error';
 

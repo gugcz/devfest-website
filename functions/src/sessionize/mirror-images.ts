@@ -29,6 +29,8 @@ import { describeError } from '../lib/errors.js';
 import { fetchWithRetry } from '../lib/http.js';
 import type { SessionizeSpeaker } from './sessionize-api.js';
 
+type Bucket = ReturnType<ReturnType<typeof getStorage>['bucket']>;
+
 const STORAGE_PREFIX = 'speakers';
 /** Refuse to buffer a runaway response; real portraits are well under this. */
 const MAX_BYTES = 10 * 1024 * 1024;
@@ -50,22 +52,12 @@ function tokenUrl(bucketName: string, objectPath: string, token: string): string
 	return `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodeURIComponent(objectPath)}?alt=media&token=${token}`;
 }
 
-interface BucketLike {
-	name: string;
-	file: (path: string) => FileLike;
-}
-
-interface FileLike {
-	getMetadata: () => Promise<[Record<string, unknown>]>;
-	save: (data: Buffer, options: Record<string, unknown>) => Promise<void>;
-}
-
 /**
  * Mirror one speaker photo and return its served URL. Reuses the existing
  * object when it was already mirrored from the same source; otherwise downloads
  * + uploads. Throws on any failure so the caller can fall back to the original.
  */
-async function mirrorOne(bucket: BucketLike, speakerId: string, sourceUrl: string): Promise<string> {
+async function mirrorOne(bucket: Bucket, speakerId: string, sourceUrl: string): Promise<string> {
 	const objectPath = `${STORAGE_PREFIX}/${speakerId}`;
 	const file = bucket.file(objectPath);
 
@@ -147,9 +139,9 @@ export async function mirrorSpeakerImages(
 ): Promise<Map<string, string>> {
 	const map = new Map<string, string>();
 
-	let bucket: BucketLike;
+	let bucket: Bucket;
 	try {
-		bucket = getStorage(adminApp).bucket() as unknown as BucketLike;
+		bucket = getStorage(adminApp).bucket();
 	} catch (err) {
 		logger.warn(
 			`sessionize image mirror: Storage unavailable, using source URLs: ${describeError(err)}`,

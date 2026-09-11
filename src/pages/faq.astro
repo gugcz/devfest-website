@@ -28,16 +28,6 @@ const faqGroups = (await getCollection('faq'))
 		items: entry.data.items,
 	}));
 
-let fileCounter = 0;
-const groupsForDisplay = faqGroups.map((group) => ({
-	...group,
-	count: String(group.items.length).padStart(2, '0'),
-	items: group.items.map((item) => {
-		fileCounter += 1;
-		return { ...item, num: String(fileCounter).padStart(2, '0') };
-	}),
-}));
-
 // FAQPage structured data — flattened from the same source so it can never
 // drift from what's rendered. https://developers.google.com/search/docs/appearance/structured-data/faqpage
 const faqSchema = {
@@ -84,13 +74,13 @@ const faqJsonLd = JSON.stringify(faqSchema);
 		<section class="band band--lit" aria-labelledby="faq-list-heading">
 			<div class="band-inner">
 				<h2 id="faq-list-heading" class="sr-only">All questions</h2>
-				{groupsForDisplay.map((group, groupIndex) => (
+				{faqGroups.map((group, groupIndex) => (
 					<div class="faq-group reveal">
 						{/* Category pinned in its own column beside the questions —
 						    an editorial two-column split rather than a caption stacked
 						    over a narrow centred list. */}
 						<div class="faq-head">
-							<h2 class="faq-cat" id={`faq-cat-${group.id}`}>{group.label}</h2>
+							<h2 class="faq-cat">{group.label}</h2>
 						</div>
 
 						<div class="field faq-list">

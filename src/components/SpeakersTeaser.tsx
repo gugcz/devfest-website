@@ -96,11 +96,6 @@ export default function SpeakersTeaser() {
 		return () => clearInterval(id);
 	}, [status, canRotate, paused, reduceMotion, size, total]);
 
-	// Keep the window valid if the roster shrinks between syncs.
-	useEffect(() => {
-		if (total > 0 && offset >= total) setOffset(0);
-	}, [total, offset]);
-
 	if (status !== 'ready' || total === 0) return null;
 
 	const shown = Array.from({ length: size }, (_, i) => displaySpeakers[(offset + i) % total]);

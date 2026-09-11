@@ -17,10 +17,6 @@
 		text-transform: uppercase;
 		color: var(--color-text);
 		margin: 0;
-
-		.red {
-			color: var(--color-accent-hot);
-		}
 	}
 
 	// A ruled note opening on a strong rule, not a mounted panel.
@@ -183,9 +179,6 @@
 		.coverage-arrow,
 		.coverage-thumb img { transition: none; }
 
-	}
-
-	@media (max-width: 900px) {
 	}
 
 	@media (max-width: 600px) {

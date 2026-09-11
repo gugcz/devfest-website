@@ -283,8 +283,7 @@
 	justify-content: center;
 }
 
-.avatarMono,
-.avatarMore {
+.avatarMono {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-label-lg);
 	letter-spacing: 0.04em;
@@ -297,7 +296,9 @@
 // the same well as the monogram beside it and now reads in the same ink.
 .avatarMore {
 	@include mono(var(--fs-label-xs));
+	letter-spacing: 0.04em;
 	color: var(--ink-monogram-sm);
+	filter: none;
 }
 
 .names {

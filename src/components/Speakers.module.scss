@@ -24,9 +24,9 @@
 }
 
 // Carries `--i` for the develop stagger; exists so the index can be set without
-// styling the bare <li>.
+// styling the bare <li>. `display: flex` comes from `.grid > li` above — same
+// element, one declaration.
 .cell {
-	display: flex;
 }
 
 .card {

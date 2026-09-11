@@ -275,8 +275,6 @@ export interface AgendaPartition {
 	bands: Session[];
 	/** Timed talks per room column, keyed by the column's `key`, sorted by start. */
 	byRoom: Map<string, Session[]>;
-	/** Timed talks with no room, sorted by start (rendered in the TBA column). */
-	roomTba: Session[];
 	/** Displayable sessions without a start time, sorted by array order. */
 	unscheduled: Session[];
 }
@@ -321,7 +319,7 @@ export function partitionAgenda(sessions: Session[]): AgendaPartition {
 		roomTba.length > 0 ? [...columns, { key: ROOM_TBA, label: ROOM_TBA }] : columns;
 	if (roomTba.length > 0) byRoom.set(ROOM_TBA, roomTba);
 
-	return { columns: finalColumns, bands, byRoom, roomTba, unscheduled };
+	return { columns: finalColumns, bands, byRoom, unscheduled };
 }
 
 /**

@@ -36,7 +36,7 @@ setGlobalOptions({ maxInstances: 10 });
 export const REGION = 'europe-west1';
 
 /** Schedules are authored in local time; the event and its organizers are in Prague. */
-export const TIME_ZONE = 'Europe/Prague';
+const TIME_ZONE = 'Europe/Prague';
 
 /**
  * Scheduled jobs. `retryCount: 1` gives one platform-level retry, which covers

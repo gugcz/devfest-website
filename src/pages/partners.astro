@@ -87,7 +87,6 @@ const logoProps = (logo: string, plated = false) => {
 			};
 };
 
-const DECK_READY = true;
 const PRESENTATION_URL = 'https://canva.link/828fiq93km2hwds';
 const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.cz' };
 
@@ -194,16 +193,9 @@ const tickerTopics = [
 					</p>
 
 					<div class="closer-actions">
-						{DECK_READY ? (
-							<a class="btn-primary" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
-								See partnership deck
-							</a>
-						) : (
-							<span class="partners-cta-soon" aria-disabled="true">
-								<span class="partners-cta-label">Partnership deck</span>
-								<span class="partners-cta-stamp" aria-hidden="true">Coming soon</span>
-							</span>
-						)}
+						<a class="btn-primary" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
+							See partnership deck
+						</a>
 						<a class="btn-ghost" href={`mailto:${FILIP.email}`}>Email Filip</a>
 					</div>
 				</div>

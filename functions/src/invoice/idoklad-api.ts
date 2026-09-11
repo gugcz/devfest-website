@@ -37,8 +37,8 @@ const VAT_RATE_ZERO = 2; // VatRateType.Zero
 const ITEM_TYPE_NORMAL = 0; // PostIssuedInvoiceItemType.ItemTypeNormal
 
 /** PaymentStatus enum (Unpaid=0, Paid=1, PartialPaid=2, Overpaid=3). */
-export const PAYMENT_STATUS_PAID = 1;
-export const PAYMENT_STATUS_OVERPAID = 3;
+const PAYMENT_STATUS_PAID = 1;
+const PAYMENT_STATUS_OVERPAID = 3;
 export function isPaidStatus(status: number | null | undefined): boolean {
 	return status === PAYMENT_STATUS_PAID || status === PAYMENT_STATUS_OVERPAID;
 }
@@ -121,11 +121,9 @@ async function getToken(cfg: IdokladConfig): Promise<string> {
  * Carries the API's own `Message`, which is the only thing that says why.
  */
 export class IdokladApiError extends Error {
-	readonly detail: string | null;
 	constructor(context: string, detail: string | null) {
 		super(`${context} refused: ${detail ?? 'IsSuccess:false with no Message'}`);
 		this.name = 'IdokladApiError';
-		this.detail = detail;
 	}
 }
 

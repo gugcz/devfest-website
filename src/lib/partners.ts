@@ -40,7 +40,7 @@ const byTier = async (tier: string): Promise<Partner[]> => {
 };
 
 /** Full sponsor ladder, top tier first (empty tiers included — filter at the call site). */
-export const getPartnerTiers = async (): Promise<PartnerTier[]> =>
+const getPartnerTiers = async (): Promise<PartnerTier[]> =>
 	Promise.all(
 		TIER_LADDER.map(async ({ id, label }) => ({ id, label, partners: await byTier(id) }))
 	);

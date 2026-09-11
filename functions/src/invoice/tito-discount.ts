@@ -79,7 +79,6 @@ function round2(n: number): number {
 }
 
 export interface CreatedDiscountCode {
-	id: number;
 	code: string;
 }
 
@@ -122,11 +121,10 @@ export async function createDiscountCode(
 		throw new Error(`ti.to discount_codes ${res.status} ${res.statusText}: ${body}`);
 	}
 
-	const data = (await res.json()) as { id?: number; code?: string; discount_code?: { id: number; code: string } };
+	const data = (await res.json()) as { code?: string; discount_code?: { code: string } };
 	// Response may be flat or wrapped; handle both.
-	const id = data.id ?? data.discount_code?.id ?? 0;
 	const code = data.code ?? data.discount_code?.code ?? input.code;
-	return { id, code };
+	return { code };
 }
 
 /** Public redeem link for a discount code. */

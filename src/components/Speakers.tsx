@@ -155,7 +155,7 @@ function SpeakerCard({
 }
 
 /** The speaker lineup grid, rendered by `Speakers` below. */
-export function SpeakerLineup({
+function SpeakerLineup({
 	speakers,
 	onOpen,
 	openId = null,

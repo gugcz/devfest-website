@@ -58,10 +58,6 @@
 		text-transform: uppercase;
 		color: var(--color-text);
 		margin: 0;
-
-		.red {
-			color: var(--color-accent-hot);
-		}
 	}
 
 	/* ===================== GRID ===================== */
@@ -183,10 +179,9 @@
 	}
 
 	.kit-badge {
-		@include mono(var(--fs-label-sm), 0.16em);
-		color: var(--ink-strong);
 		// No box: the format is a label on the tile, not a chip.
-		letter-spacing: 0.22em;
+		@include mono(var(--fs-label-sm), 0.22em);
+		color: var(--ink-strong);
 	}
 
 	.kit-meta {
@@ -297,9 +292,5 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.kit-link { transition: box-shadow 0.2s; }
 		.kit-dl { transition: color 0.2s; }
-
-		.kit-link:hover,
-		.kit-link:focus-visible { transform: none; }
 	}

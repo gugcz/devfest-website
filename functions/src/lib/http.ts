@@ -20,7 +20,7 @@ import { logger } from 'firebase-functions/v2';
 import { describeError } from './errors.js';
 
 /** Per-attempt ceiling. Generous for an API call, far below any function timeout. */
-export const DEFAULT_TIMEOUT_MS = 15_000;
+const DEFAULT_TIMEOUT_MS = 15_000;
 const DEFAULT_ATTEMPTS = 3;
 /** Backoff before attempt N+1: 1s, then 2s. */
 const RETRY_BASE_DELAY_MS = 1_000;
@@ -50,7 +50,7 @@ export interface FetchOptions {
  * caller must see it immediately rather than burn the backoff on a verdict that
  * won't change.
  */
-export function isTransientStatus(status: number): boolean {
+function isTransientStatus(status: number): boolean {
 	return status === 429 || status >= 500;
 }
 

@@ -180,7 +180,7 @@ export const ticketsWebhook = onRequest(
 			return;
 		}
 
-		const rawBody: Buffer | undefined = (req as unknown as { rawBody?: Buffer }).rawBody;
+		const rawBody = req.rawBody;
 		if (!rawBody) {
 			logger.error('ticketsWebhook missing rawBody — cannot verify signature');
 			res.status(400).send('Missing body');

@@ -10,11 +10,13 @@ interface TimeLeft {
 	seconds: string;
 }
 
+const EXPIRED_TIME: TimeLeft = { days: '0', hours: '00', minutes: '00', seconds: '00' };
+
 function calcTimeLeft(): TimeLeft {
 	const diff = TARGET - Date.now();
 
 	if (diff <= 0) {
-		return { days: '0', hours: '00', minutes: '00', seconds: '00' };
+		return EXPIRED_TIME;
 	}
 
 	return {
@@ -32,7 +34,7 @@ const UNITS: { key: keyof TimeLeft; label: string; suffix: string }[] = [
 	{ key: 'seconds', label: 'Sec', suffix: 's' },
 ];
 
-const INITIAL_TIME: TimeLeft = { days: '0', hours: '00', minutes: '00', seconds: '00' };
+const INITIAL_TIME: TimeLeft = EXPIRED_TIME;
 
 interface Props {
 	/**
