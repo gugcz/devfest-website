@@ -27,7 +27,7 @@ const {
 	ogImageAlt = "DevFest.cz 2026 — classified mission starts Oct 30, 2026",
 } = Astro.props;
 
-const ogImageType = ogImage.endsWith(".png") ? "image/png" : "image/jpeg";
+const ogImageType = new URL(ogImage).pathname.endsWith(".png") ? "image/png" : "image/jpeg";
 // Strip the trailing slash (root would be `https://devfest.cz/`) to match the
 // no-slash URLs the sitemap + JSON-LD use under `trailingSlash: 'never'`.
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, "") || siteUrl;
