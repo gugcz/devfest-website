@@ -2,11 +2,12 @@ import { useEffect, useMemo, useRef, useState, type FormEvent, type InputHTMLAtt
 import {
 	fetchTickets,
 	filterDisplayable,
-	formatPrice,
+	formatAmount,
 	grossPrice,
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
+	round2,
 	type TitoRelease,
 } from '../lib/tito';
 import { track } from '../lib/analytics';
@@ -106,21 +107,30 @@ function validate(fields: Fields, consented: boolean): Errors {
 	return errors;
 }
 
-function findCompanyRelease(releases: TitoRelease[]): TitoRelease | null {
+function findCompanyRelease(releases: TitoRelease[], opts: { laterWaveOnSale: boolean }): TitoRelease | null {
 	const matches = releases.filter((r) =>
 		releaseTitle(r).toLowerCase().includes(COMPANY_RELEASE_MATCH),
 	);
 	if (matches.length === 0) return null;
-	return matches.find((r) => releaseStatus(r).purchasable) ?? matches[0];
+	return matches.find((r) => releaseStatus(r, opts).purchasable) ?? matches[0];
 }
 
 /** The company-funded release, from the same cached endpoint `Tickets.tsx`
  * reads — display-only estimate, so a `null` cache resolves to no release
- * rather than an error. */
+ * rather than an error.
+ *
+ * O-R21: derives `laterWaveOnSale` the same way `Tickets.tsx` does and
+ * passes it to `releaseStatus()` — without it, this estimate could treat as
+ * purchasable a wave `Tickets.tsx` already labels "Ended" (a paused wave
+ * that already sold tickets, superseded by a later wave now on sale). A
+ * genuine (small) behavior fix, not pure refactor.
+ */
 function loadCompanyRelease(signal: AbortSignal): Promise<TitoRelease | null> {
 	return fetchTickets(signal).then((data) => {
 		if (!data) return null;
-		return findCompanyRelease(filterDisplayable(data.releases ?? []));
+		const visible = filterDisplayable(data.releases ?? []);
+		const laterWaveOnSale = visible.some((r) => releaseStatus(r).purchasable);
+		return findCompanyRelease(visible, { laterWaveOnSale });
 	});
 }
 
@@ -274,9 +284,9 @@ export default function InvoiceForm() {
 		const total = grossEach * count;
 		return {
 			each: display.primary,
-			total: formatPrice(String(total), release.currency),
+			total: formatAmount(total, release.currency),
 			/** Numeric total + currency for the GA4 `generate_lead` value. */
-			amount: Math.round(total * 100) / 100,
+			amount: round2(total),
 			currency: (release.currency ?? 'CZK').toUpperCase(),
 		};
 	}, [release, fields.countTickets]);

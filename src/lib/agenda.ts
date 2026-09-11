@@ -69,8 +69,14 @@ const PRAGUE_PARTS = new Intl.DateTimeFormat('en-CA', {
  * The Prague wall clock for an ISO string: `{ date: 'YYYY-MM-DD', minutes }`,
  * or `null` when the string is empty / unparseable. A naive string is already a
  * wall clock and is read as-is; a zoned one is converted (see the module header).
+ *
+ * Exported so `Agenda.tsx`'s "now" ticker can call `pragueParts(new
+ * Date().toISOString())` directly instead of hand-rolling the same
+ * `Intl.DateTimeFormat` (`pragueNow()`, since removed) — that copy rebuilt
+ * the formatter on every 30s tick instead of reusing the module-scoped
+ * `PRAGUE_PARTS` this function already hoists.
  */
-function pragueParts(iso: string): { date: string; minutes: number } | null {
+export function pragueParts(iso: string): { date: string; minutes: number } | null {
 	if (!iso) return null;
 
 	if (ZONED_RE.test(iso)) {
@@ -171,11 +177,28 @@ export function placement(session: Session): Placement | null {
 	return { startMin, endMin, spanMin };
 }
 
-/** Deterministic order for reading (mobile list + a11y): start time, then the
- * Sessionize array order as a stable tiebreaker. */
-export function byStart(a: Session, b: Session): number {
-	const sa = parseLocalMinutes(a.startsAt) ?? Number.MAX_SAFE_INTEGER;
-	const sb = parseLocalMinutes(b.startsAt) ?? Number.MAX_SAFE_INTEGER;
+/** A session's start, in minutes-from-midnight, preferring a precomputed
+ * `placements` map (see {@link placements}) over re-parsing with `Intl` —
+ * falls back to a direct parse for a session the map doesn't cover
+ * (untimed, or the caller has no map at all). */
+function startMinutesFor(session: Session, placementsMap?: Map<string, Placement>): number {
+	const placed = placementsMap?.get(session.id)?.startMin;
+	if (placed !== undefined) return placed;
+	return parseLocalMinutes(session.startsAt) ?? Number.MAX_SAFE_INTEGER;
+}
+
+/**
+ * Deterministic order for reading (mobile list + a11y): start time, then the
+ * Sessionize array order as a stable tiebreaker.
+ *
+ * Pass the memoised `placements` map a caller already holds (`Agenda.tsx`
+ * does) so a render-time sort doesn't re-run `Intl.DateTimeFormat` for every
+ * comparison — `AgendaList`'s sort previously paid that cost on every
+ * render.
+ */
+export function byStart(a: Session, b: Session, placementsMap?: Map<string, Placement>): number {
+	const sa = startMinutesFor(a, placementsMap);
+	const sb = startMinutesFor(b, placementsMap);
 	if (sa !== sb) return sa - sb;
 	return a.order - b.order;
 }
@@ -450,15 +473,23 @@ export interface NowState {
  * `nowMin` falls in its [start, end). "Coming up" only applies during a pause —
  * when no talk is live — and marks the next talk(s) to start (bands never count
  * as coming up). `nowMin === null` (not event day) yields empty sets.
+ *
+ * Takes the same memoised `placements` map `Agenda.tsx` already computes
+ * (`placements(sessions)`), instead of re-running `placement()` — Intl
+ * parsing — for every session on every 30s tick.
  */
-export function nowState(sessions: Session[], nowMin: number | null): NowState {
+export function nowState(
+	sessions: Session[],
+	nowMin: number | null,
+	placementsMap: Map<string, Placement>,
+): NowState {
 	const liveIds = new Set<string>();
 	const comingUpIds = new Set<string>();
 	if (nowMin === null) return { liveIds, comingUpIds };
 
 	let talkLive = false;
 	for (const session of sessions) {
-		const place = placement(session);
+		const place = placementsMap.get(session.id);
 		if (!place) continue;
 		if (place.startMin <= nowMin && nowMin < place.endMin) {
 			liveIds.add(session.id);
@@ -470,13 +501,13 @@ export function nowState(sessions: Session[], nowMin: number | null): NowState {
 		let soonest = Number.POSITIVE_INFINITY;
 		for (const session of sessions) {
 			if (isBand(session)) continue;
-			const place = placement(session);
+			const place = placementsMap.get(session.id);
 			if (place && place.startMin > nowMin && place.startMin < soonest) soonest = place.startMin;
 		}
 		if (Number.isFinite(soonest)) {
 			for (const session of sessions) {
 				if (isBand(session)) continue;
-				const place = placement(session);
+				const place = placementsMap.get(session.id);
 				if (place && place.startMin === soonest) comingUpIds.add(session.id);
 			}
 		}

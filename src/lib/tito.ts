@@ -135,16 +135,16 @@ export function releaseTitle(release: TitoRelease): string {
 	return release.title ?? release.slug;
 }
 
-export function eventUrl(accountSlug: string, eventSlug: string): string {
-	return `https://ti.to/${accountSlug}/${eventSlug}`;
+/** Two decimals — GA4 rejects nothing here, but long VAT floats are noise.
+ * Shared by `Tickets.tsx`'s `begin_checkout` items and `InvoiceForm.tsx`'s
+ * `generate_lead` total — both rounded a currency amount for GA4 the same
+ * way, inline. */
+export function round2(n: number): number {
+	return Math.round(n * 100) / 100;
 }
 
-export function formatPrice(price: string | null, currency: string | null): string {
-	if (price == null) return 'Free';
-	const numeric = Number(price);
-	if (!Number.isFinite(numeric)) return price;
-	if (numeric === 0) return 'Free';
-	return formatAmount(numeric, currency);
+export function eventUrl(accountSlug: string, eventSlug: string): string {
+	return `https://ti.to/${accountSlug}/${eventSlug}`;
 }
 
 /**
@@ -207,7 +207,12 @@ export function priceDisplay(release: TitoRelease): PriceDisplay | null {
 	};
 }
 
-function formatAmount(numeric: number, currency: string | null): string {
+/** Format a currency amount already known to be a number (never "Free" / an
+ * unparseable string) — `priceDisplay` and `InvoiceForm.tsx`'s estimate both
+ * already have a real number in hand, so exporting this instead of the old
+ * `formatPrice(String(total), …)` skips stringifying a number just to parse
+ * it back (see O-R20). */
+export function formatAmount(numeric: number, currency: string | null): string {
 	const code = (currency ?? 'CZK').toUpperCase();
 	try {
 		return new Intl.NumberFormat('cs-CZ', {

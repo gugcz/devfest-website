@@ -4,6 +4,7 @@ import {
 	collectFacets,
 	hasActiveFilters,
 	matchesFilters,
+	speakerNames,
 	visitorCategories,
 	type Session,
 	type SessionFilters,
@@ -31,7 +32,7 @@ function loadSessions(signal: AbortSignal): Promise<SessionsData> {
 }
 
 function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: Session) => void }) {
-	const names = session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
+	const names = speakerNames(session);
 	// Lead the card with the primary track (falls back to the room, then a generic
 	// label).
 	const kicker = visitorCategories(session)[0]?.values[0] || session.room || 'Talk';

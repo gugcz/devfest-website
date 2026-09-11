@@ -3,6 +3,7 @@ import { type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
 import { shuffle } from '../lib/shuffle';
 import { useRemoteData } from '../lib/useRemoteData';
+import { usePrefersReducedMotion } from '../lib/useMediaQuery';
 import SpeakerPhoto from './SpeakerPhoto';
 import s from './SpeakersTeaser.module.scss';
 
@@ -13,18 +14,6 @@ const ROTATE_MS = 5000;
 
 function loadSpeakers(signal: AbortSignal): Promise<Speaker[]> {
 	return fetchLineup(signal).then(({ speakers }) => speakers);
-}
-
-function usePrefersReducedMotion(): boolean {
-	const [reduce, setReduce] = useState(false);
-	useEffect(() => {
-		const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
-		const update = () => setReduce(mql.matches);
-		update();
-		mql.addEventListener('change', update);
-		return () => mql.removeEventListener('change', update);
-	}, []);
-	return reduce;
 }
 
 function Thumb({ speaker }: { speaker: Speaker }) {

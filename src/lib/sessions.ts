@@ -224,3 +224,9 @@ export function isAgendaSession(session: Session): boolean {
 export function paragraphs(text: string): string[] {
 	return text.split(/\n{2,}|\r\n\r\n/).filter((p) => p.trim());
 }
+
+/** Comma-joined presenter names, empties dropped. Shared by `Sessions.tsx`'s
+ * card and `Agenda.tsx`'s grid/list cells — both had this inlined. */
+export function speakerNames(session: Session): string {
+	return session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
+}

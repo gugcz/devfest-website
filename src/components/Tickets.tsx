@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
 	eventUrl,
 	fetchTickets,
@@ -6,6 +7,7 @@ import {
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
+	round2,
 	waveDeadline,
 	type ReleaseStatus,
 	type TitoRelease,
@@ -114,11 +116,6 @@ function trackBeginCheckout(group: ReleaseGroup, statuses: ReleaseStatus[]): voi
 	});
 }
 
-/** Two decimals — GA4 rejects nothing here, but long VAT floats are noise. */
-function round2(n: number): number {
-	return Math.round(n * 100) / 100;
-}
-
 /**
  * Every render path is the same `#tickets` section, so its class list is stated
  * once. `anchor-target` (BaseLayout.scss) is what makes "Get tickets" land on
@@ -128,6 +125,49 @@ function round2(n: number): number {
  */
 const sectionClass = `${s.tickets} anchor-target`;
 
+/**
+ * The `#tickets` section shell every render branch below shares: the
+ * `<header className="head-split">` + `<h2 id="tickets-heading">` block was
+ * hand-repeated across all four branches (error/loading/empty/ready) — see
+ * R-D7. `id="tickets-heading"` lives on exactly this one element now,
+ * removing the duplicated-id a11y risk (`aria-labelledby` targets it).
+ */
+function TicketsSection({
+	busy,
+	note,
+	className,
+	beforeHeader,
+	children,
+}: {
+	/** Sets `aria-busy` — the loading branch only. */
+	busy?: boolean;
+	/** Rendered inside the header, after the heading (a `<p className="head-note">`
+	 * or, while loading, the `<LoadingState>` itself). */
+	note?: ReactNode;
+	/** Extra section class(es) — the ready branch's `rake` sweep. */
+	className?: string;
+	/** Decorative content that must sit BEFORE the header (the ready branch's
+	 * `.rake-beam`). */
+	beforeHeader?: ReactNode;
+	children: ReactNode;
+}) {
+	return (
+		<section
+			id="tickets"
+			className={className ? `${sectionClass} ${className}` : sectionClass}
+			aria-labelledby="tickets-heading"
+			aria-busy={busy || undefined}
+		>
+			{beforeHeader}
+			<header className="head-split">
+				<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
+				{note}
+			</header>
+			{children}
+		</section>
+	);
+}
+
 export default function Tickets() {
 	const { status, data } = useRemoteData(loadTickets, {
 		isEmpty: (d) => d.releases.length === 0,
@@ -136,24 +176,17 @@ export default function Tickets() {
 
 	if (status === 'error') {
 		return (
-			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-				<header className="head-split">
-					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
-				</header>
+			<TicketsSection>
 				<ErrorState>
 					<p>The box office isn't answering. Reload, or buy direct on ti.to.</p>
 				</ErrorState>
-			</section>
+			</TicketsSection>
 		);
 	}
 
 	if (status === 'loading') {
 		return (
-			<section id="tickets" className={sectionClass} aria-busy={true} aria-labelledby="tickets-heading">
-				<header className="head-split">
-					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
-					<LoadingState label="Opening the box office" />
-				</header>
+			<TicketsSection busy note={<LoadingState label="Opening the box office" />}>
 				<ul className={`field ${s.skelField}`} role="list" aria-hidden="true">
 					{[0, 1, 2].map((i) => (
 						<li key={i} className={`field-row field-row--short ${s.skelWave}`}>
@@ -170,7 +203,7 @@ export default function Tickets() {
 						</li>
 					))}
 				</ul>
-			</section>
+			</TicketsSection>
 		);
 	}
 
@@ -181,17 +214,13 @@ export default function Tickets() {
 	if (status === 'empty') {
 		if (!hasEvent) return null;
 		return (
-			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-				<header className="head-split">
-					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
-					<p className="head-note">The box office is closed. It opens with the first wave.</p>
-				</header>
+			<TicketsSection note={<p className="head-note">The box office is closed. It opens with the first wave.</p>}>
 				<EmptyState
 					action={{ href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true }}
 				>
 					<p>Subscribe above to be notified when tickets go on sale.</p>
 				</EmptyState>
-			</section>
+			</TicketsSection>
 		);
 	}
 
@@ -202,18 +231,17 @@ export default function Tickets() {
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
 
 	return (
-		<section id="tickets" className={`${sectionClass} rake`} aria-labelledby="tickets-heading">
-			{/* Red raking light, swept by the scroll itself. Purely decorative and
-			    enhancement-only — see the `.rake` rules in BaseLayout.scss. */}
-			<span className="rake-beam" aria-hidden="true" />
-			{/* Title left, lede right — see the note on `.header`. The mono
-			    "Tickets" eyebrow above it was the page's THIRD "tickets" in one
-			    viewport (the nav button, this label, and the row CTA), and the
-			    stack under it was the shape the speakers teaser was also using. */}
-			<header className="head-split">
-				<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
-				<p className="head-note">Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>
-			</header>
+		<TicketsSection
+			className="rake"
+			// Red raking light, swept by the scroll itself. Purely decorative and
+			// enhancement-only — see the `.rake` rules in BaseLayout.scss.
+			beforeHeader={<span className="rake-beam" aria-hidden="true" />}
+			// Title left, lede right — see the note on `.header`. The mono
+			// "Tickets" eyebrow above it was the page's THIRD "tickets" in one
+			// viewport (the nav button, this label, and the row CTA), and the
+			// stack under it was the shape the speakers teaser was also using.
+			note={<p className="head-note">Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>}
+		>
 			<ul className={`field ${s.stubs}`} role="list">
 				{groupReleases(releases).map((group, i) => {
 					const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
@@ -330,6 +358,6 @@ export default function Tickets() {
 					Get a company invoice
 				</a>
 			</div>
-		</section>
+		</TicketsSection>
 	);
 }

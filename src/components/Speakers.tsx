@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom';
 import { PORTRAIT_TRANSITION, type Speaker } from '../lib/speakers';
 import { fetchLineup, type Lineup } from '../lib/lineup';
 import { useRemoteData } from '../lib/useRemoteData';
+import { REDUCED_MOTION_QUERY } from '../lib/useMediaQuery';
 import SpeakerDetail from './SpeakerDetail';
 import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
@@ -23,7 +24,7 @@ type ViewTransitionDoc = Document & {
 function canMorph(): boolean {
 	if (typeof document === 'undefined') return false;
 	if (typeof (document as ViewTransitionDoc).startViewTransition !== 'function') return false;
-	return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	return !window.matchMedia(REDUCED_MOTION_QUERY).matches;
 }
 
 /**
