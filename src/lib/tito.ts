@@ -58,14 +58,50 @@ export interface TicketsCache {
 }
 
 /**
+ * How long a resolved payload is reused by later callers. Mirrors the endpoint's
+ * own edge TTL — a soft navigation keeps this module alive for the whole visit,
+ * and a session-long memo would keep showing a wave that has since sold out.
+ */
+const MEMO_TTL_MS = 5 * 60 * 1000;
+
+let inFlight: { at: number; promise: Promise<TicketsCache | null> } | null = null;
+
+async function requestTickets(): Promise<TicketsCache | null> {
+	const res = await fetch('/api/tickets');
+	if (!res.ok) throw new Error(`tickets fetch failed: ${res.status}`);
+	return (await res.json()) as TicketsCache | null;
+}
+
+/**
  * Fetch the cached ti.to roadmap from the `/api/tickets` endpoint (Hosting
  * rewrites it to the `ticketsApi` Cloud Function, which reads RTDB via the Admin
  * SDK — no Firebase SDK / App Check on this path). Throws on a non-OK response.
+ *
+ * The request is **memoised per page** because more than one island can want it
+ * at once — an invitation page mounts `InviteCta` twice — and the endpoint sends
+ * `max-age=0`, so the browser's own HTTP cache will not coalesce them. A
+ * rejection is not memoised (the next caller retries); a resolved payload is
+ * reused for `MEMO_TTL_MS`.
+ *
+ * `signal` aborts the CALLER's wait, not the shared request: a second island
+ * unmounting must not cancel the fetch the first one is still waiting on.
  */
-export async function fetchTickets(signal?: AbortSignal): Promise<TicketsCache | null> {
-	const res = await fetch('/api/tickets', { signal });
-	if (!res.ok) throw new Error(`tickets fetch failed: ${res.status}`);
-	return (await res.json()) as TicketsCache | null;
+export function fetchTickets(signal?: AbortSignal): Promise<TicketsCache | null> {
+	if (!inFlight || Date.now() - inFlight.at > MEMO_TTL_MS) {
+		const promise = requestTickets().catch((err) => {
+			if (inFlight?.promise === promise) inFlight = null;
+			throw err;
+		});
+		inFlight = { at: Date.now(), promise };
+	}
+	const shared = inFlight.promise;
+	if (!signal) return shared;
+	return new Promise<TicketsCache | null>((resolve, reject) => {
+		const abort = () => reject(new DOMException('Aborted', 'AbortError'));
+		if (signal.aborted) return abort();
+		signal.addEventListener('abort', abort, { once: true });
+		shared.then(resolve, reject).finally(() => signal.removeEventListener('abort', abort));
+	});
 }
 
 /**
@@ -133,6 +169,10 @@ export function releaseStatus(
 
 export function releaseTitle(release: TitoRelease): string {
 	return release.title ?? release.slug;
+}
+
+export function checkoutUrl(release: TitoRelease, accountSlug: string, eventSlug: string): string {
+	return `https://ti.to/${accountSlug}/${eventSlug}/with/${release.slug}`;
 }
 
 export function eventUrl(accountSlug: string, eventSlug: string): string {
