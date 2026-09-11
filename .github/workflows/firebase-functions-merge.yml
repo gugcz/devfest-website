@@ -22,6 +22,15 @@ on:
   # run this workflow from the Actions tab after adding the new version.
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+# Two merges to 2026 in quick succession must not race two overlapping
+# deploys — queue them instead of cancelling either.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   deploy_functions:
     runs-on: ubuntu-latest
@@ -49,13 +58,17 @@ jobs:
           TITO_ACCOUNT_SLUG: ${{ vars.TITO_ACCOUNT_SLUG }}
           TITO_EVENT_SLUG: ${{ vars.TITO_EVENT_SLUG }}
         run: |
+          if [ -z "$TITO_ACCOUNT_SLUG" ] || [ -z "$TITO_EVENT_SLUG" ]; then
+            echo "::error::TITO_ACCOUNT_SLUG or TITO_EVENT_SLUG repo variable is unset — refusing to deploy with an empty ti.to slug" >&2
+            exit 1
+          fi
           {
             printf 'TITO_ACCOUNT_SLUG=%s\n' "$TITO_ACCOUNT_SLUG"
             printf 'TITO_EVENT_SLUG=%s\n' "$TITO_EVENT_SLUG"
           } > functions/.env
       - name: Deploy functions
         run: |
-          npx --yes firebase-tools@latest deploy \
+          npx --yes firebase-tools@15.30.0 deploy \
             --only functions:website \
             --project devfest-cz-app \
             --non-interactive

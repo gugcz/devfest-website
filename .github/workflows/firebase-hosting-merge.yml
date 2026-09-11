@@ -4,6 +4,17 @@ on:
   push:
     branches:
       - "2026"
+
+permissions:
+  contents: read
+
+# Two merges to 2026 in quick succession must not race two overlapping
+# deploys, and the older build must never be allowed to land last — queue
+# them instead of cancelling either.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -19,8 +30,10 @@ jobs:
       # Node 21 container. This avoids the intermittent "Premature close"
       # keep-alive failure that breaks FirebaseExtended/action-hosting-deploy
       # when it runs firebase-tools on the runner's security-patched Node.
+      # Pinned to a commit SHA (v15.22.3) rather than the tag: a git tag can
+      # be re-pointed by its owner, and this action receives GCP_SA_KEY.
       - name: Deploy to Firebase Hosting (live)
-        uses: w9jds/firebase-action@v15.22.3
+        uses: w9jds/firebase-action@221518149891c89541cd93a1edc14a03b3e8e53d # v15.22.3
         with:
           args: deploy --only hosting --project devfest-cz-app
         env:

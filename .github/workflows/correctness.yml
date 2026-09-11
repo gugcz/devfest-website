@@ -16,6 +16,12 @@ on:
 permissions:
   contents: read
 
+# A re-push while a check is still running must not stack a second one for
+# the same PR — cancel the stale run, the new push wins.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   astro-check:
     runs-on: ubuntu-latest
