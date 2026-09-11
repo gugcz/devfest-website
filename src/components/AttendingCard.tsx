@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import logoUrl from '../assets/logo.png?url';
+import samplePortraitUrl from '../assets/sample-portrait.svg?url';
 import {
 	CARD_SIZE,
 	DEFAULT_TRANSFORM,
@@ -25,6 +26,19 @@ async function loadLogo(): Promise<HTMLImageElement> {
 	await img.decode();
 	return img;
 }
+
+/** Decodes the bundled sample silhouette the same way as the logo, then hands
+ * it off as an `ImageBitmap` — the same type a visitor's own photo decodes
+ * to — so it runs through `drawAttendingCard`'s one photo pipeline
+ * unmodified (cover-fit, vignette, pan/zoom math all identical). */
+async function loadSamplePhoto(): Promise<ImageBitmap> {
+	const img = new Image();
+	img.src = samplePortraitUrl;
+	await img.decode();
+	return createImageBitmap(img);
+}
+
+const SAMPLE_NAME = 'Ada Lovelace';
 
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 2.5;
@@ -126,9 +140,12 @@ export default function AttendingCard() {
 	const [announcement, setAnnouncement] = useState('');
 	const [shareState, setShareState] = useState<ShareState>('idle');
 	const [shareMessage, setShareMessage] = useState('');
-	const [assets, setAssets] = useState<{ fonts: Fonts; palette: Palette; logo: HTMLImageElement | null } | null>(
-		null,
-	);
+	const [assets, setAssets] = useState<{
+		fonts: Fonts;
+		palette: Palette;
+		logo: HTMLImageElement | null;
+		samplePhoto: ImageBitmap | null;
+	} | null>(null);
 
 	const dragRef = useRef<{ pointerId: number; startX: number; startY: number; panX: number; panY: number } | null>(
 		null,
@@ -136,6 +153,8 @@ export default function AttendingCard() {
 	// Tracks the live bitmap so it can be `.close()`d on replace/unmount —
 	// `photo` state lags one render behind the moment we need to release it.
 	const photoRef = useRef<ImageBitmap | null>(null);
+	// Same close-on-unmount need for the bundled sample bitmap.
+	const sampleRef = useRef<ImageBitmap | null>(null);
 	// Same lag problem for the thumbnail's object URL.
 	const thumbUrlRef = useRef('');
 	// Counts nested dragenter/dragleave pairs across the whole viewport — a
@@ -153,10 +172,16 @@ export default function AttendingCard() {
 	// very first export, if a visitor is fast — from running without it.
 	useEffect(() => {
 		let cancelled = false;
-		Promise.all([document.fonts.ready, loadLogo().catch(() => null)]).then(([, logo]) => {
-			if (cancelled) return;
-			setAssets({ fonts: readFonts(), palette: readPalette(), logo });
-		});
+		Promise.all([document.fonts.ready, loadLogo().catch(() => null), loadSamplePhoto().catch(() => null)]).then(
+			([, logo, samplePhoto]) => {
+				if (cancelled) {
+					samplePhoto?.close();
+					return;
+				}
+				sampleRef.current = samplePhoto;
+				setAssets({ fonts: readFonts(), palette: readPalette(), logo, samplePhoto });
+			},
+		);
 		return () => {
 			cancelled = true;
 		};
@@ -165,16 +190,33 @@ export default function AttendingCard() {
 	useEffect(() => {
 		return () => {
 			photoRef.current?.close();
+			sampleRef.current?.close();
 			if (thumbUrlRef.current) URL.revokeObjectURL(thumbUrlRef.current);
 		};
 	}, []);
 
+	// With no photo picked yet, the card still renders — with the bundled
+	// sample portrait and (unless the visitor already typed one) the sample
+	// name — so the empty state reads as a finished card, not a blank form
+	// field. `SAMPLE` badge + locked Download/Share are what mark it as a
+	// preview; picking a real photo swaps both back to the visitor's own.
 	const draw = useCallback(() => {
 		const canvas = canvasRef.current;
 		if (!canvas || !assets) return;
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
-		drawAttendingCard(ctx, { name, photo, transform }, assets.fonts, assets.palette, assets.logo);
+		const isSample = !photo;
+		const cardPhoto = photo ?? assets.samplePhoto;
+		const cardName = isSample ? name.trim() || SAMPLE_NAME : name;
+		const cardTransform = isSample ? DEFAULT_TRANSFORM : transform;
+		drawAttendingCard(
+			ctx,
+			{ name: cardName, photo: cardPhoto, transform: cardTransform },
+			assets.fonts,
+			assets.palette,
+			assets.logo,
+			{ isSample },
+		);
 	}, [name, photo, transform, assets]);
 
 	useEffect(() => {
@@ -682,16 +724,10 @@ export default function AttendingCard() {
 						onPointerCancel={handlePointerUp}
 						data-draggable={photo ? 'true' : 'false'}
 					/>
-					{isDragging ? (
+					{isDragging && (
 						<div className={s.dragOverlay} aria-hidden="true">
 							<span>Drop to replace</span>
 						</div>
-					) : (
-						!hasPhoto && (
-							<div className={s.emptyOverlay} aria-hidden="true">
-								<span>Add a photo to preview your card</span>
-							</div>
-						)
 					)}
 				</div>
 

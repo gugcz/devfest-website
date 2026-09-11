@@ -284,6 +284,46 @@ function drawTextScrim(
 	ctx.restore();
 }
 
+/** Corner margin and sizing for the `SAMPLE` badge — kept inside the outer
+ * vignette ring (pure black at zoom 1, see below) so cream text always has a
+ * dark backdrop, and clear of the headline's own vertical band. */
+const SAMPLE_BADGE_MARGIN = 40;
+
+/** Draws the `SAMPLE` corner badge. Only ever called while there is no real
+ * photo, and Download stays disabled for exactly that same state (see
+ * `AttendingCard.tsx`'s `exportDisabled`), so this can never reach an export. */
+function drawSampleBadge(ctx: CanvasRenderingContext2D, size: number, fonts: Fonts, palette: Palette): void {
+	const label = 'SAMPLE';
+	ctx.font = `600 32px ${fonts.mono}`;
+	const textWidth = ctx.measureText(label).width;
+	const paddingX = 22;
+	const height = 52;
+	const width = textWidth + paddingX * 2;
+	const x = size - SAMPLE_BADGE_MARGIN - width;
+	const y = SAMPLE_BADGE_MARGIN;
+
+	ctx.save();
+	ctx.fillStyle = 'rgba(0,0,0,0.55)';
+	roundRectPath(ctx, x, y, width, height, height / 2);
+	ctx.fill();
+	ctx.lineWidth = 1.5;
+	ctx.strokeStyle = palette.ink;
+	ctx.stroke();
+	ctx.fillStyle = palette.ink;
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText(label, x + width / 2, y + height / 2 + 1);
+	ctx.restore();
+}
+
+export interface DrawOptions {
+	/** True while `data.photo` is the bundled sample portrait, not a photo the
+	 * visitor picked — paints the `SAMPLE` corner badge. Never true once a real
+	 * photo is set, and Download/Share stay disabled for exactly that same
+	 * state, so the badge can never end up in an export. */
+	isSample?: boolean;
+}
+
 /**
  * Paints the full 1200×1200 card. Synchronous and side-effect-free beyond the
  * given context, so the caller (the React island) owns scheduling/redraw.
@@ -296,17 +336,17 @@ export function drawAttendingCard(
 	fonts: Fonts,
 	palette: Palette,
 	logo: HTMLImageElement | null,
+	options?: DrawOptions,
 ): void {
 	const size = CARD_SIZE;
 	const { ink, red, accent } = palette;
 
 	ctx.clearRect(0, 0, size, size);
 
-	// No photo, no card: a photo is required to export (see AttendingCard.tsx,
-	// which disables Download until one is picked), so there is nothing
-	// finished to preview without one — leave the canvas empty rather than
-	// drawing a placeholder monogram card. The React layer renders its own
-	// empty-state message over the blank canvas.
+	// No photo at all (the bundled sample hasn't loaded yet either) — nothing
+	// to paint. Once assets are ready, AttendingCard.tsx always passes either
+	// the visitor's photo or the sample portrait, so this only ever fires for
+	// one early frame.
 	if (!data.photo) return;
 
 	// Pure black base, not the `bg` token: below MIN_ZOOM=1 the photo (drawn
@@ -492,4 +532,6 @@ export function drawAttendingCard(
 		ctx.textBaseline = 'middle';
 		ctx.fillText(pillText, pillX + pillWidth / 2, pillY + pillHeight / 2 + 1);
 	}
+
+	if (options?.isSample) drawSampleBadge(ctx, size, fonts, palette);
 }

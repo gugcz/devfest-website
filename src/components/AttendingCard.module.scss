@@ -532,29 +532,6 @@
 	}
 }
 
-// Shown over the canvas instead of a finished card when no photo is picked
-// yet — a photo is required to export, so there is nothing real to preview.
-.emptyOverlay {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	padding: 2rem;
-	border: 1px dashed var(--rule-strong);
-	pointer-events: none;
-
-	span {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
-		font-weight: 500;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.5);
-	}
-}
-
 .actions {
 	display: flex;
 	gap: 0.9rem;
