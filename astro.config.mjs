@@ -103,7 +103,6 @@ export default defineConfig({
         responsiveStyles: true,
     },
     prefetch: {
-        prefetchAll: true,
         defaultStrategy: 'hover',
     },
     integrations: [
