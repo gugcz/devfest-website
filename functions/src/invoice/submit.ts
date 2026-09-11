@@ -47,6 +47,12 @@ function str(v: unknown): string {
 	return typeof v === 'string' ? v.trim() : '';
 }
 
+/** `message` still carries the field name too, for any caller that isn't
+ * this repo's client (which reads `details.field` first). */
+export function invalidArgument(field: string): HttpsError {
+	return new HttpsError('invalid-argument', field, { field });
+}
+
 function validate(body: Record<string, unknown>): ValidationResult {
 	const companyName = str(body.companyName);
 	const registrationNumberIC = str(body.registrationNumberIC);
@@ -107,8 +113,7 @@ export const submitInvoiceCallable = onCall(
 
 		const result = validate(body);
 		if (!result.ok) {
-			// `message` carries the offending field so the form can point at it.
-			throw new HttpsError('invalid-argument', result.error);
+			throw invalidArgument(result.error);
 		}
 
 		// Throttle per (company, email) so one valid App Check token can't drive
