@@ -1,0 +1,10 @@
+// Pulse-opacity keyframes for loading-state dots. CSS Modules hashes keyframe
+// names per file, so a shared `@keyframes` in a global stylesheet can't be
+// referenced from a module's `animation:` — each consumer needs its own scoped
+// copy with the same recipe.
+@mixin pulse-opacity($name: pulse-opacity) {
+	@keyframes #{$name} {
+		0%, 100% { opacity: 0.3; }
+		50% { opacity: 1; }
+	}
+}

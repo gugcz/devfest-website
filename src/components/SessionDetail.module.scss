@@ -37,11 +37,7 @@
 	margin-top: clamp(2.5rem, 5vw, 4rem);
 
 	p {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.7;
-		color: var(--ink-strong);
-		margin: 0 0 1.1rem;
+		@include lede(1.7, var(--ink-strong), 0 0 1.1rem);
 		// THE COLUMN IS THE MEASURE — no character cap on sheet prose, so the
 		// abstract lines up with the title, rules and rows around it. At 1440 that
 		// is ~108 characters; justification with hyphens is what keeps it even.

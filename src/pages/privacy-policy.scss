@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/link' as *;
 	.policy {
 		min-height: 100dvh;
 		padding: 7rem var(--gutter) var(--section-y);
@@ -123,16 +124,7 @@
 	}
 
 	a {
-		color: var(--color-accent-hot);
-		text-decoration: none;
-		border-bottom: 1px solid var(--rule-red);
-		transition: border-color 0.2s, color 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			border-color: var(--color-accent-hot);
-		}
+		@include link-rule(var(--color-accent-hot));
 
 		&:focus-visible {
 			outline: var(--focus-ring);

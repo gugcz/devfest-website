@@ -93,11 +93,7 @@
 	margin-top: clamp(2rem, 4vw, 3rem);
 
 	p {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.7;
-		color: var(--ink-strong);
-		margin: 0 0 1.1rem;
+		@include lede(1.7, var(--ink-strong), 0 0 1.1rem);
 		// No character cap: the 0.62fr column beside the portrait IS the measure,
 		// same rule as the session sheet's abstract.
 		text-align: justify;

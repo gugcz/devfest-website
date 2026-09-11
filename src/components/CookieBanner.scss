@@ -1,3 +1,5 @@
+@use '../styles/link' as *;
+
 	// Full-width bar along the bottom edge, not a floating labelled box — consent is
 	// the one piece of chrome that should ask for the least attention on the page.
 	.cookie-banner {
@@ -47,16 +49,7 @@
 	}
 
 	.cookie-link {
-		color: var(--color-text);
-		text-decoration: none;
-		border-bottom: 1px solid var(--rule-red);
-		transition: color 0.2s, border-color 0.2s;
-	}
-
-	.cookie-link:hover,
-	.cookie-link:focus-visible {
-		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
+		@include link-rule(var(--color-text));
 	}
 
 	.cookie-link:focus-visible {

@@ -48,12 +48,7 @@
 	}
 
 	.empty-line {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
-		color: var(--color-grey);
-		max-width: 56ch;
-		margin: 0;
+		@include lede(1.6, var(--color-grey), 0, 56ch);
 	}
 
 	// An open field of clippings.

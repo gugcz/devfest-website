@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/link' as *;
 .wrapper {
 	width: 100%;
 	max-width: 720px;
@@ -187,10 +188,7 @@
 
 // Functional link underline — solid hairline, red on hover, with arrow affordance.
 .consentLink {
-	color: var(--ink-strong);
-	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
-	transition: border-color 0.2s, color 0.2s;
+	@include link-rule(var(--ink-strong));
 
 	&::after {
 		content: '\2197';
@@ -198,12 +196,6 @@
 		border-bottom: none;
 		display: inline-block;
 		transition: transform 0.25s;
-	}
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
 	}
 
 	&:hover::after,

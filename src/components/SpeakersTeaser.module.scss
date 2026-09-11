@@ -1,5 +1,6 @@
 @use '../styles/type' as *;
 @use '../styles/film' as *;
+@use '../styles/link' as *;
 // Home-page lineup wall — the same contact sheet /speakers and /team use, cut
 // down to four frames. It was a row of four tiles at EVERY width, which on a
 // 375px phone left 78×97px faces: too small to recognise anybody, which is the
@@ -229,17 +230,9 @@
 	min-height: 2.75rem;
 	padding: 0 0.25rem;
 	@include mono(var(--fs-label-lg), 0.2em, uppercase);
-	color: var(--color-text);
-	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
-	transition: color 0.2s ease;
-
-	&:hover {
-		color: var(--color-accent-hot);
-	}
+	@include link-rule(var(--color-text));
 
 	&:focus-visible {
-		color: var(--color-accent-hot);
 		outline: var(--focus-ring);
 		outline-offset: var(--focus-gap-lg);
 	}

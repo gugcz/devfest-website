@@ -358,13 +358,8 @@
 	}
 
 	.head-note {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
-		color: var(--ink-soft);
-		margin: 0 0 0.35rem;
+		@include lede(1.6, var(--ink-soft), 0 0 0.35rem, 34ch);
 		// Special Elite is wide; longer and this stops reading as a line and becomes a paragraph.
-		max-width: 34ch;
 	}
 
 	@media (max-width: 860px) {
@@ -421,12 +416,7 @@
 
 	// The prose a data-backed page falls back to with no JS or a dead endpoint.
 	.fallback-note {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.7;
-		color: var(--color-grey);
-		max-width: 52ch;
-		margin: 2rem 0 0;
+		@include lede(1.7, var(--color-grey), 2rem 0 0, 52ch);
 
 		a {
 			color: var(--color-accent-hot);
@@ -570,12 +560,7 @@
 	}
 
 	.closer-note {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
-		color: var(--ink-soft);
-		margin: 0;
-		max-width: 34ch;
+		@include lede(1.6, var(--ink-soft), 0, 34ch);
 	}
 
 	.band--accent .closer-note { color: var(--on-accent); }
@@ -891,13 +876,6 @@
 	@keyframes neon-flicker {
 		0%, 18%, 22%, 80%, 100% { opacity: 1; }
 		20%, 82% { opacity: 0.74; }
-	}
-
-	// Shared by every loading-state pulse (CSS Modules namespace keyframes per
-	// file, so the one they all want has to live in the global stylesheet).
-	@keyframes pulse-opacity {
-		0%, 100% { opacity: 0.3; }
-		50% { opacity: 1; }
 	}
 
 	// Enhancement only — `animation-timeline` is still flagged off in Firefox, so

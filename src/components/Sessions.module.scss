@@ -1,6 +1,8 @@
 @use '../styles/type' as *;
 @use '../styles/film' as *;
 @use '../styles/avatar' as *;
+@use '../styles/motion' as *;
+@include pulse-opacity;
 // Session docket — the programme as an open field of talks. `.field-row--link`
 // owns the rhythm and the red reach state; this file owns the two-column grid
 // and the type.
@@ -179,7 +181,7 @@
 	&:hover {
 		.avatar {
 			border-color: var(--accent-deep);
-			filter: grayscale(1) contrast(1.06) brightness(0.98);
+			@include film(1.06, 0.98);
 		}
 
 		.avatarMore {
@@ -351,12 +353,7 @@
 }
 
 .moreText {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.5;
-	color: var(--color-grey);
-	margin: 0;
-	max-width: 22ch;
+	@include lede(1.5, var(--color-grey), 0, 22ch);
 }
 
 /* ===================== RESPONSIVE ===================== */

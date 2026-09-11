@@ -1,0 +1,16 @@
+// Hairline-underline link recipe. Every site passes its own measured $color/
+// $border — the red-rule and cream-rule variants both drift on purpose,
+// never snap either to the nearest one used elsewhere. Callers keep any
+// min-height, padding, ::after arrow or focus-visible outline of their own.
+@mixin link-rule($color, $border: var(--rule-red)) {
+	color: $color;
+	text-decoration: none;
+	border-bottom: 1px solid $border;
+	transition: color 0.2s, border-color 0.2s;
+
+	&:hover,
+	&:focus-visible {
+		color: var(--color-accent-hot);
+		border-color: var(--color-accent-hot);
+	}
+}
