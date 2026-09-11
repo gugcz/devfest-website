@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Speaker } from '../lib/speakers';
 import { useRemoteData } from '../lib/useRemoteData';
 import { useMediaQuery } from '../lib/useMediaQuery';
@@ -444,6 +444,7 @@ export default function Agenda() {
 		[data],
 	);
 	const [selected, setSelected] = useState<Session | null>(null);
+	const closeSelected = useCallback(() => setSelected(null), []);
 	const isNarrow = useMediaQuery(NARROW_QUERY);
 
 	const partition = useMemo(() => partitionAgenda(sessions), [sessions]);
@@ -527,7 +528,7 @@ export default function Agenda() {
 				<SessionDetail
 					session={selected}
 					speakersById={speakersById}
-					onClose={() => setSelected(null)}
+					onClose={closeSelected}
 				/>
 			)}
 		</>

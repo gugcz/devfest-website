@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { type Speaker } from '../lib/speakers';
 import {
 	collectFacets,
@@ -86,6 +86,7 @@ export default function Sessions() {
 		[data],
 	);
 	const [selected, setSelected] = useState<Session | null>(null);
+	const closeSelected = useCallback(() => setSelected(null), []);
 	const [query, setQuery] = useState('');
 	const [filters, setFilters] = useState<SessionFilters>({});
 
@@ -214,7 +215,7 @@ export default function Sessions() {
 				<SessionDetail
 					session={selected}
 					speakersById={speakersById}
-					onClose={() => setSelected(null)}
+					onClose={closeSelected}
 				/>
 			)}
 		</>
