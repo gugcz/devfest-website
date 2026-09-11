@@ -100,6 +100,8 @@
 		}
 	}
 
+	// Same threshold as Footer.scss's `31.25em` (see its own comment on why
+	// that file uses em) — not converted here, just cross-referenced.
 	@media (max-width: 500px) {
 		.cookie-banner {
 			flex-direction: column;

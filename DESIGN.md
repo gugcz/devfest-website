@@ -30,6 +30,7 @@ ships in; if one has drifted, the token name is the durable reference.
 | `src/components/*.module.scss` | co-located CSS Modules for React islands (`import s from './X.module.scss'`) |
 | `src/components/*.astro` + `*.scss` | static components with a sibling stylesheet |
 | `src/pages/*.scss` | page-scoped styles, one file per page |
+| `src/styles/*.scss` | `@use`d mixins, not classes — `_type.scss` (`mono`, `display`, `prose`, `lede`, `monogram`), `_film.scss` (`film`), `_avatar.scss` (`avatar-ring`), `_link.scss` (`link-rule`), `_motion.scss` (`pulse-opacity`). Each parameterizes the per-site drift rather than snapping it to one value — see "Component conventions" |
 
 **[MUST] No Tailwind, no CSS-in-JS, no utility framework.** SCSS + CSS custom
 properties only. There is no `tailwind.config`, no theme object, and no runtime
@@ -168,7 +169,6 @@ Text scale, `BaseLayout.scss:100–110`:
 | `--fs-body-lg` | `1.15rem` | 106 | footnotes, short ledes |
 | `--fs-lede` | `clamp(1.2rem, 1.6vw, 1.5rem)` | 107 | section ledes, status prose |
 | `--fs-title-sm` | `1.45rem` | 108 | small titles, mobile record titles |
-| `--fs-figure` | `1.9rem` | 109 | row figures — **no call sites today**, see Open points |
 | `--fs-monogram` | `3.4rem` | 110 | initials in an empty photo well |
 
 **[MUST]** Display type is set through `--lh-display` (`0.84`, line 114) and
@@ -804,10 +804,10 @@ each needs a decision, none is fixed by this PR.
    single `aria-live` region; individual invalid fields are not marked, and there
    is no per-field inline error. Acceptable for a two-form site, but it should be
    a stated decision rather than an omission.
-6. **`--fs-figure` (`BaseLayout.scss:109`) has zero call sites.** Either it is
-   dead and should be deleted, or something is using a literal `1.9rem` where it
-   should use the token. `--panel-2` and `--panel-hover` are each used in exactly
-   one file, which is close to the same question.
+6. **Resolved: `--fs-figure` is gone.** It had zero call sites; the ramp now
+   runs `--fs-label-xs` → `--fs-monogram` (`BaseLayout.scss:73–83`) with no gap
+   where it used to sit. `--panel-2` and `--panel-hover` are each used in
+   exactly one file, which is close to the same question the token was.
 7. **`min-width` is no longer an outlier.** `SpeakersTeaser.module.scss:60` was
    the only mobile-first query when this document was written; six more
    (`press/downloads.scss:109,113,117,131,135,139`) landed via merged PRs since,
@@ -833,30 +833,26 @@ each needs a decision, none is fixed by this PR.
     Currently harmless — every `Closer` call site passes `tone="accent"`
     explicitly — but the default itself is dead and would silently render
     unstyled if a future page omitted `tone`.
-12. **The font-size ramp is stated as [MUST] but broken at 23 call sites: 18**
-    **absolute literals** (`Countdown.module.scss:33,47,72,84`,
-    `Menu.scss:348,471`, `Speakers.module.scss:201,277`,
-    `faq.scss:33`, `press.scss:162`, `team.scss:121,141`,
-    `index.scss:73,148,598,643,666,756`; the `index.scss:135`
-    site this counted no longer exists — see below), **2 relative**
-    (`Footer.scss:153`, `0.85em`; `Ticker.scss:78`, `0.5em`),
-    **2 inherited** (`Footer.scss:321,325`), and **1 on its own token**
-    (`Ticker.scss:57`, `--ticker-size`). The same "every
-    `font-size` goes through one of these steps" claim is repeated in a source
-    comment at `BaseLayout.scss:98` and is equally untrue there — worth fixing
-    next time that file is touched, not on its own. Either these get folded
-    into the ramp as named steps, or downgraded to `[CURRENT]` literals with a
-    reason each.
-    **[UNRESOLVED — flagged, not guessed]** Two of the cited call sites no
-    longer back this count after the rebase, rather than having simply moved:
-    `LandingNotice.scss` (component + stylesheet) was deleted in `d38c5187`
-    and replaced by `NextStep.astro`, which uses `var(--fs-row)` /
-    `var(--fs-body)` — no literal, so that count-of-14 entry has no current
-    home. `index.scss:135` is now `font-size: var(--fs-label);` (not a
-    literal); the file does have four literal `font-size` declarations today
-    (`index.scss:598,643,666,756`, all `.hero-statement` / `.meta-value`
-    breakpoint overrides), any/all of which may be what this site meant to
-    count, but which one(s) requires a decision, not a relocation.
+12. **The font-size ramp is stated as [MUST] but broken at several call sites**
+    — live literals in breakpoint overrides or one-off display type:
+    `index.scss`, `Countdown.module.scss`, `Menu.scss`, `Speakers.module.scss`,
+    `faq.scss`, `press.scss`, `team.scss`, `Ticker.scss`, `Footer.scss`.
+    `Footer.scss`'s two `font-size: inherit` on `.copyright`/`.opensource` are
+    **not** bypasses, though — both elements are `<small>`, so `inherit` resets
+    the UA's `0.8em` rather than picking a value outside the ramp; corrected
+    off this list. Separately, `privacy-policy.scss` sets the page `<h1>` to
+    `--fs-hero`, documented above as "home hero statement" — `--fs-display` is
+    the subpage h1 token. The same "every `font-size` goes through one of
+    these steps" claim is repeated in a source comment at
+    `BaseLayout.scss:98` and is equally untrue there — worth fixing next time
+    that file is touched, not on its own. Either these get folded into the
+    ramp as named steps, or downgraded to `[CURRENT]` literals with a reason
+    each.
+    **Line numbers throughout this document drift as the codebase moves; the
+    token name, not the cited line, is the durable reference (see intro).**
+    An exact call-site count is intentionally not restated here — it has
+    drifted at least twice already as unrelated PRs touched these files, and
+    the count itself is not the decision that matters.
 13. **`/` has no `.fallback-note`.** `agenda`, `sessions` and `speakers` each
     ship one for the no-JS / endpoint-down case; the home page's `Tickets`
     island does not. Either add one, or state the exception in the MUST
