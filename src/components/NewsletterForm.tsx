@@ -45,7 +45,7 @@ export default function NewsletterForm() {
 				onSubmit={handleSubmit}
 				noValidate
 			>
-				<label htmlFor="newsletter-email" className={s.srOnly}>
+				<label htmlFor="newsletter-email" className="sr-only">
 					Email address
 				</label>
 				<div className={s.paper}>

@@ -182,18 +182,6 @@
 		border-bottom: 0;
 	}
 
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border: 0;
-	}
-
 	// The table keeps its natural column widths and takes its own horizontal
 	// scroll when they no longer fit. Forcing the cells to break instead
 	// (`overflow-wrap: anywhere`) re-flowed the columns at a 16px root too and
