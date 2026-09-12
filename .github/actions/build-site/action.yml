@@ -5,6 +5,11 @@ description: >
   step and differed only in the deploy args after it. Callers must check out
   the repo themselves first — a local composite action can't do it for them
   (its own definition has to already be on disk to be loaded at all).
+inputs:
+  invite-discount-url:
+    description: Value for PUBLIC_INVITE_DISCOUNT_URL during the build.
+    required: false
+    default: ""
 runs:
   using: composite
   steps:
@@ -16,3 +21,5 @@ runs:
       shell: bash
     - run: npm run build
       shell: bash
+      env:
+        PUBLIC_INVITE_DISCOUNT_URL: ${{ inputs.invite-discount-url }}

@@ -1,13 +1,3 @@
-	// Red bleed over the section's pool of light — `.band--lit` supplies the ground.
-	.contact-body::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: radial-gradient(ellipse 50% 60% at 88% 12%, rgba(204, 0, 0, 0.05) 0%, transparent 60%);
-		pointer-events: none;
-		z-index: 0;
-	}
-
 	// An open field of `.field` rows; the desks are `<Desk>`. No `--lamp` box here:
 	// a full-bleed lamp draws a hard horizontal step across the page.
 	.contact-grid {

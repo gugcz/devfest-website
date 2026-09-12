@@ -109,7 +109,15 @@ export default defineConfig({
         sitemap({
             filter: (page) =>
                 !page.includes('/newsletter-subscription-thank-you') &&
-                !page.includes('/thank-you'),
+                !page.includes('/thank-you') &&
+                // The team's personal invitation pages are unlisted: `noindex`,
+                // out of the sitemap, and linked from nowhere on the site. All
+                // three together are what "secret" means here — see
+                // src/pages/invite/[member].astro.
+                !page.includes('/invite/') &&
+                // Their OG cards are a generated asset, not a page — never a
+                // sitemap entry regardless of `/invite/`'s own secrecy.
+                !page.includes('/og/invite/'),
             serialize(item) {
                 item.lastmod = BUILD_DATE;
                 item.changefreq = 'weekly';

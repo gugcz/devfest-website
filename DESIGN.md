@@ -178,6 +178,12 @@ carries **no `text-shadow`**.
 **[CURRENT]** Mono labels are uppercase at `0.22em`–`0.24em` tracking
 (`.btn-primary` 787, `.record-status` 1054, `.skip-link` 322).
 
+**[MUST] Body text caps at 65–75ch.** A full-bleed paragraph on a wide viewport
+runs 87–95 characters/line, which is past the point a line of prose is
+comfortable to read. Cap the container, don't shrink the type. `0.06em`
+letter-spacing is for short uppercase labels only — never apply it to a
+running paragraph, where it works against the measure instead of with it.
+
 ## Spacing & layout
 
 | Token | Value | Line | Use |

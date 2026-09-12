@@ -20,6 +20,20 @@ interface ImportMetaEnv {
 	 * pollute live numbers; set this to a preview host to measure there on purpose.
 	 */
 	readonly PUBLIC_ANALYTICS_ALLOWED_HOSTS?: string;
+	/**
+	 * Origin used to build absolute URLs that must resolve on the deployed
+	 * site (e.g. the invite OG image), defaulting to `https://devfest.cz`.
+	 * Set to a preview channel's URL to verify one of those URLs against
+	 * that channel's own build instead of production.
+	 */
+	readonly PUBLIC_SITE_URL?: string;
+	/**
+	 * ti.to discount checkout URL for the invite CTA. Set only outside the repo
+	 * (GitHub Actions secret) — the code that reads it never sees the value.
+	 * Empty by default, in which case `InviteCta` resolves the plain ti.to
+	 * checkout from `/api/tickets`, unchanged.
+	 */
+	readonly PUBLIC_INVITE_DISCOUNT_URL?: string;
 }
 
 interface ImportMeta {

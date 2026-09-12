@@ -21,6 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/build-site
+        with:
+          invite-discount-url: ${{ secrets.PUBLIC_INVITE_DISCOUNT_URL }}
       # Deploy with w9jds/firebase-action, which runs firebase-tools inside a
       # Node 21 container. This avoids the intermittent "Premature close"
       # keep-alive failure that breaks FirebaseExtended/action-hosting-deploy

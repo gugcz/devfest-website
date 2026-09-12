@@ -6,6 +6,12 @@
 		min-width: 0;
 	}
 
+	.contact-name {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-title-compact);
+		color: var(--color-text);
+	}
+
 	.email-link {
 		@include mono(var(--fs-label-lg), 0.04em);
 		color: var(--color-text);

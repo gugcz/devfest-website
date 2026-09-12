@@ -11,6 +11,13 @@ interface NavLink {
 
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isHome = currentPath === '/';
+// A personal invitation has exactly ONE primary action — `Take the ticket`,
+// which goes straight to ti.to. The red `Tickets` bar action is a second
+// primary action pointing somewhere else (`/#tickets`, off the invitation), so
+// it is dropped on `/invite/*`. Decided 4 Sep 2026. The mark and the menu
+// toggle stay, so the bar is still a bar and every destination is still one
+// click away behind it.
+const isInvite = currentPath === '/invite' || currentPath.startsWith('/invite/');
 // On the home page #tickets is a same-page anchor; from subpages we need
 // to send the visitor back to / first so the section actually exists.
 const ticketsHref = isHome ? '#tickets' : '/#tickets';
@@ -57,7 +64,7 @@ const isCurrent = (href: string) => {
 	<p class="header-stamp" aria-hidden="true">Prague <span>&middot;</span> 30 Oct 2026</p>
 
 	<div class="header-actions">
-		<a href={ticketsHref} class="header-cta">Tickets</a>
+		{!isInvite && <a href={ticketsHref} class="header-cta">Tickets</a>}
 
 		<nav class="nav" aria-label="Primary">
 			<button
