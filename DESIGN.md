@@ -458,14 +458,27 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   (`SpeakerDetail.module.scss:46`).
 - **[MUST] Partner and press logos are `object-fit: contain`** — never cropped
   (`partners.scss:235`, `index.scss:461`, `downloads.scss:202`).
-- **[MUST] The partner wall is one grid module, `.logo-grid` / `.logo-cell`**
-  (`partners.scss:158,172`) — `repeat(auto-fill, minmax(min(100%, --cell-min),
-  1fr))` at one track size for every partner, regardless of tier. Sizing per
-  tier used `--tier-col` as a floor rather than a width, so cells grew to close
-  their row — one page rendered a 611px platinum cell beside 264px media
-  plates, four cell modules on one wall. The tier is carried by its heading and
-  section order instead. A tier that doesn't fill its last row leaves the rest
-  empty — no hairline hangs over dead space.
+- **[CURRENT] The partner wall is one grid module, `.logo-grid` / `.logo-cell`,
+  with cell SIZE encoding tier.** `--cols` (set per row in `partners.astro`,
+  `columnsFor()` in `partners.ts`) is `repeat(var(--cols, 4), minmax(0, 1fr))`:
+  platinum full width (half at exactly two sponsors), diamond 2-up, gold 3-up,
+  silver/media/community 4-up. Partners is the page a sponsor screenshots into
+  a report, so the biggest cheque has to be the biggest cell — an earlier
+  version ran every tier at one uniform track size, which made platinum and
+  media read as the same weight. The tier label size steps down with the cell
+  (`.wall-title[data-tier=…]`): platinum `--fs-h2`, diamond `--fs-h3`,
+  gold/silver/media/community `--fs-row-sm`. A row that doesn't divide evenly
+  into its column count (desktop or the mobile 2-up fallback) is padded with
+  empty dashed plates (`paddedCount()`) rather than staircasing its last row.
+  One plate treatment for every row, ladder or off-ladder — media/community no
+  longer carry a separate cream ground.
+- **[MUST] Partner logos render in one ink white**, `filter: brightness(0)
+  invert(1)` on `.logo` (`partners.scss`) — a mark's own brand colour (a blue
+  bank block, a green wordmark) fought the red otherwise. `.is-plated` (a
+  per-partner flag for a logo whose file already bakes in its own background/
+  padding, e.g. `Partner.plated` in `partners.ts`) is exempt: inverting an
+  already-composited mark erases it rather than recolouring it, so those stay
+  native colour.
 - **[MUST] Equal cells don't make equal-looking logos.** `opticalBox()`
   (`partners.astro:53`) gives each mark a box of equal ink **area** shaped to
   its own aspect ratio (a 5:1 wordmark ≈190×38, a square glyph ≈76×76) and
@@ -575,20 +588,20 @@ are full-bleed sheets, not dialog boxes; `Closer.astro` ends every page except
 
 ## Anatomy of a page
 
-**[MUST] A subpage is this sequence, in this order:** `SubpageHero` → `Ticker`
-→ one or more `.band` sections → `Closer` → `Footer`. Every subpage under
+**[MUST] A subpage is this sequence, in this order:** `SubpageHero` → one or
+more `.band` sections → `Closer` → `Footer`. Every subpage under
 `src/pages/` (`speakers`, `sessions`, `agenda`, `team`, `faq`, `contact`,
-`invoice`, `press`, `press/downloads`) follows it; `privacy-policy` is the one
-deliberate exception (below). `/` (home) and `/partners` are the two pages
-that don't run `SubpageHero`/`Ticker` and are out of scope here.
+`invoice`, `press`, `press/downloads`, `partners`) runs `SubpageHero`;
+`privacy-policy` is the one deliberate exception (below). `/` (home) is the
+only page that doesn't. **`Ticker` runs on `/` only** — a marquee repeated at
+the top of every subpage read as the same strip stamped ten times; the home
+page is the one place it earns its keep.
 
 ```astro
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 ---
 <BaseLayout title="…" description="…">
 	<main class="page-stack">
@@ -598,9 +611,9 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			seoHeading="…"
 			titleId="…"
 			focus="68% 42%"
-			<!-- photo={false} instead of focus, for a type-only opener -->
+			<!-- photo={false} instead of focus, for a type-only opener; every
+			     subpage except /speakers uses photo={false} -->
 		/>
-		<Ticker items={EVENT_TOPICS} size="sm" />
 		<section class="band band--lit-red" aria-label="…">
 			<div class="band-inner">
 				<header class="head-stack">
@@ -619,14 +632,14 @@ Decision criteria — each one picked per page, not by copying the nearest
 existing page:
 
 - **`photo` crop vs `photo={false}`.** `SubpageHero` shows the shared
-  `/hero-detective.webp` plate at a per-page `focus` crop by default
-  (`speakers`, `sessions`, `agenda`, `team`, `press`). `photo={false}` opens
-  on type alone — used where the page's own content starts immediately below
-  the fold and a repeated photo would compete with it: `faq`, `contact`,
-  `invoice`, `press/downloads` (`faq.astro:74`, `contact.astro:21`,
-  `invoice.astro:20`, `downloads.astro:39`). **[MUST]** a new subpage picks
-  its own `focus` crop rather than reusing another page's — see Images &
-  media.
+  `/hero-detective.webp` plate at a per-page `focus` crop only on
+  `/speakers` (`speakers.astro:18`) — the one page it earns its keep on, with
+  home keeping its own separate hero. Every other subpage uses
+  `photo={false}` and opens on type alone: `sessions`, `agenda`, `team`,
+  `partners`, `faq`, `contact`, `invoice`, `press`, `press/downloads`, `404`,
+  the thank-you pages. Repeating the same photograph at the top of every page
+  is what makes a site read as one template stamped over and over, however
+  good the photograph is.
 - **`.band--lit` vs `.band--lit-red`.** `--lit-red` is for pages **about
   people and the live programme** — `speakers`, `sessions`, `agenda`, `team`
   (`speakers.astro:25`, `sessions.astro:25`, `agenda.astro:25`,

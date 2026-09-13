@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import NextStep from '../components/NextStep.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 
 // The page used to dead-end: one line of confirmation and a link back to the
 // homepage the visitor had just come from. Someone who has just handed over
@@ -46,8 +44,6 @@ const STEPS = [
 			titleId="newsletter-thanks-title"
 			photo={false}
 		/>
-
-		<Ticker items={EVENT_TOPICS} size="sm" />
 
 		<section class="band band--lit" aria-labelledby="newsletter-next-heading">
 			<div class="band-inner">

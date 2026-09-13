@@ -2,9 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 
 // ─────────────────────────────────────────────────────────────────────────
 // FAQ CONTENT — single source of truth: the `faq` content collection
@@ -72,9 +70,6 @@ const faqJsonLd = JSON.stringify(faqSchema);
 			photo={false}
 		/>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
-
 		<!-- FILES -->
 		{/* Its own heading, not the hero's `faq-title`: two <section>s carrying
 		    the same accessible name are two regions with one name, which is the
@@ -102,7 +97,7 @@ const faqJsonLd = JSON.stringify(faqSchema);
 								   to show what an answer looks like; opening more would
 								   bury the rest of the list. */
 								<details class="faq-item" open={groupIndex === 0 && itemIndex === 0}>
-									<summary class="field-row field-row--link faq-q">
+									<summary class="field-row faq-q">
 										<span class="faq-q-text">{item.q}</span>
 										<span class="faq-marker" aria-hidden="true">+</span>
 									</summary>

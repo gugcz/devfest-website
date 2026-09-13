@@ -11,12 +11,11 @@ interface Props {
 	/**
 	 * Whether the key-art plate sits behind the title.
 	 *
-	 * Ten pages opening on the same photograph in the same crop is the thing
-	 * that makes a site read as one template stamped ten times, however good
-	 * the photograph is. The pages that are ABOUT the event (lineup, schedule,
-	 * crew, partners, press) keep it; the transactional ones (contact, FAQ,
-	 * invoice, downloads) get a type-only plate — black ground, one headline —
-	 * so the scroll has two kinds of opening instead of one.
+	 * Every subpage opening on the same photograph in the same crop is the
+	 * thing that makes a site read as one template stamped over and over,
+	 * however good the photograph is. Only `/speakers` keeps it (home has its
+	 * own hero); every other subpage gets a type-only plate — black ground,
+	 * one headline.
 	 */
 	photo?: boolean;
 	/** `background-position` for the key-art plate — see HeroBackground. */

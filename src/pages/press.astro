@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import { fetchOg } from '../lib/og';
-import { EVENT_TOPICS } from '../lib/ticker';
 
 // A media mention is just a URL. Outlet, title, image, description and date
 // are all read from the article's Open Graph tags at build time. Any field set
@@ -82,10 +80,8 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 			lede="Covering DevFest.cz 2026? Find the key facts, our logos, and someone to talk to. We're glad to help journalists, bloggers, and media partners."
 			seoHeading="DevFest.cz 2026 Press & Media"
 			titleId="press-title"
+			photo={false}
 		/>
-
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 
 		<!-- IN THE PRESS + DESK + PRESS KIT -->
 		<section class="band band--lit" aria-label="Press coverage">
@@ -100,7 +96,7 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 						<ul class="field coverage-list reveal">
 							{mediaCoverage.map((m) => (
 								<li class="coverage-row">
-									<a class="field-row field-row--link coverage-card" href={m.href} target="_blank" rel="noopener noreferrer">
+									<a class="field-row coverage-card" href={m.href} target="_blank" rel="noopener noreferrer">
 										{m.image && (
 											<span class="coverage-thumb">
 												<img src={m.image} alt="" loading="lazy" decoding="async" width="400" height="225" />

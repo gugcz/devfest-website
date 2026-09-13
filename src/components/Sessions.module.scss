@@ -96,7 +96,9 @@
 
 .chip {
 	@include mono(var(--fs-label-sm), 0.04em);
-	color: var(--color-grey);
+	// --ink, not --color-grey: the rest state was the lowest-contrast
+	// interactive element on the site and read as disabled.
+	color: var(--ink);
 	background: rgba(255, 255, 255, 0.02);
 	// Square, never a pill; the boundary uses --field-border so an interactive filter
 	// clears WCAG 1.4.11.
@@ -244,17 +246,45 @@
 	overflow: hidden;
 }
 
-/* ===================== FOOT (speakers) ===================== */
-// Right-hand column: who is giving the talk, on the same axis every field row uses.
+/* ===================== FOOT (time / room / speakers) ===================== */
+// Right-hand column: when and where, then who — the same axis every field row
+// uses. A bare speaker chip left ~40% of the row's width empty; time and room
+// (from the session data, "TBA" when the schedule hasn't landed yet) are what
+// actually earn that column.
 .foot {
 	grid-column: 2;
 	grid-row: 1 / span 3;
 	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.6rem;
+	max-width: 15rem;
+	padding-top: 0.15rem;
+}
+
+.meta {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 0.5rem 0.8rem;
+}
+
+.metaItem {
+	@include mono(var(--fs-label-sm), 0.08em, uppercase);
+	color: var(--ink-muted);
+	white-space: nowrap;
+
+	& + & {
+		padding-left: 0.8rem;
+		border-left: 1px solid var(--rule);
+	}
+}
+
+.speakerRow {
+	display: flex;
 	align-items: center;
 	justify-content: flex-end;
 	gap: 0.7rem;
-	max-width: 15rem;
-	padding-top: 0.15rem;
 }
 
 .stack {
@@ -380,9 +410,14 @@
 	.foot {
 		grid-column: 1;
 		grid-row: auto;
-		justify-content: flex-start;
+		align-items: flex-start;
 		max-width: none;
 		padding-top: 0.4rem;
+	}
+
+	.meta,
+	.speakerRow {
+		justify-content: flex-start;
 	}
 }
 

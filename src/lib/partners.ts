@@ -54,3 +54,47 @@ export const getMediaPartners = (): Promise<Partner[]> => byTier('media');
 
 /** Community partners — same deal as media: /partners only, off the ladder. */
 export const getCommunityPartners = (): Promise<Partner[]> => byTier('community');
+
+/**
+ * Cell columns per row, top tier first — this IS the tier signal (Partners is
+ * optimised for the sponsor screenshotting the page, not for a uniform grid).
+ * Media/community run at the same column count as silver: off-ladder, but not
+ * a second visual system.
+ */
+const ROW_COLUMNS: Record<string, number> = {
+	platinum: 1,
+	diamond: 2,
+	gold: 3,
+	silver: 4,
+	media: 4,
+	community: 4,
+};
+
+/**
+ * Grid column count for a wall row: cell size encodes tier value, so a tier's
+ * column count is fixed regardless of how many partners fill it — a lone
+ * silver sponsor still gets a small, 4-up-sized cell, padded out with empty
+ * plates, rather than growing to fill the row (which would read as a bigger
+ * tier than it is). Platinum is the one exception: it runs full width, or
+ * half-width when there are exactly two partners — there IS no smaller
+ * platinum cell to pad out to.
+ */
+export function columnsFor(rowId: string, count: number): number {
+	if (rowId === 'platinum') return count <= 2 ? Math.max(count, 1) : 2;
+	return ROW_COLUMNS[rowId] ?? 4;
+}
+
+/**
+ * Partner count padded up to a full grid line, in BOTH the desktop column
+ * count and the mobile 2-up grid — a tier that doesn't divide evenly gets
+ * empty plates rather than a staircased last row on either layout. A
+ * single-column row (platinum) is exempt: it renders one column on mobile
+ * too (see `.logo-grid[data-cols='1']` in partners.scss), so a lone sponsor
+ * needs no padding on either breakpoint.
+ */
+export function paddedCount(count: number, cols: number): number {
+	if (count === 0 || cols <= 1) return count;
+	let target = Math.ceil(count / cols) * cols;
+	if (target % 2 !== 0) target += cols;
+	return target;
+}

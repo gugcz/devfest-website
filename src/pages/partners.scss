@@ -116,7 +116,9 @@
 		margin-bottom: clamp(2rem, 4vw, 3rem);
 	}
 
-	// Poster headline at section scale.
+	// Poster headline at section scale — the tier's own weight. Platinum runs
+	// the base size; the ramp steps down with the cell as the tier gets
+	// smaller, so the label and the grid say the same thing.
 	.wall-title {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-h2);
@@ -129,6 +131,17 @@
 		.red {
 			color: var(--color-accent-hot);
 		}
+
+		&[data-tier='diamond'] {
+			font-size: var(--fs-h3);
+		}
+
+		&[data-tier='gold'],
+		&[data-tier='silver'],
+		&[data-tier='media'],
+		&[data-tier='community'] {
+			font-size: var(--fs-row-sm);
+		}
 	}
 
 	// ─── ONE GRID MODULE ──────────────────────────────────────────────────
@@ -136,20 +149,12 @@
 	// sharing hairlines with their neighbours. No panel fill, no drop shadow,
 	// no floating tiles.
 	//
-	// The cell used to be sized PER TIER, and `--tier-col` was a floor rather
-	// than a width, so cells grew to close their row: the same page rendered a
-	// 611px platinum cell, three full-width diamond cells, a 520px silver one
-	// and 264px media plates. Four cell modules on one wall, and the size of a
-	// partner's cell said more about how many partners share its tier than
-	// about the tier.
-	//
-	// Now: one track size for every partner on the page, in both grids. The
-	// tier is carried by the heading above the sheet and by the order of the
-	// sections, which is what a ladder is for. A tier that does not fill its
-	// last row simply leaves the rest of the row empty — nothing draws a rule
-	// over it, because the rules belong to the CELLS.
+	// Cell SIZE now encodes tier — `--cols` is set per row in partners.astro
+	// (`columnsFor`): platinum full width (or half at two sponsors), diamond
+	// 2-up, gold 3-up, silver/media/community 4-up. Partners is the page a
+	// sponsor screenshots into a report, so the biggest cheque has to be the
+	// biggest thing on the page, not a cell the same size as the smallest.
 	.logo-grid {
-		--cell-min: 280px;
 		--cell-height: 200px;
 
 		list-style: none;
@@ -158,7 +163,7 @@
 		// where the next section paints over it. This gives that pixel back.
 		padding: 0 0 1px;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--cell-min)), 1fr));
+		grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
 		width: 100%;
 	}
 
@@ -218,6 +223,15 @@
 		// height follow the width keeps the mark at its true proportions when
 		// a narrow cell clamps it to `max-width: 100%` — a fixed height there
 		// letterboxes the mark inside a box wider than it renders.
+		//
+		// One ink white for every mark on the wall — `brightness(0) invert(1)`
+		// flattens whatever colour the source ships (a blue bank block, a green
+		// wordmark, a pink one) to a solid white silhouette, so the wall reads
+		// as one system instead of a sponsor's brand colours fighting the red.
+		// `.is-plated` (a logo with its own baked-in background/padding) is
+		// exempt: inverting a mark that already carries its own composited
+		// ground would erase it, not recolour it — these stay native colour
+		// and are called out as an open point in the PR.
 		.logo {
 			display: block;
 			width: var(--logo-w, 180px);
@@ -226,7 +240,12 @@
 			max-height: calc(var(--cell-height) - 3.2rem);
 			object-fit: contain;
 			opacity: 0.95;
+			filter: brightness(0) invert(1);
 			transition: opacity 0.2s;
+
+			&.is-plated {
+				filter: none;
+			}
 		}
 
 		&:has(a:hover),
@@ -241,40 +260,33 @@
 		}
 	}
 
-	// Media and community marks ship DARK (they are drawn for light
-	// backgrounds), so their cells carry a cream plate — inverting them
-	// instead flattened the raster logos to white blobs and mangled the
-	// multi-tone marks. `--rule` is cream at 13%, which on cream is invisible,
-	// so the rule inverts with the ground.
-	.logo-grid--plated {
-		.logo-cell {
-			background: var(--color-cream);
-			border-color: rgba(5, 5, 5, 0.14);
-			transition: filter 0.25s ease;
-
-			&::before { content: none; }
-
-			&:hover,
-			&:focus-within {
-				filter: brightness(1.06);
-			}
-		}
+	// An empty pad plate — closes out a row that doesn't divide evenly into
+	// its tier's column count, so the last row never staircases. No content,
+	// no hover state: it is grid filler, not a partner.
+	.logo-cell--empty {
+		border-style: dashed;
+		border-color: var(--rule);
 	}
 
 	@media (max-width: 900px) {
 		.logo-grid {
-			--cell-min: 220px;
 			--cell-height: 160px;
 		}
 	}
 
 	@media (max-width: 600px) {
-		// Two per row, never N — a three-partner row shared between however
-		// many partners a tier had put each wordmark in a ~116px cell.
+		// Two per row, never N — every multi-column row on the wall folds to
+		// the same 2-up grid on a phone (padded to an even count in
+		// partners.astro, so this never staircases either). A single-column
+		// row (platinum) stays single-column: one full-width sponsor is not a
+		// staircase, and it needs no padding partner to pair with.
 		.logo-grid {
-			--cell-min: 0;
 			--cell-height: 140px;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+
+			&[data-cols='1'] {
+				grid-template-columns: 1fr;
+			}
 		}
 
 		.logo-cell {

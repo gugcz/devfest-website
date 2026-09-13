@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SubpageHero from '../../components/SubpageHero.astro';
-import Ticker from '../../components/Ticker.astro';
 import Closer from '../../components/Closer.astro';
 import { listPressKit } from '../../lib/press-kit';
-import { EVENT_TOPICS } from '../../lib/ticker';
 
 // Downloads are read from public/press-kit/ at build time — drop a file in
 // that folder and it shows up here automatically (label, type and size are
@@ -38,8 +36,6 @@ const fillers = Array.from(
 			titleId="downloads-title"
 			photo={false}
 		/>
-
-		<Ticker items={EVENT_TOPICS} size="sm" />
 
 		<section class="band band--lit press-body" aria-label="Press kit downloads">
 			<div class="band-inner">

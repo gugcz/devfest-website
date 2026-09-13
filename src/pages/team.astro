@@ -4,9 +4,7 @@ import { getCollection } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 import { initials } from '../lib/speakers';
 
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
@@ -94,11 +92,8 @@ const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
 			lede="DevFest.cz is run by volunteers who'd rather be debugging. Every talk, every coffee, every neon-lit corridor is wired together by the people below."
 			seoHeading="DevFest.cz 2026 Team"
 			titleId="team-title"
-			focus="46% 30%"
+			photo={false}
 		/>
-
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 
 		<!-- ROSTER -->
 		<section class="band band--lit-red" aria-label="Organising team">
