@@ -9,6 +9,7 @@ import {
 	type SessionFilters,
 } from '../lib/sessions';
 import { fetchLineup } from '../lib/lineup';
+import { formatClock } from '../lib/agenda';
 import { shuffle } from '../lib/shuffle';
 import SessionDetail from './SessionDetail';
 import SpeakerPhoto from './SpeakerPhoto';
@@ -50,6 +51,8 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 	// Lead the card with the primary track (falls back to the room, then a generic
 	// label).
 	const kicker = visitorCategories(session)[0]?.values[0] || session.room || 'Talk';
+	const time = formatClock(session.startsAt) || 'TBA';
+	const room = session.room || 'TBA';
 
 	return (
 		<li>
@@ -68,8 +71,14 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 				{session.description && <span className={s.excerpt}>{session.description}</span>}
 
 				<span className={s.foot}>
-					{session.speakers.length > 0 && <SpeakerStack session={session} />}
-					<span className={s.names}>{names || 'Speaker to be announced'}</span>
+					<span className={s.meta}>
+						<span className={s.metaItem}>{time}</span>
+						<span className={s.metaItem}>{room}</span>
+					</span>
+					<span className={s.speakerRow}>
+						{session.speakers.length > 0 && <SpeakerStack session={session} />}
+						<span className={s.names}>{names || 'Speaker to be announced'}</span>
+					</span>
 				</span>
 			</button>
 		</li>

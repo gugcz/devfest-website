@@ -181,6 +181,14 @@
 	border-radius: var(--radius);
 	transition: background 0.24s ease, border-color 0.24s ease;
 
+	// A grid item stretches to its full row span by default. A stub entry
+	// (title only, no tags or speakers to earn the rest) sits at its own
+	// content height instead, leaving the remainder of its slot as open grid —
+	// an honest "nothing here yet" rather than a mostly-empty panel.
+	&.cellSparse {
+		align-self: start;
+	}
+
 	// Light washes in from the left when the entry is reached.
 	&::before {
 		content: '';
@@ -479,10 +487,55 @@
 	color: var(--color-cream);
 }
 
-// The room is the aside under them, a step down so the names lead.
+// The room label leads the card, above the title — it's what tells two
+// parallel talks apart at a glance, not an aside under the speakers.
 .itemRoom {
-	font-size: var(--fs-ui);
-	color: var(--color-grey);
+	@include mono(var(--fs-label), 0.14em, uppercase);
+	color: var(--ink-strong);
+	margin-bottom: 0.3rem;
+}
+
+// A shared time header over N room cards running the same slot.
+.itemParallelRow {
+	align-items: flex-start;
+}
+
+.itemParallelSlots {
+	display: flex;
+	flex-direction: column;
+	gap: 1.4rem;
+	min-width: 0;
+	flex: 1;
+}
+
+.parallelCard {
+	display: flex;
+	flex-direction: column;
+	gap: 0.45rem;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	font: inherit;
+	color: inherit;
+	background: none;
+	border: 0;
+	cursor: pointer;
+
+	& + & {
+		padding-top: 1.2rem;
+		border-top: 1px solid var(--rule);
+	}
+
+	&:hover .itemTitle,
+	&:focus-visible .itemTitle {
+		color: var(--color-accent-hot);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
+	}
 }
 
 /* ===================== NOT-YET-SCHEDULED ===================== */

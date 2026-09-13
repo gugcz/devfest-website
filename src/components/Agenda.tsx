@@ -355,11 +355,16 @@ function AgendaGrid({
 
 					const colIndex = columns.findIndex((c) => c.key === column?.key) + 2;
 					const live = liveIds.has(session.id);
+					// A stub session (a title, no tags, no speakers yet) has nothing to
+					// fill its duration-scaled row with — stretched to it anyway, it
+					// rendered as a mostly-empty card. Let it sit at its own content
+					// height instead of stretching into the grid row's full span.
+					const sparse = talkTags(session).length === 0 && session.speakers.length === 0;
 					return (
 						<button
 							key={session.id}
 							type="button"
-							className={`${s.cell} ${live ? s.cellLive : ''}`}
+							className={`${s.cell} ${live ? s.cellLive : ''} ${sparse ? s.cellSparse : ''}`}
 							style={{ gridColumn: colIndex, gridRow }}
 							onClick={() => onOpen(session)}
 							aria-label={talkLabel(session, column?.label ?? '')}
@@ -413,57 +418,126 @@ function AgendaList({
 		...partition.columns.flatMap((column) => partition.byRoom.get(column.key) ?? []),
 	].sort(byStart);
 	const labels = roomLabels(partition);
+
+	// Parallel rooms repeat the same timestamp as consecutive rows with no other
+	// signal that they're the same slot. Grouping consecutive TALKS (never
+	// bands, which are full-width/plenary and don't share a slot) that start at
+	// the same minute prints the time once and lets each room's card carry its
+	// own room label and title underneath.
+	const groups: Session[][] = [];
+	for (const session of timed) {
+		const band = isBand(session);
+		const prevGroup = groups[groups.length - 1];
+		const prevFirst = prevGroup?.[0];
+		const sameSlot =
+			prevFirst &&
+			!band &&
+			!isBand(prevFirst) &&
+			placement(prevFirst)?.startMin === placement(session)?.startMin;
+		if (sameSlot) {
+			prevGroup.push(session);
+		} else {
+			groups.push([session]);
+		}
+	}
+
 	return (
 		<ul className={`field ${s.list}`} role="list">
-			{timed.map((session) => {
-				const band = isBand(session);
-				const names = speakerNames(session);
-				const room = labels.get(roomKey(session)) ?? '';
-				const live = liveIds.has(session.id);
-				const time = timeParts(session);
-				const body = (
-					<>
-						<span className={s.itemTime}>
-							<span>{time?.from}</span>
-							<span>{time?.to}</span>
-						</span>
-						<span className={s.itemMain}>
-							<span className={s.itemTitleRow}>
-								<span className={s.itemTitle}>{session.title}</span>
-								<NowBadge live={live} coming={!band && comingUpIds.has(session.id)} />
+			{groups.map((group) => {
+				const [first] = group;
+				const band = isBand(first);
+				const time = timeParts(first);
+				const parallel = group.length > 1;
+
+				if (!parallel) {
+					const session = first;
+					const names = speakerNames(session);
+					const room = labels.get(roomKey(session)) ?? '';
+					const live = liveIds.has(session.id);
+					const body = (
+						<>
+							<span className={s.itemTime}>
+								<span>{time?.from}</span>
+								<span>{time?.to}</span>
 							</span>
-							{!band && <TalkTags session={session} />}
-							{!band && (room || names) && (
-								<span className={s.itemFoot}>
-									<TalkAvatars session={session} />
-									{/* The speakers carry the row's ink and the room sits under them, on
-									    its own line: joined by a dot they wrapped mid-phrase on a phone,
-									    which is where this line does its work — telling two parallel
-									    talks apart. */}
-									<span className={s.itemMeta}>
-										{names && <span className={s.itemNames}>{names}</span>}
-										{room && <span className={s.itemRoom}>{room}</span>}
-									</span>
+							<span className={s.itemMain}>
+								{!band && room && <span className={s.itemRoom}>{room}</span>}
+								<span className={s.itemTitleRow}>
+									<span className={s.itemTitle}>{session.title}</span>
+									<NowBadge live={live} coming={!band && comingUpIds.has(session.id)} />
 								</span>
+								{!band && <TalkTags session={session} />}
+								{!band && names && (
+									<span className={s.itemFoot}>
+										<TalkAvatars session={session} />
+										<span className={s.itemMeta}>
+											<span className={s.itemNames}>{names}</span>
+										</span>
+									</span>
+								)}
+							</span>
+						</>
+					);
+					return (
+						<li key={session.id}>
+							{band ? (
+								<div className={`field-row ${s.item} ${s.itemBand} ${live ? s.itemLive : ''}`}>{body}</div>
+							) : (
+								<button
+									type="button"
+									className={`field-row field-row--link ${s.item} ${live ? s.itemLive : ''}`}
+									onClick={() => onOpen(session)}
+									aria-label={talkLabel(session, room)}
+									data-agenda-open
+								>
+									{body}
+								</button>
 							)}
-						</span>
-					</>
-				);
+						</li>
+					);
+				}
+
+				// One time header, shared by every room running at this slot.
 				return (
-					<li key={session.id}>
-						{band ? (
-							<div className={`field-row ${s.item} ${s.itemBand} ${live ? s.itemLive : ''}`}>{body}</div>
-						) : (
-							<button
-								type="button"
-								className={`field-row field-row--link ${s.item} ${live ? s.itemLive : ''}`}
-								onClick={() => onOpen(session)}
-								aria-label={talkLabel(session, room)}
-								data-agenda-open
-							>
-								{body}
-							</button>
-						)}
+					<li key={first.id}>
+						<div className={`field-row ${s.item} ${s.itemParallelRow}`}>
+							<span className={s.itemTime}>
+								<span>{time?.from}</span>
+								<span>{time?.to}</span>
+							</span>
+							<div className={s.itemParallelSlots}>
+								{group.map((session) => {
+									const names = speakerNames(session);
+									const room = labels.get(roomKey(session)) ?? '';
+									const live = liveIds.has(session.id);
+									return (
+										<button
+											key={session.id}
+											type="button"
+											className={`${s.parallelCard} ${live ? s.itemLive : ''}`}
+											onClick={() => onOpen(session)}
+											aria-label={talkLabel(session, room)}
+											data-agenda-open
+										>
+											{room && <span className={s.itemRoom}>{room}</span>}
+											<span className={s.itemTitleRow}>
+												<span className={s.itemTitle}>{session.title}</span>
+												<NowBadge live={live} coming={comingUpIds.has(session.id)} />
+											</span>
+											<TalkTags session={session} />
+											{names && (
+												<span className={s.itemFoot}>
+													<TalkAvatars session={session} />
+													<span className={s.itemMeta}>
+														<span className={s.itemNames}>{names}</span>
+													</span>
+												</span>
+											)}
+										</button>
+									);
+								})}
+							</div>
+						</div>
 					</li>
 				);
 			})}

@@ -61,19 +61,31 @@
 		position: relative;
 	}
 
-	// A clipping: thumbnail left, headline and outlet right. The whole entry is the
-	// link, so it takes `.field-row--link`; this file owns only its grid and type.
+	// A clipping: thumbnail left, headline and outlet right. No full-bleed reach
+	// field — a red band behind a thumbnail is red-on-red, and the field's
+	// negative-gutter inset bled past the 1140 container. Red survives as the
+	// row rule + outlet label only; this file owns the grid, type and that rule.
 	.coverage-card {
 		display: grid;
 		grid-template-columns: 220px 1fr;
 		gap: 1.8rem;
 		text-decoration: none;
+		border-bottom: 1px solid var(--rule);
+		transition: border-color 0.2s;
 
-		// Not ink: a hairline inside the row, and the off-site arrow's motion. Hover only.
-		&:hover {
+		&:hover,
+		&:focus-visible {
+			border-color: var(--rule-red);
+
+			.coverage-outlet { color: var(--color-accent-hot); }
 			.coverage-meta { border-top-color: rgba(247, 239, 230, 0.4); }
 			.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
 			.coverage-arrow { transform: translate(2px, -2px); }
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: var(--focus-gap-tight);
 		}
 	}
 
@@ -119,18 +131,16 @@
 		color: var(--ink-muted);
 	}
 
-	// THE ONE ROW TITLE THAT IS NOT BEBAS, because it is scraped Czech from the
-	// article's OG tags: Bebas's accented caps read as a mid-word fallback, and
-	// JetBrains Mono is the only brand face that sets Czech cleanly. It advances
-	// ~0.6em against Bebas's ~0.42em, hence the ~0.6x --fs-row-sm step.
-	// Titles are scraped Czech copy of unbounded length — no uppercase (diacritics
-	// are unreadable set that way) and enough line-height to hold multiple lines.
+	// Bebas, matching every other card title on the site (Sessions included) —
+	// per the round-2 critique, one type system for "card title" beats the
+	// mono exception this ran at before. Flagged as an open point in the PR:
+	// this is scraped Czech, and Bebas's accented caps read worse than mono did.
 	.coverage-title {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-weight: 500;
-		font-size: clamp(1.45rem, 2.5vw, 2.1rem);
-		line-height: 1.3;
-		letter-spacing: 0;
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-card-title);
+		line-height: 1.1;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
 		color: var(--color-text);
 	}
 

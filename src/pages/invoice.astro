@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import InvoiceForm from '../components/InvoiceForm';
-import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
 <BaseLayout
@@ -20,24 +18,24 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			photo={false}
 		/>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 		<section class="invoice-body" aria-labelledby="invoice-form-heading">
-			<div class="invoice-inner reveal">
-				<div class="invoice-intro">
-					<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
-					<ol class="steps">
-						<li><span class="step-no">01</span> Fill in your company billing details below.</li>
-						<li><span class="step-no">02</span> We email you an invoice, payable by bank transfer.</li>
-						<li><span class="step-no">03</span> Pay it — then we send a 100%-off code to redeem your tickets on ti.to.</li>
-					</ol>
-					<p class="intro-note">
-						Paying by card instead? Skip this and buy directly on{' '}
-						<a href="/#tickets" class="intro-link">the tickets page</a>.
-					</p>
-				</div>
+			<div class="band-inner">
+				<div class="invoice-inner reveal">
+					<div class="invoice-intro">
+						<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
+						<ol class="steps">
+							<li><span class="step-no">01</span> Fill in your company billing details below.</li>
+							<li><span class="step-no">02</span> We email you an invoice, payable by bank transfer.</li>
+							<li><span class="step-no">03</span> Pay it — then we send a 100%-off code to redeem your tickets on ti.to.</li>
+						</ol>
+						<p class="intro-note">
+							Paying by card instead? Skip this and buy directly on{' '}
+							<a href="/#tickets" class="intro-link">the tickets page</a>.
+						</p>
+					</div>
 
-				<InvoiceForm client:load />
+					<InvoiceForm client:load />
+				</div>
 			</div>
 		</section>
 
@@ -71,7 +69,9 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		position: relative;
 		z-index: 1;
 		max-width: 720px;
-		margin: 0 auto;
+		// Anchored to the same `.band-inner` left grid line as every other page —
+		// not centred independently, which floated the form as its own column.
+		margin: 0;
 		display: flex;
 		flex-direction: column;
 		gap: 3rem;
@@ -83,10 +83,10 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		gap: 1.4rem;
 	}
 
-	// --fs-h3, the step every other secondary head on the site runs at.
+	// --fs-h2, the same step every other `.head-title` on the site runs at.
 	.intro-title {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-h3);
+		font-size: var(--fs-h2);
 		line-height: var(--lh-display);
 		letter-spacing: var(--track-display);
 		text-transform: uppercase;

@@ -18,10 +18,10 @@
 		top: 7rem;
 	}
 
-	// A step above the questions: at --fs-h3 the category read as another entry in the list.
+	// The sub-head step, same as every other secondary head on the site.
 	.faq-cat {
 		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: clamp(2.4rem, 4.2vw, 3.75rem);
+		font-size: var(--fs-h3);
 		line-height: var(--lh-display);
 		letter-spacing: var(--track-display);
 		text-transform: uppercase;
@@ -46,39 +46,24 @@
 		}
 	}
 
-	// The REACH FIELD lives on the <summary> (`.field-row--link`), not here — a long
-	// answer sitting on red is a lot of red to read against. An OPEN item takes the
-	// warm wash instead: several <details> can be open at once, and four permanent
-	// red bands down one page is the accent as texture.
+	// No field wash here — a long answer sitting on a flooded band is a lot of
+	// colour to read against, and a wash wide enough to read as a band bleeds
+	// past the 1140 container. An OPEN item is marked by its row rule and its
+	// marker/label going accent-hot instead — no field, no bleed.
 	.faq-item {
 		position: relative;
 		isolation: isolate;
 
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0 calc(-1 * var(--gutter));
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.06) 0%,
-				rgba(255, 240, 226, 0.028) 38%,
-				transparent 82%
-			);
-			opacity: 0;
-			pointer-events: none;
-			transition: opacity 0.3s ease;
-			z-index: -2;
-			-webkit-mask-image: var(--field-feather);
-			mask-image: var(--field-feather);
-		}
-
-		&[open]::before {
-			opacity: 1;
+		&[open] {
+			.faq-q { border-color: var(--rule-red); }
+			.faq-marker { color: var(--color-accent-hot); }
 		}
 	}
 
-	// Question text + toggle marker. Rhythm, reach field, ink inversion and focus ring
-	// come from `.field-row--link`.
+	// Question text + toggle marker. No full-bleed reach field here — a long
+	// answer sitting under a flooded red row is a lot of red to read against,
+	// and the field's negative-gutter inset bled past the 1140 container to
+	// the viewport edge. Red survives as the row rule + marker/label only.
 	.faq-q {
 		z-index: 1;
 		list-style: none;
@@ -87,10 +72,25 @@
 		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: baseline;
 		column-gap: clamp(1.25rem, 3vw, 2.75rem);
+		border-bottom: 1px solid var(--rule);
+		transition: border-color 0.2s;
 
 		// Strip the default disclosure triangle (WebKit + the rest).
 		&::-webkit-details-marker {
 			display: none;
+		}
+
+		&:hover,
+		&:focus-visible {
+			border-color: var(--rule-red);
+
+			.faq-q-text { color: var(--color-accent-hot); }
+			.faq-marker { color: var(--color-accent-hot); }
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: var(--focus-gap-tight);
 		}
 	}
 

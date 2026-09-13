@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Desk from '../components/Desk.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 
 ---
 
@@ -20,9 +18,6 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			titleId="contact-title"
 			photo={false}
 		/>
-
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 
 		<!-- CARDS -->
 		<section class="band band--lit contact-body" aria-labelledby="desks-heading">

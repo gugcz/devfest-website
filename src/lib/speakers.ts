@@ -127,6 +127,17 @@ function isString(value: unknown): value is string {
 	return typeof value === 'string';
 }
 
+/**
+ * Speaker ids routed to the initials fallback regardless of their Sessionize
+ * `profilePicture` — for a submitted photo that doesn't meet the site's tone
+ * (crop/subject unusable in the noir grid, not a quality nitpick). Ids only,
+ * never names: this repo is public, and a real-name list in a code comment is
+ * exactly the kind of attendee-adjacent data that must not live here. A
+ * proper portrait replaces the override; requesting one is on the organisers,
+ * not this file.
+ */
+const PHOTO_OVERRIDE_IDS = new Set<string>([]);
+
 /** http(s)-only scheme re-check at the render boundary — defense-in-depth over
  * the Cloud Function's write-time `sanitizeLinkUrl` (the collection is
  * client-write-blocked, but this module renders directly into an `href`). */
@@ -179,7 +190,11 @@ export function speakerFromDoc(id: string, data: Record<string, unknown>): Speak
 		fullName: isString(data.fullName) ? data.fullName : '',
 		tagLine: isString(data.tagLine) ? data.tagLine : '',
 		bio: isString(data.bio) ? data.bio : '',
-		profilePicture: isString(data.profilePicture) ? data.profilePicture : '',
+		profilePicture: PHOTO_OVERRIDE_IDS.has(id)
+			? ''
+			: isString(data.profilePicture)
+				? data.profilePicture
+				: '',
 		links,
 		sessions,
 	};

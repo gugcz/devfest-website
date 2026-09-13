@@ -2,7 +2,6 @@
 .wrapper {
 	width: 100%;
 	max-width: 720px;
-	margin: 0 auto;
 }
 
 .form {
@@ -33,7 +32,7 @@
 }
 
 .label {
-	@include mono(var(--fs-label), 0.16em, uppercase);
+	@include mono(var(--fs-label-lg), 0.16em, uppercase);
 	color: var(--ink-meta);
 	transition: color 0.2s ease;
 }
@@ -43,12 +42,13 @@
 	letter-spacing: 0.1em;
 }
 
-// Lit dark field — hairline border that warms to red and glows on focus.
+// A filled field — visibly lighter than the page ground, not a hairline box
+// floating on the same dark. Hairline border warms to red and glows on focus.
 .input {
 	width: 100%;
 	padding: 0.85rem 0.95rem;
 	min-height: 2.75rem;
-	background: var(--panel-lit-2);
+	background: var(--panel-hover);
 	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	color: var(--color-text);
@@ -82,14 +82,14 @@
 	// only channel.
 	&[aria-invalid='true'] {
 		border-color: var(--color-accent-hot);
-		background: var(--panel-lit-2);
+		background: var(--panel-hover);
 	}
 }
 
 // The per-field message. Mono, like every other label on the site — the error
 // is a label, not prose, and it sits in the same column as the field's own.
 .error {
-	@include mono(var(--fs-label));
+	@include mono(var(--fs-ui));
 	line-height: 1.5;
 	letter-spacing: 0.06em;
 	color: var(--color-accent-hot);
@@ -149,7 +149,7 @@
 	display: block;
 	margin-top: 0.35rem;
 	font-style: italic;
-	font-size: var(--fs-label-lg);
+	font-size: var(--fs-ui);
 	color: var(--color-grey);
 }
 
