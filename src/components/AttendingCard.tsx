@@ -566,7 +566,7 @@ export default function AttendingCard() {
 
 							<input
 								ref={fileInputRef}
-								className={s.srOnly}
+								className="sr-only"
 								id="attending-photo-input"
 								type="file"
 								accept="image/*"
@@ -806,7 +806,7 @@ export default function AttendingCard() {
 					)}
 				</div>
 
-				<span className={s.srOnly} role="status" aria-live="polite">
+				<span className="sr-only" role="status" aria-live="polite">
 					{announcement}
 				</span>
 			</div>

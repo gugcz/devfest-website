@@ -180,19 +180,6 @@
 	}
 }
 
-// Clipped, not `display:none` — the input must stay focusable/keyboard-operable.
-.srOnly {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
-}
-
 // Dropzone tile: empty / drag-over states. Picked and decoding states use
 // `.photoRow` instead — the tile collapses once there's something to show.
 .dropzone {
