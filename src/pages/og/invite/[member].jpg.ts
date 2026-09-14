@@ -23,6 +23,7 @@ import { Resvg } from '@resvg/resvg-js';
 import sharp from 'sharp';
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
+import type { ReactNode } from 'react';
 import { firstName, INVITE_EVENT } from '../../../lib/invite';
 
 export async function getStaticPaths() {
@@ -263,7 +264,9 @@ export const GET: APIRoute = async ({ props }) => {
 		},
 	};
 
-	const svg = await satori(markup, {
+	// satori is typed against ReactNode but walks plain `{ type, props }` trees;
+	// this is that tree, built without a JSX runtime.
+	const svg = await satori(markup as unknown as ReactNode, {
 		width: CARD_WIDTH,
 		height: CARD_HEIGHT,
 		fonts: [

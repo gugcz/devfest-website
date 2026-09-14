@@ -5,7 +5,9 @@
     "**/*"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "functions",
+    ".claude"
   ],
   "compilerOptions": {
     "jsx": "react-jsx",

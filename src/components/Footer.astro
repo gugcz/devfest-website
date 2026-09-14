@@ -30,7 +30,7 @@ const SOCIALS = [
 	},
 ] as const;
 
-const SITEMAP = [
+const SITEMAP: { href: string; label: string; external?: boolean }[] = [
 	{ href: '/', label: 'Home' },
 	{ href: '/#tickets', label: 'Tickets' },
 	// The B2B revenue path was linked from nowhere — not the menu, not here —
@@ -40,7 +40,7 @@ const SITEMAP = [
 	{ href: '/press', label: 'Press' },
 	{ href: 'https://2025.devfest.cz', label: "Last year's edition", external: true },
 	{ href: '/privacy-policy', label: 'Privacy Policy' },
-] as const;
+];
 ---
 
 <footer class="footer" role="contentinfo">

@@ -26,7 +26,7 @@ function parseDocs<T>(raw: unknown, parse: (id: string, data: Record<string, unk
 async function fetchDocs(signal?: AbortSignal): Promise<{ speakers: unknown; sessions: unknown }> {
 	const res = await fetch(ENDPOINT, { signal });
 	if (!res.ok) throw new Error(`lineup fetch failed: ${res.status}`);
-	return (await res.json()) as { speakers?: unknown; sessions?: unknown };
+	return (await res.json()) as { speakers: unknown; sessions: unknown };
 }
 
 function fetchParsed(keep: (s: Session) => boolean, signal?: AbortSignal): Promise<Lineup> {
