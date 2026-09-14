@@ -51,7 +51,7 @@ const SITE_URL = import.meta.env.PUBLIC_SITE_URL ?? 'https://devfest.cz';
 // below) sees a changed card instead of replaying its first unfurl forever —
 // see `src/lib/og-version.ts`.
 const ogImageUrl = new URL(
-	`/og/invite/${slug}.png?v=${ogCardVersion(member)}`,
+	`/og/invite/${slug}.jpg?v=${ogCardVersion(member)}`,
 	SITE_URL
 ).href;
 
