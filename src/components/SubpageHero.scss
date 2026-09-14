@@ -1,77 +1,77 @@
-	// Every subpage opens here: tag, title, one line of copy, and the title does
-	// all the work. Sized so the first content row is ALWAYS visible without
-	// scrolling — height comes from the padding and the title, not min-height.
+// Every subpage opens here: tag, title, one line of copy, and the title does
+// all the work. Sized so the first content row is ALWAYS visible without
+// scrolling — height comes from the padding and the title, not min-height.
+.subpage-hero {
+	position: relative;
+	min-height: max(360px, 44vh);
+	display: flex;
+	align-items: flex-end;
+	overflow: hidden;
+	// 7.5rem, not 5.5: this padding is the only clearance under the fixed header.
+	padding:
+		calc(7.5rem + env(safe-area-inset-top))
+		var(--gutter)
+		var(--section-y-tight);
+	border-bottom: 1px solid var(--rule-soft);
+}
+
+// Type-only opening — no photo, so the frame is shorter and the headline
+// carries the plate.
+.subpage-hero--plain {
+	min-height: max(320px, 36vh);
+	background: var(--color-bg);
+}
+
+.hero-content {
+	position: relative;
+	z-index: 10;
+	max-width: var(--maxw);
+	width: 100%;
+	margin: 0 auto;
+}
+
+.scene-vignette { z-index: 3; }
+
+// The page's one piece of poster-scale type. Never a second --fs-display on a subpage.
+.hero-title {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-display);
+	line-height: var(--lh-display);
+	letter-spacing: var(--track-display);
+	text-transform: uppercase;
+	color: var(--color-text);
+	margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+	max-width: 18ch;
+	text-wrap: balance;
+}
+
+// set:html injects unscoped markup; :global lets the page's <span class="red"> take
+// the accent. Flat — no halation.
+:global(.subpage-hero .hero-title .red) {
+	color: var(--color-accent-hot);
+}
+
+// One line, typewriter, no border and no accent bar.
+.hero-lede {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-lede);
+	line-height: 1.6;
+	color: var(--ink-soft);
+	max-width: 46ch;
+	margin: 0;
+}
+
+@media (max-width: 900px) {
 	.subpage-hero {
-		position: relative;
-		min-height: max(360px, 44vh);
-		display: flex;
-		align-items: flex-end;
-		overflow: hidden;
-		// 7.5rem, not 5.5: this padding is the only clearance under the fixed header.
-		padding:
-			calc(7.5rem + env(safe-area-inset-top))
-			var(--gutter)
-			var(--section-y-tight);
-		border-bottom: 1px solid var(--rule-soft);
+		min-height: max(340px, 40vh);
+		padding: calc(6.5rem + env(safe-area-inset-top)) var(--gutter) var(--section-y-tight);
+	}
+}
+
+@media (max-width: 600px) {
+	.subpage-hero {
+		min-height: max(300px, 36vh);
 	}
 
-	// Type-only opening — no photo, so the frame is shorter and the headline
-	// carries the plate.
-	.subpage-hero--plain {
-		min-height: max(320px, 36vh);
-		background: var(--color-bg);
-	}
-
-	.hero-content {
-		position: relative;
-		z-index: 10;
-		max-width: var(--maxw);
-		width: 100%;
-		margin: 0 auto;
-	}
-
-	.scene-vignette { z-index: 3; }
-
-	// The page's one piece of poster-scale type. Never a second --fs-display on a subpage.
-	.hero-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-display);
-		line-height: var(--lh-display);
-		letter-spacing: var(--track-display);
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
-		max-width: 18ch;
-		text-wrap: balance;
-	}
-
-	// set:html injects unscoped markup; :global lets the page's <span class="red"> take
-	// the accent. Flat — no halation.
-	:global(.subpage-hero .hero-title .red) {
-		color: var(--color-accent-hot);
-	}
-
-	// One line, typewriter, no border and no accent bar.
-	.hero-lede {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
-		color: var(--ink-soft);
-		max-width: 46ch;
-		margin: 0;
-	}
-
-	@media (max-width: 900px) {
-		.subpage-hero {
-			min-height: max(340px, 40vh);
-			padding: calc(6.5rem + env(safe-area-inset-top)) var(--gutter) var(--section-y-tight);
-		}
-	}
-
-	@media (max-width: 600px) {
-		.subpage-hero {
-			min-height: max(300px, 36vh);
-		}
-
-		.hero-title { max-width: none; }
-	}
+	.hero-title { max-width: none; }
+}

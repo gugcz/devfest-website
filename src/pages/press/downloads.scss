@@ -1,312 +1,312 @@
 @use '../../styles/type' as *;
-	/* ===================== BODY ===================== */
-	.back-link {
-		// Standalone nav link, so SC 2.5.8's inline exception does not apply (154x19).
-		display: inline-flex;
-		align-items: center;
-		min-height: 2.75rem;
-		margin-bottom: 2.6rem;
-		@include mono(var(--fs-label-sm), 0.22em, uppercase);
-		color: var(--ink-meta);
-		text-decoration: none;
-		border-bottom: 1px solid var(--rule-red);
-		padding-bottom: 2px;
-		transition: color 0.2s, border-color 0.2s;
+/* ===================== BODY ===================== */
+.back-link {
+	// Standalone nav link, so SC 2.5.8's inline exception does not apply (154x19).
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
+	margin-bottom: 2.6rem;
+	@include mono(var(--fs-label-sm), 0.22em, uppercase);
+	color: var(--ink-meta);
+	text-decoration: none;
+	border-bottom: 1px solid var(--rule-red);
+	padding-bottom: 2px;
+	transition: color 0.2s, border-color 0.2s;
 
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			border-color: var(--color-accent-hot);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: var(--focus-gap);
-		}
+	&:hover,
+	&:focus-visible {
+		color: var(--color-accent-hot);
+		border-color: var(--color-accent-hot);
 	}
 
-	/* ===================== SECTION HEAD ===================== */
-	// Left-set editorial head at the homepage section rhythm.
-	.section-head {
-		margin-bottom: 4rem;
-		text-align: left;
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
+	}
+}
+
+/* ===================== SECTION HEAD ===================== */
+// Left-set editorial head at the homepage section rhythm.
+.section-head {
+	margin-bottom: 4rem;
+	text-align: left;
+}
+
+.section-label {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.9rem;
+	margin: 0 0 1rem;
+	@include mono(var(--fs-label-sm), 0.3em, uppercase);
+	color: var(--ink-meta);
+
+	&::after {
+		content: '';
+		flex: 1 1 auto;
+		height: 1px;
+		background: var(--rule-soft);
+	}
+}
+
+// A plain mono count, never a hairline-boxed numeral.
+.section-no {
+	flex: 0 0 auto;
+	color: var(--ink-muted);
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.16em;
+}
+
+// The page's section head, so it runs at --fs-h2 like every other one on the site.
+.section-title {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-h2);
+	line-height: var(--lh-display);
+	letter-spacing: var(--track-display);
+	text-transform: uppercase;
+	color: var(--color-text);
+	margin: 0;
+
+	.red {
+		color: var(--color-accent-hot);
+	}
+}
+
+/* ===================== GRID ===================== */
+// Ruled contact sheet. Fixed column counts, not `auto-fill`: the page must
+// know the count to close a short last row with blanks (downloads.astro).
+.presskit-grid {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 0;
+	border-top: 1px solid var(--rule);
+	border-left: 1px solid var(--rule);
+
+	@media (min-width: 700px) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
-	.section-label {
-		display: flex;
-		align-items: center;
-		justify-content: flex-start;
-		gap: 0.9rem;
-		margin: 0 0 1rem;
-		@include mono(var(--fs-label-sm), 0.3em, uppercase);
-		color: var(--ink-meta);
-
-		&::after {
-			content: '';
-			flex: 1 1 auto;
-			height: 1px;
-			background: var(--rule-soft);
-		}
-	}
-
-	// A plain mono count, never a hairline-boxed numeral.
-	.section-no {
-		flex: 0 0 auto;
-		color: var(--ink-muted);
-		font-variant-numeric: tabular-nums;
-		letter-spacing: 0.16em;
-	}
-
-	// The page's section head, so it runs at --fs-h2 like every other one on the site.
-	.section-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-h2);
-		line-height: var(--lh-display);
-		letter-spacing: var(--track-display);
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin: 0;
-
-		.red {
-			color: var(--color-accent-hot);
-		}
-	}
-
-	/* ===================== GRID ===================== */
-	// Ruled contact sheet. Fixed column counts, not `auto-fill`: the page must
-	// know the count to close a short last row with blanks (downloads.astro).
-	.presskit-grid {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: 0;
-		border-top: 1px solid var(--rule);
-		border-left: 1px solid var(--rule);
-
-		@media (min-width: 700px) {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-
-		@media (min-width: 1000px) {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-		}
-
-		@media (min-width: 1280px) {
-			grid-template-columns: repeat(4, minmax(0, 1fr));
-		}
-	}
-
-	// A blank cell of the sheet: the ruling and the row height, nothing else.
-	// Shown only at the column count that needs it.
-	.kit-filler {
-		display: none;
-		min-height: 168px;
-		border-right: 1px solid var(--rule);
-		border-bottom: 1px solid var(--rule);
-	}
-
-	@media (min-width: 700px) and (max-width: 999px) {
-		.kit-filler--c2 { display: block; }
-	}
-
-	@media (min-width: 1000px) and (max-width: 1279px) {
-		.kit-filler--c3 { display: block; }
+	@media (min-width: 1000px) {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 
 	@media (min-width: 1280px) {
-		.kit-filler--c4 { display: block; }
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+// A blank cell of the sheet: the ruling and the row height, nothing else.
+// Shown only at the column count that needs it.
+.kit-filler {
+	display: none;
+	min-height: 168px;
+	border-right: 1px solid var(--rule);
+	border-bottom: 1px solid var(--rule);
+}
+
+@media (min-width: 700px) and (max-width: 999px) {
+	.kit-filler--c2 { display: block; }
+}
+
+@media (min-width: 1000px) and (max-width: 1279px) {
+	.kit-filler--c3 { display: block; }
+}
+
+@media (min-width: 1280px) {
+	.kit-filler--c4 { display: block; }
+}
+
+.kit-link {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-height: 168px;
+	overflow: hidden;
+	background: transparent;
+	border: 0;
+	border-right: 1px solid var(--rule);
+	border-bottom: 1px solid var(--rule);
+	border-radius: 0;
+	text-decoration: none;
+	transition: none;
+
+	// The cell under the cursor is the one the lamp is over.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			104deg,
+			rgba(255, 244, 232, 0.07) 0%,
+			rgba(255, 240, 226, 0.03) 42%,
+			transparent 86%
+		);
+		opacity: 0;
+		pointer-events: none;
+		z-index: 0;
+		transition: opacity 0.28s ease;
 	}
 
-	.kit-link {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		min-height: 168px;
-		overflow: hidden;
-		background: transparent;
-		border: 0;
-		border-right: 1px solid var(--rule);
-		border-bottom: 1px solid var(--rule);
-		border-radius: 0;
-		text-decoration: none;
-		transition: none;
-
-		// The cell under the cursor is the one the lamp is over.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.07) 0%,
-				rgba(255, 240, 226, 0.03) 42%,
-				transparent 86%
-			);
-			opacity: 0;
-			pointer-events: none;
-			z-index: 0;
-			transition: opacity 0.28s ease;
-		}
-
-		&:hover::before,
-		&:focus-visible::before {
-			opacity: 1;
-		}
-
-		&:hover,
-		&:focus-visible {
-			.kit-label { color: var(--color-accent-hot); }
-			.kit-dl { color: var(--color-accent-hot); transform: translateY(2px); }
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: var(--focus-gap);
-		}
+	&:hover::before,
+	&:focus-visible::before {
+		opacity: 1;
 	}
 
-	.kit-preview {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 92px;
-		border-bottom: 1px solid var(--rule);
-		background: var(--color-cream);
-
-		img {
-			max-width: 100%;
-			max-height: 100%;
-			object-fit: contain;
-			padding: 14px 22px;
-			display: block;
-		}
+	&:hover,
+	&:focus-visible {
+		.kit-label { color: var(--color-accent-hot); }
+		.kit-dl { color: var(--color-accent-hot); transform: translateY(2px); }
 	}
 
-	/* White / light marks + source files read better on a dark tile. */
-	.kit-preview--dark {
-		background: var(--panel-lit-2);
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
 	}
+}
 
-	.kit-badge {
-		@include mono(var(--fs-label-sm), 0.16em);
-		color: var(--ink-strong);
-		// No box: the format is a label on the tile, not a chip.
-		letter-spacing: 0.22em;
+.kit-preview {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 92px;
+	border-bottom: 1px solid var(--rule);
+	background: var(--color-cream);
+
+	img {
+		max-width: 100%;
+		max-height: 100%;
+		object-fit: contain;
+		padding: 14px 22px;
+		display: block;
 	}
+}
 
-	.kit-meta {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.8rem;
-		padding: 0.7rem 0.85rem;
-	}
+/* White / light marks + source files read better on a dark tile. */
+.kit-preview--dark {
+	background: var(--panel-lit-2);
+}
 
-	.kit-meta-text {
-		display: flex;
-		flex-direction: column;
-		gap: 0.28rem;
-		min-width: 0;
-	}
+.kit-badge {
+	@include mono(var(--fs-label-sm), 0.16em);
+	color: var(--ink-strong);
+	// No box: the format is a label on the tile, not a chip.
+	letter-spacing: 0.22em;
+}
 
-	// The asset's name is the tile's title, so it is set like one: Bebas, uppercase,
-	// on the tile step /agenda's cells use.
-	.kit-label {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-title-sm);
-		line-height: 1.06;
-		letter-spacing: 0.02em;
-		text-transform: uppercase;
-		color: var(--color-text);
-		transition: color 0.2s;
-	}
+.kit-meta {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.8rem;
+	padding: 0.7rem 0.85rem;
+}
 
-	.kit-spec {
-		@include mono(var(--fs-label-xs), 0.12em, uppercase);
-		color: var(--ink-soft);
-	}
+.kit-meta-text {
+	display: flex;
+	flex-direction: column;
+	gap: 0.28rem;
+	min-width: 0;
+}
 
-	.kit-dl {
-		flex-shrink: 0;
-		font-size: var(--fs-body);
-		color: var(--ink-muted);
-		transition: color 0.2s, transform 0.2s;
-	}
+// The asset's name is the tile's title, so it is set like one: Bebas, uppercase,
+// on the tile step /agenda's cells use.
+.kit-label {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-title-sm);
+	line-height: 1.06;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--color-text);
+	transition: color 0.2s;
+}
 
-	/* ===================== EMPTY STATE ===================== */
-	.empty-state {
-		position: relative;
-		border: 0;
-		border-top: 1px solid var(--rule-strong);
-		border-radius: 0;
-		background: transparent;
-		padding: 2.2rem 0 0;
-		max-width: 56ch;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1.1rem;
-	}
+.kit-spec {
+	@include mono(var(--fs-label-xs), 0.12em, uppercase);
+	color: var(--ink-soft);
+}
 
-	.empty-stamp,
-	.empty-line {
-		position: relative;
-		z-index: 1;
-	}
+.kit-dl {
+	flex-shrink: 0;
+	font-size: var(--fs-body);
+	color: var(--ink-muted);
+	transition: color 0.2s, transform 0.2s;
+}
 
-	.empty-stamp {
-		@include mono(var(--fs-label-xs), 0.3em, uppercase);
+/* ===================== EMPTY STATE ===================== */
+.empty-state {
+	position: relative;
+	border: 0;
+	border-top: 1px solid var(--rule-strong);
+	border-radius: 0;
+	background: transparent;
+	padding: 2.2rem 0 0;
+	max-width: 56ch;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1.1rem;
+}
+
+.empty-stamp,
+.empty-line {
+	position: relative;
+	z-index: 1;
+}
+
+.empty-stamp {
+	@include mono(var(--fs-label-xs), 0.3em, uppercase);
+	color: var(--color-accent-hot);
+	padding: 0;
+	background: transparent;
+	// A plain mono word, not a boxed stamp — matches /press.
+	border: 0;
+}
+
+.empty-line {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-body);
+	line-height: 1.7;
+	color: var(--color-grey);
+	max-width: 56ch;
+	margin: 0;
+}
+
+.inline-link {
+	color: var(--color-text);
+	text-decoration: none;
+	border-bottom: 1px solid var(--rule-red);
+
+	&:hover,
+	&:focus-visible {
 		color: var(--color-accent-hot);
-		padding: 0;
-		background: transparent;
-		// A plain mono word, not a boxed stamp — matches /press.
-		border: 0;
+		border-color: var(--color-accent-hot);
 	}
 
-	.empty-line {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-body);
-		line-height: 1.7;
-		color: var(--color-grey);
-		max-width: 56ch;
-		margin: 0;
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
 	}
+}
 
-	.inline-link {
-		color: var(--color-text);
-		text-decoration: none;
-		border-bottom: 1px solid var(--rule-red);
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 900px) {
+	.press-body { padding: clamp(3.5rem, 7vw, 5rem) var(--gutter); }
+}
 
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			border-color: var(--color-accent-hot);
-		}
+@media (max-width: 600px) {
+	.press-body { padding: clamp(3rem, 9vw, 4rem) var(--gutter); }
+	.kit-link { min-height: 0; }
+	.section-head { margin-bottom: 2.4rem; }
+}
 
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: var(--focus-gap);
-		}
-	}
+@media (prefers-reduced-motion: reduce) {
+	.kit-link { transition: box-shadow 0.2s; }
+	.kit-dl { transition: color 0.2s; }
 
-	/* ===================== RESPONSIVE ===================== */
-	@media (max-width: 900px) {
-		.press-body { padding: clamp(3.5rem, 7vw, 5rem) var(--gutter); }
-	}
-
-	@media (max-width: 600px) {
-		.press-body { padding: clamp(3rem, 9vw, 4rem) var(--gutter); }
-		.kit-link { min-height: 0; }
-		.section-head { margin-bottom: 2.4rem; }
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.kit-link { transition: box-shadow 0.2s; }
-		.kit-dl { transition: color 0.2s; }
-
-		.kit-link:hover,
-		.kit-link:focus-visible { transform: none; }
-	}
+	.kit-link:hover,
+	.kit-link:focus-visible { transform: none; }
+}

@@ -1,297 +1,297 @@
 @use '../styles/type' as *;
-	/* ===================== THE PARTNER WALL ===================== */
-	// One section shape for every partner group — the four sponsor tiers and
-	// the two off-ladder rows (media, community). They used to be two copies
-	// under two sets of names with identical bodies.
-	.logo-wall {
+/* ===================== THE PARTNER WALL ===================== */
+// One section shape for every partner group — the four sponsor tiers and
+// the two off-ladder rows (media, community). They used to be two copies
+// under two sets of names with identical bodies.
+.logo-wall {
+	position: relative;
+	// Top padding only: the next wall's own top padding is the gap between
+	// them, and the closing accent band supplies the last one.
+	padding: var(--section-y) var(--gutter) 0;
+	background: var(--color-bg);
+}
+
+.wall-inner {
+	max-width: var(--maxw);
+	margin: 0 auto;
+}
+
+// The group name on its own. It used to carry a mono "03 partners" caption
+// beside it — six sections down one page each announcing how few they had.
+.wall-head {
+	margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+// Poster headline at section scale.
+.wall-title {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-h2);
+	line-height: var(--lh-display);
+	letter-spacing: var(--track-display);
+	text-transform: uppercase;
+	color: var(--color-text);
+	margin: 0;
+
+	.red {
+		color: var(--color-accent-hot);
+	}
+}
+
+// ─── ONE GRID MODULE ──────────────────────────────────────────────────
+// Contact sheet, not a tile grid: one track size for every partner, no
+// panel fill or shadow. Per-tier sizing let cells grow to close their row.
+// The tier is carried by heading and section order; a short last row
+// stays empty — rules belong to the CELLS.
+.logo-grid {
+	--cell-min: 280px;
+	--cell-height: 200px;
+
+	list-style: none;
+	margin: 0;
+	// The cells' -1px bottom margin puts the last row's border outside the container,
+	// where the next section paints over it. This gives that pixel back.
+	padding: 0 0 1px;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--cell-min)), 1fr));
+	width: 100%;
+}
+
+.logo-cell {
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	min-height: var(--cell-height);
+	// A box around each logo. The -1px pulls neighbours onto a shared
+	// hairline, so a row of cells still reads as one ruled sheet rather
+	// than as a strip of 2px-doubled boxes.
+	border: 1px solid var(--rule);
+	margin: 0 -1px -1px 0;
+	border-radius: 0;
+	background: transparent;
+	transition: background 0.28s ease;
+
+	// The cell lights rather than lifts.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			104deg,
+			rgba(255, 244, 232, 0.07) 0%,
+			rgba(255, 240, 226, 0.03) 42%,
+			transparent 86%
+		);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.28s ease;
+	}
+
+	a,
+	.logo {
+		margin: auto;
+	}
+
+	a {
 		position: relative;
-		// Top padding only: the next wall's own top padding is the gap between
-		// them, and the closing accent band supplies the last one.
-		padding: var(--section-y) var(--gutter) 0;
-		background: var(--color-bg);
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1.6rem 2rem;
+		text-decoration: none;
 	}
 
-	.wall-inner {
-		max-width: var(--maxw);
-		margin: 0 auto;
+	// Box computed per logo in partners.astro (`opticalBox`), arriving as
+	// --logo-w / --logo-h: equal ink AREA shaped to the mark's own ratio, so
+	// a wordmark and a square glyph read as the same weight. `height: auto`,
+	// not --logo-h: the two agree by construction, and following the width
+	// keeps proportions when a narrow cell clamps `max-width: 100%`.
+	.logo {
+		display: block;
+		width: var(--logo-w, 180px);
+		height: auto;
+		max-width: 100%;
+		max-height: calc(var(--cell-height) - 3.2rem);
+		object-fit: contain;
+		opacity: 0.95;
+		transition: opacity 0.2s;
 	}
 
-	// The group name on its own. It used to carry a mono "03 partners" caption
-	// beside it — six sections down one page each announcing how few they had.
-	.wall-head {
-		margin-bottom: clamp(2rem, 4vw, 3rem);
+	&:has(a:hover),
+	&:has(a:focus-visible) {
+		// The cell under the cursor is the one the lamp is over.
+		&::before { opacity: 1; }
 	}
 
-	// Poster headline at section scale.
-	.wall-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-h2);
-		line-height: var(--lh-display);
-		letter-spacing: var(--track-display);
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin: 0;
+	&:hover .logo,
+	a:focus-visible .logo {
+		opacity: 1;
+	}
+}
 
-		.red {
-			color: var(--color-accent-hot);
+// Media and community marks ship DARK, so their cells carry a cream plate
+// (inverting flattened raster logos to white blobs). `--rule` is cream at
+// 13% — invisible on cream — so the rule inverts with the ground.
+.logo-grid--plated {
+	.logo-cell {
+		background: var(--color-cream);
+		border-color: rgba(5, 5, 5, 0.14);
+		transition: filter 0.25s ease;
+
+		&::before { content: none; }
+
+		&:hover,
+		&:focus-within {
+			filter: brightness(1.06);
 		}
 	}
+}
 
-	// ─── ONE GRID MODULE ──────────────────────────────────────────────────
-	// Contact sheet, not a tile grid: one track size for every partner, no
-	// panel fill or shadow. Per-tier sizing let cells grow to close their row.
-	// The tier is carried by heading and section order; a short last row
-	// stays empty — rules belong to the CELLS.
+@media (max-width: 900px) {
 	.logo-grid {
-		--cell-min: 280px;
-		--cell-height: 200px;
+		--cell-min: 220px;
+		--cell-height: 160px;
+	}
+}
 
-		list-style: none;
-		margin: 0;
-		// The cells' -1px bottom margin puts the last row's border outside the container,
-		// where the next section paints over it. This gives that pixel back.
-		padding: 0 0 1px;
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--cell-min)), 1fr));
-		width: 100%;
+@media (max-width: 600px) {
+	// Two per row, never N — a three-partner row shared between however
+	// many partners a tier had put each wordmark in a ~116px cell.
+	.logo-grid {
+		--cell-min: 0;
+		--cell-height: 140px;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
 	.logo-cell {
-		position: relative;
-		overflow: hidden;
-		display: flex;
-		min-height: var(--cell-height);
-		// A box around each logo. The -1px pulls neighbours onto a shared
-		// hairline, so a row of cells still reads as one ruled sheet rather
-		// than as a strip of 2px-doubled boxes.
-		border: 1px solid var(--rule);
-		margin: 0 -1px -1px 0;
-		border-radius: 0;
-		background: transparent;
-		transition: background 0.28s ease;
+		a { padding: 1.1rem 1rem; }
 
-		// The cell lights rather than lifts.
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.07) 0%,
-				rgba(255, 240, 226, 0.03) 42%,
-				transparent 86%
-			);
-			opacity: 0;
-			pointer-events: none;
-			transition: opacity 0.28s ease;
-		}
-
-		a,
 		.logo {
-			margin: auto;
-		}
-
-		a {
-			position: relative;
-			z-index: 1;
-			width: 100%;
-			height: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding: 1.6rem 2rem;
-			text-decoration: none;
-		}
-
-		// Box computed per logo in partners.astro (`opticalBox`), arriving as
-		// --logo-w / --logo-h: equal ink AREA shaped to the mark's own ratio, so
-		// a wordmark and a square glyph read as the same weight. `height: auto`,
-		// not --logo-h: the two agree by construction, and following the width
-		// keeps proportions when a narrow cell clamps `max-width: 100%`.
-		.logo {
-			display: block;
-			width: var(--logo-w, 180px);
-			height: auto;
 			max-width: 100%;
-			max-height: calc(var(--cell-height) - 3.2rem);
-			object-fit: contain;
-			opacity: 0.95;
-			transition: opacity 0.2s;
-		}
-
-		&:has(a:hover),
-		&:has(a:focus-visible) {
-			// The cell under the cursor is the one the lamp is over.
-			&::before { opacity: 1; }
-		}
-
-		&:hover .logo,
-		a:focus-visible .logo {
-			opacity: 1;
 		}
 	}
+}
 
-	// Media and community marks ship DARK, so their cells carry a cream plate
-	// (inverting flattened raster logos to white blobs). `--rule` is cream at
-	// 13% — invisible on cream — so the rule inverts with the ground.
-	.logo-grid--plated {
-		.logo-cell {
-			background: var(--color-cream);
-			border-color: rgba(5, 5, 5, 0.14);
-			transition: filter 0.25s ease;
+/* ===================== CLOSING STATEMENT ===================== */
+// A dark gap before the red field. `.logo-wall` above has zero bottom
+// padding by design, so the gap lives here, on this page's closing
+// section, not on the shared `.band--accent` (every other `Closer`
+// already sits after a full `--section-y`).
+.partners-cta {
+	margin-top: var(--section-y);
+}
 
-			&::before { content: none; }
+// Contact block on the accent field. Ink inverts globally via
+// `.band--accent` in BaseLayout.scss; only the partner-specific bits
+// (the named contact, the disabled deck stamp) are stated here. These
+// classes appear ONLY inside the accent band, so there is no dark-ground
+// variant to inherit from.
+.partners-contact {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	min-width: 0;
+	margin: 0;
+}
 
-			&:hover,
-			&:focus-within {
-				filter: brightness(1.06);
-			}
-		}
+.contact-name {
+	@include mono(var(--fs-label), 0.22em, uppercase);
+	// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
+	color: var(--on-accent);
+}
+
+.email-link {
+	@include mono(var(--fs-ui), 0.04em);
+	color: var(--on-accent);
+	align-self: flex-start;
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 4px;
+	text-decoration-color: rgba(247, 239, 230, 0.85);
+	word-break: break-word;
+	transition: text-decoration-color 0.2s;
+
+	&::after {
+		content: '\2197';
+		margin-left: 0.5rem;
+		text-decoration: none;
+		display: inline-block;
+		transition: transform 0.25s;
 	}
 
-	@media (max-width: 900px) {
-		.logo-grid {
-			--cell-min: 220px;
-			--cell-height: 160px;
-		}
+	&:hover,
+	&:focus-visible {
+		text-decoration-color: var(--on-accent);
 	}
 
-	@media (max-width: 600px) {
-		// Two per row, never N — a three-partner row shared between however
-		// many partners a tier had put each wordmark in a ~116px cell.
-		.logo-grid {
-			--cell-min: 0;
-			--cell-height: 140px;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-
-		.logo-cell {
-			a { padding: 1.1rem 1rem; }
-
-			.logo {
-				max-width: 100%;
-			}
-		}
+	&:hover::after,
+	&:focus-visible::after {
+		transform: translate(2px, -2px);
 	}
+}
 
-	/* ===================== CLOSING STATEMENT ===================== */
-	// A dark gap before the red field. `.logo-wall` above has zero bottom
-	// padding by design, so the gap lives here, on this page's closing
-	// section, not on the shared `.band--accent` (every other `Closer`
-	// already sits after a full `--section-y`).
-	.partners-cta {
-		margin-top: var(--section-y);
-	}
+// Flat "Coming soon" placeholder — outline, no rotation, no stamp ink.
+.partners-cta-soon {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.7rem;
+	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	color: var(--on-accent);
+	background: transparent;
+	border: 1px dashed rgba(247, 239, 230, 0.45);
+	border-radius: var(--radius);
+	padding: 1.25rem 2rem;
+	cursor: not-allowed;
+}
 
-	// Contact block on the accent field. Ink inverts globally via
-	// `.band--accent` in BaseLayout.scss; only the partner-specific bits
-	// (the named contact, the disabled deck stamp) are stated here. These
-	// classes appear ONLY inside the accent band, so there is no dark-ground
-	// variant to inherit from.
-	.partners-contact {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-		min-width: 0;
-		margin: 0;
-	}
+.partners-cta-label {
+	opacity: 0.92;
+}
 
-	.contact-name {
-		@include mono(var(--fs-label), 0.22em, uppercase);
-		// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
-		color: var(--on-accent);
-	}
+.partners-cta-stamp {
+	@include mono(var(--fs-label), 0.28em, uppercase);
+	padding: 0.22rem 0.55rem;
+	color: var(--on-accent);
+	border: 1px solid var(--rule-red);
+	border-radius: var(--radius);
+}
 
-	.email-link {
-		@include mono(var(--fs-ui), 0.04em);
-		color: var(--on-accent);
-		align-self: flex-start;
-		display: inline-flex;
-		align-items: center;
-		min-height: 2.75rem;
-		text-decoration: underline;
-		text-decoration-thickness: 1px;
-		text-underline-offset: 4px;
-		text-decoration-color: rgba(247, 239, 230, 0.85);
-		word-break: break-word;
-		transition: text-decoration-color 0.2s;
-
-		&::after {
-			content: '\2197';
-			margin-left: 0.5rem;
-			text-decoration: none;
-			display: inline-block;
-			transition: transform 0.25s;
-		}
-
-		&:hover,
-		&:focus-visible {
-			text-decoration-color: var(--on-accent);
-		}
-
-		&:hover::after,
-		&:focus-visible::after {
-			transform: translate(2px, -2px);
-		}
-	}
-
-	// Flat "Coming soon" placeholder — outline, no rotation, no stamp ink.
+@media (max-width: 900px) {
 	.partners-cta-soon {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.7rem;
-		@include mono(var(--fs-label-lg), 0.22em, uppercase);
-		color: var(--on-accent);
-		background: transparent;
-		border: 1px dashed rgba(247, 239, 230, 0.45);
-		border-radius: var(--radius);
-		padding: 1.25rem 2rem;
-		cursor: not-allowed;
-	}
-
-	.partners-cta-label {
-		opacity: 0.92;
+		flex-wrap: wrap;
+		gap: 0.55rem;
+		white-space: normal;
 	}
 
 	.partners-cta-stamp {
-		@include mono(var(--fs-label), 0.28em, uppercase);
-		padding: 0.22rem 0.55rem;
-		color: var(--on-accent);
-		border: 1px solid var(--rule-red);
-		border-radius: var(--radius);
+		font-size: var(--fs-label);
+		letter-spacing: 0.24em;
+		padding: 0.2rem 0.45rem;
 	}
+}
 
-	@media (max-width: 900px) {
-		.partners-cta-soon {
-			flex-wrap: wrap;
-			gap: 0.55rem;
-			white-space: normal;
-		}
+/* ===================== REDUCED MOTION ===================== */
+@media (prefers-reduced-motion: reduce) {
+	.logo-cell {
+		transition: none;
 
-		.partners-cta-stamp {
-			font-size: var(--fs-label);
-			letter-spacing: 0.24em;
-			padding: 0.2rem 0.45rem;
-		}
-	}
+		&::before { transition: none; }
 
-	/* ===================== REDUCED MOTION ===================== */
-	@media (prefers-reduced-motion: reduce) {
-		.logo-cell {
-			transition: none;
-
-			&::before { transition: none; }
-
-			&:has(a:hover),
-			&:has(a:focus-visible) {
-				transform: none;
-			}
-		}
-
-		.email-link::after,
-		.email-link:hover::after,
-		.email-link:focus-visible::after {
-			transition: none;
+		&:has(a:hover),
+		&:has(a:focus-visible) {
 			transform: none;
 		}
 	}
+
+	.email-link::after,
+	.email-link:hover::after,
+	.email-link:focus-visible::after {
+		transition: none;
+		transform: none;
+	}
+}

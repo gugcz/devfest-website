@@ -1,121 +1,121 @@
-	// Full-width bar along the bottom edge, not a floating labelled box — consent is
-	// the one piece of chrome that should ask for the least attention on the page.
+// Full-width bar along the bottom edge, not a floating labelled box — consent is
+// the one piece of chrome that should ask for the least attention on the page.
+.cookie-banner {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.25rem min(2.5rem, 12.5vw);
+	flex-wrap: wrap;
+	padding:
+		1rem min(clamp(1rem, 4vw, 2.5rem), 5vw)
+		calc(1rem + env(safe-area-inset-bottom));
+	background: #0A0908;
+	border-top: 1px solid var(--rule);
+	z-index: 10000;
+	// visibility switches only after the opacity/transform fade finishes, so the
+	// hide animation still plays; while hidden it takes the buttons out of the
+	// tab order instead of leaving two focusable stops inside aria-hidden.
+	transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
 	.cookie-banner {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1.25rem min(2.5rem, 12.5vw);
-		flex-wrap: wrap;
-		padding:
-			1rem min(clamp(1rem, 4vw, 2.5rem), 5vw)
-			calc(1rem + env(safe-area-inset-bottom));
-		background: #0A0908;
-		border-top: 1px solid var(--rule);
-		z-index: 10000;
-		// visibility switches only after the opacity/transform fade finishes, so the
-		// hide animation still plays; while hidden it takes the buttons out of the
-		// tab order instead of leaving two focusable stops inside aria-hidden.
-		transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+		transition: none;
 	}
+}
 
-	@media (prefers-reduced-motion: reduce) {
-		.cookie-banner {
-			transition: none;
-		}
+.cookie-banner--hidden {
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(100%);
+	visibility: hidden;
+	transition-delay: 0s, 0s, 0.3s;
+}
+
+.cookie-text {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-ui);
+	line-height: 1.55;
+	letter-spacing: 0.01em;
+	color: var(--ink-soft);
+	margin: 0;
+	max-width: 78ch;
+}
+
+.cookie-link {
+	color: var(--color-text);
+	text-decoration: none;
+	border-bottom: 1px solid var(--rule-red);
+	transition: color 0.2s, border-color 0.2s;
+}
+
+.cookie-link:hover,
+.cookie-link:focus-visible {
+	color: var(--color-accent-hot);
+	border-color: var(--color-accent-hot);
+}
+
+.cookie-link:focus-visible {
+	outline: 2px solid var(--color-accent-hot);
+	outline-offset: var(--focus-gap);
+}
+
+.cookie-actions {
+	display: flex;
+	align-items: center;
+	// Wraps under text-only zoom — two mono buttons at a 32px root are
+	// wider than a 320px viewport side by side, and the pair is the last
+	// thing on the page that may be cut off.
+	flex-wrap: wrap;
+	gap: min(1rem, 5vw);
+	flex-shrink: 0;
+}
+
+// Compact sizing overrides on top of global .btn-primary / .btn-ghost.
+//
+// The two choices are PEERS: Accept keeps the accent fill, everything else
+// (type, padding, height, footprint) is shared. Decline's boundary is
+// --field-border via .btn-ghost (3.33:1).
+.cookie-btn {
+	font-size: var(--fs-label-lg);
+	letter-spacing: 0.22em;
+	white-space: nowrap;
+	// Physical touch target — px, not rem, so it does not double with the
+	// root font (WCAG 2.5.5 is about the pointer, not the type size).
+	min-height: 44px;
+	// The shared minimum footprint: the shorter word is not the smaller
+	// target. Well past 44px, so it carries 2.5.5 on the width too.
+	min-width: 9rem;
+	padding: 0.55rem min(1.4rem, 7vw);
+	justify-content: center;
+	flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cookie-btn--accept:hover {
+		transform: none;
 	}
+}
 
-	.cookie-banner--hidden {
-		opacity: 0;
-		pointer-events: none;
-		transform: translateY(100%);
-		visibility: hidden;
-		transition-delay: 0s, 0s, 0.3s;
+@media (max-width: 500px) {
+	.cookie-banner {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.8rem;
 	}
-
-	.cookie-text {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-ui);
-		line-height: 1.55;
-		letter-spacing: 0.01em;
-		color: var(--ink-soft);
-		margin: 0;
-		max-width: 78ch;
-	}
-
-	.cookie-link {
-		color: var(--color-text);
-		text-decoration: none;
-		border-bottom: 1px solid var(--rule-red);
-		transition: color 0.2s, border-color 0.2s;
-	}
-
-	.cookie-link:hover,
-	.cookie-link:focus-visible {
-		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-	}
-
-	.cookie-link:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
-
 	.cookie-actions {
-		display: flex;
-		align-items: center;
-		// Wraps under text-only zoom — two mono buttons at a 32px root are
-		// wider than a 320px viewport side by side, and the pair is the last
-		// thing on the page that may be cut off.
-		flex-wrap: wrap;
-		gap: min(1rem, 5vw);
-		flex-shrink: 0;
+		align-self: stretch;
 	}
-
-	// Compact sizing overrides on top of global .btn-primary / .btn-ghost.
-	//
-	// The two choices are PEERS: Accept keeps the accent fill, everything else
-	// (type, padding, height, footprint) is shared. Decline's boundary is
-	// --field-border via .btn-ghost (3.33:1).
+	// Below 500px the pair splits the row evenly rather than sitting at the
+	// two ends — equal width is the same peer-weighting rule, expressed in
+	// the space a phone actually has.
 	.cookie-btn {
-		font-size: var(--fs-label-lg);
-		letter-spacing: 0.22em;
-		white-space: nowrap;
-		// Physical touch target — px, not rem, so it does not double with the
-		// root font (WCAG 2.5.5 is about the pointer, not the type size).
-		min-height: 44px;
-		// The shared minimum footprint: the shorter word is not the smaller
-		// target. Well past 44px, so it carries 2.5.5 on the width too.
-		min-width: 9rem;
-		padding: 0.55rem min(1.4rem, 7vw);
-		justify-content: center;
-		flex: 0 0 auto;
+		flex: 1 1 0;
+		min-width: 0;
+		padding-inline: 0.75rem;
 	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.cookie-btn--accept:hover {
-			transform: none;
-		}
-	}
-
-	@media (max-width: 500px) {
-		.cookie-banner {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.8rem;
-		}
-		.cookie-actions {
-			align-self: stretch;
-		}
-		// Below 500px the pair splits the row evenly rather than sitting at the
-		// two ends — equal width is the same peer-weighting rule, expressed in
-		// the space a phone actually has.
-		.cookie-btn {
-			flex: 1 1 0;
-			min-width: 0;
-			padding-inline: 0.75rem;
-		}
-	}
+}

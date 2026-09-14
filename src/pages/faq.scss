@@ -1,175 +1,175 @@
 @use '../styles/type' as *;
-	// Category on the left, its questions on the right.
+// Category on the left, its questions on the right.
+.faq-group {
+	display: grid;
+	grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+	gap: 1.5rem clamp(2rem, 6vw, 6rem);
+	align-items: start;
+}
+
+// Each group is its own sheet with its own heading, so groups sit a section apart.
+.faq-group + .faq-group {
+	margin-top: var(--section-y);
+}
+
+// Sticky, so the category stays beside its questions while a long group scrolls.
+.faq-head {
+	position: sticky;
+	top: 7rem;
+}
+
+// A step above the questions: at --fs-h3 the category read as another entry in the list.
+.faq-cat {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: clamp(2.4rem, 4.2vw, 3.75rem);
+	line-height: var(--lh-display);
+	letter-spacing: var(--track-display);
+	text-transform: uppercase;
+	color: var(--color-text);
+	margin: 0;
+}
+
+// An open field of questions; the category head beside it is the list's top edge.
+.faq-list {
+	display: flex;
+	flex-direction: column;
+}
+
+@media (max-width: 900px) {
 	.faq-group {
-		display: grid;
-		grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
-		gap: 1.5rem clamp(2rem, 6vw, 6rem);
-		align-items: start;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
 	}
 
-	// Each group is its own sheet with its own heading, so groups sit a section apart.
-	.faq-group + .faq-group {
-		margin-top: var(--section-y);
-	}
-
-	// Sticky, so the category stays beside its questions while a long group scrolls.
 	.faq-head {
-		position: sticky;
-		top: 7rem;
+		position: static;
+	}
+}
+
+// The REACH FIELD lives on the <summary> (`.field-row--link`), not here — a long
+// answer sitting on red is a lot of red to read against. An OPEN item takes the
+// warm wash instead: several <details> can be open at once, and four permanent
+// red bands down one page is the accent as texture.
+.faq-item {
+	position: relative;
+	isolation: isolate;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0 calc(-1 * var(--gutter));
+		background: linear-gradient(
+			104deg,
+			rgba(255, 244, 232, 0.06) 0%,
+			rgba(255, 240, 226, 0.028) 38%,
+			transparent 82%
+		);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.3s ease;
+		z-index: -2;
+		-webkit-mask-image: var(--field-feather);
+		mask-image: var(--field-feather);
 	}
 
-	// A step above the questions: at --fs-h3 the category read as another entry in the list.
-	.faq-cat {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: clamp(2.4rem, 4.2vw, 3.75rem);
-		line-height: var(--lh-display);
-		letter-spacing: var(--track-display);
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin: 0;
+	&[open]::before {
+		opacity: 1;
 	}
+}
 
-	// An open field of questions; the category head beside it is the list's top edge.
-	.faq-list {
-		display: flex;
-		flex-direction: column;
+// Question text + toggle marker. Rhythm, reach field, ink inversion and focus ring
+// come from `.field-row--link`.
+.faq-q {
+	z-index: 1;
+	list-style: none;
+	cursor: pointer;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: baseline;
+	column-gap: clamp(1.25rem, 3vw, 2.75rem);
+
+	// Strip the default disclosure triangle (WebKit + the rest).
+	&::-webkit-details-marker {
+		display: none;
 	}
+}
 
-	@media (max-width: 900px) {
-		.faq-group {
-			grid-template-columns: 1fr;
-			gap: 1.5rem;
-		}
+// The long-list row step, shared with the session rows and the press clippings.
+.faq-q-text {
+	flex: 1;
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-row-sm);
+	line-height: 1.06;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--color-text);
+	transition: color 0.2s;
+}
 
-		.faq-head {
-			position: static;
-		}
-	}
+// Muted at rest; full cream on the red field. Red on twelve markers is not a highlight.
+.faq-marker {
+	flex: 0 0 auto;
+	@include mono(var(--fs-title-sm));
+	line-height: 1;
+	color: var(--ink-muted);
+	transition: transform 0.2s ease, color 0.2s;
+	transform-origin: center;
+}
 
-	// The REACH FIELD lives on the <summary> (`.field-row--link`), not here — a long
-	// answer sitting on red is a lot of red to read against. An OPEN item takes the
-	// warm wash instead: several <details> can be open at once, and four permanent
-	// red bands down one page is the accent as texture.
-	.faq-item {
-		position: relative;
-		isolation: isolate;
+// The open question holds the wash; the marker turns.
+.faq-item[open] .faq-marker {
+	transform: rotate(45deg); // + → ×
+}
 
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0 calc(-1 * var(--gutter));
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.06) 0%,
-				rgba(255, 240, 226, 0.028) 38%,
-				transparent 82%
-			);
-			opacity: 0;
-			pointer-events: none;
-			transition: opacity 0.3s ease;
-			z-index: -2;
-			-webkit-mask-image: var(--field-feather);
-			mask-image: var(--field-feather);
-		}
+// The open answer is indented behind a hairline, like a margin note.
+.faq-a {
+	position: relative;
+	z-index: 1;
+	margin: 0 0 1.8rem;
+	padding-left: 1.4rem;
+	// Neutral hairline, never a red bar: an accent bar down the left edge of a block
+	// is banned site-wide.
+	border-left: 1px solid var(--rule);
+}
 
-		&[open]::before {
-			opacity: 1;
-		}
-	}
+.faq-a :global(p) {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-body);
+	line-height: 1.85;
+	letter-spacing: 0.01em;
+	color: rgba(240, 237, 230, 0.72);
+	margin: 0;
+	max-width: 70ch;
+}
 
-	// Question text + toggle marker. Rhythm, reach field, ink inversion and focus ring
-	// come from `.field-row--link`.
-	.faq-q {
-		z-index: 1;
-		list-style: none;
-		cursor: pointer;
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
-		align-items: baseline;
-		column-gap: clamp(1.25rem, 3vw, 2.75rem);
+.faq-a :global(a) {
+	color: var(--color-accent-hot);
+	text-decoration: none;
+	border-bottom: 1px solid var(--rule-red);
+	transition: border-color 0.2s, color 0.2s;
 
-		// Strip the default disclosure triangle (WebKit + the rest).
-		&::-webkit-details-marker {
-			display: none;
-		}
-	}
-
-	// The long-list row step, shared with the session rows and the press clippings.
-	.faq-q-text {
-		flex: 1;
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-row-sm);
-		line-height: 1.06;
-		letter-spacing: 0.02em;
-		text-transform: uppercase;
-		color: var(--color-text);
-		transition: color 0.2s;
-	}
-
-	// Muted at rest; full cream on the red field. Red on twelve markers is not a highlight.
-	.faq-marker {
-		flex: 0 0 auto;
-		@include mono(var(--fs-title-sm));
-		line-height: 1;
-		color: var(--ink-muted);
-		transition: transform 0.2s ease, color 0.2s;
-		transform-origin: center;
-	}
-
-	// The open question holds the wash; the marker turns.
-	.faq-item[open] .faq-marker {
-		transform: rotate(45deg); // + → ×
-	}
-
-	// The open answer is indented behind a hairline, like a margin note.
-	.faq-a {
-		position: relative;
-		z-index: 1;
-		margin: 0 0 1.8rem;
-		padding-left: 1.4rem;
-		// Neutral hairline, never a red bar: an accent bar down the left edge of a block
-		// is banned site-wide.
-		border-left: 1px solid var(--rule);
-	}
-
-	.faq-a :global(p) {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-body);
-		line-height: 1.85;
-		letter-spacing: 0.01em;
-		color: rgba(240, 237, 230, 0.72);
-		margin: 0;
-		max-width: 70ch;
-	}
-
-	.faq-a :global(a) {
+	&:hover,
+	&:focus-visible {
 		color: var(--color-accent-hot);
-		text-decoration: none;
-		border-bottom: 1px solid var(--rule-red);
-		transition: border-color 0.2s, color 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			border-color: var(--color-accent-hot);
-		}
+		border-color: var(--color-accent-hot);
 	}
+}
 
-	@media (max-width: 600px) {
-		// Flush to the content column — side padding insets each question from the rule it sits on.
-		.faq-q {
-			gap: 0.8rem;
-		}
-		.faq-a {
-			margin: 0 0 1.3rem;
-			padding-left: 1.1rem;
-		}
+@media (max-width: 600px) {
+	// Flush to the content column — side padding insets each question from the rule it sits on.
+	.faq-q {
+		gap: 0.8rem;
 	}
+	.faq-a {
+		margin: 0 0 1.3rem;
+		padding-left: 1.1rem;
+	}
+}
 
-	@media (prefers-reduced-motion: reduce) {
-		.faq-item,
-		.faq-q-text,
-		.faq-marker {
-			transition: none;
-		}
+@media (prefers-reduced-motion: reduce) {
+	.faq-item,
+	.faq-q-text,
+	.faq-marker {
+		transition: none;
 	}
+}

@@ -1,247 +1,247 @@
 @use '../styles/type' as *;
-	// Mugshots laid out on the page — no cell, no panel, no rule around anybody; the
-	// print carries its own mount. Four across at most: at a 210px floor the roster
-	// laid out as six small columns, which is a contact sheet, not a crew.
-	.crew-grid {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: grid;
-		// 240, not 300: at 300 four cards didn't fit a 1296px column, so
-		// auto-fill dropped to three 407px mugshots — gallery scale for a crew
-		// roster. `max()` with a quarter of the row also CAPS the count at four:
-		// a bare 240px minimum let 1920px lay eleven out five across, leaving
-		// the eleventh alone.
-		--crew-col-gap: clamp(1.5rem, 2.6vw, 2.5rem);
-		grid-template-columns: repeat(
-			auto-fill,
-			minmax(min(max(240px, (100% - 3 * var(--crew-col-gap)) / 4), 100%), 1fr)
-		);
-		gap: clamp(2.5rem, 4.5vw, 4rem) var(--crew-col-gap);
+// Mugshots laid out on the page — no cell, no panel, no rule around anybody; the
+// print carries its own mount. Four across at most: at a 210px floor the roster
+// laid out as six small columns, which is a contact sheet, not a crew.
+.crew-grid {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	// 240, not 300: at 300 four cards didn't fit a 1296px column, so
+	// auto-fill dropped to three 407px mugshots — gallery scale for a crew
+	// roster. `max()` with a quarter of the row also CAPS the count at four:
+	// a bare 240px minimum let 1920px lay eleven out five across, leaving
+	// the eleventh alone.
+	--crew-col-gap: clamp(1.5rem, 2.6vw, 2.5rem);
+	grid-template-columns: repeat(
+		auto-fill,
+		minmax(min(max(240px, (100% - 3 * var(--crew-col-gap)) / 4), 100%), 1fr)
+	);
+	gap: clamp(2.5rem, 4.5vw, 4rem) var(--crew-col-gap);
+}
+
+// No panel, no shadow, no matte frame, no lift. The cursor colour-bleed on the
+// mugshot is the team page's one flourish.
+.crew-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.9rem;
+	height: 100%;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+}
+
+// Animatable bleed radius. Without @property support the transition is skipped
+// and the colour just swaps on hover.
+@property --bleed {
+	syntax: '<percentage>';
+	inherits: false;
+	initial-value: 0%;
+}
+
+// Two stacked copies of the photo: a B&W base and a colour layer revealed through
+// an expanding grainy mask anchored at the cursor. `.mugshot` carries no rules —
+// the frame is the global `.print`; the class is the JS hook team.astro queries.
+.mugshot-base,
+.mugshot-color {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+// Neutral B&W at rest.
+.mugshot-base {
+	filter: grayscale(1) contrast(1.12) brightness(0.82);
+}
+
+.mugshot-color {
+	// --mx / --my are set per-card by JS; --bleed animates the reveal radius. Two
+	// composited masks make the colour spread as a grainy diffusion, not a clean circle.
+	--mx: 50%;
+	--my: 50%;
+	--bleed: 0%;
+	--diffuse-radial: radial-gradient(
+		circle at var(--mx) var(--my),
+		#000 calc(var(--bleed) * 0.3),
+		rgba(0, 0, 0, 0.65) calc(var(--bleed) * 0.62),
+		rgba(0, 0, 0, 0.25) calc(var(--bleed) * 0.85),
+		transparent var(--bleed)
+	);
+	--diffuse-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 0.45'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23d)'/%3E%3C/svg%3E");
+
+	-webkit-mask-image: var(--diffuse-radial), var(--diffuse-noise);
+	mask-image: var(--diffuse-radial), var(--diffuse-noise);
+	-webkit-mask-size: 100% 100%, 180px 180px;
+	mask-size: 100% 100%, 180px 180px;
+	-webkit-mask-repeat: no-repeat, repeat;
+	mask-repeat: no-repeat, repeat;
+	-webkit-mask-position: center, center;
+	mask-position: center, center;
+	-webkit-mask-composite: source-in;
+	mask-composite: intersect;
+	transition: --bleed 0.7s ease-out;
+}
+
+.crew-card:hover .mugshot-color,
+.crew-card:focus-within .mugshot-color {
+	--bleed: 165%;
+}
+
+.monogram {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: clamp(2.6rem, 8vw, 3.4rem);
+	color: var(--ink-monogram);
+	text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+	user-select: none;
+}
+
+.crew-info {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	flex: 1;
+	padding: 0;
+}
+
+.crew-name {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: clamp(1.6rem, 2vw, 2.1rem);
+	line-height: 1;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: var(--color-text);
+	margin: 0;
+}
+
+// Real role at rest, noir codename on hover. Both lines are stacked in one grid
+// cell; the two-line reserve keeps the links row aligned across cards.
+.crew-role {
+	display: grid;
+	// One overlapping cell, allowed to be narrower than the role it holds
+	// — the two lines are stacked in the same cell, so an `auto` track
+	// floored at the longer one's min-content width under text zoom.
+	grid-template-columns: minmax(0, 1fr);
+	@include mono(var(--fs-label), 0.16em, uppercase);
+	line-height: 1.4;
+	margin-top: 0.2rem;
+	min-height: 2.8em;
+}
+
+.crew-role-line {
+	grid-area: 1 / 1; // overlap both lines in the same cell
+	transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.crew-role-real {
+	color: var(--color-text);
+}
+
+// accent-hot, not --color-accent: ~4.96:1 vs ~3.3:1 on the dark panel at this size.
+.crew-role-alias {
+	color: var(--color-accent-hot);
+}
+
+.crew-role[data-swap] .crew-role-alias {
+	opacity: 0;
+	transform: translateY(0.25em);
+}
+
+// Cross-fade, only on cards that carry a real role.
+.crew-card:hover .crew-role[data-swap] .crew-role-real,
+.crew-card:focus-within .crew-role[data-swap] .crew-role-real {
+	opacity: 0;
+	transform: translateY(-0.25em);
+}
+
+.crew-card:hover .crew-role[data-swap] .crew-role-alias,
+.crew-card:focus-within .crew-role[data-swap] .crew-role-alias {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+// No hover, no `:focus-within` on a phone (and a card with no links has
+// nothing to focus), so the two lines stop sharing a cell and both print.
+@media (hover: none) {
+	.crew-role[data-swap] {
+		grid-template-rows: auto auto;
 	}
 
-	// No panel, no shadow, no matte frame, no lift. The cursor colour-bleed on the
-	// mugshot is the team page's one flourish.
-	.crew-card {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		gap: 0.9rem;
-		height: 100%;
-		padding: 0;
-		border: 0;
-		border-radius: 0;
-		background: transparent;
-	}
-
-	// Animatable bleed radius. Without @property support the transition is skipped
-	// and the colour just swaps on hover.
-	@property --bleed {
-		syntax: '<percentage>';
-		inherits: false;
-		initial-value: 0%;
-	}
-
-	// Two stacked copies of the photo: a B&W base and a colour layer revealed through
-	// an expanding grainy mask anchored at the cursor. `.mugshot` carries no rules —
-	// the frame is the global `.print`; the class is the JS hook team.astro queries.
-	.mugshot-base,
-	.mugshot-color {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-	}
-
-	// Neutral B&W at rest.
-	.mugshot-base {
-		filter: grayscale(1) contrast(1.12) brightness(0.82);
-	}
-
-	.mugshot-color {
-		// --mx / --my are set per-card by JS; --bleed animates the reveal radius. Two
-		// composited masks make the colour spread as a grainy diffusion, not a clean circle.
-		--mx: 50%;
-		--my: 50%;
-		--bleed: 0%;
-		--diffuse-radial: radial-gradient(
-			circle at var(--mx) var(--my),
-			#000 calc(var(--bleed) * 0.3),
-			rgba(0, 0, 0, 0.65) calc(var(--bleed) * 0.62),
-			rgba(0, 0, 0, 0.25) calc(var(--bleed) * 0.85),
-			transparent var(--bleed)
-		);
-		--diffuse-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 0.45'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23d)'/%3E%3C/svg%3E");
-
-		-webkit-mask-image: var(--diffuse-radial), var(--diffuse-noise);
-		mask-image: var(--diffuse-radial), var(--diffuse-noise);
-		-webkit-mask-size: 100% 100%, 180px 180px;
-		mask-size: 100% 100%, 180px 180px;
-		-webkit-mask-repeat: no-repeat, repeat;
-		mask-repeat: no-repeat, repeat;
-		-webkit-mask-position: center, center;
-		mask-position: center, center;
-		-webkit-mask-composite: source-in;
-		mask-composite: intersect;
-		transition: --bleed 0.7s ease-out;
-	}
-
-	.crew-card:hover .mugshot-color,
-	.crew-card:focus-within .mugshot-color {
-		--bleed: 165%;
-	}
-
-	.monogram {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: clamp(2.6rem, 8vw, 3.4rem);
-		color: var(--ink-monogram);
-		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
-		user-select: none;
-	}
-
-	.crew-info {
-		position: relative;
-		z-index: 1;
-		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
-		flex: 1;
-		padding: 0;
-	}
-
-	.crew-name {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: clamp(1.6rem, 2vw, 2.1rem);
-		line-height: 1;
-		letter-spacing: 0.03em;
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin: 0;
-	}
-
-	// Real role at rest, noir codename on hover. Both lines are stacked in one grid
-	// cell; the two-line reserve keeps the links row aligned across cards.
-	.crew-role {
-		display: grid;
-		// One overlapping cell, allowed to be narrower than the role it holds
-		// — the two lines are stacked in the same cell, so an `auto` track
-		// floored at the longer one's min-content width under text zoom.
-		grid-template-columns: minmax(0, 1fr);
-		@include mono(var(--fs-label), 0.16em, uppercase);
-		line-height: 1.4;
-		margin-top: 0.2rem;
-		min-height: 2.8em;
-	}
-
-	.crew-role-line {
-		grid-area: 1 / 1; // overlap both lines in the same cell
-		transition: opacity 0.35s ease, transform 0.35s ease;
-	}
-
-	.crew-role-real {
-		color: var(--color-text);
-	}
-
-	// accent-hot, not --color-accent: ~4.96:1 vs ~3.3:1 on the dark panel at this size.
-	.crew-role-alias {
-		color: var(--color-accent-hot);
+	.crew-role[data-swap] .crew-role-line {
+		grid-area: auto;
+		transition: none;
 	}
 
 	.crew-role[data-swap] .crew-role-alias {
-		opacity: 0;
-		transform: translateY(0.25em);
-	}
-
-	// Cross-fade, only on cards that carry a real role.
-	.crew-card:hover .crew-role[data-swap] .crew-role-real,
-	.crew-card:focus-within .crew-role[data-swap] .crew-role-real {
-		opacity: 0;
-		transform: translateY(-0.25em);
-	}
-
-	.crew-card:hover .crew-role[data-swap] .crew-role-alias,
-	.crew-card:focus-within .crew-role[data-swap] .crew-role-alias {
 		opacity: 1;
-		transform: translateY(0);
+		transform: none;
+	}
+}
+
+.crew-links {
+	list-style: none;
+	margin: 0.6rem 0 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+}
+
+.crew-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	color: rgba(242, 239, 233, 0.6);
+	border: 1px solid var(--field-border);
+	border-radius: var(--radius);
+	transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+
+	svg {
+		width: 1rem;
+		height: 1rem;
+		display: block;
 	}
 
-	// No hover, no `:focus-within` on a phone (and a card with no links has
-	// nothing to focus), so the two lines stop sharing a cell and both print.
-	@media (hover: none) {
-		.crew-role[data-swap] {
-			grid-template-rows: auto auto;
-		}
-
-		.crew-role[data-swap] .crew-role-line {
-			grid-area: auto;
-			transition: none;
-		}
-
-		.crew-role[data-swap] .crew-role-alias {
-			opacity: 1;
-			transform: none;
-		}
+	&:hover,
+	&:focus-visible {
+		color: var(--color-text);
+		border-color: var(--rule-red);
+		background: rgba(204, 0, 0, 0.1);
+		transform: translateY(-1px);
 	}
 
-	.crew-links {
-		list-style: none;
-		margin: 0.6rem 0 0;
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
 	}
+}
 
+@media (max-width: 600px) {
+	.crew-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.crew-card {
+		gap: 0.75rem;
+	}
+	.crew-name {
+		font-size: var(--fs-title-sm);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.crew-card,
+	.mugshot-color,
+	.crew-role-line,
 	.crew-link {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 2rem;
-		height: 2rem;
-		color: rgba(242, 239, 233, 0.6);
-		border: 1px solid var(--field-border);
-		border-radius: var(--radius);
-		transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
-
-		svg {
-			width: 1rem;
-			height: 1rem;
-			display: block;
-		}
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-text);
-			border-color: var(--rule-red);
-			background: rgba(204, 0, 0, 0.1);
-			transform: translateY(-1px);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: var(--focus-gap-tight);
-		}
+		transition: none;
 	}
-
-	@media (max-width: 600px) {
-		.crew-grid {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-		.crew-card {
-			gap: 0.75rem;
-		}
-		.crew-name {
-			font-size: var(--fs-title-sm);
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.crew-card,
-		.mugshot-color,
-		.crew-role-line,
-		.crew-link {
-			transition: none;
-		}
-	}
+}

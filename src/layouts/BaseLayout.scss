@@ -1,961 +1,961 @@
 @use '../styles/type' as *;
-	:root {
-		--color-bg: #050505;
-		--color-grey: #8C8C8C;
-		--color-text: #F2EFE9;
-		--color-cream: #E8E0CC;
-		--color-accent: #CC0000;
-		--color-accent-hot: #FF1111;
-		// Form-error text only: the accent desaturated far enough to clear AA as
-		// small copy (~5.7:1). Never use it as an accent, a fill or a rule.
-		--color-error: rgba(220, 110, 110, 0.95);
+:root {
+	--color-bg: #050505;
+	--color-grey: #8C8C8C;
+	--color-text: #F2EFE9;
+	--color-cream: #E8E0CC;
+	--color-accent: #CC0000;
+	--color-accent-hot: #FF1111;
+	// Form-error text only: the accent desaturated far enough to clear AA as
+	// small copy (~5.7:1). Never use it as an accent, a fill or a rule.
+	--color-error: rgba(220, 110, 110, 0.95);
 
-		// Injected into :root by the matching <Font /> in BaseLayout.astro; the
-		// families resolve to build-time hashes, so never write a literal
-		// 'Bebas Neue' string. Only these three faces — never add a fourth.
+	// Injected into :root by the matching <Font /> in BaseLayout.astro; the
+	// families resolve to build-time hashes, so never write a literal
+	// 'Bebas Neue' string. Only these three faces — never add a fourth.
 
-		--maxw: 1440px;
-		// The `min()` ceiling keeps the page reflowable under text-only zoom
-		// (WCAG 1.4.4 / 1.4.10): at a 32px root the 1.25rem floor doubled and two
-		// gutters ate a quarter of a 320px viewport. 6.25vw equals the floor at
-		// 320px and sits above the clamp everywhere else, so nothing moves at 16px.
-		--gutter: min(clamp(1.25rem, 5vw, 4.5rem), 6.25vw);
+	--maxw: 1440px;
+	// The `min()` ceiling keeps the page reflowable under text-only zoom
+	// (WCAG 1.4.4 / 1.4.10): at a 32px root the 1.25rem floor doubled and two
+	// gutters ate a quarter of a 320px viewport. 6.25vw equals the floor at
+	// 320px and sits above the clamp everywhere else, so nothing moves at 16px.
+	--gutter: min(clamp(1.25rem, 5vw, 4.5rem), 6.25vw);
 
-		// Three densities: tight is a cut, base the normal beat, wide a held shot.
-		--section-y-tight: clamp(3.75rem, 6vw, 6.5rem);
-		--section-y: clamp(6rem, 10vw, 11rem);
-		--section-y-wide: clamp(8.5rem, 15vw, 17rem);
+	// Three densities: tight is a cut, base the normal beat, wide a held shot.
+	--section-y-tight: clamp(3.75rem, 6vw, 6.5rem);
+	--section-y: clamp(6rem, 10vw, 11rem);
+	--section-y-wide: clamp(8.5rem, 15vw, 17rem);
 
-		// The fixed bar's height, stated once: vertical padding plus the 44px
-		// WCAG 2.5.5 tap target (the logo caps at 34px). `Menu.scss` builds the
-		// bar from these same tokens, so anchor offsets can't drift from it.
-		--header-pad-y: 0.85rem;
-		// 44px, not 2.75rem: a physical target must not scale with the root font.
-		--header-tap: 44px;
-		--header-h: calc(var(--header-pad-y) * 2 + var(--header-tap));
-		// Tighter bar on the smallest phones. Changed on the token so `--header-h`
-		// follows (71.2px → 66.4px) — `Menu.scss` used to override the padding
-		// directly and left every anchor offset 4.8px out under 380px.
-		@media (max-width: 380px) {
-			--header-pad-y: 0.7rem;
-		}
-
-		// Sharp corners — a hint of softening, never pill-shaped.
-		--radius: 2px;
-
-		// THE POSTER SCALE. Bebas above --fs-h3, Special Elite as body texture.
-		// --fs-display caps at 9rem: 11rem left nothing above a 760px fold.
-		--fs-display: clamp(3rem, 9.5vw, 9rem);
-		--fs-hero: clamp(3rem, 9.5vw, 8.5rem);      // home hero statement
-		--fs-h2: clamp(2.9rem, 8vw, 7rem);          // section headline
-		--fs-stat: clamp(3.4rem, 10vw, 9.5rem);     // figure in a facts band
-		--fs-h3: clamp(1.8rem, 3.4vw, 2.6rem);      // sub-section headline
-		--fs-card-title: 1.95rem;                   // card / dossier title
-		--fs-title-compact: 1.6rem;                 // compact field row title
-
-		// Row titles carry the separation: 72px for a short list, 54px for a long one.
-		--fs-row: clamp(2.6rem, 5.2vw, 4.5rem);     // row title, short list (waves, desks)
-		--fs-row-sm: clamp(2.2rem, 4vw, 3.4rem);    // row title, long list (sessions, FAQ, clippings)
-		--fs-row-figure: clamp(2.5rem, 4.2vw, 4rem); // the figure opposite a row title
-
-		// ── THE RAMP ────────────────────────────────────────────────────────
-		// Every font-size goes through a step below; never add one outside it.
-		--fs-label-xs: 0.68rem;   // micro mono: avatar counts, kit tags
-		--fs-label-sm: 0.74rem;   // mono: counts, chips, inline clears
-		--fs-label: 0.78rem;      // mono: eyebrows, section labels
-		--fs-label-lg: 0.84rem;   // mono: nav, buttons, email links
-		--fs-ui: 0.95rem;         // small UI prose, help text
-		--fs-body: 1.05rem;       // long-form reading copy
-		--fs-body-lg: 1.15rem;    // footnotes, short ledes
-		--fs-lede: clamp(1.2rem, 1.6vw, 1.5rem);  // section ledes, status prose
-		--fs-title-sm: 1.45rem;   // small titles, mobile field-row titles
-		--fs-monogram: 3.4rem;    // initials in an empty photo well
-
-		// Condensed caps at poster scale need the leading pulled in.
-		--lh-display: 0.84;
-		--track-display: 0.005em;
-
-		--rule: rgba(240, 237, 230, 0.13);
-		--rule-soft: rgba(240, 237, 230, 0.06);
-		--rule-strong: rgba(240, 237, 230, 0.22);
-		--rule-red: rgba(204, 0, 0, 0.55);
-		// THE control-edge token: boundary for anything operable (text fields,
-		// .btn-ghost, .nav-toggle, the cookie Decline, .crew-link). 3.33:1 on
-		// #050505, clearing WCAG 1.4.11; --rule-strong (1.74:1) and --rule
-		// (1.30:1) did not. Kept separate from those: they are decorative
-		// hairlines and must stay faint.
-		--field-border: rgba(240, 237, 230, 0.4);
-
-		// Cream-ink ramp. Named steps only — a one-off alpha stays a raw literal.
-		--ink-strong: rgba(240, 237, 230, 0.85);
-		--ink: rgba(240, 237, 230, 0.78);
-		--ink-soft: rgba(240, 237, 230, 0.7);
-		--ink-meta: rgba(240, 237, 230, 0.62);
-		--ink-muted: rgba(240, 237, 230, 0.55);
-
-		--panel: #0C0B0B;
-		--panel-2: #111010;
-		--panel-hover: #161413;
-
-		--on-accent: #F7EFE6;
-
-		// Focus-ring stand-off. The ring is always 2px solid --color-accent-hot; the gap
-		// tracks how much visible edge the control already has.
-		--focus-gap-tight: 2px;
-		--focus-gap: 3px;
-		--focus-gap-lg: 4px;
-
-		// Red as LIGHT — interactive things only (CTA hover, live status). Red TEXT is flat.
-		--glow-red: 0 0 14px rgba(204, 0, 0, 0.4), 0 0 34px rgba(204, 0, 0, 0.18);
-		--glow-red-soft: 0 0 18px rgba(204, 0, 0, 0.22);
-
-		// A photograph is MOUNTED, not floated: keyline just inside the edge plus a shadow.
-		--print-mount:
-			inset 0 0 0 1px rgba(240, 237, 230, 0.16),
-			0 10px 24px rgba(0, 0, 0, 0.5);
-
-		--panel-lit: #0A0908;
-		--panel-lit-2: #0E0C0B;
-
-		// Initials standing in for a missing photograph, on --panel-lit. Measured
-		// 4.21:1 on the large plate and 7.71:1 at label scale — never dim further.
-		--ink-monogram: rgba(242, 239, 233, 0.46);
-		--ink-monogram-sm: rgba(242, 239, 233, 0.66);
-
-		--lit: radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%);
-		// Feathers a full-bleed row wash so its top and bottom edges do not step across the page.
-		--field-feather: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
-		--vignette: radial-gradient(ellipse 120% 105% at 50% 42%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
+	// The fixed bar's height, stated once: vertical padding plus the 44px
+	// WCAG 2.5.5 tap target (the logo caps at 34px). `Menu.scss` builds the
+	// bar from these same tokens, so anchor offsets can't drift from it.
+	--header-pad-y: 0.85rem;
+	// 44px, not 2.75rem: a physical target must not scale with the root font.
+	--header-tap: 44px;
+	--header-h: calc(var(--header-pad-y) * 2 + var(--header-tap));
+	// Tighter bar on the smallest phones. Changed on the token so `--header-h`
+	// follows (71.2px → 66.4px) — `Menu.scss` used to override the padding
+	// directly and left every anchor offset 4.8px out under 380px.
+	@media (max-width: 380px) {
+		--header-pad-y: 0.7rem;
 	}
 
-	*, *::before, *::after {
-		box-sizing: border-box;
-		margin: 0;
-		padding: 0;
-	}
+	// Sharp corners — a hint of softening, never pill-shaped.
+	--radius: 2px;
 
+	// THE POSTER SCALE. Bebas above --fs-h3, Special Elite as body texture.
+	// --fs-display caps at 9rem: 11rem left nothing above a 760px fold.
+	--fs-display: clamp(3rem, 9.5vw, 9rem);
+	--fs-hero: clamp(3rem, 9.5vw, 8.5rem);      // home hero statement
+	--fs-h2: clamp(2.9rem, 8vw, 7rem);          // section headline
+	--fs-stat: clamp(3.4rem, 10vw, 9.5rem);     // figure in a facts band
+	--fs-h3: clamp(1.8rem, 3.4vw, 2.6rem);      // sub-section headline
+	--fs-card-title: 1.95rem;                   // card / dossier title
+	--fs-title-compact: 1.6rem;                 // compact field row title
+
+	// Row titles carry the separation: 72px for a short list, 54px for a long one.
+	--fs-row: clamp(2.6rem, 5.2vw, 4.5rem);     // row title, short list (waves, desks)
+	--fs-row-sm: clamp(2.2rem, 4vw, 3.4rem);    // row title, long list (sessions, FAQ, clippings)
+	--fs-row-figure: clamp(2.5rem, 4.2vw, 4rem); // the figure opposite a row title
+
+	// ── THE RAMP ────────────────────────────────────────────────────────
+	// Every font-size goes through a step below; never add one outside it.
+	--fs-label-xs: 0.68rem;   // micro mono: avatar counts, kit tags
+	--fs-label-sm: 0.74rem;   // mono: counts, chips, inline clears
+	--fs-label: 0.78rem;      // mono: eyebrows, section labels
+	--fs-label-lg: 0.84rem;   // mono: nav, buttons, email links
+	--fs-ui: 0.95rem;         // small UI prose, help text
+	--fs-body: 1.05rem;       // long-form reading copy
+	--fs-body-lg: 1.15rem;    // footnotes, short ledes
+	--fs-lede: clamp(1.2rem, 1.6vw, 1.5rem);  // section ledes, status prose
+	--fs-title-sm: 1.45rem;   // small titles, mobile field-row titles
+	--fs-monogram: 3.4rem;    // initials in an empty photo well
+
+	// Condensed caps at poster scale need the leading pulled in.
+	--lh-display: 0.84;
+	--track-display: 0.005em;
+
+	--rule: rgba(240, 237, 230, 0.13);
+	--rule-soft: rgba(240, 237, 230, 0.06);
+	--rule-strong: rgba(240, 237, 230, 0.22);
+	--rule-red: rgba(204, 0, 0, 0.55);
+	// THE control-edge token: boundary for anything operable (text fields,
+	// .btn-ghost, .nav-toggle, the cookie Decline, .crew-link). 3.33:1 on
+	// #050505, clearing WCAG 1.4.11; --rule-strong (1.74:1) and --rule
+	// (1.30:1) did not. Kept separate from those: they are decorative
+	// hairlines and must stay faint.
+	--field-border: rgba(240, 237, 230, 0.4);
+
+	// Cream-ink ramp. Named steps only — a one-off alpha stays a raw literal.
+	--ink-strong: rgba(240, 237, 230, 0.85);
+	--ink: rgba(240, 237, 230, 0.78);
+	--ink-soft: rgba(240, 237, 230, 0.7);
+	--ink-meta: rgba(240, 237, 230, 0.62);
+	--ink-muted: rgba(240, 237, 230, 0.55);
+
+	--panel: #0C0B0B;
+	--panel-2: #111010;
+	--panel-hover: #161413;
+
+	--on-accent: #F7EFE6;
+
+	// Focus-ring stand-off. The ring is always 2px solid --color-accent-hot; the gap
+	// tracks how much visible edge the control already has.
+	--focus-gap-tight: 2px;
+	--focus-gap: 3px;
+	--focus-gap-lg: 4px;
+
+	// Red as LIGHT — interactive things only (CTA hover, live status). Red TEXT is flat.
+	--glow-red: 0 0 14px rgba(204, 0, 0, 0.4), 0 0 34px rgba(204, 0, 0, 0.18);
+	--glow-red-soft: 0 0 18px rgba(204, 0, 0, 0.22);
+
+	// A photograph is MOUNTED, not floated: keyline just inside the edge plus a shadow.
+	--print-mount:
+		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
+		0 10px 24px rgba(0, 0, 0, 0.5);
+
+	--panel-lit: #0A0908;
+	--panel-lit-2: #0E0C0B;
+
+	// Initials standing in for a missing photograph, on --panel-lit. Measured
+	// 4.21:1 on the large plate and 7.71:1 at label scale — never dim further.
+	--ink-monogram: rgba(242, 239, 233, 0.46);
+	--ink-monogram-sm: rgba(242, 239, 233, 0.66);
+
+	--lit: radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%);
+	// Feathers a full-bleed row wash so its top and bottom edges do not step across the page.
+	--field-feather: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+	--vignette: radial-gradient(ellipse 120% 105% at 50% 42%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+*, *::before, *::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	scroll-behavior: smooth;
+	// Keeps anchor jumps (#tickets, #newsletter, …) clear of the fixed header.
+	// Derived from the bar's height, not guessed.
+	scroll-padding-top: calc(var(--header-h) + 1.5rem);
+	// keep keyboard-focused elements clear of the fixed cookie banner
+	scroll-padding-bottom: 8rem;
+	// Canvas colour — prevents a white flash during iOS rubber-band scroll.
+	background: var(--color-bg);
+	// `clip`, never `hidden`: `hidden` makes html a scroll container on iOS Safari,
+	// which anchors position:fixed to the html box and breaks env(safe-area-inset-*).
+	@supports (overflow-x: clip) {
+		overflow-x: clip;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
 	html {
-		scroll-behavior: smooth;
-		// Keeps anchor jumps (#tickets, #newsletter, …) clear of the fixed header.
-		// Derived from the bar's height, not guessed.
-		scroll-padding-top: calc(var(--header-h) + 1.5rem);
-		// keep keyboard-focused elements clear of the fixed cookie banner
-		scroll-padding-bottom: 8rem;
-		// Canvas colour — prevents a white flash during iOS rubber-band scroll.
-		background: var(--color-bg);
-		// `clip`, never `hidden`: `hidden` makes html a scroll container on iOS Safari,
-		// which anchors position:fixed to the html box and breaks env(safe-area-inset-*).
-		@supports (overflow-x: clip) {
-			overflow-x: clip;
-		}
+		scroll-behavior: auto;
+	}
+}
+
+::selection {
+	background: rgba(204, 0, 0, 0.4);
+	color: var(--color-text);
+}
+
+:focus {
+	outline: none;
+}
+
+:focus-visible {
+	outline: 2px solid var(--color-accent-hot);
+	outline-offset: var(--focus-gap);
+	border-radius: 2px;
+}
+
+body {
+	// `100vh`, not `100dvh`: dynamic units reflow the body box when iOS Safari's
+	// URL bar collapses, pushing `position: fixed; top: 0` below the status bar.
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-family: var(--font-special-elite), cursive;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	// Inherited by everything. Under text-only zoom a long word (a Bebas
+	// title, a speaker name) widens the document (WCAG 1.4.10). `break-word`,
+	// not `anywhere`: only breaks a word that has no other way to fit.
+	overflow-wrap: break-word;
+
+	// Film grain. Static, not animated — a full-viewport overlay repaints every frame.
+	&::before {
+		content: '';
+		position: fixed;
+		inset: 0;
+		z-index: 9999;
+		pointer-events: none;
+		// `screen`, not `overlay`: overlay leaves near-black almost untouched, so
+		// on a #050505 ground the grain was invisible.
+		opacity: 0.06;
+		mix-blend-mode: screen;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+		background-size: 220px 220px;
 	}
 
-	@media (prefers-reduced-motion: reduce) {
-		html {
-			scroll-behavior: auto;
-		}
+	// Decorative: below the nav/cookie chrome (z 10000+) and gentle enough to keep edge text AA.
+	&::after {
+		content: '';
+		position: fixed;
+		inset: 0;
+		z-index: 9998;
+		pointer-events: none;
+		background: var(--vignette);
 	}
+}
 
-	::selection {
-		background: rgba(204, 0, 0, 0.4);
-		color: var(--color-text);
+.skip-link {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 0.7rem 1.1rem;
+	background: #050505;
+	color: #F0EDE6;
+	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	text-decoration: none;
+	border: 1px solid rgba(204, 0, 0, 0.5);
+	z-index: 10001;
+	clip-path: inset(50%);
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	white-space: nowrap;
+
+	&:focus {
+		clip-path: none;
+		width: auto;
+		height: auto;
+		overflow: visible;
+		white-space: normal;
+		outline: 2px solid var(--color-accent);
 	}
+}
 
-	:focus {
-		outline: none;
+// Skip-link target (`tabindex="-1"` so the link moves FOCUS). Ring
+// suppressed on this region only; controls inside keep theirs.
+#main-content:focus,
+#main-content:focus-visible {
+	outline: none;
+}
+
+// Visually hidden, but kept in the a11y tree + crawlable HTML.
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+
+.u-container {
+	width: 100%;
+	max-width: var(--maxw);
+	margin-inline: auto;
+	padding-inline: var(--gutter);
+}
+
+// Mono eyebrow — a plain label. Never give it a trailing hairline or any other decoration.
+.eyebrow {
+	@include mono(var(--fs-label), 0.28em, uppercase);
+	color: var(--ink-muted);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+// THE headline class. No shadow, no glow, no gradient; size comes from the caller's --fs-*.
+.display {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-weight: 400;
+	line-height: var(--lh-display);
+	letter-spacing: var(--track-display);
+	text-transform: uppercase;
+	color: var(--color-text);
+	margin: 0;
+	text-wrap: balance;
+}
+
+// Accent word inside a display line. FLAT red — never a glow.
+.display .red,
+:where(h1, h2, h3) .red {
+	color: var(--color-accent-hot);
+}
+
+// Statement left, one supporting line right; `--ruled` closes it with a hairline.
+.head-split {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+	align-items: end;
+	gap: clamp(1.5rem, 4vw, 4rem);
+	margin-bottom: clamp(2.75rem, 5vw, 4rem);
+}
+
+.head-split--ruled {
+	padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
+	border-bottom: 1px solid var(--rule-soft);
+}
+
+// Sections run at --fs-h2; --fs-display is the ONE display element per page.
+.head-title {
+	font-size: var(--fs-h2);
+}
+
+.head-note {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-lede);
+	line-height: 1.6;
+	color: var(--ink-soft);
+	margin: 0 0 0.35rem;
+	// Special Elite is wide; longer and this stops reading as a line and becomes a paragraph.
+	max-width: 34ch;
+}
+
+@media (max-width: 860px) {
+	.head-split {
+		// minmax(0, …) — see `.closer`: a bare `1fr` floors at min-content.
+		grid-template-columns: minmax(0, 1fr);
+		align-items: start;
 	}
+}
 
-	:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-		border-radius: 2px;
+@media (max-width: 600px) {
+	.head-split { margin-bottom: 2.4rem; }
+	.head-split--ruled { padding-bottom: 1.2rem; }
+}
+
+.print {
+	position: relative;
+	aspect-ratio: 4 / 5;
+	width: 100%;
+	overflow: hidden;
+	background: var(--panel-lit);
+	box-shadow: var(--print-mount);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.page-stack {
+	display: flex;
+	flex-direction: column;
+}
+
+// The one-column section head. Compose the title with `.display` + `.head-title`.
+.head-stack {
+	margin-bottom: 4rem;
+	padding-bottom: 1.6rem;
+	border-bottom: 1px solid var(--rule-soft);
+}
+
+.head-stack .eyebrow {
+	margin: 0 0 1rem;
+}
+
+.head-stack-link {
+	margin: 1.6rem 0 0;
+}
+
+@media (max-width: 600px) {
+	.head-stack {
+		margin-bottom: 2.4rem;
+		padding-bottom: 1.2rem;
 	}
+}
 
-	body {
-		// `100vh`, not `100dvh`: dynamic units reflow the body box when iOS Safari's
-		// URL bar collapses, pushing `position: fixed; top: 0` below the status bar.
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-		background: var(--color-bg);
-		color: var(--color-text);
-		font-family: var(--font-special-elite), cursive;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		// Inherited by everything. Under text-only zoom a long word (a Bebas
-		// title, a speaker name) widens the document (WCAG 1.4.10). `break-word`,
-		// not `anywhere`: only breaks a word that has no other way to fit.
-		overflow-wrap: break-word;
+// The prose a data-backed page falls back to with no JS or a dead endpoint.
+.fallback-note {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-lede);
+	line-height: 1.7;
+	color: var(--color-grey);
+	max-width: 52ch;
+	margin: 2rem 0 0;
 
-		// Film grain. Static, not animated — a full-viewport overlay repaints every frame.
-		&::before {
-			content: '';
-			position: fixed;
-			inset: 0;
-			z-index: 9999;
-			pointer-events: none;
-			// `screen`, not `overlay`: overlay leaves near-black almost untouched, so
-			// on a #050505 ground the grain was invisible.
-			opacity: 0.06;
-			mix-blend-mode: screen;
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-			background-size: 220px 220px;
-		}
-
-		// Decorative: below the nav/cookie chrome (z 10000+) and gentle enough to keep edge text AA.
-		&::after {
-			content: '';
-			position: fixed;
-			inset: 0;
-			z-index: 9998;
-			pointer-events: none;
-			background: var(--vignette);
-		}
-	}
-
-	.skip-link {
-		position: absolute;
-		top: 0;
-		left: 0;
-		padding: 0.7rem 1.1rem;
-		background: #050505;
-		color: #F0EDE6;
-		@include mono(var(--fs-label-lg), 0.22em, uppercase);
-		text-decoration: none;
-		border: 1px solid rgba(204, 0, 0, 0.5);
-		z-index: 10001;
-		clip-path: inset(50%);
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		white-space: nowrap;
-
-		&:focus {
-			clip-path: none;
-			width: auto;
-			height: auto;
-			overflow: visible;
-			white-space: normal;
-			outline: 2px solid var(--color-accent);
-		}
-	}
-
-	// Skip-link target (`tabindex="-1"` so the link moves FOCUS). Ring
-	// suppressed on this region only; controls inside keep theirs.
-	#main-content:focus,
-	#main-content:focus-visible {
-		outline: none;
-	}
-
-	// Visually hidden, but kept in the a11y tree + crawlable HTML.
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		clip-path: inset(50%);
-		white-space: nowrap;
-		border: 0;
-	}
-
-
-	.u-container {
-		width: 100%;
-		max-width: var(--maxw);
-		margin-inline: auto;
-		padding-inline: var(--gutter);
-	}
-
-	// Mono eyebrow — a plain label. Never give it a trailing hairline or any other decoration.
-	.eyebrow {
-		@include mono(var(--fs-label), 0.28em, uppercase);
-		color: var(--ink-muted);
-		display: inline-flex;
-		align-items: center;
-		gap: 0.75rem;
-	}
-
-	// THE headline class. No shadow, no glow, no gradient; size comes from the caller's --fs-*.
-	.display {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-weight: 400;
-		line-height: var(--lh-display);
-		letter-spacing: var(--track-display);
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin: 0;
-		text-wrap: balance;
-	}
-
-	// Accent word inside a display line. FLAT red — never a glow.
-	.display .red,
-	:where(h1, h2, h3) .red {
+	a {
 		color: var(--color-accent-hot);
 	}
+}
 
-	// Statement left, one supporting line right; `--ruled` closes it with a hairline.
-	.head-split {
-		display: grid;
-		grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-		align-items: end;
-		gap: clamp(1.5rem, 4vw, 4rem);
-		margin-bottom: clamp(2.75rem, 5vw, 4rem);
+/* ---- Anchor targets ---- */
+// A jump lands on the section HEAD, not the section box: the target cancels
+// its own opening air. `--section-air` is the section's padding variable
+// (`.band` sets it, `.tickets` widens it), so the two can't drift.
+// `scroll-padding-top` can't do this — the air is inside the target.
+.anchor-target {
+	scroll-margin-top: calc(-1 * var(--section-air, var(--section-y)));
+}
+
+/* ---- Bands ---- */
+// Full-bleed grounds. A band gives a section its own ground; alternating
+// them gives a page a rhythm. Two grounds: default and accent. A raised
+// third and tight/wide padding modifiers existed and never got a caller.
+.band {
+	position: relative;
+	width: 100%;
+	// Opening air declared as `--section-air`; padding reads it, so every band
+	// is anchorable for free. Override the variable, not the padding.
+	--section-air: var(--section-y);
+	padding: var(--section-air) var(--gutter);
+	background: var(--color-bg);
+}
+
+// RED AS A FIELD. At most once per page, for the thing the page wants the
+// visitor to do. Ink is cream --on-accent; black ink is 2.3:1 here.
+.band--accent {
+	background: var(--color-accent);
+	color: var(--on-accent);
+}
+
+// The subpage ground: a spotlight pool closed by a hairline at the top.
+.band--lit {
+	background: var(--lit), var(--color-bg);
+	border-top: 1px solid var(--rule-soft);
+}
+
+.band-inner {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	max-width: var(--maxw);
+	margin-inline: auto;
+}
+
+// Controls on the red field invert — a red button on red is invisible. Measured
+// ink on #CC0000: cream #F7EFE6 5.17:1, cream at 80% 3.58:1 (boundaries only),
+// near-black #1A0000 3.42:1 (large text only). Hierarchy from SIZE, never dimming.
+.band--accent .eyebrow { color: var(--on-accent); }
+.band--accent .display { color: var(--on-accent); }
+.band--accent .display .red { color: #1A0000; }
+
+.band--accent .btn-primary {
+	background: var(--on-accent);
+	border-color: var(--on-accent);
+	color: #1A0000;
+
+	&:hover {
+		background: #FFFFFF;
+		border-color: #FFFFFF;
+		box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
 	}
+}
 
-	.head-split--ruled {
-		padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
-		border-bottom: 1px solid var(--rule-soft);
-	}
+.band--accent .btn-ghost {
+	color: var(--on-accent);
+	// 3.95:1 on the red ground — a control boundary must clear 3:1 (1.4.11).
+	border-color: rgba(247, 239, 230, 0.85);
 
-	// Sections run at --fs-h2; --fs-display is the ONE display element per page.
-	.head-title {
-		font-size: var(--fs-h2);
-	}
-
-	.head-note {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
-		color: var(--ink-soft);
-		margin: 0 0 0.35rem;
-		// Special Elite is wide; longer and this stops reading as a line and becomes a paragraph.
-		max-width: 34ch;
-	}
-
-	@media (max-width: 860px) {
-		.head-split {
-			// minmax(0, …) — see `.closer`: a bare `1fr` floors at min-content.
-			grid-template-columns: minmax(0, 1fr);
-			align-items: start;
-		}
-	}
-
-	@media (max-width: 600px) {
-		.head-split { margin-bottom: 2.4rem; }
-		.head-split--ruled { padding-bottom: 1.2rem; }
-	}
-
-	.print {
-		position: relative;
-		aspect-ratio: 4 / 5;
-		width: 100%;
-		overflow: hidden;
-		background: var(--panel-lit);
-		box-shadow: var(--print-mount);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.page-stack {
-		display: flex;
-		flex-direction: column;
-	}
-
-	// The one-column section head. Compose the title with `.display` + `.head-title`.
-	.head-stack {
-		margin-bottom: 4rem;
-		padding-bottom: 1.6rem;
-		border-bottom: 1px solid var(--rule-soft);
-	}
-
-	.head-stack .eyebrow {
-		margin: 0 0 1rem;
-	}
-
-	.head-stack-link {
-		margin: 1.6rem 0 0;
-	}
-
-	@media (max-width: 600px) {
-		.head-stack {
-			margin-bottom: 2.4rem;
-			padding-bottom: 1.2rem;
-		}
-	}
-
-	// The prose a data-backed page falls back to with no JS or a dead endpoint.
-	.fallback-note {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.7;
-		color: var(--color-grey);
-		max-width: 52ch;
-		margin: 2rem 0 0;
-
-		a {
-			color: var(--color-accent-hot);
-		}
-	}
-
-	/* ---- Anchor targets ---- */
-	// A jump lands on the section HEAD, not the section box: the target cancels
-	// its own opening air. `--section-air` is the section's padding variable
-	// (`.band` sets it, `.tickets` widens it), so the two can't drift.
-	// `scroll-padding-top` can't do this — the air is inside the target.
-	.anchor-target {
-		scroll-margin-top: calc(-1 * var(--section-air, var(--section-y)));
-	}
-
-	/* ---- Bands ---- */
-	// Full-bleed grounds. A band gives a section its own ground; alternating
-	// them gives a page a rhythm. Two grounds: default and accent. A raised
-	// third and tight/wide padding modifiers existed and never got a caller.
-	.band {
-		position: relative;
-		width: 100%;
-		// Opening air declared as `--section-air`; padding reads it, so every band
-		// is anchorable for free. Override the variable, not the padding.
-		--section-air: var(--section-y);
-		padding: var(--section-air) var(--gutter);
-		background: var(--color-bg);
-	}
-
-	// RED AS A FIELD. At most once per page, for the thing the page wants the
-	// visitor to do. Ink is cream --on-accent; black ink is 2.3:1 here.
-	.band--accent {
-		background: var(--color-accent);
+	&:hover,
+	&:focus-visible {
 		color: var(--on-accent);
-	}
-
-	// The subpage ground: a spotlight pool closed by a hairline at the top.
-	.band--lit {
-		background: var(--lit), var(--color-bg);
-		border-top: 1px solid var(--rule-soft);
-	}
-
-	.band-inner {
-		position: relative;
-		z-index: 1;
-		width: 100%;
-		max-width: var(--maxw);
-		margin-inline: auto;
-	}
-
-	// Controls on the red field invert — a red button on red is invisible. Measured
-	// ink on #CC0000: cream #F7EFE6 5.17:1, cream at 80% 3.58:1 (boundaries only),
-	// near-black #1A0000 3.42:1 (large text only). Hierarchy from SIZE, never dimming.
-	.band--accent .eyebrow { color: var(--on-accent); }
-	.band--accent .display { color: var(--on-accent); }
-	.band--accent .display .red { color: #1A0000; }
-
-	.band--accent .btn-primary {
-		background: var(--on-accent);
 		border-color: var(--on-accent);
-		color: #1A0000;
-
-		&:hover {
-			background: #FFFFFF;
-			border-color: #FFFFFF;
-			box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
-		}
+		background: rgba(247, 239, 230, 0.1);
 	}
+}
 
-	.band--accent .btn-ghost {
-		color: var(--on-accent);
-		// 3.95:1 on the red ground — a control boundary must clear 3:1 (1.4.11).
-		border-color: rgba(247, 239, 230, 0.85);
+.band--accent :focus-visible {
+	outline-color: var(--on-accent);
+}
 
-		&:hover,
-		&:focus-visible {
-			color: var(--on-accent);
-			border-color: var(--on-accent);
-			background: rgba(247, 239, 230, 0.1);
-		}
-	}
+.closer {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+	align-items: end;
+	gap: clamp(2rem, 5vw, 5rem);
+}
 
-	.band--accent :focus-visible {
-		outline-color: var(--on-accent);
-	}
+.closer-title {
+	font-size: var(--fs-h2);
+	text-wrap: initial;
+}
 
+.closer-side {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: clamp(1.25rem, 2.5vw, 1.9rem);
+}
+
+.closer-note {
+	font-family: var(--font-special-elite), cursive;
+	font-size: var(--fs-lede);
+	line-height: 1.6;
+	color: var(--ink-soft);
+	margin: 0;
+	max-width: 34ch;
+}
+
+.band--accent .closer-note { color: var(--on-accent); }
+
+.closer-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.9rem;
+}
+
+@media (max-width: 900px) {
 	.closer {
-		display: grid;
-		grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-		align-items: end;
-		gap: clamp(2rem, 5vw, 5rem);
+		// `minmax(0, 1fr)`, not `1fr`: a bare `1fr` track floors at its
+		// min-content width, so one wide CTA drags the whole closer past
+		// the viewport under text zoom instead of wrapping inside it.
+		grid-template-columns: minmax(0, 1fr);
+		align-items: start;
+	}
+}
+
+.facts {
+	display: grid;
+	// 320px floor: below it a mono label at this tracking cannot hold one line.
+	grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+	gap: clamp(2.5rem, 5vw, 4.5rem) clamp(1.75rem, 3vw, 3rem);
+}
+
+.fact {
+	display: flex;
+	flex-direction: column;
+	gap: 0.9rem;
+	min-width: 0;
+}
+
+.fact-figure {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-stat);
+	line-height: 0.82;
+	letter-spacing: 0.005em;
+	color: var(--color-text);
+	font-variant-numeric: tabular-nums;
+}
+
+.fact-figure .red { color: var(--color-accent-hot); }
+
+.fact-label {
+	@include mono(var(--fs-label-lg));
+	// 0.14em, not 0.2em: wider tracking breaks these labels onto two lines.
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: rgba(240, 237, 230, 0.6);
+	line-height: 1.5;
+}
+
+.btn-primary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.7rem;
+	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	color: var(--on-accent);
+	background: var(--color-accent);
+	border: 1px solid var(--color-accent);
+	border-radius: var(--radius);
+	// Large: at poster scale a small CTA reads as an afterthought. The
+	// horizontal padding is viewport-capped — the label must grow with the
+	// root font (1.4.4), but 2.8rem of padding per side must not (at a 32px
+	// root that pushed every `.closer` off a 320px viewport). 14vw equals
+	// 2.8rem at 320px, so desktop is untouched.
+	padding: 1.25rem min(2.8rem, 14vw);
+	// A button is never wider than its column; the label wraps.
+	max-width: 100%;
+	// `anywhere`, not `break-word`: a label is an anonymous flex item whose
+	// min size is its min-content width, and only `anywhere` shrinks that.
+	overflow-wrap: anywhere;
+	text-decoration: none;
+	cursor: pointer;
+	position: relative;
+	transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+
+	&:hover {
+		background: var(--color-accent-hot);
+		border-color: var(--color-accent-hot);
+		transform: translateY(-2px);
+		// Halation on hover — one of the two places the glow survives.
+		box-shadow: var(--glow-red), 0 12px 30px rgba(204, 0, 0, 0.28);
 	}
 
-	.closer-title {
-		font-size: var(--fs-h2);
-		text-wrap: initial;
+	&:active { transform: translateY(0); }
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
 	}
+}
 
-	.closer-side {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: clamp(1.25rem, 2.5vw, 1.9rem);
-	}
+.btn-ghost {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.6rem;
+	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	color: var(--color-text);
+	text-decoration: none;
+	cursor: pointer;
+	// Viewport-capped horizontal padding — same reason as .btn-primary.
+	padding: 1.25rem min(2rem, 10vw);
+	max-width: 100%;
+	// See .btn-primary.
+	overflow-wrap: anywhere;
+	// Control edge, not a decorative hairline — see --field-border.
+	border: 1px solid var(--field-border);
+	border-radius: var(--radius);
+	background: transparent;
+	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, gap 0.2s ease;
 
-	.closer-note {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
-		color: var(--ink-soft);
-		margin: 0;
-		max-width: 34ch;
-	}
-
-	.band--accent .closer-note { color: var(--on-accent); }
-
-	.closer-actions {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.9rem;
-	}
-
-	@media (max-width: 900px) {
-		.closer {
-			// `minmax(0, 1fr)`, not `1fr`: a bare `1fr` track floors at its
-			// min-content width, so one wide CTA drags the whole closer past
-			// the viewport under text zoom instead of wrapping inside it.
-			grid-template-columns: minmax(0, 1fr);
-			align-items: start;
-		}
-	}
-
-	.facts {
-		display: grid;
-		// 320px floor: below it a mono label at this tracking cannot hold one line.
-		grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
-		gap: clamp(2.5rem, 5vw, 4.5rem) clamp(1.75rem, 3vw, 3rem);
-	}
-
-	.fact {
-		display: flex;
-		flex-direction: column;
-		gap: 0.9rem;
-		min-width: 0;
-	}
-
-	.fact-figure {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-stat);
-		line-height: 0.82;
-		letter-spacing: 0.005em;
+	&:hover,
+	&:focus-visible {
 		color: var(--color-text);
-		font-variant-numeric: tabular-nums;
-	}
-
-	.fact-figure .red { color: var(--color-accent-hot); }
-
-	.fact-label {
-		@include mono(var(--fs-label-lg));
-		// 0.14em, not 0.2em: wider tracking breaks these labels onto two lines.
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: rgba(240, 237, 230, 0.6);
-		line-height: 1.5;
-	}
-
-	.btn-primary {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.7rem;
-		@include mono(var(--fs-label-lg), 0.22em, uppercase);
-		color: var(--on-accent);
-		background: var(--color-accent);
-		border: 1px solid var(--color-accent);
-		border-radius: var(--radius);
-		// Large: at poster scale a small CTA reads as an afterthought. The
-		// horizontal padding is viewport-capped — the label must grow with the
-		// root font (1.4.4), but 2.8rem of padding per side must not (at a 32px
-		// root that pushed every `.closer` off a 320px viewport). 14vw equals
-		// 2.8rem at 320px, so desktop is untouched.
-		padding: 1.25rem min(2.8rem, 14vw);
-		// A button is never wider than its column; the label wraps.
-		max-width: 100%;
-		// `anywhere`, not `break-word`: a label is an anonymous flex item whose
-		// min size is its min-content width, and only `anywhere` shrinks that.
-		overflow-wrap: anywhere;
-		text-decoration: none;
-		cursor: pointer;
-		position: relative;
-		transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-
-		&:hover {
-			background: var(--color-accent-hot);
-			border-color: var(--color-accent-hot);
-			transform: translateY(-2px);
-			// Halation on hover — one of the two places the glow survives.
-			box-shadow: var(--glow-red), 0 12px 30px rgba(204, 0, 0, 0.28);
-		}
-
-		&:active { transform: translateY(0); }
-
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: var(--focus-gap);
-		}
-	}
-
-	.btn-ghost {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.6rem;
-		@include mono(var(--fs-label-lg), 0.22em, uppercase);
-		color: var(--color-text);
-		text-decoration: none;
-		cursor: pointer;
-		// Viewport-capped horizontal padding — same reason as .btn-primary.
-		padding: 1.25rem min(2rem, 10vw);
-		max-width: 100%;
-		// See .btn-primary.
-		overflow-wrap: anywhere;
-		// Control edge, not a decorative hairline — see --field-border.
-		border: 1px solid var(--field-border);
-		border-radius: var(--radius);
+		border-color: var(--color-text);
 		background: transparent;
-		transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, gap 0.2s ease;
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-text);
-			border-color: var(--color-text);
-			background: transparent;
-			gap: 0.85rem;
-			outline: none;
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: var(--focus-gap);
-		}
+		gap: 0.85rem;
+		outline: none;
 	}
 
-	// THE CONTAINER LANGUAGE for every list. No rules; separation is air and
-	// type scale, the REACH STATE marks an entry.
-	//   .field-row--link    the row IS the control -> full-bleed red field
-	//   .field-row--holds   the row CONTAINS a control -> warm wash + pull
-	//   .field-row--short   the 72px-title step (short lists)
-	// Never add a border, a per-list light box, or an opacity "inactive" state.
-
-	.field {
-		position: relative;
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
 	}
+}
 
-	// The step is the rhythm AND the band the reach field fills — hence one variable.
-	.field-row {
-		--field-step: clamp(1.9rem, 2.8vw, 2.5rem);
-		position: relative;
-		// Without its own stacking context the z-index:-1 field paints behind the section bg.
-		isolation: isolate;
-		padding: var(--field-step) 0;
-		background: transparent;
-		border: 0;
-		border-radius: 0;
-	}
+// THE CONTAINER LANGUAGE for every list. No rules; separation is air and
+// type scale, the REACH STATE marks an entry.
+//   .field-row--link    the row IS the control -> full-bleed red field
+//   .field-row--holds   the row CONTAINS a control -> warm wash + pull
+//   .field-row--short   the 72px-title step (short lists)
+// Never add a border, a per-list light box, or an opacity "inactive" state.
 
-	// Short lists carry the 72px title, so they take the wider step.
-	.field-row--short {
-		--field-step: clamp(2.25rem, 3.6vw, 3.25rem);
-	}
+.field {
+	position: relative;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
 
-	// No translateX here: dragging a band that runs to both viewport edges reads as a fault.
-	.field-row--link {
-		transition: color 0.28s ease;
+// The step is the rhythm AND the band the reach field fills — hence one variable.
+.field-row {
+	--field-step: clamp(1.9rem, 2.8vw, 2.5rem);
+	position: relative;
+	// Without its own stacking context the z-index:-1 field paints behind the section bg.
+	isolation: isolate;
+	padding: var(--field-step) 0;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+}
 
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0 calc(-1 * var(--gutter));
-			background: var(--color-accent);
-			opacity: 0;
-			pointer-events: none;
-			z-index: -1;
-			transition: opacity 0.28s ease;
-		}
+// Short lists carry the 72px title, so they take the wider step.
+.field-row--short {
+	--field-step: clamp(2.25rem, 3.6vw, 3.25rem);
+}
 
-		// HOVER paints the field; FOCUS draws a ring. Focus persists after a sheet closes,
-		// and a full-bleed red band left behind reads as a stuck highlight.
-		&:hover::before {
-			opacity: 1;
-		}
+// No translateX here: dragging a band that runs to both viewport edges reads as a fault.
+.field-row--link {
+	transition: color 0.28s ease;
 
-		// Every ink goes FULL CREAM — muted rgba() fails on #CC0000. Blunt on purpose;
-		// a caller needing an exception overrides it with its own class.
-		&:hover {
-			color: #F7EFE6;
-
-			*:not(svg):not(path) {
-				color: #F7EFE6;
-			}
-		}
-
-		// accent-hot on #050505 is 4.96:1, clear of the 3:1 in 1.4.11.
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: var(--focus-gap-tight);
-		}
-
-		// Red on red is not a ring, so hover + focus inverts it to cream.
-		&:hover:focus-visible {
-			outline-color: #F7EFE6;
-		}
-	}
-
-	// A red band under a row that isn't clickable promises a click, so it warms and pulls.
-	.field-row--holds {
-		transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0 calc(-1 * var(--gutter));
-			background: linear-gradient(
-				104deg,
-				rgba(255, 244, 232, 0.06) 0%,
-				rgba(255, 240, 226, 0.026) 38%,
-				transparent 82%
-			);
-			opacity: 0;
-			pointer-events: none;
-			z-index: -1;
-			transition: opacity 0.3s ease;
-			// Feathered: an un-masked full-bleed box shows its top and bottom edges as steps
-			// across the page. The red field above is the exception — it reads as a band.
-			-webkit-mask-image: var(--field-feather);
-			mask-image: var(--field-feather);
-		}
-
-		&:hover::before,
-		&:focus-within::before {
-			opacity: 1;
-		}
-
-		&:hover,
-		&:focus-within {
-			transform: translateX(0.6rem);
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.field-row--link,
-		.field-row--holds {
-			transition: none;
-
-			&::before { transition: none; }
-		}
-
-		.field-row--holds:hover,
-		.field-row--holds:focus-within {
-			transform: none;
-		}
-	}
-
-	// Status word. Never a pill, chip, or underlined — it sits where the
-	// "Get tickets" link would, and an underline there promises a click.
-	.record-status {
-		@include mono(var(--fs-label-sm), 0.24em, uppercase);
-		color: rgba(240, 237, 230, 0.72);
-		white-space: nowrap;
-	}
-
-	.scene { position: relative; }
-	.scene > .scene-vignette {
+	&::before {
+		content: '';
 		position: absolute;
-		inset: 0;
-		background: radial-gradient(ellipse 92% 82% at 50% 44%, transparent 36%, rgba(0, 0, 0, 0.62) 100%);
+		inset: 0 calc(-1 * var(--gutter));
+		background: var(--color-accent);
+		opacity: 0;
 		pointer-events: none;
-		z-index: 1;
+		z-index: -1;
+		transition: opacity 0.28s ease;
 	}
 
-	// Scroll reveal, hidden only when JS is present, so a no-JS render is fully visible.
-	.js .reveal {
-		opacity: 0;
-		transform: translateY(16px);
-		transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-	}
-	.js .reveal.is-visible {
+	// HOVER paints the field; FOCUS draws a ring. Focus persists after a sheet closes,
+	// and a full-bleed red band left behind reads as a stuck highlight.
+	&:hover::before {
 		opacity: 1;
+	}
+
+	// Every ink goes FULL CREAM — muted rgba() fails on #CC0000. Blunt on purpose;
+	// a caller needing an exception overrides it with its own class.
+	&:hover {
+		color: #F7EFE6;
+
+		*:not(svg):not(path) {
+			color: #F7EFE6;
+		}
+	}
+
+	// accent-hot on #050505 is 4.96:1, clear of the 3:1 in 1.4.11.
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
+	}
+
+	// Red on red is not a ring, so hover + focus inverts it to cream.
+	&:hover:focus-visible {
+		outline-color: #F7EFE6;
+	}
+}
+
+// A red band under a row that isn't clickable promises a click, so it warms and pulls.
+.field-row--holds {
+	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0 calc(-1 * var(--gutter));
+		background: linear-gradient(
+			104deg,
+			rgba(255, 244, 232, 0.06) 0%,
+			rgba(255, 240, 226, 0.026) 38%,
+			transparent 82%
+		);
+		opacity: 0;
+		pointer-events: none;
+		z-index: -1;
+		transition: opacity 0.3s ease;
+		// Feathered: an un-masked full-bleed box shows its top and bottom edges as steps
+		// across the page. The red field above is the exception — it reads as a band.
+		-webkit-mask-image: var(--field-feather);
+		mask-image: var(--field-feather);
+	}
+
+	&:hover::before,
+	&:focus-within::before {
+		opacity: 1;
+	}
+
+	&:hover,
+	&:focus-within {
+		transform: translateX(0.6rem);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.field-row--link,
+	.field-row--holds {
+		transition: none;
+
+		&::before { transition: none; }
+	}
+
+	.field-row--holds:hover,
+	.field-row--holds:focus-within {
 		transform: none;
 	}
+}
 
-	// Staggered fade; `--i` is set by the owning grid. Suppressed while a parent
-	// `.reveal` is closed, or an Astro grid animates behind an opacity-0 parent.
-	.js .develop {
-		animation: print-fade 0.6s ease backwards;
-		animation-delay: calc(min(var(--i, 0), 10) * 55ms);
-	}
-	.js .reveal:not(.is-visible) .develop {
-		animation: none;
-	}
+// Status word. Never a pill, chip, or underlined — it sits where the
+// "Get tickets" link would, and an underline there promises a click.
+.record-status {
+	@include mono(var(--fs-label-sm), 0.24em, uppercase);
+	color: rgba(240, 237, 230, 0.72);
+	white-space: nowrap;
+}
 
-	@keyframes print-fade {
-		from { opacity: 0; transform: translateY(12px); }
-		to   { opacity: 1; transform: none; }
-	}
+.scene { position: relative; }
+.scene > .scene-vignette {
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(ellipse 92% 82% at 50% 44%, transparent 36%, rgba(0, 0, 0, 0.62) 100%);
+	pointer-events: none;
+	z-index: 1;
+}
 
-	// Enhancement only — `animation-timeline` is still flagged off in Firefox, so
-	// nothing here carries meaning, contrast or state.
-	@supports (animation-timeline: view()) {
-		@media (prefers-reduced-motion: no-preference) {
-			.rake {
-				position: relative;
-			}
+// Scroll reveal, hidden only when JS is present, so a no-JS render is fully visible.
+.js .reveal {
+	opacity: 0;
+	transform: translateY(16px);
+	transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.js .reveal.is-visible {
+	opacity: 1;
+	transform: none;
+}
 
-			// The beam is positioned, so siblings need one too or they paint underneath it.
-			.rake > *:not(.rake-beam) {
-				position: relative;
-				z-index: 1;
-			}
+// Staggered fade; `--i` is set by the owning grid. Suppressed while a parent
+// `.reveal` is closed, or an Astro grid animates behind an opacity-0 parent.
+.js .develop {
+	animation: print-fade 0.6s ease backwards;
+	animation-delay: calc(min(var(--i, 0), 10) * 55ms);
+}
+.js .reveal:not(.is-visible) .develop {
+	animation: none;
+}
 
-			.rake > .rake-beam {
-				position: absolute;
-				// Full-bleed: at `inset: 0` the beam stops at a centred column's max-width.
-				// `50% - 50vw` is zero on a full-width `.rake`; html carries `overflow-x: clip`.
-				inset: 0 calc(50% - 50vw);
-				pointer-events: none;
-				z-index: 0;
-				background: linear-gradient(
-					104deg,
-					transparent 34%,
-					rgba(204, 0, 0, 0.13) 50%,
-					transparent 66%
-				);
-				background-size: 260% 100%;
-				background-repeat: no-repeat;
-				animation: rake-sweep linear both;
-				animation-timeline: view();
-				animation-range: entry 0% exit 100%;
-			}
-		}
-	}
+@keyframes print-fade {
+	from { opacity: 0; transform: translateY(12px); }
+	to   { opacity: 1; transform: none; }
+}
 
-	@keyframes rake-sweep {
-		from { background-position: -70% 0; }
-		to   { background-position: 170% 0; }
-	}
-
-	// The lineup print morphing into the sheet photo — a camera move, not a UI transition.
-	::view-transition-old(speaker-portrait),
-	::view-transition-new(speaker-portrait) {
-		animation-duration: 0.42s;
-		animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-	}
-
-	// No full-page dissolve behind the travelling portrait — it reads as a glitch.
-	::view-transition-old(root),
-	::view-transition-new(root) {
-		animation-duration: 0.24s;
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.js .reveal { opacity: 1; transform: none; transition: none; }
-		.js .develop { animation: none; }
-		.rake > .rake-beam { display: none; }
-	}
-
-	@keyframes fadeInUp {
-		from { opacity: 0; transform: translateY(30px); }
-		to { opacity: 1; transform: translateY(0); }
-	}
-
-	// Status-bar scrim. iOS Safari ignores `viewport-fit=cover` in some modes and anchors
-	// `position: fixed; top: 0` BELOW the safe-area inset, leaving content behind the
-	// translucent status bar. z-index 10000 keeps it above the grain so blending can't hide it.
-	.status-bar-cover {
-		position: fixed;
-		top: calc(-1 * env(safe-area-inset-top));
-		left: 0;
-		right: 0;
-		height: env(safe-area-inset-top);
-		background: var(--color-bg);
-		z-index: 10000;
-		pointer-events: none;
-	}
-
-	/* ===================== PRINT ===================== */
-	// Cream on #050505 prints as invisible text. One sitewide sheet: white
-	// ground, black ink, atmosphere dropped, links print their address.
-	// Grounds cleared by a blanket rule, not a class list (a list goes stale).
-	@media print {
-		html,
-		body {
-			background: #FFFFFF !important;
-			color: #050505 !important;
+// Enhancement only — `animation-timeline` is still flagged off in Firefox, so
+// nothing here carries meaning, contrast or state.
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.rake {
+			position: relative;
 		}
 
-		// Ink too: the site's muted alphas (labels at 0.55, meta at 0.62) print
-		// as pale grey on white. Everything goes near-black; roles below darker.
-		*,
-		*::before,
-		*::after {
-			color: #1A1A1A !important;
-			background-color: transparent !important;
-			background-image: none !important;
-			box-shadow: none !important;
-			text-shadow: none !important;
-			filter: none !important;
+		// The beam is positioned, so siblings need one too or they paint underneath it.
+		.rake > *:not(.rake-beam) {
+			position: relative;
+			z-index: 1;
 		}
 
-		// Atmosphere, chrome and the closing red band: nothing that is texture
-		// rather than content survives onto paper.
-		body::before,
-		body::after,
-		.scene-vignette,
-		.status-bar-cover,
-		.ticker-wrap,
-		.site-header,
-		.footer,
-		.cookie-banner,
-		.band--accent {
-			display: none !important;
-		}
-
-		.band,
-		.subpage-hero {
-			padding-block: 1rem !important;
-		}
-
-		// Ink by ROLE, not by page, so a new section inherits it.
-		h1,
-		h2,
-		h3,
-		h4,
-		.hero-title,
-		.hero-lede,
-		.display,
-		.head-title,
-		.head-note,
-		.eyebrow,
-		.red,
-		.field-row,
-		a {
-			color: #050505 !important;
-		}
-
-		// A printed form needs visible field boxes — a drawn edge on white.
-		input,
-		select,
-		textarea,
-		.btn-primary,
-		.btn-ghost {
-			color: #050505 !important;
-			border: 1px solid #050505 !important;
-		}
-
-		// A printed link is a dead end without its address.
-		a[href^='http']::after,
-		a[href^='mailto:']::after {
-			content: ' (' attr(href) ')';
-			@include mono(0.75em);
-		}
-
-		// …but not where the link IS its address, or the line prints twice.
-		a[href^='mailto:'].email-link::after,
-		.field-row a[href^='mailto:']::after {
-			content: none;
+		.rake > .rake-beam {
+			position: absolute;
+			// Full-bleed: at `inset: 0` the beam stops at a centred column's max-width.
+			// `50% - 50vw` is zero on a full-width `.rake`; html carries `overflow-x: clip`.
+			inset: 0 calc(50% - 50vw);
+			pointer-events: none;
+			z-index: 0;
+			background: linear-gradient(
+				104deg,
+				transparent 34%,
+				rgba(204, 0, 0, 0.13) 50%,
+				transparent 66%
+			);
+			background-size: 260% 100%;
+			background-repeat: no-repeat;
+			animation: rake-sweep linear both;
+			animation-timeline: view();
+			animation-range: entry 0% exit 100%;
 		}
 	}
+}
+
+@keyframes rake-sweep {
+	from { background-position: -70% 0; }
+	to   { background-position: 170% 0; }
+}
+
+// The lineup print morphing into the sheet photo — a camera move, not a UI transition.
+::view-transition-old(speaker-portrait),
+::view-transition-new(speaker-portrait) {
+	animation-duration: 0.42s;
+	animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+// No full-page dissolve behind the travelling portrait — it reads as a glitch.
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 0.24s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.js .reveal { opacity: 1; transform: none; transition: none; }
+	.js .develop { animation: none; }
+	.rake > .rake-beam { display: none; }
+}
+
+@keyframes fadeInUp {
+	from { opacity: 0; transform: translateY(30px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+// Status-bar scrim. iOS Safari ignores `viewport-fit=cover` in some modes and anchors
+// `position: fixed; top: 0` BELOW the safe-area inset, leaving content behind the
+// translucent status bar. z-index 10000 keeps it above the grain so blending can't hide it.
+.status-bar-cover {
+	position: fixed;
+	top: calc(-1 * env(safe-area-inset-top));
+	left: 0;
+	right: 0;
+	height: env(safe-area-inset-top);
+	background: var(--color-bg);
+	z-index: 10000;
+	pointer-events: none;
+}
+
+/* ===================== PRINT ===================== */
+// Cream on #050505 prints as invisible text. One sitewide sheet: white
+// ground, black ink, atmosphere dropped, links print their address.
+// Grounds cleared by a blanket rule, not a class list (a list goes stale).
+@media print {
+	html,
+	body {
+		background: #FFFFFF !important;
+		color: #050505 !important;
+	}
+
+	// Ink too: the site's muted alphas (labels at 0.55, meta at 0.62) print
+	// as pale grey on white. Everything goes near-black; roles below darker.
+	*,
+	*::before,
+	*::after {
+		color: #1A1A1A !important;
+		background-color: transparent !important;
+		background-image: none !important;
+		box-shadow: none !important;
+		text-shadow: none !important;
+		filter: none !important;
+	}
+
+	// Atmosphere, chrome and the closing red band: nothing that is texture
+	// rather than content survives onto paper.
+	body::before,
+	body::after,
+	.scene-vignette,
+	.status-bar-cover,
+	.ticker-wrap,
+	.site-header,
+	.footer,
+	.cookie-banner,
+	.band--accent {
+		display: none !important;
+	}
+
+	.band,
+	.subpage-hero {
+		padding-block: 1rem !important;
+	}
+
+	// Ink by ROLE, not by page, so a new section inherits it.
+	h1,
+	h2,
+	h3,
+	h4,
+	.hero-title,
+	.hero-lede,
+	.display,
+	.head-title,
+	.head-note,
+	.eyebrow,
+	.red,
+	.field-row,
+	a {
+		color: #050505 !important;
+	}
+
+	// A printed form needs visible field boxes — a drawn edge on white.
+	input,
+	select,
+	textarea,
+	.btn-primary,
+	.btn-ghost {
+		color: #050505 !important;
+		border: 1px solid #050505 !important;
+	}
+
+	// A printed link is a dead end without its address.
+	a[href^='http']::after,
+	a[href^='mailto:']::after {
+		content: ' (' attr(href) ')';
+		@include mono(0.75em);
+	}
+
+	// …but not where the link IS its address, or the line prints twice.
+	a[href^='mailto:'].email-link::after,
+	.field-row a[href^='mailto:']::after {
+		content: none;
+	}
+}
