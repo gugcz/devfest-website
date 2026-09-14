@@ -59,10 +59,58 @@ const devApiMocks = () => ({
     },
 });
 
+// Content Security Policy. Astro emits it as a <meta http-equiv> on every
+// page with a SHA-256 hash per inline script and style it renders (hydration
+// loaders, <ClientRouter />, the is:inline theme snippet), so `script-src`
+// needs no 'unsafe-inline'. `firebase.json` keeps only `frame-ancestors`,
+// which a <meta> cannot carry. Hosts:
+//   google.com / gstatic.com   reCAPTCHA Enterprise (App Check)
+//   googletagmanager.com, *.google-analytics.com, *.analytics.google.com   GA4
+//   *.googleapis.com, *.cloudfunctions.net   Firebase (App Check exchange, callable)
+//   *.firebasedatabase.app   RTDB (SDK still bundled; the browser reads /api/*)
+//   app.smartemailing.cz   newsletter form action
+//   youtube.com   embedded video
+/** @type {Exclude<NonNullable<import('astro').AstroUserConfig['security']>['csp'], boolean | undefined>} */
+const csp = {
+    algorithm: 'SHA-256',
+    directives: [
+        "default-src 'self'",
+        "base-uri 'self'",
+        "object-src 'none'",
+        "manifest-src 'self'",
+        // Any https image: /press hotlinks coverage thumbnails from the media
+        // partners' own sites. An image cannot run script, so this stays broad.
+        "img-src 'self' data: blob: https:",
+        "font-src 'self' data:",
+        "worker-src 'self' blob:",
+        "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.cloudfunctions.net https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://www.gstatic.com",
+        "frame-src https://www.google.com https://www.youtube.com",
+        "form-action 'self' https://app.smartemailing.cz",
+    ],
+    scriptDirective: {
+        resources: [
+            "'self'",
+            // heic-to decodes iPhone photos on /attending through a wasm module.
+            "'wasm-unsafe-eval'",
+            'https://www.google.com',
+            'https://www.gstatic.com',
+            'https://www.googletagmanager.com',
+            'https://*.google-analytics.com',
+        ],
+    },
+    styleDirective: {
+        // Elements are hashed by Astro; attributes (the hero's `style="--hero-…"`
+        // custom properties, React `style={{}}`) stay allowed — an inline style
+        // attribute cannot run script.
+        resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }],
+    },
+};
+
 // https://astro.build/config
 export default defineConfig({
     site: 'https://devfest.cz',
     trailingSlash: 'never',
+    security: { csp },
     // Self-hosted, build-time-optimised replacements for the three brand faces
     // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
     // Weights/styles mirror exactly what that css2 URL requested. Only the four

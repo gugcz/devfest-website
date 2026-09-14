@@ -43,7 +43,8 @@ const faqSchema = {
 		}))
 	),
 };
-const faqJsonLd = JSON.stringify(faqSchema);
+// `<` escaped: answers are HTML, and `</script>` in one would end the element.
+const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout

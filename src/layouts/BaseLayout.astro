@@ -166,11 +166,14 @@ const breadcrumbSchema = !isHome && slug
 		}
 	: null;
 
+// `set:html` writes this verbatim, so `<` is escaped: a `</script>` inside any
+// string (a page title, a description) would otherwise end the element early.
+// `\u003c` is still `<` to a JSON parser.
 const jsonLd = JSON.stringify(
 	isHome
 		? [eventSchema, organizationSchema, websiteSchema]
 		: [organizationSchema, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])]
-);
+).replace(/</g, '\\u003c');
 ---
 
 <html lang="en">
