@@ -65,6 +65,8 @@
 }
 
 /* ===================== PRINT + PLATE ===================== */
+// The print itself is `Print.module.scss` (shared with the lineup); this
+// file owns the tile's shape and the name plate under it.
 .tile {
 	position: relative;
 	display: flex;
@@ -73,117 +75,6 @@
 	padding: 0;
 	text-decoration: none;
 	color: inherit;
-	outline: none;
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-lg);
-	}
-}
-
-.thumb {
-	position: relative;
-	display: block;
-	z-index: 1;
-	aspect-ratio: 4 / 5;
-	overflow: hidden;
-	background: var(--panel-lit);
-	// Mounted print: bone keyline plus a shadow so it sits on the sheet. The
-	// second, RED inset keyline this used to carry put a red mark on every
-	// frame before anyone touched anything.
-	box-shadow: var(--print-mount);
-
-	// Crop-brackets open only on the frame being pointed at — a gesture, not
-	// decoration (see Speakers.module.scss for the same reasoning).
-	&::before,
-	&::after {
-		content: '';
-		position: absolute;
-		width: 16px;
-		height: 16px;
-		border: 2px solid var(--color-accent-hot);
-		z-index: 3;
-		opacity: 0;
-		transform: scale(0.7);
-		transition: opacity 0.3s ease, transform 0.3s ease;
-	}
-	&::before {
-		top: 7px;
-		left: 7px;
-		border-right: 0;
-		border-bottom: 0;
-		transform-origin: top left;
-	}
-	&::after {
-		right: 7px;
-		bottom: 7px;
-		border-left: 0;
-		border-top: 0;
-		transform-origin: bottom right;
-	}
-}
-
-.photo {
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	object-position: center 22%;
-	filter: grayscale(1) contrast(1.14) brightness(0.82);
-	transform: scale(1.02);
-	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
-}
-
-.monogram {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-monogram);
-	color: var(--ink-monogram);
-	user-select: none;
-}
-
-// Always-on bottom scrim so the print sits into its own shadow.
-.scrim {
-	position: absolute;
-	inset: 0;
-	z-index: 2;
-	pointer-events: none;
-	background: linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
-}
-
-// Hover darkening — the existing vignette treatment, no red wash.
-.vignette {
-	position: absolute;
-	inset: 0;
-	z-index: 2;
-	pointer-events: none;
-	background: radial-gradient(120% 100% at 50% 8%, rgba(0, 0, 0, 0.5) 0%, transparent 46%);
-	opacity: 0;
-	transition: opacity 0.3s ease;
-}
-
-.tile:hover .photo,
-.tile:focus-visible .photo {
-	transform: scale(1.07);
-	filter: grayscale(0.1) contrast(1.06) brightness(1);
-}
-
-.tile:hover .thumb::before,
-.tile:hover .thumb::after,
-.tile:focus-visible .thumb::before,
-.tile:focus-visible .thumb::after {
-	opacity: 1;
-	transform: scale(1);
-}
-
-.tile:hover .vignette,
-.tile:focus-visible .vignette {
-	opacity: 1;
 }
 
 /* ===================== NAME PLATE ===================== */
@@ -243,19 +134,6 @@
 	.plate {
 		margin-top: 0.7rem;
 	}
-	.thumb::before,
-	.thumb::after {
-		width: 12px;
-		height: 12px;
-		top: 6px;
-		left: 6px;
-	}
-	.thumb::after {
-		top: auto;
-		left: auto;
-		right: 6px;
-		bottom: 6px;
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -263,15 +141,7 @@
 		animation: none;
 	}
 	.tile,
-	.photo,
-	.vignette,
-	.tname,
-	.thumb::before,
-	.thumb::after {
+	.tname {
 		transition: none;
-	}
-	.tile:hover .photo,
-	.tile:focus-visible .photo {
-		transform: none;
 	}
 }

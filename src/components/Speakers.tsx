@@ -5,6 +5,7 @@ import { fetchLineup } from '../lib/lineup';
 import SpeakerDetail from './SpeakerDetail';
 import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
+import print from './Print.module.scss';
 import s from './Speakers.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
@@ -109,24 +110,24 @@ function SpeakerCard({
 		<li className={s.cell} style={{ '--i': index } as React.CSSProperties}>
 			<button
 				type="button"
-				className={`${s.card} develop`}
+				className={`${print.frame} ${s.card} develop`}
 				onClick={() => onOpen(speaker)}
 				aria-label={`View ${speaker.fullName}'s profile`}
 				style={
 					morphing ? ({ viewTransitionName: PORTRAIT_TRANSITION } as React.CSSProperties) : undefined
 				}
 			>
-				<span className={s.media}>
+				<span className={print.print}>
 					<SpeakerPhoto
 						speaker={speaker}
-						photoClass={s.photo}
-						monogramClass={s.monogram}
+						photoClass={print.photo}
+						monogramClass={print.monogram}
 						width={400}
 						height={500}
 						eager={priority}
 					/>
-					<span className={s.scrim} aria-hidden="true" />
-					<span className={s.vignette} aria-hidden="true" />
+					<span className={print.scrim} aria-hidden="true" />
+					<span className={print.vignette} aria-hidden="true" />
 				</span>
 				<span className={s.body}>
 					<span className={s.name}>{speaker.fullName}</span>
@@ -164,7 +165,10 @@ export function SpeakerLineup({
 			    final. */}
 			<li className={s.cell} style={{ '--i': speakers.length } as React.CSSProperties}>
 				<div className={`${s.moreCard} develop`}>
-					<span className={s.moreFrame} aria-hidden="true" />
+					{/* The same mount as a real print, so it reads as an unexposed frame and
+					    not as an outlined empty box among borderless photographs. No
+					    `.frame` parent, so its brackets never open. */}
+					<span className={print.print} aria-hidden="true" />
 					<span className={s.moreBody}>
 						<span className={s.moreKicker}>Still developing</span>
 						<p className={s.moreText}>More names to come</p>

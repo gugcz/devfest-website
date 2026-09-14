@@ -1,8 +1,8 @@
 @use '../styles/type' as *;
-// Speaker lineup — prints laid out on the page, and nothing else. A photograph
-// needs no container: it carries its own mount (`--print-mount`), so a cell
-// border only draws a second rectangle around the first. Never wrap a print in
-// a card or a shared-edge contact sheet; alignment and rhythm make the grid.
+// Speaker lineup — prints laid out on the page, and nothing else. The print
+// itself (plate, brackets, photo, hover gesture) is `Print.module.scss`,
+// shared with the home teaser; this file owns the grid, the caption and the
+// closing "still developing" frame.
 
 // Faces are the content here — a 210px floor laid them out as six small columns.
 .grid {
@@ -42,117 +42,6 @@
 	background: transparent;
 	border: 0;
 	border-radius: 0;
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-lg);
-	}
-}
-
-.media {
-	position: relative;
-	display: block;
-	z-index: 1;
-	aspect-ratio: 4 / 5;
-	overflow: hidden;
-	background: var(--panel-lit);
-	// Mounted print: bone keyline plus a shadow, so it sits ON the sheet.
-	box-shadow: var(--print-mount);
-
-	// Red crop-brackets — a GESTURE, not decoration. They open only on the frame
-	// being pointed at; at rest they put twenty red marks in one viewport.
-	&::before,
-	&::after {
-		content: '';
-		position: absolute;
-		width: 18px;
-		height: 18px;
-		border: 2px solid var(--color-accent-hot);
-		z-index: 3;
-		opacity: 0;
-		// Scale from the corner rather than animating width/height — composited.
-		transform: scale(0.7);
-		transition: opacity 0.3s ease, transform 0.3s ease;
-	}
-	&::before {
-		top: 9px;
-		left: 9px;
-		border-right: 0;
-		border-bottom: 0;
-		transform-origin: top left;
-	}
-	&::after {
-		right: 9px;
-		bottom: 9px;
-		border-left: 0;
-		border-top: 0;
-		transform-origin: bottom right;
-	}
-}
-
-.photo {
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	object-position: center 22%;
-	// Hard B&W at rest, lifting toward colour on hover.
-	filter: grayscale(1) contrast(1.14) brightness(0.84);
-	transform: scale(1.02);
-	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
-}
-
-// Always-on bottom scrim so the print sits into its own shadow.
-.scrim {
-	position: absolute;
-	inset: 0;
-	z-index: 2;
-	pointer-events: none;
-	background: linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
-}
-
-// The darkening wash rides on hover only.
-.vignette {
-	position: absolute;
-	inset: 0;
-	z-index: 2;
-	pointer-events: none;
-	background: radial-gradient(120% 100% at 50% 6%, rgba(0, 0, 0, 0.5) 0%, transparent 46%);
-	opacity: 0;
-	transition: opacity 0.3s ease;
-}
-
-.card:hover .photo,
-.card:focus-visible .photo {
-	transform: scale(1.06);
-	filter: grayscale(0.12) contrast(1.06) brightness(1);
-}
-
-.card:hover .media::before,
-.card:hover .media::after,
-.card:focus-visible .media::before,
-.card:focus-visible .media::after {
-	opacity: 1;
-	transform: scale(1);
-}
-
-.card:hover .vignette,
-.card:focus-visible .vignette {
-	opacity: 1;
-}
-
-.monogram {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-monogram);
-	letter-spacing: 0.08em;
-	color: var(--ink-monogram);
-	user-select: none;
 }
 
 /* ===================== CAPTION ===================== */
@@ -221,15 +110,6 @@
 	background: transparent;
 }
 
-// Carries the SAME mount as a real print, so it reads as an unexposed frame and
-// not as an outlined empty box among borderless photographs.
-.moreFrame {
-	position: relative;
-	aspect-ratio: 4 / 5;
-	background: var(--panel-lit);
-	box-shadow: var(--print-mount);
-}
-
 .moreBody {
 	padding: 0;
 	margin-top: 0.9rem;
@@ -269,33 +149,12 @@
 	.moreBody {
 		margin-top: 0.7rem;
 	}
-	.media::before,
-	.media::after {
-		width: 12px;
-		height: 12px;
-		top: 6px;
-		left: 6px;
-	}
-	.media::after {
-		top: auto;
-		left: auto;
-		right: 6px;
-		bottom: 6px;
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.card,
-	.photo,
-	.name,
-	.vignette,
-	.media::before,
-	.media::after {
+	.name {
 		transition: none;
 		animation: none;
-	}
-	.card:hover .photo,
-	.card:focus-visible .photo {
-		transform: none;
 	}
 }
