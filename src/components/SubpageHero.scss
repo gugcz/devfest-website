@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 // Every subpage opens here: tag, title, one line of copy, and the title does
 // all the work. Sized so the first content row is ALWAYS visible without
 // scrolling — height comes from the padding and the title, not min-height.
@@ -34,12 +35,7 @@
 
 // The page's one piece of poster-scale type. Never a second --fs-display on a subpage.
 .hero-title {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-display);
-	line-height: var(--lh-display);
-	letter-spacing: var(--track-display);
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include display(var(--fs-display));
 	margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
 	max-width: 18ch;
 	text-wrap: balance;

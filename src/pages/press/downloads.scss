@@ -57,21 +57,6 @@
 	letter-spacing: 0.16em;
 }
 
-// The page's section head, so it runs at --fs-h2 like every other one on the site.
-.section-title {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-h2);
-	line-height: var(--lh-display);
-	letter-spacing: var(--track-display);
-	text-transform: uppercase;
-	color: var(--color-text);
-	margin: 0;
-
-	.red {
-		color: var(--color-accent-hot);
-	}
-}
-
 /* ===================== GRID ===================== */
 // Ruled contact sheet. Fixed column counts, not `auto-fill`: the page must
 // know the count to close a short last row with blanks (downloads.astro).
@@ -215,12 +200,7 @@
 // The asset's name is the tile's title, so it is set like one: Bebas, uppercase,
 // on the tile step /agenda's cells use.
 .kit-label {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-title-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title(var(--fs-title-sm));
 	transition: color 0.2s;
 }
 

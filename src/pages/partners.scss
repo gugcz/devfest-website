@@ -22,21 +22,6 @@
 	margin-bottom: clamp(2rem, 4vw, 3rem);
 }
 
-// Poster headline at section scale.
-.wall-title {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-h2);
-	line-height: var(--lh-display);
-	letter-spacing: var(--track-display);
-	text-transform: uppercase;
-	color: var(--color-text);
-	margin: 0;
-
-	.red {
-		color: var(--color-accent-hot);
-	}
-}
-
 // ─── ONE GRID MODULE ──────────────────────────────────────────────────
 // Contact sheet, not a tile grid: one track size for every partner, no
 // panel fill or shadow. Per-tier sizing let cells grow to close their row.

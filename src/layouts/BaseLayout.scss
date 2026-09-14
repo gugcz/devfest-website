@@ -280,12 +280,8 @@ body {
 
 // THE headline class. No shadow, no glow, no gradient; size comes from the caller's --fs-*.
 .display {
-	font-family: var(--font-bebas-neue), sans-serif;
+	@include display;
 	font-weight: 400;
-	line-height: var(--lh-display);
-	letter-spacing: var(--track-display);
-	text-transform: uppercase;
-	color: var(--color-text);
 	margin: 0;
 	text-wrap: balance;
 }

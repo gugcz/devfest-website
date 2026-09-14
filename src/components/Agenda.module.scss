@@ -443,12 +443,7 @@
 // The long-list row step, shared with the session rows, the FAQ questions and
 // the press clippings.
 .itemTitle {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title;
 
 	.itemBand & {
 		@include mono(var(--fs-ui), 0.18em);
@@ -503,13 +498,8 @@
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
-	font-family: var(--font-bebas-neue), sans-serif;
 	// The long-list row step, shared with /sessions, the FAQ and the press clippings.
-	font-size: var(--fs-row-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title;
 	text-align: left;
 	cursor: pointer;
 	// Titles are unbounded-length Sessionize copy — wrap instead of overflowing the row.

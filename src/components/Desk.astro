@@ -88,12 +88,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 
 	// Short-list scale: at --fs-h3 the desk names sat a size below every other row.
 	.desk-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-row);
-		line-height: var(--lh-display);
-		letter-spacing: var(--track-display);
-		text-transform: uppercase;
-		color: var(--color-text);
+		@include display(var(--fs-row));
 		margin: 0;
 	}
 

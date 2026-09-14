@@ -211,12 +211,7 @@
 // A step below the 54px a short list carries — thirty talks at that size stop
 // being scannable, but this is the same container language, not a smaller one.
 .title {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title;
 	// Reserve up to three lines so short and long titles keep row heights close.
 	display: -webkit-box;
 	-webkit-line-clamp: 3;

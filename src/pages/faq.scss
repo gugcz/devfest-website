@@ -20,12 +20,7 @@
 
 // A step above the questions: at --fs-h3 the category read as another entry in the list.
 .faq-cat {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(2.4rem, 4.2vw, 3.75rem);
-	line-height: var(--lh-display);
-	letter-spacing: var(--track-display);
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include display(clamp(2.4rem, 4.2vw, 3.75rem));
 	margin: 0;
 }
 
@@ -97,12 +92,7 @@
 // The long-list row step, shared with the session rows and the press clippings.
 .faq-q-text {
 	flex: 1;
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title;
 	transition: color 0.2s;
 }
 

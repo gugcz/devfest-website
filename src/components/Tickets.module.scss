@@ -66,12 +66,7 @@
 }
 
 .stubTitle {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row);
-	letter-spacing: var(--track-display);
-	line-height: var(--lh-display);
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include display(var(--fs-row));
 	margin: 0;
 }
 

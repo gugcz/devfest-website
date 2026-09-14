@@ -118,12 +118,7 @@
 }
 
 .speakerName {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title;
 }
 
 .speakerTag {

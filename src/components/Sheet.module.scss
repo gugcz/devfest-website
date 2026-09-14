@@ -121,12 +121,7 @@
 // at --fs-h3 (41.6px) — a size BELOW the 54px row that opened them, so the
 // detail view of a thing was smaller than the summary of it.
 .title {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-h2);
-	line-height: var(--lh-display);
-	letter-spacing: var(--track-display);
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include display(var(--fs-h2));
 	text-wrap: balance;
 	margin: 0;
 }

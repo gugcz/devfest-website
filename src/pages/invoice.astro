@@ -85,12 +85,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 
 	// --fs-h3, the step every other secondary head on the site runs at.
 	.intro-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-h3);
-		line-height: var(--lh-display);
-		letter-spacing: var(--track-display);
-		text-transform: uppercase;
-		color: var(--color-text);
+		@include display(var(--fs-h3));
 		margin: 0;
 	}
 
