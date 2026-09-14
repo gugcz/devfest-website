@@ -73,7 +73,9 @@ export const submitInvoiceCallable = onCall(
 		// invoices and emails: the framework rejects a missing/invalid token before
 		// the handler runs.
 		enforceAppCheck: true,
-		maxInstances: 10,
+		// The browser is the only caller: production and the PR previews. App
+		// Check is the real gate; this just stops other origins preflighting.
+		cors: [/^https:\/\/(www\.)?devfest\.cz$/, /^https:\/\/devfest-public--pr-\d+-[a-z0-9]+\.web\.app$/],
 	},
 	async (request) => {
 		const body = (request.data ?? {}) as Record<string, unknown>;

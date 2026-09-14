@@ -34,7 +34,7 @@ import {
 	type TitoConfig,
 } from './tito-discount.js';
 import { buildInvoiceEmail, formatDueDate } from './email.js';
-import { updateInvoice, type InvoiceDoc } from './firestore.js';
+import { claimInvoiceForIssuing, updateInvoice, type InvoiceDoc } from './firestore.js';
 
 
 export const processInvoiceTrigger = onDocumentCreated(
@@ -49,6 +49,14 @@ export const processInvoiceTrigger = onDocumentCreated(
 		const id = event.params.invoiceId;
 		const doc = snap.data() as InvoiceDoc;
 		const slackUrl = SLACK_WEBHOOK_URL.value();
+
+		// Firestore delivers create events at least once. Only the delivery that
+		// flips `pending` → `processing` issues the invoice; a replay sees the doc
+		// already claimed and does nothing — never a second iDoklad invoice.
+		if (!(await claimInvoiceForIssuing(id))) {
+			logger.info('processInvoiceTrigger duplicate delivery ignored', { id });
+			return;
+		}
 
 		try {
 			const titoCfg: TitoConfig = {

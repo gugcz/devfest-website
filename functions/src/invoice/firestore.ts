@@ -7,15 +7,16 @@
  *
  * Lifecycle (status):
  *   pending    → form submitted, nothing sent yet
+ *   processing → a function has claimed the doc: the trigger is issuing the
+ *                invoice, or the poller is minting the code for a paid one
  *   invoiced   → iDoklad contact + invoice created (and emailed)
- *   processing → poller claimed a paid invoice and is minting the code
  *   completed  → invoice paid → 100%-off ti.to code generated + delivered
  *   error      → pipeline failed; see `errorMessage`
  */
 
 import { createHash } from 'node:crypto';
 
-import { FieldValue } from 'firebase-admin/firestore';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 
 import { firestore } from '../lib/admin.js';
 
@@ -132,26 +133,46 @@ export async function checkInvoiceRateLimit(opts: {
 			return true;
 		}
 
-		tx.set(ref, { windowStart: now, count: 1, updatedAt: FieldValue.serverTimestamp() });
+		// `expiresAt` is the TTL field: a Firestore TTL policy on this
+		// collection (console → TTL, field `expiresAt`) deletes spent windows,
+		// or the collection grows by one doc per company forever.
+		tx.set(ref, {
+			windowStart: now,
+			count: 1,
+			expiresAt: Timestamp.fromMillis(now + opts.windowMs),
+			updatedAt: FieldValue.serverTimestamp(),
+		});
 		return true;
 	});
 }
 
 /**
- * Atomically claim a paid invoice for post-payment processing by flipping its
- * status `invoiced` → `processing` in a transaction. Returns `true` only for
- * the caller that won the claim, so the 100%-off code is minted exactly once
- * even if the poller re-enters (overlapping runs, at-least-once retries).
+ * Atomically flip `from` → `processing` in a transaction. Returns `true` only
+ * for the caller that won the claim, so each stage runs exactly once even
+ * when the platform re-delivers (Firestore triggers are at-least-once; the
+ * poller can overlap itself).
  */
-export async function claimInvoiceForProcessing(id: string): Promise<boolean> {
+async function claimInvoice(id: string, from: InvoiceStatus): Promise<boolean> {
 	const ref = invoicesCollection().doc(id);
 	return firestore().runTransaction(async (tx) => {
 		const snap = await tx.get(ref);
 		if (!snap.exists) return false;
-		if ((snap.data() as InvoiceDoc).status !== 'invoiced') return false;
+		if ((snap.data() as InvoiceDoc).status !== from) return false;
 		tx.update(ref, { status: 'processing', updatedAt: FieldValue.serverTimestamp() });
 		return true;
 	});
+}
+
+/** `pending` → `processing`, for `processInvoiceTrigger`. A redelivered
+ * create event must not mint a second iDoklad invoice. */
+export function claimInvoiceForIssuing(id: string): Promise<boolean> {
+	return claimInvoice(id, 'pending');
+}
+
+/** `invoiced` → `processing`, for `pollPaidInvoicesScheduled`, so the
+ * 100%-off code is minted exactly once. */
+export function claimInvoiceForProcessing(id: string): Promise<boolean> {
+	return claimInvoice(id, 'invoiced');
 }
 
 /** Release a claimed invoice back to `invoiced` for the next poll — only

@@ -30,17 +30,30 @@ export interface CachedEndpointSpec<T> {
 export function cachedJsonEndpoint<T>(
 	spec: CachedEndpointSpec<T>,
 ): (req: Request, res: Response) => Promise<void> {
-	let memo: { at: number; payload: T } | null = null;
+	// The memo holds the PROMISE, not the result: concurrent misses on a cold
+	// instance (the CDN revalidation burst) share one Admin SDK read instead of
+	// each issuing their own. A rejected promise is dropped so the next request
+	// retries rather than serving the failure for the whole TTL.
+	let memo: { at: number; payload: Promise<T> } | null = null;
 
-	const load = async (): Promise<T> => {
+	const load = (): Promise<T> => {
 		const now = Date.now();
 		if (memo && now - memo.at < spec.memoTtlMs) return memo.payload;
-		const payload = await spec.load();
+		const payload = spec.load();
 		memo = { at: now, payload };
+		payload.catch(() => {
+			if (memo?.payload === payload) memo = null;
+		});
 		return payload;
 	};
 
-	return async (_req, res) => {
+	return async (req, res) => {
+		// Read-only endpoint; nothing else is routed here.
+		if (req.method !== 'GET' && req.method !== 'HEAD') {
+			res.set('Allow', 'GET, HEAD');
+			res.status(405).send('Method Not Allowed');
+			return;
+		}
 		try {
 			const payload = await load();
 			res.set('Cache-Control', spec.cacheControl);

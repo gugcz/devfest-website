@@ -173,7 +173,7 @@ async function apiEnvelope(
 	method: string,
 	path: string,
 	body?: unknown,
-): Promise<any> {
+): Promise<unknown> {
 	const res = await apiFetch(cfg, method, path, body);
 	if (!res.ok) {
 		const detail = await errorBody(res);
@@ -182,7 +182,7 @@ async function apiEnvelope(
 	return await res.json();
 }
 
-async function apiJson<T = any>(
+async function apiJson<T = unknown>(
 	cfg: IdokladConfig,
 	method: string,
 	path: string,
@@ -310,9 +310,9 @@ export async function createInvoice(
 	cfg: IdokladConfig,
 	input: { contactId: number; dueDays: number; description: string; line: IdokladInvoiceLine },
 ): Promise<CreatedInvoice> {
-	const tpl = await apiJson<Record<string, any>>(cfg, 'GET', '/IssuedInvoices/Default');
+	const tpl = await apiJson<Record<string, unknown>>(cfg, 'GET', '/IssuedInvoices/Default');
 
-	const issue = tpl.DateOfIssue ? new Date(tpl.DateOfIssue) : new Date();
+	const issue = typeof tpl.DateOfIssue === 'string' ? new Date(tpl.DateOfIssue) : new Date();
 	const maturity = addDays(issue, input.dueDays);
 
 	const item = {
@@ -371,9 +371,9 @@ export async function sendInvoiceByEmail(
 	const otherRecipients = (opts.otherRecipients ?? []).map((a) => a.trim()).filter(Boolean);
 	const masked = otherRecipients.map(maskEmail);
 
-	let envelope: any;
+	let envelope: { IsSuccess?: unknown } | null;
 	try {
-		envelope = await apiEnvelope(cfg, 'POST', '/Mails/IssuedInvoice/Send', {
+		envelope = (await apiEnvelope(cfg, 'POST', '/Mails/IssuedInvoice/Send', {
 			DocumentId: invoiceId,
 			SendToPartner: true,
 			SendToSelf: false,
@@ -382,7 +382,7 @@ export async function sendInvoiceByEmail(
 			EmailSubject: opts.subject,
 			EmailBody: opts.body,
 			SendAttachment: true,
-		});
+		})) as { IsSuccess?: unknown } | null;
 	} catch (err) {
 		// Log before rethrowing: the caller records the failure, but only this
 		// frame knows which invoice and which recipients it was for.
