@@ -62,17 +62,5 @@ const toneClass = tone === 'accent' ? ' band--accent' : tone === 'raised' ? ' ba
 </section>
 
 <style lang="scss">
-	.closer-band {
-		border-top: 1px solid var(--rule-soft);
-	}
-
-	// The accent field carries its own edge — a hairline on a red ground reads
-	// as a seam, not as structure.
-	.closer-band:global(.band--accent) {
-		border-top: 0;
-	}
-
-	.closer-eyebrow {
-		margin-bottom: clamp(1.1rem, 2vw, 1.6rem);
-	}
+	@use './Closer';
 </style>
