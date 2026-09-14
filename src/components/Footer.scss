@@ -81,9 +81,7 @@
 }
 
 .brand-tagline {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
-	line-height: 1.55;
+	@include prose(var(--fs-ui), 1.55);
 	color: rgba(240, 237, 230, 0.6);
 	max-width: 32ch;
 }
@@ -183,8 +181,7 @@
 	display: inline-flex;
 	align-items: center;
 	min-height: 2.75rem;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
+	@include prose(var(--fs-ui));
 	color: rgba(240, 237, 230, 0.88);
 	text-decoration: none;
 	border-bottom: 1px solid var(--field-border);

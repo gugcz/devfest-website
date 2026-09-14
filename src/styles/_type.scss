@@ -43,10 +43,12 @@
 
 // Typewriter reading copy — ledes, notes, abstracts. Colour is the caller's:
 // it depends on the ground (cream ink on black, `--on-accent` on red).
-@mixin prose($size: var(--fs-body), $lh: 1.6) {
+@mixin prose($size: var(--fs-body), $lh: null) {
 	font-family: var(--font-special-elite), cursive;
 	font-size: $size;
-	line-height: $lh;
+	@if $lh {
+		line-height: $lh;
+	}
 }
 
 // Inline link on a red hairline that lights to accent-hot. Keyboard focus

@@ -221,9 +221,7 @@
 }
 
 .excerpt {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
-	line-height: 1.6;
+	@include prose(var(--fs-body), 1.6);
 	color: rgba(240, 237, 230, 0.72);
 	margin-top: 0.55rem;
 	display: -webkit-box;
@@ -334,9 +332,7 @@
 }
 
 .moreText {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.5;
+	@include prose(var(--fs-lede), 1.5);
 	color: var(--color-grey);
 	margin: 0;
 	max-width: 22ch;

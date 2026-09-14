@@ -95,9 +95,7 @@
 	margin-top: clamp(2rem, 4vw, 3rem);
 
 	p {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.7;
+		@include prose(var(--fs-lede), 1.7);
 		color: var(--ink-strong);
 		margin: 0 0 1.1rem;
 		// No character cap: the 0.62fr column beside the portrait IS the measure,
@@ -127,9 +125,7 @@
 }
 
 .sessionDesc {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
-	line-height: 1.6;
+	@include prose(var(--fs-ui), 1.6);
 	color: rgba(240, 237, 230, 0.6);
 	max-width: 56ch;
 	margin: 0.5rem 0 0;

@@ -44,6 +44,7 @@ const { title, noteHtml, actions } = Astro.props;
 </li>
 
 <style lang="scss">
+	@use '../styles/type' as *;
 	// The 1.15/0.85 split the desks and the section heads use, so a step's
 	// title shares its left edge and its measure with everything else.
 	.step {
@@ -73,9 +74,7 @@ const { title, noteHtml, actions } = Astro.props;
 	}
 
 	.step-note {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-body);
-		line-height: 1.7;
+		@include prose(var(--fs-body), 1.7);
 		color: rgba(240, 237, 230, 0.72);
 		max-width: 46ch;
 		margin: 0;

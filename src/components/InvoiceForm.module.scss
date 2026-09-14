@@ -52,8 +52,7 @@
 	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	color: var(--color-text);
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
+	@include prose;
 	letter-spacing: 0.01em;
 	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 
@@ -116,8 +115,7 @@
 .estimate {
 	position: relative;
 	overflow: hidden;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body-lg);
+	@include prose(var(--fs-body-lg));
 	color: var(--color-text);
 	margin: 0;
 	// A readout, not a panel: ruled top and bottom, lit from the left. It must never
@@ -177,9 +175,7 @@
 	}
 
 	span {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-ui);
-		line-height: 1.55;
+		@include prose(var(--fs-ui), 1.55);
 		color: var(--ink);
 	}
 }
@@ -249,9 +245,8 @@
 }
 
 .message {
-	font-family: var(--font-special-elite), cursive;
+	@include prose(var(--fs-ui));
 	font-style: italic;
-	font-size: var(--fs-ui);
 	margin: 0;
 	min-height: 1.2em;
 	color: var(--ink-soft);
@@ -298,9 +293,7 @@
 }
 
 .successBody {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body-lg);
-	line-height: 1.6;
+	@include prose(var(--fs-body-lg), 1.6);
 	color: var(--color-grey);
 	margin: 0;
 }

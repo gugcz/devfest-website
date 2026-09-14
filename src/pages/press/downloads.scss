@@ -247,9 +247,7 @@
 }
 
 .empty-line {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
-	line-height: 1.7;
+	@include prose(var(--fs-body), 1.7);
 	color: var(--color-grey);
 	max-width: 56ch;
 	margin: 0;

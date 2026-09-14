@@ -99,9 +99,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 	}
 
 	.steps li {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-body-lg);
-		line-height: 1.5;
+		@include prose(var(--fs-body-lg), 1.5);
 		color: var(--color-grey);
 		display: flex;
 		align-items: baseline;
@@ -116,8 +114,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 	}
 
 	.intro-note {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-ui);
+		@include prose(var(--fs-ui));
 		font-style: italic;
 		color: rgba(240, 237, 230, 0.6);
 		margin: 0;

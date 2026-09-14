@@ -1,3 +1,4 @@
+@use '../styles/type' as *;
 .wrapper {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -104,19 +105,13 @@
 }
 
 .stepHeadText {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
+	@include mono(var(--fs-label), 0.22em, uppercase);
 	font-weight: 500;
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
 	color: var(--color-text);
 }
 
 .statusWord {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-xs), 0.14em, uppercase);
 
 	&[data-tone='required'] {
 		color: var(--color-text);
@@ -130,8 +125,7 @@
 .hint {
 	display: block;
 	margin-top: 0.6rem;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
+	@include prose(var(--fs-ui));
 	font-style: italic;
 	color: rgba(240, 237, 230, 0.6);
 }
@@ -149,8 +143,7 @@
 	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	color: var(--color-text);
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
+	@include prose;
 	letter-spacing: 0.01em;
 	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 
@@ -172,8 +165,7 @@
 	right: 0.95rem;
 	top: 50%;
 	transform: translateY(-50%);
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
+	@include mono(var(--fs-label-xs));
 	font-variant-numeric: tabular-nums;
 	// Spec calls for `.38` (3.19:1) as a deliberate sub-AA value — it
 	// duplicates the `maxLength` the field already enforces. `npm run a11y`
@@ -232,10 +224,7 @@
 }
 
 .dropLabel {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-lg), 0.14em, uppercase);
 	color: var(--color-text);
 }
 
@@ -245,11 +234,8 @@
 }
 
 .chooseButton {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
+	@include mono(var(--fs-label), 0.2em, uppercase);
 	font-weight: 500;
-	letter-spacing: 0.2em;
-	text-transform: uppercase;
 	color: var(--color-text);
 	background: none;
 	border: 0;
@@ -314,16 +300,12 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	min-width: 0;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
+	@include mono(var(--fs-label-lg));
 	color: var(--color-text);
 }
 
 .photoMeta {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-xs), 0.14em, uppercase);
 	color: var(--color-grey);
 	font-variant-numeric: tabular-nums;
 }
@@ -336,17 +318,13 @@
 }
 
 .error {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
+	@include prose(var(--fs-ui));
 	color: var(--color-error);
 	margin: 0.6rem 0 0;
 }
 
 .linkButton {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label), 0.14em, uppercase);
 	color: rgba(240, 237, 230, 0.6);
 	background: none;
 	border: 0;
@@ -384,16 +362,12 @@
 }
 
 .railLabel {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.2em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-xs), 0.2em, uppercase);
 	color: rgba(240, 237, 230, 0.62);
 }
 
 .railReadout {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
+	@include mono(var(--fs-label-xs));
 	font-variant-numeric: tabular-nums;
 	color: var(--color-text);
 }
@@ -504,9 +478,7 @@
 }
 
 .stepIndicator {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.14em;
+	@include mono(var(--fs-label-xs), 0.14em);
 	font-variant-numeric: tabular-nums;
 	color: rgba(240, 237, 230, 0.6);
 }
@@ -551,11 +523,8 @@
 	pointer-events: none;
 
 	span {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
+		@include mono(var(--fs-label), 0.24em, uppercase);
 		font-weight: 500;
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
 		color: var(--color-text);
 	}
 }
@@ -567,9 +536,8 @@
 }
 
 .message {
-	font-family: var(--font-special-elite), cursive;
+	@include prose(var(--fs-ui));
 	font-style: italic;
-	font-size: var(--fs-ui);
 	margin: 0;
 	min-height: 1.2em;
 	color: rgba(240, 237, 230, 0.7);

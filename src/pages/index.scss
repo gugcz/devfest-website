@@ -445,9 +445,7 @@
 }
 
 .speakers-lede {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.6;
+	@include prose(var(--fs-lede), 1.6);
 	color: var(--ink-soft);
 	max-width: 40ch;
 	margin: 1.25rem 0 2.5rem;
@@ -487,9 +485,7 @@
 
 .newsletter-lede {
 	margin: clamp(1.25rem, 2.5vw, 1.9rem) 0 0;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.6;
+	@include prose(var(--fs-lede), 1.6);
 	// Full cream — see the measured ink table in BaseLayout.scss; dimmer fails 1.4.3 on red.
 	color: var(--on-accent);
 	max-width: 32ch;

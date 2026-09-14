@@ -91,9 +91,7 @@ h3 {
 // reading copy. Eight screens of it is hard reading, so the readability is
 // bought back with a looser line-height and a 62ch measure, not a fourth face.
 p {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
-	line-height: 1.85;
+	@include prose(var(--fs-body), 1.85);
 	letter-spacing: 0.01em;
 	color: var(--ink);
 	margin-bottom: 1rem;
@@ -102,9 +100,7 @@ p {
 }
 
 ul {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
-	line-height: 1.85;
+	@include prose(var(--fs-body), 1.85);
 	letter-spacing: 0.01em;
 	color: var(--ink);
 	padding-left: 1.4rem;
@@ -146,8 +142,7 @@ code {
 table {
 	width: 100%;
 	border-collapse: collapse;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
+	@include prose(var(--fs-ui));
 	color: var(--ink);
 	// The rhythm above the table now lives on `.table-scroll`.
 	margin-top: 0;
@@ -170,8 +165,7 @@ th {
 }
 
 tbody th {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
+	@include prose(var(--fs-ui));
 	text-transform: none;
 	letter-spacing: 0.01em;
 	color: var(--ink-strong);

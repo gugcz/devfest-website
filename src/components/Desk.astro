@@ -93,9 +93,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 	}
 
 	.desk-desc {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
+		@include prose(var(--fs-lede), 1.6);
 		color: var(--ink-soft);
 		margin: 0.2rem 0 0;
 		// Special Elite is wide. Held to a measure so the blurb reads as a block.

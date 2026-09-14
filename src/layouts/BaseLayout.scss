@@ -312,9 +312,7 @@ body {
 }
 
 .head-note {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.6;
+	@include prose(var(--fs-lede), 1.6);
 	color: var(--ink-soft);
 	margin: 0 0 0.35rem;
 	// Special Elite is wide; longer and this stops reading as a line and becomes a paragraph.
@@ -375,9 +373,7 @@ body {
 
 // The prose a data-backed page falls back to with no JS or a dead endpoint.
 .fallback-note {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.7;
+	@include prose(var(--fs-lede), 1.7);
 	color: var(--color-grey);
 	max-width: 52ch;
 	margin: 2rem 0 0;
@@ -487,9 +483,7 @@ body {
 }
 
 .closer-note {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.6;
+	@include prose(var(--fs-lede), 1.6);
 	color: var(--ink-soft);
 	margin: 0;
 	max-width: 34ch;
