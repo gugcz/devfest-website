@@ -138,6 +138,7 @@ export default function AttendingCard() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const photoTriggerRef = useRef<HTMLButtonElement>(null);
 	const stepHeadRef = useRef<HTMLDivElement>(null);
+	const previewRef = useRef<HTMLDivElement>(null);
 	const stepIsFirstRenderRef = useRef(true);
 	const [step, setStep] = useState<WizardStep>(1);
 	const [name, setName] = useState('');
@@ -262,10 +263,16 @@ export default function AttendingCard() {
 	// click swaps the whole step body, and without this the focus (and a
 	// screen reader's position) would stay on a button that just vanished.
 	// Skipped on mount: nothing changed yet, so there's nothing to announce.
+	// On mobile the preview sits in normal flow above the step (not sticky),
+	// so a Back/Next click also scrolls the preview into view — otherwise a
+	// visitor scrolled down into a long step lands mid-page on the new one.
 	useEffect(() => {
 		if (stepIsFirstRenderRef.current) {
 			stepIsFirstRenderRef.current = false;
 			return;
+		}
+		if (window.matchMedia('(max-width: 900px)').matches) {
+			previewRef.current?.scrollIntoView({ block: 'start' });
 		}
 		stepHeadRef.current?.focus();
 		setAnnouncement(`Step ${step} of 4: ${STEP_LABEL[step]}.`);
@@ -818,7 +825,7 @@ export default function AttendingCard() {
 				</span>
 			</div>
 
-			<div className={s.preview}>
+			<div className={s.preview} ref={previewRef}>
 				<div
 					className={s.cardWrap}
 					onDragOver={(e) => e.preventDefault()}

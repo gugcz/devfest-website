@@ -583,18 +583,13 @@
 		grid-template-columns: 1fr;
 	}
 
-	// Preview first and pinned — on a phone the card is the thing being made,
-	// it stays visible while the wizard step scrolls underneath it. Capped to
-	// 46vh so a tall step (e.g. the three framing rails) still has room to sit
-	// below it without the page needing to scroll past the fold.
+	// Preview first, in normal flow — the card is the thing being made, so it
+	// sits above the active step. Not sticky: a pinned preview covered the
+	// step underneath once the page scrolled. Each step is short enough that
+	// preview + step still fit under it without scrolling (see .cardWrap cap).
 	.preview {
 		order: -1;
-		position: sticky;
-		top: 0;
-		z-index: 1;
-		max-height: 46vh;
 		padding-bottom: 0.75rem;
-		background: var(--color-bg);
 	}
 
 	.cardWrap {
