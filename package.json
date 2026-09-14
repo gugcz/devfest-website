@@ -1,5 +1,6 @@
 {
   "name": "devfest-website",
+  "private": true,
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -18,20 +19,20 @@
     "@astrojs/react": "^6.0.0",
     "@astrojs/sitemap": "^3.7.2",
     "@resvg/resvg-js": "^2.6.2",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
     "astro": "^7.2.8",
     "firebase": "^12.16.0",
     "heic-to": "^1.5.2",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "sass": "^1.99.0",
     "satori": "^0.33.4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@axe-core/playwright": "^4.11.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "playwright": "^1.60.0",
+    "sass": "^1.99.0",
     "typescript": "^5.6.3"
   },
   "overrides": {

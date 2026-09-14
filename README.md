@@ -13,7 +13,7 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 - **Styling:** Sass — the design system is documented in [DESIGN.md](DESIGN.md)
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
-- **Node:** >= 22.12.0
+- **Node:** 22 (see `.nvmrc`; `engine-strict` is on)
 
 [DESIGN.md](DESIGN.md) is the binding visual system — check it before styling anything.
 
