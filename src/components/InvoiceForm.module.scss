@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/controls' as *;
 .wrapper {
 	width: 100%;
 	max-width: 720px;
@@ -43,35 +44,13 @@
 	letter-spacing: 0.1em;
 }
 
-// Lit dark field — hairline border that warms to red and glows on focus.
+// The shared lit field (`_controls.scss`), plus its placeholder and invalid state.
 .input {
-	width: 100%;
-	padding: 0.85rem 0.95rem;
-	min-height: 2.75rem;
-	background: var(--panel-lit-2);
-	border: 1px solid var(--field-border);
-	border-radius: var(--radius);
-	color: var(--color-text);
-	@include prose;
-	letter-spacing: 0.01em;
-	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+	@include lit-field;
 
 	&::placeholder {
 		color: var(--ink-muted);
 		font-style: italic;
-	}
-
-	&:focus {
-		outline: none;
-		// accent-hot (not --rule-red) keeps the focused boundary >=3:1 for pointer focus
-		// too (1.4.11); keyboard focus additionally gets the ring below.
-		border-color: var(--color-accent-hot);
-		background: var(--panel-hover);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-tight);
 	}
 
 	// An invalid field used to be pixel-identical to a valid one — nine
