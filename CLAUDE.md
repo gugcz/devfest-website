@@ -18,7 +18,10 @@ pushed, PR opened, CI reported.
 
 Enforced by a PreToolUse hook (`.claude/hooks/block-deploy.sh`, wired in
 `.claude/settings.json`): pushes to `2026`, PR merges, `firebase deploy`,
-workflow dispatch and release tags are denied before they run.
+`npm run deploy`-style scripts, workflow dispatch and release tags are denied
+before they run — including through `sh -c`, `eval`, `git -C`, `npx -p` and
+flag-before-verb spellings. The hook is a belt against accidents; the
+boundary is the GitHub ruleset on `2026` (pull request required).
 
 ## Real customer data never enters this repository
 

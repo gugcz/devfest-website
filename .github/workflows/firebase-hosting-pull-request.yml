@@ -12,9 +12,15 @@ jobs:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Same-repo PRs only (above), yet the deploy step below runs with a
+    # service-account key and `firebase.json` is under the PR's control (a
+    # `predeploy` entry is arbitrary shell). Keep the preview credential a
+    # separate, Hosting-only account — or better, Workload Identity — and
+    # never the production one. Settings → Environments → preview.
+    environment: preview
     steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: actions/setup-node@v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -39,7 +45,7 @@ jobs:
       # the islands show their "unavailable" state. Functions deploy only via
       # firebase-functions-merge.yml. To verify SSR-function CHANGES, run locally.
       - name: Deploy to Firebase Hosting (preview channel)
-        uses: w9jds/firebase-action@v15.30.0
+        uses: w9jds/firebase-action@f527de56a76155c20044753433bc6b5b379f4641 # v15.30.0
         with:
           args: hosting:channel:deploy pr-${{ github.event.pull_request.number }} --project devfest-cz-app --expires 7d
         env:

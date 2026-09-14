@@ -1,4 +1,14 @@
 {
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Read(./.env.production)",
+      "Read(./functions/.env)",
+      "Read(./functions/.env.local)",
+      "Read(./functions/.env.*.local)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {

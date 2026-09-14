@@ -3,6 +3,10 @@
 # rule from CLAUDE.md. Blocks the command unconditionally; the maintainer runs
 # these from their own shell, never through Claude.
 #
+# A belt, not a boundary: it stops an agent's accidental deploy, not a
+# determined one. The boundary is GitHub — the `2026` ruleset requires a pull
+# request, and only the maintainer holds deploy credentials.
+#
 # Perl + core JSON::PP only, so there is no jq dependency to fail open on.
 use strict;
 use warnings;
@@ -49,7 +53,15 @@ for (my $i = 0; $i < @lines; $i++) {
 # 3. Split into simple commands on newlines, `;`, `&&`, `||`, `|`.
 my @segments = map { split /\s*(?:&&|\|\||\||;)\s*/, $_ } @kept;
 
-for my $seg (@segments) {
+# Global options that may sit between the executable and its verb. Stripping
+# them means `git -C . push`, `git -c x=y push`, `firebase --project p deploy`
+# and `npm --prefix functions run deploy` all read as the bare form.
+my $git_opts      = qr/(?:-C \S+|-c \S+|--git-dir=\S+|--work-tree=\S+|--no-pager|--paginate|-p|--no-optional-locks)\s+/;
+my $firebase_opts = qr/(?:--project[= ]\S+|-P \S+|--config[= ]\S+|--token[= ]\S+|--non-interactive|--debug|--json|--force|-f)\s+/;
+my $npm_opts      = qr/(?:--prefix[= ]\S+|-C \S+|-w \S+|--workspace[= ]\S+|--filter[= ]\S+|--cwd[= ]\S+|-s|--silent)\s+/;
+
+while (@segments) {
+	my $seg = shift @segments;
 	$seg =~ s/^\s+|\s+$//g;
 	$seg =~ s/\s+/ /g;
 	next if $seg eq '';
@@ -57,9 +69,26 @@ for my $seg (@segments) {
 	# 4. Strip wrappers and env assignments, then basename the executable, so
 	#    `npx firebase deploy`, `FOO=1 firebase deploy`, `command gh pr merge`
 	#    and `/usr/local/bin/gh pr merge` all reduce to the bare command.
-	1 while $seg =~ s/^(?:[A-Za-z_][A-Za-z0-9_]*=\S*|env|command|sudo|exec|time|nohup|npx|pnpx|bunx|-y|--yes|--no-install)\s+//;
+	1 while $seg =~ s/^(?:[A-Za-z_][A-Za-z0-9_]*=\S*|env|command|sudo|exec|time|nohup|npx|pnpx|bunx|-y|--yes|--no-install|-p \S+|--package[= ]\S+)\s+//;
 	$seg =~ s{^\S*/}{};
 	$seg =~ s/^firebase-tools\b/firebase/;
+
+	# 5. A shell wrapper (`sh -c "…"`, `bash -lc '…'`, `eval "…"`) is a command
+	#    carrying another: unwrap the string and scan it like any other segment.
+	if ($seg =~ /^(?:sh|bash|zsh|dash|ksh|fish)\s+(?:-\S+\s+)*-\S*c\s+(.+)$/ || $seg =~ /^eval\s+(.+)$/) {
+		my $inner = $1;
+		$inner =~ s/^(["'])(.*)\1$/$2/s;
+		unshift @segments, map { split /\s*(?:&&|\|\||\||;)\s*/, $_ } ($inner);
+		next;
+	}
+
+	# 6. Quotes around an argument change nothing for the shell; drop them so
+	#    `git push origin "2026"` is `git push origin 2026`.
+	$seg =~ s/["']//g;
+
+	$seg =~ s/^git $git_opts+/git /;
+	$seg =~ s/^firebase $firebase_opts+/firebase /;
+	$seg =~ s/^(npm|pnpm|yarn|bun) $npm_opts+/$1 /;
 
 	if ($seg =~ /^git push\b/) {
 		# Any refspec form landing on 2026: `2026`, `HEAD:2026`,
@@ -69,9 +98,12 @@ for my $seg (@segments) {
 	}
 	deny('gh pr merge')             if $seg =~ /^gh pr merge\b/;
 	deny('PR merge via gh api')     if $seg =~ /^gh api\b.*\/pulls\/\d+\/merge/;
+	deny('PR merge via GraphQL')    if $seg =~ /^gh api\b.*mergePullRequest/;
 	deny('firebase deploy')         if $seg =~ /^firebase deploy\b/;
 	deny('deploy to live channel')  if $seg =~ /^firebase hosting:channel:deploy live\b/;
+	deny('deploy via package script') if $seg =~ /^(?:npm|pnpm|yarn|bun) (?:run |run-script |exec )?deploy\b/;
 	deny('workflow dispatch')       if $seg =~ /^gh workflow run\b/;
+	deny('workflow dispatch via gh api') if $seg =~ /^gh api\b.*\/dispatches\b/;
 	deny('release tag')             if $seg =~ /^git tag\b.*\sv?\d/;
 }
 
