@@ -5,6 +5,11 @@
     "tickets": {
       ".read": true,
       ".write": false
+    },
+    "webhookDedup": {
+      "registrations": {
+        ".indexOn": ["at"]
+      }
     }
   }
 }

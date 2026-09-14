@@ -50,15 +50,17 @@ export const processInvoiceTrigger = onDocumentCreated(
 		const doc = snap.data() as InvoiceDoc;
 		const slackUrl = SLACK_WEBHOOK_URL.value();
 
-		// Firestore delivers create events at least once. Only the delivery that
-		// flips `pending` → `processing` issues the invoice; a replay sees the doc
-		// already claimed and does nothing — never a second iDoklad invoice.
-		if (!(await claimInvoiceForIssuing(id))) {
-			logger.info('processInvoiceTrigger duplicate delivery ignored', { id });
-			return;
-		}
-
 		try {
+			// Firestore delivers create events at least once. Only the delivery
+			// that flips `pending` → `processing` issues the invoice; a replay sees
+			// the doc already claimed and does nothing — never a second iDoklad
+			// invoice. Inside the try so a failed transaction lands in `error` +
+			// Slack like every other fault, not a doc stuck at `pending`.
+			if (!(await claimInvoiceForIssuing(id))) {
+				logger.info('processInvoiceTrigger duplicate delivery ignored', { id });
+				return;
+			}
+
 			const titoCfg: TitoConfig = {
 				token: TITO_API_TOKEN.value(),
 				accountSlug: TITO_ACCOUNT_SLUG.value(),

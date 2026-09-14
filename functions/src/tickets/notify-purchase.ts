@@ -68,7 +68,10 @@ async function releaseRegistrationReference(reference: string | undefined): Prom
 }
 
 /** Drop claims older than the window, a few at a time, so the dedup tree
- * stays the size of one day's registrations. Best-effort, after the ack. */
+ * stays the size of one day's registrations. Best-effort, and BEFORE the
+ * ack: 2nd-gen functions throttle CPU once the response is sent, so work
+ * queued after it may never run. Needs `.indexOn: ["at"]` on the node
+ * (database.rules.json) or RTDB scans the whole tree per query. */
 async function pruneStaleClaims(): Promise<void> {
 	try {
 		const stale = await db()
@@ -240,8 +243,8 @@ export const ticketsWebhook = onRequest(
 				event: eventName,
 				reference: payload.registration_reference ?? payload.reference ?? null,
 			});
-			res.status(200).send('ok');
 			await pruneStaleClaims();
+			res.status(200).send('ok');
 		} catch (err) {
 			logger.error(`ticketsWebhook failed to notify Slack: ${describeError(err)}`, err);
 			// Undo the dedup claim so ti.to's retry isn't silently deduped away.
