@@ -169,7 +169,7 @@ Text scale, `BaseLayout.scss:100–110`:
 | `--fs-lede` | `clamp(1.2rem, 1.6vw, 1.5rem)` | 107 | section ledes, status prose |
 | `--fs-title-sm` | `1.45rem` | 108 | small titles, mobile record titles |
 | `--fs-figure` | `1.9rem` | 109 | row figures — **no call sites today**, see Open points |
-| `--fs-monogram` | `3.4rem` | 110 | initials in an empty photo well |
+| `--fs-monogram` | `clamp(3.4rem, 7vw, 7rem)` | 110 | initials in an empty photo well — ≈1/3 of the tile height, not a timid caption |
 
 **[MUST]** Display type is set through `--lh-display` (`0.84`, line 114) and
 `--track-display` (`0.005em`, line 115) — never a per-file `line-height` — and
@@ -465,17 +465,19 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 - **[MUST] Partner and press logos are `object-fit: contain`** — never cropped
   (`partners.scss:235`, `index.scss:461`, `downloads.scss:202`).
 - **[CURRENT] The partner wall is one grid module, `.logo-grid` / `.logo-cell`,
-  with cell SIZE encoding tier.** `--cols` (set per row in `partners.astro`,
-  `columnsFor()` in `partners.ts`) is `repeat(var(--cols, 4), minmax(0, 1fr))`:
-  platinum full width (half at exactly two sponsors), diamond 2-up, gold 3-up,
-  silver/media/community 4-up. Partners is the page a sponsor screenshots into
-  a report, so the biggest cheque has to be the biggest cell — an earlier
-  version ran every tier at one uniform track size, which made platinum and
-  media read as the same weight. The tier label size steps down with the cell
+  with cell SIZE encoding tier — re-flow, never pad.** `--cols` (set per row in
+  `partners.astro`, `columnsFor()` in `partners.ts`) is however many columns
+  that row's own partners fill: one logo is a half-width plate (2-up grid, one
+  cell, left-aligned by simply having no second `<li>`), two is 2-up, three is
+  3-up, four or more caps at the tier's own ceiling (diamond 2, gold 3,
+  silver/media/community 4). There is no `.logo-cell--empty` filler cell — a
+  short last row just ends. Platinum is the one exception: always full width,
+  one column per platinum partner, regardless of count — the biggest cheque
+  stays the biggest cell. The tier label size steps down with the cell
   (`.wall-title[data-tier=…]`): platinum `--fs-h2`, diamond `--fs-h3`,
-  gold/silver/media/community `--fs-row-sm`. A row that doesn't divide evenly
-  into its column count (desktop or the mobile 2-up fallback) is padded with
-  empty dashed plates (`paddedCount()`) rather than staircasing its last row.
+  gold/silver/media/community `--fs-row-sm`. Mobile folds every multi-column
+  row to 2-up; an odd count spans the row's last cell across both columns
+  (`[data-odd='true']` in `partners.scss`) instead of leaving a staircased gap.
   One plate treatment for every row, ladder or off-ladder — media/community no
   longer carry a separate cream ground.
 - **[MUST] Partner logos render in one ink white**, `filter: brightness(0)
@@ -485,15 +487,16 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   padding, e.g. `Partner.plated` in `partners.ts`) is exempt: inverting an
   already-composited mark erases it rather than recolouring it, so those stay
   native colour.
-- **[MUST] Equal cells don't make equal-looking logos.** `opticalBox()`
-  (`partners.astro:53`) gives each mark a box of equal ink **area** shaped to
-  its own aspect ratio (a 5:1 wordmark ≈190×38, a square glyph ≈76×76) and
-  passes it as `--logo-w` / `--logo-h`; the `sizes` attribute follows the same
-  box. Capping width alone renders a glyph as a block beside a wordmark;
-  capping height alone renders the wordmark as a hairline of type. `plated`
-  stays a per-partner flag (the file ships its own background baked in) and
-  gets a larger box — it is **not** a tier-level inversion, which would move
-  the legibility risk onto the tier that pays.
+- **[MUST] Every mark on the wall reads at the same optical weight within its
+  tier — a shared `max-height` per row, `object-fit: contain`, not a per-logo
+  computed box.** Each mark renders at its own intrinsic ratio; `.logo` in
+  `partners.scss` clamps it to the row's `--cell-height` (diamond 190px, gold
+  150px, silver/media/community the 130px default, scaled down per breakpoint)
+  so a wide wordmark and a square glyph both fill their tier's height ceiling
+  instead of being forced to the same pixel width. Platinum is exempt: no
+  height ceiling, and the logo is sized off the cell itself (`width: 40%`,
+  `max-width: 420px`) — the biggest cheque gets the most room a mark can ask
+  for, and the plate's height follows it rather than a fixed box.
 - **[MUST] A missing photograph falls back to initials**, not an empty box, at
   `--ink-monogram` / `--ink-monogram-sm` — both measured (4.21:1 / 7.71:1). Every
   hand-picked alpha before the token measured *under* the 3:1 the plate needs
@@ -655,12 +658,10 @@ existing page:
   page: does it show the humans or the schedule of the conference, or does it
   process a request? The former gets `--lit-red`.
 - **`.band--accent`.** At most once per page, for the page's next step — a
-  conversion moment, not a content section. The only two call sites are the
-  home page newsletter capture (`index.astro:271`) and the partners CTA
-  (`partners.astro:176`). A `Closer` with `tone="accent"` is the more common
-  way to close on red; reach for a full `.band--accent` section only when the
-  accent band itself contains an interactive form, not just a closing
-  statement.
+  conversion moment, not a content section. The only standalone call site is
+  the home page newsletter capture (`index.astro:271`), which contains an
+  interactive form; every other accent band is a `Closer` with
+  `tone="accent"` — see the Closer tone rule below.
 - **`.head-split` vs `.head-stack`.** `.head-split` (statement left, one line
   right, optional `--ruled` hairline) is for a section that pairs a heading
   with a secondary fact — a count, a link, a note (`contact.astro:35`,
@@ -693,14 +694,17 @@ existing page:
   not reuse the hero's `aria-labelledby`: two regions with one accessible name
   is `landmark-unique`, which was the site's only axe violation
   (`faq.astro:83`).
-- **`Closer` tone.** Pass `tone="accent"` explicitly — every subpage
-  (`speakers`, `sessions`, `agenda`, `team`, `faq`, `contact`, `invoice`,
-  `press`, `press/downloads`) does, for a red closing band with the page's
-  final CTA. `tone` defaults to `'raised'` and a `tone="plain"` also exists,
-  but see Open points: no page passes either, and `band--raised` has no
-  matching CSS, so both are currently dead paths — don't rely on the
-  default. `privacy-policy` is the only page with **no** `Closer` at all: a
-  legal document doesn't get a CTA.
+- **`Closer` tone.** `tone="accent"` is reserved for pages whose next step is
+  a real conversion — `speakers`, `sessions`, `agenda` — plus the home page's
+  own accent band. Every other page passes `tone="plain"`: no red field, no
+  eyebrow, no lede, one Bebas line at `--fs-h3` plus a single `btn-ghost`
+  link (`team`, `faq`, `contact`, `invoice`, `press`, `press/downloads`,
+  `partners`, `404`, `thank-you`, `newsletter-subscription-thank-you`). A
+  utility page repeating the same red-field pitch four sections after its
+  hero already made it reads as the site nagging, not converting.
+  `tone` defaults to `'raised'`, which still has no matching CSS — see Open
+  points; don't rely on the default. `privacy-policy` is the only page with
+  **no** `Closer` at all: a legal document doesn't get a CTA.
 
 ## Iconography
 
@@ -847,11 +851,11 @@ each needs a decision, none is fixed by this PR.
     enforces the split beyond this line — if a rule changes, check both
     files.
 11. **`Closer`'s `tone="raised"` default renders `band--raised`, which has no
-    CSS** (`Closer.astro:42`; the class is never defined in
+    CSS** (`Closer.astro`; the class is never defined in
     `BaseLayout.scss`). Pre-existing, not introduced by this document.
-    Currently harmless — every `Closer` call site passes `tone="accent"`
-    explicitly — but the default itself is dead and would silently render
-    unstyled if a future page omitted `tone`.
+    Currently harmless — every `Closer` call site passes `tone="accent"` or
+    `tone="plain"` explicitly — but the default itself is dead and would
+    silently render unstyled if a future page omitted `tone`.
 12. **The font-size ramp is stated as [MUST] but broken at 23 call sites: 18**
     **absolute literals** (`Countdown.module.scss:33,47,72,84`,
     `Menu.scss:348,471`, `Speakers.module.scss:201,277`,
