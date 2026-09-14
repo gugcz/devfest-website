@@ -18,10 +18,8 @@
 }
 
 /* ===================== HEAD ===================== */
-// Two columns on one baseline: the statement left, the lede and the way out
-// right — `.head-split` in BaseLayout.scss, shared with the ticket section and
-// the /contact desks. Stacked as eyebrow-over-title-over-lede this was the
-// identical shape those two were using, three sections down one page.
+// Two columns on one baseline — `.head-split` in BaseLayout.scss, shared with
+// the ticket section and the /contact desks.
 .headSide {
 	display: flex;
 	flex-direction: column;
@@ -32,13 +30,9 @@
 
 
 /* ===================== WALL ===================== */
-// Prints on the page — no cell, no rule around anybody. See the note at the
-// head of Speakers.module.scss: a ruled grid still draws a full rectangle
-// around every photograph, and the print's own mount is the only edge it needs.
-// Left-set and full width, like the head above it and every other section on
-// the page. Centred inside an 880px cap it started at x=280 while every
-// headline on the homepage starts at x=72 — the one block that didn't sit on
-// the page's own left edge.
+// Prints on the page — no cell, no rule (see Speakers.module.scss). Left-set
+// and full width like every other section; centred in an 880px cap it was
+// the one block off the page's left edge.
 .wall {
 	list-style: none;
 	margin: 0;

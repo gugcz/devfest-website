@@ -75,12 +75,10 @@
 	/* ===================== GRID ===================== */
 	// Contact sheet of downloadable assets — one ruled sheet, cells sharing
 	// hairlines, rather than a grid of floating slabs.
-	// Fixed column counts, not `auto-fill`: the sheet is ruled, so the page has
-	// to know how many cells a row holds in order to close a short last row with
-	// blank ones (see the filler note in downloads.astro). The steps are the
-	// ones auto-fill was already picking at a 270px floor — 2 from ~700, 3 from
-	// ~1000, 4 from 1280 — minus the fifth column it took at 1920, which made
-	// the tiles smaller than the marks in them.
+	// Fixed column counts, not `auto-fill`: the sheet is ruled, so the page
+	// must know how many cells a row holds to close a short last row with
+	// blanks (see downloads.astro). Steps match what auto-fill picked at a
+	// 270px floor, minus the fifth column it took at 1920.
 	.presskit-grid {
 		list-style: none;
 		margin: 0;

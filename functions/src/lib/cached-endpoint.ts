@@ -1,23 +1,15 @@
 /**
- * The shared shape of the public `/api/*` JSON endpoints (`lineupApi`,
- * `ticketsApi`).
+ * Shared shape of the public `/api/*` JSON endpoints (`lineupApi`,
+ * `ticketsApi`): read via the Admin SDK, serve JSON, cache hard. They differ
+ * only in TTLs.
  *
- * Both exist for the same reason (see either module's header): the browser must
- * not read Firestore/RTDB through the client SDK, because that blocks the first
- * read on an App Check token. Both therefore have the same job — read once via
- * the Admin SDK, serve JSON, cache hard — and had grown the same 40 lines
- * twice, differing only in TTLs.
+ * Two cache layers:
+ *  - **CDN**: Hosting answers most requests at the edge from `s-maxage`.
+ *  - **In-instance memo**: a warm instance coalesces the revalidation burst
+ *    into one upstream read. Short TTL — the CDN is the real cache.
  *
- * Two caching layers, and the order matters:
- *  - **CDN**: Firebase Hosting answers most requests at the edge from the
- *    `Cache-Control` `s-maxage`, so the function runs only on a miss or a
- *    revalidation.
- *  - **In-instance memo**: a warm instance coalesces the burst of revalidations
- *    it sees into one upstream read. Short TTL — the CDN is the real cache.
- *
- * A failed read is never cached (`no-store`) and answers 503 with an empty
- * payload, so the island renders its "unavailable" state and the next request
- * gets a fresh attempt instead of a poisoned edge entry.
+ * A failed read is never cached (`no-store`, 503, empty payload) so the next
+ * request gets a fresh attempt instead of a poisoned edge entry.
  */
 
 import { logger } from 'firebase-functions/v2';

@@ -409,16 +409,11 @@
 }
 
 .itemTime {
-	// Start over end, always — not a range wrapped by chance. Stacked, the column
-	// is one clock wide instead of two, which is the width the title wanted back
-	// on a phone; and the two times read as a column down the page, so scanning
-	// for "what is on at two" is one eye movement.
-	//
-	// It is still the one thing in the row that must give way under a text-only
-	// zoom: `.itemMain` is `flex: 1` (basis 0), so it never competes for the row —
-	// it takes what the time leaves. At a 32px root one stacked clock measures
-	// 104px of a 320px viewport, so the cap is what makes it give way; `min-width`
-	// keeps it a column rather than letting the title crowd it at normal sizes.
+	// Start over end, always: one clock wide, and the times read as a column
+	// down the page. Under text zoom this must give way (`.itemMain` is
+	// `flex: 1`, basis 0, and takes what the time leaves): at a 32px root a
+	// stacked clock is 104px of a 320px viewport, so the cap yields;
+	// `min-width` keeps it a column at normal sizes.
 	display: flex;
 	flex-direction: column;
 	min-width: min(4.25rem, 21vw);
@@ -461,10 +456,9 @@
 	}
 }
 
-// The lede step, not the label step. This line is the only thing separating two
-// parallel talks on a phone, and at `--fs-label` (0.78rem) with everything in
-// `--color-grey` the speakers were the smallest, dimmest thing in the row. Mono
-// also sets small for its size, so it takes the step above the UI one.
+// The lede step, not the label step: this line is the only thing separating
+// two parallel talks on a phone, and at `--fs-label` the speakers were the
+// smallest, dimmest thing in the row.
 .itemMeta {
 	display: flex;
 	flex-direction: column;

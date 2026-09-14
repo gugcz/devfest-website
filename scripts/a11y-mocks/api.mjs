@@ -1,23 +1,14 @@
 /**
- * The `/api/*` payloads, built once from the fixtures and shared by everything
- * that needs to stand in for the Cloud Functions.
+ * The `/api/*` payloads, built once from the fixtures. Two consumers, one
+ * source: `scripts/a11y.mjs` (axe sweep) and `astro.config.mjs` (dev server).
  *
- * Two consumers, deliberately one source:
- *   • `scripts/a11y.mjs`  — the axe sweep, against an `A11Y_MOCK=1` build
- *   • `astro.config.mjs`  — the dev server (`npm run dev`)
+ * In production these routes are Hosting rewrites to `lineupApi` /
+ * `ticketsApi`; a dev server has no rewrite table, so without this the
+ * islands 404 and render "unavailable" forever.
  *
- * In production these routes are Hosting rewrites to `lineupApi` / `ticketsApi`
- * (see CLAUDE.md "Browser data access"). Neither the audit nor a laptop can
- * reach them — the functions are deployed, but a dev server has no rewrite
- * table, so the islands would fetch `/api/lineup`, get the dev server's 404
- * HTML, and render their "unavailable" states forever. Serving the fixtures
- * locally is what makes the lineup, the agenda grid and the ticket waves
- * visible while you work on them.
- *
- * The shaping below mirrors what the real endpoints return: raw documents
- * (`{ id, ...fields }`) for the lineup, the RTDB cache verbatim for tickets, so
- * the browser runs its own `speakerFromDoc` / `sessionFromDoc` / `filterDisplayable`
- * parsers exactly as it does against the live functions.
+ * Shapes mirror the real endpoints — raw docs (`{ id, ...fields }`) for the
+ * lineup, the RTDB cache verbatim for tickets — so the browser runs its own
+ * parsers exactly as against the live functions.
  */
 import { SPEAKERS, SESSIONS, TICKETS } from './fixtures.mjs';
 

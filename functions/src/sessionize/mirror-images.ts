@@ -1,22 +1,16 @@
 /**
- * Mirror Sessionize speaker photos into Firebase Storage so the website serves
- * every asset off Firebase instead of Sessionize's BunnyCDN.
+ * Mirror Sessionize speaker photos into Firebase Storage.
  *
- * `mirrorSpeakerImages` downloads each speaker's `profilePicture`, uploads it to
- * `speakers/{speakerId}` in the default Storage bucket, and returns a
- * speakerId → served-URL map. The served URL is a Firebase download-token URL
- * (`firebasestorage.googleapis.com/…?alt=media&token=…`), which is publicly
- * readable regardless of Storage security rules — so no rules change is needed.
+ * `mirrorSpeakerImages` uploads each `profilePicture` to `speakers/{id}` and
+ * returns a speakerId → served-URL map. The served URL is a download-token
+ * URL, publicly readable regardless of Storage rules.
  *
- * Idempotent: each object stores the source URL in its custom metadata. A run
- * re-downloads a photo only when its Sessionize URL changed (or the object is
- * missing); otherwise it reuses the existing object + token. So steady-state
- * runs do one cheap metadata read per speaker and no downloads.
+ * Idempotent: each object stores its source URL in custom metadata, so a run
+ * re-downloads only when the Sessionize URL changed — steady state is one
+ * metadata read per speaker.
  *
- * Best-effort: a per-speaker failure (network, oversize, Storage error) is
- * logged and falls back to the original Sessionize URL for that speaker; the
- * whole feature no-ops (returns an empty map) if Storage itself is unreachable,
- * so image mirroring can never break the core Sessionize sync.
+ * Best-effort: a per-speaker failure falls back to the Sessionize URL; an
+ * unreachable Storage yields an empty map. Mirroring can never break the sync.
  */
 
 import { randomUUID } from 'node:crypto';

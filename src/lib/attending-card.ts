@@ -1,11 +1,8 @@
 /**
- * Pure drawing logic for the `/attending` share-card canvas.
- *
- * Kept out of the React island so the render path has no DOM/React
- * dependency: it takes a 2D context plus plain data and paints. Colors are
- * read from the page's own CSS custom properties (`cssVar`) instead of being
- * duplicated here, so the card can never drift from the brand tokens in
- * `BaseLayout.scss`.
+ * Pure drawing logic for the `/attending` share-card canvas. No DOM/React
+ * dependency: takes a 2D context plus plain data and paints. Colors come
+ * from the page's CSS custom properties (`cssVar`), so the card can't drift
+ * from `BaseLayout.scss`.
  */
 
 export const CARD_SIZE = 1200;
@@ -55,21 +52,15 @@ function fitFontSize(
 	return size;
 }
 
-/** The furthest a pan offset (in source-image px) can go: free movement with
- * one limit, independent of zoom or `wellSize` — on each axis, the image's
- * edge may travel at most to the card's center, so the photo always still
- * covers at least half the well on that axis. Past that, the rest of the
- * well is backfilled by the vignette/black fill, which is expected — the
- * pan is no longer constrained to keep the photo fully covering the card. */
+/** Pan limit (source-image px), independent of zoom: on each axis the
+ * image's edge may travel at most to the card's center, so the photo always
+ * covers at least half the well. Beyond that the vignette/black fill shows,
+ * which is expected. */
 export function panBounds(naturalWidth: number, naturalHeight: number): { maxX: number; maxY: number } {
 	return { maxX: naturalWidth / 2, maxY: naturalHeight / 2 };
 }
 
-/**
- * Clamps a pan offset (in source-image px, centered) to `panBounds` — the
- * photo may pan far enough to expose the well's edge past half its size, but
- * never further.
- */
+/** Clamps a pan offset (source-image px, centered) to `panBounds`. */
 export function clampPan(
 	panX: number,
 	panY: number,
@@ -116,18 +107,13 @@ export interface Palette {
 	rule: string;
 	panel: string;
 	monogramInk: string;
-	/** Same muted-ink ratio used ad hoc across the site (no dedicated CSS
-	 * custom property for it — `--color-text` at ~0.6 alpha, matching e.g.
-	 * `BaseLayout.scss`'s own repeated `rgba(240, 237, 230, 0.6/0.7)`). */
+	/** The site's ad-hoc muted ink: `--color-text` at ~0.6 alpha (no token). */
 	muted: string;
 }
 
-/**
- * Reads every color the card needs off the page's CSS custom properties, in
- * one pass. `getComputedStyle` forces a style recalc, so this must be called
- * once (after fonts are ready) and the result reused across redraws — never
- * per-frame, which is what made panning janky before.
- */
+/** Reads every color the card needs in one pass. `getComputedStyle` forces a
+ * style recalc, so call once (after fonts are ready) and reuse — per-frame
+ * reads made panning janky. */
 export function readPalette(): Palette {
 	return {
 		bg: cssVar('--color-bg') || '#050505',
@@ -142,45 +128,24 @@ export function readPalette(): Palette {
 	};
 }
 
-/**
- * Full-bleed layout: the photo covers the entire 1200×1200 card (the "well"
- * IS the card), text sits on top of it. `SAFE_SPACE` keeps headline/name text
- * clear of the outer 10% of the card on every side — the fixed brand band at
- * the foot is chrome, not "content", and is deliberately exempt (it already
- * runs edge-to-edge, same as before this layout).
- */
+/** Full-bleed layout: the photo covers the whole 1200×1200 card, text on
+ * top. `SAFE_SPACE` keeps headline/name clear of the outer 10%; the brand
+ * band at the foot is chrome and exempt. */
 export const WELL_SIZE = CARD_SIZE;
 const SAFE_SPACE = CARD_SIZE * 0.1; // 120px
-/** Bottom band, sized to carry the wordmark at a legible size — not just a
- * chrome strip under the name any more. */
+/** Bottom band, sized to carry the wordmark at a legible size. */
 const BAND_HEIGHT = 168;
 
 /** Bottom band's wordmark height — the rest of the band is left to breathe. */
 const LOGO_HEIGHT = 88;
 
 /**
- * Scrim alpha behind each line of text. Chosen so contrast holds even against
- * a pure-white photo, not just the dark mock: mixing white (luminance 1)
- * under a black scrim of this alpha leaves a background luminance of
- * `1 - alpha`. The cream text (name/subtitle/"I'M") clears AA by a wide
- * margin at any alpha in this range; the headline's red word is the real
- * binding case, since red's luminance is far lower than white's.
- *
- * History: 70% of the corner radius (a prior vignette shape) put the
- * headline/subtitle/name fully inside the vignette's clear center, so 0.88
- * measured only ~4.29:1 — under the 4.5:1 AA floor — which is why that round
- * raised this to 0.92. Moving the fade-start to 40% of the corner radius
- * brought the text back inside the fade zone and let 0.88 ease back down,
- * measuring ~4.65:1.
- *
- * This round's vignette (see the vignette comment below) darkens more, and
- * starting earlier/closer to center, than either of those — so the same
- * measurement (Playwright, `getImageData`, real rendered glyphs, against a
- * synthetic `#f2f0ea` swatch, this card's documented worst case) let this
- * ease down further, to 0.80: the red word vs. its plate background (the
- * lightest point along the word, not just one sample) now measures ~4.68:1,
- * still comfortably above the 4.5:1 floor. A dark photo only ever raises this
- * ratio further.
+ * Scrim alpha behind each line of text. Chosen so contrast holds against a
+ * pure-white photo: white under a black scrim of alpha `a` leaves luminance
+ * `1 - a`. Cream text clears AA easily; the headline's red word is the
+ * binding case. Measured (Playwright, `getImageData`, real glyphs, against a
+ * `#f2f0ea` worst-case swatch): at 0.80 the red word vs. its plate measures
+ * ~4.68:1, above the 4.5:1 floor. A dark photo only raises this.
  */
 const SCRIM_ALPHA = 0.8;
 const TEXT_SCRIM_PAD_X = 32;
@@ -188,15 +153,10 @@ const TEXT_SCRIM_PAD_Y = 16;
 /** Corner rounding on each text scrim plate, so it reads as a glow behind the
  * letters instead of a stuck-on rectangle. */
 const SCRIM_CORNER_RADIUS = 14;
-/** Kept small on purpose: a Gaussian blur's falloff reaches roughly 2–3× its
- * radius, and `TEXT_SCRIM_PAD_Y` (16px) is the only margin between the plate
- * edge and the tallest glyphs (e.g. the headline's capital "A" apex) — a
- * bigger blur would eat into that margin and soften the scrim exactly where
- * the text needs full opacity, not just at the true edges. Verified by
- * measurement: at 10px this cost the worst-case (bright swatch) headline
- * contrast ~0.7 points, dropping it under the 4.5:1 AA floor; 5px keeps the
- * edge feather visible while leaving the text's own footprint at full
- * SCRIM_ALPHA. */
+/** Kept small: a Gaussian blur's falloff reaches ~2–3× its radius, and
+ * `TEXT_SCRIM_PAD_Y` (16px) is the only margin between plate edge and the
+ * tallest glyphs. At 10px the worst-case headline contrast dropped ~0.7
+ * points, under the 4.5:1 floor; 5px keeps the text footprint at full alpha. */
 const SCRIM_FEATHER = 5;
 
 /** Traces a rounded-rect path — same four-`arcTo` shape already used below
@@ -218,15 +178,11 @@ function roundRectPath(
 	ctx.closePath();
 }
 
-/** Measures one line of text in `font`, leaving it set on `ctx` for the
- * caller's own subsequent draw. Uses actual glyph bounds (not font-metric
- * guesses) so a scrim sized from this hugs the real ink, not an estimate.
- * `actualBoundingBoxAscent`/`Descent` are defined relative to whatever
- * `textBaseline` is current at measure time — forced to `'alphabetic'` here
- * because every caller's `baselineY` (the y passed to `drawTextScrim`) is an
- * alphabetic baseline. Left as whatever a previous draw call set (e.g. the
- * no-photo monogram fallback leaves it `'middle'`), the ascent read back too
- * small and the scrim sat short of the glyphs it was meant to cover. */
+/** Measures one line of text in `font` (leaving it set on `ctx`) using
+ * actual glyph bounds, so a scrim hugs the real ink. `textBaseline` is forced
+ * to `'alphabetic'` — `actualBoundingBoxAscent`/`Descent` are relative to it,
+ * and every caller's `baselineY` is alphabetic. Left as a previous draw's
+ * `'middle'`, the ascent read too small and the scrim sat short. */
 function lineMetrics(
 	ctx: CanvasRenderingContext2D,
 	text: string,
@@ -238,24 +194,15 @@ function lineMetrics(
 	return { width: m.width, ascent: m.actualBoundingBoxAscent, descent: m.actualBoundingBoxDescent };
 }
 
-/** Paints a black plate sized to one line's actual glyph bounds plus a small
- * pad — never the full card width, so it reads as a tight backing under the
- * letters instead of a horizontal band. Rounded corners plus a soft edge
- * feather keep it from reading as a stuck-on rectangle. Uses `shadowBlur` +
- * `shadowColor` rather than `ctx.filter = 'blur()'`: WebKit silently ignores
- * canvas `filter` (confirmed on an exported render — the plate came out
- * rounded but hard-edged there), while `shadowBlur` is supported everywhere
- * canvas is.
+/** Paints a black plate sized to one line's glyph bounds plus a small pad —
+ * never the full card width, so it reads as a backing, not a band. Uses
+ * `shadowBlur` rather than `ctx.filter = 'blur()'`: WebKit silently ignores
+ * canvas `filter` (confirmed on an export).
  *
- * Draws the shadow only, never the opaque fill on top of it: the fill's own
- * shape is pushed `offset` px outside the canvas (`ctx.canvas.width` is
- * always enough headroom, since no plate is ever that wide), and
- * `shadowOffsetX = offset` slides its shadow back to the plate's real
- * position. Only the blurred silhouette ever lands inside the visible
- * canvas. Stacking the opaque fill on top used to compound with its own
- * shadow (visually indistinguishable from black — measured ~0.985 effective
- * alpha against the intended SCRIM_ALPHA of 0.88); this way SCRIM_ALPHA is
- * the plate's one and only source of opacity. */
+ * Draws the shadow only: the fill is pushed `offset` px off-canvas and
+ * `shadowOffsetX = offset` slides its shadow back, so only the blurred
+ * silhouette lands on the visible canvas. Fill + shadow stacked compounded
+ * to ~0.985 alpha; this way SCRIM_ALPHA is the plate's only opacity. */
 function drawTextScrim(
 	ctx: CanvasRenderingContext2D,
 	centerX: number,
@@ -279,14 +226,13 @@ function drawTextScrim(
 	ctx.restore();
 }
 
-/** Corner margin and sizing for the `SAMPLE` badge — kept inside the outer
- * vignette ring (pure black at zoom 1, see below) so cream text always has a
- * dark backdrop, and clear of the headline's own vertical band. */
+/** `SAMPLE` badge margin/sizing — inside the outer vignette ring (pure black
+ * at zoom 1) so cream text has a dark backdrop, clear of the headline. */
 const SAMPLE_BADGE_MARGIN = 40;
 
-/** Draws the `SAMPLE` corner badge. Only ever called while there is no real
- * photo, and Download stays disabled for exactly that same state (see
- * `AttendingCard.tsx`'s `exportDisabled`), so this can never reach an export. */
+/** Draws the `SAMPLE` corner badge. Only called with no real photo, and
+ * Download is disabled for that same state (`exportDisabled` in
+ * `AttendingCard.tsx`), so it never reaches an export. */
 function drawSampleBadge(ctx: CanvasRenderingContext2D, size: number, fonts: Fonts, palette: Palette): void {
 	const label = 'SAMPLE';
 	ctx.font = `600 32px ${fonts.mono}`;
@@ -312,19 +258,13 @@ function drawSampleBadge(ctx: CanvasRenderingContext2D, size: number, fonts: Fon
 }
 
 export interface DrawOptions {
-	/** True while `data.photo` is the bundled sample portrait, not a photo the
-	 * visitor picked — paints the `SAMPLE` corner badge. Never true once a real
-	 * photo is set, and Download/Share stay disabled for exactly that same
-	 * state, so the badge can never end up in an export. */
+	/** True while `data.photo` is the bundled sample portrait — paints the
+	 * `SAMPLE` badge. Download/Share are disabled for the same state. */
 	isSample?: boolean;
 }
 
-/**
- * Paints the full 1200×1200 card. Synchronous and side-effect-free beyond the
- * given context, so the caller (the React island) owns scheduling/redraw.
- * `logo` is a static brand asset, not part of `data` — pass `null` until it
- * has been decoded (see `AttendingCard.tsx`), never draw it half-loaded.
- */
+/** Paints the full 1200×1200 card. Synchronous; the caller owns scheduling.
+ * Pass `logo` as `null` until decoded — never draw it half-loaded. */
 export function drawAttendingCard(
 	ctx: CanvasRenderingContext2D,
 	data: CardData,
@@ -338,22 +278,15 @@ export function drawAttendingCard(
 
 	ctx.clearRect(0, 0, size, size);
 
-	// No photo at all (the bundled sample hasn't loaded yet either) — nothing
-	// to paint. Once assets are ready, AttendingCard.tsx always passes either
-	// the visitor's photo or the sample portrait, so this only ever fires for
-	// one early frame.
+	// No photo yet (sample not loaded either) — only fires for one early frame.
 	if (!data.photo) return;
 
-	// Pure black base, not the `bg` token: below MIN_ZOOM=1 the photo (drawn
-	// next) no longer fully covers the card, and the vignette below already
-	// fades to pure black at its outer stop — filling with anything else would
-	// leave a visible seam between the exposed base and the vignette's edge.
+	// Pure black, not the `bg` token: below zoom 1 the photo doesn't cover the
+	// card, and the vignette fades to pure black — anything else shows a seam.
 	ctx.fillStyle = '#000000';
 	ctx.fillRect(0, 0, size, size);
 
-	// ── Photo: full-bleed cover-fit across the whole card, with user pan/zoom
-	// applied the same way it was on the old framed well — only the well's
-	// size/position changed.
+	// ── Photo: full-bleed cover-fit with user pan/zoom.
 	const scale = coverScale(data.photo.width, data.photo.height, size) * data.transform.zoom;
 	const drawWidth = data.photo.width * scale;
 	const drawHeight = data.photo.height * scale;
@@ -361,32 +294,17 @@ export function drawAttendingCard(
 	const dy = size / 2 - drawHeight / 2 + data.transform.panY * scale;
 	ctx.drawImage(data.photo, dx, dy, drawWidth, drawHeight);
 
-	// Radial vignette — one circular mask for the whole card, replacing the
-	// old top/bottom horizontal scrims (which read as a band, not a vignette).
-	// Earlier rounds parameterised both stops off the corner distance
-	// (size/2 * √2 ≈ 849px): a 50%-of-that fade left only an oval ~55% of the
-	// card width visibly photo, and 70%-of-that overcorrected the other way,
-	// reading as corner-only darkening with the photo bleeding to the card
-	// edge top/bottom/left/right-center (measured on real pixels). This round
-	// switches to absolute distances so the fade behaves the same regardless
-	// of the corner distance: it starts at 300px from center (a quarter of the
-	// card width) and reaches full black at 600px (half the card width) — so
-	// every edge midpoint (600px from center) is already pure black, same as
-	// the corners (849px, past the gradient's last stop, which clamps to it).
-	// Only a ~600px-diameter "spotlight" at the center stays clear, per the
-	// circular-vignette-to-black mock this round is matched against.
+	// Radial vignette — one circular mask for the whole card. Absolute stops:
+	// fade starts 300px from center, full black at 600px, so every edge
+	// midpoint and corner is pure black and only a ~600px spotlight stays
+	// clear. (Stops parameterised off the corner distance either left an oval
+	// or read as corner-only darkening.)
 	//
-	// Locked to the canvas, not the photo: center is always size/2, pan never
-	// shifts it — only the photo drawn above moves under a fixed ring. At
-	// zoom >= 1 both stops stay 300/600, unchanged from before. Below 1x the
-	// drawn photo shrinks below the card, so both stops scale down by
-	// k = min(zoom, 1): a fixed 600px outer stop would clear past the photo's
-	// own edge, leaving the vignette framing empty black instead of the
-	// photo. Scaling brings the outer stop back to the photo's own shorter
-	// drawn side, so at 0.5x zoom with no pan the photo fades to black with
-	// no hard edge; panBounds still permits panning the shrunk photo toward
-	// an edge, which does show a hard edge against the ring — the accepted
-	// tradeoff for a shadow that no longer tracks pan.
+	// Locked to the canvas, not the photo: pan never shifts it. Below zoom 1
+	// the photo shrinks inside the card, so both stops scale by
+	// k = min(zoom, 1) — a fixed 600px stop would frame empty black instead
+	// of the photo. Panning a shrunk photo toward an edge still shows a hard
+	// edge against the ring; accepted tradeoff.
 	const vignetteScale = Math.min(data.transform.zoom, 1);
 	const vignetteFadeStart = size * 0.25 * vignetteScale; // 300px at zoom >= 1
 	const vignetteOuterStop = (size / 2) * vignetteScale; // 600px at zoom >= 1
@@ -420,32 +338,26 @@ export function drawAttendingCard(
 	const nameSize = fitFontSize(ctx, nameText, fonts.bebas, 96, size - SAFE_SPACE * 2, 56);
 	const nameMetrics = lineMetrics(ctx, nameText, `${nameSize}px ${fonts.bebas}`);
 
-	// Name baseline: moved down from its old fixed `bandTop - SAFE_SPACE`
-	// position to roughly halfway toward the band, per Dominik's ask — but
-	// clamped so the glyphs (baseline + descent) never cross into the band's
-	// footprint with less than a 24px gap. `fitFontSize` shrinks a long name
-	// (e.g. "Grace Hopperschmidt-Wozniakowski") to a smaller floor size, which
-	// also shrinks its descent, so the clamp keeps the same floor for every
-	// name length rather than letting a long name sit closer to the band.
+	// Name baseline: roughly halfway toward the band, clamped so the glyphs
+	// (baseline + descent) keep a 24px gap from it. `fitFontSize` shrinks a
+	// long name and its descent, so the clamp keeps the same floor for every
+	// name length.
 	const bandTop = size - BAND_HEIGHT;
 	const priorNameY = bandTop - SAFE_SPACE;
 	const nameBandGap = 24;
 	const nameY = Math.min(priorNameY + (bandTop - priorNameY) / 2, bandTop - nameBandGap - nameMetrics.descent);
 
-	// Local text scrims — the radial vignette above sits mostly clear near the
-	// card's vertical center, right where the headline/subtitle/name land, so
-	// each line gets its own plate sized to its actual glyph bounds (never the
-	// full card width — that would just reintroduce the horizontal band this
-	// replaces).
+	// Local text scrims — the vignette is clear near the center, where the
+	// text lands, so each line gets a plate sized to its glyph bounds (never
+	// full card width, which would be a band again).
 	const headlineMetrics = lineMetrics(ctx, headline, `${headlineSize}px ${fonts.bebas}`);
 	drawTextScrim(ctx, size / 2, headlineY, headlineMetrics);
 	const subtitleMetrics = lineMetrics(ctx, subtitleText, subtitleFont);
 	drawTextScrim(ctx, size / 2, metaY, subtitleMetrics);
 	drawTextScrim(ctx, size / 2, nameY, nameMetrics);
 
-	// ── Headline: "I'M ATTENDING" — cream + one red word, no shadow/glow. One
-	// design for every visitor (no role toggle any more — see AttendingCard.tsx).
-	// Centered, top of card, kept inside the 10% safe space.
+	// ── Headline: "I'M ATTENDING" — cream + one red word, no shadow/glow.
+	// Centered, top of card, inside the safe space.
 	ctx.font = `${headlineSize}px ${fonts.bebas}`;
 	ctx.textBaseline = 'alphabetic';
 	const totalWidth = ctx.measureText(headline).width;
@@ -464,20 +376,16 @@ export function drawAttendingCard(
 	ctx.fillStyle = ink;
 	ctx.fillText(subtitleText, size / 2, metaY);
 
-	// ── Name, bottom of card — the card's one remaining focal line since the
-	// role toggle is gone. Baseline kept inside the 10% safe space, clear of
-	// the band below it.
+	// ── Name, bottom of card. Baseline inside the safe space, clear of the band.
 	ctx.font = `${nameSize}px ${fonts.bebas}`;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'alphabetic';
 	ctx.fillStyle = ink;
 	ctx.fillText(nameText, size / 2, nameY);
 
-	// ── Bottom accent band — one per card, mirrors `.band--accent`. Fixed
-	// BAND_HEIGHT zone at the card's foot, edge-to-edge (chrome, not content —
-	// exempt from the safe-space rule above). Wordmark + "2026" pill centered
-	// as one group per Dominik's call to put everything in this layout on the
-	// center axis; both match the mock's black-on-red treatment.
+	// ── Bottom accent band — mirrors `.band--accent`. Edge-to-edge chrome,
+	// exempt from the safe space. Wordmark + "2026" pill centered as one
+	// group, black on red per the mock.
 	const bandCenterY = size - BAND_HEIGHT / 2;
 	ctx.fillStyle = accent;
 	ctx.fillRect(0, size - BAND_HEIGHT, size, BAND_HEIGHT);
@@ -497,13 +405,10 @@ export function drawAttendingCard(
 		const logoX = size / 2 - groupWidth / 2;
 		const logoY = bandCenterY - LOGO_HEIGHT / 2;
 
-		// The shared wordmark asset is white (built for dark backgrounds
-		// elsewhere on the site); the mock wants it black on the red band. Tint
-		// it on a scratch canvas, not in place: `source-atop` masks to
-		// whatever alpha is already in the destination, and the main canvas
-		// already has the opaque red band under this whole rect, so tinting
-		// directly there would black out the full logo bounding box instead
-		// of just the letters.
+		// The wordmark asset is white; the mock wants black. Tint on a scratch
+		// canvas: `source-atop` masks to the destination's alpha, and the main
+		// canvas already has the opaque red band there, so tinting in place
+		// would black out the whole logo box.
 		const tint = document.createElement('canvas');
 		tint.width = Math.ceil(logoWidth);
 		tint.height = LOGO_HEIGHT;
@@ -516,7 +421,7 @@ export function drawAttendingCard(
 			ctx.drawImage(tint, logoX, logoY, logoWidth, LOGO_HEIGHT);
 		}
 
-		// "2026" pill, black outline + text on the red band, per Danny's mock.
+		// "2026" pill, black outline + text on the red band, per the mock.
 		const pillX = logoX + logoWidth + pillGap;
 		const pillY = bandCenterY - pillHeight / 2;
 		const radius = pillHeight / 2;

@@ -10,21 +10,17 @@
 		// stays opaque across the full stacking order.
 		z-index: 10001;
 		display: grid;
-		// Stamp centred against the VIEWPORT, not against whatever the two
-		// side slots happen to measure — equal side tracks are what keep it
-		// optically centred when the brand is wider than the actions.
-		// `minmax(0, 1fr)` rather than `1fr`: the side tracks floor at their
-		// min-content width otherwise, and under text-only zoom that is what
-		// pushed the bar past the viewport instead of letting the mark shrink.
+		// Stamp centred against the VIEWPORT: equal side tracks keep it centred
+		// when the brand is wider than the actions. `minmax(0, 1fr)`, not `1fr`:
+		// otherwise the side tracks floor at min-content and text zoom pushed
+		// the bar past the viewport.
 		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
 		align-items: center;
 		gap: min(1.5rem, 7.5vw);
-		// Constant padding — height stays fixed across scroll states so
-		// nav doesn't reflow / jump when the scroll handler flips data-state.
-		// Vertical comes from `--header-pad-y` because `--header-h` is derived
-		// from it: anchor offsets measure this bar, so the two can't drift.
-		// Viewport ceiling on the inline term: at a 32px root the 1rem floor
-		// doubles, and the bar has no room to give away at 320px.
+		// Constant padding so the bar never jumps on a scroll-state flip.
+		// Vertical comes from `--header-pad-y` because `--header-h` derives from
+		// it — anchor offsets can't drift. Viewport ceiling on the inline term:
+		// at a 32px root the 1rem floor doubles and 320px has no room to give.
 		padding: var(--header-pad-y) min(clamp(1rem, 3vw, 2.25rem), 5vw);
 		// The ground and the scrim are painted by the two pseudo-elements
 		// below, so the swap between them can be crossfaded. The bar itself
@@ -212,10 +208,9 @@
 		display: none;
 	}
 
-	// The toggle is the only bordered box left on the hero's first screen once
-	// the CTA above hands the accent to the hero's own button — a boxed
-	// control beside an unboxed one reads as two systems. Border comes back on
-	// hover/focus (below) and once the bar goes solid.
+	// On the hero's first screen the toggle would be the only bordered box —
+	// a boxed control beside an unboxed one reads as two systems. Border
+	// returns on hover/focus and once the bar goes solid.
 	#site-header[data-home='true'][data-state='top'] .nav-toggle {
 		border-color: transparent;
 	}
@@ -431,12 +426,9 @@
 	}
 
 	@media (max-width: 380px) {
-		// Horizontal only. The bar is also tighter VERTICALLY here, but that is
-		// a change to `--header-pad-y` and it is made where the token lives
-		// (BaseLayout.scss, on :root) — overriding the padding directly would
-		// shrink the bar while `--header-h` went on asserting the old height,
-		// which is exactly the drift the token exists to prevent. This file's
-		// styles are scoped, so a :root rule here would not reach `html`.
+		// Horizontal only. The vertical tightening lives on `--header-pad-y` in
+		// BaseLayout.scss (:root) — overriding padding here would shrink the bar
+		// while `--header-h` asserted the old height.
 		.site-header {
 			padding-inline: min(0.85rem, 4.25vw);
 		}

@@ -42,17 +42,12 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, ""
 // claim to BE the event. WebSite + Organization render sitewide.
 const isHome = Astro.url.pathname === "/";
 
-// `offers[].url` points to the on-site #tickets anchor so the schema stays
-// valid even if ti.to slugs change. Prices are VAT-inclusive CZK figures
-// (gross = ti.to net × 1.21 Czech VAT) and must match the customer-facing
-// prices rendered by Tickets.tsx via priceDisplay(). The event is priced in
-// CZK on ti.to (see #182) — do NOT use EUR here. Only list waves that are
-// actually on sale: Early Bird has ended and Regular is now live, so Regular
-// is the sole listed Offer. Future waves (Lazy Bird) are paused with no
-// scheduled start date, so they carry no honest `availability`/`validFrom`
-// and are omitted entirely until they open (avoids Google's missing-field
-// warning). Add an Offer here when a wave opens; remove it when it ends
-// (source of truth: ti.to/RTDB).
+// `offers[].url` points to #tickets so the schema stays valid if ti.to slugs
+// change. Prices are VAT-inclusive CZK (ti.to net × 1.21), matching
+// Tickets.tsx's priceDisplay() — never EUR (#182). Only list waves on sale:
+// a paused future wave has no honest `availability`/`validFrom` and triggers
+// Google's missing-field warning. Add an Offer when a wave opens, remove it
+// when it ends (source of truth: ti.to/RTDB).
 const organizer = {
 	"@type": "Organization",
 	"name": "GUG.cz, z.s.",
@@ -371,14 +366,10 @@ const jsonLd = JSON.stringify(
 							}
 						}
 					},
-					// threshold 0 (not 0.12): a tall single-column .reveal grid on
-					// mobile can exceed viewport/0.12 in height, so a 12% ratio is
-					// never reached and the block stays invisible. Fire as soon as
-					// any pixel crosses the line instead.
-					//
-					// Positive bottom margin grows the root downward, so a section
-					// reveals ~15% of viewport height BEFORE it reaches the fold —
-					// it reads as already there rather than arriving late.
+					// threshold 0, not 0.12: a tall mobile .reveal grid never reaches
+					// a 12% ratio and stays invisible. Positive bottom margin reveals
+					// a section ~15% of viewport BEFORE the fold, so it reads as
+					// already there.
 					{ rootMargin: '0px 0px 15% 0px', threshold: 0 }
 				);
 				reveals.forEach((el) => io.observe(el));

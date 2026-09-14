@@ -1,33 +1,23 @@
 /**
- * One way to run a background function (scheduled job or trigger), so every one
- * of them logs, alerts, and fails identically.
+ * One way to run a background function (scheduled job or trigger), so every
+ * one logs, alerts, and fails identically. Before this, several jobs failed
+ * silently — a red line in Cloud Logging nobody watches. The contract:
  *
- * Before this, each domain did its own thing: the Sessionize sync alerted to
- * Slack on failure, while the hourly tickets refresh, both status reports, and
- * the paid-invoice poll failed **silently** — nothing but a red line in Cloud
- * Logging that nobody is watching. `runBackground` gives all of them the same
- * contract:
- *
- *   1. a start line and a finish line with a duration, keyed by function name;
- *   2. a failure log carrying the unwrapped cause (see `lib/errors.ts`);
+ *   1. start + finish lines with a duration, keyed by function name;
+ *   2. a failure log carrying the unwrapped cause (`lib/errors.ts`);
  *   3. a Slack alert **on state change**, not per failure;
- *   4. the original error rethrown, so the platform still counts the failure and
- *      the scheduler's own retry still happens.
+ *   4. the original error rethrown, so the platform counts it and the
+ *      scheduler's retry still happens.
  *
- * **Alert on transition, not on occurrence.** An hourly job during a
- * three-hour upstream outage would otherwise post three identical alerts, and
- * a channel that cries wolf gets muted — which is how a silent failure mode
- * comes back through the front door. So the first failure after a healthy run
- * alerts, subsequent consecutive failures only log, and the run that recovers
- * posts a short "recovered" line. One incident reads as two messages, however
- * long it lasted.
+ * **Alert on transition, not occurrence.** An hourly job in a three-hour
+ * outage would otherwise post three identical alerts, and a channel that
+ * cries wolf gets muted. First failure after a healthy run alerts, further
+ * failures only log, the recovering run posts "recovered". One incident =
+ * two messages.
  *
- * State lives in RTDB under `ops/health/{name}`: written by the Admin SDK,
- * unreadable by clients (the root `.read`/`.write` default deny in
- * `database.rules.json` covers it — no rule change needed). Every state
- * operation is best-effort: a health-tracking failure must never mask the real
- * error, so it degrades to "assume healthy", which over-alerts rather than
- * going quiet.
+ * State lives in RTDB `ops/health/{name}` (Admin SDK; the root deny in
+ * `database.rules.json` covers it). Every state op is best-effort and
+ * degrades to "assume healthy" — over-alerts rather than going quiet.
  */
 
 import { logger } from 'firebase-functions/v2';

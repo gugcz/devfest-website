@@ -1,20 +1,12 @@
 /**
- * Deterministic fixture data for the accessibility audit's mock build.
+ * Deterministic fixture data for the a11y audit and `npm run dev`. Served
+ * from `/api/lineup` + `/api/tickets` (`scripts/a11y.mjs`, `astro.config.mjs`)
+ * so the ready-state UI renders and gets audited.
  *
- * The public lineup (speakers / sessions) and ticket cache live behind Firebase
- * reads that are blocked from CI (App Check + IP rules), so the axe sweep would
- * only ever see the "temporarily unavailable" error state — never the real,
- * hydrated content. The islands now fetch the cached `/api/lineup` + `/api/tickets`
- * endpoints (no Firebase SDK on the read path); under `A11Y_MOCK=1` the audit
- * server (`scripts/a11y.mjs`) serves these fixtures from those routes so the
- * ready-state UI (session cards, the agenda grid, filters, detail dialogs, ticket
- * waves) renders deterministically and gets audited. The only Firebase module
- * still aliased to a mock is `firebase/app-check` (App Check inits on load).
- *
- * Shapes mirror the raw Firestore/RTDB documents the parsers expect
+ * Shapes mirror the raw Firestore/RTDB docs the parsers expect
  * (`speakerFromDoc`, `sessionFromDoc`, `TicketsCache`). Sessions carry
- * `startsAt`/`endsAt`/`room` so the /agenda timetable is exercised, including a
- * service band (dropped by /sessions, kept by /agenda) and an unscheduled talk.
+ * `startsAt`/`endsAt`/`room` so /agenda is exercised, including a service
+ * band (dropped by /sessions, kept by /agenda) and an unscheduled talk.
  */
 
 // Inline SVG portrait — loads with no network so the <img> render path (not the

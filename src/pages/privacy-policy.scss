@@ -57,14 +57,9 @@
 		}
 	}
 
-	// Section head with an editorial eyebrow rhythm: a short red hairline
-	// rule above the Bebas head, echoing the masthead eyebrow without adding
-	// any card chrome — the page is a legal doc and stays calm.
-	// Cream, not red. Every section head on a 5000px legal document set in the
-	// accent is the accent used as a heading colour, which is the "red spent
-	// once per list" rule broken about a dozen times down one page. The short
-	// red rule above each head (::before) is kept — one mark carries the
-	// section break; the words do not need to carry it too.
+	// Section head: a short red hairline above the Bebas head, no card chrome.
+	// Cream, not red — a dozen red heads down a legal document is the accent
+	// as heading colour. The red rule (::before) carries the section break.
 	h2 {
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-title-sm);

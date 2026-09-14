@@ -27,14 +27,9 @@ export function LoadingState({ label }: { label: string }) {
 }
 
 /**
- * The endpoint is down. `role="alert"` because the visitor asked for content
- * and is not getting it.
- *
- * Copy convention, kept in the site's voice rather than a status-page voice:
- * name the thing, say it isn't coming up, give a way out. "The lineup won't
- * come up right now. Reload, or take it up with devfest@gug.cz." — /agenda used
- * to say "temporarily unavailable. Please check back soon", which is the one
- * line on the site that could have come from any product.
+ * The endpoint is down. `role="alert"` — the visitor asked for content and
+ * isn't getting it. Copy in the site's voice: name the thing, say it isn't
+ * coming up, give a way out.
  */
 export function ErrorState({ children }: { children: ReactNode }) {
 	return (
@@ -44,12 +39,8 @@ export function ErrorState({ children }: { children: ReactNode }) {
 	);
 }
 
-/**
- * The endpoint answered and there is nothing to show yet — the normal state of
- * a conference site before announcements land, so it always offers somewhere
- * to go. Only /agenda did that before; a dead end on four surfaces was the
- * larger half of this defect.
- */
+/** The endpoint answered with nothing to show yet — normal pre-announce, so
+ * it always offers somewhere to go. */
 export function EmptyState({
 	children,
 	action,

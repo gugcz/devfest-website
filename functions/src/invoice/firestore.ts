@@ -105,14 +105,10 @@ export async function updateInvoice(id: string, patch: Partial<InvoiceDoc>): Pro
 }
 
 /**
- * Sliding-window rate limit keyed by (IČO + email), enforced in a single-doc
- * transaction so it needs no composite index. Returns `true` when the request
- * is within budget (and records it), `false` when the caller has exceeded
- * `max` submissions inside `windowMs`.
- *
- * This is the throttle App Check cannot provide: App Check attests the caller
- * is the real site, but a captured/valid token could otherwise drive unbounded
- * invoice + email creation (cost / sending-reputation abuse).
+ * Sliding-window rate limit keyed by (IČO + email), in a single-doc
+ * transaction (no composite index). Returns `true` when within budget (and
+ * records it). The throttle App Check can't provide: a captured valid token
+ * could otherwise drive unbounded invoice + email creation.
  */
 export async function checkInvoiceRateLimit(opts: {
 	registrationNumberIC: string;

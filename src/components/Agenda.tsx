@@ -34,38 +34,24 @@ interface State {
 
 const INITIAL: State = { status: 'loading', sessions: [] };
 
-/** 5-minute grid snap + row height (px per snap unit) for the proportional grid.
+/** 5-minute grid snap + row height for the proportional grid.
  *
- * ROW_REM sets how much room a talk gets, and therefore how big its type can be.
- * At 15px a 30-minute talk was 90px tall and its contents needed 98 — already
- * clipping, with everything set at the smallest steps on the ramp to try to fit.
- * 1.625rem gives a half-hour talk 156px at the default root, which carries the
- * title at a readable size with its time, tags and speakers under it. It is the
- * row's MINIMUM: a row grows past it when the talk in it needs the space.
- *
- * In `rem`, NOT px: the row is the container for text, so it has to grow with
- * the text. At a 32px root (a 200% text-only zoom) fixed 26px rows left eight
- * cells overflowing their slot and one with no room for its title at all. */
+ * ROW_REM is the row's MINIMUM (a row grows when its talk needs space).
+ * 1.625rem gives a half-hour talk 156px — title, time, tags and speakers all
+ * fit; at 15px it clipped. In `rem`, NOT px: the row contains text, so it
+ * must grow with it — at a 32px root fixed 26px rows overflowed eight cells. */
 const SNAP_MIN = 5;
 const ROW_REM = 1.625;
 
-/** Rows a non-talk strip gets, however long it runs.
- *
- * Bands and dead time carry one mono line, so drawing them to scale spends the
- * page on nothing: the afterparty runs 18:30–00:00 and at scale is twenty times
- * the height of the talk above it, and lunch alone is 80 minutes of hatch. Two
- * rows is that one line plus its padding. Talks stay proportional — the point of
- * the sheet is comparing them. */
+/** Rows a non-talk strip gets, however long it runs. Bands and dead time
+ * carry one mono line; at scale the afterparty (18:30–00:00) is twenty times
+ * the talk above it. Two rows = one line plus padding. Talks stay
+ * proportional. */
 const NON_TALK_ROWS = 2;
 
-/** Track the width below which the timetable becomes the time-ordered list.
- *
- * NOT the site's phone breakpoint: this one is about the room columns, not the
- * page. A column is `minmax(9.5rem, 1fr)`, so from 1024 down a four-room day
- * renders ~150px columns and the Bebas titles truncate mid-word inside them —
- * the table survives, but nothing in it can be read. The list carries the same
- * day at those widths with the titles at full `--fs-row-sm`, so the grid is
- * only used where its columns are legible. */
+/** Width below which the timetable becomes the time-ordered list. NOT the
+ * site's phone breakpoint — this is about room columns: below 1024 a
+ * four-room day renders ~150px columns and Bebas titles truncate mid-word. */
 function useIsNarrow(): boolean {
 	const [narrow, setNarrow] = useState(false);
 	useEffect(() => {

@@ -15,14 +15,10 @@
 		// 'Bebas Neue' string. Only these three faces — never add a fourth.
 
 		--maxw: 1440px;
-		// The `min()` ceiling is what keeps the page reflowable under text-only
-		// zoom (WCAG 1.4.4 / 1.4.10). Every term but the ceiling is rem- or
-		// clamp-derived, so at a 32px root the 1.25rem floor doubles to 40px and
-		// two gutters ate a quarter of a 320px viewport. 6.25vw never falls
-		// below the clamp at any width from 320px up — it equals the 1.25rem
-		// floor exactly at 320px, sits above the 5vw fluid band everywhere
-		// after, and is 90px at 1440 against the 72px cap — so nothing moves
-		// at a 16px root.
+		// The `min()` ceiling keeps the page reflowable under text-only zoom
+		// (WCAG 1.4.4 / 1.4.10): at a 32px root the 1.25rem floor doubled and two
+		// gutters ate a quarter of a 320px viewport. 6.25vw equals the floor at
+		// 320px and sits above the clamp everywhere else, so nothing moves at 16px.
 		--gutter: min(clamp(1.25rem, 5vw, 4.5rem), 6.25vw);
 
 		// Three densities: tight is a cut, base the normal beat, wide a held shot.
@@ -30,23 +26,16 @@
 		--section-y: clamp(6rem, 10vw, 11rem);
 		--section-y-wide: clamp(8.5rem, 15vw, 17rem);
 
-		// The fixed bar's height, stated once. It is its constant vertical
-		// padding plus the tallest thing in it — the actions, which sit at the
-		// 44px WCAG 2.5.5 tap minimum (the brand logo caps at 34px, so it
-		// never wins). `Menu.scss` builds the bar out of these same two tokens,
-		// so the measurement anchors offset against can't drift away from the
-		// bar it describes.
+		// The fixed bar's height, stated once: vertical padding plus the 44px
+		// WCAG 2.5.5 tap target (the logo caps at 34px). `Menu.scss` builds the
+		// bar from these same tokens, so anchor offsets can't drift from it.
 		--header-pad-y: 0.85rem;
-		// 44px, not 2.75rem: the target is a physical one, so it must not scale
-		// with the root font — under a text-only zoom 88px of button height is
-		// not a bigger target, only a bar with no room left at 320px. Identical
-		// at a 16px root, so `--header-h` is unchanged there.
+		// 44px, not 2.75rem: a physical target must not scale with the root font.
 		--header-tap: 44px;
 		--header-h: calc(var(--header-pad-y) * 2 + var(--header-tap));
-		// The smallest phones run a tighter bar. It changes here, on the token,
-		// so `--header-h` follows it down (71.2px → 66.4px) instead of going on
-		// asserting the wider bar — `Menu.scss` used to override .site-header's
-		// padding directly and left every anchor offset 4.8px out under 380px.
+		// Tighter bar on the smallest phones. Changed on the token so `--header-h`
+		// follows (71.2px → 66.4px) — `Menu.scss` used to override the padding
+		// directly and left every anchor offset 4.8px out under 380px.
 		@media (max-width: 380px) {
 			--header-pad-y: 0.7rem;
 		}
@@ -90,15 +79,11 @@
 		--rule-soft: rgba(240, 237, 230, 0.06);
 		--rule-strong: rgba(240, 237, 230, 0.22);
 		--rule-red: rgba(204, 0, 0, 0.55);
-		// THE control-edge token. Perceivable boundary for anything a visitor can
-		// operate — text fields, and equally the outlined buttons: .btn-ghost,
-		// .nav-toggle, the cookie banner's Decline, .crew-link. Measures 3.33:1 on
-		// #050505, clearing WCAG 1.4.11 (non-text contrast, 3:1); the ones that
-		// used --rule-strong (0.22 = 1.74:1) and --rule (0.13 = 1.30:1) did not.
-		// Kept separate from --rule / --rule-strong on purpose: those are the
-		// decorative grouping hairlines (.band--raised, .head-split--ruled, the
-		// section rules) and they stay whisper-faint — raising THEM to 3:1 would
-		// repaint every structural line on the site. One value, four controls.
+		// THE control-edge token: boundary for anything operable (text fields,
+		// .btn-ghost, .nav-toggle, the cookie Decline, .crew-link). 3.33:1 on
+		// #050505, clearing WCAG 1.4.11; --rule-strong (1.74:1) and --rule
+		// (1.30:1) did not. Kept separate from those: they are decorative
+		// hairlines and must stay faint.
 		--field-border: rgba(240, 237, 230, 0.4);
 
 		// Cream-ink ramp. Named steps only — a one-off alpha stays a raw literal.
@@ -151,11 +136,8 @@
 
 	html {
 		scroll-behavior: smooth;
-		// Fixed site header sits on top of the page. Without this, in-page
-		// anchor jumps (#tickets, #newsletter, …) park the target's first
-		// pixel under the header and the section title is clipped. Derived
-		// from the bar's own height rather than guessed — the hardcoded 6rem
-		// this replaces stood 25px clear of a 71px bar.
+		// Keeps anchor jumps (#tickets, #newsletter, …) clear of the fixed header.
+		// Derived from the bar's height, not guessed.
 		scroll-padding-top: calc(var(--header-h) + 1.5rem);
 		// keep keyboard-focused elements clear of the fixed cookie banner
 		scroll-padding-bottom: 8rem;
@@ -200,12 +182,9 @@
 		font-family: var(--font-special-elite), cursive;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
-		// Inherited by everything. Under text-only zoom a single long word —
-		// a Bebas closer title, a speaker's name, a mono role — is routinely
-		// wider than a 320px column, and an unbroken word is what widens the
-		// document (WCAG 1.4.10). `break-word`, not `anywhere`: it only breaks
-		// a word that has no other way to fit, so nothing changes at a 16px
-		// root where the words already fit.
+		// Inherited by everything. Under text-only zoom a long word (a Bebas
+		// title, a speaker name) widens the document (WCAG 1.4.10). `break-word`,
+		// not `anywhere`: only breaks a word that has no other way to fit.
 		overflow-wrap: break-word;
 
 		// Opt-out for terminal pages — axe-core mis-samples through blend overlays.
@@ -268,10 +247,9 @@
 	}
 
 	// The skip link's destination. `tabindex="-1"` (BaseLayout.astro) makes it a
-	// valid focus target so the link moves FOCUS and not just the fragment; the
-	// ring is suppressed because the target is a whole page region, not a
-	// control, and a 100vw outline reads as a rendering fault rather than as
-	// "you are here". Every control inside it keeps its own ring.
+	// focus target so the link moves FOCUS, not just the fragment. Ring
+	// suppressed: a 100vw outline on a page region reads as a fault. Controls
+	// inside keep their own ring.
 	#main-content:focus,
 	#main-content:focus-visible {
 		outline: none;
@@ -423,50 +401,29 @@
 
 	/* ---- Anchor targets ---- */
 	// AN IN-PAGE JUMP LANDS ON THE SECTION HEAD, NOT ON THE SECTION BOX.
-	// Every section here opens with `--section-y*` of air, and an anchor jump
-	// aligns the target's TOP EDGE — so "Get tickets" put the ticket section's
-	// first pixel under the bar and left the section's own 216px of held air
-	// filling the screen: the title landed 312px down a 900px viewport with
-	// nothing above it. That reads as a jump that missed, not as emphasis.
-	// `scroll-padding-top` can't fix it (it only clears the bar, and clearing
-	// it harder makes the hole bigger); the air is inside the target.
+	// A jump aligns the target's top edge, so "Get tickets" landed the title
+	// 312px down a 900px viewport with the section's own opening air above it.
+	// `scroll-padding-top` can't fix it — the air is inside the target.
 	//
-	// So a section that IS an anchor target cancels its own opening air and
-	// declares how much that is. The air still exists — it is what someone
-	// scrolling INTO the section sees; it just isn't what a jump lands on.
-	// Cost: the jump starts inside the section, so its top rule / band edge
-	// sits above the viewport. That's the right trade — the visitor asked for
-	// the tickets, not for the boundary above them.
-	// `--section-air` is the section's OWN opening padding, declared by the
-	// section that owns it (`.band` sets it for every band; `.tickets` widens
-	// it) and read back here. It is one value, not two: a section states its
-	// air once and its padding is built from the same variable, so changing the
-	// padding later cannot leave this offset stale — which would bring this bug
-	// back silently, with no build error and nothing wrong anywhere except on
-	// the jump. The fallback is for an anchor target that is neither a band nor
-	// sets its own air.
+	// So an anchor target cancels its own opening air. The air still exists for
+	// someone scrolling in; it just isn't what a jump lands on. `--section-air`
+	// is the section's OWN opening padding (`.band` sets it; `.tickets` widens
+	// it), and the padding is built from the same variable, so changing it
+	// can't leave this offset stale. The fallback covers a target that is
+	// neither a band nor sets its own air.
 	.anchor-target {
 		scroll-margin-top: calc(-1 * var(--section-air, var(--section-y)));
 	}
 
 	/* ---- Bands ---- */
-	// Full-bleed grounds. The site was one uninterrupted #050505 from the top of
-	// every page to the bottom of it, so nothing marked where a section started
-	// and the whole scroll read as one undifferentiated block — the flattest
-	// version of the "generated page" problem. A band gives a section its own
-	// ground; alternating them is what gives a page a rhythm to read.
-	//
-	// Two grounds: the default and the accent. A raised third (#0B0A0A) and
-	// tight/wide padding modifiers existed and never got a caller — a section
-	// that wants different padding sets it, and every page that wanted a step
-	// out of the dark turned out to want the accent instead.
+	// Full-bleed grounds. A band gives a section its own ground; alternating
+	// them gives a page a rhythm. Two grounds: default and accent. A raised
+	// third and tight/wide padding modifiers existed and never got a caller.
 	.band {
 		position: relative;
 		width: 100%;
-		// The opening air is declared as `--section-air` and the padding reads
-		// it, so every band is anchorable for free: add `.anchor-target` and
-		// the offset already knows how much air there is to cancel. A band that
-		// wants a different beat overrides the variable, not the padding.
+		// Opening air declared as `--section-air`; padding reads it, so every band
+		// is anchorable for free. Override the variable, not the padding.
 		--section-air: var(--section-y);
 		padding: var(--section-air) var(--gutter);
 		background: var(--color-bg);
@@ -626,23 +583,16 @@
 		background: var(--color-accent);
 		border: 1px solid var(--color-accent);
 		border-radius: var(--radius);
-		// Larger than the old 1.05/2.4 — at poster type scale a small CTA reads
-		// as an afterthought next to the headline it is supposed to answer.
-		// The horizontal term carries a viewport ceiling: the label itself must
-		// grow with the root font (1.4.4), but 2.8rem of padding per side must
-		// not — at a 32px root that was 180px of air inside a 320px viewport,
-		// and it is what pushed every `.closer` off the page. 14vw equals
-		// 2.8rem exactly at 320px and is above it at every width after, so
-		// desktop and 100% zoom are untouched.
+		// Large: at poster scale a small CTA reads as an afterthought. The
+		// horizontal padding is viewport-capped — the label must grow with the
+		// root font (1.4.4), but 2.8rem of padding per side must not (at a 32px
+		// root that pushed every `.closer` off a 320px viewport). 14vw equals
+		// 2.8rem at 320px, so desktop is untouched.
 		padding: 1.25rem min(2.8rem, 14vw);
-		// A button is never wider than the column it sits in; the label wraps.
+		// A button is never wider than its column; the label wraps.
 		max-width: 100%;
-		// `anywhere` rather than the inherited `break-word`: a button's label is
-		// an anonymous flex item, whose automatic minimum size is its
-		// min-content width, and only `anywhere` shrinks that. Without it a
-		// one-word CTA still forced the button past the column under text zoom.
-		// No effect at a 16px root — the button is sized by its max-content
-		// width whenever the column can hold it.
+		// `anywhere`, not `break-word`: a label is an anonymous flex item whose
+		// min size is its min-content width, and only `anywhere` shrinks that.
 		overflow-wrap: anywhere;
 		text-decoration: none;
 		cursor: pointer;
@@ -827,12 +777,8 @@
 		}
 	}
 
-	// Status word. Never a pill, never a filled chip — and no longer on a rule
-	// either. It renders in the ticket wave's action slot, in place of the
-	// "Get tickets" link, and an underlined mono word sitting exactly where a
-	// link would sit promises a click that a sold-out or paused wave cannot
-	// honour. The word is the status; the mono voice and the tracking already
-	// separate it from the prose around it.
+	// Status word. Never a pill, chip, or underlined — it sits where the
+	// "Get tickets" link would, and an underline there promises a click.
 	.record-status {
 		@include mono(var(--fs-label-sm), 0.24em, uppercase);
 		color: rgba(240, 237, 230, 0.72);
@@ -978,24 +924,14 @@
 	}
 
 	/* ===================== PRINT ===================== */
-	// The site ships cream ink on #050505. Printed, that is invisible text on
-	// white — or, if the browser honours the backgrounds, page after page of
-	// black toner. Every route can be printed or saved to PDF (a company files
-	// its /invoice request, a DPO keeps /privacy-policy, a visitor keeps their
-	// /thank-you as proof of purchase), so this is ONE sitewide sheet rather
-	// than a per-page block: the ground goes white, the ink goes black, the
-	// atmosphere drops out, and outbound links print their address so a paper
-	// copy still carries them.
+	// Cream ink on #050505 prints as invisible text on white (or pages of black
+	// toner). Any route can be printed (/invoice, /privacy-policy, /thank-you as
+	// proof of purchase), so this is ONE sitewide sheet: white ground, black
+	// ink, atmosphere dropped, outbound links print their address.
 	//
-	// It started life inside thank-you.astro as an `is:global` block restyling
-	// the LAYOUT from a page — the copies-drift problem the styling conventions
-	// exist to stop. It belongs here.
-	//
-	// The grounds are cleared by a blanket rule, not by listing the classes
-	// that carry one: a page's own section backgrounds live in ten page and
-	// module stylesheets, and a list of them silently goes stale the next time
-	// a section is added (which is exactly how /invoice printed its form on
-	// black while /thank-you printed clean).
+	// Grounds are cleared by a blanket rule, not by listing classes — a list
+	// goes stale the next time a section is added (which is how /invoice once
+	// printed its form on black while /thank-you printed clean).
 	@media print {
 		html,
 		body {
@@ -1003,11 +939,8 @@
 			color: #050505 !important;
 		}
 
-		// Ink as well as ground: the muted alphas this site is built on (a form
-		// label at 0.55, a meta line at 0.62) print as pale grey on white and
-		// are the same defect as cream-on-white, one step less obvious. Every
-		// element is taken to near-black here and the roles below take what is
-		// darker still.
+		// Ink too: the site's muted alphas (labels at 0.55, meta at 0.62) print
+		// as pale grey on white. Everything goes near-black; roles below darker.
 		*,
 		*::before,
 		*::after {
@@ -1056,8 +989,7 @@
 			color: #050505 !important;
 		}
 
-		// A form printed to be filled in on paper needs its fields to be
-		// visible boxes, which on a white ground means a drawn edge.
+		// A printed form needs visible field boxes — a drawn edge on white.
 		input,
 		select,
 		textarea,

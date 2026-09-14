@@ -1,18 +1,15 @@
 /**
- * Transactional email for the invoice domain.
+ * Transactional email for the invoice domain. Two messages, two roads:
  *
- * Two messages leave this pipeline, and they leave by different roads:
+ *  - the **invoice** is sent by iDoklad (`/Mails/IssuedInvoice/Send`, PDF
+ *    attached); we supply subject + covering text as plain text, since
+ *    iDoklad drops the body into its own template.
+ *  - the **discount code**, after payment, goes out through Resend as
+ *    branded HTML (plain-text alternative included). Layout:
+ *    `email-template.ts`.
  *
- *  - the **invoice** itself is sent by iDoklad (`/Mails/IssuedInvoice/Send`,
- *    PDF attached). We only supply the subject + covering message, so that
- *    one is composed here as plain text — iDoklad drops the body into its
- *    own mail template and we can't style around it.
- *  - the **discount code**, after payment, goes out through Resend as a
- *    branded HTML mail (with a plain-text alternative for clients that ask
- *    for one, and for spam scoring). Layout lives in `email-template.ts`.
- *
- * If no Resend API key is configured, `sendEmail` returns `{ sent: false }`
- * rather than throwing — the caller falls back to Slack + the stored code.
+ * With no Resend key, `sendEmail` returns `{ sent: false }` and the caller
+ * falls back to Slack + the stored code.
  *
  * Docs: https://resend.com/docs/api-reference/emails/send-email
  */
@@ -196,13 +193,10 @@ export function formatDueDate(iso: string): string {
 }
 
 /**
- * Subject + covering message for the invoice iDoklad mails out (PDF
- * attached).
- *
- * Plain text on purpose: iDoklad renders `EmailBody` inside its own mail
- * template, so HTML we send is not guaranteed to survive — and half-rendered
- * markup would read far worse than clean text. Keep the lines short; the
- * template wraps at an unknown width.
+ * Subject + covering message for the invoice iDoklad mails out. Plain text:
+ * iDoklad renders `EmailBody` inside its own template, so HTML isn't
+ * guaranteed to survive. Keep lines short; the template wraps at an unknown
+ * width.
  */
 export function buildInvoiceEmail(opts: {
 	companyName: string;

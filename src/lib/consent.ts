@@ -1,13 +1,8 @@
 /**
- * Cookie-consent storage — the single source of truth for the visitor's
- * decision.
- *
- * `CookieBanner.astro` owns the writes (Accept / Decline); `src/lib/firebase.ts`
- * reads it **synchronously, before Analytics boots**, to seed the Consent Mode
- * default (see `initAnalytics`). That ordering is why this lives in its own
- * module rather than inside the banner script: reading the decision must not
- * pull the Firebase SDK into the banner's bundle, and the Firebase module must
- * not have to reach back into the banner.
+ * Cookie-consent storage — single source of truth for the visitor's decision.
+ * `CookieBanner.astro` writes; `src/lib/firebase.ts` reads it synchronously
+ * before Analytics boots to seed the Consent Mode default. Its own module so
+ * neither side has to import the other.
  */
 
 export const CONSENT_KEY = 'cookie-consent';

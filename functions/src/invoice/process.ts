@@ -119,11 +119,9 @@ export const processInvoiceTrigger = onDocumentCreated(
 					variableSymbol: invoice.variableSymbol,
 					dueDate: formatDueDate(invoice.dueDate),
 				});
-				// Belt for that failure mode: when we could NOT prove the
-				// contact carries the submitted address, name it explicitly so the
-				// person who filled the form gets the invoice regardless. When the
-				// contact IS in sync, `SendToPartner` already goes there — adding it
-				// again would only mail the same customer twice.
+				// Belt: when the contact is NOT proven to carry the submitted
+				// address, name it explicitly. When it IS in sync, `SendToPartner`
+				// already goes there and naming it again mails twice.
 				const result = await sendInvoiceByEmail(idokladCfg, invoice.id, {
 					subject: mail.subject,
 					body: mail.body,

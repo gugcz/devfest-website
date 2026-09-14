@@ -12,24 +12,16 @@ import {
 import { track } from '../lib/analytics';
 
 /**
- * The single primary action on a personal invitation page (`/invite/<member>`).
+ * The single primary action on `/invite/<member>`. An island for two reasons:
  *
- * Two jobs the plain `<a>` of the prototype could not do:
- *
- * 1. **It goes straight to ti.to.** The invitation has exactly one action, so
- *    routing through the homepage's ticket section would put a second decision
- *    between the visitor and the checkout. The live wave isn't known at build
- *    time, so the href resolves client-side from the cached `/api/tickets`
- *    endpoint — the same read `Tickets.tsx` does, no Firebase SDK on the path.
- * 2. **It reports `begin_checkout` carrying the member's identity.** Checkout
- *    happens on ti.to and its redirect back carries no source, so this click is
- *    the last thing GA4 can attribute to a member's invitation. Without the
- *    `invite_member` params the whole channel is unmeasurable (there is no
- *    discount code doing the attribution — see the product definition).
+ * 1. **It goes straight to ti.to.** The live wave isn't known at build time,
+ *    so the href resolves client-side from `/api/tickets`.
+ * 2. **It reports `begin_checkout` with the member's identity.** ti.to's
+ *    redirect carries no source, so this click is the only per-member
+ *    attribution the channel has.
  *
  * Until the endpoint answers — and if it never does — the href falls back to
- * the on-site ticket section, so the CTA is a working link at first paint and
- * the event still fires. A dead primary action is worse than a detour.
+ * `/#tickets`. A dead primary action is worse than a detour.
  */
 
 interface Props {

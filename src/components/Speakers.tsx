@@ -16,14 +16,10 @@ interface State {
 
 const INITIAL: State = { status: 'loading', speakers: [] };
 
-/**
- * Shared `view-transition-name` for the print the visitor clicked and the photo
- * that appears in the dialog, so the browser morphs one into the other instead
- * of cross-fading two unrelated boxes. It has to be unique *and* live on
- * exactly one element at a time, so it is applied to the open speaker's card
- * only — two elements carrying the same name at capture time makes the browser
- * skip the transition entirely.
- */
+/** Shared `view-transition-name` for the clicked print and the dialog photo,
+ * so the browser morphs one into the other. Applied to the open speaker's
+ * card only — two elements with the same name at capture time skips the
+ * transition. */
 type ViewTransitionDoc = Document & {
 	startViewTransition?: (cb: () => void) => { finished: Promise<void> };
 };
@@ -35,23 +31,17 @@ function canMorph(): boolean {
 }
 
 /**
- * Morphs the clicked print into the dialog's photo and back.
+ * Morphs the clicked print into the dialog's photo and back. The API captures
+ * the DOM before and after the callback and tweens elements sharing a
+ * `view-transition-name`. Two constraints make this a hook:
  *
- * The API captures the DOM *before* the callback and again after, then tweens
- * elements that share a `view-transition-name` across the two. That imposes two
- * awkward constraints, and both are why this is a hook rather than a one-liner:
+ *  1. The name must be on the card BEFORE the capture — so opening is two
+ *     renders: paint the name, then start the transition in an effect.
+ *  2. Only ONE element per capture may carry the name — hence handing it off
+ *     inside the callback.
  *
- *  1. The name must already be on the card when the capture happens — so
- *     opening is two renders: paint the name on, then start the transition in
- *     an effect. Setting it in the same update that opens the dialog means the
- *     "before" snapshot has no such element and nothing morphs.
- *  2. A name may exist on only ONE element per capture. If the card and the
- *     dialog photo both carry it, the browser skips the transition outright —
- *     hence handing it off inside the callback rather than adding it in.
- *
- * React batches state updates, so the callback wraps its work in `flushSync`:
- * without it the callback returns before the DOM has changed and the browser
- * captures an unchanged "after".
+ * `flushSync` because React batches updates: without it the callback returns
+ * before the DOM changed and the "after" capture is unchanged.
  */
 function usePortraitMorph(
 	selected: Speaker | null,

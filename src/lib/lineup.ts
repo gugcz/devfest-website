@@ -1,12 +1,8 @@
 /**
- * Browser-side fetch of the speaker/session lineup.
- *
- * Hits the `/api/lineup` HTTP endpoint (Firebase Hosting rewrites it to the
- * `lineupApi` Cloud Function, CDN-cached) with a plain `fetch()` — NOT the
- * Firestore SDK — so there's no App Check / reCAPTCHA token to wait on. The
- * endpoint returns raw docs (`{ id, ...fields }`); we reuse the existing
- * `speakerFromDoc` / `sessionFromDoc` parsers so the shape logic lives in one
- * place.
+ * Browser-side fetch of the lineup from `/api/lineup` (→ `lineupApi`,
+ * CDN-cached) — a plain `fetch()`, NOT the Firestore SDK, so no App Check
+ * token to wait on. Raw docs are parsed by `speakerFromDoc` /
+ * `sessionFromDoc`.
  */
 import { speakerFromDoc, type Speaker } from './speakers';
 import { isAgendaSession, isDisplayableSession, sessionFromDoc, type Session } from './sessions';

@@ -1,18 +1,13 @@
 /**
- * `lineupApi` — public HTTP endpoint serving the speaker + session lineup as JSON.
+ * `lineupApi` — public HTTP endpoint serving the speaker + session lineup.
  *
- * The browser must NOT read Firestore with the client SDK: that blocks the first
- * read on an App Check (reCAPTCHA Enterprise) token, which cost ~30s on mobile.
- * Reading here via the Admin SDK (which bypasses App Check + rules) removes the
- * wait, and keeps enforcing App Check on Firestore later an option.
+ * The browser must NOT read Firestore with the client SDK (blocks on an App
+ * Check token, ~30s on mobile). Admin SDK here removes the wait. Two cache
+ * layers: `s-maxage` for the Hosting CDN, plus an in-instance memo to
+ * coalesce the revalidation burst.
  *
- * Two caching layers keep reads and invocations low: a `s-maxage` `Cache-Control`
- * so Hosting's CDN answers most requests from the edge, plus a short in-instance
- * memo so a warm instance coalesces the revalidation burst.
- *
- * The wire shape is `{ speakers: [{ id, ...doc }], sessions: [{ id, ...doc }] }`
- * — raw docs, so the browser reuses its existing `speakerFromDoc` /
- * `sessionFromDoc` parsers (src/lib/) and no parsing logic is duplicated here.
+ * Wire shape: `{ speakers: [{ id, ...doc }], sessions: [{ id, ...doc }] }` —
+ * raw docs, parsed by the browser's `speakerFromDoc` / `sessionFromDoc`.
  */
 
 import { onRequest } from 'firebase-functions/v2/https';
@@ -21,26 +16,17 @@ import { firestore } from '../lib/admin.js';
 import { cachedJsonEndpoint } from '../lib/cached-endpoint.js';
 import { CACHED_ENDPOINT } from '../options.js';
 
-// Edge cache (shared): 15 min fresh, then a SHORT stale window while revalidating.
+// Edge cache: 15 min fresh, then a SHORT stale window while revalidating.
 //
-// The stale window used to be a day (`stale-while-revalidate=86400`), on the
-// reasoning that `refreshSessionizeScheduled` only runs daily. That backfired the
-// first time the schedule landed: Hosting `Vary`s on `accept-encoding`, so the
-// compressed variant every real browser asks for is its own cache entry, and that
-// entry kept being served stale — the site showed a lineup with no times (`/agenda`
-// rendered its "schedule lands closer to the event" empty state) while the origin
-// had the full timetable. A day-long stale window means any sync — a new talk, a
-// room change, the schedule itself — can be invisible for a day with nothing in the
-// logs to show for it, and no way to force it out but a hosting redeploy.
+// The stale window used to be a day. Hosting `Vary`s on `accept-encoding`, so
+// the compressed variant is its own cache entry, and that entry kept serving
+// stale: `/agenda` showed no times while the origin had the full timetable,
+// with nothing in the logs and no fix but a redeploy. 5 min still absorbs the
+// revalidation burst (the memo below) but bounds how long stale survives.
+// `max-age=0` keeps browsers revalidating.
 //
-// 5 minutes still absorbs the revalidation burst (that is what the in-instance memo
-// below is for) and keeps the edge answering essentially every request, but bounds
-// how long a stale lineup can survive. `max-age=0` keeps browsers revalidating.
-//
-// The fresh window is 15 min rather than the sync's own daily cadence: a talk edited
-// in Sessionize is usually followed by a forced run of `refreshSessionizeScheduled`,
-// and an hour of edge freshness made that look like nothing had happened. 15 min is
-// still ~4 origin revalidations an hour per edge, which the memo below collapses.
+// 15 min fresh, not the sync's daily cadence: a Sessionize edit is usually
+// followed by a forced sync, and an hour of freshness hid it.
 const CACHE_CONTROL = 'public, max-age=0, s-maxage=900, stale-while-revalidate=300';
 
 // In-instance memo TTL. Deliberately short: the CDN `s-maxage` above is the real

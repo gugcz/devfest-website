@@ -77,15 +77,11 @@
 
 	// Compact sizing overrides on top of global .btn-primary / .btn-ghost.
 	//
-	// The two choices are PEERS. Consent is not a call to action with an escape
-	// hatch beside it, and the pair used to be read as one: a solid red Accept
-	// at 1.4rem of side padding against a Decline at 1rem whose only boundary
-	// measured 1.74:1. Accept keeps the accent fill (it is the affirmative
-	// answer, and the fill is how the banner is findable at all), but every
-	// other dimension is now shared — same type, same tracking, same padding,
-	// same height, and the same minimum footprint so the shorter word does not
-	// make the smaller target. The boundary comes from --field-border via
-	// .btn-ghost, which clears 1.4.11 at 3.33:1.
+	// The two choices are PEERS — consent is not a CTA with an escape hatch.
+	// Accept keeps the accent fill (the affirmative answer, and how the banner
+	// is findable); everything else is shared: type, tracking, padding, height,
+	// minimum footprint. Decline's boundary is --field-border via .btn-ghost
+	// (3.33:1, clears 1.4.11).
 	.cookie-btn {
 		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;

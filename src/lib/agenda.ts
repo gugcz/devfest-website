@@ -1,20 +1,18 @@
 /**
- * Pure, framework-free helpers for the `/agenda` timetable. The time math lives
- * here rather than in the island because getting the zone wrong silently shifts
- * the whole schedule.
+ * Pure helpers for the `/agenda` timetable. Time math lives here because
+ * getting the zone wrong silently shifts the whole schedule.
  *
- * Two shapes come off the wire and both must land on the Prague wall clock:
+ * Two wire shapes, both must land on the Prague wall clock:
  *
- * - a NAIVE event-local string (`2026-10-30T09:00:00`, no offset) — read the
- *   `HH:MM` straight off the string, never through a `Date`, which would
- *   reinterpret it in the visitor's zone;
- * - a ZONED string (`2026-10-30T08:00:00Z`, or an explicit offset) — an instant,
- *   which must go through `Intl.DateTimeFormat` pinned to `Europe/Prague`.
- *   Reading `HH:MM` off one of these is what put the whole day an hour early:
- *   the schedule is stored in UTC, so `08:00Z` rendered as 08:00 instead of the
- *   09:00 the room actually starts at.
+ * - NAIVE event-local (`2026-10-30T09:00:00`, no offset) — read `HH:MM` off
+ *   the string, never through a `Date` (which reinterprets in the visitor's
+ *   zone);
+ * - ZONED (`2026-10-30T08:00:00Z` or explicit offset) — an instant; go through
+ *   `Intl.DateTimeFormat` pinned to `Europe/Prague`. Reading `HH:MM` off one
+ *   of these put the whole day an hour early (stored in UTC, `08:00Z` is
+ *   09:00 in the room).
  *
- * The event is single-day, so minutes-from-midnight is enough for placement.
+ * Single-day event, so minutes-from-midnight is enough for placement.
  */
 import type { Session } from './sessions';
 
@@ -28,14 +26,12 @@ const MIN_SPAN_MIN = 15;
 const ROOM_TBA = 'Room TBA';
 
 /**
- * A grid column: the value talks are grouped by, and what heads the column.
+ * A grid column: the value talks are grouped by, and its heading.
  *
- * Grouping is by `roomId`, not by the room NAME. Sessionize sends a scheduled
- * session an empty `room` and only the id, so keying on the name collapsed the
- * whole day into one Room-TBA column — which is what made `/agenda` fall back
- * to the stacked list on desktop. The name is used for the heading whenever
- * Sessionize does send one; otherwise the columns are numbered in the order
- * they first appear, which at least tells a visitor the tracks run in parallel.
+ * Grouped by `roomId`, not room NAME: Sessionize sends an empty `room` with
+ * only the id, so keying on the name collapsed the day into one Room-TBA
+ * column. The name heads the column when present; otherwise columns are
+ * numbered in first-seen order.
  */
 export interface AgendaColumn {
 	key: string;
@@ -126,11 +122,9 @@ function isTimed(session: Session): boolean {
 
 /**
  * True when a session renders as a full-width band (break / lunch / keynote).
- *
- * A plenum session always is one. A service session only is one when it has no
- * room: a room-scoped placeholder ("TBD Talk" held in one track) is a cell in
- * its own column — as a band it would stripe across the sheet and bury the real
- * talk running opposite it.
+ * A plenum session always is. A service session only when it has no room — a
+ * room-scoped placeholder is a cell in its column, else it would bury the
+ * talk running opposite.
  */
 export function isBand(session: Session): boolean {
 	return session.isPlenumSession || (session.isServiceSession && !roomKey(session));
@@ -197,13 +191,9 @@ export interface IdleSpan {
 }
 
 /**
- * The stretches of `range` that no session occupies — the sheet's dead time.
- *
- * The grid draws these hatched, the way it draws a break: on a proportional
- * timetable an empty half-hour is otherwise indistinguishable from a half-hour
- * whose talks simply haven't been announced, and the ruling made free time read
- * as scheduled. A room sitting idle while another room runs a talk is NOT dead
- * time — only a span where the whole day is quiet counts.
+ * Stretches of `range` no session occupies — dead time, drawn hatched like a
+ * break (otherwise an empty half-hour looks like an unannounced one). Only a
+ * span where the WHOLE day is quiet counts; one idle room is not dead time.
  */
 export function idleSpans(
 	sessions: Session[],
@@ -325,12 +315,10 @@ export function partitionAgenda(sessions: Session[]): AgendaPartition {
 }
 
 /**
- * The spans of the day that carry no talk — every band (break, lunch, keynote,
- * the afterparty) plus the dead time between them, merged and sorted.
- *
- * A band that OVERLAPS a talk is left out: the grid compresses these spans, and
- * compressing one that a room is running a talk through would drag the talk off
- * its own start time.
+ * Spans with no talk — every band plus the dead time between, sorted. A band
+ * that OVERLAPS a talk is left out: these spans get compressed, and
+ * compressing one with a talk running through it would drag the talk off
+ * its start time.
  */
 export function nonTalkSpans(
 	sessions: Session[],
@@ -350,10 +338,9 @@ export function nonTalkSpans(
 	);
 	const spans = [...free, ...idleSpans(sessions, range, placed)].sort((a, b) => a.startMin - b.startMin);
 
-	// Kept SEPARATE, never merged: each strip is compressed on its own, so a run
-	// of consecutive breaks is a strip each rather than one strip's worth of rows
-	// split between them. Overlaps are dropped instead (the mapping below walks
-	// the spans in order and cannot straddle two at once).
+	// Kept SEPARATE, never merged: each strip is compressed on its own, so
+	// consecutive breaks get a strip each. Overlaps are dropped (the mapping
+	// walks spans in order and can't straddle two).
 	const ordered: IdleSpan[] = [];
 	for (const span of spans) {
 		const last = ordered[ordered.length - 1];
@@ -374,18 +361,11 @@ export interface RowScale {
 }
 
 /**
- * Build the minutes → row mapping.
- *
- * The sheet is proportional through the talks and COMPRESSED everywhere else:
- * each span in `compressed` gets at most `maxSpanRows` rows however long it runs.
- * Drawn to scale, a 5½-hour afterparty is twenty times the height of the talk
- * above it and the day's actual content is squeezed into the top third of a page
- * of empty hatch; an 80-minute lunch does the same on a smaller scale. Every
- * strip that carries a single line of text gets the height of a single line of
- * text, and the talks keep the space.
- *
- * A span shorter than `maxSpanRows` is left alone rather than stretched up to it
- * — a five-minute gap should not open to the height of lunch.
+ * Build the minutes → row mapping. Proportional through the talks, COMPRESSED
+ * everywhere else: each span in `compressed` gets at most `maxSpanRows` rows
+ * (drawn to scale, a 5½-hour afterparty is twenty times the height of the
+ * talk above it). A span shorter than `maxSpanRows` is left alone, not
+ * stretched — a five-minute gap should not open to the height of lunch.
  */
 export function rowScale(
 	range: { start: number; end: number },

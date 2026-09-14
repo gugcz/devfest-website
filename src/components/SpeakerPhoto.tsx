@@ -2,19 +2,14 @@ import { useState } from 'react';
 import { initials, type Speaker } from '../lib/speakers';
 
 /**
- * A speaker's photograph, or their initials when there isn't one.
+ * A speaker's photograph, or their initials when there isn't one. Replaced
+ * three copies that disagreed (the same dead URL rendered as initials on
+ * /speakers and a hole on /sessions and /agenda). A missing photo is the
+ * normal state of a speaker who hasn't sent one.
  *
- * There were three of these. /speakers fell back to a monogram; /sessions and
- * /agenda set `visibility: hidden` on the broken <img> and left a blank disc in
- * the stack, so the SAME speaker with the SAME dead CDN URL rendered as
- * initials on one page and as a hole on the other two. A missing photo is not
- * an error state — it is the normal state of a speaker who hasn't sent one —
- * and it should read the same everywhere.
- *
- * The caller owns the shape (a 4:5 print, a 26px disc) by passing its own
- * classes; this owns only the DECISION: no URL, or a URL that fails to load,
- * both land on the monogram. The monogram inks come from --ink-monogram /
- * --ink-monogram-sm, which is why the size choice is the caller's too.
+ * The caller owns the shape (a 4:5 print, a 26px disc) via classes; this owns
+ * only the DECISION: no URL, or a URL that fails to load, both land on the
+ * monogram.
  */
 export default function SpeakerPhoto({
 	speaker,

@@ -1,24 +1,16 @@
 /**
- * `submitInvoiceCallable` — callable the browser invoice form invokes.
- * Validates input and writes a `pending` doc to Firestore; the
- * `processInvoiceTrigger` Firestore trigger does the iDoklad work.
+ * `submitInvoiceCallable` — the browser invoice form's callable. Validates
+ * input and writes a `pending` doc; `processInvoiceTrigger` does the iDoklad
+ * work. Server-side write keeps Firestore locked to clients and input
+ * validated before it reaches iDoklad.
  *
- * Keeping the write server-side means Firestore stays locked to clients
- * (firestore.rules denies all) and untrusted input is validated before it
- * ever reaches iDoklad.
- *
- * Abuse protection (layered, because App Check alone is attestation, not a
- * throttle):
- *   - `enforceAppCheck: true` rejects any request without a valid Firebase
- *     App Check token (reCAPTCHA Enterprise) before the handler runs — blocks
- *     bots/curl that can't mint an attestation.
- *   - a per-(IČO + email) sliding-window rate limit caps how many invoices +
- *     emails one company can drive (cost / sending-reputation abuse).
+ * Abuse protection, layered (App Check is attestation, not a throttle):
+ *   - `enforceAppCheck: true` rejects requests without a valid token before
+ *     the handler runs.
+ *   - a per-(IČO + email) sliding-window rate limit caps invoices + emails.
  *   - `maxInstances` caps fan-out on the shared billing project.
- * (Token replay protection — `consumeAppCheckToken` + limited-use client
- * tokens — is intentionally NOT enabled: low-threat site, not worth the
- * client/server coupling.)
- * The callable protocol also handles CORS, so there's nothing to wire by hand.
+ * Token replay protection (`consumeAppCheckToken`) is deliberately NOT
+ * enabled — low-threat site. The callable protocol handles CORS.
  */
 
 import { HttpsError, onCall } from 'firebase-functions/v2/https';

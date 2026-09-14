@@ -112,12 +112,10 @@ function formatViolation(v) {
 }
 
 // ─── Custom contrast pass for form controls ────────────────────────────────
-// axe-core cannot evaluate ::placeholder colour, and it returns "incomplete"
-// (never a violation) for any text/border whose background it can't flatten —
-// which on this gradient/overlay-heavy dark theme is most of the card & form
-// chrome. So placeholder + field-border contrast slip through axe entirely.
-// This pass composites the colours ourselves against the nearest SOLID
-// background and fails on real sub-threshold controls (WCAG 1.4.3 / 1.4.11).
+// axe-core can't evaluate ::placeholder colour and returns "incomplete" for
+// any text/border whose background it can't flatten — most of this theme's
+// form chrome. This pass composites the colours against the nearest SOLID
+// background and fails sub-threshold controls (WCAG 1.4.3 / 1.4.11).
 // Runs in the page; returns plain data.
 function auditControls() {
 	const relLum = ([r, g, b]) => {
@@ -268,17 +266,14 @@ async function scanSuppressedFocus() {
 }
 
 // ─── Gated ready-state coverage ────────────────────────────────────────────
-// The lineup (Firestore speakers/sessions) and ticket cache (RTDB) sit behind
-// App Check + read rules that block CI, so a plain build only ever renders the
-// "temporarily unavailable" error state. `npm run a11y` builds with A11Y_MOCK=1
-// (astro.config.mjs → scripts/a11y-mocks/) so the components hydrate from
-// fixtures and the real content — cards, filters, ticket waves, detail dialogs —
-// gets audited. Two extra concerns then need driving that a static pass misses:
+// A plain build has no `/api/*`, so islands render "unavailable". `npm run
+// a11y` builds with A11Y_MOCK=1 (astro.config.mjs → scripts/a11y-mocks/) so
+// the real content gets audited. Two things a static pass misses:
 //
-//  1. client:visible islands (Tickets on /) don't hydrate until scrolled into
-//     view — `hydrateIslands` scrolls the page and waits for aria-busy to clear.
-//  2. The speaker/session detail dialogs only exist after a click — `MODAL_FLOWS`
-//     opens each and axe re-runs scoped to the dialog.
+//  1. client:visible islands (Tickets on /) don't hydrate until scrolled —
+//     `hydrateIslands` scrolls the page and waits for aria-busy to clear.
+//  2. Detail dialogs only exist after a click — `MODAL_FLOWS` opens each and
+//     axe re-runs scoped to the dialog.
 
 async function hydrateIslands(page) {
 	// Trigger client:visible islands, then settle at the top again.
@@ -318,12 +313,10 @@ const MODAL_FLOWS = {
 			},
 		},
 		{
-			// The SAME sheet with no photograph, so the fallback initials plate
-			// is audited on every run. Pinned to a named speaker on purpose: the
-			// flow above takes whichever speaker happens to be first, and when
-			// that one had a photo the monogram was never scanned — which is how
-			// a 2.58:1 plate (3:1 required at 54px) survived local runs and only
-			// surfaced in CI. `sp-alan` is the fixture with `profilePicture: ''`.
+			// The SAME sheet with no photograph, so the initials plate is audited
+			// every run. Pinned to `sp-alan` (the fixture with `profilePicture:
+			// ''`): the flow above takes whichever speaker is first, and a 2.58:1
+			// plate once slipped through because that one had a photo.
 			label: 'session → speaker dialog (no photo)',
 			open: async (p) => {
 				await p.click('button[aria-label="View details for AI at the Edge"]');

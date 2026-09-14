@@ -20,12 +20,9 @@
 	import { readConsent, storeConsent } from '../lib/consent';
 
 	// Boot Analytics in Consent Mode and record the page view. Safe for every
-	// visitor — an undecided one gets only aggregated identifier-free pings, with
-	// no cookie / `client_id` until they accept. `trackPageView()` initialises
-	// Analytics on first use (idempotent) and swallows the initial call, which
-	// GA4's own `config` already reported; the rest are the `<ClientRouter />`
-	// soft navigations GA4 cannot see by itself. The module stays cached across
-	// soft navigations, so both guards hold.
+	// visitor — undecided gets only identifier-free pings. `trackPageView()`
+	// swallows the initial call (GA4's `config` already reported it); the rest
+	// are <ClientRouter /> soft navigations GA4 cannot see by itself.
 	async function trackPageView() {
 		try {
 			const mod = await import('../lib/firebase');
@@ -86,13 +83,10 @@
 		});
 	});
 
-	// Escape dismisses the banner (as a decline) from ANYWHERE on the page. It
-	// used to be bound to the banner element, so it only fired once focus was
-	// already inside it — which is the reachability problem, not a solution to
-	// it. Bound to `document` once at module scope, not inside the
-	// `astro:page-load` handler: that handler re-runs on every soft navigation
-	// and would stack a listener per page. The banner element is looked up when
-	// the key is pressed, so it always acts on the current document's banner.
+	// Escape dismisses the banner (as a decline) from ANYWHERE. Bound on
+	// `document` at module scope, not inside `astro:page-load` (which would
+	// stack a listener per navigation); the banner is looked up on keypress so
+	// it always hits the current document's.
 	document.addEventListener('keydown', (e) => {
 		if (e.key !== 'Escape') return;
 		const banner = document.getElementById('cookie-banner');

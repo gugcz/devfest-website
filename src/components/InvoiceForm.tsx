@@ -100,14 +100,11 @@ function findCompanyRelease(releases: TitoRelease[]): TitoRelease | null {
 }
 
 /**
- * One text field, wired for assistive tech: `aria-invalid` on the control and
- * `aria-describedby` pointing at the message under it. Nine hand-wired copies
- * of that is nine chances to forget one.
+ * One text field wired for assistive tech (`aria-invalid` + `aria-describedby`).
  *
- * Declared at module scope, not inside `InvoiceForm`: a component defined in a
- * render body is a NEW component type on every render, so React would unmount
- * and remount every input on each keystroke and the caret would jump out of
- * the field being typed into.
+ * Module scope, not inside `InvoiceForm`: a component defined in a render
+ * body is a NEW type every render, so React remounts every input on each
+ * keystroke and the caret leaves the field.
  */
 function TextField({
 	name,
@@ -262,11 +259,8 @@ export default function InvoiceForm() {
 			]);
 			const submit = httpsCallable(getFunctions(getFirebaseApp(), FUNCTIONS_REGION), 'submitInvoiceCallable');
 			await submit({ ...fields, website: honeypot });
-			// GA4's recommended event for a B2B enquiry. This is the conversion for
-			// the company path — the ti.to checkout never happens here (the company
-			// pays the invoice and claims tickets with a 100%-off code), so nothing
-			// downstream would otherwise mark it. `value`/`currency` go together or
-			// not at all; the estimate is missing only when the price lookup failed.
+			// The conversion for the company path — no ti.to checkout happens
+			// here. `value`/`currency` go together or not at all.
 			track('generate_lead', {
 				...(estimate ? { currency: estimate.currency, value: estimate.amount } : {}),
 				lead_source: 'company_invoice',

@@ -140,12 +140,9 @@ function envelopeMessage(json: unknown): string | null {
 	return null;
 }
 
-/**
- * Peel the `{ Data, IsSuccess, Message }` envelope. `IsSuccess` is the real
+/** Peel the `{ Data, IsSuccess, Message }` envelope. `IsSuccess` is the
  * verdict, not the HTTP status — iDoklad answers 200 for domain-level
- * refusals too (a partner with no email address, a validation error on the
- * payload), so a refused call must throw here rather than look delivered.
- */
+ * refusals, so a refused call must throw here. */
 function unwrap<T = unknown>(json: unknown, context: string): T {
 	if (json && typeof json === 'object') {
 		if ('IsSuccess' in json && (json as { IsSuccess: unknown }).IsSuccess === false) {
@@ -163,10 +160,9 @@ async function apiFetch(
 	body?: unknown,
 ): Promise<Response> {
 	const token = await getToken(cfg);
-	// GETs retry, POSTs deliberately don't — `fetchWithRetry` enforces that, and it
-	// matters most here: a replayed `POST /IssuedInvoices` bills a company twice
-	// and iDoklad offers no idempotency key to lean on. 30s per attempt, since
-	// invoice creation is heavier than a plain read.
+	// GETs retry, POSTs don't (`fetchWithRetry` enforces it): a replayed
+	// `POST /IssuedInvoices` bills a company twice and iDoklad has no
+	// idempotency key. 30s per attempt — invoice creation is heavy.
 	return fetchWithRetry(
 		`${API_BASE}${path}`,
 		{
@@ -210,25 +206,20 @@ async function apiJson<T = any>(
 
 export interface ResolvedContact {
 	id: number;
-	/**
-	 * True when the contact in iDoklad is known to carry the address submitted on
-	 * the form — i.e. `SendToPartner` will reach the person who asked for the
-	 * invoice. False means the stored address may be someone else's, and the
-	 * caller should add an explicit recipient.
-	 */
+	/** True when the iDoklad contact is known to carry the submitted email,
+	 * so `SendToPartner` reaches the requester. False → caller adds an
+	 * explicit recipient. */
 	emailSynced: boolean;
 }
 
 /**
- * Find a contact by IČO (IdentificationNumber), else create one. Reusing
- * contacts avoids a duplicate iDoklad contact each time the same company
- * orders. Contacts without an IČO are always created fresh.
+ * Find a contact by IČO (IdentificationNumber), else create one. Contacts
+ * without an IČO are always created fresh.
  *
- * A reused contact is **updated** from the submitted form data first. It used
- * not to be, and that is the failure this fix came from, in one line: the same company
- * ordered twice from two different people, the second request reused the
- * contact created by the first, and `SendToPartner` mailed the invoice to the
- * first person's inbox while the pipeline recorded a success.
+ * A reused contact is **updated** from the form first. It used not to be:
+ * the same company ordered twice from two people, and `SendToPartner`
+ * mailed the second invoice to the first person while the pipeline
+ * recorded success.
  */
 export async function findOrCreateContact(
 	cfg: IdokladConfig,
@@ -249,14 +240,11 @@ function hasEmail(contact: IdokladContactInput): boolean {
 }
 
 /**
- * Push the submitted email + address onto an existing contact.
- *
- * Only non-empty fields are written: an optional field the form left blank
- * must not wipe what iDoklad already holds. Best-effort — a failed update is
- * logged and reported as unsynced, which makes the caller fall back to an
- * explicit recipient rather than abandoning the invoice.
- *
- * Returns whether the contact is now known to hold the submitted address.
+ * Push the submitted email + address onto an existing contact. Only
+ * non-empty fields are written (a blank optional field must not wipe what
+ * iDoklad holds). Best-effort: a failed update is logged and reported as
+ * unsynced, so the caller adds an explicit recipient instead of abandoning
+ * the invoice. Returns whether the contact now holds the submitted address.
  */
 async function syncContactDetails(
 	cfg: IdokladConfig,
@@ -275,17 +263,13 @@ async function syncContactDetails(
 	if (Object.keys(patch).length === 1) return false;
 
 	try {
-		// The update goes to the COLLECTION with `Id` in the body. `/Contacts/{id}`
-		// answers 405 `UnsupportedApiVersion` on every write verb, so a per-id path
-		// never updates anything — it only ever lands in the catch below, which
-		// reports every reused company as unsynced.
+		// PATCH the COLLECTION with `Id` in the body — `/Contacts/{id}` answers
+		// 405 `UnsupportedApiVersion` on every write verb.
 		//
-		// The PATCH answers with the stored contact — read the address back rather
-		// than assuming the write landed. iDoklad can normalise or silently drop an
-		// `Email` it doesn't like, and a HTTP-200-shaped "success" would otherwise
-		// report the contact as synced, leave `OtherRecipients` empty, and mail the
-		// invoice to whoever the contact was created with. That is exactly the
-		// incident this belt exists for.
+		// Read the address back from the response rather than assuming the write
+		// landed: iDoklad can silently drop an `Email` it doesn't like, and a
+		// 200 would otherwise report the contact as synced and mail the invoice
+		// to whoever the contact was created with.
 		const updated = await apiJson<{ Email?: string | null }>(cfg, 'PATCH', '/Contacts', patch);
 		if (!email) return false;
 		const stored = typeof updated?.Email === 'string' ? updated.Email.trim() : '';
@@ -321,9 +305,8 @@ async function findContactByIco(cfg: IdokladConfig, ico: string): Promise<number
 		const match = items.find((c) => String(c.IdentificationNumber ?? '').trim() === ico);
 		return match ? match.Id : null;
 	} catch (err) {
-		// Non-fatal: fall through to create. Logged rather than swallowed silently —
-		// the symptom is a duplicate iDoklad contact, whose cause is otherwise
-		// invisible.
+		// Non-fatal: fall through to create. Logged — the symptom is a duplicate
+		// contact, whose cause is otherwise invisible.
 		logger.warn(`iDoklad contact lookup by IČO failed, creating a new one: ${describeError(err)}`);
 		return null;
 	}
@@ -393,11 +376,8 @@ export async function createInvoice(
 }
 
 export interface InvoiceMailResult {
-	/**
-	 * True **only** when iDoklad explicitly answered `IsSuccess: true`. Anything
-	 * else — a missing verdict, an unparseable envelope — counts as unconfirmed,
-	 * so `invoiceEmailSent` is never recorded on a hope.
-	 */
+	/** True **only** when iDoklad answered `IsSuccess: true`. A missing
+	 * verdict counts as unconfirmed, so `invoiceEmailSent` is never a hope. */
 	confirmed: boolean;
 	/** iDoklad's own `Message`, if any. */
 	message: string | null;
@@ -407,12 +387,9 @@ export interface InvoiceMailResult {
 
 /**
  * Ask iDoklad to email the issued invoice (PDF attached) to the contact.
- * `SendToPartner` uses the contact's email; the invoice PDF carries the
- * bank account + variable symbol the company pays against.
- *
- * Throws on a refusal (`IsSuccess: false`) and logs the verdict either way.
- * Nothing about this call used to be logged, which is why "did the mail go
- * out at all?" was unanswerable from Cloud Logging when it mattered.
+ * The PDF carries the bank account + variable symbol. Throws on a refusal
+ * (`IsSuccess: false`) and logs the verdict either way — "did the mail go
+ * out?" used to be unanswerable from Cloud Logging.
  */
 export async function sendInvoiceByEmail(
 	cfg: IdokladConfig,
@@ -452,10 +429,8 @@ export async function sendInvoiceByEmail(
 
 	const confirmed = envelope?.IsSuccess === true;
 	const message = envelopeMessage(envelope);
-	// Addresses are masked: this line is diagnostic, not a copy of the customer's
-	// contact details in plain text.
-	// `message` is the logger's own field — the API's text goes under its own key
-	// or it is silently overwritten by the log line.
+	// Addresses masked: diagnostic, not a plain-text copy of contact details.
+	// `message` is the logger's own field — the API's text needs its own key.
 	const entry = {
 		invoiceId,
 		isSuccess: envelope?.IsSuccess ?? null,
@@ -469,11 +444,8 @@ export async function sendInvoiceByEmail(
 	return { confirmed, message, recipients: masked };
 }
 
-/**
- * `billing@example.com` → `b*****g@example.com`. Enough to tell two
- * addresses apart in a log without writing one out in plain text; the domain
- * stays, because it is what makes the line diagnostic at all.
- */
+/** `billing@example.com` → `b*****g@example.com`. Tells two addresses apart
+ * in a log without writing one out; the domain stays for diagnosis. */
 export function maskEmail(address: string): string {
 	const at = address.lastIndexOf('@');
 	if (at <= 0) return '***';

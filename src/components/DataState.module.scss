@@ -1,17 +1,7 @@
 @use '../styles/type' as *;
-// THE loading / failure / empty block for every data-backed island.
-//
-// There were four of these — /speakers, /sessions, /agenda and the ticket
-// waves each kept a private copy — and the copies had drifted the way copies
-// do: two were centred and two left-set, two animated three trailing dots and
-// two didn't, the ticket one opened on a hairline nobody else had, and only
-// /agenda offered the visitor anywhere to go from an empty list. A visitor who
-// hits a cold endpoint twice in one session met two different pages.
-//
-// One treatment now, taking the best of each: /agenda's left-set column and
-// its next-action (the site is left-set everywhere else — see `.fallback-note`,
-// which this deliberately matches), the animated trailing dots from
-// /sessions, and the noir failure voice from /speakers.
+// THE loading / failure / empty block for every data-backed island. Replaced
+// four drifted private copies. Left-set (matching `.fallback-note`), with a
+// next action on empty, animated trailing dots, and the noir failure voice.
 .state {
 	display: flex;
 	flex-direction: column;

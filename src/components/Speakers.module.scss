@@ -156,17 +156,13 @@
 }
 
 /* ===================== CAPTION ===================== */
-// Sits directly under the print on space alone. The red hairline that used to
-// hang it was one more drawn line repeated once per speaker; the bottom edge
-// of the photograph already ends the picture.
+// Sits under the print on space alone — no hairline; the photo's bottom edge
+// already ends the picture.
 //
-// The caption IS measured, though — it was not, and a long Czech name ran past
-// the print and into the frame beside it. Two things hold the grid even: the
-// name is clamped to two lines and allowed to break inside a word (Bebas at
-// 2rem sets a 20-character surname wider than a 280px column, and a word with
-// nowhere to break overflows in silence), and the role line reserves its two
-// lines whether or not a speaker has one — otherwise a captionless speaker
-// pulls the whole row up and the prints stop landing on one baseline.
+// The caption IS measured (a long Czech name once ran into the next frame):
+// the name clamps to two lines and may break inside a word (a 20-character
+// Bebas surname is wider than a 280px column), and the role line reserves
+// its two lines even when empty, so the prints land on one baseline.
 .body {
 	position: relative;
 	z-index: 1;

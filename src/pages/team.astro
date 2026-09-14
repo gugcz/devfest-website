@@ -192,17 +192,11 @@ const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
 </BaseLayout>
 
 <script>
-	// Anchor each card's colour-bleed reveal at the cursor: track the pointer
-	// over the mugshot and feed its position into the radial mask via CSS vars.
-	// The expansion itself is driven by CSS (:hover → --bleed).
-	//
-	// The colour layer is heavy and only ever shown on hover/focus, so its real
-	// source lives in data-* attributes and is fetched on first interaction —
-	// keeping the colour photos (~half the page weight) off the initial load.
-	//
-	// Bundled module scripts run once per document, so under <ClientRouter />
-	// the binding has to happen on `astro:page-load` — it fires on the initial
-	// load and after every soft navigation, replacing DOMContentLoaded.
+	// Anchor each card's colour-bleed at the cursor: feed pointer position into
+	// the radial mask via CSS vars; the expansion is CSS (:hover → --bleed).
+	// The colour layer (~half the page weight) is fetched on first interaction
+	// from data-* attributes. Bound on `astro:page-load` because
+	// <ClientRouter /> swaps the page on soft navigations.
 	document.addEventListener('astro:page-load', () => {
 		const mugshots = document.querySelectorAll<HTMLElement>('.mugshot');
 		mugshots.forEach((mugshot) => {

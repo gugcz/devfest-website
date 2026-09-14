@@ -174,15 +174,11 @@ export default function AttendingCard() {
 	// plain boolean flickers every time the drag crosses a child element.
 	const dragDepthRef = useRef(0);
 
-	// Astro's `fonts` integration self-hosts Bebas Neue / JetBrains Mono/
-	// Special Elite behind CSS custom properties; `document.fonts.ready` is
-	// the load signal for canvas text, which (unlike CSS) doesn't wait for
-	// webfonts on its own. Colors are read from the same CSS custom
-	// properties. Fonts, palette and the decoded logo are all gathered once
-	// here, not per-draw: `getComputedStyle` forces a style recalc, and
-	// `draw()` runs on every pointermove while panning. Waiting for the logo
-	// too (not just fonts) is what keeps the very first draw — and so the
-	// very first export, if a visitor is fast — from running without it.
+	// `document.fonts.ready` is the load signal for canvas text (canvas doesn't
+	// wait for webfonts). Fonts, palette and the decoded logo are gathered
+	// once, not per-draw: `getComputedStyle` forces a style recalc and
+	// `draw()` runs on every pointermove. Waiting for the logo too keeps the
+	// first draw — and a fast visitor's first export — from running without it.
 	useEffect(() => {
 		let cancelled = false;
 		Promise.all([document.fonts.ready, loadLogo().catch(() => null), loadSamplePhoto().catch(() => null)]).then(
@@ -208,11 +204,9 @@ export default function AttendingCard() {
 		};
 	}, []);
 
-	// With no photo picked yet, the card still renders — with the bundled
-	// sample portrait and (unless the visitor already typed one) the sample
-	// name — so the empty state reads as a finished card, not a blank form
-	// field. `SAMPLE` badge + locked Download/Share are what mark it as a
-	// preview; picking a real photo swaps both back to the visitor's own.
+	// With no photo picked, the card still renders with the sample portrait and
+	// (unless typed) the sample name, so the empty state reads as a finished
+	// card. `SAMPLE` badge + locked Download/Share mark it as a preview.
 	const draw = useCallback(() => {
 		const canvas = canvasRef.current;
 		if (!canvas || !assets) return;
@@ -259,13 +253,10 @@ export default function AttendingCard() {
 		});
 	}
 
-	// Moves focus to the new step's heading and announces it — a Back/Next
-	// click swaps the whole step body, and without this the focus (and a
-	// screen reader's position) would stay on a button that just vanished.
-	// Skipped on mount: nothing changed yet, so there's nothing to announce.
-	// On mobile the preview sits in normal flow above the step (not sticky),
-	// so a Back/Next click also scrolls the preview into view — otherwise a
-	// visitor scrolled down into a long step lands mid-page on the new one.
+	// Move focus to the new step's heading — Back/Next swaps the whole step
+	// body, and focus would otherwise sit on a vanished button. Skipped on
+	// mount. On mobile the preview is in normal flow above the step, so also
+	// scroll it into view or a visitor lands mid-page.
 	useEffect(() => {
 		if (stepIsFirstRenderRef.current) {
 			stepIsFirstRenderRef.current = false;
@@ -278,12 +269,10 @@ export default function AttendingCard() {
 		setAnnouncement(`Step ${step} of 4: ${STEP_LABEL[step]}.`);
 	}, [step]);
 
-	// The affordance shows the moment a drag carrying files crosses the
-	// viewport, not only once it's precisely over the tile or card — so the
-	// listener lives on `window`, gated by a depth counter (a plain boolean
-	// flickers on every child crossing). `dragover` must also stay
-	// prevented everywhere, or a drop outside the two real targets makes the
-	// browser navigate to the file instead of doing nothing.
+	// The affordance shows as soon as a file drag enters the viewport, so the
+	// listener lives on `window`, gated by a depth counter (a boolean flickers
+	// on every child crossing). `dragover` stays prevented everywhere, or a
+	// drop outside the targets navigates the browser to the file.
 	useEffect(() => {
 		function hasFiles(e: DragEvent) {
 			return Array.from(e.dataTransfer?.types ?? []).includes('Files');

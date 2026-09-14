@@ -102,27 +102,21 @@ async function measure(page, heading) {
 }
 
 /**
- * THE BAR'S OWN HEIGHT IS AN INVARIANT, SO IT IS A CHECK.
+ * THE BAR'S HEIGHT IS AN INVARIANT, SO IT IS A CHECK.
  *
- * `--header-h` is what every anchor offset is measured against, and the CSS
- * formula behind it stopped describing the bar once `.header-actions` was
- * allowed to wrap (DEVF-31 / #311): at a 32px root the property was out by 39px
- * at 320px and 141px at 1024px. `Menu.astro` now measures the bar and writes
- * the real height over it — this sweep is what keeps that true rather than
- * true-on-the-day-it-was-measured.
+ * Every anchor offset is measured against `--header-h`, and the CSS formula
+ * stopped describing the bar once `.header-actions` could wrap (DEVF-31 /
+ * #311): at a 32px root it was out by 39px at 320px and 141px at 1024px.
+ * `Menu.astro` now measures the bar and writes the real height; this sweep
+ * keeps that true.
  *
- * Chromium only, and no anchor jumps: this measures layout, not scrolling. The
- * routes x widths x roots matrix is 660 checks, but only 15 page loads — the
- * widths are a viewport resize inside one document, not a reload.
+ * Chromium only, no anchor jumps — this measures layout. 660 checks but only
+ * 15 page loads: widths are a viewport resize, not a reload.
  *
- * THE RASTER IS DENSE ON PURPOSE. It ran 320/360/375/768/1024/1440 x 16/32 and
- * that sample missed a real fault by landing either side of it: the first fix
- * for DEVF-49 let the organizer link wrap, which severed the legal name
- * mid-word ("GUG.cz, z" / ".s.") — but only between 1060px and 1260px, and only
- * at a 32px root. Six widths straddled the band and reported green. The
- * intermediate roots earn their place the same way: 20 and 24 are the common
- * browser settings, and a threshold expressed in `em` (see `Footer.scss`)
- * crosses somewhere between 16 and 32, not at either end.
+ * THE RASTER IS DENSE ON PURPOSE. A 6-width x 2-root sample missed a real
+ * fault (DEVF-49: the organizer link wrapped mid-word, but only between
+ * 1060–1260px at a 32px root). Roots 20 and 24 are common browser settings,
+ * and an `em` threshold (`Footer.scss`) crosses somewhere between 16 and 32.
  */
 const HEADER_WIDTHS = [320, 360, 375, 500, 768, 960, 1024, 1100, 1200, 1280, 1440];
 const HEADER_ROOTS = [16, 20, 24, 32];
@@ -147,21 +141,15 @@ const HEADER_ROUTES = [
 /**
  * `src/lib/anchor.ts` MUST BE EXACTLY ONE CHUNK.
  *
- * Two importers pull it in (`BaseLayout.astro` and `Menu.astro`), and if the
- * bundler ever emits a copy per importer, `invalidateAnchorOffsets()` clears a
- * different module than the one holding the memo — a silent no-op, with the
- * deep-link hold reading a stale offset. This is an assert rather than the
- * one-off grep it started as, because a one-off grep is the same class of
- * silent no-op: the obvious probe (`landingOffset`) returns ZERO files, since
- * esbuild renames local identifiers. `performance.getEntriesByType('navigation')`
- * is the only occurrence in `src/`, and esbuild renames neither a property name
- * nor a string literal, so it survives minification.
+ * Two importers (`BaseLayout.astro`, `Menu.astro`). If the bundler emits a
+ * copy per importer, `invalidateAnchorOffsets()` clears a different module
+ * than the one holding the memo — a silent no-op with a stale offset.
  *
- * The ARGUMENT is part of the probe, not decoration: bare `getEntriesByType`
- * also matches react-dom's own chunk (`client.*.js` calls it for its resource
- * timings), which would make the count 2 and the assert permanently red.
- * The quote style is not fixed either — the minifier rewrites `'navigation'`
- * as a template literal — hence the character class.
+ * Probe: `performance.getEntriesByType('navigation')` is the only occurrence
+ * in `src/`, and esbuild renames neither property names nor string literals
+ * (a local identifier like `landingOffset` returns ZERO files). The ARGUMENT
+ * matters: bare `getEntriesByType` also matches react-dom's chunk. Quote
+ * style varies under the minifier — hence the character class.
  */
 const CHUNK_PROBE = /getEntriesByType\(\s*['"`]navigation['"`]\s*\)/;
 
@@ -179,39 +167,24 @@ async function headerSweep(port) {
 	const browser = await chromium.launch();
 	const ctx = await browser.newContext({ viewport: { width: HEADER_WIDTHS[0], height: 800 } });
 	const page = await ctx.newPage();
-	// The fixture server delays `/api/*` by 400ms on purpose — that latency is
-	// what the anchor half of this file measures, and this half has no use for
-	// it: the bar's height owes nothing to the lineup. Answer those from the
-	// same fixtures with no delay, and `load` is a sufficient wait instead of
-	// `networkidle`. Answered, not aborted: an aborted fetch renders the
-	// islands' "unavailable" state, and the overflow assert below is about the
-	// real page, not that one (aborting invented three 320px rows).
-	// Two consequences, harmless today but worth naming: an `/api/**` path with
-	// no fixture falls through to the fixture server, which 404s it into the
-	// same "unavailable" state (no such path exists right now), and `load` does
-	// not guarantee a rendered island. Neither touches the asserts — the bar's
-	// height owes nothing to the data — but if the overflow assert below ever
-	// flickers, this is the reason.
+	// The fixture server delays `/api/*` by 400ms for the anchor half; this
+	// half doesn't need it (the bar's height owes nothing to the lineup), so
+	// answer from the same fixtures with no delay and wait on `load`.
+	// Answered, not aborted: an aborted fetch renders the "unavailable" state,
+	// and the overflow assert is about the real page. `load` does not
+	// guarantee a rendered island — if the overflow assert ever flickers,
+	// this is why.
 	await page.route('**/api/**', (route) => {
 		const body = API_FIXTURES[new URL(route.request().url()).pathname];
 		if (body === undefined) return route.continue();
 		return route.fulfill({ status: 200, contentType: 'application/json; charset=utf-8', body });
 	});
-	// THE ROOT IS ENLARGED THE WAY A READER ENLARGES IT — the browser's own
-	// default font size, over CDP, not `html { font-size: 32px }` from script.
-	//
-	// The two are not the same simulation, and the difference decides a check
-	// rather than merely being tidy: a media query's `em` resolves against the
-	// INITIAL value of font-size, i.e. this browser setting. An inline style on
-	// `<html>` moves `rem` and leaves every `em` query where it was, so the
-	// footer's `60em` collapse (`Footer.scss`) would never fire here and this
-	// sweep would report an overflow the real zoomed reader does not have.
-	// Measured both ways on the same page: `matchMedia('(max-width: 60em)')` at
-	// 1024px is false under the inline style and true under this.
-	//
-	// `standard` only. `fixed` is the monospace default, which nothing on this
-	// site reads (every element inherits a font-size), and moving it would
-	// simulate a setting the reader did not change.
+	// THE ROOT IS ENLARGED THE WAY A READER ENLARGES IT — the browser's default
+	// font size over CDP, not `html { font-size: 32px }`. A media query's `em`
+	// resolves against the INITIAL font-size (this setting); an inline style
+	// moves `rem` but leaves every `em` query alone, so the footer's `60em`
+	// collapse would never fire and this sweep would report a false overflow.
+	// `standard` only — nothing on this site reads the `fixed` monospace default.
 	const cdp = await ctx.newCDPSession(page);
 	await cdp.send('Page.enable');
 	const setRootFontSize = (px) => cdp.send('Page.setFontSizes', { fontSizes: { standard: px } });
@@ -231,20 +204,12 @@ async function headerSweep(port) {
 		for (const [index, width] of HEADER_WIDTHS.entries()) {
 			if (index > 0) await page.setViewportSize({ width, height: 800 });
 			for (const root of HEADER_ROOTS) {
-				// `--header-h` MUST NOT BE WRITTEN AT A 16px ROOT.
-				//
-				// The drift check below passes whether or not the property was
-				// written, so on its own it does not cover “the offsets #310
-				// established cannot move”. This does — but only on a virgin
-				// document: once the root-32 pass has forced a write, the observer
-				// is obliged to write the corrected value back when the root
-				// returns to 16, so a later width would fail an emptiness check
-				// for the right reason. Hence the first width, first root, right
-				// after the load, once per route.
-				// Literal 16, not `HEADER_ROOTS[0]`: the claim is about the 16px
-				// root itself, so it must not hang on the array's order — reorder
-				// it to [32, 16] and the indexed form would assert emptiness at a
-				// 32px root and fail for a reason that isn't a regression.
+				// `--header-h` MUST NOT BE WRITTEN AT A 16px ROOT — that is what
+				// keeps the offsets #310 established from moving. Only checkable
+				// on a virgin document: once the root-32 pass forces a write, the
+				// observer must write the corrected value back at 16. Hence first
+				// width, first root, once per route. Literal 16, not
+				// `HEADER_ROOTS[0]`: the claim is about the 16px root itself.
 				const virgin = index === 0 && root === 16;
 				// A text-only zoom, which is what wraps the actions — set as the
 				// browser's own default size, not from script. See `setRootFontSize`.
@@ -291,32 +256,20 @@ async function headerSweep(port) {
 				if (drift > 1) bad.push({ route, width, root, ...result, kind: `--header-h off by ${drift.toFixed(1)}px` });
 				if (virgin && result.written !== '')
 					bad.push({ route, width, root, ...result, kind: `--header-h written at root ${root} ("${result.written}")` });
-				// ASSERTED, not merely reported (DEVF-49). This started as a printed
-				// warning because it was red on arrival: at a 32px root every route
-				// carrying a footer measured 1069px inside 1024px. The cause was the
-				// footer's organizer link, one `white-space: nowrap` token too wide
-				// for its column — not, as the first reading had it, the running
-				// band, whose strip is inside `overflow: hidden` and never reaches
-				// the document at all. The fix is the footer's `em` breakpoints:
-				// the column gets wider instead of the name getting broken.
+				// ASSERTED, not reported (DEVF-49): at a 32px root every route with
+				// a footer once measured 1069px inside 1024px — the organizer link's
+				// `nowrap` token, fixed by the footer's `em` breakpoints.
 				//
-				// It is an assert because `html { overflow-x: clip }` means a
-				// regression here is INVISIBLE: nothing scrolls, so the only symptom
-				// is this number. Note that `clip` is also why the number survives to
-				// be read — `overflow-x: hidden` would make html a scroll container
-				// and report `scrollWidth === innerWidth` however far the content ran.
+				// An assert because `html { overflow-x: clip }` makes a regression
+				// INVISIBLE: nothing scrolls, this number is the only symptom.
+				// (`clip` is also why the number is readable — `hidden` would make
+				// html a scroll container and report `scrollWidth === innerWidth`.)
 				//
-				// WHICH IS ALSO HOW TO FAKE A PASS, so read a green run with that in
-				// mind. Any ancestor between the offending box and `<html>` that
-				// carries `overflow: hidden` or `clip` becomes the scroll container
-				// for everything under it, and its overflow stops propagating to the
-				// document — this number goes quiet while the content still runs off
-				// the side of it. That is exactly the "wrap another clip around it"
-				// non-fix DEVF-49 was told not to accept, and this check cannot tell
-				// it apart from a real repair. If a row goes green after a change
-				// that only added an `overflow` somewhere, it did not get fixed. The
-				// same blindness is why the metric is `documentElement.scrollWidth`
-				// and not some element's: only the document's is clip-free today.
+				// WHICH IS ALSO HOW TO FAKE A PASS: any ancestor with `overflow:
+				// hidden`/`clip` stops overflow propagating to the document. A row
+				// that goes green after a change that only added an `overflow`
+				// did not get fixed. Same reason the metric is
+				// `documentElement.scrollWidth`, not an element's.
 				if (result.scrollWidth > result.innerWidth)
 					bad.push({ route, width, root, ...result, kind: `overflow ${result.scrollWidth} > ${result.innerWidth}` });
 			}

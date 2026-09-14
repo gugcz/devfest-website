@@ -15,7 +15,7 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 - **Backend:** Firebase
 - **Node:** >= 22.12.0
 
-The visual system (type, color, layout, motion) is documented in [DESIGN.md](DESIGN.md) and is binding — check it before styling anything.
+[DESIGN.md](DESIGN.md) is the binding visual system — check it before styling anything.
 
 ## Getting Started
 
@@ -36,18 +36,17 @@ npm run preview
 npm run a11y
 ```
 
-`npm run dev` has no Firebase Hosting rewrite table, so it serves `/api/lineup`
-and `/api/tickets` from the audit fixtures (`scripts/a11y-mocks/api.mjs`) —
-without that the lineup, agenda and ticket sections would all render their
-"unavailable" state locally. `npm run a11y` serves the same fixtures, so CI and
-a laptop can't disagree about what the endpoints return.
+`npm run dev` has no Hosting rewrite table, so it serves `/api/lineup` and
+`/api/tickets` from the fixtures in `scripts/a11y-mocks/api.mjs` (otherwise the
+lineup, agenda and ticket sections render "unavailable"). `npm run a11y` uses
+the same fixtures.
 
-Set `DEVFEST_LIVE_API=1 npm run dev` to skip the fixtures and hit the deployed
-functions instead. That is what you want when changing the functions themselves.
+`DEVFEST_LIVE_API=1 npm run dev` skips the fixtures and hits the deployed
+functions — use it when changing the functions.
 
 ## ti.to Tickets — Cloud Functions + RTDB cache
 
-The "Get your ticket" section is rendered client-side from a Firebase Realtime Database cache. The static build never calls ti.to, a scheduled Cloud Function keeps the cache fresh, and the browser reads it through a cached HTTP endpoint (`/api/tickets`) — **not** the Firebase SDK. (Reading RTDB with the client SDK blocked the first read on an App Check token, ~30s on mobile; a plain `fetch()` avoids that. See "Browser data access" in [CLAUDE.md](CLAUDE.md).)
+The "Get your ticket" section renders client-side from an RTDB cache. The static build never calls ti.to; a scheduled function keeps the cache fresh, and the browser reads it through the cached `/api/tickets` endpoint — **not** the Firebase SDK (the client SDK blocked on an App Check token, ~30s on mobile; see "Browser data access" in [CLAUDE.md](CLAUDE.md)).
 
 ```
 Cloud Scheduler (every 1 h, Europe/Prague)
@@ -105,28 +104,23 @@ Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 
 `database.rules.json` documents the required rules. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.json` and run `firebase deploy --only database`.
 
-`/tickets` is read by the `ticketsApi` function via the Admin SDK (which bypasses rules), so its `tickets.".read": true` is not required for the website — the browser hits `/api/tickets`, not RTDB. The rule is kept harmless; the root default and all writes stay `false`, and the Cloud Functions write the cache via the Admin SDK. Note the projected cache deliberately omits raw inventory counts (`quantity` / `quantity_sold` / `tickets_count`) and ships only a coarse `has_sales` boolean, so a reader can't derive per-wave sales velocity — see `functions/src/tickets/tito-api.ts::projectRelease`.
+`/tickets` is read by `ticketsApi` via the Admin SDK (bypasses rules), so `tickets.".read": true` is not required — the browser hits `/api/tickets`, not RTDB. Root default and all writes stay `false`; functions write via the Admin SDK. The cache omits raw inventory counts (`quantity` / `quantity_sold` / `tickets_count`) and ships only a coarse `has_sales` boolean, so nobody can derive per-wave sales velocity — see `functions/src/tickets/tito-api.ts::projectRelease`.
 
 ### App Check
 
-App Check attests that requests come from the real site, not a scraper or bot.
-The web client uses **reCAPTCHA Enterprise** in `src/lib/firebase.ts` with the
-key committed (`APPCHECK_SITE_KEY` — public, like the Firebase `apiKey`). It
-initialises on page load and its token auto-attaches to the Firebase SDK calls
-the browser still makes.
+App Check attests that requests come from the real site. The web client uses
+**reCAPTCHA Enterprise** in `src/lib/firebase.ts` with a committed key
+(`APPCHECK_SITE_KEY` — public, like the Firebase `apiKey`). It initialises on
+page load; its token auto-attaches to Firebase SDK calls.
 
-**Scope.** The browser reads no content through the Firebase SDK —
-speakers, sessions and tickets all go through the cached `/api/*` endpoints (see
-"Browser data access" in [CLAUDE.md](CLAUDE.md)), which don't involve App Check.
-The **only** App-Check-gated surface left is the **`submitInvoiceCallable`**
-callable behind the `/invoice` form, and it is already enforced **in code**
-(`enforceAppCheck: true` — see the invoice section below), so there is no RTDB or
-Firestore enforcement toggle to flip. `ticketsWebhook` is called by ti.to (an
-external server that can't mint an App Check token) and is protected by an HMAC
-signature — **do not** enforce App Check on it; the schedulers take no public
-traffic either.
+**Scope.** The browser reads no content through the Firebase SDK (everything
+goes through `/api/*`, see [CLAUDE.md](CLAUDE.md)). The only App-Check-gated
+surface is `submitInvoiceCallable`, enforced in code (`enforceAppCheck: true`),
+so there is no RTDB/Firestore toggle to flip. `ticketsWebhook` is called by
+ti.to (can't mint an App Check token) and is HMAC-protected — **do not** enforce
+App Check on it, nor on the schedulers.
 
-Setup (needed so the invoice callable and any future App-Check surface pass):
+Setup:
 
 1. **Register the key in Firebase App Check.** GCP console (project
    `devfest-cz-app`) → Security → reCAPTCHA holds the **score-based website key**
@@ -142,11 +136,11 @@ Setup (needed so the invoice callable and any future App-Check surface pass):
 
 ### Filtering
 
-Only **`secret`** (invite-only / private-link) releases are dropped — server-side before writing to RTDB (`isWebsiteVisible`), with the same predicate applied again client-side as defence-in-depth. Every other state (on-sale, sold-out, paused via `off_sale` / `locked`, upcoming, expired, archived) is persisted so the UI can render the full pricing-wave roadmap: `Tickets.tsx` maps each release to a badge (On sale / Sold out / Paused / Coming soon / Ended / Unavailable) and disables the Buy CTA for non-purchasable waves. A single `sale_status` string is synthesised from ti.to's flag set (`sold_out`, `off_sale`, `expired`, `upcoming`, `archived`, `locked`) — see `functions/src/tickets/tito-api.ts::deriveSaleStatus`.
+Only **`secret`** (invite-only) releases are dropped — server-side before the RTDB write (`isWebsiteVisible`), and again client-side as defence-in-depth. Every other state is persisted so the UI can render the full wave roadmap: `Tickets.tsx` maps each release to a badge (On sale / Sold out / Paused / Coming soon / Ended / Unavailable) and disables the Buy CTA for non-purchasable waves. A single `sale_status` string is synthesised from ti.to's flag set — see `functions/src/tickets/tito-api.ts::deriveSaleStatus`.
 
 ## Speakers & Sessions — Sessionize → Firestore → `/api/lineup`
 
-The `/speakers` and `/sessions` pages render client-side from **Firestore**, which a daily Cloud Function mirrors from **Sessionize**. Visitor browsers never touch Sessionize, and — like tickets — read through the cached `/api/lineup` endpoint, not the Firebase SDK.
+`/speakers` and `/sessions` render client-side from **Firestore**, mirrored daily from **Sessionize** by a Cloud Function. Browsers never touch Sessionize; they read the cached `/api/lineup` endpoint, not the Firebase SDK.
 
 ```
 Cloud Scheduler (every day 06:00, Europe/Prague)
@@ -174,11 +168,11 @@ Browser
 firebase functions:secrets:set SESSIONIZE_ENDPOINT_ID   # Sessionize JSON API endpoint id (or full URL)
 ```
 
-Must be a **JSON API** endpoint exposing the "All data" / "Speakers" view (an embed id returns HTML). Reuses the tickets-domain `SLACK_WEBHOOK_URL` for failure alerts. A truncated/empty Sessionize response is refused before any write (delete-guard), so a bad fetch can't wipe the live lineup. Photos are re-served from Firebase Storage (download-token URLs, publicly readable) so no asset depends on Sessionize's CDN. Requires the same **Firestore database** the invoice flow needs.
+Must be a **JSON API** endpoint exposing the "All data" / "Speakers" view (an embed id returns HTML). Reuses `SLACK_WEBHOOK_URL` for failure alerts. A truncated/empty response is refused before any write (delete-guard). Photos are re-served from Firebase Storage so nothing depends on Sessionize's CDN. Requires the same **Firestore database** as the invoice flow.
 
 ## Company invoices — iDoklad invoice-first flow
 
-Some companies must pay by bank transfer against a real invoice before they can attend — ti.to only takes cards. The `/invoice` page lets them request an invoice; once it's paid we mint a 100%-off ti.to code so they can claim the tickets they already paid for.
+ti.to only takes cards; some companies must pay by bank transfer against an invoice. `/invoice` lets them request one; once paid, we mint a 100%-off ti.to code so they can claim the tickets.
 
 ```
 Browser  /invoice  (InvoiceForm, client:load)
@@ -199,7 +193,7 @@ Cloud Scheduler (hourly) — iDoklad has NO webhooks
              └─ invoices/{id} = { status: completed, discountCode, discountLink }
 ```
 
-The browser never touches Firestore — it calls the `submitInvoiceCallable` callable, so the `invoices` collection stays server-only and input is validated before reaching iDoklad.
+The browser never touches Firestore — it calls `submitInvoiceCallable`, so `invoices` stays server-only and input is validated before reaching iDoklad.
 
 ### Functions
 
@@ -209,7 +203,7 @@ The browser never touches Firestore — it calls the `submitInvoiceCallable` cal
 | `processInvoiceTrigger` | Firestore onCreate `invoices/{id}` | Create the iDoklad contact + issued invoice and email it |
 | `pollPaidInvoicesScheduled` | Cloud Scheduler, hourly | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
 
-> **Why a poller, not a webhook:** iDoklad has no webhooks (every integration polls). So payment is detected by an hourly scheduled check of each outstanding invoice's `PaymentStatus`, not pushed. A paid invoice is therefore claimed up to ~1 h after payment.
+> **Why a poller:** iDoklad has no webhooks. Payment is detected by an hourly check of each outstanding invoice's `PaymentStatus`, so a paid invoice is claimed up to ~1 h after payment.
 
 ### Secrets & config
 
@@ -229,30 +223,30 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 ### Wiring
 
-- **iDoklad OAuth:** iDoklad → Settings → API, create client credentials and copy the client id/secret into the secrets above. The token is issued by `https://identity.idoklad.cz/server/connect/token` (scope `idoklad_api`) — this v1 endpoint needs only client id + secret (no `application_id`/Developer-portal app); lasts ~2 h, no refresh, cached in-process. No webhook to configure — payment is polled.
-- **Invoice email** is sent by iDoklad itself (`POST /Mails/IssuedInvoice/Send`, PDF attached); the company pays by bank transfer using the variable symbol on the invoice. If iDoklad can't send mail, the run still succeeds and the invoice number is posted to Slack to relay manually. Its subject + covering text (plain text — iDoklad wraps the body in its own template) come from `buildInvoiceEmail` in `functions/src/invoice/email.ts`.
-- **Discount-code email** is branded HTML built in `functions/src/invoice/email-template.ts` (dark DevFest palette, logo from `https://devfest.cz/logo.png`, table-based markup that survives Outlook), with a plain-text alternative. To preview a change, build `functions/` and render `buildDiscountEmail(...).html` to a file.
-- **Invoice fields** are seeded from iDoklad's `GET /IssuedInvoices/Default` template (currency, payment option, numeric sequence, dates) and overridden with the partner, line, and maturity — so account-specific ids are never hardcoded. The contact's `CountryId` likewise comes from `GET /Contacts/Default` (the form's free-text country is stored but not mapped to an iDoklad country id; foreign companies are handled manually).
-- **ti.to** must have release(s) whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`). Their price drives the invoice amount and the 100%-off code is scoped to them.
-- **Frontend call:** the form invokes the `submitInvoiceCallable` **callable** via the Functions SDK (`getFunctions(app, 'europe-west1')` → `httpsCallable`). No endpoint URL to configure — the SDK resolves it from the Firebase config and the same FirebaseApp that App Check is initialised on.
-- **App Check (abuse protection):** `submitInvoiceCallable` is a callable with `enforceAppCheck: true`. The Functions SDK auto-attaches the App Check token (reCAPTCHA Enterprise) and the framework rejects any request without a valid one *before* the handler runs — so bots/curl can't trigger invoices or emails. The callable protocol also handles CORS. For local dev, set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN` and register the printed debug token (App Check → Apps → Manage debug tokens).
+- **iDoklad OAuth:** iDoklad → Settings → API, create client credentials, copy id/secret into the secrets above. Token from `https://identity.idoklad.cz/server/connect/token` (scope `idoklad_api`) — needs only client id + secret (no Developer-portal `application_id`); ~2 h, no refresh, cached in-process. No webhook to configure.
+- **Invoice email** is sent by iDoklad (`POST /Mails/IssuedInvoice/Send`, PDF attached); the company pays by bank transfer using the variable symbol. If iDoklad can't send, the run still succeeds and the invoice number goes to Slack for manual relay. Subject + text (plain text — iDoklad wraps the body in its own template) come from `buildInvoiceEmail` in `functions/src/invoice/email.ts`.
+- **Discount-code email** is branded HTML from `functions/src/invoice/email-template.ts` (dark palette, logo from `https://devfest.cz/logo.png`, table markup that survives Outlook) with a plain-text alternative. To preview, build `functions/` and render `buildDiscountEmail(...).html` to a file.
+- **Invoice fields** are seeded from `GET /IssuedInvoices/Default` (currency, payment option, numeric sequence, dates) and overridden with partner, line and maturity — no hardcoded account ids. The contact's `CountryId` comes from `GET /Contacts/Default` (the form's free-text country is stored, not mapped; foreign companies are handled manually).
+- **ti.to** must have release(s) whose title contains `INVOICE_RELEASE_MATCH` (default `company funded`). Their price drives the invoice amount; the 100%-off code is scoped to them.
+- **Frontend call:** the form calls the `submitInvoiceCallable` callable via the Functions SDK (`getFunctions(app, 'europe-west1')` → `httpsCallable`). No endpoint URL to configure.
+- **App Check:** `submitInvoiceCallable` has `enforceAppCheck: true`. The SDK auto-attaches the token and the framework rejects requests without a valid one *before* the handler, so bots/curl can't trigger invoices or emails. The callable protocol handles CORS. For local dev, set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN` and register the printed debug token (App Check → Apps → Manage debug tokens).
 
 ### Firestore rules
 
-> **One-time setup:** create a **Firestore database (Native mode)** in the Firebase console once. It backs both the `invoices` collection and the Sessionize `speakers`/`sessions` sync — without it `submitInvoiceCallable` / `processInvoiceTrigger` and `refreshSessionizeScheduled` all fail. (RTDB, used only for the ticket cache, is separate.)
+> **One-time setup:** create a **Firestore database (Native mode)** in the Firebase console. It backs `invoices` and the Sessionize `speakers`/`sessions` sync; without it those functions fail. (RTDB, used only for the ticket cache, is separate.)
 
-`firestore.rules` denies all client access to `invoices` (company PII; written/read only by Cloud Functions via the Admin SDK, which bypasses rules). It is **not** wired into `firebase.json` on purpose — the Firestore ruleset is project-global and the project is shared with the mobile app, so auto-deploying would clobber the app's rules. Merge the `invoices` block into the project's live ruleset in the Firebase console (same manual approach as `database.rules.json`).
+`firestore.rules` denies all client access to `invoices` (company PII; only Cloud Functions via the Admin SDK touch it). It is **not** wired into `firebase.json` — the Firestore ruleset is project-global and shared with the mobile app, so auto-deploying would clobber the app's rules. Merge the `invoices` block into the live ruleset in the console (same as `database.rules.json`).
 
 ## Analytics (GA4)
 
-Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Architecture and the gotchas behind it are in [CLAUDE.md](CLAUDE.md#firebase-integration-srclibfirebasets); this section is the console-side setup, which is **not** in the repo.
+Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Architecture and gotchas: [CLAUDE.md](CLAUDE.md#firebase-integration-srclibfirebasets). This section is the console-side setup, **not** in the repo.
 
-- **Mark the conversions as key events.** GA4 → Admin → Events → mark as key event: `ticket_purchase_confirmed` (ti.to purchase completed), `sign_up` (newsletter), `generate_lead` (company invoice request). `begin_checkout` is a recommended ecommerce event and needs no marking; pair it with `ticket_purchase_confirmed` for the checkout drop-off rate.
-- **Register the invitation parameters as custom dimensions.** GA4 → Admin → Custom definitions → create two event-scoped dimensions on `invite_member` (the `team.json` id) and `invite_member_name`. `begin_checkout` from `/invite/<member>` carries both, but GA4 does not report on an unregistered custom parameter — until they exist, the per-member attribution the invitation channel is built for is collected and invisible. Registration is not retroactive, so do it before the links go out.
-- **No revenue in reports.** ti.to's thank-you redirect carries no order id or amount, so `ticket_purchase_confirmed` deliberately isn't GA4's `purchase` and carries no value. Ticket revenue lives in ti.to, not GA4. `begin_checkout` and `generate_lead` do carry `value` (gross CZK), so *intent* is measurable.
-- **Consent Mode is already the source of truth** — do not add a second GA4 tag or a GTM container. A visitor who declines still produces cookieless, identifier-free pings by design; those are aggregate-only and cannot be attributed to a user or a session.
-- **Development traffic is excluded in code**, not by a GA4 filter: measurement is limited to `devfest.cz` (and subdomains) plus the live Hosting default domains `devfest-public.web.app` / `devfest-public.firebaseapp.com`, so `npm run dev` and `devfest-public--<channel>.web.app` preview channels send nothing. To measure a preview deliberately, build it with `PUBLIC_ANALYTICS_ALLOWED_HOSTS=<host>`.
-- **Verifying a change** needs a real host: use GA4 DebugView, or the browser devtools Network tab filtered to `/g/collect`. Check which host the hits go to — EEA traffic can be routed to `region1.google-analytics.com`, which is why the CSP `connect-src` in `firebase.json` allows `https://*.google-analytics.com` rather than just `www.`.
+- **Mark conversions as key events.** GA4 → Admin → Events: `ticket_purchase_confirmed`, `sign_up` (newsletter), `generate_lead` (company invoice). `begin_checkout` is a recommended ecommerce event and needs no marking; pair it with `ticket_purchase_confirmed` for checkout drop-off.
+- **Register invitation parameters as custom dimensions.** GA4 → Admin → Custom definitions → two event-scoped dimensions: `invite_member` (the `team.json` id) and `invite_member_name`. GA4 does not report on unregistered custom parameters, and registration is not retroactive — do it before the links go out.
+- **No revenue in reports.** ti.to's thank-you redirect carries no order id or amount, so `ticket_purchase_confirmed` isn't GA4's `purchase` and has no value. Revenue lives in ti.to. `begin_checkout` and `generate_lead` carry `value` (gross CZK), so *intent* is measurable.
+- **Consent Mode is the source of truth** — no second GA4 tag, no GTM container. A declining visitor produces cookieless, identifier-free pings by design (aggregate-only).
+- **Development traffic is excluded in code**, not by a GA4 filter: measurement is limited to `devfest.cz` (and subdomains) plus `devfest-public.web.app` / `devfest-public.firebaseapp.com`. `npm run dev` and preview channels send nothing. To measure a preview, build with `PUBLIC_ANALYTICS_ALLOWED_HOSTS=<host>`.
+- **Verifying a change** needs a real host: GA4 DebugView, or devtools Network filtered to `/g/collect`. EEA traffic can route to `region1.google-analytics.com`, which is why the CSP `connect-src` in `firebase.json` allows `https://*.google-analytics.com`.
 
 ## Key Pages
 

@@ -1,18 +1,16 @@
 /**
- * Outbound HTTP shared by every domain: Sessionize, ti.to, iDoklad, Slack, Resend.
- * A bare `fetch()` in `functions/` is a bug — it has no timeout, so a hung upstream
- * rides the whole function timeout (up to 300s on a scheduler), and no retry, so a
- * single connect-level blip costs a whole run (observed: a bare `fetch failed` at
- * ~10.7s killed a day's Sessionize sync).
+ * Outbound HTTP shared by every domain. A bare `fetch()` in `functions/` is
+ * a bug: no timeout (a hung upstream rides the whole function timeout) and
+ * no retry (one connect blip once killed a day's Sessionize sync).
  *
- * **Retries are off for anything that isn't idempotent**, enforced here rather than
- * by convention: a retried POST can mint a second invoice, discount code or email.
- * `GET`/`HEAD` retry automatically; everything else needs `retryUnsafe`, which only
- * a Slack line and an OAuth token fetch pass.
+ * **Retries are off for anything non-idempotent**, enforced here: a retried
+ * POST can mint a second invoice, code or email. `GET`/`HEAD` retry
+ * automatically; everything else needs `retryUnsafe` (only Slack and the
+ * OAuth token fetch pass it).
  *
- * Failures throw with the label, attempt count and unwrapped cause, so an alert
- * reads `ti.to releases unreachable after 3 attempts: fetch failed
- * (UND_ERR_CONNECT_TIMEOUT)` instead of `fetch failed`.
+ * Failures throw with label, attempt count and unwrapped cause:
+ * `ti.to releases unreachable after 3 attempts: fetch failed
+ * (UND_ERR_CONNECT_TIMEOUT)`.
  */
 
 import { logger } from 'firebase-functions/v2';

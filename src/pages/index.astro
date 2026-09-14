@@ -40,26 +40,14 @@ const sizing = (img: ImageMetadata) =>
 		? ({ format: 'svg', layout: 'none' } as const)
 		: ({ widths: STRIP_WIDTHS, sizes: STRIP_SIZES } as const);
 
-// The facts band. Three figures, and deliberately NOT the date or the venue:
-// both already sit in the hero's footing strip a screen above, in the header
-// stamp, and in the footer. Repeating them here spent the band's whole budget
-// restating what the visitor had just read.
+// The facts band. Deliberately NOT the date or venue — both already sit in
+// the hero strip, header stamp and footer. Figures come from the partner
+// deck and are kept in step by hand.
 //
-// Both come from the partner deck, so the site and the deck quote the same
-// event — neither is derivable from the repo, so they have to be kept in step
-// with it by hand. Three tiles is the hard cap: a fourth pushes the row under
-// the 320px-per-column floor and the labels start wrapping (see `.facts` in
-// BaseLayout.scss).
-//
-// Labels are length-constrained. Uppercase mono at this tracking fits ~33
-// characters on one line at 1280; past that a label breaks onto two and the row
-// stops reading as a row. Check any new wording at 1280, not just at 1440.
-// Two, not three. The middle slot had no fact strong enough to stand beside
-// these: a bare tracks count is the smallest mark in the row and reads as a
-// rank rather than a quantity, and everything else worth saying (side
-// programme, community-run, inclusive) is a phrase, not a figure. Two tiles
-// take half the row each, which is what lets the figures run at --fs-stat's
-// top end.
+// Two tiles, not three: no third fact was strong enough (a bare tracks count
+// reads as a rank), and two halves let the figures run at --fs-stat's top
+// end. Three is the hard cap (a fourth breaks the 320px column floor).
+// Labels fit ~33 characters on one line at 1280 — check new wording there.
 const facts = [
 	{ figure: '350+', label: 'Medior & senior developers, CEE' },
 	{ figure: '11th', label: 'Edition. Based in Prague.' },

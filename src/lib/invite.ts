@@ -1,15 +1,10 @@
 /**
- * Copy for the team's personal invitation pages (`/invite/<member>`).
+ * Copy for the personal invitation pages (`/invite/<member>`) — an unlisted
+ * referral channel, one page per person in `src/content/team.json`. See
+ * `src/pages/invite/[member].astro`.
  *
- * These pages are an unlisted referral channel: each of the eleven people in
- * `src/content/team.json` gets one page, written in their voice, which they
- * share themselves. They are `noindex`, kept out of the sitemap and linked from
- * nowhere on the site — see `src/pages/invite/[member].astro`.
- *
- * This is v1 GENERIC copy, agreed as a deliberate stop-gap: the members will
- * write their own paragraphs later, and when they do only `body` changes here.
- * `roleLine` is the one line that varies between the eleven pages, so they are
- * not literally the same page with a name swapped.
+ * v1 GENERIC copy, a deliberate stop-gap: members write their own paragraphs
+ * later, and then only `body` changes. `roleLine` is the one line that varies.
  */
 
 /** The facts the copy states out loud. Kept here so all eleven pages agree. */
@@ -20,12 +15,8 @@ export const INVITE_EVENT = {
 	stamp: 'Oct 30, 2026 · Prague',
 } as const;
 
-/**
- * The closing line, chosen by the member's `role`. Six variants cover all
- * eleven people; an unknown role falls back to the organiser line rather than
- * dropping the line altogether (a missing sentence would be the one visible
- * difference between an invite and a broken invite).
- */
+/** The closing line, by `role`. An unknown role falls back to the organiser
+ * line rather than dropping the sentence. */
 const ROLE_LINES: Record<string, string> = {
 	'lead org': "I'm the one who has to answer for how the day goes. Come make it easy.",
 	'deputy lead org': "I'm the one who has to answer for how the day goes. Come make it easy.",
@@ -49,12 +40,8 @@ export function roleLine(role?: string): string {
 	return ROLE_LINES[role.trim().toLowerCase()] ?? FALLBACK_ROLE_LINE;
 }
 
-/**
- * First name only. The invitation is one person speaking to one person, so the
- * poster line reads "Eliška is putting you on the list", not the full record.
- * `split` on whitespace is enough for this roster — it is a fixed eleven names,
- * not user input.
- */
+/** First name only — one person speaking to one person. `split` on
+ * whitespace is enough for a fixed roster. */
 export function firstName(name: string): string {
 	return name.trim().split(/\s+/)[0];
 }

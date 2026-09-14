@@ -70,11 +70,9 @@ function groupReleases(releases: TitoRelease[]): ReleaseGroup[] {
 }
 
 /**
- * Report the click on a wave's Buy CTA as GA4's recommended `begin_checkout`.
- * Checkout happens on ti.to, on a domain we don't measure, so this is the last
- * thing GA4 can see of a ticket sale — the outbound click itself is invisible to
- * it otherwise. Items carry only the buyable variants of the wave, priced gross
- * (what the visitor actually pays), matching the figure on the stub.
+ * Report a Buy CTA click as GA4's `begin_checkout`. Checkout runs on ti.to,
+ * so this is the last thing GA4 sees of a sale. Items carry only the
+ * buyable variants, priced gross (what the visitor pays).
  */
 function trackBeginCheckout(group: ReleaseGroup, statuses: ReleaseStatus[]): void {
 	const items = group.variants
@@ -107,13 +105,9 @@ function round2(n: number): number {
 	return Math.round(n * 100) / 100;
 }
 
-/**
- * Every render path is the same `#tickets` section, so its class list is stated
- * once. `anchor-target` (BaseLayout.scss) is what makes "Get tickets" land on
- * the heading instead of on the section's opening air — hand-repeated on each
- * state, the next state added would silently drop it and the anchor would break
- * only in that state.
- */
+/** Every render path is the same `#tickets` section, so the class list is
+ * stated once. `anchor-target` makes "Get tickets" land on the heading;
+ * repeated per state, a new state would silently drop it. */
 const sectionClass = `${s.tickets} anchor-target`;
 
 export default function Tickets() {
@@ -190,12 +184,10 @@ export default function Tickets() {
 	const hasEvent = Boolean(accountSlug && eventSlug);
 
 	if (state.status === 'empty') {
-		// The section renders even with no event slugs (an empty cache — the state
-		// before `refreshTicketsScheduled` has ever run). Returning null here used
-		// to delete `#tickets` from the document after hydration, and everything
-		// that links to `/#tickets` (the header action, an invitation's fallback
-		// CTA) then dropped the visitor at the top of the home page with no ticket
-		// section anywhere. Without slugs only the ti.to link is dropped.
+		// Render even with no event slugs (empty cache, before the first
+		// refresh). Returning null deleted `#tickets` after hydration, so every
+		// `/#tickets` link dropped the visitor at the top of the page. Without
+		// slugs only the ti.to link is dropped.
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
 				<header className="head-split">
@@ -250,15 +242,11 @@ export default function Tickets() {
 					const lead = prices[0];
 					const manyPrices = new Set(prices.map((p) => p.primary)).size > 1;
 					const description = groupDescription(group.name, group.description);
-					// ti.to's sale window, and ONLY for a wave a visitor can still buy
-					// into: the deadline is fed the purchasable variants, judged by the
-					// same `releaseStatus()` that prints the badge, never by `end_at`
-					// itself. Otherwise the two disagree — production has an Early bird
-					// closed by hand ahead of its window, so the row read "Ended" beside
-					// "Ends Oct 15". A closed, sold-out or upcoming wave shows no date.
-					// Most releases still carry no `end_at` either, so this is null far
-					// more often than not — the line is simply absent then, never an
-					// empty slot or an "Invalid Date".
+					// Deadline ONLY for a wave a visitor can still buy into: fed the
+					// purchasable variants per the same `releaseStatus()` that prints
+					// the badge, never `end_at` alone — otherwise a hand-closed wave
+					// reads "Ended" beside "Ends Oct 15". Null far more often than not
+					// (most releases carry no `end_at`); the line is then absent.
 					const deadline = waveDeadline(
 						group.variants.filter((_, vi) => statuses[vi].purchasable).map((v) => v.release),
 					);

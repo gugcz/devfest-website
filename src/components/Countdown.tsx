@@ -43,11 +43,9 @@ interface Props {
 	 */
 	compact?: boolean;
 	/**
-	 * Drop the seconds unit — `54D 10H 34M`, one rhythm. Seconds ticking next
-	 * to the hero's own rotating topic is a second, unrelated clock in the
-	 * same shot. Without seconds the display only needs to update once a
-	 * minute; the 15s interval is just slack so a stale minute never survives
-	 * more than that long, not a tick visitors are meant to notice.
+	 * Drop the seconds — `54D 10H 34M`. Seconds ticking beside the hero's
+	 * rotating topic is a second clock in the same shot. The 15s interval is
+	 * slack so a stale minute never survives long.
 	 */
 	showSeconds?: boolean;
 }
@@ -63,13 +61,8 @@ export default function Countdown({ compact = false, showSeconds = true }: Props
 	}, [showSeconds]);
 
 	// The clock is decorative — screen readers get the static "doors open"
-	// sentence instead. A per-second aria-label would spam AT without adding
-	// value, since the exact date is already given.
-	//
-	// Set as one continuous readout (069:22:43:21) rather than four bordered
-	// stubs: the stub carried a red header strip and a stamped-in digit
-	// animation per tick, which read as chrome around the number instead of
-	// the number itself.
+	// sentence; a per-second aria-label would spam AT. One continuous readout
+	// rather than four bordered stubs, which read as chrome around the number.
 	return (
 		<>
 			<span className={s.srOnly}>Doors open on 30 October 2026 at 9:00 AM Central European Time.</span>
