@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5.1.0
-      - uses: actions/setup-node@v5.0.0
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
         with:
           node-version: 22
           cache: npm
@@ -39,7 +39,7 @@ jobs:
       # the islands show their "unavailable" state. Functions deploy only via
       # firebase-functions-merge.yml. To verify SSR-function CHANGES, run locally.
       - name: Deploy to Firebase Hosting (preview channel)
-        uses: w9jds/firebase-action@v15.22.3
+        uses: w9jds/firebase-action@v15.30.0
         with:
           args: hosting:channel:deploy pr-${{ github.event.pull_request.number }} --project devfest-cz-app --expires 7d
         env:

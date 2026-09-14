@@ -25,8 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5.1.0
-      - uses: actions/setup-node@v5.0.0
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
         with:
           node-version: 22
           cache: npm
@@ -39,7 +39,7 @@ jobs:
       # keep-alive failure that breaks FirebaseExtended/action-hosting-deploy
       # when it runs firebase-tools on the runner's security-patched Node.
       - name: Deploy to Firebase Hosting (live)
-        uses: w9jds/firebase-action@v15.22.3
+        uses: w9jds/firebase-action@v15.30.0
         with:
           args: deploy --only hosting --project devfest-cz-app
         env:
