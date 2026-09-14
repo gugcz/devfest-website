@@ -3,13 +3,8 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import {
-	columnsFor,
-	paddedCount,
-	getActivePartnerTiers,
-	getMediaPartners,
-	getCommunityPartners,
-} from '../lib/partners';
+import Closer from '../components/Closer.astro';
+import { columnsFor, getActivePartnerTiers, getMediaPartners, getCommunityPartners } from '../lib/partners';
 
 const activeTiers = await getActivePartnerTiers();
 
@@ -21,11 +16,16 @@ const plateRows = [
 ].filter((row) => row.partners.length > 0);
 
 // One row shape for the whole page: id, label, partners, and the column count
-// that IS the tier signal (cell size encodes value — see `columnsFor`).
+// that IS the tier signal (cell size encodes value — see `columnsFor`). No pad
+// cells — a row that doesn't divide evenly re-flows and simply leaves the
+// last line short, left-aligned by the grid itself.
 const rows = [...activeTiers, ...plateRows].map((row) => {
 	const cols = columnsFor(row.id, row.partners.length);
-	const total = paddedCount(row.partners.length, cols);
-	return { ...row, cols, emptyCells: total - row.partners.length };
+	// Mobile folds every multi-column row to 2-up (platinum stays 1-up). An
+	// odd count in that grid staircases its last cell unless it spans both
+	// columns — flagged here so the CSS only has to key off one attribute.
+	const oddOnMobile = cols > 1 && row.partners.length % 2 !== 0;
+	return { ...row, cols, oddOnMobile };
 });
 
 // ─── LOGO OPTIMISATION ─────────────────────────────────────────────────────
@@ -43,61 +43,16 @@ const logoFor = (logo: string): ImageMetadata =>
 	logoByFile.get(logo.split('/').pop() as string) as ImageMetadata;
 
 // SVG wordmarks stay vector — `format="svg"` makes astro:assets copy them
-// through unchanged (rasterising a logo would be a downgrade); rasters get a
-// real srcset sized to the box the mark actually renders in.
-//
-// ─── OPTICAL NORMALISATION ────────────────────────────────────────────────
-// Every cell is the same size now (see `.logo-grid` in partners.scss), but
-// equal cells do not make equal-looking logos: a cap on WIDTH renders a square
-// glyph as a huge block beside a wordmark, and a cap on HEIGHT renders that
-// same wordmark as a hairline of type. What reads as "the same weight" is
-// roughly equal ink AREA, so each mark is given a box of the same area, shaped
-// to its own aspect ratio, and only then clamped so nothing touches the cell's
-// edges. A 5:1 wordmark lands at ~190×38, a square glyph at ~76×76.
-const LOGO_AREA = 7200;
-const LOGO_MAX_W = 230;
-const LOGO_MAX_H = 76;
-// A plated mark (the `plated` flag in the partners collection) ships with its
-// own padding and background baked into the file, so the same area cap would
-// render the ink inside it far too small. It gets a larger box and fills the
-// cell's width.
-const PLATE_SCALE = 2.1;
-
-const opticalBox = (img: ImageMetadata, plated = false) => {
-	const ratio = img.width && img.height ? img.width / img.height : 3;
-	const area = LOGO_AREA * (plated ? PLATE_SCALE : 1);
-	const maxW = plated ? 240 : LOGO_MAX_W;
-	const maxH = plated ? 120 : LOGO_MAX_H;
-	let height = Math.sqrt(area / ratio);
-	let width = height * ratio;
-	if (width > maxW) {
-		width = maxW;
-		height = width / ratio;
-	}
-	if (height > maxH) {
-		height = maxH;
-		width = height * ratio;
-	}
-	return { width: Math.round(width), height: Math.round(height) };
-};
-
-// One call site's worth of per-logo props: the optical box as custom
-// properties, plus a srcset that matches it (an `w`-descriptor image needs
-// `sizes` to state its real layout width, or the browser picks the wrong file).
-const logoProps = (logo: string, plated = false) => {
+// through unchanged (rasterising a logo would be a downgrade). Every mark,
+// SVG or raster, renders at its own intrinsic ratio: `.logo` in partners.scss
+// clamps it with a per-tier `max-height` + `object-fit: contain`, so what
+// makes every mark read as the same optical weight is the shared height
+// ceiling, not a per-logo computed box.
+const logoProps = (logo: string) => {
 	const img = logoFor(logo);
-	const box = opticalBox(img, plated);
-	const shared = {
-		src: img,
-		style: `--logo-w:${box.width}px;--logo-h:${box.height}px`,
-	};
 	return img.format === 'svg'
-		? { ...shared, format: 'svg' as const, layout: 'none' as const }
-		: {
-				...shared,
-				widths: [box.width, box.width * 2, box.width * 3],
-				sizes: `${box.width}px`,
-			};
+		? { src: img, format: 'svg' as const, layout: 'none' as const }
+		: { src: img, width: img.width, height: img.height };
 };
 
 const DECK_READY = true;
@@ -129,65 +84,38 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 							{row.label}<span class="sr-only"> partners</span>
 						</h2>
 					</div>
-					<ul class="logo-grid" data-cols={row.cols} style={`--cols:${row.cols}`}>
+					<ul
+						class="logo-grid"
+						data-tier={row.id}
+						data-cols={row.cols}
+						data-odd={row.oddOnMobile ? 'true' : undefined}
+						style={`--cols:${row.cols}`}
+					>
 						{row.partners.map((p) => (
 							<li class="logo-cell">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo, p.plated)} />
+										<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo)} />
 									</a>
 								) : (
-									<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo, p.plated)} />
+									<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo)} />
 								)}
 							</li>
-						))}
-						{/* Pads the row to a full grid line (both this column count and
-						    the mobile 2-up grid) so a tier that doesn't divide evenly
-						    never staircases its last row. */}
-						{Array.from({ length: row.emptyCells }).map(() => (
-							<li class="logo-cell logo-cell--empty" aria-hidden="true" />
 						))}
 					</ul>
 				</div>
 			</section>
 		))}
-		<!-- CLOSING STATEMENT — the page's one red field -->
-		<section class="band band--accent partners-cta" aria-labelledby="partners-cta-title">
-			<div class="band-inner closer reveal">
-				<div>
-					<p class="eyebrow closer-eyebrow">Get in touch</p>
-					<h2 id="partners-cta-title" class="display closer-title">
-						Back the<br />next <span class="red">case</span>.
-					</h2>
-				</div>
-
-				<div class="closer-side">
-					<p class="closer-note">
-						Tell us what you&rsquo;re after &mdash; brand reach, hiring, or backing the
-						community &mdash; and we&rsquo;ll find the tier that fits.
-					</p>
-
-					<p class="partners-contact">
-						<span class="contact-name">{FILIP.name} &mdash; {FILIP.role}</span>
-						<a class="email-link" href={`mailto:${FILIP.email}`}>{FILIP.email}</a>
-					</p>
-
-					<div class="closer-actions">
-						{DECK_READY ? (
-							<a class="btn-primary" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
-								See partnership deck
-							</a>
-						) : (
-							<span class="partners-cta-soon" aria-disabled="true">
-								<span class="partners-cta-label">Partnership deck</span>
-								<span class="partners-cta-stamp" aria-hidden="true">Coming soon</span>
-							</span>
-						)}
-						<a class="btn-ghost" href={`mailto:${FILIP.email}`}>Email Filip</a>
-					</div>
-				</div>
-			</div>
-		</section>
+		<Closer
+			titleHtml="Back the next case."
+			tone="plain"
+			titleId="partners-cta-title"
+			actions={[
+				DECK_READY
+					? { href: PRESENTATION_URL, label: 'See partnership deck', external: true }
+					: { href: `mailto:${FILIP.email}`, label: 'Email Filip' },
+			]}
+		/>
 	</main>
 </BaseLayout>
 

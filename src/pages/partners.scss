@@ -1,94 +1,4 @@
 @use '../styles/type' as *;
-	.partners-contact {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		min-width: 0;
-	}
-
-	.contact-name {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-title-compact);
-		color: var(--color-text);
-	}
-
-	.email-link {
-		@include mono(var(--fs-label-lg), 0.04em);
-		color: var(--color-text);
-		align-self: flex-start;
-		display: inline-flex;
-		align-items: center;
-		min-height: 2.75rem;
-		text-decoration: underline;
-		text-decoration-thickness: 1px;
-		text-decoration-color: var(--rule-red);
-		text-underline-offset: 4px;
-		word-break: break-all;
-		transition: color 0.2s, text-decoration-color 0.2s;
-
-		&::after {
-			content: '\2197';
-			margin-left: 0.5rem;
-			text-decoration: none;
-			display: inline-block;
-			transition: transform 0.25s;
-		}
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			text-decoration-color: var(--color-accent-hot);
-			// Address lights up like neon under the lamp.
-		}
-
-		&:hover::after,
-		&:focus-visible::after {
-			transform: translate(2px, -2px);
-		}
-	}
-
-
-	// Flat "Coming soon" placeholder — outline, no rotation, no stamp ink.
-	.partners-cta-soon {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.7rem;
-		@include mono(var(--fs-label-lg), 0.22em, uppercase);
-		color: rgba(240, 237, 230, 0.75);
-		background: transparent;
-		border: 1px solid var(--rule-strong);
-		border-radius: var(--radius);
-		padding: 1.05rem 2.4rem;
-		cursor: not-allowed;
-	}
-
-	.partners-cta-label {
-		opacity: 0.92;
-	}
-
-	.partners-cta-stamp {
-		@include mono(var(--fs-label), 0.28em, uppercase);
-		padding: 0.22rem 0.55rem;
-		color: var(--color-accent-hot);
-		border: 1px solid var(--rule-red);
-		border-radius: var(--radius);
-	}
-
-
-	/* ===================== RESPONSIVE ===================== */
-	@media (max-width: 900px) {
-
-		.partners-cta-soon {
-			flex-wrap: wrap;
-			gap: 0.55rem;
-			white-space: normal;
-		}
-		.partners-cta-stamp {
-			font-size: var(--fs-label);
-			letter-spacing: 0.24em;
-			padding: 0.2rem 0.45rem;
-		}
-	}
 
 	/* ===================== THE PARTNER WALL ===================== */
 	// One section shape for every group of partners on the page — the four
@@ -148,13 +58,12 @@
 	// sharing hairlines with their neighbours. No panel fill, no drop shadow,
 	// no floating tiles.
 	//
-	// Cell SIZE now encodes tier — `--cols` is set per row in partners.astro
-	// (`columnsFor`): platinum full width (or half at two sponsors), diamond
-	// 2-up, gold 3-up, silver/media/community 4-up. Partners is the page a
-	// sponsor screenshots into a report, so the biggest cheque has to be the
-	// biggest thing on the page, not a cell the same size as the smallest.
+	// `--cols` is set per row in partners.astro (`columnsFor`) — re-flow, never
+	// pad: the count is however many columns that row's own partners fill, capped
+	// at the tier's ceiling. No `.logo-cell--empty` filler cell exists any more;
+	// a short last row simply ends, left-aligned by the grid itself.
 	.logo-grid {
-		--cell-height: 200px;
+		--cell-height: 130px;
 
 		list-style: none;
 		margin: 0;
@@ -164,6 +73,12 @@
 		display: grid;
 		grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
 		width: 100%;
+
+		// Tier ladder for the shared height ceiling every logo in the row is
+		// clamped to (`.logo`, below) — the biggest cheque gets the tallest
+		// cell. Platinum has no ceiling: it sets its own rules just below.
+		&[data-tier='diamond'] { --cell-height: 190px; }
+		&[data-tier='gold'] { --cell-height: 150px; }
 	}
 
 	.logo-cell {
@@ -213,15 +128,11 @@
 			text-decoration: none;
 		}
 
-		// The box is computed per logo in partners.astro (`opticalBox`) and
-		// arrives as --logo-w / --logo-h: equal ink AREA, shaped to the mark's
-		// own aspect ratio, so a wide wordmark and a square glyph read as the
-		// same weight instead of being forced to the same pixel width.
-		// `height: auto` rather than the computed --logo-h: the two agree by
-		// construction (the box is the mark's own ratio), and letting the
-		// height follow the width keeps the mark at its true proportions when
-		// a narrow cell clamps it to `max-width: 100%` — a fixed height there
-		// letterboxes the mark inside a box wider than it renders.
+		// Every mark renders at its own intrinsic ratio, clamped by a shared
+		// per-tier `max-height` (the row's `--cell-height`) with
+		// `object-fit: contain` — the height ceiling is what makes a wordmark
+		// and a square glyph read as the same optical weight, not a per-logo
+		// computed box.
 		//
 		// One ink white for every mark on the wall — `brightness(0) invert(1)`
 		// flattens whatever colour the source ships (a blue bank block, a green
@@ -230,10 +141,12 @@
 		// `.is-plated` (a logo with its own baked-in background/padding) is
 		// exempt: inverting a mark that already carries its own composited
 		// ground would erase it, not recolour it — these stay native colour
-		// and are called out as an open point in the PR.
+		// and are called out as an open point in the PR. Two multi-tone marks
+		// (JetBrains, dotekománie) still go through the filter too, for lack
+		// of a mono master on hand — also called out as an open point.
 		.logo {
 			display: block;
-			width: var(--logo-w, 180px);
+			width: auto;
 			height: auto;
 			max-width: 100%;
 			max-height: calc(var(--cell-height) - 3.2rem);
@@ -259,41 +172,55 @@
 		}
 	}
 
-	// An empty pad plate — closes out a row that doesn't divide evenly into
-	// its tier's column count, so the last row never staircases. No content,
-	// no hover state: it is grid filler, not a partner.
-	.logo-cell--empty {
-		border-style: dashed;
-		border-color: var(--rule);
+	// Platinum — full width always (`columnsFor` returns 1 regardless of
+	// count), and the one row exempt from the shared height ceiling: the
+	// plate's height follows its logo, not a fixed box, and the logo itself
+	// is sized off the CELL rather than clamped to a tier max-height — it is
+	// the biggest cheque, so it gets the most room a mark can ask for.
+	.logo-grid[data-tier='platinum'] {
+		--cell-height: auto;
+	}
+
+	.logo-grid[data-tier='platinum'] .logo-cell {
+		min-height: 0;
+	}
+
+	.logo-grid[data-tier='platinum'] .logo {
+		width: 40%;
+		max-width: 420px;
+		max-height: none;
 	}
 
 	@media (max-width: 900px) {
 		.logo-grid {
-			--cell-height: 160px;
+			--cell-height: 120px;
+
+			&[data-tier='diamond'] { --cell-height: 150px; }
+			&[data-tier='gold'] { --cell-height: 130px; }
 		}
 	}
 
 	@media (max-width: 600px) {
 		// Two per row, never N — every multi-column row on the wall folds to
-		// the same 2-up grid on a phone (padded to an even count in
-		// partners.astro, so this never staircases either). A single-column
-		// row (platinum) stays single-column: one full-width sponsor is not a
-		// staircase, and it needs no padding partner to pair with.
+		// the same 2-up grid on a phone. A single-column row (platinum) stays
+		// single-column. `data-odd` (set in partners.astro when the row's own
+		// count is odd) spans the last cell across both columns instead of
+		// leaving a staircased gap.
 		.logo-grid {
-			--cell-height: 140px;
+			--cell-height: 110px;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 
 			&[data-cols='1'] {
 				grid-template-columns: 1fr;
 			}
+
+			&[data-odd='true'] .logo-cell:last-child {
+				grid-column: 1 / -1;
+			}
 		}
 
 		.logo-cell {
 			a { padding: 1.1rem 1rem; }
-
-			.logo {
-				max-width: 100%;
-			}
 		}
 	}
 
@@ -312,71 +239,4 @@
 			}
 		}
 
-		.email-link::after,
-		.email-link:hover::after,
-		.email-link:focus-visible::after {
-			transition: none;
-			transform: none;
-		}
-
-	}
-
-	/* ===================== CLOSING STATEMENT ===================== */
-	// A dark gap before the red field, from the section spacing scale. The
-	// `.logo-wall` section above carries zero bottom padding by design, so
-	// the seam can land flush against this section's own padding-top with
-	// no visible dark ground between them. Fixed here, on this page's own
-	// closing section, rather than as a margin on `.band--accent` itself —
-	// that class is shared by every other subpage's `Closer`, each of which
-	// already sits far enough from its own preceding `.band` (which always
-	// carries a full top+bottom `--section-y`).
-	.partners-cta {
-		margin-top: var(--section-y);
-	}
-
-	// Contact block on the accent field. Ink inverts globally via
-	// `.band--accent` in BaseLayout.scss; only the partner-specific bits
-	// (the named contact, the disabled deck stamp) are restated here.
-	.partners-contact {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-		margin: 0;
-	}
-
-	.contact-name {
-		@include mono(var(--fs-label), 0.22em, uppercase);
-		// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
-		color: var(--on-accent);
-	}
-
-	:global(.band--accent) .email-link {
-		@include mono(var(--fs-ui));
-		color: var(--on-accent);
-		text-decoration: underline;
-		text-decoration-thickness: 1px;
-		text-underline-offset: 4px;
-		text-decoration-color: rgba(247, 239, 230, 0.85);
-		word-break: break-word;
-		transition: text-decoration-color 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			text-decoration-color: var(--on-accent);
-		}
-	}
-
-	.partners-cta-soon {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.7rem;
-		padding: 1.25rem 2rem;
-		border: 1px dashed rgba(247, 239, 230, 0.45);
-		border-radius: var(--radius);
-		@include mono(var(--fs-label-lg), 0.22em, uppercase);
-		color: var(--on-accent);
-	}
-
-	.partners-cta-stamp {
-		color: var(--on-accent);
 	}
