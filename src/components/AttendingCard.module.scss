@@ -8,6 +8,7 @@
 .steps {
 	display: flex;
 	flex-direction: column;
+	overflow-anchor: none;
 }
 
 // Numeral + spine gutter, then body — the numeral is the only progress
@@ -589,13 +590,13 @@
 	// preview + step still fit under it without scrolling (see .cardWrap cap).
 	.preview {
 		order: -1;
-		padding-bottom: 0.75rem;
+		padding-bottom: 0.5rem;
 		position: static;
 		top: auto;
 	}
 
 	.cardWrap {
-		max-width: 42vh;
+		max-width: 36vh;
 		margin: 0 auto;
 	}
 
