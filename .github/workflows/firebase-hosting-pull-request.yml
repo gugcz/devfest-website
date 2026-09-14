@@ -3,13 +3,18 @@ name: Deploy to Firebase Hosting on PR
 on: pull_request
 permissions:
   contents: read
+# One preview deploy per PR at a time; a newer push supersedes the running one.
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 jobs:
   build_and_preview:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22
           cache: npm
@@ -34,7 +39,7 @@ jobs:
       # the islands show their "unavailable" state. Functions deploy only via
       # firebase-functions-merge.yml. To verify SSR-function CHANGES, run locally.
       - name: Deploy to Firebase Hosting (preview channel)
-        uses: w9jds/firebase-action@v15.22.3
+        uses: w9jds/firebase-action@221518149891c89541cd93a1edc14a03b3e8e53d # v15.22.3
         with:
           args: hosting:channel:deploy pr-${{ github.event.pull_request.number }} --project devfest-cz-app --expires 7d
         env:

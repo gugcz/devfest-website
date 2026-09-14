@@ -4,12 +4,29 @@ on:
   push:
     branches:
       - "2026"
+    # Everything except what never reaches the built site (docs, agent config,
+    # functions, other workflows) — those skip the rebuild + redeploy.
+    paths:
+      - "**"
+      - "!**.md"
+      - "!.claude/**"
+      - "!functions/**"
+      - "!.github/**"
+      - ".github/workflows/firebase-hosting-merge.yml"
+permissions:
+  contents: read
+# Production deploys queue rather than race: two quick merges must land in
+# order, and never in parallel.
+concurrency:
+  group: deploy-hosting-prod
+  cancel-in-progress: false
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22
           cache: npm
@@ -22,7 +39,7 @@ jobs:
       # keep-alive failure that breaks FirebaseExtended/action-hosting-deploy
       # when it runs firebase-tools on the runner's security-patched Node.
       - name: Deploy to Firebase Hosting (live)
-        uses: w9jds/firebase-action@v15.22.3
+        uses: w9jds/firebase-action@221518149891c89541cd93a1edc14a03b3e8e53d # v15.22.3
         with:
           args: deploy --only hosting --project devfest-cz-app
         env:
