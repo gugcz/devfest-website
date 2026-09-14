@@ -8,6 +8,11 @@ paths:
 Failure text is a product surface: it lands in Slack, an invoice's
 `errorMessage`, and Cloud Logging.
 
+- New function: file + re-export in `<domain>/index.ts`. New domain: folder +
+  `export * from './<domain>/index.js'` in `src/index.ts`.
+- `params.ts` per domain; cross-domain params (`SLACK_WEBHOOK_URL`) in
+  `lib/params.ts`. Never import a sibling domain's params.
+- `.js` import suffixes (NodeNext).
 - **`options.ts`** — `setGlobalOptions` (`maxInstances` cost ceiling, shared
   billing project) + presets `SCHEDULED`, `CACHED_ENDPOINT`, `WEBHOOK`,
   `CALLABLE`, `TRIGGER`. Spread a preset; never restate `region`/`timeZone`.

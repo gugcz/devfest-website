@@ -4,7 +4,7 @@
 // `noindex` + out of the sitemap + linked from NOWHERE (not access control).
 // Visual direction B ("The Plate"): portrait owns the right half, B&W →
 // colour bleed is the ONLY effect. Type never sits on the face; the phone
-// scrim is a legibility requirement, not a finish. See CLAUDE.md.
+// scrim is a legibility requirement, not a finish. See .claude/rules/invite.md.
 import { getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import type { ImageMetadata } from 'astro';
@@ -292,7 +292,7 @@ const color = await plate(member.photoColor ?? member.photo);
 		// ~48svh strip that holds the eyebrow + headline -- everything from the
 		// lede down moves onto the page's flat #050505, off the photograph
 		// entirely. Special Elite (the lede's face) never sits over a photo; see
-		// CLAUDE.md.
+		// .claude/rules/invite.md.
 		.invite {
 			display: block;
 			min-height: 0;

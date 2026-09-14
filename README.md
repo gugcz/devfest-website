@@ -216,7 +216,7 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 ### Wiring
 
-- **iDoklad OAuth:** iDoklad → Settings → API → client credentials into the secrets above. Token endpoint and lifetime: [CLAUDE.md](CLAUDE.md).
+- **iDoklad OAuth:** iDoklad → Settings → API → client credentials into the secrets above. Token endpoint and lifetime: [`.claude/rules/invoices.md`](.claude/rules/invoices.md).
 - **Invoice email** is sent by iDoklad (PDF attached, pay by bank transfer). If it fails, the invoice number goes to Slack for manual relay. Copy: `buildInvoiceEmail` in `functions/src/invoice/email.ts`.
 - **Discount-code email:** branded HTML from `email-template.ts`. Preview by building `functions/` and rendering `buildDiscountEmail(...).html`.
 - **Invoice fields** are seeded from `GET /IssuedInvoices/Default`; contact `CountryId` from `GET /Contacts/Default` (free-text country stored, not mapped; foreign companies handled manually).
@@ -231,7 +231,7 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 ## Analytics (GA4)
 
-Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Architecture and gotchas: [CLAUDE.md](CLAUDE.md#firebase-integration-srclibfirebasets). This section is the console-side setup, **not** in the repo.
+Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Architecture and gotchas: [`.claude/rules/analytics.md`](.claude/rules/analytics.md). This section is the console-side setup, **not** in the repo.
 
 - **Mark conversions as key events.** GA4 → Admin → Events: `ticket_purchase_confirmed`, `sign_up` (newsletter), `generate_lead` (company invoice). `begin_checkout` is a recommended ecommerce event and needs no marking; pair it with `ticket_purchase_confirmed` for checkout drop-off.
 - **Register invitation parameters as custom dimensions.** GA4 → Admin → Custom definitions → two event-scoped dimensions: `invite_member` (the `team.json` id) and `invite_member_name`. GA4 does not report on unregistered custom parameters, and registration is not retroactive — do it before the links go out.
