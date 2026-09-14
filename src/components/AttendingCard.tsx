@@ -77,6 +77,15 @@ function formatSigned(value: number): string {
 	return value > 0 ? `+${value}` : `${value}`;
 }
 
+type WizardStep = 1 | 2 | 3 | 4;
+
+const STEP_LABEL: Record<WizardStep, string> = {
+	1: 'Your name',
+	2: 'Your photo',
+	3: 'Framing',
+	4: 'Download or share',
+};
+
 /** A native range's track fill is painted through a CSS custom property set
  * inline — it cascades into the `::-webkit-slider-runnable-track` /
  * `::-moz-range-track` pseudo-elements, which can't otherwise see a value
@@ -128,6 +137,9 @@ export default function AttendingCard() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const photoTriggerRef = useRef<HTMLButtonElement>(null);
+	const stepHeadRef = useRef<HTMLDivElement>(null);
+	const stepIsFirstRenderRef = useRef(true);
+	const [step, setStep] = useState<WizardStep>(1);
 	const [name, setName] = useState('');
 	const [photo, setPhoto] = useState<ImageBitmap | null>(null);
 	const [photoName, setPhotoName] = useState('');
@@ -227,6 +239,37 @@ export default function AttendingCard() {
 	useEffect(() => {
 		if (hasPhoto) setAnnouncement('Framing controls added.');
 	}, [hasPhoto]);
+
+	// Skips the framing step when there's no photo to frame, both going
+	// forward (2 → 4) and coming back (4 → 2) — a visitor who never picks a
+	// photo should never land on an empty framing panel.
+	function goNext() {
+		setStep((s) => {
+			if (s === 1) return 2;
+			if (s === 2) return hasPhoto ? 3 : 4;
+			return 4;
+		});
+	}
+	function goBack() {
+		setStep((s) => {
+			if (s === 4) return hasPhoto ? 3 : 2;
+			if (s === 3) return 2;
+			return 1;
+		});
+	}
+
+	// Moves focus to the new step's heading and announces it — a Back/Next
+	// click swaps the whole step body, and without this the focus (and a
+	// screen reader's position) would stay on a button that just vanished.
+	// Skipped on mount: nothing changed yet, so there's nothing to announce.
+	useEffect(() => {
+		if (stepIsFirstRenderRef.current) {
+			stepIsFirstRenderRef.current = false;
+			return;
+		}
+		stepHeadRef.current?.focus();
+		setAnnouncement(`Step ${step} of 4: ${STEP_LABEL[step]}.`);
+	}, [step]);
 
 	// The affordance shows the moment a drag carrying files crosses the
 	// viewport, not only once it's precisely over the tile or card — so the
@@ -483,145 +526,149 @@ export default function AttendingCard() {
 	return (
 		<div className={s.wrapper}>
 			<div className={s.steps}>
-				<section className={s.step} aria-labelledby="attending-step-1-head">
-					<div className={s.stepGutter} aria-hidden="true">
-						<span className={s.stepNumeral} data-filled={nameFilled}>01</span>
-						<span className={s.stepSpine} data-filled={nameFilled} />
-					</div>
-					<div className={s.stepBody}>
-						<div className={s.stepHead} id="attending-step-1-head">
-							<span className={s.stepHeadText}>Your name</span>
-							<span className={s.statusWord} data-tone="required">Required</span>
+				{step === 1 && (
+					<section className={`${s.step} ${s.stepEnter}`} aria-labelledby="attending-step-1-head">
+						<div className={s.stepGutter} aria-hidden="true">
+							<span className={s.stepNumeral} data-filled={nameFilled}>01</span>
+							<span className={s.stepSpine} data-filled={nameFilled} />
 						</div>
-						<div className={s.nameFieldWrap}>
-							<input
-								className={s.input}
-								type="text"
-								maxLength={40}
-								value={name}
-								onChange={(e) => setName(e.target.value)}
-								autoComplete="name"
-								aria-labelledby="attending-step-1-head"
-								aria-describedby="attending-name-hint"
-							/>
-							<span className={s.counter} data-emphasis={name.length >= 36}>
-								{name.length}/40
+						<div className={s.stepBody}>
+							<div className={s.stepHead} id="attending-step-1-head" ref={stepHeadRef} tabIndex={-1}>
+								<span className={s.stepHeadText}>Your name</span>
+								<span className={s.statusWord} data-tone="required">Required</span>
+							</div>
+							<div className={s.nameFieldWrap}>
+								<input
+									className={s.input}
+									type="text"
+									maxLength={40}
+									value={name}
+									onChange={(e) => setName(e.target.value)}
+									autoComplete="name"
+									aria-labelledby="attending-step-1-head"
+									aria-describedby="attending-name-hint"
+								/>
+								<span className={s.counter} data-emphasis={name.length >= 36}>
+									{name.length}/40
+								</span>
+							</div>
+							<span id="attending-name-hint" className={s.hint}>
+								It goes on the card, so spell it the way you'd want it read out loud.
 							</span>
 						</div>
-						<span id="attending-name-hint" className={s.hint}>
-							It goes on the card, so spell it the way you'd want it read out loud.
-						</span>
-					</div>
-				</section>
+					</section>
+				)}
 
-				<section className={s.step} aria-labelledby="attending-step-2-head">
-					<div className={s.stepGutter} aria-hidden="true">
-						<span className={s.stepNumeral} data-filled={photoFilled}>02</span>
-						<span className={s.stepSpine} data-filled={photoFilled} />
-					</div>
-					<div className={s.stepBody}>
-						<div className={s.stepHead} id="attending-step-2-head">
-							<span className={s.stepHeadText}>Your photo</span>
-							<span className={s.statusWord} data-tone="required">Required</span>
+				{step === 2 && (
+					<section className={`${s.step} ${s.stepEnter}`} aria-labelledby="attending-step-2-head">
+						<div className={s.stepGutter} aria-hidden="true">
+							<span className={s.stepNumeral} data-filled={photoFilled}>02</span>
+							<span className={s.stepSpine} data-filled={photoFilled} />
 						</div>
-
-						<input
-							ref={fileInputRef}
-							className={s.srOnly}
-							id="attending-photo-input"
-							type="file"
-							accept="image/*"
-							tabIndex={-1}
-							onChange={handlePhotoChange}
-							aria-describedby="attending-photo-hint"
-							aria-labelledby="attending-step-2-head"
-						/>
-
-						{isDragging ? (
-							<div
-								className={s.dropzone}
-								data-state="drag"
-								onDragOver={(e) => e.preventDefault()}
-								onDrop={handleDrop}
-							>
-								<UploadIcon />
-								<span className={s.dropLabel}>Let go</span>
+						<div className={s.stepBody}>
+							<div className={s.stepHead} id="attending-step-2-head" ref={stepHeadRef} tabIndex={-1}>
+								<span className={s.stepHeadText}>Your photo</span>
+								<span className={s.statusWord} data-tone="required">Required</span>
 							</div>
-						) : photo ? (
-							<div className={s.photoRow} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
-								{photoThumbUrl && <img className={s.photoThumb} src={photoThumbUrl} alt="" />}
-								<div className={s.photoInfo}>
-									<span className={s.photoName}>{photoName}</span>
-									<span className={s.photoMeta}>{photoMeta}</span>
+
+							<input
+								ref={fileInputRef}
+								className={s.srOnly}
+								id="attending-photo-input"
+								type="file"
+								accept="image/*"
+								tabIndex={-1}
+								onChange={handlePhotoChange}
+								aria-describedby="attending-photo-hint"
+								aria-labelledby="attending-step-2-head"
+							/>
+
+							{isDragging ? (
+								<div
+									className={s.dropzone}
+									data-state="drag"
+									onDragOver={(e) => e.preventDefault()}
+									onDrop={handleDrop}
+								>
+									<UploadIcon />
+									<span className={s.dropLabel}>Let go</span>
 								</div>
-								<div className={s.photoActions}>
+							) : photo ? (
+								<div className={s.photoRow} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+									{photoThumbUrl && <img className={s.photoThumb} src={photoThumbUrl} alt="" />}
+									<div className={s.photoInfo}>
+										<span className={s.photoName}>{photoName}</span>
+										<span className={s.photoMeta}>{photoMeta}</span>
+									</div>
+									<div className={s.photoActions}>
+										<button
+											type="button"
+											className={s.linkButton}
+											onClick={triggerPhotoPick}
+											aria-controls="attending-photo-input"
+										>
+											Replace
+										</button>
+										<button
+											type="button"
+											className={s.linkButton}
+											onClick={removePhoto}
+											aria-controls="attending-photo-input"
+										>
+											Remove
+										</button>
+									</div>
+								</div>
+							) : decoding ? (
+								<div className={s.photoRow}>
+									<span className={s.photoThumbPlaceholder} aria-hidden="true" />
+									<div className={s.photoInfo}>
+										<span className={s.photoName}>{decoding}</span>
+									</div>
+								</div>
+							) : (
+								<div
+									className={s.dropzone}
+									data-state="empty"
+									onDragOver={(e) => e.preventDefault()}
+									onDrop={handleDrop}
+								>
+									{photoError ? <AlertIcon /> : <UploadIcon />}
+									<span className={s.dropLabel}>Drop a photo</span>
+									<span className={s.dropOr}>or</span>
 									<button
+										ref={photoTriggerRef}
 										type="button"
-										className={s.linkButton}
+										className={s.chooseButton}
 										onClick={triggerPhotoPick}
 										aria-controls="attending-photo-input"
 									>
-										Replace
-									</button>
-									<button
-										type="button"
-										className={s.linkButton}
-										onClick={removePhoto}
-										aria-controls="attending-photo-input"
-									>
-										Remove
+										Choose file
 									</button>
 								</div>
-							</div>
-						) : decoding ? (
-							<div className={s.photoRow}>
-								<span className={s.photoThumbPlaceholder} aria-hidden="true" />
-								<div className={s.photoInfo}>
-									<span className={s.photoName}>{decoding}</span>
-								</div>
-							</div>
-						) : (
-							<div
-								className={s.dropzone}
-								data-state="empty"
-								onDragOver={(e) => e.preventDefault()}
-								onDrop={handleDrop}
-							>
-								{photoError ? <AlertIcon /> : <UploadIcon />}
-								<span className={s.dropLabel}>Drop a photo</span>
-								<span className={s.dropOr}>or</span>
-								<button
-									ref={photoTriggerRef}
-									type="button"
-									className={s.chooseButton}
-									onClick={triggerPhotoPick}
-									aria-controls="attending-photo-input"
-								>
-									Choose file
-								</button>
-							</div>
-						)}
+							)}
 
-						<span id="attending-photo-hint" className={s.hint}>
-							Never uploaded — your browser does the whole thing.
-						</span>
+							<span id="attending-photo-hint" className={s.hint}>
+								Never uploaded — your browser does the whole thing.
+							</span>
 
-						{photoError && (
-							<p className={s.error} role="alert">
-								{photoError}
-							</p>
-						)}
-					</div>
-				</section>
+							{photoError && (
+								<p className={s.error} role="alert">
+									{photoError}
+								</p>
+							)}
+						</div>
+					</section>
+				)}
 
-				{photo && panRange && (
+				{step === 3 && photo && panRange && (
 					<section className={`${s.step} ${s.stepEnter}`} aria-labelledby="attending-step-3-head">
 						<div className={s.stepGutter} aria-hidden="true">
 							<span className={s.stepNumeral} data-filled="true">03</span>
 							<span className={s.stepSpine} data-filled="false" />
 						</div>
 						<div className={s.stepBody}>
-							<div className={s.stepHead} id="attending-step-3-head">
+							<div className={s.stepHead} id="attending-step-3-head" ref={stepHeadRef} tabIndex={-1}>
 								<span className={s.stepHeadText}>Framing</span>
 							</div>
 
@@ -697,6 +744,75 @@ export default function AttendingCard() {
 					</section>
 				)}
 
+				{step === 4 && (
+					<section className={`${s.step} ${s.stepEnter}`} aria-labelledby="attending-step-4-head">
+						<div className={s.stepGutter} aria-hidden="true">
+							<span className={s.stepNumeral} data-filled="true">04</span>
+							<span className={s.stepSpine} data-filled="false" />
+						</div>
+						<div className={s.stepBody}>
+							<div className={s.stepHead} id="attending-step-4-head" ref={stepHeadRef} tabIndex={-1}>
+								<span className={s.stepHeadText}>Download / Share</span>
+							</div>
+
+							<div className={s.actions}>
+								<button
+									type="button"
+									className="btn-primary"
+									onClick={handleDownload}
+									disabled={exportDisabled}
+									aria-describedby={!hasPhoto ? 'attending-download-hint' : undefined}
+								>
+									Download PNG
+								</button>
+								<button type="button" className="btn-ghost" onClick={handleShare} disabled={exportDisabled}>
+									{shareState === 'working' ? 'Sharing…' : 'Share'}
+								</button>
+							</div>
+
+							{!hasPhoto && (
+								<p id="attending-download-hint" className={s.hint}>
+									Upload a photo to enable the download.
+								</p>
+							)}
+
+							<p
+								className={s.message}
+								role="status"
+								aria-live="polite"
+								data-tone={shareState === 'error' ? 'error' : 'info'}
+							>
+								{shareMessage}
+							</p>
+						</div>
+					</section>
+				)}
+
+				<div className={s.stepNav}>
+					{step > 1 ? (
+						<button type="button" className="btn-ghost" onClick={goBack}>
+							Back
+						</button>
+					) : (
+						<span />
+					)}
+					<span className={s.stepIndicator} aria-hidden="true">
+						{step}/4
+					</span>
+					{step < 4 ? (
+						<button
+							type="button"
+							className="btn-primary"
+							onClick={goNext}
+							disabled={step === 1 && nameEmpty}
+						>
+							Next
+						</button>
+					) : (
+						<span />
+					)}
+				</div>
+
 				<span className={s.srOnly} role="status" aria-live="polite">
 					{announcement}
 				</span>
@@ -728,31 +844,6 @@ export default function AttendingCard() {
 						</div>
 					)}
 				</div>
-
-				<div className={s.actions}>
-					<button
-						type="button"
-						className="btn-primary"
-						onClick={handleDownload}
-						disabled={exportDisabled}
-						aria-describedby={!hasPhoto ? 'attending-download-hint' : undefined}
-					>
-						Download PNG
-					</button>
-					<button type="button" className="btn-ghost" onClick={handleShare} disabled={exportDisabled}>
-						{shareState === 'working' ? 'Sharing…' : 'Share'}
-					</button>
-				</div>
-
-				{!hasPhoto && (
-					<p id="attending-download-hint" className={s.hint}>
-						Upload a photo to enable the download.
-					</p>
-				)}
-
-				<p className={s.message} role="status" aria-live="polite" data-tone={shareState === 'error' ? 'error' : 'info'}>
-					{shareMessage}
-				</p>
 			</div>
 		</div>
 	);

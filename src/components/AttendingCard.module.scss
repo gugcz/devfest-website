@@ -483,6 +483,33 @@
 	}
 }
 
+.stepHead {
+	&:focus {
+		outline: none;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
+	}
+}
+
+.stepNav {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-top: 2.1rem;
+}
+
+.stepIndicator {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-xs);
+	letter-spacing: 0.14em;
+	font-variant-numeric: tabular-nums;
+	color: rgba(240, 237, 230, 0.6);
+}
+
 .preview {
 	display: flex;
 	flex-direction: column;
@@ -556,11 +583,23 @@
 		grid-template-columns: 1fr;
 	}
 
-	// Preview first — on a phone the card is the thing being made and it
-	// should be on screen before the controls.
+	// Preview first and pinned — on a phone the card is the thing being made,
+	// it stays visible while the wizard step scrolls underneath it. Capped to
+	// 46vh so a tall step (e.g. the three framing rails) still has room to sit
+	// below it without the page needing to scroll past the fold.
 	.preview {
 		order: -1;
-		position: static;
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		max-height: 46vh;
+		padding-bottom: 0.75rem;
+		background: var(--color-bg);
+	}
+
+	.cardWrap {
+		max-width: 42vh;
+		margin: 0 auto;
 	}
 
 	.step {
