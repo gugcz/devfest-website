@@ -30,7 +30,7 @@ jobs:
 
       - uses: actions/setup-node@v5.0.0
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install npm dependencies

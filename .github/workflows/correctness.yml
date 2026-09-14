@@ -30,7 +30,7 @@ jobs:
 
       - uses: actions/setup-node@v5.0.0
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
 
       - run: npm ci
@@ -46,7 +46,7 @@ jobs:
 
       - uses: actions/setup-node@v5.0.0
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: functions/package-lock.json
 
