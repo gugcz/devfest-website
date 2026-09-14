@@ -88,7 +88,7 @@
 		font-size: clamp(1rem, 1.4vw, 1.3rem);
 		letter-spacing: 0.02em;
 		text-transform: lowercase;
-		color: rgba(240, 237, 230, 0.5);
+		color: var(--ink-faint);
 	}
 }
 

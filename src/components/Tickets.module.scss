@@ -45,7 +45,7 @@
 .stubSerial {
 	@include mono(var(--fs-label-lg), 0.16em);
 	font-variant-numeric: tabular-nums;
-	color: rgba(240, 237, 230, 0.5);
+	color: var(--ink-faint);
 }
 
 .stubState {
@@ -162,7 +162,7 @@
 	content: '';
 	position: absolute;
 	inset: 0 calc(-1 * var(--gutter));
-	background: linear-gradient(104deg, rgba(255, 244, 232, 0.06) 0%, rgba(255, 240, 226, 0.025) 40%, transparent 84%);
+	background: var(--wash);
 	pointer-events: none;
 	z-index: -1;
 	// Feathered: nothing encloses this row, so an un-masked full-bleed box shows its edges.
@@ -376,7 +376,7 @@
 
 .invoiceLabel {
 	@include mono(var(--fs-label), 0.25em, uppercase);
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 }
 
 .footnoteLink {

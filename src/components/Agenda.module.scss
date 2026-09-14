@@ -111,7 +111,7 @@
 	z-index: 1;
 	@include mono(var(--fs-label-lg), 0.1em);
 	font-variant-numeric: tabular-nums;
-	color: rgba(240, 237, 230, 0.5);
+	color: var(--ink-faint);
 	padding: 0.35rem 0.9rem 0 0;
 }
 
@@ -179,12 +179,7 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(
-			104deg,
-			rgba(255, 244, 232, 0.07) 0%,
-			rgba(255, 240, 226, 0.03) 42%,
-			transparent 86%
-		);
+		background: var(--wash-strong);
 		opacity: 0;
 		pointer-events: none;
 		z-index: 0;

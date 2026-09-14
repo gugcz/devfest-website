@@ -53,12 +53,7 @@
 		content: '';
 		position: absolute;
 		inset: 0 calc(-1 * var(--gutter));
-		background: linear-gradient(
-			104deg,
-			rgba(255, 244, 232, 0.06) 0%,
-			rgba(255, 240, 226, 0.028) 38%,
-			transparent 82%
-		);
+		background: var(--wash);
 		opacity: 0;
 		pointer-events: none;
 		transition: opacity 0.3s ease;

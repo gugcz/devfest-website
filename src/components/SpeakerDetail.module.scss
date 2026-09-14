@@ -70,7 +70,7 @@
 	width: 2.75rem;
 	height: 2.75rem;
 	margin-left: -0.6rem;
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 	transition: color 0.2s, transform 0.2s;
 
 	svg {
@@ -126,7 +126,7 @@
 
 .sessionDesc {
 	@include prose(var(--fs-ui), 1.6);
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 	max-width: 56ch;
 	margin: 0.5rem 0 0;
 	// Same measure treatment as the bio — one justified and one ragged block of

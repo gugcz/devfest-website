@@ -25,7 +25,7 @@
 	align-items: center;
 	gap: 0.55rem;
 	@include mono(var(--fs-label-lg), 0.18em, uppercase);
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 	margin: 1rem 0 0;
 }
 

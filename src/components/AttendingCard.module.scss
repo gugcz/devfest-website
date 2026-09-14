@@ -127,7 +127,7 @@
 	margin-top: 0.6rem;
 	@include prose(var(--fs-ui));
 	font-style: italic;
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 }
 
 .nameFieldWrap {
@@ -230,7 +230,7 @@
 
 .dropOr {
 	font-family: var(--font-special-elite), cursive;
-	color: rgba(240, 237, 230, 0.5);
+	color: var(--ink-faint);
 }
 
 .chooseButton {
@@ -325,7 +325,7 @@
 
 .linkButton {
 	@include mono(var(--fs-label), 0.14em, uppercase);
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 	background: none;
 	border: 0;
 	padding: 0.15rem 0;
@@ -480,7 +480,7 @@
 .stepIndicator {
 	@include mono(var(--fs-label-xs), 0.14em);
 	font-variant-numeric: tabular-nums;
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 }
 
 .preview {

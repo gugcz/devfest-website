@@ -251,7 +251,7 @@
 	@include mono(var(--fs-label), 0.16em, uppercase);
 	line-height: 1.45;
 	margin: 0.35rem 0 0;
-	color: rgba(240, 237, 230, 0.5);
+	color: var(--ink-faint);
 	// Same reserved caption band as a speaker's role line — this card sits in
 	// the same grid row and has to end on the same line.
 	min-height: calc(2 * 1.45em);

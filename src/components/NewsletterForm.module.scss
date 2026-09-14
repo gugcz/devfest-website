@@ -188,7 +188,7 @@
 		// Opaque, not rgba: a contrast checker resolves a translucent fill's placeholder
 		// against the band red behind it, and the real ratio then depends on a blend.
 		background: #9A0000;
-		border-color: rgba(247, 239, 230, 0.85);
+		border-color: var(--on-accent-border);
 
 		&:focus-within {
 			border-color: var(--on-accent);
@@ -214,7 +214,7 @@
 	.button {
 		background: var(--on-accent);
 		border-color: var(--on-accent);
-		color: #1A0000;
+		color: var(--on-accent-ink);
 
 		&:hover:not(:disabled) {
 			background: #FFFFFF;
@@ -228,7 +228,7 @@
 	}
 
 	.consent input[type='checkbox'] {
-		accent-color: #1A0000;
+		accent-color: var(--on-accent-ink);
 
 		&:focus-visible {
 			outline-color: var(--on-accent);
@@ -241,7 +241,7 @@
 
 	.consentLink {
 		color: var(--on-accent);
-		border-bottom-color: rgba(247, 239, 230, 0.85);
+		border-bottom-color: var(--on-accent-border);
 
 		&:hover,
 		&:focus-visible {

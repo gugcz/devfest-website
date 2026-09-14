@@ -82,7 +82,7 @@
 
 .brand-tagline {
 	@include prose(var(--fs-ui), 1.55);
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 	max-width: 32ch;
 }
 
