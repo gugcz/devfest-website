@@ -284,8 +284,10 @@ export const GET: APIRoute = async ({ props }) => {
 	});
 
 	const rendered = new Resvg(svg, { fitTo: { mode: 'width', value: CARD_WIDTH } }).render().asPng();
+	// strip alpha — Messenger drops RGBA og:image
 	const png = await sharp(rendered)
 		.composite([{ input: vignette }, { input: await grainPromise, blend: 'soft-light' }])
+		.removeAlpha()
 		.png()
 		.toBuffer();
 
