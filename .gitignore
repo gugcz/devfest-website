@@ -28,8 +28,11 @@ firestore-debug.log*
 # jetbrains setting folder
 .idea/
 
-# Claude Code worktrees + local IDE configs
-.claude/
+# Claude Code: worktrees and per-machine settings stay local;
+# .claude/rules/ and .claude/settings.json are shared.
+.claude/worktrees/
+.claude/settings.local.json
+CLAUDE.local.md
 
 # impeccable local tooling (design hook cache, sidecar, critiques)
 .impeccable/
