@@ -1,23 +1,11 @@
 /**
- * One way to run a background function (scheduled job or trigger), so every
- * one logs, alerts, and fails identically. Before this, several jobs failed
- * silently — a red line in Cloud Logging nobody watches. The contract:
+ * One wrapper for every background function: start/finish log with duration,
+ * failure log with unwrapped cause, Slack alert, rethrow.
  *
- *   1. start + finish lines with a duration, keyed by function name;
- *   2. a failure log carrying the unwrapped cause (`lib/errors.ts`);
- *   3. a Slack alert **on state change**, not per failure;
- *   4. the original error rethrown, so the platform counts it and the
- *      scheduler's retry still happens.
- *
- * **Alert on transition, not occurrence.** An hourly job in a three-hour
- * outage would otherwise post three identical alerts, and a channel that
- * cries wolf gets muted. First failure after a healthy run alerts, further
- * failures only log, the recovering run posts "recovered". One incident =
- * two messages.
- *
- * State lives in RTDB `ops/health/{name}` (Admin SDK; the root deny in
- * `database.rules.json` covers it). Every state op is best-effort and
- * degrades to "assume healthy" — over-alerts rather than going quiet.
+ * Alerts fire on TRANSITION, not occurrence: first failure after a healthy
+ * run alerts, further failures only log, recovery posts "recovered" — a
+ * channel that cries wolf gets muted. Streak state in RTDB
+ * `ops/health/{name}`, best-effort (degrades to "assume healthy").
  */
 
 import { logger } from 'firebase-functions/v2';
@@ -41,12 +29,8 @@ export interface BackgroundFunctionSpec {
 	name: string;
 	/** Which Slack prefix its alerts post under. */
 	domain: SlackDomain;
-	/**
-	 * Appended to the failure alert: what the reader should conclude about blast
-	 * radius and what happens next (e.g. "live speakers/sessions left untouched,
-	 * retry at 06:00"). Without it an alert says something broke but not whether
-	 * anyone must act tonight.
-	 */
+	/** Appended to the failure alert: blast radius and what happens next
+	 * ("live speakers/sessions left untouched, retry at 06:00"). */
 	failureNote?: string;
 }
 

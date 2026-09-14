@@ -1,16 +1,8 @@
 /**
- * Outbound HTTP shared by every domain. A bare `fetch()` in `functions/` is
- * a bug: no timeout (a hung upstream rides the whole function timeout) and
- * no retry (one connect blip once killed a day's Sessionize sync).
- *
- * **Retries are off for anything non-idempotent**, enforced here: a retried
- * POST can mint a second invoice, code or email. `GET`/`HEAD` retry
- * automatically; everything else needs `retryUnsafe` (only Slack and the
- * OAuth token fetch pass it).
- *
- * Failures throw with label, attempt count and unwrapped cause:
- * `ti.to releases unreachable after 3 attempts: fetch failed
- * (UND_ERR_CONNECT_TIMEOUT)`.
+ * Outbound HTTP for every domain — a bare `fetch()` has no timeout and no
+ * retry. Non-idempotent requests never retry (a retried POST can mint a
+ * second invoice); `GET`/`HEAD` do, others need `retryUnsafe`. Failures
+ * throw with label, attempts and unwrapped cause.
  */
 
 import { logger } from 'firebase-functions/v2';
@@ -42,12 +34,7 @@ export interface FetchOptions {
 	retryUnsafe?: boolean;
 }
 
-/**
- * Worth retrying: rate limiting or a server-side hiccup. A 4xx is deterministic
- * (bad token, wrong path, a Sessionize view this endpoint doesn't serve) — the
- * caller must see it immediately rather than burn the backoff on a verdict that
- * won't change.
- */
+/** Retry 429/5xx only. A 4xx is deterministic; the caller must see it now. */
 export function isTransientStatus(status: number): boolean {
 	return status === 429 || status >= 500;
 }
@@ -58,14 +45,9 @@ export async function errorBody(res: Response, max = 300): Promise<string> {
 	return body.slice(0, max);
 }
 
-/**
- * `fetch` with a timeout, bounded retries, and a diagnosable failure.
- *
- * Returns the response even when it is non-OK (including a 5xx that survived
- * every attempt) — status handling stays with the caller, which knows whether a
- * 400 means "fall back to the other view" or "abort". Throws only when no
- * attempt produced a response at all.
- */
+/** `fetch` with timeout, bounded retries and a diagnosable failure. Returns
+ * non-OK responses (status handling stays with the caller); throws only when
+ * no attempt produced a response. */
 export async function fetchWithRetry(
 	url: string,
 	init: RequestInit = {},

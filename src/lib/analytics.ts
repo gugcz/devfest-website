@@ -1,11 +1,5 @@
-/**
- * Fire-and-forget GA4 events for UI code. The point is what it does *not*
- * import: a static import of `src/lib/firebase.ts` would put the whole
- * Firebase SDK in an island bundle. Firebase is loaded on demand instead.
- *
- * Never throws and never blocks: an analytics failure must not break a
- * checkout link or a form submit.
- */
+/** Fire-and-forget GA4 events. Loads `firebase.ts` on demand — a static
+ * import would bundle the whole SDK into an island. Never throws or blocks. */
 export function track(name: string, params?: Record<string, unknown>): void {
 	void import('./firebase')
 		.then((m) => m.trackEvent(name, params))

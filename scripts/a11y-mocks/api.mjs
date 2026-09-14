@@ -1,14 +1,7 @@
 /**
- * The `/api/*` payloads, built once from the fixtures. Two consumers, one
- * source: `scripts/a11y.mjs` (axe sweep) and `astro.config.mjs` (dev server).
- *
- * In production these routes are Hosting rewrites to `lineupApi` /
- * `ticketsApi`; a dev server has no rewrite table, so without this the
- * islands 404 and render "unavailable" forever.
- *
- * Shapes mirror the real endpoints — raw docs (`{ id, ...fields }`) for the
- * lineup, the RTDB cache verbatim for tickets — so the browser runs its own
- * parsers exactly as against the live functions.
+ * The `/api/*` payloads from the fixtures, shared by `scripts/a11y.mjs` and
+ * `astro.config.mjs` (a dev server has no Hosting rewrites). Shapes mirror
+ * the real endpoints so the browser runs its own parsers unchanged.
  */
 import { SPEAKERS, SESSIONS, TICKETS } from './fixtures.mjs';
 
@@ -21,13 +14,8 @@ export const API_FIXTURES = {
 	'/api/tickets': JSON.stringify(TICKETS),
 };
 
-/**
- * Connect-style middleware serving {@link API_FIXTURES}; anything else falls
- * through untouched. Used by the Vite dev server.
- *
- * `no-store` on purpose: the production endpoints are CDN-cached, but locally
- * you want an edited fixture to show up on the next reload.
- */
+/** Connect middleware serving {@link API_FIXTURES} with `no-store` (an
+ * edited fixture shows on the next reload); everything else falls through. */
 export function apiFixtureMiddleware(req, res, next) {
 	const pathname = (req.url ?? '').split('?')[0];
 	const body = API_FIXTURES[pathname];

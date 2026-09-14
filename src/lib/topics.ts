@@ -1,17 +1,6 @@
-/**
- * The audited topic set shown under the hero statement and in the ticker.
- *
- * No product names. The set describes what the conference is about, and a
- * subject outlives the vendor's naming — a track called after a specific
- * model or OS dates the page the moment either is renamed, and reads as a
- * sponsor list rather than a programme. The talks still name the products
- * they are about; the hero and the ticker do not.
- *
- * Mobile and web are one entry, not two. Split, they read as two platform
- * camps and the poster spends two of six lines on the same answer: what you
- * ship to a person. Merged, accessibility stays in the description where it
- * belongs — it is a property of the work, not a track beside it.
- */
+/** Topic set under the hero and in the ticker. No product names (a subject
+ * outlives a vendor's naming; products read as a sponsor list). Mobile and
+ * web are one entry; accessibility stays in the description. */
 export const TOPICS = [
 	{ n: '01', name: 'AI Agents', desc: 'Agents that touch real code and real systems.' },
 	{ n: '02', name: 'Generative UI', desc: 'LLMs as a product layer, not a demo.' },

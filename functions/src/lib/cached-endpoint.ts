@@ -1,15 +1,7 @@
 /**
- * Shared shape of the public `/api/*` JSON endpoints (`lineupApi`,
- * `ticketsApi`): read via the Admin SDK, serve JSON, cache hard. They differ
- * only in TTLs.
- *
- * Two cache layers:
- *  - **CDN**: Hosting answers most requests at the edge from `s-maxage`.
- *  - **In-instance memo**: a warm instance coalesces the revalidation burst
- *    into one upstream read. Short TTL — the CDN is the real cache.
- *
- * A failed read is never cached (`no-store`, 503, empty payload) so the next
- * request gets a fresh attempt instead of a poisoned edge entry.
+ * Shared body of the public `/api/*` endpoints: Admin SDK read, JSON, two
+ * cache layers (CDN `s-maxage` + a short in-instance memo that coalesces the
+ * revalidation burst). A failed read is `no-store` 503 — never cached.
  */
 
 import { logger } from 'firebase-functions/v2';

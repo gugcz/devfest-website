@@ -1,12 +1,7 @@
 /**
- * ti.to types + pure browser helpers. Browser-safe: types and formatting only;
- * every ti.to API call lives in `functions/src/tickets/tito-api.ts`.
- *
- * Docs: https://ti.to/docs/api/admin/3.0 (we pin to v3.0; v3.1 is beta).
- *
- * The function side projects each release into the shape below before writing it
- * to RTDB, adding a synthetic `sale_status` derived from ti.to's flag set — see
- * `deriveSaleStatus` there.
+ * ti.to types + browser-safe helpers. API calls live in
+ * `functions/src/tickets/tito-api.ts`, which also synthesises `sale_status`
+ * (`deriveSaleStatus`). Docs: https://ti.to/docs/api/admin/3.0.
  */
 
 export type TitoSaleStatus =
@@ -71,15 +66,10 @@ async function requestTickets(): Promise<TicketsCache | null> {
 }
 
 /**
- * Fetch the cached ti.to roadmap from `/api/tickets` (→ `ticketsApi`, Admin
- * SDK read; no Firebase SDK / App Check on this path). Throws on non-OK.
- *
- * Memoised per page: several islands can want it at once (an invite page
- * mounts `InviteCta` twice) and the endpoint sends `max-age=0`, so the HTTP
- * cache won't coalesce them. Rejections are not memoised; a resolved payload
- * is reused for `MEMO_TTL_MS`.
- *
- * `signal` aborts the CALLER's wait, not the shared request.
+ * Fetch the cached roadmap from `/api/tickets`. Throws on non-OK. Memoised
+ * per page (several islands want it; the endpoint sends `max-age=0`);
+ * rejections not memoised. `signal` aborts the CALLER's wait, not the
+ * shared request.
  */
 export function fetchTickets(signal?: AbortSignal): Promise<TicketsCache | null> {
 	if (!inFlight || Date.now() - inFlight.at > MEMO_TTL_MS) {
@@ -246,16 +236,9 @@ export interface WaveDeadline {
 	iso: string;
 }
 
-/**
- * Deadline for a pricing wave, from the variants passed in. Callers pass only
- * still-buyable variants, so the date is one a visitor can act on. The
- * LATEST end date wins (last moment to buy into the wave); variants with no
- * usable date are ignored.
- *
- * A past date yields `null`: the cache is up to an hour stale, so a
- * still-buyable wave can briefly carry an elapsed `end_at`, and "Ended" next
- * to a live Buy CTA is the one contradiction this must never produce.
- */
+/** Deadline for a wave: LATEST `end_at` across the still-buyable variants
+ * passed in. A past date yields `null` — the cache is up to an hour stale,
+ * and "Ended" beside a live Buy CTA must never happen. */
 export function waveDeadline(releases: TitoRelease[], now: number = Date.now()): WaveDeadline | null {
 	let latest: Date | null = null;
 	for (const release of releases) {

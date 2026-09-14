@@ -156,13 +156,9 @@
 }
 
 /* ===================== CAPTION ===================== */
-// Sits under the print on space alone — no hairline; the photo's bottom edge
-// already ends the picture.
-//
-// The caption IS measured (a long Czech name once ran into the next frame):
-// the name clamps to two lines and may break inside a word (a 20-character
-// Bebas surname is wider than a 280px column), and the role line reserves
-// its two lines even when empty, so the prints land on one baseline.
+// Under the print on space alone, no hairline. Measured: the name clamps to
+// two lines and may break inside a word (a long Bebas surname overflows a
+// 280px column); the role line reserves two lines even when empty.
 .body {
 	position: relative;
 	z-index: 1;

@@ -139,14 +139,9 @@ const BAND_HEIGHT = 168;
 /** Bottom band's wordmark height — the rest of the band is left to breathe. */
 const LOGO_HEIGHT = 88;
 
-/**
- * Scrim alpha behind each line of text. Chosen so contrast holds against a
- * pure-white photo: white under a black scrim of alpha `a` leaves luminance
- * `1 - a`. Cream text clears AA easily; the headline's red word is the
- * binding case. Measured (Playwright, `getImageData`, real glyphs, against a
- * `#f2f0ea` worst-case swatch): at 0.80 the red word vs. its plate measures
- * ~4.68:1, above the 4.5:1 floor. A dark photo only raises this.
- */
+/** Scrim alpha behind each text line. Binding case is the red headline word
+ * over a white photo: measured ~4.68:1 at 0.80 (Playwright, real glyphs,
+ * `#f2f0ea` swatch), above the 4.5:1 floor. */
 const SCRIM_ALPHA = 0.8;
 const TEXT_SCRIM_PAD_X = 32;
 const TEXT_SCRIM_PAD_Y = 16;
@@ -194,15 +189,10 @@ function lineMetrics(
 	return { width: m.width, ascent: m.actualBoundingBoxAscent, descent: m.actualBoundingBoxDescent };
 }
 
-/** Paints a black plate sized to one line's glyph bounds plus a small pad —
- * never the full card width, so it reads as a backing, not a band. Uses
- * `shadowBlur` rather than `ctx.filter = 'blur()'`: WebKit silently ignores
- * canvas `filter` (confirmed on an export).
- *
- * Draws the shadow only: the fill is pushed `offset` px off-canvas and
- * `shadowOffsetX = offset` slides its shadow back, so only the blurred
- * silhouette lands on the visible canvas. Fill + shadow stacked compounded
- * to ~0.985 alpha; this way SCRIM_ALPHA is the plate's only opacity. */
+/** Black plate sized to one line's glyph bounds (never full width — that's
+ * a band). `shadowBlur`, not `ctx.filter` (WebKit ignores canvas `filter`).
+ * Draws the shadow only: fill pushed off-canvas, `shadowOffsetX` slides the
+ * shadow back, so SCRIM_ALPHA is the plate's only opacity. */
 function drawTextScrim(
 	ctx: CanvasRenderingContext2D,
 	centerX: number,
@@ -294,17 +284,10 @@ export function drawAttendingCard(
 	const dy = size / 2 - drawHeight / 2 + data.transform.panY * scale;
 	ctx.drawImage(data.photo, dx, dy, drawWidth, drawHeight);
 
-	// Radial vignette — one circular mask for the whole card. Absolute stops:
-	// fade starts 300px from center, full black at 600px, so every edge
-	// midpoint and corner is pure black and only a ~600px spotlight stays
-	// clear. (Stops parameterised off the corner distance either left an oval
-	// or read as corner-only darkening.)
-	//
-	// Locked to the canvas, not the photo: pan never shifts it. Below zoom 1
-	// the photo shrinks inside the card, so both stops scale by
-	// k = min(zoom, 1) — a fixed 600px stop would frame empty black instead
-	// of the photo. Panning a shrunk photo toward an edge still shows a hard
-	// edge against the ring; accepted tradeoff.
+	// Radial vignette, absolute stops: clear to 300px, black at 600px, so every
+	// edge midpoint is black and a ~600px spotlight stays. Locked to the
+	// canvas (pan never shifts it). Below zoom 1 both stops scale by
+	// min(zoom, 1) so the ring follows the shrunk photo's edge.
 	const vignetteScale = Math.min(data.transform.zoom, 1);
 	const vignetteFadeStart = size * 0.25 * vignetteScale; // 300px at zoom >= 1
 	const vignetteOuterStop = (size / 2) * vignetteScale; // 600px at zoom >= 1

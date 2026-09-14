@@ -154,12 +154,8 @@ export async function claimInvoiceForProcessing(id: string): Promise<boolean> {
 	});
 }
 
-/**
- * Release a claimed invoice back to `invoiced` so the next poll retries it.
- * Used when post-payment processing fails partway — but only when no code was
- * minted yet (`claimInvoiceForProcessing` + persisting the code right after
- * minting together guarantee a code is never created twice).
- */
+/** Release a claimed invoice back to `invoiced` for the next poll — only
+ * when no code was minted yet, so a code is never created twice. */
 export async function releaseInvoiceClaim(id: string, errorMessage: string): Promise<void> {
 	await updateInvoice(id, { status: 'invoiced', errorMessage });
 }

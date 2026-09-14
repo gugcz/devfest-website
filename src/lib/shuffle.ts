@@ -1,11 +1,5 @@
-/**
- * Fisher–Yates shuffle — returns a new array so the source order stays intact.
- *
- * Used wherever a list must not give one entry a permanent top-of-page
- * advantage: the session grid is randomized once per page load, and the home
- * page's speaker wall starts on a random set rather than the first four by
- * `order`.
- */
+/** Fisher–Yates shuffle, returns a new array. Used so no session or speaker
+ * gets a permanent top-of-page advantage. */
 export function shuffle<T>(items: readonly T[]): T[] {
 	const out = items.slice();
 	for (let i = out.length - 1; i > 0; i--) {

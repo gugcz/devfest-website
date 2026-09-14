@@ -1,25 +1,14 @@
 /**
- * iDoklad API v3 client.
+ * iDoklad API v3 client. Docs: https://api.idoklad.cz/Help/v3/en/
  *
- * Docs / SDK: https://api.idoklad.cz/Help/v3/en/ · https://github.com/Solitea/IdokladSdk
+ * Auth: OAuth2 client credentials at
+ * `https://identity.idoklad.cz/server/connect/token` (`scope=idoklad_api`,
+ * client_id + secret only — not the v2 endpoint, which needs an
+ * `application_id`). ~2h token, no refresh, cached.
  *
- * Auth is OAuth 2.0 **Client Credentials Flow**. Token endpoint is on the
- * identity server (`https://identity.idoklad.cz/server/connect/token`),
- * form-urlencoded, `grant_type=client_credentials`, `scope=idoklad_api`.
- * This (v1) endpoint needs only `client_id` + `client_secret` from the
- * iDoklad account (Nastavení → Aplikace → API) — no `application_id`. The
- * `/server/v2/connect/token` variant additionally requires an
- * `application_id` from the iDoklad Developer portal; we don't use it.
- * The token (~2h) has no refresh — we cache it and re-request on expiry.
- *
- * API base: https://api.idoklad.cz/v3 . Every response is wrapped in
- * `{ Data, IsSuccess, Message, ... }`; lists wrap `Data` as
- * `{ Items, TotalItems, TotalPages }`. `unwrap()` peels the `Data` layer.
- *
- * Invoice creation follows iDoklad's Default→edit→Post pattern: GET
- * `/IssuedInvoices/Default` returns a fully-defaulted template (currency,
- * payment option, numeric sequence, dates) which we override with the
- * partner + line + maturity and POST back.
+ * Every response is `{ Data, IsSuccess, Message }`; lists wrap `Data` as
+ * `{ Items, TotalItems, TotalPages }`. `unwrap()` peels it. Invoice creation
+ * is Default→edit→Post (`GET /IssuedInvoices/Default`, override, POST).
  */
 
 import { logger } from 'firebase-functions/v2';
@@ -212,15 +201,9 @@ export interface ResolvedContact {
 	emailSynced: boolean;
 }
 
-/**
- * Find a contact by IČO (IdentificationNumber), else create one. Contacts
- * without an IČO are always created fresh.
- *
- * A reused contact is **updated** from the form first. It used not to be:
- * the same company ordered twice from two people, and `SendToPartner`
- * mailed the second invoice to the first person while the pipeline
- * recorded success.
- */
+/** Find a contact by IČO, else create one (no IČO → always create). A reused
+ * contact is **updated** from the form first, or `SendToPartner` mails the
+ * person who ordered last time. */
 export async function findOrCreateContact(
 	cfg: IdokladConfig,
 	contact: IdokladContactInput,
@@ -239,13 +222,9 @@ function hasEmail(contact: IdokladContactInput): boolean {
 	return (contact.email?.trim() ?? '') !== '';
 }
 
-/**
- * Push the submitted email + address onto an existing contact. Only
- * non-empty fields are written (a blank optional field must not wipe what
- * iDoklad holds). Best-effort: a failed update is logged and reported as
- * unsynced, so the caller adds an explicit recipient instead of abandoning
- * the invoice. Returns whether the contact now holds the submitted address.
- */
+/** PATCH the submitted email + address onto an existing contact. Non-empty
+ * fields only. Best-effort: a failed update reports unsynced so the caller
+ * adds an explicit recipient. */
 async function syncContactDetails(
 	cfg: IdokladConfig,
 	id: number,
@@ -263,13 +242,9 @@ async function syncContactDetails(
 	if (Object.keys(patch).length === 1) return false;
 
 	try {
-		// PATCH the COLLECTION with `Id` in the body — `/Contacts/{id}` answers
-		// 405 `UnsupportedApiVersion` on every write verb.
-		//
-		// Read the address back from the response rather than assuming the write
-		// landed: iDoklad can silently drop an `Email` it doesn't like, and a
-		// 200 would otherwise report the contact as synced and mail the invoice
-		// to whoever the contact was created with.
+		// PATCH the COLLECTION with `Id` in the body — `/Contacts/{id}` 405s.
+		// Read the address back from the response: iDoklad can silently drop
+		// an `Email`, and a 200 would otherwise report synced.
 		const updated = await apiJson<{ Email?: string | null }>(cfg, 'PATCH', '/Contacts', patch);
 		if (!email) return false;
 		const stored = typeof updated?.Email === 'string' ? updated.Email.trim() : '';
@@ -385,12 +360,8 @@ export interface InvoiceMailResult {
 	recipients: string[];
 }
 
-/**
- * Ask iDoklad to email the issued invoice (PDF attached) to the contact.
- * The PDF carries the bank account + variable symbol. Throws on a refusal
- * (`IsSuccess: false`) and logs the verdict either way — "did the mail go
- * out?" used to be unanswerable from Cloud Logging.
- */
+/** Ask iDoklad to email the invoice (PDF with bank details). Throws on
+ * `IsSuccess: false`; logs the verdict either way. */
 export async function sendInvoiceByEmail(
 	cfg: IdokladConfig,
 	invoiceId: number,

@@ -659,14 +659,10 @@
 
 	/* ===================== RESPONSIVE ===================== */
 	@media (max-width: 900px) {
-		// Full-viewport frame (100svh, the base rule). `min-height: auto` used
-		// to let the strip scroll in under the CTAs, but that took the date,
-		// venue and clock off the first screen. The hero is sized to fit 100svh
-		// now (height-aware clamps above), so the strip is above the fold.
+		// Full-viewport frame so date, venue and clock stay on the first screen.
 		#hero {
-			// svh, not dvh: svh is the height with the mobile URL bar SHOWN. dvh
-			// would fit only while the bar is retracted and clip the strip when
-			// it comes back.
+			// svh, not dvh: svh is the height with the URL bar SHOWN; dvh would
+			// clip the strip when the bar comes back.
 			min-height: 100svh;
 			padding: calc(4.5rem + env(safe-area-inset-top)) var(--gutter) 0;
 		}
@@ -770,16 +766,10 @@
 		}
 	}
 
-	// Phones whose VISIBLE height is under ~630px: an iPhone SE 2/3 reports
-	// 375x667 but `100svh` with Safari's bars is ~553px; SE 1st gen is 320x568.
-	// Below ~624px the hero stopped shrinking (statement at its clamp floor,
-	// CTAs and strip fixed) and bottomed out at ~633px. This rule takes the
-	// floor to 541px: the rotor goes (the one element with no data) and insets
-	// are trimmed. Calibrated on 375x553 with 12px to spare. Date, venue and
-	// clock stay whole.
-	//
-	// `pointer: coarse`: a desktop at 400% zoom is 320x256 CSS px and would
-	// otherwise match; dropping content because of zoom is a 1.4.10 fault.
+	// Phones with VISIBLE height under ~630px (SE with Safari bars ≈ 553px).
+	// The hero bottomed out at ~633px; this takes it to 541px: rotor goes,
+	// insets trimmed, date/venue/clock stay. `pointer: coarse` keeps it off a
+	// zoomed desktop — dropping content because of zoom is a 1.4.10 fault.
 	@media (max-width: 600px) and (max-height: 630px) and (pointer: coarse) {
 		.hero-inner {
 			padding-block: 0.35rem 0.6rem;
@@ -812,12 +802,9 @@
 		}
 	}
 
-	// Landscape phones (<=500px tall). The full block can't fit 375px with 71px
-	// spent on the header, and shrinking the type turns the poster into a
-	// caption. So here the hero compresses: rotor goes, CTAs side by side,
-	// statement at UI scale. Date, venue and clock stay above the fold.
-	// `pointer: coarse` keeps this off a zoomed desktop (320x256 CSS px at
-	// 400%) — removing content because of zoom is a 1.4.10 fault.
+	// Landscape phones (<=500px tall): the hero compresses — rotor goes, CTAs
+	// side by side, statement at UI scale; date/venue/clock stay above the
+	// fold. `pointer: coarse` keeps it off a zoomed desktop (1.4.10).
 	@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
 		#hero {
 			padding-top: calc(4rem + env(safe-area-inset-top));

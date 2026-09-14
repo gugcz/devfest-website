@@ -9,12 +9,8 @@ export const CONSENT_KEY = 'cookie-consent';
 
 export type ConsentDecision = 'accepted' | 'declined';
 
-/**
- * The stored decision, or `null` when the visitor hasn't decided (or storage is
- * unavailable — Safari private mode, blocked cookies). Anything unrecognised is
- * treated as undecided, so a stale or hand-edited value can't be read as
- * consent.
- */
+/** The stored decision, or `null` (undecided, storage unavailable, or an
+ * unrecognised value — never read as consent). */
 export function readConsent(): ConsentDecision | null {
 	try {
 		const raw = localStorage.getItem(CONSENT_KEY);

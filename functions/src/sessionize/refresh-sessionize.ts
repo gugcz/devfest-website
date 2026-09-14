@@ -1,14 +1,8 @@
 /**
- * Daily scheduled mirror of Sessionize into Firestore:
- *   - `speakers` — each doc embeds its `sessions[]`.
- *   - `sessions` — each doc embeds its `speakers[]`.
- * Speaker photos are mirrored into Storage first (`mirror-images.ts`) and
- * those URLs written onto both collections. `rooms` is not persisted.
- *
- * Each collection is one atomic batch (upserts + guarded deletes), so a
- * reader never sees a half-synced state. A truncated/malformed response
- * aborts before any write (see `sessionize-api.ts`). A Speakers-view
- * fallback yields no sessions; the delete-guard preserves them.
+ * Daily mirror of Sessionize into Firestore `speakers` (embeds `sessions[]`)
+ * and `sessions` (embeds `speakers[]`). Photos mirrored to Storage first.
+ * Each collection is one atomic batch with guarded deletes; a truncated
+ * response aborts before any write (see `sessionize-api.ts`).
  */
 
 import { FieldValue } from 'firebase-admin/firestore';

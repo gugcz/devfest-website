@@ -35,12 +35,8 @@ const UNITS: { key: keyof TimeLeft; label: string; suffix: string }[] = [
 const INITIAL_TIME: TimeLeft = { days: '0', hours: '00', minutes: '00', seconds: '00' };
 
 interface Props {
-	/**
-	 * `069d 22h 43m 21s` on one line instead of four labelled stubs separated
-	 * by colons. The suffix is real rendered text on the unit, not a stylesheet
-	 * `::after` — a generated-content suffix reads fine visually but is
-	 * invisible to anything that inspects the DOM text.
-	 */
+	/** `069d 22h 43m 21s` on one line. The suffix is real DOM text, not a
+	 * `::after` — generated content is invisible to anything reading the DOM. */
 	compact?: boolean;
 	/**
 	 * Drop the seconds — `54D 10H 34M`. Seconds ticking beside the hero's

@@ -1,9 +1,5 @@
-/**
- * Browser-side fetch of the lineup from `/api/lineup` (→ `lineupApi`,
- * CDN-cached) — a plain `fetch()`, NOT the Firestore SDK, so no App Check
- * token to wait on. Raw docs are parsed by `speakerFromDoc` /
- * `sessionFromDoc`.
- */
+/** Browser fetch of `/api/lineup` (plain `fetch()`, never the Firestore
+ * SDK); raw docs parsed by `speakerFromDoc` / `sessionFromDoc`. */
 import { speakerFromDoc, type Speaker } from './speakers';
 import { isAgendaSession, isDisplayableSession, sessionFromDoc, type Session } from './sessions';
 

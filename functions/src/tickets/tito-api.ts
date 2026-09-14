@@ -1,13 +1,9 @@
 /**
- * ti.to Admin API client. Docs: https://ti.to/docs/api/admin/3.0 (stable;
- * v3.1 is beta and we don't opt in).
- *
- * v3.0 wire facts:
- *   - No `sale_status` or `accessibility` field. Buyability is the flag set
- *     `sold_out`, `off_sale`, `expired`, `upcoming`, `locked`, `archived`,
- *     `secret`; `deriveSaleStatus()` synthesises one stable string.
- *   - The state field is `state_name`, not `state`.
- *   - Sale window dates are `start_at` / `end_at`.
+ * ti.to Admin API v3.0 client (https://ti.to/docs/api/admin/3.0). Wire has
+ * no `sale_status`: buyability is a flag set (`sold_out`, `off_sale`,
+ * `expired`, `upcoming`, `locked`, `archived`, `secret`) and
+ * `deriveSaleStatus()` synthesises one string. State field is `state_name`;
+ * dates are `start_at` / `end_at`.
  */
 
 import { errorBody, fetchWithRetry } from '../lib/http.js';
@@ -85,15 +81,9 @@ export function releaseTitle(r: TitoRelease): string {
 	return r.title ?? r.slug;
 }
 
-/**
- * Fields persisted to RTDB; anything else is dropped so the cache shape
- * stays stable. `projectRelease` adds the synthetic `sale_status`.
- *
- * Deliberately NOT projected: `quantity`, `quantity_sold`, `tickets_count` —
- * raw counts leak per-wave sales velocity. The browser only needs whether a
- * paused wave has ever sold ("Paused" vs "Coming soon"), so a coarse
- * `has_sales` boolean is emitted instead.
- */
+/** Fields persisted to RTDB. `quantity` / `quantity_sold` / `tickets_count`
+ * are deliberately NOT projected (they leak sales velocity); a coarse
+ * `has_sales` boolean covers "Paused" vs "Coming soon". */
 export const RELEASE_FIELDS = [
 	'id',
 	'slug',

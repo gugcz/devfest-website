@@ -9,13 +9,8 @@ interface Props {
 	 */
 	focus?: string;
 	mobileFocus?: string;
-	/**
-	 * Opt-in `background-size` for the phone crop, e.g. `auto 130%`. The plate
-	 * is a square and the phone frame is 9:19.5, so a bare `cover` at some
-	 * focus points still leaves the subject too small to read at arm's length
-	 * — `mobileFocus` alone repositions the crop, this scales it. Left unset,
-	 * the phone crop stays `cover` like every other hero.
-	 */
+	/** Opt-in `background-size` for the phone crop (e.g. `auto 130%`) when
+	 * `cover` leaves the subject too small; `mobileFocus` only repositions. */
 	mobileZoom?: string;
 	/** Opt-in desktop `width` for the plate. Defaults to the shipped 60%. */
 	width?: string;

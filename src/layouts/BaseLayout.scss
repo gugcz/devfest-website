@@ -246,10 +246,8 @@
 		}
 	}
 
-	// The skip link's destination. `tabindex="-1"` (BaseLayout.astro) makes it a
-	// focus target so the link moves FOCUS, not just the fragment. Ring
-	// suppressed: a 100vw outline on a page region reads as a fault. Controls
-	// inside keep their own ring.
+	// Skip-link target (`tabindex="-1"` so the link moves FOCUS). Ring
+	// suppressed on this region only; controls inside keep theirs.
 	#main-content:focus,
 	#main-content:focus-visible {
 		outline: none;
@@ -400,17 +398,10 @@
 	}
 
 	/* ---- Anchor targets ---- */
-	// AN IN-PAGE JUMP LANDS ON THE SECTION HEAD, NOT ON THE SECTION BOX.
-	// A jump aligns the target's top edge, so "Get tickets" landed the title
-	// 312px down a 900px viewport with the section's own opening air above it.
-	// `scroll-padding-top` can't fix it — the air is inside the target.
-	//
-	// So an anchor target cancels its own opening air. The air still exists for
-	// someone scrolling in; it just isn't what a jump lands on. `--section-air`
-	// is the section's OWN opening padding (`.band` sets it; `.tickets` widens
-	// it), and the padding is built from the same variable, so changing it
-	// can't leave this offset stale. The fallback covers a target that is
-	// neither a band nor sets its own air.
+	// A jump lands on the section HEAD, not the section box: the target cancels
+	// its own opening air. `--section-air` is the section's padding variable
+	// (`.band` sets it, `.tickets` widens it), so the two can't drift.
+	// `scroll-padding-top` can't do this — the air is inside the target.
 	.anchor-target {
 		scroll-margin-top: calc(-1 * var(--section-air, var(--section-y)));
 	}
@@ -650,14 +641,12 @@
 		}
 	}
 
-	// THE CONTAINER LANGUAGE for every list on the site. There are no rules in a
-	// list: separation is air and type scale, and the REACH STATE marks an entry.
+	// THE CONTAINER LANGUAGE for every list. No rules; separation is air and
+	// type scale, the REACH STATE marks an entry.
 	//   .field-row--link    the row IS the control -> full-bleed red field
 	//   .field-row--holds   the row CONTAINS a control -> warm wash + pull
 	//   .field-row--short   the 72px-title step (short lists)
-	// Callers own their grid and type. Never add a border, a per-list `--lamp` box
-	// (light belongs to the section `--lit` pool) or an opacity-based inactive
-	// state (dimming under 4.5:1 fails WCAG 1.4.3).
+	// Never add a border, a per-list light box, or an opacity "inactive" state.
 
 	.field {
 		position: relative;
@@ -924,14 +913,9 @@
 	}
 
 	/* ===================== PRINT ===================== */
-	// Cream ink on #050505 prints as invisible text on white (or pages of black
-	// toner). Any route can be printed (/invoice, /privacy-policy, /thank-you as
-	// proof of purchase), so this is ONE sitewide sheet: white ground, black
-	// ink, atmosphere dropped, outbound links print their address.
-	//
-	// Grounds are cleared by a blanket rule, not by listing classes — a list
-	// goes stale the next time a section is added (which is how /invoice once
-	// printed its form on black while /thank-you printed clean).
+	// Cream on #050505 prints as invisible text. One sitewide sheet: white
+	// ground, black ink, atmosphere dropped, links print their address.
+	// Grounds cleared by a blanket rule, not a class list (a list goes stale).
 	@media print {
 		html,
 		body {

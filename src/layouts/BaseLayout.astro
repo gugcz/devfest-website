@@ -42,12 +42,9 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, ""
 // claim to BE the event. WebSite + Organization render sitewide.
 const isHome = Astro.url.pathname === "/";
 
-// `offers[].url` points to #tickets so the schema stays valid if ti.to slugs
-// change. Prices are VAT-inclusive CZK (ti.to net × 1.21), matching
-// Tickets.tsx's priceDisplay() — never EUR (#182). Only list waves on sale:
-// a paused future wave has no honest `availability`/`validFrom` and triggers
-// Google's missing-field warning. Add an Offer when a wave opens, remove it
-// when it ends (source of truth: ti.to/RTDB).
+// `offers[].url` → #tickets (survives slug changes). Prices VAT-inclusive
+// CZK matching priceDisplay(), never EUR. List only waves on sale — a paused
+// wave has no honest `availability`/`validFrom`. Update as waves open/close.
 const organizer = {
 	"@type": "Organization",
 	"name": "GUG.cz, z.s.",

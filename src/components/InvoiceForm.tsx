@@ -99,13 +99,8 @@ function findCompanyRelease(releases: TitoRelease[]): TitoRelease | null {
 	return matches.find((r) => releaseStatus(r).purchasable) ?? matches[0];
 }
 
-/**
- * One text field wired for assistive tech (`aria-invalid` + `aria-describedby`).
- *
- * Module scope, not inside `InvoiceForm`: a component defined in a render
- * body is a NEW type every render, so React remounts every input on each
- * keystroke and the caret leaves the field.
- */
+/** One text field with `aria-invalid` + `aria-describedby`. Module scope —
+ * a component defined in a render body remounts on every keystroke. */
 function TextField({
 	name,
 	label,

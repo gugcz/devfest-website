@@ -1,15 +1,8 @@
 /**
- * `processInvoiceTrigger` — Firestore onCreate trigger for `invoices/{id}`.
- *
- * Runs the invoice half of the pipeline:
- *   1. resolve the active company-funded ti.to release (for price)
- *   2. find/create the iDoklad contact (company)
- *   3. create the iDoklad issued invoice (net line + VAT)
- *   4. ask iDoklad to email the invoice (PDF attached, pay by bank transfer)
- *   5. record everything + notify Slack
- *
- * The payment half (generate + deliver the 100%-off code) is driven later
- * by the `pollPaidInvoicesScheduled` scheduler — iDoklad has no webhooks.
+ * `processInvoiceTrigger` — onCreate for `invoices/{id}`: resolve the
+ * company-funded release (price) → find/create iDoklad contact → create
+ * invoice → email it → record + Slack. Payment is handled later by
+ * `pollPaidInvoicesScheduled`.
  */
 
 import { logger } from 'firebase-functions/v2';

@@ -1,11 +1,6 @@
-// Partner logos, shared by the dedicated /partners page and the homepage
-// partners teaser.
-//
-// The data itself lives in the `partners` content collection
-// (`src/content/partners.json`, schema in `src/content.config.ts`). Adding a
-// partner means adding one entry there: { id, tier, order, name, logo, url? }.
-// Logo masters live under src/assets/partners/<tier>/ — the pages glob those
-// and match by filename, so `logo` stays a plain path string.
+// Partner logos for /partners and the homepage teaser. Data: the `partners`
+// collection (`src/content/partners.json`); masters under
+// `src/assets/partners/<tier>/`, matched by filename.
 import { getCollection } from 'astro:content';
 
 export type Partner = { name: string; logo: string; url?: string; plated?: boolean };

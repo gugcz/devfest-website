@@ -6,20 +6,9 @@ import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import { EVENT_TOPICS } from '../lib/ticker';
 
-// ─────────────────────────────────────────────────────────────────────────
-// FAQ CONTENT — single source of truth: the `faq` content collection
-// (`src/content/faq.json`, schema in `src/content.config.ts`).
-//
-// A living list: we know a handful of things for certain now and will add
-// more over time. The rendered accordion and the FAQPage JSON-LD (Google
-// rich results) both DERIVE from that data, so adding or editing a Q&A
-// means touching only the JSON.
-//
-//   • `a` may contain inline HTML (links, <strong>, …). It is rendered with
-//     set:html for display and reused verbatim in the structured data.
-//   • Add / remove groups and items freely; `order` fixes the group sequence
-//     (getCollection() does not preserve file order), items keep array order.
-// ─────────────────────────────────────────────────────────────────────────
+// FAQ content: the `faq` collection (`src/content/faq.json`). Accordion and
+// FAQPage JSON-LD both derive from it. `a` may contain inline HTML
+// (`set:html`); `order` fixes group sequence, items keep array order.
 const faqGroups = (await getCollection('faq'))
 	.sort((a, b) => a.data.order - b.data.order)
 	.map((entry) => ({

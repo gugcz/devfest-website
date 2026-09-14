@@ -31,17 +31,10 @@ function canMorph(): boolean {
 }
 
 /**
- * Morphs the clicked print into the dialog's photo and back. The API captures
- * the DOM before and after the callback and tweens elements sharing a
- * `view-transition-name`. Two constraints make this a hook:
- *
- *  1. The name must be on the card BEFORE the capture — so opening is two
- *     renders: paint the name, then start the transition in an effect.
- *  2. Only ONE element per capture may carry the name — hence handing it off
- *     inside the callback.
- *
- * `flushSync` because React batches updates: without it the callback returns
- * before the DOM changed and the "after" capture is unchanged.
+ * Morphs the clicked print into the dialog photo. The name must be on the
+ * card BEFORE the capture (so opening is two renders), only ONE element may
+ * carry it per capture (hand-off inside the callback), and `flushSync` is
+ * needed or the "after" capture sees an unchanged DOM.
  */
 function usePortraitMorph(
 	selected: Speaker | null,

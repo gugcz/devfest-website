@@ -1,14 +1,8 @@
 import type { ReactNode } from 'react';
 import s from './DataState.module.scss';
 
-/**
- * The three non-ready states every data-backed island can be in, as one
- * treatment. See DataState.module.scss for why these were merged.
- *
- * Deliberately not a single `<DataState kind="…" />` switch: the three states
- * carry different ARIA (`status` vs `alert` vs neither) and a caller that
- * picked the wrong string would silently get the wrong announcement.
- */
+/** The non-ready states of every data-backed island. Separate components,
+ * not one `kind` switch — each carries different ARIA. */
 
 /** Live region while the endpoint is in flight. `role="status"` (polite) — a
  *  load is not an interruption. */

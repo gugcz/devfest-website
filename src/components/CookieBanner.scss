@@ -77,11 +77,9 @@
 
 	// Compact sizing overrides on top of global .btn-primary / .btn-ghost.
 	//
-	// The two choices are PEERS — consent is not a CTA with an escape hatch.
-	// Accept keeps the accent fill (the affirmative answer, and how the banner
-	// is findable); everything else is shared: type, tracking, padding, height,
-	// minimum footprint. Decline's boundary is --field-border via .btn-ghost
-	// (3.33:1, clears 1.4.11).
+	// The two choices are PEERS: Accept keeps the accent fill, everything else
+	// (type, padding, height, footprint) is shared. Decline's boundary is
+	// --field-border via .btn-ghost (3.33:1).
 	.cookie-btn {
 		font-size: var(--fs-label-lg);
 		letter-spacing: 0.22em;

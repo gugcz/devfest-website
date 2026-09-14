@@ -12,16 +12,10 @@ import {
 import { track } from '../lib/analytics';
 
 /**
- * The single primary action on `/invite/<member>`. An island for two reasons:
- *
- * 1. **It goes straight to ti.to.** The live wave isn't known at build time,
- *    so the href resolves client-side from `/api/tickets`.
- * 2. **It reports `begin_checkout` with the member's identity.** ti.to's
- *    redirect carries no source, so this click is the only per-member
- *    attribution the channel has.
- *
- * Until the endpoint answers — and if it never does — the href falls back to
- * `/#tickets`. A dead primary action is worse than a detour.
+ * The single primary action on `/invite/<member>`. An island because the
+ * href resolves client-side from `/api/tickets` and the click reports
+ * `begin_checkout` with the member — the channel's only attribution.
+ * Falls back to `/#tickets` until (or if never) the endpoint answers.
  */
 
 interface Props {
@@ -37,12 +31,8 @@ interface Props {
 /** On-site fallback while tickets are loading or the endpoint is down. */
 const FALLBACK_HREF = '/#tickets';
 
-/**
- * A ti.to discount link for this channel, set outside the repo (GitHub Actions
- * secret, not committed). When present it always wins the href — the
- * `/api/tickets` resolution below still runs, but only to build the
- * `begin_checkout` items/value payload, never to pick the destination.
- */
+/** Optional ti.to discount link (GitHub Actions secret). When set it wins
+ * the href; `/api/tickets` still resolves only for the event payload. */
 const DISCOUNT_URL = import.meta.env.PUBLIC_INVITE_DISCOUNT_URL || '';
 
 interface Target {

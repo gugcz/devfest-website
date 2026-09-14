@@ -1,11 +1,7 @@
 /**
- * The handful of event facts the post-purchase page has to state exactly:
- * when it starts, when it ends, and where. They also appear in the Event
- * JSON-LD in `BaseLayout.astro` — keep the two in step (the schema block is
- * the one Google reads, this one is what a visitor puts in their calendar).
- *
- * Times are Prague local with an explicit offset. October 30 is after the DST
- * switch, so CET (+01:00) is correct — do not "fix" it to +02:00.
+ * Event facts for the calendar links. Keep in step with the Event JSON-LD in
+ * `BaseLayout.astro`. October 30 is after the DST switch: CET (+01:00) is
+ * correct — do not "fix" it to +02:00.
  */
 export const EVENT = {
 	name: 'DevFest.cz 2026',

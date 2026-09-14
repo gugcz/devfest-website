@@ -1,19 +1,10 @@
 ---
 // ─── PERSONAL INVITATION ──────────────────────────────────────────────────
-// One unlisted page per team member: `/invite/<team.json id>`. A member
-// shares their own link; the page speaks in their voice with one action.
-//
-// UNLISTED = all three of:
-//   1. `noindex` (BaseLayout also drops canonical + JSON-LD),
-//   2. excluded from the sitemap (`astro.config.mjs`),
-//   3. linked from NOWHERE — not the menu, footer or `/team`.
-// Not access control (URLs are guessable) — it keeps the page from reading
-// as public marketing.
-//
-// Visual direction B ("The Plate"), approved 3 Sep 2026: the portrait owns
-// the right half and the B&W → colour bleed is the page's ONLY effect. Type
-// never sits on the face — desktop feathers the plate away from the text;
-// phone uses a scrim, which is a legibility requirement, not a finish.
+// One unlisted page per team member: `/invite/<team.json id>`. UNLISTED =
+// `noindex` + out of the sitemap + linked from NOWHERE (not access control).
+// Visual direction B ("The Plate"): portrait owns the right half, B&W →
+// colour bleed is the ONLY effect. Type never sits on the face; the phone
+// scrim is a legibility requirement, not a finish. See CLAUDE.md.
 import { getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import type { ImageMetadata } from 'astro';

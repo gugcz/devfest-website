@@ -129,15 +129,10 @@
 	}
 
 	// ─── ONE GRID MODULE ──────────────────────────────────────────────────
-	// Contact sheet, not a tile grid: logos in cells of one ruled sheet. No
-	// panel fill, no shadow, no floating tiles.
-	//
-	// One track size for every partner. Per-tier sizing used `--tier-col` as a
-	// floor, so cells grew to close their row (a 611px platinum cell beside
-	// 264px media plates) and a cell's size said more about how many partners
-	// share its tier than about the tier. The tier is carried by the heading
-	// and section order. A tier that doesn't fill its last row leaves the rest
-	// empty — rules belong to the CELLS.
+	// Contact sheet, not a tile grid: one track size for every partner, no
+	// panel fill or shadow. Per-tier sizing let cells grow to close their row.
+	// The tier is carried by heading and section order; a short last row
+	// stays empty — rules belong to the CELLS.
 	.logo-grid {
 		--cell-min: 280px;
 		--cell-height: 200px;

@@ -114,14 +114,10 @@ const isCurrent = (href: string) => {
 	import { invalidateAnchorOffsets } from '../lib/anchor';
 
 	/**
-	 * MEASURE THE BAR; DON'T TRUST THE FORMULA.
-	 *
-	 * `--header-h` is `padding * 2 + tap` in CSS, and anchor offsets, the panel
-	 * padding and every sticky element measure off it. Under text zoom
-	 * `.header-actions` wraps (the 320px overflow fix) and the bar is taller
-	 * than the formula: 39px at 320px, 141px at 1024px, at a 32px root. So the
-	 * real height is measured and written over it. The formula stays — it's
-	 * what anchors land against before this runs, and exact at a 16px root.
+	 * MEASURE THE BAR; DON'T TRUST THE FORMULA. Under text zoom
+	 * `.header-actions` wraps and the bar is taller than `--header-h`'s CSS
+	 * formula, so the real height is written over it. The formula stays — it
+	 * is what anchors land against before this runs, exact at a 16px root.
 	 */
 	const trackHeaderHeight = (header: HTMLElement, signal: AbortSignal) => {
 		const root = document.documentElement;

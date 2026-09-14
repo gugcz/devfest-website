@@ -86,12 +86,9 @@ const STEP_LABEL: Record<WizardStep, string> = {
 	4: 'Download or share',
 };
 
-/** A native range's track fill is painted through a CSS custom property set
- * inline — it cascades into the `::-webkit-slider-runnable-track` /
- * `::-moz-range-track` pseudo-elements, which can't otherwise see a value
- * computed in JS. Zoom fills from the low edge; position rails are bipolar
- * and fill from the centre outward, or a left-edge fill would misread a
- * negative value as "less than half". */
+/** Range track fill via an inline CSS custom property (the only way the
+ * `::-webkit-slider-runnable-track` pseudo sees a JS value). Zoom fills from
+ * the low edge; bipolar position rails fill from the centre. */
 function edgeFill(value: number, min: number, max: number): string {
 	const pct = ((value - min) / (max - min)) * 100;
 	return `linear-gradient(to right, var(--color-accent) 0%, var(--color-accent) ${pct}%, var(--rule-strong) ${pct}%, var(--rule-strong) 100%)`;

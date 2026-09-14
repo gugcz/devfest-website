@@ -34,12 +34,9 @@ interface State {
 
 const INITIAL: State = { status: 'loading', sessions: [] };
 
-/** 5-minute grid snap + row height for the proportional grid.
- *
- * ROW_REM is the row's MINIMUM (a row grows when its talk needs space).
- * 1.625rem gives a half-hour talk 156px — title, time, tags and speakers all
- * fit; at 15px it clipped. In `rem`, NOT px: the row contains text, so it
- * must grow with it — at a 32px root fixed 26px rows overflowed eight cells. */
+/** 5-minute grid snap + minimum row height. `rem`, NOT px: rows contain
+ * text and must grow with it under text zoom. 1.625rem gives a half-hour
+ * talk 156px, enough for title, time, tags and speakers. */
 const SNAP_MIN = 5;
 const ROW_REM = 1.625;
 

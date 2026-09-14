@@ -8,12 +8,8 @@ interface Props {
 	/** Visually-hidden keyword text prepended to the <h1>, ahead of the
 	 * decorative title (e.g. "DevFest.cz 2026 Speakers"). Omit to skip. */
 	seoHeading?: string;
-	/**
-	 * Whether the key-art plate sits behind the title. Pages ABOUT the event
-	 * (lineup, schedule, crew, partners, press) keep it; transactional ones
-	 * (contact, FAQ, invoice, downloads) open on type alone, so the site has
-	 * two kinds of opening instead of one template stamped ten times.
-	 */
+	/** Key-art plate behind the title. Pages ABOUT the event keep it;
+	 * transactional ones (contact, FAQ, invoice, downloads) open on type. */
 	photo?: boolean;
 	/** `background-position` for the key-art plate — see HeroBackground. */
 	focus?: string;

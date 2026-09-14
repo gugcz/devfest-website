@@ -1,12 +1,8 @@
 /**
- * Deterministic fixture data for the a11y audit and `npm run dev`. Served
- * from `/api/lineup` + `/api/tickets` (`scripts/a11y.mjs`, `astro.config.mjs`)
- * so the ready-state UI renders and gets audited.
- *
- * Shapes mirror the raw Firestore/RTDB docs the parsers expect
- * (`speakerFromDoc`, `sessionFromDoc`, `TicketsCache`). Sessions carry
- * `startsAt`/`endsAt`/`room` so /agenda is exercised, including a service
- * band (dropped by /sessions, kept by /agenda) and an unscheduled talk.
+ * Fixture data for the a11y audit and `npm run dev`. Shapes mirror the raw
+ * Firestore/RTDB docs (`speakerFromDoc`, `sessionFromDoc`, `TicketsCache`).
+ * Sessions are timed so /agenda is exercised, incl. a service band and an
+ * unscheduled talk.
  */
 
 // Inline SVG portrait — loads with no network so the <img> render path (not the
@@ -91,14 +87,9 @@ export const SPEAKERS = [
 	},
 ];
 
-/** Firestore `sessions` collection — raw docs (pre-ordered by `order`).
- *
- * Scheduled on a single day (2026-10-30, event-local ISO, no offset — the wire
- * shape verified against live /api/lineup) so the /agenda grid renders: a plenum
- * keynote and a lunch band (full-width), two timed talks across two rooms, a
- * timed talk with no room (Room-TBA column), and one untimed talk (Not-yet-
- * scheduled list). The lunch band is a service session — dropped by /sessions,
- * kept by /agenda — exercising the fetchLineup / fetchAgenda divergence. */
+/** Firestore `sessions` — raw docs on one day (event-local ISO, no offset):
+ * keynote + lunch bands, two talks in two rooms, a Room-TBA talk, an untimed
+ * talk. Lunch is a service session (dropped by /sessions, kept by /agenda). */
 export const SESSIONS = [
 	{
 		id: 'ses-keynote',

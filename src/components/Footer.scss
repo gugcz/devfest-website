@@ -45,21 +45,11 @@
 		padding: 0 0 clamp(2.5rem, 5vw, 3.5rem);
 		border-bottom: 1px solid var(--rule-soft);
 
-		// THE FOOTER'S BREAKPOINTS COLLAPSE BY TYPE SIZE, NOT PIXELS — the one
-		// place on the site: 60em/31.25em, not 960px/500px.
-		//
-		// A media-query `em` resolves against the reader's browser default, so
-		// these thresholds move with text-only zoom. Needed because `.org` holds
-		// the legal name "GUG.cz, z.s. ↗" as one `nowrap` token: at a 32px root
-		// it's 267px, wider than a quarter of 1024px, and the document ran 45px
-		// past the viewport on every route with a footer (DEVF-49). In `em` the
-		// zoomed reader gets the two-column grid and the name fits.
-		//
-		// 60em = 960px and 31.25em = 500px at a 16px root, so a default-size
-		// reader gets identical layout.
-		//
-		// Not `overflow-wrap: anywhere`: that severed the name mid-word
-		// ("GUG.cz, z" / ".s.") between 1060–1260px, and NBSP doesn't stop it.
+		// `em` BREAKPOINTS, the one place on the site (60em = 960px, 31.25em =
+		// 500px at 16px). They move with text zoom: `.org` holds the legal name
+		// as one `nowrap` token, which overflowed the viewport at a 32px root
+		// (DEVF-49); a zoomed reader needs a wider column, not a wrap
+		// (`overflow-wrap: anywhere` severed the name mid-word).
 		@media (max-width: 60em) {
 			grid-template-columns: 1fr 1fr;
 			gap: 2.8rem;
@@ -226,12 +216,9 @@
 
 	.org-link {
 		display: inline;
-		// The legal name + arrow is one unit — break before it, never inside.
-		// The NBSPs in the markup say the same thing, so the unit survives if
-		// this declaration is dropped. This is why `.footer-grid` uses `em`
-		// breakpoints: a zoomed reader needs a WIDER COLUMN, not a wrap. Do not
-		// "fix" an overflow with `overflow-wrap: anywhere` — it shipped once and
-		// severed the name mid-word.
+		// Legal name + arrow is one unit — break before it, never inside (the
+		// NBSPs in the markup agree). Do not "fix" an overflow with
+		// `overflow-wrap: anywhere`; see `.footer-grid`.
 		white-space: nowrap;
 		// Inline-in-prose link: a persistent underline distinguishes it without colour alone (1.4.1).
 		text-decoration: underline;

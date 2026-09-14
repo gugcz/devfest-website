@@ -1,12 +1,7 @@
 ---
-/**
- * A NEXT STEP — one thing to do, in an open field of them. Used by
- * `/thank-you`, `/newsletter-subscription-thank-you` and `/404`. A component,
- * not a repeated class name, because copies drift (like `Desk.astro`).
- *
- * A step CONTAINS its controls, so it takes `.field-row--holds` — never the
- * red reach field, which promises the row itself is clickable.
- */
+/** A NEXT STEP — one thing to do, in an open field (`/thank-you`,
+ * `/newsletter-subscription-thank-you`, `/404`). CONTAINS its controls, so
+ * `.field-row--holds`. */
 interface Action {
 	href: string;
 	label: string;

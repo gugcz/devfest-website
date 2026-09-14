@@ -1,21 +1,8 @@
 /**
- * KEEP AN ANCHOR JUMP LANDED WHILE THE PAGE IS STILL SETTLING.
- *
- * A jump (`/#tickets` load, a `/#newsletter` link from a subpage, the hero's
- * own buttons) resolves against the layout at that instant, and the home
- * page isn't finished then: the ticket island swaps its skeleton, the
- * speakers teaser appears whole once `/api/lineup` resolves, the gallery
- * loads lazily. All of that grows the page ABOVE the target, so it slides
- * down (measured: 780–1630px past the heading; in-page clicks off by up to
- * 660px in WebKit/Firefox).
- *
- * Reserving island heights would leave a permanent hole for sections that
- * legitimately render nothing (the teaser pre-announce). So the page may
- * change size and the SCROLL follows — native scroll anchoring, except WebKit
- * lacks it and nobody covers the initial fragment scroll.
- *
- * The hold re-aligns only while the scroll is at rest (a smooth animation is
- * never cut short) and stops the moment the visitor touches the page.
+ * KEEP AN ANCHOR JUMP LANDED WHILE THE PAGE SETTLES. Islands hydrate after
+ * the jump and grow the page above the target (up to 1630px off), so the
+ * scroll follows — native scroll anchoring, which WebKit lacks. Re-aligns
+ * only while the scroll is at rest; stops when the visitor touches the page.
  */
 
 /**
@@ -25,20 +12,13 @@
  */
 const HOLD_MS = 4000;
 
-/**
- * No hold when the browser restored a reading position instead of resolving
- * the hash (reload part-way down, or back/forward). A restored position is a
- * non-`navigate` navigation that left us well away from the anchor; this is
- * "well away".
- */
+/** "Well away" from the anchor: a non-`navigate` navigation this far off is
+ * a restored reading position, and gets no hold. */
 const RESTORED_TOLERANCE_PX = 200;
 
-/**
- * True when the browser put us somewhere of its own choosing, not on the hash.
- * Only asked on the FIRST document load: a ClientRouter swap creates no new
- * navigation entry, so after a reload of `/invoice` a soft navigation to
- * `/#tickets` would still read `type === 'reload'`.
- */
+/** True when the browser restored a position instead of resolving the hash.
+ * Only asked on the FIRST document load — a ClientRouter swap creates no new
+ * navigation entry. */
 function scrollWasRestored(el: HTMLElement): boolean {
 	const [nav] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
 	if (!nav || nav.type === 'navigate') return false;
@@ -58,13 +38,9 @@ function targetOf(hash: string): HTMLElement | null {
 	return document.getElementById(id) ?? (document.getElementsByName(id)[0] as HTMLElement | undefined) ?? null;
 }
 
-/**
- * Where under the viewport top a jump puts the element: `scroll-padding-top`
- * (the header) plus the element's `scroll-margin-top`. Memoised per element —
- * `drift` runs every frame during the hold, and two `getComputedStyle` reads
- * per frame force layout. Dropped on `resize` and by
- * `invalidateAnchorOffsets`.
- */
+/** Landing offset: `scroll-padding-top` + the element's `scroll-margin-top`.
+ * Memoised (`drift` runs every frame; `getComputedStyle` forces layout).
+ * Dropped on `resize` and by `invalidateAnchorOffsets`. */
 let landingOffset: { el: HTMLElement; px: number } | null = null;
 
 /**
@@ -125,12 +101,9 @@ function hold(el: HTMLElement): void {
 			const off = drift(el);
 			if (Math.abs(off) > 1) window.scrollBy({ top: off, behavior: 'instant' });
 		} else if (Math.abs(docTop - lastDocTop) > 1) {
-			// A scroll is in flight AND the target moved under it — re-aim the
-			// animation instead of cutting it off. 1px tolerance: `rect.top` is
-			// fractional and `scrollY` rounds per engine/DPR, so an exact compare
-			// would re-aim every frame and crawl. Also covers the first frame
-			// (`lastDocTop` NaN). `scrollIntoView` with no `behavior` follows CSS
-			// `scroll-behavior`, so it retargets the same smooth run.
+			// Scroll in flight AND the target moved — re-aim, don't cut off. 1px
+			// tolerance: fractional `rect.top` vs rounded `scrollY` would re-aim
+			// every frame. `scrollIntoView` without `behavior` follows CSS.
 			el.scrollIntoView({ block: 'start', inline: 'nearest' });
 		}
 		lastY = window.scrollY;
@@ -154,12 +127,8 @@ let wired = false;
  */
 let firstLoad = true;
 
-/**
- * Wire the hold to every way a hash landing happens. Called on every
- * `astro:page-load`: the load-time landing is re-checked per page, the
- * document-level listeners are registered once (they live on `window` /
- * `document`, which survive a ClientRouter swap).
- */
+/** Wire the hold to every hash landing. Called on every `astro:page-load`;
+ * document-level listeners are registered once. */
 export function keepAnchorLanded(): void {
 	// Page load (initial document, or a soft navigation into `/#tickets`). The
 	// hold is armed BEFORE the landing: Chromium and WebKit defer the initial

@@ -10,13 +10,9 @@ import { EVENT_TOPICS } from '../lib/ticker';
 import { initials } from '../lib/speakers';
 
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
-// The roster lives in the `team` content collection (`src/content/team.json`,
-// schema in `src/content.config.ts`). Each member has two photos of the SAME
-// shot: a black-and-white base (`photo`) and a colour version (`photoColor`).
-// The card shows the B&W base at rest; on hover the colour "bleeds" in from
-// the cursor (see team.scss). `alias` is the noir codename used as the kicker;
-// `role` is the real role. `order` fixes the seniority sequence — getCollection()
-// does not preserve the order of the source file.
+// Roster: the `team` collection (`src/content/team.json`). Each member has a
+// B&W `photo` and a colour `photoColor` of the same shot; colour bleeds in on
+// hover (team.scss). `alias` is the codename kicker; `order` fixes sequence.
 type LinkKind = 'linkedin' | 'github' | 'web' | 'instagram' | 'email';
 
 const team = (await getCollection('team'))

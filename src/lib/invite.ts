@@ -1,11 +1,5 @@
-/**
- * Copy for the personal invitation pages (`/invite/<member>`) — an unlisted
- * referral channel, one page per person in `src/content/team.json`. See
- * `src/pages/invite/[member].astro`.
- *
- * v1 GENERIC copy, a deliberate stop-gap: members write their own paragraphs
- * later, and then only `body` changes. `roleLine` is the one line that varies.
- */
+/** Copy for `/invite/<member>`. v1 GENERIC — members write their own later,
+ * then only `body` changes. `roleLine` is the one line that varies. */
 
 /** The facts the copy states out loud. Kept here so all eleven pages agree. */
 export const INVITE_EVENT = {

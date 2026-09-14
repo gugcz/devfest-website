@@ -1,22 +1,10 @@
 /**
- * Project-wide Cloud Functions defaults and the option presets every
- * function builds on.
+ * Cloud Functions defaults and per-kind option presets. Imported FIRST from
+ * `index.ts` so `setGlobalOptions` runs before any function factory.
+ * `maxInstances` is a cost ceiling on the shared billing project. Spread a
+ * preset and override only what is specific:
  *
- * Imported FIRST from `index.ts` so `setGlobalOptions` runs before any
- * function factory — ES modules evaluate imports in source order.
- *
- * `maxInstances` is a cost ceiling: the billing project is shared with the
- * mobile app, so a retry storm or webhook flood must not fan out unbounded.
- * Per-function overrides still win.
- *
- * Presets mean a function declares only what is specific to it (schedule,
- * secrets, unusual memory). Region and timezone were once repeated in nine
- * files. Spread a preset and override deliberately:
- *
- *     export const thing = onSchedule(
- *         { ...SCHEDULED, schedule: 'every day 06:00', secrets: [FOO] },
- *         handler,
- *     );
+ *     onSchedule({ ...SCHEDULED, schedule: 'every day 06:00', secrets: [FOO] }, handler)
  */
 
 import { setGlobalOptions } from 'firebase-functions/v2';
@@ -45,12 +33,8 @@ export const SCHEDULED = {
 	retryCount: 1,
 } satisfies Partial<ScheduleOptions>;
 
-/**
- * The public, CDN-cached `/api/*` endpoints. Scale-to-zero: a warm instance
- * is billed around the clock, and the edge TTLs mean a cold start only lands
- * on a rare revalidating request. `ticketsApi` overrides with
- * `minInstances: 1` — its 5min TTL revalidates often enough.
- */
+/** Public CDN-cached `/api/*` endpoints. Scale-to-zero (edge TTLs absorb
+ * nearly all traffic); `ticketsApi` overrides with `minInstances: 1`. */
 export const CACHED_ENDPOINT = {
 	region: REGION,
 	invoker: 'public',

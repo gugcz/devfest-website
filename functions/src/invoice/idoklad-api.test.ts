@@ -1,11 +1,7 @@
 /**
- * `node --test` coverage for the three fixes in the iDoklad client:
- * a reused contact is updated from the submitted form data, a `Send` names an
- * explicit recipient when it is not, and a 200 with `IsSuccess: false` is a
- * failure rather than a silent success.
- *
- * No network: `globalThis.fetch` is replaced by a table of route handlers, so
- * every assertion is about the request we would have made.
+ * iDoklad client tests: a reused contact is updated, `Send` names an explicit
+ * recipient when unsynced, and 200 + `IsSuccess: false` is a failure.
+ * No network — `globalThis.fetch` is a table of route handlers.
  */
 
 import assert from 'node:assert/strict';
@@ -34,14 +30,9 @@ const realFetch = globalThis.fetch;
 let calls: RecordedCall[] = [];
 
 /**
- * Install a fetch stub. `routes` is keyed by `"<METHOD> <path>"`, matched
- * EXACTLY unless the key ends in `*` (then it is a prefix). Exact matching is
- * the point: `PATCH /Contacts/{id}` answers 405 at iDoklad, and a prefix-keyed
- * stub happily answered both that and the collection path, so the tests passed
- * against a URL that can never work. An unmatched call throws.
- *
- * The OAuth token endpoint is always answered so the client's token cache
- * behaves the same whether or not a given test is the first to run.
+ * Fetch stub keyed by `"<METHOD> <path>"`, matched EXACTLY unless the key
+ * ends in `*` (a prefix stub once passed tests against a URL that 405s at
+ * iDoklad). Unmatched calls throw. The token endpoint is always answered.
  */
 function mockFetch(routes: Record<string, Handler>) {
 	globalThis.fetch = (async (url: any, init: any = {}) => {

@@ -1,18 +1,8 @@
 /**
- * Configuration for the invoice domain (iDoklad + ti.to company-funded
- * invoice-first flow).
- *
- * Credentials are **secrets** (Secret Manager) — set each once:
- *   firebase functions:secrets:set <NAME>
- *
- * Everything else is a stable code constant below (change here + redeploy)
- * — kept out of env/Secret Manager so there is nothing to configure beyond
- * the keys.
- *
- * ti.to credentials (`TITO_API_TOKEN`, `TITO_ACCOUNT_SLUG`,
- * `TITO_EVENT_SLUG`) and `SLACK_WEBHOOK_URL` are owned by the tickets
- * domain — import them from `../tickets/params.js` (or `../lib/params.js` for
- * `SLACK_WEBHOOK_URL`, which every domain shares), do NOT redeclare.
+ * Invoice domain config. Credentials are secrets
+ * (`firebase functions:secrets:set <NAME>`); everything else is a code
+ * constant. ti.to params come from `../tickets/params.js`,
+ * `SLACK_WEBHOOK_URL` from `../lib/params.js` — never redeclare.
  */
 
 import { defineSecret } from 'firebase-functions/params';

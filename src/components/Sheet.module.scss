@@ -1,12 +1,7 @@
 @use '../styles/type' as *;
-// THE SHEET — the chrome both detail views share.
-//
-// A detail view is not a dialog box: full-bleed on the section ground, a
-// poster title, no border, a mono `Close ✕` in a sticky bar. `SessionDetail`
-// and `SpeakerDetail` share every part of that; this file stops the copies
-// drifting.
-//
-// A caller imports this module alongside its own and composes:
+// THE SHEET — chrome shared by `SessionDetail` and `SpeakerDetail`. Not a
+// dialog box: full-bleed, poster title, no border, mono `Close ✕` in a
+// sticky bar. A caller composes it with its own module:
 //
 //   import sheet from './Sheet.module.scss';
 //   import s from './SpeakerDetail.module.scss';
@@ -40,14 +35,9 @@
 }
 
 /* ===================== TOP BAR ===================== */
-// Sticky, so the way out is reachable from the bottom of a long abstract.
-// Full-bleed (the scrim runs to both edges); the close still lands on the
-// measure's right axis because the inset is padding, not `max-width`.
-//
-// Inset is `(100% - --maxw) / 2`, NOT `… + --gutter`: a list row's right edge
-// sits exactly --maxw/2 from centre, so adding a gutter puts the Close one
-// gutter inside the row that opened the sheet. `max()` keeps the plain gutter
-// on narrow viewports.
+// Sticky and full-bleed; the close lands on the measure's right axis via
+// padding. Inset is `(100% - --maxw) / 2`, NOT `+ --gutter` — a gutter puts
+// the Close inside the row that opened the sheet.
 .bar {
 	position: sticky;
 	top: 0;

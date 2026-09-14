@@ -112,11 +112,9 @@ function formatViolation(v) {
 }
 
 // ─── Custom contrast pass for form controls ────────────────────────────────
-// axe-core can't evaluate ::placeholder colour and returns "incomplete" for
-// any text/border whose background it can't flatten — most of this theme's
-// form chrome. This pass composites the colours against the nearest SOLID
-// background and fails sub-threshold controls (WCAG 1.4.3 / 1.4.11).
-// Runs in the page; returns plain data.
+// axe can't evaluate ::placeholder and returns "incomplete" for text on a
+// background it can't flatten. This composites against the nearest SOLID
+// background and fails sub-threshold controls (1.4.3 / 1.4.11).
 function auditControls() {
 	const relLum = ([r, g, b]) => {
 		const f = (c) => {
@@ -226,10 +224,7 @@ function auditControls() {
 
 // ─── Source scan: suppressed focus indicators (2.4.7) ──────────────────────
 // axe has no focus-visibility rule. Flag :focus-visible blocks that kill the
-// outline without an obvious replacement (box-shadow / coloured border / a real
-// outline). Scoped to :focus-visible only — a plain :focus { outline:none } for
-// pointer users is legitimate when the keyboard :focus-visible ring survives.
-// Warn-only: static SCSS parsing is fuzzy, so a human confirms.
+// outline with no replacement. Warn-only — static SCSS parsing is fuzzy.
 async function collectStyleFiles(dir) {
 	const out = [];
 	for (const ent of await readdir(dir, { withFileTypes: true })) {
@@ -266,14 +261,10 @@ async function scanSuppressedFocus() {
 }
 
 // ─── Gated ready-state coverage ────────────────────────────────────────────
-// A plain build has no `/api/*`, so islands render "unavailable". `npm run
-// a11y` builds with A11Y_MOCK=1 (astro.config.mjs → scripts/a11y-mocks/) so
-// the real content gets audited. Two things a static pass misses:
-//
-//  1. client:visible islands (Tickets on /) don't hydrate until scrolled —
-//     `hydrateIslands` scrolls the page and waits for aria-busy to clear.
-//  2. Detail dialogs only exist after a click — `MODAL_FLOWS` opens each and
-//     axe re-runs scoped to the dialog.
+// Two things a static pass misses:
+//  1. client:visible islands hydrate only when scrolled — `hydrateIslands`.
+//  2. Detail dialogs exist only after a click — `MODAL_FLOWS` opens each and
+//     re-runs axe scoped to the dialog.
 
 async function hydrateIslands(page) {
 	// Trigger client:visible islands, then settle at the top again.

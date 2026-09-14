@@ -1,16 +1,8 @@
 import { useState } from 'react';
 import { initials, type Speaker } from '../lib/speakers';
 
-/**
- * A speaker's photograph, or their initials when there isn't one. Replaced
- * three copies that disagreed (the same dead URL rendered as initials on
- * /speakers and a hole on /sessions and /agenda). A missing photo is the
- * normal state of a speaker who hasn't sent one.
- *
- * The caller owns the shape (a 4:5 print, a 26px disc) via classes; this owns
- * only the DECISION: no URL, or a URL that fails to load, both land on the
- * monogram.
- */
+/** A speaker's photo, or initials. Owns one DECISION: no URL or a failed
+ * load both land on the monogram. The caller owns the shape via classes. */
 export default function SpeakerPhoto({
 	speaker,
 	photoClass,

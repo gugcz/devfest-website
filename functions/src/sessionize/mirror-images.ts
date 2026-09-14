@@ -1,16 +1,8 @@
 /**
- * Mirror Sessionize speaker photos into Firebase Storage.
- *
- * `mirrorSpeakerImages` uploads each `profilePicture` to `speakers/{id}` and
- * returns a speakerId → served-URL map. The served URL is a download-token
- * URL, publicly readable regardless of Storage rules.
- *
- * Idempotent: each object stores its source URL in custom metadata, so a run
- * re-downloads only when the Sessionize URL changed — steady state is one
- * metadata read per speaker.
- *
- * Best-effort: a per-speaker failure falls back to the Sessionize URL; an
- * unreachable Storage yields an empty map. Mirroring can never break the sync.
+ * Mirror speaker photos into Storage `speakers/{id}`; returns speakerId →
+ * download-token URL (public regardless of rules). Idempotent via source URL
+ * in custom metadata. Best-effort: failures fall back to the Sessionize URL
+ * and never break the sync.
  */
 
 import { randomUUID } from 'node:crypto';
@@ -130,12 +122,7 @@ async function mapWithConcurrency<T, R>(
 	return results;
 }
 
-/**
- * Mirror every speaker's photo into Firebase Storage. Returns a speakerId →
- * served-URL map covering only the speakers whose photo was successfully
- * mirrored; callers fall back to the raw Sessionize URL for any id not present.
- * Never throws — a total Storage failure yields an empty map.
- */
+/** Mirror every speaker's photo. Map covers only successes; never throws. */
 export async function mirrorSpeakerImages(
 	speakers: SessionizeSpeaker[],
 ): Promise<Map<string, string>> {

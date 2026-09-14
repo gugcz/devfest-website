@@ -6,33 +6,17 @@ interface ImportMetaEnv {
 	 * (no token attached to RTDB reads) while this is unset.
 	 */
 	readonly PUBLIC_FIREBASE_APPCHECK_SITE_KEY?: string;
-	/**
-	 * Local-only App Check debug token. Set to `true` to make the SDK print a
-	 * token in the browser console (register it under App Check → Apps → Manage
-	 * debug tokens), or paste an already-registered token string. Never set in
-	 * production.
-	 */
+	/** Local-only App Check debug token: `true` prints one to the console
+	 * (register under App Check → Manage debug tokens), or a registered string. */
 	readonly PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN?: string;
-	/**
-	 * Comma-separated hosts allowed to report into the production GA4 property,
-	 * overriding the built-in `devfest.cz` list. Analytics stays off everywhere
-	 * else (localhost, `*.web.app` preview channels) so development traffic can't
-	 * pollute live numbers; set this to a preview host to measure there on purpose.
-	 */
+	/** Comma-separated hosts allowed to report into production GA4, overriding
+	 * the `devfest.cz` list. Set to a preview host to measure it on purpose. */
 	readonly PUBLIC_ANALYTICS_ALLOWED_HOSTS?: string;
-	/**
-	 * Origin used to build absolute URLs that must resolve on the deployed
-	 * site (e.g. the invite OG image), defaulting to `https://devfest.cz`.
-	 * Set to a preview channel's URL to verify one of those URLs against
-	 * that channel's own build instead of production.
-	 */
+	/** Origin for absolute URLs (e.g. the invite OG image); default
+	 * `https://devfest.cz`. Set to a preview channel to verify against it. */
 	readonly PUBLIC_SITE_URL?: string;
-	/**
-	 * ti.to discount checkout URL for the invite CTA. Set only outside the repo
-	 * (GitHub Actions secret) — the code that reads it never sees the value.
-	 * Empty by default, in which case `InviteCta` resolves the plain ti.to
-	 * checkout from `/api/tickets`, unchanged.
-	 */
+	/** ti.to discount checkout URL for the invite CTA (GitHub Actions secret).
+	 * Empty → `InviteCta` resolves the plain checkout from `/api/tickets`. */
 	readonly PUBLIC_INVITE_DISCOUNT_URL?: string;
 }
 
