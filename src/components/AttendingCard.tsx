@@ -274,7 +274,7 @@ export default function AttendingCard() {
 		if (window.matchMedia('(max-width: 900px)').matches) {
 			previewRef.current?.scrollIntoView({ block: 'start' });
 		}
-		stepHeadRef.current?.focus();
+		stepHeadRef.current?.focus({ preventScroll: true });
 		setAnnouncement(`Step ${step} of 4: ${STEP_LABEL[step]}.`);
 	}, [step]);
 

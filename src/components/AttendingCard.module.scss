@@ -590,6 +590,8 @@
 	.preview {
 		order: -1;
 		padding-bottom: 0.75rem;
+		position: static;
+		top: auto;
 	}
 
 	.cardWrap {
