@@ -18,6 +18,9 @@ the durable reference.
 | | |
 | --- | --- |
 | `src/layouts/BaseLayout.scss` | all tokens (`:root`, lines 1–161), resets, global primitives. Injected `is:global`, so every `.astro` page and `.tsx` island uses the class names directly |
+| `src/styles/_type.scss` | the type recipes as mixins — `mono()`, `display()`, `row-title()`, `prose()`, `hairline-link()`. A CSS Module that cannot compose a global class includes the mixin instead |
+| `src/styles/_controls.scss` | control recipes — `lit-field()` |
+| `src/components/Sheet.module.scss`, `Print.module.scss` | shared chrome composed by more than one island (the detail sheets; the mounted 4:5 print) |
 | `astro.config.mjs:73–97` | the three brand faces, self-hosted via the Astro Fonts API |
 | `src/components/*.module.scss` | co-located CSS Modules for React islands (`import s from './X.module.scss'`) |
 | `src/components/*.astro` + `*.scss` | static components with a sibling stylesheet |
@@ -41,6 +44,8 @@ All tokens are declared in `BaseLayout.scss` `:root`.
 | `--color-accent-hot` | `#FF1111` | 7 | focus rings, live status, figures on a facts band |
 | `--color-error` | `rgba(220,110,110,0.95)` | 12 | **form-error text only** |
 | `--on-accent` | `#F7EFE6` | 139 | ink on the red field |
+| `--on-accent-ink` | `#1A0000` | | dark ink on the red field — large text only |
+| `--on-accent-border` | `rgba(247,239,230,0.85)` | | control boundary on the red field (3.95:1) |
 
 Surfaces: `--panel` `#0C0B0B` (134), `--panel-2` `#111010` (135), `--panel-hover`
 `#161413` (136), `--panel-lit` `#0A0908` (175), `--panel-lit-2` `#0E0C0B` (176).
@@ -49,8 +54,14 @@ Hairlines: `--rule` `rgba(240,237,230,0.13)` (118), `--rule-soft` `0.06` (119),
 `--rule-strong` `0.22` (120), `--rule-red` `rgba(204,0,0,0.55)` (121),
 `--field-border` `rgba(240,237,230,0.4)` (131).
 
+Ink ramp: `--ink-strong` `0.85`, `--ink` `0.78`, `--ink-soft` `0.7`,
+`--ink-meta` `0.62`, `--ink-dim` `0.6`, `--ink-muted` `0.55`, `--ink-faint`
+`0.5` (all `rgba(240,237,230,…)`). Named steps only; a one-off alpha stays a
+raw literal.
+
 Atmosphere: `--glow-red` / `--glow-red-soft` (162–163), `--lit` (190),
 `--vignette` (195), `--field-feather` (193), `--print-mount` (170–172),
+`--wash` / `--wash-strong` (the raking light a reached row / cell takes),
 `--ink-monogram` `0.46` → 4.21:1 and `--ink-monogram-sm` `0.66` → 7.71:1
 (186–187, ratios measured in the source comment at 184–185).
 
@@ -118,6 +129,10 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:73–97`
 - **[MUST] Reference the injected variable, never a literal family name** —
   the resolved family is a build-time hash (`BaseLayout.scss:15–20`). Keep a
   generic fallback: `var(--font-jetbrains-mono), monospace`.
+- **[MUST] Go through the recipe, not the raw declaration.** `_type.scss`
+  has `mono($size, $track, $case)`, `display($size)`, `row-title($size)`,
+  `prose($size, $lh)` and `hairline-link($color)`; a stylesheet that writes
+  `font-family: var(--font-…)` by hand is re-implementing one of them.
 - **[MUST] Roles do not mix.** Special Elite is wide; Bebas is condensed and
   is what makes the poster scale fit the column.
 - **[CURRENT]** Special Elite declares no `subsets` (`astro.config.mjs:96`) —
