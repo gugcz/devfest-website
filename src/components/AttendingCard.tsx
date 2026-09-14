@@ -475,9 +475,7 @@ export default function AttendingCard() {
 		? 'Your DevFest.cz 2026 share card preview'
 		: `Your DevFest.cz 2026 share card preview, ${name.trim()}`;
 
-	const panRange = photo
-		? panBounds(photo.width, photo.height, coverScale(photo.width, photo.height, WELL_SIZE) * transform.zoom, WELL_SIZE)
-		: null;
+	const panRange = photo ? panBounds(photo.width, photo.height) : null;
 
 	const nameFilled = !nameEmpty;
 	const photoFilled = hasPhoto;

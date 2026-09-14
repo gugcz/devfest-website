@@ -55,45 +55,20 @@ function fitFontSize(
 	return size;
 }
 
-/** Below this many source px, a bound is cover-scale slack, not a real gap
- * worth panning through — snapped to 0 (disabled, "0") rather than left as
- * noise. Cover scale exactly cancels the axis that *is* `min(width, height)`
- * (`n * (wellSize / n) === wellSize` for that axis), but real photos are
- * rarely pixel-exact squares: a 1px width/height mismatch leaves the other
- * axis exactly `scale / 2` source px short of covering, which is real (not
- * float jitter — deterministic across engines) but sub-pixel, so it should
- * read the same as the axis that cancelled cleanly. `0.5 + 1e-6` covers the
- * `0.5`-plus-rounding-error case while staying far below any bound the UI
- * actually wants pannable (tens of px at the shipped zoom range). */
-const SUBPIXEL_SLACK_PX = 0.5 + 1e-6;
-
-/** The furthest a pan offset (in source-image px) can go while the drawn
- * image stays as close as possible to fully covering a `wellSize`×`wellSize`
- * square, at the given scale. Above 1x the image is larger than the well, so
- * this is how far it can shift before exposing the well's edge. Below 1x
- * (zoomed out) the image is smaller than the well, so this is how far the
- * image itself can shift while staying inside the well — the two cases are
- * the same `abs(well − drawn) / 2` distance, just on opposite sides of the
- * mismatch, which is why one formula covers both. */
-export function panBounds(
-	naturalWidth: number,
-	naturalHeight: number,
-	scale: number,
-	wellSize: number,
-): { maxX: number; maxY: number } {
-	const drawWidth = naturalWidth * scale;
-	const drawHeight = naturalHeight * scale;
-	const maxX = Math.abs(drawWidth - wellSize) / 2 / scale;
-	const maxY = Math.abs(drawHeight - wellSize) / 2 / scale;
-	return {
-		maxX: maxX < SUBPIXEL_SLACK_PX ? 0 : maxX,
-		maxY: maxY < SUBPIXEL_SLACK_PX ? 0 : maxY,
-	};
+/** The furthest a pan offset (in source-image px) can go: free movement with
+ * one limit, independent of zoom or `wellSize` — on each axis, the image's
+ * edge may travel at most to the card's center, so the photo always still
+ * covers at least half the well on that axis. Past that, the rest of the
+ * well is backfilled by the vignette/black fill, which is expected — the
+ * pan is no longer constrained to keep the photo fully covering the card. */
+export function panBounds(naturalWidth: number, naturalHeight: number): { maxX: number; maxY: number } {
+	return { maxX: naturalWidth / 2, maxY: naturalHeight / 2 };
 }
 
 /**
- * Clamps a pan offset (in source-image px, centered) so the image keeps
- * fully covering a `wellSize`×`wellSize` square at the given scale.
+ * Clamps a pan offset (in source-image px, centered) to `panBounds` — the
+ * photo may pan far enough to expose the well's edge past half its size, but
+ * never further.
  */
 export function clampPan(
 	panX: number,
@@ -103,7 +78,7 @@ export function clampPan(
 	scale: number,
 	wellSize: number,
 ): { panX: number; panY: number } {
-	const { maxX, maxY } = panBounds(naturalWidth, naturalHeight, scale, wellSize);
+	const { maxX, maxY } = panBounds(naturalWidth, naturalHeight);
 	return {
 		panX: Math.min(maxX, Math.max(-maxX, panX)),
 		panY: Math.min(maxY, Math.max(-maxY, panY)),
