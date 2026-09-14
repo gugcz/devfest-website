@@ -1,95 +1,4 @@
 @use '../styles/type' as *;
-	.partners-contact {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		min-width: 0;
-	}
-
-	.contact-name {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-title-compact);
-		color: var(--color-text);
-	}
-
-	.email-link {
-		@include mono(var(--fs-label-lg), 0.04em);
-		color: var(--color-text);
-		align-self: flex-start;
-		display: inline-flex;
-		align-items: center;
-		min-height: 2.75rem;
-		text-decoration: underline;
-		text-decoration-thickness: 1px;
-		text-decoration-color: var(--rule-red);
-		text-underline-offset: 4px;
-		word-break: break-all;
-		transition: color 0.2s, text-decoration-color 0.2s;
-
-		&::after {
-			content: '\2197';
-			margin-left: 0.5rem;
-			text-decoration: none;
-			display: inline-block;
-			transition: transform 0.25s;
-		}
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			text-decoration-color: var(--color-accent-hot);
-			// Address lights up like neon under the lamp.
-		}
-
-		&:hover::after,
-		&:focus-visible::after {
-			transform: translate(2px, -2px);
-		}
-	}
-
-
-	// Flat "Coming soon" placeholder — outline, no rotation, no stamp ink.
-	.partners-cta-soon {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.7rem;
-		@include mono(var(--fs-label-lg), 0.22em, uppercase);
-		color: rgba(240, 237, 230, 0.75);
-		background: transparent;
-		border: 1px solid var(--rule-strong);
-		border-radius: var(--radius);
-		padding: 1.05rem 2.4rem;
-		cursor: not-allowed;
-	}
-
-	.partners-cta-label {
-		opacity: 0.92;
-	}
-
-	.partners-cta-stamp {
-		@include mono(var(--fs-label), 0.28em, uppercase);
-		padding: 0.22rem 0.55rem;
-		color: var(--color-accent-hot);
-		border: 1px solid var(--rule-red);
-		border-radius: var(--radius);
-	}
-
-
-	/* ===================== RESPONSIVE ===================== */
-	@media (max-width: 900px) {
-
-		.partners-cta-soon {
-			flex-wrap: wrap;
-			gap: 0.55rem;
-			white-space: normal;
-		}
-		.partners-cta-stamp {
-			font-size: var(--fs-label);
-			letter-spacing: 0.24em;
-			padding: 0.2rem 0.45rem;
-		}
-	}
-
 	/* ===================== THE PARTNER WALL ===================== */
 	// One section shape for every partner group — the four sponsor tiers and
 	// the two off-ladder rows (media, community). They used to be two copies
@@ -265,10 +174,109 @@
 		}
 	}
 
+	/* ===================== CLOSING STATEMENT ===================== */
+	// A dark gap before the red field. `.logo-wall` above has zero bottom
+	// padding by design, so the gap lives here, on this page's closing
+	// section, not on the shared `.band--accent` (every other `Closer`
+	// already sits after a full `--section-y`).
+	.partners-cta {
+		margin-top: var(--section-y);
+	}
+
+	// Contact block on the accent field. Ink inverts globally via
+	// `.band--accent` in BaseLayout.scss; only the partner-specific bits
+	// (the named contact, the disabled deck stamp) are stated here. These
+	// classes appear ONLY inside the accent band, so there is no dark-ground
+	// variant to inherit from.
+	.partners-contact {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		min-width: 0;
+		margin: 0;
+	}
+
+	.contact-name {
+		@include mono(var(--fs-label), 0.22em, uppercase);
+		// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
+		color: var(--on-accent);
+	}
+
+	.email-link {
+		@include mono(var(--fs-ui), 0.04em);
+		color: var(--on-accent);
+		align-self: flex-start;
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 4px;
+		text-decoration-color: rgba(247, 239, 230, 0.85);
+		word-break: break-word;
+		transition: text-decoration-color 0.2s;
+
+		&::after {
+			content: '\2197';
+			margin-left: 0.5rem;
+			text-decoration: none;
+			display: inline-block;
+			transition: transform 0.25s;
+		}
+
+		&:hover,
+		&:focus-visible {
+			text-decoration-color: var(--on-accent);
+		}
+
+		&:hover::after,
+		&:focus-visible::after {
+			transform: translate(2px, -2px);
+		}
+	}
+
+	// Flat "Coming soon" placeholder — outline, no rotation, no stamp ink.
+	.partners-cta-soon {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.7rem;
+		@include mono(var(--fs-label-lg), 0.22em, uppercase);
+		color: var(--on-accent);
+		background: transparent;
+		border: 1px dashed rgba(247, 239, 230, 0.45);
+		border-radius: var(--radius);
+		padding: 1.25rem 2rem;
+		cursor: not-allowed;
+	}
+
+	.partners-cta-label {
+		opacity: 0.92;
+	}
+
+	.partners-cta-stamp {
+		@include mono(var(--fs-label), 0.28em, uppercase);
+		padding: 0.22rem 0.55rem;
+		color: var(--on-accent);
+		border: 1px solid var(--rule-red);
+		border-radius: var(--radius);
+	}
+
+	@media (max-width: 900px) {
+		.partners-cta-soon {
+			flex-wrap: wrap;
+			gap: 0.55rem;
+			white-space: normal;
+		}
+
+		.partners-cta-stamp {
+			font-size: var(--fs-label);
+			letter-spacing: 0.24em;
+			padding: 0.2rem 0.45rem;
+		}
+	}
+
 	/* ===================== REDUCED MOTION ===================== */
 	@media (prefers-reduced-motion: reduce) {
-
-
 		.logo-cell {
 			transition: none;
 
@@ -286,61 +294,4 @@
 			transition: none;
 			transform: none;
 		}
-
-	}
-
-	/* ===================== CLOSING STATEMENT ===================== */
-	// A dark gap before the red field. `.logo-wall` above has zero bottom
-	// padding by design, so the gap lives here, on this page's closing
-	// section, not on the shared `.band--accent` (every other `Closer`
-	// already sits after a full `--section-y`).
-	.partners-cta {
-		margin-top: var(--section-y);
-	}
-
-	// Contact block on the accent field. Ink inverts globally via
-	// `.band--accent` in BaseLayout.scss; only the partner-specific bits
-	// (the named contact, the disabled deck stamp) are restated here.
-	.partners-contact {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-		margin: 0;
-	}
-
-	.contact-name {
-		@include mono(var(--fs-label), 0.22em, uppercase);
-		// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
-		color: var(--on-accent);
-	}
-
-	:global(.band--accent) .email-link {
-		@include mono(var(--fs-ui));
-		color: var(--on-accent);
-		text-decoration: underline;
-		text-decoration-thickness: 1px;
-		text-underline-offset: 4px;
-		text-decoration-color: rgba(247, 239, 230, 0.85);
-		word-break: break-word;
-		transition: text-decoration-color 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			text-decoration-color: var(--on-accent);
-		}
-	}
-
-	.partners-cta-soon {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.7rem;
-		padding: 1.25rem 2rem;
-		border: 1px dashed rgba(247, 239, 230, 0.45);
-		border-radius: var(--radius);
-		@include mono(var(--fs-label-lg), 0.22em, uppercase);
-		color: var(--on-accent);
-	}
-
-	.partners-cta-stamp {
-		color: var(--on-accent);
 	}

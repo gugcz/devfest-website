@@ -75,9 +75,11 @@
 	}
 }
 
-// Last step's spine is transparent — nothing follows it.
-.step:last-of-type .stepSpine {
-	background: transparent !important;
+// Last step's spine is transparent — nothing follows it. Compound selector so it
+// outranks the `[data-filled]` state without `!important`.
+.step:last-of-type .stepSpine,
+.step:last-of-type .stepSpine[data-filled='true'] {
+	background: transparent;
 }
 
 .stepBody {
@@ -90,6 +92,15 @@
 	align-items: baseline;
 	gap: 0.6rem;
 	margin-bottom: 0.85rem;
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
+	}
 }
 
 .stepHeadText {
@@ -481,17 +492,6 @@
 		&::-moz-range-thumb {
 			background: var(--rule-strong);
 		}
-	}
-}
-
-.stepHead {
-	&:focus {
-		outline: none;
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-tight);
 	}
 }
 

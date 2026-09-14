@@ -619,16 +619,6 @@
 }
 
 /* ===================== STATES ===================== */
-@keyframes agendaPulse {
-	0%,
-	100% {
-		opacity: 0.3;
-	}
-	50% {
-		opacity: 1;
-	}
-}
-
 @media (prefers-reduced-motion: reduce) {
 	.cell,
 	.item,

@@ -482,7 +482,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			<!-- photo={false} instead of focus, for a type-only opener -->
 		/>
 		<Ticker items={EVENT_TOPICS} size="sm" />
-		<section class="band band--lit-red" aria-label="…">
+		<section class="band band--lit" aria-label="…">
 			<div class="band-inner">
 				<header class="head-stack">
 					<p class="eyebrow">…</p>
@@ -502,9 +502,8 @@ Decision criteria, picked per page:
   `speakers`, `sessions`, `agenda`, `team`, `press`. `photo={false}` where
   content starts right below the fold: `faq`, `contact`, `invoice`,
   `press/downloads`.
-- **`.band--lit` vs `.band--lit-red`.** `--lit-red` for pages about people
-  and the programme (`speakers`, `sessions`, `agenda`, `team`); `--lit` for
-  transactional pages (`faq`, `contact`, `press`).
+- **`.band--lit`.** The one subpage ground. A `--lit-red` variant existed for
+  the people / programme pages but was byte-identical; it was folded in.
 - **`.band--accent`.** At most once per page, only when the band contains a
   form (`index.astro:271`, `partners.astro:176`). Otherwise close on red with
   `Closer tone="accent"`.
