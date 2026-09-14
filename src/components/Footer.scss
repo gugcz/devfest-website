@@ -112,11 +112,6 @@
 		color: var(--color-accent-hot);
 		border-bottom-color: var(--color-accent-hot);
 	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
 }
 
 .ext {
@@ -192,11 +187,6 @@
 	&:focus-visible {
 		color: var(--color-accent-hot);
 		border-bottom-color: var(--color-accent-hot);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
 	}
 }
 

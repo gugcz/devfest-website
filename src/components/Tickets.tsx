@@ -305,7 +305,7 @@ export default function Tickets() {
 								)}
 								{anyPurchasable ? (
 									<a
-										className={s.cta}
+										className={`btn-primary ${s.cta}`}
 										href={eventUrl(accountSlug, eventSlug)}
 										target="_blank"
 										rel="noopener noreferrer"
@@ -330,7 +330,7 @@ export default function Tickets() {
 			</p>
 			<div className={s.invoice}>
 				<span className={s.invoiceLabel}>Buying for a company?</span>
-				<a className={s.cta} href="/invoice" aria-label="Request a company invoice">
+				<a className={`btn-primary ${s.cta}`} href="/invoice" aria-label="Request a company invoice">
 					Get a company invoice
 				</a>
 			</div>

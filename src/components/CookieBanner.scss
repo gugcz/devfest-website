@@ -80,12 +80,6 @@
 	flex: 0 0 auto;
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.cookie-btn--accept:hover {
-		transform: none;
-	}
-}
-
 @media (max-width: 500px) {
 	.cookie-banner {
 		flex-direction: column;

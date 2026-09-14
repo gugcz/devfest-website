@@ -320,39 +320,15 @@
 }
 
 
-// Flat red CTA — matches the global `.btn-primary` recipe.
-.cta {
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
-	color: var(--on-accent);
-	text-decoration: none;
-	text-align: center;
+// The wave's Buy control IS the global `.btn-primary` (set on the element);
+// this module only sizes it down to the row. Module CSS is bundled BEFORE
+// the global sheet, so the compound selector is what lets these win.
+.cta:global(.btn-primary) {
 	padding: 0.95rem 1.3rem;
-	background: var(--color-accent);
-	border: 1px solid var(--color-accent);
-	border-radius: var(--radius);
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
 	gap: 0.5rem;
-	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+	// Above the wave's reach wash.
 	position: relative;
 	z-index: 2;
-
-	&:hover {
-		background: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-		transform: translateY(-2px);
-		box-shadow: var(--glow-red), 0 10px 26px rgba(204, 0, 0, 0.3);
-	}
-
-	&:active {
-		transform: translateY(0);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
 }
 
 .footnote {
@@ -401,16 +377,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.tickets,
-	.cta {
+	.tickets {
 		animation: none;
-		transition: none;
-	}
-
-	.cta,
-	.cta:hover,
-	.cta:active {
-		transform: none;
 	}
 
 	.skelBar {

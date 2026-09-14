@@ -166,12 +166,6 @@
 		margin-top: 0.1em;
 		accent-color: var(--color-accent);
 		cursor: pointer;
-
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: var(--focus-gap);
-			border-radius: 2px;
-		}
 	}
 
 	span {
@@ -198,33 +192,12 @@
 	}
 }
 
-// Flat red CTA — matches the NewsletterForm button recipe. No rotation, no stamp ink.
-.button {
+// The submit IS the global `.btn-primary` (set on the element); this module
+// only sizes it and adds the in-flight state. Module CSS is bundled BEFORE
+// the global sheet, so the compound selector is what lets these win.
+.button:global(.btn-primary) {
 	align-self: flex-start;
 	padding: 1.05rem 2.4rem;
-	background: var(--color-accent);
-	color: var(--on-accent);
-	border: 1px solid var(--color-accent);
-	border-radius: var(--radius);
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
-	cursor: pointer;
-	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-
-	&:hover:not([aria-disabled='true']) {
-		background: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-		transform: translateY(-2px);
-		box-shadow: var(--glow-red), 0 8px 22px rgba(204, 0, 0, 0.28);
-	}
-
-	&:active:not([aria-disabled='true']) {
-		transform: translateY(0);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
 
 	// Only the in-flight state dims. The button is never `disabled`: that
 	// takes it out of the tab order, and a keyboard visitor who had missed the
@@ -232,6 +205,15 @@
 	&[aria-disabled='true'] {
 		opacity: 0.55;
 		cursor: progress;
+
+		// No hover response while in flight.
+		&:hover,
+		&:active {
+			background: var(--color-accent);
+			border-color: var(--color-accent);
+			transform: none;
+			box-shadow: none;
+		}
 	}
 }
 
@@ -301,10 +283,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.button:hover:not([aria-disabled='true']) {
-		transform: none;
-	}
-
 	// Controls keep their colour transitions, but don't lift.
 	.estimate,
 	.success {

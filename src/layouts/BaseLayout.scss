@@ -589,11 +589,6 @@ body {
 	}
 
 	&:active { transform: translateY(0); }
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
 }
 
 .btn-ghost {
@@ -622,12 +617,19 @@ body {
 		border-color: var(--color-text);
 		background: transparent;
 		gap: 0.85rem;
-		outline: none;
+	}
+}
+
+// The lift is the only motion a button carries; the colour swap stays.
+@media (prefers-reduced-motion: reduce) {
+	.btn-primary,
+	.btn-ghost {
+		transition: none;
 	}
 
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
+	.btn-primary:hover,
+	.btn-primary:active {
+		transform: none;
 	}
 }
 
