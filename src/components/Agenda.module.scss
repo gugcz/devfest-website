@@ -1,9 +1,9 @@
 @use '../styles/type' as *;
 // Agenda timetable. Desktop: a proportional time × room grid ruled by the hour
-// and down each room, where a talk is an opaque panel in its column and every
-// minute nobody is on — a break, a lunch, an unfilled stretch — is struck
-// through as a hatched full-width strip. Mobile / single-room: the same open
-// field every other list on the site uses.
+// and down each room, where a talk is an opaque panel in its column, a break
+// or lunch is a hatched full-width strip carrying its own label, and an
+// unfilled stretch with no strip at all — empty is enough signal on its own.
+// Mobile / single-room: the same open field every other list on the site uses.
 
 /* ===================== TZ NOTE ===================== */
 .tzNote {
@@ -53,27 +53,6 @@
 	border-left: 1px solid var(--rule-soft);
 	pointer-events: none;
 	z-index: 0;
-}
-
-/* ---- dead time ---- */
-// The hatch is the sheet saying "nobody is on". It is the same fill as a band,
-// without the label, and it is opaque so it closes over the ruling underneath.
-.idle,
-.band {
-	background:
-		repeating-linear-gradient(
-			135deg,
-			var(--rule-soft) 0,
-			var(--rule-soft) 1px,
-			transparent 1px,
-			transparent 8px
-		),
-		var(--panel-lit);
-}
-
-.idle {
-	z-index: 1;
-	pointer-events: none;
 }
 
 // Room names: a mono label on a rule.
@@ -132,10 +111,21 @@
 	z-index: 2;
 	padding: 0.5rem 0.9rem 0.35rem;
 	overflow: hidden;
-	// Hatched like dead time (shared fill above) and ruled on ONE edge: a break is
-	// the day stopping, so it is struck through rather than drawn as another
-	// panel. Its old bottom rule sat 1px above the next entry's top rule, which
-	// doubled every boundary on the sheet.
+	// Hatched, opaque so it closes over the ruling underneath — the only
+	// hatch left on the sheet, and it carries a label (unlike empty time,
+	// which now renders as nothing at all).
+	background:
+		repeating-linear-gradient(
+			135deg,
+			var(--rule-soft) 0,
+			var(--rule-soft) 1px,
+			transparent 1px,
+			transparent 8px
+		),
+		var(--panel-lit);
+	// Ruled on ONE edge: a break is the day stopping, so it is struck through
+	// rather than drawn as another panel. Its old bottom rule sat 1px above
+	// the next entry's top rule, which doubled every boundary on the sheet.
 	border-top: 1px solid var(--rule);
 }
 
@@ -146,6 +136,7 @@
 	letter-spacing: 0.1em;
 	color: var(--ink-muted);
 	flex-shrink: 0;
+	white-space: nowrap;
 }
 
 .bandTitle {
@@ -254,6 +245,7 @@
 	font-size: var(--fs-label-lg);
 	letter-spacing: 0.1em;
 	color: var(--ink-muted);
+	white-space: nowrap;
 }
 
 // Nothing in the cell may shrink except the title, and the title clamps rather
@@ -488,16 +480,51 @@
 }
 
 // The room label leads the card, above the title — it's what tells two
-// parallel talks apart at a glance, not an aside under the speakers.
+// parallel talks apart at a glance, not an aside under the speakers. Every
+// card in a parallel group carries one, including the first — there is no
+// conditional here on purpose.
 .itemRoom {
 	@include mono(var(--fs-label), 0.14em, uppercase);
 	color: var(--ink-strong);
+}
+
+// Room label + this card's own full range, since the group header above only
+// promises the shared start time.
+.itemRoomRow {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0.8rem;
 	margin-bottom: 0.3rem;
 }
 
-// A shared time header over N room cards running the same slot.
+.itemCardTime {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-variant-numeric: tabular-nums;
+	font-size: var(--fs-label);
+	letter-spacing: 0.06em;
+	color: var(--ink-muted);
+	// The en-dash must never wrap onto its own line, splitting `10:00` from `10:30`.
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+// A shared time header over N room cards running the same slot — start time
+// only (see `.itemCardTime` on each card for its own full range).
 .itemParallelRow {
 	align-items: flex-start;
+}
+
+.itemTimeStart {
+	min-width: min(4.25rem, 21vw);
+	max-width: min(5.5rem, 30vw);
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-variant-numeric: tabular-nums;
+	font-size: var(--fs-ui);
+	letter-spacing: 0.1em;
+	color: var(--ink-muted);
+	white-space: nowrap;
+	padding-top: 0.5rem;
 }
 
 .itemParallelSlots {

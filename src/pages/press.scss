@@ -106,6 +106,20 @@
 		}
 	}
 
+	// The one fallback tile sitewide (`SpeakerPhoto.tsx`) for a card missing its
+	// image — outlet initials, ink plate, same slot the thumbnail would fill.
+	.coverage-thumb-fallback {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-h3);
+		letter-spacing: 0.06em;
+		color: var(--ink-monogram);
+	}
+
 	.coverage-text {
 		position: relative;
 		display: flex;

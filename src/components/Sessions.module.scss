@@ -264,8 +264,8 @@
 }
 
 .metaItem {
-	@include mono(var(--fs-label-sm), 0.08em, uppercase);
-	color: var(--ink-muted);
+	@include mono(var(--fs-ui), 0.08em, uppercase);
+	color: var(--ink);
 	white-space: nowrap;
 
 	& + & {
@@ -345,21 +345,6 @@
 	text-align: left;
 }
 
-.moreDots {
-	display: inline-flex;
-	gap: 0.34rem;
-
-	// Static: this marks the programme's open end, not a loading state — a
-	// perpetual pulse here promised progress that was never coming.
-	span {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--ink-muted);
-		opacity: 0.55;
-	}
-}
-
 // The programme's open end. /speakers already closes its roll in muted ink
 // ("End of roll"); this one was the same statement in red, which made the one
 // row that is NOT a session the loudest thing in the list.
@@ -406,8 +391,7 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.card,
-	.moreCard,
-	.moreDots span {
+	.moreCard {
 		transition: none;
 		animation: none;
 	}

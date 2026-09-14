@@ -7,7 +7,6 @@ import {
 	eventDateISO,
 	formatClock,
 	formatMinutes,
-	idleSpans,
 	isBand,
 	nowState,
 	nonTalkSpans,
@@ -144,6 +143,14 @@ function timeParts(session: Session): { from: string; to: string } | null {
 	return { from: `${formatMinutes(place.startMin)}–`, to: formatMinutes(place.endMin) };
 }
 
+/** Start time alone (`09:50`) — the parallel-slot group header. Individual
+ * end times differ per room, so the header can only promise the one thing
+ * every card in the group shares; each card prints its own full range. */
+function startTime(session: Session): string {
+	const place = placement(session);
+	return place ? formatMinutes(place.startMin) : '';
+}
+
 /** Comma-joined presenter names, empties dropped. */
 function speakerNames(session: Session): string {
 	return session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
@@ -234,10 +241,6 @@ function AgendaGrid({
 	const { columns, bands, byRoom } = partition;
 	const timed = [...bands, ...columns.flatMap((column) => byRoom.get(column.key) ?? [])];
 
-	// Dead time — no room has anything on. Hatched, so an unscheduled stretch
-	// reads as the day being quiet rather than as a hole in the sheet.
-	const idle = idleSpans(timed, range, placements);
-
 	// The sheet runs to scale through the talks and compresses everywhere else,
 	// so a break, a lunch and a five-hour afterparty are all one strip tall.
 	const scale = rowScale(range, nonTalkSpans(timed, range, placements), SNAP_MIN, NON_TALK_ROWS);
@@ -284,10 +287,11 @@ function AgendaGrid({
 				))}
 
 				{/* The sheet's ruling, behind everything (z 0): a hairline down
-				    each room column and one across each hour. Both are closed over
-				    by the entries and by the hatched dead-time strips, which are
-				    opaque — an earlier version left the strips translucent and the
-				    column rule ran straight through every full-width band.
+				    each room column and one across each hour, closed over by the
+				    entries and by every opaque band strip — an earlier version left
+				    those translucent and the column rule ran straight through them.
+				    Empty time carries no strip at all: no room scheduled is enough
+				    signal on its own, without hatching a "nobody is on" stretch.
 				    Decorative: the times and rooms are in the ticks, the head cells
 				    and every talk's aria-label. */}
 				{columns.slice(1).map((column, i) => (
@@ -303,20 +307,6 @@ function AgendaGrid({
 						key={`rule-${min}`}
 						className={s.hourRule}
 						style={{ gridColumn: '1 / -1', gridRow: rowFor(min) }}
-						aria-hidden="true"
-					/>
-				))}
-
-				{/* Dead time, hatched across every room. Opaque, so it closes over
-				    the column rules rather than letting them run through it. */}
-				{idle.map((span) => (
-					<div
-						key={`idle-${span.startMin}`}
-						className={s.idle}
-						style={{
-							gridColumn: '2 / -1',
-							gridRow: `${rowFor(span.startMin)} / ${rowFor(span.endMin)}`,
-						}}
 						aria-hidden="true"
 					/>
 				))}
@@ -497,14 +487,13 @@ function AgendaList({
 					);
 				}
 
-				// One time header, shared by every room running at this slot.
+				// One start-time header, shared by every room running at this slot —
+				// end times differ per room, so only the start is a promise the whole
+				// group can keep; each card below carries its own full range.
 				return (
 					<li key={first.id}>
 						<div className={`field-row ${s.item} ${s.itemParallelRow}`}>
-							<span className={s.itemTime}>
-								<span>{time?.from}</span>
-								<span>{time?.to}</span>
-							</span>
+							<span className={s.itemTimeStart}>{startTime(first)}</span>
 							<div className={s.itemParallelSlots}>
 								{group.map((session) => {
 									const names = speakerNames(session);
@@ -519,7 +508,10 @@ function AgendaList({
 											aria-label={talkLabel(session, room)}
 											data-agenda-open
 										>
-											{room && <span className={s.itemRoom}>{room}</span>}
+											<span className={s.itemRoomRow}>
+												<span className={s.itemRoom}>{room}</span>
+												<span className={s.itemCardTime}>{timeRange(session)}</span>
+											</span>
 											<span className={s.itemTitleRow}>
 												<span className={s.itemTitle}>{session.title}</span>
 												<NowBadge live={live} coming={comingUpIds.has(session.id)} />

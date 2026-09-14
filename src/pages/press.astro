@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Closer from '../components/Closer.astro';
 import { fetchOg } from '../lib/og';
+import { initials } from '../lib/speakers';
 
 // A media mention is just a URL. Outlet, title, image, description and date
 // are all read from the article's Open Graph tags at build time. Any field set
@@ -97,11 +98,13 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 							{mediaCoverage.map((m) => (
 								<li class="coverage-row">
 									<a class="field-row coverage-card" href={m.href} target="_blank" rel="noopener noreferrer">
-										{m.image && (
-											<span class="coverage-thumb">
+										<span class="coverage-thumb">
+											{m.image ? (
 												<img src={m.image} alt="" loading="lazy" decoding="async" width="400" height="225" />
-											</span>
-										)}
+											) : (
+												<span class="coverage-thumb-fallback" aria-hidden="true">{initials(m.outlet)}</span>
+											)}
+										</span>
 										<span class="coverage-text">
 											<span class="coverage-outlet">{m.outlet}</span>
 											<span class="coverage-title">{m.title}</span>
@@ -132,12 +135,10 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 		</section>
 
 		<Closer
-			eyebrow="Press kit"
-			titleHtml={'Take the<br /><span class="red">assets</span>.'}
-			note="Logos and wordmarks for the 2026 edition, ready to drop into a story."
-			tone="accent"
+			titleHtml="Take the assets."
+			tone="plain"
 			titleId="press-closer"
-			actions={[{ href: '/press/downloads', label: 'Open the press kit' }, { href: 'mailto:devfest@gug.cz', label: 'Email the desk', kind: 'ghost' }]}
+			actions={[{ href: '/press/downloads', label: 'Open the press kit' }]}
 		/>
 	</main>
 </BaseLayout>

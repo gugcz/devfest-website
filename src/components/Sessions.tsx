@@ -220,11 +220,6 @@ export default function Sessions() {
 					{!active && (
 						<li>
 							<article className={`field-row ${s.moreCard}`} aria-label="More sessions to be announced">
-								<span className={s.moreDots} aria-hidden="true">
-									<span />
-									<span />
-									<span />
-								</span>
 								<span className={s.moreKicker}>Docket open</span>
 								<p className={s.moreText}>More sessions announced soon</p>
 							</article>

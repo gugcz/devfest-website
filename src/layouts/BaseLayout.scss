@@ -80,7 +80,7 @@
 		--fs-body-lg: 1.15rem;    // footnotes, short ledes
 		--fs-lede: clamp(1.2rem, 1.6vw, 1.5rem);  // section ledes, status prose
 		--fs-title-sm: 1.45rem;   // small titles, mobile field-row titles
-		--fs-monogram: 3.4rem;    // initials in an empty photo well
+		--fs-monogram: clamp(3.4rem, 7vw, 7rem);    // initials in an empty photo well — ≈1/3 of the tile
 
 		// Condensed caps at poster scale need the leading pulled in.
 		--lh-display: 0.84;
