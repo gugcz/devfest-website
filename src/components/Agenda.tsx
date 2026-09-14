@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { type Speaker } from '../lib/speakers';
-import { visitorCategories, type Session } from '../lib/sessions';
+import { speakerNames, visitorCategories, type Session } from '../lib/sessions';
 import {
 	byStart,
 	dayRange,
@@ -19,20 +18,13 @@ import {
 	type AgendaPartition,
 	type Placement,
 } from '../lib/agenda';
-import { fetchAgenda } from '../lib/lineup';
+import { fetchAgenda, speakersById } from '../lib/lineup';
+import { useRemote } from '../lib/useRemote';
+import { useMediaQuery } from '../lib/useMediaQuery';
 import SessionDetail from './SessionDetail';
-import SpeakerPhoto from './SpeakerPhoto';
+import SpeakerStack from './SpeakerStack';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Agenda.module.scss';
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
-	sessions: Session[];
-}
-
-const INITIAL: State = { status: 'loading', sessions: [] };
 
 /** 5-minute grid snap + minimum row height. `rem`, NOT px: rows contain
  * text and must grow with it under text zoom. 1.625rem gives a half-hour
@@ -46,20 +38,14 @@ const ROW_REM = 1.625;
  * proportional. */
 const NON_TALK_ROWS = 2;
 
+/** Stable empty roster, so the memos below don't recompute on every render
+ * before the payload lands. */
+const EMPTY_SESSIONS: Session[] = [];
+
 /** Width below which the timetable becomes the time-ordered list. NOT the
  * site's phone breakpoint — this is about room columns: below 1024 a
  * four-room day renders ~150px columns and Bebas titles truncate mid-word. */
-function useIsNarrow(): boolean {
-	const [narrow, setNarrow] = useState(false);
-	useEffect(() => {
-		const mql = window.matchMedia('(max-width: 1024px)');
-		const update = () => setNarrow(mql.matches);
-		update();
-		mql.addEventListener('change', update);
-		return () => mql.removeEventListener('change', update);
-	}, []);
-	return narrow;
-}
+const NARROW = '(max-width: 1024px)';
 
 /** Current wall-clock in Europe/Prague as { date: 'YYYY-MM-DD', minutes }.
  * Uses Intl (not the raw Date fields) so it's the event-local time, not the
@@ -127,11 +113,6 @@ function timeParts(session: Session): { from: string; to: string } | null {
 	return { from: `${formatMinutes(place.startMin)}–`, to: formatMinutes(place.endMin) };
 }
 
-/** Comma-joined presenter names, empties dropped. */
-function speakerNames(session: Session): string {
-	return session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
-}
-
 /** Up to three visitor-facing category values (Track / Level / …) for a talk. */
 function talkTags(session: Session): string[] {
 	return visitorCategories(session)
@@ -139,25 +120,16 @@ function talkTags(session: Session): string[] {
 		.slice(0, 3);
 }
 
-/** Small speaker photos (up to three, overlapping) with a monogram fallback —
- * the /sessions card stack sized down for the timetable. Decorative: the names
- * carry the accessible info, so this is aria-hidden. */
+/** The /sessions card stack sized down for the timetable. */
 function TalkAvatars({ session }: { session: Session }) {
-	const shown = session.speakers.slice(0, 3);
-	if (shown.length === 0) return null;
 	return (
-		<span className={s.avatars} aria-hidden="true">
-			{shown.map((sp) => (
-				<SpeakerPhoto
-					key={sp.id}
-					speaker={sp}
-					photoClass={s.avatar}
-					monogramClass={`${s.avatar} ${s.avatarMono}`}
-					width={24}
-					height={24}
-				/>
-			))}
-		</span>
+		<SpeakerStack
+			speakers={session.speakers}
+			className={s.avatars}
+			avatarClass={s.avatar}
+			monogramClass={`${s.avatar} ${s.avatarMono}`}
+			size={24}
+		/>
 	);
 }
 
@@ -457,36 +429,22 @@ function AgendaList({
 /* ============================ ROOT ============================ */
 
 export default function Agenda() {
-	const [state, setState] = useState<State>(INITIAL);
-	const [speakersById, setSpeakersById] = useState<Record<string, Speaker>>({});
+	const { status, data } = useRemote(fetchAgenda, 'agenda', (l) => l.sessions.length === 0);
 	const [selected, setSelected] = useState<Session | null>(null);
-	const isNarrow = useIsNarrow();
+	const isNarrow = useMediaQuery(NARROW);
 
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchAgenda(ac.signal)
-			.then(({ sessions, speakers }) => {
-				setSpeakersById(Object.fromEntries(speakers.map((sp) => [sp.id, sp])));
-				setState({ status: sessions.length > 0 ? 'ready' : 'empty', sessions });
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[agenda] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
-			});
-		return () => ac.abort();
-	}, []);
-
-	const partition = useMemo(() => partitionAgenda(state.sessions), [state.sessions]);
-	const placements = useMemo(() => sessionPlacements(state.sessions), [state.sessions]);
-	const range = useMemo(() => dayRange(state.sessions), [state.sessions]);
+	const sessions = data?.sessions ?? EMPTY_SESSIONS;
+	const profiles = useMemo(() => speakersById(data?.speakers ?? []), [data]);
+	const partition = useMemo(() => partitionAgenda(sessions), [sessions]);
+	const placements = useMemo(() => sessionPlacements(sessions), [sessions]);
+	const range = useMemo(() => dayRange(sessions), [sessions]);
 	// Event-day "now" line + live/coming-up badges (hooks must run before the
 	// early returns below).
-	const eventDate = useMemo(() => eventDateISO(state.sessions), [state.sessions]);
+	const eventDate = useMemo(() => eventDateISO(sessions), [sessions]);
 	const nowMin = useNowMinutes(eventDate);
-	const now = useMemo(() => nowState(state.sessions, nowMin), [state.sessions, nowMin]);
+	const now = useMemo(() => nowState(sessions, nowMin), [sessions, nowMin]);
 
-	if (state.status === 'error') {
+	if (status === 'error') {
 		return (
 			<ErrorState>
 				<p>The agenda won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
@@ -494,12 +452,12 @@ export default function Agenda() {
 		);
 	}
 
-	if (state.status === 'loading') {
+	if (status === 'loading') {
 		return <LoadingState label="Developing the agenda" />;
 	}
 
 	// No sessions at all, or none scheduled yet → the schedule isn't published.
-	if (state.status === 'empty' || range === null) {
+	if (status === 'empty' || range === null) {
 		return (
 			<EmptyState action={{ href: '/sessions', label: 'Browse all talks' }}>
 				<p>The full schedule lands closer to the event.</p>
@@ -556,7 +514,7 @@ export default function Agenda() {
 			{selected && (
 				<SessionDetail
 					session={selected}
-					speakersById={speakersById}
+					speakersById={profiles}
 					onClose={() => setSelected(null)}
 				/>
 			)}

@@ -10,6 +10,7 @@ import {
 	type TitoRelease,
 } from '../lib/tito';
 import { track } from '../lib/analytics';
+import { round2 } from '../lib/checkout';
 import s from './InvoiceForm.module.scss';
 
 // Cloud Functions region the callable is deployed to.
@@ -196,7 +197,7 @@ export default function InvoiceForm() {
 			each: display.primary,
 			total: formatPrice(String(total), release.currency),
 			/** Numeric total + currency for the GA4 `generate_lead` value. */
-			amount: Math.round(total * 100) / 100,
+			amount: round2(total),
 			currency: (release.currency ?? 'CZK').toUpperCase(),
 		};
 	}, [release, fields.countTickets]);

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import s from './NewsletterForm.module.scss';
 
 const FORM_ACTION =
@@ -7,7 +7,6 @@ const FORM_ACTION =
 export default function NewsletterForm() {
 	const [consented, setConsented] = useState(false);
 	const [message, setMessage] = useState('');
-	const formRef = useRef<HTMLFormElement>(null);
 
 	useEffect(() => {
 		const refField = document.getElementById('se-ref-field-id') as HTMLInputElement | null;
@@ -40,7 +39,6 @@ export default function NewsletterForm() {
 				method="post"
 				action={FORM_ACTION}
 				onSubmit={handleSubmit}
-				ref={formRef}
 				noValidate
 			>
 				<label htmlFor="newsletter-email" className={s.srOnly}>
