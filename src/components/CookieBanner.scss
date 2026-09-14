@@ -46,21 +46,7 @@
 }
 
 .cookie-link {
-	color: var(--color-text);
-	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
-	transition: color 0.2s, border-color 0.2s;
-}
-
-.cookie-link:hover,
-.cookie-link:focus-visible {
-	color: var(--color-accent-hot);
-	border-color: var(--color-accent-hot);
-}
-
-.cookie-link:focus-visible {
-	outline: 2px solid var(--color-accent-hot);
-	outline-offset: var(--focus-gap);
+	@include hairline-link;
 }
 
 .cookie-actions {

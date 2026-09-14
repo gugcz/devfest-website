@@ -45,6 +45,7 @@ const { title, noteHtml, actions } = Astro.props;
 
 <style lang="scss">
 	@use '../styles/type' as *;
+	@use '../styles/type' as *;
 	// The 1.15/0.85 split the desks and the section heads use, so a step's
 	// title shares its left edge and its measure with everything else.
 	.step {
@@ -81,15 +82,7 @@ const { title, noteHtml, actions } = Astro.props;
 	}
 
 	.step-note :global(a) {
-		color: var(--color-accent-hot);
-		text-decoration: none;
-		border-bottom: 1px solid var(--rule-red);
-		transition: border-color 0.2s, color 0.2s;
-
-		&:hover,
-		&:focus-visible {
-			border-color: var(--color-accent-hot);
-		}
+		@include hairline-link(var(--color-accent-hot));
 	}
 
 	.step-actions {

@@ -121,10 +121,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 	}
 
 	.intro-link {
-		color: var(--ink-strong);
-		text-decoration: none;
-		border-bottom: 1px solid var(--rule-red);
-		transition: border-color 0.2s, color 0.2s;
+		@include hairline-link(var(--ink-strong));
 
 		&::after {
 			content: '\2197';
@@ -132,13 +129,6 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			border-bottom: none;
 			display: inline-block;
 			transition: transform 0.25s;
-		}
-
-		&:hover,
-		&:focus-visible {
-			color: var(--color-accent-hot);
-			border-color: var(--color-accent-hot);
-			// Red TEXT reads as neon — subtle halation on hover.
 		}
 
 		&:hover::after,

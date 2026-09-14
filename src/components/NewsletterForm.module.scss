@@ -137,16 +137,7 @@
 }
 
 .consentLink {
-	color: var(--ink-strong);
-	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
-	transition: border-color 0.2s, color 0.2s;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-	}
+	@include hairline-link(var(--ink-strong));
 }
 
 .message {
