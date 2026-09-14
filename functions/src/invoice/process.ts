@@ -10,7 +10,7 @@ import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 
 import { describeError } from '../lib/errors.js';
 import { SLACK_WEBHOOK_URL } from '../lib/params.js';
-import { notify } from '../lib/slack.js';
+import { escapeMrkdwn, notify } from '../lib/slack.js';
 import { TRIGGER } from '../options.js';
 import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from '../tickets/params.js';
 import { releaseTitle } from '../tickets/tito-api.js';
@@ -122,13 +122,12 @@ export const processInvoiceTrigger = onDocumentCreated(
 					variableSymbol: invoice.variableSymbol,
 					dueDate: formatDueDate(invoice.dueDate),
 				});
-				// Belt: when the contact is NOT proven to carry the submitted
-				// address, name it explicitly. When it IS in sync, `SendToPartner`
-				// already goes there and naming it again mails twice.
+				// Always the submitted address, never the contact's stored one —
+				// a reused contact is read-only for the form (see `findOrCreateContact`).
 				const result = await sendInvoiceByEmail(idokladCfg, invoice.id, {
 					subject: mail.subject,
 					body: mail.body,
-					otherRecipients: contact.emailSynced ? [] : [doc.email],
+					recipients: [doc.email],
 				});
 				// Only iDoklad's own `IsSuccess: true` counts as sent. An
 				// unconfirmed send is reported as unsent, so Slack asks for a manual
@@ -148,28 +147,28 @@ export const processInvoiceTrigger = onDocumentCreated(
 				idokladInvoiceNumber: invoice.number,
 				variableSymbol: invoice.variableSymbol,
 				invoiceEmailSent,
-				// Whether iDoklad's contact is proven to carry the submitted address.
-				// A `false` here is the trace of the belt having to fire: the doc says
-				// so afterwards, not only a log line nobody reads.
-				contactEmailSynced: contact.emailSynced,
+				// A reused contact keeps its stored details; `contactDiffers` names the
+				// form fields that disagree, so the doc says so, not only a Slack line.
+				contactReused: contact.reused,
+				contactDiffers: contact.differing,
 				errorMessage: null,
 			});
 
 			const linkNote = invoiceEmailSent
 				? ''
 				: `\n⚠️ email could not be sent — send invoice ${invoice.number ?? invoice.id} manually`;
-			// The contact update is best-effort, so its failure was previously visible
-			// only in Cloud Logging. Say it here: the mail still goes out (named
-			// recipient), but the iDoklad contact holds a stale address someone has
-			// to fix by hand, or the next invoice repeats the fault.
-			const contactNote = contact.emailSynced
+			// A reused contact is never edited from the form, so the invoice carries
+			// its stored details. When the form disagrees, a human decides whether
+			// the company moved or a stranger typed someone else's IČO.
+			const contactNote = contact.differing.length === 0
 				? ''
-				: `\n⚠️ iDoklad contact ${contactId} does not carry the submitted address — ` +
-					`invoice mailed to an explicitly named recipient; fix the contact in iDoklad`;
+				: `\n⚠️ existing iDoklad contact ${contactId} reused — submitted ` +
+					`${contact.differing.join(', ')} differ from the stored record; the invoice ` +
+					`carries the stored details and was mailed to the submitted address. Review in iDoklad.`;
 			await notify(
 				'invoices',
 				slackUrl,
-				`${doc.companyName} — invoice ${invoice.number ?? invoice.id} issued ` +
+				`${escapeMrkdwn(doc.companyName)} — invoice ${invoice.number ?? invoice.id} issued ` +
 					`(${doc.countTickets}× ticket, VS ${invoice.variableSymbol ?? '—'})${linkNote}${contactNote}`,
 			);
 			logger.info('processInvoiceTrigger invoiced', { id, invoiceId: invoice.id });
@@ -183,7 +182,7 @@ export const processInvoiceTrigger = onDocumentCreated(
 			await notify(
 				'invoices',
 				slackUrl,
-				`❌ ${doc.companyName} — invoice creation failed (id ${id}); see logs`,
+				`❌ ${escapeMrkdwn(doc.companyName)} — invoice creation failed (id ${id}); see logs`,
 			);
 		}
 	},

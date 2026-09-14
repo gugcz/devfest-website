@@ -28,9 +28,12 @@ ti.to code. Browser never touches Firestore.
   `GET /Contacts/Default`.
 - Line `UnitPrice` is net, `PriceType=1`, `VatRateType=1` (21 %) or `2` when
   `INVOICE_VAT_RATE=0`. CZK only, no FX.
-- `findOrCreateContact` matches on IČO and PATCHes the submitted email +
-  address (non-empty fields only), returning `{ id, emailSynced }`.
-  `OtherRecipients` = `[doc.email]` only when `emailSynced` is false.
+- `findOrCreateContact` matches on IČO and **never writes to a reused
+  contact** (an IČO is public; the form must not rewrite a customer's record).
+  Returns `{ id, reused, differing }` — `differing` names the submitted
+  fields that disagree with the stored ones, surfaced in Slack + the doc
+  (`contactReused`, `contactDiffers`). Invoice mail: `SendToPartner: false`,
+  `recipients: [doc.email]` always.
 - `invoiceEmailSent: true` requires iDoklad `IsSuccess: true`. Log field is
   `idokladMessage`, not `message` (logger overwrites it). Addresses masked via
   `maskEmail`.
@@ -39,8 +42,14 @@ ti.to code. Browser never touches Firestore.
   wrapped under `discount_code`, scoped to releases matching
   `INVOICE_RELEASE_MATCH`. Discount mail via Resend, optional.
 - `firestore.rules` denies all clients; not wired into `firebase.json`.
-- `submitInvoiceCallable` has `enforceAppCheck: true`; `cors` lists
-  devfest.cz + PR previews only.
+- `submitInvoiceCallable` has `enforceAppCheck: true` + `consumeAppCheckToken`
+  (client passes `limitedUseAppCheckTokens: true`); `cors` lists devfest.cz +
+  PR previews only. Throttles, outermost first: `GLOBAL_LIMIT_MAX` per hour
+  across everyone (the backstop), then 3 per (IČO, email). Validation lives in
+  `validate.ts` (pure, tested); registration ids are whitespace-stripped and
+  charset-checked (no `~`/`|` — iDoklad filter syntax).
+- Anything user-typed that reaches Slack goes through `escapeMrkdwn`
+  (`lib/slack.ts`) — `<!channel>` in a company name is a mass ping otherwise.
 - `invoiceRateLimits` docs carry `expiresAt` for a Firestore TTL policy
   (project config, not code).
 - Both mails' copy in `email.ts`; HTML shell in `email-template.ts` (tables,

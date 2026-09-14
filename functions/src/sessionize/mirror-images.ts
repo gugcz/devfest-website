@@ -22,14 +22,31 @@ const FETCH_TIMEOUT_MS = 20_000;
 /** Parallel downloads. Small — the roster is ~30–60 and we're kind to the CDN. */
 const CONCURRENCY = 6;
 
-/** Only mirror real http(s) sources; anything else is left as-is. */
-function isHttpUrl(url: string): boolean {
+/** Where Sessionize serves profile pictures (`cdn.sessionize.com/image/…`
+ * today). The function fetches whatever URL the payload names, so the host
+ * is pinned to sessionize.com and its subdomains: a payload is data, not a
+ * licence to make the function download from anywhere. */
+const SOURCE_HOST_RE = /(^|\.)sessionize\.com$/i;
+
+/** Raster types only — an SVG would be stored and served verbatim from the
+ * Storage origin, which is a script container, not a photo. */
+const IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif']);
+
+/** Only mirror an https source on a Sessionize host; anything else keeps its
+ * original URL in the doc (the browser loads it as before). Exported for tests. */
+export function isMirrorableUrl(url: string): boolean {
 	try {
-		const { protocol } = new URL(url);
-		return protocol === 'http:' || protocol === 'https:';
+		const { protocol, hostname } = new URL(url);
+		return protocol === 'https:' && SOURCE_HOST_RE.test(hostname);
 	} catch {
 		return false;
 	}
+}
+
+/** `image/jpeg; charset=…` → `image/jpeg`; `''` when unusable. */
+export function acceptedImageType(contentType: string | null): string | null {
+	const type = (contentType ?? '').split(';')[0].trim().toLowerCase();
+	return IMAGE_TYPES.has(type) ? type : null;
 }
 
 function tokenUrl(bucketName: string, objectPath: string, token: string): string {
@@ -80,8 +97,8 @@ async function mirrorOne(bucket: BucketLike, speakerId: string, sourceUrl: strin
 		{ label: `speaker photo ${speakerId}`, attempts: 2, timeoutMs: FETCH_TIMEOUT_MS },
 	);
 	if (!res.ok) throw new Error(`download ${res.status} ${res.statusText}`);
-	const contentType = res.headers.get('content-type') || 'image/jpeg';
-	if (!contentType.startsWith('image/')) throw new Error(`unexpected content-type ${contentType}`);
+	const contentType = acceptedImageType(res.headers.get('content-type'));
+	if (!contentType) throw new Error(`unexpected content-type ${res.headers.get('content-type') ?? '(none)'}`);
 	// Reject an oversize body before buffering when the length is advertised;
 	// the post-read check below is the backstop for chunked / length-less bodies.
 	const declaredLength = Number(res.headers.get('content-length'));
@@ -144,7 +161,7 @@ export async function mirrorSpeakerImages(
 			id: typeof speaker.id === 'string' ? speaker.id.trim() : '',
 			url: typeof speaker.profilePicture === 'string' ? speaker.profilePicture.trim() : '',
 		}))
-		.filter((t) => t.id && isHttpUrl(t.url));
+		.filter((t) => t.id && isMirrorableUrl(t.url));
 
 	let mirrored = 0;
 	await mapWithConcurrency(targets, CONCURRENCY, async ({ id, url }) => {

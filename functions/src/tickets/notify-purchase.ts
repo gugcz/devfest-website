@@ -10,7 +10,7 @@ import { onRequest } from 'firebase-functions/v2/https';
 import { db } from '../lib/admin.js';
 import { describeError } from '../lib/errors.js';
 import { SLACK_WEBHOOK_URL } from '../lib/params.js';
-import { postToSlack, type SlackPayload } from '../lib/slack.js';
+import { escapeMrkdwn, postToSlack, type SlackPayload } from '../lib/slack.js';
 import { WEBHOOK } from '../options.js';
 import { TITO_WEBHOOK_SECRET } from './params.js';
 import {
@@ -117,7 +117,8 @@ function summarizeTickets(tickets: TitoWebhookPayload[] | undefined): string | n
 	}
 	const lines: string[] = [];
 	for (const [title, count] of counts) {
-		lines.push(count > 1 ? `• ${count}× ${title}` : `• ${title}`);
+		const safe = escapeMrkdwn(title);
+		lines.push(count > 1 ? `• ${count}× ${safe}` : `• ${safe}`);
 	}
 	return lines.join('\n');
 }
@@ -128,10 +129,14 @@ function buildSlackMessage(payload: TitoWebhookPayload): SlackPayload {
 
 	const fields: { type: 'mrkdwn'; text: string }[] = [];
 
-	const buyer = fullName(payload);
+	// Attendee-typed strings (name, email) and ti.to-owned ones (titles,
+	// reference) both go through `escapeMrkdwn`: a buyer can name themselves
+	// `<!channel>` at checkout.
+	const buyer = escapeMrkdwn(fullName(payload));
 	fields.push({ type: 'mrkdwn', text: `*Name:*\n${buyer}` });
 
-	if (payload.email) fields.push({ type: 'mrkdwn', text: `*Email:*\n${payload.email}` });
+	const email = payload.email ? escapeMrkdwn(payload.email) : '';
+	if (email) fields.push({ type: 'mrkdwn', text: `*Email:*\n${email}` });
 
 	const ticketSummary = summarizeTickets(payload.tickets);
 	if (ticketSummary) {
@@ -142,7 +147,7 @@ function buildSlackMessage(payload: TitoWebhookPayload): SlackPayload {
 	if (priceLabel) fields.push({ type: 'mrkdwn', text: `*Price:*\n${priceLabel}` });
 
 	const reference = payload.registration_reference ?? payload.reference;
-	if (reference) fields.push({ type: 'mrkdwn', text: `*Reference:*\n${reference}` });
+	if (reference) fields.push({ type: 'mrkdwn', text: `*Reference:*\n${escapeMrkdwn(reference)}` });
 
 	const blocks: unknown[] = [
 		{
@@ -165,7 +170,7 @@ function buildSlackMessage(payload: TitoWebhookPayload): SlackPayload {
 	];
 
 	return {
-		text: `${headline} — ${buyer}${payload.email ? ` <${payload.email}>` : ''}`,
+		text: `${headline} — ${buyer}${email ? ` (${email})` : ''}`,
 		blocks,
 	};
 }

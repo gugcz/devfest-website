@@ -52,12 +52,12 @@ export interface InvoiceDoc extends InvoiceRequestInput {
 	idokladInvoiceNumber?: string | null;
 	variableSymbol?: string | null;
 	invoiceEmailSent?: boolean;
-	/**
-	 * True when the iDoklad contact was proven to carry the address submitted on
-	 * the form. False means the invoice mail named an explicit recipient instead
-	 * and the contact still holds someone else's address.
-	 */
-	contactEmailSynced?: boolean;
+	/** True when an existing iDoklad contact (matched by IČO) was reused. The
+	 * form never edits a reused contact; the invoice carries its stored details. */
+	contactReused?: boolean;
+	/** Form field names whose value differs from the reused contact's stored
+	 * one (empty when created or identical) — the organizer's review list. */
+	contactDiffers?: string[];
 	paidAmount?: string | null;
 	// ti.to
 	discountCode?: string | null;
@@ -103,6 +103,18 @@ export async function updateInvoice(id: string, patch: Partial<InvoiceDoc>): Pro
 	await invoicesCollection()
 		.doc(id)
 		.set({ ...patch, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+}
+
+/**
+ * Invoice requests created inside the trailing window, across every company.
+ * The identity throttle below is keyed on values the submitter chooses, so
+ * this ceiling is the real backstop against a farmed App Check token minting
+ * invoices and emails at scale. One aggregation read, no index to maintain.
+ */
+export async function countRecentInvoiceRequests(windowMs: number): Promise<number> {
+	const since = Timestamp.fromMillis(Date.now() - windowMs);
+	const snap = await invoicesCollection().where('createdAt', '>=', since).count().get();
+	return snap.data().count;
 }
 
 /**

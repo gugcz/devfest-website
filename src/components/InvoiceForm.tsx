@@ -247,13 +247,20 @@ export default function InvoiceForm() {
 		setMessage('Sending your request…');
 		const recipient = fields.email;
 		try {
-			// Callable: the Functions SDK auto-attaches the Firebase App Check
-			// token, and the function enforces it server-side (enforceAppCheck).
+			// Callable: the Functions SDK attaches a Firebase App Check token and the
+			// function enforces it server-side (enforceAppCheck). Limited-use: the
+			// function consumes the token (`consumeAppCheckToken`), so each submit
+			// fetches a fresh single-use one instead of reusing the cached hour-long
+			// token — a captured token cannot be replayed.
 			const [{ getFirebaseApp }, { getFunctions, httpsCallable }] = await Promise.all([
 				import('../lib/firebase'),
 				import('firebase/functions'),
 			]);
-			const submit = httpsCallable(getFunctions(getFirebaseApp(), FUNCTIONS_REGION), 'submitInvoiceCallable');
+			const submit = httpsCallable(
+				getFunctions(getFirebaseApp(), FUNCTIONS_REGION),
+				'submitInvoiceCallable',
+				{ limitedUseAppCheckTokens: true },
+			);
 			await submit({ ...fields, website: honeypot });
 			// The conversion for the company path — no ti.to checkout happens
 			// here. `value`/`currency` go together or not at all.
@@ -283,7 +290,9 @@ export default function InvoiceForm() {
 						: 'The server rejected one of the fields. Please check them and try again.'
 					: code === 'functions/unauthenticated' || code === 'functions/failed-precondition'
 						? 'Could not verify your browser. Reload the page and try again, or email devfest@gug.cz.'
-						: 'Something went wrong. Please try again or email devfest@gug.cz.',
+						: code === 'functions/resource-exhausted'
+							? 'Too many invoice requests right now. Please try again in an hour, or email devfest@gug.cz.'
+							: 'Something went wrong. Please try again or email devfest@gug.cz.',
 			);
 		}
 	}

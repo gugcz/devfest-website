@@ -193,13 +193,17 @@ The browser never touches Firestore — it calls `submitInvoiceCallable`, so `in
 
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
-| `submitInvoiceCallable` | Callable (App Check enforced) | Validate the form (honeypot) and write `invoices/{id}` |
+| `submitInvoiceCallable` | Callable (App Check enforced, single-use tokens) | Validate the form (honeypot), apply the global + per-company throttles, write `invoices/{id}` |
 | `processInvoiceTrigger` | Firestore onCreate `invoices/{id}` | Create the iDoklad contact + issued invoice and email it |
 | `pollPaidInvoicesScheduled` | Cloud Scheduler, hourly | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
 
 > iDoklad has no webhooks — payment is polled hourly, so a paid invoice is claimed up to ~1 h later.
 
 > `invoiceRateLimits` (the per-company throttle) writes an `expiresAt` timestamp. Set a Firestore **TTL policy** on that collection with field `expiresAt` (console → Firestore → TTL) so spent windows are deleted; the code does not depend on it, the collection just grows without it.
+
+> **Abuse limits.** App Check tokens are single-use (`consumeAppCheckToken` + `limitedUseAppCheckTokens` in `InvoiceForm.tsx`), so every submit is its own reCAPTCHA assessment. On top: a global ceiling of 20 requests per hour across all companies (`GLOBAL_LIMIT_MAX` in `submit.ts` — every request mints an iDoklad invoice and an email) and 3 per hour per (IČO, email). Hitting either returns `resource-exhausted`; the form tells the visitor to retry in an hour.
+
+> **Existing iDoklad contacts are read, never written.** An IČO is public data, so the form must not be able to rewrite a customer's stored email or address. When an IČO already exists in iDoklad the contact is reused as-is, the invoice carries its stored details, and the mail goes to the *submitted* address only (`SendToPartner: false`). The Slack line lists which submitted fields differ from the stored record (`contactDiffers` on the doc) so a human decides whether the company moved or a stranger typed someone else's IČO.
 
 ### Secrets & config
 
