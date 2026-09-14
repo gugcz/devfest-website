@@ -8,11 +8,6 @@
 
 import { defineSecret } from 'firebase-functions/params';
 
-/**
- * Slack incoming webhook — every domain's alerts and reports go here.
- * Create one at https://api.slack.com/apps → Incoming Webhooks.
- *
- * Any function that alerts must list it in its `secrets: []`, otherwise
- * `.value()` is empty at runtime and the notification silently no-ops.
- */
+/** Slack incoming webhook (https://api.slack.com/apps → Incoming Webhooks).
+ * A function that alerts must list it in `secrets`, or `.value()` is empty. */
 export const SLACK_WEBHOOK_URL = defineSecret('SLACK_WEBHOOK_URL');

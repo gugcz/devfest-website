@@ -12,24 +12,10 @@ import {
 import { track } from '../lib/analytics';
 
 /**
- * The single primary action on a personal invitation page (`/invite/<member>`).
- *
- * Two jobs the plain `<a>` of the prototype could not do:
- *
- * 1. **It goes straight to ti.to.** The invitation has exactly one action, so
- *    routing through the homepage's ticket section would put a second decision
- *    between the visitor and the checkout. The live wave isn't known at build
- *    time, so the href resolves client-side from the cached `/api/tickets`
- *    endpoint — the same read `Tickets.tsx` does, no Firebase SDK on the path.
- * 2. **It reports `begin_checkout` carrying the member's identity.** Checkout
- *    happens on ti.to and its redirect back carries no source, so this click is
- *    the last thing GA4 can attribute to a member's invitation. Without the
- *    `invite_member` params the whole channel is unmeasurable (there is no
- *    discount code doing the attribution — see the product definition).
- *
- * Until the endpoint answers — and if it never does — the href falls back to
- * the on-site ticket section, so the CTA is a working link at first paint and
- * the event still fires. A dead primary action is worse than a detour.
+ * The single primary action on `/invite/<member>`. An island because the
+ * href resolves client-side from `/api/tickets` and the click reports
+ * `begin_checkout` with the member — the channel's only attribution.
+ * Falls back to `/#tickets` until (or if never) the endpoint answers.
  */
 
 interface Props {
@@ -45,12 +31,8 @@ interface Props {
 /** On-site fallback while tickets are loading or the endpoint is down. */
 const FALLBACK_HREF = '/#tickets';
 
-/**
- * A ti.to discount link for this channel, set outside the repo (GitHub Actions
- * secret, not committed). When present it always wins the href — the
- * `/api/tickets` resolution below still runs, but only to build the
- * `begin_checkout` items/value payload, never to pick the destination.
- */
+/** Optional ti.to discount link (GitHub Actions secret). When set it wins
+ * the href; `/api/tickets` still resolves only for the event payload. */
 const DISCOUNT_URL = import.meta.env.PUBLIC_INVITE_DISCOUNT_URL || '';
 
 interface Target {

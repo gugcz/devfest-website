@@ -1,28 +1,10 @@
 /**
- * Project-wide Cloud Functions defaults, and the option presets every function
- * builds on.
+ * Cloud Functions defaults and per-kind option presets. Imported FIRST from
+ * `index.ts` so `setGlobalOptions` runs before any function factory.
+ * `maxInstances` is a cost ceiling on the shared billing project. Spread a
+ * preset and override only what is specific:
  *
- * Imported FIRST from `index.ts` so `setGlobalOptions` runs before any
- * function factory (onCall/onRequest/onSchedule) executes — otherwise the
- * defaults wouldn't apply. ES modules evaluate imports in source order, so the
- * leading `import './options.js'` in the barrel guarantees this side effect
- * lands before the domain modules load.
- *
- * `maxInstances` is a cost ceiling: this codebase shares a billing project
- * with the mobile-app team, so a retry storm or the public `ticketsWebhook` flood
- * path must not be able to fan out unboundedly. Per-function overrides (e.g.
- * the tighter cap on `submitInvoiceCallable`) still win where set.
- *
- * The presets below exist so a function declares only what is genuinely
- * specific to it — its schedule, its secrets, its memory if unusual. Region and
- * timezone in particular were repeated in nine files, which is nine chances to
- * deploy a function into the wrong region. Spread a preset and override
- * deliberately:
- *
- *     export const thing = onSchedule(
- *         { ...SCHEDULED, schedule: 'every day 06:00', secrets: [FOO] },
- *         handler,
- *     );
+ *     onSchedule({ ...SCHEDULED, schedule: 'every day 06:00', secrets: [FOO] }, handler)
  */
 
 import { setGlobalOptions } from 'firebase-functions/v2';
@@ -51,15 +33,8 @@ export const SCHEDULED = {
 	retryCount: 1,
 } satisfies Partial<ScheduleOptions>;
 
-/**
- * The public, CDN-cached `/api/*` endpoints (`lineupApi`, `ticketsApi`).
- * Scale-to-zero by default: no `minInstances`. A warm instance removes the cold
- * start on a CDN revalidation, but it is billed around the clock, and the long
- * edge TTLs mean visitors are served from the CDN anyway — a cold start only
- * lands on the rare revalidating request. `ticketsApi` overrides this with
- * `minInstances: 1`; its 5min TTL revalidates often enough to be worth one warm
- * container.
- */
+/** Public CDN-cached `/api/*` endpoints. Scale-to-zero (edge TTLs absorb
+ * nearly all traffic); `ticketsApi` overrides with `minInstances: 1`. */
 export const CACHED_ENDPOINT = {
 	region: REGION,
 	invoker: 'public',

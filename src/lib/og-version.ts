@@ -1,13 +1,7 @@
-/**
- * Content hash for the invite OG card URL (`/og/invite/<slug>.jpg?v=<hash>`).
- *
- * Slack caches a `.jpg` under its own URL and we send a 1-year `max-age`, so a
- * changed card is otherwise invisible in an existing Slack thread/unfurl until
- * the query string itself changes — see the OG card comment in
- * `src/pages/og/invite/[member].jpg.ts`. The hash covers everything that can
- * change a card's pixels: the render template, the logo, and the two
- * per-member inputs the template draws from (name, photo).
- */
+/** Content hash for the invite OG card URL (`?v=<hash>`). Slack caches the
+ * `.jpg` under its URL and we send a 1-year `max-age`, so a changed card is
+ * invisible until the query string changes. Covers template, logo, name,
+ * photo. */
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';

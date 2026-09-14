@@ -1,22 +1,9 @@
 /**
- * ti.to Admin API client.
- *
- * Docs: https://ti.to/docs/api/admin/3.0 (stable). v3.1 is in beta; we
- * pin to v3.0 by hitting `https://api.tito.io/v3/...` without a beta
- * opt-in (v3.0 is the default served at that path).
- *
- * Field naming follows the actual v3.0 response. Notable differences
- * from what older code assumed:
- *
- *   - There is no `sale_status` or `accessibility` field. The release's
- *     buyability is encoded across the boolean flags `sold_out`,
- *     `off_sale`, `expired`, `upcoming`, `locked`, `archived`, `secret`.
- *     We compute a synthetic `sale_status` from those flags via
- *     `deriveSaleStatus()` below so the rest of the codebase has a
- *     single, stable status string to switch on.
- *   - The state field is `state_name` (e.g. `"on_sale"`) — not `state`.
- *   - Sale window dates are `start_at` / `end_at` (not `sales_start` /
- *     `sales_end`).
+ * ti.to Admin API v3.0 client (https://ti.to/docs/api/admin/3.0). Wire has
+ * no `sale_status`: buyability is a flag set (`sold_out`, `off_sale`,
+ * `expired`, `upcoming`, `locked`, `archived`, `secret`) and
+ * `deriveSaleStatus()` synthesises one string. State field is `state_name`;
+ * dates are `start_at` / `end_at`.
  */
 
 import { errorBody, fetchWithRetry } from '../lib/http.js';
@@ -74,13 +61,9 @@ interface TitoReleasesPage {
 	};
 }
 
-/**
- * Derive a single sale-status string from the flag fields ti.to actually
- * returns. Order matters: `sold_out` wins because it is the most
- * informative signal for a visitor; `archived` wins over the time-based
- * flags because an archived release is not coming back regardless of
- * dates.
- */
+/** Derive one sale-status string from ti.to's flags. Order matters:
+ * `sold_out` wins (most informative), `archived` beats the time-based flags
+ * (not coming back regardless of dates). */
 export function deriveSaleStatus(r: TitoRelease): DerivedSaleStatus {
 	if (r.sold_out) return 'sold_out';
 	if (r.archived) return 'archived';
@@ -98,20 +81,9 @@ export function releaseTitle(r: TitoRelease): string {
 	return r.title ?? r.slug;
 }
 
-/**
- * Fields persisted to RTDB. Anything not in this list is dropped during
- * projection so the cache shape stays stable even if ti.to adds fields.
- *
- * The synthetic `sale_status` (computed via `deriveSaleStatus`) is added
- * by `projectRelease` so the browser does not need to know the flag set.
- *
- * Deliberately NOT projected: `quantity`, `quantity_sold`, `tickets_count`.
- * `/tickets` is world-readable, so publishing raw inventory/sold counts would
- * leak per-wave sales velocity and remaining capacity to anyone polling RTDB.
- * The browser only needs to know whether a paused wave has ever sold a ticket
- * (to tell "Paused" from "Coming soon"), so we emit a single coarse
- * `has_sales` boolean instead — see `projectRelease`.
- */
+/** Fields persisted to RTDB. `quantity` / `quantity_sold` / `tickets_count`
+ * are deliberately NOT projected (they leak sales velocity); a coarse
+ * `has_sales` boolean covers "Paused" vs "Coming soon". */
 export const RELEASE_FIELDS = [
 	'id',
 	'slug',
@@ -146,17 +118,9 @@ export function projectRelease(release: TitoRelease): Record<string, unknown> {
 	return out;
 }
 
-/**
- * Predicate: should this release be persisted to the public RTDB cache?
- *
- * Only `secret` releases (invite-only / private-link) are hidden. All
- * other states — on-sale, sold-out, paused (`off_sale` / `locked`),
- * upcoming, expired, archived — are persisted so the UI can render
- * the full pricing-wave roadmap. Status mapping happens in
- * `releaseStatus()` (`src/lib/tito.ts`): paused/upcoming tiers render
- * with a disabled CTA so visitors can preview waves whose exact
- * release date is not yet known.
- */
+/** Should this release be persisted to the public cache? Only `secret`
+ * releases are hidden; every other state is kept so the UI renders the full
+ * wave roadmap (`releaseStatus()` in `src/lib/tito.ts` maps them). */
 export function isWebsiteVisible(release: TitoRelease): boolean {
 	if (release.secret) return false;
 	return true;

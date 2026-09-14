@@ -49,12 +49,8 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 	);
 }
 
-/**
- * Home-page "case wall": a small set of speaker mugshots that rotates through
- * the full roster over time, plus a link to the full /speakers page. Renders
- * nothing until the lineup fetch resolves (and on an empty roster) so the home
- * page stays clean pre-announce.
- */
+/** Home-page speaker teaser: a rotating subset of mugshots + link to
+ * /speakers. Renders nothing until the lineup resolves (clean pre-announce). */
 export default function SpeakersTeaser() {
 	const [speakers, setSpeakers] = useState<Speaker[]>([]);
 	const [status, setStatus] = useState<Status>('loading');

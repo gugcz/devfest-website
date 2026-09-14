@@ -119,12 +119,9 @@
 		color: var(--ink-muted);
 	}
 
-	// THE ONE ROW TITLE THAT IS NOT BEBAS, because it is scraped Czech from the
-	// article's OG tags: Bebas's accented caps read as a mid-word fallback, and
-	// JetBrains Mono is the only brand face that sets Czech cleanly. It advances
-	// ~0.6em against Bebas's ~0.42em, hence the ~0.6x --fs-row-sm step.
-	// Titles are scraped Czech copy of unbounded length — no uppercase (diacritics
-	// are unreadable set that way) and enough line-height to hold multiple lines.
+	// THE ONE ROW TITLE NOT IN BEBAS: scraped Czech, and JetBrains Mono is the
+	// only brand face that sets Czech cleanly. Mono advances ~0.6em vs Bebas
+	// ~0.42em, hence the ~0.6x step. No uppercase (diacritics unreadable).
 	.coverage-title {
 		font-family: var(--font-jetbrains-mono), monospace;
 		font-weight: 500;

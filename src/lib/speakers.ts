@@ -1,23 +1,14 @@
 /**
- * Browser-safe speaker types + presentation helpers.
- *
- * The daily `refreshSessionizeScheduled` Cloud Function (functions/src/sessionize/)
- * writes documents into the public-read Firestore `speakers` collection; the
- * shapes here mirror the subset of that `SpeakerDoc` the UI renders (the doc
- * also carries the full Sessionize record — bio, sessions, etc. — which the
- * page ignores for now). Browser-safe: types, the kind→icon map, and pure
- * helpers only — no Firebase import (the island wires the read via
- * `getFirestoreDb()`).
+ * Browser-safe speaker types + presentation helpers. Shapes mirror the subset
+ * of `SpeakerDoc` (functions/src/sessionize/) the UI renders. No Firebase
+ * import — the island reads `/api/lineup`.
  */
 
 /**
- * Canonical social-link kinds. The Cloud Function maps each Sessionize
- * `linkType` to one of these; unknown types collapse to `web` (a globe) so a
- * link never renders without an icon.
+ * Canonical social-link kinds; unknown types collapse to `web` (globe).
  *
- * ⚠️ Keep in sync with `functions/src/sessionize/sessionize-api.ts` (its
- * `SpeakerLinkKind` + `KIND_LABEL`) — the two live across the src/ ↔ functions/
- * build boundary and share no package. Adding a kind means editing both.
+ * ⚠️ Keep in sync with `functions/src/sessionize/sessionize-api.ts`
+ * (`SpeakerLinkKind` + `KIND_LABEL`) — no shared package.
  */
 export type SpeakerLinkKind =
 	| 'linkedin'
@@ -97,14 +88,10 @@ export const SPEAKER_ICON_PATHS: Record<SpeakerLinkKind, string> = {
 };
 
 /**
- * Shared `view-transition-name` for the lineup print and the dialog photo, so
- * the browser morphs one into the other. Lives here rather than in either
- * component because both need it and importing it across them would make
- * Speakers ⇄ SpeakerDetail a cycle.
- *
- * A view-transition-name must be on exactly ONE element per capture: if the
- * card and the dialog both carry it the browser skips the transition. See
- * `usePortraitMorph` in Speakers.tsx for the hand-off.
+ * Shared `view-transition-name` for the lineup print and the dialog photo.
+ * Lives here to avoid a Speakers ⇄ SpeakerDetail import cycle. Must be on
+ * exactly ONE element per capture or the browser skips the transition — see
+ * `usePortraitMorph` in Speakers.tsx.
  */
 export const PORTRAIT_TRANSITION = 'speaker-portrait';
 
@@ -161,11 +148,8 @@ function coerceSession(raw: unknown): SpeakerSession | null {
 	return null;
 }
 
-/**
- * Defensively coerce a Firestore document into a `Speaker`. The collection is
- * written only by `refreshSessionizeScheduled`, but the client still normalizes so a
- * partially-shaped doc renders (or degrades) instead of throwing in the island.
- */
+/** Defensively coerce a Firestore doc into a `Speaker`, so a partially
+ * shaped doc degrades instead of throwing in the island. */
 export function speakerFromDoc(id: string, data: Record<string, unknown>): Speaker {
 	const links = Array.isArray(data.links)
 		? (data.links.map(coerceLink).filter(Boolean) as SpeakerLink[])

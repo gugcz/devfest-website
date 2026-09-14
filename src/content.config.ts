@@ -1,13 +1,9 @@
 import { defineCollection, z } from 'astro:content';
 import { file } from 'astro/loaders';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CONTENT COLLECTIONS. Each JSON file is an array of objects whose `id` is the
-// entry key for the `file()` loader.
-//
-// IMPORTANT: `getCollection()` gives no ordering guarantee, so every collection
-// carries an explicit numeric `order` and the consuming page sorts on it.
-// ─────────────────────────────────────────────────────────────────────────────
+// CONTENT COLLECTIONS. Each JSON file is an array keyed by `id`.
+// `getCollection()` gives no ordering guarantee — every collection carries a
+// numeric `order` and the page sorts on it.
 
 // FAQ — grouped Q&A. `a` may contain inline HTML (links, <strong>, …); it is
 // rendered with set:html AND reused verbatim in the FAQPage JSON-LD, so it must

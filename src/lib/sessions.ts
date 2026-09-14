@@ -1,12 +1,10 @@
 /**
- * Browser-safe session types + presentation helpers. The daily
- * `refreshSessionizeScheduled` function writes the `sessions` collection, each doc
- * embedding a summary of its presenters; the shapes here mirror the subset the UI
- * renders. No Firebase import — the island reads the cached `/api/lineup`.
+ * Browser-safe session types + presentation helpers. Shapes mirror the subset
+ * of the `sessions` docs the UI renders. No Firebase import — the island
+ * reads `/api/lineup`.
  *
- * ⚠️ The persisted shape lives in `functions/src/sessionize/sessionize-api.ts`
- * (`SessionDoc` / `SessionSpeakerRef`). The two sit across the src/ ↔ functions/
- * build boundary and share no package, so keep them in sync by hand.
+ * ⚠️ Persisted shape lives in `functions/src/sessionize/sessionize-api.ts`
+ * (`SessionDoc` / `SessionSpeakerRef`); no shared package, keep in sync by hand.
  */
 
 /** A presenter embedded on a session — the reverse of a speaker's `sessions[]`.
@@ -88,11 +86,8 @@ function coerceCategory(raw: unknown): SessionCategory | null {
 	return { name, values };
 }
 
-/**
- * Defensively coerce a Firestore document into a `Session`. The collection is
- * written only by `refreshSessionizeScheduled`, but the client still normalizes so a
- * partially-shaped doc renders (or degrades) instead of throwing in the island.
- */
+/** Defensively coerce a Firestore doc into a `Session`, so a partially
+ * shaped doc degrades instead of throwing in the island. */
 export function sessionFromDoc(id: string, data: Record<string, unknown>): Session {
 	const speakers = Array.isArray(data.speakers)
 		? (data.speakers.map(coerceSpeaker).filter(Boolean) as SessionSpeakerRef[])

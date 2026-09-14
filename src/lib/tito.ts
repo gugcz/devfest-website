@@ -1,12 +1,7 @@
 /**
- * ti.to types + pure browser helpers. Browser-safe: types and formatting only;
- * every ti.to API call lives in `functions/src/tickets/tito-api.ts`.
- *
- * Docs: https://ti.to/docs/api/admin/3.0 (we pin to v3.0; v3.1 is beta).
- *
- * The function side projects each release into the shape below before writing it
- * to RTDB, adding a synthetic `sale_status` derived from ti.to's flag set — see
- * `deriveSaleStatus` there.
+ * ti.to types + browser-safe helpers. API calls live in
+ * `functions/src/tickets/tito-api.ts`, which also synthesises `sale_status`
+ * (`deriveSaleStatus`). Docs: https://ti.to/docs/api/admin/3.0.
  */
 
 export type TitoSaleStatus =
@@ -57,11 +52,9 @@ export interface TicketsCache {
 	releases: TitoRelease[];
 }
 
-/**
- * How long a resolved payload is reused by later callers. Mirrors the endpoint's
- * own edge TTL — a soft navigation keeps this module alive for the whole visit,
- * and a session-long memo would keep showing a wave that has since sold out.
- */
+/** How long a resolved payload is reused. Mirrors the endpoint's edge TTL —
+ * the module lives for the whole visit, and a session-long memo would keep
+ * showing a wave that has since sold out. */
 const MEMO_TTL_MS = 5 * 60 * 1000;
 
 let inFlight: { at: number; promise: Promise<TicketsCache | null> } | null = null;
@@ -73,18 +66,10 @@ async function requestTickets(): Promise<TicketsCache | null> {
 }
 
 /**
- * Fetch the cached ti.to roadmap from the `/api/tickets` endpoint (Hosting
- * rewrites it to the `ticketsApi` Cloud Function, which reads RTDB via the Admin
- * SDK — no Firebase SDK / App Check on this path). Throws on a non-OK response.
- *
- * The request is **memoised per page** because more than one island can want it
- * at once — an invitation page mounts `InviteCta` twice — and the endpoint sends
- * `max-age=0`, so the browser's own HTTP cache will not coalesce them. A
- * rejection is not memoised (the next caller retries); a resolved payload is
- * reused for `MEMO_TTL_MS`.
- *
- * `signal` aborts the CALLER's wait, not the shared request: a second island
- * unmounting must not cancel the fetch the first one is still waiting on.
+ * Fetch the cached roadmap from `/api/tickets`. Throws on non-OK. Memoised
+ * per page (several islands want it; the endpoint sends `max-age=0`);
+ * rejections not memoised. `signal` aborts the CALLER's wait, not the
+ * shared request.
  */
 export function fetchTickets(signal?: AbortSignal): Promise<TicketsCache | null> {
 	if (!inFlight || Date.now() - inFlight.at > MEMO_TTL_MS) {
@@ -104,12 +89,9 @@ export function fetchTickets(signal?: AbortSignal): Promise<TicketsCache | null>
 	});
 }
 
-/**
- * Filter to releases that should be shown publicly. Mirrors `isWebsiteVisible()`
- * server-side; kept as defence-in-depth so a non-public release that lands in the
- * cache is still dropped at render time. Drop only `secret`: `releaseStatus()`
- * maps every other state to its own badge.
- */
+/** Public releases only. Mirrors server-side `isWebsiteVisible()` as
+ * defence-in-depth. Drops only `secret`; `releaseStatus()` maps every other
+ * state to a badge. */
 export function filterDisplayable(releases: TitoRelease[]): TitoRelease[] {
 	return releases.filter((r) => !r.secret);
 }
@@ -124,19 +106,15 @@ export interface ReleaseStatus {
 }
 
 /**
- * Map a ti.to release to a display status. Sold-out wins over the raw
- * `sale_status` so the UI stays consistent if ti.to flips only the
- * `sold_out` flag without updating the derived status.
+ * Map a ti.to release to a display status. Sold-out wins over `sale_status`
+ * in case ti.to flips only the `sold_out` flag.
  *
- * `paused` covers three realities, disambiguated here:
- * - A future wave the organizer keeps toggled off in ti.to instead of
- *   scheduling a `start_at` (so it never gets the `upcoming` flag). It
- *   has never sold a ticket → "Coming soon".
- * - An earlier wave taken off sale *because a later wave has opened* —
- *   it already sold tickets and a newer wave is now on sale. It is
- *   closed for good → "Ended" (pass `opts.laterWaveOnSale`).
- * - A wave genuinely interrupted mid-flight with no later wave live —
- *   it sold tickets and may resume → "Paused".
+ * `paused` covers three realities:
+ * - future wave kept toggled off (no `start_at`, so never `upcoming`), never
+ *   sold → "Coming soon";
+ * - earlier wave closed because a later one opened (`opts.laterWaveOnSale`)
+ *   → "Ended";
+ * - genuinely interrupted, may resume → "Paused".
  */
 export function releaseStatus(
 	release: TitoRelease,
@@ -187,23 +165,14 @@ export function formatPrice(price: string | null, currency: string | null): stri
 	return formatAmount(numeric, currency);
 }
 
-/**
- * Czech standard VAT rate. Used as a fallback when the ti.to release is
- * configured tax-exclusive (`tax_exclusive=true`) — ti.to's Admin API
- * does not expose a tax rate or a gross figure on releases, so we apply
- * the country's statutory rate. If the release is tax-inclusive
- * (`tax_exclusive=false`), the gross figure is taken directly from
- * `price` and this constant is not used.
- */
+/** Czech standard VAT rate. Fallback for a tax-exclusive release — ti.to's
+ * Admin API exposes no tax rate or gross figure. Unused when the release is
+ * tax-inclusive (`price` is already gross). */
 export const FALLBACK_VAT_RATE = 0.21;
 
-/**
- * Gross (tax-inclusive) unit price as a number, or `null` when the release is
- * free or carries no usable price. The single source of the VAT assumption
- * shared by `priceDisplay`, the invoice estimate and the GA4 ecommerce events:
- * ti.to's Admin API exposes no tax rate on a release, so a tax-exclusive one is
- * grossed up with `FALLBACK_VAT_RATE`.
- */
+/** Gross unit price, or `null` when free / no usable price. The single VAT
+ * assumption shared by `priceDisplay`, the invoice estimate and GA4 events:
+ * a tax-exclusive release is grossed up with `FALLBACK_VAT_RATE`. */
 export function grossPrice(release: TitoRelease): number | null {
 	if (release.price == null) return null;
 	const price = Number(release.price);
@@ -218,19 +187,9 @@ export interface PriceDisplay {
 	secondary: string | null;
 }
 
-/**
- * Build the price display lines for a release. Always shows the gross
- * (tax-inclusive) figure as the primary number with a small "VAT
- * included" tag underneath — visitors see what they actually pay.
- *
- * - Tax-inclusive release (`tax_exclusive=false`): `price` is already
- *   gross. Use it directly.
- * - Tax-exclusive or unknown: `price` is net. Multiply by
- *   `FALLBACK_VAT_RATE` because ti.to's Admin API does not expose a
- *   tax rate on release or event objects.
- *
- * Secondary label uses `tax_description` when the organizer set one.
- */
+/** Price display lines for a release. Primary is always gross (what the
+ * visitor pays) with a "VAT included" tag; tax-exclusive releases are grossed
+ * up via `grossPrice()`. Secondary uses `tax_description` when set. */
 export function priceDisplay(release: TitoRelease): PriceDisplay | null {
 	if (release.price == null) return { primary: 'Free', secondary: null };
 	const price = Number(release.price);
@@ -260,15 +219,9 @@ function formatAmount(numeric: number, currency: string | null): string {
 	}
 }
 
-/**
- * Wave end date. ti.to exposes the sale window as `start_at` / `end_at`;
- * the organizer only recently started filling `end_at` in, so most
- * releases still carry `null` and every caller must cope with that.
- *
- * Returns `null` for a missing, empty or unparseable value — never an
- * `Invalid Date`, which is what a bare `new Date(release.end_at)` hands
- * to `Intl` and what puts the literal string "Invalid Date" on the page.
- */
+/** Wave end date (`end_at`). Most releases still carry `null`. Returns
+ * `null` for missing/unparseable — never an `Invalid Date`, which puts the
+ * literal "Invalid Date" on the page. */
 export function releaseEnd(release: TitoRelease): Date | null {
 	const raw = release.end_at;
 	if (typeof raw !== 'string' || raw.trim() === '') return null;
@@ -283,24 +236,9 @@ export interface WaveDeadline {
 	iso: string;
 }
 
-/**
- * The deadline for a pricing wave, derived from the variants passed in (a
- * wave is rendered as one row grouping "— Individual" and "— Company
- * funded"). Callers pass only the variants that are still buyable, so the
- * date always speaks for something a visitor can act on — a closed
- * variant's window must not make a promise for the whole wave.
- *
- * The LATEST end date across those variants wins: it is the last moment a
- * visitor can still buy into the wave, which is the only date the row is
- * making a promise about. Variants that carry no usable date are ignored,
- * and a wave where none of them does has no deadline line at all.
- *
- * A date that has already passed also yields `null`. The wave's state comes
- * from ti.to's flags via `releaseStatus()`, and the cache behind them is up
- * to an hour stale, so a still-buyable wave can briefly carry an elapsed
- * `end_at`. Rendering it would put "Ended …" next to a live Buy CTA — the
- * one contradiction this line must never produce.
- */
+/** Deadline for a wave: LATEST `end_at` across the still-buyable variants
+ * passed in. A past date yields `null` — the cache is up to an hour stale,
+ * and "Ended" beside a live Buy CTA must never happen. */
 export function waveDeadline(releases: TitoRelease[], now: number = Date.now()): WaveDeadline | null {
 	let latest: Date | null = null;
 	for (const release of releases) {
@@ -314,12 +252,9 @@ export function waveDeadline(releases: TitoRelease[], now: number = Date.now()):
 	};
 }
 
-/**
- * Short date in the site's one date format (`/press` sets the same
- * `en-US` short-month shape). Pinned to Europe/Prague: the sale window is
- * the organizer's, so a visitor abroad must not read a deadline a day off
- * from the one ti.to enforces.
- */
+/** Short date in the site's one format (`en-US` short month, same as
+ * `/press`). Pinned to Europe/Prague so a visitor abroad doesn't read a
+ * deadline a day off from the one ti.to enforces. */
 function formatWaveDate(date: Date): string {
 	try {
 		return new Intl.DateTimeFormat('en-US', {

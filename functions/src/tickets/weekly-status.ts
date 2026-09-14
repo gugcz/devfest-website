@@ -1,12 +1,7 @@
 /**
- * Ticket status reports — twice a week, fetch releases directly from the ti.to
- * Admin API and post a sales summary to Slack. The cron runs only twice a week
- * so the extra ti.to requests are negligible (2/week, well under the 60/min
- * limit), and reading live data avoids any staleness from the hourly cache.
- *
- * Two scheduled functions share one handler (`runTicketStatus`): App Engine
- * cron can't express two different times-of-day in a single expression, so
- * Monday 09:00 and Thursday 18:00 are separate `onSchedule` exports.
+ * Twice-weekly ticket status report to Slack, from live ti.to data. Two
+ * `onSchedule` exports share `runTicketStatus` — cron can't express two
+ * times-of-day in one expression.
  */
 
 import { logger } from 'firebase-functions/v2';

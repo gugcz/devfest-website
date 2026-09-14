@@ -1,0 +1,78 @@
+#!/usr/bin/env perl
+# PreToolUse hook: enforces the "agents do not merge to 2026 and do not deploy"
+# rule from CLAUDE.md. Blocks the command unconditionally; the maintainer runs
+# these from their own shell, never through Claude.
+#
+# Perl + core JSON::PP only, so there is no jq dependency to fail open on.
+use strict;
+use warnings;
+use JSON::PP;
+
+local $/;
+my $raw = <STDIN>;
+my $input = eval { JSON::PP->new->decode($raw) };
+if (!$input) {
+	print STDERR "block-deploy.sh: could not parse hook input; refusing to allow the command\n";
+	exit 2;
+}
+my $command = $input->{tool_input}{command} // '';
+exit 0 if $command eq '';
+
+sub deny {
+	my ($what) = @_;
+	print STDERR "Blocked by .claude/hooks/block-deploy.sh: $what (see CLAUDE.md — only the maintainer merges to 2026 or deploys)\n";
+	exit 2;
+}
+
+# 1. Join backslash line continuations so a wrapped command is one segment.
+$command =~ s/\\\n\s*/ /g;
+
+# 2. Drop heredoc bodies (file content, not commands). Only when the
+#    terminator is actually found: an unterminated or quoted `<<` must not
+#    swallow the commands that follow it. `<<-` allows a tab-indented terminator.
+my @lines = split /\n/, $command;
+my @kept;
+for (my $i = 0; $i < @lines; $i++) {
+	my $line = $lines[$i];
+	push @kept, $line;
+	next unless $line =~ /<<(-?)\s*["']?([A-Za-z_][A-Za-z0-9_]*)["']?/;
+	my ($dash, $term) = ($1, $2);
+	my $end;
+	for (my $j = $i + 1; $j < @lines; $j++) {
+		my $cand = $lines[$j];
+		$cand =~ s/^\t+// if $dash;
+		if ($cand eq $term) { $end = $j; last }
+	}
+	$i = $end if defined $end;
+}
+
+# 3. Split into simple commands on newlines, `;`, `&&`, `||`, `|`.
+my @segments = map { split /\s*(?:&&|\|\||\||;)\s*/, $_ } @kept;
+
+for my $seg (@segments) {
+	$seg =~ s/^\s+|\s+$//g;
+	$seg =~ s/\s+/ /g;
+	next if $seg eq '';
+
+	# 4. Strip wrappers and env assignments, then basename the executable, so
+	#    `npx firebase deploy`, `FOO=1 firebase deploy`, `command gh pr merge`
+	#    and `/usr/local/bin/gh pr merge` all reduce to the bare command.
+	1 while $seg =~ s/^(?:[A-Za-z_][A-Za-z0-9_]*=\S*|env|command|sudo|exec|time|nohup|npx|pnpx|bunx|-y|--yes|--no-install)\s+//;
+	$seg =~ s{^\S*/}{};
+	$seg =~ s/^firebase-tools\b/firebase/;
+
+	if ($seg =~ /^git push\b/) {
+		# Any refspec form landing on 2026: `2026`, `HEAD:2026`,
+		# `x:refs/heads/2026`, `refs/heads/2026`, `+2026`, `:2026`.
+		deny('git push to 2026') if $seg =~ /(?:^|[ :\/+])2026(?:\s|$)/;
+		deny('pushing tags')     if $seg =~ /\s--tags(?:\s|$)/;
+	}
+	deny('gh pr merge')             if $seg =~ /^gh pr merge\b/;
+	deny('PR merge via gh api')     if $seg =~ /^gh api\b.*\/pulls\/\d+\/merge/;
+	deny('firebase deploy')         if $seg =~ /^firebase deploy\b/;
+	deny('deploy to live channel')  if $seg =~ /^firebase hosting:channel:deploy live\b/;
+	deny('workflow dispatch')       if $seg =~ /^gh workflow run\b/;
+	deny('release tag')             if $seg =~ /^git tag\b.*\sv?\d/;
+}
+
+exit 0;

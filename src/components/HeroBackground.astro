@@ -3,22 +3,14 @@ interface Props {
 	photoOpacity?: number;
 	mobilePhotoOpacity?: number;
 	/**
-	 * Which part of the plate the frame sits on, as a `background-position`.
-	 *
-	 * One photograph carries every hero on the site, and five pages running the
-	 * identical crop is what made them read as one template with the words
-	 * swapped. Re-framing is the cheapest honest variation available: same
-	 * scene, different shot.
+	 * Which part of the plate the frame sits on (`background-position`). One
+	 * photograph carries every hero; an identical crop on five pages read as
+	 * one template. Same scene, different shot.
 	 */
 	focus?: string;
 	mobileFocus?: string;
-	/**
-	 * Opt-in `background-size` for the phone crop, e.g. `auto 130%`. The plate
-	 * is a square and the phone frame is 9:19.5, so a bare `cover` at some
-	 * focus points still leaves the subject too small to read at arm's length
-	 * — `mobileFocus` alone repositions the crop, this scales it. Left unset,
-	 * the phone crop stays `cover` like every other hero.
-	 */
+	/** Opt-in `background-size` for the phone crop (e.g. `auto 130%`) when
+	 * `cover` leaves the subject too small; `mobileFocus` only repositions. */
 	mobileZoom?: string;
 	/** Opt-in desktop `width` for the plate. Defaults to the shipped 60%. */
 	width?: string;

@@ -29,18 +29,12 @@ const logoByFile = new Map<string, ImageMetadata>(
 const logoFor = (logo: string): ImageMetadata =>
 	logoByFile.get(logo.split('/').pop() as string) as ImageMetadata;
 
-// SVG wordmarks stay vector — `format="svg"` makes astro:assets copy them
-// through unchanged (rasterising a logo would be a downgrade); rasters get a
-// real srcset sized to the box the mark actually renders in.
+// SVG wordmarks stay vector (`format="svg"`); rasters get a srcset sized to
+// their box.
 //
 // ─── OPTICAL NORMALISATION ────────────────────────────────────────────────
-// Every cell is the same size now (see `.logo-grid` in partners.scss), but
-// equal cells do not make equal-looking logos: a cap on WIDTH renders a square
-// glyph as a huge block beside a wordmark, and a cap on HEIGHT renders that
-// same wordmark as a hairline of type. What reads as "the same weight" is
-// roughly equal ink AREA, so each mark is given a box of the same area, shaped
-// to its own aspect ratio, and only then clamped so nothing touches the cell's
-// edges. A 5:1 wordmark lands at ~190×38, a square glyph at ~76×76.
+// Equal ink AREA reads as equal weight: each mark gets a box of the same
+// area shaped to its ratio (5:1 wordmark ≈190×38, square glyph ≈76×76).
 const LOGO_AREA = 7200;
 const LOGO_MAX_W = 230;
 const LOGO_MAX_H = 76;

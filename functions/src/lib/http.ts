@@ -1,18 +1,8 @@
 /**
- * Outbound HTTP shared by every domain: Sessionize, ti.to, iDoklad, Slack, Resend.
- * A bare `fetch()` in `functions/` is a bug — it has no timeout, so a hung upstream
- * rides the whole function timeout (up to 300s on a scheduler), and no retry, so a
- * single connect-level blip costs a whole run (observed: a bare `fetch failed` at
- * ~10.7s killed a day's Sessionize sync).
- *
- * **Retries are off for anything that isn't idempotent**, enforced here rather than
- * by convention: a retried POST can mint a second invoice, discount code or email.
- * `GET`/`HEAD` retry automatically; everything else needs `retryUnsafe`, which only
- * a Slack line and an OAuth token fetch pass.
- *
- * Failures throw with the label, attempt count and unwrapped cause, so an alert
- * reads `ti.to releases unreachable after 3 attempts: fetch failed
- * (UND_ERR_CONNECT_TIMEOUT)` instead of `fetch failed`.
+ * Outbound HTTP for every domain — a bare `fetch()` has no timeout and no
+ * retry. Non-idempotent requests never retry (a retried POST can mint a
+ * second invoice); `GET`/`HEAD` do, others need `retryUnsafe`. Failures
+ * throw with label, attempts and unwrapped cause.
  */
 
 import { logger } from 'firebase-functions/v2';
@@ -44,12 +34,7 @@ export interface FetchOptions {
 	retryUnsafe?: boolean;
 }
 
-/**
- * Worth retrying: rate limiting or a server-side hiccup. A 4xx is deterministic
- * (bad token, wrong path, a Sessionize view this endpoint doesn't serve) — the
- * caller must see it immediately rather than burn the backoff on a verdict that
- * won't change.
- */
+/** Retry 429/5xx only. A 4xx is deterministic; the caller must see it now. */
 export function isTransientStatus(status: number): boolean {
 	return status === 429 || status >= 500;
 }
@@ -60,14 +45,9 @@ export async function errorBody(res: Response, max = 300): Promise<string> {
 	return body.slice(0, max);
 }
 
-/**
- * `fetch` with a timeout, bounded retries, and a diagnosable failure.
- *
- * Returns the response even when it is non-OK (including a 5xx that survived
- * every attempt) — status handling stays with the caller, which knows whether a
- * 400 means "fall back to the other view" or "abort". Throws only when no
- * attempt produced a response at all.
- */
+/** `fetch` with timeout, bounded retries and a diagnosable failure. Returns
+ * non-OK responses (status handling stays with the caller); throws only when
+ * no attempt produced a response. */
 export async function fetchWithRetry(
 	url: string,
 	init: RequestInit = {},

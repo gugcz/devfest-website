@@ -1,27 +1,21 @@
 // ─── PERSONAL INVITATION — OG CARD ────────────────────────────────────────
-// One PNG per team member, built from the same `team` collection as
-// `/invite/<id>` — a new member gets a card automatically, and the roster and
-// the card can never drift apart.
+// One card per team member, from the same `team` collection as `/invite/<id>`
+// — roster and card can't drift apart.
 //
-// Composition A ("poster, one field"), approved from the six studies in the
-// issue thread (proto-og/render.mjs, commit 188016e2 on agent/mika/devf-45):
-// black ground, the B&W plate full-bleed on the right feathered away from the
-// text column, red spent on one word only. The headline is the page's own
-// sentence (`inviteCopy` / `[member].astro`) — the preview is a still of the
-// page, not a second piece of copy.
+// Composition A ("poster, one field"), approved from six studies (commit
+// 188016e2): black ground, B&W plate full-bleed right, feathered away from
+// the text, red on one word. The headline is the page's own sentence
+// (`inviteCopy`) — the preview is a still of the page.
 //
-// Card content = headline + logo + date, nothing else. Measured against a
-// Slack unfurl thumbnail (~360px wide, ~0.3× this 1200×630 canvas): the
-// eyebrow (19px) and role line (23px) rendered at 5.7px / 6.9px there —
-// texture, not text. HARD RULE: nothing on this card sits below ~40px on the
-// canvas — that's the floor for anything meant to be read at 360px.
+// Content = headline + logo + date, nothing else. A Slack unfurl thumbnail is
+// ~360px (~0.3× this canvas): a 19px eyebrow rendered at 5.7px there. HARD
+// RULE: nothing below ~40px on the canvas.
 //
-// Two traps proved out in the prototype, both apply here unchanged:
-//   * satori has no `mask-image` — every feathered edge has to be baked into
-//     the plate bitmap by sharp (an alpha ramp composited with `dest-in`)
-//     before the image reaches the layout.
+// Two traps from the prototype:
+//   * satori has no `mask-image` — feathered edges are baked into the plate
+//     bitmap by sharp (alpha ramp, `dest-in`).
 //   * the Bebas TTF in `src/assets/fonts` carries the full Czech set
-//     (verified against #305) — needed for the headline's first name.
+//     (verified, #305) — needed for the headline's first name.
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import satori from 'satori';
@@ -54,11 +48,9 @@ const bebasNeue = fontBuffer('BebasNeue-Regular.ttf');
 const jetBrainsMono = fontBuffer('JetBrainsMono-Regular.ttf');
 const specialElite = fontBuffer('SpecialElite-Regular.ttf');
 
-// Same mark `Menu.astro` / `Footer.astro` render — never a second asset, so
-// the card's logo can't drift from the site's. satori can't read a file off
-// disk, so it goes in as a data URI; the source is a 3000×600 master, and
-// resvg frays a 5× downscale, so sharp pre-shrinks to 2× the drawn size
-// (520×104 → drawn at 260×52) before it ever reaches satori.
+// Same mark `Menu.astro` / `Footer.astro` render — never a second asset.
+// satori needs a data URI; the 3000×600 master frays under resvg's 5×
+// downscale, so sharp pre-shrinks to 2× the drawn size (520×104 → 260×52).
 const LOGO_WIDTH = 260;
 const LOGO_HEIGHT = 52;
 const logoDataUri = await sharp(join(root, 'src/assets/logo.png'))
@@ -128,10 +120,8 @@ export const GET: APIRoute = async ({ props }) => {
 	const plate = member.photo ? await platePng(member.photo) : undefined;
 	const first = firstName(member.name);
 	// Same sentence as `copy.titleHtml` in `src/lib/invite.ts`, broken over
-	// three lines — the text column here is narrower than the page's, so the
-	// break is chosen rather than left to wrapping. The third line's "on the"
-	// and red "list." are inline children of one flex row below, not two
-	// stacked lines. Red is spent on "list." only, exactly like the page.
+	// three chosen lines (the column is narrower than the page's). "on the"
+	// and red "list." are one flex row. Red on "list." only, like the page.
 	const headlineLines = [first, 'is putting you'];
 
 	const markup = {

@@ -1,16 +1,8 @@
 /**
- * `pollPaidInvoicesScheduled` — scheduled payment poller.
- *
- * iDoklad has NO webhooks, so we cannot be pushed a "paid" event. Instead
- * this runs hourly, lists the invoices still awaiting payment, and asks
- * iDoklad for each one's PaymentStatus. When an invoice is paid we mint
- * the 100%-off ti.to code and deliver it.
- *
- *   list invoiced docs → check PaymentStatus → (paid) mint code →
- *   email the code → record + notify Slack.
- *
- * Completion flips the doc to `completed`, so a paid invoice is processed
- * exactly once even though the poller re-runs.
+ * `pollPaidInvoicesScheduled` — hourly payment poller (iDoklad has no
+ * webhooks): list `invoiced` docs → check PaymentStatus → (paid) mint code →
+ * email → record + Slack. Completion flips to `completed`, so each invoice
+ * is processed once.
  */
 
 import { logger } from 'firebase-functions/v2';

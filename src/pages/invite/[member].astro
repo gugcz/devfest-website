@@ -1,23 +1,10 @@
 ---
 // ─── PERSONAL INVITATION ──────────────────────────────────────────────────
-// One unlisted page per team member: `/invite/<team.json id>`. A member shares
-// their own link with their own people; the page speaks in their voice and
-// carries a single action.
-//
-// UNLISTED, and all three parts of that matter:
-//   1. `noindex` (BaseLayout also drops the canonical + JSON-LD for it),
-//   2. excluded from the sitemap (the filter in `astro.config.mjs`),
-//   3. linked from NOWHERE on the site — do not add these to the menu, the
-//      footer or `/team`. A link anywhere makes the "secret" cosmetic.
-// It is not access control (the URLs are guessable and the content isn't
-// sensitive) — it is what keeps the page from reading as public marketing.
-//
-// Visual direction B ("The Plate"), approved 3 Sep 2026: the portrait owns the
-// right half of the frame and the black-and-white → colour bleed is the page's
-// ONLY effect. Type never sits on the face — on desktop the plate is feathered
-// away from the text column; on a phone there is no side-by-side frame, so the
-// scrim does that job instead. That scrim is a legibility requirement, not a
-// finish (see the media query below).
+// One unlisted page per team member: `/invite/<team.json id>`. UNLISTED =
+// `noindex` + out of the sitemap + linked from NOWHERE (not access control).
+// Visual direction B ("The Plate"): portrait owns the right half, B&W →
+// colour bleed is the ONLY effect. Type never sits on the face; the phone
+// scrim is a legibility requirement, not a finish. See .claude/rules/invite.md.
 import { getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import type { ImageMetadata } from 'astro';
@@ -64,12 +51,9 @@ const sources = import.meta.glob<{ default: ImageMetadata }>('../../assets/team/
 const sourceByFile = new Map<string, ImageMetadata>(
 	Object.entries(sources).map(([path, mod]) => [path.split('/').pop() as string, mod.default])
 );
-// The masters in `src/assets/team` are 700×875, so nothing wider can be
-// emitted — a desktop plate is that 700px upscaled across 62% of the frame, and
-// asking for 1080/1440/1800 only produced the same single 700w candidate. The
-// widths below are therefore SMALLER ones, which is the saving actually
-// available: with the `sizes` below, a 1× phone takes a 350/525w file instead
-// of the full plate. A sharper desktop plate needs new masters, not new widths.
+// Masters in `src/assets/team` are 700×875, so nothing wider can be emitted.
+// The widths below are SMALLER ones — a 1× phone takes a 350/525w file
+// instead of the full plate. A sharper desktop plate needs new masters.
 const PLATE_WIDTHS = [350, 525, 700];
 const plate = async (file?: string) => {
 	if (!file) return undefined;
@@ -308,7 +292,7 @@ const color = await plate(member.photoColor ?? member.photo);
 		// ~48svh strip that holds the eyebrow + headline -- everything from the
 		// lede down moves onto the page's flat #050505, off the photograph
 		// entirely. Special Elite (the lede's face) never sits over a photo; see
-		// CLAUDE.md.
+		// .claude/rules/invite.md.
 		.invite {
 			display: block;
 			min-height: 0;
@@ -350,14 +334,10 @@ const color = await plate(member.photoColor ?? member.photo);
 </style>
 
 <script>
-	// The one effect on the page: the plate settles, then bleeds into colour.
-	// Enhancement only — with no JS the page shows the black-and-white plate,
-	// which is the same photograph `/team` shows at rest.
-	//
-	// Bundled module scripts run once per document, but <ClientRouter /> swaps
-	// the page on every soft navigation — so this runs on `astro:page-load`
-	// (which fires on the initial load too). Without it, arriving here from
-	// another page leaves the plate black and white forever.
+	// The one effect: the plate settles, then bleeds into colour. Enhancement
+	// only — no JS shows the B&W plate. Runs on `astro:page-load` because
+	// <ClientRouter /> swaps the page on soft navigations; otherwise arriving
+	// from another page leaves the plate B&W forever.
 	document.addEventListener('astro:page-load', () => {
 		const scene = document.querySelector('[data-bleed]');
 		if (scene) requestAnimationFrame(() => setTimeout(() => scene.classList.add('is-lit'), 260));

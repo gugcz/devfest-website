@@ -1,12 +1,5 @@
-/**
- * Firebase Admin SDK singleton.
- *
- * Cloud Functions instances reuse the same Node process across invocations,
- * so we initialize the Admin app once at module load and share it from every
- * handler. The runtime injects `FIREBASE_CONFIG` (project id + default
- * `databaseURL`) and default credentials automatically — no service-account
- * JSON or hardcoded RTDB URL is required.
- */
+/** Firebase Admin SDK singleton, initialised once per instance. The runtime
+ * injects `FIREBASE_CONFIG` and credentials — no service-account JSON. */
 
 import { initializeApp, type App } from 'firebase-admin/app';
 import { getDatabase, type Database } from 'firebase-admin/database';

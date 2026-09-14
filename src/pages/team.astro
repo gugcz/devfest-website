@@ -10,13 +10,9 @@ import { EVENT_TOPICS } from '../lib/ticker';
 import { initials } from '../lib/speakers';
 
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
-// The roster lives in the `team` content collection (`src/content/team.json`,
-// schema in `src/content.config.ts`). Each member has two photos of the SAME
-// shot: a black-and-white base (`photo`) and a colour version (`photoColor`).
-// The card shows the B&W base at rest; on hover the colour "bleeds" in from
-// the cursor (see team.scss). `alias` is the noir codename used as the kicker;
-// `role` is the real role. `order` fixes the seniority sequence — getCollection()
-// does not preserve the order of the source file.
+// Roster: the `team` collection (`src/content/team.json`). Each member has a
+// B&W `photo` and a colour `photoColor` of the same shot; colour bleeds in on
+// hover (team.scss). `alias` is the codename kicker; `order` fixes sequence.
 type LinkKind = 'linkedin' | 'github' | 'web' | 'instagram' | 'email';
 
 const team = (await getCollection('team'))
@@ -192,17 +188,11 @@ const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
 </BaseLayout>
 
 <script>
-	// Anchor each card's colour-bleed reveal at the cursor: track the pointer
-	// over the mugshot and feed its position into the radial mask via CSS vars.
-	// The expansion itself is driven by CSS (:hover → --bleed).
-	//
-	// The colour layer is heavy and only ever shown on hover/focus, so its real
-	// source lives in data-* attributes and is fetched on first interaction —
-	// keeping the colour photos (~half the page weight) off the initial load.
-	//
-	// Bundled module scripts run once per document, so under <ClientRouter />
-	// the binding has to happen on `astro:page-load` — it fires on the initial
-	// load and after every soft navigation, replacing DOMContentLoaded.
+	// Anchor each card's colour-bleed at the cursor: feed pointer position into
+	// the radial mask via CSS vars; the expansion is CSS (:hover → --bleed).
+	// The colour layer (~half the page weight) is fetched on first interaction
+	// from data-* attributes. Bound on `astro:page-load` because
+	// <ClientRouter /> swaps the page on soft navigations.
 	document.addEventListener('astro:page-load', () => {
 		const mugshots = document.querySelectorAll<HTMLElement>('.mugshot');
 		mugshots.forEach((mugshot) => {

@@ -1,33 +1,11 @@
 /**
- * One way to run a background function (scheduled job or trigger), so every one
- * of them logs, alerts, and fails identically.
+ * One wrapper for every background function: start/finish log with duration,
+ * failure log with unwrapped cause, Slack alert, rethrow.
  *
- * Before this, each domain did its own thing: the Sessionize sync alerted to
- * Slack on failure, while the hourly tickets refresh, both status reports, and
- * the paid-invoice poll failed **silently** — nothing but a red line in Cloud
- * Logging that nobody is watching. `runBackground` gives all of them the same
- * contract:
- *
- *   1. a start line and a finish line with a duration, keyed by function name;
- *   2. a failure log carrying the unwrapped cause (see `lib/errors.ts`);
- *   3. a Slack alert **on state change**, not per failure;
- *   4. the original error rethrown, so the platform still counts the failure and
- *      the scheduler's own retry still happens.
- *
- * **Alert on transition, not on occurrence.** An hourly job during a
- * three-hour upstream outage would otherwise post three identical alerts, and
- * a channel that cries wolf gets muted — which is how a silent failure mode
- * comes back through the front door. So the first failure after a healthy run
- * alerts, subsequent consecutive failures only log, and the run that recovers
- * posts a short "recovered" line. One incident reads as two messages, however
- * long it lasted.
- *
- * State lives in RTDB under `ops/health/{name}`: written by the Admin SDK,
- * unreadable by clients (the root `.read`/`.write` default deny in
- * `database.rules.json` covers it — no rule change needed). Every state
- * operation is best-effort: a health-tracking failure must never mask the real
- * error, so it degrades to "assume healthy", which over-alerts rather than
- * going quiet.
+ * Alerts fire on TRANSITION, not occurrence: first failure after a healthy
+ * run alerts, further failures only log, recovery posts "recovered" — a
+ * channel that cries wolf gets muted. Streak state in RTDB
+ * `ops/health/{name}`, best-effort (degrades to "assume healthy").
  */
 
 import { logger } from 'firebase-functions/v2';
@@ -51,12 +29,8 @@ export interface BackgroundFunctionSpec {
 	name: string;
 	/** Which Slack prefix its alerts post under. */
 	domain: SlackDomain;
-	/**
-	 * Appended to the failure alert: what the reader should conclude about blast
-	 * radius and what happens next (e.g. "live speakers/sessions left untouched,
-	 * retry at 06:00"). Without it an alert says something broke but not whether
-	 * anyone must act tonight.
-	 */
+	/** Appended to the failure alert: blast radius and what happens next
+	 * ("live speakers/sessions left untouched, retry at 06:00"). */
 	failureNote?: string;
 }
 

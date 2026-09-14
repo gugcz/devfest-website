@@ -91,11 +91,9 @@
 	}
 
 	/* ===================== THE PARTNER WALL ===================== */
-	// One section shape for every group of partners on the page — the four
-	// sponsor tiers and the two off-ladder rows (media, community). The tiers
-	// and the plate rows used to keep two copies of these four rules under
-	// two sets of names (`tier-partners`/`plate-partners`, `-inner`, `-head`,
-	// `-title`) with identical bodies.
+	// One section shape for every partner group — the four sponsor tiers and
+	// the two off-ladder rows (media, community). They used to be two copies
+	// under two sets of names with identical bodies.
 	.logo-wall {
 		position: relative;
 		// Top padding only: the next wall's own top padding is the gap between
@@ -131,22 +129,10 @@
 	}
 
 	// ─── ONE GRID MODULE ──────────────────────────────────────────────────
-	// Contact sheet, not a tile grid: logos sit in cells of one ruled sheet,
-	// sharing hairlines with their neighbours. No panel fill, no drop shadow,
-	// no floating tiles.
-	//
-	// The cell used to be sized PER TIER, and `--tier-col` was a floor rather
-	// than a width, so cells grew to close their row: the same page rendered a
-	// 611px platinum cell, three full-width diamond cells, a 520px silver one
-	// and 264px media plates. Four cell modules on one wall, and the size of a
-	// partner's cell said more about how many partners share its tier than
-	// about the tier.
-	//
-	// Now: one track size for every partner on the page, in both grids. The
-	// tier is carried by the heading above the sheet and by the order of the
-	// sections, which is what a ladder is for. A tier that does not fill its
-	// last row simply leaves the rest of the row empty — nothing draws a rule
-	// over it, because the rules belong to the CELLS.
+	// Contact sheet, not a tile grid: one track size for every partner, no
+	// panel fill or shadow. Per-tier sizing let cells grow to close their row.
+	// The tier is carried by heading and section order; a short last row
+	// stays empty — rules belong to the CELLS.
 	.logo-grid {
 		--cell-min: 280px;
 		--cell-height: 200px;
@@ -208,15 +194,11 @@
 			text-decoration: none;
 		}
 
-		// The box is computed per logo in partners.astro (`opticalBox`) and
-		// arrives as --logo-w / --logo-h: equal ink AREA, shaped to the mark's
-		// own aspect ratio, so a wide wordmark and a square glyph read as the
-		// same weight instead of being forced to the same pixel width.
-		// `height: auto` rather than the computed --logo-h: the two agree by
-		// construction (the box is the mark's own ratio), and letting the
-		// height follow the width keeps the mark at its true proportions when
-		// a narrow cell clamps it to `max-width: 100%` — a fixed height there
-		// letterboxes the mark inside a box wider than it renders.
+		// Box computed per logo in partners.astro (`opticalBox`), arriving as
+		// --logo-w / --logo-h: equal ink AREA shaped to the mark's own ratio, so
+		// a wordmark and a square glyph read as the same weight. `height: auto`,
+		// not --logo-h: the two agree by construction, and following the width
+		// keeps proportions when a narrow cell clamps `max-width: 100%`.
 		.logo {
 			display: block;
 			width: var(--logo-w, 180px);
@@ -240,11 +222,9 @@
 		}
 	}
 
-	// Media and community marks ship DARK (they are drawn for light
-	// backgrounds), so their cells carry a cream plate — inverting them
-	// instead flattened the raster logos to white blobs and mangled the
-	// multi-tone marks. `--rule` is cream at 13%, which on cream is invisible,
-	// so the rule inverts with the ground.
+	// Media and community marks ship DARK, so their cells carry a cream plate
+	// (inverting flattened raster logos to white blobs). `--rule` is cream at
+	// 13% — invisible on cream — so the rule inverts with the ground.
 	.logo-grid--plated {
 		.logo-cell {
 			background: var(--color-cream);
@@ -310,14 +290,10 @@
 	}
 
 	/* ===================== CLOSING STATEMENT ===================== */
-	// A dark gap before the red field, from the section spacing scale. The
-	// `.logo-wall` section above carries zero bottom padding by design, so
-	// the seam can land flush against this section's own padding-top with
-	// no visible dark ground between them. Fixed here, on this page's own
-	// closing section, rather than as a margin on `.band--accent` itself —
-	// that class is shared by every other subpage's `Closer`, each of which
-	// already sits far enough from its own preceding `.band` (which always
-	// carries a full top+bottom `--section-y`).
+	// A dark gap before the red field. `.logo-wall` above has zero bottom
+	// padding by design, so the gap lives here, on this page's closing
+	// section, not on the shared `.band--accent` (every other `Closer`
+	// already sits after a full `--section-y`).
 	.partners-cta {
 		margin-top: var(--section-y);
 	}

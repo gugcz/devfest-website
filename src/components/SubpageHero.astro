@@ -8,16 +8,8 @@ interface Props {
 	/** Visually-hidden keyword text prepended to the <h1>, ahead of the
 	 * decorative title (e.g. "DevFest.cz 2026 Speakers"). Omit to skip. */
 	seoHeading?: string;
-	/**
-	 * Whether the key-art plate sits behind the title.
-	 *
-	 * Ten pages opening on the same photograph in the same crop is the thing
-	 * that makes a site read as one template stamped ten times, however good
-	 * the photograph is. The pages that are ABOUT the event (lineup, schedule,
-	 * crew, partners, press) keep it; the transactional ones (contact, FAQ,
-	 * invoice, downloads) get a type-only plate — black ground, one headline —
-	 * so the scroll has two kinds of opening instead of one.
-	 */
+	/** Key-art plate behind the title. Pages ABOUT the event keep it;
+	 * transactional ones (contact, FAQ, invoice, downloads) open on type. */
 	photo?: boolean;
 	/** `background-position` for the key-art plate — see HeroBackground. */
 	focus?: string;

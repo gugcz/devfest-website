@@ -1,13 +1,5 @@
-/**
- * Configuration parameters for the tickets domain.
- *
- * Secrets are stored in Secret Manager and configured with
- *   firebase functions:secrets:set <NAME>
- *
- * Non-secret strings can be set per-environment via
- *   functions/.env
- * or with `--set-env-vars` on `firebase deploy`.
- */
+/** Tickets domain params. Secrets: `firebase functions:secrets:set <NAME>`;
+ * non-secret strings: `functions/.env`. */
 
 import { defineSecret, defineString } from 'firebase-functions/params';
 

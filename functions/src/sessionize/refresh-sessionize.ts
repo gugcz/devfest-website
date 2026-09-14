@@ -1,21 +1,8 @@
 /**
- * Scheduled trigger that mirrors Sessionize into public-read Firestore. Fetches
- * the All-data view once a day and writes two cross-referenced collections so
- * the website reads them live and visitor traffic never hits Sessionize:
- *   - `speakers` — each speaker doc embeds its `sessions[]`.
- *   - `sessions` — each session doc embeds its `speakers[]`.
- * Speaker photos are mirrored into Firebase Storage first (see
- * `mirror-images.ts`) and the stored URLs are written onto both collections, so
- * every asset the website serves is cached on Firebase, not Sessionize's CDN.
- * The All view's `rooms` is on the wire but not yet persisted — add a collection
- * + guarded sync when it's needed.
- *
- * Each collection is written as its own atomic batch (upserts + guarded
- * deletes) so a live `onSnapshot` subscriber never streams a half-synced state.
- * A truncated or malformed Sessionize response aborts before any write — see
- * `sessionize-api.ts` for the validation + delete-guard rationale. Sessions are
- * only present in the All view; a Speakers-view fallback yields an empty session
- * set, which the delete-guard preserves rather than wipes.
+ * Daily mirror of Sessionize into Firestore `speakers` (embeds `sessions[]`)
+ * and `sessions` (embeds `speakers[]`). Photos mirrored to Storage first.
+ * Each collection is one atomic batch with guarded deletes; a truncated
+ * response aborts before any write (see `sessionize-api.ts`).
  */
 
 import { FieldValue } from 'firebase-admin/firestore';
@@ -48,14 +35,9 @@ const SESSIONS_COLLECTION = 'sessions';
 
 /**
  * Mirror one typed set of docs into a collection as a single atomic batch
- * (upserts + guarded deletes). Generic over the doc shape so the caller passes
- * `SpeakerDoc[]` / `SessionDoc[]` and the write is type-checked end to end.
- * Each doc is stamped with a server-side `syncedAt` (mirrors the invoice
- * domain's `createdAt`/`updatedAt`) so consumers can gauge mirror staleness.
- *
- * NOTE: a WriteBatch hard-caps at 500 ops, so docs.length + toDelete.length
- * must stay < 500 — trivially true at the expected ~30–80 speakers/sessions.
- * Chunk into multiple batches if either set ever approaches that ceiling.
+ * (upserts + guarded deletes). Each doc is stamped with a server-side
+ * `syncedAt`. A WriteBatch caps at 500 ops — fine at ~30–80 docs; chunk if
+ * either set ever approaches that.
  */
 async function commitCollection<T extends { id: string }>(name: string, docs: T[]): Promise<void> {
 	const collection = firestore().collection(name);
@@ -107,11 +89,9 @@ async function syncSessionize(): Promise<void> {
 	logger.info('Fetching Sessionize data');
 	const payload = await fetchSessionizePayload(endpointId);
 
-	// Mirror speaker photos into Firebase Storage and serve those URLs, so every
-	// asset is cached on Firebase (not Sessionize's CDN). Best-effort: any id not
-	// in the map falls back to its raw Sessionize URL. Done before normalization
-	// so both the speaker docs and the sessions' embedded speaker refs get the
-	// Firebase URL.
+	// Mirror speaker photos into Storage. Best-effort: an id missing from the
+	// map falls back to the raw Sessionize URL. Done before normalization so
+	// both speaker docs and sessions' embedded refs get the Firebase URL.
 	const rawSpeakers = extractSpeakers(payload);
 	const imageMap = await mirrorSpeakerImages(rawSpeakers);
 

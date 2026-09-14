@@ -1,20 +1,8 @@
 /**
- * Deterministic fixture data for the accessibility audit's mock build.
- *
- * The public lineup (speakers / sessions) and ticket cache live behind Firebase
- * reads that are blocked from CI (App Check + IP rules), so the axe sweep would
- * only ever see the "temporarily unavailable" error state — never the real,
- * hydrated content. The islands now fetch the cached `/api/lineup` + `/api/tickets`
- * endpoints (no Firebase SDK on the read path); under `A11Y_MOCK=1` the audit
- * server (`scripts/a11y.mjs`) serves these fixtures from those routes so the
- * ready-state UI (session cards, the agenda grid, filters, detail dialogs, ticket
- * waves) renders deterministically and gets audited. The only Firebase module
- * still aliased to a mock is `firebase/app-check` (App Check inits on load).
- *
- * Shapes mirror the raw Firestore/RTDB documents the parsers expect
- * (`speakerFromDoc`, `sessionFromDoc`, `TicketsCache`). Sessions carry
- * `startsAt`/`endsAt`/`room` so the /agenda timetable is exercised, including a
- * service band (dropped by /sessions, kept by /agenda) and an unscheduled talk.
+ * Fixture data for the a11y audit and `npm run dev`. Shapes mirror the raw
+ * Firestore/RTDB docs (`speakerFromDoc`, `sessionFromDoc`, `TicketsCache`).
+ * Sessions are timed so /agenda is exercised, incl. a service band and an
+ * unscheduled talk.
  */
 
 // Inline SVG portrait — loads with no network so the <img> render path (not the
@@ -99,14 +87,9 @@ export const SPEAKERS = [
 	},
 ];
 
-/** Firestore `sessions` collection — raw docs (pre-ordered by `order`).
- *
- * Scheduled on a single day (2026-10-30, event-local ISO, no offset — the wire
- * shape verified against live /api/lineup) so the /agenda grid renders: a plenum
- * keynote and a lunch band (full-width), two timed talks across two rooms, a
- * timed talk with no room (Room-TBA column), and one untimed talk (Not-yet-
- * scheduled list). The lunch band is a service session — dropped by /sessions,
- * kept by /agenda — exercising the fetchLineup / fetchAgenda divergence. */
+/** Firestore `sessions` — raw docs on one day (event-local ISO, no offset):
+ * keynote + lunch bands, two talks in two rooms, a Room-TBA talk, an untimed
+ * talk. Lunch is a service session (dropped by /sessions, kept by /agenda). */
 export const SESSIONS = [
 	{
 		id: 'ses-keynote',

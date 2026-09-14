@@ -1,15 +1,7 @@
 /**
- * ti.to discount-code creation for the company-funded invoice flow.
- *
- * After a company pays its iDoklad invoice, we mint a 100%-off ti.to
- * discount code scoped to the company-funded release(s). The company
- * redeems it on ti.to to claim the tickets it already paid for off-platform.
- *
- * Reuses the tickets-domain client to read releases so the release shape
- * stays defined in one place.
- *
- * Create-code docs: https://ti.to/docs/api/admin/3.0 (POST discount_codes,
- * flat-ish body wrapped under `discount_code`).
+ * Mint a 100%-off ti.to discount code scoped to the company-funded
+ * release(s) once an invoice is paid. `POST discount_codes`, body wrapped
+ * under `discount_code` (https://ti.to/docs/api/admin/3.0).
  */
 
 import { errorBody, fetchWithRetry } from '../lib/http.js';
@@ -52,12 +44,8 @@ export function pickPricingRelease(releases: TitoRelease[]): TitoRelease | null 
 	});
 }
 
-/**
- * Net (excl. VAT) unit price for an invoice line, derived from a ti.to
- * release. `price_ex_tax` is authoritative net when present; otherwise we
- * back it out of the gross `price` using the VAT rate (or take `price` as
- * net when the release is tax-exclusive).
- */
+/** Net unit price for an invoice line: `price_ex_tax` when present, else
+ * backed out of gross `price` (or `price` as-is when tax-exclusive). */
 export function releaseNetUnitPrice(release: TitoRelease, vatRatePercent: number): number {
 	const exTax = release.price_ex_tax != null ? Number(release.price_ex_tax) : NaN;
 	if (Number.isFinite(exTax)) return round2(exTax);

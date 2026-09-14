@@ -23,13 +23,10 @@ const PRIORITY = {
     'https://devfest.cz/privacy-policy': 0.3,
 };
 
-// Accessibility-audit mock mode. All page data (speakers, sessions, tickets) is
-// fetched from cached `/api/*` endpoints, which scripts/a11y.mjs serves from
-// fixtures — no Firebase SDK on the content path. The one Firebase module still
-// pulled in is App Check (reCAPTCHA Enterprise), which `initAnalytics` triggers
-// on every page load; under A11Y_MOCK=1 we alias `firebase/app-check` to a
-// no-op so headless CI doesn't try to load reCAPTCHA. Off by default — a normal
-// build never resolves this alias.
+// Accessibility-audit mock mode. Page data comes from `/api/*`, served from
+// fixtures by scripts/a11y.mjs. The one Firebase module still on the path is
+// App Check (inits on every load); under A11Y_MOCK=1 `firebase/app-check` is
+// aliased to a no-op so headless CI doesn't load reCAPTCHA.
 const a11yMock = process.env.A11Y_MOCK === '1';
 const mock = (rel) => fileURLToPath(new URL(rel, import.meta.url));
 const a11yMockAlias = a11yMock
@@ -38,18 +35,13 @@ const a11yMockAlias = a11yMock
       }
     : {};
 
-// `/api/lineup` and `/api/tickets` are Firebase Hosting rewrites in production
-// (see CLAUDE.md "Browser data access"). A dev server has no rewrite table, so
-// those fetches 404 and every data-backed island — the lineup, the agenda
-// timetable, the ticket waves — renders its "unavailable" state instead of the
-// UI you are working on. Serve the audit's fixtures from the same routes so
-// `npm run dev` shows real content.
+// `/api/lineup` and `/api/tickets` are Hosting rewrites in production (see
+// CLAUDE.md "Browser data access"). A dev server has no rewrite table, so
+// every data-backed island would render "unavailable". Serve the audit's
+// fixtures from the same routes — one module, so local and CI agree.
 //
-// Same payloads the axe sweep uses, from one module, so local and CI can't
-// disagree about what the endpoints return.
-//
-// Opt out with `DEVFEST_LIVE_API=1 npm run dev` to hit the deployed functions
-// instead — needed when you are changing the functions themselves.
+// `DEVFEST_LIVE_API=1 npm run dev` hits the deployed functions instead —
+// needed when changing the functions themselves.
 const devApiMocks = () => ({
     name: 'devfest:dev-api-fixtures',
     apply: 'serve',

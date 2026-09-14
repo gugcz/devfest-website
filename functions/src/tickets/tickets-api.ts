@@ -1,16 +1,8 @@
 /**
- * `ticketsApi` — public HTTP endpoint serving the cached ti.to release roadmap as
- * JSON. Same pattern as `lineupApi`: the browser hits this instead of RTDB, so no
- * Firebase SDK and no App Check sit on the content path.
- * `refreshTicketsScheduled` writes `/tickets` hourly; this only reads it.
- *
- * A tighter edge TTL than the lineup (tickets sell out mid-sale), plus the
- * in-instance memo to coalesce revalidation reads.
- *
- * The one function in this codebase that does NOT scale to zero: `minInstances:
- * 1` keeps a warm container so a CDN revalidation never pays a cold start. It
- * revalidates far more often than the lineup (300s TTL vs 900s), and every
- * revalidating request is a real visitor waiting on the ticket roadmap.
+ * `ticketsApi` — public endpoint serving the RTDB `/tickets` cache. Tighter
+ * TTL than the lineup (sell-outs surface faster). The one function that
+ * does NOT scale to zero: it revalidates often and the cold-start request is
+ * a real visitor waiting on the roadmap.
  */
 
 import { onRequest } from 'firebase-functions/v2/https';

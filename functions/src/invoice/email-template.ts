@@ -1,21 +1,15 @@
 /**
- * Branded HTML shell for the transactional emails this backend sends.
+ * Branded HTML shell for transactional emails.
  *
  * Email HTML is not web HTML: Outlook renders through Word, Gmail strips
- * `<style>` on the mobile clients, and flexbox/grid/`rem`/CSS variables are
- * unusable. So everything here is deliberately old-fashioned — nested
- * `<table role="presentation">`, inline styles on every element, hex colours
- * (no `rgba()`, which Outlook drops), pixel widths, and a VML fallback for
- * the button so it still renders as a filled block in Outlook.
+ * `<style>` on mobile, flexbox/grid/`rem`/CSS variables are unusable. So:
+ * nested `<table role="presentation">`, inline styles, hex colours (Outlook
+ * drops `rgba()`), pixel widths, VML fallback for the button.
  *
- * The palette mirrors the site (`BaseLayout.scss`): dark ground, cream text,
- * red accent. `color-scheme: dark` is declared so clients that auto-invert
- * (Outlook.com, Apple Mail) leave the already-dark design alone.
- *
- * Brand fonts (Special Elite / Bebas Neue) are deliberately NOT webfont-linked
- * — most clients ignore `@font-face`, and a half-applied brand face looks
- * worse than a consistent system stack. The mono stack carries the same
- * technical-dossier feel the site gets from JetBrains Mono.
+ * Palette mirrors `BaseLayout.scss`; `color-scheme: dark` keeps auto-inverting
+ * clients off the already-dark design. Brand fonts are NOT webfont-linked —
+ * most clients ignore `@font-face`, and a half-applied face looks worse than
+ * a consistent system stack.
  */
 
 /** Event/brand facts every email footer repeats. */
@@ -275,12 +269,9 @@ export function escapeHtml(s: string): string {
 		.replace(/'/g, '&#39;');
 }
 
-/**
- * Escape text destined for a double-quoted attribute (href, alt).
- * Same rules as element content here, but named separately so a call site
- * reads as intent — `href` values are attacker-adjacent (they come back
- * from ti.to) and must never be interpolated raw.
- */
+/** Escape text for a double-quoted attribute (href, alt). Same rules as
+ * element content; named separately so intent reads at the call site —
+ * `href` values come back from ti.to and must never be interpolated raw. */
 export function escapeAttr(s: string): string {
 	return escapeHtml(s);
 }

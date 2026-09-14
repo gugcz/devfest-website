@@ -1,15 +1,6 @@
 /**
- * Slack: the transport, plus the one way to send a notification.
- *
- * `postToSlack` is the raw incoming-webhook call — it throws, and callers that
- * care (the ti.to purchase webhook, the status reports) handle that themselves.
- * `notify` is what everything else wants: prefixed by domain, best-effort, and
- * loud in the log when delivery fails, so a lost alert never looks like a
- * delivered one.
- *
- * The domain prefix table lives here rather than in each domain, so the channel
- * reads consistently and a new domain can't invent a fourth style.
- *
+ * Slack transport. `postToSlack` is the raw webhook call (throws);
+ * `notify` is best-effort, domain-prefixed, and logs a failed delivery.
  * Docs: https://api.slack.com/messaging/webhooks
  */
 
@@ -58,14 +49,8 @@ export async function postToSlack(webhookUrl: string, payload: SlackPayload): Pr
 	}
 }
 
-/**
- * Best-effort domain notification: `🎤 SESSIONIZE — <text>`.
- *
- * Never throws — a Slack outage must not fail a sync or, worse, the money flow.
- * An unset webhook URL is a no-op (local runs, or a function that forgot to
- * list `SLACK_WEBHOOK_URL` in its `secrets`), which is why a failure is logged
- * rather than swallowed.
- */
+/** Best-effort domain notification: `🎤 SESSIONIZE — <text>`. Never throws;
+ * an unset URL is a no-op (logged, since it may be a missing `secrets` entry). */
 export async function notify(domain: SlackDomain, webhookUrl: string, text: string): Promise<void> {
 	if (!webhookUrl) {
 		logger.warn(`${domain} Slack notify skipped — no webhook URL configured`, { text });

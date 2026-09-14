@@ -1,11 +1,7 @@
 /**
- * `ticketsWebhook` — receives ti.to webhook deliveries, verifies the HMAC
- * signature, and posts a Slack notification when a registration finishes.
- *
- * Configure ti.to → Customize → Webhook Endpoints with the deployed URL
- * and the same security token stored in `TITO_WEBHOOK_SECRET`. Subscribe
- * to `registration.finished` — that event fires once per completed order
- * and already contains the full list of tickets purchased.
+ * `ticketsWebhook` — verifies ti.to's HMAC and posts a Slack line per
+ * finished registration. Wiring: README. Subscribe to
+ * `registration.finished` only (it already lists every ticket).
  */
 
 import { logger } from 'firebase-functions/v2';
@@ -33,13 +29,8 @@ const NOTIFY_EVENT: TitoWebhookEvent = 'registration.finished';
 // a replay is acked (200) without re-posting to Slack.
 const DEDUP_WINDOW_MS = 24 * 60 * 60 * 1000;
 
-/**
- * Claim a registration reference for processing. Returns `true` only the first
- * time a reference is seen within the window (RTDB transaction, server-only
- * path — root rules deny client access). Returns `true` as a fail-open default
- * if the reference is missing or the dedup store errors, so a transient RTDB
- * issue never drops a real notification.
- */
+/** Dedupe a registration reference (RTDB transaction). Fail-open: a missing
+ * reference or a store error returns `true` so no notification is dropped. */
 function dedupRef(reference: string) {
 	const key = reference.replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 256);
 	return db().ref(`webhookDedup/registrations/${key}`);

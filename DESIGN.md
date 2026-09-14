@@ -1,25 +1,17 @@
-Design system for the DevFest.cz 2026 site. Every value below was read back out
-of the codebase and carries its source as `file:line`, so a reviewer can check a
-claim without trusting this file.
-
-The style *rationale* (why the eyebrow lost its hairline, why lists have no
-rules, why detail views are sheets) lives in this file, inline with the rules
-it explains; `CLAUDE.md` only points here. This file is the reference: the
-values, the names, the rules.
+Design system for the DevFest.cz 2026 site. Every value was read out of the
+codebase and carries its source as `file:line`. Rationale lives here, inline
+with the rules; `CLAUDE.md` only points here.
 
 ## How to read this document
 
-Every rule is labelled, because a design doc nobody can apply during review is
-decoration:
-
 | Label | Meaning |
 | --- | --- |
-| **[MUST]** | binding. A PR that breaks it is wrong and should be sent back. It is either enforced by `npm run a11y`, or it is a decision the redesign exists to protect |
-| **[CURRENT]** | a description of the state of the code today. Useful for matching what is already there; not a rule, and changing it is a normal design decision, not a violation |
+| **[MUST]** | binding. A PR that breaks it should be sent back. Either enforced by `npm run a11y`, or a decision the redesign exists to protect |
+| **[CURRENT]** | the state of the code today. Not a rule; changing it is a normal design decision |
 
-Where the code contradicts itself, this file **does not smooth it over** — see
-"Open points" at the end. Line numbers are against the commit this document
-ships in; if one has drifted, the token name is the durable reference.
+Where the code contradicts itself, see "Open points" at the end. Line numbers
+are against the commit this document ships in; if one drifts, the token name is
+the durable reference.
 
 ## Where things live
 
@@ -122,23 +114,18 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:73–97`
 | `--font-special-elite` | Special Elite | 400 | 90–96 | body, lede and long-form reading copy. Texture, never a headline |
 | `--font-jetbrains-mono` | JetBrains Mono | 400, 500 | 82–89 | labels, eyebrows, meta, counts, buttons, status words |
 
-- **[MUST] Only these three families.** Never add a fourth to
-  `astro.config.mjs` (`BaseLayout.scss:21`).
-- **[MUST] Reference the injected variable, never a literal family name.** The
-  resolved family is a build-time hash (`BaseLayout.scss:15–20`). Every call
-  site keeps a generic fallback: `var(--font-jetbrains-mono), monospace`.
-- **[MUST] Roles do not mix.** Special Elite is wide and wrapped a three-word
-  title over three lines at `--fs-h2`; Bebas is condensed, which is what makes
-  the poster scale fit the column.
-- **[CURRENT]** Bebas and JetBrains Mono subset `latin` + `latin-ext`; Special
-  Elite declares no `subsets` (`astro.config.mjs:96`) — see Open points.
+- **[MUST] Only these three families** (`BaseLayout.scss:21`).
+- **[MUST] Reference the injected variable, never a literal family name** —
+  the resolved family is a build-time hash (`BaseLayout.scss:15–20`). Keep a
+  generic fallback: `var(--font-jetbrains-mono), monospace`.
+- **[MUST] Roles do not mix.** Special Elite is wide; Bebas is condensed and
+  is what makes the poster scale fit the column.
+- **[CURRENT]** Special Elite declares no `subsets` (`astro.config.mjs:96`) —
+  see Open points.
 
-**The ramp [MUST].** Every `font-size` goes through one of these steps. Pick the
-nearest; do not introduce a new value without adding it here. **[CURRENT]** the
-code does not hold this line yet — 18 declarations bypass the ramp with an
-absolute literal today, plus a handful more that inherit or compute off one.
-See Open points for the full list and the same claim's other copy, in a source
-comment at `BaseLayout.scss:98`.
+**The ramp [MUST].** Every `font-size` goes through one of these steps; add a
+step here before using a new value. **[CURRENT]** 18 literals still bypass it
+— see Open points.
 
 Poster scale (Bebas), `BaseLayout.scss:81–95`:
 
@@ -171,18 +158,14 @@ Text scale, `BaseLayout.scss:100–110`:
 | `--fs-figure` | `1.9rem` | 109 | row figures — **no call sites today**, see Open points |
 | `--fs-monogram` | `3.4rem` | 110 | initials in an empty photo well |
 
-**[MUST]** Display type is set through `--lh-display` (`0.84`, line 114) and
-`--track-display` (`0.005em`, line 115) — never a per-file `line-height` — and
-carries **no `text-shadow`**.
+**[MUST]** Display type uses `--lh-display` (`0.84`, line 114) and
+`--track-display` (`0.005em`, line 115), never a per-file `line-height`, and
+no `text-shadow`.
 
-**[CURRENT]** Mono labels are uppercase at `0.22em`–`0.24em` tracking
-(`.btn-primary` 787, `.record-status` 1054, `.skip-link` 322).
+**[CURRENT]** Mono labels are uppercase at `0.22em`–`0.24em` tracking.
 
-**[MUST] Body text caps at 65–75ch.** A full-bleed paragraph on a wide viewport
-runs 87–95 characters/line, which is past the point a line of prose is
-comfortable to read. Cap the container, don't shrink the type. `0.06em`
-letter-spacing is for short uppercase labels only — never apply it to a
-running paragraph, where it works against the measure instead of with it.
+**[MUST] Body text caps at 65–75ch.** Cap the container, don't shrink the
+type. `0.06em` letter-spacing is for short uppercase labels only.
 
 ## Spacing & layout
 
@@ -196,35 +179,24 @@ running paragraph, where it works against the measure instead of with it.
 | `--radius` | `2px` | 40 | **[MUST]** sharp corners — never pill-shaped |
 | `--focus-gap-tight` / `--focus-gap` / `--focus-gap-lg` | `2px` / `3px` / `4px` | 117–119 | focus-ring standoff, see Accessibility |
 
-**[MUST] Three section densities, not one** (`BaseLayout.scss:43–45`) — a single
-tempo across every section is what makes a long page read as generated.
+**[MUST] Three section densities, not one** (`BaseLayout.scss:43–45`).
 
-**[MUST] Row rhythm is the `--field-step` variable on the row**, not a value
-each caller picks, because the padding is simultaneously the rhythm and the band
-the reach field fills (`BaseLayout.scss:913–932`): `clamp(1.9rem, 2.8vw, 2.5rem)`
-default, `clamp(2.25rem, 3.6vw, 3.25rem)` for `--short`. Vertical only — a row
-has no horizontal padding at any width.
+**[MUST] Row rhythm is `--field-step` on the row** (`BaseLayout.scss:913–932`):
+`clamp(1.9rem, 2.8vw, 2.5rem)` default, `clamp(2.25rem, 3.6vw, 3.25rem)` for
+`--short`. Vertical only.
 
-**[MUST] `.anchor-target` (`#tickets`, `#newsletter`) cancels a section's own
-opening air with a negative `scroll-margin-top` reading `--section-air`**
-(`BaseLayout.scss:446–447`) — the variable the section's own padding is built
-from, so every band is anchorable for free. `scroll-padding-top` can't do this:
-the air is inside the target, not above it. `--header-h` is the single source
-for the bar height; `Menu.scss` and `html { scroll-padding-top }` both read it.
-The CSS only decides WHERE a jump lands; `src/lib/anchor.ts` (wired from
-`BaseLayout.astro`'s `astro:page-load`) keeps it landed while the islands
-resolve and grow the page above the target — without it a deep-linked
-`/#newsletter` ended up ~1000px past the heading. Two things there are not
-tidy-uppable: the click handler must **not** check `event.defaultPrevented`
-(ClientRouter cancels same-page hash links to scroll them itself), and the hold
-must be armed **before** the landing, because Chromium and WebKit defer the
-initial fragment scroll and then animate it through `scroll-behavior: smooth`.
-`npm run anchors` measures every landing in Chromium, WebKit and Firefox.
+**[MUST] `.anchor-target` cancels a section's opening air with a negative
+`scroll-margin-top` reading `--section-air`** (`BaseLayout.scss:446–447`), the
+same variable the padding is built from. `--header-h` is the single source
+for the bar height. `src/lib/anchor.ts` keeps a jump landed while islands
+grow the page; its click handler must **not** check `event.defaultPrevented`
+and the hold must be armed **before** the landing (see the file). `npm run
+anchors` measures every landing.
 
 ## Breakpoints
 
-**[MUST] Max-width media queries, mobile last.** There is no named breakpoint
-variable set; use a value already in the histogram rather than inventing one.
+**[MUST] Max-width media queries, mobile last.** No named breakpoints; use a
+value from the histogram.
 
 **[CURRENT]** Actual media-query histogram over `src/**` (occurrences):
 
@@ -241,25 +213,18 @@ variable set; use a value already in the histogram rather than inventing one.
 | `min-width: 700px` … `max-width: 999px` (compound) | 1 | `press/downloads.scss:131` |
 | `min-width: 1000px` … `max-width: 1279px` (compound) | 1 | `press/downloads.scss:135` |
 
-**[CURRENT]** `min-width` is no longer a single outlier: **7** call sites —
-`SpeakersTeaser.module.scss:60` plus the six `press/downloads.scss:109,113,117,131,135,139`
-added by merges since this document's baseline (`7b96e4d`, where the count was
-0). See Open points.
+**[CURRENT]** 7 `min-width` queries exist (`SpeakersTeaser.module.scss:60`,
+`press/downloads.scss:109–139`) — see Open points.
 
-**[MUST]** There is no horizontal-nav breakpoint: `Menu.astro` is a three-slot
-bar with all destinations behind one toggle at **every** width
-(`Menu.scss:1–13`). Do not re-add a desktop nav.
+**[MUST] No horizontal-nav breakpoint:** `Menu.astro` is a three-slot bar
+with all destinations behind one toggle at every width (`Menu.scss:1–13`).
 
-**[CURRENT]** Two behavioural breakpoints live in JS, not CSS: the header
-auto-hide-on-scroll is limited to `matchMedia('(max-width: 760px)')`
-(`Menu.astro:217`), and the agenda view switch uses
-`matchMedia('(max-width: 1024px)')` (`Agenda.tsx:52`). Neither value is in any
-stylesheet — see Open points.
+**[CURRENT]** Two JS-only breakpoints: header auto-hide `760px`
+(`Menu.astro:217`), agenda view switch `1024px` (`Agenda.tsx:52`).
 
 ## Z-index & layering
 
-**[MUST]** These are the layers. A new fixed/overlay element joins one of them
-rather than picking its own number.
+**[MUST]** A new fixed/overlay element joins one of these layers.
 
 | z | Element | Source |
 | --- | --- | --- |
@@ -276,26 +241,19 @@ rather than picking its own number.
 | `0`–`4` | in-component ordering only (Agenda columns, Speakers grid, Tickets wave) | local modules |
 | `-1` | a row's full-bleed reach field / wash, under the row's own content | `BaseLayout.scss:949`, `1012` |
 
-**[MUST] A sheet is portalled to `document.body`** (`createPortal`,
-`SpeakerDetail.tsx:69–73`). It renders from inside an island in `<main>`, and any
-positioned ancestor with a z-index traps it in that stacking context — on
-`/speakers` the fixed header (10001) drew straight over the sheet's 10060.
+**[MUST] A sheet is portalled to `document.body`** (`SpeakerDetail.tsx:69–73`)
+— any positioned ancestor with a z-index traps it under the header.
 
-**[MUST] A row that paints a `z-index: -1` layer needs `isolation: isolate`.**
-Without its own stacking context the field paints behind the *section's*
-background and vanishes (`BaseLayout.scss:919–921`). `.field-row` sets it; a row
-adding a SECOND full-bleed layer (the on-sale wave's lit ground, the open FAQ
-wash) must use `::after` or a lower z-index, because `--link` / `--holds`
-already own `::before`.
+**[MUST] A row painting a `z-index: -1` layer needs `isolation: isolate`**
+(`BaseLayout.scss:919–921`). A second full-bleed layer uses `::after` —
+`--link` / `--holds` own `::before`.
 
 **[MUST] Any full-bleed `::before` on a row is feathered** with
-`mask-image: var(--field-feather)` (`BaseLayout.scss:193`, applied at 1019–1020) —
-an un-masked `inset: 0 calc(-1 * var(--gutter))` box shows its own top and bottom
-edges as hard horizontal steps across the page. The red reach field is the one
-deliberate exception: it is meant to read as a band with edges.
+`mask-image: var(--field-feather)` (`BaseLayout.scss:193`). The red reach
+field is the one exception.
 
 **[MUST] Decorative overlays are `pointer-events: none`** and sit below the
-chrome (grain 9999 / vignette 9998, `BaseLayout.scss:290–317`).
+chrome (grain 9999 / vignette 9998).
 
 ## Motion
 
@@ -323,29 +281,23 @@ its call site. The de-facto scale, by frequency:
 
 Rules:
 
-- **[MUST] Every animation and transition has a `prefers-reduced-motion: reduce`
-  opt-out.** 23 stylesheets carry one today; a new animation must add its own. That
-  includes `scroll-behavior` (`BaseLayout.scss:205–213`), the row transitions and
-  transforms (`1034–1046`), the ticker (`Ticker.scss:88`) and the sheet
+- **[MUST] Every animation and transition has a `prefers-reduced-motion:
+  reduce` opt-out**, including `scroll-behavior` (`BaseLayout.scss:205–213`),
+  row transitions (`1034–1046`), ticker (`Ticker.scss:88`), sheet
   (`Sheet.module.scss:174`).
-- **[MUST] Scroll reveal is JS-gated.** `.reveal` is only hidden under the
-  inline `.js` class on `<html>` (`BaseLayout.scss:1088`), so a no-JS or crawler
-  render shows everything. Never hide content on `opacity: 0` without that gate.
-- **[MUST] Animate compositor-cheap properties** — `opacity` and `transform`.
-  The reveal's resting state is `transform: none` so it leaves no containing
-  block behind (`BaseLayout.scss:1088–1096`).
-- **[MUST] No `translateX` on the red reach field.** Dragging a band that runs to
-  both viewport edges reads as a rendering fault (`BaseLayout.scss:934–938`); the
-  pull belongs to the warm wash only.
-- **[CURRENT]** The full-viewport grain is deliberately static, not animated — a
-  still frame has static grain and animating it costs a repaint per frame
-  (`BaseLayout.scss:287–289`).
+- **[MUST] Scroll reveal is JS-gated.** `.reveal` hides only under `.js` on
+  `<html>` (`BaseLayout.scss:1088`). Never hide content on `opacity: 0`
+  without that gate.
+- **[MUST] Animate only `opacity` and `transform`.** The reveal rests at
+  `transform: none` (`BaseLayout.scss:1088–1096`).
+- **[MUST] No `translateX` on the red reach field** (`BaseLayout.scss:934–938`);
+  the pull belongs to the warm wash.
+- **[CURRENT]** The grain is static, not animated (`BaseLayout.scss:287–289`).
 
 ## Component states
 
-**[MUST] Hover paints, focus rings.** Never paint the reach field on `:focus`:
-focus legitimately persists after a sheet closes, and a stuck red band is
-indistinguishable from a rendering fault (`BaseLayout.scss:953–960`).
+**[MUST] Hover paints, focus rings.** Never paint the reach field on `:focus`
+— it persists after a sheet closes (`BaseLayout.scss:953–960`).
 
 `.btn-primary` (`BaseLayout.scss:787–838`):
 
@@ -357,174 +309,112 @@ indistinguishable from a rendering fault (`BaseLayout.scss:953–960`).
 | focus-visible | `2px solid var(--color-accent-hot)` at `--focus-gap` |
 | disabled | not styled globally — see the form buttons below |
 
-`.btn-ghost` (`BaseLayout.scss:841–877`): transparent fill, `--rule-strong`
-border; hover/focus brighten the border to `--color-text` and open `gap`
-`0.6rem → 0.85rem`; focus-visible adds the same ring at `--focus-gap`.
+`.btn-ghost` (`BaseLayout.scss:841–877`): transparent, `--rule-strong` border;
+hover/focus brighten to `--color-text`, `gap` `0.6rem → 0.85rem`.
 
-**[MUST] On `.band--accent` both buttons invert** (`BaseLayout.scss:662–686`) —
-a red button on a red field is invisible — and focus-visible inverts to cream
-(`688–690`).
+**[MUST] On `.band--accent` both buttons invert** (`BaseLayout.scss:662–686`),
+focus-visible to cream (`688–690`).
 
-`.field-row` reach states — **[MUST] which one applies is decided by whether the
-row IS the control**, because a red band under something you cannot click
-promises a click:
+`.field-row` reach states — **[MUST] chosen by whether the row IS the
+control**:
 
 | The row | Rest | Hover | Focus |
 | --- | --- | --- | --- |
 | **IS** the control (`--link`: sessions, FAQ, clippings, agenda entries — a real `<button>` / `<a>` / `<summary>`) | field at `opacity: 0` | `::before` inset `0 calc(-1 * var(--gutter))`, `--color-accent`, opacity → 1 over `0.28s`; **every** ink goes full cream `#F7EFE6` (`971–977`) | ring `2px solid --color-accent-hot` at `--focus-gap-tight` (4.96:1); if hovered **and** focused the ring inverts to `#F7EFE6` — red on red is not a ring (`981–990`) |
 | **CONTAINS** a control (`--holds`: ticket waves, contact/press desks) | wash at `opacity: 0` | feathered `104deg` warm wash → 1, plus `translateX(0.6rem)`; also fires on `:focus-within` (`1023–1031`) | the inner control carries the ring |
 
-**[MUST] Red is spent once per list, not once per row.** A resting per-row label
-is muted mono `rgba(240,237,230,0.55)`; a resting red label competes with the one
-state the colour is for. The single exception is a persistent mark on the ONE
-row that is genuinely different — the on-sale ticket wave, which carries a lit
-ground, not red text.
+**[MUST] Red is spent once per list, not once per row.** Resting row labels
+are muted mono `rgba(240,237,230,0.55)`. Exception: the on-sale wave's lit
+ground.
 
-**[MUST] An open `<details>` does not hold the red field.** Several FAQ items can
-be open at once; four permanent red bands is the accent as texture. An open
-question is marked by the feathered warm wash and its turned marker.
+**[MUST] An open `<details>` does not hold the red field** — it shows the
+warm wash and turned marker.
 
-**[MUST] No opacity-based "inactive" state on content.** Dimming secondary text
-under 4.5:1 fails 1.4.3 — status is a word, not a fade (`BaseLayout.scss:899–902`).
+**[MUST] No opacity-based "inactive" state on content** — status is a word,
+not a fade (`BaseLayout.scss:899–902`).
 
 **[CURRENT] Disabled controls** use `opacity: 0.55` + `cursor: not-allowed`
-(`NewsletterForm.module.scss:90–93`, `InvoiceForm.module.scss:253–256`), and
-hover/active are gated behind `:not(:disabled)`. A non-purchasable ticket wave
-disables its CTA rather than hiding it; `/partners` marks a not-yet-live CTA with
-`aria-disabled="true"` on a `<span>` (`partners.astro:202`) rather than a
-disabled button. See Open points.
+(`NewsletterForm.module.scss:90–93`, `InvoiceForm.module.scss:253–256`);
+`/partners` marks a not-yet-live CTA with `aria-disabled="true"` on a `<span>`
+(`partners.astro:202`). See Open points.
 
-**Loading / empty / error states [CURRENT]:** data-backed islands render a
-skeleton (`shimmer`, `Tickets.module.scss:310–322`; `skelPulse`,
-`Sessions.module.scss:365`), then either content or a `role="alert"` status
-block, now shared by all four islands in `DataState.tsx:41` (`ErrorState`,
-imported by `Speakers.tsx`, `Sessions.tsx`, `Agenda.tsx`, `Tickets.tsx`).
-**[MUST]** Every data-backed page also ships a `.fallback-note`
-(`BaseLayout.scss:550`) for the no-JS / endpoint-down case — except `/`
-(`Tickets`), which has none. See Open points.
+**Loading / empty / error [CURRENT]:** skeleton (`Tickets.module.scss:310–322`,
+`Sessions.module.scss:365`), then content or the shared `DataState.tsx`
+`ErrorState`. **[MUST]** Every data-backed page ships a `.fallback-note`
+(`BaseLayout.scss:550`) — except `/`, see Open points.
 
 ## Forms & errors
 
 Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 `InvoiceForm` (Firebase callable).
 
-- **[MUST] A control's boundary is `--field-border`** at rest
-  (`InvoiceForm.module.scss:54`, `NewsletterForm.module.scss:23`) — ≥3:1 for
-  1.4.11. Not `--rule`, which is decorative.
-- **[MUST] Focus warms the boundary to `--color-accent-hot`**, so pointer focus
-  keeps a ≥3:1 boundary too (`InvoiceForm.module.scss:67–75`,
-  `NewsletterForm.module.scss:28–33`), **and** keyboard focus additionally gets
-  the ring at `--focus-gap-tight` (`InvoiceForm.module.scss:77–80`). One is not a
-  substitute for the other: `outline: none` on an input was a real regression
-  (`NewsletterForm.module.scss:57–58`).
-- **[MUST] Minimum control height `2.75rem`** (`InvoiceForm.module.scss:52`,
-  the consent row at `NewsletterForm.module.scss:114`); the newsletter input is
-  `3rem` (`NewsletterForm.module.scss:39`).
-- **[MUST] Error text is `--color-error`**, carried on a `data-tone="error"`
-  message element that reserves `min-height: 1.2em` so the layout does not jump
-  when it appears (`InvoiceForm.module.scss:259–269`,
-  `NewsletterForm.module.scss:154–161`).
-- **[MUST] A submit button is never `disabled` for a missing input** — that
-  takes it out of the tab order and explains nothing. It stays reachable and
-  answers on activation; validation runs on blur and on the first submit
-  attempt and clears as fields are fixed, with a failed submit focusing the
-  first field that needs it (`InvoiceForm.tsx`, `validate()`).
-  `aria-disabled` covers only the in-flight submitting state, so the button's
-  states key off `[aria-disabled='true']`, not `:disabled`
-  (`InvoiceForm.tsx:413–417`).
-- **[MUST] A component declared in a render body remounts its subtree every
-  render.** `TextField` lives at **module scope** in `InvoiceForm.tsx`
-  (`:107–112`) for that reason — declared inside the parent component, every
-  keystroke unmounted the input and the caret left the field.
-- **[MUST] Status messages are announced.** `aria-live="polite"` on the message
-  region (`InvoiceForm.tsx:425`, `NewsletterForm.tsx:93`), `role="status"` on the
-  success block (`InvoiceForm.tsx:304`), and inputs point at their help text with
-  `aria-describedby` (`NewsletterForm.tsx:59`, `68`).
-- **[CURRENT] Validation is native**, not a validation library: `required` on
-  each field plus type/pattern, with a spam honeypot field hidden via
-  `.honeypot` (`InvoiceForm.tsx:358–366`). There is no per-field inline error
-  message and no `aria-invalid` anywhere in `src` — see Open points.
+- **[MUST] Control boundary is `--field-border`** at rest (≥3:1;
+  `InvoiceForm.module.scss:54`, `NewsletterForm.module.scss:23`). Not `--rule`.
+- **[MUST] Focus warms the boundary to `--color-accent-hot`** **and** keyboard
+  focus gets the ring at `--focus-gap-tight` (`InvoiceForm.module.scss:67–80`).
+  Never `outline: none` on an input.
+- **[MUST] Minimum control height `2.75rem`** (`InvoiceForm.module.scss:52`).
+- **[MUST] Error text is `--color-error`** on a `data-tone="error"` element
+  reserving `min-height: 1.2em` (`InvoiceForm.module.scss:259–269`).
+- **[MUST] A submit button is never `disabled` for a missing input.**
+  Validation runs on blur and first submit; a failed submit focuses the first
+  bad field (`InvoiceForm.tsx`, `validate()`). `aria-disabled` covers only the
+  in-flight submit; button states key off `[aria-disabled='true']`.
+- **[MUST] Field components live at module scope** (`TextField`,
+  `InvoiceForm.tsx:107–112`) — declared in a render body they remount on every
+  keystroke.
+- **[MUST] Status messages are announced:** `aria-live="polite"` on the message
+  region, `role="status"` on success, `aria-describedby` to help text.
+- **[CURRENT] Validation is native** (`required` + type/pattern, `.honeypot`).
+  No `aria-invalid` in `src` — see Open points.
 - **[MUST] On the red band the whole form inverts**
-  (`NewsletterForm.module.scss:199–276`): opaque `#9A0000` field fill, cream
-  boundary at 85%, cream-filled button with dark ink.
+  (`NewsletterForm.module.scss:199–276`): opaque `#9A0000` fill, cream
+  boundary at 85%, cream button with dark ink.
 
 ## Images & media
 
-- **[MUST] The photograph well is 4:5.** `.print` (`BaseLayout.scss:496–506`) is
-  the mounted plate: `--print-mount` keyline + shadow on `--panel-lit`. The
-  speaker grid and teaser use the same ratio
-  (`Speakers.module.scss:65`, `261`, `SpeakersTeaser.module.scss:96`).
+- **[MUST] The photograph well is 4:5** (`.print`, `BaseLayout.scss:496–506`;
+  `Speakers.module.scss:65`, `SpeakersTeaser.module.scss:96`).
 - **[CURRENT] Other ratios in use:** `16 / 9` press clippings
   (`press.scss:95`), `3 / 2` gallery (`index.scss:277`), `1` the session sheet's
   speaker thumb (`SessionDetail.module.scss:103`).
-- **[MUST] Portraits crop `object-fit: cover; object-position: center 22%`** —
-  faces sit high in the frame (`Speakers.module.scss:115–116`,
-  `Sessions.module.scss:300–301`, `Agenda.module.scss:336–337`,
-  `SpeakersTeaser.module.scss:139–140`). The sheet plate uses `center 20%`
-  (`SpeakerDetail.module.scss:46`).
+- **[MUST] Portraits crop `object-fit: cover; object-position: center 22%`**
+  (`Speakers.module.scss:115–116` etc.); the sheet plate `center 20%`.
 - **[MUST] Partner and press logos are `object-fit: contain`** — never cropped
   (`partners.scss:235`, `index.scss:461`, `downloads.scss:202`).
 - **[MUST] The partner wall is one grid module, `.logo-grid` / `.logo-cell`**
-  (`partners.scss:158,172`) — `repeat(auto-fill, minmax(min(100%, --cell-min),
-  1fr))` at one track size for every partner, regardless of tier. Sizing per
-  tier used `--tier-col` as a floor rather than a width, so cells grew to close
-  their row — one page rendered a 611px platinum cell beside 264px media
-  plates, four cell modules on one wall. The tier is carried by its heading and
-  section order instead. A tier that doesn't fill its last row leaves the rest
-  empty — no hairline hangs over dead space.
-- **[MUST] Equal cells don't make equal-looking logos.** `opticalBox()`
-  (`partners.astro:53`) gives each mark a box of equal ink **area** shaped to
-  its own aspect ratio (a 5:1 wordmark ≈190×38, a square glyph ≈76×76) and
-  passes it as `--logo-w` / `--logo-h`; the `sizes` attribute follows the same
-  box. Capping width alone renders a glyph as a block beside a wordmark;
-  capping height alone renders the wordmark as a hairline of type. `plated`
-  stays a per-partner flag (the file ships its own background baked in) and
-  gets a larger box — it is **not** a tier-level inversion, which would move
-  the legibility risk onto the tier that pays.
-- **[MUST] A missing photograph falls back to initials**, not an empty box, at
-  `--ink-monogram` / `--ink-monogram-sm` — both measured (4.21:1 / 7.71:1). Every
-  hand-picked alpha before the token measured *under* the 3:1 the plate needs
-  (`BaseLayout.scss:178–187`).
+  (`partners.scss:158,172`), one track size for every tier. The tier is
+  carried by heading and section order.
+- **[MUST] Logos get equal ink area, not equal width.** `opticalBox()`
+  (`partners.astro:53`) → `--logo-w` / `--logo-h` (5:1 wordmark ≈190×38,
+  square glyph ≈76×76). `plated` is a per-partner flag, not a tier inversion.
+- **[MUST] A missing photograph falls back to initials** at `--ink-monogram` /
+  `--ink-monogram-sm` (4.21:1 / 7.71:1, `BaseLayout.scss:178–187`).
 - **[MUST] Every `<img>` below the fold is `loading="lazy" decoding="async"`**
-  and carries intrinsic `width`/`height`; above-the-fold marks are `eager`
-  (`Menu.astro:49`, `SpeakerPhoto.tsx:48–58`, used by `Speakers.tsx` and
-  `SpeakersTeaser.tsx`). Local assets go through Astro's
-  `<Image>` (`astro:assets`) with `layout: 'constrained'` and
-  `responsiveStyles: true` (`astro.config.mjs:98–103`).
+  with intrinsic `width`/`height`; above the fold `eager`. Local assets use
+  Astro `<Image>` with `layout: 'constrained'`, `responsiveStyles: true`
+  (`astro.config.mjs:98–103`).
 - **[MUST] Decorative images take `alt=""`** (`press.astro:105`,
   `downloads.astro:63`).
-- **[CURRENT]** Site imagery is `.webp`; the OG card is `.jpg` at 1200×630
-  (`BaseLayout.astro:263–267`). One hero plate, `/hero-detective.webp`, is
-  reframed per page through `HeroBackground`'s `focus` prop — **[MUST]** a new
-  subpage picks its own crop rather than reusing another page's.
+- **[CURRENT]** Imagery is `.webp`; OG card `.jpg` 1200×630. One hero plate,
+  `/hero-detective.webp`, reframed per page via `HeroBackground` `focus` —
+  **[MUST]** a new subpage picks its own crop.
 
 ## Component conventions
 
-- **[MUST] Astro (`.astro`) for layout and non-interactive UI; React (`.tsx`)
-  islands only where behaviour is needed** — `Countdown`, `NewsletterForm`,
-  `Speakers`, `SpeakersTeaser`, `Sessions`, `Agenda`, `Tickets`, `InvoiceForm`.
-- **[CURRENT] Mount strategy is `client:load` by default**
-  (`Countdown`, `SpeakersTeaser`, `Speakers`, `Sessions`, `Agenda`,
-  `InvoiceForm`). `Tickets` and `NewsletterForm` use `client:visible`
-  (`index.astro:170`, `280`) — both sit below the fold. **[MUST] An island
-  whose first render is empty until data resolves takes `client:load`, not
-  `client:visible`** — a zero-height placeholder never crosses the
-  intersection threshold, so the observer never fires. `SpeakersTeaser`
-  is `client:load` for exactly this reason (`index.astro:172–176`), even
-  though it also sits below the fold.
-- **[MUST] Styling location:** React islands import a co-located CSS Module
-  (`import s from './X.module.scss'`); Astro components use a sibling `.scss` or
-  the global primitives; page styles live in `src/pages/<page>.scss`.
-- **[MUST] Global primitives are used by class name from both `.astro` and
-  `.tsx`** — they are not imported. Six files each kept a copy of the row rhythm,
-  reach states, `isolation`, feather mask and focus ring, and the copies drifted.
-- **[MUST] Anything appearing on more than one page is a component or a global
-  primitive — never a copied block.** `/contact` and `/press` each kept a
-  `card-head` / `card-title` / `email-link` set; by the time they were merged the
-  address size, the label colour and the column split all disagreed.
-- **[MUST] A measured value is decided once, as a token.** `--print-mount`,
-  `--ink-monogram`, the `--focus-gap-*` scale each replaced a value four to
-  thirty call sites had picked for themselves.
+- **[MUST] Astro for layout and static UI; React islands only for behaviour**
+  (`Countdown`, `NewsletterForm`, `Speakers`, `SpeakersTeaser`, `Sessions`,
+  `Agenda`, `Tickets`, `InvoiceForm`).
+- **[CURRENT] `client:load` by default;** `Tickets` and `NewsletterForm` use
+  `client:visible`. **[MUST] An island that renders nothing until data
+  resolves takes `client:load`** — a zero-height placeholder never intersects
+  (`SpeakersTeaser`, `index.astro:172–176`).
+- **[MUST] Styling location:** islands import a co-located CSS Module; Astro
+  components use a sibling `.scss` or global primitives; pages use
+  `src/pages/<page>.scss`.
+- **[MUST] Global primitives are used by class name, never copied.**
+- **[MUST] Anything on more than one page is a component or a primitive.**
+- **[MUST] A measured value is decided once, as a token.**
 
 Primitives, all in `BaseLayout.scss`:
 
@@ -555,38 +445,23 @@ under every hero), `Closer.astro`, `Menu.astro`, `Footer.astro`,
 `Sheet.module.scss` (the shared detail-view chrome for `SessionDetail` /
 `SpeakerDetail`).
 
-- **`NextStep.astro`** — one thing to do, in an open field of them: title,
-  note, and its controls on the right axis. `/thank-you`,
-  `/newsletter-subscription-thank-you` and `/404` all end on "what now?" and
-  all three used to answer it with one link home. Takes `.field-row--holds` —
-  a step *contains* its controls, it isn't one.
-- **`DataState.tsx`** (`ErrorState` / `EmptyState`, alongside the loading
-  skeletons above) replaced a private copy kept by each of `/speakers`,
-  `/sessions`, `/agenda` and the ticket waves — the copies had drifted: two
-  centred and two left-set, two with animated trailing dots, one opening on a
-  hairline, and only `/agenda` offering a next action. Left-set (matching
-  `.fallback-note`), and **an empty state always offers somewhere to go**.
-- **`SpeakerPhoto.tsx`** owns one decision — no URL, or a URL that fails to
-  load, both land on the monogram — while the caller passes its own classes
-  for the shape. `/sessions` and `/agenda` used to `visibility: hidden` the
-  broken `<img>` instead, so the same speaker with the same dead CDN URL
-  rendered as initials on `/speakers` and as a hole on the other two.
+- **`NextStep.astro`** — one thing to do, in an open field; `/thank-you`,
+  `/newsletter-subscription-thank-you`, `/404`. Takes `.field-row--holds`.
+- **`DataState.tsx`** (`ErrorState` / `EmptyState`) — left-set; **an empty
+  state always offers somewhere to go**.
+- **`SpeakerPhoto.tsx`** — no URL or a failed load both land on the monogram;
+  caller passes classes for the shape.
 
-**Structural rules the redesign exists to keep [MUST]** (full rationale in
-`CLAUDE.md`): no decorated eyebrow; red text is flat; one `--fs-display` element
-per page; section heads are left-set; no accent bars down the left edge of a
-block; lists carry **no rules** — separation is air and type scale; detail views
-are full-bleed sheets, not dialog boxes; `Closer.astro` ends every page except
-`/privacy-policy`.
+**Structural rules [MUST]:** no decorated eyebrow; red text is flat; one
+`--fs-display` per page; section heads left-set; no accent bars down a block's
+left edge; lists carry **no rules**; detail views are full-bleed sheets;
+`Closer.astro` ends every page except `/privacy-policy`.
 
 ## Anatomy of a page
 
-**[MUST] A subpage is this sequence, in this order:** `SubpageHero` → `Ticker`
-→ one or more `.band` sections → `Closer` → `Footer`. Every subpage under
-`src/pages/` (`speakers`, `sessions`, `agenda`, `team`, `faq`, `contact`,
-`invoice`, `press`, `press/downloads`) follows it; `privacy-policy` is the one
-deliberate exception (below). `/` (home) and `/partners` are the two pages
-that don't run `SubpageHero`/`Ticker` and are out of scope here.
+**[MUST] A subpage is:** `SubpageHero` → `Ticker` → `.band` sections →
+`Closer` → `Footer`. `privacy-policy` is the exception; `/` and `/partners`
+are out of scope.
 
 ```astro
 ---
@@ -621,249 +496,124 @@ import { EVENT_TOPICS } from '../lib/ticker';
 </BaseLayout>
 ```
 
-Decision criteria — each one picked per page, not by copying the nearest
-existing page:
+Decision criteria, picked per page:
 
-- **`photo` crop vs `photo={false}`.** `SubpageHero` shows the shared
-  `/hero-detective.webp` plate at a per-page `focus` crop by default
-  (`speakers`, `sessions`, `agenda`, `team`, `press`). `photo={false}` opens
-  on type alone — used where the page's own content starts immediately below
-  the fold and a repeated photo would compete with it: `faq`, `contact`,
-  `invoice`, `press/downloads` (`faq.astro:74`, `contact.astro:21`,
-  `invoice.astro:20`, `downloads.astro:39`). **[MUST]** a new subpage picks
-  its own `focus` crop rather than reusing another page's — see Images &
-  media.
-- **`.band--lit` vs `.band--lit-red`.** `--lit-red` is for pages **about
-  people and the live programme** — `speakers`, `sessions`, `agenda`, `team`
-  (`speakers.astro:25`, `sessions.astro:25`, `agenda.astro:25`,
-  `team.astro:113`). `--lit` (no red bleed) is for **administrative /
-  transactional** pages — `faq`, `contact`, `press`
-  (`faq.astro:86`, `contact.astro:28`, `press.astro:90`). The test for a new
-  page: does it show the humans or the schedule of the conference, or does it
-  process a request? The former gets `--lit-red`.
-- **`.band--accent`.** At most once per page, for the page's next step — a
-  conversion moment, not a content section. The only two call sites are the
-  home page newsletter capture (`index.astro:271`) and the partners CTA
-  (`partners.astro:176`). A `Closer` with `tone="accent"` is the more common
-  way to close on red; reach for a full `.band--accent` section only when the
-  accent band itself contains an interactive form, not just a closing
-  statement.
-- **`.head-split` vs `.head-stack`.** `.head-split` (statement left, one line
-  right, optional `--ruled` hairline) is for a section that pairs a heading
-  with a secondary fact — a count, a link, a note (`contact.astro:35`,
-  `index.astro:237` gallery). `.head-stack` (one column, closed by a
-  hairline) is for a section that is just a heading before a list
-  (`speakers.astro:29`, `sessions.astro:27`, `agenda.astro:27`). If there is
-  nothing to put in the right column, it's `.head-stack`.
-- **`--fs-row` vs `--fs-row-sm`.** **[CURRENT]** no numeric cutoff is stated
-  in code — the existing split is three ticket waves / three contact desks /
-  two press desks at `--fs-row` (72px) against sessions / FAQ / clippings /
-  agenda at `--fs-row-sm` (54px). Treat **more than ~4 rows** as the signal to
-  drop to `--fs-row-sm`; a row count decided ahead of time, not by how it
-  looks once built, is what the existing pages did. See Open points.
-- **`/thank-you`, `/newsletter-subscription-thank-you` and `/404` are on the
-  system**, not a one-off template — they were 73 lines of one centred layout
-  with the words swapped, and one of them is where someone lands after paying.
-  All three run `SubpageHero photo={false}` → `Ticker` → a `.band--lit` field
-  of `NextStep` rows → `Closer`, with the site's em-dash title separator like
-  every other page. `/thank-you` additionally carries the four things that
-  belong there and nowhere else (calendar, venue, what happens next, share)
-  and ships an `@media print` block: it's the page someone prints as proof of
-  purchase, and the site's cream ink on `#050505` prints as invisible text.
-  Event facts for the calendar links live in `src/lib/event.ts`, alongside the
-  `.ics` in `public/` — keep them in step with the Event JSON-LD in
-  `BaseLayout.astro`.
-- **A `<details>` list opens with its first item open.** `/faq` had every
-  question collapsed on arrival, so the page a speaker and a journalist both
-  land on showed no answer at all (`faq.astro:106`). One open item, not more —
-  four open answers is the page's whole content unfolded. A section must also
-  not reuse the hero's `aria-labelledby`: two regions with one accessible name
-  is `landmark-unique`, which was the site's only axe violation
-  (`faq.astro:83`).
-- **`Closer` tone.** Pass `tone="accent"` explicitly — every subpage
-  (`speakers`, `sessions`, `agenda`, `team`, `faq`, `contact`, `invoice`,
-  `press`, `press/downloads`) does, for a red closing band with the page's
-  final CTA. `tone` defaults to `'raised'` and a `tone="plain"` also exists,
-  but see Open points: no page passes either, and `band--raised` has no
-  matching CSS, so both are currently dead paths — don't rely on the
-  default. `privacy-policy` is the only page with **no** `Closer` at all: a
-  legal document doesn't get a CTA.
+- **`photo` crop vs `photo={false}`.** Photo (own `focus` crop) for
+  `speakers`, `sessions`, `agenda`, `team`, `press`. `photo={false}` where
+  content starts right below the fold: `faq`, `contact`, `invoice`,
+  `press/downloads`.
+- **`.band--lit` vs `.band--lit-red`.** `--lit-red` for pages about people
+  and the programme (`speakers`, `sessions`, `agenda`, `team`); `--lit` for
+  transactional pages (`faq`, `contact`, `press`).
+- **`.band--accent`.** At most once per page, only when the band contains a
+  form (`index.astro:271`, `partners.astro:176`). Otherwise close on red with
+  `Closer tone="accent"`.
+- **`.head-split` vs `.head-stack`.** `.head-split` when there is a secondary
+  fact for the right column; otherwise `.head-stack`.
+- **`--fs-row` vs `--fs-row-sm`.** **[CURRENT]** no numeric cutoff in code;
+  treat more than ~4 rows as the signal for `--fs-row-sm`. See Open points.
+- **`/thank-you`, `/newsletter-subscription-thank-you`, `/404`** run
+  `SubpageHero photo={false}` → `Ticker` → `.band--lit` field of `NextStep`
+  rows → `Closer`. `/thank-you` also has calendar, venue, next steps, share
+  and an `@media print` block. Event facts in `src/lib/event.ts` + the `.ics`
+  in `public/` — keep in step with the Event JSON-LD in `BaseLayout.astro`.
+- **A `<details>` list opens with its first item open** (`faq.astro:106`).
+  A section must not reuse the hero's `aria-labelledby` (`landmark-unique`).
+- **`Closer` tone.** Pass `tone="accent"` explicitly. The `'raised'` default
+  has no CSS (Open points). `privacy-policy` has no `Closer`.
 
 ## Iconography
 
-**[MUST] No icon library.** `package.json` has no `lucide`, `heroicons`,
-`feather` or similar — six inline `<svg>` elements exist in the whole
-codebase and all six are the `Footer.astro` social-platform marks (X,
-Facebook, Bluesky, LinkedIn, YouTube), each `aria-hidden="true"` beside a
-visible text link. Don't add an icon package for a UI glyph.
+**[MUST] No icon library.** The only inline `<svg>` elements are the
+`Footer.astro` social marks, each `aria-hidden="true"` beside a visible text
+link. Don't add an icon package for a UI glyph.
 
-**[MUST] Any other glyph is text, not an image or icon font** — `Close ✕`
-(`Sheet.module.scss:5`), `→` in link labels. No emoji anywhere in UI copy.
+**[MUST] Any other glyph is text** — `Close ✕`, `→`. No emoji in UI copy.
 
 ## Voice
 
-**[CURRENT]** No single stated rule; inferred from the copy that exists —
-worth confirming as a decision, not just a pattern:
+**[CURRENT]** Inferred from existing copy:
 
-- Mono labels (eyebrows, buttons, row meta) are short — one to three words
-  — written in sentence case in source and capitalised by CSS
-  `text-transform: uppercase` (`BaseLayout.scss:403`, `781`, `1058`, …), never
-  typed in caps. Typing caps in the source would read as shouting to a
-  screen reader, which ignores the CSS transform.
-- Ledes (`--fs-lede`) run one to two sentences, no italic — see CLAUDE.md
-  "One lede shape" for why.
-- Copy is UI-English throughout (`src/pages/**/*.astro`); Czech appears only
-  in `src/pages/press/**` clippings content, which is quoted source material,
-  not site voice. **[MUST]** don't introduce a third mixed-language block
-  without the same justification.
-- Prices are CZK, formatted by `formatPrice` (`src/lib/tito.ts:157`); dates
-  go through `Intl.DateTimeFormat` (`Agenda.tsx:65`) rather than a
-  hand-written string.
+- Mono labels are one to three words, sentence case in source, uppercased by
+  CSS. Never type caps — screen readers read them as shouting.
+- Ledes run one to two sentences, no italic.
+- Copy is English; Czech appears only in quoted press clippings. **[MUST]**
+  no third mixed-language block without the same justification.
+- Prices via `formatPrice` (`src/lib/tito.ts`); dates via
+  `Intl.DateTimeFormat`.
 
 ## Accessibility
 
-`npm run a11y` is the only automated check in the repo (`scripts/a11y.mjs`): it
-builds with `A11Y_MOCK=1`, serves `dist/` plus `/api/*` fixtures, and runs
-`@axe-core/playwright` over 15 routes (`a11y.mjs:19–33`) at desktop, once more at
-375×812 (`a11y.mjs:440`), and scoped inside opened `[role="dialog"]` sheets
-(`a11y.mjs:292–353`). Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`,
-`wcag22aa` (`a11y.mjs:376`).
+`npm run a11y` (`scripts/a11y.mjs`) builds with `A11Y_MOCK=1` and runs axe
+over 15 routes at desktop and 375×812, plus inside opened `[role="dialog"]`
+sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 
-**[MUST] Zero violations is the passing bar.** Run it before opening a PR that
-touches markup or styles.
+**[MUST] Zero violations.** Run it before a PR touching markup or styles.
 
-- **[MUST] Contrast.** Body copy meets 1.4.3; non-text UI boundaries and focus
-  indicators meet 1.4.11 (≥3:1). Use `--field-border` for a control boundary and
-  `--color-error` for error prose. Don't dim ink on the red band; change size.
-- **[MUST] Focus is always visible.** Global `:focus-visible { outline: 2px solid
-  var(--color-accent-hot) }`. The gap is chosen by ONE question — how much
-  visible edge the control already has: `--focus-gap-tight` it has its own
-  boundary, `--focus-gap` type on the ground, `--focus-gap-lg` it stands alone in
-  open space (`BaseLayout.scss:141–154`). Two deliberate exceptions carry a
-  comment saying why: the agenda cell's inset ring and the partner logo's wider
-  gap.
+- **[MUST] Contrast.** Body 1.4.3; boundaries and focus rings ≥3:1 (1.4.11).
+  `--field-border` for control boundaries, `--color-error` for error prose.
+  Don't dim ink on the red band; change size.
+- **[MUST] Focus is always visible:** `:focus-visible { outline: 2px solid
+  var(--color-accent-hot) }`. Gap by how much edge the control has:
+  `--focus-gap-tight` (own boundary), `--focus-gap` (type on ground),
+  `--focus-gap-lg` (alone in space) (`BaseLayout.scss:141–154`). Two commented
+  exceptions: agenda cell inset ring, partner logo wider gap.
 - **[MUST] Semantics before ARIA.** A row that IS a control is a real
-  `<button>` / `<a>` / `<summary>` — which is also what decides `--link` vs
-  `--holds`.
-- **[MUST] `.skip-link` is the first focusable element on every page**
-  (`BaseLayout.astro:301`), hidden with `clip-path: inset(50%)` and revealed on
-  `:focus` (`BaseLayout.scss:322–354`).
-  `html { scroll-padding-top: 6rem; scroll-padding-bottom: 8rem }`
-  (`BaseLayout.scss:211–213`) keeps an anchored or focused target clear of the
-  fixed header and cookie banner. Its target, `#main-content`, carries
-  `tabindex="-1"` (`BaseLayout.astro:321,327`) — without it, `Enter` on the
-  skip link moves the document fragment but leaves focus in the header, so the
-  next `Tab` lands back in the nav and the only keyboard-only affordance on the
-  site does nothing. The ring is suppressed on that element alone (a 100vw
-  outline reads as a rendering fault, and it's a page region, not a control);
-  every control inside keeps its own.
-- **[MUST] The cookie banner is second in the DOM, right after the skip
-  link**, and its `Escape` handler is on `document`
-  (`CookieBanner.astro:89,96`). Both are the same defect: the banner used to
-  sit after the footer with a handler bound to itself, so the key only worked
-  once focus was already inside it — about 40 tab stops away.
-- **[MUST] The ticker is its own pause control (WCAG 2.2.2).** The strip
-  carries `tabindex="0"` + an `aria-label` naming the topics
-  (`Ticker.astro:31,33`), and `Ticker.scss` pauses the marquee on `:hover`
-  **and** `:focus-within`. `prefers-reduced-motion` still stops it, but that's
-  a user-agent setting, not the mechanism the SC asks for. The focusable child
-  is what makes `:focus-within` possible at all — the topics are
-  non-interactive text — so the strip is the labelled element and the doubled
-  topic list inside it is `aria-hidden` (it would otherwise be announced
-  twice). No visible pause button: this is chrome on all 15 routes.
-- **[MUST] `.sr-only`** for text that must stay in the a11y tree and the
-  crawlable HTML but not on screen (`BaseLayout.scss:367`).
-- **[MUST] Sheets return focus** to the row that opened them
-  (`src/lib/useReturnFocus.ts`) and close on Esc.
-- **[MUST] Reduced motion** — see Motion above.
-- **[MUST] `html` clips horizontal overflow with `overflow-x: clip`, never
-  `hidden`** (`BaseLayout.scss:217–229`): `hidden` turns `html` into a scroll
-  container on iOS Safari, which breaks `position: fixed` and `env()` safe-area
-  insets.
+  `<button>` / `<a>` / `<summary>`.
+- **[MUST] `.skip-link` is the first focusable element** (`BaseLayout.astro:301`,
+  `BaseLayout.scss:322–354`). `html { scroll-padding-top: 6rem;
+  scroll-padding-bottom: 8rem }` keeps targets clear of header and banner.
+  `#main-content` has `tabindex="-1"` so `Enter` moves focus, not just the
+  fragment; its ring alone is suppressed.
+- **[MUST] The cookie banner is second in the DOM**, `Escape` handler on
+  `document` (`CookieBanner.astro:89,96`).
+- **[MUST] The ticker is its own pause control (2.2.2):** `tabindex="0"` +
+  `aria-label` (`Ticker.astro:31,33`), paused on `:hover` and `:focus-within`;
+  the doubled list is `aria-hidden`. No visible pause button.
+- **[MUST] `.sr-only`** for text in the a11y tree but off screen
+  (`BaseLayout.scss:367`).
+- **[MUST] Sheets return focus** to the opening row (`src/lib/useReturnFocus.ts`)
+  and close on Esc.
+- **[MUST] Reduced motion** — see Motion.
+- **[MUST] `html { overflow-x: clip }`, never `hidden`** — `hidden` makes
+  `html` a scroll container on iOS Safari and breaks `position: fixed` and
+  safe-area `env()` (`BaseLayout.scss:217–229`).
 
 ## Open points
 
-Places the code contradicts itself or this document. Listed, not smoothed over —
-each needs a decision, none is fixed by this PR.
+Places the code contradicts itself or this document. Each needs a decision.
 
-1. **No motion tokens.** `0.2s ease` is written out at roughly 96 call sites and
-   the "arrive" curve `cubic-bezier(0.16, 1, 0.3, 1)` at 14, while every other
-   measured value in the system is a token. There is also no stated rule for when
-   a transition is `0.28s` vs `0.3s` vs `0.32s` (the row field, the row wash and
-   the row pull each picked a different one). Proposal: `--dur-control`,
+1. **No motion tokens.** `0.2s ease` at ~96 sites, the arrive curve at 14, and
+   no rule for `0.28s` vs `0.3s` vs `0.32s`. Proposal: `--dur-control`,
    `--dur-field`, `--ease-arrive`.
-2. **No z-index scale.** The layer numbers (9998 / 9999 / 10000 / 10001 / 10050 /
-   10060) are literals spread across six files, and **two different elements both
-   sit at `10000`** — the cookie banner (`CookieBanner.scss:21`) and
-   `.status-bar-cover` (`BaseLayout.scss:1247`) — so their order is source order,
-   not a decision. `.skip-link` and the site header likewise share `10001`.
-3. **Disabled state contradicts the no-dimming rule.** `BaseLayout.scss:899–902`
-   bans opacity-based inactive states because dimming fails 1.4.3, yet both form
-   buttons use `opacity: 0.55` (`NewsletterForm.module.scss:91`,
-   `InvoiceForm.module.scss:254`). WCAG exempts disabled controls, so this is
-   probably fine — but the document currently states a rule the code breaks, and
-   one of the two should change.
-4. **Three ways to say "not available".** A disabled `<button>`, an
-   `aria-disabled="true"` `<span>` (`partners.astro:202`), and a `.record-status`
-   word. No rule says which applies when.
-5. **No `aria-invalid` anywhere in `src`.** Form errors are announced through a
-   single `aria-live` region; individual invalid fields are not marked, and there
-   is no per-field inline error. Acceptable for a two-form site, but it should be
-   a stated decision rather than an omission.
-6. **`--fs-figure` (`BaseLayout.scss:109`) has zero call sites.** Either it is
-   dead and should be deleted, or something is using a literal `1.9rem` where it
-   should use the token. `--panel-2` and `--panel-hover` are each used in exactly
-   one file, which is close to the same question.
-7. **`min-width` is no longer an outlier.** `SpeakersTeaser.module.scss:60` was
-   the only mobile-first query when this document was written; six more
-   (`press/downloads.scss:109,113,117,131,135,139`) landed via merged PRs since,
-   so the codebase now has 7. Worth deciding whether mobile-first is acceptable
-   there or should be flipped to match the rest.
-8. **Two behavioural breakpoints outside the CSS set.** The header auto-hide
-   uses `760px` in JS (`Menu.astro:217`); no stylesheet uses that value, and the
-   nearest CSS breakpoints are `720px` and `860px`. The agenda view switch adds
-   a second one, `1024px` (`Agenda.tsx:52`), also absent from any stylesheet.
-9. **Special Elite declares no `subsets`** (`astro.config.mjs:96`) while the
-   other two request `latin` + `latin-ext`. The site ships Czech copy; a face
-   without `latin-ext` risks fallback glyphs for diacritics. Worth confirming
-   against the same class of bug fixed in commit `7b96e4df` (Czech press
-   clippings set in a face without the diacritics).
-10. **Split with `CLAUDE.md`.** Values, tokens, binding rules ([MUST] /
-    [CURRENT]) and their rationale all live here, in `DESIGN.md`. `CLAUDE.md`
-    → "Styling" is a one-paragraph pointer, not a second copy. Nothing
-    enforces the split beyond this line — if a rule changes, check both
-    files.
-11. **`Closer`'s `tone="raised"` default renders `band--raised`, which has no
-    CSS** (`Closer.astro:42`; the class is never defined in
-    `BaseLayout.scss`). Pre-existing, not introduced by this document.
-    Currently harmless — every `Closer` call site passes `tone="accent"`
-    explicitly — but the default itself is dead and would silently render
-    unstyled if a future page omitted `tone`.
-12. **The font-size ramp is stated as [MUST] but broken at 23 call sites: 18**
-    **absolute literals** (`Countdown.module.scss:33,47,72,84`,
-    `Menu.scss:348,471`, `Speakers.module.scss:201,277`,
-    `faq.scss:33`, `press.scss:162`, `team.scss:121,141`,
-    `index.scss:73,148,598,643,666,756`; the `index.scss:135`
-    site this counted no longer exists — see below), **2 relative**
-    (`Footer.scss:153`, `0.85em`; `Ticker.scss:78`, `0.5em`),
-    **2 inherited** (`Footer.scss:321,325`), and **1 on its own token**
-    (`Ticker.scss:57`, `--ticker-size`). The same "every
-    `font-size` goes through one of these steps" claim is repeated in a source
-    comment at `BaseLayout.scss:98` and is equally untrue there — worth fixing
-    next time that file is touched, not on its own. Either these get folded
-    into the ramp as named steps, or downgraded to `[CURRENT]` literals with a
-    reason each.
-    **[UNRESOLVED — flagged, not guessed]** Two of the cited call sites no
-    longer back this count after the rebase, rather than having simply moved:
-    `LandingNotice.scss` (component + stylesheet) was deleted in `d38c5187`
-    and replaced by `NextStep.astro`, which uses `var(--fs-row)` /
-    `var(--fs-body)` — no literal, so that count-of-14 entry has no current
-    home. `index.scss:135` is now `font-size: var(--fs-label);` (not a
-    literal); the file does have four literal `font-size` declarations today
-    (`index.scss:598,643,666,756`, all `.hero-statement` / `.meta-value`
-    breakpoint overrides), any/all of which may be what this site meant to
-    count, but which one(s) requires a decision, not a relocation.
-13. **`/` has no `.fallback-note`.** `agenda`, `sessions` and `speakers` each
-    ship one for the no-JS / endpoint-down case; the home page's `Tickets`
-    island does not. Either add one, or state the exception in the MUST
-    instead of leaving the home page silently uncovered.
+2. **No z-index scale.** Literals across six files; cookie banner and
+   `.status-bar-cover` both `10000`, `.skip-link` and header both `10001`.
+3. **Disabled state contradicts the no-dimming rule.** Both form buttons use
+   `opacity: 0.55`. WCAG exempts disabled controls, but the doc and code
+   disagree.
+4. **Three ways to say "not available":** disabled `<button>`,
+   `aria-disabled` `<span>` (`partners.astro:202`), `.record-status` word.
+5. **No `aria-invalid` in `src`.** Errors go through one `aria-live` region.
+   Acceptable for two forms, but should be a stated decision.
+6. **`--fs-figure` has zero call sites.** `--panel-2` and `--panel-hover` are
+   each used in one file.
+7. **7 `min-width` queries** (`SpeakersTeaser.module.scss:60`,
+   `press/downloads.scss:109–139`) against a max-width convention.
+8. **Two JS-only breakpoints:** `760px` (`Menu.astro:217`), `1024px`
+   (`Agenda.tsx:52`), in no stylesheet.
+9. **Special Elite declares no `subsets`** (`astro.config.mjs:96`); Czech
+   diacritics may fall back (cf. `7b96e4df`).
+10. **Split with `CLAUDE.md`.** Rules live here; `CLAUDE.md` points here.
+    Nothing enforces it.
+11. **`Closer` default `tone="raised"` renders `band--raised`, which has no
+    CSS.** Harmless today (every call site passes `tone="accent"`).
+12. **The font-size ramp is [MUST] but broken at ~23 call sites:** 18 literals
+    (`Countdown.module.scss:33,47,72,84`, `Menu.scss:348,471`,
+    `Speakers.module.scss:201,277`, `faq.scss:33`, `press.scss:162`,
+    `team.scss:121,141`, `index.scss:73,148,598,643,666,756`), 2 relative
+    (`Footer.scss:153`, `Ticker.scss:78`), 2 inherited (`Footer.scss:321,325`),
+    1 own token (`Ticker.scss:57`). The same claim in `BaseLayout.scss:98` is
+    equally untrue. Fold into the ramp or downgrade to [CURRENT].
+    **[UNRESOLVED]** two originally cited sites (`LandingNotice.scss`, deleted;
+    `index.scss:135`, now a token) no longer back the count.
+13. **`/` has no `.fallback-note`** while `agenda`, `sessions`, `speakers` do.

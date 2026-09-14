@@ -1,24 +1,8 @@
 /**
- * `submitInvoiceCallable` — callable the browser invoice form invokes.
- * Validates input and writes a `pending` doc to Firestore; the
- * `processInvoiceTrigger` Firestore trigger does the iDoklad work.
- *
- * Keeping the write server-side means Firestore stays locked to clients
- * (firestore.rules denies all) and untrusted input is validated before it
- * ever reaches iDoklad.
- *
- * Abuse protection (layered, because App Check alone is attestation, not a
- * throttle):
- *   - `enforceAppCheck: true` rejects any request without a valid Firebase
- *     App Check token (reCAPTCHA Enterprise) before the handler runs — blocks
- *     bots/curl that can't mint an attestation.
- *   - a per-(IČO + email) sliding-window rate limit caps how many invoices +
- *     emails one company can drive (cost / sending-reputation abuse).
- *   - `maxInstances` caps fan-out on the shared billing project.
- * (Token replay protection — `consumeAppCheckToken` + limited-use client
- * tokens — is intentionally NOT enabled: low-threat site, not worth the
- * client/server coupling.)
- * The callable protocol also handles CORS, so there's nothing to wire by hand.
+ * `submitInvoiceCallable` — validates the form and writes a `pending` doc;
+ * `processInvoiceTrigger` does the rest. Abuse protection: App Check
+ * (attestation), a per-(IČO + email) rate limit (throttle), `maxInstances`
+ * (fan-out). Token replay protection deliberately not enabled.
  */
 
 import { HttpsError, onCall } from 'firebase-functions/v2/https';

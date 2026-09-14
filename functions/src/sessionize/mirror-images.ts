@@ -1,22 +1,8 @@
 /**
- * Mirror Sessionize speaker photos into Firebase Storage so the website serves
- * every asset off Firebase instead of Sessionize's BunnyCDN.
- *
- * `mirrorSpeakerImages` downloads each speaker's `profilePicture`, uploads it to
- * `speakers/{speakerId}` in the default Storage bucket, and returns a
- * speakerId → served-URL map. The served URL is a Firebase download-token URL
- * (`firebasestorage.googleapis.com/…?alt=media&token=…`), which is publicly
- * readable regardless of Storage security rules — so no rules change is needed.
- *
- * Idempotent: each object stores the source URL in its custom metadata. A run
- * re-downloads a photo only when its Sessionize URL changed (or the object is
- * missing); otherwise it reuses the existing object + token. So steady-state
- * runs do one cheap metadata read per speaker and no downloads.
- *
- * Best-effort: a per-speaker failure (network, oversize, Storage error) is
- * logged and falls back to the original Sessionize URL for that speaker; the
- * whole feature no-ops (returns an empty map) if Storage itself is unreachable,
- * so image mirroring can never break the core Sessionize sync.
+ * Mirror speaker photos into Storage `speakers/{id}`; returns speakerId →
+ * download-token URL (public regardless of rules). Idempotent via source URL
+ * in custom metadata. Best-effort: failures fall back to the Sessionize URL
+ * and never break the sync.
  */
 
 import { randomUUID } from 'node:crypto';
@@ -136,12 +122,7 @@ async function mapWithConcurrency<T, R>(
 	return results;
 }
 
-/**
- * Mirror every speaker's photo into Firebase Storage. Returns a speakerId →
- * served-URL map covering only the speakers whose photo was successfully
- * mirrored; callers fall back to the raw Sessionize URL for any id not present.
- * Never throws — a total Storage failure yields an empty map.
- */
+/** Mirror every speaker's photo. Map covers only successes; never throws. */
 export async function mirrorSpeakerImages(
 	speakers: SessionizeSpeaker[],
 ): Promise<Map<string, string>> {

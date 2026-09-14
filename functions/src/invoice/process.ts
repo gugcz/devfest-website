@@ -1,15 +1,8 @@
 /**
- * `processInvoiceTrigger` — Firestore onCreate trigger for `invoices/{id}`.
- *
- * Runs the invoice half of the pipeline:
- *   1. resolve the active company-funded ti.to release (for price)
- *   2. find/create the iDoklad contact (company)
- *   3. create the iDoklad issued invoice (net line + VAT)
- *   4. ask iDoklad to email the invoice (PDF attached, pay by bank transfer)
- *   5. record everything + notify Slack
- *
- * The payment half (generate + deliver the 100%-off code) is driven later
- * by the `pollPaidInvoicesScheduled` scheduler — iDoklad has no webhooks.
+ * `processInvoiceTrigger` — onCreate for `invoices/{id}`: resolve the
+ * company-funded release (price) → find/create iDoklad contact → create
+ * invoice → email it → record + Slack. Payment is handled later by
+ * `pollPaidInvoicesScheduled`.
  */
 
 import { logger } from 'firebase-functions/v2';
@@ -119,11 +112,9 @@ export const processInvoiceTrigger = onDocumentCreated(
 					variableSymbol: invoice.variableSymbol,
 					dueDate: formatDueDate(invoice.dueDate),
 				});
-				// Belt for that failure mode: when we could NOT prove the
-				// contact carries the submitted address, name it explicitly so the
-				// person who filled the form gets the invoice regardless. When the
-				// contact IS in sync, `SendToPartner` already goes there — adding it
-				// again would only mail the same customer twice.
+				// Belt: when the contact is NOT proven to carry the submitted
+				// address, name it explicitly. When it IS in sync, `SendToPartner`
+				// already goes there and naming it again mails twice.
 				const result = await sendInvoiceByEmail(idokladCfg, invoice.id, {
 					subject: mail.subject,
 					body: mail.body,

@@ -1,14 +1,8 @@
 import type { ReactNode } from 'react';
 import s from './DataState.module.scss';
 
-/**
- * The three non-ready states every data-backed island can be in, as one
- * treatment. See DataState.module.scss for why these were merged.
- *
- * Deliberately not a single `<DataState kind="…" />` switch: the three states
- * carry different ARIA (`status` vs `alert` vs neither) and a caller that
- * picked the wrong string would silently get the wrong announcement.
- */
+/** The non-ready states of every data-backed island. Separate components,
+ * not one `kind` switch — each carries different ARIA. */
 
 /** Live region while the endpoint is in flight. `role="status"` (polite) — a
  *  load is not an interruption. */
@@ -27,14 +21,9 @@ export function LoadingState({ label }: { label: string }) {
 }
 
 /**
- * The endpoint is down. `role="alert"` because the visitor asked for content
- * and is not getting it.
- *
- * Copy convention, kept in the site's voice rather than a status-page voice:
- * name the thing, say it isn't coming up, give a way out. "The lineup won't
- * come up right now. Reload, or take it up with devfest@gug.cz." — /agenda used
- * to say "temporarily unavailable. Please check back soon", which is the one
- * line on the site that could have come from any product.
+ * The endpoint is down. `role="alert"` — the visitor asked for content and
+ * isn't getting it. Copy in the site's voice: name the thing, say it isn't
+ * coming up, give a way out.
  */
 export function ErrorState({ children }: { children: ReactNode }) {
 	return (
@@ -44,12 +33,8 @@ export function ErrorState({ children }: { children: ReactNode }) {
 	);
 }
 
-/**
- * The endpoint answered and there is nothing to show yet — the normal state of
- * a conference site before announcements land, so it always offers somewhere
- * to go. Only /agenda did that before; a dead end on four surfaces was the
- * larger half of this defect.
- */
+/** The endpoint answered with nothing to show yet — normal pre-announce, so
+ * it always offers somewhere to go. */
 export function EmptyState({
 	children,
 	action,
