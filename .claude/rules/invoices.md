@@ -12,6 +12,9 @@ paths:
 `pollPaidInvoicesScheduled` hourly (no iDoklad webhooks) → paid → 100%-off
 ti.to code. Browser never touches Firestore.
 
+- Both stages claim the doc first (`claimInvoiceForIssuing` pending→
+  processing, `claimInvoiceForProcessing` invoiced→processing): triggers
+  are at-least-once, a replay must never mint a second invoice or code.
 - `PaymentStatus`: Unpaid=0, **Paid=1**, PartialPaid=2, **Overpaid=3**.
   Completion flips to `completed`, so each invoice is processed once.
 - OAuth client credentials at `https://identity.idoklad.cz/server/connect/token`
@@ -36,7 +39,9 @@ ti.to code. Browser never touches Firestore.
   wrapped under `discount_code`, scoped to releases matching
   `INVOICE_RELEASE_MATCH`. Discount mail via Resend, optional.
 - `firestore.rules` denies all clients; not wired into `firebase.json`.
-- `submitInvoiceCallable` has `enforceAppCheck: true`; callable protocol
-  handles CORS.
+- `submitInvoiceCallable` has `enforceAppCheck: true`; `cors` lists
+  devfest.cz + PR previews only.
+- `invoiceRateLimits` docs carry `expiresAt` for a Firestore TTL policy
+  (project config, not code).
 - Both mails' copy in `email.ts`; HTML shell in `email-template.ts` (tables,
   inline styles, hex, VML, no webfonts; every interpolation escaped).

@@ -2,28 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
 import { shuffle } from '../lib/shuffle';
+import { useRemote } from '../lib/useRemote';
+import { usePrefersReducedMotion } from '../lib/useMediaQuery';
 import SpeakerPhoto from './SpeakerPhoto';
 import print from './Print.module.scss';
 import s from './SpeakersTeaser.module.scss';
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
 
 // Speakers shown at once on the home wall; the visible set rotates through the
 // full roster over time (rotation kicks in once there are more than this).
 const WALL_SIZE = 4;
 const ROTATE_MS = 5000;
-
-function usePrefersReducedMotion(): boolean {
-	const [reduce, setReduce] = useState(false);
-	useEffect(() => {
-		const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
-		const update = () => setReduce(mql.matches);
-		update();
-		mql.addEventListener('change', update);
-		return () => mql.removeEventListener('change', update);
-	}, []);
-	return reduce;
-}
 
 function Thumb({ speaker }: { speaker: Speaker }) {
 	return (
@@ -53,31 +41,14 @@ function Thumb({ speaker }: { speaker: Speaker }) {
 /** Home-page speaker teaser: a rotating subset of mugshots + link to
  * /speakers. Renders nothing until the lineup resolves (clean pre-announce). */
 export default function SpeakersTeaser() {
-	const [speakers, setSpeakers] = useState<Speaker[]>([]);
-	const [status, setStatus] = useState<Status>('loading');
+	const { status, data } = useRemote(fetchLineup, 'speakers-teaser', (l) => l.speakers.length === 0);
 	const [offset, setOffset] = useState(0);
 	const [paused, setPaused] = useState(false);
 	const reduceMotion = usePrefersReducedMotion();
 
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchLineup(ac.signal)
-			.then(({ speakers: next }) => {
-				setSpeakers(next);
-				setStatus(next.length > 0 ? 'ready' : 'empty');
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[speakers-teaser] Failed to load lineup:', err);
-				setStatus('error');
-			});
-		return () => ac.abort();
-	}, []);
-
-	// Shuffle once per roster so the starting window — and rotation order — is
-	// random on every load. Keyed on the id set so it only reshuffles when the
-	// roster actually changes, not on every re-render or rotation tick.
-	const displaySpeakers = useMemo(() => shuffle(speakers), [speakers.map((sp) => sp.id).join('|')]);
+	// Shuffle once per payload so the starting window — and rotation order — is
+	// random on every load, not on every re-render or rotation tick.
+	const displaySpeakers = useMemo(() => shuffle(data?.speakers ?? []), [data]);
 
 	const total = displaySpeakers.length;
 	const size = Math.min(WALL_SIZE, total);

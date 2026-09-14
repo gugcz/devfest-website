@@ -10,12 +10,13 @@ interface TimeLeft {
 	seconds: string;
 }
 
+/** Pre-hydration value, and what the clock settles on once doors open. */
+const ZERO: TimeLeft = { days: '0', hours: '00', minutes: '00', seconds: '00' };
+
 function calcTimeLeft(): TimeLeft {
 	const diff = TARGET - Date.now();
 
-	if (diff <= 0) {
-		return { days: '0', hours: '00', minutes: '00', seconds: '00' };
-	}
+	if (diff <= 0) return ZERO;
 
 	return {
 		days: String(Math.floor(diff / (1000 * 60 * 60 * 24))),
@@ -32,8 +33,6 @@ const UNITS: { key: keyof TimeLeft; label: string; suffix: string }[] = [
 	{ key: 'seconds', label: 'Sec', suffix: 's' },
 ];
 
-const INITIAL_TIME: TimeLeft = { days: '0', hours: '00', minutes: '00', seconds: '00' };
-
 interface Props {
 	/** `069d 22h 43m 21s` on one line. The suffix is real DOM text, not a
 	 * `::after` — generated content is invisible to anything reading the DOM. */
@@ -47,7 +46,7 @@ interface Props {
 }
 
 export default function Countdown({ compact = false, showSeconds = true }: Props) {
-	const [time, setTime] = useState<TimeLeft>(INITIAL_TIME);
+	const [time, setTime] = useState<TimeLeft>(ZERO);
 	const units = showSeconds ? UNITS : UNITS.filter((u) => u.key !== 'seconds');
 
 	useEffect(() => {

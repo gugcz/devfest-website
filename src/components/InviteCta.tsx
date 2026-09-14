@@ -4,12 +4,10 @@ import {
 	eventUrl,
 	fetchTickets,
 	filterDisplayable,
-	grossPrice,
 	releaseStatus,
-	releaseTitle,
 	type TitoRelease,
 } from '../lib/tito';
-import { track } from '../lib/analytics';
+import { trackBeginCheckout } from '../lib/checkout';
 
 /**
  * The single primary action on `/invite/<member>`. An island because the
@@ -45,11 +43,6 @@ interface Target {
 const INITIAL: Target = DISCOUNT_URL
 	? { href: DISCOUNT_URL, external: true, releases: [] }
 	: { href: FALLBACK_HREF, external: false, releases: [] };
-
-/** Two decimals — long VAT floats are noise in the GA4 payload. */
-function round2(n: number): number {
-	return Math.round(n * 100) / 100;
-}
 
 export default function InviteCta({ memberId, memberName, label, kind = 'primary', className }: Props) {
 	const [target, setTarget] = useState<Target>(INITIAL);
@@ -89,27 +82,11 @@ export default function InviteCta({ memberId, memberName, label, kind = 'primary
 		// `begin_checkout` from `Tickets.tsx`. Reporting both would double-count
 		// the wave and file an item-less event against the member.
 		if (!target.external) return;
-		const items = target.releases.map((release) => {
-			const price = grossPrice(release);
-			return {
-				item_id: release.slug,
-				item_name: releaseTitle(release),
-				...(price != null ? { price: round2(price) } : {}),
-				quantity: 1,
-			};
-		});
-		// `value` is one ticket's price, not the sum: the releases are
-		// alternatives, not a cart (same rule as Tickets.tsx). GA4 drops `value`
-		// without a `currency`, so the pair is sent together or not at all.
-		const value = items.find((i) => typeof i.price === 'number')?.price;
-		const currency = target.releases.find((r) => r.currency)?.currency;
-		track('begin_checkout', {
-			...(value != null ? { currency: (currency ?? 'CZK').toUpperCase(), value } : {}),
-			items,
+		trackBeginCheckout(
+			target.releases.map((release) => ({ release })),
 			// The attribution this whole channel rests on.
-			invite_member: memberId,
-			invite_member_name: memberName,
-		});
+			{ invite_member: memberId, invite_member_name: memberName },
+		);
 	};
 
 	return (

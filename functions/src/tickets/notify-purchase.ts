@@ -67,6 +67,31 @@ async function releaseRegistrationReference(reference: string | undefined): Prom
 	}
 }
 
+/** Drop claims older than the window, a few at a time, so the dedup tree
+ * stays the size of one day's registrations. Best-effort, and BEFORE the
+ * ack: 2nd-gen functions throttle CPU once the response is sent, so work
+ * queued after it may never run. Needs `.indexOn: ["at"]` on the node
+ * (database.rules.json) or RTDB scans the whole tree per query. */
+async function pruneStaleClaims(): Promise<void> {
+	try {
+		const stale = await db()
+			.ref('webhookDedup/registrations')
+			.orderByChild('at')
+			.endAt(Date.now() - DEDUP_WINDOW_MS)
+			.limitToFirst(50)
+			.once('value');
+		const updates: Record<string, null> = {};
+		stale.forEach((child) => {
+			if (child.key) updates[child.key] = null;
+		});
+		if (Object.keys(updates).length > 0) {
+			await db().ref('webhookDedup/registrations').update(updates);
+		}
+	} catch (err) {
+		logger.warn(`ticketsWebhook dedup prune failed: ${describeError(err)}`, err);
+	}
+}
+
 function formatPrice(price: string | null | undefined, currency: string | null | undefined): string | null {
 	if (!price) return null;
 	const numeric = Number(price);
@@ -192,9 +217,11 @@ export const ticketsWebhook = onRequest(
 			return;
 		}
 
+		// Parse the bytes the HMAC covered. Express leaves `req.body` as `{}` for
+		// an unrecognised content-type, so it can't be the source of truth.
 		let payload: TitoWebhookPayload;
 		try {
-			payload = (req.body ?? JSON.parse(rawBody.toString('utf8'))) as TitoWebhookPayload;
+			payload = JSON.parse(rawBody.toString('utf8')) as TitoWebhookPayload;
 		} catch (err) {
 			logger.error(`ticketsWebhook failed to parse body: ${describeError(err)}`, err);
 			res.status(400).send('Bad JSON');
@@ -216,6 +243,7 @@ export const ticketsWebhook = onRequest(
 				event: eventName,
 				reference: payload.registration_reference ?? payload.reference ?? null,
 			});
+			await pruneStaleClaims();
 			res.status(200).send('ok');
 		} catch (err) {
 			logger.error(`ticketsWebhook failed to notify Slack: ${describeError(err)}`, err);

@@ -2,20 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { PORTRAIT_TRANSITION, type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
+import { useRemote } from '../lib/useRemote';
+import { REDUCED_MOTION } from '../lib/useMediaQuery';
 import SpeakerDetail from './SpeakerDetail';
 import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import print from './Print.module.scss';
 import s from './Speakers.module.scss';
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
-	speakers: Speaker[];
-}
-
-const INITIAL: State = { status: 'loading', speakers: [] };
 
 /** Shared `view-transition-name` for the clicked print and the dialog photo,
  * so the browser morphs one into the other. Applied to the open speaker's
@@ -28,7 +21,7 @@ type ViewTransitionDoc = Document & {
 function canMorph(): boolean {
 	if (typeof document === 'undefined') return false;
 	if (typeof (document as ViewTransitionDoc).startViewTransition !== 'function') return false;
-	return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	return !window.matchMedia(REDUCED_MOTION).matches;
 }
 
 /**
@@ -180,25 +173,11 @@ export function SpeakerLineup({
 }
 
 export default function Speakers() {
-	const [state, setState] = useState<State>(INITIAL);
+	const { status, data } = useRemote(fetchLineup, 'speakers', (l) => l.speakers.length === 0);
 	const [selected, setSelected] = useState<Speaker | null>(null);
 	const { morphId, open, close } = usePortraitMorph(selected, setSelected);
 
-	useEffect(() => {
-		const ac = new AbortController();
-		fetchLineup(ac.signal)
-			.then(({ speakers }) => {
-				setState({ status: speakers.length > 0 ? 'ready' : 'empty', speakers });
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[speakers] Failed to load lineup:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
-			});
-		return () => ac.abort();
-	}, []);
-
-	if (state.status === 'error') {
+	if (status === 'error') {
 		return (
 			<ErrorState>
 				<p>The lineup won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
@@ -206,11 +185,11 @@ export default function Speakers() {
 		);
 	}
 
-	if (state.status === 'loading') {
+	if (status === 'loading' || !data) {
 		return <LoadingState label="Developing the lineup" />;
 	}
 
-	if (state.status === 'empty') {
+	if (status === 'empty') {
 		return (
 			<EmptyState action={{ href: '/#newsletter', label: 'Get notified' }}>
 				<p>Lineup announced soon.</p>
@@ -220,7 +199,7 @@ export default function Speakers() {
 
 	return (
 		<>
-			<SpeakerLineup speakers={state.speakers} onOpen={open} openId={morphId} />
+			<SpeakerLineup speakers={data.speakers} onOpen={open} openId={morphId} />
 			{selected && <SpeakerDetail speaker={selected} onClose={close} />}
 		</>
 	);

@@ -173,6 +173,7 @@ Browser  /invoice  (InvoiceForm, client:load)
 
 Firestore onCreate
   └─> processInvoiceTrigger (europe-west1)
+        ├─ claim pending → processing (transaction; a redelivered event is a no-op)
         ├─ ti.to:   read company-funded release → price (CZK, no FX)
         ├─ iDoklad: find/create contact → create issued invoice → email it (PDF attached)
         └─ invoices/{id} = { status: invoiced, idokladInvoiceId, variableSymbol, … }
@@ -197,6 +198,8 @@ The browser never touches Firestore — it calls `submitInvoiceCallable`, so `in
 | `pollPaidInvoicesScheduled` | Cloud Scheduler, hourly | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
 
 > iDoklad has no webhooks — payment is polled hourly, so a paid invoice is claimed up to ~1 h later.
+
+> `invoiceRateLimits` (the per-company throttle) writes an `expiresAt` timestamp. Set a Firestore **TTL policy** on that collection with field `expiresAt` (console → Firestore → TTL) so spent windows are deleted; the code does not depend on it, the collection just grows without it.
 
 ### Secrets & config
 

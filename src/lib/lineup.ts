@@ -23,7 +23,7 @@ function parseDocs<T>(raw: unknown, parse: (id: string, data: Record<string, unk
 	});
 }
 
-async function fetchDocs(signal?: AbortSignal): Promise<{ speakers: unknown; sessions: unknown }> {
+async function fetchDocs(signal?: AbortSignal): Promise<{ speakers?: unknown; sessions?: unknown }> {
 	const res = await fetch(ENDPOINT, { signal });
 	if (!res.ok) throw new Error(`lineup fetch failed: ${res.status}`);
 	return (await res.json()) as { speakers: unknown; sessions: unknown };
@@ -51,4 +51,10 @@ export function fetchLineup(signal?: AbortSignal): Promise<Lineup> {
  */
 export function fetchAgenda(signal?: AbortSignal): Promise<Lineup> {
 	return fetchParsed(isAgendaSession, signal);
+}
+
+/** Full profiles keyed by id, so a session → speaker drill-down renders
+ * from data already on the page instead of a second read. */
+export function speakersById(speakers: Speaker[]): Record<string, Speaker> {
+	return Object.fromEntries(speakers.map((sp) => [sp.id, sp]));
 }

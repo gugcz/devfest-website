@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import {
 	eventUrl,
 	fetchTickets,
 	filterDisplayable,
-	grossPrice,
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
@@ -11,7 +10,8 @@ import {
 	type ReleaseStatus,
 	type TitoRelease,
 } from '../lib/tito';
-import { track } from '../lib/analytics';
+import { trackBeginCheckout } from '../lib/checkout';
+import { useRemote } from '../lib/useRemote';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Tickets.module.scss';
 
@@ -27,17 +27,6 @@ const GROUP_DESCRIPTIONS: Record<string, string> = {
 function groupDescription(groupName: string, fallback: string | null): string | null {
 	return GROUP_DESCRIPTIONS[groupName.trim().toLowerCase()] ?? fallback;
 }
-
-type Status = 'loading' | 'ready' | 'empty' | 'error';
-
-interface State {
-	status: Status;
-	releases: TitoRelease[];
-	accountSlug: string;
-	eventSlug: string;
-}
-
-const INITIAL: State = { status: 'loading', releases: [], accountSlug: '', eventSlug: '' };
 
 interface ReleaseGroup {
 	name: string;
@@ -69,40 +58,17 @@ function groupReleases(releases: TitoRelease[]): ReleaseGroup[] {
 	return Array.from(map.values());
 }
 
-/**
- * Report a Buy CTA click as GA4's `begin_checkout`. Checkout runs on ti.to,
- * so this is the last thing GA4 sees of a sale. Items carry only the
- * buyable variants, priced gross (what the visitor pays).
- */
-function trackBeginCheckout(group: ReleaseGroup, statuses: ReleaseStatus[]): void {
-	const items = group.variants
-		.filter((_, i) => statuses[i]?.purchasable)
-		.map(({ release, variantLabel }) => {
-			const price = grossPrice(release);
-			return {
-				item_id: release.slug,
-				item_name: releaseTitle(release),
-				item_category: group.name,
-				...(variantLabel ? { item_variant: variantLabel } : {}),
-				...(price != null ? { price: round2(price) } : {}),
-				quantity: 1,
-			};
-		});
-	// `value` is the wave's lead price — the figure printed on the stub, and what
-	// one ticket costs. Summing the variants would be wrong: they are alternatives
-	// (Individual *or* Company funded), not a cart. GA4 ignores `value` without a
-	// `currency`, so the two are sent together or not at all (free / unpriced wave).
-	const value = items.find((i) => typeof i.price === 'number')?.price;
-	const currency = group.variants.find(({ release }) => release.currency)?.release.currency;
-	track('begin_checkout', {
-		...(value != null ? { currency: (currency ?? 'CZK').toUpperCase(), value } : {}),
-		items,
-	});
-}
-
-/** Two decimals — GA4 rejects nothing here, but long VAT floats are noise. */
-function round2(n: number): number {
-	return Math.round(n * 100) / 100;
+/** Buy CTA click → `begin_checkout` with only the buyable variants, each
+ * tagged with its wave (`item_category`) and variant label. */
+function trackGroupCheckout(group: ReleaseGroup, statuses: ReleaseStatus[]): void {
+	trackBeginCheckout(
+		group.variants
+			.filter((_, i) => statuses[i]?.purchasable)
+			.map(({ release, variantLabel }) => ({
+				release,
+				item: { item_category: group.name, ...(variantLabel ? { item_variant: variantLabel } : {}) },
+			})),
+	);
 }
 
 /** Every render path is the same `#tickets` section, so the class list is
@@ -111,36 +77,20 @@ function round2(n: number): number {
 const sectionClass = `${s.tickets} anchor-target`;
 
 export default function Tickets() {
-	const [state, setState] = useState<State>(INITIAL);
+	// Plain fetch of the CDN-cached `ticketsApi` endpoint (Hosting rewrites
+	// /api/tickets → the function, which reads RTDB via the Admin SDK) — no
+	// Firebase SDK / App Check on this path. A `null` payload (empty cache,
+	// before the first refresh) is "empty", not an error.
+	const { status, data } = useRemote(
+		fetchTickets,
+		'tickets',
+		(cache) => !cache || filterDisplayable(cache.releases ?? []).length === 0,
+	);
+	const releases = useMemo(() => filterDisplayable(data?.releases ?? []), [data]);
+	const accountSlug = data?.accountSlug ?? '';
+	const eventSlug = data?.eventSlug ?? '';
 
-	useEffect(() => {
-		// Plain fetch of the CDN-cached `ticketsApi` endpoint (Hosting rewrites
-		// /api/tickets → the function, which reads RTDB via the Admin SDK) — no
-		// Firebase SDK / App Check on this path.
-		const ac = new AbortController();
-		fetchTickets(ac.signal)
-			.then((data) => {
-				if (!data) {
-					setState({ status: 'empty', releases: [], accountSlug: '', eventSlug: '' });
-					return;
-				}
-				const visible = filterDisplayable(data.releases ?? []);
-				setState({
-					status: visible.length > 0 ? 'ready' : 'empty',
-					releases: visible,
-					accountSlug: data.accountSlug ?? '',
-					eventSlug: data.eventSlug ?? '',
-				});
-			})
-			.catch((err) => {
-				if (ac.signal.aborted) return;
-				console.warn('[tickets] Failed to load tickets:', err);
-				setState((prev) => ({ ...prev, status: 'error' }));
-			});
-		return () => ac.abort();
-	}, []);
-
-	if (state.status === 'error') {
+	if (status === 'error') {
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
 				<header className="head-split">
@@ -153,7 +103,7 @@ export default function Tickets() {
 		);
 	}
 
-	if (state.status === 'loading') {
+	if (status === 'loading') {
 		return (
 			<section id="tickets" className={sectionClass} aria-busy={true} aria-labelledby="tickets-heading">
 				<header className="head-split">
@@ -180,10 +130,9 @@ export default function Tickets() {
 		);
 	}
 
-	const { releases, accountSlug, eventSlug } = state;
 	const hasEvent = Boolean(accountSlug && eventSlug);
 
-	if (state.status === 'empty') {
+	if (status === 'empty') {
 		// Render even with no event slugs (empty cache, before the first
 		// refresh). Returning null deleted `#tickets` after hydration, so every
 		// `/#tickets` link dropped the visitor at the top of the page. Without
@@ -310,7 +259,7 @@ export default function Tickets() {
 										target="_blank"
 										rel="noopener noreferrer"
 										aria-label={`Get ${group.name} tickets on ti.to`}
-										onClick={() => trackBeginCheckout(group, statuses)}
+										onClick={() => trackGroupCheckout(group, statuses)}
 									>
 										Get tickets
 									</a>

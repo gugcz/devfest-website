@@ -34,7 +34,7 @@ import {
 	type TitoConfig,
 } from './tito-discount.js';
 import { buildInvoiceEmail, formatDueDate } from './email.js';
-import { updateInvoice, type InvoiceDoc } from './firestore.js';
+import { claimInvoiceForIssuing, updateInvoice, type InvoiceDoc } from './firestore.js';
 
 
 export const processInvoiceTrigger = onDocumentCreated(
@@ -51,6 +51,16 @@ export const processInvoiceTrigger = onDocumentCreated(
 		const slackUrl = SLACK_WEBHOOK_URL.value();
 
 		try {
+			// Firestore delivers create events at least once. Only the delivery
+			// that flips `pending` → `processing` issues the invoice; a replay sees
+			// the doc already claimed and does nothing — never a second iDoklad
+			// invoice. Inside the try so a failed transaction lands in `error` +
+			// Slack like every other fault, not a doc stuck at `pending`.
+			if (!(await claimInvoiceForIssuing(id))) {
+				logger.info('processInvoiceTrigger duplicate delivery ignored', { id });
+				return;
+			}
+
 			const titoCfg: TitoConfig = {
 				token: TITO_API_TOKEN.value(),
 				accountSlug: TITO_ACCOUNT_SLUG.value(),

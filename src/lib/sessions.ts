@@ -212,3 +212,8 @@ export function isDisplayableSession(session: Session): boolean {
 export function isAgendaSession(session: Session): boolean {
 	return session.title.trim().length > 0;
 }
+
+/** Comma-joined presenter names, empties dropped. */
+export function speakerNames(session: Session): string {
+	return session.speakers.map((sp) => sp.fullName).filter(Boolean).join(', ');
+}
