@@ -70,7 +70,7 @@
 	width: 2.75rem;
 	height: 2.75rem;
 	margin-left: -0.6rem;
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 	transition: color 0.2s, transform 0.2s;
 
 	svg {
@@ -95,9 +95,7 @@
 	margin-top: clamp(2rem, 4vw, 3rem);
 
 	p {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.7;
+		@include prose(var(--fs-lede), 1.7);
 		color: var(--ink-strong);
 		margin: 0 0 1.1rem;
 		// No character cap: the 0.62fr column beside the portrait IS the measure,
@@ -122,20 +120,13 @@
 }
 
 .sessionName {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title;
 	margin: 0;
 }
 
 .sessionDesc {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
-	line-height: 1.6;
-	color: rgba(240, 237, 230, 0.6);
+	@include prose(var(--fs-ui), 1.6);
+	color: var(--ink-dim);
 	max-width: 56ch;
 	margin: 0.5rem 0 0;
 	// Same measure treatment as the bio — one justified and one ragged block of

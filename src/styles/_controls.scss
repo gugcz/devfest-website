@@ -1,0 +1,32 @@
+@use 'type' as *;
+
+// The lit text field: a dark plate with the control-edge boundary, warming
+// and lighting on focus. Shared by the invoice form and the attending-card
+// builder; a caller adds its own padding, placeholder or invalid state.
+//
+// `:focus` (pointer focus too) swaps the boundary to accent-hot so it clears
+// 3:1 (1.4.11); keyboard focus additionally draws the ring, tight against the
+// edge the field already has.
+@mixin lit-field {
+	width: 100%;
+	padding: 0.85rem 0.95rem;
+	min-height: 2.75rem;
+	background: var(--panel-lit-2);
+	border: 1px solid var(--field-border);
+	border-radius: var(--radius);
+	color: var(--color-text);
+	@include prose;
+	letter-spacing: 0.01em;
+	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+
+	&:focus {
+		outline: none;
+		border-color: var(--color-accent-hot);
+		background: var(--panel-hover);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
+	}
+}

@@ -1,203 +1,181 @@
 @use '../styles/type' as *;
 
-	// 4rem, the homepage's section-head gap — this page ran its heads at half the
-	// site's spacing while carrying the same title size.
-	.section-head {
-		margin-bottom: 4rem;
-		padding-bottom: 1.1rem;
-		border-bottom: 1px solid var(--rule);
+// 4rem, the homepage's section-head gap — this page ran its heads at half the
+// site's spacing while carrying the same title size.
+.section-head {
+	margin-bottom: 4rem;
+	padding-bottom: 1.1rem;
+	border-bottom: 1px solid var(--rule);
+}
+
+// A ruled note opening on a strong rule, not a mounted panel.
+.empty-state {
+	position: relative;
+	border: 0;
+	border-top: 1px solid var(--rule-strong);
+	border-radius: 0;
+	background: transparent;
+	padding: 2.2rem 0 0;
+	max-width: 52ch;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1.1rem;
+}
+
+.empty-stamp {
+	@include mono(var(--fs-label), 0.3em, uppercase);
+	color: var(--color-accent-hot);
+	padding: 0;
+	background: transparent;
+	// A plain mono word, never a boxed stamp.
+	border: 0;
+}
+
+.empty-line {
+	@include prose(var(--fs-lede), 1.6);
+	color: var(--color-grey);
+	max-width: 56ch;
+	margin: 0;
+}
+
+// An open field of clippings.
+.coverage-list {
+	position: relative;
+}
+
+// A clipping: thumbnail left, headline and outlet right. The whole entry is the
+// link, so it takes `.field-row--link`; this file owns only its grid and type.
+.coverage-card {
+	display: grid;
+	grid-template-columns: 220px 1fr;
+	gap: 1.8rem;
+	text-decoration: none;
+
+	// Not ink: a hairline inside the row, and the off-site arrow's motion. Hover only.
+	&:hover {
+		.coverage-meta { border-top-color: rgba(247, 239, 230, 0.4); }
+		.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
+		.coverage-arrow { transform: translate(2px, -2px); }
 	}
+}
 
-	// Poster headline — typewriter, to match the noir key art.
-	.section-title {
-		font-family: var(--font-bebas-neue), sans-serif;
-		font-size: var(--fs-h2);
-		line-height: var(--lh-display);
-		letter-spacing: var(--track-display);
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin: 0;
+.coverage-thumb {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 16 / 9;
+	background: var(--panel-lit-2);
+	border: 1px solid var(--rule);
 
-		.red {
-			color: var(--color-accent-hot);
-		}
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+		filter: grayscale(0.4) contrast(1.05);
+		transition: transform 0.3s ease, filter 0.3s ease;
 	}
+}
 
-	// A ruled note opening on a strong rule, not a mounted panel.
-	.empty-state {
+.coverage-text {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	min-width: 0;
+
+	> .coverage-outlet,
+	> .coverage-title,
+	> .coverage-desc,
+	> .coverage-meta {
 		position: relative;
-		border: 0;
-		border-top: 1px solid var(--rule-strong);
-		border-radius: 0;
-		background: transparent;
-		padding: 2.2rem 0 0;
-		max-width: 52ch;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1.1rem;
+		z-index: 1;
 	}
+}
 
-	.empty-stamp {
-		@include mono(var(--fs-label), 0.3em, uppercase);
-		color: var(--color-accent-hot);
-		padding: 0;
-		background: transparent;
-		// A plain mono word, never a boxed stamp.
-		border: 0;
-	}
+// Publication name — a plain mono eyebrow, muted at rest and full cream on the
+// reach field. Never a filled tab: a resting red label competes with the one
+// state the colour is for.
+.coverage-outlet {
+	align-self: flex-start;
+	@include mono(var(--fs-label-sm), 0.24em, uppercase);
+	color: var(--ink-muted);
+}
 
-	.empty-line {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.6;
-		color: var(--color-grey);
-		max-width: 56ch;
-		margin: 0;
-	}
+// THE ONE ROW TITLE NOT IN BEBAS: scraped Czech, and JetBrains Mono is the
+// only brand face that sets Czech cleanly. Mono advances ~0.6em vs Bebas
+// ~0.42em, hence the ~0.6x step. No uppercase (diacritics unreadable).
+.coverage-title {
+	@include mono(clamp(1.45rem, 2.5vw, 2.1rem), 0);
+	font-weight: 500;
+	line-height: 1.3;
+	color: var(--color-text);
+}
 
-	// An open field of clippings.
-	.coverage-list {
-		position: relative;
-	}
+// Off-site marker on the mono "Read article" line, not the headline — on the
+// headline it scaled with the row title and became a 40px glyph mid-sentence.
+.coverage-arrow {
+	display: inline-block;
+	margin-left: 0.35rem;
+	transition: transform 0.25s;
+}
 
-	// A clipping: thumbnail left, headline and outlet right. The whole entry is the
-	// link, so it takes `.field-row--link`; this file owns only its grid and type.
+// Mono, not Special Elite, for the same reason as the title: Special Elite ships
+// a `latin` subset only, so every ř/ě/č in scraped Czech falls back mid-word.
+.coverage-desc {
+	@include mono(var(--fs-body));
+	line-height: 1.5;
+	color: var(--color-grey);
+	// Push the meta row to the card foot for aligned baselines.
+	flex: 1;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+// Hairline divider above the read/date meta row.
+.coverage-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-top: 0.8rem;
+	padding-top: 0.9rem;
+	border-top: 1px solid var(--rule);
+	@include mono(var(--fs-label), 0.12em);
+	color: var(--ink-faint);
+	// Outlet and date sit on one line while they fit and wrap when they do
+	// not. `white-space: nowrap` pinned them to one line at any text size,
+	// and at a 32px root that pair is wider than a phone viewport.
+	flex-wrap: wrap;
+}
+
+.coverage-read {
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	color: var(--ink-meta);
+	transition: color 0.2s;
+}
+
+.coverage-date {
+	color: var(--ink-faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.coverage-arrow,
+	.coverage-thumb img { transition: none; }
+
+}
+
+@media (max-width: 600px) {
+	.section-head { margin-bottom: 2.4rem; }
+
+	// Flush to the content column — the side padding inset the entry from its rule.
 	.coverage-card {
-		display: grid;
-		grid-template-columns: 220px 1fr;
-		gap: 1.8rem;
-		text-decoration: none;
-
-		// Not ink: a hairline inside the row, and the off-site arrow's motion. Hover only.
-		&:hover {
-			.coverage-meta { border-top-color: rgba(247, 239, 230, 0.4); }
-			.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
-			.coverage-arrow { transform: translate(2px, -2px); }
-		}
-	}
-
-	.coverage-thumb {
-		position: relative;
-		overflow: hidden;
-		aspect-ratio: 16 / 9;
-		background: var(--panel-lit-2);
-		border: 1px solid var(--rule);
-
-		img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			display: block;
-			filter: grayscale(0.4) contrast(1.05);
-			transition: transform 0.3s ease, filter 0.3s ease;
-		}
-	}
-
-	.coverage-text {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		min-width: 0;
-
-		> .coverage-outlet,
-		> .coverage-title,
-		> .coverage-desc,
-		> .coverage-meta {
-			position: relative;
-			z-index: 1;
-		}
-	}
-
-	// Publication name — a plain mono eyebrow, muted at rest and full cream on the
-	// reach field. Never a filled tab: a resting red label competes with the one
-	// state the colour is for.
-	.coverage-outlet {
-		align-self: flex-start;
-		@include mono(var(--fs-label-sm), 0.24em, uppercase);
-		color: var(--ink-muted);
-	}
-
-	// THE ONE ROW TITLE NOT IN BEBAS: scraped Czech, and JetBrains Mono is the
-	// only brand face that sets Czech cleanly. Mono advances ~0.6em vs Bebas
-	// ~0.42em, hence the ~0.6x step. No uppercase (diacritics unreadable).
-	.coverage-title {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-weight: 500;
-		font-size: clamp(1.45rem, 2.5vw, 2.1rem);
-		line-height: 1.3;
-		letter-spacing: 0;
-		color: var(--color-text);
-	}
-
-	// Off-site marker on the mono "Read article" line, not the headline — on the
-	// headline it scaled with the row title and became a 40px glyph mid-sentence.
-	.coverage-arrow {
-		display: inline-block;
-		margin-left: 0.35rem;
-		transition: transform 0.25s;
-	}
-
-	// Mono, not Special Elite, for the same reason as the title: Special Elite ships
-	// a `latin` subset only, so every ř/ě/č in scraped Czech falls back mid-word.
-	.coverage-desc {
-		@include mono(var(--fs-body));
-		line-height: 1.5;
-		color: var(--color-grey);
-		// Push the meta row to the card foot for aligned baselines.
-		flex: 1;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-
-	// Hairline divider above the read/date meta row.
-	.coverage-meta {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
+		grid-template-columns: 1fr;
 		gap: 1rem;
-		margin-top: 0.8rem;
-		padding-top: 0.9rem;
-		border-top: 1px solid var(--rule);
-		@include mono(var(--fs-label), 0.12em);
-		color: rgba(240, 237, 230, 0.5);
-		// Outlet and date sit on one line while they fit and wrap when they do
-		// not. `white-space: nowrap` pinned them to one line at any text size,
-		// and at a 32px root that pair is wider than a phone viewport.
-		flex-wrap: wrap;
+		padding: 1.5rem 0;
 	}
-
-	.coverage-read {
-		text-transform: uppercase;
-		letter-spacing: 0.2em;
-		color: var(--ink-meta);
-		transition: color 0.2s;
-	}
-
-	.coverage-date {
-		color: rgba(240, 237, 230, 0.5);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.coverage-arrow,
-		.coverage-thumb img { transition: none; }
-
-	}
-
-	@media (max-width: 900px) {
-	}
-
-	@media (max-width: 600px) {
-		.section-head { margin-bottom: 2.4rem; }
-
-		// Flush to the content column — the side padding inset the entry from its rule.
-		.coverage-card {
-			grid-template-columns: 1fr;
-			gap: 1rem;
-			padding: 1.5rem 0;
-		}
-	}
+}

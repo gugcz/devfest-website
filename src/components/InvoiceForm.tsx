@@ -401,7 +401,7 @@ export default function InvoiceForm() {
 				    stays reachable and answers on activation, naming what is
 				    missing. `aria-disabled` covers only the in-flight state. */}
 				<button
-					className={s.button}
+					className={`btn-primary ${s.button}`}
 					type="submit"
 					aria-disabled={status === 'submitting' ? true : undefined}
 				>

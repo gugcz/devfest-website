@@ -32,7 +32,7 @@
 	left: 0.85rem;
 	width: 1.05rem;
 	height: 1.05rem;
-	color: rgba(240, 237, 230, 0.5);
+	color: var(--ink-faint);
 	pointer-events: none;
 }
 
@@ -123,7 +123,7 @@
 .clearInline {
 	align-self: flex-start;
 	@include mono(var(--fs-label-sm), 0.14em, uppercase);
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 	background: none;
 	border: none;
 	padding: 0;
@@ -135,12 +135,6 @@
 	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);
-	}
-
-	// The underline is always on, so keyboard focus needs a real ring (2.4.7 / 1.4.1).
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
 	}
 }
 
@@ -175,7 +169,7 @@
 		}
 
 		.avatarMore {
-			color: #1A0000;
+			color: var(--on-accent-ink);
 			background: #F7EFE6;
 		}
 	}
@@ -211,12 +205,7 @@
 // A step below the 54px a short list carries — thirty talks at that size stop
 // being scannable, but this is the same container language, not a smaller one.
 .title {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title;
 	// Reserve up to three lines so short and long titles keep row heights close.
 	display: -webkit-box;
 	-webkit-line-clamp: 3;
@@ -226,9 +215,7 @@
 }
 
 .excerpt {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
-	line-height: 1.6;
+	@include prose(var(--fs-body), 1.6);
 	color: rgba(240, 237, 230, 0.72);
 	margin-top: 0.55rem;
 	display: -webkit-box;
@@ -339,9 +326,7 @@
 }
 
 .moreText {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-lede);
-	line-height: 1.5;
+	@include prose(var(--fs-lede), 1.5);
 	color: var(--color-grey);
 	margin: 0;
 	max-width: 22ch;

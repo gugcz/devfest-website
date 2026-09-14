@@ -3,6 +3,7 @@ import { type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
 import { shuffle } from '../lib/shuffle';
 import SpeakerPhoto from './SpeakerPhoto';
+import print from './Print.module.scss';
 import s from './SpeakersTeaser.module.scss';
 
 type Status = 'loading' | 'ready' | 'empty' | 'error';
@@ -27,20 +28,20 @@ function usePrefersReducedMotion(): boolean {
 function Thumb({ speaker }: { speaker: Speaker }) {
 	return (
 		<a
-			className={`${s.tile} develop`}
+			className={`${print.frame} ${s.tile} develop`}
 			href="/speakers"
 			aria-label={`${speaker.fullName} — see the full lineup`}
 		>
-			<span className={s.thumb}>
+			<span className={print.print}>
 				<SpeakerPhoto
 					speaker={speaker}
-					photoClass={s.photo}
-					monogramClass={s.monogram}
+					photoClass={print.photo}
+					monogramClass={print.monogram}
 					width={220}
 					height={275}
 				/>
-				<span className={s.scrim} aria-hidden="true" />
-				<span className={s.vignette} aria-hidden="true" />
+				<span className={print.scrim} aria-hidden="true" />
+				<span className={print.vignette} aria-hidden="true" />
 			</span>
 			<span className={s.plate}>
 				<span className={s.tname}>{speaker.fullName}</span>

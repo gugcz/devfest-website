@@ -1,3 +1,5 @@
+@use '../styles/type' as *;
+@use '../styles/controls' as *;
 .wrapper {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -75,9 +77,11 @@
 	}
 }
 
-// Last step's spine is transparent — nothing follows it.
-.step:last-of-type .stepSpine {
-	background: transparent !important;
+// Last step's spine is transparent — nothing follows it. Compound selector so it
+// outranks the `[data-filled]` state without `!important`.
+.step:last-of-type .stepSpine,
+.step:last-of-type .stepSpine[data-filled='true'] {
+	background: transparent;
 }
 
 .stepBody {
@@ -90,22 +94,25 @@
 	align-items: baseline;
 	gap: 0.6rem;
 	margin-bottom: 0.85rem;
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
+	}
 }
 
 .stepHeadText {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
+	@include mono(var(--fs-label), 0.22em, uppercase);
 	font-weight: 500;
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
 	color: var(--color-text);
 }
 
 .statusWord {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-xs), 0.14em, uppercase);
 
 	&[data-tone='required'] {
 		color: var(--color-text);
@@ -119,40 +126,22 @@
 .hint {
 	display: block;
 	margin-top: 0.6rem;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
+	@include prose(var(--fs-ui));
 	font-style: italic;
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 }
 
 .nameFieldWrap {
 	position: relative;
 }
 
-// Same lit-field recipe as InvoiceForm's `.input`.
+// The shared lit field (`_controls.scss`); room on the right for the counter.
 .input {
-	width: 100%;
-	padding: 0.85rem 3.9rem 0.85rem 0.95rem;
-	min-height: 2.75rem;
-	background: var(--panel-lit-2);
-	border: 1px solid var(--field-border);
-	border-radius: var(--radius);
-	color: var(--color-text);
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
-	letter-spacing: 0.01em;
-	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+	@include lit-field;
+	padding-right: 3.9rem;
 
 	&:focus {
-		outline: none;
-		border-color: var(--color-accent-hot);
-		background: var(--panel-hover);
 		box-shadow: var(--glow-red-soft);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-tight);
 	}
 }
 
@@ -161,8 +150,7 @@
 	right: 0.95rem;
 	top: 50%;
 	transform: translateY(-50%);
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
+	@include mono(var(--fs-label-xs));
 	font-variant-numeric: tabular-nums;
 	// Spec calls for `.38` (3.19:1) as a deliberate sub-AA value — it
 	// duplicates the `maxLength` the field already enforces. `npm run a11y`
@@ -175,19 +163,6 @@
 	&[data-emphasis='true'] {
 		color: var(--color-text);
 	}
-}
-
-// Clipped, not `display:none` — the input must stay focusable/keyboard-operable.
-.srOnly {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
 }
 
 // Dropzone tile: empty / drag-over states. Picked and decoding states use
@@ -221,24 +196,18 @@
 }
 
 .dropLabel {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-lg), 0.14em, uppercase);
 	color: var(--color-text);
 }
 
 .dropOr {
 	font-family: var(--font-special-elite), cursive;
-	color: rgba(240, 237, 230, 0.5);
+	color: var(--ink-faint);
 }
 
 .chooseButton {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
+	@include mono(var(--fs-label), 0.2em, uppercase);
 	font-weight: 500;
-	letter-spacing: 0.2em;
-	text-transform: uppercase;
 	color: var(--color-text);
 	background: none;
 	border: 0;
@@ -303,16 +272,12 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	min-width: 0;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-lg);
+	@include mono(var(--fs-label-lg));
 	color: var(--color-text);
 }
 
 .photoMeta {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-xs), 0.14em, uppercase);
 	color: var(--color-grey);
 	font-variant-numeric: tabular-nums;
 }
@@ -325,18 +290,14 @@
 }
 
 .error {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-ui);
+	@include prose(var(--fs-ui));
 	color: var(--color-error);
 	margin: 0.6rem 0 0;
 }
 
 .linkButton {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
-	color: rgba(240, 237, 230, 0.6);
+	@include mono(var(--fs-label), 0.14em, uppercase);
+	color: var(--ink-dim);
 	background: none;
 	border: 0;
 	padding: 0.15rem 0;
@@ -373,16 +334,12 @@
 }
 
 .railLabel {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.2em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-xs), 0.2em, uppercase);
 	color: rgba(240, 237, 230, 0.62);
 }
 
 .railReadout {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
+	@include mono(var(--fs-label-xs));
 	font-variant-numeric: tabular-nums;
 	color: var(--color-text);
 }
@@ -484,17 +441,6 @@
 	}
 }
 
-.stepHead {
-	&:focus {
-		outline: none;
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-tight);
-	}
-}
-
 .stepNav {
 	display: flex;
 	align-items: center;
@@ -504,11 +450,9 @@
 }
 
 .stepIndicator {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.14em;
+	@include mono(var(--fs-label-xs), 0.14em);
 	font-variant-numeric: tabular-nums;
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 }
 
 .preview {
@@ -551,11 +495,8 @@
 	pointer-events: none;
 
 	span {
-		font-family: var(--font-jetbrains-mono), monospace;
-		font-size: var(--fs-label);
+		@include mono(var(--fs-label), 0.24em, uppercase);
 		font-weight: 500;
-		letter-spacing: 0.24em;
-		text-transform: uppercase;
 		color: var(--color-text);
 	}
 }
@@ -567,9 +508,8 @@
 }
 
 .message {
-	font-family: var(--font-special-elite), cursive;
+	@include prose(var(--fs-ui));
 	font-style: italic;
-	font-size: var(--fs-ui);
 	margin: 0;
 	min-height: 1.2em;
 	color: rgba(240, 237, 230, 0.7);

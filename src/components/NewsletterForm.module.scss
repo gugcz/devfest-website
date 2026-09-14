@@ -41,8 +41,7 @@
 	border: none;
 	border-radius: inherit;
 	color: var(--color-text);
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
+	@include prose;
 	letter-spacing: 0.02em;
 
 	&::placeholder {
@@ -78,11 +77,6 @@
 		box-shadow: var(--glow-red), 0 8px 22px rgba(204, 0, 0, 0.28);
 	}
 
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
-
 	// Dedicated pair, not a dimmed accent: opacity alone measured ~2.4:1 (WCAG 1.4.3
 	// fail) against the page ground. #9A968D on --panel-hover holds ~6.2:1.
 	&:disabled {
@@ -92,18 +86,6 @@
 		border-color: var(--field-border);
 		color: #9A968D;
 	}
-}
-
-.srOnly {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
 }
 
 .consent {
@@ -122,40 +104,22 @@
 		margin-top: 0.1em;
 		accent-color: var(--color-accent);
 		cursor: pointer;
-
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: var(--focus-gap);
-			border-radius: 2px;
-		}
 	}
 
 	span {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-ui);
-		line-height: 1.55;
+		@include prose(var(--fs-ui), 1.55);
 		letter-spacing: 0.01em;
 		color: var(--ink);
 	}
 }
 
 .consentLink {
-	color: var(--ink-strong);
-	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
-	transition: border-color 0.2s, color 0.2s;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-	}
+	@include hairline-link(var(--ink-strong));
 }
 
 .message {
-	font-family: var(--font-special-elite), cursive;
+	@include prose(var(--fs-ui));
 	font-style: italic;
-	font-size: var(--fs-ui);
 	letter-spacing: 0.02em;
 	color: var(--color-error);
 	margin-top: 0.8rem;
@@ -201,7 +165,7 @@
 		// Opaque, not rgba: a contrast checker resolves a translucent fill's placeholder
 		// against the band red behind it, and the real ratio then depends on a blend.
 		background: #9A0000;
-		border-color: rgba(247, 239, 230, 0.85);
+		border-color: var(--on-accent-border);
 
 		&:focus-within {
 			border-color: var(--on-accent);
@@ -227,7 +191,7 @@
 	.button {
 		background: var(--on-accent);
 		border-color: var(--on-accent);
-		color: #1A0000;
+		color: var(--on-accent-ink);
 
 		&:hover:not(:disabled) {
 			background: #FFFFFF;
@@ -241,7 +205,7 @@
 	}
 
 	.consent input[type='checkbox'] {
-		accent-color: #1A0000;
+		accent-color: var(--on-accent-ink);
 
 		&:focus-visible {
 			outline-color: var(--on-accent);
@@ -254,7 +218,7 @@
 
 	.consentLink {
 		color: var(--on-accent);
-		border-bottom-color: rgba(247, 239, 230, 0.85);
+		border-bottom-color: var(--on-accent-border);
 
 		&:hover,
 		&:focus-visible {

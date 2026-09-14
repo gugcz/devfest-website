@@ -87,11 +87,8 @@
 	grid-row: 1;
 	display: flex;
 	align-items: center;
-	font-family: var(--font-jetbrains-mono), monospace;
+	@include mono(var(--fs-ui), 0.2em, uppercase);
 	// A room name heads a 409px column; at label size it matched the cell meta under it.
-	font-size: var(--fs-ui);
-	letter-spacing: 0.2em;
-	text-transform: uppercase;
 	color: var(--ink);
 	// Filled, not transparent: the header is the one row that must stay legible
 	// while the sheet scrolls under it.
@@ -112,11 +109,9 @@
 	align-self: start;
 	position: relative;
 	z-index: 1;
-	font-family: var(--font-jetbrains-mono), monospace;
+	@include mono(var(--fs-label-lg), 0.1em);
 	font-variant-numeric: tabular-nums;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.1em;
-	color: rgba(240, 237, 230, 0.5);
+	color: var(--ink-faint);
 	padding: 0.35rem 0.9rem 0 0;
 }
 
@@ -140,10 +135,8 @@
 }
 
 .bandTime {
-	font-family: var(--font-jetbrains-mono), monospace;
+	@include mono(var(--fs-label-lg), 0.1em);
 	font-variant-numeric: tabular-nums;
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.1em;
 	color: var(--ink-muted);
 	flex-shrink: 0;
 }
@@ -186,12 +179,7 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(
-			104deg,
-			rgba(255, 244, 232, 0.07) 0%,
-			rgba(255, 240, 226, 0.03) 42%,
-			transparent 86%
-		);
+		background: var(--wash-strong);
 		opacity: 0;
 		pointer-events: none;
 		z-index: 0;
@@ -240,11 +228,9 @@
 
 // Muted, not accent-hot: red belongs to the session that is actually on now.
 .cellTime {
-	font-family: var(--font-jetbrains-mono), monospace;
+	@include mono(var(--fs-label-lg), 0.1em);
 	font-variant-numeric: tabular-nums;
 	// Same index role as the ticket wave's serial, so the same step.
-	font-size: var(--fs-label-lg);
-	letter-spacing: 0.1em;
 	color: var(--ink-muted);
 }
 
@@ -418,10 +404,8 @@
 	flex-direction: column;
 	min-width: min(4.25rem, 21vw);
 	max-width: min(5.5rem, 30vw);
-	font-family: var(--font-jetbrains-mono), monospace;
+	@include mono(var(--fs-ui), 0.1em);
 	font-variant-numeric: tabular-nums;
-	font-size: var(--fs-ui);
-	letter-spacing: 0.1em;
 	color: var(--ink-muted);
 	// Drops the mono time onto the Bebas title's cap-height. A band's title is
 	// mono at label size, so there it sits on the first line already.
@@ -443,12 +427,7 @@
 // The long-list row step, shared with the session rows, the FAQ questions and
 // the press clippings.
 .itemTitle {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title;
 
 	.itemBand & {
 		@include mono(var(--fs-ui), 0.18em);
@@ -503,13 +482,8 @@
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
-	font-family: var(--font-bebas-neue), sans-serif;
 	// The long-list row step, shared with /sessions, the FAQ and the press clippings.
-	font-size: var(--fs-row-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title;
 	text-align: left;
 	cursor: pointer;
 	// Titles are unbounded-length Sessionize copy — wrap instead of overflowing the row.
@@ -619,16 +593,6 @@
 }
 
 /* ===================== STATES ===================== */
-@keyframes agendaPulse {
-	0%,
-	100% {
-		opacity: 0.3;
-	}
-	50% {
-		opacity: 1;
-	}
-}
-
 @media (prefers-reduced-motion: reduce) {
 	.cell,
 	.item,

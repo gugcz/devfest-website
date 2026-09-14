@@ -45,7 +45,7 @@
 .stubSerial {
 	@include mono(var(--fs-label-lg), 0.16em);
 	font-variant-numeric: tabular-nums;
-	color: rgba(240, 237, 230, 0.5);
+	color: var(--ink-faint);
 }
 
 .stubState {
@@ -66,12 +66,7 @@
 }
 
 .stubTitle {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row);
-	letter-spacing: var(--track-display);
-	line-height: var(--lh-display);
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include display(var(--fs-row));
 	margin: 0;
 }
 
@@ -79,9 +74,7 @@
 // a neutral sans at the same measure before it reads as a sentence rather than
 // as another label.
 .stubNote {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
-	line-height: 1.7;
+	@include prose(var(--fs-body), 1.7);
 	color: var(--ink);
 	max-width: 46ch;
 	margin: 0;
@@ -169,7 +162,7 @@
 	content: '';
 	position: absolute;
 	inset: 0 calc(-1 * var(--gutter));
-	background: linear-gradient(104deg, rgba(255, 244, 232, 0.06) 0%, rgba(255, 240, 226, 0.025) 40%, transparent 84%);
+	background: var(--wash);
 	pointer-events: none;
 	z-index: -1;
 	// Feathered: nothing encloses this row, so an un-masked full-bleed box shows its edges.
@@ -327,47 +320,22 @@
 }
 
 
-// Flat red CTA — matches the global `.btn-primary` recipe.
-.cta {
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
-	color: var(--on-accent);
-	text-decoration: none;
-	text-align: center;
+// The wave's Buy control IS the global `.btn-primary` (set on the element);
+// this module only sizes it down to the row. Module CSS is bundled BEFORE
+// the global sheet, so the compound selector is what lets these win.
+.cta:global(.btn-primary) {
 	padding: 0.95rem 1.3rem;
-	background: var(--color-accent);
-	border: 1px solid var(--color-accent);
-	border-radius: var(--radius);
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
 	gap: 0.5rem;
-	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+	// Above the wave's reach wash.
 	position: relative;
 	z-index: 2;
-
-	&:hover {
-		background: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-		transform: translateY(-2px);
-		box-shadow: var(--glow-red), 0 10px 26px rgba(204, 0, 0, 0.3);
-	}
-
-	&:active {
-		transform: translateY(0);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
 }
 
 .footnote {
 	margin-top: 2rem;
 	// Left-set, like every other line on the page.
 	text-align: left;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body-lg);
+	@include prose(var(--fs-body-lg));
 	letter-spacing: 0.01em;
 	color: var(--ink-meta);
 }
@@ -384,26 +352,12 @@
 
 .invoiceLabel {
 	@include mono(var(--fs-label), 0.25em, uppercase);
-	color: rgba(240, 237, 230, 0.6);
+	color: var(--ink-dim);
 }
 
 .footnoteLink {
-	color: var(--color-text);
-	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
+	@include hairline-link;
 	padding-bottom: 1px;
-	transition: color 0.2s, border-color 0.2s;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
 }
 
 @keyframes fadeInUp {
@@ -423,16 +377,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.tickets,
-	.cta {
+	.tickets {
 		animation: none;
-		transition: none;
-	}
-
-	.cta,
-	.cta:hover,
-	.cta:active {
-		transform: none;
 	}
 
 	.skelBar {

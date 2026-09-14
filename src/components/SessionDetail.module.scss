@@ -35,9 +35,7 @@
 	margin-top: clamp(2.5rem, 5vw, 4rem);
 
 	p {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-lede);
-		line-height: 1.7;
+		@include prose(var(--fs-lede), 1.7);
 		color: var(--ink-strong);
 		margin: 0 0 1.1rem;
 		// THE COLUMN IS THE MEASURE — no character cap on sheet prose, so the
@@ -118,12 +116,7 @@
 }
 
 .speakerName {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row-sm);
-	line-height: 1.06;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title;
 }
 
 .speakerTag {

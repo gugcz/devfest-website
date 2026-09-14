@@ -1,6 +1,9 @@
-// Mono label recipe (JetBrains Mono + size + optional tracking/case). Every
-// site passes its own $track/$case — never snap a site's actual value to the
-// nearest one used elsewhere, that's a visual decision, not this refactor's.
+// Type recipes shared by every stylesheet. Each mixin is one face in one
+// role; the size (and where it varies, the tracking/case) stays the caller's
+// — never snap a site's actual value to the nearest one used elsewhere,
+// that's a visual decision, not a refactor's.
+
+// Mono label (JetBrains Mono + size + optional tracking/case).
 @mixin mono($size, $track: null, $case: null) {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: $size;
@@ -9,5 +12,56 @@
 	}
 	@if $case {
 		text-transform: $case;
+	}
+}
+
+// Poster headline — the global `.display` class as a mixin, for a CSS Module
+// or a scoped component that cannot compose the class on its markup. Size is
+// the caller's `--fs-*` step.
+@mixin display($size: null) {
+	font-family: var(--font-bebas-neue), sans-serif;
+	@if $size {
+		font-size: $size;
+	}
+	line-height: var(--lh-display);
+	letter-spacing: var(--track-display);
+	text-transform: uppercase;
+	color: var(--color-text);
+}
+
+// Row title — the long-list step: session rows, FAQ questions, agenda list,
+// the talk rows inside a sheet. Tighter tracking and more leading than
+// `display`, because these sit in a list, not on a poster.
+@mixin row-title($size: var(--fs-row-sm)) {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: $size;
+	line-height: 1.06;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--color-text);
+}
+
+// Typewriter reading copy — ledes, notes, abstracts. Colour is the caller's:
+// it depends on the ground (cream ink on black, `--on-accent` on red).
+@mixin prose($size: var(--fs-body), $lh: null) {
+	font-family: var(--font-special-elite), cursive;
+	font-size: $size;
+	@if $lh {
+		line-height: $lh;
+	}
+}
+
+// Inline link on a red hairline that lights to accent-hot. Keyboard focus
+// takes the global ring; a caller with its own offset restates only that.
+@mixin hairline-link($color: var(--color-text)) {
+	color: $color;
+	text-decoration: none;
+	border-bottom: 1px solid var(--rule-red);
+	transition: color 0.2s, border-color 0.2s;
+
+	&:hover,
+	&:focus-visible {
+		color: var(--color-accent-hot);
+		border-color: var(--color-accent-hot);
 	}
 }

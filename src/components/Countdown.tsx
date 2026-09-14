@@ -61,7 +61,7 @@ export default function Countdown({ compact = false, showSeconds = true }: Props
 	// rather than four bordered stubs, which read as chrome around the number.
 	return (
 		<>
-			<span className={s.srOnly}>Doors open on 30 October 2026 at 9:00 AM Central European Time.</span>
+			<span className="sr-only">Doors open on 30 October 2026 at 9:00 AM Central European Time.</span>
 			<div className={`${s.countdown} ${compact ? s.countdownCompact : ''}`} aria-hidden="true">
 				{units.map(({ key, label, suffix }, i) => (
 					<Fragment key={key}>

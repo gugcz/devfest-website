@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/controls' as *;
 .wrapper {
 	width: 100%;
 	max-width: 720px;
@@ -43,36 +44,13 @@
 	letter-spacing: 0.1em;
 }
 
-// Lit dark field — hairline border that warms to red and glows on focus.
+// The shared lit field (`_controls.scss`), plus its placeholder and invalid state.
 .input {
-	width: 100%;
-	padding: 0.85rem 0.95rem;
-	min-height: 2.75rem;
-	background: var(--panel-lit-2);
-	border: 1px solid var(--field-border);
-	border-radius: var(--radius);
-	color: var(--color-text);
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body);
-	letter-spacing: 0.01em;
-	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+	@include lit-field;
 
 	&::placeholder {
 		color: var(--ink-muted);
 		font-style: italic;
-	}
-
-	&:focus {
-		outline: none;
-		// accent-hot (not --rule-red) keeps the focused boundary >=3:1 for pointer focus
-		// too (1.4.11); keyboard focus additionally gets the ring below.
-		border-color: var(--color-accent-hot);
-		background: var(--panel-hover);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-tight);
 	}
 
 	// An invalid field used to be pixel-identical to a valid one — nine
@@ -116,8 +94,7 @@
 .estimate {
 	position: relative;
 	overflow: hidden;
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body-lg);
+	@include prose(var(--fs-body-lg));
 	color: var(--color-text);
 	margin: 0;
 	// A readout, not a panel: ruled top and bottom, lit from the left. It must never
@@ -168,28 +145,17 @@
 		margin-top: 0.1em;
 		accent-color: var(--color-accent);
 		cursor: pointer;
-
-		&:focus-visible {
-			outline: 2px solid var(--color-accent-hot);
-			outline-offset: var(--focus-gap);
-			border-radius: 2px;
-		}
 	}
 
 	span {
-		font-family: var(--font-special-elite), cursive;
-		font-size: var(--fs-ui);
-		line-height: 1.55;
+		@include prose(var(--fs-ui), 1.55);
 		color: var(--ink);
 	}
 }
 
 // Functional link underline — solid hairline, red on hover, with arrow affordance.
 .consentLink {
-	color: var(--ink-strong);
-	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
-	transition: border-color 0.2s, color 0.2s;
+	@include hairline-link(var(--ink-strong));
 
 	&::after {
 		content: '\2197';
@@ -199,45 +165,18 @@
 		transition: transform 0.25s;
 	}
 
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-	}
-
 	&:hover::after,
 	&:focus-visible::after {
 		transform: translate(2px, -2px);
 	}
 }
 
-// Flat red CTA — matches the NewsletterForm button recipe. No rotation, no stamp ink.
-.button {
+// The submit IS the global `.btn-primary` (set on the element); this module
+// only sizes it and adds the in-flight state. Module CSS is bundled BEFORE
+// the global sheet, so the compound selector is what lets these win.
+.button:global(.btn-primary) {
 	align-self: flex-start;
 	padding: 1.05rem 2.4rem;
-	background: var(--color-accent);
-	color: var(--on-accent);
-	border: 1px solid var(--color-accent);
-	border-radius: var(--radius);
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
-	cursor: pointer;
-	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-
-	&:hover:not([aria-disabled='true']) {
-		background: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-		transform: translateY(-2px);
-		box-shadow: var(--glow-red), 0 8px 22px rgba(204, 0, 0, 0.28);
-	}
-
-	&:active:not([aria-disabled='true']) {
-		transform: translateY(0);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
 
 	// Only the in-flight state dims. The button is never `disabled`: that
 	// takes it out of the tab order, and a keyboard visitor who had missed the
@@ -245,13 +184,21 @@
 	&[aria-disabled='true'] {
 		opacity: 0.55;
 		cursor: progress;
+
+		// No hover response while in flight.
+		&:hover,
+		&:active {
+			background: var(--color-accent);
+			border-color: var(--color-accent);
+			transform: none;
+			box-shadow: none;
+		}
 	}
 }
 
 .message {
-	font-family: var(--font-special-elite), cursive;
+	@include prose(var(--fs-ui));
 	font-style: italic;
-	font-size: var(--fs-ui);
 	margin: 0;
 	min-height: 1.2em;
 	color: var(--ink-soft);
@@ -298,9 +245,7 @@
 }
 
 .successBody {
-	font-family: var(--font-special-elite), cursive;
-	font-size: var(--fs-body-lg);
-	line-height: 1.6;
+	@include prose(var(--fs-body-lg), 1.6);
 	color: var(--color-grey);
 	margin: 0;
 }
@@ -317,10 +262,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.button:hover:not([aria-disabled='true']) {
-		transform: none;
-	}
-
 	// Controls keep their colour transitions, but don't lift.
 	.estimate,
 	.success {

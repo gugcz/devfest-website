@@ -3,6 +3,6 @@
 // Said once for the whole contact sheet, in the mono catalogue voice.
 .speakers-hint {
 	@include mono(var(--fs-label), 0.22em, uppercase);
-	color: rgba(240, 237, 230, 0.5);
+	color: var(--ink-faint);
 	margin: 1rem 0 0;
 }

@@ -1,0 +1,58 @@
+@use '../styles/type' as *;
+@use '../styles/type' as *;
+// The 1.15/0.85 split the desks and the section heads use, so a step's
+// title shares its left edge and its measure with everything else.
+.step {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+	align-items: start;
+	gap: 1rem clamp(2rem, 5vw, 5rem);
+}
+
+.step-head {
+	display: flex;
+	flex-direction: column;
+	gap: 0.9rem;
+	min-width: 0;
+}
+
+// The short-list row step (--fs-row, 72px) — these lists are three or four
+// entries long, the same length as the ticket waves and the contact desks.
+.step-title {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-row);
+	line-height: 1.02;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--color-text);
+	margin: 0;
+}
+
+.step-note {
+	@include prose(var(--fs-body), 1.7);
+	color: rgba(240, 237, 230, 0.72);
+	max-width: 46ch;
+	margin: 0;
+}
+
+.step-note :global(a) {
+	@include hairline-link(var(--color-accent-hot));
+}
+
+.step-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.9rem;
+	justify-content: flex-end;
+	align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+	.step {
+		grid-template-columns: 1fr;
+	}
+
+	.step-actions {
+		justify-content: flex-start;
+	}
+}

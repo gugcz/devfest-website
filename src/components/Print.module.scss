@@ -1,0 +1,167 @@
+// THE PRINT — a mounted 4:5 photograph with its reach gesture: crop-brackets
+// open, the plate lifts toward colour, a vignette settles. Shared by the
+// lineup (`Speakers`) and the home teaser (`SpeakersTeaser`), which used to
+// carry two drifted copies. A caller composes it with its own module and
+// keeps only what is genuinely its own (grid, caption, name lighting):
+//
+//   import print from './Print.module.scss';
+//   import s from './Speakers.module.scss';
+//   <button className={`${print.frame} ${s.card}`}>      // the control
+//     <span className={print.print}>                      // the plate
+//       <img className={print.photo} /> | <span className={print.monogram}>
+//       <span className={print.scrim} /><span className={print.vignette} />
+//     </span>
+//     …caption…
+//   </button>
+//
+// A photograph needs no container: it carries its own mount (`--print-mount`),
+// so a cell border only draws a second rectangle around the first. Never wrap
+// a print in a card; alignment and rhythm make the grid.
+
+// The interactive parent. Hover and keyboard focus drive every child state.
+.frame {
+	outline: none;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-lg);
+	}
+}
+
+.print {
+	position: relative;
+	display: block;
+	z-index: 1;
+	aspect-ratio: 4 / 5;
+	overflow: hidden;
+	background: var(--panel-lit);
+	// Mounted: bone keyline plus a shadow, so it sits ON the sheet. A second,
+	// RED inset keyline this once carried put a red mark on every frame
+	// before anyone touched anything.
+	box-shadow: var(--print-mount);
+
+	// Red crop-brackets — a GESTURE, not decoration. They open only on the
+	// frame being pointed at; at rest they put twenty red marks in one viewport.
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		width: 18px;
+		height: 18px;
+		border: 2px solid var(--color-accent-hot);
+		z-index: 3;
+		opacity: 0;
+		// Scale from the corner rather than animating width/height — composited.
+		transform: scale(0.7);
+		transition: opacity 0.3s ease, transform 0.3s ease;
+	}
+	&::before {
+		top: 9px;
+		left: 9px;
+		border-right: 0;
+		border-bottom: 0;
+		transform-origin: top left;
+	}
+	&::after {
+		right: 9px;
+		bottom: 9px;
+		border-left: 0;
+		border-top: 0;
+		transform-origin: bottom right;
+	}
+}
+
+.photo {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center 22%;
+	// Hard B&W at rest, lifting toward colour on hover.
+	filter: grayscale(1) contrast(1.14) brightness(0.84);
+	transform: scale(1.02);
+	transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+}
+
+// Always-on bottom scrim so the print sits into its own shadow.
+.scrim {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background: linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
+}
+
+// The darkening wash rides on hover only.
+.vignette {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background: radial-gradient(120% 100% at 50% 6%, rgba(0, 0, 0, 0.5) 0%, transparent 46%);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+// Initials standing in for a missing photograph.
+.monogram {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-monogram);
+	letter-spacing: 0.08em;
+	color: var(--ink-monogram);
+	user-select: none;
+}
+
+.frame:hover .photo,
+.frame:focus-visible .photo {
+	transform: scale(1.06);
+	filter: grayscale(0.12) contrast(1.06) brightness(1);
+}
+
+.frame:hover .print::before,
+.frame:hover .print::after,
+.frame:focus-visible .print::before,
+.frame:focus-visible .print::after {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.frame:hover .vignette,
+.frame:focus-visible .vignette {
+	opacity: 1;
+}
+
+@media (max-width: 600px) {
+	.print::before,
+	.print::after {
+		width: 12px;
+		height: 12px;
+		top: 6px;
+		left: 6px;
+	}
+	.print::after {
+		top: auto;
+		left: auto;
+		right: 6px;
+		bottom: 6px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.photo,
+	.vignette,
+	.print::before,
+	.print::after {
+		transition: none;
+	}
+	.frame:hover .photo,
+	.frame:focus-visible .photo {
+		transform: none;
+	}
+}
