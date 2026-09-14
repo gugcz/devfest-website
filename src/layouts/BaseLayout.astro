@@ -14,6 +14,9 @@ interface Props {
 	/** Absolute URL — an unfurler will not resolve a relative path. */
 	ogImage?: string;
 	ogImageAlt?: string;
+	/** Pixel dims of `ogImage` — only the default 1200×630 image shares these with every other page; a future non-1200×630 image must pass its own. */
+	ogImageWidth?: number;
+	ogImageHeight?: number;
 }
 
 const siteUrl = "https://devfest.cz";
@@ -25,6 +28,8 @@ const {
 	showFooter = true,
 	ogImage = `${siteUrl}/og-image.jpg`,
 	ogImageAlt = "DevFest.cz 2026 — classified mission starts Oct 30, 2026",
+	ogImageWidth = 1200,
+	ogImageHeight = 630,
 } = Astro.props;
 
 const ogImageType = new URL(ogImage).pathname.endsWith(".png") ? "image/png" : "image/jpeg";
@@ -265,10 +270,12 @@ const jsonLd = JSON.stringify(
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:secure_url" content={ogImage} />
 		<meta property="og:image:type" content={ogImageType} />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
+		<meta property="og:image:width" content={ogImageWidth.toString()} />
+		<meta property="og:image:height" content={ogImageHeight.toString()} />
 		<meta property="og:image:alt" content={ogImageAlt} />
+		<link rel="image_src" href={ogImage} />
 
 		<!-- Twitter -->
 		<meta name="twitter:card" content="summary_large_image" />

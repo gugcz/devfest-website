@@ -1,10 +1,10 @@
 /**
- * Content hash for the invite OG card URL (`/og/invite/<slug>.png?v=<hash>`).
+ * Content hash for the invite OG card URL (`/og/invite/<slug>.jpg?v=<hash>`).
  *
- * Slack caches a `.png` under its own URL and we send a 1-year `max-age`, so a
+ * Slack caches a `.jpg` under its own URL and we send a 1-year `max-age`, so a
  * changed card is otherwise invisible in an existing Slack thread/unfurl until
  * the query string itself changes — see the OG card comment in
- * `src/pages/og/invite/[member].png.ts`. The hash covers everything that can
+ * `src/pages/og/invite/[member].jpg.ts`. The hash covers everything that can
  * change a card's pixels: the render template, the logo, and the two
  * per-member inputs the template draws from (name, photo).
  */
@@ -18,7 +18,7 @@ let cachedTemplateDigest: string | undefined;
 function templateDigest(): string {
 	if (!cachedTemplateDigest) {
 		const hash = createHash('sha256');
-		hash.update(readFileSync(join(root, 'src/pages/og/invite/[member].png.ts')));
+		hash.update(readFileSync(join(root, 'src/pages/og/invite/[member].jpg.ts')));
 		hash.update(readFileSync(join(root, 'src/assets/logo.png')));
 		cachedTemplateDigest = hash.digest('hex');
 	}

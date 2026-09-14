@@ -284,16 +284,16 @@ export const GET: APIRoute = async ({ props }) => {
 	});
 
 	const rendered = new Resvg(svg, { fitTo: { mode: 'width', value: CARD_WIDTH } }).render().asPng();
-	// strip alpha — Messenger drops RGBA og:image
-	const png = await sharp(rendered)
+	// removeAlpha + baseline JPEG: widest scraper support (Messenger, WhatsApp, Signal…)
+	const jpg = await sharp(rendered)
 		.composite([{ input: vignette }, { input: await grainPromise, blend: 'soft-light' }])
 		.removeAlpha()
-		.png()
+		.jpeg({ quality: 82, progressive: false })
 		.toBuffer();
 
-	return new Response(png, {
+	return new Response(jpg, {
 		headers: {
-			'Content-Type': 'image/png',
+			'Content-Type': 'image/jpeg',
 			'Cache-Control': 'public, max-age=31536000, immutable',
 		},
 	});
