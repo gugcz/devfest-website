@@ -3,8 +3,10 @@
  * The closing statement every page ends on — the one place per page where the
  * type goes back up to section scale and the visitor is told what to do next.
  *
- * `tone="accent"` puts it on the red field: at most ONE accent band per page, and
- * only for the page's actual next step.
+ * `tone="accent"` puts it on the red field: reserved for pages whose next step
+ * is a real conversion (`/`, `/speakers`, `/sessions`, `/agenda`). Every other
+ * page passes `tone="plain"` — no red field, no eyebrow, no lede, one Bebas
+ * line plus one ghost link (only `actions[0]` renders).
  */
 interface Action {
 	href: string;
@@ -16,13 +18,14 @@ interface Action {
 
 interface Props {
 	eyebrow?: string;
-	/** Allows a <span class="red"> accent word; rendered with set:html. */
+	/** Plain text — closer titles carry no accent span (hero H1s only). */
 	titleHtml: string;
 	note?: string;
 	/**
 	 * The closing actions as plain links. Omit them and pass an `actions` slot
 	 * instead when a control has to be an island (the invitation pages resolve
-	 * their ti.to href client-side and report the click).
+	 * their ti.to href client-side and report the click). `tone="plain"` uses
+	 * only the first action.
 	 */
 	actions?: readonly Action[];
 	tone?: 'accent' | 'raised' | 'plain';
@@ -38,33 +41,53 @@ const {
 	titleId,
 } = Astro.props;
 
+const isPlain = tone === 'plain';
 const toneClass = tone === 'accent' ? ' band--accent' : tone === 'raised' ? ' band--raised' : '';
+const [firstAction] = actions;
 ---
 
-<section class={`band${toneClass} closer-band`} aria-labelledby={titleId}>
-	<div class="band-inner closer reveal">
-		<div>
-			{eyebrow && <p class="eyebrow closer-eyebrow">{eyebrow}</p>}
-			<h2 id={titleId} class="display closer-title" set:html={titleHtml} />
+{isPlain ? (
+	<section class="band closer-band closer-band--plain" aria-labelledby={titleId}>
+		<div class="band-inner closer-plain reveal">
+			<h2 id={titleId} class="closer-title-plain" set:html={titleHtml} />
+			<slot name="actions" />
+			{firstAction && (
+				<a
+					href={firstAction.href}
+					class="btn-ghost"
+					{...(firstAction.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+				>
+					{firstAction.label}
+				</a>
+			)}
 		</div>
+	</section>
+) : (
+	<section class={`band${toneClass} closer-band`} aria-labelledby={titleId}>
+		<div class="band-inner closer reveal">
+			<div>
+				{eyebrow && <p class="eyebrow closer-eyebrow">{eyebrow}</p>}
+				<h2 id={titleId} class="display closer-title" set:html={titleHtml} />
+			</div>
 
-		<div class="closer-side">
-			{note && <p class="closer-note">{note}</p>}
-			<div class="closer-actions">
-				<slot name="actions" />
-				{actions.map(({ href, label, kind = 'primary', external }) => (
-					<a
-						href={href}
-						class={kind === 'primary' ? 'btn-primary' : 'btn-ghost'}
-						{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-					>
-						{label}
-					</a>
-				))}
+			<div class="closer-side">
+				{note && <p class="closer-note">{note}</p>}
+				<div class="closer-actions">
+					<slot name="actions" />
+					{actions.map(({ href, label, kind = 'primary', external }) => (
+						<a
+							href={href}
+							class={kind === 'primary' ? 'btn-primary' : 'btn-ghost'}
+							{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+						>
+							{label}
+						</a>
+					))}
+				</div>
 			</div>
 		</div>
-	</div>
-</section>
+	</section>
+)}
 
 <style lang="scss">
 	.closer-band {
@@ -79,5 +102,26 @@ const toneClass = tone === 'accent' ? ' band--accent' : tone === 'raised' ? ' ba
 
 	.closer-eyebrow {
 		margin-bottom: clamp(1.1rem, 2vw, 1.6rem);
+	}
+
+	// Plain closer — a single line, no red field, no eyebrow, no lede: the
+	// eight utility pages end quietly instead of restating the conversion
+	// pitch four sections after the hero already made it.
+	.closer-plain {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+	}
+
+	.closer-title-plain {
+		font-family: var(--font-bebas-neue), sans-serif;
+		font-size: var(--fs-h3);
+		line-height: var(--lh-display);
+		letter-spacing: var(--track-display);
+		text-transform: uppercase;
+		color: var(--color-text);
+		margin: 0;
 	}
 </style>

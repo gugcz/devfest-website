@@ -114,12 +114,10 @@ const faqJsonLd = JSON.stringify(faqSchema);
 		</section>
 
 		<Closer
-			eyebrow="Still stuck"
-			titleHtml={'Ask us<br /><span class="red">directly</span>.'}
-			note="If the answer is not here, one of the desks will have it."
-			tone="accent"
+			titleHtml="Ask us directly."
+			tone="plain"
 			titleId="faq-closer"
-			actions={[{ href: '/contact', label: 'Contact us' }, { href: '/#tickets', label: 'Get tickets', kind: 'ghost' }]}
+			actions={[{ href: '/contact', label: 'Contact us' }]}
 		/>
 	</main>
 </BaseLayout>

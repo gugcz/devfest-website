@@ -74,7 +74,7 @@ const STEPS = [
 			<div class="band-inner">
 				<header class="head-stack">
 					<p class="eyebrow">Before you close this tab</p>
-					<h2 id="next-heading" class="display head-title">Four <span class="red">things.</span></h2>
+					<h2 id="next-heading" class="display head-title">Four things.</h2>
 				</header>
 
 				<ul class="field reveal">
@@ -84,15 +84,10 @@ const STEPS = [
 		</section>
 
 		<Closer
-			eyebrow="Until October"
-			titleHtml={'See who you<br />came <span class="red">for</span>.'}
-			note="The lineup grows as speakers are confirmed. Newsletter subscribers hear first."
-			tone="accent"
+			titleHtml="See who you came for."
+			tone="plain"
 			titleId="thank-you-closer"
-			actions={[
-				{ href: '/speakers', label: 'See the speakers' },
-				{ href: '/#newsletter', label: 'Join the newsletter', kind: 'ghost' },
-			]}
+			actions={[{ href: '/speakers', label: 'See the speakers' }]}
 		/>
 	</main>
 </BaseLayout>

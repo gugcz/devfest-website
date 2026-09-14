@@ -28,7 +28,7 @@ import Closer from '../components/Closer.astro';
 				     Two columns, not a stacked eyebrow/title/lede lockup — that
 				     shape is the hero's, one screen up. -->
 				<header class="head-split head-split--ruled">
-					<h2 id="desks-heading" class="display head-title">Three <span class="red">desks.</span></h2>
+					<h2 id="desks-heading" class="display head-title">Three desks.</h2>
 					<p class="head-note">
 						Not sure which one? Take the general desk &mdash; it reaches the whole crew.
 					</p>
@@ -62,12 +62,10 @@ import Closer from '../components/Closer.astro';
 		</section>
 
 		<Closer
-			eyebrow="Or skip the inbox"
-			titleHtml={'Just come<br />to the <span class="red">show</span>.'}
-			note="Tickets are on sale now, and the newsletter carries every announcement first."
-			tone="accent"
+			titleHtml="Just come to the show."
+			tone="plain"
 			titleId="contact-closer"
-			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/#newsletter', label: 'Join the newsletter', kind: 'ghost' }]}
+			actions={[{ href: '/#tickets', label: 'Get tickets' }]}
 		/>
 	</main>
 </BaseLayout>

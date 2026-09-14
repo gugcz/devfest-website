@@ -48,7 +48,7 @@ const fillers = Array.from(
 							Asset library
 							<span class="section-no">{String(pressKit.length).padStart(2, '0')}</span>
 						</p>
-						<h2 class="section-title">Download <span class="red">files.</span></h2>
+						<h2 class="section-title">Download files.</h2>
 					</div>
 					<ul class="presskit-grid reveal">
 						{pressKit.map((a) => (
@@ -92,12 +92,10 @@ const fillers = Array.from(
 		</section>
 
 		<Closer
-			eyebrow="Missing something"
-			titleHtml={'Ask the<br /><span class="red">press desk</span>.'}
-			note="Need a format we have not published, or a quote for a story? Write to us."
-			tone="accent"
+			titleHtml="Ask the press desk."
+			tone="plain"
 			titleId="downloads-closer"
-			actions={[{ href: 'mailto:devfest@gug.cz', label: 'Email the desk' }, { href: '/press', label: 'Back to press', kind: 'ghost' }]}
+			actions={[{ href: 'mailto:devfest@gug.cz', label: 'Email the desk' }]}
 		/>
 	</main>
 </BaseLayout>

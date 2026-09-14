@@ -50,7 +50,7 @@ const STEPS = [
 				<header class="head-stack">
 					<p class="eyebrow">While you wait</p>
 					<h2 id="newsletter-next-heading" class="display head-title">
-						Three <span class="red">places</span> to go.
+						Three places to go.
 					</h2>
 				</header>
 
@@ -61,15 +61,10 @@ const STEPS = [
 		</section>
 
 		<Closer
-			eyebrow="One more thing"
-			titleHtml={'Come for the<br /><span class="red">people</span>.'}
-			note="The lineup is what those mails will be about. Here is who is confirmed so far."
-			tone="accent"
+			titleHtml="Come for the people."
+			tone="plain"
 			titleId="newsletter-thanks-closer"
-			actions={[
-				{ href: '/speakers', label: 'See the speakers' },
-				{ href: '/faq', label: 'Read the FAQ', kind: 'ghost' },
-			]}
+			actions={[{ href: '/speakers', label: 'See the speakers' }]}
 		/>
 	</main>
 </BaseLayout>

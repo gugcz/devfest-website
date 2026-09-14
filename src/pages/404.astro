@@ -61,7 +61,7 @@ const STEPS = [
 				<header class="head-stack">
 					<p class="eyebrow">Try one of these</p>
 					<h2 id="notfound-next-heading" class="display head-title">
-						What people <span class="red">came for.</span>
+						What people came for.
 					</h2>
 				</header>
 
@@ -72,15 +72,10 @@ const STEPS = [
 		</section>
 
 		<Closer
-			eyebrow="Or start over"
-			titleHtml={'Back to the<br /><span class="red">top</span>.'}
-			note="The homepage carries the date, the venue, the waves and the newsletter."
-			tone="accent"
+			titleHtml="Back to the top."
+			tone="plain"
 			titleId="notfound-closer"
-			actions={[
-				{ href: '/', label: 'Go to the homepage' },
-				{ href: 'https://2025.devfest.cz', label: "2025 edition", kind: 'ghost', external: true },
-			]}
+			actions={[{ href: '/', label: 'Go to the homepage' }]}
 		/>
 	</main>
 </BaseLayout>

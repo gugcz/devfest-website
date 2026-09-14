@@ -40,12 +40,10 @@ import InvoiceForm from '../components/InvoiceForm';
 		</section>
 
 		<Closer
-			eyebrow="Paying by card"
-			titleHtml={'Skip the<br /><span class="red">paperwork</span>.'}
-			note="Individual tickets check out on ti.to in a minute, no invoice needed."
-			tone="accent"
+			titleHtml="Skip the paperwork."
+			tone="plain"
 			titleId="invoice-closer"
-			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/faq', label: 'Read the FAQ', kind: 'ghost' }]}
+			actions={[{ href: '/#tickets', label: 'Get tickets' }]}
 		/>
 	</main>
 </BaseLayout>
