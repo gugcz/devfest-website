@@ -16,33 +16,35 @@ on:
 permissions:
   contents: read
 
+# A newer push to the same PR supersedes the running check.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   astro-check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v5.0.0
         with:
           node-version: 22
           cache: npm
 
       - run: npm ci
 
-      # Pre-existing type debt (never caught — this is the first time `astro
-      # check` runs in CI) keeps this non-blocking for now; see PR description.
       - name: astro check
         run: npm run check
-        continue-on-error: true
 
   functions-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v5.0.0
         with:
           node-version: 22
           cache: npm

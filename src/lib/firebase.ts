@@ -47,7 +47,7 @@ function initAppCheck(app: FirebaseApp): void {
 	try {
 		appCheckInstance = initializeAppCheck(app, {
 			provider: new ReCaptchaEnterpriseProvider(siteKey),
-			isTokenAutoRefresh: true,
+			isTokenAutoRefreshEnabled: true,
 		});
 	} catch (err) {
 		console.warn('[firebase] App Check init failed:', err);

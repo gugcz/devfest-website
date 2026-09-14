@@ -22,12 +22,22 @@ on:
   # run this workflow from the Actions tab after adding the new version.
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+# Production deploys queue rather than race: two quick merges must land in
+# order, and never in parallel.
+concurrency:
+  group: deploy-functions-prod
+  cancel-in-progress: false
+
 jobs:
   deploy_functions:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v5.1.0
+      - uses: actions/setup-node@v5.0.0
         with:
           node-version: 22
           cache: npm
@@ -35,6 +45,11 @@ jobs:
       - name: Install function deps
         working-directory: functions
         run: npm ci
+      # The correctness gate runs on the same push but in parallel, so it
+      # cannot block this deploy. Run the suite here: a red test never ships.
+      - name: Run functions test suite
+        working-directory: functions
+        run: npm test
       - name: Build functions
         working-directory: functions
         run: npm run build
@@ -53,9 +68,11 @@ jobs:
             printf 'TITO_ACCOUNT_SLUG=%s\n' "$TITO_ACCOUNT_SLUG"
             printf 'TITO_EVENT_SLUG=%s\n' "$TITO_EVENT_SLUG"
           } > functions/.env
+      # Pinned: an unpinned `@latest` makes a breaking CLI release a broken
+      # production deploy. Bump deliberately, alongside the hosting action.
       - name: Deploy functions
         run: |
-          npx --yes firebase-tools@latest deploy \
+          npx --yes firebase-tools@15.30.0 deploy \
             --only functions:website \
             --project devfest-cz-app \
             --non-interactive

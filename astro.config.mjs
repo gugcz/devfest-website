@@ -1,13 +1,14 @@
 // @ts-check
 import { fileURLToPath } from 'node:url';
 import { defineConfig, fontProviders } from 'astro/config';
-import sitemap from '@astrojs/sitemap';
+import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 
 import react from '@astrojs/react';
 
 const BUILD_DATE = new Date().toISOString();
 
 // Per-URL sitemap priority; anything unlisted falls back to 0.6.
+/** @type {Record<string, number>} */
 const PRIORITY = {
     'https://devfest.cz': 1.0,
     'https://devfest.cz/speakers': 0.9,
@@ -28,7 +29,9 @@ const PRIORITY = {
 // App Check (inits on every load); under A11Y_MOCK=1 `firebase/app-check` is
 // aliased to a no-op so headless CI doesn't load reCAPTCHA.
 const a11yMock = process.env.A11Y_MOCK === '1';
+/** @param {string} rel */
 const mock = (rel) => fileURLToPath(new URL(rel, import.meta.url));
+/** @type {Record<string, string>} */
 const a11yMockAlias = a11yMock
     ? {
           'firebase/app-check': mock('./scripts/a11y-mocks/app-check.mjs'),
@@ -42,6 +45,7 @@ const a11yMockAlias = a11yMock
 //
 // `DEVFEST_LIVE_API=1 npm run dev` hits the deployed functions instead —
 // needed when changing the functions themselves.
+/** @returns {import('vite').Plugin} */
 const devApiMocks = () => ({
     name: 'devfest:dev-api-fixtures',
     apply: 'serve',
@@ -113,7 +117,7 @@ export default defineConfig({
                 !page.includes('/og/invite/'),
             serialize(item) {
                 item.lastmod = BUILD_DATE;
-                item.changefreq = 'weekly';
+                item.changefreq = ChangeFreqEnum.WEEKLY;
                 const url = item.url.replace(/\/$/, '');
                 item.priority = PRIORITY[url] ?? 0.6;
                 return item;

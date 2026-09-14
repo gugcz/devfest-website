@@ -127,7 +127,7 @@ const websiteSchema = {
 
 // Home → <Page> breadcrumb trail for subpages. Names map from the first path
 // segment; unknown routes fall back to a title-cased slug.
-const pageNames = {
+const pageNames: Record<string, string> = {
 	"speakers": "Speakers",
 	"sessions": "Sessions",
 	"team": "Team",
