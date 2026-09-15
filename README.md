@@ -14,6 +14,7 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** 22 (see `.nvmrc`; `engine-strict` is on)
+- **CSP:** Astro's `security.csp` (`astro.config.mjs`) emits a per-page `<meta>` with a hash for every inline script and style, so `script-src` carries no `'unsafe-inline'`; `firebase.json` keeps only `frame-ancestors` (a `<meta>` cannot carry it). Adding a third-party script or endpoint means adding its host there.
 
 [DESIGN.md](DESIGN.md) is the binding visual system — check it before styling anything.
 
@@ -193,13 +194,17 @@ The browser never touches Firestore — it calls `submitInvoiceCallable`, so `in
 
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
-| `submitInvoiceCallable` | Callable (App Check enforced) | Validate the form (honeypot) and write `invoices/{id}` |
+| `submitInvoiceCallable` | Callable (App Check enforced, single-use tokens) | Validate the form (honeypot), apply the global + per-company throttles, write `invoices/{id}` |
 | `processInvoiceTrigger` | Firestore onCreate `invoices/{id}` | Create the iDoklad contact + issued invoice and email it |
 | `pollPaidInvoicesScheduled` | Cloud Scheduler, hourly | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
 
 > iDoklad has no webhooks — payment is polled hourly, so a paid invoice is claimed up to ~1 h later.
 
 > `invoiceRateLimits` (the per-company throttle) writes an `expiresAt` timestamp. Set a Firestore **TTL policy** on that collection with field `expiresAt` (console → Firestore → TTL) so spent windows are deleted; the code does not depend on it, the collection just grows without it.
+
+> **Abuse limits.** App Check tokens are single-use (`consumeAppCheckToken` + `limitedUseAppCheckTokens` in `InvoiceForm.tsx`), so every submit is its own reCAPTCHA assessment. On top: a global ceiling of 20 requests per hour across all companies (`GLOBAL_LIMIT_MAX` in `submit.ts` — every request mints an iDoklad invoice and an email) and 3 per hour per (IČO, email). Hitting either returns `resource-exhausted`; the form tells the visitor to retry in an hour.
+
+> **Existing iDoklad contacts are read, never written.** An IČO is public data, so the form must not be able to rewrite a customer's stored email or address. When an IČO already exists in iDoklad the contact is reused as-is, the invoice carries its stored details, and the mail goes to the *submitted* address only (`SendToPartner: false`). The Slack line lists which submitted fields differ from the stored record (`contactDiffers` on the doc) so a human decides whether the company moved or a stranger typed someone else's IČO.
 
 ### Secrets & config
 
@@ -241,7 +246,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 - **No revenue in reports.** ti.to's thank-you redirect carries no order id or amount, so `ticket_purchase_confirmed` isn't GA4's `purchase` and has no value. Revenue lives in ti.to. `begin_checkout` and `generate_lead` carry `value` (gross CZK), so *intent* is measurable.
 - **Consent Mode is the source of truth** — no second GA4 tag, no GTM container. A declining visitor produces cookieless, identifier-free pings by design (aggregate-only).
 - **Development traffic is excluded in code**, not by a GA4 filter: measurement is limited to `devfest.cz` (and subdomains) plus `devfest-public.web.app` / `devfest-public.firebaseapp.com`. `npm run dev` and preview channels send nothing. To measure a preview, build with `PUBLIC_ANALYTICS_ALLOWED_HOSTS=<host>`.
-- **Verifying a change** needs a real host: GA4 DebugView, or devtools Network filtered to `/g/collect`. EEA traffic can route to `region1.google-analytics.com`, which is why the CSP `connect-src` in `firebase.json` allows `https://*.google-analytics.com`.
+- **Verifying a change** needs a real host: GA4 DebugView, or devtools Network filtered to `/g/collect`. EEA traffic can route to `region1.google-analytics.com`, which is why the CSP `connect-src` (`csp` in `astro.config.mjs`) allows `https://*.google-analytics.com`.
 
 ## Key Pages
 

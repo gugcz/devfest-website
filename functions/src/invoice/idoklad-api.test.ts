@@ -1,6 +1,6 @@
 /**
- * iDoklad client tests: a reused contact is updated, `Send` names an explicit
- * recipient when unsynced, and 200 + `IsSuccess: false` is a failure.
+ * iDoklad client tests: a reused contact is never written, `Send` names the
+ * submitter, and 200 + `IsSuccess: false` is a failure.
  * No network — `globalThis.fetch` is a table of route handlers.
  */
 
@@ -69,10 +69,6 @@ function jsonResponse(status: number, json: unknown): Response {
 	});
 }
 
-const found = (id: number, ico: string): Handler => () => ({
-	json: { IsSuccess: true, Data: { Items: [{ Id: id, IdentificationNumber: ico }] } },
-});
-
 beforeEach(() => {
 	calls = [];
 });
@@ -91,103 +87,68 @@ describe('findOrCreateContact', () => {
 		email: 'billing@example.com',
 	};
 
-	it('updates the email + address of a contact matched by IČO', async () => {
+	/** A stored contact carrying exactly the form's details. */
+	const storedAcme = {
+		Id: 4242,
+		IdentificationNumber: '12345678',
+		CompanyName: 'Acme Example s.r.o.',
+		Street: 'Example 1',
+		City: 'Praha',
+		PostalCode: '11000',
+		Email: 'billing@example.com',
+	};
+
+	const foundContact = (item: Record<string, unknown>): Handler => () => ({
+		json: { IsSuccess: true, Data: { Items: [item] } },
+	});
+
+	it('reuses a contact matched by IČO without writing to it', async () => {
+		mockFetch({ 'GET /Contacts?*': foundContact(storedAcme) });
+
+		const contact = await findOrCreateContact(CFG, acme);
+
+		assert.deepEqual(contact, { id: 4242, reused: true, differing: [] });
+		assert.deepEqual(
+			calls.map((c) => c.method),
+			['GET'],
+			'a reused contact is read, never written',
+		);
+	});
+
+	it('names the form fields that disagree with the stored record', async () => {
 		mockFetch({
-			'GET /Contacts?*': found(4242, '12345678'),
-			'PATCH /Contacts': (call) => ({
-				json: { IsSuccess: true, Data: { Id: 4242, Email: call.body.Email } },
+			'GET /Contacts?*': foundContact({
+				...storedAcme,
+				Email: 'first.orderer@example.com',
+				Street: 'Old Street 9',
 			}),
 		});
 
 		const contact = await findOrCreateContact(CFG, acme);
 
-		assert.deepEqual(contact, { id: 4242, emailSynced: true });
-		const patch = calls.find((c) => c.method === 'PATCH');
-		assert.ok(patch, 'expected a PATCH /Contacts');
-		// The collection path with `Id` in the body — `/Contacts/4242` is a 405.
-		assert.equal(patch.path, '/Contacts');
-		assert.equal(patch.body.Id, 4242);
-		assert.equal(patch.body.Email, 'billing@example.com');
-		assert.equal(patch.body.Street, 'Example 1');
-		assert.equal(patch.body.City, 'Praha');
-		assert.equal(patch.body.PostalCode, '11000');
+		assert.equal(contact.reused, true);
+		assert.deepEqual(contact.differing, ['street', 'email']);
+		assert.equal(calls.length, 1, 'still no write');
 	});
 
-	it('accepts an address iDoklad echoes back in a different case', async () => {
+	it('compares trimmed and case-insensitively, and ignores blank form fields', async () => {
 		mockFetch({
-			'GET /Contacts?*': found(4242, '12345678'),
-			'PATCH /Contacts': () => ({
-				json: { IsSuccess: true, Data: { Id: 4242, Email: ' Billing@Example.com ' } },
+			'GET /Contacts?*': foundContact({
+				...storedAcme,
+				Email: ' Billing@Example.com ',
+				Street: 'Somewhere else',
 			}),
-		});
-
-		const contact = await findOrCreateContact(CFG, acme);
-
-		assert.deepEqual(contact, { id: 4242, emailSynced: true });
-	});
-
-	it('reports unsynced when the PATCH succeeds but drops the submitted email', async () => {
-		mockFetch({
-			'GET /Contacts?*': found(4242, '12345678'),
-			// A 200 with `IsSuccess: true` whose stored contact carries the OLD
-			// address — the shape the incident had: the write "succeeded" and the
-			// invoice still went to whoever ordered first.
-			'PATCH /Contacts': () => ({
-				json: { IsSuccess: true, Data: { Id: 4242, Email: 'first.orderer@example.com' } },
-			}),
-		});
-
-		const contact = await findOrCreateContact(CFG, acme);
-
-		assert.deepEqual(contact, { id: 4242, emailSynced: false });
-	});
-
-	it('reports unsynced when the PATCH response carries no email at all', async () => {
-		mockFetch({
-			'GET /Contacts?*': found(4242, '12345678'),
-			'PATCH /Contacts': () => ({ json: { IsSuccess: true, Data: { Id: 4242 } } }),
-		});
-
-		const contact = await findOrCreateContact(CFG, acme);
-
-		assert.deepEqual(contact, { id: 4242, emailSynced: false });
-	});
-
-	it('does not wipe fields the form left blank', async () => {
-		mockFetch({
-			'GET /Contacts?*': found(1, '12345678'),
-			'PATCH /Contacts': (call) => ({
-				json: { IsSuccess: true, Data: { Id: 1, Email: call.body.Email } },
-			}),
-		});
-
-		await findOrCreateContact(CFG, {
-			companyName: 'Acme',
-			identificationNumber: '12345678',
-			street: '   ',
-			city: null,
-			email: 'ops@acme.cz',
-		});
-
-		const patch = calls.find((c) => c.method === 'PATCH')!;
-		assert.equal('Street' in patch.body, false);
-		assert.equal('City' in patch.body, false);
-		assert.equal(patch.body.Email, 'ops@acme.cz');
-	});
-
-	it('reports the contact as unsynced when the update fails, without throwing', async () => {
-		mockFetch({
-			'GET /Contacts?*': found(7, '12345678'),
-			'PATCH /Contacts': () => ({ status: 500, json: { IsSuccess: false, Message: 'boom' } }),
 		});
 
 		const contact = await findOrCreateContact(CFG, {
-			companyName: 'Acme',
+			companyName: 'acme example S.R.O.',
 			identificationNumber: '12345678',
-			email: 'ops@acme.cz',
+			street: '   ',
+			city: null,
+			email: 'billing@example.com',
 		});
 
-		assert.deepEqual(contact, { id: 7, emailSynced: false });
+		assert.deepEqual(contact, { id: 4242, reused: true, differing: [] });
 	});
 
 	it('creates a contact when no IČO matches', async () => {
@@ -203,12 +164,23 @@ describe('findOrCreateContact', () => {
 			email: 'ops@acme.cz',
 		});
 
-		assert.deepEqual(contact, { id: 99, emailSynced: true });
-		assert.equal(
-			calls.some((c) => c.method === 'PATCH'),
-			false,
-			'a freshly created contact needs no update',
-		);
+		assert.deepEqual(contact, { id: 99, reused: false, differing: [] });
+		const post = calls.find((c) => c.method === 'POST')!;
+		assert.equal(post.body.CountryId, 2, 'starts from the account default');
+		assert.equal(post.body.IdentificationNumber, '12345678');
+		assert.equal(post.body.Email, 'ops@acme.cz');
+	});
+
+	it('creates a contact when the lookup itself fails, without throwing', async () => {
+		mockFetch({
+			'GET /Contacts?*': () => ({ status: 500, json: { IsSuccess: false, Message: 'boom' } }),
+			'GET /Contacts/Default': () => ({ json: { IsSuccess: true, Data: {} } }),
+			'POST /Contacts': () => ({ json: { IsSuccess: true, Data: { Id: 7 } } }),
+		});
+
+		const contact = await findOrCreateContact(CFG, acme);
+
+		assert.deepEqual(contact, { id: 7, reused: false, differing: [] });
 	});
 
 	it('creates a contact without looking up when there is no IČO', async () => {
@@ -219,7 +191,8 @@ describe('findOrCreateContact', () => {
 
 		const contact = await findOrCreateContact(CFG, { companyName: 'Acme', email: null });
 
-		assert.deepEqual(contact, { id: 5, emailSynced: false });
+		assert.deepEqual(contact, { id: 5, reused: false, differing: [] });
+		assert.equal(calls.some((c) => c.path.startsWith('/Contacts?')), false, 'no lookup');
 	});
 });
 
@@ -228,30 +201,31 @@ describe('sendInvoiceByEmail', () => {
 		'POST /Mails/IssuedInvoice/Send': () => ({ json }),
 	});
 
-	it('confirms only on IsSuccess: true and passes the extra recipient through', async () => {
+	it('mails the named recipient only, never the stored partner address', async () => {
 		mockFetch(sendRoute({ IsSuccess: true, Message: null, Data: true }));
 
 		const result = await sendInvoiceByEmail(CFG, 9001, {
 			subject: 'Faktura',
 			body: 'text',
-			otherRecipients: [' billing@example.com '],
+			recipients: [' billing@example.com '],
 		});
 
 		assert.equal(result.confirmed, true);
 		assert.deepEqual(result.recipients, ['b*****g@example.com']);
 		const send = calls[0];
-		assert.equal(send.body.SendToPartner, true);
+		assert.equal(send.body.SendToPartner, false);
 		assert.deepEqual(send.body.OtherRecipients, ['billing@example.com']);
+		assert.equal(send.body.SendAttachment, true);
 	});
 
 	it('throws on a 200 that carries IsSuccess: false', async () => {
-		mockFetch(sendRoute({ IsSuccess: false, Message: 'Partner has no e-mail address' }));
+		mockFetch(sendRoute({ IsSuccess: false, Message: 'Mail server refused' }));
 
 		await assert.rejects(
-			() => sendInvoiceByEmail(CFG, 1, {}),
+			() => sendInvoiceByEmail(CFG, 1, { recipients: ['billing@example.com'] }),
 			(err: unknown) => {
 				assert.ok(err instanceof IdokladApiError);
-				assert.match(err.message, /Partner has no e-mail address/);
+				assert.match(err.message, /Mail server refused/);
 				return true;
 			},
 		);
@@ -260,17 +234,19 @@ describe('sendInvoiceByEmail', () => {
 	it('reports an envelope with no verdict as unconfirmed', async () => {
 		mockFetch(sendRoute({ Data: true }));
 
-		const result = await sendInvoiceByEmail(CFG, 1, {});
+		const result = await sendInvoiceByEmail(CFG, 1, { recipients: ['billing@example.com'] });
 
 		assert.equal(result.confirmed, false);
 	});
 
-	it('drops blank extra recipients rather than sending an empty address', async () => {
+	it('refuses to send with no usable recipient instead of mailing nobody', async () => {
 		mockFetch(sendRoute({ IsSuccess: true, Data: true }));
 
-		await sendInvoiceByEmail(CFG, 1, { otherRecipients: ['', '  '] });
-
-		assert.deepEqual(calls[0].body.OtherRecipients, []);
+		await assert.rejects(
+			() => sendInvoiceByEmail(CFG, 1, { recipients: ['', '  '] }),
+			/no recipient/,
+		);
+		assert.equal(calls.length, 0, 'nothing was sent');
 	});
 });
 

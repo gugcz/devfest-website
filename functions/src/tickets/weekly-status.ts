@@ -9,7 +9,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { SLACK_WEBHOOK_URL } from '../lib/params.js';
 import { runBackground } from '../lib/run.js';
-import { postToSlack, type SlackPayload } from '../lib/slack.js';
+import { escapeMrkdwn, postToSlack, type SlackPayload } from '../lib/slack.js';
 import { SCHEDULED } from '../options.js';
 import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from './params.js';
 import {
@@ -37,7 +37,7 @@ interface Summary {
 
 function summarize(releases: TitoRelease[]): Summary {
 	const summaries = releases.map<ReleaseSummary>((r) => ({
-		title: releaseTitle(r),
+		title: escapeMrkdwn(releaseTitle(r)),
 		sold: r.quantity_sold ?? r.tickets_count ?? 0,
 		quantity: r.quantity ?? null,
 		soldOut: Boolean(r.sold_out),

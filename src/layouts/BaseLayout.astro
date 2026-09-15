@@ -166,11 +166,12 @@ const breadcrumbSchema = !isHome && slug
 		}
 	: null;
 
+// `<` escaped so a `</script>` in content can't end the element (still `<` to JSON).
 const jsonLd = JSON.stringify(
 	isHome
 		? [eventSchema, organizationSchema, websiteSchema]
 		: [organizationSchema, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])]
-);
+).replace(/</g, '\\u003c');
 ---
 
 <html lang="en">

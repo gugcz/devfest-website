@@ -195,15 +195,14 @@ async function apiJson<T = unknown>(
 
 export interface ResolvedContact {
 	id: number;
-	/** True when the iDoklad contact is known to carry the submitted email,
-	 * so `SendToPartner` reaches the requester. False → caller adds an
-	 * explicit recipient. */
-	emailSynced: boolean;
+	/** An existing contact with this IČO was reused, untouched. */
+	reused: boolean;
+	/** Form fields that differ from the reused contact (names only). */
+	differing: string[];
 }
 
-/** Find a contact by IČO, else create one (no IČO → always create). A reused
- * contact is **updated** from the form first, or `SendToPartner` mails the
- * person who ordered last time. */
+/** Find a contact by IČO, else create one. A reused contact is never
+ * written — an IČO is public, so the form must not edit customer records. */
 export async function findOrCreateContact(
 	cfg: IdokladConfig,
 	contact: IdokladContactInput,
@@ -211,74 +210,54 @@ export async function findOrCreateContact(
 	const ico = contact.identificationNumber?.trim();
 	if (ico) {
 		const existing = await findContactByIco(cfg, ico);
-		if (existing != null) {
-			return { id: existing, emailSynced: await syncContactDetails(cfg, existing, contact) };
+		if (existing) {
+			return { id: existing.Id, reused: true, differing: differingFields(existing, contact) };
 		}
 	}
-	return { id: await createContact(cfg, contact), emailSynced: hasEmail(contact) };
+	return { id: await createContact(cfg, contact), reused: false, differing: [] };
 }
 
-function hasEmail(contact: IdokladContactInput): boolean {
-	return (contact.email?.trim() ?? '') !== '';
+interface StoredContact {
+	Id: number;
+	IdentificationNumber?: string | null;
+	CompanyName?: string | null;
+	VatIdentificationNumber?: string | null;
+	Street?: string | null;
+	City?: string | null;
+	PostalCode?: string | null;
+	Email?: string | null;
 }
 
-/** PATCH the submitted email + address onto an existing contact. Non-empty
- * fields only. Best-effort: a failed update reports unsynced so the caller
- * adds an explicit recipient. */
-async function syncContactDetails(
-	cfg: IdokladConfig,
-	id: number,
-	contact: IdokladContactInput,
-): Promise<boolean> {
-	const email = contact.email?.trim() ?? '';
-	const patch: Record<string, unknown> = { Id: id };
-	if (email) patch.Email = email;
-	assignIfSet(patch, 'CompanyName', contact.companyName);
-	assignIfSet(patch, 'VatIdentificationNumber', contact.vatIdentificationNumber);
-	assignIfSet(patch, 'Street', contact.street);
-	assignIfSet(patch, 'City', contact.city);
-	assignIfSet(patch, 'PostalCode', contact.postalCode);
-	// `Id` alone is not a change worth a round trip.
-	if (Object.keys(patch).length === 1) return false;
+const COMPARED_FIELDS: Array<[keyof IdokladContactInput, keyof StoredContact]> = [
+	['companyName', 'CompanyName'],
+	['vatIdentificationNumber', 'VatIdentificationNumber'],
+	['street', 'Street'],
+	['city', 'City'],
+	['postalCode', 'PostalCode'],
+	['email', 'Email'],
+];
 
-	try {
-		// PATCH the COLLECTION with `Id` in the body — `/Contacts/{id}` 405s.
-		// Read the address back from the response: iDoklad can silently drop
-		// an `Email`, and a 200 would otherwise report synced.
-		const updated = await apiJson<{ Email?: string | null }>(cfg, 'PATCH', '/Contacts', patch);
-		if (!email) return false;
-		const stored = typeof updated?.Email === 'string' ? updated.Email.trim() : '';
-		if (stored.toLowerCase() === email.toLowerCase()) return true;
-		logger.warn(
-			`iDoklad contact ${id} did not take the submitted email (stored ` +
-				`${stored ? maskEmail(stored) : '—'}, submitted ${maskEmail(email)}) — ` +
-				`falling back to an explicit recipient`,
-		);
-		return false;
-	} catch (err) {
-		logger.warn(
-			`iDoklad contact ${id} update failed — the invoice mail may go to the stored ` +
-				`address, falling back to an explicit recipient: ${describeError(err)}`,
-		);
-		return false;
+/** Submitted fields that differ from the stored contact (case-insensitive). */
+export function differingFields(stored: StoredContact, contact: IdokladContactInput): string[] {
+	const norm = (v: unknown) => (typeof v === 'string' ? v.trim().toLowerCase() : '');
+	const out: string[] = [];
+	for (const [formKey, storedKey] of COMPARED_FIELDS) {
+		const submitted = norm(contact[formKey]);
+		if (!submitted) continue;
+		if (submitted !== norm(stored[storedKey])) out.push(formKey);
 	}
+	return out;
 }
 
-function assignIfSet(target: Record<string, unknown>, key: string, value: string | null | undefined) {
-	const trimmed = value?.trim();
-	if (trimmed) target[key] = trimmed;
-}
-
-async function findContactByIco(cfg: IdokladConfig, ico: string): Promise<number | null> {
+async function findContactByIco(cfg: IdokladConfig, ico: string): Promise<StoredContact | null> {
 	try {
-		const page = await apiJson<{ Items?: Array<{ Id: number; IdentificationNumber?: string }> }>(
+		const page = await apiJson<{ Items?: StoredContact[] }>(
 			cfg,
 			'GET',
 			`/Contacts?filter=IdentificationNumber~eq~${encodeURIComponent(ico)}&pageSize=1`,
 		);
 		const items = Array.isArray(page?.Items) ? page.Items : [];
-		const match = items.find((c) => String(c.IdentificationNumber ?? '').trim() === ico);
-		return match ? match.Id : null;
+		return items.find((c) => String(c.IdentificationNumber ?? '').trim() === ico) ?? null;
 	} catch (err) {
 		// Non-fatal: fall through to create. Logged — the symptom is a duplicate
 		// contact, whose cause is otherwise invisible.
@@ -356,29 +335,31 @@ export interface InvoiceMailResult {
 	confirmed: boolean;
 	/** iDoklad's own `Message`, if any. */
 	message: string | null;
-	/** Masked extra recipients, as logged. */
+	/** Masked recipients, as logged. */
 	recipients: string[];
 }
 
-/** Ask iDoklad to email the invoice (PDF with bank details). Throws on
- * `IsSuccess: false`; logs the verdict either way. */
+/** Ask iDoklad to email the invoice (PDF with bank details) to `recipients`.
+ * Throws on `IsSuccess: false`; logs the verdict either way. */
 export async function sendInvoiceByEmail(
 	cfg: IdokladConfig,
 	invoiceId: number,
-	opts: { subject?: string; body?: string; otherRecipients?: string[] },
+	opts: { subject?: string; body?: string; recipients: string[] },
 ): Promise<InvoiceMailResult> {
 	const context = 'iDoklad POST /Mails/IssuedInvoice/Send';
-	const otherRecipients = (opts.otherRecipients ?? []).map((a) => a.trim()).filter(Boolean);
-	const masked = otherRecipients.map(maskEmail);
+	const recipients = opts.recipients.map((a) => a.trim()).filter(Boolean);
+	if (recipients.length === 0) throw new Error(`${context}: no recipient for invoice ${invoiceId}`);
+	const masked = recipients.map(maskEmail);
 
 	let envelope: { IsSuccess?: unknown } | null;
 	try {
+		// Never `SendToPartner`: the stored address may not be the submitter's.
 		envelope = (await apiEnvelope(cfg, 'POST', '/Mails/IssuedInvoice/Send', {
 			DocumentId: invoiceId,
-			SendToPartner: true,
+			SendToPartner: false,
 			SendToSelf: false,
 			SendToAccountant: false,
-			OtherRecipients: otherRecipients,
+			OtherRecipients: recipients,
 			EmailSubject: opts.subject,
 			EmailBody: opts.body,
 			SendAttachment: true,
@@ -388,8 +369,7 @@ export async function sendInvoiceByEmail(
 		// frame knows which invoice and which recipients it was for.
 		logger.warn('iDoklad invoice mail failed', {
 			invoiceId,
-			sendToPartner: true,
-			otherRecipients: masked,
+			recipients: masked,
 			error: describeError(err),
 		});
 		throw err;
@@ -406,8 +386,7 @@ export async function sendInvoiceByEmail(
 		invoiceId,
 		isSuccess: envelope?.IsSuccess ?? null,
 		idokladMessage: message,
-		sendToPartner: true,
-		otherRecipients: masked,
+		recipients: masked,
 	};
 	if (confirmed) logger.info('iDoklad invoice mail sent', entry);
 	else logger.warn('iDoklad invoice mail unconfirmed (no IsSuccess in response)', entry);

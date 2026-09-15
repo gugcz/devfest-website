@@ -1,15 +1,8 @@
 name: Accessibility audit
 
+# Every PR, no path filter: the `2026` ruleset requires this check.
 on:
   pull_request:
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'astro.config.mjs'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'scripts/a11y.mjs'
-      - '.github/workflows/accessibility.yml'
   push:
     branches: [2026]
 

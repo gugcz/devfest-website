@@ -11,7 +11,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { describeError } from '../lib/errors.js';
 import { SLACK_WEBHOOK_URL } from '../lib/params.js';
 import { runBackground } from '../lib/run.js';
-import { notify } from '../lib/slack.js';
+import { escapeMrkdwn, notify } from '../lib/slack.js';
 import { SCHEDULED } from '../options.js';
 
 import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from '../tickets/params.js';
@@ -126,7 +126,7 @@ async function pollPaidInvoices(): Promise<void> {
 			await notify(
 				'invoices',
 				slackUrl,
-				`❌ ${record.data.companyName} — post-payment processing failed (id ${record.id}); see logs`,
+				`❌ ${escapeMrkdwn(record.data.companyName)} — post-payment processing failed (id ${record.id}); see logs`,
 			);
 		}
 	}
@@ -204,7 +204,7 @@ async function completeInvoice(
 	await notify(
 		'invoices',
 		slackUrl,
-		`${data.companyName} — paid, code ${code} generated ` +
+		`${escapeMrkdwn(data.companyName)} — paid, code ${code} generated ` +
 			`for ${data.countTickets}× ticket; ${emailNote}`,
 	);
 	logger.info('completeInvoice completed', { id, code });

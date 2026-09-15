@@ -29,6 +29,12 @@ const DOMAIN_PREFIX: Record<SlackDomain, string> = {
 	invoices: '🧾 INVOICES',
 };
 
+/** Escape user/upstream text before mrkdwn — `<!channel>` in a company name
+ * is a mass ping. https://api.slack.com/reference/surfaces/formatting#escaping */
+export function escapeMrkdwn(text: string): string {
+	return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 /** POST a payload to an incoming webhook. Throws on a non-OK response. */
 export async function postToSlack(webhookUrl: string, payload: SlackPayload): Promise<void> {
 	// `retryUnsafe` on a POST is deliberate here and nowhere else: the worst case

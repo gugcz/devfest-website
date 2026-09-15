@@ -13,7 +13,7 @@ import { logger } from 'firebase-functions/v2';
 import { db } from './admin.js';
 import { describeError } from './errors.js';
 import { SLACK_WEBHOOK_URL } from './params.js';
-import { notify, type SlackDomain } from './slack.js';
+import { escapeMrkdwn, notify, type SlackDomain } from './slack.js';
 
 const HEALTH_PATH = 'ops/health';
 
@@ -92,7 +92,7 @@ export async function runBackground(
 			await notify(
 				domain,
 				SLACK_WEBHOOK_URL.value(),
-				`❌ \`${name}\` failed: ${message}${failureNote ? ` — ${failureNote}` : ''}`,
+				`❌ \`${name}\` failed: ${escapeMrkdwn(message)}${failureNote ? ` — ${failureNote}` : ''}`,
 			);
 		} else {
 			logger.warn(`${name} still failing (${failures} consecutive), alert already sent`);

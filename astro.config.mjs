@@ -59,10 +59,47 @@ const devApiMocks = () => ({
     },
 });
 
+// CSP, emitted as a per-page <meta> with a hash per inline script/style, so
+// no 'unsafe-inline' scripts. `firebase.json` keeps only `frame-ancestors`.
+// Hosts: google.com/gstatic.com = reCAPTCHA, googletagmanager/analytics = GA4,
+// googleapis/cloudfunctions/firebasedatabase = Firebase, smartemailing = newsletter.
+/** @type {Exclude<NonNullable<import('astro').AstroUserConfig['security']>['csp'], boolean | undefined>} */
+const csp = {
+    algorithm: 'SHA-256',
+    directives: [
+        "default-src 'self'",
+        "base-uri 'self'",
+        "object-src 'none'",
+        "manifest-src 'self'",
+        // Broad: /press hotlinks thumbnails from partner sites.
+        "img-src 'self' data: blob: https:",
+        "font-src 'self' data:",
+        "worker-src 'self' blob:",
+        "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.cloudfunctions.net https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://www.gstatic.com",
+        "frame-src https://www.google.com https://www.youtube.com",
+        "form-action 'self' https://app.smartemailing.cz",
+    ],
+    scriptDirective: {
+        resources: [
+            "'self'",
+            "'wasm-unsafe-eval'", // heic-to on /attending
+            'https://www.google.com',
+            'https://www.gstatic.com',
+            'https://www.googletagmanager.com',
+            'https://*.google-analytics.com',
+        ],
+    },
+    styleDirective: {
+        // Elements hashed; style attributes (hero custom properties) stay allowed.
+        resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }],
+    },
+};
+
 // https://astro.build/config
 export default defineConfig({
     site: 'https://devfest.cz',
     trailingSlash: 'never',
+    security: { csp },
     // Self-hosted, build-time-optimised replacements for the three brand faces
     // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
     // Weights/styles mirror exactly what that css2 URL requested. Only the four

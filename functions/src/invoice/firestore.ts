@@ -52,12 +52,10 @@ export interface InvoiceDoc extends InvoiceRequestInput {
 	idokladInvoiceNumber?: string | null;
 	variableSymbol?: string | null;
 	invoiceEmailSent?: boolean;
-	/**
-	 * True when the iDoklad contact was proven to carry the address submitted on
-	 * the form. False means the invoice mail named an explicit recipient instead
-	 * and the contact still holds someone else's address.
-	 */
-	contactEmailSynced?: boolean;
+	/** An existing iDoklad contact (by IČO) was reused, untouched. */
+	contactReused?: boolean;
+	/** Form fields that differ from the reused contact (names only). */
+	contactDiffers?: string[];
 	paidAmount?: string | null;
 	// ti.to
 	discountCode?: string | null;
@@ -103,6 +101,13 @@ export async function updateInvoice(id: string, patch: Partial<InvoiceDoc>): Pro
 	await invoicesCollection()
 		.doc(id)
 		.set({ ...patch, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+}
+
+/** Invoice requests created inside the trailing window, across every company. */
+export async function countRecentInvoiceRequests(windowMs: number): Promise<number> {
+	const since = Timestamp.fromMillis(Date.now() - windowMs);
+	const snap = await invoicesCollection().where('createdAt', '>=', since).count().get();
+	return snap.data().count;
 }
 
 /**
