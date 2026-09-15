@@ -28,8 +28,8 @@ jobs:
     # a reviewer before this job runs and pin the deploy secret to it.
     environment: production
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -42,7 +42,7 @@ jobs:
       # keep-alive failure that breaks FirebaseExtended/action-hosting-deploy
       # when it runs firebase-tools on the runner's security-patched Node.
       - name: Deploy to Firebase Hosting (live)
-        uses: w9jds/firebase-action@f527de56a76155c20044753433bc6b5b379f4641 # v15.30.0
+        uses: w9jds/firebase-action@v15.30.0
         with:
           args: deploy --only hosting --project devfest-cz-app
         env:
