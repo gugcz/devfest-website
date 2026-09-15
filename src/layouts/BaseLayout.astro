@@ -22,7 +22,7 @@ interface Props {
 const siteUrl = "https://devfest.cz";
 const {
 	title = "DevFest.cz 2026 — Prague Developer Conference",
-	description = "DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML. October 30, 2026. Tickets on sale now.",
+	description = "DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. October 30, 2026 at Uhelný Mlýn. Tickets on sale now.",
 	noindex = false,
 	bodyClass = "",
 	showFooter = true,
@@ -43,27 +43,61 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, ""
 const isHome = Astro.url.pathname === "/";
 
 // `offers[].url` → #tickets (survives slug changes). Prices VAT-inclusive
-// CZK matching priceDisplay(), never EUR. List only waves on sale — a paused
-// wave has no honest `availability`/`validFrom`. Update as waves open/close.
+// CZK matching priceDisplay(), never EUR. Only the wave on sale at build time
+// is listed — a paused wave has no honest `availability`/`validFrom` — and a
+// build after the last wave closes lists none. Dates are the ti.to release
+// `end_at`s. Add the next wave only once its dates and prices are announced;
+// keep in step with the prices in src/content/faq.json.
 const organizer = {
 	"@type": "Organization",
 	"name": "GUG.cz, z.s.",
 	"url": "https://gug.cz"
 };
+const TICKET_WAVES = [
+	{
+		name: "Regular",
+		validFrom: "2026-07-01T00:00:00+02:00",
+		validUntil: "2026-09-30T12:00:00+02:00",
+		individual: "2999",
+		company: "4499"
+	}
+];
+const buildTime = Date.now();
+const offers = TICKET_WAVES.filter(
+	(wave) => Date.parse(wave.validFrom) <= buildTime && buildTime < Date.parse(wave.validUntil)
+).flatMap((wave) =>
+	[
+		{ variant: "Individual", price: wave.individual, description: "Full conference admission, personal purchase." },
+		{ variant: "Company funded", price: wave.company, description: "Full conference admission, priced for employer-reimbursed purchases." }
+	].map(({ variant, price, description }) => ({
+		"@type": "Offer",
+		"name": `${wave.name} — ${variant}`,
+		"description": description,
+		"url": `${siteUrl}/#tickets`,
+		"price": price,
+		"priceCurrency": "CZK",
+		"availability": "https://schema.org/InStock",
+		"validFrom": wave.validFrom,
+		"priceValidUntil": wave.validUntil.slice(0, 10),
+		"seller": organizer
+	}))
+);
 const eventSchema = {
 	"@context": "https://schema.org",
 	"@type": "Event",
 	"name": "DevFest.cz 2026",
 	"description":
-		"DevFest.cz 2026 — Prague's developer conference & festival. Web, Mobile, Cybersecurity, AI/ML.",
+		"DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. Two stages, one day, an afterparty.",
 	"image": [ogImage],
 	"url": siteUrl,
 	"startDate": "2026-10-30T09:00:00+01:00",
 	"endDate": "2026-10-30T20:00:00+01:00",
+	// Registration opens an hour before the keynote (see the agenda).
+	"doorTime": "2026-10-30T08:00:00+01:00",
 	"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
 	"eventStatus": "https://schema.org/EventScheduled",
 	"inLanguage": "en",
-	"keywords": "developer conference, technology conference, Prague, web development, Android, Flutter, AI, cybersecurity, DevFest",
+	"keywords": "developer conference, technology conference, Prague, AI agents, generative UI, cloud, backends, web development, mobile development, accessibility, open source, DevFest",
 	"location": {
 		"@type": "Place",
 		"name": "Uhelný Mlýn",
@@ -77,21 +111,9 @@ const eventSchema = {
 		}
 	},
 	"organizer": organizer,
-	"offers": [
-		{
-			"@type": "Offer",
-			"name": "Regular",
-			"description": "Standard conference admission.",
-			"url": `${siteUrl}/#tickets`,
-			"price": "2999",
-			"priceCurrency": "CZK",
-			"availability": "https://schema.org/InStock",
-			"validFrom": "2026-07-01T00:00:00+02:00",
-			// Bump if a later wave supersedes the Regular price before the event.
-			"priceValidUntil": "2026-10-30",
-			"seller": organizer
-		}
-	]
+	// Omitted rather than `[]` once nothing is on sale (Google reads an empty
+	// list as "no offers", a missing key as "unknown").
+	...(offers.length > 0 ? { "offers": offers } : {})
 };
 
 const organizationSchema = {
@@ -101,7 +123,7 @@ const organizationSchema = {
 	"url": siteUrl,
 	"logo": `${siteUrl}/logo.png`,
 	"description":
-		"DevFest.cz is Prague's community-run developer conference & festival — Web, Mobile, Cybersecurity, and AI/ML.",
+		"DevFest.cz is Prague's community-run developer conference & festival — AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it.",
 	"parentOrganization": organizer,
 	"contactPoint": {
 		"@type": "ContactPoint",
@@ -130,6 +152,8 @@ const websiteSchema = {
 const pageNames: Record<string, string> = {
 	"speakers": "Speakers",
 	"sessions": "Sessions",
+	"agenda": "Agenda",
+	"attending": "I'm attending",
 	"team": "Team",
 	"partners": "Partners",
 	"press": "Press",

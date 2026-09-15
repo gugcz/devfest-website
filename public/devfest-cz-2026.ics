@@ -5,11 +5,11 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
 UID:devfest-cz-2026@devfest.cz
-DTSTAMP:20260101T000000Z
+DTSTAMP:20260915T000000Z
 DTSTART:20261030T080000Z
 DTEND:20261030T190000Z
 SUMMARY:DevFest.cz 2026
-DESCRIPTION:Prague's developer conference & festival — Web\, Mobile\, Cybersecurity\, AI/ML. https://devfest.cz
+DESCRIPTION:Prague's developer conference & festival — AI agents\, generative UI\, cloud & backends\, mobile & web accessibility\, and the humans behind it. Registration from 08:00. https://devfest.cz
 LOCATION:Uhelný Mlýn\, Libčice nad Vltavou\, Czech Republic
 URL:https://devfest.cz
 END:VEVENT
