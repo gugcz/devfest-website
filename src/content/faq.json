@@ -6,19 +6,27 @@
 		"items": [
 			{
 				"q": "When and where is DevFest.cz 2026?",
-				"a": "DevFest.cz 2026 takes place on <strong>30 October 2026</strong> at <strong>Uhelný Mlýn</strong> — a converted industrial mill in Libčice nad Vltavou, just outside Prague — fully in person. Capacity is strictly capped to keep the day focused, so grab a <a href=\"/#tickets\">ticket</a> early."
+				"a": "DevFest.cz 2026 takes place on <strong>30 October 2026</strong> at <strong>Uhelný Mlýn</strong> — a converted industrial mill in Libčice nad Vltavou, just outside Prague — fully in person. Registration opens at <strong>8:00</strong>, the keynote starts at <strong>9:00</strong>, and the day runs through the closing lightning talks into the afterparty. Capacity is strictly capped to keep the day focused, so grab a <a href=\"/#tickets\">ticket</a> early."
+			},
+			{
+				"q": "What does the day look like?",
+				"a": "Registration and breakfast from 8:00, kick-off at 8:45, keynote at 9:00. From then on the talks run on two stages — <strong>Moonshine</strong> and <strong>Speakeasy</strong> — in 20- and 40-minute slots, with a lunch break around midday and a longer break in the afternoon. Lightning talks and closing remarks wrap up around 18:30, and the afterparty follows. The full timetable is on the <a href=\"/agenda\">agenda</a> page; a slot or two may still shift."
 			},
 			{
 				"q": "How do I get to the venue?",
-				"a": "Uhelný Mlýn is at <a href=\"https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8\" target=\"_blank\" rel=\"noopener noreferrer\"><strong>Areál Šroubáren 860, 252 66 Libčice nad Vltavou</strong></a>, just north of Prague. Take a train toward Kralupy nad Vltavou from <strong>Praha-Bubny</strong> (or Praha-Podbaba) and get off at <strong>Libčice nad Vltavou</strong> — roughly a 30-minute ride, with trains about every 30 minutes. From the station it is a short walk (about 0.7 km) to the venue."
+				"a": "Uhelný Mlýn is at <a href=\"https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8\" target=\"_blank\" rel=\"noopener noreferrer\"><strong>Areál Šroubáren 860, 252 66 Libčice nad Vltavou</strong></a>, just north of Prague. The train is the easy way: direct services toward Kralupy nad Vltavou leave from <strong>Praha hlavní nádraží</strong> and <strong>Praha-Holešovice</strong> about every 30 minutes (they also call at Praha-Podbaba) — get off at <strong>Libčice nad Vltavou</strong>, roughly a 25–30-minute ride. From the station it is a 10-minute walk (about 0.7 km) to the venue."
 			},
 			{
 				"q": "Who organises DevFest.cz?",
-				"a": "It's run by GUG.cz, z.s. — a Czech developer community. DevFest.cz is a volunteer-driven community event."
+				"a": "It's run by GUG.cz, z.s. — a Czech developer community. DevFest.cz is a volunteer-driven community event, now in its 11th edition."
 			},
 			{
 				"q": "What language are the talks in?",
 				"a": "All talks are in English."
+			},
+			{
+				"q": "Is there an afterparty?",
+				"a": "Yes. Once the closing remarks are done, around 18:30, the afterparty kicks off right at the venue and runs late into the night. Your conference ticket is your way in — no separate ticket needed."
 			}
 		]
 	},
@@ -29,19 +37,19 @@
 		"items": [
 			{
 				"q": "How much do tickets cost?",
-				"a": "Tickets are sold in three waves — <strong>Early Bird</strong>, <strong>Regular</strong>, and <strong>Lazy Bird</strong> — with the price rising each wave. Early Bird tickets start from <strong>2 099 Kč (VAT included)</strong>. Live pricing for the current wave is always shown in the <a href=\"/#tickets\">Tickets</a> section on the home page."
+				"a": "Tickets are sold in three waves — <strong>Early Bird</strong>, <strong>Regular</strong>, and <strong>Lazy Bird</strong> — with the price rising each wave. Early Bird has closed. <strong>Regular</strong> tickets are on sale until <strong>30 September 2026</strong>: <strong>2 999 Kč</strong> individual and <strong>4 499 Kč</strong> company funded, VAT included. From October the <strong>Lazy Bird</strong> wave takes over at 3 599 Kč individual and 5 299 Kč company funded. Live pricing for the current wave is always shown in the <a href=\"/#tickets\">Tickets</a> section on the home page."
 			},
 			{
 				"q": "What ticket types are available?",
-				"a": "Each wave offers two options: <strong>Individual</strong> (personal purchase) and <strong>Company funded</strong> (priced for employer-reimbursed purchases). Both grant full access to the conference."
+				"a": "Each wave offers two options: <strong>Individual</strong> (personal purchase) and <strong>Company funded</strong> (priced for employer-reimbursed purchases). Both grant full access to the conference — every talk on both stages — and the afterparty."
 			},
 			{
 				"q": "How do I get tickets?",
-				"a": "Live availability and pricing are shown in the <a href=\"/#tickets\">Tickets</a> section on the home page. Tickets are released in waves — the earlier you grab one, the better the price."
+				"a": "Tickets are sold through ti.to from the <a href=\"/#tickets\">Tickets</a> section on the home page. Pay by card and the ticket lands in your inbox right away. Each wave closes on its date or when it sells out — the earlier you grab one, the better the price."
 			},
 			{
 				"q": "Can I get an invoice for my company?",
-				"a": "Yes. Request one on the <a href=\"/invoice\">invoice page</a> \u2014 we issue a proper invoice, you pay by bank transfer, and we send back a code that covers the tickets in full. If you can pay by card, ti.to emails a receipt the moment you buy."
+				"a": "Yes. Request one on the <a href=\"/invoice\">invoice page</a> — we issue a proper invoice, you pay by bank transfer, and we send back a code that covers the tickets in full. If you can pay by card, ti.to emails a receipt the moment you buy."
 			}
 		]
 	},
@@ -51,12 +59,20 @@
 		"label": "Program & speakers",
 		"items": [
 			{
+				"q": "Who is speaking?",
+				"a": "The lineup is live on the <a href=\"/speakers\">speakers</a> page — developers, Google Developer Experts and researchers from across Europe and beyond, with a few more names still to land. Every talk, with its abstract and speakers, is on the <a href=\"/sessions\">sessions</a> page."
+			},
+			{
+				"q": "What topics are covered?",
+				"a": "AI agents, generative UI, cloud & backends, mobile & web (accessibility included), and the humans in tech — teams, trust, and the part that is not code. On the agenda the talks are grouped into three tracks: <strong>AI</strong>, <strong>Open Source</strong> and <strong>Humans</strong>."
+			},
+			{
 				"q": "Will the talks be recorded?",
 				"a": "Yes — talk recordings are published after the conference. We'll announce them via the <a href=\"/#newsletter\">newsletter</a> and our social channels."
 			},
 			{
 				"q": "How can I become a speaker?",
-				"a": "The Call for Proposals is now closed — submissions are no longer accepted for DevFest.cz 2026. The lineup will be announced soon. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>."
+				"a": "The Call for Proposals closed over the summer and the program for DevFest.cz 2026 is out — see the <a href=\"/speakers\">speakers</a> and <a href=\"/agenda\">agenda</a> pages. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>."
 			}
 		]
 	},
@@ -65,6 +81,14 @@
 		"order": 4,
 		"label": "Get involved",
 		"items": [
+			{
+				"q": "What's the story with the detective theme?",
+				"a": "This year's edition is styled as a film-noir case, and the case doesn't stay on the posters: there's a game running through the day for anyone who wants to play investigator. More is revealed closer to the date — and on the day itself."
+			},
+			{
+				"q": "I'm coming — how do I tell people?",
+				"a": "Make a share card on the <a href=\"/attending\">I'm attending</a> page: add your photo (processed on your device only) or let your initials carry it, then download it or share it straight to your feed."
+			},
 			{
 				"q": "How can my company become a partner?",
 				"a": "See the <a href=\"/partners\">Partners</a> page for what we offer, or write to <a href=\"mailto:filip@gug.cz\">filip@gug.cz</a>."

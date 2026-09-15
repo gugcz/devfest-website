@@ -32,7 +32,7 @@ export const googleCalendarUrl = (): string => {
 		action: 'TEMPLATE',
 		text: EVENT.name,
 		dates: `${toCalendarStamp(EVENT.start)}/${toCalendarStamp(EVENT.end)}`,
-		details: `Prague's developer conference & festival — Web, Mobile, Cybersecurity, AI/ML.\n${EVENT.url}`,
+		details: `Prague's developer conference & festival — AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. Registration from 08:00.\n${EVENT.url}`,
 		location: `${EVENT.venue}, ${EVENT.address}`,
 	});
 	return `https://calendar.google.com/calendar/render?${params.toString()}`;
