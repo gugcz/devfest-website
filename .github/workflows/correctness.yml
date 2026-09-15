@@ -1,15 +1,10 @@
 name: Correctness gate
 
+# Runs on every PR, unfiltered: the `2026` ruleset requires `astro-check` and
+# `functions-test`, and a path-filtered check never reports on a docs-only PR,
+# which would leave it unmergeable.
 on:
   pull_request:
-    paths:
-      - 'src/**'
-      - 'astro.config.mjs'
-      - 'tsconfig.json'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'functions/**'
-      - '.github/workflows/correctness.yml'
   push:
     branches: [2026]
 

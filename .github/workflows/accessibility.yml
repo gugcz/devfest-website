@@ -1,15 +1,9 @@
 name: Accessibility audit
 
+# Runs on every PR, unfiltered: the `2026` ruleset requires `axe`, and a
+# path-filtered check never reports on a docs-only PR, leaving it unmergeable.
 on:
   pull_request:
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'astro.config.mjs'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'scripts/a11y.mjs'
-      - '.github/workflows/accessibility.yml'
   push:
     branches: [2026]
 
