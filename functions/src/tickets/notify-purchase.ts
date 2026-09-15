@@ -129,9 +129,7 @@ function buildSlackMessage(payload: TitoWebhookPayload): SlackPayload {
 
 	const fields: { type: 'mrkdwn'; text: string }[] = [];
 
-	// Attendee-typed strings (name, email) and ti.to-owned ones (titles,
-	// reference) both go through `escapeMrkdwn`: a buyer can name themselves
-	// `<!channel>` at checkout.
+	// Attendee-typed strings — a buyer can name themselves `<!channel>`.
 	const buyer = escapeMrkdwn(fullName(payload));
 	fields.push({ type: 'mrkdwn', text: `*Name:*\n${buyer}` });
 

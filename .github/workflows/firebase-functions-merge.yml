@@ -35,8 +35,6 @@ jobs:
   deploy_functions:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Deployment environment: Settings → Environments → production can require
-    # a reviewer before this job runs and pin the deploy secret to it.
     environment: production
     steps:
       - uses: actions/checkout@v7.0.1

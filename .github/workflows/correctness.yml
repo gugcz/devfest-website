@@ -1,8 +1,6 @@
 name: Correctness gate
 
-# Runs on every PR, unfiltered: the `2026` ruleset requires `astro-check` and
-# `functions-test`, and a path-filtered check never reports on a docs-only PR,
-# which would leave it unmergeable.
+# Every PR, no path filter: the `2026` ruleset requires these checks.
 on:
   pull_request:
   push:

@@ -12,11 +12,6 @@ jobs:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Same-repo PRs only (above), yet the deploy step below runs with a
-    # service-account key and `firebase.json` is under the PR's control (a
-    # `predeploy` entry is arbitrary shell). Keep the preview credential a
-    # separate, Hosting-only account — or better, Workload Identity — and
-    # never the production one. Settings → Environments → preview.
     environment: preview
     steps:
       - uses: actions/checkout@v7.0.1

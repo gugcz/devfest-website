@@ -29,13 +29,8 @@ const DOMAIN_PREFIX: Record<SlackDomain, string> = {
 	invoices: '🧾 INVOICES',
 };
 
-/**
- * Escape text that is not ours before it enters mrkdwn: a company name from
- * the public form, a buyer's name from ti.to, an upstream error body. Slack
- * reads `<!channel>` / `<!here>` (mass ping) and `<url|label>` (disguised
- * link) inside such strings; the documented fix is these three entities.
- * https://api.slack.com/reference/surfaces/formatting#escaping
- */
+/** Escape user/upstream text before mrkdwn — `<!channel>` in a company name
+ * is a mass ping. https://api.slack.com/reference/surfaces/formatting#escaping */
 export function escapeMrkdwn(text: string): string {
 	return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

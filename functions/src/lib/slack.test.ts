@@ -1,4 +1,4 @@
-/** mrkdwn escaping: the three entities Slack documents, nothing else. */
+/** mrkdwn escaping. */
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';

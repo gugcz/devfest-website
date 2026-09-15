@@ -22,18 +22,13 @@ const FETCH_TIMEOUT_MS = 20_000;
 /** Parallel downloads. Small — the roster is ~30–60 and we're kind to the CDN. */
 const CONCURRENCY = 6;
 
-/** Where Sessionize serves profile pictures (`cdn.sessionize.com/image/…`
- * today). The function fetches whatever URL the payload names, so the host
- * is pinned to sessionize.com and its subdomains: a payload is data, not a
- * licence to make the function download from anywhere. */
+/** Sessionize hosts only (`cdn.sessionize.com/image/…` today). */
 const SOURCE_HOST_RE = /(^|\.)sessionize\.com$/i;
 
-/** Raster types only — an SVG would be stored and served verbatim from the
- * Storage origin, which is a script container, not a photo. */
+/** Raster only — an SVG would be served verbatim from the Storage origin. */
 const IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif']);
 
-/** Only mirror an https source on a Sessionize host; anything else keeps its
- * original URL in the doc (the browser loads it as before). Exported for tests. */
+/** https on a Sessionize host; anything else keeps its original URL. */
 export function isMirrorableUrl(url: string): boolean {
 	try {
 		const { protocol, hostname } = new URL(url);

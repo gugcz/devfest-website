@@ -166,9 +166,7 @@ const breadcrumbSchema = !isHome && slug
 		}
 	: null;
 
-// `set:html` writes this verbatim, so `<` is escaped: a `</script>` inside any
-// string (a page title, a description) would otherwise end the element early.
-// `\u003c` is still `<` to a JSON parser.
+// `<` escaped so a `</script>` in content can't end the element (still `<` to JSON).
 const jsonLd = JSON.stringify(
 	isHome
 		? [eventSchema, organizationSchema, websiteSchema]

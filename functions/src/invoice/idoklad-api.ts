@@ -195,20 +195,14 @@ async function apiJson<T = unknown>(
 
 export interface ResolvedContact {
 	id: number;
-	/** True when an existing iDoklad contact with this IČO was reused. Its
-	 * stored details are left untouched — the public form never edits an
-	 * accounting record (an IČO is public data, so anyone could otherwise
-	 * rewrite any customer's address or email). */
+	/** An existing contact with this IČO was reused, untouched. */
 	reused: boolean;
-	/** Form fields whose value differs from the reused contact's stored one
-	 * (names only, never values). Empty when created or identical. The
-	 * organizer reviews these by hand; the invoice carries the stored details. */
+	/** Form fields that differ from the reused contact (names only). */
 	differing: string[];
 }
 
-/** Find a contact by IČO, else create one (no IČO → always create). A reused
- * contact is read, never written: the caller mails the submitted address
- * explicitly (`recipients`) instead of trusting `SendToPartner`. */
+/** Find a contact by IČO, else create one. A reused contact is never
+ * written — an IČO is public, so the form must not edit customer records. */
 export async function findOrCreateContact(
 	cfg: IdokladConfig,
 	contact: IdokladContactInput,
@@ -223,8 +217,6 @@ export async function findOrCreateContact(
 	return { id: await createContact(cfg, contact), reused: false, differing: [] };
 }
 
-/** The stored fields we compare against the form. `IdentificationNumber` is
- * the match key, so it is never "differing". */
 interface StoredContact {
 	Id: number;
 	IdentificationNumber?: string | null;
@@ -245,8 +237,7 @@ const COMPARED_FIELDS: Array<[keyof IdokladContactInput, keyof StoredContact]> =
 	['email', 'Email'],
 ];
 
-/** Names of the submitted (non-empty) fields whose value does not match the
- * stored contact, compared trimmed and case-insensitively. */
+/** Submitted fields that differ from the stored contact (case-insensitive). */
 export function differingFields(stored: StoredContact, contact: IdokladContactInput): string[] {
 	const norm = (v: unknown) => (typeof v === 'string' ? v.trim().toLowerCase() : '');
 	const out: string[] = [];
@@ -348,8 +339,8 @@ export interface InvoiceMailResult {
 	recipients: string[];
 }
 
-/** Ask iDoklad to email the invoice (PDF with bank details) to the named
- * recipients only. Throws on `IsSuccess: false`; logs the verdict either way. */
+/** Ask iDoklad to email the invoice (PDF with bank details) to `recipients`.
+ * Throws on `IsSuccess: false`; logs the verdict either way. */
 export async function sendInvoiceByEmail(
 	cfg: IdokladConfig,
 	invoiceId: number,
@@ -362,9 +353,7 @@ export async function sendInvoiceByEmail(
 
 	let envelope: { IsSuccess?: unknown } | null;
 	try {
-		// `SendToPartner` is off on purpose: the partner's stored address is
-		// whatever the contact carried before this request, and the form is
-		// not allowed to rewrite it. The submitter is named explicitly instead.
+		// Never `SendToPartner`: the stored address may not be the submitter's.
 		envelope = (await apiEnvelope(cfg, 'POST', '/Mails/IssuedInvoice/Send', {
 			DocumentId: invoiceId,
 			SendToPartner: false,

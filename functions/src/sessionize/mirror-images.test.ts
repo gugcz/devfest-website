@@ -1,4 +1,4 @@
-/** Photo mirror guards: only https Sessionize hosts, only raster types. */
+/** Photo mirror guards. */
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';

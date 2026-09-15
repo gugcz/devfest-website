@@ -1,5 +1,4 @@
-/** `/invoice` body validation: registration ids are normalised and charset-
- * checked (they reach the iDoklad filter syntax), everything else bounded. */
+/** `/invoice` body validation. */
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';

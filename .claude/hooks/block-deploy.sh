@@ -3,9 +3,7 @@
 # rule from CLAUDE.md. Blocks the command unconditionally; the maintainer runs
 # these from their own shell, never through Claude.
 #
-# A belt, not a boundary: it stops an agent's accidental deploy, not a
-# determined one. The boundary is GitHub — the `2026` ruleset requires a pull
-# request, and only the maintainer holds deploy credentials.
+# A belt, not a boundary — the boundary is the GitHub ruleset on `2026`.
 #
 # Perl + core JSON::PP only, so there is no jq dependency to fail open on.
 use strict;
@@ -53,9 +51,7 @@ for (my $i = 0; $i < @lines; $i++) {
 # 3. Split into simple commands on newlines, `;`, `&&`, `||`, `|`.
 my @segments = map { split /\s*(?:&&|\|\||\||;)\s*/, $_ } @kept;
 
-# Global options that may sit between the executable and its verb. Stripping
-# them means `git -C . push`, `git -c x=y push`, `firebase --project p deploy`
-# and `npm --prefix functions run deploy` all read as the bare form.
+# Global options between executable and verb (`git -C . push`, `firebase --project p deploy`).
 my $git_opts      = qr/(?:-C \S+|-c \S+|--git-dir=\S+|--work-tree=\S+|--no-pager|--paginate|-p|--no-optional-locks)\s+/;
 my $firebase_opts = qr/(?:--project[= ]\S+|-P \S+|--config[= ]\S+|--token[= ]\S+|--non-interactive|--debug|--json|--force|-f)\s+/;
 my $npm_opts      = qr/(?:--prefix[= ]\S+|-C \S+|-w \S+|--workspace[= ]\S+|--filter[= ]\S+|--cwd[= ]\S+|-s|--silent)\s+/;
@@ -73,8 +69,7 @@ while (@segments) {
 	$seg =~ s{^\S*/}{};
 	$seg =~ s/^firebase-tools\b/firebase/;
 
-	# 5. A shell wrapper (`sh -c "…"`, `bash -lc '…'`, `eval "…"`) is a command
-	#    carrying another: unwrap the string and scan it like any other segment.
+	# 5. Unwrap `sh -c "…"` / `eval "…"` and scan the inner command.
 	if ($seg =~ /^(?:sh|bash|zsh|dash|ksh|fish)\s+(?:-\S+\s+)*-\S*c\s+(.+)$/ || $seg =~ /^eval\s+(.+)$/) {
 		my $inner = $1;
 		$inner =~ s/^(["'])(.*)\1$/$2/s;
@@ -82,8 +77,7 @@ while (@segments) {
 		next;
 	}
 
-	# 6. Quotes around an argument change nothing for the shell; drop them so
-	#    `git push origin "2026"` is `git push origin 2026`.
+	# 6. Drop quotes: `git push origin "2026"` is `git push origin 2026`.
 	$seg =~ s/["']//g;
 
 	$seg =~ s/^git $git_opts+/git /;

@@ -1,7 +1,6 @@
 name: Accessibility audit
 
-# Runs on every PR, unfiltered: the `2026` ruleset requires `axe`, and a
-# path-filtered check never reports on a docs-only PR, leaving it unmergeable.
+# Every PR, no path filter: the `2026` ruleset requires this check.
 on:
   pull_request:
   push:

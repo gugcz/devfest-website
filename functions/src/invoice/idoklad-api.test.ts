@@ -1,6 +1,6 @@
 /**
- * iDoklad client tests: a reused contact is read but never written, `Send`
- * names the submitter explicitly, and 200 + `IsSuccess: false` is a failure.
+ * iDoklad client tests: a reused contact is never written, `Send` names the
+ * submitter, and 200 + `IsSuccess: false` is a failure.
  * No network — `globalThis.fetch` is a table of route handlers.
  */
 
@@ -108,8 +108,6 @@ describe('findOrCreateContact', () => {
 		const contact = await findOrCreateContact(CFG, acme);
 
 		assert.deepEqual(contact, { id: 4242, reused: true, differing: [] });
-		// The whole point: an IČO is public, so the form must never be able to
-		// rewrite an existing customer's record. No PATCH, no POST.
 		assert.deepEqual(
 			calls.map((c) => c.method),
 			['GET'],

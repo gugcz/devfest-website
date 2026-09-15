@@ -1,15 +1,10 @@
-/**
- * Pure validation of the `/invoice` form body — no Firebase imports, so it is
- * unit-testable and the callable stays a thin shell around it.
- */
+/** Validation of the `/invoice` form body. Pure — no Firebase imports. */
 
 import type { InvoiceRequestInput } from './firestore.js';
 
 const MAX_TICKETS = 50;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// Company registration ids (IČO, DIČ, foreign equivalents): letters, digits
-// and the separators real registers use. Whitespace is stripped first. Rules
-// out `~` and `|`, which the iDoklad filter syntax would otherwise parse.
+// IČO / DIČ / foreign ids. No `~` or `|` — iDoklad filter syntax.
 const REGISTRATION_ID_RE = /^[0-9A-Za-z][0-9A-Za-z./-]{0,31}$/;
 
 export type ValidationResult =
@@ -20,7 +15,7 @@ export function str(v: unknown): string {
 	return typeof v === 'string' ? v.trim() : '';
 }
 
-/** Registration ids as typed ("123 45 678") → as stored ("12345678"). */
+/** "123 45 678" → "12345678". */
 function registrationId(v: unknown): string {
 	return str(v).replace(/\s+/g, '');
 }

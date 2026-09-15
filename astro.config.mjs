@@ -59,17 +59,10 @@ const devApiMocks = () => ({
     },
 });
 
-// Content Security Policy. Astro emits it as a <meta http-equiv> on every
-// page with a SHA-256 hash per inline script and style it renders (hydration
-// loaders, <ClientRouter />, the is:inline theme snippet), so `script-src`
-// needs no 'unsafe-inline'. `firebase.json` keeps only `frame-ancestors`,
-// which a <meta> cannot carry. Hosts:
-//   google.com / gstatic.com   reCAPTCHA Enterprise (App Check)
-//   googletagmanager.com, *.google-analytics.com, *.analytics.google.com   GA4
-//   *.googleapis.com, *.cloudfunctions.net   Firebase (App Check exchange, callable)
-//   *.firebasedatabase.app   RTDB (SDK still bundled; the browser reads /api/*)
-//   app.smartemailing.cz   newsletter form action
-//   youtube.com   embedded video
+// CSP, emitted as a per-page <meta> with a hash per inline script/style, so
+// no 'unsafe-inline' scripts. `firebase.json` keeps only `frame-ancestors`.
+// Hosts: google.com/gstatic.com = reCAPTCHA, googletagmanager/analytics = GA4,
+// googleapis/cloudfunctions/firebasedatabase = Firebase, smartemailing = newsletter.
 /** @type {Exclude<NonNullable<import('astro').AstroUserConfig['security']>['csp'], boolean | undefined>} */
 const csp = {
     algorithm: 'SHA-256',
@@ -78,8 +71,7 @@ const csp = {
         "base-uri 'self'",
         "object-src 'none'",
         "manifest-src 'self'",
-        // Any https image: /press hotlinks coverage thumbnails from the media
-        // partners' own sites. An image cannot run script, so this stays broad.
+        // Broad: /press hotlinks thumbnails from partner sites.
         "img-src 'self' data: blob: https:",
         "font-src 'self' data:",
         "worker-src 'self' blob:",
@@ -90,8 +82,7 @@ const csp = {
     scriptDirective: {
         resources: [
             "'self'",
-            // heic-to decodes iPhone photos on /attending through a wasm module.
-            "'wasm-unsafe-eval'",
+            "'wasm-unsafe-eval'", // heic-to on /attending
             'https://www.google.com',
             'https://www.gstatic.com',
             'https://www.googletagmanager.com',
@@ -99,9 +90,7 @@ const csp = {
         ],
     },
     styleDirective: {
-        // Elements are hashed by Astro; attributes (the hero's `style="--hero-…"`
-        // custom properties, React `style={{}}`) stay allowed — an inline style
-        // attribute cannot run script.
+        // Elements hashed; style attributes (hero custom properties) stay allowed.
         resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }],
     },
 };

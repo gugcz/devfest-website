@@ -1,11 +1,8 @@
 /**
  * `submitInvoiceCallable` — validates the form and writes a `pending` doc;
- * `processInvoiceTrigger` does the rest. Abuse protection, outermost first:
- * App Check with single-use tokens (every submit costs a fresh reCAPTCHA
- * assessment), a global ceiling on requests per hour (the backstop — every
- * request mints an iDoklad invoice and an email), a per-(IČO + email)
- * throttle (keyed on values the submitter picks, so a nuisance limit only),
- * `maxInstances` (fan-out).
+ * `processInvoiceTrigger` does the rest. Abuse protection: single-use App
+ * Check tokens, a global hourly ceiling, a per-(IČO + email) throttle,
+ * `maxInstances`.
  */
 
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
@@ -16,21 +13,17 @@ import { CALLABLE } from '../options.js';
 import { checkInvoiceRateLimit, countRecentInvoiceRequests, createInvoiceRequest } from './firestore.js';
 import { str, validate } from './validate.js';
 
-// At most this many submissions per (company, email) inside the window.
+// Per (company, email) inside the window.
 const RATE_LIMIT_MAX = 3;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
-// Hard ceiling across everyone inside the same window. Real volume is a
-// handful of company invoices a week; 20 an hour is already an incident.
+// Across everyone inside the window — every request mints an invoice + email.
 const GLOBAL_LIMIT_MAX = 20;
 
 export const submitInvoiceCallable = onCall(
 	{
 		...CALLABLE,
-		// App Check (reCAPTCHA Enterprise) is the gate that stops a bot minting
-		// invoices and emails: the framework rejects a missing/invalid token before
-		// the handler runs. Tokens are single-use (`InvoiceForm.tsx` asks for
-		// limited-use tokens), so one captured token cannot be replayed — each
-		// submit is its own reCAPTCHA assessment.
+		// App Check (reCAPTCHA Enterprise) rejects bots before the handler runs.
+		// Tokens are single-use (`InvoiceForm.tsx` requests limited-use ones).
 		enforceAppCheck: true,
 		consumeAppCheckToken: true,
 		// The browser is the only caller: production, the PR previews, and a dev
@@ -57,16 +50,13 @@ export const submitInvoiceCallable = onCall(
 			throw new HttpsError('invalid-argument', result.error);
 		}
 
-		// Global ceiling first: the identity key below is chosen by the submitter
-		// (vary the email, reset the budget), so only this bounds the total number
-		// of invoices and emails a farmed token can mint.
+		// Global ceiling first — the identity key below is chosen by the submitter.
 		const recent = await countRecentInvoiceRequests(RATE_LIMIT_WINDOW_MS);
 		if (recent >= GLOBAL_LIMIT_MAX) {
 			logger.warn('submitInvoiceCallable global ceiling reached', { recent, max: GLOBAL_LIMIT_MAX });
 			throw new HttpsError('resource-exhausted', 'rate_limited');
 		}
 
-		// Then per (company, email): a nuisance limit for the honest repeat.
 		const allowed = await checkInvoiceRateLimit({
 			registrationNumberIC: result.value.registrationNumberIC,
 			email: result.value.email,

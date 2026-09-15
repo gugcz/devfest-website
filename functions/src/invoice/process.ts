@@ -122,8 +122,7 @@ export const processInvoiceTrigger = onDocumentCreated(
 					variableSymbol: invoice.variableSymbol,
 					dueDate: formatDueDate(invoice.dueDate),
 				});
-				// Always the submitted address, never the contact's stored one —
-				// a reused contact is read-only for the form (see `findOrCreateContact`).
+				// Always the submitted address, never the contact's stored one.
 				const result = await sendInvoiceByEmail(idokladCfg, invoice.id, {
 					subject: mail.subject,
 					body: mail.body,
@@ -147,8 +146,6 @@ export const processInvoiceTrigger = onDocumentCreated(
 				idokladInvoiceNumber: invoice.number,
 				variableSymbol: invoice.variableSymbol,
 				invoiceEmailSent,
-				// A reused contact keeps its stored details; `contactDiffers` names the
-				// form fields that disagree, so the doc says so, not only a Slack line.
 				contactReused: contact.reused,
 				contactDiffers: contact.differing,
 				errorMessage: null,
@@ -157,9 +154,7 @@ export const processInvoiceTrigger = onDocumentCreated(
 			const linkNote = invoiceEmailSent
 				? ''
 				: `\n⚠️ email could not be sent — send invoice ${invoice.number ?? invoice.id} manually`;
-			// A reused contact is never edited from the form, so the invoice carries
-			// its stored details. When the form disagrees, a human decides whether
-			// the company moved or a stranger typed someone else's IČO.
+			// The invoice carries the stored details; a human reviews the difference.
 			const contactNote = contact.differing.length === 0
 				? ''
 				: `\n⚠️ existing iDoklad contact ${contactId} reused — submitted ` +

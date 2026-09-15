@@ -247,11 +247,8 @@ export default function InvoiceForm() {
 		setMessage('Sending your request…');
 		const recipient = fields.email;
 		try {
-			// Callable: the Functions SDK attaches a Firebase App Check token and the
-			// function enforces it server-side (enforceAppCheck). Limited-use: the
-			// function consumes the token (`consumeAppCheckToken`), so each submit
-			// fetches a fresh single-use one instead of reusing the cached hour-long
-			// token — a captured token cannot be replayed.
+			// Callable: the SDK attaches an App Check token, the function enforces it.
+			// Limited-use: the function consumes it, so each submit gets a fresh one.
 			const [{ getFirebaseApp }, { getFunctions, httpsCallable }] = await Promise.all([
 				import('../lib/firebase'),
 				import('firebase/functions'),
