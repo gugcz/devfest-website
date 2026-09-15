@@ -45,8 +45,9 @@ const isHome = Astro.url.pathname === "/";
 // `offers[].url` → #tickets (survives slug changes). Prices VAT-inclusive
 // CZK matching priceDisplay(), never EUR. Only the wave on sale at build time
 // is listed — a paused wave has no honest `availability`/`validFrom` — and a
-// deploy after the event lists none. Dates are the ti.to release `end_at`s;
-// keep in step with the waves in src/content/faq.json.
+// build after the last wave closes lists none. Dates are the ti.to release
+// `end_at`s. Add the next wave only once its dates and prices are announced;
+// keep in step with the prices in src/content/faq.json.
 const organizer = {
 	"@type": "Organization",
 	"name": "GUG.cz, z.s.",
@@ -59,13 +60,6 @@ const TICKET_WAVES = [
 		validUntil: "2026-09-30T12:00:00+02:00",
 		individual: "2999",
 		company: "4499"
-	},
-	{
-		name: "Lazy Bird",
-		validFrom: "2026-10-01T00:00:00+02:00",
-		validUntil: "2026-10-30T09:00:00+01:00",
-		individual: "3599",
-		company: "5299"
 	}
 ];
 const buildTime = Date.now();
