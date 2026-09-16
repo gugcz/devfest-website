@@ -4,6 +4,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 
 import react from '@astrojs/react';
+import { CSP_ALGORITHM, CSP_DIRECTIVES, CSP_SCRIPT_BASE, CSP_STYLE_BASE, CSP_STYLE_ATTR } from './scripts/csp.config.mjs';
 
 const BUILD_DATE = new Date().toISOString();
 
@@ -59,43 +60,27 @@ const devApiMocks = () => ({
     },
 });
 
-// CSP, emitted as a per-page <meta> with a hash per inline script/style, so
-// no 'unsafe-inline' scripts. `firebase.json` keeps only `frame-ancestors`.
+// CSP. Astro hashes every inline script/style per page and writes a per-page
+// <meta> here (no adapter on a static build, so meta is the only destination
+// it can target) — no 'unsafe-inline' scripts/style elements. A postbuild
+// step (scripts/gen-csp-header.mjs) unions those per-page hashes into one
+// site-wide `Content-Security-Policy` response header in firebase.json and
+// strips this meta from the built HTML: a meta CSP is locked to the page
+// that set it, so <ClientRouter/> soft navigation strands it on the first
+// page visited and every later page's own hashes stop applying (DEVF-64).
 // Hosts: google.com/gstatic.com = reCAPTCHA, googletagmanager/analytics = GA4,
 // googleapis/cloudfunctions/firebasedatabase = Firebase, smartemailing = newsletter.
 /** @type {Exclude<NonNullable<import('astro').AstroUserConfig['security']>['csp'], boolean | undefined>} */
 const csp = {
-    algorithm: 'SHA-256',
-    directives: [
-        "default-src 'self'",
-        "base-uri 'self'",
-        "object-src 'none'",
-        "manifest-src 'self'",
-        // Broad: /press hotlinks thumbnails from partner sites.
-        "img-src 'self' data: blob: https:",
-        "font-src 'self' data:",
-        "worker-src 'self' blob:",
-        "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.cloudfunctions.net https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://www.gstatic.com",
-        "frame-src https://www.google.com https://www.youtube.com",
-        "form-action 'self' https://app.smartemailing.cz",
-    ],
+    algorithm: CSP_ALGORITHM,
+    directives: CSP_DIRECTIVES,
     scriptDirective: {
-        resources: [
-            "'self'",
-            "'wasm-unsafe-eval'", // heic-to on /attending
-            'https://www.google.com',
-            'https://www.gstatic.com',
-            'https://www.googletagmanager.com',
-            'https://*.google-analytics.com',
-        ],
+        resources: CSP_SCRIPT_BASE,
     },
     styleDirective: {
-        // Elements hashed; style attributes (hero custom properties) stay allowed.
-        // The reCAPTCHA Enterprise badge (App Check, src/lib/firebase.ts) injects its
-        // own `<style>` tag at runtime — outside our build, so Astro can't hash it.
-        // Google ships that stylesheet with fixed content, so the hash is stable;
-        // pinned here rather than as `unsafe-inline`.
-        resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }, "'sha256-b+ACDqq6F5xfd19DfxGrqNJEBbYn8aUT21LBC4gcGwc='"],
+        // Elements hashed; style attributes (hero custom properties, the
+        // reCAPTCHA Enterprise badge) stay allowed via style-src-attr.
+        resources: [...CSP_STYLE_BASE, { resource: CSP_STYLE_ATTR, kind: 'attribute' }],
     },
 };
 
