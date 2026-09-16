@@ -45,10 +45,10 @@ SCSS (CSS Modules for React, globals in `BaseLayout.astro`), Node >= 22.12.0,
 Firebase Hosting.
 
 Commands, setup, deploys, secrets: [README.md](README.md). No lint script.
-Checks: `npm run a11y` (axe on an `A11Y_MOCK=1` build), `npm test` in
-`functions/` (`node --test`, stubs `fetch`). Function tests compile via
-`tsconfig.test.json` into `lib-test/`; deploy `tsconfig.json` excludes
-`*.test.ts`.
+Checks: `npm run a11y` (axe on an `A11Y_MOCK=1` build), `npm run csp` (CSP
+gate), `npm test` in `functions/` (`node --test`, stubs `fetch`). Function
+tests compile via `tsconfig.test.json` into `lib-test/`; deploy
+`tsconfig.json` excludes `*.test.ts`.
 
 ## PR conventions
 
@@ -98,6 +98,15 @@ working outside its paths.
 | `sessionize.md` | lineup sync, delete-guard, photo mirror |
 | `invoices.md` | iDoklad OAuth/API, invoice flow, discount code, emails |
 | `invite.md` | `/invite/<member>` pages, CTA, visual direction |
+
+### CSP
+
+One header for the whole site, generated into `firebase.json` by
+`scripts/csp-header.mjs` on `npm run build` — never a `<meta>` (ClientRouter
+stacks per-page meta policies). New third-party host → `DIRECTIVES` there.
+`npm run csp` builds and drives the site in Chromium under the header; CI
+runs it and fails when `firebase.json` is stale — run `npm run build` and
+commit it.
 
 ### Styling
 

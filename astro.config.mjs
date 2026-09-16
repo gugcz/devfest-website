@@ -103,6 +103,12 @@ export default defineConfig({
         prefetchAll: true,
         defaultStrategy: 'hover',
     },
+    build: {
+        // Every inline <style> costs a hash in the site-wide CSP header
+        // (scripts/csp-header.mjs) that churns on any CSS edit; external
+        // stylesheets are covered by style-src 'self'.
+        inlineStylesheets: 'never',
+    },
     integrations: [
         sitemap({
             filter: (page) =>
@@ -128,6 +134,13 @@ export default defineConfig({
     ],
     vite: {
         plugins: [devApiMocks()],
+        build: {
+            // Never inline hoisted page <script>s (Astro does under 4 kB via
+            // this limit): each would need its own CSP hash, and ClientRouter
+            // answers an inline module with a `data:` sentinel script that
+            // script-src blocks. `undefined` keeps the default for other assets.
+            assetsInlineLimit: (file) => (file.endsWith('.js') ? false : undefined),
+        },
         resolve: {
             alias: a11yMockAlias,
         },

@@ -22,7 +22,7 @@
           { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
           { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
           { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
-          { "key": "Content-Security-Policy", "value": "frame-ancestors 'none'" }
+          { "key": "Content-Security-Policy", "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://app.smartemailing.cz https://devfest.cz; img-src 'self' data: blob: https:; worker-src 'self' blob:; connect-src 'self' https://content-firebaseappcheck.googleapis.com https://firebase.googleapis.com https://firebaseinstallations.googleapis.com https://europe-west1-devfest-cz-app.cloudfunctions.net https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com/td https://www.google.com/recaptcha/; frame-src https://www.google.com/recaptcha/; script-src 'self' 'report-sample' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.googletagmanager.com/gtag/ 'sha256-BAUmfP+LOlbaH30B+OleuqrNONvkogHH8RaiOAlxWic=' 'sha256-Q2BPg90ZMplYY+FSdApNErhpWafg2hcRRbndmvxuL/Q=' 'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c=' 'sha256-Ya0pUYrC7nM5Cn/056TyVuEiz6dFGrzmkWzgON0pF0U='; style-src 'self' 'report-sample' 'sha256-7YfWRK2YFktUTPc6bgNM1ZxUtCqSkYxnY9er9fvl3Lw=' 'sha256-CEdXxhouDHQIm6rDT2Gy6/+Cxgs4BsRGsvgHfcv55qc=' 'sha256-vv9IoKo7BSLbWcUHr3tNmfNVmm5L/9Cfn2H6LMk7/ow=' 'sha256-w27Y/lx7d8A/ejBM2JnFUK54c7mTlzciUPqZeFErAmQ='; style-src-attr 'unsafe-inline'" }
         ]
       },
       {
