@@ -14,7 +14,6 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** 22 (see `.nvmrc`; `engine-strict` is on)
-- **CSP:** Astro's `security.csp` (`astro.config.mjs`) emits a per-page `<meta>` with a hash for every inline script and style, so `script-src` carries no `'unsafe-inline'`; `firebase.json` keeps only `frame-ancestors` (a `<meta>` cannot carry it). Adding a third-party script or endpoint means adding its host there.
 
 [DESIGN.md](DESIGN.md) is the binding visual system — check it before styling anything.
 
@@ -246,7 +245,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 - **No revenue in reports.** ti.to's thank-you redirect carries no order id or amount, so `ticket_purchase_confirmed` isn't GA4's `purchase` and has no value. Revenue lives in ti.to. `begin_checkout` and `generate_lead` carry `value` (gross CZK), so *intent* is measurable.
 - **Consent Mode is the source of truth** — no second GA4 tag, no GTM container. A declining visitor produces cookieless, identifier-free pings by design (aggregate-only).
 - **Development traffic is excluded in code**, not by a GA4 filter: measurement is limited to `devfest.cz` (and subdomains) plus `devfest-public.web.app` / `devfest-public.firebaseapp.com`. `npm run dev` and preview channels send nothing. To measure a preview, build with `PUBLIC_ANALYTICS_ALLOWED_HOSTS=<host>`.
-- **Verifying a change** needs a real host: GA4 DebugView, or devtools Network filtered to `/g/collect`. EEA traffic can route to `region1.google-analytics.com`, which is why the CSP `connect-src` (`csp` in `astro.config.mjs`) allows `https://*.google-analytics.com`.
+- **Verifying a change** needs a real host: GA4 DebugView, or devtools Network filtered to `/g/collect`.
 
 ## Key Pages
 
