@@ -45,10 +45,10 @@ SCSS (CSS Modules for React, globals in `BaseLayout.astro`), Node >= 22.12.0,
 Firebase Hosting.
 
 Commands, setup, deploys, secrets: [README.md](README.md). No lint script.
-Checks: `npm run a11y` (axe on an `A11Y_MOCK=1` build), `npm test` in
-`functions/` (`node --test`, stubs `fetch`). Function tests compile via
-`tsconfig.test.json` into `lib-test/`; deploy `tsconfig.json` excludes
-`*.test.ts`.
+Checks: `npm run a11y` (axe on an `A11Y_MOCK=1` build), `npm run csp` (CSP
+gate), `npm test` in `functions/` (`node --test`, stubs `fetch`). Function
+tests compile via `tsconfig.test.json` into `lib-test/`; deploy
+`tsconfig.json` excludes `*.test.ts`.
 
 ## PR conventions
 
@@ -98,6 +98,16 @@ working outside its paths.
 | `sessionize.md` | lineup sync, delete-guard, photo mirror |
 | `invoices.md` | iDoklad OAuth/API, invoice flow, discount code, emails |
 | `invite.md` | `/invite/<member>` pages, CTA, visual direction |
+
+### CSP
+
+Astro's `security.csp` (`astro.config.mjs`) hashes every inline script and
+style; `scripts/firebase-headers.mjs` is the static-headers adapter that
+unions the per-page result into one header in `firebase.json` on every build
+— never a `<meta>` (ClientRouter stacks per-page meta policies). New
+third-party host → the `security` block in `astro.config.mjs`. `npm run csp`
+builds and drives the site in Chromium under the header; CI runs it and fails
+when the committed `firebase.json` is stale — build and commit it.
 
 ### Styling
 

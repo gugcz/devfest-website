@@ -1,6 +1,7 @@
 // @ts-check
 import { fileURLToPath } from 'node:url';
 import { defineConfig, fontProviders } from 'astro/config';
+import firebaseHeaders from './scripts/firebase-headers.mjs';
 import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 
 import react from '@astrojs/react';
@@ -60,10 +61,69 @@ const devApiMocks = () => ({
     },
 });
 
+// Content-Security-Policy. Astro adds a hash for every inline script and style
+// it renders; scripts/firebase-headers.mjs unions the per-page result into one
+// header in firebase.json (a static build cannot send headers on its own).
+// Adding a third-party script or endpoint host → add it here, with who needs it.
+/** @type {import('astro').AstroUserConfig['security']} */
+const security = {
+    csp: {
+        directives: [
+            "default-src 'self'",
+            "base-uri 'self'",
+            "object-src 'none'",
+            "frame-ancestors 'none'", // + X-Frame-Options: DENY in firebase.json for old browsers
+            // NewsletterForm posts to SmartEmailing, which 302s back to devfest.cz;
+            // Chrome checks every hop, and on a PR preview 'self' is the preview host.
+            "form-action 'self' https://app.smartemailing.cz https://devfest.cz",
+            // data: = film-grain SVG noise in the CSS; blob: = AttendingCard previews;
+            // https: = /press hotlinks partner thumbnails.
+            "img-src 'self' data: blob: https:",
+            "worker-src 'self' blob:", // heic-to/csp spawns a blob Worker on /attending
+            /** @type {`connect-src${string}`} */ ([
+                "connect-src 'self'",
+                // Exact hosts: *.googleapis.com / *.cloudfunctions.net are multi-tenant.
+                'https://content-firebaseappcheck.googleapis.com', // App Check token exchange (invoice submit)
+                'https://firebase.googleapis.com', // Analytics dynamic config
+                'https://firebaseinstallations.googleapis.com', // Firebase Installations (Analytics)
+                'https://europe-west1-devfest-cz-app.cloudfunctions.net', // submitInvoiceCallable
+                'https://*.google-analytics.com', // GA4 beacons; EEA traffic routes to region1.google-analytics.com
+                'https://*.analytics.google.com', // GA4 beacons
+                'https://www.googletagmanager.com/td', // gtag.js tag-diagnostics beacon (Safari sends it as fetch)
+                'https://www.google.com/recaptcha/', // reCAPTCHA Enterprise client log
+            ].join(' ')),
+            // Path-scoped: the bare Google hosts also serve JSONP endpoints that
+            // would let injected markup bypass the hash policy.
+            'frame-src https://www.google.com/recaptcha/', // reCAPTCHA Enterprise anchor/bframe
+        ],
+        scriptDirective: {
+            resources: [
+                "'self'",
+                "'report-sample'", // violation events carry the first 40 chars of a blocked inline
+                'https://www.google.com/recaptcha/', // reCAPTCHA enterprise.js
+                'https://www.gstatic.com/recaptcha/', // reCAPTCHA recaptcha__en.js
+                'https://www.googletagmanager.com/gtag/', // gtag.js (GA4)
+            ],
+        },
+        styleDirective: {
+            resources: [
+                { resource: "'self'", kind: 'element' },
+                // SSR'd style="" attributes carry CSS custom properties (hero photo
+                // vars, team --i, partner --logo-w) and React style={{}}; an
+                // attribute cannot run script.
+                { resource: "'unsafe-inline'", kind: 'attribute' },
+            ],
+        },
+    },
+};
+
 // https://astro.build/config
 export default defineConfig({
     site: 'https://devfest.cz',
     trailingSlash: 'never',
+    security,
+    // No Markdown pages; silences Astro's "Shiki inline styles vs CSP" warning.
+    markdown: { syntaxHighlight: false },
     // Self-hosted, build-time-optimised replacements for the three brand faces
     // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
     // Weights/styles mirror exactly what that css2 URL requested. Only the four
@@ -103,7 +163,14 @@ export default defineConfig({
         prefetchAll: true,
         defaultStrategy: 'hover',
     },
+    build: {
+        // Every inline <style> costs a hash in the site-wide CSP header
+        // (scripts/csp-header.mjs) that churns on any CSS edit; external
+        // stylesheets are covered by style-src 'self'.
+        inlineStylesheets: 'never',
+    },
     integrations: [
+        firebaseHeaders(),
         sitemap({
             filter: (page) =>
                 !page.includes('/newsletter-subscription-thank-you') &&
@@ -128,6 +195,13 @@ export default defineConfig({
     ],
     vite: {
         plugins: [devApiMocks()],
+        build: {
+            // Never inline hoisted page <script>s (Astro does under 4 kB via
+            // this limit): each would need its own CSP hash, and ClientRouter
+            // answers an inline module with a `data:` sentinel script that
+            // script-src blocks. `undefined` keeps the default for other assets.
+            assetsInlineLimit: (file) => (file.endsWith('.js') ? false : undefined),
+        },
         resolve: {
             alias: a11yMockAlias,
         },

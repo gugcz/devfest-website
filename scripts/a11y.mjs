@@ -1,101 +1,18 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-import { createServer } from 'node:http';
 import { readFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
-import { API_FIXTURES } from './a11y-mocks/api.mjs';
-
-const DIST = path.resolve('dist');
+import { DIST, PATHS, startDistServer } from './lib/dist-server.mjs';
 
 // The islands fetch their data from cached `/api/*` endpoints (Hosting rewrites
 // them to Cloud Functions in production). CI has no functions, so the harness
 // serves the same shapes from fixtures — shared with the dev server, so the two
-// can never drift (see `a11y-mocks/api.mjs`).
+// can never drift (see `a11y-mocks/api.mjs`). Server and route list live in
+// `lib/dist-server.mjs`, shared with the CSP gate.
 const PORT = 4321;
-const PATHS = [
-	'/',
-	'/speakers/',
-	'/sessions/',
-	'/agenda/',
-	'/team/',
-	'/partners/',
-	'/contact/',
-	'/faq/',
-	'/press/',
-	'/press/downloads/',
-	'/invoice/',
-	'/attending/',
-	'/privacy-policy/',
-	// One of the eleven personal invitation pages. They are the same template
-	// with a different photograph and one different line, so auditing one
-	// audits all of them — and this is the only page where type sits over a
-	// photograph, which is exactly the contrast case worth watching.
-	'/invite/eliska-cejpova/',
-	'/newsletter-subscription-thank-you/',
-	'/thank-you/',
-	'/404.html',
-];
-
-const MIME = {
-	'.html': 'text/html; charset=utf-8',
-	'.css': 'text/css; charset=utf-8',
-	'.js': 'text/javascript; charset=utf-8',
-	'.mjs': 'text/javascript; charset=utf-8',
-	'.json': 'application/json; charset=utf-8',
-	'.svg': 'image/svg+xml',
-	'.png': 'image/png',
-	'.jpg': 'image/jpeg',
-	'.jpeg': 'image/jpeg',
-	'.webp': 'image/webp',
-	'.ico': 'image/x-icon',
-	'.woff': 'font/woff',
-	'.woff2': 'font/woff2',
-	'.xml': 'application/xml; charset=utf-8',
-	'.txt': 'text/plain; charset=utf-8',
-};
-
-function resolveFile(reqUrl) {
-	let urlPath = decodeURIComponent(reqUrl.split('?')[0]);
-	if (urlPath.endsWith('/')) urlPath += 'index.html';
-	const candidate = path.join(DIST, urlPath);
-	if (existsSync(candidate)) return candidate;
-	const htmlCandidate = `${candidate}.html`;
-	if (existsSync(htmlCandidate)) return htmlCandidate;
-	const indexCandidate = path.join(candidate, 'index.html');
-	if (existsSync(indexCandidate)) return indexCandidate;
-	return null;
-}
-
-async function startServer() {
-	const server = createServer(async (req, res) => {
-		const reqPath = (req.url ?? '/').split('?')[0];
-		if (reqPath in API_FIXTURES) {
-			res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-			res.end(API_FIXTURES[reqPath]);
-			return;
-		}
-		const file = resolveFile(req.url ?? '/');
-		if (!file) {
-			res.writeHead(404, { 'Content-Type': 'text/plain' });
-			res.end('not found');
-			return;
-		}
-		try {
-			const data = await readFile(file);
-			const ext = path.extname(file).toLowerCase();
-			res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
-			res.end(data);
-		} catch (err) {
-			res.writeHead(500, { 'Content-Type': 'text/plain' });
-			res.end(String(err));
-		}
-	});
-	await new Promise((resolve) => server.listen(PORT, '127.0.0.1', resolve));
-	return server;
-}
 
 function formatViolation(v) {
 	const lines = [`  · [${v.impact ?? 'n/a'}] ${v.id}: ${v.help}`];
@@ -356,7 +273,7 @@ async function run() {
 		process.exit(2);
 	}
 
-	const server = await startServer();
+	const server = await startDistServer({ port: PORT });
 	const browser = await chromium.launch();
 	// Force reduced motion so on-load fade animations finish instantly.
 	// Otherwise axe samples mid-fade and reports phantom contrast issues.

@@ -1,4 +1,5 @@
 ---
+import { createHash } from 'node:crypto';
 import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
 import CookieBanner from '../components/CookieBanner.astro';
@@ -196,6 +197,14 @@ const jsonLd = JSON.stringify(
 		? [eventSchema, organizationSchema, websiteSchema]
 		: [organizationSchema, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])]
 ).replace(/</g, '\\u003c');
+// Runs before first paint (see the <script is:inline> below). Astro's CSP hashes
+// only the inline scripts it renders itself, so this one's hash is registered
+// here, from the same string that is rendered — the two cannot drift.
+const jsClassScript =
+	"document.documentElement.classList.add('js');" +
+	"document.addEventListener('astro:after-swap',()=>document.documentElement.classList.add('js'));";
+Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(jsClassScript).digest('base64')}`);
+
 ---
 
 <html lang="en">
@@ -228,12 +237,7 @@ const jsonLd = JSON.stringify(
 			no-JS (always-visible) state. The listener lives on `document`, which
 			survives navigations, so registering it once here is enough.
 		-->
-		<script is:inline>
-			document.documentElement.classList.add('js');
-			document.addEventListener('astro:after-swap', () =>
-				document.documentElement.classList.add('js')
-			);
-		</script>
+		<script is:inline set:html={jsClassScript} />
 
 		<title>{title}</title>
 		<meta name="description" content={description} />
