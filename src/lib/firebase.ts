@@ -1,6 +1,6 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
-import { getAnalytics, isSupported, logEvent, type Analytics } from 'firebase/analytics';
+import { initializeAnalytics, isSupported, logEvent, type Analytics } from 'firebase/analytics';
 import { readConsent } from './consent';
 
 const firebaseConfig = {
@@ -60,18 +60,18 @@ export function getFirebaseApp(): FirebaseApp {
 	return getApp();
 }
 
-const DENIED_CONSENT = {
+/**
+ * Consent state pushed before the tag boots. Only `analytics_storage` is
+ * granted — `ad_*` stay denied permanently, since we never collect for
+ * advertising. The tag boots only after the visitor accepts (basic Consent
+ * Mode), so a "denied" state is never sent: undecided or declined sends nothing.
+ */
+const ANALYTICS_CONSENT = {
 	ad_storage: 'denied',
 	ad_user_data: 'denied',
 	ad_personalization: 'denied',
-	analytics_storage: 'denied',
+	analytics_storage: 'granted',
 } as const;
-
-/**
- * Consent state for a visitor who has already accepted. Only `analytics_storage`
- * flips — `ad_*` stay denied permanently, since we never collect for advertising.
- */
-const GRANTED_CONSENT = { ...DENIED_CONSENT, analytics_storage: 'granted' } as const;
 
 /** Hosts (and subdomains) that report into production GA4 — dev and preview
  * channels stay out. `PUBLIC_ANALYTICS_ALLOWED_HOSTS` overrides. */
@@ -97,26 +97,41 @@ const gtag = function (): void {
 	w.dataLayer.push(arguments);
 } as (...args: unknown[]) => void;
 
+/**
+ * The page the document was loaded on, captured before `<ClientRouter />`
+ * rewrites `location.href`. GA4 must see this page first: it carries the
+ * campaign parameters (`utm_*`) and the external referrer that attribute the
+ * whole session, and the visitor may accept only after soft-navigating away.
+ */
+const entryLocation = typeof window === 'undefined' ? '' : window.location.href;
+const entryTitle = typeof document === 'undefined' ? '' : document.title;
+const entryReferrer = typeof document === 'undefined' ? '' : document.referrer;
+
 let analyticsInstance: Analytics | null = null;
 let analyticsInit: Promise<void> | null = null;
-/** Whether GA4 is currently measuring with storage (a `client_id`). */
-let consentGranted = false;
+/** URL of the last page reported, or `null` while the tag isn't booted. */
+let lastPageLocation: string | null = null;
 /**
- * Initialise GA4 in Consent Mode (cookieless until `grantAnalyticsConsent()`;
- * `ad_*` always denied). Three invariants, verified in-browser:
- *  1. `consent: 'default'` must precede `config` (Firebase's `setConsent`
- *     doesn't guarantee it).
- *  2. The default is SEEDED from the stored decision — a later `update`
- *     can't retroactively attribute the entry `page_view`.
- *  3. The in-flight promise is memoised — callers overlap.
+ * Boot GA4 — only once the visitor has accepted (basic Consent Mode: no tag,
+ * no request to Google before that). Safe to call on every page load and on
+ * accept; the boot runs once and the in-flight promise is memoised (callers
+ * overlap). Invariants, verified in-browser:
+ *  1. `consent: 'default'` precedes `config` — Firebase's `setConsent()`
+ *     doesn't guarantee that, hence the gtag shim.
+ *  2. The consent gate sits BEFORE the memo, so a page-load call while
+ *     undecided doesn't pin "not booted" for the accept that follows.
+ *  3. The tag's own `config` page_view is off; `reportEntry()` sends the entry
+ *     page instead, so the session is attributed to the URL the visitor
+ *     arrived on even when they accept later.
  */
 export function initAnalytics(): Promise<void> {
+	if (typeof window === 'undefined') return Promise.resolve();
+	// App Check is a security mechanism (legitimate interest), not analytics: it
+	// runs in every environment and regardless of consent, hence before both gates.
+	getApp();
+	if (readConsent() !== 'accepted') return Promise.resolve();
 	analyticsInit ??= (async () => {
 		try {
-			if (typeof window === 'undefined') return;
-			// App Check is a security mechanism (legitimate interest), not analytics: it
-			// runs in every environment and regardless of consent, hence before both gates.
-			getApp();
 			if (!isAnalyticsHost()) {
 				console.info(
 					`[firebase] Analytics off on ${window.location.hostname} (not a production host)`,
@@ -125,9 +140,9 @@ export function initAnalytics(): Promise<void> {
 			}
 			const supported = await isSupported();
 			if (!supported) return;
-			consentGranted = readConsent() === 'accepted';
-			gtag('consent', 'default', consentGranted ? GRANTED_CONSENT : DENIED_CONSENT);
-			analyticsInstance = getAnalytics(getApp());
+			gtag('consent', 'default', ANALYTICS_CONSENT);
+			analyticsInstance = initializeAnalytics(getApp(), { config: { send_page_view: false } });
+			reportEntry();
 		} catch (err) {
 			console.warn('[firebase] Analytics init failed:', err);
 		}
@@ -136,16 +151,16 @@ export function initAnalytics(): Promise<void> {
 }
 
 /**
- * Send one `page_view`. Split out because consent grants need it too.
- * `page_referrer` is explicit: a soft navigation sends no referrer of its own, so
- * GA4 would otherwise read every in-site hop as a direct arrival.
+ * Send one `page_view`. `page_referrer` is explicit: a soft navigation sends
+ * no referrer of its own, so GA4 would otherwise read every in-site hop as a
+ * direct arrival.
  */
-function sendPageView(referrer: string | undefined): void {
+function sendPageView(location: string, title: string, referrer: string | undefined): void {
 	if (!analyticsInstance) return;
 	try {
 		logEvent(analyticsInstance, 'page_view', {
-			page_location: window.location.href,
-			page_title: document.title,
+			page_location: location,
+			page_title: title,
 			...(referrer ? { page_referrer: referrer } : {}),
 		});
 	} catch (err) {
@@ -153,23 +168,33 @@ function sendPageView(referrer: string | undefined): void {
 	}
 }
 
-/** URL of the last page reported, or `null` before the first report. */
-let lastPageLocation: string | null = null;
-/** Record a `page_view`. GA4 does NOT see `<ClientRouter />`'s `pushState`
- * (verified), so every page after the entry would go uncounted. The first
- * call is swallowed — `config` already reported it. */
+/** First report after boot: the entry page, then the current page if the
+ * visitor soft-navigated before accepting. */
+function reportEntry(): void {
+	sendPageView(entryLocation, entryTitle, entryReferrer || undefined);
+	const here = window.location.href;
+	if (here !== entryLocation) sendPageView(here, document.title, entryLocation);
+	lastPageLocation = here;
+}
+
+/** Record a `page_view` for the current page. GA4 does NOT see
+ * `<ClientRouter />`'s `pushState` (verified), so every page after the entry
+ * would go uncounted. No-op until the visitor accepts, and for the page the
+ * boot has just reported. */
 export async function trackPageView(): Promise<void> {
 	await initAnalytics();
 	if (!analyticsInstance) return;
+	const here = window.location.href;
+	if (here === lastPageLocation) return;
 	const previous = lastPageLocation;
-	lastPageLocation = window.location.href;
-	if (previous === null) return;
-	sendPageView(previous);
+	lastPageLocation = here;
+	sendPageView(here, document.title, previous ?? undefined);
 }
 
 /**
  * Send a GA4 event. Boots Analytics first (idempotent) and never throws —
  * conversion tracking must not break the click or submit it is attached to.
+ * Dropped until the visitor accepts: unconsented events never reach a report.
  */
 export async function trackEvent(
 	name: string,
@@ -182,23 +207,4 @@ export async function trackEvent(
 	} catch (err) {
 		console.warn(`[firebase] event ${name} failed:`, err);
 	}
-}
-
-/** Grant `analytics_storage` after accept, and re-send the current
- * `page_view` (the `config` one went out cookieless). No-ops once granted. */
-export async function grantAnalyticsConsent(): Promise<void> {
-	await initAnalytics();
-	if (!analyticsInstance) return;
-	if (consentGranted) return;
-	consentGranted = true;
-	try {
-		gtag('consent', 'update', { analytics_storage: 'granted' });
-	} catch (err) {
-		console.warn('[firebase] Analytics consent grant failed:', err);
-		return;
-	}
-	// Real document referrer here, not `lastPageLocation`: this re-reports the
-	// current page, it is not a navigation.
-	sendPageView(document.referrer || undefined);
-	lastPageLocation = window.location.href;
 }

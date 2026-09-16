@@ -10,34 +10,48 @@ paths:
 
 # Analytics (`src/lib/firebase.ts`)
 
-GA4 via Firebase Analytics in **Google Consent Mode**. `initAnalytics()`
-pushes `consent: 'default'` before `getAnalytics()`. Undecided → all denied,
-GA4 boots cookieless (aggregate pings only). Accept →
-`grantAnalyticsConsent()` sends `consent: 'update'`. `ad_*` stay denied.
+GA4 via Firebase Analytics in **basic Google Consent Mode**: nothing loads and
+nothing is sent to Google until the visitor accepts. `initAnalytics()` is a
+no-op while `readConsent()` (`src/lib/consent.ts`) isn't `accepted`; the
+accept handler in `CookieBanner.astro` stores the decision and calls
+`trackPageView()`, which boots the tag. The boot pushes `consent: 'default'`
+with `analytics_storage` granted and `ad_*` denied (we never collect for
+advertising), then `initializeAnalytics()`.
 
-Rules (each verified in-browser; breaking one silently writes `_ga` without
-consent):
+Why not the cookieless "advanced" mode (PR #288 → this): GA4 surfaces
+unconsented pings only through behavioral modeling, which needs ≥1000
+consenting **and** ≥1000 non-consenting visitors a day on 7 of 28 days. This
+site never qualifies (Reporting identity shows modeling inactive), so the
+pings bought nothing — and the tag's own `page_view` (the one carrying
+`_ss`/`_fv` and the campaign parameters) went out only cookieless and was
+dropped. Consented visitors only, honestly counted, is the better deal.
+
+Rules (each verified in-browser):
 
 - `consent: 'default'` must precede `config`. Firebase `setConsent()` doesn't
   guarantee that, so `firebase.ts` uses its own gtag shim.
 - gtag.js only honours commands pushed as an **`arguments` object**. Don't
   refactor the shim to a rest array.
 - `initAnalytics()` memoises the **in-flight promise**, not just the instance
-  — callers overlap.
-- The default is **seeded from `readConsent()`** (`src/lib/consent.ts`), never
-  hardcoded denied — a later `update` can't retroactively attribute the entry
-  `page_view`. `CookieBanner.astro` doesn't call `grantAnalyticsConsent()` for
-  a stored accept.
-- Granting consent re-sends the current `page_view` (the `config` one was
-  cookieless). Guarded by `consentGranted`: once per visitor.
+  — callers overlap. The consent gate sits *before* the memo, so a page-load
+  call while undecided doesn't pin "not booted" for the accept that follows.
+  App Check init sits before the gate (security, every environment,
+  regardless of consent).
+- The tag's own `config` page_view is off (`send_page_view: false`).
+  `reportEntry()` sends the **entry page** captured at module load
+  (`entryLocation`/`entryTitle`/`entryReferrer`, before `<ClientRouter />`
+  rewrites `location.href`), then the current page if the visitor
+  soft-navigated before accepting. A late accept still attributes the session
+  to the URL they arrived on (`utm_*`, external referrer).
 - **Host-gated** (`ANALYTICS_HOSTS`; `PUBLIC_ANALYTICS_ALLOWED_HOSTS`
-  overrides) — dev and previews send nothing. App Check init sits before the
-  gate.
+  overrides) — dev and previews send nothing.
+- Hits leave gtag's queue a few seconds after an accept (batched with the
+  engagement ping; gtag flushes on `pagehide`). gtag's scheduling, not ours.
 
-**Page views under `<ClientRouter />`:** GA4 sees only the document-load
-`page_view`, not `pushState`. `trackPageView()` runs on every
-`astro:page-load`, swallows the first call, sends the rest with explicit
-`page_location`/`page_title`/`page_referrer`.
+**Page views under `<ClientRouter />`:** GA4 sees only what we send, never
+`pushState`. `trackPageView()` runs on every `astro:page-load`: a no-op until
+accepted and for the page the boot has just reported, otherwise a `page_view`
+with explicit `page_location`/`page_title`/`page_referrer`.
 
 **Conversion events**, all via `src/lib/analytics.ts`:
 
