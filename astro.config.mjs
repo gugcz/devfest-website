@@ -91,7 +91,11 @@ const csp = {
     },
     styleDirective: {
         // Elements hashed; style attributes (hero custom properties) stay allowed.
-        resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }],
+        // The reCAPTCHA Enterprise badge (App Check, src/lib/firebase.ts) injects its
+        // own `<style>` tag at runtime — outside our build, so Astro can't hash it.
+        // Google ships that stylesheet with fixed content, so the hash is stable;
+        // pinned here rather than as `unsafe-inline`.
+        resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }, 'sha256-b+ACDqq6F5xfd19DfxGrqNJEBbYn8aUT21LBC4gcGwc='],
     },
 };
 
