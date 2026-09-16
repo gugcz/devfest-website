@@ -14,33 +14,21 @@
 
 <script>
 	// Consent storage lives in `src/lib/consent.ts` because `src/lib/firebase.ts`
-	// reads the same decision to seed the GA4 Consent Mode default. Static import
+	// reads the same decision to decide whether GA4 boots at all. Static import
 	// (not dynamic): the module is a few lines of localStorage access and pulls in
 	// no Firebase code.
 	import { readConsent, storeConsent } from '../lib/consent';
 
-	// Boot Analytics in Consent Mode and record the page view. Safe for every
-	// visitor — undecided gets only identifier-free pings. `trackPageView()`
-	// swallows the initial call (GA4's `config` already reported it); the rest
-	// are <ClientRouter /> soft navigations GA4 cannot see by itself.
+	// Boot GA4 (only after an accept) and record the page view. Undecided or
+	// declined loads nothing and sends nothing. `trackPageView()` is a no-op for
+	// the page the boot has just reported; the rest are <ClientRouter /> soft
+	// navigations GA4 cannot see by itself.
 	async function trackPageView() {
 		try {
 			const mod = await import('../lib/firebase');
 			await mod.trackPageView();
 		} catch (err) {
 			console.warn('[cookie-banner] Failed to track page view:', err);
-		}
-	}
-
-	// Upgrade consent to granted after the visitor accepts — flips GA4 from
-	// cookieless pings to full measurement and re-sends the current page's
-	// `page_view`, which had already gone out cookieless at `config` time.
-	async function grantAnalyticsConsent() {
-		try {
-			const mod = await import('../lib/firebase');
-			await mod.grantAnalyticsConsent();
-		} catch (err) {
-			console.warn('[cookie-banner] Failed to grant analytics consent:', err);
 		}
 	}
 
@@ -60,10 +48,9 @@
 			banner?.classList.remove('cookie-banner--hidden');
 		};
 
-		// Analytics starts for everyone; identifiers stay off until (and unless)
-		// the visitor accepts. A stored `accepted` needs no call here —
-		// `initAnalytics()` reads it and boots GA4 straight into granted, so the
-		// document-load `page_view` is already attributed.
+		// Nothing loads until (and unless) the visitor accepts — `initAnalytics()`
+		// reads the stored decision. A stored `accepted` boots GA4 right here, on
+		// the entry page, so the document-load `page_view` is attributed.
 		trackPageView();
 
 		// Banner starts hidden — reveal only if no decision yet
@@ -74,7 +61,9 @@
 		document.getElementById('cookie-accept')?.addEventListener('click', () => {
 			storeConsent('accepted');
 			hideBanner();
-			grantAnalyticsConsent();
+			// Boots GA4 now: reports the entry page (campaign parameters, referrer),
+			// then the current one if the visitor soft-navigated before accepting.
+			trackPageView();
 		});
 
 		document.getElementById('cookie-decline')?.addEventListener('click', () => {
