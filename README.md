@@ -104,7 +104,7 @@ Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 
 ### RTDB rules
 
-`database.rules.json` documents the required rules. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.json` and run `firebase deploy --only database`.
+`database.rules.json` documents the required rules. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.template.json` and run `firebase deploy --only database`.
 
 `/tickets` is read only by `ticketsApi` (Admin SDK), so `tickets.".read": true` is not required. Root default and all writes stay `false`. The cache omits raw counts (`quantity` / `quantity_sold` / `tickets_count`) and ships a coarse `has_sales` boolean — see `tito-api.ts::projectRelease`.
 
