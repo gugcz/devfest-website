@@ -52,7 +52,7 @@ async function collectHtmlFiles(dir) {
 
 /** @param {string} content */
 function sha256(content) {
-	return `'sha256-${createHash('sha256').update(content, 'utf8').digest('base64')}'`;
+	return `'sha256-${createHash('sha256').update(content.replace(/\r\n/g, '\n'), 'utf8').digest('base64')}'`;
 }
 
 const files = await collectHtmlFiles(DIST);

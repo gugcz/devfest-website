@@ -14,7 +14,7 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** 22 (see `.nvmrc`; `engine-strict` is on)
-- **CSP:** Astro's `security.csp` (`astro.config.mjs`) emits a per-page `<meta>` with a hash for every inline script and style, so `script-src` carries no `'unsafe-inline'`; `firebase.json` keeps only `frame-ancestors` (a `<meta>` cannot carry it). Adding a third-party script or endpoint means adding its host there.
+- **CSP:** `scripts/gen-csp-header.mjs` runs as a postbuild step, hashes every inline `<script>`/`<style>` in the built HTML, unions them into a single site-wide `Content-Security-Policy` response header in `firebase.json`, and strips Astro's per-page `<meta>` CSP (a meta CSP locks to the page that set it, so it doesn't survive `<ClientRouter/>` soft navigation). `script-src`/`style-src` carry no `'unsafe-inline'`. Adding a third-party script or endpoint means adding its host to `scripts/csp.config.mjs`.
 
 [DESIGN.md](DESIGN.md) is the binding visual system — check it before styling anything.
 
