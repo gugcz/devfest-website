@@ -17,6 +17,10 @@ firestore-debug.log*
 # firebase local artifacts
 .firebase/
 
+# generated from firebase.template.json by scripts/gen-csp-header.mjs
+# (postbuild step) — never edit directly, never commit
+/firebase.json
+
 
 # environment variables
 .env

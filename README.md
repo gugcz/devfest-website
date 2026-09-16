@@ -14,7 +14,8 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** 22 (see `.nvmrc`; `engine-strict` is on)
-- **CSP:** `scripts/gen-csp-header.mjs` runs as a postbuild step, hashes every inline `<script>`/`<style>` in the built HTML, unions them into a single site-wide `Content-Security-Policy` response header in `firebase.json`, and strips Astro's per-page `<meta>` CSP (a meta CSP locks to the page that set it, so it doesn't survive `<ClientRouter/>` soft navigation). `script-src`/`style-src` carry no `'unsafe-inline'`. Adding a third-party script or endpoint means adding its host to `scripts/csp.config.mjs`.
+- **CSP:** `scripts/gen-csp-header.mjs` runs as a postbuild step, hashes every inline `<script>`/`<style>` in the built HTML, unions them into a single site-wide `Content-Security-Policy` response header, and strips Astro's per-page `<meta>` CSP (a meta CSP locks to the page that set it, so it doesn't survive `<ClientRouter/>` soft navigation). `script-src`/`style-src` carry no `'unsafe-inline'`. Adding a third-party script or endpoint means adding its host to `scripts/csp.config.mjs`.
+- **`firebase.json` is generated, not committed:** `firebase.template.json` (committed) is the source of truth for hosting/functions config; `npm run build`'s postbuild step renders it into `firebase.json` with the real CSP hashes filled in. `firebase.json` is gitignored — **run `npm run build` before any `firebase` CLI command** (`firebase deploy`, `firebase emulators:start`, `firebase hosting:channel:deploy`, …), otherwise it's missing or stale. Edit `firebase.template.json`, never `firebase.json` directly.
 
 [DESIGN.md](DESIGN.md) is the binding visual system — check it before styling anything.
 

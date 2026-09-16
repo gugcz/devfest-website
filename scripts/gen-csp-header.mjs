@@ -9,10 +9,16 @@
 // page's styles/scripts, not just the specific violation reported.
 //
 // Fix: union every page's hashes into one site-wide `Content-Security-Policy`
-// response header in firebase.json — enforced once per document, so it
-// survives soft nav — and strip the now-redundant per-page meta so the two
-// policies can't intersect (a browser enforces the intersection of multiple
-// CSPs) and reintroduce the bug.
+// response header — enforced once per document, so it survives soft nav —
+// and strip the now-redundant per-page meta so the two policies can't
+// intersect (a browser enforces the intersection of multiple CSPs) and
+// reintroduce the bug.
+//
+// firebase.template.json is the committed source of truth (placeholder CSP
+// value); this script renders it into firebase.json (gitignored, regenerated
+// on every `npm run build`) with the real hashes filled in. Keeps a
+// deterministic build artifact out of git instead of it going stale/noisy
+// on every unrelated PR.
 //
 // Hashes are computed directly from the inline <script>/<style> elements in
 // the built HTML, not parsed out of Astro's meta: Astro's own CSP tracking
@@ -27,6 +33,7 @@ import path from 'node:path';
 import { CSP_DIRECTIVES, CSP_FRAME_ANCESTORS, CSP_SCRIPT_BASE, CSP_STYLE_BASE, CSP_STYLE_ATTR } from './csp.config.mjs';
 
 const DIST = path.resolve('dist');
+const FIREBASE_TEMPLATE = path.resolve('firebase.template.json');
 const FIREBASE_JSON = path.resolve('firebase.json');
 
 const CSP_META_RE = /<meta http-equiv="content-security-policy" content="[^"]*">/i;
@@ -91,10 +98,10 @@ const cspHeader = [
 	`style-src-attr ${CSP_STYLE_ATTR}`,
 ].join('; ');
 
-const firebaseJson = JSON.parse(await readFile(FIREBASE_JSON, 'utf8'));
+const firebaseJson = JSON.parse(await readFile(FIREBASE_TEMPLATE, 'utf8'));
 const headerEntry = firebaseJson.hosting.headers.find((h) => h.source === '**');
 const cspHeaderDef = headerEntry.headers.find((h) => h.key === 'Content-Security-Policy');
-if (!cspHeaderDef) throw new Error("gen-csp-header: firebase.json has no 'Content-Security-Policy' header entry under source '**' to update.");
+if (!cspHeaderDef) throw new Error("gen-csp-header: firebase.template.json has no 'Content-Security-Policy' header entry under source '**' to update.");
 cspHeaderDef.value = cspHeader;
 
 await writeFile(FIREBASE_JSON, `${JSON.stringify(firebaseJson, null, 2)}\n`);

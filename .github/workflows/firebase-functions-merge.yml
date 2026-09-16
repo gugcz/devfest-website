@@ -14,7 +14,7 @@ on:
       - "2026"
     paths:
       - "functions/**"
-      - "firebase.json"
+      - "firebase.template.json"
       - ".github/workflows/firebase-functions-merge.yml"
   # Manual re-deploy, no code change needed. Firebase pins each secret to the
   # version resolved at deploy time, so a rotated secret (e.g. a new
@@ -54,6 +54,14 @@ jobs:
       - name: Build functions
         working-directory: functions
         run: npm run build
+      # firebase.json is gitignored (rendered from firebase.template.json by
+      # the hosting build's postbuild step) — this workflow never runs that
+      # build, but `firebase deploy --only functions` still reads firebase.json
+      # from the repo root for the functions source/ignore/predeploy config.
+      # The CSP header value doesn't matter here (hosting isn't deployed by
+      # this workflow), so a plain copy of the template is enough.
+      - name: Materialize firebase.json for the functions config
+        run: cp firebase.template.json firebase.json
       - name: Write service account credentials
         env:
           SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEVFEST_CZ_APP }}
