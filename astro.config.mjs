@@ -95,7 +95,7 @@ const csp = {
         // own `<style>` tag at runtime — outside our build, so Astro can't hash it.
         // Google ships that stylesheet with fixed content, so the hash is stable;
         // pinned here rather than as `unsafe-inline`.
-        resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }, 'sha256-b+ACDqq6F5xfd19DfxGrqNJEBbYn8aUT21LBC4gcGwc='],
+        resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }, "'sha256-b+ACDqq6F5xfd19DfxGrqNJEBbYn8aUT21LBC4gcGwc='"],
     },
 };
 
