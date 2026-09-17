@@ -26,13 +26,20 @@ checked against it.
   `--color-accent`, `$fs-h2` ↔ `--fs-h2`, `$gutter` ↔ `--gutter`). Fluid
   `clamp()` tokens are stored at their **1440px desktop value**.
 - Root frames: `Components` (the primitives: `Header`, `Eyebrow`,
-  `Button/*`, `Hairline Link`, `Ticker/Item`, `Head/Stack`, `Head/Split`,
-  `Field/Row Link` (+ hover), `Ticket/Stub`, `Speaker/Tile`, `Session/Row`,
-  `Fact`, `Band/Closer Accent`, `Footer`), then one frame per surface.
-  `Home` and `Sessions` mirror the **deployed** routes section by section and
-  are the reference for any new page; a subpage is `Header` → subpage hero →
-  `Ticker` (sm) → lit band with `Head/Stack` → rows → `Band/Closer Accent` →
-  `Footer`.
+  `Button/*`, `Hairline Link`, `Ticker/Item`, `Ticker/Band sm|lg`,
+  `Subpage/Hero`, `Head/Stack`, `Head/Split`, `Field/Row Link` (+ hover),
+  `Ticket/Stub`, `Speaker/Tile`, `Session/Row`, `Fact`, `NextStep/Row`,
+  `Agenda/Cell`, `Crew/Card`, `Coverage/Row`, `Kit/Item`, `Desk/Row`,
+  `FAQ/Row`, `Logo/Cell`, `Band/Closer Accent`, `Footer`), then one frame
+  per route (`Home`, `Sessions`, `Agenda`, `Speakers`, `Team`, `Contact`,
+  `FAQ`, `Attending`, `Invoice`, `Partners`, `Press`, `Press downloads`,
+  `Thank you`, `Newsletter thank you`, `404`, `Privacy policy`, `Invite`),
+  plus `Surfaces` (menu overlay, cookie banner, session sheet, speaker
+  sheet) and `Mobile` (375px `Home` and `Sessions`). Every one mirrors the
+  **deployed** route section by section. A subpage is `Subpage/Hero` →
+  `Ticker/Band sm` → lit band with `Head/Stack` → rows → `Band/Closer
+  Accent` → `Footer`; overrides go through descendant ids (nested:
+  `"<refId>/<nodeId>"`).
 - The canvas was measured from production (devfest.cz at 1440px, computed
   styles via Playwright). When the site changes, re-measure and update the
   canvas in the same PR; when the canvas changes first, that is the design
@@ -50,11 +57,12 @@ checked against it.
   redraw a button.
 - Renderer gotchas (verified 2026-09-17): gradient fills and text `stroke`
   do not paint and can blank the whole frame; use opacity strips of
-  `$color-bg` for a feather and a faint solid fill for outlined type. Root
-  frames far from the others are culled from screenshots and exports; keep
-  pages stacked under `Components`. `execute` globals do not survive
-  between calls; carry ids as literals. Overrides on a nested instance use
-  the path `"<refId>/<nodeId>"`.
+  `$color-bg` for a feather and a faint solid fill for outlined type. A
+  root frame built from many `Insert` calls may stay unpainted in
+  `TakeScreenshot`/`Export`: `Copy` it onto its own position, delete the
+  original, and export in a separate call. Whichever app the MCP targets
+  (`pgrep -fl mcp-server-darwin-arm64`) must have the file open. `execute`
+  globals do not survive between calls; carry ids as literals.
 - Images live in `design/assets/` (`hero-detective.jpg`, `logo.png`),
   referenced relatively as `./assets/...`. Speaker photos and partner logos
   are runtime data: plates and wordmark placeholders on the canvas.

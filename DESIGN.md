@@ -735,20 +735,25 @@ this prose, so it is the current visual truth at desktop width.
   `Field/Row Link` (+ hover), `Ticket/Stub`, `Speaker/Tile`, `Session/Row`,
   `Fact`, `Band/Closer Accent`, `Footer`. A surface instances them; a new
   primitive in code gets a component on the canvas.
-- **[MUST] One root frame per surface.** `Home` and `Sessions` are the two
-  reference pages and mirror the deployed routes section by section
-  (`Home`: hero → ticker → facts → tickets → speakers → partners → gallery →
-  newsletter → footer). Exploration frames are deleted once a direction is
-  chosen.
+- **[MUST] One root frame per surface.** Every route has a frame traced
+  from production at 1440px: `Home`, `Sessions`, `Agenda`, `Speakers`,
+  `Team`, `Contact`, `FAQ`, `Attending`, `Invoice`, `Partners`, `Press`,
+  `Press downloads`, `Thank you`, `Newsletter thank you`, `404`,
+  `Privacy policy`, `Invite`. `Surfaces` holds the overlays (menu, cookie
+  banner, session sheet, speaker sheet) and `Mobile` the 375px `Home` and
+  `Sessions`. Frames sit in a grid: row 1 `Components` + `Home`, rows 2–3
+  the routes, row 4 the rest. Exploration frames are deleted once a
+  direction is chosen.
 - **[MUST] Nothing on the canvas breaks a `[MUST]` here.** The canvas is where
   a rule is tested first, not where it is waived.
 - **[CURRENT] Renderer limits, work around them:** gradient fills and text
-  strokes do not paint in the editor (a node with one can blank its whole
-  frame), so the hero feather and the outlined ticker are approximated with
-  opacity strips and a faint solid fill; nodes far from the other root frames
-  are culled from screenshots and exports, so keep pages stacked under
-  `Components`. Photos of speakers and partner logos are runtime data and
-  stay as plates on the canvas.
+  strokes do not paint (a node with one can blank its whole frame), so the
+  hero feather and the outlined ticker are approximated with opacity strips
+  and a faint solid fill. A root frame assembled with many `Insert` calls
+  can stay unpainted in screenshots and exports; `Copy` it once onto itself
+  and delete the original and it renders. Export in a call of its own,
+  never in the call that built the frame. Photos of speakers, partners and
+  team members are runtime data and stay as monogram or wordmark plates.
 
 The YAML frontmatter at the top of this file is the machine-readable layer
 (the DESIGN.md spec impeccable and the live panel read). It is derived from
