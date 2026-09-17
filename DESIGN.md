@@ -717,23 +717,38 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 
 `design/devfest.pen` is the visual companion to this document, edited through
 the `pencil` MCP server (pen.dev). Workflow, loop and guardrails:
-`.claude/rules/design-pencil.md`.
+`.claude/rules/design-pencil.md`. The canvas was rebuilt from the **deployed
+site** (devfest.cz, 1440px, computed styles sampled with Playwright), not from
+this prose, so it is the current visual truth at desktop width.
 
 - **[MUST] Canvas variables mirror `:root`.** `$color-accent` is
   `--color-accent`, `$fs-h2` is `--fs-h2`, `$gutter` is `--gutter`. A token
   added to one is added to the other in the same PR, and to the frontmatter
   above.
 - **[CURRENT]** Fluid `clamp()` tokens are stored at their 1440px value on
-  the canvas (`$fs-display` 144, `$gutter` 72, `$section-y` 176).
+  the canvas (`$fs-display` 144, `$fs-h2` 112, `$gutter` 72, `$section-y`
+  176). The home statement is a per-page override (117px, see
+  `index.scss:71`) and is written literally on the `Home` frame.
 - **[MUST] The `Components` frame is the only place a primitive is drawn.**
-  `Eyebrow`, `Button/Primary` (+ hover), `Button/Ghost`, `Head/Stack`,
-  `Field/Row Link` (+ hover), `Fact`, `Band/Closer Accent`. A surface
-  instances them; a new primitive in code gets a component on the canvas.
-- **[MUST] One root frame per surface.** `Subpage anatomy` is the reference
-  page and follows "Anatomy of a page" above. Exploration frames are deleted
-  once a direction is chosen.
+  `Header`, `Eyebrow`, `Button/Primary` (+ hover), `Button/Ghost`,
+  `Hairline Link`, `Ticker/Item`, `Head/Stack`, `Head/Split`,
+  `Field/Row Link` (+ hover), `Ticket/Stub`, `Speaker/Tile`, `Session/Row`,
+  `Fact`, `Band/Closer Accent`, `Footer`. A surface instances them; a new
+  primitive in code gets a component on the canvas.
+- **[MUST] One root frame per surface.** `Home` and `Sessions` are the two
+  reference pages and mirror the deployed routes section by section
+  (`Home`: hero → ticker → facts → tickets → speakers → partners → gallery →
+  newsletter → footer). Exploration frames are deleted once a direction is
+  chosen.
 - **[MUST] Nothing on the canvas breaks a `[MUST]` here.** The canvas is where
   a rule is tested first, not where it is waived.
+- **[CURRENT] Renderer limits, work around them:** gradient fills and text
+  strokes do not paint in the editor (a node with one can blank its whole
+  frame), so the hero feather and the outlined ticker are approximated with
+  opacity strips and a faint solid fill; nodes far from the other root frames
+  are culled from screenshots and exports, so keep pages stacked under
+  `Components`. Photos of speakers and partner logos are runtime data and
+  stay as plates on the canvas.
 
 The YAML frontmatter at the top of this file is the machine-readable layer
 (the DESIGN.md spec impeccable and the live panel read). It is derived from

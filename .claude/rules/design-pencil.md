@@ -25,10 +25,18 @@ checked against it.
   mirror `BaseLayout.scss` `:root` one-to-one (`$color-accent` ↔
   `--color-accent`, `$fs-h2` ↔ `--fs-h2`, `$gutter` ↔ `--gutter`). Fluid
   `clamp()` tokens are stored at their **1440px desktop value**.
-- Root frames: `Components` (reusable primitives: `Eyebrow`, `Button/*`,
-  `Head/Stack`, `Field/Row Link` (+ hover), `Fact`, `Band/Closer Accent`)
-  and one frame per designed surface (`Subpage anatomy` is the reference
-  page: Header → SubpageHero → Ticker → Band/Lit → Facts → Closer → Footer).
+- Root frames: `Components` (the primitives: `Header`, `Eyebrow`,
+  `Button/*`, `Hairline Link`, `Ticker/Item`, `Head/Stack`, `Head/Split`,
+  `Field/Row Link` (+ hover), `Ticket/Stub`, `Speaker/Tile`, `Session/Row`,
+  `Fact`, `Band/Closer Accent`, `Footer`), then one frame per surface.
+  `Home` and `Sessions` mirror the **deployed** routes section by section and
+  are the reference for any new page; a subpage is `Header` → subpage hero →
+  `Ticker` (sm) → lit band with `Head/Stack` → rows → `Band/Closer Accent` →
+  `Footer`.
+- The canvas was measured from production (devfest.cz at 1440px, computed
+  styles via Playwright). When the site changes, re-measure and update the
+  canvas in the same PR; when the canvas changes first, that is the design
+  decision and the code follows.
 - **Open the file before any `mcp__pencil__*` call**, or every call fails
   with "A file needs to be open in the editor":
   `code design/devfest.pen` (VS Code extension MCP) or
@@ -37,8 +45,19 @@ checked against it.
   `execute.md` and `pen-schema.md`). Reference tokens with `$name`; never
   hard-code a hex or a font name on the canvas.
 - New surface → new root frame, `placeholder: true` while in progress,
-  `FindEmptySpace` to place it, `TakeScreenshot` to verify. Instance the
-  `Components` frame; do not redraw a button.
+  `FindEmptySpace` anchored on `Home` to place it, `TakeScreenshot` or
+  `Export(...,"png")` to verify. Instance the `Components` frame; do not
+  redraw a button.
+- Renderer gotchas (verified 2026-09-17): gradient fills and text `stroke`
+  do not paint and can blank the whole frame; use opacity strips of
+  `$color-bg` for a feather and a faint solid fill for outlined type. Root
+  frames far from the others are culled from screenshots and exports; keep
+  pages stacked under `Components`. `execute` globals do not survive
+  between calls; carry ids as literals. Overrides on a nested instance use
+  the path `"<refId>/<nodeId>"`.
+- Images live in `design/assets/` (`hero-detective.jpg`, `logo.png`),
+  referenced relatively as `./assets/...`. Speaker photos and partner logos
+  are runtime data: plates and wordmark placeholders on the canvas.
 - `.pen` files are encrypted: never `Read`, `Grep` or hand-edit one.
 
 ## The loop for a new or redesigned surface
