@@ -494,7 +494,7 @@
               "name": "Lead",
               "width": 704,
               "layout": "vertical",
-              "gap": 20,
+              "gap": 21,
               "children": [
                 {
                   "id": "S84f6",
@@ -509,17 +509,63 @@
                   }
                 },
                 {
-                  "type": "text",
-                  "id": "wTUf6",
+                  "type": "frame",
+                  "id": "m8tONa",
                   "name": "Title",
-                  "fill": "$on-accent",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "PICK YOUR\nDAY.",
-                  "lineHeight": "$lh-display",
-                  "fontFamily": "$font-display",
-                  "fontSize": "$fs-h2",
-                  "fontWeight": "normal"
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tBVLf",
+                      "name": "L1",
+                      "fill": "$on-accent",
+                      "content": "PICK YOUR",
+                      "lineHeight": "$lh-display",
+                      "fontFamily": "$font-display",
+                      "fontSize": "$fs-h2",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "zE8qj",
+                      "name": "L2",
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pMjC0",
+                          "name": "t",
+                          "fill": "$on-accent",
+                          "lineHeight": "$lh-display",
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-h2",
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fBMfH",
+                          "name": "r",
+                          "fill": "$on-accent-ink",
+                          "content": "DAY",
+                          "lineHeight": "$lh-display",
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-h2",
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Hi082",
+                          "name": "x",
+                          "fill": "$on-accent",
+                          "content": ".",
+                          "lineHeight": "$lh-display",
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-h2",
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             },
@@ -828,6 +874,17 @@
               "fontFamily": "$font-display",
               "fontSize": "$fs-title-sm",
               "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "Gt3rz",
+              "name": "Tag",
+              "fill": "$ink-muted",
+              "content": "CLOUD DEVELOPER ADVOCATE",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label-xs",
+              "fontWeight": "normal",
+              "letterSpacing": 2.2
             }
           ]
         },
@@ -2060,6 +2117,17 @@
               "fontSize": "$fs-label-xs",
               "fontWeight": "normal",
               "letterSpacing": 2.2
+            },
+            {
+              "type": "text",
+              "id": "U1ELX",
+              "name": "Alias",
+              "fill": "$color-accent-hot",
+              "content": "THE BOSS / THE SCENIC ARTIST",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label-xs",
+              "fontWeight": "normal",
+              "letterSpacing": 1.5
             },
             {
               "type": "frame",
@@ -3579,6 +3647,9 @@
                     },
                     "PsmHr": {
                       "content": "DR ROUSHANAK RAHMAT"
+                    },
+                    "Gt3rz": {
+                      "enabled": false
                     }
                   }
                 },
@@ -3593,6 +3664,9 @@
                     },
                     "PsmHr": {
                       "content": "FILIP GOSZLER"
+                    },
+                    "Gt3rz": {
+                      "enabled": false
                     }
                   }
                 },
@@ -3607,6 +3681,9 @@
                     },
                     "PsmHr": {
                       "content": "RICCARDO CARLESSO"
+                    },
+                    "Gt3rz": {
+                      "enabled": false
                     }
                   }
                 },
@@ -3621,6 +3698,9 @@
                     },
                     "PsmHr": {
                       "content": "MIHAELA GHEORGHE-ROMAN"
+                    },
+                    "Gt3rz": {
+                      "enabled": false
                     }
                   }
                 }
@@ -5108,6 +5188,30 @@
             "S84f6/oIg87": {
               "content": "BE THERE",
               "fill": "$on-accent"
+            },
+            "tBVLf": {
+              "content": "PICK YOUR",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "",
+              "enabled": false
+            },
+            "fBMfH": {
+              "content": "DAY",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
+            },
+            "jb5cG": {
+              "content": "Every talk, mapped to a room and a time slot."
+            },
+            "d3PsWY": {
+              "content": "SEE THE SCHEDULE"
+            },
+            "I4ovO": {
+              "content": "GET TICKETS"
             }
           }
         },
@@ -5841,8 +5945,20 @@
               "content": "BE THERE",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "DOORS OPEN\n30 OCTOBER."
+            "tBVLf": {
+              "content": "DOORS OPEN",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "",
+              "enabled": false
+            },
+            "fBMfH": {
+              "content": "30 OCTOBER",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "Uhelný Mlýn, near Prague. Nine in the morning to eight at night."
@@ -5979,6 +6095,9 @@
                     },
                     "PsmHr": {
                       "content": "ABDEL SGHIOUAR"
+                    },
+                    "Gt3rz": {
+                      "content": "CLOUD DEVELOPER ADVOCATE"
                     }
                   }
                 },
@@ -5993,6 +6112,9 @@
                     },
                     "PsmHr": {
                       "content": "ADI MAZOR KARIO"
+                    },
+                    "Gt3rz": {
+                      "content": "PRODUCT, DESIGN & DEV AT LEMON"
                     }
                   }
                 },
@@ -6007,6 +6129,9 @@
                     },
                     "PsmHr": {
                       "content": "ANURADHA KUMARI"
+                    },
+                    "Gt3rz": {
+                      "content": "SENIOR FRONTEND DEVELOPER"
                     }
                   }
                 },
@@ -6021,6 +6146,9 @@
                     },
                     "PsmHr": {
                       "content": "ASHLEY DAVIES"
+                    },
+                    "Gt3rz": {
+                      "content": "SENIOR ANDROID DEVELOPER"
                     }
                   }
                 }
@@ -6051,6 +6179,9 @@
                     },
                     "PsmHr": {
                       "content": "BRIAN EGAN"
+                    },
+                    "Gt3rz": {
+                      "content": "SENIOR ENGINEERING LEAD"
                     }
                   }
                 },
@@ -6065,6 +6196,9 @@
                     },
                     "PsmHr": {
                       "content": "CAGATAY ULUSOY"
+                    },
+                    "Gt3rz": {
+                      "content": "GOOGLE DEVELOPER EXPERT"
                     }
                   }
                 },
@@ -6079,6 +6213,9 @@
                     },
                     "PsmHr": {
                       "content": "DENIS VALÁŠEK"
+                    },
+                    "Gt3rz": {
+                      "content": "AI FOR FINANCE"
                     }
                   }
                 },
@@ -6093,6 +6230,9 @@
                     },
                     "PsmHr": {
                       "content": "DOMINIK ŠIMONÍK"
+                    },
+                    "Gt3rz": {
+                      "content": "TECHNICAL DIRECTOR"
                     }
                   }
                 }
@@ -6123,6 +6263,9 @@
                     },
                     "PsmHr": {
                       "content": "DOMINIKA ZAJAC"
+                    },
+                    "Gt3rz": {
+                      "content": "GDE FOR WEB"
                     }
                   }
                 },
@@ -6137,6 +6280,9 @@
                     },
                     "PsmHr": {
                       "content": "DR ROUSHANAK RAHMAT"
+                    },
+                    "Gt3rz": {
+                      "content": "ENTERPRISE AI"
                     }
                   }
                 },
@@ -6151,6 +6297,9 @@
                     },
                     "PsmHr": {
                       "content": "FILIP GOSZLER"
+                    },
+                    "Gt3rz": {
+                      "content": "THE FIX MAN"
                     }
                   }
                 },
@@ -6165,6 +6314,9 @@
                     },
                     "PsmHr": {
                       "content": "FILIP KIRSCHNER"
+                    },
+                    "Gt3rz": {
+                      "content": "FOUNDER & EXPLORER"
                     }
                   }
                 }
@@ -6183,8 +6335,20 @@
               "content": "BE THERE",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "SEE THEM\nIN THE ROOM."
+            "tBVLf": {
+              "content": "SEE THEM",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "IN THE ",
+              "enabled": true
+            },
+            "fBMfH": {
+              "content": "ROOM",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "One day, one mill, the whole lineup on stage."
@@ -6283,6 +6447,9 @@
                     },
                     "aKk0R": {
                       "content": "LEAD ORG"
+                    },
+                    "U1ELX": {
+                      "content": "THE BOSS / THE SCENIC ARTIST"
                     }
                   }
                 },
@@ -6299,7 +6466,10 @@
                       "content": "LUCIE JURYSTOVÁ"
                     },
                     "aKk0R": {
-                      "content": "EVENTS LEAD ORG"
+                      "content": "DEPUTY LEAD ORG"
+                    },
+                    "U1ELX": {
+                      "content": "THE FIXER"
                     }
                   }
                 },
@@ -6317,6 +6487,9 @@
                     },
                     "aKk0R": {
                       "content": "PRODUCTION"
+                    },
+                    "U1ELX": {
+                      "content": "CHIEF OF LOGISTICS"
                     }
                   }
                 },
@@ -6334,6 +6507,9 @@
                     },
                     "aKk0R": {
                       "content": "PRODUCTION ASSISTANT"
+                    },
+                    "U1ELX": {
+                      "content": "LOGISTICS GIRL FRIDAY"
                     }
                   }
                 }
@@ -6367,6 +6543,9 @@
                     },
                     "aKk0R": {
                       "content": "PARTNERS"
+                    },
+                    "U1ELX": {
+                      "content": "THE NEGOTIATOR"
                     }
                   }
                 },
@@ -6384,6 +6563,9 @@
                     },
                     "aKk0R": {
                       "content": "SPEAKERS"
+                    },
+                    "U1ELX": {
+                      "content": "WHISPERER HUNTER"
                     }
                   }
                 },
@@ -6401,6 +6583,9 @@
                     },
                     "aKk0R": {
                       "content": "PR & MARKETING"
+                    },
+                    "U1ELX": {
+                      "content": "THE PRESS AGENT"
                     }
                   }
                 },
@@ -6418,6 +6603,9 @@
                     },
                     "aKk0R": {
                       "content": "WEB & APP"
+                    },
+                    "U1ELX": {
+                      "content": "SWITCHBOARD OPERATOR"
                     }
                   }
                 }
@@ -6441,16 +6629,19 @@
                   "id": "wGO3B",
                   "type": "ref",
                   "ref": "eGLD7",
-                  "name": "ELIŠKA ZEZULOVÁ",
+                  "name": "ELIŠKA ZEZULKOVÁ",
                   "descendants": {
                     "hkz99": {
                       "content": "EZ"
                     },
                     "yb9dQ": {
-                      "content": "ELIŠKA ZEZULOVÁ"
+                      "content": "ELIŠKA ZEZULKOVÁ"
                     },
                     "aKk0R": {
                       "content": "TICKETS & REGISTRATION"
+                    },
+                    "U1ELX": {
+                      "content": "THE GATEKEEPER"
                     }
                   }
                 },
@@ -6468,6 +6659,9 @@
                     },
                     "aKk0R": {
                       "content": "FINANCE"
+                    },
+                    "U1ELX": {
+                      "content": "HEAD BOOKKEEPER"
                     }
                   }
                 },
@@ -6475,16 +6669,19 @@
                   "id": "V2iqXd",
                   "type": "ref",
                   "ref": "eGLD7",
-                  "name": "PETR VODR",
+                  "name": "PETR VOBR",
                   "descendants": {
                     "hkz99": {
                       "content": "PV"
                     },
                     "yb9dQ": {
-                      "content": "PETR VODR"
+                      "content": "PETR VOBR"
                     },
                     "aKk0R": {
                       "content": "FESTIVAL"
+                    },
+                    "U1ELX": {
+                      "content": "PRIVATE EYE"
                     }
                   }
                 },
@@ -6501,7 +6698,10 @@
                       "content": "ROSTISLAV NAVRÁTIL"
                     },
                     "aKk0R": {
-                      "content": "FESTIVAL SCENERIO"
+                      "content": "FESTIVAL SIDEKICK"
+                    },
+                    "U1ELX": {
+                      "content": "PRIVATE EYE'S LEGMAN"
                     }
                   }
                 }
@@ -6520,8 +6720,20 @@
               "content": "JOIN US",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "WANT IN\nON THE CASE?"
+            "tBVLf": {
+              "content": "WANT IN",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "ON THE ",
+              "enabled": true
+            },
+            "fBMfH": {
+              "content": "CASE",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "?"
             },
             "jb5cG": {
               "content": "DevFest.cz is run by volunteers. We are always recruiting accomplices."
@@ -6733,11 +6945,28 @@
               "content": "OR SKIP THE INBOX",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "JUST COME\nTO THE SHOW."
+            "tBVLf": {
+              "content": "JUST COME",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "TO THE ",
+              "enabled": true
+            },
+            "fBMfH": {
+              "content": "SHOW",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "Tickets are on sale now, and the newsletter carries every announcement first."
+            },
+            "imhsh": {
+              "layout": "vertical",
+              "gap": 12,
+              "alignItems": "start"
             },
             "d3PsWY": {
               "content": "GET TICKETS"
@@ -7175,8 +7404,20 @@
               "content": "STILL STUCK",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "ASK US\nDIRECTLY."
+            "tBVLf": {
+              "content": "ASK US",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "",
+              "enabled": false
+            },
+            "fBMfH": {
+              "content": "DIRECTLY",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "If the answer is not here, one of the desks will have it."
@@ -7596,8 +7837,20 @@
               "content": "TELL EVERYONE",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "SEE YOU\nAT THE SHOW."
+            "tBVLf": {
+              "content": "SEE YOU",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "AT THE ",
+              "enabled": true
+            },
+            "fBMfH": {
+              "content": "SHOW",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "Tag @devfestcz when you post it — we reshare our favourites."
@@ -8454,8 +8707,20 @@
               "content": "PAYING BY CARD",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "SKIP THE\nPAPERWORK."
+            "tBVLf": {
+              "content": "SKIP THE",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "",
+              "enabled": false
+            },
+            "fBMfH": {
+              "content": "PAPERWORK",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "Individual tickets check out on ti.to in a minute, no invoice needed."
@@ -9246,8 +9511,20 @@
               "content": "PRESS KIT",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "TAKE THE\nASSETS."
+            "tBVLf": {
+              "content": "TAKE THE",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "",
+              "enabled": false
+            },
+            "fBMfH": {
+              "content": "ASSETS",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "Logos and wordmarks for the 2026 edition, ready to drop into a story."
@@ -9586,8 +9863,20 @@
               "content": "MISSING SOMETHING",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "ASK THE\nPRESS DESK."
+            "tBVLf": {
+              "content": "ASK THE",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "",
+              "enabled": false
+            },
+            "fBMfH": {
+              "content": "PRESS DESK",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "Need a format we have not published, or a quote for a story? Write to us."
@@ -9802,11 +10091,28 @@
               "content": "UNTIL OCTOBER",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "SEE WHO YOU\nCAME FOR."
+            "tBVLf": {
+              "content": "SEE WHO YOU",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "CAME ",
+              "enabled": true
+            },
+            "fBMfH": {
+              "content": "FOR",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "The lineup and the schedule are out. A few names are still to land — newsletter subscribers hear first."
+            },
+            "imhsh": {
+              "layout": "vertical",
+              "gap": 12,
+              "alignItems": "start"
             },
             "d3PsWY": {
               "content": "SEE THE SPEAKERS"
@@ -10000,8 +10306,20 @@
               "content": "ONE MORE THING",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "COME FOR THE\nPEOPLE."
+            "tBVLf": {
+              "content": "COME FOR THE",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "",
+              "enabled": false
+            },
+            "fBMfH": {
+              "content": "PEOPLE",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "The lineup is what those mails will be about. Here is who is confirmed so far."
@@ -10222,8 +10540,20 @@
               "content": "OR START OVER",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "BACK TO THE\nTOP."
+            "tBVLf": {
+              "content": "BACK TO THE",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "",
+              "enabled": false
+            },
+            "fBMfH": {
+              "content": "TOP",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
             },
             "jb5cG": {
               "content": "The homepage carries the date, the venue, the waves and the newsletter."
@@ -11010,8 +11340,20 @@
               "content": "THE LIST CLOSES",
               "fill": "$on-accent"
             },
-            "wTUf6": {
-              "content": "TAKE THE TICKET."
+            "tBVLf": {
+              "content": "TAKE THE TICKET.",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "",
+              "enabled": false
+            },
+            "fBMfH": {
+              "content": "",
+              "enabled": false
+            },
+            "Hi082": {
+              "content": ""
             },
             "jb5cG": {
               "content": "Waves move and the room is one day only."
@@ -11039,8 +11381,10 @@
       "x": 8640,
       "y": 18400,
       "name": "Surfaces",
+      "fill": "$color-bg",
       "layout": "vertical",
       "gap": 120,
+      "padding": 72,
       "children": [
         {
           "type": "text",
