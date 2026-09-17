@@ -1,0 +1,1288 @@
+{
+  "version": "2.17",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bH0Hq",
+      "x": 0,
+      "y": 0,
+      "name": "Components",
+      "fill": "$color-bg",
+      "layout": "vertical",
+      "gap": 48,
+      "padding": 64,
+      "children": [
+        {
+          "type": "text",
+          "id": "MLDaV",
+          "name": "Sheet label",
+          "fill": "$ink-muted",
+          "content": "COMPONENTS — MIRRORS BaseLayout.scss PRIMITIVES",
+          "fontFamily": "$font-mono",
+          "fontSize": "$fs-label-lg",
+          "fontWeight": "normal",
+          "letterSpacing": 3
+        },
+        {
+          "type": "frame",
+          "id": "hLqJ4",
+          "name": "Row 1",
+          "gap": 48,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "XjtII",
+              "name": "Eyebrow",
+              "reusable": true,
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "oIg87",
+                  "name": "Label",
+                  "fill": "$ink-muted",
+                  "content": "SECTION LABEL",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label",
+                  "fontWeight": "normal",
+                  "letterSpacing": 3.5
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "K7lcPH",
+              "name": "Button/Primary",
+              "reusable": true,
+              "fill": "$color-accent",
+              "cornerRadius": "$radius",
+              "stroke": "$color-accent",
+              "strokeWidth": 1,
+              "gap": 11,
+              "padding": [
+                20,
+                45
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "n6STia",
+                  "name": "Label",
+                  "fill": "$on-accent",
+                  "content": "GET A TICKET",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label-lg",
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "yBtp6",
+                  "name": "Arrow",
+                  "fill": "$on-accent",
+                  "content": "→",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label-lg",
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "aRg8G",
+              "name": "Button/Ghost",
+              "reusable": true,
+              "cornerRadius": "$radius",
+              "stroke": "$field-border",
+              "strokeWidth": 1,
+              "gap": 10,
+              "padding": [
+                20,
+                32
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nNSac",
+                  "name": "Label",
+                  "fill": "$color-text",
+                  "content": "SEE THE LINEUP",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label-lg",
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "qDPRk",
+                  "name": "Arrow",
+                  "fill": "$color-text",
+                  "content": "→",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label-lg",
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "y3Vwn",
+              "name": "Button/Primary Hover",
+              "reusable": true,
+              "fill": "$color-accent-hot",
+              "cornerRadius": "$radius",
+              "stroke": "$color-accent-hot",
+              "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#CC000066",
+                  "blur": 14
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#CC000047",
+                  "offset": {
+                    "x": 0,
+                    "y": 12
+                  },
+                  "blur": 30
+                }
+              ],
+              "gap": 11,
+              "padding": [
+                20,
+                45
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cw0xd",
+                  "name": "Label",
+                  "fill": "$on-accent",
+                  "content": "GET A TICKET",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label-lg",
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "DsjmY",
+                  "name": "Arrow",
+                  "fill": "$on-accent",
+                  "content": "→",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label-lg",
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "L1r2Mj",
+          "name": "Head/Stack",
+          "reusable": true,
+          "width": 900,
+          "stroke": "$rule-soft",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            0,
+            0,
+            26,
+            0
+          ],
+          "children": [
+            {
+              "id": "A20n1",
+              "type": "ref",
+              "ref": "XjtII",
+              "name": "Eyebrow",
+              "descendants": {
+                "oIg87": {
+                  "content": "THE PROGRAMME"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "YCbyw",
+              "name": "Title",
+              "fill": "$color-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "ONE DAY. ONE MILL. NO FILLER.",
+              "lineHeight": "$lh-display",
+              "fontFamily": "$font-display",
+              "fontSize": "$fs-h2",
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "AvyiD",
+          "name": "Field/Row Link",
+          "reusable": true,
+          "width": 900,
+          "gap": 32,
+          "padding": [
+            "$field-step",
+            0
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Yjt3W",
+              "name": "Lead",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sd8uK",
+                  "name": "Meta",
+                  "fill": "$ink-muted",
+                  "content": "10:00 · MAIN HALL",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label-sm",
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "h20li",
+                  "name": "Title",
+                  "fill": "$color-text",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "AGENTS THAT SHIP: A FIELD REPORT",
+                  "lineHeight": 1.06,
+                  "fontFamily": "$font-display",
+                  "fontSize": "$fs-row-sm",
+                  "fontWeight": "normal",
+                  "letterSpacing": 1
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "rdyKc",
+              "name": "Figure",
+              "fill": "$ink-muted",
+              "content": "01",
+              "lineHeight": "$lh-display",
+              "fontFamily": "$font-display",
+              "fontSize": "$fs-row-figure",
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "N36Nv",
+          "name": "Field/Row Link Hover",
+          "reusable": true,
+          "width": 900,
+          "gap": 32,
+          "padding": [
+            "$field-step",
+            0
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "end",
+          "children": [
+            {
+              "type": "rectangle",
+              "id": "jdQN5",
+              "layoutPosition": "absolute",
+              "x": -72,
+              "y": 0,
+              "name": "Reach field",
+              "fill": "$color-accent",
+              "width": 1440,
+              "height": 150
+            },
+            {
+              "type": "frame",
+              "id": "d3eK5",
+              "name": "Lead",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "doryQ",
+                  "name": "Meta",
+                  "fill": "$on-accent",
+                  "content": "10:00 · MAIN HALL",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label-sm",
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "iZk8t",
+                  "name": "Title",
+                  "fill": "$on-accent",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "AGENTS THAT SHIP: A FIELD REPORT",
+                  "lineHeight": 1.06,
+                  "fontFamily": "$font-display",
+                  "fontSize": "$fs-row-sm",
+                  "fontWeight": "normal",
+                  "letterSpacing": 1
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "l3HF5",
+              "name": "Figure",
+              "fill": "$on-accent",
+              "content": "01",
+              "lineHeight": "$lh-display",
+              "fontFamily": "$font-display",
+              "fontSize": "$fs-row-figure",
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "LZ9Fk",
+          "name": "Fact",
+          "reusable": true,
+          "layout": "vertical",
+          "gap": 14,
+          "children": [
+            {
+              "type": "text",
+              "id": "leVmR",
+              "name": "Figure",
+              "fill": "$color-text",
+              "content": "1200",
+              "lineHeight": 0.82,
+              "fontFamily": "$font-display",
+              "fontSize": "$fs-stat",
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "IM9Pm",
+              "name": "Label",
+              "fill": "$ink-dim",
+              "content": "DEVELOPERS IN ONE MILL",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label-lg",
+              "fontWeight": "normal",
+              "letterSpacing": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NdYne",
+          "name": "Band/Closer Accent",
+          "reusable": true,
+          "width": 1440,
+          "fill": "$color-accent",
+          "layout": "vertical",
+          "gap": 40,
+          "padding": [
+            "$section-y",
+            "$gutter"
+          ],
+          "children": [
+            {
+              "id": "S84f6",
+              "type": "ref",
+              "ref": "XjtII",
+              "name": "Eyebrow",
+              "descendants": {
+                "oIg87": {
+                  "content": "OCTOBER 30, 2026 · UHELNÝ MLÝN",
+                  "fill": "$on-accent"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "wTUf6",
+              "name": "Title",
+              "fill": "$on-accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "DON'T MISS THE LAST TRAIN.",
+              "lineHeight": "$lh-display",
+              "fontFamily": "$font-display",
+              "fontSize": "$fs-h2",
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "GQIdc",
+              "name": "Note",
+              "fill": "$on-accent",
+              "textGrowth": "fixed-width",
+              "width": 640,
+              "content": "Tickets are limited by the size of the building, not by ambition.",
+              "lineHeight": 1.6,
+              "fontFamily": "$font-body",
+              "fontSize": "$fs-lede",
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "szM8e",
+              "name": "Actions",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "m7hkK",
+                  "name": "Button/Primary Inverted",
+                  "fill": "$on-accent",
+                  "cornerRadius": "$radius",
+                  "gap": 11,
+                  "padding": [
+                    20,
+                    45
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LoZID",
+                      "name": "Label",
+                      "fill": "$on-accent-ink",
+                      "content": "GET A TICKET",
+                      "fontFamily": "$font-mono",
+                      "fontSize": "$fs-label-lg",
+                      "fontWeight": "normal",
+                      "letterSpacing": 3
+                    },
+                    {
+                      "type": "text",
+                      "id": "s5P31y",
+                      "name": "Arrow",
+                      "fill": "$on-accent-ink",
+                      "content": "→",
+                      "fontFamily": "$font-mono",
+                      "fontSize": "$fs-label-lg",
+                      "fontWeight": "normal",
+                      "letterSpacing": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WR986",
+                  "name": "Button/Ghost Inverted",
+                  "cornerRadius": "$radius",
+                  "stroke": "$on-accent-border",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    20,
+                    32
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "e7HVz",
+                      "name": "Label",
+                      "fill": "$on-accent",
+                      "content": "SEE THE LINEUP",
+                      "fontFamily": "$font-mono",
+                      "fontSize": "$fs-label-lg",
+                      "fontWeight": "normal",
+                      "letterSpacing": 3
+                    },
+                    {
+                      "type": "text",
+                      "id": "BCkdH",
+                      "name": "Arrow",
+                      "fill": "$on-accent",
+                      "content": "→",
+                      "fontFamily": "$font-mono",
+                      "fontSize": "$fs-label-lg",
+                      "fontWeight": "normal",
+                      "letterSpacing": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "wZ01k",
+      "x": 1728,
+      "y": 0,
+      "name": "Subpage anatomy",
+      "clip": true,
+      "width": 1440,
+      "fill": "$color-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "chJEc",
+          "name": "Header",
+          "width": "fill_container",
+          "stroke": "$rule-soft",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            0,
+            "$gutter"
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Q7obC",
+              "name": "Wordmark",
+              "fill": "$color-text",
+              "content": "DEVFEST.CZ",
+              "lineHeight": "$lh-display",
+              "fontFamily": "$font-display",
+              "fontSize": 28,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "lVQX8",
+              "name": "Date",
+              "fill": "$ink-muted",
+              "content": "30 · 10 · 2026 — PRAGUE",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            },
+            {
+              "type": "frame",
+              "id": "KG184",
+              "name": "Menu toggle",
+              "cornerRadius": "$radius",
+              "stroke": "$field-border",
+              "strokeWidth": 1,
+              "gap": 10,
+              "padding": [
+                10,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "JKMyd",
+                  "name": "Label",
+                  "fill": "$color-text",
+                  "content": "MENU",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label",
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "nxCYQ",
+          "name": "SubpageHero",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 28,
+          "padding": [
+            "$section-y",
+            "$gutter",
+            "$section-y-tight",
+            "$gutter"
+          ],
+          "children": [
+            {
+              "id": "bkYNr",
+              "type": "ref",
+              "ref": "XjtII",
+              "name": "Eyebrow",
+              "descendants": {
+                "oIg87": {
+                  "content": "SUBPAGE · ONE DISPLAY PER PAGE"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "u1Fi1m",
+              "name": "H1",
+              "fill": "$color-text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "THE PROGRAMME",
+              "lineHeight": "$lh-display",
+              "fontFamily": "$font-display",
+              "fontSize": "$fs-display",
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "uWDVl",
+              "name": "Lede",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 760,
+              "content": "Thirty talks, one mill, no filler. The lede runs one to two sentences and never goes italic.",
+              "lineHeight": 1.6,
+              "fontFamily": "$font-body",
+              "fontSize": "$fs-lede",
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hTLqg",
+          "name": "Ticker",
+          "clip": true,
+          "width": "fill_container",
+          "fill": "$color-accent",
+          "gap": 48,
+          "padding": [
+            14,
+            "$gutter"
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "XZkUj",
+              "name": "AI AGENTS",
+              "fill": "$on-accent",
+              "content": "AI AGENTS   ✕",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "DMvzL",
+              "name": "GENERATIVE UI",
+              "fill": "$on-accent",
+              "content": "GENERATIVE UI   ✕",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "OVyjV",
+              "name": "CLOUD & BACKENDS",
+              "fill": "$on-accent",
+              "content": "CLOUD & BACKENDS   ✕",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "gGJmQ",
+              "name": "MOBILE & WEB",
+              "fill": "$on-accent",
+              "content": "MOBILE & WEB   ✕",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "Hw5pZ",
+              "name": "ACCESSIBILITY",
+              "fill": "$on-accent",
+              "content": "ACCESSIBILITY   ✕",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "D4tw9q",
+              "name": "THE HUMANS BEHIND IT",
+              "fill": "$on-accent",
+              "content": "THE HUMANS BEHIND IT   ✕",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "EL1Gu",
+              "name": "AI AGENTS",
+              "fill": "$on-accent",
+              "content": "AI AGENTS   ✕",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "TBfju",
+              "name": "GENERATIVE UI",
+              "fill": "$on-accent",
+              "content": "GENERATIVE UI   ✕",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "p3chSV",
+          "name": "Band/Lit",
+          "width": "fill_container",
+          "stroke": "$rule-soft",
+          "strokeWidth": {
+            "top": 1
+          },
+          "layout": "vertical",
+          "padding": [
+            "$section-y",
+            "$gutter"
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "qIulT",
+              "name": "Band inner",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 64,
+              "children": [
+                {
+                  "id": "j33x4f",
+                  "type": "ref",
+                  "ref": "L1r2Mj",
+                  "name": "Head/Stack",
+                  "width": "fill_container",
+                  "descendants": {
+                    "YCbyw": {
+                      "content": "THE OPEN FIELD"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "YSyMN",
+                  "name": "Field",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "id": "uTpAe",
+                      "type": "ref",
+                      "ref": "AvyiD",
+                      "name": "Row 01",
+                      "width": "fill_container",
+                      "descendants": {
+                        "sd8uK": {
+                          "content": "10:00 · MAIN HALL"
+                        },
+                        "h20li": {
+                          "content": "AGENTS THAT SHIP: A FIELD REPORT"
+                        },
+                        "rdyKc": {
+                          "content": "01"
+                        }
+                      }
+                    },
+                    {
+                      "id": "HyQ3e",
+                      "type": "ref",
+                      "ref": "AvyiD",
+                      "name": "Row 02",
+                      "width": "fill_container",
+                      "descendants": {
+                        "sd8uK": {
+                          "content": "11:00 · MAIN HALL"
+                        },
+                        "h20li": {
+                          "content": "GENERATIVE UI WITHOUT THE HYPE"
+                        },
+                        "rdyKc": {
+                          "content": "02"
+                        }
+                      }
+                    },
+                    {
+                      "id": "L7cT7",
+                      "type": "ref",
+                      "ref": "AvyiD",
+                      "name": "Row 03",
+                      "width": "fill_container",
+                      "descendants": {
+                        "sd8uK": {
+                          "content": "12:00 · THE MILL"
+                        },
+                        "h20li": {
+                          "content": "ACCESSIBILITY IS A PERFORMANCE BUDGET"
+                        },
+                        "rdyKc": {
+                          "content": "03"
+                        }
+                      }
+                    },
+                    {
+                      "id": "H7yaB",
+                      "type": "ref",
+                      "ref": "AvyiD",
+                      "name": "Row 04",
+                      "width": "fill_container",
+                      "descendants": {
+                        "sd8uK": {
+                          "content": "14:00 · MAIN HALL"
+                        },
+                        "h20li": {
+                          "content": "BACKENDS FOR PEOPLE WHO HATE BACKENDS"
+                        },
+                        "rdyKc": {
+                          "content": "04"
+                        }
+                      }
+                    },
+                    {
+                      "id": "c8JfW",
+                      "type": "ref",
+                      "ref": "N36Nv",
+                      "name": "Row 05 (hover)",
+                      "width": "fill_container",
+                      "descendants": {
+                        "doryQ": {
+                          "content": "15:00 · THE MILL"
+                        },
+                        "iZk8t": {
+                          "content": "WHAT THE ROW LOOKS LIKE WHEN REACHED"
+                        },
+                        "l3HF5": {
+                          "content": "05"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "JBi7x",
+          "name": "Band/Facts",
+          "width": "fill_container",
+          "gap": 96,
+          "padding": [
+            "$section-y",
+            "$gutter"
+          ],
+          "children": [
+            {
+              "id": "RIq0u",
+              "type": "ref",
+              "ref": "LZ9Fk",
+              "name": "Fact DEVELOPERS IN ONE MILL",
+              "descendants": {
+                "leVmR": {
+                  "content": "1200"
+                },
+                "IM9Pm": {
+                  "content": "DEVELOPERS IN ONE MILL"
+                }
+              }
+            },
+            {
+              "id": "JvC7N",
+              "type": "ref",
+              "ref": "LZ9Fk",
+              "name": "Fact TALKS · THREE STAGES",
+              "descendants": {
+                "leVmR": {
+                  "content": "30"
+                },
+                "IM9Pm": {
+                  "content": "TALKS · THREE STAGES"
+                }
+              }
+            },
+            {
+              "id": "yyeEK",
+              "type": "ref",
+              "ref": "LZ9Fk",
+              "name": "Fact DAY · NO FILLER",
+              "descendants": {
+                "leVmR": {
+                  "content": "1"
+                },
+                "IM9Pm": {
+                  "content": "DAY · NO FILLER"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "dQZrE",
+          "type": "ref",
+          "ref": "NdYne",
+          "name": "Closer",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "Fixcr",
+          "name": "Footer",
+          "width": "fill_container",
+          "stroke": "$rule-soft",
+          "strokeWidth": {
+            "top": 1
+          },
+          "padding": [
+            48,
+            "$gutter"
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "end",
+          "children": [
+            {
+              "type": "text",
+              "id": "KzW2Z",
+              "name": "Wordmark",
+              "fill": "$color-text",
+              "content": "DEVFEST.CZ 2026",
+              "lineHeight": "$lh-display",
+              "fontFamily": "$font-display",
+              "fontSize": "$fs-h3",
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "z0qpR",
+              "name": "Org",
+              "fill": "$ink-muted",
+              "content": "GUG.CZ, Z.S. · UHELNÝ MLÝN · 30 OCT 2026",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "color-bg": {
+      "type": "color",
+      "value": "#050505"
+    },
+    "color-text": {
+      "type": "color",
+      "value": "#F2EFE9"
+    },
+    "color-cream": {
+      "type": "color",
+      "value": "#E8E0CC"
+    },
+    "color-grey": {
+      "type": "color",
+      "value": "#8C8C8C"
+    },
+    "color-accent": {
+      "type": "color",
+      "value": "#CC0000"
+    },
+    "color-accent-hot": {
+      "type": "color",
+      "value": "#FF1111"
+    },
+    "color-error": {
+      "type": "color",
+      "value": "#DC6E6EF2"
+    },
+    "on-accent": {
+      "type": "color",
+      "value": "#F7EFE6"
+    },
+    "on-accent-ink": {
+      "type": "color",
+      "value": "#1A0000"
+    },
+    "on-accent-border": {
+      "type": "color",
+      "value": "#F7EFE6D9"
+    },
+    "on-accent-field": {
+      "type": "color",
+      "value": "#9A0000"
+    },
+    "panel": {
+      "type": "color",
+      "value": "#0C0B0B"
+    },
+    "panel-2": {
+      "type": "color",
+      "value": "#111010"
+    },
+    "panel-hover": {
+      "type": "color",
+      "value": "#161413"
+    },
+    "panel-lit": {
+      "type": "color",
+      "value": "#0A0908"
+    },
+    "panel-lit-2": {
+      "type": "color",
+      "value": "#0E0C0B"
+    },
+    "rule": {
+      "type": "color",
+      "value": "#F0EDE621"
+    },
+    "rule-soft": {
+      "type": "color",
+      "value": "#F0EDE60F"
+    },
+    "rule-strong": {
+      "type": "color",
+      "value": "#F0EDE638"
+    },
+    "rule-red": {
+      "type": "color",
+      "value": "#CC00008C"
+    },
+    "field-border": {
+      "type": "color",
+      "value": "#F0EDE666"
+    },
+    "ink-strong": {
+      "type": "color",
+      "value": "#F0EDE6D9"
+    },
+    "ink": {
+      "type": "color",
+      "value": "#F0EDE6C7"
+    },
+    "ink-soft": {
+      "type": "color",
+      "value": "#F0EDE6B3"
+    },
+    "ink-meta": {
+      "type": "color",
+      "value": "#F0EDE69E"
+    },
+    "ink-dim": {
+      "type": "color",
+      "value": "#F0EDE699"
+    },
+    "ink-muted": {
+      "type": "color",
+      "value": "#F0EDE68C"
+    },
+    "ink-faint": {
+      "type": "color",
+      "value": "#F0EDE680"
+    },
+    "ink-monogram": {
+      "type": "color",
+      "value": "#F2EFE975"
+    },
+    "ink-monogram-sm": {
+      "type": "color",
+      "value": "#F2EFE9A8"
+    },
+    "font-display": {
+      "type": "string",
+      "value": "Bebas Neue"
+    },
+    "font-body": {
+      "type": "string",
+      "value": "Special Elite"
+    },
+    "font-mono": {
+      "type": "string",
+      "value": "JetBrains Mono"
+    },
+    "maxw": {
+      "type": "number",
+      "value": 1440
+    },
+    "gutter": {
+      "type": "number",
+      "value": 72
+    },
+    "radius": {
+      "type": "number",
+      "value": 2
+    },
+    "section-y-tight": {
+      "type": "number",
+      "value": 104
+    },
+    "section-y": {
+      "type": "number",
+      "value": 176
+    },
+    "section-y-wide": {
+      "type": "number",
+      "value": 272
+    },
+    "field-step": {
+      "type": "number",
+      "value": 40
+    },
+    "field-step-short": {
+      "type": "number",
+      "value": 52
+    },
+    "header-h": {
+      "type": "number",
+      "value": 71
+    },
+    "fs-display": {
+      "type": "number",
+      "value": 144
+    },
+    "fs-hero": {
+      "type": "number",
+      "value": 136
+    },
+    "fs-h2": {
+      "type": "number",
+      "value": 112
+    },
+    "fs-stat": {
+      "type": "number",
+      "value": 152
+    },
+    "fs-h3": {
+      "type": "number",
+      "value": 42
+    },
+    "fs-card-title": {
+      "type": "number",
+      "value": 31
+    },
+    "fs-title-compact": {
+      "type": "number",
+      "value": 26
+    },
+    "fs-row": {
+      "type": "number",
+      "value": 72
+    },
+    "fs-row-sm": {
+      "type": "number",
+      "value": 54
+    },
+    "fs-row-figure": {
+      "type": "number",
+      "value": 64
+    },
+    "fs-label-xs": {
+      "type": "number",
+      "value": 11
+    },
+    "fs-label-sm": {
+      "type": "number",
+      "value": 12
+    },
+    "fs-label": {
+      "type": "number",
+      "value": 12.5
+    },
+    "fs-label-lg": {
+      "type": "number",
+      "value": 13.5
+    },
+    "fs-ui": {
+      "type": "number",
+      "value": 15
+    },
+    "fs-body": {
+      "type": "number",
+      "value": 17
+    },
+    "fs-body-lg": {
+      "type": "number",
+      "value": 18.5
+    },
+    "fs-lede": {
+      "type": "number",
+      "value": 24
+    },
+    "fs-title-sm": {
+      "type": "number",
+      "value": 23
+    },
+    "fs-monogram": {
+      "type": "number",
+      "value": 54
+    },
+    "lh-display": {
+      "type": "number",
+      "value": 0.84
+    },
+    "track-display": {
+      "type": "number",
+      "value": 0.005
+    },
+    "track-label": {
+      "type": "number",
+      "value": 0.22
+    }
+  },
+  "fileToken": "d9b1fe1c-8100-4c96-af17-7e75e80d5731"
+}

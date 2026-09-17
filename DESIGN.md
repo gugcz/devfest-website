@@ -1,3 +1,123 @@
+---
+name: DevFest.cz 2026
+description: Noir, but loud. One dark theme, one red, poster-scale Bebas headlines, typewriter body, mono labels.
+colors:
+  bg: "#050505"
+  text: "#F2EFE9"
+  cream: "#E8E0CC"
+  grey: "#8C8C8C"
+  accent: "#CC0000"
+  accent-hot: "#FF1111"
+  error: "rgba(220,110,110,0.95)"
+  on-accent: "#F7EFE6"
+  on-accent-ink: "#1A0000"
+  on-accent-border: "rgba(247,239,230,0.85)"
+  on-accent-field: "#9A0000"
+  panel: "#0C0B0B"
+  panel-2: "#111010"
+  panel-hover: "#161413"
+  panel-lit: "#0A0908"
+  panel-lit-2: "#0E0C0B"
+  rule: "rgba(240,237,230,0.13)"
+  rule-soft: "rgba(240,237,230,0.06)"
+  rule-strong: "rgba(240,237,230,0.22)"
+  rule-red: "rgba(204,0,0,0.55)"
+  field-border: "rgba(240,237,230,0.4)"
+  ink-strong: "rgba(240,237,230,0.85)"
+  ink: "rgba(240,237,230,0.78)"
+  ink-soft: "rgba(240,237,230,0.7)"
+  ink-meta: "rgba(240,237,230,0.62)"
+  ink-dim: "rgba(240,237,230,0.6)"
+  ink-muted: "rgba(240,237,230,0.55)"
+  ink-faint: "rgba(240,237,230,0.5)"
+typography:
+  display:
+    fontFamily: "var(--font-bebas-neue), sans-serif"
+    fontSize: "clamp(3rem, 9.5vw, 9rem)"
+    fontWeight: 400
+    lineHeight: 0.84
+    letterSpacing: "0.005em"
+  headline:
+    fontFamily: "var(--font-bebas-neue), sans-serif"
+    fontSize: "clamp(2.9rem, 8vw, 7rem)"
+    fontWeight: 400
+    lineHeight: 0.84
+    letterSpacing: "0.005em"
+  title:
+    fontFamily: "var(--font-bebas-neue), sans-serif"
+    fontSize: "clamp(2.2rem, 4vw, 3.4rem)"
+    fontWeight: 400
+    lineHeight: 1.06
+    letterSpacing: "0.02em"
+  lede:
+    fontFamily: "var(--font-special-elite), cursive"
+    fontSize: "clamp(1.2rem, 1.6vw, 1.5rem)"
+    fontWeight: 400
+    lineHeight: 1.6
+  body:
+    fontFamily: "var(--font-special-elite), cursive"
+    fontSize: "1.05rem"
+    fontWeight: 400
+    lineHeight: 1.7
+  label:
+    fontFamily: "var(--font-jetbrains-mono), monospace"
+    fontSize: "0.78rem"
+    fontWeight: 400
+    letterSpacing: "0.28em"
+  label-lg:
+    fontFamily: "var(--font-jetbrains-mono), monospace"
+    fontSize: "0.84rem"
+    fontWeight: 400
+    letterSpacing: "0.22em"
+rounded:
+  sharp: "2px"
+spacing:
+  gutter: "clamp(1.25rem, 5vw, 4.5rem)"
+  section-tight: "clamp(3.75rem, 6vw, 6.5rem)"
+  section: "clamp(6rem, 10vw, 11rem)"
+  section-wide: "clamp(8.5rem, 15vw, 17rem)"
+  field-step: "clamp(1.9rem, 2.8vw, 2.5rem)"
+  field-step-short: "clamp(2.25rem, 3.6vw, 3.25rem)"
+components:
+  button-primary:
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.on-accent}"
+    typography: "{typography.label-lg}"
+    rounded: "{rounded.sharp}"
+    padding: "1.25rem min(2.8rem, 14vw)"
+  button-primary-hover:
+    backgroundColor: "{colors.accent-hot}"
+    textColor: "{colors.on-accent}"
+  button-ghost:
+    backgroundColor: "transparent"
+    textColor: "{colors.text}"
+    typography: "{typography.label-lg}"
+    rounded: "{rounded.sharp}"
+    padding: "1.25rem min(2rem, 10vw)"
+  eyebrow:
+    textColor: "{colors.ink-muted}"
+    typography: "{typography.label}"
+  field-row:
+    backgroundColor: "transparent"
+    textColor: "{colors.text}"
+    typography: "{typography.title}"
+    padding: "{spacing.field-step} 0"
+  field-row-hover:
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.on-accent}"
+  band-accent:
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.on-accent}"
+    padding: "{spacing.section} {spacing.gutter}"
+  lit-field:
+    backgroundColor: "{colors.panel-lit-2}"
+    textColor: "{colors.text}"
+    typography: "{typography.body}"
+    rounded: "{rounded.sharp}"
+    padding: "0.85rem 0.95rem"
+    height: "2.75rem"
+---
+
 Design system for the DevFest.cz 2026 site. Every value was read out of the
 codebase and carries its source as `file:line`. Rationale lives here, inline
 with the rules; `CLAUDE.md` only points here.
@@ -593,6 +713,33 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
   `html` a scroll container on iOS Safari and breaks `position: fixed` and
   safe-area `env()` (`BaseLayout.scss:217–229`).
 
+## Pencil canvas
+
+`design/devfest.pen` is the visual companion to this document, edited through
+the `pencil` MCP server (pen.dev). Workflow, loop and guardrails:
+`.claude/rules/design-pencil.md`.
+
+- **[MUST] Canvas variables mirror `:root`.** `$color-accent` is
+  `--color-accent`, `$fs-h2` is `--fs-h2`, `$gutter` is `--gutter`. A token
+  added to one is added to the other in the same PR, and to the frontmatter
+  above.
+- **[CURRENT]** Fluid `clamp()` tokens are stored at their 1440px value on
+  the canvas (`$fs-display` 144, `$gutter` 72, `$section-y` 176).
+- **[MUST] The `Components` frame is the only place a primitive is drawn.**
+  `Eyebrow`, `Button/Primary` (+ hover), `Button/Ghost`, `Head/Stack`,
+  `Field/Row Link` (+ hover), `Fact`, `Band/Closer Accent`. A surface
+  instances them; a new primitive in code gets a component on the canvas.
+- **[MUST] One root frame per surface.** `Subpage anatomy` is the reference
+  page and follows "Anatomy of a page" above. Exploration frames are deleted
+  once a direction is chosen.
+- **[MUST] Nothing on the canvas breaks a `[MUST]` here.** The canvas is where
+  a rule is tested first, not where it is waived.
+
+The YAML frontmatter at the top of this file is the machine-readable layer
+(the DESIGN.md spec impeccable and the live panel read). It is derived from
+the tables below; the prose stays normative where they disagree, and the
+disagreement is a bug to fix in both.
+
 ## Open points
 
 Places the code contradicts itself or this document. Each needs a decision.
@@ -631,3 +778,8 @@ Places the code contradicts itself or this document. Each needs a decision.
     **[UNRESOLVED]** two originally cited sites (`LandingNotice.scss`, deleted;
     `index.scss:135`, now a token) no longer back the count.
 13. **`/` has no `.fallback-note`** while `agenda`, `sessions`, `speakers` do.
+14. **`file:line` citations have drifted.** `BaseLayout.scss` was reworked
+    after this document was written: `.btn-primary` is at 557 (cited 787),
+    `.eyebrow` at 285 (399), `.u-container` at 277 (386), `.print` at 347
+    (496). Token names still resolve; the line numbers need a refresh pass
+    (`/impeccable doctor` reports it as truth drift).

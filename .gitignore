@@ -34,6 +34,12 @@ firestore-debug.log*
 .claude/settings.local.json
 CLAUDE.local.md
 
-# impeccable local tooling (design hook cache, sidecar, critiques)
-.impeccable/
+# impeccable: shared config, sidecar and surface briefs are committed;
+# per-machine consent, caches and live-mode journals stay local.
+.impeccable/*
+!.impeccable/config.json
+!.impeccable/design.json
+!.impeccable/surfaces/
+!.impeccable/live/
+.impeccable/live/inject-journal.json
 .agent_context/

@@ -104,6 +104,17 @@ working outside its paths.
 [DESIGN.md](DESIGN.md) is the source of truth. Tokens in `BaseLayout.scss`;
 React components use co-located `.module.scss`.
 
+### Design workflow
+
+**Pencil first.** `design/devfest.pen` (pen.dev, MCP server `pencil` in
+`.mcp.json`) is the primary design tool: a surface is composed on the canvas
+from the `Components` frame before it is coded, and the canvas variables
+mirror `BaseLayout.scss` tokens. **Impeccable** (`/impeccable shape`,
+`critique`, `audit`, the design hook on UI edits) is the brief and the gate.
+`PRODUCT.md` is product truth; `DESIGN.md` + `.impeccable/design.json` are
+the design record and move in the same PR as any token or primitive change.
+Full loop and guardrails: `.claude/rules/design-pencil.md`.
+
 ### SEO
 
 `BaseLayout.astro`: meta, OG/Twitter, JSON-LD (Event + WebSite). Sitemap via
