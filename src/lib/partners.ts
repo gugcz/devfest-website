@@ -1,6 +1,8 @@
 // Partner logos for /partners and the homepage teaser. Data: the `partners`
 // collection (`src/content/partners.json`); masters under
-// `src/assets/partners/<tier>/`, matched by filename.
+// `src/assets/partners/<tier>/`, matched by filename. Ladder and community
+// masters are light marks for the dark ground; media masters ship dark and
+// sit on a cream plate.
 import { getCollection } from 'astro:content';
 
 export type Partner = { name: string; logo: string; url?: string; plated?: boolean };

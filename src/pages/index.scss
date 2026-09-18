@@ -603,41 +603,6 @@
 	}
 }
 
-// Community marks ship DARK (made for light grounds), so — as on /partners —
-// each sits on a cream plate. The tier's resting opacity dims the whole plate,
-// not the mark: a desaturated or half-transparent dark logo on cream just
-// goes grey, while a dimmed plate still reads as a plate.
-.partners-item--plated {
-	.partners-plate {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		// One plate height for the row: a wide wordmark hits the width cap
-		// short of the height cap, and without this its plate would sit
-		// shorter than a glyph's. Width still follows the mark.
-		height: calc(var(--strip-logo-h) + 1.5rem);
-		padding: 0.75rem 1.25rem;
-		background: var(--color-cream);
-		opacity: var(--strip-logo-opacity);
-		transition: opacity 0.2s;
-	}
-
-	.partners-logo {
-		opacity: 1;
-		filter: none;
-	}
-
-	a:hover,
-	a:focus-visible {
-		opacity: 1;
-	}
-
-	// The plate is the visible box, so the ring hugs it like any other control.
-	a:focus-visible {
-		outline-offset: var(--focus-gap-lg);
-	}
-}
-
 // Strip-scale ladder — logo cap, resting opacity, caption brightness — in the same
 // order as $tiers in partners.scss; ids come from PartnerTierId plus the
 // off-ladder `community` row rendered after it. Caption alpha
@@ -648,9 +613,8 @@ $strip-tiers: (
 	'diamond': (72px, 290px, 0.70, 0.66),
 	'gold': (60px, 245px, 0.62, 0.60),
 	'silver': (52px, 220px, 0.58, 0.55),
-	// Off the ladder, below silver. Cap is the mark inside the plate; the plate
-	// itself carries the opacity, so it sits a touch higher than silver's mark.
-	'community': (40px, 180px, 0.72, 0.55),
+	// Off the ladder, one step below silver.
+	'community': (46px, 200px, 0.55, 0.55),
 );
 
 @each $name, $scale in $strip-tiers {
