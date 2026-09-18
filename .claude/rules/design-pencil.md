@@ -47,7 +47,8 @@ checked against it.
 - **Open the file before any `mcp__pencil__*` call**, or every call fails
   with "A file needs to be open in the editor":
   `code design/devfest.pen` (VS Code extension MCP) or
-  `open -a Pen design/devfest.pen` (desktop MCP, `.mcp.json`).
+  `open -a Pen design/devfest.pen` (desktop MCP). The server is configured
+  per user, not in the repo.
 - Read the pen-dev skill first (`mcp__pencil__read_skill`, then
   `execute.md` and `pen-schema.md`). Reference tokens with `$name`; never
   hard-code a hex or a font name on the canvas.

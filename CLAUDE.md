@@ -106,8 +106,8 @@ React components use co-located `.module.scss`.
 
 ### Design workflow
 
-**Pencil first.** `design/devfest.pen` (pen.dev, MCP server `pencil` in
-`.mcp.json`) is the primary design tool: a surface is composed on the canvas
+**Pencil first.** `design/devfest.pen` (pen.dev, via the user's `pencil` MCP server) is the
+primary design tool: a surface is composed on the canvas
 from the `Components` frame before it is coded, and the canvas variables
 mirror `BaseLayout.scss` tokens. **Impeccable** (`/impeccable shape`,
 `critique`, `audit`, the design hook on UI edits) is the brief and the gate.
