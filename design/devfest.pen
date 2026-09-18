@@ -3795,12 +3795,7 @@
                   "name": "DR ROUSHANAK RAHMAT",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/dr-roushanak-rahmat.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "content": "RR",
@@ -3821,12 +3816,7 @@
                   "name": "BRIAN EGAN",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/brian-egan.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "content": "FG",
@@ -3847,12 +3837,7 @@
                   "name": "ANURADHA KUMARI",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/anuradha-kumari.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "content": "RC",
@@ -3873,12 +3858,7 @@
                   "name": "MIHAELA GHEORGHE-ROMAN",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/mihaela-gheorghe-roman.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "content": "MG",
@@ -4029,14 +4009,22 @@
                       "name": "GOOGLE CLOUD",
                       "width": 200,
                       "height": 36,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/diamond-google-cloud.svg.png",
-                        "mode": "fit"
-                      },
+                      "fill": "#00000000",
                       "justifyContent": "center",
-                      "alignItems": "center"
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "CuNaE",
+                          "name": "Wordmark",
+                          "fill": "$ink-meta",
+                          "content": "GOOGLE CLOUD",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     },
                     {
                       "type": "frame",
@@ -4044,14 +4032,22 @@
                       "name": "SEYFOR",
                       "width": 150,
                       "height": 44,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/diamond-seyfor.svg.png",
-                        "mode": "fit"
-                      },
+                      "fill": "#00000000",
                       "justifyContent": "center",
-                      "alignItems": "center"
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "v2raV",
+                          "name": "Wordmark",
+                          "fill": "$ink-meta",
+                          "content": "SEYFOR",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 }
@@ -4103,14 +4099,22 @@
                       "name": "APIFY",
                       "width": 160,
                       "height": 44,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/gold-apify.svg.png",
-                        "mode": "fit"
-                      },
+                      "fill": "#00000000",
                       "justifyContent": "center",
-                      "alignItems": "center"
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Ue5qN",
+                          "name": "Wordmark",
+                          "fill": "$ink-meta",
+                          "content": "APIFY",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     },
                     {
                       "type": "frame",
@@ -4133,14 +4137,22 @@
                       "name": "ARICOMA",
                       "width": 210,
                       "height": 32,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/gold-aricoma.svg.png",
-                        "mode": "fit"
-                      },
+                      "fill": "#00000000",
                       "justifyContent": "center",
-                      "alignItems": "center"
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "G8cCDy",
+                          "name": "Wordmark",
+                          "fill": "$ink-meta",
+                          "content": "ARICOMA",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     },
                     {
                       "type": "frame",
@@ -4148,14 +4160,22 @@
                       "name": "SECOND FOUNDATION",
                       "width": 210,
                       "height": 26,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/gold-second-foundation.svg.png",
-                        "mode": "fit"
-                      },
+                      "fill": "#00000000",
                       "justifyContent": "center",
-                      "alignItems": "center"
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "esaEh",
+                          "name": "Wordmark",
+                          "fill": "$ink-meta",
+                          "content": "SECOND FOUNDATION",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 }
@@ -5149,12 +5169,7 @@
                       "content": "AI is dominating Android development, driven by hype over reality. As organizations rush chatbot syntax into production, we are left cleaning up a dumpster fire of unscalable slop. It is time to look past the echo chamber and address our real challenge: protecting codebases from automated pollution. True engineering relies on architectural rigor and knowing what not to buil…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/ashley-davies.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Ashley Davies"
@@ -5178,12 +5193,7 @@
                       "content": "AI has made it easier to ship apps but not easier to make apps people keep using. The apps that matter will be the ones that fit the person opening them. GenUI is a key enabler in this direction: the design system stays stable while the UI adapts to the user. We will go from idea to architecture: what GenUI actually is (and is not), how the A2UI protocol makes it backend provid…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/cagatay-ulusoy.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Cagatay Ulusoy"
@@ -5207,12 +5217,7 @@
                       "content": "Current LLMs and models are powerful enough to generate real-time, context-based interfaces for each user. This talk will explore the benefits of providing each user with a personalized interface far beyond what has been possible until now. It will also address the challenges this entails, not only in terms of technology, but also…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/juan-delgado.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Juan Delgado, Brian Egan"
@@ -5236,12 +5241,7 @@
                       "content": "Most apps store users’ data on a server and lend it back through an API. Local-first reverses that model: data lives on the user’s device first and remains under their control. The app works without a connection—and can outlive both its servers and the company behind it. To bring this approach to Trezor Suite across web, desktop, and mobile, we used Evolu: local SQLite, CRDTs, an…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/mat-j-k.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Matěj Kříž"
@@ -5265,12 +5265,7 @@
                       "content": "Gemini Enterprise brings generative AI into the workplace—but adopting it successfully requires more than just enabling a tool. In this talk, we explore how Gemini Enterprise fits into real organisational environments, focusing on secure access, identity integration, data boundaries, and practical usage patterns. Rather than product demos, we’ll loo…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/dr-roushanak-rahmat.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Dr Roushanak Rahmat"
@@ -5294,12 +5289,7 @@
                       "content": "Have you heard of AI? Of course you have – it’s likely writing code alongside you every day. But as we move from basic autocompletion to autonomous AI agents, a critical question arises: is your codebase actually built to collaborate with them? In this talk, I will share my journey of trying to build the ultimate, universal checklist for optimizing repositories for AI…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/dominika-zaj-c.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Dominika Zając"
@@ -5323,12 +5313,7 @@
                       "content": "This is not a talk about AI. It is a talk about the people who have to live with it, and about what the new way of work actually costs them. I spend my days designing future – a system where AI agents write most of our software. This is a fundamental change to digital product building and many people are afraid of what’s next. I will show you what impacts my (and probably…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/filip-kirschner.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Filip Kirschner"
@@ -5352,12 +5337,7 @@
                       "content": "This talk explores how users interact with websites and how developers can make those interactions accessible to everyone. Using practical examples, such as converting an inaccessible navigation widget or carousel into accessible versions, we’ll explore common accessibility issues and their solutions. The session will include multiple coding demonstrations to…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/anuradha-kumari.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Anuradha Kumari"
@@ -5381,12 +5361,7 @@
                       "content": "Have you ever wondered what it takes to develop a solution similar to Google Docs and then build on top of it with extra layers of security and functionality? During the planning phase of a military operation, there are multiple text documents that need to be updated simultaneously by multiple users. At the same time, there is a requirement to provi…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/mihaela-gheorghe-roman.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Mihaela Gheorghe-Roman"
@@ -5410,12 +5385,7 @@
                       "content": "One evening I left an agent running on my Linux box with a vague task and went to sleep. What happened next is a story about agents that ship, agents that break things, and what it takes to trust a machine with your shell. Practical, opinionated, and full of scars…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/riccardo-carlesso.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Riccardo Carlesso"
@@ -5439,12 +5409,7 @@
                       "content": "The most valuable interface you will work with this year is not an SDK. It is a person. A talk about the skills that make engineers effective in rooms where the other side does not speak code, and why that matters more as the code itself gets cheaper…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/zuzana-pe-kov.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Zuzana Pešková, Filip Goszler"
@@ -5468,12 +5433,7 @@
                       "content": "Cars produce a firehose of telemetry. What happens when you point a language model at it? This talk walks through a real pipeline from CAN bus to LLM: what the model gets right, where it hallucinates, and how to build predictive insights that a driver can actually trust…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/soumaya-erradi.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Soumaya Erradi"
@@ -5497,12 +5457,7 @@
                       "content": "Robotics has been ten years away for thirty years. That is changing. A product-and-design look at why foundation models are the missing piece, what the first mass-market robots will feel like, and what it means for the people who design and build them…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/adi-mazor-kario.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Adi Mazor Kario"
@@ -5526,12 +5481,7 @@
                       "content": "Every enterprise sits on a 'Cave of Wonders'. A massive codebase packed with decades of invaluable business logic, hardened edge cases, and customer data. But it is usually locked behind outdated languages, undocumented dependencies, and crushing technical debt. For years, engineers have been forced to act as poor woodcutters, endlessly chopping away at Jira tickets jus…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/abdel-sghiouar.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Abdel Sghiouar"
@@ -5555,12 +5505,7 @@
                       "content": "Every AI demo works fine until it has to touch something real. The model responds, the screenshot looks great, and then you try to wire it up to an actual device and find out how much the screen was covering for you. So we figured we'd close that gap in front of an audience instead of quietly at home. One prompt, one Genkit flow running on…"
                     },
                     "X6C58": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/dominik-imon-k.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "Xx7GA": {
                       "content": "Dominik Šimoník, Denis Valášek"
@@ -5745,12 +5690,7 @@
                   "name": "ABDEL SGHIOUAR",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/abdel-sghiouar.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -5772,12 +5712,7 @@
                   "name": "ADI MAZOR KARIO",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/adi-mazor-kario.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -5799,12 +5734,7 @@
                   "name": "ANURADHA KUMARI",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/anuradha-kumari.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -5826,12 +5756,7 @@
                   "name": "ASHLEY DAVIES",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/ashley-davies.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -5869,12 +5794,7 @@
                   "name": "BRIAN EGAN",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/brian-egan.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -5896,12 +5816,7 @@
                   "name": "CAGATAY ULUSOY",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/cagatay-ulusoy.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -5923,12 +5838,7 @@
                   "name": "DENIS VALÁŠEK",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/denis-val-ek.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -5950,12 +5860,7 @@
                   "name": "DOMINIK ŠIMONÍK",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/dominik-imon-k.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -5993,12 +5898,7 @@
                   "name": "DOMINIKA ZAJĄC",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/dominika-zaj-c.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -6020,12 +5920,7 @@
                   "name": "DR ROUSHANAK RAHMAT",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/dr-roushanak-rahmat.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -6047,12 +5942,7 @@
                   "name": "FILIP GOSZLER",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/filip-goszler.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -6074,12 +5964,7 @@
                   "name": "FILIP KIRSCHNER",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/filip-kirschner.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -6117,12 +6002,7 @@
                   "name": "JUAN DELGADO",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/juan-delgado.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -6144,12 +6024,7 @@
                   "name": "MATĚJ KŘÍŽ",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/mat-j-k.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -6171,12 +6046,7 @@
                   "name": "MIHAELA GHEORGHE-ROMAN",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/mihaela-gheorghe-roman.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -6198,12 +6068,7 @@
                   "name": "RICCARDO CARLESSO",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/riccardo-carlesso.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -6241,12 +6106,7 @@
                   "name": "SOUMAYA ERRADI",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/soumaya-erradi.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -6268,12 +6128,7 @@
                   "name": "ZUZANA PEŠKOVÁ",
                   "descendants": {
                     "d45GTr": {
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/zuzana-pe-kov.jpg",
-                        "mode": "fill"
-                      }
+                      "fill": "$panel-lit"
                     },
                     "gaI8o": {
                       "enabled": false
@@ -9347,12 +9202,22 @@
                       "name": "logo",
                       "width": 200,
                       "height": 36,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/diamond-google-cloud.svg.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "JZ6lI",
+                          "name": "Wordmark",
+                          "fill": "$ink-meta",
+                          "content": "GOOGLE CLOUD",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 },
@@ -9374,12 +9239,22 @@
                       "name": "logo",
                       "width": 150,
                       "height": 44,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/diamond-seyfor.svg.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "zcwGx",
+                          "name": "Wordmark",
+                          "fill": "$ink-meta",
+                          "content": "SEYFOR",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 }
@@ -9464,12 +9339,22 @@
                       "name": "logo",
                       "width": 160,
                       "height": 44,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/gold-apify.svg.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ndTvd",
+                          "name": "Wordmark",
+                          "fill": "$ink-meta",
+                          "content": "APIFY",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 },
@@ -9518,12 +9403,22 @@
                       "name": "logo",
                       "width": 210,
                       "height": 32,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/gold-aricoma.svg.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "h9WvQ",
+                          "name": "Wordmark",
+                          "fill": "$ink-meta",
+                          "content": "ARICOMA",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 },
@@ -9545,12 +9440,22 @@
                       "name": "logo",
                       "width": 210,
                       "height": 26,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/gold-second-foundation.svg.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "amX58",
+                          "name": "Wordmark",
+                          "fill": "$ink-meta",
+                          "content": "SECOND FOUNDATION",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 }
@@ -9671,12 +9576,22 @@
                       "name": "logo",
                       "width": 130,
                       "height": 65,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/media-whitewhalemedia.svg.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "IFGhE",
+                          "name": "Wordmark",
+                          "fill": "#1A1917",
+                          "content": "WHITEWHALEMEDIA",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 },
@@ -9698,12 +9613,22 @@
                       "name": "logo",
                       "width": 200,
                       "height": 48,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/media-dotekomanie.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "W5e9sZ",
+                          "name": "Wordmark",
+                          "fill": "#1A1917",
+                          "content": "DOTEKOMANIE.CZ",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 },
@@ -9725,12 +9650,22 @@
                       "name": "logo",
                       "width": 230,
                       "height": 30,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/media-smartmania.svg.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WPh6X",
+                          "name": "Wordmark",
+                          "fill": "#1A1917",
+                          "content": "SMARTMANIA",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 }
@@ -9788,12 +9723,22 @@
                       "name": "logo",
                       "width": 150,
                       "height": 64,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/community-junior-guru.svg.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "MJ1gN",
+                          "name": "Wordmark",
+                          "fill": "#1A1917",
+                          "content": "JUNIOR GURU",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 },
@@ -9815,12 +9760,22 @@
                       "name": "logo",
                       "width": 210,
                       "height": 46,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/community-satoshi-labs.svg.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "k6jCTh",
+                          "name": "Wordmark",
+                          "fill": "#1A1917",
+                          "content": "SATOSHI LABS",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 },
@@ -9842,12 +9797,22 @@
                       "name": "logo",
                       "width": 200,
                       "height": 44,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/partners/community-jetbrains.svg.png",
-                        "mode": "fit"
-                      }
+                      "fill": "#00000000",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dJhsf",
+                          "name": "Wordmark",
+                          "fill": "#1A1917",
+                          "content": "JETBRAINS",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
                     }
                   ]
                 }
@@ -10187,12 +10152,7 @@
               "width": "fill_container",
               "descendants": {
                 "O7W0MM": {
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "assets/press/clip-1.jpg",
-                    "mode": "fill"
-                  }
+                  "fill": "$panel-lit"
                 },
                 "XAHqV": {
                   "content": "DOTEKOMANIE.CZ"
@@ -10216,12 +10176,7 @@
               "width": "fill_container",
               "descendants": {
                 "O7W0MM": {
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "assets/press/clip-2.jpg",
-                    "mode": "fill"
-                  }
+                  "fill": "$panel-lit"
                 },
                 "XAHqV": {
                   "content": "SMARTMANIA.CZ"
@@ -10245,12 +10200,7 @@
               "width": "fill_container",
               "descendants": {
                 "O7W0MM": {
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "assets/press/clip-3.jpg",
-                    "mode": "fill"
-                  }
+                  "fill": "$panel-lit"
                 },
                 "XAHqV": {
                   "content": "DOTEKOMANIE.CZ"
@@ -10513,7 +10463,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/presskit/df26_logo-1st.svg.png",
+                        "url": "../public/press-kit/DF26_logo_white.png",
                         "mode": "fit"
                       },
                       "width": 150,
@@ -14082,12 +14032,7 @@
                       "type": "ellipse",
                       "id": "peT1B",
                       "name": "Avatar",
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "assets/speakers/cagatay-ulusoy.jpg",
-                        "mode": "fill"
-                      },
+                      "fill": "$panel-lit",
                       "width": 64,
                       "height": 64
                     },
@@ -14216,12 +14161,7 @@
                   "name": "Photo",
                   "width": 465,
                   "height": 581,
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "assets/speakers/abdel-sghiouar.jpg",
-                    "mode": "fill"
-                  },
+                  "fill": "$panel-lit",
                   "effect": {
                     "type": "shadow",
                     "shadowType": "outer",
@@ -16226,12 +16166,7 @@
                           "type": "ellipse",
                           "id": "mDFiQ",
                           "name": "a",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/zuzana-pe-kov.jpg",
-                            "mode": "fill"
-                          },
+                          "fill": "$panel-lit",
                           "width": 26,
                           "height": 26
                         },
@@ -16311,12 +16246,7 @@
                           "type": "ellipse",
                           "id": "rF9a5",
                           "name": "a",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/ashley-davies.jpg",
-                            "mode": "fill"
-                          },
+                          "fill": "$panel-lit",
                           "width": 26,
                           "height": 26
                         },
@@ -16396,12 +16326,7 @@
                           "type": "ellipse",
                           "id": "IwYv8",
                           "name": "a",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/abdel-sghiouar.jpg",
-                            "mode": "fill"
-                          },
+                          "fill": "$panel-lit",
                           "width": 26,
                           "height": 26
                         },
@@ -16481,12 +16406,7 @@
                           "type": "ellipse",
                           "id": "eW4bn",
                           "name": "a",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/soumaya-erradi.jpg",
-                            "mode": "fill"
-                          },
+                          "fill": "$panel-lit",
                           "width": 26,
                           "height": 26
                         },
@@ -16566,12 +16486,7 @@
                           "type": "ellipse",
                           "id": "NYLHG",
                           "name": "a",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/dominik-imon-k.jpg",
-                            "mode": "fill"
-                          },
+                          "fill": "$panel-lit",
                           "width": 26,
                           "height": 26
                         },
@@ -17250,12 +17165,7 @@
                               "type": "ellipse",
                               "id": "ldHFS",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/abdel-sghiouar.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -17350,12 +17260,7 @@
                               "type": "ellipse",
                               "id": "hw46a",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/soumaya-erradi.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -17560,12 +17465,7 @@
                               "type": "ellipse",
                               "id": "fNNyi",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/cagatay-ulusoy.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -17660,12 +17560,7 @@
                               "type": "ellipse",
                               "id": "cE5OO",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/zuzana-pe-kov.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -17872,12 +17767,7 @@
                               "type": "ellipse",
                               "id": "rMZff",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/dominik-imon-k.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -17973,12 +17863,7 @@
                               "type": "ellipse",
                               "id": "hvleO",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/anuradha-kumari.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -18180,12 +18065,7 @@
                               "type": "ellipse",
                               "id": "tb8r7",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/mat-j-k.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -18281,12 +18161,7 @@
                               "type": "ellipse",
                               "id": "W3Ulb",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/dr-roushanak-rahmat.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -18491,12 +18366,7 @@
                               "type": "ellipse",
                               "id": "Ru5nL",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/mihaela-gheorghe-roman.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -18591,12 +18461,7 @@
                               "type": "ellipse",
                               "id": "M1h4WO",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/riccardo-carlesso.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -18802,12 +18667,7 @@
                               "type": "ellipse",
                               "id": "G8YLU7",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/ashley-davies.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -18903,12 +18763,7 @@
                               "type": "ellipse",
                               "id": "piudQ",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/adi-mazor-kario.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -19111,12 +18966,7 @@
                               "type": "ellipse",
                               "id": "V1xQhu",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/dominika-zaj-c.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -19434,12 +19284,7 @@
                               "type": "ellipse",
                               "id": "LU8xG",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/juan-delgado.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
@@ -19641,12 +19486,7 @@
                               "type": "ellipse",
                               "id": "gjTJp",
                               "name": "av",
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "assets/speakers/filip-kirschner.jpg",
-                                "mode": "fill"
-                              },
+                              "fill": "$panel-lit",
                               "width": 26,
                               "height": 26
                             },
