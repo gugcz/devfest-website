@@ -1576,13 +1576,13 @@
           "children": [
             {
               "type": "frame",
-              "id": "g0KbJ",
-              "x": 0,
-              "y": -60,
+              "id": "nLAaH",
+              "x": 576,
+              "y": 0,
               "name": "Plate",
-              "opacity": 0.55,
-              "width": 1440,
-              "height": 760,
+              "opacity": 0.7,
+              "width": 864,
+              "height": 621,
               "fill": {
                 "type": "image",
                 "enabled": true,
@@ -1592,36 +1592,89 @@
             },
             {
               "type": "rectangle",
-              "id": "CXCwZ",
+              "id": "d8tg7Q",
+              "x": 576,
+              "y": 0,
+              "name": "Grade",
+              "fill": "#05050540",
+              "width": 864,
+              "height": 621
+            },
+            {
+              "type": "rectangle",
+              "id": "M7j5q7",
+              "x": 576,
+              "y": 0,
+              "name": "Feather",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#050505",
+                    "position": 0
+                  },
+                  {
+                    "color": "#050505F5",
+                    "position": 0.14
+                  },
+                  {
+                    "color": "#050505D6",
+                    "position": 0.3
+                  },
+                  {
+                    "color": "#05050594",
+                    "position": 0.5
+                  },
+                  {
+                    "color": "#05050542",
+                    "position": 0.72
+                  },
+                  {
+                    "color": "#05050500",
+                    "position": 0.92
+                  }
+                ]
+              },
+              "width": 795,
+              "height": 621
+            },
+            {
+              "type": "rectangle",
+              "id": "ocNrf",
               "x": 0,
               "y": 0,
-              "name": "Fade 0",
-              "opacity": 0.7,
-              "fill": "$color-bg",
+              "name": "Scene vignette",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "radial",
+                "enabled": true,
+                "rotation": 0,
+                "size": {
+                  "width": 1.84,
+                  "height": 1.64
+                },
+                "colors": [
+                  {
+                    "color": "#00000000",
+                    "position": 0.36
+                  },
+                  {
+                    "color": "#000000B8",
+                    "position": 1
+                  }
+                ],
+                "center": {
+                  "y": 0.44
+                }
+              },
               "width": 1440,
-              "height": 150
-            },
-            {
-              "type": "rectangle",
-              "id": "PGgKR",
-              "x": 0,
-              "y": 150,
-              "name": "Fade 1",
-              "opacity": 0.45,
-              "fill": "$color-bg",
-              "width": 1440,
-              "height": 150
-            },
-            {
-              "type": "rectangle",
-              "id": "uZ2id",
-              "x": 0,
-              "y": 300,
-              "name": "Fade 2",
-              "opacity": 0.2,
-              "fill": "$color-bg",
-              "width": 1440,
-              "height": 150
+              "height": 621
             },
             {
               "id": "RBa8S",
@@ -2688,12 +2741,45 @@
           "layout": "none",
           "children": [
             {
+              "type": "rectangle",
+              "id": "XYA91",
+              "x": 0,
+              "y": 0,
+              "name": "Hero wash",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "radial",
+                "enabled": true,
+                "rotation": 0,
+                "size": {
+                  "width": 0.6,
+                  "height": 0.8
+                },
+                "colors": [
+                  {
+                    "color": "#CC000012",
+                    "position": 0
+                  },
+                  {
+                    "color": "#CC000000",
+                    "position": 0.6
+                  }
+                ],
+                "center": {
+                  "x": 0.7,
+                  "y": 0.18
+                }
+              },
+              "width": 1440,
+              "height": 999
+            },
+            {
               "type": "frame",
-              "id": "j6K0AF",
+              "id": "njBhg",
               "x": 374,
               "y": 0,
               "name": "Plate",
-              "opacity": 0.85,
+              "opacity": 0.8,
               "width": 1066,
               "height": 999,
               "fill": {
@@ -2705,112 +2791,88 @@
             },
             {
               "type": "rectangle",
-              "id": "m5Hpkc",
+              "id": "xjBy1",
               "x": 374,
               "y": 0,
-              "name": "Mask 0",
-              "opacity": 0.92,
-              "fill": "$color-bg",
-              "width": 60,
+              "name": "Feather",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#050505",
+                    "position": 0
+                  },
+                  {
+                    "color": "#050505F2",
+                    "position": 0.12
+                  },
+                  {
+                    "color": "#050505C4",
+                    "position": 0.28
+                  },
+                  {
+                    "color": "#05050580",
+                    "position": 0.45
+                  },
+                  {
+                    "color": "#0505052E",
+                    "position": 0.62
+                  },
+                  {
+                    "color": "#05050500",
+                    "position": 0.8
+                  }
+                ]
+              },
+              "width": 661,
               "height": 999
             },
             {
               "type": "rectangle",
-              "id": "R8tH4",
-              "x": 434,
+              "id": "lbG4A",
+              "x": 374,
               "y": 0,
-              "name": "Mask 1",
-              "opacity": 0.84,
-              "fill": "$color-bg",
-              "width": 60,
+              "name": "Grade",
+              "fill": "#05050533",
+              "width": 1066,
               "height": 999
             },
             {
               "type": "rectangle",
-              "id": "n5cZu",
-              "x": 494,
+              "id": "Eq4Gn",
+              "x": 0,
               "y": 0,
-              "name": "Mask 2",
-              "opacity": 0.74,
-              "fill": "$color-bg",
-              "width": 60,
-              "height": 999
-            },
-            {
-              "type": "rectangle",
-              "id": "wd9mq",
-              "x": 554,
-              "y": 0,
-              "name": "Mask 3",
-              "opacity": 0.62,
-              "fill": "$color-bg",
-              "width": 60,
-              "height": 999
-            },
-            {
-              "type": "rectangle",
-              "id": "IPGqJ",
-              "x": 614,
-              "y": 0,
-              "name": "Mask 4",
-              "opacity": 0.5,
-              "fill": "$color-bg",
-              "width": 60,
-              "height": 999
-            },
-            {
-              "type": "rectangle",
-              "id": "fYipZ",
-              "x": 674,
-              "y": 0,
-              "name": "Mask 5",
-              "opacity": 0.38,
-              "fill": "$color-bg",
-              "width": 60,
-              "height": 999
-            },
-            {
-              "type": "rectangle",
-              "id": "c0U2y",
-              "x": 734,
-              "y": 0,
-              "name": "Mask 6",
-              "opacity": 0.27,
-              "fill": "$color-bg",
-              "width": 60,
-              "height": 999
-            },
-            {
-              "type": "rectangle",
-              "id": "P8QIkp",
-              "x": 794,
-              "y": 0,
-              "name": "Mask 7",
-              "opacity": 0.17,
-              "fill": "$color-bg",
-              "width": 60,
-              "height": 999
-            },
-            {
-              "type": "rectangle",
-              "id": "bxIWW",
-              "x": 854,
-              "y": 0,
-              "name": "Mask 8",
-              "opacity": 0.09,
-              "fill": "$color-bg",
-              "width": 60,
-              "height": 999
-            },
-            {
-              "type": "rectangle",
-              "id": "F60rXJ",
-              "x": 914,
-              "y": 0,
-              "name": "Mask 9",
-              "opacity": 0.03,
-              "fill": "$color-bg",
-              "width": 60,
+              "name": "Scene vignette",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "radial",
+                "enabled": true,
+                "rotation": 0,
+                "size": {
+                  "width": 1.84,
+                  "height": 1.64
+                },
+                "colors": [
+                  {
+                    "color": "#00000000",
+                    "position": 0.36
+                  },
+                  {
+                    "color": "#000000B8",
+                    "position": 1
+                  }
+                ],
+                "center": {
+                  "y": 0.44
+                }
+              },
+              "width": 1440,
               "height": 999
             },
             {
@@ -2972,6 +3034,16 @@
               "y": 924,
               "name": "Hero foot",
               "width": 1296,
+              "stroke": "$rule",
+              "strokeWidth": {
+                "top": 1
+              },
+              "padding": [
+                16,
+                0,
+                20,
+                0
+              ],
               "justifyContent": "space_between",
               "children": [
                 {
@@ -4798,7 +4870,32 @@
           "id": "KX2yt",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1
@@ -5565,7 +5662,32 @@
           "id": "a32Ni",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1
@@ -6302,7 +6424,32 @@
           "id": "A86isV",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1
@@ -6769,18 +6916,6 @@
           "width": "fill_container",
           "height": 432,
           "descendants": {
-            "g0KbJ": {
-              "enabled": false
-            },
-            "CXCwZ": {
-              "enabled": false
-            },
-            "PGgKR": {
-              "enabled": false
-            },
-            "uZ2id": {
-              "enabled": false
-            },
             "wbynQ": {
               "enabled": false
             },
@@ -6807,7 +6942,32 @@
           "id": "NZR16",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1
@@ -7027,18 +7187,6 @@
           "width": "fill_container",
           "height": 547,
           "descendants": {
-            "g0KbJ": {
-              "enabled": false
-            },
-            "CXCwZ": {
-              "enabled": false
-            },
-            "PGgKR": {
-              "enabled": false
-            },
-            "uZ2id": {
-              "enabled": false
-            },
             "wbynQ": {
               "content": "QUESTIONS,"
             },
@@ -7065,7 +7213,32 @@
           "id": "a62TC",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1
@@ -7567,18 +7740,6 @@
           "width": "fill_container",
           "height": 469,
           "descendants": {
-            "g0KbJ": {
-              "enabled": false
-            },
-            "CXCwZ": {
-              "enabled": false
-            },
-            "PGgKR": {
-              "enabled": false
-            },
-            "uZ2id": {
-              "enabled": false
-            },
             "wbynQ": {
               "enabled": false
             },
@@ -8000,18 +8161,6 @@
           "width": "fill_container",
           "height": 584,
           "descendants": {
-            "g0KbJ": {
-              "enabled": false
-            },
-            "CXCwZ": {
-              "enabled": false
-            },
-            "PGgKR": {
-              "enabled": false
-            },
-            "uZ2id": {
-              "enabled": false
-            },
             "wbynQ": {
               "content": "BUY ON A COMPANY"
             },
@@ -9976,7 +10125,32 @@
           "id": "LghL3",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1
@@ -10159,18 +10333,6 @@
           "width": "fill_container",
           "height": 506,
           "descendants": {
-            "g0KbJ": {
-              "enabled": false
-            },
-            "CXCwZ": {
-              "enabled": false
-            },
-            "PGgKR": {
-              "enabled": false
-            },
-            "uZ2id": {
-              "enabled": false
-            },
             "wbynQ": {
               "enabled": false
             },
@@ -10197,7 +10359,32 @@
           "id": "xL3NK",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1
@@ -10674,18 +10861,6 @@
           "width": "fill_container",
           "height": 469,
           "descendants": {
-            "g0KbJ": {
-              "enabled": false
-            },
-            "CXCwZ": {
-              "enabled": false
-            },
-            "PGgKR": {
-              "enabled": false
-            },
-            "uZ2id": {
-              "enabled": false
-            },
             "wbynQ": {
               "enabled": false
             },
@@ -10712,7 +10887,32 @@
           "id": "zOOye",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1
@@ -11010,18 +11210,6 @@
           "width": "fill_container",
           "height": 469,
           "descendants": {
-            "g0KbJ": {
-              "enabled": false
-            },
-            "CXCwZ": {
-              "enabled": false
-            },
-            "PGgKR": {
-              "enabled": false
-            },
-            "uZ2id": {
-              "enabled": false
-            },
             "wbynQ": {
               "enabled": false
             },
@@ -11048,7 +11236,32 @@
           "id": "t7PE3",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1
@@ -11268,18 +11481,6 @@
           "width": "fill_container",
           "height": 547,
           "descendants": {
-            "g0KbJ": {
-              "enabled": false
-            },
-            "CXCwZ": {
-              "enabled": false
-            },
-            "PGgKR": {
-              "enabled": false
-            },
-            "uZ2id": {
-              "enabled": false
-            },
             "wbynQ": {
               "content": "NOTHING FILED"
             },
@@ -11306,7 +11507,32 @@
           "id": "GItRc",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1
@@ -16417,7 +16643,32 @@
           "id": "uNjcr",
           "name": "Band lit",
           "width": "fill_container",
-          "fill": "$color-bg",
+          "fill": [
+            "#050505",
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "enabled": true,
+              "rotation": 0,
+              "size": {
+                "width": 1.56,
+                "height": 1.4
+              },
+              "colors": [
+                {
+                  "color": "#FFF4E80D",
+                  "position": 0
+                },
+                {
+                  "color": "#FFF4E800",
+                  "position": 0.72
+                }
+              ],
+              "center": {
+                "y": 0.32
+              }
+            }
+          ],
           "stroke": "$rule",
           "strokeWidth": {
             "top": 1

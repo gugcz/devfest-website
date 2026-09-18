@@ -57,14 +57,17 @@ checked against it.
   redraw a button.
 - Section hairlines on the canvas are `$rule` (13%), never `$rule-soft`
   (6%): the faint step disappears in exports. Code still uses `--rule-soft`.
-- Renderer gotchas (verified 2026-09-17): gradient fills and text `stroke`
-  do not paint and can blank the whole frame; use opacity strips of
-  `$color-bg` for a feather and a faint solid fill for outlined type. A
-  root frame built from many `Insert` calls may stay unpainted in
-  `TakeScreenshot`/`Export`: `Copy` it onto its own position, delete the
-  original, and export in a separate call. Whichever app the MCP targets
+- Renderer gotchas (verified 2026-09-18): gradients DO paint (linear,
+  radial, mesh, layered fills), so draw feathers, vignettes and washes as
+  real gradients; linear `rotation: 270` runs left to right. Text stroke,
+  CSS masks, blend modes and repeating patterns do not exist. A fresh
+  image fill renders white until Pen reloads the document (quit, reopen);
+  a root frame built from many inserts can stay unpainted until you
+  `Copy` it onto its own position and delete the original. Export in a
+  separate call. Whichever app the MCP targets
   (`pgrep -fl mcp-server-darwin-arm64`) must have the file open. `execute`
-  globals do not survive between calls; carry ids as literals.
+  globals do not survive between calls; carry ids as literals. Pen saves
+  only on quit; `open -a Pen` during a quit cancels the save.
 - Images reference the repo's own files by relative path
   (`../public/hero-detective.webp`, `../src/assets/team/<slug>-bw.webp`,
   `../src/assets/partners/<tier>/<name>.png`, `../public/press-kit/*.png`).

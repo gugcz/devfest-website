@@ -749,15 +749,19 @@ this prose, so it is the current visual truth at desktop width.
 - **[CURRENT] Hairlines on the canvas use `$rule` (13%), not `$rule-soft`
   (6%).** Pencil paints the alpha faithfully and a 6% line vanishes in a
   half-scale export; the code keeps `--rule-soft` on section edges.
-- **[CURRENT] Renderer limits, work around them:** gradient fills and text
-  strokes do not paint (a node with one can blank its whole frame), so the
-  hero feather and the outlined ticker are approximated with opacity strips
-  and a faint solid fill. A root frame assembled with many `Insert` calls
-  can stay unpainted in screenshots and exports; `Copy` it once onto itself
-  and delete the original and it renders. Export in a call of its own,
-  never in the call that built the frame. Images point at the repo's own
-  WebP/PNG files; only SVG/AVIF logo renders, speaker portraits and press
-  clippings are copied under `design/assets/`.
+- **[CURRENT] Renderer notes.** Gradient fills (linear, radial, mesh) and
+  layered fills paint, so the hero feather, scene vignette, `--lit` pool
+  and the hero's red wash are real gradients on the canvas. Linear
+  `rotation` runs position 0 from the right at 90° and from the left at
+  270°. Text strokes, CSS masks, `mix-blend-mode` grain and repeating
+  hatch patterns do not exist; the film grain is omitted and the agenda
+  hatch is a solid `$panel-lit`. A fresh image fill shows white until
+  the app reloads the document (quit and reopen Pen); a root frame built
+  from many inserts can stay unpainted until it is copied onto itself.
+  Export in a call of its own, never in the call that built the frame.
+  Images point at the repo's own WebP/PNG files; only SVG/AVIF logo
+  renders, speaker portraits and press clippings are copied under
+  `design/assets/`.
 
 The YAML frontmatter at the top of this file is the machine-readable layer
 (the DESIGN.md spec impeccable and the live panel read). It is derived from
