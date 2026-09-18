@@ -111,9 +111,9 @@
 	}
 }
 
-// Media and community marks ship DARK, so their cells carry a cream plate
-// (inverting flattened raster logos to white blobs). `--rule` is cream at
-// 13% — invisible on cream — so the rule inverts with the ground.
+// Media marks ship DARK, so their cells carry a cream plate (inverting
+// flattened raster logos to white blobs). `--rule` is cream at 13% —
+// invisible on cream — so the rule inverts with the ground.
 .logo-grid--plated {
 	.logo-cell {
 		background: var(--color-cream);

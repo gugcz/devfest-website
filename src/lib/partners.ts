@@ -1,6 +1,8 @@
 // Partner logos for /partners and the homepage teaser. Data: the `partners`
 // collection (`src/content/partners.json`); masters under
-// `src/assets/partners/<tier>/`, matched by filename.
+// `src/assets/partners/<tier>/`, matched by filename. Ladder and community
+// masters are light marks for the dark ground; media masters ship dark and
+// sit on a cream plate.
 import { getCollection } from 'astro:content';
 
 export type Partner = { name: string; logo: string; url?: string; plated?: boolean };
@@ -18,7 +20,7 @@ export type PartnerTier = {
 
 // Ordered top tier first — drives both the /partners tier sections and the
 // homepage strip. Media and community partners are deliberately not part of
-// this ladder.
+// this ladder (community still gets its own off-ladder row on both pages).
 const TIER_LADDER: { id: PartnerTierId; label: string }[] = [
 	{ id: 'platinum', label: 'Platinum' },
 	{ id: 'diamond', label: 'Diamond' },
@@ -47,5 +49,5 @@ export const getActivePartnerTiers = async (): Promise<PartnerTier[]> =>
 /** Media partners — only shown on the dedicated /partners page, never the homepage. */
 export const getMediaPartners = (): Promise<Partner[]> => byTier('media');
 
-/** Community partners — same deal as media: /partners only, off the ladder. */
+/** Community partners — off the ladder, but shown on both /partners and the homepage strip. */
 export const getCommunityPartners = (): Promise<Partner[]> => byTier('community');

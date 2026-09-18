@@ -4,16 +4,18 @@ import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Ticker from '../components/Ticker.astro';
-import { getActivePartnerTiers, getMediaPartners, getCommunityPartners } from '../lib/partners';
+import { getActivePartnerTiers, getMediaPartners, getCommunityPartners, type Partner } from '../lib/partners';
 
-const activeTiers = await getActivePartnerTiers();
-
-// Off-ladder rows, rendered below the tiers as cream logo plates. Same markup
-// and styling for both — only the heading differs — so they share one loop.
-const plateRows = [
-	{ id: 'media', label: 'Media', partners: await getMediaPartners() },
+// Every logo wall on the page, top tier first: the ladder, then the two
+// off-ladder rows — community, then media. One loop, one grid module; the
+// only per-wall difference is the ground. Media marks ship dark (made for
+// light backgrounds), so that wall's cells carry a cream plate.
+type Wall = { id: string; label: string; partners: Partner[]; plated?: boolean };
+const walls: Wall[] = [
+	...(await getActivePartnerTiers()),
 	{ id: 'community', label: 'Community', partners: await getCommunityPartners() },
-].filter((row) => row.partners.length > 0);
+	{ id: 'media', label: 'Media', partners: await getMediaPartners(), plated: true },
+].filter((wall) => wall.partners.length > 0);
 
 // ─── LOGO OPTIMISATION ─────────────────────────────────────────────────────
 // The masters live in `src/assets/partners/<tier>/` so the build can resize
@@ -109,20 +111,23 @@ const tickerTopics = [
 
 		<Ticker items={tickerTopics} size="sm" />
 
-		{activeTiers.map((tier) => (
-			<section class="logo-wall" aria-labelledby={`${tier.id}-partners-title`}>
+		{walls.map((wall) => (
+			<section class="logo-wall" aria-labelledby={`${wall.id}-partners-title`}>
 				<div class="wall-inner">
 					{/* Tier name alone at poster scale. Six sections each headed
 					    "<Tier> partners" with the second word in red was the same
 					    lockup six times down one page, so the heading is just the
 					    name — the logos under it are the count. */}
 					<div class="wall-head">
-						<h2 id={`${tier.id}-partners-title`} class="display head-title">
-							{tier.label}<span class="sr-only"> partners</span>
+						<h2 id={`${wall.id}-partners-title`} class="display head-title">
+							{wall.label}<span class="sr-only"> partners</span>
 						</h2>
 					</div>
-					<ul class="logo-grid">
-						{tier.partners.map((p) => (
+					{/* The SAME grid module for every wall — one cell size for every
+					    partner on the page. Only the ground differs: a plated wall's
+					    cells are cream, for marks made for light backgrounds. */}
+					<ul class:list={['logo-grid', { 'logo-grid--plated': wall.plated }]}>
+						{wall.partners.map((p) => (
 							<li class="logo-cell">
 								{p.url ? (
 									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
@@ -130,35 +135,6 @@ const tickerTopics = [
 									</a>
 								) : (
 									<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo, p.plated)} />
-								)}
-							</li>
-						))}
-					</ul>
-				</div>
-			</section>
-		))}
-
-		{plateRows.map((row) => (
-			<section class="logo-wall" aria-labelledby={`${row.id}-partners-title`}>
-				<div class="wall-inner">
-					<div class="wall-head">
-						<h2 id={`${row.id}-partners-title`} class="display head-title">
-							{row.label}<span class="sr-only"> partners</span>
-						</h2>
-					</div>
-					{/* The SAME grid module as the tiers — one cell size for every
-					    partner on the page. Only the ground differs: these marks
-					    ship dark (they are made for light backgrounds), so their
-					    cells are cream. */}
-					<ul class="logo-grid logo-grid--plated">
-						{row.partners.map((p) => (
-							<li class="logo-cell">
-								{p.url ? (
-									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<Image class="logo" alt={p.name} loading="lazy" {...logoProps(p.logo)} />
-									</a>
-								) : (
-									<Image class="logo" alt={p.name} loading="lazy" {...logoProps(p.logo)} />
 								)}
 							</li>
 						))}

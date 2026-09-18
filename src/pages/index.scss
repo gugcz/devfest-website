@@ -604,7 +604,8 @@
 }
 
 // Strip-scale ladder — logo cap, resting opacity, caption brightness — in the same
-// order as $tiers in partners.scss; ids come from PartnerTierId. Caption alpha
+// order as $tiers in partners.scss; ids come from PartnerTierId plus the
+// off-ladder `community` row rendered after it. Caption alpha
 // bottoms out at 0.55: below that the mono caption drops under 4.5:1 (axe caught
 // 0.46 at 4.11:1), so the ladder dims the logos, never the labels.
 $strip-tiers: (
@@ -612,6 +613,8 @@ $strip-tiers: (
 	'diamond': (72px, 290px, 0.70, 0.66),
 	'gold': (60px, 245px, 0.62, 0.60),
 	'silver': (52px, 220px, 0.58, 0.55),
+	// Off the ladder, one step below silver.
+	'community': (46px, 200px, 0.55, 0.55),
 );
 
 @each $name, $scale in $strip-tiers {

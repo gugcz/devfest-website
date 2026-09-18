@@ -9,14 +9,20 @@ import HeroBackground from '../components/HeroBackground.astro';
 import Ticker from '../components/Ticker.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
-import { getActivePartnerTiers } from '../lib/partners';
+import { getActivePartnerTiers, getCommunityPartners, type Partner } from '../lib/partners';
 import { EVENT_TOPICS } from '../lib/ticker';
 import { TOPICS } from '../lib/topics';
 
 // Homepage "silver+" strip — one labelled row per tier, top tier first, so the
 // ladder reads the same here as it does on /partners (row scale steps down with
-// the tier via the `.tier-<id>` hook in index.scss).
-const homeTiers = await getActivePartnerTiers();
+// the tier via the `.tier-<id>` hook in index.scss). Community partners close
+// the strip as one off-ladder row below silver; media partners stay on
+// /partners only.
+const communityPartners = await getCommunityPartners();
+const homeRows: { id: string; label: string; partners: Partner[] }[] = [
+	...(await getActivePartnerTiers()),
+	{ id: 'community', label: 'Community', partners: communityPartners },
+].filter((row) => row.partners.length > 0);
 
 // Partner logo masters live in `src/assets/partners/<tier>/` so the build can
 // resize them; the `partners` collection still stores plain path strings, so glob
@@ -184,14 +190,14 @@ const facts = [
 		     zero-height placeholder. -->
 		<SpeakersTeaser client:load />
 
-		<!-- PARTNERS — quiet silver+ strip, one row per tier; media partners live on /partners only -->
-		{homeTiers.length > 0 && (
+		<!-- PARTNERS — quiet silver+ strip, one row per tier, community last; media partners live on /partners only -->
+		{homeRows.length > 0 && (
 			<section id="partners" aria-labelledby="partners-title">
 				<div class="partners-inner reveal">
 					<p id="partners-title" class="eyebrow partners-eyebrow">Accomplices<span class="sr-only"> — partners</span></p>
 
 					<div class="partners-tiers">
-						{homeTiers.map((tier) => (
+						{homeRows.map((tier) => (
 							<div class={`partners-tier tier-${tier.id}`}>
 								<p class="partners-tier-label">{tier.label}</p>
 								<ul class="partners-row">
