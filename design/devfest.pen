@@ -1003,7 +1003,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "assets/logo.png",
+                "url": "../src/assets/logo.png",
                 "mode": "fit"
               }
             },
@@ -1157,7 +1157,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/logo.png",
+                        "url": "../src/assets/logo.png",
                         "mode": "fit"
                       }
                     },
@@ -1586,7 +1586,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "assets/hero-detective.jpg",
+                "url": "../public/hero-detective.webp",
                 "mode": "fill"
               }
             },
@@ -2439,7 +2439,7 @@
                   "fill": {
                     "type": "image",
                     "enabled": true,
-                    "url": "assets/logo.png",
+                    "url": "../src/assets/logo.png",
                     "mode": "fit"
                   }
                 }
@@ -2699,7 +2699,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "assets/hero-detective.jpg",
+                "url": "../public/hero-detective.webp",
                 "mode": "fill"
               }
             },
@@ -2831,7 +2831,7 @@
                   "fill": {
                     "type": "image",
                     "enabled": true,
-                    "url": "assets/logo.png",
+                    "url": "../src/assets/logo.png",
                     "mode": "fit"
                   }
                 },
@@ -3886,7 +3886,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/platinum-ceska-sporitelna.png",
+                        "url": "../src/assets/partners/platinum/ceska-sporitelna.webp",
                         "mode": "fit"
                       },
                       "justifyContent": "center",
@@ -3930,7 +3930,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/diamond-make.png",
+                        "url": "../src/assets/partners/diamond/make.png",
                         "mode": "fit"
                       },
                       "justifyContent": "center",
@@ -3945,7 +3945,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/diamond-gdg.png",
+                        "url": "../src/assets/partners/diamond/gdg.png",
                         "mode": "fit"
                       },
                       "justifyContent": "center",
@@ -4019,7 +4019,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/gold-wrike.png",
+                        "url": "../src/assets/partners/gold/wrike.png",
                         "mode": "fit"
                       },
                       "justifyContent": "center",
@@ -4049,7 +4049,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/gold-alma.png",
+                        "url": "../src/assets/partners/gold/alma.png",
                         "mode": "fit"
                       },
                       "justifyContent": "center",
@@ -4123,7 +4123,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/silver-applifting.png",
+                        "url": "../src/assets/partners/silver/applifting.png",
                         "mode": "fit"
                       },
                       "justifyContent": "center",
@@ -4242,7 +4242,7 @@
                   "fill": {
                     "type": "image",
                     "enabled": true,
-                    "url": "assets/gallery/devfest-2025-01.jpg",
+                    "url": "../public/gallery/devfest-2025-01.webp",
                     "mode": "fill"
                   },
                   "justifyContent": "center",
@@ -4257,7 +4257,7 @@
                   "fill": {
                     "type": "image",
                     "enabled": true,
-                    "url": "assets/gallery/devfest-2025-02.jpg",
+                    "url": "../public/gallery/devfest-2025-02.webp",
                     "mode": "fill"
                   },
                   "justifyContent": "center",
@@ -4272,7 +4272,7 @@
                   "fill": {
                     "type": "image",
                     "enabled": true,
-                    "url": "assets/gallery/devfest-2025-03.jpg",
+                    "url": "../public/gallery/devfest-2025-03.webp",
                     "mode": "fill"
                   },
                   "justifyContent": "center",
@@ -4508,7 +4508,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "assets/hero-detective.jpg",
+                "url": "../public/hero-detective.webp",
                 "mode": "fill"
               }
             },
@@ -8153,7 +8153,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/daniel-macho-bw.jpg",
+                        "url": "../src/assets/team/daniel-macho-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8182,7 +8182,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/lucie-jurystova-bw.jpg",
+                        "url": "../src/assets/team/lucie-jurystova-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8211,7 +8211,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/adela-janovska-bw.jpg",
+                        "url": "../src/assets/team/adela-janovska-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8240,7 +8240,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/katy-sramkova-bw.jpg",
+                        "url": "../src/assets/team/katy-sramkova-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8285,7 +8285,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/filip-goszler-bw.jpg",
+                        "url": "../src/assets/team/filip-goszler-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8314,7 +8314,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/eliska-cejpova-bw.jpg",
+                        "url": "../src/assets/team/eliska-cejpova-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8343,7 +8343,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/vera-milotova-bw.jpg",
+                        "url": "../src/assets/team/vera-milotova-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8372,7 +8372,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/dominik-simonik-bw.jpg",
+                        "url": "../src/assets/team/dominik-simonik-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8417,7 +8417,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/eliska-zezulkova-bw.jpg",
+                        "url": "../src/assets/team/eliska-zezulkova-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8446,7 +8446,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/tereza-goszlerova-bw.jpg",
+                        "url": "../src/assets/team/tereza-goszlerova-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8475,7 +8475,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/petr-vobr-bw.jpg",
+                        "url": "../src/assets/team/petr-vobr-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -8504,7 +8504,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/team/rosta-navratil-bw.jpg",
+                        "url": "../src/assets/team/rosta-navratil-bw.webp",
                         "mode": "fill"
                       }
                     },
@@ -9724,7 +9724,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/logo.png",
+                        "url": "../src/assets/logo.png",
                         "mode": "fit"
                       }
                     },
@@ -10907,7 +10907,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/platinum-ceska-sporitelna.png",
+                        "url": "../src/assets/partners/platinum/ceska-sporitelna.webp",
                         "mode": "fit"
                       }
                     }
@@ -10970,7 +10970,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/diamond-make.png",
+                        "url": "../src/assets/partners/diamond/make.png",
                         "mode": "fit"
                       }
                     }
@@ -10997,7 +10997,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/diamond-gdg.png",
+                        "url": "../src/assets/partners/diamond/gdg.png",
                         "mode": "fit"
                       }
                     }
@@ -11114,7 +11114,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/gold-wrike.png",
+                        "url": "../src/assets/partners/gold/wrike.png",
                         "mode": "fit"
                       }
                     }
@@ -11168,7 +11168,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/gold-alma.png",
+                        "url": "../src/assets/partners/gold/alma.png",
                         "mode": "fit"
                       }
                     }
@@ -11285,7 +11285,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/partners/silver-applifting.png",
+                        "url": "../src/assets/partners/silver/applifting.png",
                         "mode": "fit"
                       }
                     }
@@ -12176,7 +12176,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/presskit/DF26_logo_color_1.png",
+                        "url": "../public/press-kit/DF26_logo_color_1.png",
                         "mode": "fit"
                       },
                       "width": 150,
@@ -12203,7 +12203,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/presskit/DF26_logo_color_2_dark_transparent.png",
+                        "url": "../public/press-kit/DF26_logo_color_2_dark_transparent.png",
                         "mode": "fit"
                       },
                       "width": 150,
@@ -12230,7 +12230,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/presskit/DF26_logo_color_2_transparent.png",
+                        "url": "../public/press-kit/DF26_logo_color_2_transparent.png",
                         "mode": "fit"
                       },
                       "width": 150,
@@ -12265,7 +12265,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/presskit/DF26_logo_color_2.png",
+                        "url": "../public/press-kit/DF26_logo_color_2.png",
                         "mode": "fit"
                       },
                       "width": 150,
@@ -12292,7 +12292,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/presskit/DF26_logo_red.png",
+                        "url": "../public/press-kit/DF26_logo_red.png",
                         "mode": "fit"
                       },
                       "width": 150,
@@ -12319,7 +12319,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/presskit/DF26_logo_white_red-dot.png",
+                        "url": "../public/press-kit/DF26_logo_white_red-dot.png",
                         "mode": "fit"
                       },
                       "width": 150,
@@ -12346,7 +12346,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/presskit/DF26_logo_white.png",
+                        "url": "../public/press-kit/DF26_logo_white.png",
                         "mode": "fit"
                       },
                       "width": 150,
@@ -14600,7 +14600,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "assets/team/daniel-macho-bw.jpg",
+                "url": "../src/assets/team/daniel-macho-bw.webp",
                 "mode": "fill"
               },
               "justifyContent": "center",
@@ -15542,7 +15542,7 @@
                   "type": "frame",
                   "id": "p5Lopu",
                   "name": "Meta",
-                  "gap": 32,
+                  "gap": 14,
                   "children": [
                     {
                       "type": "text",
@@ -15554,6 +15554,17 @@
                       "fontSize": "$fs-label-lg",
                       "fontWeight": "normal",
                       "letterSpacing": 2.7
+                    },
+                    {
+                      "type": "text",
+                      "id": "JTOnE",
+                      "name": "sep",
+                      "fill": "$ink-muted",
+                      "content": "·",
+                      "fontFamily": "$font-mono",
+                      "fontSize": "$fs-label-lg",
+                      "fontWeight": "normal",
+                      "letterSpacing": 3
                     },
                     {
                       "type": "text",
@@ -15668,7 +15679,12 @@
                       "type": "ellipse",
                       "id": "peT1B",
                       "name": "Avatar",
-                      "fill": "$panel-lit",
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "assets/speakers/cagatay-ulusoy.jpg",
+                        "mode": "fill"
+                      },
                       "width": 64,
                       "height": 64
                     },
@@ -15797,7 +15813,12 @@
                   "name": "Photo",
                   "width": 465,
                   "height": 581,
-                  "fill": "$panel-lit",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "assets/speakers/abdel-sghiouar.jpg",
+                    "mode": "fill"
+                  },
                   "effect": {
                     "type": "shadow",
                     "shadowType": "outer",
@@ -15809,20 +15830,7 @@
                     "blur": 24
                   },
                   "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "gs6Ar",
-                      "name": "Monogram",
-                      "fill": "$ink-monogram",
-                      "content": "AS",
-                      "lineHeight": "$lh-display",
-                      "fontFamily": "$font-display",
-                      "fontSize": "$fs-monogram",
-                      "fontWeight": "normal"
-                    }
-                  ]
+                  "alignItems": "center"
                 },
                 {
                   "type": "frame",
@@ -15893,8 +15901,8 @@
                       "children": [
                         {
                           "type": "frame",
-                          "id": "ZzHme",
-                          "name": "X",
+                          "id": "wKFGI",
+                          "name": "𝕏",
                           "width": 44,
                           "height": 44,
                           "justifyContent": "center",
@@ -15902,19 +15910,19 @@
                           "children": [
                             {
                               "type": "text",
-                              "id": "BzXvi",
+                              "id": "xzBuy",
                               "name": "g",
                               "fill": "$ink-meta",
-                              "content": "X",
+                              "content": "𝕏",
                               "fontFamily": "$font-mono",
-                              "fontSize": 11,
+                              "fontSize": 15,
                               "fontWeight": "normal"
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "Z37r0U",
+                          "id": "g0lAga",
                           "name": "in",
                           "width": 44,
                           "height": 44,
@@ -15923,20 +15931,20 @@
                           "children": [
                             {
                               "type": "text",
-                              "id": "L8jXW9",
+                              "id": "pmg50",
                               "name": "g",
                               "fill": "$ink-meta",
                               "content": "in",
                               "fontFamily": "$font-mono",
-                              "fontSize": 11,
+                              "fontSize": 15,
                               "fontWeight": "normal"
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "TvfuN",
-                          "name": "IG",
+                          "id": "iiY3Z",
+                          "name": "◎",
                           "width": 44,
                           "height": 44,
                           "justifyContent": "center",
@@ -15944,20 +15952,20 @@
                           "children": [
                             {
                               "type": "text",
-                              "id": "VUoHg",
+                              "id": "XkQDD",
                               "name": "g",
                               "fill": "$ink-meta",
-                              "content": "IG",
+                              "content": "◎",
                               "fontFamily": "$font-mono",
-                              "fontSize": 11,
+                              "fontSize": 15,
                               "fontWeight": "normal"
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "Q3VBu",
-                          "name": "www",
+                          "id": "cjLpp",
+                          "name": "⌘",
                           "width": 44,
                           "height": 44,
                           "justifyContent": "center",
@@ -15965,20 +15973,20 @@
                           "children": [
                             {
                               "type": "text",
-                              "id": "tEGQg",
+                              "id": "ZLiok",
                               "name": "g",
                               "fill": "$ink-meta",
-                              "content": "www",
+                              "content": "⌘",
                               "fontFamily": "$font-mono",
-                              "fontSize": 11,
+                              "fontSize": 15,
                               "fontWeight": "normal"
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "E6uGgo",
-                          "name": "www",
+                          "id": "s6YtXu",
+                          "name": "⌘",
                           "width": 44,
                           "height": 44,
                           "justifyContent": "center",
@@ -15986,20 +15994,20 @@
                           "children": [
                             {
                               "type": "text",
-                              "id": "iuzq6",
+                              "id": "vc767",
                               "name": "g",
                               "fill": "$ink-meta",
-                              "content": "www",
+                              "content": "⌘",
                               "fontFamily": "$font-mono",
-                              "fontSize": 11,
+                              "fontSize": 15,
                               "fontWeight": "normal"
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "NxzM2",
-                          "name": "www",
+                          "id": "G0jGt",
+                          "name": "⌘",
                           "width": 44,
                           "height": 44,
                           "justifyContent": "center",
@@ -16007,12 +16015,12 @@
                           "children": [
                             {
                               "type": "text",
-                              "id": "fICZ0",
+                              "id": "AwuAx",
                               "name": "g",
                               "fill": "$ink-meta",
-                              "content": "www",
+                              "content": "⌘",
                               "fontFamily": "$font-mono",
-                              "fontSize": 11,
+                              "fontSize": 15,
                               "fontWeight": "normal"
                             }
                           ]
@@ -16034,7 +16042,7 @@
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
                       "content": "Abdel Sghiouar is a senior Cloud Developer Advocate @Google Cloud. A co-host of the Kubernetes Podcast by Google and a CNCF Ambassador. His focused areas are GKE/Kubernetes, Service Mesh and Serverless. Abdel started his career in datacenters and infrastructure in Morocco where he is originally. Before moving to Google's largest EU datacenter in Belgium. Then in Sweden he joined Google Cloud Professional Services and spent 5 years working with Google Cloud customers on architecting and designing large scale distributed systems before turning to advocacy and community work.",
-                      "lineHeight": 1.6,
+                      "lineHeight": 1.65,
                       "fontFamily": "$font-body",
                       "fontSize": "$fs-lede",
                       "fontWeight": "normal"
@@ -16135,22 +16143,22 @@
               "name": "Hero",
               "clip": true,
               "width": "fill_container",
-              "height": 812,
+              "height": 999,
               "layout": "none",
               "children": [
                 {
                   "type": "frame",
                   "id": "R6JhZ",
-                  "x": -60,
-                  "y": 180,
+                  "x": -40,
+                  "y": 120,
                   "name": "Plate",
                   "opacity": 0.55,
-                  "width": 520,
-                  "height": 632,
+                  "width": 480,
+                  "height": 700,
                   "fill": {
                     "type": "image",
                     "enabled": true,
-                    "url": "assets/hero-detective.jpg",
+                    "url": "../public/hero-detective.webp",
                     "mode": "fill"
                   }
                 },
@@ -16265,7 +16273,7 @@
                   "type": "frame",
                   "id": "fBgjV",
                   "x": 20,
-                  "y": 144,
+                  "y": 150,
                   "name": "Inner",
                   "width": 335,
                   "layout": "vertical",
@@ -16279,7 +16287,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/logo.png",
+                        "url": "../src/assets/logo.png",
                         "mode": "fit"
                       }
                     },
@@ -16298,10 +16306,10 @@
                       "children": [
                         {
                           "type": "text",
-                          "id": "G1WsP",
-                          "name": "PRAGUE’S MOST",
+                          "id": "OikQU",
+                          "name": "PRAGUE’S",
                           "fill": "$color-text",
-                          "content": "PRAGUE’S MOST",
+                          "content": "PRAGUE’S",
                           "lineHeight": 0.84,
                           "fontFamily": "$font-display",
                           "fontSize": 45,
@@ -16309,10 +16317,10 @@
                         },
                         {
                           "type": "text",
-                          "id": "lVojy",
-                          "name": "ORIGINAL",
+                          "id": "Iw7kr",
+                          "name": "MOST ORIGINAL",
                           "fill": "$color-text",
-                          "content": "ORIGINAL",
+                          "content": "MOST ORIGINAL",
                           "lineHeight": 0.84,
                           "fontFamily": "$font-display",
                           "fontSize": 45,
@@ -16320,7 +16328,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "aW3su",
+                          "id": "W20CY",
                           "name": "CONFERENCE IS",
                           "fill": "$color-text",
                           "content": "CONFERENCE IS",
@@ -16331,7 +16339,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "IkNGV",
+                          "id": "GTCQR",
                           "name": "BACK.",
                           "fill": "$color-accent-hot",
                           "content": "BACK.",
@@ -16358,7 +16366,93 @@
                       "fontFamily": "$font-mono",
                       "fontSize": 9,
                       "fontWeight": "normal",
-                      "letterSpacing": 2.3
+                      "letterSpacing": 2.5
+                    },
+                    {
+                      "type": "frame",
+                      "id": "YCFLe",
+                      "name": "Topics",
+                      "gap": 44,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "gKEeH",
+                          "name": "col1",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "kd8rU",
+                              "name": "AI AGENTS",
+                              "fill": "$ink-strong",
+                              "content": "AI AGENTS",
+                              "lineHeight": 1.05,
+                              "fontFamily": "$font-display",
+                              "fontSize": 21,
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.3
+                            },
+                            {
+                              "type": "text",
+                              "id": "D5jngL",
+                              "name": "GENERATIVE UI",
+                              "fill": "$ink-strong",
+                              "content": "GENERATIVE UI",
+                              "lineHeight": 1.05,
+                              "fontFamily": "$font-display",
+                              "fontSize": 21,
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.3
+                            },
+                            {
+                              "type": "text",
+                              "id": "A9e51T",
+                              "name": "CLOUD & BACKENDS",
+                              "fill": "$ink-strong",
+                              "content": "CLOUD & BACKENDS",
+                              "lineHeight": 1.05,
+                              "fontFamily": "$font-display",
+                              "fontSize": 21,
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.3
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "lvDL4",
+                          "name": "col2",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "rZCXO",
+                              "name": "MOBILE & WEB",
+                              "fill": "$ink-strong",
+                              "content": "MOBILE & WEB",
+                              "lineHeight": 1.05,
+                              "fontFamily": "$font-display",
+                              "fontSize": 21,
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.3
+                            },
+                            {
+                              "type": "text",
+                              "id": "vwb7o",
+                              "name": "HUMANS IN TECH",
+                              "fill": "$ink-strong",
+                              "content": "HUMANS IN TECH",
+                              "lineHeight": 1.05,
+                              "fontFamily": "$font-display",
+                              "fontSize": 21,
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.3
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
                       "type": "frame",
@@ -16366,17 +16460,6 @@
                       "name": "sp",
                       "width": 10,
                       "height": 6
-                    },
-                    {
-                      "type": "text",
-                      "id": "Ei2mB",
-                      "name": "topic",
-                      "fill": "$ink-strong",
-                      "content": "AI AGENTS",
-                      "lineHeight": 1,
-                      "fontFamily": "$font-display",
-                      "fontSize": 30,
-                      "fontWeight": "normal"
                     },
                     {
                       "type": "frame",
@@ -16439,7 +16522,7 @@
                   "type": "frame",
                   "id": "C4miUz",
                   "x": 20,
-                  "y": 700,
+                  "y": 860,
                   "name": "Foot",
                   "width": 335,
                   "layout": "vertical",
@@ -17182,14 +17265,17 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "assets/logo.png",
+                        "url": "../src/assets/logo.png",
                         "mode": "fit"
                       }
                     },
                     {
                       "type": "frame",
                       "id": "Q5se2",
+                      "x": 289,
+                      "y": 12,
                       "name": "Menu",
+                      "enabled": false,
                       "padding": [
                         12,
                         14
@@ -17205,6 +17291,86 @@
                           "fontSize": "$fs-label-lg",
                           "fontWeight": "normal",
                           "letterSpacing": 2.7
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "VSk1M",
+                      "name": "Actions",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "K4zRjV",
+                          "name": "Tickets",
+                          "fill": "$color-accent",
+                          "cornerRadius": "$radius",
+                          "padding": [
+                            12,
+                            22
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "THEZe",
+                              "name": "l",
+                              "fill": "$on-accent",
+                              "content": "TICKETS",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label-sm",
+                              "fontWeight": "normal",
+                              "letterSpacing": 2.5
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "b7l1i",
+                          "name": "Menu",
+                          "width": 44,
+                          "height": 44,
+                          "cornerRadius": "$radius",
+                          "stroke": "$field-border",
+                          "strokeWidth": 1,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "nlHFZ",
+                              "name": "Bars",
+                              "layout": "vertical",
+                              "gap": 4,
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "zOIPb",
+                                  "name": "b",
+                                  "fill": "$color-text",
+                                  "width": 18,
+                                  "height": 1.5
+                                },
+                                {
+                                  "type": "rectangle",
+                                  "id": "bOdT1",
+                                  "name": "b",
+                                  "fill": "$color-text",
+                                  "width": 18,
+                                  "height": 1.5
+                                },
+                                {
+                                  "type": "rectangle",
+                                  "id": "A00qd",
+                                  "name": "b",
+                                  "fill": "$color-text",
+                                  "width": 18,
+                                  "height": 1.5
+                                }
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
@@ -17440,10 +17606,11 @@
                   "name": "Search",
                   "width": "fill_container",
                   "height": 44,
-                  "fill": "$panel-lit-2",
+                  "fill": "#00000000",
                   "cornerRadius": "$radius",
                   "stroke": "$field-border",
                   "strokeWidth": 1,
+                  "gap": 10,
                   "padding": [
                     0,
                     14
@@ -17452,14 +17619,24 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "R2dWP",
+                      "id": "k1T8u",
+                      "name": "icon",
+                      "fill": "$ink-faint",
+                      "content": "⌕",
+                      "fontFamily": "$font-mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "V4Fs8",
                       "name": "ph",
                       "fill": "$ink-faint",
-                      "content": "Search talks and speakers",
-                      "lineHeight": 1.6,
-                      "fontFamily": "$font-body",
-                      "fontSize": "$fs-ui",
-                      "fontWeight": "normal"
+                      "content": "Search talks, speakers, topics",
+                      "fontFamily": "$font-mono",
+                      "fontSize": "$fs-label-sm",
+                      "fontWeight": "normal",
+                      "letterSpacing": 0.5
                     }
                   ]
                 },
@@ -17471,114 +17648,108 @@
                   "height": 12
                 },
                 {
+                  "type": "text",
+                  "id": "w0xIjU",
+                  "name": "Count",
+                  "fill": "$ink-muted",
+                  "content": "15 SESSIONS",
+                  "fontFamily": "$font-mono",
+                  "fontSize": "$fs-label-xs",
+                  "fontWeight": "normal",
+                  "letterSpacing": 2
+                },
+                {
                   "type": "frame",
                   "id": "v5ZqI",
                   "name": "Filters",
                   "clip": true,
                   "width": "fill_container",
-                  "gap": 8,
+                  "gap": 10,
+                  "alignItems": "center",
                   "children": [
                     {
+                      "type": "text",
+                      "id": "yuxTf",
+                      "name": "Label",
+                      "fill": "$ink-muted",
+                      "content": "TRACK",
+                      "fontFamily": "$font-mono",
+                      "fontSize": "$fs-label-xs",
+                      "fontWeight": "normal",
+                      "letterSpacing": 2.5
+                    },
+                    {
                       "type": "frame",
-                      "id": "ZeP9H",
-                      "name": "ALL",
-                      "fill": "$color-text",
+                      "id": "vXU29",
+                      "name": "Humans",
                       "cornerRadius": "$radius",
-                      "stroke": "$color-text",
+                      "stroke": "$field-border",
                       "strokeWidth": 1,
                       "padding": [
-                        8,
-                        12
+                        6,
+                        10
                       ],
                       "children": [
                         {
                           "type": "text",
-                          "id": "G2UNxd",
+                          "id": "hjqKw",
                           "name": "l",
-                          "fill": "$color-bg",
-                          "content": "ALL",
+                          "fill": "$ink",
+                          "content": "Humans",
                           "fontFamily": "$font-mono",
                           "fontSize": "$fs-label-xs",
                           "fontWeight": "normal",
-                          "letterSpacing": 2
+                          "letterSpacing": 0.5
                         }
                       ]
                     },
                     {
                       "type": "frame",
-                      "id": "SJubS",
+                      "id": "CfoTX",
                       "name": "AI",
-                      "fill": "#00000000",
                       "cornerRadius": "$radius",
                       "stroke": "$field-border",
                       "strokeWidth": 1,
                       "padding": [
-                        8,
-                        12
+                        6,
+                        10
                       ],
                       "children": [
                         {
                           "type": "text",
-                          "id": "I6iwAV",
+                          "id": "yyXLG",
                           "name": "l",
                           "fill": "$ink",
                           "content": "AI",
                           "fontFamily": "$font-mono",
                           "fontSize": "$fs-label-xs",
                           "fontWeight": "normal",
-                          "letterSpacing": 2
+                          "letterSpacing": 0.5
                         }
                       ]
                     },
                     {
                       "type": "frame",
-                      "id": "d2xs6",
-                      "name": "HUMANS",
-                      "fill": "#00000000",
+                      "id": "chKFT",
+                      "name": "Open Source",
                       "cornerRadius": "$radius",
                       "stroke": "$field-border",
                       "strokeWidth": 1,
                       "padding": [
-                        8,
-                        12
+                        6,
+                        10
                       ],
                       "children": [
                         {
                           "type": "text",
-                          "id": "u6Woe",
+                          "id": "aAUhR",
                           "name": "l",
                           "fill": "$ink",
-                          "content": "HUMANS",
+                          "content": "Open Source",
                           "fontFamily": "$font-mono",
                           "fontSize": "$fs-label-xs",
                           "fontWeight": "normal",
-                          "letterSpacing": 2
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "ZVFPF",
-                      "name": "OPEN SOURCE",
-                      "fill": "#00000000",
-                      "cornerRadius": "$radius",
-                      "stroke": "$field-border",
-                      "strokeWidth": 1,
-                      "padding": [
-                        8,
-                        12
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "ttui1",
-                          "name": "l",
-                          "fill": "$ink",
-                          "content": "OPEN SOURCE",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
+                          "letterSpacing": 0.5
                         }
                       ]
                     }
@@ -17593,11 +17764,11 @@
                 },
                 {
                   "type": "frame",
-                  "id": "BZjqy",
-                  "name": "GENUI IN PRODUCTION: HOW",
+                  "id": "GInbJ",
+                  "name": "NOT ALL APIS ARE CREATED",
                   "width": "fill_container",
                   "layout": "vertical",
-                  "gap": 10,
+                  "gap": 12,
                   "padding": [
                     28,
                     0
@@ -17605,10 +17776,10 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "tPghK",
+                      "id": "C49Ul",
                       "name": "tr",
                       "fill": "$ink-muted",
-                      "content": "AI",
+                      "content": "HUMANS",
                       "fontFamily": "$font-mono",
                       "fontSize": "$fs-label-xs",
                       "fontWeight": "normal",
@@ -17616,39 +17787,57 @@
                     },
                     {
                       "type": "text",
-                      "id": "NhEwC",
+                      "id": "S9Mmds",
                       "name": "t",
                       "fill": "$color-text",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "GENUI IN PRODUCTION: HOW GENUI AND A2UI CHANGE MOBILE APPS",
+                      "content": "NOT ALL APIS ARE CREATED EQUAL: THE MOST USEFUL SKILL FOR 2026",
                       "lineHeight": 1.06,
                       "fontFamily": "$font-display",
-                      "fontSize": 34,
+                      "fontSize": 30,
                       "fontWeight": "normal",
                       "letterSpacing": 0.7
                     },
                     {
+                      "type": "text",
+                      "id": "rrKB6",
+                      "name": "abs",
+                      "fill": "$ink-meta",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "\"We need to talk.\" A Slack message lands, and your brain has already written the worst-case ending: this…",
+                      "lineHeight": 1.55,
+                      "fontFamily": "$font-body",
+                      "fontSize": "$fs-body",
+                      "fontWeight": "normal"
+                    },
+                    {
                       "type": "frame",
-                      "id": "hIDlO",
+                      "id": "PzNYu",
                       "name": "who",
-                      "gap": 8,
+                      "gap": 10,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "ellipse",
-                          "id": "Uv1Iv",
+                          "id": "mDFiQ",
                           "name": "a",
-                          "fill": "$panel-hover",
-                          "width": 20,
-                          "height": 20
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "assets/speakers/zuzana-pe-kov.jpg",
+                            "mode": "fill"
+                          },
+                          "width": 26,
+                          "height": 26
                         },
                         {
                           "type": "text",
-                          "id": "q9hWq",
+                          "id": "wPVCG",
                           "name": "n",
                           "fill": "$ink-meta",
-                          "content": "Cagatay Ulusoy",
+                          "content": "Zuzana Pešková, Filip Goszler",
                           "fontFamily": "$font-mono",
                           "fontSize": "$fs-label-xs",
                           "fontWeight": "normal",
@@ -17660,11 +17849,11 @@
                 },
                 {
                   "type": "frame",
-                  "id": "H6Qms",
+                  "id": "FdM2W",
                   "name": "WE ARE ALL FUCKED: AN AN",
                   "width": "fill_container",
                   "layout": "vertical",
-                  "gap": 10,
+                  "gap": 12,
                   "padding": [
                     28,
                     0
@@ -17672,7 +17861,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "hddKb",
+                      "id": "n02XFw",
                       "name": "tr",
                       "fill": "$ink-muted",
                       "content": "HUMANS",
@@ -17683,7 +17872,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "x5uOw",
+                      "id": "PmUph",
                       "name": "t",
                       "fill": "$color-text",
                       "textGrowth": "fixed-width",
@@ -17691,28 +17880,46 @@
                       "content": "WE ARE ALL FUCKED: AN ANDROID DEVELOPER’S GUIDE TO THE POST-AI APOCALYPSE",
                       "lineHeight": 1.06,
                       "fontFamily": "$font-display",
-                      "fontSize": 34,
+                      "fontSize": 30,
                       "fontWeight": "normal",
                       "letterSpacing": 0.7
                     },
                     {
+                      "type": "text",
+                      "id": "svRhh",
+                      "name": "abs",
+                      "fill": "$ink-meta",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "AI is dominating Android development, driven by hype over reality. As organizations rush…",
+                      "lineHeight": 1.55,
+                      "fontFamily": "$font-body",
+                      "fontSize": "$fs-body",
+                      "fontWeight": "normal"
+                    },
+                    {
                       "type": "frame",
-                      "id": "cSIYK",
+                      "id": "rQZWG",
                       "name": "who",
-                      "gap": 8,
+                      "gap": 10,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "ellipse",
-                          "id": "nYHvy",
+                          "id": "rF9a5",
                           "name": "a",
-                          "fill": "$panel-hover",
-                          "width": 20,
-                          "height": 20
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "assets/speakers/ashley-davies.jpg",
+                            "mode": "fill"
+                          },
+                          "width": 26,
+                          "height": 26
                         },
                         {
                           "type": "text",
-                          "id": "B1xVn",
+                          "id": "JkfZq",
                           "name": "n",
                           "fill": "$ink-meta",
                           "content": "Ashley Davies",
@@ -17727,11 +17934,11 @@
                 },
                 {
                   "type": "frame",
-                  "id": "FZxBP",
+                  "id": "dUlha",
                   "name": "OPEN SESAME TO THE MONOL",
                   "width": "fill_container",
                   "layout": "vertical",
-                  "gap": 10,
+                  "gap": 12,
                   "padding": [
                     28,
                     0
@@ -17739,7 +17946,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "D8mOu",
+                      "id": "z2nwS",
                       "name": "tr",
                       "fill": "$ink-muted",
                       "content": "AI",
@@ -17750,7 +17957,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "eT8fJ",
+                      "id": "v2RIty",
                       "name": "t",
                       "fill": "$color-text",
                       "textGrowth": "fixed-width",
@@ -17758,31 +17965,219 @@
                       "content": "OPEN SESAME TO THE MONOLITH: RAIDING THE LEGACY CAVE WITH AI AGENTS",
                       "lineHeight": 1.06,
                       "fontFamily": "$font-display",
-                      "fontSize": 34,
+                      "fontSize": 30,
                       "fontWeight": "normal",
                       "letterSpacing": 0.7
                     },
                     {
+                      "type": "text",
+                      "id": "jRtqX",
+                      "name": "abs",
+                      "fill": "$ink-meta",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Every enterprise sits on a \"Cave of Wonders\". A massive codebase packed with decades of invaluable business…",
+                      "lineHeight": 1.55,
+                      "fontFamily": "$font-body",
+                      "fontSize": "$fs-body",
+                      "fontWeight": "normal"
+                    },
+                    {
                       "type": "frame",
-                      "id": "K2JGE7",
+                      "id": "u2Tnx6",
                       "name": "who",
-                      "gap": 8,
+                      "gap": 10,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "ellipse",
-                          "id": "gAjfJ",
+                          "id": "IwYv8",
                           "name": "a",
-                          "fill": "$panel-hover",
-                          "width": 20,
-                          "height": 20
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "assets/speakers/abdel-sghiouar.jpg",
+                            "mode": "fill"
+                          },
+                          "width": 26,
+                          "height": 26
                         },
                         {
                           "type": "text",
-                          "id": "qlDqg",
+                          "id": "r6O2xx",
                           "name": "n",
                           "fill": "$ink-meta",
                           "content": "Abdel Sghiouar",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-xs",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.4
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "AJpHA",
+                  "name": "CAN AN LLM UNDERSTAND YO",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ps48Y",
+                      "name": "tr",
+                      "fill": "$ink-muted",
+                      "content": "AI",
+                      "fontFamily": "$font-mono",
+                      "fontSize": "$fs-label-xs",
+                      "fontWeight": "normal",
+                      "letterSpacing": 2.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "D9Nzr",
+                      "name": "t",
+                      "fill": "$color-text",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "CAN AN LLM UNDERSTAND YOUR CAR? REAL TELEMETRY AND PREDICTIVE INSIGHTS",
+                      "lineHeight": 1.06,
+                      "fontFamily": "$font-display",
+                      "fontSize": 30,
+                      "fontWeight": "normal",
+                      "letterSpacing": 0.7
+                    },
+                    {
+                      "type": "text",
+                      "id": "WMolo",
+                      "name": "abs",
+                      "fill": "$ink-meta",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Modern cars produce far more data than what appears on the dashboard: sensor readings, diagnostic codes,…",
+                      "lineHeight": 1.55,
+                      "fontFamily": "$font-body",
+                      "fontSize": "$fs-body",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ZDQTZ",
+                      "name": "who",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "eW4bn",
+                          "name": "a",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "assets/speakers/soumaya-erradi.jpg",
+                            "mode": "fill"
+                          },
+                          "width": 26,
+                          "height": 26
+                        },
+                        {
+                          "type": "text",
+                          "id": "F414HL",
+                          "name": "n",
+                          "fill": "$ink-meta",
+                          "content": "Soumaya Erradi",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-xs",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.4
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "x7S56",
+                  "name": "AI PRINTER GO BRRR",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "N4n0D",
+                      "name": "tr",
+                      "fill": "$ink-muted",
+                      "content": "AI",
+                      "fontFamily": "$font-mono",
+                      "fontSize": "$fs-label-xs",
+                      "fontWeight": "normal",
+                      "letterSpacing": 2.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "Kvw3J",
+                      "name": "t",
+                      "fill": "$color-text",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "AI PRINTER GO BRRR",
+                      "lineHeight": 1.06,
+                      "fontFamily": "$font-display",
+                      "fontSize": 30,
+                      "fontWeight": "normal",
+                      "letterSpacing": 0.7
+                    },
+                    {
+                      "type": "text",
+                      "id": "ku1IJ",
+                      "name": "abs",
+                      "fill": "$ink-meta",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Every AI demo works fine until it has to touch something real. The model responds, the screenshot looks grea…",
+                      "lineHeight": 1.55,
+                      "fontFamily": "$font-body",
+                      "fontSize": "$fs-body",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "v8xqXL",
+                      "name": "who",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "NYLHG",
+                          "name": "a",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "assets/speakers/dominik-imon-k.jpg",
+                            "mode": "fill"
+                          },
+                          "width": 26,
+                          "height": 26
+                        },
+                        {
+                          "type": "text",
+                          "id": "llG6e",
+                          "name": "n",
+                          "fill": "$ink-meta",
+                          "content": "Dominik Šimoník, Denis Valášek",
                           "fontFamily": "$font-mono",
                           "fontSize": "$fs-label-xs",
                           "fontWeight": "normal",

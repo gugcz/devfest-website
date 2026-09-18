@@ -755,8 +755,9 @@ this prose, so it is the current visual truth at desktop width.
   and a faint solid fill. A root frame assembled with many `Insert` calls
   can stay unpainted in screenshots and exports; `Copy` it once onto itself
   and delete the original and it renders. Export in a call of its own,
-  never in the call that built the frame. Photos of speakers, partners and
-  team members are runtime data and stay as monogram or wordmark plates.
+  never in the call that built the frame. Images point at the repo's own
+  WebP/PNG files; only SVG/AVIF logo renders, speaker portraits and press
+  clippings are copied under `design/assets/`.
 
 The YAML frontmatter at the top of this file is the machine-readable layer
 (the DESIGN.md spec impeccable and the live panel read). It is derived from

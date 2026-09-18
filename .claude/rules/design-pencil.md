@@ -65,9 +65,15 @@ checked against it.
   original, and export in a separate call. Whichever app the MCP targets
   (`pgrep -fl mcp-server-darwin-arm64`) must have the file open. `execute`
   globals do not survive between calls; carry ids as literals.
-- Images live in `design/assets/` (`hero-detective.jpg`, `logo.png`),
-  referenced relatively as `./assets/...`. Speaker photos and partner logos
-  are runtime data: plates and wordmark placeholders on the canvas.
+- Images reference the repo's own files by relative path
+  (`../public/hero-detective.webp`, `../src/assets/team/<slug>-bw.webp`,
+  `../src/assets/partners/<tier>/<name>.png`, `../public/press-kit/*.png`).
+  Pencil renders WebP and PNG but not SVG or AVIF, so `design/assets/`
+  holds only what the repo cannot supply: PNG renders of the SVG/AVIF
+  logos (`partners/*.svg.png`, `presskit/`), speaker portraits fetched
+  from the lineup API (`speakers/`), and the three press clippings
+  (`press/`). Regenerate an SVG render with
+  `node node_modules/.capture/svg2png.mjs <dir>` (Playwright, transparent).
 - `.pen` files are encrypted: never `Read`, `Grep` or hand-edit one.
 
 ## The loop for a new or redesigned surface
