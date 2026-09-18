@@ -34,6 +34,9 @@ npm run preview
 
 # Accessibility audit (mock-data build + axe)
 npm run a11y
+
+# Fetch the images the pencil canvas (design/devfest.pen) needs but the repo does not hold
+node scripts/design-assets.mjs
 ```
 
 `npm run dev` has no Hosting rewrite table, so it serves `/api/lineup` and

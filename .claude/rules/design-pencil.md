@@ -71,12 +71,12 @@ checked against it.
 - Images reference the repo's own files by relative path
   (`../public/hero-detective.webp`, `../src/assets/team/<slug>-bw.webp`,
   `../src/assets/partners/<tier>/<name>.png`, `../public/press-kit/*.png`).
-  Pencil renders WebP and PNG but not SVG or AVIF, so `design/assets/`
-  holds only what the repo cannot supply: PNG renders of the SVG/AVIF
-  logos (`partners/*.svg.png`, `presskit/`), speaker portraits fetched
-  from the lineup API (`speakers/`), and the three press clippings
-  (`press/`). Regenerate an SVG render with
-  `node node_modules/.capture/svg2png.mjs <dir>` (Playwright, transparent).
+  Pencil paints WebP and PNG from local paths only: no SVG, no AVIF, no
+  remote URLs. What the repo cannot serve (speaker portraits from the
+  lineup API, the press clippings, PNG renders of the SVG/AVIF logos)
+  lives in the gitignored `design/assets/`, regenerated with
+  `node scripts/design-assets.mjs` after a fresh checkout or a lineup
+  change. Nothing under `design/assets/` is committed.
 - `.pen` files are encrypted: never `Read`, `Grep` or hand-edit one.
 
 ## The loop for a new or redesigned surface
