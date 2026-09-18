@@ -759,10 +759,9 @@ this prose, so it is the current visual truth at desktop width.
   the app reloads the document (quit and reopen Pen); a root frame built
   from many inserts can stay unpainted until it is copied onto itself.
   Export in a call of its own, never in the call that built the frame.
-  Images point at the repo's own WebP/PNG files; the speaker portraits,
-  press clippings and SVG/AVIF logo renders the repo cannot serve are
-  fetched into the gitignored `design/assets/` by
-  `scripts/design-assets.mjs`.
+  Images point at the repo's own WebP/PNG files; nothing is copied into
+  `design/`. SVG/AVIF logos are wordmark placeholders and runtime data
+  (speaker portraits, press clippings) is an example plate.
 
 The YAML frontmatter at the top of this file is the machine-readable layer
 (the DESIGN.md spec impeccable and the live panel read). It is derived from

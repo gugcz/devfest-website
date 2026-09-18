@@ -71,12 +71,11 @@ checked against it.
 - Images reference the repo's own files by relative path
   (`../public/hero-detective.webp`, `../src/assets/team/<slug>-bw.webp`,
   `../src/assets/partners/<tier>/<name>.png`, `../public/press-kit/*.png`).
-  Pencil paints WebP and PNG from local paths only: no SVG, no AVIF, no
-  remote URLs. What the repo cannot serve (speaker portraits from the
-  lineup API, the press clippings, PNG renders of the SVG/AVIF logos)
-  lives in the gitignored `design/assets/`, regenerated with
-  `node scripts/design-assets.mjs` after a fresh checkout or a lineup
-  change. Nothing under `design/assets/` is committed.
+  Nothing is copied into `design/`. Pencil paints WebP and PNG from local
+  paths only (no SVG, AVIF or remote URLs), so SVG/AVIF logos are mono
+  wordmark placeholders, and runtime data (speaker portraits from the
+  lineup API, press clippings) is a `$panel-lit` example plate. The
+  canvas is a design reference, not a content mirror.
 - `.pen` files are encrypted: never `Read`, `Grep` or hand-edit one.
 
 ## The loop for a new or redesigned surface

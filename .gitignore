@@ -43,6 +43,3 @@ CLAUDE.local.md
 !.impeccable/live/
 .impeccable/live/inject-journal.json
 .agent_context/
-
-# pencil canvas: fetched/rendered images the repo cannot serve (see scripts/design-assets.mjs)
-design/assets/
