@@ -746,6 +746,9 @@ this prose, so it is the current visual truth at desktop width.
   direction is chosen.
 - **[MUST] Nothing on the canvas breaks a `[MUST]` here.** The canvas is where
   a rule is tested first, not where it is waived.
+- **[CURRENT] Hairlines on the canvas use `$rule` (13%), not `$rule-soft`
+  (6%).** Pencil paints the alpha faithfully and a 6% line vanishes in a
+  half-scale export; the code keeps `--rule-soft` on section edges.
 - **[CURRENT] Renderer limits, work around them:** gradient fills and text
   strokes do not paint (a node with one can blank its whole frame), so the
   hero feather and the outlined ticker are approximated with opacity strips

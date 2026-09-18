@@ -55,6 +55,8 @@ checked against it.
   `FindEmptySpace` anchored on `Home` to place it, `TakeScreenshot` or
   `Export(...,"png")` to verify. Instance the `Components` frame; do not
   redraw a button.
+- Section hairlines on the canvas are `$rule` (13%), never `$rule-soft`
+  (6%): the faint step disappears in exports. Code still uses `--rule-soft`.
 - Renderer gotchas (verified 2026-09-17): gradient fills and text `stroke`
   do not paint and can blank the whole frame; use opacity strips of
   `$color-bg` for a feather and a faint solid fill for outlined type. A

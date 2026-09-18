@@ -229,7 +229,7 @@
           "name": "Head/Stack",
           "reusable": true,
           "width": 900,
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "bottom": 1
           },
@@ -1120,7 +1120,7 @@
           "reusable": true,
           "width": 1440,
           "fill": "#030303",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -1519,7 +1519,7 @@
               "id": "w0LrH",
               "name": "Bottom",
               "width": "fill_container",
-              "stroke": "$rule-soft",
+              "stroke": "$rule",
               "strokeWidth": {
                 "top": 1
               },
@@ -1568,7 +1568,7 @@
           "width": "fill_container",
           "height": 621,
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "bottom": 1
           },
@@ -1716,7 +1716,7 @@
           "clip": true,
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1,
             "bottom": 1
@@ -1880,7 +1880,7 @@
           "clip": true,
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1,
             "bottom": 1
@@ -3201,7 +3201,7 @@
           "clip": true,
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1,
             "bottom": 1
@@ -3389,7 +3389,7 @@
           "name": "Tickets",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -3611,7 +3611,7 @@
           "name": "Speakers teaser",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -3627,7 +3627,7 @@
               "id": "H1zAv",
               "name": "Head split ruled",
               "width": "fill_container",
-              "stroke": "$rule-soft",
+              "stroke": "$rule",
               "strokeWidth": {
                 "bottom": 1
               },
@@ -3830,7 +3830,7 @@
           "name": "Partners",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -4153,7 +4153,7 @@
           "name": "Gallery",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -4490,7 +4490,7 @@
           "width": "fill_container",
           "height": 621,
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "bottom": 1
           },
@@ -4637,7 +4637,7 @@
           "clip": true,
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1,
             "bottom": 1
@@ -4799,7 +4799,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -5568,7 +5568,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -7389,7 +7389,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -8126,7 +8126,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -8631,7 +8631,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -8695,7 +8695,7 @@
               "type": "rectangle",
               "id": "i8Z10w",
               "name": "Rule",
-              "fill": "$rule-soft",
+              "fill": "$rule",
               "width": "fill_container",
               "height": 1
             },
@@ -8889,7 +8889,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -10714,7 +10714,7 @@
           "clip": true,
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1,
             "bottom": 1
@@ -11800,7 +11800,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -12021,7 +12021,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -12536,7 +12536,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -12872,7 +12872,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -13130,7 +13130,7 @@
           "name": "Band lit",
           "width": "fill_container",
           "fill": "$color-bg",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -13532,7 +13532,7 @@
               "type": "rectangle",
               "id": "kh28e",
               "name": "rule",
-              "fill": "$rule-soft",
+              "fill": "$rule",
               "width": "fill_container",
               "height": 1
             },
@@ -13756,7 +13756,7 @@
               "type": "rectangle",
               "id": "AhMhP",
               "name": "rule",
-              "fill": "$rule-soft",
+              "fill": "$rule",
               "width": "fill_container",
               "height": 1
             },
@@ -14063,7 +14063,7 @@
               "type": "rectangle",
               "id": "G1t1r",
               "name": "rule",
-              "fill": "$rule-soft",
+              "fill": "$rule",
               "width": "fill_container",
               "height": 1
             },
@@ -14293,7 +14293,7 @@
               "type": "rectangle",
               "id": "F4lqE",
               "name": "rule",
-              "fill": "$rule-soft",
+              "fill": "$rule",
               "width": "fill_container",
               "height": 1
             },
@@ -14503,7 +14503,7 @@
               "type": "rectangle",
               "id": "sflWy",
               "name": "rule",
-              "fill": "$rule-soft",
+              "fill": "$rule",
               "width": "fill_container",
               "height": 1
             },
@@ -15261,7 +15261,7 @@
               "y": 836,
               "name": "Nav foot",
               "width": 1296,
-              "stroke": "$rule-soft",
+              "stroke": "$rule",
               "strokeWidth": {
                 "top": 1
               },
@@ -15335,7 +15335,7 @@
           "width": 1440,
           "height": 80,
           "fill": "$panel-lit",
-          "stroke": "$rule-soft",
+          "stroke": "$rule",
           "strokeWidth": {
             "top": 1
           },
@@ -16559,7 +16559,7 @@
               "name": "Ticker",
               "clip": true,
               "width": "fill_container",
-              "stroke": "$rule-soft",
+              "stroke": "$rule",
               "strokeWidth": {
                 "top": 1,
                 "bottom": 1
@@ -16796,7 +16796,7 @@
               "id": "t7ouK",
               "name": "Tickets",
               "width": "fill_container",
-              "stroke": "$rule-soft",
+              "stroke": "$rule",
               "strokeWidth": {
                 "top": 1
               },
@@ -17144,7 +17144,7 @@
               "id": "Ar29N",
               "name": "Hero",
               "width": "fill_container",
-              "stroke": "$rule-soft",
+              "stroke": "$rule",
               "strokeWidth": {
                 "bottom": 1
               },
@@ -17281,7 +17281,7 @@
               "name": "Ticker",
               "clip": true,
               "width": "fill_container",
-              "stroke": "$rule-soft",
+              "stroke": "$rule",
               "strokeWidth": {
                 "top": 1,
                 "bottom": 1
