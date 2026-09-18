@@ -5522,1829 +5522,6 @@
     },
     {
       "type": "frame",
-      "id": "m09zKv",
-      "x": 3456,
-      "y": 7600,
-      "name": "Agenda",
-      "clip": true,
-      "width": 1440,
-      "fill": "$color-bg",
-      "layout": "vertical",
-      "children": [
-        {
-          "id": "qAIJc",
-          "type": "ref",
-          "ref": "aU4cl",
-          "name": "Hero",
-          "width": "fill_container",
-          "height": 584,
-          "enabled": true,
-          "descendants": {
-            "wbynQ": {
-              "content": "THE DAY"
-            },
-            "G1BrX": {
-              "content": "ON A"
-            },
-            "OnLgQ": {
-              "content": "TIMELINE."
-            },
-            "ksyln": {
-              "content": "Every talk mapped to its room and time slot. Compare the two stages and plan your day — the schedule is out, though a slot or two may still shift."
-            }
-          }
-        },
-        {
-          "id": "i4xpTc",
-          "type": "ref",
-          "ref": "B0Adf2",
-          "name": "Ticker",
-          "width": "fill_container",
-          "enabled": true
-        },
-        {
-          "type": "frame",
-          "id": "JL0A8",
-          "name": "Band lit",
-          "width": "fill_container",
-          "fill": "$color-bg",
-          "stroke": "$rule",
-          "strokeWidth": {
-            "top": 1
-          },
-          "layout": "vertical",
-          "padding": [
-            144,
-            72
-          ],
-          "children": [
-            {
-              "id": "dgSCi",
-              "type": "ref",
-              "ref": "L1r2Mj",
-              "name": "Head stack",
-              "width": "fill_container",
-              "descendants": {
-                "A20n1/oIg87": {
-                  "content": "THE SCHEDULE"
-                },
-                "YCbyw": {
-                  "content": "WHEN & WHERE"
-                }
-              }
-            },
-            {
-              "type": "frame",
-              "id": "KB670",
-              "name": "Spacer",
-              "width": 10,
-              "height": 26
-            },
-            {
-              "id": "Zr8G8",
-              "type": "ref",
-              "ref": "aRg8G",
-              "name": "Browse all talks",
-              "descendants": {
-                "nNSac": {
-                  "content": "BROWSE ALL TALKS"
-                }
-              }
-            },
-            {
-              "type": "frame",
-              "id": "Oes15",
-              "name": "Spacer",
-              "width": 10,
-              "height": 64
-            },
-            {
-              "type": "text",
-              "id": "pz1wG",
-              "name": "TZ note",
-              "fill": "$ink-muted",
-              "content": "ALL TIMES PRAGUE (CET)",
-              "fontFamily": "$font-mono",
-              "fontSize": "$fs-label",
-              "fontWeight": "normal",
-              "letterSpacing": 2.2
-            },
-            {
-              "type": "frame",
-              "id": "P753a",
-              "name": "Spacer",
-              "width": 10,
-              "height": 40
-            },
-            {
-              "type": "frame",
-              "id": "O79lC",
-              "name": "Timetable",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 12,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "xxZwH",
-                  "name": "Stage heads",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "IQef5",
-                      "name": "gutter",
-                      "width": 62,
-                      "height": 10
-                    },
-                    {
-                      "type": "frame",
-                      "id": "yF7AB",
-                      "name": "MOONSHINE",
-                      "width": 604,
-                      "padding": [
-                        0,
-                        14,
-                        12,
-                        14
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "IRCRM",
-                          "name": "Stage",
-                          "fill": "$ink-soft",
-                          "content": "MOONSHINE",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label",
-                          "fontWeight": "normal",
-                          "letterSpacing": 3
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "geHI7",
-                      "name": "SPEAKEASY",
-                      "width": 604,
-                      "padding": [
-                        0,
-                        14,
-                        12,
-                        14
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "UWKbl",
-                          "name": "Stage",
-                          "fill": "$ink-soft",
-                          "content": "SPEAKEASY",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label",
-                          "fontWeight": "normal",
-                          "letterSpacing": 3
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "YaiNp",
-                  "name": "BREAKFAST & REGISTRATION",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "LGGHJ",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "MlTy4",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "08:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "H3lLc6",
-                      "name": "BREAKFAST & REGISTRATION",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "tqXD2",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "08:00–08:45",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "RqYDn",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "BREAKFAST & REGISTRATION",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "g20JsP",
-                  "name": "KICK OFF",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "m5zax",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "qhQBC",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "BXuYk",
-                      "name": "KICK OFF",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "tATLc",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "08:45–09:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "SlmMh",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "KICK OFF",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "GrF2e",
-                  "name": "KEYNOTE",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "vdjNO",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "YPS1Z",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "09:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "U4liZ1",
-                      "name": "KEYNOTE",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "a71bWh",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "09:00–09:40",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "Ptcx8",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "KEYNOTE",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "CYwk9",
-                  "name": "BREAK 10",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "v4PtXf",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Dl0Ap",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "wcmfE",
-                      "name": "BREAK 10",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "VIsxO",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "09:40–09:50",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "Ib0Tg",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "BREAK 10",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "MR4tM",
-                  "name": "OPEN SESAME TO THE MONOLITH: R",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "v9QuQy",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "eMMPj",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "10:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "id": "x83slI",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "OPEN SESAME TO THE MONOLITH: R",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "09:50–10:30"
-                        },
-                        "jPsRS": {
-                          "content": "OPEN SESAME TO THE MONOLITH: RAIDING THE LEGACY CAVE WITH AI AGENTS"
-                        },
-                        "DV9Qn": {
-                          "content": "AI"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/abdel-sghiouar.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Abdel Sghiouar"
-                        }
-                      }
-                    },
-                    {
-                      "id": "B4lPHR",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "CAN AN LLM UNDERSTAND YOUR CAR",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "09:50–10:30"
-                        },
-                        "jPsRS": {
-                          "content": "CAN AN LLM UNDERSTAND YOUR CAR? REAL TELEMETRY AND PREDICTIVE INSIGHTS"
-                        },
-                        "DV9Qn": {
-                          "content": "AI"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/soumaya-erradi.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Soumaya Erradi"
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "Xqa9w",
-                  "name": "BREAK 20",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "FSWKe",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "t6z15",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "XzibK",
-                      "name": "BREAK 20",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "i9tKBF",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "10:30–10:50",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "DiD3b",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "BREAK 20",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "IidNg",
-                  "name": "GENUI IN PRODUCTION: HOW GENUI",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "v5OTeL",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "suRez",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "11:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "id": "k5Z0LM",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "GENUI IN PRODUCTION: HOW GENUI",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "10:50–11:30"
-                        },
-                        "jPsRS": {
-                          "content": "GENUI IN PRODUCTION: HOW GENUI AND A2UI CHANGE MOBILE APPS"
-                        },
-                        "DV9Qn": {
-                          "content": "AI"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/cagatay-ulusoy.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Cagatay Ulusoy"
-                        }
-                      }
-                    },
-                    {
-                      "id": "DpqzF",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "NOT ALL APIS ARE CREATED EQUAL",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "10:50–11:30"
-                        },
-                        "jPsRS": {
-                          "content": "NOT ALL APIS ARE CREATED EQUAL: THE MOST USEFUL SKILL FOR 2026"
-                        },
-                        "DV9Qn": {
-                          "content": "HUMANS"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/zuzana-pe-kov.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Zuzana Pešková, Filip Goszler"
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "hkuPq",
-                  "name": "LUNCH",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "uqE0c",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "KoiTm",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "12:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "jcYHp",
-                      "name": "LUNCH",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Y9yUfS",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "11:30–12:50",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "blRFL",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "LUNCH",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "ajUpd",
-                  "name": "AI PRINTER GO BRRR",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "u7jXVJ",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "n0yhMn",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "13:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "id": "C0ujuA",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "AI PRINTER GO BRRR",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "12:50–13:10"
-                        },
-                        "jPsRS": {
-                          "content": "AI PRINTER GO BRRR"
-                        },
-                        "DV9Qn": {
-                          "content": "AI"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/dominik-imon-k.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Dominik Šimoník, Denis Valášek"
-                        }
-                      }
-                    },
-                    {
-                      "id": "T3hKc",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "INTERACTIONS THAT WORK FOR ALL",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "12:50–13:10"
-                        },
-                        "jPsRS": {
-                          "content": "INTERACTIONS THAT WORK FOR ALL USERS"
-                        },
-                        "DV9Qn": {
-                          "content": "OPEN SOURCE"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/anuradha-kumari.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Anuradha Kumari"
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "R5lKdj",
-                  "name": "YOUR APP, THEIR DATA: LOCAL-FI",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "YbVZa",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "ZbR1t",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "id": "BsP9f",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "YOUR APP, THEIR DATA: LOCAL-FI",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "13:15–13:35"
-                        },
-                        "jPsRS": {
-                          "content": "YOUR APP, THEIR DATA: LOCAL-FIRST WITH EVOLU"
-                        },
-                        "DV9Qn": {
-                          "content": "OPEN SOURCE"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/mat-j-k.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Matěj Kříž"
-                        }
-                      }
-                    },
-                    {
-                      "id": "lYPC7",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "GEMINI ENTERPRISE IN PRACTICE:",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "13:15–13:35"
-                        },
-                        "jPsRS": {
-                          "content": "GEMINI ENTERPRISE IN PRACTICE: FROM SECURE ACCESS TO REAL BUSINESS IMPACT"
-                        },
-                        "DV9Qn": {
-                          "content": "AI"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/dr-roushanak-rahmat.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Dr Roushanak Rahmat"
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "deK0e",
-                  "name": "BREAK",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "S9seP",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "ULow4",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "WZPdP",
-                      "name": "BREAK",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "HnRhB",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "13:35–13:55",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "OW97D",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "BREAK",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "x3JUZv",
-                  "name": "BUILDING A REAL-TIME COLLABORA",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "XySkc",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "N6Q5vQ",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "14:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "id": "T8o8f7",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "BUILDING A REAL-TIME COLLABORA",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "13:55–14:35"
-                        },
-                        "jPsRS": {
-                          "content": "BUILDING A REAL-TIME COLLABORATIVE EDITOR"
-                        },
-                        "DV9Qn": {
-                          "content": "OPEN SOURCE"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/mihaela-gheorghe-roman.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Mihaela Gheorghe-Roman"
-                        }
-                      }
-                    },
-                    {
-                      "id": "MAQRn",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "THE DAY I LEFT MY LINUX MACHIN",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "13:55–14:35"
-                        },
-                        "jPsRS": {
-                          "content": "THE DAY I LEFT MY LINUX MACHINE RUNNING: A LOVE STORY WITH OPENCLAW & HERMES"
-                        },
-                        "DV9Qn": {
-                          "content": "AI"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/riccardo-carlesso.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Riccardo Carlesso"
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "lUEjv",
-                  "name": "BIG BREAK",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "Ibq0W",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "EJZsu",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "vgafv",
-                      "name": "BIG BREAK",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Cac3r",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "14:35–15:25",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "bAXbf",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "BIG BREAK",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "E9SNBR",
-                  "name": "WE ARE ALL FUCKED: AN ANDROID ",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "j82S2",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "UWCaV",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "15:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "id": "St3ID",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "WE ARE ALL FUCKED: AN ANDROID ",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "15:25–15:45"
-                        },
-                        "jPsRS": {
-                          "content": "WE ARE ALL FUCKED: AN ANDROID DEVELOPER’S GUIDE TO THE POST-AI APOCALYPSE"
-                        },
-                        "DV9Qn": {
-                          "content": "HUMANS"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/ashley-davies.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Ashley Davies"
-                        }
-                      }
-                    },
-                    {
-                      "id": "ukFrD",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "HARDWARE IS HARD, BUT AI IS SM",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "15:25–15:45"
-                        },
-                        "jPsRS": {
-                          "content": "HARDWARE IS HARD, BUT AI IS SMARTER: THE ROBOTICS \"IPHONE MOMENT\" IS HERE"
-                        },
-                        "DV9Qn": {
-                          "content": "HUMANS"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/adi-mazor-kario.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Adi Mazor Kario"
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "OKgbH",
-                  "name": "IS YOUR REPO AGENT-READY? BUIL",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "lv9Zz",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "yHFnQ",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "16:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "id": "lgzBq",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "IS YOUR REPO AGENT-READY? BUIL",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "15:50–16:10"
-                        },
-                        "jPsRS": {
-                          "content": "IS YOUR REPO AGENT-READY? BUILDING A CHECKLIST FOR THE AI REVOLUTION"
-                        },
-                        "DV9Qn": {
-                          "content": "AI"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/dominika-zaj-c.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Dominika Zając"
-                        }
-                      }
-                    },
-                    {
-                      "type": "frame",
-                      "id": "v10Q3",
-                      "name": "TBA",
-                      "width": 604,
-                      "fill": "$panel-2",
-                      "cornerRadius": "$radius",
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": [
-                        11,
-                        14
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "ymWYc",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "15:50–16:10",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "OmIhF",
-                          "name": "t",
-                          "fill": "$color-text",
-                          "content": "TALK TBA",
-                          "lineHeight": 1.02,
-                          "fontFamily": "$font-display",
-                          "fontSize": 26,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "uvQaQ",
-                  "name": "BREAK 15",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "U95TNI",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "N040e",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "l71d3R",
-                      "name": "BREAK 15",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "QOaNQ",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "16:10–16:25",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "O4TVzA",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "BREAK 15",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "d4lkc",
-                  "name": "TALK TBA",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "TLKpD",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "UzhZN",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "BNiKq",
-                      "name": "TBA",
-                      "width": 604,
-                      "fill": "$panel-2",
-                      "cornerRadius": "$radius",
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": [
-                        11,
-                        14
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "V2MNKF",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "16:25–17:05",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "MCnVs",
-                          "name": "t",
-                          "fill": "$color-text",
-                          "content": "TALK TBA",
-                          "lineHeight": 1.02,
-                          "fontFamily": "$font-display",
-                          "fontSize": 26,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "Z7fjG",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "GENUI, LLMS DRIVING THE USER E",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "16:25–17:05"
-                        },
-                        "jPsRS": {
-                          "content": "GENUI, LLMS DRIVING THE USER EXPERIENCE, WHAT COULD GO WRONG"
-                        },
-                        "DV9Qn": {
-                          "content": "AI"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/juan-delgado.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Juan Delgado, Brian Egan"
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "SHUNy",
-                  "name": "BRIGHT FUTURE FOR SOFTWARE DEV",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "t7l9L",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "n1btk",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "17:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "id": "TM16G",
-                      "type": "ref",
-                      "ref": "TaSUN",
-                      "name": "BRIGHT FUTURE FOR SOFTWARE DEV",
-                      "descendants": {
-                        "JH8VB": {
-                          "content": "17:15–17:35"
-                        },
-                        "jPsRS": {
-                          "content": "BRIGHT FUTURE FOR SOFTWARE DEVELOPMENT (AND WHY MY DEVELOPERS DISAGREE)"
-                        },
-                        "DV9Qn": {
-                          "content": "HUMANS"
-                        },
-                        "O3FJGu": {
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "assets/speakers/filip-kirschner.jpg",
-                            "mode": "fill"
-                          }
-                        },
-                        "SX4aM": {
-                          "content": "Filip Kirschner"
-                        }
-                      }
-                    },
-                    {
-                      "type": "frame",
-                      "id": "d7oJBJ",
-                      "name": "empty",
-                      "width": 604,
-                      "height": 10
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "kdJ0T",
-                  "name": "LIGHTNING TALKS & CLOSING REMARKS",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "R6vla",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "h5xbE",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "ZA6oL",
-                      "name": "LIGHTNING TALKS & CLOSING REMARKS",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "D8ZJby",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "17:35–18:30",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "fz1Bp",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "LIGHTNING TALKS & CLOSING REMARKS",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "FeMEg",
-                  "name": "AFTERPARTY",
-                  "width": "fill_container",
-                  "gap": 16,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "Q2YRr",
-                      "name": "Time",
-                      "width": 62,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "JAP4t",
-                          "name": "t",
-                          "fill": "$ink-faint",
-                          "content": "00:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "p2LYI3",
-                      "name": "AFTERPARTY",
-                      "width": 1224,
-                      "stroke": "$rule",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 24,
-                      "padding": 14,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "gaR0X",
-                          "name": "time",
-                          "fill": "$ink-muted",
-                          "content": "18:30–00:00",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-xs",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2
-                        },
-                        {
-                          "type": "text",
-                          "id": "AUhHz",
-                          "name": "t",
-                          "fill": "$ink-soft",
-                          "content": "AFTERPARTY",
-                          "fontFamily": "$font-mono",
-                          "fontSize": "$fs-label-sm",
-                          "fontWeight": "normal",
-                          "letterSpacing": 2.2
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "NfLV8",
-          "type": "ref",
-          "ref": "NdYne",
-          "name": "Closer",
-          "width": "fill_container",
-          "enabled": true,
-          "descendants": {
-            "S84f6/oIg87": {
-              "content": "BE THERE",
-              "fill": "$on-accent"
-            },
-            "tBVLf": {
-              "content": "DOORS OPEN",
-              "enabled": true
-            },
-            "pMjC0": {
-              "content": "",
-              "enabled": false
-            },
-            "fBMfH": {
-              "content": "30 OCTOBER",
-              "enabled": true
-            },
-            "Hi082": {
-              "content": "."
-            },
-            "jb5cG": {
-              "content": "Uhelný Mlýn, near Prague. Nine in the morning to eight at night."
-            },
-            "d3PsWY": {
-              "content": "GET TICKETS"
-            },
-            "I4ovO": {
-              "content": "MEET THE SPEAKERS"
-            }
-          }
-        },
-        {
-          "id": "kHmDZ",
-          "type": "ref",
-          "ref": "N0aU1",
-          "name": "Footer",
-          "width": "fill_container",
-          "enabled": true
-        }
-      ]
-    },
-    {
-      "type": "frame",
       "id": "UDvGV",
       "x": 5184,
       "y": 7600,
@@ -18190,6 +16367,3266 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "NCjAa",
+      "x": 3456,
+      "y": 7600,
+      "name": "Agenda",
+      "clip": true,
+      "width": 1440,
+      "fill": "$color-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "JJr0L",
+          "type": "ref",
+          "ref": "aU4cl",
+          "name": "Hero",
+          "width": "fill_container",
+          "height": 584,
+          "enabled": true,
+          "descendants": {
+            "wbynQ": {
+              "content": "THE DAY"
+            },
+            "G1BrX": {
+              "content": "ON A"
+            },
+            "OnLgQ": {
+              "content": "TIMELINE."
+            },
+            "ksyln": {
+              "content": "Every talk mapped to its room and time slot. Compare the two stages and plan your day — the schedule is out, though a slot or two may still shift."
+            }
+          }
+        },
+        {
+          "id": "FtNFF",
+          "type": "ref",
+          "ref": "B0Adf2",
+          "name": "Ticker",
+          "width": "fill_container",
+          "enabled": true
+        },
+        {
+          "type": "frame",
+          "id": "uNjcr",
+          "name": "Band lit",
+          "width": "fill_container",
+          "fill": "$color-bg",
+          "stroke": "$rule",
+          "strokeWidth": {
+            "top": 1
+          },
+          "layout": "vertical",
+          "padding": [
+            144,
+            72
+          ],
+          "children": [
+            {
+              "id": "Q5TzX",
+              "type": "ref",
+              "ref": "L1r2Mj",
+              "name": "Head stack",
+              "width": "fill_container",
+              "descendants": {
+                "A20n1/oIg87": {
+                  "content": "THE SCHEDULE"
+                },
+                "YCbyw": {
+                  "content": "WHEN & WHERE"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "K3yVUg",
+              "name": "Spacer",
+              "width": 10,
+              "height": 26
+            },
+            {
+              "id": "D9DEJ",
+              "type": "ref",
+              "ref": "aRg8G",
+              "name": "Browse all talks",
+              "descendants": {
+                "nNSac": {
+                  "content": "BROWSE ALL TALKS"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "H7M3O8",
+              "name": "Spacer",
+              "width": 10,
+              "height": 64
+            },
+            {
+              "type": "text",
+              "id": "WO2q1",
+              "name": "TZ note",
+              "fill": "$ink-muted",
+              "content": "ALL TIMES PRAGUE (CET)",
+              "fontFamily": "$font-mono",
+              "fontSize": "$fs-label",
+              "fontWeight": "normal",
+              "letterSpacing": 2.2
+            },
+            {
+              "type": "frame",
+              "id": "uhG2o",
+              "name": "Spacer",
+              "width": 10,
+              "height": 40
+            },
+            {
+              "type": "frame",
+              "id": "pw6Zq",
+              "name": "Timetable",
+              "width": "fill_container",
+              "layout": "vertical",
+              "padding": [
+                0,
+                0,
+                8,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "VyPX4",
+                  "name": "Head row",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "zRt7X",
+                      "name": "corner",
+                      "width": 68,
+                      "height": 50,
+                      "fill": "$panel",
+                      "stroke": "$rule-strong",
+                      "strokeWidth": {
+                        "bottom": 1
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ywojs",
+                      "name": "MOONSHINE",
+                      "width": 604,
+                      "height": 50,
+                      "fill": "$panel",
+                      "stroke": "$rule-strong",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "padding": [
+                        16,
+                        14,
+                        13,
+                        14
+                      ],
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wK5NB",
+                          "name": "Stage",
+                          "fill": "$ink",
+                          "content": "MOONSHINE",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "T9Y4oF",
+                      "name": "SPEAKEASY",
+                      "width": 604,
+                      "height": 50,
+                      "fill": "$panel",
+                      "stroke": "$rule-strong",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "padding": [
+                        16,
+                        14,
+                        13,
+                        14
+                      ],
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Bc3aq",
+                          "name": "Stage",
+                          "fill": "$ink",
+                          "content": "SPEAKEASY",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 3
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nAnmn",
+                  "name": "BREAKFAST & REGISTRATION",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "UwWYK",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WxGA8",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "08:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JJS0s",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "DXYSb",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "08:00–08:45",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "acGXa",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "BREAKFAST & REGISTRATION",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "t0ZcO",
+                  "name": "KICK OFF",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Ei5ty",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rBAwY",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "evvrb",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jdTFr",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "08:45–09:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "Er38B",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "KICK OFF",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "u0C1Aa",
+                  "name": "KEYNOTE",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "eOb8g",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "zZO8Z",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "09:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ebdl1",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NkQv1",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "09:00–09:40",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "hAZ5M",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "KEYNOTE",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KHsA3",
+                  "name": "BREAK 10",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "H4I4wX",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jO5Em",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "l3dTGO",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "O8LsYf",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "09:40–09:50",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "CkfiK",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "BREAK 10",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "auLbH",
+                  "name": "OPEN SESAME TO THE MONOLITH: R",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "MdVSp",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "vQ0J3",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "10:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bjMeD",
+                      "name": "OPEN SESAME TO THE MONOLITH: R",
+                      "clip": true,
+                      "width": 604,
+                      "height": 208,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "yHwEa",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "jVuDv",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "09:50–10:30",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "ajdpZ",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "OPEN SESAME TO THE MONOLITH: RAIDING THE LEGACY CAVE WITH AI AGENTS",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "o29GIo",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "AI",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "o5bh5",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "ldHFS",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/abdel-sghiouar.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "BM7Kj",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Abdel Sghiouar",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "M2OVI",
+                      "name": "CAN AN LLM UNDERSTAND YOUR CAR",
+                      "clip": true,
+                      "width": 604,
+                      "height": 208,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "UGGQi",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "fcIJD",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "09:50–10:30",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "Showw",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "CAN AN LLM UNDERSTAND YOUR CAR? REAL TELEMETRY AND PREDICTIVE INSIGHTS",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "AJBM5",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "AI",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CucpO",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "hw46a",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/soumaya-erradi.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "KdqyQ",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Soumaya Erradi",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nR5Ut",
+                  "name": "BREAK 20",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "uVjxD",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WZ2Rl",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "B55ab",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "x9kcT",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "10:30–10:50",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "K1yC2",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "BREAK 20",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Dbaet",
+                  "name": "GENUI IN PRODUCTION: HOW GENUI",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "p65tg",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kzB7w",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "11:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "eWziz",
+                      "name": "GENUI IN PRODUCTION: HOW GENUI",
+                      "clip": true,
+                      "width": 604,
+                      "height": 208,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "S97N3W",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "nTFYE",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "10:50–11:30",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "W0NeDB",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "GENUI IN PRODUCTION: HOW GENUI AND A2UI CHANGE MOBILE APPS",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "a8z85",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "AI",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "NK68F",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "fNNyi",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/cagatay-ulusoy.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "Y7CQHJ",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Cagatay Ulusoy",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Xx3e5",
+                      "name": "NOT ALL APIS ARE CREATED EQUAL",
+                      "clip": true,
+                      "width": 604,
+                      "height": 208,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "JvPqA",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "LemHY",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "10:50–11:30",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "Sw2A2",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "NOT ALL APIS ARE CREATED EQUAL: THE MOST USEFUL SKILL FOR 2026",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "UHUsW",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "HUMANS",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "DVcv8",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "cE5OO",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/zuzana-pe-kov.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "QQkEL",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Zuzana Pešková, Filip Goszler",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "K7i4Le",
+                  "name": "LUNCH",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "lL3RQ",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Tc5Qh",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "12:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "h5whL5",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "iM47T",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "11:30–12:50",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "kukTj",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "LUNCH",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "d1gcs",
+                  "name": "AI PRINTER GO BRRR",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "j7ScX6",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "MP0bO",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "13:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ppkhR",
+                      "name": "AI PRINTER GO BRRR",
+                      "clip": true,
+                      "width": 604,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14,
+                        14,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "eYIs6",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "XpN2P",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "12:50–13:10",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "QEYAQ",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "AI PRINTER GO BRRR",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "kSg59",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "AI",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "j4Lgvl",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "rMZff",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/dominik-imon-k.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "HHn3k",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Dominik Šimoník, Denis Valášek",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "HqUIt",
+                      "name": "INTERACTIONS THAT WORK FOR ALL",
+                      "clip": true,
+                      "width": 604,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14,
+                        14,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "a89qVP",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "e0Igh",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "12:50–13:10",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "UNpHQ",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "INTERACTIONS THAT WORK FOR ALL USERS",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "bubi5",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "OPEN SOURCE",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CoCKL",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "hvleO",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/anuradha-kumari.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "K2ZAI",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Anuradha Kumari",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ys15Z",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "GVkUP",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "oVFR4",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jReLE",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "il9Cs",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "L8dNy",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "G7Kzi9",
+                  "name": "YOUR APP, THEIR DATA: LOCAL-FI",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "PnBaZ",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bMsAW",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FoxDe",
+                      "name": "YOUR APP, THEIR DATA: LOCAL-FI",
+                      "clip": true,
+                      "width": 604,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14,
+                        14,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "Zw70K",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "CI9nP",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "13:15–13:35",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "Bhkcv",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "YOUR APP, THEIR DATA: LOCAL-FIRST WITH EVOLU",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "K4Deu",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "OPEN SOURCE",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "caFSF",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "tb8r7",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/mat-j-k.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "MHFzF",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Matěj Kříž",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Xt1fm",
+                      "name": "GEMINI ENTERPRISE IN PRACTICE:",
+                      "clip": true,
+                      "width": 604,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14,
+                        14,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "aS2L6",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "cQTbl",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "13:15–13:35",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "VKKV3",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "GEMINI ENTERPRISE IN PRACTICE: FROM SECURE ACCESS TO REAL BUSINESS IMPACT",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "l8XX6",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "AI",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "fZfWo",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "W3Ulb",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/dr-roushanak-rahmat.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "LSXcY",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Dr Roushanak Rahmat",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "t8m4XY",
+                  "name": "BREAK",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "aFBMK",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "fR5ib",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "O8OeHv",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "GdiAg",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "13:35–13:55",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "XvSUe",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "BREAK",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gDvK5",
+                  "name": "BUILDING A REAL-TIME COLLABORA",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "K8wf1J",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "UngDY",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "14:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ywRDc",
+                      "name": "BUILDING A REAL-TIME COLLABORA",
+                      "clip": true,
+                      "width": 604,
+                      "height": 208,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "MKRAe",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "ZmD87",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "13:55–14:35",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "haudW",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "BUILDING A REAL-TIME COLLABORATIVE EDITOR",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "NjtzN",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "OPEN SOURCE",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "zdJwg",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "Ru5nL",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/mihaela-gheorghe-roman.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "l9KMw",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Mihaela Gheorghe-Roman",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jhYGP",
+                      "name": "THE DAY I LEFT MY LINUX MACHIN",
+                      "clip": true,
+                      "width": 604,
+                      "height": 208,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "UBf7w",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "UTfhH",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "13:55–14:35",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "NNu5l",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "THE DAY I LEFT MY LINUX MACHINE RUNNING: A LOVE STORY WITH OPENCLAW & HERMES",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "HOWcO",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "AI",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bsvYn",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "M1h4WO",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/riccardo-carlesso.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "EoWGy",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Riccardo Carlesso",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Evh9C",
+                  "name": "BIG BREAK",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "S74Ar",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "mIrm3",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "15:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "EZjGH",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "nvk8m",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "14:35–15:25",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "ru8uP",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "BIG BREAK",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "E6QIO",
+                  "name": "WE ARE ALL FUCKED: AN ANDROID ",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "aI930",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "z16MlW",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ws5UV",
+                      "name": "WE ARE ALL FUCKED: AN ANDROID ",
+                      "clip": true,
+                      "width": 604,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14,
+                        14,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "GkZwq",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "Sedbb",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "15:25–15:45",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "oZB3V",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "WE ARE ALL FUCKED: AN ANDROID DEVELOPER’S GUIDE TO THE POST-AI APOCALYPSE",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "PLy9j",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "HUMANS",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CQNh3",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "G8YLU7",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/ashley-davies.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "LDcGo",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Ashley Davies",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PQoJm",
+                      "name": "HARDWARE IS HARD, BUT AI IS SM",
+                      "clip": true,
+                      "width": 604,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14,
+                        14,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "gAOU8",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "umx5F",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "15:25–15:45",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "hzMrM",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "HARDWARE IS HARD, BUT AI IS SMARTER: THE ROBOTICS \"IPHONE MOMENT\" IS HERE",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "X0bNbk",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "HUMANS",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "wFBYw",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "piudQ",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/adi-mazor-kario.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "WNUt4",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Adi Mazor Kario",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "C8NUwC",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "F9bqi",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RUCcB",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MWBuU",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "DclEZ",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "DkL3d",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "uMVB0",
+                  "name": "IS YOUR REPO AGENT-READY? BUIL",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "UETmv",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Djeiq",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "16:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Sk8VX",
+                      "name": "IS YOUR REPO AGENT-READY? BUIL",
+                      "clip": true,
+                      "width": 604,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14,
+                        14,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "k3Vg29",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "iLmeN",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "15:50–16:10",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "bSWLA",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "IS YOUR REPO AGENT-READY? BUILDING A CHECKLIST FOR THE AI REVOLUTION",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "LW5Rk",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "AI",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Oj4OJ",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "V1xQhu",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/dominika-zaj-c.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "cpvbU",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Dominika Zając",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dSdIb",
+                      "name": "TALK TBA",
+                      "clip": true,
+                      "width": 604,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14,
+                        14,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "KxAKq",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "iyyEI",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "15:50–16:10",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "kg1C1",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "TALK TBA",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xesb4",
+                  "name": "BREAK 15",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qUjgj",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pyI9x",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "m7wFw3",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kRxiJ",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "16:10–16:25",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "Kr5bT",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "BREAK 15",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DaOWU",
+                  "name": "TALK TBA",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qnMY9",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "EowWh",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "17:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xwHTM",
+                      "name": "TALK TBA",
+                      "clip": true,
+                      "width": 604,
+                      "height": 208,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "cVoFv",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "R8Q6wb",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "16:25–17:05",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "A6pVM",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "TALK TBA",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "c2m3xn",
+                      "name": "GENUI, LLMS DRIVING THE USER E",
+                      "clip": true,
+                      "width": 604,
+                      "height": 208,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "j3GKcc",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "F2Ad9",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "16:25–17:05",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "QIgIQ",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "GENUI, LLMS DRIVING THE USER EXPERIENCE, WHAT COULD GO WRONG",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "ycFPe",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "AI",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "hm3ld",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "LU8xG",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/juan-delgado.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "ScTvJ",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Juan Delgado, Brian Egan",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OotIe",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "dlOhl",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "t0oZJ",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "NOwio",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "t4lZW",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "tqgU1",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HW5sv",
+                  "name": "BRIGHT FUTURE FOR SOFTWARE DEV",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "l3JCD",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "v4IUnd",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "C2n9u",
+                      "name": "BRIGHT FUTURE FOR SOFTWARE DEV",
+                      "clip": true,
+                      "width": 604,
+                      "fill": "$panel-2",
+                      "cornerRadius": "$radius",
+                      "stroke": "$rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        11,
+                        14,
+                        14,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "s9AH5",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "toprule",
+                          "fill": "$rule-strong",
+                          "width": 604,
+                          "height": 1
+                        },
+                        {
+                          "type": "text",
+                          "id": "A2P0s",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "17:15–17:35",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "Q4bJc",
+                          "name": "title",
+                          "fill": "$color-text",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "BRIGHT FUTURE FOR SOFTWARE DEVELOPMENT (AND WHY MY DEVELOPERS DISAGREE)",
+                          "lineHeight": 1.04,
+                          "fontFamily": "$font-display",
+                          "fontSize": "$fs-card-title",
+                          "fontWeight": "normal",
+                          "letterSpacing": 0.6
+                        },
+                        {
+                          "type": "text",
+                          "id": "PFPDJ",
+                          "name": "tag",
+                          "fill": "$ink-muted",
+                          "content": "HUMANS",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-sm",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.9
+                        },
+                        {
+                          "type": "frame",
+                          "id": "iHefg",
+                          "name": "foot",
+                          "gap": 7,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "gjTJp",
+                              "name": "av",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "assets/speakers/filip-kirschner.jpg",
+                                "mode": "fill"
+                              },
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "text",
+                              "id": "O4wD9v",
+                              "name": "who",
+                              "fill": "$color-grey",
+                              "content": "Filip Kirschner",
+                              "fontFamily": "$font-mono",
+                              "fontSize": "$fs-label",
+                              "fontWeight": "normal",
+                              "letterSpacing": 0.5
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qOScZ",
+                      "name": "empty",
+                      "width": 604,
+                      "height": 10,
+                      "fill": "#00000000"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "u1RKN",
+                  "name": "LIGHTNING TALKS & CLOSING REMARKS",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sEvJa",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RCeRf",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "18:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qb43f",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lE1bv",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "17:35–18:30",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "xL4le",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "LIGHTNING TALKS & CLOSING REMARKS",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "seS3Q",
+                  "name": "AFTERPARTY",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "U1QvhQ",
+                      "name": "tick",
+                      "width": 68,
+                      "padding": [
+                        6,
+                        14,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "DyPX6",
+                          "name": "t",
+                          "fill": "$ink-faint",
+                          "content": "19:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DglSS",
+                      "name": "band",
+                      "clip": true,
+                      "width": 1218,
+                      "height": 52,
+                      "fill": "$panel-lit",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 18,
+                      "padding": [
+                        14,
+                        14,
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "LqKYJ",
+                          "name": "time",
+                          "fill": "$ink-muted",
+                          "content": "18:30–00:00",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-label-lg",
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "ZjrOv",
+                          "name": "t",
+                          "fill": "$color-cream",
+                          "content": "AFTERPARTY",
+                          "fontFamily": "$font-mono",
+                          "fontSize": "$fs-ui",
+                          "fontWeight": "normal",
+                          "letterSpacing": 2.7
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "YxXj6",
+          "type": "ref",
+          "ref": "NdYne",
+          "name": "Closer",
+          "width": "fill_container",
+          "enabled": true,
+          "descendants": {
+            "S84f6/oIg87": {
+              "content": "BE THERE",
+              "fill": "$on-accent"
+            },
+            "tBVLf": {
+              "content": "DOORS OPEN",
+              "enabled": true
+            },
+            "pMjC0": {
+              "content": "",
+              "enabled": false
+            },
+            "fBMfH": {
+              "content": "30 OCTOBER",
+              "enabled": true
+            },
+            "Hi082": {
+              "content": "."
+            },
+            "jb5cG": {
+              "content": "Uhelný Mlýn, near Prague. Nine in the morning to eight at night."
+            },
+            "d3PsWY": {
+              "content": "GET TICKETS"
+            },
+            "I4ovO": {
+              "content": "MEET THE SPEAKERS"
+            }
+          }
+        },
+        {
+          "id": "KLWGM",
+          "type": "ref",
+          "ref": "N0aU1",
+          "name": "Footer",
+          "width": "fill_container",
+          "enabled": true
         }
       ]
     }
