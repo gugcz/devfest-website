@@ -22,10 +22,19 @@ const HEADER_LINE = /("key":\s*"Content-Security-Policy",\s*"value":\s*)"(?:[^"\
 
 /** @returns {import('astro').AstroIntegration} */
 export default function firebaseHeaders() {
+	let command;
 	return {
 		name: 'firebase-headers',
 		hooks: {
+			'astro:config:setup': (params) => {
+				command = params.command;
+			},
 			'astro:config:done': ({ setAdapter }) => {
+				// Build only. With a staticHeaders adapter registered, the dev
+				// server sends the (hash-less) policy as an enforced header and
+				// blocks every <style> Vite injects; without one, dev keeps
+				// Astro's own <meta> handling.
+				if (command !== 'build') return;
 				setAdapter({
 					name: 'firebase-headers',
 					entrypointResolution: 'auto',

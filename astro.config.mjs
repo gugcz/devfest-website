@@ -95,7 +95,8 @@ const security = {
             ].join(' ')),
             // Path-scoped: the bare Google hosts also serve JSONP endpoints that
             // would let injected markup bypass the hash policy.
-            'frame-src https://www.google.com/recaptcha/', // reCAPTCHA Enterprise anchor/bframe
+            // reCAPTCHA Enterprise anchor/bframe — both hosts from Google's CSP guidance.
+            'frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/',
         ],
         scriptDirective: {
             resources: [
@@ -108,10 +109,14 @@ const security = {
         },
         styleDirective: {
             resources: [
+                // Hashed <style> elements; 'unsafe-inline' only for style=""
+                // attributes (SSR'd custom properties — hero photo vars, team
+                // --i, partner --logo-w — and React style={{}}; an attribute
+                // cannot run script). Engines without -elem/-attr (Safari < 15.4,
+                // Firefox < 108) fall back to a bare `style-src 'self'` and lose
+                // the inline fonts and vars — accepted: a `style-src` fallback
+                // makes Astro warn on every build.
                 { resource: "'self'", kind: 'element' },
-                // SSR'd style="" attributes carry CSS custom properties (hero photo
-                // vars, team --i, partner --logo-w) and React style={{}}; an
-                // attribute cannot run script.
                 { resource: "'unsafe-inline'", kind: 'attribute' },
             ],
         },
@@ -166,7 +171,7 @@ export default defineConfig({
     },
     build: {
         // Every inline <style> costs a hash in the site-wide CSP header
-        // (scripts/csp-header.mjs) that churns on any CSS edit; external
+        // (scripts/firebase-headers.mjs) that churns on any CSS edit; external
         // stylesheets are covered by style-src 'self'.
         inlineStylesheets: 'never',
     },
