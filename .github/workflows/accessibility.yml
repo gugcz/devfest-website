@@ -1,6 +1,7 @@
 name: Accessibility audit
 
-# Every PR, no path filter: the `2026` ruleset requires this check.
+# Every PR, no path filter: the `2026` ruleset requires this check (job id
+# `axe`). It also gates the Content-Security-Policy (scripts/csp-audit.mjs).
 on:
   pull_request:
   push:
@@ -17,7 +18,7 @@ concurrency:
 jobs:
   axe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7.0.1
 
@@ -49,3 +50,17 @@ jobs:
       # runs the axe sweep over the built site.
       - name: Run axe-core audit
         run: npm run a11y
+
+      # Real build (no A11Y_MOCK), so App Check, reCAPTCHA and gtag.js load
+      # for real. Plain `astro build`: `npm run build` would regenerate the
+      # header and hide a stale firebase.json, which the audit checks first.
+      - name: Build for CSP audit
+        run: npx astro build
+        env:
+          PUBLIC_ANALYTICS_ALLOWED_HOSTS: 127.0.0.1
+
+      # Serves dist under the committed header and drives it in Chromium:
+      # direct loads, ClientRouter click-through, cookie accept. Any
+      # securitypolicyviolation fails the job.
+      - name: Run CSP audit
+        run: node scripts/csp-audit.mjs

@@ -14,6 +14,7 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** 22 (see `.nvmrc`; `engine-strict` is on)
+- **CSP:** one `Content-Security-Policy` header for the whole site in `firebase.json` — never a `<meta>`, because `<ClientRouter />` keeps one document across navigations and per-page meta policies stack. `npm run build` runs `scripts/csp-header.mjs`, which hashes every inline script/style in `dist/` and rewrites that header line (commit the result). Third-party hosts live in `DIRECTIVES` there; `npm run csp` drives the built site in Chromium under the header and fails on any violation.
 
 [DESIGN.md](DESIGN.md) is the binding visual system — check it before styling anything.
 
@@ -34,6 +35,9 @@ npm run preview
 
 # Accessibility audit (mock-data build + axe)
 npm run a11y
+
+# CSP audit (build, then drive the site in Chromium under the header)
+npm run csp
 ```
 
 `npm run dev` has no Hosting rewrite table, so it serves `/api/lineup` and

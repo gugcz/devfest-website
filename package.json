@@ -8,11 +8,12 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/csp-header.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
     "a11y": "A11Y_MOCK=1 astro build && node scripts/a11y.mjs",
+    "csp": "npm run build && node scripts/csp-audit.mjs",
     "anchors": "A11Y_MOCK=1 astro build && node scripts/anchor-measure.mjs"
   },
   "dependencies": {
