@@ -23,7 +23,8 @@ import { PATHS, startDistServer } from './lib/dist-server.mjs';
 
 const PORT = 4322;
 const ORIGIN = `http://127.0.0.1:${PORT}`;
-const BEACONS = /^https:\/\/([a-z0-9-]+\.)?(google-analytics\.com|analytics\.google\.com)\/|^https:\/\/www\.googletagmanager\.com\/td/;
+// Every GA4 collector gtag.js may pick (EEA or not) plus its diagnostics ping.
+const BEACONS = /^https:\/\/([a-z0-9-]+\.)?(google-analytics\.com|analytics\.google\.com)\/|^https:\/\/www\.google\.com\/g\/collect|^https:\/\/www\.googletagmanager\.com\/td/;
 
 const findings = [];
 let step = 'startup';
