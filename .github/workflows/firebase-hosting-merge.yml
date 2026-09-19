@@ -40,7 +40,7 @@ jobs:
       # keep-alive failure that breaks FirebaseExtended/action-hosting-deploy
       # when it runs firebase-tools on the runner's security-patched Node.
       - name: Deploy to Firebase Hosting (live)
-        uses: w9jds/firebase-action@v15.30.0
+        uses: w9jds/firebase-action@v15.30.1
         with:
           args: deploy --only hosting --project devfest-cz-app
         env:
