@@ -89,6 +89,7 @@ const security = {
                 'https://europe-west1-devfest-cz-app.cloudfunctions.net', // submitInvoiceCallable
                 'https://*.google-analytics.com', // GA4 beacons; EEA traffic routes to region1.google-analytics.com
                 'https://*.analytics.google.com', // GA4 beacons
+                'https://www.google.com/g/collect', // GA4 beacons outside the EEA (caught by the CI audit on a US runner)
                 'https://www.googletagmanager.com/td', // gtag.js tag-diagnostics beacon (Safari sends it as fetch)
                 'https://www.google.com/recaptcha/', // reCAPTCHA Enterprise client log
             ].join(' ')),
