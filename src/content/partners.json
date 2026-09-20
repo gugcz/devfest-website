@@ -135,5 +135,13 @@
 		"name": "JetBrains",
 		"logo": "/partners/community/jetbrains.svg",
 		"url": "https://www.jetbrains.com/"
+	},
+	{
+		"id": "codemagic",
+		"tier": "community",
+		"order": 4,
+		"name": "Codemagic",
+		"logo": "/partners/community/codemagic.svg",
+		"url": "https://codemagic.io/"
 	}
 ]
