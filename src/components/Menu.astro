@@ -19,17 +19,29 @@ const isInvite = currentPath === '/invite' || currentPath.startsWith('/invite/')
 // to send the visitor back to / first so the section actually exists.
 const ticketsHref = isHome ? '#tickets' : '/#tickets';
 
+// TWO TIERS, NOT TEN EQUAL LINES. Ten destinations at one poster size made
+// the visitor read all ten every time, and split the programme three ways —
+// `Speakers`, `Sessions` and `Agenda` are three doors to one question. The
+// five below are what the site is for (PRODUCT.md: sell tickets, carry the
+// programme); the rest stay one tap away in `secondary`, at label scale.
 const links: readonly NavLink[] = [
+	{ href: ticketsHref, label: 'Tickets', cta: true },
 	{ href: '/speakers', label: 'Speakers' },
 	{ href: '/sessions', label: 'Sessions' },
 	{ href: '/agenda', label: 'Agenda' },
-	{ href: '/team', label: 'Team' },
+	{ href: '/faq', label: 'FAQ' },
+];
+
+// Everything the visit does not turn on. `/invoice` joins them: companies
+// paying by bank transfer are a named user group, and the page was linked
+// from the footer alone, so a company had to already know the URL.
+const secondary: readonly NavLink[] = [
 	{ href: '/partners', label: 'Partners' },
+	{ href: '/invoice', label: 'Company invoice' },
+	{ href: '/contact', label: 'Contact' },
+	{ href: '/team', label: 'Team' },
 	{ href: '/press', label: 'Press' },
 	{ href: '/attending', label: 'I\'m attending' },
-	{ href: '/faq', label: 'FAQ' },
-	{ href: '/contact', label: 'Contact' },
-	{ href: ticketsHref, label: 'Tickets', cta: true },
 ];
 
 const isCurrent = (href: string) => {
@@ -79,9 +91,9 @@ const isCurrent = (href: string) => {
 				<span class="nav-toggle-label">Menu</span>
 			</button>
 
-			<!-- Full-screen overlay at every width. Nine links laid out inline was
-			     the densest thing on the page; behind one control they get poster
-			     scale instead. -->
+			<!-- Full-screen overlay at every width. Every destination is here,
+			     in two tiers: the five the visit turns on at poster scale, the
+			     rest at label scale in the footing. -->
 			<div id="nav-list" class="nav-panel" data-open="false">
 				<ul class="nav-list">
 					{links.map(({ href, label, external, cta }) => {
@@ -102,8 +114,31 @@ const isCurrent = (href: string) => {
 				</ul>
 
 				<div class="nav-foot">
-					<p class="nav-foot-line">30 October 2026 &mdash; Uhelný Mlýn, near Prague</p>
-					<a class="nav-foot-mail" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
+					<!-- The second tier. One wrapping row at label scale: still one
+					     tap from anywhere, but it is scanned after the five above
+					     rather than alongside them. -->
+					<ul class="nav-secondary" aria-label="More pages">
+						{secondary.map(({ href, label, external }) => {
+							const current = isCurrent(href);
+							return (
+								<li>
+									<a
+										href={href}
+										class={`nav-secondary-link${current ? ' nav-secondary-link--current' : ''}`}
+										{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+										{...(current ? { 'aria-current': 'page' } : {})}
+									>
+										{label}
+									</a>
+								</li>
+							);
+						})}
+					</ul>
+
+					<div class="nav-foot-meta">
+						<p class="nav-foot-line">30 October 2026 &mdash; Uhelný Mlýn, near Prague</p>
+						<a class="nav-foot-mail" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
+					</div>
 				</div>
 			</div>
 		</nav>
