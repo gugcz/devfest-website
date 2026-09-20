@@ -23,6 +23,8 @@ const HEADER_LINE = /("key":\s*"Content-Security-Policy",\s*"value":\s*)"(?:[^"\
 /** @returns {import('astro').AstroIntegration} */
 export default function firebaseHeaders() {
 	let command;
+	/** @type {import('astro').RouteToHeaders} */
+	let routeToHeaders;
 	return {
 		name: 'firebase-headers',
 		hooks: {
@@ -37,12 +39,20 @@ export default function firebaseHeaders() {
 				if (command !== 'build') return;
 				setAdapter({
 					name: 'firebase-headers',
+					// No serverEntrypoint: every page is prerendered (buildOutput
+					// 'static'), so nothing is ever rendered on demand.
 					entrypointResolution: 'auto',
 					adapterFeatures: { buildOutput: 'static', staticHeaders: true },
 					supportedAstroFeatures: { staticOutput: 'stable', sharpImageService: 'stable' },
 				});
 			},
-			'astro:build:generated': async ({ routeToHeaders, logger }) => {
+			// Same split as @astrojs/netlify / vercel: the map arrives here, the
+			// platform file is written once the build is done.
+			'astro:build:generated': (params) => {
+				routeToHeaders = params.routeToHeaders;
+			},
+			'astro:build:done': async ({ logger }) => {
+				if (!routeToHeaders) return; // dev / preview: adapter not registered
 				/** @type {Map<string, Set<string>>} directive → sources, in first-seen order */
 				const merged = new Map();
 				for (const { headers } of routeToHeaders.values()) {
@@ -55,6 +65,7 @@ export default function firebaseHeaders() {
 						for (const s of sources) merged.get(name).add(s);
 					}
 				}
+				if (merged.size === 0) throw new Error('CSP: no route produced a Content-Security-Policy header — is security.csp still on?');
 				const policy = [...merged].map(([name, sources]) => [name, ...[...sources].sort()].join(' ')).join('; ');
 				const text = await readFile(FIREBASE_JSON, 'utf8');
 				if (!HEADER_LINE.test(text)) throw new Error('no Content-Security-Policy header in firebase.json');

@@ -14,7 +14,7 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** 22 (see `.nvmrc`; `engine-strict` is on)
-- **CSP:** Astro's `security.csp` (`astro.config.mjs`) hashes every inline script and style; `scripts/firebase-headers.mjs` — a static-headers adapter, the piece Firebase lacks — unions the per-page result into one `Content-Security-Policy` header in `firebase.json` on every build (commit the result). One header, never a `<meta>`: `<ClientRouter />` keeps one document across navigations and per-page meta policies stack. `npm run csp` drives the built site in Chromium under the header and fails on any violation.
+- **CSP:** Astro's `security.csp` (`astro.config.mjs`) hashes the scripts and styles it renders (an `is:inline` script is not — register it with `Astro.csp.insertScriptHash` as `BaseLayout.astro` does); `scripts/firebase-headers.mjs` — a static-headers adapter, the piece Firebase lacks — unions the per-page result into one `Content-Security-Policy` header in `firebase.json` on every build (commit the result). One header, never a `<meta>`: `<ClientRouter />` keeps one document across navigations and per-page meta policies stack. `npm run csp` drives the built site in Chromium under the header and fails on any violation.
 
 [DESIGN.md](DESIGN.md) is the binding visual system — check it before styling anything.
 

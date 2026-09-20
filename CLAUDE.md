@@ -101,13 +101,15 @@ working outside its paths.
 
 ### CSP
 
-Astro's `security.csp` (`astro.config.mjs`) hashes every inline script and
-style; `scripts/firebase-headers.mjs` is the static-headers adapter that
-unions the per-page result into one header in `firebase.json` on every build
-— never a `<meta>` (ClientRouter stacks per-page meta policies). New
-third-party host → the `security` block in `astro.config.mjs`. `npm run csp`
-builds and drives the site in Chromium under the header; CI runs it and fails
-when the committed `firebase.json` is stale — build and commit it.
+Astro's `security.csp` (`astro.config.mjs`) hashes the scripts and styles it
+renders — not `is:inline` ones, those need `Astro.csp.insertScriptHash` as in
+`BaseLayout.astro`. `scripts/firebase-headers.mjs` is the static-headers
+adapter that unions the per-page result into one header in `firebase.json` on
+every build — never a `<meta>` (ClientRouter stacks per-page meta policies;
+Astro's docs call the combination unsupported, the header is the workaround).
+New third-party host → the `security` block in `astro.config.mjs`. `npm run
+csp` builds and drives the site in Chromium under the header; CI runs it and
+fails when the committed `firebase.json` is stale — build and commit it.
 
 ### Styling
 

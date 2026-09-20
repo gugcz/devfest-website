@@ -61,16 +61,21 @@ const devApiMocks = () => ({
     },
 });
 
-// Content-Security-Policy. Astro adds a hash for every inline script and style
-// it renders; scripts/firebase-headers.mjs unions the per-page result into one
-// header in firebase.json (a static build cannot send headers on its own).
-// Adding a third-party script or endpoint host → add it here, with who needs it.
+// Content-Security-Policy. Astro hashes the scripts and styles it renders
+// (hoisted scripts, client directives, island and font styles — not
+// `is:inline`, see BaseLayout.astro); scripts/firebase-headers.mjs unions the
+// per-page result into one header in firebase.json (a static build cannot
+// send headers on its own). Astro's docs list <ClientRouter /> as unsupported
+// with security.csp because a per-page <meta> policy stacks across soft
+// navigations; the site-wide header is the workaround and scripts/csp-audit.mjs
+// clicks through every route to prove it. Adding a third-party script or
+// endpoint host → add it here, with who needs it.
 /** @type {import('astro').AstroUserConfig['security']} */
 const security = {
     csp: {
         directives: [
             "default-src 'self'",
-            "base-uri 'self'",
+            "base-uri 'none'", // no <base> anywhere
             "object-src 'none'",
             "frame-ancestors 'none'", // + X-Frame-Options: DENY in firebase.json for old browsers
             // NewsletterForm posts to SmartEmailing, which 302s back to devfest.cz;
@@ -79,7 +84,7 @@ const security = {
             // data: = film-grain SVG noise in the CSS; blob: = AttendingCard previews;
             // https: = /press hotlinks partner thumbnails.
             "img-src 'self' data: blob: https:",
-            "worker-src 'self' blob:", // heic-to/csp spawns a blob Worker on /attending
+            "worker-src 'self' blob:", // heic-to/csp spawns a blob Worker on /attending (Safari < 15.5 falls back to default-src and blocks it — accepted)
             /** @type {`connect-src${string}`} */ ([
                 "connect-src 'self'",
                 // Exact hosts: *.googleapis.com / *.cloudfunctions.net are multi-tenant.
@@ -108,17 +113,13 @@ const security = {
             ],
         },
         styleDirective: {
-            resources: [
-                // Hashed <style> elements; 'unsafe-inline' only for style=""
-                // attributes (SSR'd custom properties — hero photo vars, team
-                // --i, partner --logo-w — and React style={{}}; an attribute
-                // cannot run script). Engines without -elem/-attr (Safari < 15.4,
-                // Firefox < 108) fall back to a bare `style-src 'self'` and lose
-                // the inline fonts and vars — accepted: a `style-src` fallback
-                // makes Astro warn on every build.
-                { resource: "'self'", kind: 'element' },
-                { resource: "'unsafe-inline'", kind: 'attribute' },
-            ],
+            // Hashes stay on `style-src` itself (Astro adds 'self'): Safari parsed
+            // but ignored `style-src-elem` until 26.2 (WebKit bug 276931), so an
+            // element-scoped rule would drop the fonts for every iPhone before it.
+            // 'unsafe-inline' only for style="" attributes (SSR'd custom properties
+            // — hero photo vars, team --i, partner --logo-w — and React style={{}};
+            // an attribute cannot run script).
+            resources: [{ resource: "'unsafe-inline'", kind: 'attribute' }],
         },
     },
 };
@@ -202,10 +203,11 @@ export default defineConfig({
     vite: {
         plugins: [devApiMocks()],
         build: {
-            // Never inline hoisted page <script>s (Astro does under 4 kB via
-            // this limit): each would need its own CSP hash, and ClientRouter
-            // answers an inline module with a `data:` sentinel script that
-            // script-src blocks. `undefined` keeps the default for other assets.
+            // Never inline hoisted page <script>s: ClientRouter answers an inline
+            // module with a `data:` sentinel script that script-src blocks. Astro
+            // decides inlining with Vite's assetsInlineLimit (an internal of
+            // astro/core/build/plugins/plugin-scripts.js — the CSP audit catches
+            // it if that changes). `undefined` keeps the default for other assets.
             assetsInlineLimit: (file) => (file.endsWith('.js') ? false : undefined),
         },
         resolve: {
