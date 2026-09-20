@@ -326,6 +326,11 @@
 .nav-list {
 	display: flex;
 	flex-direction: column;
+	// Take the room the footing does not, and sit centred in it. Five lines
+	// pinned under the bar left a hole down the middle of a laptop panel;
+	// centred, the space reads as margin rather than as something missing.
+	flex: 1 1 auto;
+	justify-content: center;
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -337,16 +342,18 @@
 // Destinations at poster scale — Bebas is condensed enough to fit them all.
 .nav-link {
 	font-family: var(--font-bebas-neue), sans-serif;
-	// Sized so every destination plus the footing line fits a 900px-tall laptop
-	// viewport without the panel scrolling.
-	font-size: clamp(1.9rem, 4.6vw, 3.4rem);
+	// Sized so the five destinations, the second tier and the footing line fit a
+	// 900px-tall laptop viewport without the panel scrolling. The step grew with
+	// the cut from ten lines to five: at the old size five lines left the panel
+	// mostly empty, and `space-between` opened a hole down the middle of it.
+	font-size: clamp(2.4rem, 6.4vw, 5rem);
 	line-height: 1;
 	letter-spacing: 0.01em;
 	text-transform: uppercase;
 	color: var(--color-text);
 	text-decoration: none;
 	display: block;
-	padding: clamp(0.3rem, 0.8vw, 0.5rem) 0;
+	padding: clamp(0.3rem, 1.1vw, 0.85rem) 0;
 	transition: color 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -369,15 +376,61 @@
 
 .nav-foot {
 	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: var(--maxw);
+	margin-inline: auto;
+	padding-top: 0.75rem;
+	border-top: 1px solid var(--rule-soft);
+}
+
+// ── THE SECOND TIER ────────────────────────────────────────────────────
+// Partners, invoicing, the crew, the press room, the share card. One
+// wrapping row at label scale, under the same rule as the where/when line:
+// present at a glance, never competing with the five above.
+.nav-secondary {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	// No row gap — each link is already a full tap target tall, which is the
+	// separation a wrapped row needs.
+	gap: 0 clamp(1.1rem, 3vw, 2rem);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.nav-secondary-link {
+	display: inline-flex;
+	align-items: center;
+	// Physical touch target, same token as the bar's own controls — these sit
+	// closer together than anything else in the panel (WCAG 2.5.5).
+	min-height: var(--header-tap);
+	@include mono(var(--fs-label-lg), 0.16em, uppercase);
+	color: var(--ink-dim);
+	text-decoration: none;
+	transition: color 0.18s ease;
+}
+
+.nav-secondary-link:hover,
+.nav-secondary-link:focus-visible {
+	color: var(--color-text);
+}
+
+// Same state the poster list uses: accent, and no hover offset.
+.nav-secondary-link--current {
+	color: var(--color-accent-hot);
+}
+
+.nav-foot-meta {
+	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
 	justify-content: space-between;
 	gap: 1rem 2rem;
 	width: 100%;
-	max-width: var(--maxw);
-	margin-inline: auto;
-	padding-top: 1.5rem;
-	border-top: 1px solid var(--rule-soft);
+	padding-top: 0.9rem;
 	@include mono(var(--fs-label-lg), 0.16em, uppercase);
 }
 
@@ -446,7 +499,18 @@
 // Short viewports (landscape phones): a smaller step, and the panel scrolls.
 @media (max-height: 620px) {
 	.nav-link {
-		font-size: clamp(1.5rem, 4.5vh, 2.2rem);
+		font-size: clamp(1.5rem, 5vh, 2.6rem);
+		padding: 0.22rem 0;
+	}
+
+	// The row is what pushes the footing past a landscape phone's height —
+	// let the links sit at their text height and space the rows by hand.
+	.nav-secondary-link {
+		min-height: 2rem;
+	}
+
+	.nav-foot-meta {
+		padding-top: 0.5rem;
 	}
 
 	.nav-panel {
@@ -462,6 +526,7 @@
 	.site-header,
 	.nav-panel,
 	.nav-link,
+	.nav-secondary-link,
 	.header-cta,
 	.brand,
 	.site-header[data-home='true'][data-state='top'] .brand,
