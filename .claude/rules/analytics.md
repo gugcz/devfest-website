@@ -57,7 +57,7 @@ with explicit `page_location`/`page_title`/`page_referrer`.
 
 | Event | Where | Notes |
 | --- | --- | --- |
-| `begin_checkout` | `Tickets.tsx` Buy CTA | ecommerce shape: `currency`, `value`, `items[]` (buyable variants, gross via `grossPrice()`) |
+| `begin_checkout` | `Tickets.tsx` Buy CTA (one per variant) | ecommerce shape: `currency`, `value`, `items[]` (the one variant clicked, gross via `grossPrice()`) |
 | `ticket_purchase_confirmed` | `/thank-you` | ti.to thank-you URL. Not GA4 `purchase` — redirect carries no `transaction_id`/`value` |
 | `sign_up` (`method: 'newsletter'`) | `/newsletter-subscription-thank-you` | native POST to SmartEmailing; this page load is the signal |
 | `generate_lead` | `InvoiceForm.tsx` on callable success | `value`/`currency` from the ti.to estimate |

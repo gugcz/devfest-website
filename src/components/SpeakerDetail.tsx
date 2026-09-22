@@ -1,6 +1,6 @@
 import { PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
 import { paragraphs } from '../lib/paragraphs';
-import Sheet from './Sheet';
+import Sheet, { SheetTickets } from './Sheet';
 import SpeakerPhoto from './SpeakerPhoto';
 import sheet from './Sheet.module.scss';
 import s from './SpeakerDetail.module.scss';
@@ -75,6 +75,8 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 							</ul>
 						</div>
 					)}
+
+					<SheetTickets line={`See ${speaker.fullName} live`} />
 				</div>
 			</div>
 		</Sheet>

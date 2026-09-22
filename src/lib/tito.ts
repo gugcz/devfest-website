@@ -172,12 +172,16 @@ export const FALLBACK_VAT_RATE = 0.21;
 
 /** Gross unit price, or `null` when free / no usable price. The single VAT
  * assumption shared by `priceDisplay`, the invoice estimate and GA4 events:
- * a tax-exclusive release is grossed up with `FALLBACK_VAT_RATE`. */
+ * a tax-exclusive release is grossed up with `FALLBACK_VAT_RATE`, then
+ * rounded to the haléř — ti.to stores the net to two places (2478.51), so
+ * the raw product is 2998.9971 and printed "2 999,00 Kč" instead of the
+ * 2 999 Kč ti.to charges. */
 export function grossPrice(release: TitoRelease): number | null {
 	if (release.price == null) return null;
 	const price = Number(release.price);
 	if (!Number.isFinite(price) || price === 0) return null;
-	return release.tax_exclusive === false ? price : price * (1 + FALLBACK_VAT_RATE);
+	const gross = release.tax_exclusive === false ? price : price * (1 + FALLBACK_VAT_RATE);
+	return Math.round(gross * 100) / 100;
 }
 
 export interface PriceDisplay {
@@ -232,6 +236,8 @@ export function releaseEnd(release: TitoRelease): Date | null {
 export interface WaveDeadline {
 	/** Rendered line, e.g. "Ends Sep 30, 2026". */
 	label: string;
+	/** The bare day, e.g. "Sep 30" — for a line that already names the year's event. */
+	day: string;
 	/** Machine-readable value for `<time dateTime>`. */
 	iso: string;
 }
@@ -248,6 +254,7 @@ export function waveDeadline(releases: TitoRelease[], now: number = Date.now()):
 	if (!latest || latest.getTime() <= now) return null;
 	return {
 		label: `Ends ${formatWaveDate(latest)}`,
+		day: formatWaveDate(latest, false),
 		iso: latest.toISOString(),
 	};
 }
@@ -255,15 +262,91 @@ export function waveDeadline(releases: TitoRelease[], now: number = Date.now()):
 /** Short date in the site's one format (`en-US` short month, same as
  * `/press`). Pinned to Europe/Prague so a visitor abroad doesn't read a
  * deadline a day off from the one ti.to enforces. */
-function formatWaveDate(date: Date): string {
+function formatWaveDate(date: Date, withYear = true): string {
 	try {
 		return new Intl.DateTimeFormat('en-US', {
 			month: 'short',
 			day: 'numeric',
-			year: 'numeric',
+			...(withYear ? { year: 'numeric' } : {}),
 			timeZone: 'Europe/Prague',
 		}).format(date);
 	} catch {
 		return date.toISOString().slice(0, 10);
 	}
+}
+
+export interface ReleaseGroup {
+	name: string;
+	description: string | null;
+	variants: Array<{ release: TitoRelease; variantLabel: string }>;
+}
+
+/**
+ * Group releases that share a base name (e.g. "Early bird — Individual"
+ * and "Early bird — Company funded" → one "Early bird" wave with two
+ * variants). Splits on em-dash / en-dash / hyphen surrounded by spaces.
+ * Group description is taken from the first variant that has one.
+ */
+export function groupReleases(releases: TitoRelease[]): ReleaseGroup[] {
+	const map = new Map<string, ReleaseGroup>();
+	for (const release of releases) {
+		const parts = releaseTitle(release).split(/\s+[—–-]\s+/);
+		const base = parts[0].trim();
+		const variantLabel = (parts[1] ?? '').trim();
+		let group = map.get(base);
+		if (!group) {
+			group = { name: base, description: release.description, variants: [] };
+			map.set(base, group);
+		} else if (!group.description && release.description) {
+			group.description = release.description;
+		}
+		group.variants.push({ release, variantLabel });
+	}
+	return Array.from(map.values());
+}
+
+export interface CurrentOffer {
+	/** Cheapest gross price a visitor can buy right now, formatted. */
+	price: string;
+	/** When the wave closes, or `null` when ti.to carries no future `end_at`. */
+	deadline: WaveDeadline | null;
+	/** Cheapest gross price of the next wave still to open, when it is higher. */
+	nextPrice: string | null;
+}
+
+/**
+ * The one-line offer for the hero: the wave on sale's lowest price, its
+ * deadline and what the price becomes after it. Every figure comes from the
+ * ti.to cache — `null` when nothing is buyable or the wave is free, so the
+ * line is simply absent rather than stating something ti.to does not.
+ */
+export function currentOffer(releases: TitoRelease[], now: number = Date.now()): CurrentOffer | null {
+	const groups = groupReleases(filterDisplayable(releases));
+	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
+	const liveIndex = groups.findIndex((g) => g.variants.some((v) => releaseStatus(v.release).purchasable));
+	if (liveIndex === -1) return null;
+
+	const live = groups[liveIndex];
+	const buyable = live.variants.filter((v) => releaseStatus(v.release).purchasable).map((v) => v.release);
+	const lowest = (list: TitoRelease[]): { amount: number; currency: string | null } | null =>
+		list.reduce<{ amount: number; currency: string | null } | null>((min, release) => {
+			const gross = grossPrice(release);
+			return gross != null && (!min || gross < min.amount) ? { amount: gross, currency: release.currency } : min;
+		}, null);
+
+	const price = lowest(buyable);
+	if (!price) return null;
+
+	// The next wave is the first later one still to open ("Coming soon"), never
+	// a sold-out or ended one — only that price is what "then" means.
+	const next = groups
+		.slice(liveIndex + 1)
+		.find((g) => g.variants.every((v) => releaseStatus(v.release, { laterWaveOnSale }).tone === 'soon'));
+	const nextPrice = next ? lowest(next.variants.map((v) => v.release)) : null;
+
+	return {
+		price: formatAmount(price.amount, price.currency),
+		deadline: waveDeadline(buyable, now),
+		nextPrice: nextPrice && nextPrice.amount > price.amount ? formatAmount(nextPrice.amount, nextPrice.currency) : null,
+	};
 }

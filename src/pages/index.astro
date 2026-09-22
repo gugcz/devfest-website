@@ -4,6 +4,7 @@ import type { ImageMetadata } from 'astro';
 import logo from '../assets/logo.png';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Countdown from '../components/Countdown';
+import HeroOffer from '../components/HeroOffer';
 import NewsletterForm from '../components/NewsletterForm';
 import HeroBackground from '../components/HeroBackground.astro';
 import Ticker from '../components/Ticker.astro';
@@ -119,6 +120,11 @@ const facts = [
 				<div class="hero-actions">
 					<a href="#tickets" class="btn-primary">Get tickets</a>
 					<a href="#newsletter" class="btn-ghost"><span class="btn-ghost-label">Stay in the loop</span></a>
+					<!-- The live price and the date it rises, from ti.to. A third
+					     item in the actions row, not a line under it: on desktop it
+					     sits beside the buttons and costs the hero no height; on a
+					     phone it wraps under them, where the stack already runs. -->
+					<HeroOffer client:load />
 				</div>
 			</div>
 
@@ -181,8 +187,11 @@ const facts = [
 			</div>
 		</section>
 
-		<!-- TICKETS -->
-		<Tickets client:visible />
+		<!-- TICKETS — client:load, not visible: the hero's "Get tickets" jumps
+		     straight here, and a visible-gated island only began loading on
+		     arrival, so a phone landed on the skeleton. The fetch is shared
+		     with the hero's offer line, which needs it at load anyway. -->
+		<Tickets client:load />
 
 		<!-- SPEAKERS TEASER — auto-rotating lineup spotlight; hides until data loads.
 		     client:load (not visible): the island renders nothing until Firestore
