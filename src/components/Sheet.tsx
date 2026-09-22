@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { EVENT } from '../lib/event';
 import { useReturnFocus } from '../lib/useReturnFocus';
 import sheet from './Sheet.module.scss';
 
@@ -114,5 +115,21 @@ export default function Sheet({
 			{children}
 		</div>,
 		document.body,
+	);
+}
+
+/** The way on from a detail sheet: one line naming the day, and the site's
+ * ticket CTA. Links to `/#tickets` (not ti.to) so the visitor sees the waves
+ * and prices before choosing; leaving the page tears the sheet down with it. */
+export function SheetTickets({ line }: { line: string }) {
+	return (
+		<div className={sheet.tickets}>
+			<p className={sheet.ticketsLine}>
+				{line} &middot; {EVENT.dateLabel}, {EVENT.venue}
+			</p>
+			<a className="btn-primary" href="/#tickets">
+				Get tickets
+			</a>
+		</div>
 	);
 }

@@ -135,6 +135,32 @@
 	border-bottom: 1px solid var(--rule-soft);
 }
 
+// The ticket line that closes every detail sheet. A sheet is where interest
+// peaks (someone just read a talk or a bio) and it had no way on to a ticket;
+// the page's own closer sat behind the dialog.
+.tickets {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.1rem 2rem;
+	margin-top: clamp(2.5rem, 5vw, 4rem);
+	padding-top: clamp(1.5rem, 3vw, 2.25rem);
+	border-top: 1px solid var(--rule-soft);
+}
+
+.ticketsLine {
+	@include mono(var(--fs-label), 0.14em, uppercase);
+	color: var(--ink-soft);
+	margin: 0;
+}
+
+@media (max-width: 720px) {
+	.tickets :global(.btn-primary) {
+		width: 100%;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.sheet {
 		animation: none;

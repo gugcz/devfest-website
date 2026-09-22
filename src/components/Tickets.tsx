@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
 import {
+	checkoutUrl,
 	eventUrl,
 	fetchTickets,
 	filterDisplayable,
+	groupReleases,
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
 	waveDeadline,
+	type ReleaseGroup,
 	type ReleaseStatus,
-	type TitoRelease,
 } from '../lib/tito';
 import { trackBeginCheckout } from '../lib/checkout';
 import { useRemote } from '../lib/useRemote';
@@ -28,47 +30,15 @@ function groupDescription(groupName: string, fallback: string | null): string | 
 	return GROUP_DESCRIPTIONS[groupName.trim().toLowerCase()] ?? fallback;
 }
 
-interface ReleaseGroup {
-	name: string;
-	description: string | null;
-	variants: Array<{ release: TitoRelease; variantLabel: string }>;
-}
-
-/**
- * Group releases that share a base name (e.g. "Early bird — Individual"
- * and "Early bird — Company funded" → one "Early bird" card with two
- * variants). Splits on em-dash / en-dash / hyphen surrounded by spaces.
- * Group description is taken from the first variant that has one.
- */
-function groupReleases(releases: TitoRelease[]): ReleaseGroup[] {
-	const map = new Map<string, ReleaseGroup>();
-	for (const release of releases) {
-		const parts = releaseTitle(release).split(/\s+[—–-]\s+/);
-		const base = parts[0].trim();
-		const variantLabel = (parts[1] ?? '').trim();
-		let group = map.get(base);
-		if (!group) {
-			group = { name: base, description: release.description, variants: [] };
-			map.set(base, group);
-		} else if (!group.description && release.description) {
-			group.description = release.description;
-		}
-		group.variants.push({ release, variantLabel });
-	}
-	return Array.from(map.values());
-}
-
-/** Buy CTA click → `begin_checkout` with only the buyable variants, each
+/** Buy CTA click → `begin_checkout` with the one variant the button opens,
  * tagged with its wave (`item_category`) and variant label. */
-function trackGroupCheckout(group: ReleaseGroup, statuses: ReleaseStatus[]): void {
-	trackBeginCheckout(
-		group.variants
-			.filter((_, i) => statuses[i]?.purchasable)
-			.map(({ release, variantLabel }) => ({
-				release,
-				item: { item_category: group.name, ...(variantLabel ? { item_variant: variantLabel } : {}) },
-			})),
-	);
+function trackVariantCheckout(group: ReleaseGroup, variant: ReleaseGroup['variants'][number]): void {
+	trackBeginCheckout([
+		{
+			release: variant.release,
+			item: { item_category: group.name, ...(variant.variantLabel ? { item_variant: variant.variantLabel } : {}) },
+		},
+	]);
 }
 
 /** Every render path is the same `#tickets` section, so the class list is
@@ -175,6 +145,7 @@ export default function Tickets() {
 				{groupReleases(releases).map((group, i) => {
 					const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
 					const anyPurchasable = statuses.some((st) => st.purchasable);
+					const buyable = group.variants.filter((_, vi) => statuses[vi].purchasable);
 					// When no variant is buyable, pick a non-sold-out summary if one
 					// exists so a "Paused" or "Coming soon" wave isn't labeled "Sold
 					// out" just because one variant ran out.
@@ -196,9 +167,7 @@ export default function Tickets() {
 					// the badge, never `end_at` alone — otherwise a hand-closed wave
 					// reads "Ended" beside "Ends Oct 15". Null far more often than not
 					// (most releases carry no `end_at`); the line is then absent.
-					const deadline = waveDeadline(
-						group.variants.filter((_, vi) => statuses[vi].purchasable).map((v) => v.release),
-					);
+					const deadline = waveDeadline(buyable.map((v) => v.release));
 					const serial = String(i + 1).padStart(2, '0');
 					return (
 						<li
@@ -253,16 +222,30 @@ export default function Tickets() {
 									</span>
 								)}
 								{anyPurchasable ? (
-									<a
-										className={`btn-primary ${s.cta}`}
-										href={eventUrl(accountSlug, eventSlug)}
-										target="_blank"
-										rel="noopener noreferrer"
-										aria-label={`Get ${group.name} tickets on ti.to`}
-										onClick={() => trackGroupCheckout(group, statuses)}
-									>
-										Get tickets
-									</a>
+									// One button per buyable variant, each straight into that release's
+									// ti.to checkout (`/with/<slug>`). The event page made the visitor pick
+									// Individual or Company funded a second time, and "2 999 Kč+" hid the
+									// company price until they got there.
+									<div className={s.ctas}>
+										{buyable.map((variant, bi) => {
+											const price = priceDisplay(variant.release)?.primary;
+											const many = buyable.length > 1;
+											const label = many ? variant.variantLabel || releaseTitle(variant.release) : 'Get tickets';
+											return (
+												<a
+													key={variant.release.id}
+													className={`${bi === 0 ? 'btn-primary' : 'btn-ghost'} ${s.cta}`}
+													href={checkoutUrl(variant.release, accountSlug, eventSlug)}
+													target="_blank"
+													rel="noopener noreferrer"
+													aria-label={`Buy ${releaseTitle(variant.release)} ticket${price ? `, ${price}` : ''}, on ti.to`}
+													onClick={() => trackVariantCheckout(group, variant)}
+												>
+													{many && price ? `${label} · ${price}` : label}
+												</a>
+											);
+										})}
+									</div>
 								) : (
 									<span className="record-status">{summary?.label ?? 'Unavailable'}</span>
 								)}

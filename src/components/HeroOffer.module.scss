@@ -1,0 +1,48 @@
+@use '../styles/type' as *;
+// A data line, so the mono voice of the footing strip — not a second
+// statement. Sits in the hero's actions row, after the two buttons. Reserved at one line's height before the fetch lands (and when
+// nothing is on sale), so the hero never reflows under the visitor.
+.offer {
+	@include mono(var(--fs-label), 0.14em, uppercase);
+	// The plate behind the hero is photographic: --ink-strong, like the
+	// footing labels' lifted 0.72, keeps small mono over 4.5:1 on its
+	// darkest part.
+	color: var(--ink-strong);
+	line-height: 1.5;
+	min-height: 1.5em;
+	// A flex item of `.hero-actions`: the row's own gap spaces it.
+	margin: 0;
+	max-width: 100%;
+	animation: fadeInUp 0.9s ease 0.6s both;
+}
+
+// The figure is the fact; it takes the full cream, never the red (red is
+// the CTA's, and #CC0000 is never small text).
+.price {
+	color: var(--color-text);
+	white-space: nowrap;
+}
+
+// Kept whole so a phone wraps before "then", never leaving the new price
+// alone on the second line.
+.offer time,
+.then {
+	white-space: nowrap;
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.offer {
+		animation: none;
+	}
+}

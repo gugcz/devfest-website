@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { type Speaker } from '../lib/speakers';
 import { visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
 import { paragraphs } from '../lib/paragraphs';
-import Sheet from './Sheet';
+import Sheet, { SheetTickets } from './Sheet';
 import SpeakerDetail from './SpeakerDetail';
 import SpeakerPhoto from './SpeakerPhoto';
 import sheet from './Sheet.module.scss';
@@ -123,6 +123,8 @@ export default function SessionDetail({
 							</ul>
 						</div>
 					)}
+
+					<SheetTickets line="Catch this talk live" />
 				</div>
 			</Sheet>
 			{activeSpeaker && <SpeakerDetail speaker={activeSpeaker} onClose={closeSpeaker} />}
