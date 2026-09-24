@@ -1,7 +1,7 @@
 /**
  * `submitInvoiceCallable` — validates the form and writes a `pending` doc;
- * `processInvoiceTrigger` does the rest. Abuse protection: single-use App
- * Check tokens, a global hourly ceiling, a per-(IČO + email) throttle,
+ * `processInvoiceTrigger` does the rest. Abuse protection: App Check, a
+ * global hourly ceiling, a per-(IČO + email) throttle,
  * `maxInstances`.
  */
 
@@ -23,9 +23,10 @@ export const submitInvoiceCallable = onCall(
 	{
 		...CALLABLE,
 		// App Check (reCAPTCHA Enterprise) rejects bots before the handler runs.
-		// Tokens are single-use (`InvoiceForm.tsx` requests limited-use ones).
+		// Not single-use: consuming tokens needs an extra IAM role on the runtime
+		// service account and 401s every submit without it. The global ceiling
+		// below bounds what a replayed token can do.
 		enforceAppCheck: true,
-		consumeAppCheckToken: true,
 		// The browser is the only caller: production, the PR previews, and a dev
 		// server (README: App Check debug token). App Check is the real gate;
 		// this just stops other origins preflighting.
