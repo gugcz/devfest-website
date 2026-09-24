@@ -23,7 +23,8 @@ const ticketsHref = isHome ? '#tickets' : '/#tickets';
 // the visitor read all ten every time, and split the programme three ways —
 // `Speakers`, `Sessions` and `Agenda` are three doors to one question. The
 // five below are what the site is for (PRODUCT.md: sell tickets, carry the
-// programme); the rest stay one tap away in `secondary`, at label scale.
+// programme); the rest continue the same list in `secondary`, one step
+// smaller, so they read as the same menu rather than as fine print.
 const links: readonly NavLink[] = [
 	{ href: ticketsHref, label: 'Tickets', cta: true },
 	{ href: '/speakers', label: 'Speakers' },
@@ -92,31 +93,28 @@ const isCurrent = (href: string) => {
 			</button>
 
 			<!-- Full-screen overlay at every width. Every destination is here,
-			     in two tiers: the five the visit turns on at poster scale, the
-			     rest at label scale in the footing. -->
+			     in one column of two tiers: the five the visit turns on at poster
+			     scale, the rest straight under them, one step smaller. -->
 			<div id="nav-list" class="nav-panel" data-open="false">
-				<ul class="nav-list">
-					{links.map(({ href, label, external, cta }) => {
-						const current = isCurrent(href);
-						return (
-							<li>
-								<a
-									href={href}
-									class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
-									{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-									{...(current ? { 'aria-current': 'page' } : {})}
-								>
-									{label}
-								</a>
-							</li>
-						);
-					})}
-				</ul>
+				<div class="nav-lists">
+					<ul class="nav-list">
+						{links.map(({ href, label, external, cta }) => {
+							const current = isCurrent(href);
+							return (
+								<li>
+									<a
+										href={href}
+										class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
+										{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+										{...(current ? { 'aria-current': 'page' } : {})}
+									>
+										{label}
+									</a>
+								</li>
+							);
+						})}
+					</ul>
 
-				<div class="nav-foot">
-					<!-- The second tier. One wrapping row at label scale: still one
-					     tap from anywhere, but it is scanned after the five above
-					     rather than alongside them. -->
 					<ul class="nav-secondary" aria-label="More pages">
 						{secondary.map(({ href, label, external }) => {
 							const current = isCurrent(href);
@@ -134,7 +132,9 @@ const isCurrent = (href: string) => {
 							);
 						})}
 					</ul>
+				</div>
 
+				<div class="nav-foot">
 					<div class="nav-foot-meta">
 						<p class="nav-foot-line">30 October 2026 &mdash; Uhelný Mlýn, near Prague</p>
 						<a class="nav-foot-mail" href="mailto:devfest@gug.cz">devfest@gug.cz</a>

@@ -323,14 +323,22 @@
 		visibility 0s linear 0s;
 }
 
+.nav-lists {
+	display: flex;
+	flex-direction: column;
+	// Take the room the footing does not, and sit centred in it. Lines pinned
+	// under the bar left a hole down the middle of a laptop panel; centred,
+	// the space reads as margin rather than as something missing.
+	flex: 1 1 auto;
+	justify-content: center;
+	width: 100%;
+	max-width: var(--maxw);
+	margin-inline: auto;
+}
+
 .nav-list {
 	display: flex;
 	flex-direction: column;
-	// Take the room the footing does not, and sit centred in it. Five lines
-	// pinned under the bar left a hole down the middle of a laptop panel;
-	// centred, the space reads as margin rather than as something missing.
-	flex: 1 1 auto;
-	justify-content: center;
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -342,18 +350,20 @@
 // Destinations at poster scale — Bebas is condensed enough to fit them all.
 .nav-link {
 	font-family: var(--font-bebas-neue), sans-serif;
-	// Sized so the five destinations, the second tier and the footing line fit a
-	// 900px-tall laptop viewport without the panel scrolling. The step grew with
-	// the cut from ten lines to five: at the old size five lines left the panel
-	// mostly empty, and `space-between` opened a hole down the middle of it.
-	font-size: clamp(2.4rem, 6.4vw, 5rem);
+	// Sized so the five destinations, the six under them and the footing line
+	// fit a 900px-tall laptop viewport without the panel scrolling.
+	font-size: clamp(2.2rem, 5vw, 3.9rem);
 	line-height: 1;
 	letter-spacing: 0.01em;
 	text-transform: uppercase;
 	color: var(--color-text);
 	text-decoration: none;
-	display: block;
-	padding: clamp(0.3rem, 1.1vw, 0.85rem) 0;
+	// Same tap floor as the six under it, so on a phone both tiers keep one
+	// rhythm instead of the smaller lines sitting looser than the big ones.
+	display: flex;
+	align-items: center;
+	min-height: var(--header-tap);
+	padding: clamp(0.2rem, 0.6vw, 0.45rem) 0;
 	transition: color 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -380,42 +390,42 @@
 	width: 100%;
 	max-width: var(--maxw);
 	margin-inline: auto;
-	padding-top: 0.75rem;
 	border-top: 1px solid var(--rule-soft);
 }
 
 // ── THE SECOND TIER ────────────────────────────────────────────────────
-// Partners, invoicing, the crew, the press room, the share card. One
-// wrapping row at label scale, under the same rule as the where/when line:
-// present at a glance, never competing with the five above.
+// Partners, invoicing, contact, the crew, the press room, the share card.
+// Same column, same face, straight under the five — one step smaller, so
+// the hierarchy holds without pushing them down to fine print. Partners
+// and Team matter; at label scale in dim ink they read as a footnote.
 .nav-secondary {
 	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	// No row gap — each link is already a full tap target tall, which is the
-	// separation a wrapped row needs.
-	gap: 0 clamp(1.1rem, 3vw, 2rem);
+	flex-direction: column;
 	list-style: none;
-	margin: 0;
+	margin: clamp(0.6rem, 1.6vw, 1.25rem) 0 0;
 	padding: 0;
 	width: 100%;
 }
 
 .nav-secondary-link {
-	display: inline-flex;
+	display: flex;
 	align-items: center;
-	// Physical touch target, same token as the bar's own controls — these sit
-	// closer together than anything else in the panel (WCAG 2.5.5).
+	// Physical touch target, same token as the bar's own controls (WCAG 2.5.5).
 	min-height: var(--header-tap);
-	@include mono(var(--fs-label-lg), 0.16em, uppercase);
-	color: var(--ink-dim);
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+	line-height: 1;
+	letter-spacing: 0.01em;
+	text-transform: uppercase;
+	color: var(--color-text);
 	text-decoration: none;
-	transition: color 0.18s ease;
+	transition: color 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-secondary-link:hover,
 .nav-secondary-link:focus-visible {
-	color: var(--color-text);
+	color: var(--color-accent-hot);
+	transform: translateX(0.75rem);
 }
 
 // Same state the poster list uses: accent, and no hover offset.
@@ -500,13 +510,15 @@
 @media (max-height: 620px) {
 	.nav-link {
 		font-size: clamp(1.5rem, 5vh, 2.6rem);
+		min-height: 2rem;
 		padding: 0.22rem 0;
 	}
 
-	// The row is what pushes the footing past a landscape phone's height —
-	// let the links sit at their text height and space the rows by hand.
+	// Eleven lines cannot fit a landscape phone; keep the step small and let
+	// the panel scroll.
 	.nav-secondary-link {
 		min-height: 2rem;
+		font-size: clamp(1.2rem, 4vh, 1.8rem);
 	}
 
 	.nav-foot-meta {
@@ -537,7 +549,9 @@
 	}
 
 	.nav-link:hover,
-	.nav-link:focus-visible {
+	.nav-link:focus-visible,
+	.nav-secondary-link:hover,
+	.nav-secondary-link:focus-visible {
 		transform: none;
 	}
 }
