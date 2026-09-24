@@ -248,7 +248,6 @@ export default function InvoiceForm() {
 		const recipient = fields.email;
 		try {
 			// Callable: the SDK attaches an App Check token, the function enforces it.
-			// Limited-use: the function consumes it, so each submit gets a fresh one.
 			const [{ getFirebaseApp }, { getFunctions, httpsCallable }] = await Promise.all([
 				import('../lib/firebase'),
 				import('firebase/functions'),
@@ -256,7 +255,6 @@ export default function InvoiceForm() {
 			const submit = httpsCallable(
 				getFunctions(getFirebaseApp(), FUNCTIONS_REGION),
 				'submitInvoiceCallable',
-				{ limitedUseAppCheckTokens: true },
 			);
 			await submit({ ...fields, website: honeypot });
 			// The conversion for the company path — no ti.to checkout happens

@@ -42,8 +42,9 @@ ti.to code. Browser never touches Firestore.
   wrapped under `discount_code`, scoped to releases matching
   `INVOICE_RELEASE_MATCH`. Discount mail via Resend, optional.
 - `firestore.rules` denies all clients; not wired into `firebase.json`.
-- `submitInvoiceCallable` has `enforceAppCheck: true` + `consumeAppCheckToken`
-  (client passes `limitedUseAppCheckTokens: true`); `cors` lists devfest.cz +
+- `submitInvoiceCallable` has `enforceAppCheck: true`, no
+  `consumeAppCheckToken` (it needs the App Check Token Verifier IAM role, and
+  401s every submit without it); `cors` lists devfest.cz +
   PR previews only. Throttles, outermost first: `GLOBAL_LIMIT_MAX` per hour
   across everyone (the backstop), then 3 per (IČO, email). Validation lives in
   `validate.ts` (pure, tested); registration ids are whitespace-stripped and
