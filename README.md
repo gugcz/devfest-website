@@ -92,8 +92,7 @@ The default Cloud Functions service account has the IAM needed to write RTDB; no
 | `refreshTicketsScheduled` | Cloud Scheduler, hourly | Sync ti.to releases → RTDB `/tickets` |
 | `ticketsApi` | HTTPS, public (`/api/tickets`) | Serve the cached `/tickets` roadmap as JSON for the browser to `fetch()` (5-min edge TTL) |
 | `ticketsWebhook` | HTTPS, public | Verifies `Tito-Signature` and posts purchase notifications to Slack |
-| `weeklyTicketStatusScheduled` | Cloud Scheduler, Mondays `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |
-| `thursdayTicketStatusScheduled` | Cloud Scheduler, Thursdays `18:00 Europe/Prague` | Same handler as `weeklyTicketStatusScheduled` — second weekly status report |
+| `dailyTicketStatusScheduled` | Cloud Scheduler, daily `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |
 
 Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 1. Paste the deployed `ticketsWebhook` URL.
