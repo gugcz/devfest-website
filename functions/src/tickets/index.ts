@@ -5,5 +5,5 @@
 
 export { refreshTicketsScheduled } from './refresh-cache.js';
 export { ticketsWebhook } from './notify-purchase.js';
-export { weeklyTicketStatusScheduled, thursdayTicketStatusScheduled } from './weekly-status.js';
+export { dailyTicketStatusScheduled } from './daily-status.js';
 export { ticketsApi } from './tickets-api.js';

@@ -1,8 +1,4 @@
-/**
- * Twice-weekly ticket status report to Slack, from live ti.to data. Two
- * `onSchedule` exports share `runTicketStatus` — cron can't express two
- * times-of-day in one expression.
- */
+/** Daily ticket status report to Slack, from live ti.to data. */
 
 import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
@@ -123,16 +119,10 @@ function buildSlackMessage(summary: Summary): SlackPayload {
 	};
 }
 
-/** Shared cron options for both status-report schedules. */
-const SCHEDULE_OPTS = {
-	...SCHEDULED,
-	secrets: [SLACK_WEBHOOK_URL, TITO_API_TOKEN],
-};
-
-/** Shared alerting identity for both schedules — they run the same handler. */
+/** Alerting identity for the status report. */
 const BACKGROUND = {
 	domain: 'tickets',
-	failureNote: 'no sales summary was posted for this slot; ticket sales are unaffected',
+	failureNote: 'no sales summary was posted today; ticket sales are unaffected',
 } as const;
 
 /** Fetch live releases from ti.to and post a sales summary to Slack. */
@@ -157,14 +147,12 @@ async function runTicketStatus(): Promise<void> {
 	});
 }
 
-/** Monday at 09:00 Europe/Prague. Fetches live data from ti.to (no RTDB). */
-export const weeklyTicketStatusScheduled = onSchedule(
-	{ ...SCHEDULE_OPTS, schedule: 'every monday 09:00' },
-	() => runBackground({ ...BACKGROUND, name: 'weeklyTicketStatusScheduled' }, runTicketStatus),
-);
-
-/** Thursday at 18:00 Europe/Prague. Fetches live data from ti.to (no RTDB). */
-export const thursdayTicketStatusScheduled = onSchedule(
-	{ ...SCHEDULE_OPTS, schedule: 'every thursday 18:00' },
-	() => runBackground({ ...BACKGROUND, name: 'thursdayTicketStatusScheduled' }, runTicketStatus),
+/** Every day at 09:00 Europe/Prague. Fetches live data from ti.to (no RTDB). */
+export const dailyTicketStatusScheduled = onSchedule(
+	{
+		...SCHEDULED,
+		schedule: 'every day 09:00',
+		secrets: [SLACK_WEBHOOK_URL, TITO_API_TOKEN],
+	},
+	() => runBackground({ ...BACKGROUND, name: 'dailyTicketStatusScheduled' }, runTicketStatus),
 );
