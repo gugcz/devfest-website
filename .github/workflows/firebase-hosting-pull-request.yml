@@ -40,7 +40,7 @@ jobs:
       # the islands show their "unavailable" state. Functions deploy only via
       # firebase-functions-merge.yml. To verify SSR-function CHANGES, run locally.
       - name: Deploy to Firebase Hosting (preview channel)
-        uses: w9jds/firebase-action@v15.30.1
+        uses: w9jds/firebase-action@v15.30.2
         with:
           args: hosting:channel:deploy pr-${{ github.event.pull_request.number }} --project devfest-cz-app --expires 7d
         env:
