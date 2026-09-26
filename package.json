@@ -19,12 +19,12 @@
     "@astrojs/react": "^7.0.0",
     "@astrojs/sitemap": "^3.7.2",
     "@resvg/resvg-js": "^2.6.2",
-    "astro": "^7.2.8",
+    "astro": "^7.3.4",
     "firebase": "^12.16.0",
     "heic-to": "^1.5.2",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "satori": "^0.33.4"
+    "satori": "^0.33.5"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
@@ -32,7 +32,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "playwright": "^1.60.0",
-    "sass": "^1.104.1",
+    "sass": "^1.105.0",
     "typescript": "^5.6.3"
   },
   "overrides": {
