@@ -1,48 +1,59 @@
 @use '../styles/type' as *;
-// A data line, so the mono voice of the footing strip — not a second
-// statement. Sits in the hero's actions row, after the two buttons. Reserved at one line's height before the fetch lands (and when
-// nothing is on sale), so the hero never reflows under the visitor.
+// A fact of the footing strip, so it wears the strip's two voices: the mono
+// label over the Bebas value. Mirrors `.meta-item` / `.meta-label` /
+// `.meta-value` in `pages/index.scss`, which are Astro-scoped and cannot
+// reach into this island.
 .offer {
-	@include mono(var(--fs-label), 0.14em, uppercase);
-	// The plate behind the hero is photographic: --ink-strong, like the
-	// footing labels' lifted 0.72, keeps small mono over 4.5:1 on its
-	// darkest part.
-	color: var(--ink-strong);
-	line-height: 1.5;
-	min-height: 1.5em;
-	// A flex item of `.hero-actions`: the row's own gap spaces it.
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
 	margin: 0;
-	max-width: 100%;
-	animation: fadeInUp 0.9s ease 0.6s both;
 }
 
-// The figure is the fact; it takes the full cream, never the red (red is
-// the CTA's, and #CC0000 is never small text).
-.price {
+// Holds the box while `/api/tickets` is in flight, so Date and Place never
+// shift when the price lands.
+.pending {
+	visibility: hidden;
+}
+
+// Same lifted 0.72 as the strip's other labels: the plate behind it is
+// photographic, and 0.55 fell under 4.5:1 on its darkest part.
+.label {
+	@include mono(var(--fs-label), 0.26em, uppercase);
+	color: rgba(240, 237, 230, 0.72);
+	white-space: nowrap;
+	margin: 0;
+}
+
+.value {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+	line-height: 1;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
 	color: var(--color-text);
 	white-space: nowrap;
+	margin: 0;
 }
 
-// Kept whole so a phone wraps before "then", never leaving the new price
-// alone on the second line.
-.offer time,
-.then {
-	white-space: nowrap;
-}
+// Same hover as the venue link beside it.
+.link {
+	color: inherit;
+	text-decoration: none;
+	transition: color 0.2s ease;
 
-@keyframes fadeInUp {
-	from {
-		opacity: 0;
-		transform: translateY(12px);
-	}
-	to {
-		opacity: 1;
-		transform: none;
+	&:hover,
+	&:focus-visible {
+		color: var(--color-accent-hot);
 	}
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (max-width: 600px) {
 	.offer {
-		animation: none;
+		gap: 0.35rem;
+	}
+
+	.value {
+		font-size: 1.4rem;
 	}
 }

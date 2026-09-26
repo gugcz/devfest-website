@@ -729,6 +729,12 @@ $strip-tiers: (
 			justify-content: flex-start;
 			padding-inline: 1.35rem;
 		}
+
+		// The ghost has no box on a phone either, so an inset only pushed its
+		// label off the column the whole hero is set on.
+		.btn-ghost {
+			padding-inline: 0;
+		}
 	}
 
 	.hero-meta {
