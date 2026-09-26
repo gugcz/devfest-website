@@ -60,6 +60,12 @@
 	}
 }
 
+// No preview image: the text takes the whole row instead of the 220px
+// thumbnail column.
+.coverage-card--bare {
+	grid-template-columns: 1fr;
+}
+
 .coverage-thumb {
 	position: relative;
 	overflow: hidden;

@@ -4,39 +4,46 @@ import { useRemote } from '../lib/useRemote';
 import s from './HeroOffer.module.scss';
 
 /**
- * The hero's one line of price: the wave on sale, its lowest price, when it
- * closes and what it costs after. Beside the CTA because a price rise with a
- * date is the reason to buy this week, and it was three scrolls down.
+ * The wave on sale, as a third fact in the hero's footing strip beside Date
+ * and Place: the wave and when it closes as the label, its lowest price as
+ * the value, linked down to the Tickets section. It used to trail the two
+ * CTAs as a loose mono sentence, which read as a stray caption rather than
+ * data.
  *
  * Every figure is live from `/api/tickets` (the same memoised fetch the
- * Tickets section uses) — never copy. Nothing buyable, a free wave or a
- * failed fetch → the line stays empty; its box is reserved either way so
- * the hero never shifts when the data lands.
+ * Tickets section uses) — never copy. While the fetch is in flight the item
+ * holds its box so the strip does not reflow when the data lands; nothing
+ * buyable, a free wave or a failed fetch → the item is dropped.
  */
 export default function HeroOffer() {
-	const { data } = useRemote(fetchTickets, 'hero-offer', (cache) => !cache);
+	const { status, data } = useRemote(fetchTickets, 'hero-offer', (cache) => !cache);
 	const offer = useMemo(() => (data ? currentOffer(data.releases ?? []) : null), [data]);
 
+	if (!offer) {
+		return status === 'loading' ? (
+			<dl className={`${s.offer} ${s.pending}`} aria-hidden="true">
+				<dt className={s.label}>&nbsp;</dt>
+				<dd className={s.value}>&nbsp;</dd>
+			</dl>
+		) : null;
+	}
+
 	return (
-		<p className={s.offer}>
-			{offer && (
-				<>
-					{/* The wave's name is left to the Tickets section: at 375px it
-					    pushed the line onto a second row, and the price and the
-					    date are what the line is for. */}
-					From <span className={s.price}>{offer.price}</span>
-					{offer.deadline && (
-						<>
-							{' '}until <time dateTime={offer.deadline.iso}>{offer.deadline.day}</time>
-							{offer.nextPrice && (
-								<>
-									, <span className={s.then}>then {offer.nextPrice}</span>
-								</>
-							)}
-						</>
-					)}
-				</>
-			)}
-		</p>
+		<dl className={s.offer}>
+			<dt className={s.label}>
+				{offer.wave}
+				{offer.deadline && (
+					<>
+						{' · until '}
+						<time dateTime={offer.deadline.iso}>{offer.deadline.day}</time>
+					</>
+				)}
+			</dt>
+			<dd className={s.value}>
+				<a className={s.link} href="#tickets">
+					From {offer.price}
+				</a>
+			</dd>
+		</dl>
 	);
 }

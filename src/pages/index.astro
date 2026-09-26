@@ -120,24 +120,22 @@ const facts = [
 				<div class="hero-actions">
 					<a href="#tickets" class="btn-primary">Get tickets</a>
 					<a href="#newsletter" class="btn-ghost"><span class="btn-ghost-label">Stay in the loop</span></a>
-					<!-- The live price and the date it rises, from ti.to. A third
-					     item in the actions row, not a line under it: on desktop it
-					     sits beside the buttons and costs the hero no height; on a
-					     phone it wraps under them, where the stack already runs. -->
-					<HeroOffer client:load />
 				</div>
 			</div>
 
-			<!-- Full-bleed footing strip. The date, the venue and the clock are
-			     data, so they sit on one line at the base of the frame instead of
+			<!-- Full-bleed footing strip. The date, the venue, the price and the
+			     clock are data, so they sit on one line at the base of the frame instead of
 			     taking a second column away from the statement. -->
 			<div class="hero-foot">
-				<dl class="hero-meta">
-					<div class="meta-item">
+				<!-- One <dl> per fact, not one around all three: the price is an
+				     island, and its <astro-island> wrapper is not a legal child
+				     of a <dl>. -->
+				<div class="hero-meta">
+					<dl class="meta-item">
 						<dt class="meta-label">Date</dt>
 						<dd class="meta-value">30 Oct 2026</dd>
-					</div>
-					<div class="meta-item">
+					</dl>
+					<dl class="meta-item">
 						<dt class="meta-label">Place</dt>
 						<dd class="meta-value">
 							<a
@@ -147,8 +145,11 @@ const facts = [
 								rel="noopener noreferrer"
 							>Uhelný Mlýn</a>
 						</dd>
-					</div>
-				</dl>
+					</dl>
+					<!-- The wave on sale and its price, live from ti.to: a fact
+					     like the two beside it, not a caption after the CTAs. -->
+					<HeroOffer client:load />
+				</div>
 
 				<div class="hero-clock" aria-label="Time until doors open">
 					<p class="meta-label">Doors open in</p>
@@ -190,7 +191,7 @@ const facts = [
 		<!-- TICKETS — client:load, not visible: the hero's "Get tickets" jumps
 		     straight here, and a visible-gated island only began loading on
 		     arrival, so a phone landed on the skeleton. The fetch is shared
-		     with the hero's offer line, which needs it at load anyway. -->
+		     with the hero's offer, which needs it at load anyway. -->
 		<Tickets client:load />
 
 		<!-- SPEAKERS TEASER — auto-rotating lineup spotlight; hides until data loads.

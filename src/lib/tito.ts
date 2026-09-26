@@ -306,47 +306,35 @@ export function groupReleases(releases: TitoRelease[]): ReleaseGroup[] {
 }
 
 export interface CurrentOffer {
+	/** The wave on sale, as its group is named (e.g. "Early bird"). */
+	wave: string;
 	/** Cheapest gross price a visitor can buy right now, formatted. */
 	price: string;
 	/** When the wave closes, or `null` when ti.to carries no future `end_at`. */
 	deadline: WaveDeadline | null;
-	/** Cheapest gross price of the next wave still to open, when it is higher. */
-	nextPrice: string | null;
 }
 
 /**
- * The one-line offer for the hero: the wave on sale's lowest price, its
- * deadline and what the price becomes after it. Every figure comes from the
+ * The offer in the hero's footing strip: the wave on sale, its lowest price
+ * and when it closes. Every figure comes from the
  * ti.to cache — `null` when nothing is buyable or the wave is free, so the
  * line is simply absent rather than stating something ti.to does not.
  */
 export function currentOffer(releases: TitoRelease[], now: number = Date.now()): CurrentOffer | null {
 	const groups = groupReleases(filterDisplayable(releases));
-	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
-	const liveIndex = groups.findIndex((g) => g.variants.some((v) => releaseStatus(v.release).purchasable));
-	if (liveIndex === -1) return null;
+	const live = groups.find((g) => g.variants.some((v) => releaseStatus(v.release).purchasable));
+	if (!live) return null;
 
-	const live = groups[liveIndex];
 	const buyable = live.variants.filter((v) => releaseStatus(v.release).purchasable).map((v) => v.release);
-	const lowest = (list: TitoRelease[]): { amount: number; currency: string | null } | null =>
-		list.reduce<{ amount: number; currency: string | null } | null>((min, release) => {
-			const gross = grossPrice(release);
-			return gross != null && (!min || gross < min.amount) ? { amount: gross, currency: release.currency } : min;
-		}, null);
-
-	const price = lowest(buyable);
+	const price = buyable.reduce<{ amount: number; currency: string | null } | null>((min, release) => {
+		const gross = grossPrice(release);
+		return gross != null && (!min || gross < min.amount) ? { amount: gross, currency: release.currency } : min;
+	}, null);
 	if (!price) return null;
 
-	// The next wave is the first later one still to open ("Coming soon"), never
-	// a sold-out or ended one — only that price is what "then" means.
-	const next = groups
-		.slice(liveIndex + 1)
-		.find((g) => g.variants.every((v) => releaseStatus(v.release, { laterWaveOnSale }).tone === 'soon'));
-	const nextPrice = next ? lowest(next.variants.map((v) => v.release)) : null;
-
 	return {
+		wave: live.name,
 		price: formatAmount(price.amount, price.currency),
 		deadline: waveDeadline(buyable, now),
-		nextPrice: nextPrice && nextPrice.amount > price.amount ? formatAmount(nextPrice.amount, nextPrice.currency) : null,
 	};
 }

@@ -139,7 +139,7 @@ export default function Tickets() {
 			    stack under it was the shape the speakers teaser was also using. */}
 			<header className="head-split">
 				<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
-				<p className="head-note">Three waves: early bird, regular, lazy bird. Individual or company-funded.</p>
+				<p className="head-note">The earlier the wave, the lower the price.</p>
 			</header>
 			<ul className={`field ${s.stubs}`} role="list">
 				{groupReleases(releases).map((group, i) => {
@@ -214,7 +214,10 @@ export default function Tickets() {
 								{lead && (
 									<span className={s.stubPriceGroup}>
 										<span className={s.stubPrice}>
-											{manyPrices ? `${lead.primary}+` : lead.primary}
+											{/* "From", not a trailing "+": "1 210 Kč+" read as a
+											    typo beside the buttons that spell out each price. */}
+											{manyPrices && <span className={s.stubFrom}>From </span>}
+											{lead.primary}
 										</span>
 										{lead.secondary && (
 											<span className={s.stubVat}>{lead.secondary}</span>
@@ -254,18 +257,21 @@ export default function Tickets() {
 					);
 				})}
 			</ul>
+			{/* Two quiet side doors, one voice. The invoice route used to be a
+			    second filled red button under the list, competing with the live
+			    wave's own buy button for the one primary action in the section. */}
 			<p className={s.footnote}>
 				Not ready yet?{' '}
 				<a href="#newsletter" className={s.footnoteLink}>
 					Notify me when the next wave drops
 				</a>
 			</p>
-			<div className={s.invoice}>
-				<span className={s.invoiceLabel}>Buying for a company?</span>
-				<a className={`btn-primary ${s.cta}`} href="/invoice" aria-label="Request a company invoice">
-					Get a company invoice
+			<p className={s.footnote}>
+				Buying for a company?{' '}
+				<a href="/invoice" className={s.footnoteLink}>
+					Request a company invoice
 				</a>
-			</div>
+			</p>
 		</section>
 	);
 }
