@@ -103,6 +103,8 @@ export default function SpeakerCard() {
 	const [photoError, setPhotoError] = useState('');
 	const [transform, setTransform] = useState<PhotoTransform>(DEFAULT_TRANSFORM);
 	const [shareState, setShareState] = useState<ShareState>('idle');
+	// Bumped once the latin-ext glyphs for the current text have loaded.
+	const [glyphsReady, setGlyphsReady] = useState(0);
 	const [shareMessage, setShareMessage] = useState('');
 	const [assets, setAssets] = useState<{ fonts: Fonts; palette: Palette; logo: HTMLImageElement | null } | null>(
 		null,
@@ -175,11 +177,32 @@ export default function SpeakerCard() {
 			assets.palette,
 			assets.logo,
 		);
-	}, [speaker, talk, photo, transform, assets]);
+	}, [speaker, talk, photo, transform, assets, glyphsReady]);
 
 	useEffect(() => {
 		draw();
 	}, [draw]);
+
+	// The latin-ext halves of the faces are `unicode-range` subsets that load
+	// only when something on the page uses them, and canvas text never asks —
+	// so a Czech name or title would draw its accents in a fallback face.
+	// Load them for this exact text, then redraw.
+	useEffect(() => {
+		if (!assets) return;
+		let cancelled = false;
+		const text = `${speaker?.fullName ?? ''} ${talk}`;
+		Promise.all([
+			document.fonts.load(`100px ${assets.fonts.bebas}`, text.toLocaleUpperCase('cs-CZ')),
+			document.fonts.load(`500 44px ${assets.fonts.mono}`, text.toLocaleUpperCase('cs-CZ')),
+		])
+			.catch(() => undefined)
+			.then(() => {
+				if (!cancelled) setGlyphsReady((n) => n + 1);
+			});
+		return () => {
+			cancelled = true;
+		};
+	}, [speaker?.fullName, talk, assets]);
 
 	async function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
 		const file = event.target.files?.[0];

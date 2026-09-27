@@ -19,9 +19,12 @@ export interface SpeakerCardData {
 const MARGIN = 80;
 const BAND_HEIGHT = 136;
 const LOGO_HEIGHT = 64;
-const TALK_MAX_LINES = 4;
-const TALK_START_PX = 132;
-const TALK_FLOOR_PX = 76;
+const TALK_MAX_LINES = 3;
+const TALK_START_PX = 112;
+const TALK_FLOOR_PX = 56;
+/** Cap on the title block's height, so a long title can't bury the photo:
+ * the block stays in the lower third however long the talk is named. */
+const TALK_MAX_BLOCK_PX = 260;
 /** Bebas sits tight; 0.94 keeps stacked lines from touching. */
 const TALK_LEADING = 0.94;
 
@@ -43,7 +46,8 @@ function wrapWords(ctx: CanvasRenderingContext2D, text: string, maxWidth: number
 }
 
 /** Shrinks the talk title from `TALK_START_PX` until it fits in
- * `TALK_MAX_LINES`; past the floor the last line is ellipsized. */
+ * `TALK_MAX_LINES` and `TALK_MAX_BLOCK_PX`; past the floor the last line is
+ * ellipsized. */
 function layoutTalk(
 	ctx: CanvasRenderingContext2D,
 	title: string,
@@ -55,14 +59,16 @@ function layoutTalk(
 	for (;;) {
 		ctx.font = `${size}px ${family}`;
 		lines = wrapWords(ctx, title, maxWidth);
-		if (lines.length <= TALK_MAX_LINES || size <= TALK_FLOOR_PX) break;
+		const fits = lines.length <= TALK_MAX_LINES && lines.length * size * TALK_LEADING <= TALK_MAX_BLOCK_PX;
+		if (fits || size <= TALK_FLOOR_PX) break;
 		size -= 4;
 	}
 	if (lines.length > TALK_MAX_LINES) {
 		lines = lines.slice(0, TALK_MAX_LINES);
-		let last = lines[TALK_MAX_LINES - 1];
-		while (last.length > 1 && ctx.measureText(`${last}…`).width > maxWidth) last = last.slice(0, -1);
-		lines[TALK_MAX_LINES - 1] = `${last.trimEnd()}…`;
+		// Drop whole words, not letters, until the ellipsis fits.
+		const words = lines[TALK_MAX_LINES - 1].split(' ');
+		while (words.length > 1 && ctx.measureText(`${words.join(' ')}…`).width > maxWidth) words.pop();
+		lines[TALK_MAX_LINES - 1] = `${words.join(' ').replace(/[\s,.:;–-]+$/, '')}…`;
 	}
 	return { lines, size };
 }
@@ -105,7 +111,9 @@ export function drawSpeakerCard(
 	// ── Text block, measured bottom-up from the lower margin: name (mono),
 	// talk title (Bebas), `SPEAKER` stamp.
 	const name = data.name.trim().toUpperCase() || 'YOUR NAME';
-	const talk = data.talk.trim();
+	// Uppercased up front: Bebas draws ASCII lowercase as caps but has no
+	// lowercase accented glyphs, so `č`/`ř`/`ž` would fall back to another face.
+	const talk = data.talk.trim().toLocaleUpperCase('cs-CZ');
 	const { lines, size: talkSize } = talk
 		? layoutTalk(ctx, talk, fonts.bebas, textWidth)
 		: { lines: [] as string[], size: 0 };
