@@ -27,6 +27,8 @@ const TALK_FLOOR_PX = 56;
 const TALK_MAX_BLOCK_PX = 260;
 /** Bebas sits tight; 0.94 keeps stacked lines from touching. */
 const TALK_LEADING = 0.94;
+/** Width of the fade from a photo edge into the black card. */
+const PHOTO_FEATHER_PX = 180;
 
 /** Greedy word wrap at the font currently set on `ctx`. */
 function wrapWords(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
@@ -73,6 +75,35 @@ function layoutTalk(
 	return { lines, size };
 }
 
+/** Fades each photo edge that sits inside the card into the black behind it,
+ * so a zoomed-out or panned photo has no hard seam (the `/attending` card
+ * gets the same from its vignette). At zoom 1 with no pan every edge is off
+ * the card and nothing is drawn. */
+function featherPhotoEdges(
+	ctx: CanvasRenderingContext2D,
+	x: number,
+	y: number,
+	width: number,
+	height: number,
+	size: number,
+): void {
+	const feather = Math.min(PHOTO_FEATHER_PX, width / 2, height / 2);
+	const edges: Array<[x0: number, y0: number, x1: number, y1: number, inside: boolean]> = [
+		[x, 0, x + feather, 0, x > 0],
+		[x + width, 0, x + width - feather, 0, x + width < size],
+		[0, y, 0, y + feather, y > 0],
+		[0, y + height, 0, y + height - feather, y + height < size],
+	];
+	for (const [x0, y0, x1, y1, inside] of edges) {
+		if (!inside) continue;
+		const fade = ctx.createLinearGradient(x0, y0, x1, y1);
+		fade.addColorStop(0, 'rgba(0,0,0,1)');
+		fade.addColorStop(1, 'rgba(0,0,0,0)');
+		ctx.fillStyle = fade;
+		ctx.fillRect(x, y, width, height);
+	}
+}
+
 /** Paints the 1200×1200 speaker card. Synchronous; pass `logo` as `null`
  * until decoded. */
 export function drawSpeakerCard(
@@ -95,18 +126,15 @@ export function drawSpeakerCard(
 	const scale = coverScale(data.photo.width, data.photo.height, size) * data.transform.zoom;
 	const drawWidth = data.photo.width * scale;
 	const drawHeight = data.photo.height * scale;
-	ctx.drawImage(
-		data.photo,
-		size / 2 - drawWidth / 2 + data.transform.panX * scale,
-		size / 2 - drawHeight / 2 + data.transform.panY * scale,
-		drawWidth,
-		drawHeight,
-	);
+	const dx = size / 2 - drawWidth / 2 + data.transform.panX * scale;
+	const dy = size / 2 - drawHeight / 2 + data.transform.panY * scale;
+	ctx.drawImage(data.photo, dx, dy, drawWidth, drawHeight);
 	ctx.save();
 	ctx.globalCompositeOperation = 'saturation';
 	ctx.fillStyle = '#808080';
 	ctx.fillRect(0, 0, size, size);
 	ctx.restore();
+	featherPhotoEdges(ctx, dx, dy, drawWidth, drawHeight, size);
 
 	// ── Text block, measured bottom-up from the lower margin: name (mono),
 	// talk title (Bebas), `SPEAKER` stamp.
