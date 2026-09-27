@@ -132,10 +132,10 @@ Only `secret` releases are dropped (`isWebsiteVisible`, again client-side). Ever
 
 ## Speakers & Sessions — Sessionize → Firestore → `/api/lineup`
 
-`/speakers` and `/sessions` render client-side from **Firestore**, mirrored daily from **Sessionize** by a Cloud Function. Browsers never touch Sessionize; they read the cached `/api/lineup` endpoint, not the Firebase SDK.
+`/speakers` and `/sessions` render client-side from **Firestore**, mirrored every 15 minutes from **Sessionize** by a Cloud Function. Browsers never touch Sessionize; they read the cached `/api/lineup` endpoint, not the Firebase SDK.
 
 ```
-Cloud Scheduler (every day 06:00, Europe/Prague)
+Cloud Scheduler (every 15 minutes)
   └─> Cloud Function `refreshSessionizeScheduled` (europe-west1)
         ├─ fetch  Sessionize "All data" JSON view (SESSIONIZE_ENDPOINT_ID)
         ├─ mirror speaker photos → Firebase Storage `speakers/{id}` (idempotent)
@@ -151,7 +151,7 @@ Browser
 
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
-| `refreshSessionizeScheduled` | Cloud Scheduler, daily 06:00 | Sync Sessionize → Storage photos + Firestore `speakers`/`sessions` |
+| `refreshSessionizeScheduled` | Cloud Scheduler, every 15 minutes | Sync Sessionize → Storage photos + Firestore `speakers`/`sessions` |
 | `lineupApi` | HTTPS, public (`/api/lineup`) | Serve `{ speakers, sessions }` as JSON for the browser to `fetch()` (15-min edge TTL) |
 | `speakerPhotoApi` | HTTPS, public (`/api/speaker-photo?id=`) | Serve one speaker's photo same-origin so `/speaker-card` can export its canvas (1-day edge TTL) |
 
