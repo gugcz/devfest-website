@@ -14,7 +14,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'The voices on<br />the <span class="red">stand.</span>'}
-			lede="The developers, makers and researchers stepping up to the mic at DevFest.cz 2026. The lineup is out — a few more names are still to land."
+			lede="Developers, makers and researchers on stage at DevFest.cz 2026, with a few names still to come. Pick anyone for their bio and talk."
 			seoHeading="DevFest.cz 2026 Speakers"
 			titleId="speakers-title"
 			focus="68% 42%"
@@ -26,13 +26,10 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			<!-- Red raking light swept by the scroll; decorative, enhancement-only. -->
 			<span class="rake-beam" aria-hidden="true"></span>
 			<div class="band-inner">
-				<header class="head-stack">
-					<p class="eyebrow">The lineup</p>
-					<h2 class="display head-title">Who&rsquo;s talking</h2>
-					<!-- The one affordance line for the whole sheet. It used to be a
-					     "View profile →" chip printed on every single card. -->
-					<p class="speakers-hint">Pick a face for the full record</p>
-				</header>
+				<!-- The hero already names this band, so its head is for screen
+				     readers only; a second poster headline ("Who's talking") under
+				     "The voices on the stand" said the same thing twice. -->
+				<h2 class="sr-only">Speakers</h2>
 
 				<!-- The grid hydrates client-side from Firestore; keep a static note
 				     for crawlers and no-JS visitors. -->
@@ -48,7 +45,6 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		</section>
 
 		<Closer
-			eyebrow="Be there"
 			titleHtml={'See them<br />in the <span class="red">room</span>.'}
 			note="One day, one mill, the whole lineup on stage."
 			tone="accent"
@@ -57,7 +53,3 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		/>
 	</main>
 </BaseLayout>
-
-<style lang="scss">
-	@use './speakers';
-</style>

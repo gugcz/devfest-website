@@ -14,7 +14,8 @@ import { EVENT_TOPICS } from '../lib/ticker';
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'The day<br /><span class="red">on a timeline.</span>'}
-			lede="Every talk mapped to its room and time slot. Compare the two stages and plan your day — the schedule is out, though a slot or two may still shift."
+			lede="Every talk by room and time. A slot or two may still move before the day."
+			link={{ href: '/sessions', label: 'Browse all talks' }}
 			seoHeading="DevFest.cz 2026 Agenda & Schedule"
 			titleId="agenda-title"
 			focus="82% 60%"
@@ -24,13 +25,8 @@ import { EVENT_TOPICS } from '../lib/ticker';
 
 		<section class="band band--lit" aria-label="Conference timetable">
 			<div class="band-inner">
-				<header class="head-stack">
-					<p class="eyebrow">The schedule</p>
-					<h2 class="display head-title">When &amp; where</h2>
-					<p class="head-stack-link">
-						<a class="btn-ghost" href="/sessions">Browse all talks</a>
-					</p>
-				</header>
+				<!-- The hero names this band; its head is for screen readers only. -->
+				<h2 class="sr-only">Timetable</h2>
 
 				<!-- The timetable hydrates client-side from /api/lineup; keep a static
 				     note for crawlers and no-JS visitors. -->
@@ -45,7 +41,6 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		</section>
 
 		<Closer
-			eyebrow="Be there"
 			titleHtml={'Doors open<br /><span class="red">30 October</span>.'}
 			note="Uhelný Mlýn, near Prague. Nine in the morning to eight at night."
 			tone="accent"

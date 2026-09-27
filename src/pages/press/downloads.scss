@@ -13,36 +13,6 @@
 
 /* ===================== SECTION HEAD ===================== */
 // Left-set editorial head at the homepage section rhythm.
-.section-head {
-	margin-bottom: 4rem;
-	text-align: left;
-}
-
-.section-label {
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	gap: 0.9rem;
-	margin: 0 0 1rem;
-	@include mono(var(--fs-label-sm), 0.3em, uppercase);
-	color: var(--ink-meta);
-
-	&::after {
-		content: '';
-		flex: 1 1 auto;
-		height: 1px;
-		background: var(--rule-soft);
-	}
-}
-
-// A plain mono count, never a hairline-boxed numeral.
-.section-no {
-	flex: 0 0 auto;
-	color: var(--ink-muted);
-	font-variant-numeric: tabular-nums;
-	letter-spacing: 0.16em;
-}
-
 /* ===================== GRID ===================== */
 // Ruled contact sheet. Fixed column counts, not `auto-fill`: the page must
 // know the count to close a short last row with blanks (downloads.astro).
@@ -241,7 +211,6 @@
 @media (max-width: 600px) {
 	.press-body { padding: clamp(3rem, 9vw, 4rem) var(--gutter); }
 	.kit-link { min-height: 0; }
-	.section-head { margin-bottom: 2.4rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

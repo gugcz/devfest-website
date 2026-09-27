@@ -46,6 +46,19 @@ function hostname(url: string): string {
 	}
 }
 
+// Last-resort title when the article's OG tags could not be read: its URL
+// slug as words. A raw URL set at headline scale broke into a column of
+// fragments.
+function slugTitle(url: string): string {
+	try {
+		const slug = new URL(url).pathname.split('/').filter(Boolean).pop() ?? '';
+		const words = decodeURIComponent(slug).replace(/[-_]+/g, ' ').trim();
+		return words ? words.charAt(0).toUpperCase() + words.slice(1) : hostname(url);
+	} catch {
+		return url;
+	}
+}
+
 // Resolve each entry from its Open Graph tags at build time. fetchOg never
 // throws (returns {} on failure), so a dead/blocked source degrades to a
 // hostname + bare-link card instead of breaking the build.
@@ -61,7 +74,7 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 		return {
 			href: m.href,
 			outlet: m.outlet ?? og.siteName ?? hostname(m.href),
-			title: m.title ?? og.title ?? m.href,
+			title: m.title ?? og.title ?? slugTitle(m.href),
 			date: iso ? iso.slice(0, 10) : undefined,
 			dateLabel,
 			image: m.image ?? og.image,
@@ -79,7 +92,7 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'In the <span class="red">news.</span>'}
-			lede="Covering DevFest.cz 2026? Find the key facts, our logos, and someone to talk to. We're glad to help journalists, bloggers, and media partners."
+			lede="What has been written about DevFest.cz 2026 so far. Writing a story yourself? The press kit and our contact are at the bottom."
 			seoHeading="DevFest.cz 2026 Press & Media"
 			titleId="press-title"
 		/>
@@ -90,17 +103,17 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 		<!-- IN THE PRESS + DESK + PRESS KIT -->
 		<section class="band band--lit" aria-label="Press coverage">
 			<div class="band-inner">
-								<!-- MEDIA COVERAGE -->
+				<!-- MEDIA COVERAGE -->
 				<section class="press-section" aria-labelledby="coverage-heading">
-					<header class="section-head">
-						<h2 id="coverage-heading" class="display head-title">In the press</h2>
-					</header>
+					{/* "In the press" under "In the news." was the same headline twice;
+					    the hero names the list, screen readers keep the head. */}
+					<h2 id="coverage-heading" class="sr-only">Coverage</h2>
 
 					{mediaCoverage.length > 0 ? (
 						<ul class="field coverage-list reveal">
 							{mediaCoverage.map((m) => (
 								<li class="coverage-row">
-									<a class="field-row field-row--link coverage-card" href={m.href} target="_blank" rel="noopener noreferrer">
+									<a class:list={['field-row field-row--link coverage-card', { 'coverage-card--bare': !m.image }]} href={m.href} target="_blank" rel="noopener noreferrer">
 										{m.image && (
 											<span class="coverage-thumb">
 												<img src={m.image} alt="" loading="lazy" decoding="async" width="400" height="225" />

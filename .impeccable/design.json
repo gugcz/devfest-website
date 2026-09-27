@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-17T15:30:00.000Z",
+  "generatedAt": "2026-09-27T12:00:00.000Z",
   "title": "Design System: DevFest.cz 2026",
   "extensions": {
     "colorMeta": {
@@ -141,7 +141,9 @@
       "Don't add rules, boxes or opacity 'inactive' states to a list.",
       "Don't paint the reach field on :focus; focus draws a ring.",
       "Don't introduce a prefers-color-scheme block for a single component.",
-      "Don't use translateX on the red reach field; the pull belongs to the warm wash."
+      "Don't use translateX on the red reach field; the pull belongs to the warm wash.",
+      "Don't stack a second poster headline under a hero that already names the band; give the band an sr-only h2.",
+      "Don't put a mood eyebrow ('Be there', 'Join us') on a closer; an eyebrow carries a fact or nothing."
     ]
   }
 }

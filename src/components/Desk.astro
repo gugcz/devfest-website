@@ -8,8 +8,9 @@ interface Contact {
 }
 
 interface Props {
-	/** Mono eyebrow above the title ("General", "Press kit"). */
-	label: string;
+	/** Optional mono eyebrow above the title. Leave it off when it would only
+	 * repeat the title ("General" over "General questions"). */
+	label?: string;
 	/** The desk name. Rendered as the heading at `level`. */
 	title: string;
 	/** `id` for the heading, so the caller can `aria-labelledby` it. */
@@ -30,7 +31,7 @@ const Heading = `h${level}` as 'h2' | 'h3';
 
 <article class="field-row field-row--short field-row--holds desk" aria-labelledby={titleId}>
 	<div class="desk-head">
-		<span class="desk-label">{label}</span>
+		{label && <span class="desk-label">{label}</span>}
 		<Heading id={titleId} class="desk-title">{title}</Heading>
 		<p class="desk-desc">{desc}</p>
 	</div>

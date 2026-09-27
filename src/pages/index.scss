@@ -338,8 +338,7 @@
 	background: var(--color-bg);
 }
 
-// Head above, figures across the full column: side by side, every mono label
-// broke onto two or three lines.
+// Below 1280px: head above, figures across the full column.
 .facts-inner {
 	display: block;
 }
@@ -348,6 +347,53 @@
 	font-size: var(--fs-h2);
 	text-wrap: initial;
 	margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+// Wide: the head on the left, the figures as a two-line ledger on the right,
+// set at the head's own size so each figure sits on one of its lines ("One
+// day." / "350+", "One mill." / "11th"). Stacked under the head, two
+// 9.5rem figures left the right half of the band empty.
+@media (min-width: 1280px) {
+	.facts-inner {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: var(--gutter);
+		align-items: start;
+	}
+
+	.facts-head {
+		margin-bottom: 0;
+	}
+
+	// One column of figures and one of labels, shared by both rows through
+	// subgrid, so the labels start on the same x.
+	.facts {
+		grid-template-columns: auto 1fr;
+		column-gap: clamp(1.5rem, 2.5vw, 2.5rem);
+		row-gap: 0;
+	}
+
+	.fact {
+		display: grid;
+		grid-column: 1 / -1;
+		grid-template-columns: subgrid;
+		align-items: baseline;
+		// `normal` takes the ledger's own column gap; the base `.fact` gap
+		// would otherwise override it and butt the label against the figure.
+		gap: normal;
+	}
+
+	.fact-figure {
+		grid-column: 1;
+		grid-row: 1;
+		font-size: var(--fs-h2);
+		line-height: var(--lh-display);
+	}
+
+	.fact-label {
+		grid-column: 2;
+		grid-row: 1;
+	}
 }
 
 /* ===================== GALLERY ===================== */
@@ -728,6 +774,12 @@ $strip-tiers: (
 			// so the label lands near the same edge as the type above.
 			justify-content: flex-start;
 			padding-inline: 1.35rem;
+		}
+
+		// The ghost has no box on a phone either, so an inset only pushed its
+		// label off the column the whole hero is set on.
+		.btn-ghost {
+			padding-inline: 0;
 		}
 	}
 
