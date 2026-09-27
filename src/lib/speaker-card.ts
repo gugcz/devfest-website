@@ -75,8 +75,41 @@ function layoutTalk(
 	return { lines, size };
 }
 
-/** Fades each photo edge that sits inside the card into the black behind it,
- * so a zoomed-out or panned photo has no hard seam (the `/attending` card
+const backdropTones = new WeakMap<ImageBitmap, number>();
+
+/** Grey level (0–255) of the photo's top, left and right edges — the
+ * background a zoomed-out photo sits in. The bottom edge is skipped: it is
+ * usually the speaker's torso, and it sits under the dark text floor anyway. */
+function backdropTone(photo: ImageBitmap): number {
+	const cached = backdropTones.get(photo);
+	if (cached !== undefined) return cached;
+	const n = 32;
+	const probe = document.createElement('canvas');
+	probe.width = n;
+	probe.height = n;
+	const probeCtx = probe.getContext('2d', { willReadFrequently: true });
+	let tone = 0;
+	if (probeCtx) {
+		probeCtx.drawImage(photo, 0, 0, n, n);
+		const { data } = probeCtx.getImageData(0, 0, n, n);
+		let sum = 0;
+		let count = 0;
+		for (let y = 0; y < n; y++) {
+			for (let x = 0; x < n; x++) {
+				if (y > 1 && x > 1 && x < n - 2) continue;
+				const i = (y * n + x) * 4;
+				sum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+				count++;
+			}
+		}
+		tone = Math.round(sum / count);
+	}
+	backdropTones.set(photo, tone);
+	return tone;
+}
+
+/** Fades each photo edge that sits inside the card into the backdrop behind
+ * it, so a zoomed-out or panned photo has no hard seam (the `/attending` card
  * gets the same from its vignette). At zoom 1 with no pan every edge is off
  * the card and nothing is drawn. */
 function featherPhotoEdges(
@@ -86,6 +119,7 @@ function featherPhotoEdges(
 	width: number,
 	height: number,
 	size: number,
+	tone: number,
 ): void {
 	const feather = Math.min(PHOTO_FEATHER_PX, width / 2, height / 2);
 	const edges: Array<[x0: number, y0: number, x1: number, y1: number, inside: boolean]> = [
@@ -97,8 +131,8 @@ function featherPhotoEdges(
 	for (const [x0, y0, x1, y1, inside] of edges) {
 		if (!inside) continue;
 		const fade = ctx.createLinearGradient(x0, y0, x1, y1);
-		fade.addColorStop(0, 'rgba(0,0,0,1)');
-		fade.addColorStop(1, 'rgba(0,0,0,0)');
+		fade.addColorStop(0, `rgba(${tone},${tone},${tone},1)`);
+		fade.addColorStop(1, `rgba(${tone},${tone},${tone},0)`);
 		ctx.fillStyle = fade;
 		ctx.fillRect(x, y, width, height);
 	}
@@ -118,7 +152,10 @@ export function drawSpeakerCard(
 	ctx.clearRect(0, 0, size, size);
 	if (!data.photo) return;
 
-	ctx.fillStyle = '#000000';
+	// Backdrop in the photo's own background tone, not black: below zoom 1 a
+	// white studio shot would otherwise glow as a box on black.
+	const tone = backdropTone(data.photo);
+	ctx.fillStyle = `rgb(${tone},${tone},${tone})`;
 	ctx.fillRect(0, 0, size, size);
 
 	// ── Photo, cover-fit with pan/zoom, then desaturated. `saturation` blend,
@@ -126,15 +163,16 @@ export function drawSpeakerCard(
 	const scale = coverScale(data.photo.width, data.photo.height, size) * data.transform.zoom;
 	const drawWidth = data.photo.width * scale;
 	const drawHeight = data.photo.height * scale;
-	const dx = size / 2 - drawWidth / 2 + data.transform.panX * scale;
-	const dy = size / 2 - drawHeight / 2 + data.transform.panY * scale;
-	ctx.drawImage(data.photo, dx, dy, drawWidth, drawHeight);
+	// Whole pixels, so an edge inside the card leaves no half-covered seam.
+	const dx = Math.round(size / 2 - drawWidth / 2 + data.transform.panX * scale);
+	const dy = Math.round(size / 2 - drawHeight / 2 + data.transform.panY * scale);
+	ctx.drawImage(data.photo, dx, dy, Math.round(drawWidth), Math.round(drawHeight));
 	ctx.save();
 	ctx.globalCompositeOperation = 'saturation';
 	ctx.fillStyle = '#808080';
 	ctx.fillRect(0, 0, size, size);
 	ctx.restore();
-	featherPhotoEdges(ctx, dx, dy, drawWidth, drawHeight, size);
+	featherPhotoEdges(ctx, dx, dy, Math.round(drawWidth), Math.round(drawHeight), size, tone);
 
 	// ── Text block, measured bottom-up from the lower margin: name (mono),
 	// talk title (Bebas), `SPEAKER` stamp.
