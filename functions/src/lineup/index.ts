@@ -3,3 +3,4 @@
  * speaker/session lineup JSON the website fetches. See `lineup-api.ts`.
  */
 export * from './lineup-api.js';
+export * from './speaker-photo-api.js';

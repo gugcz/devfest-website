@@ -28,11 +28,8 @@ const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 2.5;
 const MAX_PHOTO_BYTES = 20 * 1024 * 1024;
 
-async function loadImage(src: string, crossOrigin: boolean): Promise<HTMLImageElement> {
+async function loadImage(src: string): Promise<HTMLImageElement> {
 	const img = new Image();
-	// Anonymous CORS, or the speaker photo taints the canvas and the export
-	// throws. A host without CORS headers fails the load instead → monogram.
-	if (crossOrigin) img.crossOrigin = 'anonymous';
 	img.src = src;
 	await img.decode();
 	return img;
@@ -116,7 +113,7 @@ export default function SpeakerCard() {
 
 	useEffect(() => {
 		let cancelled = false;
-		Promise.all([document.fonts.ready, loadImage(logoUrl, false).catch(() => null)]).then(([, logo]) => {
+		Promise.all([document.fonts.ready, loadImage(logoUrl).catch(() => null)]).then(([, logo]) => {
 			if (!cancelled) setAssets({ fonts: readFonts(), palette: readPalette(), logo });
 		});
 		return () => {
@@ -139,7 +136,10 @@ export default function SpeakerCard() {
 		let cancelled = false;
 		setPhotoError('');
 		const load = speaker?.profilePicture
-			? loadImage(speaker.profilePicture, true)
+			? // Same-origin proxy of the lineup photo (`speakerPhotoApi`): the
+				// Storage mirror needs App Check and Sessionize sends no CORS, and
+				// either would leave the canvas unexportable.
+				loadImage(`/api/speaker-photo?id=${encodeURIComponent(speaker.id)}`)
 					.then((img) => createImageBitmap(img))
 					.then((bitmap) => ({ bitmap, source: 'speaker' as const }))
 			: Promise.reject(new Error('no-photo'));
