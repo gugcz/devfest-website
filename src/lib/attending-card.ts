@@ -21,6 +21,12 @@ export interface CardData {
 	name: string;
 	photo: ImageBitmap | null;
 	transform: PhotoTransform;
+	/** Red word of the headline. Defaults to `ATTENDING`; the speaker card
+	 * passes `SPEAKING`. */
+	headlineWord?: string;
+	/** Talk title, set above the name in the reading face. Empty/absent draws
+	 * the plain attending layout. */
+	talk?: string;
 }
 
 /** Reads a CSS custom property off the document root — the single source of
@@ -247,6 +253,61 @@ function drawSampleBadge(ctx: CanvasRenderingContext2D, size: number, fonts: Fon
 	ctx.restore();
 }
 
+/** Gap between the talk block's last glyph and the name's cap height. */
+const TALK_NAME_GAP = 44;
+const TALK_MAX_LINES = 3;
+
+interface TalkLayout {
+	lines: string[];
+	font: string;
+	lineHeight: number;
+	width: number;
+	firstAscent: number;
+	lastDescent: number;
+}
+
+/** Greedy word wrap of `text` at `font` into lines no wider than `maxWidth`. */
+function wrapWords(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+	const lines: string[] = [];
+	let line = '';
+	for (const word of text.split(/\s+/)) {
+		const next = line ? `${line} ${word}` : word;
+		if (line && ctx.measureText(next).width > maxWidth) {
+			lines.push(line);
+			line = word;
+		} else {
+			line = next;
+		}
+	}
+	if (line) lines.push(line);
+	return lines;
+}
+
+/** Sets the talk title in quotes, shrinking from 52px toward 36px until it
+ * fits in `TALK_MAX_LINES`; past the floor the last line is ellipsized. */
+function layoutTalk(ctx: CanvasRenderingContext2D, title: string, family: string, maxWidth: number): TalkLayout {
+	const text = `\u201C${title}\u201D`;
+	let size = 52;
+	let lines: string[];
+	for (;;) {
+		ctx.font = `${size}px ${family}`;
+		lines = wrapWords(ctx, text, maxWidth);
+		if (lines.length <= TALK_MAX_LINES || size <= 36) break;
+		size -= 4;
+	}
+	if (lines.length > TALK_MAX_LINES) {
+		lines = lines.slice(0, TALK_MAX_LINES);
+		let last = lines[TALK_MAX_LINES - 1];
+		while (last.length > 1 && ctx.measureText(`${last}\u2026\u201D`).width > maxWidth) last = last.slice(0, -1);
+		lines[TALK_MAX_LINES - 1] = `${last.trimEnd()}\u2026\u201D`;
+	}
+	const font = `${size}px ${family}`;
+	const first = lineMetrics(ctx, lines[0], font);
+	const last = lineMetrics(ctx, lines[lines.length - 1], font);
+	const width = Math.max(...lines.map((l) => ctx.measureText(l).width));
+	return { lines, font, lineHeight: Math.round(size * 1.3), width, firstAscent: first.ascent, lastDescent: last.descent };
+}
+
 export interface DrawOptions {
 	/** True while `data.photo` is the bundled sample portrait — paints the
 	 * `SAMPLE` badge. Download/Share are disabled for the same state. */
@@ -307,7 +368,7 @@ export function drawAttendingCard(
 
 	// ── Text geometry, computed before the scrims so the scrims can be sized
 	// to the actual text zones instead of guessed fixed offsets.
-	const word = 'ATTENDING';
+	const word = (data.headlineWord ?? 'ATTENDING').toUpperCase();
 	const prefix = `I'M `;
 	const headline = `${prefix}${word}`;
 	const maxHeadlineWidth = size - SAFE_SPACE * 2;
@@ -339,6 +400,20 @@ export function drawAttendingCard(
 	drawTextScrim(ctx, size / 2, metaY, subtitleMetrics);
 	drawTextScrim(ctx, size / 2, nameY, nameMetrics);
 
+	// Talk title block, stacked above the name: one scrim for the whole block
+	// (per-line plates would double up where they overlap).
+	const talk = data.talk?.trim() ? layoutTalk(ctx, data.talk.trim(), fonts.elite, size - SAFE_SPACE * 2) : null;
+	let talkFirstBaseline = 0;
+	if (talk) {
+		const lastBaseline = nameY - nameMetrics.ascent - TALK_NAME_GAP - talk.lastDescent;
+		talkFirstBaseline = lastBaseline - (talk.lines.length - 1) * talk.lineHeight;
+		drawTextScrim(ctx, size / 2, talkFirstBaseline, {
+			width: talk.width,
+			ascent: talk.firstAscent,
+			descent: (talk.lines.length - 1) * talk.lineHeight + talk.lastDescent,
+		});
+	}
+
 	// ── Headline: "I'M ATTENDING" — cream + one red word, no shadow/glow.
 	// Centered, top of card, inside the safe space.
 	ctx.font = `${headlineSize}px ${fonts.bebas}`;
@@ -365,6 +440,12 @@ export function drawAttendingCard(
 	ctx.textBaseline = 'alphabetic';
 	ctx.fillStyle = ink;
 	ctx.fillText(nameText, size / 2, nameY);
+
+	if (talk) {
+		ctx.font = talk.font;
+		ctx.fillStyle = ink;
+		talk.lines.forEach((line, i) => ctx.fillText(line, size / 2, talkFirstBaseline + i * talk.lineHeight));
+	}
 
 	// ── Bottom accent band — mirrors `.band--accent`. Edge-to-edge chrome,
 	// exempt from the safe space. Wordmark + "2026" pill centered as one

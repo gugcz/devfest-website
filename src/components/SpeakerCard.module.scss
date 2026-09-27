@@ -1,0 +1,30 @@
+@use '../styles/type' as *;
+@use '../styles/controls' as *;
+
+// The shared lit field (`_controls.scss`), as a native select.
+.select {
+	@include lit-field;
+	cursor: pointer;
+
+	&:focus {
+		box-shadow: var(--glow-red-soft);
+	}
+}
+
+.note {
+	margin: 0 0 0.9rem;
+	@include prose(var(--fs-ui));
+	color: var(--ink-dim);
+}
+
+.photoButtons {
+	display: flex;
+	margin-bottom: 1.4rem;
+}
+
+.exportRow {
+	display: flex;
+	flex-direction: column;
+	gap: 0.9rem;
+	margin-top: 2.4rem;
+}
