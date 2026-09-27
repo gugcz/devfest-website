@@ -44,15 +44,44 @@ DevFest.cz 2026 landing page. Astro 7, React 19 islands, TypeScript strict,
 SCSS (CSS Modules for React, globals in `BaseLayout.astro`), Node >= 22.12.0,
 Firebase Hosting.
 
-Commands, setup, deploys, secrets: [README.md](README.md). No lint script.
-Checks: `npm run a11y` (axe on an `A11Y_MOCK=1` build), `npm test` in
-`functions/` (`node --test`, stubs `fetch`). Function tests compile via
-`tsconfig.test.json` into `lib-test/`; deploy `tsconfig.json` excludes
-`*.test.ts`.
+Setup, deploys, secrets: [README.md](README.md). No lint or formatter script.
 
-## PR conventions
+## Commands
 
-- **No `## Test plan` section.** Summary / Why / Behavior / Files, stop.
+| Task | Command |
+| --- | --- |
+| Install | `npm ci && npm --prefix functions ci` (the SessionStart hook does this when `node_modules` is missing) |
+| Dev server | `npm run dev` (`/api/*` from mocks; `DEVFEST_LIVE_API=1` for deployed functions) |
+| Full gate (= the three required CI checks) | `npm run verify` |
+| Types | `npm run check` (`astro check`) |
+| Function tests | `npm --prefix functions test` (`node --test`, stubs `fetch`) |
+| Accessibility | `npm run a11y` (axe on an `A11Y_MOCK=1` build, needs Playwright Chromium) |
+
+Function tests compile via `tsconfig.test.json` into `lib-test/`; deploy
+`tsconfig.json` excludes `*.test.ts`. Only a green `npm run verify` counts as
+green: `astro check` alone misses the function tests and the axe sweep.
+
+## Definition of done
+
+1. `npm run verify` passes on the branch. A change that cannot touch one of
+   the three checks may skip it, but say which and why in the PR.
+2. The branch is committed and pushed, and a PR against `2026` is open.
+3. CI is green on the PR's head.
+4. The user has the PR link and its preview URL
+   (`devfest-public--pr-<n>-*.web.app`).
+
+The `ship` skill (`.claude/skills/ship/`) runs these steps. Never share a PR
+as ready before step 1 is green.
+
+## Commits and PRs
+
+- Conventional Commits with a scope; the subject says what a visitor or the
+  maintainer notices, not which file moved:
+  `fix(menu): second tier back in the list, one step smaller`.
+  Types in use: `feat`, `fix`, `refactor`, `perf`, `docs`, `ci`, `chore`,
+  `security`.
+- PR title = the squash commit subject, same format.
+- PR body: Summary / Why / Behavior / Files. **No `## Test plan` section.**
 
 ## Architecture
 
@@ -114,6 +143,17 @@ mirror `BaseLayout.scss` tokens. **Impeccable** (`/impeccable shape`,
 `PRODUCT.md` is product truth; `DESIGN.md` + `.impeccable/design.json` are
 the design record and move in the same PR as any token or primitive change.
 Full loop and guardrails: `.claude/rules/design-pencil.md`.
+
+Tooling for this loop:
+
+- **Impeccable** is a plugin declared in `.claude/settings.json`
+  (`extraKnownMarketplaces` + `enabledPlugins`); Claude Code offers to install
+  it when the repo is trusted. Where its guidance disagrees with this file,
+  `DESIGN.md` or `.claude/rules/`, the repo wins.
+- **Pencil** needs a local pen.dev app (the `.mcp.json` entry is the macOS
+  desktop app path; the VS Code extension is the other route). In a cloud or
+  Linux session the `pencil` server fails to start: say so, skip the canvas
+  steps, and still run the Impeccable critique/audit and `npm run a11y`.
 
 ### SEO
 
