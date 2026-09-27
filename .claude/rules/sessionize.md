@@ -10,7 +10,7 @@ paths:
 
 # Sessionize lineup
 
-Daily sync into Firestore `speakers` (embeds `sessions[]`) and `sessions`
+15-minute sync (`every 15 minutes`) into Firestore `speakers` (embeds `sessions[]`) and `sessions`
 (embeds `speakers[]`); browser reads `/api/lineup`.
 
 - Each collection is one atomic `WriteBatch` (cap 500 ops).
