@@ -89,7 +89,6 @@ export default function SpeakerCard() {
 
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
-	const photoRef = useRef<ImageBitmap | null>(null);
 	const dragRef = useRef<{ pointerId: number; startX: number; startY: number; panX: number; panY: number } | null>(
 		null,
 	);
@@ -122,8 +121,6 @@ export default function SpeakerCard() {
 	}, []);
 
 	function replacePhoto(next: ImageBitmap | null, source: PhotoSource) {
-		photoRef.current?.close();
-		photoRef.current = next;
 		setPhoto(next);
 		setPhotoSource(source);
 		setTransform(DEFAULT_TRANSFORM);
@@ -160,12 +157,10 @@ export default function SpeakerCard() {
 		};
 	}, [speaker?.id, assets]);
 
-	useEffect(
-		() => () => {
-			photoRef.current?.close();
-		},
-		[],
-	);
+	// Frees a bitmap once a newer one is committed (or on unmount). Not on
+	// replace: an effect from the render before still draws the old bitmap,
+	// and drawing a closed one throws and takes the island down.
+	useEffect(() => () => photo?.close(), [photo]);
 
 	const draw = useCallback(() => {
 		const ctx = canvasRef.current?.getContext('2d');
