@@ -11,7 +11,8 @@
     "trailingSlash": false,
     "rewrites": [
       { "source": "/api/lineup", "function": { "functionId": "lineupApi", "region": "europe-west1" } },
-      { "source": "/api/tickets", "function": { "functionId": "ticketsApi", "region": "europe-west1" } }
+      { "source": "/api/tickets", "function": { "functionId": "ticketsApi", "region": "europe-west1" } },
+      { "source": "/api/speaker-photo", "function": { "functionId": "speakerPhotoApi", "region": "europe-west1" } }
     ],
     "headers": [
       {

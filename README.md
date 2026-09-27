@@ -153,6 +153,7 @@ Browser
 | ---- | ------- | ------- |
 | `refreshSessionizeScheduled` | Cloud Scheduler, daily 06:00 | Sync Sessionize → Storage photos + Firestore `speakers`/`sessions` |
 | `lineupApi` | HTTPS, public (`/api/lineup`) | Serve `{ speakers, sessions }` as JSON for the browser to `fetch()` (15-min edge TTL) |
+| `speakerPhotoApi` | HTTPS, public (`/api/speaker-photo?id=`) | Serve one speaker's photo same-origin so `/speaker-card` can export its canvas (1-day edge TTL) |
 
 ### Config
 
