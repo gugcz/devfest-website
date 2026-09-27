@@ -352,7 +352,7 @@
 	font-family: var(--font-bebas-neue), sans-serif;
 	// Sized so the five destinations, the six under them and the footing line
 	// fit a 900px-tall laptop viewport without the panel scrolling.
-	font-size: clamp(2.2rem, 5vw, 3.9rem);
+	font-size: clamp(2rem, 4.2vw, 3.3rem);
 	line-height: 1;
 	letter-spacing: 0.01em;
 	text-transform: uppercase;
@@ -363,7 +363,12 @@
 	display: flex;
 	align-items: center;
 	min-height: var(--header-tap);
-	padding: clamp(0.2rem, 0.6vw, 0.45rem) 0;
+	// LEADING IN `em`, NOT `vw`. Above the 44px floor the tap target stops
+	// setting the pitch and the padding is all that is left, so it has to be
+	// a share of each tier's own step — otherwise the two tiers breathe
+	// differently at the same viewport, which is what made the lower six
+	// read as a separate, clumped block on a desktop panel.
+	padding: 0.15em 0;
 	transition: color 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -373,9 +378,13 @@
 	transform: translateX(0.75rem);
 }
 
-// The current page keeps the accent but not the offset — it is a state, not a hover.
+// The current page is the one line that goes nowhere, so it steps back
+// instead of lighting up: red in this panel belongs to the ticket action
+// alone. `aria-current` carries the same fact to assistive tech, and hover
+// still warms it so it never reads as disabled. (--ink-dim is 6.4:1 on the
+// panel ground.)
 .nav-link--current {
-	color: var(--color-accent-hot);
+	color: var(--ink-dim);
 }
 
 // Tickets is a filled button in the bar; inside the panel it is just the last
@@ -402,7 +411,9 @@
 	display: flex;
 	flex-direction: column;
 	list-style: none;
-	margin: clamp(0.6rem, 1.6vw, 1.25rem) 0 0;
+	// Clear of the five above by more than a line of their own pitch, so the
+	// step down in size reads as a second group rather than as a stumble.
+	margin: clamp(0.9rem, 2.2vw, 2rem) 0 0;
 	padding: 0;
 	width: 100%;
 }
@@ -413,8 +424,12 @@
 	// Physical touch target, same token as the bar's own controls (WCAG 2.5.5).
 	min-height: var(--header-tap);
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+	font-size: clamp(1.6rem, 2.95vw, 2.3rem);
 	line-height: 1;
+	// The same share of the step as the tier above (see `.nav-link`). Without
+	// it these six sat at exactly their text height on a desktop panel — no
+	// leading at all — while the five above had room to breathe.
+	padding: 0.15em 0;
 	letter-spacing: 0.01em;
 	text-transform: uppercase;
 	color: var(--color-text);
@@ -428,9 +443,9 @@
 	transform: translateX(0.75rem);
 }
 
-// Same state the poster list uses: accent, and no hover offset.
+// Same state the poster list uses.
 .nav-secondary-link--current {
-	color: var(--color-accent-hot);
+	color: var(--ink-dim);
 }
 
 .nav-foot-meta {
