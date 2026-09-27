@@ -6,13 +6,13 @@ import {
 	WELL_SIZE,
 	clampPan,
 	coverScale,
-	drawAttendingCard,
 	readFonts,
 	readPalette,
 	type Fonts,
 	type Palette,
 	type PhotoTransform,
 } from '../lib/attending-card';
+import { drawSpeakerCard } from '../lib/speaker-card';
 import { fetchLineup } from '../lib/lineup';
 import { initials, type Speaker } from '../lib/speakers';
 import { useRemote } from '../lib/useRemote';
@@ -20,9 +20,9 @@ import { EmptyState, ErrorState, LoadingState } from './DataState';
 import a from './AttendingCard.module.scss';
 import s from './SpeakerCard.module.scss';
 
-/** The `/attending` card, set for a speaker: their name, their talk title and
- * "I'M SPEAKING". Same drawing code (`drawAttendingCard`), so the two cards
- * can't drift apart. Lives on an unlisted page — see `speaker-card.astro`. */
+/** The speaker's share card: their name and talk title on a poster of its
+ * own (`speaker-card.ts`), sharing the `/attending` builder's photo pipeline
+ * and styles. Lives on an unlisted page — see `speaker-card.astro`. */
 
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 2.5;
@@ -168,15 +168,9 @@ export default function SpeakerCard() {
 	const draw = useCallback(() => {
 		const ctx = canvasRef.current?.getContext('2d');
 		if (!ctx || !assets) return;
-		drawAttendingCard(
+		drawSpeakerCard(
 			ctx,
-			{
-				name: speaker?.fullName ?? 'Your name here',
-				photo,
-				transform,
-				headlineWord: 'SPEAKING',
-				talk: speaker ? talk : 'Your talk title',
-			},
+			{ name: speaker?.fullName ?? '', talk: speaker ? talk : 'Your talk title', photo, transform },
 			assets.fonts,
 			assets.palette,
 			assets.logo,
