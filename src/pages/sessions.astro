@@ -14,7 +14,8 @@ import { EVENT_TOPICS } from '../lib/ticker';
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'The talks on<br />the <span class="red">docket.</span>'}
-			lede="Every talk confirmed for DevFest.cz 2026, with the speakers behind it. Search or filter by track to find your thing, then see the schedule for its room and time."
+			lede="Every confirmed talk at DevFest.cz 2026 and who gives it. Search, or filter by track and level."
+			link={{ href: '/agenda', label: 'See the schedule' }}
 			seoHeading="DevFest.cz 2026 Sessions & Talks"
 			titleId="sessions-title"
 			focus="28% 55%"
@@ -24,13 +25,8 @@ import { EVENT_TOPICS } from '../lib/ticker';
 
 		<section class="band band--lit" aria-label="Session list">
 			<div class="band-inner">
-				<header class="head-stack">
-					<p class="eyebrow">The sessions</p>
-					<h2 class="display head-title">What&rsquo;s on</h2>
-					<p class="head-stack-link">
-						<a class="btn-ghost" href="/agenda">See the schedule</a>
-					</p>
-				</header>
+				<!-- The hero names this band; its head is for screen readers only. -->
+				<h2 class="sr-only">All sessions</h2>
 
 				<!-- The grid hydrates client-side from Firestore; keep a static note
 				     for crawlers and no-JS visitors. -->
@@ -46,9 +42,8 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		</section>
 
 		<Closer
-			eyebrow="Be there"
-			titleHtml={'Pick your<br /><span class="red">day</span>.'}
-			note="Every talk, mapped to a room and a time slot."
+			titleHtml={'Plan your<br /><span class="red">day</span>.'}
+			note="The schedule puts every talk in a room and a time slot."
 			tone="accent"
 			titleId="sessions-closer"
 			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/agenda', label: 'See the schedule', kind: 'ghost' }]}

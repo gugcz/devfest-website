@@ -92,7 +92,7 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'In the <span class="red">news.</span>'}
-			lede="Covering DevFest.cz 2026? Find the key facts, our logos, and someone to talk to. We're glad to help journalists, bloggers, and media partners."
+			lede="What has been written about DevFest.cz 2026 so far. Writing a story yourself? The press kit and our contact are at the bottom."
 			seoHeading="DevFest.cz 2026 Press & Media"
 			titleId="press-title"
 		/>
@@ -103,11 +103,11 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 		<!-- IN THE PRESS + DESK + PRESS KIT -->
 		<section class="band band--lit" aria-label="Press coverage">
 			<div class="band-inner">
-								<!-- MEDIA COVERAGE -->
+				<!-- MEDIA COVERAGE -->
 				<section class="press-section" aria-labelledby="coverage-heading">
-					<header class="section-head">
-						<h2 id="coverage-heading" class="display head-title">In the press</h2>
-					</header>
+					{/* "In the press" under "In the news." was the same headline twice;
+					    the hero names the list, screen readers keep the head. */}
+					<h2 id="coverage-heading" class="sr-only">Coverage</h2>
 
 					{mediaCoverage.length > 0 ? (
 						<ul class="field coverage-list reveal">

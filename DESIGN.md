@@ -615,14 +615,13 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			titleId="…"
 			focus="68% 42%"
 			<!-- photo={false} instead of focus, for a type-only opener -->
+			<!-- link={{ href: '/agenda', label: 'See the schedule' }} for a sibling page -->
 		/>
 		<Ticker items={EVENT_TOPICS} size="sm" />
 		<section class="band band--lit" aria-label="…">
 			<div class="band-inner">
-				<header class="head-stack">
-					<p class="eyebrow">…</p>
-					<h2 class="display head-title">…</h2>
-				</header>
+				<!-- The hero names the first band, so its head is sr-only. -->
+				<h2 class="sr-only">…</h2>
 				<!-- .field / .field-row list, or a component grid -->
 			</div>
 		</section>
@@ -642,8 +641,20 @@ Decision criteria, picked per page:
 - **`.band--accent`.** At most once per page, only when the band contains a
   form (`index.astro:271`, `partners.astro:176`). Otherwise close on red with
   `Closer tone="accent"`.
+- **The first band's head.** **[MUST]** When the hero already names what the
+  band holds (`speakers`, `sessions`, `agenda`, `contact`, `press`,
+  `press/downloads`), the band opens straight on its content with an
+  `sr-only` `h2`. A second poster headline under the hero ("Who's talking"
+  under "The voices on the stand") says the same thing twice. A visible head
+  is for a band the hero does not name: the `NextStep` field on `/404` and the
+  thank-you pages, the FAQ groups, a second band further down.
+- **A link to a sibling page** (`sessions` ↔ `agenda`) goes in the hero as
+  `SubpageHero link`, a hairline mono link under the lede, not in a band head.
 - **`.head-split` vs `.head-stack`.** `.head-split` when there is a secondary
   fact for the right column; otherwise `.head-stack`.
+- **Eyebrows on a `Closer`.** Only when the eyebrow carries a fact the title
+  does not (`invoice`: "Paying by card"; `press`: "Press kit"). A mood label
+  ("Be there", "Join us") above the closing title is filler; leave it off.
 - **`--fs-row` vs `--fs-row-sm`.** **[CURRENT]** no numeric cutoff in code;
   treat more than ~4 rows as the signal for `--fs-row-sm`. See Open points.
 - **`/thank-you`, `/newsletter-subscription-thank-you`, `/404`** run
@@ -651,6 +662,12 @@ Decision criteria, picked per page:
   rows → `Closer`. `/thank-you` also has calendar, venue, next steps, share
   and an `@media print` block. Event facts in `src/lib/event.ts` + the `.ics`
   in `public/` — keep in step with the Event JSON-LD in `BaseLayout.astro`.
+- **The facts band on `/`.** Below 1280px the head sits above and the figures
+  run across the column at `--fs-stat`. From 1280px the head and the figures
+  share the band: the figures drop to the head's `--fs-h2` and form a two-row
+  ledger (figure, then label, on a shared subgrid) so each figure lands on one
+  of the head's lines. Two `--fs-stat` figures under the head left the right
+  half of the band empty.
 - **A `<details>` list opens with its first item open** (`faq.astro:106`).
   A section must not reuse the hero's `aria-labelledby` (`landmark-unique`).
 - **`Closer` tone.** Pass `tone="accent"` explicitly. The `'raised'` default

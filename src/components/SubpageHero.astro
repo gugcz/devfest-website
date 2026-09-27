@@ -13,6 +13,9 @@ interface Props {
 	photo?: boolean;
 	/** `background-position` for the key-art plate — see HeroBackground. */
 	focus?: string;
+	/** One cross-link under the lede, to the page's sibling view (sessions ↔
+	 * agenda). It used to sit under a second section headline in the band. */
+	link?: { href: string; label: string };
 }
 
 const {
@@ -22,6 +25,7 @@ const {
 	seoHeading,
 	photo = true,
 	focus = 'center',
+	link,
 } = Astro.props;
 ---
 
@@ -39,6 +43,11 @@ const {
 			<span set:html={titleHtml} />
 		</h1>
 		<p class="hero-lede">{lede}</p>
+		{link && (
+			<p class="hero-link">
+				<a href={link.href}>{link.label}<span aria-hidden="true">&#160;&rarr;</span></a>
+			</p>
+		)}
 	</div>
 </section>
 

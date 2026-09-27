@@ -55,6 +55,20 @@
 	margin: 0;
 }
 
+// The sibling view, as a hairline link in the label voice — a way across,
+// not a second call to action.
+.hero-link {
+	margin: clamp(1.25rem, 2.4vw, 1.75rem) 0 0;
+	@include mono(var(--fs-label-lg), 0.18em, uppercase);
+
+	// Inline-block with block padding: clear of the 24px target minimum.
+	a {
+		@include hairline-link;
+		display: inline-block;
+		padding: 0.4em 0 0.3em;
+	}
+}
+
 @media (max-width: 900px) {
 	.subpage-hero {
 		min-height: max(340px, 40vh);

@@ -15,7 +15,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Get in <span class="red">touch.</span>'}
-			lede="Pick the right inbox and we'll get back to you as soon as we can."
+			lede="Three inboxes, one per kind of question. Not sure which? The general one reaches the whole team."
 			seoHeading="Contact DevFest.cz 2026"
 			titleId="contact-title"
 			photo={false}
@@ -27,17 +27,10 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		<!-- CARDS -->
 		<section class="band band--lit contact-body" aria-labelledby="desks-heading">
 			<div class="band-inner">
-				<!-- Every other subpage opens its body on a head; this one used to
-				     drop straight from the ticker onto the first desk, so the list
-				     had no owner and the wide page had nothing in its right half.
-				     Two columns, not a stacked eyebrow/title/lede lockup — that
-				     shape is the hero's, one screen up. -->
-				<header class="head-split head-split--ruled">
-					<h2 id="desks-heading" class="display head-title">Three <span class="red">desks.</span></h2>
-					<p class="head-note">
-						Not sure which one? Take the general desk &mdash; it reaches the whole crew.
-					</p>
-				</header>
+				<!-- No second poster head ("Three desks.") under "Get in touch.":
+				     the hero names the band, and its one useful line (which desk
+				     to pick when unsure) now closes the hero lede. -->
+				<h2 id="desks-heading" class="sr-only">Contact desks</h2>
 
 				<div class="field contact-grid reveal">
 					<Desk
@@ -64,7 +57,6 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		</section>
 
 		<Closer
-			eyebrow="Or skip the inbox"
 			titleHtml={'Just come<br />to the <span class="red">show</span>.'}
 			note="Tickets are on sale now, and the newsletter carries every announcement first."
 			tone="accent"

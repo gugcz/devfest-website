@@ -1,13 +1,5 @@
 @use '../styles/type' as *;
 
-// 4rem, the homepage's section-head gap — this page ran its heads at half the
-// site's spacing while carrying the same title size.
-.section-head {
-	margin-bottom: 4rem;
-	padding-bottom: 1.1rem;
-	border-bottom: 1px solid var(--rule);
-}
-
 // A ruled note opening on a strong rule, not a mounted panel.
 .empty-state {
 	position: relative;
@@ -176,8 +168,6 @@
 }
 
 @media (max-width: 600px) {
-	.section-head { margin-bottom: 2.4rem; }
-
 	// Flush to the content column — the side padding inset the entry from its rule.
 	.coverage-card {
 		grid-template-columns: 1fr;
