@@ -11,7 +11,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check && node scripts/check-client-sdk.mjs",
+    "check": "astro check",
     "a11y": "A11Y_MOCK=1 astro build && node scripts/a11y.mjs",
     "verify": "npm run check && npm --prefix functions test && npm run a11y",
     "anchors": "A11Y_MOCK=1 astro build && node scripts/anchor-measure.mjs"

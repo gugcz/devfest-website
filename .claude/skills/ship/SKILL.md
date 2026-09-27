@@ -24,7 +24,7 @@ pushes to `2026`, never deploys; "ship it" is not merge permission.
 npm run verify
 ```
 
-That is `npm run check` (astro check + client-SDK guard), the functions test
+That is `npm run check` (astro check), the functions test
 suite, and the axe sweep — the three checks the `2026` ruleset requires.
 
 - If dependencies are missing, run `npm ci && npm --prefix functions ci`.

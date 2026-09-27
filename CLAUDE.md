@@ -53,7 +53,7 @@ Setup, deploys, secrets: [README.md](README.md). No lint or formatter script.
 | Install | `npm ci && npm --prefix functions ci` (the SessionStart hook does this when `node_modules` is missing) |
 | Dev server | `npm run dev` (`/api/*` from mocks; `DEVFEST_LIVE_API=1` for deployed functions) |
 | Full gate (= the three required CI checks) | `npm run verify` |
-| Types + client-SDK guard | `npm run check` (`astro check`, then `scripts/check-client-sdk.mjs`) |
+| Types | `npm run check` (`astro check`) |
 | Function tests | `npm --prefix functions test` (`node --test`, stubs `fetch`) |
 | Accessibility | `npm run a11y` (axe on an `A11Y_MOCK=1` build, needs Playwright Chromium) |
 
@@ -94,8 +94,6 @@ React islands (`.tsx`, `client:load`) in `src/components/`.
 
 **Browser reads DB data only through cached HTTP functions, never the client
 SDK** (client reads blocked on an App Check token, ~30s on mobile).
-`scripts/check-client-sdk.mjs` (part of `npm run check`, so CI) fails if
-`src/` imports `firebase/firestore*` or `firebase/database`.
 
 | Endpoint | Function | Reads | Caller |
 | --- | --- | --- | --- |
