@@ -113,6 +113,9 @@ export default defineConfig({
                 // three together are what "secret" means here — see
                 // src/pages/invite/[member].astro.
                 !page.includes('/invite/') &&
+                // Same three-part secrecy for the speakers' share-card tool
+                // (src/pages/speaker-card.astro).
+                !page.includes('/speaker-card') &&
                 // Their OG cards are a generated asset, not a page — never a
                 // sitemap entry regardless of `/invite/`'s own secrecy.
                 !page.includes('/og/invite/'),

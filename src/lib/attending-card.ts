@@ -156,7 +156,7 @@ const SCRIM_FEATHER = 5;
 
 /** Traces a rounded-rect path — same four-`arcTo` shape already used below
  * for the "2026" pill, pulled out so the text scrims can share it. */
-function roundRectPath(
+export function roundRectPath(
 	ctx: CanvasRenderingContext2D,
 	x: number,
 	y: number,

@@ -1,0 +1,36 @@
+---
+// ─── SPEAKER SHARE CARD ───────────────────────────────────────────────────
+// The `/attending` card for speakers: pick your name, get "I'M SPEAKING" with
+// your talk title. UNLISTED = `noindex` + out of the sitemap + linked from
+// NOWHERE (not access control) — the link goes out to speakers directly.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import SpeakerCard from '../components/SpeakerCard';
+---
+
+<BaseLayout
+	title="I'm speaking — DevFest.cz 2026"
+	description="Make a DevFest.cz 2026 speaker card with your name and talk title."
+	noindex
+>
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={'I’m <span class="red">speaking.</span>'}
+			lede="Pick your name and we set your talk on the card. Download it or share it straight to your feed."
+			seoHeading="DevFest.cz 2026 — I'm speaking"
+			titleId="speaker-card-title"
+			photo={false}
+		/>
+
+		<section class="attending-body" aria-labelledby="speaker-card-form-heading">
+			<div class="attending-inner reveal">
+				<h2 id="speaker-card-form-heading" class="sr-only">Build your speaker card</h2>
+				<SpeakerCard client:load />
+			</div>
+		</section>
+	</main>
+</BaseLayout>
+
+<style lang="scss">
+	@use './attending';
+</style>
