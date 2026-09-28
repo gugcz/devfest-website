@@ -48,6 +48,20 @@ const EMPTY_ROOMS: Room[] = [];
  * four-room day renders ~150px columns and Bebas titles truncate mid-word. */
 const NARROW = '(max-width: 1024px)';
 
+/** A standing note beside a room's name, keyed by its Sessionize name
+ * (lowercased). Sessionize rooms carry no description, so it lives here —
+ * rename the room there and this key must follow. */
+const ROOM_NOTES: Record<string, string> = {
+	'crime lab': 'Workshops only',
+};
+
+/** The note beside a column's name: the room's standing note, else "Talks
+ * TBA" for a room with nothing slotted in it yet (an empty column all day
+ * reads as a failed load), else none. */
+function roomNote(label: string, talks: Session[]): string | null {
+	return ROOM_NOTES[label.trim().toLowerCase()] ?? (talks.length === 0 ? 'Talks TBA' : null);
+}
+
 /** Current wall-clock in Europe/Prague as { date: 'YYYY-MM-DD', minutes }.
  * Uses Intl (not the raw Date fields) so it's the event-local time, not the
  * visitor's zone. */
@@ -233,16 +247,15 @@ function AgendaGrid({
 			<div className={s.grid} style={gridStyle} role="presentation">
 				{/* Header row: empty time-gutter corner + room names */}
 				<div className={`${s.headCell} ${s.headCorner}`} aria-hidden="true" />
-				{columns.map((column, i) => (
-					<div key={column.key} className={s.headCell} style={{ gridColumn: i + 2, gridRow: 1 }}>
-						{column.label}
-						{/* A Sessionize room with nothing slotted in it yet: say so, or
-						    an empty column all day reads as a failed load. */}
-						{(byRoom.get(column.key) ?? []).length === 0 && (
-							<span className={s.headNote}>Talks TBA</span>
-						)}
-					</div>
-				))}
+				{columns.map((column, i) => {
+					const note = roomNote(column.label, byRoom.get(column.key) ?? []);
+					return (
+						<div key={column.key} className={s.headCell} style={{ gridColumn: i + 2, gridRow: 1 }}>
+							<span className={s.headLabel}>{column.label}</span>
+							{note && <span className={s.headNote}>{note}</span>}
+						</div>
+					);
+				})}
 
 				{/* The sheet's ruling, behind everything (z 0): a hairline down
 				    each room column and one across each hour. Both are closed over

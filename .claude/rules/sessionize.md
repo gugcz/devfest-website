@@ -14,7 +14,9 @@ paths:
 (embeds `speakers[]`) and `rooms`; browser reads `/api/lineup`.
 
 - `/agenda` gets a column for every `rooms` doc, even one with no talk yet
-  (header says "Talks TBA"), plus any other room a talk sits in.
+  (header says "Talks TBA"), plus any other room a talk sits in. A room's
+  standing header note ("Workshops only" on Crime Lab) is `ROOM_NOTES` in
+  `src/components/Agenda.tsx`, keyed by the Sessionize room name.
 
 - Each collection is one atomic `WriteBatch` (cap 500 ops).
 - Delete-guard: `computeDeletePlan` withholds deletes on a truncated fetch and

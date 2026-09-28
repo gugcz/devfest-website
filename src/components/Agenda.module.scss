@@ -86,7 +86,9 @@
 	z-index: 3;
 	grid-row: 1;
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
+	row-gap: 0.3rem;
 	@include mono(var(--fs-ui), 0.2em, uppercase);
 	// A room name heads a 409px column; at label size it matched the cell meta under it.
 	color: var(--ink);
@@ -97,7 +99,13 @@
 	padding: 1rem 0.9rem 0.8rem;
 }
 
-// "Talks TBA" beside the name of a room with nothing slotted in it yet.
+// The room name never breaks mid-name; a note that doesn't fit beside it
+// wraps to a line of its own instead of squeezing it.
+.headLabel {
+	white-space: nowrap;
+}
+
+// "Talks TBA" / "Workshops only" beside a room's name (see `roomNote`).
 .headNote {
 	margin-left: auto;
 	padding-left: 0.8rem;
@@ -133,7 +141,10 @@
 	display: flex;
 	align-items: flex-start;
 	gap: 1.1rem;
-	z-index: 2;
+	// BELOW the talks (z 2): a workshop runs through the breaks, and a band
+	// drawn over it cut the workshop in two. The workshop's opaque panel closes
+	// over the band in its own column; every other column keeps the strip.
+	z-index: 1;
 	padding: 0.5rem 0.9rem 0.35rem;
 	overflow: hidden;
 	// Hatched like dead time (shared fill above) and ruled on ONE edge: a break is
