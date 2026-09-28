@@ -304,7 +304,7 @@
 	// it replaces already had.
 	padding:
 		calc(var(--header-h) + 1.3rem + env(safe-area-inset-top))
-		min(clamp(1.25rem, 5vw, 4.5rem), 6.25vw)
+		min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw)
 		calc(2rem + env(safe-area-inset-bottom));
 	background: #050505;
 	overflow-y: auto;
@@ -507,6 +507,20 @@
 
 	.nav-toggle {
 		padding: 0.72rem min(0.9rem, 4.5vw);
+	}
+
+	// On the page's own gutter, so the mark stands on the same edge as the
+	// title under it instead of 8px outside it.
+	.site-header {
+		padding-inline: var(--gutter);
+	}
+
+	// A 0.2em-tracked label in a 1.5rem-inset box made the red block the
+	// widest thing in the bar; tighter, it reads as a button beside the mark,
+	// not a banner across it. Height is untouched (`--header-tap`).
+	.header-cta {
+		padding-inline: min(1.1rem, 5.5vw);
+		letter-spacing: 0.16em;
 	}
 }
 

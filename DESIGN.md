@@ -72,7 +72,7 @@ typography:
 rounded:
   sharp: "2px"
 spacing:
-  gutter: "clamp(1.25rem, 5vw, 4.5rem)"
+  gutter: "min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw)"
   section-tight: "clamp(3.75rem, 6vw, 6.5rem)"
   section: "clamp(6rem, 10vw, 11rem)"
   section-wide: "clamp(8.5rem, 15vw, 17rem)"
@@ -307,7 +307,7 @@ type. `0.06em` letter-spacing is for short uppercase labels only.
 | Token | Value | Line | Use |
 | --- | --- | --- | --- |
 | `--maxw` | `90rem` (1440px) | 29 | the content column (`.u-container`, `.band-inner`) |
-| `--gutter` | `clamp(1.25rem, 5vw, 4.5rem)` | 30 | page gutter; also the negative inset for full-bleed row fields |
+| `--gutter` | `min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw)` | 30 | page gutter; also the negative inset for full-bleed row fields |
 | `--section-y-tight` | `clamp(3.75rem, 6vw, 6.5rem)` | 35 | a cut |
 | `--section-y` | `clamp(6rem, 10vw, 11rem)` | 36 | the normal beat |
 | `--section-y-wide` | `clamp(8.5rem, 15vw, 17rem)` | 37 | a held shot before something that matters |

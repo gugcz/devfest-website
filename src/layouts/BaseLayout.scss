@@ -20,7 +20,9 @@
 	// (WCAG 1.4.4 / 1.4.10): at a 32px root the 1.25rem floor doubled and two
 	// gutters ate a quarter of a 320px viewport. 6.25vw equals the floor at
 	// 320px and sits above the clamp everywhere else, so nothing moves at 16px.
-	--gutter: min(clamp(1.25rem, 5vw, 4.5rem), 6.25vw);
+	// Floor 1.5rem, not 1.25rem: 20px left every phone column running almost
+	// edge to edge. The 6.25vw ceiling still hands a 320px screen its 20px.
+	--gutter: min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw);
 
 	// Three densities: tight is a cut, base the normal beat, wide a held shot.
 	--section-y-tight: clamp(3.75rem, 6vw, 6.5rem);
