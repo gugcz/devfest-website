@@ -4,7 +4,8 @@
  * reads `/api/lineup`.
  *
  * ⚠️ Persisted shape lives in `functions/src/sessionize/sessionize-api.ts`
- * (`SessionDoc` / `SessionSpeakerRef`); no shared package, keep in sync by hand.
+ * (`SessionDoc` / `SessionSpeakerRef` / `RoomDoc`); no shared package, keep in
+ * sync by hand.
  */
 
 /** A presenter embedded on a session — the reverse of a speaker's `sessions[]`.
@@ -52,6 +53,16 @@ export interface Session {
 	speakers: SessionSpeakerRef[];
 	/** Resolved Sessionize categories (Track / Level / Format …); may be empty. */
 	categories: SessionCategory[];
+}
+
+/** A Sessionize room. Listed on its own so `/agenda` can give a room its
+ * column before any talk is slotted in it. */
+export interface Room {
+	/** Sessionize room id — what a session carries as `roomId`. */
+	id: string;
+	/** Sessionize's room order. */
+	order: number;
+	name: string;
 }
 
 function isString(value: unknown): value is string {
@@ -108,6 +119,17 @@ export function sessionFromDoc(id: string, data: Record<string, unknown>): Sessi
 		isPlenumSession: data.isPlenumSession === true,
 		speakers,
 		categories,
+	};
+}
+
+/** Coerce a `rooms` doc into a `Room`; `null` when it has no id or name. */
+export function roomFromDoc(id: string, data: Record<string, unknown>): Room | null {
+	const name = asStr(data.name).trim();
+	if (!id.trim() || !name) return null;
+	return {
+		id: id.trim(),
+		order: typeof data.order === 'number' ? data.order : Number.MAX_SAFE_INTEGER,
+		name,
 	};
 }
 

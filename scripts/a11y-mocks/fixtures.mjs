@@ -89,7 +89,7 @@ export const SPEAKERS = [
 
 /** Firestore `sessions` — raw docs on one day (event-local ISO, no offset):
  * keynote + lunch bands, two talks in two rooms, a Room-TBA talk, an untimed
- * talk. Lunch is a service session (dropped by /sessions, kept by /agenda). */
+ * talk (a third room stays empty, see `ROOMS`). Lunch is a service session (dropped by /sessions, kept by /agenda). */
 export const SESSIONS = [
 	{
 		id: 'ses-keynote',
@@ -100,6 +100,7 @@ export const SESSIONS = [
 			startsAt: '2026-10-30T09:00:00',
 			endsAt: '2026-10-30T09:45:00',
 			room: 'Main Hall',
+			roomId: 'room-main',
 			isServiceSession: false,
 			isPlenumSession: true,
 			speakers: [
@@ -118,6 +119,7 @@ export const SESSIONS = [
 			startsAt: '2026-10-30T10:00:00',
 			endsAt: '2026-10-30T10:45:00',
 			room: 'Main Hall',
+			roomId: 'room-main',
 			isServiceSession: false,
 			isPlenumSession: false,
 			speakers: [
@@ -144,6 +146,7 @@ export const SESSIONS = [
 			startsAt: '2026-10-30T10:00:00',
 			endsAt: '2026-10-30T10:30:00',
 			room: 'Room B',
+			roomId: 'room-b',
 			isServiceSession: false,
 			isPlenumSession: false,
 			speakers: [
@@ -205,6 +208,7 @@ export const SESSIONS = [
 			startsAt: '2026-10-30T11:00:00',
 			endsAt: '',
 			room: 'Main Hall',
+			roomId: 'room-main',
 			isServiceSession: false,
 			isPlenumSession: false,
 			speakers: [
@@ -222,6 +226,7 @@ export const SESSIONS = [
 			startsAt: '',
 			endsAt: '',
 			room: 'Room B',
+			roomId: 'room-b',
 			isServiceSession: false,
 			isPlenumSession: false,
 			speakers: [
@@ -230,6 +235,14 @@ export const SESSIONS = [
 			categories: [{ name: 'Track', values: ['Web'] }],
 		},
 	},
+];
+
+/** Firestore `rooms` — the Sessionize room list. "Workshop Lab" has no
+ * session in it, so /agenda renders (and the audit covers) an empty column. */
+export const ROOMS = [
+	{ id: 'room-main', data: { order: 0, name: 'Main Hall' } },
+	{ id: 'room-b', data: { order: 1, name: 'Room B' } },
+	{ id: 'room-lab', data: { order: 2, name: 'Workshop Lab' } },
 ];
 
 /** RTDB `/tickets` cache (`TicketsCache`) — a full pricing-wave roadmap. */

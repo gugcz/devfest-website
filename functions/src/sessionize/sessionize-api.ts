@@ -6,8 +6,8 @@
  * OBJECT (`{ speakers, sessions, rooms, categories, questions }`), "Speakers"
  * a bare ARRAY; we try All, fall back to Speakers. An embed id returns HTML.
  *
- * Output: `speakers` (with `sessions[]`) and `sessions` (with `speakers[]`).
- * Sessions exist only in the All view. Validation and the delete-guard are
+ * Output: `speakers` (with `sessions[]`), `sessions` (with `speakers[]`) and
+ * `rooms`. Sessions and rooms exist only in the All view. Validation and the delete-guard are
  * pure and exported: a truncated response must never wipe a live collection.
  */
 
@@ -62,8 +62,8 @@ export interface SessionizeSession {
 	[key: string]: unknown;
 }
 
-/** The All-data envelope. `rooms` + `categories` are consumed as id → label
- * lookups for the sessions; `questions` is unused. */
+/** The All-data envelope. `rooms` is mirrored and also labels the sessions;
+ * `categories` is an id → label lookup for them; `questions` is unused. */
 export interface SessionizeAll {
 	speakers?: unknown;
 	sessions?: unknown;
@@ -489,22 +489,41 @@ function resolveSessionSpeakers(
 	return out;
 }
 
-/** Build roomId → name from `rooms[]`. Our sessions ship `roomId` with an
- * EMPTY `room`; without this `/agenda` collapsed to one Room-TBA column. */
-export function buildRoomMap(payload: unknown): Map<string, string> {
-	const map = new Map<string, string>();
-	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return map;
+/** Firestore `rooms/{id}` doc: one Sessionize room, served by `/api/lineup`
+ * so `/agenda` can give a room its column before any talk is slotted in. */
+export interface RoomDoc {
+	/** Sessionize room id — also the Firestore doc id; sessions carry it as `roomId`. */
+	id: string;
+	/** Position in Sessionize's room order (`sort`, then array order). */
+	order: number;
+	name: string;
+}
+
+/** The All payload's `rooms[]` as docs, in Sessionize's `sort` order. Entries
+ * without an id or a name, and repeated ids, are skipped. Empty for a non-All
+ * payload. Also the roomId → name lookup for the sessions: ours ship `roomId`
+ * with an EMPTY `room`; without it `/agenda` collapsed to one Room-TBA column. */
+export function extractRooms(payload: unknown): RoomDoc[] {
+	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return [];
 	const rooms = (payload as SessionizeAll).rooms;
-	if (!Array.isArray(rooms)) return map;
-	for (const room of rooms) {
-		if (typeof room !== 'object' || room === null) continue;
+	if (!Array.isArray(rooms)) return [];
+	const seen = new Set<string>();
+	const found: { id: string; name: string; sort: number; index: number }[] = [];
+	rooms.forEach((room, index) => {
+		if (typeof room !== 'object' || room === null) return;
 		const record = room as Record<string, unknown>;
-		if (record.id == null) continue;
+		const id = record.id != null ? String(record.id).trim() : '';
 		const name = asString(record.name) || asString(record.title);
-		if (!name) continue;
-		map.set(String(record.id), name);
-	}
-	return map;
+		if (!id || !name || seen.has(id)) return;
+		seen.add(id);
+		const sort =
+			typeof record.sort === 'number' && Number.isFinite(record.sort)
+				? record.sort
+				: Number.MAX_SAFE_INTEGER;
+		found.push({ id, name, sort, index });
+	});
+	found.sort((a, b) => a.sort - b.sort || a.index - b.index);
+	return found.map(({ id, name }, order) => ({ id, order, name }));
 }
 
 /** A category item resolved to its group title + label. */

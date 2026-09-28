@@ -1,7 +1,7 @@
 /**
  * 15-minute mirror of Sessionize into Firestore `speakers` (embeds
- * `sessions[]`) and `sessions` (embeds `speakers[]`). Photos mirrored to
- * Storage first.
+ * `sessions[]`), `sessions` (embeds `speakers[]`) and `rooms`. Photos
+ * mirrored to Storage first.
  * Each collection is one atomic batch with guarded deletes; a truncated
  * response aborts before any write (see `sessionize-api.ts`).
  */
@@ -20,10 +20,10 @@ import { mirrorSpeakerImages } from './mirror-images.js';
 import { SESSIONIZE_ENDPOINT_ID } from './params.js';
 import {
 	buildCategoryMap,
-	buildRoomMap,
 	buildSessionMap,
 	buildSpeakerSummaryMap,
 	computeDeletePlan,
+	extractRooms,
 	extractSessions,
 	extractSpeakers,
 	fetchSessionizePayload,
@@ -33,6 +33,7 @@ import {
 
 const SPEAKERS_COLLECTION = 'speakers';
 const SESSIONS_COLLECTION = 'sessions';
+const ROOMS_COLLECTION = 'rooms';
 
 /**
  * Mirror one typed set of docs into a collection as a single atomic batch
@@ -104,7 +105,8 @@ async function syncSessionize(): Promise<void> {
 	const categoryMap = buildCategoryMap(payload);
 	// Sessions carry a `roomId` and (for this event) no inline room name, so the
 	// column names on /agenda come from the payload's top-level `rooms[]`.
-	const roomMap = buildRoomMap(payload);
+	const rooms = extractRooms(payload);
+	const roomMap = new Map(rooms.map((room) => [room.id, room.name]));
 	const sessions = normalizeSessions(extractSessions(payload), speakerMap, categoryMap, roomMap);
 
 	// Speakers first: `extractSpeakers` throws on an empty/invalid roster, so a
@@ -113,6 +115,9 @@ async function syncSessionize(): Promise<void> {
 	// a truncated run from wiping the live /sessions collection.
 	await commitCollection(SPEAKERS_COLLECTION, speakers);
 	await commitCollection(SESSIONS_COLLECTION, sessions);
+	// Rooms on their own: a room with nothing slotted in it yet still gets its
+	// (empty) column on /agenda.
+	await commitCollection(ROOMS_COLLECTION, rooms);
 }
 
 /**

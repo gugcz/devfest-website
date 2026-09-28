@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { speakerNames, visitorCategories, type Session } from '../lib/sessions';
+import { speakerNames, visitorCategories, type Room, type Session } from '../lib/sessions';
 import {
 	byStart,
 	dayRange,
@@ -41,6 +41,7 @@ const NON_TALK_ROWS = 2;
 /** Stable empty roster, so the memos below don't recompute on every render
  * before the payload lands. */
 const EMPTY_SESSIONS: Session[] = [];
+const EMPTY_ROOMS: Room[] = [];
 
 /** Width below which the timetable becomes the time-ordered list. NOT the
  * site's phone breakpoint — this is about room columns: below 1024 a
@@ -235,6 +236,11 @@ function AgendaGrid({
 				{columns.map((column, i) => (
 					<div key={column.key} className={s.headCell} style={{ gridColumn: i + 2, gridRow: 1 }}>
 						{column.label}
+						{/* A Sessionize room with nothing slotted in it yet: say so, or
+						    an empty column all day reads as a failed load. */}
+						{(byRoom.get(column.key) ?? []).length === 0 && (
+							<span className={s.headNote}>Talks TBA</span>
+						)}
 					</div>
 				))}
 
@@ -434,8 +440,9 @@ export default function Agenda() {
 	const isNarrow = useMediaQuery(NARROW);
 
 	const sessions = data?.sessions ?? EMPTY_SESSIONS;
+	const rooms = data?.rooms ?? EMPTY_ROOMS;
 	const profiles = useMemo(() => speakersById(data?.speakers ?? []), [data]);
-	const partition = useMemo(() => partitionAgenda(sessions), [sessions]);
+	const partition = useMemo(() => partitionAgenda(sessions, rooms), [sessions, rooms]);
 	const placements = useMemo(() => sessionPlacements(sessions), [sessions]);
 	const range = useMemo(() => dayRange(sessions), [sessions]);
 	// Event-day "now" line + live/coming-up badges (hooks must run before the

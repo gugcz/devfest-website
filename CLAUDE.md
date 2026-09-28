@@ -97,7 +97,7 @@ SDK** (client reads blocked on an App Check token, ~30s on mobile).
 
 | Endpoint | Function | Reads | Caller |
 | --- | --- | --- | --- |
-| `/api/lineup` | `lineupApi` | Firestore `speakers` + `sessions` | `src/lib/lineup.ts` |
+| `/api/lineup` | `lineupApi` | Firestore `speakers` + `sessions` + `rooms` | `src/lib/lineup.ts` |
 | `/api/tickets` | `ticketsApi` | RTDB `/tickets` | `src/lib/tito.ts::fetchTickets` |
 | `/api/speaker-photo?id=` | `speakerPhotoApi` | Storage `speakers/{id}` or the Sessionize CDN (image bytes) | `src/components/SpeakerCard.tsx` |
 

@@ -7,7 +7,7 @@
  *   `Europe/Prague` (reading `HH:MM` off it put the day an hour early).
  * Single-day event: minutes-from-midnight is enough for placement.
  */
-import type { Session } from './sessions';
+import type { Room, Session } from './sessions';
 
 /** Assumed length of a session whose `endsAt` is missing or not after its start. */
 const FALLBACK_DURATION_MIN = 30;
@@ -19,7 +19,7 @@ const MIN_SPAN_MIN = 15;
 const ROOM_TBA = 'Room TBA';
 
 /** A grid column. Grouped by `roomId`, not room NAME (Sessionize sends an
- * empty `room`); named when present, else numbered in first-seen order. */
+ * empty `room`); named when present, else numbered in column order. */
 export interface AgendaColumn {
 	key: string;
 	label: string;
@@ -218,11 +218,16 @@ export function dayRange(sessions: Session[]): { start: number; end: number } | 
 	return end > start ? { start, end } : null;
 }
 
-/** Grid columns in first-seen order over timed, non-band talks. Room-less
- * talks get {@link ROOM_TBA} via {@link partitionAgenda}; unnamed columns
- * are numbered. */
-function roomColumns(sessions: Session[]): AgendaColumn[] {
+/** Grid columns: every Sessionize room in its own order, so a room with
+ * nothing slotted yet still shows (empty), then any other room a timed,
+ * non-band talk sits in, first-seen. Room-less talks get {@link ROOM_TBA}
+ * via {@link partitionAgenda}; unnamed columns are numbered. */
+function roomColumns(sessions: Session[], rooms: Room[]): AgendaColumn[] {
 	const labels = new Map<string, string>();
+	for (const room of [...rooms].sort((a, b) => a.order - b.order)) {
+		const key = room.id.trim();
+		if (key && !labels.has(key)) labels.set(key, room.name.trim());
+	}
 	for (const session of [...sessions].sort(byStart)) {
 		if (!isTimed(session) || isBand(session)) continue;
 		const key = roomKey(session);
@@ -239,7 +244,8 @@ function roomColumns(sessions: Session[]): AgendaColumn[] {
 
 /** The agenda split into its render groups. */
 export interface AgendaPartition {
-	/** Column order for the grid (real rooms, then a `Room TBA` column if used). */
+	/** Column order for the grid (real rooms, empty ones included, then a
+	 * `Room TBA` column if used). */
 	columns: AgendaColumn[];
 	/** Timed service / plenum sessions (full-width bands), sorted by start. */
 	bands: Session[];
@@ -254,10 +260,11 @@ export interface AgendaPartition {
 /**
  * Partition agenda sessions into bands, per-room talk lists, a Room-TBA list,
  * and the not-yet-scheduled remainder. Input is expected to be
- * `isAgendaSession`-filtered (title present; service + plenum kept).
+ * `isAgendaSession`-filtered (title present; service + plenum kept). `rooms`
+ * adds a column for every Sessionize room, whether or not it has talks yet.
  */
-export function partitionAgenda(sessions: Session[]): AgendaPartition {
-	const columns = roomColumns(sessions);
+export function partitionAgenda(sessions: Session[], rooms: Room[] = []): AgendaPartition {
+	const columns = roomColumns(sessions, rooms);
 	const byRoom = new Map<string, Session[]>();
 	for (const column of columns) byRoom.set(column.key, []);
 

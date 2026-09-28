@@ -139,7 +139,7 @@ Cloud Scheduler (every 15 minutes)
   └─> Cloud Function `refreshSessionizeScheduled` (europe-west1)
         ├─ fetch  Sessionize "All data" JSON view (SESSIONIZE_ENDPOINT_ID)
         ├─ mirror speaker photos → Firebase Storage `speakers/{id}` (idempotent)
-        └─ write  Firestore `speakers` + `sessions` (cross-referenced, atomic batches)
+        └─ write  Firestore `speakers` + `sessions` (cross-referenced) + `rooms`, atomic batches
 
 Browser
   └─> Speakers.tsx / Sessions.tsx (client:load)
@@ -151,8 +151,8 @@ Browser
 
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
-| `refreshSessionizeScheduled` | Cloud Scheduler, every 15 minutes | Sync Sessionize → Storage photos + Firestore `speakers`/`sessions` |
-| `lineupApi` | HTTPS, public (`/api/lineup`) | Serve `{ speakers, sessions }` as JSON for the browser to `fetch()` (15-min edge TTL) |
+| `refreshSessionizeScheduled` | Cloud Scheduler, every 15 minutes | Sync Sessionize → Storage photos + Firestore `speakers`/`sessions`/`rooms` |
+| `lineupApi` | HTTPS, public (`/api/lineup`) | Serve `{ speakers, sessions, rooms }` as JSON for the browser to `fetch()` (15-min edge TTL) |
 | `speakerPhotoApi` | HTTPS, public (`/api/speaker-photo?id=`) | Serve one speaker's photo same-origin so `/speaker-card` can export its canvas (1-day edge TTL) |
 
 ### Config
