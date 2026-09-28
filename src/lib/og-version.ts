@@ -26,3 +26,16 @@ export function ogCardVersion(member: { name: string; photo?: string }): string 
 	if (member.photo) hash.update(member.photo);
 	return hash.digest('hex').slice(0, 10);
 }
+
+let cachedDefaultVersion: string | undefined;
+/** Same `?v=<hash>` for the site-wide `public/og-image.jpg`: without it a
+ * replaced share image keeps unfurling as the old one on Slack. */
+export function defaultOgImageVersion(): string {
+	if (!cachedDefaultVersion) {
+		cachedDefaultVersion = createHash('sha256')
+			.update(readFileSync(join(root, 'public/og-image.jpg')))
+			.digest('hex')
+			.slice(0, 10);
+	}
+	return cachedDefaultVersion;
+}

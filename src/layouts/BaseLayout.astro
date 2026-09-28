@@ -4,6 +4,7 @@ import { ClientRouter } from 'astro:transitions';
 import CookieBanner from '../components/CookieBanner.astro';
 import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
+import { defaultOgImageVersion } from '../lib/og-version';
 
 interface Props {
 	title?: string;
@@ -26,7 +27,7 @@ const {
 	noindex = false,
 	bodyClass = "",
 	showFooter = true,
-	ogImage = `${siteUrl}/og-image.jpg`,
+	ogImage = `${siteUrl}/og-image.jpg?v=${defaultOgImageVersion()}`,
 	ogImageAlt = "DevFest.cz 2026 — classified mission starts Oct 30, 2026",
 	ogImageWidth = 1200,
 	ogImageHeight = 630,
