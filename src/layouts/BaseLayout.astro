@@ -359,6 +359,12 @@ const jsonLd = JSON.stringify(
 
 		<script>
 			import { keepAnchorLanded } from '../lib/anchor';
+			import { initCampaignLinks } from '../lib/attribution';
+
+			// Once per document, outside `astro:page-load`: it reads the entry URL
+			// before a soft navigation drops its `utm_*`, and the listeners sit on
+			// `document`, which survives the swap.
+			initCampaignLinks();
 
 			// Cinematic atmosphere behaviours — all degrade gracefully and respect
 			// reduced-motion (CSS already neutralises the visual side).
