@@ -88,8 +88,9 @@ export const SPEAKERS = [
 ];
 
 /** Firestore `sessions` — raw docs on one day (event-local ISO, no offset):
- * keynote + lunch bands, two talks in two rooms, a Room-TBA talk, an untimed
- * talk (a third room stays empty, see `ROOMS`). Lunch is a service session (dropped by /sessions, kept by /agenda). */
+ * keynote + lunch bands, two talks in two rooms, a workshop running through
+ * lunch, a Room-TBA talk, an untimed talk (a third room stays empty, see
+ * `ROOMS`). Lunch is a service session (dropped by /sessions, kept by /agenda). */
 export const SESSIONS = [
 	{
 		id: 'ses-keynote',
@@ -218,9 +219,29 @@ export const SESSIONS = [
 		},
 	},
 	{
+		id: 'ses-workshop',
+		data: {
+			// Runs straight through the lunch band: the band must sit UNDER it
+			// (src/components/Agenda.module.scss, `.band`), not cut it in two.
+			order: 6,
+			title: 'Workshop: accessible components from scratch',
+			description: 'Two hours, laptops open.',
+			startsAt: '2026-10-30T11:30:00',
+			endsAt: '2026-10-30T13:30:00',
+			room: 'Room B',
+			roomId: 'room-b',
+			isServiceSession: false,
+			isPlenumSession: false,
+			speakers: [
+				{ id: 'sp-margaret', fullName: 'Margaret Hamilton', tagLine: 'Software engineering', profilePicture: '' },
+			],
+			categories: [{ name: 'Track', values: ['Web'] }],
+		},
+	},
+	{
 		id: 'ses-unscheduled',
 		data: {
-			order: 6,
+			order: 7,
 			title: 'Workshop: hands-on debugging (time TBA)',
 			description: 'A late-addition workshop still being slotted into the grid.',
 			startsAt: '',
