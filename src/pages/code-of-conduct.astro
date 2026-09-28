@@ -1,10 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+// The full text lives in the CoC team's Google Doc; this page is the one-pager.
+const FULL_COC_URL =
+	'https://docs.google.com/document/d/16n7_UlJMYUNeCAsSTMxq9tp9yOq2SDppzulPsvhZYak/preview';
 ---
 
 <BaseLayout
 	title="Code of Conduct — DevFest.cz 2026"
-	description="Code of Conduct for DevFest.cz 2026 — what we do not tolerate, how it is enforced, and who to talk to at the conference."
+	description="Code of Conduct for DevFest.cz 2026 — the short version, and who to talk to at the conference."
 	showFooter={false}
 >
 	<main class="policy">
@@ -14,14 +18,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			<h1 class="policy-title">Code of Conduct</h1>
 			<p class="policy-meta eyebrow">GUG.cz, z.s. · DevFest.cz 2026</p>
 
-			<section aria-labelledby="coc-short">
-				<h2 id="coc-short">In short</h2>
+			<section>
 				<p>
 					DevFest.cz is a community event where we strive to create safer and welcoming
 					spaces for community members to learn from each other. Oppressive or harassing
 					language or behaviour is not allowed. If you are asked to stop, you will stop
 					immediately. The full Code of Conduct is there to help you understand what this
-					means in practice &mdash; <a href="#introduction">you can find it below</a>.
+					means in practice &mdash; <a
+						href={FULL_COC_URL}
+						target="_blank"
+						rel="noopener noreferrer">you can find it here</a
+					>.
 				</p>
 				<p>
 					If you see or experience something that is or might be a violation of the Code of
@@ -29,153 +36,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 					Listener <strong>Eliška Čejpová</strong>,
 					<a href="tel:+420728409551">+420&#160;728&#160;409&#160;551</a>,
 					<a href="mailto:eliska.cejpova@gug.cz">eliska.cejpova@gug.cz</a>.
-				</p>
-			</section>
-
-			<section>
-				<h2 id="introduction">Introduction</h2>
-				<p>
-					DevFest.cz is a developer conference organised by the community GUG.cz, where we
-					strive to create safe and welcoming spaces for community members to learn from
-					each other. This document establishes a shared understanding of how we interact to
-					foster a positive environment. Use this document to help create a welcoming and
-					safe experience for all participants.
-				</p>
-				<p>
-					The DevFest.cz Code of Conduct governs DevFest.cz events and virtual spaces. This
-					includes members, visitors, sponsors, speakers, organisers and volunteers.
-				</p>
-			</section>
-
-			<section>
-				<h2>What to avoid</h2>
-				<p>
-					DevFest.cz is dedicated to providing a welcoming and harassment-free experience for
-					everyone. We do not tolerate harassment of participants in any form.
-				</p>
-				<p>Harassment includes, but is not limited to:</p>
-				<ul>
-					<li>
-						Verbal or written comments that reinforce social structures of domination related
-						to gender, gender identity and expression, sexual orientation, disability, physical
-						appearance, body size, race, age, religion;
-					</li>
-					<li>Sexual images in public spaces;</li>
-					<li>Deliberate intimidation, stalking, or following;</li>
-					<li>Harassing photography or recording;</li>
-					<li>Sustained disruption of talks or other events;</li>
-					<li>Inappropriate or unwanted physical contact;</li>
-					<li>Unwelcome sexual attention;</li>
-					<li>Advocating for, or encouraging, any of the above behaviour;</li>
-					<li>
-						Weaponising this Code of Conduct, e.g. using it in bad faith to silence, punish,
-						or retaliate against someone rather than to address genuine harm.
-					</li>
-				</ul>
-				<p>The Code of Conduct does not enable complaints regarding:</p>
-				<ul>
-					<li>
-						&ldquo;Reverse discrimination&rdquo;, such as reverse racism and cisphobia, because
-						challenging biases and privileges is not a form of discrimination;
-					</li>
-					<li>
-						Reasonable communication of boundaries, such as &ldquo;I want you to stop
-						that&rdquo;, &ldquo;leave me alone&rdquo;, &ldquo;go away&rdquo;, or &ldquo;I&rsquo;m
-						not discussing this with you&rdquo;;
-					</li>
-					<li>Refusal to explain or debate social justice concepts;</li>
-					<li>Communicating in a &ldquo;tone&rdquo; you don&rsquo;t find congenial;</li>
-					<li>
-						Criticising oppressive behaviour or assumptions including, but not limited to,
-						racism, sexism, cissexism, or others.
-					</li>
-				</ul>
-			</section>
-
-			<section>
-				<h2>Enforcement</h2>
-				<p>
-					Every person under the Code of Conduct is expected to uphold it and use it to
-					reflect on and question both their own behaviour and the behaviour they witness.
-					You are encouraged to speak up and ask for the unwanted behaviour to stop. If you
-					are asked to stop, you are expected to stop immediately.
-				</p>
-
-				<h3>Repercussions</h3>
-				<p>
-					When you are given feedback based on the Code of Conduct, you are expected to try to
-					learn and understand the effects of the behaviour questioned.
-				</p>
-			</section>
-
-			<section>
-				<h2>Enforcement at the conference</h2>
-				<p>
-					A DevFest.cz conference will have a designated Code of Conduct Listener available
-					during the event. The Listener will help evaluate and understand actions from the
-					point of view of the Code of Conduct.
-				</p>
-				<p>
-					If a participant engages in harassing behaviour, event organisers retain the right
-					to take any actions to keep the event a welcoming environment for all participants.
-					Community event participants violating these rules may be sanctioned or expelled
-					from the event without a refund at the discretion of the event organisers.
-				</p>
-				<p>
-					Event organisers may take action to redress anything designed to, or with the clear
-					impact of, disrupting the event or making the environment hostile for any
-					participants. This includes warning the offender or expulsion from the conference,
-					with no refund. Violations may also be escalated to the relevant authorities if
-					necessary.
-				</p>
-				<p>
-					The decision of what necessary steps need to be taken is on the joint agreement of
-					the lead organiser and the Code of Conduct Listener. People involved in the Code of
-					Conduct violation, or closely affiliated with the people involved in it, will recuse
-					themselves from the decision-making.
-				</p>
-				<p>
-					We expect participants to follow these rules at all event venues and event-related
-					social activities.
-				</p>
-			</section>
-
-			<section>
-				<h2>Code of Conduct Listener</h2>
-				<p>
-					The Code of Conduct Listener is a designated individual at the conference
-					responsible for addressing any concerns related to harassment or inappropriate
-					behaviour.
-				</p>
-				<p>Their responsibilities typically include:</p>
-				<ul>
-					<li>
-						Being available and accessible to attendees who need assistance or want to report
-						an incident of harassment, listening with empathy and without judgement, in
-						confidence.
-					</li>
-					<li>
-						Explaining the Code of Conduct and the available options for reporting and
-						resolution.
-					</li>
-					<li>
-						Working closely with conference organisers to ensure reported incidents are
-						addressed and appropriate action is taken.
-					</li>
-				</ul>
-				<p>
-					For DevFest.cz 2026 the Code of Conduct Listener is <strong>Eliška Čejpová</strong>,
-					<a href="tel:+420728409551">+420&#160;728&#160;409&#160;551</a>,
-					<a href="mailto:eliska.cejpova@gug.cz">eliska.cejpova@gug.cz</a>.
-				</p>
-			</section>
-
-			<section>
-				<h2>Complaints</h2>
-				<p>
-					If you are unsatisfied with the enforcement or support, please contact the board of
-					<a href="https://gug.cz" target="_blank" rel="noopener noreferrer">GUG.cz</a>, the
-					organising body of DevFest.cz.
 				</p>
 			</section>
 		</div>
