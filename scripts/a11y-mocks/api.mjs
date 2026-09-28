@@ -3,13 +3,14 @@
  * `astro.config.mjs` (a dev server has no Hosting rewrites). Shapes mirror
  * the real endpoints so the browser runs its own parsers unchanged.
  */
-import { SPEAKERS, SESSIONS, TICKETS } from './fixtures.mjs';
+import { ROOMS, SPEAKERS, SESSIONS, TICKETS } from './fixtures.mjs';
 
 /** Route → JSON body. Keys are exact pathnames, query strings stripped. */
 export const API_FIXTURES = {
 	'/api/lineup': JSON.stringify({
 		speakers: SPEAKERS.map((s) => ({ id: s.id, ...s.data })),
 		sessions: SESSIONS.map((s) => ({ id: s.id, ...s.data })),
+		rooms: ROOMS.map((r) => ({ id: r.id, ...r.data })),
 	}),
 	'/api/tickets': JSON.stringify(TICKETS),
 };

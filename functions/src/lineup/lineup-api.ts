@@ -1,5 +1,5 @@
 /**
- * `lineupApi` — public endpoint serving `{ speakers, sessions }` as raw docs
+ * `lineupApi` — public endpoint serving `{ speakers, sessions, rooms }` as raw docs
  * (`{ id, ...doc }`), read via Admin SDK so the browser never waits on an App
  * Check token. See `cached-endpoint.ts` for the caching.
  */
@@ -29,6 +29,7 @@ interface LineupDoc {
 interface LineupPayload {
 	speakers: LineupDoc[];
 	sessions: LineupDoc[];
+	rooms: LineupDoc[];
 }
 
 async function readCollection(name: string): Promise<LineupDoc[]> {
@@ -37,11 +38,12 @@ async function readCollection(name: string): Promise<LineupDoc[]> {
 }
 
 async function loadLineup(): Promise<LineupPayload> {
-	const [speakers, sessions] = await Promise.all([
+	const [speakers, sessions, rooms] = await Promise.all([
 		readCollection('speakers'),
 		readCollection('sessions'),
+		readCollection('rooms'),
 	]);
-	return { speakers, sessions };
+	return { speakers, sessions, rooms };
 }
 
 export const lineupApi = onRequest(
@@ -50,7 +52,7 @@ export const lineupApi = onRequest(
 		name: 'lineupApi',
 		cacheControl: CACHE_CONTROL,
 		memoTtlMs: MEMO_TTL_MS,
-		fallback: { speakers: [], sessions: [] },
+		fallback: { speakers: [], sessions: [], rooms: [] },
 		load: loadLineup,
 	}),
 );

@@ -1,11 +1,21 @@
 /** Browser fetch of `/api/lineup` (plain `fetch()`, never the Firestore
- * SDK); raw docs parsed by `speakerFromDoc` / `sessionFromDoc`. */
+ * SDK); raw docs parsed by `speakerFromDoc` / `sessionFromDoc` / `roomFromDoc`. */
 import { speakerFromDoc, type Speaker } from './speakers';
-import { isAgendaSession, isDisplayableSession, sessionFromDoc, type Session } from './sessions';
+import {
+	isAgendaSession,
+	isDisplayableSession,
+	roomFromDoc,
+	sessionFromDoc,
+	type Room,
+	type Session,
+} from './sessions';
 
 export interface Lineup {
 	speakers: Speaker[];
 	sessions: Session[];
+	/** Every Sessionize room, empty ones included; `[]` from a function
+	 * deployed before rooms were mirrored. */
+	rooms: Room[];
 }
 
 const ENDPOINT = '/api/lineup';
@@ -23,16 +33,19 @@ function parseDocs<T>(raw: unknown, parse: (id: string, data: Record<string, unk
 	});
 }
 
-async function fetchDocs(signal?: AbortSignal): Promise<{ speakers?: unknown; sessions?: unknown }> {
+async function fetchDocs(
+	signal?: AbortSignal,
+): Promise<{ speakers?: unknown; sessions?: unknown; rooms?: unknown }> {
 	const res = await fetch(ENDPOINT, { signal });
 	if (!res.ok) throw new Error(`lineup fetch failed: ${res.status}`);
-	return (await res.json()) as { speakers: unknown; sessions: unknown };
+	return (await res.json()) as { speakers: unknown; sessions: unknown; rooms?: unknown };
 }
 
 function fetchParsed(keep: (s: Session) => boolean, signal?: AbortSignal): Promise<Lineup> {
 	return fetchDocs(signal).then((data) => ({
 		speakers: parseDocs(data.speakers, speakerFromDoc),
 		sessions: parseDocs(data.sessions, sessionFromDoc).filter(keep),
+		rooms: parseDocs(data.rooms, roomFromDoc).filter((room): room is Room => room !== null),
 	}));
 }
 
