@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// The full text lives in the CoC team's Google Doc; this page is the one-pager.
+const FULL_COC_URL =
+	'https://docs.google.com/document/d/16n7_UlJMYUNeCAsSTMxq9tp9yOq2SDppzulPsvhZYak/preview';
+---
+
+<BaseLayout
+	title="Code of Conduct — DevFest.cz 2026"
+	description="Code of Conduct for DevFest.cz 2026 — the short version, and who to talk to at the conference."
+	showFooter={false}
+>
+	<main class="policy">
+		<div class="policy-inner">
+			<a href="/" class="back-link">&#8592; Back</a>
+
+			<h1 class="policy-title">Code of Conduct</h1>
+			<p class="policy-meta eyebrow">GUG.cz, z.s. · DevFest.cz 2026</p>
+
+			<section>
+				<p>
+					DevFest.cz is a community event where we strive to create safer and welcoming
+					spaces for community members to learn from each other. Oppressive or harassing
+					language or behaviour is not allowed. If you are asked to stop, you will stop
+					immediately. The full Code of Conduct is there to help you understand what this
+					means in practice &mdash; <a
+						href={FULL_COC_URL}
+						target="_blank"
+						rel="noopener noreferrer">you can find it here</a
+					>.
+				</p>
+				<p>
+					If you see or experience something that is or might be a violation of the Code of
+					Conduct, please reach out to the organisers or directly to the Code of Conduct
+					Listener <strong>Eliška Čejpová</strong>,
+					<a href="tel:+420728409551">+420&#160;728&#160;409&#160;551</a>,
+					<a href="mailto:eliska.cejpova@gug.cz">eliska.cejpova@gug.cz</a>.
+				</p>
+			</section>
+		</div>
+	</main>
+</BaseLayout>
+
+<style lang="scss">
+	// Same legal-document column as the privacy policy.
+	@use './privacy-policy';
+</style>

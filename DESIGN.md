@@ -590,12 +590,13 @@ under every hero), `Closer.astro`, `Menu.astro`, `Footer.astro`,
 **Structural rules [MUST]:** no decorated eyebrow; red text is flat; one
 `--fs-display` per page; section heads left-set; no accent bars down a block's
 left edge; lists carry **no rules**; detail views are full-bleed sheets;
-`Closer.astro` ends every page except `/privacy-policy`.
+`Closer.astro` ends every page except `/privacy-policy` and `/code-of-conduct`.
 
 ## Anatomy of a page
 
 **[MUST] A subpage is:** `SubpageHero` → `Ticker` → `.band` sections →
-`Closer` → `Footer`. `privacy-policy` is the exception; `/` and `/partners`
+`Closer` → `Footer`. `privacy-policy` and `code-of-conduct` (same legal
+column) are the exception; `/` and `/partners`
 are out of scope.
 
 ```astro
@@ -671,7 +672,7 @@ Decision criteria, picked per page:
 - **A `<details>` list opens with its first item open** (`faq.astro:106`).
   A section must not reuse the hero's `aria-labelledby` (`landmark-unique`).
 - **`Closer` tone.** Pass `tone="accent"` explicitly. The `'raised'` default
-  has no CSS (Open points). `privacy-policy` has no `Closer`.
+  has no CSS (Open points). `privacy-policy` and `code-of-conduct` have no `Closer`.
 
 ## Iconography
 

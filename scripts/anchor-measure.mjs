@@ -124,6 +124,7 @@ const HEADER_ROUTES = [
 	'/press/',
 	'/press/downloads/',
 	'/invoice/',
+	'/code-of-conduct/',
 	'/privacy-policy/',
 	'/thank-you/',
 	'/newsletter-subscription-thank-you/',
