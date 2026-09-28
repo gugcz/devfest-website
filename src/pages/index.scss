@@ -331,6 +331,41 @@
 	align-items: flex-start;
 }
 
+// Laptop heights. A browser window on a 1280x720 to 1536x864 screen leaves
+// a 600-790px viewport, and the insets above pushed the footing strip
+// 40-90px under the fold there — date and venue only showed on scroll. On
+// a short desktop viewport the statement, the rotor's pause and the insets
+// yield more to height; tall screens keep the poster spacing.
+@media (min-width: 901px) and (max-height: 960px) {
+	.hero-inner {
+		padding-block: clamp(0.5rem, 1.5svh, 2rem) clamp(1rem, 3.5svh, 4rem);
+	}
+
+	.hero-title {
+		margin-bottom: clamp(0.75rem, min(3.5vw, 2.5svh), 2.75rem);
+	}
+
+	.hero-logo {
+		width: clamp(173px, min(44vw, 38svh), 439px);
+	}
+
+	.hero-statement {
+		font-size: clamp(2.5rem, min(9.5vw, 11svh), 8.5rem);
+	}
+
+	.topics-rotor {
+		margin-top: clamp(1.25rem, 5svh, 6rem);
+	}
+
+	.topics-rotor-item {
+		font-size: clamp(1.5rem, min(2.9vw, 5svh), 2.75rem);
+	}
+
+	.hero-actions {
+		margin-top: clamp(1rem, min(4.5vw, 3svh), 3.5rem);
+	}
+}
+
 /* ===================== FACTS ===================== */
 // Figures instead of a paragraph, on an asymmetric split.
 #facts {
