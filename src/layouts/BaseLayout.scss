@@ -155,6 +155,12 @@ html {
 	scroll-padding-bottom: 8rem;
 	// Canvas colour — prevents a white flash during iOS rubber-band scroll.
 	background: var(--color-bg);
+	// Speaker photos come verbatim from Sessionize, and a phone portrait can
+	// carry an HDR gain map. On an HDR screen one such photo pushes the display
+	// into HDR mode, and every SDR pixel around it (the whole page) dims.
+	// Inherited: every image on the site renders as SDR. Unsupported browsers
+	// ignore it.
+	dynamic-range-limit: standard;
 	// `clip`, never `hidden`: `hidden` makes html a scroll container on iOS Safari,
 	// which anchors position:fixed to the html box and breaks env(safe-area-inset-*).
 	@supports (overflow-x: clip) {
