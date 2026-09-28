@@ -29,6 +29,7 @@ const PATHS = [
 	'/invoice/',
 	'/attending/',
 	'/speaker-card/',
+	'/code-of-conduct/',
 	'/privacy-policy/',
 	// One of the eleven personal invitation pages. They are the same template
 	// with a different photograph and one different line, so auditing one
