@@ -698,6 +698,10 @@ $strip-tiers: (
 	'community': (2.875rem, 12.5rem, 0.55, 0.55),
 );
 
+// Tiers that go two to a line on a phone. Platinum and Diamond keep one logo
+// per line at their full phone cap: the size is part of what the tier buys.
+$strip-grid-tiers: ('gold', 'silver', 'community');
+
 @each $name, $scale in $strip-tiers {
 	.partners-tier.tier-#{$name} {
 		--strip-logo-h: #{list.nth($scale, 1)};
@@ -706,8 +710,35 @@ $strip-tiers: (
 		--tier-label-color: #{rgba(240, 237, 230, list.nth($scale, 4))};
 
 		@media (max-width: 600px) {
-			--strip-logo-h: #{list.nth($scale, 1) * 0.8};
-			--strip-logo-w: #{list.nth($scale, 2) * 0.78};
+			@if list.index($strip-grid-tiers, $name) {
+				// In the grid the cell sets the width; the ladder still steps
+				// the height down.
+				--strip-logo-h: #{list.nth($scale, 1) * 0.68};
+				--strip-logo-w: 100%;
+			} @else {
+				--strip-logo-h: #{list.nth($scale, 1) * 0.8};
+				--strip-logo-w: #{list.nth($scale, 2) * 0.78};
+			}
+		}
+	}
+}
+
+// On a phone the free-wrapping row set the lower tiers unevenly: one Gold
+// logo on a line, two side by side, then one again, each at its own size, a
+// pile rather than a list. Two even columns make each of those tiers one
+// tidy block, and the ladder (height + opacity) still carries the rank.
+@media (max-width: 600px) {
+	@each $name in $strip-grid-tiers {
+		.partners-tier.tier-#{$name} .partners-row {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 1.5rem 1.75rem;
+			width: 100%;
+		}
+
+		.partners-tier.tier-#{$name} .partners-item {
+			min-height: var(--strip-logo-h);
+			min-width: 0;
 		}
 	}
 }

@@ -174,4 +174,12 @@
 		gap: 1rem;
 		padding: 1.5rem 0;
 	}
+
+	// The mono headline's 1.45rem floor set five heavy lines per clipping on
+	// a phone. Mono runs ~0.6em a character, so it takes a smaller step than
+	// the Bebas row titles to sit at the same weight in the list.
+	.coverage-title {
+		font-size: var(--fs-body-lg);
+		line-height: 1.4;
+	}
 }

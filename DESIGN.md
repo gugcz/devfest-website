@@ -310,6 +310,11 @@ the lists under them come down.
 **[MUST] Body text caps at 65–75ch.** Cap the container, don't shrink the
 type. `0.06em` letter-spacing is for short uppercase labels only.
 
+**[MUST] Sheet prose sets ragged on a phone.** The session abstract and the
+speaker bio are justified with `hyphens: auto` on wider screens; at ≤600px
+they go `text-align: left` at `--fs-body`. A ~30-character Special Elite
+column opens rivers between three or four words when justified.
+
 ## Spacing & layout
 
 | Token | Value | Line | Use |
@@ -537,6 +542,10 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 - **[MUST] The partner wall is one grid module, `.logo-grid` / `.logo-cell`**
   (`partners.scss:158,172`), one track size for every tier. The tier is
   carried by heading and section order.
+- **[CURRENT] The home partner strip steps by logo cap** (`$strip-tiers`,
+  `index.scss`). On a phone Platinum and Diamond keep one logo per line;
+  Gold, Silver and Community set two to a line in an even grid, so the lower
+  tiers read as blocks and the cap ladder still carries the rank.
 - **[MUST] Logos get equal ink area, not equal width.** `opticalBox()`
   (`partners.astro:53`) → `--logo-w` / `--logo-h` (5:1 wordmark ≈190×38,
   square glyph ≈76×76). `plated` is a per-partner flag, not a tier inversion.
