@@ -97,6 +97,9 @@ export default function SpeakerCard() {
 	const [photo, setPhoto] = useState<ImageBitmap | null>(null);
 	const [photoSource, setPhotoSource] = useState<PhotoSource>('monogram');
 	const [photoError, setPhotoError] = useState('');
+	// True while a speaker's photo downloads or an upload decodes: the proxy
+	// can take seconds on a cold start, and HEIC decodes slowly on phones.
+	const [photoLoading, setPhotoLoading] = useState(false);
 	const [transform, setTransform] = useState<PhotoTransform>(DEFAULT_TRANSFORM);
 	const [shareState, setShareState] = useState<ShareState>('idle');
 	// Bumped once the latin-ext glyphs for the current text have loaded.
@@ -132,6 +135,7 @@ export default function SpeakerCard() {
 		if (!assets) return;
 		let cancelled = false;
 		setPhotoError('');
+		setPhotoLoading(Boolean(speaker?.profilePicture));
 		const load = speaker?.profilePicture
 			? // Same-origin proxy of the lineup photo (`speakerPhotoApi`): the
 				// Storage mirror needs App Check and Sessionize sends no CORS, and
@@ -151,6 +155,7 @@ export default function SpeakerCard() {
 					return;
 				}
 				replacePhoto(bitmap, source);
+				setPhotoLoading(false);
 			});
 		return () => {
 			cancelled = true;
@@ -208,10 +213,13 @@ export default function SpeakerCard() {
 			setPhotoError('That file is over 20 MB. Try a smaller export.');
 			return;
 		}
+		setPhotoLoading(true);
 		try {
 			replacePhoto(await decodeFile(file), 'upload');
 		} catch {
 			setPhotoError("Couldn't read that image. JPG, PNG, WebP or HEIC all work.");
+		} finally {
+			setPhotoLoading(false);
 		}
 	}
 
@@ -316,9 +324,10 @@ export default function SpeakerCard() {
 		);
 	}
 
-	const exportDisabled = !speaker || !photo || shareState === 'working';
-	const photoNote =
-		photoSource === 'speaker'
+	const exportDisabled = !speaker || !photo || photoLoading || shareState === 'working';
+	const photoNote = photoLoading
+		? 'Fetching your photo…'
+		: photoSource === 'speaker'
 			? 'Your Sessionize photo. Drag it on the card to frame it.'
 			: photoSource === 'upload'
 				? 'Your own photo, processed on your device only. Drag it on the card to frame it.'
@@ -489,6 +498,7 @@ export default function SpeakerCard() {
 						height={CARD_SIZE}
 						className={a.canvas}
 						role="img"
+						aria-busy={photoLoading}
 						aria-label={
 							speaker
 								? `DevFest.cz 2026 speaker card for ${speaker.fullName}${talk ? `, ${talk}` : ''}`
@@ -500,6 +510,11 @@ export default function SpeakerCard() {
 						onPointerCancel={handlePointerUp}
 						data-draggable={photo && photoSource !== 'monogram' ? 'true' : 'false'}
 					/>
+					{photoLoading && (
+						<div className={s.photoLoading}>
+							<LoadingState label="Developing your photo" />
+						</div>
+					)}
 				</div>
 			</div>
 		</div>
