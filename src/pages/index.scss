@@ -61,7 +61,7 @@
 	// The wordmark is ~5:1, so its WIDTH is what spends vertical budget.
 	// Capping it against svh as well keeps a 900px-tall desktop from giving
 	// 112px of the hero's height to the mark alone.
-	width: clamp(173px, min(44vw, 44svh), 439px);
+	width: clamp(173px, min(44vw, 44svh), 27.4375rem);
 	max-width: 100%;
 	height: auto;
 	display: block;
@@ -346,7 +346,7 @@
 	}
 
 	.hero-logo {
-		width: clamp(173px, min(44vw, 38svh), 439px);
+		width: clamp(173px, min(44vw, 38svh), 27.4375rem);
 	}
 
 	.hero-statement {
@@ -488,7 +488,7 @@
 // Flat B&W press photos that develop into colour on hover. No frame per photo.
 .gallery-track img {
 	display: block;
-	height: clamp(240px, 30vw, 420px);
+	height: clamp(240px, 30vw, 26.25rem);
 	width: auto;
 	max-width: none;
 	aspect-ratio: 3 / 2;
@@ -690,12 +690,12 @@
 // bottoms out at 0.55: below that the mono caption drops under 4.5:1 (axe caught
 // 0.46 at 4.11:1), so the ladder dims the logos, never the labels.
 $strip-tiers: (
-	'platinum': (84px, 330px, 0.78, 0.72),
-	'diamond': (72px, 290px, 0.70, 0.66),
-	'gold': (60px, 245px, 0.62, 0.60),
-	'silver': (52px, 220px, 0.58, 0.55),
+	'platinum': (5.25rem, 20.625rem, 0.78, 0.72),
+	'diamond': (4.5rem, 18.125rem, 0.70, 0.66),
+	'gold': (3.75rem, 15.3125rem, 0.62, 0.60),
+	'silver': (3.25rem, 13.75rem, 0.58, 0.55),
 	// Off the ladder, one step below silver.
-	'community': (46px, 200px, 0.55, 0.55),
+	'community': (2.875rem, 12.5rem, 0.55, 0.55),
 );
 
 @each $name, $scale in $strip-tiers {

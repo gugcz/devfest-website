@@ -72,7 +72,7 @@ const logoProps = (logo: string, plated = false) => {
 	const box = opticalBox(img, plated);
 	const shared = {
 		src: img,
-		style: `--logo-w:${box.width}px;--logo-h:${box.height}px`,
+		style: `--logo-w:${box.width / 16}rem;--logo-h:${box.height / 16}rem`,
 	};
 	return img.format === 'svg'
 		? { ...shared, format: 'svg' as const, layout: 'none' as const }

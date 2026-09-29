@@ -28,8 +28,8 @@
 // The tier is carried by heading and section order; a short last row
 // stays empty — rules belong to the CELLS.
 .logo-grid {
-	--cell-min: 280px;
-	--cell-height: 200px;
+	--cell-min: 17.5rem;
+	--cell-height: 12.5rem;
 
 	list-style: none;
 	margin: 0;
@@ -90,7 +90,7 @@
 	// keeps proportions when a narrow cell clamps `max-width: 100%`.
 	.logo {
 		display: block;
-		width: var(--logo-w, 180px);
+		width: var(--logo-w, 11.25rem);
 		height: auto;
 		max-width: 100%;
 		max-height: calc(var(--cell-height) - 3.2rem);

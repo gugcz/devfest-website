@@ -306,13 +306,22 @@ type. `0.06em` letter-spacing is for short uppercase labels only.
 
 | Token | Value | Line | Use |
 | --- | --- | --- | --- |
-| `--maxw` | `1440px` | 29 | the content column (`.u-container`, `.band-inner`) |
+| `--maxw` | `90rem` (1440px) | 29 | the content column (`.u-container`, `.band-inner`) |
 | `--gutter` | `clamp(1.25rem, 5vw, 4.5rem)` | 30 | page gutter; also the negative inset for full-bleed row fields |
 | `--section-y-tight` | `clamp(3.75rem, 6vw, 6.5rem)` | 35 | a cut |
 | `--section-y` | `clamp(6rem, 10vw, 11rem)` | 36 | the normal beat |
 | `--section-y-wide` | `clamp(8.5rem, 15vw, 17rem)` | 37 | a held shot before something that matters |
 | `--radius` | `2px` | 40 | **[MUST]** sharp corners — never pill-shaped |
 | `--focus-gap-tight` / `--focus-gap` / `--focus-gap-lg` | `2px` / `3px` / `4px` | 117–119 | focus-ring standoff, see Accessibility |
+
+**[MUST] Large screens scale, they do not widen.** Up to 1920px the root is
+the browser default. Past it `html` grows the root linearly
+(`100% + (100vw - 1920px) / 120`, capped at 200%), so a 2560px viewport (4K at
+150%) renders the page at 1.33x and 3840px (4K at 100%) at 2x: the same
+composition as 1920px, not a 1440px column adrift in black. It only works
+because layout caps and grid minimums are in rem; a new `max-width`,
+`minmax()` floor or image cap goes in rem, and a px value is for phone
+floors and physical sizes (the 44px tap target, hairlines) only.
 
 **[MUST] Three section densities, not one** (`BaseLayout.scss:43–45`).
 
