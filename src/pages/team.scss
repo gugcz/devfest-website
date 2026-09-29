@@ -15,7 +15,7 @@
 	--crew-col-gap: clamp(1.5rem, 2.6vw, 2.5rem);
 	grid-template-columns: repeat(
 		auto-fill,
-		minmax(min(max(240px, (100% - 3 * var(--crew-col-gap)) / 4), 100%), 1fr)
+		minmax(min(max(15rem, (100% - 3 * var(--crew-col-gap)) / 4), 100%), 1fr)
 	);
 	gap: clamp(2.5rem, 4.5vw, 4rem) var(--crew-col-gap);
 }

@@ -14,7 +14,8 @@
 	// families resolve to build-time hashes, so never write a literal
 	// 'Bebas Neue' string. Only these three faces — never add a fourth.
 
-	--maxw: 1440px;
+	// In rem so the column grows with the large-screen root step on `html`.
+	--maxw: 90rem;
 	// The `min()` ceiling keeps the page reflowable under text-only zoom
 	// (WCAG 1.4.4 / 1.4.10): at a 32px root the 1.25rem floor doubled and two
 	// gutters ate a quarter of a 320px viewport. 6.25vw equals the floor at
@@ -38,6 +39,12 @@
 	// directly and left every anchor offset 4.8px out under 380px.
 	@media (max-width: 380px) {
 		--header-pad-y: 0.7rem;
+	}
+	// Past 1920px the root grows (see `html`), and a 44px bar under a 2x page
+	// read as a hairline. Browser zoom pulls the CSS viewport under 1921px, so
+	// a zoomed page keeps the physical 44px target above.
+	@media (min-width: 1921px) {
+		--header-tap: 2.75rem;
 	}
 
 	// Sharp corners — a hint of softening, never pill-shaped.
@@ -153,6 +160,15 @@ html {
 	scroll-padding-top: calc(var(--header-h) + 1.5rem);
 	// keep keyboard-focused elements clear of the fixed cookie banner
 	scroll-padding-bottom: 8rem;
+	// LARGE SCREENS. Up to 1920px nothing moves. Past it the root grows with the
+	// viewport, so the whole rem-built page scales like a 1920px layout instead
+	// of a 1440px column floating in black: 2560px (a 4K screen at 150%) reads
+	// at 1.33x, 3840px (4K at 100%) at 2x, the cap. Added to 100%, not set in
+	// px, so a visitor's own default font size still counts. Layout caps and
+	// grid minimums are in rem for the same reason; keep new ones in rem too.
+	@media (min-width: 1921px) {
+		font-size: clamp(100%, calc(100% + (100vw - 1920px) / 120), 200%);
+	}
 	// Canvas colour — prevents a white flash during iOS rubber-band scroll.
 	background: var(--color-bg);
 	// Speaker photos come verbatim from Sessionize, and a phone portrait can
@@ -520,8 +536,8 @@ body {
 
 .facts {
 	display: grid;
-	// 320px floor: below it a mono label at this tracking cannot hold one line.
-	grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+	// 20rem (320px) floor: below it a mono label at this tracking cannot hold one line.
+	grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
 	gap: clamp(2.5rem, 5vw, 4.5rem) clamp(1.75rem, 3vw, 3rem);
 }
 

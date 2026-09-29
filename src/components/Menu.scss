@@ -130,6 +130,13 @@
 	object-fit: contain;
 }
 
+// Large screens: the page scales with the root past 1920px, so the mark does too.
+@media (min-width: 1921px) {
+	.brand-logo {
+		height: 2.125rem;
+	}
+}
+
 .header-stamp {
 	margin: 0;
 	justify-self: center;
