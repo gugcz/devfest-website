@@ -631,3 +631,16 @@
 		transition: none;
 	}
 }
+
+@media (max-width: 600px) {
+	// The names still lead the row, but at the lede step in mono they set as
+	// large as the phone's row title and every entry read as two headlines.
+	// Body size keeps them the brightest line under the title, not a rival.
+	.itemMeta {
+		font-size: var(--fs-body);
+	}
+
+	.itemMain {
+		gap: 0.55rem;
+	}
+}

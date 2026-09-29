@@ -515,12 +515,11 @@
 		padding-inline: var(--gutter);
 	}
 
-	// A 0.2em-tracked label in a 1.5rem-inset box made the red block the
-	// widest thing in the bar; tighter, it reads as a button beside the mark,
-	// not a banner across it. Height is untouched (`--header-tap`).
+	// In a 1.5rem-inset box the red block was the widest thing in the bar;
+	// tighter (and with the phone's tracking scale), it reads as a button
+	// beside the mark, not a banner across it. Height is `--header-tap`.
 	.header-cta {
 		padding-inline: min(1.1rem, 5.5vw);
-		letter-spacing: 0.16em;
 	}
 }
 

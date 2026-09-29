@@ -273,9 +273,9 @@ Poster scale (Bebas), `BaseLayout.scss:81–95`:
 | `--fs-h3` | `clamp(1.8rem, 3.4vw, 2.6rem)` | 85 | sub-section headline |
 | `--fs-card-title` | `1.95rem` | 86 | card / dossier title |
 | `--fs-title-compact` | `1.6rem` | 87 | compact record title |
-| `--fs-row` | `clamp(2.6rem, 5.2vw, 4.5rem)` | 93 | row title, **short** list (waves, desks) |
-| `--fs-row-sm` | `clamp(2.2rem, 4vw, 3.4rem)` | 94 | row title, **long** list (sessions, FAQ, clippings) |
-| `--fs-row-figure` | `clamp(2.5rem, 4.2vw, 4rem)` | 95 | the figure opposite a row title |
+| `--fs-row` | `clamp(2.6rem, 5.2vw, 4.5rem)`; `2.1rem` ≤600px | 93 | row title, **short** list (waves, desks) |
+| `--fs-row-sm` | `clamp(2.2rem, 4vw, 3.4rem)`; `1.7rem` ≤600px | 94 | row title, **long** list (sessions, FAQ, clippings) |
+| `--fs-row-figure` | `clamp(2.5rem, 4.2vw, 4rem)`; `2.1rem` ≤600px | 95 | the figure opposite a row title |
 
 Text scale, `BaseLayout.scss:100–110`:
 
@@ -299,6 +299,14 @@ no `text-shadow`.
 
 **[CURRENT]** Mono labels are uppercase at `0.22em`–`0.24em` tracking.
 
+**[MUST] Phones take their own list step and tracking.** At ≤600px the
+`:root` phone block (last in `:root`, so it wins over the base steps) sets
+the row steps above to their phone values and `--track-scale: 0.72`; the
+`mono()` mixin multiplies its tracking by `--track-scale`, so a 0.24em label
+sets at ~0.17em on a phone. `--fs-h2`, `--fs-display` and `--fs-hero` keep
+their floors: the section head and the page title stay poster scale while
+the lists under them come down.
+
 **[MUST] Body text caps at 65–75ch.** Cap the container, don't shrink the
 type. `0.06em` letter-spacing is for short uppercase labels only.
 
@@ -310,7 +318,7 @@ type. `0.06em` letter-spacing is for short uppercase labels only.
 | `--gutter` | `min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw)` | 30 | page gutter; also the negative inset for full-bleed row fields |
 | `--section-y-tight` | `clamp(3.75rem, 6vw, 6.5rem)` | 35 | a cut |
 | `--section-y` | `clamp(6rem, 10vw, 11rem)` | 36 | the normal beat |
-| `--section-y-wide` | `clamp(8.5rem, 15vw, 17rem)` | 37 | a held shot before something that matters |
+| `--section-y-wide` | `clamp(8.5rem, 15vw, 17rem)`; `6.5rem` ≤600px | 37 | a held shot before something that matters |
 | `--radius` | `2px` | 40 | **[MUST]** sharp corners — never pill-shaped |
 | `--focus-gap-tight` / `--focus-gap` / `--focus-gap-lg` | `2px` / `3px` / `4px` | 117–119 | focus-ring standoff, see Accessibility |
 

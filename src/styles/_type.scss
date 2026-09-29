@@ -7,8 +7,11 @@
 @mixin mono($size, $track: null, $case: null) {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: $size;
+	// Tracking goes through `--track-scale` (1 everywhere, pulled in on
+	// phones in BaseLayout.scss): a 0.26em label that reads as a caption on a
+	// laptop spells itself out letter by letter across a 390px column.
 	@if $track {
-		letter-spacing: $track;
+		letter-spacing: calc(#{$track} * var(--track-scale, 1));
 	}
 	@if $case {
 		text-transform: $case;

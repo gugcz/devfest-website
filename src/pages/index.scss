@@ -789,14 +789,19 @@ $strip-tiers: (
 		max-width: 12ch;
 	}
 
-	// The rotor carries no data (date/venue/clock do). At 375x667 its lede
-	// scale was the difference between the clock clearing the fold or not,
-	// so on phones it runs at UI size.
-	.topics-rotor-item {
-		font-size: var(--fs-ui);
+	// The rotor carries no data (date/venue/clock do), and on a phone the
+	// ticker band starts right under the hero with the same five topics at
+	// display scale. At UI size it was a 9px caption over a 15px word, the
+	// smallest and busiest thing in the frame; the h1's sr-only text and the
+	// ticker still name every topic.
+	.topics-rotor {
+		display: none;
 	}
 
+	// The pause the rotor held moves here: statement is one cluster, the two
+	// actions the next.
 	.hero-actions {
+		margin-top: clamp(1.75rem, 5.5vh, 3rem);
 		gap: 0.9rem;
 
 		// Two CTAs side by side at 375px are too narrow to read; stack them
@@ -834,10 +839,6 @@ $strip-tiers: (
 
 	.hero-meta {
 		display: contents;
-	}
-
-	.meta-label {
-		letter-spacing: 0.2em;
 	}
 
 	.meta-value {

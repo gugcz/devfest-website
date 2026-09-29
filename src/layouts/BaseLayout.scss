@@ -147,6 +147,25 @@
 	// Feathers a full-bleed row wash so its top and bottom edges do not step across the page.
 	--field-feather: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
 	--vignette: radial-gradient(ellipse 120% 105% at 50% 42%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
+
+	// ── PHONE TYPE ──────────────────────────────────────────────────────
+	// Last in :root on purpose: Sass emits a nested @media in source order,
+	// so declared above the base steps it would lose to them.
+	// The row steps' floors are poster sizes: a 35px FAQ question or agenda
+	// title wrapped to three lines of shouting caps on a 342px column, and
+	// every list on the phone read as a stack of headlines. Phones get their
+	// own list step; the section head (--fs-h2) and the one display title
+	// keep theirs, so the hierarchy opens up instead of flattening.
+	@media (max-width: 600px) {
+		--fs-row: 2.1rem;
+		--fs-row-sm: 1.7rem;
+		--fs-row-figure: 2.1rem;
+		// Mono tracking at 72%: see the `mono` mixin in `_type.scss`.
+		--track-scale: 0.72;
+		// The held shot stays the longest pause, but 136px stacked on the
+		// section above left a screen of black between facts and tickets.
+		--section-y-wide: 6.5rem;
+	}
 }
 
 *, *::before, *::after {
@@ -533,6 +552,20 @@ body {
 		// the viewport under text zoom instead of wrapping inside it.
 		grid-template-columns: minmax(0, 1fr);
 		align-items: start;
+	}
+}
+
+// On a phone the two closer buttons wrapped into a ragged stack, each as
+// wide as its own label ("Get tickets" under a longer "Browse the talks").
+// Full measure, one width: a pair of choices, not two leftovers.
+@media (max-width: 600px) {
+	.closer-side {
+		align-items: stretch;
+	}
+
+	.closer-actions {
+		flex-direction: column;
+		align-items: stretch;
 	}
 }
 
