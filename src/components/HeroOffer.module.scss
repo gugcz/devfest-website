@@ -53,6 +53,12 @@
 		gap: 0.35rem;
 	}
 
+	// Half a phone column wide on the hero's 2×2 footing: the wave and its
+	// deadline wrap onto two lines rather than push the clock off the row.
+	.label {
+		white-space: normal;
+	}
+
 	.value {
 		font-size: 1.4rem;
 	}

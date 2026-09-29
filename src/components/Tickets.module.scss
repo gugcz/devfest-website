@@ -355,14 +355,16 @@
 	margin-top: 2rem;
 	// Left-set, like every other line on the page.
 	text-align: left;
-	@include prose(var(--fs-body-lg));
+	// Leading of its own: at the face's default the underlined link on the
+	// second line ran into the first, and two footnotes read as one knot.
+	@include prose(var(--fs-body-lg), 1.6);
 	letter-spacing: 0.01em;
 	color: var(--ink-meta);
 }
 
 // The second side door sits right under the first.
 .footnote + .footnote {
-	margin-top: 0.6rem;
+	margin-top: 0.85rem;
 }
 
 .footnoteLink {

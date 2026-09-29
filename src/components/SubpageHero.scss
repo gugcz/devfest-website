@@ -81,5 +81,21 @@
 		min-height: max(300px, 36vh);
 	}
 
-	.hero-title { max-width: none; }
+	.hero-title {
+		max-width: none;
+		margin-bottom: 1.35rem;
+	}
+
+	// The lede's 1.2rem floor is a desktop measure: Special Elite is wide, and
+	// on a phone column it set ~28 characters a line, three dense lines of
+	// typewriter under the title. Body size keeps it one voice under the
+	// headline instead of a second block competing with it.
+	.hero-lede {
+		font-size: var(--fs-body);
+		line-height: 1.65;
+	}
+
+	.hero-link {
+		margin-top: 1.5rem;
+	}
 }

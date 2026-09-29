@@ -125,6 +125,17 @@
 	color: var(--ink-muted);
 }
 
+// A phone column holds ~30 characters of Special Elite: justified, every line
+// opened rivers between three or four words, and the lede step made it a
+// wall. Ragged and at body size, the abstract reads as a paragraph again.
+@media (max-width: 600px) {
+	.abstract p {
+		font-size: var(--fs-body);
+		text-align: left;
+		hyphens: manual;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.avatar {
 		transition: none;

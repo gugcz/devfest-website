@@ -135,6 +135,22 @@
 	hyphens: auto;
 }
 
+// Same call as the session sheet's abstract: justified on a ~30-character
+// phone column, the bio opened rivers between words. Both blocks go ragged
+// together, so the sheet still reads as one treatment.
+@media (max-width: 600px) {
+	.bio p {
+		font-size: var(--fs-body);
+		text-align: left;
+		hyphens: manual;
+	}
+
+	.sessionDesc {
+		text-align: left;
+		hyphens: manual;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.link {
 		transition: none;

@@ -698,6 +698,10 @@ $strip-tiers: (
 	'community': (2.875rem, 12.5rem, 0.55, 0.55),
 );
 
+// Tiers that go two to a line on a phone. Platinum and Diamond keep one logo
+// per line at their full phone cap: the size is part of what the tier buys.
+$strip-grid-tiers: ('gold', 'silver', 'community');
+
 @each $name, $scale in $strip-tiers {
 	.partners-tier.tier-#{$name} {
 		--strip-logo-h: #{list.nth($scale, 1)};
@@ -706,8 +710,35 @@ $strip-tiers: (
 		--tier-label-color: #{rgba(240, 237, 230, list.nth($scale, 4))};
 
 		@media (max-width: 600px) {
-			--strip-logo-h: #{list.nth($scale, 1) * 0.8};
-			--strip-logo-w: #{list.nth($scale, 2) * 0.78};
+			@if list.index($strip-grid-tiers, $name) {
+				// In the grid the cell sets the width; the ladder still steps
+				// the height down.
+				--strip-logo-h: #{list.nth($scale, 1) * 0.68};
+				--strip-logo-w: 100%;
+			} @else {
+				--strip-logo-h: #{list.nth($scale, 1) * 0.8};
+				--strip-logo-w: #{list.nth($scale, 2) * 0.78};
+			}
+		}
+	}
+}
+
+// On a phone the free-wrapping row set the lower tiers unevenly: one Gold
+// logo on a line, two side by side, then one again, each at its own size, a
+// pile rather than a list. Two even columns make each of those tiers one
+// tidy block, and the ladder (height + opacity) still carries the rank.
+@media (max-width: 600px) {
+	@each $name in $strip-grid-tiers {
+		.partners-tier.tier-#{$name} .partners-row {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 1.5rem 1.75rem;
+			width: 100%;
+		}
+
+		.partners-tier.tier-#{$name} .partners-item {
+			min-height: var(--strip-logo-h);
+			min-width: 0;
 		}
 	}
 }
@@ -771,7 +802,9 @@ $strip-tiers: (
 
 @media (max-width: 600px) {
 	.hero-inner {
-		padding-block: clamp(0.5rem, 1.5vh, 1.25rem) clamp(1rem, 3vh, 2rem);
+		// Bottom inset is the air above the footing hairline; it takes part of
+		// the row the 2×2 strip gave back, so the buttons no longer sit on it.
+		padding-block: clamp(0.5rem, 1.5vh, 1.25rem) clamp(1.25rem, 4.5vh, 2.75rem);
 		// Sit the block on the footing strip. Centred, a tall phone (390x844)
 		// left ~100px of empty frame above and below and the lockup floated
 		// mid-screen like a card. Bottom-set, the hero rises off the strip.
@@ -787,15 +820,20 @@ $strip-tiers: (
 		max-width: 12ch;
 	}
 
-	// The rotor carries no data (date/venue/clock do). At 375x667 its lede
-	// scale was the difference between the clock clearing the fold or not,
-	// so on phones it runs at UI size.
-	.topics-rotor-item {
-		font-size: var(--fs-ui);
+	// The rotor carries no data (date/venue/clock do), and on a phone the
+	// ticker band starts right under the hero with the same five topics at
+	// display scale. At UI size it was a 9px caption over a 15px word, the
+	// smallest and busiest thing in the frame; the h1's sr-only text and the
+	// ticker still name every topic.
+	.topics-rotor {
+		display: none;
 	}
 
+	// The pause the rotor held moves here: statement is one cluster, the two
+	// actions the next.
 	.hero-actions {
-		gap: 0.6rem;
+		margin-top: clamp(1.75rem, 5.5vh, 3rem);
+		gap: 0.9rem;
 
 		// Two CTAs side by side at 375px are too narrow to read; stack them
 		// full-width. Vertical padding comes down from 1.25rem — each is still
@@ -818,8 +856,20 @@ $strip-tiers: (
 		}
 	}
 
+	// Four facts on a 2×2 grid instead of three ragged rows: date | place,
+	// price | clock. The strip is one row shorter, and that row goes back to
+	// the hero as air between the statement, the rotor and the buttons.
+	// `display: contents` lifts date, place and the offer island (itself
+	// `display: contents`) into the grid beside the clock.
+	.hero-foot {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		align-items: end;
+		gap: 1.1rem 1.5rem;
+	}
+
 	.hero-meta {
-		gap: 1rem 1.75rem;
+		display: contents;
 	}
 
 	.meta-value {
