@@ -128,7 +128,7 @@ export function isWebsiteVisible(release: TitoRelease): boolean {
 
 export async function fetchAllReleases(params: FetchReleasesParams): Promise<TitoRelease[]> {
 	const url = `${TITO_API_BASE}/${params.accountSlug}/${params.eventSlug}/releases?per_page=100`;
-	// Read-only, so it retries transient faults: this backs the hourly cache
+	// Read-only, so it retries transient faults: this backs the 5-minute cache
 	// refresh and both status reports, and a blip there means stale ticket data on
 	// the site or a status report that silently never arrives.
 	const res = await fetchWithRetry(
