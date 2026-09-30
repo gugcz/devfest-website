@@ -16,7 +16,9 @@ import { TITO_WEBHOOK_SECRET } from './params.js';
 import {
 	TITO_EVENT_HEADER,
 	TITO_SIGNATURE_HEADER,
+	discountCodes,
 	fullName,
+	trackingSource,
 	verifyTitoSignature,
 	type TitoWebhookEvent,
 	type TitoWebhookPayload,
@@ -143,6 +145,15 @@ function buildSlackMessage(payload: TitoWebhookPayload): SlackPayload {
 
 	const priceLabel = formatPrice(payload.total ?? payload.price, payload.currency);
 	if (priceLabel) fields.push({ type: 'mrkdwn', text: `*Price:*\n${priceLabel}` });
+
+	// Buyer-controlled too: `source` comes straight off the checkout URL.
+	const codes = discountCodes(payload);
+	if (codes) {
+		fields.push({ type: 'mrkdwn', text: `*Discount code:*\n${codes.map(escapeMrkdwn).join(', ')}` });
+	}
+
+	const source = trackingSource(payload);
+	fields.push({ type: 'mrkdwn', text: `*Source:*\n${source ? escapeMrkdwn(source) : '_direct_'}` });
 
 	const reference = payload.registration_reference ?? payload.reference;
 	if (reference) fields.push({ type: 'mrkdwn', text: `*Reference:*\n${escapeMrkdwn(reference)}` });
