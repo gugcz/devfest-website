@@ -48,8 +48,15 @@ export interface TitoWebhookPayload {
 	state?: string | null;
 	registration_reference?: string | null;
 	url?: string | null;
+	/** Code applied to this ticket (ticket payloads, and each entry of a
+	 * registration's `tickets`). */
+	discount_code_used?: string | null;
 
 	// Registration events
+	/** ti.to tracking source, from `?source=` on the checkout URL (the site
+	 * maps `utm_source` onto it, see `src/lib/attribution.ts`). */
+	source?: string | null;
+	discount_code?: string | null;
 	total?: string | null;
 	tickets_count?: number | null;
 	tickets?: TitoWebhookPayload[];
@@ -91,4 +98,29 @@ export function fullName(payload: TitoWebhookPayload): string {
 	const last = payload.last_name?.trim() ?? '';
 	const combined = `${first} ${last}`.trim();
 	return combined || 'Anonymous attendee';
+}
+
+function nonEmpty(value: unknown): string | null {
+	return typeof value === 'string' && value.trim() ? value.trim() : null;
+}
+
+/**
+ * Discount code(s) used on a registration: the registration-level
+ * `discount_code`, else the distinct codes on its tickets. `null` when none.
+ */
+export function discountCodes(payload: TitoWebhookPayload): string[] | null {
+	const direct = nonEmpty(payload.discount_code);
+	if (direct) return [direct];
+	const codes = new Set<string>();
+	for (const ticket of payload.tickets ?? []) {
+		const code = nonEmpty(ticket.discount_code_used) ?? nonEmpty(ticket.discount_code);
+		if (code) codes.add(code);
+	}
+	return codes.size > 0 ? [...codes] : null;
+}
+
+/** ti.to tracking source (our `utm_source`), or `null` when the buyer came
+ * without one. */
+export function trackingSource(payload: TitoWebhookPayload): string | null {
+	return nonEmpty(payload.source);
 }
