@@ -26,16 +26,19 @@ const EXT_RANK: Record<string, number> = { svg: 0, png: 1, webp: 1, jpg: 1, jpeg
 
 // Friendly labels for the known 2026 assets; anything else gets an auto label.
 const LABELS: Record<string, string> = {
-	'df26_logo-1st.svg': 'Primary logo',
-	'DF26_logo_color_1.png': 'Color logo',
-	'DF26_logo_color_2.png': 'Color logo (alt)',
-	'DF26_logo_color_2_transparent.png': 'Color logo — transparent',
-	'DF26_logo_color_2_dark_transparent.png': 'Color logo — for dark backgrounds',
-	'DF26_logo_red.png': 'Red logo',
+	'df26_logo_white.svg': 'White logo',
+	'df26_logo_white_and_red_dot.svg': 'White logo — red dot',
+	'df26_logo_dark.svg': 'Dark logo',
+	'df26_logo_dark_and_red_dot.svg': 'Dark logo — red dot',
 	'DF26_logo_white.png': 'White logo',
-	'DF26_logo_white_red-dot.png': 'White logo — red dot',
-	'df26_logo_red.ai': 'Red logo — vector source',
+	'DF26_logo_white_and_red_dot.png': 'White logo — red dot',
+	'DF26_logo_dark.png': 'Dark logo',
+	'DF26_logo_dark_and_red_dot.png': 'Dark logo — red dot',
+	'DevFest.cz_2026_Brand_Manual.pdf': 'Brand manual',
 	'df26_logo_white.ai': 'White logo — vector source',
+	'df26_logo_white_and_red_dot.ai': 'White logo, red dot — vector source',
+	'df26_logo_dark.ai': 'Dark logo — vector source',
+	'df26_logo_dark_and_red_dot.ai': 'Dark logo, red dot — vector source',
 };
 
 function humanSize(bytes: number): string {
