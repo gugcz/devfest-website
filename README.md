@@ -89,7 +89,7 @@ The default Cloud Functions service account has the IAM needed to write RTDB; no
 
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
-| `refreshTicketsScheduled` | Cloud Scheduler, hourly | Sync ti.to releases → RTDB `/tickets` |
+| `refreshTicketsScheduled` | Cloud Scheduler, every 5 min | Sync ti.to releases → RTDB `/tickets` |
 | `ticketsApi` | HTTPS, public (`/api/tickets`) | Serve the cached `/tickets` roadmap as JSON for the browser to `fetch()` (5-min edge TTL) |
 | `ticketsWebhook` | HTTPS, public | Verifies `Tito-Signature` and posts purchase notifications to Slack |
 | `dailyTicketStatusScheduled` | Cloud Scheduler, daily `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |

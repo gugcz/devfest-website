@@ -243,7 +243,7 @@ export interface WaveDeadline {
 }
 
 /** Deadline for a wave: LATEST `end_at` across the still-buyable variants
- * passed in. A past date yields `null` — the cache is up to an hour stale,
+ * passed in. A past date yields `null` — the cache is up to ~10 minutes stale,
  * and "Ended" beside a live Buy CTA must never happen. */
 export function waveDeadline(releases: TitoRelease[], now: number = Date.now()): WaveDeadline | null {
 	let latest: Date | null = null;

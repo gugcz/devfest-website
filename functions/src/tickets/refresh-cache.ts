@@ -53,13 +53,16 @@ async function syncTickets(): Promise<void> {
 }
 
 /**
- * Hourly scheduled refresh. ti.to advertises a 60 req/min rate limit per
- * token; one request per hour is well under that.
+ * Refresh every 5 minutes, the same as the `/api/tickets` edge TTL. ti.to
+ * sends no webhook when a release is switched on or off, so a new wave
+ * opened by hand only reaches the site on the next run; hourly left the
+ * previous wave on the page for up to an hour. One request per run, far
+ * under ti.to's 60 req/min per token.
  */
 export const refreshTicketsScheduled = onSchedule(
 	{
 		...SCHEDULED,
-		schedule: 'every 1 hours',
+		schedule: 'every 5 minutes',
 		secrets: [TITO_API_TOKEN, SLACK_WEBHOOK_URL],
 	},
 	() =>
@@ -69,7 +72,7 @@ export const refreshTicketsScheduled = onSchedule(
 				domain: 'tickets',
 				// The site keeps serving the previous cache, so a failed run degrades
 				// to stale prices rather than an empty ticket roadmap.
-				failureNote: '`/tickets` cache left at its previous contents, retry within the hour',
+				failureNote: '`/tickets` cache left at its previous contents, retried on the next run in 5 minutes',
 			},
 			syncTickets,
 		),

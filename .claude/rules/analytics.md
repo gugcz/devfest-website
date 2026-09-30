@@ -68,7 +68,7 @@ with explicit `page_location`/`page_title`/`page_referrer`.
   `astro:page-load` listener survives soft navigations.
 - Mark the three conversions as key events in GA4 (README "Analytics").
 
-**Data stores:** RTDB `/tickets` (ti.to cache, hourly), Firestore
+**Data stores:** RTDB `/tickets` (ti.to cache, every 5 min), Firestore
 `speakers`/`sessions` (Sessionize) and `invoices`. Project `devfest-cz-app`,
 site `devfest-public`.
 
