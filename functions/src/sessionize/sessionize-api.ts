@@ -289,6 +289,36 @@ export function extractSpeakers(payload: unknown): SessionizeSpeaker[] {
 	throw new Error('Sessionize payload is neither an array nor an object');
 }
 
+/**
+ * Add the speakers the All view leaves out. All lists only speakers of the
+ * sessions it publishes, so the event's hosts and keynote (Sessionize sessions
+ * the All view filters out) are missing there but present in the Speakers view.
+ *
+ * Result follows the Speakers view's order. A speaker in both keeps their All
+ * entry (session ids resolve to full titles + abstracts); one only in All is
+ * appended. Malformed Speakers-view entries are skipped, never thrown on: the
+ * All roster is already validated and must not be lost to the extra view.
+ */
+export function mergeSpeakerRosters(all: SessionizeSpeaker[], speakersView: unknown): SessionizeSpeaker[] {
+	if (!Array.isArray(speakersView)) return all;
+	const byId = new Map(all.map((speaker) => [(speaker.id as string).trim(), speaker]));
+	const merged: SessionizeSpeaker[] = [];
+	const seen = new Set<string>();
+	for (const entry of speakersView) {
+		if (typeof entry !== 'object' || entry === null) continue;
+		const id = (entry as SessionizeSpeaker).id;
+		if (typeof id !== 'string' || id.trim() === '') continue;
+		const key = id.trim();
+		if (seen.has(key)) continue;
+		seen.add(key);
+		merged.push(byId.get(key) ?? (entry as SessionizeSpeaker));
+	}
+	for (const [key, speaker] of byId) {
+		if (!seen.has(key)) merged.push(speaker);
+	}
+	return merged;
+}
+
 /** Build id → { title, abstract } from the All payload's top-level
  * `sessions[]`. Empty map for the Speakers view, which inlines `{ id, name }`
  * on each speaker. */
@@ -658,6 +688,19 @@ async function fetchView(endpointId: string, view: string): Promise<Response> {
 		{ headers: { Accept: 'application/json' } },
 		{ label: `Sessionize ${view} view` },
 	);
+}
+
+/** Fetch the Speakers view on its own, for {@link mergeSpeakerRosters}.
+ * Throws on a non-OK response or a non-JSON body; the caller treats that as
+ * "no extra speakers", not a failed sync. */
+export async function fetchSpeakersView(rawEndpointId: string): Promise<unknown> {
+	const endpointId = parseEndpointId(rawEndpointId);
+	if (!endpointId) throw new Error('Missing or empty Sessionize endpoint id');
+	const res = await fetchView(endpointId, 'Speakers');
+	if (!res.ok) {
+		throw new Error(`Sessionize Speakers view ${res.status} ${res.statusText}: ${await errorBody(res, 200)}`);
+	}
+	return res.json();
 }
 
 /** Fetch + parse the Sessionize payload: try All, fall back to Speakers on

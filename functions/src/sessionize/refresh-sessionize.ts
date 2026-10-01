@@ -11,7 +11,7 @@ import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { firestore } from '../lib/admin.js';
-import { stageError } from '../lib/errors.js';
+import { describeError, stageError } from '../lib/errors.js';
 import { SLACK_WEBHOOK_URL } from '../lib/params.js';
 import { runBackground } from '../lib/run.js';
 import { notify } from '../lib/slack.js';
@@ -27,6 +27,8 @@ import {
 	extractSessions,
 	extractSpeakers,
 	fetchSessionizePayload,
+	fetchSpeakersView,
+	mergeSpeakerRosters,
 	normalizeSessions,
 	normalizeSpeakers,
 } from './sessionize-api.js';
@@ -82,6 +84,19 @@ async function commitCollection<T extends { id: string }>(name: string, docs: T[
 	}
 }
 
+/** The Speakers view, when `payload` is the All view (it lists only speakers
+ * of the sessions it publishes, so hosts and the keynote are missing).
+ * Best-effort: on failure the run syncs the All roster as before. */
+async function extraSpeakers(endpointId: string, payload: unknown): Promise<unknown> {
+	if (Array.isArray(payload)) return null; // already the Speakers view (fallback)
+	try {
+		return await fetchSpeakersView(endpointId);
+	} catch (err) {
+		logger.warn(`Sessionize Speakers view unavailable, syncing the All roster only: ${describeError(err)}`);
+		return null;
+	}
+}
+
 async function syncSessionize(): Promise<void> {
 	const endpointId = SESSIONIZE_ENDPOINT_ID.value();
 	if (!endpointId) {
@@ -94,7 +109,7 @@ async function syncSessionize(): Promise<void> {
 	// Mirror speaker photos into Storage. Best-effort: an id missing from the
 	// map falls back to the raw Sessionize URL. Done before normalization so
 	// both speaker docs and sessions' embedded refs get the Firebase URL.
-	const rawSpeakers = extractSpeakers(payload);
+	const rawSpeakers = mergeSpeakerRosters(extractSpeakers(payload), await extraSpeakers(endpointId, payload));
 	const imageMap = await mirrorSpeakerImages(rawSpeakers);
 
 	// Speakers embed their sessions; sessions embed their speakers.

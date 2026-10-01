@@ -138,6 +138,7 @@ Only `secret` releases are dropped (`isWebsiteVisible`, again client-side). Ever
 Cloud Scheduler (every 15 minutes)
   └─> Cloud Function `refreshSessionizeScheduled` (europe-west1)
         ├─ fetch  Sessionize "All data" JSON view (SESSIONIZE_ENDPOINT_ID)
+        ├─ fetch  its "Speakers" view too: hosts + keynote, missing from All, join the roster
         ├─ mirror speaker photos → Firebase Storage `speakers/{id}` (idempotent)
         └─ write  Firestore `speakers` + `sessions` (cross-referenced) + `rooms`, atomic batches
 

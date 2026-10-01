@@ -1,9 +1,9 @@
-/** Room mirror: `extractRooms`. */
+/** Room mirror: `extractRooms`; speaker roster merge: `mergeSpeakerRosters`. */
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { extractRooms } from './sessionize-api.js';
+import { extractRooms, mergeSpeakerRosters } from './sessionize-api.js';
 
 describe('extractRooms', () => {
 	it('keeps every room, empty ones included, in Sessionize sort order', () => {
@@ -43,5 +43,46 @@ describe('extractRooms', () => {
 		assert.deepEqual(extractRooms([{ id: 'sp' }]), []);
 		assert.deepEqual(extractRooms({ sessions: [] }), []);
 		assert.deepEqual(extractRooms({ rooms: 'nope' }), []);
+	});
+});
+
+describe('mergeSpeakerRosters', () => {
+	const all = [
+		{ id: 'a', fullName: 'Ada Example', sessions: [101] },
+		{ id: 'b', fullName: 'Bob Example', sessions: [102] },
+	];
+
+	it('adds speakers only the Speakers view lists, in its order, keeping All entries', () => {
+		const merged = mergeSpeakerRosters(all, [
+			{ id: 'host', fullName: 'Hana Host', sessions: [{ id: 900, name: 'HOST' }] },
+			{ id: 'b', fullName: 'Bob Example', sessions: [{ id: 102, name: 'Short title' }] },
+			{ id: 'a', fullName: 'Ada Example', sessions: [{ id: 101, name: 'Short title' }] },
+		]);
+		assert.deepEqual(
+			merged.map((sp) => sp.id),
+			['host', 'b', 'a'],
+		);
+		assert.equal(merged[1], all[1]);
+		assert.equal(merged[2], all[0]);
+	});
+
+	it('keeps All-only speakers and skips malformed or repeated Speakers-view entries', () => {
+		const merged = mergeSpeakerRosters(all, [
+			{ id: 'b' },
+			{ id: 'b' },
+			null,
+			'junk',
+			{ id: '' },
+			{ fullName: 'No id' },
+		]);
+		assert.deepEqual(
+			merged.map((sp) => sp.id),
+			['b', 'a'],
+		);
+	});
+
+	it('returns the All roster unchanged without a Speakers view', () => {
+		assert.equal(mergeSpeakerRosters(all, null), all);
+		assert.equal(mergeSpeakerRosters(all, { speakers: [] }), all);
 	});
 });
