@@ -332,7 +332,7 @@ const jsonLd = JSON.stringify(
 		*/}
 		<ClientRouter />
 	</head>
-	<body class={bodyClass}>
+	<body class:list={[bodyClass, { kiosk }]}>
 		<a href="#main-content" class="skip-link">Skip to main content</a>
 		{/*
 			Second in the DOM, not last. The banner is the one consent surface on
