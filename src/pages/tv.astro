@@ -1,0 +1,19 @@
+---
+// ─── VENUE SCREENS ────────────────────────────────────────────────────────
+// What the TVs around the venue show on the day: `/tv?room=<id or name>`
+// pins a screen to the room it hangs next to (now, next, the rest of the
+// day, the other rooms, Bluesky), plain `/tv` shows every room. `?at=10:15`
+// fakes the time to check a screen before the day. UNLISTED = `noindex` +
+// out of the sitemap + linked from NOWHERE (not access control).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TvScreen from '../components/TvScreen';
+---
+
+<BaseLayout
+	title="Venue screen — DevFest.cz 2026"
+	description="DevFest.cz 2026 programme for the screens at the venue."
+	noindex
+	kiosk
+>
+	<TvScreen client:load />
+</BaseLayout>

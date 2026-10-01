@@ -12,6 +12,9 @@ interface Props {
 	noindex?: boolean;
 	bodyClass?: string;
 	showFooter?: boolean;
+	/** A wall screen nobody interacts with (`/tv`): no menu, footer or cookie
+	 * banner. Without the banner nobody can accept, so GA never boots. */
+	kiosk?: boolean;
 	/** Absolute URL — an unfurler will not resolve a relative path. */
 	ogImage?: string;
 	ogImageAlt?: string;
@@ -27,6 +30,7 @@ const {
 	noindex = false,
 	bodyClass = "",
 	showFooter = true,
+	kiosk = false,
 	ogImage = `${siteUrl}/og-image.jpg?v=${defaultOgImageVersion()}`,
 	ogImageAlt = "DevFest.cz 2026 — classified mission starts Oct 30, 2026",
 	ogImageWidth = 1200,
@@ -335,7 +339,7 @@ const jsonLd = JSON.stringify(
 			choice from the skip link took ~40 tab stops — long enough that the
 			only realistic way to dismiss it was the mouse.
 		*/}
-		<CookieBanner />
+		{!kiosk && <CookieBanner />}
 		<!--
 			Status-bar scrim — paints brand-dark behind iOS Safari's
 			translucent status bar / notch zone. Uses the
@@ -346,7 +350,7 @@ const jsonLd = JSON.stringify(
 			overlays (9999 / 9998) so it stays opaque under the chrome.
 		-->
 		<div class="status-bar-cover" aria-hidden="true"></div>
-		<Menu />
+		{!kiosk && <Menu />}
 		{/*
 			`tabindex="-1"` is what makes the skip link actually skip. Without it
 			the browser moves the document fragment but leaves focus in the
@@ -355,7 +359,7 @@ const jsonLd = JSON.stringify(
 			focus; -1 makes it a valid target without adding a tab stop.
 		*/}
 		<div id="main-content" tabindex="-1"><slot /></div>
-		{showFooter && <Footer />}
+		{showFooter && !kiosk && <Footer />}
 
 		<script>
 			import { keepAnchorLanded } from '../lib/anchor';

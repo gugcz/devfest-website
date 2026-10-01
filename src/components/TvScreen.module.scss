@@ -1,0 +1,510 @@
+@use '../styles/type' as *;
+
+// `/tv` is a fixed 16:9 wall screen read from across a room, not a scrolling
+// page: everything sizes off `--u` (1/100 of the width, capped by height so a
+// letterboxed or portrait-ish browser still fits) instead of the site's
+// fluid `--fs-*` steps, which top out at laptop sizes.
+.screen {
+	--u: min(1vw, 1.7778vh);
+	--pad: calc(var(--u) * 2.6);
+
+	position: fixed;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background: var(--color-bg);
+	color: var(--color-text);
+	cursor: none;
+}
+
+.header {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	gap: calc(var(--u) * 2.4);
+	padding: calc(var(--u) * 1.4) var(--pad);
+	border-bottom: 1px solid var(--rule-strong);
+}
+
+.logo {
+	height: calc(var(--u) * 3.4);
+	width: auto;
+}
+
+.heading {
+	@include display(calc(var(--u) * 4.6));
+	line-height: 1;
+	margin: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.clock {
+	@include mono(calc(var(--u) * 3.2), 0.04em);
+	margin: 0;
+	font-variant-numeric: tabular-nums;
+	color: var(--color-text);
+}
+
+.status {
+	@include prose(calc(var(--u) * 2));
+	margin: auto;
+	color: var(--ink-soft);
+}
+
+.roomLayout,
+.venueLayout {
+	flex: 1;
+	min-height: 0;
+	display: grid;
+	grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+}
+
+.venueLayout {
+	grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr);
+}
+
+.main {
+	min-width: 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 1.6);
+	padding: calc(var(--u) * 2) var(--pad);
+	overflow: hidden;
+}
+
+.side {
+	min-width: 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 1.8);
+	padding: calc(var(--u) * 2) var(--pad);
+	background: var(--panel);
+	border-left: 1px solid var(--rule);
+	overflow: hidden;
+}
+
+.notice {
+	@include mono(calc(var(--u) * 1), 0.18em, uppercase);
+	margin: 0;
+	color: var(--ink-meta);
+}
+
+.panelLabel,
+.eyebrow {
+	@include mono(calc(var(--u) * 0.95), 0.24em, uppercase);
+	margin: 0 0 calc(var(--u) * 1);
+	color: var(--ink-muted);
+	font-weight: 400;
+}
+
+// ─── Room screen: now + next ────────────────────────────────────────────────
+
+.feature {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 1.1);
+	padding-left: calc(var(--u) * 1.6);
+	border-left: calc(var(--u) * 0.3) solid var(--rule-strong);
+}
+
+.featureLive {
+	border-left-color: var(--color-accent);
+}
+
+.featureBand .titleNow,
+.featureBand .titleNext {
+	color: var(--color-cream);
+}
+
+.eyebrow {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 1);
+	margin: 0;
+	color: var(--ink-strong);
+}
+
+.when {
+	color: var(--ink-muted);
+}
+
+.dot {
+	display: inline-block;
+	flex: none;
+	width: 0.7em;
+	height: 0.7em;
+	border-radius: 50%;
+	background: var(--color-accent-hot);
+	animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+	50% {
+		opacity: 0.35;
+	}
+}
+
+.titleNow,
+.titleNext {
+	@include display;
+	margin: 0;
+	text-wrap: balance;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.titleNow {
+	font-size: calc(var(--u) * 6.4);
+	line-height: 1;
+	-webkit-line-clamp: 3;
+
+	&.titleMid {
+		font-size: calc(var(--u) * 5);
+	}
+
+	&.titleLong {
+		font-size: calc(var(--u) * 4);
+	}
+}
+
+.titleNext {
+	font-size: calc(var(--u) * 3.6);
+	line-height: 1;
+	-webkit-line-clamp: 2;
+
+	&.titleLong {
+		font-size: calc(var(--u) * 2.8);
+	}
+}
+
+.titleMid,
+.titleLong {
+	text-wrap: pretty;
+}
+
+.speakers {
+	display: flex;
+	flex-wrap: wrap;
+	gap: calc(var(--u) * 1) calc(var(--u) * 2.2);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	--photo: calc(var(--u) * 3);
+}
+
+.speakersLg {
+	--photo: calc(var(--u) * 6);
+	margin-top: calc(var(--u) * 0.6);
+}
+
+.speaker {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 1);
+	min-width: 0;
+}
+
+.photo,
+.monogram {
+	flex: none;
+	width: var(--photo);
+	height: var(--photo);
+	border-radius: var(--radius);
+	object-fit: cover;
+	filter: grayscale(1) contrast(1.05);
+}
+
+.monogram {
+	display: grid;
+	place-items: center;
+	background: var(--panel-2);
+	border: 1px solid var(--rule);
+	@include display(calc(var(--photo) * 0.45));
+	line-height: 1;
+	color: var(--ink-soft);
+}
+
+.speakerText {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 0.25);
+	min-width: 0;
+}
+
+.speakerName {
+	@include prose(calc(var(--u) * 1.5), 1.2);
+	color: var(--color-text);
+}
+
+.speakersLg .speakerName {
+	font-size: calc(var(--u) * 2);
+}
+
+.speakerTag {
+	@include mono(calc(var(--u) * 0.9), 0.06em);
+	color: var(--ink-meta);
+}
+
+.progress {
+	height: calc(var(--u) * 0.3);
+	background: var(--rule);
+
+	span {
+		display: block;
+		height: 100%;
+		background: var(--color-accent);
+		transform-origin: left;
+		transition: transform 1s linear;
+	}
+}
+
+.laterList {
+	margin: auto 0 0;
+	padding: calc(var(--u) * 1.2) 0 0;
+	list-style: none;
+	border-top: 1px solid var(--rule);
+	display: grid;
+	gap: calc(var(--u) * 0.6);
+}
+
+.later {
+	@include prose(calc(var(--u) * 1.3), 1.3);
+	margin: 0;
+	color: var(--ink);
+	display: flex;
+	gap: calc(var(--u) * 1.2);
+}
+
+.laterTime {
+	@include mono(calc(var(--u) * 1.1), 0.04em);
+	flex: none;
+	color: var(--ink-muted);
+	padding-top: 0.15em;
+	font-variant-numeric: tabular-nums;
+}
+
+.wrap {
+	margin: auto 0;
+}
+
+.wrapLine {
+	@include prose(calc(var(--u) * 2), 1.4);
+	color: var(--ink-soft);
+	margin: calc(var(--u) * 1.5) 0 0;
+}
+
+// ─── Venue screen: one column per room ─────────────────────────────────────
+
+.venueGrid {
+	flex: 1;
+	min-height: 0;
+	display: grid;
+	grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+	gap: calc(var(--u) * 2);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.roomCol,
+.roomRow {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 1);
+	min-width: 0;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.roomCol {
+	gap: calc(var(--u) * 1.4);
+	padding-top: calc(var(--u) * 1.2);
+	border-top: calc(var(--u) * 0.25) solid var(--rule-strong);
+
+	.roomName {
+		font-size: calc(var(--u) * 3.4);
+	}
+
+	.slotMeta {
+		font-size: calc(var(--u) * 1);
+	}
+
+	.slotTitle {
+		font-size: calc(var(--u) * 1.9);
+		-webkit-line-clamp: 4;
+	}
+
+	.later {
+		font-size: calc(var(--u) * 1.25);
+	}
+}
+
+.roomName {
+	@include display(calc(var(--u) * 2.6));
+	line-height: 1;
+	margin: 0;
+}
+
+.roomRow .roomName {
+	font-size: calc(var(--u) * 1.8);
+	color: var(--color-cream);
+}
+
+.roomSlot {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 0.6);
+	padding-bottom: calc(var(--u) * 0.8);
+}
+
+.slotMeta {
+	@include mono(calc(var(--u) * 0.85), 0.16em, uppercase);
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 0.6);
+	margin: 0;
+	color: var(--ink-muted);
+}
+
+.slotTitle {
+	@include prose(calc(var(--u) * 1.5), 1.25);
+	margin: 0;
+	color: var(--color-text);
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+}
+
+.roomRows {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: grid;
+	gap: calc(var(--u) * 1.2);
+
+	.roomRow + .roomRow {
+		padding-top: calc(var(--u) * 1.2);
+		border-top: 1px solid var(--rule);
+	}
+
+	.slotTitle {
+		font-size: calc(var(--u) * 1.3);
+		-webkit-line-clamp: 2;
+	}
+}
+
+// ─── Social ────────────────────────────────────────────────────────────────
+
+.social {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.post {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 1);
+	animation: fade-in 0.8s ease both;
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+}
+
+.postMeta {
+	@include mono(calc(var(--u) * 0.85), 0.08em);
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 0.8);
+	margin: 0;
+	color: var(--ink-muted);
+}
+
+.avatar {
+	width: calc(var(--u) * 2.2);
+	height: calc(var(--u) * 2.2);
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.postAuthor {
+	color: var(--ink-strong);
+}
+
+.postText {
+	@include prose(calc(var(--u) * 1.45), 1.4);
+	margin: 0;
+	color: var(--color-text);
+	white-space: pre-line;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 7;
+	overflow: hidden;
+}
+
+.postImage {
+	flex: 1 1 0;
+	min-height: 0;
+	width: 100%;
+	object-fit: cover;
+	border-radius: var(--radius);
+}
+
+.pager {
+	display: flex;
+	gap: calc(var(--u) * 0.4);
+	margin: auto 0 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		width: calc(var(--u) * 1.2);
+		height: calc(var(--u) * 0.2);
+		background: var(--rule-strong);
+	}
+
+	.pagerOn {
+		background: var(--color-text);
+	}
+}
+
+.follow {
+	margin: auto 0;
+}
+
+.followLine {
+	@include display(calc(var(--u) * 4));
+	margin: 0 0 calc(var(--u) * 1.4);
+}
+
+.followHandles {
+	@include mono(calc(var(--u) * 1.1), 0.12em);
+	display: grid;
+	gap: calc(var(--u) * 0.6);
+	margin: 0;
+	color: var(--ink-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dot,
+	.post {
+		animation: none;
+	}
+
+	.progress span {
+		transition: none;
+	}
+}
