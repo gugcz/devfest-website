@@ -29,6 +29,8 @@ const PATHS = [
 	'/invoice/',
 	'/attending/',
 	'/speaker-card/',
+	'/tv/',
+	'/tv/?room=main-hall&at=10:20',
 	'/code-of-conduct/',
 	'/privacy-policy/',
 	'/delete-account/',
