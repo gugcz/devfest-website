@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import logoUrl from '../assets/logo.png?url';
 import { eventDateISO, formatMinutes, isBand } from '../lib/agenda';
-import { BLUESKY_HANDLE, fetchSocialPosts, timeAgo, type SocialPost } from '../lib/bluesky';
+import { EVENT } from '../lib/event';
+import { BLUESKY_HANDLE, fetchSocialFeed, timeAgo, type SocialFeed, type SocialNetwork } from '../lib/social';
 import { fetchAgenda, type Lineup } from '../lib/lineup';
 import { isHostSession, type SessionSpeakerRef } from '../lib/sessions';
 import { initials } from '../lib/speakers';
@@ -13,7 +14,7 @@ import s from './TvScreen.module.scss';
 const LINEUP_REFRESH_MS = 2 * 60_000;
 const SOCIAL_REFRESH_MS = 5 * 60_000;
 const SOCIAL_ROTATE_MS = 15_000;
-const SOCIAL_MAX = 8;
+const SOCIAL_MAX = 10;
 const CLOCK_TICK_MS = 5_000;
 /** A screen runs all day unattended: reload now and then so a deploy lands
  * and a long-lived tab can't drift. */
@@ -135,6 +136,19 @@ function loadLineup(signal: AbortSignal): Promise<Lineup> {
 	}));
 }
 
+const DAY = new Intl.DateTimeFormat('en-GB', {
+	timeZone: 'UTC',
+	weekday: 'short',
+	day: 'numeric',
+	month: 'short',
+});
+
+/** `2026-10-30` → `Fri 30 Oct`. */
+function dayLabel(date: string): string {
+	const at = new Date(`${date}T12:00:00Z`);
+	return Number.isNaN(at.getTime()) ? '' : DAY.format(at).replace(',', '');
+}
+
 function slotTime(slot: Slot): string {
 	return `${formatMinutes(slot.place.startMin)} – ${formatMinutes(slot.place.endMin)}`;
 }
@@ -184,13 +198,13 @@ function Feature({
 	live: boolean;
 }) {
 	const band = isBand(slot.session) || slot.session.isServiceSession;
-	const when = live ? slotTime(slot) : `${slotTime(slot)} · ${startsIn(slot.place.startMin, nowMin)}`;
+	const countdown = live ? '' : startsIn(slot.place.startMin, nowMin).replace(/^in /, '');
 	return (
-		<article className={`${s.feature} ${live ? s.featureLive : ''} ${band ? s.featureBand : ''}`}>
+		<article className={`${s.feature} ${live ? s.featureLive : s.featureNext} ${band ? s.featureBand : ''}`}>
 			<p className={s.eyebrow}>
 				{live && <span className={s.dot} aria-hidden="true" />}
 				<span>{label}</span>
-				<span className={s.when}>{when.replace(/ · $/, '')}</span>
+				<span className={s.when}>{slotTime(slot)}</span>
 			</p>
 			<h2 className={`${live ? s.titleNow : s.titleNext} ${titleSize(slot.session.title)}`}>
 				{slot.session.title}
@@ -200,6 +214,12 @@ function Feature({
 				<div className={s.progress} aria-hidden="true">
 					<span style={{ transform: `scaleX(${progress(slot.place, nowMin)})` }} />
 				</div>
+			)}
+			{countdown && (
+				<p className={s.countdown}>
+					<span className={s.countdownLabel}>Starts in</span>
+					{countdown}
+				</p>
 			)}
 		</article>
 	);
@@ -217,7 +237,7 @@ function RoomSummary({ room, nowMin, compact }: { room: RoomNow; nowMin: number 
 			{now ? (
 				<div className={s.roomSlot}>
 					<p className={s.slotMeta}>
-						<span className={s.dot} aria-hidden="true" /> Now · until {formatMinutes(now.place.endMin)}
+						<span className={s.slotNow}>Now</span> until {formatMinutes(now.place.endMin)}
 					</p>
 					<p className={s.slotTitle}>{now.session.title}</p>
 					{!compact && <Speakers speakers={now.session.speakers} size="sm" />}
@@ -232,7 +252,7 @@ function RoomSummary({ room, nowMin, compact }: { room: RoomNow; nowMin: number 
 					{!compact && <Speakers speakers={next.session.speakers} size="sm" />}
 				</div>
 			) : null}
-			{!now && !next && <p className={s.slotMeta}>Done for today</p>}
+			{!now && !next && <p className={s.slotMeta}>{nowMin === null ? 'Nothing scheduled' : 'Done for today'}</p>}
 			{!compact &&
 				room.upcoming.slice(1, 4).map((slot) => (
 					<p key={slot.session.id} className={s.later}>
@@ -244,8 +264,16 @@ function RoomSummary({ room, nowMin, compact }: { room: RoomNow; nowMin: number 
 	);
 }
 
-function Social({ posts, now }: { posts: SocialPost[] | null; now: number }) {
-	const shown = (posts ?? []).slice(0, SOCIAL_MAX);
+const NETWORK: Record<SocialNetwork, string> = {
+	bluesky: 'Bluesky',
+	facebook: 'Facebook',
+	instagram: 'Instagram',
+	hashtag: 'Instagram',
+};
+
+function Social({ feed, now }: { feed: SocialFeed | null; now: number }) {
+	const shown = (feed?.posts ?? []).slice(0, SOCIAL_MAX);
+	const tag = feed?.hashtag ? `#${feed.hashtag}` : '';
 	const [index, setIndex] = useState(0);
 	useEffect(() => {
 		if (shown.length < 2) return;
@@ -257,13 +285,15 @@ function Social({ posts, now }: { posts: SocialPost[] | null; now: number }) {
 	return (
 		<section className={s.social} aria-labelledby="tv-social-heading">
 			<h2 id="tv-social-heading" className={s.panelLabel}>
-				On Bluesky · @{BLUESKY_HANDLE}
+				{tag ? `Post with ${tag}` : 'On social'}
 			</h2>
 			{post ? (
 				<article key={post.id} className={s.post}>
 					<p className={s.postMeta}>
-						{post.avatar && <img className={s.avatar} src={post.avatar} alt="" />}
-						<span className={s.postAuthor}>{post.authorName}</span>
+						<span className={s.postAuthor}>
+							{NETWORK[post.network]}
+							{post.network === 'hashtag' ? ` · ${tag}` : post.author ? ` · ${post.author}` : ''}
+						</span>
 						<span>{timeAgo(post.createdAt, now)}</span>
 					</p>
 					{post.text && <p className={s.postText}>{post.text}</p>}
@@ -278,8 +308,9 @@ function Social({ posts, now }: { posts: SocialPost[] | null; now: number }) {
 				</article>
 			) : (
 				<div className={s.follow}>
-					<p className={s.followLine}>Share your DevFest.</p>
+					<p className={s.followLine}>{tag ? `Post with ${tag}.` : 'Share your DevFest.'}</p>
 					<p className={s.followHandles}>
+						<span>Facebook DevFestCZ</span>
 						<span>Bluesky @{BLUESKY_HANDLE}</span>
 						<span>X @devfest_cz</span>
 						<span>LinkedIn GUG.cz</span>
@@ -296,7 +327,7 @@ export default function TvScreen() {
 	useKioskUpkeep();
 
 	const lineup = usePolled(loadLineup, LINEUP_REFRESH_MS, 'tv-lineup');
-	const social = usePolled(fetchSocialPosts, SOCIAL_REFRESH_MS, 'tv-social');
+	const social = usePolled(fetchSocialFeed, SOCIAL_REFRESH_MS, 'tv-social');
 
 	const sessions = lineup.data?.sessions ?? [];
 	const eventDate = useMemo(() => eventDateISO(sessions), [sessions]);
@@ -321,8 +352,11 @@ export default function TvScreen() {
 			<header className={s.header}>
 				<img className={s.logo} src={logoUrl} alt="DevFest.cz 2026" />
 				<h1 className={s.heading}>{heading}</h1>
-				<p className={s.clock} aria-label="Current time">
-					{formatMinutes(clock.minutes)}
+				<p className={s.clockBlock}>
+					<span className={s.clock}>{formatMinutes(clock.minutes)}</span>
+					<span className={s.clockMeta}>
+						{lineup.failed && lineup.data !== null ? 'Reconnecting…' : dayLabel(clock.date)}
+					</span>
 				</p>
 			</header>
 
@@ -337,7 +371,11 @@ export default function TvScreen() {
 								{rooms.map((r) => r.column.key).join(', ')}
 							</p>
 						)}
-						{beforeDay && <p className={s.notice}>30 October 2026 · Uhelný Mlýn</p>}
+						{beforeDay && (
+							<p className={s.notice}>
+								{EVENT.dateLabel} · {EVENT.venue}
+							</p>
+						)}
 
 						{here ? (
 							<>
@@ -354,8 +392,16 @@ export default function TvScreen() {
 								)}
 								{!here.now && !next && (
 									<div className={s.wrap}>
-										<p className={s.titleNow}>{dayOver ? 'That’s a wrap.' : 'Nothing more in this room.'}</p>
-										<p className={s.wrapLine}>Thank you for coming to DevFest.cz 2026.</p>
+										<p className={s.titleNow}>
+											{dayOver ? 'That’s a wrap.' : nowMin === null ? 'Programme soon.' : 'That’s it in here.'}
+										</p>
+										<p className={s.wrapLine}>
+											{dayOver
+												? 'Thank you for coming to DevFest.cz 2026.'
+												: nowMin === null
+													? 'Talks for this room are being scheduled.'
+													: 'The rest of the day is in the other rooms.'}
+										</p>
 									</div>
 								)}
 								{here.upcoming.length > 1 && (
@@ -391,7 +437,7 @@ export default function TvScreen() {
 								</ul>
 							</section>
 						)}
-						<Social posts={social.data} now={Date.now()} />
+						<Social feed={social.data} now={Date.now()} />
 					</aside>
 				</div>
 			)}
