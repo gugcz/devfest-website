@@ -32,16 +32,47 @@ export async function resolveCompanyFundedReleases(
 /**
  * Pick the release to price the invoice from: prefer one that is on sale,
  * otherwise the latest by start date. Returns null if none qualify.
+ *
+ * Secret releases never price a new invoice: an earlier wave is kept on sale
+ * but secret after it closes, so the codes of its still-unpaid invoices can
+ * redeem it, and it must not win over the wave the site actually sells.
  */
 export function pickPricingRelease(releases: TitoRelease[]): TitoRelease | null {
-	if (releases.length === 0) return null;
-	const onSale = releases.filter((r) => deriveSaleStatus(r) === 'on_sale');
-	const pool = onSale.length > 0 ? onSale : releases;
-	return pool.reduce((latest, r) => {
-		const a = latest.start_at ? Date.parse(latest.start_at) : 0;
-		const b = r.start_at ? Date.parse(r.start_at) : 0;
-		return b >= a ? r : latest;
-	});
+	const visible = releases.filter((r) => !r.secret);
+	const candidates = visible.length > 0 ? visible : releases;
+	if (candidates.length === 0) return null;
+	const onSale = candidates.filter((r) => deriveSaleStatus(r) === 'on_sale');
+	const pool = onSale.length > 0 ? onSale : candidates;
+	return pool.reduce((latest, r) => (startMs(r) >= startMs(latest) ? r : latest));
+}
+
+/**
+ * The release(s) a paid invoice's code is scoped to: the wave the invoice
+ * was priced from, so a Regular invoice paid after Lazy bird opens still
+ * registers Regular tickets (sales per wave stay right). The release is the
+ * one stored at issue time, or for invoices issued before that was stored,
+ * the wave that had started last when the invoice was requested. Falls back
+ * to every matching release when that wave can't be found or is no longer
+ * redeemable, so a payer is never left with a code that unlocks nothing.
+ */
+export function pickInvoicedReleases(
+	releases: TitoRelease[],
+	invoice: { releaseId?: number | null; requestedAtMs?: number | null },
+): TitoRelease[] {
+	let release = releases.find((r) => r.id === invoice.releaseId);
+	if (!release && invoice.requestedAtMs != null) {
+		const requestedAt = invoice.requestedAtMs;
+		const started = releases.filter((r) => startMs(r) <= requestedAt);
+		if (started.length > 0) {
+			release = started.reduce((latest, r) => (startMs(r) >= startMs(latest) ? r : latest));
+		}
+	}
+	if (release && deriveSaleStatus(release) === 'on_sale') return [release];
+	return releases;
+}
+
+function startMs(r: TitoRelease): number {
+	return r.start_at ? Date.parse(r.start_at) : 0;
 }
 
 /** Net unit price for an invoice line: `price_ex_tax` when present, else

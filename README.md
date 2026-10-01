@@ -227,7 +227,7 @@ The invoice **price is taken automatically** from the active ti.to release whose
 - **Invoice email** is sent by iDoklad (PDF attached, pay by bank transfer). If it fails, the invoice number goes to Slack for manual relay. Copy: `buildInvoiceEmail` in `functions/src/invoice/email.ts`.
 - **Discount-code email:** branded HTML from `email-template.ts`. Preview by building `functions/` and rendering `buildDiscountEmail(...).html`.
 - **Invoice fields** are seeded from `GET /IssuedInvoices/Default`; contact `CountryId` from `GET /Contacts/Default` (free-text country stored, not mapped; foreign companies handled manually).
-- **ti.to** needs release(s) whose title contains `INVOICE_RELEASE_MATCH` (`company funded`); their price drives the invoice and the code is scoped to them.
+- **ti.to** needs release(s) whose title contains `INVOICE_RELEASE_MATCH` (`company funded`); the public (non-secret) one on sale prices the invoice, and the paid code is scoped to the release the invoice was priced from. When a wave closes, keep its company-funded release on sale but secret until its unpaid invoices are redeemed.
 - **Frontend:** `submitInvoiceCallable` via `getFunctions(app, 'europe-west1')` → `httpsCallable`. App Check enforced; for local dev set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN` and register the token.
 
 ### Firestore rules

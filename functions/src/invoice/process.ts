@@ -146,6 +146,8 @@ export const processInvoiceTrigger = onDocumentCreated(
 				idokladInvoiceNumber: invoice.number,
 				variableSymbol: invoice.variableSymbol,
 				invoiceEmailSent,
+				titoReleaseId: release.id,
+				titoReleaseTitle: releaseTitle(release),
 				contactReused: contact.reused,
 				contactDiffers: contact.differing,
 				errorMessage: null,

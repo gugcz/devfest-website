@@ -32,6 +32,7 @@ import {
 	buildDiscountCode,
 	createDiscountCode,
 	discountRedeemUrl,
+	pickInvoicedReleases,
 	resolveCompanyFundedReleases,
 	type TitoConfig,
 } from './tito-discount.js';
@@ -147,7 +148,11 @@ async function completeInvoice(
 	let link = data.discountLink ?? null;
 
 	if (!code) {
-		const releases = await resolveCompanyFundedReleases(titoCfg, INVOICE_RELEASE_MATCH);
+		const matching = await resolveCompanyFundedReleases(titoCfg, INVOICE_RELEASE_MATCH);
+		const releases = pickInvoicedReleases(matching, {
+			releaseId: data.titoReleaseId,
+			requestedAtMs: data.createdAt?.toMillis() ?? null,
+		});
 		const releaseIds = releases.map((r) => r.id);
 		if (releaseIds.length === 0) {
 			throw new Error(`No ti.to release matched "${INVOICE_RELEASE_MATCH}"`);
