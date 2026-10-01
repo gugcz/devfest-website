@@ -473,10 +473,23 @@
 
 .boardTitle {
 	@include tv-title(calc(var(--u) * 3.4), 2);
+
+	&.titleLong {
+		font-size: calc(var(--u) * 2.9);
+	}
+
+	&.titleXl {
+		font-size: calc(var(--u) * 2.6);
+	}
 }
 
 .boardTitleSm {
 	@include tv-title(calc(var(--u) * 2.8), 2);
+
+	&.titleLong,
+	&.titleXl {
+		font-size: calc(var(--u) * 2.4);
+	}
 }
 
 // Four rooms and more: one line per title so every row still fits.
