@@ -34,18 +34,30 @@
 
 .heading {
 	@include display(calc(var(--u) * 4.6));
-	line-height: 1;
 	margin: 0;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
+.clockBlock {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: calc(var(--u) * 0.35);
+	margin: 0;
+}
+
 .clock {
 	@include mono(calc(var(--u) * 3.2), 0.04em);
-	margin: 0;
+	line-height: 1;
 	font-variant-numeric: tabular-nums;
 	color: var(--color-text);
+}
+
+.clockMeta {
+	@include mono(calc(var(--u) * 0.8), 0.24em, uppercase);
+	color: var(--ink-muted);
 }
 
 .status {
@@ -67,6 +79,7 @@
 }
 
 .main {
+	background: var(--lit);
 	min-width: 0;
 	min-height: 0;
 	display: flex;
@@ -116,6 +129,32 @@
 	border-left-color: var(--color-accent);
 }
 
+// The countdown sits opposite the eyebrow, the one figure a passer-by
+// needs from across the room.
+.featureNext {
+	position: relative;
+	padding-right: calc(var(--u) * 12);
+}
+
+.countdown {
+	position: absolute;
+	top: 0;
+	right: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: calc(var(--u) * 0.5);
+	margin: 0;
+	@include display(calc(var(--u) * 4.2));
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
+.countdownLabel {
+	@include mono(calc(var(--u) * 0.85), 0.24em, uppercase);
+	color: var(--ink-muted);
+}
+
 .featureBand .titleNow,
 .featureBand .titleNext {
 	color: var(--color-cream);
@@ -136,10 +175,11 @@
 .dot {
 	display: inline-block;
 	flex: none;
-	width: 0.7em;
-	height: 0.7em;
-	border-radius: 50%;
+	width: 0.6em;
+	height: 0.6em;
+	border-radius: var(--radius);
 	background: var(--color-accent-hot);
+	box-shadow: var(--glow-red-soft);
 	animation: pulse 2s ease-in-out infinite;
 }
 
@@ -161,7 +201,9 @@
 
 .titleNow {
 	font-size: calc(var(--u) * 6.4);
-	line-height: 1;
+	// Bebas caps sit high in a 0.84 line box; the inset keeps the first
+	// line's tops inside the clamp's clip.
+	padding-top: 0.06em;
 	-webkit-line-clamp: 3;
 
 	&.titleMid {
@@ -175,7 +217,7 @@
 
 .titleNext {
 	font-size: calc(var(--u) * 3.6);
-	line-height: 1;
+	padding-top: 0.06em;
 	-webkit-line-clamp: 2;
 
 	&.titleLong {
@@ -227,7 +269,7 @@
 	border: 1px solid var(--rule);
 	@include display(calc(var(--photo) * 0.45));
 	line-height: 1;
-	color: var(--ink-soft);
+	color: var(--ink-monogram-sm);
 }
 
 .speakerText {
@@ -347,7 +389,6 @@
 
 .roomName {
 	@include display(calc(var(--u) * 2.6));
-	line-height: 1;
 	margin: 0;
 }
 
@@ -363,8 +404,12 @@
 	padding-bottom: calc(var(--u) * 0.8);
 }
 
+.slotNow {
+	color: var(--color-text);
+}
+
 .slotMeta {
-	@include mono(calc(var(--u) * 0.85), 0.16em, uppercase);
+	@include mono(calc(var(--u) * 0.85), 0.22em, uppercase);
 	display: flex;
 	align-items: center;
 	gap: calc(var(--u) * 0.6);
@@ -425,19 +470,12 @@
 }
 
 .postMeta {
-	@include mono(calc(var(--u) * 0.85), 0.08em);
+	@include mono(calc(var(--u) * 0.8), 0.18em, uppercase);
 	display: flex;
 	align-items: center;
 	gap: calc(var(--u) * 0.8);
 	margin: 0;
 	color: var(--ink-muted);
-}
-
-.avatar {
-	width: calc(var(--u) * 2.2);
-	height: calc(var(--u) * 2.2);
-	border-radius: 50%;
-	object-fit: cover;
 }
 
 .postAuthor {
