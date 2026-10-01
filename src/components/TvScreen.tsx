@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import logoUrl from '../assets/logo.png?url';
 import { eventDateISO, formatMinutes, isBand } from '../lib/agenda';
 import { EVENT } from '../lib/event';
-import { BLUESKY_HANDLE, fetchSocialFeed, timeAgo, type SocialFeed, type SocialNetwork } from '../lib/social';
 import { fetchAgenda, type Lineup } from '../lib/lineup';
 import { isHostSession, type SessionSpeakerRef } from '../lib/sessions';
 import { initials } from '../lib/speakers';
@@ -12,9 +11,6 @@ import s from './TvScreen.module.scss';
 /** The lineup endpoint is edge-cached for 15 min; polling faster costs nothing
  * and picks up a schedule fix within one cache window. */
 const LINEUP_REFRESH_MS = 2 * 60_000;
-const SOCIAL_REFRESH_MS = 5 * 60_000;
-const SOCIAL_ROTATE_MS = 15_000;
-const SOCIAL_MAX = 10;
 const CLOCK_TICK_MS = 5_000;
 /** A screen runs all day unattended: reload now and then so a deploy lands
  * and a long-lived tab can't drift. */
@@ -243,7 +239,7 @@ function RoomSummary({ room, nowMin, compact }: { room: RoomNow; nowMin: number 
 					{!compact && <Speakers speakers={now.session.speakers} size="sm" />}
 				</div>
 			) : null}
-			{next && (!compact || !now) ? (
+			{next ? (
 				<div className={s.roomSlot}>
 					<p className={s.slotMeta}>
 						Next · {formatMinutes(next.place.startMin)} {nowMin !== null && `· ${startsIn(next.place.startMin, nowMin)}`}
@@ -254,7 +250,7 @@ function RoomSummary({ room, nowMin, compact }: { room: RoomNow; nowMin: number 
 			) : null}
 			{!now && !next && <p className={s.slotMeta}>{nowMin === null ? 'Nothing scheduled' : 'Done for today'}</p>}
 			{!compact &&
-				room.upcoming.slice(1, 4).map((slot) => (
+				room.upcoming.slice(1, 6).map((slot) => (
 					<p key={slot.session.id} className={s.later}>
 						<span className={s.laterTime}>{formatMinutes(slot.place.startMin)}</span>
 						{slot.session.title}
@@ -264,70 +260,12 @@ function RoomSummary({ room, nowMin, compact }: { room: RoomNow; nowMin: number 
 	);
 }
 
-const NETWORK: Record<SocialNetwork, string> = {
-	bluesky: 'Bluesky',
-	facebook: 'Facebook',
-	instagram: 'Instagram',
-	hashtag: 'Instagram',
-};
-
-function Social({ feed, now }: { feed: SocialFeed | null; now: number }) {
-	const shown = (feed?.posts ?? []).slice(0, SOCIAL_MAX);
-	const tag = feed?.hashtag ? `#${feed.hashtag}` : '';
-	const [index, setIndex] = useState(0);
-	useEffect(() => {
-		if (shown.length < 2) return;
-		const id = setInterval(() => setIndex((i) => (i + 1) % shown.length), SOCIAL_ROTATE_MS);
-		return () => clearInterval(id);
-	}, [shown.length]);
-
-	const post = shown.length > 0 ? shown[index % shown.length] : null;
-	return (
-		<section className={s.social} aria-labelledby="tv-social-heading">
-			<h2 id="tv-social-heading" className={s.panelLabel}>
-				{tag ? `Post with ${tag}` : 'On social'}
-			</h2>
-			{post ? (
-				<article key={post.id} className={s.post}>
-					<p className={s.postMeta}>
-						<span className={s.postAuthor}>
-							{NETWORK[post.network]}
-							{post.network === 'hashtag' ? ` · ${tag}` : post.author ? ` · ${post.author}` : ''}
-						</span>
-						<span>{timeAgo(post.createdAt, now)}</span>
-					</p>
-					{post.text && <p className={s.postText}>{post.text}</p>}
-					{post.image && <img className={s.postImage} src={post.image} alt={post.imageAlt} />}
-					{shown.length > 1 && (
-						<ol className={s.pager} aria-hidden="true">
-							{shown.map((p, i) => (
-								<li key={p.id} className={i === index % shown.length ? s.pagerOn : ''} />
-							))}
-						</ol>
-					)}
-				</article>
-			) : (
-				<div className={s.follow}>
-					<p className={s.followLine}>{tag ? `Post with ${tag}.` : 'Share your DevFest.'}</p>
-					<p className={s.followHandles}>
-						<span>Facebook DevFestCZ</span>
-						<span>Bluesky @{BLUESKY_HANDLE}</span>
-						<span>X @devfest_cz</span>
-						<span>LinkedIn GUG.cz</span>
-					</p>
-				</div>
-			)}
-		</section>
-	);
-}
-
 export default function TvScreen() {
 	const [params, setParams] = useState<Params | null>(null);
 	useEffect(() => setParams(readParams()), []);
 	useKioskUpkeep();
 
 	const lineup = usePolled(loadLineup, LINEUP_REFRESH_MS, 'tv-lineup');
-	const social = usePolled(fetchSocialFeed, SOCIAL_REFRESH_MS, 'tv-social');
 
 	const sessions = lineup.data?.sessions ?? [];
 	const eventDate = useMemo(() => eventDateISO(sessions), [sessions]);
@@ -363,7 +301,7 @@ export default function TvScreen() {
 			{lineup.data === null ? (
 				<p className={s.status}>{lineup.failed ? 'Programme unavailable, retrying…' : 'Loading programme…'}</p>
 			) : (
-				<div className={here ? s.roomLayout : s.venueLayout}>
+				<div className={here && others.length > 0 ? s.roomLayout : s.venueLayout}>
 					<main className={s.main}>
 						{params?.room && !column && (
 							<p className={s.notice}>
@@ -424,21 +362,18 @@ export default function TvScreen() {
 						)}
 					</main>
 
-					<aside className={s.side}>
-						{here && others.length > 0 && (
-							<section aria-labelledby="tv-venue-heading">
-								<h2 id="tv-venue-heading" className={s.panelLabel}>
-									Elsewhere at DevFest
-								</h2>
-								<ul className={s.roomRows}>
-									{others.map((room) => (
-										<RoomSummary key={room.column.key} room={room} nowMin={nowMin} compact />
-									))}
-								</ul>
-							</section>
-						)}
-						<Social feed={social.data} now={Date.now()} />
-					</aside>
+					{here && others.length > 0 && (
+						<aside className={s.side} aria-labelledby="tv-venue-heading">
+							<h2 id="tv-venue-heading" className={s.panelLabel}>
+								Elsewhere at DevFest
+							</h2>
+							<ul className={s.roomRows}>
+								{others.map((room) => (
+									<RoomSummary key={room.column.key} room={room} nowMin={nowMin} compact />
+								))}
+							</ul>
+						</aside>
+					)}
 				</div>
 			)}
 		</div>

@@ -100,7 +100,6 @@ SDK** (client reads blocked on an App Check token, ~30s on mobile).
 | `/api/lineup` | `lineupApi` | Firestore `speakers` + `sessions` + `rooms` | `src/lib/lineup.ts` |
 | `/api/tickets` | `ticketsApi` | RTDB `/tickets` | `src/lib/tito.ts::fetchTickets` |
 | `/api/speaker-photo?id=` | `speakerPhotoApi` | Storage `speakers/{id}` or the Sessionize CDN (image bytes) | `src/components/SpeakerCard.tsx` |
-| `/api/social` | `socialApi` | Meta Graph API (Facebook page, Instagram account + hashtag) | `src/lib/social.ts` |
 
 - 2nd-gen `onRequest`, public, `europe-west1`, codebase `website`. Edge
   `s-maxage` + in-instance memo. Lineup TTL 15min, tickets 5min. Failed read →
