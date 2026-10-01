@@ -253,7 +253,7 @@ Setting up Meta (every source is off until its id is set):
 firebase functions:secrets:set META_PAGE_TOKEN   # the page token (must exist before functions deploy)
 ```
 
-and in `functions/.env`: `META_PAGE_ID`, `META_IG_USER_ID` (from `/{page-id}?fields=instagram_business_account`) and `SOCIAL_HASHTAG` (without `#`). Instagram allows hashtag search on 30 distinct tags per account per week and returns only the last 24 hours of a tag.
+and as GitHub repository variables (Settings → Secrets and variables → Actions → Variables; the functions deploy writes them into `functions/.env`): `META_PAGE_ID`, `META_IG_USER_ID` (from `/{page-id}?fields=instagram_business_account`) and `SOCIAL_HASHTAG` (without `#`). Instagram allows hashtag search on 30 distinct tags per account per week and returns only the last 24 hours of a tag.
 
 ## Analytics (GA4)
 

@@ -60,14 +60,20 @@ jobs:
         run: |
           printf '%s' "$SA_JSON" > "$RUNNER_TEMP/sa.json"
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
-      - name: Write functions env (non-secret ti.to slugs)
+      - name: Write functions env (non-secret ti.to slugs, Meta ids)
         env:
           TITO_ACCOUNT_SLUG: ${{ vars.TITO_ACCOUNT_SLUG }}
           TITO_EVENT_SLUG: ${{ vars.TITO_EVENT_SLUG }}
+          META_PAGE_ID: ${{ vars.META_PAGE_ID }}
+          META_IG_USER_ID: ${{ vars.META_IG_USER_ID }}
+          SOCIAL_HASHTAG: ${{ vars.SOCIAL_HASHTAG }}
         run: |
           {
             printf 'TITO_ACCOUNT_SLUG=%s\n' "$TITO_ACCOUNT_SLUG"
             printf 'TITO_EVENT_SLUG=%s\n' "$TITO_EVENT_SLUG"
+            printf 'META_PAGE_ID=%s\n' "$META_PAGE_ID"
+            printf 'META_IG_USER_ID=%s\n' "$META_IG_USER_ID"
+            printf 'SOCIAL_HASHTAG=%s\n' "$SOCIAL_HASHTAG"
           } > functions/.env
       # Pinned: an unpinned `@latest` makes a breaking CLI release a broken
       # production deploy. Bump deliberately, alongside the hosting action.
