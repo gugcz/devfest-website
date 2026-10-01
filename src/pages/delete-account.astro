@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Public account-deletion instructions for the DevFest.cz mobile app. Google
+// Play requires them at a stable URL (the Play Console "Delete account URL"),
+// so keep this route. The same text lives in section 8 of /privacy-policy.
+const MAIL_SUBJECT = 'Delete my DevFest app account';
+---
+
+<BaseLayout
+	title="Delete Your App Account — DevFest.cz 2026"
+	description="How to delete your DevFest.cz mobile app account and its data, in the app or by email."
+	showFooter={false}
+>
+	<main class="policy">
+		<div class="policy-inner">
+			<a href="/" class="back-link">&#8592; Back</a>
+
+			<h1 class="policy-title">Delete Your App Account</h1>
+			<p class="policy-meta eyebrow">DevFest.cz app · GUG.cz, z.s.</p>
+
+			<section>
+				<p>
+					This page explains how to delete your account in the DevFest.cz mobile app for iOS
+					and Android (<code>cz.devfest.app</code>), published by GUG.cz, z.s., and what
+					happens to your data.
+				</p>
+			</section>
+
+			<section>
+				<h2>In the app</h2>
+				<p>
+					Go to <strong>Profile &gt; Delete account</strong>. This immediately deletes:
+				</p>
+				<ul>
+					<li>your account document: name, email, registration reference and favourite sessions</li>
+					<li>all your email verification-code records</li>
+					<li>your Firebase Authentication account</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Without the app</h2>
+				<p>
+					Email <a href={`mailto:devfest@gug.cz?subject=${encodeURIComponent(MAIL_SUBJECT)}`}>devfest@gug.cz</a> from
+					your ticket's email address with the subject "{MAIL_SUBJECT}". We delete the same
+					data within 30 days.
+				</p>
+			</section>
+
+			<section>
+				<h2>What is not deleted</h2>
+				<p>
+					Usage analytics, crash reports and App Check signals are not linked to your account,
+					so they cannot be picked out and deleted. They expire on their own: analytics after
+					14 months, crash reports after 90 days, and App Check signals on the retention
+					periods Google and Apple set for each platform. Your ti.to ticket itself is not
+					affected.
+				</p>
+				<p>
+					Everything the app collects is described in the <a href="/privacy-policy#mobile-app">privacy policy</a>.
+				</p>
+			</section>
+		</div>
+	</main>
+</BaseLayout>
+
+<style lang="scss">
+	// Same legal-document column as the privacy policy.
+	@use './privacy-policy';
+</style>
