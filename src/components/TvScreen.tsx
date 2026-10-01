@@ -5,7 +5,7 @@ import { EVENT } from '../lib/event';
 import { fetchAgenda, type Lineup } from '../lib/lineup';
 import { isHostSession, type SessionSpeakerRef } from '../lib/sessions';
 import { initials } from '../lib/speakers';
-import { findColumn, isDayOver, progress, startsIn, venueNow, type RoomNow, type Slot } from '../lib/tv';
+import { findColumn, isDayOver, progress, roomSlug, startsIn, venueNow, type RoomNow, type Slot } from '../lib/tv';
 import s from './TvScreen.module.scss';
 
 /** The lineup endpoint is edge-cached for 15 min; polling faster costs nothing
@@ -338,7 +338,9 @@ function Board({ rooms, nowMin }: { rooms: RoomNow[]; nowMin: number | null }) {
 							<div className={s.boardCell}>
 								{room.now ? (
 									<>
-										<p className={`${s.boardTitle} ${isBreak(room.now) ? s.boardBreak : ''}`}>
+										<p
+											className={`${s.boardTitle} ${titleSize(room.now.session.title)} ${isBreak(room.now) ? s.boardBreak : ''}`}
+										>
 											{room.now.session.title}
 										</p>
 										<p className={s.boardMeta}>
@@ -356,7 +358,9 @@ function Board({ rooms, nowMin }: { rooms: RoomNow[]; nowMin: number | null }) {
 							<div className={s.boardCell}>
 								{next ? (
 									<>
-										<p className={`${s.boardTitleSm} ${isBreak(next) ? s.boardBreak : ''}`}>{next.session.title}</p>
+										<p className={`${s.boardTitleSm} ${titleSize(next.session.title)} ${isBreak(next) ? s.boardBreak : ''}`}>
+												{next.session.title}
+											</p>
 										<p className={s.boardMeta}>
 											{formatMinutes(next.place.startMin)}
 											{nowMin !== null && ` · ${startsIn(next.place.startMin, nowMin)}`}
@@ -421,7 +425,7 @@ export default function TvScreen() {
 				<main className={s.main}>
 					{params?.room && !column && (
 						<p className={s.notice}>
-							Unknown room “{params.room}”. Use one of: {rooms.map((r) => r.column.key).join(', ')}
+							Unknown room “{params.room}”. Use one of: {rooms.map((r) => roomSlug(r.column.label)).join(', ')}
 						</p>
 					)}
 					{dayNote && !hero && <p className={s.notice}>{dayNote}</p>}
