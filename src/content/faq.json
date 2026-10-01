@@ -41,7 +41,7 @@
 		"items": [
 			{
 				"q": "How much do tickets cost?",
-				"a": "Tickets are sold in three waves — <strong>Early Bird</strong>, <strong>Regular</strong>, and <strong>Lazy Bird</strong> — with the price rising each wave. Early Bird has closed. <strong>Regular</strong> tickets are on sale until <strong>30 September 2026</strong>: <strong>2 999 Kč</strong> individual and <strong>4 499 Kč</strong> company funded, VAT included. Lazy Bird follows. Live pricing for the current wave is always shown in the <a href=\"/#tickets\">Tickets</a> section on the home page."
+				"a": "Tickets are sold in three waves — <strong>Early Bird</strong>, <strong>Regular</strong>, and <strong>Lazy Bird</strong> — with the price rising each wave. Early Bird and Regular have closed; <strong>Lazy Bird</strong> is the last wave and is on sale now. Already paid a company invoice from an earlier wave? The code we email you still claims those tickets. Live pricing for the current wave is always shown in the <a href=\"/#tickets\">Tickets</a> section on the home page."
 			},
 			{
 				"q": "What ticket types are available?",

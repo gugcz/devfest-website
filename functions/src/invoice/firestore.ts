@@ -46,6 +46,7 @@ export interface InvoiceRequestInput {
 
 export interface InvoiceDoc extends InvoiceRequestInput {
 	status: InvoiceStatus;
+	createdAt?: Timestamp;
 	// iDoklad
 	idokladContactId?: number;
 	idokladInvoiceId?: number;
@@ -58,6 +59,9 @@ export interface InvoiceDoc extends InvoiceRequestInput {
 	contactDiffers?: string[];
 	paidAmount?: string | null;
 	// ti.to
+	/** Release the invoice was priced from; the paid code is scoped to it. */
+	titoReleaseId?: number | null;
+	titoReleaseTitle?: string | null;
 	discountCode?: string | null;
 	discountLink?: string | null;
 	discountEmailSent?: boolean;

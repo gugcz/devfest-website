@@ -41,6 +41,11 @@ ti.to code. Browser never touches Firestore.
   (`buildInvoiceEmail`). Discount code: Admin API `POST /discount_codes`
   wrapped under `discount_code`, scoped to releases matching
   `INVOICE_RELEASE_MATCH`. Discount mail via Resend, optional.
+- Pricing skips `secret` releases (`pickPricingRelease`). The code is scoped
+  to the release the invoice was priced from (`titoReleaseId`, inferred from
+  `createdAt` on older docs; `pickInvoicedReleases`), so a closed wave stays
+  on sale but secret in ti.to until its unpaid invoices are redeemed. A
+  release that is no longer on sale falls back to every matching release.
 - `firestore.rules` denies all clients; not wired into `firebase.json`.
 - `submitInvoiceCallable` has `enforceAppCheck: true`, no
   `consumeAppCheckToken` (it needs the App Check Token Verifier IAM role, and
