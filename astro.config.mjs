@@ -24,6 +24,7 @@ const PRIORITY = {
     'https://devfest.cz/press/downloads': 0.5,
     'https://devfest.cz/code-of-conduct': 0.4,
     'https://devfest.cz/privacy-policy': 0.3,
+    'https://devfest.cz/delete-account': 0.2,
 };
 
 // Accessibility-audit mock mode. Page data comes from `/api/*`, served from

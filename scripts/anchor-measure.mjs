@@ -126,6 +126,7 @@ const HEADER_ROUTES = [
 	'/invoice/',
 	'/code-of-conduct/',
 	'/privacy-policy/',
+	'/delete-account/',
 	'/thank-you/',
 	'/newsletter-subscription-thank-you/',
 	'/404.html',
