@@ -333,27 +333,3 @@ export const TICKETS = {
 		},
 	],
 };
-
-/** `/api/social` (`functions/src/social/social-api.ts`) — one post per Meta
- * source, so `/tv` renders a real post instead of the empty-feed card. */
-export const SOCIAL = {
-	hashtag: 'examplefest',
-	posts: [
-		{
-			id: 'ig:4242',
-			source: 'hashtag',
-			text: 'Front row for the keynote. #examplefest',
-			createdAt: '2026-10-30T09:05:00+01:00',
-			image: '',
-			author: '',
-		},
-		{
-			id: 'fb:4242_1',
-			source: 'facebook',
-			text: 'Doors are open. Grab your badge and a coffee on the way in.',
-			createdAt: '2026-10-30T08:00:00+01:00',
-			image: '',
-			author: 'Acme Example',
-		},
-	],
-};

@@ -36,8 +36,8 @@ npm run preview
 npm run a11y
 ```
 
-`npm run dev` has no Hosting rewrite table, so it serves `/api/lineup`,
-`/api/social` and `/api/tickets` from the fixtures in `scripts/a11y-mocks/api.mjs` (otherwise the
+`npm run dev` has no Hosting rewrite table, so it serves `/api/lineup` and
+`/api/tickets` from the fixtures in `scripts/a11y-mocks/api.mjs` (otherwise the
 lineup, agenda and ticket sections render "unavailable"). `npm run a11y` uses
 the same fixtures.
 
@@ -237,23 +237,9 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 `firestore.rules` denies all client access. Not wired into `firebase.json` (ruleset is project-global, shared with the app) — merge the `invoices` block in the console manually.
 
-## Venue screens — `/tv` + `/api/social`
+## Venue screens — `/tv`
 
-`/tv` is the unlisted page for the TVs at the venue (`noindex`, out of the sitemap, linked from nowhere). `/tv?room=<room id or name slug>` pins a screen to one room; plain `/tv` shows every room; `&at=10:15` fakes the clock on the event day for checking a screen early. The programme comes from `/api/lineup`.
-
-The social column mixes the DevFest Bluesky account (read in the browser from Bluesky's public API) with `/api/social`: the Facebook page, the Instagram account and recent public Instagram posts with the event hashtag, read by `socialApi` through the Meta Graph API (5-min edge TTL). LinkedIn and X hashtags are not covered: both need partner or paid API access.
-
-Setting up Meta (every source is off until its id is set):
-
-1. A Meta app (developers.facebook.com) with Facebook Login, permissions `pages_show_list`, `pages_read_engagement`, `instagram_basic` and `instagram_manage_insights` (the last one is what hashtag search needs). The Instagram account must be a professional account linked to the Facebook page.
-2. Get a **Page access token that does not expire**: exchange a user token for a long-lived one, then read the page's token from `/me/accounts`.
-3. Store it and the ids:
-
-```bash
-firebase functions:secrets:set META_PAGE_TOKEN   # the page token (must exist before functions deploy)
-```
-
-and as GitHub repository variables (Settings → Secrets and variables → Actions → Variables; the functions deploy writes them into `functions/.env`): `META_PAGE_ID`, `META_IG_USER_ID` (from `/{page-id}?fields=instagram_business_account`) and `SOCIAL_HASHTAG` (without `#`). Instagram allows hashtag search on 30 distinct tags per account per week and returns only the last 24 hours of a tag.
+`/tv` is the unlisted page for the TVs at the venue (`noindex`, out of the sitemap, linked from nowhere). `/tv?room=<room id or name slug>` pins a screen to one room (now, up next with a countdown, the rest of its day, the other rooms); plain `/tv` shows every room; `&at=10:15` fakes the clock on the event day for checking a screen early. The programme comes from `/api/lineup`, polled every 2 minutes.
 
 ## Analytics (GA4)
 
@@ -280,7 +266,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/team` | Organizing team |
 | `/contact` | Contact page |
 | `/faq` | Frequently asked questions |
-| `/tv` | Unlisted venue-screen page: a room's now/next, the whole venue, social posts (reads `/api/lineup`, `/api/social`) |
+| `/tv` | Unlisted venue-screen page: a room's now/next, or the whole venue (reads `/api/lineup`) |
 | `/attending` | "I'm attending" share-card generator (client-side canvas → PNG) |
 | `/code-of-conduct` | Code of Conduct one-pager, Listener's contact, link to the full text |
 | `/privacy-policy` | GDPR privacy policy |
