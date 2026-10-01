@@ -239,7 +239,7 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 ## Venue screens — `/tv`
 
-`/tv` is the unlisted page for the TVs at the venue (`noindex`, out of the sitemap, linked from nowhere). `/tv?room=<room id or name slug>` pins a screen to one room (now, up next with a countdown, the rest of its day, the other rooms); plain `/tv` shows every room; `&at=10:15` fakes the clock on the event day for checking a screen early. The programme comes from `/api/lineup`, polled every 2 minutes.
+`/tv` is the unlisted page for the TVs at the venue (`noindex`, out of the sitemap, linked from nowhere). `/tv?room=<room id or name slug>` pins a screen to one room (the talk on now, up next with a countdown, what the other rooms are showing); plain `/tv` shows every room as a now/next board; `&at=10:15` fakes the clock on the event day for checking a screen early. The programme comes from `/api/lineup`, polled every 2 minutes.
 
 ## Analytics (GA4)
 

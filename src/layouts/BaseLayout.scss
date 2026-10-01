@@ -266,6 +266,13 @@ body {
 		pointer-events: none;
 		background: var(--vignette);
 	}
+
+	// A wall screen read from across a room (`/tv`, BaseLayout `kiosk`): grain
+	// and vignette only cost legibility there.
+	&.kiosk::before,
+	&.kiosk::after {
+		content: none;
+	}
 }
 
 .skip-link {

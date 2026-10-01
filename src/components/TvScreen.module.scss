@@ -1,12 +1,23 @@
 @use '../styles/type' as *;
 
 // `/tv` is a fixed 16:9 wall screen read from across a room, not a scrolling
-// page: everything sizes off `--u` (1/100 of the width, capped by height so a
-// letterboxed or portrait-ish browser still fits) instead of the site's
-// fluid `--fs-*` steps, which top out at laptop sizes.
+// page. Everything sizes off `--u` (1/100 of the width, capped by height so a
+// letterboxed browser still fits) instead of the site's fluid `--fs-*` steps,
+// which top out at laptop sizes.
+//
+// Signage rules, not page rules (letter height ~25 mm per 3 m of viewing
+// distance; a passer-by gets one or two seconds):
+// - two zones only: the hero (what's on) and a rail (what's next, other rooms);
+// - every title is Bebas, every label and name JetBrains Mono at 500 —
+//   Special Elite's typewriter texture breaks up a few metres away;
+// - labels are ≥ 1.4u (27px at 1080p), tracked 0.06em, never the site's
+//   0.22em micro-labels; ink is --ink-strong or brighter;
+// - a ~4.5% safe margin all round, generous gaps instead of hairlines.
 .screen {
 	--u: min(1vw, 1.7778vh);
-	--pad: calc(var(--u) * 2.6);
+	--pad: calc(var(--u) * 4.4);
+	--gap: calc(var(--u) * 3);
+	--label: calc(var(--u) * 1.45);
 
 	position: fixed;
 	inset: 0;
@@ -18,23 +29,49 @@
 	cursor: none;
 }
 
+@mixin tv-label($size: var(--label)) {
+	@include mono($size, 0.06em, uppercase);
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+// A Bebas title clamped to `$lines`. The top inset keeps Bebas caps, which
+// sit high in their line box, inside the clamp's clip. `pretty`, not
+// `balance`: Chromium balances only the lines a clamp keeps, which pushes
+// the end of a long title into the clipped fourth line.
+@mixin tv-title($size, $lines) {
+	@include display($size);
+	line-height: 0.92;
+	margin: 0;
+	padding-top: 0.06em;
+	text-wrap: pretty;
+	flex-shrink: 0;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: $lines;
+	overflow: hidden;
+}
+
+// ─── Header ────────────────────────────────────────────────────────────────
+
 .header {
 	display: grid;
 	grid-template-columns: auto 1fr auto;
 	align-items: center;
-	gap: calc(var(--u) * 2.4);
-	padding: calc(var(--u) * 1.4) var(--pad);
-	border-bottom: 1px solid var(--rule-strong);
+	gap: calc(var(--u) * 2.6);
+	padding: calc(var(--u) * 2.6) var(--pad) calc(var(--u) * 2.2);
 }
 
 .logo {
-	height: calc(var(--u) * 3.4);
+	height: calc(var(--u) * 3);
 	width: auto;
 }
 
 .heading {
-	@include display(calc(var(--u) * 4.6));
+	@include display(calc(var(--u) * 5.2));
 	margin: 0;
+	padding: 0.08em 0 0 calc(var(--u) * 2.6);
+	border-left: 2px solid var(--rule-strong);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -44,139 +81,59 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
-	gap: calc(var(--u) * 0.35);
+	gap: calc(var(--u) * 0.5);
 	margin: 0;
 }
 
 .clock {
-	@include mono(calc(var(--u) * 3.2), 0.04em);
+	@include mono(calc(var(--u) * 3.6));
+	font-weight: 500;
 	line-height: 1;
 	font-variant-numeric: tabular-nums;
-	color: var(--color-text);
 }
 
 .clockMeta {
-	@include mono(calc(var(--u) * 0.8), 0.24em, uppercase);
-	color: var(--ink-muted);
+	@include tv-label(calc(var(--u) * 1.15));
+	color: var(--ink-strong);
 }
 
 .status {
-	@include prose(calc(var(--u) * 2));
+	@include tv-label(calc(var(--u) * 2));
 	margin: auto;
-	color: var(--ink-soft);
-}
-
-.roomLayout,
-.venueLayout {
-	flex: 1;
-	min-height: 0;
-	display: grid;
-	grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
-}
-
-.venueLayout {
-	grid-template-columns: minmax(0, 1fr);
+	color: var(--ink-strong);
 }
 
 .main {
-	background: var(--lit);
-	min-width: 0;
+	flex: 1;
 	min-height: 0;
 	display: flex;
 	flex-direction: column;
 	gap: calc(var(--u) * 1.6);
-	padding: calc(var(--u) * 2) var(--pad);
-	overflow: hidden;
-}
-
-.side {
-	min-width: 0;
-	min-height: 0;
-	display: flex;
-	flex-direction: column;
-	gap: calc(var(--u) * 1.8);
-	padding: calc(var(--u) * 2) var(--pad);
-	background: var(--panel);
-	border-left: 1px solid var(--rule);
-	overflow: hidden;
+	padding: calc(var(--u) * 1) var(--pad) var(--pad);
 }
 
 .notice {
-	@include mono(calc(var(--u) * 1), 0.18em, uppercase);
-	margin: 0;
-	color: var(--ink-meta);
-}
-
-.panelLabel,
-.eyebrow {
-	@include mono(calc(var(--u) * 0.95), 0.24em, uppercase);
-	margin: 0 0 calc(var(--u) * 1);
-	color: var(--ink-muted);
-	font-weight: 400;
-}
-
-// ─── Room screen: now + next ────────────────────────────────────────────────
-
-.feature {
-	display: flex;
-	flex-direction: column;
-	gap: calc(var(--u) * 1.1);
-	padding-left: calc(var(--u) * 1.6);
-	border-left: calc(var(--u) * 0.3) solid var(--rule-strong);
-}
-
-.featureLive {
-	border-left-color: var(--color-accent);
-}
-
-// The countdown sits opposite the eyebrow, the one figure a passer-by
-// needs from across the room.
-.featureNext {
-	position: relative;
-	padding-right: calc(var(--u) * 12);
-}
-
-.countdown {
-	position: absolute;
-	top: 0;
-	right: 0;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
-	gap: calc(var(--u) * 0.5);
-	margin: 0;
-	@include display(calc(var(--u) * 4.2));
-	white-space: nowrap;
-	font-variant-numeric: tabular-nums;
-}
-
-.countdownLabel {
-	@include mono(calc(var(--u) * 0.85), 0.24em, uppercase);
-	color: var(--ink-muted);
-}
-
-.featureBand .titleNow,
-.featureBand .titleNext {
-	color: var(--color-cream);
-}
-
-.eyebrow {
-	display: flex;
-	align-items: center;
-	gap: calc(var(--u) * 1);
+	@include tv-label;
 	margin: 0;
 	color: var(--ink-strong);
 }
 
-.when {
-	color: var(--ink-muted);
+.metaTime {
+	color: var(--ink-strong);
+	font-variant-numeric: tabular-nums;
+}
+
+.cardLabel {
+	@include tv-label;
+	margin: 0;
+	color: var(--color-text);
 }
 
 .dot {
 	display: inline-block;
 	flex: none;
-	width: 0.6em;
-	height: 0.6em;
+	width: 0.7em;
+	height: 0.7em;
 	border-radius: var(--radius);
 	background: var(--color-accent-hot);
 	box-shadow: var(--glow-red-soft);
@@ -189,66 +146,232 @@
 	}
 }
 
-.titleNow,
-.titleNext {
-	@include display;
+// ─── Room screen: hero + rail ──────────────────────────────────────────────
+
+.roomGrid {
+	flex: 1;
+	min-height: 0;
+	display: grid;
+	grid-template-columns: minmax(0, 1.72fr) minmax(0, 1fr);
+	gap: calc(var(--u) * 4);
+}
+
+.hero {
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 2.2);
+	padding-top: calc(var(--u) * 1);
+}
+
+.heroMeta {
+	@include tv-label(calc(var(--u) * 1.8));
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 1.6);
 	margin: 0;
-	text-wrap: balance;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
+}
+
+.state {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55em;
+}
+
+.metaAside {
+	margin-left: auto;
+	color: var(--ink-strong);
+}
+
+.heroTitle {
+	@include tv-title(calc(var(--u) * 8.4), 3);
+
+	&.titleMid {
+		font-size: calc(var(--u) * 6.8);
+	}
+
+	&.titleLong {
+		font-size: calc(var(--u) * 5.6);
+	}
+
+	&.titleXl {
+		font-size: calc(var(--u) * 4.6);
+		-webkit-line-clamp: 4;
+	}
+}
+
+.heroBreak .heroTitle {
+	color: var(--color-cream);
+}
+
+.progress {
+	height: calc(var(--u) * 0.45);
+	margin-top: auto;
+	background: var(--rule-strong);
+
+	span {
+		display: block;
+		height: 100%;
+		background: var(--color-accent);
+		transform-origin: left;
+		transition: transform 1s linear;
+	}
+}
+
+.rail {
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap);
 	overflow: hidden;
 }
 
-.titleNow {
-	font-size: calc(var(--u) * 6.4);
-	// Bebas caps sit high in a 0.84 line box; the inset keeps the first
-	// line's tops inside the clamp's clip.
-	padding-top: 0.06em;
-	-webkit-line-clamp: 3;
-
-	&.titleMid {
-		font-size: calc(var(--u) * 5);
-	}
-
-	&.titleLong {
-		font-size: calc(var(--u) * 4);
-	}
+.next {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 1.6);
+	padding: calc(var(--u) * 2.6);
+	background: var(--panel-hover);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
 }
 
-.titleNext {
-	font-size: calc(var(--u) * 3.6);
-	padding-top: 0.06em;
-	-webkit-line-clamp: 2;
-
-	&.titleLong {
-		font-size: calc(var(--u) * 2.8);
-	}
-}
-
-.titleMid,
-.titleLong {
-	text-wrap: pretty;
-}
-
-.speakers {
+.nextTop {
 	display: flex;
 	flex-wrap: wrap;
-	gap: calc(var(--u) * 1) calc(var(--u) * 2.2);
+	align-items: baseline;
+	justify-content: space-between;
+	gap: calc(var(--u) * 0.6) calc(var(--u) * 2);
+	margin: 0;
+
+	.cardLabel {
+		white-space: nowrap;
+	}
+}
+
+.countdown {
+	@include tv-label(calc(var(--u) * 1.8));
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
+.nextTitle {
+	@include tv-title(calc(var(--u) * 4), 3);
+
+	&.titleMid {
+		font-size: calc(var(--u) * 3.3);
+	}
+
+	&.titleLong,
+	&.titleXl {
+		font-size: calc(var(--u) * 3);
+	}
+}
+
+.elsewhere {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 1.4);
+	padding: 0 calc(var(--u) * 2.6);
+}
+
+// A column that wraps: a room that does not fit moves to a second column,
+// which the overflow hides, so a room is either whole or gone, never cut.
+.elsewhereList {
+	flex: 1;
+	min-height: 0;
 	margin: 0;
 	padding: 0;
 	list-style: none;
-	--photo: calc(var(--u) * 3);
+	display: flex;
+	flex-flow: column wrap;
+	align-content: flex-start;
+	gap: calc(var(--u) * 1.9) var(--pad);
+	overflow: hidden;
 }
 
-.speakersLg {
-	--photo: calc(var(--u) * 6);
-	margin-top: calc(var(--u) * 0.6);
+.elsewhereRoom {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 0.6);
+	width: 100%;
+	min-width: 0;
+}
+
+.elsewhereHead {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: calc(var(--u) * 0.4) calc(var(--u) * 1.6);
+	margin: 0;
+}
+
+.elsewhereName {
+	@include tv-label(calc(var(--u) * 1.3));
+	color: var(--color-cream);
+}
+
+.elsewhereTitle {
+	@include tv-title(calc(var(--u) * 2.6), 2);
+}
+
+.elsewhereDense .elsewhereTitle {
+	-webkit-line-clamp: 1;
+}
+
+.elsewhereMeta {
+	@include mono(calc(var(--u) * 1.3));
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	color: var(--ink-strong);
+	font-variant-numeric: tabular-nums;
+}
+
+.wrap {
+	align-self: center;
+}
+
+.wrapLine {
+	@include tv-label(calc(var(--u) * 1.8));
+	margin: calc(var(--u) * 2) 0 0;
+	color: var(--ink-strong);
+}
+
+// ─── Speakers ──────────────────────────────────────────────────────────────
+
+.speakers {
+	display: flex;
+	flex-shrink: 0;
+	flex-wrap: wrap;
+	gap: calc(var(--u) * 1.4) calc(var(--u) * 3);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.speakers-lg {
+	--photo: calc(var(--u) * 6.4);
+	--name: calc(var(--u) * 2.3);
+}
+
+.speakers-lg.speakersMany {
+	--photo: calc(var(--u) * 4.8);
+	--name: calc(var(--u) * 2.1);
+}
+
+.speakers-md {
+	--name: calc(var(--u) * 1.8);
+	row-gap: calc(var(--u) * 0.6);
 }
 
 .speaker {
 	display: flex;
 	align-items: center;
-	gap: calc(var(--u) * 1);
+	gap: calc(var(--u) * 1.3);
 	min-width: 0;
 }
 
@@ -266,7 +389,7 @@
 	display: grid;
 	place-items: center;
 	background: var(--panel-2);
-	border: 1px solid var(--rule);
+	border: 1px solid var(--rule-strong);
 	@include display(calc(var(--photo) * 0.45));
 	line-height: 1;
 	color: var(--ink-monogram-sm);
@@ -275,186 +398,114 @@
 .speakerText {
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--u) * 0.25);
+	gap: calc(var(--u) * 0.4);
 	min-width: 0;
 }
 
 .speakerName {
-	@include prose(calc(var(--u) * 1.5), 1.2);
-	color: var(--color-text);
-}
-
-.speakersLg .speakerName {
-	font-size: calc(var(--u) * 2);
+	@include mono(var(--name));
+	font-weight: 500;
+	line-height: 1.2;
 }
 
 .speakerTag {
-	@include mono(calc(var(--u) * 0.9), 0.06em);
-	color: var(--ink-meta);
+	@include mono(calc(var(--u) * 1.35));
+	line-height: 1.3;
+	color: var(--ink-strong);
 }
 
-.progress {
-	height: calc(var(--u) * 0.3);
-	background: var(--rule);
+// ─── Venue screen: a departures board ──────────────────────────────────────
 
-	span {
-		display: block;
-		height: 100%;
-		background: var(--color-accent);
-		transform-origin: left;
-		transition: transform 1s linear;
-	}
-}
-
-.laterList {
-	margin: auto 0 0;
-	padding: calc(var(--u) * 1.2) 0 0;
-	list-style: none;
-	border-top: 1px solid var(--rule);
-	display: grid;
-	gap: calc(var(--u) * 0.6);
-}
-
-.later {
-	@include prose(calc(var(--u) * 1.3), 1.3);
-	margin: 0;
-	color: var(--ink);
+.board {
+	flex: 1;
+	min-height: 0;
 	display: flex;
-	gap: calc(var(--u) * 1.2);
+	flex-direction: column;
+	--cols: minmax(0, 0.7fr) minmax(0, 1.5fr) minmax(0, 1fr);
 }
 
-.laterTime {
-	@include mono(calc(var(--u) * 1.1), 0.04em);
-	flex: none;
-	color: var(--ink-muted);
-	padding-top: 0.15em;
-	font-variant-numeric: tabular-nums;
+.boardHead {
+	@include tv-label;
+	display: grid;
+	grid-template-columns: var(--cols);
+	gap: calc(var(--u) * 3);
+	padding: 0 calc(var(--u) * 2.8) calc(var(--u) * 1.4);
+	color: var(--ink-strong);
 }
 
-.wrap {
-	margin: auto 0;
-}
-
-.wrapLine {
-	@include prose(calc(var(--u) * 2), 1.4);
-	color: var(--ink-soft);
-	margin: calc(var(--u) * 1.5) 0 0;
-}
-
-// ─── Venue screen: one column per room ─────────────────────────────────────
-
-.venueGrid {
+.boardRows {
 	flex: 1;
 	min-height: 0;
 	display: grid;
-	grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-	gap: calc(var(--u) * 2);
+	grid-auto-rows: minmax(0, 1fr);
+	gap: calc(var(--u) * 1.2);
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
-.roomCol,
-.roomRow {
-	display: flex;
-	flex-direction: column;
-	gap: calc(var(--u) * 1);
-	min-width: 0;
+.boardRow {
+	display: grid;
+	grid-template-columns: var(--cols);
+	align-items: center;
+	gap: calc(var(--u) * 3);
 	min-height: 0;
+	padding: calc(var(--u) * 1.4) calc(var(--u) * 2.8);
+	background: var(--panel-hover);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
 	overflow: hidden;
 }
 
-.roomCol {
-	gap: calc(var(--u) * 1.8);
-	padding-top: calc(var(--u) * 1.4);
-	border-top: calc(var(--u) * 0.25) solid var(--rule-strong);
-
-	.roomName {
-		font-size: calc(var(--u) * 4.4);
-	}
-
-	.slotMeta {
-		font-size: calc(var(--u) * 1.15);
-	}
-
-	.slotTitle {
-		font-size: calc(var(--u) * 2.4);
-		-webkit-line-clamp: 4;
-	}
-
-	.speakers {
-		--photo: calc(var(--u) * 4);
-	}
-
-	.speakerName {
-		font-size: calc(var(--u) * 1.8);
-	}
-
-	.later {
-		font-size: calc(var(--u) * 1.6);
-	}
-
-	.laterTime {
-		font-size: calc(var(--u) * 1.3);
-	}
-}
-
-.roomName {
-	@include display(calc(var(--u) * 2.6));
+.boardRoom {
+	@include display(calc(var(--u) * 4));
+	line-height: 0.92;
 	margin: 0;
+	padding-top: 0.06em;
 }
 
-.roomRow .roomName {
-	font-size: calc(var(--u) * 2.4);
+.boardCell {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 0.8);
+	min-width: 0;
+}
+
+.boardTitle {
+	@include tv-title(calc(var(--u) * 3.4), 2);
+}
+
+.boardTitleSm {
+	@include tv-title(calc(var(--u) * 2.8), 2);
+}
+
+// Four rooms and more: one line per title so every row still fits.
+.boardDense {
+	.boardRoom {
+		font-size: calc(var(--u) * 3.2);
+	}
+
+	.boardTitle,
+	.boardTitleSm {
+		-webkit-line-clamp: 1;
+	}
+}
+
+.boardBreak {
 	color: var(--color-cream);
 }
 
-.roomSlot {
-	display: flex;
-	flex-direction: column;
-	gap: calc(var(--u) * 0.6);
-	padding-bottom: calc(var(--u) * 0.8);
-}
-
-.slotNow {
-	color: var(--color-text);
-}
-
-.slotMeta {
-	@include mono(calc(var(--u) * 0.85), 0.22em, uppercase);
+.boardMeta {
+	@include mono(calc(var(--u) * 1.45));
 	display: flex;
 	align-items: center;
-	gap: calc(var(--u) * 0.6);
+	gap: 0.5em;
 	margin: 0;
-	color: var(--ink-muted);
-}
-
-.slotTitle {
-	@include prose(calc(var(--u) * 1.5), 1.25);
-	margin: 0;
-	color: var(--color-text);
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 3;
+	color: var(--ink-strong);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
 	overflow: hidden;
-}
-
-.roomRows {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	display: grid;
-	gap: calc(var(--u) * 1.8);
-
-	.roomRow + .roomRow {
-		padding-top: calc(var(--u) * 1.8);
-		border-top: 1px solid var(--rule);
-	}
-
-	.slotTitle {
-		font-size: calc(var(--u) * 1.6);
-		-webkit-line-clamp: 2;
-	}
+	text-overflow: ellipsis;
 }
 
 @media (prefers-reduced-motion: reduce) {

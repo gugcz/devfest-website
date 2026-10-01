@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import logoUrl from '../assets/logo.png?url';
 import { eventDateISO, formatMinutes, isBand } from '../lib/agenda';
 import { EVENT } from '../lib/event';
@@ -146,27 +146,50 @@ function dayLabel(date: string): string {
 }
 
 function slotTime(slot: Slot): string {
-	return `${formatMinutes(slot.place.startMin)} – ${formatMinutes(slot.place.endMin)}`;
+	return `${formatMinutes(slot.place.startMin)}–${formatMinutes(slot.place.endMin)}`;
 }
 
-function Speakers({ speakers, size }: { speakers: SessionSpeakerRef[]; size: 'lg' | 'sm' }) {
+/** Minutes left in a live slot: `18 min left`, `1 h 5 min left`. */
+function timeLeft(slot: Slot, nowMin: number | null): string {
+	if (nowMin === null) return '';
+	const left = Math.max(0, slot.place.endMin - nowMin);
+	if (left < 60) return `${left} min left`;
+	const minutes = left % 60;
+	return `${Math.floor(left / 60)} h${minutes ? ` ${minutes} min` : ''} left`;
+}
+
+/** Long talk titles step down a size so they fit their line clamp. */
+function titleSize(title: string): string {
+	if (title.length > 70) return s.titleXl;
+	if (title.length > 55) return s.titleLong;
+	if (title.length > 40) return s.titleMid;
+	return '';
+}
+
+function isBreak(slot: Slot): boolean {
+	return isBand(slot.session) || slot.session.isServiceSession;
+}
+
+/** `lg`: portraits, and the tagline when one person gives the talk; `md`:
+ * names only. */
+function Speakers({ speakers, size }: { speakers: SessionSpeakerRef[]; size: 'lg' | 'md' }) {
 	if (speakers.length === 0) return null;
+	const solo = speakers.length === 1;
 	return (
-		<ul className={`${s.speakers} ${size === 'lg' ? s.speakersLg : ''}`}>
+		<ul className={`${s.speakers} ${s[`speakers-${size}`]} ${solo ? '' : s.speakersMany}`}>
 			{speakers.map((speaker) => (
 				<li key={speaker.id} className={s.speaker}>
-					{speaker.profilePicture ? (
-						<img className={s.photo} src={speaker.profilePicture} alt="" />
-					) : (
-						<span className={s.monogram} aria-hidden="true">
-							{initials(speaker.fullName) || '?'}
-						</span>
-					)}
+					{size === 'lg' &&
+						(speaker.profilePicture ? (
+							<img className={s.photo} src={speaker.profilePicture} alt="" />
+						) : (
+							<span className={s.monogram} aria-hidden="true">
+								{initials(speaker.fullName) || '?'}
+							</span>
+						))}
 					<span className={s.speakerText}>
 						<span className={s.speakerName}>{speaker.fullName}</span>
-						{size === 'lg' && speaker.tagLine && (
-							<span className={s.speakerTag}>{speaker.tagLine}</span>
-						)}
+						{size === 'lg' && solo && speaker.tagLine && <span className={s.speakerTag}>{speaker.tagLine}</span>}
 					</span>
 				</li>
 			))}
@@ -174,89 +197,180 @@ function Speakers({ speakers, size }: { speakers: SessionSpeakerRef[]; size: 'lg
 	);
 }
 
-/** Long talk titles step down a size so they fit in three lines. */
-function titleSize(title: string): string {
-	if (title.length > 70) return s.titleLong;
-	if (title.length > 38) return s.titleMid;
-	return '';
-}
-
-/** The big "on now" / "up next" block of a room screen. */
-function Feature({
-	slot,
-	label,
-	nowMin,
-	live,
-}: {
-	slot: Slot;
-	label: string;
-	nowMin: number | null;
-	live: boolean;
-}) {
-	const band = isBand(slot.session) || slot.session.isServiceSession;
-	const countdown = live ? '' : startsIn(slot.place.startMin, nowMin).replace(/^in /, '');
+/** The room screen's main block: the talk on now, or — between talks and
+ * before the day — the next one with its countdown. */
+function Hero({ slot, live, nowMin, note }: { slot: Slot; live: boolean; nowMin: number | null; note: string }) {
+	const countdown = live ? '' : startsIn(slot.place.startMin, nowMin);
 	return (
-		<article className={`${s.feature} ${live ? s.featureLive : s.featureNext} ${band ? s.featureBand : ''}`}>
-			<p className={s.eyebrow}>
-				{live && <span className={s.dot} aria-hidden="true" />}
-				<span>{label}</span>
-				<span className={s.when}>{slotTime(slot)}</span>
+		<section className={`${s.hero} ${isBreak(slot) ? s.heroBreak : ''}`} aria-labelledby="tv-hero-title">
+			{note && <p className={s.notice}>{note}</p>}
+			<p className={s.heroMeta}>
+				<span className={s.state}>
+					{live && <span className={s.dot} aria-hidden="true" />}
+					{live ? 'Now' : nowMin === null ? 'First up' : 'Up next'}
+				</span>
+				<span className={s.metaTime}>{slotTime(slot)}</span>
+				{live && <span className={s.metaAside}>{timeLeft(slot, nowMin)}</span>}
+				{countdown && <span className={s.metaAside}>Starts {countdown}</span>}
 			</p>
-			<h2 className={`${live ? s.titleNow : s.titleNext} ${titleSize(slot.session.title)}`}>
+			<h2 id="tv-hero-title" className={`${s.heroTitle} ${titleSize(slot.session.title)}`}>
 				{slot.session.title}
 			</h2>
-			<Speakers speakers={slot.session.speakers} size={live ? 'lg' : 'sm'} />
+			<Speakers speakers={slot.session.speakers} size="lg" />
 			{live && (
 				<div className={s.progress} aria-hidden="true">
 					<span style={{ transform: `scaleX(${progress(slot.place, nowMin)})` }} />
 				</div>
 			)}
-			{countdown && (
-				<p className={s.countdown}>
-					<span className={s.countdownLabel}>Starts in</span>
-					{countdown}
-				</p>
-			)}
-		</article>
+		</section>
 	);
 }
 
-/** One room as a compact column (venue screen) or a row (side panel). */
-function RoomSummary({ room, nowMin, compact }: { room: RoomNow; nowMin: number | null; compact: boolean }) {
-	// A venue-wide band (lunch, keynote) is the same in every room; a side
-	// row says what comes after it instead.
-	const now = compact && room.now && isBand(room.now.session) ? null : room.now;
-	const next = (compact ? room.upcoming.find((slot) => !isBand(slot.session)) : room.upcoming[0]) ?? null;
+/** The rail's first card: what comes after the hero in this room. */
+function NextCard({ slot, nowMin }: { slot: Slot; nowMin: number | null }) {
+	const countdown = startsIn(slot.place.startMin, nowMin);
 	return (
-		<li className={compact ? s.roomRow : s.roomCol}>
-			<h3 className={s.roomName}>{room.column.label}</h3>
-			{now ? (
-				<div className={s.roomSlot}>
-					<p className={s.slotMeta}>
-						<span className={s.slotNow}>Now</span> until {formatMinutes(now.place.endMin)}
-					</p>
-					<p className={s.slotTitle}>{now.session.title}</p>
-					{!compact && <Speakers speakers={now.session.speakers} size="sm" />}
-				</div>
-			) : null}
-			{next ? (
-				<div className={s.roomSlot}>
-					<p className={s.slotMeta}>
-						Next · {formatMinutes(next.place.startMin)} {nowMin !== null && `· ${startsIn(next.place.startMin, nowMin)}`}
-					</p>
-					<p className={s.slotTitle}>{next.session.title}</p>
-					{!compact && <Speakers speakers={next.session.speakers} size="sm" />}
-				</div>
-			) : null}
-			{!now && !next && <p className={s.slotMeta}>{nowMin === null ? 'Nothing scheduled' : 'Done for today'}</p>}
-			{!compact &&
-				room.upcoming.slice(1, 6).map((slot) => (
-					<p key={slot.session.id} className={s.later}>
-						<span className={s.laterTime}>{formatMinutes(slot.place.startMin)}</span>
-						{slot.session.title}
-					</p>
+		<section className={s.next} aria-labelledby="tv-next-title">
+			<p className={s.nextTop}>
+				<span className={s.cardLabel}>
+					Up next&ensp;<span className={s.metaTime}>{formatMinutes(slot.place.startMin)}</span>
+				</span>
+				{countdown && <span className={s.countdown}>{countdown}</span>}
+			</p>
+			<h2 id="tv-next-title" className={`${s.nextTitle} ${titleSize(slot.session.title)}`}>
+				{slot.session.title}
+			</h2>
+			<Speakers speakers={slot.session.speakers} size="md" />
+		</section>
+	);
+}
+
+/** What the slot a room shows in a summary is: its live talk, else the next
+ * one. A venue-wide band reads the same in every room, so it is skipped. */
+function summarySlot(room: RoomNow): { slot: Slot; live: boolean } | null {
+	if (room.now && !isBand(room.now.session)) return { slot: room.now, live: true };
+	const next = room.upcoming.find((slot) => !isBand(slot.session));
+	return next ? { slot: next, live: false } : null;
+}
+
+/** `Until 10:40` for a live talk; `11:00 · in 10 min` for the next one
+ * within the hour, else just its start. Short, so it shares a line with the
+ * room name. */
+function summaryWhen(shown: { slot: Slot; live: boolean } | null, nowMin: number | null): string {
+	if (!shown) return nowMin === null ? 'Nothing scheduled' : 'Done for today';
+	const { place } = shown.slot;
+	if (shown.live) return `Until ${formatMinutes(place.endMin)}`;
+	const soon = nowMin !== null && place.startMin - nowMin < 60;
+	return soon ? `${formatMinutes(place.startMin)} · ${startsIn(place.startMin, nowMin)}` : formatMinutes(place.startMin);
+}
+
+/** The rail under Up next: what the other rooms are showing. Titles get two
+ * lines while every room fits, one line when they do not; a room that still
+ * does not fit drops out whole (see `.elsewhereList`) rather than clip. */
+function Elsewhere({ rooms, nowMin }: { rooms: RoomNow[]; nowMin: number | null }) {
+	const items = rooms.map((room) => {
+		const shown = summarySlot(room);
+		return {
+			key: room.column.key,
+			label: room.column.label,
+			when: summaryWhen(shown, nowMin),
+			live: shown?.live ?? false,
+			title: shown?.slot.session.title ?? '',
+		};
+	});
+	const content = JSON.stringify(items);
+
+	// Measured before paint, so the screen never shows the clipped version: a
+	// wrapped room lands in a second column, which widens the list. Fonts that
+	// arrive later change the measure, so they trigger a re-check.
+	const list = useRef<HTMLUListElement>(null);
+	const [dense, setDense] = useState(false);
+	useLayoutEffect(() => setDense(false), [content]);
+	useLayoutEffect(() => {
+		if (dense) return;
+		const check = () => {
+			const el = list.current;
+			if (el && el.scrollWidth > el.clientWidth + 1) setDense(true);
+		};
+		check();
+		document.fonts?.addEventListener('loadingdone', check);
+		return () => document.fonts?.removeEventListener('loadingdone', check);
+	}, [dense, content]);
+
+	return (
+		<section className={s.elsewhere} aria-labelledby="tv-elsewhere-heading">
+			<h2 id="tv-elsewhere-heading" className={s.cardLabel}>
+				Other rooms
+			</h2>
+			<ul ref={list} className={`${s.elsewhereList} ${dense ? s.elsewhereDense : ''}`}>
+				{items.map((item) => (
+					<li key={item.key} className={s.elsewhereRoom}>
+						<p className={s.elsewhereHead}>
+							<span className={s.elsewhereName}>{item.label}</span>
+							<span className={s.elsewhereMeta}>
+								{item.live && <span className={s.dot} aria-hidden="true" />}
+								{item.when}
+							</span>
+						</p>
+						{item.title && <p className={s.elsewhereTitle}>{item.title}</p>}
+					</li>
 				))}
-		</li>
+			</ul>
+		</section>
+	);
+}
+
+/** The venue screen: a departures-board row per room, Now and Next. */
+function Board({ rooms, nowMin }: { rooms: RoomNow[]; nowMin: number | null }) {
+	return (
+		<div className={`${s.board} ${rooms.length > 3 ? s.boardDense : ''}`}>
+			<div className={s.boardHead} aria-hidden="true">
+				<span>Room</span>
+				<span>Now</span>
+				<span>Next</span>
+			</div>
+			<ul className={s.boardRows}>
+				{rooms.map((room) => {
+					const next = room.upcoming[0] ?? null;
+					return (
+						<li key={room.column.key} className={s.boardRow}>
+							<h2 className={s.boardRoom}>{room.column.label}</h2>
+							<div className={s.boardCell}>
+								{room.now ? (
+									<>
+										<p className={`${s.boardTitle} ${isBreak(room.now) ? s.boardBreak : ''}`}>
+											{room.now.session.title}
+										</p>
+										<p className={s.boardMeta}>
+											<span className={s.dot} aria-hidden="true" /> Until {formatMinutes(room.now.place.endMin)}
+											{room.now.session.speakers.length > 0 &&
+												` · ${room.now.session.speakers.map((sp) => sp.fullName).join(', ')}`}
+										</p>
+									</>
+								) : (
+									<p className={s.boardMeta}>
+										{nowMin === null ? 'Starts ' + (next ? formatMinutes(next.place.startMin) : 'later') : 'Between talks'}
+									</p>
+								)}
+							</div>
+							<div className={s.boardCell}>
+								{next ? (
+									<>
+										<p className={`${s.boardTitleSm} ${isBreak(next) ? s.boardBreak : ''}`}>{next.session.title}</p>
+										<p className={s.boardMeta}>
+											{formatMinutes(next.place.startMin)}
+											{nowMin !== null && ` · ${startsIn(next.place.startMin, nowMin)}`}
+										</p>
+									</>
+								) : (
+									<p className={s.boardMeta}>{room.now ? 'Last of the day' : 'Done for today'}</p>
+								)}
+							</div>
+						</li>
+					);
+				})}
+			</ul>
+		</div>
 	);
 }
 
@@ -281,15 +395,18 @@ export default function TvScreen() {
 	const others = rooms.filter((r) => r !== here);
 	const dayOver = isDayOver(rooms, nowMin);
 	const beforeDay = nowMin === null && eventDate !== '' && clock.date < eventDate;
+	const dayNote = beforeDay ? `${EVENT.dateLabel} · ${EVENT.venue}` : '';
 
-	const heading = here ? here.column.label : 'Programme';
-	const next = here?.upcoming[0] ?? null;
+	// Room screen: the hero is the live slot, else the next one; the card
+	// under it is whatever follows the hero.
+	const hero = here ? (here.now ?? here.upcoming[0] ?? null) : null;
+	const queue = here ? (here.now ? here.upcoming : here.upcoming.slice(1)) : [];
 
 	return (
 		<div className={s.screen}>
 			<header className={s.header}>
 				<img className={s.logo} src={logoUrl} alt="DevFest.cz 2026" />
-				<h1 className={s.heading}>{heading}</h1>
+				<h1 className={s.heading}>{here ? here.column.label : 'Programme'}</h1>
 				<p className={s.clockBlock}>
 					<span className={s.clock}>{formatMinutes(clock.minutes)}</span>
 					<span className={s.clockMeta}>
@@ -301,80 +418,43 @@ export default function TvScreen() {
 			{lineup.data === null ? (
 				<p className={s.status}>{lineup.failed ? 'Programme unavailable, retrying…' : 'Loading programme…'}</p>
 			) : (
-				<div className={here && others.length > 0 ? s.roomLayout : s.venueLayout}>
-					<main className={s.main}>
-						{params?.room && !column && (
-							<p className={s.notice}>
-								Unknown room “{params.room}”. Use one of:{' '}
-								{rooms.map((r) => r.column.key).join(', ')}
-							</p>
-						)}
-						{beforeDay && (
-							<p className={s.notice}>
-								{EVENT.dateLabel} · {EVENT.venue}
-							</p>
-						)}
-
-						{here ? (
-							<>
-								{here.now ? (
-									<Feature slot={here.now} label="Now" nowMin={nowMin} live />
-								) : null}
-								{next && (
-									<Feature
-										slot={next}
-										label={here.now ? 'Up next' : nowMin === null ? 'First up' : 'Up next'}
-										nowMin={nowMin}
-										live={false}
-									/>
-								)}
-								{!here.now && !next && (
-									<div className={s.wrap}>
-										<p className={s.titleNow}>
-											{dayOver ? 'That’s a wrap.' : nowMin === null ? 'Programme soon.' : 'That’s it in here.'}
-										</p>
-										<p className={s.wrapLine}>
-											{dayOver
-												? 'Thank you for coming to DevFest.cz 2026.'
-												: nowMin === null
-													? 'Talks for this room are being scheduled.'
-													: 'The rest of the day is in the other rooms.'}
-										</p>
-									</div>
-								)}
-								{here.upcoming.length > 1 && (
-									<ol className={s.laterList}>
-										{here.upcoming.slice(1, 5).map((slot) => (
-											<li key={slot.session.id} className={s.later}>
-												<span className={s.laterTime}>{formatMinutes(slot.place.startMin)}</span>
-												{slot.session.title}
-											</li>
-										))}
-									</ol>
-								)}
-							</>
-						) : (
-							<ul className={s.venueGrid} style={{ ['--cols' as string]: rooms.length || 1 }}>
-								{rooms.map((room) => (
-									<RoomSummary key={room.column.key} room={room} nowMin={nowMin} compact={false} />
-								))}
-							</ul>
-						)}
-					</main>
-
-					{here && others.length > 0 && (
-						<aside className={s.side} aria-labelledby="tv-venue-heading">
-							<h2 id="tv-venue-heading" className={s.panelLabel}>
-								Elsewhere at DevFest
-							</h2>
-							<ul className={s.roomRows}>
-								{others.map((room) => (
-									<RoomSummary key={room.column.key} room={room} nowMin={nowMin} compact />
-								))}
-							</ul>
-						</aside>
+				<main className={s.main}>
+					{params?.room && !column && (
+						<p className={s.notice}>
+							Unknown room “{params.room}”. Use one of: {rooms.map((r) => r.column.key).join(', ')}
+						</p>
 					)}
-				</div>
+					{dayNote && !hero && <p className={s.notice}>{dayNote}</p>}
+
+					{here ? (
+						<div className={s.roomGrid}>
+							{hero ? (
+								<Hero slot={hero} live={hero === here.now} nowMin={nowMin} note={dayNote} />
+							) : (
+								<div className={s.wrap}>
+									<p className={s.heroTitle}>
+										{dayOver ? 'That’s a wrap.' : nowMin === null ? 'Programme soon.' : 'That’s it in here.'}
+									</p>
+									<p className={s.wrapLine}>
+										{dayOver
+											? 'Thank you for coming to DevFest.cz 2026.'
+											: nowMin === null
+												? 'Talks for this room are being scheduled.'
+												: 'The rest of the day is in the other rooms.'}
+									</p>
+								</div>
+							)}
+							{(queue[0] || others.length > 0) && (
+								<div className={s.rail}>
+									{queue[0] && <NextCard slot={queue[0]} nowMin={nowMin} />}
+									{others.length > 0 && <Elsewhere rooms={others} nowMin={nowMin} />}
+								</div>
+							)}
+						</div>
+					) : (
+						<Board rooms={rooms} nowMin={nowMin} />
+					)}
+				</main>
 			)}
 		</div>
 	);
