@@ -410,7 +410,7 @@ export default function TvScreen() {
 		<div className={s.screen}>
 			<header className={s.header}>
 				<img className={s.logo} src={logoUrl} alt="DevFest.cz 2026" />
-				<h1 className={s.heading}>{here ? here.column.label : 'Programme'}</h1>
+				<h1 className={s.heading}>{here ? here.column.label : 'Agenda'}</h1>
 				<p className={s.clockBlock}>
 					<span className={s.clock}>{formatMinutes(clock.minutes)}</span>
 					<span className={s.clockMeta}>
@@ -420,7 +420,7 @@ export default function TvScreen() {
 			</header>
 
 			{lineup.data === null ? (
-				<p className={s.status}>{lineup.failed ? 'Programme unavailable, retrying…' : 'Loading programme…'}</p>
+				<p className={s.status}>{lineup.failed ? 'Agenda unavailable, retrying…' : 'Loading agenda…'}</p>
 			) : (
 				<main className={s.main}>
 					{params?.room && !column && (
@@ -437,7 +437,7 @@ export default function TvScreen() {
 							) : (
 								<div className={s.wrap}>
 									<p className={s.heroTitle}>
-										{dayOver ? 'That’s a wrap.' : nowMin === null ? 'Programme soon.' : 'That’s it in here.'}
+										{dayOver ? 'That’s a wrap.' : nowMin === null ? 'Agenda coming soon.' : 'That’s it in here.'}
 									</p>
 									<p className={s.wrapLine}>
 										{dayOver
