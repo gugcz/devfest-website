@@ -13,6 +13,11 @@ paths:
 15-minute sync (`every 15 minutes`) into Firestore `speakers` (embeds `sessions[]`), `sessions`
 (embeds `speakers[]`) and `rooms`; browser reads `/api/lineup`.
 
+- Speakers come from the All view **plus** the Speakers view
+  (`mergeSpeakerRosters`): All lists only speakers of the sessions it
+  publishes, so the hosts (session "HOST") and the keynote speaker exist only
+  in the Speakers view. Best-effort: if that view fails, the All roster syncs.
+
 - `/agenda` gets a column for every `rooms` doc, even one with no talk yet
   (header says "Talks TBA"), plus any other room a talk sits in. A room's
   standing header note ("Workshops only" on Crime Lab) is `ROOM_NOTES` in
