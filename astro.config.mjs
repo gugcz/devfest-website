@@ -118,6 +118,8 @@ export default defineConfig({
                 // Same three-part secrecy for the speakers' share-card tool
                 // (src/pages/speaker-card.astro).
                 !page.includes('/speaker-card') &&
+                // And for the venue TV screens (src/pages/tv.astro).
+                !/\/tv\/?$/.test(page) &&
                 // Their OG cards are a generated asset, not a page — never a
                 // sitemap entry regardless of `/invite/`'s own secrecy.
                 !page.includes('/og/invite/'),
