@@ -100,6 +100,9 @@ export default defineConfig({
         // responsiveStyles defaults to false — without it the `layout` prop
         // emits srcset/sizes but no resize CSS, so images ignore the layout.
         responsiveStyles: true,
+        // Sharp, except an SVG asked for as a raster is drawn at the requested
+        // size (the mobile app's credits feed needs PNG logos).
+        service: { entrypoint: './src/lib/image-service.ts' },
     },
     prefetch: {
         prefetchAll: true,
