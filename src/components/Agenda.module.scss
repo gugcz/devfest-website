@@ -478,41 +478,6 @@
 	color: var(--color-grey);
 }
 
-/* ===================== NOT-YET-SCHEDULED ===================== */
-.unscheduled {
-	margin-top: clamp(2.6rem, 5vw, 4rem);
-}
-
-.unscheduledHead {
-	@include mono(var(--fs-label), 0.24em, uppercase);
-	color: var(--ink-muted);
-	margin: 0 0 1.2rem;
-}
-
-// A short open field. The one rule kept anywhere in a list: the hairline is the
-// mono caption's underline, not a row rule.
-.unscheduledList {
-	border-top: 1px solid var(--rule-strong);
-	// Inset so the first row's reach field doesn't sit flush against the hairline.
-	padding-top: 14px;
-}
-
-// Rhythm, reach field, ink inversion and focus ring come from `.field-row--link`.
-.unscheduledItem {
-	display: block;
-	width: 100%;
-	box-sizing: border-box;
-	// The long-list row step, shared with /sessions, the FAQ and the press clippings.
-	@include row-title;
-	text-align: left;
-	cursor: pointer;
-	// Titles are unbounded-length Sessionize copy — wrap instead of overflowing the row.
-	overflow-wrap: break-word;
-	word-break: break-word;
-	// Shorter than a full row: these are titles alone, with no meta under them.
-	--field-step: clamp(1.1rem, 2vw, 1.5rem);
-}
-
 /* ===================== NOW LINE + LIVE / COMING-UP ===================== */
 // Full-width line across the grid at the current minute (event day / ?now= only).
 .nowLine {
@@ -616,7 +581,6 @@
 @media (prefers-reduced-motion: reduce) {
 	.cell,
 	.item,
-	.unscheduledItem,
 	.liveDot {
 		transition: none;
 		animation: none;
