@@ -2,7 +2,7 @@
  * Fixture data for the a11y audit and `npm run dev`. Shapes mirror the raw
  * Firestore/RTDB docs (`speakerFromDoc`, `sessionFromDoc`, `TicketsCache`).
  * Sessions are timed so /agenda is exercised, incl. a service band and an
- * unscheduled talk.
+ * unscheduled talk (listed on /sessions, left off /agenda).
  */
 
 // Inline SVG portrait — loads with no network so the <img> render path (not the

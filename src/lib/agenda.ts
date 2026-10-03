@@ -253,13 +253,12 @@ export interface AgendaPartition {
 	byRoom: Map<string, Session[]>;
 	/** Timed talks with no room, sorted by start (rendered in the TBA column). */
 	roomTba: Session[];
-	/** Displayable sessions without a start time, sorted by array order. */
-	unscheduled: Session[];
 }
 
 /**
- * Partition agenda sessions into bands, per-room talk lists, a Room-TBA list,
- * and the not-yet-scheduled remainder. Input is expected to be
+ * Partition agenda sessions into bands, per-room talk lists and a Room-TBA
+ * list. Sessions without a start time are left out: the agenda shows only
+ * what is on the timetable (`/sessions` lists them all). Input is expected to be
  * `isAgendaSession`-filtered (title present; service + plenum kept). `rooms`
  * adds a column for every Sessionize room, whether or not it has talks yet.
  */
@@ -270,13 +269,9 @@ export function partitionAgenda(sessions: Session[], rooms: Room[] = []): Agenda
 
 	const bands: Session[] = [];
 	const roomTba: Session[] = [];
-	const unscheduled: Session[] = [];
 
 	for (const session of sessions) {
-		if (!isTimed(session)) {
-			unscheduled.push(session);
-			continue;
-		}
+		if (!isTimed(session)) continue;
 		if (isBand(session)) {
 			bands.push(session);
 			continue;
@@ -291,14 +286,13 @@ export function partitionAgenda(sessions: Session[], rooms: Room[] = []): Agenda
 
 	bands.sort(byStart);
 	roomTba.sort(byStart);
-	unscheduled.sort((a, b) => a.order - b.order);
 	for (const list of byRoom.values()) list.sort(byStart);
 
 	const finalColumns =
 		roomTba.length > 0 ? [...columns, { key: ROOM_TBA, label: ROOM_TBA }] : columns;
 	if (roomTba.length > 0) byRoom.set(ROOM_TBA, roomTba);
 
-	return { columns: finalColumns, bands, byRoom, roomTba, unscheduled };
+	return { columns: finalColumns, bands, byRoom, roomTba };
 }
 
 /** Spans with no talk (bands + dead time), sorted. A band overlapping a

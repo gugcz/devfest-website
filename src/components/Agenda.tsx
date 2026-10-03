@@ -511,26 +511,6 @@ export default function Agenda() {
 				/>
 			)}
 
-			{partition.unscheduled.length > 0 && (
-				<section className={s.unscheduled} aria-label="Not yet scheduled">
-					<h3 className={s.unscheduledHead}>Not yet scheduled</h3>
-					<ul className={`field ${s.unscheduledList}`} role="list">
-						{partition.unscheduled.map((session) => (
-							<li key={session.id}>
-								<button
-									type="button"
-									className={`field-row field-row--link ${s.unscheduledItem}`}
-									onClick={() => setSelected(session)}
-									aria-label={`View details for ${session.title}`}
-								>
-									{session.title}
-								</button>
-							</li>
-						))}
-					</ul>
-				</section>
-			)}
-
 			{selected && (
 				<SessionDetail
 					session={selected}
