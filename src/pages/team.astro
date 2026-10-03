@@ -4,9 +4,7 @@ import { getCollection } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 import { initials } from '../lib/speakers';
 
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
@@ -93,18 +91,14 @@ const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
 			focus="46% 30%"
 		/>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 
 		<!-- ROSTER -->
 		<section class="band band--lit" aria-label="Organising team">
 			<div class="band-inner">
-				<ul class="crew-grid reveal">
-					{cards.map(({ member, base, color }, i) => (
-						/* `--i` staggers the develop animation — see `.develop` in
-						   BaseLayout.scss. */
-						<li style={`--i: ${i}`}>
-							<article class="crew-card develop">
+				<ul class="crew-grid">
+					{cards.map(({ member, base, color }) => (
+						<li>
+							<article class="crew-card">
 								<div class="print mugshot">
 									{base ? (
 										<>
@@ -177,7 +171,7 @@ const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
 		</section>
 
 		<Closer
-			titleHtml={'Want in<br />on the <span class="red">case</span>?'}
+			titleHtml={'Want in<br />on the case?'}
 			note="DevFest.cz is run by volunteers. We are always recruiting accomplices."
 			tone="accent"
 			titleId="team-closer"

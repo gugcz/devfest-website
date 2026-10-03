@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	collectFacets,
 	hasActiveFilters,
@@ -8,19 +8,47 @@ import {
 	type Session,
 	type SessionFilters,
 } from '../lib/sessions';
+import { byStart, formatMinutes, placement } from '../lib/agenda';
 import { fetchLineup, speakersById } from '../lib/lineup';
-import { shuffle } from '../lib/shuffle';
 import { useRemote } from '../lib/useRemote';
 import SessionDetail from './SessionDetail';
 import SpeakerStack from './SpeakerStack';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
 
-function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: Session) => void }) {
+/** The query parameter that names an open talk, so a speaker can link
+ * straight to theirs: `/sessions?talk=<sessionize id>`. */
+const TALK_PARAM = 'talk';
+
+/** `10:00–10:45, Main Hall` once a talk is scheduled; `''` before. Sessionize
+ * can leave `room` blank and carry only the id, hence the lookup. */
+function whenLabel(session: Session, roomNames: Map<string, string>): string {
+	const place = placement(session);
+	const time = place ? `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}` : '';
+	const room = session.room.trim() || roomNames.get(session.roomId) || '';
+	return [time, room].filter(Boolean).join(', ');
+}
+
+/** Mirror the open sheet in the address bar without adding a history entry. */
+function syncTalkParam(id: string | null) {
+	const url = new URL(window.location.href);
+	if (id) url.searchParams.set(TALK_PARAM, id);
+	else url.searchParams.delete(TALK_PARAM);
+	window.history.replaceState(window.history.state, '', url);
+}
+
+function SessionCard({
+	session,
+	when,
+	onOpen,
+}: {
+	session: Session;
+	when: string;
+	onOpen: (session: Session) => void;
+}) {
 	const names = speakerNames(session);
-	// Lead the card with the primary track (falls back to the room, then a generic
-	// label).
-	const kicker = visitorCategories(session)[0]?.values[0] || session.room || 'Talk';
+	// The track; the room now travels with the time in `when`.
+	const kicker = visitorCategories(session)[0]?.values[0] || 'Talk';
 
 	return (
 		<li>
@@ -31,6 +59,7 @@ function SessionCard({ session, onOpen }: { session: Session; onOpen: (session: 
 				aria-label={`View details for ${session.title}`}
 			>
 				<span className={s.top}>
+					{when && <span className={s.when}>{when}</span>}
 					<span className={s.kicker}>{kicker}</span>
 				</span>
 
@@ -60,15 +89,40 @@ export default function Sessions() {
 	const [query, setQuery] = useState('');
 	const [filters, setFilters] = useState<SessionFilters>({});
 
-	// Shuffled once per payload so no talk gets a permanent top-of-page slot.
-	const sessions = useMemo(() => shuffle(data?.sessions ?? []), [data]);
+	// Programme order: start time, then Sessionize's own order for talks not
+	// yet slotted. It used to be shuffled per load, which also reshuffled the
+	// filter chips built from it and left a returning visitor nothing to find
+	// twice.
+	const sessions = useMemo(() => [...(data?.sessions ?? [])].sort(byStart), [data]);
 	const profiles = useMemo(() => speakersById(data?.speakers ?? []), [data]);
+	const roomNames = useMemo(
+		() => new Map((data?.rooms ?? []).map((room) => [room.id, room.name])),
+		[data],
+	);
 	const facets = useMemo(() => collectFacets(sessions), [sessions]);
 	const filtered = useMemo(
 		() => sessions.filter((session) => matchesFilters(session, query, filters)),
 		[sessions, query, filters],
 	);
 	const active = hasActiveFilters(query, filters);
+	const anyChip = Object.values(filters).some((values) => values.length > 0);
+
+	const open = useCallback((session: Session) => {
+		setSelected(session);
+		syncTalkParam(session.id);
+	}, []);
+	const close = useCallback(() => {
+		setSelected(null);
+		syncTalkParam(null);
+	}, []);
+
+	// A `?talk=` link opens that talk's sheet once the lineup has loaded.
+	useEffect(() => {
+		const id = new URLSearchParams(window.location.search).get(TALK_PARAM);
+		if (!id) return;
+		const match = sessions.find((session) => session.id === id);
+		if (match) setSelected(match);
+	}, [sessions]);
 
 	const toggleValue = (group: string, value: string) => {
 		setFilters((prev) => {
@@ -150,24 +204,30 @@ export default function Sessions() {
 					</div>
 				))}
 
-				{active && (
+				{/* One clear control at a time: with no results the empty state
+				    below carries it, next to the sentence that explains why. */}
+				{active && filtered.length > 0 && (
 					<button type="button" className={s.clear} onClick={clearFilters}>
-						Clear filters
+						{anyChip ? 'Clear filters' : 'Clear search'}
 					</button>
 				)}
 			</div>
 
 			{filtered.length === 0 ? (
 				<EmptyState>
-					<p>No sessions match your filters.</p>
+					<p>
+						{anyChip
+							? 'No session matches these filters. Remove one, or clear them all.'
+							: `No session mentions “${query.trim()}”. Try a speaker's name or a topic.`}
+					</p>
 					<button type="button" className={s.clearInline} onClick={clearFilters}>
-						Clear filters
+						{anyChip ? 'Clear filters' : 'Clear search'}
 					</button>
 				</EmptyState>
 			) : (
 				<ul className={`field ${s.grid}`} role="list">
 					{filtered.map((session) => (
-						<SessionCard key={session.id} session={session} onOpen={setSelected} />
+						<SessionCard key={session.id} session={session} when={whenLabel(session, roomNames)} onOpen={open} />
 					))}
 					{!active && (
 						<li>
@@ -187,8 +247,9 @@ export default function Sessions() {
 			{selected && (
 				<SessionDetail
 					session={selected}
+					when={whenLabel(selected, roomNames)}
 					speakersById={profiles}
-					onClose={() => setSelected(null)}
+					onClose={close}
 				/>
 			)}
 		</>

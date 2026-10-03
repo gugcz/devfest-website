@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import Speakers from '../components/Speakers.tsx';
-import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
 <BaseLayout
@@ -19,8 +17,6 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			titleId="speakers-title"
 			focus="68% 42%"
 		/>
-
-		<Ticker items={EVENT_TOPICS} size="sm" />
 
 		<section class="band band--lit rake" aria-label="Speaker lineup">
 			<!-- Red raking light swept by the scroll; decorative, enhancement-only. -->
@@ -45,7 +41,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		</section>
 
 		<Closer
-			titleHtml={'See them<br />in the <span class="red">room</span>.'}
+			titleHtml={'See them<br />in the room.'}
 			note="One day, one mill, the whole lineup on stage."
 			tone="accent"
 			titleId="speakers-closer"

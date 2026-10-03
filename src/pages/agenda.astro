@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import Agenda from '../components/Agenda.tsx';
-import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
 <BaseLayout
@@ -20,8 +18,6 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			titleId="agenda-title"
 			focus="82% 60%"
 		/>
-
-		<Ticker items={EVENT_TOPICS} size="sm" />
 
 		<section class="band band--lit" aria-label="Conference timetable">
 			<div class="band-inner">
@@ -41,7 +37,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		</section>
 
 		<Closer
-			titleHtml={'Doors open<br /><span class="red">30 October</span>.'}
+			titleHtml={'Doors open<br />30 October.'}
 			note="Uhelný Mlýn, near Prague. Nine in the morning to eight at night."
 			tone="accent"
 			titleId="agenda-closer"

@@ -191,6 +191,15 @@
 	grid-column: 1;
 }
 
+// When and where leads the row: on a programme, the time is what a visitor
+// scans down. A step brighter than the track beside it, never red.
+.when {
+	@include mono(var(--fs-label-sm), 0.16em, uppercase);
+	color: var(--ink-soft);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
 // The track is muted, not accent-red: red on every row of a thirty-row list is
 // not a highlight.
 .kicker {

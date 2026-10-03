@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import InvoiceForm from '../components/InvoiceForm';
-import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
 <BaseLayout
@@ -20,16 +18,14 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			photo={false}
 		/>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 		<section class="invoice-body" aria-labelledby="invoice-form-heading">
-			<div class="invoice-inner reveal">
+			<div class="invoice-inner">
 				<div class="invoice-intro">
 					<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
 					<ol class="steps">
 						<li><span class="step-no">01</span> Fill in your company billing details below.</li>
-						<li><span class="step-no">02</span> We email you an invoice, payable by bank transfer.</li>
-						<li><span class="step-no">03</span> Pay it — then we send a 100%-off code to redeem your tickets on ti.to.</li>
+						<li><span class="step-no">02</span> We email the invoice right away. Pay it by bank transfer within 14 days.</li>
+						<li><span class="step-no">03</span> Once the payment arrives, we email one code that claims all your tickets on ti.to.</li>
 					</ol>
 					<p class="intro-note">
 						Paying by card instead? Skip this and buy directly on{' '}
@@ -41,13 +37,15 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			</div>
 		</section>
 
+		<!-- The closer answers the next question on this page, not a different
+		     purchase: "Skip the paperwork" sent a company that had come here to
+		     invoice back to card checkout, and the intro already offers that. -->
 		<Closer
-			eyebrow="Paying by card"
-			titleHtml={'Skip the<br /><span class="red">paperwork</span>.'}
-			note="Individual tickets check out on ti.to in a minute, no invoice needed."
+			titleHtml={'Questions about<br />the invoice?'}
+			note="Write to devfest@gug.cz and name the company on the request, so we can find it."
 			tone="accent"
 			titleId="invoice-closer"
-			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/faq', label: 'Read the FAQ', kind: 'ghost' }]}
+			actions={[{ href: 'mailto:devfest@gug.cz', label: 'Email us' }, { href: '/faq', label: 'Read the FAQ', kind: 'ghost' }]}
 		/>
 	</main>
 </BaseLayout>

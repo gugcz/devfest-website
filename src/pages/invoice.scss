@@ -60,7 +60,6 @@
 
 .intro-note {
 	@include prose(var(--fs-ui));
-	font-style: italic;
 	color: var(--ink-dim);
 	margin: 0;
 }

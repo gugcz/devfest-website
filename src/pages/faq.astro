@@ -2,9 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 
 // FAQ content: the `faq` collection (`src/content/faq.json`). Accordion and
 // FAQPage JSON-LD both derive from it. `a` may contain inline HTML
@@ -62,8 +60,6 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 			photo={false}
 		/>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 
 		<!-- FILES -->
 		{/* Its own heading, not the hero's `faq-title`: two <section>s carrying
@@ -75,7 +71,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 			<div class="band-inner">
 				<h2 id="faq-list-heading" class="sr-only">All questions</h2>
 				{groupsForDisplay.map((group, groupIndex) => (
-					<div class="faq-group reveal">
+					<div class="faq-group">
 						{/* Category pinned in its own column beside the questions —
 						    an editorial two-column split rather than a caption stacked
 						    over a narrow centred list. */}
@@ -109,7 +105,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 		</section>
 
 		<Closer
-			titleHtml={'Ask us<br /><span class="red">directly</span>.'}
+			titleHtml={'Ask us<br />directly.'}
 			note="If the answer is not here, one of the desks will have it."
 			tone="accent"
 			titleId="faq-closer"

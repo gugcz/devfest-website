@@ -255,8 +255,17 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:73–97`
   `font-family: var(--font-…)` by hand is re-implementing one of them.
 - **[MUST] Roles do not mix.** Special Elite is wide; Bebas is condensed and
   is what makes the poster scale fit the column.
-- **[CURRENT]** Special Elite declares no `subsets` (`astro.config.mjs:96`) —
-  see Open points.
+- **[MUST] Czech letters Special Elite lacks fall to JetBrains Mono.** Google
+  ships Special Elite in Latin only; its Fonts API entry sets
+  `fallbacks: ['var(--font-jetbrains-mono)', 'monospace']` with
+  `optimizedFallbacks: false` (`astro.config.mjs`), so `--font-special-elite`
+  resolves to Special Elite → JetBrains Mono (latin-ext loaded). The default
+  metric fallback was Arial at 117%, which printed "Libčice" as "LibČice".
+  Never add a `subsets` entry or a fourth face to fix a glyph.
+- **[MUST] No synthesised bold or italic.** `body { font-synthesis: none }`.
+  Every face ships one weight (JetBrains Mono two) and no italic; emphasis in
+  prose is ink — `strong` / `b` step up to `--color-text` — never weight or
+  slant. Don't write `font-style: italic`.
 
 **The ramp [MUST].** Every `font-size` goes through one of these steps; add a
 step here before using a new value. **[CURRENT]** 18 literals still bypass it
@@ -423,7 +432,7 @@ its call site. The de-facto scale, by frequency:
 | `0.28s` | the row reach field's colour + opacity fade (`BaseLayout.scss:940`, `950`) |
 | `0.3s` | the warm wash opacity, cookie banner (`BaseLayout.scss:1013`, `CookieBanner.scss:22`) |
 | `0.32s` | the row pull (`translateX`) and the sheet entry (`BaseLayout.scss:998`, `Sheet.module.scss:33`) |
-| `0.6s` | scroll reveal (`BaseLayout.scss:1091`) |
+| `0.6s` | the `.develop` stagger when the speakers teaser deals its next set |
 | `1s` / `1.2s` | staged page-entry fades (`Tickets.module.scss:16`; the `LandingNotice.scss` component this cited has since been removed — see Open points) |
 | `1.3s` / `1.4s` / `1.6s` infinite | skeleton pulse and shimmer while data loads (`Sessions.module.scss:365`, `Tickets.module.scss:322`; the generic loading spinner's `1.3s` pulse now lives in `DataState.module.scss:55`) |
 | `46s` linear infinite | the `Ticker` marquee (`Ticker.scss:48`) |
@@ -432,7 +441,7 @@ its call site. The de-facto scale, by frequency:
 | --- | --- |
 | `ease` | the default for control transitions (~96 uses) |
 | `cubic-bezier(0.16, 1, 0.3, 1)` | the house "arrive" curve — sheet entry, row pull, staged fades (14 uses) |
-| `cubic-bezier(0.22, 1, 0.36, 1)` | scroll reveal only (`BaseLayout.scss:1091`) |
+| `cubic-bezier(0.22, 1, 0.36, 1)` | the rake beam and view transitions |
 | `linear` | marquee and shimmer, where any easing would read as a stutter |
 | `ease-in-out` | skeleton pulses |
 
@@ -442,11 +451,19 @@ Rules:
   reduce` opt-out**, including `scroll-behavior` (`BaseLayout.scss:205–213`),
   row transitions (`1034–1046`), ticker (`Ticker.scss:88`), sheet
   (`Sheet.module.scss:174`).
-- **[MUST] Scroll reveal is JS-gated.** `.reveal` hides only under `.js` on
-  `<html>` (`BaseLayout.scss:1088`). Never hide content on `opacity: 0`
-  without that gate.
-- **[MUST] Animate only `opacity` and `transform`.** The reveal rests at
-  `transform: none` (`BaseLayout.scss:1088–1096`).
+- **[MUST] No scroll reveal, no per-section entrance.** Sections are simply
+  there. The `.reveal` fade-and-rise on every band was removed: the same
+  entrance seventeen times spent the page's motion before anything happened.
+  The orchestrated moments are the home hero's staged entry and the portrait
+  view transition into a sheet; everything else moves only to show a change
+  (a sheet opening, a row's field, the teaser dealing a new set via
+  `.develop`). Anything `.js`-gated never hides content without that gate.
+- **[MUST] Nothing moves on its own except the home ticker and the
+  countdown.** The hero topic rotor and the 180s gallery marquee were
+  removed; the gallery is a strip the visitor scrolls (`.gallery-strip`,
+  focusable region, `scroll-snap: proximity`, fixed photo order — a shuffle
+  made snap jump to the moved photo).
+- **[MUST] Animate only `opacity` and `transform`.**
 - **[MUST] No `translateX` on the red reach field** (`BaseLayout.scss:934–938`);
   the pull belongs to the warm wash.
 - **[CURRENT]** The grain is static, not animated (`BaseLayout.scss:287–289`).
@@ -585,7 +602,7 @@ Primitives, all in `BaseLayout.scss`:
 | `.page-stack` | 511 | every page's `<main>` |
 | `.band` (+ `--accent` 617, `--lit` 625, `--lit-red` 634) / `.band-inner` | 602 | a section's ground. `--accent` **at most once per page**; `--lit` is the subpage ground, `--lit-red` the variant for pages about people and the programme |
 | `.eyebrow` | 399 | plain mono section label — no decoration, no trailing hairline |
-| `.display` (+ `.red`) | 414 | poster headline |
+| `.display` (+ `.red`) | 414 | poster headline; `.red` only on the page's h1 (see Structural rules) |
 | `.head-split` / `.head-title` / `.head-note` (+ `--ruled` 454) | 446 | two-column section head: statement left, one line right |
 | `.head-stack` | 524 | the one-column section head, closed by a hairline |
 | `.print` | 496 | the mounted photograph well at 4:5 |
@@ -595,13 +612,13 @@ Primitives, all in `BaseLayout.scss`:
 | `.btn-primary` / `.btn-ghost` | 787 / 841 | the two buttons |
 | `.field` / `.field-row` (+ `--short` 930, `--link` 939, `--holds` 997) | 904 / 916 | the open-field list and row |
 | `.record-status` | 1054 | the last survivor of the retired `.ledger` / `.record` family |
-| `.scene` / `.reveal` / `.develop` | 1069 / 1088 / 1110 | lighting and scroll reveal, `.js`-gated, reduced-motion-disabled |
+| `.scene` / `.develop` | 1069 / 1110 | lighting; `.develop` staggers a set that just changed (the speakers teaser), `.js`-gated, reduced-motion-disabled |
 | `.skip-link` / `.sr-only` | 322 / 367 | see Accessibility |
 | `.status-bar-cover` | 1240 | iOS safe-area paint |
 
 Shared components: `Desk.astro` (one inbox), `SubpageHero.astro`,
 `HeroBackground.astro` (takes a `focus` crop), `Ticker.astro` (the running band
-under every hero), `Closer.astro`, `Menu.astro`, `Footer.astro`,
+under the home hero — home only), `Closer.astro`, `Menu.astro`, `Footer.astro`,
 `CookieBanner.astro`, `NextStep.astro`, `DataState.tsx`, `SpeakerPhoto.tsx`, and
 `Sheet.module.scss` (the shared detail-view chrome for `SessionDetail` /
 `SpeakerDetail`).
@@ -613,15 +630,27 @@ under every hero), `Closer.astro`, `Menu.astro`, `Footer.astro`,
 - **`SpeakerPhoto.tsx`** — no URL or a failed load both land on the monogram;
   caller passes classes for the shape.
 
-**Structural rules [MUST]:** no decorated eyebrow; red text is flat; one
-`--fs-display` per page; section heads left-set; no accent bars down a block's
-left edge; lists carry **no rules**; detail views are full-bleed sheets;
-`Closer.astro` ends every page except `/privacy-policy` and `/code-of-conduct`.
+**Structural rules [MUST]:** no decorated eyebrow; red text is flat; **the
+red word is spent once per page, on its h1** (the `SubpageHero` title, the
+home statement, the invite title) — section heads and every `Closer` title are
+plain cream, because a red final word on ~30 headlines made none of them the
+loud one; one `--fs-display` per page; section heads left-set; no accent bars
+down a block's left edge; lists carry **no rules**; detail views are
+full-bleed sheets; `Closer.astro` ends every page except `/privacy-policy` and
+`/code-of-conduct`.
+
+**The footer is the open sitemap [MUST].** The menu hides every destination
+behind one toggle at every width, so `Footer.astro` lists every page in two
+groups, *Attend* and *About*, with the menu's labels. A new route is added to
+both.
 
 ## Anatomy of a page
 
-**[MUST] A subpage is:** `SubpageHero` → `Ticker` → `.band` sections →
-`Closer` → `Footer`. `privacy-policy` and `code-of-conduct` (same legal
+**[MUST] A subpage is:** `SubpageHero` → `.band` sections → `Closer` →
+`Footer`. No `Ticker`: it runs under the home hero only (it was the same five
+topics under every hero, including /404 and /invoice). The first band after
+the hero opens on `--section-y-tight` with no top hairline
+(`.subpage-hero + .band`). `privacy-policy` and `code-of-conduct` (same legal
 column) are the exception; `/` and `/partners`
 are out of scope.
 
@@ -629,9 +658,7 @@ are out of scope.
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 ---
 <BaseLayout title="…" description="…">
 	<main class="page-stack">
@@ -644,7 +671,6 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			<!-- photo={false} instead of focus, for a type-only opener -->
 			<!-- link={{ href: '/agenda', label: 'See the schedule' }} for a sibling page -->
 		/>
-		<Ticker items={EVENT_TOPICS} size="sm" />
 		<section class="band band--lit" aria-label="…">
 			<div class="band-inner">
 				<!-- The hero names the first band, so its head is sr-only. -->
@@ -680,12 +706,12 @@ Decision criteria, picked per page:
 - **`.head-split` vs `.head-stack`.** `.head-split` when there is a secondary
   fact for the right column; otherwise `.head-stack`.
 - **Eyebrows on a `Closer`.** Only when the eyebrow carries a fact the title
-  does not (`invoice`: "Paying by card"; `press`: "Press kit"). A mood label
+  does not (`press`: "Press kit"). A mood label
   ("Be there", "Join us") above the closing title is filler; leave it off.
 - **`--fs-row` vs `--fs-row-sm`.** **[CURRENT]** no numeric cutoff in code;
   treat more than ~4 rows as the signal for `--fs-row-sm`. See Open points.
 - **`/thank-you`, `/newsletter-subscription-thank-you`, `/404`** run
-  `SubpageHero photo={false}` → `Ticker` → `.band--lit` field of `NextStep`
+  `SubpageHero photo={false}` → `.band--lit` field of `NextStep`
   rows → `Closer`. `/thank-you` also has calendar, venue, next steps, share
   and an `@media print` block. Event facts in `src/lib/event.ts` + the `.ics`
   in `public/` — keep in step with the Event JSON-LD in `BaseLayout.astro`.
@@ -694,7 +720,20 @@ Decision criteria, picked per page:
   share the band: the figures drop to the head's `--fs-h2` and form a two-row
   ledger (figure, then label, on a shared subgrid) so each figure lands on one
   of the head's lines. Two `--fs-stat` figures under the head left the right
-  half of the band empty.
+  half of the band empty. At every width the figure reads first: `.fact-label`
+  takes `order: 1` (the `<dt>` must precede the `<dd>` in the markup).
+- **The home hero and the cookie banner.** While the banner is up it publishes
+  its height as `--consent-h` on `<html>` (`CookieBanner.astro`); `#hero`
+  takes it as its bottom inset, so the bottom-set content rises into the sky
+  of the photograph instead of sliding under the banner. Date, place, price
+  and clock are on the first screen at desktop; date and place on a phone.
+- **The ticket and invoice facts sit where the decision is.** "Company
+  funded" is explained under the wave list, not only in the FAQ; `/invoice`
+  names the rate it prices from (no "Estimated"), the 14-day due date
+  (`INVOICE_DUE_DAYS`, mirrored in `InvoiceForm.tsx`), that the price holds
+  once the invoice is issued, and that one code claims every ticket. Its
+  closer answers invoice questions; it does not send the visitor to card
+  checkout.
 - **A `<details>` list opens with its first item open** (`faq.astro:106`).
   A section must not reuse the hero's `aria-labelledby` (`landmark-unique`).
 - **`Closer` tone.** Pass `tone="accent"` explicitly. The `'raised'` default
@@ -745,7 +784,7 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
   fragment; its ring alone is suppressed.
 - **[MUST] The cookie banner is second in the DOM**, `Escape` handler on
   `document` (`CookieBanner.astro:89,96`).
-- **[MUST] The ticker is its own pause control (2.2.2):** `tabindex="0"` +
+- **[MUST] The home ticker is its own pause control (2.2.2):** `tabindex="0"` +
   `aria-label` (`Ticker.astro:31,33`), paused on `:hover` and `:focus-within`;
   the doubled list is `aria-hidden`. No visible pause button.
 - **[MUST] `.sr-only`** for text in the a11y tree but off screen
@@ -834,8 +873,8 @@ Places the code contradicts itself or this document. Each needs a decision.
    `press/downloads.scss:109–139`) against a max-width convention.
 8. **Two JS-only breakpoints:** `760px` (`Menu.astro:217`), `1024px`
    (`Agenda.tsx:52`), in no stylesheet.
-9. **Special Elite declares no `subsets`** (`astro.config.mjs:96`); Czech
-   diacritics may fall back (cf. `7b96e4df`).
+9. ~~**Special Elite declares no `subsets`**~~ Resolved: Latin-Ext letters
+   fall to JetBrains Mono via the Fonts API `fallbacks` (see Typography).
 10. **Split with `CLAUDE.md`.** Rules live here; `CLAUDE.md` points here.
     Nothing enforces it.
 11. **`Closer` default `tone="raised"` renders `band--raised`, which has no

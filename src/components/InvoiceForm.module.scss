@@ -50,7 +50,6 @@
 
 	&::placeholder {
 		color: var(--ink-muted);
-		font-style: italic;
 	}
 
 	// An invalid field used to be pixel-identical to a valid one — nine
@@ -111,7 +110,7 @@
 	border-bottom: 1px solid var(--rule);
 	border-radius: 0;
 
-	strong {
+	.estimateFigure {
 		position: relative;
 		z-index: 1;
 		font-family: var(--font-bebas-neue), sans-serif;
@@ -125,8 +124,11 @@
 	// middle of its own parenthesis and the total read as one long run of text.
 	display: block;
 	margin-top: 0.35rem;
-	font-style: italic;
-	font-size: var(--fs-label-lg);
+	// Upright: Special Elite ships no italic, so `italic` was the browser's
+	// slanted fake. The size and the grey already set it apart from the total.
+	font-size: var(--fs-ui);
+	line-height: 1.6;
+	max-width: 62ch;
 	color: var(--color-grey);
 }
 
@@ -198,7 +200,6 @@
 
 .message {
 	@include prose(var(--fs-ui));
-	font-style: italic;
 	margin: 0;
 	min-height: 1.2em;
 	color: var(--ink-soft);

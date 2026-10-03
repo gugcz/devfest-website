@@ -34,6 +34,26 @@ interface Fields {
 }
 
 type FieldName = keyof Fields;
+
+/** The form's own label for each field, so a server refusal names the field
+ * the visitor can see ("IČO"), not the key it travels under
+ * ("registrationNumberIC"). Same words as the `label` props below. */
+const FIELD_LABELS: Record<FieldName, string> = {
+	companyName: 'Company name',
+	registrationNumberIC: 'IČO',
+	registrationNumberDIC: 'DIČ',
+	street: 'Street and number',
+	city: 'City',
+	zip: 'ZIP',
+	country: 'Country',
+	email: 'Email',
+	countTickets: 'Number of tickets',
+};
+
+/** Days until the invoice falls due. Mirrors `INVOICE_DUE_DAYS` in
+ * `functions/src/invoice/params.ts`; the two move together. */
+const INVOICE_DUE_DAYS = 14;
+
 /** `consent` is not a billing field, but it fails the same way and is shown
  * the same way, so it shares the error bag. */
 type ErrorKey = FieldName | 'consent';
@@ -194,6 +214,9 @@ export default function InvoiceForm() {
 		if (!display || grossEach == null) return null;
 		const total = grossEach * fields.countTickets;
 		return {
+			// "Early Bird — Company funded" → "Early Bird": the wave is what the
+			// visitor recognises from the tickets list; the variant is a given here.
+			wave: releaseTitle(release).split(/\s+[—–-]\s+/)[0].trim(),
 			each: display.primary,
 			total: formatPrice(String(total), release.currency),
 			/** Numeric total + currency for the GA4 `generate_lead` value. */
@@ -246,6 +269,7 @@ export default function InvoiceForm() {
 		setStatus('submitting');
 		setMessage('Sending your request…');
 		const recipient = fields.email;
+		const count = fields.countTickets;
 		try {
 			// Callable: the SDK attaches an App Check token, the function enforces it.
 			const [{ getFirebaseApp }, { getFunctions, httpsCallable }] = await Promise.all([
@@ -266,8 +290,10 @@ export default function InvoiceForm() {
 			});
 			setStatus('success');
 			setMessage(
-				`Request received. We'll email the invoice to ${recipient}. ` +
-					`Once it's paid, you'll get a code to claim your ticket(s) on ti.to.`,
+				`The invoice is on its way to ${recipient}, due in ${INVOICE_DUE_DAYS} days. ` +
+					`Once the payment reaches us, we email one code that claims ` +
+					`${count === 1 ? 'the ticket' : `all ${count} tickets`} on ti.to. ` +
+					`No invoice within the hour? Write to devfest@gug.cz.`,
 			);
 			setFields(EMPTY);
 			setConsented(false);
@@ -276,12 +302,13 @@ export default function InvoiceForm() {
 			setAttempted(false);
 		} catch (e) {
 			const code = (e as { code?: string }).code ?? '';
-			const field = (e as { message?: string }).message ?? '';
+			const key = (e as { message?: string }).message ?? '';
+			const field = key in FIELD_LABELS ? FIELD_LABELS[key as FieldName] : '';
 			setStatus('error');
 			setMessage(
 				code === 'functions/invalid-argument'
 					? field
-						? `The server rejected the ${field} field. Please check it and try again.`
+						? `We could not use the ${field} you entered. Check it and send again.`
 						: 'The server rejected one of the fields. Please check them and try again.'
 					: code === 'functions/unauthenticated' || code === 'functions/failed-precondition'
 						? 'Could not verify your browser. Reload the page and try again, or email devfest@gug.cz.'
@@ -360,11 +387,15 @@ export default function InvoiceForm() {
 					onChange={(e) => setHoneypot(e.target.value)}
 				/>
 
+				{/* The rate is named, not "estimated": the code the company gets
+				    is scoped to the release this price comes from, so the wave
+				    holds even if it closes before the transfer lands. */}
 				{estimate && (
 					<p className={s.estimate}>
-						Estimated total: <strong>{estimate.total}</strong>{' '}
+						Total: <span className={s.estimateFigure}>{estimate.total}</span>{' '}
 						<span className={s.estimateNote}>
-							({fields.countTickets} × {estimate.each}, incl. VAT)
+							{fields.countTickets} × {estimate.each} incl. VAT, the {estimate.wave} company-funded price.
+							The price holds once the invoice is issued, even if the wave closes before you pay.
 						</span>
 					</p>
 				)}

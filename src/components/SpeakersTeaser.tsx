@@ -90,7 +90,7 @@ export default function SpeakersTeaser() {
 				    stack left the right half of every section empty. */}
 				<div className="head-split head-split--ruled">
 					<h2 id="lineup-teaser-title" className="display head-title">
-						The <span className="red">speakers.</span>
+						The speakers.
 					</h2>
 					<div className={s.headSide}>
 						<p className="head-note">New names hit the wall as they&rsquo;re confirmed.</p>

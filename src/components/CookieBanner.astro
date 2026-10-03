@@ -3,8 +3,8 @@
 
 <div id="cookie-banner" class="cookie-banner cookie-banner--hidden" role="region" aria-label="Cookie consent" aria-live="polite" aria-hidden="true">
 	<p class="cookie-text">
-		We use analytics cookies to understand how visitors use this site.
-		See our <a href="/privacy-policy" class="cookie-link">Privacy Policy</a> for details.
+		May we use analytics cookies?
+		Details in our <a href="/privacy-policy" class="cookie-link">Privacy Policy</a>.
 	</p>
 	<div class="cookie-actions">
 		<button id="cookie-accept" type="button" class="btn-primary cookie-btn cookie-btn--accept">Accept</button>
@@ -38,15 +38,29 @@
 	document.addEventListener('astro:page-load', () => {
 		const banner = document.getElementById('cookie-banner');
 
+		// While the banner is up, its height is published as `--consent-h` so
+		// the home hero can lift its footing strip (date, place, price) above
+		// it — on a first visit the banner otherwise covered exactly the facts
+		// the first screen exists to give. Cleared the moment it goes.
+		const root = document.documentElement;
+		let sizer: ResizeObserver | undefined;
+
 		const hideBanner = () => {
 			banner?.setAttribute('aria-hidden', 'true');
 			banner?.classList.add('cookie-banner--hidden');
+			sizer?.disconnect();
+			root.style.removeProperty('--consent-h');
 		};
 
 		const showBanner = () => {
 			banner?.setAttribute('aria-hidden', 'false');
 			banner?.classList.remove('cookie-banner--hidden');
+			if (!banner || !('ResizeObserver' in window)) return;
+			sizer = new ResizeObserver(() => root.style.setProperty('--consent-h', `${banner.offsetHeight}px`));
+			sizer.observe(banner);
 		};
+
+		document.addEventListener('astro:before-swap', () => sizer?.disconnect(), { once: true });
 
 		// Nothing loads until (and unless) the visitor accepts — `initAnalytics()`
 		// reads the stored decision. A stored `accepted` boots GA4 right here, on

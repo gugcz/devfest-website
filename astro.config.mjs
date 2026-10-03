@@ -68,7 +68,7 @@ export default defineConfig({
     trailingSlash: 'never',
     // Self-hosted, build-time-optimised replacements for the three brand faces
     // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
-    // Weights/styles mirror exactly what that css2 URL requested. Only the four
+    // Weights/styles mirror exactly what that css2 URL requested. Only the three
     // brand fonts are allowed — never add a fourth family here.
     fonts: [
         {
@@ -93,6 +93,16 @@ export default defineConfig({
             cssVariable: '--font-special-elite',
             weights: [400],
             styles: ['normal'],
+            // Google ships Special Elite in Latin only, so every č ř š ž ě ů
+            // fell through to the generated metric fallback — Arial at 117% —
+            // and "Libčice" printed as "LibČice". JetBrains Mono (latin-ext
+            // loaded above) takes those letters instead: a brand face, and a
+            // monospace whose 0.6em advance sits close to Special Elite's, so
+            // it also stands in without a reflow while the typewriter loads.
+            // Unquoted on purpose: Astro quotes only values with spaces, so
+            // the var() lands in `--font-special-elite` as a live reference.
+            fallbacks: ['var(--font-jetbrains-mono)', 'monospace'],
+            optimizedFallbacks: false,
         },
     ],
     image: {
