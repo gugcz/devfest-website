@@ -36,7 +36,7 @@
 	content: '';
 	position: absolute;
 	inset: 0;
-	background: #050505;
+	background: #000000;
 	opacity: 1;
 	pointer-events: none;
 	z-index: -1;
@@ -52,9 +52,9 @@
 	inset: 0;
 	background: linear-gradient(
 		180deg,
-		rgba(5, 5, 5, 0.6) 0%,
-		rgba(5, 5, 5, 0.34) 58%,
-		rgba(5, 5, 5, 0) 100%
+		rgba(0, 0, 0, 0.6) 0%,
+		rgba(0, 0, 0, 0.34) 58%,
+		rgba(0, 0, 0, 0) 100%
 	);
 	opacity: 0;
 	pointer-events: none;
@@ -121,7 +121,10 @@
 
 .brand-logo {
 	display: block;
-	height: clamp(26px, 3.4vw, 34px);
+	// 38px tall = 190px wide: the brand manual's 180px digital minimum for
+	// the logo itself (the artboard adds 3% clear space each side). Never
+	// smaller, or the 2026 badge stops reading.
+	height: 38px;
 	width: auto;
 	// The mark gives way before the bar overflows. Its height is already in
 	// px so it does not grow with the root font; this only bounds it when
@@ -133,7 +136,7 @@
 // Large screens: the page scales with the root past 1920px, so the mark does too.
 @media (min-width: 1921px) {
 	.brand-logo {
-		height: 2.125rem;
+		height: 2.375rem;
 	}
 }
 
@@ -306,7 +309,7 @@
 		calc(var(--header-h) + 1.3rem + env(safe-area-inset-top))
 		min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw)
 		calc(2rem + env(safe-area-inset-bottom));
-	background: #050505;
+	background: #000000;
 	overflow-y: auto;
 	overscroll-behavior: contain;
 	// The closed panel must be inert to the pointer AND out of the a11y tree;
@@ -528,10 +531,6 @@
 	// while `--header-h` asserted the old height.
 	.site-header {
 		padding-inline: min(0.85rem, 4.25vw);
-	}
-
-	.brand-logo {
-		height: 24px;
 	}
 
 	.header-cta {

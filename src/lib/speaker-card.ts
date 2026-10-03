@@ -236,24 +236,15 @@ export function drawSpeakerCard(
 	ctx.fillText(name, MARGIN, nameY);
 	ctx.letterSpacing = '0px';
 
-	// ── Brand band across the top: black wordmark left, date + place right.
+	// ── Brand band across the top: the official mono white logo left (the
+	// manual's only version on red), date + place right. The artboard carries
+	// its own side clear space, so it starts a clear-space step left of MARGIN.
 	ctx.fillStyle = palette.accent;
 	ctx.fillRect(0, 0, size, BAND_HEIGHT);
 	const bandMid = BAND_HEIGHT / 2;
 	if (logo && logo.naturalWidth > 0) {
 		const logoWidth = (logo.naturalWidth / logo.naturalHeight) * LOGO_HEIGHT;
-		// White asset tinted black on a scratch canvas (see `attending-card.ts`).
-		const tint = document.createElement('canvas');
-		tint.width = Math.ceil(logoWidth);
-		tint.height = LOGO_HEIGHT;
-		const tintCtx = tint.getContext('2d');
-		if (tintCtx) {
-			tintCtx.drawImage(logo, 0, 0, logoWidth, LOGO_HEIGHT);
-			tintCtx.globalCompositeOperation = 'source-atop';
-			tintCtx.fillStyle = '#000000';
-			tintCtx.fillRect(0, 0, logoWidth, LOGO_HEIGHT);
-			ctx.drawImage(tint, MARGIN, bandMid - LOGO_HEIGHT / 2, logoWidth, LOGO_HEIGHT);
-		}
+		ctx.drawImage(logo, MARGIN - logoWidth * 0.028, bandMid - LOGO_HEIGHT / 2, logoWidth, LOGO_HEIGHT);
 	}
 	ctx.fillStyle = '#000000';
 	ctx.font = `500 34px ${fonts.mono}`;

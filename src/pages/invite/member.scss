@@ -55,7 +55,7 @@
 	position: absolute;
 	inset: 0;
 	z-index: -1;
-	background: linear-gradient(180deg, rgba(5, 5, 5, 0.55) 0%, rgba(5, 5, 5, 0) 26%, rgba(5, 5, 5, 0.6) 82%, #050505 100%);
+	background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 26%, rgba(0, 0, 0, 0.6) 82%, #000000 100%);
 }
 
 // The section is a flex container, so the shared container must be told to
@@ -92,7 +92,7 @@
 
 .invite-meta {
 	@include mono(var(--fs-label-lg), 0.08em, uppercase);
-	color: rgba(240, 237, 230, 0.7);
+	color: rgba(255, 255, 255, 0.7);
 }
 
 .invite-note {
@@ -106,7 +106,7 @@
 .invite-quote {
 	@include mono(var(--fs-ui));
 	line-height: 1.7;
-	color: rgba(240, 237, 230, 0.72);
+	color: rgba(255, 255, 255, 0.72);
 
 	span {
 		color: var(--ink-faint);
@@ -116,7 +116,7 @@
 @media (max-width: 860px) {
 	// On a phone the plate goes back to full-bleed, but only behind the top
 	// ~48svh strip that holds the eyebrow + headline -- everything from the
-	// lede down moves onto the page's flat #050505, off the photograph
+	// lede down moves onto the page's flat #000000, off the photograph
 	// entirely. Special Elite (the lede's face) never sits over a photo; see
 	// .claude/rules/invite.md.
 	.invite {
@@ -136,7 +136,7 @@
 	// The strip's own scrim, for the eyebrow + headline only; solid black
 	// from ~48svh down is what turns the rest of the page into flat ground.
 	.invite::after {
-		background: linear-gradient(180deg, rgba(5, 5, 5, 0.45) 0%, rgba(5, 5, 5, 0.65) 30svh, #050505 48svh, #050505 100%);
+		background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.65) 30svh, #000000 48svh, #000000 100%);
 	}
 
 	.invite-content {

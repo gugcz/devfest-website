@@ -20,7 +20,7 @@
 // photographic, and 0.55 fell under 4.5:1 on its darkest part.
 .label {
 	@include mono(var(--fs-label), 0.26em, uppercase);
-	color: rgba(240, 237, 230, 0.72);
+	color: rgba(255, 255, 255, 0.72);
 	white-space: nowrap;
 	margin: 0;
 }

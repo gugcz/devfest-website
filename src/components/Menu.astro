@@ -59,15 +59,16 @@ const isCurrent = (href: string) => {
 <header id="site-header" class="site-header" data-state="top" data-home={isHome ? 'true' : 'false'}>
 	<a href="/" class="brand" aria-label="DevFest.cz 2026 — home">
 		<!-- Header sits above the fold on every page, so it loads eagerly; the
-		     intrinsic width/height come from the source (4.2:1), and `widths` caps
-		     the srcset at the 176px CSS maximum up to 2× DPR. -->
+		     intrinsic width/height come from the official 3000×600 artboard (5:1,
+		     clear space included), and `widths` caps the srcset at the 190px CSS
+		     width up to 2× DPR. -->
 		<Image
 			src={logo}
 			alt="DevFest.cz 2026"
 			class="brand-logo"
 			loading="eager"
-			widths={[165, 330]}
-			sizes="176px"
+			widths={[190, 380]}
+			sizes="190px"
 		/>
 	</a>
 

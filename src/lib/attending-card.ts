@@ -116,15 +116,15 @@ export interface Palette {
  * reads made panning janky. */
 export function readPalette(): Palette {
 	return {
-		bg: cssVar('--color-bg') || '#050505',
-		ink: cssVar('--color-text') || '#F2EFE9',
-		red: cssVar('--color-accent-hot') || '#FF1111',
-		accent: cssVar('--color-accent') || '#CC0000',
-		onAccent: cssVar('--on-accent') || '#F7EFE6',
-		rule: cssVar('--rule') || 'rgba(240, 237, 230, 0.16)',
-		panel: cssVar('--panel-lit') || '#0A0908',
-		monogramInk: cssVar('--ink-monogram') || 'rgba(242, 239, 233, 0.46)',
-		muted: 'rgba(240, 237, 230, 0.6)',
+		bg: cssVar('--color-bg') || '#000000',
+		ink: cssVar('--color-text') || '#FFFFFF',
+		red: cssVar('--color-accent-hot') || '#F11000',
+		accent: cssVar('--color-accent') || '#F11000',
+		onAccent: cssVar('--on-accent') || '#000000',
+		rule: cssVar('--rule') || 'rgba(255, 255, 255, 0.16)',
+		panel: cssVar('--panel-lit') || '#0A0A0A',
+		monogramInk: cssVar('--ink-monogram') || 'rgba(255, 255, 255, 0.46)',
+		muted: 'rgba(255, 255, 255, 0.6)',
 	};
 }
 
@@ -367,62 +367,15 @@ export function drawAttendingCard(
 	ctx.fillText(nameText, size / 2, nameY);
 
 	// ── Bottom accent band — mirrors `.band--accent`. Edge-to-edge chrome,
-	// exempt from the safe space. Wordmark + "2026" pill centered as one
-	// group, black on red per the mock.
+	// exempt from the safe space. The official mono white logo (2026 badge
+	// included) centered: on red the manual allows the white mono logo only.
 	const bandCenterY = size - BAND_HEIGHT / 2;
 	ctx.fillStyle = accent;
 	ctx.fillRect(0, size - BAND_HEIGHT, size, BAND_HEIGHT);
 
 	if (logo && logo.naturalWidth > 0) {
 		const logoWidth = (logo.naturalWidth / logo.naturalHeight) * LOGO_HEIGHT;
-
-		const pillText = '2026';
-		ctx.font = `600 44px ${fonts.mono}`;
-		const pillTextWidth = ctx.measureText(pillText).width;
-		const pillPaddingX = 28;
-		const pillHeight = 68;
-		const pillWidth = pillTextWidth + pillPaddingX * 2;
-		const pillGap = 28;
-
-		const groupWidth = logoWidth + pillGap + pillWidth;
-		const logoX = size / 2 - groupWidth / 2;
-		const logoY = bandCenterY - LOGO_HEIGHT / 2;
-
-		// The wordmark asset is white; the mock wants black. Tint on a scratch
-		// canvas: `source-atop` masks to the destination's alpha, and the main
-		// canvas already has the opaque red band there, so tinting in place
-		// would black out the whole logo box.
-		const tint = document.createElement('canvas');
-		tint.width = Math.ceil(logoWidth);
-		tint.height = LOGO_HEIGHT;
-		const tintCtx = tint.getContext('2d');
-		if (tintCtx) {
-			tintCtx.drawImage(logo, 0, 0, logoWidth, LOGO_HEIGHT);
-			tintCtx.globalCompositeOperation = 'source-atop';
-			tintCtx.fillStyle = '#000000';
-			tintCtx.fillRect(0, 0, logoWidth, LOGO_HEIGHT);
-			ctx.drawImage(tint, logoX, logoY, logoWidth, LOGO_HEIGHT);
-		}
-
-		// "2026" pill, black outline + text on the red band, per the mock.
-		const pillX = logoX + logoWidth + pillGap;
-		const pillY = bandCenterY - pillHeight / 2;
-		const radius = pillHeight / 2;
-		ctx.beginPath();
-		ctx.moveTo(pillX + radius, pillY);
-		ctx.arcTo(pillX + pillWidth, pillY, pillX + pillWidth, pillY + pillHeight, radius);
-		ctx.arcTo(pillX + pillWidth, pillY + pillHeight, pillX, pillY + pillHeight, radius);
-		ctx.arcTo(pillX, pillY + pillHeight, pillX, pillY, radius);
-		ctx.arcTo(pillX, pillY, pillX + pillWidth, pillY, radius);
-		ctx.closePath();
-		ctx.lineWidth = 2;
-		ctx.strokeStyle = '#000000';
-		ctx.stroke();
-		ctx.fillStyle = '#000000';
-		ctx.font = `600 44px ${fonts.mono}`;
-		ctx.textAlign = 'center';
-		ctx.textBaseline = 'middle';
-		ctx.fillText(pillText, pillX + pillWidth / 2, pillY + pillHeight / 2 + 1);
+		ctx.drawImage(logo, size / 2 - logoWidth / 2, bandCenterY - LOGO_HEIGHT / 2, logoWidth, LOGO_HEIGHT);
 	}
 
 	if (options?.isSample) drawSampleBadge(ctx, size, fonts, palette);

@@ -61,9 +61,9 @@ const logoDataUri = await sharp(join(root, 'src/assets/logo.png'))
 	.then((buffer) => `data:image/png;base64,${buffer.toString('base64')}`);
 
 // ─── palette (BaseLayout.scss) ───
-const BG = '#050505';
-const RED_HOT = '#FF1111'; // `.red` on a dark ground
-const CREAM = '#F7EFE6';
+const BG = '#000000';
+const RED_HOT = '#F11000'; // `.red` on a dark ground
+const CREAM = '#FFFFFF';
 
 // Crop the same B&W master `/invite` uses down to the "chest" window the
 // studies proved out — centred on the face, wide enough to feather without

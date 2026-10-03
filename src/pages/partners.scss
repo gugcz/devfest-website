@@ -117,7 +117,7 @@
 .logo-grid--plated {
 	.logo-cell {
 		background: var(--color-cream);
-		border-color: rgba(5, 5, 5, 0.14);
+		border-color: rgba(0, 0, 0, 0.14);
 		transition: filter 0.25s ease;
 
 		&::before { content: none; }
@@ -223,7 +223,7 @@
 	@include mono(var(--fs-label-lg), 0.22em, uppercase);
 	color: var(--on-accent);
 	background: transparent;
-	border: 1px dashed rgba(247, 239, 230, 0.45);
+	border: 1px dashed rgba(255, 255, 255, 0.45);
 	border-radius: var(--radius);
 	padding: 1.25rem 2rem;
 	cursor: not-allowed;

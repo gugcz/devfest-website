@@ -296,9 +296,9 @@
 	z-index: 1;
 	background: linear-gradient(
 		90deg,
-		rgba(240, 237, 230, 0.05) 0%,
-		rgba(240, 237, 230, 0.15) 50%,
-		rgba(240, 237, 230, 0.05) 100%
+		rgba(255, 255, 255, 0.05) 0%,
+		rgba(255, 255, 255, 0.15) 50%,
+		rgba(255, 255, 255, 0.05) 100%
 	);
 	background-size: 200% 100%;
 	animation: shimmer 1.6s linear infinite;
@@ -318,9 +318,9 @@
 	border-radius: var(--radius);
 	background: linear-gradient(
 		90deg,
-		rgba(204, 0, 0, 0.2) 0%,
-		rgba(204, 0, 0, 0.45) 50%,
-		rgba(204, 0, 0, 0.2) 100%
+		rgba(241, 16, 0, 0.2) 0%,
+		rgba(241, 16, 0, 0.45) 50%,
+		rgba(241, 16, 0, 0.2) 100%
 	);
 	background-size: 200% 100%;
 	animation: shimmer 1.6s linear infinite;
@@ -396,8 +396,8 @@
 		animation: none;
 	}
 
-	.skelBar { background: rgba(240, 237, 230, 0.1); }
-	.skelBtn { background: rgba(204, 0, 0, 0.35); }
+	.skelBar { background: rgba(255, 255, 255, 0.1); }
+	.skelBtn { background: rgba(241, 16, 0, 0.35); }
 }
 
 @media (max-width: 720px) {

@@ -1,13 +1,8 @@
 .hero-bg {
 	position: absolute;
 	inset: 0;
-	// One wash, and it answers to the frame: the lamp in the plate sits
-	// upper right, so that's the only light source here. A second bloom in
-	// the lower left answered to nothing in the shot and read as
-	// decoration rather than lighting.
-	background:
-		radial-gradient(ellipse 30% 40% at 70% 18%, rgba(204, 0, 0, 0.07) 0%, transparent 60%),
-		#050505;
+	// No red wash: the manual keeps red for clues, never for mood.
+	background: #000000;
 	z-index: 0;
 }
 

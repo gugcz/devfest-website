@@ -200,7 +200,7 @@
 	justify-content: center;
 	width: 2rem;
 	height: 2rem;
-	color: rgba(242, 239, 233, 0.6);
+	color: rgba(255, 255, 255, 0.6);
 	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
@@ -215,7 +215,7 @@
 	&:focus-visible {
 		color: var(--color-text);
 		border-color: var(--rule-red);
-		background: rgba(204, 0, 0, 0.1);
+		background: rgba(241, 16, 0, 0.1);
 		transform: translateY(-1px);
 	}
 

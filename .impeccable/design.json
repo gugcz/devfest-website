@@ -4,11 +4,11 @@
   "title": "Design System: DevFest.cz 2026",
   "extensions": {
     "colorMeta": {
-      "bg": { "role": "neutral", "displayName": "Darkroom Black", "tonalRamp": ["#050505", "#0C0B0B", "#111010", "#161413", "#2A2826", "#5C5955", "#8C8C8C", "#F2EFE9"] },
-      "text": { "role": "neutral", "displayName": "Cream Ink", "tonalRamp": ["#1A1917", "#3B3934", "#5C5955", "#8C8C8C", "#B9B4A8", "#D6D0C2", "#E8E0CC", "#F2EFE9"] },
+      "bg": { "role": "neutral", "displayName": "Noir Black", "tonalRamp": ["#000000", "#0C0C0C", "#111111", "#161616", "#2A2A2A", "#5C5C5C", "#8C8C8C", "#FFFFFF"] },
+      "text": { "role": "neutral", "displayName": "Paper White", "tonalRamp": ["#1A1A1A", "#3B3B3B", "#5C5C5C", "#8C8C8C", "#B9B9B9", "#D6D6D6", "#EDEDED", "#FFFFFF"] },
       "cream": { "role": "neutral", "displayName": "Warm Cream" },
       "grey": { "role": "neutral", "displayName": "Muted Meta Grey" },
-      "accent": { "role": "primary", "displayName": "Signal Red", "tonalRamp": ["#1A0000", "#4D0000", "#7A0000", "#9A0000", "#CC0000", "#FF1111", "#FF6B6B", "#FFD1D1"] },
+      "accent": { "role": "primary", "displayName": "Evidence Red", "tonalRamp": ["#000000", "#F11000"] },
       "accent-hot": { "role": "primary", "displayName": "Hot Red (focus, live)" },
       "error": { "role": "neutral", "displayName": "Error Prose Red" },
       "on-accent": { "role": "neutral", "displayName": "Ink on Red" },
@@ -32,9 +32,9 @@
       "label-lg": { "displayName": "Control Label", "purpose": "Nav, buttons, email links. 0.22em tracking." }
     },
     "shadows": [
-      { "name": "glow-red", "value": "0 0 14px rgba(204,0,0,0.4), 0 0 34px rgba(204,0,0,0.18)", "purpose": "Red as light: CTA hover and live status only. Red text is flat." },
-      { "name": "glow-red-soft", "value": "0 0 18px rgba(204,0,0,0.22)", "purpose": "Softer halation for live status." },
-      { "name": "print-mount", "value": "inset 0 0 0 1px rgba(240,237,230,0.16), 0 10px 24px rgba(0,0,0,0.5)", "purpose": "A photograph is mounted, not floated: keyline plus shadow." }
+      { "name": "glow-red", "value": "0 0 14px rgba(241, 16, 0,0.4), 0 0 34px rgba(241, 16, 0,0.18)", "purpose": "Red as light: CTA hover and live status only. Red text is flat." },
+      { "name": "glow-red-soft", "value": "0 0 18px rgba(241, 16, 0,0.22)", "purpose": "Softer halation for live status." },
+      { "name": "print-mount", "value": "inset 0 0 0 1px rgba(255, 255, 255,0.16), 0 10px 24px rgba(0,0,0,0.5)", "purpose": "A photograph is mounted, not floated: keyline plus shadow." }
     ],
     "motion": [
       { "name": "control", "value": "0.2s ease", "purpose": "The standard control transition: buttons, inputs, links." },
@@ -59,7 +59,7 @@
       "refersTo": "button-primary",
       "description": "The one action a section wants. Large on purpose: at poster scale a small CTA reads as an afterthought.",
       "html": "<a class=\"ds-btn-primary\" href=\"#\">Get a ticket <span aria-hidden=\"true\">→</span></a>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 0.7rem; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; color: #F7EFE6; background: #CC0000; border: 1px solid #CC0000; border-radius: 2px; padding: 1.25rem 2.8rem; text-decoration: none; transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; } .ds-btn-primary:hover { background: #FF1111; border-color: #FF1111; transform: translateY(-2px); box-shadow: 0 0 14px rgba(204,0,0,0.4), 0 0 34px rgba(204,0,0,0.18), 0 12px 30px rgba(204,0,0,0.28); } .ds-btn-primary:active { transform: translateY(0); } .ds-btn-primary:focus-visible { outline: 2px solid #FF1111; outline-offset: 3px; }"
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 0.7rem; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; color: #000000; background: #F11000; border: 1px solid #F11000; border-radius: 2px; padding: 1.25rem 2.8rem; text-decoration: none; transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; } .ds-btn-primary:hover { background: #F11000; border-color: #F11000; transform: translateY(-2px); box-shadow: 0 0 14px rgba(241, 16, 0,0.4), 0 0 34px rgba(241, 16, 0,0.18), 0 12px 30px rgba(241, 16, 0,0.28); } .ds-btn-primary:active { transform: translateY(0); } .ds-btn-primary:focus-visible { outline: 2px solid #F11000; outline-offset: 3px; }"
     },
     {
       "name": "Ghost Button",
@@ -67,7 +67,7 @@
       "refersTo": "button-ghost",
       "description": "The secondary action. Transparent with the control-edge boundary; hover brightens the edge and widens the gap.",
       "html": "<a class=\"ds-btn-ghost\" href=\"#\">See the lineup <span aria-hidden=\"true\">→</span></a>",
-      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; color: #F2EFE9; background: transparent; border: 1px solid rgba(240,237,230,0.4); border-radius: 2px; padding: 1.25rem 2rem; text-decoration: none; transition: color 0.2s ease, border-color 0.2s ease, gap 0.2s ease; } .ds-btn-ghost:hover, .ds-btn-ghost:focus-visible { border-color: #F2EFE9; gap: 0.85rem; } .ds-btn-ghost:focus-visible { outline: 2px solid #FF1111; outline-offset: 3px; }"
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; color: #FFFFFF; background: transparent; border: 1px solid rgba(255, 255, 255,0.4); border-radius: 2px; padding: 1.25rem 2rem; text-decoration: none; transition: color 0.2s ease, border-color 0.2s ease, gap 0.2s ease; } .ds-btn-ghost:hover, .ds-btn-ghost:focus-visible { border-color: #FFFFFF; gap: 0.85rem; } .ds-btn-ghost:focus-visible { outline: 2px solid #F11000; outline-offset: 3px; }"
     },
     {
       "name": "Eyebrow",
@@ -75,7 +75,7 @@
       "refersTo": "eyebrow",
       "description": "A plain mono section label. No decoration, no trailing hairline, uppercased by CSS.",
       "html": "<p class=\"ds-eyebrow\">The programme</p>",
-      "css": ".ds-eyebrow { font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.78rem; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(240,237,230,0.55); margin: 0; }"
+      "css": ".ds-eyebrow { font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.78rem; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255, 255, 255,0.55); margin: 0; }"
     },
     {
       "name": "Field Row (link)",
@@ -83,7 +83,7 @@
       "refersTo": "field-row",
       "description": "The container language for every list: no rules, separation is air and type scale. A row that IS the control paints a full-bleed red reach field on hover and every ink goes full cream.",
       "html": "<ul class=\"ds-field\"><li class=\"ds-field-row\"><a class=\"ds-row-link\" href=\"#\"><span class=\"ds-row-meta\">10:00 · Main hall</span><span class=\"ds-row-title\">Agents that ship: a field report</span><span class=\"ds-row-figure\">01</span></a></li><li class=\"ds-field-row\"><a class=\"ds-row-link\" href=\"#\"><span class=\"ds-row-meta\">11:00 · Main hall</span><span class=\"ds-row-title\">Generative UI without the hype</span><span class=\"ds-row-figure\">02</span></a></li></ul>",
-      "css": ".ds-field { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; background: #050505; } .ds-field-row { position: relative; isolation: isolate; padding: 2rem 0; } .ds-row-link { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem 2rem; align-items: end; color: #F2EFE9; text-decoration: none; transition: color 0.28s ease; } .ds-row-link::before { content: ''; position: absolute; inset: 0 -2rem; background: #CC0000; opacity: 0; z-index: -1; transition: opacity 0.28s ease; } .ds-row-link:hover::before { opacity: 1; } .ds-row-link:hover, .ds-row-link:hover * { color: #F7EFE6; } .ds-row-link:focus-visible { outline: 2px solid #FF1111; outline-offset: 2px; } .ds-row-meta { grid-column: 1; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.74rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(240,237,230,0.55); } .ds-row-title { grid-column: 1; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.06; letter-spacing: 0.02em; text-transform: uppercase; } .ds-row-figure { grid-column: 2; grid-row: 1 / span 2; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(2.5rem, 4.2vw, 4rem); line-height: 0.84; color: rgba(240,237,230,0.55); }"
+      "css": ".ds-field { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; background: #000000; } .ds-field-row { position: relative; isolation: isolate; padding: 2rem 0; } .ds-row-link { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem 2rem; align-items: end; color: #FFFFFF; text-decoration: none; transition: color 0.28s ease; } .ds-row-link::before { content: ''; position: absolute; inset: 0 -2rem; background: #F11000; opacity: 0; z-index: -1; transition: opacity 0.28s ease; } .ds-row-link:hover::before { opacity: 1; } .ds-row-link:hover, .ds-row-link:hover * { color: #000000; } .ds-row-link:focus-visible { outline: 2px solid #F11000; outline-offset: 2px; } .ds-row-meta { grid-column: 1; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.74rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255, 255, 255,0.55); } .ds-row-title { grid-column: 1; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.06; letter-spacing: 0.02em; text-transform: uppercase; } .ds-row-figure { grid-column: 2; grid-row: 1 / span 2; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(2.5rem, 4.2vw, 4rem); line-height: 0.84; color: rgba(255, 255, 255,0.55); }"
     },
     {
       "name": "Lit Field",
@@ -91,7 +91,7 @@
       "refersTo": "lit-field",
       "description": "The text field: a dark plate with the control-edge boundary, warming to accent-hot on focus. Keyboard focus adds the ring tight against the edge.",
       "html": "<label class=\"ds-lit-label\">Company name<input class=\"ds-lit-field\" type=\"text\" placeholder=\"Acme Example s.r.o.\"></label>",
-      "css": ".ds-lit-label { display: flex; flex-direction: column; gap: 0.5rem; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.78rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(240,237,230,0.62); } .ds-lit-field { width: 100%; box-sizing: border-box; min-height: 2.75rem; padding: 0.85rem 0.95rem; background: #0E0C0B; border: 1px solid rgba(240,237,230,0.4); border-radius: 2px; color: #F2EFE9; font-family: var(--font-special-elite, 'Special Elite', cursive); font-size: 1.05rem; letter-spacing: 0.01em; transition: border-color 0.2s ease, background 0.2s ease; } .ds-lit-field::placeholder { color: rgba(240,237,230,0.5); } .ds-lit-field:focus { outline: none; border-color: #FF1111; background: #161413; } .ds-lit-field:focus-visible { outline: 2px solid #FF1111; outline-offset: 2px; }"
+      "css": ".ds-lit-label { display: flex; flex-direction: column; gap: 0.5rem; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.78rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255, 255, 255,0.62); } .ds-lit-field { width: 100%; box-sizing: border-box; min-height: 2.75rem; padding: 0.85rem 0.95rem; background: #0E0E0E; border: 1px solid rgba(255, 255, 255,0.4); border-radius: 2px; color: #FFFFFF; font-family: var(--font-special-elite, 'Special Elite', cursive); font-size: 1.05rem; letter-spacing: 0.01em; transition: border-color 0.2s ease, background 0.2s ease; } .ds-lit-field::placeholder { color: rgba(255, 255, 255,0.5); } .ds-lit-field:focus { outline: none; border-color: #F11000; background: #161616; } .ds-lit-field:focus-visible { outline: 2px solid #F11000; outline-offset: 2px; }"
     },
     {
       "name": "Fact",
@@ -99,7 +99,7 @@
       "refersTo": "band-accent",
       "description": "A figure in a facts band: poster-scale Bebas number over a mono label.",
       "html": "<div class=\"ds-fact\"><span class=\"ds-fact-figure\">1<span class=\"ds-red\">200</span></span><span class=\"ds-fact-label\">Developers in one mill</span></div>",
-      "css": ".ds-fact { display: flex; flex-direction: column; gap: 0.9rem; background: #050505; } .ds-fact-figure { font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(3.4rem, 10vw, 9.5rem); line-height: 0.82; letter-spacing: 0.005em; color: #F2EFE9; font-variant-numeric: tabular-nums; } .ds-red { color: #FF1111; } .ds-fact-label { font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(240,237,230,0.6); line-height: 1.5; }"
+      "css": ".ds-fact { display: flex; flex-direction: column; gap: 0.9rem; background: #000000; } .ds-fact-figure { font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(3.4rem, 10vw, 9.5rem); line-height: 0.82; letter-spacing: 0.005em; color: #FFFFFF; font-variant-numeric: tabular-nums; } .ds-red { color: #F11000; } .ds-fact-label { font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 255, 255,0.6); line-height: 1.5; }"
     },
     {
       "name": "Accent Band (Closer)",
@@ -107,7 +107,7 @@
       "refersTo": "band-accent",
       "description": "Red as a field. At most once per page, for the thing the page wants the visitor to do. Controls invert; hierarchy comes from size, never from dimming.",
       "html": "<section class=\"ds-band-accent\"><p class=\"ds-band-eyebrow\">October 30, 2026 · Uhelný Mlýn</p><h2 class=\"ds-band-title\">Don't miss the last train.</h2><p class=\"ds-band-note\">Tickets are limited by the size of the building, not by ambition.</p><a class=\"ds-band-btn\" href=\"#\">Get a ticket →</a></section>",
-      "css": ".ds-band-accent { background: #CC0000; color: #F7EFE6; padding: 4rem 3rem; display: flex; flex-direction: column; gap: 1.5rem; } .ds-band-eyebrow { margin: 0; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.78rem; letter-spacing: 0.28em; text-transform: uppercase; } .ds-band-title { margin: 0; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(2.9rem, 8vw, 7rem); line-height: 0.84; letter-spacing: 0.005em; text-transform: uppercase; font-weight: 400; } .ds-band-note { margin: 0; max-width: 34ch; font-family: var(--font-special-elite, 'Special Elite', cursive); font-size: clamp(1.2rem, 1.6vw, 1.5rem); line-height: 1.6; } .ds-band-btn { align-self: flex-start; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; color: #1A0000; background: #F7EFE6; border: 1px solid #F7EFE6; border-radius: 2px; padding: 1.25rem 2.8rem; text-decoration: none; transition: background 0.2s ease, box-shadow 0.2s ease; } .ds-band-btn:hover { background: #FFFFFF; border-color: #FFFFFF; box-shadow: 0 12px 30px rgba(0,0,0,0.28); } .ds-band-btn:focus-visible { outline: 2px solid #F7EFE6; outline-offset: 3px; }"
+      "css": ".ds-band-accent { background: #F11000; color: #000000; padding: 4rem 3rem; display: flex; flex-direction: column; gap: 1.5rem; } .ds-band-eyebrow { margin: 0; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.78rem; letter-spacing: 0.28em; text-transform: uppercase; } .ds-band-title { margin: 0; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(2.9rem, 8vw, 7rem); line-height: 0.84; letter-spacing: 0.005em; text-transform: uppercase; font-weight: 400; } .ds-band-note { margin: 0; max-width: 34ch; font-family: var(--font-special-elite, 'Special Elite', cursive); font-size: clamp(1.2rem, 1.6vw, 1.5rem); line-height: 1.6; } .ds-band-btn { align-self: flex-start; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; color: #FFFFFF; background: #000000; border: 1px solid #000000; border-radius: 2px; padding: 1.25rem 2.8rem; text-decoration: none; transition: background 0.2s ease, box-shadow 0.2s ease; } .ds-band-btn:hover { background: #FFFFFF; border-color: #FFFFFF; box-shadow: 0 12px 30px rgba(0,0,0,0.28); } .ds-band-btn:focus-visible { outline: 2px solid #000000; outline-offset: 3px; }"
     }
   ],
   "narrative": {
@@ -122,8 +122,8 @@
       "No icon library; glyphs are text"
     ],
     "rules": [
-      { "name": "The Red Is Never Small Text Rule", "body": "#CC0000 on #050505 is ~3.3:1. It may be a fill, large display type or a rule, never body, label, meta or error text; the focus ring is #FF1111.", "section": "colors" },
-      { "name": "The Size Not Dimming Rule", "body": "On the red field, hierarchy comes from size. Ink is #F7EFE6 at full opacity; 85% cream is for control boundaries only.", "section": "colors" },
+      { "name": "The Red Is Evidence Rule", "body": "Brand manual v1.0: three colours, #000000, #FFFFFF, #F11000. Red marks details (a dot, 1-2 headline words, the year, CTA words) and, as a large area, only red bands, title bars and primary CTA fills. Never running text, never a wash, never another accent hue.", "section": "colors" },
+      { "name": "The Size Not Dimming Rule", "body": "On the red field, hierarchy comes from size. Ink is #000000 at full opacity (4.8:1 on #F11000); 85% black is for control boundaries only; white only for large type (4.4:1).", "section": "colors" },
       { "name": "The One Display Rule", "body": "One --fs-display element per page. Sections run at --fs-h2.", "section": "typography" },
       { "name": "The One Red Word Rule", "body": "The red accent word is spent once per page, on its h1 (SubpageHero title, home statement, invite title). Section heads and every Closer title are plain cream.", "section": "typography" },
       { "name": "The No Fake Styles Rule", "body": "font-synthesis: none. One weight per face and no italic, so prose emphasis is ink (strong steps up to --color-text). Czech letters Special Elite lacks fall to JetBrains Mono.", "section": "typography" },
@@ -141,7 +141,7 @@
     ],
     "donts": [
       "Don't add a fourth font, an icon package, Tailwind or CSS-in-JS.",
-      "Don't put #CC0000 on small text or use --color-error as an accent.",
+      "Don't set paragraphs in #F11000, add a second red or any other accent hue, or use --color-error as an accent.",
       "Don't add rules, boxes or opacity 'inactive' states to a list.",
       "Don't paint the reach field on :focus; focus draws a ring.",
       "Don't introduce a prefers-color-scheme block for a single component.",

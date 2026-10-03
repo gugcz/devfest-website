@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import logoUrl from '../assets/logo.png?url';
+// Mono white: the manual's only logo version on a red field.
+import logoUrl from '../assets/logo-mono-white.png?url';
 import samplePortraitUrl from '../assets/sample-portrait.svg?url';
 import {
 	CARD_SIZE,
