@@ -458,11 +458,15 @@ Rules:
   view transition into a sheet; everything else moves only to show a change
   (a sheet opening, a row's field, the teaser dealing a new set via
   `.develop`). Anything `.js`-gated never hides content without that gate.
-- **[MUST] Nothing moves on its own except the home ticker and the
-  countdown.** The hero topic rotor and the 180s gallery marquee were
-  removed; the gallery is a strip the visitor scrolls (`.gallery-strip`,
-  focusable region, `scroll-snap: proximity`, fixed photo order — a shuffle
-  made snap jump to the moved photo).
+- **[MUST] Nothing moves on its own except the home hero's topic rotor, the
+  home ticker and the countdown.** The topics stay on the home page: the
+  rotor ("What we cover", hover/focus holds it, hidden on phones where the
+  ticker sits right under the hero) follows a one-line "A one-day conference
+  for developers." — that line is dropped at `min-width: 901px` and
+  `max-height: 760px` so the footing strip still clears the cookie banner.
+  The 180s gallery marquee was removed; the gallery is a strip the visitor
+  scrolls (`.gallery-strip`, focusable region, `scroll-snap: proximity`,
+  fixed photo order — a shuffle made snap jump to the moved photo).
 - **[MUST] Animate only `opacity` and `transform`.**
 - **[MUST] No `translateX` on the red reach field** (`BaseLayout.scss:934–938`);
   the pull belongs to the warm wash.

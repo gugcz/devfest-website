@@ -12,6 +12,7 @@ import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
 import { getActivePartnerTiers, getCommunityPartners, type Partner } from '../lib/partners';
 import { EVENT_TOPICS } from '../lib/ticker';
+import { TOPICS } from '../lib/topics';
 
 // Homepage "silver+" strip — one labelled row per tier, top tier first, so the
 // ladder reads the same here as it does on /partners (row scale steps down with
@@ -99,9 +100,26 @@ const facts = [
 				</p>
 
 				<!-- What the event IS, in plain words: the statement above never says
-				     "developer". It replaces a rotating topic slot — the ticker under
-				     the hero already runs every topic at display scale. -->
-				<p class="hero-sub">A one-day conference and festival for developers, built by the Prague community.</p>
+				     "developer". The topic rotor below then says what it covers. -->
+				<p class="hero-sub">A one-day conference for developers.</p>
+
+				<!-- The topic set as one rotating subject in a fixed slot, not five
+				     lines under the statement — the poster keeps its column, the
+				     set still covers all five. The full set stays in the DOM at
+				     all times for SEO and screen readers (`aria-label` on the
+				     group); the rotating slot itself is `aria-hidden` so the
+				     swap is never announced as a live-region update. Hover or
+				     focus on the group holds the current subject (SC 2.2.2);
+				     `prefers-reduced-motion` unstacks the slot into the static
+				     set below instead of starting the rotation. -->
+				<p class="topics-rotor" tabindex="0" role="group" aria-label={`What we cover: ${TOPICS.map((t) => t.name).join(', ')}`}>
+					<span class="topics-rotor-label" aria-hidden="true">What we cover</span>
+					<span class="topics-rotor-slot" data-rotor aria-hidden="true">
+						{TOPICS.map((t, i) => (
+							<span class={`topics-rotor-item${i === 0 ? ' is-active' : ''}`}>{t.name}</span>
+						))}
+					</span>
+				</p>
 
 				<div class="hero-actions">
 					<a href="#tickets" class="btn-primary">Get tickets</a>
@@ -277,3 +295,51 @@ const facts = [
 <style lang="scss">
 	@use './index';
 </style>
+
+<script>
+	// The topic rotor. `prefers-reduced-motion` is checked once here — the
+	// stylesheet already unstacks the slot into the full static set for that
+	// visitor, so the loop below simply never starts and that static reading
+	// is the deployed one, not a fallback.
+	let rotorInterval: ReturnType<typeof setInterval> | undefined;
+
+	document.addEventListener('astro:before-swap', () => {
+		clearInterval(rotorInterval);
+	});
+
+	document.addEventListener('astro:page-load', () => {
+		clearInterval(rotorInterval);
+		const slot = document.querySelector<HTMLElement>('[data-rotor]');
+		if (!slot) return;
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+		const items = [...slot.children] as HTMLElement[];
+		let i = 0;
+		// SC 2.2.2 (Pause, Stop, Hide): the rotation runs longer than 5s, so it
+		// must be stoppable. Pointer over the group or keyboard focus inside it
+		// holds the current subject; there is no separate visible control, so
+		// the group itself carries the focus ring.
+		let paused = false;
+		const group = slot.closest<HTMLElement>('.topics-rotor');
+		group?.addEventListener('mouseenter', () => { paused = true; });
+		group?.addEventListener('mouseleave', () => { paused = false; });
+		group?.addEventListener('focusin', () => { paused = true; });
+		group?.addEventListener('focusout', () => { paused = false; });
+
+		// Out, THEN in — never both at once. Cross-fading two names in one slot
+		// leaves both legible mid-swap, which reads as a rendering fault rather
+		// than a change.
+		rotorInterval = setInterval(() => {
+			if (paused) return;
+			const prev = items[i];
+			prev.classList.remove('is-active');
+			prev.classList.add('is-leaving');
+			i = (i + 1) % items.length;
+			const next = items[i];
+			setTimeout(() => {
+				prev.classList.remove('is-leaving');
+				next.classList.add('is-active');
+			}, 260);
+		}, 2600);
+	});
+</script>
