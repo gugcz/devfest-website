@@ -116,7 +116,12 @@ export default function Tickets() {
 				<EmptyState
 					action={hasEvent ? { href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true } : undefined}
 				>
-					<p>Subscribe above to be notified when tickets go on sale.</p>
+					<p>
+						<a href="#newsletter" className={s.footnoteLink}>
+							Join the newsletter
+						</a>{' '}
+						to hear when the first wave opens.
+					</p>
 				</EmptyState>
 			</section>
 		);
@@ -127,6 +132,7 @@ export default function Tickets() {
 	// sale, that paused wave has been superseded — it reads "Ended", not
 	// "Paused". See releaseStatus().
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
+	const hasCompanyVariant = releases.some((r) => releaseTitle(r).toLowerCase().includes('company funded'));
 
 	return (
 		<section id="tickets" className={`${sectionClass} rake`} aria-labelledby="tickets-heading">
@@ -266,8 +272,13 @@ export default function Tickets() {
 					Notify me when the next wave drops
 				</a>
 			</p>
+			{/* The two variant buttons differ only in who pays; without this line
+			    the higher "Company funded" price read as a different ticket, and
+			    the explanation lived only in the FAQ. Same footnote as the
+			    invoice route, because that is the next question it raises. */}
 			<p className={s.footnote}>
-				Buying for a company?{' '}
+				{hasCompanyVariant && <>Company funded is the same ticket, priced for when your employer pays. </>}
+				Need to pay by bank transfer?{' '}
 				<a href="/invoice" className={s.footnoteLink}>
 					Request a company invoice
 				</a>

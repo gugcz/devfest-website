@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Desk from '../components/Desk.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 
 ---
 
@@ -21,8 +19,6 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			photo={false}
 		/>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 
 		<!-- CARDS -->
 		<section class="band band--lit contact-body" aria-labelledby="desks-heading">
@@ -32,7 +28,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 				     to pick when unsure) now closes the hero lede. -->
 				<h2 id="desks-heading" class="sr-only">Contact desks</h2>
 
-				<div class="field contact-grid reveal">
+				<div class="field contact-grid">
 					<Desk
 						title="General questions"
 						titleId="desk-general"
@@ -57,7 +53,7 @@ import { EVENT_TOPICS } from '../lib/ticker';
 		</section>
 
 		<Closer
-			titleHtml={'Just come<br />to the <span class="red">show</span>.'}
+			titleHtml={'Just come<br />to the show.'}
 			note="Tickets are on sale now, and the newsletter carries every announcement first."
 			tone="accent"
 			titleId="contact-closer"

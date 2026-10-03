@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import NextStep from '../components/NextStep.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 
 // A dead URL is still a visitor who wanted something specific. The page used
 // to state the fault and offer one link home; it now offers the routes people
@@ -58,24 +56,22 @@ const STEPS = [
 			photo={false}
 		/>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 		<section class="band band--lit" aria-labelledby="notfound-next-heading">
 			<div class="band-inner">
 				<header class="head-stack">
 					<h2 id="notfound-next-heading" class="display head-title">
-						Try one of <span class="red">these.</span>
+						Try one of these.
 					</h2>
 				</header>
 
-				<ul class="field reveal">
+				<ul class="field">
 					{STEPS.map((step) => <NextStep {...step} />)}
 				</ul>
 			</div>
 		</section>
 
 		<Closer
-			titleHtml={'Back to the<br /><span class="red">top</span>.'}
+			titleHtml={'Back to the<br />top.'}
 			note="The homepage carries the date, the venue, the waves and the newsletter."
 			tone="accent"
 			titleId="notfound-closer"

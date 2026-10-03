@@ -22,8 +22,7 @@
 	}
 }
 
-// Carries `--i` for the develop stagger; exists so the index can be set without
-// styling the bare <li>.
+// The grid cell, so the bare <li> stays unstyled.
 .cell {
 	display: flex;
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-27T12:00:00.000Z",
+  "generatedAt": "2026-10-03T14:00:00.000Z",
   "title": "Design System: DevFest.cz 2026",
   "extensions": {
     "colorMeta": {
@@ -40,8 +40,8 @@
       { "name": "control", "value": "0.2s ease", "purpose": "The standard control transition: buttons, inputs, links." },
       { "name": "field", "value": "0.28s ease", "purpose": "The row reach field colour and opacity fade." },
       { "name": "arrive", "value": "0.32s cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The house arrive curve: sheet entry, row pull, staged fades." },
-      { "name": "reveal", "value": "0.6s cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Scroll reveal only; JS-gated, reduced-motion disabled." },
-      { "name": "marquee", "value": "46s linear infinite", "purpose": "The Ticker band." }
+      { "name": "develop", "value": "0.6s ease", "purpose": "Stagger for a set that just changed (the speakers teaser). No scroll reveal, no per-section entrance." },
+      { "name": "marquee", "value": "46s linear infinite", "purpose": "The Ticker band under the home hero (home only)." }
     ],
     "breakpoints": [
       { "name": "narrowest-phone", "value": "380px" },
@@ -125,6 +125,10 @@
       { "name": "The Red Is Never Small Text Rule", "body": "#CC0000 on #050505 is ~3.3:1. It may be a fill, large display type or a rule, never body, label, meta or error text; the focus ring is #FF1111.", "section": "colors" },
       { "name": "The Size Not Dimming Rule", "body": "On the red field, hierarchy comes from size. Ink is #F7EFE6 at full opacity; 85% cream is for control boundaries only.", "section": "colors" },
       { "name": "The One Display Rule", "body": "One --fs-display element per page. Sections run at --fs-h2.", "section": "typography" },
+      { "name": "The One Red Word Rule", "body": "The red accent word is spent once per page, on its h1 (SubpageHero title, home statement, invite title). Section heads and every Closer title are plain cream.", "section": "typography" },
+      { "name": "The No Fake Styles Rule", "body": "font-synthesis: none. One weight per face and no italic, so prose emphasis is ink (strong steps up to --color-text). Czech letters Special Elite lacks fall to JetBrains Mono.", "section": "typography" },
+      { "name": "The No Decorative Lines Rule", "body": "A hairline only where it carries structure: the agenda grid, data tables, tile grids, control boundaries, link underlines, progress spines, the cookie banner edge. No section dividers, no rule under a head or above a fact strip, no ruled readouts, no left-edge lines.", "section": "elevation" },
+      { "name": "The Motion Answers A Change Rule", "body": "No scroll reveal, no per-section entrance. The home hero entry and the portrait view transition are the orchestrated moments; only the home hero's topic rotor, the home ticker and the countdown move on their own.", "section": "motion" },
       { "name": "The Recipe Rule", "body": "Every font declaration goes through _type.scss (mono, display, row-title, prose, hairline-link); every font-size through the ramp.", "section": "typography" },
       { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat. The only shadows are the CTA hover glow and the print mount; red text is flat.", "section": "elevation" }
     ],

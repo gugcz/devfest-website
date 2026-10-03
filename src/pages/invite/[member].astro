@@ -9,10 +9,8 @@ import { getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Ticker from '../../components/Ticker.astro';
 import Closer from '../../components/Closer.astro';
 import InviteCta from '../../components/InviteCta.tsx';
-import { EVENT_TOPICS } from '../../lib/ticker';
 import { INVITE_EVENT, inviteCopy } from '../../lib/invite';
 import { ogCardVersion } from '../../lib/og-version';
 
@@ -127,8 +125,6 @@ const color = await plate(member.photoColor ?? member.photo);
 			</div>
 		</section>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 		<section class="band" aria-label="From the invitation">
 			<div class="band-inner invite-note">
 				<p>{copy.body[1]} {copy.body[2]}</p>
@@ -143,7 +139,7 @@ const color = await plate(member.photoColor ?? member.photo);
 
 		<Closer
 			eyebrow="The list closes"
-			titleHtml={'Take the <span class="red">ticket.</span>'}
+			titleHtml={'Take the ticket.'}
 			note="Waves move and the room is one day only."
 			tone="accent"
 			actions={[

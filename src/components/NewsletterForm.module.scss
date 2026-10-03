@@ -46,7 +46,6 @@
 
 	&::placeholder {
 		color: var(--ink-meta);
-		font-style: italic;
 	}
 
 	&:focus {
@@ -119,7 +118,6 @@
 
 .message {
 	@include prose(var(--fs-ui));
-	font-style: italic;
 	letter-spacing: 0.02em;
 	color: var(--color-error);
 	margin-top: 0.8rem;

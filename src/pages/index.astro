@@ -172,9 +172,9 @@ const facts = [
 
 		<!-- THE FACTS — what the event IS, in figures instead of a paragraph -->
 		<section id="facts" aria-labelledby="facts-title">
-			<div class="u-container facts-inner reveal">
+			<div class="u-container facts-inner">
 				<h2 id="facts-title" class="facts-head display">
-					One day.<br />One <span class="red">mill.</span>
+					One day.<br />One mill.
 				</h2>
 
 				<dl class="facts">
@@ -203,8 +203,8 @@ const facts = [
 		<!-- PARTNERS — quiet silver+ strip, one row per tier, community last; media partners live on /partners only -->
 		{homeRows.length > 0 && (
 			<section id="partners" aria-labelledby="partners-title">
-				<div class="partners-inner reveal">
-					<p id="partners-title" class="eyebrow partners-eyebrow">Accomplices<span class="sr-only"> — partners</span></p>
+				<div class="partners-inner">
+					<p id="partners-title" class="eyebrow partners-eyebrow">Partners</p>
 
 					<div class="partners-tiers">
 						{homeRows.map((tier) => (
@@ -236,33 +236,35 @@ const facts = [
 
 		<!-- GALLERY — photos from past editions -->
 		<section id="gallery" aria-labelledby="gallery-title">
-			<div class="u-container head-split gallery-head reveal">
-				<h2 id="gallery-title" class="display head-title">Look <span class="red">back.</span></h2>
+			<div class="u-container head-split gallery-head">
+				<h2 id="gallery-title" class="display head-title">Look back.</h2>
 				<p class="head-note">
 					Past editions of DevFest.cz &mdash; and the community that makes them.
 				</p>
 			</div>
 
-			<div class="gallery-marquee" aria-hidden="true">
-				<div class="gallery-track">
-					{Array.from({ length: 2 }).map(() => (
-						<>
-							{Array.from({ length: 22 }, (_, i) => {
-								const n = String(i + 1).padStart(2, '0');
-								return (
-									<img
-										src={`/gallery/devfest-2025-${n}.webp`}
-										alt=""
-										loading="lazy"
-										decoding="async"
-										width="1080"
-										height="720"
-									/>
-								);
-							})}
-						</>
-					))}
-				</div>
+			<!-- A strip the visitor moves, not a 180s marquee: the photos hold
+			     still until someone scrolls them (wheel, swipe, or arrow keys once
+			     the strip has focus). One set of 22 in a fixed order, not a doubled
+			     loop of 44: a shuffle made scroll-snap re-snap to the moved photo. -->
+			<div class="gallery-strip" role="region" aria-label="Photos from DevFest.cz 2025" tabindex="0">
+				<ul class="gallery-track" role="list">
+					{Array.from({ length: 22 }, (_, i) => {
+						const n = String(i + 1).padStart(2, '0');
+						return (
+							<li>
+								<img
+									src={`/gallery/devfest-2025-${n}.webp`}
+									alt=""
+									loading="lazy"
+									decoding="async"
+									width="1080"
+									height="720"
+								/>
+							</li>
+						);
+					})}
+				</ul>
 			</div>
 		</section>
 
@@ -271,9 +273,9 @@ const facts = [
 		<!-- `anchor-target`: the hero's "Stay in the loop" jumps here, and the
 		     band opens with `--section-y` of air a jump would otherwise land on. -->
 		<section id="newsletter" class="band band--accent anchor-target">
-			<div class="band-inner newsletter-inner reveal">
+			<div class="band-inner newsletter-inner">
 				<div class="newsletter-head">
-					<h2 class="newsletter-title display">Follow the<br /><span class="red">leads.</span></h2>
+					<h2 class="newsletter-title display">Follow the<br />leads.</h2>
 					<p class="newsletter-lede">
 						Lineup drops, wave changes, and the odd thing we can&rsquo;t announce yet.
 					</p>
@@ -291,21 +293,6 @@ const facts = [
 </style>
 
 <script>
-	// Re-bind on `astro:page-load`, never DOMContentLoaded: bundled module scripts
-	// run once per document and <ClientRouter /> swaps the page.
-	document.addEventListener('astro:page-load', () => {
-		const track = document.querySelector<HTMLElement>('.gallery-track');
-		if (!track) return;
-		const all = Array.from(track.children) as HTMLElement[];
-		const unique = all.slice(0, all.length / 2);
-		for (let i = unique.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[unique[i], unique[j]] = [unique[j], unique[i]];
-		}
-		const shuffled = [...unique, ...unique.map((n) => n.cloneNode(true) as HTMLElement)];
-		track.replaceChildren(...shuffled);
-	});
-
 	// The topic rotor. `prefers-reduced-motion` is checked once here — the
 	// stylesheet already unstacks the slot into the full static set for that
 	// visitor, so the loop below simply never starts and that static reading

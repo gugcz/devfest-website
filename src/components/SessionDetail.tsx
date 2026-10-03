@@ -30,10 +30,15 @@ function speakerFromRef(ref: SessionSpeakerRef): Speaker {
  * behaviour lives in `Sheet`; a speaker row opens `SpeakerDetail` on top. */
 export default function SessionDetail({
 	session,
+	when,
 	speakersById,
 	onClose,
 }: {
 	session: Session;
+	/** `10:00–10:45, Main Hall` from the caller, which knows the room names;
+	 * replaces the bare room on the meta line. The agenda omits it — its grid
+	 * already places the talk in time and room. */
+	when?: string;
 	speakersById: Record<string, Speaker>;
 	onClose: () => void;
 }) {
@@ -67,9 +72,13 @@ export default function SessionDetail({
 					    second row of bordered chips under the room — a pill is a
 					    different product's vocabulary and the redesign took them off
 					    every other surface already. */}
-					{(session.room || tagCategories.length > 0) && (
+					{(when || session.room || tagCategories.length > 0) && (
 						<ul className={s.meta}>
-							{session.room && <li className={s.metaItem}>{session.room}</li>}
+							{when ? (
+								<li className={s.metaItem}>{when}</li>
+							) : (
+								session.room && <li className={s.metaItem}>{session.room}</li>
+							)}
 							{tagCategories.flatMap((category) =>
 								category.values.map((value) => (
 									<li key={`${category.name}-${value}`} className={s.metaItem}>

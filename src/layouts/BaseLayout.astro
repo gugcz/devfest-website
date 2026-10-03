@@ -219,16 +219,16 @@ const jsonLd = JSON.stringify(
 		<meta name="color-scheme" content="dark" />
 		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
 		<!--
-			Mark JS available ASAP so scroll-reveal elements only start hidden
-			when we can actually reveal them — no-JS / crawlers get the
+			Mark JS available ASAP so `.develop` only animates when a script is
+			there to drive the change it marks — no-JS / crawlers get the
 			fully-visible render.
 		-->
 		<!--
 			ClientRouter's swap rebuilds <html>'s attributes from the incoming
 			document, which never carries `js` (the class is added by script, and
 			the fetched document's scripts don't run). Re-apply it in
-			`astro:after-swap` — before paint, so `.js .reveal` never flashes its
-			no-JS (always-visible) state. The listener lives on `document`, which
+			`astro:after-swap` — before paint, so a `.js`-gated rule never flips
+			mid-navigation. The listener lives on `document`, which
 			survives navigations, so registering it once here is enough.
 		-->
 		<script is:inline>
@@ -367,46 +367,12 @@ const jsonLd = JSON.stringify(
 			// `document`, which survives the swap.
 			initCampaignLinks();
 
-			// Cinematic atmosphere behaviours — all degrade gracefully and respect
-			// reduced-motion (CSS already neutralises the visual side).
-			//
 			// Re-bind on `astro:page-load`, never DOMContentLoaded: bundled module
 			// scripts run once per document and <ClientRouter /> swaps the page.
 			document.addEventListener('astro:page-load', () => {
 				// An anchor jump is resolved against a page that hasn't finished
 				// loading its islands; hold the landing while it settles.
 				keepAnchorLanded();
-
-				const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-				// 1) Scroll reveal — fade/rise sections as they enter the frame.
-				const reveals = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
-				if (!reveals.length) return;
-
-				if (reduce || !('IntersectionObserver' in window)) {
-					reveals.forEach((el) => el.classList.add('is-visible'));
-					return;
-				}
-
-				const io = new IntersectionObserver(
-					(entries, obs) => {
-						for (const e of entries) {
-							if (e.isIntersecting) {
-								e.target.classList.add('is-visible');
-								obs.unobserve(e.target);
-							}
-						}
-					},
-					// threshold 0, not 0.12: a tall mobile .reveal grid never reaches
-					// a 12% ratio and stays invisible. Positive bottom margin reveals
-					// a section ~15% of viewport BEFORE the fold, so it reads as
-					// already there.
-					{ rootMargin: '0px 0px 15% 0px', threshold: 0 }
-				);
-				reveals.forEach((el) => io.observe(el));
-				// Drop the observer before the next swap so it doesn't keep the
-				// outgoing document's elements alive.
-				document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
 			});
 		</script>
 	</body>

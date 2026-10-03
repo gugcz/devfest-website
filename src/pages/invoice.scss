@@ -9,7 +9,6 @@
 	padding: var(--section-y) var(--gutter) var(--section-y);
 	// Pool of light dropped behind the billing desk — a lit noir scene.
 	background: var(--lit), var(--color-bg);
-	border-top: 1px solid var(--rule-soft);
 }
 
 .invoice-inner {
@@ -60,7 +59,6 @@
 
 .intro-note {
 	@include prose(var(--fs-ui));
-	font-style: italic;
 	color: var(--ink-dim);
 	margin: 0;
 }

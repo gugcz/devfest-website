@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import { fetchOg } from '../lib/og';
-import { EVENT_TOPICS } from '../lib/ticker';
 
 // A media mention is just a URL. Outlet, title, image, description and date
 // are all read from the article's Open Graph tags at build time. Any field set
@@ -97,8 +95,6 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 			titleId="press-title"
 		/>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 
 		<!-- IN THE PRESS + DESK + PRESS KIT -->
 		<section class="band band--lit" aria-label="Press coverage">
@@ -110,7 +106,7 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 					<h2 id="coverage-heading" class="sr-only">Coverage</h2>
 
 					{mediaCoverage.length > 0 ? (
-						<ul class="field coverage-list reveal">
+						<ul class="field coverage-list">
 							{mediaCoverage.map((m) => (
 								<li class="coverage-row">
 									<a class:list={['field-row field-row--link coverage-card', { 'coverage-card--bare': !m.image }]} href={m.href} target="_blank" rel="noopener noreferrer">
@@ -150,7 +146,7 @@ const mediaCoverage: ResolvedMention[] = await Promise.all(
 
 		<Closer
 			eyebrow="Press kit"
-			titleHtml={'Take the<br /><span class="red">assets</span>.'}
+			titleHtml={'Take the<br />assets.'}
 			note="Logos and wordmarks for the 2026 edition, ready to drop into a story."
 			tone="accent"
 			titleId="press-closer"

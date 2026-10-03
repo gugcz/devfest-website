@@ -98,12 +98,10 @@ function SpeakerCard({
 	morphing: boolean;
 }) {
 	return (
-		// `--i` staggers the develop animation; see the `.develop` rules in
-		// BaseLayout.scss.
-		<li className={s.cell} style={{ '--i': index } as React.CSSProperties}>
+		<li className={s.cell}>
 			<button
 				type="button"
-				className={`${print.frame} ${s.card} develop`}
+				className={`${print.frame} ${s.card}`}
 				onClick={() => onOpen(speaker)}
 				aria-label={`View ${speaker.fullName}'s profile`}
 				style={
@@ -156,8 +154,8 @@ export function SpeakerLineup({
 			))}
 			{/* Closes the sheet on an unexposed frame so the lineup never reads as
 			    final. */}
-			<li className={s.cell} style={{ '--i': speakers.length } as React.CSSProperties}>
-				<div className={`${s.moreCard} develop`}>
+			<li className={s.cell}>
+				<div className={s.moreCard}>
 					{/* The same mount as a real print, so it reads as an unexposed frame and
 					    not as an outlined empty box among borderless photographs. No
 					    `.frame` parent, so its brackets never open. */}

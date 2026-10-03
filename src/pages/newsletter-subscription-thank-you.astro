@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import NextStep from '../components/NextStep.astro';
 import Closer from '../components/Closer.astro';
-import { EVENT_TOPICS } from '../lib/ticker';
 
 // The page used to dead-end: one line of confirmation and a link back to the
 // homepage the visitor had just come from. Someone who has just handed over
@@ -47,24 +45,22 @@ const STEPS = [
 			photo={false}
 		/>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 		<section class="band band--lit" aria-labelledby="newsletter-next-heading">
 			<div class="band-inner">
 				<header class="head-stack">
 					<h2 id="newsletter-next-heading" class="display head-title">
-						While you <span class="red">wait.</span>
+						While you wait.
 					</h2>
 				</header>
 
-				<ul class="field reveal">
+				<ul class="field">
 					{STEPS.map((step) => <NextStep {...step} />)}
 				</ul>
 			</div>
 		</section>
 
 		<Closer
-			titleHtml={'Come for the<br /><span class="red">people</span>.'}
+			titleHtml={'Come for the<br />people.'}
 			note="The lineup is what those mails will be about. Here is who is confirmed so far."
 			tone="accent"
 			titleId="newsletter-thanks-closer"

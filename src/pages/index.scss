@@ -12,8 +12,10 @@
 	justify-content: flex-end;
 	overflow: hidden;
 	// 5.5rem clears the 71px header bar; the bar is a scrim and the photo runs under it.
-	padding: calc(5.5rem + env(safe-area-inset-top)) var(--gutter) 0;
-	border-bottom: 1px solid var(--rule-soft);
+	// The bottom inset is the cookie banner while it is up (`--consent-h`, set
+	// by CookieBanner.astro): the content is bottom-set, so it rises into the
+	// empty sky above instead of sliding under the banner.
+	padding: calc(5.5rem + env(safe-area-inset-top)) var(--gutter) var(--consent-h, 0px);
 }
 
 .hero-inner {
@@ -238,7 +240,8 @@
 }
 
 /* ---- footing strip ---- */
-// Full-bleed row along the base of the hero, one hairline above.
+// Full-bleed row along the base of the hero. No hairline above it: the gap
+// under the actions sets it apart.
 .hero-foot {
 	position: relative;
 	z-index: 10;
@@ -251,7 +254,6 @@
 	gap: 2rem 3rem;
 	flex-wrap: wrap;
 	padding: clamp(0.85rem, 1.6vh, 1.6rem) 0 calc(clamp(0.85rem, 1.6vh, 1.6rem) + env(safe-area-inset-bottom));
-	border-top: 1px solid var(--rule);
 	animation: fadeInUp 0.9s ease 0.7s both;
 }
 
@@ -366,6 +368,15 @@
 	}
 }
 
+// Short laptop windows (a 1280x720 or 1366x768 screen leaves ~650-720px).
+// With the cookie banner up the footing strip needs the last ~15px the
+// pause above the rotor holds; on a tall window the pause stays poster-size.
+@media (min-width: 901px) and (max-height: 760px) {
+	.topics-rotor {
+		margin-top: 3svh;
+	}
+}
+
 /* ===================== FACTS ===================== */
 // Figures instead of a paragraph, on an asymmetric split.
 #facts {
@@ -440,49 +451,46 @@
 	padding: var(--section-y-wide) 0 var(--section-y);
 	background: var(--color-bg);
 	overflow: hidden;
-	border-top: 1px solid var(--rule-soft);
 }
 
 // Layout, title and lede come from `.head-split`; only the stacking is local, so
-// the head sits above the marquee starting under it.
+// the head sits above the strip starting under it.
 .gallery-head {
 	position: relative;
 	z-index: 2;
 }
 
-.gallery-marquee {
+// A strip the visitor scrolls. Starts on the content column (gutter inset),
+// runs off the right edge so it reads as "more this way".
+.gallery-strip {
 	position: relative;
 	z-index: 2;
-	width: 100%;
-	overflow: hidden;
-	padding: 0.5rem 0;
-	mask-image: linear-gradient(
-		to right,
-		transparent 0%,
-		#000 6%,
-		#000 94%,
-		transparent 100%
-	);
-	-webkit-mask-image: linear-gradient(
-		to right,
-		transparent 0%,
-		#000 6%,
-		#000 94%,
-		transparent 100%
-	);
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x proximity;
+	scroll-padding-inline: var(--gutter);
+	padding: 0.5rem var(--gutter) 1.25rem;
+	// The bar is part of the design: a thin track with a dim cream thumb.
+	scrollbar-width: thin;
+	scrollbar-color: var(--ink-faint) transparent;
 
-	&:hover .gallery-track,
-	&:focus-within .gallery-track {
-		animation-play-state: paused;
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: calc(-1 * var(--focus-gap-tight));
 	}
 }
 
 .gallery-track {
+	list-style: none;
+	margin: 0;
+	padding: 0;
 	display: flex;
 	gap: 1.25rem;
 	width: max-content;
-	animation: gallery-scroll 180s linear infinite;
-	will-change: transform;
+
+	li {
+		scroll-snap-align: start;
+	}
 }
 
 // Flat B&W press photos that develop into colour on hover. No frame per photo.
@@ -496,15 +504,9 @@
 	filter: grayscale(1) contrast(1.06) brightness(0.78);
 	transition: filter 0.6s ease;
 
-	&:hover,
-	&:focus-visible {
+	&:hover {
 		filter: grayscale(0) contrast(1.02) brightness(1);
 	}
-}
-
-@keyframes gallery-scroll {
-	from { transform: translateX(0); }
-	to   { transform: translateX(-50%); }
 }
 
 /* ===================== CALL FOR SPEAKERS ===================== */
@@ -515,7 +517,6 @@
 	width: 100%;
 	overflow: hidden;
 	background: var(--color-bg);
-	border-top: 1px solid var(--rule-soft);
 }
 
 .speakers-inner {
@@ -587,7 +588,6 @@
 	padding: var(--section-y-tight) var(--gutter);
 	width: 100%;
 	background: var(--color-bg);
-	border-top: 1px solid var(--rule-soft);
 }
 
 // Left-set, like every other section on the page.
@@ -775,7 +775,7 @@ $strip-grid-tiers: ('gold', 'silver', 'community');
 		// svh, not dvh: svh is the height with the URL bar SHOWN; dvh would
 		// clip the strip when the bar comes back.
 		min-height: 100svh;
-		padding: calc(4.5rem + env(safe-area-inset-top)) var(--gutter) 0;
+		padding: calc(4.5rem + env(safe-area-inset-top)) var(--gutter) var(--consent-h, 0px);
 	}
 
 	.hero-statement {
@@ -802,7 +802,7 @@ $strip-grid-tiers: ('gold', 'silver', 'community');
 
 @media (max-width: 600px) {
 	.hero-inner {
-		// Bottom inset is the air above the footing hairline; it takes part of
+		// Bottom inset is the air above the footing strip; it takes part of
 		// the row the 2×2 strip gave back, so the buttons no longer sit on it.
 		padding-block: clamp(0.5rem, 1.5vh, 1.25rem) clamp(1.25rem, 4.5vh, 2.75rem);
 		// Sit the block on the footing strip. Centred, a tall phone (390x844)
@@ -994,10 +994,7 @@ $strip-grid-tiers: ('gold', 'silver', 'community');
 	.hero-statement,
 	.topics-rotor,
 	.hero-actions,
-	.hero-foot,
-	.gallery-track { animation: none; }
+	.hero-foot { animation: none; }
 
-	.gallery-marquee {
-		overflow-x: auto;
-	}
+	.gallery-track img { transition: none; }
 }

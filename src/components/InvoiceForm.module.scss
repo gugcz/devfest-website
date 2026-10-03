@@ -50,7 +50,6 @@
 
 	&::placeholder {
 		color: var(--ink-muted);
-		font-style: italic;
 	}
 
 	// An invalid field used to be pixel-identical to a valid one — nine
@@ -97,7 +96,7 @@
 	@include prose(var(--fs-body-lg));
 	color: var(--color-text);
 	margin: 0;
-	// A readout, not a panel: ruled top and bottom, lit from the left. It must never
+	// A readout, not a panel: lit from the left, no rules. It must never
 	// lift when the pointer crosses it — nothing here is interactive.
 	padding: 1.2rem 0;
 	background: linear-gradient(
@@ -107,11 +106,9 @@
 		transparent 84%
 	);
 	border: 0;
-	border-top: 1px solid var(--rule);
-	border-bottom: 1px solid var(--rule);
 	border-radius: 0;
 
-	strong {
+	.estimateFigure {
 		position: relative;
 		z-index: 1;
 		font-family: var(--font-bebas-neue), sans-serif;
@@ -125,8 +122,11 @@
 	// middle of its own parenthesis and the total read as one long run of text.
 	display: block;
 	margin-top: 0.35rem;
-	font-style: italic;
-	font-size: var(--fs-label-lg);
+	// Upright: Special Elite ships no italic, so `italic` was the browser's
+	// slanted fake. The size and the grey already set it apart from the total.
+	font-size: var(--fs-ui);
+	line-height: 1.6;
+	max-width: 62ch;
 	color: var(--color-grey);
 }
 
@@ -198,7 +198,6 @@
 
 .message {
 	@include prose(var(--fs-ui));
-	font-style: italic;
 	margin: 0;
 	min-height: 1.2em;
 	color: var(--ink-soft);
@@ -220,8 +219,6 @@
 		transparent 88%
 	);
 	border: 0;
-	border-top: 1px solid var(--rule-red);
-	border-bottom: 1px solid var(--rule);
 	border-radius: 0;
 }
 
@@ -240,8 +237,6 @@
 	color: var(--color-text);
 	margin: 0 0 1.2rem;
 	padding-bottom: 1.2rem;
-	// Editorial hairline divider under the confirmation head.
-	border-bottom: 1px solid var(--rule);
 }
 
 .successBody {

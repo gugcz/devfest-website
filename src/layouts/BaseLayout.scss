@@ -235,6 +235,11 @@ body {
 	background: var(--color-bg);
 	color: var(--color-text);
 	font-family: var(--font-special-elite), cursive;
+	// Every brand face ships one weight (JetBrains Mono two) and no italic, so
+	// a `<strong>` or `font-style: italic` was a browser-smeared fake: thickened
+	// typewriter strokes, a slanted Bebas. Hierarchy comes from size, case and
+	// ink instead — see `strong` below.
+	font-synthesis: none;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	// Inherited by everything. Under text-only zoom a long word (a Bebas
@@ -302,6 +307,14 @@ body {
 	outline: none;
 }
 
+// Emphasis is ink, not weight: with synthesis off, a bold run in Special Elite
+// or Bebas sets at the one weight there is, so it steps up to full cream from
+// the dimmer prose ink around it. JetBrains Mono still takes its real 500.
+strong,
+b {
+	color: var(--color-text);
+}
+
 // Visually hidden, but kept in the a11y tree + crawlable HTML.
 .sr-only {
 	position: absolute;
@@ -341,13 +354,16 @@ body {
 	text-wrap: balance;
 }
 
-// Accent word inside a display line. FLAT red — never a glow.
+// Accent word inside a display line. FLAT red — never a glow. Spent ONCE per
+// page, on its h1: a red final word on every section head and closer was the
+// same device thirty times, so no single one of them read as the loud one.
 .display .red,
 :where(h1, h2, h3) .red {
 	color: var(--color-accent-hot);
 }
 
-// Statement left, one supporting line right; `--ruled` closes it with a hairline.
+// Statement left, one supporting line right; `--ruled` adds the closing air a
+// hairline used to sit in (the line itself is gone — no decorative rules).
 .head-split {
 	display: grid;
 	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
@@ -358,7 +374,6 @@ body {
 
 .head-split--ruled {
 	padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
-	border-bottom: 1px solid var(--rule-soft);
 }
 
 // Sections run at --fs-h2; --fs-display is the ONE display element per page.
@@ -405,10 +420,10 @@ body {
 }
 
 // The one-column section head. Compose the title with `.display` + `.head-title`.
+// Closed by space, not a hairline.
 .head-stack {
 	margin-bottom: 4rem;
 	padding-bottom: 1.6rem;
-	border-bottom: 1px solid var(--rule-soft);
 }
 
 @media (max-width: 600px) {
@@ -460,10 +475,16 @@ body {
 	color: var(--on-accent);
 }
 
-// The subpage ground: a spotlight pool closed by a hairline at the top.
+// The subpage ground: a spotlight pool. No hairline at the top.
 .band--lit {
 	background: var(--lit), var(--color-bg);
-	border-top: 1px solid var(--rule-soft);
+}
+
+// Straight off a subpage hero the band opens on a cut, not a full beat: the
+// ticker that used to sit between them (and supply the pause) runs on the
+// home page only now.
+.subpage-hero + .band {
+	padding-top: var(--section-y-tight);
 }
 
 .band-inner {
@@ -479,7 +500,6 @@ body {
 // near-black #1A0000 3.42:1 (large text only). Hierarchy from SIZE, never dimming.
 .band--accent .eyebrow { color: var(--on-accent); }
 .band--accent .display { color: var(--on-accent); }
-.band--accent .display .red { color: var(--on-accent-ink); }
 
 .band--accent .btn-primary {
 	background: var(--on-accent);
@@ -592,9 +612,10 @@ body {
 	font-variant-numeric: tabular-nums;
 }
 
-.fact-figure .red { color: var(--color-accent-hot); }
-
 .fact-label {
+	// The figure reads first, the label under it ("11th" / "Edition…"). The
+	// <dt> has to come first in a <dl>, so the order is visual only.
+	order: 1;
 	@include mono(var(--fs-label-lg));
 	// 0.14em, not 0.2em: wider tracking breaks these labels onto two lines.
 	letter-spacing: 0.14em;
@@ -819,25 +840,16 @@ body {
 	z-index: 1;
 }
 
-// Scroll reveal, hidden only when JS is present, so a no-JS render is fully visible.
-.js .reveal {
-	opacity: 0;
-	transform: translateY(16px);
-	transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.js .reveal.is-visible {
-	opacity: 1;
-	transform: none;
-}
+// No scroll reveal: sections are simply there. A fade-and-rise on every band
+// was the same entrance seventeen times, and spent the page's motion before
+// anything happened. Motion answers a change instead.
 
-// Staggered fade; `--i` is set by the owning grid. Suppressed while a parent
-// `.reveal` is closed, or an Astro grid animates behind an opacity-0 parent.
+// Staggered fade for a set that has just CHANGED under the visitor (the
+// speakers teaser dealing its next four); `--i` is set by the owning grid.
+// Not a page-load entrance.
 .js .develop {
 	animation: print-fade 0.6s ease backwards;
 	animation-delay: calc(min(var(--i, 0), 10) * 55ms);
-}
-.js .reveal:not(.is-visible) .develop {
-	animation: none;
 }
 
 @keyframes print-fade {
@@ -900,7 +912,6 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.js .reveal { opacity: 1; transform: none; transition: none; }
 	.js .develop { animation: none; }
 	.rake > .rake-beam { display: none; }
 }

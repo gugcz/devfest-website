@@ -1,10 +1,9 @@
 @use '../styles/type' as *;
 
-// A ruled note opening on a strong rule, not a mounted panel.
+// A plain note, not a mounted panel and not a ruled one.
 .empty-state {
 	position: relative;
 	border: 0;
-	border-top: 1px solid var(--rule-strong);
 	border-radius: 0;
 	background: transparent;
 	padding: 2.2rem 0 0;
@@ -133,7 +132,7 @@
 	overflow: hidden;
 }
 
-// Hairline divider above the read/date meta row.
+// The read/date meta row, set off by space alone.
 .coverage-meta {
 	display: flex;
 	align-items: center;
@@ -141,7 +140,6 @@
 	gap: 1rem;
 	margin-top: 0.8rem;
 	padding-top: 0.9rem;
-	border-top: 1px solid var(--rule);
 	@include mono(var(--fs-label), 0.12em);
 	color: var(--ink-faint);
 	// Outlet and date sit on one line while they fit and wrap when they do

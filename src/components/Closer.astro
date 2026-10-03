@@ -11,7 +11,8 @@ interface Action {
 
 interface Props {
 	eyebrow?: string;
-	/** Allows a <span class="red"> accent word; rendered with set:html. */
+	/** Rendered with set:html (for a `<br />`). Plain cream: the red word is
+	 * spent once per page, on the page's h1 (SubpageHero), never on a closer. */
 	titleHtml: string;
 	note?: string;
 	/**
@@ -37,7 +38,7 @@ const toneClass = tone === 'accent' ? ' band--accent' : tone === 'raised' ? ' ba
 ---
 
 <section class={`band${toneClass} closer-band`} aria-labelledby={titleId}>
-	<div class="band-inner closer reveal">
+	<div class="band-inner closer">
 		<div>
 			{eyebrow && <p class="eyebrow closer-eyebrow">{eyebrow}</p>}
 			<h2 id={titleId} class="display closer-title" set:html={titleHtml} />

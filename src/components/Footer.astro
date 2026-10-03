@@ -30,17 +30,43 @@ const SOCIALS = [
 	},
 ] as const;
 
-const SITEMAP: { href: string; label: string; external?: boolean }[] = [
-	{ href: '/', label: 'Home' },
-	{ href: '/#tickets', label: 'Tickets' },
-	// The B2B revenue path was linked from nowhere — not the menu, not here —
-	// so a company that needed an invoice had to already know the URL.
-	{ href: '/invoice', label: 'Company invoice' },
-	{ href: '/#newsletter', label: 'Newsletter' },
-	{ href: '/press', label: 'Press' },
-	{ href: 'https://2025.devfest.cz', label: "Last year's edition", external: true },
-	{ href: '/code-of-conduct', label: 'Code of Conduct' },
-	{ href: '/privacy-policy', label: 'Privacy Policy' },
+type FooterLink = { href: string; label: string; external?: boolean };
+
+// Every destination, in two groups. The menu is the only navigation above the
+// fold (one toggle at every width, by design), so the footer is the one place
+// the whole site is listed in the open — it used to carry eight links and
+// leave out Speakers, Sessions, Agenda, FAQ, Contact, Team and Partners.
+// Labels match the menu's, so a destination has one name.
+const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
+	{
+		id: 'footer-attend',
+		title: 'Attend',
+		links: [
+			{ href: '/#tickets', label: 'Tickets' },
+			{ href: '/agenda', label: 'Agenda' },
+			{ href: '/sessions', label: 'Sessions' },
+			{ href: '/speakers', label: 'Speakers' },
+			{ href: '/faq', label: 'FAQ' },
+			// The B2B revenue path was linked from nowhere — not the menu, not
+			// here — so a company that needed an invoice had to know the URL.
+			{ href: '/invoice', label: 'Company invoice' },
+			{ href: '/code-of-conduct', label: 'Code of Conduct' },
+			{ href: '/attending', label: "I'm attending" },
+		],
+	},
+	{
+		id: 'footer-about',
+		title: 'About',
+		links: [
+			{ href: '/team', label: 'Team' },
+			{ href: '/partners', label: 'Partners' },
+			{ href: '/press', label: 'Press' },
+			{ href: '/contact', label: 'Contact' },
+			{ href: '/#newsletter', label: 'Newsletter' },
+			{ href: 'https://2025.devfest.cz', label: "Last year's edition", external: true },
+			{ href: '/privacy-policy', label: 'Privacy Policy' },
+		],
+	},
 ];
 ---
 
@@ -72,11 +98,11 @@ const SITEMAP: { href: string; label: string; external?: boolean }[] = [
 				</address>
 			</section>
 
-			<nav class="col" aria-labelledby="footer-sitemap">
-				<h2 id="footer-sitemap" class="col-title">Sitemap</h2>
-				<ul class="link-list">
-					{
-						SITEMAP.map(({ href, label, external }) => (
+			{LINK_GROUPS.map(({ id, title, links }) => (
+				<nav class="col col-links" aria-labelledby={id}>
+					<h2 id={id} class="col-title">{title}</h2>
+					<ul class="link-list">
+						{links.map(({ href, label, external }) => (
 							<li>
 								<a
 									class="footer-link"
@@ -87,10 +113,10 @@ const SITEMAP: { href: string; label: string; external?: boolean }[] = [
 									{external && <span class="ext" aria-hidden="true">&#160;&#8599;</span>}
 								</a>
 							</li>
-						))
-					}
-				</ul>
-			</nav>
+						))}
+					</ul>
+				</nav>
+			))}
 
 			<section class="col" aria-labelledby="footer-event">
 				<h2 id="footer-event" class="col-title">Event</h2>

@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Ticker from '../components/Ticker.astro';
 import Closer from '../components/Closer.astro';
 import AttendingCard from '../components/AttendingCard';
-import { EVENT_TOPICS } from '../lib/ticker';
 ---
 
 <BaseLayout
@@ -20,21 +18,19 @@ import { EVENT_TOPICS } from '../lib/ticker';
 			photo={false}
 		/>
 
-		<Ticker items={EVENT_TOPICS} size="sm" />
-
 		<section class="attending-body" aria-labelledby="attending-form-heading">
-			<div class="attending-inner reveal">
+			<div class="attending-inner">
 				<h2 id="attending-form-heading" class="sr-only">Build your card</h2>
 				<AttendingCard client:load />
 			</div>
 		</section>
 
 		<Closer
-			titleHtml={'See you<br />at the <span class="red">show</span>.'}
+			titleHtml={'See you<br />at the show.'}
 			note="Tag @devfestcz when you post it — we reshare our favourites."
 			tone="accent"
 			titleId="attending-closer"
-			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/faq', label: 'Read the FAQ', kind: 'ghost' }]}
+			actions={[{ href: '/agenda', label: 'See the schedule' }, { href: '/faq', label: 'Read the FAQ', kind: 'ghost' }]}
 		/>
 	</main>
 </BaseLayout>
