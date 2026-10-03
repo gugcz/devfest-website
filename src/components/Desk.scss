@@ -69,7 +69,7 @@
 
 .desk-contact-name {
 	@include mono(var(--fs-label), 0.22em, uppercase);
-	color: rgba(240, 237, 230, 0.65);
+	color: rgba(255, 255, 255, 0.65);
 }
 
 // The address is the point of the desk, so it is not set below the blurb beside it.

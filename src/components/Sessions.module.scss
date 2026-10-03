@@ -39,7 +39,7 @@
 	width: 100%;
 	@include mono(var(--fs-label-lg), 0.02em);
 	color: var(--color-text);
-	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070606 90%);
+	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070707 90%);
 	// --field-border (not --rule) keeps the boundary >=3:1 over the dark fill (1.4.11).
 	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
@@ -114,7 +114,7 @@
 
 .chipOn {
 	color: #fff;
-	background: rgba(204, 0, 0, 0.28);
+	background: rgba(241, 16, 0, 0.28);
 	border-color: var(--rule-red);
 }
 
@@ -163,13 +163,13 @@
 	// not ink, and must stay legible ON the field. Hover only — focus draws a ring.
 	&:hover {
 		.avatar {
-			border-color: #B00000;
+			border-color: var(--on-accent-border);
 			filter: grayscale(1) contrast(1.06) brightness(0.98);
 		}
 
 		.avatarMore {
 			color: var(--on-accent-ink);
-			background: #F7EFE6;
+			background: var(--on-accent);
 		}
 	}
 }
@@ -224,7 +224,7 @@
 
 .excerpt {
 	@include prose(var(--fs-body), 1.6);
-	color: rgba(240, 237, 230, 0.72);
+	color: rgba(255, 255, 255, 0.72);
 	margin-top: 0.55rem;
 	display: -webkit-box;
 	-webkit-line-clamp: 3;
@@ -262,7 +262,7 @@
 	border-radius: 50%;
 	object-fit: cover;
 	object-position: center 22%;
-	border: 1.5px solid #0b0a0a;
+	border: 1.5px solid #0B0B0B;
 	background: var(--panel-lit);
 	filter: grayscale(1) contrast(1.06) brightness(0.9);
 	display: inline-flex;

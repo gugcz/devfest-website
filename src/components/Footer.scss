@@ -6,7 +6,7 @@
 	padding: var(--section-y-tight) var(--gutter) 2.4rem;
 	background: #030303;
 	font-family: var(--font-jetbrains-mono), monospace;
-	color: rgba(240, 237, 230, 0.65);
+	color: rgba(255, 255, 255, 0.65);
 }
 
 .footer-inner {
@@ -31,7 +31,8 @@
 
 .footer-logo {
 	display: block;
-	width: clamp(150px, 18vw, 12.75rem);
+	// Floor = the brand manual's 180px digital minimum plus the artboard's clear space.
+	width: clamp(188px, 18vw, 12.75rem);
 	height: auto;
 }
 
@@ -160,7 +161,7 @@
 
 	dd {
 		margin: 0;
-		color: rgba(240, 237, 230, 0.82);
+		color: rgba(255, 255, 255, 0.82);
 		letter-spacing: 0.04em;
 
 		// Venue links out to the map — muted meta with a hairline underline.
@@ -187,7 +188,7 @@
 	align-items: center;
 	min-height: 2.75rem;
 	@include prose(var(--fs-ui));
-	color: rgba(240, 237, 230, 0.88);
+	color: rgba(255, 255, 255, 0.88);
 	text-decoration: none;
 	border-bottom: 1px solid var(--field-border);
 	padding-bottom: 1px;
@@ -207,7 +208,7 @@
 .org {
 	@include mono(var(--fs-label-lg));
 	line-height: 1.6;
-	color: rgba(240, 237, 230, 0.65);
+	color: rgba(255, 255, 255, 0.65);
 	max-width: 34ch;
 }
 
@@ -231,7 +232,7 @@
 }
 
 .social-link {
-	color: rgba(240, 237, 230, 0.72);
+	color: rgba(255, 255, 255, 0.72);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -244,7 +245,7 @@
 	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);
-		background: rgba(204, 0, 0, 0.08);
+		background: rgba(241, 16, 0, 0.08);
 	}
 
 	&:focus-visible {

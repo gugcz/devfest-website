@@ -45,7 +45,7 @@
 
 	// Not ink: a hairline inside the row, and the off-site arrow's motion. Hover only.
 	&:hover {
-		.coverage-meta { border-top-color: rgba(247, 239, 230, 0.4); }
+		.coverage-meta { border-top-color: rgba(255, 255, 255, 0.4); }
 		.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
 		.coverage-arrow { transform: translate(2px, -2px); }
 	}

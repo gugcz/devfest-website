@@ -14,7 +14,7 @@
 	padding:
 		1rem min(clamp(1rem, 4vw, 2.5rem), 5vw)
 		calc(1rem + env(safe-area-inset-bottom));
-	background: #0A0908;
+	background: #0A0A0A;
 	border-top: 1px solid var(--rule);
 	z-index: 10000;
 	// visibility switches only after the opacity/transform fade finishes, so the

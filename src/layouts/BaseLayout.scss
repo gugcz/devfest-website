@@ -1,14 +1,18 @@
 @use '../styles/type' as *;
 :root {
-	--color-bg: #050505;
-	--color-grey: #8C8C8C;
-	--color-text: #F2EFE9;
-	--color-cream: #E8E0CC;
-	--color-accent: #CC0000;
-	--color-accent-hot: #FF1111;
-	// Form-error text only: the accent desaturated far enough to clear AA as
-	// small copy (~5.7:1). Never use it as an accent, a fill or a rule.
-	--color-error: rgba(220, 110, 110, 0.95);
+	// Brand manual v1.0: three colours, no more. Noir Black, Paper White,
+	// Evidence Red. Greys exist only as white or black at an opacity — the
+	// solid neutrals below are those opacities flattened onto black.
+	--color-bg: #000000;
+	--color-grey: #8C8C8C; // 55% white
+	--color-text: #FFFFFF;
+	--color-cream: #FFFFFF;
+	--color-accent: #F11000;
+	// One red. Kept as its own token so hover/live call sites stay legible;
+	// hover feedback comes from the lift and glow, not a second red.
+	--color-accent-hot: #F11000;
+	// Form-error text: Evidence Red, 4.8:1 on black — clears AA as small copy.
+	--color-error: #F11000;
 
 	// Injected into :root by the matching <Font /> in BaseLayout.astro; the
 	// families resolve to build-time hashes, so never write a literal
@@ -84,36 +88,37 @@
 	--lh-display: 0.84;
 	--track-display: 0.005em;
 
-	--rule: rgba(240, 237, 230, 0.13);
-	--rule-soft: rgba(240, 237, 230, 0.06);
-	--rule-strong: rgba(240, 237, 230, 0.22);
-	--rule-red: rgba(204, 0, 0, 0.55);
+	--rule: rgba(255, 255, 255, 0.13);
+	--rule-soft: rgba(255, 255, 255, 0.06);
+	--rule-strong: rgba(255, 255, 255, 0.22);
+	--rule-red: rgba(241, 16, 0, 0.55);
 	// THE control-edge token: boundary for anything operable (text fields,
 	// .btn-ghost, .nav-toggle, the cookie Decline, .crew-link). 3.33:1 on
-	// #050505, clearing WCAG 1.4.11; --rule-strong (1.74:1) and --rule
+	// #000000, clearing WCAG 1.4.11; --rule-strong (1.74:1) and --rule
 	// (1.30:1) did not. Kept separate from those: they are decorative
 	// hairlines and must stay faint.
-	--field-border: rgba(240, 237, 230, 0.4);
+	--field-border: rgba(255, 255, 255, 0.4);
 
 	// Cream-ink ramp. Named steps only — a one-off alpha stays a raw literal.
-	--ink-strong: rgba(240, 237, 230, 0.85);
-	--ink: rgba(240, 237, 230, 0.78);
-	--ink-soft: rgba(240, 237, 230, 0.7);
-	--ink-meta: rgba(240, 237, 230, 0.62);
-	--ink-dim: rgba(240, 237, 230, 0.6);
-	--ink-muted: rgba(240, 237, 230, 0.55);
-	// 4.5:1 on #050505 at label size — the floor for small mono copy.
-	--ink-faint: rgba(240, 237, 230, 0.5);
+	--ink-strong: rgba(255, 255, 255, 0.85);
+	--ink: rgba(255, 255, 255, 0.78);
+	--ink-soft: rgba(255, 255, 255, 0.7);
+	--ink-meta: rgba(255, 255, 255, 0.62);
+	--ink-dim: rgba(255, 255, 255, 0.6);
+	--ink-muted: rgba(255, 255, 255, 0.55);
+	// 4.5:1 on #000000 at label size — the floor for small mono copy.
+	--ink-faint: rgba(255, 255, 255, 0.5);
 
-	--panel: #0C0B0B;
-	--panel-2: #111010;
-	--panel-hover: #161413;
+	--panel: #0C0C0C;
+	--panel-2: #111111;
+	--panel-hover: #161616;
 
-	--on-accent: #F7EFE6;
-	// Ink and edges ON the red field. Measured on #CC0000: cream 5.17:1, the
-	// 85% cream boundary 3.95:1 (1.4.11), near-black 3.42:1 (large text only).
-	--on-accent-ink: #1A0000;
-	--on-accent-border: rgba(247, 239, 230, 0.85);
+	// Ink and edges ON the red field. Measured on #F11000: black 4.8:1 at any
+	// size; white 4.4:1, so white is for large type only (3:1). An inverted
+	// control on red is a black fill carrying --on-accent-ink.
+	--on-accent: #000000;
+	--on-accent-ink: #FFFFFF;
+	--on-accent-border: rgba(0, 0, 0, 0.85);
 
 	// Focus-ring stand-off. The ring is always 2px solid --color-accent-hot; the gap
 	// tracks how much visible edge the control already has.
@@ -122,21 +127,21 @@
 	--focus-gap-lg: 4px;
 
 	// Red as LIGHT — interactive things only (CTA hover, live status). Red TEXT is flat.
-	--glow-red: 0 0 14px rgba(204, 0, 0, 0.4), 0 0 34px rgba(204, 0, 0, 0.18);
-	--glow-red-soft: 0 0 18px rgba(204, 0, 0, 0.22);
+	--glow-red: 0 0 14px rgba(241, 16, 0, 0.4), 0 0 34px rgba(241, 16, 0, 0.18);
+	--glow-red-soft: 0 0 18px rgba(241, 16, 0, 0.22);
 
 	// A photograph is MOUNTED, not floated: keyline just inside the edge plus a shadow.
 	--print-mount:
-		inset 0 0 0 1px rgba(240, 237, 230, 0.16),
+		inset 0 0 0 1px rgba(255, 255, 255, 0.16),
 		0 10px 24px rgba(0, 0, 0, 0.5);
 
-	--panel-lit: #0A0908;
-	--panel-lit-2: #0E0C0B;
+	--panel-lit: #0A0A0A;
+	--panel-lit-2: #0E0E0E;
 
 	// Initials standing in for a missing photograph, on --panel-lit. Measured
 	// 4.21:1 on the large plate and 7.71:1 at label scale — never dim further.
-	--ink-monogram: rgba(242, 239, 233, 0.46);
-	--ink-monogram-sm: rgba(242, 239, 233, 0.66);
+	--ink-monogram: rgba(255, 255, 255, 0.46);
+	--ink-monogram-sm: rgba(255, 255, 255, 0.66);
 
 	--lit: radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%);
 	// The raking light a reached row or cell takes: warm, from the left, gone
@@ -212,7 +217,7 @@ html {
 }
 
 ::selection {
-	background: rgba(204, 0, 0, 0.4);
+	background: rgba(241, 16, 0, 0.4);
 	color: var(--color-text);
 }
 
@@ -255,7 +260,7 @@ body {
 		z-index: 9999;
 		pointer-events: none;
 		// `screen`, not `overlay`: overlay leaves near-black almost untouched, so
-		// on a #050505 ground the grain was invisible.
+		// on a #000000 ground the grain was invisible.
 		opacity: 0.06;
 		mix-blend-mode: screen;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
@@ -278,11 +283,11 @@ body {
 	top: 0;
 	left: 0;
 	padding: 0.7rem 1.1rem;
-	background: #050505;
-	color: #F0EDE6;
+	background: #000000;
+	color: #FFFFFF;
 	@include mono(var(--fs-label-lg), 0.22em, uppercase);
 	text-decoration: none;
-	border: 1px solid rgba(204, 0, 0, 0.5);
+	border: 1px solid rgba(241, 16, 0, 0.5);
 	z-index: 10001;
 	clip-path: inset(50%);
 	width: 1px;
@@ -469,7 +474,7 @@ b {
 }
 
 // RED AS A FIELD. At most once per page, for the thing the page wants the
-// visitor to do. Ink is cream --on-accent; black ink is 2.3:1 here.
+// visitor to do. Ink is black --on-accent; white is large type only here.
 .band--accent {
 	background: var(--color-accent);
 	color: var(--on-accent);
@@ -496,10 +501,13 @@ b {
 }
 
 // Controls on the red field invert — a red button on red is invisible. Measured
-// ink on #CC0000: cream #F7EFE6 5.17:1, cream at 80% 3.58:1 (boundaries only),
-// near-black #1A0000 3.42:1 (large text only). Hierarchy from SIZE, never dimming.
+// ink on #F11000: black 4.8:1, black at 85% (boundaries only), white 4.4:1
+// (large text only). Hierarchy from SIZE, never dimming.
 .band--accent .eyebrow { color: var(--on-accent); }
-.band--accent .display { color: var(--on-accent); }
+// Poster-scale Bebas clears 3:1 in white, so the headline stays Paper White
+// like the manual's title bars; its one highlighted word drops to black.
+.band--accent .display { color: var(--on-accent-ink); }
+.band--accent .display .red { color: var(--on-accent); }
 
 .band--accent .btn-primary {
 	background: var(--on-accent);
@@ -509,6 +517,7 @@ b {
 	&:hover {
 		background: #FFFFFF;
 		border-color: #FFFFFF;
+		color: var(--on-accent);
 		box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
 	}
 }
@@ -522,7 +531,7 @@ b {
 	&:focus-visible {
 		color: var(--on-accent);
 		border-color: var(--on-accent);
-		background: rgba(247, 239, 230, 0.1);
+		background: rgba(0, 0, 0, 0.1);
 	}
 }
 
@@ -655,7 +664,7 @@ b {
 		border-color: var(--color-accent-hot);
 		transform: translateY(-2px);
 		// Halation on hover — one of the two places the glow survives.
-		box-shadow: var(--glow-red), 0 12px 30px rgba(204, 0, 0, 0.28);
+		box-shadow: var(--glow-red), 0 12px 30px rgba(241, 16, 0, 0.28);
 	}
 
 	&:active { transform: translateY(0); }
@@ -757,25 +766,25 @@ b {
 		opacity: 1;
 	}
 
-	// Every ink goes FULL CREAM — muted rgba() fails on #CC0000. Blunt on purpose;
+	// Every ink goes FULL BLACK — muted rgba() fails on #F11000. Blunt on purpose;
 	// a caller needing an exception overrides it with its own class.
 	&:hover {
-		color: #F7EFE6;
+		color: var(--on-accent);
 
 		*:not(svg):not(path) {
-			color: #F7EFE6;
+			color: var(--on-accent);
 		}
 	}
 
-	// accent-hot on #050505 is 4.96:1, clear of the 3:1 in 1.4.11.
+	// accent-hot on #000000 is 4.8:1, clear of the 3:1 in 1.4.11.
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap-tight);
 	}
 
-	// Red on red is not a ring, so hover + focus inverts it to cream.
+	// Red on red is not a ring, so hover + focus inverts it to black.
 	&:hover:focus-visible {
-		outline-color: #F7EFE6;
+		outline-color: var(--on-accent);
 	}
 }
 
@@ -827,7 +836,7 @@ b {
 // "Get tickets" link would, and an underline there promises a click.
 .record-status {
 	@include mono(var(--fs-label-sm), 0.24em, uppercase);
-	color: rgba(240, 237, 230, 0.72);
+	color: rgba(255, 255, 255, 0.72);
 	white-space: nowrap;
 }
 
@@ -881,7 +890,7 @@ b {
 			background: linear-gradient(
 				104deg,
 				transparent 34%,
-				rgba(204, 0, 0, 0.13) 50%,
+				rgba(241, 16, 0, 0.13) 50%,
 				transparent 66%
 			);
 			background-size: 260% 100%;
@@ -936,14 +945,14 @@ b {
 }
 
 /* ===================== PRINT ===================== */
-// Cream on #050505 prints as invisible text. One sitewide sheet: white
+// Cream on #000000 prints as invisible text. One sitewide sheet: white
 // ground, black ink, atmosphere dropped, links print their address.
 // Grounds cleared by a blanket rule, not a class list (a list goes stale).
 @media print {
 	html,
 	body {
 		background: #FFFFFF !important;
-		color: #050505 !important;
+		color: #000000 !important;
 	}
 
 	// Ink too: the site's muted alphas (labels at 0.55, meta at 0.62) print
@@ -992,7 +1001,7 @@ b {
 	.red,
 	.field-row,
 	a {
-		color: #050505 !important;
+		color: #000000 !important;
 	}
 
 	// A printed form needs visible field boxes — a drawn edge on white.
@@ -1001,8 +1010,8 @@ b {
 	textarea,
 	.btn-primary,
 	.btn-ghost {
-		color: #050505 !important;
-		border: 1px solid #050505 !important;
+		color: #000000 !important;
+		border: 1px solid #000000 !important;
 	}
 
 	// A printed link is a dead end without its address.

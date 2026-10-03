@@ -2,34 +2,34 @@
 name: DevFest.cz 2026
 description: Noir, but loud. One dark theme, one red, poster-scale Bebas headlines, typewriter body, mono labels.
 colors:
-  bg: "#050505"
-  text: "#F2EFE9"
-  cream: "#E8E0CC"
+  bg: "#000000"
+  text: "#FFFFFF"
+  cream: "#FFFFFF"
   grey: "#8C8C8C"
-  accent: "#CC0000"
-  accent-hot: "#FF1111"
-  error: "rgba(220,110,110,0.95)"
-  on-accent: "#F7EFE6"
-  on-accent-ink: "#1A0000"
-  on-accent-border: "rgba(247,239,230,0.85)"
-  on-accent-field: "#9A0000"
-  panel: "#0C0B0B"
-  panel-2: "#111010"
-  panel-hover: "#161413"
-  panel-lit: "#0A0908"
-  panel-lit-2: "#0E0C0B"
-  rule: "rgba(240,237,230,0.13)"
-  rule-soft: "rgba(240,237,230,0.06)"
-  rule-strong: "rgba(240,237,230,0.22)"
-  rule-red: "rgba(204,0,0,0.55)"
-  field-border: "rgba(240,237,230,0.4)"
-  ink-strong: "rgba(240,237,230,0.85)"
-  ink: "rgba(240,237,230,0.78)"
-  ink-soft: "rgba(240,237,230,0.7)"
-  ink-meta: "rgba(240,237,230,0.62)"
-  ink-dim: "rgba(240,237,230,0.6)"
-  ink-muted: "rgba(240,237,230,0.55)"
-  ink-faint: "rgba(240,237,230,0.5)"
+  accent: "#F11000"
+  accent-hot: "#F11000"
+  error: "#F11000"
+  on-accent: "#000000"
+  on-accent-ink: "#FFFFFF"
+  on-accent-border: "rgba(0,0,0,0.85)"
+  on-accent-field: "#FFFFFF"
+  panel: "#0C0C0C"
+  panel-2: "#111111"
+  panel-hover: "#161616"
+  panel-lit: "#0A0A0A"
+  panel-lit-2: "#0E0E0E"
+  rule: "rgba(255,255,255,0.13)"
+  rule-soft: "rgba(255,255,255,0.06)"
+  rule-strong: "rgba(255,255,255,0.22)"
+  rule-red: "rgba(241,16,0,0.55)"
+  field-border: "rgba(255,255,255,0.4)"
+  ink-strong: "rgba(255,255,255,0.85)"
+  ink: "rgba(255,255,255,0.78)"
+  ink-soft: "rgba(255,255,255,0.7)"
+  ink-meta: "rgba(255,255,255,0.62)"
+  ink-dim: "rgba(255,255,255,0.6)"
+  ink-muted: "rgba(255,255,255,0.55)"
+  ink-faint: "rgba(255,255,255,0.5)"
 typography:
   display:
     fontFamily: "var(--font-bebas-neue), sans-serif"
@@ -152,27 +152,33 @@ style library in `package.json`.
 
 ## Color
 
+The palette follows the **DevFest.cz 2026 Brand Manual v1.0**
+(`public/press-kit/DevFest.cz_2026_Brand_Manual.pdf`, p. 08–09): three colours,
+no more. Noir Black `#000000`, Paper White `#FFFFFF`, Evidence Red `#F11000`.
+Greys exist only as white or black at an opacity; the solid neutrals below are
+those opacities flattened onto black, never a warm tint.
+
 All tokens are declared in `BaseLayout.scss` `:root`.
 
-| Token | Value | Line | Use |
-| --- | --- | --- | --- |
-| `--color-bg` | `#050505` | 2 | page ground |
-| `--color-text` | `#F2EFE9` | 4 | ink |
-| `--color-cream` | `#E8E0CC` | 5 | warm ink variant (3 files) |
-| `--color-grey` | `#8C8C8C` | 3 | muted meta (8 files) |
-| `--color-accent` | `#CC0000` | 6 | the accent — CTA fill, red bands, the reach field |
-| `--color-accent-hot` | `#FF1111` | 7 | focus rings, live status, figures on a facts band |
-| `--color-error` | `rgba(220,110,110,0.95)` | 12 | **form-error text only** |
-| `--on-accent` | `#F7EFE6` | 139 | ink on the red field |
-| `--on-accent-ink` | `#1A0000` | | dark ink on the red field — large text only |
-| `--on-accent-border` | `rgba(247,239,230,0.85)` | | control boundary on the red field (3.95:1) |
+| Token | Value | Use |
+| --- | --- | --- |
+| `--color-bg` | `#000000` | page ground |
+| `--color-text` | `#FFFFFF` | ink |
+| `--color-cream` | `#FFFFFF` | legacy alias of Paper White (paper cards, chips) |
+| `--color-grey` | `#8C8C8C` | muted meta (= 55% white) |
+| `--color-accent` | `#F11000` | the accent — CTA fill, red bands, the reach field, red words |
+| `--color-accent-hot` | `#F11000` | focus rings, live status; same red, kept as a role |
+| `--color-error` | `#F11000` | **form-error text only** (4.8:1 on black) |
+| `--on-accent` | `#000000` | ink on the red field, any size |
+| `--on-accent-ink` | `#FFFFFF` | large type on red; ink on an inverted (black) control |
+| `--on-accent-border` | `rgba(0,0,0,0.85)` | control boundary on the red field |
 
-Surfaces: `--panel` `#0C0B0B` (134), `--panel-2` `#111010` (135), `--panel-hover`
-`#161413` (136), `--panel-lit` `#0A0908` (175), `--panel-lit-2` `#0E0C0B` (176).
+Surfaces: `--panel` `#0C0C0C`, `--panel-2` `#111111`, `--panel-hover`
+`#161616`, `--panel-lit` `#0A0A0A`, `--panel-lit-2` `#0E0E0E`.
 
-Hairlines: `--rule` `rgba(240,237,230,0.13)` (118), `--rule-soft` `0.06` (119),
-`--rule-strong` `0.22` (120), `--rule-red` `rgba(204,0,0,0.55)` (121),
-`--field-border` `rgba(240,237,230,0.4)` (131).
+Hairlines: `--rule` `rgba(255,255,255,0.13)`, `--rule-soft` `0.06`,
+`--rule-strong` `0.22`, `--rule-red` `rgba(241,16,0,0.55)`,
+`--field-border` `rgba(255,255,255,0.4)`.
 
 **[MUST] No decorative hairlines.** A line is drawn only where it carries
 structure: the agenda's time × room grid, data tables (privacy policy), tile
@@ -186,53 +192,55 @@ the maintainer asked for the "random lines" to go.
 
 Ink ramp: `--ink-strong` `0.85`, `--ink` `0.78`, `--ink-soft` `0.7`,
 `--ink-meta` `0.62`, `--ink-dim` `0.6`, `--ink-muted` `0.55`, `--ink-faint`
-`0.5` (all `rgba(240,237,230,…)`). Named steps only; a one-off alpha stays a
+`0.5` (all `rgba(255,255,255,…)`). Named steps only; a one-off alpha stays a
 raw literal.
 
-Atmosphere: `--glow-red` / `--glow-red-soft` (162–163), `--lit` (190),
-`--vignette` (195), `--field-feather` (193), `--print-mount` (170–172),
-`--wash` / `--wash-strong` (the raking light a reached row / cell takes),
-`--ink-monogram` `0.46` → 4.21:1 and `--ink-monogram-sm` `0.66` → 7.71:1
-(186–187, ratios measured in the source comment at 184–185).
+Atmosphere: `--glow-red` / `--glow-red-soft`, `--lit`, `--vignette`,
+`--field-feather`, `--print-mount`, `--wash` / `--wash-strong` (the raking
+light a reached row / cell takes), `--ink-monogram` `0.46` and
+`--ink-monogram-sm` `0.66`.
 
-**[MUST] `--color-accent` is never small text.** `#CC0000` on `#050505` is
-~3.3:1 and fails 1.4.3 for body copy (`BaseLayout.scss:8–12`). Where it may and
-may not appear:
+**[MUST] Red is evidence, not mood.** Per the manual it marks details (a dot,
+1–2 words in a headline, the year, CTA words, stamps) and, as a large area,
+only title bars, red bands and primary CTA buttons. No red washes behind
+photographs, no red running text, no other accent hue, no red-to-other-hue
+gradients.
 
-| Use of `#CC0000` | Allowed? |
+| Use of `#F11000` | Allowed? |
 | --- | --- |
 | a fill (CTA background, `.band--accent`, the row reach field) | yes |
-| large display type (`--fs-h3` and above) | yes |
+| display type, highlighted words, the year | yes |
 | a rule / keyline (`--rule-red`) | yes |
-| body copy, labels, meta, links in prose, error text | **no** — use `--color-text`, or `--color-error` for errors |
-| a focus indicator | **no** — the ring is `--color-accent-hot` (4.96:1) |
+| a focus indicator | yes — 4.8:1 on black |
+| body copy, lore, paragraphs | **no** — use `--color-text` |
 
 **[MUST] `--color-error` is error prose only.** Never an accent, a fill or a
-rule (`BaseLayout.scss:8–12`).
+rule.
 
 **[MUST] `--field-border` is the boundary of an interactive form control**
-(WCAG 1.4.11, ≥3:1). Structural hairlines (see above) stay at `--rule`
-(`BaseLayout.scss:122–131`).
+(WCAG 1.4.11, ≥3:1). Structural hairlines (see above) stay at `--rule`.
 
-**[MUST] Measured ink on `#CC0000`** — hierarchy on the accent field comes from
+**[MUST] Measured ink on `#F11000`** — hierarchy on the accent field comes from
 SIZE, never from dimming:
 
 | ink | ratio | verdict |
 | --- | --- | --- |
-| `#F7EFE6` | 5.17:1 | anything, incl. body copy |
-| `#F7EFE6` @ 85% | 3.95:1 | control boundaries only (1.4.11) |
-| `#F7EFE6` @ 80% | 3.58:1 | fails body copy |
-| `#1A0000` | 3.42:1 | large text only — the accent word |
-| `#000000` | 3.57:1 | large text only |
+| `#000000` | 4.82:1 | anything, incl. small mono labels and body copy |
+| `#000000` @ 85% | ~4.2:1 | control boundaries only (1.4.11) |
+| `#FFFFFF` | 4.36:1 | large text only (Bebas headline on a red band) |
+
+So a CTA label on a red button is black; a red band's poster headline stays
+white with its one highlighted word in black; an inverted control on red is a
+black fill with white ink.
 
 **[MUST] No translucent field fills on the red band.** A contrast checker
-resolves a placeholder against the band *behind* an `rgba()` fill, so
-`NewsletterForm.module.scss:208` uses an opaque `#9A0000`.
+resolves a placeholder against the band *behind* an `rgba()` fill, so the
+newsletter field on the band is opaque Paper White with black ink.
 
 ## Dark / light
 
 **[MUST] There is one theme, and it is dark.** `<meta name="color-scheme"
-content="dark">` (`BaseLayout.astro:190`) and `theme-color` `#050505` declared
+content="dark">` (`BaseLayout.astro:190`) and `theme-color` `#000000` declared
 identically for both `prefers-color-scheme` branches (`BaseLayout.astro:188–189`)
 — the site does not respond to the OS preference. There is no
 `prefers-color-scheme` rule anywhere in `src/**/*.scss`.
@@ -499,18 +507,18 @@ Rules:
 hover/focus brighten to `--color-text`, `gap` `0.6rem → 0.85rem`.
 
 **[MUST] On `.band--accent` both buttons invert** (`BaseLayout.scss:662–686`),
-focus-visible to cream (`688–690`).
+black fill with white ink, white on hover; focus-visible to black (`688–690`).
 
 `.field-row` reach states — **[MUST] chosen by whether the row IS the
 control**:
 
 | The row | Rest | Hover | Focus |
 | --- | --- | --- | --- |
-| **IS** the control (`--link`: sessions, FAQ, clippings, agenda entries — a real `<button>` / `<a>` / `<summary>`) | field at `opacity: 0` | `::before` inset `0 calc(-1 * var(--gutter))`, `--color-accent`, opacity → 1 over `0.28s`; **every** ink goes full cream `#F7EFE6` (`971–977`) | ring `2px solid --color-accent-hot` at `--focus-gap-tight` (4.96:1); if hovered **and** focused the ring inverts to `#F7EFE6` — red on red is not a ring (`981–990`) |
+| **IS** the control (`--link`: sessions, FAQ, clippings, agenda entries — a real `<button>` / `<a>` / `<summary>`) | field at `opacity: 0` | `::before` inset `0 calc(-1 * var(--gutter))`, `--color-accent`, opacity → 1 over `0.28s`; **every** ink goes full black `--on-accent` (`971–977`) | ring `2px solid --color-accent-hot` at `--focus-gap-tight` (4.8:1); if hovered **and** focused the ring inverts to black — red on red is not a ring (`981–990`) |
 | **CONTAINS** a control (`--holds`: ticket waves, contact/press desks) | wash at `opacity: 0` | feathered `104deg` warm wash → 1, plus `translateX(0.6rem)`; also fires on `:focus-within` (`1023–1031`) | the inner control carries the ring |
 
 **[MUST] Red is spent once per list, not once per row.** Resting row labels
-are muted mono `rgba(240,237,230,0.55)`. Exception: the on-sale wave's lit
+are muted mono `rgba(255,255,255,0.55)`. Exception: the on-sale wave's lit
 ground.
 
 **[MUST] An open `<details>` does not hold the red field** — it shows the
@@ -554,8 +562,8 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 - **[CURRENT] Validation is native** (`required` + type/pattern, `.honeypot`).
   No `aria-invalid` in `src` — see Open points.
 - **[MUST] On the red band the whole form inverts**
-  (`NewsletterForm.module.scss:199–276`): opaque `#9A0000` fill, cream
-  boundary at 85%, cream button with dark ink.
+  (`NewsletterForm.module.scss:199–276`): opaque Paper White fill with black
+  ink, black boundary at 85%, black button with white ink.
 
 ## Images & media
 
@@ -566,6 +574,17 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   speaker thumb (`SessionDetail.module.scss:103`).
 - **[MUST] Portraits crop `object-fit: cover; object-position: center 22%`**
   (`Speakers.module.scss:115–116` etc.); the sheet plate `center 20%`.
+- **[MUST] The DevFest.cz logo is the official file, never a redraw.**
+  `src/assets/logo.png` is `public/press-kit/DF26_logo_white_and_red_dot.png`
+  (3000×600, clear space built into the artboard, 2026 badge included);
+  share cards on a red band use `src/assets/logo-mono-white.png`
+  (`DF26_logo_white.png`), the manual's only version on red. Never tint,
+  recolour, crop the badge or retype the wordmark (manual p. 03–07).
+- **[MUST] Logo minimum: 180px wide for the logo itself** — 188–190px for the
+  artboard (header 38px tall, hero and footer 188px floors). Where a bar has
+  no room, the image shrinks within `max-width: 100%` rather than distorting.
+- **[MUST] The standalone symbol is white or dark only** (favicons, app
+  icons); never red.
 - **[MUST] Partner and press logos are `object-fit: contain`** — never cropped
   (`partners.scss:235`, `index.scss:461`, `downloads.scss:202`).
 - **[MUST] The partner wall is one grid module, `.logo-grid` / `.logo-cell`**

@@ -73,17 +73,17 @@
 	&:hover:not(:disabled) {
 		background: var(--color-accent-hot);
 		border-color: var(--color-accent-hot);
-		box-shadow: var(--glow-red), 0 8px 22px rgba(204, 0, 0, 0.28);
+		box-shadow: var(--glow-red), 0 8px 22px rgba(241, 16, 0, 0.28);
 	}
 
 	// Dedicated pair, not a dimmed accent: opacity alone measured ~2.4:1 (WCAG 1.4.3
-	// fail) against the page ground. #9A968D on --panel-hover holds ~6.2:1.
+	// fail) against the page ground. 60% white on --panel-hover holds ~6.6:1.
 	&:disabled {
 		opacity: 1;
 		cursor: not-allowed;
 		background: var(--panel-hover);
 		border-color: var(--field-border);
-		color: #9A968D;
+		color: rgba(255, 255, 255, 0.6);
 	}
 }
 
@@ -152,7 +152,7 @@
 /* ===================== ON THE ACCENT FIELD ===================== */
 // Every control here would otherwise be red-on-red: the filled button disappears
 // into the ground and a dark field reads as a hole punched in it. Ink
-// measurements for #CC0000 are in BaseLayout.scss — text is full cream, control
+// measurements for #F11000 are in BaseLayout.scss — text is full black, control
 // boundaries need 3:1.
 :global(.band--accent) {
 	.wrapper {
@@ -160,9 +160,9 @@
 	}
 
 	.paper {
-		// Opaque, not rgba: a contrast checker resolves a translucent fill's placeholder
-		// against the band red behind it, and the real ratio then depends on a blend.
-		background: #9A0000;
+		// Paper White, opaque: a contrast checker resolves a translucent fill's
+		// placeholder against the band red behind it. Black ink on it reads 21:1.
+		background: #FFFFFF;
 		border-color: var(--on-accent-border);
 
 		&:focus-within {
@@ -175,7 +175,7 @@
 		color: var(--on-accent);
 
 		&::placeholder {
-			// Full cream — 7.8:1 on the field, 5.2:1 if resolved against the band red.
+			// Full black — 21:1 on the paper, 4.8:1 if resolved against the band red.
 			color: var(--on-accent);
 			opacity: 1;
 		}
@@ -185,7 +185,7 @@
 		}
 	}
 
-	// Inverted: cream fill, dark ink. A red button on a red field is invisible.
+	// Inverted: black fill, white ink. A red button on a red field is invisible.
 	.button {
 		background: var(--on-accent);
 		border-color: var(--on-accent);
@@ -194,6 +194,7 @@
 		&:hover:not(:disabled) {
 			background: #FFFFFF;
 			border-color: #FFFFFF;
+			color: var(--on-accent);
 			box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
 		}
 
