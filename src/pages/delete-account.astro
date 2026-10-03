@@ -33,9 +33,9 @@ const MAIL_SUBJECT = 'Delete my DevFest app account';
 					Go to <strong>Profile &gt; Delete account</strong>. This immediately deletes:
 				</p>
 				<ul>
-					<li>your account document: name, email, registration reference and favourite sessions</li>
-					<li>all your email verification-code records</li>
 					<li>your Firebase Authentication account</li>
+					<li>your user record: name, email, registration reference, favourite sessions and networking connections</li>
+					<li>any pending email verification codes</li>
 				</ul>
 			</section>
 
@@ -43,7 +43,7 @@ const MAIL_SUBJECT = 'Delete my DevFest app account';
 				<h2>Without the app</h2>
 				<p>
 					Email <a href={`mailto:devfest@gug.cz?subject=${encodeURIComponent(MAIL_SUBJECT)}`}>devfest@gug.cz</a> from
-					your ticket's email address with the subject "{MAIL_SUBJECT}". We delete the same
+					the email address on your ticket with the subject "{MAIL_SUBJECT}". We delete the same
 					data within 30 days.
 				</p>
 			</section>
@@ -54,8 +54,14 @@ const MAIL_SUBJECT = 'Delete my DevFest app account';
 					Usage analytics, crash reports and App Check signals are not linked to your account,
 					so they cannot be picked out and deleted. They expire on their own: analytics after
 					14 months, crash reports after 90 days, and App Check signals on the retention
-					periods Google and Apple set for each platform. Your ti.to ticket itself is not
-					affected.
+					periods Google and Apple set for each platform. Data kept only on your device
+					(onboarding state, reminder choices, notification inbox) goes away when you uninstall
+					the app. Your ti.to ticket itself is not affected.
+				</p>
+				<p>
+					If another attendee scanned your badge, your name and company stay in their list
+					until they delete their account. Email <a href="mailto:devfest@gug.cz">devfest@gug.cz</a> and
+					we will remove them.
 				</p>
 				<p>
 					Everything the app collects is described in the <a href="/privacy-policy#mobile-app">privacy policy</a>.
