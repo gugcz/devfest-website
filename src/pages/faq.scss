@@ -112,9 +112,8 @@
 	z-index: 1;
 	margin: 0 0 1.8rem;
 	padding-left: 1.4rem;
-	// Neutral hairline, never a red bar: an accent bar down the left edge of a block
-	// is banned site-wide.
-	border-left: 1px solid var(--rule);
+	// No edge down the left at all: a bar or hairline along a block's left side
+	// is banned site-wide; the inset alone sets the answer under its question.
 }
 
 .faq-a :global(p) {

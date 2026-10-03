@@ -13,7 +13,6 @@
 		calc(7.5rem + env(safe-area-inset-top))
 		var(--gutter)
 		var(--section-y-tight);
-	border-bottom: 1px solid var(--rule-soft);
 }
 
 // Type-only opening — no photo, so the frame is shorter and the headline

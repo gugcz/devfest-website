@@ -5,8 +5,6 @@
 	z-index: 20;
 	overflow: hidden;
 	background: var(--color-bg);
-	border-top: 1px solid var(--rule-soft);
-	border-bottom: 1px solid var(--rule-soft);
 	padding: var(--ticker-pad) 0;
 
 	// SC 2.2.2 — the strip is the pause control. Hover covers the pointer, and

@@ -11,7 +11,6 @@
 	padding: var(--section-air) var(--gutter);
 	position: relative;
 	z-index: 1;
-	border-top: 1px solid var(--rule-soft);
 	animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 

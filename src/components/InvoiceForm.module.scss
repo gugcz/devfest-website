@@ -96,7 +96,7 @@
 	@include prose(var(--fs-body-lg));
 	color: var(--color-text);
 	margin: 0;
-	// A readout, not a panel: ruled top and bottom, lit from the left. It must never
+	// A readout, not a panel: lit from the left, no rules. It must never
 	// lift when the pointer crosses it — nothing here is interactive.
 	padding: 1.2rem 0;
 	background: linear-gradient(
@@ -106,8 +106,6 @@
 		transparent 84%
 	);
 	border: 0;
-	border-top: 1px solid var(--rule);
-	border-bottom: 1px solid var(--rule);
 	border-radius: 0;
 
 	.estimateFigure {
@@ -221,8 +219,6 @@
 		transparent 88%
 	);
 	border: 0;
-	border-top: 1px solid var(--rule-red);
-	border-bottom: 1px solid var(--rule);
 	border-radius: 0;
 }
 
@@ -241,8 +237,6 @@
 	color: var(--color-text);
 	margin: 0 0 1.2rem;
 	padding-bottom: 1.2rem;
-	// Editorial hairline divider under the confirmation head.
-	border-bottom: 1px solid var(--rule);
 }
 
 .successBody {

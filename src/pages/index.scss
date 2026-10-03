@@ -16,7 +16,6 @@
 	// by CookieBanner.astro): the content is bottom-set, so it rises into the
 	// empty sky above instead of sliding under the banner.
 	padding: calc(5.5rem + env(safe-area-inset-top)) var(--gutter) var(--consent-h, 0px);
-	border-bottom: 1px solid var(--rule-soft);
 }
 
 .hero-inner {
@@ -241,7 +240,8 @@
 }
 
 /* ---- footing strip ---- */
-// Full-bleed row along the base of the hero, one hairline above.
+// Full-bleed row along the base of the hero. No hairline above it: the gap
+// under the actions sets it apart.
 .hero-foot {
 	position: relative;
 	z-index: 10;
@@ -254,7 +254,6 @@
 	gap: 2rem 3rem;
 	flex-wrap: wrap;
 	padding: clamp(0.85rem, 1.6vh, 1.6rem) 0 calc(clamp(0.85rem, 1.6vh, 1.6rem) + env(safe-area-inset-bottom));
-	border-top: 1px solid var(--rule);
 	animation: fadeInUp 0.9s ease 0.7s both;
 }
 
@@ -452,7 +451,6 @@
 	padding: var(--section-y-wide) 0 var(--section-y);
 	background: var(--color-bg);
 	overflow: hidden;
-	border-top: 1px solid var(--rule-soft);
 }
 
 // Layout, title and lede come from `.head-split`; only the stacking is local, so
@@ -519,7 +517,6 @@
 	width: 100%;
 	overflow: hidden;
 	background: var(--color-bg);
-	border-top: 1px solid var(--rule-soft);
 }
 
 .speakers-inner {
@@ -591,7 +588,6 @@
 	padding: var(--section-y-tight) var(--gutter);
 	width: 100%;
 	background: var(--color-bg);
-	border-top: 1px solid var(--rule-soft);
 }
 
 // Left-set, like every other section on the page.
@@ -806,7 +802,7 @@ $strip-grid-tiers: ('gold', 'silver', 'community');
 
 @media (max-width: 600px) {
 	.hero-inner {
-		// Bottom inset is the air above the footing hairline; it takes part of
+		// Bottom inset is the air above the footing strip; it takes part of
 		// the row the 2×2 strip gave back, so the buttons no longer sit on it.
 		padding-block: clamp(0.5rem, 1.5vh, 1.25rem) clamp(1.25rem, 4.5vh, 2.75rem);
 		// Sit the block on the footing strip. Centred, a tall phone (390x844)

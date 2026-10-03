@@ -174,6 +174,16 @@ Hairlines: `--rule` `rgba(240,237,230,0.13)` (118), `--rule-soft` `0.06` (119),
 `--rule-strong` `0.22` (120), `--rule-red` `rgba(204,0,0,0.55)` (121),
 `--field-border` `rgba(240,237,230,0.4)` (131).
 
+**[MUST] No decorative hairlines.** A line is drawn only where it carries
+structure: the agenda's time × room grid, data tables (privacy policy), tile
+grids (press kit, partner wall), a form control's boundary, a link's
+underline, a progress spine (the card builder's steps), and the cookie
+banner's edge over the page. Never a divider between sections, a rule under a
+section head (`.head-split--ruled` and `.head-stack` close on space), a line
+above a fact strip (the home hero's date/place/price row), a ruled readout
+(the invoice total), or an edge down a block's left side. Space separates;
+the maintainer asked for the "random lines" to go.
+
 Ink ramp: `--ink-strong` `0.85`, `--ink` `0.78`, `--ink-soft` `0.7`,
 `--ink-meta` `0.62`, `--ink-dim` `0.6`, `--ink-muted` `0.55`, `--ink-faint`
 `0.5` (all `rgba(240,237,230,…)`). Named steps only; a one-off alpha stays a
@@ -201,7 +211,7 @@ may not appear:
 rule (`BaseLayout.scss:8–12`).
 
 **[MUST] `--field-border` is the boundary of an interactive form control**
-(WCAG 1.4.11, ≥3:1). Decorative grouping hairlines stay at `--rule`
+(WCAG 1.4.11, ≥3:1). Structural hairlines (see above) stay at `--rule`
 (`BaseLayout.scss:122–131`).
 
 **[MUST] Measured ink on `#CC0000`** — hierarchy on the accent field comes from
@@ -606,7 +616,7 @@ Primitives, all in `BaseLayout.scss`:
 | `.eyebrow` | 399 | plain mono section label — no decoration, no trailing hairline |
 | `.display` (+ `.red`) | 414 | poster headline; `.red` only on the page's h1 (see Structural rules) |
 | `.head-split` / `.head-title` / `.head-note` (+ `--ruled` 454) | 446 | two-column section head: statement left, one line right |
-| `.head-stack` | 524 | the one-column section head, closed by a hairline |
+| `.head-stack` | 524 | the one-column section head, closed by space (no hairline) |
 | `.print` | 496 | the mounted photograph well at 4:5 |
 | `.fallback-note` | 550 | the no-JS / endpoint-down prose |
 | `.closer` family | 696 | the closing statement (see `Closer.astro`) |
@@ -651,8 +661,8 @@ both.
 **[MUST] A subpage is:** `SubpageHero` → `.band` sections → `Closer` →
 `Footer`. No `Ticker`: it runs under the home hero only (it was the same five
 topics under every hero, including /404 and /invoice). The first band after
-the hero opens on `--section-y-tight` with no top hairline
-(`.subpage-hero + .band`). `privacy-policy` and `code-of-conduct` (same legal
+the hero opens on `--section-y-tight` (`.subpage-hero + .band`); neither the
+hero nor the band draws a line between them. `privacy-policy` and `code-of-conduct` (same legal
 column) are the exception; `/` and `/partners`
 are out of scope.
 

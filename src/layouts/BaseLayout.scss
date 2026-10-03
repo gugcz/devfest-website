@@ -362,7 +362,8 @@ b {
 	color: var(--color-accent-hot);
 }
 
-// Statement left, one supporting line right; `--ruled` closes it with a hairline.
+// Statement left, one supporting line right; `--ruled` adds the closing air a
+// hairline used to sit in (the line itself is gone — no decorative rules).
 .head-split {
 	display: grid;
 	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
@@ -373,7 +374,6 @@ b {
 
 .head-split--ruled {
 	padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
-	border-bottom: 1px solid var(--rule-soft);
 }
 
 // Sections run at --fs-h2; --fs-display is the ONE display element per page.
@@ -420,10 +420,10 @@ b {
 }
 
 // The one-column section head. Compose the title with `.display` + `.head-title`.
+// Closed by space, not a hairline.
 .head-stack {
 	margin-bottom: 4rem;
 	padding-bottom: 1.6rem;
-	border-bottom: 1px solid var(--rule-soft);
 }
 
 @media (max-width: 600px) {
@@ -475,18 +475,16 @@ b {
 	color: var(--on-accent);
 }
 
-// The subpage ground: a spotlight pool closed by a hairline at the top.
+// The subpage ground: a spotlight pool. No hairline at the top.
 .band--lit {
 	background: var(--lit), var(--color-bg);
-	border-top: 1px solid var(--rule-soft);
 }
 
 // Straight off a subpage hero the band opens on a cut, not a full beat: the
-// hero already closes on its own hairline, and the ticker that used to sit
-// between them (and supply the pause) runs on the home page only now.
+// ticker that used to sit between them (and supply the pause) runs on the
+// home page only now.
 .subpage-hero + .band {
 	padding-top: var(--section-y-tight);
-	border-top: 0;
 }
 
 .band-inner {

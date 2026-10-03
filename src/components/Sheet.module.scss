@@ -132,7 +132,6 @@
 	color: var(--ink-muted);
 	margin: 0 0 clamp(1rem, 2vw, 1.5rem);
 	padding-bottom: clamp(0.9rem, 1.8vw, 1.25rem);
-	border-bottom: 1px solid var(--rule-soft);
 }
 
 // The ticket line that closes every detail sheet. A sheet is where interest
@@ -146,7 +145,6 @@
 	gap: 1.1rem 2rem;
 	margin-top: clamp(2.5rem, 5vw, 4rem);
 	padding-top: clamp(1.5rem, 3vw, 2.25rem);
-	border-top: 1px solid var(--rule-soft);
 }
 
 .ticketsLine {

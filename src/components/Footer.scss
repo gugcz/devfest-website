@@ -4,7 +4,6 @@
 	width: 100%;
 	z-index: 2;
 	padding: var(--section-y-tight) var(--gutter) 2.4rem;
-	border-top: 1px solid var(--rule-soft);
 	background: #030303;
 	font-family: var(--font-jetbrains-mono), monospace;
 	color: rgba(240, 237, 230, 0.65);
@@ -41,10 +40,9 @@
 	// Brand · Attend · About · Event · Organizer.
 	grid-template-columns: 1.4fr 1fr 1fr 1.1fr 1.3fr;
 	gap: 3.5rem;
-	// No top rule: the grid is the footer's first row and the footer already opens
-	// on its own hairline.
+	// No rules: the footer is set apart by space, not by a line above the grid
+	// or one between the grid and the copyright row.
 	padding: 0 0 clamp(2.5rem, 5vw, 3.5rem);
-	border-bottom: 1px solid var(--rule-soft);
 
 	// `em` BREAKPOINTS, the one place on the site (60em = 960px, 31.25em =
 	// 500px at 16px). They move with text zoom: `.org` holds the legal name
