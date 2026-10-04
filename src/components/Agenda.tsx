@@ -32,11 +32,12 @@ import s from './Agenda.module.scss';
 const SNAP_MIN = 5;
 const ROW_REM = 1.625;
 
-/** Rows a non-talk strip gets, however long it runs. Bands and dead time
- * carry one mono line; at scale the afterparty (18:30–00:00) is twenty times
- * the talk above it. Two rows = one line plus padding. Talks stay
- * proportional. */
-const NON_TALK_ROWS = 2;
+/** How tall a non-talk strip (a band or dead time) runs. Still to its length,
+ * but at half the talks' scale and capped: at full scale a lunch is two talks
+ * tall and the afterparty (18:30–00:00) twenty. Two rows (one mono line plus
+ * padding) for a coffee break, a row per ten minutes after that, six rows
+ * (a half-hour talk) for anything an hour or longer. */
+const NON_TALK_ROWS = { minPerRow: 10, minRows: 2, maxRows: 6 } as const;
 
 /** Stable empty roster, so the memos below don't recompute on every render
  * before the payload lands. */
