@@ -237,6 +237,10 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 `firestore.rules` denies all client access. Not wired into `firebase.json` (ruleset is project-global, shared with the app) — merge the `invoices` block in the console manually.
 
+## Venue screens — `/tv`
+
+`/tv` is the unlisted page for the TVs at the venue (`noindex`, out of the sitemap, linked from nowhere). `/tv?room=<room id or name slug>` pins a screen to one room (the talk on now, up next with a countdown, what the other rooms are showing); plain `/tv` shows every room as a now/next board; `&at=10:15` fakes the clock on the event day for checking a screen early. The agenda comes from `/api/lineup`, polled every 2 minutes.
+
 ## Analytics (GA4)
 
 Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Architecture and gotchas: [`.claude/rules/analytics.md`](.claude/rules/analytics.md). This section is the console-side setup, **not** in the repo.
@@ -262,6 +266,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/team` | Organizing team |
 | `/contact` | Contact page |
 | `/faq` | Frequently asked questions |
+| `/tv` | Unlisted venue-screen page: a room's now/next, or the whole venue (reads `/api/lineup`) |
 | `/attending` | "I'm attending" share-card generator (client-side canvas → PNG) |
 | `/code-of-conduct` | Code of Conduct one-pager, Listener's contact, link to the full text |
 | `/privacy-policy` | GDPR privacy policy |
