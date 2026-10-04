@@ -337,19 +337,32 @@ export interface RowScale {
 	isCompressed(min: number): boolean;
 }
 
+/** How a compressed span is sized: one row per `minPerRow` minutes, clamped
+ * to `minRows`–`maxRows`. */
+export interface SpanRows {
+	minPerRow: number;
+	minRows: number;
+	maxRows: number;
+}
+
 /** Minutes → row mapping. Proportional through talks, COMPRESSED elsewhere:
- * each `compressed` span gets at most `maxSpanRows` rows (a 5½-hour
- * afterparty at scale is twenty talks tall). Shorter spans are not stretched. */
+ * each `compressed` span runs on its own coarser scale (`span.minPerRow`),
+ * kept between `span.minRows` and `span.maxRows` — so a lunch still reads
+ * longer than a coffee break, but a 5½-hour afterparty is not twenty talks
+ * tall. */
 export function rowScale(
 	range: { start: number; end: number },
 	compressed: IdleSpan[],
 	snapMin: number,
-	maxSpanRows: number,
+	span: SpanRows,
 ): RowScale {
 	const stops = compressed
-		.map((span) => ({
-			...span,
-			rows: Math.min(maxSpanRows, Math.max(1, Math.round((span.endMin - span.startMin) / snapMin))),
+		.map((idle) => ({
+			...idle,
+			rows: Math.min(
+				span.maxRows,
+				Math.max(span.minRows, Math.round((idle.endMin - idle.startMin) / span.minPerRow)),
+			),
 		}))
 		.sort((a, b) => a.startMin - b.startMin);
 
