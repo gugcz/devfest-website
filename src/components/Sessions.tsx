@@ -17,7 +17,7 @@ import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
 
 /** The query parameter that names an open talk, so a speaker can link
- * straight to theirs: `/sessions?talk=<sessionize id>`. */
+ * straight to theirs: `/agenda?talk=<sessionize id>` (the old `/sessions?talk=` redirects there). */
 const TALK_PARAM = 'talk';
 
 /** `10:00–10:45, Main Hall` once a talk is scheduled; `''` before. Sessionize

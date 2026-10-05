@@ -18,7 +18,7 @@ web
 - **[inferred]** Companies buying several tickets who must pay by bank
   transfer against an invoice (`/invoice`).
 - **[inferred]** Speakers, press and partners checking programme, downloads
-  and partnership terms (`/speakers`, `/press`, `/partners`).
+  and partnership terms (`/speakers`, `/contact#press`, `/press/downloads`, `/partners`).
 - **[inferred]** Ticket holders on the day, reading the agenda on a phone
   (`/agenda`, `/attending`).
 

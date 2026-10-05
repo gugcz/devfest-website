@@ -1,6 +1,6 @@
 // Build-time Open Graph scraper. Imported only from .astro frontmatter, so it
 // runs in Node during `astro build` / dev SSR and never ships to the client.
-// Used by the press page to turn a bare article URL into a rich preview card
+// Used by the press band on /contact to turn a bare article URL into a rich preview card
 // (image + description + site name) without hand-copying metadata per entry.
 
 export interface OgData {

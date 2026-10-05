@@ -115,13 +115,11 @@ const HEADER_ROOTS = [16, 20, 24, 32];
 const HEADER_ROUTES = [
 	'/',
 	'/speakers/',
-	'/sessions/',
 	'/agenda/',
 	'/team/',
 	'/partners/',
 	'/contact/',
 	'/faq/',
-	'/press/',
 	'/press/downloads/',
 	'/invoice/',
 	'/code-of-conduct/',

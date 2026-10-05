@@ -3,12 +3,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Desk from '../components/Desk.astro';
 import Closer from '../components/Closer.astro';
+import { loadMediaCoverage } from '../lib/press-coverage';
 
+// CONTACT ABSORBS PRESS. `/press` was a menu line for a page whose job was a
+// list of articles and "here is our inbox" — the inbox lives here already, so
+// the clippings and the press kit link moved in as a band. `/press` redirects
+// to `#press`; `/press/downloads` stays where it is.
+const mediaCoverage = await loadMediaCoverage();
 ---
 
 <BaseLayout
 	title="Contact — DevFest.cz 2026"
-	description="Reach the DevFest.cz 2026 organising team — general questions, partnerships, and speaker enquiries."
+	description="Reach the DevFest.cz 2026 organising team — general questions, partnerships, speaker enquiries and press: coverage so far and the press kit."
 >
 	<main class="page-stack">
 		<SubpageHero
@@ -52,6 +58,57 @@ import Closer from '../components/Closer.astro';
 			</div>
 		</section>
 
+		<section id="press" class="band band--lit" aria-labelledby="press-title">
+			<div class="band-inner">
+				<div class="head-split">
+					<h2 id="press-title" class="display head-title">In the news.</h2>
+					<p class="head-note">
+						Writing a story? The press kit under the clippings has the logos, and the general inbox answers press.
+					</p>
+				</div>
+
+				{mediaCoverage.length > 0 ? (
+					<ul class="field coverage-list">
+						{mediaCoverage.map((m) => (
+							<li class="coverage-row">
+								<a class:list={['field-row field-row--link coverage-card', { 'coverage-card--bare': !m.image }]} href={m.href} target="_blank" rel="noopener noreferrer">
+									{m.image && (
+										<span class="coverage-thumb">
+											<img src={m.image} alt="" loading="lazy" decoding="async" width="400" height="225" />
+										</span>
+									)}
+									<span class="coverage-text">
+										<span class="coverage-outlet">{m.outlet}</span>
+										<span class="coverage-title">{m.title}</span>
+										{m.description && <span class="coverage-desc">{m.description}</span>}
+										<span class="coverage-meta">
+											<span class="coverage-read">
+												Read article
+												<span class="coverage-arrow" aria-hidden="true">↗</span>
+											</span>
+											{m.dateLabel && <time class="coverage-date" datetime={m.date}>{m.dateLabel}</time>}
+										</span>
+									</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				) : (
+					<div class="empty-state" role="status">
+						<span class="empty-stamp" aria-hidden="true">No coverage yet</span>
+						<p class="empty-line">
+							Coverage of DevFest.cz 2026 will appear here. Wrote about us?
+							Send us the link.
+						</p>
+					</div>
+				)}
+
+				<p class="press-kit-link">
+					<a href="/press/downloads" class="btn-ghost">Open the press kit</a>
+				</p>
+			</div>
+		</section>
+
 		<Closer
 			titleHtml={'Just come<br />to the show.'}
 			note="Tickets are on sale now, and the newsletter carries every announcement first."
@@ -64,4 +121,5 @@ import Closer from '../components/Closer.astro';
 
 <style lang="scss">
 	@use './contact';
+	@use './press';
 </style>
