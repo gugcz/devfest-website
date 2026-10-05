@@ -5,6 +5,7 @@ import {
 	fetchTickets,
 	filterDisplayable,
 	groupReleases,
+	isFinalWave,
 	priceDisplay,
 	releaseStatus,
 	releaseTitle,
@@ -133,6 +134,14 @@ export default function Tickets() {
 	// "Paused". See releaseStatus().
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
 	const hasCompanyVariant = releases.some((r) => releaseTitle(r).toLowerCase().includes('company funded'));
+	// Nothing left to wait for (no "Coming soon" wave): the section stops
+	// pitching "earlier is cheaper" and the next-wave newsletter, and says
+	// this is the last call instead.
+	const finalWave = isFinalWave(releases);
+	const groups = groupReleases(releases);
+	const finalName = finalWave
+		? groups.find((g) => g.variants.some((v) => releaseStatus(v.release).purchasable))?.name
+		: undefined;
 
 	return (
 		<section id="tickets" className={`${sectionClass} rake`} aria-labelledby="tickets-heading">
@@ -144,11 +153,17 @@ export default function Tickets() {
 			    viewport (the nav button, this label, and the row CTA), and the
 			    stack under it was the shape the speakers teaser was also using. */}
 			<header className="head-split">
-				<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
-				<p className="head-note">The earlier the wave, the lower the price.</p>
+				<h2 id="tickets-heading" className="display head-title">
+					{finalWave ? 'Last chance to get in.' : 'Buy your way in.'}
+				</h2>
+				<p className="head-note">
+					{finalWave
+						? `${finalName ?? 'This'} is the final wave. There is no next one.`
+						: 'The earlier the wave, the lower the price.'}
+				</p>
 			</header>
 			<ul className={`field ${s.stubs}`} role="list">
-				{groupReleases(releases).map((group, i) => {
+				{groups.map((group, i) => {
 					const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
 					const anyPurchasable = statuses.some((st) => st.purchasable);
 					const buyable = group.variants.filter((_, vi) => statuses[vi].purchasable);
@@ -187,7 +202,11 @@ export default function Tickets() {
 							    deep, for information that is two words long. */}
 							<span className={s.stubMeta}>
 								<span className={s.stubSerial} aria-hidden="true">{serial}</span>
-								{anyPurchasable && <span className={s.stubState}>On sale</span>}
+								{anyPurchasable && (
+									<span className={finalWave ? `${s.stubState} ${s.stubStateFinal}` : s.stubState}>
+										{finalWave ? 'Last chance' : 'On sale'}
+									</span>
+								)}
 							</span>
 
 							<div className={s.stubBody}>
@@ -266,12 +285,15 @@ export default function Tickets() {
 			{/* Two quiet side doors, one voice. The invoice route used to be a
 			    second filled red button under the list, competing with the live
 			    wave's own buy button for the one primary action in the section. */}
-			<p className={s.footnote}>
-				Not ready yet?{' '}
-				<a href="#newsletter" className={s.footnoteLink}>
-					Notify me when the next wave drops
-				</a>
-			</p>
+			{/* No next wave to be notified about once the final one is on sale. */}
+			{!finalWave && (
+				<p className={s.footnote}>
+					Not ready yet?{' '}
+					<a href="#newsletter" className={s.footnoteLink}>
+						Notify me when the next wave drops
+					</a>
+				</p>
+			)}
 			{/* The two variant buttons differ only in who pays; without this line
 			    the higher "Company funded" price read as a different ticket, and
 			    the explanation lived only in the FAQ. Same footnote as the
