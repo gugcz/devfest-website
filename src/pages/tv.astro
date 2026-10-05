@@ -1,12 +1,41 @@
 ---
 // ─── VENUE SCREENS ────────────────────────────────────────────────────────
 // What the TVs around the venue show on the day: `/tv?room=<id or name>`
-// pins a screen to the room it hangs next to (now, next, the rest of the
-// day, the other rooms, Bluesky), plain `/tv` shows every room. `?at=10:15`
-// fakes the time to check a screen before the day. UNLISTED = `noindex` +
-// out of the sitemap + linked from NOWHERE (not access control).
+// pins a screen to the room it hangs next to (the talk on now, what's next,
+// the other rooms), plain `/tv` shows every room. A credits band under both
+// names the organiser and loops through the partners. `?at=10:15` fakes the
+// time to check a screen before the day. UNLISTED = `noindex` + out of the
+// sitemap + linked from NOWHERE (not access control).
 import BaseLayout from '../layouts/BaseLayout.astro';
-import TvScreen from '../components/TvScreen';
+import TvScreen, { type PartnerGroup } from '../components/TvScreen';
+import gugLogo from '../assets/gug-logo.png';
+import { getActivePartnerTiers, getCommunityPartners } from '../lib/partners';
+
+// The same set and order as the homepage strip: the ladder top tier first,
+// community last. Logos are looked up by filename, as on the homepage.
+const logoSources = import.meta.glob<{ default: ImageMetadata }>('../assets/partners/**/*', { eager: true });
+const logoByFile = new Map(
+	Object.entries(logoSources).map(([path, mod]) => [path.split('/').pop() as string, mod.default]),
+);
+const tiers = [
+	...(await getActivePartnerTiers()).map((tier) => ({ tier: tier.label, partners: tier.partners })),
+	{ tier: 'Community', partners: await getCommunityPartners() },
+];
+// Three logos fit the band at a size that reads; a bigger tier splits into
+// even pages (5 → 3 + 2), each still labelled with its tier.
+const PER_PAGE = 3;
+const partners: PartnerGroup[] = tiers.flatMap(({ tier, partners }) => {
+	const label = `${tier} partner${partners.length === 1 ? '' : 's'}`;
+	const logos = partners.flatMap((p) => {
+		const logo = logoByFile.get(p.logo.split('/').pop() as string);
+		return logo ? [{ name: p.name, src: logo.src, plated: p.plated ?? false }] : [];
+	});
+	const pages = Math.ceil(logos.length / PER_PAGE);
+	return Array.from({ length: pages }, (_, i) => ({
+		label,
+		logos: logos.slice(Math.round((i * logos.length) / pages), Math.round(((i + 1) * logos.length) / pages)),
+	}));
+});
 ---
 
 <BaseLayout
@@ -15,5 +44,5 @@ import TvScreen from '../components/TvScreen';
 	noindex
 	kiosk
 >
-	<TvScreen client:load />
+	<TvScreen client:load partners={partners} organizerLogo={gugLogo.src} />
 </BaseLayout>

@@ -27,10 +27,29 @@
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	background: var(--color-bg);
+	// Noir lighting: one warm desk-lamp pool over the hero, the rest black.
+	background:
+		radial-gradient(ellipse 58% 62% at 28% 46%, rgba(255, 244, 232, 0.05), transparent 72%),
+		var(--color-bg);
 	color: var(--color-text);
 	cursor: none;
 	animation: drift 24min steps(1, end) infinite;
+
+	// The detective's Prague skyline from the site's hero, as a dim night band
+	// behind the header that dissolves before the first line of content. The
+	// plate is mostly black sky, so the white type on it keeps its contrast.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0 0 auto;
+		z-index: -1;
+		height: calc(var(--u) * 17);
+		background: url('/hero-detective.webp') center 37% / cover no-repeat;
+		filter: grayscale(1) contrast(1.15) brightness(0.8);
+		opacity: 0.5;
+		mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.5) 42%, transparent 88%);
+		pointer-events: none;
+	}
 }
 
 @keyframes drift {
@@ -116,6 +135,11 @@
 	text-overflow: ellipsis;
 }
 
+// The site's headline full stop, in Evidence Red: MOONSHINE.
+.stop {
+	color: var(--color-accent);
+}
+
 // The date sits left of the digits; the sweep runs under them.
 .clockBlock {
 	display: grid;
@@ -182,7 +206,92 @@
 	display: flex;
 	flex-direction: column;
 	gap: calc(var(--u) * 1.6);
-	padding: calc(var(--u) * 0.8) var(--pad) var(--pad);
+	padding: calc(var(--u) * 0.8) var(--pad) calc(var(--u) * 2);
+}
+
+// ─── Credits: the organiser and the partner loop ──────────────────────────
+
+.credits {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 3);
+	margin: 0 var(--pad);
+	padding: calc(var(--u) * 1.3) 0 calc(var(--u) * 2.4);
+	border-top: 1px solid var(--rule-strong);
+}
+
+// Typewriter captions: the noir texture in the one place nobody has to read
+// from across the room.
+.creditLabel {
+	@include prose(calc(var(--u) * 1.5));
+	flex: none;
+	margin: 0;
+	color: var(--ink-strong);
+	white-space: nowrap;
+}
+
+.organizer {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: calc(var(--u) * 1.4);
+	margin: 0;
+	padding-right: calc(var(--u) * 3);
+	border-right: 1px solid var(--rule-strong);
+}
+
+// The GUG wordmark is four colours; on the noir band it goes white like the
+// partners' light marks.
+.organizerLogo {
+	height: calc(var(--u) * 2.2);
+	width: auto;
+	filter: brightness(0) invert(1);
+}
+
+.partnerGroup {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: calc(var(--u) * 2.4);
+	min-width: 0;
+
+	// One width for every tier label, so the logos start in the same place
+	// page after page.
+	.creditLabel {
+		min-width: calc(var(--u) * 15.5);
+	}
+}
+
+.partnerLogos {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: calc(var(--u) * 3.6);
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		flex: none;
+	}
+}
+
+.partnerLogo {
+	display: block;
+	height: calc(var(--u) * 2.6);
+	width: auto;
+	max-width: calc(var(--u) * 15);
+	object-fit: contain;
+	object-position: left center;
+	filter: brightness(0) invert(1);
+}
+
+// A logo that ships on its own brand plate keeps it, as on /partners.
+.plated {
+	height: calc(var(--u) * 3.4);
+	filter: none;
 }
 
 .notice {
@@ -593,6 +702,10 @@
 	border-bottom: 1px solid var(--rule-strong);
 }
 
+.boardRow:last-child {
+	border-bottom: 0;
+}
+
 .boardRoom {
 	@include display(calc(var(--u) * 4.4));
 	line-height: 0.92;
@@ -640,7 +753,11 @@
 
 // Four rooms and more: one line per title so every row still fits.
 .boardDense {
-	.boardRoom {
+	.boardRow:last-child {
+	border-bottom: 0;
+}
+
+.boardRoom {
 		font-size: calc(var(--u) * 3.4);
 	}
 

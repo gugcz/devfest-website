@@ -239,7 +239,7 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 ## Venue screens — `/tv`
 
-`/tv` is the unlisted page for the TVs at the venue (`noindex`, out of the sitemap, linked from nowhere). `/tv?room=<room id or name slug>` pins a screen to one room (the talk on now, up next with a countdown, what the other rooms are showing); plain `/tv` shows every room as a now/next board. During a break both lead with the next talk and show the break as a small tag by the heading; `&at=10:15` fakes the clock on the event day for checking a screen early. The agenda comes from `/api/lineup`, polled every 2 minutes.
+`/tv` is the unlisted page for the TVs at the venue (`noindex`, out of the sitemap, linked from nowhere). `/tv?room=<room id or name slug>` pins a screen to one room (the talk on now, up next with a countdown, what the other rooms are showing); plain `/tv` shows every room as a now/next board. During a break both lead with the next talk and show the break as a small tag by the heading. A credits band under both names GUG.cz as the organiser and loops through the partners (the homepage set, from `src/content/partners.json`, three logos a page); `&at=10:15` fakes the clock on the event day for checking a screen early. The agenda comes from `/api/lineup`, polled every 2 minutes.
 
 ## Analytics (GA4)
 

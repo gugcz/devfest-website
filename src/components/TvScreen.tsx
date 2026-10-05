@@ -27,6 +27,15 @@ const CLOCK_TICK_MS = 1_000;
 /** A screen runs all day unattended: reload now and then so a deploy lands
  * and a long-lived tab can't drift. */
 const RELOAD_MS = 3 * 60 * 60_000;
+/** How long the credits band holds one page of partner logos. */
+const PARTNER_GROUP_MS = 8_000;
+
+/** One page of the credits band's partner loop: a tier, or part of a big
+ * one, resolved at build by `tv.astro`. */
+export interface PartnerGroup {
+	label: string;
+	logos: { name: string; src: string; plated: boolean }[];
+}
 
 const PRAGUE = new Intl.DateTimeFormat('en-CA', {
 	timeZone: 'Europe/Prague',
@@ -409,6 +418,39 @@ function Elsewhere({
 	);
 }
 
+/** The band under every screen: the organiser, then the partners a page at
+ * a time, in ladder order. Light marks go white; a plated logo keeps its
+ * brand plate. */
+function Credits({ partners, organizerLogo }: { partners: PartnerGroup[]; organizerLogo: string }) {
+	const [index, setIndex] = useState(0);
+	useEffect(() => {
+		if (partners.length < 2) return;
+		const id = setInterval(() => setIndex((i) => (i + 1) % partners.length), PARTNER_GROUP_MS);
+		return () => clearInterval(id);
+	}, [partners.length]);
+	const group = partners[index % Math.max(partners.length, 1)];
+	return (
+		<footer className={s.credits}>
+			<p className={s.organizer}>
+				<span className={s.creditLabel}>Organized by</span>
+				<img className={s.organizerLogo} src={organizerLogo} alt="GUG.cz" />
+			</p>
+			{group && (
+				<div key={index} className={`${s.partnerGroup} ${s.flip}`}>
+					<p className={s.creditLabel}>{group.label}</p>
+					<ul className={s.partnerLogos}>
+						{group.logos.map((logo) => (
+							<li key={logo.name}>
+								<img className={`${s.partnerLogo} ${logo.plated ? s.plated : ''}`} src={logo.src} alt={logo.name} />
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
+		</footer>
+	);
+}
+
 /** The room screen's right column: Up next, then the other rooms. Every
  * room has to show, so when they do not fit the card gives up a title line;
  * that resets whenever what the rail shows changes. */
@@ -503,7 +545,13 @@ function Board({ rooms, nowMin }: { rooms: RoomNow[]; nowMin: number | null }) {
 	);
 }
 
-export default function TvScreen() {
+export default function TvScreen({
+	partners = [],
+	organizerLogo,
+}: {
+	partners?: PartnerGroup[];
+	organizerLogo: string;
+}) {
 	const [params, setParams] = useState<Params | null>(null);
 	useEffect(() => setParams(readParams()), []);
 	useKioskUpkeep();
@@ -540,7 +588,12 @@ export default function TvScreen() {
 			<header className={s.header}>
 				<img className={s.logo} src={logoUrl} alt="DevFest.cz 2026" />
 				<div className={s.titleRow}>
-					<h1 className={s.heading}>{here ? here.column.label : 'Agenda'}</h1>
+					<h1 className={s.heading}>
+						{here ? here.column.label : 'Agenda'}
+						<span className={s.stop} aria-hidden="true">
+							.
+						</span>
+					</h1>
 					{pause && (
 						<p className={s.pause}>
 							{breakLabel(pause.session)} until {formatMinutes(pause.place.endMin)}
@@ -592,6 +645,7 @@ export default function TvScreen() {
 					)}
 				</main>
 			)}
+			<Credits partners={partners} organizerLogo={organizerLogo} />
 		</div>
 	);
 }
