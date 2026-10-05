@@ -18,7 +18,7 @@
 			},
 			{
 				"q": "I'm flying in — which airport, and where should I stay?",
-				"a": "Fly to <strong>Prague</strong> (Václav Havel Airport, PRG) — the venue is just outside the city, not in another one. From the airport, trolleybus 59 to Nádraží Veleslavín and metro A take you into town in about 45 minutes; the Airport Express bus runs straight to Praha hlavní nádraží. Stay anywhere near <strong>Praha hlavní nádraží</strong> or <strong>Holešovice</strong> and the venue is a single 25–30-minute train ride away on the day."
+				"a": "Fly to <strong>Prague</strong> (Václav Havel Airport, PRG) — the venue is just outside the city, not in another one. The Airport Express bus runs straight from the airport to Praha hlavní nádraží. Stay anywhere near <strong>Praha hlavní nádraží</strong> or <strong>Holešovice</strong> and the venue is a single 25–30-minute train ride away on the day."
 			},
 			{
 				"q": "Who organises DevFest.cz?",
