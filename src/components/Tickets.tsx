@@ -24,7 +24,7 @@ import s from './Tickets.module.scss';
 const GROUP_DESCRIPTIONS: Record<string, string> = {
 	'early bird': 'The lowest ticket price of the year. Limited early availability.',
 	regular: 'Standard pricing while the wave lasts — secure your seat early.',
-	'lazy bird': 'Late pricing, same full access. When this wave is gone, so is the box office.',
+	'lazy bird': 'Last chance to grab a ticket. Late pricing, same full access.',
 };
 
 function groupDescription(groupName: string, fallback: string | null): string | null {
