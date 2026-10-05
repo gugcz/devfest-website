@@ -82,6 +82,51 @@ export function venueNow(sessions: Session[], rooms: Room[], nowMin: number | nu
 	});
 }
 
+/** Breaks and lunch. A keynote is venue-wide too, but it is a talk. */
+export function isBreak(session: Session): boolean {
+	return session.isServiceSession;
+}
+
+/** `Break 20` → `Break`, `Lunch break` → `Lunch`: what a screen calls a pause. */
+export function breakLabel(session: Session): string {
+	if (/lunch|oběd/i.test(session.title)) return 'Lunch';
+	if (/break|coffee|přestávka|pauza/i.test(session.title)) return 'Break';
+	return session.title;
+}
+
+/** What a screen leads with for one room. During a break people want what
+ * comes after it, so a break never leads: it is the `pause` beside the next
+ * talk. */
+export interface RoomFocus {
+	/** The talk on now, else the next one. */
+	lead: Slot | null;
+	live: boolean;
+	/** A break running now, while `lead` waits for it to end. */
+	pause: Slot | null;
+	/** The talk after `lead`. */
+	next: Slot | null;
+	/** A break between `lead` and `next`. */
+	gap: Slot | null;
+}
+
+export function roomFocus(room: RoomNow): RoomFocus {
+	const talks = room.upcoming.filter((slot) => !isBreak(slot.session));
+	const onNow = room.now && !isBreak(room.now.session) ? room.now : null;
+	const lead = onNow ?? talks[0] ?? null;
+	const next = (onNow ? talks[0] : talks[1]) ?? null;
+	const gap =
+		lead && next
+			? (room.upcoming.find(
+					(slot) =>
+						isBreak(slot.session) &&
+						slot.place.startMin >= lead.place.endMin &&
+						slot.place.endMin <= next.place.startMin,
+				) ?? null)
+			: null;
+	const pause = room.now && isBreak(room.now.session) ? room.now : null;
+	return { lead, live: onNow !== null, pause, next, gap };
+}
+
 /** True once the last session of the day has ended. */
 export function isDayOver(rooms: RoomNow[], nowMin: number | null): boolean {
 	if (nowMin === null) return false;

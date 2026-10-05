@@ -10,13 +10,16 @@
 // - two zones only: the hero (what's on) and a rail (what's next, other rooms);
 // - every title is Bebas, every label and name JetBrains Mono at 500 —
 //   Special Elite's typewriter texture breaks up a few metres away;
-// - labels are ≥ 1.4u (27px at 1080p), tracked 0.06em, never the site's
+// - labels are ≥ 1.3u (25px at 1080p), tracked 0.06em, never the site's
 //   0.22em micro-labels; ink is --ink-strong or brighter;
-// - a ~4.5% safe margin all round, generous gaps instead of hairlines.
+// - red means live and nothing else: the Live chip, the live dot, the
+//   progress fill and the clock's seconds sweep;
+// - a fixed grid on hairlines, like a departures board, instead of boxes;
+// - motion only when something changes (a title flips in), plus a 1px drift
+//   every few minutes so a static frame never burns into the panel.
 .screen {
 	--u: min(1vw, 1.7778vh);
 	--pad: calc(var(--u) * 4.4);
-	--gap: calc(var(--u) * 3);
 	--label: calc(var(--u) * 1.45);
 
 	position: fixed;
@@ -27,6 +30,21 @@
 	background: var(--color-bg);
 	color: var(--color-text);
 	cursor: none;
+	animation: drift 24min steps(1, end) infinite;
+}
+
+@keyframes drift {
+	25% {
+		transform: translate(1px, 0);
+	}
+
+	50% {
+		transform: translate(1px, 1px);
+	}
+
+	75% {
+		transform: translate(0, 1px);
+	}
 }
 
 @mixin tv-label($size: var(--label)) {
@@ -52,14 +70,27 @@
 	overflow: hidden;
 }
 
+// A title that changed flips down into place, like a split-flap leaf. Only
+// the transform moves, so the text is at full contrast throughout.
+.flip {
+	transform-origin: 50% 0;
+	animation: flip-in 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+@keyframes flip-in {
+	from {
+		transform: perspective(40em) rotateX(-80deg);
+	}
+}
+
 // ─── Header ────────────────────────────────────────────────────────────────
 
 .header {
 	display: grid;
-	grid-template-columns: auto 1fr auto;
+	grid-template-columns: auto minmax(0, 1fr) auto;
 	align-items: center;
 	gap: calc(var(--u) * 2.6);
-	padding: calc(var(--u) * 2.6) var(--pad) calc(var(--u) * 2.2);
+	padding: calc(var(--u) * 2.4) var(--pad) calc(var(--u) * 1.8);
 }
 
 .logo {
@@ -67,34 +98,76 @@
 	width: auto;
 }
 
-.heading {
-	@include display(calc(var(--u) * 5.2));
-	margin: 0;
-	padding: 0.08em 0 0 calc(var(--u) * 2.6);
+.titleRow {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 2.4);
+	min-width: 0;
+	padding-left: calc(var(--u) * 2.6);
 	border-left: 2px solid var(--rule-strong);
+}
+
+.heading {
+	@include display(calc(var(--u) * 5.4));
+	margin: 0;
+	padding-top: 0.08em;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
+// The date sits left of the digits; the sweep runs under them.
 .clockBlock {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
-	gap: calc(var(--u) * 0.5);
+	display: grid;
+	grid-template-areas:
+		'meta clock'
+		'. sweep';
+	align-items: end;
+	gap: calc(var(--u) * 0.7) calc(var(--u) * 1.6);
 	margin: 0;
 }
 
 .clock {
-	@include mono(calc(var(--u) * 3.6));
-	font-weight: 500;
-	line-height: 1;
+	@include display(calc(var(--u) * 5));
+	grid-area: clock;
+	line-height: 0.84;
+	padding-top: 0.08em;
 	font-variant-numeric: tabular-nums;
 }
 
+.sweep {
+	grid-area: sweep;
+	display: block;
+	height: calc(var(--u) * 0.22);
+	background: var(--rule);
+
+	span {
+		display: block;
+		height: 100%;
+		background: var(--color-accent);
+		transform-origin: left;
+		animation: sweep 60s linear infinite;
+	}
+}
+
+// 58.5 s to fill, then a rest until the minute turns.
+@keyframes sweep {
+	from {
+		transform: scaleX(0);
+	}
+
+	97.5%,
+	to {
+		transform: scaleX(1);
+	}
+}
+
 .clockMeta {
-	@include tv-label(calc(var(--u) * 1.15));
+	@include tv-label(calc(var(--u) * 1.3));
+	grid-area: meta;
+	padding-bottom: 0.15em;
 	color: var(--ink-strong);
+	text-align: right;
 }
 
 .status {
@@ -109,13 +182,25 @@
 	display: flex;
 	flex-direction: column;
 	gap: calc(var(--u) * 1.6);
-	padding: calc(var(--u) * 1) var(--pad) var(--pad);
+	padding: calc(var(--u) * 0.8) var(--pad) var(--pad);
 }
 
 .notice {
 	@include tv-label;
 	margin: 0;
 	color: var(--ink-strong);
+}
+
+// A break, lunch or registration running now: a quiet tag beside the
+// heading, because what people want from the screen then is the talk after it.
+.pause {
+	@include tv-label(calc(var(--u) * 1.5));
+	flex: none;
+	margin: 0;
+	padding: 0.5em 0.8em 0.45em;
+	border: 1px solid var(--rule-strong);
+	border-radius: var(--radius);
+	color: var(--color-text);
 }
 
 .metaTime {
@@ -127,6 +212,22 @@
 	@include tv-label;
 	margin: 0;
 	color: var(--color-text);
+}
+
+// The state word on a slot: a white block, red for Live alone.
+.chip {
+	@include tv-label(calc(var(--u) * 1.35));
+	flex: none;
+	padding: 0.32em 0.6em 0.26em;
+	border-radius: var(--radius);
+	background: var(--color-text);
+	color: var(--on-accent);
+	line-height: 1;
+}
+
+.chipLive {
+	background: var(--color-accent);
+	box-shadow: var(--glow-red-soft);
 }
 
 .dot {
@@ -146,14 +247,38 @@
 	}
 }
 
+.progressRow {
+	@include mono(calc(var(--u) * 1.3));
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 1.2);
+	color: var(--ink-strong);
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+}
+
+.progress {
+	flex: 1;
+	height: calc(var(--u) * 0.3);
+	background: var(--rule-strong);
+
+	span {
+		display: block;
+		height: 100%;
+		background: var(--color-accent);
+		transform-origin: left;
+		transition: transform 1s linear;
+	}
+}
+
 // ─── Room screen: hero + rail ──────────────────────────────────────────────
 
 .roomGrid {
 	flex: 1;
 	min-height: 0;
 	display: grid;
-	grid-template-columns: minmax(0, 1.72fr) minmax(0, 1fr);
-	gap: calc(var(--u) * 4);
+	grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr);
+	gap: calc(var(--u) * 3.4);
 }
 
 .hero {
@@ -162,20 +287,22 @@
 	flex-direction: column;
 	gap: calc(var(--u) * 2.2);
 	padding-top: calc(var(--u) * 1);
+
+	.progressRow {
+		margin-top: auto;
+	}
 }
 
 .heroMeta {
 	@include tv-label(calc(var(--u) * 1.8));
 	display: flex;
 	align-items: center;
-	gap: calc(var(--u) * 1.6);
+	gap: calc(var(--u) * 1.4);
 	margin: 0;
-}
 
-.state {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.55em;
+	.chip {
+		font-size: calc(var(--u) * 1.6);
+	}
 }
 
 .metaAside {
@@ -200,48 +327,36 @@
 	}
 }
 
-.heroBreak .heroTitle {
-	color: var(--color-cream);
-}
-
-.progress {
-	height: calc(var(--u) * 0.45);
-	margin-top: auto;
-	background: var(--rule-strong);
-
-	span {
-		display: block;
-		height: 100%;
-		background: var(--color-accent);
-		transform-origin: left;
-		transition: transform 1s linear;
-	}
-}
-
 .rail {
 	min-height: 0;
 	display: flex;
 	flex-direction: column;
-	gap: var(--gap);
+	gap: calc(var(--u) * 2.6);
+	padding-left: calc(var(--u) * 3.4);
+	border-left: 1px solid var(--rule-strong);
 	overflow: hidden;
 }
 
 .next {
+	flex: none;
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--u) * 1.6);
-	padding: calc(var(--u) * 2.6);
-	background: var(--panel-hover);
-	border: 1px solid var(--rule);
-	border-radius: var(--radius);
+	gap: calc(var(--u) * 1);
+	padding-top: calc(var(--u) * 1.6);
+	border-top: calc(var(--u) * 0.3) solid var(--rule-strong);
+}
+
+// Ten minutes out, the rule over Up next turns white: the room is about to
+// change over.
+.nextSoon {
+	border-top-color: var(--color-text);
 }
 
 .nextTop {
 	display: flex;
-	flex-wrap: wrap;
 	align-items: baseline;
 	justify-content: space-between;
-	gap: calc(var(--u) * 0.6) calc(var(--u) * 2);
+	gap: calc(var(--u) * 2);
 	margin: 0;
 
 	.cardLabel {
@@ -250,21 +365,47 @@
 }
 
 .countdown {
-	@include tv-label(calc(var(--u) * 1.8));
+	@include display(calc(var(--u) * 3.4));
+	line-height: 0.84;
 	white-space: nowrap;
 	font-variant-numeric: tabular-nums;
 }
 
+// Every other room has to fit under the card, so when they would not, the
+// title gives up its third line.
+.nextCramped .nextTitle {
+	-webkit-line-clamp: 2;
+}
+
+.nextSpeakers {
+	@include mono(calc(var(--u) * 1.8));
+	margin: 0;
+	font-weight: 500;
+	line-height: 1.2;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.nextWhen {
+	@include mono(calc(var(--u) * 1.45));
+	margin: 0;
+	color: var(--ink-strong);
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+}
+
 .nextTitle {
-	@include tv-title(calc(var(--u) * 4), 3);
+	@include tv-title(calc(var(--u) * 3.6), 3);
+	margin-top: calc(var(--u) * 0.3);
 
 	&.titleMid {
-		font-size: calc(var(--u) * 3.3);
+		font-size: calc(var(--u) * 3.1);
 	}
 
 	&.titleLong,
 	&.titleXl {
-		font-size: calc(var(--u) * 3);
+		font-size: calc(var(--u) * 2.7);
 	}
 }
 
@@ -273,8 +414,7 @@
 	min-height: 0;
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--u) * 1.4);
-	padding: 0 calc(var(--u) * 2.6);
+	gap: calc(var(--u) * 1.1);
 }
 
 // A column that wraps: a room that does not fit moves to a second column,
@@ -288,16 +428,18 @@
 	display: flex;
 	flex-flow: column wrap;
 	align-content: flex-start;
-	gap: calc(var(--u) * 1.9) var(--pad);
+	gap: calc(var(--u) * 1.2) var(--pad);
 	overflow: hidden;
 }
 
 .elsewhereRoom {
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--u) * 0.6);
+	gap: calc(var(--u) * 0.7);
 	width: 100%;
 	min-width: 0;
+	padding-top: calc(var(--u) * 1.1);
+	border-top: 1px solid var(--rule-strong);
 }
 
 .elsewhereHead {
@@ -310,8 +452,8 @@
 }
 
 .elsewhereName {
-	@include tv-label(calc(var(--u) * 1.3));
-	color: var(--color-cream);
+	@include tv-label(calc(var(--u) * 1.35));
+	color: var(--color-text);
 }
 
 .elsewhereTitle {
@@ -328,6 +470,7 @@
 	align-items: center;
 	gap: 0.5em;
 	color: var(--ink-strong);
+	font-weight: 500;
 	font-variant-numeric: tabular-nums;
 }
 
@@ -344,6 +487,9 @@
 // ─── Speakers ──────────────────────────────────────────────────────────────
 
 .speakers {
+	--photo: calc(var(--u) * 8.4);
+	--name: calc(var(--u) * 2.4);
+
 	display: flex;
 	flex-shrink: 0;
 	flex-wrap: wrap;
@@ -353,28 +499,20 @@
 	list-style: none;
 }
 
-.speakers-lg {
-	--photo: calc(var(--u) * 6.4);
-	--name: calc(var(--u) * 2.3);
-}
-
-.speakers-lg.speakersMany {
-	--photo: calc(var(--u) * 4.8);
+.speakersMany {
+	--photo: calc(var(--u) * 6);
 	--name: calc(var(--u) * 2.1);
-}
-
-.speakers-md {
-	--name: calc(var(--u) * 1.8);
-	row-gap: calc(var(--u) * 0.6);
 }
 
 .speaker {
 	display: flex;
 	align-items: center;
-	gap: calc(var(--u) * 1.3);
+	gap: calc(var(--u) * 1.6);
 	min-width: 0;
 }
 
+// One treatment for every portrait, whatever light it was shot in: square,
+// black and white, a touch more contrast, so a row of speakers reads as a set.
 .photo,
 .monogram {
 	flex: none;
@@ -382,7 +520,7 @@
 	height: var(--photo);
 	border-radius: var(--radius);
 	object-fit: cover;
-	filter: grayscale(1) contrast(1.05);
+	filter: grayscale(1) contrast(1.12);
 }
 
 .monogram {
@@ -398,7 +536,7 @@
 .speakerText {
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--u) * 0.4);
+	gap: calc(var(--u) * 0.5);
 	min-width: 0;
 }
 
@@ -409,7 +547,7 @@
 }
 
 .speakerTag {
-	@include mono(calc(var(--u) * 1.35));
+	@include mono(calc(var(--u) * 1.4));
 	line-height: 1.3;
 	color: var(--ink-strong);
 }
@@ -421,15 +559,16 @@
 	min-height: 0;
 	display: flex;
 	flex-direction: column;
-	--cols: minmax(0, 0.7fr) minmax(0, 1.5fr) minmax(0, 1fr);
+	gap: calc(var(--u) * 1.6);
+	--cols: minmax(0, 0.62fr) minmax(0, 1.5fr) minmax(0, 1fr);
+	--col-gap: calc(var(--u) * 3.4);
 }
 
 .boardHead {
 	@include tv-label;
 	display: grid;
 	grid-template-columns: var(--cols);
-	gap: calc(var(--u) * 3);
-	padding: 0 calc(var(--u) * 2.8) calc(var(--u) * 1.4);
+	gap: var(--col-gap);
 	color: var(--ink-strong);
 }
 
@@ -438,41 +577,48 @@
 	min-height: 0;
 	display: grid;
 	grid-auto-rows: minmax(0, 1fr);
-	gap: calc(var(--u) * 1.2);
-	margin: 0;
+	margin: calc(var(--u) * -0.6) 0 0;
 	padding: 0;
 	list-style: none;
+	border-top: 1px solid var(--rule-strong);
 }
 
 .boardRow {
 	display: grid;
 	grid-template-columns: var(--cols);
 	align-items: center;
-	gap: calc(var(--u) * 3);
+	gap: var(--col-gap);
 	min-height: 0;
-	padding: calc(var(--u) * 1.4) calc(var(--u) * 2.8);
-	background: var(--panel-hover);
-	border: 1px solid var(--rule);
-	border-radius: var(--radius);
-	overflow: hidden;
+	padding: calc(var(--u) * 1.2) 0;
+	border-bottom: 1px solid var(--rule-strong);
 }
 
 .boardRoom {
-	@include display(calc(var(--u) * 4));
+	@include display(calc(var(--u) * 4.4));
 	line-height: 0.92;
 	margin: 0;
 	padding-top: 0.06em;
 }
 
 .boardCell {
+	position: relative;
+	align-self: stretch;
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--u) * 0.8);
+	justify-content: center;
+	gap: calc(var(--u) * 0.9);
 	min-width: 0;
+	min-height: 0;
+
+	// A live talk's progress runs along the row's bottom rule, under its cell.
+	.progressRow {
+		position: absolute;
+		inset: auto 0 calc(var(--u) * -1.2 - 1px);
+	}
 }
 
 .boardTitle {
-	@include tv-title(calc(var(--u) * 3.4), 2);
+	@include tv-title(calc(var(--u) * 3.3), 2);
 
 	&.titleLong {
 		font-size: calc(var(--u) * 2.9);
@@ -484,7 +630,7 @@
 }
 
 .boardTitleSm {
-	@include tv-title(calc(var(--u) * 2.8), 2);
+	@include tv-title(calc(var(--u) * 2.7), 2);
 
 	&.titleLong,
 	&.titleXl {
@@ -495,7 +641,7 @@
 // Four rooms and more: one line per title so every row still fits.
 .boardDense {
 	.boardRoom {
-		font-size: calc(var(--u) * 3.2);
+		font-size: calc(var(--u) * 3.4);
 	}
 
 	.boardTitle,
@@ -504,26 +650,35 @@
 	}
 }
 
-.boardBreak {
-	color: var(--color-cream);
-}
-
 .boardMeta {
 	@include mono(calc(var(--u) * 1.45));
 	display: flex;
 	align-items: center;
-	gap: 0.5em;
+	gap: 0.7em;
 	margin: 0;
 	color: var(--ink-strong);
+	font-weight: 500;
 	font-variant-numeric: tabular-nums;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
+.boardMetaText {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.dot {
+	.dot,
+	.flip {
 		animation: none;
+	}
+
+	.sweep span {
+		animation: none;
+		transform: scaleX(0);
 	}
 
 	.progress span {
