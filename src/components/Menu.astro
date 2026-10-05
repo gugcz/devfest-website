@@ -19,16 +19,18 @@ const isInvite = currentPath === '/invite' || currentPath.startsWith('/invite/')
 // to send the visitor back to / first so the section actually exists.
 const ticketsHref = isHome ? '#tickets' : '/#tickets';
 
-// TWO TIERS, SEVEN LINES. Ten destinations at one poster size made the
+// TWO TIERS, EIGHT LINES. Ten destinations at one poster size made the
 // visitor read all ten every time; two tiers of twelve still did. So the
 // pages were merged, not just ranked: `Sessions` lives on `/agenda` under the
 // timetable (one programme, one door) and `Press` is a band on `/contact`.
-// The four below are what the site is for (PRODUCT.md: sell tickets, carry
-// the programme).
+// The five below are what the site is for (PRODUCT.md: sell tickets, carry
+// the programme) plus the one thing every ticket holder has to look up: how
+// to get to the venue.
 const links: readonly NavLink[] = [
 	{ href: ticketsHref, label: 'Tickets', cta: true },
 	{ href: '/speakers', label: 'Speakers' },
 	{ href: '/agenda', label: 'Agenda' },
+	{ href: '/venue', label: 'Venue' },
 	{ href: '/faq', label: 'FAQ' },
 ];
 
