@@ -23,6 +23,7 @@ const PATHS = [
 	'/partners/',
 	'/contact/',
 	'/faq/',
+	'/venue/',
 	'/press/downloads/',
 	'/invoice/',
 	'/attending/',
