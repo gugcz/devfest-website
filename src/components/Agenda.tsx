@@ -480,7 +480,7 @@ export default function Agenda() {
 	// No sessions at all, or none scheduled yet → the schedule isn't published.
 	if (status === 'empty' || range === null) {
 		return (
-			<EmptyState action={{ href: '/sessions', label: 'Browse all talks' }}>
+			<EmptyState action={{ href: '#talks', label: 'Browse all talks' }}>
 				<p>The full schedule lands closer to the event.</p>
 			</EmptyState>
 		);

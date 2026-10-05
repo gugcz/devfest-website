@@ -1,5 +1,7 @@
 @use '../styles/type' as *;
 
+// The press band on /contact (was the /press page).
+
 // A plain note, not a mounted panel and not a ruled one.
 .empty-state {
 	position: relative;
@@ -180,4 +182,9 @@
 		font-size: var(--fs-body-lg);
 		line-height: 1.4;
 	}
+}
+
+// The way on to the kit, under the clippings.
+.press-kit-link {
+	margin: clamp(2rem, 4vw, 3rem) 0 0;
 }

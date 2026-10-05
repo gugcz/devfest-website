@@ -18,13 +18,11 @@ const PORT = 4321;
 const PATHS = [
 	'/',
 	'/speakers/',
-	'/sessions/',
 	'/agenda/',
 	'/team/',
 	'/partners/',
 	'/contact/',
 	'/faq/',
-	'/press/',
 	'/press/downloads/',
 	'/invoice/',
 	'/attending/',
@@ -293,15 +291,23 @@ const MODAL_FLOWS = {
 			open: (p) => p.click('button[aria-label^="View "]'),
 		},
 	],
-	'/sessions/': [
+	// The talk list (was /sessions) sits under the timetable since the merge;
+	// its flows are scoped to `#talks` so they never hit a timetable cell.
+	'/agenda/': [
+		{
+			// A timetable cell opens the same SessionDetail dialog. Cells carry a
+			// hashed CSS-module class, so target the stable data hook instead.
+			label: 'agenda session dialog',
+			open: (p) => p.click('[data-agenda-open]'),
+		},
 		{
 			label: 'session detail dialog',
-			open: (p) => p.click('button[aria-label^="View details for "]'),
+			open: (p) => p.click('#talks button[aria-label^="View details for "]'),
 		},
 		{
 			label: 'session → speaker dialog',
 			open: async (p) => {
-				await p.click('button[aria-label^="View details for "]');
+				await p.click('#talks button[aria-label^="View details for "]');
 				await p.waitForSelector('[role="dialog"]');
 				await p.click('[role="dialog"] button[aria-label^="View "]');
 			},
@@ -313,18 +319,10 @@ const MODAL_FLOWS = {
 			// plate once slipped through because that one had a photo.
 			label: 'session → speaker dialog (no photo)',
 			open: async (p) => {
-				await p.click('button[aria-label="View details for AI at the Edge"]');
+				await p.click('#talks button[aria-label="View details for AI at the Edge"]');
 				await p.waitForSelector('[role="dialog"]');
 				await p.click('[role="dialog"] button[aria-label="View Alan Turing\'s profile"]');
 			},
-		},
-	],
-	'/agenda/': [
-		{
-			// A timetable cell opens the same SessionDetail dialog. Cells carry a
-			// hashed CSS-module class, so target the stable data hook instead.
-			label: 'agenda session dialog',
-			open: (p) => p.click('[data-agenda-open]'),
 		},
 	],
 };

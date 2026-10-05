@@ -132,7 +132,7 @@ Only `secret` releases are dropped (`isWebsiteVisible`, again client-side). Ever
 
 ## Speakers & Sessions — Sessionize → Firestore → `/api/lineup`
 
-`/speakers` and `/sessions` render client-side from **Firestore**, mirrored every 15 minutes from **Sessionize** by a Cloud Function. Browsers never touch Sessionize; they read the cached `/api/lineup` endpoint, not the Firebase SDK.
+`/speakers` and `/agenda` render client-side from **Firestore**, mirrored every 15 minutes from **Sessionize** by a Cloud Function. Browsers never touch Sessionize; they read the cached `/api/lineup` endpoint, not the Firebase SDK.
 
 ```
 Cloud Scheduler (every 15 minutes)
@@ -254,13 +254,12 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 |-------|-------------|
 | `/` | Landing page with countdown and newsletter signup |
 | `/speakers` | Speaker lineup (reads `/api/lineup`) |
-| `/sessions` | Session schedule (reads `/api/lineup`) |
-| `/agenda` | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day (reads `/api/lineup`) |
+| `/agenda` | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day — and under it (`#talks`) every talk with search and filters (reads `/api/lineup`). `/sessions` redirects here, `?talk=` included |
 | `/invoice` | Request a company invoice to buy tickets by bank transfer |
 | `/partners` | Sponsors & partners |
-| `/press`, `/press/downloads` | Press kit and downloadable assets |
+| `/press/downloads` | Press kit and downloadable assets (`/press` redirects to the press band on `/contact`) |
 | `/team` | Organizing team |
-| `/contact` | Contact page |
+| `/contact` | Contact desks, plus press coverage and the press-kit link (`#press`) |
 | `/faq` | Frequently asked questions |
 | `/attending` | "I'm attending" share-card generator (client-side canvas → PNG) |
 | `/code-of-conduct` | Code of Conduct one-pager, Listener's contact, link to the full text |

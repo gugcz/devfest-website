@@ -19,31 +19,28 @@ const isInvite = currentPath === '/invite' || currentPath.startsWith('/invite/')
 // to send the visitor back to / first so the section actually exists.
 const ticketsHref = isHome ? '#tickets' : '/#tickets';
 
-// TWO TIERS, NOT TEN EQUAL LINES. Ten destinations at one poster size made
-// the visitor read all ten every time, and split the programme three ways —
-// `Speakers`, `Sessions` and `Agenda` are three doors to one question. The
-// five below are what the site is for (PRODUCT.md: sell tickets, carry the
-// programme); the rest continue the same list in `secondary`, one step
-// smaller, so they read as the same menu rather than as fine print.
+// TWO TIERS, SEVEN LINES. Ten destinations at one poster size made the
+// visitor read all ten every time; two tiers of twelve still did. So the
+// pages were merged, not just ranked: `Sessions` lives on `/agenda` under the
+// timetable (one programme, one door) and `Press` is a band on `/contact`.
+// The four below are what the site is for (PRODUCT.md: sell tickets, carry
+// the programme).
 const links: readonly NavLink[] = [
 	{ href: ticketsHref, label: 'Tickets', cta: true },
 	{ href: '/speakers', label: 'Speakers' },
-	{ href: '/sessions', label: 'Sessions' },
 	{ href: '/agenda', label: 'Agenda' },
 	{ href: '/faq', label: 'FAQ' },
 ];
 
-// Everything the visit does not turn on. `/invoice` joins them: companies
-// paying by bank transfer are a named user group, and the page was linked
-// from the footer alone, so a company had to already know the URL.
+// The organisers' side, one step smaller so it reads as the same list rather
+// than as fine print. Off the menu but one click from where they are asked
+// for: `Company invoice` (the Tickets section and the FAQ), `I'm attending`
+// (the post-purchase thank-you page and the FAQ), `Code of Conduct` (the FAQ).
+// All three stay in the footer, which lists every page.
 const secondary: readonly NavLink[] = [
 	{ href: '/partners', label: 'Partners' },
-	{ href: '/invoice', label: 'Company invoice' },
-	{ href: '/contact', label: 'Contact' },
 	{ href: '/team', label: 'Team' },
-	{ href: '/press', label: 'Press' },
-	{ href: '/attending', label: 'I\'m attending' },
-	{ href: '/code-of-conduct', label: 'Code of Conduct' },
+	{ href: '/contact', label: 'Contact' },
 ];
 
 const isCurrent = (href: string) => {
@@ -94,8 +91,8 @@ const isCurrent = (href: string) => {
 				<span class="nav-toggle-label">Menu</span>
 			</button>
 
-			<!-- Full-screen overlay at every width. Every destination is here,
-			     in one column of two tiers: the five the visit turns on at poster
+			<!-- Full-screen overlay at every width. The main destinations are here,
+			     in one column of two tiers: the four the visit turns on at poster
 			     scale, the rest straight under them, one step smaller. -->
 			<div id="nav-list" class="nav-panel" data-open="false">
 				<div class="nav-lists">

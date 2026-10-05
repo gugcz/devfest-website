@@ -31,6 +31,10 @@
 			{
 				"q": "Is there an afterparty?",
 				"a": "Yes. Once the closing remarks are done, around 18:30, the afterparty kicks off right at the venue. More details closer to the date."
+			},
+			{
+				"q": "Is there a code of conduct?",
+				"a": "Yes. DevFest.cz is a community event and harassment of any kind is not allowed; if you are asked to stop, you stop. The short version, and who to talk to on the day, is on the <a href=\"/code-of-conduct\">Code of Conduct</a> page."
 			}
 		]
 	},
@@ -64,7 +68,7 @@
 		"items": [
 			{
 				"q": "Who is speaking?",
-				"a": "The lineup is live on the <a href=\"/speakers\">speakers</a> page — developers, Google Developer Experts and researchers from across Europe and beyond, with a few more names still to land. Every talk, with its abstract and speakers, is on the <a href=\"/sessions\">sessions</a> page."
+				"a": "The lineup is live on the <a href=\"/speakers\">speakers</a> page — developers, Google Developer Experts and researchers from across Europe and beyond, with a few more names still to land. Every talk, with its abstract and speakers, is on the <a href=\"/agenda#talks\">agenda</a> page, under the timetable."
 			},
 			{
 				"q": "What topics are covered?",
