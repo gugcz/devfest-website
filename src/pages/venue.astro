@@ -3,7 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import NextStep from '../components/NextStep.astro';
 import Closer from '../components/Closer.astro';
+import { Image } from 'astro:assets';
 import { EVENT } from '../lib/event';
+import chimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
+import entranceTower from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
+import entrance from '../assets/venue/uhelny-mlyn-entrance.jpg';
 
 // The route as the visitor travels it: Prague, the train, the walk, the door.
 // Same facts as the FAQ answer ("How do I get to the venue?") — keep the two
@@ -36,6 +40,23 @@ const STEPS = [
 		actions: [],
 	},
 ];
+
+// What to look for on arrival, widest view first. Informative, so each has
+// alt text. The parked van's number plate is blurred in the source file.
+const PHOTOS = [
+	{
+		src: chimney,
+		alt: 'The Uhelný Mlýn complex: red-brick factory halls with a tall brick chimney behind them.',
+	},
+	{
+		src: entranceTower,
+		alt: 'The chimney above a brick hall, with the black perforated-metal entrance building beside it.',
+	},
+	{
+		src: entrance,
+		alt: 'The entrance: glass doors under a black perforated-metal façade, up a few concrete steps.',
+	},
+];
 ---
 
 <BaseLayout
@@ -62,6 +83,24 @@ const STEPS = [
 			</div>
 		</section>
 
+		<section class="venue-photos" aria-labelledby="photos-heading">
+			<div class="u-container head-split">
+				<h2 id="photos-heading" class="display head-title">Look for the chimney.</h2>
+				<p class="head-note">
+					A converted industrial mill: red-brick halls, one tall chimney, and the entrance in the black
+					metal building.
+				</p>
+			</div>
+
+			<ul class="u-container venue-photos-grid" role="list">
+				{PHOTOS.map(({ src, alt }) => (
+					<li>
+						<Image src={src} alt={alt} widths={[640, 960, 1400]} sizes="(max-width: 700px) 100vw, 40vw" loading="lazy" />
+					</li>
+				))}
+			</ul>
+		</section>
+
 		<Closer
 			titleHtml={'See you<br />on the 30th.'}
 			note="Still deciding? The lineup and the schedule are out, and tickets are on sale."
@@ -74,3 +113,7 @@ const STEPS = [
 		/>
 	</main>
 </BaseLayout>
+
+<style lang="scss">
+	@use './venue';
+</style>
