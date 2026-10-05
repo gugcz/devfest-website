@@ -26,8 +26,11 @@ const STEPS = [
 		title: 'Find the venue',
 		noteHtml:
 			`${EVENT.venue} &mdash; ${EVENT.address}. Half an hour north of Prague; ` +
-			'getting there is covered in the <a href="/faq">FAQ</a>.',
-		actions: [{ href: EVENT.mapUrl, label: 'Open in maps', external: true }],
+			'one direct train, then a ten-minute walk.',
+		actions: [
+			{ href: '/venue', label: 'Getting there' },
+			{ href: EVENT.mapUrl, label: 'Open in maps', external: true },
+		],
 	},
 	{
 		title: 'What happens next',

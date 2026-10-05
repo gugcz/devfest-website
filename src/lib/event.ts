@@ -12,7 +12,11 @@ export const EVENT = {
 	timeLabel: '09:00 — 20:00 CET',
 	venue: 'Uhelný Mlýn',
 	address: 'Libčice nad Vltavou, Czech Republic',
+	/** The full postal address, for the venue page and the FAQ. */
+	street: 'Areál Šroubáren 860, 252 66 Libčice nad Vltavou',
 	mapUrl: 'https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8',
+	/** Walking route from Libčice nad Vltavou station to the venue. */
+	stationWalkUrl: 'https://maps.app.goo.gl/95BeQWKRnyoXTXMF9',
 	/** The calendar file served from `public/`. */
 	icsUrl: '/devfest-cz-2026.ics',
 	url: 'https://devfest.cz',

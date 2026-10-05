@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import NextStep from '../components/NextStep.astro';
+import Closer from '../components/Closer.astro';
+import { EVENT } from '../lib/event';
+
+// The route as the visitor travels it: Prague, the train, the walk, the door.
+// Same facts as the FAQ answer ("How do I get to the venue?") — keep the two
+// in step. The open field of steps is the one `/thank-you` uses.
+const STEPS = [
+	{
+		title: 'Take the train from Prague',
+		noteHtml:
+			'Trains toward <strong>Kralupy nad Vltavou</strong> leave from <strong>Praha hlavní nádraží</strong> ' +
+			'and <strong>Praha-Holešovice</strong> about every 30 minutes, and also call at Praha-Podbaba. ' +
+			'Get off at <strong>Libčice nad Vltavou</strong> &mdash; 25&ndash;30 minutes from the city centre.',
+		actions: [],
+	},
+	{
+		title: 'Walk from the station',
+		noteHtml:
+			'From Libčice nad Vltavou station it is a ten-minute walk, about 0.7&nbsp;km, to the venue.',
+		actions: [{ href: EVENT.stationWalkUrl, label: 'Station to venue', kind: 'primary' as const, external: true }],
+	},
+	{
+		title: `Find ${EVENT.venue}`,
+		noteHtml: `${EVENT.street}. Registration opens at 08:00, the keynote starts at 09:00.`,
+		actions: [{ href: EVENT.mapUrl, label: 'Open in maps', external: true }],
+	},
+	{
+		title: 'Flying in',
+		noteHtml:
+			'Fly to <strong>Prague</strong> (Václav Havel Airport, PRG). The Airport Express bus runs ' +
+			'straight to <strong>Praha hlavní nádraží</strong>, where the train to Libčice leaves.',
+		actions: [],
+	},
+];
+---
+
+<BaseLayout
+	title="Getting there — DevFest.cz 2026"
+	description={`How to get to DevFest.cz 2026 at ${EVENT.venue}, Libčice nad Vltavou: a direct 25–30-minute train from Prague, then a ten-minute walk from the station.`}
+>
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={'Getting <span class="red">there.</span>'}
+			lede={`${EVENT.venue} sits just north of Prague: one direct train from the city centre, then a ten-minute walk from the station.`}
+			seoHeading={`How to get to ${EVENT.venue}, DevFest.cz 2026`}
+			titleId="venue-title"
+		/>
+
+		<section class="band band--lit" aria-labelledby="route-heading">
+			<div class="band-inner">
+				<header class="head-stack">
+					<h2 id="route-heading" class="display head-title">The route.</h2>
+				</header>
+
+				<ol class="field">
+					{STEPS.map((step) => <NextStep {...step} />)}
+				</ol>
+			</div>
+		</section>
+
+		<Closer
+			titleHtml={'See you<br />on the 30th.'}
+			note="Still deciding? The lineup and the schedule are out, and tickets are on sale."
+			tone="accent"
+			titleId="venue-closer"
+			actions={[
+				{ href: '/#tickets', label: 'Get tickets' },
+				{ href: '/agenda', label: 'See the agenda', kind: 'ghost' },
+			]}
+		/>
+	</main>
+</BaseLayout>

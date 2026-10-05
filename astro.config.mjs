@@ -15,6 +15,7 @@ const PRIORITY = {
     'https://devfest.cz/agenda': 0.9,
     'https://devfest.cz/partners': 0.8,
     'https://devfest.cz/faq': 0.7,
+    'https://devfest.cz/venue': 0.7,
     'https://devfest.cz/team': 0.7,
     'https://devfest.cz/contact': 0.6,
     'https://devfest.cz/attending': 0.6,
