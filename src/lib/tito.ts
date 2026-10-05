@@ -145,6 +145,17 @@ export function releaseStatus(
 	}
 }
 
+/**
+ * The wave on sale is the last one: something is buyable and no wave is
+ * still to come ("Coming soon"). Earlier waves count as superseded, the way
+ * the Tickets list labels them. Drives the "last chance" framing in the
+ * Tickets section and the hero offer.
+ */
+export function isFinalWave(releases: TitoRelease[]): boolean {
+	const statuses = filterDisplayable(releases).map((r) => releaseStatus(r, { laterWaveOnSale: true }));
+	return statuses.some((st) => st.purchasable) && !statuses.some((st) => st.tone === 'soon');
+}
+
 export function releaseTitle(release: TitoRelease): string {
 	return release.title ?? release.slug;
 }
@@ -312,6 +323,8 @@ export interface CurrentOffer {
 	price: string;
 	/** When the wave closes, or `null` when ti.to carries no future `end_at`. */
 	deadline: WaveDeadline | null;
+	/** No wave comes after this one — see `isFinalWave()`. */
+	final: boolean;
 }
 
 /**
@@ -336,5 +349,6 @@ export function currentOffer(releases: TitoRelease[], now: number = Date.now()):
 		wave: live.name,
 		price: formatAmount(price.amount, price.currency),
 		deadline: waveDeadline(buyable, now),
+		final: isFinalWave(releases),
 	};
 }
