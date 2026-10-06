@@ -130,6 +130,10 @@ export default defineConfig({
                 // Their OG cards are a generated asset, not a page — never a
                 // sitemap entry regardless of `/invite/`'s own secrecy.
                 !page.includes('/og/invite/') &&
+                // Share pages for one talk or speaker (src/lib/share.ts):
+                // `noindex` previews that forward to the sheet.
+                !page.includes('/talks/') &&
+                !/\/speakers\/[^/]+\/?$/.test(page) &&
                 // Retired URLs that only redirect (Sessions → /agenda#talks,
                 // Press → /contact#press). `/press/downloads` is a real page.
                 !/\/(sessions|press)\/?$/.test(page),

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { type Speaker } from '../lib/speakers';
 import { visitorCategories, type Session, type SessionSpeakerRef } from '../lib/sessions';
 import { paragraphs } from '../lib/paragraphs';
+import { talkSharePath } from '../lib/share';
 import Sheet, { SheetTickets } from './Sheet';
 import SpeakerDetail from './SpeakerDetail';
 import SpeakerPhoto from './SpeakerPhoto';
@@ -61,7 +62,12 @@ export default function SessionDetail({
 
 	return (
 		<>
-			<Sheet labelledBy="session-detail-title" inert={activeSpeaker !== null} onClose={onClose}>
+			<Sheet
+				labelledBy="session-detail-title"
+				inert={activeSpeaker !== null}
+				share={{ path: talkSharePath(session.id), title: session.title }}
+				onClose={onClose}
+			>
 				<div className={sheet.content}>
 					<p className={sheet.kicker}>Session</p>
 					<h2 id="session-detail-title" className={sheet.title}>

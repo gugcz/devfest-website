@@ -11,14 +11,11 @@ import {
 import { byStart, formatMinutes, placement } from '../lib/agenda';
 import { fetchLineup, speakersById } from '../lib/lineup';
 import { useRemote } from '../lib/useRemote';
+import { TALK_PARAM, syncParam } from '../lib/share';
 import SessionDetail from './SessionDetail';
 import SpeakerStack from './SpeakerStack';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
-
-/** The query parameter that names an open talk, so a speaker can link
- * straight to theirs: `/agenda?talk=<sessionize id>` (the old `/sessions?talk=` redirects there). */
-const TALK_PARAM = 'talk';
 
 /** `10:00–10:45, Main Hall` once a talk is scheduled; `''` before. Sessionize
  * can leave `room` blank and carry only the id, hence the lookup. */
@@ -27,14 +24,6 @@ function whenLabel(session: Session, roomNames: Map<string, string>): string {
 	const time = place ? `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}` : '';
 	const room = session.room.trim() || roomNames.get(session.roomId) || '';
 	return [time, room].filter(Boolean).join(', ');
-}
-
-/** Mirror the open sheet in the address bar without adding a history entry. */
-function syncTalkParam(id: string | null) {
-	const url = new URL(window.location.href);
-	if (id) url.searchParams.set(TALK_PARAM, id);
-	else url.searchParams.delete(TALK_PARAM);
-	window.history.replaceState(window.history.state, '', url);
 }
 
 function SessionCard({
@@ -109,14 +98,15 @@ export default function Sessions() {
 
 	const open = useCallback((session: Session) => {
 		setSelected(session);
-		syncTalkParam(session.id);
+		syncParam(TALK_PARAM, session.id);
 	}, []);
 	const close = useCallback(() => {
 		setSelected(null);
-		syncTalkParam(null);
+		syncParam(TALK_PARAM, null);
 	}, []);
 
-	// A `?talk=` link opens that talk's sheet once the lineup has loaded.
+	// A `?talk=` link (what `/talks/<id>` and the old `/sessions?talk=` forward
+	// to) opens that talk's sheet once the lineup has loaded.
 	useEffect(() => {
 		const id = new URLSearchParams(window.location.search).get(TALK_PARAM);
 		if (!id) return;

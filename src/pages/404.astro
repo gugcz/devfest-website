@@ -44,6 +44,17 @@ const STEPS = [
 	description="The page you're looking for doesn't exist."
 	noindex
 >
+	<!-- A share link to a talk or speaker added since the last build has no
+	     page yet (src/lib/share.ts). Hosting answers it with this page, so
+	     send it on to the sheet it names. -->
+	<script is:inline>
+		(() => {
+			const m = /^\/(talks|speakers)\/([A-Za-z0-9-]{1,64})\/?$/.exec(location.pathname);
+			if (!m) return;
+			const to = m[1] === 'talks' ? `/agenda?talk=${m[2]}` : `/speakers?speaker=${m[2]}`;
+			location.replace(to);
+		})();
+	</script>
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Nothing filed<br />under <span class="red">that.</span>'}

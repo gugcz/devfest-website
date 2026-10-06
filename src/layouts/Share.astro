@@ -1,0 +1,70 @@
+---
+/**
+ * A share page: one talk's or one speaker's link preview, then the page that
+ * shows it. Link scrapers (Slack, LinkedIn, X, Messenger) read the head and
+ * run no script, so they unfurl THIS title and description; a visitor's
+ * browser runs the script and lands on `to`, where the sheet opens.
+ *
+ * No meta refresh: some scrapers follow one and would unfurl the agenda
+ * instead. `og:url` is this page for the same reason (Facebook re-fetches
+ * whatever `og:url` names). `noindex`: the content lives on `to`.
+ */
+import { defaultOgImageVersion } from '../lib/og-version';
+
+interface Props {
+	/** Where a visitor goes: `/agenda?talk=<id>` or `/speakers?speaker=<id>`. */
+	to: string;
+	title: string;
+	description: string;
+	/** What the no-script fallback line names. */
+	label: string;
+}
+
+const { to, title, description, label } = Astro.props;
+const site = 'https://devfest.cz';
+const url = new URL(Astro.url.pathname, site).href.replace(/\/$/, '');
+const ogImage = `${site}/og-image.jpg?v=${defaultOgImageVersion()}`;
+const ogImageAlt = 'DevFest.cz 2026, 30 October at Uhelný Mlýn';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={url} />
+		<meta property="og:site_name" content="DevFest.cz" />
+		<meta property="og:locale" content="en_US" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:secure_url" content={ogImage} />
+		<meta property="og:image:type" content="image/jpeg" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content={ogImageAlt} />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="@devfest_cz" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image:alt" content={ogImageAlt} />
+
+		<script is:inline define:vars={{ to }}>
+			location.replace(new URL(to, location.origin).href);
+		</script>
+		<style>
+			body { background: #000; color: #fff; font: 1rem/1.5 monospace; padding: 2rem; }
+			a { color: inherit; }
+		</style>
+	</head>
+	<body>
+		<p><a href={to}>{label}</a> at DevFest.cz 2026.</p>
+	</body>
+</html>
