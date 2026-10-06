@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { EVENT } from '../lib/event';
 import { useReturnFocus } from '../lib/useReturnFocus';
@@ -14,10 +14,73 @@ import sheet from './Sheet.module.scss';
  * on /speakers the fixed site header (z-index 10001) drew straight over the
  * sheet's own 10060 and hid its Close control.
  */
+/** What the sheet's Share control hands out: its own `/talks/<id>` or
+ * `/speakers/<id>` link and the title a share sheet shows with it. */
+export interface SheetShare {
+	path: string;
+	title: string;
+}
+
+const COPIED_MS = 2400;
+
+/**
+ * Share this sheet's link. A phone opens its own share sheet (that is where
+ * people send links from); a desktop copies the link and says so in place.
+ * The word is the live region, so a screen reader hears "Link copied" too.
+ */
+function ShareButton({ share }: { share: SheetShare }) {
+	const [copied, setCopied] = useState(false);
+
+	useEffect(() => {
+		if (!copied) return;
+		const timer = window.setTimeout(() => setCopied(false), COPIED_MS);
+		return () => window.clearTimeout(timer);
+	}, [copied]);
+
+	const onClick = async () => {
+		const url = new URL(share.path, window.location.origin).href;
+		const touch = window.matchMedia('(pointer: coarse)').matches;
+		if (touch && typeof navigator.share === 'function') {
+			try {
+				await navigator.share({ title: share.title, url });
+				return;
+			} catch (err) {
+				// Dismissing the share sheet is not a failure to fall back from.
+				if ((err as Error)?.name === 'AbortError') return;
+			}
+		}
+		try {
+			await navigator.clipboard.writeText(url);
+			setCopied(true);
+		} catch {
+			// No clipboard (an insecure origin, a denied permission): the address
+			// bar already carries the sheet, so there is still a link to copy.
+		}
+	};
+
+	return (
+		<button className={sheet.close} type="button" onClick={onClick}>
+			<span aria-live="polite">{copied ? 'Link copied' : 'Share'}</span>
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+				{copied ? (
+					<path d="M5 12.5l4.5 4.5L19 7.5" strokeLinecap="round" strokeLinejoin="round" />
+				) : (
+					<path
+						d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
+				)}
+			</svg>
+		</button>
+	);
+}
+
 export default function Sheet({
 	labelledBy,
 	className,
 	inert = false,
+	share,
 	onClose,
 	children,
 }: {
@@ -28,6 +91,8 @@ export default function Sheet({
 	/** Another dialog is stacked on top: it owns Esc and the focus trap, so
 	 * this one's key handler stands down until it closes. */
 	inert?: boolean;
+	/** Adds a Share control next to Close. */
+	share?: SheetShare;
 	onClose: () => void;
 	children: ReactNode;
 }) {
@@ -95,6 +160,7 @@ export default function Sheet({
 			tabIndex={-1}
 		>
 			<div className={sheet.bar}>
+				{share && <ShareButton share={share} />}
 				<button
 					className={sheet.close}
 					type="button"

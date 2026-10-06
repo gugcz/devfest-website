@@ -1,0 +1,28 @@
+---
+import Share from '../../layouts/Share.astro';
+import { staticLineup } from '../../lib/lineup-static';
+import type { Speaker } from '../../lib/speakers';
+import { EVENT } from '../../lib/event';
+import { excerpt, speakerTarget } from '../../lib/share';
+
+// One preview per speaker; `/speakers?speaker=<id>` is where it is read.
+export async function getStaticPaths() {
+	const { speakers } = await staticLineup();
+	return speakers.map((speaker) => ({ params: { id: speaker.id }, props: { speaker } }));
+}
+
+const { speaker } = Astro.props as { speaker: Speaker };
+const talks = speaker.sessions.map((s) => `“${s.name}”`).join(', ');
+const lead = talks ? `Speaking at DevFest.cz 2026: ${talks}.` : 'Speaking at DevFest.cz 2026.';
+const tagLine = speaker.tagLine.trim().replace(/([^.!?])$/, '$1.');
+const description = [tagLine, lead, `${EVENT.dateLabel}, ${EVENT.venue}.`]
+	.filter(Boolean)
+	.join(' ');
+---
+
+<Share
+	to={speakerTarget(speaker.id)}
+	title={`${speaker.fullName} | DevFest.cz 2026 speaker`}
+	description={excerpt(description, 300)}
+	label={speaker.fullName}
+/>

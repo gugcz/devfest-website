@@ -4,6 +4,7 @@ import { PORTRAIT_TRANSITION, type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
 import { useRemote } from '../lib/useRemote';
 import { REDUCED_MOTION } from '../lib/useMediaQuery';
+import { SPEAKER_PARAM, syncParam } from '../lib/share';
 import SpeakerDetail from './SpeakerDetail';
 import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
@@ -173,7 +174,30 @@ export function SpeakerLineup({
 export default function Speakers() {
 	const { status, data } = useRemote(fetchLineup, 'speakers', (l) => l.speakers.length === 0);
 	const [selected, setSelected] = useState<Speaker | null>(null);
-	const { morphId, open, close } = usePortraitMorph(selected, setSelected);
+	const { morphId, open: morphOpen, close: morphClose } = usePortraitMorph(selected, setSelected);
+
+	const open = useCallback(
+		(speaker: Speaker) => {
+			morphOpen(speaker);
+			syncParam(SPEAKER_PARAM, speaker.id);
+		},
+		[morphOpen],
+	);
+	const close = useCallback(() => {
+		morphClose();
+		syncParam(SPEAKER_PARAM, null);
+	}, [morphClose]);
+
+	// A `?speaker=` link (what `/speakers/<id>` forwards to) opens that
+	// speaker's sheet once the lineup has loaded. No morph: there is no click
+	// to morph from.
+	const speakers = data?.speakers;
+	useEffect(() => {
+		const id = new URLSearchParams(window.location.search).get(SPEAKER_PARAM);
+		if (!id || !speakers) return;
+		const match = speakers.find((speaker) => speaker.id === id);
+		if (match) setSelected(match);
+	}, [speakers]);
 
 	if (status === 'error') {
 		return (

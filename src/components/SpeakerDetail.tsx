@@ -1,5 +1,6 @@
 import { PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
 import { paragraphs } from '../lib/paragraphs';
+import { speakerSharePath } from '../lib/share';
 import Sheet, { SheetTickets } from './Sheet';
 import SpeakerPhoto from './SpeakerPhoto';
 import sheet from './Sheet.module.scss';
@@ -11,7 +12,12 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 	const bioParagraphs = paragraphs(speaker.bio);
 
 	return (
-		<Sheet labelledBy="speaker-detail-name" className={s.stacked} onClose={onClose}>
+		<Sheet
+			labelledBy="speaker-detail-name"
+			className={s.stacked}
+			share={{ path: speakerSharePath(speaker.id), title: speaker.fullName }}
+			onClose={onClose}
+		>
 			<div className={`${sheet.content} ${s.split}`}>
 				{/* Receives the morph from the lineup print — see usePortraitMorph
 				    in Speakers.tsx for why the name lives here only while open. */}
