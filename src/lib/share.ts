@@ -6,6 +6,7 @@
  * opens the sheet (`/agenda?talk=<id>`, `/speakers?speaker=<id>`). A talk
  * added after the last build has no page yet; `404.astro` forwards those.
  */
+import { useEffect } from 'react';
 
 /** Query parameter `/agenda` reads to open a talk's sheet. */
 export const TALK_PARAM = 'talk';
@@ -25,12 +26,28 @@ export const speakerSharePath = (id: string): string => `/speakers/${encodeURICo
 export const talkTarget = (id: string): string => `/agenda?${TALK_PARAM}=${encodeURIComponent(id)}`;
 export const speakerTarget = (id: string): string => `/speakers?${SPEAKER_PARAM}=${encodeURIComponent(id)}`;
 
-/** Mirror an open sheet in the address bar without adding a history entry. */
-export function syncParam(name: string, id: string | null): void {
-	const url = new URL(window.location.href);
-	if (id) url.searchParams.set(name, id);
-	else url.searchParams.delete(name);
-	window.history.replaceState(window.history.state, '', url);
+/**
+ * While a sheet is open, the address bar shows its share link
+ * (`/talks/<id>`, `/speakers/<id>`), so copying the URL is sharing the talk.
+ * No history entry; closing puts the page's own URL back. Reloading the
+ * share link lands on the share page, which forwards to the sheet again.
+ * A sheet stacked on another restores the one beneath it.
+ */
+export function useAddressBar(path: string): void {
+	useEffect(() => {
+		const before = new URL(window.location.href);
+		// A sheet opened from `?talk=` / `?speaker=` closes onto the bare page.
+		before.searchParams.delete(TALK_PARAM);
+		before.searchParams.delete(SPEAKER_PARAM);
+		window.history.replaceState(window.history.state, '', path);
+		const shown = window.location.pathname;
+		return () => {
+			// Unmounted by a navigation away (a link in the sheet): the address
+			// bar already belongs to the next page.
+			if (window.location.pathname !== shown) return;
+			window.history.replaceState(window.history.state, '', before);
+		};
+	}, [path]);
 }
 
 /** A description cut on a word, for a link preview. */

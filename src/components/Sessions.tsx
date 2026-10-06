@@ -11,7 +11,7 @@ import {
 import { byStart, formatMinutes, placement } from '../lib/agenda';
 import { fetchLineup, speakersById } from '../lib/lineup';
 import { useRemote } from '../lib/useRemote';
-import { TALK_PARAM, syncParam } from '../lib/share';
+import { TALK_PARAM } from '../lib/share';
 import SessionDetail from './SessionDetail';
 import SpeakerStack from './SpeakerStack';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
@@ -96,14 +96,8 @@ export default function Sessions() {
 	const active = hasActiveFilters(query, filters);
 	const anyChip = Object.values(filters).some((values) => values.length > 0);
 
-	const open = useCallback((session: Session) => {
-		setSelected(session);
-		syncParam(TALK_PARAM, session.id);
-	}, []);
-	const close = useCallback(() => {
-		setSelected(null);
-		syncParam(TALK_PARAM, null);
-	}, []);
+	const open = useCallback((session: Session) => setSelected(session), []);
+	const close = useCallback(() => setSelected(null), []);
 
 	// A `?talk=` link (what `/talks/<id>` and the old `/sessions?talk=` forward
 	// to) opens that talk's sheet once the lineup has loaded.
