@@ -151,5 +151,13 @@
 		"name": "She Loves Data",
 		"logo": "/partners/community/she-loves-data.svg",
 		"url": "https://shelovesdata.com/"
+	},
+	{
+		"id": "genlive",
+		"tier": "community",
+		"order": 6,
+		"name": "GenLive",
+		"logo": "/partners/community/genlive.svg",
+		"url": "https://www.genlive.pro/"
 	}
 ]
