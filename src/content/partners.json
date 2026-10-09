@@ -143,5 +143,13 @@
 		"name": "Codemagic",
 		"logo": "/partners/community/codemagic.svg",
 		"url": "https://codemagic.io/"
+	},
+	{
+		"id": "she-loves-data",
+		"tier": "community",
+		"order": 5,
+		"name": "She Loves Data",
+		"logo": "/partners/community/she-loves-data.svg",
+		"url": "https://shelovesdata.com/"
 	}
 ]
