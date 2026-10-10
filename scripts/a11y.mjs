@@ -187,6 +187,17 @@ function auditControls() {
 
 	const fails = [];
 	const review = [];
+	// One colour against the control's background: a non-flat bg goes to
+	// manual review, a flat one fails below `need`.
+	const check = (sel, kind, fg, bg, need) => {
+		if (!fg || fg.a <= 0) return;
+		if (bg.unknown) {
+			review.push({ sel, kind: `${kind} (bg not flat)` });
+			return;
+		}
+		const r = ratio(over(fg, bg.rgb), bg.rgb);
+		if (r < need) fails.push({ sel, kind, ratio: +r.toFixed(2), need });
+	};
 	const controls = document.querySelectorAll(
 		'input:not([type=hidden]):not([type=checkbox]):not([type=radio]), textarea, select'
 	);
@@ -197,29 +208,11 @@ function auditControls() {
 
 		// Placeholder text vs field fill — 4.5:1 (normal text).
 		const hasPh = (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') && el.placeholder;
-		if (hasPh) {
-			const ph = parse(getComputedStyle(el, '::placeholder').color);
-			if (ph && ph.a > 0) {
-				if (bg.unknown) review.push({ sel, kind: 'placeholder (bg not flat)' });
-				else {
-					const r = ratio(over(ph, bg.rgb), bg.rgb);
-					if (r < 4.5) fails.push({ sel, kind: 'placeholder', ratio: +r.toFixed(2), need: 4.5 });
-				}
-			}
-		}
+		if (hasPh) check(sel, 'placeholder', parse(getComputedStyle(el, '::placeholder').color), bg, 4.5);
 
 		// Field border vs the fill it delimits — 3:1 (non-text, 1.4.11).
 		const bw = parseFloat(cs.borderTopWidth) || 0;
-		if (bw > 0 && cs.borderTopStyle !== 'none') {
-			const bc = parse(cs.borderTopColor);
-			if (bc && bc.a > 0) {
-				if (bg.unknown) review.push({ sel, kind: 'border (bg not flat)' });
-				else {
-					const r = ratio(over(bc, bg.rgb), bg.rgb);
-					if (r < 3) fails.push({ sel, kind: 'border', ratio: +r.toFixed(2), need: 3 });
-				}
-			}
-		}
+		if (bw > 0 && cs.borderTopStyle !== 'none') check(sel, 'border', parse(cs.borderTopColor), bg, 3);
 	});
 	return { fails, review };
 }
@@ -352,120 +345,113 @@ async function auditModals(page, urlPath, url, tags) {
 	return found;
 }
 
-async function run() {
-	if (!existsSync(DIST)) {
-		console.error('dist/ missing. Run `npm run build` first.');
-		process.exit(2);
+// Everything the sweep collects, shared by the page passes and the report.
+function emptyReport() {
+	return {
+		totalViolations: 0,
+		failures: [],
+		controlFailures: [],
+		controlReview: [],
+		incompleteReview: [],
+	};
+}
+
+// axe blind spots: our own control-contrast pass + surfaced incompletes.
+function recordBlindSpots(report, urlPath, fails, review, incomplete) {
+	for (const f of fails) report.controlFailures.push({ urlPath, ...f });
+	for (const r of review) report.controlReview.push({ urlPath, ...r });
+	for (const inc of incomplete) {
+		if (inc.id === 'color-contrast') {
+			report.incompleteReview.push({ urlPath, nodes: inc.nodes.length });
+		}
+	}
+}
+
+function pageFailureSummary(violations, pageFails, modalFails) {
+	const parts = [];
+	if (violations.length) parts.push(`${violations.length} axe`);
+	if (pageFails) parts.push(`${pageFails} control-contrast`);
+	if (modalFails.length) parts.push(`${modalFails.reduce((n, m) => n + m.violations.length, 0)} modal`);
+	return parts.join(', ');
+}
+
+async function auditPage(page, urlPath, tags, report) {
+	const url = `http://127.0.0.1:${PORT}${urlPath}`;
+	const start = Date.now();
+	// 'networkidle' never fires on pages that hold a live realtime listener
+	// (the Firestore speakers wall, the RTDB tickets cache keep a channel
+	// open), so load the DOM, then wait for idle only briefly and fall
+	// through — enough for islands to hydrate without hanging 30s.
+	await page.goto(url, { waitUntil: 'domcontentloaded' });
+	await page.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
+	// Under the mock build, drive client:visible islands (Tickets on /) to
+	// their ready state before axe samples the DOM.
+	await hydrateIslands(page);
+	const results = await new AxeBuilder({ page }).withTags(tags).analyze();
+
+	const { fails, review } = await page.evaluate(auditControls);
+	recordBlindSpots(report, urlPath, fails, review, results.incomplete);
+
+	// Detail dialogs (speaker / session) only exist after a click.
+	const modalFails = await auditModals(page, urlPath, url, tags);
+	for (const m of modalFails) {
+		report.totalViolations += m.violations.length;
+		report.failures.push(m);
 	}
 
-	const server = await startServer();
-	const browser = await chromium.launch();
-	// Force reduced motion so on-load fade animations finish instantly.
-	// Otherwise axe samples mid-fade and reports phantom contrast issues.
-	const context = await browser.newContext({ reducedMotion: 'reduce' });
-	const page = await context.newPage();
-
-	const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
-	let totalViolations = 0;
-	const failures = [];
-	const controlFailures = [];
-	const controlReview = [];
-	const incompleteReview = [];
-
-	console.log(`Auditing ${PATHS.length} pages against ${tags.join(', ')}`);
-
-	for (const urlPath of PATHS) {
-		const url = `http://127.0.0.1:${PORT}${urlPath}`;
-		const start = Date.now();
-		// 'networkidle' never fires on pages that hold a live realtime listener
-		// (the Firestore speakers wall, the RTDB tickets cache keep a channel
-		// open), so load the DOM, then wait for idle only briefly and fall
-		// through — enough for islands to hydrate without hanging 30s.
-		await page.goto(url, { waitUntil: 'domcontentloaded' });
-		await page.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
-		// Under the mock build, drive client:visible islands (Tickets on /) to
-		// their ready state before axe samples the DOM.
-		await hydrateIslands(page);
-		const results = await new AxeBuilder({ page }).withTags(tags).analyze();
-
-		// axe blind spots: our own control-contrast pass + surfaced incompletes.
-		const { fails, review } = await page.evaluate(auditControls);
-		for (const f of fails) controlFailures.push({ urlPath, ...f });
-		for (const r of review) controlReview.push({ urlPath, ...r });
-		for (const inc of results.incomplete) {
-			if (inc.id === 'color-contrast') {
-				incompleteReview.push({ urlPath, nodes: inc.nodes.length });
-			}
-		}
-
-		// Detail dialogs (speaker / session) only exist after a click.
-		const modalFails = await auditModals(page, urlPath, url, tags);
-		for (const m of modalFails) {
-			totalViolations += m.violations.length;
-			failures.push(m);
-		}
-
-		const elapsed = Date.now() - start;
-		const pageFails = fails.length;
-		if (results.violations.length === 0 && pageFails === 0 && modalFails.length === 0) {
-			console.log(`  ✓ ${urlPath} (${elapsed}ms)`);
-			continue;
-		}
-		if (results.violations.length) {
-			totalViolations += results.violations.length;
-			failures.push({ urlPath, violations: results.violations });
-		}
-		const parts = [];
-		if (results.violations.length) parts.push(`${results.violations.length} axe`);
-		if (pageFails) parts.push(`${pageFails} control-contrast`);
-		if (modalFails.length) parts.push(`${modalFails.reduce((n, m) => n + m.violations.length, 0)} modal`);
-		console.log(`  ✘ ${urlPath} — ${parts.join(', ')} (${elapsed}ms)`);
+	const elapsed = Date.now() - start;
+	const pageFails = fails.length;
+	if (results.violations.length === 0 && pageFails === 0 && modalFails.length === 0) {
+		console.log(`  ✓ ${urlPath} (${elapsed}ms)`);
+		return;
 	}
-
-	// Mobile pass: below 760px the /agenda grid collapses to AgendaList — a
-	// distinct DOM (list rows, not grid cells) the desktop sweep never renders.
-	// Audit it once at a phone width, including the detail dialog opened from a
-	// list row.
-	{
-		const mobile = await browser.newContext({
-			reducedMotion: 'reduce',
-			viewport: { width: 375, height: 812 },
-		});
-		const mp = await mobile.newPage();
-		const urlPath = '/agenda/ [mobile list]';
-		const url = `http://127.0.0.1:${PORT}/agenda/`;
-		await mp.goto(url, { waitUntil: 'domcontentloaded' });
-		await mp.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
-		await hydrateIslands(mp);
-		const results = await new AxeBuilder({ page: mp }).withTags(tags).analyze();
-		// The list rows open the same SessionDetail dialog as the grid cells.
-		let modalViolations = 0;
-		try {
-			await mp.click('[data-agenda-open]');
-			await mp.waitForSelector('[role="dialog"]', { timeout: 3000 });
-			await mp.waitForTimeout(200);
-			const modalRes = await new AxeBuilder({ page: mp }).withTags(tags).include('[role="dialog"]').analyze();
-			modalViolations = modalRes.violations.length;
-			if (modalViolations) failures.push({ urlPath: '/agenda/ [mobile list dialog]', violations: modalRes.violations });
-		} catch (err) {
-			console.log(`  ⚠ ${urlPath} — dialog flow error: ${err}`);
-		}
-		if (results.violations.length === 0 && modalViolations === 0) {
-			console.log(`  ✓ ${urlPath}`);
-		} else {
-			totalViolations += results.violations.length + modalViolations;
-			if (results.violations.length) failures.push({ urlPath, violations: results.violations });
-			console.log(`  ✘ ${urlPath} — ${results.violations.length + modalViolations} axe`);
-		}
-		await mobile.close();
+	if (results.violations.length) {
+		report.totalViolations += results.violations.length;
+		report.failures.push({ urlPath, violations: results.violations });
 	}
+	console.log(`  ✘ ${urlPath} — ${pageFailureSummary(results.violations, pageFails, modalFails)} (${elapsed}ms)`);
+}
 
-	await browser.close();
-	server.close();
+// Mobile pass: below 760px the /agenda grid collapses to AgendaList — a
+// distinct DOM (list rows, not grid cells) the desktop sweep never renders.
+// Audit it once at a phone width, including the detail dialog opened from a
+// list row.
+async function auditMobileAgenda(browser, tags, report) {
+	const mobile = await browser.newContext({
+		reducedMotion: 'reduce',
+		viewport: { width: 375, height: 812 },
+	});
+	const mp = await mobile.newPage();
+	const urlPath = '/agenda/ [mobile list]';
+	const url = `http://127.0.0.1:${PORT}/agenda/`;
+	await mp.goto(url, { waitUntil: 'domcontentloaded' });
+	await mp.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
+	await hydrateIslands(mp);
+	const results = await new AxeBuilder({ page: mp }).withTags(tags).analyze();
+	// The list rows open the same SessionDetail dialog as the grid cells.
+	let modalViolations = 0;
+	try {
+		await mp.click('[data-agenda-open]');
+		await mp.waitForSelector('[role="dialog"]', { timeout: 3000 });
+		await mp.waitForTimeout(200);
+		const modalRes = await new AxeBuilder({ page: mp }).withTags(tags).include('[role="dialog"]').analyze();
+		modalViolations = modalRes.violations.length;
+		if (modalViolations) report.failures.push({ urlPath: '/agenda/ [mobile list dialog]', violations: modalRes.violations });
+	} catch (err) {
+		console.log(`  ⚠ ${urlPath} — dialog flow error: ${err}`);
+	}
+	if (results.violations.length === 0 && modalViolations === 0) {
+		console.log(`  ✓ ${urlPath}`);
+	} else {
+		report.totalViolations += results.violations.length + modalViolations;
+		if (results.violations.length) report.failures.push({ urlPath, violations: results.violations });
+		console.log(`  ✘ ${urlPath} — ${results.violations.length + modalViolations} axe`);
+	}
+	await mobile.close();
+}
 
-	const focusHits = await scanSuppressedFocus();
-
-	// Non-failing review sections — things axe cannot decide but a human should.
+// Non-failing review sections — things axe cannot decide but a human should.
+function printReviewSections({ incompleteReview, controlReview }, focusHits) {
 	if (incompleteReview.length) {
 		const total = incompleteReview.reduce((n, r) => n + r.nodes, 0);
 		// Informational only: this theme layers gradients + film-grain over almost
@@ -484,12 +470,9 @@ async function run() {
 		console.log(`\n⚠ ${focusHits.length} focus rule(s) suppress outline with no obvious replacement (2.4.7) — review:`);
 		for (const h of focusHits) console.log(`    ${h}`);
 	}
+}
 
-	if (failures.length === 0 && controlFailures.length === 0) {
-		console.log('\nAll pages pass WCAG 2.2 AA (axe-core + custom control-contrast pass).');
-		process.exit(0);
-	}
-
+function printFailureDetails({ failures, controlFailures, totalViolations }) {
 	if (failures.length) {
 		console.log('\n=== axe violation details ===');
 		for (const { urlPath, violations } of failures) {
@@ -506,6 +489,43 @@ async function run() {
 	console.log(
 		`\nTotal: ${totalViolations} axe violation(s), ${controlFailures.length} control-contrast failure(s).`
 	);
+}
+
+async function run() {
+	if (!existsSync(DIST)) {
+		console.error('dist/ missing. Run `npm run build` first.');
+		process.exit(2);
+	}
+
+	const server = await startServer();
+	const browser = await chromium.launch();
+	// Force reduced motion so on-load fade animations finish instantly.
+	// Otherwise axe samples mid-fade and reports phantom contrast issues.
+	const context = await browser.newContext({ reducedMotion: 'reduce' });
+	const page = await context.newPage();
+
+	const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+	const report = emptyReport();
+
+	console.log(`Auditing ${PATHS.length} pages against ${tags.join(', ')}`);
+
+	for (const urlPath of PATHS) await auditPage(page, urlPath, tags, report);
+
+	await auditMobileAgenda(browser, tags, report);
+
+	await browser.close();
+	server.close();
+
+	const focusHits = await scanSuppressedFocus();
+
+	printReviewSections(report, focusHits);
+
+	if (report.failures.length === 0 && report.controlFailures.length === 0) {
+		console.log('\nAll pages pass WCAG 2.2 AA (axe-core + custom control-contrast pass).');
+		process.exit(0);
+	}
+
+	printFailureDetails(report);
 	process.exit(1);
 }
 

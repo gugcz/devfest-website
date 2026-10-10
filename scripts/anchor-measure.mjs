@@ -148,6 +148,58 @@ async function countProbeChunks() {
 	return hits;
 }
 
+/**
+ * Runs in the page: the bar's declared and real height after a root change,
+ * plus what the assertions in `headerFaults` need.
+ */
+async function readHeaderState({ rootPx, virgin }) {
+	// Two frames: one for the layout the root change causes, one for
+	// the `requestAnimationFrame` the observer writes its value in.
+	await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+	await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+	const header = document.querySelector('.site-header');
+	// `--header-h` is unregistered, so its computed value is a token
+	// stream — lay an element out against it to read it as pixels.
+	const probe = document.createElement('div');
+	probe.style.cssText =
+		'position:absolute;top:0;left:0;width:0;height:var(--header-h);visibility:hidden;pointer-events:none';
+	document.body.appendChild(probe);
+	const declared = probe.getBoundingClientRect().height;
+	probe.remove();
+	const out = {
+		declared,
+		actual: header ? header.getBoundingClientRect().height : 0,
+		// The inline property is the observer's only footprint: empty
+		// means it decided the formula was already right.
+		written: virgin ? document.documentElement.style.getPropertyValue('--header-h') : null,
+		// DEVF-31: the wrap exists to keep the bar inside 320px at a
+		// 32px root. Guard it here rather than trusting it stayed fixed.
+		scrollWidth: document.documentElement.scrollWidth,
+		innerWidth: window.innerWidth,
+		// The simulation asserts itself: a CDP setting that silently
+		// stopped applying would turn every root but 16 into a rerun of
+		// the 16px pass, and 495 of these checks would go green for the
+		// wrong reason.
+		rootPx: parseFloat(getComputedStyle(document.documentElement).fontSize),
+	};
+	return out;
+}
+
+/** Every assertion one (route, width, root) sample fails, as a message. */
+function headerFaults(result, root, virgin) {
+	const faults = [];
+	if (Math.abs(result.rootPx - root) > 0.5) faults.push(`root is ${result.rootPx}px, asked for ${root}px`);
+	const drift = Math.abs(result.declared - result.actual);
+	if (drift > 1) faults.push(`--header-h off by ${drift.toFixed(1)}px`);
+	if (virgin && result.written !== '') faults.push(`--header-h written at root ${root} ("${result.written}")`);
+	// ASSERTED (DEVF-49): `html { overflow-x: clip }` makes a regression
+	// INVISIBLE — this number is the only symptom. Any ancestor adding
+	// `overflow: hidden/clip` also hides it, so a row that goes green
+	// after only an `overflow` change did not get fixed.
+	if (result.scrollWidth > result.innerWidth) faults.push(`overflow ${result.scrollWidth} > ${result.innerWidth}`);
+	return faults;
+}
+
 async function headerSweep(port) {
 	const browser = await chromium.launch();
 	const ctx = await browser.newContext({ viewport: { width: HEADER_WIDTHS[0], height: 800 } });
@@ -190,54 +242,9 @@ async function headerSweep(port) {
 				// A text-only zoom, which is what wraps the actions — set as the
 				// browser's own default size, not from script. See `setRootFontSize`.
 				await setRootFontSize(root);
-				const result = await page.evaluate(
-					async ({ rootPx, virgin }) => {
-						// Two frames: one for the layout the root change causes, one for
-						// the `requestAnimationFrame` the observer writes its value in.
-						await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-						await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-						const header = document.querySelector('.site-header');
-						// `--header-h` is unregistered, so its computed value is a token
-						// stream — lay an element out against it to read it as pixels.
-						const probe = document.createElement('div');
-						probe.style.cssText =
-							'position:absolute;top:0;left:0;width:0;height:var(--header-h);visibility:hidden;pointer-events:none';
-						document.body.appendChild(probe);
-						const declared = probe.getBoundingClientRect().height;
-						probe.remove();
-						const out = {
-							declared,
-							actual: header ? header.getBoundingClientRect().height : 0,
-							// The inline property is the observer's only footprint: empty
-							// means it decided the formula was already right.
-							written: virgin ? document.documentElement.style.getPropertyValue('--header-h') : null,
-							// DEVF-31: the wrap exists to keep the bar inside 320px at a
-							// 32px root. Guard it here rather than trusting it stayed fixed.
-							scrollWidth: document.documentElement.scrollWidth,
-							innerWidth: window.innerWidth,
-							// The simulation asserts itself: a CDP setting that silently
-							// stopped applying would turn every root but 16 into a rerun of
-							// the 16px pass, and 495 of these checks would go green for the
-							// wrong reason.
-							rootPx: parseFloat(getComputedStyle(document.documentElement).fontSize),
-						};
-						return out;
-					},
-					{ rootPx: root, virgin }
-				);
+				const result = await page.evaluate(readHeaderState, { rootPx: root, virgin });
 				checks++;
-				if (Math.abs(result.rootPx - root) > 0.5)
-					bad.push({ route, width, root, ...result, kind: `root is ${result.rootPx}px, asked for ${root}px` });
-				const drift = Math.abs(result.declared - result.actual);
-				if (drift > 1) bad.push({ route, width, root, ...result, kind: `--header-h off by ${drift.toFixed(1)}px` });
-				if (virgin && result.written !== '')
-					bad.push({ route, width, root, ...result, kind: `--header-h written at root ${root} ("${result.written}")` });
-				// ASSERTED (DEVF-49): `html { overflow-x: clip }` makes a regression
-				// INVISIBLE — this number is the only symptom. Any ancestor adding
-				// `overflow: hidden/clip` also hides it, so a row that goes green
-				// after only an `overflow` change did not get fixed.
-				if (result.scrollWidth > result.innerWidth)
-					bad.push({ route, width, root, ...result, kind: `overflow ${result.scrollWidth} > ${result.innerWidth}` });
+				bad.push(...headerFaults(result, root, virgin).map((kind) => ({ route, width, root, ...result, kind })));
 			}
 		}
 	}
