@@ -54,6 +54,22 @@ const FIELD_LABELS: Record<FieldName, string> = {
  * `functions/src/invoice/params.ts`; the two move together. */
 const INVOICE_DUE_DAYS = 14;
 
+/** The visitor-facing message for a failed `submitInvoiceCallable` call. */
+function submitErrorMessage(e: unknown): string {
+	const code = (e as { code?: string }).code ?? '';
+	const key = (e as { message?: string }).message ?? '';
+	const field = key in FIELD_LABELS ? FIELD_LABELS[key as FieldName] : '';
+	return code === 'functions/invalid-argument'
+		? field
+			? `We could not use the ${field} you entered. Check it and send again.`
+			: 'The server rejected one of the fields. Please check them and try again.'
+		: code === 'functions/unauthenticated' || code === 'functions/failed-precondition'
+			? 'Could not verify your browser. Reload the page and try again, or email devfest@gug.cz.'
+			: code === 'functions/resource-exhausted'
+				? 'Too many invoice requests right now. Please try again in an hour, or email devfest@gug.cz.'
+				: 'Something went wrong. Please try again or email devfest@gug.cz.';
+}
+
 /** `consent` is not a billing field, but it fails the same way and is shown
  * the same way, so it shares the error bag. */
 type ErrorKey = FieldName | 'consent';
@@ -301,21 +317,8 @@ export default function InvoiceForm() {
 			setTouched({});
 			setAttempted(false);
 		} catch (e) {
-			const code = (e as { code?: string }).code ?? '';
-			const key = (e as { message?: string }).message ?? '';
-			const field = key in FIELD_LABELS ? FIELD_LABELS[key as FieldName] : '';
 			setStatus('error');
-			setMessage(
-				code === 'functions/invalid-argument'
-					? field
-						? `We could not use the ${field} you entered. Check it and send again.`
-						: 'The server rejected one of the fields. Please check them and try again.'
-					: code === 'functions/unauthenticated' || code === 'functions/failed-precondition'
-						? 'Could not verify your browser. Reload the page and try again, or email devfest@gug.cz.'
-						: code === 'functions/resource-exhausted'
-							? 'Too many invoice requests right now. Please try again in an hour, or email devfest@gug.cz.'
-							: 'Something went wrong. Please try again or email devfest@gug.cz.',
-			);
+			setMessage(submitErrorMessage(e));
 		}
 	}
 

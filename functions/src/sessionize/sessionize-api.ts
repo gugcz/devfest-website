@@ -354,32 +354,49 @@ function resolveSessions(raw: unknown, sessionMap: Map<string, SessionDetail>): 
 	if (!Array.isArray(raw)) return [];
 	const out: SpeakerSession[] = [];
 	for (const item of raw) {
-		if (typeof item === 'number' || typeof item === 'string') {
-			const id = String(item);
-			const detail = sessionMap.get(id);
-			if (detail?.name) out.push({ id, name: detail.name, description: detail.description });
-			continue;
-		}
-		if (typeof item === 'object' && item !== null) {
-			const record = item as Record<string, unknown>;
-			const id = record.id != null ? String(record.id) : '';
-			const detail = id ? sessionMap.get(id) : undefined;
-			const name = (
-				(typeof record.name === 'string' && record.name) ||
-				(typeof record.title === 'string' && record.title) ||
-				detail?.name ||
-				''
-			).trim();
-			if (!name) continue;
-			const description = (
-				(typeof record.description === 'string' && record.description) ||
-				detail?.description ||
-				''
-			).trim();
-			out.push({ id, name, description });
-		}
+		const session = resolveSession(item, sessionMap);
+		if (session) out.push(session);
 	}
 	return out;
+}
+
+/** One `sessions` entry: a bare id or an inlined object. Undefined when the
+ * title cannot be resolved. */
+function resolveSession(
+	item: unknown,
+	sessionMap: Map<string, SessionDetail>,
+): SpeakerSession | undefined {
+	if (typeof item === 'number' || typeof item === 'string') {
+		const id = String(item);
+		const detail = sessionMap.get(id);
+		return detail?.name ? { id, name: detail.name, description: detail.description } : undefined;
+	}
+	if (typeof item === 'object' && item !== null) {
+		return resolveInlineSession(item as Record<string, unknown>, sessionMap);
+	}
+	return undefined;
+}
+
+/** An inlined `{ id, name | title, description }`, gaps filled from `sessionMap`. */
+function resolveInlineSession(
+	record: Record<string, unknown>,
+	sessionMap: Map<string, SessionDetail>,
+): SpeakerSession | undefined {
+	const id = record.id != null ? String(record.id) : '';
+	const detail = id ? sessionMap.get(id) : undefined;
+	const name = (
+		(typeof record.name === 'string' && record.name) ||
+		(typeof record.title === 'string' && record.title) ||
+		detail?.name ||
+		''
+	).trim();
+	if (!name) return undefined;
+	const description = (
+		(typeof record.description === 'string' && record.description) ||
+		detail?.description ||
+		''
+	).trim();
+	return { id, name, description };
 }
 
 /** Project a raw speaker into the persisted doc. `order` = array index;
@@ -572,20 +589,24 @@ export function buildCategoryMap(payload: unknown): Map<string, CategoryItem> {
 	if (!Array.isArray(categories)) return map;
 	for (const group of categories) {
 		if (typeof group !== 'object' || group === null) continue;
-		const record = group as Record<string, unknown>;
-		const groupName = asString(record.title) || asString(record.name);
-		const items = record.items;
-		if (!Array.isArray(items)) continue;
-		for (const item of items) {
-			if (typeof item !== 'object' || item === null) continue;
-			const itemRecord = item as Record<string, unknown>;
-			if (itemRecord.id == null) continue;
-			const name = asString(itemRecord.name) || asString(itemRecord.title);
-			if (!name) continue;
-			map.set(String(itemRecord.id), { group: groupName, name });
-		}
+		addCategoryGroup(map, group as Record<string, unknown>);
 	}
 	return map;
+}
+
+/** Add one category group's named items to `map`, labelled with its title. */
+function addCategoryGroup(map: Map<string, CategoryItem>, record: Record<string, unknown>): void {
+	const groupName = asString(record.title) || asString(record.name);
+	const items = record.items;
+	if (!Array.isArray(items)) return;
+	for (const item of items) {
+		if (typeof item !== 'object' || item === null) continue;
+		const itemRecord = item as Record<string, unknown>;
+		if (itemRecord.id == null) continue;
+		const name = asString(itemRecord.name) || asString(itemRecord.title);
+		if (!name) continue;
+		map.set(String(itemRecord.id), { group: groupName, name });
+	}
 }
 
 /** Resolve flat `categoryItems` ids into grouped `SessionCategory[]`

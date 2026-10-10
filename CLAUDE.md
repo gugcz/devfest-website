@@ -44,7 +44,7 @@ DevFest.cz 2026 landing page. Astro 7, React 19 islands, TypeScript strict,
 SCSS (CSS Modules for React, globals in `BaseLayout.astro`), Node >= 22.12.0,
 Firebase Hosting.
 
-Setup, deploys, secrets: [README.md](README.md). No lint or formatter script.
+Setup, deploys, secrets: [README.md](README.md). No style linter or formatter; ESLint runs only the cognitive complexity rule.
 
 ## Commands
 
@@ -52,8 +52,9 @@ Setup, deploys, secrets: [README.md](README.md). No lint or formatter script.
 | --- | --- |
 | Install | `npm ci && npm --prefix functions ci` (the SessionStart hook does this when `node_modules` is missing) |
 | Dev server | `npm run dev` (`/api/*` from mocks; `DEVFEST_LIVE_API=1` for deployed functions) |
-| Full gate (= the three required CI checks) | `npm run verify` |
+| Full gate (= the CI checks) | `npm run verify` |
 | Types | `npm run check` (`astro check`) |
+| Cognitive complexity | `npm run complexity` (`sonarjs/cognitive-complexity`, max 15) |
 | Function tests | `npm --prefix functions test` (`node --test`, stubs `fetch`) |
 | Accessibility | `npm run a11y` (axe on an `A11Y_MOCK=1` build, needs Playwright Chromium) |
 
@@ -64,7 +65,7 @@ green: `astro check` alone misses the function tests and the axe sweep.
 ## Definition of done
 
 1. `npm run verify` passes on the branch. A change that cannot touch one of
-   the three checks may skip it, but say which and why in the PR.
+   the checks may skip it, but say which and why in the PR.
 2. The branch is committed and pushed, and a PR against `2026` is open.
 3. CI is green on the PR's head.
 4. The user has the PR link and its preview URL
