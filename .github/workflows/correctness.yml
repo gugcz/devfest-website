@@ -31,6 +31,22 @@ jobs:
       - name: astro check
         run: npm run check
 
+  complexity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Cognitive complexity
+        run: npm run complexity
+
   functions-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10

@@ -131,6 +131,88 @@ function AlertIcon() {
 	);
 }
 
+/** Step 2's photo slot: the drag target, the picked file's row, the decoding
+ * row, or the empty dropzone — in that order of precedence. */
+function PhotoSlot({
+	isDragging,
+	hasPhoto,
+	photoThumbUrl,
+	photoName,
+	photoMeta,
+	decoding,
+	photoError,
+	photoTriggerRef,
+	onDrop,
+	onPick,
+	onRemove,
+}: {
+	isDragging: boolean;
+	hasPhoto: boolean;
+	photoThumbUrl: string;
+	photoName: string;
+	photoMeta: string;
+	decoding: string;
+	photoError: string;
+	photoTriggerRef: React.RefObject<HTMLButtonElement | null>;
+	onDrop: (event: React.DragEvent) => void;
+	onPick: () => void;
+	onRemove: () => void;
+}) {
+	if (isDragging) {
+		return (
+			<div className={s.dropzone} data-state="drag" onDragOver={(e) => e.preventDefault()} onDrop={onDrop}>
+				<UploadIcon />
+				<span className={s.dropLabel}>Let go</span>
+			</div>
+		);
+	}
+	if (hasPhoto) {
+		return (
+			<div className={s.photoRow} onDragOver={(e) => e.preventDefault()} onDrop={onDrop}>
+				{photoThumbUrl && <img className={s.photoThumb} src={photoThumbUrl} alt="" />}
+				<div className={s.photoInfo}>
+					<span className={s.photoName}>{photoName}</span>
+					<span className={s.photoMeta}>{photoMeta}</span>
+				</div>
+				<div className={s.photoActions}>
+					<button type="button" className={s.linkButton} onClick={onPick} aria-controls="attending-photo-input">
+						Replace
+					</button>
+					<button type="button" className={s.linkButton} onClick={onRemove} aria-controls="attending-photo-input">
+						Remove
+					</button>
+				</div>
+			</div>
+		);
+	}
+	if (decoding) {
+		return (
+			<div className={s.photoRow}>
+				<span className={s.photoThumbPlaceholder} aria-hidden="true" />
+				<div className={s.photoInfo}>
+					<span className={s.photoName}>{decoding}</span>
+				</div>
+			</div>
+		);
+	}
+	return (
+		<div className={s.dropzone} data-state="empty" onDragOver={(e) => e.preventDefault()} onDrop={onDrop}>
+			{photoError ? <AlertIcon /> : <UploadIcon />}
+			<span className={s.dropLabel}>Drop a photo</span>
+			<span className={s.dropOr}>or</span>
+			<button
+				ref={photoTriggerRef}
+				type="button"
+				className={s.chooseButton}
+				onClick={onPick}
+				aria-controls="attending-photo-input"
+			>
+				Choose file
+			</button>
+		</div>
+	);
+}
+
 export default function AttendingCard() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -577,70 +659,19 @@ export default function AttendingCard() {
 								aria-labelledby="attending-step-2-head"
 							/>
 
-							{isDragging ? (
-								<div
-									className={s.dropzone}
-									data-state="drag"
-									onDragOver={(e) => e.preventDefault()}
-									onDrop={handleDrop}
-								>
-									<UploadIcon />
-									<span className={s.dropLabel}>Let go</span>
-								</div>
-							) : photo ? (
-								<div className={s.photoRow} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
-									{photoThumbUrl && <img className={s.photoThumb} src={photoThumbUrl} alt="" />}
-									<div className={s.photoInfo}>
-										<span className={s.photoName}>{photoName}</span>
-										<span className={s.photoMeta}>{photoMeta}</span>
-									</div>
-									<div className={s.photoActions}>
-										<button
-											type="button"
-											className={s.linkButton}
-											onClick={triggerPhotoPick}
-											aria-controls="attending-photo-input"
-										>
-											Replace
-										</button>
-										<button
-											type="button"
-											className={s.linkButton}
-											onClick={removePhoto}
-											aria-controls="attending-photo-input"
-										>
-											Remove
-										</button>
-									</div>
-								</div>
-							) : decoding ? (
-								<div className={s.photoRow}>
-									<span className={s.photoThumbPlaceholder} aria-hidden="true" />
-									<div className={s.photoInfo}>
-										<span className={s.photoName}>{decoding}</span>
-									</div>
-								</div>
-							) : (
-								<div
-									className={s.dropzone}
-									data-state="empty"
-									onDragOver={(e) => e.preventDefault()}
-									onDrop={handleDrop}
-								>
-									{photoError ? <AlertIcon /> : <UploadIcon />}
-									<span className={s.dropLabel}>Drop a photo</span>
-									<span className={s.dropOr}>or</span>
-									<button
-										ref={photoTriggerRef}
-										type="button"
-										className={s.chooseButton}
-										onClick={triggerPhotoPick}
-										aria-controls="attending-photo-input"
-									>
-										Choose file
-									</button>
-								</div>
-							)}
+							<PhotoSlot
+								isDragging={isDragging}
+								hasPhoto={hasPhoto}
+								photoThumbUrl={photoThumbUrl}
+								photoName={photoName}
+								photoMeta={photoMeta}
+								decoding={decoding}
+								photoError={photoError}
+								photoTriggerRef={photoTriggerRef}
+								onDrop={handleDrop}
+								onPick={triggerPhotoPick}
+								onRemove={removePhoto}
+							/>
 
 							<span id="attending-photo-hint" className={s.hint}>
 								Never uploaded — your browser does the whole thing.

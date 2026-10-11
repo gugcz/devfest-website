@@ -413,12 +413,37 @@ export interface NowState {
 	comingUpIds: Set<string>;
 }
 
+/** Earliest start of a non-band session strictly after `nowMin`, or
+ * `Infinity` when no talk is still to come. */
+function soonestTalkStart(sessions: Session[], nowMin: number): number {
+	let soonest = Number.POSITIVE_INFINITY;
+	for (const session of sessions) {
+		if (isBand(session)) continue;
+		const place = placement(session);
+		if (place && place.startMin > nowMin && place.startMin < soonest) soonest = place.startMin;
+	}
+	return soonest;
+}
+
+/** Ids of the next talk(s) to start after `nowMin` (never bands); empty when
+ * nothing is still to come. */
+function comingUpTalkIds(sessions: Session[], nowMin: number): Set<string> {
+	const ids = new Set<string>();
+	const soonest = soonestTalkStart(sessions, nowMin);
+	if (!Number.isFinite(soonest)) return ids;
+	for (const session of sessions) {
+		if (isBand(session)) continue;
+		const place = placement(session);
+		if (place && place.startMin === soonest) ids.add(session.id);
+	}
+	return ids;
+}
+
 /** Live = `nowMin` in [start, end). Coming up = next talk(s) during a pause
  * (never bands). `nowMin === null` → empty sets. */
 export function nowState(sessions: Session[], nowMin: number | null): NowState {
 	const liveIds = new Set<string>();
-	const comingUpIds = new Set<string>();
-	if (nowMin === null) return { liveIds, comingUpIds };
+	if (nowMin === null) return { liveIds, comingUpIds: new Set<string>() };
 
 	let talkLive = false;
 	for (const session of sessions) {
@@ -430,21 +455,6 @@ export function nowState(sessions: Session[], nowMin: number | null): NowState {
 		}
 	}
 
-	if (!talkLive) {
-		let soonest = Number.POSITIVE_INFINITY;
-		for (const session of sessions) {
-			if (isBand(session)) continue;
-			const place = placement(session);
-			if (place && place.startMin > nowMin && place.startMin < soonest) soonest = place.startMin;
-		}
-		if (Number.isFinite(soonest)) {
-			for (const session of sessions) {
-				if (isBand(session)) continue;
-				const place = placement(session);
-				if (place && place.startMin === soonest) comingUpIds.add(session.id);
-			}
-		}
-	}
-
+	const comingUpIds = talkLive ? new Set<string>() : comingUpTalkIds(sessions, nowMin);
 	return { liveIds, comingUpIds };
 }

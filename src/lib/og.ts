@@ -31,6 +31,36 @@ function decodeEntities(s: string): string {
 		.trim();
 }
 
+// Meta key → OgData field it fills, and whether its content is entity-decoded.
+// The first non-empty match per field wins. A Map, so a stray key like
+// `constructor` can't hit Object.prototype.
+const OG_FIELDS = new Map<string, { field: keyof OgData; decode: boolean }>([
+	['og:image', { field: 'image', decode: false }],
+	['og:image:url', { field: 'image', decode: false }],
+	['twitter:image', { field: 'image', decode: false }],
+	['og:description', { field: 'description', decode: true }],
+	['twitter:description', { field: 'description', decode: true }],
+	['description', { field: 'description', decode: true }],
+	['og:site_name', { field: 'siteName', decode: true }],
+	['og:title', { field: 'title', decode: true }],
+	['article:published_time', { field: 'publishedTime', decode: false }],
+	['article:modified_time', { field: 'publishedTime', decode: false }],
+]);
+
+function parseOgTags(head: string): OgData {
+	const data: OgData = {};
+	const tags = head.match(META_RE) ?? [];
+	for (const tag of tags) {
+		const key = (attr(tag, 'property') ?? attr(tag, 'name') ?? '').toLowerCase();
+		const content = attr(tag, 'content');
+		if (!content) continue;
+		const spec = OG_FIELDS.get(key);
+		if (!spec || data[spec.field]) continue;
+		data[spec.field] = spec.decode ? decodeEntities(content) : content;
+	}
+	return data;
+}
+
 /**
  * Fetch a URL and extract Open Graph / Twitter card metadata. Resolves to a
  * (possibly empty) OgData; never throws — network/parse failures yield {} so
@@ -51,32 +81,7 @@ export async function fetchOg(url: string): Promise<OgData> {
 		// Parse the <head> only — enough for meta tags, avoids scanning huge bodies.
 		const headEnd = html.search(/<\/head>/i);
 		const head = headEnd === -1 ? html.slice(0, 60_000) : html.slice(0, headEnd);
-
-		const data: OgData = {};
-		const tags = head.match(META_RE) ?? [];
-		for (const tag of tags) {
-			const key = (attr(tag, 'property') ?? attr(tag, 'name') ?? '').toLowerCase();
-			const content = attr(tag, 'content');
-			if (!content) continue;
-			if ((key === 'og:image' || key === 'og:image:url' || key === 'twitter:image') && !data.image) {
-				data.image = content;
-			} else if (
-				(key === 'og:description' || key === 'twitter:description' || key === 'description') &&
-				!data.description
-			) {
-				data.description = decodeEntities(content);
-			} else if (key === 'og:site_name' && !data.siteName) {
-				data.siteName = decodeEntities(content);
-			} else if (key === 'og:title' && !data.title) {
-				data.title = decodeEntities(content);
-			} else if (
-				(key === 'article:published_time' || key === 'article:modified_time') &&
-				!data.publishedTime
-			) {
-				data.publishedTime = content;
-			}
-		}
-		return data;
+		return parseOgTags(head);
 	} catch {
 		return {};
 	}
