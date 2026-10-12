@@ -1,0 +1,161 @@
+@use '../styles/type' as *;
+@use '../styles/controls' as *;
+
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 1.6rem;
+	width: 100%;
+	max-width: 52rem;
+	margin: 0 auto;
+}
+
+.login {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+.label {
+	@include mono(var(--fs-label), 0.16em, uppercase);
+	color: var(--ink-meta);
+}
+
+.hint {
+	@include prose(var(--fs-ui));
+	margin: 0;
+	color: var(--ink-soft);
+}
+
+.row {
+	display: flex;
+	gap: 0.8rem;
+	align-items: stretch;
+}
+
+.input {
+	@include lit-field;
+	max-width: 16rem;
+	letter-spacing: 0.08em;
+
+	&[aria-invalid='true'] {
+		border-color: var(--color-accent-hot);
+	}
+}
+
+.error {
+	@include mono(var(--fs-label));
+	margin: 0;
+	line-height: 1.5;
+	letter-spacing: 0.06em;
+	color: var(--color-accent-hot);
+}
+
+.account {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.4rem 1.2rem;
+}
+
+.accountName {
+	@include prose(var(--fs-body-lg));
+	margin: 0;
+	color: var(--color-text);
+}
+
+.textButton {
+	@include hairline-link;
+	background: none;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+	font: inherit;
+}
+
+.message {
+	@include prose(var(--fs-ui));
+	margin: 0;
+	color: var(--ink-soft);
+
+	&:empty {
+		display: none;
+	}
+}
+
+.list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	border-top: 1px solid var(--rule-strong);
+}
+
+.card {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.5rem;
+	padding: 1.6rem 0;
+	border-bottom: 1px solid var(--rule-strong);
+}
+
+.meta {
+	@include mono(var(--fs-label), 0.16em, uppercase);
+	margin: 0;
+	color: var(--ink-meta);
+}
+
+.title {
+	@include row-title;
+	margin: 0;
+	color: var(--color-text);
+}
+
+.speakers {
+	@include prose(var(--fs-ui));
+	margin: 0;
+	color: var(--color-grey);
+}
+
+.seats {
+	@include mono(var(--fs-label), 0.12em, uppercase);
+	margin: 0.4rem 0 0;
+	color: var(--color-text);
+
+	&[data-full] {
+		color: var(--color-accent-hot);
+	}
+}
+
+.mine {
+	@include prose(var(--fs-ui));
+	margin: 0;
+	color: var(--color-text);
+	font-weight: 600;
+}
+
+.card .button:global(.btn-primary),
+.card .button:global(.btn-ghost) {
+	margin-top: 0.4rem;
+}
+
+.button:global(.btn-primary),
+.button:global(.btn-ghost) {
+
+	&[aria-disabled='true'] {
+		opacity: 0.55;
+		cursor: progress;
+	}
+}
+
+@media (max-width: 600px) {
+	.row {
+		flex-direction: column;
+	}
+
+	.input {
+		max-width: none;
+	}
+}

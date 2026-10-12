@@ -1,5 +1,6 @@
 import { PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
 import { paragraphs } from '../lib/paragraphs';
+import { speakerSharePath, useAddressBar } from '../lib/share';
 import Sheet, { SheetTickets } from './Sheet';
 import SpeakerPhoto from './SpeakerPhoto';
 import sheet from './Sheet.module.scss';
@@ -8,10 +9,16 @@ import s from './SpeakerDetail.module.scss';
 /** Speaker detail dialog: portrait, bio, talks, and social links. The modal
  * behaviour (trap, Esc, scroll lock, focus return) lives in `Sheet`. */
 export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; onClose: () => void }) {
+	useAddressBar(speakerSharePath(speaker.id));
+
 	const bioParagraphs = paragraphs(speaker.bio);
 
 	return (
-		<Sheet labelledBy="speaker-detail-name" className={s.stacked} onClose={onClose}>
+		<Sheet
+			labelledBy="speaker-detail-name"
+			className={s.stacked}
+			onClose={onClose}
+		>
 			<div className={`${sheet.content} ${s.split}`}>
 				{/* Receives the morph from the lineup print — see usePortraitMorph
 				    in Speakers.tsx for why the name lives here only while open. */}

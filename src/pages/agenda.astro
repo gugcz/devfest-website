@@ -3,18 +3,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Closer from '../components/Closer.astro';
 import Agenda from '../components/Agenda.tsx';
+import Sessions from '../components/Sessions.tsx';
+
+// ONE PAGE FOR THE PROGRAMME. The timetable answers "when and where", the
+// list under it "what is it about" — search, filters and every abstract. They
+// were two menu lines (`Sessions`, `Agenda`) for one question; `/sessions`
+// now redirects to `#talks` here, query string and all.
 ---
 
 <BaseLayout
-	title="Agenda — DevFest.cz 2026"
-	description="The full timetable for DevFest.cz 2026 — registration from 8:00, keynote at 9:00, two stages of talks, lightning talks and the afterparty. Every talk, room and time slot for Prague's community developer conference."
+	title="Agenda & talks — DevFest.cz 2026"
+	description="The full programme for DevFest.cz 2026 — registration from 8:00, keynote at 9:00, two stages of talks, lightning talks and the afterparty. Every talk, room and time slot, plus a searchable list of every talk at Prague's community developer conference."
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'The day<br /><span class="red">on a timeline.</span>'}
-			lede="Every talk by room and time. A slot or two may still move before the day."
-			link={{ href: '/sessions', label: 'Browse all talks' }}
-			seoHeading="DevFest.cz 2026 Agenda & Schedule"
+			lede="Every talk by room and time, and the full list with abstracts below it. A slot or two may still move before the day."
+			link={{ href: '#talks', label: 'Browse all talks' }}
+			seoHeading="DevFest.cz 2026 Agenda, Schedule & Sessions"
 			titleId="agenda-title"
 			focus="82% 60%"
 		/>
@@ -30,9 +36,21 @@ import Agenda from '../components/Agenda.tsx';
 
 				<noscript>
 					<p class="fallback-note">
-						The agenda loads with JavaScript enabled. Please turn it on, or see the <a href="/sessions">full list of talks</a>.
+						The agenda loads with JavaScript enabled. Please turn it on, or check back soon.
 					</p>
 				</noscript>
+			</div>
+		</section>
+
+		<section id="talks" class="band band--lit agenda-talks" aria-labelledby="talks-title">
+			<div class="band-inner">
+				<div class="head-split">
+					<h2 id="talks-title" class="display head-title">Every talk.</h2>
+					<p class="head-note">Search, or filter by track and level. Pick one for its abstract and speakers.</p>
+				</div>
+
+				<!-- Hydrates from the same /api/lineup read as the timetable. -->
+				<Sessions client:load />
 			</div>
 		</section>
 

@@ -12,12 +12,11 @@ const BUILD_DATE = new Date().toISOString();
 const PRIORITY = {
     'https://devfest.cz': 1.0,
     'https://devfest.cz/speakers': 0.9,
-    'https://devfest.cz/sessions': 0.9,
     'https://devfest.cz/agenda': 0.9,
     'https://devfest.cz/partners': 0.8,
     'https://devfest.cz/faq': 0.7,
+    'https://devfest.cz/venue': 0.7,
     'https://devfest.cz/team': 0.7,
-    'https://devfest.cz/press': 0.6,
     'https://devfest.cz/contact': 0.6,
     'https://devfest.cz/attending': 0.6,
     'https://devfest.cz/invoice': 0.5,
@@ -132,7 +131,14 @@ export default defineConfig({
                 !/\/tv\/?$/.test(page) &&
                 // Their OG cards are a generated asset, not a page — never a
                 // sitemap entry regardless of `/invite/`'s own secrecy.
-                !page.includes('/og/invite/'),
+                !page.includes('/og/invite/') &&
+                // Share pages for one talk or speaker (src/lib/share.ts):
+                // `noindex` previews that forward to the sheet.
+                !page.includes('/talks/') &&
+                !/\/speakers\/[^/]+\/?$/.test(page) &&
+                // Retired URLs that only redirect (Sessions → /agenda#talks,
+                // Press → /contact#press). `/press/downloads` is a real page.
+                !/\/(sessions|press)\/?$/.test(page),
             serialize(item) {
                 item.lastmod = BUILD_DATE;
                 item.changefreq = ChangeFreqEnum.WEEKLY;

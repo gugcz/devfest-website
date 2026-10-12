@@ -360,7 +360,7 @@
 // Destinations at poster scale — Bebas is condensed enough to fit them all.
 .nav-link {
 	font-family: var(--font-bebas-neue), sans-serif;
-	// Sized so the five destinations, the six under them and the footing line
+	// Sized so the four destinations, the three under them and the footing line
 	// fit a 900px-tall laptop viewport without the panel scrolling.
 	font-size: clamp(2rem, 4.2vw, 3.3rem);
 	line-height: 1;
@@ -368,7 +368,7 @@
 	text-transform: uppercase;
 	color: var(--color-text);
 	text-decoration: none;
-	// Same tap floor as the six under it, so on a phone both tiers keep one
+	// Same tap floor as the three under it, so on a phone both tiers keep one
 	// rhythm instead of the smaller lines sitting looser than the big ones.
 	display: flex;
 	align-items: center;
@@ -376,7 +376,7 @@
 	// LEADING IN `em`, NOT `vw`. Above the 44px floor the tap target stops
 	// setting the pitch and the padding is all that is left, so it has to be
 	// a share of each tier's own step — otherwise the two tiers breathe
-	// differently at the same viewport, which is what made the lower six
+	// differently at the same viewport, which is what made the lower tier
 	// read as a separate, clumped block on a desktop panel.
 	padding: 0.15em 0;
 	transition: color 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -412,15 +412,15 @@
 }
 
 // ── THE SECOND TIER ────────────────────────────────────────────────────
-// Partners, invoicing, contact, the crew, the press room, the share card.
-// Same column, same face, straight under the five — one step smaller, so
+// Partners, the crew, contact.
+// Same column, same face, straight under the four — one step smaller, so
 // the hierarchy holds without pushing them down to fine print. Partners
 // and Team matter; at label scale in dim ink they read as a footnote.
 .nav-secondary {
 	display: flex;
 	flex-direction: column;
 	list-style: none;
-	// Clear of the five above by more than a line of their own pitch, so the
+	// Clear of the four above by more than a line of their own pitch, so the
 	// step down in size reads as a second group rather than as a stumble.
 	margin: clamp(0.9rem, 2.2vw, 2rem) 0 0;
 	padding: 0;
@@ -436,8 +436,8 @@
 	font-size: clamp(1.6rem, 2.95vw, 2.3rem);
 	line-height: 1;
 	// The same share of the step as the tier above (see `.nav-link`). Without
-	// it these six sat at exactly their text height on a desktop panel — no
-	// leading at all — while the five above had room to breathe.
+	// it the lower tier sat at exactly their text height on a desktop panel — no
+	// leading at all — while the tier above had room to breathe.
 	padding: 0.15em 0;
 	letter-spacing: 0.01em;
 	text-transform: uppercase;
@@ -547,7 +547,7 @@
 		padding: 0.22rem 0;
 	}
 
-	// Eleven lines cannot fit a landscape phone; keep the step small and let
+	// Seven lines still crowd a landscape phone; keep the step small and let
 	// the panel scroll.
 	.nav-secondary-link {
 		min-height: 2rem;

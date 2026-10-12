@@ -81,6 +81,14 @@
 		"url": "https://www.second-foundation.eu/"
 	},
 	{
+		"id": "asus",
+		"tier": "gold",
+		"order": 6,
+		"name": "ASUS",
+		"logo": "/partners/gold/asus.png",
+		"url": "https://www.asus.com/cz/"
+	},
+	{
 		"id": "applifting",
 		"tier": "silver",
 		"order": 1,
@@ -143,5 +151,21 @@
 		"name": "Codemagic",
 		"logo": "/partners/community/codemagic.svg",
 		"url": "https://codemagic.io/"
+	},
+	{
+		"id": "she-loves-data",
+		"tier": "community",
+		"order": 5,
+		"name": "She Loves Data",
+		"logo": "/partners/community/she-loves-data.svg",
+		"url": "https://shelovesdata.com/"
+	},
+	{
+		"id": "genlive",
+		"tier": "community",
+		"order": 6,
+		"name": "GenLive",
+		"logo": "/partners/community/genlive.png",
+		"url": "https://www.genlive.pro/"
 	}
 ]

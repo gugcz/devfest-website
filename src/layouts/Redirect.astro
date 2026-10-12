@@ -1,0 +1,42 @@
+---
+/**
+ * A retired URL that still has links pointing at it. Static hosting has no
+ * server to answer with a 301, so the page does the redirect itself: the
+ * script carries the query string across (`/sessions?talk=<id>` is a link
+ * speakers have shared), the meta refresh covers no-JS, and the canonical +
+ * `noindex` tell a crawler the content lives at `to`. No BaseLayout: without
+ * <ClientRouter /> a soft navigation that lands here falls back to a full load.
+ */
+interface Props {
+	/** Where the content lives now; may carry a `#fragment`. */
+	to: string;
+	title: string;
+}
+
+const { to, title } = Astro.props;
+const canonical = new URL(to.split('#')[0], Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex" />
+		<title>{title}</title>
+		<link rel="canonical" href={canonical} />
+		<meta http-equiv="refresh" content={`0; url=${to}`} />
+		<script is:inline define:vars={{ to }}>
+			const url = new URL(to, location.origin);
+			url.search = location.search;
+			location.replace(url.href);
+		</script>
+		<style>
+			body { background: #000; color: #fff; font: 1rem/1.5 monospace; padding: 2rem; }
+			a { color: inherit; }
+		</style>
+	</head>
+	<body>
+		<p>This page has moved to <a href={to}>{to}</a>.</p>
+	</body>
+</html>

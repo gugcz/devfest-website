@@ -78,6 +78,22 @@ function slug(text: string): string {
 type ShareState = 'idle' | 'working' | 'done' | 'error';
 type PhotoSource = 'speaker' | 'upload' | 'monogram';
 
+function photoNoteFor(photoLoading: boolean, photoSource: PhotoSource): string {
+	return photoLoading
+		? 'Fetching your photo…'
+		: photoSource === 'speaker'
+			? 'Your Sessionize photo. Drag it on the card to frame it.'
+			: photoSource === 'upload'
+				? 'Your own photo, processed on your device only. Drag it on the card to frame it.'
+				: 'No photo we can use, so your initials carry the card. Add your own below.';
+}
+
+function cardLabelFor(speaker: Speaker | undefined, talk: string): string {
+	return speaker
+		? `DevFest.cz 2026 speaker card for ${speaker.fullName}${talk ? `, ${talk}` : ''}`
+		: 'DevFest.cz 2026 speaker card preview';
+}
+
 export default function SpeakerCard() {
 	const { status, data } = useRemote(fetchLineup, 'speaker-card', (l) => l.speakers.length === 0);
 	const speakers = useMemo(
@@ -326,13 +342,7 @@ export default function SpeakerCard() {
 	}
 
 	const exportDisabled = !speaker || !photo || photoLoading || shareState === 'working';
-	const photoNote = photoLoading
-		? 'Fetching your photo…'
-		: photoSource === 'speaker'
-			? 'Your Sessionize photo. Drag it on the card to frame it.'
-			: photoSource === 'upload'
-				? 'Your own photo, processed on your device only. Drag it on the card to frame it.'
-				: 'No photo we can use, so your initials carry the card. Add your own below.';
+	const photoNote = photoNoteFor(photoLoading, photoSource);
 
 	return (
 		<div className={a.wrapper}>
@@ -500,11 +510,7 @@ export default function SpeakerCard() {
 						className={a.canvas}
 						role="img"
 						aria-busy={photoLoading}
-						aria-label={
-							speaker
-								? `DevFest.cz 2026 speaker card for ${speaker.fullName}${talk ? `, ${talk}` : ''}`
-								: 'DevFest.cz 2026 speaker card preview'
-						}
+						aria-label={cardLabelFor(speaker, talk)}
 						onPointerDown={handlePointerDown}
 						onPointerMove={handlePointerMove}
 						onPointerUp={handlePointerUp}

@@ -53,6 +53,12 @@
 	white-space: nowrap;
 }
 
+// "Last chance" is two words that overrun the 4rem index column; stacked
+// under the serial they stay clear of the wave title.
+.stubStateFinal {
+	white-space: normal;
+}
+
 /* ---- body ---- */
 .stubBody {
 	display: flex;

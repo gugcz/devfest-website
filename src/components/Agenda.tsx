@@ -32,11 +32,12 @@ import s from './Agenda.module.scss';
 const SNAP_MIN = 5;
 const ROW_REM = 1.625;
 
-/** Rows a non-talk strip gets, however long it runs. Bands and dead time
- * carry one mono line; at scale the afterparty (18:30–00:00) is twenty times
- * the talk above it. Two rows = one line plus padding. Talks stay
- * proportional. */
-const NON_TALK_ROWS = 2;
+/** How tall a non-talk strip (a band or dead time) runs. Still to its length,
+ * but at half the talks' scale and capped: at full scale a lunch is two talks
+ * tall and the afterparty (18:30–00:00) twenty. Two rows (one mono line plus
+ * padding) for a coffee break, a row per ten minutes after that, six rows
+ * (a half-hour talk) for anything an hour or longer. */
+const NON_TALK_ROWS = { minPerRow: 10, minRows: 2, maxRows: 6 } as const;
 
 /** Stable empty roster, so the memos below don't recompute on every render
  * before the payload lands. */
@@ -51,15 +52,20 @@ const NARROW = '(max-width: 1024px)';
 /** A standing note beside a room's name, keyed by its Sessionize name
  * (lowercased). Sessionize rooms carry no description, so it lives here —
  * rename the room there and this key must follow. */
-const ROOM_NOTES: Record<string, string> = {
-	'crime lab': 'Workshops only',
+const ROOM_NOTES: Record<string, RoomNote> = {
+	'crime lab': { text: 'Workshops · register', href: '/workshops' },
 };
+
+interface RoomNote {
+	text: string;
+	href?: string;
+}
 
 /** The note beside a column's name: the room's standing note, else "Talks
  * TBA" for a room with nothing slotted in it yet (an empty column all day
  * reads as a failed load), else none. */
-function roomNote(label: string, talks: Session[]): string | null {
-	return ROOM_NOTES[label.trim().toLowerCase()] ?? (talks.length === 0 ? 'Talks TBA' : null);
+function roomNote(label: string, talks: Session[]): RoomNote | null {
+	return ROOM_NOTES[label.trim().toLowerCase()] ?? (talks.length === 0 ? { text: 'Talks TBA' } : null);
 }
 
 /** Current wall-clock in Europe/Prague as { date: 'YYYY-MM-DD', minutes }.
@@ -252,7 +258,12 @@ function AgendaGrid({
 					return (
 						<div key={column.key} className={s.headCell} style={{ gridColumn: i + 2, gridRow: 1 }}>
 							<span className={s.headLabel}>{column.label}</span>
-							{note && <span className={s.headNote}>{note}</span>}
+							{note?.href && (
+								<a className={`${s.headNote} ${s.headLink}`} href={note.href}>
+									{note.text}
+								</a>
+							)}
+							{note && !note.href && <span className={s.headNote}>{note.text}</span>}
 						</div>
 					);
 				})}
@@ -479,7 +490,7 @@ export default function Agenda() {
 	// No sessions at all, or none scheduled yet → the schedule isn't published.
 	if (status === 'empty' || range === null) {
 		return (
-			<EmptyState action={{ href: '/sessions', label: 'Browse all talks' }}>
+			<EmptyState action={{ href: '#talks', label: 'Browse all talks' }}>
 				<p>The full schedule lands closer to the event.</p>
 			</EmptyState>
 		);

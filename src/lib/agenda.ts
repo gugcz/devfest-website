@@ -337,19 +337,32 @@ export interface RowScale {
 	isCompressed(min: number): boolean;
 }
 
+/** How a compressed span is sized: one row per `minPerRow` minutes, clamped
+ * to `minRows`–`maxRows`. */
+export interface SpanRows {
+	minPerRow: number;
+	minRows: number;
+	maxRows: number;
+}
+
 /** Minutes → row mapping. Proportional through talks, COMPRESSED elsewhere:
- * each `compressed` span gets at most `maxSpanRows` rows (a 5½-hour
- * afterparty at scale is twenty talks tall). Shorter spans are not stretched. */
+ * each `compressed` span runs on its own coarser scale (`span.minPerRow`),
+ * kept between `span.minRows` and `span.maxRows` — so a lunch still reads
+ * longer than a coffee break, but a 5½-hour afterparty is not twenty talks
+ * tall. */
 export function rowScale(
 	range: { start: number; end: number },
 	compressed: IdleSpan[],
 	snapMin: number,
-	maxSpanRows: number,
+	span: SpanRows,
 ): RowScale {
 	const stops = compressed
-		.map((span) => ({
-			...span,
-			rows: Math.min(maxSpanRows, Math.max(1, Math.round((span.endMin - span.startMin) / snapMin))),
+		.map((idle) => ({
+			...idle,
+			rows: Math.min(
+				span.maxRows,
+				Math.max(span.minRows, Math.round((idle.endMin - idle.startMin) / span.minPerRow)),
+			),
 		}))
 		.sort((a, b) => a.startMin - b.startMin);
 
@@ -400,12 +413,37 @@ export interface NowState {
 	comingUpIds: Set<string>;
 }
 
+/** Earliest start of a non-band session strictly after `nowMin`, or
+ * `Infinity` when no talk is still to come. */
+function soonestTalkStart(sessions: Session[], nowMin: number): number {
+	let soonest = Number.POSITIVE_INFINITY;
+	for (const session of sessions) {
+		if (isBand(session)) continue;
+		const place = placement(session);
+		if (place && place.startMin > nowMin && place.startMin < soonest) soonest = place.startMin;
+	}
+	return soonest;
+}
+
+/** Ids of the next talk(s) to start after `nowMin` (never bands); empty when
+ * nothing is still to come. */
+function comingUpTalkIds(sessions: Session[], nowMin: number): Set<string> {
+	const ids = new Set<string>();
+	const soonest = soonestTalkStart(sessions, nowMin);
+	if (!Number.isFinite(soonest)) return ids;
+	for (const session of sessions) {
+		if (isBand(session)) continue;
+		const place = placement(session);
+		if (place && place.startMin === soonest) ids.add(session.id);
+	}
+	return ids;
+}
+
 /** Live = `nowMin` in [start, end). Coming up = next talk(s) during a pause
  * (never bands). `nowMin === null` → empty sets. */
 export function nowState(sessions: Session[], nowMin: number | null): NowState {
 	const liveIds = new Set<string>();
-	const comingUpIds = new Set<string>();
-	if (nowMin === null) return { liveIds, comingUpIds };
+	if (nowMin === null) return { liveIds, comingUpIds: new Set<string>() };
 
 	let talkLive = false;
 	for (const session of sessions) {
@@ -417,21 +455,6 @@ export function nowState(sessions: Session[], nowMin: number | null): NowState {
 		}
 	}
 
-	if (!talkLive) {
-		let soonest = Number.POSITIVE_INFINITY;
-		for (const session of sessions) {
-			if (isBand(session)) continue;
-			const place = placement(session);
-			if (place && place.startMin > nowMin && place.startMin < soonest) soonest = place.startMin;
-		}
-		if (Number.isFinite(soonest)) {
-			for (const session of sessions) {
-				if (isBand(session)) continue;
-				const place = placement(session);
-				if (place && place.startMin === soonest) comingUpIds.add(session.id);
-			}
-		}
-	}
-
+	const comingUpIds = talkLive ? new Set<string>() : comingUpTalkIds(sessions, nowMin);
 	return { liveIds, comingUpIds };
 }

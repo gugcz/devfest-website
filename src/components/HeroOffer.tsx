@@ -31,7 +31,9 @@ export default function HeroOffer() {
 	return (
 		<dl className={s.offer}>
 			<dt className={s.label}>
-				{offer.wave}
+				{/* The final wave sells on urgency, not on its name: the Tickets
+				    section right below names it. */}
+				{offer.final ? 'Last chance' : offer.wave}
 				{offer.deadline && (
 					<>
 						{' · until '}

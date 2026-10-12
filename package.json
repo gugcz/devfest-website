@@ -13,28 +13,33 @@
     "astro": "astro",
     "check": "astro check",
     "a11y": "A11Y_MOCK=1 astro build && node scripts/a11y.mjs",
-    "verify": "npm run check && npm --prefix functions test && npm run a11y",
-    "anchors": "A11Y_MOCK=1 astro build && node scripts/anchor-measure.mjs"
+    "verify": "npm run check && npm run complexity && npm --prefix functions test && npm run a11y",
+    "anchors": "A11Y_MOCK=1 astro build && node scripts/anchor-measure.mjs",
+    "complexity": "eslint src functions/src scripts astro.config.mjs"
   },
   "dependencies": {
-    "@astrojs/react": "^7.0.0",
+    "@astrojs/react": "^7.0.1",
     "@astrojs/sitemap": "^3.7.2",
     "@resvg/resvg-js": "^2.6.2",
-    "astro": "^7.3.5",
+    "astro": "^7.3.6",
     "firebase": "^12.16.0",
-    "heic-to": "^1.5.2",
+    "heic-to": "^1.6.5",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "satori": "^0.33.5"
+    "satori": "^0.35.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@axe-core/playwright": "^4.11.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.5",
+    "eslint-plugin-astro": "^1.7.0",
+    "eslint-plugin-sonarjs": "^4.2.2",
     "playwright": "^1.60.0",
     "sass": "^1.105.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.71.1"
   },
   "overrides": {
     "@babel/core": "^7.29.6",

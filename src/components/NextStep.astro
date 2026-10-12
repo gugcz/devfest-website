@@ -1,6 +1,6 @@
 ---
 /** A NEXT STEP — one thing to do, in an open field (`/thank-you`,
- * `/newsletter-subscription-thank-you`, `/404`). CONTAINS its controls, so
+ * `/newsletter-subscription-thank-you`, `/404`, `/venue`). CONTAINS its controls, so
  * `.field-row--holds`. */
 interface Action {
 	href: string;
@@ -29,6 +29,7 @@ const { title, noteHtml, actions } = Astro.props;
 		<p class="step-note" set:html={noteHtml} />
 	</div>
 
+	{actions.length > 0 && (
 	<div class="step-actions">
 		{actions.map(({ href, label, kind = 'ghost', external, download }) => (
 			<a
@@ -41,6 +42,7 @@ const { title, noteHtml, actions } = Astro.props;
 			</a>
 		))}
 	</div>
+	)}
 </li>
 
 <style lang="scss">

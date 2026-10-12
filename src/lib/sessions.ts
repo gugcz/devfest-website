@@ -228,8 +228,8 @@ export function isDisplayableSession(session: Session): boolean {
  * The agenda counterpart of {@link isDisplayableSession}. Deliberately keeps
  * service + plenum sessions (breaks / lunch / registration / keynote) — the
  * timetable renders them as full-width bands — and only drops docs left
- * title-less by a partial sync. `/sessions` uses `isDisplayableSession`
- * (talks only); `/agenda` uses this.
+ * title-less by a partial sync. The talk list under the timetable uses
+ * `isDisplayableSession` (talks only); the timetable uses this.
  */
 export function isAgendaSession(session: Session): boolean {
 	return session.title.trim().length > 0;

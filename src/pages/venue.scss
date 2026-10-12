@@ -1,0 +1,27 @@
+// Three photos at one height: landscape 4:3, portrait 3:4, landscape 4:3, so
+// the columns run 4 : 2.25 : 4. In colour, unlike the home gallery: they are for
+// recognising the building on arrival, and the red brick is part of that.
+.venue-photos {
+	padding: var(--section-y) 0;
+	background: var(--color-bg);
+}
+
+.venue-photos-grid {
+	list-style: none;
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: 4fr 2.25fr 4fr;
+	gap: 1.25rem;
+
+	img {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+}
+
+@media (max-width: 700px) {
+	.venue-photos-grid {
+		grid-template-columns: 1fr;
+	}
+}
