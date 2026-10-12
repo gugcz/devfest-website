@@ -81,6 +81,14 @@
 		"url": "https://www.second-foundation.eu/"
 	},
 	{
+		"id": "asus",
+		"tier": "gold",
+		"order": 6,
+		"name": "ASUS",
+		"logo": "/partners/gold/asus.png",
+		"url": "https://www.asus.com/cz/"
+	},
+	{
 		"id": "applifting",
 		"tier": "silver",
 		"order": 1,
