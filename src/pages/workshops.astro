@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Closer from '../components/Closer.astro';
+import Workshops from '../components/Workshops.tsx';
+
+// Workshop sign-up for ticket holders. A workshop opens here once its seat
+// limit is set in RTDB (`/workshops/{sessionId}/limit`); the page lists those
+// and nothing else. Sign-in is the app's ticket login (src/lib/workshops.ts).
+---
+
+<BaseLayout
+	title="Workshop registration — DevFest.cz 2026"
+	description="Save a seat at a DevFest.cz 2026 workshop. Sign in with the code from your ticket, pick a workshop, and join the waitlist when it is full."
+>
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={'Save your seat<br /><span class="red">at a workshop.</span>'}
+			lede="Workshops have limited seats. Sign in with the code from your ticket and register. When a workshop is full, join the waitlist: you move up as soon as someone cancels."
+			seoHeading="DevFest.cz 2026 Workshop Registration"
+			titleId="workshops-title"
+			photo={false}
+		/>
+
+		<section class="band band--lit" aria-labelledby="workshops-list-title">
+			<div class="band-inner">
+				<h2 id="workshops-list-title" class="sr-only">Workshops</h2>
+				<Workshops client:load />
+				<noscript>
+					<p class="fallback-note">Registration needs JavaScript. Please turn it on and reload the page.</p>
+				</noscript>
+			</div>
+		</section>
+
+		<Closer
+			titleHtml={'No ticket<br />yet?'}
+			note="Workshops are for ticket holders. Get yours first, then come back to save a seat."
+			tone="accent"
+			titleId="workshops-closer"
+			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/agenda', label: 'See the agenda', kind: 'ghost' }]}
+		/>
+	</main>
+</BaseLayout>

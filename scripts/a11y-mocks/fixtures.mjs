@@ -333,3 +333,12 @@ export const TICKETS = {
 		},
 	],
 };
+
+/** `/api/workshops` — seats per open workshop: one with seats left, one full
+ * with a waitlist, so /workshops renders both states. */
+export const WORKSHOPS = {
+	workshops: {
+		'ses-workshop': { limit: 20, taken: 12, waiting: 0 },
+		'ses-unscheduled': { limit: 15, taken: 15, waiting: 4 },
+	},
+};

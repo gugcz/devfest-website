@@ -26,6 +26,7 @@ const PATHS = [
 	'/venue/',
 	'/press/downloads/',
 	'/invoice/',
+	'/workshops/',
 	'/attending/',
 	'/speaker-card/',
 	'/code-of-conduct/',
