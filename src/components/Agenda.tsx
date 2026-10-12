@@ -52,15 +52,20 @@ const NARROW = '(max-width: 1024px)';
 /** A standing note beside a room's name, keyed by its Sessionize name
  * (lowercased). Sessionize rooms carry no description, so it lives here —
  * rename the room there and this key must follow. */
-const ROOM_NOTES: Record<string, string> = {
-	'crime lab': 'Workshops only',
+const ROOM_NOTES: Record<string, RoomNote> = {
+	'crime lab': { text: 'Workshops · register', href: '/workshops' },
 };
+
+interface RoomNote {
+	text: string;
+	href?: string;
+}
 
 /** The note beside a column's name: the room's standing note, else "Talks
  * TBA" for a room with nothing slotted in it yet (an empty column all day
  * reads as a failed load), else none. */
-function roomNote(label: string, talks: Session[]): string | null {
-	return ROOM_NOTES[label.trim().toLowerCase()] ?? (talks.length === 0 ? 'Talks TBA' : null);
+function roomNote(label: string, talks: Session[]): RoomNote | null {
+	return ROOM_NOTES[label.trim().toLowerCase()] ?? (talks.length === 0 ? { text: 'Talks TBA' } : null);
 }
 
 /** Current wall-clock in Europe/Prague as { date: 'YYYY-MM-DD', minutes }.
@@ -253,7 +258,12 @@ function AgendaGrid({
 					return (
 						<div key={column.key} className={s.headCell} style={{ gridColumn: i + 2, gridRow: 1 }}>
 							<span className={s.headLabel}>{column.label}</span>
-							{note && <span className={s.headNote}>{note}</span>}
+							{note?.href && (
+								<a className={`${s.headNote} ${s.headLink}`} href={note.href}>
+									{note.text}
+								</a>
+							)}
+							{note && !note.href && <span className={s.headNote}>{note.text}</span>}
 						</div>
 					);
 				})}
