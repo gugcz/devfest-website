@@ -67,7 +67,8 @@
 // --field-border via .btn-ghost (3.33:1).
 .cookie-btn {
 	font-size: var(--fs-label-lg);
-	letter-spacing: 0.22em;
+	// Matches `.btn-primary` (BaseLayout.scss): tighter tracking reads on red.
+	letter-spacing: 0.16em;
 	white-space: nowrap;
 	// Physical touch target — px, not rem, so it does not double with the
 	// root font (WCAG 2.5.5 is about the pointer, not the type size).
