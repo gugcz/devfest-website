@@ -1,9 +1,10 @@
 @use '../styles/type' as *;
 
 // `/tv` is a fixed 16:9 wall screen read from across a room, not a scrolling
-// page. Everything sizes off `--u` (1/100 of the width, capped by height so a
-// letterboxed browser still fits) instead of the site's fluid `--fs-*` steps,
-// which top out at laptop sizes.
+// page. Everything sizes off `--u` (1/100 of the long side, capped by the
+// short one so a letterboxed browser still fits) instead of the site's fluid
+// `--fs-*` steps, which top out at laptop sizes. A TV hung on its side gets
+// the same unit and stacked zones (see Portrait at the end).
 //
 // Signage rules, not page rules (letter height ~25 mm per 3 m of viewing
 // distance; a passer-by gets one or two seconds):
@@ -591,6 +592,7 @@
 	@include tv-label(calc(var(--u) * 1.8));
 	margin: calc(var(--u) * 2) 0 0;
 	color: var(--ink-strong);
+	text-wrap: balance;
 }
 
 // ─── Speakers ──────────────────────────────────────────────────────────────
@@ -753,11 +755,7 @@
 
 // Four rooms and more: one line per title so every row still fits.
 .boardDense {
-	.boardRow:last-child {
-	border-bottom: 0;
-}
-
-.boardRoom {
+	.boardRoom {
 		font-size: calc(var(--u) * 3.4);
 	}
 
@@ -785,6 +783,208 @@
 	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+// What the second column heads, said in the cell for portrait, where the
+// board has no columns: Next after a live talk, After that after a coming one.
+.boardCellLabel {
+	display: none;
+	color: var(--color-text);
+}
+
+// ─── Portrait: the same screens on a TV turned on its side ────────────────
+// The unit swaps axes, so a letter is as tall as on the same panel hung
+// landscape; what sat side by side stacks instead.
+
+@media (orientation: portrait) {
+	.screen {
+		--u: min(1.7778vw, 1vh);
+
+		background:
+			radial-gradient(ellipse 90% 34% at 40% 30%, rgba(255, 244, 232, 0.05), transparent 72%),
+			var(--color-bg);
+
+		&::before {
+			height: calc(var(--u) * 24);
+		}
+	}
+
+	// Logo and clock on one line, the room name across the full width under
+	// them.
+	.header {
+		grid-template-columns: auto minmax(0, 1fr);
+		grid-template-areas:
+			'logo clock'
+			'title title';
+		gap: calc(var(--u) * 1.6) calc(var(--u) * 2);
+		padding-bottom: calc(var(--u) * 1.2);
+	}
+
+	.logo {
+		grid-area: logo;
+	}
+
+	.clockBlock {
+		grid-area: clock;
+		justify-self: end;
+	}
+
+	.titleRow {
+		grid-area: title;
+		flex-wrap: wrap;
+		row-gap: calc(var(--u) * 1.2);
+		padding-left: 0;
+		border-left: 0;
+	}
+
+	.heading {
+		font-size: calc(var(--u) * 5.8);
+	}
+
+	// Room screen: the hero on top, the rail under it. The hero is a little
+	// narrower than on a landscape screen, so its title steps scale with it
+	// and a title keeps the lines it has there.
+	.roomGrid {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto minmax(0, 1fr);
+		gap: calc(var(--u) * 2.4);
+	}
+
+	.hero {
+		gap: calc(var(--u) * 1.8);
+	}
+
+	.heroTitle {
+		font-size: calc(var(--u) * 7.3);
+
+		&.titleMid {
+			font-size: calc(var(--u) * 5.9);
+		}
+
+		&.titleLong {
+			font-size: calc(var(--u) * 4.9);
+		}
+
+		&.titleXl {
+			font-size: calc(var(--u) * 4);
+		}
+	}
+
+	.speakers {
+		--photo: calc(var(--u) * 7.2);
+	}
+
+	// Two portraits and names on one line, not two.
+	.speakersMany {
+		--photo: calc(var(--u) * 4.6);
+		--name: calc(var(--u) * 1.9);
+	}
+
+	// Nothing left in this room: the sign-off takes the middle of the screen
+	// and the other rooms sit at the foot.
+	.roomGridWrap {
+		grid-template-rows: minmax(0, 1fr) auto;
+	}
+
+	.rail {
+		gap: calc(var(--u) * 2.2);
+		padding-left: 0;
+		border-left: 0;
+	}
+
+	// Board: the room and what's on share the top line of each row, the title
+	// runs the full width under them, and what's next closes the row.
+	.boardHead {
+		display: none;
+	}
+
+	.boardRows {
+		margin-top: 0;
+	}
+
+	.boardRow {
+		grid-template-columns: auto minmax(0, 1fr);
+		grid-template-areas:
+			'room meta'
+			'title title'
+			'progress progress'
+			'next next';
+		align-content: center;
+		gap: calc(var(--u) * 1.1) calc(var(--u) * 2);
+		padding: calc(var(--u) * 1.3) 0;
+	}
+
+	.boardRoom {
+		grid-area: room;
+		font-size: calc(var(--u) * 4);
+	}
+
+	.boardNow {
+		display: contents;
+
+		// Beside the room name there is height for a second line, so the
+		// speakers wrap instead of trailing off.
+		> .boardMeta {
+			grid-area: meta;
+			white-space: normal;
+
+			.boardMetaText {
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2;
+			}
+		}
+
+		> .boardTitle {
+			grid-area: title;
+		}
+
+		> .progressRow {
+			grid-area: progress;
+			position: static;
+		}
+	}
+
+	.boardNext {
+		grid-area: next;
+		margin-top: calc(var(--u) * 0.6);
+	}
+
+	.boardCellLabel {
+		display: inline;
+	}
+
+	// Credits: two captioned columns, the organiser and the partners.
+	.credits {
+		align-items: stretch;
+		padding: calc(var(--u) * 1.2) 0 calc(var(--u) * 2);
+	}
+
+	.organizer,
+	.partnerGroup {
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: calc(var(--u) * 0.8);
+	}
+
+	.partnerGroup .creditLabel {
+		min-width: 0;
+	}
+
+	.partnerLogos {
+		align-self: stretch;
+		gap: calc(var(--u) * 2.8);
+
+		li {
+			flex: 0 1 auto;
+			min-width: 0;
+		}
+	}
+
+	.partnerLogo {
+		max-width: min(100%, calc(var(--u) * 15));
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {

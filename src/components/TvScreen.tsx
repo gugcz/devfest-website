@@ -152,6 +152,20 @@ function useKioskUpkeep() {
 	}, []);
 }
 
+/** Whether the screen hangs on its side. The rail measures what fits, so it
+ * starts over when the screen turns. */
+function usePortrait(): boolean {
+	const [portrait, setPortrait] = useState(false);
+	useEffect(() => {
+		const query = window.matchMedia('(orientation: portrait)');
+		const update = () => setPortrait(query.matches);
+		update();
+		query.addEventListener('change', update);
+		return () => query.removeEventListener('change', update);
+	}, []);
+	return portrait;
+}
+
 function loadLineup(signal: AbortSignal): Promise<Lineup> {
 	return fetchAgenda(signal).then((lineup) => ({
 		...lineup,
@@ -495,7 +509,7 @@ function Board({ rooms, nowMin }: { rooms: RoomNow[]; nowMin: number | null }) {
 				{focus.map(({ room, lead, live, next, gap }) => (
 					<li key={room.column.key} className={s.boardRow}>
 						<h2 className={s.boardRoom}>{room.column.label}</h2>
-						<div className={s.boardCell}>
+						<div className={`${s.boardCell} ${s.boardNow}`}>
 							{lead ? (
 								<>
 									<p className={s.boardMeta}>
@@ -517,10 +531,13 @@ function Board({ rooms, nowMin }: { rooms: RoomNow[]; nowMin: number | null }) {
 								<p className={s.boardMeta}>{nowMin === null ? 'Nothing scheduled' : 'Done for today'}</p>
 							)}
 						</div>
-						<div className={s.boardCell}>
+						<div className={`${s.boardCell} ${s.boardNext}`}>
 							{next ? (
 								<>
 									<p className={s.boardMeta}>
+										<span className={s.boardCellLabel} aria-hidden="true">
+											{live ? 'Next' : 'After that'}
+										</span>
 										<span className={s.boardMetaText}>
 											{formatMinutes(next.place.startMin)}
 											{gap
@@ -555,6 +572,7 @@ export default function TvScreen({
 	const [params, setParams] = useState<Params | null>(null);
 	useEffect(() => setParams(readParams()), []);
 	useKioskUpkeep();
+	const portrait = usePortrait();
 
 	const lineup = usePolled(loadLineup, LINEUP_REFRESH_MS, 'tv-lineup');
 
@@ -619,7 +637,7 @@ export default function TvScreen({
 					{dayNote && !hero && <p className={s.notice}>{dayNote}</p>}
 
 					{here && focus ? (
-						<div className={s.roomGrid}>
+						<div className={`${s.roomGrid} ${hero ? '' : s.roomGridWrap}`}>
 							{hero ? (
 								<Hero slot={hero} live={focus.live} nowMin={nowMin} note={dayNote} />
 							) : (
@@ -637,7 +655,14 @@ export default function TvScreen({
 								</div>
 							)}
 							{(focus.next || others.length > 0) && (
-								<Rail next={focus.next} gap={focus.gap} afterHero={!focus.live} others={others} nowMin={nowMin} />
+								<Rail
+									key={portrait ? 'portrait' : 'landscape'}
+									next={focus.next}
+									gap={focus.gap}
+									afterHero={!focus.live}
+									others={others}
+									nowMin={nowMin}
+								/>
 							)}
 						</div>
 					) : (
