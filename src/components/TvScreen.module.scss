@@ -768,6 +768,7 @@
 .boardMeta {
 	@include mono(calc(var(--u) * 1.45));
 	display: flex;
+	flex-shrink: 0;
 	align-items: center;
 	gap: 0.7em;
 	margin: 0;

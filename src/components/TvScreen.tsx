@@ -15,6 +15,7 @@ import {
 	roomSlug,
 	startsIn,
 	venueNow,
+	type RoomFocus,
 	type RoomNow,
 	type Slot,
 } from '../lib/tv';
@@ -562,6 +563,115 @@ function Board({ rooms, nowMin }: { rooms: RoomNow[]; nowMin: number | null }) {
 	);
 }
 
+/** The lineup, the clock and every room's now and next, kept current. */
+function useVenue(atMin: number | null) {
+	const lineup = usePolled(loadLineup, LINEUP_REFRESH_MS, 'tv-lineup');
+	const sessions = lineup.data?.sessions ?? [];
+	const eventDate = useMemo(() => eventDateISO(sessions), [sessions]);
+	const clock = useClock(atMin, eventDate);
+	const nowMin = eventDate && clock.date === eventDate ? clock.minutes : null;
+	const roomList = lineup.data?.rooms;
+	const rooms = useMemo(() => venueNow(sessions, roomList ?? [], nowMin), [sessions, roomList, nowMin]);
+	const beforeDay = nowMin === null && eventDate !== '' && clock.date < eventDate;
+	return { lineup, clock, nowMin, rooms, beforeDay };
+}
+
+/** The room a `?room=` value names, the rest of the venue, and the value
+ * itself when it names no room. */
+function pickRoom(rooms: RoomNow[], wanted: string): { here: RoomNow | null; others: RoomNow[]; unknown: string } {
+	const column = wanted ? findColumn(rooms.map((r) => r.column), wanted) : null;
+	const here = column ? (rooms.find((r) => r.column.key === column.key) ?? null) : null;
+	return { here, others: rooms.filter((r) => r !== here), unknown: wanted && !column ? wanted : '' };
+}
+
+/** A break on now: the room's own, or on the board one that spans the venue. */
+function pauseNow(focus: RoomFocus | null, rooms: RoomNow[]): Slot | null {
+	if (focus) return focus.pause;
+	return rooms.map((room) => roomFocus(room).pause).find((slot) => slot && isBand(slot.session)) ?? null;
+}
+
+/** What a room screen says once nothing more is scheduled in it. */
+function wrapCopy(dayOver: boolean, nowMin: number | null): { title: string; line: string } {
+	if (dayOver) return { title: 'That’s a wrap.', line: 'Thank you for coming to DevFest.cz 2026.' };
+	if (nowMin === null) return { title: 'Agenda coming soon.', line: 'Talks for this room are being scheduled.' };
+	return { title: 'That’s it in here.', line: 'The rest of the day is in the other rooms.' };
+}
+
+function Header({
+	heading,
+	pause,
+	clock,
+	meta,
+}: {
+	heading: string;
+	pause: Slot | null;
+	clock: Clock & { phase: number };
+	meta: string;
+}) {
+	return (
+		<header className={s.header}>
+			<img className={s.logo} src={logoUrl} alt="DevFest.cz 2026" />
+			<div className={s.titleRow}>
+				<h1 className={s.heading}>
+					{heading}
+					<span className={s.stop} aria-hidden="true">
+						.
+					</span>
+				</h1>
+				{pause && (
+					<p className={s.pause}>
+						{breakLabel(pause.session)} until {formatMinutes(pause.place.endMin)}
+					</p>
+				)}
+			</div>
+			<ClockFace minutes={clock.minutes} phase={clock.phase} meta={meta} />
+		</header>
+	);
+}
+
+/** A screen pinned to one room: the hero is the talk on now, else the next
+ * one; the card under it is the talk after that. */
+function RoomScreen({
+	focus,
+	others,
+	nowMin,
+	dayOver,
+	note,
+	portrait,
+}: {
+	focus: RoomFocus;
+	others: RoomNow[];
+	nowMin: number | null;
+	dayOver: boolean;
+	note: string;
+	portrait: boolean;
+}) {
+	const hero = focus.lead;
+	const wrap = wrapCopy(dayOver, nowMin);
+	return (
+		<div className={`${s.roomGrid} ${hero ? '' : s.roomGridWrap}`}>
+			{hero ? (
+				<Hero slot={hero} live={focus.live} nowMin={nowMin} note={note} />
+			) : (
+				<div className={s.wrap}>
+					<p className={s.heroTitle}>{wrap.title}</p>
+					<p className={s.wrapLine}>{wrap.line}</p>
+				</div>
+			)}
+			{(focus.next || others.length > 0) && (
+				<Rail
+					key={portrait ? 'portrait' : 'landscape'}
+					next={focus.next}
+					gap={focus.gap}
+					afterHero={!focus.live}
+					others={others}
+					nowMin={nowMin}
+				/>
+			)}
+		</div>
+	);
+}
+
 export default function TvScreen({
 	partners = [],
 	organizerLogo,
@@ -574,97 +684,39 @@ export default function TvScreen({
 	useKioskUpkeep();
 	const portrait = usePortrait();
 
-	const lineup = usePolled(loadLineup, LINEUP_REFRESH_MS, 'tv-lineup');
-
-	const sessions = lineup.data?.sessions ?? [];
-	const eventDate = useMemo(() => eventDateISO(sessions), [sessions]);
-	const clock = useClock(params?.atMin ?? null, eventDate);
-	const nowMin = eventDate && clock.date === eventDate ? clock.minutes : null;
-
-	const rooms = useMemo(
-		() => venueNow(sessions, lineup.data?.rooms ?? [], nowMin),
-		[sessions, lineup.data?.rooms, nowMin],
-	);
-	const column = params?.room ? findColumn(rooms.map((r) => r.column), params.room) : null;
-	const here = column ? (rooms.find((r) => r.column.key === column.key) ?? null) : null;
-	const others = rooms.filter((r) => r !== here);
-	const dayOver = isDayOver(rooms, nowMin);
-	const beforeDay = nowMin === null && eventDate !== '' && clock.date < eventDate;
-	const dayNote = beforeDay ? `${EVENT.dateLabel} · ${EVENT.venue}` : '';
-
-	// Room screen: the hero is the talk on now, else the next one; the card
-	// under it is the talk after that.
+	const { lineup, clock, nowMin, rooms, beforeDay } = useVenue(params?.atMin ?? null);
+	const { here, others, unknown } = pickRoom(rooms, params?.room ?? '');
 	const focus = here ? roomFocus(here) : null;
-	const hero = focus?.lead ?? null;
-	// A break on now: the room's own, or on the board one that spans the venue.
-	const pause = focus
-		? focus.pause
-		: (rooms.map((room) => roomFocus(room).pause).find((slot) => slot && isBand(slot.session)) ?? null);
+	const note = beforeDay ? `${EVENT.dateLabel} · ${EVENT.venue}` : '';
+	const reconnecting = lineup.failed && lineup.data !== null;
 
 	return (
 		<div className={s.screen}>
-			<header className={s.header}>
-				<img className={s.logo} src={logoUrl} alt="DevFest.cz 2026" />
-				<div className={s.titleRow}>
-					<h1 className={s.heading}>
-						{here ? here.column.label : 'Agenda'}
-						<span className={s.stop} aria-hidden="true">
-							.
-						</span>
-					</h1>
-					{pause && (
-						<p className={s.pause}>
-							{breakLabel(pause.session)} until {formatMinutes(pause.place.endMin)}
-						</p>
-					)}
-				</div>
-				<ClockFace
-					minutes={clock.minutes}
-					phase={clock.phase}
-					meta={lineup.failed && lineup.data !== null ? 'Reconnecting…' : dayLabel(clock.date)}
-				/>
-			</header>
-
+			<Header
+				heading={here?.column.label ?? 'Agenda'}
+				pause={pauseNow(focus, rooms)}
+				clock={clock}
+				meta={reconnecting ? 'Reconnecting…' : dayLabel(clock.date)}
+			/>
 			{lineup.data === null ? (
 				<p className={s.status}>{lineup.failed ? 'Agenda unavailable, retrying…' : 'Loading agenda…'}</p>
 			) : (
 				<main className={s.main}>
-					{params?.room && !column && (
+					{unknown && (
 						<p className={s.notice}>
-							Unknown room “{params.room}”. Use one of: {rooms.map((r) => roomSlug(r.column.label)).join(', ')}
+							Unknown room “{unknown}”. Use one of: {rooms.map((r) => roomSlug(r.column.label)).join(', ')}
 						</p>
 					)}
-					{dayNote && !hero && <p className={s.notice}>{dayNote}</p>}
-
-					{here && focus ? (
-						<div className={`${s.roomGrid} ${hero ? '' : s.roomGridWrap}`}>
-							{hero ? (
-								<Hero slot={hero} live={focus.live} nowMin={nowMin} note={dayNote} />
-							) : (
-								<div className={s.wrap}>
-									<p className={s.heroTitle}>
-										{dayOver ? 'That’s a wrap.' : nowMin === null ? 'Agenda coming soon.' : 'That’s it in here.'}
-									</p>
-									<p className={s.wrapLine}>
-										{dayOver
-											? 'Thank you for coming to DevFest.cz 2026.'
-											: nowMin === null
-												? 'Talks for this room are being scheduled.'
-												: 'The rest of the day is in the other rooms.'}
-									</p>
-								</div>
-							)}
-							{(focus.next || others.length > 0) && (
-								<Rail
-									key={portrait ? 'portrait' : 'landscape'}
-									next={focus.next}
-									gap={focus.gap}
-									afterHero={!focus.live}
-									others={others}
-									nowMin={nowMin}
-								/>
-							)}
-						</div>
+					{note && !focus?.lead && <p className={s.notice}>{note}</p>}
+					{focus ? (
+						<RoomScreen
+							focus={focus}
+							others={others}
+							nowMin={nowMin}
+							dayOver={isDayOver(rooms, nowMin)}
+							note={note}
+							portrait={portrait}
+						/>
 					) : (
 						<Board rooms={rooms} nowMin={nowMin} />
 					)}
