@@ -53,7 +53,7 @@ const NARROW = '(max-width: 1024px)';
  * (lowercased). Sessionize rooms carry no description, so it lives here —
  * rename the room there and this key must follow. */
 const ROOM_NOTES: Record<string, RoomNote> = {
-	'crime lab': { text: 'Workshops · register', href: '/workshops' },
+	'crime lab': { text: 'Workshops only' },
 };
 
 interface RoomNote {
