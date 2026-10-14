@@ -89,6 +89,14 @@
 		"url": "https://www.asus.com/cz/"
 	},
 	{
+		"id": "prusa-research",
+		"tier": "gold",
+		"order": 7,
+		"name": "Prusa Research",
+		"logo": "/partners/gold/prusa-research.svg",
+		"url": "https://www.prusa3d.com/"
+	},
+	{
 		"id": "applifting",
 		"tier": "silver",
 		"order": 1,
