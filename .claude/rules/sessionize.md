@@ -6,6 +6,11 @@ paths:
   - "src/lib/speakers.ts"
   - "src/lib/sessions.ts"
   - "src/lib/agenda.ts"
+  - "src/lib/lineup-static.ts"
+  - "src/lib/share.ts"
+  - "src/layouts/Share.astro"
+  - "src/pages/speakers/**"
+  - "src/pages/talks/**"
 ---
 
 # Sessionize lineup
@@ -28,5 +33,11 @@ paths:
   pings Slack. `extractSpeakers` throws on empty; an empty session set
   (Speakers-view fallback) is preserved.
 - Photos mirrored to Storage (`mirror-images.ts`), idempotent, best-effort.
+- Share pages `/talks/<id>` and `/speakers/<id>` are built from production
+  `/api/lineup` at `astro build` (`lineup-static.ts`, never shipped to the
+  client; `DEVFEST_LINEUP_URL` overrides, `A11Y_MOCK` builds none). Each
+  unfurls its own title/description, then forwards to the sheet
+  (`/agenda?talk=`, `/speakers?speaker=`). Something added after the last build
+  has no page: `404.astro` forwards its link, with the site's own preview.
 - `SESSIONIZE_ENDPOINT_ID` must be a JSON API id or URL (embed id returns
   HTML); `parseEndpointId` handles both.

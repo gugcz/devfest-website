@@ -24,8 +24,9 @@ pushes to `2026`, never deploys; "ship it" is not merge permission.
 npm run verify
 ```
 
-That is `npm run check` (astro check), the functions test
-suite, and the axe sweep — the three checks the `2026` ruleset requires.
+That is `npm run check` (astro check), `npm run complexity` (cognitive
+complexity, max 15), the functions test suite and the axe sweep — the checks
+CI runs on every PR against `2026`.
 
 - If dependencies are missing, run `npm ci && npm --prefix functions ci`.
 - If Chromium is missing for `npm run a11y`, try the preinstalled browser
@@ -33,6 +34,9 @@ suite, and the axe sweep — the three checks the `2026` ruleset requires.
 - A check the change cannot affect (e.g. a11y for a functions-only change) may
   be skipped only if it cannot run here; note which one and why in the PR.
 - Fix every failure and re-run. Do not continue on red.
+- If the change adds or renames a function, endpoint, page, secret or rule,
+  or makes an architecture decision, the docs move in the same PR
+  (`.claude/rules/docs.md`).
 
 ## 3. Commit
 
@@ -49,8 +53,9 @@ Keep commits focused; add the attribution trailer the session requires.
 
 - `git push -u origin <branch>` (retry on network errors only).
 - Open a PR against `2026`, or update the existing one for this branch. Title
-  = the commit subject format. Body sections, in this order and nothing else:
-  **Summary**, **Why**, **Behavior**, **Files**. No test plan section.
+  = the commit subject format. Body follows
+  `.github/PULL_REQUEST_TEMPLATE.md`: **Summary**, **Why**, **Behavior**,
+  **Files**, in that order and nothing else. No test plan section.
 - If the session has PR-attribution or assignee rules, apply them.
 
 ## 5. Report
