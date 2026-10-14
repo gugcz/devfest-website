@@ -143,11 +143,39 @@ export function initAnalytics(): Promise<void> {
 			gtag('consent', 'default', ANALYTICS_CONSENT);
 			analyticsInstance = initializeAnalytics(getApp(), { config: { send_page_view: false } });
 			reportEntry();
+			schedulePerformance();
 		} catch (err) {
 			console.warn('[firebase] Analytics init failed:', err);
 		}
 	})();
 	return analyticsInit;
+}
+
+let performanceStarted = false;
+/**
+ * Boot Firebase Performance Monitoring (page load, Web Vitals, network
+ * requests). Same gates as GA4 — consented visitors on production hosts only —
+ * because it stores a Firebase Installations id on the device. The SDK is its
+ * own lazy chunk, loaded when the browser is idle so it never competes with
+ * the page; it reads load timings and Web Vitals from the buffered Performance
+ * API, so a late boot still reports the entry page.
+ */
+function schedulePerformance(): void {
+	if (performanceStarted) return;
+	performanceStarted = true;
+	const boot = async (): Promise<void> => {
+		try {
+			const { initializePerformance } = await import('firebase/performance');
+			initializePerformance(getApp());
+		} catch (err) {
+			console.warn('[firebase] Performance init failed:', err);
+		}
+	};
+	if ('requestIdleCallback' in window) {
+		requestIdleCallback(() => void boot(), { timeout: 5000 });
+	} else {
+		setTimeout(() => void boot(), 2000);
+	}
 }
 
 /**

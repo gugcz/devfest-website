@@ -61,6 +61,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 					details, or anything else that identifies you.
 				</p>
 				<p>
+					With the same consent we also run Google Firebase Performance Monitoring, which
+					measures how fast the site loads and responds for you: page load timings, Core Web
+					Vitals and the duration of requests the page makes, together with browser, device
+					type, connection type and coarse country. It stores a random installation id in
+					your browser (IndexedDB, listed below) and never records page content or anything
+					you type.
+				</p>
+				<p>
 					The data is used only for analytics — never for advertising,
 					ad personalisation, or profiling.
 				</p>
@@ -129,6 +137,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 							<td>2 years</td>
 						</tr>
 						<tr>
+							<th scope="row"><code>firebase-installations-database</code></th>
+							<td>Firebase Performance Monitoring installation id (IndexedDB) — only set after consent</td>
+							<td>Until you clear browser storage</td>
+						</tr>
+						<tr>
 							<th scope="row"><code>_GRECAPTCHA</code></th>
 							<td>Google reCAPTCHA — bot protection (set for security, not consent-gated)</td>
 							<td>6 months</td>
@@ -147,7 +160,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 				</p>
 				<ul>
 					<li>SmartEmailing — newsletter delivery</li>
-					<li>Google Firebase (Hosting, Analytics, Firestore) — website hosting, analytics, and storage of invoice requests</li>
+					<li>Google Firebase (Hosting, Analytics, Performance Monitoring, Firestore) — website hosting, analytics, performance measurement, and storage of invoice requests</li>
 					<li>Google reCAPTCHA Enterprise (via Firebase App Check) — bot protection</li>
 					<li>iDoklad (Solitea a.s. / Seyfor, <a href="https://www.idoklad.cz" target="_blank" rel="noopener noreferrer">idoklad.cz</a>) — issuing company invoices</li>
 					<li>ti.to — ticket sales and discount-code redemption</li>
