@@ -20,7 +20,7 @@ web
 - **[inferred]** Speakers, press and partners checking programme, downloads
   and partnership terms (`/speakers`, `/contact#press`, `/press/downloads`, `/partners`).
 - **[inferred]** Ticket holders on the day, reading the agenda on a phone
-  (`/agenda`, `/attending`).
+  (`/agenda`, `/attending`), and saving a seat at a workshop (`/workshops`).
 
 ## Product Purpose
 
@@ -43,8 +43,10 @@ built by a community, not a vendor event.
 - Tickets are sold on **ti.to**; the site renders releases from a cached
   `/api/tickets` endpoint. Company invoices go through **iDoklad**, paid by
   bank transfer, then redeemed as a 100%-off ti.to code.
-- The lineup is authored in **Sessionize** and mirrored daily into Firestore;
-  the site reads `/api/lineup`.
+- The lineup is authored in **Sessionize** and mirrored into Firestore every
+  15 minutes; the site reads `/api/lineup`.
+- Workshop seats are opened by hand in RTDB; ticket holders sign in with the
+  mobile app's ticket login to register.
 - Hosting and functions are **Firebase**, project `devfest-cz-app`, shared
   with the mobile app.
 - Analytics is GA4 behind Consent Mode; only consenting visitors are counted.
@@ -53,18 +55,20 @@ built by a community, not a vendor event.
 
 ## Capabilities and Constraints
 
-- Pages: home, agenda, sessions, speakers, tickets (on home), attending,
-  invoice, partners, press and press downloads, team, FAQ, contact, newsletter
-  thank-you, thank-you, 404, privacy policy, per-member `/invite/<member>`.
+- Pages: home, agenda (with every talk), speakers, tickets (on home),
+  workshops, venue, attending, invoice, partners, press downloads, team, FAQ,
+  contact (with press), code of conduct, newsletter thank-you, thank-you, 404,
+  privacy policy, delete-account (mobile app), share pages per talk and
+  speaker, unlisted `/invite/<member>` and `/speaker-card`.
 - Static Astro build with React islands only for data-backed behaviour.
-  Browser data comes only from cached HTTP endpoints, never the Firebase
-  client SDK.
+  Browser reads come only from cached HTTP endpoints, never the Firebase
+  client SDK; writes go through App Check-gated callables.
 - **Public repository.** No real attendee, partner or customer data ever
   enters the repo, fixtures or docs.
 - Production is the `2026` branch; only the maintainer merges or deploys.
 - Copy is English; Czech appears only in quoted press clippings.
-- **Undecided:** whether the 2026 edition adds a second day or workshops
-  track; nothing in the repo says so.
+- One day. Workshops run alongside the talks with limited seats
+  (`/workshops`).
 
 ## Brand Commitments
 

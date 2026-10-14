@@ -13,6 +13,14 @@ Failure text is a product surface: it lands in Slack, an invoice's
 - `params.ts` per domain; cross-domain params (`SLACK_WEBHOOK_URL`) in
   `lib/params.ts`. Never import a sibling domain's params.
 - `.js` import suffixes (NodeNext).
+- Names: `camelCase` + trigger suffix (`Scheduled`, `Api`, `Webhook`,
+  `Callable`, `Trigger`), unique across the project shared with the mobile
+  app. Add a new one to CLAUDE.md's function list and README's table.
+- Every `onCall` sets `enforceAppCheck: true` and a `cors` list (devfest.cz,
+  `devfest-public--pr-*` previews). Never `consumeAppCheckToken`
+  ([ADR 0004](../../docs/adr/0004-app-check-with-plain-tokens.md)).
+- Removing a function: the deploy runs without `--force`, so it fails until
+  the maintainer deletes the old one by hand. Say so in the PR.
 - **`options.ts`** — `setGlobalOptions` (`maxInstances` cost ceiling, shared
   billing project) + presets `SCHEDULED`, `CACHED_ENDPOINT`, `WEBHOOK`,
   `CALLABLE`, `TRIGGER`. Spread a preset; never restate `region`/`timeZone`.
