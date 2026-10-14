@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import { APP_LINKS } from '../lib/app-links';
+
+// THE APP SIGNPOST. Venue QR codes land here, so it opens on the three ways in
+// and nothing else. On a phone the script below moves that phone's store to the
+// top and tags it; the DOM order changes too, so focus order follows the eye.
+const stores = [
+	{
+		platform: 'android',
+		label: 'Android',
+		title: 'Google Play',
+		desc: 'For Android phones and tablets.',
+		cta: 'Get it on Google Play',
+		href: APP_LINKS.googlePlay,
+	},
+	{
+		platform: 'ios',
+		label: 'iPhone',
+		title: 'App Store',
+		desc: 'For iPhone and iPad.',
+		cta: 'Download on the App Store',
+		href: APP_LINKS.appStore,
+	},
+	{
+		platform: 'web',
+		label: 'Any browser',
+		title: 'Web app',
+		desc: 'Nothing to install. Open it in your browser and add it to your home screen if you like.',
+		cta: 'Open the web app',
+		href: APP_LINKS.pwa,
+	},
+];
+---
+
+<BaseLayout
+	title="Get the App — DevFest.cz 2026"
+	description="The DevFest.cz 2026 app: the agenda, your saved talks and reminders on your phone. Google Play, App Store, or the web app in any browser."
+>
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={'Get the <span class="red">app.</span>'}
+			lede="The agenda, your saved talks and reminders for October 30, on your phone."
+			seoHeading="DevFest.cz 2026 app"
+			titleId="app-title"
+			photo={false}
+		/>
+
+		<section class="band band--lit app-body" aria-labelledby="stores-heading">
+			<div class="band-inner">
+				<h2 id="stores-heading" class="sr-only">Where to get the app</h2>
+
+				<ul class="field app-stores" data-app-stores>
+					{stores.map((s) => (
+						<li class="app-store-item" data-platform={s.platform}>
+							{s.href ? (
+								<a class="field-row field-row--short field-row--link app-store" href={s.href} target="_blank" rel="noopener noreferrer">
+									<span class="app-store-head">
+										<span class="app-store-label">
+											{s.label}
+											<span class="app-store-yours" hidden> · Your phone</span>
+										</span>
+										<span class="app-store-title">{s.title}</span>
+										<span class="app-store-desc">{s.desc}</span>
+									</span>
+									<span class="app-store-cta">
+										{s.cta}
+										<span class="app-store-arrow" aria-hidden="true">↗</span>
+									</span>
+								</a>
+							) : (
+								<div class="field-row field-row--short app-store">
+									<span class="app-store-head">
+										<span class="app-store-label">
+											{s.label}
+											<span class="app-store-yours" hidden> · Your phone</span>
+										</span>
+										<span class="app-store-title">{s.title}</span>
+										<span class="app-store-desc">{s.desc}</span>
+									</span>
+									<span class="app-store-soon">Coming soon</span>
+								</div>
+							)}
+						</li>
+					))}
+				</ul>
+			</div>
+		</section>
+	</main>
+</BaseLayout>
+
+<script>
+	// Put the visitor's own store first. iPadOS reports itself as a Mac, so a
+	// Mac with a touch screen counts as iOS. Anything else keeps the page order.
+	function detectPlatform(): 'android' | 'ios' | null {
+		const ua = navigator.userAgent;
+		if (/Android/i.test(ua)) return 'android';
+		if (/iPhone|iPad|iPod/i.test(ua)) return 'ios';
+		if (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1) return 'ios';
+		return null;
+	}
+
+	document.addEventListener('astro:page-load', () => {
+		const list = document.querySelector<HTMLElement>('[data-app-stores]');
+		const platform = detectPlatform();
+		if (!list || !platform) return;
+		const item = list.querySelector<HTMLElement>(`[data-platform="${platform}"]`);
+		if (!item) return;
+		list.prepend(item);
+		item.querySelector<HTMLElement>('.app-store-yours')?.removeAttribute('hidden');
+	});
+</script>
+
+<style lang="scss">
+	@use './app';
+</style>

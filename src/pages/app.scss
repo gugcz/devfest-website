@@ -1,0 +1,106 @@
+@use '../styles/type' as *;
+
+// /app — one short field of ways to get the app. A row with a link IS the
+// control (`.field-row--link`); a row still waiting for its link is plain text.
+
+.app-stores {
+	position: relative;
+}
+
+// Same 1.15/0.85 split as the /contact desks: the name left, the action on
+// the right axis.
+.app-store {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+	align-items: center;
+	gap: 1rem clamp(2rem, 5vw, 5rem);
+	color: var(--color-text);
+	text-decoration: none;
+
+	&:hover .app-store-arrow {
+		transform: translate(2px, -2px);
+	}
+}
+
+.app-store-head {
+	display: flex;
+	flex-direction: column;
+	gap: 0.8rem;
+	min-width: 0;
+}
+
+.app-store-label {
+	align-self: flex-start;
+	@include mono(var(--fs-label-sm), 0.24em, uppercase);
+	color: var(--ink-muted);
+}
+
+// The visitor's own store. Accent-hot text, never a filled tab.
+.app-store-yours {
+	color: var(--color-accent-hot);
+}
+
+.app-store-title {
+	@include display(var(--fs-row));
+	margin: 0;
+}
+
+.app-store-desc {
+	@include prose(var(--fs-lede), 1.6);
+	color: var(--ink-soft);
+	max-width: 34ch;
+}
+
+.app-store-cta,
+.app-store-soon {
+	justify-self: end;
+	text-align: right;
+}
+
+.app-store-cta {
+	@include mono(var(--fs-body-lg), 0.04em);
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-decoration-color: var(--rule-red);
+	text-underline-offset: 4px;
+}
+
+.app-store-arrow {
+	display: inline-block;
+	margin-left: 0.5rem;
+	text-decoration: none;
+	transition: transform 0.25s;
+}
+
+.app-store-soon {
+	@include mono(var(--fs-label), 0.3em, uppercase);
+	color: var(--ink-muted);
+}
+
+@media (max-width: 860px) {
+	// People arrive from a QR code at the venue: the first store sits straight
+	// under the lede, not a full band beat below it.
+	.subpage-hero + .app-body {
+		padding-top: 0;
+	}
+
+	.app-store {
+		grid-template-columns: 1fr;
+		gap: 1.25rem;
+	}
+
+	.app-store-cta,
+	.app-store-soon {
+		justify-self: start;
+		text-align: left;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.app-store-arrow {
+		transition: none;
+	}
+}
