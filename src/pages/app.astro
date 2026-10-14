@@ -2,6 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import { APP_LINKS } from '../lib/app-links';
+// Official store badges (Apple and Google artwork, unaltered, as their brand
+// guidelines require). The web app has no official badge, so it gets one in
+// the same shape, drawn in CSS.
+import googlePlayBadge from '../assets/app-badges/google-play.svg';
+import appStoreBadge from '../assets/app-badges/app-store.svg';
 
 // THE APP SIGNPOST. Venue QR codes land here, so it opens on the three ways in
 // and nothing else. On a phone the script below moves that phone's store to the
@@ -9,26 +14,23 @@ import { APP_LINKS } from '../lib/app-links';
 const stores = [
 	{
 		platform: 'android',
-		label: 'Android',
-		title: 'Google Play',
-		desc: 'For Android phones and tablets.',
-		cta: 'Get it on Google Play',
+		title: 'Android',
+		desc: 'Phones and tablets, from Google Play.',
+		badge: { src: googlePlayBadge.src, alt: 'Get it on Google Play', width: 241, height: 71 },
 		href: APP_LINKS.googlePlay,
 	},
 	{
 		platform: 'ios',
-		label: 'iPhone',
-		title: 'App Store',
-		desc: 'For iPhone and iPad.',
-		cta: 'Download on the App Store',
+		title: 'iPhone & iPad',
+		desc: 'From the App Store.',
+		badge: { src: appStoreBadge.src, alt: 'Download on the App Store', width: 120, height: 40 },
 		href: APP_LINKS.appStore,
 	},
 	{
 		platform: 'web',
-		label: 'Any browser',
-		title: 'Web app',
-		desc: 'Nothing to install. Open it in your browser and add it to your home screen if you like.',
-		cta: 'Open the web app',
+		title: 'Any browser',
+		desc: 'Nothing to install. Open the web app and add it to your home screen if you like.',
+		badge: null,
 		href: APP_LINKS.pwa,
 	},
 ];
@@ -52,38 +54,37 @@ const stores = [
 				<h2 id="stores-heading" class="sr-only">Where to get the app</h2>
 
 				<ul class="field app-stores" data-app-stores>
-					{stores.map((s) => (
-						<li class="app-store-item" data-platform={s.platform}>
-							{s.href ? (
-								<a class="field-row field-row--short field-row--link app-store" href={s.href} target="_blank" rel="noopener noreferrer">
+					{stores.map((s) => {
+						const Row = s.href ? 'a' : 'div';
+						const linkProps = s.href ? { href: s.href, target: '_blank', rel: 'noopener noreferrer' } : {};
+						return (
+							<li class="app-store-item" data-platform={s.platform}>
+								<Row class:list={['field-row field-row--short app-store', { 'field-row--link': s.href }]} {...linkProps}>
 									<span class="app-store-head">
-										<span class="app-store-label">
-											{s.label}
-											<span class="app-store-yours" hidden> · Your phone</span>
-										</span>
+										<span class="app-store-yours" hidden>Your phone</span>
 										<span class="app-store-title">{s.title}</span>
 										<span class="app-store-desc">{s.desc}</span>
 									</span>
-									<span class="app-store-cta">
-										{s.cta}
-										<span class="app-store-arrow" aria-hidden="true">↗</span>
-									</span>
-								</a>
-							) : (
-								<div class="field-row field-row--short app-store">
-									<span class="app-store-head">
-										<span class="app-store-label">
-											{s.label}
-											<span class="app-store-yours" hidden> · Your phone</span>
+									{!s.href ? (
+										<span class="app-store-soon">Coming soon</span>
+									) : s.badge ? (
+										<img class="app-badge" src={s.badge.src} alt={s.badge.alt} width={s.badge.width} height={s.badge.height} />
+									) : (
+										<span class="app-badge app-badge--web">
+											<svg class="app-badge-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+												<circle cx="12" cy="12" r="9.25" />
+												<path d="M2.75 12h18.5M12 2.75c2.6 2.6 3.9 5.7 3.9 9.25S14.6 18.65 12 21.25C9.4 18.65 8.1 15.55 8.1 12S9.4 5.35 12 2.75Z" />
+											</svg>
+											<span class="app-badge-text">
+												<span class="app-badge-small">Open the</span>
+												<span class="app-badge-big">Web App</span>
+											</span>
 										</span>
-										<span class="app-store-title">{s.title}</span>
-										<span class="app-store-desc">{s.desc}</span>
-									</span>
-									<span class="app-store-soon">Coming soon</span>
-								</div>
-							)}
-						</li>
-					))}
+									)}
+								</Row>
+							</li>
+						);
+					})}
 				</ul>
 			</div>
 		</section>
