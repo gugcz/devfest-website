@@ -22,8 +22,8 @@
 // - red is evidence: the Live chip, the live dot, the progress fill, the
 //   headline's full stop and the rubber stamps (a talk minutes away, the
 //   case closed at the end of the day);
-// - noir light: one lamp from the top left, blinds from the top right, film
-//   grain so the gradients do not band on a TV;
+// - noir light: one lamp from the top left, film grain so the gradients do
+//   not band on a TV;
 // - motion only when something changes (a title flips in), plus a 1px drift
 //   every few minutes so a static frame never burns into the panel.
 .screen {
@@ -74,26 +74,6 @@
 		filter: grayscale(1) contrast(1.15) brightness(0.8);
 		opacity: 0.5;
 		mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.5) 45%, transparent 80%);
-		pointer-events: none;
-	}
-
-	// Light through venetian blinds, falling across everything from the top
-	// right. `screen` only lifts what is dark, so white type stays white.
-	&::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		z-index: 5;
-		background: repeating-linear-gradient(
-			-58deg,
-			transparent 0,
-			rgba(255, 244, 232, 0.06) calc(var(--u) * 0.6),
-			rgba(255, 244, 232, 0.06) calc(var(--u) * 1.8),
-			transparent calc(var(--u) * 2.4),
-			transparent calc(var(--u) * 4.2)
-		);
-		mask-image: radial-gradient(ellipse 60% 75% at 92% 8%, #000 0%, rgba(0, 0, 0, 0.5) 45%, transparent 80%);
-		mix-blend-mode: screen;
 		pointer-events: none;
 	}
 }
@@ -982,10 +962,6 @@ $tear: (100 0.7, 96 0.1, 92.5 0.9, 88 0.3, 84 1.1, 79.5 0.2, 75 0.8, 71 0.1, 66.
 
 		&::before {
 			height: calc(var(--u) * 19);
-		}
-
-		&::after {
-			mask-image: radial-gradient(ellipse 80% 45% at 92% 6%, #000 0%, rgba(0, 0, 0, 0.5) 45%, transparent 80%);
 		}
 	}
 
