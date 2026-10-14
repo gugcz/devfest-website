@@ -15,13 +15,19 @@
 //   0.22em micro-labels; ink is --ink-strong or brighter;
 // - red means live and nothing else: the Live chip, the live dot, the
 //   progress fill and the clock's seconds sweep;
-// - a fixed grid on hairlines, like a departures board, instead of boxes;
+// - structure from filled cards and space, like the rows of an airport
+//   board, not hairlines: a 1px line at 22% white vanishes on a TV across a
+//   hall, and the site's own panels (#0C0C0C) read as black there too;
 // - motion only when something changes (a title flips in), plus a 1px drift
 //   every few minutes so a static frame never burns into the panel.
 .screen {
 	--u: min(1vw, 1.7778vh);
 	--pad: calc(var(--u) * 4.4);
 	--label: calc(var(--u) * 1.45);
+	// A card a TV still shows as a surface: about 10% white, with the site's
+	// warm raking light over it.
+	--card: var(--wash-strong), #1a1a1a;
+	--gutter: calc(var(--u) * 0.9);
 
 	position: fixed;
 	inset: 0;
@@ -37,18 +43,18 @@
 	animation: drift 24min steps(1, end) infinite;
 
 	// The detective's Prague skyline from the site's hero, as a dim night band
-	// behind the header that dissolves before the first line of content. The
+	// behind the header that is gone before the first label under it. The
 	// plate is mostly black sky, so the white type on it keeps its contrast.
 	&::before {
 		content: '';
 		position: absolute;
 		inset: 0 0 auto;
 		z-index: -1;
-		height: calc(var(--u) * 17);
+		height: calc(var(--u) * 13);
 		background: url('/hero-detective.webp') center 37% / cover no-repeat;
 		filter: grayscale(1) contrast(1.15) brightness(0.8);
 		opacity: 0.5;
-		mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.5) 42%, transparent 88%);
+		mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.5) 45%, transparent 80%);
 		pointer-events: none;
 	}
 }
@@ -123,8 +129,7 @@
 	align-items: center;
 	gap: calc(var(--u) * 2.4);
 	min-width: 0;
-	padding-left: calc(var(--u) * 2.6);
-	border-left: 2px solid var(--rule-strong);
+	padding-left: calc(var(--u) * 1.4);
 }
 
 .heading {
@@ -207,18 +212,17 @@
 	display: flex;
 	flex-direction: column;
 	gap: calc(var(--u) * 1.6);
-	padding: calc(var(--u) * 0.8) var(--pad) calc(var(--u) * 2);
+	padding: calc(var(--u) * 0.8) var(--pad) calc(var(--u) * 1.4);
 }
 
 // ─── Credits: the organiser and the partner loop ──────────────────────────
 
 .credits {
 	display: flex;
-	align-items: center;
-	gap: calc(var(--u) * 3);
+	align-items: stretch;
+	gap: var(--gutter);
 	margin: 0 var(--pad);
-	padding: calc(var(--u) * 1.3) 0 calc(var(--u) * 2.4);
-	border-top: 1px solid var(--rule-strong);
+	padding: 0 0 calc(var(--u) * 2.4);
 }
 
 // Typewriter captions: the noir texture in the one place nobody has to read
@@ -231,14 +235,19 @@
 	white-space: nowrap;
 }
 
+.organizer,
+.partnerGroup {
+	padding: calc(var(--u) * 1) calc(var(--u) * 2);
+	border-radius: var(--radius);
+	background: var(--card);
+}
+
 .organizer {
 	display: flex;
 	flex: none;
 	align-items: center;
 	gap: calc(var(--u) * 1.4);
 	margin: 0;
-	padding-right: calc(var(--u) * 3);
-	border-right: 1px solid var(--rule-strong);
 }
 
 // The GUG wordmark is four colours; on the noir band it goes white like the
@@ -308,8 +317,8 @@
 	flex: none;
 	margin: 0;
 	padding: 0.5em 0.8em 0.45em;
-	border: 1px solid var(--rule-strong);
 	border-radius: var(--radius);
+	background: var(--card);
 	color: var(--color-text);
 }
 
@@ -441,9 +450,7 @@
 	min-height: 0;
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--u) * 2.6);
-	padding-left: calc(var(--u) * 3.4);
-	border-left: 1px solid var(--rule-strong);
+	gap: calc(var(--u) * 1.2);
 	overflow: hidden;
 }
 
@@ -452,11 +459,13 @@
 	display: flex;
 	flex-direction: column;
 	gap: calc(var(--u) * 1);
-	padding-top: calc(var(--u) * 1.6);
+	padding: calc(var(--u) * 1.1) calc(var(--u) * 2) calc(var(--u) * 1.3);
 	border-top: calc(var(--u) * 0.3) solid var(--rule-strong);
+	border-radius: var(--radius);
+	background: var(--card);
 }
 
-// Ten minutes out, the rule over Up next turns white: the room is about to
+// Ten minutes out, the bar over Up next turns white: the room is about to
 // change over.
 .nextSoon {
 	border-top-color: var(--color-text);
@@ -524,7 +533,7 @@
 	min-height: 0;
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--u) * 1.1);
+	gap: calc(var(--u) * 0.6);
 }
 
 // A column that wraps: a room that does not fit moves to a second column,
@@ -538,7 +547,7 @@
 	display: flex;
 	flex-flow: column wrap;
 	align-content: flex-start;
-	gap: calc(var(--u) * 1.2) var(--pad);
+	gap: var(--gutter) var(--pad);
 	overflow: hidden;
 }
 
@@ -548,8 +557,9 @@
 	gap: calc(var(--u) * 0.7);
 	width: 100%;
 	min-width: 0;
-	padding-top: calc(var(--u) * 1.1);
-	border-top: 1px solid var(--rule-strong);
+	padding: calc(var(--u) * 0.8) calc(var(--u) * 2) calc(var(--u) * 1);
+	border-radius: var(--radius);
+	background: var(--card);
 }
 
 .elsewhereHead {
@@ -673,6 +683,7 @@
 	gap: calc(var(--u) * 1.6);
 	--cols: minmax(0, 0.62fr) minmax(0, 1.5fr) minmax(0, 1fr);
 	--col-gap: calc(var(--u) * 3.4);
+	--row-pad: calc(var(--u) * 1.4);
 }
 
 .boardHead {
@@ -680,6 +691,7 @@
 	display: grid;
 	grid-template-columns: var(--cols);
 	gap: var(--col-gap);
+	padding: 0 calc(var(--u) * 2.2);
 	color: var(--ink-strong);
 }
 
@@ -688,24 +700,24 @@
 	min-height: 0;
 	display: grid;
 	grid-auto-rows: minmax(0, 1fr);
+	gap: var(--gutter);
 	margin: calc(var(--u) * -0.6) 0 0;
 	padding: 0;
 	list-style: none;
-	border-top: 1px solid var(--rule-strong);
 }
 
+// Each room is a card, like a row of an airport board.
 .boardRow {
+	position: relative;
 	display: grid;
 	grid-template-columns: var(--cols);
 	align-items: center;
 	gap: var(--col-gap);
 	min-height: 0;
-	padding: calc(var(--u) * 1.2) 0;
-	border-bottom: 1px solid var(--rule-strong);
-}
-
-.boardRow:last-child {
-	border-bottom: 0;
+	padding: var(--row-pad) calc(var(--u) * 2.2);
+	border-radius: var(--radius);
+	background: var(--card);
+	overflow: hidden;
 }
 
 .boardRoom {
@@ -725,10 +737,10 @@
 	min-width: 0;
 	min-height: 0;
 
-	// A live talk's progress runs along the row's bottom rule, under its cell.
+	// A live talk's progress runs along the card's bottom edge, under its cell.
 	.progressRow {
 		position: absolute;
-		inset: auto 0 calc(var(--u) * -1.2 - 1px);
+		inset: auto 0 calc(var(--row-pad) * -1);
 	}
 }
 
@@ -806,7 +818,7 @@
 			var(--color-bg);
 
 		&::before {
-			height: calc(var(--u) * 24);
+			height: calc(var(--u) * 19);
 		}
 	}
 
@@ -835,7 +847,6 @@
 		flex-wrap: wrap;
 		row-gap: calc(var(--u) * 1.2);
 		padding-left: 0;
-		border-left: 0;
 	}
 
 	.heading {
@@ -887,12 +898,6 @@
 		grid-template-rows: minmax(0, 1fr) auto;
 	}
 
-	.rail {
-		gap: calc(var(--u) * 2.2);
-		padding-left: 0;
-		border-left: 0;
-	}
-
 	// Board: the room and what's on share the top line of each row, the title
 	// runs the full width under them, and what's next closes the row.
 	.boardHead {
@@ -912,7 +917,6 @@
 			'next next';
 		align-content: center;
 		gap: calc(var(--u) * 1.1) calc(var(--u) * 2);
-		padding: calc(var(--u) * 1.3) 0;
 	}
 
 	.boardRoom {
@@ -957,8 +961,7 @@
 
 	// Credits: two captioned columns, the organiser and the partners.
 	.credits {
-		align-items: stretch;
-		padding: calc(var(--u) * 1.2) 0 calc(var(--u) * 2);
+		padding-bottom: calc(var(--u) * 2);
 	}
 
 	.organizer,
