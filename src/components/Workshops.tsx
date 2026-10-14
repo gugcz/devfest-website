@@ -59,11 +59,23 @@ function timeRange(session: Session): string {
 	return from && to ? `${from}–${to}` : from || 'Time TBA';
 }
 
+function loginLabel(awaitingEmail: boolean, busy: boolean): string {
+	if (awaitingEmail) return busy ? 'Signing in' : 'Sign in';
+	return busy ? 'Sending' : 'Send code';
+}
+
+function actionLabel(registered: boolean, full: boolean, pending: boolean): string {
+	if (registered) return pending ? 'Cancelling' : 'Cancel registration';
+	if (pending) return 'Saving your seat';
+	return full ? 'Join the waitlist' : 'Register';
+}
+
 interface LoginProps {
 	account: Account;
 	name: string;
 	onCodeSent: () => void;
-	onSignedIn: () => void;
+	/** Resolves once the sign-ups have loaded, so the button stays busy until then. */
+	onSignedIn: () => Promise<void>;
 	onSignOut: () => void;
 }
 
@@ -104,7 +116,7 @@ function Login({ account, name, onCodeSent, onSignedIn, onSignOut }: LoginProps)
 		try {
 			if (awaitingEmail) {
 				await completeLogin(code);
-				onSignedIn();
+				await onSignedIn();
 			} else {
 				await requestLoginCode(code);
 				onCodeSent();
@@ -118,6 +130,7 @@ function Login({ account, name, onCodeSent, onSignedIn, onSignOut }: LoginProps)
 	}
 
 	const id = awaitingEmail ? 'workshop-email-code' : 'workshop-ticket-code';
+	const pending = busy ? (awaitingEmail ? 'Signing you in…' : 'Sending the code to your email…') : '';
 	return (
 		<form className={s.login} onSubmit={submit} noValidate>
 			<label className={s.label} htmlFor={id}>
@@ -141,10 +154,19 @@ function Login({ account, name, onCodeSent, onSignedIn, onSignOut }: LoginProps)
 					aria-describedby={`${id}-hint${error ? ` ${id}-error` : ''}`}
 					aria-invalid={error ? true : undefined}
 				/>
-				<button type="submit" className={`btn-primary ${s.button}`} aria-disabled={busy || undefined}>
-					{awaitingEmail ? 'Sign in' : 'Send code'}
+				<button
+					type="submit"
+					className={`btn-primary ${s.button}`}
+					aria-disabled={busy || undefined}
+					aria-busy={busy || undefined}
+				>
+					{busy && <span className={s.spinner} aria-hidden="true" />}
+					{loginLabel(awaitingEmail, busy)}
 				</button>
 			</div>
+			<p className={s.pending} role="status" aria-live="polite">
+				{pending}
+			</p>
 			{error && (
 				<p className={s.error} id={`${id}-error`} role="alert">
 					{error}
@@ -159,10 +181,12 @@ interface CardProps {
 	status: WorkshopStatus | undefined;
 	signedIn: boolean;
 	busy: boolean;
+	/** This card's own request is in flight. */
+	pending: boolean;
 	onAction: (action: 'join' | 'leave', sessionId: string) => void;
 }
 
-function WorkshopCard({ listing, status, signedIn, busy, onAction }: CardProps) {
+function WorkshopCard({ listing, status, signedIn, busy, pending, onAction }: CardProps) {
 	const { session } = listing;
 	const seats = status ?? listing.seats;
 	const mine = standingLine(status?.mine);
@@ -186,9 +210,11 @@ function WorkshopCard({ listing, status, signedIn, busy, onAction }: CardProps) 
 					type="button"
 					className={registered ? `btn-ghost ${s.button}` : `btn-primary ${s.button}`}
 					aria-disabled={busy || undefined}
+					aria-busy={pending || undefined}
 					onClick={() => !busy && onAction(registered ? 'leave' : 'join', session.id)}
 				>
-					{registered ? 'Cancel registration' : full ? 'Join the waitlist' : 'Register'}
+					{pending && <span className={s.spinner} aria-hidden="true" />}
+					{actionLabel(registered, full, pending)}
 				</button>
 			)}
 		</li>
@@ -201,6 +227,7 @@ export default function Workshops() {
 	const [account, setAccount] = useState<Account>('checking');
 	const [status, setStatus] = useState<RegistrationStatus | null>(null);
 	const [busy, setBusy] = useState(false);
+	const [pendingId, setPendingId] = useState<string | null>(null);
 	const [message, setMessage] = useState('');
 
 	useEffect(() => {
@@ -216,6 +243,7 @@ export default function Workshops() {
 
 	async function refresh(action: 'status' | 'join' | 'leave' = 'status', sessionId?: string) {
 		setBusy(true);
+		setPendingId(sessionId ?? null);
 		setMessage('');
 		try {
 			setStatus(await registration(action, sessionId));
@@ -225,6 +253,7 @@ export default function Workshops() {
 			else setMessage(registrationErrorMessage(err));
 		} finally {
 			setBusy(false);
+			setPendingId(null);
 		}
 	}
 
@@ -266,6 +295,7 @@ export default function Workshops() {
 							status={status?.workshops[listing.session.id]}
 							signedIn={account === 'signed-in'}
 							busy={busy}
+							pending={pendingId === listing.session.id}
 							onAction={(action, id) => refresh(action, id)}
 						/>
 					))}
