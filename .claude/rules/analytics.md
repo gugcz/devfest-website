@@ -48,6 +48,14 @@ Rules (each verified in-browser):
 - Hits leave gtag's queue a few seconds after an accept (batched with the
   engagement ping; gtag flushes on `pagehide`). gtag's scheduling, not ours.
 
+**Performance Monitoring** (`firebase/performance`): booted by
+`schedulePerformance()` at the end of the GA4 boot, so it shares both gates
+(consent + `ANALYTICS_HOSTS`) — it stores a Firebase Installations id in
+IndexedDB, which needs consent like `_ga`. The SDK is a separate dynamic
+chunk loaded on `requestIdleCallback` (5s timeout; `setTimeout` fallback).
+A late boot still reports the entry page load and Web Vitals: the SDK reads
+the buffered Performance API. Console: Firebase → Performance.
+
 **Page views under `<ClientRouter />`:** GA4 sees only what we send, never
 `pushState`. `trackPageView()` runs on every `astro:page-load`: a no-op until
 accepted and for the page the boot has just reported, otherwise a `page_view`
