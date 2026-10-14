@@ -73,6 +73,37 @@
 	font: inherit;
 }
 
+// In-flight line under the login field, so a slow callable never reads as a dead button.
+.pending {
+	@include mono(var(--fs-label));
+	margin: 0;
+	letter-spacing: 0.06em;
+	color: var(--ink-soft);
+}
+
+// A ring in the label's own ink, beside the busy verb.
+.spinner {
+	display: inline-block;
+	width: 0.9em;
+	height: 0.9em;
+	border: 2px solid currentColor;
+	border-right-color: transparent;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.spinner {
+		animation-duration: 2.4s;
+	}
+}
+
 .message {
 	@include prose(var(--fs-ui));
 	margin: 0;
@@ -144,8 +175,13 @@
 .button:global(.btn-primary),
 .button:global(.btn-ghost) {
 
+	// Not dimmed: the spinner and the busy verb carry the state, and a faded
+	// label on red is exactly what read poorly.
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6rem;
+
 	&[aria-disabled='true'] {
-		opacity: 0.55;
 		cursor: progress;
 	}
 }

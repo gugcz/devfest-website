@@ -4,7 +4,6 @@
     "public": "dist",
     "ignore": [
       "firebase.json",
-      "**/.*",
       "**/node_modules/**"
     ],
     "cleanUrls": true,
@@ -31,6 +30,12 @@
         "source": "/tv",
         "headers": [
           { "key": "Cache-Control", "value": "no-cache" }
+        ]
+      },
+      {
+        "source": "/.well-known/apple-app-site-association",
+        "headers": [
+          { "key": "Content-Type", "value": "application/json" }
         ]
       },
       {

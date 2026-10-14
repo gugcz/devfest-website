@@ -497,7 +497,7 @@ Rules:
 
 | State | Treatment |
 | --- | --- |
-| rest | `--color-accent` fill, `--on-accent` ink, 1px accent border, `--radius` |
+| rest | `--color-accent` fill, `--on-accent` ink at weight 500 and `0.16em` tracking (thin, wide-set black on red read faint), 1px accent border, `--radius` |
 | hover | fill → `--color-accent-hot`, `translateY(-2px)`, `--glow-red` halation (one of the two places the glow survives) |
 | active | `transform: translateY(0)` |
 | focus-visible | `2px solid var(--color-accent-hot)` at `--focus-gap` |

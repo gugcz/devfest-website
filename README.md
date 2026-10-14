@@ -251,6 +251,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 - **Consent Mode is the source of truth** — no second GA4 tag, no GTM container. Basic mode: nothing loads before the visitor accepts, so GA4 counts consenting visitors only. Behavioral modeling (which would fill in the rest) needs ≥1000 consenting and ≥1000 non-consenting visitors a day — out of reach, so Reporting identity stays "Blended" with modeling inactive.
 - **Development traffic is excluded in code**, not by a GA4 filter: measurement is limited to `devfest.cz` (and subdomains) plus `devfest-public.web.app` / `devfest-public.firebaseapp.com`. `npm run dev` and preview channels send nothing. To measure a preview, build with `PUBLIC_ANALYTICS_ALLOWED_HOSTS=<host>`.
 - **Verifying a change** needs a real host: GA4 DebugView, or devtools Network filtered to `/g/collect`.
+- **Performance Monitoring** rides the same consent and host gates (Firebase console → Performance; first data shows up after ~12 hours). It needs the Firebase Installations API enabled for `devfest-cz-app`; if the browser API key is ever restricted, allow Firebase Installations, Firebase Remote Config and Firebase Performance (`firebaselogging`) on it. Verify in devtools Network: `firebaseinstallations.googleapis.com` then `firebaselogging.googleapis.com` after an accept.
 
 ## Key Pages
 
