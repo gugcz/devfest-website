@@ -181,7 +181,7 @@ Hairlines: `--rule` `rgba(255,255,255,0.13)`, `--rule-soft` `0.06`,
 `--field-border` `rgba(255,255,255,0.4)`.
 
 **[MUST] No decorative hairlines.** A line is drawn only where it carries
-structure: the agenda's time × room grid, data tables (privacy policy), tile
+structure: the agenda's programme rows (one per start time), the FAQ transcript's entries, data tables (privacy policy), tile
 grids (press kit, partner wall), a form control's boundary, a link's
 underline, a progress spine (the card builder's steps), and the cookie
 banner's edge over the page. Never a divider between sections, a rule under a
@@ -403,8 +403,9 @@ value from the histogram.
 **[MUST] No horizontal-nav breakpoint:** `Menu.astro` is a three-slot bar
 with all destinations behind one toggle at every width (`Menu.scss:1–13`).
 
-**[CURRENT]** Two JS-only breakpoints: header auto-hide `760px`
-(`Menu.astro:217`), agenda view switch `1024px` (`Agenda.tsx:52`).
+**[CURRENT]** One JS-only breakpoint: header auto-hide `760px`
+(`Menu.astro:217`). The agenda is one programme at every width; its parallel
+talks stack at `600px` in `Agenda.module.scss`.
 
 ## Z-index & layering
 
@@ -717,8 +718,8 @@ import Closer from '../components/Closer.astro';
 Decision criteria, picked per page:
 
 - **`photo` crop vs `photo={false}`.** Photo (own `focus` crop) for
-  `speakers`, `sessions`, `agenda`, `team`, `press`. `photo={false}` where
-  content starts right below the fold: `faq`, `contact`, `invoice`,
+  `speakers`, `sessions`, `team`, `press`. `photo={false}` where
+  content starts right below the fold: `agenda`, `faq`, `contact`, `invoice`,
   `press/downloads`.
 - **`.band--lit`.** The one subpage ground. A `--lit-red` variant existed for
   the people / programme pages but was byte-identical; it was folded in.
@@ -765,7 +766,9 @@ Decision criteria, picked per page:
   once the invoice is issued, and that one code claims every ticket. Its
   closer answers invoice questions; it does not send the visitor to card
   checkout.
-- **A `<details>` list opens with its first item open** (`faq.astro:106`).
+- **The FAQ is a transcript:** "Q." / "A." columns, the first three answers
+  open on arrival (`OPEN_ON_ARRIVAL` in `faq.astro`), a sticky group index
+  beside the list (chips under `900px`).
   A section must not reuse the hero's `aria-labelledby` (`landmark-unique`).
 - **`Closer` tone.** Pass `tone="accent"` explicitly. The `'raised'` default
   has no CSS (Open points). `privacy-policy` and `code-of-conduct` have no `Closer`.
@@ -804,8 +807,8 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 - **[MUST] Focus is always visible:** `:focus-visible { outline: 2px solid
   var(--color-accent-hot) }`. Gap by how much edge the control has:
   `--focus-gap-tight` (own boundary), `--focus-gap` (type on ground),
-  `--focus-gap-lg` (alone in space) (`BaseLayout.scss:141–154`). Two commented
-  exceptions: agenda cell inset ring, partner logo wider gap.
+  `--focus-gap-lg` (alone in space) (`BaseLayout.scss:141–154`). One commented
+  exception: partner logo wider gap.
 - **[MUST] Semantics before ARIA.** A row that IS a control is a real
   `<button>` / `<a>` / `<summary>`.
 - **[MUST] `.skip-link` is the first focusable element** (`BaseLayout.astro:301`,
@@ -902,8 +905,7 @@ Places the code contradicts itself or this document. Each needs a decision.
    each used in one file.
 7. **7 `min-width` queries** (`SpeakersTeaser.module.scss:60`,
    `press/downloads.scss:109–139`) against a max-width convention.
-8. **Two JS-only breakpoints:** `760px` (`Menu.astro:217`), `1024px`
-   (`Agenda.tsx:52`), in no stylesheet.
+8. **One JS-only breakpoint:** `760px` (`Menu.astro:217`), in no stylesheet.
 9. ~~**Special Elite declares no `subsets`**~~ Resolved: Latin-Ext letters
    fall to JetBrains Mono via the Fonts API `fallbacks` (see Typography).
 10. **Split with `CLAUDE.md`.** Rules live here; `CLAUDE.md` points here.

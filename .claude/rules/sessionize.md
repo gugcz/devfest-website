@@ -23,9 +23,9 @@ paths:
   publishes, so the hosts (session "HOST") and the keynote speaker exist only
   in the Speakers view. Best-effort: if that view fails, the All roster syncs.
 
-- `/agenda` gets a column for every `rooms` doc, even one with no talk yet
-  (header says "Talks TBA"), plus any other room a talk sits in. A room's
-  standing header note ("Workshops only" on Crime Lab) is `ROOM_NOTES` in
+- `/agenda` is one printed programme: rows by start time, parallel talks side
+  by side, and a room filter listing every room with a talk in it. A room's
+  standing note in that filter ("Workshops" on Crime Lab) is `ROOM_NOTES` in
   `src/components/Agenda.tsx`, keyed by the Sessionize room name.
 
 - Each collection is one atomic `WriteBatch` (cap 500 ops).
