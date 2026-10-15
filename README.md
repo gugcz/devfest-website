@@ -306,7 +306,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/` | Landing page with countdown and newsletter signup |
 | `/speakers` | Speaker lineup (reads `/api/lineup`); `?speaker=<id>` opens one speaker |
 | `/speakers/<id>`, `/talks/<id>` | Share pages: one speaker's or talk's own link preview, then forward to the sheet |
-| `/agenda` | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day — and under it (`#talks`) every talk with search and filters (reads `/api/lineup`). `/sessions` redirects here, `?talk=` included |
+| `/agenda` | Conference-day programme — one row per start time, parallel talks side by side, a room filter and a red "Now" rule on the day — and under it (`#talks`) every talk with search and filters (reads `/api/lineup`). `/sessions` redirects here, `?talk=` included |
 | `/workshops` | Workshop seat sign-up and waitlist for ticket holders (reads `/api/workshops`) |
 | `/invoice` | Request a company invoice to buy tickets by bank transfer |
 | `/partners` | Sponsors & partners |
