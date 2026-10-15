@@ -1,0 +1,1130 @@
+@use '../styles/type' as *;
+
+// `/tv` is a fixed 16:9 wall screen read from across a room, not a scrolling
+// page. Everything sizes off `--u` (1/100 of the long side, capped by the
+// short one so a letterboxed browser still fits) instead of the site's fluid
+// `--fs-*` steps, which top out at laptop sizes. A TV hung on its side gets
+// the same unit and stacked zones (see Portrait at the end).
+//
+// Signage rules, not page rules (letter height ~25 mm per 3 m of viewing
+// distance; a passer-by gets one or two seconds):
+// - two zones only: the hero (what's on) and a rail (what's next, other rooms);
+// - titles, names and big numbers are Bebas, given a little air between
+//   letters; labels are JetBrains Mono at 500. Special Elite only at poster
+//   size (the sign-off) or where nobody reads from afar (the credits);
+// - labels are ≥ 1.3u (25px at 1080p), tracked 0.08em; anything that has to
+//   be read is --ink-tv (92%) or brighter: dimmer meta stops reading a few
+//   metres away, so hierarchy comes from size, not fading;
+// - the brand's detective kit does the structure: what is on now (the board's
+//   slips), what is next (the torn note) and the credits are black ink on
+//   paper, the strongest contrast a TV shows; the rest sits on lit cards
+//   (~13% white), never on hairlines, which vanish across a hall;
+// - red is evidence: the Live chip, the live dot, the progress fill, the
+//   headline's full stop and the rubber stamps (a talk minutes away, the
+//   case closed at the end of the day);
+// - noir light: one lamp from the top left, film grain so the gradients do
+//   not band on a TV;
+// - motion only when something changes (a title flips in), plus a 1px drift
+//   every few minutes so a static frame never burns into the panel.
+.screen {
+	--u: min(1vw, 1.7778vh);
+	--pad: calc(var(--u) * 4.4);
+	--label: calc(var(--u) * 1.45);
+	// Ink for everything that has to be read: dimmer meta stops reading a few
+	// metres away, so hierarchy comes from size, not from fading.
+	--ink-tv: rgba(255, 255, 255, 0.92);
+	// A card a TV still shows as a surface (~13% white, lit from above with a
+	// bright top edge), well clear of the black so a cheap panel keeps it.
+	--card: linear-gradient(to bottom, #272727, #1e1e1e);
+	--card-edge: inset 0 calc(var(--u) * 0.12) 0 rgba(255, 255, 255, 0.1);
+	--gutter: calc(var(--u) * 0.9);
+	// The brand's torn paper: what matters most on a screen is black ink on a
+	// sheet, the strongest contrast a TV across the hall shows. A shade under
+	// Paper White: a whole slip of #FFF glares on a TV in a dark hall.
+	--paper: #ECEAE4;
+	--paper-ink: #000000;
+	--grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+	--grain-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+
+	position: fixed;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	// Noir lighting: one hard lamp from the top left, the rest falling to black.
+	background:
+		var(--grain),
+		radial-gradient(ellipse 70% 80% at 12% -6%, rgba(255, 244, 232, 0.13), rgba(255, 244, 232, 0.04) 45%, transparent 75%),
+		radial-gradient(ellipse 120% 110% at 40% 30%, transparent 55%, rgba(0, 0, 0, 0.6) 100%),
+		var(--color-bg);
+	color: var(--color-text);
+	cursor: none;
+	animation: drift 24min steps(1, end) infinite;
+
+	// The detective's Prague skyline from the site's hero, as a dim night band
+	// behind the header that is gone before the first label under it. The
+	// plate is mostly black sky, so the white type on it keeps its contrast.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0 0 auto;
+		z-index: -1;
+		height: calc(var(--u) * 13);
+		background: url('/hero-detective.webp') center 37% / cover no-repeat;
+		filter: grayscale(1) contrast(1.15) brightness(0.8);
+		opacity: 0.5;
+		mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.5) 45%, transparent 80%);
+		pointer-events: none;
+	}
+}
+
+@keyframes drift {
+	25% {
+		transform: translate(1px, 0);
+	}
+
+	50% {
+		transform: translate(1px, 1px);
+	}
+
+	75% {
+		transform: translate(0, 1px);
+	}
+}
+
+@mixin tv-label($size: var(--label)) {
+	@include mono($size, 0.08em, uppercase);
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+// A Bebas title clamped to `$lines`. The top inset keeps Bebas caps, which
+// sit high in their line box, inside the clamp's clip. `pretty`, not
+// `balance`: Chromium balances only the lines a clamp keeps, which pushes
+// the end of a long title into the clipped fourth line.
+@mixin tv-title($size, $lines) {
+	@include display($size);
+	line-height: 0.96;
+	letter-spacing: 0.012em;
+	word-spacing: 0.04em;
+	margin: 0;
+	padding-top: 0.06em;
+	text-wrap: pretty;
+	flex-shrink: 0;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: $lines;
+	overflow: hidden;
+}
+
+// A torn bottom edge: points along the foot as (x %, depth in u), right to
+// left, so a paper note looks ripped from a newspaper.
+$tear: (100 0.7, 96 0.1, 92.5 0.9, 88 0.3, 84 1.1, 79.5 0.2, 75 0.8, 71 0.1, 66.5 1, 62 0.4, 58 1.2, 53.5 0.2, 49 0.9, 45 0.3, 40.5 1.1, 36 0.2, 32 0.8, 27.5 0.1, 23 1, 19 0.4, 14.5 1.2, 10 0.2, 6 0.9, 2.5 0.3, 0 0.8);
+
+@function torn-edge($depth: 1.4) {
+	$points: '0 0, 100% 0';
+	@each $x, $d in $tear {
+		$points: $points + ', #{$x * 1%} calc(100% - var(--u) * #{$depth - $d})';
+	}
+	@return polygon(#{$points});
+}
+
+// A sheet of paper: Paper White with a little tooth, black ink.
+@mixin paper {
+	background: var(--grain-dark), var(--paper);
+	color: var(--paper-ink);
+}
+
+// A red rubber stamp: Bebas in a ruled box, knocked a few degrees off true,
+// the ink a little patchy. The mask keeps most of the ink, so it still reads.
+@mixin stamp {
+	padding: 0.1em 0.3em 0;
+	border: 0.07em solid currentColor;
+	border-radius: var(--radius);
+	color: var(--color-accent);
+	transform: rotate(-4deg);
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -4 3.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+}
+
+// A title that changed flips down into place, like a split-flap leaf. Only
+// the transform moves, so the text is at full contrast throughout.
+.flip {
+	transform-origin: 50% 0;
+	animation: flip-in 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+@keyframes flip-in {
+	from {
+		transform: perspective(40em) rotateX(-80deg);
+	}
+}
+
+// ─── Header ────────────────────────────────────────────────────────────────
+
+.header {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: calc(var(--u) * 2.6);
+	padding: calc(var(--u) * 2.4) var(--pad) calc(var(--u) * 1.8);
+}
+
+.logo {
+	height: calc(var(--u) * 3);
+	width: auto;
+}
+
+.titleRow {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 2.4);
+	min-width: 0;
+	padding-left: calc(var(--u) * 1.4);
+}
+
+// The room name never gives way to the tag beside it.
+.heading {
+	@include display(calc(var(--u) * 5.4));
+	flex-shrink: 0;
+	max-width: 100%;
+	margin: 0;
+	padding-top: 0.08em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+// The site's headline full stop, in Evidence Red: MOONSHINE.
+.stop {
+	color: var(--color-accent);
+}
+
+// The date sits left of the digits; the sweep runs under them.
+.clockBlock {
+	display: grid;
+	grid-template-areas:
+		'meta clock'
+		'. sweep';
+	align-items: end;
+	gap: calc(var(--u) * 0.7) calc(var(--u) * 1.6);
+	margin: 0;
+}
+
+.clock {
+	@include display(calc(var(--u) * 5));
+	grid-area: clock;
+	line-height: 0.84;
+	padding-top: 0.08em;
+	font-variant-numeric: tabular-nums;
+}
+
+.sweep {
+	grid-area: sweep;
+	display: block;
+	height: calc(var(--u) * 0.22);
+	background: var(--rule-strong);
+
+	span {
+		display: block;
+		height: 100%;
+		background: var(--color-text);
+		transform-origin: left;
+		animation: sweep 60s linear infinite;
+	}
+}
+
+// 58.5 s to fill, then a rest until the minute turns.
+@keyframes sweep {
+	from {
+		transform: scaleX(0);
+	}
+
+	97.5%,
+	to {
+		transform: scaleX(1);
+	}
+}
+
+.clockMeta {
+	@include tv-label(calc(var(--u) * 1.3));
+	grid-area: meta;
+	padding-bottom: 0.15em;
+	color: var(--ink-tv);
+	text-align: right;
+}
+
+.status {
+	@include tv-label(calc(var(--u) * 2));
+	margin: auto;
+	color: var(--ink-tv);
+}
+
+.main {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 1.6);
+	padding: calc(var(--u) * 0.8) var(--pad) calc(var(--u) * 1.4);
+}
+
+// ─── Credits: the organiser and the partner loop ──────────────────────────
+
+.credits {
+	display: flex;
+	align-items: stretch;
+	gap: var(--gutter);
+	margin: 0 var(--pad);
+	padding: 0 0 calc(var(--u) * 2.4);
+}
+
+// Typewriter captions: the noir texture in the one place nobody has to read
+// from across the room.
+.creditLabel {
+	@include prose(calc(var(--u) * 1.5));
+	flex: none;
+	margin: 0;
+	color: var(--paper-ink);
+	white-space: nowrap;
+}
+
+// Credits on cards of paper, as in the brand's partner posts.
+.organizer,
+.partnerGroup {
+	@include paper;
+	padding: calc(var(--u) * 1) calc(var(--u) * 2);
+	border-radius: var(--radius);
+}
+
+.organizer {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: calc(var(--u) * 1.4);
+	margin: 0;
+}
+
+// The GUG.cz logo keeps its colours on the paper.
+.organizerLogo {
+	height: calc(var(--u) * 2.6);
+	width: auto;
+}
+
+.partnerGroup {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: calc(var(--u) * 2.4);
+	min-width: 0;
+
+	// One width for every tier label, so the logos start in the same place
+	// page after page.
+	.creditLabel {
+		min-width: calc(var(--u) * 15.5);
+	}
+}
+
+.partnerLogos {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: calc(var(--u) * 3.6);
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	// Three wide wordmarks share what the band has rather than run off it.
+	li {
+		display: flex;
+		flex: 0 1 auto;
+		min-width: 0;
+	}
+}
+
+// Partner marks ship light, for the site's black; on paper they print black.
+.partnerLogo {
+	display: block;
+	height: calc(var(--u) * 2.6);
+	width: auto;
+	max-width: min(100%, calc(var(--u) * 15));
+	object-fit: contain;
+	object-position: left center;
+	filter: brightness(0);
+}
+
+// A logo that ships on its own brand plate keeps it, as on /partners.
+.plated {
+	height: calc(var(--u) * 3.4);
+	filter: none;
+}
+
+.notice {
+	@include tv-label;
+	margin: 0;
+	color: var(--ink-tv);
+}
+
+// A break, lunch or registration running now: a quiet tag beside the
+// heading, because what people want from the screen then is the talk after it.
+// Before the day it says when and where.
+.pause {
+	@include tv-label(calc(var(--u) * 1.5));
+	flex: 0 1 auto;
+	min-width: 0;
+	margin: 0;
+	text-wrap: balance;
+	padding: 0.5em 0.8em 0.45em;
+	border-radius: var(--radius);
+	background: var(--card);
+	box-shadow: var(--card-edge);
+	color: var(--color-text);
+}
+
+.metaTime {
+	color: var(--ink-tv);
+	font-variant-numeric: tabular-nums;
+}
+
+.cardLabel {
+	@include tv-label;
+	margin: 0;
+	color: var(--color-text);
+}
+
+// The state word on a slot: a white block, red for Live alone.
+.chip {
+	@include tv-label(calc(var(--u) * 1.35));
+	flex: none;
+	padding: 0.32em 0.6em 0.26em;
+	border-radius: var(--radius);
+	background: var(--color-text);
+	color: var(--on-accent);
+	line-height: 1;
+}
+
+.chipLive {
+	background: var(--color-accent);
+	box-shadow: var(--glow-red-soft);
+}
+
+.dot {
+	display: inline-block;
+	flex: none;
+	width: 0.7em;
+	height: 0.7em;
+	border-radius: var(--radius);
+	background: var(--color-accent-hot);
+	box-shadow: var(--glow-red-soft);
+	animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+	50% {
+		opacity: 0.35;
+	}
+}
+
+.progressRow {
+	display: flex;
+	align-items: center;
+}
+
+.progress {
+	flex: 1;
+	height: calc(var(--u) * 0.3);
+	background: var(--rule-strong);
+
+	span {
+		display: block;
+		height: 100%;
+		background: var(--color-accent);
+		transform-origin: left;
+		transition: transform 1s linear;
+	}
+}
+
+// ─── Room screen: hero + rail ──────────────────────────────────────────────
+
+.roomGrid {
+	flex: 1;
+	min-height: 0;
+	display: grid;
+	grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr);
+	gap: calc(var(--u) * 3.4);
+}
+
+.hero {
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 2.2);
+	padding-top: calc(var(--u) * 1);
+
+	// The talk's progress runs right under its times.
+	.progressRow {
+		margin-top: calc(var(--u) * -1);
+	}
+}
+
+// On a landscape screen the hero's height is fixed by the screen: the
+// speakers close it at the foot, and their prints take the height the title
+// leaves them (see `.photo`).
+@media (orientation: landscape) {
+	.hero .speakers {
+		flex: 1 1 0;
+		min-height: calc(var(--u) * 5);
+		align-content: flex-end;
+		container-type: size;
+	}
+}
+
+.heroMeta {
+	@include tv-label(calc(var(--u) * 1.8));
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 1.4);
+	margin: 0;
+
+	.chip {
+		font-size: calc(var(--u) * 1.6);
+	}
+}
+
+// Time left is the hero's second-biggest fact: Bebas, not a label.
+.metaAside {
+	@include display(calc(var(--u) * 3.6));
+	margin-left: auto;
+	line-height: 0.84;
+	padding-top: 0.08em;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
+.heroTitle {
+	@include tv-title(calc(var(--u) * 8.4), 3);
+
+	&.titleMid {
+		font-size: calc(var(--u) * 6.8);
+	}
+
+	&.titleLong {
+		font-size: calc(var(--u) * 5.6);
+	}
+
+	&.titleXl {
+		font-size: calc(var(--u) * 4.6);
+		-webkit-line-clamp: 4;
+	}
+}
+
+.rail {
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 1.2);
+	overflow: hidden;
+}
+
+.next {
+	@include paper;
+	flex: none;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 0.7);
+	padding: calc(var(--u) * 1.1) calc(var(--u) * 2) calc(var(--u) * 2.2);
+	clip-path: torn-edge(1.4);
+
+	.cardLabel,
+	.nextWhen,
+	.nextSpeakers,
+	.nextTitle,
+	.countdown {
+		color: var(--paper-ink);
+	}
+
+	// Newspaper rules above and under the headline.
+	.headline {
+		padding: calc(var(--u) * 0.5) 0 calc(var(--u) * 0.4);
+		border-block: calc(var(--u) * 0.25) solid var(--paper-ink);
+	}
+}
+
+// Ten minutes out, the countdown is stamped on the note in red, the brand's
+// rubber stamp for status.
+.nextSoon .countdown {
+	@include stamp;
+}
+
+.nextTop {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: calc(var(--u) * 2);
+	margin: 0;
+
+	.cardLabel {
+		white-space: nowrap;
+	}
+}
+
+.countdown {
+	@include display(calc(var(--u) * 3.4));
+	line-height: 0.84;
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
+// Every other room has to fit under the card, so when they would not, the
+// title gives up its third line and the speakers make way.
+.nextCramped {
+	.nextTitle {
+		-webkit-line-clamp: 2;
+	}
+
+	.nextSpeakers {
+		display: none;
+	}
+}
+
+.nextSpeakers {
+	@include mono(calc(var(--u) * 1.8));
+	margin: 0;
+	font-weight: 500;
+	line-height: 1.2;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.nextWhen {
+	@include mono(calc(var(--u) * 1.45));
+	margin: 0;
+	color: var(--ink-tv);
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+}
+
+.nextTitle {
+	@include tv-title(calc(var(--u) * 3.6), 3);
+
+	&.titleMid {
+		font-size: calc(var(--u) * 3.1);
+	}
+
+	&.titleLong,
+	&.titleXl {
+		font-size: calc(var(--u) * 2.7);
+	}
+}
+
+.elsewhere {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 0.6);
+}
+
+// A column that wraps: a room that does not fit moves to a second column,
+// which the overflow hides, so a room is either whole or gone, never cut.
+.elsewhereList {
+	flex: 1;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-flow: column wrap;
+	align-content: flex-start;
+	gap: var(--gutter) var(--pad);
+	overflow: hidden;
+}
+
+.elsewhereRoom {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 0.7);
+	width: 100%;
+	min-width: 0;
+	padding: calc(var(--u) * 0.8) calc(var(--u) * 2) calc(var(--u) * 1);
+	border-radius: var(--radius);
+	background: var(--card);
+	box-shadow: var(--card-edge);
+}
+
+.elsewhereHead {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: calc(var(--u) * 0.4) calc(var(--u) * 1.6);
+	margin: 0;
+}
+
+.elsewhereName {
+	@include tv-label(calc(var(--u) * 1.35));
+	color: var(--color-text);
+}
+
+.elsewhereTitle {
+	@include tv-title(calc(var(--u) * 2.6), 2);
+}
+
+.elsewhereDense .elsewhereTitle {
+	-webkit-line-clamp: 1;
+}
+
+.elsewhereMeta {
+	@include mono(calc(var(--u) * 1.3));
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	color: var(--ink-tv);
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+}
+
+.wrap {
+	align-self: center;
+}
+
+// The day's last frame closes the case: a red stamp over the sign-off.
+.wrapStamp {
+	@include display(calc(var(--u) * 4.2));
+	@include stamp;
+	display: inline-block;
+	margin: 0 0 calc(var(--u) * 2.4);
+	line-height: 1;
+	letter-spacing: 0.04em;
+}
+
+// The sign-off in the brand's typewriter voice, at a size it holds up at.
+.wrapLine {
+	@include prose(calc(var(--u) * 2.6), 1.4);
+	margin: calc(var(--u) * 2) 0 0;
+	color: var(--ink-tv);
+	text-wrap: balance;
+}
+
+// ─── Speakers ──────────────────────────────────────────────────────────────
+
+.speakers {
+	--photo: calc(var(--u) * 8.4);
+	--name: calc(var(--u) * 3.4);
+
+	display: flex;
+	flex-shrink: 0;
+	flex-wrap: wrap;
+	gap: calc(var(--u) * 1.4) calc(var(--u) * 3);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.speakersMany {
+	--photo: calc(var(--u) * 6.4);
+	--name: calc(var(--u) * 2.8);
+}
+
+.speaker {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--u) * 1.6);
+	min-width: 0;
+}
+
+// One treatment for every portrait, whatever light it was shot in: a 4:5
+// black-and-white print with more contrast, mounted on a paper border like
+// a photograph in a case file, so a row of speakers reads as a set.
+.photo,
+.monogram {
+	// `--photo` wide at most, and never taller than the speakers' row: in the
+	// landscape hero that row is a container as tall as the title leaves.
+	--photo-w: min(var(--photo), calc((100cqh - var(--u) * 0.8) * 0.8));
+
+	flex: none;
+	box-sizing: content-box;
+	width: var(--photo-w);
+	height: calc(var(--photo-w) * 1.25);
+	padding: calc(var(--u) * 0.4);
+	border-radius: var(--radius);
+	background: var(--paper);
+	box-shadow: 0 calc(var(--u) * 0.5) calc(var(--u) * 1.4) rgba(0, 0, 0, 0.7);
+	object-fit: cover;
+	object-position: center 22%;
+	filter: grayscale(1) contrast(1.2);
+}
+
+.monogram {
+	display: grid;
+	place-items: center;
+	background: var(--paper);
+	@include display(calc(var(--photo-w) * 0.45));
+	line-height: 1;
+	color: var(--paper-ink);
+}
+
+.speakerText {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 0.5);
+	min-width: 0;
+}
+
+// Names in Bebas, as on the brand's speaker posts.
+.speakerName {
+	@include display(var(--name));
+	line-height: 0.95;
+	padding-top: 0.06em;
+	letter-spacing: 0.03em;
+}
+
+.speakerTag {
+	@include mono(calc(var(--u) * 1.5));
+	font-weight: 500;
+	line-height: 1.3;
+	color: var(--ink-tv);
+}
+
+// ─── Venue screen: a departures board ──────────────────────────────────────
+
+.board {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--u) * 1.6);
+	--cols: minmax(0, 0.78fr) minmax(0, 1.5fr) minmax(0, 0.95fr);
+	--col-gap: calc(var(--u) * 3.4);
+	--row-pad: calc(var(--u) * 1.4);
+}
+
+.boardHead {
+	@include tv-label;
+	display: grid;
+	grid-template-columns: var(--cols);
+	gap: var(--col-gap);
+	padding: 0 calc(var(--u) * 2.2) 0 0;
+	color: var(--ink-tv);
+
+	// Over the room name and the paper slip's text.
+	span:not(:last-child) {
+		padding-left: calc(var(--u) * 2.2);
+	}
+}
+
+.boardRows {
+	flex: 1;
+	min-height: 0;
+	display: grid;
+	grid-auto-rows: minmax(0, 1fr);
+	gap: var(--gutter);
+	margin: calc(var(--u) * -0.6) 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+// Each room is a row; what's on now is a slip of paper pinned in it.
+.boardRow {
+	position: relative;
+	display: grid;
+	grid-template-columns: var(--cols);
+	align-items: center;
+	gap: var(--col-gap);
+	min-height: 0;
+	padding: 0 calc(var(--u) * 2.2) 0 0;
+	border-radius: var(--radius);
+	background: var(--card);
+	box-shadow: var(--card-edge);
+	overflow: hidden;
+}
+
+.boardNow {
+	@include paper;
+	padding: var(--row-pad) calc(var(--u) * 2.2);
+
+	.boardMeta,
+	.boardTitle {
+		color: var(--paper-ink);
+	}
+
+	.chip:not(.chipLive) {
+		background: var(--paper-ink);
+		color: var(--paper);
+	}
+
+	.progress {
+		background: rgba(0, 0, 0, 0.18);
+	}
+}
+
+.boardRoom {
+	@include display(calc(var(--u) * 4));
+	line-height: 0.92;
+	margin: 0;
+	padding: 0.06em 0 0 calc(var(--u) * 2.2);
+	letter-spacing: 0.02em;
+}
+
+.boardCell {
+	position: relative;
+	align-self: stretch;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: calc(var(--u) * 0.9);
+	min-width: 0;
+	min-height: 0;
+
+	// A live talk's progress runs along the paper slip's bottom edge.
+	.progressRow {
+		position: absolute;
+		inset: auto 0 0;
+	}
+}
+
+.boardTitle {
+	@include tv-title(calc(var(--u) * 3.3), 2);
+
+	&.titleLong {
+		font-size: calc(var(--u) * 2.9);
+	}
+
+	&.titleXl {
+		font-size: calc(var(--u) * 2.6);
+	}
+}
+
+.boardTitleSm {
+	@include tv-title(calc(var(--u) * 2.7), 2);
+
+	&.titleLong,
+	&.titleXl {
+		font-size: calc(var(--u) * 2.4);
+	}
+}
+
+// Four rooms and more: one line per title so every row still fits.
+.boardDense {
+	.boardRoom {
+		font-size: calc(var(--u) * 3.4);
+	}
+
+	.boardTitle,
+	.boardTitleSm {
+		-webkit-line-clamp: 1;
+	}
+}
+
+.boardMeta {
+	@include mono(calc(var(--u) * 1.45));
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: 0.7em;
+	margin: 0;
+	color: var(--ink-tv);
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.boardMetaText {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+// What the second column heads, said in the cell for portrait, where the
+// board has no columns: Next after a live talk, After that after a coming one.
+.boardCellLabel {
+	display: none;
+	color: var(--color-text);
+}
+
+// ─── Portrait: the same screens on a TV turned on its side ────────────────
+// The unit swaps axes, so a letter is as tall as on the same panel hung
+// landscape; what sat side by side stacks instead.
+
+@media (orientation: portrait) {
+	.screen {
+		--u: min(1.7778vw, 1vh);
+
+		background:
+			var(--grain),
+			radial-gradient(ellipse 95% 50% at 8% -4%, rgba(255, 244, 232, 0.13), rgba(255, 244, 232, 0.04) 45%, transparent 75%),
+			radial-gradient(ellipse 130% 100% at 40% 30%, transparent 55%, rgba(0, 0, 0, 0.6) 100%),
+			var(--color-bg);
+
+		&::before {
+			height: calc(var(--u) * 19);
+		}
+	}
+
+	// Logo and clock on one line, the room name across the full width under
+	// them.
+	.header {
+		grid-template-columns: auto minmax(0, 1fr);
+		grid-template-areas:
+			'logo clock'
+			'title title';
+		gap: calc(var(--u) * 1.6) calc(var(--u) * 2);
+		padding-bottom: calc(var(--u) * 1.2);
+	}
+
+	.logo {
+		grid-area: logo;
+	}
+
+	.clockBlock {
+		grid-area: clock;
+		justify-self: end;
+	}
+
+	.titleRow {
+		grid-area: title;
+		flex-wrap: wrap;
+		row-gap: calc(var(--u) * 1.2);
+		padding-left: 0;
+	}
+
+	.heading {
+		font-size: calc(var(--u) * 5.8);
+	}
+
+	// Room screen: the hero on top, the rail under it. The hero is a little
+	// narrower than on a landscape screen, so its title steps scale with it
+	// and a title keeps the lines it has there.
+	.roomGrid {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto minmax(0, 1fr);
+		gap: calc(var(--u) * 2.4);
+	}
+
+	.hero {
+		gap: calc(var(--u) * 1.8);
+	}
+
+	.heroTitle {
+		font-size: calc(var(--u) * 7.3);
+
+		&.titleMid {
+			font-size: calc(var(--u) * 5.9);
+		}
+
+		&.titleLong {
+			font-size: calc(var(--u) * 4.9);
+		}
+
+		&.titleXl {
+			font-size: calc(var(--u) * 4);
+		}
+	}
+
+	.speakers {
+		--photo: calc(var(--u) * 7.2);
+	}
+
+	// Two portraits and names on one line, not two.
+	.speakersMany {
+		--photo: calc(var(--u) * 4.6);
+		--name: calc(var(--u) * 2.4);
+	}
+
+	// Nothing left in this room: the sign-off takes the middle of the screen
+	// and the other rooms sit at the foot.
+	.roomGridWrap {
+		grid-template-rows: minmax(0, 1fr) auto;
+	}
+
+	// Board: each row stacks the room name, the paper slip across the full
+	// width of the card, and what's next on one line.
+	.board {
+		--row-pad: calc(var(--u) * 1.1);
+	}
+
+	.boardHead {
+		display: none;
+	}
+
+	.boardRows {
+		margin-top: 0;
+	}
+
+	.boardRow {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-areas:
+			'room'
+			'now'
+			'next';
+		align-content: center;
+		gap: calc(var(--u) * 0.9);
+		padding: var(--row-pad) calc(var(--u) * 2.2);
+	}
+
+	.boardRoom {
+		grid-area: room;
+		padding-left: 0;
+		font-size: calc(var(--u) * 3.4);
+	}
+
+	.boardNow {
+		grid-area: now;
+		margin-inline: calc(var(--u) * -2.2);
+		padding-block: calc(var(--u) * 1.3);
+	}
+
+	.boardNext {
+		grid-area: next;
+	}
+
+	.boardTitleSm {
+		-webkit-line-clamp: 1;
+	}
+
+	.boardCellLabel {
+		display: inline;
+	}
+
+	// Credits: two captioned columns, the organiser and the partners.
+	.credits {
+		padding-bottom: calc(var(--u) * 2);
+	}
+
+	.organizer,
+	.partnerGroup {
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: calc(var(--u) * 0.8);
+	}
+
+	.partnerGroup .creditLabel {
+		min-width: 0;
+	}
+
+	.partnerLogos {
+		align-self: stretch;
+		gap: calc(var(--u) * 2.8);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dot,
+	.flip {
+		animation: none;
+	}
+
+	.sweep span {
+		animation: none;
+		transform: scaleX(0);
+	}
+
+	.progress span {
+		transition: none;
+	}
+}
