@@ -32,7 +32,8 @@ paths:
 - **`docs/design.md`** and `.impeccable/design.json` are the design record;
   **`docs/product.md`** the product record (`.claude/rules/design-pencil.md`).
 - When a change adds or renames a function, an endpoint, a page, a secret or a
-  rule, update README's table, CLAUDE.md's function list and endpoint table,
-  and the matching rule **in the same PR**.
+  rule, update README's table, CLAUDE.md's function list and rules table,
+  the endpoint table in `.claude/rules/api.md`, and the matching rule **in
+  the same PR** (the `update-docs` skill walks the list).
 - The repo is public: no customer data and no business internals in any of
   these files (CLAUDE.md, top).
