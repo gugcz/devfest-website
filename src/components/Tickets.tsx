@@ -54,10 +54,12 @@ function trackVariantCheckout(group: ReleaseGroup, variant: Variant): void {
  * variant that costs something else as a small data line under it. The
  * buttons below carry no price, so the figure is never read twice. */
 function StubPrice({ group }: { group: ReleaseGroup }) {
-	const [first, ...rest] = group.variants;
-	const lead = first ? priceDisplay(first.release) : null;
-	if (!lead) return null;
-	const others = rest
+	// Lead with the first variant that has a figure, not just the first one.
+	const leadIdx = group.variants.findIndex((v) => priceDisplay(v.release));
+	if (leadIdx < 0) return null;
+	const lead = priceDisplay(group.variants[leadIdx].release)!;
+	const others = group.variants
+		.filter((_, i) => i !== leadIdx)
 		.map(({ release, variantLabel }) => ({
 			id: release.id,
 			label: variantLabel || releaseTitle(release),
@@ -89,6 +91,9 @@ interface StubCtasProps {
  * still carries the release and its price for a screen reader. */
 function StubCtas({ group, buyable, accountSlug, eventSlug }: StubCtasProps) {
 	const companyOnSale = buyable.some((v) => isCompanyFunded(v.release));
+	// "Buy" only works while one variant is not company-funded; two or more
+	// (say Regular and Student) need their own names to tell them apart.
+	const personal = buyable.filter((v) => !isCompanyFunded(v.release)).length;
 	return (
 		<>
 			<div className={s.ctas}>
@@ -96,6 +101,11 @@ function StubCtas({ group, buyable, accountSlug, eventSlug }: StubCtasProps) {
 					const price = priceDisplay(variant.release)?.primary;
 					const company = isCompanyFunded(variant.release);
 					const what = `${releaseTitle(variant.release)} ticket${price ? `, ${price}` : ''}, on ti.to`;
+					const label = company
+						? 'Company pays'
+						: personal > 1
+							? variant.variantLabel || releaseTitle(variant.release)
+							: 'Buy';
 					return (
 						<a
 							key={variant.release.id}
@@ -103,10 +113,10 @@ function StubCtas({ group, buyable, accountSlug, eventSlug }: StubCtasProps) {
 							href={checkoutUrl(variant.release, accountSlug, eventSlug)}
 							target="_blank"
 							rel="noopener noreferrer"
-							aria-label={company ? `Company pays: ${what}` : `Buy ${what}`}
+							aria-label={`${label}: ${what}`}
 							onClick={() => trackVariantCheckout(group, variant)}
 						>
-							{company ? 'Company pays' : 'Buy'}
+							{label}
 						</a>
 					);
 				})}

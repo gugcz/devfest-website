@@ -137,9 +137,8 @@ function SpeakerTile({
 	);
 }
 
-/** The lineup as a grid of prints, one tile per speaker, closed by a single
- * unidentified suspect while names are still to come. Rendered by `Speakers`.
- * The lineup carries no "final" flag, so the suspect is always there. */
+/** The lineup as a grid of prints, one tile per speaker. No placeholder tile
+ * for names still to come (removed in #465). Rendered by `Speakers`. */
 export function SpeakerLineup({
 	speakers,
 	onOpen,
@@ -161,14 +160,6 @@ export function SpeakerLineup({
 					morphing={speaker.id === openId}
 				/>
 			))}
-			{/* Not interactive: there is no record to open yet. */}
-			<li className={`${s.cell} ${s.suspect}`}>
-				<span className={print.print} aria-hidden="true">
-					<span className={s.unknown}>?</span>
-				</span>
-				<span className={s.name}>Unidentified suspect</span>
-				<span className={s.tag}>To be revealed</span>
-			</li>
 		</ul>
 	);
 }

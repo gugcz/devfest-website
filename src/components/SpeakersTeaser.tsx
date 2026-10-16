@@ -61,7 +61,7 @@ export default function SpeakersTeaser() {
 					<h2 id="lineup-teaser-title" className="display head-title">
 						Starring
 					</h2>
-					<p className={s.count}>{total} confirmed &middot; more to come</p>
+					<p className={s.count}>{total} confirmed</p>
 				</div>
 
 				<div className={s.body}>

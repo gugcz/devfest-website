@@ -1,6 +1,6 @@
 @use '../styles/type' as *;
 // Speaker lineup as a grid of prints: one tile per speaker (print, name, one
-// role line), closed by a single unidentified suspect. The print itself
+// role line). The print itself
 // (mount, photo, monogram, develop) is `Print.module.scss`, shared with the
 // home teaser; this file owns the grid and the caption under each print.
 
@@ -65,26 +65,6 @@
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	overflow-wrap: anywhere;
-}
-
-/* ===================== SUSPECT ===================== */
-// The slot still to be announced: an unexposed plate, faint, not a control.
-.suspect .name,
-.suspect .tag {
-	color: var(--ink-faint);
-}
-
-.unknown {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-h2);
-	line-height: 1;
-	color: var(--ink-faint);
-	user-select: none;
 }
 
 @media (max-width: 759px) {

@@ -162,7 +162,7 @@ the durable reference.
 | `src/layouts/BaseLayout.scss` | all tokens (`:root`, lines 2–178), resets, global primitives. Injected `is:global`, so every `.astro` page and `.tsx` island uses the class names directly |
 | `src/styles/_type.scss` | the type recipes as mixins — `mono()`, `display()`, `row-title()`, `prose()`, `hairline-link()`. A CSS Module that cannot compose a global class includes the mixin instead |
 | `src/styles/_controls.scss` | control recipes — `lit-field()` |
-| `src/styles/_logos.scss` | partner-mark recipes — `partner-logo()` (the mono modes) and `partner-logo-lit()` |
+| `src/styles/_logos.scss` | partner-mark recipe — `partner-logo()` (original colours; `.logo--dark` on a paper card) |
 | `src/components/Sheet.module.scss`, `Print.module.scss` | shared chrome composed by more than one island (the detail sheets; the mounted 4:5 print) |
 | `astro.config.mjs:72–106` | the three brand faces, self-hosted via the Astro Fonts API |
 | `src/components/*.module.scss` | co-located CSS Modules for React islands (`import s from './X.module.scss'`) |
@@ -681,17 +681,13 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   icons); never red.
 - **[MUST] Partner and press logos are `object-fit: contain`** — never cropped
   (`_logos.scss:12`, `press/downloads.scss:55`).
-- **[MUST] Every partner mark is a white mono mark at 70%, full on hover or
-  focus.** One recipe for the home strip and the `/partners` wall:
-  `partner-logo()` / `partner-logo-lit()` in `src/styles/_logos.scss`. The
-  master picks its route to white through a `.logo--<mode>` class from
-  `LogoMono` (`src/lib/partners.ts:9–18`): `ink` (default, one-colour mark
-  flattened with `brightness(0) invert(1)`), `tile` (light ink on a coloured
-  tile: greyscale + hard threshold + `screen`, pulled back `-21%` onto the
-  column edge), `dark` (dark ink for a light ground: inverted, then the same
-  threshold), `colour` (no clean mono derivable: greyscale only). The mode
-  map is `LOGO_MONO`, keyed by filename (`partners.ts:22–27`) — a stopgap,
-  see Open points.
+- **[MUST] Partner marks keep their original colours** (brand manual
+  p. 15: the one exception to the three-colour rule). Never recolour,
+  flatten to white, dim or tint a partner logo. One recipe for the home strip
+  and the `/partners` wall: `partner-logo()` in `src/styles/_logos.scss`.
+  `LogoMono` in `src/lib/partners.ts` flags masters made for a light ground
+  (`dark`: Dotěkománie, White Whale Media), which sit on a paper-white card;
+  every other master is shown as supplied.
 - **[MUST] The partner wall draws no tiles.** No cell, no border, no lit
   plate, no cream tile: open marks on the page ground. Each tier is a
   regular, left-set grid whose column is the tier's box width
@@ -734,7 +730,7 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   is `src/assets/venue/uhelny-mlyn-chimney.jpg`. **[MUST]** The detective key
   art, `/hero-detective.webp`, is the home hero and the default subpage plate
   (`HeroBackground.scss:15`); a page about the event may swap in a documentary
-  shot from a past edition, graded B&W (`PRODUCT.md`). `SubpageHero` `plate`
+  shot from a past edition, graded B&W (`docs/product.md`). `SubpageHero` `plate`
   (→ `HeroBackground` `src`) does that: `/speakers` `devfest-2025-03`,
   `/partners` `devfest-2025-01`. A new subpage picks its own crop (`focus`),
   and its own plate where a documentary shot fits.
@@ -840,10 +836,8 @@ and
   `cleanTagline()`, Special Elite `--fs-ui` in `--ink-soft`, clamped at two
   lines (the full tagline is in the sheet). The tile is a `<button>`; its
   print develops via `[data-developed]` while that tile is hovered or
-  focused, and carries the view transition into the sheet. One trailing
-  tile closes the grid, not interactive: an unexposed print with a Bebas
-  `--fs-h2` "?" in `--ink-faint`, "Unidentified suspect" / "To be revealed"
-  in `--ink-faint` (`Speakers.tsx:164–171`). No list, no index, no sticky
+  focused, and carries the view transition into the sheet. No placeholder
+  tile for names still to come (removed in #465). No list, no index, no sticky
   portrait.
 - **Speaker sheet** (`SpeakerDetail`) — opens on the name; no "Speaker"
   kicker above it (the session sheet keeps its "Session" kicker). Bio and
@@ -1113,8 +1107,7 @@ spelling: "programme", not "program".
 
 **[MUST] Noir wordplay is spent in a few earned places, not everywhere.**
 It lives in: the home hero statement, the `/404` title "Nothing filed under
-that", the newsletter's "Follow the leads.", the "Unidentified suspect"
-tile, "Starring", "Buy your way in", "See them in the room.". Every other
+that", the newsletter's "Follow the leads.", "Starring", "Buy your way in", "See them in the room.". Every other
 title says plainly what the page or block is ("Speakers", "Partners", "The
 team", "Questions", "Become a partner"). No triads, no em-dash chains, no
 hype words.
@@ -1256,13 +1249,10 @@ Places the code contradicts itself or this document. Each needs a decision.
     the credits' `.allLink` (`SpeakersTeaser.module.scss:125`) hand-writes
     the same look without the mixin. Use the class, or state why a caller
     cannot.
-22. **Partner marks forced to white mono need sign-off or mono assets.**
-    Derived in CSS from colour masters: GenLive (greyscale only, no clean
-    mono), Česká spořitelna (tile thresholded), Dotěkománie and White Whale
-    Media (dark ink inverted), and Google Cloud, GDG, JetBrains, Wrike and
-    Prusa Research (multi-colour marks flattened to white). Confirm with the
-    partners that a white mono rendering is allowed, or get official mono
-    assets.
+22. **Dark-ink partner masters sit on a paper card.** Dotěkománie and White
+    Whale Media only ship dark-ink artwork; light versions would let them
+    drop the card. `LogoMono` is keyed by filename and belongs as a field
+    in the partners schema.
 23. **Canvas drift.** `design/devfest.pen` now carries the footer with its
     logo, the speaker grid, the home collage gallery, the plain subpage
     titles and `EndLine`; it still lacks `NextStepList`, the unhatched agenda,

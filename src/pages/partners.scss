@@ -69,11 +69,6 @@
 		@include partner-logo;
 	}
 
-	a:hover .logo,
-	a:focus-visible .logo {
-		@include partner-logo-lit;
-	}
-
 	// Wider than --focus-gap-lg on purpose: a wordmark carries its own
 	// whitespace, so a 4px ring lands on the image margin.
 	a:focus-visible {

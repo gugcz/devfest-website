@@ -138,6 +138,17 @@
 			outline: 2px solid var(--color-accent-hot);
 			outline-offset: var(--focus-gap);
 		}
+
+		// Forced colours flatten the drawn fill and tick to Canvas, so checked
+		// and unchecked would look the same: hand the box back to the system.
+		@media (forced-colors: active) {
+			appearance: auto;
+			-webkit-appearance: auto;
+
+			&::before {
+				content: none;
+			}
+		}
 	}
 
 	span {

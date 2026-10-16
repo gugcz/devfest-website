@@ -1,8 +1,9 @@
 /**
  * Event facts: the day's hours, the date as the site writes it, the venue and
- * the calendar links. Every page that states an hour or the date reads it
- * from here. Keep in step with the Event JSON-LD in `BaseLayout.astro` and
- * with `public/devfest-cz-2026.ics`.
+ * the calendar links. Code that states an hour or the date reads it from
+ * here; copy that repeats an hour (`src/content/faq.json`, the agenda and
+ * venue notes, the countdown's screen-reader line) and the Event JSON-LD in
+ * `BaseLayout.astro` and `public/devfest-cz-2026.ics` must be kept in step.
  *
  * The hours come from the published agenda (Sessionize): breakfast and
  * registration 08:00, kick-off 08:45, opening keynote 09:00, lightning talks

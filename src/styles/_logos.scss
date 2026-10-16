@@ -1,47 +1,22 @@
-// Partner marks — the home strip and the /partners wall share one treatment:
-// every logo a white mono mark on the dark ground, held back at 70%, full on
-// hover or focus. The mode class comes from `LogoMono` in src/lib/partners.ts.
+// Partner marks — the home strip and the /partners wall share one treatment.
+// The brand manual (p. 15) keeps a partner's logo in its original colours, the
+// one exception to the three-colour rule, so nothing here recolours a mark.
+// The mode class comes from `LogoMono` in src/lib/partners.ts.
 
 // The size arrives per logo as `--logo-w` (`partnerLogo()`), scaled by the
 // caller's `--logo-scale`; the cell clamps it.
 @mixin partner-logo {
 	display: block;
+	box-sizing: border-box;
 	width: calc(var(--logo-w, 11.25rem) * var(--logo-scale, 1));
 	height: auto;
 	max-width: 100%;
 	object-fit: contain;
-	opacity: 0.7;
-	filter: brightness(0) invert(1);
-	transition: opacity 0.15s ease;
 
-	// Light ink on a coloured tile: greyscale, then a hard threshold sends
-	// the tile to black and the ink to white; `screen` drops the black.
-	// The tile's own padding then reads as an indent, so the mark is pulled
-	// back onto the column edge by it (21% of the Česká spořitelna master).
-	&.logo--tile {
-		filter: grayscale(1) contrast(10);
-		mix-blend-mode: screen;
-		// `translate` is a share of the mark's own rendered width, clamped or not.
-		translate: -21% 0;
-	}
-
-	// Dark ink made for a light ground: inverted first, then the same threshold.
+	// Dark ink made for a light ground would vanish on black: it sits on a
+	// paper-white card, the manual's "paper card" for partner marks.
 	&.logo--dark {
-		filter: grayscale(1) invert(1) contrast(10);
-		mix-blend-mode: screen;
+		background: var(--color-text);
+		padding: 0.6rem 0.9rem;
 	}
-
-	// No clean mono derivable from the master: greyscale only.
-	&.logo--colour {
-		filter: grayscale(1);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		transition: none;
-	}
-}
-
-// The lit state, for the caller's `a:hover` / `a:focus-visible`.
-@mixin partner-logo-lit {
-	opacity: 1;
 }

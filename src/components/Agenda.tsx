@@ -34,7 +34,7 @@ const ROW_REM = 1.625;
 
 /** How tall a non-talk strip (a band or dead time) runs: compressed and capped,
  * because at full scale a lunch is two talks tall and the afterparty
- * (18:30–00:00) twenty. Two rows (one mono line plus padding) for a coffee
+ * (19:00–23:00) sixteen. Two rows (one mono line plus padding) for a coffee
  * break, three for anything 40 minutes or longer. A break is a pause on the
  * sheet, not a block that outweighs the talks around it. */
 const NON_TALK_ROWS = { minPerRow: 20, minRows: 2, maxRows: 3 } as const;
@@ -87,7 +87,12 @@ function isLongRunning(session: Session): boolean {
 /** A slot held for a talk that is not announced yet: no speaker, and a
  * placeholder title. Shown as an empty slot, never as a talk called "Talk TBA". */
 function isOpenSlot(session: Session): boolean {
-	return !isBand(session) && session.speakers.length === 0 && OPEN_SLOT_RE.test(session.title);
+	return (
+		!isBand(session) &&
+		!session.isServiceSession &&
+		session.speakers.length === 0 &&
+		OPEN_SLOT_RE.test(session.title)
+	);
 }
 
 /** The long-running sessions pulled out of the sheet, and the sessions and
@@ -476,7 +481,7 @@ function ListRow({
 				<span className={s.itemMain}>
 					<span className={s.itemTitleRow}>
 						<span className={s.itemTitle}>{open ? 'Slot open' : session.title}</span>
-						<NowBadge live={live} coming={false} />
+						<NowBadge live={live && !open} coming={false} />
 					</span>
 					{open && room && <span className={s.itemRoom}>{room}</span>}
 				</span>

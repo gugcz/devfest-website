@@ -1,19 +1,16 @@
 // Partner logos for /partners and the homepage teaser. Data: the `partners`
 // collection (`src/content/partners.json`); masters under
-// `src/assets/partners/<tier>/`, matched by filename. Every mark renders as
-// a white mono mark on the dark ground; `LOGO_MONO` says how each master
-// gets there.
+// `src/assets/partners/<tier>/`, matched by filename. Every mark keeps its
+// original colours (brand manual p. 15); `LOGO_MONO` flags the masters that
+// need a paper card to read on the dark ground.
 import { getCollection } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 
 /**
- * How a master becomes the white mark (the `.logo--<mode>` hook):
- * - `ink`: one-colour mark on transparency, flattened to white (the default).
- * - `tile`: light ink on a coloured tile; thresholded so the tile drops to
- *   black and screens out against the ground, leaving the ink.
- * - `dark`: dark ink made for a light ground; inverted, then thresholded.
- * - `colour`: no clean mono can be derived from the master (the ink and the
- *   tile share a tone); greyscale until a mono asset exists.
+ * How a master sits on the dark ground, always in its original colours
+ * (brand manual p. 15). The `.logo--<mode>` hook:
+ * - `ink`, `tile`, `colour`: shown as supplied.
+ * - `dark`: dark ink made for a light ground; set on a paper-white card.
  */
 export type LogoMono = 'ink' | 'tile' | 'dark' | 'colour';
 
@@ -83,15 +80,23 @@ export const getCommunityPartners = (): Promise<Partner[]> => byTier('community'
 
 // ─── LOGO SIZING ─────────────────────────────────────────────────────────
 // The masters live in `src/assets/partners/<tier>/` so the build can resize
-// them; the collection stores plain path strings, so glob the sources and key
-// them by filename (same pattern as team.astro).
+// them; the collection stores plain path strings (`/partners/<tier>/<file>`),
+// so glob the sources and key them by that same tier-relative path. Keyed by
+// path, not filename, so two tiers can hold a file of the same name.
 const logoSources = import.meta.glob<{ default: ImageMetadata }>('../assets/partners/**/*', {
 	eager: true,
 });
-const logoByFile = new Map<string, ImageMetadata>(
-	Object.entries(logoSources).map(([path, mod]) => [fileOf(path), mod.default])
+const logoByPath = new Map<string, ImageMetadata>(
+	Object.entries(logoSources).map(([path, mod]) => [path.replace('../assets', ''), mod.default])
 );
-const logoFor = (logo: string): ImageMetadata => logoByFile.get(fileOf(logo)) as ImageMetadata;
+
+/** The master for a collection path; a typo in partners.json fails the build
+ * with the partner's name instead of a bare `undefined.width`. */
+const logoFor = (logo: string, name: string): ImageMetadata => {
+	const img = logoByPath.get(logo);
+	if (!img) throw new Error(`Partner "${name}": no logo master at src/assets${logo}`);
+	return img;
+};
 
 // Desktop reference box per tier, in px, on /partners: the box size carries
 // the rank. No box is drawn; `opticalBox` sizes each mark as a share of it.
@@ -150,7 +155,7 @@ const opticalBox = (ratio: number, cell: Cell, plated = false) => {
  * `scale` shrinks the tier's box for a smaller wall (the home strip).
  */
 export const partnerLogo = (p: Partner, tier: string, scale = 1) => {
-	const img = logoFor(p.logo);
+	const img = logoFor(p.logo, p.name);
 	const ratio = img.width && img.height ? img.width / img.height : 3;
 	const base = CELLS[tier] ?? CELLS.gold;
 	const box = opticalBox(ratio, { w: base.w * scale, h: base.h * scale }, p.plated);

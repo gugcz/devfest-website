@@ -458,9 +458,7 @@ b {
 	background: var(--lit), var(--color-bg);
 }
 
-// Straight off a subpage hero the band opens on a cut, not a full beat: the
-// ticker that used to sit between them (and supply the pause) runs on the
-// home page only now.
+// Straight off a subpage hero the band opens on a cut, not a full beat.
 .subpage-hero + .band {
 	padding-top: var(--section-y-tight);
 }
@@ -883,7 +881,6 @@ b {
 	.scene::before,
 	.scene-vignette,
 	.status-bar-cover,
-	.ticker-wrap,
 	.site-header,
 	.footer,
 	.cookie-banner,

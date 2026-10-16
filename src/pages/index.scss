@@ -55,7 +55,6 @@
 	// The wordmark PNG carries ~2.8% of transparent margin on its left; left
 	// as-is the mark sits visibly right of the statement's stem below it.
 	transform: translateX(-2.77%);
-	filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.9));
 }
 
 .hero-logo {
@@ -639,11 +638,6 @@
 
 	.partners-logo {
 		@include partner-logo;
-	}
-
-	a:hover .partners-logo,
-	a:focus-visible .partners-logo {
-		@include partner-logo-lit;
 	}
 
 	// Wider than --focus-gap-lg on purpose: a wordmark carries its own whitespace, so a

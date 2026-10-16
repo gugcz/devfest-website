@@ -145,9 +145,13 @@ export function speakerFromDoc(id: string, data: Record<string, unknown>): Speak
 	};
 }
 
-// Pictographs and their joiners/variation selectors (🔷, ⭐️, 👩‍💻). Digits,
-// `#` and `*` are `Emoji` but not `Extended_Pictographic`, so they survive.
-const PICTOGRAPH = /[\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{20E3}]/gu;
+// Pictographs and their joiners/variation selectors (🔷, ⭐️, 👩‍💻) read as
+// separators. © ® ™ are `Extended_Pictographic` too but belong to a name, so
+// they are kept. Digits, `#` and `*` are not pictographs and survive.
+const PICTOGRAPH = /(?![\u00A9\u00AE\u2122])[\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{20E3}]/gu;
+// Skin-tone modifiers and flag halves carry no meaning without their base:
+// dropped outright, not turned into a separator.
+const EMOJI_PARTS = /[\p{Emoji_Modifier}\p{Regional_Indicator}]/gu;
 // A fragment that is only hashtags (`#Foo #Bar`) says nothing as a credit.
 const HASHTAGS_ONLY = /^(?:#[\p{L}\p{N}_]+\s*)+$/u;
 
@@ -156,6 +160,7 @@ const HASHTAGS_ONLY = /^(?:#[\p{L}\p{N}_]+\s*)+$/u;
  * Returns '' when nothing meaningful remains. */
 export function cleanTagline(raw: string): string {
 	return raw
+		.replace(EMOJI_PARTS, '')
 		.replace(PICTOGRAPH, '|')
 		.split('|')
 		.map((part) => part.replace(/\s+/g, ' ').trim())
