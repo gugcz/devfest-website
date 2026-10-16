@@ -36,7 +36,7 @@
 }
 
 .step-note :global(a) {
-	@include hairline-link(var(--color-accent-hot));
+	@include hairline-link;
 }
 
 .step-actions {

@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import NextStep from '../components/NextStep.astro';
-import Closer from '../components/Closer.astro';
+import EndLine from '../components/EndLine.astro';
 import { EVENT, googleCalendarUrl } from '../lib/event';
 
 // The one page on the site a visitor reaches AFTER paying, and it used to say
@@ -70,7 +70,7 @@ const STEPS = [
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={"You're <span class=\"red\">in.</span>"}
+			titleHtml={"You're in"}
 			lede={`Ticket confirmed. The receipt and your QR code are on their way to your inbox — see you at ${EVENT.venue} on ${EVENT.dateLabel}.`}
 			seoHeading="DevFest.cz 2026 ticket confirmed"
 			titleId="thank-you-title"
@@ -80,25 +80,16 @@ const STEPS = [
 		<section class="band band--lit" aria-labelledby="next-heading">
 			<div class="band-inner">
 				<header class="head-stack">
-					<h2 id="next-heading" class="display head-title">Before you go.</h2>
+					<h2 id="next-heading" class="display head-title">Before you go</h2>
 				</header>
 
 				<ul class="field">
 					{STEPS.map((step) => <NextStep {...step} />)}
 				</ul>
+
+				<EndLine text="See who you came for." href="/speakers" label="Meet the speakers" />
 			</div>
 		</section>
-
-		<Closer
-			titleHtml={'See who you<br />came for.'}
-			note="The lineup and the schedule are out. A few names are still to land — newsletter subscribers hear first."
-			tone="accent"
-			titleId="thank-you-closer"
-			actions={[
-				{ href: '/speakers', label: 'See the speakers' },
-				{ href: '/#newsletter', label: 'Join the newsletter', kind: 'ghost' },
-			]}
-		/>
 	</main>
 </BaseLayout>
 

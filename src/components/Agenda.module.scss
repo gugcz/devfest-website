@@ -502,7 +502,6 @@
 	align-self: start;
 	height: 0;
 	border-top: 2px solid var(--color-accent-hot);
-	box-shadow: var(--glow-red-soft);
 	pointer-events: none;
 }
 
@@ -563,26 +562,13 @@
 	width: 5px;
 	height: 5px;
 	border-radius: 50%;
+	// Static: the "Live now" word beside it carries the state. No pulse, no ring.
 	background: var(--color-accent-hot);
-	animation: agendaLivePulse 1.4s ease-out infinite;
-}
-
-@keyframes agendaLivePulse {
-	0% {
-		box-shadow: 0 0 0 0 rgba(255, 17, 17, 0.6);
-	}
-	70% {
-		box-shadow: 0 0 0 5px rgba(255, 17, 17, 0);
-	}
-	100% {
-		box-shadow: 0 0 0 0 rgba(255, 17, 17, 0);
-	}
 }
 
 // The session on now is the ONE entry that gets the accent.
 .cellLive {
 	border-top-color: var(--color-accent);
-	box-shadow: var(--glow-red-soft);
 }
 
 .itemLive {

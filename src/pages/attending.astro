@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Closer from '../components/Closer.astro';
+import EndLine from '../components/EndLine.astro';
 import AttendingCard from '../components/AttendingCard';
 ---
 
@@ -11,7 +11,7 @@ import AttendingCard from '../components/AttendingCard';
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'I’m <span class="red">attending.</span>'}
+			titleHtml={'I’m attending'}
 			lede="Build a card for your feed. Add your photo (processed on your device only) or let your initials carry it, then download or share."
 			seoHeading="DevFest.cz 2026 — I'm attending"
 			titleId="attending-title"
@@ -22,16 +22,9 @@ import AttendingCard from '../components/AttendingCard';
 			<div class="attending-inner">
 				<h2 id="attending-form-heading" class="sr-only">Build your card</h2>
 				<AttendingCard client:load />
+				<EndLine text="Tag @devfestcz when you post it." href="/agenda" label="See the schedule" />
 			</div>
 		</section>
-
-		<Closer
-			titleHtml={'See you<br />at the show.'}
-			note="Tag @devfestcz when you post it — we reshare our favourites."
-			tone="accent"
-			titleId="attending-closer"
-			actions={[{ href: '/agenda', label: 'See the schedule' }, { href: '/faq', label: 'Read the FAQ', kind: 'ghost' }]}
-		/>
 	</main>
 </BaseLayout>
 

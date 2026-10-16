@@ -4,15 +4,14 @@ import { useRemote } from '../lib/useRemote';
 import s from './HeroOffer.module.scss';
 
 /**
- * The wave on sale, as a third fact in the hero's footing strip beside Date
- * and Place: the wave and when it closes as the label, its lowest price as
- * the value, linked down to the Tickets section. It used to trail the two
- * CTAs as a loose mono sentence, which read as a stray caption rather than
- * data.
+ * The wave on sale, typed into the hero's footing line after the date and
+ * the venue: the wave (and when it closes) as an inline mono qualifier, its
+ * lowest price as the value, linked down to the Tickets section. The
+ * qualifier stays because a bare "From 1 210 Kč" does not say which wave.
  *
  * Every figure is live from `/api/tickets` (the same memoised fetch the
  * Tickets section uses) — never copy. While the fetch is in flight the item
- * holds its box so the strip does not reflow when the data lands; nothing
+ * holds its box so the line does not reflow when the data lands; nothing
  * buyable, a free wave or a failed fetch → the item is dropped.
  */
 export default function HeroOffer() {
@@ -21,16 +20,16 @@ export default function HeroOffer() {
 
 	if (!offer) {
 		return status === 'loading' ? (
-			<dl className={`${s.offer} ${s.pending}`} aria-hidden="true">
-				<dt className={s.label}>&nbsp;</dt>
-				<dd className={s.value}>&nbsp;</dd>
-			</dl>
+			<p className={`${s.offer} ${s.pending}`} aria-hidden="true">
+				<span className={s.label}>&nbsp;</span>
+				<span className={s.value}>&nbsp;</span>
+			</p>
 		) : null;
 	}
 
 	return (
-		<dl className={s.offer}>
-			<dt className={s.label}>
+		<p className={s.offer}>
+			<span className={s.label}>
 				{/* The final wave sells on urgency, not on its name: the Tickets
 				    section right below names it. */}
 				{offer.final ? 'Last chance' : offer.wave}
@@ -40,12 +39,10 @@ export default function HeroOffer() {
 						<time dateTime={offer.deadline.iso}>{offer.deadline.day}</time>
 					</>
 				)}
-			</dt>
-			<dd className={s.value}>
-				<a className={s.link} href="#tickets">
-					From {offer.price}
-				</a>
-			</dd>
-		</dl>
+			</span>{' '}
+			<a className={`${s.value} ${s.link}`} href="#tickets">
+				From {offer.price}
+			</a>
+		</p>
 	);
 }

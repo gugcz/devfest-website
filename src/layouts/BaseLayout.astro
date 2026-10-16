@@ -219,9 +219,9 @@ const jsonLd = JSON.stringify(
 		<meta name="color-scheme" content="dark" />
 		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
 		<!--
-			Mark JS available ASAP so `.develop` only animates when a script is
-			there to drive the change it marks — no-JS / crawlers get the
-			fully-visible render.
+			Mark JS available ASAP so a `.js`-gated rule only applies when a
+			script is there to drive it — no-JS / crawlers get the
+			fully-visible render. No stylesheet keys off `.js` today.
 		-->
 		<!--
 			ClientRouter's swap rebuilds <html>'s attributes from the incoming

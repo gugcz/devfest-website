@@ -42,9 +42,9 @@
 }
 
 // The REACH FIELD lives on the <summary> (`.field-row--link`), not here — a long
-// answer sitting on red is a lot of red to read against. An OPEN item takes the
-// warm wash instead: several <details> can be open at once, and four permanent
-// red bands down one page is the accent as texture.
+// answer sitting on red is a lot of red to read against. An OPEN item takes a
+// flat panel instead (no wash, no feather): several <details> can be open at
+// once, and four permanent red bands down one page is the accent as texture.
 .faq-item {
 	position: relative;
 	isolation: isolate;
@@ -53,13 +53,11 @@
 		content: '';
 		position: absolute;
 		inset: 0 calc(-1 * var(--gutter));
-		background: var(--wash);
+		background: var(--panel-lit);
 		opacity: 0;
 		pointer-events: none;
 		transition: opacity 0.3s ease;
 		z-index: -2;
-		-webkit-mask-image: var(--field-feather);
-		mask-image: var(--field-feather);
 	}
 
 	&[open]::before {
@@ -91,7 +89,8 @@
 	transition: color 0.2s;
 }
 
-// Muted at rest; full cream on the red field. Red on twelve markers is not a highlight.
+// Muted at rest (--ink-muted, ~6:1 on black, clear of 3:1); full black on the red
+// field. Red on twelve markers is not a highlight.
 .faq-marker {
 	flex: 0 0 auto;
 	@include mono(var(--fs-title-sm));
@@ -101,7 +100,7 @@
 	transform-origin: center;
 }
 
-// The open question holds the wash; the marker turns.
+// The open question holds the panel; the marker turns.
 .faq-item[open] .faq-marker {
 	transform: rotate(45deg); // + → ×
 }

@@ -35,6 +35,10 @@
 			{
 				"q": "Is there a code of conduct?",
 				"a": "Yes. DevFest.cz is a community event and harassment of any kind is not allowed; if you are asked to stop, you stop. The short version, and who to talk to on the day, is on the <a href=\"/code-of-conduct\">Code of Conduct</a> page."
+			},
+			{
+				"q": "What's the story with the detective theme?",
+				"a": "This year's edition is styled as a film-noir case, and the case doesn't stay on the posters: there's a game running through the day for anyone who wants to play investigator. More is revealed closer to the date — and on the day itself."
 			}
 		]
 	},
@@ -89,10 +93,6 @@
 		"order": 4,
 		"label": "Get involved",
 		"items": [
-			{
-				"q": "What's the story with the detective theme?",
-				"a": "This year's edition is styled as a film-noir case, and the case doesn't stay on the posters: there's a game running through the day for anyone who wants to play investigator. More is revealed closer to the date — and on the day itself."
-			},
 			{
 				"q": "I'm coming — how do I tell people?",
 				"a": "Make a share card on the <a href=\"/attending\">I'm attending</a> page: add your photo (processed on your device only) or let your initials carry it, then download it or share it straight to your feed."

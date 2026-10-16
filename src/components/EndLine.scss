@@ -1,0 +1,22 @@
+@use '../styles/type' as *;
+// A question and the next step, on one baseline; wraps under on a phone.
+.end-line {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 1rem 1.75rem;
+	margin: 6rem 0 0;
+}
+
+.end-line-text {
+	@include prose(var(--fs-lede), 1.4);
+	color: var(--ink-soft);
+}
+
+// The hero's hairline-link recipe (`SubpageHero.scss` `.hero-link`).
+.end-line-link {
+	@include mono(var(--fs-label-lg), 0.18em, uppercase);
+	@include hairline-link;
+	display: inline-block;
+	padding: 0.4em 0 0.3em;
+}

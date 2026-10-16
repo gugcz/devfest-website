@@ -3,37 +3,20 @@
 	position: relative;
 	width: 100%;
 	z-index: 2;
-	padding: var(--section-y-tight) var(--gutter) 2.4rem;
+	padding: 6rem var(--gutter) 2rem;
 	background: #030303;
 	font-family: var(--font-jetbrains-mono), monospace;
 	color: rgba(255, 255, 255, 0.65);
 }
 
+// Columns → wordmark → bottom line, separated by space alone: no rule above
+// the footer, none between its rows.
 .footer-inner {
 	max-width: var(--maxw);
 	margin: 0 auto;
-}
-
-/* ---- the mark ---- */
-// The brand asset itself — never typeset the name in Bebas, which produces a
-// second wordmark disagreeing with the header's. It heads the brand column
-// rather than taking a row of its own.
-.footer-logo-link {
-	display: inline-flex;
-	line-height: 0;
-	transition: opacity 0.2s ease;
-
-	&:hover,
-	&:focus-visible {
-		opacity: 0.75;
-	}
-}
-
-.footer-logo {
-	display: block;
-	// Floor = the brand manual's 180px digital minimum plus the artboard's clear space.
-	width: clamp(188px, 18vw, 12.75rem);
-	height: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 4rem;
 }
 
 .footer-grid {
@@ -41,9 +24,6 @@
 	// Brand · Attend · About · Event · Organizer.
 	grid-template-columns: 1.4fr 1fr 1fr 1.1fr 1.3fr;
 	gap: 3.5rem;
-	// No rules: the footer is set apart by space, not by a line above the grid
-	// or one between the grid and the copyright row.
-	padding: 0 0 clamp(2.5rem, 5vw, 3.5rem);
 
 	// `em` BREAKPOINTS, the one place on the site (60em = 960px, 31.25em =
 	// 500px at 16px). They move with text zoom: `.org` holds the legal name
@@ -254,22 +234,28 @@
 	}
 }
 
+/* ---- the wordmark ---- */
+// The name set at the width of the content column, on one line at every
+// width (--fs-wordmark scales with the viewport). Quiet ink: it must not
+// compete with the page's one --fs-display. Decorative — aria-hidden.
+.footer-wordmark {
+	@include display(var(--fs-wordmark));
+	line-height: 0.82;
+	color: var(--ink-wordmark);
+	white-space: nowrap;
+	margin: 0;
+}
+
+// Copyright left, the repo link right; when they wrap, both stay left-set.
 .footer-bottom {
-	padding-top: 2.4rem;
 	display: flex;
-	justify-content: center;
+	flex-wrap: wrap;
+	justify-content: space-between;
 	align-items: center;
-	text-align: center;
+	gap: 0.7rem 2rem;
 	font-size: var(--fs-label);
 	letter-spacing: 0.06em;
 	color: var(--ink-muted);
-
-	// Both halves wrap at phone widths, which leaves the middot separator
-	// dangling and the row visually off-centre. Stack them instead.
-	@media (max-width: 31.25em) {
-		flex-direction: column;
-		gap: 0.7rem;
-	}
 }
 
 .copyright {
@@ -284,16 +270,5 @@
 	.footer-link {
 		font-size: inherit;
 		letter-spacing: inherit;
-	}
-
-	&::before {
-		content: '\00b7';
-		margin: 0 0.6em;
-	}
-
-	@media (max-width: 31.25em) {
-		&::before {
-			content: none;
-		}
 	}
 }

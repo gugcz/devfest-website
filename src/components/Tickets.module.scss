@@ -11,7 +11,6 @@
 	padding: var(--section-air) var(--gutter);
 	position: relative;
 	z-index: 1;
-	animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
 // Head layout, title and note come from `.head-split` / `.head-title` / `.head-note`.
@@ -154,15 +153,9 @@
 	color: var(--color-text);
 }
 
-// A qualifier on the figure, not part of it: mono, like the VAT line below.
-.stubFrom {
-	@include mono(var(--fs-label), 0.2em, uppercase);
-	color: var(--ink-meta);
-	vertical-align: 0.35em;
-	margin-right: 0.4em;
-}
-
-.stubVat {
+// A variant that costs something else ("Company funded 1 452 Kč"): data
+// under the figure, not a second figure. 11.8px, clear of the 11px floor.
+.stubAltPrice {
 	@include mono(var(--fs-label-sm), 0.1em, uppercase);
 	color: var(--ink-meta);
 }
@@ -347,6 +340,14 @@
 // the element); this module only sizes it down to the row. Module CSS is
 // bundled BEFORE the global sheet, so the compound selector is what lets
 // these win.
+// What "Company pays" means, under the buttons it explains.
+.ctaNote {
+	@include prose(var(--fs-ui), 1.5);
+	color: var(--ink-meta);
+	max-width: 26ch;
+	margin: 0;
+}
+
 .cta:global(.btn-primary),
 .cta:global(.btn-ghost) {
 	padding: 0.95rem 1.3rem;
@@ -365,6 +366,8 @@
 	@include prose(var(--fs-body-lg), 1.6);
 	letter-spacing: 0.01em;
 	color: var(--ink-meta);
+	// The full field width ran ~140 characters to a line.
+	max-width: 70ch;
 }
 
 // The second side door sits right under the first.
@@ -377,16 +380,6 @@
 	padding-bottom: 1px;
 }
 
-@keyframes fadeInUp {
-	from {
-		opacity: 0;
-		transform: translateY(24px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
 
 @keyframes shimmer {
 	0% { background-position: 200% 0; }
@@ -394,10 +387,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.tickets {
-		animation: none;
-	}
-
 	.skelBar {
 		animation: none;
 	}

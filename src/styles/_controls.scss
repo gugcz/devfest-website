@@ -17,7 +17,7 @@
 	color: var(--color-text);
 	@include prose;
 	letter-spacing: 0.01em;
-	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+	transition: border-color 0.2s ease, background 0.2s ease;
 
 	&:focus {
 		outline: none;

@@ -22,6 +22,9 @@ interface Props {
 	 * its own midpoint turns most of a paid-for photograph into flat black.
 	 */
 	tightMask?: boolean;
+	/** Public path of a different plate (a documentary shot from a past
+	 * edition). Defaults to the detective key art. */
+	src?: string;
 }
 
 const {
@@ -33,6 +36,7 @@ const {
 	width,
 	size,
 	tightMask = false,
+	src,
 } = Astro.props;
 ---
 
@@ -40,7 +44,7 @@ const {
 <div
 	class={`hero-photo${tightMask ? ' hero-photo--tight-mask' : ''}`}
 	aria-hidden="true"
-	style={`--hero-photo-opacity:${photoOpacity};--hero-photo-opacity-mobile:${mobilePhotoOpacity};--hero-photo-pos:${focus};--hero-photo-pos-mobile:${mobileFocus};${mobileZoom ? `--hero-photo-size-mobile:${mobileZoom};` : ''}${width ? `--hero-photo-width:${width};` : ''}${size ? `--hero-photo-size:${size};` : ''}`}
+	style={`--hero-photo-opacity:${photoOpacity};--hero-photo-opacity-mobile:${mobilePhotoOpacity};--hero-photo-pos:${focus};--hero-photo-pos-mobile:${mobileFocus};${mobileZoom ? `--hero-photo-size-mobile:${mobileZoom};` : ''}${width ? `--hero-photo-width:${width};` : ''}${size ? `--hero-photo-size:${size};` : ''}${src ? `--hero-photo-src:url('${src}');` : ''}`}
 ></div>
 
 <style lang="scss">

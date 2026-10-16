@@ -1,22 +1,24 @@
 @use '../styles/type' as *;
-// A fact of the footing strip, so it wears the strip's two voices: the mono
-// label over the Bebas value. Mirrors `.meta-item` / `.meta-label` /
-// `.meta-value` in `pages/index.scss`, which are Astro-scoped and cannot
-// reach into this island.
+// A stretch of the hero's footing line, so it wears the line's two voices:
+// the mono qualifier in front of the Bebas value, on one baseline. Mirrors
+// `.meta-label` / `.meta-value` in `pages/index.scss`, which are
+// Astro-scoped and cannot reach into this island.
 .offer {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	// A long wave + deadline drops the price under it on a phone.
+	gap: 0.35rem 0.6em;
 	margin: 0;
 }
 
-// Holds the box while `/api/tickets` is in flight, so Date and Place never
-// shift when the price lands.
+// Holds the box while `/api/tickets` is in flight, so the clock after it
+// never shifts when the price lands.
 .pending {
 	visibility: hidden;
 }
 
-// Same lifted 0.72 as the strip's other labels: the plate behind it is
+// Same lifted 0.72 as the line's other qualifier: the plate behind it is
 // photographic, and 0.55 fell under 4.5:1 on its darkest part.
 .label {
 	@include mono(var(--fs-label), 0.26em, uppercase);
@@ -49,16 +51,6 @@
 }
 
 @media (max-width: 600px) {
-	.offer {
-		gap: 0.35rem;
-	}
-
-	// Half a phone column wide on the hero's 2×2 footing: the wave and its
-	// deadline wrap onto two lines rather than push the clock off the row.
-	.label {
-		white-space: normal;
-	}
-
 	.value {
 		font-size: 1.4rem;
 	}

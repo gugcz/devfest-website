@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import logo from '../assets/logo.png';
+import millChimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Countdown from '../components/Countdown';
 import HeroOffer from '../components/HeroOffer';
@@ -14,9 +15,9 @@ import { getActivePartnerTiers, getCommunityPartners, type Partner } from '../li
 import { EVENT_TOPICS } from '../lib/ticker';
 import { TOPICS } from '../lib/topics';
 
-// Homepage "silver+" strip — one labelled row per tier, top tier first, so the
-// ladder reads the same here as it does on /partners (row scale steps down with
-// the tier via the `.tier-<id>` hook in index.scss). Community partners close
+// Homepage "silver+" strip — one unlabelled row per tier, top tier first, so
+// the ladder reads the same here as it does on /partners (logo scale steps
+// down with the tier via the `.tier-<id>` hook in index.scss). Community partners close
 // the strip as one off-ladder row below silver; media partners stay on
 // /partners only.
 const communityPartners = await getCommunityPartners();
@@ -46,14 +47,6 @@ const sizing = (img: ImageMetadata) =>
 	img.format === 'svg'
 		? ({ format: 'svg', layout: 'none' } as const)
 		: ({ widths: STRIP_WIDTHS, sizes: STRIP_SIZES } as const);
-
-// Facts band. NOT the date or venue (already in hero, stamp, footer).
-// Figures from the partner deck, kept in step by hand. Three tiles is the
-// hard cap (320px column floor); labels fit ~33 chars at 1280.
-const facts = [
-	{ figure: '350+', label: 'Medior & senior developers, CEE' },
-	{ figure: '11th', label: 'Edition. Based in Prague.' },
-];
 
 ---
 
@@ -109,7 +102,6 @@ const facts = [
 				     `prefers-reduced-motion` unstacks the slot into the static
 				     set below instead of starting the rotation. -->
 				<p class="topics-rotor" tabindex="0" role="group" aria-label={`What we cover: ${TOPICS.map((t) => t.name).join(', ')}`}>
-					<span class="topics-rotor-label" aria-hidden="true">What we cover</span>
 					<span class="topics-rotor-slot" data-rotor aria-hidden="true">
 						{TOPICS.map((t, i) => (
 							<span class={`topics-rotor-item${i === 0 ? ' is-active' : ''}`}>{t.name}</span>
@@ -123,36 +115,23 @@ const facts = [
 				</div>
 			</div>
 
-			<!-- Full-bleed footing strip. The date, the venue, the price and the
-			     clock are data, so they sit on one line at the base of the frame instead of
-			     taking a second column away from the statement. -->
+			<!-- The footing line: date, venue, price and clock typed out along the
+			     base of the frame, values only. Date and venue speak for
+			     themselves; the wave and the clock keep an inline qualifier
+			     because a bare figure would not say what it counts. -->
 			<div class="hero-foot">
-				<!-- One <dl> per fact, not one around all three: the price is an
-				     island, and its <astro-island> wrapper is not a legal child
-				     of a <dl>. -->
-				<div class="hero-meta">
-					<dl class="meta-item">
-						<dt class="meta-label">Date</dt>
-						<dd class="meta-value">30 Oct 2026</dd>
-					</dl>
-					<dl class="meta-item">
-						<dt class="meta-label">Place</dt>
-						<dd class="meta-value">
-							<a
-								class="meta-value--link"
-								href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
-								target="_blank"
-								rel="noopener noreferrer"
-							>Uhelný Mlýn</a>
-						</dd>
-					</dl>
-					<!-- The wave on sale and its price, live from ti.to: a fact
-					     like the two beside it, not a caption after the CTAs. -->
-					<HeroOffer client:load />
-				</div>
+				<time class="meta-value" datetime="2026-10-30">30 Oct 2026</time>
+				<a
+					class="meta-value meta-value--link"
+					href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
+					target="_blank"
+					rel="noopener noreferrer"
+				>Uhelný Mlýn</a>
+				<!-- The wave on sale and its price, live from ti.to. -->
+				<HeroOffer client:load />
 
 				<div class="hero-clock" aria-label="Time until doors open">
-					<p class="meta-label">Doors open in</p>
+					<span class="meta-label">Doors open in</span>
 					{/*
 						transition:persist keeps this island (and its 1s interval)
 						alive across soft navigations instead of remounting it from
@@ -170,22 +149,30 @@ const facts = [
 		<!-- TICKER -->
 		<Ticker items={EVENT_TOPICS} />
 
-		<!-- THE FACTS — what the event IS, in figures instead of a paragraph -->
+		<!-- THE FACTS — what the event IS: the couplet, then one reading line.
+		     Audience and edition from the partner deck, kept in step by hand. -->
 		<section id="facts" aria-labelledby="facts-title">
-			<div class="u-container facts-inner">
+			<div class="facts-text">
 				<h2 id="facts-title" class="facts-head display">
 					One day.<br />One mill.
 				</h2>
 
-				<dl class="facts">
-					{facts.map((f) => (
-						<div class="fact">
-							<dt class="fact-label">{f.label}</dt>
-							<dd class="fact-figure" set:html={f.figure} />
-						</div>
-					))}
-				</dl>
+				<p class="facts-lede">
+					350+ medior and senior developers from across CEE. The eleventh
+					edition, in Uhelný Mlýn, Libčice nad Vltavou.
+				</p>
 			</div>
+			<!-- The mill itself, the band's dominant element: a documentary plate
+			     on the right 60%, bleeding off the edge, graded like the hero. -->
+			<figure class="facts-plate">
+				<Image
+					src={millChimney}
+					alt="Uhelný Mlýn: the brick coal mill and its chimney in Libčice nad Vltavou"
+					widths={[480, 720, 960, 1280, 1824]}
+					sizes="(max-width: 900px) 100vw, 60vw"
+					loading="lazy"
+				/>
+			</figure>
 		</section>
 
 		<!-- TICKETS — client:load, not visible: the hero's "Get tickets" jumps
@@ -194,53 +181,45 @@ const facts = [
 		     with the hero's offer, which needs it at load anyway. -->
 		<Tickets client:load />
 
-		<!-- SPEAKERS TEASER — auto-rotating lineup spotlight; hides until data loads.
+		<!-- SPEAKERS TEASER — lineup credits with the lit name's portrait; hides until data loads.
 		     client:load (not visible): the island renders nothing until Firestore
 		     resolves, so a client:visible observer would never fire on the
 		     zero-height placeholder. -->
 		<SpeakersTeaser client:load />
 
-		<!-- PARTNERS — quiet silver+ strip, one row per tier, community last; media partners live on /partners only -->
+		<!-- PARTNERS — a quiet strip, no head: one row of logos per tier, top
+		     tier first and largest, community last; tier names and media
+		     partners live on /partners only. -->
 		{homeRows.length > 0 && (
-			<section id="partners" aria-labelledby="partners-title">
+			<section id="partners" aria-label="Partners">
 				<div class="partners-inner">
-					<p id="partners-title" class="eyebrow partners-eyebrow">Partners</p>
-
 					<div class="partners-tiers">
 						{homeRows.map((tier) => (
-							<div class={`partners-tier tier-${tier.id}`}>
-								<p class="partners-tier-label">{tier.label}</p>
-								<ul class="partners-row">
-									{tier.partners.map((p) => (
-										<li class="partners-item">
-											{p.url ? (
-												<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-													<Image class={`partners-logo${p.plated ? ' is-plated' : ''}`} src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
-												</a>
-											) : (
+							<ul class={`partners-row tier-${tier.id}`} aria-label={tier.label}>
+								{tier.partners.map((p) => (
+									<li class="partners-item">
+										{p.url ? (
+											<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
 												<Image class={`partners-logo${p.plated ? ' is-plated' : ''}`} src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
-											)}
-										</li>
-									))}
-								</ul>
-							</div>
+											</a>
+										) : (
+											<Image class={`partners-logo${p.plated ? ' is-plated' : ''}`} src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
+										)}
+									</li>
+								))}
+							</ul>
 						))}
 					</div>
 
-					<p class="partners-more">
-						<a href="/partners">See all partners</a>
-					</p>
+					<a class="partners-more" href="/partners">See all partners</a>
 				</div>
 			</section>
 		)}
 
 		<!-- GALLERY — photos from past editions -->
 		<section id="gallery" aria-labelledby="gallery-title">
-			<div class="u-container head-split gallery-head">
-				<h2 id="gallery-title" class="display head-title">Look back.</h2>
-				<p class="head-note">
-					Past editions of DevFest.cz &mdash; and the community that makes them.
-				</p>
+			<div class="u-container head-stack gallery-head">
+				<h2 id="gallery-title" class="display head-title">Look back</h2>
 			</div>
 
 			<!-- A strip the visitor moves, not a 180s marquee: the photos hold

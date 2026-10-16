@@ -6,15 +6,34 @@ import SubpageHero from '../components/SubpageHero.astro';
 import { getActivePartnerTiers, getMediaPartners, getCommunityPartners, type Partner } from '../lib/partners';
 
 // Every logo wall on the page, top tier first: the ladder, then the two
-// off-ladder rows — community, then media. One loop, one grid module; the
-// only per-wall difference is the ground. Media marks ship dark (made for
-// light backgrounds), so that wall's cells carry a cream plate.
-type Wall = { id: string; label: string; partners: Partner[]; plated?: boolean };
+// off-ladder rows — community, then media. One loop, one heading treatment
+// for every tier; a logo's size comes from its rank (`CELLS`).
+type Wall = { id: string; label: string; partners: Partner[] };
 const walls: Wall[] = [
 	...(await getActivePartnerTiers()),
 	{ id: 'community', label: 'Community', partners: await getCommunityPartners() },
-	{ id: 'media', label: 'Media', partners: await getMediaPartners(), plated: true },
+	{ id: 'media', label: 'Media', partners: await getMediaPartners() },
 ].filter((wall) => wall.partners.length > 0);
+
+// Desktop reference box per tier, in px: the box size carries the rank. No
+// cell is drawn; `opticalBox` sizes each logo as a share of it.
+type Cell = { w: number; h: number };
+const CELLS: Record<string, Cell> = {
+	platinum: { w: 600, h: 300 },
+	diamond: { w: 312, h: 190 },
+	gold: { w: 246, h: 150 },
+	silver: { w: 246, h: 150 },
+	community: { w: 200, h: 110 },
+	media: { w: 200, h: 110 },
+};
+const cellFor = (id: string): Cell => CELLS[id] ?? CELLS.gold;
+
+// Marks that ship dark (made for a light ground). Nothing plates them on
+// this page, so CSS inverts them (`.logo--dark-ink`) until light variants
+// exist. Stopgap: belongs in the partners collection as a per-partner flag.
+const DARK_INK = new Set(['dotekomanie.avif', 'whitewhalemedia.svg']);
+const logoClass = (p: Partner) =>
+	`logo${p.plated ? ' is-plated' : ''}${DARK_INK.has(p.logo.split('/').pop() as string) ? ' logo--dark-ink' : ''}`;
 
 // ─── LOGO OPTIMISATION ─────────────────────────────────────────────────────
 // The masters live in `src/assets/partners/<tier>/` so the build can resize
@@ -35,21 +54,23 @@ const logoFor = (logo: string): ImageMetadata =>
 //
 // ─── OPTICAL NORMALISATION ────────────────────────────────────────────────
 // Equal ink AREA reads as equal weight: each mark gets a box of the same
-// area shaped to its ratio (5:1 wordmark ≈190×38, square glyph ≈76×76).
-const LOGO_AREA = 7200;
-const LOGO_MAX_W = 230;
-const LOGO_MAX_H = 76;
+// area shaped to its ratio, as a share of its tier's cell (in a Gold cell a
+// 5:1 wordmark lands ≈190×38, a square glyph ≈75×75).
+const LOGO_AREA = 0.195;
+const LOGO_MAX_W = 0.78;
+const LOGO_MAX_H = 0.5;
 // A plated mark (the `plated` flag in the partners collection) ships with its
 // own padding and background baked into the file, so the same area cap would
-// render the ink inside it far too small. It gets a larger box and fills the
-// cell's width.
+// render the ink inside it far too small. It gets a larger box.
 const PLATE_SCALE = 2.1;
+const PLATE_MAX_W = 0.86;
+const PLATE_MAX_H = 0.6;
 
-const opticalBox = (img: ImageMetadata, plated = false) => {
+const opticalBox = (img: ImageMetadata, cell: Cell, plated = false) => {
 	const ratio = img.width && img.height ? img.width / img.height : 3;
-	const area = LOGO_AREA * (plated ? PLATE_SCALE : 1);
-	const maxW = plated ? 240 : LOGO_MAX_W;
-	const maxH = plated ? 120 : LOGO_MAX_H;
+	const area = cell.w * cell.h * LOGO_AREA * (plated ? PLATE_SCALE : 1);
+	const maxW = cell.w * (plated ? PLATE_MAX_W : LOGO_MAX_W);
+	const maxH = cell.h * (plated ? PLATE_MAX_H : LOGO_MAX_H);
 	let height = Math.sqrt(area / ratio);
 	let width = height * ratio;
 	if (width > maxW) {
@@ -66,9 +87,9 @@ const opticalBox = (img: ImageMetadata, plated = false) => {
 // One call site's worth of per-logo props: the optical box as custom
 // properties, plus a srcset that matches it (an `w`-descriptor image needs
 // `sizes` to state its real layout width, or the browser picks the wrong file).
-const logoProps = (logo: string, plated = false) => {
-	const img = logoFor(logo);
-	const box = opticalBox(img, plated);
+const logoProps = (p: Partner, cell: Cell) => {
+	const img = logoFor(p.logo);
+	const box = opticalBox(img, cell, p.plated);
 	const shared = {
 		src: img,
 		style: `--logo-w:${box.width / 16}rem;--logo-h:${box.height / 16}rem`,
@@ -94,44 +115,47 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'In good <span class="red">company.</span>'}
+			titleHtml={'In good company'}
 			lede="DevFest.cz is a non-profit conference run by its community. The companies below pay for the venue and the day."
 			seoHeading="Partner with DevFest.cz 2026"
 			titleId="partners-title"
-			focus="12% 50%"
+			plate="/gallery/devfest-2025-01.webp"
+			focus="center"
 		/>
 
-		{walls.map((wall) => (
-			<section class="logo-wall" aria-labelledby={`${wall.id}-partners-title`}>
-				<div class="wall-inner">
-					{/* Tier name alone at poster scale. Six sections each headed
-					    "<Tier> partners" with the second word in red was the same
-					    lockup six times down one page, so the heading is just the
-					    name — the logos under it are the count. */}
-					<div class="wall-head">
-						<h2 id={`${wall.id}-partners-title`} class="display head-title">
+		{walls.map((wall, i) => {
+			const cell = cellFor(wall.id);
+			return (
+				<section
+					class:list={[
+						'logo-wall',
+						{ 'logo-wall--lead': wall.id === 'platinum', 'logo-wall--first': i === 0, 'logo-wall--last': i === walls.length - 1 },
+					]}
+					aria-labelledby={`${wall.id}-partners-title`}
+				>
+					<div class="wall-inner">
+						{/* One heading step for every tier: the logo size says the
+						    rank, so no tier needs a poster head of its own. */}
+						<h2 id={`${wall.id}-partners-title`} class="wall-title">
 							{wall.label}<span class="sr-only"> partners</span>
 						</h2>
+						<ul class="logo-grid">
+							{wall.partners.map((p) => (
+								<li class="logo-item">
+									{p.url ? (
+										<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+											<Image class={logoClass(p)} alt={p.name} loading="lazy" {...logoProps(p, cell)} />
+										</a>
+									) : (
+										<Image class={logoClass(p)} alt={p.name} loading="lazy" {...logoProps(p, cell)} />
+									)}
+								</li>
+							))}
+						</ul>
 					</div>
-					{/* The SAME grid module for every wall — one cell size for every
-					    partner on the page. Only the ground differs: a plated wall's
-					    cells are cream, for marks made for light backgrounds. */}
-					<ul class:list={['logo-grid', { 'logo-grid--plated': wall.plated }]}>
-						{wall.partners.map((p) => (
-							<li class="logo-cell">
-								{p.url ? (
-									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo, p.plated)} />
-									</a>
-								) : (
-									<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo, p.plated)} />
-								)}
-							</li>
-						))}
-					</ul>
-				</div>
-			</section>
-		))}
+				</section>
+			);
+		})}
 		<!-- CLOSING STATEMENT — the page's one red field -->
 		<section class="band band--accent partners-cta" aria-labelledby="partners-cta-title">
 			<div class="band-inner closer">

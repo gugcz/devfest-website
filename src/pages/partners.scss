@@ -1,14 +1,25 @@
 @use '../styles/type' as *;
 /* ===================== THE PARTNER WALL ===================== */
 // One section shape for every partner group — the four sponsor tiers and
-// the two off-ladder rows (media, community). They used to be two copies
-// under two sets of names with identical bodies.
+// the two off-ladder rows (community, media). Tight between tiers; the first
+// opens on a full beat under the hero, the last closes on one before the red
+// CTA. Platinum holds a half beat under its logo.
 .logo-wall {
 	position: relative;
-	// Top padding only: the next wall's own top padding is the gap between
-	// them, and the closing accent band supplies the last one.
-	padding: var(--section-y) var(--gutter) 0;
+	padding: 3rem var(--gutter);
 	background: var(--color-bg);
+}
+
+.logo-wall--first {
+	padding-top: var(--section-y);
+}
+
+.logo-wall--lead {
+	padding-bottom: calc(var(--section-y) / 2);
+}
+
+.logo-wall--last {
+	padding-bottom: var(--section-y);
 }
 
 .wall-inner {
@@ -16,153 +27,73 @@
 	margin: 0 auto;
 }
 
-// The group name on its own. It used to carry a mono "03 partners" caption
-// beside it — six sections down one page each announcing how few they had.
-.wall-head {
-	margin-bottom: clamp(2rem, 4vw, 3rem);
+// Every tier, Platinum included: the tier name at the sub-section step.
+.wall-title {
+	@include display(var(--fs-h3));
+	margin: 0 0 clamp(1.75rem, 3.4vw, 2.5rem);
 }
 
-// ─── ONE GRID MODULE ──────────────────────────────────────────────────
-// Contact sheet, not a tile grid: one track size for every partner, no
-// panel fill or shadow. Per-tier sizing let cells grow to close their row.
-// The tier is carried by heading and section order; a short last row
-// stays empty — rules belong to the CELLS.
+// ─── THE LOGO ROWS ────────────────────────────────────────────────────
+// Open logos on the page ground: no cell, no border, no lit tile. Each mark
+// takes its optical box (`opticalBox` in partners.astro → --logo-w), so the
+// rank reads from the logo's size; rows wrap with generous gaps.
 .logo-grid {
-	--cell-min: 17.5rem;
-	--cell-height: 12.5rem;
-
 	list-style: none;
 	margin: 0;
-	// The cells' -1px bottom margin puts the last row's border outside the container,
-	// where the next section paints over it. This gives that pixel back.
-	padding: 0 0 1px;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--cell-min)), 1fr));
-	width: 100%;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: clamp(2.25rem, 4.5vw, 3.75rem) clamp(2.75rem, 6vw, 5.5rem);
 }
 
-.logo-cell {
-	position: relative;
-	overflow: hidden;
+.logo-item {
 	display: flex;
-	min-height: var(--cell-height);
-	// A box around each logo. The -1px pulls neighbours onto a shared
-	// hairline, so a row of cells still reads as one ruled sheet rather
-	// than as a strip of 2px-doubled boxes.
-	border: 1px solid var(--rule);
-	margin: 0 -1px -1px 0;
-	border-radius: 0;
-	background: transparent;
-	transition: background 0.28s ease;
-
-	// The cell lights rather than lifts.
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: var(--wash-strong);
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.28s ease;
-	}
-
-	a,
-	.logo {
-		margin: auto;
-	}
+	align-items: center;
+	max-width: 100%;
 
 	a {
-		position: relative;
-		z-index: 1;
-		width: 100%;
-		height: 100%;
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		padding: 1.6rem 2rem;
+		max-width: 100%;
 		text-decoration: none;
 	}
 
-	// Box computed per logo in partners.astro (`opticalBox`), arriving as
-	// --logo-w / --logo-h: equal ink AREA shaped to the mark's own ratio, so
-	// a wordmark and a square glyph read as the same weight. `height: auto`,
-	// not --logo-h: the two agree by construction, and following the width
-	// keeps proportions when a narrow cell clamps `max-width: 100%`.
+	// Box computed per logo as a share of the tier's reference box, arriving
+	// as --logo-w: equal ink AREA shaped to the mark's own ratio. `height:
+	// auto` follows the width, so a narrow column clamping `max-width` keeps
+	// the proportions.
 	.logo {
 		display: block;
-		width: var(--logo-w, 11.25rem);
+		width: calc(var(--logo-w, 11.25rem) * var(--logo-scale, 1));
 		height: auto;
 		max-width: 100%;
-		max-height: calc(var(--cell-height) - 3.2rem);
 		object-fit: contain;
-		opacity: 0.95;
+		opacity: 0.9;
 		transition: opacity 0.2s;
 	}
 
-	&:has(a:hover),
-	&:has(a:focus-visible) {
-		// The cell under the cursor is the one the lamp is over.
-		&::before { opacity: 1; }
+	// A mark made for a light ground, inverted to read on black. The hue turn
+	// keeps its brand colour family; a proper light asset replaces this.
+	.logo--dark-ink {
+		filter: invert(1) hue-rotate(180deg);
 	}
 
-	&:hover .logo,
+	a:hover .logo,
 	a:focus-visible .logo {
 		opacity: 1;
 	}
 }
 
-// Media marks ship DARK, so their cells carry a cream plate (inverting
-// flattened raster logos to white blobs). `--rule` is cream at 13% —
-// invisible on cream — so the rule inverts with the ground.
-.logo-grid--plated {
-	.logo-cell {
-		background: var(--color-cream);
-		border-color: rgba(0, 0, 0, 0.14);
-		transition: filter 0.25s ease;
-
-		&::before { content: none; }
-
-		&:hover,
-		&:focus-within {
-			filter: brightness(1.06);
-		}
-	}
-}
-
-@media (max-width: 900px) {
-	.logo-grid {
-		--cell-min: 220px;
-		--cell-height: 160px;
-	}
-}
-
+// Phones: Platinum keeps its full size (clamped to the column); every other
+// tier steps down so two marks share a row.
 @media (max-width: 600px) {
-	// Two per row, never N — a three-partner row shared between however
-	// many partners a tier had put each wordmark in a ~116px cell.
-	.logo-grid {
-		--cell-min: 0;
-		--cell-height: 140px;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.logo-cell {
-		a { padding: 1.1rem 1rem; }
-
-		.logo {
-			max-width: 100%;
-		}
+	.logo-wall:not(.logo-wall--lead) {
+		--logo-scale: 0.72;
 	}
 }
 
 /* ===================== CLOSING STATEMENT ===================== */
-// A dark gap before the red field. `.logo-wall` above has zero bottom
-// padding by design, so the gap lives here, on this page's closing
-// section, not on the shared `.band--accent` (every other `Closer`
-// already sits after a full `--section-y`).
-.partners-cta {
-	margin-top: var(--section-y);
-}
-
 // Contact block on the accent field. Ink inverts globally via
 // `.band--accent` in BaseLayout.scss; only the partner-specific bits
 // (the named contact, the disabled deck stamp) are stated here. These
@@ -257,15 +188,8 @@
 
 /* ===================== REDUCED MOTION ===================== */
 @media (prefers-reduced-motion: reduce) {
-	.logo-cell {
+	.logo-item .logo {
 		transition: none;
-
-		&::before { transition: none; }
-
-		&:has(a:hover),
-		&:has(a:focus-visible) {
-			transform: none;
-		}
 	}
 
 	.email-link::after,

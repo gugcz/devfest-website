@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Closer from '../components/Closer.astro';
+import EndLine from '../components/EndLine.astro';
 import { initials } from '../lib/speakers';
 
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'The crew on<br />the <span class="red">case.</span>'}
+			titleHtml={'The crew on<br />the case'}
 			lede="The volunteers putting this year's edition together, most of them developers who'd rather be debugging."
 			seoHeading="DevFest.cz 2026 Team"
 			titleId="team-title"
@@ -167,16 +167,10 @@ const LINK_META: Record<LinkKind, { label: string; icon: string }> = {
 						</li>
 					))}
 				</ul>
+
+				<EndLine text="Want in on the case?" href="mailto:devfest@gug.cz" label="Write to devfest@gug.cz" />
 			</div>
 		</section>
-
-		<Closer
-			titleHtml={'Want in<br />on the case?'}
-			note="DevFest.cz is run by volunteers. We are always recruiting accomplices."
-			tone="accent"
-			titleId="team-closer"
-			actions={[{ href: 'mailto:devfest@gug.cz', label: 'Drop us a wire' }, { href: '/contact', label: 'Other desks', kind: 'ghost' }]}
-		/>
 	</main>
 </BaseLayout>
 

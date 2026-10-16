@@ -1,38 +1,40 @@
 @use '../styles/type' as *;
-// Speaker lineup — prints laid out on the page, and nothing else. The print
-// itself (plate, brackets, photo, hover gesture) is `Print.module.scss`,
-// shared with the home teaser; this file owns the grid and the caption.
+// Speaker lineup as a casting sheet: a numbered list of names on the left,
+// the active one's portrait pinned on the right. The plate itself (mount,
+// photo, monogram) is `Print.module.scss`, shared with the home teaser; this
+// file owns the two columns, the rows and the caption under the plate.
 
-// Faces are the content here — a 210px floor laid them out as six small columns.
-.grid {
+.sheet {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 26.25rem;
+	gap: clamp(2.5rem, 6vw, 6rem);
+	align-items: start;
+}
+
+// Rows are separated by space only — lists carry no rules.
+.list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	min-width: 0;
+}
+
+// Index · name · role on one baseline. The block padding (not a list gap)
+// spaces the rows, so the whole band between two names is the hit area.
+.row,
+.slot {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(17.5rem, 100%), 1fr));
-	gap: clamp(2.5rem, 4.5vw, 4rem) clamp(1.5rem, 2.6vw, 2.5rem);
-
-	// `min-width: 0`, or a flex item's `auto` minimum lets a single long word
-	// (a Czech surname at Bebas display size) push the track wider than its
-	// share and shove the print next to it out of alignment.
-	> li {
-		display: flex;
-		min-width: 0;
-	}
-}
-
-// The grid cell, so the bare <li> stays unstyled.
-.cell {
-	display: flex;
-}
-
-.card {
-	position: relative;
-	display: flex;
-	flex-direction: column;
+	// The name takes what it needs up to the column; the tag gets the rest
+	// and truncates, so a long tagline never pushes the row past the list.
+	grid-template-columns: 2.5rem minmax(0, max-content) minmax(0, 1fr);
+	align-items: baseline;
+	column-gap: 1.25rem;
 	width: 100%;
+	padding: 0.6875rem 0;
+}
+
+.row {
 	margin: 0;
-	padding: 0;
 	text-align: left;
 	font: inherit;
 	color: inherit;
@@ -42,77 +44,92 @@
 	border-radius: 0;
 }
 
-/* ===================== CAPTION ===================== */
-// Under the print on space alone, no hairline. Measured: the name clamps to
-// two lines and may break inside a word (a long Bebas surname overflows a
-// 280px column); the role line reserves two lines even when empty.
-.body {
-	position: relative;
-	z-index: 1;
+.index {
+	@include mono(var(--fs-label-sm), 0.08em);
+	color: var(--ink-muted);
+}
+
+// The long-list Bebas step at --fs-h3, dimmed until its row is the active one.
+.name {
+	@include row-title(var(--fs-h3));
+	color: var(--ink-dim);
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+// One line, cut with an ellipsis: wrapped taglines made the rows ragged. The
+// full tagline is in the speaker's sheet. `--fs-label-sm`, not `-xs`: 10.9px
+// was under the 11px floor for a running label.
+.tag {
+	@include mono(var(--fs-label-sm), 0.14em, uppercase);
+	line-height: 1.45;
+	color: var(--ink-muted);
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+// Active = the row the plate is showing (last hovered or focused; the first
+// by default). Hover and keyboard focus light it directly as well.
+.row[data-active],
+.row:hover,
+.row:focus-visible {
+	.name {
+		color: var(--color-text);
+	}
+	.tag {
+		color: var(--ink-soft);
+	}
+}
+
+// Unannounced slots: same row, faint, not a control.
+.slot .name {
+	color: var(--ink-faint);
+}
+
+/* ===================== PORTRAIT ===================== */
+// Pinned under the fixed header while the list scrolls past it.
+.portrait {
+	position: sticky;
+	top: calc(var(--header-h) + 1.5rem);
 	display: flex;
 	flex-direction: column;
-	min-width: 0;
-	padding: 0;
-	margin-top: 0.9rem;
-	background: none;
 }
 
-.name {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.55rem, 1.9vw, 2rem);
-	line-height: 1.05;
-	letter-spacing: 0.03em;
-	text-transform: uppercase;
-	color: var(--color-text);
-	transition: color 0.25s ease;
-	// Two lines is a full name on two words at this step; a third is a name
-	// that has to be read in the sheet instead.
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+.portraitName {
+	@include display(var(--fs-title-sm));
+	margin-top: 1.1rem;
 	overflow-wrap: anywhere;
 }
 
-.tagline {
-	@include mono(var(--fs-label), 0.16em, uppercase);
-	line-height: 1.45;
-	margin-top: 0.35rem;
-	color: var(--color-grey);
-	// Two lines held open, clamped at two: the role is a caption, not a bio,
-	// and every caption in the sheet has to occupy the same band.
-	min-height: calc(2 * 1.45em);
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-	overflow-wrap: anywhere;
+.hint {
+	@include mono(var(--fs-label-xs), 0.14em, uppercase);
+	margin-top: 0.5rem;
+	color: var(--ink-muted);
 }
 
-// The name is the affordance — it lights with the frame it belongs to.
-.card:hover .name,
-.card:focus-visible .name {
-	color: var(--color-accent-hot);
-}
-
-@media (max-width: 600px) {
-	.grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+// One column: the list alone, role under the name.
+@media (max-width: 760px) {
+	.sheet {
+		grid-template-columns: minmax(0, 1fr);
 	}
+
+	.portrait {
+		display: none;
+	}
+
+	.row,
+	.slot {
+		grid-template-columns: 2.5rem minmax(0, 1fr);
+		row-gap: 0.3rem;
+	}
+
 	.name {
-		font-size: var(--fs-title-sm);
+		font-size: var(--fs-card-title);
 	}
-	.body {
-		margin-top: 0.7rem;
-	}
-}
 
-@media (prefers-reduced-motion: reduce) {
-	.card,
-	.name {
-		transition: none;
-		animation: none;
+	.tag {
+		grid-column: 2;
 	}
 }

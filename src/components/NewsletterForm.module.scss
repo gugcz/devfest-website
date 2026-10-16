@@ -67,13 +67,14 @@
 	border-radius: 0 var(--radius) var(--radius) 0;
 	@include mono(var(--fs-label-lg), 0.22em, uppercase);
 	cursor: pointer;
-	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 	white-space: nowrap;
 
+	// Same hover as `.btn-primary`: the fill inverts, nothing glows or moves.
 	&:hover:not(:disabled) {
-		background: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-		box-shadow: var(--glow-red), 0 8px 22px rgba(241, 16, 0, 0.28);
+		background: var(--color-text);
+		border-color: var(--color-text);
+		color: var(--color-bg);
 	}
 
 	// Dedicated pair, not a dimmed accent: opacity alone measured ~2.4:1 (WCAG 1.4.3
@@ -195,7 +196,6 @@
 			background: #FFFFFF;
 			border-color: #FFFFFF;
 			color: var(--on-accent);
-			box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
 		}
 
 		&:focus-visible {

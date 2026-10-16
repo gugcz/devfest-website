@@ -11,10 +11,10 @@ import { EmptyState, ErrorState, LoadingState } from './DataState';
 import print from './Print.module.scss';
 import s from './Speakers.module.scss';
 
-/** Shared `view-transition-name` for the clicked print and the dialog photo,
- * so the browser morphs one into the other. Applied to the open speaker's
- * card only — two elements with the same name at capture time skips the
- * transition. */
+/** Shared `view-transition-name` for the portrait plate and the dialog photo,
+ * so the browser morphs one into the other. Applied only while the plate shows
+ * the speaker being opened — two elements with the same name at capture time
+ * skips the transition. */
 type ViewTransitionDoc = Document & {
 	startViewTransition?: (cb: () => void) => { finished: Promise<void> };
 };
@@ -26,8 +26,8 @@ function canMorph(): boolean {
 }
 
 /**
- * Morphs the clicked print into the dialog photo. The name must be on the
- * card BEFORE the capture (so opening is two renders), only ONE element may
+ * Morphs the portrait plate into the dialog photo. The name must be on the
+ * plate BEFORE the capture (so opening is two renders), only ONE element may
  * carry it per capture (hand-off inside the callback), and `flushSync` is
  * needed or the "after" capture sees an unchanged DOM.
  */
@@ -35,7 +35,7 @@ function usePortraitMorph(
 	selected: Speaker | null,
 	setSelected: (sp: Speaker | null) => void,
 ) {
-	// Which card currently carries the transition name (never the open one).
+	// Which speaker's plate carries the transition name (never the open one).
 	const [morphId, setMorphId] = useState<string | null>(null);
 	const pending = useRef<Speaker | null>(null);
 
@@ -51,7 +51,7 @@ function usePortraitMorph(
 		[setSelected],
 	);
 
-	// Second render of the open sequence: the name is now painted on the card,
+	// Second render of the open sequence: the name is now painted on the plate,
 	// so the capture has something to morph from.
 	useEffect(() => {
 		const sp = pending.current;
@@ -77,7 +77,7 @@ function usePortraitMorph(
 				setMorphId(sp.id);
 			});
 		});
-		// Drop the name once the tween is done so no card is left carrying it
+		// Drop the name once the tween is done so the plate is not left carrying it
 		// into the next transition.
 		transition?.finished.finally(() => setMorphId(null));
 	}, [selected, setSelected]);
@@ -85,52 +85,48 @@ function usePortraitMorph(
 	return { morphId, open, close };
 }
 
-function SpeakerCard({
+/** Trailing rows for the slots still to be announced, so the sheet never
+ * reads as final. Not interactive: there is no record to open yet. */
+const UNANNOUNCED_SLOTS = 2;
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+function CastingRow({
 	speaker,
-	onOpen,
-	priority,
 	index,
-	morphing,
+	active,
+	onActivate,
+	onOpen,
 }: {
 	speaker: Speaker;
-	onOpen: (speaker: Speaker) => void;
-	priority: boolean;
 	index: number;
-	morphing: boolean;
+	active: boolean;
+	onActivate: (speaker: Speaker) => void;
+	onOpen: (speaker: Speaker) => void;
 }) {
 	return (
-		<li className={s.cell}>
+		<li>
 			<button
 				type="button"
-				className={`${print.frame} ${s.card}`}
+				className={s.row}
+				data-active={active || undefined}
 				onClick={() => onOpen(speaker)}
+				onPointerEnter={() => onActivate(speaker)}
+				onFocus={() => onActivate(speaker)}
 				aria-label={`View ${speaker.fullName}'s profile`}
-				style={
-					morphing ? ({ viewTransitionName: PORTRAIT_TRANSITION } as React.CSSProperties) : undefined
-				}
 			>
-				<span className={print.print}>
-					<SpeakerPhoto
-						speaker={speaker}
-						photoClass={print.photo}
-						monogramClass={print.monogram}
-						width={400}
-						height={500}
-						eager={priority}
-					/>
-					<span className={print.scrim} aria-hidden="true" />
-					<span className={print.vignette} aria-hidden="true" />
+				<span className={s.index} aria-hidden="true">
+					{pad(index + 1)}
 				</span>
-				<span className={s.body}>
-					<span className={s.name}>{speaker.fullName}</span>
-					{speaker.tagLine && <span className={s.tagline}>{speaker.tagLine}</span>}
-				</span>
+				<span className={s.name}>{speaker.fullName}</span>
+				{speaker.tagLine && <span className={s.tag}>{speaker.tagLine}</span>}
 			</button>
 		</li>
 	);
 }
 
-/** The speaker lineup grid, rendered by `Speakers` below. */
+/** The lineup as a casting sheet: every name in a numbered list on the left,
+ * the active one's portrait pinned on the right. Rendered by `Speakers`. */
 export function SpeakerLineup({
 	speakers,
 	onOpen,
@@ -138,22 +134,81 @@ export function SpeakerLineup({
 }: {
 	speakers: Speaker[];
 	onOpen: (speaker: Speaker) => void;
-	/** Id of the speaker whose dialog is open — that card carries the morph. */
+	/** Id of the speaker whose dialog is open — the plate carries the morph. */
 	openId?: string | null;
 }) {
+	const [activeId, setActiveId] = useState<string | null>(null);
+	// True while a row is hovered or focused: the plate develops to colour then,
+	// and is B&W at rest (the default first speaker included).
+	const [engaged, setEngaged] = useState(false);
+	const active = speakers.find((sp) => sp.id === activeId) ?? speakers[0];
+	const activate = useCallback((sp: Speaker) => {
+		setActiveId(sp.id);
+		setEngaged(true);
+	}, []);
+	// Focus leaving the list entirely (not moving to the next row) ends it.
+	const onListBlur = (event: React.FocusEvent<HTMLOListElement>) => {
+		if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setEngaged(false);
+	};
+
 	return (
-		<ul className={s.grid} role="list">
-			{speakers.map((speaker, i) => (
-				<SpeakerCard
-					key={speaker.id}
-					speaker={speaker}
-					onOpen={onOpen}
-					priority={i < 4}
-					index={i}
-					morphing={speaker.id === openId}
-				/>
-			))}
-		</ul>
+		<div className={s.sheet}>
+			<ol
+				className={s.list}
+				role="list"
+				onPointerLeave={() => setEngaged(false)}
+				onBlur={onListBlur}
+			>
+				{speakers.map((speaker, i) => (
+					<CastingRow
+						key={speaker.id}
+						speaker={speaker}
+						index={i}
+						active={speaker.id === active.id}
+						onActivate={activate}
+						onOpen={onOpen}
+					/>
+				))}
+				{Array.from({ length: UNANNOUNCED_SLOTS }, (_, i) => (
+					<li key={`slot-${i}`} className={s.slot}>
+						<span className={s.index} aria-hidden="true">
+							{pad(speakers.length + i + 1)}
+						</span>
+						<span className={s.name}>Unidentified suspect</span>
+						<span className={s.tag}>To be revealed</span>
+					</li>
+				))}
+			</ol>
+
+			{/* Mirrors the active row, so it is hidden from assistive tech; the
+			    row's own button is the way in. Swaps instantly, no tween; only
+			    the develop to colour (Print.module.scss) fades. */}
+			<div className={s.portrait} aria-hidden="true">
+				<span
+					className={print.print}
+					data-developed={engaged || undefined}
+					style={
+						active.id === openId
+							? ({ viewTransitionName: PORTRAIT_TRANSITION } as React.CSSProperties)
+							: undefined
+					}
+				>
+					{/* Keyed, so a failed load on one speaker never sticks to the next. */}
+					<SpeakerPhoto
+						key={active.id}
+						speaker={active}
+						photoClass={print.photo}
+						monogramClass={print.monogram}
+						width={420}
+						height={525}
+						eager
+					/>
+					<span className={print.scrim} />
+				</span>
+				<span className={s.portraitName}>{active.fullName}</span>
+				<span className={s.hint}>Pick a name for the full record</span>
+			</div>
+		</div>
 	);
 }
 

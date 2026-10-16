@@ -54,18 +54,14 @@
 	line-height: 1;
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
-	// Outlined, not solid: nine topics set solid at 4rem out-shout the section
-	// headline on either side of the band.
-	color: transparent;
-	// 0.56, not 0.45: the stroke blends to 3.95:1 at 0.45, and the `sm` band
-	// bottoms out at 22px on a phone, where 4.5:1 applies. 0.56 measures 5.6:1.
-	-webkit-text-stroke: 1px rgba(255, 255, 255, 0.56);
+	// Solid but faint: nine topics in full ink at 4rem out-shout the section
+	// headline on either side of the band. --ink-faint still clears 4.5:1.
+	color: var(--ink-faint);
 }
 
 .ticker-sep {
-	// The only solid ink in the band, so it carries the accent and does the pacing.
+	// The only accent in the band, so it does the pacing.
 	color: var(--color-accent);
-	-webkit-text-stroke: 0;
 	font-size: 0.5em;
 	line-height: 1;
 	transform: translateY(-0.15em);

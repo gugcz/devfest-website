@@ -5,10 +5,6 @@
 .select {
 	@include lit-field;
 	cursor: pointer;
-
-	&:focus {
-		box-shadow: var(--glow-red-soft);
-	}
 }
 
 .note {

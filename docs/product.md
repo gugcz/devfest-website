@@ -77,8 +77,10 @@ built by a community, not a vendor event.
 - Visual direction "noir, but loud": one dark theme, red accent, poster-scale
   Bebas Neue headlines. Only the brand faces in `astro.config.mjs` may be
   used; never add a font.
-- The hero photograph (`/hero-detective.webp`) is the one plate, reframed per
-  page.
+- The detective key art (`/hero-detective.webp`) is the home hero and the
+  default subpage plate. Pages about the event may swap in a documentary
+  shot from a past edition (`/public/gallery`), graded B&W; never stock or
+  generated imagery.
 - The design system in `docs/design.md` is binding.
 
 ## Evidence on Hand

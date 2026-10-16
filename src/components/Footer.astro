@@ -1,7 +1,4 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../assets/logo.png';
-
 const SOCIALS = [
 	{
 		href: 'https://x.com/devfest_cz',
@@ -73,23 +70,8 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 <footer class="footer" role="contentinfo">
 	<div class="footer-inner">
 		<div class="footer-grid">
-			<!-- The mark heads its own column rather than a row of its own above
-			     the grid. That row carried the wordmark AND a date/place line,
-			     both of which were already here: the line repeated the Event
-			     column's Date and Place verbatim, and the column's own mono
-			     heading spelled out the name the logo beside it was already
-			     saying. -->
+			<!-- No logo here: the wordmark under the grid carries the name. -->
 			<section class="col col-brand" aria-label="DevFest.cz 2026">
-				<a href="/" class="footer-logo-link" aria-label="DevFest.cz 2026 — home">
-					<Image
-						src={logo}
-						alt="DevFest.cz 2026"
-						class="footer-logo"
-						loading="lazy"
-						widths={[204, 408]}
-						sizes="204px"
-					/>
-				</a>
 				<p class="brand-tagline">
 					Prague's developer conference &mdash; AI agents, generative UI, cloud &amp; backends, mobile &amp; web, and the humans behind it.
 				</p>
@@ -169,10 +151,12 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 			</section>
 		</div>
 
+		<!-- Decorative: the header logo and the brand column already name the
+		     site, so the wordmark is hidden from assistive tech. -->
+		<p class="footer-wordmark" aria-hidden="true">DEVFEST.CZ</p>
+
 		<div class="footer-bottom">
-			<small class="copyright">
-				&copy; 2026 GUG.cz, z.s. &mdash; All rights reserved.
-			</small>
+			<small class="copyright">&copy; 2026 GUG.cz, z.s.</small>
 			<small class="opensource">
 				<a
 					class="footer-link"

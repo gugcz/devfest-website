@@ -211,23 +211,27 @@
 	border-color: var(--color-accent-hot);
 }
 
-// The home hero carries its own "Get tickets" button, in view whenever the
-// bar is still transparent — a second route to the same place inside one
-// screen. It comes back the moment the hero has scrolled away.
-#site-header[data-home='true'][data-state='top'] .header-cta {
-	display: none;
-}
+// Above phone width the home hero carries its own "Get tickets" button, in
+// view whenever the bar is still transparent — a second route to the same
+// place inside one screen. It comes back the moment the hero has scrolled
+// away. A phone keeps it: there the hero's button sits at the foot of the
+// fold, and the bar is the one action every other page shows at the top.
+@media (min-width: 601px) {
+	#site-header[data-home='true'][data-state='top'] .header-cta {
+		display: none;
+	}
 
-// On the hero's first screen the toggle would be the only bordered box —
-// a boxed control beside an unboxed one reads as two systems. Border
-// returns on hover/focus and once the bar goes solid.
-#site-header[data-home='true'][data-state='top'] .nav-toggle {
-	border-color: transparent;
-}
+	// On the hero's first screen the toggle would be the only bordered box —
+	// a boxed control beside an unboxed one reads as two systems. Border
+	// returns on hover/focus and once the bar goes solid.
+	#site-header[data-home='true'][data-state='top'] .nav-toggle {
+		border-color: transparent;
+	}
 
-#site-header[data-home='true'][data-state='top'] .nav-toggle:hover,
-#site-header[data-home='true'][data-state='top'] .nav-toggle:focus-visible {
-	border-color: var(--color-text);
+	#site-header[data-home='true'][data-state='top'] .nav-toggle:hover,
+	#site-header[data-home='true'][data-state='top'] .nav-toggle:focus-visible {
+		border-color: var(--color-text);
+	}
 }
 
 .nav {
@@ -474,16 +478,7 @@
 }
 
 .nav-foot-mail {
-	color: var(--color-text);
-	text-decoration: underline 1px solid var(--rule-strong);
-	text-underline-offset: 0.4rem;
-	transition: color 0.2s, text-decoration-color 0.2s;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		text-decoration-color: var(--color-accent-hot);
-	}
+	@include hairline-link;
 }
 
 // The stamp goes first: it duplicates the hero meta, and the bar must never wrap.

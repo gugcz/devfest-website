@@ -32,7 +32,6 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 				</div>
 
 				<div>
-					<p className={sheet.kicker}>Speaker</p>
 					<h2 id="speaker-detail-name" className={sheet.title}>
 						{speaker.fullName}
 					</h2>
