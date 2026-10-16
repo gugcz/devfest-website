@@ -1,8 +1,7 @@
 @use '../styles/type' as *;
 // Speaker lineup — prints laid out on the page, and nothing else. The print
 // itself (plate, brackets, photo, hover gesture) is `Print.module.scss`,
-// shared with the home teaser; this file owns the grid, the caption and the
-// closing "still developing" frame.
+// shared with the home teaser; this file owns the grid and the caption.
 
 // Faces are the content here — a 210px floor laid them out as six small columns.
 .grid {
@@ -98,54 +97,14 @@
 	color: var(--color-accent-hot);
 }
 
-// Closes the sheet so the lineup never reads as complete. An unexposed frame,
-// not a dashed placeholder.
-.moreCard {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	padding: 0;
-	background: transparent;
-}
-
-.moreBody {
-	padding: 0;
-	margin-top: 0.9rem;
-}
-
-// Same step as a real speaker's name — this card sits in the same grid.
-.moreKicker {
-	display: block;
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.55rem, 1.9vw, 2rem);
-	line-height: 1.05;
-	letter-spacing: 0.03em;
-	text-transform: uppercase;
-	color: var(--color-grey);
-	overflow-wrap: anywhere;
-}
-
-.moreText {
-	@include mono(var(--fs-label), 0.16em, uppercase);
-	line-height: 1.45;
-	margin: 0.35rem 0 0;
-	color: var(--ink-faint);
-	// Same reserved caption band as a speaker's role line — this card sits in
-	// the same grid row and has to end on the same line.
-	min-height: calc(2 * 1.45em);
-}
-
 @media (max-width: 600px) {
 	.grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
-	.name,
-	.moreKicker {
+	.name {
 		font-size: var(--fs-title-sm);
 	}
-	.body,
-	.moreBody {
+	.body {
 		margin-top: 0.7rem;
 	}
 }
