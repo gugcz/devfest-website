@@ -153,20 +153,6 @@ export function SpeakerLineup({
 					morphing={speaker.id === openId}
 				/>
 			))}
-			{/* Closes the sheet on an unexposed frame so the lineup never reads as
-			    final. */}
-			<li className={s.cell}>
-				<div className={s.moreCard}>
-					{/* The same mount as a real print, so it reads as an unexposed frame and
-					    not as an outlined empty box among borderless photographs. No
-					    `.frame` parent, so its brackets never open. */}
-					<span className={print.print} aria-hidden="true" />
-					<span className={s.moreBody}>
-						<span className={s.moreKicker}>Still developing</span>
-						<p className={s.moreText}>More names to come</p>
-					</span>
-				</div>
-			</li>
 		</ul>
 	);
 }
