@@ -34,9 +34,10 @@ CI runs on every PR against `2026`.
 - A check the change cannot affect (e.g. a11y for a functions-only change) may
   be skipped only if it cannot run here; note which one and why in the PR.
 - Fix every failure and re-run. Do not continue on red.
-- If the change adds or renames a function, endpoint, page, secret or rule,
-  or makes an architecture decision, the docs move in the same PR
-  (`.claude/rules/docs.md`).
+- Run the `update-docs` skill over the diff. A change that adds or renames a
+  function, endpoint, page, secret or rule, alters what a visitor sees or how
+  the site looks, or makes an architecture decision moves the docs in the
+  same PR (`.claude/rules/docs.md`).
 
 ## 3. Review
 
