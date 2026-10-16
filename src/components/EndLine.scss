@@ -15,7 +15,7 @@
 
 // The hero's hairline-link recipe (`SubpageHero.scss` `.hero-link`).
 .end-line-link {
-	@include mono(var(--fs-label-lg), 0.18em, uppercase);
+	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 	@include hairline-link;
 	display: inline-block;
 	padding: 0.4em 0 0.3em;

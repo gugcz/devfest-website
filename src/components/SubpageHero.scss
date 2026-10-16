@@ -58,7 +58,7 @@
 // not a second call to action.
 .hero-link {
 	margin: clamp(1.25rem, 2.4vw, 1.75rem) 0 0;
-	@include mono(var(--fs-label-lg), 0.18em, uppercase);
+	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 
 	// Inline-block with block padding: clear of the 24px target minimum.
 	a {

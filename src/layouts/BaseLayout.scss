@@ -1,10 +1,10 @@
 @use '../styles/type' as *;
 :root {
 	// Brand manual v1.0: three colours, no more. Noir Black, Paper White,
-	// Evidence Red. Greys exist only as white or black at an opacity — the
-	// solid neutrals below are those opacities flattened onto black.
+	// Evidence Red. Greys exist only as white or black at an opacity — never
+	// a tinted grey or a solid near-black hex.
 	--color-bg: #000000;
-	--color-grey: #8C8C8C; // 55% white
+	--color-grey: rgba(255, 255, 255, 0.55);
 	--color-text: #FFFFFF;
 	--color-cream: #FFFFFF;
 	--color-accent: #F11000;
@@ -88,9 +88,10 @@
 	--fs-title-sm: 1.45rem;   // small titles, mobile field-row titles
 	--fs-monogram: 3.4rem;    // initials in an empty photo well
 
-	// Condensed caps at poster scale need the leading pulled in.
-	--lh-display: 0.84;
-	--track-display: 0.005em;
+	// Condensed caps at poster scale: the brand manual's 0.9–1.0 leading, at
+	// its floor, and zero tracking.
+	--lh-display: 0.9;
+	--track-display: 0;
 
 	--rule: rgba(255, 255, 255, 0.13);
 	--rule-soft: rgba(255, 255, 255, 0.06);
@@ -113,14 +114,20 @@
 	// 4.5:1 on #000000 at label size — the floor for small mono copy.
 	--ink-faint: rgba(255, 255, 255, 0.5);
 
-	--panel: #0C0C0C;
-	--panel-2: #111111;
-	--panel-hover: #161616;
+	// Plates are white at an opacity over the black ground (the old solid
+	// #0C0C0C / #111111 / #161616, same look on #000). Where a plate must be
+	// opaque (a fixed bar over content), layer it on `--color-bg`.
+	--panel: rgba(255, 255, 255, 0.047);
+	--panel-2: rgba(255, 255, 255, 0.067);
+	--panel-hover: rgba(255, 255, 255, 0.086);
 
 	// Ink and edges ON the red field. Measured on #F11000: black 4.8:1 at any
 	// size; white 4.4:1, so white is for large type only (3:1). An inverted
 	// control on red is a black fill carrying --on-accent-ink.
 	--on-accent: #000000;
+	// The CTA label on red: 1.17rem = 18.7px, just over the 14pt-bold
+	// "large text" line (18.66px) where white's 4.4:1 clears AA.
+	--fs-cta: 1.17rem;
 	--on-accent-ink: #FFFFFF;
 	--on-accent-border: rgba(0, 0, 0, 0.85);
 
@@ -136,8 +143,9 @@
 		inset 0 0 0 1px rgba(255, 255, 255, 0.16),
 		0 10px 24px rgba(0, 0, 0, 0.5);
 
-	--panel-lit: #0A0A0A;
-	--panel-lit-2: #0E0E0E;
+	// Was #0A0A0A / #0E0E0E.
+	--panel-lit: rgba(255, 255, 255, 0.04);
+	--panel-lit-2: rgba(255, 255, 255, 0.055);
 
 	// Initials standing in for a missing photograph, on --panel-lit. Measured
 	// 4.21:1 on the large plate and 7.71:1 at label scale — never dim further.
@@ -148,12 +156,12 @@
 	// box (38 / 50 > 0.72), so the pool is gone before the top and bottom
 	// edges: at 70% it still glowed at the top edge and stepped against the
 	// section above it.
-	--lit: radial-gradient(ellipse 78% 50% at 50% 38%, rgba(255, 244, 232, 0.05), transparent 72%);
-	// The raking light a reached row or cell takes: warm, from the left, gone
+	--lit: radial-gradient(ellipse 78% 50% at 50% 38%, rgba(255, 255, 255, 0.05), transparent 72%);
+	// The raking light a reached row or cell takes: white, from the left, gone
 	// by the far edge. `--wash` for a full-bleed row, `--wash-strong` inside
 	// a bounded cell where the same alpha would vanish against a panel fill.
-	--wash: linear-gradient(104deg, rgba(255, 244, 232, 0.06) 0%, rgba(255, 240, 226, 0.026) 38%, transparent 82%);
-	--wash-strong: linear-gradient(104deg, rgba(255, 244, 232, 0.07) 0%, rgba(255, 240, 226, 0.03) 42%, transparent 86%);
+	--wash: linear-gradient(104deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.026) 38%, transparent 82%);
+	--wash-strong: linear-gradient(104deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 42%, transparent 86%);
 	// Feathers a full-bleed row wash so its top and bottom edges do not step across the page.
 	--field-feather: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
 
@@ -169,7 +177,7 @@
 		--fs-row: 2.1rem;
 		--fs-row-sm: 1.7rem;
 		--fs-row-figure: 2.1rem;
-		// Mono tracking at 72%: see the `mono` mixin in `_type.scss`.
+		// Mono tracking at 72%, floored at 0.1em: see the `mono` mixin in `_type.scss`.
 		--track-scale: 0.72;
 		// The held shot stays the longest pause, but 136px stacked on the
 		// section above left a screen of black between facts and tickets.
@@ -264,7 +272,7 @@ body {
 	padding: 0.7rem 1.1rem;
 	background: #000000;
 	color: #FFFFFF;
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 	text-decoration: none;
 	border: 1px solid rgba(241, 16, 0, 0.5);
 	z-index: 10001;
@@ -323,7 +331,7 @@ b {
 
 // Mono eyebrow — a plain label. Never give it a trailing hairline or any other decoration.
 .eyebrow {
-	@include mono(var(--fs-label), 0.28em, uppercase);
+	@include mono(var(--fs-label), 0.2em, uppercase);
 	color: var(--ink-muted);
 	display: inline-flex;
 	align-items: center;
@@ -496,7 +504,7 @@ b {
 	color: var(--on-accent);
 	// Same reason as `.btn-primary`: thin black on red reads faint.
 	font-weight: 500;
-	letter-spacing: calc(0.16em * var(--track-scale, 1));
+	letter-spacing: max(0.1em, calc(0.15em * var(--track-scale, 1)));
 	// 3.95:1 on the red ground — a control boundary must clear 3:1 (1.4.11).
 	border-color: var(--on-accent-border);
 
@@ -576,12 +584,10 @@ b {
 	align-items: center;
 	justify-content: center;
 	gap: 0.7rem;
-	// Medium weight, tighter tracking: black on Evidence Red is the most
-	// contrast the brand red allows (4.8:1), and a thin, wide-set label on a
-	// saturated field still read as faint. Weight carries what contrast can't.
-	@include mono(var(--fs-label-lg), 0.16em, uppercase);
-	font-weight: 500;
-	color: var(--on-accent);
+	// White Bold at large-text size, as the brand manual sets the CTA: a thin
+	// black label on Evidence Red read faint (`cta-label` in _type.scss).
+	@include cta-label;
+	color: var(--color-text);
 	background: var(--color-accent);
 	border: 1px solid var(--color-accent);
 	border-radius: var(--radius);
@@ -615,7 +621,7 @@ b {
 	align-items: center;
 	justify-content: center;
 	gap: 0.6rem;
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 	color: var(--color-text);
 	text-decoration: none;
 	cursor: pointer;
@@ -790,7 +796,7 @@ b {
 // Status word. Never a pill, chip, or underlined — it sits where the
 // "Get tickets" link would, and an underline there promises a click.
 .record-status {
-	@include mono(var(--fs-label-sm), 0.24em, uppercase);
+	@include mono(var(--fs-label-sm), 0.2em, uppercase);
 	color: rgba(255, 255, 255, 0.72);
 	white-space: nowrap;
 }
@@ -864,11 +870,11 @@ b {
 	}
 
 	// Ink too: the site's muted alphas (labels at 0.55, meta at 0.62) print
-	// as pale grey on white. Everything goes near-black; roles below darker.
+	// as pale grey on white. Everything goes to black at 90%; roles below darker.
 	*,
 	*::before,
 	*::after {
-		color: #1A1A1A !important;
+		color: rgba(0, 0, 0, 0.9) !important;
 		background-color: transparent !important;
 		background-image: none !important;
 		box-shadow: none !important;

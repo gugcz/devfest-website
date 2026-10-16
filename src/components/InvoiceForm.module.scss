@@ -32,7 +32,7 @@
 }
 
 .label {
-	@include mono(var(--fs-label), 0.16em, uppercase);
+	@include mono(var(--fs-label), 0.15em, uppercase);
 	color: var(--ink-meta);
 	transition: color 0.2s ease;
 }
@@ -66,7 +66,7 @@
 .error {
 	@include mono(var(--fs-label));
 	line-height: 1.5;
-	letter-spacing: 0.06em;
+	letter-spacing: 0.1em;
 	color: var(--color-accent-hot);
 }
 
@@ -97,12 +97,7 @@
 	// A readout, not a panel: lit from the left, no rules. It must never
 	// lift when the pointer crosses it — nothing here is interactive.
 	padding: 1.2rem 0;
-	background: linear-gradient(
-		104deg,
-		rgba(255, 244, 232, 0.05) 0%,
-		rgba(255, 240, 226, 0.022) 40%,
-		transparent 84%
-	);
+	background: var(--wash);
 	border: 0;
 	border-radius: 0;
 
@@ -111,7 +106,8 @@
 		z-index: 1;
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-title-sm);
-		letter-spacing: 0.03em;
+		line-height: 1;
+		letter-spacing: 0;
 	}
 }
 
@@ -188,6 +184,7 @@
 		&:active {
 			background: var(--color-accent);
 			border-color: var(--color-accent);
+			color: var(--color-text);
 			transform: none;
 			box-shadow: none;
 		}
@@ -210,12 +207,7 @@
 .success {
 	position: relative;
 	padding: 2.4rem 0 2.2rem;
-	background: linear-gradient(
-		104deg,
-		rgba(255, 244, 232, 0.075) 0%,
-		rgba(255, 240, 226, 0.038) 34%,
-		transparent 88%
-	);
+	background: var(--wash-strong);
 	border: 0;
 	border-radius: 0;
 }
@@ -231,7 +223,7 @@
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-card-title);
 	line-height: 1;
-	letter-spacing: 0.04em;
+	letter-spacing: 0;
 	color: var(--color-text);
 	margin: 0 0 1.2rem;
 	padding-bottom: 1.2rem;

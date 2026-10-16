@@ -114,13 +114,13 @@
 }
 
 .contact-name {
-	@include mono(var(--fs-label), 0.22em, uppercase);
+	@include mono(var(--fs-label), 0.2em, uppercase);
 	// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
 	color: var(--on-accent);
 }
 
 .email-link {
-	@include mono(var(--fs-ui), 0.04em);
+	@include mono(var(--fs-ui), 0.1em);
 	color: var(--on-accent);
 	align-self: flex-start;
 	display: inline-flex;
@@ -157,7 +157,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.7rem;
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 	color: var(--on-accent);
 	background: transparent;
 	border: 1px dashed rgba(255, 255, 255, 0.45);
@@ -171,7 +171,7 @@
 }
 
 .partners-cta-stamp {
-	@include mono(var(--fs-label), 0.28em, uppercase);
+	@include mono(var(--fs-label), 0.2em, uppercase);
 	padding: 0.22rem 0.55rem;
 	color: var(--on-accent);
 	border: 1px solid var(--rule-red);
@@ -187,7 +187,7 @@
 
 	.partners-cta-stamp {
 		font-size: var(--fs-label);
-		letter-spacing: 0.24em;
+		letter-spacing: 0.2em;
 		padding: 0.2rem 0.45rem;
 	}
 }

@@ -91,7 +91,7 @@
 }
 
 .invite-meta {
-	@include mono(var(--fs-label-lg), 0.08em, uppercase);
+	@include mono(var(--fs-label-lg), 0.1em, uppercase);
 	color: rgba(255, 255, 255, 0.7);
 }
 

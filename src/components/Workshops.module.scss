@@ -17,7 +17,7 @@
 }
 
 .label {
-	@include mono(var(--fs-label), 0.16em, uppercase);
+	@include mono(var(--fs-label), 0.15em, uppercase);
 	color: var(--ink-meta);
 }
 
@@ -47,7 +47,7 @@
 	@include mono(var(--fs-label));
 	margin: 0;
 	line-height: 1.5;
-	letter-spacing: 0.06em;
+	letter-spacing: 0.1em;
 	color: var(--color-accent-hot);
 }
 
@@ -77,7 +77,7 @@
 .pending {
 	@include mono(var(--fs-label));
 	margin: 0;
-	letter-spacing: 0.06em;
+	letter-spacing: 0.1em;
 	color: var(--ink-soft);
 }
 
@@ -133,7 +133,7 @@
 }
 
 .meta {
-	@include mono(var(--fs-label), 0.16em, uppercase);
+	@include mono(var(--fs-label), 0.15em, uppercase);
 	margin: 0;
 	color: var(--ink-meta);
 }
@@ -151,7 +151,7 @@
 }
 
 .seats {
-	@include mono(var(--fs-label), 0.12em, uppercase);
+	@include mono(var(--fs-label), 0.1em, uppercase);
 	margin: 0.4rem 0 0;
 	color: var(--color-text);
 

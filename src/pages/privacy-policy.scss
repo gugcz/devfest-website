@@ -22,7 +22,7 @@
 	}
 
 	h3 {
-		@include mono(var(--fs-ui), 0.08em, uppercase);
+		@include mono(var(--fs-ui), 0.1em, uppercase);
 		color: var(--ink-strong);
 		margin: 1.8rem 0 0.8rem;
 	}
@@ -41,7 +41,8 @@
 	}
 
 	a {
-		@include hairline-link(var(--color-accent-hot));
+		// White on the red hairline: red stays a detail, never running text.
+		@include hairline-link;
 	}
 
 	code {
@@ -76,7 +77,7 @@
 
 	// Column heads: mono caps over a firmer rule.
 	thead th {
-		@include mono(var(--fs-label-lg), 0.14em, uppercase);
+		@include mono(var(--fs-label-lg), 0.15em, uppercase);
 		color: var(--ink-strong);
 		border-bottom: 1px solid var(--rule-strong);
 	}
@@ -160,7 +161,7 @@
 	}
 
 	.policy table td::before {
-		@include mono(var(--fs-label), 0.14em, uppercase);
+		@include mono(var(--fs-label), 0.15em, uppercase);
 		content: attr(data-label);
 		display: block;
 		color: var(--ink-dim);

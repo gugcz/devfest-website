@@ -38,8 +38,9 @@
 
 .step-no {
 	@include mono(var(--fs-label-sm), 0.2em);
-	// Red reads as light — the step numbers glow like neon markers.
-	color: var(--color-accent-hot);
+	// Muted, not red: three red numbers down one list is the accent as
+	// running colour. --ink-muted clears AA on black.
+	color: var(--ink-muted);
 	flex-shrink: 0;
 }
 

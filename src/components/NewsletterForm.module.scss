@@ -62,10 +62,10 @@
 .button {
 	padding: 0.95rem 2rem;
 	background: var(--color-accent);
-	color: var(--on-accent);
+	color: var(--color-text);
 	border: 1px solid var(--color-accent);
 	border-radius: 0 var(--radius) var(--radius) 0;
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	@include cta-label;
 	cursor: pointer;
 	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 	white-space: nowrap;

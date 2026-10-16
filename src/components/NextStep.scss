@@ -21,7 +21,7 @@
 // The ticket stubs' serial: mono, tabular, faint, over the title. In the
 // title's cell, so a numbered row and a plain one share one grid.
 .step-index {
-	@include mono(var(--fs-label-lg), 0.16em);
+	@include mono(var(--fs-label-lg), 0.15em);
 	font-variant-numeric: tabular-nums;
 	color: var(--ink-faint);
 }

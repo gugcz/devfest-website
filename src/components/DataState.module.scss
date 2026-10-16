@@ -24,7 +24,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.55rem;
-	@include mono(var(--fs-label-lg), 0.18em, uppercase);
+	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 	color: var(--ink-dim);
 	margin: 1rem 0 0;
 }

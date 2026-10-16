@@ -52,7 +52,7 @@
 	inset: 0;
 	z-index: 2;
 	pointer-events: none;
-	background: linear-gradient(to top, rgba(3, 3, 3, 0.5) 0%, transparent 40%);
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, transparent 40%);
 }
 
 // Initials standing in for a missing photograph.
@@ -64,7 +64,7 @@
 	justify-content: center;
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-monogram);
-	letter-spacing: 0.08em;
+	letter-spacing: 0;
 	color: var(--ink-monogram);
 	user-select: none;
 }

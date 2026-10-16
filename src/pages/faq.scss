@@ -145,7 +145,8 @@
 }
 
 .faq-a :global(a) {
-	@include hairline-link(var(--color-accent-hot));
+	// White on the red hairline: red stays a detail, never running text.
+	@include hairline-link;
 }
 
 @media (max-width: 600px) {

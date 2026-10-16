@@ -6,7 +6,7 @@
 	align-items: center;
 	min-height: 2.75rem;
 	margin-bottom: 2.6rem;
-	@include mono(var(--fs-label-sm), 0.22em, uppercase);
+	@include mono(var(--fs-label-sm), 0.2em, uppercase);
 	@include hairline-link(var(--ink-meta));
 	padding-bottom: 2px;
 }
@@ -84,7 +84,7 @@
 	gap: 0.45rem;
 	min-height: 2.75rem;
 	padding: 0.8rem 0.6rem 0.7rem;
-	@include mono(var(--fs-label-sm), 0.14em, uppercase);
+	@include mono(var(--fs-label-sm), 0.15em, uppercase);
 	color: var(--color-text);
 	text-decoration: none;
 	border: 1px solid var(--field-border);
@@ -100,7 +100,7 @@
 
 .kit-chip-size {
 	font-size: var(--fs-label-xs);
-	letter-spacing: 0.04em;
+	letter-spacing: 0.1em;
 	color: var(--ink-meta);
 }
 
@@ -138,7 +138,7 @@
 }
 
 .kit-spec {
-	@include mono(var(--fs-label-xs), 0.12em, uppercase);
+	@include mono(var(--fs-label-xs), 0.1em, uppercase);
 	color: var(--ink-soft);
 }
 
@@ -163,7 +163,7 @@
 }
 
 .empty-stamp {
-	@include mono(var(--fs-label-xs), 0.3em, uppercase);
+	@include mono(var(--fs-label-xs), 0.2em, uppercase);
 	color: var(--color-accent-hot);
 	padding: 0;
 	background: transparent;

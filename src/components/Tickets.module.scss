@@ -41,13 +41,13 @@
 }
 
 .stubSerial {
-	@include mono(var(--fs-label-lg), 0.16em);
+	@include mono(var(--fs-label-lg), 0.15em);
 	font-variant-numeric: tabular-nums;
 	color: var(--ink-faint);
 }
 
 .stubState {
-	@include mono(var(--fs-label-sm), 0.22em, uppercase);
+	@include mono(var(--fs-label-sm), 0.2em, uppercase);
 	color: var(--color-accent-hot);
 	white-space: nowrap;
 }
@@ -104,7 +104,7 @@
 	@include mono(var(--fs-label-sm));
 	// Wide tracking is the mono voice, but two tracked caps lines under a
 	// sentence stopped scanning as words. Pulled back to a readable step.
-	letter-spacing: 0.08em;
+	letter-spacing: 0.1em;
 	text-transform: uppercase;
 	color: var(--ink-meta);
 	margin: 0;
@@ -119,12 +119,14 @@
 	flex-wrap: wrap;
 	align-items: baseline;
 	gap: 0.55rem;
-	@include mono(var(--fs-label-sm), 0.08em, uppercase);
+	@include mono(var(--fs-label-sm), 0.1em, uppercase);
 	color: var(--ink-meta);
 }
 
+// Muted, not red: a red slash on every row is a red mark per wave, and the
+// list's one red mark is the live wave's state.
 .stubGrantSep {
-	color: var(--rule-red);
+	color: var(--ink-faint);
 }
 
 /* ---- price + action ---- */
@@ -148,7 +150,7 @@
 .stubPrice {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-row-figure);
-	letter-spacing: 0.02em;
+	letter-spacing: 0;
 	line-height: 0.9;
 	color: var(--color-text);
 }
@@ -247,7 +249,7 @@
 	// The desktop wash is a raking highlight; a phone needs the lit row stated harder.
 	.stubLive::after {
 		background:
-			linear-gradient(104deg, rgba(255, 244, 232, 0.1) 0%, rgba(255, 240, 226, 0.045) 42%, transparent 86%);
+			linear-gradient(104deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.045) 42%, transparent 86%);
 	}
 }
 

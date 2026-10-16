@@ -15,7 +15,7 @@
 
 .metaItem {
 	position: relative;
-	@include mono(var(--fs-label-lg), 0.16em, uppercase);
+	@include mono(var(--fs-label-lg), 0.15em, uppercase);
 	color: var(--ink-muted);
 
 	& + .metaItem::before {
@@ -97,13 +97,13 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	filter: grayscale(1) contrast(1.06) brightness(0.92);
+	filter: grayscale(1) contrast(1.3) brightness(0.9);
 }
 
 .avatarMono {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-body-lg);
-	letter-spacing: 0.04em;
+	line-height: 1;
 	color: var(--ink-monogram-sm);
 	user-select: none;
 }
@@ -120,7 +120,7 @@
 }
 
 .speakerTag {
-	@include mono(var(--fs-label), 0.06em);
+	@include mono(var(--fs-label), 0.1em);
 	line-height: 1.45;
 	color: var(--ink-muted);
 }

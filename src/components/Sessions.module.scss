@@ -37,9 +37,9 @@
 
 .searchInput {
 	width: 100%;
-	@include mono(var(--fs-label-lg), 0.02em);
+	@include mono(var(--fs-label-lg), 0.1em);
 	color: var(--color-text);
-	background: linear-gradient(158deg, var(--panel-lit-2) 0%, #070707 90%);
+	background: linear-gradient(158deg, var(--panel-lit-2) 0%, var(--panel-lit) 90%);
 	// --field-border (not --rule) keeps the boundary >=3:1 over the dark fill (1.4.11).
 	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
@@ -64,7 +64,7 @@
 }
 
 .count {
-	@include mono(var(--fs-label-sm), 0.14em, uppercase);
+	@include mono(var(--fs-label-sm), 0.15em, uppercase);
 	color: var(--ink-muted);
 	white-space: nowrap;
 }
@@ -81,7 +81,7 @@
 // = muted mono; the red in this section belongs to the row under the pointer.
 .facetLabel {
 	flex-shrink: 0;
-	@include mono(var(--fs-label-sm), 0.22em, uppercase);
+	@include mono(var(--fs-label-sm), 0.2em, uppercase);
 	color: var(--ink-muted);
 	min-width: 4.5rem;
 }
@@ -93,7 +93,7 @@
 }
 
 .chip {
-	@include mono(var(--fs-label-sm), 0.04em);
+	@include mono(var(--fs-label-sm), 0.1em);
 	color: var(--color-grey);
 	background: rgba(255, 255, 255, 0.02);
 	// Square, never a pill; the boundary uses --field-border so an interactive filter
@@ -120,7 +120,7 @@
 .clear,
 .clearInline {
 	align-self: flex-start;
-	@include mono(var(--fs-label-sm), 0.14em, uppercase);
+	@include mono(var(--fs-label-sm), 0.15em, uppercase);
 	color: var(--ink-dim);
 	background: none;
 	border: none;
@@ -166,7 +166,7 @@
 		}
 
 		.avatarImg {
-			filter: grayscale(1) contrast(1.06) brightness(0.98);
+			filter: grayscale(1) contrast(1.3) brightness(0.96);
 		}
 
 		.avatarMore {
@@ -195,7 +195,7 @@
 // When and where leads the row: on a programme, the time is what a visitor
 // scans down. A step brighter than the track beside it, never red.
 .when {
-	@include mono(var(--fs-label-sm), 0.16em, uppercase);
+	@include mono(var(--fs-label-sm), 0.15em, uppercase);
 	color: var(--ink-soft);
 	font-variant-numeric: tabular-nums;
 	white-space: nowrap;
@@ -204,7 +204,7 @@
 // The track is muted, not accent-red: red on every row of a thirty-row list is
 // not a highlight.
 .kicker {
-	@include mono(var(--fs-label-sm), 0.22em, uppercase);
+	@include mono(var(--fs-label-sm), 0.2em, uppercase);
 	color: var(--ink-muted);
 	white-space: nowrap;
 	overflow: hidden;
@@ -264,9 +264,9 @@
 	border-radius: 50%;
 	object-fit: cover;
 	object-position: center 22%;
-	border: 1.5px solid #0B0B0B;
+	border: 1.5px solid var(--panel);
 	background: var(--panel-lit);
-	filter: grayscale(1) contrast(1.06) brightness(0.9);
+	filter: grayscale(1) contrast(1.3) brightness(0.88);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -285,7 +285,7 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	filter: grayscale(1) contrast(1.06) brightness(0.9);
+	filter: grayscale(1) contrast(1.3) brightness(0.88);
 }
 
 .avatarNone {
@@ -296,7 +296,7 @@
 .avatarMore {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-label-lg);
-	letter-spacing: 0.04em;
+	line-height: 1;
 	color: var(--ink-monogram-sm);
 	filter: none;
 }
@@ -305,14 +305,14 @@
 // accent once per row over thirty rows — texture, not a highlight. It sits in
 // the same well as the monogram beside it and now reads in the same ink.
 .avatarMore {
-	@include mono(var(--fs-label-xs));
+	@include mono(var(--fs-label-xs), 0.1em);
 	color: var(--ink-monogram-sm);
 }
 
 .names {
-	@include mono(var(--fs-label-sm), 0.02em);
-	line-height: 1.4;
-	color: var(--color-grey);
+	// Names are lore, not metadata: Special Elite in sentence case.
+	@include prose(var(--fs-label-lg), 1.4);
+	color: var(--ink-soft);
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
@@ -351,7 +351,7 @@
 // ("End of roll"); this one was the same statement in red, which made the one
 // row that is NOT a session the loudest thing in the list.
 .moreKicker {
-	@include mono(var(--fs-label-sm), 0.28em, uppercase);
+	@include mono(var(--fs-label-sm), 0.2em, uppercase);
 	color: var(--ink-muted);
 }
 

@@ -36,7 +36,7 @@
 .stepNumeral {
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: 2.5rem;
-	line-height: 0.84;
+	line-height: 0.9;
 	font-variant-numeric: tabular-nums;
 	color: rgba(255, 255, 255, 0.42);
 	transition: color 0.25s ease;
@@ -87,13 +87,13 @@
 }
 
 .stepHeadText {
-	@include mono(var(--fs-label), 0.22em, uppercase);
+	@include mono(var(--fs-label), 0.2em, uppercase);
 	font-weight: 500;
 	color: var(--color-text);
 }
 
 .statusWord {
-	@include mono(var(--fs-label-xs), 0.14em, uppercase);
+	@include mono(var(--fs-label-xs), 0.15em, uppercase);
 
 	&[data-tone='required'] {
 		color: var(--color-text);
@@ -171,7 +171,7 @@
 }
 
 .dropLabel {
-	@include mono(var(--fs-label-lg), 0.14em, uppercase);
+	@include mono(var(--fs-label-lg), 0.15em, uppercase);
 	color: var(--color-text);
 }
 
@@ -252,7 +252,7 @@
 }
 
 .photoMeta {
-	@include mono(var(--fs-label-xs), 0.14em, uppercase);
+	@include mono(var(--fs-label-xs), 0.15em, uppercase);
 	color: var(--color-grey);
 	font-variant-numeric: tabular-nums;
 }
@@ -271,7 +271,7 @@
 }
 
 .linkButton {
-	@include mono(var(--fs-label), 0.14em, uppercase);
+	@include mono(var(--fs-label), 0.15em, uppercase);
 	color: var(--ink-dim);
 	background: none;
 	border: 0;
@@ -426,7 +426,7 @@
 
 // Pinned to the far end of the step head's baseline.
 .stepCount {
-	@include mono(var(--fs-label-xs), 0.14em);
+	@include mono(var(--fs-label-xs), 0.15em);
 	font-variant-numeric: tabular-nums;
 	color: var(--ink-dim);
 	margin-left: auto;
@@ -472,7 +472,7 @@
 	pointer-events: none;
 
 	span {
-		@include mono(var(--fs-label), 0.24em, uppercase);
+		@include mono(var(--fs-label), 0.2em, uppercase);
 		font-weight: 500;
 		color: var(--color-text);
 	}

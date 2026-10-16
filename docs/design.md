@@ -5,7 +5,7 @@ colors:
   bg: "#000000"
   text: "#FFFFFF"
   cream: "#FFFFFF"
-  grey: "#8C8C8C"
+  grey: "rgba(255,255,255,0.55)"
   accent: "#F11000"
   accent-hot: "#F11000"
   error: "#F11000"
@@ -13,11 +13,11 @@ colors:
   on-accent-ink: "#FFFFFF"
   on-accent-border: "rgba(0,0,0,0.85)"
   on-accent-field: "#FFFFFF"
-  panel: "#0C0C0C"
-  panel-2: "#111111"
-  panel-hover: "#161616"
-  panel-lit: "#0A0A0A"
-  panel-lit-2: "#0E0E0E"
+  panel: "rgba(255,255,255,0.047)"
+  panel-2: "rgba(255,255,255,0.067)"
+  panel-hover: "rgba(255,255,255,0.086)"
+  panel-lit: "rgba(255,255,255,0.04)"
+  panel-lit-2: "rgba(255,255,255,0.055)"
   rule: "rgba(255,255,255,0.13)"
   rule-soft: "rgba(255,255,255,0.06)"
   rule-strong: "rgba(255,255,255,0.22)"
@@ -35,20 +35,20 @@ typography:
     fontFamily: "var(--font-bebas-neue), sans-serif"
     fontSize: "clamp(3rem, 9.5vw, 9rem)"
     fontWeight: 400
-    lineHeight: 0.84
-    letterSpacing: "0.005em"
+    lineHeight: 0.9
+    letterSpacing: "0"
   headline:
     fontFamily: "var(--font-bebas-neue), sans-serif"
     fontSize: "clamp(2.25rem, min(6vw, 9svh), 5.5rem)"
     fontWeight: 400
-    lineHeight: 0.84
-    letterSpacing: "0.005em"
+    lineHeight: 0.9
+    letterSpacing: "0"
   title:
     fontFamily: "var(--font-bebas-neue), sans-serif"
     fontSize: "clamp(1.7rem, min(4vw, 6svh), 3.4rem)"
     fontWeight: 400
-    lineHeight: 1.06
-    letterSpacing: "0.02em"
+    lineHeight: 1
+    letterSpacing: "0"
   lede:
     fontFamily: "var(--font-special-elite), cursive"
     fontSize: "clamp(1.2rem, 1.6vw, 1.5rem)"
@@ -63,17 +63,22 @@ typography:
     fontFamily: "var(--font-jetbrains-mono), monospace"
     fontSize: "0.78rem"
     fontWeight: 400
-    letterSpacing: "0.28em"
+    letterSpacing: "0.2em"
   label-lg:
     fontFamily: "var(--font-jetbrains-mono), monospace"
     fontSize: "0.84rem"
     fontWeight: 400
-    letterSpacing: "0.22em"
+    letterSpacing: "0.2em"
   label-xs:
     fontFamily: "var(--font-jetbrains-mono), monospace"
     fontSize: "0.6875rem"
     fontWeight: 400
-    letterSpacing: "0.14em"
+    letterSpacing: "0.15em"
+  cta:
+    fontFamily: "var(--font-jetbrains-mono), monospace"
+    fontSize: "1.17rem"
+    fontWeight: 700
+    letterSpacing: "0.12em"
 rounded:
   sharp: "2px"
 spacing:
@@ -86,8 +91,8 @@ spacing:
 components:
   button-primary:
     backgroundColor: "{colors.accent}"
-    textColor: "{colors.on-accent}"
-    typography: "{typography.label-lg}"
+    textColor: "{colors.text}"
+    typography: "{typography.cta}"
     rounded: "{rounded.sharp}"
     padding: "1.25rem min(2.8rem, 14vw)"
   button-primary-hover:
@@ -159,8 +164,8 @@ the durable reference.
 
 | | |
 | --- | --- |
-| `src/layouts/BaseLayout.scss` | all tokens (`:root`, lines 2–178), resets, global primitives. Injected `is:global`, so every `.astro` page and `.tsx` island uses the class names directly |
-| `src/styles/_type.scss` | the type recipes as mixins — `mono()`, `display()`, `row-title()`, `prose()`, `hairline-link()`. A CSS Module that cannot compose a global class includes the mixin instead |
+| `src/layouts/BaseLayout.scss` | all tokens (`:root`, lines 2–186), resets, global primitives. Injected `is:global`, so every `.astro` page and `.tsx` island uses the class names directly |
+| `src/styles/_type.scss` | the type recipes as mixins — `mono()`, `cta-label()`, `display()`, `row-title()`, `prose()`, `hairline-link()`. A CSS Module that cannot compose a global class includes the mixin instead |
 | `src/styles/_controls.scss` | control recipes — `lit-field()` |
 | `src/styles/_logos.scss` | partner-mark recipe — `partner-logo()` (original colours; `.logo--dark` on a paper card) |
 | `src/components/Sheet.module.scss`, `Print.module.scss` | shared chrome composed by more than one island (the detail sheets; the mounted 4:5 print) |
@@ -173,13 +178,30 @@ the durable reference.
 properties only. There is no `tailwind.config`, no theme object, and no runtime
 style library in `package.json`.
 
+## Brand manual v1.0
+
+The rules below trace to the **DevFest.cz 2026 Brand Manual v1.0**
+(`public/press-kit/DevFest.cz_2026_Brand_Manual.pdf`). A compliance pass
+brought the code in line; where a rule cites a page, it comes from here.
+
+| Page | Rule here |
+| --- | --- |
+| p. 03–07 | official logo files only; white mono on red; 180px digital minimum, never shrink (change the layout); no recolour, glow or overlay |
+| p. 08 | three colours; greys only as white or black at an opacity |
+| p. 09 | red marks details; large red only as title bars, red-toned backgrounds, primary CTAs; never running text |
+| p. 10 | Bebas uppercase at line-height 0.9–1.0, tracking 0; Special Elite sentence case; JetBrains Mono 400/500/700 at 0.1–0.2em |
+| p. 11 | mono buttons, CTA labels white on red; speaker names in Special Elite; one red mark per list |
+| p. 13 | photography B&W, high contrast |
+| p. 15 | partner logos keep their original colours |
+
 ## Color
 
 The palette follows the **DevFest.cz 2026 Brand Manual v1.0**
 (`public/press-kit/DevFest.cz_2026_Brand_Manual.pdf`, p. 08–09): three colours,
 no more. Noir Black `#000000`, Paper White `#FFFFFF`, Evidence Red `#F11000`.
-Greys exist only as white or black at an opacity; the solid neutrals below are
-those opacities flattened onto black, never a warm tint.
+Greys exist only as white or black at an opacity (manual p. 08): every neutral
+token below is an `rgba()` of white, never a tinted grey or a solid near-black
+hex (`BaseLayout.scss:3–5`).
 
 All tokens are declared in `BaseLayout.scss` `:root`.
 
@@ -188,16 +210,25 @@ All tokens are declared in `BaseLayout.scss` `:root`.
 | `--color-bg` | `#000000` | page ground |
 | `--color-text` | `#FFFFFF` | ink |
 | `--color-cream` | `#FFFFFF` | legacy alias of Paper White (paper cards, chips) |
-| `--color-grey` | `#8C8C8C` | muted meta (= 55% white) |
+| `--color-grey` | `rgba(255,255,255,0.55)` | muted meta |
 | `--color-accent` | `#F11000` | the accent — CTA fill, red bands, the reach field, red words |
 | `--color-accent-hot` | `#F11000` | focus rings, live status; same red, kept as a role |
-| `--color-error` | `#F11000` | **form-error text only** (4.8:1 on black) |
+| `--color-error` | `#F11000` | **form-error text only** (4.8:1 on black). Errors stay red: a state, not lore |
 | `--on-accent` | `#000000` | ink on the red field, any size |
 | `--on-accent-ink` | `#FFFFFF` | large type on red; ink on an inverted (black) control |
+| `--fs-cta` | `1.17rem` (18.7px) | the CTA label on red, white Bold: just over the 18.66px bold large-text line (`BaseLayout.scss:128–130`) |
 | `--on-accent-border` | `rgba(0,0,0,0.85)` | control boundary on the red field |
 
-Surfaces: `--panel` `#0C0C0C`, `--panel-2` `#111111`, `--panel-hover`
-`#161616`, `--panel-lit` `#0A0A0A`, `--panel-lit-2` `#0E0E0E`.
+Surfaces, white at an opacity over the black ground (`BaseLayout.scss:117–122`,
+`146–148`): `--panel` `0.047`, `--panel-2` `0.067`, `--panel-hover` `0.086`,
+`--panel-lit` `0.04`, `--panel-lit-2` `0.055`. Same look on `#000` as the old
+solid `#0C0C0C`…`#161616`. **[MUST]** A plate that must be opaque (a fixed bar
+over content) layers the token over `--color-bg`: the cookie banner is
+`linear-gradient(var(--panel-lit), var(--panel-lit)), var(--color-bg)`
+(`CookieBanner.scss:18`). Canvas-drawn plates (speaker / attending card
+monograms) fill black first, then the panel (`SpeakerCard.tsx:47–52`,
+`AttendingCard.tsx:41–46`), or they export see-through. The footer ground is
+`--color-bg` (`Footer.scss:7`).
 
 Hairlines: `--rule` `rgba(255,255,255,0.13)`, `--rule-soft` `0.06`,
 `--rule-strong` `0.22`, `--rule-red` `rgba(241,16,0,0.55)`,
@@ -221,8 +252,9 @@ raw literal.
 
 Atmosphere: `--lit` (the spotlight pool, `ellipse 78% 50% at 50% 38%`, gone
 by 72% so it fades out before the band's top and bottom edges: no seam
-against the section above, `BaseLayout.scss:147–151`), `--field-feather`, `--print-mount`, `--wash` /
-`--wash-strong` (the raking light a reached row / cell takes),
+against the section above, `BaseLayout.scss:155–159`), `--field-feather`, `--print-mount`, `--wash` /
+`--wash-strong` (the raking light a reached row / cell takes; pure white
+alphas, `163–164`),
 `--ink-monogram` `0.46` and `--ink-monogram-sm` `0.66`. No glow token and no
 page vignette token; the plate vignette is `.scene-vignette`'s own gradient.
 
@@ -231,9 +263,14 @@ an inverted fill for buttons, a border or ink change for rows and fields.
 
 **[MUST] Red is evidence, not mood.** Per the manual it marks details (a dot,
 1–2 words in a headline, the year, CTA words, stamps) and, as a large area,
-only title bars, red bands and primary CTA buttons. No red washes behind
-photographs, no red running text, no other accent hue, no red-to-other-hue
-gradients.
+only title bars, red-toned backgrounds and primary CTA buttons (see Open
+points on the flat red bands). No red washes behind photographs, no red
+running text, no other accent hue, no red-to-other-hue gradients.
+
+**[MUST] One red mark per list.** A list spends red once: the invoice step
+numbers are `--ink-muted` (`invoice.scss:39–45`), the ticket grant separator
+`--ink-faint` (`Tickets.module.scss:126–130`), so the live wave's state is the
+list's one red mark.
 
 | Use of `#F11000` | Allowed? |
 | --- | --- |
@@ -241,7 +278,7 @@ gradients.
 | display type, highlighted words, the year | yes |
 | a rule / keyline (`--rule-red`) | yes |
 | a focus indicator | yes — 4.8:1 on black |
-| body copy, lore, paragraphs | **no** — use `--color-text` |
+| body copy, lore, paragraphs, inline prose links | **no** — use `--color-text`; a prose link is white on the red hairline |
 
 **[MUST] `--color-error` is error prose only.** Never an accent, a fill or a
 rule.
@@ -256,11 +293,17 @@ SIZE, never from dimming:
 | --- | --- | --- |
 | `#000000` | 4.82:1 | anything, incl. small mono labels and body copy |
 | `#000000` @ 85% | ~4.2:1 | control boundaries only (1.4.11) |
-| `#FFFFFF` | 4.36:1 | large text only (Bebas headline on a red band) |
+| `#FFFFFF` | 4.36:1 | large text only (≥18.66px bold / 24px regular): Bebas headlines, the `cta-label` |
 
-So a CTA label on a red button is black; a red band's poster headline stays
-white with its one highlighted word in black; an inverted control on red is a
-black fill with white ink.
+**[MUST] A label on a red button is white JetBrains Mono Bold at `--fs-cta`.**
+Manual p. 11 sets CTA labels white on red; 4.36:1 clears AA only as large
+text, so the `cta-label` mixin (`_type.scss:11–14`: `--fs-cta`, `0.12em`,
+uppercase, weight 700) is the floor. **Never shrink it** or drop the weight.
+Callers: `.btn-primary` (`BaseLayout.scss:589`), the header Tickets
+(`Menu.scss:191`), the newsletter button (`NewsletterForm.module.scss:68`);
+the cookie buttons take its size and tracking (`CookieBanner.scss:72–73`).
+A red band's poster headline stays white with its one highlighted word in
+black; an inverted control on red is a black fill with white ink.
 
 **[MUST] No translucent field fills on the red band.** A contrast checker
 resolves a placeholder against the band *behind* an `rgba()` fill, so the
@@ -290,15 +333,15 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:72–106
 | --- | --- | --- | --- | --- |
 | `--font-bebas-neue` | Bebas Neue | 400 | 73–80 | every headline at `--fs-h3` and above: hero, section titles, nav destinations, figures, prices, row titles, speaker-grid names |
 | `--font-special-elite` | Special Elite | 400 | 89–105 | body, lede and long-form reading copy. Texture, never a headline |
-| `--font-jetbrains-mono` | JetBrains Mono | 400, 500 | 81–88 | labels, eyebrows, meta, counts, buttons, status words |
+| `--font-jetbrains-mono` | JetBrains Mono | 400, 500, 700 | 81–88 | labels, eyebrows, meta, counts, buttons, status words; 700 only for `cta-label` |
 
 - **[MUST] Only these three families** (`BaseLayout.scss:16–18`).
 - **[MUST] Reference the injected variable, never a literal family name** —
   the resolved family is a build-time hash (`BaseLayout.scss:16–18`). Keep a
   generic fallback: `var(--font-jetbrains-mono), monospace`.
 - **[MUST] Go through the recipe, not the raw declaration.** `_type.scss`
-  has `mono($size, $track, $case)`, `display($size)`, `row-title($size)`,
-  `prose($size, $lh)` and `hairline-link($color)`; a stylesheet that writes
+  has `mono($size, $track, $case)`, `cta-label`, `display($size)`,
+  `row-title($size)`, `prose($size, $lh)` and `hairline-link($color)`; a stylesheet that writes
   `font-family: var(--font-…)` by hand is re-implementing one of them.
 - **[MUST] Roles do not mix.** Special Elite is wide; Bebas is condensed and
   is what makes the poster scale fit the column.
@@ -310,7 +353,8 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:72–106
   metric fallback was Arial at 117%, which printed "Libčice" as "LibČice".
   Never add a `subsets` entry or a fourth face to fix a glyph.
 - **[MUST] No synthesised bold or italic.** `body { font-synthesis: none }`.
-  Every face ships one weight (JetBrains Mono two) and no italic; emphasis in
+  Every face ships one weight (JetBrains Mono three: 400, 500, and 700 for
+  the CTA label) and no italic; emphasis in
   prose is ink — `strong` / `b` step up to `--color-text` — never weight or
   slant. Don't write `font-style: italic`.
 
@@ -356,21 +400,26 @@ Text scale, `BaseLayout.scss:80–89`:
 **[MUST] Mono labels never set under 11px.** `--fs-label-xs` is the floor;
 there is no smaller mono step.
 
-**[MUST]** Display type uses `--lh-display` (`0.84`, line 92) and
-`--track-display` (`0.005em`, line 93), never a per-file `line-height`, and
-no `text-shadow`.
+**[MUST] Bebas sets at line-height 0.9–1.0, tracking 0, uppercase** (manual
+p. 10). Display type uses `--lh-display` (`0.9`, line 93) and
+`--track-display` (`0`, line 94), never a per-file `line-height`, and no
+`text-shadow`; `row-title()` sets `line-height: 1`, `letter-spacing: 0`
+(`_type.scss:50–57`). No Bebas rule carries a `letter-spacing` of its own.
 
-**[CURRENT]** Mono labels are uppercase at `0.22em`–`0.24em` tracking.
+**[MUST] JetBrains Mono tracks at `0.1em`, `0.15em` or `0.2em`** (manual
+p. 10: 0.1–0.2em). The CTA label's `0.12em` is the one in-range exception.
+Mono labels are uppercase by CSS. Stragglers: see Open points.
 
 **[MUST] Phones take their own list step and tracking.** At ≤600px the
 `:root` phone block (last in `:root`, so it wins over the base steps) sets
 the row steps above to their phone values and `--track-scale: 0.72`; the
-`mono()` mixin multiplies its tracking by `--track-scale`, so a 0.24em label
-sets at ~0.17em on a phone. `--fs-h2` and `--fs-display` keep their floors: the section head and the page title stay poster scale while
+`mono()` mixin multiplies its tracking by `--track-scale` and floors the
+result at `0.1em` (`max(0.1em, …)`, `_type.scss:24–26`), so a 0.2em label
+sets at 0.144em on a phone and a 0.1em one stays at 0.1em. `--fs-h2` and `--fs-display` keep their floors: the section head and the page title stay poster scale while
 the lists under them come down.
 
 **[MUST] Body text caps at 65–75ch.** Cap the container, don't shrink the
-type. `0.06em` letter-spacing is for short uppercase labels only.
+type. Mono never tracks under `0.1em`, a sentence-case mono line included.
 
 **[MUST] Speaker-sheet prose sets ragged at every width.** The bio and the
 talk line under it are `text-align: left; hyphens: manual`
@@ -387,9 +436,9 @@ with `hyphens: auto` above 600px and ragged at ≤600px
 | `--gutter` | `min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw)` | 29 | page gutter; also the negative inset for full-bleed row fields |
 | `--section-y-tight` | `clamp(3.75rem, 6vw, 6.5rem)` | 32 | a cut |
 | `--section-y` | `clamp(6rem, 10vw, 11rem)` | 33 | the normal beat |
-| `--section-y-wide` | `clamp(8.5rem, 15vw, 17rem)`; `6.5rem` ≤600px | 34, 176 | a held shot before something that matters |
+| `--section-y-wide` | `clamp(8.5rem, 15vw, 17rem)`; `6.5rem` ≤600px | 34, 184 | a held shot before something that matters |
 | `--radius` | `2px` | 57 | **[MUST]** sharp corners — never pill-shaped |
-| `--focus-gap-tight` / `--focus-gap` / `--focus-gap-lg` | `2px` / `3px` / `4px` | 129–131 | focus-ring standoff, see Accessibility |
+| `--focus-gap-tight` / `--focus-gap` / `--focus-gap-lg` | `2px` / `3px` / `4px` | 136–138 | focus-ring standoff, see Accessibility |
 
 **[MUST] Large screens scale, they do not widen.** Up to 1920px the root is
 the browser default. Past it `html` grows the root linearly
@@ -402,12 +451,12 @@ floors and physical sizes (the 44px tap target, hairlines) only.
 
 **[MUST] Three section densities, not one** (`BaseLayout.scss:31–34`).
 
-**[MUST] Row rhythm is `--field-step` on the row** (`BaseLayout.scss:682–696`):
+**[MUST] Row rhythm is `--field-step` on the row** (`BaseLayout.scss:686–700`):
 `clamp(1.9rem, 2.8vw, 2.5rem)` default, `clamp(2.25rem, 3.6vw, 3.25rem)` for
 `--short`. Vertical only.
 
 **[MUST] `.anchor-target` cancels a section's opening air with a negative
-`scroll-margin-top` reading `--section-air`** (`BaseLayout.scss:431–433`), the
+`scroll-margin-top` reading `--section-air`** (`BaseLayout.scss:439–441`), the
 same variable the padding is built from. `--header-h` is the single source
 for the bar height. `src/lib/anchor.ts` keeps a jump landed while islands
 grow the page; its click handler must **not** check `event.defaultPrevented`
@@ -428,8 +477,9 @@ value from the histogram.
 | `max-width: 860px` | 5 | header / hero |
 | `max-width: 720px` | 5 | mid collapse |
 | `max-width: 500px` | 4 | small phone — 2× `500px` + 2× `31.25em` (`Footer.scss:76,148`) |
-| `max-width: 380px` | 3 | narrowest phone |
-| `max-width: 760px` / `759px` | 2 | the home credits drop their portrait (`SpeakersTeaser.module.scss:152`); the speaker grid's names step down (`Speakers.module.scss:90`) |
+| `max-width: 380px` | 2 | narrowest phone (`BaseLayout.scss:46` header padding, `Countdown.module.scss:104`) |
+| `max-width: 383.98px` | 1 | the header Tickets leaves the bar (`Menu.scss:571`) |
+| `max-width: 760px` / `759px` | 2 | the home credits drop their portrait (`SpeakersTeaser.module.scss:152`); the speaker grid's names step down (`Speakers.module.scss:70`) |
 | `max-width: 700px` | 2 | `venue.scss:53`, `thank-you.scss:70` |
 | `max-width: 1100px` | 1 | the calendar stub folds to two columns (`thank-you.scss:58`) |
 | `max-width: 1000px` | 1 | widest collapse (`index.scss:546`) |
@@ -437,7 +487,7 @@ value from the histogram.
 | `max-width: 960px` | 1 | `60em`, `Footer.scss:67` |
 
 **[CURRENT]** `min-width` queries exist: `901px` ×6 (`index.scss` ×5, the
-menu's two-column overlay `Menu.scss:366`), `601px` ×2 (`Menu.scss:222`,
+menu's two-column overlay `Menu.scss:363`), `601px` ×2 (`Menu.scss:219`,
 `invite/member.scss:164`), the speaker grid's `760px` / `1100px`
 (`Speakers.module.scss:15`, `20`), the press kit's `640px` / `1100px`
 (`press/downloads.scss:26`, `30`), and the `1921px` root scale ×3 — see
@@ -458,15 +508,15 @@ with all destinations behind one toggle at every width (`Menu.scss:1–13`).
 | `10060` | a sheet stacked on another sheet (speaker opened from a session) | `SpeakerDetail.module.scss:7` (`--sheet-z`) |
 | `10050` | detail sheet (default `--sheet-z`) | `Sheet.module.scss:18` |
 | `10001` | fixed site header | `Menu.scss:11` |
-| `10001` | `.skip-link` | `BaseLayout.scss:270` |
-| `10000` | cookie banner | `CookieBanner.scss:19` |
-| `10000` | `.status-bar-cover` (iOS safe-area paint) | `BaseLayout.scss:853` |
+| `10001` | `.skip-link` | `BaseLayout.scss:278` |
+| `10000` | cookie banner | `CookieBanner.scss:20` |
+| `10000` | `.status-bar-cover` (iOS safe-area paint) | `BaseLayout.scss:857` |
 | `10` | subpage hero content over its photograph | `SubpageHero.scss:27` |
-| `0`–`4` | in-component ordering only (Agenda columns, Tickets wave; the header mark at 2 over the open menu panel at 1, `Menu.scss`; inside a scene: plate, `.scene-vignette` 1 (3 in `SubpageHero`), film grain 2) | local modules, `BaseLayout.scss:800–824` |
-| `-1` | a row's full-bleed reach field / wash, under the row's own content | `BaseLayout.scss:709`, `759` |
+| `0`–`4` | in-component ordering only (Agenda columns, Tickets wave; the header mark at 2 over the open menu panel at 1, `Menu.scss`; inside a scene: plate, `.scene-vignette` 1 (3 in `SubpageHero`), film grain 2) | local modules, `BaseLayout.scss:804–828` |
+| `-1` | a row's full-bleed reach field / wash, under the row's own content | `BaseLayout.scss:713`, `763` |
 
 **[MUST] Grain lives on the photograph.** The film grain is
-`.scene:has(> .scene-vignette)::before` (`BaseLayout.scss:812`), z `2` inside
+`.scene:has(> .scene-vignette)::before` (`BaseLayout.scss:816`), z `2` inside
 the scene, static, `pointer-events: none`: only a scene that carries a plate
 (home hero, subpage hero, invite) takes it. No page-level grain or vignette
 overlay.
@@ -475,11 +525,11 @@ overlay.
 — any positioned ancestor with a z-index traps it under the header.
 
 **[MUST] A row painting a `z-index: -1` layer needs `isolation: isolate`**
-(`BaseLayout.scss:685–686`). A second full-bleed layer uses `::after` —
+(`BaseLayout.scss:689–690`). A second full-bleed layer uses `::after` —
 `--link` / `--holds` own `::before`.
 
 **[MUST] Any full-bleed `::before` on a row is feathered** with
-`mask-image: var(--field-feather)` (`BaseLayout.scss:158`, applied `763–764`). The red reach
+`mask-image: var(--field-feather)` (`BaseLayout.scss:166`, applied `767–768`). The red reach
 field is the one exception.
 
 **[MUST] Decorative overlays are `pointer-events: none`** and stay inside
@@ -492,13 +542,13 @@ its call site. The de-facto scale, by frequency:
 
 | Duration | Where |
 | --- | --- |
-| `0.2s` (dominant, ~68 uses) | the standard control transition: buttons, inputs, links (`BaseLayout.scss:604`, `_type.scss:63`) |
+| `0.2s` (dominant, ~68 uses) | the standard control transition: buttons, inputs, links (`BaseLayout.scss:608`, `_type.scss:75`) |
 | `0.15s` | the header mark / Tickets hiding under the home hero (`Menu.scss`), a partner mark lighting (`_logos.scss`) |
-| `0.28s` | the row reach field's colour + opacity fade (`BaseLayout.scss:700`, `710`) |
-| `0.3s` | the warm wash opacity, cookie banner (`BaseLayout.scss:760`, `CookieBanner.scss:23`) |
-| `0.32s` | the row pull (`translateX`) and the sheet entry (`BaseLayout.scss:750`, `Sheet.module.scss:23`) |
-| `0.6s` | a B&W photograph developing to colour (`index.scss:379`, `475`: mill plate, gallery; `venue.scss:32`: venue photos; `Print.module.scss:42`: speaker plates) |
-| `1.3s` / `1.6s` infinite | loading pulse and skeleton shimmer while data loads (`DataState.module.scss:41`, `55`; `Tickets.module.scss:303`, `325`) |
+| `0.28s` | the row reach field's colour + opacity fade (`BaseLayout.scss:704`, `714`) |
+| `0.3s` | the wash opacity, cookie banner (`BaseLayout.scss:764`, `CookieBanner.scss:24`) |
+| `0.32s` | the row pull (`translateX`) and the sheet entry (`BaseLayout.scss:754`, `Sheet.module.scss:23`) |
+| `0.6s` | a B&W photograph developing to colour (`index.scss:377`, `474`: mill plate, gallery; `venue.scss:32`: venue photos; `Print.module.scss:42`: speaker plates) |
+| `1.3s` / `1.6s` infinite | loading pulse and skeleton shimmer while data loads (`DataState.module.scss:41`, `55`; `Tickets.module.scss:305`, `327`) |
 
 | Easing | Where |
 | --- | --- |
@@ -511,8 +561,8 @@ its call site. The de-facto scale, by frequency:
 Rules:
 
 - **[MUST] Every animation and transition has a `prefers-reduced-motion:
-  reduce` opt-out**, including `scroll-behavior` (`BaseLayout.scss:217–221`),
-  row transitions (`778–790`), sheet (`Sheet.module.scss:162`).
+  reduce` opt-out**, including `scroll-behavior` (`BaseLayout.scss:225–229`),
+  row transitions (`782–794`), sheet (`Sheet.module.scss:162`).
 - **[MUST] No scroll reveal, no per-section entrance.** Sections are simply
   there. The `.reveal` fade-and-rise on every band was removed: the same
   entrance seventeen times spent the page's motion before anything happened.
@@ -530,54 +580,55 @@ Rules:
 - **[MUST] Nothing moves on its own except the home hero's topic rotor and
   the countdown.** The ticker band is gone (component deleted). The rotor sits between the statement and
   the actions at every width, phones included, under a mono `--fs-label`
-  "On the programme" caption in `--ink-muted` (`index.scss:108–114`,
+  "On the programme" caption in `--ink-muted` (`index.scss:107–113`,
   `aria-hidden`; the group's `aria-label` repeats it with the set);
   hover/focus holds it. The agenda's live dot is static: the "Live now" word
   carries the state. The gallery is a static collage: nothing scrolls,
   nothing marquees (see Anatomy).
 - **[MUST] Animate only `opacity` and `transform`.**
-- **[MUST] No `translateX` on the red reach field** (`BaseLayout.scss:698–699`);
-  the pull belongs to the warm wash.
-- **[CURRENT]** The grain is static, not animated (`BaseLayout.scss:812`).
+- **[MUST] No `translateX` on the red reach field** (`BaseLayout.scss:702`);
+  the pull belongs to the wash.
+- **[CURRENT]** The grain is static, not animated (`BaseLayout.scss:816`).
 
 ## Component states
 
 **[MUST] Hover paints, focus rings.** Never paint the reach field on `:focus`
-— it persists after a sheet closes (`BaseLayout.scss:713–720`). **[MUST]
+— it persists after a sheet closes (`BaseLayout.scss:717–724`). **[MUST]
 Hover painting sits under `@media (hover: hover)`**: on touch a tap left the
-red field painted (`716`, `724`, `741`).
+red field painted (`720`, `728`, `745`).
 
-`.btn-primary` (`BaseLayout.scss:576–613`):
+`.btn-primary` (`BaseLayout.scss:582–617`):
 
 | State | Treatment |
 | --- | --- |
-| rest | `--color-accent` fill, `--on-accent` ink at weight 500 and `0.16em` tracking (thin, wide-set black on red read faint), 1px accent border, `--radius` |
+| rest | `--color-accent` fill, white `--color-text` label via `cta-label` (Bold 700, `--fs-cta`, `0.12em`; see Color), 1px accent border, `--radius` |
 | hover | fill and border → `--color-text`, label → `--color-bg`. No lift, no glow, no shadow |
 | focus-visible | `2px solid var(--color-accent-hot)` at `--focus-gap` |
 | disabled | not styled globally — see the form buttons below |
 
-`.btn-ghost` (`BaseLayout.scss:615–642`): transparent, `--field-border` border;
+`.btn-ghost` (`BaseLayout.scss:619–646`): transparent, `--field-border` border;
 hover/focus brighten to `--color-text`, `gap` `0.6rem → 0.85rem`.
 
-**[MUST] On `.band--accent` both buttons invert** (`BaseLayout.scss:485–511`),
+**[MUST] On `.band--accent` both buttons invert** (`BaseLayout.scss:491–517`),
 black fill with white ink, white fill with black ink on hover, flat; focus-visible
-to black (`513–515`). The newsletter button follows `.btn-primary`: inverted
-fill on hover, no shadow on either ground, nothing glows or moves
-(`NewsletterForm.module.scss:73–78`, `228–233`).
+to black (`519–521`). The newsletter button and the header Tickets follow
+`.btn-primary`: white `cta-label` on red, inverted fill on hover, no shadow on
+either ground, nothing glows or moves (`NewsletterForm.module.scss:62–78`,
+`234–249`; `Menu.scss:187–217`).
 
 **Live state is a red border, nothing more.** The agenda's now line
 (`.nowLine`) is a 2px `--color-accent-hot` top border; the session on now
 (`.cellLive`) turns its 1px top border `--color-accent`. Neither carries a
-shadow (`Agenda.module.scss:518`, `589–591`). The live dot (`.liveDot`,
-`580`) is a static 5px red dot, no pulse, no ring.
+shadow (`Agenda.module.scss:517`, `588–590`). The live dot (`.liveDot`,
+`579`) is a static 5px red dot, no pulse, no ring.
 
 `.field-row` reach states — **[MUST] chosen by whether the row IS the
 control**:
 
 | The row | Rest | Hover | Focus |
 | --- | --- | --- | --- |
-| **IS** the control (`--link`: sessions, clippings, agenda entries — a real `<button>` / `<a>`) | field at `opacity: 0` | `::before` inset `0 calc(-1 * var(--gutter))`, `--color-accent`, opacity → 1 over `0.28s`; **every** ink goes full black `--on-accent` (`724–732`) | ring `2px solid --color-accent-hot` at `--focus-gap-tight` (4.8:1); if hovered **and** focused the ring inverts to black — red on red is not a ring (`735–745`) |
-| **CONTAINS** a control (`--holds`: ticket waves, contact/press desks, `NextStep` rows) | wash at `opacity: 0` | feathered `104deg` warm wash → 1, plus `translateX(0.6rem)`; also fires on `:focus-within` (`767–775`) | the inner control carries the ring |
+| **IS** the control (`--link`: sessions, clippings, agenda entries — a real `<button>` / `<a>`) | field at `opacity: 0` | `::before` inset `0 calc(-1 * var(--gutter))`, `--color-accent`, opacity → 1 over `0.28s`; **every** ink goes full black `--on-accent` (`728–736`) | ring `2px solid --color-accent-hot` at `--focus-gap-tight` (4.8:1); if hovered **and** focused the ring inverts to black — red on red is not a ring (`739–749`) |
+| **CONTAINS** a control (`--holds`: ticket waves, contact/press desks, `NextStep` rows) | wash at `opacity: 0` | feathered `104deg` white wash → 1, plus `translateX(0.6rem)`; also fires on `:focus-within` (`771–779`) | the inner control carries the ring |
 
 The FAQ `<summary>` is a plain `.field-row`, not `--link`: a red block under
 a toggle stayed lit after a tap. Its reach state is the question and marker
@@ -586,8 +637,8 @@ inset ring (`outline-offset: -2px`) plus the same red text
 (`faq.scss:90–106`).
 
 **[MUST] Red is spent once per list, not once per row.** Resting row labels
-are muted mono `rgba(255,255,255,0.55)`. Exception: the on-sale wave's lit
-ground.
+are muted mono `rgba(255,255,255,0.55)`; step numbers and separators are
+muted too (see Color). Exception: the on-sale wave's lit ground and state.
 
 **[MUST] An open `<details>` does not hold the red field** — it takes a flat
 `--panel-lit` ground (no wash, no feather) inside the question column, not
@@ -596,19 +647,19 @@ full-bleed, and the turned marker; question and answer share one side inset
 `127–129`, `132–137`).
 
 **[MUST] No opacity-based "inactive" state on content** — status is a word,
-not a fade (`BaseLayout.scss:665–670`).
+not a fade (`BaseLayout.scss:669–674`).
 
 **[CURRENT] Disabled controls:** the newsletter submit (`disabled` until
 consent) takes a dedicated `--panel-hover` / 60% white pair, not a fade
 (`NewsletterForm.module.scss:80–88`); the invoice submit dims to
 `opacity: 0.55` only while in flight (`[aria-disabled='true']`,
-`InvoiceForm.module.scss:182–183`); `/partners` marks a not-yet-live CTA with
+`InvoiceForm.module.scss:178–179`); `/partners` marks a not-yet-live CTA with
 `aria-disabled="true"` on a `<span>` (`partners.astro:103`). See Open points.
 
-**Loading / empty / error [CURRENT]:** skeleton (`Tickets.module.scss:254–325`)
+**Loading / empty / error [CURRENT]:** skeleton (`Tickets.module.scss:256–327`)
 or the `DataState.tsx` loading pulse, then content or the shared `DataState.tsx`
 `ErrorState`. **[MUST]** Every data-backed page ships a `.fallback-note`
-(`BaseLayout.scss:415`) — except `/`, see Open points.
+(`BaseLayout.scss:423`) — except `/`, see Open points.
 
 ## Forms & errors
 
@@ -617,12 +668,12 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 
 - **[MUST] Control boundary is `--field-border`** at rest (≥3:1;
   `lit-field()` `_controls.scss:15`, `NewsletterForm.module.scss:24`). Not `--rule`.
-- **[MUST] Focus warms the boundary to `--color-accent-hot`** **and** keyboard
+- **[MUST] Focus turns the boundary `--color-accent-hot`** **and** keyboard
   focus gets the ring at `--focus-gap-tight` (`_controls.scss:22–31`).
   Never `outline: none` on an input.
 - **[MUST] Minimum control height `2.75rem`** (`_controls.scss:13`).
 - **[MUST] Error text is `--color-error`** on a `data-tone="error"` element
-  reserving `min-height: 1.2em` (`InvoiceForm.module.scss:197–205`).
+  reserving `min-height: 1.2em` (`InvoiceForm.module.scss:193–202`).
 - **[MUST] A submit button is never `disabled` for a missing input.**
   Validation runs on blur and first submit; a failed submit focuses the first
   bad field (`InvoiceForm.tsx`, `validate()`). `aria-disabled` covers only the
@@ -653,7 +704,7 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 
 ## Images & media
 
-- **[MUST] The photograph well is 4:5** (`.print`, `BaseLayout.scss:383`;
+- **[MUST] The photograph well is 4:5** (`.print`, `BaseLayout.scss:391`;
   `Print.module.scss:24`, the plate the speaker grid and the home credits
   share).
 - **[CURRENT] Other ratios in use:** `16 / 9` press clippings on `/contact`
@@ -670,13 +721,29 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   `src/assets/logo.png` is `public/press-kit/DF26_logo_white_and_red_dot.png`
   (3000×600, clear space built into the artboard, 2026 badge included);
   share cards on a red band use `src/assets/logo-mono-white.png`
-  (`DF26_logo_white.png`), the manual's only version on red. Never tint,
-  recolour, crop the badge or retype the wordmark (manual p. 03–07).
-- **[MUST] Logo minimum: 180px wide for the logo itself** — 188–190px for the
-  artboard (header 38px tall, hero 188px floor, footer
-  `clamp(188px, 18vw, 12.75rem)`, `Footer.scss:38–43`). Never typeset the
-  name as a second wordmark. Where a bar has no room, the image shrinks
-  within `max-width: 100%` rather than distorting.
+  (`DF26_logo_white.png`), the manual's only version on red. Both mono files
+  are pure `#FFFFFF`, alpha as supplied. Never tint, recolour, crop the badge
+  or retype the wordmark (manual p. 03–07).
+- **[MUST] Nothing dims or covers the logo.** No opacity change on hover or
+  focus, header or footer: keyboard focus draws the ring around the link
+  (`Menu.scss:103–105`; `Footer.scss:26–37`, its own ring at
+  `--focus-gap-lg`). No darkening overlay over it: the invite OG card
+  composites the logo layer after the vignette, so it lands at full white
+  (`og/invite/[member].jpg.ts:287–302`).
+- **[MUST] Logo minimum: 180px wide for the logo itself** (manual, digital) —
+  188–190px for the artboard (header 38px tall = 190px, hero 188px floor,
+  footer `clamp(188px, 18vw, 12.75rem)`, `Footer.scss:39–44`). Never typeset
+  the name as a second wordmark.
+- **[MUST] The header logo never shrinks.** `.brand-logo` is `max-width:
+  none` (`Menu.scss:122–133`); the brand track floors at `max-content`
+  (`grid-template-columns: minmax(max-content, 1fr) …`, `Menu.scss:18`;
+  `max-content minmax(0, 1fr)` ≤860px, `529`;
+  `.brand` `min-width: max-content`, `90`). The bar gives way instead: ≤600px
+  a tighter inset (`min(var(--gutter), 3.2vw)`), `0.5rem` / `0.375rem` gaps
+  and a square toggle (`Menu.scss:543–565`); under 384px the header Tickets
+  is hidden (`571–575`) and stays the first menu line (`Menu.astro:30`). That
+  is the only way to keep the full logo and an AA-sized CTA label in one row
+  at 320 / 360px.
 - **[MUST] The standalone symbol is white or dark only** (favicons, app
   icons); never red.
 - **[MUST] Partner and press logos are `object-fit: contain`** — never cropped
@@ -718,7 +785,15 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   ≈190×38, a square glyph ≈75×75). `plated` is a per-partner flag (a larger
   box for a master with its padding baked in), not a tier inversion.
 - **[MUST] A missing photograph falls back to initials** at `--ink-monogram` /
-  `--ink-monogram-sm` (4.21:1 / 7.71:1, `BaseLayout.scss:142–145`).
+  `--ink-monogram-sm` (4.21:1 / 7.71:1, `BaseLayout.scss:150–153`).
+- **[MUST] Photography is B&W at high contrast** (manual p. 13). The gallery
+  rests at `grayscale(1) contrast(1.3) brightness(0.78)` (`index.scss:473`);
+  avatars and the session sheet's speaker thumb at `contrast(1.3)`
+  (`Agenda.module.scss:415`, `Sessions.module.scss:169`, `269`, `288`,
+  `SessionDetail.module.scss:100`). **[CURRENT]** The speaker prints, the
+  speaker-sheet plate, `/team` and the hero plate still rest at
+  `contrast(1.12–1.14)`; the mill and venue plates at `1.35` (see Open
+  points).
 - **[MUST] Every `<img>` below the fold is `loading="lazy" decoding="async"`**
   with intrinsic `width`/`height`; above the fold `eager`. Local assets use
   Astro `<Image>` with `layout: 'constrained'`, `responsiveStyles: true`
@@ -726,7 +801,9 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 - **[MUST] Decorative images take `alt=""`** (`contact.astro:76`,
   `press/downloads.astro:60`). The home gallery's six frames carry real
   `alt` text: they are the content of "Look back" (`index.astro:33–40`).
-- **[CURRENT]** Imagery is `.webp`; OG card `.jpg` 1200×630; the mill plate
+- **[CURRENT]** Imagery is `.webp`; OG card `.jpg` 1200×630
+  (`public/og-image.jpg`: "30 OCT 2026" with only "2026" red, the official
+  white red-dot logo, a white CTA label on red); the mill plate
   is `src/assets/venue/uhelny-mlyn-chimney.jpg`. **[MUST]** The detective key
   art, `/hero-detective.webp`, is the home hero and the default subpage plate
   (`HeroBackground.scss:15`); a page about the event may swap in a documentary
@@ -757,24 +834,24 @@ Primitives, all in `BaseLayout.scss`:
 
 | Class | Line | What it is |
 | --- | --- | --- |
-| `.u-container` | 317 | centred column at `--maxw` with the page gutter |
-| `.page-stack` | 395 | every page's `<main>` |
-| `.band` (+ `--accent` 451, `--lit` 457) / `.band-inner` | 439 / 468 | a section's ground. `--accent` **at most once per page**; `--lit` is the subpage ground |
-| `.eyebrow` | 325 | plain mono section label — no decoration, no trailing hairline; also the head of a `NextStepList` |
-| `.display` (+ `.red` 344) | 334 | poster headline; `.red` only on the home hero statement (see Structural rules) |
-| `.head-split` / `.head-title` / `.head-note` | 350 / 359 / 363 | two-column section head: statement left, one line right |
-| `.head-stack` | 402 | the one-column section head, closed by space (no hairline) |
-| `.print` | 383 | the mounted photograph well at 4:5 |
-| `.fallback-note` | 415 | the no-JS / endpoint-down prose |
-| `.anchor-target` | 431 | a jump lands on the section head |
-| `.closer` family | 517 | the closing statement (see `Closer.astro`) |
-| `.btn-primary` / `.btn-ghost` | 576 / 615 | the two buttons |
-| `.hairline-link` | 649 | **the** "see all" / next-step link: white mono `--fs-label-lg` label on a `--rule-red` hairline, lit to `--color-accent-hot` on hover/focus. Never a grey or plain variant. Inline prose links may include the mixin as `hairline-link(var(--color-accent-hot))` without the label voice (`faq.scss:148`, `privacy-policy.scss:44`) |
-| `.field` / `.field-row` (+ `--short` 694, `--link` 699, `--holds` 749) | 672 / 682 | the open-field list and row |
-| `.record-status` | 794 | the last survivor of the retired `.ledger` / `.record` family |
-| `.scene` / `.scene-vignette` | 800 / 801 | a photographed scene: plate, vignette, film grain (`::before`, 812) |
-| `.skip-link` / `.sr-only` | 260 / 303 | see Accessibility |
-| `.status-bar-cover` | 846 | iOS safe-area paint |
+| `.u-container` | 325 | centred column at `--maxw` with the page gutter |
+| `.page-stack` | 403 | every page's `<main>` |
+| `.band` (+ `--accent` 459, `--lit` 465) / `.band-inner` | 447 / 474 | a section's ground. `--accent` **at most once per page**; `--lit` is the subpage ground |
+| `.eyebrow` | 333 | plain mono section label — no decoration, no trailing hairline; also the head of a `NextStepList` |
+| `.display` (+ `.red` 352) | 342 | poster headline; `.red` only on the home hero statement (see Structural rules) |
+| `.head-split` / `.head-title` / `.head-note` | 358 / 367 / 371 | two-column section head: statement left, one line right |
+| `.head-stack` | 410 | the one-column section head, closed by space (no hairline) |
+| `.print` | 391 | the mounted photograph well at 4:5 |
+| `.fallback-note` | 423 | the no-JS / endpoint-down prose |
+| `.anchor-target` | 439 | a jump lands on the section head |
+| `.closer` family | 523 | the closing statement (see `Closer.astro`) |
+| `.btn-primary` / `.btn-ghost` | 582 / 619 | the two buttons |
+| `.hairline-link` | 653 | **the** "see all" / next-step link: white mono `--fs-label-lg` label on a `--rule-red` hairline, lit to `--color-accent-hot` on hover/focus. Never a grey or plain variant. **[MUST]** Inline prose links include the default mixin (white text, red hairline) without the label voice, never a red-text variant: red is not running text (`faq.scss:147–150`, `privacy-policy.scss:43–46`) |
+| `.field` / `.field-row` (+ `--short` 698, `--link` 703, `--holds` 753) | 676 / 686 | the open-field list and row |
+| `.record-status` | 798 | the last survivor of the retired `.ledger` / `.record` family |
+| `.scene` / `.scene-vignette` | 804 / 805 | a photographed scene: plate, vignette, film grain (`::before`, 816) |
+| `.skip-link` / `.sr-only` | 268 / 311 | see Accessibility |
+| `.status-bar-cover` | 850 | iOS safe-area paint |
 
 Shared components: `Desk.astro` (one inbox), `SubpageHero.astro` (takes
 `focus` and a `plate`), `HeroBackground.astro` (takes a `focus` crop and a
@@ -849,7 +926,9 @@ and
   (`SpeakerDetail.tsx:9–31`, `SpeakerDetail.module.scss:56–89`).
 - **Sessions** (`Sessions`, "Every talk") — an unscheduled talk shows
   "Time TBA" (plus the room if it has one) where the time goes
-  (`Sessions.tsx:25`). Card avatars put the initials **under** each photo,
+  (`Sessions.tsx:25`). Speaker names under a row are lore, not metadata:
+  Special Elite via `prose(--fs-label-lg)`, `--ink-soft`, sentence case
+  (manual p. 11; `.names`, `Sessions.module.scss:312–315`). Card avatars put the initials **under** each photo,
   so a lazy or failed photo still reads as a name (`CardAvatars`,
   `Sessions.tsx:35`).
 - **Agenda** (`Agenda`) — breaks and dead time are flat `--panel-lit`
@@ -857,22 +936,24 @@ and
   compressed to 2–3 rows (`NON_TALK_ROWS`, `Agenda.tsx:40`). A speakerless
   "TBA"/"TBD" slot renders as "Slot open": its time and a mono `--fs-ui`
   label on `--panel` inside a dashed `--rule-strong` outline, not a control
-  (`.slotOpen`, `Agenda.module.scss:302–320`). A speakerless service
+  (`.slotOpen`, `Agenda.module.scss:301–319`). A cell's speaker names set
+  like the Sessions list: Special Elite `--fs-label-lg`, `--ink-soft`,
+  sentence case (`.cellSpeakers`, `Agenda.module.scss:286–290`). A speakerless service
   session running ≥180 minutes (the lounge) leaves the grid for a banner
   above it, one `--panel-lit` line each: time, title, room
-  (`AllDayStrip`, `Agenda.tsx:224`; `.allDay`, `Agenda.module.scss:323`).
+  (`AllDayStrip`, `Agenda.tsx:224`; `.allDay`, `Agenda.module.scss:322`).
   The narrow layout (≤1024px, JS) is a run sheet: time, Bebas
   `--fs-title-sm` title, mono `--fs-label` room, at a tighter
-  `--field-step` (`ListRow`, `Agenda.tsx:450`; `Agenda.module.scss:437`);
+  `--field-step` (`ListRow`, `Agenda.tsx:450`; `Agenda.module.scss:436`);
   abstracts, tags and photos live only in "Every talk" below.
 - **Menu** (`Menu.astro`) — the header mark link is a full 44px tap target
-  (`min-height: var(--header-tap)`, `Menu.scss:87`) and stays over the
+  (`min-height: var(--header-tap)`, `Menu.scss:89`) and stays over the
   open panel (z 2). Open, the toggle label reads "Close"
   (`Menu.astro:345–346`). ≥901px the panel is two columns: the lists left,
   primary links at `--fs-h2`, secondary at `--fs-h3`; right the hero's
   detective plate graded like the hero and feathered on every edge, painted
   only while the panel is open, so nothing loads it unopened
-  (`Menu.scss:340–392`). Below 901px the lists alone.
+  (`Menu.scss:358–389`). Below 901px the lists alone.
 
 **Structural rules [MUST]:** no decorated eyebrow; red text is flat; **the
 red word and the closing full stop belong to the home hero statement**
@@ -899,7 +980,8 @@ both.
 left, "Open source ↗" right). The brand column leads with the official logo
 file (`src/assets/logo.png`, a link home, `Footer.astro:79–89`), then the
 tagline; no typeset `DEVFEST.CZ` wordmark (it disagreed with the header's
-mark). No rules; space separates the rows (`Footer.scss:12–43`).
+mark). Ground `--color-bg`. No rules; space separates the rows
+(`Footer.scss:2–44`).
 
 ## Anatomy of a page
 
@@ -1039,8 +1121,10 @@ Decision criteria, picked per page:
   date as a `<time>`, the venue as a maps link, the wave on sale
   (`HeroOffer`: mono wave qualifier, "· until <date>" when it has one, then
   "From <price>" linked to `#tickets`) and "Doors open in" + the compact
-  countdown. Values in Bebas at one size (`index.scss:267–276`,
-  `HeroOffer.module.scss:32`, `Countdown.module.scss:54`); no Date / Place
+  countdown. Values in Bebas at one size (`index.scss:266–274`,
+  `HeroOffer.module.scss:32`, `Countdown.module.scss:53`); the countdown's
+  unit letters are Bebas caps, uppercase, not lowercase
+  (`Countdown.module.scss:72–79`); no Date / Place
   labels, no stat row. The line wraps at the phone measure. The rotor is
   captioned "On the programme" (see Motion).
 - **The home statement fills the phone column.** ≤600px it sets at
@@ -1051,7 +1135,7 @@ Decision criteria, picked per page:
   in view below the bar, `trackHeroCover` (`Menu.astro:222`) writes the
   token into the header's `data-covered` and the bar's own mark or "Get
   tickets" fades out (`visibility` kept, so nothing reflows), at every
-  width (`Menu.scss:116–124`). The open menu always shows the mark. Without
+  width (`Menu.scss:107–120`). The open menu always shows the mark. Without
   JS the attribute never appears and both stay visible.
 - **The ticket and invoice facts sit where the decision is.** Each stub
   prints its price once; another variant's price is one mono data line under
@@ -1140,14 +1224,14 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 - **[MUST] Focus is always visible:** `:focus-visible { outline: 2px solid
   var(--color-accent-hot) }`. Gap by how much edge the control has:
   `--focus-gap-tight` (own boundary), `--focus-gap` (type on ground),
-  `--focus-gap-lg` (alone in space) (`BaseLayout.scss:127–131`). Commented
+  `--focus-gap-lg` (alone in space) (`BaseLayout.scss:134–138`). Commented
   exceptions: agenda cell inset ring, the FAQ question's inset ring
   (`faq.scss:90–93`), and a partner logo's wider `6px` gap on the home strip
-  and `/partners` (`index.scss:653`, `partners.scss:78–81`).
+  and `/partners` (`index.scss:647`, `partners.scss:78–81`).
 - **[MUST] Semantics before ARIA.** A row that IS a control is a real
   `<button>` / `<a>` / `<summary>`.
 - **[MUST] `.skip-link` is the first focusable element** (`BaseLayout.astro:332`,
-  `BaseLayout.scss:260–292`). `html { scroll-padding-top: calc(var(--header-h)
+  `BaseLayout.scss:268–300`). `html { scroll-padding-top: calc(var(--header-h)
   + 1.5rem); scroll-padding-bottom: 8rem }` keeps targets clear of header and banner.
   `#main-content` has `tabindex="-1"` so `Enter` moves focus, not just the
   fragment; its ring alone is suppressed.
@@ -1158,15 +1242,19 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
   with an `aria-label` naming the set, held on `:hover` / `:focus-within`.
   No visible pause button.
 - **[MUST] Header controls are 44px tap targets.** The mark link and the
-  bar's buttons take `min-height: var(--header-tap)` (`Menu.scss:87`).
+  bar's buttons take `min-height: var(--header-tap)` (`Menu.scss:89`, `201`).
+- **[MUST] A white label on red is large text or it does not ship.** The
+  `cta-label` size is the AA floor (see Color); where it does not fit, the
+  control moves (the header Tickets into the menu under 384px), the label
+  never shrinks.
 - **[MUST] `.sr-only`** for text in the a11y tree but off screen
-  (`BaseLayout.scss:303`).
+  (`BaseLayout.scss:311`).
 - **[MUST] Sheets return focus** to the opening row (`src/lib/useReturnFocus.ts`)
   and close on Esc.
 - **[MUST] Reduced motion** — see Motion.
 - **[MUST] `html { overflow-x: clip }`, never `hidden`** — `hidden` makes
   `html` a scroll container on iOS Safari and breaks `position: fixed` and
-  safe-area `env()` (`BaseLayout.scss:210–214`).
+  safe-area `env()` (`BaseLayout.scss:218–222`).
 
 ## Open points
 
@@ -1190,7 +1278,7 @@ Places the code contradicts itself or this document. Each needs a decision.
    clamp. Delete both or give them a caller. (`--fs-wordmark` and
    `--ink-wordmark` went with the footer wordmark.)
 7. **`min-width` queries** against a max-width convention: `901px` ×6
-   (`index.scss` ×5, `Menu.scss:366`), `601px` ×2 (`Menu.scss:222`,
+   (`index.scss` ×5, `Menu.scss:363`), `601px` ×2 (`Menu.scss:219`,
    `invite/member.scss:164`), `Speakers.module.scss:15,20`
    (`760px` / `1100px`), `press/downloads.scss:26,30` (`640px` / `1100px`).
 8. **JS-only breakpoint:** `1024px` (`Agenda.tsx:58`), in no stylesheet.
@@ -1203,16 +1291,16 @@ Places the code contradicts itself or this document. Each needs a decision.
 11. **`Closer` default `tone="raised"` renders `band--raised`, which has no
     CSS.** Harmless today (every call site passes `tone="accent"`).
 12. **The font-size ramp is [MUST] but broken at ~35 call sites:** 29
-    literals (`Countdown.module.scss:19,31,54,75,84,95,107`,
-    `HeroOffer.module.scss:32,55`, `Menu.scss:410,481,581,590`,
-    `AttendingCard.module.scss:38,524`, `team.scss:98,116`,
+    literals (`Countdown.module.scss:19,30,53,74,84,95,107`,
+    `HeroOffer.module.scss:32,54`, `Menu.scss:407,478,580,589`,
+    `AttendingCard.module.scss:38,524`, `team.scss:98,117`,
     `invite/member.scss:74`,
-    `index.scss:78,132,269,315,323,699,704,738,775,788,849`), 1 relative
-    (`Footer.scss:132`), 3 inherited
-    (`Footer.scss:273,277,282`).
+    `index.scss:77,131,268,313,321,693,698,731,768,781,842`), 1 relative
+    (`Footer.scss:133`), 3 inherited
+    (`Footer.scss:274,278,283`).
     The hero footing value `clamp(1.6rem, 2.4vw, 2.2rem)` is written three
-    times (`index.scss:269`, `HeroOffer.module.scss:32`,
-    `Countdown.module.scss:54`): a token candidate. The same claim in
+    times (`index.scss:268`, `HeroOffer.module.scss:32`,
+    `Countdown.module.scss:53`): a token candidate. The same claim in
     `BaseLayout.scss:79` is equally untrue. Fold into the ramp or downgrade
     to [CURRENT].
 13. **`/` has no `.fallback-note`** while `agenda`, `speakers` and
@@ -1244,8 +1332,8 @@ Places the code contradicts itself or this document. Each needs a decision.
     (`content.config.ts`) as a per-partner field.
 21. **`.hairline-link` has no markup caller.** The canonical "see all" /
     next-step link is re-implemented by every caller: `.partners-more`
-    (`index.scss:672`), `.end-line-link` (`EndLine.scss:16`, `0.18em`
-    tracking) and `.hero-link a` (`SubpageHero.scss:64`) include the mixins;
+    (`index.scss:666`), `.end-line-link` (`EndLine.scss:17`) and
+    `.hero-link a` (`SubpageHero.scss:64`) include the mixins;
     the credits' `.allLink` (`SpeakersTeaser.module.scss:125`) hand-writes
     the same look without the mixin. Use the class, or state why a caller
     cannot.
@@ -1257,4 +1345,18 @@ Places the code contradicts itself or this document. Each needs a decision.
     logo, the speaker grid, the home collage gallery, the plain subpage
     titles and `EndLine`; it still lacks `NextStepList`, the unhatched agenda,
     the mono partner marks and the two-column menu, and the subpage frames
-    still show a `Ticker/Band sm` the site no longer renders.
+    still show a `Ticker/Band sm` the site no longer renders. Not re-synced
+    with the brand-manual pass: white Bold CTA labels, alpha panels,
+    Bebas at 0.9 / 0 tracking, the 0.1–0.2em mono grid.
+24. **Full-width flat red bands are not an approved large red area.** The
+    manual (p. 09) allows large red only as title bars behind a headline,
+    red-toned backgrounds (red darkened by a black gradient) and primary CTA
+    buttons. The newsletter `.band--accent` (`index.astro:244`,
+    `BaseLayout.scss:459`) and the `Closer tone="accent"` bands are flat
+    full-width red. Decision pending: red-toned gradient, title bar, or a
+    stated exception.
+27. **Photo contrast is mixed.** Gallery and avatars rest at
+    `contrast(1.3)`; speaker prints (`Print.module.scss:40`), the speaker
+    sheet (`SpeakerDetail.module.scss:40`), `/team` (`team.scss:60`) and
+    the hero plate (`HeroBackground.scss:19`) at 1.12–1.14. Manual p. 13
+    also allows speaker portraits in colour on black.

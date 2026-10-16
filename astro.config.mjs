@@ -82,7 +82,7 @@ export default defineConfig({
             provider: fontProviders.google(),
             name: 'JetBrains Mono',
             cssVariable: '--font-jetbrains-mono',
-            weights: [400, 500],
+            weights: [400, 500, 700],
             styles: ['normal'],
             subsets: ['latin', 'latin-ext'],
         },

@@ -4,7 +4,7 @@
 	width: 100%;
 	z-index: 2;
 	padding: 6rem var(--gutter) 2rem;
-	background: #030303;
+	background: var(--color-bg);
 	font-family: var(--font-jetbrains-mono), monospace;
 	color: rgba(255, 255, 255, 0.65);
 }
@@ -27,11 +27,12 @@
 	display: inline-flex;
 	align-self: flex-start;
 	line-height: 0;
-	transition: opacity 0.2s ease;
+	// No hover or focus treatment on the mark: the brand manual never dims
+	// or recolours the logo. Keyboard focus draws the ring around the link.
 
-	&:hover,
 	&:focus-visible {
-		opacity: 0.75;
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-lg);
 	}
 }
 
@@ -87,7 +88,7 @@
 }
 
 .col-title {
-	@include mono(var(--fs-label), 0.24em, uppercase);
+	@include mono(var(--fs-label), 0.2em, uppercase);
 	color: var(--ink-strong);
 	font-weight: normal;
 	margin: 0;
@@ -114,7 +115,7 @@
 }
 
 .footer-link {
-	@include mono(var(--fs-ui), 0.04em);
+	@include mono(var(--fs-ui), 0.1em);
 	color: var(--ink);
 	text-decoration: none;
 	border-bottom: 1px solid transparent;
@@ -165,7 +166,7 @@
 	dd {
 		margin: 0;
 		color: rgba(255, 255, 255, 0.82);
-		letter-spacing: 0.04em;
+		letter-spacing: 0.1em;
 
 		// Venue links out to the map — muted meta with a hairline underline.
 		a {
@@ -209,7 +210,7 @@
 }
 
 .org {
-	@include mono(var(--fs-label-lg));
+	@include mono(var(--fs-label-lg), 0.1em);
 	line-height: 1.6;
 	color: rgba(255, 255, 255, 0.65);
 	max-width: 34ch;
@@ -265,7 +266,7 @@
 	align-items: center;
 	gap: 0.7rem 2rem;
 	font-size: var(--fs-label);
-	letter-spacing: 0.06em;
+	letter-spacing: 0.1em;
 	color: var(--ink-muted);
 }
 

@@ -38,6 +38,10 @@ function monogramBitmap(text: string, fonts: Fonts, palette: Palette): Promise<I
 	canvas.height = CARD_SIZE;
 	const ctx = canvas.getContext('2d');
 	if (ctx) {
+		// The panel token is white at an opacity: lay it over black, or the
+		// plate would export see-through.
+		ctx.fillStyle = '#000000';
+		ctx.fillRect(0, 0, CARD_SIZE, CARD_SIZE);
 		ctx.fillStyle = palette.panel;
 		ctx.fillRect(0, 0, CARD_SIZE, CARD_SIZE);
 		ctx.fillStyle = palette.monogramInk;

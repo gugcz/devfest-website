@@ -122,7 +122,7 @@ export function readPalette(): Palette {
 		accent: cssVar('--color-accent') || '#F11000',
 		onAccent: cssVar('--on-accent') || '#000000',
 		rule: cssVar('--rule') || 'rgba(255, 255, 255, 0.16)',
-		panel: cssVar('--panel-lit') || '#0A0A0A',
+		panel: cssVar('--panel-lit') || 'rgba(255, 255, 255, 0.04)',
 		monogramInk: cssVar('--ink-monogram') || 'rgba(255, 255, 255, 0.46)',
 		muted: 'rgba(255, 255, 255, 0.6)',
 	};
