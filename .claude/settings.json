@@ -1,5 +1,20 @@
 {
   "permissions": {
+    "allow": [
+      "Bash(npm run verify)",
+      "Bash(npm run check)",
+      "Bash(npm run complexity)",
+      "Bash(npm run a11y)",
+      "Bash(npm --prefix functions test)",
+      "Bash(npm ci)",
+      "Bash(npm --prefix functions ci)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch)",
+      "Bash(git branch --show-current)"
+    ],
     "deny": [
       "Read(./.env)",
       "Read(./.env.local)",
@@ -42,6 +57,12 @@
     ]
   },
   "extraKnownMarketplaces": {
+    "very-good-claude-code-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "VeryGoodOpenSource/very-good-claude-code-marketplace"
+      }
+    },
     "impeccable": {
       "source": {
         "source": "github",
@@ -50,6 +71,7 @@
     }
   },
   "enabledPlugins": {
+    "vgv-wingspan@very-good-claude-code-marketplace": true,
     "impeccable@impeccable": true
   }
 }

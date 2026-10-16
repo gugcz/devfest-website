@@ -79,7 +79,7 @@ built by a community, not a vendor event.
   used; never add a font.
 - The hero photograph (`/hero-detective.webp`) is the one plate, reframed per
   page.
-- The design system in `DESIGN.md` is binding; `design/devfest.pen` is its
+- The design system in `docs/design.md` is binding; `design/devfest.pen` is its
   visual companion.
 
 ## Evidence on Hand

@@ -75,9 +75,11 @@ certain files is a path-scoped rule under `.claude/rules/`.
 - `scripts/`: the axe sweep (`a11y.mjs`) and its `/api/*` fixtures
   (`a11y-mocks/`).
 - `public/`: static assets, the press kit, `.well-known/` (iOS app links).
-- `design/devfest.pen`: the Pencil canvas. `DESIGN.md` is the design system,
-  `PRODUCT.md` the product record.
-- `docs/adr/`: architecture decision records (`.claude/rules/docs.md`).
+- `design/devfest.pen`: the Pencil canvas. `docs/design.md` is the design
+  system, `docs/product.md` the product record.
+- `docs/adr/`: architecture decision records; `docs/brainstorm/` and
+  `docs/plan/`: the `vgv-wingspan` brainstorms and plans, committed with the
+  change they led to and never deleted (`.claude/rules/docs.md`).
 
 ## Commands
 
@@ -99,17 +101,20 @@ ignore comment.
 
 ## Definition of done
 
-1. `npm run verify` passes on the branch. A change that cannot touch one of
+1. Anything bigger than a small fix has a committed plan in `docs/plan/`.
+2. `npm run verify` passes on the branch. A change that cannot touch one of
    the checks may skip it, but say which and why in the PR.
-2. A change to architecture (data access, the Firebase split, a new
+3. A change to architecture (data access, the Firebase split, a new
    integration, storage) records its decision in `docs/adr/` in the same PR.
-3. The branch is committed and pushed, and a PR against `2026` is open.
-4. CI is green on the PR's head.
-5. The user has the PR link and its preview URL
+4. `/review` (or a review agent) has run over the diff and its findings are
+   fixed or answered.
+5. The branch is committed and pushed, and a draft PR against `2026` is open.
+6. CI is green on the PR's head.
+7. The user has the PR link and its preview URL
    (`devfest-public--pr-<n>-*.web.app`).
 
-The `ship` skill (`.claude/skills/ship/`) runs these steps. Never share a PR
-as ready before step 1 is green.
+The `ship` skill (`.claude/skills/ship/`) runs steps 2–7. Never share a PR
+as ready before step 2 is green.
 
 ## Commits and PRs
 
@@ -120,8 +125,8 @@ as ready before step 1 is green.
   `security`.
 - PR title = the squash commit subject, same format.
 - PR body follows `.github/PULL_REQUEST_TEMPLATE.md`: Summary / Why /
-  Behavior / Files. **No `## Test plan` section.** Name any `verify` check
-  you skipped.
+  Behavior / Files / Type of Change. **No `## Test plan` section.** Name any
+  `verify` check you skipped.
 - Branches: humans `<type>/<slug>`, Claude Code `claude/<slug>`. Dependabot
   opens grouped weekly bumps for the root, `functions/` and Actions.
 
@@ -209,12 +214,12 @@ working outside its paths.
 | `invoices.md` | iDoklad OAuth/API, invoice flow, discount code, emails |
 | `workshops.md` | seat limits, waitlist order, the app's ticket login |
 | `invite.md` | `/invite/<member>` pages, CTA, visual direction |
-| `design-pencil.md` | Pencil canvas, Impeccable loop, DESIGN.md as the record |
+| `design-pencil.md` | Pencil canvas, Impeccable loop, docs/design.md as the record |
 | `docs.md` | README, CLAUDE.md, ADRs, what goes where |
 
 ### Styling
 
-[DESIGN.md](DESIGN.md) is the source of truth. Tokens in `BaseLayout.scss`;
+[docs/design.md](docs/design.md) is the source of truth. Tokens in `BaseLayout.scss`;
 React components use co-located `.module.scss`.
 
 ### Design workflow
@@ -224,7 +229,7 @@ React components use co-located `.module.scss`.
 from the `Components` frame before it is coded, and the canvas variables
 mirror `BaseLayout.scss` tokens. **Impeccable** (`/impeccable shape`,
 `critique`, `audit`, the design hook on UI edits) is the brief and the gate.
-`PRODUCT.md` is product truth; `DESIGN.md` + `.impeccable/design.json` are
+`docs/product.md` is product truth; `docs/design.md` + `.impeccable/design.json` are
 the design record and move in the same PR as any token or primitive change.
 Full loop and guardrails: `.claude/rules/design-pencil.md`.
 
@@ -233,23 +238,36 @@ Full loop and guardrails: `.claude/rules/design-pencil.md`.
 `BaseLayout.astro`: meta, OG/Twitter, JSON-LD (Event + WebSite). Sitemap via
 `@astrojs/sitemap`. Share pages and `/invite/*` set their own OG image.
 
-## Project tooling
+## Plugins and project tooling
 
-- **Plugins.** Impeccable is declared in `.claude/settings.json`
-  (`extraKnownMarketplaces` + `enabledPlugins`); Claude Code offers to install
-  it when the repo is trusted. **Where a plugin skill or agent disagrees with
-  this file, `DESIGN.md` or `.claude/rules/`, the repo wins.**
+- **Plugins.** `vgv-wingspan` and Impeccable are declared in
+  `.claude/settings.json` (`extraKnownMarketplaces` + `enabledPlugins`);
+  Claude Code offers to install them when the repo is trusted. **Where a
+  plugin skill or agent disagrees with this file, `docs/design.md` or
+  `.claude/rules/`, the repo wins.**
+- **`vgv-wingspan`** is the workflow for anything bigger than a small fix:
+  1. `/brainstorm` writes to `docs/brainstorm/`. Commit the file.
+  2. `/plan` writes to `docs/plan/`. The plan is approved, and linked from
+     its issue if there is one, before code.
+  3. `/build` implements the plan.
+  4. `/review` runs the architecture, test-quality and simplicity agents.
+  - `/hotfix` for an urgent fix, `/debrief` after an incident.
+  - Finish with the project `ship` skill rather than `/create-pr`.
 - **Pencil** needs a local pen.dev app (the `.mcp.json` entry is the macOS
   desktop app path; the VS Code extension is the other route). In a cloud or
   Linux session the `pencil` server fails to start: say so, skip the canvas
   steps, and still run the Impeccable critique/audit and `npm run a11y`.
 - **Skills** (`.claude/skills/`): `ship` runs the definition of done.
 - **Hooks** (`.claude/hooks/`, wired in `.claude/settings.json`):
-  - `block-deploy.sh` denies pushes to `2026`, merges, deploys, workflow
-    dispatch and release tags ([above](#agents-do-not-merge-to-2026-and-do-not-deploy)).
+  - `block-deploy.sh` denies pushes to `2026` (also a bare `git push` or
+    `git push origin HEAD` while on `2026`, or when the branch cannot be
+    resolved), merges, deploys, workflow dispatch and release tags
+    ([above](#agents-do-not-merge-to-2026-and-do-not-deploy)).
   - `guard-edits.sh` denies hand edits to build output and lockfiles
     (`dist/`, `functions/lib/`, `functions/lib-test/`, `package-lock.json`)
     and asks before editing what reaches the shared project (`firebase.json`,
     the rules files, the deploy workflows, the iOS app-links file).
   - `session-start.sh` runs `npm ci` in a fresh checkout.
-  - `.env` files are denied to Claude in `permissions.deny`.
+  - `.env` files are denied to Claude in `permissions.deny`;
+    `permissions.allow` pre-approves only the `verify` gate and its parts,
+    `npm ci` and read-only git (never push, merge or deploy).

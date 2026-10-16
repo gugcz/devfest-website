@@ -10,12 +10,12 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 
 - **Framework:** [Astro](https://astro.build/) 7
 - **Language:** TypeScript (strict mode)
-- **Styling:** Sass — the design system is documented in [DESIGN.md](DESIGN.md)
+- **Styling:** Sass — the design system is documented in [docs/design.md](docs/design.md)
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** 22 (see `.nvmrc`; `engine-strict` is on)
 
-[DESIGN.md](DESIGN.md) is the binding visual system — check it before styling anything.
+[docs/design.md](docs/design.md) is the binding visual system — check it before styling anything.
 
 ## Docs
 
@@ -24,8 +24,8 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 | [README.md](README.md) | Setup, every function, secrets and the console-only steps (this file) |
 | [CLAUDE.md](CLAUDE.md) | Working rules for contributors and coding agents: commands, definition of done, the repo map |
 | [docs/adr/](docs/adr/README.md) | Architecture decision records: why the site is built the way it is |
-| [DESIGN.md](DESIGN.md) | The design system |
-| [PRODUCT.md](PRODUCT.md) | The product record: users, purpose, brand commitments |
+| [docs/design.md](docs/design.md) | The design system |
+| [docs/product.md](docs/product.md) | The product record: users, purpose, brand commitments |
 | [`.claude/rules/`](.claude/rules) | Per-domain notes (tickets, lineup, invoices, workshops, analytics, design) |
 
 ## Getting Started

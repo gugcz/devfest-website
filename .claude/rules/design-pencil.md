@@ -1,8 +1,8 @@
 ---
 paths:
   - "design/**"
-  - "DESIGN.md"
-  - "PRODUCT.md"
+  - "docs/design.md"
+  - "docs/product.md"
   - ".impeccable/**"
   - "src/components/**"
   - "src/pages/**"
@@ -10,18 +10,18 @@ paths:
   - "src/styles/**"
 ---
 
-# Design workflow: pencil first, impeccable as the gate, DESIGN.md as the law
+# Design workflow: pencil first, impeccable as the gate, docs/design.md as the law
 
 Three artifacts, one order. **Pencil** (`design/devfest.pen`, pen.dev) is where
 a surface is composed. **Impeccable** (`/impeccable …`) is how a surface is
-briefed, critiqued and audited. **`DESIGN.md`** (+ `.impeccable/design.json`)
+briefed, critiqued and audited. **`docs/design.md`** (+ `.impeccable/design.json`)
 is the binding record that both must agree with. Nothing visual lands in
 `src/` that was not first laid out on the canvas or, for a narrow refinement,
 checked against it.
 
 ## The canvas
 
-- `design/devfest.pen` is the visual companion to `DESIGN.md`. Its variables
+- `design/devfest.pen` is the visual companion to `docs/design.md`. Its variables
   mirror `BaseLayout.scss` `:root` one-to-one (`$color-accent` ↔
   `--color-accent`, `$fs-h2` ↔ `--fs-h2`, `$gutter` ↔ `--gutter`). Fluid
   `clamp()` tokens are stored at their **1440px desktop value**.
@@ -81,16 +81,17 @@ checked against it.
 ## The loop for a new or redesigned surface
 
 1. **Brief.** `/impeccable shape <surface>` (writes a surface brief under
-   `.impeccable/surfaces/`). `PRODUCT.md` is the product truth it reads;
-   fix facts there, not in the brief.
+   `.impeccable/surfaces/`, creating the folder on first use; none exists
+   yet). Commit the brief with the surface it shaped. `docs/product.md` is
+   the product truth it reads; fix facts there, not in the brief.
 2. **Compose on the canvas.** Build the surface in `design/devfest.pen`
    from `Components`. Every text uses a `$fs-*` step, every colour a
    `$color-*` / `$ink-*` token, every gap a spacing token. If the design
    needs a value the tokens lack, add the token to **all three**:
-   `BaseLayout.scss`, `DESIGN.md` (frontmatter + prose), `.pen` variables.
+   `BaseLayout.scss`, `docs/design.md` (frontmatter + prose), `.pen` variables.
 3. **Critique the comp.** `/impeccable critique` on a `TakeScreenshot` or
    `Export(...,"png")` of the frame before writing code. Fix on the canvas.
-4. **Code it.** Translate the frame into Astro + SCSS per `DESIGN.md`
+4. **Code it.** Translate the frame into Astro + SCSS per `docs/design.md`
    (primitives by class name, recipes from `_type.scss`, tokens only).
    Same labels, same spacing, same type steps as the canvas.
 5. **Audit the build.** The impeccable design hook fires on every UI edit;
@@ -98,7 +99,7 @@ checked against it.
    named evidence — never `ignore-file` on your own judgment). Then
    `npm run a11y` (zero violations) and `/impeccable audit <route>`.
 6. **Record.** If the build changed a token, a primitive or a rule, update
-   `DESIGN.md` and regenerate `.impeccable/design.json` in the same PR, and
+   `docs/design.md` and regenerate `.impeccable/design.json` in the same PR, and
    sync the `Components` frame so the canvas does not drift.
 
 A narrow refinement of an existing surface (copy, spacing, a state) may skip
@@ -106,7 +107,7 @@ step 1 and go canvas → code, but still passes steps 5 and 6.
 
 ## Guardrails
 
-- `DESIGN.md` `[MUST]` rules bind the canvas too: `#CC0000` never small
+- `docs/design.md` `[MUST]` rules bind the canvas too: `#CC0000` never small
   text, one `$fs-display` per page, `.band--accent` once per page, sharp
   corners (`$radius` = 2), no icon library, three faces only.
 - The canvas is a design record, not a screenshot archive: delete
@@ -114,5 +115,5 @@ step 1 and go canvas → code, but still passes steps 5 and 6.
   surface.
 - Impeccable owns `.impeccable/config.json` through its CLI
   (`/impeccable hooks …`); do not hand-edit it except `detector.extensions`.
-- `impeccable context` reports `CONTEXT_STALE` when `DESIGN.md` and the code
+- `impeccable context` reports `CONTEXT_STALE` when `docs/design.md` and the code
   drift; report it, and fix it only when asked (`/impeccable doctor`).
