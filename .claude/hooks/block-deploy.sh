@@ -26,6 +26,28 @@ sub deny {
 	exit 2;
 }
 
+# The directory a bare `git push` runs in: the session cwd from the hook
+# input, moved by any `cd <dir>` segment that precedes the push.
+my $cwd = $input->{cwd} // $ENV{PWD} // '.';
+
+sub resolve_dir {
+	my ($base, $dir) = @_;
+	return $dir if $dir =~ m{^/};
+	return ($ENV{HOME} // '') . substr($dir, 1) if $dir =~ m{^~(?:/|$)};
+	return "$base/$dir";
+}
+
+# The branch a push with no refspec (or `HEAD` / `@`) sends. Empty when it
+# cannot be resolved (detached HEAD, no repo, git missing).
+sub current_branch {
+	my ($dir, @git_opts) = @_;
+	open(my $fh, '-|', 'git', '-C', $dir, @git_opts, 'symbolic-ref', '--short', '-q', 'HEAD') or return '';
+	my $branch = <$fh> // '';
+	close $fh;
+	$branch =~ s/\s+$//; # `$/` is undef here (slurp mode above), so no chomp
+	return $branch;
+}
+
 # 1. Join backslash line continuations so a wrapped command is one segment.
 $command =~ s/\\\n\s*/ /g;
 
@@ -80,6 +102,22 @@ while (@segments) {
 	# 6. Drop quotes: `git push origin "2026"` is `git push origin 2026`.
 	$seg =~ s/["']//g;
 
+	# `cd <dir>` moves where a later bare `git push` resolves its branch.
+	if ($seg =~ /^cd(?:\s+(\S+))?$/) {
+		$cwd = resolve_dir($cwd, $1 // ($ENV{HOME} // '/'));
+		next;
+	}
+
+	# Keep the repo-locating global options (`-C`, `--git-dir`, `--work-tree`)
+	# so a bare push is checked against the repository it actually targets.
+	my ($git_dir, @git_loc) = ($cwd);
+	if ($seg =~ /^git ((?:$git_opts)+)/) {
+		my $prefix = $1;
+		while ($prefix =~ /(-C (\S+)|--git-dir=\S+|--work-tree=\S+)/g) {
+			if (defined $2) { $git_dir = resolve_dir($git_dir, $2) } else { push @git_loc, $1 }
+		}
+	}
+
 	$seg =~ s/^git $git_opts+/git /;
 	$seg =~ s/^firebase $firebase_opts+/firebase /;
 	$seg =~ s/^(npm|pnpm|yarn|bun) $npm_opts+/$1 /;
@@ -89,6 +127,24 @@ while (@segments) {
 		# `x:refs/heads/2026`, `refs/heads/2026`, `+2026`, `:2026`.
 		deny('git push to 2026') if $seg =~ /(?:^|[ :\/+])2026(?:\s|$)/;
 		deny('pushing tags')     if $seg =~ /\s--tags(?:\s|$)/;
+
+		# No refspec, or `HEAD` / `@` (optionally forced), pushes the current
+		# branch. Deny it when that branch is 2026 or cannot be resolved.
+		my @args = split / /, $seg;
+		splice @args, 0, 2;
+		my @positional;
+		while (@args) {
+			my $arg = shift @args;
+			if ($arg =~ /^(?:-o|--push-option|--receive-pack|--exec|--repo)$/) { shift @args; next }
+			next if $arg =~ /^-/;
+			push @positional, $arg;
+		}
+		shift @positional; # the remote
+		if (!@positional || grep { /^\+?(?:HEAD|@)$/ } @positional) {
+			my $branch = current_branch($git_dir, @git_loc);
+			deny('git push of the current branch, 2026') if $branch eq '2026';
+			deny('git push of the current branch, which could not be resolved') if $branch eq '';
+		}
 	}
 	deny('gh pr merge')             if $seg =~ /^gh pr merge\b/;
 	deny('PR merge via gh api')     if $seg =~ /^gh api\b.*\/pulls\/\d+\/merge/;

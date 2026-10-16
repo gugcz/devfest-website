@@ -23,8 +23,14 @@ paths:
   Consequences. Number in sequence, never reuse a number, and add it to
   `docs/adr/README.md`. A reversed decision gets a new ADR that supersedes it;
   the old one stays, marked `Superseded by NNNN`.
-- **`DESIGN.md`** and `.impeccable/design.json` are the design record;
-  **`PRODUCT.md`** the product record (`.claude/rules/design-pencil.md`).
+- **`docs/brainstorm/YYYY-MM-DD-<slug>-brainstorm-doc.md`** and
+  **`docs/plan/YYYY-MM-DD-<type>-<slug>-plan.md`** come from the
+  `vgv-wingspan` `/brainstorm` and `/plan` skills (`<type>` is the
+  Conventional Commits type). Commit them in the same PR as the change they
+  led to and never delete them. A plan is linked from its issue if there is
+  one.
+- **`docs/design.md`** and `.impeccable/design.json` are the design record;
+  **`docs/product.md`** the product record (`.claude/rules/design-pencil.md`).
 - When a change adds or renames a function, an endpoint, a page, a secret or a
   rule, update README's table, CLAUDE.md's function list and endpoint table,
   and the matching rule **in the same PR**.
