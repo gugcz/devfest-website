@@ -6,7 +6,9 @@
 .teaser {
 	position: relative;
 	width: 100%;
-	padding: var(--section-y) var(--gutter);
+	// Opens on one beat; closes on none — the partner strip below opens on
+	// its own cut, and both paddings stacked left ~230px of black.
+	padding: var(--section-y) var(--gutter) 0;
 	background: var(--lit), var(--color-bg);
 }
 
@@ -77,6 +79,15 @@
 .tag {
 	@include mono(var(--fs-label-sm), 0.16em, uppercase);
 	color: var(--ink-muted);
+	// One line, cut with an ellipsis: a long Sessionize tagline wrapped into
+	// a paragraph under a credit. It shares the name's line while 12rem fits,
+	// else drops under it.
+	flex: 1 1 12rem;
+	min-width: 0;
+	max-width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 // The lit row: hovered, keyboard-focused, or the first by default. The state
@@ -150,6 +161,11 @@
 	.row {
 		flex-direction: column;
 		align-items: flex-start;
+	}
+
+	// In a column the tag's 12rem basis would become its height.
+	.tag {
+		flex: none;
 	}
 
 	.name {

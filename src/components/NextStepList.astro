@@ -1,0 +1,26 @@
+---
+/** The list of `NextStep` rows with its section label. The label is a mono
+ * eyebrow, not a poster head: the row titles under it are the larger type,
+ * and a section head smaller than its own rows read upside down. */
+interface Props {
+	label: string;
+	/** Id for the `<h2>`, so the section can be `aria-labelledby` it. */
+	labelId: string;
+	/** `true` when the steps are a sequence (the venue route). */
+	ordered?: boolean;
+}
+
+const { label, labelId, ordered = false } = Astro.props;
+const List = ordered ? 'ol' : 'ul';
+---
+
+<h2 id={labelId} class="eyebrow step-list-label">{label}</h2>
+<List class="field step-list">
+	<slot />
+</List>
+
+<style lang="scss">
+	.step-list-label {
+		margin: 0 0 clamp(0.5rem, 1.5vw, 1rem);
+	}
+</style>

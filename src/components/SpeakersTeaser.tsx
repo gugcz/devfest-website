@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { type Speaker } from '../lib/speakers';
+import { cleanTagline, type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
 import { speakerTarget } from '../lib/share';
 import { shuffle } from '../lib/shuffle';
@@ -16,6 +16,7 @@ const CREDITS_SIZE = 6;
  * speaker so a failed photo falls back per speaker, not once for the plate.
  * Develops to colour while a row is hovered or focused. */
 function Portrait({ speaker, engaged }: { speaker: Speaker; engaged: boolean }) {
+	const tag = cleanTagline(speaker.tagLine);
 	return (
 		<div className={s.portrait} aria-hidden="true">
 			<span className={`${print.print} ${s.plate}`} data-developed={engaged || undefined}>
@@ -29,7 +30,7 @@ function Portrait({ speaker, engaged }: { speaker: Speaker; engaged: boolean }) 
 				/>
 				<span className={print.scrim} />
 			</span>
-			{speaker.tagLine && <p className={s.caption}>{speaker.tagLine}</p>}
+			{tag && <p className={s.caption}>{tag}</p>}
 		</div>
 	);
 }
@@ -73,25 +74,28 @@ export default function SpeakersTeaser() {
 								if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setEngaged(false);
 							}}
 						>
-							{credits.map((speaker, i) => (
-								<li key={speaker.id}>
-									<a
-										className={`${s.row}${speaker === lit ? ` ${s.isActive}` : ''}`}
-										href={speakerTarget(speaker.id)}
-										onMouseEnter={() => {
-											setActive(i);
-											setEngaged(true);
-										}}
-										onFocus={() => {
-											setActive(i);
-											setEngaged(true);
-										}}
-									>
-										<span className={s.name}>{speaker.fullName}</span>
-										{speaker.tagLine && <span className={s.tag}>{speaker.tagLine}</span>}
-									</a>
-								</li>
-							))}
+							{credits.map((speaker, i) => {
+								const tag = cleanTagline(speaker.tagLine);
+								return (
+									<li key={speaker.id}>
+										<a
+											className={`${s.row}${speaker === lit ? ` ${s.isActive}` : ''}`}
+											href={speakerTarget(speaker.id)}
+											onMouseEnter={() => {
+												setActive(i);
+												setEngaged(true);
+											}}
+											onFocus={() => {
+												setActive(i);
+												setEngaged(true);
+											}}
+										>
+											<span className={s.name}>{speaker.fullName}</span>
+											{tag && <span className={s.tag} title={tag}>{tag}</span>}
+										</a>
+									</li>
+								);
+							})}
 						</ul>
 
 						<a className={s.allLink} href="/speakers">

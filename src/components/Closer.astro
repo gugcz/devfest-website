@@ -23,6 +23,8 @@ interface Props {
 	actions?: readonly Action[];
 	tone?: 'accent' | 'raised' | 'plain';
 	titleId?: string;
+	/** Extra class on the section, for a page that lays out its actions. */
+	class?: string;
 }
 
 const {
@@ -32,12 +34,13 @@ const {
 	actions = [],
 	tone = 'raised',
 	titleId,
+	class: extraClass,
 } = Astro.props;
 
 const toneClass = tone === 'accent' ? ' band--accent' : tone === 'raised' ? ' band--raised' : '';
 ---
 
-<section class={`band${toneClass} closer-band`} aria-labelledby={titleId}>
+<section class:list={[`band${toneClass} closer-band`, extraClass]} aria-labelledby={titleId}>
 	<div class="band-inner closer">
 		<div>
 			{eyebrow && <p class="eyebrow closer-eyebrow">{eyebrow}</p>}

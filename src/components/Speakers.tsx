@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { PORTRAIT_TRANSITION, type Speaker } from '../lib/speakers';
+import { PORTRAIT_TRANSITION, cleanTagline, type Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
 import { useRemote } from '../lib/useRemote';
 import { REDUCED_MOTION } from '../lib/useMediaQuery';
@@ -11,9 +11,9 @@ import { EmptyState, ErrorState, LoadingState } from './DataState';
 import print from './Print.module.scss';
 import s from './Speakers.module.scss';
 
-/** Shared `view-transition-name` for the portrait plate and the dialog photo,
- * so the browser morphs one into the other. Applied only while the plate shows
- * the speaker being opened — two elements with the same name at capture time
+/** Shared `view-transition-name` for a tile's print and the dialog photo, so
+ * the browser morphs one into the other. Applied only to the print of the
+ * speaker being opened — two elements with the same name at capture time
  * skips the transition. */
 type ViewTransitionDoc = Document & {
 	startViewTransition?: (cb: () => void) => { finished: Promise<void> };
@@ -26,8 +26,8 @@ function canMorph(): boolean {
 }
 
 /**
- * Morphs the portrait plate into the dialog photo. The name must be on the
- * plate BEFORE the capture (so opening is two renders), only ONE element may
+ * Morphs a tile's print into the dialog photo. The name must be on the
+ * print BEFORE the capture (so opening is two renders), only ONE element may
  * carry it per capture (hand-off inside the callback), and `flushSync` is
  * needed or the "after" capture sees an unchanged DOM.
  */
@@ -35,7 +35,7 @@ function usePortraitMorph(
 	selected: Speaker | null,
 	setSelected: (sp: Speaker | null) => void,
 ) {
-	// Which speaker's plate carries the transition name (never the open one).
+	// Which speaker's print carries the transition name (never the open one).
 	const [morphId, setMorphId] = useState<string | null>(null);
 	const pending = useRef<Speaker | null>(null);
 
@@ -51,7 +51,7 @@ function usePortraitMorph(
 		[setSelected],
 	);
 
-	// Second render of the open sequence: the name is now painted on the plate,
+	// Second render of the open sequence: the name is now painted on the print,
 	// so the capture has something to morph from.
 	useEffect(() => {
 		const sp = pending.current;
@@ -77,7 +77,7 @@ function usePortraitMorph(
 				setMorphId(sp.id);
 			});
 		});
-		// Drop the name once the tween is done so the plate is not left carrying it
+		// Drop the name once the tween is done so the print is not left carrying it
 		// into the next transition.
 		transition?.finished.finally(() => setMorphId(null));
 	}, [selected, setSelected]);
@@ -85,48 +85,61 @@ function usePortraitMorph(
 	return { morphId, open, close };
 }
 
-/** Trailing rows for the slots still to be announced, so the sheet never
- * reads as final. Not interactive: there is no record to open yet. */
-const UNANNOUNCED_SLOTS = 2;
-
-const pad = (n: number) => String(n).padStart(2, '0');
-
-function CastingRow({
+function SpeakerTile({
 	speaker,
-	index,
-	active,
-	onActivate,
 	onOpen,
+	priority,
+	morphing,
 }: {
 	speaker: Speaker;
-	index: number;
-	active: boolean;
-	onActivate: (speaker: Speaker) => void;
 	onOpen: (speaker: Speaker) => void;
+	priority: boolean;
+	morphing: boolean;
 }) {
+	// The print develops to colour while its tile is hovered or focused.
+	const [developed, setDeveloped] = useState(false);
+	const develop = () => setDeveloped(true);
+	const rest = () => setDeveloped(false);
+
 	return (
-		<li>
+		<li className={s.cell}>
 			<button
 				type="button"
-				className={s.row}
-				data-active={active || undefined}
+				className={s.tile}
 				onClick={() => onOpen(speaker)}
-				onPointerEnter={() => onActivate(speaker)}
-				onFocus={() => onActivate(speaker)}
+				onPointerEnter={develop}
+				onPointerLeave={rest}
+				onFocus={develop}
+				onBlur={rest}
 				aria-label={`View ${speaker.fullName}'s profile`}
 			>
-				<span className={s.index} aria-hidden="true">
-					{pad(index + 1)}
+				<span
+					className={print.print}
+					data-developed={developed || undefined}
+					style={
+						morphing ? ({ viewTransitionName: PORTRAIT_TRANSITION } as React.CSSProperties) : undefined
+					}
+				>
+					<SpeakerPhoto
+						speaker={speaker}
+						photoClass={print.photo}
+						monogramClass={print.monogram}
+						width={400}
+						height={500}
+						eager={priority}
+					/>
+					<span className={print.scrim} aria-hidden="true" />
 				</span>
 				<span className={s.name}>{speaker.fullName}</span>
-				{speaker.tagLine && <span className={s.tag}>{speaker.tagLine}</span>}
+				{cleanTagline(speaker.tagLine) && <span className={s.tag}>{cleanTagline(speaker.tagLine)}</span>}
 			</button>
 		</li>
 	);
 }
 
-/** The lineup as a casting sheet: every name in a numbered list on the left,
- * the active one's portrait pinned on the right. Rendered by `Speakers`. */
+/** The lineup as a grid of prints, one tile per speaker, closed by a single
+ * unidentified suspect while names are still to come. Rendered by `Speakers`.
+ * The lineup carries no "final" flag, so the suspect is always there. */
 export function SpeakerLineup({
 	speakers,
 	onOpen,
@@ -134,81 +147,29 @@ export function SpeakerLineup({
 }: {
 	speakers: Speaker[];
 	onOpen: (speaker: Speaker) => void;
-	/** Id of the speaker whose dialog is open — the plate carries the morph. */
+	/** Id of the speaker whose dialog is open — that tile's print carries the morph. */
 	openId?: string | null;
 }) {
-	const [activeId, setActiveId] = useState<string | null>(null);
-	// True while a row is hovered or focused: the plate develops to colour then,
-	// and is B&W at rest (the default first speaker included).
-	const [engaged, setEngaged] = useState(false);
-	const active = speakers.find((sp) => sp.id === activeId) ?? speakers[0];
-	const activate = useCallback((sp: Speaker) => {
-		setActiveId(sp.id);
-		setEngaged(true);
-	}, []);
-	// Focus leaving the list entirely (not moving to the next row) ends it.
-	const onListBlur = (event: React.FocusEvent<HTMLOListElement>) => {
-		if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setEngaged(false);
-	};
-
 	return (
-		<div className={s.sheet}>
-			<ol
-				className={s.list}
-				role="list"
-				onPointerLeave={() => setEngaged(false)}
-				onBlur={onListBlur}
-			>
-				{speakers.map((speaker, i) => (
-					<CastingRow
-						key={speaker.id}
-						speaker={speaker}
-						index={i}
-						active={speaker.id === active.id}
-						onActivate={activate}
-						onOpen={onOpen}
-					/>
-				))}
-				{Array.from({ length: UNANNOUNCED_SLOTS }, (_, i) => (
-					<li key={`slot-${i}`} className={s.slot}>
-						<span className={s.index} aria-hidden="true">
-							{pad(speakers.length + i + 1)}
-						</span>
-						<span className={s.name}>Unidentified suspect</span>
-						<span className={s.tag}>To be revealed</span>
-					</li>
-				))}
-			</ol>
-
-			{/* Mirrors the active row, so it is hidden from assistive tech; the
-			    row's own button is the way in. Swaps instantly, no tween; only
-			    the develop to colour (Print.module.scss) fades. */}
-			<div className={s.portrait} aria-hidden="true">
-				<span
-					className={print.print}
-					data-developed={engaged || undefined}
-					style={
-						active.id === openId
-							? ({ viewTransitionName: PORTRAIT_TRANSITION } as React.CSSProperties)
-							: undefined
-					}
-				>
-					{/* Keyed, so a failed load on one speaker never sticks to the next. */}
-					<SpeakerPhoto
-						key={active.id}
-						speaker={active}
-						photoClass={print.photo}
-						monogramClass={print.monogram}
-						width={420}
-						height={525}
-						eager
-					/>
-					<span className={print.scrim} />
+		<ul className={s.grid} role="list">
+			{speakers.map((speaker, i) => (
+				<SpeakerTile
+					key={speaker.id}
+					speaker={speaker}
+					onOpen={onOpen}
+					priority={i < 4}
+					morphing={speaker.id === openId}
+				/>
+			))}
+			{/* Not interactive: there is no record to open yet. */}
+			<li className={`${s.cell} ${s.suspect}`}>
+				<span className={print.print} aria-hidden="true">
+					<span className={s.unknown}>?</span>
 				</span>
-				<span className={s.portraitName}>{active.fullName}</span>
-				<span className={s.hint}>Pick a name for the full record</span>
-			</div>
-		</div>
+				<span className={s.name}>Unidentified suspect</span>
+				<span className={s.tag}>To be revealed</span>
+			</li>
+		</ul>
 	);
 }
 

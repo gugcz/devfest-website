@@ -7,23 +7,53 @@ import {
 	visitorCategories,
 	type Session,
 	type SessionFilters,
+	type SessionSpeakerRef,
 } from '../lib/sessions';
+import { initials } from '../lib/speakers';
 import { byStart, formatMinutes, placement } from '../lib/agenda';
 import { fetchLineup, speakersById } from '../lib/lineup';
 import { useRemote } from '../lib/useRemote';
 import { TALK_PARAM } from '../lib/share';
 import SessionDetail from './SessionDetail';
-import SpeakerStack from './SpeakerStack';
+import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
 
-/** `10:00–10:45, Main Hall` once a talk is scheduled; `''` before. Sessionize
- * can leave `room` blank and carry only the id, hence the lookup. */
+/** `10:00–10:45, Main Hall` once a talk is scheduled; `Time TBA` (plus the
+ * room, if it has one) before. Sessionize can leave `room` blank and carry
+ * only the id, hence the lookup. */
 function whenLabel(session: Session, roomNames: Map<string, string>): string {
 	const place = placement(session);
-	const time = place ? `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}` : '';
+	const time = place ? `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}` : 'Time TBA';
 	const room = session.room.trim() || roomNames.get(session.roomId) || '';
 	return [time, room].filter(Boolean).join(', ');
+}
+
+/** Up to three overlapping speaker avatars. The initials sit UNDER each photo,
+ * so a circle still reading a name while a lazy photo loads, or when it never
+ * paints, never shows as an empty disc. Decorative — the names carry it. */
+function CardAvatars({ speakers }: { speakers: SessionSpeakerRef[] }) {
+	const shown = speakers.slice(0, 3);
+	if (shown.length === 0) return null;
+	const extra = speakers.length - shown.length;
+	return (
+		<span className={s.stack} aria-hidden="true">
+			{shown.map((speaker) => (
+				<span key={speaker.id} className={`${s.avatar} ${s.avatarMono}`}>
+					{initials(speaker.fullName)}
+					{/* A failed photo falls back to the initials already under it. */}
+					<SpeakerPhoto
+						speaker={speaker}
+						photoClass={s.avatarImg}
+						monogramClass={s.avatarNone}
+						width={40}
+						height={40}
+					/>
+				</span>
+			))}
+			{extra > 0 && <span className={`${s.avatar} ${s.avatarMore}`}>+{extra}</span>}
+		</span>
+	);
 }
 
 function SessionCard({
@@ -48,7 +78,7 @@ function SessionCard({
 				aria-label={`View details for ${session.title}`}
 			>
 				<span className={s.top}>
-					{when && <span className={s.when}>{when}</span>}
+					<span className={s.when}>{when}</span>
 					<span className={s.kicker}>{kicker}</span>
 				</span>
 
@@ -57,14 +87,7 @@ function SessionCard({
 				{session.description && <span className={s.excerpt}>{session.description}</span>}
 
 				<span className={s.foot}>
-					<SpeakerStack
-						speakers={session.speakers}
-						className={s.stack}
-						avatarClass={s.avatar}
-						monogramClass={`${s.avatar} ${s.avatarMono}`}
-						moreClass={`${s.avatar} ${s.avatarMore}`}
-						size={40}
-					/>
+					<CardAvatars speakers={session.speakers} />
 					<span className={s.names}>{names || 'Speaker to be announced'}</span>
 				</span>
 			</button>

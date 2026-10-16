@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/logos' as *;
 /* ===================== THE PARTNER WALL ===================== */
 // One section shape for every partner group — the four sponsor tiers and
 // the two off-ladder rows (community, media). Tight between tiers; the first
@@ -34,17 +35,22 @@
 }
 
 // ─── THE LOGO ROWS ────────────────────────────────────────────────────
-// Open logos on the page ground: no cell, no border, no lit tile. Each mark
-// takes its optical box (`opticalBox` in partners.astro → --logo-w), so the
-// rank reads from the logo's size; rows wrap with generous gaps.
+// Open logos on the page ground: no cell, no border, no lit tile. A regular,
+// left-set grid per tier, its column the tier's box width (`--wall-col`), so
+// a short last row stands on the same columns as the full one above it. Each
+// mark takes its optical box (`partnerLogo()` → --logo-w), so the rank reads
+// from the logo's size.
 .logo-grid {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	display: flex;
-	flex-wrap: wrap;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(var(--wall-col), 100%), 1fr));
+	// A two-column mark would otherwise leave a hole in the row before it.
+	grid-auto-flow: row dense;
 	align-items: center;
-	gap: clamp(2.25rem, 4.5vw, 3.75rem) clamp(2.75rem, 6vw, 5.5rem);
+	justify-items: start;
+	gap: clamp(2.25rem, 4.5vw, 3.75rem) clamp(1.5rem, 3vw, 3rem);
 }
 
 .logo-item {
@@ -59,37 +65,42 @@
 		text-decoration: none;
 	}
 
-	// Box computed per logo as a share of the tier's reference box, arriving
-	// as --logo-w: equal ink AREA shaped to the mark's own ratio. `height:
-	// auto` follows the width, so a narrow column clamping `max-width` keeps
-	// the proportions.
 	.logo {
-		display: block;
-		width: calc(var(--logo-w, 11.25rem) * var(--logo-scale, 1));
-		height: auto;
-		max-width: 100%;
-		object-fit: contain;
-		opacity: 0.9;
-		transition: opacity 0.2s;
-	}
-
-	// A mark made for a light ground, inverted to read on black. The hue turn
-	// keeps its brand colour family; a proper light asset replaces this.
-	.logo--dark-ink {
-		filter: invert(1) hue-rotate(180deg);
+		@include partner-logo;
 	}
 
 	a:hover .logo,
 	a:focus-visible .logo {
-		opacity: 1;
+		@include partner-logo-lit;
+	}
+
+	// Wider than --focus-gap-lg on purpose: a wordmark carries its own
+	// whitespace, so a 4px ring lands on the image margin.
+	a:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 6px;
 	}
 }
 
-// Phones: Platinum keeps its full size (clamped to the column); every other
-// tier steps down so two marks share a row.
+// A very wide mark (`partnerLogo().wide`) is drawn against two columns.
+.logo-item--wide {
+	grid-column: span 2;
+}
+
+// Phones: two columns for every tier but Platinum, which keeps its full size
+// (clamped to the column). A very wide mark keeps its full box across both.
 @media (max-width: 600px) {
 	.logo-wall:not(.logo-wall--lead) {
-		--logo-scale: 0.72;
+		--logo-scale: 0.8;
+
+		.logo-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			column-gap: 1.25rem;
+		}
+	}
+
+	.logo-item--wide {
+		--logo-scale: 1;
 	}
 }
 
@@ -188,10 +199,6 @@
 
 /* ===================== REDUCED MOTION ===================== */
 @media (prefers-reduced-motion: reduce) {
-	.logo-item .logo {
-		transition: none;
-	}
-
 	.email-link::after,
 	.email-link:hover::after,
 	.email-link:focus-visible::after {

@@ -1,27 +1,74 @@
-// Three photos at one height: landscape 4:3, portrait 3:4, landscape 4:3, so
-// the columns run 4 : 2.25 : 4. In colour, unlike the home gallery: they are for
-// recognising the building on arrival, and the red brick is part of that.
+@use '../styles/type' as *;
+
+// Three photos on the last step of the route, cut to one crop (4:5 on a
+// desktop row, 4:3 stacked on a phone) and graded like the home mill plate:
+// noir by default, developing to colour under the cursor. The red brick the
+// caption names comes back on hover.
 .venue-photos {
-	padding: var(--section-y) 0;
-	background: var(--color-bg);
+	margin: 0.4rem 0 0;
+	width: 100%;
 }
 
 .venue-photos-grid {
 	list-style: none;
-	margin: 0 auto;
+	margin: 0;
+	padding: 0;
 	display: grid;
-	grid-template-columns: 4fr 2.25fr 4fr;
-	gap: 1.25rem;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.75rem;
+
+	li {
+		overflow: hidden;
+		background: var(--panel-lit);
+	}
 
 	img {
 		display: block;
 		width: 100%;
 		height: auto;
+		aspect-ratio: 4 / 5;
+		object-fit: cover;
+		filter: grayscale(1) contrast(1.35) brightness(0.62);
+		transition: filter 0.6s ease;
 	}
+
+	li:hover img {
+		filter: grayscale(0) contrast(1.02) brightness(1);
+	}
+}
+
+.venue-photos-caption {
+	@include prose(var(--fs-ui), 1.6);
+	color: var(--ink-soft);
+	max-width: 52ch;
+	margin-top: 0.9rem;
+}
+
+// "Flying in" is the leg before the route, so it sits outside the numbered
+// list, closed off by air rather than a rule.
+.venue-aside {
+	margin-top: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 @media (max-width: 700px) {
 	.venue-photos-grid {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
+
+		img {
+			aspect-ratio: 4 / 3;
+		}
 	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.venue-photos-grid img {
+		transition: none;
+	}
+}
+
+// Focal points, so the one crop keeps what the visitor looks for.
+.venue-photos-grid {
+	.crop-chimney { object-position: 58% 50%; }
+	.crop-tower { object-position: 50% 40%; }
+	.crop-entrance { object-position: 45% 55%; }
 }

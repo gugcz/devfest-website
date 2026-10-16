@@ -1,383 +1,391 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageHero from '../components/SubpageHero.astro';
 ---
 
 <BaseLayout
 	title="Privacy Policy — DevFest.cz 2026"
 	description="Privacy policy for DevFest.cz 2026 — how we collect, use, and protect your personal data."
-	showFooter={false}
 >
-	<main class="policy">
-		<div class="policy-inner">
-			<a href="/" class="back-link">&#8592; Back</a>
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={'Privacy<br />Policy'}
+			lede="How GUG.cz, z.s. collects, uses and protects your personal data on this site and in the DevFest.cz app. Last updated October 2026."
+			seoHeading="DevFest.cz 2026 Privacy Policy"
+			titleId="privacy-title"
+			photo={false}
+		/>
 
-			<h1 class="policy-title">Privacy Policy</h1>
-			<p class="policy-meta eyebrow">GUG.cz, z.s. · Last updated: October 2026</p>
+		<div class="band band--lit">
+			<div class="band-inner">
+				<div class="policy">
+					<section>
+						<h2>1. Who we are</h2>
+						<p>
+							DevFest.cz 2026 is organised by GUG.cz, z.s. (formerly GDG Czech Republic),
+							a registered association (zapsaný spolek) and the data controller for the
+							personal data described here. For privacy-related enquiries, contact us at <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>.
+						</p>
+					</section>
 
-			<section>
-				<h2>1. Who we are</h2>
-				<p>
-					DevFest.cz 2026 is organised by GUG.cz, z.s. (formerly GDG Czech Republic),
-					a registered association (zapsaný spolek) and the data controller for the
-					personal data described here. For privacy-related enquiries, contact us at <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>.
-				</p>
-			</section>
+					<section>
+						<h2>2. Data we collect and why</h2>
 
-			<section>
-				<h2>2. Data we collect and why</h2>
+						<h3>a) Newsletter sign-up</h3>
+						<p>
+							When you submit your email address via the notification form, we store it in
+							SmartEmailing (our email service provider) to send you conference updates such as
+							ticket availability announcements and event news. Legal basis: consent (GDPR Art. 6(1)(a)).
+							You may unsubscribe at any time via the link in every email.
+						</p>
 
-				<h3>a) Newsletter sign-up</h3>
-				<p>
-					When you submit your email address via the notification form, we store it in
-					SmartEmailing (our email service provider) to send you conference updates such as
-					ticket availability announcements and event news. Legal basis: consent (GDPR Art. 6(1)(a)).
-					You may unsubscribe at any time via the link in every email.
-				</p>
+						<h3>b) Analytics</h3>
+						<p>
+							We use Google Firebase Analytics (measurement ID G-L5NK2S2EZ0) to understand how
+							visitors use the site, so we can improve it. It runs only if you accept analytics
+							cookies in the cookie banner.
+						</p>
+						<p>
+							<strong>Before you decide, and if you decline:</strong> analytics does not run. The
+							site loads no Google Analytics code, sets no analytics cookie, and sends Google no
+							measurement data about your visit.
+						</p>
+						<p>
+							<strong>If you accept:</strong> analytics loads and sets the <code>_ga</code> cookies listed below, which give you a random analytics identifier.
+							That lets us count returning visitors and follow sessions across pages — pages
+							visited, session duration, browser type. We never collect your name, email, or any
+							other information that identifies you personally. Legal basis: consent
+							(GDPR Art. 6(1)(a)). You can withdraw consent at any time by clicking "Decline" in
+							the cookie banner (clear your browser storage to see it again).
+						</p>
+						<p>
+							Alongside page views we also record a few interaction events:
+							opening the ticket checkout, completing a newsletter sign-up or a ticket purchase,
+							and submitting a company invoice request. These record the action itself — which
+							ticket wave, its price, how many tickets — and never your name, email, company
+							details, or anything else that identifies you.
+						</p>
+						<p>
+							With the same consent we also run Google Firebase Performance Monitoring, which
+							measures how fast the site loads and responds for you: page load timings, Core Web
+							Vitals and the duration of requests the page makes, together with browser, device
+							type, connection type and coarse country. It stores a random installation id in
+							your browser (IndexedDB, listed below) and never records page content or anything
+							you type.
+						</p>
+						<p>
+							The data is used only for analytics — never for advertising,
+							ad personalisation, or profiling.
+						</p>
 
-				<h3>b) Analytics</h3>
-				<p>
-					We use Google Firebase Analytics (measurement ID G-L5NK2S2EZ0) to understand how
-					visitors use the site, so we can improve it. It runs only if you accept analytics
-					cookies in the cookie banner.
-				</p>
-				<p>
-					<strong>Before you decide, and if you decline:</strong> analytics does not run. The
-					site loads no Google Analytics code, sets no analytics cookie, and sends Google no
-					measurement data about your visit.
-				</p>
-				<p>
-					<strong>If you accept:</strong> analytics loads and sets the <code>_ga</code> cookies listed below, which give you a random analytics identifier.
-					That lets us count returning visitors and follow sessions across pages — pages
-					visited, session duration, browser type. We never collect your name, email, or any
-					other information that identifies you personally. Legal basis: consent
-					(GDPR Art. 6(1)(a)). You can withdraw consent at any time by clicking "Decline" in
-					the cookie banner (clear your browser storage to see it again).
-				</p>
-				<p>
-					Alongside page views we also record a few interaction events:
-					opening the ticket checkout, completing a newsletter sign-up or a ticket purchase,
-					and submitting a company invoice request. These record the action itself — which
-					ticket wave, its price, how many tickets — and never your name, email, company
-					details, or anything else that identifies you.
-				</p>
-				<p>
-					With the same consent we also run Google Firebase Performance Monitoring, which
-					measures how fast the site loads and responds for you: page load timings, Core Web
-					Vitals and the duration of requests the page makes, together with browser, device
-					type, connection type and coarse country. It stores a random installation id in
-					your browser (IndexedDB, listed below) and never records page content or anything
-					you type.
-				</p>
-				<p>
-					The data is used only for analytics — never for advertising,
-					ad personalisation, or profiling.
-				</p>
+						<h3>c) Server logs</h3>
+						<p>
+							Our hosting provider (Firebase Hosting) automatically records standard access logs
+							(IP address, browser, requested URL). These are retained for up to 30 days for
+							security purposes. Legal basis: legitimate interests (GDPR Art. 6(1)(f)).
+						</p>
 
-				<h3>c) Server logs</h3>
-				<p>
-					Our hosting provider (Firebase Hosting) automatically records standard access logs
-					(IP address, browser, requested URL). These are retained for up to 30 days for
-					security purposes. Legal basis: legitimate interests (GDPR Art. 6(1)(f)).
-				</p>
+						<h3>d) Bot protection (reCAPTCHA)</h3>
+						<p>
+							To protect our ticketing data from automated scraping and abuse, the site uses
+							Google reCAPTCHA Enterprise (via Firebase App Check). reCAPTCHA runs in the background to
+							tell humans from bots, analysing signals such as your interactions with the page,
+							device and browser information, and IP address. This data is shared with Google and
+							processed under the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a> and <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
+							Because this is a security measure, it runs regardless of your cookie choice.
+							Legal basis: legitimate interests (GDPR Art. 6(1)(f)).
+						</p>
 
-				<h3>d) Bot protection (reCAPTCHA)</h3>
-				<p>
-					To protect our ticketing data from automated scraping and abuse, the site uses
-					Google reCAPTCHA Enterprise (via Firebase App Check). reCAPTCHA runs in the background to
-					tell humans from bots, analysing signals such as your interactions with the page,
-					device and browser information, and IP address. This data is shared with Google and
-					processed under the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a> and <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
-					Because this is a security measure, it runs regardless of your cookie choice.
-					Legal basis: legitimate interests (GDPR Art. 6(1)(f)).
-				</p>
+						<h3>e) Company invoice requests</h3>
+						<p>
+							If you request a company invoice via the <a href="/invoice">company invoice form</a>, we collect your company name,
+							registration number (IČO), VAT identification number (DIČ, if provided),
+							billing address (street, city, ZIP, country), contact email, and the number of
+							tickets requested. We use this data to issue the invoice, process your payment,
+							and send you a discount code to claim your tickets on ti.to. The request is
+							stored in Google Firestore, the invoice is issued through iDoklad, and the
+							discount code is created in ti.to. Legal basis: performance of a contract
+							(GDPR Art. 6(1)(b)) and compliance with our legal accounting and tax
+							obligations (GDPR Art. 6(1)(c)). Issued invoices and related accounting
+							records are retained for up to 10 years, as required by Czech tax and
+							accounting law.
+						</p>
+					</section>
 
-				<h3>e) Company invoice requests</h3>
-				<p>
-					If you request a company invoice via the <a href="/invoice">company invoice form</a>, we collect your company name,
-					registration number (IČO), VAT identification number (DIČ, if provided),
-					billing address (street, city, ZIP, country), contact email, and the number of
-					tickets requested. We use this data to issue the invoice, process your payment,
-					and send you a discount code to claim your tickets on ti.to. The request is
-					stored in Google Firestore, the invoice is issued through iDoklad, and the
-					discount code is created in ti.to. Legal basis: performance of a contract
-					(GDPR Art. 6(1)(b)) and compliance with our legal accounting and tax
-					obligations (GDPR Art. 6(1)(c)). Issued invoices and related accounting
-					records are retained for up to 10 years, as required by Czech tax and
-					accounting law.
-				</p>
-			</section>
+					<section>
+						<h2>3. Cookies</h2>
+						<p>We use the following cookies:</p>
+						<!-- A data table is one of the things WCAG 1.4.10 exempts from
+						     single-column reflow: it needs two dimensions to be read at
+						     all. So the TABLE scrolls sideways, not the page (under 600px
+						     each row stacks into a labelled card instead). Focusable
+						     because a scrollable region must be reachable by keyboard
+						     (WCAG 2.1.1); labelled because it is now a landmark. -->
+						<div class="table-scroll" role="region" aria-label="Cookies we set" tabindex="0">
+						<table>
+							<caption class="sr-only">List of cookies we set, their purpose, and retention period.</caption>
+							<thead>
+								<tr>
+									<th scope="col">Name</th>
+									<th scope="col">Purpose</th>
+									<th scope="col">Duration</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th scope="row"><code>cookie-consent</code></th>
+									<td data-label="Purpose">Stores your cookie preference (localStorage)</td>
+									<td data-label="Duration">Until you clear browser storage</td>
+								</tr>
+								<tr>
+									<th scope="row"><code>_ga, _ga_*</code></th>
+									<td data-label="Purpose">Google Analytics — only set after consent</td>
+									<td data-label="Duration">2 years</td>
+								</tr>
+								<tr>
+									<th scope="row"><code>firebase-installations-database</code></th>
+									<td data-label="Purpose">Firebase Performance Monitoring installation id (IndexedDB) — only set after consent</td>
+									<td data-label="Duration">Until you clear browser storage</td>
+								</tr>
+								<tr>
+									<th scope="row"><code>_GRECAPTCHA</code></th>
+									<td data-label="Purpose">Google reCAPTCHA — bot protection (set for security, not consent-gated)</td>
+									<td data-label="Duration">6 months</td>
+								</tr>
+							</tbody>
+						</table>
+						</div>
+					</section>
 
-			<section>
-				<h2>3. Cookies</h2>
-				<p>We use the following cookies:</p>
-				<!-- A data table is one of the things WCAG 1.4.10 exempts from
-				     single-column reflow: it needs two dimensions to be read at
-				     all. So the TABLE scrolls sideways, not the page. Focusable
-				     because a scrollable region must be reachable by keyboard
-				     (WCAG 2.1.1); labelled because it is now a landmark. -->
-				<div class="table-scroll" role="region" aria-label="Cookies we set" tabindex="0">
-				<table>
-					<caption class="sr-only">List of cookies we set, their purpose, and retention period.</caption>
-					<thead>
-						<tr>
-							<th scope="col">Name</th>
-							<th scope="col">Purpose</th>
-							<th scope="col">Duration</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th scope="row"><code>cookie-consent</code></th>
-							<td>Stores your cookie preference (localStorage)</td>
-							<td>Until you clear browser storage</td>
-						</tr>
-						<tr>
-							<th scope="row"><code>_ga, _ga_*</code></th>
-							<td>Google Analytics — only set after consent</td>
-							<td>2 years</td>
-						</tr>
-						<tr>
-							<th scope="row"><code>firebase-installations-database</code></th>
-							<td>Firebase Performance Monitoring installation id (IndexedDB) — only set after consent</td>
-							<td>Until you clear browser storage</td>
-						</tr>
-						<tr>
-							<th scope="row"><code>_GRECAPTCHA</code></th>
-							<td>Google reCAPTCHA — bot protection (set for security, not consent-gated)</td>
-							<td>6 months</td>
-						</tr>
-					</tbody>
-				</table>
+					<section>
+						<h2>4. Data sharing</h2>
+						<p>
+							We do not sell your data. We share it only with the processors listed below, under
+							data processing agreements and only to the extent necessary to provide the
+							services described:
+						</p>
+						<ul>
+							<li>SmartEmailing — newsletter delivery</li>
+							<li>Google Firebase (Hosting, Analytics, Performance Monitoring, Firestore) — website hosting, analytics, performance measurement, and storage of invoice requests</li>
+							<li>Google reCAPTCHA Enterprise (via Firebase App Check) — bot protection</li>
+							<li>iDoklad (Solitea a.s. / Seyfor, <a href="https://www.idoklad.cz" target="_blank" rel="noopener noreferrer">idoklad.cz</a>) — issuing company invoices</li>
+							<li>ti.to — ticket sales and discount-code redemption</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>5. Your rights</h2>
+						<p>Under GDPR you have the right to:</p>
+						<ul>
+							<li>Access the personal data we hold about you</li>
+							<li>Request correction or deletion of your data</li>
+							<li>Withdraw consent at any time (this does not affect prior processing)</li>
+							<li>Lodge a complaint with the Czech Data Protection Authority (<a href="https://www.uoou.cz" target="_blank" rel="noopener noreferrer">uoou.cz</a>)</li>
+						</ul>
+						<p>To exercise these rights, email us at <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>.</p>
+					</section>
+
+					<section>
+						<h2>6. Changes to this policy</h2>
+						<p>
+							We may update this policy as the website evolves. The "last updated" date at the top
+							reflects the most recent revision. Material changes will be announced via our newsletter.
+						</p>
+					</section>
+
+					<section id="mobile-app">
+						<h2>7. Mobile app</h2>
+						<p>
+							This section covers the DevFest.cz mobile app for iOS and Android (bundle and
+							package id <code>cz.devfest.app</code>). The data controller is the same as for the
+							website: GUG.cz, z.s., <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>. The app
+							is not directed at children.
+						</p>
+						<p>
+							You can use the programme without logging in. Logging in with your ticket is
+							optional and is needed only for networking and for keeping your favourites on
+							your account.
+						</p>
+
+						<h3>a) What the app collects and why</h3>
+						<!-- Same table treatment as the cookie list in section 3. -->
+						<div class="table-scroll" role="region" aria-label="Data the mobile app collects" tabindex="0">
+						<table>
+							<caption class="sr-only">Data the mobile app collects, where it comes from, why, and how long it is kept.</caption>
+							<thead>
+								<tr>
+									<th scope="col">Data</th>
+									<th scope="col">Source</th>
+									<th scope="col">Purpose</th>
+									<th scope="col">Retention</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th scope="row">Registration reference / ti.to ticket code</th>
+									<td data-label="Source">Typed by you, or read from your ticket's QR code, when you log in with your ticket</td>
+									<td data-label="Purpose">Look up your ticket in the ti.to check-in list</td>
+									<td data-label="Retention">Until the account is deleted</td>
+								</tr>
+								<tr>
+									<th scope="row">Full name and email address</th>
+									<td data-label="Source">Taken from the matched ti.to ticket, never typed in the app</td>
+									<td data-label="Purpose">Your account and ticket verification</td>
+									<td data-label="Retention">Until the account is deleted</td>
+								</tr>
+								<tr>
+									<th scope="row">6-digit email verification code</th>
+									<td data-label="Source">Generated by our backend and sent to the ticket email via Resend</td>
+									<td data-label="Purpose">Confirm that you own the ticket email</td>
+									<td data-label="Retention">Stored only as a salted hash, expires after 30 minutes, purged nightly</td>
+								</tr>
+								<tr>
+									<th scope="row">Favourite session ids</th>
+									<td data-label="Source">Your taps in the agenda (ids of public programme sessions)</td>
+									<td data-label="Purpose">Your personal agenda and session reminders</td>
+									<td data-label="Retention">Until the account is deleted</td>
+								</tr>
+								<tr>
+									<th scope="row">Networking connections: the name and company of each attendee whose badge you scan (what the badge already prints), their ticket identifier and the time of the scan. Never their email</th>
+									<td data-label="Source">The QR code on the other attendee's badge, scanned by you after logging in with your ticket</td>
+									<td data-label="Purpose">Your list of people you met. After the conference we email you that list via Resend</td>
+									<td data-label="Retention">At most 500 entries, until your account is deleted</td>
+								</tr>
+								<tr>
+									<th scope="row">Account metadata (Firebase user id, created and updated timestamps)</th>
+									<td data-label="Source">Firebase Authentication</td>
+									<td data-label="Purpose">Run your account</td>
+									<td data-label="Retention">Until the account is deleted</td>
+								</tr>
+								<tr>
+									<th scope="row">Usage analytics: screen views and a closed set of events (tab switched, session opened, session favourited or unfavourited, onboarding finished), app-instance id, device model, OS version, coarse location derived from IP address</th>
+									<td data-label="Source">Firebase Analytics</td>
+									<td data-label="Purpose">Understand how the app is used. No user id is set, no event contains personal data, and the advertising ID is not collected</td>
+									<td data-label="Retention">14 months (Google default)</td>
+								</tr>
+								<tr>
+									<th scope="row">Crash reports: stack traces, device model, OS version, installation id</th>
+									<td data-label="Source">Firebase Crashlytics</td>
+									<td data-label="Purpose">Fix crashes</td>
+									<td data-label="Retention">90 days (Google default)</td>
+								</tr>
+								<tr>
+									<th scope="row">Device attestation signals</th>
+									<td data-label="Source">Firebase App Check with Play Integrity (Android) or App Attest (Apple)</td>
+									<td data-label="Purpose">Protect our backend from abuse</td>
+									<td data-label="Retention">As set by Google and Apple for each platform</td>
+								</tr>
+								<tr>
+									<th scope="row">Push notification subscriptions: topics for announcements, general sessions and one per favourited session</th>
+									<td data-label="Source">Firebase Cloud Messaging. The device token is held by Google and is never stored in our database</td>
+									<td data-label="Purpose">Send announcements and reminders for sessions you favourited. Notification permission is optional</td>
+									<td data-label="Retention">Until you unsubscribe, turn notifications off or uninstall the app</td>
+								</tr>
+								<tr>
+									<th scope="row">App update check: app id, app version, platform and a random per-install id</th>
+									<td data-label="Source">Sent to Shorebird when the app starts</td>
+									<td data-label="Purpose">Deliver code updates to the app</td>
+									<td data-label="Retention">As set by Shorebird</td>
+								</tr>
+								<tr>
+									<th scope="row">Backend logs, which can contain your user id and the matched ticket email</th>
+									<td data-label="Source">Google Cloud Logging</td>
+									<td data-label="Purpose">Operate and debug the backend</td>
+									<td data-label="Retention">30 days</td>
+								</tr>
+							</tbody>
+						</table>
+						</div>
+
+						<h3>b) Networking: if your badge is scanned</h3>
+						<p>
+							Another attendee who is logged in to the app can scan the QR code on your badge.
+							If they do, the person who scanned it gets your name and company, the same details
+							your badge already shows, and the app keeps them on that person's account. Your
+							email address is never shared. After the conference we email each attendee the list
+							of people they scanned. The entry is deleted when the person who scanned you deletes
+							their account, and you can ask us to remove it earlier (see section 8).
+						</p>
+
+						<h3>c) Camera</h3>
+						<p>
+							The app uses the camera only to scan a ticket or badge QR code. The camera frames
+							are processed on your device and are not uploaded or stored. On Android, scanning
+							uses Google's ML Kit barcode model, and Google receives its own usage telemetry
+							from ML Kit.
+						</p>
+
+						<h3>d) Stored only on your device</h3>
+						<p>
+							Whether you finished onboarding, which reminder topics you chose, and an inbox of up
+							to 100 received notifications are kept in the app's storage on your device. They
+							never reach our servers, are not backed up, and are removed when you uninstall the
+							app.
+						</p>
+
+						<h3>e) Legal basis</h3>
+						<p>
+							The account, ticket verification, personal agenda, networking connections and push
+							notifications are processed to provide the app you asked for (GDPR Art. 6(1)(b)).
+							Usage analytics, crash reports, device attestation, update checks and backend logs
+							are processed on the basis of our legitimate interests
+							in keeping the app working, secure and useful (GDPR Art. 6(1)(f)).
+						</p>
+
+						<h3>f) Analytics and crash reports are always on</h3>
+						<p>
+							Unlike the website, the app has no consent switch: usage analytics and crash
+							reporting are always on, and there is no in-app opt-out. They carry no name, email
+							or user id, and they are never used for advertising, ad personalisation or tracking.
+							If you do not want them sent, please do not use the app.
+						</p>
+
+						<h3>g) Processors</h3>
+						<p>
+							We do not sell app data, do not share it with third parties acting as independent
+							controllers, and do not use it for advertising or tracking. All data is encrypted in
+							transit. It is processed only by:
+						</p>
+						<ul>
+							<li>Google (Firebase Authentication, Firestore, Realtime Database, Cloud Functions, Analytics, Crashlytics, Cloud Messaging, App Check / Play Integrity, ML Kit, Cloud Logging) — running the app and its backend</li>
+							<li>Apple (App Attest, push notification delivery, App Store) — device attestation, notifications and app distribution on iOS</li>
+							<li>ti.to — ticket lookup</li>
+							<li>Resend — sending the verification email and the post-conference list of people you scanned</li>
+							<li>Shorebird — app code updates</li>
+						</ul>
+						<p>
+							Your rights from section 5 apply to app data too.
+						</p>
+					</section>
+
+					<section id="delete-account">
+						<h2>8. Deleting your app account</h2>
+						<p>
+							<strong>In the app:</strong> go to Profile &gt; Delete account. This immediately
+							deletes your Firebase Authentication account, your user record (name, email,
+							registration reference, favourite sessions and networking connections) and any
+							pending verification codes.
+						</p>
+						<p>
+							<strong>Without the app:</strong> email <a href="mailto:devfest@gug.cz?subject=Delete%20my%20DevFest%20app%20account">devfest@gug.cz</a> from
+							the email address on your ticket with the subject "Delete my DevFest app account".
+							We delete the same data within 30 days.
+						</p>
+						<p>
+							<strong>What is not deleted:</strong> usage analytics, crash reports and App Check
+							signals are not linked to your account, so they cannot be picked out and deleted;
+							they expire on their own (analytics after 14 months, crash reports after 90 days).
+							Data kept only on your device goes away when you uninstall the app. If another
+							attendee scanned your badge, your name and company stay in their list until they
+							delete their account; email <a href="mailto:devfest@gug.cz">devfest@gug.cz</a> and we
+							will remove them. Your ti.to ticket itself is not affected.
+						</p>
+						<p>
+							The same instructions are on a page of their own at <a href="/delete-account">devfest.cz/delete-account</a>.
+						</p>
+					</section>
 				</div>
-			</section>
-
-			<section>
-				<h2>4. Data sharing</h2>
-				<p>
-					We do not sell your data. We share it only with the processors listed below, under
-					data processing agreements and only to the extent necessary to provide the
-					services described:
-				</p>
-				<ul>
-					<li>SmartEmailing — newsletter delivery</li>
-					<li>Google Firebase (Hosting, Analytics, Performance Monitoring, Firestore) — website hosting, analytics, performance measurement, and storage of invoice requests</li>
-					<li>Google reCAPTCHA Enterprise (via Firebase App Check) — bot protection</li>
-					<li>iDoklad (Solitea a.s. / Seyfor, <a href="https://www.idoklad.cz" target="_blank" rel="noopener noreferrer">idoklad.cz</a>) — issuing company invoices</li>
-					<li>ti.to — ticket sales and discount-code redemption</li>
-				</ul>
-			</section>
-
-			<section>
-				<h2>5. Your rights</h2>
-				<p>Under GDPR you have the right to:</p>
-				<ul>
-					<li>Access the personal data we hold about you</li>
-					<li>Request correction or deletion of your data</li>
-					<li>Withdraw consent at any time (this does not affect prior processing)</li>
-					<li>Lodge a complaint with the Czech Data Protection Authority (<a href="https://www.uoou.cz" target="_blank" rel="noopener noreferrer">uoou.cz</a>)</li>
-				</ul>
-				<p>To exercise these rights, email us at <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>.</p>
-			</section>
-
-			<section>
-				<h2>6. Changes to this policy</h2>
-				<p>
-					We may update this policy as the website evolves. The "last updated" date at the top
-					reflects the most recent revision. Material changes will be announced via our newsletter.
-				</p>
-			</section>
-
-			<section id="mobile-app">
-				<h2>7. Mobile app</h2>
-				<p>
-					This section covers the DevFest.cz mobile app for iOS and Android (bundle and
-					package id <code>cz.devfest.app</code>). The data controller is the same as for the
-					website: GUG.cz, z.s., <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>. The app
-					is not directed at children.
-				</p>
-				<p>
-					You can use the programme without logging in. Logging in with your ticket is
-					optional and is needed only for networking and for keeping your favourites on
-					your account.
-				</p>
-
-				<h3>a) What the app collects and why</h3>
-				<!-- Same sideways-scrolling table as the cookie list in section 3. -->
-				<div class="table-scroll" role="region" aria-label="Data the mobile app collects" tabindex="0">
-				<table>
-					<caption class="sr-only">Data the mobile app collects, where it comes from, why, and how long it is kept.</caption>
-					<thead>
-						<tr>
-							<th scope="col">Data</th>
-							<th scope="col">Source</th>
-							<th scope="col">Purpose</th>
-							<th scope="col">Retention</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th scope="row">Registration reference / ti.to ticket code</th>
-							<td>Typed by you, or read from your ticket's QR code, when you log in with your ticket</td>
-							<td>Look up your ticket in the ti.to check-in list</td>
-							<td>Until the account is deleted</td>
-						</tr>
-						<tr>
-							<th scope="row">Full name and email address</th>
-							<td>Taken from the matched ti.to ticket, never typed in the app</td>
-							<td>Your account and ticket verification</td>
-							<td>Until the account is deleted</td>
-						</tr>
-						<tr>
-							<th scope="row">6-digit email verification code</th>
-							<td>Generated by our backend and sent to the ticket email via Resend</td>
-							<td>Confirm that you own the ticket email</td>
-							<td>Stored only as a salted hash, expires after 30 minutes, purged nightly</td>
-						</tr>
-						<tr>
-							<th scope="row">Favourite session ids</th>
-							<td>Your taps in the agenda (ids of public programme sessions)</td>
-							<td>Your personal agenda and session reminders</td>
-							<td>Until the account is deleted</td>
-						</tr>
-						<tr>
-							<th scope="row">Networking connections: the name and company of each attendee whose badge you scan (what the badge already prints), their ticket identifier and the time of the scan. Never their email</th>
-							<td>The QR code on the other attendee's badge, scanned by you after logging in with your ticket</td>
-							<td>Your list of people you met. After the conference we email you that list via Resend</td>
-							<td>At most 500 entries, until your account is deleted</td>
-						</tr>
-						<tr>
-							<th scope="row">Account metadata (Firebase user id, created and updated timestamps)</th>
-							<td>Firebase Authentication</td>
-							<td>Run your account</td>
-							<td>Until the account is deleted</td>
-						</tr>
-						<tr>
-							<th scope="row">Usage analytics: screen views and a closed set of events (tab switched, session opened, session favourited or unfavourited, onboarding finished), app-instance id, device model, OS version, coarse location derived from IP address</th>
-							<td>Firebase Analytics</td>
-							<td>Understand how the app is used. No user id is set, no event contains personal data, and the advertising ID is not collected</td>
-							<td>14 months (Google default)</td>
-						</tr>
-						<tr>
-							<th scope="row">Crash reports: stack traces, device model, OS version, installation id</th>
-							<td>Firebase Crashlytics</td>
-							<td>Fix crashes</td>
-							<td>90 days (Google default)</td>
-						</tr>
-						<tr>
-							<th scope="row">Device attestation signals</th>
-							<td>Firebase App Check with Play Integrity (Android) or App Attest (Apple)</td>
-							<td>Protect our backend from abuse</td>
-							<td>As set by Google and Apple for each platform</td>
-						</tr>
-						<tr>
-							<th scope="row">Push notification subscriptions: topics for announcements, general sessions and one per favourited session</th>
-							<td>Firebase Cloud Messaging. The device token is held by Google and is never stored in our database</td>
-							<td>Send announcements and reminders for sessions you favourited. Notification permission is optional</td>
-							<td>Until you unsubscribe, turn notifications off or uninstall the app</td>
-						</tr>
-						<tr>
-							<th scope="row">App update check: app id, app version, platform and a random per-install id</th>
-							<td>Sent to Shorebird when the app starts</td>
-							<td>Deliver code updates to the app</td>
-							<td>As set by Shorebird</td>
-						</tr>
-						<tr>
-							<th scope="row">Backend logs, which can contain your user id and the matched ticket email</th>
-							<td>Google Cloud Logging</td>
-							<td>Operate and debug the backend</td>
-							<td>30 days</td>
-						</tr>
-					</tbody>
-				</table>
-				</div>
-
-				<h3>b) Networking: if your badge is scanned</h3>
-				<p>
-					Another attendee who is logged in to the app can scan the QR code on your badge.
-					If they do, the person who scanned it gets your name and company, the same details
-					your badge already shows, and the app keeps them on that person's account. Your
-					email address is never shared. After the conference we email each attendee the list
-					of people they scanned. The entry is deleted when the person who scanned you deletes
-					their account, and you can ask us to remove it earlier (see section 8).
-				</p>
-
-				<h3>c) Camera</h3>
-				<p>
-					The app uses the camera only to scan a ticket or badge QR code. The camera frames
-					are processed on your device and are not uploaded or stored. On Android, scanning
-					uses Google's ML Kit barcode model, and Google receives its own usage telemetry
-					from ML Kit.
-				</p>
-
-				<h3>d) Stored only on your device</h3>
-				<p>
-					Whether you finished onboarding, which reminder topics you chose, and an inbox of up
-					to 100 received notifications are kept in the app's storage on your device. They
-					never reach our servers, are not backed up, and are removed when you uninstall the
-					app.
-				</p>
-
-				<h3>e) Legal basis</h3>
-				<p>
-					The account, ticket verification, personal agenda, networking connections and push
-					notifications are processed to provide the app you asked for (GDPR Art. 6(1)(b)).
-					Usage analytics, crash reports, device attestation, update checks and backend logs
-					are processed on the basis of our legitimate interests
-					in keeping the app working, secure and useful (GDPR Art. 6(1)(f)).
-				</p>
-
-				<h3>f) Analytics and crash reports are always on</h3>
-				<p>
-					Unlike the website, the app has no consent switch: usage analytics and crash
-					reporting are always on, and there is no in-app opt-out. They carry no name, email
-					or user id, and they are never used for advertising, ad personalisation or tracking.
-					If you do not want them sent, please do not use the app.
-				</p>
-
-				<h3>g) Processors</h3>
-				<p>
-					We do not sell app data, do not share it with third parties acting as independent
-					controllers, and do not use it for advertising or tracking. All data is encrypted in
-					transit. It is processed only by:
-				</p>
-				<ul>
-					<li>Google (Firebase Authentication, Firestore, Realtime Database, Cloud Functions, Analytics, Crashlytics, Cloud Messaging, App Check / Play Integrity, ML Kit, Cloud Logging) — running the app and its backend</li>
-					<li>Apple (App Attest, push notification delivery, App Store) — device attestation, notifications and app distribution on iOS</li>
-					<li>ti.to — ticket lookup</li>
-					<li>Resend — sending the verification email and the post-conference list of people you scanned</li>
-					<li>Shorebird — app code updates</li>
-				</ul>
-				<p>
-					Your rights from section 5 apply to app data too.
-				</p>
-			</section>
-
-			<section id="delete-account">
-				<h2>8. Deleting your app account</h2>
-				<p>
-					<strong>In the app:</strong> go to Profile &gt; Delete account. This immediately
-					deletes your Firebase Authentication account, your user record (name, email,
-					registration reference, favourite sessions and networking connections) and any
-					pending verification codes.
-				</p>
-				<p>
-					<strong>Without the app:</strong> email <a href="mailto:devfest@gug.cz?subject=Delete%20my%20DevFest%20app%20account">devfest@gug.cz</a> from
-					the email address on your ticket with the subject "Delete my DevFest app account".
-					We delete the same data within 30 days.
-				</p>
-				<p>
-					<strong>What is not deleted:</strong> usage analytics, crash reports and App Check
-					signals are not linked to your account, so they cannot be picked out and deleted;
-					they expire on their own (analytics after 14 months, crash reports after 90 days).
-					Data kept only on your device goes away when you uninstall the app. If another
-					attendee scanned your badge, your name and company stay in their list until they
-					delete their account; email <a href="mailto:devfest@gug.cz">devfest@gug.cz</a> and we
-					will remove them. Your ti.to ticket itself is not affected.
-				</p>
-				<p>
-					The same instructions are on a page of their own at <a href="/delete-account">devfest.cz/delete-account</a>.
-				</p>
-			</section>
+			</div>
 		</div>
 	</main>
 </BaseLayout>

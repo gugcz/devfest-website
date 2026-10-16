@@ -1,40 +1,42 @@
 @use '../styles/type' as *;
-// Speaker lineup as a casting sheet: a numbered list of names on the left,
-// the active one's portrait pinned on the right. The plate itself (mount,
-// photo, monogram) is `Print.module.scss`, shared with the home teaser; this
-// file owns the two columns, the rows and the caption under the plate.
+// Speaker lineup as a grid of prints: one tile per speaker (print, name, one
+// role line), closed by a single unidentified suspect. The print itself
+// (mount, photo, monogram, develop) is `Print.module.scss`, shared with the
+// home teaser; this file owns the grid and the caption under each print.
 
-.sheet {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) 26.25rem;
-	gap: clamp(2.5rem, 6vw, 6rem);
-	align-items: start;
-}
-
-// Rows are separated by space only — lists carry no rules.
-.list {
+.grid {
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 2.5rem 1rem;
+
+	@media (min-width: 760px) {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 3rem 1.5rem;
+	}
+
+	@media (min-width: 1100px) {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 3.5rem 2rem;
+	}
+}
+
+// `min-width: 0`, or a long Czech surname at Bebas size widens its track and
+// shoves the next print out of line.
+.cell {
+	display: flex;
+	flex-direction: column;
 	min-width: 0;
 }
 
-// Index · name · role on one baseline. The block padding (not a list gap)
-// spaces the rows, so the whole band between two names is the hit area.
-.row,
-.slot {
-	display: grid;
-	// The name takes what it needs up to the column; the tag gets the rest
-	// and truncates, so a long tagline never pushes the row past the list.
-	grid-template-columns: 2.5rem minmax(0, max-content) minmax(0, 1fr);
-	align-items: baseline;
-	column-gap: 1.25rem;
+.tile {
+	display: flex;
+	flex-direction: column;
 	width: 100%;
-	padding: 0.6875rem 0;
-}
-
-.row {
 	margin: 0;
+	padding: 0;
 	text-align: left;
 	font: inherit;
 	color: inherit;
@@ -44,92 +46,50 @@
 	border-radius: 0;
 }
 
-.index {
-	@include mono(var(--fs-label-sm), 0.08em);
-	color: var(--ink-muted);
-}
-
-// The long-list Bebas step at --fs-h3, dimmed until its row is the active one.
+// Under the print on space alone, no rule.
 .name {
-	@include row-title(var(--fs-h3));
-	color: var(--ink-dim);
-	min-width: 0;
+	@include row-title(var(--fs-card-title));
+	margin-top: 0.9rem;
 	overflow-wrap: anywhere;
 }
 
-// One line, cut with an ellipsis: wrapped taglines made the rows ragged. The
-// full tagline is in the speaker's sheet. `--fs-label-sm`, not `-xs`: 10.9px
-// was under the 11px floor for a running label.
+// One role line in the typewriter face, clamped at two lines: a caption, not
+// a bio. The full tagline is in the speaker's sheet.
 .tag {
-	@include mono(var(--fs-label-sm), 0.14em, uppercase);
-	line-height: 1.45;
-	color: var(--ink-muted);
-	min-width: 0;
+	@include prose(var(--fs-ui), 1.4);
+	margin-top: 0.35rem;
+	color: var(--ink-soft);
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
 	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+	overflow-wrap: anywhere;
 }
 
-// Active = the row the plate is showing (last hovered or focused; the first
-// by default). Hover and keyboard focus light it directly as well.
-.row[data-active],
-.row:hover,
-.row:focus-visible {
-	.name {
-		color: var(--color-text);
-	}
-	.tag {
-		color: var(--ink-soft);
-	}
-}
-
-// Unannounced slots: same row, faint, not a control.
-.slot .name {
+/* ===================== SUSPECT ===================== */
+// The slot still to be announced: an unexposed plate, faint, not a control.
+.suspect .name,
+.suspect .tag {
 	color: var(--ink-faint);
 }
 
-/* ===================== PORTRAIT ===================== */
-// Pinned under the fixed header while the list scrolls past it.
-.portrait {
-	position: sticky;
-	top: calc(var(--header-h) + 1.5rem);
+.unknown {
+	position: absolute;
+	inset: 0;
 	display: flex;
-	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-h2);
+	line-height: 1;
+	color: var(--ink-faint);
+	user-select: none;
 }
 
-.portraitName {
-	@include display(var(--fs-title-sm));
-	margin-top: 1.1rem;
-	overflow-wrap: anywhere;
-}
-
-.hint {
-	@include mono(var(--fs-label-xs), 0.14em, uppercase);
-	margin-top: 0.5rem;
-	color: var(--ink-muted);
-}
-
-// One column: the list alone, role under the name.
-@media (max-width: 760px) {
-	.sheet {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.portrait {
-		display: none;
-	}
-
-	.row,
-	.slot {
-		grid-template-columns: 2.5rem minmax(0, 1fr);
-		row-gap: 0.3rem;
-	}
-
+@media (max-width: 759px) {
 	.name {
-		font-size: var(--fs-card-title);
-	}
-
-	.tag {
-		grid-column: 2;
+		font-size: var(--fs-title-sm);
+		margin-top: 0.7rem;
 	}
 }

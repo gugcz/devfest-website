@@ -32,12 +32,20 @@ import s from './Agenda.module.scss';
 const SNAP_MIN = 5;
 const ROW_REM = 1.625;
 
-/** How tall a non-talk strip (a band or dead time) runs. Still to its length,
- * but at half the talks' scale and capped: at full scale a lunch is two talks
- * tall and the afterparty (18:30–00:00) twenty. Two rows (one mono line plus
- * padding) for a coffee break, a row per ten minutes after that, six rows
- * (a half-hour talk) for anything an hour or longer. */
-const NON_TALK_ROWS = { minPerRow: 10, minRows: 2, maxRows: 6 } as const;
+/** How tall a non-talk strip (a band or dead time) runs: compressed and capped,
+ * because at full scale a lunch is two talks tall and the afterparty
+ * (18:30–00:00) twenty. Two rows (one mono line plus padding) for a coffee
+ * break, three for anything 40 minutes or longer. A break is a pause on the
+ * sheet, not a block that outweighs the talks around it. */
+const NON_TALK_ROWS = { minPerRow: 20, minRows: 2, maxRows: 3 } as const;
+
+/** A speakerless service session in a room that runs at least this long (the
+ * lounge open 09:45–17:35) is not a slot on the sheet: as a column it was one
+ * card the height of the day. It rides in the strip above the grid instead. */
+const LONG_RUN_MIN = 180;
+
+/** Sessionize placeholder titles for a slot nobody fills yet ("Talk TBA"). */
+const OPEN_SLOT_RE = /\b(tba|tbd)\b/i;
 
 /** Stable empty roster, so the memos below don't recompute on every render
  * before the payload lands. */
@@ -66,6 +74,35 @@ interface RoomNote {
  * reads as a failed load), else none. */
 function roomNote(label: string, talks: Session[]): RoomNote | null {
 	return ROOM_NOTES[label.trim().toLowerCase()] ?? (talks.length === 0 ? { text: 'Talks TBA' } : null);
+}
+
+/** A speakerless service session in a room, long enough to be "open all day"
+ * rather than a slot (see {@link LONG_RUN_MIN}). Bands keep their own strip. */
+function isLongRunning(session: Session): boolean {
+	if (!session.isServiceSession || session.speakers.length > 0 || isBand(session)) return false;
+	const place = placement(session);
+	return place !== null && place.endMin - place.startMin >= LONG_RUN_MIN;
+}
+
+/** A slot held for a talk that is not announced yet: no speaker, and a
+ * placeholder title. Shown as an empty slot, never as a talk called "Talk TBA". */
+function isOpenSlot(session: Session): boolean {
+	return !isBand(session) && session.speakers.length === 0 && OPEN_SLOT_RE.test(session.title);
+}
+
+/** The long-running sessions pulled out of the sheet, and the sessions and
+ * rooms left for it. A room that only holds long-running sessions loses its
+ * column; a room that also has slots keeps it. */
+function splitLongRunning(
+	sessions: Session[],
+	rooms: Room[],
+): { allDay: Session[]; sessions: Session[]; rooms: Room[] } {
+	const allDay = sessions.filter(isLongRunning).sort(byStart);
+	if (allDay.length === 0) return { allDay, sessions, rooms };
+	const rest = sessions.filter((session) => !allDay.includes(session));
+	const busyRooms = new Set(rest.map(roomKey));
+	const railRooms = new Set(allDay.map(roomKey).filter((key) => !busyRooms.has(key)));
+	return { allDay, sessions: rest, rooms: rooms.filter((room) => !railRooms.has(room.id.trim())) };
 }
 
 /** Current wall-clock in Europe/Prague as { date: 'YYYY-MM-DD', minutes }.
@@ -181,6 +218,22 @@ function NowBadge({ live, coming }: { live: boolean; coming: boolean }) {
 	}
 	if (coming) return <span className={`${s.badge} ${s.badgeComing}`}>Coming up</span>;
 	return null;
+}
+
+/** Long-running rooms in one strip above the sheet: time, what, where. */
+function AllDayStrip({ sessions, labels }: { sessions: Session[]; labels: Map<string, string> }) {
+	if (sessions.length === 0) return null;
+	return (
+		<ul className={s.allDay} aria-label="Running all day">
+			{sessions.map((session) => (
+				<li key={session.id} className={s.allDayItem}>
+					<span className={s.allDayTime}>{timeRange(session)}</span>
+					<span className={s.allDayTitle}>{session.title}</span>
+					<span className={s.allDayRoom}>{session.room.trim() || labels.get(roomKey(session)) || ''}</span>
+				</li>
+			))}
+		</ul>
+	);
 }
 
 /* ============================ GRID ============================ */
@@ -339,6 +392,14 @@ function AgendaGrid({
 					}
 
 					const colIndex = columns.findIndex((c) => c.key === column?.key) + 2;
+					if (isOpenSlot(session)) {
+						return (
+							<div key={session.id} className={s.slotOpen} style={{ gridColumn: colIndex, gridRow }}>
+								<span className={s.cellTime}>{timeRange(session)}</span>
+								<span className={s.slotOpenLabel}>Slot open</span>
+							</div>
+						);
+					}
 					const live = liveIds.has(session.id);
 					return (
 						<button
@@ -380,6 +441,69 @@ function AgendaGrid({
 
 /* ============================ LIST ============================ */
 
+// The narrow layout is a run sheet, not a second copy of "Every talk": time,
+// title and room per slot, the breaks between them, and a tap opens the same
+// session sheet. Abstracts, tags, photos, search and filters live in the list
+// under it — on a phone the two used to repeat every talk at full size.
+
+/** One run-sheet row: a band (information), an open slot, or a talk (control). */
+function ListRow({
+	session,
+	room,
+	live,
+	coming,
+	onOpen,
+}: {
+	session: Session;
+	room: string;
+	live: boolean;
+	coming: boolean;
+	onOpen: (session: Session) => void;
+}) {
+	const time = timeParts(session);
+	const clock = (
+		<span className={s.itemTime}>
+			<span>{time?.from}</span>
+			<span>{time?.to}</span>
+		</span>
+	);
+
+	if (isBand(session) || isOpenSlot(session)) {
+		const open = isOpenSlot(session);
+		return (
+			<div className={`field-row ${s.item} ${s.itemBand} ${live ? s.itemLive : ''}`}>
+				{clock}
+				<span className={s.itemMain}>
+					<span className={s.itemTitleRow}>
+						<span className={s.itemTitle}>{open ? 'Slot open' : session.title}</span>
+						<NowBadge live={live} coming={false} />
+					</span>
+					{open && room && <span className={s.itemRoom}>{room}</span>}
+				</span>
+			</div>
+		);
+	}
+
+	return (
+		<button
+			type="button"
+			className={`field-row field-row--link ${s.item} ${live ? s.itemLive : ''}`}
+			onClick={() => onOpen(session)}
+			aria-label={talkLabel(session, room)}
+			data-agenda-open
+		>
+			{clock}
+			<span className={s.itemMain}>
+				<span className={s.itemTitleRow}>
+					<span className={s.itemTitle}>{session.title}</span>
+					<NowBadge live={live} coming={coming} />
+				</span>
+				{room && <span className={s.itemRoom}>{room}</span>}
+			</span>
+		</button>
+	);
+}
+
 function AgendaList({
 	partition,
 	liveIds,
@@ -400,58 +524,17 @@ function AgendaList({
 	const labels = roomLabels(partition);
 	return (
 		<ul className={`field ${s.list}`} role="list">
-			{timed.map((session) => {
-				const band = isBand(session);
-				const names = speakerNames(session);
-				const room = labels.get(roomKey(session)) ?? '';
-				const live = liveIds.has(session.id);
-				const time = timeParts(session);
-				const body = (
-					<>
-						<span className={s.itemTime}>
-							<span>{time?.from}</span>
-							<span>{time?.to}</span>
-						</span>
-						<span className={s.itemMain}>
-							<span className={s.itemTitleRow}>
-								<span className={s.itemTitle}>{session.title}</span>
-								<NowBadge live={live} coming={!band && comingUpIds.has(session.id)} />
-							</span>
-							{!band && <TalkTags session={session} />}
-							{!band && (room || names) && (
-								<span className={s.itemFoot}>
-									<TalkAvatars session={session} />
-									{/* The speakers carry the row's ink and the room sits under them, on
-									    its own line: joined by a dot they wrapped mid-phrase on a phone,
-									    which is where this line does its work — telling two parallel
-									    talks apart. */}
-									<span className={s.itemMeta}>
-										{names && <span className={s.itemNames}>{names}</span>}
-										{room && <span className={s.itemRoom}>{room}</span>}
-									</span>
-								</span>
-							)}
-						</span>
-					</>
-				);
-				return (
-					<li key={session.id}>
-						{band ? (
-							<div className={`field-row ${s.item} ${s.itemBand} ${live ? s.itemLive : ''}`}>{body}</div>
-						) : (
-							<button
-								type="button"
-								className={`field-row field-row--link ${s.item} ${live ? s.itemLive : ''}`}
-								onClick={() => onOpen(session)}
-								aria-label={talkLabel(session, room)}
-								data-agenda-open
-							>
-								{body}
-							</button>
-						)}
-					</li>
-				);
-			})}
+			{timed.map((session) => (
+				<li key={session.id}>
+					<ListRow
+						session={session}
+						room={labels.get(roomKey(session)) ?? ''}
+						live={liveIds.has(session.id)}
+						coming={comingUpIds.has(session.id)}
+						onOpen={onOpen}
+					/>
+				</li>
+			))}
 		</ul>
 	);
 }
@@ -463,10 +546,17 @@ export default function Agenda() {
 	const [selected, setSelected] = useState<Session | null>(null);
 	const isNarrow = useMediaQuery(NARROW);
 
-	const sessions = data?.sessions ?? EMPTY_SESSIONS;
-	const rooms = data?.rooms ?? EMPTY_ROOMS;
+	const split = useMemo(
+		() => splitLongRunning(data?.sessions ?? EMPTY_SESSIONS, data?.rooms ?? EMPTY_ROOMS),
+		[data],
+	);
+	const { sessions, rooms, allDay } = split;
 	const profiles = useMemo(() => speakersById(data?.speakers ?? []), [data]);
 	const partition = useMemo(() => partitionAgenda(sessions, rooms), [sessions, rooms]);
+	const allRoomNames = useMemo(
+		() => new Map((data?.rooms ?? EMPTY_ROOMS).map((room) => [room.id.trim(), room.name.trim()])),
+		[data],
+	);
 	const placements = useMemo(() => sessionPlacements(sessions), [sessions]);
 	const range = useMemo(() => dayRange(sessions), [sessions]);
 	// Event-day "now" line + live/coming-up badges (hooks must run before the
@@ -502,6 +592,7 @@ export default function Agenda() {
 	return (
 		<>
 			<p className={s.tzNote}>All times Prague (CET)</p>
+			<AllDayStrip sessions={allDay} labels={allRoomNames} />
 
 			{asList ? (
 				<AgendaList

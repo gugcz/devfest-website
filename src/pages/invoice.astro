@@ -18,24 +18,26 @@ import InvoiceForm from '../components/InvoiceForm';
 			photo={false}
 		/>
 
-		<section class="invoice-body" aria-labelledby="invoice-form-heading">
-			<div class="invoice-inner">
-				<div class="invoice-intro">
-					<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
-					<ol class="steps">
-						<li><span class="step-no">01</span> Fill in your company billing details below.</li>
-						<li><span class="step-no">02</span> We email the invoice right away. Pay it by bank transfer within 14 days.</li>
-						<li><span class="step-no">03</span> Once the payment arrives, we email one code that claims all your tickets on ti.to.</li>
-					</ol>
-					<p class="intro-note">
-						Paying by card instead? Skip this and buy directly on{' '}
-						<a href="/#tickets" class="intro-link">the tickets page</a>.
-					</p>
+		<section class="band band--lit" aria-labelledby="invoice-form-heading">
+			<div class="band-inner">
+				<div class="invoice-inner">
+					<div class="invoice-intro">
+						<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
+						<ol class="steps">
+							<li><span class="step-no">01</span> Fill in your company billing details below.</li>
+							<li><span class="step-no">02</span> We email the invoice right away. Pay it by bank transfer within 14 days.</li>
+							<li><span class="step-no">03</span> Once the payment arrives, we email one code that claims all your tickets on ti.to.</li>
+						</ol>
+						<p class="intro-note">
+							Paying by card instead? Skip this and buy directly on{' '}
+							<a href="/#tickets" class="intro-link">the tickets page</a>.
+						</p>
+					</div>
+
+					<InvoiceForm client:load />
+
+					<EndLine text="Questions about the invoice? Name the company when you write." href="mailto:devfest@gug.cz" label="Write to devfest@gug.cz" />
 				</div>
-
-				<InvoiceForm client:load />
-
-				<EndLine text="Questions about the invoice? Name the company when you write." href="mailto:devfest@gug.cz" label="Write to devfest@gug.cz" />
 			</div>
 		</section>
 	</main>

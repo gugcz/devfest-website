@@ -22,15 +22,11 @@ import SpeakerCard from '../components/SpeakerCard';
 			photo={false}
 		/>
 
-		<section class="attending-body" aria-labelledby="speaker-card-form-heading">
-			<div class="attending-inner">
+		<section class="band band--lit" aria-labelledby="speaker-card-form-heading">
+			<div class="band-inner">
 				<h2 id="speaker-card-form-heading" class="sr-only">Build your speaker card</h2>
 				<SpeakerCard client:load />
 			</div>
 		</section>
 	</main>
 </BaseLayout>
-
-<style lang="scss">
-	@use './attending';
-</style>

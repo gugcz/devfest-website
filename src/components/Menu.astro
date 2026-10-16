@@ -97,42 +97,50 @@ const isCurrent = (href: string) => {
 			     in one column of two tiers: the four the visit turns on at poster
 			     scale, the rest straight under them, one step smaller. -->
 			<div id="nav-list" class="nav-panel" data-open="false">
-				<div class="nav-lists">
-					<ul class="nav-list">
-						{links.map(({ href, label, external, cta }) => {
-							const current = isCurrent(href);
-							return (
-								<li>
-									<a
-										href={href}
-										class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
-										{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-										{...(current ? { 'aria-current': 'page' } : {})}
-									>
-										{label}
-									</a>
-								</li>
-							);
-						})}
-					</ul>
+				<div class="nav-body">
+					<div class="nav-lists">
+						<ul class="nav-list">
+							{links.map(({ href, label, external, cta }) => {
+								const current = isCurrent(href);
+								return (
+									<li>
+										<a
+											href={href}
+											class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
+											{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+											{...(current ? { 'aria-current': 'page' } : {})}
+										>
+											{label}
+										</a>
+									</li>
+								);
+							})}
+						</ul>
 
-					<ul class="nav-secondary" aria-label="More pages">
-						{secondary.map(({ href, label, external }) => {
-							const current = isCurrent(href);
-							return (
-								<li>
-									<a
-										href={href}
-										class={`nav-secondary-link${current ? ' nav-secondary-link--current' : ''}`}
-										{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-										{...(current ? { 'aria-current': 'page' } : {})}
-									>
-										{label}
-									</a>
-								</li>
-							);
-						})}
-					</ul>
+						<ul class="nav-secondary" aria-label="More pages">
+							{secondary.map(({ href, label, external }) => {
+								const current = isCurrent(href);
+								return (
+									<li>
+										<a
+											href={href}
+											class={`nav-secondary-link${current ? ' nav-secondary-link--current' : ''}`}
+											{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+											{...(current ? { 'aria-current': 'page' } : {})}
+										>
+											{label}
+										</a>
+									</li>
+								);
+							})}
+						</ul>
+					</div>
+
+					<!-- The hero's key art on the right of a wide panel, so the open menu
+					     is a scene, not a list floating in black. Decorative; painted as
+					     a background only while the panel is open on a wide screen, so
+					     no other page loads it. -->
+					<div class="nav-plate" aria-hidden="true"></div>
 				</div>
 
 				<div class="nav-foot">
@@ -204,6 +212,33 @@ const isCurrent = (href: string) => {
 		);
 	};
 
+	/**
+	 * THE HERO COVERS THE BAR. While an element marked `data-covers="brand"`
+	 * or `data-covers="cta"` (the home hero's lockup and its actions) is in
+	 * view below the bar, the bar's own logo or Tickets button would be the
+	 * same thing twice on one screen; the token goes into `data-covered` and
+	 * Menu.scss hides that control. No JS, no attribute: both stay visible.
+	 */
+	const trackHeroCover = (header: HTMLElement, signal: AbortSignal) => {
+		const covers = document.querySelectorAll<HTMLElement>('[data-covers]');
+		if (covers.length === 0) return;
+		const covered = new Set<string>();
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					const token = (entry.target as HTMLElement).dataset.covers ?? '';
+					if (entry.isIntersecting) covered.add(token);
+					else covered.delete(token);
+				}
+				header.dataset.covered = [...covered].join(' ');
+			},
+			// Under the bar counts as out of view: the bar is what covers it there.
+			{ rootMargin: `-${Math.round(header.getBoundingClientRect().height)}px 0px 0px 0px` }
+		);
+		covers.forEach((el) => observer.observe(el));
+		signal.addEventListener('abort', () => observer.disconnect(), { once: true });
+	};
+
 	// Module scripts run once per document, but <ClientRouter /> replaces the
 	// header on every soft navigation — re-bind on `astro:page-load`. The
 	// window/document/matchMedia listeners are registered with an
@@ -222,6 +257,7 @@ const isCurrent = (href: string) => {
 		// survive a soft navigation — re-measuring per page-load is what restores
 		// it, and it is per-page-correct by construction.
 		if (header) trackHeaderHeight(header, signal);
+		if (header) trackHeroCover(header, signal);
 
 		// Scroll state — sets data-state for brand reveal on home page
 		const onScrollState = () => {
@@ -306,7 +342,11 @@ const isCurrent = (href: string) => {
 			if (!toggle || !list) return;
 			toggle.setAttribute('aria-expanded', String(open));
 			toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+			const label = toggle.querySelector('.nav-toggle-label');
+			if (label) label.textContent = open ? 'Close' : 'Menu';
 			list.dataset.open = String(open);
+			// The open panel shows the mark whatever the hero is doing.
+			if (header) header.dataset.menu = open ? 'open' : 'closed';
 			document.body.style.overflow = open ? 'hidden' : '';
 			// Force header visible when the drawer opens — user needs the toggle.
 			if (open && header) {

@@ -1,11 +1,34 @@
 // Partner logos for /partners and the homepage teaser. Data: the `partners`
 // collection (`src/content/partners.json`); masters under
-// `src/assets/partners/<tier>/`, matched by filename. Ladder and community
-// masters are light marks for the dark ground; media masters ship dark and
-// sit on a cream plate.
+// `src/assets/partners/<tier>/`, matched by filename. Every mark renders as
+// a white mono mark on the dark ground; `LOGO_MONO` says how each master
+// gets there.
 import { getCollection } from 'astro:content';
+import type { ImageMetadata } from 'astro';
 
-export type Partner = { name: string; logo: string; url?: string; plated?: boolean };
+/**
+ * How a master becomes the white mark (the `.logo--<mode>` hook):
+ * - `ink`: one-colour mark on transparency, flattened to white (the default).
+ * - `tile`: light ink on a coloured tile; thresholded so the tile drops to
+ *   black and screens out against the ground, leaving the ink.
+ * - `dark`: dark ink made for a light ground; inverted, then thresholded.
+ * - `colour`: no clean mono can be derived from the master (the ink and the
+ *   tile share a tone); greyscale until a mono asset exists.
+ */
+export type LogoMono = 'ink' | 'tile' | 'dark' | 'colour';
+
+// Keyed by master filename. Stopgap: belongs in the partners collection as a
+// per-partner field (the schema lives in content.config.ts).
+const LOGO_MONO: Record<string, LogoMono> = {
+	'ceska-sporitelna.webp': 'tile',
+	'dotekomanie.avif': 'dark',
+	'whitewhalemedia.svg': 'dark',
+	'genlive.png': 'colour',
+};
+
+const fileOf = (logo: string): string => logo.split('/').pop() as string;
+
+export type Partner = { name: string; logo: string; url?: string; plated?: boolean; mono: LogoMono };
 
 // Ladder tiers only — `media` and `community` are tiers in the schema but never
 // part of the ladder.
@@ -33,7 +56,13 @@ const byTier = async (tier: string): Promise<Partner[]> => {
 	const entries = await getCollection('partners', (entry) => entry.data.tier === tier);
 	return entries
 		.sort((a, b) => a.data.order - b.data.order)
-		.map(({ data }) => ({ name: data.name, logo: data.logo, url: data.url, plated: data.plated }));
+		.map(({ data }) => ({
+			name: data.name,
+			logo: data.logo,
+			url: data.url,
+			plated: data.plated,
+			mono: LOGO_MONO[fileOf(data.logo)] ?? 'ink',
+		}));
 };
 
 /** Full sponsor ladder, top tier first (empty tiers included — filter at the call site). */
@@ -51,3 +80,88 @@ export const getMediaPartners = (): Promise<Partner[]> => byTier('media');
 
 /** Community partners — off the ladder, but shown on both /partners and the homepage strip. */
 export const getCommunityPartners = (): Promise<Partner[]> => byTier('community');
+
+// ─── LOGO SIZING ─────────────────────────────────────────────────────────
+// The masters live in `src/assets/partners/<tier>/` so the build can resize
+// them; the collection stores plain path strings, so glob the sources and key
+// them by filename (same pattern as team.astro).
+const logoSources = import.meta.glob<{ default: ImageMetadata }>('../assets/partners/**/*', {
+	eager: true,
+});
+const logoByFile = new Map<string, ImageMetadata>(
+	Object.entries(logoSources).map(([path, mod]) => [fileOf(path), mod.default])
+);
+const logoFor = (logo: string): ImageMetadata => logoByFile.get(fileOf(logo)) as ImageMetadata;
+
+// Desktop reference box per tier, in px, on /partners: the box size carries
+// the rank. No box is drawn; `opticalBox` sizes each mark as a share of it.
+// Diamond is cut to 288 so its four marks share one row of the column.
+type Cell = { w: number; h: number };
+const CELLS: Record<string, Cell> = {
+	platinum: { w: 600, h: 300 },
+	diamond: { w: 288, h: 176 },
+	gold: { w: 246, h: 150 },
+	silver: { w: 246, h: 150 },
+	community: { w: 200, h: 110 },
+	media: { w: 200, h: 110 },
+};
+
+// Equal ink AREA reads as equal weight: each mark gets a box of the same area
+// shaped to its ratio (in a Gold box a 5:1 wordmark lands ≈190×38, a square
+// glyph ≈75×75), capped so no mark outgrows the box.
+const LOGO_AREA = 0.195;
+const LOGO_MAX_W = 0.78;
+const LOGO_MAX_H = 0.5;
+// A plated mark ships with its own padding baked into the file, so the same
+// area would render the ink inside it far too small.
+const PLATE_SCALE = 2.1;
+const PLATE_MAX_W = 0.86;
+const PLATE_MAX_H = 0.6;
+// A mark this wide (GDG, Second Foundation, SatoshiLabs) takes two grid
+// cells and the full box width, or its letters fall under a legible size.
+const WIDE_RATIO = 6;
+
+/** A tier's grid column, in rem: its box width, so a tier's marks stand on
+ * one regular, left-set grid. */
+export const tierColumnRem = (tier: string, scale = 1): number =>
+	((CELLS[tier] ?? CELLS.gold).w * scale) / 16;
+
+const opticalBox = (ratio: number, cell: Cell, plated = false) => {
+	const area = cell.w * cell.h * LOGO_AREA * (plated ? PLATE_SCALE : 1);
+	const wideMax = ratio >= WIDE_RATIO ? 1 : LOGO_MAX_W;
+	const maxW = cell.w * (plated ? PLATE_MAX_W : wideMax);
+	const maxH = cell.h * (plated ? PLATE_MAX_H : LOGO_MAX_H);
+	let height = Math.sqrt(area / ratio);
+	let width = height * ratio;
+	if (width > maxW) {
+		width = maxW;
+		height = width / ratio;
+	}
+	if (height > maxH) {
+		height = maxH;
+		width = height * ratio;
+	}
+	return { width: Math.round(width), height: Math.round(height) };
+};
+
+/**
+ * Everything one logo needs at one call site: the `<Image>` props (the
+ * optical box as `--logo-w`, a srcset matching it) and whether it is wide.
+ * `scale` shrinks the tier's box for a smaller wall (the home strip).
+ */
+export const partnerLogo = (p: Partner, tier: string, scale = 1) => {
+	const img = logoFor(p.logo);
+	const ratio = img.width && img.height ? img.width / img.height : 3;
+	const base = CELLS[tier] ?? CELLS.gold;
+	const box = opticalBox(ratio, { w: base.w * scale, h: base.h * scale }, p.plated);
+	const shared = { src: img, style: `--logo-w:${box.width / 16}rem` };
+	const props =
+		img.format === 'svg'
+			? { ...shared, format: 'svg' as const, layout: 'none' as const }
+			: {
+					...shared,
+					widths: [box.width, box.width * 2, box.width * 3],
+					sizes: `${box.width}px`,
+				};
+	return { props, wide: ratio >= WIDE_RATIO };
+};

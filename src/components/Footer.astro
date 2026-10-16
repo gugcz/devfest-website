@@ -1,4 +1,8 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import { EVENT } from '../lib/event';
+
 const SOCIALS = [
 	{
 		href: 'https://x.com/devfest_cz',
@@ -70,8 +74,19 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 <footer class="footer" role="contentinfo">
 	<div class="footer-inner">
 		<div class="footer-grid">
-			<!-- No logo here: the wordmark under the grid carries the name. -->
+			<!-- The mark heads its own column rather than a row of its own above
+			     the grid. -->
 			<section class="col col-brand" aria-label="DevFest.cz 2026">
+				<a href="/" class="footer-logo-link" aria-label="DevFest.cz 2026 — home">
+					<Image
+						src={logo}
+						alt="DevFest.cz 2026"
+						class="footer-logo"
+						loading="lazy"
+						widths={[204, 408]}
+						sizes="204px"
+					/>
+				</a>
 				<p class="brand-tagline">
 					Prague's developer conference &mdash; AI agents, generative UI, cloud &amp; backends, mobile &amp; web, and the humans behind it.
 				</p>
@@ -105,15 +120,15 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 				<dl class="event-meta">
 					<dt>Date</dt>
 					<dd>
-						<time datetime="2026-10-30">30 October 2026</time>
+						<time datetime={EVENT.start.slice(0, 10)}>{EVENT.dateLabel}</time>
 					</dd>
 					<dt>Place</dt>
 					<dd>
 						<a
-							href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
+							href={EVENT.mapUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-						>Uhelný Mlýn, Libčice nad Vltavou</a>
+						>{EVENT.venue}, Libčice nad Vltavou</a>
 					</dd>
 					<dt>Format</dt>
 					<dd>In-person</dd>
@@ -150,10 +165,6 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 				</nav>
 			</section>
 		</div>
-
-		<!-- Decorative: the header logo and the brand column already name the
-		     site, so the wordmark is hidden from assistive tech. -->
-		<p class="footer-wordmark" aria-hidden="true">DEVFEST.CZ</p>
 
 		<div class="footer-bottom">
 			<small class="copyright">&copy; 2026 GUG.cz, z.s.</small>

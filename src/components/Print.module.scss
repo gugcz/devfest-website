@@ -1,8 +1,8 @@
 // THE PRINT — a mounted 4:5 photograph that develops from B&W to colour.
 // Shared by the lineup (`Speakers`) and the home credits (`SpeakersTeaser`),
-// which used to carry two drifted copies. In both the plate is an
-// `aria-hidden` mirror of the active row, so the row is the control and the
-// caller says when the plate develops:
+// which used to carry two drifted copies. On `/speakers` each tile carries
+// its own print; on the home credits the plate is an `aria-hidden` mirror of
+// the active row. Either way the caller says when the plate develops:
 //
 //   import print from './Print.module.scss';
 //   <span className={print.print} data-developed={engaged || undefined}>
@@ -10,8 +10,8 @@
 //     <span className={print.scrim} />
 //   </span>
 //
-// `data-developed` is set while a row in the caller's list is hovered or
-// focused (the plate shows that row's speaker). At rest the print is B&W.
+// `data-developed` is set while the caller's tile or row is hovered or
+// focused. At rest the print is B&W.
 //
 // A photograph needs no container: it carries its own mount (`--print-mount`),
 // so a cell border only draws a second rectangle around the first. Never wrap

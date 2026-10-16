@@ -82,16 +82,19 @@
 	display: inline-flex;
 	align-items: center;
 	justify-self: start;
+	// The link is a full tap target (WCAG 2.5.5) around the 38px mark; on a
+	// phone the mark shrinks with its track, the link does not.
+	min-height: var(--header-tap);
 	min-width: 0;
 	text-decoration: none;
 	color: var(--color-text);
 	flex-shrink: 0;
+	// Above the open panel (z-index 1), so the mark stays on screen with the menu.
+	position: relative;
+	z-index: 2;
 	opacity: 1;
-	transform: translateY(0);
-	// Reveal/hide: fade + slide; the visibility delay is handled per-state.
 	transition:
-		opacity 0.4s ease,
-		transform 0.4s ease,
+		opacity 0.15s ease,
 		visibility 0s linear 0s;
 }
 
@@ -105,18 +108,19 @@
 	opacity: 0.7;
 }
 
-// Home + at top: the hero owns the identity. `visibility` keeps the grid slot so
-// nothing jumps on the state flip.
-.site-header[data-home='true'][data-state='top'] .brand {
+// THE HERO COVERS THE BAR. While the home hero's lockup or its actions are
+// in view, the bar's own mark or Tickets button would be the same thing twice
+// on one screen. `data-covered` is written by `trackHeroCover` in Menu.astro;
+// without JS it never appears and both stay visible. `visibility` keeps the
+// grid slot, so nothing reflows; the open menu always shows the mark.
+.site-header[data-covered~='brand']:not([data-menu='open']) .brand,
+.site-header[data-covered~='cta'] .header-cta {
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
-	transform: translateY(-6px);
-	// Delay the visibility flip until after the opacity fade-out.
 	transition:
-		opacity 0.4s ease,
-		transform 0.4s ease,
-		visibility 0s linear 0.4s;
+		opacity 0.15s ease,
+		visibility 0s linear 0.15s;
 }
 
 .brand-logo {
@@ -202,7 +206,11 @@
 	min-height: var(--header-tap);
 	display: inline-flex;
 	align-items: center;
-	transition: background 0.2s ease, border-color 0.2s ease;
+	transition:
+		background 0.2s ease,
+		border-color 0.2s ease,
+		opacity 0.15s ease,
+		visibility 0s linear 0s;
 }
 
 .header-cta:hover,
@@ -211,16 +219,7 @@
 	border-color: var(--color-accent-hot);
 }
 
-// Above phone width the home hero carries its own "Get tickets" button, in
-// view whenever the bar is still transparent — a second route to the same
-// place inside one screen. It comes back the moment the hero has scrolled
-// away. A phone keeps it: there the hero's button sits at the foot of the
-// fold, and the bar is the one action every other page shows at the top.
 @media (min-width: 601px) {
-	#site-header[data-home='true'][data-state='top'] .header-cta {
-		display: none;
-	}
-
 	// On the hero's first screen the toggle would be the only bordered box —
 	// a boxed control beside an unboxed one reads as two systems. Border
 	// returns on hover/focus and once the bar goes solid.
@@ -337,17 +336,59 @@
 		visibility 0s linear 0s;
 }
 
-.nav-lists {
-	display: flex;
-	flex-direction: column;
-	// Take the room the footing does not, and sit centred in it. Lines pinned
-	// under the bar left a hole down the middle of a laptop panel; centred,
-	// the space reads as margin rather than as something missing.
+// Lists left, the key art right on a wide panel; the lists alone below 901px.
+.nav-body {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	// Take the room the footing does not.
 	flex: 1 1 auto;
-	justify-content: center;
 	width: 100%;
 	max-width: var(--maxw);
 	margin-inline: auto;
+	min-height: 0;
+}
+
+.nav-lists {
+	display: flex;
+	flex-direction: column;
+	// Sit centred in the body. Lines pinned under the bar left a hole down the
+	// middle of a laptop panel; centred, the space reads as margin.
+	justify-content: center;
+	width: 100%;
+}
+
+// Painted only while the panel is open on a wide screen: a `display: none`
+// element fetches no background, so no page pays for the plate unopened.
+.nav-plate {
+	display: none;
+}
+
+@media (min-width: 901px) {
+	.nav-body {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: clamp(2rem, 4vw, 4rem);
+	}
+
+	// The hero's detective, graded like the hero, every edge dissolving into
+	// the panel ground: light falling off, not a framed picture.
+	.nav-panel[data-open='true'] .nav-plate {
+		display: block;
+		background: url('/hero-detective.webp') 50% 30% / cover no-repeat;
+		filter: grayscale(1) contrast(1.2) brightness(0.7);
+		-webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%);
+		mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%);
+	}
+
+	// Poster scale: the section-head step for the five, the sub-section step
+	// for the three under them.
+	.nav-link {
+		font-size: var(--fs-h2);
+		padding: 0.08em 0;
+	}
+
+	.nav-secondary-link {
+		font-size: var(--fs-h3);
+	}
 }
 
 .nav-list {
@@ -569,7 +610,8 @@
 	.nav-secondary-link,
 	.header-cta,
 	.brand,
-	.site-header[data-home='true'][data-state='top'] .brand,
+	.site-header[data-covered~='brand']:not([data-menu='open']) .brand,
+	.site-header[data-covered~='cta'] .header-cta,
 	.header-stamp,
 	.site-header[data-state='top'] .header-stamp,
 	.nav-toggle-bars span {

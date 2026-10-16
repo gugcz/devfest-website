@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
 import logo from '../assets/logo.png';
 import millChimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -8,16 +7,14 @@ import Countdown from '../components/Countdown';
 import HeroOffer from '../components/HeroOffer';
 import NewsletterForm from '../components/NewsletterForm';
 import HeroBackground from '../components/HeroBackground.astro';
-import Ticker from '../components/Ticker.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
-import { getActivePartnerTiers, getCommunityPartners, type Partner } from '../lib/partners';
-import { EVENT_TOPICS } from '../lib/ticker';
+import { getActivePartnerTiers, getCommunityPartners, partnerLogo, type Partner } from '../lib/partners';
 import { TOPICS } from '../lib/topics';
 
 // Homepage "silver+" strip — one unlabelled row per tier, top tier first, so
-// the ladder reads the same here as it does on /partners (logo scale steps
-// down with the tier via the `.tier-<id>` hook in index.scss). Community partners close
+// the ladder reads the same here as it does on /partners (logo size steps
+// down with the tier's box). Community partners close
 // the strip as one off-ladder row below silver; media partners stay on
 // /partners only.
 const communityPartners = await getCommunityPartners();
@@ -26,31 +23,25 @@ const homeRows: { id: string; label: string; partners: Partner[] }[] = [
 	{ id: 'community', label: 'Community', partners: communityPartners },
 ].filter((row) => row.partners.length > 0);
 
-// Partner logo masters live in `src/assets/partners/<tier>/` so the build can
-// resize them; the `partners` collection still stores plain path strings, so glob
-// the sources and key them by filename (same pattern as team.astro).
-const logoSources = import.meta.glob<{ default: ImageMetadata }>('../assets/partners/**/*', {
-	eager: true,
-});
-const logoByFile = new Map<string, ImageMetadata>(
-	Object.entries(logoSources).map(([path, mod]) => [path.split('/').pop() as string, mod.default])
-);
-const logoFor = (logo: string): ImageMetadata =>
-	logoByFile.get(logo.split('/').pop() as string) as ImageMetadata;
+// The strip sizes every mark against its tier's /partners box at 70%, on one
+// grid shared by all rows, so the tiers' columns line up.
+const STRIP_SCALE = 0.7;
 
-// SVG wordmarks stay vector (`format="svg"` copies them through unchanged);
-// rasters get a srcset sized for the widest strip cap (top tier, 330px) up to
-// ~2× DPR — one list for every tier, the CSS cap does the per-tier scaling.
-const STRIP_WIDTHS = [330, 495, 660];
-const STRIP_SIZES = '330px';
-const sizing = (img: ImageMetadata) =>
-	img.format === 'svg'
-		? ({ format: 'svg', layout: 'none' } as const)
-		: ({ widths: STRIP_WIDTHS, sizes: STRIP_SIZES } as const);
+// The "Look back" collage, in grid order: the first frame is the large one.
+// Picked for range (the hall, the stage, the costumes, the hallway, the
+// audience), not as a full archive.
+const GALLERY = [
+	{ file: 'devfest-2025-01.webp', width: 800, height: 533, alt: 'A full hall in the brick mill, rows of attendees facing a speaker and his projected slide' },
+	{ file: 'devfest-2025-03.webp', width: 800, height: 533, alt: 'A speaker in an orange T-shirt gesturing on stage in front of his slides' },
+	{ file: 'devfest-2025-02.webp', width: 800, height: 534, alt: 'Five attendees in post-apocalyptic costumes posing together' },
+	{ file: 'devfest-2025-14.webp', width: 800, height: 534, alt: 'Two attendees comparing their phones in a hallway of the mill' },
+	{ file: 'devfest-2025-08.webp', width: 800, height: 533, alt: 'Audience members laughing during a talk, one filming it on his phone' },
+	{ file: 'devfest-2025-20.webp', width: 1080, height: 720, alt: 'Three attendees laughing over their laptops at a hallway table' },
+] as const;
 
 ---
 
-<BaseLayout description="DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. October 30, 2026. Tickets on sale now.">
+<BaseLayout description="DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. 30 October 2026. Tickets on sale now.">
 	<!-- Preload the LCP hero background so it isn't discovered only after CSS parse -->
 	<link
 		slot="head"
@@ -76,7 +67,9 @@ const sizing = (img: ImageMetadata) =>
 			<div class="scene-vignette" aria-hidden="true"></div>
 
 			<div class="hero-inner">
-				<h1 class="hero-title">
+				<!-- `data-covers`: while this is in view the bar hides its own mark
+				     and Tickets button (Menu.astro, `trackHeroCover`). -->
+				<h1 class="hero-title" data-covers="brand">
 					<Image
 						src={logo}
 						alt=""
@@ -85,7 +78,7 @@ const sizing = (img: ImageMetadata) =>
 						widths={[220, 439, 487, 974]}
 						sizes="(max-width: 700px) 82vw, (min-width: 1921px) 23vw, 439px"
 					/>
-					<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference. AI agents, generative UI, cloud & backends, mobile & web accessibility. October 30, 2026.</span>
+					<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference. AI agents, generative UI, cloud & backends, mobile & web accessibility. 30 October 2026.</span>
 				</h1>
 
 				<p class="hero-statement display">
@@ -101,7 +94,8 @@ const sizing = (img: ImageMetadata) =>
 				     focus on the group holds the current subject (SC 2.2.2);
 				     `prefers-reduced-motion` unstacks the slot into the static
 				     set below instead of starting the rotation. -->
-				<p class="topics-rotor" tabindex="0" role="group" aria-label={`What we cover: ${TOPICS.map((t) => t.name).join(', ')}`}>
+				<p class="topics-rotor" tabindex="0" role="group" aria-label={`On the programme: ${TOPICS.map((t) => t.name).join(', ')}`}>
+					<span class="topics-rotor-label" aria-hidden="true">On the programme</span>
 					<span class="topics-rotor-slot" data-rotor aria-hidden="true">
 						{TOPICS.map((t, i) => (
 							<span class={`topics-rotor-item${i === 0 ? ' is-active' : ''}`}>{t.name}</span>
@@ -109,7 +103,7 @@ const sizing = (img: ImageMetadata) =>
 					</span>
 				</p>
 
-				<div class="hero-actions">
+				<div class="hero-actions" data-covers="cta">
 					<a href="#tickets" class="btn-primary">Get tickets</a>
 					<a href="#newsletter" class="btn-ghost"><span class="btn-ghost-label">Stay in the loop</span></a>
 				</div>
@@ -145,9 +139,6 @@ const sizing = (img: ImageMetadata) =>
 				</div>
 			</div>
 		</section>
-
-		<!-- TICKER -->
-		<Ticker items={EVENT_TOPICS} />
 
 		<!-- THE FACTS — what the event IS: the couplet, then one reading line.
 		     Audience and edition from the partner deck, kept in step by hand. -->
@@ -187,26 +178,30 @@ const sizing = (img: ImageMetadata) =>
 		     zero-height placeholder. -->
 		<SpeakersTeaser client:load />
 
-		<!-- PARTNERS — a quiet strip, no head: one row of logos per tier, top
-		     tier first and largest, community last; tier names and media
-		     partners live on /partners only. -->
+		<!-- PARTNERS — a quiet strip under one mono label: one row of logos per
+		     tier, top tier first and largest, community last; tier names and
+		     media partners live on /partners only. -->
 		{homeRows.length > 0 && (
-			<section id="partners" aria-label="Partners">
+			<section id="partners" aria-labelledby="partners-label">
 				<div class="partners-inner">
+					<h2 id="partners-label" class="partners-label">Partners</h2>
 					<div class="partners-tiers">
 						{homeRows.map((tier) => (
 							<ul class={`partners-row tier-${tier.id}`} aria-label={tier.label}>
-								{tier.partners.map((p) => (
-									<li class="partners-item">
-										{p.url ? (
-											<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-												<Image class={`partners-logo${p.plated ? ' is-plated' : ''}`} src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
-											</a>
-										) : (
-											<Image class={`partners-logo${p.plated ? ' is-plated' : ''}`} src={logoFor(p.logo)} alt={p.name} loading="lazy" {...sizing(logoFor(p.logo))} />
-										)}
-									</li>
-								))}
+								{tier.partners.map((p) => {
+									const { props, wide } = partnerLogo(p, tier.id, STRIP_SCALE);
+									return (
+										<li class:list={['partners-item', { 'partners-item--wide': wide }]}>
+											{p.url ? (
+												<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+													<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
+												</a>
+											) : (
+												<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
+											)}
+										</li>
+									);
+								})}
 							</ul>
 						))}
 					</div>
@@ -222,29 +217,24 @@ const sizing = (img: ImageMetadata) =>
 				<h2 id="gallery-title" class="display head-title">Look back</h2>
 			</div>
 
-			<!-- A strip the visitor moves, not a 180s marquee: the photos hold
-			     still until someone scrolls them (wheel, swipe, or arrow keys once
-			     the strip has focus). One set of 22 in a fixed order, not a doubled
-			     loop of 44: a shuffle made scroll-snap re-snap to the moved photo. -->
-			<div class="gallery-strip" role="region" aria-label="Photos from DevFest.cz 2025" tabindex="0">
-				<ul class="gallery-track" role="list">
-					{Array.from({ length: 22 }, (_, i) => {
-						const n = String(i + 1).padStart(2, '0');
-						return (
-							<li>
-								<img
-									src={`/gallery/devfest-2025-${n}.webp`}
-									alt=""
-									loading="lazy"
-									decoding="async"
-									width="1080"
-									height="720"
-								/>
-							</li>
-						);
-					})}
-				</ul>
-			</div>
+			<!-- A held collage, not a strip: six frames that all fit the column,
+			     one large and five smaller, so nothing is cut at the edge and
+			     nothing asks to be scrolled. Below the fold, so every frame is
+			     lazy. -->
+			<ul class="u-container gallery-grid" role="list">
+				{GALLERY.map(({ file, alt, width, height }) => (
+					<li>
+						<img
+							src={`/gallery/${file}`}
+							alt={alt}
+							loading="lazy"
+							decoding="async"
+							width={width}
+							height={height}
+						/>
+					</li>
+				))}
+			</ul>
 		</section>
 
 		<!-- NEWSLETTER — the home page's one red field, matching the closing
@@ -256,7 +246,7 @@ const sizing = (img: ImageMetadata) =>
 				<div class="newsletter-head">
 					<h2 class="newsletter-title display">Follow the<br />leads.</h2>
 					<p class="newsletter-lede">
-						Lineup drops, wave changes, and the odd thing we can&rsquo;t announce yet.
+						We write when a wave opens or a speaker is confirmed. A few emails a year.
 					</p>
 				</div>
 				<div class="newsletter-form">

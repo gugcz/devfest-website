@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import NextStep from '../components/NextStep.astro';
+import NextStepList from '../components/NextStepList.astro';
 import EndLine from '../components/EndLine.astro';
 
 // The page used to dead-end: one line of confirmation and a link back to the
@@ -39,7 +40,7 @@ const STEPS = [
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={"You're on the list"}
-			lede="Every announcement — waves opening, speakers confirmed, the schedule going live — reaches you first, and no more than a handful of times a year."
+			lede="You hear first when a wave opens or a speaker is confirmed. A few emails a year, no more."
 			seoHeading="Subscribed to DevFest.cz 2026 updates"
 			titleId="newsletter-thanks-title"
 			photo={false}
@@ -47,15 +48,9 @@ const STEPS = [
 
 		<section class="band band--lit" aria-labelledby="newsletter-next-heading">
 			<div class="band-inner">
-				<header class="head-stack">
-					<h2 id="newsletter-next-heading" class="display head-title">
-						While you wait
-					</h2>
-				</header>
-
-				<ul class="field">
+				<NextStepList label="While you wait" labelId="newsletter-next-heading">
 					{STEPS.map((step) => <NextStep {...step} />)}
-				</ul>
+				</NextStepList>
 
 				<EndLine text="Here is who is confirmed so far." href="/speakers" label="See the speakers" />
 			</div>

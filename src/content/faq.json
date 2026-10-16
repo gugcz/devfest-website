@@ -10,7 +10,7 @@
 			},
 			{
 				"q": "What does the day look like?",
-				"a": "Registration opens at 8:00 (there is a cloakroom for coats and bags), kick-off is at 8:45, keynote at 9:00. From then on the talks run on two stages — <strong>Moonshine</strong> and <strong>Speakeasy</strong> — in 20- and 40-minute slots, with a lunch break around midday and a longer break in the afternoon. Lightning talks and closing remarks wrap up around 18:30, and the afterparty follows. The full timetable is on the <a href=\"/agenda\">agenda</a> page; a slot or two may still shift."
+				"a": "Registration opens at 08:00 (there is a cloakroom for coats and bags), kick-off is at 08:45, keynote at 09:00. From then on the talks run on two stages — <strong>Moonshine</strong> and <strong>Speakeasy</strong> — in 20- and 40-minute slots, with a lunch break around midday and a longer break in the afternoon. Lightning talks and closing remarks wrap up around 18:30, and the afterparty follows. The full timetable is on the <a href=\"/agenda\">agenda</a> page; a slot or two may still shift."
 			},
 			{
 				"q": "How do I get to the venue?",
@@ -68,7 +68,7 @@
 	{
 		"id": "program",
 		"order": 3,
-		"label": "Program & speakers",
+		"label": "Programme & speakers",
 		"items": [
 			{
 				"q": "Who is speaking?",
@@ -84,7 +84,7 @@
 			},
 			{
 				"q": "How can I become a speaker?",
-				"a": "The Call for Proposals closed over the summer and the program for DevFest.cz 2026 is out — see the <a href=\"/speakers\">speakers</a> and <a href=\"/agenda\">agenda</a> pages. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>."
+				"a": "The Call for Proposals closed over the summer and the programme for DevFest.cz 2026 is out — see the <a href=\"/speakers\">speakers</a> and <a href=\"/agenda\">agenda</a> pages. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>."
 			}
 		]
 	},
@@ -103,7 +103,7 @@
 			},
 			{
 				"q": "How do I stay updated?",
-				"a": "Drop your email in the form on the <a href=\"/#newsletter\">home page</a> and follow us on social media — ticket drops and program news land there first."
+				"a": "Drop your email in the form on the <a href=\"/#newsletter\">home page</a> and follow us on social media — ticket drops and programme news land there first."
 			}
 		]
 	}

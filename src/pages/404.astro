@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import NextStep from '../components/NextStep.astro';
+import NextStepList from '../components/NextStepList.astro';
 
 // A dead URL is still a visitor who wanted something specific. The page used
 // to state the fault and offer one link home; it now offers the routes people
@@ -65,15 +66,9 @@ const STEPS = [
 
 		<section class="band band--lit" aria-labelledby="notfound-next-heading">
 			<div class="band-inner">
-				<header class="head-stack">
-					<h2 id="notfound-next-heading" class="display head-title">
-						Try one of these
-					</h2>
-				</header>
-
-				<ul class="field">
+				<NextStepList label="Try one of these" labelId="notfound-next-heading">
 					{STEPS.map((step) => <NextStep {...step} />)}
-				</ul>
+				</NextStepList>
 			</div>
 		</section>
 	</main>

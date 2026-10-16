@@ -1,8 +1,9 @@
 @use '../styles/type' as *;
 @use '../styles/controls' as *;
+// Builder on the left 7 of 12 columns, the card it makes beside it on 5.
 .wrapper {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
 	gap: clamp(2.5rem, 4vw, 4rem);
 	align-items: start;
 }
@@ -11,6 +12,7 @@
 	display: flex;
 	flex-direction: column;
 	overflow-anchor: none;
+	max-width: 47.5rem;
 }
 
 // Numeral + spine gutter, then body — the numeral is the only progress
@@ -22,27 +24,6 @@
 
 	& + & {
 		margin-top: 2.1rem;
-	}
-}
-
-.stepEnter {
-	animation: attending-step-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes attending-step-in {
-	from {
-		opacity: 0;
-		transform: translateY(6px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.stepEnter {
-		animation: none;
 	}
 }
 
@@ -443,10 +424,12 @@
 	margin-top: 2.1rem;
 }
 
-.stepIndicator {
+// Pinned to the far end of the step head's baseline.
+.stepCount {
 	@include mono(var(--fs-label-xs), 0.14em);
 	font-variant-numeric: tabular-nums;
 	color: var(--ink-dim);
+	margin-left: auto;
 }
 
 .preview {

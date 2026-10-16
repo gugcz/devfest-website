@@ -53,36 +53,33 @@
 	margin: clamp(1rem, 2vw, 1.5rem) 0 0;
 }
 
-// Bare glyphs on the ground — never boxed squares.
+// Named links, not glyphs: a website, a blog and a company page were three
+// identical chain icons. Mono words on the ground, never boxed.
 .links {
 	list-style: none;
 	display: flex;
 	flex-wrap: wrap;
-	gap: clamp(1rem, 2vw, 1.5rem);
+	gap: 0.25rem clamp(1.25rem, 2.5vw, 2rem);
 	margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
 	padding: 0;
 }
 
 .link {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 2.75rem;
-	height: 2.75rem;
-	margin-left: -0.6rem;
+	display: inline-block;
+	// Block padding clears the 24px target minimum.
+	padding: 0.5em 0 0.4em;
+	@include mono(var(--fs-label-lg), 0.06em);
 	color: var(--ink-dim);
-	transition: color 0.2s, transform 0.2s;
-
-	svg {
-		width: 1.25rem;
-		height: 1.25rem;
-		display: block;
-	}
+	text-decoration: underline;
+	text-decoration-color: var(--rule-strong);
+	text-underline-offset: 0.3em;
+	overflow-wrap: anywhere;
+	transition: color 0.2s, text-decoration-color 0.2s;
 
 	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);
-		transform: translateY(-2px);
+		text-decoration-color: currentColor;
 	}
 
 	&:focus-visible {
@@ -98,10 +95,11 @@
 		@include prose(var(--fs-lede), 1.7);
 		color: var(--ink-strong);
 		margin: 0 0 1.1rem;
-		// No character cap: the 0.62fr column beside the portrait IS the measure,
-		// same rule as the session sheet's abstract.
-		text-align: justify;
-		hyphens: auto;
+		// No character cap: the 0.62fr column beside the portrait IS the measure.
+		// Ragged, never justified: Special Elite is monospaced in feel, and
+		// justified it opened rivers down the whole bio.
+		text-align: left;
+		hyphens: manual;
 
 		&:last-child {
 			margin-bottom: 0;
@@ -129,35 +127,19 @@
 	color: var(--ink-dim);
 	max-width: 56ch;
 	margin: 0.5rem 0 0;
-	// Same measure treatment as the bio — one justified and one ragged block of
-	// the same face in one sheet reads as a fault.
-	text-align: justify;
-	hyphens: auto;
+	// Ragged like the bio above it — one sheet, one treatment.
+	text-align: left;
+	hyphens: manual;
 }
 
-// Same call as the session sheet's abstract: justified on a ~30-character
-// phone column, the bio opened rivers between words. Both blocks go ragged
-// together, so the sheet still reads as one treatment.
 @media (max-width: 600px) {
 	.bio p {
 		font-size: var(--fs-body);
-		text-align: left;
-		hyphens: manual;
-	}
-
-	.sessionDesc {
-		text-align: left;
-		hyphens: manual;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.link {
 		transition: none;
-	}
-
-	.link:hover,
-	.link:focus-visible {
-		transform: none;
 	}
 }

@@ -41,18 +41,19 @@
 	}
 }
 
-// The REACH FIELD lives on the <summary> (`.field-row--link`), not here — a long
-// answer sitting on red is a lot of red to read against. An OPEN item takes a
-// flat panel instead (no wash, no feather): several <details> can be open at
-// once, and four permanent red bands down one page is the accent as texture.
+// An OPEN item takes a flat panel (no wash, no feather), kept inside the
+// question column: run to the viewport edge it read as a stray band. The
+// question and its answer carry the same side inset, so the text sits inside
+// the panel whether it is open or not and never shifts when it opens.
 .faq-item {
+	--faq-inset: clamp(0.9rem, 2vw, 1.4rem);
 	position: relative;
 	isolation: isolate;
 
 	&::before {
 		content: '';
 		position: absolute;
-		inset: 0 calc(-1 * var(--gutter));
+		inset: 0;
 		background: var(--panel-lit);
 		opacity: 0;
 		pointer-events: none;
@@ -65,8 +66,10 @@
 	}
 }
 
-// Question text + toggle marker. Rhythm, reach field, ink inversion and focus ring
-// come from `.field-row--link`.
+// Question text + toggle marker. Rhythm comes from `.field-row`; the reach
+// state is red TEXT, not the red field of `.field-row--link`: a solid red
+// block under a toggle stayed lit after a tap on touch and read as a stuck
+// highlight. Hover only where there is a pointer that hovers.
 .faq-q {
 	z-index: 1;
 	list-style: none;
@@ -75,10 +78,30 @@
 	grid-template-columns: minmax(0, 1fr) auto;
 	align-items: baseline;
 	column-gap: clamp(1.25rem, 3vw, 2.75rem);
+	padding-inline: var(--faq-inset);
 
 	// Strip the default disclosure triangle (WebKit + the rest).
 	&::-webkit-details-marker {
 		display: none;
+	}
+
+	// Inset, so the ring stays inside the column and is not clipped by the
+	// neighbouring question.
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: -2px;
+	}
+
+	&:focus-visible .faq-q-text,
+	&:focus-visible .faq-marker {
+		color: var(--color-accent-hot);
+	}
+}
+
+@media (hover: hover) {
+	.faq-q:hover .faq-q-text,
+	.faq-q:hover .faq-marker {
+		color: var(--color-accent-hot);
 	}
 }
 
@@ -105,14 +128,12 @@
 	transform: rotate(45deg); // + → ×
 }
 
-// The open answer is indented behind a hairline, like a margin note.
+// The answer starts on the question's left edge (same inset), no extra indent.
 .faq-a {
 	position: relative;
 	z-index: 1;
-	margin: 0 0 1.8rem;
-	padding-left: 1.4rem;
-	// No edge down the left at all: a bar or hairline along a block's left side
-	// is banned site-wide; the inset alone sets the answer under its question.
+	margin: 0;
+	padding: 0 var(--faq-inset) 1.8rem;
 }
 
 .faq-a :global(p) {
@@ -133,8 +154,7 @@
 		gap: 0.8rem;
 	}
 	.faq-a {
-		margin: 0 0 1.3rem;
-		padding-left: 1.1rem;
+		padding-bottom: 1.3rem;
 	}
 }
 

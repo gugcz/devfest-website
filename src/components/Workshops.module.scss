@@ -6,8 +6,8 @@
 	flex-direction: column;
 	gap: 1.6rem;
 	width: 100%;
-	max-width: 52rem;
-	margin: 0 auto;
+	// The site's form column: 7 of 12, left on the gutter like the hero.
+	max-width: 47.5rem;
 }
 
 .login {

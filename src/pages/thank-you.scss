@@ -1,0 +1,79 @@
+@use '../styles/type' as *;
+
+// The ticket's facts as one stub: [ date ][ time, place ][ calendar ]. A
+// raised panel, the one closed shape on the page; the steps under it stay an
+// open field.
+.event-stub {
+	display: grid;
+	grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
+	align-items: end;
+	gap: 1.5rem clamp(2rem, 4vw, 4rem);
+	padding: clamp(1.5rem, 3vw, 2.5rem);
+	margin-bottom: clamp(3rem, 6vw, 5rem);
+	background: var(--panel-2);
+	border-radius: var(--radius);
+}
+
+.stub-when {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+
+	h2 {
+		margin: 0;
+	}
+}
+
+.stub-date {
+	@include display(var(--fs-h2));
+	margin: 0;
+}
+
+.stub-facts {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 0.6rem 1.25rem;
+	margin: 0;
+
+	dt {
+		@include mono(var(--fs-label-sm), 0.22em, uppercase);
+		color: var(--ink-faint);
+		padding-top: 0.2rem;
+	}
+
+	dd {
+		@include mono(var(--fs-label-lg), 0.06em);
+		color: var(--ink-strong);
+		margin: 0;
+	}
+}
+
+.stub-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0.75rem;
+}
+
+@media (max-width: 1100px) {
+	.event-stub {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	}
+
+	.stub-actions {
+		grid-column: 1 / -1;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+}
+
+@media (max-width: 700px) {
+	.event-stub {
+		grid-template-columns: minmax(0, 1fr);
+		align-items: start;
+	}
+
+	.stub-actions {
+		flex-direction: column;
+	}
+}

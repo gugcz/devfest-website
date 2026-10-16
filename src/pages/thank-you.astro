@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import NextStep from '../components/NextStep.astro';
+import NextStepList from '../components/NextStepList.astro';
 import EndLine from '../components/EndLine.astro';
 import { EVENT, googleCalendarUrl } from '../lib/event';
 
@@ -13,15 +14,11 @@ import { EVENT, googleCalendarUrl } from '../lib/event';
 const shareText = `I'm going to ${EVENT.name} on ${EVENT.dateLabel}.`;
 const shareUrl = EVENT.url;
 
+// The date, the hours and the place as one stub: the facts a ticket carries,
+// with the two calendar actions on it. The steps below are the errands.
+const eventDay = EVENT.start.slice(0, 10);
+
 const STEPS = [
-	{
-		title: 'Put it in your calendar',
-		noteHtml: `${EVENT.dateLabel}, ${EVENT.timeLabel}. One day, one venue.`,
-		actions: [
-			{ href: EVENT.icsUrl, label: 'Download .ics', kind: 'primary' as const, download: true },
-			{ href: googleCalendarUrl(), label: 'Google Calendar', external: true },
-		],
-	},
 	{
 		title: 'Find the venue',
 		noteHtml:
@@ -36,7 +33,7 @@ const STEPS = [
 		title: 'What happens next',
 		noteHtml:
 			'Your ticket and receipt arrive by email from ti.to &mdash; check spam if nothing lands ' +
-			'within an hour. The programme goes up on the sessions and agenda pages as talks are confirmed.',
+			'within an hour. The programme goes up on the agenda page as talks are confirmed.',
 		actions: [{ href: '/agenda', label: 'See the programme' }],
 	},
 	{
@@ -79,19 +76,36 @@ const STEPS = [
 
 		<section class="band band--lit" aria-labelledby="next-heading">
 			<div class="band-inner">
-				<header class="head-stack">
-					<h2 id="next-heading" class="display head-title">Before you go</h2>
-				</header>
+				<section class="event-stub" aria-labelledby="stub-heading">
+					<div class="stub-when">
+						<h2 id="stub-heading" class="eyebrow">Put it in your calendar</h2>
+						<p class="stub-date"><time datetime={eventDay}>{EVENT.dateLabel}</time></p>
+					</div>
+					<dl class="stub-facts">
+						<dt>Time</dt>
+						<dd>{EVENT.timeLabel}</dd>
+						<dt>Place</dt>
+						<dd>{EVENT.venue}, {EVENT.address}</dd>
+					</dl>
+					<div class="stub-actions">
+						<a class="btn-primary" href={EVENT.icsUrl} download>Download .ics</a>
+						<a class="btn-ghost" href={googleCalendarUrl()} target="_blank" rel="noopener noreferrer">Google Calendar</a>
+					</div>
+				</section>
 
-				<ul class="field">
+				<NextStepList label="Before you go" labelId="next-heading">
 					{STEPS.map((step) => <NextStep {...step} />)}
-				</ul>
+				</NextStepList>
 
 				<EndLine text="See who you came for." href="/speakers" label="Meet the speakers" />
 			</div>
 		</section>
 	</main>
 </BaseLayout>
+
+<style lang="scss">
+	@use './thank-you';
+</style>
 
 <script>
 	import { trackConversion } from '../lib/analytics';

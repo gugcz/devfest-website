@@ -97,13 +97,47 @@
 	min-height: 2.75rem;
 	padding: 0.5rem 0;
 
+	// Drawn, not native: the UA box rendered dark grey on the dark ground
+	// and on red, and read as disabled. An open square in full ink (21:1 on
+	// black), filled with a cut-out tick when checked. `--box-ink` is the
+	// ground's ink, `--box-tick` the tick on it.
 	input[type='checkbox'] {
+		--box-ink: var(--color-text);
+		--box-tick: var(--color-bg);
+		appearance: none;
+		-webkit-appearance: none;
 		flex-shrink: 0;
+		display: grid;
+		place-content: center;
 		width: 1.5rem;
 		height: 1.5rem;
-		margin-top: 0.1em;
-		accent-color: var(--color-accent);
+		margin: 0.1em 0 0;
+		border: 2px solid var(--box-ink);
+		border-radius: var(--radius);
+		background: transparent;
 		cursor: pointer;
+
+		&::before {
+			content: '';
+			width: 0.85rem;
+			height: 0.85rem;
+			background: var(--box-tick);
+			clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+			transform: scale(0);
+		}
+
+		&:checked {
+			background: var(--box-ink);
+		}
+
+		&:checked::before {
+			transform: scale(1);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: var(--focus-gap);
+		}
 	}
 
 	span {
@@ -203,8 +237,10 @@
 		}
 	}
 
+	// Black box and black fill on red (4.8:1), the tick cut out in white.
 	.consent input[type='checkbox'] {
-		accent-color: var(--on-accent-ink);
+		--box-ink: var(--on-accent);
+		--box-tick: var(--on-accent-ink);
 
 		&:focus-visible {
 			outline-color: var(--on-accent);

@@ -59,11 +59,6 @@
 	// THE POSTER SCALE. Bebas above --fs-h3, Special Elite as body texture.
 	// --fs-display caps at 9rem: 11rem left nothing above a 760px fold.
 	--fs-display: clamp(3rem, 9.5vw, 9rem);
-	// The footer's "DEVFEST.CZ" spans the content column on one line. Shaped in
-	// Bebas with --track-display it is 3.5em wide, so 0.28 × the column
-	// (viewport less both gutters, capped at --maxw) fills 98% of it; the
-	// slack absorbs a classic scrollbar, which 100vw includes.
-	--fs-wordmark: clamp(3rem, calc((100vw - 2 * var(--gutter)) * 0.28), calc(var(--maxw) * 0.28));
 	--fs-hero: clamp(3rem, 9.5vw, 8.5rem);      // home hero statement
 	// Section headline. Always a clear step under the home hero, which
 	// `index.scss` caps at 11svh on short screens: a width-only term let a
@@ -117,8 +112,6 @@
 	--ink-muted: rgba(255, 255, 255, 0.55);
 	// 4.5:1 on #000000 at label size — the floor for small mono copy.
 	--ink-faint: rgba(255, 255, 255, 0.5);
-	// Footer wordmark: the quietest ink that still clears 3:1 as large text.
-	--ink-wordmark: rgba(255, 255, 255, 0.38);
 
 	--panel: #0C0C0C;
 	--panel-2: #111111;
@@ -151,7 +144,11 @@
 	--ink-monogram: rgba(255, 255, 255, 0.46);
 	--ink-monogram-sm: rgba(255, 255, 255, 0.66);
 
-	--lit: radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%);
+	// The spotlight pool. Its vertical radius keeps the 72% stop inside the
+	// box (38 / 50 > 0.72), so the pool is gone before the top and bottom
+	// edges: at 70% it still glowed at the top edge and stepped against the
+	// section above it.
+	--lit: radial-gradient(ellipse 78% 50% at 50% 38%, rgba(255, 244, 232, 0.05), transparent 72%);
 	// The raking light a reached row or cell takes: warm, from the left, gone
 	// by the far edge. `--wash` for a full-bleed row, `--wash-strong` inside
 	// a bounded cell where the same alpha would vanish against a panel fill.
@@ -714,18 +711,23 @@ b {
 	}
 
 	// HOVER paints the field; FOCUS draws a ring. Focus persists after a sheet closes,
-	// and a full-bleed red band left behind reads as a stuck highlight.
-	&:hover::before {
-		opacity: 1;
+	// and a full-bleed red band left behind reads as a stuck highlight. Hover only
+	// where a pointer hovers: a tap on touch would leave the band painted.
+	@media (hover: hover) {
+		&:hover::before {
+			opacity: 1;
+		}
 	}
 
 	// Every ink goes FULL BLACK — muted rgba() fails on #F11000. Blunt on purpose;
 	// a caller needing an exception overrides it with its own class.
-	&:hover {
-		color: var(--on-accent);
-
-		*:not(svg):not(path) {
+	@media (hover: hover) {
+		&:hover {
 			color: var(--on-accent);
+
+			*:not(svg):not(path) {
+				color: var(--on-accent);
+			}
 		}
 	}
 
@@ -736,8 +738,10 @@ b {
 	}
 
 	// Red on red is not a ring, so hover + focus inverts it to black.
-	&:hover:focus-visible {
-		outline-color: var(--on-accent);
+	@media (hover: hover) {
+		&:hover:focus-visible {
+			outline-color: var(--on-accent);
+		}
 	}
 }
 

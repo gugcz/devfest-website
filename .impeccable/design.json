@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-16T21:00:00.000Z",
+  "generatedAt": "2026-10-16T22:00:00.000Z",
   "title": "Design System: DevFest.cz 2026",
   "extensions": {
     "colorMeta": {
@@ -20,8 +20,7 @@
       "rule": { "role": "neutral", "displayName": "Hairline" },
       "field-border": { "role": "neutral", "displayName": "Control Edge (3.33:1)" },
       "ink-muted": { "role": "neutral", "displayName": "Muted Ink (resting labels)" },
-      "ink-faint": { "role": "neutral", "displayName": "Faint Ink (4.5:1 floor)" },
-      "ink-wordmark": { "role": "neutral", "displayName": "Wordmark Ink (footer only, 3:1 large text)" }
+      "ink-faint": { "role": "neutral", "displayName": "Faint Ink (4.5:1 floor)" }
     },
     "typographyMeta": {
       "display": { "displayName": "Display", "purpose": "The subpage <h1> or home hero statement. One per page." },
@@ -31,7 +30,6 @@
       "body": { "displayName": "Body", "purpose": "Long-form reading copy, capped at 65–75ch." },
       "label": { "displayName": "Eyebrow", "purpose": "Mono section label, uppercase by CSS, 0.28em tracking." },
       "label-lg": { "displayName": "Control Label", "purpose": "Nav, buttons, email links. 0.22em tracking." },
-      "wordmark": { "displayName": "Wordmark", "purpose": "The footer DEVFEST.CZ, one line at the content column's width (--fs-wordmark, lh 0.82, --ink-wordmark, aria-hidden)." },
       "label-xs": { "displayName": "Micro Label", "purpose": "Micro mono (avatar counts, kit tags, portrait captions). 0.6875rem = 11px, the mono floor: no mono label sets smaller." }
     },
     "shadows": [
@@ -39,10 +37,10 @@
     ],
     "motion": [
       { "name": "control", "value": "0.2s ease", "purpose": "The standard control transition: buttons, inputs, links." },
+      { "name": "cover", "value": "0.15s ease", "purpose": "The header mark and Tickets fading out while the home hero covers them; a partner mark lighting from 70% to full." },
       { "name": "field", "value": "0.28s ease", "purpose": "The row reach field colour and opacity fade." },
       { "name": "arrive", "value": "0.32s cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The house arrive curve: sheet entry, row pull." },
-      { "name": "develop", "value": "0.6s ease", "purpose": "The signature motion: a B&W photograph develops to colour on hover (gallery, facts mill plate) and the speaker plates on /speakers and the home credits while a row of their list is hovered or focused ([data-developed] on the print). With the portrait view transition, the only decorative motion. No page entry, no scroll reveal." },
-      { "name": "marquee", "value": "46s linear infinite", "purpose": "The Ticker band under the home hero (home only)." }
+      { "name": "develop", "value": "0.6s ease", "purpose": "The signature motion: a B&W photograph develops to colour on hover (gallery collage, facts mill plate, venue route photos) and the speaker prints via [data-developed]: per tile on /speakers while that tile is hovered or focused, on the home credits while a row is. With the portrait view transition, the only decorative motion. No page entry, no scroll reveal." }
     ],
     "breakpoints": [
       { "name": "narrowest-phone", "value": "380px" },
@@ -51,7 +49,8 @@
       { "name": "mid", "value": "720px" },
       { "name": "speaker-lists", "value": "760px" },
       { "name": "header", "value": "860px" },
-      { "name": "wide-collapse", "value": "900px" }
+      { "name": "wide-collapse", "value": "900px" },
+      { "name": "speaker-grid-wide", "value": "1100px" }
     ]
   },
   "components": [
@@ -99,17 +98,17 @@
       "name": "Credits",
       "kind": "custom",
       "refersTo": "field-row",
-      "description": "Home speakers teaser as film credits: head \"Starring\" with a mono count, up to six names (Bebas --fs-row) each with a one-line mono tag, one lit, its 4:5 portrait beside them in a fixed 360px column. The portrait is an aria-hidden mirror of the active row and develops to colour while a row is hovered or focused. Rows on space only; a hairline \"See all N speakers\" link closes the list. No auto-rotation.",
+      "description": "Home speakers teaser as film credits: head \"Starring\" with a mono count, up to six names (Bebas --fs-row) each with a mono tag from cleanTagline() on one line cut with an ellipsis, one lit, its 4:5 portrait beside them in a fixed 360px column. The portrait is an aria-hidden mirror of the active row and develops to colour while a row is hovered or focused. Rows on space only; a hairline \"See all N speakers\" link closes the list. No auto-rotation.",
       "html": "<div class=\"ds-credits\"><ul class=\"ds-credits-list\"><li><a class=\"ds-credit is-active\" href=\"#\"><span class=\"ds-credit-name\">Jane Example</span><span class=\"ds-credit-tag\">Staff engineer, Acme</span></a></li><li><a class=\"ds-credit\" href=\"#\"><span class=\"ds-credit-name\">John Example</span><span class=\"ds-credit-tag\">Developer advocate</span></a></li></ul><div class=\"ds-credit-plate\" aria-hidden=\"true\"></div></div>",
-      "css": ".ds-credits { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 5rem; align-items: start; background: #000000; } .ds-credits-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.625rem; } .ds-credit { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1.25rem; text-decoration: none; } .ds-credit-name { font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(2.1rem, min(5.2vw, 7.5svh), 4.5rem); line-height: 0.84; letter-spacing: 0.005em; text-transform: uppercase; color: rgba(255, 255, 255,0.6); } .ds-credit-tag { font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255, 255, 255,0.55); } .ds-credit.is-active .ds-credit-name, .ds-credit:hover .ds-credit-name, .ds-credit:focus-visible .ds-credit-name { color: #FFFFFF; } .ds-credit.is-active .ds-credit-tag, .ds-credit:hover .ds-credit-tag, .ds-credit:focus-visible .ds-credit-tag { color: rgba(255, 255, 255,0.7); } .ds-credit:focus-visible { outline: 2px solid #F11000; outline-offset: 3px; } .ds-credit-plate { width: 360px; aspect-ratio: 4 / 5; background: #0A0A0A; filter: grayscale(1) contrast(1.14) brightness(0.84); transition: filter 0.6s ease; box-shadow: inset 0 0 0 1px rgba(255, 255, 255,0.16), 0 10px 24px rgba(0,0,0,0.5); } .ds-credits-list:hover ~ .ds-credit-plate, .ds-credits-list:focus-within ~ .ds-credit-plate { filter: grayscale(0) contrast(1.02) brightness(1); }"
+      "css": ".ds-credits { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 5rem; align-items: start; background: #000000; } .ds-credits-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.625rem; } .ds-credit { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1.25rem; text-decoration: none; } .ds-credit-name { font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(2.1rem, min(5.2vw, 7.5svh), 4.5rem); line-height: 0.84; letter-spacing: 0.005em; text-transform: uppercase; color: rgba(255, 255, 255,0.6); } .ds-credit-tag { flex: 1 1 12rem; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255, 255, 255,0.55); } .ds-credit.is-active .ds-credit-name, .ds-credit:hover .ds-credit-name, .ds-credit:focus-visible .ds-credit-name { color: #FFFFFF; } .ds-credit.is-active .ds-credit-tag, .ds-credit:hover .ds-credit-tag, .ds-credit:focus-visible .ds-credit-tag { color: rgba(255, 255, 255,0.7); } .ds-credit:focus-visible { outline: 2px solid #F11000; outline-offset: 3px; } .ds-credit-plate { width: 360px; aspect-ratio: 4 / 5; background: #0A0A0A; filter: grayscale(1) contrast(1.14) brightness(0.84); transition: filter 0.6s ease; box-shadow: inset 0 0 0 1px rgba(255, 255, 255,0.16), 0 10px 24px rgba(0,0,0,0.5); } .ds-credits-list:hover ~ .ds-credit-plate, .ds-credits-list:focus-within ~ .ds-credit-plate { filter: grayscale(0) contrast(1.02) brightness(1); }"
     },
     {
-      "name": "Casting Sheet",
+      "name": "Speaker Grid",
       "kind": "custom",
-      "refersTo": "field-row",
-      "description": "The /speakers lineup: a numbered list beside a sticky 420px portrait. Row grid 2.5rem minmax(0,max-content) minmax(0,1fr): mono index, Bebas --fs-h3 name, mono --fs-label-sm tag on one line cut with an ellipsis. The active row lights; the aria-hidden portrait mirrors it and develops while a row is hovered or focused. Trailing unannounced slots at faint ink, not interactive.",
-      "html": "<div class=\"ds-cast\"><ol class=\"ds-cast-list\"><li><a class=\"ds-cast-row is-active\" href=\"#\"><span class=\"ds-cast-index\">01</span><span class=\"ds-cast-name\">Jane Example</span><span class=\"ds-cast-tag\">Staff engineer, Acme Example s.r.o.</span></a></li><li><a class=\"ds-cast-row\" href=\"#\"><span class=\"ds-cast-index\">02</span><span class=\"ds-cast-name\">John Example</span><span class=\"ds-cast-tag\">Developer advocate</span></a></li><li><span class=\"ds-cast-row ds-cast-slot\"><span class=\"ds-cast-index\">03</span><span class=\"ds-cast-name\">Unidentified suspect</span><span class=\"ds-cast-tag\">To be revealed</span></span></li></ol><div class=\"ds-cast-plate\" aria-hidden=\"true\"></div></div>",
-      "css": ".ds-cast { display: grid; grid-template-columns: minmax(0, 1fr) 26.25rem; gap: 4rem; align-items: start; background: #000000; } .ds-cast-list { list-style: none; margin: 0; padding: 0; } .ds-cast-row { display: grid; grid-template-columns: 2.5rem minmax(0, max-content) minmax(0, 1fr); align-items: baseline; gap: 0 1.25rem; padding: 0.4rem 0; color: inherit; text-decoration: none; } .ds-cast-index { font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.74rem; letter-spacing: 0.08em; color: rgba(255, 255, 255,0.55); } .ds-cast-name { font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(1.8rem, 3.4vw, 2.6rem); line-height: 1.06; letter-spacing: 0.02em; text-transform: uppercase; color: rgba(255, 255, 255,0.6); } .ds-cast-tag { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.74rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 255, 255,0.55); } .ds-cast-row.is-active .ds-cast-name, a.ds-cast-row:hover .ds-cast-name, a.ds-cast-row:focus-visible .ds-cast-name { color: #FFFFFF; } .ds-cast-row.is-active .ds-cast-tag, a.ds-cast-row:hover .ds-cast-tag, a.ds-cast-row:focus-visible .ds-cast-tag { color: rgba(255, 255, 255,0.7); } .ds-cast-slot .ds-cast-name { color: rgba(255, 255, 255,0.5); } a.ds-cast-row:focus-visible { outline: 2px solid #F11000; outline-offset: 3px; } .ds-cast-plate { position: sticky; top: 6rem; aspect-ratio: 4 / 5; background: #0A0A0A; box-shadow: inset 0 0 0 1px rgba(255, 255, 255,0.16), 0 10px 24px rgba(0,0,0,0.5); }"
+      "refersTo": "speaker-tile",
+      "description": "The /speakers lineup as a grid of prints: 4 columns at ≥1100px, 3 at ≥760px, 2 below (column gaps 2rem / 1.5rem / 1rem). Each tile is a button: its own 4:5 print, the name in Bebas --fs-card-title in full ink (--fs-title-sm under 760px), one Special Elite --fs-ui role line in soft ink clamped at two lines. The print develops while its tile is hovered or focused. One trailing non-interactive tile, an unexposed print with a --fs-h2 \"?\" and \"Unidentified suspect\" / \"To be revealed\" in faint ink, closes the grid.",
+      "html": "<ul class=\"ds-sgrid\"><li><button class=\"ds-stile\" type=\"button\"><span class=\"ds-sprint\"></span><span class=\"ds-sname\">Jane Example</span><span class=\"ds-srole\">Staff engineer, Acme Example s.r.o.</span></button></li><li><button class=\"ds-stile\" type=\"button\"><span class=\"ds-sprint\"></span><span class=\"ds-sname\">John Example</span><span class=\"ds-srole\">Developer advocate</span></button></li><li class=\"ds-suspect\"><span class=\"ds-sprint\" aria-hidden=\"true\"><span class=\"ds-sunknown\">?</span></span><span class=\"ds-sname\">Unidentified suspect</span><span class=\"ds-srole\">To be revealed</span></li></ul>",
+      "css": ".ds-sgrid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3.5rem 2rem; background: #000000; } .ds-sgrid > li { display: flex; flex-direction: column; min-width: 0; } .ds-stile { display: flex; flex-direction: column; width: 100%; padding: 0; margin: 0; text-align: left; font: inherit; color: inherit; background: transparent; border: 0; cursor: pointer; } .ds-sprint { position: relative; display: block; aspect-ratio: 4 / 5; background: #0A0A0A; filter: grayscale(1) contrast(1.14) brightness(0.84); transition: filter 0.6s ease; box-shadow: inset 0 0 0 1px rgba(255, 255, 255,0.16), 0 10px 24px rgba(0,0,0,0.5); } .ds-stile:hover .ds-sprint, .ds-stile:focus-visible .ds-sprint { filter: grayscale(0) contrast(1.02) brightness(1); } .ds-stile:focus-visible { outline: 2px solid #F11000; outline-offset: 3px; } .ds-sname { margin-top: 0.9rem; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: 1.95rem; line-height: 1.06; letter-spacing: 0.02em; text-transform: uppercase; color: #FFFFFF; overflow-wrap: anywhere; } .ds-srole { margin-top: 0.35rem; font-family: var(--font-special-elite, 'Special Elite', cursive); font-size: 0.95rem; line-height: 1.4; color: rgba(255, 255, 255,0.7); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; } .ds-suspect .ds-sname, .ds-suspect .ds-srole { color: rgba(255, 255, 255,0.5); } .ds-sunknown { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(2.25rem, min(6vw, 9svh), 5.5rem); line-height: 1; color: rgba(255, 255, 255,0.5); }"
     },
     {
       "name": "Hairline Link",
@@ -128,11 +127,27 @@
       "css": ".ds-end-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1rem 1.75rem; margin: 0; background: #000000; } .ds-end-line-text { font-family: var(--font-special-elite, 'Special Elite', cursive); font-size: clamp(1.2rem, 1.6vw, 1.5rem); line-height: 1.4; color: rgba(255, 255, 255,0.7); } .ds-end-line-link { display: inline-block; padding: 0.4em 0 0.3em; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.18em; text-transform: uppercase; color: #FFFFFF; text-decoration: none; border-bottom: 1px solid rgba(241,16,0,0.55); transition: color 0.2s, border-color 0.2s; } .ds-end-line-link:hover, .ds-end-line-link:focus-visible { color: #F11000; border-color: #F11000; }"
     },
     {
+      "name": "Next Step List",
+      "kind": "custom",
+      "refersTo": "step-list-label",
+      "description": "NextStepList.astro + NextStep.astro: a mono eyebrow h2 heads an open field of errands (an <ol> when the steps are a sequence, e.g. the venue route 01–03). Each row CONTAINS its controls (.field-row--holds): an optional faint mono index over a Bebas --fs-h3 title on the left; the Special Elite note on the right with its actions under it, left-set. Never a poster head over the rows.",
+      "html": "<h2 class=\"ds-step-label\">The route</h2><ol class=\"ds-steps\"><li class=\"ds-step\"><div class=\"ds-step-head\"><span class=\"ds-step-index\" aria-hidden=\"true\">01</span><h3 class=\"ds-step-title\">Take the train</h3></div><div class=\"ds-step-body\"><p class=\"ds-step-note\">Trains leave Praha Masarykovo every half hour.</p><a class=\"ds-step-btn\" href=\"#\">Plan the trip</a></div></li></ol>",
+      "css": ".ds-step-label { margin: 0 0 1rem; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.78rem; font-weight: 400; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255, 255, 255,0.55); } .ds-steps { list-style: none; margin: 0; padding: 0; background: #000000; } .ds-step { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 0.9rem 4rem; align-items: start; padding: 2.5rem 0; } .ds-step-head { display: flex; flex-direction: column; gap: 0.6rem; } .ds-step-index { font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.16em; font-variant-numeric: tabular-nums; color: rgba(255, 255, 255,0.5); } .ds-step-title { margin: 0; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(1.8rem, 3.4vw, 2.6rem); font-weight: 400; line-height: 1.06; letter-spacing: 0.02em; text-transform: uppercase; color: #FFFFFF; } .ds-step-body { display: flex; flex-direction: column; align-items: flex-start; gap: 1.1rem; } .ds-step-note { margin: 0; max-width: 52ch; font-family: var(--font-special-elite, 'Special Elite', cursive); font-size: 1.05rem; line-height: 1.7; color: rgba(255, 255, 255,0.78); } .ds-step-btn { font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; color: #FFFFFF; border: 1px solid rgba(255, 255, 255,0.4); border-radius: 2px; padding: 1.25rem 2rem; text-decoration: none; } .ds-step-btn:hover, .ds-step-btn:focus-visible { border-color: #FFFFFF; } .ds-step-btn:focus-visible { outline: 2px solid #F11000; outline-offset: 3px; }"
+    },
+    {
+      "name": "Partner Logo",
+      "kind": "custom",
+      "refersTo": "partner-logo",
+      "description": "Every partner mark, on the home strip and the /partners wall, is a white mono mark on the page ground at 70%, full on hover or focus (_logos.scss). The master picks its route to white via .logo--<mode> from LogoMono: ink (flattened), tile (thresholded, tile screened out), dark (inverted, then thresholded), colour (greyscale only). Sized by equal ink area against the tier's reference box (partnerLogo / opticalBox); a mark at ratio ≥6 spans two grid cells. No tile, border or plate.",
+      "html": "<ul class=\"ds-logos\"><li><a class=\"ds-logo-link\" href=\"#\" aria-label=\"Acme Example\"><span class=\"ds-logo ds-logo--wide\">ACME EXAMPLE</span></a></li><li><a class=\"ds-logo-link\" href=\"#\" aria-label=\"Example Labs\"><span class=\"ds-logo\">EXAMPLE</span></a></li></ul>",
+      "css": ".ds-logos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 2.5rem 3rem; align-items: center; justify-items: start; background: #000000; } .ds-logo-link { display: inline-flex; text-decoration: none; } .ds-logo { display: block; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: 1.6rem; letter-spacing: 0.04em; color: #FFFFFF; opacity: 0.7; transition: opacity 0.15s ease; } .ds-logo--wide { font-size: 1.3rem; letter-spacing: 0.12em; } .ds-logo-link:hover .ds-logo, .ds-logo-link:focus-visible .ds-logo { opacity: 1; } .ds-logo-link:focus-visible { outline: 2px solid #F11000; outline-offset: 6px; }"
+    },
+    {
       "name": "Accent Band (Closer)",
       "kind": "card",
       "refersTo": "band-accent",
       "description": "Red as a field. At most once per page, for the thing the page wants the visitor to do. Controls invert; hierarchy comes from size, never from dimming.",
-      "html": "<section class=\"ds-band-accent\"><p class=\"ds-band-eyebrow\">October 30, 2026 · Uhelný Mlýn</p><h2 class=\"ds-band-title\">Don't miss the last train.</h2><p class=\"ds-band-note\">Tickets are limited by the size of the building, not by ambition.</p><a class=\"ds-band-btn\" href=\"#\">Get a ticket →</a></section>",
+      "html": "<section class=\"ds-band-accent\"><p class=\"ds-band-eyebrow\">30 Oct 2026 · Uhelný Mlýn</p><h2 class=\"ds-band-title\">Don't miss the last train.</h2><p class=\"ds-band-note\">Tickets are limited by the size of the building, not by ambition.</p><a class=\"ds-band-btn\" href=\"#\">Get a ticket →</a></section>",
       "css": ".ds-band-accent { background: #F11000; color: #000000; padding: 4rem 3rem; display: flex; flex-direction: column; gap: 1.5rem; } .ds-band-eyebrow { margin: 0; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.78rem; letter-spacing: 0.28em; text-transform: uppercase; } .ds-band-title { margin: 0; font-family: var(--font-bebas-neue, 'Bebas Neue', sans-serif); font-size: clamp(2.25rem, min(6vw, 9svh), 5.5rem); line-height: 0.84; letter-spacing: 0.005em; text-transform: uppercase; font-weight: 400; } .ds-band-note { margin: 0; max-width: 34ch; font-family: var(--font-special-elite, 'Special Elite', cursive); font-size: clamp(1.2rem, 1.6vw, 1.5rem); line-height: 1.6; } .ds-band-btn { align-self: flex-start; font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace); font-size: 0.84rem; letter-spacing: 0.22em; text-transform: uppercase; color: #FFFFFF; background: #000000; border: 1px solid #000000; border-radius: 2px; padding: 1.25rem 2.8rem; text-decoration: none; transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease; } .ds-band-btn:hover { background: #FFFFFF; border-color: #FFFFFF; color: #000000; } .ds-band-btn:focus-visible { outline: 2px solid #000000; outline-offset: 3px; }"
     }
   ],
@@ -154,19 +169,23 @@
       { "name": "The One Display Rule", "body": "One --fs-display element per page. Sections run at --fs-h2.", "section": "typography" },
       { "name": "The One Red Word Rule", "body": "The red accent word and the closing full stop belong to the home hero statement (and the invite title). Every subpage hero title carries neither; section heads and every Closer title are plain cream.", "section": "typography" },
       { "name": "The No Fake Styles Rule", "body": "font-synthesis: none. One weight per face and no italic, so prose emphasis is ink (strong steps up to --color-text). Czech letters Special Elite lacks fall to JetBrains Mono.", "section": "typography" },
-      { "name": "The No Decorative Lines Rule", "body": "A hairline only where it carries structure: the agenda grid, data tables, the press-kit tile grid, control boundaries, link underlines, progress spines, the cookie banner edge. No section dividers, no rule under a head or above the hero's footing line, no ruled readouts, no left-edge lines, no tiles or borders behind partner logos.", "section": "elevation" },
-      { "name": "The Motion Answers A Change Rule", "body": "No scroll reveal, no per-section entrance, no page-entry animation: the hero lands still. One signature motion: a B&W photograph develops to colour on hover (gallery, mill plate, speaker plates). Only the home hero's topic rotor, the home ticker and the countdown move on their own; the agenda's live dot is static.", "section": "motion" },
+      { "name": "The No Decorative Lines Rule", "body": "A hairline only where it carries structure: the agenda grid, data tables, control boundaries (the press kit's format chips included), link underlines, progress spines, the cookie banner edge. No section dividers, no rule under a head or above the hero's footing line, no ruled readouts, no left-edge lines, no tiles or borders behind partner logos.", "section": "elevation" },
+      { "name": "The Motion Answers A Change Rule", "body": "No scroll reveal, no per-section entrance, no page-entry animation: the hero lands still. One signature motion: a B&W photograph develops to colour on hover (gallery collage, mill plate, venue photos, speaker prints). Only the home hero's topic rotor (captioned \"On the programme\", shown on phones too) and the countdown move on their own; no ticker, no marquee, no scroll strip; the agenda's live dot is static. Hover painting on rows only under (hover: hover).", "section": "motion" },
       { "name": "The Recipe Rule", "body": "Every font declaration goes through _type.scss (mono, display, row-title, prose, hairline-link); every font-size through the ramp.", "section": "typography" },
       { "name": "The No Glow Rule", "body": "No glow anywhere. Hover and live states are flat colour changes: an inverted fill for buttons, a border or ink change for rows and fields. The print mount stays: a photograph is mounted, not floated.", "section": "elevation" },
-      { "name": "The Size By Tier Rule", "body": "Partner logos sit on the page ground with no tile, border or plate. Rank reads from size: opticalBox() gives each mark equal ink area within its tier's reference box (Platinum 600x300, Diamond 312x190, Gold/Silver 246x150, Media/Community 200x110). Every tier heading is Bebas --fs-h3; on a phone every tier but Platinum scales to 0.72.", "section": "components" },
-      { "name": "The End Line Rule", "body": "A Closer ends a page that asks for a decision (speakers, agenda, workshops, venue, invite). A page that asks for none ends on an EndLine: one lede line and one hairline link.", "section": "components" }
+      { "name": "The Size By Tier Rule", "body": "Partner logos sit on the page ground with no tile, border or plate, each a white mono mark at 70%, full on hover or focus. Rank reads from size: opticalBox() gives each mark equal ink area within its tier's reference box (Platinum 600x300, Diamond 288x176, Gold/Silver 246x150, Media/Community 200x110) on a left-set grid whose column is the box width; a mark at ratio ≥6 spans two cells. Every tier heading is Bebas --fs-h3; on a phone every tier but Platinum sets two to a row at 0.8. The home strip reuses the boxes at 70% under a mono \"Partners\" label.", "section": "components" },
+      { "name": "The End Line Rule", "body": "A Closer ends a page that asks for a decision (speakers, agenda, workshops, venue, invite). A page that asks for none ends on an EndLine (one lede line and one hairline link) or on its content (legal pages, 404's step list).", "section": "components" },
+      { "name": "The Earned Noir Rule", "body": "Noir wordplay is spent in a few earned places: the home hero statement, the 404 \"Nothing filed under that\", \"Follow the leads.\", the \"Unidentified suspect\" tile, \"Starring\", \"Buy your way in\", \"See them in the room.\". Every other title says plainly what it is (\"Speakers\", \"Partners\", \"The team\", \"Questions\", \"Become a partner\"). No triads, no em-dash chains, no hype words.", "section": "components" },
+      { "name": "The One Date Format Rule", "body": "Event facts come from src/lib/event.ts: doors 08:00, keynote 09:00, close 19:00, afterparty to 23:00. \"30 October 2026\" in running copy, \"30 Oct 2026\" in stamps, never \"October 30\"; 24-hour HH:MM; British \"programme\".", "section": "components" }
     ],
     "dos": [
       "Do use global primitives by class name (.band, .eyebrow, .display, .field-row, .btn-primary, .btn-ghost).",
       "Do give every data-backed page a .fallback-note.",
       "Do use --field-border (≥3:1) for any interactive control boundary.",
       "Do add a prefers-reduced-motion opt-out to every animation.",
-      "Do use .hairline-link for every \"see all\" or next-step link."
+      "Do use .hairline-link for every \"see all\" or next-step link.",
+      "Do head a list of next steps with NextStepList's mono label, an <ol> when the steps are a sequence.",
+      "Do render every partner mark through the partner-logo() recipe and its LogoMono mode."
     ],
     "donts": [
       "Don't add a fourth font, an icon package, Tailwind or CSS-in-JS.",
@@ -179,7 +198,9 @@
       "Don't put a mood eyebrow ('Be there', 'Join us') on a closer; an eyebrow carries a fact or nothing.",
       "Don't add a glow, a lift or a drop shadow to a hover or live state.",
       "Don't draw a tile, border or plate behind a partner logo; size carries the tier.",
-      "Don't set a mono label under 11px (--fs-label-xs is the floor)."
+      "Don't set a mono label under 11px (--fs-label-xs is the floor).",
+      "Don't typeset the DevFest.cz name as a second wordmark; use the official logo file.",
+      "Don't spend noir wordplay on a plain title; name the page."
     ]
   }
 }

@@ -9,7 +9,7 @@
 	color: rgba(255, 255, 255, 0.65);
 }
 
-// Columns → wordmark → bottom line, separated by space alone: no rule above
+// Columns → bottom line, separated by space alone: no rule above
 // the footer, none between its rows.
 .footer-inner {
 	max-width: var(--maxw);
@@ -17,6 +17,29 @@
 	display: flex;
 	flex-direction: column;
 	gap: 4rem;
+}
+
+/* ---- the mark ---- */
+// The brand asset itself — never typeset the name in Bebas, which produces a
+// second wordmark disagreeing with the header's. It heads the brand column
+// rather than taking a row of its own.
+.footer-logo-link {
+	display: inline-flex;
+	align-self: flex-start;
+	line-height: 0;
+	transition: opacity 0.2s ease;
+
+	&:hover,
+	&:focus-visible {
+		opacity: 0.75;
+	}
+}
+
+.footer-logo {
+	display: block;
+	// Floor = the brand manual's 180px digital minimum plus the artboard's clear space.
+	width: clamp(188px, 18vw, 12.75rem);
+	height: auto;
 }
 
 .footer-grid {
@@ -232,18 +255,6 @@
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap-tight);
 	}
-}
-
-/* ---- the wordmark ---- */
-// The name set at the width of the content column, on one line at every
-// width (--fs-wordmark scales with the viewport). Quiet ink: it must not
-// compete with the page's one --fs-display. Decorative — aria-hidden.
-.footer-wordmark {
-	@include display(var(--fs-wordmark));
-	line-height: 0.82;
-	color: var(--ink-wordmark);
-	white-space: nowrap;
-	margin: 0;
 }
 
 // Copyright left, the repo link right; when they wrap, both stay left-set.

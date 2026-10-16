@@ -163,6 +163,9 @@
 	&:hover {
 		.avatar {
 			border-color: var(--on-accent-border);
+		}
+
+		.avatarImg {
 			filter: grayscale(1) contrast(1.06) brightness(0.98);
 		}
 
@@ -267,6 +270,26 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+}
+
+// The initials well; the photo, when it paints, covers it edge to edge.
+.avatarMono {
+	position: relative;
+	overflow: hidden;
+}
+
+.avatarImg {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center 22%;
+	filter: grayscale(1) contrast(1.06) brightness(0.9);
+}
+
+.avatarNone {
+	display: none;
 }
 
 .avatarMono,

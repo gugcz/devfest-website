@@ -53,7 +53,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'Asked and<br />answered'}
+			titleHtml={'Questions'}
 			lede="Answers to the questions we hear most. Can't find yours?"
 			link={{ href: 'mailto:devfest@gug.cz', label: 'Get in touch' }}
 			seoHeading="DevFest.cz 2026 FAQ"
@@ -89,7 +89,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 								   to show what an answer looks like; opening more would
 								   bury the rest of the list. */
 								<details class="faq-item" open={groupIndex === 0 && itemIndex === 0}>
-									<summary class="field-row field-row--link faq-q">
+									<summary class="field-row faq-q">
 										<span class="faq-q-text">{item.q}</span>
 										<span class="faq-marker" aria-hidden="true">+</span>
 									</summary>

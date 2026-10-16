@@ -18,8 +18,8 @@ import AttendingCard from '../components/AttendingCard';
 			photo={false}
 		/>
 
-		<section class="attending-body" aria-labelledby="attending-form-heading">
-			<div class="attending-inner">
+		<section class="band band--lit" aria-labelledby="attending-form-heading">
+			<div class="band-inner">
 				<h2 id="attending-form-heading" class="sr-only">Build your card</h2>
 				<AttendingCard client:load />
 				<EndLine text="Tag @devfestcz when you post it." href="/agenda" label="See the schedule" />
@@ -27,7 +27,3 @@ import AttendingCard from '../components/AttendingCard';
 		</section>
 	</main>
 </BaseLayout>
-
-<style lang="scss">
-	@use './attending';
-</style>
