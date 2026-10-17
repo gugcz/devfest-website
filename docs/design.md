@@ -1382,17 +1382,9 @@ Places the code contradicts itself or this document. Each needs a decision.
     Whale Media only ship dark-ink artwork; light versions would let them
     drop the card. `LogoMono` is keyed by filename and belongs as a field
     in the partners schema.
-23. ~~**Canvas drift.**~~ Resolved: `design/devfest.pen` carries the
-    footer with its logo, the speaker grid, the home collage gallery, the
-    plain subpage titles, `EndLine`, the brand-manual tokens, white Bold
-    CTA labels, the red-toned bands, the two-column menu, the agenda hours,
-    the `NextStepList` label-only head, the home logo wall at its coded
-    size, the hero-into-mill fade, and the 375px `Home` without a ticker.
-    `$on-accent` / `$on-accent-ink` / `$on-accent-border` are themed on a
-    `ground` axis (`flat` = black ink on red, `band` = white ink on the
-    red-toned ground); every red-toned band sets `ground: band`. The
-    red-toned fill itself stays a literal layered fill on each band: Pen
-    has no gradient variables.
+23. ~~**Canvas drift.**~~ Moot: the Pencil canvas left the repo in #473;
+    `docs/design.md` and `.impeccable/design.json` are the only design
+    record (`.claude/rules/design.md`).
 24. ~~**Full-width flat red bands are not an approved large red area.**~~
     Resolved: `.band--accent` (the newsletter, the `/partners` CTA and every
     `Closer tone="accent"`) paints `--red-toned` (`BaseLayout.scss:139`,
