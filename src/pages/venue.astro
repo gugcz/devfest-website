@@ -27,12 +27,14 @@ const ROUTE = [
 		title: 'Walk from the station',
 		noteHtml:
 			'From Libčice nad Vltavou station it is a ten-minute walk, about 0.7&nbsp;km, to the venue.',
-		actions: [{ href: EVENT.stationWalkUrl, label: 'Station to venue', kind: 'primary' as const, external: true }],
+		// Two map links on one page are two ways to the same place, not two
+		// decisions: both are quiet, the page's red is the closer's button.
+		actions: [{ href: EVENT.stationWalkUrl, label: 'Station to venue', kind: 'ghost' as const, external: true }],
 	},
 	{
 		title: `Find ${EVENT.venue}`,
 		noteHtml: `${EVENT.street}. Registration opens at ${EVENT.doorsTime}, the keynote starts at ${EVENT.startTime}.`,
-		actions: [{ href: EVENT.mapUrl, label: 'Open in maps', external: true }],
+		actions: [{ href: EVENT.mapUrl, label: 'Open in maps', kind: 'ghost' as const, external: true }],
 	},
 ];
 
@@ -77,6 +79,8 @@ const PHOTOS = [
 			lede={`${EVENT.venue} sits just north of Prague: one direct train from the city centre, then a ten-minute walk from the station.`}
 			seoHeading={`How to get to ${EVENT.venue}, DevFest.cz 2026`}
 			titleId="venue-title"
+			plate="/gallery/uhelny-mlyn-entrance-tower.webp"
+			focus="50% 45%"
 		/>
 
 		<section class="band band--lit" aria-labelledby="route-heading">

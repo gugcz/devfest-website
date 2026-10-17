@@ -19,8 +19,11 @@
 }
 
 // A step above the questions: at --fs-h3 the category read as another entry in the list.
+// The category is the page's head on this row: section size, over the
+// questions a step down. The other way round, twenty questions at head size
+// shouted over four quiet categories.
 .faq-cat {
-	@include display(clamp(2.4rem, 4.2vw, 3.75rem));
+	@include display(var(--fs-h2));
 	margin: 0;
 }
 
@@ -41,29 +44,14 @@
 	}
 }
 
-// An OPEN item takes a flat panel (no wash, no feather), kept inside the
-// question column: run to the viewport edge it read as a stray band. The
-// question and its answer carry the same side inset, so the text sits inside
-// the panel whether it is open or not and never shifts when it opens.
+// An open item opens on the black ground: the answer under its question, the
+// marker turned. No panel behind it — a lit box around one answer was the one
+// card on a page of rows. The question and its answer share one side inset
+// so nothing shifts when it opens.
 .faq-item {
 	--faq-inset: clamp(0.9rem, 2vw, 1.4rem);
 	position: relative;
 	isolation: isolate;
-
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: var(--panel-lit);
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.3s ease;
-		z-index: -2;
-	}
-
-	&[open]::before {
-		opacity: 1;
-	}
 }
 
 // Question text + toggle marker. Rhythm comes from `.field-row`; the reach
@@ -108,7 +96,7 @@
 // The long-list row step, shared with the session rows and the press clippings.
 .faq-q-text {
 	flex: 1;
-	@include row-title;
+	@include row-title(var(--fs-row-sm));
 	transition: color 0.2s;
 }
 

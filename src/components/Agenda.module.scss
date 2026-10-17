@@ -59,12 +59,13 @@
 // A flat strip is the sheet saying "nobody is on". It is the same fill as a
 // band, without the label, and it is opaque so it closes over the ruling
 // underneath. Flat, not hatched: struck through, a lunch out-shouted the talks.
-.idle,
 .band {
 	background: var(--panel-lit);
 }
 
+// Unfilled time is black like the sheet; the room rules run through it.
 .idle {
+	background: transparent;
 	z-index: 1;
 	pointer-events: none;
 }
@@ -178,10 +179,13 @@
 }
 
 /* ===================== CELL (talk button) ===================== */
-// A talk is an opaque panel filling its slot in the room column, from its start
-// time down to its end. Flat: `--radius` (2px), no drop shadow, and its boundary
-// is a hairline box, not a bar down one edge — a left spine is the shape this
-// language exists to avoid. Reached, it lights and its bottom rule draws red.
+// A talk is type on the sheet, filling its slot in the room column from its
+// start time down to its end, with one rule across its top where it starts.
+// No panel fill, no box: twenty-five grey cards made the timetable a wall of
+// cards, which is the one thing this language exists to avoid. Transparent,
+// not opaque black — on the lit band an opaque cell read as a dark card; the
+// room rule runs on behind the text. Reached, it lights and its bottom rule
+// draws red.
 .cell {
 	position: relative;
 	z-index: 2;
@@ -196,10 +200,10 @@
 	color: inherit;
 	cursor: pointer;
 	overflow: hidden;
-	background: var(--panel-2);
-	border: 1px solid var(--rule);
+	background: transparent;
+	border: 0;
 	border-top: 1px solid var(--rule-strong);
-	border-radius: var(--radius);
+	border-radius: 0;
 	transition: background 0.24s ease, border-color 0.24s ease;
 
 	// Light washes in from the left when the entry is reached.

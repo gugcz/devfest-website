@@ -85,60 +85,68 @@ function usePortraitMorph(
 	return { morphId, open, close };
 }
 
-function SpeakerTile({
+/** One name on the register: Bebas name, mono role on the same line (under
+ * it on a phone). Reaching the row (pointer or focus) puts its portrait on
+ * the shared plate; pressing it opens the sheet. */
+function SpeakerRow({
 	speaker,
 	onOpen,
-	priority,
-	morphing,
+	onReach,
+	active,
 }: {
 	speaker: Speaker;
 	onOpen: (speaker: Speaker) => void;
-	priority: boolean;
-	morphing: boolean;
+	onReach: () => void;
+	active: boolean;
 }) {
-	// The print develops to colour while its tile is hovered or focused.
-	const [developed, setDeveloped] = useState(false);
-	const develop = () => setDeveloped(true);
-	const rest = () => setDeveloped(false);
-
+	const tag = cleanTagline(speaker.tagLine);
 	return (
 		<li className={s.cell}>
 			<button
 				type="button"
-				className={s.tile}
+				className={`${s.row}${active ? ` ${s.isActive}` : ''}`}
 				onClick={() => onOpen(speaker)}
-				onPointerEnter={develop}
-				onPointerLeave={rest}
-				onFocus={develop}
-				onBlur={rest}
+				onPointerEnter={onReach}
+				onFocus={onReach}
 				aria-label={`View ${speaker.fullName}'s profile`}
 			>
-				<span
-					className={print.print}
-					data-developed={developed || undefined}
-					style={
-						morphing ? ({ viewTransitionName: PORTRAIT_TRANSITION } as React.CSSProperties) : undefined
-					}
-				>
-					<SpeakerPhoto
-						speaker={speaker}
-						photoClass={print.photo}
-						monogramClass={print.monogram}
-						width={400}
-						height={500}
-						eager={priority}
-					/>
-					<span className={print.scrim} aria-hidden="true" />
-				</span>
 				<span className={s.name}>{speaker.fullName}</span>
-				{cleanTagline(speaker.tagLine) && <span className={s.tag}>{cleanTagline(speaker.tagLine)}</span>}
+				{tag && <span className={s.tag}>{tag}</span>}
 			</button>
 		</li>
 	);
 }
 
-/** The lineup as a grid of prints, one tile per speaker. No placeholder tile
- * for names still to come (removed in #465). Rendered by `Speakers`. */
+/** The one portrait beside the register: the reached row's speaker on the
+ * shared print, sticky as the list scrolls, running off the right edge.
+ * Decorative for screen readers (the row's name is the label); it carries
+ * the morph into the sheet when its speaker is the one being opened. */
+function LineupPortrait({ speaker, engaged, morphing }: { speaker: Speaker; engaged: boolean; morphing: boolean }) {
+	return (
+		<div className={s.portrait} aria-hidden="true">
+			<span
+				className={print.print}
+				data-developed={engaged || undefined}
+				style={morphing ? ({ viewTransitionName: PORTRAIT_TRANSITION } as React.CSSProperties) : undefined}
+			>
+				<SpeakerPhoto
+					key={speaker.id}
+					speaker={speaker}
+					photoClass={print.photo}
+					monogramClass={print.monogram}
+					width={420}
+					height={525}
+					eager
+				/>
+				<span className={print.scrim} aria-hidden="true" />
+			</span>
+		</div>
+	);
+}
+
+/** The lineup as a register of names with one portrait beside it — the name
+ * is the content; a grid of twenty-six prints was a team page. No placeholder
+ * row for names still to come (removed in #465). Rendered by `Speakers`. */
 export function SpeakerLineup({
 	speakers,
 	onOpen,
@@ -146,21 +154,39 @@ export function SpeakerLineup({
 }: {
 	speakers: Speaker[];
 	onOpen: (speaker: Speaker) => void;
-	/** Id of the speaker whose dialog is open — that tile's print carries the morph. */
+	/** Id of the speaker whose dialog is open — the plate carries the morph for them. */
 	openId?: string | null;
 }) {
+	const [active, setActive] = useState(0);
+	const [engaged, setEngaged] = useState(false);
+	// The roster can shrink between syncs; never point past the list.
+	const lit = speakers[active] ?? speakers[0];
+
 	return (
-		<ul className={s.grid} role="list">
-			{speakers.map((speaker, i) => (
-				<SpeakerTile
-					key={speaker.id}
-					speaker={speaker}
-					onOpen={onOpen}
-					priority={i < 4}
-					morphing={speaker.id === openId}
-				/>
-			))}
-		</ul>
+		<div className={s.lineup}>
+			<ul
+				className={s.list}
+				role="list"
+				onPointerLeave={() => setEngaged(false)}
+				onBlur={(e) => {
+					if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setEngaged(false);
+				}}
+			>
+				{speakers.map((speaker, i) => (
+					<SpeakerRow
+						key={speaker.id}
+						speaker={speaker}
+						onOpen={onOpen}
+						active={speaker === lit}
+						onReach={() => {
+							setActive(i);
+							setEngaged(true);
+						}}
+					/>
+				))}
+			</ul>
+			{lit && <LineupPortrait speaker={lit} engaged={engaged} morphing={lit.id === openId} />}
+		</div>
 	);
 }
 

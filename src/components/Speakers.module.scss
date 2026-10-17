@@ -1,42 +1,39 @@
 @use '../styles/type' as *;
-// Speaker lineup as a grid of prints: one tile per speaker (print, name, one
-// role line). The print itself
-// (mount, photo, monogram, develop) is `Print.module.scss`, shared with the
-// home teaser; this file owns the grid and the caption under each print.
+// Speaker lineup as a register: one row per speaker (Bebas name, mono role),
+// one portrait beside the list on the shared print (`Print.module.scss`),
+// following the reached row and running off the right edge of the page.
+// Rows on space only, no rules between them.
 
-.grid {
+.lineup {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 420px;
+	gap: clamp(2rem, 5vw, 5rem);
+	align-items: start;
+}
+
+.list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 2.5rem 1rem;
-
-	@media (min-width: 760px) {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 3rem 1.5rem;
-	}
-
-	@media (min-width: 1100px) {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 3.5rem 2rem;
-	}
-}
-
-// `min-width: 0`, or a long Czech surname at Bebas size widens its track and
-// shoves the next print out of line.
-.cell {
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
 }
 
-.tile {
+// `min-width: 0`, or a long surname at Bebas size widens the column.
+.cell {
+	min-width: 0;
+}
+
+.row {
 	display: flex;
-	flex-direction: column;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0.25rem 2rem;
 	width: 100%;
 	margin: 0;
-	padding: 0;
+	padding: 0.55rem 0;
 	text-align: left;
 	font: inherit;
 	color: inherit;
@@ -44,32 +41,73 @@
 	background: transparent;
 	border: 0;
 	border-radius: 0;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
+	}
 }
 
-// Under the print on space alone, no rule.
+// Resting names a step down from white; the reached one is white. Hierarchy
+// by ink on one size, not by size.
 .name {
-	@include row-title(var(--fs-card-title));
-	margin-top: 0.9rem;
+	@include display(var(--fs-row-sm));
+	color: var(--ink-dim);
 	overflow-wrap: anywhere;
+	transition: color 0.2s;
 }
 
-// One role line in the typewriter face, clamped at two lines: a caption, not
-// a bio. The full tagline is in the speaker's sheet.
+// The role: mono, right-set on the name's baseline, one line.
 .tag {
-	@include prose(var(--fs-ui), 1.4);
-	margin-top: 0.35rem;
-	color: var(--ink-soft);
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
+	@include mono(var(--fs-label-sm), 0.15em, uppercase);
+	color: var(--ink-muted);
+	text-align: right;
+	max-width: 42%;
+	white-space: nowrap;
 	overflow: hidden;
-	overflow-wrap: anywhere;
+	text-overflow: ellipsis;
+	transition: color 0.2s;
 }
 
-@media (max-width: 759px) {
+.isActive,
+.row:focus-visible {
 	.name {
-		font-size: var(--fs-title-sm);
-		margin-top: 0.7rem;
+		color: var(--color-text);
+	}
+
+	.tag {
+		color: var(--ink-soft);
+	}
+}
+
+// Sticky under the bar while the register scrolls; overruns the column by
+// the gutter so it meets the viewport edge.
+.portrait {
+	position: sticky;
+	top: calc(var(--header-h, 4.5rem) + 2rem);
+	margin-right: calc(-1 * var(--gutter));
+}
+
+// Phones and narrow tablets: the register alone, role under the name; the
+// face is in the sheet a tap away.
+@media (max-width: 900px) {
+	.lineup {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.portrait {
+		display: none;
+	}
+
+	.row {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.2rem;
+		padding: 0.7rem 0;
+	}
+
+	.tag {
+		max-width: 100%;
+		text-align: left;
 	}
 }
