@@ -43,3 +43,6 @@ CLAUDE.local.md
 !.impeccable/live/
 .impeccable/live/inject-journal.json
 .agent_context/
+
+# pencil: agent-proposed frames, handed to the maintainer, never committed
+design/drafts/

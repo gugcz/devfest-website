@@ -113,11 +113,12 @@ refactored; never raise the threshold or add an ignore comment.
 - **Impeccable**: `/impeccable shape`, `critique`, `audit` and the design hook
   on UI edits. Reads `docs/product.md` and `docs/design.md` (its
   `.impeccable/design.json` sidecar comes from `/impeccable document`).
-- **Pencil** (MCP `pencil` in `.mcp.json`): `design/devfest.pen`, where a
-  surface is composed before it is coded. Needs a local pen.dev app (the
-  `.mcp.json` entry is the macOS desktop app path; the VS Code extension is
-  the other route). In a cloud or Linux session the `pencil` server fails to
-  start: say so, skip the canvas steps, and still run the Impeccable
+- **Pencil**: `design/devfest.pen`, an additional design source the
+  maintainer owns and composes in the Pen app. The agent never writes it
+  and does not use the `pencil` MCP in `.mcp.json` (it edits the
+  maintainer's live document); it reads through the headless `pen` CLI and
+  proposes frames in `design/drafts/`. Without the CLI or a `pen status`
+  session: say so, skip the canvas steps, and still run the Impeccable
   critique/audit and `npm run a11y`. Loop: `.claude/rules/design-pencil.md`.
 - **Skills** (`.claude/skills/`): `ship` runs the definition of done.
   `update-docs` keeps the product record, the design record (via

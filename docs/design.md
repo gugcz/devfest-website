@@ -829,16 +829,17 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 
 ## Pencil canvas
 
-`design/devfest.pen` is the visual companion to this document, edited through
-the `pencil` MCP server (pen.dev). Workflow, loop and guardrails:
+`design/devfest.pen` is the visual companion to this document and an
+additional design source. The maintainer edits it in the Pen app; agents read
+it through the headless `pen` CLI. Workflow, loop and guardrails:
 `.claude/rules/design-pencil.md`. The canvas was rebuilt from the **deployed
 site** (devfest.cz, 1440px, computed styles sampled with Playwright), not from
-this prose, so it is the current visual truth at desktop width.
+this prose. It is a reference at desktop width; it does not gate code.
 
 - **[MUST] Canvas variables mirror `:root`.** `$color-accent` is
   `--color-accent`, `$fs-h2` is `--fs-h2`, `$gutter` is `--gutter`. A token
-  added to one is added to the other in the same PR, and to the frontmatter
-  above.
+  added to `:root` goes into the frontmatter above in the same PR; the
+  maintainer adds the `.pen` variable.
 - **[CURRENT]** Fluid `clamp()` tokens are stored at their 1440px value on
   the canvas (`$fs-display` 144, `$fs-h2` 112, `$gutter` 72, `$section-y`
   176). The home statement is a per-page override (117px, see
@@ -847,8 +848,8 @@ this prose, so it is the current visual truth at desktop width.
   `Header`, `Eyebrow`, `Button/Primary` (+ hover), `Button/Ghost`,
   `Hairline Link`, `Ticker/Item`, `Head/Stack`, `Head/Split`,
   `Field/Row Link` (+ hover), `Ticket/Stub`, `Speaker/Tile`, `Session/Row`,
-  `Fact`, `Band/Closer Accent`, `Footer`. A surface instances them; a new
-  primitive in code gets a component on the canvas.
+  `Fact`, `Band/Closer Accent`, `Footer`. A surface instances them; the maintainer adds a component for a new
+  primitive in code.
 - **[MUST] One root frame per surface.** Every route has a frame traced
   from production at 1440px: `Home`, `Sessions`, `Agenda`, `Speakers`,
   `Team`, `Contact`, `FAQ`, `Attending`, `Invoice`, `Partners`, `Press`,
@@ -856,8 +857,8 @@ this prose, so it is the current visual truth at desktop width.
   `Privacy policy`, `Invite`. `Surfaces` holds the overlays (menu, cookie
   banner, session sheet, speaker sheet) and `Mobile` the 375px `Home` and
   `Sessions`. Frames sit in a grid: row 1 `Components` + `Home`, rows 2–3
-  the routes, row 4 the rest. Exploration frames are deleted once a
-  direction is chosen.
+  the routes, row 4 the rest. Exploration frames are the maintainer's
+  to keep or delete.
 - **[MUST] Nothing on the canvas breaks a `[MUST]` here.** The canvas is where
   a rule is tested first, not where it is waived.
 - **[CURRENT] Hairlines on the canvas use `$rule` (13%), not `$rule-soft`
