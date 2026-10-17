@@ -68,8 +68,8 @@ built by a community, not a vendor event.
   note; the facts as a date / place / doors / audience / programme list,
   the programme being the topics), Tickets (one ruled row per wave: index and state, wave and
   deadline, price and company figure, Buy / Company pays or the state
-  word), Speakers (five ruled rows: index, name, role, with the reached
-  row's portrait beside the list; "All N speakers"),
+  word), Speakers (five ruled rows: index, portrait, name, role; "All N
+  speakers"),
   Last year (a scrollable strip of 22 press photographs from DevFest.cz
   2025), Partners (one row of marks per tier, no tier labels; "All
   partners"), Newsletter (lede and form). No arrow glyphs, no second hero,

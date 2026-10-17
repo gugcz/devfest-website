@@ -1032,19 +1032,20 @@ and
 - **Speakers teaser** (`SpeakersTeaser`, home) — the register's first
   lines. Head: the `.head-rule` "Speakers" with the note "N confirmed";
   then five `.field-row` rows (`TEASER_SIZE`, shuffled once per payload),
-  each an `<a>` to `/speakers?speaker=<id>` on a `4rem / 1fr / auto`
-  grid: a mono `--fs-label` index figure in `--ink-faint` (tabular,
-  `aria-hidden`), the name Bebas `--fs-row-sm` in `--color-text`, and the
-  role as a `note(--fs-note-sm)` in `--ink-muted` right-set on one line
-  (ellipsis at `32ch`). No arrow column; resting names sit in `--ink-dim`
-  and the reached row's name is white; the row's ground stays black (no
-  reach field). Beside the rows, on a `minmax(0, 1fr) / 420px` grid, the
-  reached row's portrait on the shared print (`Print.module.scss`, 4:5,
-  B&W at rest, developing to colour while a row is hovered or focused,
-  sticky under the bar, overrunning the gutter) — the same plate as the
-  /speakers register. The `.action` "All N speakers" closes the list on
-  `0.5rem`. No auto-rotation. ≤900px the portrait goes; ≤720px the
-  index goes and the role sits under the name. The teaser opens on
+  each an `<a>` to `/speakers?speaker=<id>` on a
+  `4rem / --thumb-w / 1fr / auto` grid: a mono `--fs-label` index figure in
+  `--ink-faint` (tabular, `aria-hidden`), the speaker's portrait on the
+  shared print at row size (`.thumb`, `--thumb-w: clamp(3.5rem, 5vw,
+  4.5rem)`, 4:5, B&W at rest and developing to colour while the row is
+  hovered or focused — `Print.module.scss` lets a link develop the print
+  inside it), the name Bebas `--fs-row-sm`, and the role as a
+  `note(--fs-note-sm)` in `--ink-muted` right-set on one line (ellipsis at
+  `32ch`). No arrow column; resting names sit in `--ink-dim` and the
+  reached row's name is white; the row's ground stays black (no reach
+  field). The portrait is in the row on every screen: a face that only
+  appears on hover is no face on a phone. The `.action` "All N speakers"
+  closes the list on `0.5rem`. No auto-rotation. ≤720px the index goes,
+  the portrait spans both lines and the role sits under the name. The teaser opens on
   `--section-y-tight` and closes on no padding of its own; nothing renders
   until the lineup resolves (`SpeakersTeaser.tsx`,
   `SpeakersTeaser.module.scss:6–89`).
