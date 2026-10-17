@@ -23,9 +23,10 @@ const homeRows: { id: string; label: string; partners: Partner[] }[] = [
 	{ id: 'community', label: 'Community', partners: communityPartners },
 ].filter((row) => row.partners.length > 0);
 
-// The strip sizes every mark against its tier's /partners box at 70%, on one
+// The strip sizes every mark against its tier's /partners box, a step larger
+// (110%) so the smallest community wordmark still clears ~32px at 1440, on one
 // grid shared by all rows, so the tiers' columns line up.
-const STRIP_SCALE = 0.7;
+const STRIP_SCALE = 1.1;
 
 // The "Look back" collage, in grid order: the first frame is the large one.
 // Picked for range (the hall, the stage, the costumes, the hallway, the
@@ -63,6 +64,7 @@ const GALLERY = [
 				size="auto 132%"
 				focus="54% 46%"
 				tightMask
+				fadeBottom
 			/>
 			<div class="scene-vignette" aria-hidden="true"></div>
 

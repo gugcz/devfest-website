@@ -18,6 +18,14 @@
 	padding: calc(5.5rem + env(safe-area-inset-top)) var(--gutter) var(--consent-h, 0px);
 }
 
+// The grain (BaseLayout `.scene::before`) lifts black to a faint grey; it
+// thins out with the plate's bottom fade (`fadeBottom`), so the frame ends on
+// the same #000 the facts band opens on, with no edge between them.
+#hero::before {
+	-webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+	mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+}
+
 .hero-inner {
 	position: relative;
 	z-index: 10;
@@ -362,10 +370,19 @@
 	margin: 0;
 	align-self: stretch;
 	min-height: clamp(28rem, 52vw, 47.5rem);
-	// The hero's tight-mask curve, compressed: opaque by 38%, so the feather
-	// eats the plate's left edge, not the mill.
-	-webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.34) 14%, rgba(0, 0, 0, 0.78) 26%, #000 38%);
-	mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.34) 14%, rgba(0, 0, 0, 0.78) 26%, #000 38%);
+	// Two feathers, intersected. Left: the hero's tight-mask curve, compressed,
+	// opaque by 38% so it eats the plate's left edge, not the mill. Top: the
+	// sky rises out of black, so the eye runs from the hero's faded bottom
+	// into the mill with no band edge between them.
+	-webkit-mask-image:
+		linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.34) 14%, rgba(0, 0, 0, 0.78) 26%, #000 38%),
+		linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.12) 9%, rgba(0, 0, 0, 0.42) 18%, rgba(0, 0, 0, 0.8) 26%, #000 32%);
+	mask-image:
+		linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.34) 14%, rgba(0, 0, 0, 0.78) 26%, #000 38%),
+		linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.12) 9%, rgba(0, 0, 0, 0.42) 18%, rgba(0, 0, 0, 0.8) 26%, #000 32%);
+	// Legacy WebKit keyword first; the standard one wins where both parse.
+	-webkit-mask-composite: source-in;
+	mask-composite: intersect;
 
 	img {
 		display: block;
@@ -398,6 +415,8 @@
 		aspect-ratio: 4 / 5;
 		-webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%);
 		mask-image: linear-gradient(to bottom, transparent 0%, #000 18%);
+		-webkit-mask-composite: source-over;
+		mask-composite: add;
 	}
 }
 
@@ -602,18 +621,26 @@
 
 // One column grid shared by every tier row, left-set, so the tiers' columns
 // line up and a short row stands on the columns of the full one above it.
-// 9rem lets the seven Gold marks share one row of the 90rem column.
+// 13.5rem gives five tracks at 1440: the Diamond row (GDG two-wide) fills
+// one, Gold takes two, and every mark keeps its /partners box size.
 .partners-row {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(9rem, 100%), 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(13.5rem, 100%), 1fr));
 	// A two-column mark would otherwise leave a hole in the row before it.
 	grid-auto-flow: row dense;
 	align-items: center;
 	justify-items: start;
 	gap: clamp(1.75rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 3rem);
+}
+
+// Community closes the strip off the ladder, on its own tighter track: its
+// boxes are the smallest, and at 13.5rem its six marks left one alone on a
+// second row.
+.tier-community {
+	grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr));
 }
 
 // Platinum's one mark is drawn against a box two columns wide, and so is
@@ -648,11 +675,12 @@
 	}
 }
 
-// Phones: three columns; Platinum and a very wide mark take the whole row.
+// Phones: two columns, so a wordmark stays ~30px tall; Platinum and a very
+// wide mark take the whole row.
 @media (max-width: 600px) {
 	.partners-row {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 1.5rem 1rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.75rem 1.25rem;
 	}
 
 	.tier-platinum .partners-item,

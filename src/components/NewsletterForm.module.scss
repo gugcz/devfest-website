@@ -196,10 +196,9 @@
 }
 
 /* ===================== ON THE ACCENT FIELD ===================== */
-// Every control here would otherwise be red-on-red: the filled button disappears
-// into the ground and a dark field reads as a hole punched in it. Ink
-// measurements for #F11000 are in BaseLayout.scss — text is full black, control
-// boundaries need 3:1.
+// The band is red-toned and re-points --on-accent to white, --on-accent-ink
+// to black (BaseLayout.scss). Every control here would otherwise be red on
+// red, so the field stays Paper White and the button inverts to white.
 :global(.band--accent) {
 	.wrapper {
 		align-items: flex-start;
@@ -207,9 +206,10 @@
 
 	.paper {
 		// Paper White, opaque: a contrast checker resolves a translucent fill's
-		// placeholder against the band red behind it. Black ink on it reads 21:1.
+		// placeholder against the band behind it. Black ink on it reads 21:1;
+		// the white edge is 6.3:1 against the brightest band point.
 		background: #FFFFFF;
-		border-color: var(--on-accent-border);
+		border-color: var(--on-accent);
 
 		&:focus-within {
 			border-color: var(--on-accent);
@@ -218,28 +218,31 @@
 	}
 
 	.input {
-		color: var(--on-accent);
+		color: var(--on-accent-ink);
 
 		&::placeholder {
-			// Full black — 21:1 on the paper, 4.8:1 if resolved against the band red.
-			color: var(--on-accent);
+			// 60% black on the paper: 5.7:1.
+			color: rgba(0, 0, 0, 0.6);
 			opacity: 1;
 		}
 
+		// White ring around a white field would merge with its edge; black
+		// sits inside the paper, 21:1 on it.
 		&:focus-visible {
-			outline-color: var(--on-accent);
+			outline-color: var(--on-accent-ink);
+			outline-offset: -4px;
 		}
 	}
 
-	// Inverted: black fill, white ink. A red button on a red field is invisible.
+	// Inverted: white fill, black label. Hover goes black, white label.
 	.button {
 		background: var(--on-accent);
 		border-color: var(--on-accent);
 		color: var(--on-accent-ink);
 
 		&:hover:not(:disabled) {
-			background: #FFFFFF;
-			border-color: #FFFFFF;
+			background: var(--on-accent-ink);
+			border-color: var(--on-accent-ink);
 			color: var(--on-accent);
 		}
 
@@ -248,7 +251,7 @@
 		}
 	}
 
-	// Black box and black fill on red (4.8:1), the tick cut out in white.
+	// White box and white fill on the ground (6.3:1), the tick cut out in black.
 	.consent input[type='checkbox'] {
 		--box-ink: var(--on-accent);
 		--box-tick: var(--on-accent-ink);
@@ -273,8 +276,16 @@
 		}
 	}
 
+	// A status or error never goes red on red: it lands on a Paper White
+	// panel in black ink (21:1), so it reads as a notice, not as more copy.
 	.message {
-		color: var(--on-accent);
 		text-align: left;
+		color: var(--on-accent-ink);
+
+		&:not(:empty) {
+			background: var(--on-accent);
+			padding: 0.55rem 0.8rem;
+			border-radius: var(--radius);
+		}
 	}
 }

@@ -115,7 +115,7 @@
 
 .contact-name {
 	@include mono(var(--fs-label), 0.2em, uppercase);
-	// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
+	// Full white: a dimmed label would fail 1.4.3 at the band's brightest point.
 	color: var(--on-accent);
 }
 
@@ -160,7 +160,7 @@
 	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 	color: var(--on-accent);
 	background: transparent;
-	border: 1px dashed rgba(255, 255, 255, 0.45);
+	border: 1px dashed var(--on-accent-border);
 	border-radius: var(--radius);
 	padding: 1.25rem 2rem;
 	cursor: not-allowed;
@@ -174,7 +174,8 @@
 	@include mono(var(--fs-label), 0.2em, uppercase);
 	padding: 0.22rem 0.55rem;
 	color: var(--on-accent);
-	border: 1px solid var(--rule-red);
+	// White edge, not red: red on the red-toned band is red on red.
+	border: 1px solid var(--on-accent-border);
 	border-radius: var(--radius);
 }
 
