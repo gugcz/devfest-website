@@ -6,7 +6,6 @@ import {
 	eventDateISO,
 	formatClock,
 	formatMinutes,
-	idleSpans,
 	isBand,
 	nowState,
 	nonTalkSpans,
@@ -40,9 +39,15 @@ const ROW_REM = 1.625;
 const NON_TALK_ROWS = { minPerRow: 20, minRows: 2, maxRows: 3 } as const;
 
 /** A speakerless service session in a room that runs at least this long (the
- * lounge open 09:45–17:35) is not a slot on the sheet: as a column it was one
- * card the height of the day. It rides in the strip above the grid instead. */
+ * lounge open 09:45–17:35) is "open all day", not a slot: it keeps its room's
+ * column as one block from its start to its end, marked with {@link ALL_DAY_NOTE}
+ * instead of reading as a talk. It does not count as a talk when the sheet
+ * decides where to compress, or what is live: a lounge open through lunch must
+ * not stretch the lunch to scale or hide "Coming up" all day. */
 const LONG_RUN_MIN = 180;
+
+/** The note line on an open-all-day block, grid and list alike. */
+const ALL_DAY_NOTE = 'Open all day, drop in any time';
 
 /** Sessionize placeholder titles for a slot nobody fills yet ("Talk TBA"). */
 const OPEN_SLOT_RE = /\b(tba|tbd)\b/i;
@@ -77,7 +82,7 @@ function roomNote(label: string, talks: Session[]): RoomNote | null {
 }
 
 /** A speakerless service session in a room, long enough to be "open all day"
- * rather than a slot (see {@link LONG_RUN_MIN}). Bands keep their own strip. */
+ * rather than a slot (see {@link LONG_RUN_MIN}). Bands stay bands. */
 function isLongRunning(session: Session): boolean {
 	if (!session.isServiceSession || session.speakers.length > 0 || isBand(session)) return false;
 	const place = placement(session);
@@ -95,19 +100,15 @@ function isOpenSlot(session: Session): boolean {
 	);
 }
 
-/** The long-running sessions pulled out of the sheet, and the sessions and
- * rooms left for it. A room that only holds long-running sessions loses its
- * column; a room that also has slots keeps it. */
-function splitLongRunning(
-	sessions: Session[],
-	rooms: Room[],
-): { allDay: Session[]; sessions: Session[]; rooms: Room[] } {
-	const allDay = sessions.filter(isLongRunning).sort(byStart);
-	if (allDay.length === 0) return { allDay, sessions, rooms };
-	const rest = sessions.filter((session) => !allDay.includes(session));
-	const busyRooms = new Set(rest.map(roomKey));
-	const railRooms = new Set(allDay.map(roomKey).filter((key) => !busyRooms.has(key)));
-	return { allDay, sessions: rest, rooms: rooms.filter((room) => !railRooms.has(room.id.trim())) };
+/** What an entry is on the sheet: a full-width band, a slot held open, a room
+ * open all day, or a talk (the only control). */
+type EntryKind = 'band' | 'open' | 'allDay' | 'talk';
+
+function entryKind(session: Session): EntryKind {
+	if (isBand(session)) return 'band';
+	if (isOpenSlot(session)) return 'open';
+	if (isLongRunning(session)) return 'allDay';
+	return 'talk';
 }
 
 /** Current wall-clock in Europe/Prague as { date: 'YYYY-MM-DD', minutes }.
@@ -225,23 +226,77 @@ function NowBadge({ live, coming }: { live: boolean; coming: boolean }) {
 	return null;
 }
 
-/** Long-running rooms in one strip above the sheet: time, what, where. */
-function AllDayStrip({ sessions, labels }: { sessions: Session[]; labels: Map<string, string> }) {
-	if (sessions.length === 0) return null;
-	return (
-		<ul className={s.allDay} aria-label="Running all day">
-			{sessions.map((session) => (
-				<li key={session.id} className={s.allDayItem}>
-					<span className={s.allDayTime}>{timeRange(session)}</span>
-					<span className={s.allDayTitle}>{session.title}</span>
-					<span className={s.allDayRoom}>{session.room.trim() || labels.get(roomKey(session)) || ''}</span>
-				</li>
-			))}
-		</ul>
-	);
-}
-
 /* ============================ GRID ============================ */
+
+/** One placed entry on the sheet. Only a talk is a control. */
+function GridEntry({
+	session,
+	gridColumn,
+	gridRow,
+	room,
+	live,
+	coming,
+	onOpen,
+}: {
+	session: Session;
+	gridColumn: number | string;
+	gridRow: string;
+	room: string;
+	live: boolean;
+	coming: boolean;
+	onOpen: (session: Session) => void;
+}) {
+	const style = { gridColumn, gridRow };
+	switch (entryKind(session)) {
+		case 'band':
+			return (
+				<div className={`${s.band} ${live ? s.bandLive : ''}`} style={style}>
+					<span className={s.bandTime}>{timeRange(session)}</span>
+					<span className={s.bandTitle}>{session.title}</span>
+					<NowBadge live={live} coming={false} />
+				</div>
+			);
+		case 'open':
+			return (
+				<div className={s.slotOpen} style={style}>
+					<span className={s.cellTime}>{timeRange(session)}</span>
+					<span className={s.slotOpenLabel}>Slot open</span>
+				</div>
+			);
+		case 'allDay':
+			return (
+				<div className={s.allDayCell} style={style}>
+					<span className={s.cellTime}>{timeRange(session)}</span>
+					<span className={s.cellTitle}>{session.title}</span>
+					<span className={s.allDayNote}>{ALL_DAY_NOTE}</span>
+				</div>
+			);
+		default:
+			return (
+				<button
+					type="button"
+					className={`${s.cell} ${live ? s.cellLive : ''}`}
+					style={style}
+					onClick={() => onOpen(session)}
+					aria-label={talkLabel(session, room)}
+					data-agenda-open
+				>
+					<span className={s.cellHead}>
+						<span className={s.cellTime}>{timeRange(session)}</span>
+						<NowBadge live={live} coming={coming} />
+					</span>
+					<span className={s.cellTitle}>{session.title}</span>
+					<TalkTags session={session} />
+					{session.speakers.length > 0 && (
+						<span className={s.cellFoot}>
+							<TalkAvatars session={session} />
+							<span className={s.cellSpeakers}>{speakerNames(session)}</span>
+						</span>
+					)}
+				</button>
+			);
+	}
+}
 
 // Each session is placed by its absolute grid row in its room column. Two
 // sessions overlapping in the SAME room would render on top of each other —
@@ -266,11 +321,11 @@ function AgendaGrid({
 	onOpen: (session: Session) => void;
 }) {
 	const { columns, bands, byRoom } = partition;
-	const timed = [...bands, ...columns.flatMap((column) => byRoom.get(column.key) ?? [])];
-
-	// Dead time — no room has anything on. Hatched, so an unscheduled stretch
-	// reads as the day being quiet rather than as a hole in the sheet.
-	const idle = idleSpans(timed, range, placements);
+	// An open-all-day room is left out of the scale: counted as a talk, it would
+	// hold every break it runs through at full height.
+	const timed = [...bands, ...columns.flatMap((column) => byRoom.get(column.key) ?? [])].filter(
+		(session) => !isLongRunning(session),
+	);
 
 	// The sheet runs to scale through the talks and compresses everywhere else,
 	// so a break, a lunch and a five-hour afterparty are all one strip tall.
@@ -296,14 +351,13 @@ function AgendaGrid({
 		if (!scale.isCompressed(h * 60)) ticks.push(h * 60);
 	}
 
-	// Talks + bands in one time-sorted list so DOM (reading) order matches the
+	// Every entry in one time-sorted list so DOM (reading) order matches the
 	// mobile list and screen-reader order, independent of visual placement.
-	const talks = columns.flatMap((column) =>
-		(byRoom.get(column.key) ?? []).map((session) => ({ session, column })),
-	);
 	const placed = [
-		...bands.map((session) => ({ kind: 'band' as const, session, column: null })),
-		...talks.map(({ session, column }) => ({ kind: 'talk' as const, session, column })),
+		...bands.map((session) => ({ session, gridColumn: '2 / -1' as number | string, room: '' })),
+		...columns.flatMap((column, i) =>
+			(byRoom.get(column.key) ?? []).map((session) => ({ session, gridColumn: i + 2, room: column.label })),
+		),
 	].sort((a, b) => byStart(a.session, b.session));
 
 	return (
@@ -326,40 +380,17 @@ function AgendaGrid({
 					);
 				})}
 
-				{/* The sheet's ruling, behind everything (z 0): a hairline down
-				    each room column and one across each hour. Both are closed over
-				    by the entries and by the hatched dead-time strips, which are
-				    opaque — an earlier version left the strips translucent and the
-				    column rule ran straight through every full-width band.
+				{/* The sheet's ruling, behind everything (z 0): one dashed hairline
+				    across each hour. The rooms need no rule: the blocks and the gap
+				    between them part the columns, and empty time stays black. The
+				    blocks are opaque, so the hour rule never runs through one.
 				    Decorative: the times and rooms are in the ticks, the head cells
 				    and every talk's aria-label. */}
-				{columns.slice(1).map((column, i) => (
-					<div
-						key={`col-${column.key}`}
-						className={s.colRule}
-						style={{ gridColumn: i + 3, gridRow: '2 / -1' }}
-						aria-hidden="true"
-					/>
-				))}
 				{ticks.map((min) => (
 					<div
 						key={`rule-${min}`}
 						className={s.hourRule}
 						style={{ gridColumn: '1 / -1', gridRow: rowFor(min) }}
-						aria-hidden="true"
-					/>
-				))}
-
-				{/* Dead time, hatched across every room. Opaque, so it closes over
-				    the column rules rather than letting them run through it. */}
-				{idle.map((span) => (
-					<div
-						key={`idle-${span.startMin}`}
-						className={s.idle}
-						style={{
-							gridColumn: '2 / -1',
-							gridRow: `${rowFor(span.startMin)} / ${rowFor(span.endMin)}`,
-						}}
 						aria-hidden="true"
 					/>
 				))}
@@ -375,60 +406,22 @@ function AgendaGrid({
 					</div>
 				))}
 
-				{placed.map(({ kind, session, column }) => {
+				{placed.map(({ session, gridColumn, room }) => {
 					const place = placements.get(session.id);
 					if (!place) return null;
 					const rowStart = rowFor(place.startMin);
 					const rowSpan = Math.max(1, rowFor(place.endMin) - rowStart);
-					const gridRow = `${rowStart} / span ${rowSpan}`;
-
-					if (kind === 'band') {
-						return (
-							<div
-								key={session.id}
-								className={`${s.band} ${liveIds.has(session.id) ? s.bandLive : ''}`}
-								style={{ gridColumn: '2 / -1', gridRow }}
-							>
-								<span className={s.bandTime}>{timeRange(session)}</span>
-								<span className={s.bandTitle}>{session.title}</span>
-								<NowBadge live={liveIds.has(session.id)} coming={false} />
-							</div>
-						);
-					}
-
-					const colIndex = columns.findIndex((c) => c.key === column?.key) + 2;
-					if (isOpenSlot(session)) {
-						return (
-							<div key={session.id} className={s.slotOpen} style={{ gridColumn: colIndex, gridRow }}>
-								<span className={s.cellTime}>{timeRange(session)}</span>
-								<span className={s.slotOpenLabel}>Slot open</span>
-							</div>
-						);
-					}
-					const live = liveIds.has(session.id);
 					return (
-						<button
+						<GridEntry
 							key={session.id}
-							type="button"
-							className={`${s.cell} ${live ? s.cellLive : ''}`}
-							style={{ gridColumn: colIndex, gridRow }}
-							onClick={() => onOpen(session)}
-							aria-label={talkLabel(session, column?.label ?? '')}
-							data-agenda-open
-						>
-							<span className={s.cellHead}>
-								<span className={s.cellTime}>{timeRange(session)}</span>
-								<NowBadge live={live} coming={comingUpIds.has(session.id)} />
-							</span>
-							<span className={s.cellTitle}>{session.title}</span>
-							<TalkTags session={session} />
-							{session.speakers.length > 0 && (
-								<span className={s.cellFoot}>
-									<TalkAvatars session={session} />
-									<span className={s.cellSpeakers}>{speakerNames(session)}</span>
-								</span>
-							)}
-						</button>
+							session={session}
+							gridColumn={gridColumn}
+							gridRow={`${rowStart} / span ${rowSpan}`}
+							room={room}
+							live={liveIds.has(session.id)}
+							coming={comingUpIds.has(session.id)}
+							onOpen={onOpen}
+						/>
 					);
 				})}
 
@@ -451,7 +444,15 @@ function AgendaGrid({
 // session sheet. Abstracts, tags, photos, search and filters live in the list
 // under it — on a phone the two used to repeat every talk at full size.
 
-/** One run-sheet row: a band (information), an open slot, or a talk (control). */
+/** The ground each non-control run-sheet row takes. */
+const QUIET_ROW: Record<Exclude<EntryKind, 'talk'>, string> = {
+	band: s.itemBand,
+	open: s.itemOpen,
+	allDay: s.itemAllDay,
+};
+
+/** One run-sheet row: a band, an open slot or an open-all-day room (all
+ * information), or a talk (the control). */
 function ListRow({
 	session,
 	room,
@@ -473,17 +474,18 @@ function ListRow({
 		</span>
 	);
 
-	if (isBand(session) || isOpenSlot(session)) {
-		const open = isOpenSlot(session);
+	const kind = entryKind(session);
+	if (kind !== 'talk') {
 		return (
-			<div className={`field-row ${s.item} ${s.itemBand} ${live ? s.itemLive : ''}`}>
+			<div className={`field-row ${s.item} ${QUIET_ROW[kind]} ${live ? s.itemLive : ''}`}>
 				{clock}
 				<span className={s.itemMain}>
 					<span className={s.itemTitleRow}>
-						<span className={s.itemTitle}>{open ? 'Slot open' : session.title}</span>
-						<NowBadge live={live && !open} coming={false} />
+						<span className={s.itemTitle}>{kind === 'open' ? 'Slot open' : session.title}</span>
+						<NowBadge live={live && kind === 'band'} coming={false} />
 					</span>
-					{open && room && <span className={s.itemRoom}>{room}</span>}
+					{kind !== 'band' && room && <span className={s.itemRoom}>{room}</span>}
+					{kind === 'allDay' && <span className={s.itemRoom}>{ALL_DAY_NOTE}</span>}
 				</span>
 			</div>
 		);
@@ -551,24 +553,20 @@ export default function Agenda() {
 	const [selected, setSelected] = useState<Session | null>(null);
 	const isNarrow = useMediaQuery(NARROW);
 
-	const split = useMemo(
-		() => splitLongRunning(data?.sessions ?? EMPTY_SESSIONS, data?.rooms ?? EMPTY_ROOMS),
-		[data],
-	);
-	const { sessions, rooms, allDay } = split;
+	const sessions = data?.sessions ?? EMPTY_SESSIONS;
+	const rooms = data?.rooms ?? EMPTY_ROOMS;
 	const profiles = useMemo(() => speakersById(data?.speakers ?? []), [data]);
 	const partition = useMemo(() => partitionAgenda(sessions, rooms), [sessions, rooms]);
-	const allRoomNames = useMemo(
-		() => new Map((data?.rooms ?? EMPTY_ROOMS).map((room) => [room.id.trim(), room.name.trim()])),
-		[data],
-	);
+	// What can be live or coming up: everything but an open-all-day room, which
+	// would count as "a talk on now" from morning to evening.
+	const slotted = useMemo(() => sessions.filter((session) => !isLongRunning(session)), [sessions]);
 	const placements = useMemo(() => sessionPlacements(sessions), [sessions]);
 	const range = useMemo(() => dayRange(sessions), [sessions]);
 	// Event-day "now" line + live/coming-up badges (hooks must run before the
 	// early returns below).
 	const eventDate = useMemo(() => eventDateISO(sessions), [sessions]);
 	const nowMin = useNowMinutes(eventDate);
-	const now = useMemo(() => nowState(sessions, nowMin), [sessions, nowMin]);
+	const now = useMemo(() => nowState(slotted, nowMin), [slotted, nowMin]);
 
 	if (status === 'error') {
 		return (
@@ -597,7 +595,6 @@ export default function Agenda() {
 	return (
 		<>
 			<p className={s.tzNote}>All times Prague (CET)</p>
-			<AllDayStrip sessions={allDay} labels={allRoomNames} />
 
 			{asList ? (
 				<AgendaList

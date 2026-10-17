@@ -336,28 +336,7 @@
 	width: 100%;
 }
 
-// Painted only while the panel is open on a wide screen: a `display: none`
-// element fetches no background, so no page pays for the plate unopened.
-.nav-plate {
-	display: none;
-}
-
 @media (min-width: 901px) {
-	.nav-body {
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		gap: clamp(2rem, 4vw, 4rem);
-	}
-
-	// The hero's detective, graded like the hero, every edge dissolving into
-	// the panel ground: light falling off, not a framed picture.
-	.nav-panel[data-open='true'] .nav-plate {
-		display: block;
-		background: url('/hero-detective.webp') 50% 30% / cover no-repeat;
-		filter: grayscale(1) contrast(1.2) brightness(0.7);
-		-webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%);
-		mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%);
-	}
-
 	// Poster scale: the section-head step for the five, the sub-section step
 	// for the three under them.
 	.nav-link {

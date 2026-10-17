@@ -29,8 +29,9 @@
 }
 
 // Each tier opens on the ruled head (`.head-rule`, global), then its marks
-// in one left-set row on one height per tier (`--mark-h`), wrapping when
-// they must. No grid: a column grid with two-wide cells left holes.
+// in one left-set row, wrapping when they must. Each mark's width comes from
+// its tier's reference box (`partnerLogo()` → `--logo-w`), so the tier sets
+// the size and marks within a tier carry equal ink.
 .logo-grid {
 	list-style: none;
 	margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
@@ -38,12 +39,8 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: clamp(1.25rem, 2.5vw, 2rem) clamp(2rem, 4vw, 3.5rem);
-	--mark-h: 2.6rem;
+	gap: clamp(1.5rem, 3vw, 2.5rem) clamp(2.25rem, 4.5vw, 4rem);
 }
-
-.logo-wall--lead .logo-grid { --mark-h: 4rem; }
-.logo-wall:is(.tier-community, .tier-media) .logo-grid { --mark-h: 2.2rem; }
 
 .logo-item {
 	display: flex;
@@ -59,8 +56,6 @@
 
 	.logo {
 		@include partner-logo;
-		width: auto;
-		height: var(--mark-h);
 	}
 
 	// Wider than --focus-gap-lg on purpose: a wordmark carries its own
@@ -71,10 +66,9 @@
 	}
 }
 
-// Phones: marks a step smaller.
+// Phones: every mark a step smaller, the ladder intact.
 @media (max-width: 600px) {
-	.logo-grid { --mark-h: 2rem; }
-	.logo-wall--lead .logo-grid { --mark-h: 3rem; }
+	.logo-grid { --logo-scale: 0.7; }
 }
 
 /* ===================== CLOSING STATEMENT ===================== */

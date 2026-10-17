@@ -22,7 +22,8 @@ const ticketsHref = isHome ? '#tickets' : '/#tickets';
 // TWO TIERS, EIGHT LINES. Ten destinations at one poster size made the
 // visitor read all ten every time; two tiers of twelve still did. So the
 // pages were merged, not just ranked: `Sessions` lives on `/agenda` under the
-// timetable (one programme, one door) and `Press` is a band on `/contact`.
+// timetable (one programme, one door). `Press` is a band on `/contact`, linked
+// in the second tier so a journalist finds it without guessing it is there.
 // The five below are what the site is for (docs/product.md: sell tickets, carry
 // the programme) plus the one thing every ticket holder has to look up: how
 // to get to the venue.
@@ -42,6 +43,7 @@ const links: readonly NavLink[] = [
 const secondary: readonly NavLink[] = [
 	{ href: '/partners', label: 'Partners' },
 	{ href: '/team', label: 'Team' },
+	{ href: '/contact#press', label: 'Press' },
 	{ href: '/contact', label: 'Contact' },
 ];
 
@@ -135,12 +137,6 @@ const isCurrent = (href: string) => {
 							})}
 						</ul>
 					</div>
-
-					<!-- The hero's key art on the right of a wide panel, so the open menu
-					     is a scene, not a list floating in black. Decorative; painted as
-					     a background only while the panel is open on a wide screen, so
-					     no other page loads it. -->
-					<div class="nav-plate" aria-hidden="true"></div>
 				</div>
 
 				<div class="nav-foot">

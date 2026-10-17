@@ -99,16 +99,16 @@ const logoFor = (logo: string, name: string): ImageMetadata => {
 };
 
 // Desktop reference box per tier, in px, on /partners: the box size carries
-// the rank. No box is drawn; `opticalBox` sizes each mark as a share of it.
-// Diamond is cut to 288 so its four marks share one row of the column.
+// the rank, one clear step per tier. No box is drawn; `opticalBox` sizes
+// each mark as a share of it, so marks in one tier carry equal weight.
 type Cell = { w: number; h: number };
 const CELLS: Record<string, Cell> = {
 	platinum: { w: 600, h: 300 },
-	diamond: { w: 288, h: 176 },
-	gold: { w: 246, h: 150 },
-	silver: { w: 246, h: 150 },
-	community: { w: 200, h: 110 },
-	media: { w: 200, h: 110 },
+	diamond: { w: 330, h: 190 },
+	gold: { w: 260, h: 150 },
+	silver: { w: 210, h: 120 },
+	community: { w: 180, h: 100 },
+	media: { w: 180, h: 100 },
 };
 
 // Equal ink AREA reads as equal weight: each mark gets a box of the same area

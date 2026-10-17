@@ -1,7 +1,7 @@
 // THE PRINT — a mounted 4:5 photograph that develops from B&W to colour.
-// Shared by the lineup (`Speakers`) and the home credits (`SpeakersTeaser`),
-// which used to carry two drifted copies. On both, the plate is one
-// `aria-hidden` mirror of the reached row. Either way the caller says when the plate develops:
+// Used by the speaker tiles (`SpeakerTile`, on the home page and /speakers).
+// A print inside a link or button develops with it; elsewhere the caller
+// says when it develops:
 //
 //   import print from './Print.module.scss';
 //   <span className={print.print} data-developed={engaged || undefined}>
@@ -42,9 +42,8 @@
 }
 
 .print[data-developed] .photo,
-// A print inside a link develops with the link (the home speaker rows).
-a:hover > .print .photo,
-a:focus-visible > .print .photo {
+// A print inside a link or button develops with it (the speaker tiles).
+:is(a, button):is(:hover, :focus-visible) > .print .photo {
 	filter: grayscale(0) contrast(1.02) brightness(1);
 }
 

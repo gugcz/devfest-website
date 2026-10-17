@@ -1,7 +1,5 @@
-@use '../styles/type' as *;
-// Home-page speaker teaser: the register's first lines. Head and rows are the
-// global ruled primitives (`.head-rule`, `.field-row`); this file owns the
-// row's columns.
+// Home-page speakers: the ruled head, the first rows of the casting sheet
+// (`SpeakerTile.module.scss` owns the grid and the tile), the way to the rest.
 
 .teaser {
 	position: relative;
@@ -13,90 +11,25 @@
 .inner {
 	max-width: var(--maxw);
 	margin: 0 auto;
+}
 
-	> * + * {
-		margin-top: 0;
+.sheet {
+	margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.inner > :global(.action) {
+	margin-top: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+// The sheet in whole rows: eight at four across, six at three, four at two.
+@media (max-width: 1100px) {
+	.sheet > li:nth-child(n + 7) {
+		display: none;
 	}
-
-	> :global(.action) {
-		margin-top: 0.5rem;
-	}
-}
-
-.list {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-//   [ index ][ portrait ][ name ][ role ]
-.row {
-	display: grid;
-	grid-template-columns: 4rem var(--thumb-w) minmax(0, 1fr) auto;
-	--thumb-w: clamp(3.5rem, 5vw, 4.5rem);
-	align-items: center;
-	column-gap: clamp(1.4rem, 3vw, 3rem);
-	text-decoration: none;
-	color: inherit;
-
-	&:hover .name,
-	&:focus-visible .name {
-		color: var(--color-text);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-tight);
-	}
-}
-
-.index {
-	@include mono(var(--fs-label), 0.15em);
-	font-variant-numeric: tabular-nums;
-	color: var(--ink-faint);
-}
-
-.name {
-	@include display(var(--fs-row-sm));
-	// Resting names a step down from white; the reached one is white.
-	color: var(--ink-dim);
-	overflow-wrap: anywhere;
-	transition: color 0.2s;
-}
-
-.tag {
-	@include note(var(--fs-note-sm));
-	color: var(--ink-muted);
-	text-align: right;
-	max-width: 32ch;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-// The row's print at row size; it develops with the row (`Print.module.scss`
-// lets a hovered or focused link develop the print inside it).
-.thumb {
-	width: var(--thumb-w);
 }
 
 @media (max-width: 720px) {
-	.row {
-		grid-template-columns: var(--thumb-w) minmax(0, 1fr);
-		row-gap: 0.3rem;
-	}
-
-	.index {
+	.sheet > li:nth-child(n + 5) {
 		display: none;
-	}
-
-	.thumb {
-		grid-row: 1 / span 2;
-	}
-
-	.tag {
-		grid-column: 2;
-		text-align: left;
-		max-width: 100%;
 	}
 }

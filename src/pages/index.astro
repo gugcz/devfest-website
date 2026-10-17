@@ -22,9 +22,13 @@ const homeRows: { id: string; label: string; partners: Partner[] }[] = [
 	{ id: 'community', label: 'Community', partners: communityPartners },
 ].filter((row) => row.partners.length > 0);
 
-// Marks are sized by height per tier (`--mark-h`, index.scss); the box from
-// `partnerLogo()` only feeds the srcset.
-const STRIP_SCALE = 1.1;
+// The mosaic's eight, in its order: the full hall leads (2×2), the
+// group on stage spans the last row's first half (index.scss).
+const GALLERY = ['01', '02', '03', '08', '20', '13', '21', '14'] as const;
+
+// The home wall is the /partners ladder at 70%: each tier's reference box
+// (`partnerLogo()`) shrunk, so the rank reads the same on both pages.
+const STRIP_SCALE = 0.7;
 ---
 
 <BaseLayout description="DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. 30 October 2026. Tickets on sale now.">
@@ -107,32 +111,27 @@ const STRIP_SCALE = 1.1;
 		<!-- SPEAKERS — the register's first lines; hides until data loads. -->
 		<SpeakersTeaser client:load />
 
-		<!-- LAST YEAR — the one place the page shows the event itself: a strip
-		     of press photographs from DevFest.cz 2025 the visitor scrolls. -->
+		<!-- PAST EDITIONS — the one place the page shows the event itself: eight
+		     press photographs as a mosaic, the hall leading. Decorative: the
+		     section title says what they are. -->
 		<section class="band sec" aria-labelledby="gallery-title">
 			<div class="band-inner">
 				<header class="head-rule">
-					<h2 id="gallery-title" class="head-rule-title">Last year</h2>
-					<p class="head-rule-note">DevFest.cz 2025, in photographs</p>
+					<h2 id="gallery-title" class="head-rule-title">Past editions</h2>
 				</header>
-			</div>
-			<div class="gallery-strip" role="region" aria-label="Photographs from DevFest.cz 2025" tabindex="0">
-				<ul class="gallery-track" role="list">
-					{Array.from({ length: 22 }, (_, i) => {
-						const n = String(i + 1).padStart(2, '0');
-						return (
-							<li>
-								<img
-									src={`/gallery/devfest-2025-${n}.webp`}
-									alt=""
-									loading="lazy"
-									decoding="async"
-									width="1080"
-									height="720"
-								/>
-							</li>
-						);
-					})}
+				<ul class="gallery" role="list">
+					{GALLERY.map((n) => (
+						<li>
+							<img
+								src={`/gallery/devfest-2025-${n}.webp`}
+								alt=""
+								loading="lazy"
+								decoding="async"
+								width="1080"
+								height="720"
+							/>
+						</li>
+					))}
 				</ul>
 			</div>
 		</section>

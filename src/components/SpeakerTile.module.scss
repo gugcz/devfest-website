@@ -1,0 +1,110 @@
+@use '../styles/type' as *;
+// THE CASTING SHEET. Speakers as portraits on a regular grid: the print, then
+// a mono sheet number, the Bebas name and the typewriter role under it. No
+// card, no box, no ground: the photograph carries its own mount. Shared by
+// the home teaser and /speakers (`SpeakerTile.tsx`).
+
+.grid {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: clamp(2.25rem, 4vw, 3.5rem) clamp(1.25rem, 2.4vw, 2rem);
+}
+
+.cell {
+	min-width: 0;
+}
+
+.tile {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	grid-template-areas:
+		'print print'
+		'index name'
+		'.     role';
+	column-gap: 0.75rem;
+	align-items: baseline;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	font: inherit;
+	color: inherit;
+	text-decoration: none;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
+	}
+
+	&:hover .name,
+	&:focus-visible .name {
+		color: var(--color-accent-hot);
+	}
+}
+
+.print {
+	grid-area: print;
+	margin-bottom: 1rem;
+}
+
+.index {
+	grid-area: index;
+	@include mono(var(--fs-label), 0.15em);
+	font-variant-numeric: tabular-nums;
+	color: var(--ink-faint);
+}
+
+.name {
+	grid-area: name;
+	@include display(var(--fs-title-sm));
+	line-height: 1;
+	overflow-wrap: anywhere;
+	transition: color 0.2s;
+}
+
+// Two lines at most: a long Sessionize tagline would push the next row of
+// portraits off its line.
+.role {
+	grid-area: role;
+	@include note(var(--fs-note-sm));
+	color: var(--ink-muted);
+	margin-top: 0.35rem;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+	.grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 720px) {
+	.grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.tile {
+		column-gap: 0.5rem;
+	}
+
+	.print {
+		margin-bottom: 0.75rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.name {
+		transition: none;
+	}
+}
