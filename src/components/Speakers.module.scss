@@ -84,7 +84,7 @@
 // the gutter so it meets the viewport edge.
 .portrait {
 	position: sticky;
-	top: calc(var(--header-h, 4.5rem) + 2rem);
+	top: calc(var(--header-h) + 2rem);
 	margin-right: calc(-1 * var(--gutter));
 }
 

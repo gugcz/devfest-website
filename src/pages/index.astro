@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
+import millChimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroOffer from '../components/HeroOffer';
 import NewsletterForm from '../components/NewsletterForm';
@@ -26,14 +27,6 @@ const homeRows: { id: string; label: string; partners: Partner[] }[] = [
 // grid shared by all rows, so the tiers' columns line up.
 const STRIP_SCALE = 1.1;
 
-// The one frame from the last edition on the home page: the full hall. The
-// rest of the archive is press material, not home-page texture.
-const FRAME = {
-	file: 'devfest-2025-01.webp',
-	width: 800,
-	height: 533,
-	alt: 'A full hall in the brick mill, rows of attendees facing a speaker and his projected slide',
-} as const;
 
 ---
 
@@ -129,7 +122,7 @@ const FRAME = {
 		     Audience and edition from the partner deck, kept in step by hand. -->
 		<section id="facts" class="band" aria-labelledby="facts-title">
 			<div class="band-inner facts-inner">
-				<h2 id="facts-title" class="eyebrow-index"><span class="eyebrow-no">01</span>The event</h2>
+				<h2 id="facts-title" class="eyebrow-index"><span class="eyebrow-no" aria-hidden="true">01</span>The event</h2>
 				<p class="facts-note">
 					One day in a converted coal mill north of Prague. 350 medior and
 					senior developers from across CEE, three stages, one afterparty.
@@ -142,18 +135,19 @@ const FRAME = {
 					<div><dt>Audience</dt><dd>350 developers</dd></div>
 				</dl>
 			</div>
-			<!-- One frame from DevFest 2025, full width, graded B&W; the caption
-			     says what and where, in the line's mono voice. -->
+			<!-- One frame, full width, graded B&W: the mill itself (the only
+			     plate in the repo sharp enough for a 1440px frame; the 2025 press
+			     photos are 800px). The caption says what and where, in the
+			     line's mono voice. -->
 			<figure class="facts-frame">
-				<img
-					src={`/gallery/${FRAME.file}`}
-					alt={FRAME.alt}
+				<Image
+					src={millChimney}
+					alt="Uhelný Mlýn: the brick coal mill and its chimney in Libčice nad Vltavou"
+					widths={[720, 1080, 1440, 1824]}
+					sizes="(max-width: 900px) 100vw, min(100vw, 90rem)"
 					loading="lazy"
-					decoding="async"
-					width={FRAME.width}
-					height={FRAME.height}
 				/>
-				<figcaption class="facts-caption">DevFest 2025 &middot; the main hall, Uhelný Mlýn</figcaption>
+				<figcaption class="facts-caption">Uhelný Mlýn &middot; Libčice nad Vltavou, 25 minutes from Prague</figcaption>
 			</figure>
 		</section>
 
@@ -175,7 +169,7 @@ const FRAME = {
 		{homeRows.length > 0 && (
 			<section id="partners" class="band" aria-labelledby="partners-label">
 				<div class="band-inner partners-inner">
-					<h2 id="partners-label" class="eyebrow-index"><span class="eyebrow-no">04</span>Partners</h2>
+					<h2 id="partners-label" class="eyebrow-index"><span class="eyebrow-no" aria-hidden="true">04</span>Partners</h2>
 					<div class="partners-tiers">
 						{homeRows.map((tier) => (
 							<div class={`partners-tier tier-${tier.id}`}>
@@ -212,7 +206,7 @@ const FRAME = {
 		<section id="newsletter" class="band anchor-target" aria-labelledby="newsletter-title">
 			<div class="band-inner newsletter-inner">
 				<div class="newsletter-head">
-					<p class="eyebrow-index"><span class="eyebrow-no">05</span>Newsletter</p>
+					<p class="eyebrow-index"><span class="eyebrow-no" aria-hidden="true">05</span>Newsletter</p>
 					<h2 id="newsletter-title" class="newsletter-title display">A few emails<br />a year.</h2>
 					<p class="newsletter-lede">
 						We write when a wave opens or a speaker is confirmed. Nothing else.

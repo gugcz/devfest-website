@@ -59,7 +59,7 @@ export default function SpeakersTeaser() {
 			<div className={s.inner}>
 				<div className={s.head}>
 					<h2 id="lineup-teaser-title" className="eyebrow-index">
-						<span className="eyebrow-no">03</span>Speakers
+						<span className="eyebrow-no" aria-hidden="true">03</span>Speakers
 					</h2>
 					<p className={s.count}>{total} confirmed</p>
 				</div>

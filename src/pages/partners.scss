@@ -171,8 +171,7 @@
 	@include mono(var(--fs-label), 0.2em, uppercase);
 	padding: 0.22rem 0.55rem;
 	color: var(--color-text);
-	// White edge, not red: red on the red-toned band is red on red.
-	border: 1px solid var(--field-border);
+		border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 }
 

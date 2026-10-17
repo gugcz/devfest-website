@@ -123,8 +123,7 @@
 
 	// Ink and edges on FLAT red (#F11000: chips, a hovered field row).
 	// Black 4.8:1 at any size; white 4.4:1, so white is for large type only
-	// (3:1). `.band--accent` re-points this trio to white for its darker,
-	// red-toned ground.
+	// (3:1).
 	--on-accent: #000000;
 	// The CTA label on red: 1.17rem = 18.7px, just over the 14pt-bold
 	// "large text" line (18.66px) where white's 4.4:1 clears AA.
@@ -888,8 +887,7 @@ b {
 	.status-bar-cover,
 	.site-header,
 	.footer,
-	.cookie-banner,
-	.band--accent {
+	.cookie-banner {
 		display: none !important;
 	}
 

@@ -56,9 +56,8 @@
 }
 
 /* ---- dead time ---- */
-// A flat strip is the sheet saying "nobody is on". It is the same fill as a
-// band, without the label, and it is opaque so it closes over the ruling
-// underneath. Flat, not hatched: struck through, a lunch out-shouted the talks.
+// A break or a lunch is a flat strip with a label: the sheet saying "nobody is
+// on". Flat, not hatched: struck through, a lunch out-shouted the talks.
 .band {
 	background: var(--panel-lit);
 }

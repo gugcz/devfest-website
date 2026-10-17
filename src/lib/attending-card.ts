@@ -366,7 +366,7 @@ export function drawAttendingCard(
 	ctx.fillStyle = ink;
 	ctx.fillText(nameText, size / 2, nameY);
 
-	// ── Bottom accent band — mirrors `.band--accent` (`--red-toned`: red
+	// ── Bottom accent band — the manual's red-toned ground (red
 	// darkened by a black radial, as the manual allows for large red areas).
 	// Edge-to-edge chrome, exempt from the safe space. The official mono white
 	// logo (2026 badge included) centered: on red the manual allows it only.

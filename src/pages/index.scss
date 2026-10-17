@@ -504,10 +504,10 @@
 	}
 }
 
-/* ===================== TICKETS → STARRING ===================== */
+/* ===================== TICKETS → SPEAKERS ===================== */
 // The tickets island closes on no air of its own: the credits below open on
 // one `--section-y` beat. Stacked, the two paddings left ~360px of black
-// between the last wave and "Starring".
+// between the last wave and the speakers.
 :global(#tickets) {
 	padding-bottom: 0;
 }

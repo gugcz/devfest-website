@@ -234,7 +234,7 @@ export default function Tickets() {
 			    head → lede → list shape every other section used. */}
 			<header className={s.head}>
 				<h2 id="tickets-heading" className="eyebrow-index">
-					<span className="eyebrow-no">02</span>Tickets
+					<span className="eyebrow-no" aria-hidden="true">02</span>Tickets
 				</h2>
 				{finalWave && (
 					<p className={s.headNote}>{finalName ?? 'This'} is the final wave. There is no next one.</p>
