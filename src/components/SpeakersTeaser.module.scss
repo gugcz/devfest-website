@@ -1,7 +1,7 @@
 @use '../styles/type' as *;
-// Home-page lineup teaser, set as film credits: names in a column, one lit,
-// its portrait on the right. It was a wall of four prints; a credits list
-// bills six names in the same height and still puts a face beside them.
+// Home-page lineup teaser, set as a poster's billing block: six names at
+// section-head size in a column, one lit, its portrait on the right running
+// off the page edge. Names only; the roles live on /speakers.
 
 .teaser {
 	position: relative;
@@ -35,10 +35,11 @@
 }
 
 /* ===================== BODY ===================== */
-// The list fills; the portrait column is fixed at the plate's width.
+// The names fill; the portrait column is fixed at the plate's width and the
+// plate runs past the column into the gutter, off the right edge of the page.
 .body {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) 360px;
+	grid-template-columns: minmax(0, 1fr) 420px;
 	gap: clamp(2rem, 5vw, 5rem);
 	align-items: start;
 }
@@ -59,38 +60,23 @@
 	padding: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 0.625rem;
-	// A flex item's min-width is `auto`: one long nowrap tag widened the
-	// whole list past the phone and the page scrolled sideways.
+	gap: 0.35rem;
 	min-width: 0;
 	width: 100%;
 }
 
-// Name over role, always: a role that sometimes shared the name's line and
-// sometimes dropped under it made the list ragged from row to row.
+// A name per row and nothing else: the billing block of a poster. Roles,
+// companies and talks are one click away on /speakers; here they only made
+// six lines of small grey text under six big ones.
 .row {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 0.2rem;
+	display: block;
 	text-decoration: none;
 	color: inherit;
 }
 
 .name {
-	@include display(var(--fs-row));
+	@include display(var(--fs-h2));
 	color: var(--ink-dim);
-}
-
-.tag {
-	@include mono(var(--fs-label-sm), 0.15em, uppercase);
-	color: var(--ink-muted);
-	// One line, cut with an ellipsis: a long Sessionize tagline wrapped into
-	// a paragraph under a credit.
-	max-width: 100%;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 // The lit row: hovered, keyboard-focused, or the first by default. The state
@@ -101,27 +87,19 @@
 	.name {
 		color: var(--color-text);
 	}
-	.tag {
-		color: var(--ink-soft);
-	}
 }
 
 /* ===================== PORTRAIT ===================== */
-// The shared print at 360×450 (its own 4:5). Swaps instantly with the row.
+// The shared print at 4:5, swapping instantly with the row. It overruns the
+// content column by the gutter so it meets the viewport edge: the one
+// element on the page that is not set on the column.
 .portrait {
 	display: flex;
-	flex-direction: column;
-	gap: 0.9rem;
+	margin-right: calc(-1 * var(--gutter));
 }
 
 .plate {
 	width: 100%;
-}
-
-.caption {
-	@include mono(var(--fs-label-xs), 0.15em, uppercase);
-	color: var(--ink-muted);
-	margin: 0;
 }
 
 /* ===================== FOOT — all-speakers link ===================== */

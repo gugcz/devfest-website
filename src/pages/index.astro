@@ -1,7 +1,6 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
-import millChimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroOffer from '../components/HeroOffer';
 import NewsletterForm from '../components/NewsletterForm';
@@ -27,17 +26,14 @@ const homeRows: { id: string; label: string; partners: Partner[] }[] = [
 // grid shared by all rows, so the tiers' columns line up.
 const STRIP_SCALE = 1.1;
 
-// The "Look back" collage, in grid order: the first frame is the large one.
-// Picked for range (the hall, the stage, the costumes, the hallway, the
-// audience), not as a full archive.
-const GALLERY = [
-	{ file: 'devfest-2025-01.webp', width: 800, height: 533, alt: 'A full hall in the brick mill, rows of attendees facing a speaker and his projected slide' },
-	{ file: 'devfest-2025-03.webp', width: 800, height: 533, alt: 'A speaker in an orange T-shirt gesturing on stage in front of his slides' },
-	{ file: 'devfest-2025-02.webp', width: 800, height: 534, alt: 'Five attendees in post-apocalyptic costumes posing together' },
-	{ file: 'devfest-2025-14.webp', width: 800, height: 534, alt: 'Two attendees comparing their phones in a hallway of the mill' },
-	{ file: 'devfest-2025-08.webp', width: 800, height: 533, alt: 'Audience members laughing during a talk, one filming it on his phone' },
-	{ file: 'devfest-2025-20.webp', width: 1080, height: 720, alt: 'Three attendees laughing over their laptops at a hallway table' },
-] as const;
+// The one frame from the last edition on the home page: the full hall. The
+// rest of the archive is press material, not home-page texture.
+const FRAME = {
+	file: 'devfest-2025-01.webp',
+	width: 800,
+	height: 533,
+	alt: 'A full hall in the brick mill, rows of attendees facing a speaker and his projected slide',
+} as const;
 
 ---
 
@@ -127,29 +123,37 @@ const GALLERY = [
 			</div>
 		</section>
 
-		<!-- THE FACTS — what the event IS: the couplet, then one reading line.
+		<!-- 01 THE EVENT — the case note and the facts, then one held frame from
+		     the last edition. No second poster head under the hero: this block
+		     is narration (Special Elite) and data (mono), set on two columns.
 		     Audience and edition from the partner deck, kept in step by hand. -->
-		<section id="facts" aria-labelledby="facts-title">
-			<div class="facts-text">
-				<h2 id="facts-title" class="facts-head display">
-					One day.<br />One mill.
-				</h2>
-
-				<p class="facts-lede">
-					350+ medior and senior developers from across CEE. The eleventh
-					edition, in Uhelný Mlýn, Libčice nad Vltavou.
+		<section id="facts" class="band" aria-labelledby="facts-title">
+			<div class="band-inner facts-inner">
+				<h2 id="facts-title" class="eyebrow-index"><span class="eyebrow-no">01</span>The event</h2>
+				<p class="facts-note">
+					One day in a converted coal mill north of Prague. 350 medior and
+					senior developers from across CEE, three stages, one afterparty.
+					The eleventh edition; the first in Uhelný Mlýn.
 				</p>
+				<dl class="facts-list">
+					<div><dt>Date</dt><dd><time datetime="2026-10-30">30 October 2026</time></dd></div>
+					<div><dt>Place</dt><dd>Uhelný Mlýn, Libčice nad Vltavou</dd></div>
+					<div><dt>Doors</dt><dd>08:00 &mdash; afterparty until 23:00</dd></div>
+					<div><dt>Audience</dt><dd>350 developers</dd></div>
+				</dl>
 			</div>
-			<!-- The mill itself, the band's dominant element: a documentary plate
-			     on the right 60%, bleeding off the edge, graded like the hero. -->
-			<figure class="facts-plate">
-				<Image
-					src={millChimney}
-					alt="Uhelný Mlýn: the brick coal mill and its chimney in Libčice nad Vltavou"
-					widths={[480, 720, 960, 1280, 1824]}
-					sizes="(max-width: 900px) 100vw, 60vw"
+			<!-- One frame from DevFest 2025, full width, graded B&W; the caption
+			     says what and where, in the line's mono voice. -->
+			<figure class="facts-frame">
+				<img
+					src={`/gallery/${FRAME.file}`}
+					alt={FRAME.alt}
 					loading="lazy"
+					decoding="async"
+					width={FRAME.width}
+					height={FRAME.height}
 				/>
+				<figcaption class="facts-caption">DevFest 2025 &middot; the main hall, Uhelný Mlýn</figcaption>
 			</figure>
 		</section>
 
@@ -165,31 +169,34 @@ const GALLERY = [
 		     zero-height placeholder. -->
 		<SpeakersTeaser client:load />
 
-		<!-- PARTNERS — a quiet strip under one mono label: one row of logos per
-		     tier, top tier first and largest, community last; tier names and
-		     media partners live on /partners only. -->
+		<!-- 04 PARTNERS — one wall: the tier as a mono label in the margin
+		     column, the marks on one cap height per tier, left-set. Media
+		     partners live on /partners only. -->
 		{homeRows.length > 0 && (
-			<section id="partners" aria-labelledby="partners-label">
-				<div class="partners-inner">
-					<h2 id="partners-label" class="partners-label">Partners</h2>
+			<section id="partners" class="band" aria-labelledby="partners-label">
+				<div class="band-inner partners-inner">
+					<h2 id="partners-label" class="eyebrow-index"><span class="eyebrow-no">04</span>Partners</h2>
 					<div class="partners-tiers">
 						{homeRows.map((tier) => (
-							<ul class={`partners-row tier-${tier.id}`} aria-label={tier.label}>
-								{tier.partners.map((p) => {
-									const { props, wide } = partnerLogo(p, tier.id, STRIP_SCALE);
-									return (
-										<li class:list={['partners-item', { 'partners-item--wide': wide }]}>
-											{p.url ? (
-												<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+							<div class={`partners-tier tier-${tier.id}`}>
+								<p class="partners-tier-label" id={`partners-tier-${tier.id}`}>{tier.label}</p>
+								<ul class="partners-row" aria-labelledby={`partners-tier-${tier.id}`}>
+									{tier.partners.map((p) => {
+										const { props } = partnerLogo(p, tier.id, STRIP_SCALE);
+										return (
+											<li class="partners-item">
+												{p.url ? (
+													<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+														<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
+													</a>
+												) : (
 													<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
-												</a>
-											) : (
-												<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
-											)}
-										</li>
-									);
-								})}
-							</ul>
+												)}
+											</li>
+										);
+									})}
+								</ul>
+							</div>
 						))}
 					</div>
 
@@ -197,32 +204,6 @@ const GALLERY = [
 				</div>
 			</section>
 		)}
-
-		<!-- GALLERY — photos from past editions -->
-		<section id="gallery" aria-labelledby="gallery-title">
-			<div class="u-container head-stack gallery-head">
-				<h2 id="gallery-title" class="display head-title">Look back</h2>
-			</div>
-
-			<!-- A held collage, not a strip: six frames that all fit the column,
-			     one large and five smaller, so nothing is cut at the edge and
-			     nothing asks to be scrolled. Below the fold, so every frame is
-			     lazy. -->
-			<ul class="u-container gallery-grid" role="list">
-				{GALLERY.map(({ file, alt, width, height }) => (
-					<li>
-						<img
-							src={`/gallery/${file}`}
-							alt={alt}
-							loading="lazy"
-							decoding="async"
-							width={width}
-							height={height}
-						/>
-					</li>
-				))}
-			</ul>
-		</section>
 
 		<!-- NEWSLETTER — one line on the black ground, no red field: the form is
 		     the red on this screen. -->
