@@ -133,7 +133,6 @@
       { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat. The only shadows are the CTA hover glow and the print mount; red text is flat.", "section": "elevation" }
     ],
     "dos": [
-      "Do compose a surface on the pencil canvas from the Components frame before coding it.",
       "Do use global primitives by class name (.band, .eyebrow, .display, .field-row, .btn-primary, .btn-ghost).",
       "Do give every data-backed page a .fallback-note.",
       "Do use --field-border (≥3:1) for any interactive control boundary.",

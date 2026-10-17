@@ -42,14 +42,11 @@ edit. Say so and stop.
    exists.
 2. `impeccable context` reports `CONTEXT_STALE`: run `/impeccable doctor` and
    fix what it names.
-3. Canvas: `.claude/rules/design-pencil.md`; sync the `Components` frame in
-   `design/devfest.pen` when a primitive changed, and a new token goes into
-   all three of `BaseLayout.scss`, `docs/design.md` and the `.pen` variables.
 
 Impeccable comes from `.claude/settings.json`. If it is unavailable (a cloud
-session without the plugin, Pencil failing on Linux): edit `docs/design.md` by
-hand to match the code, say in the PR body that `/impeccable document` and the
-canvas sync did not run, and leave them for the maintainer's machine.
+session without the plugin): edit `docs/design.md` by hand to match the code,
+say in the PR body that `/impeccable document` did not run, and leave it for
+the maintainer's machine.
 
 ## 4. Write it
 

@@ -73,8 +73,8 @@ edited PR body keeps its old text in the public edit history.
 - `scripts/`: the axe sweep (`a11y.mjs`) and its `/api/*` fixtures
   (`a11y-mocks/`).
 - `public/`: static assets, the press kit, `.well-known/` (iOS app links).
-- `design/devfest.pen`: the Pencil canvas. `docs/design.md` is the design
-  system, `docs/product.md` the product record.
+- `docs/design.md`: the design system; `docs/product.md`: the product
+  record.
 - `docs/adr/`: architecture decision records; `docs/brainstorm/` and
   `docs/plan/`: the `vgv-wingspan` brainstorms and plans, committed with the
   change they led to and never deleted (`.claude/rules/docs.md`).
@@ -113,12 +113,7 @@ refactored; never raise the threshold or add an ignore comment.
 - **Impeccable**: `/impeccable shape`, `critique`, `audit` and the design hook
   on UI edits. Reads `docs/product.md` and `docs/design.md` (its
   `.impeccable/design.json` sidecar comes from `/impeccable document`).
-- **Pencil** (MCP `pencil` in `.mcp.json`): `design/devfest.pen`, where a
-  surface is composed before it is coded. Needs a local pen.dev app (the
-  `.mcp.json` entry is the macOS desktop app path; the VS Code extension is
-  the other route). In a cloud or Linux session the `pencil` server fails to
-  start: say so, skip the canvas steps, and still run the Impeccable
-  critique/audit and `npm run a11y`. Loop: `.claude/rules/design-pencil.md`.
+  Loop: `.claude/rules/design.md`.
 - **Skills** (`.claude/skills/`): `ship` runs the definition of done.
   `update-docs` keeps the product record, the design record (via
   Impeccable), the ADRs, CLAUDE.md and README true to the code.
@@ -150,7 +145,7 @@ one directly when working outside them.
 | `workshops.md` | `functions/src/workshops/**`, `src/lib/workshops.ts`, `Workshops.tsx`, `workshops.astro` | Seat limits, waitlist order, the app's ticket login |
 | `analytics.md` | `src/lib/firebase.ts`, `analytics.ts`, `consent.ts`, `CookieBanner.astro`, the thank-you pages | GA4 Consent Mode, page views, conversion events, Performance Monitoring |
 | `invite.md` | `src/pages/invite/**`, `src/lib/invite.ts`, `InviteCta.tsx`, `team.json` | `/invite/<member>` pages, CTA, visual direction |
-| `design-pencil.md` | `design/**`, `docs/design.md`, `docs/product.md`, `.impeccable/**`, `src/components/**`, `src/pages/**`, `src/layouts/**`, `src/styles/**` | Pencil canvas, Impeccable loop, `docs/design.md` as the record |
+| `design.md` | `docs/design.md`, `docs/product.md`, `.impeccable/**`, `src/components/**`, `src/pages/**`, `src/layouts/**`, `src/styles/**` | Impeccable loop, `docs/design.md` as the record |
 | `docs.md` | `docs/**`, `README.md`, `CLAUDE.md`, `.claude/**`, the PR template | README, CLAUDE.md, ADRs, brainstorms, plans, what goes where |
 
 ## Firebase shared project
