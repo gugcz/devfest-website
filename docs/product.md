@@ -60,12 +60,18 @@ built by a community, not a vendor event.
   contact (with press), code of conduct, newsletter thank-you, thank-you, 404,
   privacy policy, delete-account (mobile app), share pages per talk and
   speaker, unlisted `/invite/<member>` and `/speaker-card`.
-- The home page is the hero (statement, topic rotor, two actions, a
-  date / venue / wave line) and five numbered sections: 01 The event (a
-  short note, the facts as a date / place / doors / audience list, one
-  photograph from the last edition), 02 Tickets (the waves, sold out as a
-  stamp), 03 Speakers (six names, one portrait), 04 Partners (one wall, the
-  tier in the margin), 05 Newsletter. No gallery, no second hero.
+- The home page is one ruled document: a full-bleed hero plate (the
+  statement set into its lower left, a "Case file DF-2026 · Public" stamp
+  top-left, nothing else on the photograph), a facts line under it (date,
+  venue link, the wave on sale, the page's one red "Get tickets"), then
+  sections that each open on a ruled head with a mono note: The event (a
+  short note; the facts as a date / place / doors / audience / programme
+  list, the programme being the topics), Tickets (one ruled row per wave:
+  index and state, wave and deadline, price and company figure, Buy /
+  Company pays or the state word), Speakers (five ruled rows: index, name,
+  role, arrow; "All N speakers"), Partners (one row of marks per tier, no
+  tier labels; "All partners"), Newsletter (lede and form). No gallery, no
+  photograph in the sections, no second hero, nothing that moves on its own.
 - Static Astro build with React islands only for data-backed behaviour.
   Browser reads come only from cached HTTP endpoints, never the Firebase
   client SDK; writes go through App Check-gated callables.
