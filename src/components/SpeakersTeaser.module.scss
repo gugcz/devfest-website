@@ -1,14 +1,11 @@
-@use '../styles/type' as *;
-// Home-page lineup wall — the same contact sheet /speakers and /team use, cut
-// down to four frames. It was a row of four tiles at EVERY width, which on a
-// 375px phone left 78×97px faces: too small to recognise anybody, which is the
-// entire job of a speaker teaser. Two-up on phones, four-up from 600px.
+// Home-page speakers: the ruled head, the first rows of the casting sheet
+// (`SpeakerTile.module.scss` owns the grid and the tile), the way to the rest.
 
 .teaser {
 	position: relative;
 	width: 100%;
-	padding: var(--section-y) var(--gutter);
-	background: var(--lit), var(--color-bg);
+	padding: var(--section-y-tight) var(--gutter) 0;
+	background: var(--color-bg);
 }
 
 .inner {
@@ -16,131 +13,23 @@
 	margin: 0 auto;
 }
 
-/* ===================== HEAD ===================== */
-// Two columns on one baseline — `.head-split` in BaseLayout.scss, shared with
-// the ticket section and the /contact desks.
-.headSide {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: clamp(1rem, 2vw, 1.5rem);
-	padding-bottom: 0.35rem;
+.sheet {
+	margin-top: clamp(1.75rem, 3vw, 2.5rem);
 }
 
+.inner > :global(.action) {
+	margin-top: clamp(1.5rem, 2.5vw, 2rem);
+}
 
-/* ===================== WALL ===================== */
-// Prints on the page — no cell, no rule (see Speakers.module.scss). Left-set
-// and full width like every other section; centred in an 880px cap it was
-// the one block off the page's left edge.
-.wall {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: grid;
-	// Two-up on phones so a face is actually legible; four-up from 600px.
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: clamp(2rem, 3.4vw, 3rem) clamp(1.4rem, 2.4vw, 2.2rem);
-	// Re-keyed on each rotation → replays this crossfade as the set changes.
-	animation: wallFade 0.55s ease;
-
-	> li {
-		display: flex;
+// The sheet in whole rows: eight at four across, six at three, four at two.
+@media (max-width: 1100px) {
+	.sheet > li:nth-child(n + 7) {
+		display: none;
 	}
 }
 
-@media (min-width: 600px) {
-	.wall {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-	}
-}
-
-@keyframes wallFade {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
-/* ===================== PRINT + PLATE ===================== */
-// The print itself is `Print.module.scss` (shared with the lineup); this
-// file owns the tile's shape and the name plate under it.
-.tile {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	padding: 0;
-	text-decoration: none;
-	color: inherit;
-}
-
-/* ===================== NAME PLATE ===================== */
-// Space, not a rule. This has been a 2px red left border (the side-tab cliché)
-// and then a red top hairline; both were a drawn line repeated once per face.
-// The bottom edge of the print already ends the picture.
-.plate {
-	position: relative;
-	z-index: 1;
-	margin-top: 0.9rem;
-	padding: 0;
-}
-
-.tname {
-	display: block;
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-lede);
-	line-height: 1.1;
-	letter-spacing: 0.035em;
-	color: var(--color-text);
-	transition: color 0.25s ease;
-}
-
-.tile:hover .tname,
-.tile:focus-visible .tname {
-	color: var(--color-accent-hot);
-}
-
-/* ===================== FOOT — all-speakers link ===================== */
-.allLink {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.5rem;
-	// WCAG 2.2 SC 2.5.8: the link measured 190×23, one pixel under the 24px
-	// minimum target size.
-	min-height: 2.75rem;
-	padding: 0 0.25rem;
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
-	color: var(--color-text);
-	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
-	transition: color 0.2s ease;
-
-	&:hover {
-		color: var(--color-accent-hot);
-	}
-
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-lg);
-	}
-}
-
-/* ===================== RESPONSIVE ===================== */
-@media (max-width: 600px) {
-	.plate {
-		margin-top: 0.7rem;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.wall {
-		animation: none;
-	}
-	.tile,
-	.tname {
-		transition: none;
+@media (max-width: 720px) {
+	.sheet > li:nth-child(n + 5) {
+		display: none;
 	}
 }

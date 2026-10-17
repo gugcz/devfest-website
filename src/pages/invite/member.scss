@@ -91,7 +91,7 @@
 }
 
 .invite-meta {
-	@include mono(var(--fs-label-lg), 0.08em, uppercase);
+	@include mono(var(--fs-label-lg), 0.1em);
 	color: rgba(255, 255, 255, 0.7);
 }
 
@@ -104,7 +104,7 @@
 }
 
 .invite-quote {
-	@include mono(var(--fs-ui));
+	@include prose(var(--fs-body));
 	line-height: 1.7;
 	color: rgba(255, 255, 255, 0.72);
 
@@ -155,5 +155,24 @@
 
 	.invite-note {
 		grid-template-columns: 1fr;
+	}
+}
+
+// Closer: three actions in a column built for two. Laid out on purpose
+// instead of wrapping 2 + 1: the ticket across the full measure, the two
+// ways to look around side by side under it. A phone keeps the global stack.
+@media (min-width: 601px) {
+	:global(.invite-closer .closer-side) {
+		align-items: stretch;
+	}
+
+	:global(.invite-closer .closer-actions) {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		max-width: 34rem;
+	}
+
+	:global(.invite-closer .closer-actions .btn-primary) {
+		grid-column: 1 / -1;
 	}
 }

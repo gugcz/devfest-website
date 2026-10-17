@@ -17,11 +17,11 @@
 }
 
 .empty-stamp {
-	@include mono(var(--fs-label), 0.3em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--color-accent-hot);
 	padding: 0;
 	background: transparent;
-	// A plain mono word, never a boxed stamp.
+	// A plain typewriter note, never a boxed stamp.
 	border: 0;
 }
 
@@ -45,11 +45,10 @@
 	gap: 1.8rem;
 	text-decoration: none;
 
-	// Not ink: a hairline inside the row, and the off-site arrow's motion. Hover only.
+	// Not ink: a hairline inside the row and the photograph developing. Hover only.
 	&:hover {
 		.coverage-meta { border-top-color: rgba(255, 255, 255, 0.4); }
 		.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
-		.coverage-arrow { transform: translate(2px, -2px); }
 	}
 }
 
@@ -92,12 +91,12 @@
 	}
 }
 
-// Publication name — a plain mono eyebrow, muted at rest and full cream on the
-// reach field. Never a filled tab: a resting red label competes with the one
-// state the colour is for.
+// Publication name — a plain typewriter eyebrow, muted at rest and full cream
+// on the reach field. Never a filled tab: a resting red label competes with
+// the one state the colour is for.
 .coverage-outlet {
 	align-self: flex-start;
-	@include mono(var(--fs-label-sm), 0.24em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 }
 
@@ -105,19 +104,12 @@
 // only brand face that sets Czech cleanly. Mono advances ~0.6em vs Bebas
 // ~0.42em, hence the ~0.6x step. No uppercase (diacritics unreadable).
 .coverage-title {
-	@include mono(clamp(1.45rem, 2.5vw, 2.1rem), 0);
+	@include mono(clamp(1.45rem, 2.5vw, 2.1rem), 0.1em);
 	font-weight: 500;
 	line-height: 1.3;
 	color: var(--color-text);
 }
 
-// Off-site marker on the mono "Read article" line, not the headline — on the
-// headline it scaled with the row title and became a 40px glyph mid-sentence.
-.coverage-arrow {
-	display: inline-block;
-	margin-left: 0.35rem;
-	transition: transform 0.25s;
-}
 
 // Mono, not Special Elite, for the same reason as the title: Special Elite ships
 // a `latin` subset only, so every ř/ě/č in scraped Czech falls back mid-word.
@@ -134,7 +126,8 @@
 	overflow: hidden;
 }
 
-// The read/date meta row, set off by space alone.
+// The read/date meta row, set off by space alone. Mono is for the date
+// figure; the "Read article" action restates its own voice below.
 .coverage-meta {
 	display: flex;
 	align-items: center;
@@ -142,7 +135,7 @@
 	gap: 1rem;
 	margin-top: 0.8rem;
 	padding-top: 0.9rem;
-	@include mono(var(--fs-label), 0.12em);
+	@include mono(var(--fs-label), 0.1em);
 	color: var(--ink-faint);
 	// Outlet and date sit on one line while they fit and wrap when they do
 	// not. `white-space: nowrap` pinned them to one line at any text size,
@@ -151,8 +144,7 @@
 }
 
 .coverage-read {
-	text-transform: uppercase;
-	letter-spacing: 0.2em;
+	@include action(var(--fs-action));
 	color: var(--ink-meta);
 	transition: color 0.2s;
 }
@@ -162,7 +154,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.coverage-arrow,
 	.coverage-thumb img { transition: none; }
 
 }

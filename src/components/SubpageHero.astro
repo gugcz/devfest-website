@@ -13,6 +13,8 @@ interface Props {
 	photo?: boolean;
 	/** `background-position` for the key-art plate — see HeroBackground. */
 	focus?: string;
+	/** Public path of a page-specific plate; see HeroBackground `src`. */
+	plate?: string;
 	/** One cross-link under the lede, to the page's sibling view (sessions ↔
 	 * agenda). It used to sit under a second section headline in the band. */
 	link?: { href: string; label: string };
@@ -25,6 +27,7 @@ const {
 	seoHeading,
 	photo = true,
 	focus = 'center',
+	plate,
 	link,
 } = Astro.props;
 ---
@@ -32,7 +35,7 @@ const {
 <section class:list={['subpage-hero', 'scene', { 'subpage-hero--plain': !photo }]} aria-labelledby={titleId}>
 	{photo && (
 		<>
-			<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} focus={focus} />
+			<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} focus={focus} src={plate} />
 			<div class="scene-vignette" aria-hidden="true"></div>
 		</>
 	)}
@@ -45,7 +48,7 @@ const {
 		<p class="hero-lede">{lede}</p>
 		{link && (
 			<p class="hero-link">
-				<a href={link.href}>{link.label}<span aria-hidden="true">&#160;&rarr;</span></a>
+				<a class="action" href={link.href}>{link.label}</a>
 			</p>
 		)}
 	</div>

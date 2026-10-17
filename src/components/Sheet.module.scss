@@ -1,6 +1,6 @@
 @use '../styles/type' as *;
 // THE SHEET — chrome shared by `SessionDetail` and `SpeakerDetail`. Not a
-// dialog box: full-bleed, poster title, no border, mono `Close ✕` in a
+// dialog box: full-bleed, poster title, no border, Bebas `Close ✕` in a
 // sticky bar. A caller composes it with its own module:
 //
 //   import sheet from './Sheet.module.scss';
@@ -63,7 +63,7 @@
 	mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
 }
 
-// A mono word and a cross, not a bordered square. Every other control in this
+// A Bebas word and a cross, not a bordered square. Every other control in this
 // language is type on the ground.
 .close {
 	display: inline-flex;
@@ -71,7 +71,7 @@
 	gap: 0.6rem;
 	min-height: 2.75rem;
 	padding: 0;
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	@include action(var(--fs-action));
 	color: var(--ink-soft);
 	background: none;
 	border: 0;
@@ -112,7 +112,7 @@
 // Muted, not accent-hot. Red is spent on the reach state of the rows below;
 // a red label at the top competes with the one thing the colour is for.
 .kicker {
-	@include mono(var(--fs-label-sm), 0.28em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--ink-muted);
 	margin: 0 0 clamp(0.75rem, 1.5vw, 1.1rem);
 }
@@ -126,9 +126,9 @@
 	margin: 0;
 }
 
-// The mono label that opens a block inside the sheet ("Speakers", "Talks").
+// The typewriter label that opens a block inside the sheet ("Speakers", "Talks").
 .blockTitle {
-	@include mono(var(--fs-label-sm), 0.24em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--ink-muted);
 	margin: 0 0 clamp(1rem, 2vw, 1.5rem);
 	padding-bottom: clamp(0.9rem, 1.8vw, 1.25rem);
@@ -148,7 +148,7 @@
 }
 
 .ticketsLine {
-	@include mono(var(--fs-label), 0.14em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--ink-soft);
 	margin: 0;
 }

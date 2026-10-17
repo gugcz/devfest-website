@@ -14,7 +14,8 @@
 	padding:
 		1rem min(clamp(1rem, 4vw, 2.5rem), 5vw)
 		calc(1rem + env(safe-area-inset-bottom));
-	background: #0A0A0A;
+	// Opaque over page content: the lit plate laid on the black ground.
+	background: linear-gradient(var(--panel-lit), var(--panel-lit)), var(--color-bg);
 	border-top: 1px solid var(--rule);
 	z-index: 10000;
 	// visibility switches only after the opacity/transform fade finishes, so the
@@ -66,9 +67,9 @@
 // (type, padding, height, footprint) is shared. Decline's boundary is
 // --field-border via .btn-ghost (3.33:1).
 .cookie-btn {
-	font-size: var(--fs-label-lg);
-	// Matches `.btn-primary` (BaseLayout.scss): tighter tracking reads on red.
-	letter-spacing: 0.16em;
+	// The `.btn-primary` label size, never smaller: white on red clears AA
+	// only as large text (`cta-label` in _type.scss). Decline matches it.
+	font-size: var(--fs-cta);
 	white-space: nowrap;
 	// Physical touch target — px, not rem, so it does not double with the
 	// root font (WCAG 2.5.5 is about the pointer, not the type size).

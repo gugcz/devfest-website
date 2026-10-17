@@ -1,12 +1,6 @@
 .closer-band {
 }
 
-// The accent field carries its own edge — a hairline on a red ground reads
-// as a seam, not as structure.
-.closer-band:global(.band--accent) {
-	border-top: 0;
-}
-
 .closer-eyebrow {
 	margin-bottom: clamp(1.1rem, 2vw, 1.6rem);
 }

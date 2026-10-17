@@ -1,58 +1,63 @@
 @use '../styles/type' as *;
-@use '../styles/type' as *;
-// The 1.15/0.85 split the desks and the section heads use, so a step's
-// title shares its left edge and its measure with everything else.
+
+// [ index over title ][ note, then its actions ]. The action sits under the
+// sentence that explains it, left-aligned, so the eye never crosses the
+// page to find the control. The title is a sub-head (--fs-h3), not a row
+// poster: the list is a short set of errands, not the page's statement.
 .step {
 	display: grid;
-	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+	grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
 	align-items: start;
-	gap: 1rem clamp(2rem, 5vw, 5rem);
+	gap: 0.9rem clamp(2rem, 4vw, 4rem);
 }
 
 .step-head {
 	display: flex;
 	flex-direction: column;
-	gap: 0.9rem;
+	gap: 0.6rem;
 	min-width: 0;
 }
 
-// The short-list row step (--fs-row, 72px) — these lists are three or four
-// entries long, the same length as the ticket waves and the contact desks.
+// The ticket stubs' serial: mono, tabular, faint, over the title. In the
+// title's cell, so a numbered row and a plain one share one grid.
+.step-index {
+	@include mono(var(--fs-label-lg), 0.15em);
+	font-variant-numeric: tabular-nums;
+	color: var(--ink-faint);
+}
+
 .step-title {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row);
-	line-height: 1.02;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
+	@include row-title(var(--fs-h3));
 	margin: 0;
+}
+
+.step-body {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1.1rem;
+	min-width: 0;
 }
 
 .step-note {
 	@include prose(var(--fs-body), 1.7);
-	color: rgba(255, 255, 255, 0.72);
-	max-width: 46ch;
+	color: var(--ink);
+	max-width: 52ch;
 	margin: 0;
 }
 
 .step-note :global(a) {
-	@include hairline-link(var(--color-accent-hot));
+	@include hairline-link;
 }
 
 .step-actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.9rem;
-	justify-content: flex-end;
-	align-items: flex-start;
+	gap: 0.75rem;
 }
 
 @media (max-width: 900px) {
 	.step {
-		grid-template-columns: 1fr;
-	}
-
-	.step-actions {
-		justify-content: flex-start;
+		grid-template-columns: minmax(0, 1fr);
 	}
 }

@@ -12,34 +12,103 @@ import {
 	waveDeadline,
 	type ReleaseGroup,
 	type ReleaseStatus,
+	type TitoRelease,
 } from '../lib/tito';
 import { trackBeginCheckout } from '../lib/checkout';
 import { useRemote } from '../lib/useRemote';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Tickets.module.scss';
 
-// Static copy keyed by lowercased group name. Overrides whatever ti.to
-// returns in the release `description` so marketing copy stays in repo,
-// not in the ti.to admin.
-const GROUP_DESCRIPTIONS: Record<string, string> = {
-	'early bird': 'The lowest ticket price of the year. Limited early availability.',
-	regular: 'Standard pricing while the wave lasts — secure your seat early.',
-	'lazy bird': 'Last chance to grab a ticket. Late pricing, same full access.',
-};
+type Variant = ReleaseGroup['variants'][number];
 
-function groupDescription(groupName: string, fallback: string | null): string | null {
-	return GROUP_DESCRIPTIONS[groupName.trim().toLowerCase()] ?? fallback;
+/** The variant an employer pays for: same ticket, invoiced to the company. */
+function isCompanyFunded(release: TitoRelease): boolean {
+	return releaseTitle(release).toLowerCase().includes('company funded');
 }
 
 /** Buy CTA click → `begin_checkout` with the one variant the button opens,
  * tagged with its wave (`item_category`) and variant label. */
-function trackVariantCheckout(group: ReleaseGroup, variant: ReleaseGroup['variants'][number]): void {
+function trackVariantCheckout(group: ReleaseGroup, variant: Variant): void {
 	trackBeginCheckout([
 		{
 			release: variant.release,
 			item: { item_category: group.name, ...(variant.variantLabel ? { item_variant: variant.variantLabel } : {}) },
 		},
 	]);
+}
+
+/** The wave's price, printed once: the first variant's figure large, and any
+ * variant that costs something else as a small data line under it. The
+ * buttons below carry no price, so the figure is never read twice. */
+function StubPrice({ group }: { group: ReleaseGroup }) {
+	// Lead with the first variant that has a figure, not just the first one.
+	const leadIdx = group.variants.findIndex((v) => priceDisplay(v.release));
+	if (leadIdx < 0) return null;
+	const lead = priceDisplay(group.variants[leadIdx].release)!;
+	const others = group.variants
+		.filter((_, i) => i !== leadIdx)
+		.map(({ release, variantLabel }) => ({
+			id: release.id,
+			label: variantLabel || releaseTitle(release),
+			price: priceDisplay(release)?.primary,
+		}))
+		.filter((o) => o.price && o.price !== lead.primary);
+	return (
+		<span className={s.stubPriceGroup}>
+			<span className={s.stubPrice}>{lead.primary}</span>
+			{others.map((o) => (
+				<span key={o.id} className={s.stubAltPrice}>
+					{o.label} {o.price}
+				</span>
+			))}
+		</span>
+	);
+}
+
+interface StubCtasProps {
+	group: ReleaseGroup;
+	buyable: Variant[];
+	accountSlug: string;
+	eventSlug: string;
+}
+
+/** One button per buyable variant, each straight into that release's ti.to
+ * checkout (`/with/<slug>`), labelled by who pays — the price is the figure
+ * above, and the company figure its data line, so who-pays is said twice on
+ * the row and no more. The visible label leads the accessible name (WCAG
+ * 2.5.3); the name still carries the release and its price for a screen
+ * reader. */
+function StubCtas({ group, buyable, accountSlug, eventSlug }: StubCtasProps) {
+	// "Buy" only works while one variant is not company-funded; two or more
+	// (say Regular and Student) need their own names to tell them apart.
+	const personal = buyable.filter((v) => !isCompanyFunded(v.release)).length;
+	return (
+		<div className={s.ctas}>
+			{buyable.map((variant, bi) => {
+				const price = priceDisplay(variant.release)?.primary;
+				const company = isCompanyFunded(variant.release);
+				const what = `${releaseTitle(variant.release)} ticket${price ? `, ${price}` : ''}, on ti.to`;
+				const label = company
+					? 'Company pays'
+					: personal > 1
+						? variant.variantLabel || releaseTitle(variant.release)
+						: 'Buy';
+				return (
+					<a
+						key={variant.release.id}
+						className={`${bi === 0 ? 'btn-primary' : 'btn-ghost'} ${s.cta}`}
+						href={checkoutUrl(variant.release, accountSlug, eventSlug)}
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label={`${label}: ${what}`}
+						onClick={() => trackVariantCheckout(group, variant)}
+					>
+						{label}
+					</a>
+				);
+			})}
+		</div>
+	);
 }
 
 /** Every render path is the same `#tickets` section, so the class list is
@@ -64,8 +133,8 @@ export default function Tickets() {
 	if (status === 'error') {
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-				<header className="head-split">
-					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
+				<header className="head-rule">
+					<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
 				</header>
 				<ErrorState>
 					<p>The box office isn't answering. Reload, or buy direct on ti.to.</p>
@@ -77,8 +146,8 @@ export default function Tickets() {
 	if (status === 'loading') {
 		return (
 			<section id="tickets" className={sectionClass} aria-busy={true} aria-labelledby="tickets-heading">
-				<header className="head-split">
-					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
+				<header className="head-rule">
+					<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
 					<LoadingState label="Opening the box office" />
 				</header>
 				<ul className={`field ${s.skelField}`} role="list" aria-hidden="true">
@@ -110,9 +179,9 @@ export default function Tickets() {
 		// slugs only the ti.to link is dropped.
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-				<header className="head-split">
-					<h2 id="tickets-heading" className="display head-title">Buy your way in.</h2>
-					<p className="head-note">The box office is closed. It opens with the first wave.</p>
+				<header className="head-rule">
+					<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
+					<p className="head-rule-note">Opens with the first wave</p>
 				</header>
 				<EmptyState
 					action={hasEvent ? { href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true } : undefined}
@@ -133,7 +202,9 @@ export default function Tickets() {
 	// sale, that paused wave has been superseded — it reads "Ended", not
 	// "Paused". See releaseStatus().
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
-	const hasCompanyVariant = releases.some((r) => releaseTitle(r).toLowerCase().includes('company funded'));
+	// Every price is gross, so the tax line is said once under the list
+	// instead of under each figure.
+	const vatNote = releases.map((r) => priceDisplay(r)?.secondary).find(Boolean);
 	// Nothing left to wait for (no "Coming soon" wave): the section stops
 	// pitching "earlier is cheaper" and the next-wave newsletter, and says
 	// this is the last call instead.
@@ -144,22 +215,12 @@ export default function Tickets() {
 		: undefined;
 
 	return (
-		<section id="tickets" className={`${sectionClass} rake`} aria-labelledby="tickets-heading">
-			{/* Red raking light, swept by the scroll itself. Purely decorative and
-			    enhancement-only — see the `.rake` rules in BaseLayout.scss. */}
-			<span className="rake-beam" aria-hidden="true" />
-			{/* Title left, lede right — see the note on `.header`. The mono
-			    "Tickets" eyebrow above it was the page's THIRD "tickets" in one
-			    viewport (the nav button, this label, and the row CTA), and the
-			    stack under it was the shape the speakers teaser was also using. */}
-			<header className="head-split">
-				<h2 id="tickets-heading" className="display head-title">
-					{finalWave ? 'Last chance to get in.' : 'Buy your way in.'}
-				</h2>
-				<p className="head-note">
-					{finalWave
-						? `${finalName ?? 'This'} is the final wave. There is no next one.`
-						: 'The earlier the wave, the lower the price.'}
+		<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
+			{/* The ledger: a ruled head, then one ruled row per wave. */}
+			<header className="head-rule">
+				<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
+				<p className="head-rule-note">
+					{finalWave ? `${finalName ?? 'This'} is the final wave` : (vatNote ?? 'Prices in CZK')}
 				</p>
 			</header>
 			<ul className={`field ${s.stubs}`} role="list">
@@ -173,16 +234,6 @@ export default function Tickets() {
 					const summary: ReleaseStatus | null = anyPurchasable
 						? null
 						: statuses.find((st) => st.tone !== 'sold-out') ?? statuses[0];
-					// A wave is a pass, so it renders as a stub. The live one carries the
-					// red admission band; a settled one is cancelled on its counterfoil,
-					// which keeps every word of copy at full contrast (WCAG 1.4.3) rather
-					// than overprinting VOID across live text.
-					const prices = group.variants
-						.map(({ release }) => priceDisplay(release))
-						.filter((p): p is NonNullable<typeof p> => Boolean(p));
-					const lead = prices[0];
-					const manyPrices = new Set(prices.map((p) => p.primary)).size > 1;
-					const description = groupDescription(group.name, group.description);
 					// Deadline ONLY for a wave a visitor can still buy into: fed the
 					// purchasable variants per the same `releaseStatus()` that prints
 					// the badge, never `end_at` alone — otherwise a hand-closed wave
@@ -211,69 +262,18 @@ export default function Tickets() {
 
 							<div className={s.stubBody}>
 								<h3 className={s.stubTitle}>{group.name}</h3>
-								{anyPurchasable && description && <p className={s.stubNote}>{description}</p>}
-								{/* Deadline and admission line are both mono caps, so stacked they
-								    read as one undifferentiated block of small text. They share a
-								    single wrapping line instead, set off from the prose above by
-								    air — one fact group, not two more rows in the pile. */}
-								<div className={s.stubFacts}>
-									{deadline && (
-										<p className={s.stubDeadline}>
-											<time dateTime={deadline.iso}>{deadline.label}</time>
-										</p>
-									)}
-									<ul className={s.stubGrants}>
-										{group.variants.map(({ release, variantLabel }, vi) => (
-											<li key={release.id}>
-												{vi > 0 && (
-													<span className={s.stubGrantSep} aria-hidden="true">{'/ '}</span>
-												)}
-												{variantLabel || releaseTitle(release)}
-											</li>
-										))}
-									</ul>
-								</div>
+								{/* The wave's one fact: its sale window, when the organizer set one. */}
+								{deadline && (
+									<p className={s.stubDeadline}>
+										<time dateTime={deadline.iso}>{deadline.label}</time>
+									</p>
+								)}
 							</div>
 
 							<div className={s.stubEnd}>
-								{lead && (
-									<span className={s.stubPriceGroup}>
-										<span className={s.stubPrice}>
-											{/* "From", not a trailing "+": "1 210 Kč+" read as a
-											    typo beside the buttons that spell out each price. */}
-											{manyPrices && <span className={s.stubFrom}>From </span>}
-											{lead.primary}
-										</span>
-										{lead.secondary && (
-											<span className={s.stubVat}>{lead.secondary}</span>
-										)}
-									</span>
-								)}
+								<StubPrice group={group} />
 								{anyPurchasable ? (
-									// One button per buyable variant, each straight into that release's
-									// ti.to checkout (`/with/<slug>`). The event page made the visitor pick
-									// Individual or Company funded a second time, and "2 999 Kč+" hid the
-									// company price until they got there.
-									<div className={s.ctas}>
-										{buyable.map((variant, bi) => {
-											const price = priceDisplay(variant.release)?.primary;
-											const many = buyable.length > 1;
-											const label = many ? variant.variantLabel || releaseTitle(variant.release) : 'Get tickets';
-											return (
-												<a
-													key={variant.release.id}
-													className={`${bi === 0 ? 'btn-primary' : 'btn-ghost'} ${s.cta}`}
-													href={checkoutUrl(variant.release, accountSlug, eventSlug)}
-													target="_blank"
-													rel="noopener noreferrer"
-													aria-label={`Buy ${releaseTitle(variant.release)} ticket${price ? `, ${price}` : ''}, on ti.to`}
-													onClick={() => trackVariantCheckout(group, variant)}
-												>
-													{many && price ? `${label} · ${price}` : label}
-												</a>
-											);
-										})}
-									</div>
+									<StubCtas group={group} buyable={buyable} accountSlug={accountSlug} eventSlug={eventSlug} />
 								) : (
 									<span className="record-status">{summary?.label ?? 'Unavailable'}</span>
 								)}
@@ -284,7 +284,14 @@ export default function Tickets() {
 			</ul>
 			{/* Two quiet side doors, one voice. The invoice route used to be a
 			    second filled red button under the list, competing with the live
-			    wave's own buy button for the one primary action in the section. */}
+			    wave's own buy button for the one primary action in the section.
+			    The tax line is the head's note, not repeated here. */}
+			<p className={s.footnote}>
+				Need to pay by bank transfer?{' '}
+				<a href="/invoice" className={s.footnoteLink}>
+					Request a company invoice
+				</a>
+			</p>
 			{/* No next wave to be notified about once the final one is on sale. */}
 			{!finalWave && (
 				<p className={s.footnote}>
@@ -294,17 +301,6 @@ export default function Tickets() {
 					</a>
 				</p>
 			)}
-			{/* The two variant buttons differ only in who pays; without this line
-			    the higher "Company funded" price read as a different ticket, and
-			    the explanation lived only in the FAQ. Same footnote as the
-			    invoice route, because that is the next question it raises. */}
-			<p className={s.footnote}>
-				{hasCompanyVariant && <>Company funded is the same ticket, priced for when your employer pays. </>}
-				Need to pay by bank transfer?{' '}
-				<a href="/invoice" className={s.footnoteLink}>
-					Request a company invoice
-				</a>
-			</p>
 		</section>
 	);
 }

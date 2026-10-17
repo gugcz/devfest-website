@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Closer from '../components/Closer.astro';
+import EndLine from '../components/EndLine.astro';
 import InvoiceForm from '../components/InvoiceForm';
 ---
 
@@ -11,42 +11,35 @@ import InvoiceForm from '../components/InvoiceForm';
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'Buy on a company<br /><span class="red">invoice.</span>'}
+			titleHtml={'Buy on a company<br />invoice'}
 			lede="Need an invoice before you can pay? Request one here. We'll bill your company, and once it's settled you'll get a code to claim your tickets on ti.to."
 			seoHeading="DevFest.cz 2026 Company Invoice"
 			titleId="invoice-title"
 			photo={false}
 		/>
 
-		<section class="invoice-body" aria-labelledby="invoice-form-heading">
-			<div class="invoice-inner">
-				<div class="invoice-intro">
-					<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
-					<ol class="steps">
-						<li><span class="step-no">01</span> Fill in your company billing details below.</li>
-						<li><span class="step-no">02</span> We email the invoice right away. Pay it by bank transfer within 14 days.</li>
-						<li><span class="step-no">03</span> Once the payment arrives, we email one code that claims all your tickets on ti.to.</li>
-					</ol>
-					<p class="intro-note">
-						Paying by card instead? Skip this and buy directly on{' '}
-						<a href="/#tickets" class="intro-link">the tickets page</a>.
-					</p>
-				</div>
+		<section class="band band--lit" aria-labelledby="invoice-form-heading">
+			<div class="band-inner">
+				<div class="invoice-inner">
+					<div class="invoice-intro">
+						<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
+						<ol class="steps">
+							<li><span class="step-no">01</span> Fill in your company billing details below.</li>
+							<li><span class="step-no">02</span> We email the invoice right away. Pay it by bank transfer within 14 days.</li>
+							<li><span class="step-no">03</span> Once the payment arrives, we email one code that claims all your tickets on ti.to.</li>
+						</ol>
+						<p class="intro-note">
+							Paying by card instead? Skip this and buy directly on{' '}
+							<a href="/#tickets" class="intro-link">the tickets page</a>.
+						</p>
+					</div>
 
-				<InvoiceForm client:load />
+					<InvoiceForm client:load />
+
+					<EndLine text="Questions about the invoice? Name the company when you write." href="mailto:devfest@gug.cz" label="Write to devfest@gug.cz" />
+				</div>
 			</div>
 		</section>
-
-		<!-- The closer answers the next question on this page, not a different
-		     purchase: "Skip the paperwork" sent a company that had come here to
-		     invoice back to card checkout, and the intro already offers that. -->
-		<Closer
-			titleHtml={'Questions about<br />the invoice?'}
-			note="Write to devfest@gug.cz and name the company on the request, so we can find it."
-			tone="accent"
-			titleId="invoice-closer"
-			actions={[{ href: 'mailto:devfest@gug.cz', label: 'Email us' }, { href: '/faq', label: 'Read the FAQ', kind: 'ghost' }]}
-		/>
 	</main>
 </BaseLayout>
 

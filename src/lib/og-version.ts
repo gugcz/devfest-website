@@ -14,6 +14,9 @@ function templateDigest(): string {
 		const hash = createHash('sha256');
 		hash.update(readFileSync(join(root, 'src/pages/og/invite/[member].jpg.ts')));
 		hash.update(readFileSync(join(root, 'src/assets/logo.png')));
+		// The card prints the date stamp from these two.
+		hash.update(readFileSync(join(root, 'src/lib/invite.ts')));
+		hash.update(readFileSync(join(root, 'src/lib/event.ts')));
 		cachedTemplateDigest = hash.digest('hex');
 	}
 	return cachedTemplateDigest;

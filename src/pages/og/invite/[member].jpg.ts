@@ -110,6 +110,63 @@ const vignette = Buffer.from(
 	`<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_WIDTH}" height="${CARD_HEIGHT}"><defs><radialGradient id="v" cx="50%" cy="42%" r="72%"><stop offset="50%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity="0.45"/></radialGradient></defs><rect width="100%" height="100%" fill="url(#v)"/></svg>`
 );
 
+// Logo + date row. Both layers lay it out identically; `card` keeps the
+// logo's slot empty, `logo` keeps only the logo (date invisible, still sized).
+function footerRow(layer: 'card' | 'logo') {
+	const logoBox = { display: 'flex', width: `${LOGO_WIDTH}px`, height: `${LOGO_HEIGHT}px` };
+	return {
+		type: 'div',
+		props: {
+			style: {
+				display: 'flex',
+				position: 'absolute',
+				left: '64px',
+				bottom: '44px',
+				alignItems: 'flex-end',
+				gap: '22px',
+			},
+			children: [
+				layer === 'logo'
+					? {
+							type: 'img',
+							props: { src: logoDataUri, width: LOGO_WIDTH, height: LOGO_HEIGHT, style: logoBox },
+						}
+					: { type: 'div', props: { style: logoBox } },
+				{
+					type: 'div',
+					props: {
+						style: {
+							display: 'flex',
+							fontFamily: 'Bebas Neue',
+							fontSize: '40px',
+							letterSpacing: 0,
+							textTransform: 'uppercase',
+							color: CREAM,
+							opacity: layer === 'logo' ? 0 : 1,
+						},
+						children: INVITE_EVENT.stamp,
+					},
+				},
+			],
+		},
+	};
+}
+
+// satori is typed against ReactNode but walks plain `{ type, props }` trees;
+// these are such trees, built without a JSX runtime.
+async function render(tree: object): Promise<Buffer> {
+	const svg = await satori(tree as unknown as ReactNode, {
+		width: CARD_WIDTH,
+		height: CARD_HEIGHT,
+		fonts: [
+			{ name: 'Bebas Neue', data: bebasNeue, weight: 400, style: 'normal' },
+			{ name: 'JetBrains Mono', data: jetBrainsMono, weight: 400, style: 'normal' },
+			{ name: 'Special Elite', data: specialElite, weight: 400, style: 'normal' },
+		],
+	});
+	return new Resvg(svg, { fitTo: { mode: 'width', value: CARD_WIDTH } }).render().asPng();
+}
+
 export const GET: APIRoute = async ({ props }) => {
 	const member = props.member as {
 		name: string;
@@ -222,64 +279,27 @@ export const GET: APIRoute = async ({ props }) => {
 						],
 					},
 				},
-				{
-					type: 'div',
-					props: {
-						style: {
-							display: 'flex',
-							position: 'absolute',
-							left: '64px',
-							bottom: '44px',
-							alignItems: 'flex-end',
-							gap: '22px',
-						},
-						children: [
-							{
-								type: 'img',
-								props: {
-									src: logoDataUri,
-									width: LOGO_WIDTH,
-									height: LOGO_HEIGHT,
-									style: { display: 'flex', width: `${LOGO_WIDTH}px`, height: `${LOGO_HEIGHT}px` },
-								},
-							},
-							{
-								type: 'div',
-								props: {
-									style: {
-										display: 'flex',
-										fontFamily: 'Bebas Neue',
-										fontSize: '40px',
-										letterSpacing: '0.04em',
-										textTransform: 'uppercase',
-										color: CREAM,
-									},
-									children: INVITE_EVENT.stamp,
-								},
-							},
-						],
-					},
-				},
+				footerRow('card'),
 			].filter(Boolean),
 		},
 	};
 
-	// satori is typed against ReactNode but walks plain `{ type, props }` trees;
-	// this is that tree, built without a JSX runtime.
-	const svg = await satori(markup as unknown as ReactNode, {
-		width: CARD_WIDTH,
-		height: CARD_HEIGHT,
-		fonts: [
-			{ name: 'Bebas Neue', data: bebasNeue, weight: 400, style: 'normal' },
-			{ name: 'JetBrains Mono', data: jetBrainsMono, weight: 400, style: 'normal' },
-			{ name: 'Special Elite', data: specialElite, weight: 400, style: 'normal' },
-		],
-	});
+	// The brand manual forbids the logo under a darkening overlay, so the
+	// vignette goes on the card first and the logo lands on top of it: the
+	// logo is rendered alone, from the same footer layout, on a transparent
+	// layer.
+	const logoLayer = {
+		type: 'div',
+		props: {
+			style: { width: `${CARD_WIDTH}px`, height: `${CARD_HEIGHT}px`, display: 'flex', position: 'relative' },
+			children: [footerRow('logo')],
+		},
+	};
 
-	const rendered = new Resvg(svg, { fitTo: { mode: 'width', value: CARD_WIDTH } }).render().asPng();
+	const [rendered, logo] = await Promise.all([render(markup), render(logoLayer)]);
 	// removeAlpha + baseline JPEG: widest scraper support (Messenger, WhatsApp, Signal…)
 	const jpg = await sharp(rendered)
-		.composite([{ input: vignette }, { input: await grainPromise, blend: 'soft-light' }])
+		.composite([{ input: vignette }, { input: logo }, { input: await grainPromise, blend: 'soft-light' }])
 		.removeAlpha()
 		.jpeg({ quality: 82, progressive: false })
 		.toBuffer();

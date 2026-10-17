@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Desk from '../components/Desk.astro';
-import Closer from '../components/Closer.astro';
 import { loadMediaCoverage } from '../lib/press-coverage';
 
 // CONTACT ABSORBS PRESS. `/press` was a menu line for a page whose job was a
@@ -18,7 +17,7 @@ const mediaCoverage = await loadMediaCoverage();
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'Get in <span class="red">touch.</span>'}
+			titleHtml={'Get in touch'}
 			lede="Three inboxes, one per kind of question. Not sure which? The general one reaches the whole team."
 			seoHeading="Contact DevFest.cz 2026"
 			titleId="contact-title"
@@ -58,10 +57,10 @@ const mediaCoverage = await loadMediaCoverage();
 			</div>
 		</section>
 
-		<section id="press" class="band band--lit" aria-labelledby="press-title">
+		<section id="press" class="band band--lit anchor-target" aria-labelledby="press-title">
 			<div class="band-inner">
 				<div class="head-split">
-					<h2 id="press-title" class="display head-title">In the news.</h2>
+					<h2 id="press-title" class="display head-title">In the news</h2>
 					<p class="head-note">
 						Writing a story? The press kit under the clippings has the logos, and the general inbox answers press.
 					</p>
@@ -82,10 +81,7 @@ const mediaCoverage = await loadMediaCoverage();
 										<span class="coverage-title">{m.title}</span>
 										{m.description && <span class="coverage-desc">{m.description}</span>}
 										<span class="coverage-meta">
-											<span class="coverage-read">
-												Read article
-												<span class="coverage-arrow" aria-hidden="true">↗</span>
-											</span>
+											<span class="coverage-read">Read article</span>
 											{m.dateLabel && <time class="coverage-date" datetime={m.date}>{m.dateLabel}</time>}
 										</span>
 									</span>
@@ -108,14 +104,6 @@ const mediaCoverage = await loadMediaCoverage();
 				</p>
 			</div>
 		</section>
-
-		<Closer
-			titleHtml={'Just come<br />to the show.'}
-			note="Tickets are on sale now, and the newsletter carries every announcement first."
-			tone="accent"
-			titleId="contact-closer"
-			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/#newsletter', label: 'Join the newsletter', kind: 'ghost' }]}
-		/>
 	</main>
 </BaseLayout>
 

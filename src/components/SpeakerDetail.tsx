@@ -1,10 +1,34 @@
-import { PORTRAIT_TRANSITION, SPEAKER_ICON_PATHS, type Speaker } from '../lib/speakers';
+import { PORTRAIT_TRANSITION, type Speaker, type SpeakerLink } from '../lib/speakers';
 import { paragraphs } from '../lib/paragraphs';
 import { speakerSharePath, useAddressBar } from '../lib/share';
 import Sheet, { SheetTickets } from './Sheet';
 import SpeakerPhoto from './SpeakerPhoto';
 import sheet from './Sheet.module.scss';
 import s from './SpeakerDetail.module.scss';
+
+/** The link's host without `www.`, or `''` for a URL that will not parse. */
+function hostOf(url: string): string {
+	try {
+		return new URL(url).hostname.replace(/^www\./, '');
+	} catch {
+		return '';
+	}
+}
+
+/** What a link says on the sheet: the network's name for a known kind
+ * ("LinkedIn", "GitHub"), the domain for a website — three "Website" labels
+ * side by side told the visitor nothing. */
+function linkText(link: SpeakerLink): string {
+	if (link.kind !== 'web') return link.label;
+	return hostOf(link.url) || link.label;
+}
+
+/** The accessible name: who, what, and where it goes. */
+function linkAria(name: string, link: SpeakerLink): string {
+	const host = hostOf(link.url);
+	const what = link.kind === 'web' ? link.label : `${link.label} profile`;
+	return host ? `${name}: ${what}, ${host} (opens in a new tab)` : `${name}: ${what} (opens in a new tab)`;
+}
 
 /** Speaker detail dialog: portrait, bio, talks, and social links. The modal
  * behaviour (trap, Esc, scroll lock, focus return) lives in `Sheet`. */
@@ -32,7 +56,6 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 				</div>
 
 				<div>
-					<p className={sheet.kicker}>Speaker</p>
 					<h2 id="speaker-detail-name" className={sheet.title}>
 						{speaker.fullName}
 					</h2>
@@ -45,14 +68,11 @@ export default function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; 
 									<a
 										className={s.link}
 										href={link.url}
-										aria-label={`${speaker.fullName} — ${link.label}`}
-										title={link.label}
+										aria-label={linkAria(speaker.fullName, link)}
 										target="_blank"
 										rel="noopener noreferrer"
 									>
-										<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-											<path d={SPEAKER_ICON_PATHS[link.kind]} />
-										</svg>
+										{linkText(link)}
 									</a>
 								</li>
 							))}

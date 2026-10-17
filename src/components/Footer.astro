@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
+import { EVENT } from '../lib/event';
 
 const SOCIALS = [
 	{
@@ -74,11 +75,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 	<div class="footer-inner">
 		<div class="footer-grid">
 			<!-- The mark heads its own column rather than a row of its own above
-			     the grid. That row carried the wordmark AND a date/place line,
-			     both of which were already here: the line repeated the Event
-			     column's Date and Place verbatim, and the column's own mono
-			     heading spelled out the name the logo beside it was already
-			     saying. -->
+			     the grid. -->
 			<section class="col col-brand" aria-label="DevFest.cz 2026">
 				<a href="/" class="footer-logo-link" aria-label="DevFest.cz 2026 — home">
 					<Image
@@ -110,8 +107,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 									{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
 								>
 									{label}
-									{external && <span class="ext" aria-hidden="true">&#160;&#8599;</span>}
-								</a>
+									</a>
 							</li>
 						))}
 					</ul>
@@ -123,15 +119,15 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 				<dl class="event-meta">
 					<dt>Date</dt>
 					<dd>
-						<time datetime="2026-10-30">30 October 2026</time>
+						<time datetime={EVENT.start.slice(0, 10)}>{EVENT.dateLabel}</time>
 					</dd>
 					<dt>Place</dt>
 					<dd>
 						<a
-							href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
+							href={EVENT.mapUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-						>Uhelný Mlýn, Libčice nad Vltavou</a>
+						>{EVENT.venue}, Libčice nad Vltavou</a>
 					</dd>
 					<dt>Format</dt>
 					<dd>In-person</dd>
@@ -147,7 +143,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 						href="https://gug.cz"
 						target="_blank"
 						rel="noopener noreferrer"
-					>GUG.cz,&#160;z.s.<span class="ext" aria-hidden="true">&#160;&#8599;</span></a>
+					>GUG.cz,&#160;z.s.</a>
 				</p>
 				<nav class="socials" aria-label="Follow DevFest.cz on social media">
 					{
@@ -170,16 +166,16 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		</div>
 
 		<div class="footer-bottom">
-			<small class="copyright">
-				&copy; 2026 GUG.cz, z.s. &mdash; All rights reserved.
-			</small>
+			<small class="copyright">&copy; 2026 GUG.cz, z.s.</small>
+			<!-- The case-file folio the brand manual prints on every page. -->
+			<small class="folio" aria-hidden="true">Case no. DF-2026</small>
 			<small class="opensource">
 				<a
 					class="footer-link"
 					href="https://github.com/gugcz/devfest-website"
 					target="_blank"
 					rel="noopener noreferrer"
-				>Open source<span class="ext" aria-hidden="true">&#160;&#8599;</span></a>
+				>Open source</a>
 			</small>
 		</div>
 	</div>

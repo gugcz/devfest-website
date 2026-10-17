@@ -1,15 +1,15 @@
 @use '../styles/type' as *;
 :root {
 	// Brand manual v1.0: three colours, no more. Noir Black, Paper White,
-	// Evidence Red. Greys exist only as white or black at an opacity — the
-	// solid neutrals below are those opacities flattened onto black.
+	// Evidence Red. Greys exist only as white or black at an opacity — never
+	// a tinted grey or a solid near-black hex.
 	--color-bg: #000000;
-	--color-grey: #8C8C8C; // 55% white
+	--color-grey: rgba(255, 255, 255, 0.55);
 	--color-text: #FFFFFF;
 	--color-cream: #FFFFFF;
 	--color-accent: #F11000;
 	// One red. Kept as its own token so hover/live call sites stay legible;
-	// hover feedback comes from the lift and glow, not a second red.
+	// hover feedback comes from an inverted fill, not a second red.
 	--color-accent-hot: #F11000;
 	// Form-error text: Evidence Red, 4.8:1 on black — clears AA as small copy.
 	--color-error: #F11000;
@@ -60,23 +60,31 @@
 	// --fs-display caps at 9rem: 11rem left nothing above a 760px fold.
 	--fs-display: clamp(3rem, 9.5vw, 9rem);
 	--fs-hero: clamp(3rem, 9.5vw, 8.5rem);      // home hero statement
-	--fs-h2: clamp(2.9rem, 8vw, 7rem);          // section headline
-	--fs-stat: clamp(3.4rem, 10vw, 9.5rem);     // figure in a facts band
+	// Section headline. Always a clear step under the home hero, which
+	// `index.scss` caps at 11svh on short screens: a width-only term let a
+	// 1280×720 section head tie the hero, so the height term follows it down.
+	--fs-h2: clamp(2.25rem, min(6vw, 9svh), 5.5rem);
 	--fs-h3: clamp(1.8rem, 3.4vw, 2.6rem);      // sub-section headline
+	--fs-head: clamp(2.1rem, 3.4vw, 3rem);      // the ruled section head (`.head-rule`)
 	--fs-card-title: 1.95rem;                   // card / dossier title
 	--fs-title-compact: 1.6rem;                 // compact field row title
 
 	// Row titles carry the separation: 72px for a short list, 54px for a long one.
-	--fs-row: clamp(2.6rem, 5.2vw, 4.5rem);     // row title, short list (waves, desks)
-	--fs-row-sm: clamp(2.2rem, 4vw, 3.4rem);    // row title, long list (sessions, FAQ, clippings)
-	--fs-row-figure: clamp(2.5rem, 4.2vw, 4rem); // the figure opposite a row title
+	// They take the same height term as --fs-h2, or on a short screen a list
+	// row outranks the section head above it. Floors = the phone steps below.
+	--fs-row: clamp(2.1rem, min(5.2vw, 7.5svh), 4.5rem);     // row title, short list (waves, desks)
+	--fs-row-sm: clamp(1.7rem, min(4vw, 6svh), 3.4rem);      // row title, long list (sessions, FAQ, clippings)
+	--fs-row-figure: clamp(2.1rem, min(4.2vw, 6svh), 4rem);  // the figure opposite a row title
 
 	// ── THE RAMP ────────────────────────────────────────────────────────
 	// Every font-size goes through a step below; never add one outside it.
-	--fs-label-xs: 0.68rem;   // micro mono: avatar counts, kit tags
-	--fs-label-sm: 0.74rem;   // mono: counts, chips, inline clears
-	--fs-label: 0.78rem;      // mono: eyebrows, section labels
-	--fs-label-lg: 0.84rem;   // mono: nav, buttons, email links
+	--fs-label-xs: 0.6875rem; // micro mono figure: avatar counts — 11px, the mono floor
+	--fs-label-sm: 0.74rem;   // mono figure: counts, inline clears
+	--fs-label: 0.78rem;      // mono figure: indices, serials, times
+	--fs-label-lg: 0.84rem;   // mono figure: the larger index
+	--fs-note-sm: 0.85rem;    // Special Elite note: roles, captions, row metadata
+	--fs-note: 0.95rem;       // Special Elite note: section notes, eyebrows, nav meta
+	--fs-action: 1.3rem;      // Bebas action: text actions, nav, buttons
 	--fs-ui: 0.95rem;         // small UI prose, help text
 	--fs-body: 1.05rem;       // long-form reading copy
 	--fs-body-lg: 1.15rem;    // footnotes, short ledes
@@ -84,9 +92,10 @@
 	--fs-title-sm: 1.45rem;   // small titles, mobile field-row titles
 	--fs-monogram: 3.4rem;    // initials in an empty photo well
 
-	// Condensed caps at poster scale need the leading pulled in.
-	--lh-display: 0.84;
-	--track-display: 0.005em;
+	// Condensed caps at poster scale: the brand manual's 0.9–1.0 leading, at
+	// its floor, and zero tracking.
+	--lh-display: 0.9;
+	--track-display: 0;
 
 	--rule: rgba(255, 255, 255, 0.13);
 	--rule-soft: rgba(255, 255, 255, 0.06);
@@ -109,14 +118,20 @@
 	// 4.5:1 on #000000 at label size — the floor for small mono copy.
 	--ink-faint: rgba(255, 255, 255, 0.5);
 
-	--panel: #0C0C0C;
-	--panel-2: #111111;
-	--panel-hover: #161616;
+	// Plates are white at an opacity over the black ground (the old solid
+	// #0C0C0C / #111111 / #161616, same look on #000). Where a plate must be
+	// opaque (a fixed bar over content), layer it on `--color-bg`.
+	--panel: rgba(255, 255, 255, 0.047);
+	--panel-2: rgba(255, 255, 255, 0.067);
+	--panel-hover: rgba(255, 255, 255, 0.086);
 
-	// Ink and edges ON the red field. Measured on #F11000: black 4.8:1 at any
-	// size; white 4.4:1, so white is for large type only (3:1). An inverted
-	// control on red is a black fill carrying --on-accent-ink.
+	// Ink and edges on FLAT red (#F11000: chips, a hovered field row).
+	// Black 4.8:1 at any size; white 4.4:1, so white is for large type only
+	// (3:1).
 	--on-accent: #000000;
+	// The CTA label on red: Bebas at 1.5rem = 24px, the regular-weight
+	// "large text" line where white's 4.4:1 clears AA.
+	--fs-cta: 1.5rem;
 	--on-accent-ink: #FFFFFF;
 	--on-accent-border: rgba(0, 0, 0, 0.85);
 
@@ -126,32 +141,33 @@
 	--focus-gap: 3px;
 	--focus-gap-lg: 4px;
 
-	// Red as LIGHT — interactive things only (CTA hover, live status). Red TEXT is flat.
-	--glow-red: 0 0 14px rgba(241, 16, 0, 0.4), 0 0 34px rgba(241, 16, 0, 0.18);
-	--glow-red-soft: 0 0 18px rgba(241, 16, 0, 0.22);
 
 	// A photograph is MOUNTED, not floated: keyline just inside the edge plus a shadow.
 	--print-mount:
 		inset 0 0 0 1px rgba(255, 255, 255, 0.16),
 		0 10px 24px rgba(0, 0, 0, 0.5);
 
-	--panel-lit: #0A0A0A;
-	--panel-lit-2: #0E0E0E;
+	// Was #0A0A0A / #0E0E0E.
+	--panel-lit: rgba(255, 255, 255, 0.04);
+	--panel-lit-2: rgba(255, 255, 255, 0.055);
 
 	// Initials standing in for a missing photograph, on --panel-lit. Measured
 	// 4.21:1 on the large plate and 7.71:1 at label scale — never dim further.
 	--ink-monogram: rgba(255, 255, 255, 0.46);
 	--ink-monogram-sm: rgba(255, 255, 255, 0.66);
 
-	--lit: radial-gradient(ellipse 78% 70% at 50% 32%, rgba(255, 244, 232, 0.05), transparent 72%);
-	// The raking light a reached row or cell takes: warm, from the left, gone
+	// The spotlight pool. Its vertical radius keeps the 72% stop inside the
+	// box (38 / 50 > 0.72), so the pool is gone before the top and bottom
+	// edges: at 70% it still glowed at the top edge and stepped against the
+	// section above it.
+	--lit: radial-gradient(ellipse 78% 50% at 50% 38%, rgba(255, 255, 255, 0.05), transparent 72%);
+	// The raking light a reached row or cell takes: white, from the left, gone
 	// by the far edge. `--wash` for a full-bleed row, `--wash-strong` inside
 	// a bounded cell where the same alpha would vanish against a panel fill.
-	--wash: linear-gradient(104deg, rgba(255, 244, 232, 0.06) 0%, rgba(255, 240, 226, 0.026) 38%, transparent 82%);
-	--wash-strong: linear-gradient(104deg, rgba(255, 244, 232, 0.07) 0%, rgba(255, 240, 226, 0.03) 42%, transparent 86%);
+	--wash: linear-gradient(104deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.026) 38%, transparent 82%);
+	--wash-strong: linear-gradient(104deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 42%, transparent 86%);
 	// Feathers a full-bleed row wash so its top and bottom edges do not step across the page.
 	--field-feather: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
-	--vignette: radial-gradient(ellipse 120% 105% at 50% 42%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
 
 	// ── PHONE TYPE ──────────────────────────────────────────────────────
 	// Last in :root on purpose: Sass emits a nested @media in source order,
@@ -165,7 +181,7 @@
 		--fs-row: 2.1rem;
 		--fs-row-sm: 1.7rem;
 		--fs-row-figure: 2.1rem;
-		// Mono tracking at 72%: see the `mono` mixin in `_type.scss`.
+		// Mono tracking at 72%, floored at 0.1em: see the `mono` mixin in `_type.scss`.
 		--track-scale: 0.72;
 		// The held shot stays the longest pause, but 136px stacked on the
 		// section above left a screen of black between facts and tickets.
@@ -251,31 +267,6 @@ body {
 	// title, a speaker name) widens the document (WCAG 1.4.10). `break-word`,
 	// not `anywhere`: only breaks a word that has no other way to fit.
 	overflow-wrap: break-word;
-
-	// Film grain. Static, not animated — a full-viewport overlay repaints every frame.
-	&::before {
-		content: '';
-		position: fixed;
-		inset: 0;
-		z-index: 9999;
-		pointer-events: none;
-		// `screen`, not `overlay`: overlay leaves near-black almost untouched, so
-		// on a #000000 ground the grain was invisible.
-		opacity: 0.06;
-		mix-blend-mode: screen;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-		background-size: 220px 220px;
-	}
-
-	// Decorative: below the nav/cookie chrome (z 10000+) and gentle enough to keep edge text AA.
-	&::after {
-		content: '';
-		position: fixed;
-		inset: 0;
-		z-index: 9998;
-		pointer-events: none;
-		background: var(--vignette);
-	}
 }
 
 .skip-link {
@@ -285,7 +276,7 @@ body {
 	padding: 0.7rem 1.1rem;
 	background: #000000;
 	color: #FFFFFF;
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	@include action;
 	text-decoration: none;
 	border: 1px solid rgba(241, 16, 0, 0.5);
 	z-index: 10001;
@@ -342,13 +333,38 @@ b {
 	padding-inline: var(--gutter);
 }
 
-// Mono eyebrow — a plain label. Never give it a trailing hairline or any other decoration.
+// Eyebrow — a plain typewriter note. Never give it a trailing hairline or any other decoration.
 .eyebrow {
-	@include mono(var(--fs-label), 0.28em, uppercase);
+	@include note;
 	color: var(--ink-muted);
 	display: inline-flex;
 	align-items: center;
 	gap: 0.75rem;
+}
+
+// THE SECTION HEAD. A Bebas title on the left, one typewriter note on the right,
+// both on a rule — the top edge of the ruled list under it. Every section on
+// every page opens this way; the rule is structure, the list's first line.
+.head-rule {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 1rem 2rem;
+	flex-wrap: wrap;
+	border-bottom: 1px solid var(--color-text);
+	padding-bottom: 0.8rem;
+	margin: 0;
+
+	.head-rule-title {
+		@include display(var(--fs-head));
+		margin: 0;
+	}
+
+	.head-rule-note {
+		@include note;
+		color: var(--ink-muted);
+		margin: 0;
+	}
 }
 
 // THE headline class. No shadow, no glow, no gradient; size comes from the caller's --fs-*.
@@ -367,18 +383,13 @@ b {
 	color: var(--color-accent-hot);
 }
 
-// Statement left, one supporting line right; `--ruled` adds the closing air a
-// hairline used to sit in (the line itself is gone — no decorative rules).
+// Statement left, one supporting line right. No decorative rules.
 .head-split {
 	display: grid;
 	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
 	align-items: end;
 	gap: clamp(1.5rem, 4vw, 4rem);
 	margin-bottom: clamp(2.75rem, 5vw, 4rem);
-}
-
-.head-split--ruled {
-	padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
 }
 
 // Sections run at --fs-h2; --fs-display is the ONE display element per page.
@@ -404,7 +415,6 @@ b {
 
 @media (max-width: 600px) {
 	.head-split { margin-bottom: 2.4rem; }
-	.head-split--ruled { padding-bottom: 1.2rem; }
 }
 
 .print {
@@ -446,7 +456,7 @@ b {
 	margin: 2rem 0 0;
 
 	a {
-		color: var(--color-accent-hot);
+		@include hairline-link;
 	}
 }
 
@@ -473,21 +483,17 @@ b {
 	background: var(--color-bg);
 }
 
-// RED AS A FIELD. At most once per page, for the thing the page wants the
-// visitor to do. Ink is black --on-accent; white is large type only here.
-.band--accent {
-	background: var(--color-accent);
-	color: var(--on-accent);
-}
+// No red band. Red as a 500px ground on every page's closer and the home
+// newsletter was more red than the rest of the site put together, and the
+// accent stopped being one. Red is a verb: one word, one button, one state
+// per page. Every closer and the newsletter sit on the black ground.
 
 // The subpage ground: a spotlight pool. No hairline at the top.
 .band--lit {
 	background: var(--lit), var(--color-bg);
 }
 
-// Straight off a subpage hero the band opens on a cut, not a full beat: the
-// ticker that used to sit between them (and supply the pause) runs on the
-// home page only now.
+// Straight off a subpage hero the band opens on a cut, not a full beat.
 .subpage-hero + .band {
 	padding-top: var(--section-y-tight);
 }
@@ -498,48 +504,6 @@ b {
 	width: 100%;
 	max-width: var(--maxw);
 	margin-inline: auto;
-}
-
-// Controls on the red field invert — a red button on red is invisible. Measured
-// ink on #F11000: black 4.8:1, black at 85% (boundaries only), white 4.4:1
-// (large text only). Hierarchy from SIZE, never dimming.
-.band--accent .eyebrow { color: var(--on-accent); }
-// Poster-scale Bebas clears 3:1 in white, so the headline stays Paper White
-// like the manual's title bars; its one highlighted word drops to black.
-.band--accent .display { color: var(--on-accent-ink); }
-.band--accent .display .red { color: var(--on-accent); }
-
-.band--accent .btn-primary {
-	background: var(--on-accent);
-	border-color: var(--on-accent);
-	color: var(--on-accent-ink);
-
-	&:hover {
-		background: #FFFFFF;
-		border-color: #FFFFFF;
-		color: var(--on-accent);
-		box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
-	}
-}
-
-.band--accent .btn-ghost {
-	color: var(--on-accent);
-	// Same reason as `.btn-primary`: thin black on red reads faint.
-	font-weight: 500;
-	letter-spacing: calc(0.16em * var(--track-scale, 1));
-	// 3.95:1 on the red ground — a control boundary must clear 3:1 (1.4.11).
-	border-color: var(--on-accent-border);
-
-	&:hover,
-	&:focus-visible {
-		color: var(--on-accent);
-		border-color: var(--on-accent);
-		background: rgba(0, 0, 0, 0.1);
-	}
-}
-
-.band--accent :focus-visible {
-	outline-color: var(--on-accent);
 }
 
 .closer {
@@ -567,8 +531,6 @@ b {
 	margin: 0;
 	max-width: 34ch;
 }
-
-.band--accent .closer-note { color: var(--on-accent); }
 
 .closer-actions {
 	display: flex;
@@ -601,52 +563,15 @@ b {
 	}
 }
 
-.facts {
-	display: grid;
-	// 20rem (320px) floor: below it a mono label at this tracking cannot hold one line.
-	grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
-	gap: clamp(2.5rem, 5vw, 4.5rem) clamp(1.75rem, 3vw, 3rem);
-}
-
-.fact {
-	display: flex;
-	flex-direction: column;
-	gap: 0.9rem;
-	min-width: 0;
-}
-
-.fact-figure {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-stat);
-	line-height: 0.82;
-	letter-spacing: 0.005em;
-	color: var(--color-text);
-	font-variant-numeric: tabular-nums;
-}
-
-.fact-label {
-	// The figure reads first, the label under it ("11th" / "Edition…"). The
-	// <dt> has to come first in a <dl>, so the order is visual only.
-	order: 1;
-	@include mono(var(--fs-label-lg));
-	// 0.14em, not 0.2em: wider tracking breaks these labels onto two lines.
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
-	color: var(--ink-dim);
-	line-height: 1.5;
-}
-
 .btn-primary {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.7rem;
-	// Medium weight, tighter tracking: black on Evidence Red is the most
-	// contrast the brand red allows (4.8:1), and a thin, wide-set label on a
-	// saturated field still read as faint. Weight carries what contrast can't.
-	@include mono(var(--fs-label-lg), 0.16em, uppercase);
-	font-weight: 500;
-	color: var(--on-accent);
+	// White Bebas at large-text size, as the brand manual sets the CTA: a thin
+	// black label on Evidence Red read faint (`cta-label` in _type.scss).
+	@include cta-label;
+	color: var(--color-text);
 	background: var(--color-accent);
 	border: 1px solid var(--color-accent);
 	border-radius: var(--radius);
@@ -664,67 +589,64 @@ b {
 	text-decoration: none;
 	cursor: pointer;
 	position: relative;
-	transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
+	// Hover inverts the fill — no lift, no glow, no shadow. The focus ring
+	// stays the global red one, clear of a white fill.
 	&:hover {
-		background: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-		transform: translateY(-2px);
-		// Halation on hover — one of the two places the glow survives.
-		box-shadow: var(--glow-red), 0 12px 30px rgba(241, 16, 0, 0.28);
+		background: var(--color-text);
+		border-color: var(--color-text);
+		color: var(--color-bg);
 	}
-
-	&:active { transform: translateY(0); }
 }
 
-.btn-ghost {
+// THE SECOND CONTROL, and the last. Every action that is not the page's one
+// red fill is this: Bebas caps, no box, no underline, no glyph. `.btn-ghost`
+// is kept as the class name its callers use; it draws the same thing.
+.btn-ghost,
+.action {
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
 	gap: 0.6rem;
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	@include action;
 	color: var(--color-text);
 	text-decoration: none;
 	cursor: pointer;
-	// Viewport-capped horizontal padding — same reason as .btn-primary.
-	padding: 1.25rem min(2rem, 10vw);
+	// A 44px target without a box: the padding is vertical only, the inline
+	// edge stays on the column.
+	padding: 0.75rem 0;
+	min-height: 2.75rem;
 	max-width: 100%;
-	// See .btn-primary.
 	overflow-wrap: anywhere;
-	// Control edge, not a decorative hairline — see --field-border.
-	border: 1px solid var(--field-border);
-	border-radius: var(--radius);
+	border: 0;
+	border-radius: 0;
 	background: transparent;
-	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, gap 0.2s ease;
+	transition: color 0.2s ease;
 
+	// No arrow glyph anywhere (it renders differently on every system): the
+	// hover is the red the site keeps for a live state.
 	&:hover,
 	&:focus-visible {
-		color: var(--color-text);
-		border-color: var(--color-text);
+		color: var(--color-accent-hot);
 		background: transparent;
-		gap: 0.85rem;
 	}
 }
 
-// The lift is the only motion a button carries; the colour swap stays.
 @media (prefers-reduced-motion: reduce) {
 	.btn-primary,
-	.btn-ghost {
+	.btn-ghost,
+	.action {
 		transition: none;
-	}
-
-	.btn-primary:hover,
-	.btn-primary:active {
-		transform: none;
 	}
 }
 
-// THE CONTAINER LANGUAGE for every list. No rules; separation is air and
-// type scale, the REACH STATE marks an entry.
+// THE CONTAINER LANGUAGE for every list: a ruled document. A 1px rule under
+// each row, the head rule above the list, air and type scale for hierarchy;
+// the REACH STATE marks an entry.
 //   .field-row--link    the row IS the control -> full-bleed red field
 //   .field-row--holds   the row CONTAINS a control -> warm wash + pull
 //   .field-row--short   the 72px-title step (short lists)
-// Never add a border, a per-list light box, or an opacity "inactive" state.
+// Never add a per-list light box or an opacity "inactive" state.
 
 .field {
 	position: relative;
@@ -737,13 +659,15 @@ b {
 
 // The step is the rhythm AND the band the reach field fills — hence one variable.
 .field-row {
-	--field-step: clamp(1.9rem, 2.8vw, 2.5rem);
+	--field-step: clamp(1.4rem, 2.2vw, 1.9rem);
 	position: relative;
 	// Without its own stacking context the z-index:-1 field paints behind the section bg.
 	isolation: isolate;
 	padding: var(--field-step) 0;
 	background: transparent;
 	border: 0;
+	// Rows are ruled: the list is a ruled document, each row a line in it.
+	border-bottom: 1px solid var(--rule);
 	border-radius: 0;
 }
 
@@ -768,18 +692,23 @@ b {
 	}
 
 	// HOVER paints the field; FOCUS draws a ring. Focus persists after a sheet closes,
-	// and a full-bleed red band left behind reads as a stuck highlight.
-	&:hover::before {
-		opacity: 1;
+	// and a full-bleed red band left behind reads as a stuck highlight. Hover only
+	// where a pointer hovers: a tap on touch would leave the band painted.
+	@media (hover: hover) {
+		&:hover::before {
+			opacity: 1;
+		}
 	}
 
 	// Every ink goes FULL BLACK — muted rgba() fails on #F11000. Blunt on purpose;
 	// a caller needing an exception overrides it with its own class.
-	&:hover {
-		color: var(--on-accent);
-
-		*:not(svg):not(path) {
+	@media (hover: hover) {
+		&:hover {
 			color: var(--on-accent);
+
+			*:not(svg):not(path) {
+				color: var(--on-accent);
+			}
 		}
 	}
 
@@ -790,8 +719,10 @@ b {
 	}
 
 	// Red on red is not a ring, so hover + focus inverts it to black.
-	&:hover:focus-visible {
-		outline-color: var(--on-accent);
+	@media (hover: hover) {
+		&:hover:focus-visible {
+			outline-color: var(--on-accent);
+		}
 	}
 }
 
@@ -842,7 +773,7 @@ b {
 // Status word. Never a pill, chip, or underlined — it sits where the
 // "Get tickets" link would, and an underline there promises a click.
 .record-status {
-	@include mono(var(--fs-label-sm), 0.24em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: rgba(255, 255, 255, 0.72);
 	white-space: nowrap;
 }
@@ -856,63 +787,26 @@ b {
 	z-index: 1;
 }
 
+// Film grain lives on the photograph, not the page: only a scene that carries
+// a plate (it has a `.scene-vignette`) takes it. Static — never animated.
+// Above the plate, below the scene's content (z 10).
+.scene:has(> .scene-vignette)::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	// `screen`, not `overlay`: overlay leaves near-black almost untouched, so
+	// on a #000000 ground the grain was invisible.
+	opacity: 0.06;
+	mix-blend-mode: screen;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+	background-size: 220px 220px;
+}
+
 // No scroll reveal: sections are simply there. A fade-and-rise on every band
 // was the same entrance seventeen times, and spent the page's motion before
 // anything happened. Motion answers a change instead.
-
-// Staggered fade for a set that has just CHANGED under the visitor (the
-// speakers teaser dealing its next four); `--i` is set by the owning grid.
-// Not a page-load entrance.
-.js .develop {
-	animation: print-fade 0.6s ease backwards;
-	animation-delay: calc(min(var(--i, 0), 10) * 55ms);
-}
-
-@keyframes print-fade {
-	from { opacity: 0; transform: translateY(12px); }
-	to   { opacity: 1; transform: none; }
-}
-
-// Enhancement only — `animation-timeline` is still flagged off in Firefox, so
-// nothing here carries meaning, contrast or state.
-@supports (animation-timeline: view()) {
-	@media (prefers-reduced-motion: no-preference) {
-		.rake {
-			position: relative;
-		}
-
-		// The beam is positioned, so siblings need one too or they paint underneath it.
-		.rake > *:not(.rake-beam) {
-			position: relative;
-			z-index: 1;
-		}
-
-		.rake > .rake-beam {
-			position: absolute;
-			// Full-bleed: at `inset: 0` the beam stops at a centred column's max-width.
-			// `50% - 50vw` is zero on a full-width `.rake`; html carries `overflow-x: clip`.
-			inset: 0 calc(50% - 50vw);
-			pointer-events: none;
-			z-index: 0;
-			background: linear-gradient(
-				104deg,
-				transparent 34%,
-				rgba(241, 16, 0, 0.13) 50%,
-				transparent 66%
-			);
-			background-size: 260% 100%;
-			background-repeat: no-repeat;
-			animation: rake-sweep linear both;
-			animation-timeline: view();
-			animation-range: entry 0% exit 100%;
-		}
-	}
-}
-
-@keyframes rake-sweep {
-	from { background-position: -70% 0; }
-	to   { background-position: 170% 0; }
-}
 
 // The lineup print morphing into the sheet photo — a camera move, not a UI transition.
 ::view-transition-old(speaker-portrait),
@@ -927,19 +821,9 @@ b {
 	animation-duration: 0.24s;
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.js .develop { animation: none; }
-	.rake > .rake-beam { display: none; }
-}
-
-@keyframes fadeInUp {
-	from { opacity: 0; transform: translateY(30px); }
-	to { opacity: 1; transform: translateY(0); }
-}
-
 // Status-bar scrim. iOS Safari ignores `viewport-fit=cover` in some modes and anchors
 // `position: fixed; top: 0` BELOW the safe-area inset, leaving content behind the
-// translucent status bar. z-index 10000 keeps it above the grain so blending can't hide it.
+// translucent status bar. z-index 10000 keeps it above every decorative layer.
 .status-bar-cover {
 	position: fixed;
 	top: calc(-1 * env(safe-area-inset-top));
@@ -963,11 +847,11 @@ b {
 	}
 
 	// Ink too: the site's muted alphas (labels at 0.55, meta at 0.62) print
-	// as pale grey on white. Everything goes near-black; roles below darker.
+	// as pale grey on white. Everything goes to black at 90%; roles below darker.
 	*,
 	*::before,
 	*::after {
-		color: #1A1A1A !important;
+		color: rgba(0, 0, 0, 0.9) !important;
 		background-color: transparent !important;
 		background-image: none !important;
 		box-shadow: none !important;
@@ -977,15 +861,12 @@ b {
 
 	// Atmosphere, chrome and the closing red band: nothing that is texture
 	// rather than content survives onto paper.
-	body::before,
-	body::after,
+	.scene::before,
 	.scene-vignette,
 	.status-bar-cover,
-	.ticker-wrap,
 	.site-header,
 	.footer,
-	.cookie-banner,
-	.band--accent {
+	.cookie-banner {
 		display: none !important;
 	}
 

@@ -60,6 +60,20 @@ built by a community, not a vendor event.
   contact (with press), code of conduct, newsletter thank-you, thank-you, 404,
   privacy policy, delete-account (mobile app), share pages per talk and
   speaker, unlisted `/invite/<member>` and `/speaker-card`.
+- The home page is one ruled document: a full-bleed hero plate (the
+  statement set into its lower left, nothing else on the photograph), a
+  typewriter facts line under it (date · venue link · the wave on sale,
+  and the page's one red "Get tickets"), then sections that each open on a
+  ruled head, with a note only where it carries a fact: The event (a short
+  note; the facts as a date / place / doors / audience / programme list,
+  the programme being the topics), Tickets (one ruled row per wave: index and state, wave and
+  deadline, price and company figure, Buy / Company pays or the state
+  word), Speakers (eight portraits from the casting sheet `/speakers`
+  shows in full: portrait, sheet number, name, role; "All N speakers"),
+  Past editions (a mosaic of eight press photographs), Partners (one row
+  of marks per tier, each mark sized by its tier, no tier labels; "All
+  partners"), Newsletter (lede and form). No arrow glyphs, no second hero,
+  nothing that moves on its own.
 - Static Astro build with React islands only for data-backed behaviour.
   Browser reads come only from cached HTTP endpoints, never the Firebase
   client SDK; writes go through App Check-gated callables.
@@ -77,8 +91,11 @@ built by a community, not a vendor event.
 - Visual direction "noir, but loud": one dark theme, red accent, poster-scale
   Bebas Neue headlines. Only the brand faces in `astro.config.mjs` may be
   used; never add a font.
-- The hero photograph (`/hero-detective.webp`) is the one plate, reframed per
-  page.
+- The detective key art (`/hero-detective.webp`) is the home hero. One
+  plate per route: pages about the event (speakers, partners, agenda, venue)
+  each take one documentary shot from a past edition or of the venue
+  (`/public/gallery`), graded B&W; every other subpage opens type-only.
+  Never stock or generated imagery.
 - The design system in `docs/design.md` is binding.
 
 ## Evidence on Hand

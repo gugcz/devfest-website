@@ -1,7 +1,8 @@
 ---
 /** A NEXT STEP — one thing to do, in an open field (`/thank-you`,
  * `/newsletter-subscription-thank-you`, `/404`, `/venue`). CONTAINS its controls, so
- * `.field-row--holds`. */
+ * `.field-row--holds`. Rendered inside `NextStepList`. The default slot takes
+ * media that belongs to the step (the venue photos), under its actions. */
 interface Action {
 	href: string;
 	label: string;
@@ -18,31 +19,43 @@ interface Props {
 	/** One or two lines on what this is. May contain inline HTML (links). */
 	noteHtml: string;
 	actions: readonly Action[];
+	/** 1-based position on a route. Set it only when the steps are a real
+	 * sequence; the `<ol>` already tells assistive tech, so the figure is
+	 * visual only. */
+	index?: number;
 }
 
-const { title, noteHtml, actions } = Astro.props;
+const { title, noteHtml, actions, index } = Astro.props;
 ---
 
-<li class="field-row field-row--short field-row--holds step">
+<li class="field-row field-row--holds step">
 	<div class="step-head">
+		{index !== undefined && (
+			<span class="step-index" aria-hidden="true">{String(index).padStart(2, '0')}</span>
+		)}
 		<h3 class="step-title">{title}</h3>
-		<p class="step-note" set:html={noteHtml} />
 	</div>
 
-	{actions.length > 0 && (
-	<div class="step-actions">
-		{actions.map(({ href, label, kind = 'ghost', external, download }) => (
-			<a
-				class={kind === 'primary' ? 'btn-primary' : 'btn-ghost'}
-				href={href}
-				{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-				{...(download ? { download: true } : {})}
-			>
-				{label}
-			</a>
-		))}
+	<div class="step-body">
+		<p class="step-note" set:html={noteHtml} />
+
+		{actions.length > 0 && (
+		<div class="step-actions">
+			{actions.map(({ href, label, kind = 'ghost', external, download }) => (
+				<a
+					class={kind === 'primary' ? 'btn-primary' : 'btn-ghost'}
+					href={href}
+					{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+					{...(download ? { download: true } : {})}
+				>
+					{label}
+				</a>
+			))}
+		</div>
+		)}
+
+		<slot />
 	</div>
-	)}
 </li>
 
 <style lang="scss">

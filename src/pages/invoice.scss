@@ -1,21 +1,7 @@
 @use '../styles/type' as *;
-.invoice-page {
-	display: flex;
-	flex-direction: column;
-}
-
-.invoice-body {
-	position: relative;
-	padding: var(--section-y) var(--gutter) var(--section-y);
-	// Pool of light dropped behind the billing desk — a lit noir scene.
-	background: var(--lit), var(--color-bg);
-}
-
+// The site's form column: 7 of 12, left on the gutter like the hero.
 .invoice-inner {
-	position: relative;
-	z-index: 1;
-	max-width: 45rem;
-	margin: 0 auto;
+	max-width: 47.5rem;
 	display: flex;
 	flex-direction: column;
 	gap: 3rem;
@@ -52,8 +38,9 @@
 
 .step-no {
 	@include mono(var(--fs-label-sm), 0.2em);
-	// Red reads as light — the step numbers glow like neon markers.
-	color: var(--color-accent-hot);
+	// Muted, not red: three red numbers down one list is the accent as
+	// running colour. --ink-muted clears AA on black.
+	color: var(--ink-muted);
 	flex-shrink: 0;
 }
 
@@ -66,27 +53,7 @@
 .intro-link {
 	@include hairline-link(var(--ink-strong));
 
-	&::after {
-		content: '\2197';
-		margin-left: 0.4rem;
-		border-bottom: none;
-		display: inline-block;
-		transition: transform 0.25s;
-	}
-
-	&:hover::after,
-	&:focus-visible::after {
-		transform: translate(2px, -2px);
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.intro-link::after {
-		transition: none;
-	}
-
-	.intro-link:hover::after,
-	.intro-link:focus-visible::after {
-		transform: none;
-	}
 }

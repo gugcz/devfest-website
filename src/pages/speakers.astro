@@ -11,23 +11,22 @@ import Speakers from '../components/Speakers.tsx';
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'The voices on<br />the <span class="red">stand.</span>'}
-			lede="Developers, makers and researchers on stage at DevFest.cz 2026, with a few names still to come. Pick anyone for their bio and talk."
+			titleHtml={'Speakers'}
+			lede="Everyone on stage on 30 October. A few names are still to come. Pick anyone for their bio and talk."
 			seoHeading="DevFest.cz 2026 Speakers"
 			titleId="speakers-title"
-			focus="68% 42%"
+			plate="/gallery/devfest-2025-03.webp"
+			focus="center 30%"
 		/>
 
-		<section class="band band--lit rake" aria-label="Speaker lineup">
-			<!-- Red raking light swept by the scroll; decorative, enhancement-only. -->
-			<span class="rake-beam" aria-hidden="true"></span>
+		<section class="band band--lit" aria-label="Speaker lineup">
 			<div class="band-inner">
 				<!-- The hero already names this band, so its head is for screen
 				     readers only; a second poster headline ("Who's talking") under
-				     "The voices on the stand" said the same thing twice. -->
+				     "Speakers" said the same thing twice. -->
 				<h2 class="sr-only">Speakers</h2>
 
-				<!-- The grid hydrates client-side from Firestore; keep a static note
+				<!-- The casting sheet hydrates client-side from Firestore; keep a static note
 				     for crawlers and no-JS visitors. -->
 				<Speakers client:load />
 
@@ -41,9 +40,8 @@ import Speakers from '../components/Speakers.tsx';
 		</section>
 
 		<Closer
-			titleHtml={'See them<br />in the room.'}
-			note="One day, one mill, the whole lineup on stage."
-			tone="accent"
+			titleHtml={'Be in<br />the room.'}
+			note="Every name on this page, in one room on 30 October."
 			titleId="speakers-closer"
 			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/agenda#talks', label: 'Browse the talks', kind: 'ghost' }]}
 		/>

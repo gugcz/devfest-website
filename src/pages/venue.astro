@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import NextStep from '../components/NextStep.astro';
+import NextStepList from '../components/NextStepList.astro';
 import Closer from '../components/Closer.astro';
 import { Image } from 'astro:assets';
 import { EVENT } from '../lib/event';
@@ -11,8 +12,9 @@ import entrance from '../assets/venue/uhelny-mlyn-entrance.jpg';
 
 // The route as the visitor travels it: Prague, the train, the walk, the door.
 // Same facts as the FAQ answer ("How do I get to the venue?") — keep the two
-// in step. The open field of steps is the one `/thank-you` uses.
-const STEPS = [
+// in step. Numbered, because it is a sequence; the photos ride on the last
+// step, where the visitor needs to recognise the building.
+const ROUTE = [
 	{
 		title: 'Take the train from Prague',
 		noteHtml:
@@ -25,35 +27,43 @@ const STEPS = [
 		title: 'Walk from the station',
 		noteHtml:
 			'From Libčice nad Vltavou station it is a ten-minute walk, about 0.7&nbsp;km, to the venue.',
-		actions: [{ href: EVENT.stationWalkUrl, label: 'Station to venue', kind: 'primary' as const, external: true }],
+		// Two map links on one page are two ways to the same place, not two
+		// decisions: both are quiet, the page's red is the closer's button.
+		actions: [{ href: EVENT.stationWalkUrl, label: 'Station to venue', kind: 'ghost' as const, external: true }],
 	},
 	{
 		title: `Find ${EVENT.venue}`,
-		noteHtml: `${EVENT.street}. Registration opens at 08:00, the keynote starts at 09:00.`,
-		actions: [{ href: EVENT.mapUrl, label: 'Open in maps', external: true }],
-	},
-	{
-		title: 'Flying in',
-		noteHtml:
-			'Fly to <strong>Prague</strong> (Václav Havel Airport, PRG). The Airport Express bus runs ' +
-			'straight to <strong>Praha hlavní nádraží</strong>, where the train to Libčice leaves.',
-		actions: [],
+		noteHtml: `${EVENT.street}. Registration opens at ${EVENT.doorsTime}, the keynote starts at ${EVENT.startTime}.`,
+		actions: [{ href: EVENT.mapUrl, label: 'Open in maps', kind: 'ghost' as const, external: true }],
 	},
 ];
 
+// Not a step on the route: the leg before it, for anyone not starting in Prague.
+const FLYING_IN = {
+	title: 'Flying in',
+	noteHtml:
+		'Fly to <strong>Prague</strong> (Václav Havel Airport, PRG). The Airport Express bus runs ' +
+		'straight to <strong>Praha hlavní nádraží</strong>, where the train to Libčice leaves.',
+	actions: [],
+};
+
 // What to look for on arrival, widest view first. Informative, so each has
 // alt text. The parked van's number plate is blurred in the source file.
+// `crop` names the photo's focal point, set in `venue.scss`.
 const PHOTOS = [
 	{
 		src: chimney,
+		crop: 'crop-chimney',
 		alt: 'The Uhelný Mlýn complex: red-brick factory halls with a tall brick chimney behind them.',
 	},
 	{
 		src: entranceTower,
+		crop: 'crop-tower',
 		alt: 'The chimney above a brick hall, with the black perforated-metal entrance building beside it.',
 	},
 	{
 		src: entrance,
+		crop: 'crop-entrance',
 		alt: 'The entrance: glass doors under a black perforated-metal façade, up a few concrete steps.',
 	},
 ];
@@ -65,46 +75,54 @@ const PHOTOS = [
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'Getting <span class="red">there.</span>'}
+			titleHtml={'Getting there'}
 			lede={`${EVENT.venue} sits just north of Prague: one direct train from the city centre, then a ten-minute walk from the station.`}
 			seoHeading={`How to get to ${EVENT.venue}, DevFest.cz 2026`}
 			titleId="venue-title"
+			plate="/gallery/uhelny-mlyn-entrance-tower.webp"
+			focus="50% 45%"
 		/>
 
 		<section class="band band--lit" aria-labelledby="route-heading">
 			<div class="band-inner">
-				<header class="head-stack">
-					<h2 id="route-heading" class="display head-title">The route.</h2>
-				</header>
+				<NextStepList label="The route" labelId="route-heading" ordered>
+					{ROUTE.map((step, i) => (
+						<NextStep {...step} index={i + 1}>
+							{i === ROUTE.length - 1 && (
+								<figure class="venue-photos">
+									<ul class="venue-photos-grid" role="list">
+										{PHOTOS.map(({ src, alt, crop }) => (
+											<li>
+												<Image
+													src={src}
+													alt={alt}
+													widths={[400, 640, 960]}
+													sizes="(max-width: 700px) 100vw, (max-width: 900px) 30vw, 16vw"
+													class={crop}
+													loading="lazy"
+												/>
+											</li>
+										))}
+									</ul>
+									<figcaption class="venue-photos-caption">
+										A converted industrial mill: red-brick halls, one tall chimney, and the entrance in the black
+										metal building.
+									</figcaption>
+								</figure>
+							)}
+						</NextStep>
+					))}
+				</NextStepList>
 
-				<ol class="field">
-					{STEPS.map((step) => <NextStep {...step} />)}
-				</ol>
+				<ul class="field venue-aside">
+					<NextStep {...FLYING_IN} />
+				</ul>
 			</div>
-		</section>
-
-		<section class="venue-photos" aria-labelledby="photos-heading">
-			<div class="u-container head-split">
-				<h2 id="photos-heading" class="display head-title">Look for the chimney.</h2>
-				<p class="head-note">
-					A converted industrial mill: red-brick halls, one tall chimney, and the entrance in the black
-					metal building.
-				</p>
-			</div>
-
-			<ul class="u-container venue-photos-grid" role="list">
-				{PHOTOS.map(({ src, alt }) => (
-					<li>
-						<Image src={src} alt={alt} widths={[640, 960, 1400]} sizes="(max-width: 700px) 100vw, 40vw" loading="lazy" />
-					</li>
-				))}
-			</ul>
 		</section>
 
 		<Closer
 			titleHtml={'See you<br />on the 30th.'}
 			note="Still deciding? The lineup and the schedule are out, and tickets are on sale."
-			tone="accent"
 			titleId="venue-closer"
 			actions={[
 				{ href: '/#tickets', label: 'Get tickets' },

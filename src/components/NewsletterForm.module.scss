@@ -19,6 +19,9 @@
 
 .paper {
 	flex: 1;
+	// A flex box, so the input stretches to the button's height beside it
+	// and its text sits on the button's centre line, not at the top.
+	display: flex;
 	position: relative;
 	background: var(--panel-2);
 	border: 1px solid var(--field-border);
@@ -62,18 +65,19 @@
 .button {
 	padding: 0.95rem 2rem;
 	background: var(--color-accent);
-	color: var(--on-accent);
+	color: var(--color-text);
 	border: 1px solid var(--color-accent);
 	border-radius: 0 var(--radius) var(--radius) 0;
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
+	@include cta-label;
 	cursor: pointer;
-	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 	white-space: nowrap;
 
+	// Same hover as `.btn-primary`: the fill inverts, nothing glows or moves.
 	&:hover:not(:disabled) {
-		background: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
-		box-shadow: var(--glow-red), 0 8px 22px rgba(241, 16, 0, 0.28);
+		background: var(--color-text);
+		border-color: var(--color-text);
+		color: var(--color-bg);
 	}
 
 	// Dedicated pair, not a dimmed accent: opacity alone measured ~2.4:1 (WCAG 1.4.3
@@ -96,13 +100,58 @@
 	min-height: 2.75rem;
 	padding: 0.5rem 0;
 
+	// Drawn, not native: the UA box rendered dark grey on the dark ground
+	// and on red, and read as disabled. An open square in full ink (21:1 on
+	// black), filled with a cut-out tick when checked. `--box-ink` is the
+	// ground's ink, `--box-tick` the tick on it.
 	input[type='checkbox'] {
+		--box-ink: var(--color-text);
+		--box-tick: var(--color-bg);
+		appearance: none;
+		-webkit-appearance: none;
 		flex-shrink: 0;
+		display: grid;
+		place-content: center;
 		width: 1.5rem;
 		height: 1.5rem;
-		margin-top: 0.1em;
-		accent-color: var(--color-accent);
+		margin: 0.1em 0 0;
+		border: 2px solid var(--box-ink);
+		border-radius: var(--radius);
+		background: transparent;
 		cursor: pointer;
+
+		&::before {
+			content: '';
+			width: 0.85rem;
+			height: 0.85rem;
+			background: var(--box-tick);
+			clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+			transform: scale(0);
+		}
+
+		&:checked {
+			background: var(--box-ink);
+		}
+
+		&:checked::before {
+			transform: scale(1);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent-hot);
+			outline-offset: var(--focus-gap);
+		}
+
+		// Forced colours flatten the drawn fill and tick to Canvas, so checked
+		// and unchecked would look the same: hand the box back to the system.
+		@media (forced-colors: active) {
+			appearance: auto;
+			-webkit-appearance: auto;
+
+			&::before {
+				content: none;
+			}
+		}
 	}
 
 	span {
@@ -146,88 +195,5 @@
 		width: 100%;
 		padding: 1rem 2rem;
 		border-radius: var(--radius);
-	}
-}
-
-/* ===================== ON THE ACCENT FIELD ===================== */
-// Every control here would otherwise be red-on-red: the filled button disappears
-// into the ground and a dark field reads as a hole punched in it. Ink
-// measurements for #F11000 are in BaseLayout.scss — text is full black, control
-// boundaries need 3:1.
-:global(.band--accent) {
-	.wrapper {
-		align-items: flex-start;
-	}
-
-	.paper {
-		// Paper White, opaque: a contrast checker resolves a translucent fill's
-		// placeholder against the band red behind it. Black ink on it reads 21:1.
-		background: #FFFFFF;
-		border-color: var(--on-accent-border);
-
-		&:focus-within {
-			border-color: var(--on-accent);
-			box-shadow: none;
-		}
-	}
-
-	.input {
-		color: var(--on-accent);
-
-		&::placeholder {
-			// Full black — 21:1 on the paper, 4.8:1 if resolved against the band red.
-			color: var(--on-accent);
-			opacity: 1;
-		}
-
-		&:focus-visible {
-			outline-color: var(--on-accent);
-		}
-	}
-
-	// Inverted: black fill, white ink. A red button on a red field is invisible.
-	.button {
-		background: var(--on-accent);
-		border-color: var(--on-accent);
-		color: var(--on-accent-ink);
-
-		&:hover:not(:disabled) {
-			background: #FFFFFF;
-			border-color: #FFFFFF;
-			color: var(--on-accent);
-			box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
-		}
-
-		&:focus-visible {
-			outline-color: var(--on-accent);
-		}
-	}
-
-	.consent input[type='checkbox'] {
-		accent-color: var(--on-accent-ink);
-
-		&:focus-visible {
-			outline-color: var(--on-accent);
-		}
-	}
-
-	.consent span {
-		color: var(--on-accent);
-	}
-
-	.consentLink {
-		color: var(--on-accent);
-		border-bottom-color: var(--on-accent-border);
-
-		&:hover,
-		&:focus-visible {
-			color: var(--on-accent);
-			border-bottom-color: var(--on-accent);
-		}
-	}
-
-	.message {
-		color: var(--on-accent);
-		text-align: left;
 	}
 }

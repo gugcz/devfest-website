@@ -1,0 +1,22 @@
+---
+/** The last line of a page that asks for no decision, in place of a `Closer`:
+ * one typewriter line and one text action (`.action`) to the useful next step
+ * (`/faq` "Still stuck?", `/404`, `/team`, the thank-you pages). Place it
+ * inside the last band's inner column. */
+interface Props {
+	text: string;
+	href: string;
+	label: string;
+}
+
+const { text, href, label } = Astro.props;
+---
+
+<p class="end-line">
+	<span class="end-line-text">{text}</span>
+	<a class="action" href={href}>{label}</a>
+</p>
+
+<style lang="scss">
+	@use './EndLine';
+</style>

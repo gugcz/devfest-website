@@ -2,8 +2,6 @@
 @use '../styles/controls' as *;
 .wrapper {
 	width: 100%;
-	max-width: 45rem;
-	margin: 0 auto;
 }
 
 .form {
@@ -23,7 +21,7 @@
 	flex-direction: column;
 	gap: 0.5rem;
 
-	// Tighten label/field rhythm: the mono label warms as the field takes focus.
+	// Tighten label/field rhythm: the note label warms as the field takes focus.
 	&:focus-within .label {
 		color: rgba(255, 255, 255, 0.82);
 	}
@@ -34,14 +32,13 @@
 }
 
 .label {
-	@include mono(var(--fs-label), 0.16em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--ink-meta);
 	transition: color 0.2s ease;
 }
 
 .optional {
 	color: var(--ink-muted);
-	letter-spacing: 0.1em;
 }
 
 // The shared lit field (`_controls.scss`), plus its placeholder and invalid state.
@@ -63,12 +60,11 @@
 	}
 }
 
-// The per-field message. Mono, like every other label on the site — the error
-// is a label, not prose, and it sits in the same column as the field's own.
+// The per-field message. The note voice, like every other word-label on the
+// site — the error is a label, not prose, and it sits in the same column as
+// the field's own.
 .error {
-	@include mono(var(--fs-label));
-	line-height: 1.5;
-	letter-spacing: 0.06em;
+	@include note(var(--fs-note));
 	color: var(--color-accent-hot);
 }
 
@@ -99,12 +95,7 @@
 	// A readout, not a panel: lit from the left, no rules. It must never
 	// lift when the pointer crosses it — nothing here is interactive.
 	padding: 1.2rem 0;
-	background: linear-gradient(
-		104deg,
-		rgba(255, 244, 232, 0.05) 0%,
-		rgba(255, 240, 226, 0.022) 40%,
-		transparent 84%
-	);
+	background: var(--wash);
 	border: 0;
 	border-radius: 0;
 
@@ -113,7 +104,8 @@
 		z-index: 1;
 		font-family: var(--font-bebas-neue), sans-serif;
 		font-size: var(--fs-title-sm);
-		letter-spacing: 0.03em;
+		line-height: 1;
+		letter-spacing: 0;
 	}
 }
 
@@ -153,22 +145,10 @@
 	}
 }
 
-// Functional link underline — solid hairline, red on hover, with arrow affordance.
+// Functional link underline — solid hairline, red on hover.
 .consentLink {
 	@include hairline-link(var(--ink-strong));
 
-	&::after {
-		content: '\2197';
-		margin-left: 0.35rem;
-		border-bottom: none;
-		display: inline-block;
-		transition: transform 0.25s;
-	}
-
-	&:hover::after,
-	&:focus-visible::after {
-		transform: translate(2px, -2px);
-	}
 }
 
 // The submit IS the global `.btn-primary` (set on the element); this module
@@ -190,6 +170,7 @@
 		&:active {
 			background: var(--color-accent);
 			border-color: var(--color-accent);
+			color: var(--color-text);
 			transform: none;
 			box-shadow: none;
 		}
@@ -212,12 +193,7 @@
 .success {
 	position: relative;
 	padding: 2.4rem 0 2.2rem;
-	background: linear-gradient(
-		104deg,
-		rgba(255, 244, 232, 0.075) 0%,
-		rgba(255, 240, 226, 0.038) 34%,
-		transparent 88%
-	);
+	background: var(--wash-strong);
 	border: 0;
 	border-radius: 0;
 }
@@ -233,7 +209,7 @@
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-card-title);
 	line-height: 1;
-	letter-spacing: 0.04em;
+	letter-spacing: 0;
 	color: var(--color-text);
 	margin: 0 0 1.2rem;
 	padding-bottom: 1.2rem;
