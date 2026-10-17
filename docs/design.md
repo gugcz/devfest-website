@@ -1177,11 +1177,12 @@ Decision criteria, picked per page:
   its height as `--consent-h` on `<html>` (`CookieBanner.astro`); `#hero`
   takes it as its bottom inset, so the bottom-set content rises into the sky
   of the photograph instead of sliding under the banner.
-- **The home hero is as tall as its content on a desktop**
-  (`index.scss:7–21`): forced to the viewport, the frame hung the footing
-  line in dead black under the actions. ≤900px it keeps `min-height:
-  100svh` so date, venue and the wave stay on the first screen
-  (`index.scss:624–631`).
+- **The home hero is as tall as its content at every width**
+  (`index.scss:7–21`, `618–624`): forced to the viewport, the frame hung
+  the footing line in dead black under the actions — on a tall phone 400px
+  of it. The `01` block opens straight under the footing line. The topic
+  rotor swaps in one tick (`index.astro`, the inline script): an out-then-in
+  sequence left the slot empty for 260ms every cycle.
 - **The home hero's foot is one mono line** (`index.astro`, `.hero-foot`):
   the date as a `<time>`, the venue as a maps link ("Uhelný Mlýn, near
   Prague") and the wave on sale (`HeroOffer`: wave qualifier, "· until

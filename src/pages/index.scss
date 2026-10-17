@@ -144,21 +144,14 @@
 	color: rgba(255, 255, 255, 0.96);
 	opacity: 0;
 	transform: translateY(0.3em);
-	transition: opacity 420ms ease, transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+	// Short: the two names overlap for these 180ms, and a brief overlap
+	// reads as a change; an empty slot between them read as a fault.
+	transition: opacity 180ms ease, transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .topics-rotor-item.is-active {
 	opacity: 1;
 	transform: translateY(0);
-}
-
-// Out is faster than in and travels the other way, so the two names are
-// never both legible mid-swap — a cross-fade of two half-transparent words
-// reads as a rendering fault, not a change.
-.topics-rotor-item.is-leaving {
-	opacity: 0;
-	transform: translateY(-0.3em);
-	transition-duration: 260ms;
 }
 
 // The full set, unstacked into two columns instead of rotating. This
@@ -622,11 +615,10 @@
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 900px) {
-	// Full-viewport frame so date, venue and clock stay on the first screen.
+	// As tall as its content, like the desktop: a full-viewport frame hung the
+	// footing line under 400px of empty frame on a tall phone. The next block
+	// opens straight under the line.
 	#hero {
-		// svh, not dvh: svh is the height with the URL bar SHOWN; dvh would
-		// clip the strip when the bar comes back.
-		min-height: 100svh;
 		padding: calc(4.5rem + env(safe-area-inset-top)) var(--gutter) var(--consent-h, 0px);
 	}
 

@@ -254,20 +254,15 @@ const STRIP_SCALE = 1.1;
 		group?.addEventListener('focusin', () => { paused = true; });
 		group?.addEventListener('focusout', () => { paused = false; });
 
-		// Out, THEN in — never both at once. Cross-fading two names in one slot
-		// leaves both legible mid-swap, which reads as a rendering fault rather
-		// than a change.
+		// One swap, one tick: the next name is in before the last has gone.
+		// An "out, then in" sequence left the slot empty for 260ms every
+		// cycle, and a screenshot or a glance in that window saw a caption
+		// over nothing.
 		rotorInterval = setInterval(() => {
 			if (paused) return;
-			const prev = items[i];
-			prev.classList.remove('is-active');
-			prev.classList.add('is-leaving');
+			items[i].classList.remove('is-active');
 			i = (i + 1) % items.length;
-			const next = items[i];
-			setTimeout(() => {
-				prev.classList.remove('is-leaving');
-				next.classList.add('is-active');
-			}, 260);
+			items[i].classList.add('is-active');
 		}, 2600);
 	});
 </script>
