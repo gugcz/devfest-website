@@ -104,21 +104,6 @@
 // dims or recolours the logo. Keyboard focus takes the global accent-hot
 // ring (WCAG 2.4.7) around the link.
 
-// THE HERO COVERS THE BAR. While the home hero's lockup or its actions are
-// in view, the bar's own mark or Tickets button would be the same thing twice
-// on one screen. `data-covered` is written by `trackHeroCover` in Menu.astro;
-// without JS it never appears and both stay visible. `visibility` keeps the
-// grid slot, so nothing reflows; the open menu always shows the mark.
-.site-header[data-covered~='brand']:not([data-menu='open']) .brand,
-.site-header[data-covered~='cta'] .header-cta {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-	transition:
-		opacity 0.15s ease,
-		visibility 0s linear 0.15s;
-}
-
 .brand-logo {
 	display: block;
 	// 38px tall = 190px wide: the brand manual's 180px digital minimum for
@@ -570,9 +555,8 @@
 	}
 }
 
-// Under ~384px the mark, the CTA label (which cannot shrink: white on red
-// is AA only as large text) and the toggle no longer fit one row. The CTA
-// leaves the bar; Tickets stays the first line of the menu.
+// On a phone the mark, the Tickets label and the Menu toggle no longer fit
+// one row. The CTA leaves the bar; Tickets stays the first line of the menu.
 @media (max-width: 599.98px) {
 	.header-cta {
 		display: none;
@@ -614,8 +598,6 @@
 	.nav-secondary-link,
 	.header-cta,
 	.brand,
-	.site-header[data-covered~='brand']:not([data-menu='open']) .brand,
-	.site-header[data-covered~='cta'] .header-cta,
 	.header-stamp,
 	.site-header[data-state='top'] .header-stamp,
 	.nav-toggle-bars span {

@@ -126,11 +126,6 @@ const PLATE_MAX_H = 0.6;
 // cells and the full box width, or its letters fall under a legible size.
 const WIDE_RATIO = 6;
 
-/** A tier's grid column, in rem: its box width, so a tier's marks stand on
- * one regular, left-set grid. */
-export const tierColumnRem = (tier: string, scale = 1): number =>
-	((CELLS[tier] ?? CELLS.gold).w * scale) / 16;
-
 const opticalBox = (ratio: number, cell: Cell, plated = false) => {
 	const area = cell.w * cell.h * LOGO_AREA * (plated ? PLATE_SCALE : 1);
 	const wideMax = ratio >= WIDE_RATIO ? 1 : LOGO_MAX_W;
@@ -151,8 +146,8 @@ const opticalBox = (ratio: number, cell: Cell, plated = false) => {
 
 /**
  * Everything one logo needs at one call site: the `<Image>` props (the
- * optical box as `--logo-w`, a srcset matching it) and whether it is wide.
- * `scale` shrinks the tier's box for a smaller wall (the home strip).
+ * optical box as `--logo-w`, a srcset matching it). `scale` shrinks the
+ * tier's box for a smaller wall (the home strip).
  */
 export const partnerLogo = (p: Partner, tier: string, scale = 1) => {
 	const img = logoFor(p.logo, p.name);
@@ -168,5 +163,5 @@ export const partnerLogo = (p: Partner, tier: string, scale = 1) => {
 					widths: [box.width, box.width * 2, box.width * 3],
 					sizes: `${box.width}px`,
 				};
-	return { props, wide: ratio >= WIDE_RATIO };
+	return { props };
 };

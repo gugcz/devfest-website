@@ -588,12 +588,6 @@ b {
 	position: relative;
 	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
-	// The arrow every action carries, so the two controls read as one family.
-	&::after {
-		content: '\2192';
-		font-weight: 400;
-	}
-
 	// Hover inverts the fill — no lift, no glow, no shadow. The focus ring
 	// stays the global red one, clear of a white fill.
 	&:hover {
@@ -626,12 +620,6 @@ b {
 	background: transparent;
 	transition: color 0.2s ease, gap 0.2s ease;
 
-	&::after {
-		content: '\2192';
-		font-weight: 400;
-		transition: transform 0.25s ease;
-	}
-
 	&:hover,
 	&:focus-visible {
 		color: var(--color-text);
@@ -640,33 +628,31 @@ b {
 	}
 }
 
-// THE "see all" link: white label on a red hairline, lit to accent-hot. The
-// one look for a way across ("See all partners", "All speakers"), never a
-// grey or plain variant. Inline prose links include the `hairline-link`
-// mixin without the label voice; a CSS Module that cannot use the global
-// class includes both.
-.hairline-link {
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
-	@include hairline-link;
-	// Inline-block with block padding: clear of the 24px target minimum.
-	display: inline-block;
-	padding: 0.4em 0 0.3em;
+// The arrow promises a destination, so links carry it and buttons (Share,
+// Download, Accept, a workshop sign-up) do not. Both controls read as one
+// family through it.
+a.btn-primary::after,
+a.btn-ghost::after,
+.action::after {
+	content: '\2192';
+	font-weight: 400;
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.btn-primary,
 	.btn-ghost,
-	.hairline-link {
+	.action {
 		transition: none;
 	}
 }
 
-// THE CONTAINER LANGUAGE for every list. No rules; separation is air and
-// type scale, the REACH STATE marks an entry.
+// THE CONTAINER LANGUAGE for every list: a ruled document. A 1px rule under
+// each row, the head rule above the list, air and type scale for hierarchy;
+// the REACH STATE marks an entry.
 //   .field-row--link    the row IS the control -> full-bleed red field
 //   .field-row--holds   the row CONTAINS a control -> warm wash + pull
 //   .field-row--short   the 72px-title step (short lists)
-// Never add a border, a per-list light box, or an opacity "inactive" state.
+// Never add a per-list light box or an opacity "inactive" state.
 
 .field {
 	position: relative;

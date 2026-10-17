@@ -43,7 +43,7 @@
 }
 
 .logo-wall--lead .logo-grid { --mark-h: 4rem; }
-.logo-wall:is([aria-labelledby='community-partners-title'], [aria-labelledby='media-partners-title']) .logo-grid { --mark-h: 2.2rem; }
+.logo-wall:is(.tier-community, .tier-media) .logo-grid { --mark-h: 2.2rem; }
 
 .logo-item {
 	display: flex;

@@ -19,15 +19,6 @@ import { useRemote } from '../lib/useRemote';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Tickets.module.scss';
 
-// Static copy keyed by lowercased group name. Overrides whatever ti.to
-// returns in the release `description` so marketing copy stays in repo,
-// not in the ti.to admin.
-const GROUP_DESCRIPTIONS: Record<string, string> = {
-	'early bird': 'The lowest ticket price of the year. Limited early availability.',
-	regular: 'Standard pricing while the wave lasts — secure your seat early.',
-	'lazy bird': 'Last chance to grab a ticket. Late pricing, same full access.',
-};
-
 type Variant = ReleaseGroup['variants'][number];
 
 /** The variant an employer pays for: same ticket, invoiced to the company. */
@@ -294,9 +285,8 @@ export default function Tickets() {
 			{/* Two quiet side doors, one voice. The invoice route used to be a
 			    second filled red button under the list, competing with the live
 			    wave's own buy button for the one primary action in the section.
-			    The tax line leads, right under the figures it qualifies. */}
+			    The tax line is the head's note, not repeated here. */}
 			<p className={s.footnote}>
-				{vatNote && <>{vatNote} in every price. </>}
 				Need to pay by bank transfer?{' '}
 				<a href="/invoice" className={s.footnoteLink}>
 					Request a company invoice

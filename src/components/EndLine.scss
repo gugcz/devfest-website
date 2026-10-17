@@ -12,18 +12,3 @@
 	@include prose(var(--fs-lede), 1.4);
 	color: var(--ink-soft);
 }
-
-// The site's text action: mono caps and an arrow (`.action`, BaseLayout.scss).
-.end-line-link {
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
-	@include hairline-link;
-	text-decoration: none;
-	display: inline-flex;
-	align-items: center;
-	gap: 0.6rem;
-	padding: 0.4em 0 0.3em;
-
-	&::after {
-		content: '\2192';
-	}
-}

@@ -30,7 +30,7 @@
 		rgba(0, 0, 0, 0.74) 72%,
 		#000 92%
 	);
-	// Fully opaque unless `.hero-photo--fade-bottom` replaces it.
+	// Fully opaque; a page may set its own fade.
 	--hero-mask-fade: linear-gradient(#000, #000);
 	-webkit-mask-image: var(--hero-mask-shape), var(--hero-mask-fade);
 	mask-image: var(--hero-mask-shape), var(--hero-mask-fade);
@@ -41,34 +41,6 @@
 	opacity: var(--hero-photo-opacity, 0.85);
 	pointer-events: none;
 	z-index: 1;
-
-	// A shorter dissolve for a frame that widened the plate: the shipped
-	// gradient is still transparent at half its own width, which on a wider
-	// plate turns most of a paid-for photograph into flat black. This one
-	// clears the type column and gets out of the way by 62%.
-	&.hero-photo--tight-mask {
-		--hero-mask-shape: linear-gradient(
-			to right,
-			transparent 0%,
-			rgba(0, 0, 0, 0.1) 16%,
-			rgba(0, 0, 0, 0.34) 30%,
-			rgba(0, 0, 0, 0.72) 46%,
-			#000 62%
-		);
-	}
-
-	// The plate runs out to pure black over its bottom quarter, so the section
-	// below starts on the same black and there is no edge where the frame ends.
-	&.hero-photo--fade-bottom {
-		--hero-mask-fade: linear-gradient(
-			to bottom,
-			#000 0%,
-			#000 74%,
-			rgba(0, 0, 0, 0.55) 84%,
-			rgba(0, 0, 0, 0.18) 93%,
-			transparent 100%
-		);
-	}
 
 	@media (max-width: 900px) {
 		width: 100%;

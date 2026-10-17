@@ -16,15 +16,6 @@ interface Props {
 	width?: string;
 	/** Opt-in desktop `background-size`. Left unset, the desktop crop stays `cover`. */
 	size?: string;
-	/**
-	 * Shortens the left-to-right dissolve so the plate reaches full opacity by
-	 * 62% of its own width instead of 92% — a fade that stays transparent past
-	 * its own midpoint turns most of a paid-for photograph into flat black.
-	 */
-	tightMask?: boolean;
-	/** Fades the plate to pure black over its bottom quarter, for a hero whose
-	 * next section starts on the black ground (the home hero into the facts). */
-	fadeBottom?: boolean;
 	/** Public path of a different plate (a documentary shot from a past
 	 * edition). Defaults to the detective key art. */
 	src?: string;
@@ -38,15 +29,13 @@ const {
 	mobileZoom,
 	width,
 	size,
-	tightMask = false,
-	fadeBottom = false,
 	src,
 } = Astro.props;
 ---
 
 <div class="hero-bg" aria-hidden="true"></div>
 <div
-	class:list={['hero-photo', { 'hero-photo--tight-mask': tightMask, 'hero-photo--fade-bottom': fadeBottom }]}
+	class="hero-photo"
 	aria-hidden="true"
 	style={`--hero-photo-opacity:${photoOpacity};--hero-photo-opacity-mobile:${mobilePhotoOpacity};--hero-photo-pos:${focus};--hero-photo-pos-mobile:${mobileFocus};${mobileZoom ? `--hero-photo-size-mobile:${mobileZoom};` : ''}${width ? `--hero-photo-width:${width};` : ''}${size ? `--hero-photo-size:${size};` : ''}${src ? `--hero-photo-src:url('${src}');` : ''}`}
 ></div>

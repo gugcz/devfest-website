@@ -56,7 +56,7 @@
 }
 
 // The facts line: date and venue in white, the wave in the offer's two
-// greys, the one red fill flush right. Middle dots between the parts.
+// greys, the one red fill flush right. Air between the parts, no dots.
 .hero-line {
 	width: 100%;
 	max-width: var(--maxw);
@@ -81,15 +81,10 @@
 	}
 }
 
+// The venue is a link in a line of text, so it carries the in-prose underline
+// (SC 1.4.1: the date beside it is the same white).
 .hero-facts-link {
-	color: var(--color-text);
-	text-decoration: none;
-	transition: color 0.2s ease;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-	}
+	@include hairline-link;
 }
 
 .hero-cta {

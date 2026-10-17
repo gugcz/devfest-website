@@ -212,33 +212,6 @@ const isCurrent = (href: string) => {
 		);
 	};
 
-	/**
-	 * THE HERO COVERS THE BAR. While an element marked `data-covers="brand"`
-	 * or `data-covers="cta"` (the home hero's lockup and its actions) is in
-	 * view below the bar, the bar's own logo or Tickets button would be the
-	 * same thing twice on one screen; the token goes into `data-covered` and
-	 * Menu.scss hides that control. No JS, no attribute: both stay visible.
-	 */
-	const trackHeroCover = (header: HTMLElement, signal: AbortSignal) => {
-		const covers = document.querySelectorAll<HTMLElement>('[data-covers]');
-		if (covers.length === 0) return;
-		const covered = new Set<string>();
-		const observer = new IntersectionObserver(
-			(entries) => {
-				for (const entry of entries) {
-					const token = (entry.target as HTMLElement).dataset.covers ?? '';
-					if (entry.isIntersecting) covered.add(token);
-					else covered.delete(token);
-				}
-				header.dataset.covered = [...covered].join(' ');
-			},
-			// Under the bar counts as out of view: the bar is what covers it there.
-			{ rootMargin: `-${Math.round(header.getBoundingClientRect().height)}px 0px 0px 0px` }
-		);
-		covers.forEach((el) => observer.observe(el));
-		signal.addEventListener('abort', () => observer.disconnect(), { once: true });
-	};
-
 	// Module scripts run once per document, but <ClientRouter /> replaces the
 	// header on every soft navigation — re-bind on `astro:page-load`. The
 	// window/document/matchMedia listeners are registered with an
@@ -257,7 +230,6 @@ const isCurrent = (href: string) => {
 		// survive a soft navigation — re-measuring per page-load is what restores
 		// it, and it is per-page-correct by construction.
 		if (header) trackHeaderHeight(header, signal);
-		if (header) trackHeroCover(header, signal);
 
 		// Scroll state — sets data-state for brand reveal on home page
 		const onScrollState = () => {

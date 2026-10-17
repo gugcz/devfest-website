@@ -45,6 +45,7 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 			<section
 				class:list={[
 					'logo-wall',
+					`tier-${wall.id}`,
 					{ 'logo-wall--lead': wall.id === 'platinum', 'logo-wall--first': i === 0, 'logo-wall--last': i === walls.length - 1 },
 				]}
 				aria-labelledby={`${wall.id}-partners-title`}
