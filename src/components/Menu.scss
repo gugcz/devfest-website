@@ -216,18 +216,17 @@
 	color: var(--color-bg);
 }
 
-@media (min-width: 601px) {
-	// On the hero's first screen the toggle would be the only bordered box —
-	// a boxed control beside an unboxed one reads as two systems. Border
-	// returns on hover/focus and once the bar goes solid.
-	#site-header[data-home='true'][data-state='top'] .nav-toggle {
-		border-color: transparent;
-	}
+// On the hero's first screen the toggle would be the only bordered box —
+// a boxed control beside an unboxed one reads as two systems; on a phone it
+// was the only thing in the bar at all. Border returns on hover/focus and
+// once the bar goes solid.
+#site-header[data-home='true'][data-state='top'] .nav-toggle {
+	border-color: transparent;
+}
 
-	#site-header[data-home='true'][data-state='top'] .nav-toggle:hover,
-	#site-header[data-home='true'][data-state='top'] .nav-toggle:focus-visible {
-		border-color: var(--color-text);
-	}
+#site-header[data-home='true'][data-state='top'] .nav-toggle:hover,
+#site-header[data-home='true'][data-state='top'] .nav-toggle:focus-visible {
+	border-color: var(--color-text);
 }
 
 .nav {
@@ -542,10 +541,14 @@
 		display: none;
 	}
 
-	// A square tap target, bars centred: nothing wider than the 44px floor.
+	// A square, bars centred, as tall as the Tickets button beside it (the
+	// label's line sets the height) and exactly that wide — not a tall
+	// slot with three thin lines lost in it.
 	.nav-toggle {
 		justify-content: center;
 		padding: 0.72rem 0;
+		aspect-ratio: 1;
+		min-width: 0;
 	}
 
 	// The full-size mark (190px), the large-text CTA and the 44px toggle

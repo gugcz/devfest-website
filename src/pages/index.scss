@@ -724,10 +724,10 @@
 		// Bottom inset is the air above the footing strip; it takes part of
 		// the row the 2×2 strip gave back, so the buttons no longer sit on it.
 		padding-block: clamp(0.5rem, 1.5vh, 1.25rem) clamp(1.25rem, 4.5vh, 2.75rem);
-		// Sit the block on the footing strip. Centred, a tall phone (390x844)
-		// left ~100px of empty frame above and below and the lockup floated
-		// mid-screen like a card. Bottom-set, the hero rises off the strip.
-		justify-content: flex-end;
+		// Hung from the top edge, like the desktop: bottom-set, a tall phone
+		// opened on ~300px of empty sky with the wordmark halfway down the
+		// screen. The footing line still closes the frame at the bottom.
+		justify-content: flex-start;
 	}
 
 	// Poster scale on a phone too. `--fs-hero`'s vw term only passes its
@@ -768,14 +768,10 @@
 		}
 	}
 
-	// The line wraps at the phone measure: date and venue, then the offer,
-	// then the clock, each on its own baseline.
+	// The line stacks at the phone measure: date, venue, then the offer,
+	// each on its own line (the dots hide, see `.hero-foot-link`).
 	.hero-foot {
 		gap: 0.5rem 1.25rem;
-	}
-
-	.meta-value {
-		font-size: 1.4rem;
 	}
 }
 
