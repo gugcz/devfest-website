@@ -146,8 +146,10 @@ export default function Tickets() {
 	if (status === 'error') {
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-				<header className="head-split">
-					<h2 id="tickets-heading" className="display head-title">Buy your way in</h2>
+				<header className={s.head}>
+					<h2 id="tickets-heading" className="eyebrow-index">
+						<span className="eyebrow-no" aria-hidden="true">02</span>Tickets
+					</h2>
 				</header>
 				<ErrorState>
 					<p>The box office isn't answering. Reload, or buy direct on ti.to.</p>
@@ -159,8 +161,10 @@ export default function Tickets() {
 	if (status === 'loading') {
 		return (
 			<section id="tickets" className={sectionClass} aria-busy={true} aria-labelledby="tickets-heading">
-				<header className="head-split">
-					<h2 id="tickets-heading" className="display head-title">Buy your way in</h2>
+				<header className={s.head}>
+					<h2 id="tickets-heading" className="eyebrow-index">
+						<span className="eyebrow-no" aria-hidden="true">02</span>Tickets
+					</h2>
 					<LoadingState label="Opening the box office" />
 				</header>
 				<ul className={`field ${s.skelField}`} role="list" aria-hidden="true">
@@ -192,9 +196,11 @@ export default function Tickets() {
 		// slugs only the ti.to link is dropped.
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-				<header className="head-split">
-					<h2 id="tickets-heading" className="display head-title">Buy your way in</h2>
-					<p className="head-note">The box office is closed. It opens with the first wave.</p>
+				<header className={s.head}>
+					<h2 id="tickets-heading" className="eyebrow-index">
+						<span className="eyebrow-no" aria-hidden="true">02</span>Tickets
+					</h2>
+					<p className={s.headNote}>The box office is closed. It opens with the first wave.</p>
 				</header>
 				<EmptyState
 					action={hasEvent ? { href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true } : undefined}

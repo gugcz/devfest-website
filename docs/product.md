@@ -60,6 +60,12 @@ built by a community, not a vendor event.
   contact (with press), code of conduct, newsletter thank-you, thank-you, 404,
   privacy policy, delete-account (mobile app), share pages per talk and
   speaker, unlisted `/invite/<member>` and `/speaker-card`.
+- The home page is the hero (statement, topic rotor, two actions, a
+  date / venue / wave line) and five numbered sections: 01 The event (a
+  short note, the facts as a date / place / doors / audience list, one
+  photograph from the last edition), 02 Tickets (the waves, sold out as a
+  stamp), 03 Speakers (six names, one portrait), 04 Partners (one wall, the
+  tier in the margin), 05 Newsletter. No gallery, no second hero.
 - Static Astro build with React islands only for data-backed behaviour.
   Browser reads come only from cached HTTP endpoints, never the Firebase
   client SDK; writes go through App Check-gated callables.
@@ -77,10 +83,11 @@ built by a community, not a vendor event.
 - Visual direction "noir, but loud": one dark theme, red accent, poster-scale
   Bebas Neue headlines. Only the brand faces in `astro.config.mjs` may be
   used; never add a font.
-- The detective key art (`/hero-detective.webp`) is the home hero and the
-  default subpage plate. Pages about the event may swap in a documentary
-  shot from a past edition (`/public/gallery`), graded B&W; never stock or
-  generated imagery.
+- The detective key art (`/hero-detective.webp`) is the home hero. One
+  plate per route: pages about the event (speakers, partners, agenda, venue)
+  each take one documentary shot from a past edition or of the venue
+  (`/public/gallery`), graded B&W; every other subpage opens type-only.
+  Never stock or generated imagery.
 - The design system in `docs/design.md` is binding.
 
 ## Evidence on Hand
