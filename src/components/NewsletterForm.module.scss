@@ -19,6 +19,9 @@
 
 .paper {
 	flex: 1;
+	// A flex box, so the input stretches to the button's height beside it
+	// and its text sits on the button's centre line, not at the top.
+	display: flex;
 	position: relative;
 	background: var(--panel-2);
 	border: 1px solid var(--field-border);

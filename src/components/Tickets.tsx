@@ -87,44 +87,40 @@ interface StubCtasProps {
 
 /** One button per buyable variant, each straight into that release's ti.to
  * checkout (`/with/<slug>`), labelled by who pays — the price is the figure
- * above. The visible label leads the accessible name (WCAG 2.5.3); the name
- * still carries the release and its price for a screen reader. */
+ * above, and the company figure its data line, so who-pays is said twice on
+ * the row and no more. The visible label leads the accessible name (WCAG
+ * 2.5.3); the name still carries the release and its price for a screen
+ * reader. */
 function StubCtas({ group, buyable, accountSlug, eventSlug }: StubCtasProps) {
-	const companyOnSale = buyable.some((v) => isCompanyFunded(v.release));
 	// "Buy" only works while one variant is not company-funded; two or more
 	// (say Regular and Student) need their own names to tell them apart.
 	const personal = buyable.filter((v) => !isCompanyFunded(v.release)).length;
 	return (
-		<>
-			<div className={s.ctas}>
-				{buyable.map((variant, bi) => {
-					const price = priceDisplay(variant.release)?.primary;
-					const company = isCompanyFunded(variant.release);
-					const what = `${releaseTitle(variant.release)} ticket${price ? `, ${price}` : ''}, on ti.to`;
-					const label = company
-						? 'Company pays'
-						: personal > 1
-							? variant.variantLabel || releaseTitle(variant.release)
-							: 'Buy';
-					return (
-						<a
-							key={variant.release.id}
-							className={`${bi === 0 ? 'btn-primary' : 'btn-ghost'} ${s.cta}`}
-							href={checkoutUrl(variant.release, accountSlug, eventSlug)}
-							target="_blank"
-							rel="noopener noreferrer"
-							aria-label={`${label}: ${what}`}
-							onClick={() => trackVariantCheckout(group, variant)}
-						>
-							{label}
-						</a>
-					);
-				})}
-			</div>
-			{/* The two buttons differ only in who pays; without this line the
-			    company price read as a different ticket. */}
-			{companyOnSale && <p className={s.ctaNote}>Company pays: same ticket, invoiced to your employer.</p>}
-		</>
+		<div className={s.ctas}>
+			{buyable.map((variant, bi) => {
+				const price = priceDisplay(variant.release)?.primary;
+				const company = isCompanyFunded(variant.release);
+				const what = `${releaseTitle(variant.release)} ticket${price ? `, ${price}` : ''}, on ti.to`;
+				const label = company
+					? 'Company pays'
+					: personal > 1
+						? variant.variantLabel || releaseTitle(variant.release)
+						: 'Buy';
+				return (
+					<a
+						key={variant.release.id}
+						className={`${bi === 0 ? 'btn-primary' : 'btn-ghost'} ${s.cta}`}
+						href={checkoutUrl(variant.release, accountSlug, eventSlug)}
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label={`${label}: ${what}`}
+						onClick={() => trackVariantCheckout(group, variant)}
+					>
+						{label}
+					</a>
+				);
+			})}
+		</div>
 	);
 }
 
@@ -292,26 +288,15 @@ export default function Tickets() {
 							<div className={s.stubBody}>
 								<h3 className={s.stubTitle}>{group.name}</h3>
 								{anyPurchasable && description && <p className={s.stubNote}>{description}</p>}
-								{/* Deadline and admission line are both mono caps, so stacked they
-								    read as one undifferentiated block of small text. They share a
-								    single wrapping line instead, set off from the prose above by
-								    air — one fact group, not two more rows in the pile. */}
+								{/* The wave's one fact: its sale window. Who the pass is for is
+								    said on the price column (the company figure, the "Company
+								    pays" button), not repeated here as an admission line. */}
 								<div className={s.stubFacts}>
 									{deadline && (
 										<p className={s.stubDeadline}>
 											<time dateTime={deadline.iso}>{deadline.label}</time>
 										</p>
 									)}
-									<ul className={s.stubGrants}>
-										{group.variants.map(({ release, variantLabel }, vi) => (
-											<li key={release.id}>
-												{vi > 0 && (
-													<span className={s.stubGrantSep} aria-hidden="true">{'/ '}</span>
-												)}
-												{variantLabel || releaseTitle(release)}
-											</li>
-										))}
-									</ul>
 								</div>
 							</div>
 

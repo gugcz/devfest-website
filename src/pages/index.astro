@@ -3,7 +3,6 @@ import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
 import millChimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Countdown from '../components/Countdown';
 import HeroOffer from '../components/HeroOffer';
 import NewsletterForm from '../components/NewsletterForm';
 import HeroBackground from '../components/HeroBackground.astro';
@@ -111,34 +110,20 @@ const GALLERY = [
 				</div>
 			</div>
 
-			<!-- The footing line: date, venue, price and clock typed out along the
-			     base of the frame, values only. Date and venue speak for
-			     themselves; the wave and the clock keep an inline qualifier
-			     because a bare figure would not say what it counts. -->
+			<!-- The footing line: date, venue and the wave on sale, typed as one
+			     mono line along the base of the frame — a case-file stamp, not a
+			     stats bar. No clock: a ticking readout under a still poster was
+			     the one thing on the page that moved for its own sake. -->
 			<div class="hero-foot">
-				<time class="meta-value" datetime="2026-10-30">30 Oct 2026</time>
+				<time datetime="2026-10-30">30 Oct 2026</time>
 				<a
-					class="meta-value meta-value--link"
+					class="hero-foot-link"
 					href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
 					target="_blank"
 					rel="noopener noreferrer"
-				>Uhelný Mlýn</a>
+				>Uhelný Mlýn, near Prague</a>
 				<!-- The wave on sale and its price, live from ti.to. -->
 				<HeroOffer client:load />
-
-				<div class="hero-clock" aria-label="Time until doors open">
-					<span class="meta-label">Doors open in</span>
-					{/*
-						transition:persist keeps this island (and its 1s interval)
-						alive across soft navigations instead of remounting it from
-						the INITIAL_TIME placeholder. Persistence needs a matching
-						persisted element on BOTH the outgoing and incoming page, and
-						the countdown only exists here — so it helps on same-page
-						client-side navigations (e.g. back/forward to `/`), not on
-						`/` → `/team`, where the island is torn down as usual.
-					*/}
-					<Countdown compact showSeconds={false} client:load transition:persist />
-				</div>
 			</div>
 		</section>
 

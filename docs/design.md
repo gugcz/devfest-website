@@ -274,9 +274,9 @@ red band is `--red-toned`, never flat `#F11000`. No red washes behind photograph
 running text, no other accent hue, no red-to-other-hue gradients.
 
 **[MUST] One red mark per list.** A list spends red once: the invoice step
-numbers are `--ink-muted` (`invoice.scss:39–45`), the ticket grant separator
-`--ink-faint` (`Tickets.module.scss:126–130`), so the live wave's state is the
-list's one red mark.
+numbers are `--ink-muted` (`invoice.scss:39–45`); on the ticket list the
+live wave's "On sale" state and its red Buy button are the one red mark —
+the row has no lit ground of its own (`Tickets.module.scss`, "the live wave").
 
 | Use of `#F11000` | Allowed? |
 | --- | --- |
@@ -497,7 +497,7 @@ value from the histogram.
 | `max-width: 860px` | 5 | header / hero |
 | `max-width: 720px` | 5 | mid collapse |
 | `max-width: 500px` | 4 | small phone — 2× `500px` + 2× `31.25em` (`Footer.scss:76,148`) |
-| `max-width: 380px` | 2 | narrowest phone (`BaseLayout.scss:46` header padding, `Countdown.module.scss:104`) |
+| `max-width: 380px` | 1 | narrowest phone (`BaseLayout.scss:46` header padding) |
 | `max-width: 383.98px` | 1 | the header Tickets leaves the bar (`Menu.scss:571`) |
 | `max-width: 760px` / `759px` | 2 | the home credits drop their portrait (`SpeakersTeaser.module.scss:152`); the speaker grid's names step down (`Speakers.module.scss:70`) |
 | `max-width: 700px` | 2 | `venue.scss:53`, `thank-you.scss:70` |
@@ -597,8 +597,10 @@ Rules:
   tile while that tile is hovered or focused, on the home credits while a row
   of the list is; on `/team` the colour bleeds from the cursor). With the portrait view transition into a
   sheet, it is the site's only decorative motion.
-- **[MUST] Nothing moves on its own except the home hero's topic rotor and
-  the countdown.** The ticker band is gone (component deleted). The rotor sits between the statement and
+- **[MUST] Nothing moves on its own except the home hero's topic rotor.**
+  The ticker band and the hero countdown are gone (both components deleted:
+  a ticking readout under a still poster was the one thing on the page that
+  moved for its own sake). The rotor sits between the statement and
   the actions at every width, phones included, under a mono `--fs-label`
   "On the programme" caption in `--ink-muted` (`index.scss:115–121`,
   `aria-hidden`; the group's `aria-label` repeats it with the set);
@@ -660,7 +662,8 @@ inset ring (`outline-offset: -2px`) plus the same red text
 
 **[MUST] Red is spent once per list, not once per row.** Resting row labels
 are muted mono `rgba(255,255,255,0.55)`; step numbers and separators are
-muted too (see Color). Exception: the on-sale wave's lit ground and state.
+muted too (see Color). Exception: the on-sale wave's state word and its
+  Buy button.
 
 **[MUST] An open `<details>` does not hold the red field** — it takes a flat
 `--panel-lit` ground (no wash, no feather) inside the question column, not
@@ -800,11 +803,12 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   `index.scss:608–613`), no tier names (they live on `/partners`), one grid
   of marks per tier, top tier first, Media left out (`index.astro:186–213`).
   Each mark is sized against its tier's `/partners` box at 110%
-  (`STRIP_SCALE` 1.1, `index.astro:29`); every tier shares one `auto-fill`
-  grid of `13.5rem` tracks, so the tiers' columns line up (Community on its
-  own `11rem` track); `grid-auto-flow: row dense`; Platinum and wide marks
-  span two cells (`index.scss:622–651`). On a phone two columns, Platinum
-  and wide marks across the row (`index.scss:678–690`). The strip ends on a
+  (`STRIP_SCALE` 1.1, `index.astro:29`); each tier is one left-set flex row
+  of marks at their natural width, wrapping when it must, on one steady gap
+  (`.partners-row`, `index.scss`) — a line of logos, not a grid: the earlier
+  `auto-fill` grid with two-wide cells and `dense` packing scattered the
+  marks into holes. On a phone a two-column grid, Platinum and wide marks
+  across the row. The strip ends on a
   "See all partners" hairline link (`.partners-more`, `index.scss:694–708`).
 - **[MUST] Logos get equal ink area, not equal width.** `opticalBox()`
   (`partners.ts:129`) → `--logo-w` (via `partnerLogo()`, `partners.ts:152`),
@@ -842,7 +846,7 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 ## Component conventions
 
 - **[MUST] Astro for layout and static UI; React islands only for behaviour**
-  (`Countdown`, `NewsletterForm`, `Speakers`, `SpeakersTeaser`, `Sessions`,
+  (`HeroOffer`, `NewsletterForm`, `Speakers`, `SpeakersTeaser`, `Sessions`,
   `Agenda`, `Tickets`, `InvoiceForm`).
 - **[CURRENT] `client:load` by default;** `NewsletterForm`
   (`index.astro:255`) and the invite page's island use `client:visible`.
@@ -1158,16 +1162,15 @@ Decision criteria, picked per page:
   its height as `--consent-h` on `<html>` (`CookieBanner.astro`); `#hero`
   takes it as its bottom inset, so the bottom-set content rises into the sky
   of the photograph instead of sliding under the banner.
-- **The home hero's foot is one typed line** (`index.astro:118–142`): the
-  date as a `<time>`, the venue as a maps link, the wave on sale
-  (`HeroOffer`: mono wave qualifier, "· until <date>" when it has one, then
-  "From <price>" linked to `#tickets`) and "Doors open in" + the compact
-  countdown. Values in Bebas at one size (`index.scss:274–282`,
-  `HeroOffer.module.scss:32`, `Countdown.module.scss:53`); the countdown's
-  unit letters are Bebas caps, uppercase, not lowercase
-  (`Countdown.module.scss:72–79`); no Date / Place
-  labels, no stat row. The line wraps at the phone measure. The rotor is
-  captioned "On the programme" (see Motion).
+- **The home hero's foot is one mono line** (`index.astro`, `.hero-foot`):
+  the date as a `<time>`, the venue as a maps link ("Uhelný Mlýn, near
+  Prague") and the wave on sale (`HeroOffer`: wave qualifier, "· until
+  <date>" when it has one, then "From <price>" linked to `#tickets`), all in
+  `--fs-label` mono caps — facts in white, qualifiers at 0.72 — joined by
+  middle dots that ride on the part they precede. No Bebas figures, no
+  countdown, no stat row: a stamp on the case file, so the poster above is
+  the only large type in the frame. The line wraps at the phone measure.
+  The rotor is captioned "On the programme" (see Motion).
 - **The home statement fills the phone column.** ≤600px it sets at
   `clamp(2.6rem, 16.5vw, 4.5rem)` with no `ch` cap, so the longest line
   spans the column (`index.scss:766–767`); still the page's largest type.
@@ -1181,9 +1184,10 @@ Decision criteria, picked per page:
 - **The ticket and invoice facts sit where the decision is.** Each stub
   prints its price once; another variant's price is one mono data line under
   it ("Company funded 1 452 Kč"). The buttons read "Buy" / "Company pays";
-  their accessible names lead with that visible label (WCAG 2.5.3). The
-  on-sale stub explains the company variant in one line ("Company pays: same
-  ticket, invoiced to your employer."). "VAT included in every price." sits
+  their accessible names lead with that visible label (WCAG 2.5.3). That is
+  the whole of who-pays on a row: no "Individual / Company funded" admission
+  line under the description, no explainer under the buttons — the same
+  fact four times read as a template. "VAT included in every price." sits
   once under the list, in the footnote (max `70ch`, `Tickets.module.scss:370`)
   that also offers the invoice (`Tickets.tsx:56–117`, `324–330`). `/invoice`
   names the rate it prices from (no "Estimated"), the 14-day due date
@@ -1332,18 +1336,14 @@ Places the code contradicts itself or this document. Each needs a decision.
 11. **`Closer` default `tone="raised"` renders `band--raised`, which has no
     CSS.** Harmless today (every call site passes `tone="accent"`).
 12. **The font-size ramp is [MUST] but broken at ~35 call sites:** 29
-    literals (`Countdown.module.scss:19,30,53,74,84,95,107`,
-    `HeroOffer.module.scss:32,54`, `Menu.scss:407,478,580,589`,
+    literals (`Menu.scss:407,478,580,589`,
     `AttendingCard.module.scss:38,524`, `team.scss:98,117`,
     `invite/member.scss:74`,
     `index.scss:85,139,276,321,329,721,726,759,796,809,870`), 1 relative
     (`Footer.scss:133`), 3 inherited
     (`Footer.scss:274,278,283`).
-    The hero footing value `clamp(1.6rem, 2.4vw, 2.2rem)` is written three
-    times (`index.scss:276`, `HeroOffer.module.scss:32`,
-    `Countdown.module.scss:53`): a token candidate. The same claim in
-    `BaseLayout.scss:79` is equally untrue. Fold into the ramp or downgrade
-    to [CURRENT].
+    The same claim in `BaseLayout.scss:79` is equally untrue. Fold into
+    the ramp or downgrade to [CURRENT].
 13. **`/` has no `.fallback-note`** while `agenda`, `speakers` and
     `workshops` do.
 14. **`file:line` citations drift.** This pass re-cited the whole document

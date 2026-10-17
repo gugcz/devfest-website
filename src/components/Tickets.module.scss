@@ -110,25 +110,6 @@
 	margin: 0;
 }
 
-// Admission line — what the pass grants, set as one mono row.
-.stubGrants {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 0.55rem;
-	@include mono(var(--fs-label-sm), 0.1em, uppercase);
-	color: var(--ink-meta);
-}
-
-// Muted, not red: a red slash on every row is a red mark per wave, and the
-// list's one red mark is the live wave's state.
-.stubGrantSep {
-	color: var(--ink-faint);
-}
-
 /* ---- price + action ---- */
 .stubEnd {
 	display: flex;
@@ -163,20 +144,9 @@
 }
 
 /* ---- the live wave ---- */
-// The buyable wave is marked by a lit ground that bleeds past the column — light,
-// not a box, and its only mark. On ::after, because `.field-row--holds::before`
-// is the shared reach wash.
-.stubLive::after {
-	content: '';
-	position: absolute;
-	inset: 0 calc(-1 * var(--gutter));
-	background: var(--wash);
-	pointer-events: none;
-	z-index: -1;
-	// Feathered: nothing encloses this row, so an un-masked full-bleed box shows its edges.
-	-webkit-mask-image: var(--field-feather);
-	mask-image: var(--field-feather);
-}
+// No ground of its own: the live wave is told by its red "On sale" state
+// and the red Buy button — the list's one red mark — not by a lit panel
+// behind it. (`.stubLive` stays on the row for the hover wash and tests.)
 
 /* ---- a spent wave ---- */
 // Keeps full text contrast — a settled wave is quieter by weight and by its status
@@ -230,13 +200,8 @@
 		font-size: var(--fs-h3);
 	}
 
-	// The admission line is a property of the event, not of a wave, so it stays only
-	// on the wave a visitor can actually buy. With nothing left inside it, the fact
-	// line must not keep reserving its air either.
-	.stubSpent .stubGrants {
-		display: none;
-	}
-
+	// A spent wave has no deadline left to show, so the fact line must not
+	// keep reserving its air either.
 	.stubSpent .stubFacts {
 		margin-top: 0;
 	}
@@ -244,12 +209,6 @@
 	// The column is left-set on mobile, so the figure and its VAT note must be too.
 	.stubPriceGroup {
 		align-items: flex-start;
-	}
-
-	// The desktop wash is a raking highlight; a phone needs the lit row stated harder.
-	.stubLive::after {
-		background:
-			linear-gradient(104deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.045) 42%, transparent 86%);
 	}
 }
 
@@ -342,14 +301,6 @@
 // the element); this module only sizes it down to the row. Module CSS is
 // bundled BEFORE the global sheet, so the compound selector is what lets
 // these win.
-// What "Company pays" means, under the buttons it explains.
-.ctaNote {
-	@include prose(var(--fs-ui), 1.5);
-	color: var(--ink-meta);
-	max-width: 26ch;
-	margin: 0;
-}
-
 .cta:global(.btn-primary),
 .cta:global(.btn-ghost) {
 	padding: 0.95rem 1.3rem;

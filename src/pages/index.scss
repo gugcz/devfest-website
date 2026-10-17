@@ -243,11 +243,12 @@
 }
 
 /* ---- footing line ---- */
-// Date, venue, price and clock as one typed line along the base of the hero,
-// set on a shared baseline and left-set like the column above it. Values
-// only; the two qualifiers that survive ("Early bird", "Doors open in") sit
-// inline in front of their figure. No hairline above it: the gap under the
-// actions sets it apart.
+// Date, venue and the wave on sale as ONE mono line along the base of the
+// hero, left-set like the column above it: a stamp on the case file, in the
+// same voice as every other label on the site. Facts in white, qualifiers
+// at 0.72 (0.55 fell under 4.5:1 on the plate's darkest part), a middle dot
+// between the parts. No Bebas figures, no clock: the poster above is the
+// only large type in the frame.
 .hero-foot {
 	position: relative;
 	z-index: 10;
@@ -258,45 +259,34 @@
 	flex-wrap: wrap;
 	align-items: baseline;
 	justify-content: flex-start;
-	gap: 0.6rem clamp(1.5rem, 3vw, 2.75rem);
+	gap: 0.5rem 0.9rem;
 	padding: clamp(0.85rem, 1.6vh, 1.6rem) 0 calc(clamp(0.85rem, 1.6vh, 1.6rem) + env(safe-area-inset-bottom));
-}
-
-// Lifted from 0.55 to 0.72: at the darker part of the plate this sits on,
-// 0.55 fell under 4.5:1. `--fs-label` is 12.5px at every width.
-.meta-label {
 	@include mono(var(--fs-label), 0.2em, uppercase);
 	color: rgba(255, 255, 255, 0.72);
-	white-space: nowrap;
-	margin: 0;
+
+	time {
+		color: var(--color-text);
+	}
 }
 
-.meta-value {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.6rem, 2.4vw, 2.2rem);
-	line-height: 1;
-	text-transform: uppercase;
+// The dot rides on the part it precedes, so a wrapped line never starts
+// with one. The offer island draws its own (`HeroOffer.module.scss`): a
+// scoped `> * + *::before` here cannot reach into it.
+.hero-foot-link {
 	color: var(--color-text);
-	white-space: nowrap;
-	margin: 0;
-}
-
-.meta-value--link {
-	color: inherit;
 	text-decoration: none;
 	transition: color 0.2s ease;
+
+	&::before {
+		content: '·';
+		margin-right: 0.9rem;
+		color: rgba(255, 255, 255, 0.45);
+	}
 
 	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);
 	}
-}
-
-// Qualifier and readout on one baseline, like the offer beside it.
-.hero-clock {
-	display: inline-flex;
-	align-items: baseline;
-	gap: 0.6em;
 }
 
 // Laptop heights. A browser window on a 1280x720 to 1536x864 screen leaves
@@ -619,35 +609,18 @@
 	width: 100%;
 }
 
-// One column grid shared by every tier row, left-set, so the tiers' columns
-// line up and a short row stands on the columns of the full one above it.
-// 13.5rem gives five tracks at 1440: the Diamond row (GDG two-wide) fills
-// one, Gold takes two, and every mark keeps its /partners box size.
+// Each tier is one left-set row of marks at their natural width, wrapping
+// when it must — a line of logos, not a grid. A grid with two-wide cells
+// and `dense` packing scattered the marks into holes; a flowing row keeps
+// the tier's ladder (bigger marks higher up) and a steady gap.
 .partners-row {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(13.5rem, 100%), 1fr));
-	// A two-column mark would otherwise leave a hole in the row before it.
-	grid-auto-flow: row dense;
+	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
-	justify-items: start;
-	gap: clamp(1.75rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 3rem);
-}
-
-// Community closes the strip off the ladder, on its own tighter track: its
-// boxes are the smallest, and at 13.5rem its six marks left one alone on a
-// second row.
-.tier-community {
-	grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr));
-}
-
-// Platinum's one mark is drawn against a box two columns wide, and so is
-// a very wide mark (`partnerLogo().wide`).
-.tier-platinum .partners-item,
-.partners-item--wide {
-	grid-column: span 2;
+	gap: clamp(1.75rem, 3vw, 2.5rem) clamp(2rem, 4vw, 3.5rem);
 }
 
 // No card — open marks on the section ground (`partner-logo` in _logos.scss).
@@ -675,10 +648,11 @@
 	}
 }
 
-// Phones: two columns, so a wordmark stays ~30px tall; Platinum and a very
-// wide mark take the whole row.
+// Phones: a two-column grid, so a wordmark stays ~30px tall; Platinum and a
+// very wide mark take the whole row.
 @media (max-width: 600px) {
 	.partners-row {
+		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 1.75rem 1.25rem;
 	}

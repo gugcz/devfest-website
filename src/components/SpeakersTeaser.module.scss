@@ -62,11 +62,13 @@
 	gap: 0.625rem;
 }
 
+// Name over role, always: a role that sometimes shared the name's line and
+// sometimes dropped under it made the list ragged from row to row.
 .row {
 	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 0.25rem 1.25rem;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.2rem;
 	text-decoration: none;
 	color: inherit;
 }
@@ -80,10 +82,7 @@
 	@include mono(var(--fs-label-sm), 0.15em, uppercase);
 	color: var(--ink-muted);
 	// One line, cut with an ellipsis: a long Sessionize tagline wrapped into
-	// a paragraph under a credit. It shares the name's line while 12rem fits,
-	// else drops under it.
-	flex: 1 1 12rem;
-	min-width: 0;
+	// a paragraph under a credit.
 	max-width: 100%;
 	white-space: nowrap;
 	overflow: hidden;
@@ -148,7 +147,7 @@
 }
 
 /* ===================== RESPONSIVE ===================== */
-// Phones: no portrait column; the name steps down and the tag drops under it.
+// Phones: no portrait column; the name steps down.
 @media (max-width: 760px) {
 	.body {
 		grid-template-columns: minmax(0, 1fr);
@@ -156,16 +155,6 @@
 
 	.portrait {
 		display: none;
-	}
-
-	.row {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
-	// In a column the tag's 12rem basis would become its height.
-	.tag {
-		flex: none;
 	}
 
 	.name {

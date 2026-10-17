@@ -242,7 +242,9 @@
 	position: relative;
 	z-index: 2;
 	gap: min(0.65rem, 3.25vw);
-	padding: 0.72rem min(1.15rem, 5.75vw);
+	// Same box as `.header-cta` — label type, padding and so height — so the
+	// two controls in the bar read as a pair, not a button and its footnote.
+	padding: 0.72rem min(1.5rem, 7.5vw);
 	// Physical touch target — the token is px, not rem. See .header-cta.
 	min-height: var(--header-tap);
 	min-width: var(--header-tap);
@@ -252,7 +254,7 @@
 	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 	color: var(--color-text);
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
+	@include cta-label;
 	cursor: pointer;
 	transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
