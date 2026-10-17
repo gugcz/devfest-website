@@ -54,6 +54,12 @@ typography:
     fontWeight: 400
     lineHeight: 1
     letterSpacing: "0"
+  title-sm:
+    fontFamily: "var(--font-bebas-neue), sans-serif"
+    fontSize: "1.45rem"
+    fontWeight: 400
+    lineHeight: 1
+    letterSpacing: "0"
   lede:
     fontFamily: "var(--font-special-elite), cursive"
     fontSize: "clamp(1.2rem, 1.6vw, 1.5rem)"
@@ -165,11 +171,19 @@ components:
     rounded: "{rounded.sharp}"
     padding: "0.85rem 0.95rem"
     height: "2.75rem"
-  speaker-row:
+  speaker-tile:
     backgroundColor: "transparent"
-    textColor: "{colors.ink-dim}"
-    typography: "{typography.title}"
-    padding: "0.55rem 0"
+    textColor: "{colors.text}"
+    typography: "{typography.title-sm}"
+  speaker-tile-hover:
+    textColor: "{colors.accent-hot}"
+  agenda-block:
+    backgroundColor: "{colors.panel}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.sharp}"
+    padding: "0.7rem 0.9rem"
+  agenda-block-hover:
+    backgroundColor: "{colors.panel-hover}"
   step-list-label:
     textColor: "{colors.ink-muted}"
     typography: "{typography.note}"
@@ -201,7 +215,7 @@ the durable reference.
 | `src/styles/_type.scss` | the type recipes as mixins, one per voice — `note()`, `action()`, `cta-label()`, `mono()`, `display()`, `row-title()`, `prose()`, `hairline-link()`. A CSS Module that cannot compose a global class includes the mixin instead |
 | `src/styles/_controls.scss` | control recipes — `lit-field()` |
 | `src/styles/_logos.scss` | partner-mark recipe — `partner-logo()` (original colours; `.logo--dark` on a paper card) |
-| `src/components/Sheet.module.scss`, `Print.module.scss` | shared chrome composed by more than one island (the detail sheets; the mounted 4:5 print) |
+| `src/components/Sheet.module.scss`, `Print.module.scss`, `SpeakerTile.module.scss` | shared chrome composed by more than one island (the detail sheets; the mounted 4:5 print; the speaker tile and its casting-sheet grid) |
 | `astro.config.mjs:72–106` | the three brand faces, self-hosted via the Astro Fonts API |
 | `src/components/*.module.scss` | co-located CSS Modules for React islands (`import s from './X.module.scss'`) |
 | `src/components/*.astro` + `*.scss` | static components with a sibling stylesheet |
@@ -277,16 +291,20 @@ document: a line is the first or last edge of a list, never ornament. A
 rule is drawn at a section head (`.head-rule`: a 1px `--color-text` line
 the head sits on, the list's first line, `BaseLayout.scss:348–368`), under
 every list row (`.field-row` `border-bottom: 1px solid var(--rule)`,
-`661–686`; the speaker register's `.cell`, which also opens on a white top
-rule, `Speakers.module.scss:21–32`), on the footer's top edge (`Footer.scss:9`,
-the document's last rule), in the agenda's time × room grid, in data tables
+`661–686`), on the footer's top edge (`Footer.scss:9`,
+the document's last rule), in the agenda timetable (a dashed `--rule-soft`
+tick across each hour, the `--rule-strong` line under the room heads, the
+`--rule` hairline a break sits on; `Agenda.module.scss:70–76`, `97`,
+`172`), in data tables
 (privacy policy), as a form control's boundary (the press kit's format chips
 included), as an in-prose link's underline, as a progress spine (the card
 builder's steps; the hero facts line's venue link, `index.scss:86–88`), and
 as the cookie banner's edge over the page. The partner
-walls draw no tiles or borders around a mark. Never a divider floating
+walls draw no tiles or borders around a mark, and the speaker tiles none
+around a print. Never a divider floating
 between sections, a line above the hero's facts line, a ruled readout (the
-invoice total), or an edge down a block's left side. `.head-split` and
+invoice total), a rule down an agenda room column (the gap between blocks
+parts the rooms), or an edge down a block's left side. `.head-split` and
 `.head-stack` still close on space.
 
 Ink ramp: `--ink-strong` `0.85`, `--ink` `0.78`, `--ink-soft` `0.7`,
@@ -441,7 +459,7 @@ Poster scale (Bebas), `BaseLayout.scss:61–77`:
 | `--fs-card-title` | `1.95rem` | 69 | card / dossier title (invoice, agenda) |
 | `--fs-title-compact` | `1.6rem` | 70 | **no caller** |
 | `--fs-row` | `clamp(2.1rem, min(5.2vw, 7.5svh), 4.5rem)`; `2.1rem` ≤600px | 75 | row title, **short** list (desks) |
-| `--fs-row-sm` | `clamp(1.7rem, min(4vw, 6svh), 3.4rem)`; `1.7rem` ≤600px | 76 | row title, **long** list (sessions, FAQ questions, clippings, the speaker register, the ticket waves and their prices, the home speaker rows) |
+| `--fs-row-sm` | `clamp(1.7rem, min(4vw, 6svh), 3.4rem)`; `1.7rem` ≤600px | 76 | row title, **long** list (sessions, FAQ questions, clippings, the ticket waves and their prices) |
 | `--fs-row-figure` | `clamp(2.1rem, min(4.2vw, 6svh), 4rem)`; `2.1rem` ≤600px | 77 | the figure opposite a row title |
 
 **[MUST] hero > h2 > head > row-sm at every viewport.** `--fs-h2` and the
@@ -459,7 +477,7 @@ Text scale, `BaseLayout.scss:81–93`:
 | --- | --- | --- | --- |
 | `--fs-label-xs` | `0.6875rem` (11px) | 81 | micro mono figure: avatar counts, kit file sizes and specs |
 | `--fs-label-sm` | `0.74rem` | 82 | mono figure: the session row's time, counts |
-| `--fs-label` | `0.78rem` | 83 | mono figure: row indices and serials (the ticket ledger, the speakers teaser), the footer folio, a press clipping's date |
+| `--fs-label` | `0.78rem` | 83 | mono figure: row indices and serials (the ticket ledger, the speaker tiles' sheet numbers), the footer folio, a press clipping's date |
 | `--fs-label-lg` | `0.84rem` | 84 | mono figure: the larger index (`NextStep`), agenda times, the invite meta line |
 | `--fs-note-sm` | `0.85rem` | 85 | Special Elite note: roles, captions, row metadata (the ticket state word, deadline and alt price; the speaker role; agenda room and track; session chips; `.record-status`) |
 | `--fs-note` | `0.95rem` | 86 | Special Elite note: the `.head-rule` note, `.eyebrow`, the hero facts line, the facts `dl`, form labels, the sheet kicker, nav meta, footer links |
@@ -468,7 +486,7 @@ Text scale, `BaseLayout.scss:81–93`:
 | `--fs-body` | `1.05rem` | 89 | long-form reading copy |
 | `--fs-body-lg` | `1.15rem` | 90 | footnotes, short ledes |
 | `--fs-lede` | `clamp(1.2rem, 1.6vw, 1.5rem)` | 91 | section ledes, status prose, the `EndLine`, the home facts note and newsletter lede |
-| `--fs-title-sm` | `1.45rem` | 92 | small titles, mobile record titles, agenda run-sheet titles, press-kit variant names |
+| `--fs-title-sm` | `1.45rem` | 92 | small titles, mobile record titles, agenda run-sheet titles, press-kit variant names, speaker tile names (`SpeakerTile.module.scss:64–70`) |
 | `--fs-monogram` | `3.4rem` | 93 | initials in an empty photo well |
 
 **[MUST] Mono figures never set under 11px.** `--fs-label-xs` is the floor;
@@ -558,22 +576,21 @@ value from the histogram.
 
 | Query | Count | Where |
 | --- | --- | --- |
-| `max-width: 600px` | 19 | the main phone breakpoint |
-| `max-width: 900px` | 13 | wide layout collapse; the speaker register drops its portrait (`Speakers.module.scss:97`); the home facts and newsletter go one column, the facts line stacks and drops its middle dots, the venue frame goes 4:3 (`index.scss:288–316`, `HeroOffer.module.scss:30`) |
-| `max-width: 860px` | 7 | header / hero |
-| `max-width: 720px` | 5 | mid collapse: the ticket row and the home speaker row fold to two columns (`Tickets.module.scss:172`, `SpeakersTeaser.module.scss:74`) |
-| `max-width: 500px` | 4 | small phone — 2× `500px` + 2× `31.25em` (`Footer.scss:76,148`) |
-| `max-width: 380px` | 1 | narrowest phone (`BaseLayout.scss:46` header padding) |
-| `max-width: 599.98px` | 1 | the header Tickets leaves the bar (`Menu.scss:560`) |
+| `max-width: 600px` | 18 | the main phone breakpoint |
+| `max-width: 900px` | 10 | wide layout collapse; the home facts and newsletter go one column, the facts line stacks and drops its middle dots (`index.scss:274`, `HeroOffer.module.scss:29`) |
+| `max-width: 720px` | 7 | mid collapse: the ticket row folds to two columns (`Tickets.module.scss:172`, `271`); the speaker tiles go two across and the home teaser trims to four (`SpeakerTile.module.scss:92`, `SpeakersTeaser.module.scss:31`); the home mosaic goes two columns (`index.scss:161`); `Sheet.module.scss:156`, `Sessions.module.scss:366` |
+| `max-width: 860px` | 5 | header / hero |
+| `max-width: 1100px` | 3 | the speaker tiles go three across and the home teaser trims to six (`SpeakerTile.module.scss:86`, `SpeakersTeaser.module.scss:25`); the calendar stub folds to two columns (`thank-you.scss:58`) |
+| `max-width: 500px` | 4 | small phone — 2× `500px` + 2× `31.25em` (`Footer.scss:80,147`) |
 | `max-width: 700px` | 2 | `venue.scss:53`, `thank-you.scss:70` |
-| `max-width: 1100px` | 1 | the calendar stub folds to two columns (`thank-you.scss:58`) |
-| `max-width: 1000px` | 1 | widest collapse (`index.scss:565`) |
-| `max-width: 1200px` | 1 | `75em`, `Footer.scss:59` |
-| `max-width: 960px` | 1 | `60em`, `Footer.scss:67` |
+| `max-width: 380px` | 1 | narrowest phone (`BaseLayout.scss:46` header padding) |
+| `max-width: 599.98px` | 1 | the header Tickets leaves the bar (`Menu.scss:535`) |
+| `max-width: 1200px` | 1 | `75em`, `Footer.scss:63` |
+| `max-width: 960px` | 1 | `60em`, `Footer.scss:71` |
 
-**[CURRENT]** `min-width` queries exist: `901px` ×6 (`index.scss` ×5, the
-menu's two-column overlay `Menu.scss:363`), `601px` ×2 (`Menu.scss:219`,
-`invite/member.scss:164`), the press kit's `640px` / `1100px`
+**[CURRENT]** `min-width` queries exist: `901px` ×1 (the menu's
+poster-scale link steps, `Menu.scss:339`), `601px` ×1
+(`invite/member.scss:164`), the press kit's `640px` / `1100px`
 (`press/downloads.scss:26`, `30`), and the `1921px` root scale ×3 — see
 Open points.
 
@@ -581,7 +598,7 @@ Open points.
 with all destinations behind one toggle at every width (`Menu.scss:1–13`).
 
 **[CURRENT]** Two JS-only breakpoints: header auto-hide `760px`
-(`Menu.astro:282`), agenda view switch `1024px` (`Agenda.tsx:58`). No
+(`Menu.astro:250`), agenda view switch `1024px` (`Agenda.tsx:63`). No
 stylesheet uses `760px` any more.
 
 ## Z-index & layering
@@ -632,7 +649,7 @@ its call site. The de-facto scale, by frequency:
 | `0.28s` | the row reach field's colour + opacity fade (`BaseLayout.scss:681`, `691`) |
 | `0.3s` | the wash opacity, cookie banner (`BaseLayout.scss:741`, `CookieBanner.scss:24`) |
 | `0.32s` | the row pull (`translateX`) and the sheet entry (`BaseLayout.scss:731`, `Sheet.module.scss:23`) |
-| `0.6s` | a B&W photograph developing to colour (`venue.scss:32`: venue photos; `Print.module.scss:42`: the speaker print; `index.scss:145`, `206`: the home gallery strip and venue frame) |
+| `0.6s` | a B&W photograph developing to colour (`venue.scss:32`: venue photos; `Print.module.scss:41`: the speaker print on every tile; `index.scss:147`: the home mosaic) |
 | `1.3s` / `1.6s` infinite | loading pulse and skeleton shimmer while data loads (`DataState.module.scss:41`, `55`; `Tickets.module.scss:305`, `327`) |
 
 | Easing | Where |
@@ -648,8 +665,8 @@ Rules:
 - **[MUST] Every animation and transition has a `prefers-reduced-motion:
   reduce` opt-out**, including `scroll-behavior` (`BaseLayout.scss:229–233`),
   controls (`635–641`), row transitions (`759–771`), sheet
-  (`Sheet.module.scss:162`), the home gallery and venue frame
-  (`index.scss:151–153`, `212–214`).
+  (`Sheet.module.scss:162`), the home mosaic (`index.scss:153–155`), the
+  speaker tile's name (`SpeakerTile.module.scss:106–110`).
 - **[MUST] No scroll reveal, no per-section entrance.** Sections are simply
   there. The `.reveal` fade-and-rise on every band was removed: the same
   entrance seventeen times spent the page's motion before anything happened.
@@ -659,21 +676,21 @@ Rules:
   never hides content without that gate.
 - **[MUST] One signature motion: a B&W photograph develops to colour on
   hover** (`filter: grayscale(1) …` → `grayscale(0)` over `0.6s`: the venue
-  route photos, and the speaker print via `[data-developed]`
-  (`Print.module.scss:45`): the one portrait beside the `/speakers` register
-  develops while a row of its list is hovered or focused; on `/team` the
-  colour bleeds from the cursor; on `/` the venue frame under the facts and
-  every photograph in the "Last year" strip, `index.scss:137–153`,
-  `195–214`). With the portrait view transition into a sheet, it is the
+  route photos; the speaker print on every tile, which develops while its
+  link or button is focused, or hovered where a pointer hovers
+  (`:is(a, button):focus-visible > .print .photo` and the same under
+  `@media (hover: hover)`, `Print.module.scss:44–56`; `[data-developed]` stays for a caller whose
+  print is not inside the control); on `/team` the colour bleeds from the
+  cursor; on `/` every photograph in the "Past editions" mosaic,
+  `index.scss:140–157`). With the portrait view transition into a sheet, it is the
   site's only decorative motion. The hero plate is still.
 - **[MUST] Nothing moves on its own.** The ticker band, the hero countdown
   and the home topic rotor are gone (a ticking readout or a cycling word
   under a still poster was the one thing on the page that moved for its own
   sake; the topics are a "Programme" line in the facts `dl`). The agenda's
   live dot is static: the "Live now" word carries the state. Nothing
-  scrolls, nothing marquees: the home gallery is a strip the visitor
-  scrolls (`overflow-x: auto`, scroll-snap), never a marquee
-  (`index.scss:104–135`). There is no other hover motion: a text action's
+  scrolls, nothing marquees: the home gallery is a still mosaic
+  (`index.scss:118–159`). There is no other hover motion: a text action's
   hover is a colour change to `--color-accent-hot`, nothing slides (see
   Component states).
 - **[MUST] Animate only `opacity` and `transform`.**
@@ -744,9 +761,9 @@ shadow, nothing glows or moves (`NewsletterForm.module.scss:62–78`).
 
 **Live state is a red border, nothing more.** The agenda's now line
 (`.nowLine`) is a 2px `--color-accent-hot` top border; the session on now
-(`.cellLive`) turns its 1px top border `--color-accent`. Neither carries a
-shadow (`Agenda.module.scss:517`, `588–590`). The live dot (`.liveDot`,
-`579`) is a static 5px red dot, no pulse, no ring.
+(`.cellLive`) takes a 2px `--color-accent` top edge on its block. Neither carries a
+shadow (`Agenda.module.scss:496–503`, `567–569`). The live dot (`.liveDot`,
+`558–564`) is a static 5px red dot, no pulse, no ring.
 
 `.field-row` reach states — **[MUST] chosen by whether the row IS the
 control**:
@@ -837,17 +854,19 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 ## Images & media
 
 - **[MUST] The photograph well is 4:5** (`.print`, `BaseLayout.scss:398`;
-  `Print.module.scss:24`, the one plate beside the speaker register and
-  beside the home speakers teaser).
-- **[CURRENT] Other ratios in use:** `3 / 2` the home
-  gallery strip (`index.scss:137–142`), `16 / 9` press clippings on `/contact`
+  `Print.module.scss:23`, every speaker tile on the home teaser and on
+  `/speakers`).
+- **[CURRENT] Other ratios in use:** `16 / 9` press clippings on `/contact`
   (`press.scss:65`) and press-kit previews (`press/downloads.scss:46`), `1`
   the session sheet's speaker thumb (`SessionDetail.module.scss:82`). The
   home hero plate has no ratio: `.hero-plate` is `min-height: clamp(26rem,
   58vw, 44rem)` (`34rem` ≤600px) and the photograph fills it
-  (`index.scss:11–32`, `318–326`).
+  (`index.scss:11–32`, `318–326`). The home mosaic has no ratio either:
+  its cells are grid rows `clamp(9rem, 15vw, 14rem)` tall (`clamp(7rem,
+  30vw, 10rem)` ≤720px) and each photograph covers its cell
+  (`index.scss:118–175`).
 - **[MUST] Portraits crop `object-fit: cover; object-position: center 22%`**
-  (`Print.module.scss:36–37`); the sheet plate `center 20%`
+  (`Print.module.scss:35–36`); the sheet plate `center 20%`
   (`SpeakerDetail.module.scss:39`).
 - **[MUST] The DevFest.cz logo is the official file, never a redraw.**
   `src/assets/logo.png` is `public/press-kit/DF26_logo_white_and_red_dot.png`
@@ -889,39 +908,41 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   every other master is shown as supplied.
 - **[MUST] The partner wall draws no tiles.** No cell, no border, no lit
   plate, no cream tile: open marks on the page ground. On `/partners` each
-  tier opens on a `.head-rule` (the tier name at `--fs-head`, the count "N
-  partners" as the note; `partners.astro:50–55`), then its marks in **one
-  left-set flex row** wrapping when it must, on a steady gap
-  (`.logo-grid`, `partners.scss:33–45`). Rank is **one cap height per tier**
-  (`--mark-h`): Platinum `4rem`, every other tier `2.6rem`, Community and
-  Media `2.2rem` (`3rem` / `2rem` ≤600px); every mark sets `height:
-  var(--mark-h); width: auto` through `partner-logo()`. No grid, no
-  two-wide cell, no tier box drawn: the column grid with two-wide cells
-  left holes. The tier order is the ladder, then Community, then Media.
-- **[CURRENT] The home partner wall** (`#partners`, `index.astro:154–181`,
-  `index.scss:229–270`): a `.head-rule` "Partners" with no note (a tier
+  tier opens on a `.head-rule` with the tier name at `--fs-head` and no
+  note (`partners.astro:55–60`), then its marks in **one left-set flex
+  row** wrapping when it must, on a steady gap (`.logo-grid`,
+  `partners.scss:35–43`). No grid, no two-wide cell, no tier box drawn:
+  the column grid with two-wide cells left holes. The tier order is the
+  ladder, then Community, then Media.
+- **[CURRENT] Rank is the tier's box; marks in a tier carry equal ink.**
+  Each tier has a reference box (`CELLS`, `partners.ts:105–112`, px:
+  Platinum 600×300, Diamond 330×190, Gold 260×150, Silver 210×120,
+  Community and Media 180×100). `partnerLogo()` (`partners.ts:151–157`)
+  fits each mark into a box of the same area shaped to its ratio
+  (`opticalBox()`, `129`, capped so no mark outgrows the box) and hands
+  the width to the stylesheet as `--logo-w`; the `partner-logo` mixin sets
+  `width: calc(var(--logo-w) * var(--logo-scale, 1)); height: auto`
+  (`_logos.scss:8–14`). No height per tier. On a phone the ladder holds
+  and every mark scales by `--logo-scale`: `0.7` on `/partners`
+  (`partners.scss:69–72`). `plated` is a per-partner flag, not a tier
+  inversion.
+- **[CURRENT] The home partner wall** (`#partners`, `index.astro:141–168`,
+  `index.scss:215–256`): a `.head-rule` "Partners" with no note (a tier
   list is a label of the wall's own contents, not a fact; see Structural
   rules), then one `.partners-row` per tier, top tier first, Community
-  last, Media on `/partners` only. No tier labels in the wall: the heights
-  carry the ladder. `--mark-h` Platinum `3.5rem`, every other tier `2.4rem`,
-  Community `2rem` (`2.8rem` / `2rem` / `1.7rem` ≤600px). The wall ends on
-  the `.action` "All partners".
-- **[CURRENT] Rank is height, not ink area.** `partnerLogo()` still runs
-  `opticalBox()` against the tier's reference box (`CELLS`,
-  `partners.ts:105`; `STRIP_SCALE` 1.1 on the home wall), but on both walls
-  the box only feeds the `<Image>` `width` / `height` and srcset: the
-  rendered size is `--mark-h`. `plated` is a per-partner flag, not a tier
-  inversion.
+  last, Media on `/partners` only. No tier labels in the wall: the sizes
+  carry the ladder. The wall is the `/partners` ladder at `STRIP_SCALE =
+  0.7` (`index.astro:31`), and `--logo-scale: 0.75` ≤600px
+  (`index.scss:309–311`). The wall ends on the `.action` "All partners".
 - **[MUST] A missing photograph falls back to initials** at `--ink-monogram` /
   `--ink-monogram-sm` (4.21:1 / 7.71:1, `BaseLayout.scss:157–160`).
 - **[MUST] Photography is B&W at high contrast** (manual p. 13). Avatars
   and the session sheet's speaker thumb rest at `contrast(1.3)`
-  (`Agenda.module.scss:415`, `Sessions.module.scss:169`, `269`, `288`,
-  `SessionDetail.module.scss:100`); the home venue frame at `contrast(1.3)
-  brightness(0.8)` (`index.scss:205`). **[CURRENT]** The speaker print, the
+  (`Agenda.module.scss:360`, `Sessions.module.scss:169`, `269`, `288`,
+  `SessionDetail.module.scss:100`). **[CURRENT]** The speaker print, the
   speaker-sheet plate, `/team` and the hero plate rest at
-  `contrast(1.12–1.14)`; the home gallery strip at `contrast(1.06)
-  brightness(0.78)` (`index.scss:144`); the venue route photos at `1.35`
+  `contrast(1.12–1.14)`; the home mosaic at `contrast(1.06)
+  brightness(0.78)` (`index.scss:146`); the venue route photos at `1.35`
   (see Open points). Every one of them develops to colour on hover.
 - **[MUST] Every `<img>` below the fold is `loading="lazy" decoding="async"`**
   with intrinsic `width`/`height`; above the fold `eager`. Local assets use
@@ -944,10 +965,9 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   (all under `public/gallery/`). The detective plate is the home hero's
   alone; `/team` and every other subpage open type-only (`photo={false}`).
   Beyond the plate, `/` carries two photographic blocks and no more: the
-  venue frame closing "The event" (`src/assets/venue/uhelny-mlyn-chimney.jpg`
-  through `<Image>`, `index.astro:102–111`) and the "Last year" strip of 22
-  press photographs (`public/gallery/devfest-2025-01…22.webp`, `alt=""`,
-  lazy, `index.astro:125–151`).
+  speaker prints in the teaser and the "Past editions" mosaic of eight
+  press photographs (`GALLERY`, `index.astro:27`, from
+  `public/gallery/`; `alt=""`, lazy, `index.astro:114–137`).
 
 ## Component conventions
 
@@ -959,7 +979,7 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
   `Tickets` takes `client:load` (`index.astro:105`): the hero's "Get tickets"
   jumps straight to it. **[MUST] An island that renders nothing until data
   resolves takes `client:load`** — a zero-height placeholder never intersects
-  (`SpeakersTeaser`, `index.astro:108`).
+  (`SpeakersTeaser`, `index.astro:112`).
 - **[MUST] Styling location:** islands import a co-located CSS Module; Astro
   components use a sibling `.scss` or global primitives; pages use
   `src/pages/<page>.scss`.
@@ -999,7 +1019,7 @@ Shared components: `Desk.astro` (one inbox), `SubpageHero.astro` (takes
 `class`; `tone` is accepted for its call sites and ignored, every closer
 renders on black), `EndLine.astro`, `Menu.astro`, `Footer.astro`, `CookieBanner.astro`,
 `NextStep.astro`, `NextStepList.astro`, `DataState.tsx`, `SpeakerPhoto.tsx`,
-and
+`SpeakerTile.tsx`, `Print.module.scss` (the mounted print), and
 `Sheet.module.scss` (the shared detail-view chrome for `SessionDetail` /
 `SpeakerDetail`).
 
@@ -1029,45 +1049,36 @@ and
   state always offers somewhere to go**.
 - **`SpeakerPhoto.tsx`** — no URL or a failed load both land on the monogram;
   caller passes classes for the shape.
-- **Speakers teaser** (`SpeakersTeaser`, home) — the register's first
-  lines. Head: the `.head-rule` "Speakers" with the note "N confirmed";
-  then five `.field-row` rows (`TEASER_SIZE`, shuffled once per payload),
-  each an `<a>` to `/speakers?speaker=<id>` on a
-  `4rem / --thumb-w / 1fr / auto` grid: a mono `--fs-label` index figure in
-  `--ink-faint` (tabular, `aria-hidden`), the speaker's portrait on the
-  shared print at row size (`.thumb`, `--thumb-w: clamp(3.5rem, 5vw,
-  4.5rem)`, 4:5, B&W at rest and developing to colour while the row is
-  hovered or focused — `Print.module.scss` lets a link develop the print
-  inside it), the name Bebas `--fs-row-sm`, and the role as a
-  `note(--fs-note-sm)` in `--ink-muted` right-set on one line (ellipsis at
-  `32ch`). No arrow column; resting names sit in `--ink-dim` and the
-  reached row's name is white; the row's ground stays black (no reach
-  field). The portrait is in the row on every screen: a face that only
-  appears on hover is no face on a phone. The `.action` "All N speakers"
-  closes the list on `0.5rem`. No auto-rotation. ≤720px the index goes,
-  the portrait spans both lines and the role sits under the name. The teaser opens on
+- **Speaker tile** (`SpeakerTile.tsx`, `SpeakerTile.module.scss`) — the
+  casting sheet: speakers as portraits on a regular grid, the same tile on
+  `/` and on `/speakers`. The grid (`.grid`) is four columns, three
+  ≤1100px, two ≤720px, on a gap of `clamp(2.25rem, 4vw, 3.5rem)` ×
+  `clamp(1.25rem, 2.4vw, 2rem)` (`SpeakerTile.module.scss:7–14`,
+  `86–104`). A tile is the shared 4:5 print (`Print.module.scss`, B&W at
+  rest, developing while its link or button is hovered or focused), then
+  a mono `--fs-label` sheet number in `--ink-faint` (tabular,
+  `aria-hidden`), the name Bebas `--fs-title-sm` beside it, and under the
+  name the role (`cleanTagline()`) as a `note(--fs-note-sm)` in
+  `--ink-muted`, clamped to two lines so a long tagline cannot push the
+  next row of portraits off its line (`57–84`). No card, no ground, no
+  rule: the print carries its own mount. Reached, the name turns
+  `--color-accent-hot` and the print develops; focus also draws the ring
+  at `--focus-gap` (`41–49`).
+- **Speakers teaser** (`SpeakersTeaser`, home) — the first rows of the
+  casting sheet. Head: the `.head-rule` "Speakers" with the note "N
+  confirmed"; then eight tiles (`TEASER_SIZE`, shuffled once per payload),
+  each an `<a>` to the speaker, trimmed to whole rows: six ≤1100px, four
+  ≤720px (`SpeakersTeaser.module.scss:24–35`). The `.action` "All N
+  speakers" closes it. No auto-rotation. The teaser opens on
   `--section-y-tight` and closes on no padding of its own; nothing renders
-  until the lineup resolves (`SpeakersTeaser.tsx`,
-  `SpeakersTeaser.module.scss:6–89`).
-- **Speaker register** (`Speakers`, `/speakers`, `Speakers.module.scss`) —
-  one row per speaker and one portrait beside the list, no grid of prints.
-  The list column and a fixed 420px portrait column (`.lineup`, gap
-  `clamp(2rem, 5vw, 5rem)`). The list opens on a 1px `--color-text` top
-  rule, like every ruled list's head line, and every row (`.cell`) closes
-  on a 1px `--rule`. A row is a `<button>`: the name Bebas `--fs-row-sm` via
-  `display()` in `--ink-dim`, the role (`cleanTagline()`) a
-  `note(--fs-note-sm)` in `--ink-muted`, right-set on the name's
-  baseline, one line cut with an ellipsis at 42% of the row; `0.55rem` of
-  padding each side of the rule. The reached row (pointer or focus) lights
-  to `--color-text` / `--ink-soft` and puts its speaker on the shared
-  `.print`, which is `position: sticky` under the bar
-  (`top: calc(var(--header-h) + 2rem)`) and overruns the column by the
-  gutter to the viewport edge; it develops while a row is hovered or
-  focused and carries the view transition into the sheet for the speaker
-  being opened. ≤900px: the register alone, role under the name, no
-  portrait (the face is in the sheet). No placeholder row for names still
-  to come (removed in #465). Hierarchy by ink on one size, not by size
-  (`Speakers.module.scss:7–118`).
+  until the lineup resolves (`SpeakersTeaser.tsx:13–51`).
+- **Speakers lineup** (`Speakers`, `/speakers`) — every speaker as a tile
+  on the same grid, each a `<button>` ("View <name>'s profile") that opens
+  the speaker sheet; the pressed tile's print carries the view transition
+  and morphs into the sheet's photograph (`usePortraitMorph`,
+  `Speakers.tsx:33–85`; `SpeakerLineup`, `91–115`). The first four prints
+  load eagerly. No placeholder tile for names still to come (removed in
+  #465).
 - **Speaker sheet** (`SpeakerDetail`) — opens on the name; no "Speaker"
   kicker above it (the session sheet keeps its "Session" kicker). Bio and
   talk line ragged, no hyphens (see Typography). Links are named Bebas
@@ -1083,34 +1094,46 @@ and
   (manual p. 11; `.names`, `Sessions.module.scss:312–315`). Card avatars put the initials **under** each photo,
   so a lazy or failed photo still reads as a name (`CardAvatars`,
   `Sessions.tsx:35`).
-- **Agenda** (`Agenda`) — a talk is **type on the sheet, not a card**: the
-  cell is transparent with one `--rule-strong` hairline across its top
-  where it starts, no fill, no box, no radius (`.cell`,
-  `Agenda.module.scss:181–207`); reached, it lights and its bottom rule
-  draws red. Unfilled time (`.idle`) is transparent too, the room rules
-  running through it; only a break (`.band`) is a flat `--panel-lit` strip,
-  no hatching, ruled on the top edge only (`Agenda.module.scss:59–71`),
-  compressed to 2–3 rows (`NON_TALK_ROWS`, `Agenda.tsx:40`). A speakerless
-  "TBA"/"TBD" slot renders as "Slot open": its time and a `note` label on
-  `--panel` inside a dashed `--rule-strong` outline, not a control
-  (`.slotOpen`, `Agenda.module.scss:301–319`). A cell's speaker names set
-  like the Sessions list: Special Elite `--fs-label-lg`, `--ink-soft`,
-  sentence case (`.cellSpeakers`, `Agenda.module.scss:286–290`). A speakerless service
-  session running ≥180 minutes (the lounge) leaves the grid for a banner
-  above it, one `--panel-lit` line each: time, title, room
-  (`AllDayStrip`, `Agenda.tsx:224`; `.allDay`, `Agenda.module.scss:322`).
-  The narrow layout (≤1024px, JS) is a run sheet: a mono time figure, Bebas
-  `--fs-title-sm` title, the room as a `note(--fs-note-sm)`, at a tighter
-  `--field-step` (`ListRow`, `Agenda.tsx:450`; `Agenda.module.scss:436`);
-  abstracts, tags and photos live only in "Every talk" below.
+- **Agenda** (`Agenda`) — a printed timetable: every talk is a **filled
+  block** in its room's column, `--panel` laid over `--color-bg` so it is
+  opaque, `--radius` corners, `0.7rem 0.9rem` of padding, no border, no
+  shadow, and a `6px` gap of black page under it and between the columns
+  (`$cell-gap` and the `block` mixin, `Agenda.module.scss:11–37`;
+  `.grid`, `57–64`). Reached, the ground lifts to `--panel-hover` and a
+  1px `--color-accent` line draws along its bottom edge; focus keeps the
+  inset red ring (`.cell`, `194–232`). The rooms are parted by the gap
+  alone; empty time stays black. The room heads are `note(--fs-note)` on a
+  sticky `--panel` row over a `--rule-strong` line (`.headCell`, `82–100`).
+  A break or lunch (`.band`) is quieter: time and title on a `--rule`
+  hairline, no ground (`159–188`), compressed to 2–3 rows
+  (`NON_TALK_ROWS`, `Agenda.tsx:39`). A speakerless "TBA"/"TBD" slot
+  renders as "Slot open": a block inside a dashed `--rule-strong` outline
+  with its time and a `note` label, not a control (`.slotOpen`,
+  `278–286`). A cell's speaker names set like the Sessions list: Special
+  Elite `--fs-label-lg`, `--ink-soft`, sentence case (`.cellSpeakers`,
+  `263–273`). A speakerless service session running ≥180 minutes in a
+  room (the lounge) is open all day, not a slot: its room keeps a column
+  holding one block from its start to its end, with its time, title and
+  the note "Open all day, drop in any time"; it is not a control and never
+  lifts (`LONG_RUN_MIN`, `ALL_DAY_NOTE`, `Agenda.tsx:47–50`;
+  `.allDayCell`, `Agenda.module.scss:292–299`). It stays out of the time
+  scale and out of the live and coming-up state. The narrow layout
+  (≤1024px, JS) is a run sheet on the same grounds: each talk a `--panel`
+  block at `--radius` with the reach field kept inside it, a mono time
+  figure, Bebas `--fs-title-sm` title and the room as a
+  `note(--fs-note-sm)`, at a tighter `--field-step`; a break on its
+  hairline; the lounge an entry at its start time with its room and the
+  note (`ListRow`, `Agenda.tsx:456`; `Agenda.module.scss:378–413`).
+  Abstracts, tags and photos live only in "Every talk" below.
 - **Menu** (`Menu.astro`) — the header mark link is a full 44px tap target
   (`min-height: var(--header-tap)`, `Menu.scss:89`) and stays over the
   open panel (z 2). Open, the toggle label reads "Close"
-  (`Menu.astro:345–346`). ≥901px the panel is two columns: the lists left,
-  primary links at `--fs-h2`, secondary at `--fs-h3`; right the hero's
-  detective plate graded like the hero and feathered on every edge, painted
-  only while the panel is open, so nothing loads it unopened
-  (`Menu.scss:358–389`). Below 901px the lists alone.
+  (`Menu.astro:314`). The open panel is one column of links and no
+  picture (`Menu.scss:319–337`): the five primary destinations (Tickets,
+  Speakers, Agenda, Venue, FAQ), then the second tier, Partners, Team,
+  Press (`/contact#press`) and Contact (`Menu.astro:30–48`). ≥901px the
+  primary links set at `--fs-h2` and the second tier at `--fs-h3`
+  (`Menu.scss:339–350`).
 
 **Structural rules [MUST]:** no decorated eyebrow; red text is flat; **the
 red word and the closing full stop belong to the home hero statement**
@@ -1119,17 +1142,16 @@ list under Voice); every `SubpageHero` title is migrated. Section heads and ever
 are plain cream, because a red final word on ~30 headlines made none of them
 the loud one. On `/` every section opens on a `.head-rule`: the title is
 the section's name at `--fs-head` ("The event", "Tickets", "Speakers",
-"Last year", "Partners", "Newsletter") and the rule under them is the
+"Past editions", "Partners", "Newsletter") and the rule under them is the
 list's first line. No numbered eyebrow, no stamp, no poster `h2`.
 
 **[MUST] A head note carries a fact, never a label of the section's own
 contents.** The note exists only where it tells the visitor something the
 section does not already show: Tickets ("VAT included" / "Prices in CZK" /
 "<Wave> is the final wave", `Tickets.tsx:222–224`), Speakers ("N
-confirmed"), Last year ("DevFest.cz 2025, in photographs",
-`index.astro:129`), each `/partners` tier ("N partners"). The event,
-Partners and Newsletter open on the title alone (`index.astro:83–85`,
-`157–159`, `188–190`): "Eleventh edition" restated the note under it, the
+confirmed"). The event, Past editions, Partners, Newsletter and each
+`/partners` tier open on the title alone (`index.astro:86–88`, `119–121`,
+`143–145`, `174–176`; `partners.astro:55–60`): "Eleventh edition" restated the note under it, the
 tier list restated the wall, "A few emails a year" restated the lede. A
 note that only names what follows is filler and is left off. Section titles say what the section is; a full stop belongs to
 a statement, not a label. One `--fs-display` per page; section heads
@@ -1283,13 +1305,13 @@ Decision criteria, picked per page:
 - **The home page is one ruled document** (`index.astro`, `index.scss`):
   the full-bleed plate with the statement set into it, the facts line with
   the page's one red fill, then five sections on `.head-rule` (The event,
-  Tickets, Speakers, Last year, Partners) and the Newsletter. No second
+  Tickets, Speakers, Past editions, Partners) and the Newsletter. No second
   hero, no numbered eyebrows, nothing that moves on its own. Each section
   is a `.band .sec`: `--section-air: var(--section-y-tight)`, no bottom
   padding, and `clamp(1.75rem, 3vw, 2.5rem)` between the head and what
-  follows (`index.scss:93–102`); the ticket ledger and the speakers teaser
+  follows (`index.scss:105–112`); the ticket ledger and the speakers teaser
   set the same opening on their own roots (`Tickets.module.scss:7–18`,
-  `SpeakersTeaser.module.scss:6–11`).
+  `SpeakersTeaser.module.scss:4–9`).
 - **The home hero is the plate** (`#hero`, `.hero-plate`, `index.astro:44–62`,
   `index.scss:11–47`). `HeroBackground` runs edge to edge (`width="100%"`;
   `--hero-mask-shape` set to a flat black gradient so the left feather is
@@ -1328,19 +1350,17 @@ Decision criteria, picked per page:
   Doors ("08:00 — 20:00"), Audience, and **Programme**: the `TOPICS` joined
   by middle dots, the line that replaced the rotor. No photograph in the
   section: the venue is shown on /venue, and the home page's photographs
-  are the hero plate, the speaker portrait and the "Last year" strip.
-- **"Last year"** (`index.astro:123–151`, `index.scss:104–153`), after
-  the speakers teaser: the `.head-rule` "Last year" with the note
-  "DevFest.cz 2025, in photographs", then `.gallery-strip`: a horizontal
-  strip of 22 press photographs the visitor scrolls (`overflow-x: auto`,
-  `scroll-snap-type: x proximity`, `scrollbar-width: thin` in
-  `--ink-faint`, the thin scrollbar part of the design), starting on the
-  content column and running off the right edge (`padding: 0 var(--gutter)
-  1.25rem`, `scroll-padding-inline: var(--gutter)`). It is a focusable
-  `role="region"` with an accessible name and an inset focus ring
-  (`index.scss:119–122`). Each photograph is `3 / 2`, `clamp(240px, 30vw,
-  26.25rem)` tall, B&W at rest and colour on hover, no frame, no caption,
-  `alt=""`. Not a marquee: nothing scrolls on its own.
+  are the hero plate, the speaker prints and the "Past editions" mosaic.
+- **"Past editions"** (`index.astro:114–137`, `index.scss:114–175`),
+  after the speakers teaser: the `.head-rule` "Past editions" with no
+  note, then `.gallery`: a mosaic of eight press photographs (`GALLERY`,
+  `index.astro:27`) on four columns, the hall leading at 2×2, four singles
+  beside it, then the stage group across two columns and two singles;
+  ≤720px two columns, the hall and the stage group full width and the
+  singles paired between them. Gap `clamp(0.5rem, 1vw, 0.875rem)`. Each
+  photograph covers its cell, B&W at rest and colour on hover, no frame,
+  no caption, `alt=""`: decorative, the title says what they are. Nothing
+  scrolls.
 - **The partner wall on `/`** — see Images & media. Its head has no note.
 - **The newsletter** (`index.astro:186–200`, `index.scss:272–286`): the
   `.head-rule` "Newsletter" with no note, then the Special Elite
@@ -1442,8 +1462,7 @@ that", and at most one closer line per page ("Doors open 30 October.",
 "See you on the 30th."). Every section title and page title says plainly
 what it is ("The event", "Tickets", "Speakers", "Partners", "Newsletter",
 "Agenda", "The team", "Questions", "Become a partner"); a `.head-rule`
-note is a fact or absent ("N confirmed", "VAT included", "DevFest.cz 2025,
-in photographs"); the home hero carries no case-file stamp, and the only
+note is a fact or absent ("N confirmed", "VAT included"); the home hero carries no case-file stamp, and the only
 case dressing left is the footer's folio and the header's scroll-in stamp.
 No triads, no em-dash chains, no hype words.
 
@@ -1478,7 +1497,7 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
   `--focus-gap-lg` (alone in space) (`BaseLayout.scss:138–142`). Commented
   exceptions: agenda cell inset ring, the FAQ question's inset ring
   (`faq.scss:90–93`), and a partner logo's wider `6px` gap on the home wall
-  and `/partners` (`index.scss:185–188`, `partners.scss:68–71`).
+  and `/partners` (`index.scss:252–255`, `partners.scss:63–66`).
 - **[MUST] Semantics before ARIA.** A row that IS a control is a real
   `<button>` / `<a>` / `<summary>`.
 - **[MUST] `.skip-link` is the first focusable element** (`BaseLayout.astro:332`,
@@ -1530,13 +1549,12 @@ Places the code contradicts itself or this document. Each needs a decision.
    `--fs-hero` moved to `SubpageHero`, and the home statement sets its own
    clamp (`index.scss:49`). Delete both or give them a caller. (`--fs-wordmark` and
    `--ink-wordmark` went with the footer wordmark.)
-7. **`min-width` queries** against a max-width convention: `901px` ×6
-   (`index.scss` ×5, `Menu.scss:363`), `601px` ×2 (`Menu.scss:219`,
-   `invite/member.scss:164`), `press/downloads.scss:26,30` (`640px` /
-   `1100px`).
-8. **JS-only breakpoint:** `1024px` (`Agenda.tsx:58`), in no stylesheet.
-   The header's `760px` (`Menu.astro:282`) matches no stylesheet query any
-   more; the home rows fold at `720px`, the speaker register at `900px`.
+7. **`min-width` queries** against a max-width convention: `901px` ×1
+   (`Menu.scss:339`), `601px` ×1 (`invite/member.scss:164`),
+   `press/downloads.scss:26,30` (`640px` / `1100px`).
+8. **JS-only breakpoint:** `1024px` (`Agenda.tsx:63`), in no stylesheet.
+   The header's `760px` (`Menu.astro:250`) matches no stylesheet query any
+   more; the speaker tiles and the home mosaic fold at `1100px` / `720px`.
 9. ~~**Special Elite declares no `subsets`**~~ Resolved: Latin-Ext letters
    fall to JetBrains Mono via the Fonts API `fallbacks` (see Typography).
 10. **Split with `CLAUDE.md`.** Rules live here; `CLAUDE.md` points here.
@@ -1594,8 +1612,8 @@ Places the code contradicts itself or this document. Each needs a decision.
 28. **The attending card still draws a red band** with a black radial of
     its own (`src/lib/attending-card.ts`), the one red ground left now the
     site has none. Decide whether the generated card follows the site.
-27. **Photo contrast is mixed.** The home frame and avatars rest at
-    `contrast(1.3)`; speaker prints (`Print.module.scss:40`), the speaker
+27. **Photo contrast is mixed.** Avatars rest at
+    `contrast(1.3)`; speaker prints (`Print.module.scss:39`), the speaker
     sheet (`SpeakerDetail.module.scss:40`), `/team` (`team.scss:60`) and
     the hero plate (`HeroBackground.scss:19`) at 1.12–1.14; the venue
     route photos at 1.35. Manual p. 13 also allows speaker portraits in

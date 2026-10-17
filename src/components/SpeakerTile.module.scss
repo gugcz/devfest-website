@@ -43,8 +43,14 @@
 		outline-offset: var(--focus-gap);
 	}
 
-	&:hover .name,
 	&:focus-visible .name {
+		color: var(--color-accent-hot);
+	}
+}
+
+// Hover only where a pointer hovers: on a phone a tap would leave the name red.
+@media (hover: hover) {
+	.tile:hover .name {
 		color: var(--color-accent-hot);
 	}
 }
@@ -63,8 +69,7 @@
 
 .name {
 	grid-area: name;
-	@include display(var(--fs-title-sm));
-	line-height: 1;
+	@include row-title(var(--fs-title-sm));
 	overflow-wrap: anywhere;
 	transition: color 0.2s;
 }

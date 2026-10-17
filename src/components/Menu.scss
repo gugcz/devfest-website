@@ -315,7 +315,7 @@
 		visibility 0s linear 0s;
 }
 
-// Lists left, the key art right on a wide panel; the lists alone below 901px.
+// One column of links at every width.
 .nav-body {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
@@ -338,7 +338,7 @@
 
 @media (min-width: 901px) {
 	// Poster scale: the section-head step for the five, the sub-section step
-	// for the three under them.
+	// for the four under them.
 	.nav-link {
 		font-size: var(--fs-h2);
 		padding: 0.08em 0;
