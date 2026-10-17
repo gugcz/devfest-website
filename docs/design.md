@@ -1394,10 +1394,9 @@ Places the code contradicts itself or this document. Each needs a decision.
     Resolved: `.band--accent` (the newsletter, the `/partners` CTA and every
     `Closer tone="accent"`) paints `--red-toned` (`BaseLayout.scss:139`,
     `471–479`), the manual's red-toned background.
-28. **The attending card still draws a flat red band.** The generated card's
-    bottom band "mirrors `.band--accent`" but fills flat `accent`
-    (`src/lib/attending-card.ts:369–374`). Red-toned gradient, or a stated
-    exception for a small edge band.
+28. ~~**The attending card still draws a flat red band.**~~ Resolved: the
+    generated card's bottom band paints red under the same black radial as
+    `--red-toned` (`src/lib/attending-card.ts`).
 27. **Photo contrast is mixed.** Gallery and avatars rest at
     `contrast(1.3)`; speaker prints (`Print.module.scss:40`), the speaker
     sheet (`SpeakerDetail.module.scss:40`), `/team` (`team.scss:60`) and

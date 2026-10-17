@@ -366,12 +366,18 @@ export function drawAttendingCard(
 	ctx.fillStyle = ink;
 	ctx.fillText(nameText, size / 2, nameY);
 
-	// ── Bottom accent band — mirrors `.band--accent`. Edge-to-edge chrome,
-	// exempt from the safe space. The official mono white logo (2026 badge
-	// included) centered: on red the manual allows the white mono logo only.
+	// ── Bottom accent band — mirrors `.band--accent` (`--red-toned`: red
+	// darkened by a black radial, as the manual allows for large red areas).
+	// Edge-to-edge chrome, exempt from the safe space. The official mono white
+	// logo (2026 badge included) centered: on red the manual allows it only.
 	const bandCenterY = size - BAND_HEIGHT / 2;
 	ctx.fillStyle = accent;
-	ctx.fillRect(0, size - BAND_HEIGHT, size, BAND_HEIGHT);
+	ctx.fillRect(0, bandTop, size, BAND_HEIGHT);
+	const tone = ctx.createRadialGradient(size / 2, bandTop, 0, size / 2, bandTop, size * 0.65);
+	tone.addColorStop(0, 'rgba(0, 0, 0, 0.2)');
+	tone.addColorStop(1, 'rgba(0, 0, 0, 0.78)');
+	ctx.fillStyle = tone;
+	ctx.fillRect(0, bandTop, size, BAND_HEIGHT);
 
 	if (logo && logo.naturalWidth > 0) {
 		const logoWidth = (logo.naturalWidth / logo.naturalHeight) * LOGO_HEIGHT;
