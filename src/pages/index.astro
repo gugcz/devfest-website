@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import millChimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroOffer from '../components/HeroOffer';
 import NewsletterForm from '../components/NewsletterForm';
@@ -97,18 +96,6 @@ const STRIP_SCALE = 1.1;
 						<div><dt>Programme</dt><dd>{TOPICS.map((t) => t.name).join(' · ')}</dd></div>
 					</dl>
 				</div>
-				<!-- The one photograph in the body: the venue, because the facts
-				     name a place most visitors have never seen. -->
-				<figure class="facts-frame">
-					<Image
-						src={millChimney}
-						alt="Uhelný Mlýn: the brick coal mill and its chimney in Libčice nad Vltavou"
-						widths={[720, 1080, 1440, 1824]}
-						sizes="(max-width: 900px) 100vw, min(100vw, 90rem)"
-						loading="lazy"
-					/>
-					<figcaption class="facts-caption">Uhelný Mlýn, Libčice nad Vltavou</figcaption>
-				</figure>
 			</div>
 		</section>
 

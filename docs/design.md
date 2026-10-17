@@ -838,9 +838,8 @@ Two forms exist: `NewsletterForm` (native POST to SmartEmailing) and
 
 - **[MUST] The photograph well is 4:5** (`.print`, `BaseLayout.scss:398`;
   `Print.module.scss:24`, the one plate beside the speaker register and
-  beside the home credits).
-- **[CURRENT] Other ratios in use:** `21 / 9` the home venue frame
-  (`4 / 3` ≤900px, `index.scss:195–216`, `309–311`), `3 / 2` the home
+  beside the home speakers teaser).
+- **[CURRENT] Other ratios in use:** `3 / 2` the home
   gallery strip (`index.scss:137–142`), `16 / 9` press clippings on `/contact`
   (`press.scss:65`) and press-kit previews (`press/downloads.scss:46`), `1`
   the session sheet's speaker thumb (`SessionDetail.module.scss:82`). The
@@ -1037,9 +1036,14 @@ and
   grid: a mono `--fs-label` index figure in `--ink-faint` (tabular,
   `aria-hidden`), the name Bebas `--fs-row-sm` in `--color-text`, and the
   role as a `note(--fs-note-sm)` in `--ink-muted` right-set on one line
-  (ellipsis at `32ch`). No arrow column and nothing moves on hover; the
-  row's ground stays black (no reach field). The `.action` "All N speakers"
-  closes the list on `0.5rem`. No portrait, no auto-rotation. ≤720px: the
+  (ellipsis at `32ch`). No arrow column; resting names sit in `--ink-dim`
+  and the reached row's name is white; the row's ground stays black (no
+  reach field). Beside the rows, on a `minmax(0, 1fr) / 420px` grid, the
+  reached row's portrait on the shared print (`Print.module.scss`, 4:5,
+  B&W at rest, developing to colour while a row is hovered or focused,
+  sticky under the bar, overrunning the gutter) — the same plate as the
+  /speakers register. The `.action` "All N speakers" closes the list on
+  `0.5rem`. No auto-rotation. ≤900px the portrait goes; ≤720px the
   index goes and the role sits under the name. The teaser opens on
   `--section-y-tight` and closes on no padding of its own; nothing renders
   until the lineup resolves (`SpeakersTeaser.tsx`,
@@ -1321,12 +1325,9 @@ Decision criteria, picked per page:
   across CEE." `.facts-list` is a `<dl>` set as a `note()`: the term in
   `--ink-muted`, the value in `--color-text` — Date (a `<time>`), Place,
   Doors ("08:00 — 20:00"), Audience, and **Programme**: the `TOPICS` joined
-  by middle dots, the line that replaced the rotor. The section closes on
-  the venue: `.facts-frame`, a full-width `21 / 9` photograph of the mill
-  (`4 / 3` ≤900px) B&W at rest and colour on hover, with the
-  `note(--fs-note-sm)` caption "Uhelný Mlýn, Libčice nad Vltavou" in
-  `--ink-muted` (`index.astro:102–111`, `index.scss:193–223`): the facts
-  name a place most visitors have never seen.
+  by middle dots, the line that replaced the rotor. No photograph in the
+  section: the venue is shown on /venue, and the home page's photographs
+  are the hero plate, the speaker portrait and the "Last year" strip.
 - **"Last year"** (`index.astro:123–151`, `index.scss:104–153`), after
   the speakers teaser: the `.head-rule` "Last year" with the note
   "DevFest.cz 2025, in photographs", then `.gallery-strip`: a horizontal

@@ -18,6 +18,23 @@
 		margin-top: 0;
 	}
 
+}
+
+// Rows left, the reached row's portrait right, as on /speakers.
+.body {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 420px;
+	gap: clamp(2rem, 5vw, 5rem);
+	align-items: start;
+	margin-top: 0;
+}
+
+.listCol {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	min-width: 0;
+
 	> :global(.action) {
 		margin-top: 0.5rem;
 	}
@@ -27,6 +44,20 @@
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	width: 100%;
+}
+
+// Sticky under the bar while the rows scroll; overruns the column by the
+// gutter so it meets the viewport edge.
+.portrait {
+	display: flex;
+	position: sticky;
+	top: calc(var(--header-h) + 2rem);
+	margin-right: calc(-1 * var(--gutter));
+}
+
+.plate {
+	width: 100%;
 }
 
 //   [ index ][ name ][ role ]
@@ -39,7 +70,8 @@
 	color: inherit;
 
 	&:hover .name,
-	&:focus-visible .name {
+	&:focus-visible .name,
+	&.isActive .name {
 		color: var(--color-text);
 	}
 
@@ -57,8 +89,10 @@
 
 .name {
 	@include display(var(--fs-row-sm));
-	color: var(--color-text);
+	// Resting names a step down from white; the reached one is white.
+	color: var(--ink-dim);
 	overflow-wrap: anywhere;
+	transition: color 0.2s;
 }
 
 .tag {
@@ -69,6 +103,17 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+// Phones and narrow tablets: the rows alone; the face is on /speakers.
+@media (max-width: 900px) {
+	.body {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.portrait {
+		display: none;
+	}
 }
 
 @media (max-width: 720px) {

@@ -25,10 +25,20 @@
 }
 
 // Edge-to-edge plate: the component's default is a right-hand 60% with a
-// left feather; here the photograph is the whole frame.
+// left feather; here the photograph is the whole frame, and it runs out to
+// black over its bottom quarter so the facts line below starts on the same
+// ground and there is no edge where the photograph ends.
 .hero-plate :global(.hero-photo) {
 	width: 100%;
 	--hero-mask-shape: linear-gradient(#000, #000);
+	--hero-mask-fade: linear-gradient(
+		to bottom,
+		#000 0%,
+		#000 68%,
+		rgba(0, 0, 0, 0.6) 82%,
+		rgba(0, 0, 0, 0.2) 93%,
+		transparent 100%
+	);
 }
 
 .hero-statement {
@@ -190,36 +200,6 @@
 	}
 }
 
-// The venue, full width under the facts: a 21:9 frame, grey at rest and in
-// colour on hover like the plates elsewhere.
-.facts-frame {
-	margin: 0;
-
-	img {
-		display: block;
-		width: 100%;
-		height: auto;
-		aspect-ratio: 21 / 9;
-		object-fit: cover;
-		object-position: center 40%;
-		filter: grayscale(1) contrast(1.3) brightness(0.8);
-		transition: filter 0.6s ease;
-	}
-
-	&:hover img {
-		filter: grayscale(0) contrast(1.02) brightness(1);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		img { transition: none; }
-	}
-}
-
-.facts-caption {
-	margin: 0.9rem 0 0;
-	@include note(var(--fs-note-sm));
-	color: var(--ink-muted);
-}
 
 /* ---- partners ---- */
 // One row per tier, marks on one height per tier (platinum leads, community
@@ -304,10 +284,6 @@
 
 	.hero-facts-dot {
 		display: none;
-	}
-
-	.facts-frame img {
-		aspect-ratio: 4 / 3;
 	}
 
 	.hero-cta {
