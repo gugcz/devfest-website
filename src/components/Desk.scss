@@ -131,9 +131,7 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.desk-email,
-	.desk-action,
-	.desk-email::after,
-	.desk-action::after {
+	.desk-action {
 		transition: none;
 	}
 }

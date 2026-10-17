@@ -70,7 +70,6 @@
 	// The `.btn-primary` label size, never smaller: white on red clears AA
 	// only as large text (`cta-label` in _type.scss). Decline matches it.
 	font-size: var(--fs-cta);
-	letter-spacing: 0.12em;
 	white-space: nowrap;
 	// Physical touch target — px, not rem, so it does not double with the
 	// root font (WCAG 2.5.5 is about the pointer, not the type size).
