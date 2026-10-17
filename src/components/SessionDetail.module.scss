@@ -2,7 +2,7 @@
 // Session detail. The chrome is `Sheet.module.scss`, shared with SpeakerDetail;
 // this file holds only the meta line, the abstract measure and the speaker rows.
 
-// One mono line of plain labels — never bordered chips.
+// One typewriter line of plain labels — never bordered chips.
 .meta {
 	list-style: none;
 	display: flex;
@@ -15,7 +15,7 @@
 
 .metaItem {
 	position: relative;
-	@include mono(var(--fs-label-lg), 0.15em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--ink-muted);
 
 	& + .metaItem::before {
@@ -120,8 +120,7 @@
 }
 
 .speakerTag {
-	@include mono(var(--fs-label), 0.1em);
-	line-height: 1.45;
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 }
 

@@ -64,7 +64,7 @@
 }
 
 .count {
-	@include mono(var(--fs-label-sm), 0.15em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 	white-space: nowrap;
 }
@@ -78,10 +78,10 @@
 
 // One of these opens every filter group, so red here is the accent set three
 // times in a 60px band before the visitor has touched anything. Resting label
-// = muted mono; the red in this section belongs to the row under the pointer.
+// = muted typewriter; the red in this section belongs to the row under the pointer.
 .facetLabel {
 	flex-shrink: 0;
-	@include mono(var(--fs-label-sm), 0.2em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 	min-width: 4.5rem;
 }
@@ -93,7 +93,7 @@
 }
 
 .chip {
-	@include mono(var(--fs-label-sm), 0.1em);
+	@include note(var(--fs-note-sm));
 	color: var(--color-grey);
 	background: rgba(255, 255, 255, 0.02);
 	// Square, never a pill; the boundary uses --field-border so an interactive filter
@@ -120,7 +120,7 @@
 .clear,
 .clearInline {
 	align-self: flex-start;
-	@include mono(var(--fs-label-sm), 0.15em, uppercase);
+	@include action(var(--fs-action));
 	color: var(--ink-dim);
 	background: none;
 	border: none;
@@ -195,7 +195,7 @@
 // When and where leads the row: on a programme, the time is what a visitor
 // scans down. A step brighter than the track beside it, never red.
 .when {
-	@include mono(var(--fs-label-sm), 0.15em, uppercase);
+	@include mono(var(--fs-label-sm), 0.15em);
 	color: var(--ink-soft);
 	font-variant-numeric: tabular-nums;
 	white-space: nowrap;
@@ -204,7 +204,7 @@
 // The track is muted, not accent-red: red on every row of a thirty-row list is
 // not a highlight.
 .kicker {
-	@include mono(var(--fs-label-sm), 0.2em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 	white-space: nowrap;
 	overflow: hidden;
@@ -321,7 +321,7 @@
 }
 
 /* ===================== "MORE SOON" TILE ===================== */
-// The programme's open end — a mono closing note at the foot of the field, never
+// The programme's open end — a typewriter closing note at the foot of the field, never
 // a dashed placeholder tile.
 .moreCard {
 	position: relative;
@@ -351,7 +351,7 @@
 // ("End of roll"); this one was the same statement in red, which made the one
 // row that is NOT a session the loudest thing in the list.
 .moreKicker {
-	@include mono(var(--fs-label-sm), 0.2em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 }
 

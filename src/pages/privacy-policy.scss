@@ -21,8 +21,9 @@
 		margin: 0 0 1.2rem;
 	}
 
+	// Sub-heads are words, not figures: a typewriter note, not mono caps.
 	h3 {
-		@include mono(var(--fs-ui), 0.1em, uppercase);
+		@include note(var(--fs-note));
 		color: var(--ink-strong);
 		margin: 1.8rem 0 0.8rem;
 	}
@@ -75,9 +76,9 @@
 	border-collapse: collapse;
 	color: var(--ink);
 
-	// Column heads: mono caps over a firmer rule.
+	// Column heads: a typewriter note over a firmer rule.
 	thead th {
-		@include mono(var(--fs-label-lg), 0.15em, uppercase);
+		@include note(var(--fs-note));
 		color: var(--ink-strong);
 		border-bottom: 1px solid var(--rule-strong);
 	}
@@ -161,7 +162,7 @@
 	}
 
 	.policy table td::before {
-		@include mono(var(--fs-label), 0.15em, uppercase);
+		@include note(var(--fs-note-sm));
 		content: attr(data-label);
 		display: block;
 		color: var(--ink-dim);

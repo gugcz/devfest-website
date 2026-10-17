@@ -8,7 +8,7 @@
 	// The document's last rule: the footer opens on it like every section.
 	border-top: 1px solid var(--rule);
 	background: var(--color-bg);
-	font-family: var(--font-jetbrains-mono), monospace;
+	font-family: var(--font-special-elite), cursive;
 	color: rgba(255, 255, 255, 0.65);
 }
 
@@ -91,7 +91,7 @@
 }
 
 .col-title {
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	@include note;
 	color: var(--ink-strong);
 	font-weight: normal;
 	margin: 0;
@@ -118,7 +118,7 @@
 }
 
 .footer-link {
-	@include mono(var(--fs-ui), 0.1em);
+	@include note;
 	color: var(--ink);
 	text-decoration: none;
 	border-bottom: 1px solid transparent;
@@ -130,11 +130,6 @@
 		color: var(--color-accent-hot);
 		border-bottom-color: var(--color-accent-hot);
 	}
-}
-
-.ext {
-	font-size: 0.85em;
-	opacity: 0.65;
 }
 
 .event-meta {
@@ -159,9 +154,7 @@
 	}
 
 	dt {
-		font-size: var(--fs-label);
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
+		@include note(var(--fs-note-sm));
 		color: var(--ink-meta);
 		align-self: center;
 	}
@@ -169,7 +162,6 @@
 	dd {
 		margin: 0;
 		color: rgba(255, 255, 255, 0.82);
-		letter-spacing: 0.1em;
 
 		// Venue links out to the map — muted meta with a hairline underline.
 		a {
@@ -213,7 +205,7 @@
 }
 
 .org {
-	@include mono(var(--fs-label-lg), 0.1em);
+	@include note(var(--fs-note-sm));
 	line-height: 1.6;
 	color: rgba(255, 255, 255, 0.65);
 	max-width: 34ch;
@@ -268,8 +260,7 @@
 	justify-content: space-between;
 	align-items: center;
 	gap: 0.7rem 2rem;
-	font-size: var(--fs-label);
-	letter-spacing: 0.1em;
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 }
 
@@ -277,11 +268,9 @@
 	font-size: inherit;
 }
 
-// Centre slot of the bottom line; the manual's `CASE NO.` stamp, uppercase.
+// Centre slot of the bottom line; the manual's `Case no.` stamp, a mono figure.
 .folio {
-	font-size: inherit;
-	text-transform: uppercase;
-	letter-spacing: 0.2em;
+	@include mono(var(--fs-label), 0.1em);
 }
 
 .opensource {
@@ -291,6 +280,5 @@
 	// it takes the copyright's size so the line reads as one line.
 	.footer-link {
 		font-size: inherit;
-		letter-spacing: inherit;
 	}
 }

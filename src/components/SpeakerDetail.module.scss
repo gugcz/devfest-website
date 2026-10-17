@@ -49,7 +49,7 @@
 }
 
 .tag {
-	@include mono(var(--fs-label-lg), 0.15em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--ink-muted);
 	margin: clamp(1rem, 2vw, 1.5rem) 0 0;
 }
@@ -69,7 +69,7 @@
 	display: inline-block;
 	// Block padding clears the 24px target minimum.
 	padding: 0.5em 0 0.4em;
-	@include mono(var(--fs-label-lg), 0.1em);
+	@include action(var(--fs-action));
 	color: var(--ink-dim);
 	text-decoration: underline;
 	text-decoration-color: var(--rule-strong);

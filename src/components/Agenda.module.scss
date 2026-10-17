@@ -7,7 +7,7 @@
 
 /* ===================== TZ NOTE ===================== */
 .tzNote {
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--ink-muted);
 	margin: 0 0 1.4rem;
 }
@@ -69,7 +69,7 @@
 	pointer-events: none;
 }
 
-// Room names: a mono label on a rule.
+// Room names: a typewriter note on a rule.
 // `top: 0`, NOT an offset clearing the fixed header: `.scroller` is the sticky
 // containing block and never scrolls vertically, so a positive `top` just
 // shunts the header row down over the first hour of the sheet.
@@ -82,7 +82,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	row-gap: 0.3rem;
-	@include mono(var(--fs-ui), 0.2em, uppercase);
+	@include note(var(--fs-note));
 	// A room name heads a 409px column; at label size it matched the cell meta under it.
 	color: var(--ink);
 	// Filled, not transparent: the header is the one row that must stay legible
@@ -102,7 +102,7 @@
 .headNote {
 	margin-left: auto;
 	padding-left: 0.8rem;
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 	white-space: nowrap;
 }
@@ -170,7 +170,7 @@
 }
 
 .bandTitle {
-	@include mono(var(--fs-ui), 0.2em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--color-cream);
 	white-space: nowrap;
 	overflow: hidden;
@@ -315,7 +315,7 @@
 }
 
 .slotOpenLabel {
-	@include mono(var(--fs-ui), 0.2em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--ink-muted);
 }
 
@@ -347,12 +347,12 @@
 }
 
 .allDayTitle {
-	@include mono(var(--fs-ui), 0.2em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--color-cream);
 }
 
 .allDayRoom {
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 }
 
@@ -364,15 +364,15 @@
 	gap: 0.2rem 1.1rem;
 }
 
-// A plain mono label, never a boxed chip. It must match the session sheet, where
-// the tags are one mono line beside the room — a talk should not change shape
+// A plain typewriter label, never a boxed chip. It must match the session sheet, where
+// the tags are one note line beside the room — a talk should not change shape
 // when the visitor opens it.
 .tag {
 	position: relative;
-	@include mono(var(--fs-label-sm), 0.15em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 	// No `white-space: nowrap`, and a zero flex floor: a one-word track label
-	// ("ARCHITECTURE") is 216px of mono at a 32px root, which is most of a
+	// ("Architecture") is wide at a 32px root, which is most of a
 	// phone viewport. `.tags` already wraps between labels; this lets a single
 	// label break inside itself when even one does not fit.
 	min-width: 0;
@@ -482,7 +482,7 @@
 	font-variant-numeric: tabular-nums;
 	color: var(--ink-muted);
 	// Drops the mono time onto the Bebas title's cap-height. A band's title is
-	// mono at label size, so there it sits on the first line already.
+	// a typewriter note, so there it sits on the first line already.
 	padding-top: 0.2rem;
 
 	.itemBand & {
@@ -504,14 +504,14 @@
 	@include row-title(var(--fs-title-sm));
 
 	.itemBand & {
-		@include mono(var(--fs-ui), 0.2em);
+		@include note(var(--fs-note));
 		color: var(--color-cream);
 	}
 }
 
 // The room tells two parallel talks apart on a phone.
 .itemRoom {
-	@include mono(var(--fs-label), 0.15em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--color-grey);
 }
 
@@ -530,7 +530,7 @@
 	position: absolute;
 	top: -0.62rem;
 	left: 0;
-	@include mono(var(--fs-label-sm), 0.15em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--on-accent);
 	background: var(--color-accent-hot);
 	padding: 0.05rem 0.4rem;
@@ -564,7 +564,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.3rem;
-	@include mono(var(--fs-label-sm), 0.15em, uppercase);
+	@include note(var(--fs-note-sm));
 	padding-bottom: 0.22rem;
 	white-space: nowrap;
 }

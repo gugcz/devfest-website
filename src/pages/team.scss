@@ -129,7 +129,7 @@
 	// — the two lines are stacked in the same cell, so an `auto` track
 	// floored at the longer one's min-content width under text zoom.
 	grid-template-columns: minmax(0, 1fr);
-	@include mono(var(--fs-label), 0.15em, uppercase);
+	@include note(var(--fs-note-sm));
 	line-height: 1.4;
 	margin-top: 0.2rem;
 	min-height: 2.8em;

@@ -17,11 +17,11 @@
 }
 
 .empty-stamp {
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--color-accent-hot);
 	padding: 0;
 	background: transparent;
-	// A plain mono word, never a boxed stamp.
+	// A plain typewriter note, never a boxed stamp.
 	border: 0;
 }
 
@@ -45,11 +45,10 @@
 	gap: 1.8rem;
 	text-decoration: none;
 
-	// Not ink: a hairline inside the row, and the off-site arrow's motion. Hover only.
+	// Not ink: a hairline inside the row and the photograph developing. Hover only.
 	&:hover {
 		.coverage-meta { border-top-color: rgba(255, 255, 255, 0.4); }
 		.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
-		.coverage-arrow { transform: translate(2px, -2px); }
 	}
 }
 
@@ -92,12 +91,12 @@
 	}
 }
 
-// Publication name — a plain mono eyebrow, muted at rest and full cream on the
-// reach field. Never a filled tab: a resting red label competes with the one
-// state the colour is for.
+// Publication name — a plain typewriter eyebrow, muted at rest and full cream
+// on the reach field. Never a filled tab: a resting red label competes with
+// the one state the colour is for.
 .coverage-outlet {
 	align-self: flex-start;
-	@include mono(var(--fs-label-sm), 0.2em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 }
 
@@ -111,13 +110,6 @@
 	color: var(--color-text);
 }
 
-// Off-site marker on the mono "Read article" line, not the headline — on the
-// headline it scaled with the row title and became a 40px glyph mid-sentence.
-.coverage-arrow {
-	display: inline-block;
-	margin-left: 0.35rem;
-	transition: transform 0.25s;
-}
 
 // Mono, not Special Elite, for the same reason as the title: Special Elite ships
 // a `latin` subset only, so every ř/ě/č in scraped Czech falls back mid-word.
@@ -134,7 +126,8 @@
 	overflow: hidden;
 }
 
-// The read/date meta row, set off by space alone.
+// The read/date meta row, set off by space alone. Mono is for the date
+// figure; the "Read article" action restates its own voice below.
 .coverage-meta {
 	display: flex;
 	align-items: center;
@@ -151,8 +144,7 @@
 }
 
 .coverage-read {
-	text-transform: uppercase;
-	letter-spacing: 0.2em;
+	@include action(var(--fs-action));
 	color: var(--ink-meta);
 	transition: color 0.2s;
 }
@@ -162,7 +154,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.coverage-arrow,
 	.coverage-thumb img { transition: none; }
 
 }

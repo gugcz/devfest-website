@@ -78,10 +78,13 @@
 
 	// ── THE RAMP ────────────────────────────────────────────────────────
 	// Every font-size goes through a step below; never add one outside it.
-	--fs-label-xs: 0.6875rem; // micro mono: avatar counts, kit tags — 11px, the mono floor
-	--fs-label-sm: 0.74rem;   // mono: counts, chips, inline clears
-	--fs-label: 0.78rem;      // mono: eyebrows, section labels
-	--fs-label-lg: 0.84rem;   // mono: nav, buttons, email links
+	--fs-label-xs: 0.6875rem; // micro mono figure: avatar counts — 11px, the mono floor
+	--fs-label-sm: 0.74rem;   // mono figure: counts, inline clears
+	--fs-label: 0.78rem;      // mono figure: indices, serials, times
+	--fs-label-lg: 0.84rem;   // mono figure: the larger index
+	--fs-note-sm: 0.85rem;    // Special Elite note: roles, captions, row metadata
+	--fs-note: 0.95rem;       // Special Elite note: section notes, eyebrows, nav meta
+	--fs-action: 1.3rem;      // Bebas action: text actions, nav, buttons
 	--fs-ui: 0.95rem;         // small UI prose, help text
 	--fs-body: 1.05rem;       // long-form reading copy
 	--fs-body-lg: 1.15rem;    // footnotes, short ledes
@@ -126,9 +129,9 @@
 	// Black 4.8:1 at any size; white 4.4:1, so white is for large type only
 	// (3:1).
 	--on-accent: #000000;
-	// The CTA label on red: 1.17rem = 18.7px, just over the 14pt-bold
-	// "large text" line (18.66px) where white's 4.4:1 clears AA.
-	--fs-cta: 1.17rem;
+	// The CTA label on red: Bebas at 1.5rem = 24px, the regular-weight
+	// "large text" line where white's 4.4:1 clears AA.
+	--fs-cta: 1.5rem;
 	--on-accent-ink: #FFFFFF;
 	--on-accent-border: rgba(0, 0, 0, 0.85);
 
@@ -273,7 +276,7 @@ body {
 	padding: 0.7rem 1.1rem;
 	background: #000000;
 	color: #FFFFFF;
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
+	@include action;
 	text-decoration: none;
 	border: 1px solid rgba(241, 16, 0, 0.5);
 	z-index: 10001;
@@ -330,16 +333,16 @@ b {
 	padding-inline: var(--gutter);
 }
 
-// Mono eyebrow — a plain label. Never give it a trailing hairline or any other decoration.
+// Eyebrow — a plain typewriter note. Never give it a trailing hairline or any other decoration.
 .eyebrow {
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	@include note;
 	color: var(--ink-muted);
 	display: inline-flex;
 	align-items: center;
 	gap: 0.75rem;
 }
 
-// THE SECTION HEAD. A Bebas title on the left, one mono note on the right,
+// THE SECTION HEAD. A Bebas title on the left, one typewriter note on the right,
 // both on a rule — the top edge of the ruled list under it. Every section on
 // every page opens this way; the rule is structure, the list's first line.
 .head-rule {
@@ -358,7 +361,7 @@ b {
 	}
 
 	.head-rule-note {
-		@include mono(var(--fs-label), 0.2em, uppercase);
+		@include note;
 		color: var(--ink-muted);
 		margin: 0;
 	}
@@ -565,7 +568,7 @@ b {
 	align-items: center;
 	justify-content: center;
 	gap: 0.7rem;
-	// White Bold at large-text size, as the brand manual sets the CTA: a thin
+	// White Bebas at large-text size, as the brand manual sets the CTA: a thin
 	// black label on Evidence Red read faint (`cta-label` in _type.scss).
 	@include cta-label;
 	color: var(--color-text);
@@ -598,14 +601,14 @@ b {
 }
 
 // THE SECOND CONTROL, and the last. Every action that is not the page's one
-// red fill is this: mono caps and an arrow, no box, no underline. `.btn-ghost`
+// red fill is this: Bebas caps, no box, no underline, no glyph. `.btn-ghost`
 // is kept as the class name its callers use; it draws the same thing.
 .btn-ghost,
 .action {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.6rem;
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
+	@include action;
 	color: var(--color-text);
 	text-decoration: none;
 	cursor: pointer;
@@ -618,24 +621,15 @@ b {
 	border: 0;
 	border-radius: 0;
 	background: transparent;
-	transition: color 0.2s ease, gap 0.2s ease;
+	transition: color 0.2s ease;
 
+	// No arrow glyph anywhere (it renders differently on every system): the
+	// hover is the red the site keeps for a live state.
 	&:hover,
 	&:focus-visible {
-		color: var(--color-text);
+		color: var(--color-accent-hot);
 		background: transparent;
-		gap: 0.9rem;
 	}
-}
-
-// The arrow promises a destination, so links carry it and buttons (Share,
-// Download, Accept, a workshop sign-up) do not. Both controls read as one
-// family through it.
-a.btn-primary::after,
-a.btn-ghost::after,
-.action::after {
-	content: '\2192';
-	font-weight: 400;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -779,7 +773,7 @@ a.btn-ghost::after,
 // Status word. Never a pill, chip, or underlined — it sits where the
 // "Get tickets" link would, and an underline there promises a click.
 .record-status {
-	@include mono(var(--fs-label-sm), 0.2em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: rgba(255, 255, 255, 0.72);
 	white-space: nowrap;
 }

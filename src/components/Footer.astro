@@ -107,8 +107,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 									{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
 								>
 									{label}
-									{external && <span class="ext" aria-hidden="true">&#160;&#8599;</span>}
-								</a>
+									</a>
 							</li>
 						))}
 					</ul>
@@ -144,7 +143,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 						href="https://gug.cz"
 						target="_blank"
 						rel="noopener noreferrer"
-					>GUG.cz,&#160;z.s.<span class="ext" aria-hidden="true">&#160;&#8599;</span></a>
+					>GUG.cz,&#160;z.s.</a>
 				</p>
 				<nav class="socials" aria-label="Follow DevFest.cz on social media">
 					{
@@ -176,7 +175,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 					href="https://github.com/gugcz/devfest-website"
 					target="_blank"
 					rel="noopener noreferrer"
-				>Open source<span class="ext" aria-hidden="true">&#160;&#8599;</span></a>
+				>Open source</a>
 			</small>
 		</div>
 	</div>

@@ -36,13 +36,13 @@
 	margin: 0;
 
 	dt {
-		@include mono(var(--fs-label-sm), 0.2em, uppercase);
+		@include note(var(--fs-note-sm));
 		color: var(--ink-faint);
 		padding-top: 0.2rem;
 	}
 
 	dd {
-		@include mono(var(--fs-label-lg), 0.1em);
+		@include note;
 		color: var(--ink-strong);
 		margin: 0;
 	}

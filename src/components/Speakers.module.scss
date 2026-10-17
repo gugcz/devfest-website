@@ -61,9 +61,9 @@
 	transition: color 0.2s;
 }
 
-// The role: mono, right-set on the name's baseline, one line.
+// The role: a typewriter note, right-set on the name's baseline, one line.
 .tag {
-	@include mono(var(--fs-label-sm), 0.15em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-muted);
 	text-align: right;
 	max-width: 42%;

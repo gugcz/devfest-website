@@ -17,7 +17,7 @@
 }
 
 .label {
-	@include mono(var(--fs-label), 0.15em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--ink-meta);
 }
 
@@ -44,10 +44,8 @@
 }
 
 .error {
-	@include mono(var(--fs-label));
+	@include note(var(--fs-note));
 	margin: 0;
-	line-height: 1.5;
-	letter-spacing: 0.1em;
 	color: var(--color-accent-hot);
 }
 
@@ -75,9 +73,8 @@
 
 // In-flight line under the login field, so a slow callable never reads as a dead button.
 .pending {
-	@include mono(var(--fs-label));
+	@include note(var(--fs-note));
 	margin: 0;
-	letter-spacing: 0.1em;
 	color: var(--ink-soft);
 }
 
@@ -133,7 +130,7 @@
 }
 
 .meta {
-	@include mono(var(--fs-label), 0.15em, uppercase);
+	@include mono(var(--fs-label), 0.15em);
 	margin: 0;
 	color: var(--ink-meta);
 }
@@ -151,7 +148,7 @@
 }
 
 .seats {
-	@include mono(var(--fs-label), 0.1em, uppercase);
+	@include note(var(--fs-note-sm));
 	margin: 0.4rem 0 0;
 	color: var(--color-text);
 

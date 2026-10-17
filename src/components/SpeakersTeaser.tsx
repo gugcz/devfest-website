@@ -46,9 +46,6 @@ export default function SpeakersTeaser() {
 									</span>
 									<span className={s.name}>{speaker.fullName}</span>
 									{tag && <span className={s.tag}>{tag}</span>}
-									<span className={s.arrow} aria-hidden="true">
-										→
-									</span>
 								</a>
 							</li>
 						);

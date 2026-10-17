@@ -21,7 +21,7 @@
 	flex-direction: column;
 	gap: 0.5rem;
 
-	// Tighten label/field rhythm: the mono label warms as the field takes focus.
+	// Tighten label/field rhythm: the note label warms as the field takes focus.
 	&:focus-within .label {
 		color: rgba(255, 255, 255, 0.82);
 	}
@@ -32,14 +32,13 @@
 }
 
 .label {
-	@include mono(var(--fs-label), 0.15em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--ink-meta);
 	transition: color 0.2s ease;
 }
 
 .optional {
 	color: var(--ink-muted);
-	letter-spacing: 0.1em;
 }
 
 // The shared lit field (`_controls.scss`), plus its placeholder and invalid state.
@@ -61,12 +60,11 @@
 	}
 }
 
-// The per-field message. Mono, like every other label on the site — the error
-// is a label, not prose, and it sits in the same column as the field's own.
+// The per-field message. The note voice, like every other word-label on the
+// site — the error is a label, not prose, and it sits in the same column as
+// the field's own.
 .error {
-	@include mono(var(--fs-label));
-	line-height: 1.5;
-	letter-spacing: 0.1em;
+	@include note(var(--fs-note));
 	color: var(--color-accent-hot);
 }
 
@@ -147,22 +145,10 @@
 	}
 }
 
-// Functional link underline — solid hairline, red on hover, with arrow affordance.
+// Functional link underline — solid hairline, red on hover.
 .consentLink {
 	@include hairline-link(var(--ink-strong));
 
-	&::after {
-		content: '\2197';
-		margin-left: 0.35rem;
-		border-bottom: none;
-		display: inline-block;
-		transition: transform 0.25s;
-	}
-
-	&:hover::after,
-	&:focus-visible::after {
-		transform: translate(2px, -2px);
-	}
 }
 
 // The submit IS the global `.btn-primary` (set on the element); this module

@@ -6,7 +6,7 @@
 	align-items: center;
 	min-height: 2.75rem;
 	margin-bottom: 2.6rem;
-	@include mono(var(--fs-label-sm), 0.2em, uppercase);
+	@include action(var(--fs-action));
 	@include hairline-link(var(--ink-meta));
 	padding-bottom: 2px;
 }
@@ -84,7 +84,8 @@
 	gap: 0.45rem;
 	min-height: 2.75rem;
 	padding: 0.8rem 0.6rem 0.7rem;
-	@include mono(var(--fs-label-sm), 0.15em, uppercase);
+	// The format name is a word: typewriter. The size beside it is a figure.
+	@include note(var(--fs-note-sm));
 	color: var(--color-text);
 	text-decoration: none;
 	border: 1px solid var(--field-border);
@@ -99,8 +100,7 @@
 }
 
 .kit-chip-size {
-	font-size: var(--fs-label-xs);
-	letter-spacing: 0.1em;
+	@include mono(var(--fs-label-xs), 0.1em);
 	color: var(--ink-meta);
 }
 
@@ -137,8 +137,9 @@
 	min-width: 0;
 }
 
+// "PDF · 2.4 MB": a figure with its format code, so it stays mono.
 .kit-spec {
-	@include mono(var(--fs-label-xs), 0.1em, uppercase);
+	@include mono(var(--fs-label-xs), 0.1em);
 	color: var(--ink-soft);
 }
 
@@ -163,11 +164,11 @@
 }
 
 .empty-stamp {
-	@include mono(var(--fs-label-xs), 0.2em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--color-accent-hot);
 	padding: 0;
 	background: transparent;
-	// A plain mono word, not a boxed stamp — matches /press.
+	// A plain typewriter note, not a boxed stamp — matches /press.
 	border: 0;
 }
 

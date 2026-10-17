@@ -1,6 +1,6 @@
 @use '../styles/type' as *;
 // A stretch of the hero's facts line, so it wears the line's one voice:
-// mono caps, the qualifier at 0.72 and the figure in white. Mirrors
+// the typewriter note, the qualifier at 0.72 and the figure in white. Mirrors
 // `.hero-facts` in `pages/index.scss`, which is Astro-scoped and cannot
 // reach into this island.
 .offer {
@@ -19,17 +19,29 @@
 	visibility: hidden;
 }
 
+// The middle dot before the offer, matching the page's `.hero-facts` dots.
+// Gone on a phone, where the facts stack one per line.
+.dot {
+	@include note;
+	color: var(--ink-muted);
+	margin-right: 0.4rem;
+
+	@media (max-width: 900px) {
+		display: none;
+	}
+}
+
 // Same lifted 0.72 as the line's other qualifier: the plate behind it is
 // photographic, and 0.55 fell under 4.5:1 on its darkest part.
 .label {
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	@include note;
 	color: rgba(255, 255, 255, 0.72);
 	white-space: nowrap;
 	margin: 0;
 }
 
 .value {
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	@include note;
 	color: var(--color-text);
 	white-space: nowrap;
 	margin: 0;

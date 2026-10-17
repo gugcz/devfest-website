@@ -46,7 +46,7 @@
 
 // The list's one red word.
 .stubState {
-	@include mono(var(--fs-label-sm), 0.2em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--color-accent-hot);
 	white-space: nowrap;
 }
@@ -70,7 +70,7 @@
 
 // Sale window — the wave's ti.to `end_at`, when the organizer set one.
 .stubDeadline {
-	@include mono(var(--fs-label-sm), 0.1em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-meta);
 	margin: 0;
 }
@@ -99,7 +99,7 @@
 // A variant that costs something else ("Company funded 1 452 Kč"): data
 // under the figure, not a second figure.
 .stubAltPrice {
-	@include mono(var(--fs-label-sm), 0.1em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--ink-meta);
 	white-space: nowrap;
 }

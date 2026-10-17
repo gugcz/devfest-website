@@ -89,13 +89,13 @@
 }
 
 .contact-name {
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	@include note;
 	// Full white: a dimmed label would fail 1.4.3 at the band's brightest point.
 	color: var(--color-text);
 }
 
 .email-link {
-	@include mono(var(--fs-ui), 0.1em);
+	@include action;
 	color: var(--color-text);
 	align-self: flex-start;
 	display: inline-flex;
@@ -108,23 +108,11 @@
 	word-break: break-word;
 	transition: text-decoration-color 0.2s;
 
-	&::after {
-		content: '\2197';
-		margin-left: 0.5rem;
-		text-decoration: none;
-		display: inline-block;
-		transition: transform 0.25s;
-	}
-
 	&:hover,
 	&:focus-visible {
 		text-decoration-color: var(--color-text);
 	}
 
-	&:hover::after,
-	&:focus-visible::after {
-		transform: translate(2px, -2px);
-	}
 }
 
 // Flat "Coming soon" placeholder — outline, no rotation, no stamp ink.
@@ -132,7 +120,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.7rem;
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
+	@include action;
 	color: var(--color-text);
 	background: transparent;
 	border: 1px dashed var(--field-border);
@@ -146,7 +134,7 @@
 }
 
 .partners-cta-stamp {
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	@include note(var(--fs-note-sm));
 	padding: 0.22rem 0.55rem;
 	color: var(--color-text);
 		border: 1px solid var(--field-border);
@@ -169,10 +157,4 @@
 
 /* ===================== REDUCED MOTION ===================== */
 @media (prefers-reduced-motion: reduce) {
-	.email-link::after,
-	.email-link:hover::after,
-	.email-link:focus-visible::after {
-		transition: none;
-		transform: none;
-	}
 }

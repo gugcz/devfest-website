@@ -53,27 +53,7 @@
 .intro-link {
 	@include hairline-link(var(--ink-strong));
 
-	&::after {
-		content: '\2197';
-		margin-left: 0.4rem;
-		border-bottom: none;
-		display: inline-block;
-		transition: transform 0.25s;
-	}
-
-	&:hover::after,
-	&:focus-visible::after {
-		transform: translate(2px, -2px);
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.intro-link::after {
-		transition: none;
-	}
-
-	.intro-link:hover::after,
-	.intro-link:focus-visible::after {
-		transform: none;
-	}
 }

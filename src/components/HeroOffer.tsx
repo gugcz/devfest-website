@@ -5,7 +5,7 @@ import s from './HeroOffer.module.scss';
 
 /**
  * The wave on sale, typed into the hero's footing line after the date and
- * the venue: the wave (and when it closes) as an inline mono qualifier, its
+ * the venue: the wave (and when it closes) as an inline typewriter qualifier, its
  * lowest price as the value, linked down to the Tickets section. The
  * qualifier stays because a bare "From 1 210 Kč" does not say which wave.
  *
@@ -29,6 +29,9 @@ export default function HeroOffer() {
 
 	return (
 		<p className={s.offer}>
+			{/* The line's separator, here because the island is a `display:
+			    contents` wrapper the page's own `::before` cannot reach. */}
+			<span className={s.dot} aria-hidden="true">·</span>
 			<span className={s.label}>
 				{/* The final wave sells on urgency, not on its name: the Tickets
 				    section right below names it. */}

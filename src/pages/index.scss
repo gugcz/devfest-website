@@ -31,15 +31,6 @@
 	--hero-mask-shape: linear-gradient(#000, #000);
 }
 
-.hero-stamp {
-	position: absolute;
-	top: calc(var(--header-h, 4.5rem) + 1.25rem);
-	left: var(--gutter);
-	margin: 0;
-	@include mono(var(--fs-label), 0.2em, uppercase);
-	color: var(--ink-muted);
-}
-
 .hero-statement {
 	position: relative;
 	z-index: 2;
@@ -56,7 +47,7 @@
 }
 
 // The facts line: date and venue in white, the wave in the offer's two
-// greys, the one red fill flush right. Air between the parts, no dots.
+// greys, the one red fill flush right. Typewriter, middle dots between.
 .hero-line {
 	width: 100%;
 	max-width: var(--maxw);
@@ -72,13 +63,20 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
-	gap: 0.5rem 1.75rem;
-	@include mono(var(--fs-label), 0.2em, uppercase);
+	gap: 0.35rem 0.75rem;
+	@include note;
 	color: var(--ink-muted);
 
 	time {
 		color: var(--color-text);
 	}
+
+}
+
+// The separator between the facts (the offer island draws its own, see
+// `HeroOffer.module.scss`); gone on a phone, where the facts stack.
+.hero-facts-dot {
+	color: var(--ink-muted);
 }
 
 // The venue is a link in a line of text, so it carries the in-prose underline
@@ -103,6 +101,58 @@
 	margin-top: clamp(1.75rem, 3vw, 2.5rem);
 }
 
+/* ---- last year ---- */
+// A strip the visitor scrolls, not a marquee. Starts on the content column
+// and runs off the right edge; the thin scrollbar is part of the design.
+.gallery-strip {
+	margin-top: clamp(1.75rem, 3vw, 2.5rem);
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x proximity;
+	scroll-padding-inline: var(--gutter);
+	padding: 0 var(--gutter) 1.25rem;
+	scrollbar-width: thin;
+	scrollbar-color: var(--ink-faint) transparent;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: calc(-1 * var(--focus-gap-tight));
+	}
+}
+
+.gallery-track {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 1.25rem;
+	width: max-content;
+
+	li {
+		scroll-snap-align: start;
+	}
+}
+
+// Flat B&W press photographs that develop into colour on hover; no frame.
+.gallery-track img {
+	display: block;
+	height: clamp(240px, 30vw, 26.25rem);
+	width: auto;
+	max-width: none;
+	aspect-ratio: 3 / 2;
+	object-fit: cover;
+	filter: grayscale(1) contrast(1.06) brightness(0.78);
+	transition: filter 0.6s ease;
+
+	&:hover {
+		filter: grayscale(0) contrast(1.02) brightness(1);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		transition: none;
+	}
+}
+
 /* ---- the event ---- */
 .facts {
 	display: grid;
@@ -124,7 +174,7 @@
 	grid-template-columns: max-content minmax(0, 1fr);
 	column-gap: clamp(1.5rem, 3vw, 2.5rem);
 	row-gap: 0.85rem;
-	@include mono(var(--fs-label), 0.15em, uppercase);
+	@include note;
 
 	div {
 		display: contents;
@@ -138,6 +188,37 @@
 		margin: 0;
 		color: var(--color-text);
 	}
+}
+
+// The venue, full width under the facts: a 21:9 frame, grey at rest and in
+// colour on hover like the plates elsewhere.
+.facts-frame {
+	margin: 0;
+
+	img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 21 / 9;
+		object-fit: cover;
+		object-position: center 40%;
+		filter: grayscale(1) contrast(1.3) brightness(0.8);
+		transition: filter 0.6s ease;
+	}
+
+	&:hover img {
+		filter: grayscale(0) contrast(1.02) brightness(1);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		img { transition: none; }
+	}
+}
+
+.facts-caption {
+	margin: 0.9rem 0 0;
+	@include note(var(--fs-note-sm));
+	color: var(--ink-muted);
 }
 
 /* ---- partners ---- */
@@ -219,6 +300,14 @@
 	.hero-facts {
 		flex-direction: column;
 		gap: 0.5rem;
+	}
+
+	.hero-facts-dot {
+		display: none;
+	}
+
+	.facts-frame img {
+		aspect-ratio: 4 / 3;
 	}
 
 	.hero-cta {

@@ -91,7 +91,7 @@
 }
 
 .invite-meta {
-	@include mono(var(--fs-label-lg), 0.1em, uppercase);
+	@include mono(var(--fs-label-lg), 0.1em);
 	color: rgba(255, 255, 255, 0.7);
 }
 
@@ -104,7 +104,7 @@
 }
 
 .invite-quote {
-	@include mono(var(--fs-ui));
+	@include prose(var(--fs-body));
 	line-height: 1.7;
 	color: rgba(255, 255, 255, 0.72);
 

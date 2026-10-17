@@ -3,16 +3,41 @@
 // — never snap a site's actual value to the nearest one used elsewhere,
 // that's a visual decision, not a refactor's.
 
-// Mono label (JetBrains Mono + size + optional tracking/case).
-// A label on a red fill: white, Bold, at the 14pt-bold "large text" size.
-// White on #F11000 is 4.4:1, which clears AA only as large text (3:1), and
-// the brand manual sets the CTA label white on red. Below this size the
-// label would fail AA, so never shrink it.
-@mixin cta-label {
-	@include mono(var(--fs-cta), 0.12em, uppercase);
-	font-weight: 700;
+// THE THREE VOICES. Bebas speaks (headlines and actions), Special Elite
+// tells (prose, notes, every label made of words), JetBrains Mono records
+// (figures only: prices, times, indices, counts, codes). Mono never sets a
+// word-label; that was the site's "AI" tell.
+
+// The note voice: a label, role, caption, eyebrow or section note. Sentence
+// case, no tracking — the typewriter does not shout. Floor `--fs-note-sm`:
+// Special Elite's texture breaks up under 13px.
+@mixin note($size: var(--fs-note)) {
+	font-family: var(--font-special-elite), cursive;
+	font-size: $size;
+	letter-spacing: 0;
+	text-transform: none;
+	line-height: 1.45;
 }
 
+// The action voice: a link or button label. Bebas caps at `--fs-action`,
+// tracking 0 (manual), one line.
+@mixin action($size: var(--fs-action)) {
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: $size;
+	line-height: 1;
+	letter-spacing: 0;
+	text-transform: uppercase;
+}
+
+// A label on a red fill: white Bebas at the 24px "large text" size. White
+// on #F11000 is 4.4:1, which clears AA only as large text (3:1); Bebas has
+// no bold, so the size carries it. Never shrink it.
+@mixin cta-label {
+	@include action(var(--fs-cta));
+}
+
+// Mono figure (JetBrains Mono + size + optional tracking/case). For numbers
+// and codes; a word-label uses `note`, an action uses `action`.
 @mixin mono($size, $track: null, $case: null) {
 	font-family: var(--font-jetbrains-mono), monospace;
 	font-size: $size;

@@ -87,13 +87,12 @@
 }
 
 .stepHeadText {
-	@include mono(var(--fs-label), 0.2em, uppercase);
-	font-weight: 500;
+	@include note(var(--fs-note));
 	color: var(--color-text);
 }
 
 .statusWord {
-	@include mono(var(--fs-label-xs), 0.15em, uppercase);
+	@include note(var(--fs-note-sm));
 
 	&[data-tone='required'] {
 		color: var(--color-text);
@@ -171,7 +170,7 @@
 }
 
 .dropLabel {
-	@include mono(var(--fs-label-lg), 0.15em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--color-text);
 }
 
@@ -181,8 +180,7 @@
 }
 
 .chooseButton {
-	@include mono(var(--fs-label), 0.2em, uppercase);
-	font-weight: 500;
+	@include action(var(--fs-action));
 	color: var(--color-text);
 	background: none;
 	border: 0;
@@ -252,7 +250,7 @@
 }
 
 .photoMeta {
-	@include mono(var(--fs-label-xs), 0.15em, uppercase);
+	@include mono(var(--fs-label-xs), 0.15em);
 	color: var(--color-grey);
 	font-variant-numeric: tabular-nums;
 }
@@ -271,7 +269,7 @@
 }
 
 .linkButton {
-	@include mono(var(--fs-label), 0.15em, uppercase);
+	@include action(var(--fs-action));
 	color: var(--ink-dim);
 	background: none;
 	border: 0;
@@ -309,7 +307,7 @@
 }
 
 .railLabel {
-	@include mono(var(--fs-label-xs), 0.2em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: rgba(255, 255, 255, 0.62);
 }
 
@@ -472,8 +470,7 @@
 	pointer-events: none;
 
 	span {
-		@include mono(var(--fs-label), 0.2em, uppercase);
-		font-weight: 500;
+		@include note(var(--fs-note));
 		color: var(--color-text);
 	}
 }

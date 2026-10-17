@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import millChimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroOffer from '../components/HeroOffer';
 import NewsletterForm from '../components/NewsletterForm';
@@ -21,7 +22,6 @@ const homeRows: { id: string; label: string; partners: Partner[] }[] = [
 	...(await getActivePartnerTiers()),
 	{ id: 'community', label: 'Community', partners: communityPartners },
 ].filter((row) => row.partners.length > 0);
-const tierNote = homeRows.map((row) => row.label).join(' · ');
 
 // Marks are sized by height per tier (`--mark-h`, index.scss); the box from
 // `partnerLogo()` only feeds the srcset.
@@ -53,7 +53,6 @@ const STRIP_SCALE = 1.1;
 					focus="56% 42%"
 				/>
 				<div class="scene-vignette" aria-hidden="true"></div>
-				<p class="hero-stamp" aria-hidden="true">Case file DF-2026 &middot; Public</p>
 				<h1 id="hero-title" class="hero-statement display">
 					<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference, 30 October 2026. </span>
 					Prague&rsquo;s most original<br />conference is <span class="red">back.</span>
@@ -65,6 +64,7 @@ const STRIP_SCALE = 1.1;
 			<div class="hero-line">
 				<div class="hero-facts">
 					<time datetime="2026-10-30">30 Oct 2026</time>
+					<span class="hero-facts-dot" aria-hidden="true">·</span>
 					<a
 						class="hero-facts-link"
 						href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
@@ -77,27 +77,38 @@ const STRIP_SCALE = 1.1;
 			</div>
 		</section>
 
-		<!-- THE EVENT — narration (Special Elite) and data (mono) on two columns. -->
+		<!-- THE EVENT — a note and the facts list, both typewriter, on two columns. -->
 		<section class="band sec" aria-labelledby="facts-title">
 			<div class="band-inner">
 				<header class="head-rule">
 					<h2 id="facts-title" class="head-rule-title">The event</h2>
-					<p class="head-rule-note">Eleventh edition</p>
 				</header>
 				<div class="facts">
 					<p class="facts-note">
-						One day in a converted coal mill north of Prague. 350 medior and
-						senior developers from across CEE, three stages, one afterparty.
-						The eleventh edition; the first in Uhelný Mlýn.
+						The eleventh DevFest.cz: one day in a converted coal mill
+						25 minutes north of Prague, for 350 medior and senior
+						developers from across CEE.
 					</p>
 					<dl class="facts-list">
 						<div><dt>Date</dt><dd><time datetime="2026-10-30">30 October 2026</time></dd></div>
 						<div><dt>Place</dt><dd>Uhelný Mlýn, Libčice nad Vltavou</dd></div>
-						<div><dt>Doors</dt><dd>08:00 &mdash; afterparty until 23:00</dd></div>
+						<div><dt>Doors</dt><dd>08:00 &mdash; 20:00</dd></div>
 						<div><dt>Audience</dt><dd>350 developers</dd></div>
 						<div><dt>Programme</dt><dd>{TOPICS.map((t) => t.name).join(' · ')}</dd></div>
 					</dl>
 				</div>
+				<!-- The one photograph in the body: the venue, because the facts
+				     name a place most visitors have never seen. -->
+				<figure class="facts-frame">
+					<Image
+						src={millChimney}
+						alt="Uhelný Mlýn: the brick coal mill and its chimney in Libčice nad Vltavou"
+						widths={[720, 1080, 1440, 1824]}
+						sizes="(max-width: 900px) 100vw, min(100vw, 90rem)"
+						loading="lazy"
+					/>
+					<figcaption class="facts-caption">Uhelný Mlýn, Libčice nad Vltavou</figcaption>
+				</figure>
 			</div>
 		</section>
 
@@ -109,13 +120,42 @@ const STRIP_SCALE = 1.1;
 		<!-- SPEAKERS — the register's first lines; hides until data loads. -->
 		<SpeakersTeaser client:load />
 
+		<!-- LAST YEAR — the one place the page shows the event itself: a strip
+		     of press photographs from DevFest.cz 2025 the visitor scrolls. -->
+		<section class="band sec" aria-labelledby="gallery-title">
+			<div class="band-inner">
+				<header class="head-rule">
+					<h2 id="gallery-title" class="head-rule-title">Last year</h2>
+					<p class="head-rule-note">DevFest.cz 2025, in photographs</p>
+				</header>
+			</div>
+			<div class="gallery-strip" role="region" aria-label="Photographs from DevFest.cz 2025" tabindex="0">
+				<ul class="gallery-track" role="list">
+					{Array.from({ length: 22 }, (_, i) => {
+						const n = String(i + 1).padStart(2, '0');
+						return (
+							<li>
+								<img
+									src={`/gallery/devfest-2025-${n}.webp`}
+									alt=""
+									loading="lazy"
+									decoding="async"
+									width="1080"
+									height="720"
+								/>
+							</li>
+						);
+					})}
+				</ul>
+			</div>
+		</section>
+
 		<!-- PARTNERS — one wall, one row per tier, marks on one height per tier. -->
 		{homeRows.length > 0 && (
 			<section class="band sec" aria-labelledby="partners-title">
 				<div class="band-inner">
 					<header class="head-rule">
 						<h2 id="partners-title" class="head-rule-title">Partners</h2>
-						<p class="head-rule-note">{tierNote}</p>
 					</header>
 					<div class="partners-tiers">
 						{homeRows.map((tier) => (
@@ -147,7 +187,6 @@ const STRIP_SCALE = 1.1;
 			<div class="band-inner">
 				<header class="head-rule">
 					<h2 id="newsletter-title" class="head-rule-title">Newsletter</h2>
-					<p class="head-rule-note">A few emails a year</p>
 				</header>
 				<div class="newsletter">
 					<p class="newsletter-lede">We write when a wave opens or a speaker is confirmed. Nothing else.</p>

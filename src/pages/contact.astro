@@ -81,10 +81,7 @@ const mediaCoverage = await loadMediaCoverage();
 										<span class="coverage-title">{m.title}</span>
 										{m.description && <span class="coverage-desc">{m.description}</span>}
 										<span class="coverage-meta">
-											<span class="coverage-read">
-												Read article
-												<span class="coverage-arrow" aria-hidden="true">↗</span>
-											</span>
+											<span class="coverage-read">Read article</span>
 											{m.dateLabel && <time class="coverage-date" datetime={m.date}>{m.dateLabel}</time>}
 										</span>
 									</span>

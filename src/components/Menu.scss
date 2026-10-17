@@ -127,7 +127,7 @@
 .header-stamp {
 	margin: 0;
 	justify-self: center;
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
+	@include note;
 	color: var(--color-text);
 	white-space: nowrap;
 	opacity: 1;
@@ -173,9 +173,9 @@
 	// `--header-h` asserts the bar is one tap-target tall; a wrapped label
 	// would make that a lie and pull every anchor offset out with it.
 	white-space: nowrap;
-	// The bar's second control: mono caps and an arrow, no fill. The page's
+	// The bar's second control: Bebas caps, no fill. The page's
 	// one red fill is the hero's (or the ledger's) button, not the bar.
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
+	@include action;
 	text-decoration: none;
 	color: var(--color-text);
 	background: transparent;
@@ -189,18 +189,14 @@
 	display: inline-flex;
 	align-items: center;
 	transition:
-		gap 0.2s ease,
+		color 0.2s ease,
 		opacity 0.15s ease,
 		visibility 0s linear 0s;
-
-	&::after {
-		content: '\2192';
-	}
 }
 
 .header-cta:hover,
 .header-cta:focus-visible {
-	gap: 0.9rem;
+	color: var(--color-accent-hot);
 }
 
 // On the hero's first screen the toggle would be the only bordered box —
@@ -238,7 +234,7 @@
 	border: 0;
 	border-radius: 0;
 	color: var(--color-text);
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
+	@include action;
 	cursor: pointer;
 	transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
@@ -493,7 +489,7 @@
 	gap: 1rem 2rem;
 	width: 100%;
 	padding-top: 0.9rem;
-	@include mono(var(--fs-label-lg), 0.15em, uppercase);
+	@include note;
 }
 
 .nav-foot-line {
