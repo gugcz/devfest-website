@@ -283,6 +283,14 @@
 		color: rgba(255, 255, 255, 0.45);
 	}
 
+	// On a phone the line stacks, one fact per line, and a dot would then
+	// open each line.
+	@media (max-width: 600px) {
+		&::before {
+			display: none;
+		}
+	}
+
 	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);

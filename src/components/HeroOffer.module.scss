@@ -18,6 +18,13 @@
 		margin-right: 0.3rem;
 		color: rgba(255, 255, 255, 0.45);
 	}
+
+	// Stacked on a phone (see `.hero-foot-link` in `pages/index.scss`).
+	@media (max-width: 600px) {
+		&::before {
+			display: none;
+		}
+	}
 }
 
 // Holds the box while `/api/tickets` is in flight, so the line never

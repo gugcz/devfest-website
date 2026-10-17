@@ -60,6 +60,10 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.625rem;
+	// A flex item's min-width is `auto`: one long nowrap tag widened the
+	// whole list past the phone and the page scrolled sideways.
+	min-width: 0;
+	width: 100%;
 }
 
 // Name over role, always: a role that sometimes shared the name's line and
