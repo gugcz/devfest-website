@@ -42,9 +42,6 @@ edit. Say so and stop.
    exists.
 2. `impeccable context` reports `CONTEXT_STALE`: run `/impeccable doctor` and
    fix what it names.
-3. Canvas: `.claude/rules/design-pencil.md`. A new token goes into
-   `BaseLayout.scss` and `docs/design.md`. The canvas is the maintainer's:
-   name the drift, never edit `design/devfest.pen`.
 
 Impeccable comes from `.claude/settings.json`. If it is unavailable (a cloud
 session without the plugin): edit `docs/design.md` by hand to match the code,

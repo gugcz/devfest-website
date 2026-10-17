@@ -30,7 +30,7 @@ paths:
   led to and never delete them. A plan is linked from its issue if there is
   one.
 - **`docs/design.md`** and `.impeccable/design.json` are the design record;
-  **`docs/product.md`** the product record (`.claude/rules/design-pencil.md`).
+  **`docs/product.md`** the product record (`.claude/rules/design.md`).
 - When a change adds or renames a function, an endpoint, a page, a secret or a
   rule, update README's table, CLAUDE.md's function list and rules table,
   the endpoint table in `.claude/rules/api.md`, and the matching rule **in

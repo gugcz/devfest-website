@@ -827,62 +827,6 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
   `html` a scroll container on iOS Safari and breaks `position: fixed` and
   safe-area `env()` (`BaseLayout.scss:217–229`).
 
-## Pencil canvas
-
-`design/devfest.pen` is the visual companion to this document and an
-additional design source. The maintainer edits it in the Pen app; agents read
-it through the headless `pen` CLI. Workflow, loop and guardrails:
-`.claude/rules/design-pencil.md`. The canvas was rebuilt from the **deployed
-site** (devfest.cz, 1440px, computed styles sampled with Playwright), not from
-this prose. It is a reference at desktop width; it does not gate code.
-
-- **[MUST] Canvas variables mirror `:root`.** `$color-accent` is
-  `--color-accent`, `$fs-h2` is `--fs-h2`, `$gutter` is `--gutter`. A token
-  added to `:root` goes into the frontmatter above in the same PR; the
-  maintainer adds the `.pen` variable.
-- **[CURRENT]** Fluid `clamp()` tokens are stored at their 1440px value on
-  the canvas (`$fs-display` 144, `$fs-h2` 112, `$gutter` 72, `$section-y`
-  176). The home statement is a per-page override (117px, see
-  `index.scss:71`) and is written literally on the `Home` frame.
-- **[MUST] The `Components` frame is the only place a primitive is drawn.**
-  `Header`, `Eyebrow`, `Button/Primary` (+ hover), `Button/Ghost`,
-  `Hairline Link`, `Ticker/Item`, `Head/Stack`, `Head/Split`,
-  `Field/Row Link` (+ hover), `Ticket/Stub`, `Speaker/Tile`, `Session/Row`,
-  `Fact`, `Band/Closer Accent`, `Footer`. A surface instances them; the maintainer adds a component for a new
-  primitive in code.
-- **[MUST] One root frame per surface.** Every route has a frame traced
-  from production at 1440px: `Home`, `Sessions`, `Agenda`, `Speakers`,
-  `Team`, `Contact`, `FAQ`, `Attending`, `Invoice`, `Partners`, `Press`,
-  `Press downloads`, `Thank you`, `Newsletter thank you`, `404`,
-  `Privacy policy`, `Invite`. `Surfaces` holds the overlays (menu, cookie
-  banner, session sheet, speaker sheet) and `Mobile` the 375px `Home` and
-  `Sessions`. Frames sit in a grid: row 1 `Components` + `Home`, rows 2–3
-  the routes, row 4 the rest. Exploration frames are the maintainer's
-  to keep or delete.
-- **[MUST] Nothing on the canvas breaks a `[MUST]` here.** The canvas is where
-  a rule is tested first, not where it is waived.
-- **[CURRENT] Hairlines on the canvas use `$rule` (13%), not `$rule-soft`
-  (6%).** Pencil paints the alpha faithfully and a 6% line vanishes in a
-  half-scale export; the code keeps `--rule-soft` on section edges.
-- **[CURRENT] Renderer notes.** Gradient fills (linear, radial, mesh) and
-  layered fills paint, so the hero feather, scene vignette, `--lit` pool
-  and the hero's red wash are real gradients on the canvas. Linear
-  `rotation` runs position 0 from the right at 90° and from the left at
-  270°. Text strokes, CSS masks, `mix-blend-mode` grain and repeating
-  hatch patterns do not exist; the film grain is omitted and the agenda
-  hatch is a solid `$panel-lit`. A fresh image fill shows white until
-  the app reloads the document (quit and reopen Pen); a root frame built
-  from many inserts can stay unpainted until it is copied onto itself.
-  Export in a call of its own, never in the call that built the frame.
-  Images point at the repo's own WebP/PNG files; nothing is copied into
-  `design/`. SVG/AVIF logos are wordmark placeholders and runtime data
-  (speaker portraits, press clippings) is an example plate.
-
-The YAML frontmatter at the top of this file is the machine-readable layer
-(the DESIGN.md spec impeccable and the live panel read). It is derived from
-the tables below; the prose stays normative where they disagree, and the
-disagreement is a bug to fix in both.
-
 ## Open points
 
 Places the code contradicts itself or this document. Each needs a decision.
