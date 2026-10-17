@@ -1,6 +1,7 @@
 ---
-/** The closing statement every page ends on. `tone="accent"` puts it on the
- * red field — at most ONE accent band per page. */
+/** The closing statement every page ends on, on the black ground. (The red
+ * field it used to sit on is gone: red is spent on a word, a button and a
+ * state, never on a ground.) */
 interface Action {
 	href: string;
 	label: string;
@@ -21,6 +22,7 @@ interface Props {
 	 * their ti.to href client-side and report the click).
 	 */
 	actions?: readonly Action[];
+	/** Kept for call sites; every tone renders on the black ground now. */
 	tone?: 'accent' | 'raised' | 'plain';
 	titleId?: string;
 	/** Extra class on the section, for a page that lays out its actions. */
@@ -32,15 +34,12 @@ const {
 	titleHtml,
 	note,
 	actions = [],
-	tone = 'raised',
 	titleId,
 	class: extraClass,
 } = Astro.props;
-
-const toneClass = tone === 'accent' ? ' band--accent' : tone === 'raised' ? ' band--raised' : '';
 ---
 
-<section class:list={[`band${toneClass} closer-band`, extraClass]} aria-labelledby={titleId}>
+<section class:list={['band closer-band', extraClass]} aria-labelledby={titleId}>
 	<div class="band-inner closer">
 		<div>
 			{eyebrow && <p class="eyebrow closer-eyebrow">{eyebrow}</p>}

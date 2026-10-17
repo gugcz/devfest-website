@@ -224,16 +224,17 @@ const GALLERY = [
 			</ul>
 		</section>
 
-		<!-- NEWSLETTER — the home page's one red field, matching the closing
-		     statement every subpage ends on -->
+		<!-- NEWSLETTER — one line on the black ground, no red field: the form is
+		     the red on this screen. -->
 		<!-- `anchor-target`: the hero's "Stay in the loop" jumps here, and the
 		     band opens with `--section-y` of air a jump would otherwise land on. -->
-		<section id="newsletter" class="band band--accent anchor-target">
+		<section id="newsletter" class="band anchor-target" aria-labelledby="newsletter-title">
 			<div class="band-inner newsletter-inner">
 				<div class="newsletter-head">
-					<h2 class="newsletter-title display">Follow the<br />leads.</h2>
+					<p class="eyebrow-index"><span class="eyebrow-no">05</span>Newsletter</p>
+					<h2 id="newsletter-title" class="newsletter-title display">A few emails<br />a year.</h2>
 					<p class="newsletter-lede">
-						We write when a wave opens or a speaker is confirmed. A few emails a year.
+						We write when a wave opens or a speaker is confirmed. Nothing else.
 					</p>
 				</div>
 				<div class="newsletter-form">

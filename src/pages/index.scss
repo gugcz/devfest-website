@@ -6,7 +6,9 @@
 // sits in a footing strip along the base of the frame.
 #hero {
 	position: relative;
-	min-height: 100svh;
+	// As tall as its content on a desktop: forced to the viewport, the frame
+	// hung the footing line in 400px of dead black under the actions. Phones
+	// keep the full first screen (below).
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
@@ -533,7 +535,7 @@
 }
 
 /* ===================== NEWSLETTER ===================== */
-// Ground and container come from `.band--accent`; only the split is local.
+// Ground and container come from `.band`; only the split is local.
 #newsletter {
 	position: relative;
 }
@@ -554,8 +556,7 @@
 .newsletter-lede {
 	margin: clamp(1.25rem, 2.5vw, 1.9rem) 0 0;
 	@include prose(var(--fs-lede), 1.6);
-	// Full cream — see the measured ink table in BaseLayout.scss; dimmer fails 1.4.3 on red.
-	color: var(--on-accent);
+	color: var(--ink-soft);
 	max-width: 32ch;
 }
 

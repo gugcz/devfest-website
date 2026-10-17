@@ -21,6 +21,21 @@
 // one, so it never takes the red field the link rows use.
 //
 //   [ index · state ][ wave + what's included ][ price · buy ]
+// The numbered eyebrow is the section's heading; a note joins it only on the
+// final wave.
+.head {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.headNote {
+	@include prose(var(--fs-lede), 1.6);
+	color: var(--ink-soft);
+	max-width: 40ch;
+	margin: calc(-1 * clamp(0.5rem, 1vw, 1rem)) 0 clamp(2rem, 4vw, 3rem);
+}
+
 .stubs {
 	position: relative;
 }

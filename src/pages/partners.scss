@@ -100,11 +100,8 @@
 }
 
 /* ===================== CLOSING STATEMENT ===================== */
-// Contact block on the accent field. Ink inverts globally via
-// `.band--accent` in BaseLayout.scss; only the partner-specific bits
-// (the named contact, the disabled deck stamp) are stated here. These
-// classes appear ONLY inside the accent band, so there is no dark-ground
-// variant to inherit from.
+// Contact block in the closer, on the black ground: the named contact and
+// the disabled deck placeholder.
 .partners-contact {
 	display: flex;
 	flex-direction: column;
@@ -116,12 +113,12 @@
 .contact-name {
 	@include mono(var(--fs-label), 0.2em, uppercase);
 	// Full white: a dimmed label would fail 1.4.3 at the band's brightest point.
-	color: var(--on-accent);
+	color: var(--color-text);
 }
 
 .email-link {
 	@include mono(var(--fs-ui), 0.1em);
-	color: var(--on-accent);
+	color: var(--color-text);
 	align-self: flex-start;
 	display: inline-flex;
 	align-items: center;
@@ -129,7 +126,7 @@
 	text-decoration: underline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 4px;
-	text-decoration-color: var(--on-accent-border);
+	text-decoration-color: var(--field-border);
 	word-break: break-word;
 	transition: text-decoration-color 0.2s;
 
@@ -143,7 +140,7 @@
 
 	&:hover,
 	&:focus-visible {
-		text-decoration-color: var(--on-accent);
+		text-decoration-color: var(--color-text);
 	}
 
 	&:hover::after,
@@ -158,9 +155,9 @@
 	align-items: center;
 	gap: 0.7rem;
 	@include mono(var(--fs-label-lg), 0.2em, uppercase);
-	color: var(--on-accent);
+	color: var(--color-text);
 	background: transparent;
-	border: 1px dashed var(--on-accent-border);
+	border: 1px dashed var(--field-border);
 	border-radius: var(--radius);
 	padding: 1.25rem 2rem;
 	cursor: not-allowed;
@@ -173,9 +170,9 @@
 .partners-cta-stamp {
 	@include mono(var(--fs-label), 0.2em, uppercase);
 	padding: 0.22rem 0.55rem;
-	color: var(--on-accent);
+	color: var(--color-text);
 	// White edge, not red: red on the red-toned band is red on red.
-	border: 1px solid var(--on-accent-border);
+	border: 1px solid var(--field-border);
 	border-radius: var(--radius);
 }
 

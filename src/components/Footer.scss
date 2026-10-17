@@ -274,6 +274,13 @@
 	font-size: inherit;
 }
 
+// Centre slot of the bottom line; the manual's `CASE NO.` stamp, uppercase.
+.folio {
+	font-size: inherit;
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+}
+
 .opensource {
 	font-size: inherit;
 

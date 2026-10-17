@@ -229,19 +229,16 @@ export default function Tickets() {
 
 	return (
 		<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-			{/* Title left, lede right — see the note on `.header`. The mono
-			    "Tickets" eyebrow above it was the page's THIRD "tickets" in one
-			    viewport (the nav button, this label, and the row CTA), and the
-			    stack under it was the shape the speakers teaser was also using. */}
-			<header className="head-split">
-				<h2 id="tickets-heading" className="display head-title">
-					{finalWave ? 'Last chance to get in.' : 'Buy your way in'}
+			{/* The ledger opens straight under its numbered eyebrow: the waves ARE
+			    the headline. A poster head here ("Buy your way in") was the same
+			    head → lede → list shape every other section used. */}
+			<header className={s.head}>
+				<h2 id="tickets-heading" className="eyebrow-index">
+					<span className="eyebrow-no">02</span>Tickets
 				</h2>
-				<p className="head-note">
-					{finalWave
-						? `${finalName ?? 'This'} is the final wave. There is no next one.`
-						: 'The earlier the wave, the lower the price.'}
-				</p>
+				{finalWave && (
+					<p className={s.headNote}>{finalName ?? 'This'} is the final wave. There is no next one.</p>
+				)}
 			</header>
 			<ul className={`field ${s.stubs}`} role="list">
 				{groups.map((group, i) => {
@@ -304,6 +301,9 @@ export default function Tickets() {
 								<StubPrice group={group} />
 								{anyPurchasable ? (
 									<StubCtas group={group} buyable={buyable} accountSlug={accountSlug} eventSlug={eventSlug} />
+								) : summary?.tone === 'sold-out' ? (
+									/* The manual's rubber stamp, for the one state that is final. */
+									<span className="stamp">Sold out</span>
 								) : (
 									<span className="record-status">{summary?.label ?? 'Unavailable'}</span>
 								)}

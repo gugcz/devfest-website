@@ -132,12 +132,6 @@
 	--on-accent-ink: #FFFFFF;
 	--on-accent-border: rgba(0, 0, 0, 0.85);
 
-	// RED-TONED GROUND (brand manual p.9): Evidence Red darkened by a black
-	// gradient, never a hue shift. Lightest at the top centre (20% black =
-	// #C10D00), sinking to 78% black at the bottom edges. `.band--accent`
-	// paints it and re-points the --on-accent-* trio to white ink for it.
-	--red-toned: radial-gradient(130% 110% at 50% 0%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.78) 100%), #F11000;
-
 	// Focus-ring stand-off. The ring is always 2px solid --color-accent-hot; the gap
 	// tracks how much visible edge the control already has.
 	--focus-gap-tight: 2px;
@@ -345,6 +339,49 @@ b {
 	gap: 0.75rem;
 }
 
+// Numbered section eyebrow, the brand manual's "01 — THE CASE": the index
+// in red is the section's one small red mark, the label stays muted. Set
+// as the section's heading when the section has no poster head of its own
+// (`<h2 class="eyebrow-index">`), else as a `<p>` above the head.
+.eyebrow-index {
+	@include mono(var(--fs-label), 0.2em, uppercase);
+	color: var(--ink-muted);
+	font-weight: 400;
+	display: flex;
+	align-items: baseline;
+	gap: 0.75rem;
+	margin: 0 0 clamp(1.5rem, 3vw, 2.5rem);
+
+	.eyebrow-no {
+		color: var(--color-accent-hot);
+		font-variant-numeric: tabular-nums;
+
+		&::after {
+			content: '\2014';
+			margin-left: 0.75rem;
+			color: var(--ink-faint);
+		}
+	}
+}
+
+// Rubber stamp (manual p. 01, 09, 12): a red outlined box, mono Bold caps,
+// knocked a few degrees off true. A state word only ("Sold out"), never a
+// label the layout depends on — it is inline-block so the row keeps its
+// rhythm without it.
+.stamp {
+	display: inline-block;
+	padding: 0.3em 0.7em;
+	border: 2px solid var(--color-accent-hot);
+	border-radius: var(--radius);
+	color: var(--color-accent-hot);
+	@include mono(var(--fs-label-sm), 0.2em, uppercase);
+	font-weight: 700;
+	line-height: 1.2;
+	white-space: nowrap;
+	transform: rotate(-7deg);
+	transform-origin: center;
+}
+
 // THE headline class. No shadow, no glow, no gradient; size comes from the caller's --fs-*.
 .display {
 	@include display;
@@ -461,22 +498,10 @@ b {
 	background: var(--color-bg);
 }
 
-// RED AS A FIELD. At most once per page, for the thing the page wants the
-// visitor to do. Not flat red: the manual approves only a red-toned ground
-// for a large area. Its brightest point is #C10D00, where black is 3.3:1
-// and fails small text, so the band re-points the --on-accent-* trio to
-// white ink; flat-red chips elsewhere keep the black :root values.
-// Measured on #C10D00 (worst case; the darker the ground, the better white
-// reads): white 6.3:1, white 70% 3.6:1, black 3.3:1.
-.band--accent {
-	--on-accent: #FFFFFF;
-	// The label on an inverted (white) control.
-	--on-accent-ink: #000000;
-	// Control boundaries: white 70% clears 3:1 (1.4.11) at the brightest point.
-	--on-accent-border: rgba(255, 255, 255, 0.7);
-	background: var(--red-toned);
-	color: var(--on-accent);
-}
+// No red band. Red as a 500px ground on every page's closer and the home
+// newsletter was more red than the rest of the site put together, and the
+// accent stopped being one. Red is a verb: one word, one button, one state
+// per page. Every closer and the newsletter sit on the black ground.
 
 // The subpage ground: a spotlight pool. No hairline at the top.
 .band--lit {
@@ -494,48 +519,6 @@ b {
 	width: 100%;
 	max-width: var(--maxw);
 	margin-inline: auto;
-}
-
-// Controls on the red-toned field invert — a red button on red is red on red.
-// Ink is full white (see the table on `.band--accent`). Hierarchy from SIZE,
-// never dimming.
-.band--accent .eyebrow { color: var(--on-accent); }
-// Headline in Paper White; a highlighted word goes white too — no red on red.
-.band--accent .display,
-.band--accent .display .red { color: var(--on-accent); }
-
-// Inverted: white fill, black Bold label (21:1); the white edge is 6.3:1 on
-// the ground. Hover goes black with a white label — black on the ground is
-// 3.3:1, still a visible control edge.
-.band--accent .btn-primary {
-	background: var(--on-accent);
-	border-color: var(--on-accent);
-	color: var(--on-accent-ink);
-
-	&:hover {
-		background: var(--on-accent-ink);
-		border-color: var(--on-accent-ink);
-		color: var(--on-accent);
-	}
-}
-
-.band--accent .btn-ghost {
-	color: var(--on-accent);
-	font-weight: 500;
-	letter-spacing: max(0.1em, calc(0.15em * var(--track-scale, 1)));
-	border-color: var(--on-accent-border);
-
-	&:hover,
-	&:focus-visible {
-		color: var(--on-accent);
-		border-color: var(--on-accent);
-		background: rgba(0, 0, 0, 0.2);
-	}
-}
-
-// A red ring on a red-toned ground disappears: the ring goes white (6.3:1).
-.band--accent :focus-visible {
-	outline-color: var(--on-accent);
 }
 
 .closer {
@@ -563,8 +546,6 @@ b {
 	margin: 0;
 	max-width: 34ch;
 }
-
-.band--accent .closer-note { color: var(--on-accent); }
 
 .closer-actions {
 	display: flex;
