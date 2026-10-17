@@ -28,10 +28,6 @@ const GROUP_DESCRIPTIONS: Record<string, string> = {
 	'lazy bird': 'Last chance to grab a ticket. Late pricing, same full access.',
 };
 
-function groupDescription(groupName: string, fallback: string | null): string | null {
-	return GROUP_DESCRIPTIONS[groupName.trim().toLowerCase()] ?? fallback;
-}
-
 type Variant = ReleaseGroup['variants'][number];
 
 /** The variant an employer pays for: same ticket, invoiced to the company. */
@@ -146,10 +142,8 @@ export default function Tickets() {
 	if (status === 'error') {
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-				<header className={s.head}>
-					<h2 id="tickets-heading" className="eyebrow-index">
-						<span className="eyebrow-no" aria-hidden="true">02</span>Tickets
-					</h2>
+				<header className="head-rule">
+					<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
 				</header>
 				<ErrorState>
 					<p>The box office isn't answering. Reload, or buy direct on ti.to.</p>
@@ -161,10 +155,8 @@ export default function Tickets() {
 	if (status === 'loading') {
 		return (
 			<section id="tickets" className={sectionClass} aria-busy={true} aria-labelledby="tickets-heading">
-				<header className={s.head}>
-					<h2 id="tickets-heading" className="eyebrow-index">
-						<span className="eyebrow-no" aria-hidden="true">02</span>Tickets
-					</h2>
+				<header className="head-rule">
+					<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
 					<LoadingState label="Opening the box office" />
 				</header>
 				<ul className={`field ${s.skelField}`} role="list" aria-hidden="true">
@@ -196,11 +188,9 @@ export default function Tickets() {
 		// slugs only the ti.to link is dropped.
 		return (
 			<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-				<header className={s.head}>
-					<h2 id="tickets-heading" className="eyebrow-index">
-						<span className="eyebrow-no" aria-hidden="true">02</span>Tickets
-					</h2>
-					<p className={s.headNote}>The box office is closed. It opens with the first wave.</p>
+				<header className="head-rule">
+					<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
+					<p className="head-rule-note">Opens with the first wave</p>
 				</header>
 				<EmptyState
 					action={hasEvent ? { href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true } : undefined}
@@ -235,16 +225,12 @@ export default function Tickets() {
 
 	return (
 		<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-			{/* The ledger opens straight under its numbered eyebrow: the waves ARE
-			    the headline. A poster head here ("Buy your way in") was the same
-			    head → lede → list shape every other section used. */}
-			<header className={s.head}>
-				<h2 id="tickets-heading" className="eyebrow-index">
-					<span className="eyebrow-no" aria-hidden="true">02</span>Tickets
-				</h2>
-				{finalWave && (
-					<p className={s.headNote}>{finalName ?? 'This'} is the final wave. There is no next one.</p>
-				)}
+			{/* The ledger: a ruled head, then one ruled row per wave. */}
+			<header className="head-rule">
+				<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
+				<p className="head-rule-note">
+					{finalWave ? `${finalName ?? 'This'} is the final wave` : (vatNote ?? 'Prices in CZK')}
+				</p>
 			</header>
 			<ul className={`field ${s.stubs}`} role="list">
 				{groups.map((group, i) => {
@@ -257,11 +243,6 @@ export default function Tickets() {
 					const summary: ReleaseStatus | null = anyPurchasable
 						? null
 						: statuses.find((st) => st.tone !== 'sold-out') ?? statuses[0];
-					// A wave is a pass, so it renders as a stub. The live one carries the
-					// red admission band; a settled one is cancelled on its counterfoil,
-					// which keeps every word of copy at full contrast (WCAG 1.4.3) rather
-					// than overprinting VOID across live text.
-					const description = groupDescription(group.name, group.description);
 					// Deadline ONLY for a wave a visitor can still buy into: fed the
 					// purchasable variants per the same `releaseStatus()` that prints
 					// the badge, never `end_at` alone — otherwise a hand-closed wave
@@ -290,26 +271,18 @@ export default function Tickets() {
 
 							<div className={s.stubBody}>
 								<h3 className={s.stubTitle}>{group.name}</h3>
-								{anyPurchasable && description && <p className={s.stubNote}>{description}</p>}
-								{/* The wave's one fact: its sale window. Who the pass is for is
-								    said on the price column (the company figure, the "Company
-								    pays" button), not repeated here as an admission line. */}
-								<div className={s.stubFacts}>
-									{deadline && (
-										<p className={s.stubDeadline}>
-											<time dateTime={deadline.iso}>{deadline.label}</time>
-										</p>
-									)}
-								</div>
+								{/* The wave's one fact: its sale window, when the organizer set one. */}
+								{deadline && (
+									<p className={s.stubDeadline}>
+										<time dateTime={deadline.iso}>{deadline.label}</time>
+									</p>
+								)}
 							</div>
 
 							<div className={s.stubEnd}>
 								<StubPrice group={group} />
 								{anyPurchasable ? (
 									<StubCtas group={group} buyable={buyable} accountSlug={accountSlug} eventSlug={eventSlug} />
-								) : summary?.tone === 'sold-out' ? (
-									/* The manual's rubber stamp, for the one state that is final. */
-									<span className="stamp">Sold out</span>
 								) : (
 									<span className="record-status">{summary?.label ?? 'Unavailable'}</span>
 								)}

@@ -7,7 +7,6 @@ import {
 	getMediaPartners,
 	getCommunityPartners,
 	partnerLogo,
-	tierColumnRem,
 	type Partner,
 } from '../lib/partners';
 
@@ -53,14 +52,17 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 				<div class="wall-inner">
 					{/* One heading step for every tier: the logo size says the
 					    rank, so no tier needs a poster head of its own. */}
-					<h2 id={`${wall.id}-partners-title`} class="wall-title">
-						{wall.label}<span class="sr-only"> partners</span>
-					</h2>
-					<ul class="logo-grid" style={`--wall-col:${tierColumnRem(wall.id)}rem`}>
+					<header class="head-rule">
+						<h2 id={`${wall.id}-partners-title`} class="head-rule-title">
+							{wall.label}<span class="sr-only"> partners</span>
+						</h2>
+						<p class="head-rule-note">{wall.partners.length === 1 ? '1 partner' : `${wall.partners.length} partners`}</p>
+					</header>
+					<ul class="logo-grid">
 						{wall.partners.map((p) => {
-							const { props, wide } = partnerLogo(p, wall.id);
+							const { props } = partnerLogo(p, wall.id);
 							return (
-								<li class:list={['logo-item', { 'logo-item--wide': wide }]}>
+								<li class="logo-item">
 									{p.url ? (
 										<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
 											<Image class={`logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />

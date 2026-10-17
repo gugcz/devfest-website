@@ -65,6 +65,7 @@
 	// 1280×720 section head tie the hero, so the height term follows it down.
 	--fs-h2: clamp(2.25rem, min(6vw, 9svh), 5.5rem);
 	--fs-h3: clamp(1.8rem, 3.4vw, 2.6rem);      // sub-section headline
+	--fs-head: clamp(2.1rem, 3.4vw, 3rem);      // the ruled section head (`.head-rule`)
 	--fs-card-title: 1.95rem;                   // card / dossier title
 	--fs-title-compact: 1.6rem;                 // compact field row title
 
@@ -338,47 +339,29 @@ b {
 	gap: 0.75rem;
 }
 
-// Numbered section eyebrow, the brand manual's "01 — THE CASE": the index
-// in red is the section's one small red mark, the label stays muted. Set
-// as the section's heading when the section has no poster head of its own
-// (`<h2 class="eyebrow-index">`), else as a `<p>` above the head.
-.eyebrow-index {
-	@include mono(var(--fs-label), 0.2em, uppercase);
-	color: var(--ink-muted);
-	font-weight: 400;
+// THE SECTION HEAD. A Bebas title on the left, one mono note on the right,
+// both on a rule — the top edge of the ruled list under it. Every section on
+// every page opens this way; the rule is structure, the list's first line.
+.head-rule {
 	display: flex;
+	justify-content: space-between;
 	align-items: baseline;
-	gap: 0.75rem;
-	margin: 0 0 clamp(1.5rem, 3vw, 2.5rem);
+	gap: 1rem 2rem;
+	flex-wrap: wrap;
+	border-bottom: 1px solid var(--color-text);
+	padding-bottom: 0.8rem;
+	margin: 0;
 
-	.eyebrow-no {
-		color: var(--color-accent-hot);
-		font-variant-numeric: tabular-nums;
-
-		&::after {
-			content: '\2014';
-			margin-left: 0.75rem;
-			color: var(--ink-faint);
-		}
+	.head-rule-title {
+		@include display(var(--fs-head));
+		margin: 0;
 	}
-}
 
-// Rubber stamp (manual p. 01, 09, 12): a red outlined box, mono Bold caps,
-// knocked a few degrees off true. A state word only ("Sold out"), never a
-// label the layout depends on — it is inline-block so the row keeps its
-// rhythm without it.
-.stamp {
-	display: inline-block;
-	padding: 0.3em 0.7em;
-	border: 2px solid var(--color-accent-hot);
-	border-radius: var(--radius);
-	color: var(--color-accent-hot);
-	@include mono(var(--fs-label-sm), 0.2em, uppercase);
-	font-weight: 700;
-	line-height: 1.2;
-	white-space: nowrap;
-	transform: rotate(-7deg);
-	transform-origin: center;
+	.head-rule-note {
+		@include mono(var(--fs-label), 0.2em, uppercase);
+		color: var(--ink-muted);
+		margin: 0;
+	}
 }
 
 // THE headline class. No shadow, no glow, no gradient; size comes from the caller's --fs-*.
@@ -605,6 +588,12 @@ b {
 	position: relative;
 	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
+	// The arrow every action carries, so the two controls read as one family.
+	&::after {
+		content: '\2192';
+		font-weight: 400;
+	}
+
 	// Hover inverts the fill — no lift, no glow, no shadow. The focus ring
 	// stays the global red one, clear of a white fill.
 	&:hover {
@@ -614,32 +603,40 @@ b {
 	}
 }
 
-.btn-ghost {
+// THE SECOND CONTROL, and the last. Every action that is not the page's one
+// red fill is this: mono caps and an arrow, no box, no underline. `.btn-ghost`
+// is kept as the class name its callers use; it draws the same thing.
+.btn-ghost,
+.action {
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
 	gap: 0.6rem;
 	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 	color: var(--color-text);
 	text-decoration: none;
 	cursor: pointer;
-	// Viewport-capped horizontal padding — same reason as .btn-primary.
-	padding: 1.25rem min(2rem, 10vw);
+	// A 44px target without a box: the padding is vertical only, the inline
+	// edge stays on the column.
+	padding: 0.75rem 0;
+	min-height: 2.75rem;
 	max-width: 100%;
-	// See .btn-primary.
 	overflow-wrap: anywhere;
-	// Control edge, not a decorative hairline — see --field-border.
-	border: 1px solid var(--field-border);
-	border-radius: var(--radius);
+	border: 0;
+	border-radius: 0;
 	background: transparent;
-	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, gap 0.2s ease;
+	transition: color 0.2s ease, gap 0.2s ease;
+
+	&::after {
+		content: '\2192';
+		font-weight: 400;
+		transition: transform 0.25s ease;
+	}
 
 	&:hover,
 	&:focus-visible {
 		color: var(--color-text);
-		border-color: var(--color-text);
 		background: transparent;
-		gap: 0.85rem;
+		gap: 0.9rem;
 	}
 }
 
@@ -682,13 +679,15 @@ b {
 
 // The step is the rhythm AND the band the reach field fills — hence one variable.
 .field-row {
-	--field-step: clamp(1.9rem, 2.8vw, 2.5rem);
+	--field-step: clamp(1.4rem, 2.2vw, 1.9rem);
 	position: relative;
 	// Without its own stacking context the z-index:-1 field paints behind the section bg.
 	isolation: isolate;
 	padding: var(--field-step) 0;
 	background: transparent;
 	border: 0;
+	// Rows are ruled: the list is a ruled document, each row a line in it.
+	border-bottom: 1px solid var(--rule);
 	border-radius: 0;
 }
 

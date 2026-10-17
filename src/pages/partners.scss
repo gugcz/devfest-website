@@ -28,30 +28,22 @@
 	margin: 0 auto;
 }
 
-// Every tier, Platinum included: the tier name at the sub-section step.
-.wall-title {
-	@include display(var(--fs-h3));
-	margin: 0 0 clamp(1.75rem, 3.4vw, 2.5rem);
-}
-
-// ─── THE LOGO ROWS ────────────────────────────────────────────────────
-// Open logos on the page ground: no cell, no border, no lit tile. A regular,
-// left-set grid per tier, its column the tier's box width (`--wall-col`), so
-// a short last row stands on the same columns as the full one above it. Each
-// mark takes its optical box (`partnerLogo()` → --logo-w), so the rank reads
-// from the logo's size.
+// Each tier opens on the ruled head (`.head-rule`, global), then its marks
+// in one left-set row on one height per tier (`--mark-h`), wrapping when
+// they must. No grid: a column grid with two-wide cells left holes.
 .logo-grid {
 	list-style: none;
-	margin: 0;
+	margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
 	padding: 0;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(var(--wall-col), 100%), 1fr));
-	// A two-column mark would otherwise leave a hole in the row before it.
-	grid-auto-flow: row dense;
+	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
-	justify-items: start;
-	gap: clamp(2.25rem, 4.5vw, 3.75rem) clamp(1.5rem, 3vw, 3rem);
+	gap: clamp(1.25rem, 2.5vw, 2rem) clamp(2rem, 4vw, 3.5rem);
+	--mark-h: 2.6rem;
 }
+
+.logo-wall--lead .logo-grid { --mark-h: 4rem; }
+.logo-wall:is([aria-labelledby='community-partners-title'], [aria-labelledby='media-partners-title']) .logo-grid { --mark-h: 2.2rem; }
 
 .logo-item {
 	display: flex;
@@ -67,6 +59,8 @@
 
 	.logo {
 		@include partner-logo;
+		width: auto;
+		height: var(--mark-h);
 	}
 
 	// Wider than --focus-gap-lg on purpose: a wordmark carries its own
@@ -77,26 +71,10 @@
 	}
 }
 
-// A very wide mark (`partnerLogo().wide`) is drawn against two columns.
-.logo-item--wide {
-	grid-column: span 2;
-}
-
-// Phones: two columns for every tier but Platinum, which keeps its full size
-// (clamped to the column). A very wide mark keeps its full box across both.
+// Phones: marks a step smaller.
 @media (max-width: 600px) {
-	.logo-wall:not(.logo-wall--lead) {
-		--logo-scale: 0.8;
-
-		.logo-grid {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-			column-gap: 1.25rem;
-		}
-	}
-
-	.logo-item--wide {
-		--logo-scale: 1;
-	}
+	.logo-grid { --mark-h: 2rem; }
+	.logo-wall--lead .logo-grid { --mark-h: 3rem; }
 }
 
 /* ===================== CLOSING STATEMENT ===================== */

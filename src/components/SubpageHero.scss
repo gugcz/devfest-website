@@ -61,10 +61,18 @@
 	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 
 	// Inline-block with block padding: clear of the 24px target minimum.
+	// The site's text action (`.action`): no underline, an arrow.
 	a {
 		@include hairline-link;
-		display: inline-block;
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
 		padding: 0.4em 0 0.3em;
+
+		&::after {
+			content: '\2192';
+		}
 	}
 }
 

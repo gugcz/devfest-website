@@ -188,13 +188,15 @@
 	// `--header-h` asserts the bar is one tap-target tall; a wrapped label
 	// would make that a lie and pull every anchor offset out with it.
 	white-space: nowrap;
-	@include cta-label;
+	// The bar's second control: mono caps and an arrow, no fill. The page's
+	// one red fill is the hero's (or the ledger's) button, not the bar.
+	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 	text-decoration: none;
 	color: var(--color-text);
-	background: var(--color-accent);
-	border: 1px solid var(--color-accent);
-	border-radius: var(--radius);
-	padding: 0.72rem min(1.5rem, 7.5vw);
+	background: transparent;
+	border: 0;
+	padding: 0.72rem 0;
+	gap: 0.6rem;
 	// Touch target — WCAG 2.5.5. It is also the tallest thing in the bar,
 	// so it is what `--header-h` is built from. The token is a physical
 	// 44px, not 2.75rem — see BaseLayout.scss.
@@ -202,18 +204,18 @@
 	display: inline-flex;
 	align-items: center;
 	transition:
-		background 0.2s ease,
-		border-color 0.2s ease,
+		gap 0.2s ease,
 		opacity 0.15s ease,
 		visibility 0s linear 0s;
+
+	&::after {
+		content: '\2192';
+	}
 }
 
-// Same hover as `.btn-primary`: the fill inverts, nothing glows or moves.
 .header-cta:hover,
 .header-cta:focus-visible {
-	background: var(--color-text);
-	border-color: var(--color-text);
-	color: var(--color-bg);
+	gap: 0.9rem;
 }
 
 // On the hero's first screen the toggle would be the only bordered box —
@@ -241,19 +243,17 @@
 	position: relative;
 	z-index: 2;
 	gap: min(0.65rem, 3.25vw);
-	// Same box as `.header-cta` — label type, padding and so height — so the
-	// two controls in the bar read as a pair, not a button and its footnote.
-	padding: 0.72rem min(1.5rem, 7.5vw);
+	// Same type as `.header-cta`, and like it no box: the bar is two mono
+	// words and the mark.
+	padding: 0.72rem 0 0.72rem min(1.5rem, 7.5vw);
 	// Physical touch target — the token is px, not rem. See .header-cta.
 	min-height: var(--header-tap);
 	min-width: var(--header-tap);
 	background: transparent;
-	// The site's ONLY navigation control at every width — there is no
-	// horizontal nav breakpoint — so its boundary has to clear 1.4.11.
-	border: 1px solid var(--field-border);
-	border-radius: var(--radius);
+	border: 0;
+	border-radius: 0;
 	color: var(--color-text);
-	@include cta-label;
+	@include mono(var(--fs-label-lg), 0.2em, uppercase);
 	cursor: pointer;
 	transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
@@ -573,7 +573,7 @@
 // Under ~384px the mark, the CTA label (which cannot shrink: white on red
 // is AA only as large text) and the toggle no longer fit one row. The CTA
 // leaves the bar; Tickets stays the first line of the menu.
-@media (max-width: 383.98px) {
+@media (max-width: 599.98px) {
 	.header-cta {
 		display: none;
 	}

@@ -3,14 +3,17 @@
 	position: relative;
 	width: 100%;
 	z-index: 2;
-	padding: 6rem var(--gutter) 2rem;
+	margin-top: var(--section-y);
+	padding: 3rem var(--gutter) 2rem;
+	// The document's last rule: the footer opens on it like every section.
+	border-top: 1px solid var(--rule);
 	background: var(--color-bg);
 	font-family: var(--font-jetbrains-mono), monospace;
 	color: rgba(255, 255, 255, 0.65);
 }
 
-// Columns → bottom line, separated by space alone: no rule above
-// the footer, none between its rows.
+// Columns → bottom line, separated by space; the rule above is the
+// footer's head line, none between its rows.
 .footer-inner {
 	max-width: var(--maxw);
 	margin: 0 auto;

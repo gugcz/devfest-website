@@ -68,15 +68,20 @@
 
 // Inline link on a red hairline that lights to accent-hot. Keyboard focus
 // takes the global ring; a caller with its own offset restates only that.
+// A link inside running text: a plain underline (SC 1.4.1 — colour alone
+// does not mark it), white, red on hover. Standalone actions do not use
+// this; they are `.action` (mono caps + arrow, BaseLayout.scss).
 @mixin hairline-link($color: var(--color-text)) {
 	color: $color;
-	text-decoration: none;
-	border-bottom: 1px solid var(--rule-red);
-	transition: color 0.2s, border-color 0.2s;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+	text-decoration-color: var(--rule-red);
+	transition: color 0.2s, text-decoration-color 0.2s;
 
 	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
+		text-decoration-color: var(--color-accent-hot);
 	}
 }

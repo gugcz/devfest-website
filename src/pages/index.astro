@@ -1,7 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import logo from '../assets/logo.png';
-import millChimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroOffer from '../components/HeroOffer';
 import NewsletterForm from '../components/NewsletterForm';
@@ -11,23 +9,23 @@ import SpeakersTeaser from '../components/SpeakersTeaser';
 import { getActivePartnerTiers, getCommunityPartners, partnerLogo, type Partner } from '../lib/partners';
 import { TOPICS } from '../lib/topics';
 
-// Homepage "silver+" strip — one unlabelled row per tier, top tier first, so
-// the ladder reads the same here as it does on /partners (logo size steps
-// down with the tier's box). Community partners close
-// the strip as one off-ladder row below silver; media partners stay on
-// /partners only.
+// The home page is one ruled document: a full-bleed plate with the statement
+// set into it, a facts line with the page's one red fill, then four ruled
+// sections (the event, tickets, speakers, partners) and the newsletter.
+// Every section opens on `.head-rule`; every list row is a `.field-row`.
+
+// One row per tier, top tier first; community closes the wall. Media
+// partners live on /partners only.
 const communityPartners = await getCommunityPartners();
 const homeRows: { id: string; label: string; partners: Partner[] }[] = [
 	...(await getActivePartnerTiers()),
 	{ id: 'community', label: 'Community', partners: communityPartners },
 ].filter((row) => row.partners.length > 0);
+const tierNote = homeRows.map((row) => row.label).join(' · ');
 
-// The strip sizes every mark against its tier's /partners box, a step larger
-// (110%) so the smallest community wordmark still clears ~32px at 1440, on one
-// grid shared by all rows, so the tiers' columns line up.
+// Marks are sized by height per tier (`--mark-h`, index.scss); the box from
+// `partnerLogo()` only feeds the srcset.
 const STRIP_SCALE = 1.1;
-
-
 ---
 
 <BaseLayout description="DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. 30 October 2026. Tickets on sale now.">
@@ -41,179 +39,121 @@ const STRIP_SCALE = 1.1;
 	/>
 
 	<main class="page-stack">
-		<!-- HERO -->
-		<section id="hero" class="scene">
-			<HeroBackground
-				photoOpacity={0.85}
-				mobilePhotoOpacity={0.55}
-				mobileFocus="42% 100%"
-				mobileZoom="auto 130%"
-				width="74%"
-				size="auto 132%"
-				focus="54% 46%"
-				tightMask
-				fadeBottom
-			/>
-			<div class="scene-vignette" aria-hidden="true"></div>
-
-			<div class="hero-inner">
-				<!-- `data-covers`: while this is in view the bar hides its own mark
-				     and Tickets button (Menu.astro, `trackHeroCover`). -->
-				<h1 class="hero-title" data-covers="brand">
-					<Image
-						src={logo}
-						alt=""
-						class="hero-logo"
-						priority
-						widths={[220, 439, 487, 974]}
-						sizes="(max-width: 700px) 82vw, (min-width: 1921px) 23vw, 439px"
-					/>
-					<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference. AI agents, generative UI, cloud & backends, mobile & web accessibility. 30 October 2026.</span>
-				</h1>
-
-				<p class="hero-statement display">
+		<!-- HERO — the plate runs edge to edge; the statement is set into its
+		     lower left, the case-file stamp into its upper left. Nothing else
+		     sits on the photograph. -->
+		<section id="hero" class="scene" aria-labelledby="hero-title">
+			<div class="hero-plate">
+				<HeroBackground
+					photoOpacity={0.9}
+					mobilePhotoOpacity={0.7}
+					mobileFocus="42% 40%"
+					mobileZoom="auto 120%"
+					width="100%"
+					focus="56% 42%"
+				/>
+				<div class="scene-vignette" aria-hidden="true"></div>
+				<p class="hero-stamp" aria-hidden="true">Case file DF-2026 &middot; Public</p>
+				<h1 id="hero-title" class="hero-statement display">
+					<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference, 30 October 2026. </span>
 					Prague&rsquo;s most original<br />conference is <span class="red">back.</span>
-				</p>
-
-				<!-- The topic set as one rotating subject in a fixed slot, not five
-				     lines under the statement — the poster keeps its column, the
-				     set still covers all five. The full set stays in the DOM at
-				     all times for SEO and screen readers (`aria-label` on the
-				     group); the rotating slot itself is `aria-hidden` so the
-				     swap is never announced as a live-region update. Hover or
-				     focus on the group holds the current subject (SC 2.2.2);
-				     `prefers-reduced-motion` unstacks the slot into the static
-				     set below instead of starting the rotation. -->
-				<p class="topics-rotor" tabindex="0" role="group" aria-label={`On the programme: ${TOPICS.map((t) => t.name).join(', ')}`}>
-					<span class="topics-rotor-label" aria-hidden="true">On the programme</span>
-					<span class="topics-rotor-slot" data-rotor aria-hidden="true">
-						{TOPICS.map((t, i) => (
-							<span class={`topics-rotor-item${i === 0 ? ' is-active' : ''}`}>{t.name}</span>
-						))}
-					</span>
-				</p>
-
-				<div class="hero-actions" data-covers="cta">
-					<a href="#tickets" class="btn-primary">Get tickets</a>
-					<a href="#newsletter" class="btn-ghost"><span class="btn-ghost-label">Stay in the loop</span></a>
-				</div>
+				</h1>
 			</div>
 
-			<!-- The footing line: date, venue and the wave on sale, typed as one
-			     mono line along the base of the frame — a case-file stamp, not a
-			     stats bar. No clock: a ticking readout under a still poster was
-			     the one thing on the page that moved for its own sake. -->
-			<div class="hero-foot">
-				<time datetime="2026-10-30">30 Oct 2026</time>
-				<a
-					class="hero-foot-link"
-					href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
-					target="_blank"
-					rel="noopener noreferrer"
-				>Uhelný Mlýn, near Prague</a>
-				<!-- The wave on sale and its price, live from ti.to. -->
-				<HeroOffer client:load />
+			<!-- The facts line under the plate: date, venue, the wave on sale, and
+			     the page's one red fill. -->
+			<div class="hero-line">
+				<div class="hero-facts">
+					<time datetime="2026-10-30">30 Oct 2026</time>
+					<a
+						class="hero-facts-link"
+						href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
+						target="_blank"
+						rel="noopener noreferrer"
+					>Uhelný Mlýn, near Prague</a>
+					<HeroOffer client:load />
+				</div>
+				<a href="#tickets" class="btn-primary hero-cta">Get tickets</a>
 			</div>
 		</section>
 
-		<!-- 01 THE EVENT — the case note and the facts, then one held frame from
-		     the last edition. No second poster head under the hero: this block
-		     is narration (Special Elite) and data (mono), set on two columns.
-		     Audience and edition from the partner deck, kept in step by hand. -->
-		<section id="facts" class="band" aria-labelledby="facts-title">
-			<div class="band-inner facts-inner">
-				<h2 id="facts-title" class="eyebrow-index"><span class="eyebrow-no" aria-hidden="true">01</span>The event</h2>
-				<p class="facts-note">
-					One day in a converted coal mill north of Prague. 350 medior and
-					senior developers from across CEE, three stages, one afterparty.
-					The eleventh edition; the first in Uhelný Mlýn.
-				</p>
-				<dl class="facts-list">
-					<div><dt>Date</dt><dd><time datetime="2026-10-30">30 October 2026</time></dd></div>
-					<div><dt>Place</dt><dd>Uhelný Mlýn, Libčice nad Vltavou</dd></div>
-					<div><dt>Doors</dt><dd>08:00 &mdash; afterparty until 23:00</dd></div>
-					<div><dt>Audience</dt><dd>350 developers</dd></div>
-				</dl>
+		<!-- THE EVENT — narration (Special Elite) and data (mono) on two columns. -->
+		<section class="band sec" aria-labelledby="facts-title">
+			<div class="band-inner">
+				<header class="head-rule">
+					<h2 id="facts-title" class="head-rule-title">The event</h2>
+					<p class="head-rule-note">Eleventh edition</p>
+				</header>
+				<div class="facts">
+					<p class="facts-note">
+						One day in a converted coal mill north of Prague. 350 medior and
+						senior developers from across CEE, three stages, one afterparty.
+						The eleventh edition; the first in Uhelný Mlýn.
+					</p>
+					<dl class="facts-list">
+						<div><dt>Date</dt><dd><time datetime="2026-10-30">30 October 2026</time></dd></div>
+						<div><dt>Place</dt><dd>Uhelný Mlýn, Libčice nad Vltavou</dd></div>
+						<div><dt>Doors</dt><dd>08:00 &mdash; afterparty until 23:00</dd></div>
+						<div><dt>Audience</dt><dd>350 developers</dd></div>
+						<div><dt>Programme</dt><dd>{TOPICS.map((t) => t.name).join(' · ')}</dd></div>
+					</dl>
+				</div>
 			</div>
-			<!-- One frame, full width, graded B&W: the mill itself (the only
-			     plate in the repo sharp enough for a 1440px frame; the 2025 press
-			     photos are 800px). The caption says what and where, in the
-			     line's mono voice. -->
-			<figure class="facts-frame">
-				<Image
-					src={millChimney}
-					alt="Uhelný Mlýn: the brick coal mill and its chimney in Libčice nad Vltavou"
-					widths={[720, 1080, 1440, 1824]}
-					sizes="(max-width: 900px) 100vw, min(100vw, 90rem)"
-					loading="lazy"
-				/>
-				<figcaption class="facts-caption">Uhelný Mlýn &middot; Libčice nad Vltavou, 25 minutes from Prague</figcaption>
-			</figure>
 		</section>
 
 		<!-- TICKETS — client:load, not visible: the hero's "Get tickets" jumps
 		     straight here, and a visible-gated island only began loading on
-		     arrival, so a phone landed on the skeleton. The fetch is shared
-		     with the hero's offer, which needs it at load anyway. -->
+		     arrival, so a phone landed on the skeleton. -->
 		<Tickets client:load />
 
-		<!-- SPEAKERS TEASER — lineup credits with the lit name's portrait; hides until data loads.
-		     client:load (not visible): the island renders nothing until Firestore
-		     resolves, so a client:visible observer would never fire on the
-		     zero-height placeholder. -->
+		<!-- SPEAKERS — the register's first lines; hides until data loads. -->
 		<SpeakersTeaser client:load />
 
-		<!-- 04 PARTNERS — one wall: the tier as a mono label in the margin
-		     column, the marks on one cap height per tier, left-set. Media
-		     partners live on /partners only. -->
+		<!-- PARTNERS — one wall, one row per tier, marks on one height per tier. -->
 		{homeRows.length > 0 && (
-			<section id="partners" class="band" aria-labelledby="partners-label">
-				<div class="band-inner partners-inner">
-					<h2 id="partners-label" class="eyebrow-index"><span class="eyebrow-no" aria-hidden="true">04</span>Partners</h2>
+			<section class="band sec" aria-labelledby="partners-title">
+				<div class="band-inner">
+					<header class="head-rule">
+						<h2 id="partners-title" class="head-rule-title">Partners</h2>
+						<p class="head-rule-note">{tierNote}</p>
+					</header>
 					<div class="partners-tiers">
 						{homeRows.map((tier) => (
-							<div class={`partners-tier tier-${tier.id}`}>
-								<p class="partners-tier-label" id={`partners-tier-${tier.id}`}>{tier.label}</p>
-								<ul class="partners-row" aria-labelledby={`partners-tier-${tier.id}`}>
-									{tier.partners.map((p) => {
-										const { props } = partnerLogo(p, tier.id, STRIP_SCALE);
-										return (
-											<li class="partners-item">
-												{p.url ? (
-													<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-														<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
-													</a>
-												) : (
+							<ul class={`partners-row tier-${tier.id}`} aria-label={tier.label}>
+								{tier.partners.map((p) => {
+									const { props } = partnerLogo(p, tier.id, STRIP_SCALE);
+									return (
+										<li class="partners-item">
+											{p.url ? (
+												<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
 													<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
-												)}
-											</li>
-										);
-									})}
-								</ul>
-							</div>
+												</a>
+											) : (
+												<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
+											)}
+										</li>
+									);
+								})}
+							</ul>
 						))}
 					</div>
-
-					<a class="partners-more" href="/partners">See all partners</a>
+					<a class="action" href="/partners">All partners</a>
 				</div>
 			</section>
 		)}
 
-		<!-- NEWSLETTER — one line on the black ground, no red field: the form is
-		     the red on this screen. -->
-		<!-- `anchor-target`: the hero's "Stay in the loop" jumps here, and the
-		     band opens with `--section-y` of air a jump would otherwise land on. -->
-		<section id="newsletter" class="band anchor-target" aria-labelledby="newsletter-title">
-			<div class="band-inner newsletter-inner">
-				<div class="newsletter-head">
-					<p class="eyebrow-index"><span class="eyebrow-no" aria-hidden="true">05</span>Newsletter</p>
-					<h2 id="newsletter-title" class="newsletter-title display">A few emails<br />a year.</h2>
-					<p class="newsletter-lede">
-						We write when a wave opens or a speaker is confirmed. Nothing else.
-					</p>
-				</div>
-				<div class="newsletter-form">
-					<NewsletterForm client:visible />
+		<!-- NEWSLETTER — `anchor-target`: the hero's footnote links jump here. -->
+		<section id="newsletter" class="band sec anchor-target" aria-labelledby="newsletter-title">
+			<div class="band-inner">
+				<header class="head-rule">
+					<h2 id="newsletter-title" class="head-rule-title">Newsletter</h2>
+					<p class="head-rule-note">A few emails a year</p>
+				</header>
+				<div class="newsletter">
+					<p class="newsletter-lede">We write when a wave opens or a speaker is confirmed. Nothing else.</p>
+					<div class="newsletter-form">
+						<NewsletterForm client:visible />
+					</div>
 				</div>
 			</div>
 		</section>
@@ -223,46 +163,3 @@ const STRIP_SCALE = 1.1;
 <style lang="scss">
 	@use './index';
 </style>
-
-<script>
-	// The topic rotor. `prefers-reduced-motion` is checked once here — the
-	// stylesheet already unstacks the slot into the full static set for that
-	// visitor, so the loop below simply never starts and that static reading
-	// is the deployed one, not a fallback.
-	let rotorInterval: ReturnType<typeof setInterval> | undefined;
-
-	document.addEventListener('astro:before-swap', () => {
-		clearInterval(rotorInterval);
-	});
-
-	document.addEventListener('astro:page-load', () => {
-		clearInterval(rotorInterval);
-		const slot = document.querySelector<HTMLElement>('[data-rotor]');
-		if (!slot) return;
-		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-		const items = [...slot.children] as HTMLElement[];
-		let i = 0;
-		// SC 2.2.2 (Pause, Stop, Hide): the rotation runs longer than 5s, so it
-		// must be stoppable. Pointer over the group or keyboard focus inside it
-		// holds the current subject; there is no separate visible control, so
-		// the group itself carries the focus ring.
-		let paused = false;
-		const group = slot.closest<HTMLElement>('.topics-rotor');
-		group?.addEventListener('mouseenter', () => { paused = true; });
-		group?.addEventListener('mouseleave', () => { paused = false; });
-		group?.addEventListener('focusin', () => { paused = true; });
-		group?.addEventListener('focusout', () => { paused = false; });
-
-		// One swap, one tick: the next name is in before the last has gone.
-		// An "out, then in" sequence left the slot empty for 260ms every
-		// cycle, and a screenshot or a glance in that window saw a caption
-		// over nothing.
-		rotorInterval = setInterval(() => {
-			if (paused) return;
-			items[i].classList.remove('is-active');
-			i = (i + 1) % items.length;
-			items[i].classList.add('is-active');
-		}, 2600);
-	});
-</script>

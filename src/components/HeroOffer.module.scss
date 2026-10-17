@@ -1,7 +1,7 @@
 @use '../styles/type' as *;
 // A stretch of the hero's footing line, so it wears the line's one voice:
 // mono caps, the qualifier at 0.72 and the figure in white. Mirrors
-// `.hero-foot` in `pages/index.scss`, which is Astro-scoped and cannot
+// `.hero-facts` in `pages/index.scss`, which is Astro-scoped and cannot
 // reach into this island.
 .offer {
 	display: inline-flex;
@@ -11,20 +11,6 @@
 	gap: 0.35rem 0.6em;
 	margin: 0;
 
-	// The line's middle dot, same as `.hero-foot-link::before`; it hides
-	// with the pending box.
-	&::before {
-		content: '·';
-		margin-right: 0.3rem;
-		color: rgba(255, 255, 255, 0.45);
-	}
-
-	// Stacked on a phone (see `.hero-foot-link` in `pages/index.scss`).
-	@media (max-width: 600px) {
-		&::before {
-			display: none;
-		}
-	}
 }
 
 // Holds the box while `/api/tickets` is in flight, so the line never

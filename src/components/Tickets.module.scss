@@ -1,49 +1,33 @@
 @use '../styles/type' as *;
+// The ticket ledger: a ruled head (`.head-rule`, global), then one ruled row
+// per wave (`.field-row`, global). This file owns the row's columns.
+//
+//   [ index · state ][ wave · deadline ][ price · company figure ][ action ]
+
 .tickets {
 	width: 100%;
 	max-width: var(--maxw);
 	margin: 0 auto;
-	// A held shot — extra air reads as emphasis. #tickets is the site's
-	// most-followed anchor, so `.anchor-target` (BaseLayout.scss) cancels
-	// `--section-air`; stating it here and building the padding from it keeps
-	// the two in step.
-	--section-air: var(--section-y-wide);
-	padding: var(--section-air) var(--gutter);
+	// #tickets is the site's most-followed anchor, so `.anchor-target`
+	// (BaseLayout.scss) cancels `--section-air`; stating it here keeps the
+	// two in step.
+	--section-air: var(--section-y-tight);
+	padding: var(--section-air) var(--gutter) 0;
 	position: relative;
 	z-index: 1;
 }
 
-// Head layout, title and note come from `.head-split` / `.head-title` / `.head-note`.
-
-/* ===================== TICKET WAVES ===================== */
-// An open field, not a ruled table: `.field-row--holds` owns the rhythm and the
-// warm reach state. A wave CONTAINS its control (the Buy CTA) rather than being
-// one, so it never takes the red field the link rows use.
-//
-//   [ index · state ][ wave + what's included ][ price · buy ]
-// The numbered eyebrow is the section's heading; a note joins it only on the
-// final wave.
-.head {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-}
-
-.headNote {
-	@include prose(var(--fs-lede), 1.6);
-	color: var(--ink-soft);
-	max-width: 40ch;
-	margin: calc(-1 * clamp(0.5rem, 1vw, 1rem)) 0 clamp(2rem, 4vw, 3rem);
-}
-
 .stubs {
 	position: relative;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
 .stub {
 	display: grid;
-	grid-template-columns: 4rem minmax(0, 1fr) minmax(13rem, auto);
-	align-items: start;
+	grid-template-columns: 4rem minmax(0, 1fr) auto auto;
+	align-items: center;
 	column-gap: clamp(1.4rem, 3vw, 3rem);
 }
 
@@ -51,183 +35,175 @@
 .stubMeta {
 	display: flex;
 	flex-direction: column;
-	gap: 0.6rem;
-	padding-top: 0.35rem;
+	gap: 0.4rem;
 }
 
 .stubSerial {
-	@include mono(var(--fs-label-lg), 0.15em);
+	@include mono(var(--fs-label), 0.15em);
 	font-variant-numeric: tabular-nums;
 	color: var(--ink-faint);
 }
 
+// The list's one red word.
 .stubState {
 	@include mono(var(--fs-label-sm), 0.2em, uppercase);
 	color: var(--color-accent-hot);
 	white-space: nowrap;
 }
 
-// "Last chance" is two words that overrun the 4rem index column; stacked
-// under the serial they stay clear of the wave title.
 .stubStateFinal {
 	white-space: normal;
 }
 
-/* ---- body ---- */
+/* ---- wave ---- */
 .stubBody {
 	display: flex;
 	flex-direction: column;
-	// Not one uniform gap: the wave was arriving as six evenly spaced lines with
-	// nothing saying which belong together. Title and its sentence sit close, the
-	// fact line takes its own air below (`.stubFacts` margin-top).
-	gap: 0.5rem;
+	gap: 0.4rem;
 	min-width: 0;
 }
 
 .stubTitle {
-	@include display(var(--fs-row));
+	@include display(var(--fs-row-sm));
 	margin: 0;
-}
-
-// Special Elite is a typewriter face — it needs more leading and more size than
-// a neutral sans at the same measure before it reads as a sentence rather than
-// as another label.
-.stubNote {
-	@include prose(var(--fs-body), 1.7);
-	color: var(--ink);
-	max-width: 46ch;
-	margin: 0;
-}
-
-// The wave's facts on one wrapping line: sale window, then what the pass admits.
-.stubFacts {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	// No punctuation joins the two: on a narrow column the line wraps, and a
-	// joiner then lands stranded at the head of the second line.
-	column-gap: 1.4rem;
-	row-gap: 0.4rem;
-	margin-top: 0.55rem;
 }
 
 // Sale window — the wave's ti.to `end_at`, when the organizer set one.
-// Muted mono like every other per-row label: red is spent once per list
-// (the live wave's "On sale" state), so a deadline on every row must not
-// compete with it.
 .stubDeadline {
-	@include mono(var(--fs-label-sm));
-	// Wide tracking is the mono voice, but two tracked caps lines under a
-	// sentence stopped scanning as words. Pulled back to a readable step.
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
+	@include mono(var(--fs-label-sm), 0.1em, uppercase);
 	color: var(--ink-meta);
 	margin: 0;
 }
 
-/* ---- price + action ---- */
+/* ---- price ---- */
 .stubEnd {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
-	gap: 1rem;
-	text-align: right;
+	display: contents;
 }
 
-// Stacked, not side by side: the figure's right edge landed short of the CTA's
-// and the column read as two ragged axes.
 .stubPriceGroup {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
-	gap: 0.35rem;
+	gap: 0.3rem;
+	text-align: right;
 }
 
 .stubPrice {
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row-figure);
+	font-size: var(--fs-row-sm);
 	letter-spacing: 0;
 	line-height: 0.9;
 	color: var(--color-text);
 }
 
 // A variant that costs something else ("Company funded 1 452 Kč"): data
-// under the figure, not a second figure. 11.8px, clear of the 11px floor.
+// under the figure, not a second figure.
 .stubAltPrice {
 	@include mono(var(--fs-label-sm), 0.1em, uppercase);
 	color: var(--ink-meta);
+	white-space: nowrap;
 }
 
-/* ---- the live wave ---- */
-// No ground of its own: the live wave is told by its red "On sale" state
-// and the red Buy button — the list's one red mark — not by a lit panel
-// behind it. (`.stubLive` stays on the row for the hover wash and tests.)
+/* ---- action ---- */
+// The live wave's controls: the red fill for the first variant, the text
+// action for the second. A settled wave shows its state word here instead.
+.ctas {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 1.5rem;
+	min-width: 12rem;
+}
 
-/* ---- a spent wave ---- */
-// Keeps full text contrast — a settled wave is quieter by weight and by its status
-// word, never by dimming its copy (WCAG 1.4.3).
+.cta:global(.btn-primary) {
+	padding: 0.85rem 1.3rem;
+	position: relative;
+	z-index: 2;
+}
+
+.cta:global(.btn-ghost) {
+	position: relative;
+	z-index: 2;
+}
+
+.stubLive {
+}
+
 .stubSpent {
-	// No mark of its own — it is simply the wave without the lit ground.
+	// The state word takes the action column, flush right.
+	:global(.record-status) {
+		display: block;
+		text-align: right;
+		min-width: 12rem;
+	}
 }
 
+/* ---- footnotes ---- */
+.footnote {
+	margin-top: 1.5rem;
+	text-align: left;
+	@include prose(var(--fs-body-lg), 1.6);
+	letter-spacing: 0.01em;
+	color: var(--ink-meta);
+	max-width: 70ch;
+}
+
+.footnote + .footnote {
+	margin-top: 0.6rem;
+}
+
+// Inline in a sentence, so underlined like reading-copy links; the
+// standalone actions on the page carry an arrow instead.
+.footnoteLink {
+	color: var(--color-text);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	text-decoration-color: var(--rule-red);
+	transition: color 0.2s, text-decoration-color 0.2s;
+
+	&:hover,
+	&:focus-visible {
+		color: var(--color-accent-hot);
+		text-decoration-color: var(--color-accent-hot);
+	}
+}
+
+/* ---- phones ---- */
 @media (max-width: 720px) {
-	// One column: a two-column mobile grid put the body into the 2.5rem index track.
-	// The copy block and the price/action block are two different things to read;
-	// at 1.1rem they joined the same undifferentiated stack of lines.
 	.stub {
-		grid-template-columns: minmax(0, 1fr);
-		row-gap: 1.9rem;
+		grid-template-columns: minmax(0, 1fr) auto;
+		row-gap: 0.9rem;
 	}
 
 	.stubMeta {
+		grid-column: 1 / -1;
 		flex-direction: row;
 		align-items: baseline;
 		gap: 0.9rem;
-		padding-top: 0;
 	}
 
-	.stubEnd {
-		flex-direction: row;
-		align-items: baseline;
-		justify-content: space-between;
-		flex-wrap: wrap;
-		gap: 1.2rem 1.25rem;
-		text-align: left;
-		width: 100%;
-	}
-
-	// On a phone the three waves stack into one viewport and arrive as three identical
-	// titles; the live wave keeps the poster scale and the settled ones drop a step.
-	// Hierarchy is SIZE and AIR, never alpha (WCAG 1.4.3). Two classes so the step
-	// outranks `.field-row--short`, which sets the same variable globally.
-	.stub.stubSpent {
-		--field-step: 1.6rem;
-		// A settled wave is a title and a figure; the wide split belongs to the
-		// live wave, which has prose and a fact line between the two.
-		row-gap: 1.1rem;
-	}
-
-	.stubSpent .stubTitle {
-		font-size: var(--fs-h3);
-	}
-
-	.stubSpent .stubPrice {
-		font-size: var(--fs-h3);
-	}
-
-	// A spent wave has no deadline left to show, so the fact line must not
-	// keep reserving its air either.
-	.stubSpent .stubFacts {
-		margin-top: 0;
-	}
-
-	// The column is left-set on mobile, so the figure and its VAT note must be too.
 	.stubPriceGroup {
-		align-items: flex-start;
+		align-items: flex-end;
+	}
+
+	.ctas {
+		grid-column: 1 / -1;
+		justify-content: space-between;
+		width: 100%;
+		min-width: 0;
+	}
+
+	.cta:global(.btn-primary) {
+		flex: 1 1 auto;
+	}
+
+	.stubSpent :global(.record-status) {
+		min-width: 0;
 	}
 }
 
-// The loading skeleton mirrors the field geometry so nothing reflows on load.
+/* ---- loading skeleton ---- */
+// Mirrors the row geometry so nothing reflows on load.
 .skelField {
 	list-style: none;
 	padding: 0;
@@ -236,17 +212,17 @@
 
 .skelWave {
 	display: grid;
-	grid-template-columns: 4rem minmax(0, 1fr) minmax(13rem, auto);
-	align-items: start;
+	grid-template-columns: 4rem minmax(0, 1fr) auto;
+	align-items: center;
 	column-gap: clamp(1.4rem, 3vw, 3rem);
-	row-gap: 1.9rem;
-	padding: clamp(2.25rem, 3.6vw, 3.25rem) 0;
+	padding: clamp(1.4rem, 2.2vw, 1.9rem) 0;
+	border-bottom: 1px solid var(--rule);
 }
 
 .skelCol {
 	display: flex;
 	flex-direction: column;
-	gap: 0.9rem;
+	gap: 0.6rem;
 	min-width: 0;
 }
 
@@ -254,100 +230,28 @@
 	align-items: flex-end;
 }
 
-@media (max-width: 720px) {
-	.skelWave {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.skelColRight {
-		align-items: flex-start;
-	}
-}
-
-// Shimmering placeholder bars laid into the field geometry above.
 .skelBar {
 	display: block;
 	position: relative;
 	z-index: 1;
-	background: linear-gradient(
-		90deg,
-		rgba(255, 255, 255, 0.05) 0%,
-		rgba(255, 255, 255, 0.15) 50%,
-		rgba(255, 255, 255, 0.05) 100%
-	);
+	background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.05) 100%);
 	background-size: 200% 100%;
 	animation: shimmer 1.6s linear infinite;
 }
 
-.skelIndex { height: 0.85rem; width: 1.5rem; margin-top: 0.35rem; }
-.skelTitle { height: 2.2rem; width: 62%; }
-.skelText { height: 0.75rem; width: 100%; max-width: 34ch; }
-.skelFacts { height: 0.7rem; width: 100%; max-width: 24ch; }
-.skelPrice { height: 2rem; width: 8rem; flex-shrink: 0; }
+.skelIndex { height: 0.8rem; width: 1.5rem; }
+.skelTitle { height: 1.8rem; width: 40%; }
+.skelText { height: 0.6rem; width: 30%; }
+.skelFacts { display: none; }
+.skelPrice { height: 1.8rem; width: 6rem; }
 
 .skelBtn {
-	height: 2.9rem;
-	// The placeholder stands in for a button, so it is bounded by its column
-	// the same way one is — 11rem is 352px at a 32px root.
-	width: min(11rem, 100%);
-	border-radius: var(--radius);
-	background: linear-gradient(
-		90deg,
-		rgba(241, 16, 0, 0.2) 0%,
-		rgba(241, 16, 0, 0.45) 50%,
-		rgba(241, 16, 0, 0.2) 100%
-	);
+	height: 2.6rem;
+	width: min(8rem, 100%);
+	background: linear-gradient(90deg, rgba(241, 16, 0, 0.2) 0%, rgba(241, 16, 0, 0.45) 50%, rgba(241, 16, 0, 0.2) 100%);
 	background-size: 200% 100%;
 	animation: shimmer 1.6s linear infinite;
 }
-
-
-// The live wave's buy controls: one per variant, each opening its own ti.to
-// checkout. Stacked and equal width so the two labels read as one choice;
-// the first (the cheapest, Individual) is the filled one.
-.ctas {
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	gap: 0.75rem;
-}
-
-// The wave's Buy control IS the global `.btn-primary` / `.btn-ghost` (set on
-// the element); this module only sizes it down to the row. Module CSS is
-// bundled BEFORE the global sheet, so the compound selector is what lets
-// these win.
-.cta:global(.btn-primary),
-.cta:global(.btn-ghost) {
-	padding: 0.95rem 1.3rem;
-	gap: 0.5rem;
-	// Above the wave's reach wash.
-	position: relative;
-	z-index: 2;
-}
-
-.footnote {
-	margin-top: 2rem;
-	// Left-set, like every other line on the page.
-	text-align: left;
-	// Leading of its own: at the face's default the underlined link on the
-	// second line ran into the first, and two footnotes read as one knot.
-	@include prose(var(--fs-body-lg), 1.6);
-	letter-spacing: 0.01em;
-	color: var(--ink-meta);
-	// The full field width ran ~140 characters to a line.
-	max-width: 70ch;
-}
-
-// The second side door sits right under the first.
-.footnote + .footnote {
-	margin-top: 0.85rem;
-}
-
-.footnoteLink {
-	@include hairline-link;
-	padding-bottom: 1px;
-}
-
 
 @keyframes shimmer {
 	0% { background-position: 200% 0; }
@@ -355,7 +259,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.skelBar {
+	.skelBar,
+	.skelBtn {
 		animation: none;
 	}
 
@@ -364,9 +269,7 @@
 }
 
 @media (max-width: 720px) {
-	// The action takes the full measure, so the buy target stays the widest thing on the row.
-	.cta,
-	.ctas {
-		width: 100%;
+	.skelWave {
+		grid-template-columns: minmax(0, 1fr) auto;
 	}
 }

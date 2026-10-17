@@ -1,290 +1,90 @@
 @use '../styles/type' as *;
 @use '../styles/logos' as *;
 
+// The home page as a ruled document (docs/design.md, "The ruled document").
+// Section heads and list rows are global (`.head-rule`, `.field-row`); this
+// file owns the plate, the facts line and the four sections' inner layout.
+
 /* ===================== HERO ===================== */
-// One column, not two. The statement is the page; the data (date, venue, clock)
-// sits in a footing strip along the base of the frame.
+// The plate runs edge to edge under the bar; the statement sits in its lower
+// left on the page column. Height is the photograph's, not the viewport's.
 #hero {
 	position: relative;
-	// As tall as its content on a desktop: forced to the viewport, the frame
-	// hung the footing line in 400px of dead black under the actions. Phones
-	// keep the full first screen (below).
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
 	overflow: hidden;
-	// 5.5rem clears the 71px header bar; the bar is a scrim and the photo runs under it.
-	// The bottom inset is the cookie banner while it is up (`--consent-h`, set
-	// by CookieBanner.astro): the content is bottom-set, so it rises into the
-	// empty sky above instead of sliding under the banner.
-	padding: calc(5.5rem + env(safe-area-inset-top)) var(--gutter) var(--consent-h, 0px);
+	background: var(--color-bg);
 }
 
-// The grain (BaseLayout `.scene::before`) lifts black to a faint grey; it
-// thins out with the plate's bottom fade (`fadeBottom`), so the frame ends on
-// the same #000 the facts band opens on, with no edge between them.
-#hero::before {
-	-webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
-	mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
-}
-
-.hero-inner {
+.hero-plate {
 	position: relative;
-	z-index: 10;
-	width: 100%;
-	max-width: var(--maxw);
-	margin: 0 auto;
-	// The statement block sits low in the frame — a poster, not a centred
-	// card. Top inset is small: it only pushed the wordmark further down.
-	padding-block: clamp(0.75rem, 2vh, 2rem) clamp(1.5rem, 5vh, 4rem);
-	flex: 1;
+	// Tall enough for a two-line statement at poster size and the sky above it.
+	min-height: clamp(26rem, 58vw, 44rem);
 	display: flex;
 	flex-direction: column;
-	// Bottom-set on the phone (the mobile fold fix this column depends on —
-	// see the `#hero` comment below); hung from the top edge on desktop.
 	justify-content: flex-end;
-	align-items: flex-start;
+	padding: calc(var(--header-h, 4.5rem) + 1.5rem) var(--gutter) clamp(1.75rem, 3.5vw, 3rem);
 }
 
-// Hung from the top edge, not centred: a centred column pooled ~520px of
-// dead air above the wordmark once the rotor collapsed five lines to one.
-// Phone keeps the bottom-set rule — the mobile-fold fix relies on it.
-@media (min-width: 901px) {
-	.hero-inner {
-		justify-content: flex-start;
-	}
-}
-
-.hero-title {
-	line-height: 0;
-	// Height-aware: the gap under the wordmark is one of the four vertical
-	// insets that decide whether the footing strip clears the fold. `min()`
-	// against an svh term lets a short viewport take the small value while a
-	// tall desktop keeps the poster spacing.
-	margin: 0 0 clamp(0.9rem, min(3.5vw, 3svh), 2.75rem);
-	// The wordmark PNG carries ~2.8% of transparent margin on its left; left
-	// as-is the mark sits visibly right of the statement's stem below it.
-	transform: translateX(-2.77%);
-}
-
-.hero-logo {
-	// The wordmark is ~5:1, so its WIDTH is what spends vertical budget.
-	// Capping it against svh as well keeps a 900px-tall desktop from giving
-	// 112px of the hero's height to the mark alone.
-	// Floor = the brand manual's 180px digital minimum plus the artboard's clear space.
-	width: clamp(188px, min(44vw, 44svh), 27.4375rem);
-	max-width: 100%;
-	height: auto;
-	display: block;
-}
-
-// THE statement. Poster scale, set tight; the one thing that must land first.
-.hero-statement {
-	// Height-aware override of the width-only --fs-hero: at 1440x900 it set
-	// 136px lines and pushed the footing strip 116px below the fold. The svh
-	// term makes the statement yield on short viewports; tall screens are
-	// unchanged.
-	font-size: clamp(2.5rem, min(9.5vw, 13svh), 8.5rem);
-	max-width: 18ch;
-	// `balance` fights the explicit <br> — the line breaks are art-directed.
-	text-wrap: initial;
-
-	// The sentence overlaps the figure — a clean seam between type block and
-	// photo reads as a caption, not a poster.
-	@media (min-width: 901px) {
-		.red {
-			display: inline-block;
-			transform: translateX(0.12em);
-		}
-	}
-}
-
-// One rotating subject in a fixed slot instead of five lines — covers all
-// five topics without five rows. The big pause sits ABOVE the subject
-// (mark + statement are one cluster, subject + action the next).
-.topics-rotor {
-	display: grid;
-	gap: clamp(0.3rem, 0.9vh, 0.5rem);
-	margin: clamp(2rem, 9vh, 6rem) 0 0;
+// Edge-to-edge plate: the component's default is a right-hand 60% with a
+// left feather; here the photograph is the whole frame.
+.hero-plate :global(.hero-photo) {
 	width: 100%;
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap, 0.5rem);
-	}
+	--hero-mask-shape: linear-gradient(#000, #000);
 }
 
-// Says what the rotating name is. Indented by its own tracking so the caption
-// starts on the same optical stem as the name under it.
-.topics-rotor-label {
-	margin: 0 0 0 0.2em;
+.hero-stamp {
+	position: absolute;
+	top: calc(var(--header-h, 4.5rem) + 1.25rem);
+	left: var(--gutter);
+	margin: 0;
 	@include mono(var(--fs-label), 0.2em, uppercase);
 	color: var(--ink-muted);
 }
 
-// Every name occupies the same grid cell, so the slot measures the widest
-// one and the block's height and width stay constant across the cycle —
-// nothing else on the page reflows as the subject changes.
-.topics-rotor-slot {
-	display: grid;
-	grid-template-areas: 'slot';
-	justify-items: start;
-}
-
-// Bebas, full ink, one grade under the statement — separated by SCALE, not
-// tint (dimmed cream on the one thing that moves reads as disabled). Bebas
-// is condensed, so more tracking, less leading, bigger size than the mono
-// it replaced.
-.topics-rotor-item {
-	grid-area: slot;
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.5rem, 2.9vw, 2.75rem);
-	line-height: 1;
-	text-transform: uppercase;
-	color: rgba(255, 255, 255, 0.96);
-	opacity: 0;
-	transform: translateY(0.3em);
-	// Short: the two names overlap for these 180ms, and a brief overlap
-	// reads as a change; an empty slot between them read as a fault.
-	transition: opacity 180ms ease, transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-.topics-rotor-item.is-active {
-	opacity: 1;
-	transform: translateY(0);
-}
-
-// The full set, unstacked into two columns instead of rotating. This
-// is also what a visitor with `prefers-reduced-motion: reduce` sees — the
-// script that drives the rotation never starts (see the inline script
-// below), so this is the deployed reading for them, not a fallback.
-@media (prefers-reduced-motion: reduce) {
-	.topics-rotor-slot {
-		grid-template-areas: none;
-		grid-auto-flow: column;
-		grid-template-rows: repeat(3, auto);
-		grid-template-columns: repeat(2, minmax(0, max-content));
-		column-gap: clamp(1.25rem, 3vw, 3rem);
-		// Bebas sets at line-height 1, so the rows need their leading back
-		// here — 0.1rem was tuned against the mono's 1.15.
-		row-gap: 0.35rem;
-	}
-
-	.topics-rotor-item {
-		grid-area: auto;
-		opacity: 1;
-		transform: none;
-	}
-}
-
-// Close under the rotor (~52px at the cap): the big pause in the column
-// sits above the subject, not below it, so this gap stays tight.
-.hero-actions {
-	margin-top: clamp(1.25rem, min(4.5vw, 4svh), 3.5rem);
-	display: flex;
-	gap: clamp(1.25rem, 3vw, 2.25rem);
-	align-items: center;
-	flex-wrap: wrap;
-}
-
-// Optical, not metric: a filled rectangle aligned to the same x as a
-// letter stem reads as sitting inside the column above it.
-.hero-actions .btn-primary {
-	transform: translateX(-2px);
-}
-
-// One secondary control, one treatment — the outlined pill next to the
-// filled one reads as a second button of equal weight; the system already
-// dropped that device everywhere else.
-.hero-actions .btn-ghost {
-	width: auto;
-	min-height: 44px;
-	border: 0;
-	background: none;
-	padding: 0.55rem 0;
-	justify-content: flex-start;
-	color: var(--ink);
-	text-decoration: none;
-}
-
-// Underline via `::after`, not `text-decoration`: on tracked-out mono the
-// browser's runs one tracking space past the last glyph. Gap is 0.2em —
-// uppercase mono has no descenders, so a deeper drop reads as a rule under
-// the button.
-.btn-ghost-label {
-	display: inline-block;
-	white-space: nowrap;
-	border-bottom: 1px solid currentColor;
-	padding-bottom: 0.2em;
-
-	&::after {
-		content: '';
-		display: inline-block;
-		margin-left: -0.22em;
-	}
-}
-
-// Two controls, two different hit areas otherwise: the ghost stretches to
-// the filled button's block instead of carrying its own 44px, so the row
-// reads as one control surface with two labels.
-@media (min-width: 901px) {
-	.hero-actions .btn-ghost {
-		align-self: stretch;
-		min-height: 0;
-		padding-block: 0;
-		display: inline-flex;
-		align-items: center;
-	}
-}
-
-/* ---- footing line ---- */
-// Date, venue and the wave on sale as ONE mono line along the base of the
-// hero, left-set like the column above it: a stamp on the case file, in the
-// same voice as every other label on the site. Facts in white, qualifiers
-// at 0.72 (0.55 fell under 4.5:1 on the plate's darkest part), a middle dot
-// between the parts. No Bebas figures, no clock: the poster above is the
-// only large type in the frame.
-.hero-foot {
+.hero-statement {
 	position: relative;
-	z-index: 10;
+	z-index: 2;
+	width: 100%;
+	max-width: var(--maxw);
+	margin: 0 auto;
+	// Poster scale, two lines at 1440; the column, not the viewport, is the measure.
+	font-size: clamp(2.8rem, 9.4vw, 8.5rem);
+	line-height: 0.88;
+	text-wrap: balance;
+	// Legibility on the photograph without a scrim: a soft black lift under
+	// the letterforms only.
+	text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
+}
+
+// The facts line: date and venue in white, the wave in the offer's two
+// greys, the one red fill flush right. Middle dots between the parts.
+.hero-line {
 	width: 100%;
 	max-width: var(--maxw);
 	margin: 0 auto;
 	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1.5rem 2.5rem;
+	padding: clamp(1.25rem, 2vw, 1.75rem) var(--gutter) 0;
+}
+
+.hero-facts {
+	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
-	justify-content: flex-start;
-	gap: 0.5rem 0.9rem;
-	padding: clamp(0.85rem, 1.6vh, 1.6rem) 0 calc(clamp(0.85rem, 1.6vh, 1.6rem) + env(safe-area-inset-bottom));
+	gap: 0.5rem 1.75rem;
 	@include mono(var(--fs-label), 0.2em, uppercase);
-	color: rgba(255, 255, 255, 0.72);
+	color: var(--ink-muted);
 
 	time {
 		color: var(--color-text);
 	}
 }
 
-// The dot rides on the part it precedes, so a wrapped line never starts
-// with one. The offer island draws its own (`HeroOffer.module.scss`): a
-// scoped `> * + *::before` here cannot reach into it.
-.hero-foot-link {
+.hero-facts-link {
 	color: var(--color-text);
 	text-decoration: none;
 	transition: color 0.2s ease;
-
-	&::before {
-		content: '·';
-		margin-right: 0.9rem;
-		color: rgba(255, 255, 255, 0.45);
-	}
-
-	// On a phone the line stacks, one fact per line, and a dot would then
-	// open each line.
-	@media (max-width: 600px) {
-		&::before {
-			display: none;
-		}
-	}
 
 	&:hover,
 	&:focus-visible {
@@ -292,68 +92,30 @@
 	}
 }
 
-// Laptop heights. A browser window on a 1280x720 to 1536x864 screen leaves
-// a 600-790px viewport, and the insets above pushed the footing strip
-// 40-90px under the fold there — date and venue only showed on scroll. On
-// a short desktop viewport the statement, the rotor's pause and the insets
-// yield more to height; tall screens keep the poster spacing.
-@media (min-width: 901px) and (max-height: 960px) {
-	.hero-inner {
-		padding-block: clamp(0.5rem, 1.5svh, 2rem) clamp(1rem, 3.5svh, 4rem);
-	}
-
-	.hero-title {
-		margin-bottom: clamp(0.75rem, min(3.5vw, 2.5svh), 2.75rem);
-	}
-
-	.hero-logo {
-		width: clamp(188px, min(44vw, 38svh), 27.4375rem);
-	}
-
-	.hero-statement {
-		font-size: clamp(2.5rem, min(9.5vw, 11svh), 8.5rem);
-	}
-
-	.topics-rotor {
-		margin-top: clamp(1.25rem, 5svh, 6rem);
-	}
-
-	.topics-rotor-item {
-		font-size: clamp(1.5rem, min(2.9vw, 5svh), 2.75rem);
-	}
-
-	.hero-actions {
-		margin-top: clamp(1rem, min(4.5vw, 3svh), 3.5rem);
-	}
+.hero-cta {
+	flex-shrink: 0;
+	padding: 1rem 1.75rem;
 }
 
-// Short laptop windows (a 1280x720 or 1366x768 screen leaves ~650-720px).
-// With the cookie banner up the footing strip needs the last ~15px the
-// pause above the rotor holds; on a tall window the pause stays poster-size.
-@media (min-width: 901px) and (max-height: 760px) {
-	.topics-rotor {
-		margin-top: 3svh;
-	}
+/* ===================== SECTIONS ===================== */
+// Every section: the head on its rule, then its list or its two columns.
+.sec {
+	--section-air: var(--section-y-tight);
+	padding-bottom: 0;
 }
 
-/* ===================== 01 THE EVENT ===================== */
-// Narration left, data right, on one baseline row; the frame below runs the
-// full width of the band. No poster head: the hero above is the page's one.
-.facts-inner {
+.sec .band-inner > * + * {
+	margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+/* ---- the event ---- */
+.facts {
 	display: grid;
-	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+	grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
 	column-gap: clamp(2.5rem, 6vw, 7rem);
-	row-gap: clamp(2rem, 4vw, 3rem);
 	align-items: start;
-
-	.eyebrow-index {
-		grid-column: 1 / -1;
-		margin-bottom: 0;
-	}
 }
 
-// The case note: Special Elite on a reading measure. The one place on the
-// home page the typewriter narrates.
 .facts-note {
 	@include prose(var(--fs-lede), 1.65);
 	color: var(--ink);
@@ -361,7 +123,6 @@
 	margin: 0;
 }
 
-// Mono data lines in the manual's label grammar: term muted, value white.
 .facts-list {
 	margin: 0;
 	display: grid;
@@ -384,161 +145,14 @@
 	}
 }
 
-// The held frame: full band width, 21:9, graded like every photo on the
-// site, developing to colour under the pointer.
-.facts-frame {
-	margin: clamp(3rem, 6vw, 5rem) 0 0;
-	max-width: var(--maxw);
-	margin-inline: auto;
-
-	img {
-		display: block;
-		width: 100%;
-		aspect-ratio: 21 / 9;
-		object-fit: cover;
-		object-position: center 40%;
-		filter: grayscale(1) contrast(1.3) brightness(0.8);
-		transition: filter 0.6s ease;
-	}
-
-	&:hover img {
-		filter: grayscale(0) contrast(1.02) brightness(1);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		img { transition: none; }
-	}
-}
-
-.facts-caption {
-	margin: 0.9rem 0 0;
-	@include mono(var(--fs-label-sm), 0.15em, uppercase);
-	color: var(--ink-muted);
-}
-
-@media (max-width: 900px) {
-	.facts-inner {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.facts-frame img {
-		aspect-ratio: 4 / 3;
-	}
-}
-
-/* ===================== CALL FOR SPEAKERS ===================== */
-// Currently commented out in index.astro (CFP closed) — kept in sync.
-#speakers {
-	position: relative;
-	padding: var(--section-y-tight) var(--gutter);
-	width: 100%;
-	overflow: hidden;
-	background: var(--color-bg);
-}
-
-.speakers-inner {
-	position: relative;
-	z-index: 1;
-	max-width: var(--maxw);
-	margin: 0 auto;
-}
-
-.speakers-lede {
-	@include prose(var(--fs-lede), 1.6);
-	color: var(--ink-soft);
-	max-width: 40ch;
-	margin: 1.25rem 0 2.5rem;
-}
-
-.speakers-cta-group {
-	display: flex;
-	align-items: center;
-	gap: 1.6rem;
-	flex-wrap: wrap;
-}
-
-.speakers-tag {
-	@include mono(var(--fs-label), 0.2em, uppercase);
-	color: var(--color-accent-hot);
-	white-space: nowrap;
-}
-
-/* ===================== NEWSLETTER ===================== */
-// Ground and container come from `.band`; only the split is local.
-#newsletter {
-	position: relative;
-}
-
-// Title left, form right — the form is the point of the section.
-.newsletter-inner {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	gap: clamp(2.5rem, 6vw, 6rem);
-	align-items: center;
-}
-
-.newsletter-title {
-	font-size: var(--fs-h2);
-	text-wrap: initial;
-}
-
-.newsletter-lede {
-	margin: clamp(1.25rem, 2.5vw, 1.9rem) 0 0;
-	@include prose(var(--fs-lede), 1.6);
-	color: var(--ink-soft);
-	max-width: 32ch;
-}
-
-@media (max-width: 1000px) {
-	.newsletter-inner {
-		// minmax(0, …) — a bare `1fr` track floors at its min-content
-		// width, which under text zoom is the widest word in the title.
-		grid-template-columns: minmax(0, 1fr);
-	}
-}
-
-/* ===================== TICKETS → SPEAKERS ===================== */
-// The tickets island closes on no air of its own: the credits below open on
-// one `--section-y` beat. Stacked, the two paddings left ~360px of black
-// between the last wave and the speakers.
-:global(#tickets) {
-	padding-bottom: 0;
-}
-
-/* ===================== 04 PARTNERS ===================== */
-// One wall. Each tier is a row: the tier name as a mono label in a margin
-// column, the marks beside it on one cap height, left-set, wrapping when
-// they must. The ladder is three heights, not a size per logo.
-.partners-inner {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-}
-
+/* ---- partners ---- */
+// One row per tier, marks on one height per tier (platinum leads, community
+// closes), wrapping when they must. No tier labels: the head's note names
+// the ladder, the heights carry it.
 .partners-tiers {
 	display: flex;
 	flex-direction: column;
-	gap: clamp(2rem, 3.5vw, 3rem);
-	width: 100%;
-}
-
-.partners-tier {
-	display: grid;
-	grid-template-columns: 8rem minmax(0, 1fr);
-	column-gap: clamp(1.5rem, 3vw, 3rem);
-	align-items: start;
-	// The mark height per tier: platinum leads, community closes.
-	--mark-h: 2.6rem;
-}
-
-.tier-platinum { --mark-h: 3.75rem; }
-.tier-community { --mark-h: 2.1rem; }
-
-.partners-tier-label {
-	@include mono(var(--fs-label-sm), 0.2em, uppercase);
-	color: var(--ink-muted);
-	margin: 0;
-	padding-top: calc(var(--mark-h) / 2 - 0.5em);
+	gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .partners-row {
@@ -549,10 +163,12 @@
 	flex-wrap: wrap;
 	align-items: center;
 	gap: clamp(1.25rem, 2.5vw, 2rem) clamp(2rem, 4vw, 3.5rem);
+	--mark-h: 2.4rem;
 }
 
-// No card — open marks on the section ground (`partner-logo` in _logos.scss),
-// sized by height here so the row reads on one line.
+.tier-platinum { --mark-h: 3.5rem; }
+.tier-community { --mark-h: 2rem; }
+
 .partners-item {
 	display: flex;
 	align-items: center;
@@ -571,225 +187,63 @@
 		height: var(--mark-h);
 	}
 
-	// Wider than --focus-gap-lg on purpose: a wordmark carries its own whitespace, so a
-	// 4px ring lands on the image margin rather than around the visible mark.
 	a:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: 6px;
 	}
 }
 
-// Phones: the label above its row; marks a step smaller.
-@media (max-width: 600px) {
-	.partners-tier {
-		grid-template-columns: minmax(0, 1fr);
-		row-gap: 0.9rem;
-		--mark-h: 2.1rem;
-	}
-
-	.tier-platinum { --mark-h: 3rem; }
-	.tier-community { --mark-h: 1.8rem; }
-
-	.partners-tier-label {
-		padding-top: 0;
-	}
+/* ---- newsletter ---- */
+.newsletter {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: clamp(2rem, 5vw, 6rem);
+	align-items: start;
 }
 
-// Same primitive as the speakers teaser's "See all speakers"
-// (`.allLink` in SpeakersTeaser.module.scss): mono caps on the red hairline.
-.partners-more {
-	display: inline-flex;
-	align-items: center;
-	margin-top: clamp(2rem, 4vw, 3rem);
-	// WCAG 2.2 SC 2.5.8: a 44px target, not the 23px text line.
-	min-height: 2.75rem;
-	padding: 0 0.25rem;
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
-	@include hairline-link;
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-lg);
-	}
+.newsletter-lede {
+	@include prose(var(--fs-lede), 1.6);
+	color: var(--ink);
+	max-width: 36ch;
+	margin: 0;
 }
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 900px) {
-	// As tall as its content, like the desktop: a full-viewport frame hung the
-	// footing line under 400px of empty frame on a tall phone. The next block
-	// opens straight under the line.
-	#hero {
-		padding: calc(4.5rem + env(safe-area-inset-top)) var(--gutter) var(--consent-h, 0px);
+	.facts,
+	.newsletter {
+		grid-template-columns: minmax(0, 1fr);
+		row-gap: clamp(1.5rem, 4vw, 2.5rem);
 	}
 
-	.hero-statement {
-		font-size: clamp(2rem, 10vw, 2.6rem);
-		max-width: none;
+	.hero-line {
+		flex-direction: column;
+		align-items: stretch;
 	}
 
-	.topics-rotor-item {
-		font-size: 1.15rem;
+	.hero-facts {
+		flex-direction: column;
+		gap: 0.5rem;
 	}
 
-	.hero-actions {
-		margin-top: clamp(1.5rem, 4.2vh, 2.5rem);
+	.hero-cta {
+		width: 100%;
 	}
-
-	.hero-foot {
-		column-gap: 1.75rem;
-	}
-
 }
 
 @media (max-width: 600px) {
-	.hero-inner {
-		// Bottom inset is the air above the footing strip; it takes part of
-		// the row the 2×2 strip gave back, so the buttons no longer sit on it.
-		padding-block: clamp(0.5rem, 1.5vh, 1.25rem) clamp(1.25rem, 4.5vh, 2.75rem);
-		// Hung from the top edge, like the desktop: bottom-set, a tall phone
-		// opened on ~300px of empty sky with the wordmark halfway down the
-		// screen. The footing line still closes the frame at the bottom.
-		justify-content: flex-start;
-	}
-
-	// Poster scale on a phone too. `--fs-hero`'s vw term only passes its
-	// floor at 421px, so every phone got 40px — smaller than the 46.4px
-	// `--fs-h2` section heads below, inverting the hierarchy.
-	// Sized so the longest art-directed line ("most original") spans the
-	// column: at 12vw under a 12ch measure the statement used two thirds of
-	// a 390px phone and the right third sat empty. Still the page's largest
-	// type, under the 9rem display cap.
-	.hero-statement {
-		font-size: clamp(2.6rem, 16.5vw, 4.5rem);
-		max-width: none;
-	}
-
-	// The big pause sits above the rotor; the actions follow it closely.
-	.hero-actions {
-		margin-top: clamp(1.25rem, 3vh, 2rem);
-		gap: 0.9rem;
-
-		// Two CTAs side by side at 375px are too narrow to read; stack them
-		// full-width. Vertical padding comes down from 1.25rem — each is still
-		// 52px tall, clear of the 44px touch minimum.
-		.btn-primary,
-		.btn-ghost {
-			width: 100%;
-			padding-block: 1rem;
-			// Left-set: everything else on the phone hero is flush left, and
-			// two centred labels read as a mis-set block. Short inline inset
-			// so the label lands near the same edge as the type above.
-			justify-content: flex-start;
-			padding-inline: 1.35rem;
-		}
-
-		// The ghost has no box on a phone either, so an inset only pushed its
-		// label off the column the whole hero is set on.
-		.btn-ghost {
-			padding-inline: 0;
-		}
-	}
-
-	// The line stacks at the phone measure: date, venue, then the offer,
-	// each on its own line (the dots hide, see `.hero-foot-link`).
-	.hero-foot {
-		gap: 0.5rem 1.25rem;
-	}
-}
-
-// Short phones (SE-class, 640px tall). From 667px up the clamps fit 100svh
-// alone; below that the hero ran ~26px long and the clock fell under the
-// fold. Only insets are trimmed here; content is untouched.
-@media (max-width: 600px) and (max-height: 680px) {
-	#hero {
-		padding-top: calc(4rem + env(safe-area-inset-top));
+	.hero-plate {
+		min-height: 34rem;
 	}
 
 	.hero-statement {
-		font-size: 2.25rem;
+		font-size: clamp(2.6rem, 15vw, 4.2rem);
 	}
 
-	.topics-rotor {
-		margin-top: 0.65rem;
-	}
-}
-
-// Phones with VISIBLE height under ~630px (SE with Safari bars ≈ 553px).
-// The hero bottomed out at ~633px; this takes it to 541px: rotor goes,
-// insets trimmed, date/venue/clock stay. `pointer: coarse` keeps it off a
-// zoomed desktop — dropping content because of zoom is a 1.4.10 fault.
-@media (max-width: 600px) and (max-height: 630px) and (pointer: coarse) {
-	.hero-inner {
-		padding-block: 0.35rem 0.6rem;
+	.partners-row {
+		--mark-h: 2rem;
 	}
 
-	.hero-title {
-		margin-bottom: 0.7rem;
-	}
-
-	.topics-rotor {
-		display: none;
-	}
-
-	.hero-actions {
-		margin-top: 0.85rem;
-
-		// 45.6px tall, still clear of the 44px touch minimum.
-		.btn-primary,
-		.btn-ghost {
-			padding-block: 0.8rem;
-		}
-	}
-
-	.hero-foot {
-		padding-top: 0.7rem;
-	}
-}
-
-// Landscape phones (<=500px tall): the hero compresses — rotor goes, CTAs
-// side by side, statement at UI scale; date/venue/clock stay above the
-// fold. `pointer: coarse` keeps it off a zoomed desktop (1.4.10).
-@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
-	#hero {
-		padding-top: calc(4rem + env(safe-area-inset-top));
-	}
-
-	.hero-inner {
-		padding-block: 0.5rem 0.75rem;
-	}
-
-	.hero-logo {
-		width: clamp(188px, 26vw, 260px);
-	}
-
-	.hero-title {
-		margin-bottom: 0.6rem;
-	}
-
-	.hero-statement {
-		font-size: 1.9rem;
-		max-width: 26ch;
-	}
-
-	.topics-rotor {
-		display: none;
-	}
-
-	.hero-actions {
-		margin-top: 0.9rem;
-
-		.btn-primary,
-		.btn-ghost {
-			width: auto;
-			padding-block: 0.7rem;
-		}
-	}
-
-	.hero-foot {
-		column-gap: 1.5rem;
-		padding-top: 0.7rem;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
+	.tier-platinum { --mark-h: 2.8rem; }
+	.tier-community { --mark-h: 1.7rem; }
 }
