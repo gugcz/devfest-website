@@ -27,14 +27,9 @@
 }
 
 // The room: a plain Bebas label over the edge, not tape (tape is for prints).
-// `.slip .tape` outranks the global `.tape` primitive the markup carries.
-.slip .tape {
+.room {
 	display: block;
 	margin: 0 0 0.75rem;
-	padding: 0;
-	background: none;
-	box-shadow: none;
-	transform: none;
 	@include action(var(--fs-action));
 	color: var(--paper-ink);
 }

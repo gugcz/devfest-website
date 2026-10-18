@@ -18,7 +18,7 @@
 	z-index: var(--sheet-z, 10050);
 	overflow-y: auto;
 	overscroll-behavior: contain;
-	background: var(--lit), var(--color-bg);
+	background: var(--color-bg);
 	outline: none;
 	animation: sheetIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }

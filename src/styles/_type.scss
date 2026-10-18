@@ -82,7 +82,7 @@
 }
 
 // Typewriter reading copy — ledes, notes, abstracts. Colour is the caller's:
-// it depends on the ground (cream ink on black, `--on-accent` on red).
+// it depends on the ground (white ink on black, `--paper-ink` on paper).
 @mixin prose($size: var(--fs-body), $lh: null) {
 	font-family: var(--font-special-elite), cursive;
 	font-size: $size;

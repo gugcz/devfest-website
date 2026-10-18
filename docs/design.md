@@ -4,21 +4,12 @@ description: Noir, but loud, in the darkroom. Photographs are tilted paper print
 colors:
   bg: "#000000"
   text: "#FFFFFF"
-  cream: "#FFFFFF"
   grey: "rgba(255,255,255,0.55)"
   accent: "#F11000"
   accent-hot: "#F11000"
-  error: "#F11000"
-  on-accent: "#000000"
-  on-accent-ink: "#FFFFFF"
-  on-accent-border: "rgba(0,0,0,0.85)"
-  panel: "rgba(255,255,255,0.047)"
-  panel-2: "rgba(255,255,255,0.067)"
-  panel-hover: "rgba(255,255,255,0.086)"
   panel-lit: "rgba(255,255,255,0.04)"
   panel-lit-2: "rgba(255,255,255,0.055)"
   rule: "rgba(255,255,255,0.13)"
-  rule-soft: "rgba(255,255,255,0.06)"
   rule-strong: "rgba(255,255,255,0.22)"
   rule-red: "rgba(241,16,0,0.55)"
   field-border: "rgba(255,255,255,0.4)"
@@ -142,9 +133,8 @@ spacing:
   gutter: "min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw)"
   section-tight: "clamp(3.75rem, 6vw, 6.5rem)"
   section: "clamp(6rem, 10vw, 11rem)"
-  section-wide: "clamp(8.5rem, 15vw, 17rem)"
-  field-step: "clamp(1.4rem, 2.2vw, 1.9rem)"
-  field-step-short: "clamp(2.25rem, 3.6vw, 3.25rem)"
+  side-col: "24rem"
+  side-gap: "clamp(1.5rem, 4vw, 4rem)"
 components:
   button-primary:
     backgroundColor: "{colors.accent}"
@@ -197,24 +187,14 @@ components:
   end-line:
     textColor: "{colors.ink-soft}"
     typography: "{typography.lede}"
-  field-row:
-    backgroundColor: "transparent"
-    textColor: "{colors.text}"
-    typography: "{typography.title}"
-    padding: "{spacing.field-step} 0"
-  field-row-hover:
-    backgroundColor: "{colors.accent}"
-    textColor: "{colors.on-accent}"
   closer:
     backgroundColor: "{colors.bg}"
     textColor: "{colors.text}"
     padding: "{spacing.section} {spacing.gutter}"
-  lit-field:
-    backgroundColor: "{colors.panel-lit-2}"
-    textColor: "{colors.text}"
-    typography: "{typography.body}"
-    rounded: "{rounded.sharp}"
-    padding: "0.85rem 0.95rem"
+  typed-field:
+    backgroundColor: "transparent"
+    textColor: "{colors.paper-ink}"
+    typography: "{typography.lede}"
     height: "2.75rem"
   speaker-tile:
     backgroundColor: "{colors.paper}"
@@ -255,9 +235,8 @@ the durable reference.
 
 | | |
 | --- | --- |
-| `src/layouts/BaseLayout.scss` | all tokens (`:root`, lines 2–207), resets, global primitives, the darkroom primitives (`.paper`, `.paper-photo`, `.paper-edge`, `.tape`, `.grease`). Injected `is:global`, so every `.astro` page and `.tsx` island uses the class names directly |
-| `src/styles/_type.scss` | the type recipes as mixins, one per voice — `note()`, `action()`, `cta-label()`, `mono()`, `display()`, `row-title()`, `prose()`, `hairline-link()`. A CSS Module that cannot compose a global class includes the mixin instead |
-| `src/styles/_controls.scss` | control recipes — `lit-field()` |
+| `src/layouts/BaseLayout.scss` | all tokens (`:root`, lines 2–176), resets, global primitives, the darkroom primitives (`.paper`, `.paper-photo`, `.paper-edge`, `.tape`, `.grease`). Injected `is:global`, so every `.astro` page and `.tsx` island uses the class names directly |
+| `src/styles/_type.scss` | the type recipes as mixins, one per voice — `note()`, `action()`, `cta-label()`, `mono()`, `display()`, `row-title()`, `prose()`, `hairline-link()`, `paper-action()`. A CSS Module that cannot compose a global class includes the mixin instead |
 | `src/styles/_logos.scss` | partner-mark recipe — `partner-logo()` (original colours; `.logo--dark` on a paper card) |
 | `src/components/Sheet.module.scss`, `SpeakerTile.module.scss` | shared chrome composed by more than one island (the detail sheets; the speaker print and its grid, on `/` and `/speakers`) |
 | `astro.config.mjs:72–106` | the three brand faces, self-hosted via the Astro Fonts API |
@@ -279,7 +258,7 @@ brought the code in line; where a rule cites a page, it comes from here.
 | --- | --- |
 | p. 03–07 | official logo files only; white mono on red; 180px digital minimum, never shrink (change the layout); no recolour, glow or overlay |
 | p. 08 | three colours; greys only as white or black at an opacity |
-| p. 09 | red marks details; large red only as title bars, darkened red grounds, primary CTAs; never running text. The site spends the allowance on buttons and the reach field only: no red ground |
+| p. 09 | red marks details; large red only as title bars, darkened red grounds, primary CTAs; never running text. The site spends the allowance on buttons only: no red ground |
 | p. 10 | Bebas uppercase at line-height 0.9–1.0, tracking 0; Special Elite sentence case; JetBrains Mono 400/500 at 0.1–0.2em |
 | p. 11 | CTA labels white on red; speaker names in Special Elite; one red mark per list. The manual sets buttons in mono; the site sets every action in Bebas since the three-voices pass (see Typography), a recorded divergence |
 | p. 13 | photography B&W, high contrast |
@@ -300,27 +279,19 @@ All tokens are declared in `BaseLayout.scss` `:root`.
 | --- | --- | --- |
 | `--color-bg` | `#000000` | page ground |
 | `--color-text` | `#FFFFFF` | ink |
-| `--color-cream` | `#FFFFFF` | legacy alias of Paper White (paper cards, chips) |
 | `--color-grey` | `rgba(255,255,255,0.55)` | muted meta |
-| `--color-accent` | `#F11000` | the accent — CTA fill, the reach field, flat-red chips, red words |
+| `--color-accent` | `#F11000` | the accent — CTA fill, the grease stroke, a margin mark, red words |
 | `--color-accent-hot` | `#F11000` | focus rings, live status; same red, kept as a role |
-| `--color-error` | `#F11000` | **form-error text only** (4.8:1 on black). Errors stay red: a state, not lore |
-| `--on-accent` | `#000000` | ink on flat red, any size (the hovered `.field-row--link`, the agenda `.nowLabel`, the sessions `.avatarMore`) |
-| `--on-accent-ink` | `#FFFFFF` | large type on flat red |
-| `--fs-cta` | `1.5rem` (24px) | the CTA label on red, white Bebas: the 24px regular-weight large-text line (`BaseLayout.scss:131–134`) |
-| `--on-accent-border` | `rgba(0,0,0,0.85)` | control boundary on flat red |
+| `--fs-cta` | `1.5rem` (24px) | the CTA label on red, white Bebas: the 24px regular-weight large-text line |
 
-The `--on-accent-*` trio is for **flat** `#F11000` only (the reach field,
-chips, `BaseLayout.scss:129–136`). There is no red ground token: the
-darkened red band and its white-ink re-pointing are gone
-(`BaseLayout.scss:501–504`).
+There is no red ground token and no ink-on-red token: red is a button,
+a stroke or a word, and the button's white label is measured below.
 
-Surfaces, white at an opacity over the black ground (`BaseLayout.scss:120–125`,
-`156–158`): `--panel` `0.047`, `--panel-2` `0.067`, `--panel-hover` `0.086`,
-`--panel-lit` `0.04`, `--panel-lit-2` `0.055`. Same look on `#000` as the old
-solid `#0C0C0C`…`#161616`. **[MUST]** A plate that must be opaque (a fixed bar
-over content) layers the token over `--color-bg` (the sheet ground,
-`Sheet.module.scss`); paper is already opaque enough to sit over content
+Surfaces, white at an opacity over the black ground: `--panel-lit` `0.04`
+and `--panel-lit-2` `0.055`, the "Every talk" search field's plate
+(`Sessions.module.scss`). **[MUST]** A plate that must be opaque (a fixed bar
+over content) layers it over `--color-bg` (the sheet ground is
+`--color-bg` itself, `Sheet.module.scss`); paper is already opaque enough to sit over content
 (the cookie slip, `CookieBanner.scss`). Canvas-drawn plates (speaker / attending card
 monograms) fill black first, then the panel (`SpeakerCard.tsx:47–52`,
 `AttendingCard.tsx:41–46`), or they export see-through. The footer ground is
@@ -337,22 +308,27 @@ sits on the table by the tight `--paper-shadow` (`0 1.5rem 1.5rem -1rem
 rgba(0,0,0,0.85), 0 2px 6px rgba(0,0,0,0.7)`), a drop pulled in by its
 negative spread so it stays under its own print and never falls across a
 neighbour as a grey band, plus one contact shadow. It is a static property
-of the paper, never a hover state. Where slips sit close (the agenda grid
-and list) each slip is opaque paper over black and draws the shadow on a
-`::before` under the isolated sheet, so no neighbour's drop lands on paper
-(`Agenda.module.scss`, `.slip`).
+of the paper, never a hover state. **[MUST] One shadow for all paper.**
+Every print, slip, card, clipping and form takes `--paper-shadow`; no
+paper carries a shadow of its own. A card set a gap apart takes it as is
+(the `/contact` index cards through `.paper`, the clippings in
+`press.scss`); a grid of close-set slips draws the same token on each
+slip's `::before` under the isolated grid, so no neighbour's drop lands on
+paper (`Agenda.module.scss`, `Sessions.module.scss`,
+`Workshops.module.scss`). The share page's no-script slip
+(`Share.astro`) loads no site stylesheet and writes the token's value out.
 
 **[MUST] Only photographs tilt.** A `.paper` print that holds a
 photograph tilts; a slip, a card, a form, a clipping or a cookie banner
-sits straight. The one exception is the home ticket slips, set down like
+sits straight, the speaker sheet's talk slips, the invite page's quote
+slip and the share page's no-script slip included. The one exception is the home ticket slips, set down like
 tickets on the table (`Tickets.module.scss`). Tilts are `--tilt-1`
 `0.8deg`, `--tilt-2` `1.4deg`, `--tilt-3` `2.2deg`; nothing tilts past
 `--tilt-3`, and under 720px a `.paper` clamps to ±`--tilt-1`
 (`BaseLayout.scss`, `@media (max-width: 720px)` after `.grease`). Callers
 vary the sign and take fractions of a step so neighbours never match.
 
-Hairlines: `--rule` `rgba(255,255,255,0.13)`, `--rule-soft` `0.06`,
-`--rule-strong` `0.22`, `--rule-red` `rgba(241,16,0,0.55)`,
+Hairlines: `--rule` `rgba(255,255,255,0.13)`, `--rule-strong` `0.22`, `--rule-red` `rgba(241,16,0,0.55)`,
 `--field-border` `rgba(255,255,255,0.4)`.
 
 **[MUST] Rules only where they carry structure.** Space and paper part the
@@ -366,8 +342,8 @@ in-prose link's underline (the hero facts line's venue link,
 dashed `--field-border` outline of a place still empty (the agenda's open
 slot) and as the short `--rule-strong` mark
 between the two link groups in the desktop bar (`.bar-sep`, `Menu.scss`).
-The ruled `.field` list (`BaseLayout.scss`) has no caller left: the sheets
-and the `NextStep` cards are paper. Never a divider floating between
+There is no ruled list: the sheets and the `NextStep` cards are paper.
+Never a divider floating between
 sections, a rule under a section head, a line above the hero's facts line,
 a ruled readout (the invoice total), a rule down an agenda room column (the
 gap between slips parts the rooms), a box drawn round a partner mark, or an
@@ -379,15 +355,10 @@ Ink ramp: `--ink-strong` `0.85`, `--ink` `0.78`, `--ink-soft` `0.7`,
 raw literal.
 
 **[MUST] The ground is flat black.** No spotlight pool, no haze, no
-gradient under a band: `--lit` is `none`, kept only as a no-op layer for
-the callers that still stack it (`Sheet.module.scss`), and `.band--lit`
-is plain `--color-bg` (`BaseLayout.scss`). Atmosphere left:
-`--field-feather`, `--wash` / `--wash-strong` (the raking light a reached
-row / cell takes; pure white alphas), `--ink-monogram` `0.46` and
-`--ink-monogram-sm` `0.66`. Every photograph is a `.paper` print;
-`--print-mount` and the `.print` well it mounts have no caller (see Open
-points). No glow token and no page vignette token; the plate vignette is
-`.scene-vignette`'s own gradient, which has no caller today.
+gradient under a band: `.band--lit` and the sheet ground are plain
+`--color-bg` (`BaseLayout.scss`, `Sheet.module.scss`). Atmosphere left:
+`--ink-monogram` `0.46` and `--ink-monogram-sm` `0.66`. Every photograph
+is a `.paper` print. No glow token, no vignette, no grain.
 
 **[MUST] No glow anywhere.** Hover and live states are flat colour changes:
 an inverted fill for buttons, a border or ink change for rows and fields.
@@ -395,7 +366,7 @@ The paper shadow is the paper's, at rest and under the pointer alike.
 
 **[MUST] Red is evidence, not mood.** Per the manual it marks details (a dot,
 1–2 words in a headline, the year, CTA words, a grease-pencil stroke) and,
-as a large area, only primary CTA buttons and the row reach field. **No red
+as a large area, only primary CTA buttons. **No red
 ground**: every `Closer`, the `/partners` CTA and the newsletter sit on the
 black ground (`Closer.astro`). Red is a verb: one word, one button, one
 state at a time. No red washes behind photographs, no red running text, no
@@ -428,22 +399,22 @@ grease cross is allowed beside it: it records a closed wave, not a call.
 
 | Use of `#F11000` | Allowed? |
 | --- | --- |
-| a fill (CTA background, the row reach field, a chip) | yes |
+| a fill (a CTA background, the live dot, a margin mark) | yes |
 | a full-width band or a section ground | **no** — closers and forms sit on black |
 | display type, highlighted words, the year | yes |
 | a rule / keyline (`--rule-red`) | yes |
 | a focus indicator | yes — 4.8:1 on black |
 | body copy, lore, paragraphs, inline prose links | **no** — use `--color-text`; a prose link is white on the red hairline |
 
-**[MUST] `--color-error` is error prose only.** Never an accent, a fill or a
-rule. **[CURRENT]** It has no caller: every form now sits on paper, where
-an error is paper ink behind a red margin mark (see Forms).
+**[MUST] An error is never red prose.** Every form sits on paper, where
+an error is paper ink behind a red margin mark (see Forms); there is no
+error-text token.
 
 **[MUST] `--field-border` is the boundary of an interactive form control**
 (WCAG 1.4.11, ≥3:1). Structural hairlines (see above) stay at `--rule`.
 
-**[MUST] Measured ink on flat `#F11000`** (chips, the reach field) —
-hierarchy on red comes from SIZE, never from dimming:
+**[MUST] Measured ink on flat `#F11000`** (a red button) — hierarchy on
+red comes from SIZE, never from dimming:
 
 | ink | ratio | verdict |
 | --- | --- | --- |
@@ -460,9 +431,9 @@ black table the same word is red (`.band .flagLive`). **The reach state on
 paper is an ink underline or a red dot, never red text**: the open FAQ
 question underlines and its marker goes to full ink (`faq.scss`), a FAQ
 answer link, the partnerships and `/contact` addresses thicken their ink
-underline (`partners.scss`, `contact.scss`), a clipping's "Read article",
-the `/venue` route actions and a `NextStep` card's actions underline in
-ink (`press.scss`, `venue.scss`, `NextStep.scss`), and a form field's
+underline (`partners.scss`, `contact.scss`), a clipping's "Read article"
+underlines in ink, every text action on paper takes `paper-action()` (see
+Component states), and a form field's
 error is paper ink behind a red margin mark (`InvoiceForm.module.scss`,
 `Workshops.module.scss`).
 
@@ -509,8 +480,8 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:72–106
   generic fallback: `var(--font-jetbrains-mono), monospace`.
 - **[MUST] Go through the recipe, not the raw declaration.** `_type.scss`
   has `note($size)`, `action($size)`, `cta-label`, `mono($size, $track,
-  $case)`, `display($size)`, `row-title($size)`, `prose($size, $lh)` and
-  `hairline-link($color)`; a stylesheet that writes `font-family:
+  $case)`, `display($size)`, `row-title($size)`, `prose($size, $lh)`,
+  `hairline-link($color)` and `paper-action`; a stylesheet that writes `font-family:
   var(--font-…)` by hand is re-implementing one of them.
 - **[MUST] The three voices** (`_type.scss:6–9`). **Bebas speaks**:
   headlines and actions (`display()`, `row-title()`, `action()`,
@@ -522,10 +493,11 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:72–106
   **[MUST] JetBrains Mono records figures only** (`mono()`): prices, times,
   frame and sheet numbers on a print's edge, counts, codes, the footer
   folio. A paper edge is figures only (frame, sheet number, time, year):
-  "01" and "30.10.2026" on the subpage print, "30 / 10 / 26" on the
-  speaker sheet's print. A word on an edge is a note (`.paper-edge
-  .edge-word`, `BaseLayout.scss`: "On the back" on the home event card, the
-  venue's name on the `/venue` entrance print), and so are the agenda
+  "30 / 10 / 26" on the speaker sheet's print, "2019" on the `/contact`
+  press print. A word on an edge is a note (`.paper-edge .edge-word`,
+  `BaseLayout.scss`: "On the back" on the home event card, the venue's
+  name on the `/venue` entrance print, a clipping's outlet on `/contact`),
+  and so are the agenda
   flags ("Live now", "Next", "Now") and the words on a slip's edge (track
   and length, room, "Time TBA"). **Mono never sets a word-label**; a
   tracked mono caption was
@@ -541,7 +513,8 @@ Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:72–106
 - **Two recorded exceptions to mono for figures only.** (1) The press
   clipping's excerpt (the scraped standfirst) sets in mono (`press.scss`):
   Special Elite ships Latin only and a Czech excerpt is whole sentences of
-  ř, ě and č. The clipping's headline is Bebas. (2) Speaker names on the
+  ř, ě and č. The clipping's headline is Bebas and its outlet a note on
+  the edge (`contact.astro`). (2) Speaker names on the
   prints and slips stay Bebas (`SpeakerTile`, the agenda `.who`, the
   session `.names`), where manual p. 11 sets them in Special Elite: on a
   print the name is the headline.
@@ -578,10 +551,8 @@ Poster scale (Bebas), `BaseLayout.scss:61–79`:
 | `--fs-h3` | `clamp(1.8rem, 3.4vw, 2.6rem)` | 67 | a ticket slip's price; `/team` names; the menu's secondary links |
 | `--fs-head` | `clamp(2.1rem, 3.4vw, 3rem)` | 68 | a compact head on paper: the `NextStep` titles and index, the `/contact` index-card titles, the `/venue` card titles and numbers, a clipping's headline, the partnerships contact's name, the legal `h2`, the workshop slip title, the invoice step numbers and estimate |
 | `--fs-card-title` | `1.95rem` | 71 | the speaker name on a print (and the keynote's on a phone), the live slip's Buy label |
-| `--fs-title-compact` | `1.6rem` | 72 | **no caller** |
 | `--fs-row` | `clamp(2.1rem, min(5.2vw, 7.5svh), 4.5rem)`; `2.1rem` ≤600px | 77 | the keynote print's name |
 | `--fs-row-sm` | `clamp(1.7rem, min(4vw, 6svh), 3.4rem)`; `1.7rem` ≤600px | 78 | a ticket slip's wave name |
-| `--fs-row-figure` | `clamp(2.1rem, min(4.2vw, 6svh), 4rem)`; `2.1rem` ≤600px | 79 | **no caller** |
 
 **[MUST] One display element per page, and it outranks the section
 heads.** On a subpage that is the `SubpageHero` title (`--fs-subpage`); on
@@ -600,8 +571,8 @@ Text scale, `BaseLayout.scss:83–95`:
 | `--fs-label` | `0.78rem` | 85 | mono figure: the ticket slip's date stamp and company figure, the FAQ index numbers, agenda break times |
 | `--fs-label-lg` | `0.84rem` | 86 | mono figure: the agenda time gutter and the lounge hours, the session sheet's time, the invite meta line |
 | `--fs-note-sm` | `0.85rem` | 87 | Special Elite note: roles, captions, tape labels, row metadata (the ticket alt price and edge; the speaker role and "With …"; agenda room notes; a form label on paper) |
-| `--fs-note` | `0.95rem` | 88 | Special Elite note: `.eyebrow`, a speaker print's talk, the hosts label, a partner tier label, a press-kit variant label, the lounge line, nav meta, the FAQ index label |
-| `--fs-action` | `1.3rem` | 89 | Bebas action: the text action (`.action` / `.btn-ghost`), nav toggle, desktop bar links, footer links, Sheet close, speaker social links, the session filters, "Clear", the agenda room names and the session sheet's room |
+| `--fs-note` | `0.95rem` | 88 | Special Elite note: `.eyebrow`, a speaker print's talk, the hosts label, a partner tier label, a press-kit variant label, the lounge line, nav meta, the FAQ index label, the "Every talk" search query |
+| `--fs-action` | `1.3rem` | 89 | Bebas action: the text action (`.action` / `.btn-ghost`), nav toggle, desktop bar links, footer links, Sheet close, speaker social links, the session filters, "Clear", the agenda room names and the session sheet's room (`.room`) |
 | `--fs-ui` | `0.95rem` | 90 | small UI prose, help text |
 | `--fs-body` | `1.05rem` | 91 | long-form reading copy; an agenda slip's title |
 | `--fs-body-lg` | `1.15rem` | 92 | the `.head-rule` note, subpage ledes, footnotes, a session slip's title |
@@ -646,6 +617,12 @@ the lists under them come down.
 **[MUST] Body text caps at 65–75ch.** Cap the container, don't shrink the
 type. Mono never tracks under `0.1em`.
 
+**[MUST] A hyphenated word in a Bebas title never breaks at its
+hyphen.** Bebas caps leave "FULL-" hanging at a line end, so the workshop
+slip title holds each hyphenated word in one `white-space: nowrap` span
+(`unbrokenHyphens`, `Workshops.tsx`; `.nobreak`,
+`Workshops.module.scss`).
+
 **[MUST] Sheet prose sets ragged at every width.** The speaker bio, the
 talk slips under it and the session abstract are `text-align: left;
 hyphens: manual` (`SpeakerDetail.module.scss`, `.bio`, `.slipDesc`;
@@ -660,7 +637,7 @@ the whole bio.
 | `--gutter` | `min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw)` | 29 | page gutter; also the negative inset for full-bleed row fields |
 | `--section-y-tight` | `clamp(3.75rem, 6vw, 6.5rem)` | 32 | a cut |
 | `--section-y` | `clamp(6rem, 10vw, 11rem)` | 33 | the normal beat |
-| `--section-y-wide` | `clamp(8.5rem, 15vw, 17rem)`; `6.5rem` ≤600px | 34, 191 | a held shot before something that matters |
+| `--side-col` / `--side-gap` | `24rem` / `clamp(1.5rem, 4vw, 4rem)` | 22–23 | the right column of every head and its gap: `SubpageHero`'s note and every `.head-rule` note or action start at one x on desktop |
 | `--radius` | `2px` | 57 | **[MUST]** sharp corners — never pill-shaped |
 | `--focus-gap-tight` / `--focus-gap` / `--focus-gap-lg` | `2px` / `3px` / `4px` | 140–142 | focus-ring standoff, see Accessibility |
 
@@ -673,11 +650,8 @@ because layout caps and grid minimums are in rem; a new `max-width`,
 `minmax()` floor or image cap goes in rem, and a px value is for phone
 floors and physical sizes (the 44px tap target, hairlines) only.
 
-**[MUST] Three section densities, not one** (`BaseLayout.scss:31–34`).
-
-**[MUST] Row rhythm is `--field-step` on the row** (`BaseLayout.scss:661–677`):
-`clamp(1.4rem, 2.2vw, 1.9rem)` default, `clamp(2.25rem, 3.6vw, 3.25rem)` for
-`--short`. Vertical only; the row closes on its 1px `--rule`.
+**[MUST] Two section densities:** `--section-y` the beat between
+sections, `--section-y-tight` the last band's close (`BaseLayout.scss`).
 
 **[MUST] `.anchor-target` cancels a section's opening air with a negative
 `scroll-margin-top` reading `--section-air`** (`BaseLayout.scss:468–470`), the
@@ -696,13 +670,12 @@ value from the histogram.
 
 | Query | Count | Where |
 | --- | --- | --- |
-| `max-width: 720px` | 25 | **the darkroom's phone step**: prints go one or two across and stop tilting past `--tilt-1` (`BaseLayout.scss`); the speaker grid goes two across under the keynote's full-width print (`SpeakerTile.module.scss`); the teaser trims; ticket slips stack; the agenda becomes the list; the FAQ index becomes a row of links; the subpage hero stacks; `Sessions`, `Sheet`, `NextStep`, the newsletter card, the `/venue`, `/contact`, `/team`, `/partners`, press and legal grids |
-| `max-width: 1100px` | 14 | tablet: the `/speakers` grid goes three across; the home event grid, the `/venue`, `/contact`, press and `/partners` CTA grids go one column; the agenda tightens; `/team` three across; the FAQ grid `4fr / 8fr`; the calendar stub folds (`thank-you.scss`) |
-| `max-width: 600px` | 10 | the phone type steps in `:root`; the menu bar tightens (`Menu.scss`); sheets and forms |
-| `max-width: 900px` | 4 | `NextStepList` one column, the card builder, `HeroBackground`, `BaseLayout.scss` |
-| `max-width: 860px` | 3 | the speaker sheet stacks, `.head-split`, the invite page |
+| `max-width: 720px` | 29 | **the darkroom's phone step**: prints go one or two across and stop tilting past `--tilt-1` (`BaseLayout.scss`); the speaker grid goes two across under the keynote's full-width print (`SpeakerTile.module.scss`); the teaser trims; ticket slips stack; the agenda becomes the list; the FAQ index becomes a row of links; the subpage hero and every `.head-rule` stack; `Sessions`, `Sheet`, `NextStep`, the newsletter card, the `/venue`, `/contact`, `/team`, `/partners`, press and legal grids |
+| `max-width: 1100px` | 16 | tablet: the `/speakers` grid goes three across; the home event grid, the `/venue`, `/contact`, press and `/partners` CTA grids go one column; the agenda tightens; `/team` three across; the FAQ grid `4fr / 8fr`; the calendar stub folds (`thank-you.scss`) |
+| `max-width: 600px` | 8 | the phone type steps in `:root`; the menu bar tightens (`Menu.scss`); sheets and forms |
+| `max-width: 900px` | 5 | `NextStepList` one column, the card builder, `HeroBackground`, `BaseLayout.scss` |
+| `max-width: 860px` | 4 | the speaker sheet stacks, the invite page |
 | `max-width: 1240px` / `1000px` | 1 / 1 | four `NextStep` cards go two across (`NextStepList.astro`); `Workshops.module.scss` |
-| `max-width: 599.98px` | 1 | the subpage print leaves a phone (`SubpageHero.scss`) |
 | `max-width: 500px` | 1 | the newsletter form stacks |
 | `max-width: 45em` / `23.75em` | 2 / 1 | the footer goes two columns, then one (`Footer.scss`) |
 | `max-width: 700px` | 1 | `thank-you.scss` |
@@ -737,25 +710,19 @@ toggle is hidden; under it every destination lives behind the one toggle.
 | `10000` | cookie banner | `CookieBanner.scss:20` |
 | `10000` | `.status-bar-cover` (iOS safe-area paint) | `BaseLayout.scss:930` |
 | `0`–`4` | in-component ordering only (the header mark at 2 over the open menu panel at 1, `Menu.scss`; on a print, the tape at 2 and the grease stroke at 3, `BaseLayout.scss:440–454`; on the home hero, the shade 1 and the type 3, `index.scss`) | local modules |
-| `-1` | a row's full-bleed reach field / wash, under the row's own content | `BaseLayout.scss:783–860` |
+| `-1` | a close-set slip's paper shadow, on its `::before` under the isolated grid | `Agenda.module.scss`, `Sessions.module.scss`, `Workshops.module.scss` |
 
-**[MUST] Grain lives on the photograph.** The film grain is
-`.scene:has(> .scene-vignette)::before` (`BaseLayout.scss`), static,
-`pointer-events: none`: only a scene that carries a vignetted plate takes
-it, and no page carries one now (the home hero has a shade, not a
-vignette; the invite portrait is a paper print; subpages open on type). No
-page-level grain or vignette overlay.
+**[MUST] No grain, no vignette overlay.** No page, scene or print carries
+film grain or a vignette layer: the home hero has a shade
+(`.hero-shade`), the invite portrait is a paper print, subpages open on
+type.
 
 **[MUST] A sheet is portalled to `document.body`** (`Sheet.tsx:88–117`)
 — any positioned ancestor with a z-index traps it under the header.
 
-**[MUST] A row painting a `z-index: -1` layer needs `isolation: isolate`**
-(`BaseLayout.scss:664–665`). A second full-bleed layer uses `::after` —
-`--link` / `--holds` own `::before`.
-
-**[MUST] Any full-bleed `::before` on a row is feathered** with
-`mask-image: var(--field-feather)` (`BaseLayout.scss:170`, applied `744–745`). The red reach
-field is the one exception.
+**[MUST] A grid whose slips paint a `z-index: -1` layer needs
+`isolation: isolate`** (`Agenda.module.scss`, `Sessions.module.scss`,
+`Workshops.module.scss`), or the layer paints behind the section ground.
 
 **[MUST] Decorative overlays are `pointer-events: none`** and stay inside
 their scene, under its content.
@@ -769,9 +736,8 @@ its call site. The de-facto scale, by frequency:
 | --- | --- |
 | `0.2s` (dominant) | the standard control transition: buttons, inputs, links; the text action's colour to `--color-accent-hot` (`BaseLayout.scss:695`, `727`; `_type.scss:105`) |
 | `0.18s` | the desktop bar links' colour (`Menu.scss:193`) |
-| `0.28s` | the row reach field's colour + opacity fade (`BaseLayout.scss:681`, `691`) |
-| `0.3s` | the wash opacity, the cookie slip's fade (`BaseLayout.scss`, `CookieBanner.scss`) |
-| `0.32s` | the row pull (`translateX`) and the sheet entry (`BaseLayout.scss:731`, `Sheet.module.scss:23`) |
+| `0.3s` | the cookie slip's fade (`CookieBanner.scss`) |
+| `0.32s` | the sheet entry (`Sheet.module.scss`) |
 | `0.6s` | a B&W speaker print developing to colour (`SpeakerTile.module.scss:53`) |
 | `0.7s` | the `/team` colour bleed from the cursor (`team.scss:115`) |
 | `1.3s` / `1.6s` infinite | loading pulse and skeleton shimmer while data loads (`DataState.module.scss:41`, `55`; the two blank ticket slips, `Tickets.module.scss:259–264`) |
@@ -779,7 +745,7 @@ its call site. The de-facto scale, by frequency:
 | Easing | Where |
 | --- | --- |
 | `ease` | the default for control transitions |
-| `cubic-bezier(0.16, 1, 0.3, 1)` | the house "arrive" curve — sheet entry, row pull (8 uses) |
+| `cubic-bezier(0.16, 1, 0.3, 1)` | the house "arrive" curve — sheet entry (3 uses) |
 | `cubic-bezier(0.22, 1, 0.36, 1)` | the portrait view transition |
 | `linear` | shimmer, where any easing would read as a stutter |
 | `ease-in-out` | loading pulses |
@@ -788,7 +754,7 @@ Rules:
 
 - **[MUST] Every animation and transition has a `prefers-reduced-motion:
   reduce` opt-out**, including `scroll-behavior` (`BaseLayout.scss:229–233`),
-  controls (`738–744`), row transitions (`862–868`), sheet
+  controls (`BaseLayout.scss`), sheet
   (`Sheet.module.scss:162`), the speaker print and name
   (`SpeakerTile.module.scss:296–301`), the
   ticket skeleton (`Tickets.module.scss:282–291`).
@@ -807,7 +773,7 @@ Rules:
   from the cursor; the session sheet's speaker prints develop the same way
   (`SessionDetail.module.scss`); on `/invite/<member>` the portrait
   develops once on arrival (`.is-lit`, `invite/member.scss`). Every other
-  print (the subpage print, the
+  print (the
   home event print, the contact sheet and its enlargement, the `/venue`
   entrance, the menu panel's print) stays B&W. With the portrait view
   transition into a sheet, it is the site's
@@ -822,16 +788,13 @@ Rules:
   hover is a colour change to `--color-accent-hot`, nothing slides: nothing
   lifts under the pointer, and no partner mark dims.
 - **[MUST] Animate only `opacity` and `transform`.**
-- **[MUST] No `translateX` on the red reach field** (`BaseLayout.scss:679`);
-  the pull belongs to the wash.
-- **[CURRENT]** The grain is static, not animated (`BaseLayout.scss`).
 
 ## Component states
 
-**[MUST] Hover paints, focus rings.** Never paint the reach field on `:focus`
-— it persists after a sheet closes (`BaseLayout.scss:694–701`). **[MUST]
-Hover painting sits under `@media (hover: hover)`**: on touch a tap left the
-red field painted (`697`, `705`, `722`).
+**[MUST] Hover paints, focus rings.** A hover treatment never also fires
+on `:focus`: focus returns to a sheet's opener after it closes, and a
+painted state left behind reads as stuck. **[MUST] Hover painting sits
+under `@media (hover: hover)`**: on touch a tap leaves it painted.
 
 **[MUST] Two controls site-wide, and no third.** Every action is either a
 red fill or a Bebas text action; both set in the action voice.
@@ -867,11 +830,16 @@ is the same thing by its new name: the home "All partners" and "Become a
 partner", the teaser's "All N speakers", the ticket head's "Request a
 company invoice", the `/venue` map links, the press-kit back link, the
 `EndLine` links and `SubpageHero`'s way-across link take the class
-directly. On paper the text action takes `--paper-ink` and its reach state
-is an ink underline: the ticket slip's "Company pays"
-(`Tickets.module.scss`), the cookie Decline, the partnerships card's
-"Email Filip" at `--fs-cta` (`partners.scss`), the `/venue` route actions
-and a `NextStep` card's `.step-go`.
+directly. **On paper a text action takes `paper-action()`** (`_type.scss`):
+`--paper-ink`, no line at rest, a 2px ink underline at a 4px offset on
+hover (under `(hover: hover)`) and on focus; red text misses 4.5:1 on
+paper, so the line is the reach state. One treatment for every paper
+card: the ticket slip's "Company pays" (`Tickets.module.scss`), the
+partnerships card's "Email Filip" at `--fs-cta` (`partners.scss`), the
+`/venue` route actions (`venue.scss`), a `NextStep` card's `.step-go`
+(`NextStep.scss`), the `/thank-you` calendar link (`thank-you.scss`), the
+workshop slips' and sign-in's text actions (`Workshops.module.scss`) and
+the card builders' (`AttendingCard.module.scss`).
 
 **A filter is a Bebas word, red when on.** The agenda room filter
 (`action(--fs-cta)`, `Agenda.module.scss:27–50`) and the session filters
@@ -912,17 +880,8 @@ something at it is live (`.tickLive`); in the phone list the group's time
 carries a red "Now HH:MM" note (`.groupNow`). No pulse, no ring, no
 shadow.
 
-`.field-row` reach states — **[MUST] chosen by whether the row IS the
-control**. **[CURRENT]** Neither variant has a caller now (the sheets and
-`NextStep` are paper); the states stand for a ruled list that comes back:
-
-| The row | Rest | Hover | Focus |
-| --- | --- | --- | --- |
-| **IS** the control (`--link`: a real `<button>` / `<a>`) | field at `opacity: 0` | `::before` inset `0 calc(-1 * var(--gutter))`, `--color-accent`, opacity → 1 over `0.28s`; **every** ink goes full black `--on-accent` (`BaseLayout.scss:783–831`) | ring `2px solid --color-accent-hot` at `--focus-gap-tight` (4.8:1); if hovered **and** focused the ring inverts to black — red on red is not a ring |
-| **CONTAINS** a control (`--holds`) | wash at `opacity: 0` | feathered `104deg` white wash → 1, plus `translateX(0.6rem)`; also fires on `:focus-within` (`833–860`) | the inner control carries the ring |
-
 **A slip is the control.** An agenda slip and a session slip are each one
-`<button>` that opens the sheet: no reach field and no lift under the
+`<button>` that opens the sheet: no hover fill and no lift under the
 pointer; focus draws the ring outside the paper at `--focus-gap-lg`
 (`Agenda.module.scss`, `Sessions.module.scss`).
 
@@ -978,8 +937,9 @@ is not a print: it sits straight, untaped.**
   `aria-invalid="true"`, with the keyboard ring at `--focus-gap`
   (`InvoiceForm.module.scss`, `Workshops.module.scss`,
   `NewsletterForm.module.scss`). Never `outline: none` without the ring.
-  On the black ground a control's boundary is `--field-border` (≥3:1); the
-  `lit-field()` recipe that drew it (`_controls.scss`) has no caller.
+  On the black ground a control keeps the `--field-border` boundary
+  (≥3:1): the "Every talk" search field, its query typed as a
+  `note(--fs-note)` (`Sessions.module.scss`, `.searchInput`).
 - **[MUST] Minimum control height `2.75rem`.**
 - **[MUST] An error is paper ink behind a red margin mark.** A per-field
   message (`note(--fs-note-sm)`) and the form's `data-tone="error"` status
@@ -1048,8 +1008,7 @@ is not a print: it sits straight, untaped.**
   the agenda), no tape (`partners.scss`, `.tier-label`; `index.scss`,
   `.partners-label`; `SpeakerTile.module.scss`, `.hostsLabel`;
   `press.scss`). Tape is for prints. The session sheet's room sits on its
-  slip as a plain Bebas label, the `.tape` class stripped back
-  (`SessionDetail.module.scss`).
+  slip as a plain Bebas label (`.room`, `SessionDetail.module.scss`).
 - **[MUST] The portrait well is 4:5**: every speaker print
   (`SpeakerTile.module.scss`), the speaker sheet's print, the session
   sheet's speaker prints, every `/team` mugshot, the invite portrait, the
@@ -1059,9 +1018,7 @@ is not a print: it sits straight, untaped.**
 - **[CURRENT] Other ratios in use:** `2.39 / 1` the home event print
   (`4 / 3` ≤720px, `index.scss`); `3 / 2` the contact-sheet frames, the
   home enlargement and the `/contact` press print (`index.scss`,
-  `press.scss`); `4 / 3` the `/venue` entrance print and the subpage print
-  ≤720px; the subpage print on a wider screen is a `5 / 4` box capped to
-  the title block's height (`SubpageHero.scss`); `3 / 4` the menu panel's
+  `press.scss`); `4 / 3` the `/venue` entrance print; `3 / 4` the menu panel's
   print (`Menu.scss`); press-kit previews `16 / 9`
   (`press/downloads.scss`). The home hero has no ratio: `#hero` is
   `min-height: clamp(45rem, 62vw, 56.25rem)` (`47.5rem` ≤720px) and the
@@ -1165,8 +1122,8 @@ is not a print: it sits straight, untaped.**
   Astro `<Image>` with `layout: 'constrained'`, `responsiveStyles: true`
   (`astro.config.mjs`).
 - **[MUST] Decorative images take `alt=""`** (the contact-sheet frames,
-  `index.astro`; the subpage print, the menu panel's print and the
-  `/contact` press print, all `aria-hidden`; `press/downloads.astro`).
+  `index.astro`; the menu panel's print and the `/contact` press print,
+  both `aria-hidden`; `press/downloads.astro`).
   Where a print repeats what a frame already shows, the print carries the
   description (the home enlargement, `index.astro`).
 - **[CURRENT]** Imagery is `.webp`; OG card `.jpg` 1200×630
@@ -1177,13 +1134,11 @@ is not a print: it sits straight, untaped.**
   `#hero .hero-photo` re-masks it to fade in from the left and takes
   `grayscale(1) contrast(1.12) brightness(0.95)`, `index.scss`; full width
   over the top of the hero ≤720px). `HeroBackground` has no other caller.
-  **[MUST] A subpage opens on type with at most one print**: a page about
-  the event takes one documentary photograph, graded B&W, as a `.paper`
-  print beside its title (`SubpageHero` `plate` and `focus`): `/partners`
-  `devfest-2025-17`, `/contact` `devfest-2025-22` (under
-  `public/gallery/`). Every other subpage carries no hero print: `/venue`
-  shows its one print, the entrance, in a band; the lineup's portraits and
-  the agenda's slips start right under the title. Beyond the hero, `/`
+  **[MUST] A subpage opens on type.** `SubpageHero` takes no photograph:
+  every subpage opens on its title and lede. `/venue` shows its one print,
+  the entrance, in a band; `/contact` its 2019 press print beside the
+  clippings; the lineup's portraits and the agenda's slips start right
+  under the title. Beyond the hero, `/`
   carries three photographic blocks: the event print of the mill
   (`uhelny-mlyn-chimney`), the speaker prints in the teaser, and the "Past
   editions" contact sheet of eight frames with one enlarged (`STRIPS`,
@@ -1216,31 +1171,26 @@ Primitives, all in `BaseLayout.scss`:
 | `.page-stack` | 545 | every page's `<main>`; its last `.band` closes on `--section-y-tight` (624) and the footer adds no opening air |
 | `.band` (+ `--lit` 605) / `.band-inner` | 589 / 628 | a section's ground, flat black; `--lit` is the same flat black, kept as the class of the form, legal and reference subpages (`/agenda`, `/faq` among them). There is no `--accent` variant. **[MUST] One gap between two sections**: a band followed by a closer hands its bottom air to the closer (`.band:has(+ .closer-band)`, 617), and consecutive bands of one page do the same (`/agenda`, `/invoice`), so two paddings never stack |
 | `.eyebrow` | 355 | plain typewriter note (`note()`, `--ink-muted`) — no decoration, no trailing hairline, never uppercased; the head of a `NextStepList`, a `Closer` eyebrow |
-| `.head-rule` (+ `.head-rule-title`, `.head-rule-note`) | 367 | **the section head**: a `<header>` (or `<div>`) with the Bebas `--fs-section` title (`display()`) left and, on the right, at most one note set as `prose(--fs-body-lg, 1.6)` in `--ink-soft` (max `30ch`) or the section's text actions, both sitting on the title's baseline (`align-items: flex-end`); no rule, space closes it (`margin-bottom: clamp(2.5rem, 5vw, 4.5rem)`); wraps on a phone. The class keeps its old name |
+| `.head-rule` (+ `.head-rule-title`, `.head-rule-note`) | 335 | **the section head**: a `<header>` (or `<div>`) on `SubpageHero`'s grid, `minmax(0, 1fr) minmax(0, var(--side-col))` with `--side-gap` between, aligned to the foot (`align-items: end`): the Bebas `--fs-section` title (`display()`) left and, in the right column, at most one note set as `prose(--fs-body-lg, 1.6)` in `--ink-soft` (max `34ch`) or the section's text actions, so every head's note starts at the hero note's x; a head with no note spans both columns (`> :only-child`); one column ≤720px; no rule, space closes it (`margin-bottom: clamp(2.5rem, 5vw, 4.5rem)`). The class keeps its old name |
 | `.paper` | 393 | **a paper print**: `--paper` border (`0.65rem 0.65rem 0`), `--paper-ink`, `--paper-shadow`, `rotate(var(--tilt, 0deg))`; ≤720px the tilt clamps to ±`--tilt-1`. Also the class of a straight paper card, slip or form that carries no photograph (the `/venue` and `/contact` index cards, the `NextStep` cards, the partnerships card, the invoice and workshop forms, the `/thank-you` stub); those set no `--tilt` |
 | `.paper-photo` | 403 | the black photograph well inside a print; its `<img>` covers it in `grayscale(1) contrast(1.1)`; the caller sets the ratio |
 | `.paper-edge` | 418 | the print's bottom margin: two items pushed apart, `mono(--fs-label-xs, 0.12em, uppercase)` in `--paper-ink-dim`; a word on it is an `.edge-word` note |
 | `.tape` (+ `.paper > .tape` 447) | 436 | a strip of tape: `--tape` ground, `note(--fs-note-sm)` in `--paper-ink`, `0.35rem 0.85rem 0.3rem`, a 1px contact shadow, `rotate(var(--tape-tilt, -1.5deg))`. Only on a print: one per print, over the top edge at the top-left (`top: -0.85rem; left: 1rem`, z 2), one line at `width: max-content`, never cut with an ellipsis (see Images) |
 | `.grease` | 461 | the red grease pencil: an absolutely placed, `aria-hidden`, `pointer-events: none` SVG at z 3; its `path` is a 3px `--color-accent` stroke, round caps and joins, `non-scaling-stroke`. The caller sets the box. One decorative mark per page (see Color) |
 | `.display` (+ `.red` 494) | 484 | poster headline; `.red` only on the home hero statement (see Structural rules) |
-| `.head-split` / `.head-title` / `.head-note` | 500 | two-column section head: statement left, one line right; **no caller** today |
-| `.head-stack` | 552 | the one-column section head, closed by space (no hairline); **no caller** today |
-| `.print` | 533 | the mounted 4:5 well (`--panel-lit`, `--print-mount`); **no caller** today: every photograph is a `.paper` print |
 | `.fallback-note` | 565 | the no-JS / endpoint-down prose |
 | `.anchor-target` | 581 | a jump lands on the section head |
 | `.closer` family | 636 | the closing statement (see `Closer.astro`), on the black ground |
 | `.btn-primary` | 693 | the red fill; white Bebas `cta-label`, no glyph |
 | `.btn-ghost` / `.action` | 733 | the text action: Bebas `--fs-action` caps, no box, no underline, no glyph; red on hover (see Component states) |
+| `paper-action()` | `_type.scss:118` | **the text action on paper**, a mixin: `--paper-ink`, no line at rest, a 2px ink underline at 4px offset on hover and focus (see Component states) |
 | `hairline-link()` | `_type.scss:99` | **the in-prose link**, a mixin only (the old `.hairline-link` class is gone): plain `underline` in `--rule-red` at 3px offset, white, lit to `--color-accent-hot` on hover/focus (SC 1.4.1: colour alone does not mark it). **[MUST]** A link inside running text on the black table takes it as is (`privacy-policy.scss`, the ticket footnote, the forms' consent lines, the hero facts line's venue link, the press-kit footnote, the FAQ and `/team` inbox addresses); never a red-text variant, red is not running text. On paper an in-prose link is a 1px `--paper-ink` underline (the FAQ answers, the `NextStep` notes). A standalone link is an `.action`, never underlined |
-| `.field` / `.field-row` (+ `--short` 802, `--link` 807, `--holds` 857) | 778 / 788 | the ruled list and row: `border-bottom: 1px solid var(--rule)` on every row, `--field-step` of vertical padding. **No caller** today |
-| `.record-status` | 902 | a state word flush right in an action column; **no caller** since the ticket slips state their own |
-| `.scene` / `.scene-vignette` | 908 / 909 | a photographed scene: plate, vignette, film grain (`::before`, 920). `#hero` keeps the `.scene` class with no vignette; `.scene-vignette` has no caller |
+| `.scene` | 690 | `position: relative` for the home hero (`#hero`) |
 | `.skip-link` / `.sr-only` | 290 / 333 | see Accessibility; the skip link is set in the action voice |
 | `.status-bar-cover` | 954 | iOS safe-area paint |
 
 Shared components: `SubpageHero.astro` (takes `titleHtml`, `lede`,
-`seoHeading`, `titleId`, an optional `plate` with its `focus`, and an
-optional `link`; `photo` is kept for the callers' sake), `HeroBackground.astro`
+`seoHeading`, `titleId` and an optional `link`), `HeroBackground.astro`
 (the home hero's plate: a `focus` crop, a `src` plate, default the
 detective key art, an opt-in `width` / `size`, the two opacities),
 `Closer.astro` (takes an extra `class`; every closer renders on black),
@@ -1254,17 +1204,12 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   (`SubpageHero.scss`): the title Bebas `--fs-subpage`, `text-wrap:
   balance`, left; beside it the lede, `prose(--fs-body-lg, 1.6)` in
   `--ink-soft` (max `34ch`), and the optional way-across `.action` under it,
-  on a `1fr / 24rem` grid aligned to the foot. **[MUST] The title starts at
-  the same top with or without a print.** With a `plate` the one print sits
-  beside the title in the right column, capped to the title block's height:
-  a `.hero-print-slot` stretched to the title row holds the `.paper`
-  absolutely (a `5 / 4` box, height 100%), so the print adds no height and
-  can never push the title down; the lede drops under the print. The print
-  is tilted `--tilt-3`, its edge "01" and "30.10.2026", `aria-hidden`
-  (`SubpageHero.astro`). ≤720px everything stacks (title, lede, print) and
-  the print takes 60% of the column at 4:3, set right; **under 600px the
-  print is hidden** (`max-width: 599.98px`): a phone opens on type alone,
-  or the print would push the first row under the fold. Its padding is the
+  on a `minmax(0, 1fr) / minmax(0, var(--side-col))` grid with
+  `--side-gap` between, aligned to the foot, so the note sits on the
+  title's last line. **[MUST] One column for every note**: `--side-col`
+  (`24rem`) and `--side-gap` are shared with `.head-rule`, so every section
+  head's note on the page starts at the hero note's x. It carries no
+  photograph. ≤720px the title and the lede stack. Its padding is the
   only clearance under the fixed header; its bottom padding
   (`clamp(3.5rem, 7vw, 6.5rem)`) is the pause before the first band, which
   opens with no top padding of its own (`.subpage-hero + .band`,
@@ -1297,9 +1242,14 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   500 in paper ink (`index`, `01`, visual only — the `<ol>` carries the
   order), the errand as a Bebas `--fs-head` title, the note as
   `prose(--fs-body)` in paper ink, and its actions at the card's foot:
-  ghost by default as `.step-go` (Bebas `--fs-cta` in paper ink on a 2px
-  underline that thickens on hover and focus), or the red fill. The
-  default slot takes media for the step.
+  ghost by default as `.step-go` (Bebas `--fs-cta` through
+  `paper-action()`: no line at rest, a 2px ink underline on hover and
+  focus), or the red fill; the default slot, for media, sits in the same
+  foot (`.step-foot`). **[MUST] Across a row the cards line up**: each
+  card spans three row tracks of the list (four with an index) through
+  `grid-template-rows: subgrid`, so every note and every foot starts at
+  one height however many lines a title takes; without subgrid the foot
+  drops to the card's bottom edge (`margin-top: auto`, `NextStep.scss`).
 - **`DataState.tsx`** (`ErrorState` / `EmptyState`) — left-set; **an empty
   state always offers somewhere to go**.
 - **`SpeakerPhoto.tsx`** — no URL or a failed load both land on the monogram;
@@ -1362,14 +1312,14 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   reading column: the name at `--fs-display`, the tagline as a note, the
   links, the bio (`prose(--fs-body-lg, 1.75)`, max `62ch`, ragged), then
   the talks as paper slips (the title Bebas `--fs-title-sm`, the abstract
-  ragged). No kicker. Links are named Bebas `--fs-action` text in
+  ragged), straight. No kicker. Links are named Bebas `--fs-action` text in
   `--ink-soft`, no underline, lit to `--color-accent-hot`: the network's
   name for a known kind ("LinkedIn", "GitHub"), the bare domain for a
   website; no icons. The accessible name says who, what, the host and
   "opens in a new tab" (`SpeakerDetail.tsx`, `SpeakerDetail.module.scss`).
 - **Session sheet** (`SessionDetail`) — the talk as one big flat paper slip
   (max `58rem`, `SessionDetail.module.scss`): the room as a plain Bebas
-  `--fs-action` label, the time a mono `--fs-label-lg` figure and the tags
+  `--fs-action` label (`.room`, no tape), the time a mono `--fs-label-lg` figure and the tags
   a note on its edge, the title `display(--fs-h2)`, the abstract a ragged
   reading column. Beside it (under it ≤1100px) the speakers as small 4:5
   `.paper` prints, tilted in turn, each a `<button>` that opens the speaker
@@ -1544,7 +1494,6 @@ import EndLine from '../components/EndLine.astro';
 			lede="…"
 			seoHeading="…"
 			titleId="…"
-			<!-- plate="/gallery/<shot>.webp" focus="50% 40%" for the one print -->
 			<!-- link={{ href: '#talks', label: 'Browse all talks' }} for a way across -->
 		/>
 		<section class="band band--lit" aria-label="…">
@@ -1564,15 +1513,10 @@ import EndLine from '../components/EndLine.astro';
 
 Decision criteria, picked per page:
 
-- **A print or none.** At most one print per subpage, and the detective
-  art is the home hero's: `partners` and `contact` each take their own
-  documentary `plate` and `focus` (list under Images). Every other subpage
-  passes no `plate` and opens on type alone (many still pass
-  `photo={false}`, which now changes nothing): `speakers` and `agenda`,
-  whose content is pictures and slips already, `venue` (its print is the
-  entrance, in a band), `team`, `faq`, `invoice`, `press/downloads`,
-  `workshops`, `attending`, `speaker-card`, `404`, the two thank-you pages
-  and the three legal pages.
+- **Type first.** Every subpage opens on type alone; the detective art is
+  the home hero's. A page's photographs live in its bands: `speakers` and
+  `agenda` (prints and slips right under the title), `venue` (the
+  entrance), `contact` (the 2019 press print), `team` (the crew prints).
 - **Legal pages.** Inside the band a `.reading` grid, `3fr / 9fr` (`4fr /
   8fr` ≤1100px, one column ≤720px): a sticky contents index on the left
   (a note label, mono numbers and Bebas `--fs-action` links, red on hover)
@@ -1605,13 +1549,13 @@ Decision criteria, picked per page:
   "Browse all talks" (`#talks`; `/sessions` now redirects there), `/faq`
   "Get in touch" (`mailto:`).
 - **`.head-rule` is the one section head.** A poster name and, at most,
-  one fact or the section's actions on its baseline. `.head-split` and
-  `.head-stack` have no caller (see Open points).
+  one fact or the section's actions in the right column, the column the
+  hero's note takes.
 - **Eyebrows on a `Closer`.** Only when the eyebrow carries a fact the title
   does not (`invite`: "The list closes"). A mood label
   ("Be there", "Join us") above the closing title is filler; leave it off.
 - **`/thank-you`, `/newsletter-subscription-thank-you`, `/404`** run
-  `SubpageHero photo={false}` → `.band--lit` with a `NextStepList` →
+  `SubpageHero` → `.band--lit` with a `NextStepList` →
   `EndLine` (not `/404`). `/thank-you` opens the band on the calendar as a
   straight paper stub (`.event-stub.paper`, `thank-you.scss`): "Put it in
   your calendar" as a note, the date `display(--fs-h2)` from
@@ -1653,8 +1597,8 @@ Decision criteria, picked per page:
   a little air above and below, its ink `--paper-ink`, the "+" turned to
   "×", the answer `prose(--fs-body)` under the question text (max `62ch`).
   The first question opens on arrival. The page ends on its `EndLine`.
-- **`/partners`** (`partners.astro`, `partners.scss`) — the hero with its
-  print, then one wall per tier under its plain label (see Images &
+- **`/partners`** (`partners.astro`, `partners.scss`) — a type-only hero,
+  then one wall per tier under its plain label (see Images &
   media), then "Become a partner": the `.display` title at `--fs-section`
   left and the partnerships card right on a `5fr / 7fr` grid (one column
   ≤1100px). The card is a straight `.paper` with "2026" on its edge, the
@@ -1662,18 +1606,17 @@ Decision criteria, picked per page:
   role as a note, the address as an underlined link (a thicker ink line on
   hover), then the red "See partnership deck" and the paper-ink `.action`
   "Email Filip".
-- **`/contact`** (`contact.astro`, `contact.scss`, `press.scss`) — the hero
-  with its print, then the three inboxes as straight typed **index cards**
+- **`/contact`** (`contact.astro`, `contact.scss`, `press.scss`) — a
+  type-only hero, then the three inboxes as straight typed **index cards**
   in one row of equal cards (two columns ≤1100px with the general card
   across, one ≤720px): each a `.paper` with "0n" on its edge, a Bebas
   `--fs-head` title, a line and the address; the general inbox's address
   is underlined in grease, the page's one mark. These cards and the
-  clippings sit a gap apart, so they keep only the paper's contact shadow
-  (`0 2px 6px`), not the drop. **In the news**: the `.head-rule` with the
+  clippings take `--paper-shadow` like all paper. **In the news**: the `.head-rule` with the
   press-kit note, then the clippings as straight paper slips cut square
   beside a past-edition print taped "DevFest.cz 2019" (3:2, `--tilt-2`,
-  its edge "2019"); each slip is one link: the outlet and date on its mono
-  edge, the headline Bebas `--fs-head` (`--fs-title-sm` ≤720px), the
+  its edge "2019"); each slip is one link: the outlet (a note) and the
+  date (mono) on its edge, the headline Bebas `--fs-head` (`--fs-title-sm` ≤720px), the
   excerpt in mono (Czech diacritics; the recorded exception in
   Typography), "Read article" in Bebas, underlined in ink when the slip is
   reached; focus rings outside the slip. **Press kit**: the `.display`
@@ -1739,7 +1682,7 @@ Decision criteria, picked per page:
 - **"The eleventh DevFest.cz"** (`index.astro`, `index.scss`):
   the `.head-rule` title at `--fs-section`, no note, then on an `8fr / 4fr`
   grid (one column ≤1100px): a widescreen print of the mill (2.39:1, 4:3
-  ≤720px) taped "Uhelný mlýn, Libčice nad Vltavou", with the line "One day
+  ≤720px) taped "Uhelný Mlýn, Libčice nad Vltavou" (`EVENT.venue`), with the line "One day
   in a converted coal mill 25 minutes north of Prague, for 350 medior and
   senior developers from across CEE." set over the photograph like a
   subtitle, tilted `-tilt-1`, its edge "02 · 2.39 : 1 · 08:00"; and beside
@@ -1914,7 +1857,7 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 
 - **[MUST] Contrast.** Body 1.4.3; boundaries and focus rings ≥3:1 (1.4.11).
   `--field-border` for control boundaries on black, `--paper-ink` on
-  paper, `--color-error` for error prose. On paper, small text is
+  paper, an error in paper ink behind a red mark. On paper, small text is
   `--paper-ink` or `--paper-ink-dim` (5.3:1), never red (see Color).
   Don't dim ink on red; change size.
 - **[MUST] Focus is always visible:** `:focus-visible { outline: 2px solid
@@ -1950,8 +1893,7 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 - **[MUST] `.sr-only`** for text in the a11y tree but off screen
   (`BaseLayout.scss:332`).
 - **[MUST] A grease stroke is `aria-hidden`**, and so is a decorative
-  print (the subpage print, the menu panel's print, the `/contact` press
-  print). **[CURRENT]** Most paper edges are `aria-hidden` too (the home
+  print (the menu panel's print, the `/contact` press print). **[CURRENT]** Most paper edges are `aria-hidden` too (the home
   prints, the `/contact` and `/team` cards); the speaker print's tape and
   edge are read as part of its link or button. A label that names a group
   is real text (the `/partners` tier `h2`, the hosts `h3`, the agenda room
@@ -1977,13 +1919,11 @@ Places the code contradicts itself or this document. Each needs a decision.
    The newsletter's disabled state now uses a dedicated colour pair instead.
 4. **Three ways to say "not available":** disabled `<button>`,
    `aria-disabled` `<span>` (`partners.astro`, the deck slot), and a
-   spent ticket slip's state note under a grease cross; `.record-status`
-   has no caller left. Delete it or give it the slips' state.
+   spent ticket slip's state note under a grease cross.
 5. ~~**No `aria-invalid` in `src`.**~~ Done: the invoice fields carry
    `aria-invalid` and `aria-describedby` (`InvoiceForm.tsx`) and the typed
    line turns red on it.
-6. **Orphaned token.** `--fs-title-compact` (`BaseLayout.scss:72`) has no
-   `var()` caller. Delete it or give it one.
+6. ~~**Orphaned token.**~~ Done: `--fs-title-compact` is deleted.
 7. **`min-width` queries** against a max-width convention: `1100px` ×2
    (the inline nav, `Menu.scss`; `press/downloads.scss`), `901px` ×2
    (`Menu.scss`: the panel's link steps and its print), `601px` ×1
@@ -2054,9 +1994,9 @@ Places the code contradicts itself or this document. Each needs a decision.
     and the contact-sheet frames at `1.15`, the hero plate at `1.12`
     (`index.scss`). Manual p. 13 asks for high contrast and also allows
     speaker portraits in colour on black.
-29. **`.head-stack` and `.head-split` have no caller**
-    (`BaseLayout.scss:489–520`, `541–552`): the poster `.head-rule` is the
-    one section head. Delete both primitives.
+29. ~~**`.head-stack` and `.head-split` have no caller.**~~ Done: both
+    are deleted with `.head-title` and `.head-note`; `.head-rule` is the
+    one section head.
 30. **Two `text-shadow`s on photographs** against the Bebas rule's "no
     text-shadow": the home statement (`index.scss:61`) and the subtitle
     set over the home event print (`index.scss`, `.event-subtitle`), legibility lifts for
@@ -2107,30 +2047,28 @@ Places the code contradicts itself or this document. Each needs a decision.
     corners, the "350" ring and the ride ring are gone; the sold-out cross
     is functional (Color).
 47. ~~The spotlight and the long shadow.~~ Done: the ground is flat black
-    (`--lit: none`), the paper flat with the tight `--paper-shadow`, and
+    (no spotlight layer), the paper flat with the tight `--paper-shadow`, and
     one section gap everywhere (`.band:has(+ .closer-band)`, the last band
     on `--section-y-tight`, no footer margin).
-48. **Paper that still tilts without a photograph.** The speaker sheet's
-    talk slips (`SLIP_TILTS`, `SpeakerDetail.tsx`), the invite page's quote
-    slip (`invite/member.scss`, `.invite-quote`) and the share page's
-    no-script slip (`Share.astro`) rotate against "only photographs tilt".
-    Set them straight.
-49. **Dead primitives and tokens.** No caller: `.print` and
-    `--print-mount`, `.field` / `.field-row` and its variants,
-    `.scene-vignette` and the grain it gates, `lit-field()`
-    (`_controls.scss`), `--color-error`, `--fs-row-figure`. `--lit` is
-    `none` and still layered by `Sheet.module.scss`. Delete them, or keep
-    the ones a ruled list or a vignetted plate would bring back.
-50. **Two words in mono.** A clipping's outlet sits on its mono
-    `.paper-edge` beside the date (`contact.astro`), and the "Every talk"
-    search field types its query in mono (`Sessions.module.scss`,
-    `.searchInput`). Mono records figures only; the clipping excerpt is the
-    recorded exception, not its outlet.
-51. **Two kinds of paper shadow.** The `/contact` index cards and the
-    clippings override `--paper-shadow` with its contact shadow alone
-    (`contact.scss`, `press.scss`), where the agenda and session slips keep
-    the full shadow on a `::before` under an isolated grid. Pick one way
-    for paper set a gap apart.
-52. **The session sheet's room wears `.tape` and undoes it.** The markup
-    carries the global `.tape` class and `SessionDetail.module.scss`
-    strips it back to a plain Bebas label. Drop the class.
+48. ~~**Paper that still tilts without a photograph.**~~ Done: the
+    speaker sheet's talk slips, the invite quote slip and the share page's
+    no-script slip sit straight (Color).
+49. ~~**Dead primitives and tokens.**~~ Done: `.print`, `.field` /
+    `.field-row`, `.scene-vignette` and its grain, `.head-split` /
+    `.head-title` / `.head-note`, `.head-stack`, `.record-status`,
+    `_controls.scss` with `lit-field()`, and every token with no `var()`
+    caller (`--lit`, `--print-mount`, `--wash`, `--wash-strong`,
+    `--field-feather`, `--on-accent`, `--on-accent-ink`,
+    `--on-accent-border`, `--color-cream`, `--color-error`, `--panel`,
+    `--panel-2`, `--panel-hover`, `--rule-soft`, `--section-y-wide`,
+    `--fs-row-figure`, `--fs-title-compact`) are deleted. `.scene` stays
+    on `#hero`.
+50. ~~**Two words in mono.**~~ Done: a clipping's outlet is an
+    `.edge-word` note (`contact.astro`) and the "Every talk" search types
+    its query as a `note(--fs-note)` (`Sessions.module.scss`).
+51. ~~**Two kinds of paper shadow.**~~ Done: all paper takes
+    `--paper-shadow`; the `/contact` cards and the clippings take it as is,
+    close-set slips draw it on a `::before` under their isolated grid
+    (Color).
+52. ~~**The session sheet's room wears `.tape` and undoes it.**~~ Done:
+    the room is a plain `.room` label (`SessionDetail.module.scss`).

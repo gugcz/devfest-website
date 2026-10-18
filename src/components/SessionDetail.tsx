@@ -36,7 +36,7 @@ function timeSpan(session: Session): string {
 	return end ? `${start} – ${end}` : start;
 }
 
-/** The room the tape names. Sessionize can leave the name blank; the caller's
+/** The room the slip names. Sessionize can leave the name blank; the caller's
  * `when` line (`10:00–10:45, Main Hall`) carries the resolved one then. */
 function roomOf(session: Session, when?: string): string {
 	const named = session.room.trim();
@@ -90,7 +90,7 @@ export default function SessionDetail({
 			<Sheet labelledBy="session-detail-title" inert={activeSpeaker !== null} onClose={onClose}>
 				<div className={`${sheet.content} ${s.layout}`}>
 					<article className={s.slip}>
-						{room && <span className={`tape ${s.tape}`}>{room}</span>}
+						{room && <span className={s.room}>{room}</span>}
 
 						{(time || tags.length > 0) && (
 							<div className={s.edge}>

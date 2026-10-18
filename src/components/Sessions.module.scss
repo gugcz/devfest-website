@@ -1,7 +1,6 @@
 @use '../styles/type' as *;
-// Session docket — the programme as an open field of talks. `.field-row--link`
-// owns the rhythm and the red reach state; this file owns the two-column grid
-// and the type.
+// Session docket — every talk a paper slip in one grid; this file owns the
+// grid, the slips and the type.
 
 /* ===================== FILTER BAR ===================== */
 .filters {
@@ -37,7 +36,8 @@
 
 .searchInput {
 	width: 100%;
-	@include mono(var(--fs-label-lg), 0.1em);
+	// A typed query is words, so the note voice: mono records figures only.
+	@include note(var(--fs-note));
 	color: var(--color-text);
 	background: linear-gradient(158deg, var(--panel-lit-2) 0%, var(--panel-lit) 90%);
 	// --field-border (not --rule) keeps the boundary >=3:1 over the dark fill (1.4.11).

@@ -82,8 +82,9 @@ built by a community, not a vendor event.
   header (Speakers, Agenda, Venue, FAQ, then Partners, Team, Press,
   Contact) beside a red Tickets button; narrower, they live behind one
   menu toggle. The footer lists every page.
-- Subpages open on type: a poster-scale title, a factual lede and at most
-  one print, which a phone leaves out. Speakers and the agenda are paper:
+- Subpages open on type: a poster-scale title and a factual lede beside
+  it, no photograph; every section head's note lines up under the lede's
+  column. Speakers and the agenda are paper:
   every speaker a print in running order with room and start time, the
   hosts in their own row; every talk a slip by room and time, the all-day
   lounge one line above them (one list grouped by time on a phone). The
@@ -107,11 +108,9 @@ built by a community, not a vendor event.
 - Visual direction "noir, but loud", in the darkroom: one dark theme, red
   accent, poster-scale Bebas Neue headlines, photographs as paper prints.
   Only the brand faces in `astro.config.mjs` may be used; never add a font.
-- The detective key art (`/hero-detective.webp`) is the home hero. A
-  subpage carries at most one print: partners and contact each take one
-  documentary shot from a past edition (`/public/gallery`) beside the
-  title, and venue shows its entrance further down, graded B&W; every
-  other subpage opens on type.
+- The detective key art (`/hero-detective.webp`) is the home hero. Every
+  subpage opens on type; a subpage's photographs sit in its bands (venue
+  its entrance, contact a 2019 print beside the clippings), graded B&W.
   Never stock or generated imagery.
 - The design system in `docs/design.md` is binding.
 

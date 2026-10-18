@@ -39,9 +39,6 @@ function linkAria(name: string, link: SpeakerLink): string {
 	return host ? `${name}: ${what}, ${host} (opens in a new tab)` : `${name}: ${what} (opens in a new tab)`;
 }
 
-// The talks are slips set down by hand: a fraction of the smallest tilt.
-const SLIP_TILTS = ['calc(var(--tilt-1) * -0.4)', 'calc(var(--tilt-1) * 0.35)'];
-
 /** Speaker detail dialog: the speaker as a large print (tape with the room,
  * the time on its edge) beside the bio in a reading column and the talks as
  * paper slips. The modal behaviour (trap, Esc, scroll lock, focus return)
@@ -115,11 +112,7 @@ export default function SpeakerDetail({
 							<h3 className={sheet.blockTitle}>{speaker.sessions.length > 1 ? 'Talks' : 'Talk'}</h3>
 							<ul className={s.slips}>
 								{speaker.sessions.map((session, i) => (
-									<li
-										key={i}
-										className={s.slip}
-										style={{ rotate: SLIP_TILTS[i % SLIP_TILTS.length] } as CSSProperties}
-									>
+									<li key={i} className={s.slip}>
 										<p className={s.slipTitle}>{session.name}</p>
 										{session.description && (
 											<div className={s.slipDesc}>

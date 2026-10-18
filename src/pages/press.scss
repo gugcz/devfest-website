@@ -41,9 +41,7 @@
 	color: var(--paper-ink);
 	padding: 1.9rem 2.1rem;
 	text-decoration: none;
-	// Flat paper: the table's long soft shadow would fall on the clipping
-	// above as a dark band, like a curl. Only the tight contact shadow stays.
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+	box-shadow: var(--paper-shadow);
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);

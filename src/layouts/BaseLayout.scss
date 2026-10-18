@@ -6,13 +6,10 @@
 	--color-bg: #000000;
 	--color-grey: rgba(255, 255, 255, 0.55);
 	--color-text: #FFFFFF;
-	--color-cream: #FFFFFF;
 	--color-accent: #F11000;
 	// One red. Kept as its own token so hover/live call sites stay legible;
 	// hover feedback comes from an inverted fill, not a second red.
 	--color-accent-hot: #F11000;
-	// Form-error text: Evidence Red, 4.8:1 on black — clears AA as small copy.
-	--color-error: #F11000;
 
 	// Injected into :root by the matching <Font /> in BaseLayout.astro; the
 	// families resolve to build-time hashes, so never write a literal
@@ -32,10 +29,9 @@
 	// edge to edge. The 6.25vw ceiling still hands a 320px screen its 20px.
 	--gutter: min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw);
 
-	// Three densities: tight is a cut, base the normal beat, wide a held shot.
+	// Two densities: tight is a cut, base the normal beat.
 	--section-y-tight: clamp(3.75rem, 6vw, 6.5rem);
 	--section-y: clamp(6rem, 10vw, 11rem);
-	--section-y-wide: clamp(8.5rem, 15vw, 17rem);
 
 	// The fixed bar's height, stated once: vertical padding plus the 44px
 	// WCAG 2.5.5 tap target (the logo caps at 34px). `Menu.scss` builds the
@@ -73,14 +69,12 @@
 	--fs-section: clamp(4rem, 9vw, 8rem);       // the section head (`.head-rule`) and any secondary title
 	--fs-subpage: clamp(5rem, 13vw, 12.5rem);   // the subpage title (`SubpageHero`)
 	--fs-card-title: 1.95rem;                   // card / dossier title
-	--fs-title-compact: 1.6rem;                 // compact field row title
 
 	// Row titles carry the separation: 72px for a short list, 54px for a long one.
 	// They take the same height term as --fs-h2, or on a short screen a list
 	// row outranks the section head above it. Floors = the phone steps below.
 	--fs-row: clamp(2.1rem, min(5.2vw, 7.5svh), 4.5rem);     // row title, short list (waves, desks)
 	--fs-row-sm: clamp(1.7rem, min(4vw, 6svh), 3.4rem);      // row title, long list (sessions, FAQ, clippings)
-	--fs-row-figure: clamp(2.1rem, min(4.2vw, 6svh), 4rem);  // the figure opposite a row title
 
 	// ── THE RAMP ────────────────────────────────────────────────────────
 	// Every font-size goes through a step below; never add one outside it.
@@ -95,7 +89,7 @@
 	--fs-body: 1.05rem;       // long-form reading copy
 	--fs-body-lg: 1.15rem;    // footnotes, short ledes
 	--fs-lede: clamp(1.2rem, 1.6vw, 1.5rem);  // section ledes, status prose
-	--fs-title-sm: 1.45rem;   // small titles, mobile field-row titles
+	--fs-title-sm: 1.45rem;   // small titles: a talk slip in a sheet, phone-size names
 	--fs-monogram: 3.4rem;    // initials in an empty photo well
 
 	// Condensed caps at poster scale: the brand manual's 0.9–1.0 leading, at
@@ -104,7 +98,6 @@
 	--track-display: 0;
 
 	--rule: rgba(255, 255, 255, 0.13);
-	--rule-soft: rgba(255, 255, 255, 0.06);
 	--rule-strong: rgba(255, 255, 255, 0.22);
 	--rule-red: rgba(241, 16, 0, 0.55);
 	// THE control-edge token: boundary for anything operable (text fields,
@@ -127,19 +120,10 @@
 	// Plates are white at an opacity over the black ground (the old solid
 	// #0C0C0C / #111111 / #161616, same look on #000). Where a plate must be
 	// opaque (a fixed bar over content), layer it on `--color-bg`.
-	--panel: rgba(255, 255, 255, 0.047);
-	--panel-2: rgba(255, 255, 255, 0.067);
-	--panel-hover: rgba(255, 255, 255, 0.086);
 
-	// Ink and edges on FLAT red (#F11000: chips, a hovered field row).
-	// Black 4.8:1 at any size; white 4.4:1, so white is for large type only
-	// (3:1).
-	--on-accent: #000000;
 	// The CTA label on red: Bebas at 1.5rem = 24px, the regular-weight
-	// "large text" line where white's 4.4:1 clears AA.
+	// "large text" line where white's 4.4:1 on #F11000 clears AA.
 	--fs-cta: 1.5rem;
-	--on-accent-ink: #FFFFFF;
-	--on-accent-border: rgba(0, 0, 0, 0.85);
 
 	// Focus-ring stand-off. The ring is always 2px solid --color-accent-hot; the gap
 	// tracks how much visible edge the control already has.
@@ -147,11 +131,6 @@
 	--focus-gap: 3px;
 	--focus-gap-lg: 4px;
 
-
-	// A photograph is MOUNTED, not floated: keyline just inside the edge plus a shadow.
-	--print-mount:
-		inset 0 0 0 1px rgba(255, 255, 255, 0.16),
-		0 10px 24px rgba(0, 0, 0, 0.5);
 
 	// THE DARKROOM. Photographs are paper prints on the black table, labelled
 	// with tape. Paper and tape are white at an opacity (the brand manual has
@@ -180,17 +159,6 @@
 	--ink-monogram: rgba(255, 255, 255, 0.46);
 	--ink-monogram-sm: rgba(255, 255, 255, 0.66);
 
-	// The table is flat black: the spotlight pool read as a grey haze on
-	// every subpage. Kept as a no-op layer for callers that still stack it.
-	--lit: none;
-	// The raking light a reached row or cell takes: white, from the left, gone
-	// by the far edge. `--wash` for a full-bleed row, `--wash-strong` inside
-	// a bounded cell where the same alpha would vanish against a panel fill.
-	--wash: linear-gradient(104deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.026) 38%, transparent 82%);
-	--wash-strong: linear-gradient(104deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 42%, transparent 86%);
-	// Feathers a full-bleed row wash so its top and bottom edges do not step across the page.
-	--field-feather: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
-
 	// ── PHONE TYPE ──────────────────────────────────────────────────────
 	// Last in :root on purpose: Sass emits a nested @media in source order,
 	// so declared above the base steps it would lose to them.
@@ -202,12 +170,8 @@
 	@media (max-width: 600px) {
 		--fs-row: 2.1rem;
 		--fs-row-sm: 1.7rem;
-		--fs-row-figure: 2.1rem;
 		// Mono tracking at 72%, floored at 0.1em: see the `mono` mixin in `_type.scss`.
 		--track-scale: 0.72;
-		// The held shot stays the longest pause, but 136px stacked on the
-		// section above left a screen of black between facts and tickets.
-		--section-y-wide: 6.5rem;
 	}
 }
 
@@ -447,8 +411,8 @@ b {
 	}
 }
 
-// A strip of tape with a typewritten label. On a print it overlaps the top
-// edge; on its own it labels a group (a partner tier, a room).
+// A strip of tape with a typewritten label, only ever on a print, over its
+// top edge. A group label (a partner tier, a room) is plain type, not tape.
 .tape {
 	display: inline-block;
 	background: var(--tape);
@@ -472,8 +436,8 @@ b {
 	width: max-content;
 }
 
-// The red grease pencil: one mark per section, drawn as an aria-hidden SVG
-// over what it marks.
+// The red grease pencil: one decorative mark per page, drawn as an
+// aria-hidden SVG over what it marks.
 .grease {
 	position: absolute;
 	pointer-events: none;
@@ -512,69 +476,9 @@ b {
 	color: var(--color-accent-hot);
 }
 
-// Statement left, one supporting line right. No decorative rules.
-.head-split {
-	display: grid;
-	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-	align-items: end;
-	gap: clamp(1.5rem, 4vw, 4rem);
-	margin-bottom: clamp(2.75rem, 5vw, 4rem);
-}
-
-// Sections run at --fs-h2; the page title is the ONE display element per page.
-.head-title {
-	font-size: var(--fs-h2);
-}
-
-.head-note {
-	@include prose(var(--fs-lede), 1.6);
-	color: var(--ink-soft);
-	margin: 0 0 0.35rem;
-	// Special Elite is wide; longer and this stops reading as a line and becomes a paragraph.
-	max-width: 34ch;
-}
-
-@media (max-width: 860px) {
-	.head-split {
-		// minmax(0, …) — see `.closer`: a bare `1fr` floors at min-content.
-		grid-template-columns: minmax(0, 1fr);
-		align-items: start;
-	}
-}
-
-@media (max-width: 600px) {
-	.head-split { margin-bottom: 2.4rem; }
-}
-
-.print {
-	position: relative;
-	aspect-ratio: 4 / 5;
-	width: 100%;
-	overflow: hidden;
-	background: var(--panel-lit);
-	box-shadow: var(--print-mount);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
 .page-stack {
 	display: flex;
 	flex-direction: column;
-}
-
-// The one-column section head. Compose the title with `.display` + `.head-title`.
-// Closed by space, not a hairline.
-.head-stack {
-	margin-bottom: 4rem;
-	padding-bottom: 1.6rem;
-}
-
-@media (max-width: 600px) {
-	.head-stack {
-		margin-bottom: 2.4rem;
-		padding-bottom: 1.2rem;
-	}
 }
 
 // The prose a data-backed page falls back to with no JS or a dead endpoint.
@@ -783,169 +687,7 @@ b {
 	}
 }
 
-// THE CONTAINER LANGUAGE for every list: a ruled document. A 1px rule under
-// each row, the head rule above the list, air and type scale for hierarchy;
-// the REACH STATE marks an entry.
-//   .field-row--link    the row IS the control -> full-bleed red field
-//   .field-row--holds   the row CONTAINS a control -> warm wash + pull
-//   .field-row--short   the 72px-title step (short lists)
-// Never add a per-list light box or an opacity "inactive" state.
-
-.field {
-	position: relative;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-}
-
-// The step is the rhythm AND the band the reach field fills — hence one variable.
-.field-row {
-	--field-step: clamp(1.4rem, 2.2vw, 1.9rem);
-	position: relative;
-	// Without its own stacking context the z-index:-1 field paints behind the section bg.
-	isolation: isolate;
-	padding: var(--field-step) 0;
-	background: transparent;
-	border: 0;
-	// Rows are ruled: the list is a ruled document, each row a line in it.
-	border-bottom: 1px solid var(--rule);
-	border-radius: 0;
-}
-
-// Short lists carry the 72px title, so they take the wider step.
-.field-row--short {
-	--field-step: clamp(2.25rem, 3.6vw, 3.25rem);
-}
-
-// No translateX here: dragging a band that runs to both viewport edges reads as a fault.
-.field-row--link {
-	transition: color 0.28s ease;
-
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0 calc(-1 * var(--gutter));
-		background: var(--color-accent);
-		opacity: 0;
-		pointer-events: none;
-		z-index: -1;
-		transition: opacity 0.28s ease;
-	}
-
-	// HOVER paints the field; FOCUS draws a ring. Focus persists after a sheet closes,
-	// and a full-bleed red band left behind reads as a stuck highlight. Hover only
-	// where a pointer hovers: a tap on touch would leave the band painted.
-	@media (hover: hover) {
-		&:hover::before {
-			opacity: 1;
-		}
-	}
-
-	// Every ink goes FULL BLACK — muted rgba() fails on #F11000. Blunt on purpose;
-	// a caller needing an exception overrides it with its own class.
-	@media (hover: hover) {
-		&:hover {
-			color: var(--on-accent);
-
-			*:not(svg):not(path) {
-				color: var(--on-accent);
-			}
-		}
-	}
-
-	// accent-hot on #000000 is 4.8:1, clear of the 3:1 in 1.4.11.
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-tight);
-	}
-
-	// Red on red is not a ring, so hover + focus inverts it to black.
-	@media (hover: hover) {
-		&:hover:focus-visible {
-			outline-color: var(--on-accent);
-		}
-	}
-}
-
-// A red band under a row that isn't clickable promises a click, so it warms and pulls.
-.field-row--holds {
-	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0 calc(-1 * var(--gutter));
-		background: var(--wash);
-		opacity: 0;
-		pointer-events: none;
-		z-index: -1;
-		transition: opacity 0.3s ease;
-		// Feathered: an un-masked full-bleed box shows its top and bottom edges as steps
-		// across the page. The red field above is the exception — it reads as a band.
-		-webkit-mask-image: var(--field-feather);
-		mask-image: var(--field-feather);
-	}
-
-	&:hover::before,
-	&:focus-within::before {
-		opacity: 1;
-	}
-
-	&:hover,
-	&:focus-within {
-		transform: translateX(0.6rem);
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.field-row--link,
-	.field-row--holds {
-		transition: none;
-
-		&::before { transition: none; }
-	}
-
-	.field-row--holds:hover,
-	.field-row--holds:focus-within {
-		transform: none;
-	}
-}
-
-// Status word. Never a pill, chip, or underlined — it sits where the
-// "Get tickets" link would, and an underline there promises a click.
-.record-status {
-	@include note(var(--fs-note-sm));
-	color: rgba(255, 255, 255, 0.72);
-	white-space: nowrap;
-}
-
 .scene { position: relative; }
-.scene > .scene-vignette {
-	position: absolute;
-	inset: 0;
-	background: radial-gradient(ellipse 92% 82% at 50% 44%, transparent 36%, rgba(0, 0, 0, 0.62) 100%);
-	pointer-events: none;
-	z-index: 1;
-}
-
-// Film grain lives on the photograph, not the page: only a scene that carries
-// a plate (it has a `.scene-vignette`) takes it. Static — never animated.
-// Above the plate, below the scene's content (z 10).
-.scene:has(> .scene-vignette)::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	z-index: 2;
-	pointer-events: none;
-	// `screen`, not `overlay`: overlay leaves near-black almost untouched, so
-	// on a #000000 ground the grain was invisible.
-	opacity: 0.06;
-	mix-blend-mode: screen;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-	background-size: 220px 220px;
-}
 
 // No scroll reveal: sections are simply there. A fade-and-rise on every band
 // was the same entrance seventeen times, and spent the page's motion before
@@ -1004,8 +746,6 @@ b {
 
 	// Atmosphere, chrome and the closing red band: nothing that is texture
 	// rather than content survives onto paper.
-	.scene::before,
-	.scene-vignette,
 	.status-bar-cover,
 	.site-header,
 	.footer,
@@ -1026,11 +766,8 @@ b {
 	.hero-title,
 	.hero-lede,
 	.display,
-	.head-title,
-	.head-note,
 	.eyebrow,
 	.red,
-	.field-row,
 	a {
 		color: #000000 !important;
 	}
@@ -1053,8 +790,7 @@ b {
 	}
 
 	// …but not where the link IS its address, or the line prints twice.
-	a[href^='mailto:'].email-link::after,
-	.field-row a[href^='mailto:']::after {
+	a[href^='mailto:'].email-link::after {
 		content: none;
 	}
 }

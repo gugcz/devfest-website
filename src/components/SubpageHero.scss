@@ -1,7 +1,7 @@
 @use '../styles/type' as *;
 // Every subpage opens on type: the title at poster scale on the left, one
-// factual line beside it, and at most one print. Compact on purpose: the
-// first content row shows without scrolling.
+// factual line beside it. Compact on purpose: the first content row shows
+// without scrolling.
 .subpage-hero {
 	position: relative;
 	// The padding is the only clearance under the fixed header.
@@ -21,17 +21,6 @@
 	max-width: var(--maxw);
 	width: 100%;
 	margin: 0 auto;
-}
-
-// With a print the title still starts where every subpage title starts:
-// the print sits beside it in the right column, capped to the title block's
-// height (`.hero-print-slot`), and the note drops under the print.
-.subpage-hero--print .hero-content {
-	grid-template-areas:
-		'title print'
-		'.     side';
-	align-items: start;
-	row-gap: 2rem;
 }
 
 .hero-title {
@@ -63,73 +52,17 @@
 	margin: 1.25rem 0 0;
 }
 
-// The slot is as tall as the title row and adds no height of its own (the
-// print inside is out of flow), so the print can never push the title down.
-.hero-print-slot {
-	grid-area: print;
-	position: relative;
-	align-self: stretch;
-}
-
-.hero-print {
-	position: absolute;
-	top: 0;
-	left: 0;
-	height: 100%;
-	aspect-ratio: 5 / 4;
-	display: flex;
-	flex-direction: column;
-	--tilt: var(--tilt-3);
-	margin: 0;
-
-	.paper-photo {
-		flex: 1 1 0;
-		min-height: 0;
-	}
-
-	.paper-edge {
-		padding-block: 0.5rem 0.6rem;
-	}
-}
-
 @media (max-width: 720px) {
-	.hero-content,
-	.subpage-hero--print .hero-content {
+	.hero-content {
 		grid-template-columns: minmax(0, 1fr);
 		grid-template-areas:
 			'title'
-			'side'
-			'print';
+			'side';
 		gap: 1.5rem;
-	}
-
-	.hero-print-slot {
-		position: static;
-	}
-
-	.hero-print {
-		position: static;
-		width: 60%;
-		height: auto;
-		aspect-ratio: auto;
-		display: block;
-		margin: 0 0 0 auto;
-
-		.paper-photo {
-			aspect-ratio: 4 / 3;
-		}
 	}
 
 	.hero-lede {
 		font-size: var(--fs-body);
 		line-height: 1.65;
-	}
-}
-
-// A phone opens on type alone: the print would push the page's first row
-// under the fold.
-@media (max-width: 599.98px) {
-	.hero-print-slot {
-		display: none;
 	}
 }

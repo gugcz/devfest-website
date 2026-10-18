@@ -100,7 +100,8 @@
 	color: var(--ink-strong);
 }
 
-// The member's own line, typed on a slip and set down beside the note.
+// The member's own line, typed on a slip and set down straight beside the
+// note: only a photograph tilts.
 .invite-quote {
 	align-self: start;
 	@include prose(var(--fs-body));
@@ -109,7 +110,6 @@
 	background: var(--paper);
 	box-shadow: var(--paper-shadow);
 	padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1.1rem, 2.6vw, 1.75rem);
-	rotate: calc(var(--tilt-1) * -0.6);
 
 	span {
 		color: var(--paper-ink-dim);
