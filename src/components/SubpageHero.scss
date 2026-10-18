@@ -14,10 +14,10 @@
 
 .hero-content {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+	grid-template-columns: minmax(0, 1fr) minmax(0, var(--side-col));
 	grid-template-areas: 'title side';
 	align-items: end;
-	gap: clamp(1.5rem, 4vw, 4rem);
+	gap: var(--side-gap);
 	max-width: var(--maxw);
 	width: 100%;
 	margin: 0 auto;

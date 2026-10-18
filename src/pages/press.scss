@@ -80,11 +80,16 @@
 	@include action;
 	color: var(--paper-ink);
 	margin-top: 0.3rem;
-	text-decoration-thickness: 1px;
+	text-decoration-thickness: 2px;
 	text-underline-offset: 4px;
 }
 
-// Red text on paper misses 4.5:1: the reach state is an ink underline.
+// Red text on paper misses 4.5:1: the reach state is an ink underline, the
+// same 2px line as every paper action (`paper-action`).
+.clip-link:focus-visible .clip-read {
+	text-decoration-line: underline;
+}
+
 @media (hover: hover) {
 	.clip-link:hover .clip-read {
 		text-decoration-line: underline;
@@ -93,9 +98,13 @@
 
 // A past edition on the table beside the clippings: the band's one print,
 // its tape top-left like every print.
+// On desktop it stays in view beside the clipping stack, so the right column
+// never runs empty while the clippings scroll past.
 .press-print {
 	--tilt: var(--tilt-2);
 	margin: 0;
+	position: sticky;
+	top: calc(var(--header-h) + 2.5rem);
 
 	.paper-photo {
 		aspect-ratio: 3 / 2;
@@ -224,6 +233,7 @@
 	}
 
 	.press-print {
+		position: relative;
 		width: 100%;
 		max-width: 32rem;
 		margin-left: auto;

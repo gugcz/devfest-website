@@ -8,6 +8,7 @@ import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
 import { getActivePartnerTiers, getCommunityPartners, partnerLogo, type Partner } from '../lib/partners';
 import { TOPICS } from '../lib/topics';
+import { EVENT } from '../lib/event';
 
 // The home page as prints on a black table: the full-bleed plate with the
 // statement set left over it, then the event (a widescreen print and its
@@ -94,7 +95,7 @@ const STRIP_SCALE = 1;
 						href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
 						target="_blank"
 						rel="noopener noreferrer"
-					>Uhelný mlýn, near Prague</a>
+					>{EVENT.venue}, near Prague</a>
 					<HeroOffer client:load />
 				</div>
 				<a href="#tickets" class="btn-primary hero-cta">Get tickets</a>
@@ -110,11 +111,11 @@ const STRIP_SCALE = 1;
 				</header>
 				<div class="event-grid">
 					<div class="paper event-print">
-						<span class="tape">Uhelný mlýn, Libčice nad Vltavou</span>
+						<span class="tape">{EVENT.venue}, Libčice nad Vltavou</span>
 						<div class="paper-photo event-photo">
 							<img
 								src="/gallery/uhelny-mlyn-chimney.webp"
-								alt="The chimney of Uhelný mlýn, the converted coal mill at Libčice nad Vltavou"
+								alt={`The chimney of ${EVENT.venue}, the converted coal mill at Libčice nad Vltavou`}
 								loading="lazy"
 								decoding="async"
 								width="1824"
@@ -137,7 +138,7 @@ const STRIP_SCALE = 1;
 						</div>
 						<dl class="facts-list">
 							<div><dt>Date</dt><dd><time datetime="2026-10-30">30 October 2026</time></dd></div>
-							<div><dt>Place</dt><dd>Uhelný mlýn, Libčice nad Vltavou</dd></div>
+							<div><dt>Place</dt><dd>{EVENT.venue}, Libčice nad Vltavou</dd></div>
 							<div><dt>Doors</dt><dd><span class="fig">08:00&ndash;20:00</span></dd></div>
 							<div>
 								<dt>Audience</dt>
@@ -163,7 +164,7 @@ const STRIP_SCALE = 1;
 		     enlargement carries the description. -->
 		<section class="band sec" aria-labelledby="gallery-title">
 			<div class="band-inner">
-				<header class="head-rule past-head">
+				<header class="head-rule">
 					<h2 id="gallery-title" class="head-rule-title">Past editions</h2>
 					<p class="head-rule-note">Ten editions since <span class="fig">2015</span>.</p>
 				</header>

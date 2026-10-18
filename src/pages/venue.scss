@@ -57,9 +57,10 @@
 /* ---- The route: index cards ---- */
 // Two steps side by side at one height, the flight under them full width.
 .venue-cards {
+	--cards-gap: clamp(1.75rem, 3vw, 3rem);
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: clamp(1.75rem, 3vw, 3rem);
+	gap: var(--cards-gap);
 	align-items: stretch;
 }
 
@@ -70,10 +71,11 @@
 }
 
 .venue-card {
+	--card-pad-x: 1.75rem;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	padding: 1.6rem 1.75rem 1.9rem;
+	padding: 1.6rem var(--card-pad-x) 1.9rem;
 
 	p {
 		@include prose(var(--fs-body), 1.55);
@@ -125,39 +127,22 @@
 	}
 }
 
-// The site's text action, in paper ink. Red text on paper misses 4.5:1, so
-// the reach state is an underline in the same ink.
-// Held to the card's foot, so both steps end on one line.
+// The site's text action on paper. Held to the card's foot, so both steps
+// end on one line.
 .action.venue-go {
 	margin-top: auto;
 	padding-top: 1.25rem;
-	color: var(--paper-ink);
-	text-decoration-thickness: 1px;
-	text-underline-offset: 4px;
-
-	// The global `.action` turns red on hover and focus; hold the ink.
-	&:hover,
-	&:focus-visible {
-		color: var(--paper-ink);
-	}
-
-	&:focus-visible {
-		text-decoration-line: underline;
-	}
+	@include paper-action;
 }
 
-@media (hover: hover) {
-	.action.venue-go:hover {
-		text-decoration-line: underline;
-	}
-}
-
-// The flight is the leg before the route: one straight row across.
+// The flight is the leg before the route: one straight row across, on the
+// route's two columns. The column gap spans the cards' gap plus both cards'
+// side padding, so the body starts at the second card's text edge.
 .venue-fly {
 	grid-column: 1 / -1;
 	display: grid;
-	grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-	gap: 0.75rem clamp(1.75rem, 3vw, 3rem);
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem calc(var(--cards-gap) + 2 * var(--card-pad-x));
 	align-items: baseline;
 
 	.venue-card-title {
@@ -250,7 +235,8 @@
 	}
 
 	.venue-card {
-		padding: 1.4rem 1.4rem 1.6rem;
+		--card-pad-x: 1.4rem;
+		padding: 1.4rem var(--card-pad-x) 1.6rem;
 	}
 
 	.venue-fly {

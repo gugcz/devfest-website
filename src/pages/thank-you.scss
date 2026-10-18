@@ -57,28 +57,14 @@
 	gap: 0.5rem;
 }
 
-// A text action on paper: black Bebas on its own underline, never red text.
+// A text action on paper: black Bebas, the ink line only on hover and focus.
 .stub-go {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	min-height: 2.75rem;
 	@include action(var(--fs-cta));
-	color: var(--paper-ink);
-	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 4px;
-	transition: text-decoration-thickness 0.2s ease;
-
-	&:focus-visible {
-		text-decoration-thickness: 4px;
-	}
-}
-
-@media (hover: hover) {
-	.stub-go:hover {
-		text-decoration-thickness: 4px;
-	}
+	@include paper-action;
 }
 
 @media (max-width: 1100px) {

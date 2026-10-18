@@ -35,22 +35,23 @@ const { title, noteHtml, actions, index } = Astro.props;
 	<h3 class="step-title">{title}</h3>
 	<p class="step-note" set:html={noteHtml} />
 
-	{actions.length > 0 && (
-		<div class="step-actions">
-			{actions.map(({ href, label, kind = 'ghost', external, download }) => (
-				<a
-					class={kind === 'primary' ? 'btn-primary' : 'step-go'}
-					href={href}
-					{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-					{...(download ? { download: true } : {})}
-				>
-					{label}
-				</a>
-			))}
-		</div>
-	)}
-
-	<slot />
+	<div class="step-foot">
+		{actions.length > 0 && (
+			<div class="step-actions">
+				{actions.map(({ href, label, kind = 'ghost', external, download }) => (
+					<a
+						class={kind === 'primary' ? 'btn-primary' : 'step-go'}
+						href={href}
+						{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+						{...(download ? { download: true } : {})}
+					>
+						{label}
+					</a>
+				))}
+			</div>
+		)}
+		<slot />
+	</div>
 </li>
 
 <style lang="scss">

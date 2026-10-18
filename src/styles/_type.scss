@@ -110,3 +110,32 @@
 		text-decoration-color: var(--color-accent-hot);
 	}
 }
+
+// A Bebas text action on paper (`.action`/`.btn-ghost` or a bare button):
+// paper ink, no line at rest, a 2px ink underline on hover and focus. Red
+// text misses 4.5:1 on paper, so the line is the only reach state. One
+// treatment for every paper card on the site.
+@mixin paper-action {
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-color: transparent;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
+	transition: text-decoration-color 0.2s ease;
+
+	&:focus-visible {
+		color: var(--paper-ink);
+		text-decoration-color: var(--paper-ink);
+	}
+
+	@media (hover: hover) {
+		&:hover {
+			color: var(--paper-ink);
+			text-decoration-color: var(--paper-ink);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		transition: none;
+	}
+}

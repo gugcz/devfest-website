@@ -182,11 +182,6 @@
 
 /* ---- past editions ---- */
 // The note sits beside the title, not across the page.
-.past-head {
-	justify-content: flex-start;
-	gap: 1rem clamp(1.5rem, 3.5vw, 3rem);
-}
-
 .past-grid {
 	display: grid;
 	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);

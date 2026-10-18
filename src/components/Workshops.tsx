@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { formatClock } from '../lib/agenda';
 import { fetchLineup } from '../lib/lineup';
 import { speakerNames, type Session } from '../lib/sessions';
@@ -205,6 +205,20 @@ interface CardProps {
 	onAction: (action: 'join' | 'leave', sessionId: string) => void;
 }
 
+/** A hyphenated word ("Full-stack") never breaks at its hyphen: Bebas caps
+ * leave "FULL-" hanging at a line end. Each such word is held in one piece. */
+function unbrokenHyphens(title: string): ReactNode[] {
+	return title.split(/(\S+-\S+)/).map((part, i) =>
+		i % 2 === 1 ? (
+			<span key={i} className={s.nobreak}>
+				{part}
+			</span>
+		) : (
+			part
+		),
+	);
+}
+
 function WorkshopCard({ listing, status, signedIn, busy, pending, onAction }: CardProps) {
 	const { session } = listing;
 	const seats = status ?? listing.seats;
@@ -218,7 +232,7 @@ function WorkshopCard({ listing, status, signedIn, busy, pending, onAction }: Ca
 				<span className={s.time}>{timeRange(session)}</span>
 				{session.room && <span className={s.room}>{session.room}</span>}
 			</p>
-			<h3 className={s.title}>{session.title}</h3>
+			<h3 className={s.title}>{unbrokenHyphens(session.title)}</h3>
 			{speakers && <p className={s.speakers}>{speakers}</p>}
 			<p className={s.seats} data-full={full || undefined}>
 				<SeatLine seats={seats} />

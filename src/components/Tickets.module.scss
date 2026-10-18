@@ -206,23 +206,7 @@
 
 // The second variant's text action, inked for paper.
 .side:global(.btn-ghost) {
-	color: var(--paper-ink);
-	text-decoration: underline;
-	text-decoration-color: transparent;
-	text-underline-offset: 4px;
-	transition: text-decoration-color 0.2s ease;
-
-	&:focus-visible {
-		color: var(--paper-ink);
-		text-decoration-color: var(--color-accent);
-	}
-}
-
-@media (hover: hover) {
-	.side:global(.btn-ghost):hover {
-		color: var(--paper-ink);
-		text-decoration-color: var(--color-accent);
-	}
+	@include paper-action;
 }
 
 /* ---- footnote ---- */

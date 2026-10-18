@@ -264,9 +264,9 @@
 }
 
 // The text action in the ink of the card.
-.cta-action {
-	color: var(--paper-ink);
+.action.cta-action {
 	font-size: var(--fs-cta);
+	@include paper-action;
 }
 
 // Deck not ready: a typed label in place of the red button.

@@ -43,16 +43,16 @@ const STEPS = [
 			'Half the value of a conference is who you go with. Tell the people you would want in the room. ' +
 			'Make yourself an "I\'m attending" card for socials in a minute.',
 		actions: [
-			{ href: '/attending/', label: 'Make your card' },
+			{ href: '/attending/', label: 'Your card' },
 			{
 				href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
-				label: 'Share on LinkedIn',
+				label: 'LinkedIn',
 				kind: 'ghost' as const,
 				external: true,
 			},
 			{
 				href: `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
-				label: 'Share on X',
+				label: 'X',
 				kind: 'ghost' as const,
 				external: true,
 			},
@@ -84,7 +84,7 @@ const STEPS = [
 						<dt>Time</dt>
 						<dd class="stub-fig">{EVENT.timeLabel}</dd>
 						<dt>Place</dt>
-						<dd>{EVENT.venue}, {EVENT.address}</dd>
+						<dd>{EVENT.venue}, Libčice nad Vltavou</dd>
 					</dl>
 					<div class="stub-actions">
 						<a class="btn-primary" href={EVENT.icsUrl} download>Download .ics</a>

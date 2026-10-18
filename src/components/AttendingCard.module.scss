@@ -200,17 +200,14 @@
 	color: var(--paper-ink-dim);
 }
 
-// A text action on paper: black Bebas on its own underline.
+// A text action on paper: black Bebas, the ink line on hover and focus.
 .chooseButton {
 	@include action(var(--fs-cta));
 	min-height: 2.75rem;
 	padding: 0.5rem 0.1rem;
-	color: var(--paper-ink);
 	background: none;
 	border: 0;
-	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 4px;
+	@include paper-action;
 	cursor: pointer;
 
 	&:focus-visible {
@@ -300,12 +297,9 @@
 	@include action(var(--fs-action));
 	min-height: 2.75rem;
 	padding: 0.5rem 0;
-	color: var(--paper-ink);
 	background: none;
 	border: 0;
-	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 4px;
+	@include paper-action;
 	cursor: pointer;
 
 	&:focus-visible {
@@ -314,12 +308,6 @@
 	}
 }
 
-@media (hover: hover) {
-	.chooseButton:hover,
-	.linkButton:hover {
-		text-decoration-thickness: 3px;
-	}
-}
 
 .rail {
 	& + & {

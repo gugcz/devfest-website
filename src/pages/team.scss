@@ -223,11 +223,15 @@
 		display: none;
 	}
 
+	// One line on a phone: the smallest tape, free to span the whole print.
+	// A codename that still cannot fit wraps upward, off the photograph: the
+	// tape's foot always overlaps the print's top edge by the same 0.6rem.
 	.crew-alias {
-		left: 0.2rem;
-		max-width: calc(100% - 0.4rem);
-		font-size: var(--fs-label-sm);
-		padding: 0.25rem 0.45rem 0.2rem;
+		left: 0;
+		max-width: 100%;
+		font-size: var(--fs-label-xs);
+		padding: 0.25rem 0.4rem 0.2rem;
+		transform: translateY(calc(-100% + 0.6rem)) rotate(var(--tape-tilt));
 	}
 }
 

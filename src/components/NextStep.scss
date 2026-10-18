@@ -11,6 +11,33 @@
 	padding: 1.6rem 1.75rem 1.7rem;
 }
 
+// Without subgrid the foot drops to the card's bottom edge.
+.step-foot {
+	margin-top: auto;
+	width: 100%;
+}
+
+// Across a row the cards share their row tracks (title, note, foot), so every
+// note starts at one height however many lines the titles take.
+@supports (grid-template-rows: subgrid) {
+	.step {
+		display: grid;
+		grid-row: span 3;
+		grid-template-rows: subgrid;
+		row-gap: 0;
+		justify-items: start;
+	}
+
+	.step:has(> .step-index) {
+		grid-row: span 4;
+	}
+
+	// The actions start on one line across the row too.
+	.step-foot {
+		margin-top: 0;
+	}
+}
+
 // The serial, when the cards are a real sequence: a figure, so mono.
 .step-index {
 	display: block;
@@ -53,33 +80,17 @@
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 0.5rem 1.6rem;
-	margin-top: auto;
 	padding-top: 1.25rem;
 }
 
-// A text action on paper: black Bebas on its own underline. The hover
-// thickens the line; red text never sits on paper.
+// A text action on paper: black Bebas, the ink line only on hover and focus.
 .step-go {
 	display: inline-flex;
 	align-items: center;
 	min-height: 2.75rem;
 	@include action(var(--fs-cta));
-	color: var(--paper-ink);
-	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 4px;
+	@include paper-action;
 	overflow-wrap: anywhere;
-	transition: text-decoration-thickness 0.2s ease;
-
-	&:focus-visible {
-		text-decoration-thickness: 4px;
-	}
-}
-
-@media (hover: hover) {
-	.step-go:hover {
-		text-decoration-thickness: 4px;
-	}
 }
 
 @media (max-width: 720px) {
