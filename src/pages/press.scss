@@ -232,6 +232,8 @@
 
 	.press-print {
 		position: relative;
+		// The sticky offset would push the print into the press kit below.
+		top: auto;
 		width: 100%;
 		max-width: 32rem;
 		margin-left: auto;

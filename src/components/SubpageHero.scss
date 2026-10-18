@@ -46,6 +46,8 @@
 	color: var(--ink-soft);
 	margin: 0;
 	max-width: 34ch;
+	// No one-word last line ("CET.", a lone year).
+	text-wrap: pretty;
 }
 
 .hero-link {

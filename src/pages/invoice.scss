@@ -53,8 +53,10 @@
 /* ---- The form ---- */
 .invoice-form-grid {
 	display: grid;
-	grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
-	gap: clamp(2.5rem, 5vw, 5rem);
+	// The aside takes the hero's note column, so its line starts where every
+	// note on the page does.
+	grid-template-columns: minmax(0, 1fr) minmax(0, var(--side-col));
+	gap: var(--side-gap);
 	align-items: start;
 }
 
