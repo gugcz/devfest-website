@@ -595,9 +595,10 @@
 		top: auto;
 	}
 
+	// On the column's left edge, like the step sheet under it.
 	.cardWrap {
 		width: min(100%, 34vh);
-		margin: 0 auto;
+		margin: 0;
 	}
 
 	.steps {

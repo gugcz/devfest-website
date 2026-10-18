@@ -906,7 +906,7 @@ export default function AttendingCard() {
 						data-draggable={photo ? 'true' : 'false'}
 					/>
 					<span className={`paper-edge ${s.edge}`} aria-hidden="true">
-						<span>DevFest.cz</span>
+						<span className="edge-word">DevFest.cz</span>
 						<span>30.10.2026</span>
 					</span>
 					{isDragging && (

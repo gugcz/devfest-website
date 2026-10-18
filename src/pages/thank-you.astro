@@ -69,7 +69,7 @@ const STEPS = [
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={"You're in"}
-			lede={`Ticket confirmed. The receipt and your QR code are on their way to your inbox — see you at ${EVENT.venue} on ${EVENT.dateLabel.replace(/ (\d{4})$/, '\u00a0$1')}.`}
+			lede={`Ticket confirmed. The receipt and your QR code are on their way to your inbox — see you at ${EVENT.venue} on ${EVENT.dateLabel.replaceAll(' ', '\u00a0')}.`}
 			seoHeading="DevFest.cz 2026 ticket confirmed"
 			titleId="thank-you-title"
 		/>
