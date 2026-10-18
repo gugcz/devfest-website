@@ -60,20 +60,32 @@ built by a community, not a vendor event.
   contact (with press), code of conduct, newsletter thank-you, thank-you, 404,
   privacy policy, delete-account (mobile app), share pages per talk and
   speaker, unlisted `/invite/<member>` and `/speaker-card`.
-- The home page is one ruled document: a full-bleed hero plate (the
-  statement set into its lower left, nothing else on the photograph), a
-  typewriter facts line under it (date · venue link · the wave on sale,
-  and the page's one red "Get tickets"), then sections that each open on a
-  ruled head, with a note only where it carries a fact: The event (a short
-  note; the facts as a date / place / doors / audience / programme list,
-  the programme being the topics), Tickets (one ruled row per wave: index and state, wave and
-  deadline, price and company figure, Buy / Company pays or the state
-  word), Speakers (eight portraits from the casting sheet `/speakers`
-  shows in full: portrait, sheet number, name, role; "All N speakers"),
-  Past editions (a mosaic of eight press photographs), Partners (one row
-  of marks per tier, each mark sized by its tier, no tier labels; "All
-  partners"), Newsletter (lede and form). No arrow glyphs, no second hero,
-  nothing that moves on its own.
+- The site is a darkroom: photographs and the facts that go with them are
+  paper prints, slips and cards on a black table, labelled with tape and
+  marked with one red grease-pencil stroke per section.
+- The home page: a hero with the key art on the right and, over it, the
+  statement, the facts (date, venue link, the wave on sale "from <price>")
+  and the red "Get tickets"; then sections that each open on a
+  poster-scale head, with a note only where it carries a fact: The
+  eleventh DevFest.cz (a print of the mill with the one-line pitch, and its
+  back with date / place / doors / audience / programme, the programme
+  being the topics), Tickets (one paper ticket slip per wave: the wave on
+  sale large with its price, state, Buy / Company pays; spent waves
+  crossed out; the invoice route beside the head), Speakers (the first
+  prints of the lineup, the opening keynote large, then the count and "All
+  speakers"), Past editions (a contact sheet of eight frames with one
+  enlarged), Partners (a taped row per tier, each mark sized by its tier;
+  "All partners", "Become a partner"), Newsletter (lede and the form on a
+  paper card). No arrow glyphs, nothing that moves on its own.
+- Navigation: at 1100px and wider the destinations sit inline in the
+  header (Speakers, Agenda, Venue, FAQ, then Partners, Team, Press,
+  Contact) beside a red Tickets button; narrower, they live behind one
+  menu toggle. The footer lists every page.
+- Subpages open on type: a poster-scale title, a factual lede and at most
+  one print. Speakers and the agenda are paper: every speaker a print in
+  running order with room and start time, every talk a slip by room and
+  time (one list grouped by time on a phone). `/speakers` ends on the way
+  to the agenda and tickets, with no closing block.
 - Static Astro build with React islands only for data-backed behaviour.
   Browser reads come only from cached HTTP endpoints, never the Firebase
   client SDK; writes go through App Check-gated callables.
@@ -88,13 +100,13 @@ built by a community, not a vendor event.
 
 - Name: **DevFest.cz**. Organiser credit: **GUG.cz, z.s.** (rebranded from
   GDG; never "GDG Czech Republic").
-- Visual direction "noir, but loud": one dark theme, red accent, poster-scale
-  Bebas Neue headlines. Only the brand faces in `astro.config.mjs` may be
-  used; never add a font.
-- The detective key art (`/hero-detective.webp`) is the home hero. One
-  plate per route: pages about the event (speakers, partners, agenda, venue)
-  each take one documentary shot from a past edition or of the venue
-  (`/public/gallery`), graded B&W; every other subpage opens type-only.
+- Visual direction "noir, but loud", in the darkroom: one dark theme, red
+  accent, poster-scale Bebas Neue headlines, photographs as paper prints.
+  Only the brand faces in `astro.config.mjs` may be used; never add a font.
+- The detective key art (`/hero-detective.webp`) is the home hero. A
+  subpage carries at most one print: partners, venue and contact each take
+  one documentary shot from a past edition or of the venue
+  (`/public/gallery`), graded B&W; every other subpage opens on type.
   Never stock or generated imagery.
 - The design system in `docs/design.md` is binding.
 
@@ -110,7 +122,8 @@ built by a community, not a vendor event.
 
 ## Product Principles
 
-1. **One thing per page.** Every page has one action; the closer names it.
+1. **One thing per page.** Every page has one action; its last block (a
+   closer, an end line or the end of its content) names it.
 2. **Facts over hype.** Figures and dates come from `event.ts` or a live
    endpoint, never from copy.
 3. **Works with the endpoint down.** Every data-backed section ships a
