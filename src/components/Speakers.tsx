@@ -129,7 +129,7 @@ export function SpeakerLineup({
 				<a className="action" href="/agenda">
 					Full agenda
 				</a>
-				<a className="btn-primary" href="/#tickets">
+				<a className="action" href="/#tickets">
 					Get tickets
 				</a>
 			</li>
@@ -177,7 +177,13 @@ export default function Speakers() {
 	return (
 		<>
 			<SpeakerLineup billings={billings} onOpen={open} morphId={morphId} />
-			{selected && <SpeakerDetail speaker={selected} onClose={close} />}
+			{selected && (
+				<SpeakerDetail
+					speaker={selected}
+					slot={billings.find((billing) => billing.speaker.id === selected.id)}
+					onClose={close}
+				/>
+			)}
 		</>
 	);
 }

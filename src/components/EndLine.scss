@@ -1,11 +1,16 @@
 @use '../styles/type' as *;
 // A question and the next step, on one baseline; wraps under on a phone.
+// The action at the CTA step, so the page's last control reads as one.
 .end-line {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
-	gap: 1rem 1.75rem;
+	gap: 0.5rem 1.75rem;
 	margin: 6rem 0 0;
+
+	.action {
+		font-size: var(--fs-cta);
+	}
 }
 
 .end-line-text {

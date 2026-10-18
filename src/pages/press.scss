@@ -93,12 +93,14 @@
 	@include action;
 	color: var(--paper-ink);
 	margin-top: 0.3rem;
-	transition: color 0.2s ease;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 4px;
 }
 
+// Red text on paper misses 4.5:1: the reach state is an ink underline.
 @media (hover: hover) {
 	.clip-link:hover .clip-read {
-		color: var(--color-accent);
+		text-decoration-line: underline;
 	}
 }
 
@@ -153,7 +155,7 @@
 }
 
 .kit-title {
-	font-size: var(--fs-display);
+	font-size: var(--fs-section);
 }
 
 .kit-note {

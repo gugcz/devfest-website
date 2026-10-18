@@ -63,7 +63,7 @@ const manual = [...groups.values()].filter((files) => !files.some((f) => f.isIma
 				<h2 id="desks-heading" class="sr-only">Contact desks</h2>
 
 				<article class="paper icard icard--main" aria-labelledby={general.id}>
-					<p class="paper-edge icard-edge" aria-hidden="true"><span>01</span><span>DevFest.cz</span></p>
+					<p class="paper-edge icard-edge" aria-hidden="true"><span>01</span></p>
 					<h3 id={general.id} class="icard-title">{general.title}</h3>
 					<p class="icard-desc">{general.desc}</p>
 					<span class="icard-mailwrap">
@@ -77,7 +77,7 @@ const manual = [...groups.values()].filter((files) => !files.some((f) => f.isIma
 				<div class="desk-side">
 					{desks.map((d, i) => (
 						<article class="paper icard" aria-labelledby={d.id}>
-							<p class="paper-edge icard-edge" aria-hidden="true"><span>{String(i + 2).padStart(2, '0')}</span><span>DevFest.cz</span></p>
+							<p class="paper-edge icard-edge" aria-hidden="true"><span>{String(i + 2).padStart(2, '0')}</span></p>
 							<h3 id={d.id} class="icard-title">{d.title}</h3>
 							<p class="icard-desc">{d.desc}</p>
 							{d.name && (
@@ -134,7 +134,7 @@ const manual = [...groups.values()].filter((files) => !files.some((f) => f.isIma
 						<div class="paper-photo">
 							<img src="/gallery/devfest-2025-13.webp" alt="" loading="lazy" decoding="async" />
 						</div>
-						<figcaption class="paper-edge"><span>DevFest.cz</span><span>2019</span></figcaption>
+						<figcaption class="paper-edge"><span>2019</span></figcaption>
 						<span class="tape press-print-tape">DevFest.cz 2019</span>
 					</figure>
 				</div>

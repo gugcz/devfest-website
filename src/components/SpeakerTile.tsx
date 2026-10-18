@@ -16,7 +16,8 @@ export interface Billing {
 	with: string[];
 	/** The typewritten tape over the print: the room, "Host", or that the time is still to come. */
 	tape: string;
-	/** The right end of the print's edge: the CET start, `TBA` or `Host`. */
+	/** The right end of the print's edge: the CET start, or '' for a host or
+	 * an unscheduled talk (the tape says which). Mono sets figures only. */
 	clock: string;
 	/** The opening keynote: the first talk of the day, the large print. */
 	keynote: boolean;
@@ -89,8 +90,7 @@ function tapeFor(slot: Slot, keynote: boolean): string {
 }
 
 function clockFor(slot: Slot): string {
-	if (slot.host) return 'Host';
-	return slot.minutes === null ? 'TBA' : formatMinutes(slot.minutes);
+	return slot.host || slot.minutes === null ? '' : formatMinutes(slot.minutes);
 }
 
 function billingFor(slot: Slot, keynote: boolean): Billing {
@@ -173,7 +173,7 @@ export default function SpeakerTile({
 					<span>
 						{String(index).padStart(2, '0')} / {String(total).padStart(2, '0')}
 					</span>
-					<span>{billing.clock}</span>
+					{billing.clock && <span>{billing.clock}</span>}
 				</span>
 			</span>
 			{keynote && (

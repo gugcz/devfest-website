@@ -75,7 +75,7 @@
 // The category is the page's head on this row: poster scale, over the slips.
 // Jumped to from the index, it lands clear of the fixed header.
 .faq-cat {
-	@include display(var(--fs-display));
+	@include display(var(--fs-section));
 	margin: 0 0 clamp(1.75rem, 3vw, 2.75rem);
 	scroll-margin-top: calc(var(--header-h) + 2rem);
 }
@@ -97,7 +97,8 @@
 	}
 }
 
-// Number, question, marker. The reach state is red text, never a field.
+// Number, question, marker. Red text on paper misses 4.5:1, so the reach
+// state is an underline under the question and the marker in full ink.
 .faq-q {
 	list-style: none;
 	cursor: pointer;
@@ -117,16 +118,22 @@
 		outline-offset: -4px;
 	}
 
-	&:focus-visible .faq-q-text,
+	&:focus-visible .faq-q-text {
+		text-decoration-line: underline;
+	}
+
 	&:focus-visible .faq-marker {
-		color: var(--color-accent);
+		color: var(--paper-ink);
 	}
 }
 
 @media (hover: hover) {
-	.faq-q:hover .faq-q-text,
+	.faq-q:hover .faq-q-text {
+		text-decoration-line: underline;
+	}
+
 	.faq-q:hover .faq-marker {
-		color: var(--color-accent);
+		color: var(--paper-ink);
 	}
 }
 
@@ -139,7 +146,8 @@
 .faq-q-text {
 	@include prose(var(--fs-lede), 1.3);
 	color: var(--paper-ink);
-	transition: color 0.2s;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 4px;
 }
 
 .faq-marker {
@@ -184,11 +192,16 @@
 	text-decoration: underline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 3px;
-	transition: color 0.2s;
 
-	&:hover,
+	// The reach state thickens the ink underline; red text fails on paper.
 	&:focus-visible {
-		color: var(--color-accent);
+		text-decoration-thickness: 2px;
+	}
+}
+
+@media (hover: hover) {
+	.faq-a :global(a:hover) {
+		text-decoration-thickness: 2px;
 	}
 }
 

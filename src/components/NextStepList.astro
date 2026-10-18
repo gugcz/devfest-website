@@ -1,7 +1,7 @@
 ---
-/** The list of `NextStep` rows with its section label. The label is a mono
- * eyebrow, not a poster head: the row titles under it are the larger type,
- * and a section head smaller than its own rows read upside down. */
+/** The `NextStep` index cards with their label. The label is a typewriter
+ * note, not a poster head: the card titles under it are the larger type, and
+ * a section head smaller than its own cards read upside down. */
 interface Props {
 	label: string;
 	/** Id for the `<h2>`, so the section can be `aria-labelledby` it. */
@@ -15,12 +15,61 @@ const List = ordered ? 'ol' : 'ul';
 ---
 
 <h2 id={labelId} class="eyebrow step-list-label">{label}</h2>
-<List class="field step-list">
+<List class="step-list" role="list">
 	<slot />
 </List>
 
 <style lang="scss">
+	// The cards dealt onto the table: three across, four across when there
+	// are four, a slight tilt each and the second dropped a step, like the
+	// /venue route. Air between them, never a rule.
 	.step-list-label {
-		margin: 0 0 clamp(0.5rem, 1.5vw, 1rem);
+		margin: 0 0 clamp(2rem, 3.5vw, 3rem);
+	}
+
+	.step-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 3rem clamp(1.5rem, 2.6vw, 2.75rem);
+		align-items: start;
+
+		&:has(> :nth-child(4)) {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+
+		> :global(:nth-child(odd)) {
+			--tilt: calc(-0.75 * var(--tilt-1));
+		}
+
+		> :global(:nth-child(even)) {
+			--tilt: var(--tilt-1);
+			margin-top: 2.5rem;
+		}
+
+		> :global(:nth-child(3n)) {
+			--tilt: calc(-0.5 * var(--tilt-2));
+		}
+	}
+
+	@media (max-width: 1240px) {
+		.step-list:has(> :nth-child(4)) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 900px) {
+		.step-list,
+		.step-list:has(> :nth-child(4)) {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 2.25rem;
+			max-width: 36rem;
+
+			> :global(:nth-child(even)) {
+				margin-top: 0;
+			}
+		}
 	}
 </style>

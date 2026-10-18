@@ -1,4 +1,7 @@
-.closer-band {
+// The closer signs a page off at poster scale: the section-head step, one
+// below the subpage title, so it never outranks the page's own h1.
+.closer-title {
+	font-size: var(--fs-section);
 }
 
 .closer-eyebrow {

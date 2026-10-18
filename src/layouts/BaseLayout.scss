@@ -59,14 +59,14 @@
 	// THE POSTER SCALE. Bebas above --fs-h3, Special Elite as body texture.
 	// --fs-display caps at 9rem: 11rem left nothing above a 760px fold.
 	--fs-display: clamp(3rem, 9.5vw, 9rem);
-	--fs-hero: clamp(3rem, 9.5vw, 8.5rem);      // home hero statement
+	--fs-hero: clamp(4.5rem, 10.5vw, 9.25rem);  // home statement: floor and cap above --fs-section
 	// Section headline. Always a clear step under the home hero, which
 	// `index.scss` caps at 11svh on short screens: a width-only term let a
 	// 1280×720 section head tie the hero, so the height term follows it down.
 	--fs-h2: clamp(2.25rem, min(6vw, 9svh), 5.5rem);
 	--fs-h3: clamp(1.8rem, 3.4vw, 2.6rem);      // sub-section headline
 	--fs-head: clamp(2.1rem, 3.4vw, 3rem);      // a compact head (sheets, small blocks)
-	--fs-section: clamp(4.5rem, 12vw, 12.5rem); // the section head (`.head-rule`): poster scale
+	--fs-section: clamp(4rem, 9vw, 8rem);       // the section head (`.head-rule`) and any secondary title
 	--fs-subpage: clamp(5rem, 13vw, 12.5rem);   // the subpage title (`SubpageHero`)
 	--fs-card-title: 1.95rem;                   // card / dossier title
 	--fs-title-compact: 1.6rem;                 // compact field row title
@@ -422,6 +422,12 @@ b {
 	padding: 0.7rem 0.15rem 0.8rem;
 	@include mono(var(--fs-label-xs), 0.12em, uppercase);
 	color: var(--paper-ink-dim);
+
+	// Mono records figures only; a word on the edge is typed, not recorded.
+	.edge-word {
+		@include note(var(--fs-note-sm));
+		line-height: 1.2;
+	}
 }
 
 // A strip of tape with a typewritten label. On a print it overlaps the top
@@ -494,7 +500,7 @@ b {
 	margin-bottom: clamp(2.75rem, 5vw, 4rem);
 }
 
-// Sections run at --fs-h2; --fs-display is the ONE display element per page.
+// Sections run at --fs-h2; the page title is the ONE display element per page.
 .head-title {
 	font-size: var(--fs-h2);
 }

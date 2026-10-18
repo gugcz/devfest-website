@@ -19,14 +19,20 @@ import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
 
-/** `10:00–10:45, Main Hall` once a talk is scheduled; `Time TBA` (plus the
- * room, if it has one) before. Sessionize can leave `room` blank and carry
- * only the id, hence the lookup. */
-function whenLabel(session: Session, roomNames: Map<string, string>): string {
+/** The talk's time (`10:00–10:45`, null before it is scheduled) and its
+ * room. Sessionize can leave `room` blank and carry only the id, hence the
+ * lookup. */
+function whenParts(session: Session, roomNames: Map<string, string>): { time: string | null; room: string } {
 	const place = placement(session);
-	const time = place ? `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}` : 'Time TBA';
-	const room = session.room.trim() || roomNames.get(session.roomId) || '';
-	return [time, room].filter(Boolean).join(', ');
+	const time = place ? `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}` : null;
+	return { time, room: session.room.trim() || roomNames.get(session.roomId) || '' };
+}
+
+/** `10:00–10:45, Main Hall` once a talk is scheduled; `Time TBA` (plus the
+ * room, if it has one) before. */
+function whenLabel(session: Session, roomNames: Map<string, string>): string {
+	const { time, room } = whenParts(session, roomNames);
+	return [time ?? 'Time TBA', room].filter(Boolean).join(', ');
 }
 
 /** Up to three overlapping speaker avatars. The initials sit UNDER each photo,
@@ -66,13 +72,15 @@ function SessionCard({
 	onOpen,
 }: {
 	session: Session;
-	when: string;
+	when: { time: string | null; room: string };
 	tilt: string;
 	onOpen: (session: Session) => void;
 }) {
 	const names = speakerNames(session);
-	// The track; the room travels with the time in `when`.
+	// The track; the room travels with the time. Mono sets the time only;
+	// the words on the edge are notes.
 	const kicker = visitorCategories(session)[0]?.values[0] || 'Talk';
+	const where = [when.time ? '' : 'Time TBA', when.room].filter(Boolean).join(', ');
 
 	return (
 		<li>
@@ -83,7 +91,10 @@ function SessionCard({
 				aria-label={`View details for ${session.title}`}
 			>
 				<span className={s.top}>
-					<span className={s.when}>{when}</span>
+					<span>
+						{when.time && <span className={s.when}>{when.time}</span>}
+						{where && <span>{when.time ? `, ${where}` : where}</span>}
+					</span>
 					<span className={s.kicker}>{kicker}</span>
 				</span>
 
@@ -242,7 +253,7 @@ export default function Sessions() {
 						<SessionCard
 							key={session.id}
 							session={session}
-							when={whenLabel(session, roomNames)}
+							when={whenParts(session, roomNames)}
 							tilt={TILTS[i % TILTS.length]}
 							onOpen={open}
 						/>

@@ -1,6 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
+import venuePrint from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
+import { EVENT } from '../lib/event';
 
 interface NavLink {
 	href: string;
@@ -167,6 +169,19 @@ const isCurrent = (href: string) => {
 								);
 							})}
 						</ul>
+					</div>
+
+					<!-- One small print on the table beside the lines (>=901px only):
+					     where the day happens. Decorative; the foot line says it in words. -->
+					<div class="nav-print paper" aria-hidden="true">
+						<span class="tape">{EVENT.venue}</span>
+						<span class="paper-photo nav-print-photo">
+							<Image src={venuePrint} alt="" widths={[260, 520]} sizes="260px" loading="lazy" />
+						</span>
+						<span class="paper-edge">
+							<span>30 / 10 / 26</span>
+							<span>{EVENT.doorsTime}</span>
+						</span>
 					</div>
 				</div>
 

@@ -1,6 +1,6 @@
 @use '../styles/type' as *;
-// The sign-off: the name at poster scale, then four columns, then the folio
-// line. Space separates the three, never a rule.
+// The sign-off: the official logo at poster scale, then four columns, then
+// the folio line. Space separates the three, never a rule.
 .footer {
 	position: relative;
 	width: 100%;
@@ -19,15 +19,13 @@
 	flex-direction: column;
 }
 
-/* ---- the wordmark ---- */
-.footer-wordmark {
-	@include display(var(--fs-section));
-	line-height: 0.8;
+/* ---- the logo ---- */
+// The logo file as artwork: no recolour, no hover treatment.
+.footer-logo-link {
+	display: block;
 	align-self: flex-start;
+	width: min(40rem, 80vw);
 	margin-bottom: clamp(2.5rem, 4vw, 3.5rem);
-	color: var(--color-text);
-	text-decoration: none;
-	transition: color 0.2s ease;
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
@@ -35,10 +33,10 @@
 	}
 }
 
-@media (hover: hover) {
-	.footer-wordmark:hover {
-		color: var(--color-accent-hot);
-	}
+.footer-logo {
+	display: block;
+	width: 100%;
+	height: auto;
 }
 
 .footer-grid {
@@ -73,8 +71,6 @@
 
 .col-title {
 	@include note(var(--fs-note-sm));
-	text-transform: uppercase;
-	letter-spacing: 0.14em;
 	color: var(--ink-meta);
 	font-weight: normal;
 	margin: 0 0 1.1rem;
@@ -102,7 +98,6 @@
 
 .footer-link {
 	@include action;
-	letter-spacing: 0.05em;
 	color: var(--color-text);
 	text-decoration: none;
 	transition: color 0.2s ease;
@@ -132,8 +127,6 @@
 
 	dt {
 		@include note(var(--fs-note-sm));
-		text-transform: uppercase;
-		letter-spacing: 0.14em;
 		color: var(--ink-meta);
 	}
 

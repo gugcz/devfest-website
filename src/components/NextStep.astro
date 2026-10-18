@@ -1,13 +1,13 @@
 ---
-/** A NEXT STEP — one thing to do, in an open field (`/thank-you`,
- * `/newsletter-subscription-thank-you`, `/404`, `/venue`). CONTAINS its controls, so
- * `.field-row--holds`. Rendered inside `NextStepList`. The default slot takes
- * media that belongs to the step (the venue photos), under its actions. */
+/** A NEXT STEP — one thing to do, as a typed paper index card on the black
+ * table (`/thank-you`, `/newsletter-subscription-thank-you`, `/404`).
+ * Rendered inside `NextStepList`. The default slot takes media that belongs
+ * to the step, under its actions. */
 interface Action {
 	href: string;
 	label: string;
-	/** Filled (primary) or outlined (ghost). Default ghost — a field of filled
-	 * red buttons is the accent as texture. */
+	/** The red fill (primary) or a black text action on the paper (ghost).
+	 * Default ghost: one red fill per screen, never one per card. */
 	kind?: 'primary' | 'ghost';
 	external?: boolean;
 	/** `download` on the calendar file, so it saves rather than renders. */
@@ -28,22 +28,18 @@ interface Props {
 const { title, noteHtml, actions, index } = Astro.props;
 ---
 
-<li class="field-row field-row--holds step">
-	<div class="step-head">
-		{index !== undefined && (
-			<span class="step-index" aria-hidden="true">{String(index).padStart(2, '0')}</span>
-		)}
-		<h3 class="step-title">{title}</h3>
-	</div>
+<li class="paper step">
+	{index !== undefined && (
+		<span class="step-index" aria-hidden="true">{String(index).padStart(2, '0')}</span>
+	)}
+	<h3 class="step-title">{title}</h3>
+	<p class="step-note" set:html={noteHtml} />
 
-	<div class="step-body">
-		<p class="step-note" set:html={noteHtml} />
-
-		{actions.length > 0 && (
+	{actions.length > 0 && (
 		<div class="step-actions">
 			{actions.map(({ href, label, kind = 'ghost', external, download }) => (
 				<a
-					class={kind === 'primary' ? 'btn-primary' : 'btn-ghost'}
+					class={kind === 'primary' ? 'btn-primary' : 'step-go'}
 					href={href}
 					{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
 					{...(download ? { download: true } : {})}
@@ -52,10 +48,9 @@ const { title, noteHtml, actions, index } = Astro.props;
 				</a>
 			))}
 		</div>
-		)}
+	)}
 
-		<slot />
-	</div>
+	<slot />
 </li>
 
 <style lang="scss">

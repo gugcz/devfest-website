@@ -10,12 +10,13 @@ import { EVENT, googleCalendarUrl } from '../lib/event';
 // four words and offer a link home. Four things belong here and nowhere else:
 // the date in their calendar, the venue on a map, what happens next, and a way
 // to say they are coming. Built out of the site's own composition — hero,
-// running band, open field of steps, closer — not a bespoke centred stack.
+// the stub, the index cards, one end line — not a bespoke centred stack.
 const shareText = `I'm going to ${EVENT.name} on ${EVENT.dateLabel}.`;
 const shareUrl = EVENT.url;
 
-// The date, the hours and the place as one stub: the facts a ticket carries,
-// with the two calendar actions on it. The steps below are the errands.
+// The date, the hours and the place as one paper stub: the facts a ticket
+// carries, with the two calendar actions on it. Its .ics button is the
+// page's one red fill; the index cards below are the errands.
 const eventDay = EVENT.start.slice(0, 10);
 
 const STEPS = [
@@ -42,7 +43,7 @@ const STEPS = [
 			'Half the value of a conference is who you go with. Tell the people you would want in the room. ' +
 			'Make yourself an "I\'m attending" card for socials in a minute.',
 		actions: [
-			{ href: '/attending/', label: 'Make your card', kind: 'primary' as const },
+			{ href: '/attending/', label: 'Make your card' },
 			{
 				href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
 				label: 'Share on LinkedIn',
@@ -76,20 +77,18 @@ const STEPS = [
 
 		<section class="band band--lit" aria-labelledby="next-heading">
 			<div class="band-inner">
-				<section class="event-stub" aria-labelledby="stub-heading">
-					<div class="stub-when">
-						<h2 id="stub-heading" class="eyebrow">Put it in your calendar</h2>
-						<p class="stub-date"><time datetime={eventDay}>{EVENT.dateLabel}</time></p>
-					</div>
+				<section class="paper event-stub" aria-labelledby="stub-heading">
+					<h2 id="stub-heading" class="tape stub-tape">Put it in your calendar</h2>
+					<p class="stub-date"><time datetime={eventDay}>{EVENT.dateLabel}</time></p>
 					<dl class="stub-facts">
 						<dt>Time</dt>
-						<dd>{EVENT.timeLabel}</dd>
+						<dd class="stub-fig">{EVENT.timeLabel}</dd>
 						<dt>Place</dt>
 						<dd>{EVENT.venue}, {EVENT.address}</dd>
 					</dl>
 					<div class="stub-actions">
 						<a class="btn-primary" href={EVENT.icsUrl} download>Download .ics</a>
-						<a class="btn-ghost" href={googleCalendarUrl()} target="_blank" rel="noopener noreferrer">Google Calendar</a>
+						<a class="stub-go" href={googleCalendarUrl()} target="_blank" rel="noopener noreferrer">Google Calendar</a>
 					</div>
 				</section>
 

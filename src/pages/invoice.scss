@@ -1,59 +1,104 @@
 @use '../styles/type' as *;
-// The site's form column: 7 of 12, left on the gutter like the hero.
-.invoice-inner {
-	max-width: 47.5rem;
-	display: flex;
-	flex-direction: column;
-	gap: 3rem;
-}
 
-.invoice-intro {
-	display: flex;
-	flex-direction: column;
-	gap: 1.4rem;
-}
+// The steps as typed index cards on the black table (the /venue route
+// cards), then the request as one paper form with the sign-off beside it.
 
-// --fs-h3, the step every other secondary head on the site runs at.
-.intro-title {
-	@include display(var(--fs-h3));
-	margin: 0;
-}
-
-.steps {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 0.9rem;
-}
-
-.steps li {
-	@include prose(var(--fs-body-lg), 1.5);
-	color: var(--color-grey);
-	display: flex;
-	align-items: baseline;
-	gap: 0.9rem;
-}
-
-.step-no {
-	@include mono(var(--fs-label-sm), 0.2em);
-	// Muted, not red: three red numbers down one list is the accent as
-	// running colour. --ink-muted clears AA on black.
-	color: var(--ink-muted);
-	flex-shrink: 0;
-}
-
-.intro-note {
-	@include prose(var(--fs-ui));
-	color: var(--ink-dim);
-	margin: 0;
+// Consecutive bands share one beat of air, not two.
+.invoice-band + .invoice-band {
+	padding-top: 0;
 }
 
 .intro-link {
 	@include hairline-link(var(--ink-strong));
-
 }
 
-@media (prefers-reduced-motion: reduce) {
+/* ---- How it works: index cards ---- */
+.invoice-steps {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 3rem clamp(1.75rem, 3vw, 3rem);
+	align-items: start;
+}
+
+.invoice-card {
+	padding: 1.6rem 1.75rem 1.9rem;
+
+	&:nth-child(1) {
+		--tilt: calc(-1 * var(--tilt-1));
+	}
+
+	&:nth-child(2) {
+		--tilt: calc(0.75 * var(--tilt-1));
+		margin-top: 2rem;
+	}
+
+	&:nth-child(3) {
+		--tilt: calc(-0.5 * var(--tilt-2));
+	}
+}
+
+.invoice-card-no {
+	display: block;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-weight: 500;
+	font-size: var(--fs-head);
+	line-height: 1;
+	letter-spacing: -0.02em;
+	color: var(--paper-ink);
+}
+
+.invoice-card-text {
+	@include prose(var(--fs-body-lg), 1.55);
+	color: var(--paper-ink);
+	margin: 1.1rem 0 0;
+	max-width: 30ch;
+}
+
+/* ---- The form ---- */
+.invoice-form-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+	gap: clamp(2.5rem, 5vw, 5rem);
+	align-items: end;
+}
+
+// The sign-off sits beside the form, on its last line.
+.invoice-aside :global(.end-line) {
+	margin: 0;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+	.invoice-steps {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.25rem;
+		max-width: 34rem;
+	}
+
+	.invoice-card:nth-child(2) {
+		margin-top: 0;
+		margin-left: clamp(0rem, 6vw, 3rem);
+	}
+}
+
+@media (max-width: 1100px) {
+	.invoice-form-grid {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 4rem;
+	}
+}
+
+@media (max-width: 720px) {
+	.invoice-card {
+		padding: 1.4rem 1.4rem 1.6rem;
+	}
+
+	.invoice-card:nth-child(2) {
+		margin-left: 0;
+	}
 }

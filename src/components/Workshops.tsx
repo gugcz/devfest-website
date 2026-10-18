@@ -41,10 +41,24 @@ function listings(sessions: Session[], seats: Record<string, WorkshopSeats>): Li
 		.sort((a, b) => byStart(a.session, b.session));
 }
 
-function seatLine(seats: WorkshopSeats): string {
+/** The seat count, its figures in the mono voice. */
+function SeatLine({ seats }: { seats: WorkshopSeats }) {
 	const left = seatsLeft(seats);
-	if (left > 0) return `${left} of ${seats.limit} seats left`;
-	return seats.waiting > 0 ? `Full · ${seats.waiting} on the waitlist` : 'Full · waitlist open';
+	if (left > 0) {
+		return (
+			<>
+				<span className={s.fig}>{left}</span> of <span className={s.fig}>{seats.limit}</span> seats left
+			</>
+		);
+	}
+	if (seats.waiting > 0) {
+		return (
+			<>
+				Full · <span className={s.fig}>{seats.waiting}</span> on the waitlist
+			</>
+		);
+	}
+	return <>Full · waitlist open</>;
 }
 
 function standingLine(mine: WorkshopStatus['mine'] | undefined): string | null {
@@ -88,7 +102,7 @@ function Login({ account, name, onCodeSent, onSignedIn, onSignOut }: LoginProps)
 
 	if (account === 'signed-in') {
 		return (
-			<div className={s.account}>
+			<div className={`paper ${s.account}`}>
 				<p className={s.accountName}>Signed in{name ? ` as ${name}` : ''}</p>
 				<button type="button" className={s.textButton} onClick={onSignOut}>
 					Sign out
@@ -132,14 +146,19 @@ function Login({ account, name, onCodeSent, onSignedIn, onSignOut }: LoginProps)
 	const id = awaitingEmail ? 'workshop-email-code' : 'workshop-ticket-code';
 	const pending = busy ? (awaitingEmail ? 'Signing you in…' : 'Sending the code to your email…') : '';
 	return (
-		<form className={s.login} onSubmit={submit} noValidate>
+		<form className={`paper ${s.login}`} onSubmit={submit} noValidate>
 			<label className={s.label} htmlFor={id}>
 				{awaitingEmail ? 'Code from the email' : 'Ticket code'}
 			</label>
 			<p className={s.hint} id={`${id}-hint`}>
 				{awaitingEmail
 					? 'We sent a six-digit code to the email address on your ticket.'
-					: 'It is on your ti.to ticket, like ABCD-1. The same code signs you in to the DevFest app.'}
+					: (
+						<>
+							It is on your ti.to ticket, like <span className={s.code}>ABCD-1</span>. The same code signs you
+							in to the DevFest app.
+						</>
+					)}
 			</p>
 			<div className={s.row}>
 				<input
@@ -196,19 +215,19 @@ function WorkshopCard({ listing, status, signedIn, busy, pending, onAction }: Ca
 	return (
 		<li className={s.card}>
 			<p className={s.meta}>
-				{timeRange(session)}
-				{session.room ? ` · ${session.room}` : ''}
+				<span className={s.time}>{timeRange(session)}</span>
+				{session.room && <span className={s.room}>{session.room}</span>}
 			</p>
 			<h3 className={s.title}>{session.title}</h3>
 			{speakers && <p className={s.speakers}>{speakers}</p>}
 			<p className={s.seats} data-full={full || undefined}>
-				{seatLine(seats)}
+				<SeatLine seats={seats} />
 			</p>
 			{mine && <p className={s.mine}>{mine}</p>}
 			{signedIn && (
 				<button
 					type="button"
-					className={registered ? `btn-ghost ${s.button}` : `btn-primary ${s.button}`}
+					className={`${s.slipAction} ${registered ? s.slipActionText : s.slipActionFill}`}
 					aria-disabled={busy || undefined}
 					aria-busy={pending || undefined}
 					onClick={() => !busy && onAction(registered ? 'leave' : 'join', session.id)}

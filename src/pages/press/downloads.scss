@@ -1,27 +1,21 @@
 @use '../../styles/type' as *;
-/* ===================== BODY ===================== */
+// The full press kit, in the /contact press-kit language: each logo variant
+// a print on the black table with its typed tape label, the formats under it
+// as Bebas links with their sizes as figures, the brand manual as the one red.
+
 .back-link {
-	// Standalone nav link, so SC 2.5.8's inline exception does not apply (154x19).
-	display: inline-flex;
-	align-items: center;
-	min-height: 2.75rem;
-	margin-bottom: 2.6rem;
-	@include action(var(--fs-action));
-	@include hairline-link(var(--ink-meta));
-	padding-bottom: 2px;
+	margin-bottom: clamp(2.5rem, 4vw, 3.5rem);
 }
 
 /* ===================== VARIANTS ===================== */
-// One card per logo variant: the mark on its tile, the name, its formats as
-// chips. Separated by air, not ruling, so a short last row is never a hole.
-// Four variants divide evenly into 4 and 2 columns.
 .kit-grid {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: clamp(1.75rem, 3vw, 2.5rem) clamp(1rem, 2vw, 1.5rem);
+	gap: 3.5rem clamp(1.75rem, 3vw, 3rem);
+	align-items: start;
 
 	@media (min-width: 640px) {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -35,17 +29,35 @@
 .kit-item {
 	display: flex;
 	flex-direction: column;
-	gap: 0.9rem;
+	gap: 1.1rem;
 	min-width: 0;
 }
 
+.kit-print {
+	--tilt: calc(-0.75 * var(--tilt-1));
+	--tape-tilt: -1.5deg;
+	padding: 0.65rem;
+}
+
+.kit-item:nth-child(even) .kit-print {
+	--tilt: var(--tilt-1);
+	--tape-tilt: 1.2deg;
+}
+
+// The tape is the variant's heading.
+.kit-label {
+	margin: 0;
+	font-weight: 400;
+}
+
+// The mark in the print's well: on the paper itself, or on black for a
+// white mark.
 .kit-preview {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	aspect-ratio: 16 / 9;
-	background: var(--color-cream);
-	border-radius: var(--radius);
+	background: var(--paper);
 
 	img {
 		display: block;
@@ -56,126 +68,83 @@
 	}
 }
 
-// White / light marks read better on a dark tile.
 .kit-preview--dark {
-	background: var(--panel-2);
-}
-
-// The asset's name is the card's title: Bebas on the tile step.
-.kit-label {
-	@include row-title(var(--fs-title-sm));
-	margin: 0;
+	background: var(--color-bg);
 }
 
 .kit-formats {
 	list-style: none;
 	margin: 0;
-	padding: 0;
+	padding: 0 0.15rem;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.4rem;
+	gap: 0 1.6rem;
 }
 
-// A format chip is a download control, so it carries the control edge
-// (--field-border), not a decorative hairline.
-.kit-chip {
+.kit-format {
 	display: inline-flex;
 	align-items: baseline;
-	gap: 0.45rem;
+	gap: 0.4rem;
 	min-height: 2.75rem;
-	padding: 0.8rem 0.6rem 0.7rem;
-	// The format name is a word: typewriter. The size beside it is a figure.
-	@include note(var(--fs-note-sm));
+	padding: 0.6rem 0;
+	@include action;
 	color: var(--color-text);
 	text-decoration: none;
-	border: 1px solid var(--field-border);
-	border-radius: var(--radius);
-	transition: color 0.2s, border-color 0.2s;
+	transition: color 0.2s ease;
 
-	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);
-		border-color: var(--color-accent-hot);
 	}
 }
 
-.kit-chip-size {
+@media (hover: hover) {
+	.kit-format:hover {
+		color: var(--color-accent-hot);
+	}
+}
+
+.kit-format-size {
 	@include mono(var(--fs-label-xs), 0.1em);
 	color: var(--ink-meta);
 }
 
 /* ===================== DOCUMENTS ===================== */
-// The brand manual has no preview, so it is a typed row: name and spec on
-// the left, its one action right after them.
 .kit-docs {
 	list-style: none;
-	margin: clamp(3rem, 6vw, 4.5rem) 0 0;
+	margin: clamp(4rem, 7vw, 6rem) 0 0;
 	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 1.5rem;
-}
-
-.kit-doc {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 1.25rem clamp(1.5rem, 4vw, 3rem);
-	padding: clamp(1.25rem, 2.5vw, 1.75rem);
-	background: var(--panel-2);
-	border-radius: var(--radius);
-
-	.kit-label {
-		font-size: var(--fs-h3);
-	}
+	gap: 1rem 2rem;
 }
 
-.kit-doc-text {
-	display: flex;
-	flex-direction: column;
-	gap: 0.4rem;
-	min-width: 0;
+.kit-doc {
+	gap: 0.9rem;
 }
 
-// "PDF · 2.4 MB": a figure with its format code, so it stays mono.
-.kit-spec {
-	@include mono(var(--fs-label-xs), 0.1em);
-	color: var(--ink-soft);
+// Black on the red fill: white clears AA there only as large text.
+.btn-primary .kit-doc-size {
+	color: var(--on-accent);
+}
+
+.kit-doc-size {
+	@include mono(var(--fs-label), 0.1em);
+	color: var(--ink-meta);
 }
 
 /* ===================== EMPTY STATE ===================== */
 .empty-state {
-	position: relative;
-	border: 0;
-	border-radius: 0;
-	background: transparent;
-	padding: 2.2rem 0 0;
 	max-width: 56ch;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 1.1rem;
-}
-
-.empty-stamp,
-.empty-line {
-	position: relative;
-	z-index: 1;
-}
-
-.empty-stamp {
-	@include note(var(--fs-note));
-	color: var(--color-accent-hot);
-	padding: 0;
-	background: transparent;
-	// A plain typewriter note, not a boxed stamp — matches /press.
-	border: 0;
+	gap: 1.4rem;
 }
 
 .empty-line {
-	@include prose(var(--fs-body), 1.7);
-	color: var(--color-grey);
-	max-width: 56ch;
+	@include prose(var(--fs-body-lg), 1.6);
+	color: var(--ink-soft);
 	margin: 0;
 }
 
@@ -184,14 +153,14 @@
 }
 
 /* ===================== RESPONSIVE ===================== */
-@media (max-width: 900px) {
-	.press-body { padding: clamp(3.5rem, 7vw, 5rem) var(--gutter); }
-}
-
-@media (max-width: 600px) {
-	.press-body { padding: clamp(3rem, 9vw, 4rem) var(--gutter); }
+@media (max-width: 720px) {
+	.kit-docs .btn-primary {
+		width: 100%;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.kit-chip { transition: none; }
+	.kit-format {
+		transition: none;
+	}
 }

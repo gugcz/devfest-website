@@ -1,78 +1,34 @@
 @use '../../styles/type' as *;
-// The photograph owns the right half of the frame and is feathered into the
-// page black on its left edge; the type sits on that black, never on a face.
+// The darkroom: the invitation on the black table, the member's portrait a
+// large paper print beside it (above it on a phone). Type never sits on a
+// photograph; the print's B&W → colour bleed is the only effect.
 .invite {
-	position: relative;
-	min-height: 92svh;
-	display: flex;
-	align-items: center;
-	overflow: hidden;
-	isolation: isolate;
+	padding-block: calc(var(--header-h) + clamp(2.5rem, 6vw, 5rem)) clamp(3rem, 7vw, 6rem);
 }
 
-.invite-plate {
-	position: absolute;
-	inset: 0 0 0 38%;
-	z-index: -2;
-	mask-image: linear-gradient(90deg, transparent 0%, #000 26%, #000 100%);
-
-	img {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: 42% 18%;
-	}
-
-	.plate-base {
-		opacity: 0.9;
-	}
-
-	.plate-color {
-		opacity: 0;
-		transition: opacity 1.4s ease-out;
-		mask-image: radial-gradient(circle at 54% 30%, #000 0%, rgba(0, 0, 0, 0.55) 46%, transparent 72%);
-	}
-}
-
-.invite.is-lit .plate-color {
-	opacity: 1;
-}
-
-// The bleed is the page's only effect, so it is the only thing to reduce:
-// the colour still arrives (it is the point of the page), it just arrives
-// without the fade.
-@media (prefers-reduced-motion: reduce) {
-	.invite-plate .plate-color {
-		transition: none;
-	}
-}
-
-// Vertical settle so the bottom of the frame closes on page black.
-.invite::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	z-index: -1;
-	background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 26%, rgba(0, 0, 0, 0.6) 82%, #000000 100%);
-}
-
-// The section is a flex container, so the shared container must be told to
-// take the full width — otherwise it shrinks to the content and centres.
-.invite > :global(.band-inner) {
-	width: 100%;
+.invite-grid {
+	// `.band-inner` caps the width; the inset is this section's own (it is
+	// not a `.band`).
 	padding-inline: var(--gutter);
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+	align-items: center;
+	gap: clamp(3rem, 7vw, 8rem);
 }
 
 .invite-content {
-	padding-block: clamp(3rem, 7vw, 5rem);
-	max-width: 30rem;
+	max-width: 34rem;
+}
+
+.invite-alias {
+	@include note(var(--fs-note));
+	color: var(--ink-muted);
+	margin: 0;
 }
 
 .invite-title {
-	font-size: clamp(2.6rem, 5.4vw, 5rem);
-	margin: 0.3em 0 0;
+	font-size: var(--fs-display);
+	margin: 0.25em 0 0;
 }
 
 .invite-lede {
@@ -86,13 +42,53 @@
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: 1.25rem;
+	gap: 1rem 1.5rem;
 	margin-top: clamp(1.75rem, 3vw, 2.5rem);
 }
 
+// Date and city: words, so the typewriter, not mono.
 .invite-meta {
-	@include mono(var(--fs-label-lg), 0.1em);
-	color: rgba(255, 255, 255, 0.7);
+	@include note(var(--fs-note));
+	color: var(--ink-soft);
+}
+
+// THE PRINT
+.invite-print {
+	justify-self: end;
+	width: 100%;
+	max-width: 30rem;
+	--tilt: var(--tilt-2);
+}
+
+.invite-plate {
+	display: block;
+	aspect-ratio: 4 / 5;
+
+	img {
+		position: absolute;
+		inset: 0;
+		object-position: 42% 18%;
+	}
+
+	// The colour layer develops over the B&W print: no grayscale on it.
+	.plate-color {
+		filter: none;
+		opacity: 0;
+		transition: opacity 1.4s ease-out;
+		mask-image: radial-gradient(circle at 54% 30%, #000 0%, rgba(0, 0, 0, 0.55) 46%, transparent 72%);
+	}
+}
+
+.invite.is-lit .plate-color {
+	opacity: 1;
+}
+
+// The bleed is the page's only effect, so it is the only thing to reduce:
+// the colour still arrives (it is the point of the page), just without the fade.
+@media (prefers-reduced-motion: reduce) {
+	.invite-plate .plate-color {
+		transition: none;
+	}
 }
 
 .invite-note {
@@ -101,56 +97,40 @@
 	gap: clamp(2rem, 5vw, 5rem);
 	padding-block: clamp(2.5rem, 4.5vw, 4rem);
 	@include prose(var(--fs-body), 1.8);
+	color: var(--ink-strong);
 }
 
+// The member's own line, typed on a slip and set down beside the note.
 .invite-quote {
+	align-self: start;
 	@include prose(var(--fs-body));
 	line-height: 1.7;
-	color: rgba(255, 255, 255, 0.72);
+	color: var(--paper-ink);
+	background: var(--paper);
+	box-shadow: var(--paper-shadow);
+	padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1.1rem, 2.6vw, 1.75rem);
+	rotate: calc(var(--tilt-1) * -0.6);
 
 	span {
-		color: var(--ink-faint);
+		color: var(--paper-ink-dim);
 	}
 }
 
 @media (max-width: 860px) {
-	// On a phone the plate goes back to full-bleed, but only behind the top
-	// ~48svh strip that holds the eyebrow + headline -- everything from the
-	// lede down moves onto the page's flat #000000, off the photograph
-	// entirely. Special Elite (the lede's face) never sits over a photo; see
-	// .claude/rules/invite.md.
-	.invite {
-		display: block;
-		min-height: 0;
+	// The print first, the invitation under it on the black.
+	.invite-grid {
+		grid-template-columns: 1fr;
+		gap: clamp(2.5rem, 8vw, 3.5rem);
 	}
 
-	.invite-plate {
-		inset: 0;
-		mask-image: linear-gradient(180deg, #000 0%, #000 42svh, transparent 52svh);
-	}
-
-	.invite-plate .plate-base {
-		opacity: 0.7;
-	}
-
-	// The strip's own scrim, for the eyebrow + headline only; solid black
-	// from ~48svh down is what turns the rest of the page into flat ground.
-	.invite::after {
-		background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.65) 30svh, #000000 48svh, #000000 100%);
+	.invite-print {
+		order: -1;
+		justify-self: start;
+		max-width: min(20rem, 80%);
 	}
 
 	.invite-content {
 		max-width: none;
-	}
-
-	// Pins the eyebrow + headline to the plate strip's height so the lede
-	// that follows always lands past it, on solid ground.
-	.invite-hero {
-		min-height: 48svh;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-		padding-bottom: 1.5rem;
 	}
 
 	.invite-note {

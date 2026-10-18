@@ -905,6 +905,10 @@ export default function AttendingCard() {
 						onPointerCancel={handlePointerUp}
 						data-draggable={photo ? 'true' : 'false'}
 					/>
+					<span className={`paper-edge ${s.edge}`} aria-hidden="true">
+						<span>DevFest.cz</span>
+						<span>30.10.2026</span>
+					</span>
 					{isDragging && (
 						<div className={s.dragOverlay} aria-hidden="true">
 							<span>Drop to replace</span>

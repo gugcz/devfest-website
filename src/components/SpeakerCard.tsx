@@ -521,6 +521,10 @@ export default function SpeakerCard() {
 						onPointerCancel={handlePointerUp}
 						data-draggable={photo && photoSource !== 'monogram' ? 'true' : 'false'}
 					/>
+					<span className={`paper-edge ${a.edge}`} aria-hidden="true">
+						<span>DevFest.cz</span>
+						<span>30.10.2026</span>
+					</span>
 					{photoLoading && (
 						<div className={s.photoLoading}>
 							<LoadingState label="Developing your photo" />

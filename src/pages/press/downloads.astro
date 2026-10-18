@@ -11,7 +11,7 @@ const pressKit = await listPressKit();
 
 type Asset = (typeof pressKit)[number];
 
-// One entry per logo variant, its formats as chips: `df26_logo_dark.svg`,
+// One entry per logo variant, its formats as links: `df26_logo_dark.svg`,
 // `DF26_logo_dark.png` and `df26_logo_dark.ai` are one mark in three files.
 // A group with no previewable file (the brand manual) is a document instead.
 const baseName = (file: string) => file.replace(/\.[^.]+$/, '').toLowerCase();
@@ -46,7 +46,7 @@ const documents = [...groups.values()].filter((files) => !files.some((f) => f.is
 
 		<section class="band band--lit press-body" aria-label="Press kit downloads">
 			<div class="band-inner">
-				<a class="back-link" href="/contact#press">Back to In the news</a>
+				<a class="action back-link" href="/contact#press">Back to In the news</a>
 
 				{pressKit.length > 0 ? (
 					<>
@@ -56,17 +56,19 @@ const documents = [...groups.values()].filter((files) => !files.some((f) => f.is
 					<ul class="kit-grid" role="list">
 						{variants.map(({ label, preview, files }) => (
 							<li class="kit-item">
-								<span class={`kit-preview${preview.darkPreview ? ' kit-preview--dark' : ''}`}>
-									<img src={preview.href} alt="" loading="lazy" decoding="async" />
-								</span>
-								<h3 class="kit-label">{label}</h3>
+								<div class="paper kit-print">
+									<h3 class="tape kit-label">{label}</h3>
+									<span class:list={['kit-preview', { 'kit-preview--dark': preview.darkPreview }]}>
+										<img src={preview.href} alt="" loading="lazy" decoding="async" />
+									</span>
+								</div>
 								<ul class="kit-formats" role="list">
 									{files.map((f) => (
 										<li>
-											<a class="kit-chip" href={f.href} download>
+											<a class="kit-format" href={f.href} download>
 												<span class="sr-only">{label}, </span>
 												{f.ext}
-												<span class="kit-chip-size">{f.sizeLabel}</span>
+												<span class="kit-format-size">{f.sizeLabel}</span>
 											</a>
 										</li>
 									))}
@@ -75,16 +77,14 @@ const documents = [...groups.values()].filter((files) => !files.some((f) => f.is
 						))}
 					</ul>
 
+					{/* The brand manual has no preview: the band's one red fill,
+					    its format and size on the button like /contact. */}
 					{documents.length > 0 && (
 						<ul class="kit-docs" role="list">
-							{documents.map((d) => (
-								<li class="kit-doc">
-									<span class="kit-doc-text">
-										<span class="kit-label">{d.label}</span>
-										<span class="kit-spec">{d.ext} &middot; {d.sizeLabel}</span>
-									</span>
-									<a class="btn-ghost" href={d.href} download>
-										Download {d.ext}<span class="sr-only">, {d.label}</span>
+							{documents.map((d, i) => (
+								<li>
+									<a class={i === 0 ? 'btn-primary kit-doc' : 'action kit-doc'} href={d.href} download>
+										{d.label}<span class="kit-doc-size">{d.ext} {d.sizeLabel}</span>
 									</a>
 								</li>
 							))}
@@ -93,7 +93,7 @@ const documents = [...groups.values()].filter((files) => !files.some((f) => f.is
 					</>
 				) : (
 					<div class="empty-state" role="status">
-						<span class="empty-stamp" aria-hidden="true">Coming soon</span>
+						<span class="tape empty-stamp" aria-hidden="true">Coming soon</span>
 						<p class="empty-line">
 							The press kit is being prepared. In the meantime, email the press desk at
 							<a class="inline-link" href="mailto:devfest@gug.cz">devfest@gug.cz</a>.

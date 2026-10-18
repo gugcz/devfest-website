@@ -3,6 +3,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import EndLine from '../components/EndLine.astro';
 import InvoiceForm from '../components/InvoiceForm';
+
+// The three steps, typed on index cards (the /venue route cards).
+const STEPS = [
+	'Fill in your company billing details below.',
+	'We email the invoice right away. Pay it by bank transfer within 14 days.',
+	'Once the payment arrives, we email one code that claims all your tickets on ti.to.',
+];
 ---
 
 <BaseLayout
@@ -18,24 +25,32 @@ import InvoiceForm from '../components/InvoiceForm';
 			photo={false}
 		/>
 
-		<section class="band band--lit" aria-labelledby="invoice-form-heading">
+		<section class="band invoice-band" aria-labelledby="invoice-steps-heading">
 			<div class="band-inner">
-				<div class="invoice-inner">
-					<div class="invoice-intro">
-						<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
-						<ol class="steps">
-							<li><span class="step-no">01</span> Fill in your company billing details below.</li>
-							<li><span class="step-no">02</span> We email the invoice right away. Pay it by bank transfer within 14 days.</li>
-							<li><span class="step-no">03</span> Once the payment arrives, we email one code that claims all your tickets on ti.to.</li>
-						</ol>
-						<p class="intro-note">
-							Paying by card instead? Skip this and buy directly on{' '}
-							<a href="/#tickets" class="intro-link">the tickets page</a>.
-						</p>
-					</div>
+				<div class="head-rule">
+					<h2 id="invoice-steps-heading" class="head-rule-title">How it works</h2>
+					<p class="head-rule-note">
+						Paying by card instead? Skip this and buy directly on{' '}
+						<a href="/#tickets" class="intro-link">the tickets page</a>.
+					</p>
+				</div>
 
-					<InvoiceForm client:load />
+				<ol class="invoice-steps" role="list">
+					{STEPS.map((text, i) => (
+						<li class="paper invoice-card">
+							<span class="invoice-card-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+							<p class="invoice-card-text">{text}</p>
+						</li>
+					))}
+				</ol>
+			</div>
+		</section>
 
+		<section class="band invoice-band" aria-labelledby="invoice-form-heading">
+			<div class="band-inner invoice-form-grid">
+				<h2 id="invoice-form-heading" class="sr-only">Company billing details</h2>
+				<InvoiceForm client:load />
+				<div class="invoice-aside">
 					<EndLine text="Questions about the invoice? Name the company when you write." href="mailto:devfest@gug.cz" label="Write to devfest@gug.cz" />
 				</div>
 			</div>

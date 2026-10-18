@@ -175,17 +175,11 @@
 	text-align: left;
 	font: inherit;
 	cursor: pointer;
-	transition: translate 0.2s ease;
 
+	// No lift under the pointer: nothing slides. Focus draws the ring.
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap-lg);
-	}
-}
-
-@media (hover: hover) {
-	.card:hover {
-		translate: 0 -3px;
 	}
 }
 
@@ -194,18 +188,21 @@
 .tiltC { rotate: calc(var(--tilt-1) * 0.3); }
 .tiltD { rotate: calc(var(--tilt-1) * -0.6); }
 
-// Time and room, track opposite: the slip's mono edge.
+// Time and room, track opposite: the slip's edge. The time is a mono
+// figure; the room and the track are notes.
 .top {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
 	align-items: baseline;
 	gap: 0.15rem 0.75rem;
-	@include mono(var(--fs-label-xs), 0.1em, uppercase);
+	@include note(var(--fs-note-sm));
+	line-height: 1.2;
 	color: var(--paper-ink-dim);
 }
 
 .when {
+	@include mono(var(--fs-label-xs), 0.1em);
 	font-variant-numeric: tabular-nums;
 }
 

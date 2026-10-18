@@ -84,10 +84,16 @@
 	text-underline-offset: 6px;
 	overflow-wrap: anywhere;
 	padding: 0.2rem 0;
-	transition: color 0.2s ease;
 
-	&:hover {
-		color: var(--color-accent);
+	// Red text on paper misses 4.5:1: the reach state thickens the ink line.
+	&:focus-visible {
+		text-decoration-thickness: 3px;
+	}
+}
+
+@media (hover: hover) {
+	.icard-mail:hover {
+		text-decoration-thickness: 3px;
 	}
 }
 

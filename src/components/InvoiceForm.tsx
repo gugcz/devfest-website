@@ -324,7 +324,7 @@ export default function InvoiceForm() {
 
 	if (status === 'success') {
 		return (
-			<div className={s.wrapper}>
+			<div className={`paper ${s.wrapper}`}>
 				<div className={s.success} role="status" aria-live="polite">
 					<p className={s.successTitle}>Request received</p>
 					<p className={s.successBody}>{message}</p>
@@ -358,7 +358,10 @@ export default function InvoiceForm() {
 	const consentError = errorFor('consent');
 
 	return (
-		<div className={s.wrapper}>
+		<div className={`paper ${s.wrapper}`}>
+			<span className={`tape ${s.tape}`} aria-hidden="true">
+				Company billing details
+			</span>
 			{/* `noValidate` because the errors below replace the browser's own
 			    bubble: that bubble is English-only whatever the page language,
 			    shows one field at a time, and vanishes on the next keystroke. */}
@@ -395,7 +398,8 @@ export default function InvoiceForm() {
 				    holds even if it closes before the transfer lands. */}
 				{estimate && (
 					<p className={s.estimate}>
-						Total: <span className={s.estimateFigure}>{estimate.total}</span>{' '}
+						<span className={s.estimateLabel}>Total</span>{' '}
+						<span className={s.estimateFigure}>{estimate.total}</span>{' '}
 						<span className={s.estimateNote}>
 							{fields.countTickets} × {estimate.each} incl. VAT, the {estimate.wave} company-funded price.
 							The price holds once the invoice is issued, even if the wave closes before you pay.

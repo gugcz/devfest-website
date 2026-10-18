@@ -142,7 +142,7 @@ function timeRange(session: Session): string {
 	return `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}`;
 }
 
-/** The slip's right-hand edge: track and length, `AI · 40 MIN`. */
+/** The slip's right-hand edge: track and length, `AI · 40 min`, in the note voice. */
 function trackLength(session: Session): string {
 	const categories = visitorCategories(session);
 	const track = (categories.find((c) => c.name.toLowerCase() === 'track') ?? categories[0])?.values[0];
@@ -243,7 +243,7 @@ function TalkSlip({
 			)}
 			<span className={s.edge}>
 				<span>{timeRange(session)}</span>
-				<span>{trackLength(session)}</span>
+				<span className={s.edgeNote}>{trackLength(session)}</span>
 			</span>
 			<span className={s.title}>{session.title}</span>
 			{names && <span className={s.who}>{names}</span>}
@@ -274,7 +274,7 @@ function AllDayBlock({
 				)}
 				<span className={s.edge}>
 					<span>{timeRange(session)}</span>
-					{taped && <span>All day</span>}
+					{taped && <span className={s.edgeNote}>All day</span>}
 				</span>
 				<span className={s.title}>{session.title}</span>
 				<span className={s.allDayNote}>{ALL_DAY_NOTE}</span>

@@ -5,6 +5,12 @@ import SubpageHero from '../components/SubpageHero.astro';
 // The full text lives in the CoC team's Google Doc; this page is the one-pager.
 const FULL_COC_URL =
 	'https://docs.google.com/document/d/16n7_UlJMYUNeCAsSTMxq9tp9yOq2SDppzulPsvhZYak/preview';
+
+// The two halves the hero promises, pinned beside the text.
+const SECTIONS = [
+	{ id: 'short-version', title: 'The short version' },
+	{ id: 'who-to-talk-to', title: 'Who to talk to' },
+];
 ---
 
 <BaseLayout
@@ -21,9 +27,24 @@ const FULL_COC_URL =
 		/>
 
 		<div class="band band--lit">
-			<div class="band-inner">
+			<div class="band-inner reading">
+				<nav class="reading-index" aria-label="Contents">
+					<p class="reading-index-label">Contents</p>
+					<ol role="list">
+						{SECTIONS.map(({ id, title }, i) => (
+							<li>
+								<a href={`#${id}`}>
+									<span class="reading-index-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+									<span>{title}</span>
+								</a>
+							</li>
+						))}
+					</ol>
+				</nav>
+
 				<div class="policy">
-					<section>
+					<section id="short-version">
+						<h2>The short version</h2>
 						<p>
 							DevFest.cz is a community event where we strive to create safer and welcoming
 							spaces for community members to learn from each other. Oppressive or harassing
@@ -35,13 +56,29 @@ const FULL_COC_URL =
 								rel="noopener noreferrer">you can find it here</a
 							>.
 						</p>
+					</section>
+
+					<section id="who-to-talk-to">
+						<h2>Who to talk to</h2>
 						<p>
 							If you see or experience something that is or might be a violation of the Code of
 							Conduct, please reach out to the organisers or directly to the Code of Conduct
-							Listener <strong>Eliška Čejpová</strong>,{' '}
-							<a href="tel:+420728409551">+420&#160;728&#160;409&#160;551</a>,{' '}
-							<a href="mailto:eliska.cejpova@gug.cz">eliska.cejpova@gug.cz</a>.
+							Listener.
 						</p>
+						{/* The listener as a typed card: the one contact a visitor
+						    may need in a hurry, so it reads at a glance. */}
+						<div class="paper listener">
+							<span class="tape">Code of Conduct Listener</span>
+							<p class="listener-name">Eliška Čejpová</p>
+							<ul class="listener-lines" role="list">
+								<li>
+									<a class="listener-link listener-link--tel" href="tel:+420728409551">+420&#160;728&#160;409&#160;551</a>
+								</li>
+								<li>
+									<a class="listener-link" href="mailto:eliska.cejpova@gug.cz">eliska.cejpova@gug.cz</a>
+								</li>
+							</ul>
+						</div>
 					</section>
 				</div>
 			</div>
@@ -50,6 +87,6 @@ const FULL_COC_URL =
 </BaseLayout>
 
 <style lang="scss">
-	// Same legal-document column as the privacy policy.
+	// Same reading column as the privacy policy.
 	@use './privacy-policy';
 </style>

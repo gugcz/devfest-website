@@ -1,63 +1,99 @@
 @use '../styles/type' as *;
 
-// [ index over title ][ note, then its actions ]. The action sits under the
-// sentence that explains it, left-aligned, so the eye never crosses the
-// page to find the control. The title is a sub-head (--fs-h3), not a row
-// poster: the list is a short set of errands, not the page's statement.
+// A typed index card, like the /venue route cards: the errand as a Bebas
+// head, one or two typewriter lines under it, then its actions. Paper ink
+// only: no red text on paper (the one red fill is a button, white on red).
 .step {
-	display: grid;
-	grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-	align-items: start;
-	gap: 0.9rem clamp(2rem, 4vw, 4rem);
-}
-
-.step-head {
-	display: flex;
-	flex-direction: column;
-	gap: 0.6rem;
-	min-width: 0;
-}
-
-// The ticket stubs' serial: mono, tabular, faint, over the title. In the
-// title's cell, so a numbered row and a plain one share one grid.
-.step-index {
-	@include mono(var(--fs-label-lg), 0.15em);
-	font-variant-numeric: tabular-nums;
-	color: var(--ink-faint);
-}
-
-.step-title {
-	@include row-title(var(--fs-h3));
-	margin: 0;
-}
-
-.step-body {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 1.1rem;
 	min-width: 0;
+	padding: 1.6rem 1.75rem 1.7rem;
+}
+
+// The serial, when the cards are a real sequence: a figure, so mono.
+.step-index {
+	display: block;
+	margin-bottom: 0.85rem;
+	@include mono(var(--fs-head));
+	font-weight: 500;
+	line-height: 1;
+	color: var(--paper-ink);
+}
+
+.step-title {
+	@include row-title(var(--fs-head));
+	line-height: 0.92;
+	color: var(--paper-ink);
+	margin: 0 0 0.9rem;
+	text-wrap: balance;
 }
 
 .step-note {
-	@include prose(var(--fs-body), 1.7);
-	color: var(--ink);
-	max-width: 52ch;
+	@include prose(var(--fs-body), 1.55);
+	color: var(--paper-ink);
 	margin: 0;
 }
 
 .step-note :global(a) {
-	@include hairline-link;
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+	transition: text-decoration-thickness 0.2s ease;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration-thickness: 2px;
+	}
 }
 
 .step-actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.75rem;
+	align-items: center;
+	gap: 0.5rem 1.6rem;
+	padding-top: 1.25rem;
 }
 
-@media (max-width: 900px) {
+// A text action on paper: black Bebas on its own underline. The hover
+// thickens the line; red text never sits on paper.
+.step-go {
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
+	@include action(var(--fs-cta));
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
+	overflow-wrap: anywhere;
+	transition: text-decoration-thickness 0.2s ease;
+
+	&:focus-visible {
+		text-decoration-thickness: 4px;
+	}
+}
+
+@media (hover: hover) {
+	.step-go:hover {
+		text-decoration-thickness: 4px;
+	}
+}
+
+@media (max-width: 720px) {
 	.step {
-		grid-template-columns: minmax(0, 1fr);
+		padding: 1.4rem 1.4rem 1.5rem;
+	}
+
+	.step-actions .btn-primary {
+		width: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.step-go,
+	.step-note :global(a) {
+		transition: none;
 	}
 }

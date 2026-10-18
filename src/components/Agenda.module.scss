@@ -163,17 +163,11 @@
 	text-align: left;
 	font: inherit;
 	cursor: pointer;
-	transition: translate 0.2s ease;
 
+	// No lift under the pointer: nothing slides. Focus draws the ring.
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap-lg);
-	}
-}
-
-@media (hover: hover) {
-	.slip:hover {
-		translate: 0 -3px;
 	}
 }
 
@@ -189,9 +183,16 @@
 	justify-content: space-between;
 	align-items: baseline;
 	gap: 0.15rem 0.75rem;
-	@include mono(var(--fs-label-xs), 0.1em, uppercase);
+	@include mono(var(--fs-label-xs), 0.1em);
 	color: var(--paper-ink-dim);
 	font-variant-numeric: tabular-nums;
+}
+
+// The words on the edge (track and length, "All day") in the note voice;
+// mono keeps the figures only.
+.edgeNote {
+	@include note(var(--fs-note-sm));
+	line-height: 1.2;
 }
 
 .title {
@@ -208,14 +209,14 @@
 	color: var(--paper-ink);
 }
 
-// "Live now" / "Next". Red text on paper would miss 4.5:1, so the word stays
-// in ink and the red rides on a dot in front of it.
+// "Live now" / "Next" in the note voice. Red text on paper would miss 4.5:1,
+// so the word stays in ink and the red rides on a dot in front of it.
 .flag {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.45rem;
 	margin-top: 0.75rem;
-	@include mono(var(--fs-label-xs), 0.14em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--paper-ink-dim);
 }
 
@@ -242,7 +243,6 @@
 	position: relative;
 	padding: 0.875rem 1rem;
 	background: var(--panel-hover);
-	border-left: 3px solid var(--paper);
 	color: var(--color-text);
 
 	.edge {
@@ -425,7 +425,7 @@
 
 .groupNow {
 	margin-left: 0.75rem;
-	@include mono(var(--fs-label-xs), 0.14em, uppercase);
+	@include note(var(--fs-note-sm));
 	color: var(--color-accent-hot);
 }
 

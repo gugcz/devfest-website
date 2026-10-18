@@ -28,7 +28,7 @@
 }
 
 .venue-addr-title {
-	@include display(var(--fs-display));
+	@include display(var(--fs-section));
 	margin: 0;
 	text-wrap: balance;
 }
@@ -147,11 +147,8 @@
 
 .venue-card-no {
 	display: block;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-weight: 500;
-	font-size: var(--fs-head);
+	@include mono(var(--fs-head));
 	line-height: 1;
-	letter-spacing: -0.02em;
 	color: var(--paper-ink);
 }
 
@@ -192,26 +189,28 @@
 	}
 }
 
-// A text action on paper: black Bebas on its own underline, red on hover.
-.venue-go {
-	display: inline-block;
-	margin-top: 1.25rem;
-	padding: 0.5rem 0 0.15rem;
-	@include action(var(--fs-cta));
+// The site's text action, in paper ink. Red text on paper misses 4.5:1, so
+// the reach state is an underline in the same ink.
+.action.venue-go {
+	margin-top: 0.75rem;
 	color: var(--paper-ink);
-	text-decoration: underline;
-	text-decoration-thickness: 2px;
+	text-decoration-thickness: 1px;
 	text-underline-offset: 4px;
-	transition: color 0.2s ease;
+
+	// The global `.action` turns red on hover and focus; hold the ink.
+	&:hover,
+	&:focus-visible {
+		color: var(--paper-ink);
+	}
 
 	&:focus-visible {
-		color: var(--color-accent);
+		text-decoration-line: underline;
 	}
 }
 
 @media (hover: hover) {
-	.venue-go:hover {
-		color: var(--color-accent);
+	.action.venue-go:hover {
+		text-decoration-line: underline;
 	}
 }
 
@@ -272,7 +271,7 @@
 }
 
 .venue-door-title {
-	@include display(var(--fs-display));
+	@include display(var(--fs-section));
 	margin: 0;
 }
 

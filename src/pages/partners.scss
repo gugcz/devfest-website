@@ -102,16 +102,6 @@
 	}
 }
 
-@media (hover: hover) {
-	.logo-item a .logo {
-		transition: opacity 0.2s ease;
-	}
-
-	.logo-item a:hover .logo {
-		opacity: 0.82;
-	}
-}
-
 @media (max-width: 720px) {
 	.tier {
 		padding-bottom: 5.5rem;
@@ -156,7 +146,7 @@
 }
 
 .cta-title {
-	font-size: var(--fs-display);
+	font-size: var(--fs-section);
 }
 
 // Filip's card: a typed paper card, lifted off the table.
@@ -215,8 +205,15 @@
 	overflow-wrap: anywhere;
 	padding: 0.35rem 0;
 
-	&:hover {
-		color: var(--color-accent);
+	// Red text on paper misses 4.5:1: the reach state thickens the ink line.
+	&:focus-visible {
+		text-decoration-thickness: 2px;
+	}
+}
+
+@media (hover: hover) {
+	.cta-mail:hover {
+		text-decoration-thickness: 2px;
 	}
 }
 

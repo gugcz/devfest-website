@@ -57,7 +57,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 							loading="lazy"
 						/>
 					</div>
-					<figcaption class="paper-edge"><span>{EVENT.venue}</span><span>Libčice nad Vltavou</span></figcaption>
+					<figcaption class="paper-edge"><span class="edge-word">{EVENT.venue}</span><span class="edge-word">Libčice nad Vltavou</span></figcaption>
 				</figure>
 			</div>
 		</section>
@@ -112,7 +112,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 								<dt>Distance</dt>
 								<dd><span class="fig">0.7&nbsp;km</span></dd>
 							</dl>
-							<a class="venue-go" href={EVENT.stationWalkUrl} target="_blank" rel="noopener noreferrer">
+							<a class="action venue-go" href={EVENT.stationWalkUrl} target="_blank" rel="noopener noreferrer">
 								Station to venue
 							</a>
 						</li>
@@ -124,7 +124,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 							<p>
 								Registration opens at <span class="fig">{EVENT.doorsTime}</span>, the keynote starts at <span class="fig">{EVENT.startTime}</span>.
 							</p>
-							<a class="venue-go" href={EVENT.mapUrl} target="_blank" rel="noopener noreferrer">Open in maps</a>
+							<a class="action venue-go" href={EVENT.mapUrl} target="_blank" rel="noopener noreferrer">Open in maps</a>
 						</li>
 					</ol>
 
@@ -157,7 +157,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 							loading="lazy"
 						/>
 					</div>
-					<figcaption class="paper-edge"><span>The entrance</span><span>{EVENT.doorsTime}</span></figcaption>
+					<figcaption class="paper-edge"><span class="edge-word">The entrance</span><span>{EVENT.doorsTime}</span></figcaption>
 					<svg class="grease venue-door-mark" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
 						<path d="M30 8 C 62 -2, 96 14, 96 48 C 96 84, 64 98, 36 94 C 8 90, 2 60, 6 38 C 10 18, 30 6, 54 6" />
 					</svg>

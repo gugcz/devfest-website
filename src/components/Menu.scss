@@ -183,7 +183,6 @@
 
 .bar-link {
 	@include action;
-	letter-spacing: 0.08em;
 	display: inline-flex;
 	align-items: center;
 	min-height: var(--header-tap);
@@ -351,10 +350,12 @@
 		visibility 0s linear 0s;
 }
 
-// One column of links at every width.
+// One column of links at every width; >=901px one small print beside it.
 .nav-body {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
+	align-items: center;
+	gap: clamp(2rem, 5vw, 5rem);
 	// Take the room the footing does not.
 	flex: 1 1 auto;
 	width: 100%;
@@ -372,16 +373,23 @@
 	width: 100%;
 }
 
-@media (min-width: 901px) {
-	// Poster scale: the section-head step for the five, the sub-section step
-	// for the four under them.
-	.nav-link {
-		font-size: var(--fs-h2);
-		padding: 0.08em 0;
-	}
+// THE PRINT: the venue, taped, set down beside the lines. Decorative and
+// only where the panel has room for it.
+.nav-print {
+	display: none;
+	width: clamp(12rem, 19vw, 17rem);
+	margin-right: clamp(0rem, 4vw, 4rem);
+	--tilt: var(--tilt-2);
+}
 
-	.nav-secondary-link {
-		font-size: var(--fs-h3);
+.nav-print-photo {
+	display: block;
+	aspect-ratio: 3 / 4;
+}
+
+@media (min-width: 901px) and (min-height: 621px) {
+	.nav-print {
+		display: block;
 	}
 }
 
@@ -399,9 +407,9 @@
 // Destinations at poster scale — Bebas is condensed enough to fit them all.
 .nav-link {
 	font-family: var(--font-bebas-neue), sans-serif;
-	// Sized so the four destinations, the three under them and the footing line
-	// fit a 900px-tall laptop viewport without the panel scrolling.
-	font-size: clamp(2rem, 4.2vw, 3.3rem);
+	// Poster scale on a phone too: the five lines, the four under them and
+	// the footing still fit a 390x844 screen without the panel scrolling.
+	font-size: var(--fs-display);
 	line-height: 1;
 	letter-spacing: 0;
 	text-transform: uppercase;
@@ -418,13 +426,18 @@
 	// differently at the same viewport, which is what made the lower tier
 	// read as a separate, clumped block on a desktop panel.
 	padding: 0.15em 0;
-	transition: color 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: color 0.18s ease;
 }
 
-.nav-link:hover,
+// Nothing slides: the line warms to red, and only that.
 .nav-link:focus-visible {
 	color: var(--color-accent-hot);
-	transform: translateX(0.75rem);
+}
+
+@media (hover: hover) {
+	.nav-link:hover {
+		color: var(--color-accent-hot);
+	}
 }
 
 // The current page is the one line that goes nowhere, so it steps back
@@ -472,7 +485,7 @@
 	// Physical touch target, same token as the bar's own controls (WCAG 2.5.5).
 	min-height: var(--header-tap);
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.6rem, 2.95vw, 2.3rem);
+	font-size: var(--fs-h3);
 	line-height: 1;
 	// The same share of the step as the tier above (see `.nav-link`). Without
 	// it the lower tier sat at exactly their text height on a desktop panel — no
@@ -482,18 +495,39 @@
 	text-transform: uppercase;
 	color: var(--color-text);
 	text-decoration: none;
-	transition: color 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: color 0.18s ease;
 }
 
-.nav-secondary-link:hover,
 .nav-secondary-link:focus-visible {
 	color: var(--color-accent-hot);
-	transform: translateX(0.75rem);
+}
+
+@media (hover: hover) {
+	.nav-secondary-link:hover {
+		color: var(--color-accent-hot);
+	}
 }
 
 // Same state the poster list uses.
 .nav-secondary-link--current {
 	color: var(--ink-dim);
+}
+
+@media (min-width: 901px) {
+	// After the base rules, or they win. Poster scale: the section-head step for the five, the sub-section step
+	// for the four under them.
+	.nav-body {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+
+	.nav-link {
+		font-size: var(--fs-h2);
+		padding: 0.08em 0;
+	}
+
+	.nav-secondary-link {
+		font-size: var(--fs-h3);
+	}
 }
 
 .nav-foot-meta {
@@ -563,7 +597,7 @@
 // Short viewports (landscape phones): a smaller step, and the panel scrolls.
 @media (max-height: 620px) {
 	.nav-link {
-		font-size: clamp(1.5rem, 5vh, 2.6rem);
+		font-size: var(--fs-h3);
 		min-height: 2rem;
 		padding: 0.22rem 0;
 	}
@@ -572,7 +606,7 @@
 	// the panel scroll.
 	.nav-secondary-link {
 		min-height: 2rem;
-		font-size: clamp(1.2rem, 4vh, 1.8rem);
+		font-size: var(--fs-title-sm);
 	}
 
 	.nav-foot-meta {
@@ -598,12 +632,5 @@
 	.bar-link,
 	.nav-toggle-bars span {
 		transition: none;
-	}
-
-	.nav-link:hover,
-	.nav-link:focus-visible,
-	.nav-secondary-link:hover,
-	.nav-secondary-link:focus-visible {
-		transform: none;
 	}
 }

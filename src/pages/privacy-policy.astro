@@ -1,6 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
+
+// The contents pinned beside the text. Ids are public anchors: `mobile-app`
+// and `delete-account` are linked from /delete-account and the app.
+const SECTIONS = [
+	{ id: 'who-we-are', title: 'Who we are' },
+	{ id: 'data-we-collect', title: 'Data we collect and why' },
+	{ id: 'cookies', title: 'Cookies' },
+	{ id: 'data-sharing', title: 'Data sharing' },
+	{ id: 'your-rights', title: 'Your rights' },
+	{ id: 'changes', title: 'Changes to this policy' },
+	{ id: 'mobile-app', title: 'Mobile app' },
+	{ id: 'delete-account', title: 'Deleting your app account' },
+];
 ---
 
 <BaseLayout
@@ -17,9 +30,23 @@ import SubpageHero from '../components/SubpageHero.astro';
 		/>
 
 		<div class="band band--lit">
-			<div class="band-inner">
+			<div class="band-inner reading">
+				<nav class="reading-index" aria-label="Contents">
+					<p class="reading-index-label">Contents</p>
+					<ol role="list">
+						{SECTIONS.map(({ id, title }, i) => (
+							<li>
+								<a href={`#${id}`}>
+									<span class="reading-index-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+									<span>{title}</span>
+								</a>
+							</li>
+						))}
+					</ol>
+				</nav>
+
 				<div class="policy">
-					<section>
+					<section id="who-we-are">
 						<h2>1. Who we are</h2>
 						<p>
 							DevFest.cz 2026 is organised by GUG.cz, z.s. (formerly GDG Czech Republic),
@@ -28,7 +55,7 @@ import SubpageHero from '../components/SubpageHero.astro';
 						</p>
 					</section>
 
-					<section>
+					<section id="data-we-collect">
 						<h2>2. Data we collect and why</h2>
 
 						<h3>a) Newsletter sign-up</h3>
@@ -112,16 +139,12 @@ import SubpageHero from '../components/SubpageHero.astro';
 						</p>
 					</section>
 
-					<section>
+					<section id="cookies">
 						<h2>3. Cookies</h2>
 						<p>We use the following cookies:</p>
-						<!-- A data table is one of the things WCAG 1.4.10 exempts from
-						     single-column reflow: it needs two dimensions to be read at
-						     all. So the TABLE scrolls sideways, not the page (under 600px
-						     each row stacks into a labelled card instead). Focusable
-						     because a scrollable region must be reachable by keyboard
-						     (WCAG 2.1.1); labelled because it is now a landmark. -->
-						<div class="table-scroll" role="region" aria-label="Cookies we set" tabindex="0">
+						<!-- Each row reads as a short entry (privacy-policy.scss): the
+						     name over its facts, each fact labelled from its column
+						     head. It reflows to any width, so it needs no scroll box. -->
 						<table>
 							<caption class="sr-only">List of cookies we set, their purpose, and retention period.</caption>
 							<thead>
@@ -154,10 +177,9 @@ import SubpageHero from '../components/SubpageHero.astro';
 								</tr>
 							</tbody>
 						</table>
-						</div>
 					</section>
 
-					<section>
+					<section id="data-sharing">
 						<h2>4. Data sharing</h2>
 						<p>
 							We do not sell your data. We share it only with the processors listed below, under
@@ -173,7 +195,7 @@ import SubpageHero from '../components/SubpageHero.astro';
 						</ul>
 					</section>
 
-					<section>
+					<section id="your-rights">
 						<h2>5. Your rights</h2>
 						<p>Under GDPR you have the right to:</p>
 						<ul>
@@ -185,7 +207,7 @@ import SubpageHero from '../components/SubpageHero.astro';
 						<p>To exercise these rights, email us at <a href="mailto:devfest@gug.cz">devfest@gug.cz</a>.</p>
 					</section>
 
-					<section>
+					<section id="changes">
 						<h2>6. Changes to this policy</h2>
 						<p>
 							We may update this policy as the website evolves. The "last updated" date at the top
@@ -208,8 +230,7 @@ import SubpageHero from '../components/SubpageHero.astro';
 						</p>
 
 						<h3>a) What the app collects and why</h3>
-						<!-- Same table treatment as the cookie list in section 3. -->
-						<div class="table-scroll" role="region" aria-label="Data the mobile app collects" tabindex="0">
+						<!-- Same entry treatment as the cookie list in section 3. -->
 						<table>
 							<caption class="sr-only">Data the mobile app collects, where it comes from, why, and how long it is kept.</caption>
 							<thead>
@@ -295,7 +316,6 @@ import SubpageHero from '../components/SubpageHero.astro';
 								</tr>
 							</tbody>
 						</table>
-						</div>
 
 						<h3>b) Networking: if your badge is scanned</h3>
 						<p>

@@ -6,6 +6,12 @@ import SubpageHero from '../components/SubpageHero.astro';
 // Play requires them at a stable URL (the Play Console "Delete account URL"),
 // so keep this route. The same text lives in section 8 of /privacy-policy.
 const MAIL_SUBJECT = 'Delete my DevFest app account';
+
+const SECTIONS = [
+	{ id: 'in-the-app', title: 'In the app' },
+	{ id: 'without-the-app', title: 'Without the app' },
+	{ id: 'not-deleted', title: 'What is not deleted' },
+];
 ---
 
 <BaseLayout
@@ -22,7 +28,21 @@ const MAIL_SUBJECT = 'Delete my DevFest app account';
 		/>
 
 		<div class="band band--lit">
-			<div class="band-inner">
+			<div class="band-inner reading">
+				<nav class="reading-index" aria-label="Contents">
+					<p class="reading-index-label">Contents</p>
+					<ol role="list">
+						{SECTIONS.map(({ id, title }, i) => (
+							<li>
+								<a href={`#${id}`}>
+									<span class="reading-index-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+									<span>{title}</span>
+								</a>
+							</li>
+						))}
+					</ol>
+				</nav>
+
 				<div class="policy">
 					<section>
 						<p>
@@ -32,7 +52,7 @@ const MAIL_SUBJECT = 'Delete my DevFest app account';
 						</p>
 					</section>
 
-					<section>
+					<section id="in-the-app">
 						<h2>In the app</h2>
 						<p>
 							Go to <strong>Profile &gt; Delete account</strong>. This immediately deletes:
@@ -44,7 +64,7 @@ const MAIL_SUBJECT = 'Delete my DevFest app account';
 						</ul>
 					</section>
 
-					<section>
+					<section id="without-the-app">
 						<h2>Without the app</h2>
 						<p>
 							Email <a href={`mailto:devfest@gug.cz?subject=${encodeURIComponent(MAIL_SUBJECT)}`}>devfest@gug.cz</a> from
@@ -53,7 +73,7 @@ const MAIL_SUBJECT = 'Delete my DevFest app account';
 						</p>
 					</section>
 
-					<section>
+					<section id="not-deleted">
 						<h2>What is not deleted</h2>
 						<p>
 							Usage analytics, crash reports and App Check signals are not linked to your account,
@@ -79,6 +99,6 @@ const MAIL_SUBJECT = 'Delete my DevFest app account';
 </BaseLayout>
 
 <style lang="scss">
-	// Same legal-document column as the privacy policy.
+	// Same reading column as the privacy policy.
 	@use './privacy-policy';
 </style>

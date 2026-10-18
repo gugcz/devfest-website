@@ -1,46 +1,50 @@
 @use '../styles/type' as *;
 // Speaker detail. The chrome is `Sheet.module.scss`, shared with SessionDetail;
-// this file holds the portrait plate, identity, social glyphs, bio and talk rows.
+// this file holds the large print, the identity, the bio's reading column and
+// the talks as paper slips. Darkroom primitives (`.paper`, `.paper-photo`,
+// `.paper-edge`, `.tape`) come from BaseLayout.scss.
 
 // A speaker opened FROM a session stacks on that sheet, so it cannot share its z-index.
 .stacked {
 	--sheet-z: 10060;
 }
 
-// Portrait left, the person right — the plate keeps real size rather than
-// shrinking to an avatar. Composed on top of the shared `.content`.
+// The print left, the person right. Composed on top of the shared `.content`.
 .split {
 	display: grid;
-	grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
+	grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr);
 	align-items: start;
-	gap: clamp(2rem, 5vw, 5rem);
+	gap: clamp(2.5rem, 5.5vw, 6rem);
+	// The tape sits over the print's top edge.
+	padding-top: clamp(2rem, 4vh, 3.5rem);
 }
 
-@media (max-width: 860px) {
-	.split {
-		grid-template-columns: 1fr;
-		gap: clamp(1.75rem, 4vw, 2.5rem);
-	}
+// The print stays in view while the bio scrolls past it.
+.printCol {
+	position: sticky;
+	top: clamp(5rem, 10vh, 6.5rem);
+}
 
-	// Capped: stacked, the plate takes the full content measure, and at a
-	// foldable/tablet width that is ~800px at 4:5 — the portrait alone filled
-	// the screen and pushed the name below the fold.
-	.plate {
-		max-width: 22rem;
-	}
+.print {
+	max-width: 30rem;
+}
+
+.photoWell {
+	aspect-ratio: 4 / 5;
 }
 
 .photo {
 	position: absolute;
 	inset: 0;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	object-position: center 20%;
-	filter: grayscale(1) contrast(1.12) brightness(0.82);
+	object-position: center 22%;
 }
 
 .monogram {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	font-family: var(--font-bebas-neue), sans-serif;
 	font-size: var(--fs-monogram);
 	line-height: 1;
@@ -48,57 +52,66 @@
 	user-select: none;
 }
 
+.person {
+	min-width: 0;
+}
+
+.name {
+	@include display(var(--fs-display));
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+	margin: 0;
+}
+
 .tag {
 	@include note(var(--fs-note));
 	color: var(--ink-muted);
 	margin: clamp(1rem, 2vw, 1.5rem) 0 0;
+	max-width: 52ch;
 }
 
-// Named links, not glyphs: a website, a blog and a company page were three
-// identical chain icons. Mono words on the ground, never boxed.
+// Named links as Bebas text actions on the table, never boxed.
 .links {
 	list-style: none;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.25rem clamp(1.25rem, 2.5vw, 2rem);
-	margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+	gap: 0 clamp(1.25rem, 2.5vw, 2rem);
+	margin: clamp(1.25rem, 2.5vw, 1.75rem) 0 0;
 	padding: 0;
 }
 
 .link {
-	display: inline-block;
-	// Block padding clears the 24px target minimum.
-	padding: 0.5em 0 0.4em;
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
 	@include action(var(--fs-action));
-	color: var(--ink-dim);
-	text-decoration: underline;
-	text-decoration-color: var(--rule-strong);
-	text-underline-offset: 0.3em;
+	color: var(--ink-soft);
+	text-decoration: none;
 	overflow-wrap: anywhere;
-	transition: color 0.2s, text-decoration-color 0.2s;
+	transition: color 0.2s;
 
-	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);
-		text-decoration-color: currentColor;
-	}
-
-	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap-tight);
 	}
 }
 
+@media (hover: hover) {
+	.link:hover {
+		color: var(--color-accent-hot);
+	}
+}
+
+// The reading column: a measure, ragged, never justified.
 .bio {
 	margin-top: clamp(2rem, 4vw, 3rem);
+	max-width: 62ch;
 
 	p {
-		@include prose(var(--fs-lede), 1.7);
+		@include prose(var(--fs-body-lg), 1.75);
 		color: var(--ink-strong);
 		margin: 0 0 1.1rem;
-		// No character cap: the 0.62fr column beside the portrait IS the measure.
-		// Ragged, never justified: Special Elite is monospaced in feel, and
-		// justified it opened rivers down the whole bio.
 		text-align: left;
 		hyphens: manual;
 
@@ -109,28 +122,64 @@
 }
 
 .sessions {
-	margin-top: clamp(2.5rem, 5vw, 4rem);
+	margin-top: clamp(3rem, 6vw, 4.5rem);
 }
 
-// Open-field rows with NO reach state — a talk here opens nothing, so it takes
-// `.field-row` and neither modifier.
-.sessionRow {
-	--field-step: clamp(1.1rem, 2vw, 1.5rem);
+// Each talk a paper slip on the table.
+.slips {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: clamp(1.5rem, 3vw, 2.25rem);
+	margin: 0;
+	padding: 0;
+	max-width: 44rem;
 }
 
-.sessionName {
-	@include row-title;
+.slip {
+	background: var(--paper);
+	color: var(--paper-ink);
+	box-shadow: var(--paper-shadow);
+	padding: clamp(1.1rem, 2.4vw, 1.75rem) clamp(1.1rem, 2.6vw, 2rem);
+}
+
+.slipTitle {
+	@include row-title(var(--fs-title-sm));
+	color: var(--paper-ink);
 	margin: 0;
 }
 
-.sessionDesc {
-	@include prose(var(--fs-ui), 1.6);
-	color: var(--ink-dim);
-	max-width: 56ch;
-	margin: 0.5rem 0 0;
-	// Ragged like the bio above it — one sheet, one treatment.
-	text-align: left;
-	hyphens: manual;
+.slipDesc {
+	margin-top: 0.85rem;
+
+	p {
+		@include prose(var(--fs-ui), 1.65);
+		color: var(--paper-ink);
+		margin: 0 0 0.75rem;
+		text-align: left;
+		hyphens: manual;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
+
+@media (max-width: 860px) {
+	.split {
+		grid-template-columns: 1fr;
+		gap: clamp(2.25rem, 6vw, 3rem);
+	}
+
+	.printCol {
+		position: static;
+	}
+
+	// Capped, or at a tablet width the portrait alone filled the screen and
+	// pushed the name below the fold.
+	.print {
+		max-width: min(20rem, 82%);
+	}
 }
 
 @media (max-width: 600px) {

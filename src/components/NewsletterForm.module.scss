@@ -1,8 +1,10 @@
 @use '../styles/type' as *;
 
 // The form as a card on the table: paper, black ink, the field a typed
-// underline, the one red fill beside it. Paper and ink are the darkroom
-// tokens (BaseLayout.scss); contrast on --paper uses --paper-ink(-dim).
+// underline, a black fill beside it (red is the header's Tickets plus one
+// fill per screen, and on `/` that is the hero's). Paper and ink are the
+// darkroom tokens (BaseLayout.scss); contrast on --paper uses
+// --paper-ink(-dim).
 .wrapper {
 	position: relative;
 	display: flex;
@@ -91,19 +93,20 @@
 .button {
 	flex-shrink: 0;
 	padding: 0.95rem 1.75rem 0.8rem;
-	background: var(--color-accent);
+	background: var(--paper-ink);
 	color: var(--color-text);
-	border: 1px solid var(--color-accent);
+	border: 1px solid var(--paper-ink);
 	border-radius: var(--radius);
 	@include cta-label;
 	cursor: pointer;
 	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 	white-space: nowrap;
 
-	// On paper the hover inverts to black (white would vanish on the card).
+	// Hover inverts: the card's paper with the ink label, the border holding
+	// the button's edge.
 	&:hover:not(:disabled) {
-		background: var(--paper-ink);
-		border-color: var(--paper-ink);
+		background: var(--paper);
+		color: var(--paper-ink);
 	}
 
 	&:focus-visible {
