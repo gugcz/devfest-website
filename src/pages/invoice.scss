@@ -18,6 +18,15 @@
 	font-size: var(--fs-h2);
 }
 
+// The note's last line sits on the title's line, not hanging above it.
+.head-rule {
+	align-items: last baseline;
+}
+
+.head-rule .head-rule-note {
+	margin-bottom: 0;
+}
+
 .invoice-steps {
 	list-style: none;
 	margin: 0;
@@ -46,10 +55,10 @@
 	display: grid;
 	grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
 	gap: clamp(2.5rem, 5vw, 5rem);
-	align-items: end;
+	align-items: start;
 }
 
-// The sign-off sits beside the form, on its last line.
+// The sign-off sits beside the form, level with its top edge.
 .invoice-aside :global(.end-line) {
 	margin: 0;
 	flex-direction: column;

@@ -119,9 +119,12 @@
 	gap: 0.9rem;
 }
 
-// Black on the red fill: white clears AA there only as large text.
+// White on the red fill clears AA only as large text: the format and size
+// are set in the button's own Bebas at --fs-cta and its colour.
 .btn-primary .kit-doc-size {
-	color: var(--on-accent);
+	font: inherit;
+	color: inherit;
+	letter-spacing: inherit;
 }
 
 .kit-doc-size {

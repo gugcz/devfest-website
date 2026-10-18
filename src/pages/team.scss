@@ -4,7 +4,8 @@
 // on a phone. Each print sits at its own small tilt; the codename is one
 // line of tape over its top-left corner.
 .crew {
-	padding: var(--section-y-tight) var(--gutter);
+	// Straight off the subpage hero: its bottom padding is the pause.
+	padding: 0 var(--gutter) var(--section-y-tight);
 	background: var(--color-bg);
 }
 
@@ -39,15 +40,19 @@
 	padding: 0.6rem 0.6rem 0;
 }
 
-// The codename: one line of tape over the top-left corner of every print.
+// The codename on tape over the top-left corner of every print. Never cut:
+// a codename longer than the print wraps to a second line, centred on the
+// print's top edge.
 .crew-alias {
 	margin: 0;
-	top: -0.9rem;
+	top: 0;
 	left: 1.1rem;
 	--tape-tilt: -2deg;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	transform: translateY(-50%) rotate(var(--tape-tilt));
+	white-space: normal;
+	overflow: visible;
+	text-overflow: clip;
+	text-wrap: balance;
 }
 
 // The photo well. `.mugshot` is also the hook team.astro's script queries.
@@ -219,10 +224,10 @@
 	}
 
 	.crew-alias {
-		left: 0.4rem;
-		max-width: calc(100% - 0.8rem);
-		font-size: var(--fs-label);
-		padding: 0.3rem 0.55rem 0.25rem;
+		left: 0.2rem;
+		max-width: calc(100% - 0.4rem);
+		font-size: var(--fs-label-sm);
+		padding: 0.25rem 0.45rem 0.2rem;
 	}
 }
 

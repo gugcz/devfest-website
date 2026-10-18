@@ -108,6 +108,7 @@
 	display: grid;
 	gap: 0.75rem 1.25rem;
 	align-items: stretch;
+	isolation: isolate;
 }
 
 // One room picked: a column the width of a slip, not of the page.
@@ -197,31 +198,29 @@
 	padding: 0.875rem 1rem 1rem;
 	border: 0;
 	border-radius: 0;
-	background: var(--paper);
+	// Flat paper: --paper laid over the black so the slip is opaque, one
+	// even tone, whatever lies under it.
+	background: linear-gradient(var(--paper), var(--paper)), var(--color-bg);
 	color: var(--paper-ink);
-	// The contact edge of --paper-shadow only: its long drop fell across the
-	// neighbouring slips as a grey wash, slips sit too close for it.
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
 	text-align: left;
 	font: inherit;
 	cursor: pointer;
+
+	// The print's shadow, set under every slip on the sheet (the grid and
+	// the list isolate): a neighbour's long drop never lands on paper.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		box-shadow: var(--paper-shadow);
+		pointer-events: none;
+	}
 
 	// No lift under the pointer: nothing slides. Focus draws the ring.
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
 		outline-offset: var(--focus-gap-lg);
-	}
-}
-
-// A slip that runs past the rows beside it (a workshop): the slip keeps its
-// own height, a dim panel holds the rest of its span.
-.span {
-	display: flex;
-	flex-direction: column;
-	background: var(--panel);
-
-	> .slip {
-		width: 100%;
 	}
 }
 
@@ -338,6 +337,7 @@
 	margin: 0;
 	padding: 0;
 	list-style: none;
+	isolation: isolate;
 
 	> li + li {
 		margin-top: 1rem;
@@ -365,6 +365,12 @@
 		&:last-child {
 			margin-bottom: 0;
 		}
+	}
+
+	// Time and room on the first line, track and length always on their own.
+	.edge {
+		flex-direction: column;
+		align-items: flex-start;
 	}
 
 	.title {

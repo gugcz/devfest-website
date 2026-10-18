@@ -13,11 +13,17 @@ import { initials } from '../lib/speakers';
 import { byStart, formatMinutes, placement } from '../lib/agenda';
 import { fetchLineup, speakersById } from '../lib/lineup';
 import { useRemote } from '../lib/useRemote';
+import { useMediaQuery } from '../lib/useMediaQuery';
 import { TALK_PARAM } from '../lib/share';
 import SessionDetail from './SessionDetail';
 import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
+
+/** Width at or below which the list waits for a search or a filter: the
+ * timetable above already lists every talk, a second copy of 21 slips under
+ * it is a long scroll on a phone. */
+const NARROW = '(max-width: 720px)';
 
 /** The talk's time (`10:00–10:45`, null before it is scheduled) and its
  * room. Sessionize can leave `room` blank and carry only the id, hence the
@@ -111,6 +117,7 @@ export default function Sessions() {
 	const [selected, setSelected] = useState<Session | null>(null);
 	const [query, setQuery] = useState('');
 	const [filters, setFilters] = useState<SessionFilters>({});
+	const isNarrow = useMediaQuery(NARROW);
 
 	// Programme order: start time, then Sessionize's own order for talks not
 	// yet slotted. It used to be shuffled per load, which also reshuffled the
@@ -129,6 +136,8 @@ export default function Sessions() {
 	);
 	const active = hasActiveFilters(query, filters);
 	const anyChip = Object.values(filters).some((values) => values.length > 0);
+	// Phone, nothing asked yet: the search alone, no slips.
+	const collapsed = isNarrow && !active;
 
 	const open = useCallback((session: Session) => setSelected(session), []);
 	const close = useCallback(() => setSelected(null), []);
@@ -179,7 +188,12 @@ export default function Sessions() {
 
 	return (
 		<>
-			<div className={s.filters}>
+			<div className={`${s.filters} ${collapsed ? s.filtersAlone : ''}`}>
+				{collapsed && (
+					<label htmlFor="sessions-search" className={s.invite}>
+						Search all {sessions.length} talks
+					</label>
+				)}
 				<div className={s.searchRow}>
 					<div className={s.search}>
 						<svg className={s.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
@@ -187,17 +201,20 @@ export default function Sessions() {
 							<path d="m20 20-3.2-3.2" strokeLinecap="round" />
 						</svg>
 						<input
+							id="sessions-search"
 							type="search"
 							className={s.searchInput}
-							placeholder="Search talks, speakers, topics"
+							placeholder="Talks, speakers, topics"
 							aria-label="Search sessions"
 							value={query}
 							onChange={(e) => setQuery(e.target.value)}
 						/>
 					</div>
-					<output className={s.count}>
-						{filtered.length} {filtered.length === 1 ? 'session' : 'sessions'}
-					</output>
+					{!collapsed && (
+						<output className={s.count}>
+							{filtered.length} {filtered.length === 1 ? 'session' : 'sessions'}
+						</output>
+					)}
 				</div>
 
 				{facets.map((facet) => (
@@ -231,7 +248,7 @@ export default function Sessions() {
 				)}
 			</div>
 
-			{filtered.length === 0 ? (
+			{!collapsed && (filtered.length === 0 ? (
 				<EmptyState>
 					<p>
 						{anyChip
@@ -253,7 +270,7 @@ export default function Sessions() {
 						/>
 					))}
 				</ul>
-			)}
+			))}
 			{selected && (
 				<SessionDetail
 					session={selected}

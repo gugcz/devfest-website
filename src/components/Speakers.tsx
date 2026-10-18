@@ -86,7 +86,7 @@ function usePortraitMorph(
 
 /** Every speaker as a print on one grid, in running order (`SpeakerTile`),
  * the opening keynote the large print, then the hosts in their own row of
- * smaller prints. Pressing a print opens the sheet; its photo morphs into the
+ * the same prints. Pressing a print opens the sheet; its photo morphs into the
  * sheet's. The way on (agenda, tickets) is the page's `EndLine`, under the
  * island. Rendered by `Speakers`. */
 export function SpeakerLineup({
@@ -118,12 +118,7 @@ export function SpeakerLineup({
 
 	return (
 		<>
-			{/* On a phone (two columns) the keynote spans the row for an odd
-			    count and takes one cell for an even one: the rows stay whole. */}
-			<ul
-				className={`${tile.grid} ${tile.sheet} ${talks.length % 2 === 0 ? tile.keynoteCell : ''}`}
-				role="list"
-			>
+			<ul className={`${tile.grid} ${tile.sheet}`} role="list">
 				{talks.map((billing, i) => tileFor(billing, i))}
 			</ul>
 			{hosts.length > 0 && (
@@ -131,7 +126,7 @@ export function SpeakerLineup({
 					<h3 id="lineup-hosts" className={tile.hostsLabel}>
 						Hosts
 					</h3>
-					<ul className={`${tile.grid} ${tile.hosts}`} role="list" aria-labelledby="lineup-hosts">
+					<ul className={`${tile.grid} ${tile.sheet}`} role="list" aria-labelledby="lineup-hosts">
 						{hosts.map((billing, i) => tileFor(billing, talks.length + i))}
 					</ul>
 				</>

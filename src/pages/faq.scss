@@ -1,7 +1,7 @@
 @use '../styles/type' as *;
 
 // The category index pinned on the left, the questions on the right as
-// straight paper slips: one width, one left edge.
+// straight rows on the black table: only the open question is a paper slip.
 .faq {
 	display: grid;
 	grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
@@ -91,13 +91,31 @@
 .faq-slips {
 	display: flex;
 	flex-direction: column;
-	gap: 1.6rem;
+	gap: 0.35rem;
 }
 
-/* ---- Slips ---- */
+/* ---- Rows and the open slip ---- */
+// A closed question is a straight row on black, set apart by space alone.
+// The open one becomes a paper slip holding its answer.
 .faq-item {
 	--faq-pad: 1.75rem;
+	--faq-ink: var(--color-text);
+	--faq-ink-dim: var(--ink-dim);
+	position: relative;
 	padding: 0;
+	color: var(--faq-ink);
+}
+
+.faq-item[open] {
+	--faq-ink: var(--paper-ink);
+	--faq-ink-dim: var(--paper-ink-dim);
+	background: var(--paper);
+	box-shadow: var(--paper-shadow);
+	margin-block: 0.9rem;
+}
+
+.faq-item[open]:first-child {
+	margin-top: 0;
 }
 
 // Number, question, marker. Red text on paper misses 4.5:1, so the reach
@@ -126,7 +144,7 @@
 	}
 
 	&:focus-visible .faq-marker {
-		color: var(--paper-ink);
+		color: var(--faq-ink);
 	}
 }
 
@@ -136,19 +154,19 @@
 	}
 
 	.faq-q:hover .faq-marker {
-		color: var(--paper-ink);
+		color: var(--faq-ink);
 	}
 }
 
 .faq-no {
 	@include mono(var(--fs-label-xs), 0.1em);
-	color: var(--paper-ink-dim);
+	color: var(--faq-ink-dim);
 	white-space: nowrap;
 }
 
 .faq-q-text {
 	@include prose(var(--fs-lede), 1.3);
-	color: var(--paper-ink);
+	color: var(--faq-ink);
 	text-decoration-thickness: 1px;
 	text-underline-offset: 4px;
 }
@@ -159,7 +177,7 @@
 	align-self: center;
 	width: 0.9rem;
 	height: 0.9rem;
-	color: var(--paper-ink-dim);
+	color: var(--faq-ink-dim);
 	transition:
 		color 0.2s,
 		transform 0.25s ease;

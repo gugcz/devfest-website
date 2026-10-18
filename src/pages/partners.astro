@@ -24,16 +24,17 @@ const walls: Wall[] = [
 
 // How much larger than its reference box a tier sets on this page. Passed to
 // `partnerLogo` (not a CSS `--logo-scale`) so the srcset is cut for the size
-// the mark actually renders at. Each tier's scaled box stays strictly smaller
-// than the one above it, so the rank reads from size alone; the phone caps
-// in partners.scss keep that order on a narrow column.
+// the mark actually renders at. Each scaled box fits its grid cell at 1440, so
+// no mark is clamped by its cell and every mark in a tier keeps the same ink
+// area; each tier's box stays smaller than the one above it, so the rank reads
+// from size alone. The narrower widths step whole tiers down in partners.scss.
 const TIER_SCALE: Record<string, number> = {
 	platinum: 1.5,
-	diamond: 1.9,
-	gold: 1.6,
-	silver: 1.6,
-	community: 1.5,
-	media: 1.5,
+	diamond: 1.5,
+	gold: 1.28,
+	silver: 1.28,
+	community: 1.2,
+	media: 1.2,
 };
 
 const DECK_READY = true;
@@ -79,9 +80,6 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 									);
 								})}
 							</ul>
-							{wall.id === 'platinum' && wall.partners.length === 1 && (
-								<p class="tier-credit">Platinum partner of DevFest.cz 2026.</p>
-							)}
 						</div>
 					</section>
 				))}

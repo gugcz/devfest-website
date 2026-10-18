@@ -23,15 +23,15 @@
 	margin: 0 auto;
 }
 
-// With a print the right column stacks the print over the note; the title
-// spans both rows and sits on the floor, so the note's last line lands on
-// the title's last line on every subpage, print or not.
+// With a print the title still starts where every subpage title starts:
+// the print sits beside it in the right column, capped to the title block's
+// height (`.hero-print-slot`), and the note drops under the print.
 .subpage-hero--print .hero-content {
-	grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
 	grid-template-areas:
 		'title print'
-		'title side';
-	row-gap: 2.25rem;
+		'.     side';
+	align-items: start;
+	row-gap: 2rem;
 }
 
 .hero-title {
@@ -63,20 +63,32 @@
 	margin: 1.25rem 0 0;
 }
 
-.hero-print {
+// The slot is as tall as the title row and adds no height of its own (the
+// print inside is out of flow), so the print can never push the title down.
+.hero-print-slot {
 	grid-area: print;
-	align-self: end;
+	position: relative;
+	align-self: stretch;
+}
+
+.hero-print {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	aspect-ratio: 5 / 4;
+	display: flex;
+	flex-direction: column;
 	--tilt: var(--tilt-3);
 	margin: 0;
 
 	.paper-photo {
-		aspect-ratio: 4 / 3;
+		flex: 1 1 0;
+		min-height: 0;
 	}
-}
 
-@media (max-width: 1100px) {
-	.subpage-hero--print .hero-content {
-		grid-template-columns: minmax(0, 1fr) minmax(0, 17rem);
+	.paper-edge {
+		padding-block: 0.5rem 0.6rem;
 	}
 }
 
@@ -91,9 +103,21 @@
 		gap: 1.5rem;
 	}
 
+	.hero-print-slot {
+		position: static;
+	}
+
 	.hero-print {
-		width: 70%;
+		position: static;
+		width: 60%;
+		height: auto;
+		aspect-ratio: auto;
+		display: block;
 		margin: 0 0 0 auto;
+
+		.paper-photo {
+			aspect-ratio: 4 / 3;
+		}
 	}
 
 	.hero-lede {
@@ -105,7 +129,7 @@
 // A phone opens on type alone: the print would push the page's first row
 // under the fold.
 @media (max-width: 599.98px) {
-	.hero-print {
+	.hero-print-slot {
 		display: none;
 	}
 }

@@ -11,8 +11,10 @@
 	// #tickets is the site's most-followed anchor, so `.anchor-target`
 	// (BaseLayout.scss) cancels `--section-air`; stating it here keeps the
 	// two in step.
-	--section-air: var(--section-y-tight);
-	padding: var(--section-air) var(--gutter) var(--section-y-tight);
+	// The home rhythm (`.sec` in index.scss): one section gap above, none
+	// below; the next section's head is the cut.
+	--section-air: var(--section-y);
+	padding: var(--section-air) var(--gutter) 0;
 	position: relative;
 	z-index: 1;
 }
@@ -44,9 +46,12 @@
 
 // With a wave on sale: that slip first and largest on the left, the other
 // waves small beside it, stacked from the top (no empty quadrant).
+// The live slip is capped so its type fills it (no empty right half); the
+// pair spreads to the head's edges, the small slips under the note.
 .slipsLed {
 	display: grid;
-	grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+	grid-template-columns: minmax(0, 35rem) minmax(0, 28rem);
+	justify-content: space-between;
 	align-items: start;
 	gap: clamp(1.75rem, 3vw, 2.75rem) clamp(2rem, 5vw, 4.5rem);
 

@@ -161,7 +161,8 @@ export default function SpeakerTile({
 	const tilt = keynote ? 'calc(-1 * var(--tilt-1))' : TILTS[index % TILTS.length];
 	const body = (
 		<>
-			{billing.tape && (
+			{/* A host's print carries no tape: the "Hosts" label over their row says it. */}
+			{billing.tape && !billing.host && (
 				<span className="tape">
 					<span className={s.tapeFull}>{billing.tape}</span>
 					<span className={s.tapeShort}>{billing.tapeShort}</span>

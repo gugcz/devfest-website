@@ -203,7 +203,6 @@ function TalkSlip({
 	live,
 	coming,
 	showRoom,
-	spanning,
 	style,
 	onOpen,
 }: {
@@ -213,18 +212,17 @@ function TalkSlip({
 	coming: boolean;
 	/** In the list the room rides on the edge; on the sheet the column names it. */
 	showRoom: boolean;
-	/** Runs past the rows beside it (a workshop): the slip keeps its own
-	 * height and a dim panel holds the rest of the span. */
-	spanning: boolean;
 	style?: CSSProperties;
 	onOpen: (session: Session) => void;
 }) {
 	const names = speakerNames(session);
-	const slip = (
+	// A slip that runs past the rows beside it (a workshop) is one sheet of
+	// paper over its whole span: the edge and the title at its top.
+	return (
 		<button
 			type="button"
 			className={s.slip}
-			style={spanning ? undefined : style}
+			style={style}
 			onClick={() => onOpen(session)}
 			aria-label={talkLabel(session, room)}
 			data-agenda-open
@@ -240,12 +238,6 @@ function TalkSlip({
 			{names && <span className={s.who}>{names}</span>}
 			<Flag live={live} coming={coming} />
 		</button>
-	);
-	if (!spanning) return slip;
-	return (
-		<div className={s.span} style={style}>
-			{slip}
-		</div>
 	);
 }
 
@@ -309,14 +301,12 @@ function Entry({
 	session,
 	room,
 	showRoom,
-	spanning = false,
 	style,
 	sheet,
 }: {
 	session: Session;
 	room: string;
 	showRoom: boolean;
-	spanning?: boolean;
 	style?: CSSProperties;
 	sheet: SheetState;
 }) {
@@ -336,7 +326,6 @@ function Entry({
 					live={live}
 					coming={sheet.comingUpIds.has(session.id)}
 					showRoom={showRoom}
-					spanning={spanning}
 					style={style}
 					onOpen={sheet.onOpen}
 				/>
@@ -447,7 +436,6 @@ function AgendaGrid({
 			{entries.map(({ session, room, column }) => {
 				const place = placements.get(session.id);
 				const gridColumn = column === 0 && place ? bandColumns(place, columns, partition) : column + 1;
-				const spanning = place ? (line.get(place.endMin) ?? 0) - (line.get(place.startMin) ?? 0) > 1 : false;
 				const style = { gridColumn, gridRow: rowOf(session) };
 				return (
 					<Entry
@@ -455,7 +443,6 @@ function AgendaGrid({
 						session={session}
 						room={room}
 						showRoom={false}
-						spanning={spanning}
 						style={style}
 						sheet={sheet}
 					/>

@@ -19,7 +19,8 @@
 	grid-area: slip;
 	position: relative;
 	max-width: 58rem;
-	background: var(--paper);
+	// Flat paper: --paper laid over the black, opaque and one even tone.
+	background: linear-gradient(var(--paper), var(--paper)), var(--color-bg);
 	color: var(--paper-ink);
 	box-shadow: var(--paper-shadow);
 	padding: clamp(1.75rem, 4.5vw, 3.75rem) clamp(1.25rem, 4.5vw, 4rem) clamp(2rem, 5vw, 4rem);

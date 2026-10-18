@@ -145,7 +145,8 @@ export default function SessionDetail({
 					)}
 
 					<div className={s.way}>
-						<SheetTickets line="Catch this talk live" />
+						{/* A drop-in (the lounge, open all day) is not a talk to catch at a time. */}
+						<SheetTickets line={session.isServiceSession ? 'Drop in on the day' : 'Catch this talk live'} />
 					</div>
 				</div>
 			</Sheet>

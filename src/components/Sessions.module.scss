@@ -69,6 +69,20 @@
 	white-space: nowrap;
 }
 
+// Nothing under the bar yet: the section ends on it.
+.filtersAlone {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+// Phone, before a search or a filter: one line inviting the search, the
+// field and the track filter; the slips come with the first query or chip.
+.invite {
+	display: block;
+	@include note(var(--fs-note));
+	color: var(--ink-soft);
+}
+
 .facet {
 	display: flex;
 	align-items: baseline;
@@ -153,6 +167,7 @@
 	margin: 0;
 	padding: 0;
 	list-style: none;
+	isolation: isolate;
 
 	> li {
 		display: flex;
@@ -169,14 +184,24 @@
 	padding: 1.1rem 1.25rem 1.25rem;
 	border: 0;
 	border-radius: 0;
-	background: var(--paper);
+	// Flat paper: --paper laid over the black so the slip is opaque, one
+	// even tone, whatever lies under it.
+	background: linear-gradient(var(--paper), var(--paper)), var(--color-bg);
 	color: var(--paper-ink);
-	// The contact edge of --paper-shadow only: its long drop fell across the
-	// neighbouring slips as a grey wash, slips sit too close for it.
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
 	text-align: left;
 	font: inherit;
 	cursor: pointer;
+
+	// The print's shadow, set under every slip in the grid (it isolates): a
+	// neighbour's long drop never lands on paper.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		box-shadow: var(--paper-shadow);
+		pointer-events: none;
+	}
 
 	// No lift under the pointer: nothing slides. Focus draws the ring.
 	&:focus-visible {

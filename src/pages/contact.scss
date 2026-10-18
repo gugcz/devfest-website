@@ -4,7 +4,9 @@
 // general one is the large card on the left, its address marked with the red
 // grease pencil; the other two stack beside it, together exactly its height.
 .desks {
-	padding: var(--section-y-tight) var(--gutter) var(--section-y);
+	// Straight off the subpage hero: its bottom padding is the pause.
+	// The press band below opens on its own air: no second gap here.
+	padding: 0 var(--gutter);
 	background: var(--color-bg);
 }
 
@@ -12,21 +14,23 @@
 	max-width: var(--maxw);
 	margin: 0 auto;
 	display: grid;
-	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: clamp(1.5rem, 2.5vw, 2.25rem);
 	align-items: stretch;
 }
 
-// The pair splits the main card's height evenly.
+// Three inboxes, one row of equal cards: the pair joins the main card's row.
 .desk-side {
-	display: grid;
-	grid-template-rows: repeat(2, minmax(0, 1fr));
-	gap: clamp(1.5rem, 2.5vw, 2.25rem);
+	display: contents;
 }
 
+// Flat paper: the cards sit a gap apart, so the table's long soft shadow
+// would fall on the neighbouring card as a dark band, like a curl. Only the
+// tight contact shadow stays.
 .icard {
 	margin: 0;
 	padding: 1.75rem 2rem 2rem;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -40,7 +44,7 @@
 }
 
 .icard--main {
-	padding: 2.5rem 2.75rem 2.9rem;
+	padding: 1.75rem 2rem 2rem;
 }
 
 .icard-edge {
@@ -54,19 +58,11 @@
 	margin: 0;
 }
 
-.icard--main .icard-title {
-	font-size: var(--fs-h2);
-}
-
 .icard-desc {
 	@include prose(var(--fs-body), 1.5);
 	color: var(--paper-ink-dim);
 	margin: 0.75rem 0 0;
 	max-width: 34ch;
-}
-
-.icard--main .icard-desc {
-	font-size: var(--fs-lede);
 }
 
 .icard-who {
@@ -111,7 +107,6 @@
 
 	.icard-mail {
 		margin-top: 0;
-		font-size: var(--fs-head);
 		// The grease pencil underlines it instead.
 		text-decoration: none;
 	}
@@ -126,17 +121,16 @@
 
 @media (max-width: 1100px) {
 	.desks-inner {
-		grid-template-columns: minmax(0, 1fr);
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
-	.desk-side {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		grid-template-rows: none;
+	.icard--main {
+		grid-column: 1 / -1;
 	}
 }
 
 @media (max-width: 720px) {
-	.desk-side {
+	.desks-inner {
 		grid-template-columns: minmax(0, 1fr);
 	}
 
@@ -152,9 +146,6 @@
 		font-size: var(--fs-body);
 	}
 
-	.icard-mailwrap .icard-mail {
-		font-size: var(--fs-title-sm);
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {

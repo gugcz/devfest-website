@@ -7,7 +7,8 @@
 // `partnerLogo`); the grid only sets how many share a row. The caps below
 // keep every tier smaller than the one above it at every width.
 .tiers {
-	padding: var(--section-y-tight) var(--gutter) 0;
+	// Straight off the subpage hero: its bottom padding is the pause.
+	padding: 0 var(--gutter);
 	background: var(--color-bg);
 }
 
@@ -25,32 +26,18 @@
 	padding-bottom: clamp(4rem, 7vw, 6.5rem);
 }
 
-// A plain label, not a poster head: the logos are the headline.
+// A plain label, not a poster head: the logos are the headline. The same
+// label as the home partner strip (`.partners-label` in index.scss).
 .tier-label {
-	@include action;
-	color: var(--ink-soft);
+	@include note(var(--fs-note));
+	font-weight: normal;
+	color: var(--ink-meta);
 	margin: 0;
 	padding-top: 0.35rem;
 }
 
 .tier-body {
 	min-width: 0;
-}
-
-// The one Platinum mark with its credit beside it, so the row reads as one
-// line across the table instead of a box beside a void.
-.tier-platinum .tier-body {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 1.5rem clamp(2rem, 4vw, 4rem);
-}
-
-.tier-credit {
-	@include note(var(--fs-lede));
-	color: var(--ink-soft);
-	margin: 0;
-	max-width: 18ch;
 }
 
 .wall {
@@ -104,8 +91,11 @@
 	}
 
 	// Dark ink made for a light ground: a straight paper chip on the table.
-	// Overrides the mixin's plain white card.
-	.logo--dark {
+	// Overrides the mixin's plain white card. The chip grows around the mark
+	// (content-box), so its padding never eats the ink area the mark is sized
+	// for.
+	.logo.logo--dark {
+		box-sizing: content-box;
 		background: var(--paper);
 		padding: 0.75rem 1.1rem;
 		box-shadow: var(--paper-shadow);
@@ -119,18 +109,6 @@
 	}
 }
 
-// No Diamond mark outruns the Platinum one: a very wide wordmark (GDG)
-// would otherwise fill its whole cell.
-.tier-diamond .logo {
-	max-width: min(100%, 32rem);
-}
-
-// Nor does a wide off-ladder wordmark outrun the Silver one.
-.tier-community .logo,
-.tier-media .logo {
-	max-width: min(100%, 11rem);
-}
-
 @media (max-width: 1100px) {
 	// The label goes over its marks, so Gold keeps three wide cells.
 	.tier {
@@ -140,17 +118,19 @@
 	.tier-label {
 		padding-top: 0;
 	}
+
+	// Narrower cells: the two grid tiers step down whole, so the widest
+	// wordmark still fits its cell and keeps its tier's area.
+	.tier-diamond .wall,
+	.tier-gold .wall {
+		--logo-scale: 0.86;
+	}
 }
 
 @media (max-width: 720px) {
 	.tier {
 		gap: 1.5rem;
 		padding-bottom: 4.5rem;
-	}
-
-	.tier-credit {
-		font-size: var(--fs-body);
-		max-width: none;
 	}
 
 	.wall {
@@ -164,23 +144,27 @@
 		--logo-scale: 0.6;
 	}
 
-	.tier-diamond .logo {
-		max-width: 72cqi;
-	}
-
+	// Gold runs as a wrapped row: two fixed cells would squeeze the widest
+	// wordmark and leave the rest of the tier illegibly small.
 	.tier-gold .wall {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 2.5rem 1.75rem;
+		display: flex;
+		gap: 2.25rem 2rem;
+		--logo-scale: 0.75;
 	}
 
-	// The lower rows step down again so each stays under Gold.
+	// The lower rows step down again so each stays under Gold, but no
+	// further than a phone can still read.
 	.tier-silver .wall {
-		--logo-scale: 0.65;
+		--logo-scale: 0.7;
 	}
 
 	.tier-community .wall,
 	.tier-media .wall {
-		--logo-scale: 0.5;
+		--logo-scale: 0.8;
+	}
+
+	.logo-item .logo.logo--dark {
+		padding: 0.5rem 0.7rem;
 	}
 }
 

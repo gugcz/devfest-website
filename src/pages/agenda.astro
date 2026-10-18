@@ -63,13 +63,21 @@ import Sessions from '../components/Sessions.tsx';
 </BaseLayout>
 
 <style>
-	/* The timetable and the list under it are one programme: a tight step
-	   between them, not two full section airs. */
+	/* One gap between two sections, never two paddings stacked: the timetable
+	   hands its bottom air to the list's opening, and the list hands its own
+	   to the closer's. */
 	.agenda-sheet {
-		padding-bottom: var(--section-y-tight);
+		padding-bottom: 0;
 	}
 
 	.agenda-talks {
-		padding-top: var(--section-y-tight);
+		padding-bottom: 0;
+	}
+
+	/* Phone: the list under the head waits for a search, and says so itself. */
+	@media (max-width: 720px) {
+		.agenda-talks .head-rule-note {
+			display: none;
+		}
 	}
 </style>

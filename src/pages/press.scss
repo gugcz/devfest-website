@@ -4,7 +4,7 @@
 
 /* ===================== IN THE NEWS ===================== */
 .press {
-	--section-air: var(--section-y-tight);
+	--section-air: var(--section-y);
 	padding: var(--section-air) var(--gutter) var(--section-y);
 	background: var(--color-bg);
 }
@@ -19,7 +19,8 @@
 	display: grid;
 	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
 	gap: clamp(2.5rem, 5vw, 5rem);
-	align-items: center;
+	// The print's top edge lines up with the first clipping's.
+	align-items: start;
 }
 
 // A clipping: a straight slip of newsprint, cut square.
@@ -40,7 +41,9 @@
 	color: var(--paper-ink);
 	padding: 1.9rem 2.1rem;
 	text-decoration: none;
-	box-shadow: var(--paper-shadow);
+	// Flat paper: the table's long soft shadow would fall on the clipping
+	// above as a dark band, like a curl. Only the tight contact shadow stays.
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
@@ -52,10 +55,11 @@
 	padding: 0;
 }
 
-// Scraped Czech: Bebas Neue sets ř/ě/č, so the headline is a row title;
+// Scraped Czech: Bebas Neue sets ř/ě/č, so the headline is a row title, one
+// step under a list row so a long headline stays within three lines;
 // Special Elite ships a latin subset, so the standfirst stays mono.
 .clip-title {
-	@include row-title(var(--fs-row-sm));
+	@include row-title(var(--fs-head));
 	line-height: 1.05;
 	color: var(--paper-ink);
 	text-wrap: balance;
@@ -91,7 +95,7 @@
 // its tape top-left like every print.
 .press-print {
 	--tilt: var(--tilt-2);
-	margin: 1.5rem 0 0;
+	margin: 0;
 
 	.paper-photo {
 		aspect-ratio: 3 / 2;
@@ -150,10 +154,11 @@
 	margin-top: 2rem;
 }
 
-// Black on the red fill: white clears AA there only as large text.
+// White on the red fill clears AA only as large text: the format and size
+// are set in the button's own Bebas at --fs-cta and its colour.
 .kit-manual-size {
-	@include mono(var(--fs-label), 0.1em);
-	color: var(--on-accent);
+	font: inherit;
+	color: inherit;
 }
 
 .variants {
@@ -228,6 +233,12 @@
 @media (max-width: 720px) {
 	.clip-link {
 		padding: 1.5rem 1.4rem;
+	}
+
+	// A phone column fits a few Bebas words a line: the headline steps down
+	// again so it still reads in three or four lines.
+	.clip-title {
+		font-size: var(--fs-title-sm);
 	}
 
 	.press-print {

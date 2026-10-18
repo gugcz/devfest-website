@@ -18,9 +18,12 @@
 	padding-top: 1rem;
 }
 
+// A row's prints are one height: the caption takes the slack and the edge
+// sits on the print's bottom margin.
 .cell {
 	min-width: 0;
-	align-self: start;
+	display: flex;
+	flex-direction: column;
 }
 
 .tile {
@@ -34,6 +37,9 @@
 	border: 0;
 	border-radius: 0;
 	cursor: pointer;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
@@ -99,7 +105,9 @@
 }
 
 .caption {
-	display: block;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 	padding: 0.9rem 0.25rem 0;
 }
 
@@ -137,8 +145,14 @@
 	margin-top: 0.4rem;
 }
 
-.edge {
-	margin-top: 0.4rem;
+// Pinned to the print's bottom margin; the tallest print in a row keeps
+// one step (0.4rem) between the last line and its edge.
+.caption > .edge {
+	margin-top: auto;
+}
+
+.caption > :nth-last-child(2) {
+	margin-bottom: 0.4rem;
 }
 
 // THE OPENING KEYNOTE: two columns by two rows, stretched to the rows beside
@@ -161,6 +175,10 @@
 		flex: 1;
 		min-height: 26rem;
 		aspect-ratio: auto;
+	}
+
+	.caption {
+		flex: none;
 	}
 
 	.name {
@@ -235,37 +253,17 @@
 		gap: 0.4rem;
 	}
 
-	// The keynote stays the large print: the full width, one square row;
-	// one cell like the rest where that leaves the rows whole
-	// (`.keynoteCell`, an even count).
-	.keynoteCell .keynote {
-		grid-column: auto;
-
-		.photo {
-			aspect-ratio: 4 / 5;
-		}
-
-		.name {
-			font-size: var(--fs-title-sm);
-		}
-
-		.talk {
-			font-size: var(--fs-note-sm);
-		}
-	}
-
+	// The keynote stays the large print: the full width, one square row.
 	.keynote {
 		grid-column: 1 / -1;
 		grid-row: auto;
-		align-self: start;
-		display: block;
 
 		.tile {
-			display: block;
 			padding: 0.65rem 0.65rem 0;
 		}
 
 		.photo {
+			flex: none;
 			min-height: 0;
 			aspect-ratio: 1 / 1;
 		}
@@ -290,7 +288,7 @@
 	}
 }
 
-// THE HOSTS: their own row under the lineup, a plain label and smaller
+// THE HOSTS: their own row under the lineup, a plain label and the same
 // prints, so the speakers above fill whole rows.
 .hostsLabel {
 	@include note(var(--fs-note));
@@ -299,33 +297,9 @@
 	margin: clamp(4rem, 6vw, 5.5rem) 0 1.75rem;
 }
 
-.hosts {
-	grid-template-columns: repeat(6, minmax(0, 1fr));
-	gap: 3rem clamp(1.25rem, 2vw, 1.75rem);
-
-	.name {
-		font-size: var(--fs-title-sm);
-	}
-
-	.talk {
-		font-size: var(--fs-note-sm);
-	}
-}
-
-@media (max-width: 1100px) {
-	.hosts {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-	}
-}
-
 @media (max-width: 720px) {
 	.hostsLabel {
 		margin-top: 3.5rem;
-	}
-
-	.hosts {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 2.25rem 0.75rem;
 	}
 }
 

@@ -15,8 +15,12 @@
 
 	// Dark ink made for a light ground would vanish on black: it sits on a
 	// paper-white card, the manual's "paper card" for partner marks.
+	// `content-box` so the card grows around the mark: padding inside the
+	// width would shrink the ink a size step.
 	&.logo--dark {
+		box-sizing: content-box;
 		background: var(--color-text);
 		padding: 0.6rem 0.9rem;
+		max-width: calc(100% - 1.8rem);
 	}
 }

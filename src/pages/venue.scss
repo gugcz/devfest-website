@@ -55,11 +55,12 @@
 }
 
 /* ---- The route: index cards ---- */
+// Two steps side by side at one height, the flight under them full width.
 .venue-cards {
 	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 3.5rem clamp(1.75rem, 3vw, 3rem);
-	align-items: start;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: clamp(1.75rem, 3vw, 3rem);
+	align-items: stretch;
 }
 
 // The steps join the card grid; the list stays an ordered list for AT.
@@ -69,6 +70,9 @@
 }
 
 .venue-card {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 	padding: 1.6rem 1.75rem 1.9rem;
 
 	p {
@@ -86,22 +90,6 @@
 		font-weight: 400;
 		color: var(--paper-ink);
 		background: linear-gradient(transparent 62%, rgba(0, 0, 0, 0.1) 62%);
-	}
-}
-
-// The card's top margin: what kind of leg (typed), and its place (figure).
-.venue-card .venue-card-edge {
-	display: flex;
-	justify-content: space-between;
-	align-items: baseline;
-	gap: 0.75rem;
-	margin-bottom: 1.35rem;
-	@include note(var(--fs-note-sm));
-	color: var(--paper-ink-dim);
-
-	.fig {
-		font-size: var(--fs-label-xs);
-		letter-spacing: 0.12em;
 	}
 }
 
@@ -139,8 +127,10 @@
 
 // The site's text action, in paper ink. Red text on paper misses 4.5:1, so
 // the reach state is an underline in the same ink.
+// Held to the card's foot, so both steps end on one line.
 .action.venue-go {
-	margin-top: 0.75rem;
+	margin-top: auto;
+	padding-top: 1.25rem;
 	color: var(--paper-ink);
 	text-decoration-thickness: 1px;
 	text-underline-offset: 4px;
@@ -162,15 +152,29 @@
 	}
 }
 
+// The flight is the leg before the route: one straight row across.
 .venue-fly {
-	grid-column: 2 / 4;
+	grid-column: 1 / -1;
+	display: grid;
+	grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+	gap: 0.75rem clamp(1.75rem, 3vw, 3rem);
+	align-items: baseline;
 
 	.venue-card-title {
-		margin-top: 0;
+		margin: 0;
+	}
+
+	p {
+		max-width: 62ch;
 	}
 }
 
 /* ---- Closer ---- */
+// The last band hands its closing air to the closer: one beat, not two.
+.venue-door-band {
+	padding-bottom: 0;
+}
+
 // The page signs off at poster scale, like its section heads.
 :global(.venue-closer .closer-title) {
 	font-size: var(--fs-section);
@@ -224,14 +228,14 @@
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
-	.venue-fly {
-		grid-column: 2;
-		margin-top: 0;
-	}
-
 	.venue-door {
 		grid-template-columns: minmax(0, 1fr);
 		gap: 3rem;
+	}
+
+	// Stacked, the heading leads and the photograph follows.
+	.venue-door-text {
+		order: -1;
 	}
 }
 
@@ -250,7 +254,7 @@
 	}
 
 	.venue-fly {
-		grid-column: auto;
+		grid-template-columns: minmax(0, 1fr);
 	}
 }
 

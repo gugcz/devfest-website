@@ -101,7 +101,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 									   collapsed meant the page a speaker and a journalist
 									   both land on showed no answer at all. One open item is
 									   enough to show what an answer looks like. */
-									<details class="paper faq-item" open={groupIndex === 0 && itemIndex === 0}>
+									<details class="faq-item" open={groupIndex === 0 && itemIndex === 0}>
 										<summary class="faq-q">
 											<span class="faq-no">Q {item.num}</span>
 											<span class="faq-q-text">{item.q}</span>

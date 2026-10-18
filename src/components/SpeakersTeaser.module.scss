@@ -6,7 +6,9 @@
 .teaser {
 	position: relative;
 	width: 100%;
-	padding: var(--section-y-tight) var(--gutter);
+	// The home rhythm (`.sec` in index.scss): one section gap above, none
+	// below; the next section's head is the cut.
+	padding: var(--section-y) var(--gutter) 0;
 	background: var(--color-bg);
 }
 

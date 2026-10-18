@@ -157,8 +157,11 @@
 	--paper-ink: #000000;
 	// 5.3:1 on --paper: the floor for small mono edge labels on a print.
 	--paper-ink-dim: rgba(0, 0, 0, 0.66);
-	// A print lifted off the table: one deep drop, one contact shadow.
-	--paper-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.7);
+	// A print lifted off the table: one deep drop, one contact shadow. The
+	// drop is pulled in (negative spread) so it stays under its own print: at
+	// full width it fell across the neighbouring print as a grey band, like
+	// a curl in the paper.
+	--paper-shadow: 0 1.5rem 1.5rem -1rem rgba(0, 0, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.7);
 	// Tilts, from barely set down to tossed. Never more than --tilt-3.
 	--tilt-1: 0.8deg;
 	--tilt-2: 1.4deg;
@@ -173,11 +176,9 @@
 	--ink-monogram: rgba(255, 255, 255, 0.46);
 	--ink-monogram-sm: rgba(255, 255, 255, 0.66);
 
-	// The spotlight pool. Its vertical radius keeps the 72% stop inside the
-	// box (38 / 50 > 0.72), so the pool is gone before the top and bottom
-	// edges: at 70% it still glowed at the top edge and stepped against the
-	// section above it.
-	--lit: radial-gradient(ellipse 78% 50% at 50% 38%, rgba(255, 255, 255, 0.05), transparent 72%);
+	// The table is flat black: the spotlight pool read as a grey haze on
+	// every subpage. Kept as a no-op layer for callers that still stack it.
+	--lit: none;
 	// The raking light a reached row or cell takes: white, from the left, gone
 	// by the far edge. `--wash` for a full-bleed row, `--wash-strong` inside
 	// a bounded cell where the same alpha would vanish against a panel fill.
@@ -449,11 +450,10 @@ b {
 	top: -0.85rem;
 	left: 1rem;
 	max-width: calc(100% - 2rem);
-	// One line, top-left, always: a label that does not fit gets a shorter
-	// text or a smaller tape on a phone, never a second line.
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	// One line, top-left: a label that does not fit gets a shorter text or a
+	// smaller tape on a phone. Never cut with an ellipsis; as a last resort
+	// it wraps inside the print.
+	width: max-content;
 }
 
 // The red grease pencil: one mark per section, drawn as an aria-hidden SVG
@@ -601,15 +601,21 @@ b {
 // accent stopped being one. Red is a verb: one word, one button, one state
 // per page. Every closer and the newsletter sit on the black ground.
 
-// The subpage ground: a spotlight pool. No hairline at the top.
+// The subpage ground: the same flat black table. No pool, no hairline.
 .band--lit {
-	background: var(--lit), var(--color-bg);
+	background: var(--color-bg);
 }
 
 // Straight off a subpage hero the band opens on a cut: the hero's own
 // bottom padding is the pause.
 .subpage-hero + .band {
 	padding-top: 0;
+}
+
+// One gap between two sections: a band followed by a closer hands its
+// bottom air to the closer's top, so the two never stack into a dead gap.
+.band:has(+ .closer-band) {
+	padding-bottom: 0;
 }
 
 // The page's last band closes on one tight step, and the footer adds no

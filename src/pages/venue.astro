@@ -21,7 +21,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Venue'}
-			lede={`${EVENT.venue} sits just north of Prague: one direct train from the city centre, then a ten-minute walk from the station.`}
+			lede={`${EVENT.venue} is a converted industrial mill in Libčice nad Vltavou, on the river just north of Prague.`}
 			seoHeading={`How to get to ${EVENT.venue}, DevFest.cz 2026`}
 			titleId="venue-title"
 			photo={false}
@@ -62,7 +62,6 @@ const TOWN = ADDRESS?.[3] ?? '';
 				<div class="venue-cards">
 					<ol class="venue-steps" role="list">
 						<li class="paper venue-card">
-							<p class="venue-card-edge"><span>By train</span><span class="fig">01 / 03</span></p>
 							<span class="venue-card-no" aria-hidden="true">01</span>
 							<h3 class="venue-card-title">Take the train from Prague</h3>
 							<p>
@@ -72,19 +71,14 @@ const TOWN = ADDRESS?.[3] ?? '';
 								<dt>Get off</dt>
 								<dd>Libčice nad Vltavou</dd>
 								<dt>Ride</dt>
-								<dd>
-<span class="fig">25–30</span> min
-								</dd>
-								<dt>From</dt>
-								<dd>the city centre</dd>
+								<dd><span class="fig">25–30</span> min</dd>
 							</dl>
 						</li>
 						<li class="paper venue-card">
-							<p class="venue-card-edge"><span>On foot</span><span class="fig">02 / 03</span></p>
 							<span class="venue-card-no" aria-hidden="true">02</span>
-							<h3 class="venue-card-title">Walk from the station</h3>
+							<h3 class="venue-card-title">Walk to {EVENT.venue}</h3>
 							<p>
-								From Libčice nad Vltavou station it is a ten-minute walk, about <span class="fig">0.7&nbsp;km</span>, to the venue.
+								From Libčice nad Vltavou station it is a ten-minute walk, about <span class="fig">0.7&nbsp;km</span>, to the entrance in the black metal building.
 							</p>
 							<dl class="venue-facts">
 								<dt>Walk</dt>
@@ -96,18 +90,11 @@ const TOWN = ADDRESS?.[3] ?? '';
 								Station to venue
 							</a>
 						</li>
-						<li class="paper venue-card">
-							<p class="venue-card-edge"><span>Arrival</span><span class="fig">03 / 03</span></p>
-							<span class="venue-card-no" aria-hidden="true">03</span>
-							<h3 class="venue-card-title">Find {EVENT.venue}</h3>
-							<a class="action venue-go" href={EVENT.mapUrl} target="_blank" rel="noopener noreferrer">Open in maps</a>
-						</li>
 					</ol>
 
 					{/* Not a step on the route: the leg before it, for anyone not
 					    starting in Prague. */}
 					<div class="paper venue-card venue-fly">
-						<p class="venue-card-edge"><span>By air</span><span class="fig">PRG</span></p>
 						<h3 class="venue-card-title">Flying in</h3>
 						<p>
 							Fly to <strong>Prague</strong> (Václav Havel Airport, <span class="fig">PRG</span>). The Airport Express bus runs straight to <strong>Praha hlavní nádraží</strong>, where the train to Libčice leaves.
@@ -119,7 +106,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 
 		{/* What to look for on arrival. The parked van's number plate is
 		    blurred in the source file. */}
-		<section class="band venue-band" aria-labelledby="door-title">
+		<section class="band venue-band venue-door-band" aria-labelledby="door-title">
 			<div class="band-inner venue-door">
 				<figure class="paper venue-door-print">
 					<span class="tape">The black metal building</span>
@@ -137,10 +124,10 @@ const TOWN = ADDRESS?.[3] ?? '';
 						<path d="M30 8 C 62 -2, 96 14, 96 48 C 96 84, 64 98, 36 94 C 8 90, 2 60, 6 38 C 10 18, 30 6, 54 6" />
 					</svg>
 				</figure>
-				<div>
+				<div class="venue-door-text">
 					<h2 id="door-title" class="venue-door-title">The entrance</h2>
 					<p class="venue-door-note">
-						A converted industrial mill: red-brick halls, one tall chimney, and the entrance in the black metal building.
+						Red-brick halls, one tall chimney, and the doors in the black metal building, up a few concrete steps.
 					</p>
 				</div>
 			</div>
