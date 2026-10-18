@@ -1,156 +1,258 @@
 @use '../styles/type' as *;
-// Category on the left, its questions on the right.
-.faq-group {
+
+// The category index pinned on the left, the questions on the right as paper
+// slips: one width, one left edge, a tilt you only notice when two touch.
+.faq {
 	display: grid;
-	grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
-	gap: 1.5rem clamp(2rem, 6vw, 6rem);
+	grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+	gap: clamp(2rem, 5vw, 5rem);
 	align-items: start;
 }
 
-// Each group is its own sheet with its own heading, so groups sit a section apart.
-.faq-group + .faq-group {
-	margin-top: var(--section-y);
-}
-
-// Sticky, so the category stays beside its questions while a long group scrolls.
-.faq-head {
+/* ---- Index ---- */
+.faq-index {
 	position: sticky;
-	top: 7rem;
+	top: calc(var(--header-h) + 2rem);
+
+	ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+	}
+
+	ol a {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+		padding: 0.35rem 0;
+		@include action(var(--fs-cta));
+		color: var(--color-text);
+		text-decoration: none;
+		transition: color 0.2s ease;
+
+		&:focus-visible {
+			color: var(--color-accent-hot);
+		}
+	}
 }
 
-// A step above the questions: at --fs-h3 the category read as another entry in the list.
-// The category is the page's head on this row: section size, over the
-// questions a step down. The other way round, twenty questions at head size
-// shouted over four quiet categories.
+.faq-index-label {
+	@include note(var(--fs-note));
+	color: var(--ink-dim);
+	margin: 0 0 0.9rem;
+}
+
+.faq-index-no {
+	@include mono(var(--fs-label), 0.08em);
+	color: var(--ink-dim);
+}
+
+.faq-index-ask {
+	@include note(var(--fs-note));
+	color: var(--ink);
+	margin: 2.5rem 0 0;
+
+	.action {
+		display: flex;
+		padding-top: 0.25rem;
+	}
+}
+
+@media (hover: hover) {
+	.faq-index ol a:hover {
+		color: var(--color-accent-hot);
+	}
+}
+
+/* ---- Categories ---- */
+.faq-group + .faq-group {
+	margin-top: clamp(5rem, 8vw, 7.5rem);
+}
+
+// The category is the page's head on this row: poster scale, over the slips.
+// Jumped to from the index, it lands clear of the fixed header.
 .faq-cat {
-	@include display(var(--fs-h2));
-	margin: 0;
+	@include display(var(--fs-display));
+	margin: 0 0 clamp(1.75rem, 3vw, 2.75rem);
+	scroll-margin-top: calc(var(--header-h) + 2rem);
 }
 
-// An open field of questions; the category head beside it is the list's top edge.
-.faq-list {
+.faq-slips {
 	display: flex;
 	flex-direction: column;
+	gap: 1.6rem;
 }
 
-@media (max-width: 900px) {
-	.faq-group {
-		grid-template-columns: 1fr;
-		gap: 1.5rem;
-	}
-
-	.faq-head {
-		position: static;
-	}
-}
-
-// An open item opens on the black ground: the answer under its question, the
-// marker turned. No panel behind it — a lit box around one answer was the one
-// card on a page of rows. The question and its answer share one side inset
-// so nothing shifts when it opens.
+/* ---- Slips ---- */
 .faq-item {
-	--faq-inset: clamp(0.9rem, 2vw, 1.4rem);
-	position: relative;
-	isolation: isolate;
+	--tilt: calc(-0.4 * var(--tilt-1));
+	--faq-pad: 1.75rem;
+	padding: 0;
+
+	&:nth-child(even) {
+		--tilt: calc(0.4 * var(--tilt-1));
+	}
 }
 
-// Question text + toggle marker. Rhythm comes from `.field-row`; the reach
-// state is red TEXT, not the red field of `.field-row--link`: a solid red
-// block under a toggle stayed lit after a tap on touch and read as a stuck
-// highlight. Hover only where there is a pointer that hovers.
+// Number, question, marker. The reach state is red text, never a field.
 .faq-q {
-	z-index: 1;
 	list-style: none;
 	cursor: pointer;
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-columns: 3.4rem minmax(0, 1fr) auto;
+	column-gap: 1.25rem;
 	align-items: baseline;
-	column-gap: clamp(1.25rem, 3vw, 2.75rem);
-	padding-inline: var(--faq-inset);
+	padding: 1.35rem var(--faq-pad);
 
-	// Strip the default disclosure triangle (WebKit + the rest).
 	&::-webkit-details-marker {
 		display: none;
 	}
 
-	// Inset, so the ring stays inside the column and is not clipped by the
-	// neighbouring question.
+	// Inset, so the ring stays on the slip.
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: -2px;
+		outline: 2px solid var(--color-accent);
+		outline-offset: -4px;
 	}
 
 	&:focus-visible .faq-q-text,
 	&:focus-visible .faq-marker {
-		color: var(--color-accent-hot);
+		color: var(--color-accent);
 	}
 }
 
 @media (hover: hover) {
 	.faq-q:hover .faq-q-text,
 	.faq-q:hover .faq-marker {
-		color: var(--color-accent-hot);
+		color: var(--color-accent);
 	}
 }
 
-// The long-list row step, shared with the session rows and the press clippings.
+.faq-no {
+	@include mono(var(--fs-label-xs), 0.1em);
+	color: var(--paper-ink-dim);
+	white-space: nowrap;
+}
+
 .faq-q-text {
-	flex: 1;
-	@include row-title(var(--fs-row-sm));
+	@include prose(var(--fs-lede), 1.3);
+	color: var(--paper-ink);
 	transition: color 0.2s;
 }
 
-// Muted at rest (--ink-muted, ~6:1 on black, clear of 3:1); full black on the red
-// field. Red on twelve markers is not a highlight.
 .faq-marker {
-	flex: 0 0 auto;
-	@include mono(var(--fs-title-sm));
-	line-height: 1;
-	color: var(--ink-muted);
-	transition: transform 0.2s ease, color 0.2s;
-	transform-origin: center;
+	@include action(var(--fs-action));
+	color: var(--paper-ink-dim);
+	transition: color 0.2s;
 }
 
-// The open question holds the panel; the marker turns.
-.faq-item[open] .faq-marker {
-	transform: rotate(45deg); // + → ×
+.faq-marker-close,
+.faq-item[open] .faq-marker-open {
+	display: none;
 }
 
-// The answer starts on the question's left edge (same inset), no extra indent.
+.faq-item[open] .faq-marker-close {
+	display: inline;
+}
+
+// The answer starts under the question text, not under the number.
 .faq-a {
-	position: relative;
-	z-index: 1;
-	margin: 0;
-	padding: 0 var(--faq-inset) 1.8rem;
+	padding: 0 var(--faq-pad) 1.75rem calc(var(--faq-pad) + 3.4rem + 1.25rem);
 }
 
 .faq-a :global(p) {
-	@include prose(var(--fs-body), 1.85);
-	letter-spacing: 0.01em;
-	color: rgba(255, 255, 255, 0.72);
+	@include prose(var(--fs-body), 1.65);
+	color: var(--paper-ink);
 	margin: 0;
-	max-width: 70ch;
+	max-width: 62ch;
+}
+
+.faq-a :global(strong) {
+	font-weight: 400;
+	color: var(--paper-ink);
+	white-space: nowrap;
+}
+
+.faq-a :global(a strong) {
+	white-space: normal;
 }
 
 .faq-a :global(a) {
-	// White on the red hairline: red stays a detail, never running text.
-	@include hairline-link;
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+	transition: color 0.2s;
+
+	&:hover,
+	&:focus-visible {
+		color: var(--color-accent);
+	}
 }
 
-@media (max-width: 600px) {
-	// Flush to the content column — side padding insets each question from the rule it sits on.
-	.faq-q {
-		gap: 0.8rem;
+@media (max-width: 1100px) {
+	.faq {
+		grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
 	}
+}
+
+// Phone: the index becomes a wrapped row of links above the slips.
+@media (max-width: 720px) {
+	.faq {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3.5rem;
+	}
+
+	.faq-index {
+		position: static;
+
+		ol {
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: 0 1.4rem;
+		}
+
+		ol a {
+			font-size: var(--fs-action);
+			gap: 0.5rem;
+		}
+	}
+
+	.faq-index-ask {
+		display: none;
+	}
+
+	.faq-slips {
+		gap: 1.25rem;
+	}
+
+	.faq-item {
+		--faq-pad: 1.1rem;
+	}
+
+	.faq-q {
+		grid-template-columns: minmax(0, 1fr) auto;
+		row-gap: 0.4rem;
+		column-gap: 0.9rem;
+		padding-block: 1.1rem;
+	}
+
+	.faq-no {
+		grid-column: 1 / -1;
+	}
+
 	.faq-a {
-		padding-bottom: 1.3rem;
+		padding: 0 var(--faq-pad) 1.4rem;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.faq-item,
+	.faq-index ol a,
 	.faq-q-text,
-	.faq-marker {
+	.faq-marker,
+	.faq-a :global(a) {
 		transition: none;
 	}
 }

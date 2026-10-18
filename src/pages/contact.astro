@@ -1,14 +1,46 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Desk from '../components/Desk.astro';
 import { loadMediaCoverage } from '../lib/press-coverage';
+import { listPressKit } from '../lib/press-kit';
 
-// CONTACT ABSORBS PRESS. `/press` was a menu line for a page whose job was a
-// list of articles and "here is our inbox" — the inbox lives here already, so
-// the clippings and the press kit link moved in as a band. `/press` redirects
-// to `#press`; `/press/downloads` stays where it is.
+// CONTACT ABSORBS PRESS. `/press` redirects to `#press`: the clippings and the
+// press kit sit here, next to the inbox that answers press. The full kit
+// page stays at `/press/downloads`.
 const mediaCoverage = await loadMediaCoverage();
+
+// Three inboxes as typed index cards. The general one is the large card.
+type Desk = { id: string; title: string; desc: string; email: string; name?: string; role?: string };
+const [general, ...desks]: Desk[] = [
+	{ id: 'desk-general', title: 'General questions', desc: 'Tickets, billing, production, or anything else.', email: 'devfest@gug.cz' },
+	{
+		id: 'desk-partners',
+		title: 'Partners & sales',
+		desc: 'Partnerships, sponsorships, and media collaborations.',
+		email: 'filip@gug.cz',
+		name: 'Filip Goszler',
+		role: 'Lead',
+	},
+	{ id: 'desk-speakers', title: 'Speakers & lineup', desc: 'Call for Proposals questions and speaker travel.', email: 'devfest-speakers@gug.cz' },
+];
+
+// The press kit: one taped label per logo variant with its formats, and the
+// document (the brand manual) as the band's one red button. Files are read
+// from public/press-kit/ at build time (src/lib/press-kit.ts).
+const pressKit = await listPressKit();
+type Asset = (typeof pressKit)[number];
+const baseName = (file: string) => file.replace(/\.[^.]+$/, '').toLowerCase();
+const groups = new Map<string, Asset[]>();
+for (const asset of pressKit) {
+	const key = baseName(asset.file);
+	groups.set(key, [...(groups.get(key) ?? []), asset]);
+}
+const variants = [...groups.values()]
+	.filter((files) => files.some((f) => f.isImage))
+	.map((files) => ({ label: (files.find((f) => f.isImage) as Asset).label, files }))
+	// White marks first: the site's own ground is black.
+	.sort((a, b) => Number(b.label.startsWith('White')) - Number(a.label.startsWith('White')) || a.label.localeCompare(b.label));
+const manual = [...groups.values()].filter((files) => !files.some((f) => f.isImage)).flat()[0];
 ---
 
 <BaseLayout
@@ -17,91 +49,143 @@ const mediaCoverage = await loadMediaCoverage();
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'Get in touch'}
+			titleHtml={'Contact'}
 			lede="Three inboxes, one per kind of question. Not sure which? The general one reaches the whole team."
 			seoHeading="Contact DevFest.cz 2026"
 			titleId="contact-title"
-			photo={false}
+			plate="/gallery/devfest-2025-03.webp"
+			focus="50% 40%"
 		/>
 
-
-		<!-- CARDS -->
-		<section class="band band--lit contact-body" aria-labelledby="desks-heading">
-			<div class="band-inner">
-				<!-- No second poster head ("Three desks.") under "Get in touch.":
-				     the hero names the band, and its one useful line (which desk
-				     to pick when unsure) now closes the hero lede. -->
+		<!-- INBOXES -->
+		<section class="desks" aria-labelledby="desks-heading">
+			<div class="desks-inner">
 				<h2 id="desks-heading" class="sr-only">Contact desks</h2>
 
-				<div class="field contact-grid">
-					<Desk
-						title="General questions"
-						titleId="desk-general"
-						desc="Tickets, billing, production, or anything else."
-						contacts={[{ email: 'devfest@gug.cz' }]}
-					/>
-					<Desk
-						title="Partners & sales"
-						titleId="desk-partners"
-						desc="Partnerships, sponsorships, and media collaborations."
-						contacts={[{ name: 'Filip Goszler — Lead', email: 'filip@gug.cz' }]}
-					/>
-					<Desk
-						title="Speakers & lineup"
-						titleId="desk-speakers"
-						desc="Call for Proposals questions and speaker travel."
-						contacts={[{ email: 'devfest-speakers@gug.cz' }]}
-					/>
-				</div>
+				<article class="paper icard icard--main" aria-labelledby={general.id}>
+					<p class="paper-edge icard-edge" aria-hidden="true"><span>01</span><span>DevFest.cz</span></p>
+					<h3 id={general.id} class="icard-title">{general.title}</h3>
+					<p class="icard-desc">{general.desc}</p>
+					<span class="icard-mailwrap">
+						<a class="icard-mail" href={`mailto:${general.email}`}>{general.email}</a>
+						<svg class="grease icard-grease" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true">
+							<path d="M4 12 C 50 6, 110 4, 196 9 M 30 16 C 80 12, 140 12, 180 14" />
+						</svg>
+					</span>
+				</article>
 
+				<div class="desk-side">
+					{desks.map((d, i) => (
+						<article class="paper icard" aria-labelledby={d.id}>
+							<p class="paper-edge icard-edge" aria-hidden="true"><span>{String(i + 2).padStart(2, '0')}</span><span>DevFest.cz</span></p>
+							<h3 id={d.id} class="icard-title">{d.title}</h3>
+							<p class="icard-desc">{d.desc}</p>
+							{d.name && (
+								<p class="icard-who">
+									{d.name}
+									{d.role && <span class="icard-role"> &middot; {d.role}</span>}
+								</p>
+							)}
+							<a class="icard-mail" href={`mailto:${d.email}`}>{d.email}</a>
+						</article>
+					))}
+				</div>
 			</div>
 		</section>
 
-		<section id="press" class="band band--lit anchor-target" aria-labelledby="press-title">
-			<div class="band-inner">
-				<div class="head-split">
-					<h2 id="press-title" class="display head-title">In the news</h2>
-					<p class="head-note">
+		<!-- IN THE NEWS — clippings on the table beside a past-edition print. -->
+		<section id="press" class="press anchor-target" aria-labelledby="press-title">
+			<div class="press-inner">
+				<header class="head-rule">
+					<h2 id="press-title" class="head-rule-title">In the news</h2>
+					<p class="head-rule-note">
 						Writing a story? The press kit under the clippings has the logos, and the general inbox answers press.
 					</p>
+				</header>
+
+				<div class="press-grid">
+					{mediaCoverage.length > 0 ? (
+						<ul class="clips">
+							{mediaCoverage.map((m) => (
+								<li class="clip">
+									<a class="clip-link" href={m.href} target="_blank" rel="noopener noreferrer">
+										<span class="paper-edge clip-edge">
+											<span>{m.outlet}</span>
+											{m.dateLabel && <time datetime={m.date}>{m.dateLabel}</time>}
+										</span>
+										<span class="clip-title">{m.title}</span>
+										{m.description && <span class="clip-desc">{m.description}</span>}
+										<span class="clip-read">Read article</span>
+									</a>
+								</li>
+							))}
+						</ul>
+					) : (
+						<div class="empty-state" role="status">
+							<span class="empty-stamp" aria-hidden="true">No coverage yet</span>
+							<p class="empty-line">
+								Coverage of DevFest.cz 2026 will appear here. Wrote about us?
+								Send us the link.
+							</p>
+						</div>
+					)}
+
+					<figure class="paper press-print" aria-hidden="true">
+						<div class="paper-photo">
+							<img src="/gallery/devfest-2025-13.webp" alt="" loading="lazy" decoding="async" />
+						</div>
+						<figcaption class="paper-edge"><span>DevFest.cz</span><span>2019</span></figcaption>
+						<span class="tape press-print-tape">DevFest.cz 2019</span>
+					</figure>
+				</div>
+			</div>
+		</section>
+
+		<!-- PRESS KIT -->
+		<section class="kit" aria-labelledby="kit-title">
+			<div class="kit-inner">
+				<div class="kit-intro">
+					<h2 id="kit-title" class="display kit-title">Press kit</h2>
+					<p class="kit-note">
+						Official DevFest.cz 2026 logos and the brand manual. Please keep the logo intact, keep clear space around it, and don't recolour it.
+					</p>
+					{manual ? (
+						<a class="btn-primary kit-manual" href={manual.href} download>
+							{manual.label}<span class="kit-manual-size">{manual.ext} {manual.sizeLabel}</span>
+						</a>
+					) : (
+						<a class="btn-primary kit-manual" href="/press/downloads">Open the press kit</a>
+					)}
 				</div>
 
-				{mediaCoverage.length > 0 ? (
-					<ul class="field coverage-list">
-						{mediaCoverage.map((m) => (
-							<li class="coverage-row">
-								<a class:list={['field-row field-row--link coverage-card', { 'coverage-card--bare': !m.image }]} href={m.href} target="_blank" rel="noopener noreferrer">
-									{m.image && (
-										<span class="coverage-thumb">
-											<img src={m.image} alt="" loading="lazy" decoding="async" width="400" height="225" />
-										</span>
-									)}
-									<span class="coverage-text">
-										<span class="coverage-outlet">{m.outlet}</span>
-										<span class="coverage-title">{m.title}</span>
-										{m.description && <span class="coverage-desc">{m.description}</span>}
-										<span class="coverage-meta">
-											<span class="coverage-read">Read article</span>
-											{m.dateLabel && <time class="coverage-date" datetime={m.date}>{m.dateLabel}</time>}
-										</span>
-									</span>
-								</a>
-							</li>
-						))}
-					</ul>
-				) : (
-					<div class="empty-state" role="status">
-						<span class="empty-stamp" aria-hidden="true">No coverage yet</span>
-						<p class="empty-line">
-							Coverage of DevFest.cz 2026 will appear here. Wrote about us?
-							Send us the link.
-						</p>
-					</div>
-				)}
-
-				<p class="press-kit-link">
-					<a href="/press/downloads" class="btn-ghost">Open the press kit</a>
-				</p>
+				<div class="kit-files">
+					{variants.length > 0 ? (
+						<ul class="variants">
+							{variants.map(({ label, files }) => (
+								<li class="variant">
+									<h3 class="tape variant-tape">{label}</h3>
+									<ul class="formats">
+										{files.map((f) => (
+											<li>
+												<a class="format" href={f.href} download>
+													<span class="sr-only">{label}, </span>
+													{f.ext}
+													<span class="format-size">{f.sizeLabel}</span>
+												</a>
+											</li>
+										))}
+									</ul>
+								</li>
+							))}
+						</ul>
+					) : (
+						<p class="kit-end">The logos are being prepared.</p>
+					)}
+					<p class="kit-end">
+						Need a format we have not published?{' '}
+						<a class="kit-end-link" href="mailto:devfest@gug.cz">Write to devfest@gug.cz</a>
+					</p>
+				</div>
 			</div>
 		</section>
 	</main>

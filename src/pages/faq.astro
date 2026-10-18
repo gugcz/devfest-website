@@ -18,7 +18,6 @@ const faqGroups = (await getCollection('faq'))
 let fileCounter = 0;
 const groupsForDisplay = faqGroups.map((group) => ({
 	...group,
-	count: String(group.items.length).padStart(2, '0'),
 	items: group.items.map((item) => {
 		fileCounter += 1;
 		return { ...item, num: String(fileCounter).padStart(2, '0') };
@@ -62,49 +61,67 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 		/>
 
 
-		<!-- FILES -->
 		{/* Its own heading, not the hero's `faq-title`: two <section>s carrying
 		    the same accessible name are two regions with one name, which is the
 		    `landmark-unique` axe violation this page used to be the only holder
 		    of. The heading is visually hidden — the category heads inside the
 		    list are what a sighted visitor reads as structure. */}
 		<section class="band band--lit" aria-labelledby="faq-list-heading">
-			<div class="band-inner">
+			<div class="band-inner faq">
 				<h2 id="faq-list-heading" class="sr-only">All questions</h2>
-				{groupsForDisplay.map((group, groupIndex) => (
-					<div class="faq-group">
-						{/* Category pinned in its own column beside the questions —
-						    an editorial two-column split rather than a caption stacked
-						    over a narrow centred list. */}
-						<div class="faq-head">
+
+				{/* The categories, pinned beside the slips on a desktop; a wrapped
+				    row of links above them on a phone. */}
+				<nav class="faq-index" aria-label="FAQ categories">
+					<p class="faq-index-label">Categories</p>
+					<ol role="list">
+						{groupsForDisplay.map((group, groupIndex) => (
+							<li>
+								<a href={`#faq-cat-${group.id}`}>
+									<span class="faq-index-no" aria-hidden="true">{String(groupIndex + 1).padStart(2, '0')}</span>
+									<span>{group.label}</span>
+								</a>
+							</li>
+						))}
+					</ol>
+					<p class="faq-index-ask">
+						Can't find yours? <a class="action" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
+					</p>
+				</nav>
+
+				<div class="faq-body">
+					{groupsForDisplay.map((group, groupIndex) => (
+						<div class="faq-group">
 							<h2 class="faq-cat" id={`faq-cat-${group.id}`}>{group.label}</h2>
-						</div>
 
-						<div class="field faq-list">
-							{group.items.map((item, itemIndex) => (
-								/* The first question opens on arrival. Every <details>
-								   collapsed meant the page a speaker and a journalist
-								   both land on showed no answer at all — a list of
-								   questions and nothing else. One open item is enough
-								   to show what an answer looks like; opening more would
-								   bury the rest of the list. */
-								<details class="faq-item" open={groupIndex === 0 && itemIndex === 0}>
-									<summary class="field-row faq-q">
-										<span class="faq-q-text">{item.q}</span>
-										<span class="faq-marker" aria-hidden="true">+</span>
-									</summary>
-									<div class="faq-a">
-										<p set:html={item.a} />
-									</div>
-								</details>
-							))}
+							<div class="faq-slips">
+								{group.items.map((item, itemIndex) => (
+									/* The first question opens on arrival. Every <details>
+									   collapsed meant the page a speaker and a journalist
+									   both land on showed no answer at all. One open item is
+									   enough to show what an answer looks like. */
+									<details class="paper faq-item" open={groupIndex === 0 && itemIndex === 0}>
+										<summary class="faq-q">
+											<span class="faq-no">Q {item.num}</span>
+											<span class="faq-q-text">{item.q}</span>
+											<span class="faq-marker" aria-hidden="true">
+												<span class="faq-marker-open">Open</span>
+												<span class="faq-marker-close">Close</span>
+											</span>
+										</summary>
+										<div class="faq-a">
+											<p set:html={item.a} />
+										</div>
+									</details>
+								))}
+							</div>
 						</div>
-					</div>
-				))}
+					))}
 
-				{/* The page ends on one line to the inbox, not a closing band: a
-				    visitor who read this far wants an answer, not a pitch. */}
-				<EndLine text="Still stuck?" href="mailto:devfest@gug.cz" label="Write to devfest@gug.cz" />
+					{/* The page ends on one line to the inbox, not a closing band: a
+					    visitor who read this far wants an answer, not a pitch. */}
+					<EndLine text="Still stuck?" href="mailto:devfest@gug.cz" label="Write to devfest@gug.cz" />
+				</div>
 			</div>
 		</section>
 	</main>

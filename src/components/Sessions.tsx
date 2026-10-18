@@ -56,24 +56,29 @@ function CardAvatars({ speakers }: { speakers: SessionSpeakerRef[] }) {
 	);
 }
 
+/** Slip tilts, cycled down the list: a fraction of `--tilt-1`. */
+const TILTS = [s.tiltA, s.tiltB, s.tiltC, s.tiltD];
+
 function SessionCard({
 	session,
 	when,
+	tilt,
 	onOpen,
 }: {
 	session: Session;
 	when: string;
+	tilt: string;
 	onOpen: (session: Session) => void;
 }) {
 	const names = speakerNames(session);
-	// The track; the room now travels with the time in `when`.
+	// The track; the room travels with the time in `when`.
 	const kicker = visitorCategories(session)[0]?.values[0] || 'Talk';
 
 	return (
 		<li>
 			<button
 				type="button"
-				className={`field-row field-row--link ${s.card}`}
+				className={`${s.card} ${tilt}`}
 				onClick={() => onOpen(session)}
 				aria-label={`View details for ${session.title}`}
 			>
@@ -232,18 +237,19 @@ export default function Sessions() {
 					</button>
 				</EmptyState>
 			) : (
-				<ul className={`field ${s.grid}`} role="list">
-					{filtered.map((session) => (
-						<SessionCard key={session.id} session={session} when={whenLabel(session, roomNames)} onOpen={open} />
+				<ul className={s.grid} role="list">
+					{filtered.map((session, i) => (
+						<SessionCard
+							key={session.id}
+							session={session}
+							when={whenLabel(session, roomNames)}
+							tilt={TILTS[i % TILTS.length]}
+							onOpen={open}
+						/>
 					))}
 					{!active && (
 						<li>
-							<article className={`field-row ${s.moreCard}`} aria-label="More sessions to be announced">
-								<span className={s.moreDots} aria-hidden="true">
-									<span />
-									<span />
-									<span />
-								</span>
+							<article className={s.moreCard} aria-label="More sessions to be announced">
 								<span className={s.moreKicker}>Docket open</span>
 								<p className={s.moreText}>More sessions announced soon</p>
 							</article>

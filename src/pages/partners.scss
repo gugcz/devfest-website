@@ -1,50 +1,68 @@
 @use '../styles/type' as *;
 @use '../styles/logos' as *;
-/* ===================== THE PARTNER WALL ===================== */
-// One section shape for every partner group — the four sponsor tiers and
-// the two off-ladder rows (community, media). Tight between tiers; the first
-// opens on a full beat under the hero, the last closes on one before the red
-// CTA. Platinum holds a half beat under its logo.
-.logo-wall {
-	position: relative;
-	padding: 3rem var(--gutter);
+
+/* ===================== THE TIERS ===================== */
+// One strip of tape per tier, its marks laid on the black table under it.
+// The size of a mark carries the rank (`TIER_SCALE` in partners.astro feeds
+// `partnerLogo`); the grid only sets how many share a row.
+.tiers {
+	padding: var(--section-y-tight) var(--gutter) 0;
 	background: var(--color-bg);
 }
 
-.logo-wall--first {
-	padding-top: var(--section-y);
-}
-
-.logo-wall--lead {
-	padding-bottom: calc(var(--section-y) / 2);
-}
-
-.logo-wall--last {
-	padding-bottom: var(--section-y);
-}
-
-.wall-inner {
+.tiers-inner {
 	max-width: var(--maxw);
 	margin: 0 auto;
 }
 
-// Each tier opens on the ruled head (`.head-rule`, global), then its marks
-// in one left-set row, wrapping when they must. Each mark's width comes from
-// its tier's reference box (`partnerLogo()` → `--logo-w`), so the tier sets
-// the size and marks within a tier carry equal ink.
-.logo-grid {
+.tier {
+	padding-bottom: clamp(5.5rem, 9vw, 8.75rem);
+}
+
+// The tier label is a strip of tape, not a poster head: the logos are the
+// headline. Alternate tilts so the strips read as torn and stuck by hand.
+.tier-tape {
+	margin: 0 0 clamp(1.75rem, 3vw, 2.5rem);
+	font-size: var(--fs-note);
+	--tape-tilt: -1.5deg;
+}
+
+.tier:nth-child(even) .tier-tape {
+	--tape-tilt: 1.2deg;
+}
+
+.wall {
 	list-style: none;
-	margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+	margin: 0;
 	padding: 0;
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: clamp(1.5rem, 3vw, 2.5rem) clamp(2.25rem, 4.5vw, 4rem);
+	gap: clamp(2.25rem, 4vw, 3.25rem) clamp(2.5rem, 4.5vw, 4rem);
+}
+
+// Diamond two to a row, gold three: the grid gives each mark its own cell so
+// the strong sizes line up into columns instead of a ragged run.
+.tier-diamond .wall,
+.tier-gold .wall {
+	display: grid;
+	align-items: center;
+	gap: clamp(2.5rem, 5vw, 4.5rem) clamp(2.5rem, 6vw, 6rem);
+}
+
+.tier-diamond .wall {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tier-gold .wall {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(2.5rem, 4.5vw, 4rem) clamp(2.5rem, 5vw, 5rem);
 }
 
 .logo-item {
 	display: flex;
 	align-items: center;
+	min-width: 0;
 	max-width: 100%;
 
 	a {
@@ -58,6 +76,24 @@
 		@include partner-logo;
 	}
 
+	// The platinum tile is a print of its own: it gets the table's shadow.
+	.logo--tile {
+		box-shadow: var(--paper-shadow);
+	}
+
+	// Dark ink made for a light ground: a paper card on the table, tilted
+	// like every other print. Overrides the mixin's plain white card.
+	.logo--dark {
+		background: var(--paper);
+		padding: 0.75rem 1.1rem;
+		box-shadow: var(--paper-shadow);
+		transform: rotate(-1.2deg);
+	}
+
+	&:nth-child(even) .logo--dark {
+		transform: rotate(1deg);
+	}
+
 	// Wider than --focus-gap-lg on purpose: a wordmark carries its own
 	// whitespace, so a 4px ring lands on the image margin.
 	a:focus-visible {
@@ -66,89 +102,190 @@
 	}
 }
 
-// Phones: every mark a step smaller, the ladder intact.
-@media (max-width: 600px) {
-	.logo-grid { --logo-scale: 0.7; }
+@media (hover: hover) {
+	.logo-item a .logo {
+		transition: opacity 0.2s ease;
+	}
+
+	.logo-item a:hover .logo {
+		opacity: 0.82;
+	}
 }
 
-/* ===================== CLOSING STATEMENT ===================== */
-// Contact block in the closer, on the black ground: the named contact and
-// the disabled deck placeholder.
-.partners-contact {
-	display: flex;
-	flex-direction: column;
-	gap: 0.4rem;
-	min-width: 0;
+@media (max-width: 720px) {
+	.tier {
+		padding-bottom: 5.5rem;
+	}
+
+	.tier-diamond .wall {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.75rem;
+		--logo-scale: 0.7;
+	}
+
+	.tier-gold .wall {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 2.5rem 1.75rem;
+	}
+
+	.wall {
+		gap: 2.25rem 2.5rem;
+	}
+
+	// The off-ladder rows run a step down on a phone so two share a line.
+	.tier-community .wall,
+	.tier-media .wall,
+	.tier-silver .wall {
+		--logo-scale: 0.6;
+	}
+}
+
+/* ===================== BECOME A PARTNER ===================== */
+.partners-cta {
+	padding: clamp(1rem, 3vw, 2.5rem) var(--gutter) var(--section-y);
+	background: var(--color-bg);
+}
+
+.cta-inner {
+	max-width: var(--maxw);
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: clamp(2.5rem, 6vw, 6rem);
+	align-items: center;
+}
+
+.cta-title {
+	font-size: var(--fs-display);
+}
+
+// Filip's card: a typed paper card, lifted off the table.
+.cta-card {
+	--tilt: calc(-1 * var(--tilt-1) - 0.4deg);
+	padding: 2.25rem 2.5rem 2.5rem;
+}
+
+.cta-edge {
+	margin: 0 0 1.6rem;
+	padding: 0;
+}
+
+.cta-body {
+	display: grid;
+	grid-template-columns: 7.5rem minmax(0, 1fr);
+	gap: 1.75rem;
+	align-items: start;
+}
+
+.cta-mug {
+	aspect-ratio: 4 / 5;
+}
+
+.cta-say {
+	@include prose(var(--fs-lede), 1.5);
+	color: var(--paper-ink);
 	margin: 0;
 }
 
-.contact-name {
-	@include note;
-	// Full white: a dimmed label would fail 1.4.3 at the band's brightest point.
-	color: var(--color-text);
+.cta-who {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.4rem;
+	margin: 1.4rem 0 0;
 }
 
-.email-link {
-	@include action;
-	color: var(--color-text);
-	align-self: flex-start;
-	display: inline-flex;
-	align-items: center;
-	min-height: 2.75rem;
+.cta-name {
+	@include display(var(--fs-head));
+	color: var(--paper-ink);
+	line-height: 1;
+}
+
+.cta-role {
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink-dim);
+}
+
+.cta-mail {
+	@include prose(var(--fs-body), 1.4);
+	color: var(--paper-ink);
 	text-decoration: underline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 4px;
-	text-decoration-color: var(--field-border);
-	word-break: break-word;
-	transition: text-decoration-color 0.2s;
+	overflow-wrap: anywhere;
+	padding: 0.35rem 0;
 
-	&:hover,
-	&:focus-visible {
-		text-decoration-color: var(--color-text);
+	&:hover {
+		color: var(--color-accent);
 	}
-
 }
 
-// Flat "Coming soon" placeholder — outline, no rotation, no stamp ink.
+.cta-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1.25rem 2.25rem;
+	margin-top: 2.1rem;
+}
+
+// The text action in the ink of the card.
+.cta-action {
+	color: var(--paper-ink);
+	font-size: var(--fs-cta);
+}
+
+// Deck not ready: a typed label in place of the red button.
 .partners-cta-soon {
 	display: inline-flex;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: 0.7rem;
 	@include action;
-	color: var(--color-text);
-	background: transparent;
-	border: 1px dashed var(--field-border);
-	border-radius: var(--radius);
-	padding: 1.25rem 2rem;
+	color: var(--paper-ink);
+	border: 1px dashed var(--paper-ink-dim);
+	padding: 1.1rem 1.6rem;
 	cursor: not-allowed;
-}
-
-.partners-cta-label {
-	opacity: 0.92;
 }
 
 .partners-cta-stamp {
 	@include note(var(--fs-note-sm));
-	padding: 0.22rem 0.55rem;
-	color: var(--color-text);
-		border: 1px solid var(--field-border);
-	border-radius: var(--radius);
+	color: var(--paper-ink-dim);
 }
 
-@media (max-width: 900px) {
-	.partners-cta-soon {
-		flex-wrap: wrap;
-		gap: 0.55rem;
-		white-space: normal;
+@media (max-width: 1100px) {
+	.cta-inner {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3.5rem;
 	}
 
-	.partners-cta-stamp {
-		font-size: var(--fs-label);
-		letter-spacing: 0.2em;
-		padding: 0.2rem 0.45rem;
+	.cta-card {
+		width: 100%;
+		max-width: 45rem;
+		margin-left: auto;
 	}
 }
 
-/* ===================== REDUCED MOTION ===================== */
+@media (max-width: 720px) {
+	.cta-card {
+		padding: 1.6rem 1.4rem 1.75rem;
+	}
+
+	.cta-body {
+		grid-template-columns: 5.25rem minmax(0, 1fr);
+		gap: 1.1rem;
+	}
+
+	.cta-say {
+		font-size: var(--fs-body);
+	}
+
+	.cta-actions .btn-primary {
+		width: 100%;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
+	.logo-item a .logo {
+		transition: none;
+	}
 }

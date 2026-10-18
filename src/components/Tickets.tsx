@@ -15,11 +15,16 @@ import {
 	type TitoRelease,
 } from '../lib/tito';
 import { trackBeginCheckout } from '../lib/checkout';
+import { EVENT } from '../lib/event';
 import { useRemote } from '../lib/useRemote';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Tickets.module.scss';
 
 type Variant = ReleaseGroup['variants'][number];
+
+/** The event day as the slip's edge stamps it: `30.10.2026`. */
+const EVENT_DAY_ISO = EVENT.doors.slice(0, 10);
+const EVENT_DAY_STAMP = EVENT_DAY_ISO.split('-').reverse().join('.');
 
 /** The variant an employer pays for: same ticket, invoiced to the company. */
 function isCompanyFunded(release: TitoRelease): boolean {
@@ -40,7 +45,7 @@ function trackVariantCheckout(group: ReleaseGroup, variant: Variant): void {
 /** The wave's price, printed once: the first variant's figure large, and any
  * variant that costs something else as a small data line under it. The
  * buttons below carry no price, so the figure is never read twice. */
-function StubPrice({ group }: { group: ReleaseGroup }) {
+function SlipPrice({ group }: { group: ReleaseGroup }) {
 	// Lead with the first variant that has a figure, not just the first one.
 	const leadIdx = group.variants.findIndex((v) => priceDisplay(v.release));
 	if (leadIdx < 0) return null;
@@ -54,18 +59,18 @@ function StubPrice({ group }: { group: ReleaseGroup }) {
 		}))
 		.filter((o) => o.price && o.price !== lead.primary);
 	return (
-		<span className={s.stubPriceGroup}>
-			<span className={s.stubPrice}>{lead.primary}</span>
+		<>
+			<p className={s.price}>{lead.primary}</p>
 			{others.map((o) => (
-				<span key={o.id} className={s.stubAltPrice}>
-					{o.label} {o.price}
-				</span>
+				<p key={o.id} className={s.altPrice}>
+					{o.label} <span className={s.altFigure}>{o.price}</span>
+				</p>
 			))}
-		</span>
+		</>
 	);
 }
 
-interface StubCtasProps {
+interface SlipCtasProps {
 	group: ReleaseGroup;
 	buyable: Variant[];
 	accountSlug: string;
@@ -75,10 +80,10 @@ interface StubCtasProps {
 /** One button per buyable variant, each straight into that release's ti.to
  * checkout (`/with/<slug>`), labelled by who pays — the price is the figure
  * above, and the company figure its data line, so who-pays is said twice on
- * the row and no more. The visible label leads the accessible name (WCAG
+ * the slip and no more. The visible label leads the accessible name (WCAG
  * 2.5.3); the name still carries the release and its price for a screen
  * reader. */
-function StubCtas({ group, buyable, accountSlug, eventSlug }: StubCtasProps) {
+function SlipCtas({ group, buyable, accountSlug, eventSlug }: SlipCtasProps) {
 	// "Buy" only works while one variant is not company-funded; two or more
 	// (say Regular and Student) need their own names to tell them apart.
 	const personal = buyable.filter((v) => !isCompanyFunded(v.release)).length;
@@ -96,7 +101,7 @@ function StubCtas({ group, buyable, accountSlug, eventSlug }: StubCtasProps) {
 				return (
 					<a
 						key={variant.release.id}
-						className={`${bi === 0 ? 'btn-primary' : 'btn-ghost'} ${s.cta}`}
+						className={bi === 0 ? `btn-primary ${s.buy}` : `btn-ghost ${s.side}`}
 						href={checkoutUrl(variant.release, accountSlug, eventSlug)}
 						target="_blank"
 						rel="noopener noreferrer"
@@ -108,6 +113,76 @@ function StubCtas({ group, buyable, accountSlug, eventSlug }: StubCtasProps) {
 				);
 			})}
 		</div>
+	);
+}
+
+interface WaveSlipProps {
+	group: ReleaseGroup;
+	laterWaveOnSale: boolean;
+	finalWave: boolean;
+	vatNote: string | undefined;
+	accountSlug: string;
+	eventSlug: string;
+}
+
+/** One wave as a paper ticket slip on the table. The wave on sale is the big
+ * slip with the Buy button; a spent wave is a small tilted slip the grease
+ * pencil crosses out; a wave still to come is a small plain slip. */
+function WaveSlip({ group, laterWaveOnSale, finalWave, vatNote, accountSlug, eventSlug }: WaveSlipProps) {
+	const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
+	const buyable = group.variants.filter((_, vi) => statuses[vi].purchasable);
+	const live = buyable.length > 0;
+	// When no variant is buyable, pick a non-sold-out summary if one exists so
+	// a "Paused" or "Coming soon" wave isn't labeled "Sold out" just because
+	// one variant ran out.
+	const summary: ReleaseStatus = statuses.find((st) => st.tone !== 'sold-out') ?? statuses[0];
+	const spent = !live && (summary.tone === 'sold-out' || summary.tone === 'ended');
+	// Deadline ONLY for a wave a visitor can still buy into: fed the purchasable
+	// variants per the same `releaseStatus()` that decides the Buy button,
+	// never `end_at` alone — otherwise a hand-closed wave reads "Ended" beside
+	// "Ends Oct 15". Null far more often than not; the clause is then absent.
+	const deadline = waveDeadline(buyable.map((v) => v.release));
+
+	if (!live) {
+		return (
+			<li className={`${s.slip} ${spent ? s.slipSpent : s.slipSoon}`}>
+				<h3 className={s.tier}>{group.name}</h3>
+				<SlipPrice group={group} />
+				<div className={s.perf} aria-hidden="true" />
+				<p className={s.state}>{summary.label}.</p>
+				{spent && (
+					<svg className={`grease ${s.cross}`} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+						<path d="M8 10 L 92 90 M 90 8 L 12 92" />
+					</svg>
+				)}
+			</li>
+		);
+	}
+
+	return (
+		<li className={`${s.slip} ${s.slipLive}`}>
+			<h3 className={s.tier}>{group.name}</h3>
+			<SlipPrice group={group} />
+			<p className={s.state}>
+				{finalWave ? 'The final wave, on sale.' : 'On sale.'}
+				{deadline && (
+					<>
+						{' '}
+						<time dateTime={deadline.iso}>{deadline.label}.</time>
+					</>
+				)}
+			</p>
+			<div className={s.perf} aria-hidden="true" />
+			<div className={s.row}>
+				<p className={s.edge}>
+					{vatNote && <span>{vatNote}</span>}
+					<time className={s.edgeDate} dateTime={EVENT_DAY_ISO}>
+						{EVENT_DAY_STAMP}
+					</time>
+				</p>
+				<SlipCtas group={group} buyable={buyable} accountSlug={accountSlug} eventSlug={eventSlug} />
+			</div>
+		</li>
 	);
 }
 
@@ -150,22 +225,11 @@ export default function Tickets() {
 					<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
 					<LoadingState label="Opening the box office" />
 				</header>
-				<ul className={`field ${s.skelField}`} role="list" aria-hidden="true">
-					{[0, 1, 2].map((i) => (
-						<li key={i} className={`field-row field-row--short ${s.skelWave}`}>
-							<span className={`${s.skelBar} ${s.skelIndex}`} />
-							<div className={s.skelCol}>
-								<span className={`${s.skelBar} ${s.skelTitle}`} />
-								<span className={`${s.skelBar} ${s.skelText}`} />
-								<span className={`${s.skelBar} ${s.skelFacts}`} />
-							</div>
-							<div className={`${s.skelCol} ${s.skelColRight}`}>
-								<span className={`${s.skelBar} ${s.skelPrice}`} />
-								{i === 1 && <span className={`${s.skelBar} ${s.skelBtn}`} />}
-							</div>
-						</li>
-					))}
-				</ul>
+				{/* Two blank slips in the live layout, so nothing reflows on load. */}
+				<div className={s.slips} aria-hidden="true">
+					<div className={`${s.skelSlip} ${s.skelSmall}`} />
+					<div className={`${s.skelSlip} ${s.skelBig}`} />
+				</div>
 			</section>
 		);
 	}
@@ -202,96 +266,40 @@ export default function Tickets() {
 	// sale, that paused wave has been superseded — it reads "Ended", not
 	// "Paused". See releaseStatus().
 	const laterWaveOnSale = releases.some((r) => releaseStatus(r).purchasable);
-	// Every price is gross, so the tax line is said once under the list
-	// instead of under each figure.
-	const vatNote = releases.map((r) => priceDisplay(r)?.secondary).find(Boolean);
+	// Every price is gross, so the tax line is said once, on the live slip's
+	// edge, instead of under each figure.
+	const vatNote = releases.map((r) => priceDisplay(r)?.secondary).find(Boolean) ?? undefined;
 	// Nothing left to wait for (no "Coming soon" wave): the section stops
-	// pitching "earlier is cheaper" and the next-wave newsletter, and says
-	// this is the last call instead.
+	// pitching the next-wave newsletter and says this is the last call instead.
 	const finalWave = isFinalWave(releases);
 	const groups = groupReleases(releases);
-	const finalName = finalWave
-		? groups.find((g) => g.variants.some((v) => releaseStatus(v.release).purchasable))?.name
-		: undefined;
 
 	return (
 		<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
-			{/* The ledger: a ruled head, then one ruled row per wave. */}
+			{/* The head carries the invoice route as its note: a quiet side door
+			    beside the poster title, never a second red button. */}
 			<header className="head-rule">
 				<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
-				<p className="head-rule-note">
-					{finalWave ? `${finalName ?? 'This'} is the final wave` : (vatNote ?? 'Prices in CZK')}
-				</p>
+				<div className={`head-rule-note ${s.note}`}>
+					<p>Need to pay by bank transfer?</p>
+					<a href="/invoice" className={`action ${s.noteAction}`}>
+						Request a company invoice
+					</a>
+				</div>
 			</header>
-			<ul className={`field ${s.stubs}`} role="list">
-				{groups.map((group, i) => {
-					const statuses = group.variants.map((v) => releaseStatus(v.release, { laterWaveOnSale }));
-					const anyPurchasable = statuses.some((st) => st.purchasable);
-					const buyable = group.variants.filter((_, vi) => statuses[vi].purchasable);
-					// When no variant is buyable, pick a non-sold-out summary if one
-					// exists so a "Paused" or "Coming soon" wave isn't labeled "Sold
-					// out" just because one variant ran out.
-					const summary: ReleaseStatus | null = anyPurchasable
-						? null
-						: statuses.find((st) => st.tone !== 'sold-out') ?? statuses[0];
-					// Deadline ONLY for a wave a visitor can still buy into: fed the
-					// purchasable variants per the same `releaseStatus()` that prints
-					// the badge, never `end_at` alone — otherwise a hand-closed wave
-					// reads "Ended" beside "Ends Oct 15". Null far more often than not
-					// (most releases carry no `end_at`); the line is then absent.
-					const deadline = waveDeadline(buyable.map((v) => v.release));
-					const serial = String(i + 1).padStart(2, '0');
-					return (
-						<li
-							key={group.name}
-							className={`field-row field-row--short field-row--holds ${s.stub} ${anyPurchasable ? s.stubLive : s.stubSpent}`}
-						>
-							{/* Index and state on one mono line at the head of the row.
-							    This replaces a punched perforation, two cut-out notches,
-							    a vertical serial, a VOID overprint and a filled ADMIT ONE
-							    band — six pieces of ticket cosplay per wave, three waves
-							    deep, for information that is two words long. */}
-							<span className={s.stubMeta}>
-								<span className={s.stubSerial} aria-hidden="true">{serial}</span>
-								{anyPurchasable && (
-									<span className={finalWave ? `${s.stubState} ${s.stubStateFinal}` : s.stubState}>
-										{finalWave ? 'Last chance' : 'On sale'}
-									</span>
-								)}
-							</span>
-
-							<div className={s.stubBody}>
-								<h3 className={s.stubTitle}>{group.name}</h3>
-								{/* The wave's one fact: its sale window, when the organizer set one. */}
-								{deadline && (
-									<p className={s.stubDeadline}>
-										<time dateTime={deadline.iso}>{deadline.label}</time>
-									</p>
-								)}
-							</div>
-
-							<div className={s.stubEnd}>
-								<StubPrice group={group} />
-								{anyPurchasable ? (
-									<StubCtas group={group} buyable={buyable} accountSlug={accountSlug} eventSlug={eventSlug} />
-								) : (
-									<span className="record-status">{summary?.label ?? 'Unavailable'}</span>
-								)}
-							</div>
-						</li>
-					);
-				})}
+			<ul className={s.slips} role="list">
+				{groups.map((group) => (
+					<WaveSlip
+						key={group.name}
+						group={group}
+						laterWaveOnSale={laterWaveOnSale}
+						finalWave={finalWave}
+						vatNote={vatNote}
+						accountSlug={accountSlug}
+						eventSlug={eventSlug}
+					/>
+				))}
 			</ul>
-			{/* Two quiet side doors, one voice. The invoice route used to be a
-			    second filled red button under the list, competing with the live
-			    wave's own buy button for the one primary action in the section.
-			    The tax line is the head's note, not repeated here. */}
-			<p className={s.footnote}>
-				Need to pay by bank transfer?{' '}
-				<a href="/invoice" className={s.footnoteLink}>
-					Request a company invoice
-				</a>
-			</p>
 			{/* No next wave to be notified about once the final one is on sale. */}
 			{!finalWave && (
 				<p className={s.footnote}>

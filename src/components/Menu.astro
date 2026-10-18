@@ -73,13 +73,44 @@ const isCurrent = (href: string) => {
 		/>
 	</a>
 
-	<!-- Event stamp. The where/when belongs in the bar, not three scrolls down.
-	     Decorative duplicate of the hero meta, so it stays out of the a11y tree. -->
-	<p class="header-stamp" aria-hidden="true">Prague <span>&middot;</span> 30 Oct 2026</p>
+	<!-- Desktop (>=1100px): the destinations sit in the bar, the four the visit
+	     turns on, then the organisers' side one shade dimmer. Below 1100px this
+	     list is hidden and the same lines live in the full-screen panel. -->
+	<nav class="bar-nav" aria-label="Primary">
+		<ul class="bar-list">
+			{links.filter(({ cta }) => !cta).map(({ href, label }) => {
+				const current = isCurrent(href);
+				return (
+					<li>
+						<a
+							href={href}
+							class={`bar-link${current ? ' bar-link--current' : ''}`}
+							{...(current ? { 'aria-current': 'page' } : {})}
+						>
+							{label}
+						</a>
+					</li>
+				);
+			})}
+			<li class="bar-sep" aria-hidden="true"></li>
+			{secondary.map(({ href, label }) => {
+				const current = isCurrent(href);
+				return (
+					<li>
+						<a
+							href={href}
+							class={`bar-link bar-link--secondary${current ? ' bar-link--current' : ''}`}
+							{...(current ? { 'aria-current': 'page' } : {})}
+						>
+							{label}
+						</a>
+					</li>
+				);
+			})}
+		</ul>
+	</nav>
 
 	<div class="header-actions">
-		{!isInvite && <a href={ticketsHref} class="header-cta">Tickets</a>}
-
 		<nav class="nav" aria-label="Primary">
 			<button
 				id="nav-toggle"
@@ -147,6 +178,8 @@ const isCurrent = (href: string) => {
 				</div>
 			</div>
 		</nav>
+
+		{!isInvite && <a href={ticketsHref} class="header-cta">Tickets</a>}
 	</div>
 </header>
 

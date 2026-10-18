@@ -9,26 +9,53 @@ import SpeakersTeaser from '../components/SpeakersTeaser';
 import { getActivePartnerTiers, getCommunityPartners, partnerLogo, type Partner } from '../lib/partners';
 import { TOPICS } from '../lib/topics';
 
-// The home page is one ruled document: a full-bleed plate with the statement
-// set into it, a facts line with the page's one red fill, then four ruled
-// sections (the event, tickets, speakers, partners) and the newsletter.
-// Every section opens on `.head-rule`; every list row is a `.field-row`.
+// The home page as prints on a black table: the full-bleed plate with the
+// statement set left over it, then the event (a widescreen print and its
+// back), tickets, speakers, the past editions as a contact sheet, the
+// partner wall labelled with tape, and the newsletter card.
 
-// One row per tier, top tier first; community closes the wall. Media
-// partners live on /partners only.
+// One row per tier, top tier first. Silver and community share the last row
+// (each mark still sized by its own tier). Media partners live on /partners only.
 const communityPartners = await getCommunityPartners();
-const homeRows: { id: string; label: string; partners: Partner[] }[] = [
-	...(await getActivePartnerTiers()),
-	{ id: 'community', label: 'Community', partners: communityPartners },
+const ladder = await getActivePartnerTiers();
+type HomeRow = { id: string; label: string; partners: { p: Partner; tier: string }[] };
+const tail = [
+	...(ladder.find((t) => t.id === 'silver')?.partners.map((p) => ({ p, tier: 'silver' })) ?? []),
+	...communityPartners.map((p) => ({ p, tier: 'community' })),
+];
+const homeRows: HomeRow[] = [
+	...ladder
+		.filter((t) => t.id !== 'silver')
+		.map((t) => ({ id: t.id, label: t.label, partners: t.partners.map((p) => ({ p, tier: t.id })) })),
+	{
+		id: 'silver',
+		label: ladder.some((t) => t.id === 'silver') ? 'Silver and community' : 'Community',
+		partners: tail,
+	},
 ].filter((row) => row.partners.length > 0);
 
-// The mosaic's eight, in its order: the full hall leads (2×2), the
-// group on stage spans the last row's first half (index.scss).
-const GALLERY = ['01', '02', '03', '08', '20', '13', '21', '14'] as const;
+// The contact sheet: two strips of four frames, the hall (01) third on the
+// first strip, ringed in grease and enlarged beside the sheet. Frame numbers
+// run on like a roll of film.
+const STRIPS = [
+	[
+		{ n: '02', no: '11A' },
+		{ n: '03', no: '12' },
+		{ n: '01', no: '12A' },
+		{ n: '08', no: '13' },
+	],
+	[
+		{ n: '20', no: '13A' },
+		{ n: '13', no: '14' },
+		{ n: '21', no: '14A' },
+		{ n: '14', no: '15' },
+	],
+] as const;
+const RINGED = '01';
 
-// The home wall is the /partners ladder at 70%: each tier's reference box
-// (`partnerLogo()`) shrunk, so the rank reads the same on both pages.
-const STRIP_SCALE = 0.7;
+// The home wall uses the /partners reference boxes (`partnerLogo()`) as they
+// are; each tier's `--logo-scale` in index.scss sets the rank on this page.
+const STRIP_SCALE = 1;
 ---
 
 <BaseLayout description="DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. 30 October 2026. Tickets on sale now.">
@@ -42,63 +69,92 @@ const STRIP_SCALE = 0.7;
 	/>
 
 	<main class="page-stack">
-		<!-- HERO — the plate runs edge to edge; the statement is set into its
-		     lower left, the case-file stamp into its upper left. Nothing else
-		     sits on the photograph. -->
+		<!-- HERO — the plate runs edge to edge, the photograph pushed right and
+		     fading to black on its left and bottom; the statement, the facts
+		     line and the page's one red fill are set left over it. -->
 		<section id="hero" class="scene" aria-labelledby="hero-title">
-			<div class="hero-plate">
-				<HeroBackground
-					photoOpacity={0.9}
-					mobilePhotoOpacity={0.7}
-					mobileFocus="42% 40%"
-					mobileZoom="auto 120%"
-					width="100%"
-					focus="56% 42%"
-				/>
-				<div class="scene-vignette" aria-hidden="true"></div>
+			<HeroBackground
+				photoOpacity={1}
+				mobilePhotoOpacity={1}
+				mobileFocus="42% 40%"
+				width="74%"
+				focus="38% 42%"
+			/>
+			<div class="hero-shade" aria-hidden="true"></div>
+			<div class="hero-body">
 				<h1 id="hero-title" class="hero-statement display">
 					<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference, 30 October 2026. </span>
-					Prague&rsquo;s most original<br />conference is <span class="red">back.</span>
+					Prague&rsquo;s most original conference is <span class="red">back.</span>
 				</h1>
-			</div>
 
-			<!-- The facts line under the plate: date, venue, the wave on sale, and
-			     the page's one red fill. -->
-			<div class="hero-line">
 				<div class="hero-facts">
-					<time datetime="2026-10-30">30 Oct 2026</time>
-					<span class="hero-facts-dot" aria-hidden="true">·</span>
+					<time class="hero-date" datetime="2026-10-30">30 Oct 2026</time>
 					<a
 						class="hero-facts-link"
 						href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
 						target="_blank"
 						rel="noopener noreferrer"
-					>Uhelný Mlýn, near Prague</a>
+					>Uhelný mlýn, near Prague</a>
 					<HeroOffer client:load />
 				</div>
 				<a href="#tickets" class="btn-primary hero-cta">Get tickets</a>
+				<span class="hero-frame" aria-hidden="true">Frame 01 · 30.10.2026</span>
 			</div>
 		</section>
 
-		<!-- THE EVENT — a note and the facts list, both typewriter, on two columns. -->
-		<section class="band sec" aria-labelledby="facts-title">
+		<!-- THE EVENT — a widescreen print of the mill with the line set over it
+		     like a subtitle, and the back of the print beside it. -->
+		<section class="band sec event" aria-labelledby="facts-title">
 			<div class="band-inner">
 				<header class="head-rule">
-					<h2 id="facts-title" class="head-rule-title">The event</h2>
+					<h2 id="facts-title" class="head-rule-title event-title">The eleventh DevFest.cz</h2>
 				</header>
-				<div class="facts">
-					<p class="facts-note">
-						The eleventh DevFest.cz: one day in a converted coal mill
-						25 minutes north of Prague, for 350 medior and senior
-						developers from across CEE.
-					</p>
-					<dl class="facts-list">
-						<div><dt>Date</dt><dd><time datetime="2026-10-30">30 October 2026</time></dd></div>
-						<div><dt>Place</dt><dd>Uhelný Mlýn, Libčice nad Vltavou</dd></div>
-						<div><dt>Doors</dt><dd>08:00 &mdash; 20:00</dd></div>
-						<div><dt>Audience</dt><dd>350 developers</dd></div>
-						<div><dt>Programme</dt><dd>{TOPICS.map((t) => t.name).join(' · ')}</dd></div>
-					</dl>
+				<div class="event-grid">
+					<div class="paper event-print">
+						<span class="tape event-tape">Uhelný mlýn, Libčice nad Vltavou</span>
+						<div class="paper-photo event-photo">
+							<img
+								src="/gallery/uhelny-mlyn-chimney.webp"
+								alt="The chimney of Uhelný mlýn, the converted coal mill at Libčice nad Vltavou"
+								loading="lazy"
+								decoding="async"
+								width="1824"
+								height="1368"
+							/>
+							<p class="event-subtitle">
+								One day in a converted coal mill <span class="fig">25</span> minutes
+								north of Prague, for <span class="fig">350</span> medior and senior
+								developers from across CEE.
+							</p>
+						</div>
+						<div class="paper-edge" aria-hidden="true">
+							<span>Frame 02</span><span>2.39 : 1</span><span>08:00</span>
+						</div>
+					</div>
+
+					<div class="event-card">
+						<div class="paper-edge event-card-edge" aria-hidden="true">
+							<span class="edge-word">On the back</span><span>02</span>
+						</div>
+						<dl class="facts-list">
+							<div><dt>Date</dt><dd><time datetime="2026-10-30">30 October 2026</time></dd></div>
+							<div><dt>Place</dt><dd>Uhelný mlýn, Libčice nad Vltavou</dd></div>
+							<div><dt>Doors</dt><dd><span class="fig">08:00&ndash;20:00</span></dd></div>
+							<div>
+								<dt>Audience</dt>
+								<dd>
+									<span class="ringed">
+										<span class="fig">350</span>
+										<svg class="grease" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+											<path d="M22 10 C 50 -2, 92 6, 94 30 C 96 52, 60 60, 30 56 C 6 52, 2 30, 14 16 C 22 8, 40 4, 56 6" />
+										</svg>
+									</span>
+									developers
+								</dd>
+							</div>
+							<div><dt>Programme</dt><dd>{TOPICS.map((t) => t.name).join(' · ')}</dd></div>
+						</dl>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -111,74 +167,109 @@ const STRIP_SCALE = 0.7;
 		<!-- SPEAKERS — the register's first lines; hides until data loads. -->
 		<SpeakersTeaser client:load />
 
-		<!-- PAST EDITIONS — the one place the page shows the event itself: eight
-		     press photographs as a mosaic, the hall leading. Decorative: the
-		     section title says what they are. -->
+		<!-- PAST EDITIONS — a contact sheet of the last edition, one frame ringed
+		     in grease and enlarged beside it. The frames are decorative; the
+		     enlargement carries the description. -->
 		<section class="band sec" aria-labelledby="gallery-title">
 			<div class="band-inner">
-				<header class="head-rule">
+				<header class="head-rule past-head">
 					<h2 id="gallery-title" class="head-rule-title">Past editions</h2>
+					<p class="head-rule-note">Ten editions since <span class="fig">2015</span>.</p>
 				</header>
-				<ul class="gallery" role="list">
-					{GALLERY.map((n) => (
-						<li>
+				<div class="past-grid">
+					<div class="sheet">
+						{STRIPS.map((strip) => (
+							<ul class="strip" role="list">
+								{strip.map((f) => (
+									<li class="frame">
+										<span class="frame-no" aria-hidden="true">{f.no}</span>
+										<div class="frame-photo">
+											<img
+												src={`/gallery/devfest-2025-${f.n}.webp`}
+												alt=""
+												loading="lazy"
+												decoding="async"
+												width="1080"
+												height="720"
+											/>
+										</div>
+										{f.n === RINGED && (
+											<svg class="grease" viewBox="0 0 200 140" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+												<path d="M30 34 C 60 6, 150 4, 186 34 C 204 60, 196 112, 150 128 C 100 142, 30 134, 12 100 C 0 72, 14 44, 58 22" />
+											</svg>
+										)}
+									</li>
+								))}
+							</ul>
+						))}
+						<div class="sheet-edge" aria-hidden="true"><span>2015</span><span>2025</span></div>
+					</div>
+					<div class="paper past-print">
+						<span class="tape past-tape">The big hall</span>
+						<div class="paper-photo past-photo">
 							<img
-								src={`/gallery/devfest-2025-${n}.webp`}
-								alt=""
+								src={`/gallery/devfest-2025-${RINGED}.webp`}
+								alt="The big hall full of attendees facing the stage at DevFest.cz 2025"
 								loading="lazy"
 								decoding="async"
-								width="1080"
-								height="720"
+								width="800"
+								height="533"
 							/>
-						</li>
-					))}
-				</ul>
+						</div>
+						<div class="paper-edge" aria-hidden="true"><span>12A</span><span>2025</span></div>
+					</div>
+				</div>
 			</div>
 		</section>
 
-		<!-- PARTNERS — one wall, one row per tier, marks on one height per tier. -->
+		<!-- PARTNERS — tiers labelled with tape; each mark's box comes from its
+		     tier (`partnerLogo()`), so the size carries the rank. -->
 		{homeRows.length > 0 && (
 			<section class="band sec" aria-labelledby="partners-title">
 				<div class="band-inner">
 					<header class="head-rule">
 						<h2 id="partners-title" class="head-rule-title">Partners</h2>
+						<div class="partners-actions">
+							<a class="action" href="/partners">All partners</a>
+							<a class="action" href="/partners#partners-cta-title">Become a partner</a>
+						</div>
 					</header>
 					<div class="partners-tiers">
-						{homeRows.map((tier) => (
-							<ul class={`partners-row tier-${tier.id}`} aria-label={tier.label}>
-								{tier.partners.map((p) => {
-									const { props } = partnerLogo(p, tier.id, STRIP_SCALE);
-									return (
-										<li class="partners-item">
-											{p.url ? (
-												<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+						{homeRows.map((row) => (
+							<div class={`partners-tier tier-${row.id}`}>
+								<span class="tape partners-tape" id={`tier-${row.id}-label`}>{row.label}</span>
+								<ul class="partners-row" aria-labelledby={`tier-${row.id}-label`}>
+									{row.partners.map(({ p, tier }) => {
+										const { props } = partnerLogo(p, tier, STRIP_SCALE);
+										return (
+											<li class={`partners-item item-${tier}`}>
+												{p.url ? (
+													<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+														<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
+													</a>
+												) : (
 													<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
-												</a>
-											) : (
-												<Image class={`partners-logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
-											)}
-										</li>
-									);
-								})}
-							</ul>
+												)}
+											</li>
+										);
+									})}
+								</ul>
+							</div>
 						))}
 					</div>
-					<a class="action" href="/partners">All partners</a>
 				</div>
 			</section>
 		)}
 
 		<!-- NEWSLETTER — `anchor-target`: the ticket footnote, the footer and the FAQ jump here. -->
 		<section id="newsletter" class="band sec anchor-target" aria-labelledby="newsletter-title">
-			<div class="band-inner">
-				<header class="head-rule">
-					<h2 id="newsletter-title" class="head-rule-title">Newsletter</h2>
-				</header>
-				<div class="newsletter">
+			<div class="band-inner newsletter">
+				<div>
+					<h2 id="newsletter-title" class="display newsletter-title">Newsletter</h2>
 					<p class="newsletter-lede">We write when a wave opens or a speaker is confirmed. Nothing else.</p>
-					<div class="newsletter-form">
-						<NewsletterForm client:visible />
-					</div>
+				</div>
+				<div class="newsletter-form">
+					<NewsletterForm client:visible />
 				</div>
 			</div>
 		</section>

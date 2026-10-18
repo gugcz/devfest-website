@@ -1,74 +1,339 @@
 @use '../styles/type' as *;
 
-// Three photos on the last step of the route, cut to one crop (4:5 on a
-// desktop row, 4:3 stacked on a phone) and graded like the home mill plate:
-// noir by default, developing to colour under the cursor. The red brick the
-// caption names comes back on hover.
-.venue-photos {
-	margin: 0.4rem 0 0;
-	width: 100%;
+// Prints on a black table: the address beside the mill, the route as typed
+// index cards, the entrance with one red grease circle on the door.
+
+// Consecutive bands share one beat of air, not two.
+.venue-band + .venue-band {
+	padding-top: 0;
 }
 
-.venue-photos-grid {
-	list-style: none;
+// Figures inside typewriter copy: the mono voice records them.
+.fig {
+	font-family: var(--font-jetbrains-mono), monospace;
+}
+
+/* ---- Address ---- */
+.venue-addr-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: clamp(2.5rem, 5vw, 5.5rem);
+	align-items: center;
+}
+
+.venue-label {
+	@include note(var(--fs-note));
+	color: var(--ink-dim);
+	margin: 0 0 1rem;
+}
+
+.venue-addr-title {
+	@include display(var(--fs-display));
 	margin: 0;
-	padding: 0;
+	text-wrap: balance;
+}
+
+.venue-town {
+	@include prose(var(--fs-lede), 1.4);
+	color: var(--color-text);
+	margin: 1.1rem 0 0;
+}
+
+.venue-hours {
+	@include prose(var(--fs-body-lg), 1.6);
+	color: var(--ink);
+	margin: 1.75rem 0 0;
+	max-width: 32ch;
+
+	.fig {
+		color: var(--color-text);
+	}
+}
+
+.venue-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 2.25rem;
+	margin-top: 1.25rem;
+
+	.action {
+		font-size: var(--fs-cta);
+	}
+}
+
+.venue-mill {
+	--tilt: calc(-0.5 * var(--tilt-2));
+	--tape-tilt: 2deg;
+	margin: 0;
+	padding: 0.9rem 0.9rem 0;
+
+	.tape {
+		left: auto;
+		right: 9%;
+	}
+
+	.paper-photo {
+		aspect-ratio: 3 / 2;
+	}
+
+	:global(img) {
+		object-position: 50% 55%;
+	}
+}
+
+/* ---- The route: index cards ---- */
+.venue-cards {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 3.5rem clamp(1.75rem, 3vw, 3rem);
+	align-items: start;
+}
+
+// The steps join the card grid; the list stays an ordered list for AT.
+.venue-steps {
+	display: contents;
+	list-style: none;
+}
+
+.venue-card {
+	padding: 1.6rem 1.75rem 1.9rem;
+
+	p {
+		@include prose(var(--fs-body), 1.55);
+		color: var(--paper-ink);
+		margin: 0;
+	}
+
+	p + p {
+		margin-top: 0.75rem;
+	}
+
+	strong {
+		white-space: nowrap;
+		font-weight: 400;
+		color: var(--paper-ink);
+		background: linear-gradient(transparent 62%, rgba(0, 0, 0, 0.1) 62%);
+	}
+}
+
+.venue-steps .venue-card:nth-child(1) {
+	--tilt: calc(-1 * var(--tilt-2));
+}
+
+.venue-steps .venue-card:nth-child(2) {
+	--tilt: var(--tilt-1);
+	margin-top: 2.5rem;
+}
+
+.venue-steps .venue-card:nth-child(3) {
+	--tilt: calc(-0.75 * var(--tilt-1));
+}
+
+// The card's top margin: what kind of leg (typed), and its place (figure).
+.venue-card .venue-card-edge {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
 	gap: 0.75rem;
+	margin-bottom: 1.35rem;
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink-dim);
 
-	li {
-		overflow: hidden;
-		background: var(--panel-lit);
-	}
-
-	img {
-		display: block;
-		width: 100%;
-		height: auto;
-		aspect-ratio: 4 / 5;
-		object-fit: cover;
-		filter: grayscale(1) contrast(1.35) brightness(0.62);
-		transition: filter 0.6s ease;
-	}
-
-	li:hover img {
-		filter: grayscale(0) contrast(1.02) brightness(1);
+	.fig {
+		font-size: var(--fs-label-xs);
+		letter-spacing: 0.12em;
 	}
 }
 
-.venue-photos-caption {
-	@include prose(var(--fs-ui), 1.6);
-	color: var(--ink-soft);
-	max-width: 52ch;
-	margin-top: 0.9rem;
+.venue-card-no {
+	display: block;
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-weight: 500;
+	font-size: var(--fs-head);
+	line-height: 1;
+	letter-spacing: -0.02em;
+	color: var(--paper-ink);
 }
 
-// "Flying in" is the leg before the route, so it sits outside the numbered
-// list, closed off by air rather than a rule.
-.venue-aside {
-	margin-top: clamp(1.5rem, 3vw, 2.5rem);
+.venue-card-title {
+	@include row-title(var(--fs-head));
+	line-height: 0.92;
+	color: var(--paper-ink);
+	margin: 0.85rem 0;
 }
 
-@media (max-width: 700px) {
-	.venue-photos-grid {
+.venue-facts {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 0.5rem 1rem;
+	margin: 1.25rem 0 0;
+
+	dt {
+		@include note(var(--fs-note-sm));
+		color: var(--paper-ink-dim);
+	}
+
+	dd {
+		@include prose(var(--fs-ui), 1.4);
+		color: var(--paper-ink);
+		margin: 0;
+	}
+}
+
+.venue-circ {
+	position: relative;
+	display: inline-block;
+
+	.grease {
+		left: -14%;
+		top: -34%;
+		width: 128%;
+		height: 168%;
+	}
+}
+
+// A text action on paper: black Bebas on its own underline, red on hover.
+.venue-go {
+	display: inline-block;
+	margin-top: 1.25rem;
+	padding: 0.5rem 0 0.15rem;
+	@include action(var(--fs-cta));
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
+	transition: color 0.2s ease;
+
+	&:focus-visible {
+		color: var(--color-accent);
+	}
+}
+
+@media (hover: hover) {
+	.venue-go:hover {
+		color: var(--color-accent);
+	}
+}
+
+.venue-fly {
+	grid-column: 2 / 4;
+	margin-top: 1.5rem;
+	padding-top: 2.1rem;
+	--tilt: calc(0.75 * var(--tilt-1));
+
+	> .tape {
+		left: 1.75rem;
+	}
+
+	.venue-card-title {
+		margin-top: 0;
+	}
+}
+
+/* ---- Closer ---- */
+// The page signs off at poster scale, like its section heads.
+:global(.venue-closer .closer-title) {
+	font-size: var(--fs-section);
+}
+
+/* ---- The entrance ---- */
+.venue-door {
+	display: grid;
+	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+	gap: clamp(2.5rem, 5vw, 5rem);
+	align-items: end;
+}
+
+.venue-door-print {
+	--tilt: var(--tilt-1);
+	--tape-tilt: -2deg;
+	margin: 0;
+	padding: 0.9rem 0.9rem 0;
+
+	> .tape {
+		left: 8%;
+	}
+
+	.paper-photo {
+		aspect-ratio: 4 / 3;
+	}
+}
+
+// Around the glass doors, bottom left of the frame.
+.venue-door-mark {
+	left: 10%;
+	top: 49%;
+	width: 26%;
+	height: 36%;
+
+	path {
+		stroke-width: 2.5px;
+	}
+}
+
+.venue-door-title {
+	@include display(var(--fs-display));
+	margin: 0;
+}
+
+.venue-door-note {
+	@include prose(var(--fs-body-lg), 1.6);
+	color: var(--ink);
+	margin: 1.75rem 0 0;
+	max-width: 30ch;
+}
+
+@media (max-width: 1100px) {
+	.venue-addr-grid {
 		grid-template-columns: minmax(0, 1fr);
+		gap: 3.5rem;
+	}
 
-		img {
-			aspect-ratio: 4 / 3;
-		}
+	.venue-mill {
+		max-width: 52rem;
+	}
+
+	.venue-cards {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.venue-steps .venue-card:nth-child(2) {
+		margin-top: 0;
+	}
+
+	.venue-fly {
+		grid-column: 2;
+		margin-top: 0;
+	}
+
+	.venue-door {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3rem;
+	}
+}
+
+@media (max-width: 720px) {
+	.venue-mill,
+	.venue-door-print {
+		padding: 0.5rem 0.5rem 0;
+	}
+
+	.venue-cards {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.5rem;
+	}
+
+	.venue-card {
+		padding: 1.4rem 1.4rem 1.6rem;
+	}
+
+	.venue-fly {
+		grid-column: auto;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.venue-photos-grid img {
+	.venue-go {
 		transition: none;
 	}
-}
-
-// Focal points, so the one crop keeps what the visitor looks for.
-.venue-photos-grid {
-	.crop-chimney { object-position: 58% 50%; }
-	.crop-tower { object-position: 50% 40%; }
-	.crop-entrance { object-position: 45% 55%; }
 }

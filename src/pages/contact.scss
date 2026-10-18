@@ -1,6 +1,158 @@
-// An open field of `.field` rows; the desks are `<Desk>`. No `--lamp` box here:
-// a full-bleed lamp draws a hard horizontal step across the page.
-.contact-grid {
+@use '../styles/type' as *;
+
+// THE INBOXES: three typed paper index cards on the table. The general one is
+// the large card on the left, its address marked with the red grease pencil;
+// the other two stack beside it.
+.desks {
+	padding: var(--section-y-tight) var(--gutter) var(--section-y);
+	background: var(--color-bg);
+}
+
+.desks-inner {
+	max-width: var(--maxw);
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+	gap: clamp(2.5rem, 5vw, 4.5rem);
+	align-items: start;
+}
+
+.desk-side {
+	display: flex;
+	flex-direction: column;
+	gap: 3.5rem;
+	padding-top: 2.5rem;
+
+	.icard:nth-child(1) { --tilt: var(--tilt-2); }
+	.icard:nth-child(2) { --tilt: calc(-1 * var(--tilt-1)); margin-left: 6%; }
+}
+
+.icard {
+	margin: 0;
+	padding: 1.75rem 2rem 2rem;
+}
+
+.icard--main {
+	--tilt: calc(-1 * var(--tilt-1) - 0.4deg);
+	padding: 2.5rem 2.75rem 2.9rem;
+}
+
+.icard-edge {
+	margin: 0 0 1.4rem;
+	padding: 0;
+}
+
+.icard-title {
+	@include display(var(--fs-head));
+	color: var(--paper-ink);
+	margin: 0;
+}
+
+.icard--main .icard-title {
+	font-size: var(--fs-h2);
+}
+
+.icard-desc {
+	@include prose(var(--fs-body), 1.5);
+	color: var(--paper-ink-dim);
+	margin: 0.75rem 0 0;
+	max-width: 34ch;
+}
+
+.icard--main .icard-desc {
+	font-size: var(--fs-lede);
+}
+
+.icard-who {
+	@include note(var(--fs-body));
+	color: var(--paper-ink);
+	margin: 1.4rem 0 0;
+}
+
+.icard-role {
+	color: var(--paper-ink-dim);
+}
+
+// The address, typed large: the card's one action.
+.icard-mail {
+	display: inline-block;
+	margin-top: 1.25rem;
+	@include prose(var(--fs-lede), 1.2);
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 6px;
+	overflow-wrap: anywhere;
+	padding: 0.2rem 0;
+	transition: color 0.2s ease;
+
+	&:hover {
+		color: var(--color-accent);
+	}
+}
+
+.icard-mailwrap {
 	position: relative;
-	display: block;
+	display: inline-block;
+	max-width: 100%;
+	margin-top: 1.9rem;
+
+	.icard-mail {
+		margin-top: 0;
+		font-size: var(--fs-head);
+		// The grease pencil underlines it instead.
+		text-decoration: none;
+	}
+}
+
+.icard-grease {
+	left: -3%;
+	bottom: -1rem;
+	width: 106%;
+	height: 1.25rem;
+}
+
+@media (max-width: 1100px) {
+	.desks-inner {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3.5rem;
+	}
+
+	.desk-side {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 2.5rem;
+		padding-top: 0;
+
+		.icard:nth-child(2) { margin-left: 0; }
+	}
+}
+
+@media (max-width: 720px) {
+	.desk-side {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.75rem;
+	}
+
+	.icard {
+		padding: 1.5rem 1.4rem 1.6rem;
+	}
+
+	.icard--main {
+		padding: 1.75rem 1.5rem 2rem;
+	}
+
+	.icard--main .icard-desc {
+		font-size: var(--fs-body);
+	}
+
+	.icard-mailwrap .icard-mail {
+		font-size: var(--fs-title-sm);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.icard-mail {
+		transition: none;
+	}
 }

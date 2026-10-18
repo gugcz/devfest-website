@@ -1,6 +1,6 @@
 @use '../styles/type' as *;
-// A bar, not a navigation. Three slots — mark, stamp, actions — and every
-// destination lives behind one control at every width.
+// The bar: the mark left; at >=1100px the destinations inline and the red
+// Tickets button, below that the full-screen menu toggle and Tickets.
 .site-header {
 	position: fixed;
 	top: 0;
@@ -9,14 +9,8 @@
 	// Above `.status-bar-cover` (10000) and the film-grain overlay, so nav content
 	// stays opaque across the full stacking order.
 	z-index: 10001;
-	display: grid;
-	// Stamp centred against the VIEWPORT: equal side tracks keep it centred
-	// when the brand is wider than the actions. The actions track is
-	// `minmax(0, 1fr)`, not `1fr`: otherwise it floors at min-content and
-	// text zoom pushed the bar past the viewport. The brand track floors at
-	// the mark (a fixed 190px), which never shrinks.
-	grid-template-columns: minmax(max-content, 1fr) auto minmax(0, 1fr);
-	align-items: center;
+	display: flex;
+	justify-content: space-between;
 	gap: min(1.5rem, 7.5vw);
 	// Constant padding so the bar never jumps on a scroll-state flip.
 	// Vertical comes from `--header-pad-y` because `--header-h` derives from
@@ -124,38 +118,6 @@
 	}
 }
 
-.header-stamp {
-	margin: 0;
-	justify-self: center;
-	@include note;
-	color: var(--color-text);
-	white-space: nowrap;
-	opacity: 1;
-	transform: translateY(0);
-	transition:
-		opacity 0.4s ease,
-		transform 0.4s ease,
-		visibility 0s linear 0s;
-
-	span {
-		color: var(--color-accent-hot);
-		padding: 0 0.35em;
-	}
-}
-
-// At the top the hero already says where and when, so the stamp arrives on scroll.
-// `visibility: hidden` keeps the centre grid slot so the bar never reflows.
-.site-header[data-state='top'] .header-stamp {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-	transform: translateY(-6px);
-	transition:
-		opacity 0.4s ease,
-		transform 0.4s ease,
-		visibility 0s linear 0.4s;
-}
-
 .header-actions {
 	display: flex;
 	align-items: center;
@@ -173,30 +135,104 @@
 	// `--header-h` asserts the bar is one tap-target tall; a wrapped label
 	// would make that a lie and pull every anchor offset out with it.
 	white-space: nowrap;
-	// The bar's second control: Bebas caps, no fill. The page's
-	// one red fill is the hero's (or the ledger's) button, not the bar.
-	@include action;
+	// The red button. White Bebas on red stays at the large-text step
+	// (`cta-label`) — 4.4:1 clears AA only as large text.
+	@include cta-label;
 	text-decoration: none;
 	color: var(--color-text);
-	background: transparent;
+	background: var(--color-accent);
 	border: 0;
-	padding: 0.72rem 0;
-	gap: 0.6rem;
+	border-radius: var(--radius);
+	padding: 0.3rem 1.1rem 0.1rem;
 	// Touch target — WCAG 2.5.5. It is also the tallest thing in the bar,
-	// so it is what `--header-h` is built from. The token is a physical
-	// 44px, not 2.75rem — see BaseLayout.scss.
+	// so it is what `--header-h` is built from.
 	min-height: var(--header-tap);
 	display: inline-flex;
 	align-items: center;
 	transition:
 		color 0.2s ease,
-		opacity 0.15s ease,
-		visibility 0s linear 0s;
+		background 0.2s ease;
 }
 
-.header-cta:hover,
+@media (hover: hover) {
+	.header-cta:hover {
+		color: var(--color-bg);
+		background: var(--color-text);
+	}
+}
+
 .header-cta:focus-visible {
+	outline: 2px solid var(--color-accent-hot);
+	outline-offset: var(--focus-gap);
+}
+
+// ── THE INLINE BAR (>=1100px) ──────────────────────────────────────────
+.bar-nav {
+	display: none;
+	margin-left: auto;
+}
+
+.bar-list {
+	display: flex;
+	align-items: center;
+	gap: clamp(1rem, 1.8vw, 1.65rem);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.bar-link {
+	@include action;
+	letter-spacing: 0.08em;
+	display: inline-flex;
+	align-items: center;
+	min-height: var(--header-tap);
+	color: var(--color-text);
+	text-decoration: none;
+	white-space: nowrap;
+	transition: color 0.18s ease;
+}
+
+.bar-link--secondary {
+	color: var(--ink-soft);
+}
+
+// The page you are on: red, and `aria-current` says the same to AT.
+.bar-link--current {
 	color: var(--color-accent-hot);
+}
+
+@media (hover: hover) {
+	.bar-link:hover {
+		color: var(--color-accent-hot);
+	}
+}
+
+.bar-link:focus-visible {
+	outline: 2px solid var(--color-accent-hot);
+	outline-offset: var(--focus-gap-tight);
+}
+
+// A short mark between the two groups, not a rule across the bar.
+.bar-sep {
+	width: 1px;
+	height: 1.1rem;
+	background: var(--rule-strong);
+}
+
+@media (min-width: 1100px) {
+	.bar-nav {
+		display: block;
+	}
+
+	// Doubled class: beats the base `.nav { display: flex }` further down.
+	.site-header .nav {
+		display: none;
+	}
+
+	.header-actions {
+		margin-left: clamp(1rem, 1.8vw, 1.65rem);
+	}
 }
 
 // On the hero's first screen the toggle would be the only bordered box —
@@ -480,20 +516,6 @@
 	@include hairline-link;
 }
 
-// The stamp goes first: it duplicates the hero meta, and the bar must never wrap.
-@media (max-width: 860px) {
-	.header-stamp {
-		display: none;
-	}
-
-	.site-header {
-		grid-template-columns: max-content minmax(0, 1fr);
-	}
-
-	// The brand is NOT re-shown here: mobile follows the same rule as every other
-	// width — the hero owns the mark at the top, the bar takes it over on scroll.
-}
-
 @media (max-width: 600px) {
 	.nav-toggle-label {
 		// Below this width the word and the Tickets button fight for the same 40px; the
@@ -526,13 +548,13 @@
 
 	// Height is `--header-tap`; only the inline padding tightens.
 	.header-cta {
-		padding-inline: 0.625rem;
+		padding-inline: 0.8rem;
 	}
 }
 
-// On a phone the mark, the Tickets label and the Menu toggle no longer fit
-// one row. The CTA leaves the bar; Tickets stays the first line of the menu.
-@media (max-width: 599.98px) {
+// Under 380px the mark, the Tickets button and the toggle no longer fit one
+// row. The CTA leaves the bar; Tickets stays the first line of the menu.
+@media (max-width: 379.98px) {
 	.header-cta {
 		display: none;
 	}
@@ -573,8 +595,7 @@
 	.nav-secondary-link,
 	.header-cta,
 	.brand,
-	.header-stamp,
-	.site-header[data-state='top'] .header-stamp,
+	.bar-link,
 	.nav-toggle-bars span {
 		transition: none;
 	}

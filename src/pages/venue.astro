@@ -1,72 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import NextStep from '../components/NextStep.astro';
-import NextStepList from '../components/NextStepList.astro';
 import Closer from '../components/Closer.astro';
 import { Image } from 'astro:assets';
 import { EVENT } from '../lib/event';
 import chimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
-import entranceTower from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
 import entrance from '../assets/venue/uhelny-mlyn-entrance.jpg';
 
-// The route as the visitor travels it: Prague, the train, the walk, the door.
-// Same facts as the FAQ answer ("How do I get to the venue?") — keep the two
-// in step. Numbered, because it is a sequence; the photos ride on the last
-// step, where the visitor needs to recognise the building.
-const ROUTE = [
-	{
-		title: 'Take the train from Prague',
-		noteHtml:
-			'Trains toward <strong>Kralupy nad Vltavou</strong> leave from <strong>Praha hlavní nádraží</strong> ' +
-			'and <strong>Praha-Holešovice</strong> about every 30 minutes, and also call at Praha-Podbaba. ' +
-			'Get off at <strong>Libčice nad Vltavou</strong> &mdash; 25&ndash;30 minutes from the city centre.',
-		actions: [],
-	},
-	{
-		title: 'Walk from the station',
-		noteHtml:
-			'From Libčice nad Vltavou station it is a ten-minute walk, about 0.7&nbsp;km, to the venue.',
-		// Two map links on one page are two ways to the same place, not two
-		// decisions: both are quiet, the page's red is the closer's button.
-		actions: [{ href: EVENT.stationWalkUrl, label: 'Station to venue', kind: 'ghost' as const, external: true }],
-	},
-	{
-		title: `Find ${EVENT.venue}`,
-		noteHtml: `${EVENT.street}. Registration opens at ${EVENT.doorsTime}, the keynote starts at ${EVENT.startTime}.`,
-		actions: [{ href: EVENT.mapUrl, label: 'Open in maps', kind: 'ghost' as const, external: true }],
-	},
-];
-
-// Not a step on the route: the leg before it, for anyone not starting in Prague.
-const FLYING_IN = {
-	title: 'Flying in',
-	noteHtml:
-		'Fly to <strong>Prague</strong> (Václav Havel Airport, PRG). The Airport Express bus runs ' +
-		'straight to <strong>Praha hlavní nádraží</strong>, where the train to Libčice leaves.',
-	actions: [],
-};
-
-// What to look for on arrival, widest view first. Informative, so each has
-// alt text. The parked van's number plate is blurred in the source file.
-// `crop` names the photo's focal point, set in `venue.scss`.
-const PHOTOS = [
-	{
-		src: chimney,
-		crop: 'crop-chimney',
-		alt: 'The Uhelný Mlýn complex: red-brick factory halls with a tall brick chimney behind them.',
-	},
-	{
-		src: entranceTower,
-		crop: 'crop-tower',
-		alt: 'The chimney above a brick hall, with the black perforated-metal entrance building beside it.',
-	},
-	{
-		src: entrance,
-		crop: 'crop-entrance',
-		alt: 'The entrance: glass doors under a black perforated-metal façade, up a few concrete steps.',
-	},
-];
+// The postal address, split for the address block: the street as the head,
+// the post code and town under it.
+const ADDRESS = /^(.+), (\d{3} \d{2}) (.+)$/.exec(EVENT.street);
+const STREET = ADDRESS?.[1] ?? EVENT.street;
+const POST_CODE = ADDRESS?.[2] ?? '';
+const TOWN = ADDRESS?.[3] ?? '';
 ---
 
 <BaseLayout
@@ -80,43 +26,148 @@ const PHOTOS = [
 			seoHeading={`How to get to ${EVENT.venue}, DevFest.cz 2026`}
 			titleId="venue-title"
 			plate="/gallery/uhelny-mlyn-entrance-tower.webp"
-			focus="50% 45%"
+			focus="50% 40%"
 		/>
 
-		<section class="band band--lit" aria-labelledby="route-heading">
-			<div class="band-inner">
-				<NextStepList label="The route" labelId="route-heading" ordered>
-					{ROUTE.map((step, i) => (
-						<NextStep {...step} index={i + 1}>
-							{i === ROUTE.length - 1 && (
-								<figure class="venue-photos">
-									<ul class="venue-photos-grid" role="list">
-										{PHOTOS.map(({ src, alt, crop }) => (
-											<li>
-												<Image
-													src={src}
-													alt={alt}
-													widths={[400, 640, 960]}
-													sizes="(max-width: 700px) 100vw, (max-width: 900px) 30vw, 16vw"
-													class={crop}
-													loading="lazy"
-												/>
-											</li>
-										))}
-									</ul>
-									<figcaption class="venue-photos-caption">
-										A converted industrial mill: red-brick halls, one tall chimney, and the entrance in the black
-										metal building.
-									</figcaption>
-								</figure>
-							)}
-						</NextStep>
-					))}
-				</NextStepList>
+		{/* The address, large, with the mill beside it. */}
+		<section class="band venue-band venue-addr" aria-labelledby="addr-title">
+			<div class="band-inner venue-addr-grid">
+				<div>
+					<p class="venue-label">Address</p>
+					<h2 id="addr-title" class="venue-addr-title">{STREET}</h2>
+					<p class="venue-town"><span class="fig">{POST_CODE}</span> {TOWN}</p>
+					<p class="venue-hours">
+						Registration opens at <span class="fig">{EVENT.doorsTime}</span>, the keynote starts at <span class="fig">{EVENT.startTime}</span>.
+					</p>
+					<div class="venue-links">
+						<a class="action" href={EVENT.mapUrl} target="_blank" rel="noopener noreferrer">Open in maps</a>
+						<a class="action" href={EVENT.stationWalkUrl} target="_blank" rel="noopener noreferrer">
+							Station to venue
+						</a>
+					</div>
+				</div>
+				<figure class="paper venue-mill">
+					<span class="tape">A converted industrial mill</span>
+					<div class="paper-photo">
+						<Image
+							src={chimney}
+							alt="The Uhelný Mlýn complex: red-brick factory halls with a tall brick chimney behind them."
+							widths={[640, 960, 1400]}
+							sizes="(max-width: 1100px) 92vw, 52vw"
+							loading="lazy"
+						/>
+					</div>
+					<figcaption class="paper-edge"><span>{EVENT.venue}</span><span>Libčice nad Vltavou</span></figcaption>
+				</figure>
+			</div>
+		</section>
 
-				<ul class="field venue-aside">
-					<NextStep {...FLYING_IN} />
-				</ul>
+		{/* The route as the visitor travels it: Prague, the train, the walk,
+		    the door. Same facts as the FAQ answer ("How do I get to the
+		    venue?") — keep the two in step. */}
+		<section class="band venue-band" aria-labelledby="route-title">
+			<div class="band-inner">
+				<div class="head-rule">
+					<h2 id="route-title" class="head-rule-title">The route</h2>
+					<p class="head-rule-note">
+						A direct train, <span class="fig">25–30</span> minutes from the city centre, then a ten-minute walk.
+					</p>
+				</div>
+
+				<div class="venue-cards">
+					<ol class="venue-steps" role="list">
+						<li class="paper venue-card">
+							<p class="venue-card-edge"><span>By train</span><span class="fig">01 / 03</span></p>
+							<span class="venue-card-no" aria-hidden="true">01</span>
+							<h3 class="venue-card-title">Take the train from Prague</h3>
+							<p>
+								Trains toward <strong>Kralupy nad Vltavou</strong> leave from <strong>Praha hlavní nádraží</strong> and <strong>Praha-Holešovice</strong> about every <span class="fig">30</span> minutes, and also call at Praha-Podbaba.
+							</p>
+							<dl class="venue-facts">
+								<dt>Get off</dt>
+								<dd>Libčice nad Vltavou</dd>
+								<dt>Ride</dt>
+								<dd>
+									<span class="venue-circ">
+										<span class="fig">25–30</span>
+										<svg class="grease" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+											<path d="M22 10 C 50 -2, 92 6, 94 30 C 96 52, 60 60, 30 56 C 6 52, 2 30, 14 16 C 22 8, 40 4, 56 6" />
+										</svg>
+									</span>{' '}min
+								</dd>
+								<dt>From</dt>
+								<dd>the city centre</dd>
+							</dl>
+						</li>
+						<li class="paper venue-card">
+							<p class="venue-card-edge"><span>On foot</span><span class="fig">02 / 03</span></p>
+							<span class="venue-card-no" aria-hidden="true">02</span>
+							<h3 class="venue-card-title">Walk from the station</h3>
+							<p>
+								From Libčice nad Vltavou station it is a ten-minute walk, about <span class="fig">0.7&nbsp;km</span>, to the venue.
+							</p>
+							<dl class="venue-facts">
+								<dt>Walk</dt>
+								<dd><span class="fig">10</span> min</dd>
+								<dt>Distance</dt>
+								<dd><span class="fig">0.7&nbsp;km</span></dd>
+							</dl>
+							<a class="venue-go" href={EVENT.stationWalkUrl} target="_blank" rel="noopener noreferrer">
+								Station to venue
+							</a>
+						</li>
+						<li class="paper venue-card">
+							<p class="venue-card-edge"><span>Arrival</span><span class="fig">03 / 03</span></p>
+							<span class="venue-card-no" aria-hidden="true">03</span>
+							<h3 class="venue-card-title">Find {EVENT.venue}</h3>
+							<p>{EVENT.street}.</p>
+							<p>
+								Registration opens at <span class="fig">{EVENT.doorsTime}</span>, the keynote starts at <span class="fig">{EVENT.startTime}</span>.
+							</p>
+							<a class="venue-go" href={EVENT.mapUrl} target="_blank" rel="noopener noreferrer">Open in maps</a>
+						</li>
+					</ol>
+
+					{/* Not a step on the route: the leg before it, for anyone not
+					    starting in Prague. */}
+					<div class="paper venue-card venue-fly">
+						<span class="tape">Not starting in Prague?</span>
+						<p class="venue-card-edge"><span>By air</span><span class="fig">PRG</span></p>
+						<h3 class="venue-card-title">Flying in</h3>
+						<p>
+							Fly to <strong>Prague</strong> (Václav Havel Airport, <span class="fig">PRG</span>). The Airport Express bus runs straight to <strong>Praha hlavní nádraží</strong>, where the train to Libčice leaves.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* What to look for on arrival. The parked van's number plate is
+		    blurred in the source file. */}
+		<section class="band venue-band" aria-labelledby="door-title">
+			<div class="band-inner venue-door">
+				<figure class="paper venue-door-print">
+					<span class="tape">The black metal building</span>
+					<div class="paper-photo">
+						<Image
+							src={entrance}
+							alt="The entrance: glass doors under a black perforated-metal façade, up a few concrete steps."
+							widths={[640, 960, 1400]}
+							sizes="(max-width: 1100px) 92vw, 60vw"
+							loading="lazy"
+						/>
+					</div>
+					<figcaption class="paper-edge"><span>The entrance</span><span>{EVENT.doorsTime}</span></figcaption>
+					<svg class="grease venue-door-mark" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+						<path d="M30 8 C 62 -2, 96 14, 96 48 C 96 84, 64 98, 36 94 C 8 90, 2 60, 6 38 C 10 18, 30 6, 54 6" />
+					</svg>
+				</figure>
+				<div>
+					<h2 id="door-title" class="venue-door-title">The entrance</h2>
+					<p class="venue-door-note">
+						A converted industrial mill: red-brick halls, one tall chimney, and the entrance in the black metal building.
+					</p>
+				</div>
 			</div>
 		</section>
 
@@ -124,6 +175,7 @@ const PHOTOS = [
 			titleHtml={'See you<br />on the 30th.'}
 			note="Still deciding? The lineup and the schedule are out, and tickets are on sale."
 			titleId="venue-closer"
+			class="venue-closer"
 			actions={[
 				{ href: '/#tickets', label: 'Get tickets' },
 				{ href: '/agenda', label: 'See the agenda', kind: 'ghost' },

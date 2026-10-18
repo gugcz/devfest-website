@@ -1,226 +1,364 @@
 @use '../styles/type' as *;
 @use '../styles/logos' as *;
 
-// The home page as a ruled document (docs/design.md, "The ruled document").
-// Section heads and list rows are global (`.head-rule`, `.field-row`); this
-// file owns the plate, the facts line and the four sections' inner layout.
+// The home page as prints on a black table (docs/design.md, "The darkroom").
+// The section head, paper, tape, edge and grease are global (BaseLayout.scss);
+// this file owns the plate and each section's inner layout.
 
-/* ===================== HERO ===================== */
-// The plate runs edge to edge under the bar; the statement sits in its lower
-// left on the page column. Height is the photograph's, not the viewport's.
-#hero {
-	position: relative;
-	overflow: hidden;
-	background: var(--color-bg);
+// A figure inside a line of typewriter text: JetBrains Mono a step down, so
+// it sits on the same x-height.
+.fig {
+	@include mono(0.86em);
 }
 
-.hero-plate {
+/* ===================== HERO ===================== */
+// The photograph is pushed right and fades to black on its left and bottom;
+// the statement, the facts line and the red fill are set left over it.
+#hero {
 	position: relative;
-	// Tall enough for a two-line statement at poster size and the sky above it.
-	min-height: clamp(26rem, 58vw, 44rem);
+	isolation: isolate;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
-	padding: calc(var(--header-h, 4.5rem) + 1.5rem) var(--gutter) clamp(1.75rem, 3.5vw, 3rem);
+	min-height: clamp(45rem, 62vw, 56.25rem);
+	background: var(--color-bg);
 }
 
-// Edge-to-edge plate: the component's default is a right-hand 60% with a
-// left feather; here the photograph is the whole frame, and it runs out to
-// black over its bottom quarter so the facts line below starts on the same
-// ground and there is no edge where the photograph ends.
-.hero-plate :global(.hero-photo) {
+#hero :global(.hero-photo) {
+	filter: grayscale(1) contrast(1.12) brightness(0.95);
+	--hero-mask-shape: linear-gradient(to right, transparent 0, #000 32%);
+}
+
+// Lifts the type off the plate: the bar's shade at the top, the left third
+// to black under the statement, the foot to black so the page runs on.
+.hero-shade {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	pointer-events: none;
+	background:
+		linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0, transparent 9rem),
+		linear-gradient(to right, #000 0%, rgba(0, 0, 0, 0.78) 30%, rgba(0, 0, 0, 0.1) 60%, transparent 100%),
+		linear-gradient(to bottom, transparent 55%, rgba(0, 0, 0, 0.75) 82%, #000 100%);
+}
+
+.hero-body {
+	position: relative;
+	z-index: 3;
 	width: 100%;
-	--hero-mask-shape: linear-gradient(#000, #000);
-	--hero-mask-fade: linear-gradient(
-		to bottom,
-		#000 0%,
-		#000 50%,
-		rgba(0, 0, 0, 0.7) 68%,
-		rgba(0, 0, 0, 0.3) 84%,
-		transparent 100%
-	);
+	max-width: calc(var(--maxw) + 2 * var(--gutter));
+	margin: 0 auto;
+	padding: calc(var(--header-h, 4.5rem) + 4rem) var(--gutter) clamp(5rem, 7vw, 7.5rem);
 }
 
 .hero-statement {
-	position: relative;
-	z-index: 2;
-	width: 100%;
-	max-width: var(--maxw);
-	margin: 0 auto;
-	// Poster scale, two lines at 1440; the column, not the viewport, is the measure.
-	font-size: clamp(2.8rem, 9.4vw, 8.5rem);
-	line-height: 0.88;
-	text-wrap: balance;
-	// Legibility on the photograph without a scrim: a soft black lift under
-	// the letterforms only.
-	text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
+	margin: 0;
+	font-size: var(--fs-hero);
+	line-height: 0.86;
+	max-width: 6.2em;
+	text-wrap: wrap;
+	text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
 }
 
-// The facts line: date and venue in white, the wave in the offer's two
-// greys, the one red fill flush right. Typewriter, middle dots between.
-.hero-line {
-	width: 100%;
-	max-width: var(--maxw);
-	margin: 0 auto;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 1.5rem 2.5rem;
-	padding: clamp(1.25rem, 2vw, 1.75rem) var(--gutter) 0;
-}
-
+// Date, venue, the wave on sale: typewriter, spaced, no separators.
 .hero-facts {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
-	gap: 0.35rem 0.75rem;
-	@include note;
-	color: var(--ink-muted);
-
-	time {
-		color: var(--color-text);
-	}
-
+	gap: 0.6rem 2.25rem;
+	margin-top: 2.5rem;
+	@include note(var(--fs-body-lg));
+	color: var(--ink-strong);
 }
 
-// The separator between the facts (the offer island draws its own, see
-// `HeroOffer.module.scss`); gone on a phone, where the facts stack.
-.hero-facts-dot {
-	color: var(--ink-muted);
+.hero-date {
+	@include mono(var(--fs-body));
+	color: var(--color-text);
 }
 
-// The venue is a link in a line of text, so it carries the in-prose underline
-// (SC 1.4.1: the date beside it is the same white).
+// The venue is a link in a line of text, so it keeps the in-prose underline.
 .hero-facts-link {
-	@include hairline-link;
+	@include hairline-link(var(--ink-strong));
 }
 
 .hero-cta {
-	flex-shrink: 0;
-	padding: 1rem 1.75rem;
+	margin-top: 2.1rem;
+	padding: 1rem 2.5rem;
+}
+
+.hero-frame {
+	position: absolute;
+	right: var(--gutter);
+	bottom: clamp(5rem, 7vw, 7.5rem);
+	@include mono(var(--fs-label-xs), 0.14em, uppercase);
+	color: var(--ink-dim);
 }
 
 /* ===================== SECTIONS ===================== */
-// Every section: the head on its rule, then its list or its two columns.
+// Every section opens on the poster head and closes on space; the next
+// head is the cut.
 .sec {
-	--section-air: var(--section-y-tight);
 	padding-bottom: 0;
 }
 
-.sec .band-inner > * + * {
-	margin-top: clamp(1.75rem, 3vw, 2.5rem);
+/* ---- the event ---- */
+.event-title {
+	font-size: var(--fs-display);
+	max-width: 10em;
 }
 
-/* ---- past editions ---- */
-// A mosaic on four columns: the hall 2×2 top left, four singles beside it,
-// then the stage group across two columns and two singles. Flat B&W press
-// photographs that develop into colour on hover; no frame, no caption.
-.gallery {
-	list-style: none;
-	margin: 0;
-	padding: 0;
+.event-grid {
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	grid-auto-rows: clamp(9rem, 15vw, 14rem);
-	gap: clamp(0.5rem, 1vw, 0.875rem);
+	grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+	gap: clamp(2rem, 4vw, 4rem);
+	align-items: center;
+}
 
-	li {
-		min-width: 0;
-		overflow: hidden;
-	}
+.event-print {
+	--tilt: calc(-1 * var(--tilt-1));
+	padding: 0.875rem 0.875rem 0;
+}
 
-	li:nth-child(1) {
-		grid-column: span 2;
-		grid-row: span 2;
-	}
+.event-tape {
+	left: auto;
+	right: 10%;
+	--tape-tilt: 2.5deg;
+	white-space: nowrap;
+}
 
-	li:nth-child(6) {
-		grid-column: span 2;
-	}
+.event-photo {
+	aspect-ratio: 2.39 / 1;
 
 	img {
-		display: block;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		filter: grayscale(1) contrast(1.06) brightness(0.78);
-		transition: filter 0.6s ease;
-
-		&:hover {
-			filter: grayscale(0) contrast(1.02) brightness(1);
-		}
-
-		@media (prefers-reduced-motion: reduce) {
-			transition: none;
-		}
+		object-position: 50% 40%;
+		filter: grayscale(1) contrast(1.1) brightness(0.7);
 	}
 }
 
-// Two columns: the hall and the stage group run full width, the singles
-// pair up between them.
-@media (max-width: 720px) {
-	.gallery {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		grid-auto-rows: clamp(7rem, 30vw, 10rem);
-
-		li:nth-child(1) {
-			grid-column: span 2;
-			grid-row: span 2;
-		}
-
-		li:nth-child(6) {
-			grid-column: span 2;
-		}
-	}
-}
-
-/* ---- the event ---- */
-.facts {
-	display: grid;
-	grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-	column-gap: clamp(2.5rem, 6vw, 7rem);
-	align-items: start;
-}
-
-.facts-note {
-	@include prose(var(--fs-lede), 1.65);
-	color: var(--ink);
+// The line set over the photograph like a subtitle.
+.event-subtitle {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: clamp(0.875rem, 2vw, 1.75rem);
+	margin: 0 auto;
 	max-width: 44ch;
-	margin: 0;
+	padding: 0 1rem;
+	text-align: center;
+	@include prose(var(--fs-body-lg), 1.5);
+	color: var(--color-text);
+	text-shadow: 0 1px 2px #000, 0 0 16px rgba(0, 0, 0, 0.95);
+
+	// A phone print is a third as wide: at the desktop size the line covered
+	// the mill.
+	@media (max-width: 720px) {
+		font-size: var(--fs-note-sm);
+		line-height: 1.4;
+		padding: 0 0.75rem;
+	}
+}
+
+// The back of the print: the facts, typed.
+.event-card {
+	position: relative;
+	background: var(--paper);
+	color: var(--paper-ink);
+	padding: 1.75rem 1.875rem 1.875rem;
+	box-shadow: var(--paper-shadow);
+	transform: rotate(var(--tilt-2));
+}
+
+.event-card-edge {
+	padding: 0 0 1.1rem;
+}
+
+// A word on the edge is typed, not recorded.
+.edge-word {
+	@include note(var(--fs-note-sm));
 }
 
 .facts-list {
 	margin: 0;
 	display: grid;
 	grid-template-columns: max-content minmax(0, 1fr);
-	column-gap: clamp(1.5rem, 3vw, 2.5rem);
-	row-gap: 0.85rem;
-	@include note;
+	gap: 0.75rem 1.125rem;
 
 	div {
 		display: contents;
 	}
 
 	dt {
-		color: var(--ink-muted);
+		@include note(var(--fs-note-sm));
+		color: var(--paper-ink-dim);
+		padding-top: 0.15rem;
 	}
 
 	dd {
 		margin: 0;
-		color: var(--color-text);
+		@include note(var(--fs-body));
+		line-height: 1.4;
 	}
 }
 
+.ringed {
+	position: relative;
+	display: inline-block;
+	margin: 0 0.55rem 0 0.2rem;
+
+	.grease {
+		left: -18%;
+		top: -30%;
+		width: 136%;
+		height: 160%;
+	}
+}
+
+/* ---- past editions ---- */
+// The note sits beside the title, not across the page.
+.past-head {
+	justify-content: flex-start;
+	gap: 1rem clamp(1.5rem, 3.5vw, 3rem);
+}
+
+.past-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+	gap: clamp(2rem, 4vw, 4rem);
+	align-items: center;
+}
+
+// The contact sheet: two strips of negatives on a dark card.
+.sheet {
+	position: relative;
+	background: rgba(255, 255, 255, 0.055);
+	padding: clamp(1.25rem, 2.6vw, 2.5rem);
+	transform: rotate(-0.6deg);
+	box-shadow: 0 2rem 4.5rem rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.strip {
+	position: relative;
+	list-style: none;
+	margin: 0;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: clamp(0.5rem, 1.2vw, 1rem);
+	background: #000;
+	padding: 1.875rem clamp(0.625rem, 1.2vw, 1rem);
+
+	// The sprocket holes along both edges.
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 0.625rem;
+		background-image: radial-gradient(ellipse 5px 3.5px at center, rgba(255, 255, 255, 0.14) 98%, transparent 100%);
+		background-size: 1.375rem 0.625rem;
+		background-repeat: repeat-x;
+	}
+
+	&::before {
+		top: 0.5625rem;
+	}
+
+	&::after {
+		bottom: 0.5625rem;
+	}
+
+	& + & {
+		margin-top: clamp(0.875rem, 1.6vw, 1.375rem);
+	}
+}
+
+.frame {
+	position: relative;
+	min-width: 0;
+
+	.grease {
+		left: -9%;
+		top: 4%;
+		width: 118%;
+		height: 118%;
+	}
+}
+
+.frame-no {
+	display: block;
+	@include mono(var(--fs-label-xs), 0.08em);
+	color: var(--ink-dim);
+	padding-bottom: 0.375rem;
+}
+
+.frame-photo {
+	aspect-ratio: 3 / 2;
+	overflow: hidden;
+
+	img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		filter: grayscale(1) contrast(1.15) brightness(0.9);
+	}
+}
+
+.sheet-edge {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 1.125rem;
+	@include mono(var(--fs-label-xs), 0.14em);
+	color: var(--ink-dim);
+}
+
+.past-print {
+	--tilt: var(--tilt-3);
+	padding: 0.875rem 0.875rem 0;
+}
+
+.past-tape {
+	left: 22%;
+	--tape-tilt: -4deg;
+}
+
+.past-photo {
+	aspect-ratio: 4 / 5;
+}
 
 /* ---- partners ---- */
-// One row per tier (platinum leads, community closes), wrapping when they
-// must. No tier labels: each mark's width comes from its tier's reference
-// box (`partnerLogo()` → `--logo-w`, scaled down for the home page), so the
-// size carries the rank.
-.partners-tiers {
+.partners-actions {
 	display: flex;
-	flex-direction: column;
-	gap: clamp(1.5rem, 3vw, 2.5rem);
+	flex-wrap: wrap;
+	gap: 0 2.25rem;
+	margin-bottom: 0.4rem;
+}
+
+// Platinum and diamond side by side, gold and the rest across the page.
+.partners-tiers {
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: 4rem clamp(2.5rem, 6vw, 6rem);
+	align-items: start;
+}
+
+.partners-tier {
+	grid-column: 1 / -1;
+	min-width: 0;
+}
+
+.tier-platinum,
+.tier-diamond {
+	grid-column: auto;
+}
+
+.partners-tape {
+	margin-bottom: 1.375rem;
+}
+
+.partners-tier:nth-child(even) .partners-tape {
+	--tape-tilt: 1.2deg;
 }
 
 .partners-row {
@@ -230,8 +368,15 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: clamp(1.25rem, 2.5vw, 2rem) clamp(2rem, 4vw, 3.5rem);
+	gap: 2rem 3.5rem;
 }
+
+// The rank on this page: each tier's reference box (`partnerLogo()`) scaled.
+.item-platinum { --logo-scale: 0.85; }
+.item-diamond { --logo-scale: 0.9; }
+.item-gold { --logo-scale: 1; }
+.item-silver { --logo-scale: 1; }
+.item-community { --logo-scale: 1.1; }
 
 .partners-item {
 	display: flex;
@@ -259,54 +404,149 @@
 .newsletter {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	gap: clamp(2rem, 5vw, 6rem);
-	align-items: start;
+	gap: clamp(2rem, 5vw, 5rem);
+	align-items: center;
+}
+
+// One word, never broken: the display step fits it in a half column.
+.newsletter-title {
+	margin: 0;
+	font-size: var(--fs-display);
+	overflow-wrap: normal;
+	word-break: normal;
+	hyphens: none;
 }
 
 .newsletter-lede {
-	@include prose(var(--fs-lede), 1.6);
+	@include prose(var(--fs-body-lg), 1.6);
 	color: var(--ink);
-	max-width: 36ch;
-	margin: 0;
+	max-width: 30ch;
+	margin: 1.5rem 0 0;
 }
 
 /* ===================== RESPONSIVE ===================== */
-@media (max-width: 900px) {
-	.facts,
-	.newsletter {
+@media (max-width: 1100px) {
+	.event-grid {
 		grid-template-columns: minmax(0, 1fr);
-		row-gap: clamp(1.5rem, 4vw, 2.5rem);
+		gap: 3rem;
 	}
 
-	.hero-line {
-		flex-direction: column;
-		align-items: stretch;
+	.event-card {
+		width: 100%;
+		max-width: 35rem;
+		margin-left: auto;
+	}
+}
+
+@media (max-width: 720px) {
+	#hero {
+		min-height: 47.5rem;
+	}
+
+	#hero :global(.hero-photo) {
+		width: 100%;
+		bottom: 32%;
+		background-size: cover;
+		--hero-mask-shape: linear-gradient(to bottom, #000 55%, transparent 100%);
+	}
+
+	.hero-shade {
+		background:
+			linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0, transparent 7.5rem),
+			linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.85) 58%, #000 75%);
+	}
+
+	.hero-body {
+		padding-top: 7.5rem;
+		padding-bottom: 4.5rem;
+	}
+
+	.hero-statement {
+		max-width: none;
 	}
 
 	.hero-facts {
 		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.hero-facts-dot {
-		display: none;
+		gap: 0.375rem;
+		margin-top: 1.75rem;
 	}
 
 	.hero-cta {
+		display: flex;
 		width: 100%;
 	}
-}
 
-@media (max-width: 600px) {
-	.hero-plate {
-		min-height: 34rem;
+	.hero-frame {
+		display: none;
 	}
 
-	.hero-statement {
-		font-size: clamp(2.6rem, 15vw, 4.2rem);
+	.event-print {
+		padding: 0.5rem 0.5rem 0;
+	}
+
+	.event-photo {
+		aspect-ratio: 4 / 3;
+	}
+
+	.event-tape {
+		right: 6%;
+		white-space: normal;
+		max-width: 80%;
+	}
+
+	.event-card {
+		transform: rotate(var(--tilt-1));
+		padding: 1.5rem 1.375rem;
+	}
+
+	.past-grid {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.75rem;
+	}
+
+	.sheet {
+		transform: none;
+	}
+
+	.strip {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		padding: 1.625rem 0.625rem;
+	}
+
+	.past-print {
+		width: 84%;
+		margin: 0 auto;
+	}
+
+	.past-tape {
+		left: 8%;
+	}
+
+	.partners-actions {
+		flex-direction: column;
+		margin-bottom: 0;
+	}
+
+	.partners-tiers {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3rem;
 	}
 
 	.partners-row {
-		--logo-scale: 0.75;
+		gap: 1.5rem 2rem;
+	}
+
+	.item-platinum { --logo-scale: 0.55; }
+	.item-diamond { --logo-scale: 0.6; }
+	.item-gold { --logo-scale: 0.75; }
+	.item-silver,
+	.item-community { --logo-scale: 0.85; }
+
+	.newsletter {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.newsletter-title {
+		font-size: var(--fs-section);
 	}
 }

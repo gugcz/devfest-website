@@ -22,8 +22,6 @@ import Sessions from '../components/Sessions.tsx';
 			link={{ href: '#talks', label: 'Browse all talks' }}
 			seoHeading="DevFest.cz 2026 Agenda, Schedule & Sessions"
 			titleId="agenda-title"
-			plate="/gallery/uhelny-mlyn-chimney.webp"
-			focus="60% 40%"
 		/>
 
 		<section class="band band--lit" aria-label="Conference timetable">
@@ -45,9 +43,9 @@ import Sessions from '../components/Sessions.tsx';
 
 		<section id="talks" class="band band--lit agenda-talks" aria-labelledby="talks-title">
 			<div class="band-inner">
-				<div class="head-split">
-					<h2 id="talks-title" class="display head-title">Every talk</h2>
-					<p class="head-note">Search, or filter by track and level. Pick one for its abstract and speakers.</p>
+				<div class="head-rule">
+					<h2 id="talks-title" class="head-rule-title">Every talk</h2>
+					<p class="head-rule-note">Search, or filter by track and level. Pick one for its abstract and speakers.</p>
 				</div>
 
 				<!-- Hydrates from the same /api/lineup read as the timetable. -->

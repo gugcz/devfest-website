@@ -1,29 +1,25 @@
 import { useMemo } from 'react';
 import { fetchLineup } from '../lib/lineup';
 import { speakerTarget } from '../lib/share';
-import { shuffle } from '../lib/shuffle';
 import { useRemote } from '../lib/useRemote';
-import SpeakerTile from './SpeakerTile';
+import SpeakerTile, { billLineup } from './SpeakerTile';
 import tile from './SpeakerTile.module.scss';
 import s from './SpeakersTeaser.module.scss';
 
-// Portraits on the home sheet: two rows of four on a laptop (the module
-// trims the sheet to whole rows on narrower screens). The rest of the
-// roster is one link away.
+// Prints on the home table: the opening keynote large, then the next talks
+// of the day, then the way to the rest. Three rows of four on a laptop
+// (the keynote covers four cells), four rows of two on a phone.
 const TEASER_SIZE = 8;
 
-/** Home-page speakers: the first lines of the casting sheet /speakers shows
- * in full. A ruled head with the confirmed count, a shuffled handful of
- * portraits (`SpeakerTile`, each a link to the speaker), and the way to the
- * full lineup. Renders nothing until the lineup resolves (clean
+/** Home-page speakers: the first prints of the lineup /speakers shows in
+ * full, in running order (`SpeakerTile`, each a link to the speaker). The
+ * head with the confirmed count, then the prints, the last cell the way to
+ * all of them. Renders nothing until the lineup resolves (clean
  * pre-announce). */
 export default function SpeakersTeaser() {
 	const { status, data } = useRemote(fetchLineup, 'speakers-teaser', (l) => l.speakers.length === 0);
-
-	// Shuffle once per payload so the faces billed are random on every load,
-	// not on every re-render.
-	const roster = useMemo(() => shuffle(data?.speakers ?? []), [data]);
-	const total = roster.length;
+	const billings = useMemo(() => (data ? billLineup(data) : []), [data]);
+	const total = billings.length;
 
 	if (status !== 'ready' || total === 0) return null;
 
@@ -34,18 +30,28 @@ export default function SpeakersTeaser() {
 					<h2 id="lineup-teaser-title" className="head-rule-title">
 						Speakers
 					</h2>
-					<p className="head-rule-note">{total} confirmed</p>
+					<p className="head-rule-note">
+						<span className={s.figure}>{total}</span> confirmed. Times in CET.
+					</p>
 				</header>
 
-				<ul className={`${tile.grid} ${s.sheet}`} role="list">
-					{roster.slice(0, TEASER_SIZE).map((speaker, i) => (
-						<SpeakerTile key={speaker.id} speaker={speaker} index={i + 1} href={speakerTarget(speaker.id)} />
+				<ul className={`${tile.grid} ${s.table}`} role="list">
+					{billings.slice(0, TEASER_SIZE).map((billing, i) => (
+						<SpeakerTile
+							key={billing.speaker.id}
+							billing={billing}
+							index={i + 1}
+							total={total}
+							href={speakerTarget(billing.speaker.id)}
+						/>
 					))}
+					<li className={s.all}>
+						<a className={s.allLink} href="/speakers">
+							<span className={s.allCount}>{total}</span>
+							<span className={s.allLabel}>All speakers</span>
+						</a>
+					</li>
 				</ul>
-
-				<a className="action" href="/speakers">
-					All {total} speakers
-				</a>
 			</div>
 		</section>
 	);

@@ -1,7 +1,9 @@
 @use '../styles/type' as *;
-// THE CASTING SHEET. Speakers as portraits on a regular grid: the print, then
-// a mono sheet number, the Bebas name and the typewriter role under it. No
-// card, no box, no ground: the photograph carries its own mount. Shared by
+// THE SPEAKER PRINTS. Every speaker is a paper print set down on the black
+// table (`.paper`, `.paper-photo`, `.paper-edge`, `.tape` in BaseLayout.scss):
+// a 4:5 B&W portrait, the Bebas name, the typewriter role and talk, the edge
+// with the running number and the CET start. The opening keynote is the
+// large print (two columns by two rows) with red grease corners. Shared by
 // the home teaser and /speakers (`SpeakerTile.tsx`).
 
 .grid {
@@ -10,105 +12,289 @@
 	padding: 0;
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: clamp(2.25rem, 4vw, 3.5rem) clamp(1.25rem, 2.4vw, 2rem);
+	grid-auto-flow: row dense;
+	gap: clamp(3.5rem, 5vw, 4.5rem) clamp(1.5rem, 2.8vw, 2.5rem);
+	// The tapes sit over the top edge of the first row.
+	padding-top: 1rem;
 }
 
 .cell {
 	min-width: 0;
+	align-self: start;
 }
 
 .tile {
-	display: grid;
-	grid-template-columns: auto minmax(0, 1fr);
-	grid-template-areas:
-		'print print'
-		'index name'
-		'.     role';
-	column-gap: 0.75rem;
-	align-items: baseline;
+	display: block;
 	width: 100%;
 	margin: 0;
-	padding: 0;
 	text-align: left;
 	font: inherit;
-	color: inherit;
+	color: var(--paper-ink);
 	text-decoration: none;
-	background: transparent;
 	border: 0;
 	border-radius: 0;
 	cursor: pointer;
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
-
-	&:focus-visible .name {
-		color: var(--color-accent-hot);
+		outline-offset: var(--focus-gap-lg);
 	}
 }
 
-// Hover only where a pointer hovers: on a phone a tap would leave the name red.
+.photo {
+	display: block;
+	aspect-ratio: 4 / 5;
+}
+
+.img {
+	position: absolute;
+	inset: 0;
+	object-position: 50% 30%;
+	transition: filter 0.6s ease;
+}
+
+// Initials standing in for a missing photograph.
+.monogram {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--font-bebas-neue), sans-serif;
+	font-size: var(--fs-monogram);
+	color: var(--ink-monogram);
+	user-select: none;
+}
+
+// The print develops to colour: on keyboard focus always, on hover only where
+// a pointer hovers.
+.tile:focus-visible .img {
+	filter: none;
+}
+
+.tile:focus-visible .name {
+	color: var(--color-accent);
+}
+
 @media (hover: hover) {
+	.tile:hover .img {
+		filter: none;
+	}
+
 	.tile:hover .name {
-		color: var(--color-accent-hot);
+		color: var(--color-accent);
 	}
 }
 
-.print {
-	grid-area: print;
-	margin-bottom: 1rem;
-}
-
-.index {
-	grid-area: index;
-	@include mono(var(--fs-label), 0.15em);
-	font-variant-numeric: tabular-nums;
-	color: var(--ink-faint);
+.caption {
+	display: block;
+	padding: 0.9rem 0.25rem 0;
 }
 
 .name {
-	grid-area: name;
-	@include row-title(var(--fs-title-sm));
+	display: block;
+	@include row-title(var(--fs-card-title));
+	line-height: 0.92;
+	color: var(--paper-ink);
 	overflow-wrap: anywhere;
 	transition: color 0.2s;
 }
 
-// Two lines at most: a long Sessionize tagline would push the next row of
-// portraits off its line.
+// Two lines at most: a long Sessionize tagline would push the print taller
+// than its row.
 .role {
-	grid-area: role;
-	@include note(var(--fs-note-sm));
-	color: var(--ink-muted);
-	margin-top: 0.35rem;
 	display: -webkit-box;
+	@include note(var(--fs-note-sm));
+	line-height: 1.35;
+	color: var(--paper-ink-dim);
+	margin-top: 0.4rem;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
 	overflow: hidden;
 }
 
-@media (max-width: 1100px) {
-	.grid {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+.talk {
+	display: block;
+	@include note(var(--fs-note));
+	line-height: 1.4;
+	color: var(--paper-ink);
+	margin-top: 0.65rem;
+}
+
+.with {
+	display: block;
+	@include note(var(--fs-note-sm));
+	line-height: 1.35;
+	color: var(--paper-ink-dim);
+	margin-top: 0.4rem;
+}
+
+.edge {
+	margin-top: 0.4rem;
+}
+
+// THE OPENING KEYNOTE: two columns by two rows, stretched to the rows beside
+// it; the photo takes what the caption leaves.
+.keynote {
+	grid-column: 1 / 3;
+	grid-row: 1 / 3;
+	align-self: stretch;
+	display: flex;
+	flex-direction: column;
+
+	.tile {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		padding: 1rem 1rem 0;
+	}
+
+	.photo {
+		flex: 1;
+		min-height: 26rem;
+		aspect-ratio: auto;
+	}
+
+	.name {
+		font-size: var(--fs-row);
+	}
+
+	.role {
+		font-size: var(--fs-note);
+		margin-top: 0.75rem;
+	}
+
+	.talk {
+		font-size: var(--fs-lede);
+		line-height: 1.45;
+	}
+
+	:global(.tape) {
+		font-size: var(--fs-body-lg);
+		left: 1.5rem;
+	}
+
+	:global(.grease) {
+		left: -3%;
+		top: -3%;
+		width: 106%;
+		height: 106%;
+
+		path {
+			stroke-width: 7px;
+		}
 	}
 }
 
+// The way on, after the last print: the rest of the row (`--rest-N`, set by
+// the lineup for N columns).
+.end {
+	grid-column: span var(--rest-4, 1);
+	align-self: center;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1.25rem 2.5rem;
+	padding: 1.75rem 0 1.75rem 1.5rem;
+}
+
+// /speakers runs three across on a tablet; the home teaser stays at four.
+@media (max-width: 1100px) {
+	.grid {
+		gap: 4rem 2rem;
+	}
+
+	.sheet {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.sheet .end {
+		grid-column: span var(--rest-3, 1);
+	}
+}
+
+// Phone: two equal columns, the keynote the same size as every other print.
 @media (max-width: 720px) {
 	.grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 2.75rem 1rem;
 	}
 
 	.tile {
-		column-gap: 0.5rem;
+		padding: 0.4rem 0.4rem 0;
 	}
 
-	.print {
-		margin-bottom: 0.75rem;
+	.caption {
+		padding: 0.7rem 0.15rem 0;
+	}
+
+	.name {
+		font-size: var(--fs-title-sm);
+	}
+
+	.talk {
+		font-size: var(--fs-note-sm);
+	}
+
+	.cell :global(.tape) {
+		left: 0.4rem;
+		max-width: calc(100% - 0.8rem);
+		padding: 0.3rem 0.55rem 0.25rem;
+	}
+
+	.edge {
+		gap: 0.4rem;
+	}
+
+	.grid .end {
+		grid-column: span var(--rest-2, 1);
+		padding: 0.75rem 0 0 0.25rem;
+		gap: 1.1rem 1.5rem;
+	}
+
+	.keynote {
+		grid-column: auto;
+		grid-row: auto;
+		align-self: start;
+		display: block;
+
+		.tile {
+			display: block;
+			padding: 0.4rem 0.4rem 0;
+		}
+
+		.photo {
+			min-height: 0;
+			aspect-ratio: 4 / 5;
+		}
+
+		.name {
+			font-size: var(--fs-title-sm);
+		}
+
+		.role {
+			font-size: var(--fs-note-sm);
+			margin-top: 0.4rem;
+		}
+
+		.talk {
+			font-size: var(--fs-note-sm);
+		}
+
+		:global(.tape) {
+			font-size: var(--fs-note-sm);
+			left: 0.4rem;
+		}
+
+		:global(.grease) path {
+			stroke-width: 5px;
+		}
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.img,
 	.name {
 		transition: none;
 	}

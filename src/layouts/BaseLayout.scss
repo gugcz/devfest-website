@@ -65,7 +65,9 @@
 	// 1280×720 section head tie the hero, so the height term follows it down.
 	--fs-h2: clamp(2.25rem, min(6vw, 9svh), 5.5rem);
 	--fs-h3: clamp(1.8rem, 3.4vw, 2.6rem);      // sub-section headline
-	--fs-head: clamp(2.1rem, 3.4vw, 3rem);      // the ruled section head (`.head-rule`)
+	--fs-head: clamp(2.1rem, 3.4vw, 3rem);      // a compact head (sheets, small blocks)
+	--fs-section: clamp(4.5rem, 12vw, 12.5rem); // the section head (`.head-rule`): poster scale
+	--fs-subpage: clamp(5rem, 13vw, 12.5rem);   // the subpage title (`SubpageHero`)
 	--fs-card-title: 1.95rem;                   // card / dossier title
 	--fs-title-compact: 1.6rem;                 // compact field row title
 
@@ -146,6 +148,21 @@
 	--print-mount:
 		inset 0 0 0 1px rgba(255, 255, 255, 0.16),
 		0 10px 24px rgba(0, 0, 0, 0.5);
+
+	// THE DARKROOM. Photographs are paper prints on the black table, labelled
+	// with tape. Paper and tape are white at an opacity (the brand manual has
+	// no cream), the ink on them is black at an opacity.
+	--paper: rgba(255, 255, 255, 0.94);
+	--tape: rgba(255, 255, 255, 0.82);
+	--paper-ink: #000000;
+	// 5.3:1 on --paper: the floor for small mono edge labels on a print.
+	--paper-ink-dim: rgba(0, 0, 0, 0.66);
+	// A print lifted off the table: one deep drop, one contact shadow.
+	--paper-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.7);
+	// Tilts, from barely set down to tossed. Never more than --tilt-3.
+	--tilt-1: 0.8deg;
+	--tilt-2: 1.4deg;
+	--tilt-3: 2.2deg;
 
 	// Was #0A0A0A / #0E0E0E.
 	--panel-lit: rgba(255, 255, 255, 0.04);
@@ -342,28 +359,113 @@ b {
 	gap: 0.75rem;
 }
 
-// THE SECTION HEAD. A Bebas title on the left, one typewriter note on the right,
-// both on a rule — the top edge of the ruled list under it. Every section on
-// every page opens this way; the rule is structure, the list's first line.
+// THE SECTION HEAD. A poster-scale Bebas title on the left; one typewriter
+// note (or the section's text actions) on the right, sitting on the title's
+// baseline. Space closes it, never a rule: the ruled head made every section
+// read as a table. The class keeps its old name; every page uses it.
 .head-rule {
 	display: flex;
 	justify-content: space-between;
-	align-items: baseline;
-	gap: 1rem 2rem;
+	align-items: flex-end;
+	gap: 1rem clamp(1.5rem, 4vw, 3rem);
 	flex-wrap: wrap;
-	border-bottom: 1px solid var(--color-text);
-	padding-bottom: 0.8rem;
-	margin: 0;
+	margin: 0 0 clamp(2.5rem, 5vw, 4.5rem);
 
 	.head-rule-title {
-		@include display(var(--fs-head));
+		@include display(var(--fs-section));
 		margin: 0;
 	}
 
 	.head-rule-note {
-		@include note;
-		color: var(--ink-muted);
-		margin: 0;
+		@include prose(var(--fs-body-lg), 1.6);
+		color: var(--ink-soft);
+		margin: 0 0 0.6rem;
+		max-width: 30ch;
+	}
+}
+
+/* ---- The darkroom ---- */
+
+// A paper print: the photograph (`.paper-photo`) inside a white border, a
+// mono `.paper-edge` under it. Tilt it with `--tilt`; the tape sits over its
+// top edge. Under 720px a print never tilts past --tilt-1.
+.paper {
+	position: relative;
+	display: block;
+	background: var(--paper);
+	color: var(--paper-ink);
+	padding: 0.65rem 0.65rem 0;
+	box-shadow: var(--paper-shadow);
+	transform: rotate(var(--tilt, 0deg));
+}
+
+.paper-photo {
+	position: relative;
+	overflow: hidden;
+	background: #000000;
+
+	img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		filter: grayscale(1) contrast(1.1);
+	}
+}
+
+// The frame number and the time along a print's bottom margin.
+.paper-edge {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.75rem;
+	padding: 0.7rem 0.15rem 0.8rem;
+	@include mono(var(--fs-label-xs), 0.12em, uppercase);
+	color: var(--paper-ink-dim);
+}
+
+// A strip of tape with a typewritten label. On a print it overlaps the top
+// edge; on its own it labels a group (a partner tier, a room).
+.tape {
+	display: inline-block;
+	background: var(--tape);
+	color: var(--paper-ink);
+	@include note(var(--fs-note-sm));
+	line-height: 1.2;
+	padding: 0.35rem 0.85rem 0.3rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+	transform: rotate(var(--tape-tilt, -1.5deg));
+}
+
+.paper > .tape {
+	position: absolute;
+	z-index: 2;
+	top: -0.85rem;
+	left: 1rem;
+	max-width: calc(100% - 2rem);
+}
+
+// The red grease pencil: one mark per section, drawn as an aria-hidden SVG
+// over what it marks.
+.grease {
+	position: absolute;
+	pointer-events: none;
+	overflow: visible;
+	z-index: 3;
+
+	path {
+		fill: none;
+		stroke: var(--color-accent);
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		vector-effect: non-scaling-stroke;
+		stroke-width: 3px;
+	}
+}
+
+@media (max-width: 720px) {
+	.paper {
+		transform: rotate(clamp(calc(-1 * var(--tilt-1)), var(--tilt, 0deg), var(--tilt-1)));
 	}
 }
 
@@ -493,9 +595,10 @@ b {
 	background: var(--lit), var(--color-bg);
 }
 
-// Straight off a subpage hero the band opens on a cut, not a full beat.
+// Straight off a subpage hero the band opens on a cut: the hero's own
+// bottom padding is the pause.
 .subpage-hero + .band {
-	padding-top: var(--section-y-tight);
+	padding-top: 0;
 }
 
 .band-inner {

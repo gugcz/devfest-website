@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Closer from '../components/Closer.astro';
 import Speakers from '../components/Speakers.tsx';
 ---
 
@@ -12,22 +11,21 @@ import Speakers from '../components/Speakers.tsx';
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Speakers'}
-			lede="Everyone on stage on 30 October. A few names are still to come. Pick anyone for their bio and talk."
+			lede="Everyone on stage on 30 October. Pick anyone for their bio and talk. Times in CET."
 			seoHeading="DevFest.cz 2026 Speakers"
 			titleId="speakers-title"
-			plate="/gallery/devfest-2025-03.webp"
-			focus="center 30%"
 		/>
 
-		<section class="band band--lit" aria-label="Speaker lineup">
+		<section class="band lineup" aria-label="Speaker lineup">
 			<div class="band-inner">
 				<!-- The hero already names this band, so its head is for screen
 				     readers only; a second poster headline ("Who's talking") under
 				     "Speakers" said the same thing twice. -->
 				<h2 class="sr-only">Speakers</h2>
 
-				<!-- The casting sheet hydrates client-side from Firestore; keep a static note
-				     for crawlers and no-JS visitors. -->
+				<!-- The prints hydrate client-side from /api/lineup and end on the way to
+				     the agenda and tickets (no closer under them); keep a static note for
+				     crawlers and no-JS visitors. -->
 				<Speakers client:load />
 
 				<noscript>
@@ -38,12 +36,13 @@ import Speakers from '../components/Speakers.tsx';
 				</noscript>
 			</div>
 		</section>
-
-		<Closer
-			titleHtml={'Be in<br />the room.'}
-			note="Every name on this page, in one room on 30 October."
-			titleId="speakers-closer"
-			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/agenda#talks', label: 'Browse the talks', kind: 'ghost' }]}
-		/>
 	</main>
 </BaseLayout>
+
+<style>
+	/* The prints sit right under the head: the hero's own bottom padding is the
+	   only air between them, as on the approved mock. */
+	:global(.subpage-hero) + .band.lineup {
+		padding-top: 0;
+	}
+</style>

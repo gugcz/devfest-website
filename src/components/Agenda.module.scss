@@ -1,592 +1,457 @@
 @use '../styles/type' as *;
-// Agenda timetable. Desktop: a proportional time × room grid, ruled by the
-// hour, where every talk is a filled block in its room's column and a small gap
-// of black page parts each block from the next, like a printed timetable. A
-// room open all day is one block from its opening to its close. A break or a
-// lunch is quieter: time and title on a hairline, no ground. Empty time stays
-// black. Mobile / single-room: the same entries as a run sheet, on the same
-// grounds.
+// The agenda as slips on the black table. Desktop: rooms are columns under
+// their tapes; each talk is a paper slip from its start line to its end line;
+// a break is a quiet typewriter line across the rooms; the lounge is one dark
+// block all day; a slot nobody holds yet is a dashed outline. Phone: the
+// same day as one list grouped by start time, each slip taped with its room.
 
-// The black page between two blocks, across rooms and down a room alike.
-$cell-gap: 6px;
-
-// A block's ground. OPAQUE (the panel layered over the page black, as
-// docs/design.md requires for a plate over content): the hour rule and a
-// break's hairline run behind the blocks, and a translucent ground let both
-// show through a workshop that runs through lunch.
-@mixin ground($panel: var(--panel)) {
-	background: linear-gradient($panel, $panel), var(--color-bg);
-}
-
-// A filled block on the sheet: ground, corners, the gap under it. No border,
-// no shadow.
-@mixin block {
-	position: relative;
-	z-index: 2;
+/* ===================== BAR: room filter + time zone ===================== */
+.bar {
 	display: flex;
-	flex-direction: column;
-	gap: 0.35rem;
-	min-height: 0;
-	// The row gap: a block stops short of the next one in its room. A margin
-	// sits inside the grid area, so the sheet's rows stay to scale.
-	margin: 0 0 $cell-gap;
-	padding: 0.7rem 0.9rem;
-	@include ground;
-	border: 0;
-	border-radius: var(--radius);
+	align-items: baseline;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 1rem 2rem;
+	margin-bottom: 2.5rem;
 }
 
-/* ===================== TZ NOTE ===================== */
-.tzNote {
-	@include note(var(--fs-note));
-	color: var(--ink-muted);
-	margin: 0 0 1.4rem;
-}
-
-/* ===================== GRID ===================== */
-// Horizontal scroll container so a wide day (many rooms) never breaks the page.
-.scroller {
-	overflow-x: auto;
-	overflow-y: visible;
-	// Room-scroll cue on small desktops; harmless when it fits.
-	-webkit-overflow-scrolling: touch;
-}
-
-// The rooms are parted by the column gap alone; no rule runs down it. Rows keep
-// `gap: 0` so the time scale holds; each block draws its own gap below it.
-.grid {
-	display: grid;
-	position: relative;
-	row-gap: 0;
-	column-gap: $cell-gap;
-	min-width: min-content;
-	padding-bottom: 0.5rem;
-}
-
-/* ---- the sheet's own ruling ---- */
-// The hour hairline is a decorative overlay behind the entries (z 0).
-// `--rule-soft` DASHED: solid, the same token read as a line of content across an
-// empty stretch. Dashed it is a tick mark for the numeral beside it, no more.
-.hourRule {
-	align-self: start;
-	height: 0;
-	border-top: 1px dashed var(--rule-soft);
-	pointer-events: none;
-	z-index: 0;
-}
-
-// Room names: a typewriter note on a rule.
-// `top: 0`, NOT an offset clearing the fixed header: `.scroller` is the sticky
-// containing block and never scrolls vertically, so a positive `top` just
-// shunts the header row down over the first hour of the sheet.
-.headCell {
-	position: sticky;
-	top: 0;
-	z-index: 3;
-	grid-row: 1;
+.rooms {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
-	row-gap: 0.3rem;
-	@include note(var(--fs-note));
-	// A room name heads a 409px column; at label size it matched the cell meta under it.
-	color: var(--ink);
-	// Filled, not transparent: the header is the one row that must stay legible
-	// while the sheet scrolls under it.
-	background: var(--panel);
-	border-bottom: 1px solid var(--rule-strong);
-	padding: 1rem 0.9rem 0.8rem;
-	margin-bottom: $cell-gap;
+	gap: 0.25rem 1.6rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
-// The room name never breaks mid-name; a note that doesn't fit beside it
-// wraps to a line of its own instead of squeezing it.
-.headLabel {
-	white-space: nowrap;
-}
+.room {
+	@include action(var(--fs-cta));
+	background: none;
+	border: 0;
+	padding: 0.5rem 0;
+	color: var(--ink-soft);
+	cursor: pointer;
+	transition: color 0.2s ease;
 
-// "Talks TBA" / "Workshops only" beside a room's name (see `roomNote`).
-.headNote {
-	margin-left: auto;
-	padding-left: 0.8rem;
-	@include note(var(--fs-note-sm));
-	color: var(--ink-muted);
-	white-space: nowrap;
-}
-
-// The workshop room's note leads to the sign-up page.
-.headLink {
-	color: var(--color-text);
-	text-decoration: underline;
-	text-underline-offset: 0.25em;
-
-	&:hover {
+	&[aria-pressed='true'] {
 		color: var(--color-accent-hot);
 	}
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-tight);
+		outline-offset: var(--focus-gap);
 	}
 }
 
-.headCorner {
-	grid-column: 1;
-	background: var(--panel);
-	border-bottom: 1px solid var(--rule-strong);
-	margin-bottom: $cell-gap;
+@media (hover: hover) {
+	.room[aria-pressed='false']:hover {
+		color: var(--color-text);
+	}
 }
 
-// The hairline is drawn by `.hourRule` across the sheet, so the tick is the numeral.
+.tz {
+	@include note(var(--fs-note-sm));
+	color: var(--ink-soft);
+	margin: 0;
+}
+
+/* ===================== GRID ===================== */
+// Rows are the moments something starts or ends, each as tall as what sits
+// in it (set inline). The gutter column and the lounge's narrower column
+// come from the two variables here.
+.grid {
+	--gutter-col: 4rem;
+	--all-day-fr: 0.72fr;
+	display: grid;
+	gap: 0.75rem 1.25rem;
+	align-items: stretch;
+}
+
+// One room picked: a column the width of a slip, not of the page.
+.gridSingle {
+	max-width: 44rem;
+}
+
+.head {
+	padding-bottom: 1rem;
+}
+
+.headTape {
+	--tape-tilt: -1.5deg;
+	font-size: var(--fs-note);
+}
+
+.head:nth-child(even) .headTape {
+	--tape-tilt: 1.2deg;
+}
+
+.headNote {
+	display: block;
+	margin-top: 0.75rem;
+	@include note(var(--fs-note-sm));
+	color: var(--ink-soft);
+}
+
 .tick {
 	grid-column: 1;
 	align-self: start;
-	position: relative;
-	z-index: 1;
-	@include mono(var(--fs-label-lg), 0.1em);
+	padding-top: 0.75rem;
+	@include mono(var(--fs-label-lg));
+	color: var(--ink);
 	font-variant-numeric: tabular-nums;
-	color: var(--ink-faint);
-	padding: 0.35rem 0.9rem 0 0;
 }
 
-/* ===================== BAND (break / lunch / keynote) ===================== */
-// A band is the whole day stopping: time and title on one hairline across the
-// sheet, no ground. Quieter than a talk on purpose — the talk blocks carry the
-// sheet, and a lit strip under a lunch read as one more block.
-// `flex-start`, not `center`: a band is placed at its start time, but it spans
-// its whole length, so a centred label on an 80-minute lunch prints 40 minutes
-// below the hairline it belongs to and reads as the wrong slot.
+.tickLive {
+	color: var(--color-accent-hot);
+}
+
+/* ===================== BAND (a line across the rooms) ===================== */
 .band {
-	display: flex;
-	align-items: flex-start;
-	gap: 1.1rem;
-	// BELOW the talks (z 2): a workshop runs through the breaks, and a band
-	// drawn over it cut the workshop in two. The workshop's opaque panel closes
-	// over the band in its own column; every other column keeps the strip.
-	z-index: 1;
-	padding: 0.5rem 0.9rem 0.35rem;
-	overflow: hidden;
-	// Ruled on ONE edge, the top: a bottom rule as well doubled every
-	// boundary against the block under it.
-	background: transparent;
-	border-top: 1px solid var(--rule);
+	align-self: center;
+	margin: 0;
+	padding: 0.6rem 0.25rem;
+	@include prose(var(--fs-body), 1.4);
+	color: var(--ink-soft);
 }
 
 .bandTime {
-	@include mono(var(--fs-label-lg), 0.1em);
-	font-variant-numeric: tabular-nums;
+	@include mono(var(--fs-label));
 	color: var(--ink-muted);
-	flex-shrink: 0;
-}
-
-.bandTitle {
-	@include note(var(--fs-note));
-	color: var(--color-cream);
+	margin-right: 0.4rem;
+	font-variant-numeric: tabular-nums;
 	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
-/* ===================== CELL (talk button) ===================== */
-// A talk is a filled block in its room's column, from its start time down to
-// its end. Reached, the ground lifts one step and its bottom edge draws red;
-// focused, it also takes the red ring.
-.cell {
-	@include block;
+// The evening programme, after the last talk: louder, and it names its room.
+.bandLoud {
+	font-size: var(--fs-lede);
+	color: var(--color-text);
+
+	.bandTime {
+		font-size: var(--fs-label);
+	}
+}
+
+.bandWhere {
+	@include note(var(--fs-note));
+	color: var(--ink-muted);
+	margin-left: 0.25rem;
+}
+
+.bandLive .bandTitle {
+	color: var(--color-text);
+}
+
+.bandFlag {
+	margin-left: 0.75rem;
+}
+
+/* ===================== SLIP (a talk) ===================== */
+.slip {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	min-height: 6rem;
+	margin: 0;
+	padding: 0.875rem 1rem 1rem;
+	border: 0;
+	border-radius: 0;
+	background: var(--paper);
+	color: var(--paper-ink);
+	box-shadow: var(--paper-shadow);
 	text-align: left;
 	font: inherit;
-	color: inherit;
 	cursor: pointer;
-	overflow: hidden;
+	transition: translate 0.2s ease;
 
-	// The red mark along the bottom edge when the entry is reached.
-	&::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		height: 1px;
-		background: var(--color-accent);
-		transform: scaleX(0);
-		transform-origin: left center;
-		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-	}
-
-	&:hover,
-	&:focus-visible {
-		@include ground(var(--panel-hover));
-	}
-
-	&:hover::after,
-	&:focus-visible::after {
-		transform: scaleX(1);
-	}
-
-	// INSET, not one of the --focus-gap steps: the gap between blocks is
-	// narrower than a ring set outside the box.
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: -2px;
+		outline-offset: var(--focus-gap-lg);
 	}
 }
 
-// Muted, not accent-hot: red belongs to the session that is actually on now.
-.cellTime {
-	@include mono(var(--fs-label-lg), 0.1em);
+@media (hover: hover) {
+	.slip:hover {
+		translate: 0 -3px;
+	}
+}
+
+// Barely set down: a fraction of the smallest tilt, cycled down the day.
+.tiltA { rotate: calc(var(--tilt-1) * -0.6); }
+.tiltB { rotate: calc(var(--tilt-1) * 0.4); }
+.tiltC { rotate: calc(var(--tilt-1) * -0.35); }
+.tiltD { rotate: calc(var(--tilt-1) * 0.7); }
+
+.edge {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.15rem 0.75rem;
+	@include mono(var(--fs-label-xs), 0.1em, uppercase);
+	color: var(--paper-ink-dim);
 	font-variant-numeric: tabular-nums;
-	// Same index role as the ticket wave's serial, so the same step.
-	color: var(--ink-muted);
 }
 
-// Nothing in the cell may shrink except the title, and the title clamps rather
-// than collapsing: in a short cell the flex column used to squeeze it to 3px,
-// which rendered a talk with no title at all.
-.cellTime,
-.cellHead,
-.tags,
-.cellFoot {
-	flex-shrink: 0;
+.title {
+	display: block;
+	margin-top: 0.625rem;
+	@include prose(var(--fs-body), 1.3);
+	color: var(--paper-ink);
 }
 
-.cellTitle {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-card-title);
-	line-height: 1;
-	text-transform: uppercase;
+.who {
+	display: block;
+	margin-top: 0.625rem;
+	@include action(var(--fs-action));
+	color: var(--paper-ink);
+}
+
+// "Live now" / "Next". Red text on paper would miss 4.5:1, so the word stays
+// in ink and the red rides on a dot in front of it.
+.flag {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	margin-top: 0.75rem;
+	@include mono(var(--fs-label-xs), 0.14em, uppercase);
+	color: var(--paper-ink-dim);
+}
+
+.flagLive {
+	color: var(--paper-ink);
+
+	&::before {
+		content: '';
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background: var(--color-accent);
+	}
+}
+
+// On the black table (a band line) the word itself can be red.
+.band .flagLive {
+	margin-top: 0;
+	color: var(--color-accent-hot);
+}
+
+/* ===================== ALL DAY (the lounge) ===================== */
+.allDay {
+	position: relative;
+	padding: 0.875rem 1rem;
+	background: var(--panel-hover);
+	border-left: 3px solid var(--paper);
 	color: var(--color-text);
-	// NOT clamped. The rows grow to their content (see `gridTemplateRows`), so a
-	// title that runs long takes the lines it needs instead of being cut off
-	// mid-phrase — a truncated talk title is the one thing a timetable must not do.
+
+	.edge {
+		color: var(--ink-dim);
+	}
+
+	.title {
+		font-size: var(--fs-body-lg);
+		color: var(--color-text);
+	}
 }
 
-.cellSpeakers {
-	min-width: 0;
-	// Names are lore, not metadata: Special Elite in sentence case.
-	@include prose(var(--fs-label-lg), 1.35);
-	color: var(--ink-soft);
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-
-/* ===================== OPEN SLOT ===================== */
-// A slot held for a talk not announced yet: a block inside a dashed outline,
-// with its time. It is not a control — there is nothing to open.
-.slotOpen {
-	@include block;
-	border: 1px dashed var(--rule-strong);
-}
-
-.slotOpenLabel {
-	@include note(var(--fs-note));
-	color: var(--ink-muted);
-}
-
-/* ===================== OPEN ALL DAY ===================== */
-// A room open the whole day (the lounge): one block in its own column from its
-// opening to its close, on the talk ground. Not a control, so it never lifts;
-// the time range and the note under the title say it is not a talk.
-.allDayCell {
-	@include block;
+// The name and hours ride down the block as the day scrolls past.
+.allDayIn {
+	position: sticky;
+	top: calc(var(--header-h) + 1.5rem);
 }
 
 .allDayNote {
-	@include note(var(--fs-note-sm));
-	color: var(--ink-muted);
+	display: block;
+	margin-top: 0.625rem;
+	@include note(var(--fs-note));
+	color: var(--ink-soft);
 }
 
-/* ===================== TAGS + SPEAKER PHOTOS (cell + list) ===================== */
-.tags {
+/* ===================== OPEN SLOT ===================== */
+.open {
 	display: flex;
-	flex-wrap: wrap;
-	// Wide enough for the separator dot between labels to sit in.
-	gap: 0.2rem 1.1rem;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 0.875rem 1rem;
+	border: 1px dashed var(--field-border);
+	@include prose(var(--fs-body), 1.4);
+	color: var(--ink-soft);
 }
 
-// A plain typewriter label, never a boxed chip. It must match the session sheet, where
-// the tags are one note line beside the room — a talk should not change shape
-// when the visitor opens it.
-.tag {
-	position: relative;
-	@include note(var(--fs-note-sm));
-	color: var(--ink-muted);
-	// No `white-space: nowrap`, and a zero flex floor: a one-word track label
-	// ("Architecture") is wide at a 32px root, which is most of a
-	// phone viewport. `.tags` already wraps between labels; this lets a single
-	// label break inside itself when even one does not fit.
-	min-width: 0;
+.openTime {
+	@include mono(var(--fs-label-xs), 0.1em);
+	color: var(--ink-soft);
+	font-variant-numeric: tabular-nums;
+}
 
-	& + .tag::before {
-		content: '';
-		position: absolute;
-		left: -0.55rem;
-		top: 50%;
-		width: 3px;
-		height: 3px;
-		transform: translateY(-50%);
-		background: rgba(255, 255, 255, 0.3);
+/* ===================== TABLET ===================== */
+@media (max-width: 1100px) {
+	.grid {
+		--gutter-col: 3.25rem;
+		--all-day-fr: 0.62fr;
+		column-gap: 0.875rem;
+	}
+
+	.slip {
+		padding: 0.75rem 0.75rem 0.875rem;
+	}
+
+	.title {
+		font-size: var(--fs-ui);
+	}
+
+	.headTape {
+		font-size: var(--fs-note-sm);
+		padding-inline: 0.625rem;
+	}
+
+	.tick {
+		font-size: var(--fs-label-sm);
+	}
+
+	.band {
+		font-size: var(--fs-ui);
+	}
+
+	.bandLoud {
+		font-size: var(--fs-body-lg);
+	}
+
+	.allDayNote {
+		font-size: var(--fs-note-sm);
+	}
+
+	.allDay .title {
+		font-size: var(--fs-body);
 	}
 }
 
-.cellFoot {
-	display: flex;
-	align-items: center;
-	gap: 0.45rem;
-	min-width: 0;
-}
-
-// Overlapping mugshots, monogram fallback — the /sessions stack, sized down.
-.avatars {
-	display: inline-flex;
-	flex-shrink: 0;
-
-	.avatar + .avatar {
-		margin-left: -9px;
-	}
-}
-
-.avatar {
-	width: 26px;
-	height: 26px;
-	border-radius: 50%;
-	object-fit: cover;
-	object-position: center 22%;
-	// A thin ring separates overlapping photos.
-	border: 1.5px solid var(--panel);
-	background: var(--panel-lit);
-	filter: grayscale(1) contrast(1.3) brightness(0.88);
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.avatarMono {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-label-sm);
-	line-height: 1;
-	color: var(--ink-monogram-sm);
-	filter: none;
-}
-
-/* ===================== LIST (mobile / single-room) ===================== */
-// A run sheet: time, title, room, each entry on the grid's ground with the
-// same gap of black between them. A tighter step than the long lists, because
-// the abstracts and photos are in "Every talk" below.
+/* ===================== LIST (phone) ===================== */
 .list {
-	gap: $cell-gap;
-}
-
-// The shared field row, re-grounded as a block: no rule under it, the panel
-// behind it, and the reach field kept inside the block instead of bleeding to
-// the page edges.
-.list .item {
-	--field-step: clamp(0.8rem, 2vw, 1.1rem);
-	padding-inline: 0.9rem;
-	@include ground;
-	border-bottom: 0;
-	border-radius: var(--radius);
-
-	&::before {
-		inset: 0;
-		border-radius: inherit;
-	}
-}
-
-// A break: the hairline and no ground, as on the grid.
-.list .itemBand {
-	background: transparent;
-	border-top: 1px solid var(--rule);
-	border-radius: 0;
-}
-
-// A slot held open: the dashed outline, as on the grid.
-.list .itemOpen {
-	border: 1px dashed var(--rule-strong);
-}
-
-// The session on now: a red top edge, the grid's live mark.
-.list .itemLive {
-	border-top: 2px solid var(--color-accent);
-}
-
-.item {
-	display: flex;
-	align-items: flex-start;
-	gap: min(clamp(1rem, 3vw, 2rem), 5vw);
-	width: 100%;
 	margin: 0;
-	text-align: left;
-	font: inherit;
-	color: inherit;
-	cursor: pointer;
-}
+	padding: 0;
+	list-style: none;
 
-// A band, an open slot and an open-all-day room are information, not
-// controls — they take no reach field and no mark.
-.itemBand,
-.itemOpen,
-.itemAllDay {
-	cursor: default;
+	> li + li {
+		margin-top: 1.5rem;
+	}
 
-	&::before { content: none; }
+	> .group {
+		margin-top: 2.75rem;
+	}
 
-	&:hover {
-		.itemTime,
-		.itemTitle,
-		.itemRoom {
-			color: inherit;
+	.band {
+		padding: 0;
+		font-size: var(--fs-body);
+	}
+
+	.bandLoud {
+		font-size: var(--fs-body-lg);
+	}
+
+	.slip,
+	.allDay {
+		width: 100%;
+		margin-bottom: 1.9rem;
+		padding: 1.5rem 1.125rem 1.125rem;
+
+		&:last-child {
+			margin-bottom: 0;
 		}
 	}
+
+	// Under 720px a print never tilts past a whisper.
+	.slip {
+		rotate: calc(var(--tilt-1) * 0.4);
+	}
+
+	.slip:nth-of-type(even) {
+		rotate: calc(var(--tilt-1) * -0.6);
+	}
+
+	// In the list the lounge is a slip like the rest, taped with its room.
+	.allDay {
+		background: var(--paper);
+		color: var(--paper-ink);
+		border-left: 0;
+		box-shadow: var(--paper-shadow);
+
+		.edge {
+			color: var(--paper-ink-dim);
+		}
+
+		.title {
+			font-size: var(--fs-body);
+			color: var(--paper-ink);
+		}
+
+		.allDayNote {
+			color: var(--paper-ink-dim);
+		}
+	}
+
+	.allDayIn {
+		position: static;
+	}
+
+	.open {
+		display: block;
+		margin-bottom: 2.1rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.openTime {
+		margin-right: 0.4rem;
+	}
 }
 
-.itemTime {
-	// Start over end, always: one clock wide, and the times read as a column
-	// down the page. Under text zoom this must give way (`.itemMain` is
-	// `flex: 1`, basis 0, and takes what the time leaves): at a 32px root a
-	// stacked clock is 104px of a 320px viewport, so the cap yields;
-	// `min-width` keeps it a column at normal sizes.
-	display: flex;
-	flex-direction: column;
-	min-width: min(4.25rem, 21vw);
-	max-width: min(5.5rem, 30vw);
-	@include mono(var(--fs-ui), 0.1em);
+.group {
+	.band {
+		margin-bottom: 1.25rem;
+	}
+}
+
+.groupTime {
+	margin: 0 0 1.9rem;
+	@include mono(var(--fs-title-sm));
+	font-weight: 400;
+	color: var(--color-text);
 	font-variant-numeric: tabular-nums;
-	color: var(--ink-muted);
-	// Drops the mono time onto the Bebas title's cap-height. A band's title is
-	// a typewriter note, so there it sits on the first line already.
-	padding-top: 0.2rem;
-
-	.itemBand &,
-	.itemOpen & {
-		padding-top: 0;
-	}
 }
 
-.itemMain {
-	display: flex;
-	flex-direction: column;
-	gap: 0.3rem;
-	min-width: 0;
-	flex: 1;
-}
-
-// A step under the long-list row title: this is the index, "Every talk" is
-// the read.
-.itemTitle {
-	@include row-title(var(--fs-title-sm));
-
-	.itemBand &,
-	.itemOpen & {
-		@include note(var(--fs-note));
-		color: var(--color-cream);
-	}
-}
-
-// The room tells two parallel talks apart on a phone.
-.itemRoom {
-	@include note(var(--fs-note-sm));
-	color: var(--color-grey);
-}
-
-/* ===================== NOW LINE + LIVE / COMING-UP ===================== */
-// Full-width line across the grid at the current minute (event day / ?now= only).
-.nowLine {
-	position: relative;
-	z-index: 4;
-	align-self: start;
-	height: 0;
-	border-top: 2px solid var(--color-accent-hot);
-	pointer-events: none;
-}
-
-.nowLabel {
-	position: absolute;
-	top: -0.62rem;
-	left: 0;
-	@include note(var(--fs-note-sm));
-	color: var(--on-accent);
-	background: var(--color-accent-hot);
-	padding: 0.05rem 0.4rem;
-}
-
-// Time + badge row at the top of a cell.
-.cellHead {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 0.4rem;
-}
-
-.itemTitleRow {
-	display: flex;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: 0.75rem;
-	// The badge drops under the title rather than pushing it off the row when
-	// the type is zoomed.
-	flex-wrap: wrap;
-
-	> :first-child {
-		min-width: 0;
-	}
-}
-
-// A status word on a rule — never a filled pill.
-.badge {
-	flex-shrink: 0;
-	display: inline-flex;
-	align-items: center;
-	gap: 0.3rem;
-	@include note(var(--fs-note-sm));
-	padding-bottom: 0.22rem;
-	white-space: nowrap;
-}
-
-.badgeLive {
+.groupNow {
+	margin-left: 0.75rem;
+	@include mono(var(--fs-label-xs), 0.14em, uppercase);
 	color: var(--color-accent-hot);
-	border-bottom: 1px solid var(--color-accent);
 }
 
-.badgeComing {
-	color: rgba(255, 255, 255, 0.72);
-	border-bottom: 1px solid var(--rule-strong);
+.slipTape {
+	position: absolute;
+	z-index: 2;
+	top: -0.8rem;
+	left: 0.875rem;
+	max-width: calc(100% - 2rem);
+	--tape-tilt: -2deg;
+	padding: 0.3rem 0.75rem 0.25rem;
 }
 
-.liveDot {
-	width: 5px;
-	height: 5px;
-	border-radius: 50%;
-	// Static: the "Live now" word beside it carries the state. No pulse, no ring.
-	background: var(--color-accent-hot);
+@media (max-width: 720px) {
+	.room {
+		font-size: var(--fs-action);
+	}
+
+	.rooms {
+		gap: 0 1.1rem;
+	}
 }
 
-// The session on now is the ONE entry that gets the accent: a red top edge.
-.cellLive {
-	border-top: 2px solid var(--color-accent);
-}
-
-.bandLive {
-	border-color: var(--rule-red);
-}
-
-/* ===================== STATES ===================== */
 @media (prefers-reduced-motion: reduce) {
-	.cell,
-	.item,
-	.liveDot {
-		transition: none;
-		animation: none;
-	}
-
-	// The red mark draws on `::after`, and a pseudo-element keeps its own
-	// transition, so `.cell { transition: none }` above does not reach it. It
-	// carries no meaning: focus keeps its ring and the live entry its edge.
-	.cell::after {
+	.slip,
+	.room {
 		transition: none;
 	}
 }
-
-

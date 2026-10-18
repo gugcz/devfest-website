@@ -29,9 +29,6 @@ export default function HeroOffer() {
 
 	return (
 		<p className={s.offer}>
-			{/* The line's separator, here because the island is a `display:
-			    contents` wrapper the page's own `::before` cannot reach. */}
-			<span className={s.dot} aria-hidden="true">·</span>
 			<span className={s.label}>
 				{/* The final wave sells on urgency, not on its name: the Tickets
 				    section right below names it. */}
@@ -44,7 +41,7 @@ export default function HeroOffer() {
 				)}
 			</span>{' '}
 			<a className={`${s.value} ${s.link}`} href="#tickets">
-				From {offer.price}
+				from <span className={s.figure}>{offer.price}</span>
 			</a>
 		</p>
 	);

@@ -89,32 +89,35 @@
 .chips {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.5rem;
+	gap: 0.25rem 1.4rem;
 }
 
+// A filter is a Bebas word, red when on — the same voice as the room
+// filter on the timetable above. No box: a box per value read as a form.
 .chip {
-	@include note(var(--fs-note-sm));
-	color: var(--color-grey);
-	background: rgba(255, 255, 255, 0.02);
-	// Square, never a pill; the boundary uses --field-border so an interactive filter
-	// clears WCAG 1.4.11.
-	border: 1px solid var(--field-border);
-	border-radius: var(--radius);
-	padding: 0.42rem 0.85rem;
+	@include action(var(--fs-action));
+	color: var(--ink-soft);
+	background: none;
+	border: 0;
+	padding: 0.35rem 0;
 	cursor: pointer;
-	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+	transition: color 0.2s ease;
 
-	&:hover,
 	&:focus-visible {
-		color: var(--color-text);
-		border-color: var(--rule-red);
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
 	}
 }
 
-.chipOn {
-	color: #fff;
-	background: rgba(241, 16, 0, 0.28);
-	border-color: var(--rule-red);
+@media (hover: hover) {
+	.chip:hover {
+		color: var(--color-text);
+	}
+}
+
+.chipOn,
+.chipOn:hover {
+	color: var(--color-accent-hot);
 }
 
 .clear,
@@ -140,94 +143,83 @@
 	margin-top: 1rem;
 }
 
+/* ===================== SLIPS ===================== */
+// Every talk as a paper slip on the table, two to a row: time and room on
+// the edge, the title typed, a stretch of the abstract, then the speakers.
 .grid {
-	position: relative;
-}
-
-/* ===================== ROW (button) ===================== */
-.card {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
-	align-items: start;
-	column-gap: clamp(1.25rem, 3vw, 2.75rem);
-	row-gap: 0.7rem;
-	width: 100%;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 2.25rem 1.75rem;
 	margin: 0;
-	text-align: left;
-	font: inherit;
-	color: inherit;
-	cursor: pointer;
+	padding: 0;
+	list-style: none;
 
-	// Exceptions to the primitive's "every ink goes cream" rule: these are objects,
-	// not ink, and must stay legible ON the field. Hover only — focus draws a ring.
-	&:hover {
-		.avatar {
-			border-color: var(--on-accent-border);
-		}
-
-		.avatarImg {
-			filter: grayscale(1) contrast(1.3) brightness(0.96);
-		}
-
-		.avatarMore {
-			color: var(--on-accent-ink);
-			background: var(--on-accent);
-		}
+	> li {
+		display: flex;
 	}
 }
 
-/* ===================== TOP META ROW ===================== */
-// Track / time kicker, in the body column above the title.
-.top {
-	grid-column: 1;
+.card {
+	position: relative;
 	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	width: 100%;
+	margin: 0;
+	padding: 1.1rem 1.25rem 1.25rem;
+	border: 0;
+	border-radius: 0;
+	background: var(--paper);
+	color: var(--paper-ink);
+	box-shadow: var(--paper-shadow);
+	text-align: left;
+	font: inherit;
+	cursor: pointer;
+	transition: translate 0.2s ease;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-lg);
+	}
+}
+
+@media (hover: hover) {
+	.card:hover {
+		translate: 0 -3px;
+	}
+}
+
+.tiltA { rotate: calc(var(--tilt-1) * -0.5); }
+.tiltB { rotate: calc(var(--tilt-1) * 0.4); }
+.tiltC { rotate: calc(var(--tilt-1) * 0.3); }
+.tiltD { rotate: calc(var(--tilt-1) * -0.6); }
+
+// Time and room, track opposite: the slip's mono edge.
+.top {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
 	align-items: baseline;
-	justify-content: flex-start;
-	gap: 0.9rem;
-	margin-bottom: 0.6rem;
+	gap: 0.15rem 0.75rem;
+	@include mono(var(--fs-label-xs), 0.1em, uppercase);
+	color: var(--paper-ink-dim);
 }
 
-.title,
-.excerpt {
-	grid-column: 1;
-}
-
-// When and where leads the row: on a programme, the time is what a visitor
-// scans down. A step brighter than the track beside it, never red.
 .when {
-	@include mono(var(--fs-label-sm), 0.15em);
-	color: var(--ink-soft);
 	font-variant-numeric: tabular-nums;
-	white-space: nowrap;
 }
 
-// The track is muted, not accent-red: red on every row of a thirty-row list is
-// not a highlight.
-.kicker {
-	@include note(var(--fs-note-sm));
-	color: var(--ink-muted);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-/* ===================== TITLE + EXCERPT ===================== */
-// A step below the 54px a short list carries — thirty talks at that size stop
-// being scannable, but this is the same container language, not a smaller one.
 .title {
-	@include row-title;
-	// Reserve up to three lines so short and long titles keep row heights close.
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	line-clamp: 3;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+	display: block;
+	margin-top: 0.75rem;
+	@include prose(var(--fs-body-lg), 1.3);
+	color: var(--paper-ink);
 }
 
 .excerpt {
-	@include prose(var(--fs-body), 1.6);
-	color: rgba(255, 255, 255, 0.72);
-	margin-top: 0.55rem;
+	@include prose(var(--fs-note-sm), 1.55);
+	color: var(--paper-ink-dim);
+	margin-top: 0.6rem;
 	display: -webkit-box;
 	-webkit-line-clamp: 3;
 	line-clamp: 3;
@@ -235,17 +227,13 @@
 	overflow: hidden;
 }
 
-/* ===================== FOOT (speakers) ===================== */
-// Right-hand column: who is giving the talk, on the same axis every field row uses.
+// The speakers close the slip, pushed to its foot so a row of slips lines up.
 .foot {
-	grid-column: 2;
-	grid-row: 1 / span 3;
 	display: flex;
 	align-items: center;
-	justify-content: flex-end;
-	gap: 0.7rem;
-	max-width: 15rem;
-	padding-top: 0.15rem;
+	gap: 0.6rem;
+	margin-top: auto;
+	padding-top: 0.9rem;
 }
 
 .stack {
@@ -262,11 +250,8 @@
 	width: 30px;
 	height: 30px;
 	border-radius: 50%;
-	object-fit: cover;
-	object-position: center 22%;
-	border: 1.5px solid var(--panel);
-	background: var(--panel-lit);
-	filter: grayscale(1) contrast(1.3) brightness(0.88);
+	border: 1.5px solid var(--paper);
+	background: var(--paper-ink);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -285,7 +270,7 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center 22%;
-	filter: grayscale(1) contrast(1.3) brightness(0.88);
+	filter: grayscale(1) contrast(1.1);
 }
 
 .avatarNone {
@@ -298,97 +283,58 @@
 	font-size: var(--fs-label-lg);
 	line-height: 1;
 	color: var(--ink-monogram-sm);
-	filter: none;
 }
 
-// The "+2" overflow chip rides in the speaker stack, so a red fill here is the
-// accent once per row over thirty rows — texture, not a highlight. It sits in
-// the same well as the monogram beside it and now reads in the same ink.
 .avatarMore {
 	@include mono(var(--fs-label-xs), 0.1em);
-	color: var(--ink-monogram-sm);
 }
 
 .names {
-	// Names are lore, not metadata: Special Elite in sentence case.
-	@include prose(var(--fs-label-lg), 1.4);
-	color: var(--ink-soft);
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+	@include action(var(--fs-action));
+	color: var(--paper-ink);
 }
 
-/* ===================== "MORE SOON" TILE ===================== */
-// The programme's open end — a typewriter closing note at the foot of the field, never
-// a dashed placeholder tile.
+/* ===================== "MORE SOON" ===================== */
+// The programme's open end: a dashed outline where the next slips will go,
+// like an open slot on the timetable.
 .moreCard {
-	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	justify-content: center;
 	gap: 0.6rem;
+	width: 100%;
+	padding: 1.25rem;
+	border: 1px dashed var(--field-border);
 	text-align: left;
 }
 
-.moreDots {
-	display: inline-flex;
-	gap: 0.34rem;
-
-	// Static: this marks the programme's open end, not a loading state — a
-	// perpetual pulse here promised progress that was never coming.
-	span {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--ink-muted);
-		opacity: 0.55;
-	}
-}
-
-// The programme's open end. /speakers already closes its roll in muted ink
-// ("End of roll"); this one was the same statement in red, which made the one
-// row that is NOT a session the loudest thing in the list.
 .moreKicker {
 	@include note(var(--fs-note-sm));
-	color: var(--ink-muted);
+	color: var(--ink-soft);
 }
 
 .moreText {
 	@include prose(var(--fs-lede), 1.5);
-	color: var(--color-grey);
+	color: var(--ink);
 	margin: 0;
 	max-width: 22ch;
 }
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 720px) {
-	// The speaker column folds under the body rather than squeezing the title.
-	.card {
+	.grid {
 		grid-template-columns: minmax(0, 1fr);
+		gap: 1.9rem;
 	}
 
-	.foot {
-		grid-column: 1;
-		grid-row: auto;
-		justify-content: flex-start;
-		max-width: none;
-		padding-top: 0.4rem;
-	}
-}
-
-@media (max-width: 600px) {
 	.title {
-		font-size: var(--fs-title-sm);
+		font-size: var(--fs-body);
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.card,
-	.moreCard,
-	.moreDots span {
+	.card {
 		transition: none;
-		animation: none;
 	}
 }

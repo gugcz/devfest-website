@@ -1,8 +1,8 @@
 @use '../styles/type' as *;
-// The ticket ledger: a ruled head (`.head-rule`, global), then one ruled row
-// per wave (`.field-row`, global). This file owns the row's columns.
-//
-//   [ index · state ][ wave · deadline ][ price · company figure ][ action ]
+// The box office: a poster head with the invoice route as its note, then one
+// paper ticket slip per wave on the black table. The wave on sale is the big
+// slip; a spent wave is a small tilted slip crossed by the grease pencil; a
+// wave still to come is a small plain slip.
 
 .tickets {
 	width: 100%;
@@ -12,245 +12,266 @@
 	// (BaseLayout.scss) cancels `--section-air`; stating it here keeps the
 	// two in step.
 	--section-air: var(--section-y-tight);
-	padding: var(--section-air) var(--gutter) 0;
+	padding: var(--section-air) var(--gutter) var(--section-y-tight);
 	position: relative;
 	z-index: 1;
 }
 
-.stubs {
-	position: relative;
+/* ---- head note ---- */
+.note {
+	max-width: 32ch;
+
+	p {
+		margin: 0;
+	}
+}
+
+.noteAction {
+	margin-top: 0.2rem;
+	font-size: var(--fs-cta);
+}
+
+/* ---- the slips ---- */
+.slips {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: clamp(2rem, 5vw, 4.5rem);
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
-.stub {
-	display: grid;
-	grid-template-columns: 4rem minmax(0, 1fr) auto auto;
-	align-items: center;
-	column-gap: clamp(1.4rem, 3vw, 3rem);
-}
-
-/* ---- index + state ---- */
-.stubMeta {
-	display: flex;
-	flex-direction: column;
-	gap: 0.4rem;
-}
-
-.stubSerial {
-	@include mono(var(--fs-label), 0.15em);
-	font-variant-numeric: tabular-nums;
-	color: var(--ink-faint);
-}
-
-// The list's one red word.
-.stubState {
-	@include note(var(--fs-note-sm));
-	color: var(--color-accent-hot);
-	white-space: nowrap;
-}
-
-.stubStateFinal {
-	white-space: normal;
-}
-
-/* ---- wave ---- */
-.stubBody {
-	display: flex;
-	flex-direction: column;
-	gap: 0.4rem;
+.slip {
+	position: relative;
+	flex: 5 1 18rem;
+	// A small slip that wraps to its own line stays a slip, not a banner.
+	max-width: 34rem;
 	min-width: 0;
+	background: var(--paper);
+	color: var(--paper-ink);
+	box-shadow: var(--paper-shadow);
+	--slip-pad-x: 2.1rem;
+	padding: 1.9rem var(--slip-pad-x) 2.1rem;
+	transform: rotate(var(--tilt, 0deg));
 }
 
-.stubTitle {
+.tier {
 	@include display(var(--fs-row-sm));
+	color: var(--paper-ink);
 	margin: 0;
 }
 
-// Sale window — the wave's ti.to `end_at`, when the organizer set one.
-.stubDeadline {
+.price {
+	@include mono(var(--fs-h3));
+	font-weight: 500;
+	letter-spacing: -0.03em;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+	margin: 1rem 0 0;
+	color: var(--paper-ink);
+}
+
+// A variant that costs something else ("Company funded 5 299 Kč"): data under
+// the figure, not a second figure.
+.altPrice {
 	@include note(var(--fs-note-sm));
-	color: var(--ink-meta);
-	margin: 0;
+	color: var(--paper-ink-dim);
+	margin: 0.5rem 0 0;
 }
 
-/* ---- price ---- */
-.stubEnd {
-	display: contents;
-}
-
-.stubPriceGroup {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
-	gap: 0.3rem;
-	text-align: right;
-}
-
-.stubPrice {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row-sm);
-	letter-spacing: 0;
-	line-height: 0.9;
-	color: var(--color-text);
-}
-
-// A variant that costs something else ("Company funded 1 452 Kč"): data
-// under the figure, not a second figure.
-.stubAltPrice {
-	@include note(var(--fs-note-sm));
-	color: var(--ink-meta);
+.altFigure {
+	@include mono(var(--fs-label));
 	white-space: nowrap;
 }
 
-/* ---- action ---- */
-// The live wave's controls: the red fill for the first variant, the text
-// action for the second. A settled wave shows its state word here instead.
+.state {
+	@include note(var(--fs-body-lg));
+	color: var(--paper-ink-dim);
+	margin: 0.65rem 0 0;
+}
+
+// The tear line: punched holes through to the table, bleeding to both edges.
+.perf {
+	height: 10px;
+	margin: 1.4rem calc(-1 * var(--slip-pad-x));
+	background-image: radial-gradient(circle, var(--color-bg) 3px, transparent 3.5px);
+	background-size: 18px 10px;
+	background-repeat: repeat-x;
+	background-position: center;
+}
+
+/* ---- a spent wave: small, tilted, crossed out ---- */
+.slipSpent {
+	--tilt: calc(-1 * var(--tilt-3));
+	// An older print: the paper a shade darker than the live slip's.
+	filter: brightness(0.93);
+
+	.price {
+		color: var(--paper-ink-dim);
+	}
+}
+
+.cross {
+	left: -3%;
+	top: -3%;
+	width: 106%;
+	height: 106%;
+}
+
+/* ---- a wave still to come: small, plain ---- */
+.slipSoon {
+	--tilt: calc(-1 * var(--tilt-1));
+}
+
+/* ---- the wave on sale: the big slip ---- */
+.slipLive {
+	flex: 7 1 28rem;
+	max-width: none;
+	--tilt: var(--tilt-1);
+	--slip-pad-x: 2.75rem;
+	padding: 2.4rem var(--slip-pad-x) 2.75rem;
+
+	.tier {
+		font-size: var(--fs-h2);
+	}
+
+	.price {
+		font-size: var(--fs-h2);
+	}
+
+	.perf {
+		margin: 1.6rem calc(-1 * var(--slip-pad-x));
+	}
+}
+
+.row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 1rem 1.5rem;
+}
+
+// The slip's bottom edge: the tax line and the day it admits to.
+.edge {
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 0.3rem 1rem;
+	margin: 0;
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink-dim);
+}
+
+.edgeDate {
+	@include mono(var(--fs-label), 0.12em);
+}
+
 .ctas {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	gap: 1.5rem;
-	min-width: 12rem;
+	flex-wrap: wrap;
+	gap: 0.75rem 1.75rem;
 }
 
-.cta:global(.btn-primary) {
-	padding: 0.85rem 1.3rem;
-	position: relative;
-	z-index: 2;
+.buy:global(.btn-primary) {
+	font-size: var(--fs-card-title);
+	padding: 1.1rem min(4rem, 12vw);
 }
 
-.cta:global(.btn-ghost) {
-	position: relative;
-	z-index: 2;
-}
+// The second variant's text action, inked for paper.
+.side:global(.btn-ghost) {
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-color: transparent;
+	text-underline-offset: 4px;
+	transition: text-decoration-color 0.2s ease;
 
-.stubLive {
-}
-
-.stubSpent {
-	// The state word takes the action column, flush right.
-	:global(.record-status) {
-		display: block;
-		text-align: right;
-		min-width: 12rem;
+	&:focus-visible {
+		color: var(--paper-ink);
+		text-decoration-color: var(--color-accent);
 	}
 }
 
-/* ---- footnotes ---- */
+@media (hover: hover) {
+	.side:global(.btn-ghost):hover {
+		color: var(--paper-ink);
+		text-decoration-color: var(--color-accent);
+	}
+}
+
+/* ---- footnote ---- */
 .footnote {
-	margin-top: 1.5rem;
-	text-align: left;
+	margin: clamp(2.5rem, 5vw, 4rem) 0 0;
 	@include prose(var(--fs-body-lg), 1.6);
-	letter-spacing: 0.01em;
 	color: var(--ink-meta);
 	max-width: 70ch;
 }
 
-.footnote + .footnote {
-	margin-top: 0.6rem;
-}
-
-// Inline in a sentence, so underlined like reading-copy links; the
-// standalone actions on the page carry an arrow instead.
+// Inline in a sentence, so underlined like reading-copy links.
 .footnoteLink {
-	color: var(--color-text);
-	text-decoration: underline;
-	text-underline-offset: 3px;
-	text-decoration-color: var(--rule-red);
-	transition: color 0.2s, text-decoration-color 0.2s;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		text-decoration-color: var(--color-accent-hot);
-	}
+	@include hairline-link;
 }
 
 /* ---- phones ---- */
 @media (max-width: 720px) {
-	.stub {
-		grid-template-columns: minmax(0, 1fr) auto;
-		row-gap: 0.9rem;
+	.slips {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 2.25rem;
 	}
 
-	.stubMeta {
-		grid-column: 1 / -1;
-		flex-direction: row;
-		align-items: baseline;
-		gap: 0.9rem;
+	.slip {
+		flex: none;
+		max-width: none;
+		--slip-pad-x: 1.6rem;
+		padding: 1.6rem var(--slip-pad-x) 1.75rem;
 	}
 
-	.stubPriceGroup {
-		align-items: flex-end;
+	.tier {
+		font-size: var(--fs-h2);
+	}
+
+	.slipLive {
+		--slip-pad-x: 1.6rem;
+		padding: 1.9rem var(--slip-pad-x) 2rem;
+
+		.tier,
+		.price {
+			font-size: var(--fs-display);
+		}
 	}
 
 	.ctas {
-		grid-column: 1 / -1;
-		justify-content: space-between;
 		width: 100%;
-		min-width: 0;
+		justify-content: center;
 	}
 
-	.cta:global(.btn-primary) {
-		flex: 1 1 auto;
-	}
-
-	.stubSpent :global(.record-status) {
-		min-width: 0;
+	.buy:global(.btn-primary) {
+		flex: 1 1 100%;
 	}
 }
 
 /* ---- loading skeleton ---- */
-// Mirrors the row geometry so nothing reflows on load.
-.skelField {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-}
-
-.skelWave {
-	display: grid;
-	grid-template-columns: 4rem minmax(0, 1fr) auto;
-	align-items: center;
-	column-gap: clamp(1.4rem, 3vw, 3rem);
-	padding: clamp(1.4rem, 2.2vw, 1.9rem) 0;
-	border-bottom: 1px solid var(--rule);
-}
-
-.skelCol {
-	display: flex;
-	flex-direction: column;
-	gap: 0.6rem;
-	min-width: 0;
-}
-
-.skelColRight {
-	align-items: flex-end;
-}
-
-.skelBar {
-	display: block;
-	position: relative;
-	z-index: 1;
-	background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.05) 100%);
+// Two blank slips in the live layout, so nothing reflows on load.
+.skelSlip {
+	flex: 5 1 18rem;
+	background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.05) 100%);
 	background-size: 200% 100%;
 	animation: shimmer 1.6s linear infinite;
 }
 
-.skelIndex { height: 0.8rem; width: 1.5rem; }
-.skelTitle { height: 1.8rem; width: 40%; }
-.skelText { height: 0.6rem; width: 30%; }
-.skelFacts { display: none; }
-.skelPrice { height: 1.8rem; width: 6rem; }
+.skelSmall {
+	height: 15rem;
+	transform: rotate(calc(-1 * var(--tilt-3)));
+}
 
-.skelBtn {
-	height: 2.6rem;
-	width: min(8rem, 100%);
-	background: linear-gradient(90deg, rgba(241, 16, 0, 0.2) 0%, rgba(241, 16, 0, 0.45) 50%, rgba(241, 16, 0, 0.2) 100%);
-	background-size: 200% 100%;
-	animation: shimmer 1.6s linear infinite;
+.skelBig {
+	flex: 7 1 28rem;
+	height: 24rem;
+	transform: rotate(var(--tilt-1));
 }
 
 @keyframes shimmer {
@@ -259,17 +280,23 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.skelBar,
-	.skelBtn {
+	.skelSlip {
 		animation: none;
+		background: rgba(255, 255, 255, 0.08);
 	}
 
-	.skelBar { background: rgba(255, 255, 255, 0.1); }
-	.skelBtn { background: rgba(241, 16, 0, 0.35); }
+	.side:global(.btn-ghost) {
+		transition: none;
+	}
 }
 
 @media (max-width: 720px) {
-	.skelWave {
-		grid-template-columns: minmax(0, 1fr) auto;
+	.skelSlip {
+		flex: none;
+	}
+
+	.skelSmall,
+	.skelBig {
+		transform: none;
 	}
 }

@@ -1,92 +1,107 @@
 @use '../styles/type' as *;
-// Every subpage opens here: tag, title, one line of copy, and the title does
-// all the work. Sized so the first content row is ALWAYS visible without
-// scrolling — height comes from the padding and the title, not min-height.
+// Every subpage opens on type: the title at poster scale on the left, one
+// factual line beside it, and at most one print. Compact on purpose: the
+// first content row shows without scrolling.
 .subpage-hero {
 	position: relative;
-	min-height: max(360px, 44vh);
-	display: flex;
-	align-items: flex-end;
-	overflow: hidden;
-	// 7.5rem, not 5.5: this padding is the only clearance under the fixed header.
+	// The padding is the only clearance under the fixed header.
 	padding:
-		calc(7.5rem + env(safe-area-inset-top))
+		calc(var(--header-h) + clamp(2.5rem, 5vw, 4.5rem) + env(safe-area-inset-top))
 		var(--gutter)
-		var(--section-y-tight);
-}
-
-// Type-only opening — no photo, so the frame is shorter and the headline
-// carries the plate.
-.subpage-hero--plain {
-	min-height: max(320px, 36vh);
+		clamp(3.5rem, 7vw, 6.5rem);
 	background: var(--color-bg);
 }
 
 .hero-content {
-	position: relative;
-	z-index: 10;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+	grid-template-areas: 'title side';
+	align-items: end;
+	gap: clamp(1.5rem, 4vw, 4rem);
 	max-width: var(--maxw);
 	width: 100%;
 	margin: 0 auto;
 }
 
-.scene-vignette { z-index: 3; }
+// With a print the lede goes under the title: three columns left the title
+// a third of the width and broke PARTNERS mid-word.
+.subpage-hero--print .hero-content {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
+	grid-template-areas:
+		'title print'
+		'side print';
+	align-items: start;
+	row-gap: 1.75rem;
+}
 
-// The page's one piece of poster-scale type. Never a second --fs-display on a subpage.
+.subpage-hero--print .hero-title {
+	align-self: end;
+}
+
 .hero-title {
-	@include display(var(--fs-display));
-	margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
-	max-width: 18ch;
+	grid-area: title;
+	@include display(var(--fs-subpage));
+	margin: 0;
 	text-wrap: balance;
 }
 
-// set:html injects unscoped markup; :global lets the page's <span class="red"> take
-// the accent. Flat — no halation.
+// set:html injects unscoped markup; :global lets a page's <span class="red">
+// take the accent.
 :global(.subpage-hero .hero-title .red) {
 	color: var(--color-accent-hot);
 }
 
-// One line, typewriter, no border and no accent bar.
+.hero-side {
+	grid-area: side;
+	padding-bottom: 0.6rem;
+}
+
 .hero-lede {
-	@include prose(var(--fs-lede), 1.6);
+	@include prose(var(--fs-body-lg), 1.6);
 	color: var(--ink-soft);
-	max-width: 46ch;
 	margin: 0;
+	max-width: 34ch;
 }
 
-// The sibling view as the site's text action (`.action`, BaseLayout.scss):
-// a way across, not a second call to action.
 .hero-link {
-	margin: clamp(1.25rem, 2.4vw, 1.75rem) 0 0;
+	margin: 1.25rem 0 0;
 }
 
-@media (max-width: 900px) {
-	.subpage-hero {
-		min-height: max(340px, 40vh);
-		padding: calc(6.5rem + env(safe-area-inset-top)) var(--gutter) var(--section-y-tight);
+.hero-print {
+	grid-area: print;
+	align-self: start;
+	--tilt: var(--tilt-3);
+	margin: 0;
+
+	.paper-photo {
+		aspect-ratio: 4 / 3;
 	}
 }
 
-@media (max-width: 600px) {
-	.subpage-hero {
-		min-height: max(300px, 36vh);
+@media (max-width: 1100px) {
+	.subpage-hero--print .hero-content {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 17rem);
+	}
+}
+
+@media (max-width: 720px) {
+	.hero-content,
+	.subpage-hero--print .hero-content {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-areas:
+			'title'
+			'side'
+			'print';
+		gap: 1.5rem;
 	}
 
-	.hero-title {
-		max-width: none;
-		margin-bottom: 1.35rem;
+	.hero-print {
+		width: 70%;
+		margin: 1rem 0 0 auto;
 	}
 
-	// The lede's 1.2rem floor is a desktop measure: Special Elite is wide, and
-	// on a phone column it set ~28 characters a line, three dense lines of
-	// typewriter under the title. Body size keeps it one voice under the
-	// headline instead of a second block competing with it.
 	.hero-lede {
 		font-size: var(--fs-body);
 		line-height: 1.65;
-	}
-
-	.hero-link {
-		margin-top: 1.5rem;
 	}
 }

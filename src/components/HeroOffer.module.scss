@@ -19,18 +19,6 @@
 	visibility: hidden;
 }
 
-// The middle dot before the offer, matching the page's `.hero-facts` dots.
-// Gone on a phone, where the facts stack one per line.
-.dot {
-	@include note;
-	color: var(--ink-muted);
-	margin-right: 0.4rem;
-
-	@media (max-width: 900px) {
-		display: none;
-	}
-}
-
 // Same lifted 0.72 as the line's other qualifier: the plate behind it is
 // photographic, and 0.55 fell under 4.5:1 on its darkest part.
 .label {
@@ -45,6 +33,11 @@
 	color: var(--color-text);
 	white-space: nowrap;
 	margin: 0;
+}
+
+// The price is a figure: JetBrains Mono, like the date at the line's start.
+.figure {
+	@include mono(var(--fs-body));
 }
 
 // Same hover as the venue link beside it.

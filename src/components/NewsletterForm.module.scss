@@ -1,93 +1,127 @@
 @use '../styles/type' as *;
+
+// The form as a card on the table: paper, black ink, the field a typed
+// underline, the one red fill beside it. Paper and ink are the darkroom
+// tokens (BaseLayout.scss); contrast on --paper uses --paper-ink(-dim).
 .wrapper {
+	position: relative;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	gap: 1rem;
 	width: 100%;
-}
+	background: var(--paper);
+	color: var(--paper-ink);
+	padding: 2rem 2.25rem 1.75rem;
+	box-shadow: var(--paper-shadow);
+	transform: rotate(calc(-1 * var(--tilt-2)));
 
-// Flat field + button pair — a single hairline-bordered control group.
-.form {
-	display: flex;
-	align-items: stretch;
-	gap: 0;
-	max-width: 30rem;
-	width: 100%;
-	position: relative;
-}
-
-.paper {
-	flex: 1;
-	// A flex box, so the input stretches to the button's height beside it
-	// and its text sits on the button's centre line, not at the top.
-	display: flex;
-	position: relative;
-	background: var(--panel-2);
-	border: 1px solid var(--field-border);
-	border-right: none;
-	border-radius: var(--radius) 0 0 var(--radius);
-	transition: border-color 0.2s ease;
-
-	&:focus-within {
-		// accent-hot gives the focused field a >=3:1 boundary (1.4.11) — the inner input
-		// carries no border of its own, so this wrapper is the cue.
-		border-color: var(--color-accent-hot);
+	@media (max-width: 720px) {
+		transform: rotate(calc(-1 * var(--tilt-1)));
+		padding: 1.75rem 1.5rem 1.5rem;
 	}
 }
 
+// The card's top margin: a typed word and a figure.
+.edge {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.75rem;
+	margin-bottom: 0.4rem;
+	@include mono(var(--fs-label-xs), 0.12em);
+	color: var(--paper-ink-dim);
+}
+
+.edgeWord {
+	@include note(var(--fs-note-sm));
+}
+
+.form {
+	display: flex;
+	align-items: flex-end;
+	gap: 1.25rem;
+	width: 100%;
+
+	@media (max-width: 500px) {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+.field {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.label {
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink-dim);
+}
+
+// A typed line: no box, a 2px black underline that turns red on focus.
 .input {
 	width: 100%;
-	padding: 0.95rem 1.1rem;
-	min-height: 3rem;
+	min-height: 2.75rem;
+	padding: 0.6rem 0.125rem;
 	background: transparent;
-	border: none;
-	border-radius: inherit;
-	color: var(--color-text);
-	@include prose;
-	letter-spacing: 0.02em;
+	border: 0;
+	border-bottom: 2px solid var(--paper-ink);
+	border-radius: 0;
+	color: var(--paper-ink);
+	@include prose(var(--fs-lede));
 
 	&::placeholder {
-		color: var(--ink-meta);
+		color: var(--paper-ink-dim);
 	}
 
 	&:focus {
 		outline: none;
+		border-bottom-color: var(--color-accent);
 	}
 
-	// Keyboard focus must show a visible ring — WCAG 2.4.7. Never `outline: none` here.
+	// Keyboard focus keeps a visible ring (WCAG 2.4.7).
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-tight);
+		outline-offset: var(--focus-gap);
 	}
 }
 
 .button {
-	padding: 0.95rem 2rem;
+	flex-shrink: 0;
+	padding: 0.95rem 1.75rem 0.8rem;
 	background: var(--color-accent);
 	color: var(--color-text);
 	border: 1px solid var(--color-accent);
-	border-radius: 0 var(--radius) var(--radius) 0;
+	border-radius: var(--radius);
 	@include cta-label;
 	cursor: pointer;
 	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 	white-space: nowrap;
 
-	// Same hover as `.btn-primary`: the fill inverts, nothing glows or moves.
+	// On paper the hover inverts to black (white would vanish on the card).
 	&:hover:not(:disabled) {
-		background: var(--color-text);
-		border-color: var(--color-text);
-		color: var(--color-bg);
+		background: var(--paper-ink);
+		border-color: var(--paper-ink);
 	}
 
-	// Dedicated pair, not a dimmed accent: opacity alone measured ~2.4:1 (WCAG 1.4.3
-	// fail) against the page ground. 60% white on --panel-hover holds ~6.6:1.
+	&:focus-visible {
+		outline: 2px solid var(--paper-ink);
+		outline-offset: var(--focus-gap);
+	}
+
+	// Until the consent is ticked: an outlined slot in the dim ink, which
+	// holds 5.3:1 on the paper (a dimmed red fell under 3:1).
 	&:disabled {
-		opacity: 1;
 		cursor: not-allowed;
-		background: var(--panel-hover);
-		border-color: var(--field-border);
-		color: rgba(255, 255, 255, 0.6);
+		background: transparent;
+		border-color: var(--paper-ink-dim);
+		color: var(--paper-ink-dim);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		transition: none;
 	}
 }
 
@@ -95,18 +129,15 @@
 	display: flex;
 	align-items: flex-start;
 	gap: 0.65rem;
-	max-width: 28.75rem;
 	cursor: pointer;
 	min-height: 2.75rem;
-	padding: 0.5rem 0;
+	padding: 0.5rem 0 0;
 
-	// Drawn, not native: the UA box rendered dark grey on the dark ground
-	// and on red, and read as disabled. An open square in full ink (21:1 on
-	// black), filled with a cut-out tick when checked. `--box-ink` is the
-	// ground's ink, `--box-tick` the tick on it.
+	// Drawn, not native: an open square in the paper's ink, filled with a
+	// cut-out tick when checked.
 	input[type='checkbox'] {
-		--box-ink: var(--color-text);
-		--box-tick: var(--color-bg);
+		--box-ink: var(--paper-ink);
+		--box-tick: var(--paper);
 		appearance: none;
 		-webkit-appearance: none;
 		flex-shrink: 0;
@@ -142,8 +173,7 @@
 			outline-offset: var(--focus-gap);
 		}
 
-		// Forced colours flatten the drawn fill and tick to Canvas, so checked
-		// and unchecked would look the same: hand the box back to the system.
+		// Forced colours flatten the drawn fill and tick: hand the box back.
 		@media (forced-colors: active) {
 			appearance: auto;
 			-webkit-appearance: auto;
@@ -156,44 +186,31 @@
 
 	span {
 		@include prose(var(--fs-ui), 1.55);
-		letter-spacing: 0.01em;
-		color: var(--ink);
+		color: var(--paper-ink-dim);
 	}
 }
 
 .consentLink {
-	@include hairline-link(var(--ink-strong));
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration-color: var(--color-accent);
+	}
 }
 
+// The status line: black ink on paper (the error red is 4:1 here, under
+// the small-text floor).
 .message {
 	@include prose(var(--fs-ui));
-	letter-spacing: 0.02em;
-	color: var(--color-error);
-	margin-top: 0.8rem;
+	color: var(--paper-ink);
+	margin: 0;
 	min-height: 1.2em;
-	text-align: center;
-}
 
-@media (max-width: 500px) {
-	.form {
-		flex-direction: column;
-		max-width: 100%;
-		gap: 0.6rem;
-	}
-
-	.paper {
-		width: 100%;
-		border-right: 1px solid var(--rule);
-		border-radius: var(--radius);
-	}
-
-	.input {
-		padding: 0.95rem 0.9rem;
-	}
-
-	.button {
-		width: 100%;
-		padding: 1rem 2rem;
-		border-radius: var(--radius);
+	&:empty {
+		min-height: 0;
 	}
 }

@@ -1,6 +1,4 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../assets/logo.png';
 import { EVENT } from '../lib/event';
 
 const SOCIALS = [
@@ -73,20 +71,11 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 
 <footer class="footer" role="contentinfo">
 	<div class="footer-inner">
+		<!-- The poster sign-off: the name set at section scale, still the way home. -->
+		<a href="/" class="footer-wordmark" aria-label="DevFest.cz, home">DevFest.cz</a>
+
 		<div class="footer-grid">
-			<!-- The mark heads its own column rather than a row of its own above
-			     the grid. -->
-			<section class="col col-brand" aria-label="DevFest.cz 2026">
-				<a href="/" class="footer-logo-link" aria-label="DevFest.cz 2026 — home">
-					<Image
-						src={logo}
-						alt="DevFest.cz 2026"
-						class="footer-logo"
-						loading="lazy"
-						widths={[204, 408]}
-						sizes="204px"
-					/>
-				</a>
+			<section class="col col-brand" aria-label="About DevFest.cz">
 				<p class="brand-tagline">
 					Prague's developer conference &mdash; AI agents, generative UI, cloud &amp; backends, mobile &amp; web, and the humans behind it.
 				</p>

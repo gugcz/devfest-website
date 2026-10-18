@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
+import filipPhoto from '../assets/team/filip-goszler-bw.webp';
 import {
 	getActivePartnerTiers,
 	getMediaPartners,
@@ -11,9 +12,9 @@ import {
 } from '../lib/partners';
 
 // Every logo wall on the page, top tier first: the ladder, then the two
-// off-ladder rows — community, then media. One loop, one heading treatment
-// for every tier; a logo's size comes from its tier's reference box
-// (`partnerLogo` in src/lib/partners.ts).
+// off-ladder rows — community, then media. Each tier is one strip of tape
+// and its marks on the table; a logo's size comes from its tier's reference
+// box (`partnerLogo` in src/lib/partners.ts).
 type Wall = { id: string; label: string; partners: Partner[] };
 const walls: Wall[] = [
 	...(await getActivePartnerTiers()),
@@ -21,10 +22,22 @@ const walls: Wall[] = [
 	{ id: 'media', label: 'Media', partners: await getMediaPartners() },
 ].filter((wall) => wall.partners.length > 0);
 
+// How much larger than its reference box a tier sets on this page. Passed to
+// `partnerLogo` (not a CSS `--logo-scale`) so the srcset is cut for the size
+// the mark actually renders at. The ladder still steps down tier by tier, but
+// no tier reads small: the lower boxes get the larger boost.
+const TIER_SCALE: Record<string, number> = {
+	platinum: 1.5,
+	diamond: 1.9,
+	gold: 1.6,
+	silver: 2,
+	community: 1.9,
+	media: 1.9,
+};
+
 const DECK_READY = true;
 const PRESENTATION_URL = 'https://canva.link/828fiq93km2hwds';
 const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.cz' };
-
 ---
 
 <BaseLayout
@@ -41,73 +54,72 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 			focus="center"
 		/>
 
-		{walls.map((wall, i) => (
-			<section
-				class:list={[
-					'logo-wall',
-					`tier-${wall.id}`,
-					{ 'logo-wall--lead': wall.id === 'platinum', 'logo-wall--first': i === 0, 'logo-wall--last': i === walls.length - 1 },
-				]}
-				aria-labelledby={`${wall.id}-partners-title`}
-			>
-				<div class="wall-inner">
-					{/* One heading step for every tier: the logo size says the
-					    rank, so no tier needs a poster head of its own. */}
-					<header class="head-rule">
-						<h2 id={`${wall.id}-partners-title`} class="head-rule-title">
+		<div class="tiers">
+			<div class="tiers-inner">
+				{walls.map((wall) => (
+					<section class:list={['tier', `tier-${wall.id}`]} aria-labelledby={`${wall.id}-partners-title`}>
+						<h2 id={`${wall.id}-partners-title`} class="tape tier-tape">
 							{wall.label}<span class="sr-only"> partners</span>
 						</h2>
-					</header>
-					<ul class="logo-grid">
-						{wall.partners.map((p) => {
-							const { props } = partnerLogo(p, wall.id);
-							return (
-								<li class="logo-item">
-									{p.url ? (
-										<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+						<ul class="wall">
+							{wall.partners.map((p) => {
+								const { props } = partnerLogo(p, wall.id, TIER_SCALE[wall.id] ?? 1);
+								return (
+									<li class="logo-item">
+										{p.url ? (
+											<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+												<Image class={`logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
+											</a>
+										) : (
 											<Image class={`logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
-										</a>
-									) : (
-										<Image class={`logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
-									)}
-								</li>
-							);
-						})}
-					</ul>
-				</div>
-			</section>
-		))}
-		<!-- CLOSING STATEMENT — on the black ground; the deck button is the red. -->
-		<section class="band partners-cta" aria-labelledby="partners-cta-title">
-			<div class="band-inner closer">
-				<div>
-					<h2 id="partners-cta-title" class="display closer-title">
-						Become a<br />partner
-					</h2>
-				</div>
+										)}
+									</li>
+								);
+							})}
+						</ul>
+					</section>
+				))}
+			</div>
+		</div>
 
-				<div class="closer-side">
-					<p class="closer-note">
-						Tell us what you want from the day and we&rsquo;ll find the tier that fits.
-					</p>
+		<!-- CLOSER — the title on the table, Filip's card beside it; the deck
+		     button is the page's one red. -->
+		<section class="partners-cta" aria-labelledby="partners-cta-title">
+			<div class="cta-inner">
+				<h2 id="partners-cta-title" class="display cta-title">
+					Become a<br />partner
+				</h2>
 
-					<p class="partners-contact">
-						<span class="contact-name">{FILIP.name} &mdash; {FILIP.role}</span>
-						<a class="email-link" href={`mailto:${FILIP.email}`}>{FILIP.email}</a>
-					</p>
+				<div class="paper cta-card">
+					<p class="paper-edge cta-edge"><span>DevFest.cz</span><span>2026</span></p>
+					<div class="cta-body">
+						<div class="paper-photo cta-mug">
+							<Image src={filipPhoto} alt={FILIP.name} widths={[120, 240]} sizes="120px" loading="lazy" />
+						</div>
+						<div>
+							<p class="cta-say">
+								Tell us what you want from the day and we&rsquo;ll find the tier that fits.
+							</p>
+							<p class="cta-who">
+								<span class="cta-name">{FILIP.name}</span>
+								<span class="cta-role">{FILIP.role}</span>
+								<a class="cta-mail" href={`mailto:${FILIP.email}`}>{FILIP.email}</a>
+							</p>
+						</div>
+					</div>
 
-					<div class="closer-actions">
+					<div class="cta-actions">
 						{DECK_READY ? (
 							<a class="btn-primary" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
 								See partnership deck
 							</a>
 						) : (
 							<span class="partners-cta-soon" aria-disabled="true">
-								<span class="partners-cta-label">Partnership deck</span>
-								<span class="partners-cta-stamp" aria-hidden="true">Coming soon</span>
+								<span>Partnership deck</span>
+								<span class="partners-cta-stamp">Coming soon</span>
 							</span>
 						)}
-						<a class="btn-ghost" href={`mailto:${FILIP.email}`}>Email Filip</a>
+						<a class="action cta-action" href={`mailto:${FILIP.email}`}>Email Filip</a>
 					</div>
 				</div>
 			</div>

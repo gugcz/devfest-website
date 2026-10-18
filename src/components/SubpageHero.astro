@@ -1,6 +1,4 @@
 ---
-import HeroBackground from './HeroBackground.astro';
-
 interface Props {
 	titleHtml: string;
 	lede: string;
@@ -8,15 +6,14 @@ interface Props {
 	/** Visually-hidden keyword text prepended to the <h1>, ahead of the
 	 * decorative title (e.g. "DevFest.cz 2026 Speakers"). Omit to skip. */
 	seoHeading?: string;
-	/** Key-art plate behind the title. Pages ABOUT the event keep it;
-	 * transactional ones (contact, FAQ, invoice, downloads) open on type. */
+	/** Kept for the callers' sake: a page without a `plate` opens on type. */
 	photo?: boolean;
-	/** `background-position` for the key-art plate — see HeroBackground. */
+	/** `object-position` for the print's photograph. */
 	focus?: string;
-	/** Public path of a page-specific plate; see HeroBackground `src`. */
+	/** Public path of the one print beside the title. Pages ABOUT the event
+	 * carry one; transactional ones (contact, FAQ, invoice) open on type. */
 	plate?: string;
-	/** One cross-link under the lede, to the page's sibling view (sessions ↔
-	 * agenda). It used to sit under a second section headline in the band. */
+	/** One cross-link under the lede, to the page's sibling view. */
 	link?: { href: string; label: string };
 }
 
@@ -30,26 +27,30 @@ const {
 	plate,
 	link,
 } = Astro.props;
+const print = photo && plate;
 ---
 
-<section class:list={['subpage-hero', 'scene', { 'subpage-hero--plain': !photo }]} aria-labelledby={titleId}>
-	{photo && (
-		<>
-			<HeroBackground photoOpacity={0.7} mobilePhotoOpacity={0.4} focus={focus} src={plate} />
-			<div class="scene-vignette" aria-hidden="true"></div>
-		</>
-	)}
-
+<section class:list={['subpage-hero', { 'subpage-hero--print': print }]} aria-labelledby={titleId}>
 	<div class="hero-content">
 		<h1 id={titleId} class="hero-title">
 			{seoHeading && <span class="sr-only">{seoHeading} — </span>}
 			<span set:html={titleHtml} />
 		</h1>
-		<p class="hero-lede">{lede}</p>
-		{link && (
-			<p class="hero-link">
-				<a class="action" href={link.href}>{link.label}</a>
-			</p>
+		<div class="hero-side">
+			<p class="hero-lede">{lede}</p>
+			{link && (
+				<p class="hero-link">
+					<a class="action" href={link.href}>{link.label}</a>
+				</p>
+			)}
+		</div>
+		{print && (
+			<figure class="paper hero-print" aria-hidden="true">
+				<div class="paper-photo">
+					<img src={plate} alt="" loading="eager" decoding="async" style={`object-position:${focus}`} />
+				</div>
+				<figcaption class="paper-edge"><span>DevFest.cz</span><span>30.10.2026</span></figcaption>
+			</figure>
 		)}
 	</div>
 </section>
