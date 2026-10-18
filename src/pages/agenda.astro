@@ -24,7 +24,7 @@ import Sessions from '../components/Sessions.tsx';
 			titleId="agenda-title"
 		/>
 
-		<section class="band band--lit" aria-label="Conference timetable">
+		<section class="band band--lit agenda-sheet" aria-label="Conference timetable">
 			<div class="band-inner">
 				<!-- The hero names this band; its head is for screen readers only. -->
 				<h2 class="sr-only">Timetable</h2>
@@ -45,7 +45,7 @@ import Sessions from '../components/Sessions.tsx';
 			<div class="band-inner">
 				<div class="head-rule">
 					<h2 id="talks-title" class="head-rule-title">Every talk</h2>
-					<p class="head-rule-note">Search, or filter by track and level. Pick one for its abstract and speakers.</p>
+					<p class="head-rule-note">Search, or filter by track. Pick one for its abstract and speakers.</p>
 				</div>
 
 				<!-- Hydrates from the same /api/lineup read as the timetable. -->
@@ -61,3 +61,15 @@ import Sessions from '../components/Sessions.tsx';
 		/>
 	</main>
 </BaseLayout>
+
+<style>
+	/* The timetable and the list under it are one programme: a tight step
+	   between them, not two full section airs. */
+	.agenda-sheet {
+		padding-bottom: var(--section-y-tight);
+	}
+
+	.agenda-talks {
+		padding-top: var(--section-y-tight);
+	}
+</style>

@@ -359,9 +359,9 @@ export default function InvoiceForm() {
 
 	return (
 		<div className={`paper ${s.wrapper}`}>
-			<span className={`tape ${s.tape}`} aria-hidden="true">
+			<p className={s.sheetLabel} aria-hidden="true">
 				Company billing details
-			</span>
+			</p>
 			{/* `noValidate` because the errors below replace the browser's own
 			    bubble: that bubble is English-only whatever the page language,
 			    shows one field at a time, and vanishes on the next keystroke. */}

@@ -1,10 +1,10 @@
 @use '../styles/type' as *;
 
 // The crew as prints on the black table: four across, three on a tablet, two
-// on a phone. Each print sits at its own small tilt; the codename is the
-// tape across its top edge.
+// on a phone. Each print sits at its own small tilt; the codename is one
+// line of tape over its top-left corner.
 .crew {
-	padding: var(--section-y-tight) var(--gutter) var(--section-y);
+	padding: var(--section-y-tight) var(--gutter);
 	background: var(--color-bg);
 }
 
@@ -39,18 +39,15 @@
 	padding: 0.6rem 0.6rem 0;
 }
 
-// The codename: tape over the top edge, left on odd prints, right on even.
+// The codename: one line of tape over the top-left corner of every print.
 .crew-alias {
 	margin: 0;
 	top: -0.9rem;
 	left: 1.1rem;
 	--tape-tilt: -2deg;
-}
-
-.crew-member:nth-child(even) .crew-alias {
-	left: auto;
-	right: 1.1rem;
-	--tape-tilt: 1.8deg;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 // The photo well. `.mugshot` is also the hook team.astro's script queries.
@@ -175,22 +172,10 @@
 	margin: 0.6rem 0 0;
 }
 
-// The closing line: a poster question and the one way to answer it.
-.crew-end {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: 1.25rem 3rem;
-	margin-top: clamp(5rem, 8vw, 7.5rem);
-}
-
-.crew-end-title {
-	font-size: var(--fs-h2);
-}
-
-.crew-end-action {
-	font-size: var(--fs-cta);
+// The end line's action is the address: typed and lowercase, not Bebas caps.
+.crew-inner :global(.end-line a[href^='mailto:']) {
+	@include note(var(--fs-lede));
+	@include hairline-link(var(--color-text));
 }
 
 @media (max-width: 1100px) {
@@ -233,14 +218,9 @@
 		display: none;
 	}
 
-	.crew-end-title {
-		font-size: var(--fs-section);
-	}
-
-	.crew-alias,
-	.crew-member:nth-child(even) .crew-alias {
+	.crew-alias {
 		left: 0.4rem;
-		right: auto;
+		max-width: calc(100% - 0.8rem);
 		font-size: var(--fs-label);
 		padding: 0.3rem 0.55rem 0.25rem;
 	}

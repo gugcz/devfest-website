@@ -1,9 +1,10 @@
 @use '../styles/type' as *;
 // The agenda as slips on the black table. Desktop: rooms are columns under
-// their tapes; each talk is a paper slip from its start line to its end line;
-// a break is a quiet typewriter line across the rooms; the lounge is one dark
-// block all day; a slot nobody holds yet is a dashed outline. Phone: the
-// same day as one list grouped by start time, each slip taped with its room.
+// their Bebas names; each talk is a straight paper slip from its start line to
+// its end line; a break is a quiet typewriter line across the rooms; the
+// lounge is one line above the sheet; a slot nobody holds yet is a dashed
+// outline. Phone: the same day as one compact list grouped by start time, the
+// room named on each slip's edge.
 
 /* ===================== BAR: room filter + time zone ===================== */
 .bar {
@@ -55,13 +56,55 @@
 	margin: 0;
 }
 
+/* ===================== LOUNGE (open all day) ===================== */
+// One line above the sheet: the room in Bebas, the rest typed, hours in mono.
+.lounge {
+	margin: 0 0 2.25rem;
+	@include note(var(--fs-note));
+	color: var(--ink-soft);
+}
+
+.loungeOpen {
+	padding: 0.25rem 0;
+	background: none;
+	border: 0;
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
+	}
+}
+
+@media (hover: hover) {
+	.loungeOpen:hover .loungeText {
+		color: var(--color-text);
+	}
+}
+
+.loungeRoom {
+	@include action(var(--fs-action));
+	color: var(--color-text);
+}
+
+.loungeText {
+	transition: color 0.2s ease;
+}
+
+.loungeTime {
+	@include mono(var(--fs-label-lg));
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
 /* ===================== GRID ===================== */
 // Rows are the moments something starts or ends, each as tall as what sits
-// in it (set inline). The gutter column and the lounge's narrower column
-// come from the two variables here.
+// in it (set inline). The gutter column comes from the variable here.
 .grid {
 	--gutter-col: 4rem;
-	--all-day-fr: 0.72fr;
 	display: grid;
 	gap: 0.75rem 1.25rem;
 	align-items: stretch;
@@ -76,18 +119,15 @@
 	padding-bottom: 1rem;
 }
 
-.headTape {
-	--tape-tilt: -1.5deg;
-	font-size: var(--fs-note);
-}
-
-.head:nth-child(even) .headTape {
-	--tape-tilt: 1.2deg;
+.headLabel {
+	display: block;
+	@include action(var(--fs-action));
+	color: var(--color-text);
 }
 
 .headNote {
 	display: block;
-	margin-top: 0.75rem;
+	margin-top: 0.35rem;
 	@include note(var(--fs-note-sm));
 	color: var(--ink-soft);
 }
@@ -159,7 +199,9 @@
 	border-radius: 0;
 	background: var(--paper);
 	color: var(--paper-ink);
-	box-shadow: var(--paper-shadow);
+	// The contact edge of --paper-shadow only: its long drop fell across the
+	// neighbouring slips as a grey wash, slips sit too close for it.
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
 	text-align: left;
 	font: inherit;
 	cursor: pointer;
@@ -171,11 +213,17 @@
 	}
 }
 
-// Barely set down: a fraction of the smallest tilt, cycled down the day.
-.tiltA { rotate: calc(var(--tilt-1) * -0.6); }
-.tiltB { rotate: calc(var(--tilt-1) * 0.4); }
-.tiltC { rotate: calc(var(--tilt-1) * -0.35); }
-.tiltD { rotate: calc(var(--tilt-1) * 0.7); }
+// A slip that runs past the rows beside it (a workshop): the slip keeps its
+// own height, a dim panel holds the rest of its span.
+.span {
+	display: flex;
+	flex-direction: column;
+	background: var(--panel);
+
+	> .slip {
+		width: 100%;
+	}
+}
 
 .edge {
 	display: flex;
@@ -188,8 +236,9 @@
 	font-variant-numeric: tabular-nums;
 }
 
-// The words on the edge (track and length, "All day") in the note voice;
-// mono keeps the figures only.
+// The words on the edge (room, track and length) in the note voice; mono
+// keeps the figures only.
+.edgeRoom,
 .edgeNote {
 	@include note(var(--fs-note-sm));
 	line-height: 1.2;
@@ -238,36 +287,6 @@
 	color: var(--color-accent-hot);
 }
 
-/* ===================== ALL DAY (the lounge) ===================== */
-.allDay {
-	position: relative;
-	padding: 0.875rem 1rem;
-	background: var(--panel-hover);
-	color: var(--color-text);
-
-	.edge {
-		color: var(--ink-dim);
-	}
-
-	.title {
-		font-size: var(--fs-body-lg);
-		color: var(--color-text);
-	}
-}
-
-// The name and hours ride down the block as the day scrolls past.
-.allDayIn {
-	position: sticky;
-	top: calc(var(--header-h) + 1.5rem);
-}
-
-.allDayNote {
-	display: block;
-	margin-top: 0.625rem;
-	@include note(var(--fs-note));
-	color: var(--ink-soft);
-}
-
 /* ===================== OPEN SLOT ===================== */
 .open {
 	display: flex;
@@ -289,7 +308,6 @@
 @media (max-width: 1100px) {
 	.grid {
 		--gutter-col: 3.25rem;
-		--all-day-fr: 0.62fr;
 		column-gap: 0.875rem;
 	}
 
@@ -299,11 +317,6 @@
 
 	.title {
 		font-size: var(--fs-ui);
-	}
-
-	.headTape {
-		font-size: var(--fs-note-sm);
-		padding-inline: 0.625rem;
 	}
 
 	.tick {
@@ -317,87 +330,60 @@
 	.bandLoud {
 		font-size: var(--fs-body-lg);
 	}
-
-	.allDayNote {
-		font-size: var(--fs-note-sm);
-	}
-
-	.allDay .title {
-		font-size: var(--fs-body);
-	}
 }
 
 /* ===================== LIST (phone) ===================== */
+// Compact: a small time head per moment, slips close together.
 .list {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 
 	> li + li {
-		margin-top: 1.5rem;
+		margin-top: 1rem;
 	}
 
 	> .group {
-		margin-top: 2.75rem;
+		margin-top: 1.75rem;
 	}
 
 	.band {
 		padding: 0;
-		font-size: var(--fs-body);
+		font-size: var(--fs-ui);
 	}
 
 	.bandLoud {
-		font-size: var(--fs-body-lg);
+		font-size: var(--fs-body);
 	}
 
-	.slip,
-	.allDay {
+	.slip {
 		width: 100%;
-		margin-bottom: 1.9rem;
-		padding: 1.5rem 1.125rem 1.125rem;
+		min-height: 0;
+		margin-bottom: 0.75rem;
+		padding: 0.75rem 0.875rem 0.875rem;
 
 		&:last-child {
 			margin-bottom: 0;
 		}
 	}
 
-	// Under 720px a print never tilts past a whisper.
-	.slip {
-		rotate: calc(var(--tilt-1) * 0.4);
+	.title {
+		margin-top: 0.4rem;
+		font-size: var(--fs-ui);
 	}
 
-	.slip:nth-of-type(even) {
-		rotate: calc(var(--tilt-1) * -0.6);
+	.who {
+		margin-top: 0.4rem;
 	}
 
-	// In the list the lounge is a slip like the rest, taped with its room.
-	.allDay {
-		background: var(--paper);
-		color: var(--paper-ink);
-		border-left: 0;
-		box-shadow: var(--paper-shadow);
-
-		.edge {
-			color: var(--paper-ink-dim);
-		}
-
-		.title {
-			font-size: var(--fs-body);
-			color: var(--paper-ink);
-		}
-
-		.allDayNote {
-			color: var(--paper-ink-dim);
-		}
-	}
-
-	.allDayIn {
-		position: static;
+	.flag {
+		margin-top: 0.5rem;
 	}
 
 	.open {
 		display: block;
-		margin-bottom: 2.1rem;
+		margin-bottom: 0.75rem;
+		padding: 0.75rem 0.875rem;
 
 		&:last-child {
 			margin-bottom: 0;
@@ -411,13 +397,13 @@
 
 .group {
 	.band {
-		margin-bottom: 1.25rem;
+		margin-bottom: 0.75rem;
 	}
 }
 
 .groupTime {
-	margin: 0 0 1.9rem;
-	@include mono(var(--fs-title-sm));
+	margin: 0 0 0.75rem;
+	@include mono(var(--fs-body-lg));
 	font-weight: 400;
 	color: var(--color-text);
 	font-variant-numeric: tabular-nums;
@@ -429,29 +415,47 @@
 	color: var(--color-accent-hot);
 }
 
-.slipTape {
-	position: absolute;
-	z-index: 2;
-	top: -0.8rem;
-	left: 0.875rem;
-	max-width: calc(100% - 2rem);
-	--tape-tilt: -2deg;
-	padding: 0.3rem 0.75rem 0.25rem;
-}
-
+// Phone: the bar stacks, the room filter is one line that scrolls sideways.
 @media (max-width: 720px) {
-	.room {
-		font-size: var(--fs-action);
+	.bar {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.5rem;
+		margin-bottom: 1.5rem;
 	}
 
 	.rooms {
+		flex-wrap: nowrap;
 		gap: 0 1.1rem;
+		// Room for the focus ring inside the scroller's clip.
+		margin: -0.375rem;
+		padding: 0.375rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		> li {
+			flex-shrink: 0;
+		}
+	}
+
+	.room {
+		font-size: var(--fs-action);
+		white-space: nowrap;
+	}
+
+	.lounge {
+		margin-bottom: 1.5rem;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.slip,
-	.room {
+	.room,
+	.loungeText {
 		transition: none;
 	}
 }

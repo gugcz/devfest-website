@@ -6,15 +6,16 @@ import SpeakerTile, { billLineup } from './SpeakerTile';
 import tile from './SpeakerTile.module.scss';
 import s from './SpeakersTeaser.module.scss';
 
-// Prints on the home table: the opening keynote large, then the next talks
-// of the day, then the way to the rest. Three rows of four on a laptop
-// (the keynote covers four cells), four rows of two on a phone.
-const TEASER_SIZE = 8;
+// Prints on the home table in whole rows: the opening keynote large, then the
+// next talks of the day. Nine on a laptop and a tablet (three rows of four,
+// the keynote covering four cells); seven on a phone (the keynote across,
+// then three rows of two; the stylesheet drops the rest).
+const TEASER_SIZE = 9;
 
 /** Home-page speakers: the first prints of the lineup /speakers shows in
  * full, in running order (`SpeakerTile`, each a link to the speaker). The
- * head with the confirmed count, then the prints, the last cell the way to
- * all of them. Renders nothing until the lineup resolves (clean
+ * head with the confirmed count, the prints, then one text action across the
+ * page to all of them. Renders nothing until the lineup resolves (clean
  * pre-announce). */
 export default function SpeakersTeaser() {
 	const { status, data } = useRemote(fetchLineup, 'speakers-teaser', (l) => l.speakers.length === 0);
@@ -45,13 +46,12 @@ export default function SpeakersTeaser() {
 							href={speakerTarget(billing.speaker.id)}
 						/>
 					))}
-					<li className={s.all}>
-						<a className={s.allLink} href="/speakers">
-							<span className={s.allCount}>{total}</span>
-							<span className={s.allLabel}>All speakers</span>
-						</a>
-					</li>
 				</ul>
+				<p className={s.all}>
+					<a className="action" href="/speakers">
+						All {total} speakers
+					</a>
+				</p>
 			</div>
 		</section>
 	);

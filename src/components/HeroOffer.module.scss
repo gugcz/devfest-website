@@ -1,6 +1,7 @@
 @use '../styles/type' as *;
-// A stretch of the hero's facts line, so it wears the line's one voice:
-// the typewriter note, the qualifier at 0.72 and the figure in white. Mirrors
+// A stretch of the hero's facts line, so it wears the line's one voice at
+// the line's one size (`1em`): the typewriter note, the qualifier at 0.72,
+// the figure in mono a step down like the line's other figures. Mirrors
 // `.hero-facts` in `pages/index.scss`, which is Astro-scoped and cannot
 // reach into this island.
 .offer {
@@ -22,14 +23,14 @@
 // Same lifted 0.72 as the line's other qualifier: the plate behind it is
 // photographic, and 0.55 fell under 4.5:1 on its darkest part.
 .label {
-	@include note;
+	@include note(1em);
 	color: rgba(255, 255, 255, 0.72);
 	white-space: nowrap;
 	margin: 0;
 }
 
 .value {
-	@include note;
+	@include note(1em);
 	color: var(--color-text);
 	white-space: nowrap;
 	margin: 0;
@@ -37,7 +38,7 @@
 
 // The price is a figure: JetBrains Mono, like the date at the line's start.
 .figure {
-	@include mono(var(--fs-body));
+	@include mono(0.86em);
 }
 
 // Same hover as the venue link beside it.

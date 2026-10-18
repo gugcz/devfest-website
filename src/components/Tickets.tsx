@@ -226,9 +226,9 @@ export default function Tickets() {
 					<LoadingState label="Opening the box office" />
 				</header>
 				{/* Two blank slips in the live layout, so nothing reflows on load. */}
-				<div className={s.slips} aria-hidden="true">
-					<div className={`${s.skelSlip} ${s.skelSmall}`} />
+				<div className={`${s.slips} ${s.slipsLed}`} aria-hidden="true">
 					<div className={`${s.skelSlip} ${s.skelBig}`} />
+					<div className={`${s.skelSlip} ${s.skelSmall}`} />
 				</div>
 			</section>
 		);
@@ -272,7 +272,14 @@ export default function Tickets() {
 	// Nothing left to wait for (no "Coming soon" wave): the section stops
 	// pitching the next-wave newsletter and says this is the last call instead.
 	const finalWave = isFinalWave(releases);
+	// The wave on sale leads (first on a phone too); spent and coming waves
+	// follow it, small, in their own order.
+	const onSale = (group: ReleaseGroup) =>
+		group.variants.some((v) => releaseStatus(v.release, { laterWaveOnSale }).purchasable);
 	const groups = groupReleases(releases);
+	const live = groups.filter(onSale);
+	const ordered = [...live, ...groups.filter((g) => !onSale(g))];
+	const hasLive = live.length > 0;
 
 	return (
 		<section id="tickets" className={sectionClass} aria-labelledby="tickets-heading">
@@ -287,8 +294,8 @@ export default function Tickets() {
 					</a>
 				</div>
 			</header>
-			<ul className={s.slips} role="list">
-				{groups.map((group) => (
+			<ul className={`${s.slips} ${hasLive ? s.slipsLed : ''}`} role="list">
+				{ordered.map((group) => (
 					<WaveSlip
 						key={group.name}
 						group={group}

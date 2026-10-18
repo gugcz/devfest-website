@@ -62,18 +62,13 @@ function CardAvatars({ speakers }: { speakers: SessionSpeakerRef[] }) {
 	);
 }
 
-/** Slip tilts, cycled down the list: a fraction of `--tilt-1`. */
-const TILTS = [s.tiltA, s.tiltB, s.tiltC, s.tiltD];
-
 function SessionCard({
 	session,
 	when,
-	tilt,
 	onOpen,
 }: {
 	session: Session;
 	when: { time: string | null; room: string };
-	tilt: string;
 	onOpen: (session: Session) => void;
 }) {
 	const names = speakerNames(session);
@@ -86,7 +81,7 @@ function SessionCard({
 		<li>
 			<button
 				type="button"
-				className={`${s.card} ${tilt}`}
+				className={s.card}
 				onClick={() => onOpen(session)}
 				aria-label={`View details for ${session.title}`}
 			>
@@ -249,23 +244,14 @@ export default function Sessions() {
 				</EmptyState>
 			) : (
 				<ul className={s.grid} role="list">
-					{filtered.map((session, i) => (
+					{filtered.map((session) => (
 						<SessionCard
 							key={session.id}
 							session={session}
 							when={whenParts(session, roomNames)}
-							tilt={TILTS[i % TILTS.length]}
 							onOpen={open}
 						/>
 					))}
-					{!active && (
-						<li>
-							<article className={s.moreCard} aria-label="More sessions to be announced">
-								<span className={s.moreKicker}>Docket open</span>
-								<p className={s.moreText}>More sessions announced soon</p>
-							</article>
-						</li>
-					)}
 				</ul>
 			)}
 			{selected && (

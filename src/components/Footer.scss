@@ -5,8 +5,9 @@
 	position: relative;
 	width: 100%;
 	z-index: 2;
-	margin-top: var(--section-y);
-	padding: 2.5rem var(--gutter) 3rem;
+	// No opening air: the last band's tight bottom step is the only space
+	// between the page and the sign-off (BaseLayout.scss, `.page-stack`).
+	padding: 0 var(--gutter) 3rem;
 	background: var(--color-bg);
 	font-family: var(--font-special-elite), cursive;
 	color: var(--ink);
@@ -25,6 +26,9 @@
 	display: block;
 	align-self: flex-start;
 	width: min(40rem, 80vw);
+	// The file carries transparent margin left of the mark (83 of 3000 px):
+	// pull it back so the mark starts on the text column.
+	margin-left: calc(min(40rem, 80vw) * -83 / 3000);
 	margin-bottom: clamp(2.5rem, 4vw, 3.5rem);
 
 	&:focus-visible {
@@ -198,18 +202,19 @@
 .socials {
 	display: flex;
 	align-items: center;
-	gap: 0;
-	flex-wrap: wrap;
-	// Line the first icon's glyph up with the column edge.
-	margin-left: -0.6rem;
+	// One row at every width: the targets shrink before they wrap.
+	flex-wrap: nowrap;
 }
 
+// The glyph sits at the target's left edge, so the first one lines up with
+// the column without a negative margin; the target runs on to its right.
 .social-link {
 	color: var(--ink-strong);
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
-	width: 2.5rem;
+	justify-content: flex-start;
+	flex: 0 1 2.5rem;
+	min-width: 1.75rem;
 	height: 2.5rem;
 	border-radius: var(--radius);
 	transition: color 0.25s ease;

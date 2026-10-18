@@ -1,7 +1,7 @@
 @use '../styles/type' as *;
 
-// The category index pinned on the left, the questions on the right as paper
-// slips: one width, one left edge, a tilt you only notice when two touch.
+// The category index pinned on the left, the questions on the right as
+// straight paper slips: one width, one left edge.
 .faq {
 	display: grid;
 	grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
@@ -51,14 +51,22 @@
 }
 
 .faq-index-ask {
-	@include note(var(--fs-note));
-	color: var(--ink);
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.35rem;
 	margin: 2.5rem 0 0;
+}
 
-	.action {
-		display: flex;
-		padding-top: 0.25rem;
-	}
+.faq-index-ask-label {
+	@include action(var(--fs-action));
+	color: var(--ink-dim);
+}
+
+// The address itself is typed, never set in Bebas caps.
+.faq-index-mail {
+	@include note(var(--fs-note));
+	@include hairline-link(var(--color-text));
 }
 
 @media (hover: hover) {
@@ -72,10 +80,10 @@
 	margin-top: clamp(5rem, 8vw, 7.5rem);
 }
 
-// The category is the page's head on this row: poster scale, over the slips.
+// The category heads its slips at the h2 step, under the page title.
 // Jumped to from the index, it lands clear of the fixed header.
 .faq-cat {
-	@include display(var(--fs-section));
+	@include display(var(--fs-h2));
 	margin: 0 0 clamp(1.75rem, 3vw, 2.75rem);
 	scroll-margin-top: calc(var(--header-h) + 2rem);
 }
@@ -88,13 +96,8 @@
 
 /* ---- Slips ---- */
 .faq-item {
-	--tilt: calc(-0.4 * var(--tilt-1));
 	--faq-pad: 1.75rem;
 	padding: 0;
-
-	&:nth-child(even) {
-		--tilt: calc(0.4 * var(--tilt-1));
-	}
 }
 
 // Number, question, marker. Red text on paper misses 4.5:1, so the reach
@@ -150,19 +153,35 @@
 	text-underline-offset: 4px;
 }
 
+// A drawn "+" that turns 45deg into an "×" when the slip is open.
 .faq-marker {
-	@include action(var(--fs-action));
+	position: relative;
+	align-self: center;
+	width: 0.9rem;
+	height: 0.9rem;
 	color: var(--paper-ink-dim);
-	transition: color 0.2s;
+	transition:
+		color 0.2s,
+		transform 0.25s ease;
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: calc(50% - 1px);
+		width: 100%;
+		height: 2px;
+		background: currentColor;
+	}
+
+	&::after {
+		transform: rotate(90deg);
+	}
 }
 
-.faq-marker-close,
-.faq-item[open] .faq-marker-open {
-	display: none;
-}
-
-.faq-item[open] .faq-marker-close {
-	display: inline;
+.faq-item[open] .faq-marker {
+	transform: rotate(45deg);
 }
 
 // The answer starts under the question text, not under the number.
@@ -252,7 +271,14 @@
 		padding-block: 1.1rem;
 	}
 
-	.faq-no {
+	// The number and the marker share the top line; the question takes the
+	// slip's full width under them.
+	.faq-marker {
+		grid-row: 1;
+		grid-column: 2;
+	}
+
+	.faq-q-text {
 		grid-column: 1 / -1;
 	}
 
@@ -268,4 +294,10 @@
 	.faq-a :global(a) {
 		transition: none;
 	}
+}
+
+// The end line's action is the address: typed and lowercase, not Bebas caps.
+.faq :global(.end-line a[href^='mailto:']) {
+	@include note(var(--fs-lede));
+	@include hairline-link(var(--color-text));
 }

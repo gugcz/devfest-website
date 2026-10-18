@@ -2,7 +2,7 @@
 
 // The sign-in as a small paper form beside the list, the workshops as paper
 // slips on the black table (the agenda's slips): the time and the seats are
-// figures in mono, the room on a strip of tape. The sign-in submit is the
+// figures in mono, the room typed beside it. The sign-in submit is the
 // one red fill; a slip's own action is black ink on its paper.
 
 .wrapper {
@@ -34,7 +34,6 @@
 /* ---- Sign-in: a typed paper form ---- */
 .login:global(.paper),
 .account:global(.paper) {
-	--tilt: calc(-0.5 * var(--tilt-1));
 	padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2.25rem) clamp(1.5rem, 3vw, 2rem);
 }
 
@@ -233,10 +232,8 @@
 	background: var(--paper);
 	color: var(--paper-ink);
 	box-shadow: var(--paper-shadow);
-	rotate: calc(-0.5 * var(--tilt-1));
 
 	&:nth-child(even) {
-		rotate: calc(0.6 * var(--tilt-1));
 		margin-left: clamp(0rem, 3vw, 2.5rem);
 	}
 }
@@ -395,10 +392,7 @@
 	}
 
 	.card {
-		rotate: calc(-0.3 * var(--tilt-1));
-
 		&:nth-child(even) {
-			rotate: calc(0.3 * var(--tilt-1));
 			margin-left: 0;
 		}
 	}

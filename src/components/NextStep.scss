@@ -1,7 +1,7 @@
 @use '../styles/type' as *;
 
-// A typed index card, like the /venue route cards: the errand as a Bebas
-// head, one or two typewriter lines under it, then its actions. Paper ink
+// A typed index card, straight (only photo prints tilt): the errand as a
+// Bebas head, one or two typewriter lines under it, then its actions. Paper ink
 // only: no red text on paper (the one red fill is a button, white on red).
 .step {
 	display: flex;
@@ -53,6 +53,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 0.5rem 1.6rem;
+	margin-top: auto;
 	padding-top: 1.25rem;
 }
 

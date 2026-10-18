@@ -22,29 +22,14 @@
 	align-items: center;
 }
 
-// A clipping: a slip of newsprint torn along its edges, set down at a tilt.
+// A clipping: a straight slip of newsprint, cut square.
 .clips {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 3.5rem;
-}
-
-.clip {
-	filter: drop-shadow(0 1.5rem 1.5rem rgba(0, 0, 0, 0.85));
-	transform: rotate(-1deg);
-
-	&:nth-child(3n + 2) {
-		transform: rotate(1.2deg);
-		margin-left: 8%;
-	}
-
-	&:nth-child(3n + 3) {
-		transform: rotate(-0.6deg);
-		margin-right: 6%;
-	}
+	gap: clamp(1.5rem, 2.5vw, 2.25rem);
 }
 
 .clip-link {
@@ -55,12 +40,11 @@
 	color: var(--paper-ink);
 	padding: 1.9rem 2.1rem;
 	text-decoration: none;
-	clip-path: polygon(0 1.2%, 6% 0, 14% 0.9%, 23% 0.2%, 31% 1%, 42% 0.3%, 55% 1.1%, 63% 0.2%, 74% 0.9%, 86% 0, 94% 0.8%, 100% 0.3%, 99.6% 50%, 100% 99%, 91% 100%, 80% 99.2%, 68% 100%, 57% 99.1%, 45% 99.8%, 33% 99%, 21% 100%, 10% 99.2%, 0 99.8%, 0.4% 50%);
+	box-shadow: var(--paper-shadow);
 
-	// The clip-path cuts an outline ring: the ring goes inside the slip.
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: -0.6rem;
+		outline-offset: 4px;
 	}
 }
 
@@ -68,14 +52,13 @@
 	padding: 0;
 }
 
-// Scraped Czech: JetBrains Mono is the only brand face that sets ř/ě/č
-// cleanly (Special Elite ships a latin subset), so the headline and the
-// standfirst stay mono. No uppercase: diacritics.
+// Scraped Czech: Bebas Neue sets ř/ě/č, so the headline is a row title;
+// Special Elite ships a latin subset, so the standfirst stays mono.
 .clip-title {
-	@include mono(var(--fs-lede));
-	font-weight: 500;
-	line-height: 1.35;
+	@include row-title(var(--fs-row-sm));
+	line-height: 1.05;
 	color: var(--paper-ink);
+	text-wrap: balance;
 }
 
 .clip-desc {
@@ -104,7 +87,8 @@
 	}
 }
 
-// A past edition on the table beside the clippings.
+// A past edition on the table beside the clippings: the band's one print,
+// its tape top-left like every print.
 .press-print {
 	--tilt: var(--tilt-2);
 	margin: 1.5rem 0 0;
@@ -115,10 +99,7 @@
 }
 
 .press-print-tape {
-	top: -0.95rem;
-	left: auto;
-	right: 12%;
-	--tape-tilt: 2deg;
+	white-space: nowrap;
 }
 
 // No coverage yet: a plain note, not a panel.
@@ -143,7 +124,7 @@
 
 /* ===================== PRESS KIT ===================== */
 .kit {
-	padding: 0 var(--gutter) var(--section-y);
+	padding: 0 var(--gutter) var(--section-y-tight);
 	background: var(--color-bg);
 }
 
@@ -184,13 +165,11 @@
 	gap: 3.5rem 3rem;
 }
 
-.variant-tape {
-	margin: 0 0 1.1rem;
-	--tape-tilt: -1.5deg;
-}
-
-.variant:nth-child(even) .variant-tape {
-	--tape-tilt: 1.2deg;
+// A plain label over the formats, not a strip of tape.
+.variant-label {
+	@include note(var(--fs-note));
+	color: var(--ink-soft);
+	margin: 0 0 0.6rem;
 }
 
 .formats {
@@ -229,10 +208,6 @@
 	margin: 3.5rem 0 0;
 }
 
-.kit-end-link {
-	@include hairline-link;
-}
-
 @media (max-width: 1100px) {
 	.press-grid,
 	.kit-inner {
@@ -251,26 +226,8 @@
 }
 
 @media (max-width: 720px) {
-	.clips {
-		gap: 2.5rem;
-	}
-
-	.clip,
-	.clip:nth-child(3n + 2),
-	.clip:nth-child(3n + 3) {
-		margin: 0;
-	}
-
-	.clip:nth-child(3n + 2) {
-		transform: rotate(0.8deg);
-	}
-
 	.clip-link {
 		padding: 1.5rem 1.4rem;
-	}
-
-	.clip-title {
-		font-size: var(--fs-body-lg);
 	}
 
 	.press-print {

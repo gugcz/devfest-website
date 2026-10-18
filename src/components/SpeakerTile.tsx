@@ -16,11 +16,15 @@ export interface Billing {
 	with: string[];
 	/** The typewritten tape over the print: the room, "Host", or that the time is still to come. */
 	tape: string;
+	/** The tape on a phone print, one line in half the width. */
+	tapeShort: string;
 	/** The right end of the print's edge: the CET start, or '' for a host or
 	 * an unscheduled talk (the tape says which). Mono sets figures only. */
 	clock: string;
 	/** The opening keynote: the first talk of the day, the large print. */
 	keynote: boolean;
+	/** The emcee: no talk; /speakers sets the hosts in their own row. */
+	host: boolean;
 }
 
 interface Slot {
@@ -89,6 +93,13 @@ function tapeFor(slot: Slot, keynote: boolean): string {
 	return slot.room;
 }
 
+function tapeShortFor(slot: Slot, keynote: boolean): string {
+	if (slot.host) return 'Host';
+	if (slot.minutes === null) return 'Time TBA';
+	if (keynote) return 'Opening keynote';
+	return slot.room;
+}
+
 function clockFor(slot: Slot): string {
 	return slot.host || slot.minutes === null ? '' : formatMinutes(slot.minutes);
 }
@@ -102,8 +113,10 @@ function billingFor(slot: Slot, keynote: boolean): Billing {
 			.filter((ref) => ref.id !== speaker.id && ref.fullName.trim())
 			.map((ref) => ref.fullName),
 		tape: tapeFor(slot, keynote),
+		tapeShort: tapeShortFor(slot, keynote),
 		clock: clockFor(slot),
 		keynote,
+		host: slot.host,
 	};
 }
 
@@ -117,12 +130,10 @@ export function billLineup(lineup: Lineup): Billing[] {
 // Prints set down by hand: a small tilt, never the same twice in a row.
 const TILTS = ['var(--tilt-2)', 'calc(-1 * var(--tilt-1))', 'var(--tilt-1)', 'calc(-1 * var(--tilt-2))'];
 
-const GREASE_CORNERS = 'M2 14 L 2 2 L 14 2 M 86 2 L 98 2 L 98 14 M 98 86 L 98 98 L 86 98 M 14 98 L 2 98 L 2 86';
-
 /** One speaker as a paper print: the portrait, the name in Bebas, the role
  * on the typewriter, the talk, and the edge with the sheet number and the
- * CET start. The tape says the room. The opening keynote is the large print
- * with red grease corners. The same tile on the home page (a link to the
+ * CET start. The tape says the room. The opening keynote is the large
+ * print. The same tile on the home page (a link to the
  * speaker) and on /speakers (a button that opens the sheet). The photo
  * develops to colour while the tile is hovered or focused. */
 export default function SpeakerTile({
@@ -150,7 +161,12 @@ export default function SpeakerTile({
 	const tilt = keynote ? 'calc(-1 * var(--tilt-1))' : TILTS[index % TILTS.length];
 	const body = (
 		<>
-			{billing.tape && <span className="tape">{billing.tape}</span>}
+			{billing.tape && (
+				<span className="tape">
+					<span className={s.tapeFull}>{billing.tape}</span>
+					<span className={s.tapeShort}>{billing.tapeShort}</span>
+				</span>
+			)}
 			<span
 				className={`paper-photo ${s.photo}`}
 				style={morphing ? ({ viewTransitionName: PORTRAIT_TRANSITION } as CSSProperties) : undefined}
@@ -176,11 +192,6 @@ export default function SpeakerTile({
 					{billing.clock && <span>{billing.clock}</span>}
 				</span>
 			</span>
-			{keynote && (
-				<svg className="grease" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-					<path d={GREASE_CORNERS} />
-				</svg>
-			)}
 		</>
 	);
 

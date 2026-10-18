@@ -10,9 +10,10 @@
 	align-items: start;
 }
 
-// The form sheet. The range fills are built in JS from `--rule-strong`
-// (white on the black table); on paper the same token is ink at an opacity,
-// so the inline gradients read without a change to the code.
+// The form sheet, straight: only the print beside it tilts. The range fills
+// are built in JS from `--rule-strong` (white on the black table); on paper
+// the same token is ink at an opacity, so the inline gradients read without
+// a change to the code.
 .steps {
 	--rule: rgba(0, 0, 0, 0.18);
 	--rule-strong: rgba(0, 0, 0, 0.3);
@@ -24,7 +25,6 @@
 	background: var(--paper);
 	color: var(--paper-ink);
 	box-shadow: var(--paper-shadow);
-	transform: rotate(calc(-0.3 * var(--tilt-1)));
 }
 
 // Numeral + spine gutter, then body — the numeral is the only progress

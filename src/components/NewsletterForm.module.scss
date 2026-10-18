@@ -15,10 +15,9 @@
 	color: var(--paper-ink);
 	padding: 2rem 2.25rem 1.75rem;
 	box-shadow: var(--paper-shadow);
-	transform: rotate(calc(-1 * var(--tilt-2)));
 
+	// A form is not a print: it lies straight.
 	@media (max-width: 720px) {
-		transform: rotate(calc(-1 * var(--tilt-1)));
 		padding: 1.75rem 1.5rem 1.5rem;
 	}
 }

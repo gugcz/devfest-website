@@ -12,9 +12,9 @@ import {
 } from '../lib/partners';
 
 // Every logo wall on the page, top tier first: the ladder, then the two
-// off-ladder rows — community, then media. Each tier is one strip of tape
-// and its marks on the table; a logo's size comes from its tier's reference
-// box (`partnerLogo` in src/lib/partners.ts).
+// off-ladder rows — community, then media. Each tier is a plain label and its
+// marks on the table; a logo's size comes from its tier's reference box
+// (`partnerLogo` in src/lib/partners.ts).
 type Wall = { id: string; label: string; partners: Partner[] };
 const walls: Wall[] = [
 	...(await getActivePartnerTiers()),
@@ -24,15 +24,16 @@ const walls: Wall[] = [
 
 // How much larger than its reference box a tier sets on this page. Passed to
 // `partnerLogo` (not a CSS `--logo-scale`) so the srcset is cut for the size
-// the mark actually renders at. The ladder still steps down tier by tier, but
-// no tier reads small: the lower boxes get the larger boost.
+// the mark actually renders at. Each tier's scaled box stays strictly smaller
+// than the one above it, so the rank reads from size alone; the phone caps
+// in partners.scss keep that order on a narrow column.
 const TIER_SCALE: Record<string, number> = {
 	platinum: 1.5,
 	diamond: 1.9,
 	gold: 1.6,
-	silver: 2,
-	community: 1.9,
-	media: 1.9,
+	silver: 1.6,
+	community: 1.5,
+	media: 1.5,
 };
 
 const DECK_READY = true;
@@ -50,7 +51,7 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 			lede="DevFest.cz is a non-profit conference run by its community. The companies below pay for the venue and the day."
 			seoHeading="Partner with DevFest.cz 2026"
 			titleId="partners-title"
-			plate="/gallery/devfest-2025-01.webp"
+			plate="/gallery/devfest-2025-17.webp"
 			focus="center"
 		/>
 
@@ -58,25 +59,30 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 			<div class="tiers-inner">
 				{walls.map((wall) => (
 					<section class:list={['tier', `tier-${wall.id}`]} aria-labelledby={`${wall.id}-partners-title`}>
-						<h2 id={`${wall.id}-partners-title`} class="tape tier-tape">
+						<h2 id={`${wall.id}-partners-title`} class="tier-label">
 							{wall.label}<span class="sr-only"> partners</span>
 						</h2>
-						<ul class="wall">
-							{wall.partners.map((p) => {
-								const { props } = partnerLogo(p, wall.id, TIER_SCALE[wall.id] ?? 1);
-								return (
-									<li class="logo-item">
-										{p.url ? (
-											<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+						<div class="tier-body">
+							<ul class="wall">
+								{wall.partners.map((p) => {
+									const { props } = partnerLogo(p, wall.id, TIER_SCALE[wall.id] ?? 1);
+									return (
+										<li class="logo-item">
+											{p.url ? (
+												<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+													<Image class={`logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
+												</a>
+											) : (
 												<Image class={`logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
-											</a>
-										) : (
-											<Image class={`logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
-										)}
-									</li>
-								);
-							})}
-						</ul>
+											)}
+										</li>
+									);
+								})}
+							</ul>
+							{wall.id === 'platinum' && wall.partners.length === 1 && (
+								<p class="tier-credit">Platinum partner of DevFest.cz 2026.</p>
+							)}
+						</div>
 					</section>
 				))}
 			</div>

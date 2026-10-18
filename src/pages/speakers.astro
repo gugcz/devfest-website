@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Speakers from '../components/Speakers.tsx';
+import EndLine from '../components/EndLine.astro';
 ---
 
 <BaseLayout
@@ -23,9 +24,9 @@ import Speakers from '../components/Speakers.tsx';
 				     "Speakers" said the same thing twice. -->
 				<h2 class="sr-only">Speakers</h2>
 
-				<!-- The prints hydrate client-side from /api/lineup and end on the way to
-				     the agenda and tickets (no closer under them); keep a static note for
-				     crawlers and no-JS visitors. -->
+				<!-- The prints hydrate client-side from /api/lineup; keep a static note
+				     for crawlers and no-JS visitors. The page ends on the way to the
+				     agenda and tickets (no closer). -->
 				<Speakers client:load />
 
 				<noscript>
@@ -34,6 +35,8 @@ import Speakers from '../components/Speakers.tsx';
 						check back soon.
 					</p>
 				</noscript>
+
+				<EndLine text="Every talk by time and room." href="/agenda" label="Full agenda" also={{ href: '/#tickets', label: 'Get tickets' }} />
 			</div>
 		</section>
 	</main>

@@ -61,7 +61,8 @@
 	text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
 }
 
-// Date, venue, the wave on sale: typewriter, spaced, no separators.
+// Date, venue, the wave on sale: one voice at one size. Words on the
+// typewriter, figures in mono (`.fig`), no separators.
 .hero-facts {
 	display: flex;
 	flex-wrap: wrap;
@@ -73,7 +74,6 @@
 }
 
 .hero-date {
-	@include mono(var(--fs-body));
 	color: var(--color-text);
 }
 
@@ -85,14 +85,6 @@
 .hero-cta {
 	margin-top: 2.1rem;
 	padding: 1rem 2.5rem;
-}
-
-.hero-frame {
-	position: absolute;
-	right: var(--gutter);
-	bottom: clamp(5rem, 7vw, 7.5rem);
-	@include mono(var(--fs-label-xs), 0.14em, uppercase);
-	color: var(--ink-dim);
 }
 
 /* ===================== SECTIONS ===================== */
@@ -118,13 +110,6 @@
 .event-print {
 	--tilt: calc(-1 * var(--tilt-1));
 	padding: 0.875rem 0.875rem 0;
-}
-
-.event-tape {
-	left: auto;
-	right: 10%;
-	--tape-tilt: 2.5deg;
-	white-space: nowrap;
 }
 
 .event-photo {
@@ -166,7 +151,6 @@
 	color: var(--paper-ink);
 	padding: 1.75rem 1.875rem 1.875rem;
 	box-shadow: var(--paper-shadow);
-	transform: rotate(var(--tilt-2));
 }
 
 .event-card-edge {
@@ -196,19 +180,6 @@
 	}
 }
 
-.ringed {
-	position: relative;
-	display: inline-block;
-	margin: 0 0.55rem 0 0.2rem;
-
-	.grease {
-		left: -18%;
-		top: -30%;
-		width: 136%;
-		height: 160%;
-	}
-}
-
 /* ---- past editions ---- */
 // The note sits beside the title, not across the page.
 .past-head {
@@ -218,7 +189,7 @@
 
 .past-grid {
 	display: grid;
-	grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
 	gap: clamp(2rem, 4vw, 4rem);
 	align-items: center;
 }
@@ -313,13 +284,10 @@
 	padding: 0.875rem 0.875rem 0;
 }
 
-.past-tape {
-	left: 22%;
-	--tape-tilt: -4deg;
-}
-
+// The enlargement is the ringed frame itself: the same 3:2 negative, so
+// it reads as 12A blown up, not a different shot.
 .past-photo {
-	aspect-ratio: 4 / 5;
+	aspect-ratio: 3 / 2;
 }
 
 /* ---- partners ---- */
@@ -348,12 +316,12 @@
 	grid-column: auto;
 }
 
-.partners-tape {
-	margin-bottom: 1.375rem;
-}
-
-.partners-tier:nth-child(even) .partners-tape {
-	--tape-tilt: 1.2deg;
+// A group label, not a print: no tape, the quiet note voice.
+.partners-label {
+	@include note(var(--fs-note));
+	font-weight: normal;
+	color: var(--ink-meta);
+	margin: 0 0 1.375rem;
 }
 
 .partners-row {
@@ -471,10 +439,6 @@
 		width: 100%;
 	}
 
-	.hero-frame {
-		display: none;
-	}
-
 	.event-print {
 		padding: 0.5rem 0.5rem 0;
 	}
@@ -483,14 +447,7 @@
 		aspect-ratio: 4 / 3;
 	}
 
-	.event-tape {
-		right: 6%;
-		white-space: normal;
-		max-width: 80%;
-	}
-
 	.event-card {
-		transform: rotate(var(--tilt-1));
 		padding: 1.5rem 1.375rem;
 	}
 
@@ -511,10 +468,6 @@
 	.past-print {
 		width: 84%;
 		margin: 0 auto;
-	}
-
-	.past-tape {
-		left: 8%;
 	}
 
 	.partners-actions {

@@ -7,14 +7,17 @@ interface Props {
 	text: string;
 	href: string;
 	label: string;
+	/** A second next step beside the first (`/speakers`: agenda, tickets). */
+	also?: { href: string; label: string };
 }
 
-const { text, href, label } = Astro.props;
+const { text, href, label, also } = Astro.props;
 ---
 
 <p class="end-line">
 	<span class="end-line-text">{text}</span>
 	<a class="action" href={href}>{label}</a>
+	{also && <a class="action" href={also.href}>{also.label}</a>}
 </p>
 
 <style lang="scss">

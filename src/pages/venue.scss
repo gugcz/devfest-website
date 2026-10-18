@@ -1,7 +1,7 @@
 @use '../styles/type' as *;
 
-// Prints on a black table: the address beside the mill, the route as typed
-// index cards, the entrance with one red grease circle on the door.
+// The address in type, the route as straight index cards, and the page's one
+// print: the entrance, with the one red grease circle on the door.
 
 // Consecutive bands share one beat of air, not two.
 .venue-band + .venue-band {
@@ -14,13 +14,6 @@
 }
 
 /* ---- Address ---- */
-.venue-addr-grid {
-	display: grid;
-	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-	gap: clamp(2.5rem, 5vw, 5.5rem);
-	align-items: center;
-}
-
 .venue-label {
 	@include note(var(--fs-note));
 	color: var(--ink-dim);
@@ -61,26 +54,6 @@
 	}
 }
 
-.venue-mill {
-	--tilt: calc(-0.5 * var(--tilt-2));
-	--tape-tilt: 2deg;
-	margin: 0;
-	padding: 0.9rem 0.9rem 0;
-
-	.tape {
-		left: auto;
-		right: 9%;
-	}
-
-	.paper-photo {
-		aspect-ratio: 3 / 2;
-	}
-
-	:global(img) {
-		object-position: 50% 55%;
-	}
-}
-
 /* ---- The route: index cards ---- */
 .venue-cards {
 	display: grid;
@@ -114,19 +87,6 @@
 		color: var(--paper-ink);
 		background: linear-gradient(transparent 62%, rgba(0, 0, 0, 0.1) 62%);
 	}
-}
-
-.venue-steps .venue-card:nth-child(1) {
-	--tilt: calc(-1 * var(--tilt-2));
-}
-
-.venue-steps .venue-card:nth-child(2) {
-	--tilt: var(--tilt-1);
-	margin-top: 2.5rem;
-}
-
-.venue-steps .venue-card:nth-child(3) {
-	--tilt: calc(-0.75 * var(--tilt-1));
 }
 
 // The card's top margin: what kind of leg (typed), and its place (figure).
@@ -177,18 +137,6 @@
 	}
 }
 
-.venue-circ {
-	position: relative;
-	display: inline-block;
-
-	.grease {
-		left: -14%;
-		top: -34%;
-		width: 128%;
-		height: 168%;
-	}
-}
-
 // The site's text action, in paper ink. Red text on paper misses 4.5:1, so
 // the reach state is an underline in the same ink.
 .action.venue-go {
@@ -216,13 +164,6 @@
 
 .venue-fly {
 	grid-column: 2 / 4;
-	margin-top: 1.5rem;
-	padding-top: 2.1rem;
-	--tilt: calc(0.75 * var(--tilt-1));
-
-	> .tape {
-		left: 1.75rem;
-	}
 
 	.venue-card-title {
 		margin-top: 0;
@@ -248,10 +189,6 @@
 	--tape-tilt: -2deg;
 	margin: 0;
 	padding: 0.9rem 0.9rem 0;
-
-	> .tape {
-		left: 8%;
-	}
 
 	.paper-photo {
 		aspect-ratio: 4 / 3;
@@ -283,21 +220,8 @@
 }
 
 @media (max-width: 1100px) {
-	.venue-addr-grid {
-		grid-template-columns: minmax(0, 1fr);
-		gap: 3.5rem;
-	}
-
-	.venue-mill {
-		max-width: 52rem;
-	}
-
 	.venue-cards {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.venue-steps .venue-card:nth-child(2) {
-		margin-top: 0;
 	}
 
 	.venue-fly {
@@ -312,7 +236,6 @@
 }
 
 @media (max-width: 720px) {
-	.venue-mill,
 	.venue-door-print {
 		padding: 0.5rem 0.5rem 0;
 	}

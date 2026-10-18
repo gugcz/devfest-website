@@ -3,7 +3,7 @@
 // table (`.paper`, `.paper-photo`, `.paper-edge`, `.tape` in BaseLayout.scss):
 // a 4:5 B&W portrait, the Bebas name, the typewriter role and talk, the edge
 // with the running number and the CET start. The opening keynote is the
-// large print (two columns by two rows) with red grease corners. Shared by
+// large print (two columns by two rows). Shared by
 // the home teaser and /speakers (`SpeakerTile.tsx`).
 
 .grid {
@@ -46,11 +46,18 @@
 	aspect-ratio: 4 / 5;
 }
 
+// Every portrait cropped from the top centre, so the heads line up along a
+// row, and printed through one filter.
 .img {
 	position: absolute;
 	inset: 0;
-	object-position: 50% 30%;
+	object-position: 50% 0%;
 	transition: filter 0.6s ease;
+}
+
+// Outranks the global `.paper-photo img` filter.
+.photo .img {
+	filter: grayscale(1) contrast(1.15);
 }
 
 // Initials standing in for a missing photograph.
@@ -86,6 +93,11 @@
 	}
 }
 
+// The tape's label: the full one, and the short one a phone print shows.
+.tapeShort {
+	display: none;
+}
+
 .caption {
 	display: block;
 	padding: 0.9rem 0.25rem 0;
@@ -100,18 +112,13 @@
 	transition: color 0.2s;
 }
 
-// Two lines at most: a long Sessionize tagline would push the print taller
-// than its row.
+// A person's role is never cut short: it wraps.
 .role {
-	display: -webkit-box;
+	display: block;
 	@include note(var(--fs-note-sm));
 	line-height: 1.35;
 	color: var(--paper-ink-dim);
 	margin-top: 0.4rem;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	overflow: hidden;
 }
 
 .talk {
@@ -174,29 +181,6 @@
 		font-size: var(--fs-body-lg);
 		left: 1.5rem;
 	}
-
-	:global(.grease) {
-		left: -3%;
-		top: -3%;
-		width: 106%;
-		height: 106%;
-
-		path {
-			stroke-width: 7px;
-		}
-	}
-}
-
-// The way on, after the last print: the rest of the row (`--rest-N`, set by
-// the lineup for N columns).
-.end {
-	grid-column: span var(--rest-4, 1);
-	align-self: center;
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 1.25rem 2.5rem;
-	padding: 1.75rem 0 1.75rem 1.5rem;
 }
 
 // /speakers runs three across on a tablet; the home teaser stays at four.
@@ -208,13 +192,9 @@
 	.sheet {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
-
-	.sheet .end {
-		grid-column: span var(--rest-3, 1);
-	}
 }
 
-// Phone: two equal columns, the keynote the same size as every other print.
+// Phone: two equal columns under the keynote's full-width print.
 @media (max-width: 720px) {
 	.grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -243,34 +223,55 @@
 		padding: 0.3rem 0.55rem 0.25rem;
 	}
 
+	.tapeFull {
+		display: none;
+	}
+
+	.tapeShort {
+		display: inline;
+	}
+
 	.edge {
 		gap: 0.4rem;
 	}
 
-	.grid .end {
-		grid-column: span var(--rest-2, 1);
-		padding: 0.75rem 0 0 0.25rem;
-		gap: 1.1rem 1.5rem;
+	// The keynote stays the large print: the full width, one square row;
+	// one cell like the rest where that leaves the rows whole
+	// (`.keynoteCell`, an even count).
+	.keynoteCell .keynote {
+		grid-column: auto;
+
+		.photo {
+			aspect-ratio: 4 / 5;
+		}
+
+		.name {
+			font-size: var(--fs-title-sm);
+		}
+
+		.talk {
+			font-size: var(--fs-note-sm);
+		}
 	}
 
 	.keynote {
-		grid-column: auto;
+		grid-column: 1 / -1;
 		grid-row: auto;
 		align-self: start;
 		display: block;
 
 		.tile {
 			display: block;
-			padding: 0.4rem 0.4rem 0;
+			padding: 0.65rem 0.65rem 0;
 		}
 
 		.photo {
 			min-height: 0;
-			aspect-ratio: 4 / 5;
+			aspect-ratio: 1 / 1;
 		}
 
 		.name {
-			font-size: var(--fs-title-sm);
+			font-size: var(--fs-card-title);
 		}
 
 		.role {
@@ -279,17 +280,52 @@
 		}
 
 		.talk {
-			font-size: var(--fs-note-sm);
+			font-size: var(--fs-note);
 		}
 
 		:global(.tape) {
 			font-size: var(--fs-note-sm);
-			left: 0.4rem;
+			left: 0.65rem;
 		}
+	}
+}
 
-		:global(.grease) path {
-			stroke-width: 5px;
-		}
+// THE HOSTS: their own row under the lineup, a plain label and smaller
+// prints, so the speakers above fill whole rows.
+.hostsLabel {
+	@include note(var(--fs-note));
+	font-weight: normal;
+	color: var(--ink-meta);
+	margin: clamp(4rem, 6vw, 5.5rem) 0 1.75rem;
+}
+
+.hosts {
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	gap: 3rem clamp(1.25rem, 2vw, 1.75rem);
+
+	.name {
+		font-size: var(--fs-title-sm);
+	}
+
+	.talk {
+		font-size: var(--fs-note-sm);
+	}
+}
+
+@media (max-width: 1100px) {
+	.hosts {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 720px) {
+	.hostsLabel {
+		margin-top: 3.5rem;
+	}
+
+	.hosts {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 2.25rem 0.75rem;
 	}
 }
 

@@ -187,14 +187,15 @@
 
 /* ---- The listener's card (/code-of-conduct) ---- */
 .listener {
-	--tilt: calc(-1 * var(--tilt-1));
 	max-width: 30rem;
 	margin: 2.6rem 0 0.4rem;
-	padding: 2rem 1.75rem 1.6rem;
+	padding: 1.6rem 1.75rem 1.6rem;
+}
 
-	> .tape {
-		left: 1.5rem;
-	}
+.policy .listener-role {
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink-dim);
+	margin: 0 0 0.5rem;
 }
 
 .policy .listener-name {
@@ -238,6 +239,12 @@
 	}
 }
 
+// The address is typed and lowercase, never Bebas caps.
+.policy .listener-link--mail {
+	@include note(var(--fs-body-lg));
+	text-decoration-thickness: 1px;
+}
+
 // The number is a figure: mono, still on the Bebas action's line.
 .policy .listener-link--tel {
 	font-family: var(--font-jetbrains-mono), monospace;
@@ -268,7 +275,7 @@
 	}
 
 	.listener {
-		padding: 1.8rem 1.3rem 1.3rem;
+		padding: 1.4rem 1.3rem 1.3rem;
 	}
 }
 

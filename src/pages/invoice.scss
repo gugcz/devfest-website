@@ -1,7 +1,7 @@
 @use '../styles/type' as *;
 
-// The steps as typed index cards on the black table (the /venue route
-// cards), then the request as one paper form with the sign-off beside it.
+// The steps as a plain numbered list on the black table, then the request
+// as one straight paper form with the sign-off beside it.
 
 // Consecutive bands share one beat of air, not two.
 .invoice-band + .invoice-band {
@@ -12,48 +12,32 @@
 	@include hairline-link(var(--ink-strong));
 }
 
-/* ---- How it works: index cards ---- */
+/* ---- How it works: a numbered list ---- */
+// The section head at the h2 step: a short how-to, not a poster.
+:global(#invoice-steps-heading) {
+	font-size: var(--fs-h2);
+}
+
 .invoice-steps {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 3rem clamp(1.75rem, 3vw, 3rem);
-	align-items: start;
+	gap: 2rem clamp(1.75rem, 3vw, 3rem);
 }
 
-.invoice-card {
-	padding: 1.6rem 1.75rem 1.9rem;
-
-	&:nth-child(1) {
-		--tilt: calc(-1 * var(--tilt-1));
-	}
-
-	&:nth-child(2) {
-		--tilt: calc(0.75 * var(--tilt-1));
-		margin-top: 2rem;
-	}
-
-	&:nth-child(3) {
-		--tilt: calc(-0.5 * var(--tilt-2));
-	}
-}
-
-.invoice-card-no {
+.invoice-step-no {
 	display: block;
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-weight: 500;
-	font-size: var(--fs-head);
+	@include mono(var(--fs-head));
 	line-height: 1;
-	letter-spacing: -0.02em;
-	color: var(--paper-ink);
+	color: var(--ink-dim);
 }
 
-.invoice-card-text {
+.invoice-step-text {
 	@include prose(var(--fs-body-lg), 1.55);
-	color: var(--paper-ink);
-	margin: 1.1rem 0 0;
+	color: var(--ink);
+	margin: 1rem 0 0;
 	max-width: 30ch;
 }
 
@@ -73,16 +57,9 @@
 	gap: 0.75rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 720px) {
 	.invoice-steps {
 		grid-template-columns: minmax(0, 1fr);
-		gap: 2.25rem;
-		max-width: 34rem;
-	}
-
-	.invoice-card:nth-child(2) {
-		margin-top: 0;
-		margin-left: clamp(0rem, 6vw, 3rem);
 	}
 }
 
@@ -93,12 +70,8 @@
 	}
 }
 
-@media (max-width: 720px) {
-	.invoice-card {
-		padding: 1.4rem 1.4rem 1.6rem;
-	}
-
-	.invoice-card:nth-child(2) {
-		margin-left: 0;
-	}
+// The end line's action is the address: typed and lowercase, not Bebas caps.
+.invoice-aside :global(.end-line a[href^='mailto:']) {
+	@include note(var(--fs-lede));
+	@include hairline-link(var(--color-text));
 }

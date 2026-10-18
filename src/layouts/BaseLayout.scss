@@ -449,6 +449,11 @@ b {
 	top: -0.85rem;
 	left: 1rem;
 	max-width: calc(100% - 2rem);
+	// One line, top-left, always: a label that does not fit gets a shorter
+	// text or a smaller tape on a phone, never a second line.
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 // The red grease pencil: one mark per section, drawn as an aria-hidden SVG
@@ -605,6 +610,13 @@ b {
 // bottom padding is the pause.
 .subpage-hero + .band {
 	padding-top: 0;
+}
+
+// The page's last band closes on one tight step, and the footer adds no
+// opening air of its own: a band's full bottom padding plus a footer margin
+// stacked into a black gap taller than a screen.
+.page-stack > .band:last-child {
+	padding-bottom: var(--section-y-tight);
 }
 
 .band-inner {

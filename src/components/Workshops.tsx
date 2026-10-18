@@ -47,18 +47,18 @@ function SeatLine({ seats }: { seats: WorkshopSeats }) {
 	if (left > 0) {
 		return (
 			<>
-				<span className={s.fig}>{left}</span> of <span className={s.fig}>{seats.limit}</span> seats left
+				<span className={s.fig}>{left}</span> {left === 1 ? 'seat' : 'seats'} left
 			</>
 		);
 	}
 	if (seats.waiting > 0) {
 		return (
 			<>
-				Full · <span className={s.fig}>{seats.waiting}</span> on the waitlist
+				Full, <span className={s.fig}>{seats.waiting}</span> on the waitlist
 			</>
 		);
 	}
-	return <>Full · waitlist open</>;
+	return <>Full, waitlist open</>;
 }
 
 function standingLine(mine: WorkshopStatus['mine'] | undefined): string | null {

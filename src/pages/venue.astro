@@ -4,7 +4,6 @@ import SubpageHero from '../components/SubpageHero.astro';
 import Closer from '../components/Closer.astro';
 import { Image } from 'astro:assets';
 import { EVENT } from '../lib/event';
-import chimney from '../assets/venue/uhelny-mlyn-chimney.jpg';
 import entrance from '../assets/venue/uhelny-mlyn-entrance.jpg';
 
 // The postal address, split for the address block: the street as the head,
@@ -21,17 +20,16 @@ const TOWN = ADDRESS?.[3] ?? '';
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'Getting there'}
+			titleHtml={'Venue'}
 			lede={`${EVENT.venue} sits just north of Prague: one direct train from the city centre, then a ten-minute walk from the station.`}
 			seoHeading={`How to get to ${EVENT.venue}, DevFest.cz 2026`}
 			titleId="venue-title"
-			plate="/gallery/uhelny-mlyn-entrance-tower.webp"
-			focus="50% 40%"
+			photo={false}
 		/>
 
-		{/* The address, large, with the mill beside it. */}
+		{/* The address, large. The page's one print is the entrance below. */}
 		<section class="band venue-band venue-addr" aria-labelledby="addr-title">
-			<div class="band-inner venue-addr-grid">
+			<div class="band-inner">
 				<div>
 					<p class="venue-label">Address</p>
 					<h2 id="addr-title" class="venue-addr-title">{STREET}</h2>
@@ -46,19 +44,6 @@ const TOWN = ADDRESS?.[3] ?? '';
 						</a>
 					</div>
 				</div>
-				<figure class="paper venue-mill">
-					<span class="tape">A converted industrial mill</span>
-					<div class="paper-photo">
-						<Image
-							src={chimney}
-							alt="The Uhelný Mlýn complex: red-brick factory halls with a tall brick chimney behind them."
-							widths={[640, 960, 1400]}
-							sizes="(max-width: 1100px) 92vw, 52vw"
-							loading="lazy"
-						/>
-					</div>
-					<figcaption class="paper-edge"><span class="edge-word">{EVENT.venue}</span><span class="edge-word">Libčice nad Vltavou</span></figcaption>
-				</figure>
 			</div>
 		</section>
 
@@ -88,12 +73,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 								<dd>Libčice nad Vltavou</dd>
 								<dt>Ride</dt>
 								<dd>
-									<span class="venue-circ">
-										<span class="fig">25–30</span>
-										<svg class="grease" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
-											<path d="M22 10 C 50 -2, 92 6, 94 30 C 96 52, 60 60, 30 56 C 6 52, 2 30, 14 16 C 22 8, 40 4, 56 6" />
-										</svg>
-									</span>{' '}min
+<span class="fig">25–30</span> min
 								</dd>
 								<dt>From</dt>
 								<dd>the city centre</dd>
@@ -120,10 +100,6 @@ const TOWN = ADDRESS?.[3] ?? '';
 							<p class="venue-card-edge"><span>Arrival</span><span class="fig">03 / 03</span></p>
 							<span class="venue-card-no" aria-hidden="true">03</span>
 							<h3 class="venue-card-title">Find {EVENT.venue}</h3>
-							<p>{EVENT.street}.</p>
-							<p>
-								Registration opens at <span class="fig">{EVENT.doorsTime}</span>, the keynote starts at <span class="fig">{EVENT.startTime}</span>.
-							</p>
 							<a class="action venue-go" href={EVENT.mapUrl} target="_blank" rel="noopener noreferrer">Open in maps</a>
 						</li>
 					</ol>
@@ -131,7 +107,6 @@ const TOWN = ADDRESS?.[3] ?? '';
 					{/* Not a step on the route: the leg before it, for anyone not
 					    starting in Prague. */}
 					<div class="paper venue-card venue-fly">
-						<span class="tape">Not starting in Prague?</span>
 						<p class="venue-card-edge"><span>By air</span><span class="fig">PRG</span></p>
 						<h3 class="venue-card-title">Flying in</h3>
 						<p>
@@ -157,7 +132,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 							loading="lazy"
 						/>
 					</div>
-					<figcaption class="paper-edge"><span class="edge-word">The entrance</span><span>{EVENT.doorsTime}</span></figcaption>
+					<figcaption class="paper-edge"><span class="edge-word">{EVENT.venue}</span><span>{EVENT.doorsTime}</span></figcaption>
 					<svg class="grease venue-door-mark" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
 						<path d="M30 8 C 62 -2, 96 14, 96 48 C 96 84, 64 98, 36 94 C 8 90, 2 60, 6 38 C 10 18, 30 6, 54 6" />
 					</svg>

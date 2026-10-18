@@ -52,7 +52,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'Questions'}
+			titleHtml={'FAQ'}
 			lede="Answers to the questions we hear most. Can't find yours?"
 			link={{ href: 'mailto:devfest@gug.cz', label: 'Get in touch' }}
 			seoHeading="DevFest.cz 2026 FAQ"
@@ -85,7 +85,8 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 						))}
 					</ol>
 					<p class="faq-index-ask">
-						Can't find yours? <a class="action" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
+						<span class="faq-index-ask-label">Write to us</span>
+						<a class="faq-index-mail" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
 					</p>
 				</nav>
 
@@ -104,10 +105,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 										<summary class="faq-q">
 											<span class="faq-no">Q {item.num}</span>
 											<span class="faq-q-text">{item.q}</span>
-											<span class="faq-marker" aria-hidden="true">
-												<span class="faq-marker-open">Open</span>
-												<span class="faq-marker-close">Close</span>
-											</span>
+											<span class="faq-marker" aria-hidden="true" />
 										</summary>
 										<div class="faq-a">
 											<p set:html={item.a} />
@@ -120,7 +118,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 
 					{/* The page ends on one line to the inbox, not a closing band: a
 					    visitor who read this far wants an answer, not a pitch. */}
-					<EndLine text="Still stuck?" href="mailto:devfest@gug.cz" label="Write to devfest@gug.cz" />
+					<EndLine text="Still stuck?" href="mailto:devfest@gug.cz" label="devfest@gug.cz" />
 				</div>
 			</div>
 		</section>

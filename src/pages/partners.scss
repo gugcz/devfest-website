@@ -2,9 +2,10 @@
 @use '../styles/logos' as *;
 
 /* ===================== THE TIERS ===================== */
-// One strip of tape per tier, its marks laid on the black table under it.
-// The size of a mark carries the rank (`TIER_SCALE` in partners.astro feeds
-// `partnerLogo`); the grid only sets how many share a row.
+// Each tier is a plain label beside its marks on the black table. The size
+// of a mark carries the rank (`TIER_SCALE` in partners.astro feeds
+// `partnerLogo`); the grid only sets how many share a row. The caps below
+// keep every tier smaller than the one above it at every width.
 .tiers {
 	padding: var(--section-y-tight) var(--gutter) 0;
 	background: var(--color-bg);
@@ -13,22 +14,43 @@
 .tiers-inner {
 	max-width: var(--maxw);
 	margin: 0 auto;
+	container-type: inline-size;
 }
 
 .tier {
-	padding-bottom: clamp(5.5rem, 9vw, 8.75rem);
+	display: grid;
+	grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
+	gap: 1.5rem clamp(2rem, 4vw, 4rem);
+	align-items: start;
+	padding-bottom: clamp(4rem, 7vw, 6.5rem);
 }
 
-// The tier label is a strip of tape, not a poster head: the logos are the
-// headline. Alternate tilts so the strips read as torn and stuck by hand.
-.tier-tape {
-	margin: 0 0 clamp(1.75rem, 3vw, 2.5rem);
-	font-size: var(--fs-note);
-	--tape-tilt: -1.5deg;
+// A plain label, not a poster head: the logos are the headline.
+.tier-label {
+	@include action;
+	color: var(--ink-soft);
+	margin: 0;
+	padding-top: 0.35rem;
 }
 
-.tier:nth-child(even) .tier-tape {
-	--tape-tilt: 1.2deg;
+.tier-body {
+	min-width: 0;
+}
+
+// The one Platinum mark with its credit beside it, so the row reads as one
+// line across the table instead of a box beside a void.
+.tier-platinum .tier-body {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1.5rem clamp(2rem, 4vw, 4rem);
+}
+
+.tier-credit {
+	@include note(var(--fs-lede));
+	color: var(--ink-soft);
+	margin: 0;
+	max-width: 18ch;
 }
 
 .wall {
@@ -76,22 +98,17 @@
 		@include partner-logo;
 	}
 
-	// The platinum tile is a print of its own: it gets the table's shadow.
+	// The platinum tile gets the table's shadow.
 	.logo--tile {
 		box-shadow: var(--paper-shadow);
 	}
 
-	// Dark ink made for a light ground: a paper card on the table, tilted
-	// like every other print. Overrides the mixin's plain white card.
+	// Dark ink made for a light ground: a straight paper chip on the table.
+	// Overrides the mixin's plain white card.
 	.logo--dark {
 		background: var(--paper);
 		padding: 0.75rem 1.1rem;
 		box-shadow: var(--paper-shadow);
-		transform: rotate(-1.2deg);
-	}
-
-	&:nth-child(even) .logo--dark {
-		transform: rotate(1deg);
 	}
 
 	// Wider than --focus-gap-lg on purpose: a wordmark carries its own
@@ -102,15 +119,53 @@
 	}
 }
 
-@media (max-width: 720px) {
+// No Diamond mark outruns the Platinum one: a very wide wordmark (GDG)
+// would otherwise fill its whole cell.
+.tier-diamond .logo {
+	max-width: min(100%, 32rem);
+}
+
+// Nor does a wide off-ladder wordmark outrun the Silver one.
+.tier-community .logo,
+.tier-media .logo {
+	max-width: min(100%, 11rem);
+}
+
+@media (max-width: 1100px) {
+	// The label goes over its marks, so Gold keeps three wide cells.
 	.tier {
-		padding-bottom: 5.5rem;
+		grid-template-columns: minmax(0, 1fr);
 	}
 
+	.tier-label {
+		padding-top: 0;
+	}
+}
+
+@media (max-width: 720px) {
+	.tier {
+		gap: 1.5rem;
+		padding-bottom: 4.5rem;
+	}
+
+	.tier-credit {
+		font-size: var(--fs-body);
+		max-width: none;
+	}
+
+	.wall {
+		gap: 2.25rem 2.5rem;
+	}
+
+	// One column, and never as wide as the full-width Platinum tile.
 	.tier-diamond .wall {
 		grid-template-columns: minmax(0, 1fr);
-		gap: 2.75rem;
-		--logo-scale: 0.7;
+		gap: 2.5rem;
+		--logo-scale: 0.6;
+	}
+
+	.tier-diamond .logo {
+		max-width: 72cqi;
 	}
 
 	.tier-gold .wall {
@@ -118,21 +173,20 @@
 		gap: 2.5rem 1.75rem;
 	}
 
-	.wall {
-		gap: 2.25rem 2.5rem;
+	// The lower rows step down again so each stays under Gold.
+	.tier-silver .wall {
+		--logo-scale: 0.65;
 	}
 
-	// The off-ladder rows run a step down on a phone so two share a line.
 	.tier-community .wall,
-	.tier-media .wall,
-	.tier-silver .wall {
-		--logo-scale: 0.6;
+	.tier-media .wall {
+		--logo-scale: 0.5;
 	}
 }
 
 /* ===================== BECOME A PARTNER ===================== */
 .partners-cta {
-	padding: clamp(1rem, 3vw, 2.5rem) var(--gutter) var(--section-y);
+	padding: clamp(1rem, 3vw, 2.5rem) var(--gutter) var(--section-y-tight);
 	background: var(--color-bg);
 }
 
@@ -149,9 +203,9 @@
 	font-size: var(--fs-section);
 }
 
-// Filip's card: a typed paper card, lifted off the table.
+// Filip's card: a typed paper card on the table, straight like every
+// card that is not a print.
 .cta-card {
-	--tilt: calc(-1 * var(--tilt-1) - 0.4deg);
 	padding: 2.25rem 2.5rem 2.5rem;
 }
 

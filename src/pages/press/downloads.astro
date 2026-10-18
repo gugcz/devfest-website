@@ -56,8 +56,8 @@ const documents = [...groups.values()].filter((files) => !files.some((f) => f.is
 					<ul class="kit-grid" role="list">
 						{variants.map(({ label, preview, files }) => (
 							<li class="kit-item">
+								<h3 class="kit-label">{label}</h3>
 								<div class="paper kit-print">
-									<h3 class="tape kit-label">{label}</h3>
 									<span class:list={['kit-preview', { 'kit-preview--dark': preview.darkPreview }]}>
 										<img src={preview.href} alt="" loading="lazy" decoding="async" />
 									</span>
@@ -93,7 +93,7 @@ const documents = [...groups.values()].filter((files) => !files.some((f) => f.is
 					</>
 				) : (
 					<div class="empty-state" role="status">
-						<span class="tape empty-stamp" aria-hidden="true">Coming soon</span>
+						<span class="empty-stamp" aria-hidden="true">Coming soon</span>
 						<p class="empty-line">
 							The press kit is being prepared. In the meantime, email the press desk at
 							<a class="inline-link" href="mailto:devfest@gug.cz">devfest@gug.cz</a>.
@@ -101,7 +101,7 @@ const documents = [...groups.values()].filter((files) => !files.some((f) => f.is
 					</div>
 				)}
 
-				<EndLine text="Need a format we have not published?" href="mailto:devfest@gug.cz" label="Write to devfest@gug.cz" />
+				<EndLine text="Need a format we have not published?" href="mailto:devfest@gug.cz" label="Write to us" />
 			</div>
 		</section>
 	</main>

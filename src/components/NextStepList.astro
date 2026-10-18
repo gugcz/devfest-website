@@ -20,9 +20,8 @@ const List = ordered ? 'ol' : 'ul';
 </List>
 
 <style lang="scss">
-	// The cards dealt onto the table: three across, four across when there
-	// are four, a slight tilt each and the second dropped a step, like the
-	// /venue route. Air between them, never a rule.
+	// The cards laid straight on the table, even in height: three across,
+	// four across when there are four. Air between them, never a rule.
 	.step-list-label {
 		margin: 0 0 clamp(2rem, 3.5vw, 3rem);
 	}
@@ -33,24 +32,11 @@ const List = ordered ? 'ol' : 'ul';
 		padding: 0;
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 3rem clamp(1.5rem, 2.6vw, 2.75rem);
-		align-items: start;
+		gap: clamp(1.5rem, 2.6vw, 2.25rem);
+		align-items: stretch;
 
 		&:has(> :nth-child(4)) {
 			grid-template-columns: repeat(4, minmax(0, 1fr));
-		}
-
-		> :global(:nth-child(odd)) {
-			--tilt: calc(-0.75 * var(--tilt-1));
-		}
-
-		> :global(:nth-child(even)) {
-			--tilt: var(--tilt-1);
-			margin-top: 2.5rem;
-		}
-
-		> :global(:nth-child(3n)) {
-			--tilt: calc(-0.5 * var(--tilt-2));
 		}
 	}
 
@@ -64,12 +50,7 @@ const List = ordered ? 'ol' : 'ul';
 		.step-list,
 		.step-list:has(> :nth-child(4)) {
 			grid-template-columns: minmax(0, 1fr);
-			gap: 2.25rem;
 			max-width: 36rem;
-
-			> :global(:nth-child(even)) {
-				margin-top: 0;
-			}
 		}
 	}
 </style>

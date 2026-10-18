@@ -1,7 +1,8 @@
 @use '../../styles/type' as *;
 // The full press kit, in the /contact press-kit language: each logo variant
-// a print on the black table with its typed tape label, the formats under it
-// as Bebas links with their sizes as figures, the brand manual as the one red.
+// a straight paper card on the black table under its plain label, the formats
+// under it as Bebas links with their sizes as figures, the brand manual as
+// the one red.
 
 .back-link {
 	margin-bottom: clamp(2.5rem, 4vw, 3.5rem);
@@ -34,20 +35,15 @@
 }
 
 .kit-print {
-	--tilt: calc(-0.75 * var(--tilt-1));
-	--tape-tilt: -1.5deg;
 	padding: 0.65rem;
 }
 
-.kit-item:nth-child(even) .kit-print {
-	--tilt: var(--tilt-1);
-	--tape-tilt: 1.2deg;
-}
-
-// The tape is the variant's heading.
+// The variant's heading: a plain typed label over its card.
 .kit-label {
-	margin: 0;
+	@include note(var(--fs-note));
 	font-weight: 400;
+	color: var(--ink-soft);
+	margin: 0;
 }
 
 // The mark in the print's well: on the paper itself, or on black for a
@@ -140,6 +136,11 @@
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 1.4rem;
+}
+
+.empty-stamp {
+	@include note(var(--fs-note));
+	color: var(--ink-soft);
 }
 
 .empty-line {

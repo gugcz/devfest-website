@@ -7,17 +7,17 @@
 // is a mark, never small text (docs/design.md).
 
 // The wrapper also carries the global `.paper` (set on the element); this
-// module sets its padding and its whisper of a tilt.
+// module sets its padding. A form is not a print: it sits straight, untaped.
 .wrapper:global(.paper) {
-	--tilt: calc(-0.3 * var(--tilt-1));
 	width: 100%;
 	padding: clamp(2.25rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3.5rem) clamp(1.75rem, 3.5vw, 3rem);
 }
 
-.tape:global(.tape) {
-	--tape-tilt: -2deg;
-	left: clamp(1.25rem, 4vw, 3.5rem);
-	font-size: var(--fs-note);
+// The sheet's name, typed at its head.
+.sheetLabel {
+	@include note(var(--fs-note));
+	color: var(--paper-ink-dim);
+	margin: 0 0 1.75rem;
 }
 
 .form {

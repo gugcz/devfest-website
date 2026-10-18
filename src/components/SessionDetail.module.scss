@@ -11,7 +11,6 @@
 		'way way';
 	align-items: start;
 	gap: 0 clamp(3rem, 6vw, 6rem);
-	// The tape sits over the slip's top edge.
 	padding-top: clamp(2rem, 4vh, 3.5rem);
 }
 
@@ -24,16 +23,19 @@
 	color: var(--paper-ink);
 	box-shadow: var(--paper-shadow);
 	padding: clamp(1.75rem, 4.5vw, 3.75rem) clamp(1.25rem, 4.5vw, 4rem) clamp(2rem, 5vw, 4rem);
-	rotate: calc(var(--tilt-1) * -0.3);
 }
 
-.tape {
-	position: absolute;
-	z-index: 2;
-	top: -0.9rem;
-	left: clamp(1.25rem, 4.5vw, 4rem);
-	max-width: calc(100% - 2.5rem);
-	--tape-tilt: -2deg;
+// The room: a plain Bebas label over the edge, not tape (tape is for prints).
+// `.slip .tape` outranks the global `.tape` primitive the markup carries.
+.slip .tape {
+	display: block;
+	margin: 0 0 0.75rem;
+	padding: 0;
+	background: none;
+	box-shadow: none;
+	transform: none;
+	@include action(var(--fs-action));
+	color: var(--paper-ink);
 }
 
 // Time in mono (a figure), track and level on the typewriter (words).

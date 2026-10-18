@@ -1,7 +1,7 @@
 @use '../styles/type' as *;
 // Home-page speakers: the poster head, the first prints of the lineup
-// (`SpeakerTile.module.scss` owns the grid and the print), and the last cell,
-// the count and the way to all of them.
+// (`SpeakerTile.module.scss` owns the grid and the print), and the way to
+// all of them under the grid.
 
 .teaser {
 	position: relative;
@@ -19,63 +19,18 @@
 	@include mono(1em);
 }
 
-// The last cell: the count over the action, in the fourth column.
+// The way to the rest: one text action under the prints, across the page.
 .all {
-	align-self: stretch;
-	display: flex;
-}
+	margin: clamp(3rem, 5vw, 4.5rem) 0 0;
 
-.allLink {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	gap: 0.9rem;
-	width: 100%;
-	padding: 1.75rem;
-	color: var(--color-text);
-	text-decoration: none;
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
+	:global(.action) {
+		font-size: var(--fs-cta);
 	}
 }
 
-.allCount {
-	@include mono(var(--fs-row-figure));
-	line-height: 1;
-}
-
-.allLabel {
-	@include display(var(--fs-card-title));
-	line-height: 1;
-	transition: color 0.2s;
-}
-
-@media (hover: hover) {
-	.allLink:hover .allLabel {
-		color: var(--color-accent-hot);
-	}
-}
-
-.allLink:focus-visible .allLabel {
-	color: var(--color-accent-hot);
-}
-
-// Phone: seven prints and the way to the rest, four even rows of two.
+// Phone: the keynote across, then three rows of two.
 @media (max-width: 720px) {
-	.table > li:nth-child(8) {
+	.table > li:nth-child(n + 8) {
 		display: none;
-	}
-
-	.allLink {
-		padding: 1rem 0.5rem;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.allLabel {
-		transition: none;
 	}
 }

@@ -12,7 +12,7 @@ import { TOPICS } from '../lib/topics';
 // The home page as prints on a black table: the full-bleed plate with the
 // statement set left over it, then the event (a widescreen print and its
 // back), tickets, speakers, the past editions as a contact sheet, the
-// partner wall labelled with tape, and the newsletter card.
+// partner wall with a plain label per tier, and the newsletter card.
 
 // One row per tier, top tier first. Silver and community share the last row
 // (each mark still sized by its own tier). Media partners live on /partners only.
@@ -88,7 +88,7 @@ const STRIP_SCALE = 1;
 				</h1>
 
 				<div class="hero-facts">
-					<time class="hero-date" datetime="2026-10-30">30 Oct 2026</time>
+					<time class="hero-date" datetime="2026-10-30"><span class="fig">30</span> Oct <span class="fig">2026</span></time>
 					<a
 						class="hero-facts-link"
 						href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
@@ -98,7 +98,6 @@ const STRIP_SCALE = 1;
 					<HeroOffer client:load />
 				</div>
 				<a href="#tickets" class="btn-primary hero-cta">Get tickets</a>
-				<span class="hero-frame" aria-hidden="true">01 · 30.10.2026</span>
 			</div>
 		</section>
 
@@ -111,7 +110,7 @@ const STRIP_SCALE = 1;
 				</header>
 				<div class="event-grid">
 					<div class="paper event-print">
-						<span class="tape event-tape">Uhelný mlýn, Libčice nad Vltavou</span>
+						<span class="tape">Uhelný mlýn, Libčice nad Vltavou</span>
 						<div class="paper-photo event-photo">
 							<img
 								src="/gallery/uhelny-mlyn-chimney.webp"
@@ -142,15 +141,7 @@ const STRIP_SCALE = 1;
 							<div><dt>Doors</dt><dd><span class="fig">08:00&ndash;20:00</span></dd></div>
 							<div>
 								<dt>Audience</dt>
-								<dd>
-									<span class="ringed">
-										<span class="fig">350</span>
-										<svg class="grease" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-											<path d="M22 10 C 50 -2, 92 6, 94 30 C 96 52, 60 60, 30 56 C 6 52, 2 30, 14 16 C 22 8, 40 4, 56 6" />
-										</svg>
-									</span>
-									developers
-								</dd>
+								<dd><span class="fig">350</span> developers</dd>
 							</div>
 							<div><dt>Programme</dt><dd>{TOPICS.map((t) => t.name).join(' · ')}</dd></div>
 						</dl>
@@ -205,7 +196,7 @@ const STRIP_SCALE = 1;
 						<div class="sheet-edge" aria-hidden="true"><span>2015</span><span>2025</span></div>
 					</div>
 					<div class="paper past-print">
-						<span class="tape past-tape">The big hall</span>
+						<span class="tape">The big hall</span>
 						<div class="paper-photo past-photo">
 							<img
 								src={`/gallery/devfest-2025-${RINGED}.webp`}
@@ -222,7 +213,7 @@ const STRIP_SCALE = 1;
 			</div>
 		</section>
 
-		<!-- PARTNERS — tiers labelled with tape; each mark's box comes from its
+		<!-- PARTNERS — one plain label per tier; each mark's box comes from its
 		     tier (`partnerLogo()`), so the size carries the rank. -->
 		{homeRows.length > 0 && (
 			<section class="band sec" aria-labelledby="partners-title">
@@ -237,7 +228,7 @@ const STRIP_SCALE = 1;
 					<div class="partners-tiers">
 						{homeRows.map((row) => (
 							<div class={`partners-tier tier-${row.id}`}>
-								<span class="tape partners-tape" id={`tier-${row.id}-label`}>{row.label}</span>
+								<h3 class="partners-label" id={`tier-${row.id}-label`}>{row.label}</h3>
 								<ul class="partners-row" aria-labelledby={`tier-${row.id}-label`}>
 									{row.partners.map(({ p, tier }) => {
 										const { props } = partnerLogo(p, tier, STRIP_SCALE);

@@ -4,7 +4,7 @@ import SubpageHero from '../components/SubpageHero.astro';
 import EndLine from '../components/EndLine.astro';
 import InvoiceForm from '../components/InvoiceForm';
 
-// The three steps, typed on index cards (the /venue route cards).
+// The three steps, a plain numbered list on the black table.
 const STEPS = [
 	'Fill in your company billing details below.',
 	'We email the invoice right away. Pay it by bank transfer within 14 days.',
@@ -37,9 +37,9 @@ const STEPS = [
 
 				<ol class="invoice-steps" role="list">
 					{STEPS.map((text, i) => (
-						<li class="paper invoice-card">
-							<span class="invoice-card-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-							<p class="invoice-card-text">{text}</p>
+						<li class="invoice-step">
+							<span class="invoice-step-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+							<p class="invoice-step-text">{text}</p>
 						</li>
 					))}
 				</ol>
@@ -51,7 +51,7 @@ const STEPS = [
 				<h2 id="invoice-form-heading" class="sr-only">Company billing details</h2>
 				<InvoiceForm client:load />
 				<div class="invoice-aside">
-					<EndLine text="Questions about the invoice? Name the company when you write." href="mailto:devfest@gug.cz" label="Write to devfest@gug.cz" />
+					<EndLine text="Questions about the invoice? Name the company when you write." href="mailto:devfest@gug.cz" label="devfest@gug.cz" />
 				</div>
 			</div>
 		</section>

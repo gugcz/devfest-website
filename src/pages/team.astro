@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
+import EndLine from '../components/EndLine.astro';
 import { initials } from '../lib/speakers';
 
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
@@ -147,10 +148,7 @@ const LINK_LABEL: Record<LinkKind, string> = {
 					))}
 				</ul>
 
-				<div class="crew-end">
-					<h2 class="display crew-end-title">Want to help next year?</h2>
-					<a class="action crew-end-action" href="mailto:devfest@gug.cz">Write to devfest@gug.cz</a>
-				</div>
+				<EndLine text="Want to help next year?" href="mailto:devfest@gug.cz" label="devfest@gug.cz" />
 			</div>
 		</section>
 	</main>

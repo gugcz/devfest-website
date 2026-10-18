@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import type { Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
@@ -84,15 +84,11 @@ function usePortraitMorph(
 	return { morphId, open, close };
 }
 
-/** Cells a row of `columns` has left after `cells`; a full row when none. */
-function rowRest(cells: number, columns: number): number {
-	return columns - (cells % columns);
-}
-
 /** Every speaker as a print on one grid, in running order (`SpeakerTile`),
- * the opening keynote the large print. Pressing a print opens the sheet; its
- * photo morphs into the sheet's. The last cell takes the rest of the row:
- * the way to the agenda and to tickets. Rendered by `Speakers`. */
+ * the opening keynote the large print, then the hosts in their own row of
+ * smaller prints. Pressing a print opens the sheet; its photo morphs into the
+ * sheet's. The way on (agenda, tickets) is the page's `EndLine`, under the
+ * island. Rendered by `Speakers`. */
 export function SpeakerLineup({
 	billings,
 	onOpen,
@@ -104,36 +100,43 @@ export function SpeakerLineup({
 	morphId?: string | null;
 }) {
 	const total = billings.length;
-	// The keynote covers four cells where it is the large print (3+ columns).
-	const large = billings[0]?.keynote ? 3 : 0;
-	const rest = {
-		'--rest-4': rowRest(total + large, 4),
-		'--rest-3': rowRest(total + large, 3),
-		'--rest-2': rowRest(total, 2),
-	} as CSSProperties;
+	const tileFor = (billing: Billing, i: number) => (
+		<SpeakerTile
+			key={billing.speaker.id}
+			billing={billing}
+			index={i + 1}
+			total={total}
+			onOpen={onOpen}
+			morphing={billing.speaker.id === morphId}
+			eager={i < 4}
+		/>
+	);
+	// Hosts sort last (`billLineup`), so the running number stays continuous.
+	const hostsFrom = billings.findIndex((billing) => billing.host);
+	const talks = hostsFrom < 0 ? billings : billings.slice(0, hostsFrom);
+	const hosts = hostsFrom < 0 ? [] : billings.slice(hostsFrom);
 
 	return (
-		<ul className={`${tile.grid} ${tile.sheet}`} role="list">
-			{billings.map((billing, i) => (
-				<SpeakerTile
-					key={billing.speaker.id}
-					billing={billing}
-					index={i + 1}
-					total={total}
-					onOpen={onOpen}
-					morphing={billing.speaker.id === morphId}
-					eager={i < 4}
-				/>
-			))}
-			<li className={tile.end} style={rest}>
-				<a className="action" href="/agenda">
-					Full agenda
-				</a>
-				<a className="action" href="/#tickets">
-					Get tickets
-				</a>
-			</li>
-		</ul>
+		<>
+			{/* On a phone (two columns) the keynote spans the row for an odd
+			    count and takes one cell for an even one: the rows stay whole. */}
+			<ul
+				className={`${tile.grid} ${tile.sheet} ${talks.length % 2 === 0 ? tile.keynoteCell : ''}`}
+				role="list"
+			>
+				{talks.map((billing, i) => tileFor(billing, i))}
+			</ul>
+			{hosts.length > 0 && (
+				<>
+					<h3 id="lineup-hosts" className={tile.hostsLabel}>
+						Hosts
+					</h3>
+					<ul className={`${tile.grid} ${tile.hosts}`} role="list" aria-labelledby="lineup-hosts">
+						{hosts.map((billing, i) => tileFor(billing, talks.length + i))}
+					</ul>
+				</>
+			)}
+		</>
 	);
 }
 

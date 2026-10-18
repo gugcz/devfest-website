@@ -1,22 +1,22 @@
 @use '../styles/type' as *;
 
-// The ticket's facts as one paper stub on the black table:
-// [ date ][ time, place ][ calendar ]. The tape over its top edge is the
-// stub's heading. Paper ink only; the .ics button is the page's one red.
+// The ticket's facts as one straight paper stub on the black table:
+// [ date ][ time, place ][ calendar ], its heading a typed label across the
+// top. Paper ink only; the .ics button is the page's one red.
 .event-stub {
-	--tilt: calc(-0.5 * var(--tilt-1));
-	--tape-tilt: -1.5deg;
 	display: grid;
 	grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
 	align-items: end;
 	gap: 1.5rem clamp(2rem, 4vw, 4rem);
-	padding: clamp(2.25rem, 3.5vw, 3rem) clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 2.25rem);
-	margin: 1rem 0 clamp(5rem, 9vw, 8rem);
+	padding: clamp(1.75rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 2.25rem);
+	margin: 0 0 clamp(5rem, 9vw, 8rem);
+}
 
-	> .tape {
-		margin: 0;
-		font-weight: 400;
-	}
+.stub-label {
+	grid-column: 1 / -1;
+	@include note(var(--fs-note));
+	color: var(--paper-ink-dim);
+	margin: 0;
 }
 
 .stub-date {
@@ -99,7 +99,7 @@
 	.event-stub {
 		grid-template-columns: minmax(0, 1fr);
 		align-items: start;
-		padding: 2rem 1.3rem 1.4rem;
+		padding: 1.6rem 1.3rem 1.4rem;
 	}
 
 	.stub-actions {

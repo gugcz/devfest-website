@@ -1,5 +1,5 @@
 @use '../styles/type' as *;
-// A small paper slip set down at the bottom of the table: paper ink, Accept as
+// A small straight paper slip at the bottom of the table: paper ink, Accept as
 // the black fill, Decline as a text action. No red fill here; the page keeps
 // its one red for the ticket.
 .cookie-banner {
@@ -17,7 +17,6 @@
 	background: var(--paper);
 	color: var(--paper-ink);
 	box-shadow: var(--paper-shadow);
-	rotate: calc(var(--tilt-1) * -0.4);
 	// visibility switches only after the opacity/transform fade finishes, so the
 	// hide animation still plays; while hidden it takes the buttons out of the
 	// tab order instead of leaving two focusable stops inside aria-hidden.

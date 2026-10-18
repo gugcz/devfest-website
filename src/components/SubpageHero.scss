@@ -23,19 +23,15 @@
 	margin: 0 auto;
 }
 
-// With a print the lede goes under the title: three columns left the title
-// a third of the width and broke PARTNERS mid-word.
+// With a print the right column stacks the print over the note; the title
+// spans both rows and sits on the floor, so the note's last line lands on
+// the title's last line on every subpage, print or not.
 .subpage-hero--print .hero-content {
 	grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
 	grid-template-areas:
 		'title print'
-		'side print';
-	align-items: start;
-	row-gap: 1.75rem;
-}
-
-.subpage-hero--print .hero-title {
-	align-self: end;
+		'title side';
+	row-gap: 2.25rem;
 }
 
 .hero-title {
@@ -69,7 +65,7 @@
 
 .hero-print {
 	grid-area: print;
-	align-self: start;
+	align-self: end;
 	--tilt: var(--tilt-3);
 	margin: 0;
 
@@ -97,11 +93,19 @@
 
 	.hero-print {
 		width: 70%;
-		margin: 1rem 0 0 auto;
+		margin: 0 0 0 auto;
 	}
 
 	.hero-lede {
 		font-size: var(--fs-body);
 		line-height: 1.65;
+	}
+}
+
+// A phone opens on type alone: the print would push the page's first row
+// under the fold.
+@media (max-width: 599.98px) {
+	.hero-print {
+		display: none;
 	}
 }
