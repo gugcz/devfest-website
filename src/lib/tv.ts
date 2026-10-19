@@ -8,6 +8,7 @@ import {
 	isLongRunning,
 	partitionAgenda,
 	placement,
+	slotColumns,
 	type AgendaColumn,
 	type Placement,
 } from './agenda';
@@ -67,11 +68,11 @@ function toSlots(sessions: Session[]): Slot[] {
  * `/agenda`.
  */
 export function venueNow(sessions: Session[], rooms: Room[], nowMin: number | null): RoomNow[] {
-	const slotted = sessions.filter((session) => !isLongRunning(session));
-	const { columns, bands, byRoom } = partitionAgenda(slotted, rooms);
-	const bandSlots = toSlots(bands);
-	return columns.map((column) => {
-		const own = toSlots(byRoom.get(column.key) ?? []);
+	const partition = partitionAgenda(sessions, rooms);
+	const bandSlots = toSlots(partition.bands);
+	return slotColumns(partition).map((column) => {
+		const slotted = (partition.byRoom.get(column.key) ?? []).filter((session) => !isLongRunning(session));
+		const own = toSlots(slotted);
 		const isLive = (slot: Slot) =>
 			nowMin !== null && slot.place.startMin <= nowMin && nowMin < slot.place.endMin;
 		const now = own.find(isLive) ?? bandSlots.find(isLive) ?? null;
@@ -88,14 +89,17 @@ export function venueNow(sessions: Session[], rooms: Room[], nowMin: number | nu
 /** The pauses, read off a service session's title, and what a screen calls
  * each. First match wins: "Registration and coffee" is a registration. */
 const PAUSES: [RegExp, string][] = [
-	[/\bregist|registrace/i, 'Registration'],
+	[/\bregist|\bcheck-?in\b/i, 'Registration'],
 	[/\blunch\b|oběd/i, 'Lunch'],
 	[/\bbreakfast\b|snídaně/i, 'Breakfast'],
 	[/\bbreak\b|\bcoffee\b|\bpause\b|přestávka|pauza/i, 'Break'],
 ];
 
+/** Never a pause, whatever else the title says ("Kick-off & coffee"). */
+const PROGRAMME = /\bkick-?off\b|\bkeynote\b/i;
+
 function pauseLabel(session: Session): string | null {
-	if (!session.isServiceSession) return null;
+	if (!session.isServiceSession || PROGRAMME.test(session.title)) return null;
 	return PAUSES.find(([pattern]) => pattern.test(session.title))?.[1] ?? null;
 }
 
@@ -131,7 +135,11 @@ export function roomFocus(room: RoomNow): RoomFocus {
 	const talks = room.upcoming.filter((slot) => !isBreak(slot.session));
 	const onNow = room.now && !isBreak(room.now.session) ? room.now : null;
 	const lead = onNow ?? talks[0] ?? null;
-	const next = (onNow ? talks[0] : talks[1]) ?? null;
+	// The first talk once the lead is over: a shared session that starts
+	// inside a long workshop is not that room's next.
+	const next = lead
+		? (talks.find((slot) => slot !== lead && slot.place.startMin >= lead.place.endMin) ?? null)
+		: null;
 	const gap =
 		lead && next
 			? (room.upcoming.find(

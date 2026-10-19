@@ -308,6 +308,17 @@ export function partitionAgenda(sessions: Session[], rooms: Room[] = []): Agenda
 	return { columns: finalColumns, bands, byRoom, roomTba };
 }
 
+/** A room's sessions are all open-all-day blocks (the lounge). */
+function isAllDayRoom(sessions: Session[]): boolean {
+	return sessions.length > 0 && sessions.every(isLongRunning);
+}
+
+/** The rooms that hold slots: every room but one open all day (the lounge),
+ * which `/agenda` sets as a line above the sheet and `/tv` leaves out. */
+export function slotColumns(partition: AgendaPartition): AgendaColumn[] {
+	return partition.columns.filter((column) => !isAllDayRoom(partition.byRoom.get(column.key) ?? []));
+}
+
 /** Spans with no talk (bands + dead time), sorted. A band overlapping a
  * talk is left out — compressing it would drag the talk off its start. */
 export function nonTalkSpans(

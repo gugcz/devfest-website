@@ -12,6 +12,7 @@ import {
 	placement,
 	placements as sessionPlacements,
 	roomKey,
+	slotColumns,
 	type AgendaColumn,
 	type AgendaPartition,
 	type Placement,
@@ -131,11 +132,6 @@ function trackLength(session: Session): string {
 	return [track, length].filter(Boolean).join(' · ');
 }
 
-/** A room's sessions are all open-all-day blocks (the lounge). */
-function isAllDayRoom(sessions: Session[]): boolean {
-	return sessions.length > 0 && sessions.every(isLongRunning);
-}
-
 /** The note under a room's name: its standing note, "Talks TBA" for a room
  * with nothing in it yet (an empty column all day reads as a failed load),
  * else none. */
@@ -143,12 +139,6 @@ function roomNote(label: string, sessions: Session[]): string | null {
 	const standing = ROOM_NOTES[label.trim().toLowerCase()];
 	if (standing) return standing;
 	return sessions.length === 0 ? 'Talks TBA' : null;
-}
-
-/** The rooms that hold slots: every room but one open all day (the lounge),
- * which is a line above the sheet instead of a column. */
-function slotColumns(partition: AgendaPartition): AgendaColumn[] {
-	return partition.columns.filter((column) => !isAllDayRoom(partition.byRoom.get(column.key) ?? []));
 }
 
 /** "Live now" in red, or "Next" in the slip's dim ink; nothing otherwise. */
