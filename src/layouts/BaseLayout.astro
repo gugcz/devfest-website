@@ -5,6 +5,7 @@ import CookieBanner from '../components/CookieBanner.astro';
 import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
 import { defaultOgImageVersion } from '../lib/og-version';
+import { staticTicketLines } from '../lib/tickets-static';
 
 interface Props {
 	title?: string;
@@ -47,46 +48,30 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, ""
 // claim to BE the event. WebSite + Organization render sitewide.
 const isHome = Astro.url.pathname === "/";
 
-// `offers[].url` → #tickets (survives slug changes). Prices VAT-inclusive
-// CZK matching priceDisplay(), never EUR. Only the wave on sale at build time
-// is listed — a paused wave has no honest `availability`/`validFrom` — and a
-// build after the last wave closes lists none. Dates are the ti.to release
-// `end_at`s. Add the next wave only once its dates and prices are announced;
-// keep in step with the prices in src/content/faq.json.
+// `offers[].url` → #tickets (survives slug changes). Read from ti.to through
+// `/api/tickets` at build time (`tickets-static.ts`): every ticket type on sale
+// then, priced gross in CZK as `priceDisplay()` shows it, never EUR. A build
+// with nothing on sale, or a failed read, lists none. As fresh as the last
+// Hosting deploy (ADR 0008); the cache carries no release dates, so there is
+// no `validFrom` / `priceValidUntil` to state.
 const organizer = {
 	"@type": "Organization",
 	"name": "GUG.cz, z.s.",
 	"url": "https://gug.cz"
 };
-const TICKET_WAVES = [
-	{
-		name: "Regular",
-		validFrom: "2026-07-01T00:00:00+02:00",
-		validUntil: "2026-09-30T12:00:00+02:00",
-		individual: "2999",
-		company: "4499"
-	}
-];
-const buildTime = Date.now();
-const offers = TICKET_WAVES.filter(
-	(wave) => Date.parse(wave.validFrom) <= buildTime && buildTime < Date.parse(wave.validUntil)
-).flatMap((wave) =>
-	[
-		{ variant: "Individual", price: wave.individual, description: "Full conference admission, personal purchase." },
-		{ variant: "Company funded", price: wave.company, description: "Full conference admission, priced for employer-reimbursed purchases." }
-	].map(({ variant, price, description }) => ({
-		"@type": "Offer",
-		"name": `${wave.name} — ${variant}`,
-		"description": description,
-		"url": `${siteUrl}/#tickets`,
-		"price": price,
-		"priceCurrency": "CZK",
-		"availability": "https://schema.org/InStock",
-		"validFrom": wave.validFrom,
-		"priceValidUntil": wave.validUntil.slice(0, 10),
-		"seller": organizer
-	}))
-);
+const offers = isHome
+	? (await staticTicketLines())
+			.filter((line) => line.purchasable && line.gross != null)
+			.map((line) => ({
+				"@type": "Offer",
+				"name": line.label,
+				"url": `${siteUrl}/#tickets`,
+				"price": String(line.gross),
+				"priceCurrency": "CZK",
+				"availability": "https://schema.org/InStock",
+				"seller": organizer
+			}))
+	: [];
 const eventSchema = {
 	"@context": "https://schema.org",
 	"@type": "Event",
@@ -210,31 +195,31 @@ const jsonLd = JSON.stringify(
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<meta name="generator" content={Astro.generator} />
-		<!--
+		{/*
 			theme-color: tints iOS Safari's status bar / URL bar so the
 			native chrome stays brand-dark even when the layout viewport
 			doesn't extend behind it. Variants for light + dark cover
 			browsers that only respect the media-scoped form (Firefox,
 			Samsung Internet, older iOS in-app browsers).
-		-->
+		*/}
 		<meta name="theme-color" content="#000000" />
 		<meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)" />
 		<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 		<meta name="color-scheme" content="dark" />
 		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
-		<!--
+		{/*
 			Mark JS available ASAP so a `.js`-gated rule only applies when a
 			script is there to drive it — no-JS / crawlers get the
 			fully-visible render. No stylesheet keys off `.js` today.
-		-->
-		<!--
+		*/}
+		{/*
 			ClientRouter's swap rebuilds <html>'s attributes from the incoming
 			document, which never carries `js` (the class is added by script, and
 			the fetched document's scripts don't run). Re-apply it in
 			`astro:after-swap` — before paint, so a `.js`-gated rule never flips
 			mid-navigation. The listener lives on `document`, which
 			survives navigations, so registering it once here is enough.
-		-->
+		*/}
 		<script is:inline>
 			document.documentElement.classList.add('js');
 			document.addEventListener('astro:after-swap', () =>
@@ -252,14 +237,14 @@ const jsonLd = JSON.stringify(
 			</>
 		)}
 
-		<!-- Favicon -->
-		<!--
+		{/* Favicon */}
+		{/*
 			`favicon.ico` first, and it is a real file now: the two WebP icons
 			below are both `media`-gated, so anything that does not evaluate a
 			colour-scheme query (feed readers, link unfurlers, older browsers,
 			and every request for the well-known /favicon.ico path) fell through
 			to a 404. The .ico carries 16/32/48 from the same mark.
-		-->
+		*/}
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" type="image/webp" href="/favicon-light.webp" media="(prefers-color-scheme: light)" />
 		<link rel="icon" type="image/webp" href="/favicon-dark.webp" media="(prefers-color-scheme: dark)" />
@@ -286,7 +271,7 @@ const jsonLd = JSON.stringify(
 		<Font cssVariable="--font-bebas-neue" preload />
 		<Font cssVariable="--font-jetbrains-mono" />
 
-		<!-- Open Graph / Facebook -->
+		{/* Open Graph / Facebook */}
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content={canonicalUrl} />
 		<meta property="og:site_name" content="DevFest.cz" />
@@ -301,7 +286,7 @@ const jsonLd = JSON.stringify(
 		<meta property="og:image:alt" content={ogImageAlt} />
 		<link rel="image_src" href={ogImage} />
 
-		<!-- Twitter -->
+		{/* Twitter */}
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:site" content="@devfest_cz" />
 		<meta name="twitter:title" content={title} />
@@ -309,10 +294,10 @@ const jsonLd = JSON.stringify(
 		<meta name="twitter:image" content={ogImage} />
 		<meta name="twitter:image:alt" content={ogImageAlt} />
 
-		<!-- Structured Data -->
+		{/* Structured Data */}
 		{!noindex && <script type="application/ld+json" set:html={jsonLd} />}
 
-		<!-- Page-specific <head> extras (e.g. FAQPage JSON-LD) -->
+		{/* Page-specific <head> extras (e.g. FAQPage JSON-LD) */}
 		<slot name="head" />
 
 		{/*
@@ -341,7 +326,7 @@ const jsonLd = JSON.stringify(
 			only realistic way to dismiss it was the mouse.
 		*/}
 		{!kiosk && <CookieBanner />}
-		<!--
+		{/*
 			Status-bar scrim — paints brand-dark behind iOS Safari's
 			translucent status bar / notch zone. Uses the
 			`top: calc(-1 * env(safe-area-inset-top))` trick so the
@@ -349,7 +334,7 @@ const jsonLd = JSON.stringify(
 			ignores `viewport-fit=cover` and anchors `top:0` below the
 			safe area. Z-index sits above the film-grain + scanline
 			overlays (9999 / 9998) so it stays opaque under the chrome.
-		-->
+		*/}
 		<div class="status-bar-cover" aria-hidden="true"></div>
 		{!kiosk && <Menu />}
 		{/*

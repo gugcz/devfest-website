@@ -2,22 +2,34 @@
 import Share from '../../layouts/Share.astro';
 import { staticLineup } from '../../lib/lineup-static';
 import type { Speaker } from '../../lib/speakers';
+import type { Room, Session } from '../../lib/sessions';
 import { EVENT } from '../../lib/event';
-import { excerpt, speakerTarget } from '../../lib/share';
+import { formatClock, roomName } from '../../lib/agenda';
+import { paragraphs } from '../../lib/paragraphs';
+import { excerpt, speakerTarget, talkSharePath } from '../../lib/share';
 
-// One preview per speaker; `/speakers?speaker=<id>` is where it is read.
+// One page per speaker; `/speakers?speaker=<id>` is where a browser reads it.
 export async function getStaticPaths() {
-	const { speakers } = await staticLineup();
-	return speakers.map((speaker) => ({ params: { id: speaker.id }, props: { speaker } }));
+	const { speakers, sessions, rooms } = await staticLineup();
+	return speakers.map((speaker) => ({
+		params: { id: speaker.id },
+		props: {
+			speaker,
+			talks: sessions.filter((session) => session.speakers.some((sp) => sp.id === speaker.id)),
+			rooms,
+		},
+	}));
 }
 
-const { speaker } = Astro.props as { speaker: Speaker };
-const talks = speaker.sessions.map((s) => `“${s.name}”`).join(', ');
-const lead = talks ? `Speaking at DevFest.cz 2026: ${talks}.` : 'Speaking at DevFest.cz 2026.';
+const { speaker, talks, rooms } = Astro.props as { speaker: Speaker; talks: Session[]; rooms: Room[] };
+const talkNames = speaker.sessions.map((s) => `“${s.name}”`).join(', ');
+const lead = talkNames ? `Speaking at DevFest.cz 2026: ${talkNames}.` : 'Speaking at DevFest.cz 2026.';
 const tagLine = speaker.tagLine.trim().replace(/([^.!?])$/, '$1.');
 const description = [tagLine, lead, `${EVENT.dateLabel}, ${EVENT.venue}.`]
 	.filter(Boolean)
 	.join(' ');
+const slot = (talk: Session) =>
+	[talk.startsAt && `${formatClock(talk.startsAt)} CET`, roomName(talk, rooms)].filter(Boolean).join(', ');
 ---
 
 <Share
@@ -25,4 +37,24 @@ const description = [tagLine, lead, `${EVENT.dateLabel}, ${EVENT.venue}.`]
 	title={`${speaker.fullName} | DevFest.cz 2026 speaker`}
 	description={excerpt(description, 300)}
 	label={speaker.fullName}
-/>
+>
+	<h1>{speaker.fullName}</h1>
+	{speaker.tagLine && <p>{speaker.tagLine}</p>}
+	{paragraphs(speaker.bio).map((text) => <p>{text}</p>)}
+	{talks.length > 0 && (
+		<>
+			<h2>Speaking</h2>
+			<ul>
+				{talks.map((talk) => (
+					<li>
+						<a href={talkSharePath(talk.id)}>{talk.title}</a>
+						{slot(talk) && ` (${slot(talk)})`}
+					</li>
+				))}
+			</ul>
+		</>
+	)}
+	{speaker.links.length > 0 && (
+		<p>{speaker.links.map((link, i) => <>{i > 0 && ' · '}<a href={link.url} rel="noopener">{link.label}</a></>)}</p>
+	)}
+</Share>

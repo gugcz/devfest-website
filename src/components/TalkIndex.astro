@@ -1,0 +1,49 @@
+---
+/** The programme as build-time text, for readers that run no script
+ * (`.no-js`): every talk in time order with its room, speakers, track and
+ * abstract, each linking to its share page. `/agenda` and `/workshops` render
+ * it under their islands, which replace it for everyone else. */
+import type { Room, Session } from '../lib/sessions';
+import { speakerNames, visitorCategories } from '../lib/sessions';
+import { byStart, roomName, timeRange } from '../lib/agenda';
+import { excerpt, talkSharePath } from '../lib/share';
+import { BUILD_DAY } from '../lib/static-api';
+import { EVENT } from '../lib/event';
+
+interface Props {
+	sessions: Session[];
+	rooms: Room[];
+	/** What the list holds, for the stamp ("talks", "workshops open for sign-up"). */
+	noun: string;
+}
+
+const { sessions, rooms, noun } = Astro.props;
+const meta = (session: Session) =>
+	[
+		timeRange(session),
+		roomName(session, rooms),
+		speakerNames(session),
+		...visitorCategories(session).map((c) => c.values.join(', ')),
+	]
+		.filter(Boolean)
+		.join(' · ');
+---
+
+<div class="no-js static-index">
+	<p class="static-index-stamp">
+		{sessions.length} {noun} as of {BUILD_DAY}. Times in CET, on {EVENT.dateLabel}.
+	</p>
+	<ul class="static-index-list">
+		{[...sessions].sort(byStart).map((session) => (
+			<li>
+				<h3 class="static-index-title"><a href={talkSharePath(session.id)}>{session.title}</a></h3>
+				<p class="static-index-meta">{meta(session)}</p>
+				{session.description && <p class="static-index-text">{excerpt(session.description, 320)}</p>}
+			</li>
+		))}
+	</ul>
+</div>
+
+<style lang="scss">
+	@use './StaticIndex';
+</style>

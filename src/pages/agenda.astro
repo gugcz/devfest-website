@@ -4,16 +4,19 @@ import SubpageHero from '../components/SubpageHero.astro';
 import Closer from '../components/Closer.astro';
 import Agenda from '../components/Agenda.tsx';
 import Sessions from '../components/Sessions.tsx';
+import TalkIndex from '../components/TalkIndex.astro';
+import { staticLineup } from '../lib/lineup-static';
 
 // ONE PAGE FOR THE PROGRAMME. The timetable answers "when and where", the
 // list under it "what is it about" — search, filters and every abstract. They
 // were two menu lines (`Sessions`, `Agenda`) for one question; `/sessions`
 // now redirects to `#talks` here, query string and all.
+const { sessions, rooms } = await staticLineup();
 ---
 
 <BaseLayout
 	title="Agenda & talks — DevFest.cz 2026"
-	description="The full programme for DevFest.cz 2026 — registration from 08:00, keynote at 09:00, two stages of talks, lightning talks and the afterparty. Every talk, room and time slot, plus a searchable list of every talk at Prague's community developer conference."
+	description="The full agenda for DevFest.cz 2026 — registration from 08:00, keynote at 09:00, two stages of talks, lightning talks and the afterparty. Every talk, room and time slot, plus a searchable list of every talk at Prague's community developer conference."
 >
 	<main class="page-stack">
 		<SubpageHero
@@ -26,18 +29,20 @@ import Sessions from '../components/Sessions.tsx';
 
 		<section class="band band--lit agenda-sheet" aria-label="Conference timetable">
 			<div class="band-inner">
-				<!-- The hero names this band; its head is for screen readers only. -->
+				{/* The hero names this band; its head is for screen readers only. */}
 				<h2 class="sr-only">Timetable</h2>
 
-				<!-- The timetable hydrates client-side from /api/lineup; keep a static
-				     note for crawlers and no-JS visitors. -->
+				{/* The timetable hydrates client-side from /api/lineup. Readers that run
+				   no script get every talk as of the build, under the list below. */}
 				<Agenda client:load />
 
-				<noscript>
-					<p class="fallback-note">
-						The agenda loads with JavaScript enabled. Please turn it on, or check back soon.
-					</p>
-				</noscript>
+				{sessions.length === 0 && (
+					<noscript>
+						<p class="fallback-note">
+							The agenda loads with JavaScript enabled. Please turn it on, or check back soon.
+						</p>
+					</noscript>
+				)}
 			</div>
 		</section>
 
@@ -48,14 +53,15 @@ import Sessions from '../components/Sessions.tsx';
 					<p class="head-rule-note">Search, or filter by track. Pick one for its abstract and speakers.</p>
 				</div>
 
-				<!-- Hydrates from the same /api/lineup read as the timetable. -->
+				{/* Hydrates from the same /api/lineup read as the timetable. */}
 				<Sessions client:load />
+				{sessions.length > 0 && <TalkIndex sessions={sessions} rooms={rooms} noun="talks" />}
 			</div>
 		</section>
 
 		<Closer
 			titleHtml={'Doors open<br />30 October.'}
-			note="Uhelný Mlýn, near Prague. Doors at 08:00, closing remarks at 19:00, afterparty until 23:00."
+			note="Uhelný Mlýn, Libčice nad Vltavou. Doors at 08:00, closing remarks at 19:00, afterparty until 23:00."
 			titleId="agenda-closer"
 			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/speakers', label: 'Meet the speakers', kind: 'ghost' }]}
 		/>

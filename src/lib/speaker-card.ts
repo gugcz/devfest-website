@@ -247,11 +247,11 @@ export function drawSpeakerCard(
 		ctx.drawImage(logo, MARGIN - logoWidth * 0.028, bandMid - LOGO_HEIGHT / 2, logoWidth, LOGO_HEIGHT);
 	}
 	ctx.fillStyle = '#000000';
-	ctx.font = `500 34px ${fonts.mono}`;
+	ctx.font = `500 30px ${fonts.mono}`;
 	ctx.letterSpacing = '3px';
 	ctx.textAlign = 'right';
 	ctx.textBaseline = 'middle';
-	ctx.fillText('30 OCT 2026 · PRAGUE', size - MARGIN, bandMid + 1);
+	ctx.fillText('30 OCT 2026 · LIBČICE NAD VLTAVOU', size - MARGIN, bandMid + 1);
 	ctx.letterSpacing = '0px';
 	ctx.textAlign = 'left';
 }

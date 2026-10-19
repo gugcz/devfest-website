@@ -3,6 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Speakers from '../components/Speakers.tsx';
 import EndLine from '../components/EndLine.astro';
+import SpeakerIndex from '../components/SpeakerIndex.astro';
+import { staticLineup } from '../lib/lineup-static';
+
+const { speakers, sessions } = await staticLineup();
 ---
 
 <BaseLayout
@@ -19,22 +23,26 @@ import EndLine from '../components/EndLine.astro';
 
 		<section class="band lineup" aria-label="Speaker lineup">
 			<div class="band-inner">
-				<!-- The hero already names this band, so its head is for screen
+				{/* The hero already names this band, so its head is for screen
 				     readers only; a second poster headline ("Who's talking") under
-				     "Speakers" said the same thing twice. -->
+				     "Speakers" said the same thing twice. */}
 				<h2 class="sr-only">Speakers</h2>
 
-				<!-- The prints hydrate client-side from /api/lineup; keep a static note
-				     for crawlers and no-JS visitors. The page ends on the way to the
-				     agenda and tickets (no closer). -->
+				{/* The prints hydrate client-side from /api/lineup. Readers that run no
+				   script (assistants, link readers) get the lineup as of the build. The
+				   page ends on the way to the agenda and tickets (no closer). */}
 				<Speakers client:load />
 
-				<noscript>
-					<p class="fallback-note">
-						The speaker lineup loads with JavaScript enabled. Please turn it on, or
-						check back soon.
-					</p>
-				</noscript>
+				{speakers.length > 0 ? (
+					<SpeakerIndex speakers={speakers} sessions={sessions} />
+				) : (
+					<noscript>
+						<p class="fallback-note">
+							The speaker lineup loads with JavaScript enabled. Please turn it on, or
+							check back soon.
+						</p>
+					</noscript>
+				)}
 
 				<EndLine text="Every talk by time and room." href="/agenda" label="Full agenda" also={{ href: '/#tickets', label: 'Get tickets' }} />
 			</div>

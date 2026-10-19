@@ -15,7 +15,7 @@ const STEPS = [
 		actions: [{ href: '/speakers', label: 'See the speakers' }],
 	},
 	{
-		title: 'The programme',
+		title: 'The agenda',
 		noteHtml: 'The timetable, and every talk by track under it.',
 		actions: [{ href: '/agenda', label: 'See the agenda' }],
 	},
@@ -44,9 +44,9 @@ const STEPS = [
 	description="The page you're looking for doesn't exist."
 	noindex
 >
-	<!-- A share link to a talk or speaker added since the last build has no
+	{/* A share link to a talk or speaker added since the last build has no
 	     page yet (src/lib/share.ts). Hosting answers it with this page, so
-	     send it on to the sheet it names. -->
+	     send it on to the sheet it names. */}
 	<script is:inline>
 		(() => {
 			const m = /^\/(talks|speakers)\/([A-Za-z0-9-]{1,64})\/?$/.exec(location.pathname);
