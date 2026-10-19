@@ -1,0 +1,36 @@
+@use '../styles/type' as *;
+// A stretch of the hero's facts line, in the line's one voice at its one
+// size (`1em`), like `HeroOffer.module.scss`: the typed qualifier at 0.72,
+// the time left in mono a step down like the line's other figures.
+.countdown {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	// On a narrow phone the figure drops under the label.
+	gap: 0 0.6em;
+	margin: 0;
+}
+
+// Holds the box until the clock is read in the browser.
+.pending {
+	visibility: hidden;
+}
+
+// The same lifted 0.72 as the offer's qualifier, for 4.5:1 on the plate.
+.label {
+	@include note(1em);
+	white-space: nowrap;
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.value {
+	@include note(1em);
+	color: var(--color-text);
+}
+
+.figure {
+	@include mono(0.86em);
+	white-space: nowrap;
+	color: var(--color-text);
+	font-variant-numeric: tabular-nums;
+}

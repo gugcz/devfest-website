@@ -61,7 +61,7 @@
 	text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
 }
 
-// Date, venue, the wave on sale: one voice at one size. Words on the
+// Date, countdown, venue, the wave on sale: one voice at one size. Words on the
 // typewriter, figures in mono (`.fig`), no separators.
 .hero-facts {
 	display: flex;
@@ -178,6 +178,42 @@
 		@include note(var(--fs-body));
 		line-height: 1.4;
 	}
+}
+
+/* ---- the agenda's topics ---- */
+.topics-actions {
+	margin-bottom: 0.4rem;
+}
+
+// The billing: each name large on the left, its line in the side column,
+// on the head's grid so the lines start at the head's action. Space
+// separates the rows, never a rule.
+.topics {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: clamp(1.75rem, 3.5vw, 3rem);
+}
+
+.topic {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, var(--side-col));
+	align-items: baseline;
+	gap: 0.6rem var(--side-gap);
+}
+
+.topic-name {
+	@include display(var(--fs-h2));
+	margin: 0;
+	text-wrap: balance;
+}
+
+.topic-desc {
+	@include prose(var(--fs-body-lg), 1.5);
+	color: var(--ink-soft);
+	margin: 0;
+	max-width: 34ch;
 }
 
 /* ---- past editions ---- */
@@ -432,6 +468,10 @@
 	.hero-cta {
 		display: flex;
 		width: 100%;
+	}
+
+	.topic {
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.event-print {
