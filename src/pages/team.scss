@@ -1,8 +1,8 @@
 @use '../styles/type' as *;
 
 // The crew as prints on the black table: four across, three on a tablet, two
-// on a phone. Each print sits at its own small tilt; the codename is one
-// line of tape over its top-left corner.
+// on a phone. Each print sits at its own small tilt; hover turns the role into
+// the member's codename.
 .crew {
 	// Straight off the subpage hero: its bottom padding is the pause.
 	padding: 0 var(--gutter) var(--section-y-tight);
@@ -26,8 +26,6 @@
 .crew-member {
 	position: relative;
 	align-self: start;
-	// Room for the tape over the top edge.
-	padding-top: 0.9rem;
 }
 
 // Four tilts that repeat along a row, never past --tilt-2.
@@ -38,21 +36,6 @@
 
 .crew-card {
 	padding: 0.6rem 0.6rem 0;
-}
-
-// The codename on tape over the top-left corner of every print. Never cut:
-// a codename longer than the print wraps to a second line, centred on the
-// print's top edge.
-.crew-alias {
-	margin: 0;
-	top: 0;
-	left: 1.1rem;
-	--tape-tilt: -2deg;
-	transform: translateY(-50%) rotate(var(--tape-tilt));
-	white-space: normal;
-	overflow: visible;
-	text-overflow: clip;
-	text-wrap: balance;
 }
 
 // The photo well. `.mugshot` is also the hook team.astro's script queries.
@@ -147,6 +130,59 @@
 	@include note(var(--fs-note));
 	color: var(--paper-ink-dim);
 	margin: 0.5rem 0 0;
+	// Role and codename share one cell and cross-fade; the cell may be
+	// narrower than either line so text zoom never widens the card.
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.crew-role-line {
+	grid-area: 1 / 1;
+	transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+// The codename in the card's full ink: the one thing the hover gives away.
+.crew-role-alias {
+	color: var(--paper-ink);
+}
+
+.crew-role[data-swap] .crew-role-alias {
+	opacity: 0;
+	transform: translateY(0.25em);
+}
+
+@media (hover: hover) {
+	.crew-card:hover .crew-role[data-swap] .crew-role-real {
+		opacity: 0;
+		transform: translateY(-0.25em);
+	}
+
+	.crew-card:hover .crew-role[data-swap] .crew-role-alias {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.crew-card:focus-within .crew-role[data-swap] .crew-role-real {
+	opacity: 0;
+	transform: translateY(-0.25em);
+}
+
+.crew-card:focus-within .crew-role[data-swap] .crew-role-alias {
+	opacity: 1;
+	transform: none;
+}
+
+// No hover on a phone: both lines print, the codename under the role.
+@media (hover: none) {
+	.crew-role[data-swap] .crew-role-line {
+		grid-area: auto;
+	}
+
+	.crew-role[data-swap] .crew-role-alias {
+		opacity: 1;
+		transform: none;
+	}
 }
 
 // Links as text actions in the card's ink.
@@ -222,21 +258,11 @@
 	.crew-edge-year {
 		display: none;
 	}
-
-	// One line on a phone: the smallest tape, free to span the whole print.
-	// A codename that still cannot fit wraps upward, off the photograph: the
-	// tape's foot always overlaps the print's top edge by the same 0.6rem.
-	.crew-alias {
-		left: 0;
-		max-width: 100%;
-		font-size: var(--fs-label-xs);
-		padding: 0.25rem 0.4rem 0.2rem;
-		transform: translateY(calc(-100% + 0.6rem)) rotate(var(--tape-tilt));
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.mugshot-color,
+	.crew-role-line,
 	.crew-link {
 		transition: none;
 	}

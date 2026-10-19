@@ -10,7 +10,8 @@ import { initials } from '../lib/speakers';
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
 // Roster: the `team` collection (`src/content/team.json`). Each member has a
 // B&W `photo` and a colour `photoColor` of the same shot; colour bleeds in on
-// hover (team.scss). `alias` is the codename on the tape; `order` fixes sequence.
+// hover (team.scss). `alias` is the codename the role turns into on
+// hover; `order` fixes sequence.
 type LinkKind = 'linkedin' | 'github' | 'web' | 'instagram' | 'email';
 
 const team = (await getCollection('team'))
@@ -31,14 +32,6 @@ const sourceByFile = new Map<string, ImageMetadata>(
 
 // Cards render ~220–340px wide (2-col on mobile); these widths cover that range
 // up to ~2× DPR. `sizes` lets the browser pick the smallest variant that fits.
-// A double codename ("The Boss / The Scenic Artist") that cannot fit one
-// line on a phone tape breaks only after the slash, never inside a name.
-const tapeText = (alias: string) =>
-	alias
-		.split(' / ')
-		.map((part) => part.replaceAll(' ', '\u00a0'))
-		.join(' / ');
-
 const MUGSHOT_WIDTHS = [240, 360, 480, 600, 720];
 const MUGSHOT_SIZES = '(max-width: 720px) 45vw, (max-width: 1100px) 30vw, 300px';
 
@@ -84,7 +77,7 @@ const LINK_LABEL: Record<LinkKind, string> = {
 		/>
 
 
-		<!-- ROSTER — every member a print on the table, the codename on tape. -->
+		<!-- ROSTER — every member a print on the table, the codename under the role. -->
 		<section class="crew" aria-label="Organising team">
 			<div class="crew-inner">
 				<ul class="crew-grid">
@@ -123,7 +116,16 @@ const LINK_LABEL: Record<LinkKind, string> = {
 								</div>
 								<div class="crew-info">
 									<h2 class="crew-name">{member.name}</h2>
-									{member.role && <p class="crew-role">{member.role}</p>}
+									{member.role ? (
+										<p class="crew-role" data-swap>
+											<span class="crew-role-line crew-role-real">{member.role}</span>
+											<span class="crew-role-line crew-role-alias">{member.alias}</span>
+										</p>
+									) : (
+										<p class="crew-role">
+											<span class="crew-role-line crew-role-alias">{member.alias}</span>
+										</p>
+									)}
 									{member.links && member.links.length > 0 && (
 										<ul class="crew-links">
 											{member.links.map((link) => {
@@ -149,7 +151,6 @@ const LINK_LABEL: Record<LinkKind, string> = {
 										<span class="crew-edge-year">2026</span>
 									</p>
 								</div>
-								{member.alias && <p class="tape crew-alias">{tapeText(member.alias)}</p>}
 							</article>
 						</li>
 					))}
