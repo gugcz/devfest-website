@@ -7,9 +7,11 @@ import NewsletterForm from '../components/NewsletterForm';
 import HeroBackground from '../components/HeroBackground.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
+import TicketIndex from '../components/TicketIndex.astro';
 import { getActivePartnerTiers, getCommunityPartners, partnerLogo, type Partner } from '../lib/partners';
 import { TOPICS } from '../lib/topics';
 import { EVENT } from '../lib/event';
+import { staticTicketLines } from '../lib/tickets-static';
 
 // The home page as prints on a black table: the full-bleed plate with the
 // statement set left over it, then the event (a widescreen print and its
@@ -20,6 +22,8 @@ import { EVENT } from '../lib/event';
 // (each mark still sized by its own tier). Media partners live on /partners only.
 const communityPartners = await getCommunityPartners();
 const ladder = await getActivePartnerTiers();
+// The prices as of the build, for readers that run no script.
+const ticketLines = await staticTicketLines();
 type HomeRow = { id: string; label: string; partners: { p: Partner; tier: string }[] };
 const tail = [
 	...(ladder.find((t) => t.id === 'silver')?.partners.map((p) => ({ p, tier: 'silver' })) ?? []),
@@ -61,7 +65,7 @@ const STRIP_SCALE = 1;
 ---
 
 <BaseLayout description="DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. 30 October 2026. Tickets on sale now.">
-	<!-- Preload the LCP hero background so it isn't discovered only after CSS parse -->
+	{/* Preload the LCP hero background so it isn't discovered only after CSS parse */}
 	<link
 		slot="head"
 		rel="preload"
@@ -71,9 +75,9 @@ const STRIP_SCALE = 1;
 	/>
 
 	<main class="page-stack">
-		<!-- HERO — the plate runs edge to edge, the photograph pushed right and
+		{/* HERO — the plate runs edge to edge, the photograph pushed right and
 		     fading to black on its left and bottom; the statement, the facts
-		     line and the page's one red fill are set left over it. -->
+		     line and the page's one red fill are set left over it. */}
 		<section id="hero" class="scene" aria-labelledby="hero-title">
 			<HeroBackground
 				photoOpacity={1}
@@ -89,7 +93,7 @@ const STRIP_SCALE = 1;
 					Prague&rsquo;s most original conference is <span class="red">back.</span>
 				</h1>
 
-				<!-- The day's five topics, billed under the statement. -->
+				{/* The day's five topics, billed under the statement. */}
 				<ul class="hero-topics" role="list" aria-label="Topics">
 					{TOPICS.map((t) => <li>{t.name}</li>)}
 				</ul>
@@ -109,8 +113,8 @@ const STRIP_SCALE = 1;
 			</div>
 		</section>
 
-		<!-- THE EVENT — a widescreen print of the mill with the line set over it
-		     like a subtitle, and the back of the print beside it. -->
+		{/* THE EVENT — a widescreen print of the mill with the line set over it
+		     like a subtitle, and the back of the print beside it. */}
 		<section class="band sec event" aria-labelledby="facts-title">
 			<div class="band-inner">
 				<header class="head-rule">
@@ -157,17 +161,18 @@ const STRIP_SCALE = 1;
 			</div>
 		</section>
 
-		<!-- TICKETS — client:load, not visible: the hero's "Get tickets" jumps
+		{/* TICKETS — client:load, not visible: the hero's "Get tickets" jumps
 		     straight here, and a visible-gated island only began loading on
-		     arrival, so a phone landed on the skeleton. -->
+		     arrival, so a phone landed on the skeleton. */}
 		<Tickets client:load />
+		{ticketLines.length > 0 && <TicketIndex lines={ticketLines} />}
 
-		<!-- SPEAKERS — the register's first lines; hides until data loads. -->
+		{/* SPEAKERS — the register's first lines; hides until data loads. */}
 		<SpeakersTeaser client:load />
 
-		<!-- PAST EDITIONS — a contact sheet of the last edition, one frame ringed
+		{/* PAST EDITIONS — a contact sheet of the last edition, one frame ringed
 		     in grease and enlarged beside it. The frames are decorative; the
-		     enlargement carries the description. -->
+		     enlargement carries the description. */}
 		<section class="band sec" aria-labelledby="gallery-title">
 			<div class="band-inner">
 				<header class="head-rule">
@@ -220,8 +225,8 @@ const STRIP_SCALE = 1;
 			</div>
 		</section>
 
-		<!-- PARTNERS — one plain label per tier; each mark's box comes from its
-		     tier (`partnerLogo()`), so the size carries the rank. -->
+		{/* PARTNERS — one plain label per tier; each mark's box comes from its
+		     tier (`partnerLogo()`), so the size carries the rank. */}
 		{homeRows.length > 0 && (
 			<section class="band sec" aria-labelledby="partners-title">
 				<div class="band-inner">
@@ -259,7 +264,7 @@ const STRIP_SCALE = 1;
 			</section>
 		)}
 
-		<!-- NEWSLETTER — `anchor-target`: the ticket footnote, the footer and the FAQ jump here. -->
+		{/* NEWSLETTER — `anchor-target`: the ticket footnote, the footer and the FAQ jump here. */}
 		<section id="newsletter" class="band sec anchor-target" aria-labelledby="newsletter-title">
 			<div class="band-inner newsletter">
 				<div>

@@ -1,9 +1,9 @@
 /**
  * SHAREABLE LINKS to one talk or one speaker. `/talks/<id>` and
  * `/speakers/<id>` are static pages built from the lineup (see
- * `lineup-static.ts`): they carry the talk's or speaker's own title and
- * description for a link preview, then hand the visitor to the page that
- * opens the sheet (`/agenda?talk=<id>`, `/speakers?speaker=<id>`). A talk
+ * `lineup-static.ts`): they carry the talk or speaker as text, with its own
+ * title and description for a link preview, then hand a browser to the page
+ * that opens the sheet (`/agenda?talk=<id>`, `/speakers?speaker=<id>`). A talk
  * added after the last build has no page yet; `404.astro` forwards those.
  */
 import { useEffect } from 'react';
