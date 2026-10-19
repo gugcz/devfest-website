@@ -17,7 +17,7 @@ web
   deciding whether to attend a one-day conference, then buying a ticket.
 - **[inferred]** Companies buying several tickets who must pay by bank
   transfer against an invoice (`/invoice`).
-- **[inferred]** Speakers, press and partners checking programme, downloads
+- **[inferred]** Speakers, press and partners checking the agenda, downloads
   and partnership terms (`/speakers`, `/contact#press`, `/press/downloads`, `/partners`).
 - **[inferred]** Ticket holders on the day, reading the agenda on a phone
   (`/agenda`, `/attending`), and saving a seat at a workshop (`/workshops`).
@@ -27,7 +27,7 @@ web
 The landing site for **DevFest.cz 2026**, a community-built developer
 conference and festival on **30 October 2026** at **Uhelný Mlýn** in Libčice nad Vltavou,
 organised by **GUG.cz, z.s.** The site exists to sell tickets and to carry the
-programme, speakers, venue and practical information. **[inferred]** Success
+agenda, speakers, venue and practical information. **[inferred]** Success
 is ticket sales and newsletter sign-ups; the analytics conversion events are
 the ticket CTA and the newsletter form.
 
@@ -65,19 +65,19 @@ built by a community, not a vendor event.
   that go with them are straight paper slips and cards. A page carries one
   red grease-pencil mark.
 - The home page: a hero with the key art on the right and, over it, the
-  statement, the facts (date, venue link, the wave on sale "from <price>")
+  statement, the five topics billed under it, the facts (date, a ticking
+  countdown to the keynote, venue link, the wave on sale "from <price>")
   and the red "Get tickets"; then sections that each open on a
   poster-scale head, with a note only where it carries a fact: The
   eleventh DevFest.cz (a print of the mill with the one-line pitch, and its
-  back with date / place / doors / audience / programme, the programme
-  being the topics), Tickets (one paper ticket slip per wave: the wave on
-  sale first and large with its price, state, Buy / Company pays; spent
+  back with date / place / doors / audience), Tickets (one paper ticket
+  slip per wave: the wave on sale first and large with its price, state, Buy / Company pays; spent
   waves crossed out; the invoice route beside the head), Speakers (the
   first prints of the lineup, the opening keynote large, then "All N
   speakers"), Past editions (a contact sheet of eight frames with one
   enlarged), Partners (a labelled row per tier, each mark sized by its
   tier; "All partners", "Become a partner"), Newsletter (lede and the form
-  on a paper card). No arrow glyphs, nothing that moves on its own.
+  on a paper card). No arrow glyphs; the countdown is the only thing that moves on its own.
 - Navigation: at 1100px and wider the destinations sit inline in the
   header (Speakers, Agenda, Venue, FAQ, then Partners, Team, Press,
   Contact) beside a red Tickets button; narrower, they live behind one

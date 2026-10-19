@@ -61,7 +61,29 @@
 	text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
 }
 
-// Date, venue, the wave on sale: one voice at one size. Words on the
+// The five topics under the statement: a Bebas billing, white, split by a
+// dim slash, wrapping as a line of type.
+.hero-topics {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.15em 0;
+	list-style: none;
+	margin: 1.75rem 0 0;
+	padding: 0;
+	@include display(var(--fs-card-title));
+	line-height: 1.05;
+	text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+
+	// The slash trails its topic, so a wrapped line never opens on one.
+	li:not(:last-child)::after {
+		// Empty alt text: the slash is not read out.
+		content: '/' / '';
+		padding: 0 0.45em;
+		color: var(--ink-faint);
+	}
+}
+
+// Date, countdown, venue, the wave on sale: one voice at one size. Words on the
 // typewriter, figures in mono (`.fig`), no separators.
 .hero-facts {
 	display: flex;
