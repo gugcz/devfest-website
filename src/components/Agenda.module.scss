@@ -151,32 +151,37 @@
 	align-self: center;
 	margin: 0;
 	padding: 0.6rem 0.25rem;
-	@include prose(var(--fs-body), 1.4);
-	color: var(--ink-soft);
+	color: var(--color-text);
+	// Time, name, room: a long name wraps in its own column, never under the time.
+	display: flex;
+	align-items: baseline;
+	column-gap: 0.75rem;
+}
+
+// The moments the whole house shares (kick off, breaks, lunch): a Bebas line
+// across the rooms, white on the table, so the day reads at a glance.
+.bandTitle {
+	@include display(clamp(1.6rem, 2.4vw, 2.1rem));
+	color: var(--color-text);
+	min-width: 0;
 }
 
 .bandTime {
 	@include mono(var(--fs-label));
-	color: var(--ink-muted);
-	margin-right: 0.4rem;
+	color: var(--ink-soft);
+	flex: none;
 	font-variant-numeric: tabular-nums;
 	white-space: nowrap;
 }
 
 // The evening programme, after the last talk: louder, and it names its room.
-.bandLoud {
-	font-size: var(--fs-lede);
-	color: var(--color-text);
-
-	.bandTime {
-		font-size: var(--fs-label);
-	}
+.bandLoud .bandTitle {
+	font-size: var(--fs-h3);
 }
 
 .bandWhere {
 	@include note(var(--fs-note));
 	color: var(--ink-muted);
-	margin-left: 0.25rem;
 }
 
 .bandLive .bandTitle {
@@ -322,12 +327,12 @@
 		font-size: var(--fs-label-sm);
 	}
 
-	.band {
-		font-size: var(--fs-ui);
+	.bandTitle {
+		font-size: var(--fs-title-sm);
 	}
 
-	.bandLoud {
-		font-size: var(--fs-body-lg);
+	.bandLoud .bandTitle {
+		font-size: var(--fs-head);
 	}
 }
 
@@ -347,13 +352,22 @@
 		margin-top: 1.75rem;
 	}
 
+	// The room goes under the name: a phone has no width beside it.
 	.band {
 		padding: 0;
-		font-size: var(--fs-ui);
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
 	}
 
-	.bandLoud {
-		font-size: var(--fs-body);
+	.bandWhere,
+	.bandFlag {
+		grid-column: 2;
+		margin-left: 0;
+	}
+
+	.bandTitle,
+	.bandLoud .bandTitle {
+		font-size: var(--fs-title-sm);
 	}
 
 	.slip {
