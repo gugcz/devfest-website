@@ -15,7 +15,7 @@
 /** Event/brand facts every email footer repeats. */
 export const BRAND = {
 	eventName: 'DevFest.cz 2026',
-	tagline: 'Developer conference & festival just outside Prague',
+	tagline: "Prague's developer conference & festival",
 	dateLine: 'Friday, 30 October 2026',
 	venue: 'Uhelný Mlýn, Libčice nad Vltavou',
 	siteUrl: 'https://devfest.cz',

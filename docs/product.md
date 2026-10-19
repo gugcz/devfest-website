@@ -25,7 +25,7 @@ web
 ## Product Purpose
 
 The landing site for **DevFest.cz 2026**, a community-built developer
-conference and festival on **30 October 2026** at **Uhelný Mlýn** near Prague,
+conference and festival on **30 October 2026** at **Uhelný Mlýn** in Libčice nad Vltavou,
 organised by **GUG.cz, z.s.** The site exists to sell tickets and to carry the
 programme, speakers, venue and practical information. **[inferred]** Success
 is ticket sales and newsletter sign-ups; the analytics conversion events are
@@ -33,7 +33,7 @@ the ticket CTA and the newsletter form.
 
 ## Positioning
 
-**[inferred]** "The most original developer conference near Prague": one day,
+**[inferred]** "The most original developer conference in Prague": one day,
 one venue, a curated lineup across AI agents, generative UI, cloud and
 backends, mobile and web accessibility, and the humans behind it. A festival
 built by a community, not a vendor event.

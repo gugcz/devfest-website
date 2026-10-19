@@ -1,10 +1,10 @@
 # DevFest.cz 2026
 
-The most original developer conference near Prague is back.
+The most original developer conference in Prague is back.
 
 ![DevFest.cz 2026](public/og-image.jpg)
 
-DevFest.cz 2026 is a community-built conference and festival for developers, geeks, and tech enthusiasts — AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it — happening **October 30, 2026** at Uhelný Mlýn near Prague, Czech Republic.
+DevFest.cz 2026 is a community-built conference and festival for developers, geeks, and tech enthusiasts — AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it — happening **October 30, 2026** at Uhelný Mlýn in Libčice nad Vltavou, Czech Republic.
 
 ## Tech Stack
 
