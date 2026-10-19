@@ -1,39 +1,44 @@
 @use '../styles/type' as *;
-// A fact of the footing strip, so it wears the strip's two voices: the mono
-// label over the Bebas value. Mirrors `.meta-item` / `.meta-label` /
-// `.meta-value` in `pages/index.scss`, which are Astro-scoped and cannot
+// A stretch of the hero's facts line, so it wears the line's one voice at
+// the line's one size (`1em`): the typewriter note, the qualifier at 0.72,
+// the figure in mono a step down like the line's other figures. Mirrors
+// `.hero-facts` in `pages/index.scss`, which is Astro-scoped and cannot
 // reach into this island.
 .offer {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	// A long wave + deadline drops the price under it on a phone.
+	gap: 0.35rem 0.6em;
 	margin: 0;
+
 }
 
-// Holds the box while `/api/tickets` is in flight, so Date and Place never
-// shift when the price lands.
+// Holds the box while `/api/tickets` is in flight, so the line never
+// shifts when the price lands.
 .pending {
 	visibility: hidden;
 }
 
-// Same lifted 0.72 as the strip's other labels: the plate behind it is
+// Same lifted 0.72 as the line's other qualifier: the plate behind it is
 // photographic, and 0.55 fell under 4.5:1 on its darkest part.
 .label {
-	@include mono(var(--fs-label), 0.26em, uppercase);
+	@include note(1em);
 	color: rgba(255, 255, 255, 0.72);
 	white-space: nowrap;
 	margin: 0;
 }
 
 .value {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.6rem, 2.4vw, 2.2rem);
-	line-height: 1;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
+	@include note(1em);
 	color: var(--color-text);
 	white-space: nowrap;
 	margin: 0;
+}
+
+// The price is a figure: JetBrains Mono, like the date at the line's start.
+.figure {
+	@include mono(0.86em);
 }
 
 // Same hover as the venue link beside it.
@@ -45,21 +50,5 @@
 	&:hover,
 	&:focus-visible {
 		color: var(--color-accent-hot);
-	}
-}
-
-@media (max-width: 600px) {
-	.offer {
-		gap: 0.35rem;
-	}
-
-	// Half a phone column wide on the hero's 2×2 footing: the wave and its
-	// deadline wrap onto two lines rather than push the clock off the row.
-	.label {
-		white-space: normal;
-	}
-
-	.value {
-		font-size: 1.4rem;
 	}
 }

@@ -34,6 +34,10 @@ export default function NewsletterForm() {
 
 	return (
 		<div className={s.wrapper}>
+			<div className={s.edge} aria-hidden="true">
+				<span className={s.edgeWord}>DevFest.cz</span>
+				<span>2026</span>
+			</div>
 			<form
 				className={s.form}
 				method="post"
@@ -41,17 +45,16 @@ export default function NewsletterForm() {
 				onSubmit={handleSubmit}
 				noValidate
 			>
-				<label htmlFor="newsletter-email" className="sr-only">
-					Email address
-				</label>
-				<div className={s.paper}>
+				<div className={s.field}>
+					<label htmlFor="newsletter-email" className={s.label}>
+						Email
+					</label>
 					<input
 						className={s.input}
 						type="email"
 						id="newsletter-email"
 						name="fields[df_emailaddress]"
 						data-emailaddress="1"
-						placeholder="your@email.com"
 						required
 						autoComplete="email"
 						aria-describedby="newsletter-message"
@@ -65,7 +68,7 @@ export default function NewsletterForm() {
 					disabled={!consented}
 					aria-describedby="newsletter-consent-text"
 				>
-					Notify Me
+					Notify me
 				</button>
 				<input type="hidden" name="referrer" id="se-ref-field-id" defaultValue="" />
 				<input type="hidden" name="sessionid" id="se-sessionid-field" defaultValue="" />

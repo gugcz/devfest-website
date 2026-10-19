@@ -90,7 +90,8 @@ export const SPEAKERS = [
 /** Firestore `sessions` — raw docs on one day (event-local ISO, no offset):
  * keynote + lunch bands, two talks in two rooms, a workshop running through
  * lunch, a Room-TBA talk, an untimed talk (a third room stays empty, see
- * `ROOMS`). Lunch is a service session (dropped by /sessions, kept by /agenda). */
+ * `ROOMS`), and a lounge open most of the day in its own room. Lunch and the
+ * lounge are service sessions (dropped by /sessions, kept by /agenda). */
 export const SESSIONS = [
 	{
 		id: 'ses-keynote',
@@ -256,14 +257,35 @@ export const SESSIONS = [
 			categories: [{ name: 'Track', values: ['Web'] }],
 		},
 	},
+	{
+		id: 'ses-lounge',
+		data: {
+			// A speakerless service session running ≥180 minutes in a room of its
+			// own: /agenda draws it as one open-all-day block in that room's column
+			// (src/components/Agenda.tsx, `isLongRunning`), through the lunch band.
+			order: 8,
+			title: 'Lounge open',
+			description: '',
+			startsAt: '2026-10-30T09:45:00',
+			endsAt: '2026-10-30T13:15:00',
+			room: 'Lounge',
+			roomId: 'room-lounge',
+			isServiceSession: true,
+			isPlenumSession: false,
+			speakers: [],
+			categories: [],
+		},
+	},
 ];
 
 /** Firestore `rooms` — the Sessionize room list. "Workshop Lab" has no
- * session in it, so /agenda renders (and the audit covers) an empty column. */
+ * session in it, so /agenda renders (and the audit covers) an empty column;
+ * "Lounge" holds only the open-all-day `ses-lounge`. */
 export const ROOMS = [
 	{ id: 'room-main', data: { order: 0, name: 'Main Hall' } },
 	{ id: 'room-b', data: { order: 1, name: 'Room B' } },
 	{ id: 'room-lab', data: { order: 2, name: 'Workshop Lab' } },
+	{ id: 'room-lounge', data: { order: 3, name: 'Lounge' } },
 ];
 
 /** RTDB `/tickets` cache (`TicketsCache`) — a full pricing-wave roadmap. */

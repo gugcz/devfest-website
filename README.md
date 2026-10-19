@@ -10,18 +10,29 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 
 - **Framework:** [Astro](https://astro.build/) 7
 - **Language:** TypeScript (strict mode)
-- **Styling:** Sass — the design system is documented in [DESIGN.md](DESIGN.md)
+- **Styling:** Sass — the design system is documented in [docs/design.md](docs/design.md)
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** 22 (see `.nvmrc`; `engine-strict` is on)
 
-[DESIGN.md](DESIGN.md) is the binding visual system — check it before styling anything.
+[docs/design.md](docs/design.md) is the binding visual system — check it before styling anything.
+
+## Docs
+
+| File | What it is |
+| --- | --- |
+| [README.md](README.md) | Setup, every function, secrets and the console-only steps (this file) |
+| [CLAUDE.md](CLAUDE.md) | Working rules for contributors and coding agents: commands, definition of done, the repo map |
+| [docs/adr/](docs/adr/README.md) | Architecture decision records: why the site is built the way it is |
+| [docs/design.md](docs/design.md) | The design system |
+| [docs/product.md](docs/product.md) | The product record: users, purpose, brand commitments |
+| [`.claude/rules/`](.claude/rules) | Per-domain notes (tickets, lineup, invoices, workshops, analytics, design) |
 
 ## Getting Started
 
 ```bash
-# Install dependencies
-npm install
+# Install dependencies (site + functions)
+npm ci && npm --prefix functions ci
 
 # Start development server
 npm run dev
@@ -34,10 +45,18 @@ npm run preview
 
 # Accessibility audit (mock-data build + axe)
 npm run a11y
+
+# Everything CI checks: astro check, cognitive complexity, function tests, axe
+npm run verify
 ```
 
-`npm run dev` has no Hosting rewrite table, so it serves `/api/lineup` and
-`/api/tickets` from the fixtures in `scripts/a11y-mocks/api.mjs` (otherwise the
+`2026` is the production branch. A merge into it deploys the site
+(`firebase-hosting-merge.yml`) and, when `functions/**` or `firebase.json`
+changed, the functions (`firebase-functions-merge.yml`). Every PR gets a
+preview channel, `devfest-public--pr-<n>-*.web.app`, which calls the
+**production** functions.
+
+`npm run dev` has no Hosting rewrite table, so it serves `/api/*` from the fixtures in `scripts/a11y-mocks/api.mjs` (otherwise the
 lineup, agenda and ticket sections render "unavailable"). `npm run a11y` uses
 the same fixtures.
 
@@ -49,7 +68,7 @@ functions — use it when changing the functions.
 The ticket section renders client-side from an RTDB cache, read through `/api/tickets` — never the Firebase SDK (see [CLAUDE.md](CLAUDE.md)). The static build never calls ti.to.
 
 ```
-Cloud Scheduler (every 1 h, Europe/Prague)
+Cloud Scheduler (every 5 min, Europe/Prague)
   └─> Cloud Function `refreshTicketsScheduled` (europe-west1)
         ├─ fetch  https://api.tito.io/v3/<acc>/<evt>/releases
         └─ write  RTDB /tickets = { releases, accountSlug, eventSlug, fetchedAt }
@@ -62,7 +81,7 @@ Browser
 
 The Blaze plan is required for scheduled functions and Secret Manager.
 
-> **Shared Firebase project.** `devfest-cz-app` also hosts the mobile app's functions. This repo declares `"codebase": "website"`; the app repo must use a different codebase and function names.
+> **Shared Firebase project.** `devfest-cz-app` also hosts the mobile app's functions and site. This repo declares `"codebase": "website"` and only ever deploys `functions:website`; the app repo uses codebase `app` and different function names. Rules are split by collection and merged by hand. See [ADR 0002](docs/adr/0002-shared-firebase-project.md).
 
 ### Configure & deploy the functions
 
@@ -79,9 +98,12 @@ firebase functions:secrets:set SLACK_WEBHOOK_URL       # Slack incoming-webhook 
 echo 'TITO_ACCOUNT_SLUG=your-account' >> functions/.env
 echo 'TITO_EVENT_SLUG=your-event'      >> functions/.env
 
-# Deploy
-firebase deploy --only functions
+# Deploy: happens on merge to 2026 (firebase-functions-merge.yml).
+# A manual deploy is the maintainer's, and always scoped:
+firebase deploy --only functions:website
 ```
+
+The workflow deploys without `--force`: a function removed from the code makes the deploy fail instead of deleting it. Delete it by hand (`firebase functions:delete <name> --region europe-west1`), then re-run the workflow. A rotated secret reaches the functions only on the next deploy: re-run the workflow from the Actions tab.
 
 The default Cloud Functions service account has the IAM needed to write RTDB; no extra service-account JSON is required at runtime.
 
@@ -91,7 +113,7 @@ The default Cloud Functions service account has the IAM needed to write RTDB; no
 | ---- | ------- | ------- |
 | `refreshTicketsScheduled` | Cloud Scheduler, every 5 min | Sync ti.to releases → RTDB `/tickets` |
 | `ticketsApi` | HTTPS, public (`/api/tickets`) | Serve the cached `/tickets` roadmap as JSON for the browser to `fetch()` (5-min edge TTL) |
-| `ticketsWebhook` | HTTPS, public | Verifies `Tito-Signature` and posts purchase notifications to Slack |
+| `ticketsWebhook` | HTTPS, public | Verifies `Tito-Signature`, drops redeliveries (RTDB `webhookDedup`) and posts purchase notifications to Slack |
 | `dailyTicketStatusScheduled` | Cloud Scheduler, daily `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |
 
 Wire up the webhook in ti.to → Customize → Webhook Endpoints:
@@ -103,7 +125,7 @@ Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 
 `database.rules.json` documents the required rules. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.json` and run `firebase deploy --only database`.
 
-`/tickets` is read only by `ticketsApi` (Admin SDK), so `tickets.".read": true` is not required. Root default and all writes stay `false`. The cache omits raw counts (`quantity` / `quantity_sold` / `tickets_count`) and ships a coarse `has_sales` boolean — see `tito-api.ts::projectRelease`.
+`/tickets` is read only by `ticketsApi` (Admin SDK), so `tickets.".read": true` is not required. Root default and all writes stay `false`. `/workshops`, `/webhookDedup` and `/ops` (function health) are server-only and covered by the root deny. The cache omits raw counts (`quantity` / `quantity_sold` / `tickets_count`) and ships a coarse `has_sales` boolean — see `tito-api.ts::projectRelease`.
 
 ### App Check
 
@@ -145,8 +167,10 @@ Cloud Scheduler (every 15 minutes)
 Browser
   └─> Speakers.tsx / Sessions.tsx (client:load)
         └─ fetch /api/lineup  ─→  Hosting rewrite  ─→  Cloud Function `lineupApi` (europe-west1)
-                                                            └─ read Firestore speakers+sessions via Admin SDK (cached, 1-h edge TTL)
+                                                            └─ read Firestore speakers+sessions+rooms via Admin SDK (cached, 15-min edge TTL)
 ```
+
+**Share pages.** `/talks/<id>` and `/speakers/<id>` are static pages built from the production `/api/lineup` at `astro build` (`src/lib/lineup-static.ts`; set `DEVFEST_LINEUP_URL` to build against another copy). They unfurl the talk's or speaker's own preview and forward to the sheet. A failed read builds none; `404.astro` forwards links to anything newer. See [ADR 0006](docs/adr/0006-share-pages-built-from-the-live-lineup.md).
 
 ### Functions
 
@@ -163,6 +187,32 @@ firebase functions:secrets:set SESSIONIZE_ENDPOINT_ID   # Sessionize JSON API en
 ```
 
 Must be a **JSON API** endpoint ("All data" / "Speakers" view; an embed id returns HTML). Photos are mirrored to Firebase Storage. Requires the Firestore database.
+
+## Workshops — seat sign-up for ticket holders
+
+`/workshops` lets ticket holders save a seat at a workshop and join a waitlist when it is full. See [ADR 0005](docs/adr/0005-workshop-sign-up-on-the-app-login.md).
+
+```
+RTDB /workshops/{sessionId}/limit          ← set by hand in the console; opens the workshop
+RTDB /workshops/{sessionId}/registrations  ← written by the callable; first `limit` by time hold a seat
+
+Browser  /workshops  (Workshops.tsx, client:load)
+  ├─ fetch /api/workshops  ─→  `workshopsApi` (seat counts only, 30-s edge TTL)
+  ├─ sign in with the ticket code: the mobile app's
+  │    verifyRegistrationCodeCallable → emailed code → completeEmailVerificationCallable → custom token
+  └─ workshopRegistrationCallable (status / join / leave, App Check enforced)
+```
+
+### Functions
+
+| Name | Trigger | Purpose |
+| ---- | ------- | ------- |
+| `workshopsApi` | HTTPS, public (`/api/workshops`) | Seats taken and waiting per open workshop, no names |
+| `workshopRegistrationCallable` | Callable (App Check enforced) | Join or leave a workshop; trusts only a verified ticket on the app's Firestore `users/{uid}` |
+
+### Opening a workshop
+
+Firebase console → Realtime Database → `workshops/<Sessionize session id>/limit` = number of seats. The page lists the workshop from then on. Raising the limit seats the waitlist in order; deleting it closes sign-up. The sign-in callables and `users` collection belong to the mobile app repo: keep their names in step.
 
 ## Company invoices — iDoklad invoice-first flow
 
@@ -254,8 +304,10 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | Route | Description |
 |-------|-------------|
 | `/` | Landing page with countdown and newsletter signup |
-| `/speakers` | Speaker lineup (reads `/api/lineup`) |
+| `/speakers` | Speaker lineup (reads `/api/lineup`); `?speaker=<id>` opens one speaker |
+| `/speakers/<id>`, `/talks/<id>` | Share pages: one speaker's or talk's own link preview, then forward to the sheet |
 | `/agenda` | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day — and under it (`#talks`) every talk with search and filters (reads `/api/lineup`). `/sessions` redirects here, `?talk=` included |
+| `/workshops` | Workshop seat sign-up and waitlist for ticket holders (reads `/api/workshops`) |
 | `/invoice` | Request a company invoice to buy tickets by bank transfer |
 | `/partners` | Sponsors & partners |
 | `/press/downloads` | Press kit and downloadable assets (`/press` redirects to the press band on `/contact`) |
@@ -265,10 +317,15 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/venue` | Getting to Uhelný Mlýn — train from Prague, walk from the station, airport |
 | `/attending` | "I'm attending" share-card generator (client-side canvas → PNG) |
 | `/code-of-conduct` | Code of Conduct one-pager, Listener's contact, link to the full text |
-| `/privacy-policy` | GDPR privacy policy |
+| `/privacy-policy` | GDPR privacy policy, website and mobile app |
+| `/delete-account` | How to delete a mobile app account (the Google Play "Delete account URL"; keep the route) |
 | `/newsletter-subscription-thank-you` | Post-signup confirmation |
 | `/thank-you` | Post-purchase confirmation (ti.to "thank you URL") |
-| `/404` | Not-found page |
+| `/404` | Not-found page; also forwards share links to talks or speakers added since the last build |
+
+Unlisted pages (`noindex`, out of the sitemap, linked from nowhere): `/invite/<member>` (one per `src/content/team.json` entry) and `/speaker-card`.
+
+`public/.well-known/apple-app-site-association` decides which devfest.cz links open the iOS app: only `/sessions`, `/agenda` and `/game/*`. Add a path only when the app has a route for it.
 
 ## Links
 

@@ -10,7 +10,7 @@
 			},
 			{
 				"q": "What does the day look like?",
-				"a": "Registration opens at 8:00 (there is a cloakroom for coats and bags), kick-off is at 8:45, keynote at 9:00. From then on the talks run on two stages — <strong>Moonshine</strong> and <strong>Speakeasy</strong> — in 20- and 40-minute slots, with a lunch break around midday and a longer break in the afternoon. Lightning talks and closing remarks wrap up around 18:30, and the afterparty follows. The full timetable is on the <a href=\"/agenda\">agenda</a> page; a slot or two may still shift."
+				"a": "Registration opens at 08:00 (there is a cloakroom for coats and bags), kick-off is at 08:45, keynote at 09:00. From then on the talks run on two stages — <strong>Moonshine</strong> and <strong>Speakeasy</strong> — in 20- and 40-minute slots, with a lunch break around midday and a longer break in the afternoon. Lightning talks and closing remarks wrap up at 19:00, and the afterparty follows. The full timetable is on the <a href=\"/agenda\">agenda</a> page; a slot or two may still shift."
 			},
 			{
 				"q": "How do I get to the venue?",
@@ -30,11 +30,15 @@
 			},
 			{
 				"q": "Is there an afterparty?",
-				"a": "Yes. Once the closing remarks are done, around 18:30, the afterparty kicks off right at the venue. More details closer to the date."
+				"a": "Yes. Once the closing remarks are done at 19:00, the afterparty kicks off right at the venue. More details closer to the date."
 			},
 			{
 				"q": "Is there a code of conduct?",
 				"a": "Yes. DevFest.cz is a community event and harassment of any kind is not allowed; if you are asked to stop, you stop. The short version, and who to talk to on the day, is on the <a href=\"/code-of-conduct\">Code of Conduct</a> page."
+			},
+			{
+				"q": "What's the story with the detective theme?",
+				"a": "This year's edition is styled as a film-noir case, and the case doesn't stay on the posters: there's a game running through the day for anyone who wants to play investigator. More is revealed closer to the date — and on the day itself."
 			}
 		]
 	},
@@ -64,7 +68,7 @@
 	{
 		"id": "program",
 		"order": 3,
-		"label": "Program & speakers",
+		"label": "Programme & speakers",
 		"items": [
 			{
 				"q": "Who is speaking?",
@@ -80,7 +84,7 @@
 			},
 			{
 				"q": "How can I become a speaker?",
-				"a": "The Call for Proposals closed over the summer and the program for DevFest.cz 2026 is out — see the <a href=\"/speakers\">speakers</a> and <a href=\"/agenda\">agenda</a> pages. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>."
+				"a": "The Call for Proposals closed over the summer and the programme for DevFest.cz 2026 is out — see the <a href=\"/speakers\">speakers</a> and <a href=\"/agenda\">agenda</a> pages. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>."
 			}
 		]
 	},
@@ -89,10 +93,6 @@
 		"order": 4,
 		"label": "Get involved",
 		"items": [
-			{
-				"q": "What's the story with the detective theme?",
-				"a": "This year's edition is styled as a film-noir case, and the case doesn't stay on the posters: there's a game running through the day for anyone who wants to play investigator. More is revealed closer to the date — and on the day itself."
-			},
 			{
 				"q": "I'm coming — how do I tell people?",
 				"a": "Make a share card on the <a href=\"/attending\">I'm attending</a> page: add your photo (processed on your device only) or let your initials carry it, then download it or share it straight to your feed."
@@ -103,7 +103,7 @@
 			},
 			{
 				"q": "How do I stay updated?",
-				"a": "Drop your email in the form on the <a href=\"/#newsletter\">home page</a> and follow us on social media — ticket drops and program news land there first."
+				"a": "Drop your email in the form on the <a href=\"/#newsletter\">home page</a> and follow us on social media — ticket drops and programme news land there first."
 			}
 		]
 	}

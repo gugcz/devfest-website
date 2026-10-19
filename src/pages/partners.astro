@@ -1,91 +1,45 @@
 ---
 import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import { getActivePartnerTiers, getMediaPartners, getCommunityPartners, type Partner } from '../lib/partners';
+import filipPhoto from '../assets/team/filip-goszler-bw.webp';
+import {
+	getActivePartnerTiers,
+	getMediaPartners,
+	getCommunityPartners,
+	partnerLogo,
+	type Partner,
+} from '../lib/partners';
 
 // Every logo wall on the page, top tier first: the ladder, then the two
-// off-ladder rows — community, then media. One loop, one grid module; the
-// only per-wall difference is the ground. Media marks ship dark (made for
-// light backgrounds), so that wall's cells carry a cream plate.
-type Wall = { id: string; label: string; partners: Partner[]; plated?: boolean };
+// off-ladder rows — community, then media. Each tier is a plain label and its
+// marks on the table; a logo's size comes from its tier's reference box
+// (`partnerLogo` in src/lib/partners.ts).
+type Wall = { id: string; label: string; partners: Partner[] };
 const walls: Wall[] = [
 	...(await getActivePartnerTiers()),
 	{ id: 'community', label: 'Community', partners: await getCommunityPartners() },
-	{ id: 'media', label: 'Media', partners: await getMediaPartners(), plated: true },
+	{ id: 'media', label: 'Media', partners: await getMediaPartners() },
 ].filter((wall) => wall.partners.length > 0);
 
-// ─── LOGO OPTIMISATION ─────────────────────────────────────────────────────
-// The masters live in `src/assets/partners/<tier>/` so the build can resize
-// them and emit modern formats (assets in `public/` are served untouched).
-// The `partners` collection still stores plain path strings, so — same pattern
-// as team.astro — we glob the sources and key them by filename.
-const logoSources = import.meta.glob<{ default: ImageMetadata }>('../assets/partners/**/*', {
-	eager: true,
-});
-const logoByFile = new Map<string, ImageMetadata>(
-	Object.entries(logoSources).map(([path, mod]) => [path.split('/').pop() as string, mod.default])
-);
-const logoFor = (logo: string): ImageMetadata =>
-	logoByFile.get(logo.split('/').pop() as string) as ImageMetadata;
-
-// SVG wordmarks stay vector (`format="svg"`); rasters get a srcset sized to
-// their box.
-//
-// ─── OPTICAL NORMALISATION ────────────────────────────────────────────────
-// Equal ink AREA reads as equal weight: each mark gets a box of the same
-// area shaped to its ratio (5:1 wordmark ≈190×38, square glyph ≈76×76).
-const LOGO_AREA = 7200;
-const LOGO_MAX_W = 230;
-const LOGO_MAX_H = 76;
-// A plated mark (the `plated` flag in the partners collection) ships with its
-// own padding and background baked into the file, so the same area cap would
-// render the ink inside it far too small. It gets a larger box and fills the
-// cell's width.
-const PLATE_SCALE = 2.1;
-
-const opticalBox = (img: ImageMetadata, plated = false) => {
-	const ratio = img.width && img.height ? img.width / img.height : 3;
-	const area = LOGO_AREA * (plated ? PLATE_SCALE : 1);
-	const maxW = plated ? 240 : LOGO_MAX_W;
-	const maxH = plated ? 120 : LOGO_MAX_H;
-	let height = Math.sqrt(area / ratio);
-	let width = height * ratio;
-	if (width > maxW) {
-		width = maxW;
-		height = width / ratio;
-	}
-	if (height > maxH) {
-		height = maxH;
-		width = height * ratio;
-	}
-	return { width: Math.round(width), height: Math.round(height) };
-};
-
-// One call site's worth of per-logo props: the optical box as custom
-// properties, plus a srcset that matches it (an `w`-descriptor image needs
-// `sizes` to state its real layout width, or the browser picks the wrong file).
-const logoProps = (logo: string, plated = false) => {
-	const img = logoFor(logo);
-	const box = opticalBox(img, plated);
-	const shared = {
-		src: img,
-		style: `--logo-w:${box.width / 16}rem;--logo-h:${box.height / 16}rem`,
-	};
-	return img.format === 'svg'
-		? { ...shared, format: 'svg' as const, layout: 'none' as const }
-		: {
-				...shared,
-				widths: [box.width, box.width * 2, box.width * 3],
-				sizes: `${box.width}px`,
-			};
+// How much larger than its reference box a tier sets on this page. Passed to
+// `partnerLogo` (not a CSS `--logo-scale`) so the srcset is cut for the size
+// the mark actually renders at. Each scaled box fits its grid cell at 1440, so
+// no mark is clamped by its cell and every mark in a tier keeps the same ink
+// area; each tier's box stays smaller than the one above it, so the rank reads
+// from size alone. The narrower widths step whole tiers down in partners.scss.
+const TIER_SCALE: Record<string, number> = {
+	platinum: 1.5,
+	diamond: 1.5,
+	gold: 1.28,
+	silver: 1.28,
+	community: 1.2,
+	media: 1.2,
 };
 
 const DECK_READY = true;
 const PRESENTATION_URL = 'https://canva.link/828fiq93km2hwds';
 const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.cz' };
-
 ---
 
 <BaseLayout
@@ -94,76 +48,80 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'In good <span class="red">company.</span>'}
+			titleHtml={'Partners'}
 			lede="DevFest.cz is a non-profit conference run by its community. The companies below pay for the venue and the day."
 			seoHeading="Partner with DevFest.cz 2026"
 			titleId="partners-title"
-			focus="12% 50%"
 		/>
 
-		{walls.map((wall) => (
-			<section class="logo-wall" aria-labelledby={`${wall.id}-partners-title`}>
-				<div class="wall-inner">
-					{/* Tier name alone at poster scale. Six sections each headed
-					    "<Tier> partners" with the second word in red was the same
-					    lockup six times down one page, so the heading is just the
-					    name — the logos under it are the count. */}
-					<div class="wall-head">
-						<h2 id={`${wall.id}-partners-title`} class="display head-title">
+		<div class="tiers">
+			<div class="tiers-inner">
+				{walls.map((wall) => (
+					<section class:list={['tier', `tier-${wall.id}`]} aria-labelledby={`${wall.id}-partners-title`}>
+						<h2 id={`${wall.id}-partners-title`} class="tier-label">
 							{wall.label}<span class="sr-only"> partners</span>
 						</h2>
+						<div class="tier-body">
+							<ul class="wall">
+								{wall.partners.map((p) => {
+									const { props } = partnerLogo(p, wall.id, TIER_SCALE[wall.id] ?? 1);
+									return (
+										<li class="logo-item">
+											{p.url ? (
+												<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
+													<Image class={`logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
+												</a>
+											) : (
+												<Image class={`logo logo--${p.mono}`} alt={p.name} loading="lazy" {...props} />
+											)}
+										</li>
+									);
+								})}
+							</ul>
+						</div>
+					</section>
+				))}
+			</div>
+		</div>
+
+		<!-- CLOSER — the title on the table, Filip's card beside it; the deck
+		     button is the page's one red. -->
+		<section class="partners-cta" aria-labelledby="partners-cta-title">
+			<div class="cta-inner">
+				<h2 id="partners-cta-title" class="display cta-title">
+					Become a<br />partner
+				</h2>
+
+				<div class="paper cta-card">
+					<p class="paper-edge cta-edge"><span>2026</span></p>
+					<div class="cta-body">
+						<div class="paper-photo cta-mug">
+							<Image src={filipPhoto} alt={FILIP.name} widths={[120, 240]} sizes="120px" loading="lazy" />
+						</div>
+						<div>
+							<p class="cta-say">
+								Tell us what you want from the day and we&rsquo;ll find the tier that fits.
+							</p>
+							<p class="cta-who">
+								<span class="cta-name">{FILIP.name}</span>
+								<span class="cta-role">{FILIP.role}</span>
+								<a class="cta-mail" href={`mailto:${FILIP.email}`}>{FILIP.email}</a>
+							</p>
+						</div>
 					</div>
-					{/* The SAME grid module for every wall — one cell size for every
-					    partner on the page. Only the ground differs: a plated wall's
-					    cells are cream, for marks made for light backgrounds. */}
-					<ul class:list={['logo-grid', { 'logo-grid--plated': wall.plated }]}>
-						{wall.partners.map((p) => (
-							<li class="logo-cell">
-								{p.url ? (
-									<a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name}>
-										<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo, p.plated)} />
-									</a>
-								) : (
-									<Image class={`logo${p.plated ? ' is-plated' : ''}`} alt={p.name} loading="lazy" {...logoProps(p.logo, p.plated)} />
-								)}
-							</li>
-						))}
-					</ul>
-				</div>
-			</section>
-		))}
-		<!-- CLOSING STATEMENT — the page's one red field -->
-		<section class="band band--accent partners-cta" aria-labelledby="partners-cta-title">
-			<div class="band-inner closer">
-				<div>
-					<h2 id="partners-cta-title" class="display closer-title">
-						Back the<br />next case.
-					</h2>
-				</div>
 
-				<div class="closer-side">
-					<p class="closer-note">
-						Tell us what you&rsquo;re after, whether that is reach, hiring or backing
-						the community, and we&rsquo;ll find the tier that fits.
-					</p>
-
-					<p class="partners-contact">
-						<span class="contact-name">{FILIP.name} &mdash; {FILIP.role}</span>
-						<a class="email-link" href={`mailto:${FILIP.email}`}>{FILIP.email}</a>
-					</p>
-
-					<div class="closer-actions">
+					<div class="cta-actions">
 						{DECK_READY ? (
 							<a class="btn-primary" href={PRESENTATION_URL} target="_blank" rel="noopener noreferrer">
 								See partnership deck
 							</a>
 						) : (
 							<span class="partners-cta-soon" aria-disabled="true">
-								<span class="partners-cta-label">Partnership deck</span>
-								<span class="partners-cta-stamp" aria-hidden="true">Coming soon</span>
+								<span>Partnership deck</span>
+								<span class="partners-cta-stamp">Coming soon</span>
 							</span>
 						)}
-						<a class="btn-ghost" href={`mailto:${FILIP.email}`}>Email Filip</a>
+						<a class="action cta-action" href={`mailto:${FILIP.email}`}>Email Filip</a>
 					</div>
 				</div>
 			</div>

@@ -1,100 +1,91 @@
 @use '../styles/type' as *;
+// The sign-off: the official logo at poster scale, then four columns, then
+// the folio line. Space separates the three, never a rule.
 .footer {
 	position: relative;
 	width: 100%;
 	z-index: 2;
-	padding: var(--section-y-tight) var(--gutter) 2.4rem;
-	background: #030303;
-	font-family: var(--font-jetbrains-mono), monospace;
-	color: rgba(255, 255, 255, 0.65);
+	// No opening air: the last band's tight bottom step is the only space
+	// between the page and the sign-off (BaseLayout.scss, `.page-stack`).
+	padding: 0 var(--gutter) 3rem;
+	background: var(--color-bg);
+	font-family: var(--font-special-elite), cursive;
+	color: var(--ink);
 }
 
 .footer-inner {
 	max-width: var(--maxw);
 	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
 }
 
-/* ---- the mark ---- */
-// The brand asset itself — never typeset the name in Bebas, which produces a
-// second wordmark disagreeing with the header's. It heads the brand column
-// rather than taking a row of its own.
+/* ---- the logo ---- */
+// The logo file as artwork: no recolour, no hover treatment.
 .footer-logo-link {
-	display: inline-flex;
-	line-height: 0;
-	transition: opacity 0.2s ease;
+	display: block;
+	align-self: flex-start;
+	width: min(40rem, 80vw);
+	// The file carries transparent margin left of the mark (83 of 3000 px):
+	// pull it back so the mark starts on the text column.
+	margin-left: calc(min(40rem, 80vw) * -83 / 3000);
+	margin-bottom: clamp(2.5rem, 4vw, 3.5rem);
 
-	&:hover,
 	&:focus-visible {
-		opacity: 0.75;
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-lg);
 	}
 }
 
 .footer-logo {
 	display: block;
-	// Floor = the brand manual's 180px digital minimum plus the artboard's clear space.
-	width: clamp(188px, 18vw, 12.75rem);
+	width: 100%;
 	height: auto;
 }
 
 .footer-grid {
 	display: grid;
 	// Brand · Attend · About · Event · Organizer.
-	grid-template-columns: 1.4fr 1fr 1fr 1.1fr 1.3fr;
-	gap: 3.5rem;
-	// No rules: the footer is set apart by space, not by a line above the grid
-	// or one between the grid and the copyright row.
-	padding: 0 0 clamp(2.5rem, 5vw, 3.5rem);
+	grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr));
+	gap: 2.5rem 3rem;
+	align-items: start;
 
-	// `em` BREAKPOINTS, the one place on the site (60em = 960px, 31.25em =
-	// 500px at 16px). They move with text zoom: `.org` holds the legal name
-	// as one `nowrap` token, which overflowed the viewport at a 32px root
-	// (DEVF-49); a zoomed reader needs a wider column, not a wrap
-	// (`overflow-wrap: anywhere` severed the name mid-word).
-	// Five columns need ~1200px before `.org`'s one-token legal name fits its
-	// track; under that the brand takes its own row and the four lists sit
-	// three, then two, to a row.
-	@media (max-width: 75em) {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+	// `em` breakpoints: they move with text zoom, so a zoomed reader gets
+	// wider columns instead of a clipped legal name (DEVF-49). Two columns,
+	// the brand on its own row above them.
+	@media (max-width: 45em) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 2.5rem 1.5rem;
 
 		.col-brand {
 			grid-column: 1 / -1;
 		}
 	}
 
-	@media (max-width: 60em) {
-		grid-template-columns: 1fr 1fr;
-		gap: 2.8rem;
-	}
-
-	// Stacks, but stays LEFT-SET. Every block on the site is left-set at
-	// every other width, and the footer was the one surface that centred
-	// itself below 500px — so the phone was the only place the site changed
-	// its mind about where a column starts.
-	@media (max-width: 31.25em) {
-		grid-template-columns: 1fr;
-		gap: 2.6rem;
+	@media (max-width: 23.75em) {
+		grid-template-columns: minmax(0, 1fr);
 	}
 }
 
 .col {
 	display: flex;
 	flex-direction: column;
-	gap: 1.2rem;
 	min-width: 0;
 }
 
 .col-title {
-	@include mono(var(--fs-label), 0.24em, uppercase);
-	color: var(--ink-strong);
+	@include note(var(--fs-note-sm));
+	color: var(--ink-meta);
 	font-weight: normal;
-	margin: 0;
-	// Plain. Never flank a column head with a pair of hairlines.
+	margin: 0 0 1.1rem;
 }
 
 .brand-tagline {
 	@include prose(var(--fs-ui), 1.55);
-	color: var(--ink-dim);
-	max-width: 32ch;
+	color: var(--ink);
+	max-width: 30ch;
+	margin: 0 0 1.1rem;
+	text-wrap: pretty;
 }
 
 .contact {
@@ -107,146 +98,14 @@
 	margin: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 0.85rem;
+	gap: 0.6rem;
 }
 
 .footer-link {
-	@include mono(var(--fs-ui), 0.04em);
-	color: var(--ink);
+	@include action;
+	color: var(--color-text);
 	text-decoration: none;
-	border-bottom: 1px solid transparent;
-	padding-bottom: 1px;
-	transition: color 0.2s ease, border-color 0.2s ease;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		border-bottom-color: var(--color-accent-hot);
-	}
-}
-
-.ext {
-	font-size: 0.85em;
-	opacity: 0.65;
-}
-
-.event-meta {
-	display: grid;
-	grid-template-columns: auto 1fr;
-	column-gap: 1.4rem;
-	row-gap: 0.7rem;
-	margin: 0;
-	font-size: var(--fs-ui);
-
-	// Single-column mobile footer: the two-column term/value grid is sized by
-	// its widest value (the venue, which wraps), so at phone widths the
-	// values land far off the label they belong to. Stack term over value
-	// instead — both still left-set, like the rest of the footer.
-	@media (max-width: 31.25em) {
-		grid-template-columns: 1fr;
-		row-gap: 0.35rem;
-
-		dd + dt {
-			margin-top: 1rem;
-		}
-	}
-
-	dt {
-		font-size: var(--fs-label);
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		color: var(--ink-meta);
-		align-self: center;
-	}
-
-	dd {
-		margin: 0;
-		color: rgba(255, 255, 255, 0.82);
-		letter-spacing: 0.04em;
-
-		// Venue links out to the map — muted meta with a hairline underline.
-		a {
-			color: inherit;
-			text-decoration: none;
-			border-bottom: 1px solid var(--field-border);
-			padding-bottom: 1px;
-			transition: color 0.2s ease, border-color 0.2s ease;
-
-			&:hover,
-			&:focus-visible {
-				color: var(--color-accent-hot);
-				border-bottom-color: var(--color-accent-hot);
-			}
-		}
-	}
-}
-
-// A standalone contact link in an <address>, so SC 2.5.8's inline exception does
-// not cover it (117x17). inline-flex + a 2.75rem row gives a real touch target.
-.email {
-	display: inline-flex;
-	align-items: center;
-	min-height: 2.75rem;
-	@include prose(var(--fs-ui));
-	color: rgba(255, 255, 255, 0.88);
-	text-decoration: none;
-	border-bottom: 1px solid var(--field-border);
-	padding-bottom: 1px;
-	transition: color 0.2s ease, border-color 0.2s ease;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		border-bottom-color: var(--color-accent-hot);
-	}
-}
-
-.col-organizer {
-	gap: 1.5rem;
-}
-
-.org {
-	@include mono(var(--fs-label-lg));
-	line-height: 1.6;
-	color: rgba(255, 255, 255, 0.65);
-	max-width: 34ch;
-}
-
-.org-link {
-	display: inline;
-	// Legal name + arrow is one unit — break before it, never inside (the
-	// NBSPs in the markup agree). Do not "fix" an overflow with
-	// `overflow-wrap: anywhere`; see `.footer-grid`.
-	white-space: nowrap;
-	// Inline-in-prose link: a persistent underline distinguishes it without colour alone (1.4.1).
-	text-decoration: underline;
-	text-decoration-color: var(--rule-red);
-	text-underline-offset: 3px;
-}
-
-.socials {
-	display: flex;
-	align-items: center;
-	gap: 0.6rem;
-	flex-wrap: wrap;
-}
-
-.social-link {
-	color: rgba(255, 255, 255, 0.72);
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 2.5rem;
-	height: 2.5rem;
-	// Nothing in this system is rounder than 2px.
-	border-radius: var(--radius);
-	transition: color 0.25s ease, background 0.25s ease;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		background: rgba(241, 16, 0, 0.08);
-	}
+	transition: color 0.2s ease;
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
@@ -254,21 +113,139 @@
 	}
 }
 
-.footer-bottom {
-	padding-top: 2.4rem;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	text-align: center;
-	font-size: var(--fs-label);
-	letter-spacing: 0.06em;
-	color: var(--ink-muted);
+@media (hover: hover) {
+	.footer-link:hover {
+		color: var(--color-accent-hot);
+	}
+}
 
-	// Both halves wrap at phone widths, which leaves the middot separator
-	// dangling and the row visually off-centre. Stack them instead.
-	@media (max-width: 31.25em) {
+// Term over value, both left-set.
+.event-meta {
+	display: grid;
+	row-gap: 0.25rem;
+	margin: 0;
+	font-size: var(--fs-ui);
+
+	dd + dt {
+		margin-top: 0.75rem;
+	}
+
+	dt {
+		@include note(var(--fs-note-sm));
+		color: var(--ink-meta);
+	}
+
+	dd {
+		margin: 0;
+		line-height: 1.45;
+		color: var(--color-text);
+
+		// Venue links out to the map: an underlined inline link.
+		a {
+			color: inherit;
+			text-decoration: underline;
+			text-underline-offset: 3px;
+			transition: color 0.2s ease;
+
+			&:focus-visible {
+				outline: 2px solid var(--color-accent-hot);
+				outline-offset: var(--focus-gap-tight);
+			}
+		}
+	}
+}
+
+@media (hover: hover) {
+	.event-meta dd a:hover {
+		color: var(--color-accent-hot);
+	}
+}
+
+// A standalone contact link in an <address>, so SC 2.5.8's inline exception does
+// not cover it. inline-flex + a 2.75rem row gives a real touch target.
+.email {
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
+	@include prose(var(--fs-body));
+	color: var(--color-text);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	transition: color 0.2s ease;
+}
+
+@media (hover: hover) {
+	.email:hover {
+		color: var(--color-accent-hot);
+	}
+}
+
+.org {
+	@include prose(var(--fs-ui), 1.5);
+	color: var(--color-text);
+	margin: 0 0 1rem;
+}
+
+.org-link {
+	// The legal name is one unit — break before it, never inside (the NBSP
+	// in the markup agrees). Do not "fix" an overflow with
+	// `overflow-wrap: anywhere`; see `.footer-grid`.
+	white-space: nowrap;
+	// Back to prose inside the sentence; a persistent underline marks it
+	// as a link without colour alone (1.4.1).
+	font: inherit;
+	letter-spacing: 0;
+	text-transform: none;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.socials {
+	display: flex;
+	align-items: center;
+	// One row at every width: the targets shrink before they wrap.
+	flex-wrap: nowrap;
+}
+
+// The glyph sits at the target's left edge, so the first one lines up with
+// the column without a negative margin; the target runs on to its right.
+.social-link {
+	color: var(--ink-strong);
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex: 0 1 2.5rem;
+	min-width: 1.75rem;
+	height: 2.5rem;
+	border-radius: var(--radius);
+	transition: color 0.25s ease;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-tight);
+	}
+}
+
+@media (hover: hover) {
+	.social-link:hover {
+		color: var(--color-accent-hot);
+	}
+}
+
+// The folio line: copyright left, the case number centre, the repo right.
+.footer-bottom {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.5rem 2rem;
+	margin-top: clamp(3rem, 5vw, 4.5rem);
+	@include note(var(--fs-note-sm));
+	color: var(--ink-dim);
+
+	@media (max-width: 45em) {
 		flex-direction: column;
-		gap: 0.7rem;
+		align-items: flex-start;
 	}
 }
 
@@ -276,24 +253,21 @@
 	font-size: inherit;
 }
 
+// The manual's `Case no.` stamp, a mono figure.
+.folio {
+	@include mono(var(--fs-label-xs), 0.16em, uppercase);
+}
+
 .opensource {
 	font-size: inherit;
 
-	// The link is a `.footer-link`, which sets its own UI size; in this row
-	// it takes the copyright's size so the line reads as one line.
+	// In this row the link takes the line's note voice, underlined.
 	.footer-link {
-		font-size: inherit;
-		letter-spacing: inherit;
-	}
-
-	&::before {
-		content: '\00b7';
-		margin: 0 0.6em;
-	}
-
-	@media (max-width: 31.25em) {
-		&::before {
-			content: none;
-		}
+		font: inherit;
+		letter-spacing: 0;
+		text-transform: none;
+		color: var(--ink-strong);
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 }

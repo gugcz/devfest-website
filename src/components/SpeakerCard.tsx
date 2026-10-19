@@ -44,6 +44,10 @@ function monogramBitmap(name: string, fonts: Fonts, palette: Palette): Promise<I
 	canvas.height = CARD_SIZE;
 	const ctx = canvas.getContext('2d');
 	if (ctx) {
+		// The panel token is white at an opacity: lay it over black, or the
+		// plate would export see-through.
+		ctx.fillStyle = '#000000';
+		ctx.fillRect(0, 0, CARD_SIZE, CARD_SIZE);
 		ctx.fillStyle = palette.panel;
 		ctx.fillRect(0, 0, CARD_SIZE, CARD_SIZE);
 		ctx.fillStyle = palette.monogramInk;
@@ -517,6 +521,10 @@ export default function SpeakerCard() {
 						onPointerCancel={handlePointerUp}
 						data-draggable={photo && photoSource !== 'monogram' ? 'true' : 'false'}
 					/>
+					<span className={`paper-edge ${a.edge}`} aria-hidden="true">
+						<span className="edge-word">DevFest.cz</span>
+						<span>30.10.2026</span>
+					</span>
 					{photoLoading && (
 						<div className={s.photoLoading}>
 							<LoadingState label="Developing your photo" />

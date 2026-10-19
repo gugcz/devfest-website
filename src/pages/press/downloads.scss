@@ -1,200 +1,154 @@
 @use '../../styles/type' as *;
-/* ===================== BODY ===================== */
+// The full press kit, in the /contact press-kit language: each logo variant
+// a straight paper card on the black table under its plain label, the formats
+// under it as Bebas links with their sizes as figures, the brand manual as
+// the one red.
+
 .back-link {
-	// Standalone nav link, so SC 2.5.8's inline exception does not apply (154x19).
-	display: inline-flex;
-	align-items: center;
-	min-height: 2.75rem;
-	margin-bottom: 2.6rem;
-	@include mono(var(--fs-label-sm), 0.22em, uppercase);
-	@include hairline-link(var(--ink-meta));
-	padding-bottom: 2px;
+	margin-bottom: clamp(2.5rem, 4vw, 3.5rem);
 }
 
-/* ===================== SECTION HEAD ===================== */
-// Left-set editorial head at the homepage section rhythm.
-/* ===================== GRID ===================== */
-// Ruled contact sheet. Fixed column counts, not `auto-fill`: the page must
-// know the count to close a short last row with blanks (downloads.astro).
-.presskit-grid {
+/* ===================== VARIANTS ===================== */
+.kit-grid {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: 0;
-	border-top: 1px solid var(--rule);
-	border-left: 1px solid var(--rule);
+	gap: 3.5rem clamp(1.75rem, 3vw, 3rem);
+	align-items: start;
 
-	@media (min-width: 700px) {
+	@media (min-width: 640px) {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
-	@media (min-width: 1000px) {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-
-	@media (min-width: 1280px) {
+	@media (min-width: 1100px) {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 }
 
-// A blank cell of the sheet: the ruling and the row height, nothing else.
-// Shown only at the column count that needs it.
-.kit-filler {
-	display: none;
-	min-height: 168px;
-	border-right: 1px solid var(--rule);
-	border-bottom: 1px solid var(--rule);
-}
-
-@media (min-width: 700px) and (max-width: 999px) {
-	.kit-filler--c2 { display: block; }
-}
-
-@media (min-width: 1000px) and (max-width: 1279px) {
-	.kit-filler--c3 { display: block; }
-}
-
-@media (min-width: 1280px) {
-	.kit-filler--c4 { display: block; }
-}
-
-.kit-link {
-	position: relative;
+.kit-item {
 	display: flex;
 	flex-direction: column;
-	min-height: 168px;
-	overflow: hidden;
-	background: transparent;
-	border: 0;
-	border-right: 1px solid var(--rule);
-	border-bottom: 1px solid var(--rule);
-	border-radius: 0;
-	text-decoration: none;
-	transition: none;
-
-	// The cell under the cursor is the one the lamp is over.
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: var(--wash-strong);
-		opacity: 0;
-		pointer-events: none;
-		z-index: 0;
-		transition: opacity 0.28s ease;
-	}
-
-	&:hover::before,
-	&:focus-visible::before {
-		opacity: 1;
-	}
-
-	&:hover,
-	&:focus-visible {
-		.kit-label { color: var(--color-accent-hot); }
-		.kit-dl { color: var(--color-accent-hot); transform: translateY(2px); }
-	}
+	gap: 1.1rem;
+	min-width: 0;
 }
 
+.kit-print {
+	padding: 0.65rem;
+}
+
+// The variant's heading: a plain typed label over its card.
+.kit-label {
+	@include note(var(--fs-note));
+	font-weight: 400;
+	color: var(--ink-soft);
+	margin: 0;
+}
+
+// The mark in the print's well: on the paper itself, or on black for a
+// white mark.
 .kit-preview {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 92px;
-	border-bottom: 1px solid var(--rule);
-	background: var(--color-cream);
+	aspect-ratio: 16 / 9;
+	background: var(--paper);
 
 	img {
-		max-width: 100%;
-		max-height: 100%;
-		object-fit: contain;
-		padding: 14px 22px;
 		display: block;
+		width: 72%;
+		height: auto;
+		max-height: 60%;
+		object-fit: contain;
 	}
 }
 
-/* White / light marks + source files read better on a dark tile. */
 .kit-preview--dark {
-	background: var(--panel-lit-2);
+	background: var(--color-bg);
 }
 
-.kit-badge {
-	@include mono(var(--fs-label-sm), 0.16em);
-	color: var(--ink-strong);
-	// No box: the format is a label on the tile, not a chip.
-	letter-spacing: 0.22em;
-}
-
-.kit-meta {
-	flex: 1;
+.kit-formats {
+	list-style: none;
+	margin: 0;
+	padding: 0 0.15rem;
 	display: flex;
+	flex-wrap: wrap;
+	gap: 0 1.6rem;
+}
+
+.kit-format {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.4rem;
+	min-height: 2.75rem;
+	padding: 0.6rem 0;
+	@include action;
+	color: var(--color-text);
+	text-decoration: none;
+	transition: color 0.2s ease;
+
+	&:focus-visible {
+		color: var(--color-accent-hot);
+	}
+}
+
+@media (hover: hover) {
+	.kit-format:hover {
+		color: var(--color-accent-hot);
+	}
+}
+
+.kit-format-size {
+	@include mono(var(--fs-label-xs), 0.1em);
+	color: var(--ink-meta);
+}
+
+/* ===================== DOCUMENTS ===================== */
+.kit-docs {
+	list-style: none;
+	margin: clamp(4rem, 7vw, 6rem) 0 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
-	justify-content: space-between;
-	gap: 0.8rem;
-	padding: 0.7rem 0.85rem;
+	gap: 1rem 2rem;
 }
 
-.kit-meta-text {
-	display: flex;
-	flex-direction: column;
-	gap: 0.28rem;
-	min-width: 0;
+.kit-doc {
+	gap: 0.9rem;
 }
 
-// The asset's name is the tile's title, so it is set like one: Bebas, uppercase,
-// on the tile step /agenda's cells use.
-.kit-label {
-	@include row-title(var(--fs-title-sm));
-	transition: color 0.2s;
+// White on the red fill clears AA only as large text: the format and size
+// are set in the button's own Bebas at --fs-cta and its colour.
+.btn-primary .kit-doc-size {
+	font: inherit;
+	color: inherit;
+	letter-spacing: inherit;
 }
 
-.kit-spec {
-	@include mono(var(--fs-label-xs), 0.12em, uppercase);
-	color: var(--ink-soft);
-}
-
-.kit-dl {
-	flex-shrink: 0;
-	font-size: var(--fs-body);
-	color: var(--ink-muted);
-	transition: color 0.2s, transform 0.2s;
+.kit-doc-size {
+	@include mono(var(--fs-label), 0.1em);
+	color: var(--ink-meta);
 }
 
 /* ===================== EMPTY STATE ===================== */
 .empty-state {
-	position: relative;
-	border: 0;
-	border-radius: 0;
-	background: transparent;
-	padding: 2.2rem 0 0;
 	max-width: 56ch;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 1.1rem;
-}
-
-.empty-stamp,
-.empty-line {
-	position: relative;
-	z-index: 1;
+	gap: 1.4rem;
 }
 
 .empty-stamp {
-	@include mono(var(--fs-label-xs), 0.3em, uppercase);
-	color: var(--color-accent-hot);
-	padding: 0;
-	background: transparent;
-	// A plain mono word, not a boxed stamp — matches /press.
-	border: 0;
+	@include note(var(--fs-note));
+	color: var(--ink-soft);
 }
 
 .empty-line {
-	@include prose(var(--fs-body), 1.7);
-	color: var(--color-grey);
-	max-width: 56ch;
+	@include prose(var(--fs-body-lg), 1.6);
+	color: var(--ink-soft);
 	margin: 0;
 }
 
@@ -203,19 +157,14 @@
 }
 
 /* ===================== RESPONSIVE ===================== */
-@media (max-width: 900px) {
-	.press-body { padding: clamp(3.5rem, 7vw, 5rem) var(--gutter); }
-}
-
-@media (max-width: 600px) {
-	.press-body { padding: clamp(3rem, 9vw, 4rem) var(--gutter); }
-	.kit-link { min-height: 0; }
+@media (max-width: 720px) {
+	.kit-docs .btn-primary {
+		width: 100%;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.kit-link { transition: box-shadow 0.2s; }
-	.kit-dl { transition: color 0.2s; }
-
-	.kit-link:hover,
-	.kit-link:focus-visible { transform: none; }
+	.kit-format {
+		transition: none;
+	}
 }

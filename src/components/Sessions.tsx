@@ -7,23 +7,65 @@ import {
 	visitorCategories,
 	type Session,
 	type SessionFilters,
+	type SessionSpeakerRef,
 } from '../lib/sessions';
+import { initials } from '../lib/speakers';
 import { byStart, formatMinutes, placement } from '../lib/agenda';
 import { fetchLineup, speakersById } from '../lib/lineup';
 import { useRemote } from '../lib/useRemote';
+import { useMediaQuery } from '../lib/useMediaQuery';
 import { TALK_PARAM } from '../lib/share';
 import SessionDetail from './SessionDetail';
-import SpeakerStack from './SpeakerStack';
+import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
 
-/** `10:00–10:45, Main Hall` once a talk is scheduled; `''` before. Sessionize
- * can leave `room` blank and carry only the id, hence the lookup. */
-function whenLabel(session: Session, roomNames: Map<string, string>): string {
+/** Width at or below which the list waits for a search or a filter: the
+ * timetable above already lists every talk, a second copy of 21 slips under
+ * it is a long scroll on a phone. */
+const NARROW = '(max-width: 720px)';
+
+/** The talk's time (`10:00–10:45`, null before it is scheduled) and its
+ * room. Sessionize can leave `room` blank and carry only the id, hence the
+ * lookup. */
+function whenParts(session: Session, roomNames: Map<string, string>): { time: string | null; room: string } {
 	const place = placement(session);
-	const time = place ? `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}` : '';
-	const room = session.room.trim() || roomNames.get(session.roomId) || '';
-	return [time, room].filter(Boolean).join(', ');
+	const time = place ? `${formatMinutes(place.startMin)}–${formatMinutes(place.endMin)}` : null;
+	return { time, room: session.room.trim() || roomNames.get(session.roomId) || '' };
+}
+
+/** `10:00–10:45, Main Hall` once a talk is scheduled; `Time TBA` (plus the
+ * room, if it has one) before. */
+function whenLabel(session: Session, roomNames: Map<string, string>): string {
+	const { time, room } = whenParts(session, roomNames);
+	return [time ?? 'Time TBA', room].filter(Boolean).join(', ');
+}
+
+/** Up to three overlapping speaker avatars. The initials sit UNDER each photo,
+ * so a circle still reading a name while a lazy photo loads, or when it never
+ * paints, never shows as an empty disc. Decorative — the names carry it. */
+function CardAvatars({ speakers }: { speakers: SessionSpeakerRef[] }) {
+	const shown = speakers.slice(0, 3);
+	if (shown.length === 0) return null;
+	const extra = speakers.length - shown.length;
+	return (
+		<span className={s.stack} aria-hidden="true">
+			{shown.map((speaker) => (
+				<span key={speaker.id} className={`${s.avatar} ${s.avatarMono}`}>
+					{initials(speaker.fullName)}
+					{/* A failed photo falls back to the initials already under it. */}
+					<SpeakerPhoto
+						speaker={speaker}
+						photoClass={s.avatarImg}
+						monogramClass={s.avatarNone}
+						width={40}
+						height={40}
+					/>
+				</span>
+			))}
+			{extra > 0 && <span className={`${s.avatar} ${s.avatarMore}`}>+{extra}</span>}
+		</span>
+	);
 }
 
 function SessionCard({
@@ -32,23 +74,28 @@ function SessionCard({
 	onOpen,
 }: {
 	session: Session;
-	when: string;
+	when: { time: string | null; room: string };
 	onOpen: (session: Session) => void;
 }) {
 	const names = speakerNames(session);
-	// The track; the room now travels with the time in `when`.
+	// The track; the room travels with the time. Mono sets the time only;
+	// the words on the edge are notes.
 	const kicker = visitorCategories(session)[0]?.values[0] || 'Talk';
+	const where = [when.time ? '' : 'Time TBA', when.room].filter(Boolean).join(', ');
 
 	return (
 		<li>
 			<button
 				type="button"
-				className={`field-row field-row--link ${s.card}`}
+				className={s.card}
 				onClick={() => onOpen(session)}
 				aria-label={`View details for ${session.title}`}
 			>
 				<span className={s.top}>
-					{when && <span className={s.when}>{when}</span>}
+					<span>
+						{when.time && <span className={s.when}>{when.time}</span>}
+						{where && <span>{when.time ? `, ${where}` : where}</span>}
+					</span>
 					<span className={s.kicker}>{kicker}</span>
 				</span>
 
@@ -57,14 +104,7 @@ function SessionCard({
 				{session.description && <span className={s.excerpt}>{session.description}</span>}
 
 				<span className={s.foot}>
-					<SpeakerStack
-						speakers={session.speakers}
-						className={s.stack}
-						avatarClass={s.avatar}
-						monogramClass={`${s.avatar} ${s.avatarMono}`}
-						moreClass={`${s.avatar} ${s.avatarMore}`}
-						size={40}
-					/>
+					<CardAvatars speakers={session.speakers} />
 					<span className={s.names}>{names || 'Speaker to be announced'}</span>
 				</span>
 			</button>
@@ -77,6 +117,7 @@ export default function Sessions() {
 	const [selected, setSelected] = useState<Session | null>(null);
 	const [query, setQuery] = useState('');
 	const [filters, setFilters] = useState<SessionFilters>({});
+	const isNarrow = useMediaQuery(NARROW);
 
 	// Programme order: start time, then Sessionize's own order for talks not
 	// yet slotted. It used to be shuffled per load, which also reshuffled the
@@ -95,6 +136,8 @@ export default function Sessions() {
 	);
 	const active = hasActiveFilters(query, filters);
 	const anyChip = Object.values(filters).some((values) => values.length > 0);
+	// Phone, nothing asked yet: the search alone, no slips.
+	const collapsed = isNarrow && !active;
 
 	const open = useCallback((session: Session) => setSelected(session), []);
 	const close = useCallback(() => setSelected(null), []);
@@ -145,7 +188,12 @@ export default function Sessions() {
 
 	return (
 		<>
-			<div className={s.filters}>
+			<div className={`${s.filters} ${collapsed ? s.filtersAlone : ''}`}>
+				{collapsed && (
+					<label htmlFor="sessions-search" className={s.invite}>
+						Search all {sessions.length} talks
+					</label>
+				)}
 				<div className={s.searchRow}>
 					<div className={s.search}>
 						<svg className={s.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
@@ -153,17 +201,20 @@ export default function Sessions() {
 							<path d="m20 20-3.2-3.2" strokeLinecap="round" />
 						</svg>
 						<input
+							id="sessions-search"
 							type="search"
 							className={s.searchInput}
-							placeholder="Search talks, speakers, topics"
+							placeholder="Talks, speakers, topics"
 							aria-label="Search sessions"
 							value={query}
 							onChange={(e) => setQuery(e.target.value)}
 						/>
 					</div>
-					<output className={s.count}>
-						{filtered.length} {filtered.length === 1 ? 'session' : 'sessions'}
-					</output>
+					{!collapsed && (
+						<output className={s.count}>
+							{filtered.length} {filtered.length === 1 ? 'session' : 'sessions'}
+						</output>
+					)}
 				</div>
 
 				{facets.map((facet) => (
@@ -197,7 +248,7 @@ export default function Sessions() {
 				)}
 			</div>
 
-			{filtered.length === 0 ? (
+			{!collapsed && (filtered.length === 0 ? (
 				<EmptyState>
 					<p>
 						{anyChip
@@ -209,25 +260,17 @@ export default function Sessions() {
 					</button>
 				</EmptyState>
 			) : (
-				<ul className={`field ${s.grid}`} role="list">
+				<ul className={s.grid} role="list">
 					{filtered.map((session) => (
-						<SessionCard key={session.id} session={session} when={whenLabel(session, roomNames)} onOpen={open} />
+						<SessionCard
+							key={session.id}
+							session={session}
+							when={whenParts(session, roomNames)}
+							onOpen={open}
+						/>
 					))}
-					{!active && (
-						<li>
-							<article className={`field-row ${s.moreCard}`} aria-label="More sessions to be announced">
-								<span className={s.moreDots} aria-hidden="true">
-									<span />
-									<span />
-									<span />
-								</span>
-								<span className={s.moreKicker}>Docket open</span>
-								<p className={s.moreText}>More sessions announced soon</p>
-							</article>
-						</li>
-					)}
 				</ul>
-			)}
+			))}
 			{selected && (
 				<SessionDetail
 					session={selected}

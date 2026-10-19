@@ -1,12 +1,12 @@
 ---
 name: ship
-description: Finish a change in this repo — run the verify gate, commit in the house format, push the branch, open or update the PR against 2026 and hand back its preview URL. Use when the user says ship, wrap up, open a PR, or the work is done. Never merges or deploys.
+description: Finish a change in this repo — run the verify gate, review the diff, commit in the house format, push the branch, open a draft PR against 2026 (or update it) and hand back its preview URL. Use when the user says ship, wrap up, open a PR, or the work is done. Use it instead of wingspan's /create-pr. Never merges or deploys.
 ---
 
 # Ship a change
 
 Carries a change from "code is written" to the definition of done in
-`CLAUDE.md`. It stops at an open PR with CI reported. It never merges, never
+`CLAUDE.md`. It stops at an open draft PR with CI reported. It never merges, never
 pushes to `2026`, never deploys; "ship it" is not merge permission.
 
 ## 1. Check the branch
@@ -24,8 +24,9 @@ pushes to `2026`, never deploys; "ship it" is not merge permission.
 npm run verify
 ```
 
-That is `npm run check` (astro check), the functions test
-suite, and the axe sweep — the three checks the `2026` ruleset requires.
+That is `npm run check` (astro check), `npm run complexity` (cognitive
+complexity, max 15), the functions test suite and the axe sweep — the checks
+CI runs on every PR against `2026`.
 
 - If dependencies are missing, run `npm ci && npm --prefix functions ci`.
 - If Chromium is missing for `npm run a11y`, try the preinstalled browser
@@ -33,8 +34,20 @@ suite, and the axe sweep — the three checks the `2026` ruleset requires.
 - A check the change cannot affect (e.g. a11y for a functions-only change) may
   be skipped only if it cannot run here; note which one and why in the PR.
 - Fix every failure and re-run. Do not continue on red.
+- Run the `update-docs` skill over the diff. A change that adds or renames a
+  function, endpoint, page, secret or rule, alters what a visitor sees or how
+  the site looks, or makes an architecture decision moves the docs in the
+  same PR (`.claude/rules/docs.md`).
 
-## 3. Commit
+## 3. Review
+
+Run wingspan `/review` (or at least the
+`vgv-wingspan:codebase-review:vgv-review-agent` agent) over the diff. Fix
+each finding or answer it in one line. Where a finding contradicts
+`CLAUDE.md`, `docs/design.md` or `.claude/rules/`, the repo wins; say so
+rather than changing the code. If a fix touches code, re-run step 2.
+
+## 4. Commit
 
 Conventional Commits with a scope; the subject says what a visitor or the
 maintainer notices:
@@ -45,15 +58,18 @@ fix(tickets): sold-out wave stays visible with a struck price
 
 Keep commits focused; add the attribution trailer the session requires.
 
-## 4. Push and open the PR
+## 5. Push and open the PR
 
 - `git push -u origin <branch>` (retry on network errors only).
-- Open a PR against `2026`, or update the existing one for this branch. Title
-  = the commit subject format. Body sections, in this order and nothing else:
-  **Summary**, **Why**, **Behavior**, **Files**. No test plan section.
+- Open a **draft** PR against `2026` (`gh pr create --draft`, or the GitHub
+  MCP `create_pull_request` with `draft: true`), or update the existing one
+  for this branch. Title = the commit subject format. Body follows
+  `.github/PULL_REQUEST_TEMPLATE.md`: **Summary**, **Why**, **Behavior**,
+  **Files**, **Type of Change**, in that order and nothing else. No test
+  plan section.
 - If the session has PR-attribution or assignee rules, apply them.
 
-## 5. Report
+## 6. Report
 
 - Wait for CI on the PR head (correctness gate, accessibility audit, hosting
   preview). If a check fails, fix, re-run the gate, push, repeat.

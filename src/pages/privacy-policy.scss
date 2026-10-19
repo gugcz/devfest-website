@@ -1,184 +1,287 @@
 @use '../styles/type' as *;
-.policy {
-	min-height: 100dvh;
-	padding: 7rem var(--gutter) var(--section-y);
-	position: relative;
-	z-index: 1;
-	// Faint pool of light over the legal column — no card chrome; the page stays calm.
-	background: var(--lit);
+// The reading pages: /privacy-policy, /code-of-conduct and /delete-account.
+// The page shell is the standard subpage (type-first hero + lit band +
+// footer); this sheet sets what sits inside the band: the contents pinned on
+// the left like the /faq index, the text as one comfortable typewriter
+// column on the right. Space carries every break, never a rule.
+.reading {
+	display: grid;
+	grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+	gap: clamp(2rem, 5vw, 5rem);
+	align-items: start;
 }
 
-.policy-inner {
-	max-width: 42.5rem;
-	margin: 0 auto;
+/* ---- Contents ---- */
+.reading-index {
+	position: sticky;
+	top: calc(var(--header-h) + 2rem);
+
+	ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+	}
+
+	ol a {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+		padding: 0.35rem 0;
+		@include action(var(--fs-action));
+		line-height: 1.05;
+		color: var(--color-text);
+		text-decoration: none;
+		transition: color 0.2s ease;
+
+		&:focus-visible {
+			color: var(--color-accent-hot);
+		}
+	}
 }
 
-.back-link {
-	@include mono(var(--fs-ui), 0.08em);
-	color: var(--ink-strong);
-	text-decoration: none;
-	margin-bottom: 3.5rem;
-	padding: 0.5rem 0.5rem 0.5rem 0;
-	min-height: 2.75rem;
-	display: inline-flex;
-	align-items: center;
-	transition: color 0.2s;
+.reading-index-label {
+	@include note(var(--fs-note));
+	color: var(--ink-dim);
+	margin: 0 0 0.9rem;
+}
 
-	&:hover,
-	&:focus-visible {
+.reading-index-no {
+	@include mono(var(--fs-label), 0.08em);
+	flex: none;
+	min-width: 1.6rem;
+	color: var(--ink-dim);
+}
+
+@media (hover: hover) {
+	.reading-index ol a:hover {
 		color: var(--color-accent-hot);
 	}
 }
 
-.policy-title {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-hero);
-	color: var(--color-text);
-	line-height: 0.9;
-	margin-bottom: 1rem;
-}
+/* ---- The column ---- */
+.policy {
+	@include prose(var(--fs-body), 1.8);
+	max-width: 68ch;
+	color: var(--ink);
 
-// Styled by the global `.eyebrow`; this rule only carries the spacing below it.
-.policy-meta {
-	margin-bottom: 4rem;
-}
+	section + section {
+		margin-top: clamp(3.5rem, 6vw, 5rem);
+	}
 
-section {
-	margin-bottom: 3.2rem;
+	// A jump from the contents lands the head clear of the fixed header.
+	section[id] {
+		scroll-margin-top: calc(var(--header-h) + 2rem);
+	}
 
-	& + section {
-		padding-top: 3.2rem;
+	// White Bebas at a modest step: a dozen poster heads down a legal text
+	// would shout over the page's own title.
+	h2 {
+		@include row-title(var(--fs-head));
+		line-height: 0.95;
+		text-wrap: balance;
+		margin: 0 0 1.4rem;
+	}
+
+	// Sub-heads are words: the typewriter, a step over the body, in white.
+	h3 {
+		@include note(var(--fs-body-lg));
+		color: var(--color-text);
+		margin: 2.4rem 0 0.8rem;
+	}
+
+	p,
+	ul {
+		margin: 0 0 1.1rem;
+	}
+
+	ul {
+		padding-left: 1.4rem;
+	}
+
+	li + li {
+		margin-top: 0.5rem;
+	}
+
+	strong {
+		font-weight: 400;
+		color: var(--color-text);
+	}
+
+	a {
+		@include hairline-link;
+	}
+
+	code {
+		@include mono(var(--fs-ui));
+		color: var(--color-text);
 	}
 }
 
-// Section head: a short red hairline above the Bebas head, no card chrome.
-// Cream, not red — a dozen red heads down a legal document is the accent
-// as heading colour. The red rule (::before) carries the section break.
-h2 {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-title-sm);
-	letter-spacing: 0.08em;
+/* ---- Lists of records (the cookies, the app's data) ---- */
+// Not a ruled table: each row is a short entry, its name over its facts, the
+// column head as a typewriter label beside each fact. The <table> stays for
+// assistive tech; the eye reads entries separated by air.
+.policy table,
+.policy tbody,
+.policy tr,
+.policy th,
+.policy td {
+	display: block;
+}
+
+.policy table {
+	@include prose(var(--fs-ui));
+	margin: 1.6rem 0 0;
+	color: var(--ink);
+}
+
+// The column heads move into each cell's label (`data-label`); they stay in
+// the table for assistive tech.
+.policy thead {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.policy tbody {
+	display: flex;
+	flex-direction: column;
+	gap: 1.9rem;
+}
+
+.policy tbody th {
+	@include prose(var(--fs-body), 1.5);
+	text-align: left;
+	font-weight: 400;
 	color: var(--color-text);
-	margin-bottom: 1.4rem;
-	padding-top: 1.1rem;
-	position: relative;
+	margin: 0 0 0.6rem;
+
+	code {
+		font-size: var(--fs-body);
+	}
+}
+
+.policy td {
+	display: grid;
+	grid-template-columns: 6.5rem minmax(0, 1fr);
+	gap: 0 1.25rem;
+	line-height: 1.65;
+
+	& + td {
+		margin-top: 0.35rem;
+	}
 
 	&::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 48px;
-		height: 2px;
-		background: var(--color-accent);
+		@include note(var(--fs-note-sm));
+		content: attr(data-label);
+		color: var(--ink-dim);
+		padding-top: 0.1rem;
 	}
 }
 
-h3 {
-	@include mono(var(--fs-ui), 0.08em, uppercase);
-	color: rgba(255, 255, 255, 0.75);
-	margin-top: 1.8rem;
-	margin-bottom: 0.8rem;
+/* ---- The listener's card (/code-of-conduct) ---- */
+.listener {
+	max-width: 30rem;
+	margin: 2.6rem 0 0.4rem;
+	padding: 1.6rem 1.75rem 1.6rem;
 }
 
-// Long-form legal prose on the typewriter face, like the rest of the site's
-// reading copy. Eight screens of it is hard reading, so the readability is
-// bought back with a looser line-height and a 62ch measure, not a fourth face.
-p {
-	@include prose(var(--fs-body), 1.85);
-	letter-spacing: 0.01em;
-	color: var(--ink);
-	margin-bottom: 1rem;
-	// Comfortable reading measure on wide viewports.
-	max-width: 62ch;
+.policy .listener-role {
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink-dim);
+	margin: 0 0 0.5rem;
 }
 
-ul {
-	@include prose(var(--fs-body), 1.85);
-	letter-spacing: 0.01em;
-	color: var(--ink);
-	padding-left: 1.4rem;
-	margin-bottom: 1rem;
-	max-width: 62ch;
+.policy .listener-name {
+	@include row-title(var(--fs-head));
+	color: var(--paper-ink);
+	margin: 0 0 0.75rem;
 }
 
-li + li {
-	margin-top: 0.4rem;
+.policy .listener-lines {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	li + li {
+		margin-top: 0;
+	}
 }
 
-a {
-	@include hairline-link(var(--color-accent-hot));
-}
+// A text action on paper: black Bebas on its own underline. No red text on
+// paper; the hover thickens the line.
+.policy .listener-link {
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
+	@include action(var(--fs-cta));
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-color: var(--paper-ink);
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
+	transition: text-decoration-thickness 0.2s ease;
 
-code {
-	@include mono(var(--fs-ui));
-	// Lit surface for inline code — matches the subpage panel tone.
-	background: var(--panel-lit-2);
-	padding: 0.1em 0.35em;
-	border: 1px solid var(--rule);
-	border-radius: var(--radius);
-}
-
-table {
-	width: 100%;
-	border-collapse: collapse;
-	@include prose(var(--fs-ui));
-	color: var(--ink);
-	// The rhythm above the table now lives on `.table-scroll`.
-	margin-top: 0;
-}
-
-// Column heads: mono caps over a firmer hairline.
-thead th {
-	border-bottom: 1px solid var(--rule-strong);
-}
-
-th {
-	@include mono(var(--fs-label-lg));
-	text-align: left;
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
-	color: var(--ink-strong);
-	font-weight: normal;
-	padding: 0.8rem 1rem;
-	vertical-align: top;
-}
-
-tbody th {
-	@include prose(var(--fs-ui));
-	text-transform: none;
-	letter-spacing: 0.01em;
-	color: var(--ink-strong);
-	border-bottom: 1px solid var(--rule-soft);
-}
-
-// Tidy bottom edge — no trailing hairline under the final row.
-tbody tr:last-child th,
-tbody tr:last-child td {
-	border-bottom: 0;
-}
-
-// The table keeps its natural column widths and takes its own horizontal
-// scroll when they no longer fit. Forcing the cells to break instead
-// (`overflow-wrap: anywhere`) re-flowed the columns at a 16px root too and
-// split `_GRECAPTCHA` mid-word on desktop; a cookie name is not prose.
-.table-scroll {
-	overflow-x: auto;
-	// `overflow` makes this a block formatting context, so the table's own
-	// top margin no longer collapses with the paragraph above it — carry
-	// the margin on the wrapper instead and the rhythm is unchanged.
-	margin-top: 1.4rem;
-	// The focus ring belongs to the scroll box, which has no boundary of
-	// its own to sit against.
+	&:hover,
 	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap-lg);
+		color: var(--paper-ink);
+		text-decoration-color: var(--paper-ink);
+		text-decoration-thickness: 4px;
 	}
 }
 
-td {
-	padding: 0.9rem 1rem;
-	border-bottom: 1px solid var(--rule-soft);
-	vertical-align: top;
-	line-height: 1.7;
+// The address is typed and lowercase, never Bebas caps.
+.policy .listener-link--mail {
+	@include note(var(--fs-body-lg));
+	text-decoration-thickness: 1px;
+}
+
+// The number is a figure: mono, still on the Bebas action's line.
+.policy .listener-link--tel {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-body-lg);
+	letter-spacing: 0.04em;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1100px) {
+	.reading {
+		grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+	}
+}
+
+// Phone: the contents become a short list above the text.
+@media (max-width: 720px) {
+	.reading {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3rem;
+	}
+
+	.reading-index {
+		position: static;
+	}
+
+	.policy td {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.listener {
+		padding: 1.4rem 1.3rem 1.3rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.reading-index ol a,
+	.policy .listener-link {
+		transition: none;
+	}
 }

@@ -1,84 +1,205 @@
 @use '../styles/type' as *;
-@use '../styles/controls' as *;
+
+// The sign-in as a small paper form beside the list, the workshops as paper
+// slips on the black table (the agenda's slips): the time and the seats are
+// figures in mono, the room typed beside it. The sign-in submit is the
+// one red fill; a slip's own action is black ink on its paper.
 
 .wrapper {
-	display: flex;
-	flex-direction: column;
-	gap: 1.6rem;
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: 1.5rem clamp(2.5rem, 5vw, 5.5rem);
+	align-items: start;
 	width: 100%;
-	max-width: 52rem;
-	margin: 0 auto;
+	// Every paper's shadow sits under all the paper (see `flat-paper`).
+	isolation: isolate;
+
+	> * {
+		grid-column: 2;
+	}
+
+	// The sign-in (or the signed-in line) holds the left column while the
+	// list scrolls past it.
+	> :first-child {
+		grid-column: 1;
+		grid-row: 1 / span 3;
+		position: sticky;
+		top: calc(var(--header-h) + 2rem);
+	}
+}
+
+// Figures inside a typed line: the mono voice records them.
+.fig {
+	font-family: var(--font-jetbrains-mono), monospace;
+}
+
+// Flat paper: --paper laid over the black so the sheet is opaque, one even
+// tone; its shadow is a layer under every sheet in the wrapper, so the list's
+// long drop never lands on the sign-in beside it.
+@mixin flat-paper {
+	background: linear-gradient(var(--paper), var(--paper)), var(--color-bg);
+	box-shadow: none;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		box-shadow: var(--paper-shadow);
+		pointer-events: none;
+	}
+}
+
+/* ---- Sign-in: a typed paper form ---- */
+.login:global(.paper),
+.account:global(.paper) {
+	@include flat-paper;
+	padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2.25rem) clamp(1.5rem, 3vw, 2rem);
 }
 
 .login {
 	display: flex;
 	flex-direction: column;
-	gap: 0.6rem;
+	gap: 0.5rem;
 }
 
 .label {
-	@include mono(var(--fs-label), 0.16em, uppercase);
-	color: var(--ink-meta);
+	@include note(var(--fs-note));
+	color: var(--paper-ink);
 }
 
 .hint {
-	@include prose(var(--fs-ui));
-	margin: 0;
-	color: var(--ink-soft);
+	@include prose(var(--fs-ui), 1.55);
+	margin: 0 0 0.5rem;
+	color: var(--paper-ink-dim);
 }
 
+// The field, then the submit under it: the column is narrow beside the list.
 .row {
 	display: flex;
-	gap: 0.8rem;
-	align-items: stretch;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1.25rem;
 }
 
+// The sample code: a figure, kept on one line.
+.code {
+	font-family: var(--font-jetbrains-mono), monospace;
+	font-size: var(--fs-label-lg);
+	white-space: nowrap;
+	color: var(--paper-ink);
+}
+
+// A typed line: no box, a 2px black underline that turns red on focus.
 .input {
-	@include lit-field;
-	max-width: 16rem;
+	width: 100%;
+	min-width: 0;
+	min-height: 2.75rem;
+	padding: 0.55rem 0.125rem 0.45rem;
+	background: transparent;
+	border: 0;
+	border-bottom: 2px solid var(--paper-ink);
+	border-radius: 0;
+	color: var(--paper-ink);
+	@include prose(var(--fs-lede));
 	letter-spacing: 0.08em;
+	transition: border-color 0.2s ease;
+
+	&:focus {
+		outline: none;
+		border-bottom-color: var(--color-accent);
+	}
+
+	// Keyboard focus keeps a visible ring (WCAG 2.4.7).
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
+	}
 
 	&[aria-invalid='true'] {
-		border-color: var(--color-accent-hot);
+		border-bottom-color: var(--color-accent);
 	}
 }
 
+// Paper ink behind a red margin mark: red is the mark, never the words.
 .error {
-	@include mono(var(--fs-label));
+	position: relative;
 	margin: 0;
-	line-height: 1.5;
-	letter-spacing: 0.06em;
-	color: var(--color-accent-hot);
+	padding-left: 1.1rem;
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink);
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.2em;
+		bottom: 0.2em;
+		width: 4px;
+		background: var(--color-accent);
+	}
+}
+
+// In-flight line under the field, so a slow callable never reads as a dead button.
+.pending {
+	@include note(var(--fs-note-sm));
+	margin: 0;
+	color: var(--paper-ink-dim);
+
+	&:empty {
+		display: none;
+	}
 }
 
 .account {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 0.4rem 1.2rem;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.25rem 1.5rem;
 }
 
 .accountName {
-	@include prose(var(--fs-body-lg));
+	@include prose(var(--fs-body-lg), 1.45);
 	margin: 0;
-	color: var(--color-text);
+	color: var(--paper-ink);
 }
 
+// A text action on paper: black Bebas, the ink line on hover and focus.
 .textButton {
-	@include hairline-link;
+	@include action;
+	min-height: 2.75rem;
+	padding: 0.5rem 0;
 	background: none;
 	border: 0;
-	padding: 0;
+	@include paper-action;
 	cursor: pointer;
-	font: inherit;
 }
 
-// In-flight line under the login field, so a slow callable never reads as a dead button.
-.pending {
-	@include mono(var(--fs-label));
-	margin: 0;
-	letter-spacing: 0.06em;
-	color: var(--ink-soft);
+// The sign-in submit IS the global `.btn-primary` (set on the element).
+// Module CSS is bundled BEFORE the global sheet: the compound selector wins.
+.button:global(.btn-primary) {
+	flex-shrink: 0;
+	gap: 0.6rem;
+	padding-block: 0.85rem;
+	min-height: 2.75rem;
+
+	// On paper the hover inverts to black (white would vanish on the card).
+	&:hover {
+		background: var(--paper-ink);
+		border-color: var(--paper-ink);
+		color: var(--color-text);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--paper-ink);
+		outline-offset: var(--focus-gap);
+	}
+
+	// Not dimmed: the spinner and the busy verb carry the state.
+	&[aria-disabled='true'] {
+		cursor: progress;
+	}
 }
 
 // A ring in the label's own ink, beside the busy verb.
@@ -98,14 +219,8 @@
 	}
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.spinner {
-		animation-duration: 2.4s;
-	}
-}
-
 .message {
-	@include prose(var(--fs-ui));
+	@include prose(var(--fs-body-lg), 1.6);
 	margin: 0;
 	color: var(--ink-soft);
 
@@ -114,84 +229,195 @@
 	}
 }
 
+/* ---- The workshops: paper slips ---- */
 .list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: flex;
 	flex-direction: column;
-	border-top: 1px solid var(--rule-strong);
+	gap: 2.75rem;
 }
 
 .card {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 0.5rem;
-	padding: 1.6rem 0;
-	border-bottom: 1px solid var(--rule-strong);
+	gap: 0.6rem;
+	padding: 1.5rem clamp(1.25rem, 3vw, 2.25rem) 1.75rem;
+	@include flat-paper;
+	color: var(--paper-ink);
 }
 
+// The slip's top margin: the time (a figure) and the room (typed).
 .meta {
-	@include mono(var(--fs-label), 0.16em, uppercase);
-	margin: 0;
-	color: var(--ink-meta);
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 0.25rem 1rem;
+	width: 100%;
+	margin: 0 0 0.35rem;
+}
+
+.time {
+	@include mono(var(--fs-label), 0.08em);
+	color: var(--paper-ink);
+}
+
+.room {
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink-dim);
 }
 
 .title {
-	@include row-title;
+	@include row-title(var(--fs-head));
+	line-height: 0.95;
 	margin: 0;
-	color: var(--color-text);
+	// The slip's full width: balance then evens the lines across all of it.
+	align-self: stretch;
+	color: var(--paper-ink);
+	text-wrap: balance;
+}
+
+.nobreak {
+	white-space: nowrap;
 }
 
 .speakers {
-	@include prose(var(--fs-ui));
+	@include note(var(--fs-note));
 	margin: 0;
-	color: var(--color-grey);
+	color: var(--paper-ink-dim);
 }
 
+// The seats: typed, figures in mono. A full slip carries the red dot in
+// front (the agenda's "Live now" treatment): red as a mark, ink as the words.
 .seats {
-	@include mono(var(--fs-label), 0.12em, uppercase);
-	margin: 0.4rem 0 0;
-	color: var(--color-text);
+	position: relative;
+	@include note(var(--fs-note));
+	margin: 0.6rem 0 0;
+	color: var(--paper-ink);
+
+	.fig {
+		font-size: var(--fs-label-lg);
+	}
 
 	&[data-full] {
-		color: var(--color-accent-hot);
+		padding-left: 1.1rem;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 50%;
+			width: 0.55rem;
+			height: 0.55rem;
+			border-radius: 50%;
+			background: var(--color-accent);
+			transform: translateY(-50%);
+		}
 	}
 }
 
 .mine {
-	@include prose(var(--fs-ui));
+	@include prose(var(--fs-body), 1.5);
 	margin: 0;
-	color: var(--color-text);
-	font-weight: 600;
+	color: var(--paper-ink);
+	background: linear-gradient(transparent 62%, rgba(0, 0, 0, 0.1) 62%);
 }
 
-.card .button:global(.btn-primary),
-.card .button:global(.btn-ghost) {
-	margin-top: 0.4rem;
-}
-
-.button:global(.btn-primary),
-.button:global(.btn-ghost) {
-
-	// Not dimmed: the spinner and the busy verb carry the state, and a faded
-	// label on red is exactly what read poorly.
+// A slip's action: black on paper. Register is a black fill; cancelling is
+// the text action. The page's one red stays on the sign-in.
+.slipAction {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.6rem;
+	margin-top: 0.75rem;
+	min-height: 2.75rem;
+	@include cta-label;
+	color: var(--paper-ink);
+	background: transparent;
+	border: 2px solid transparent;
+	border-radius: var(--radius);
+	cursor: pointer;
+	transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 
 	&[aria-disabled='true'] {
 		cursor: progress;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
+	}
+}
+
+.slipActionFill {
+	padding: 0.75rem 1.75rem 0.65rem;
+	background: var(--paper-ink);
+	border-color: var(--paper-ink);
+	color: var(--color-text);
+}
+
+.slipActionText {
+	padding: 0.5rem 0;
+	@include paper-action;
+
+	&[aria-disabled='true'] {
+		text-decoration-color: transparent;
+	}
+}
+
+@media (hover: hover) {
+	.slipActionFill:not([aria-disabled='true']):hover {
+		background: transparent;
+		color: var(--paper-ink);
+	}
+}
+
+@media (max-width: 1000px) {
+	.wrapper {
+		grid-template-columns: minmax(0, 1fr);
+		max-width: 44rem;
+
+		> *,
+		> :first-child {
+			grid-column: 1;
+			grid-row: auto;
+			// Relative, not static: the paper's shadow layer is set inside it.
+			position: relative;
+			top: auto;
+		}
+	}
+
+	.wrapper > :first-child {
+		margin-bottom: 2rem;
 	}
 }
 
 @media (max-width: 600px) {
 	.row {
-		flex-direction: column;
+		align-items: stretch;
 	}
 
-	.input {
-		max-width: none;
+	.button:global(.btn-primary) {
+		width: 100%;
+	}
+
+	.slipActionFill {
+		align-self: stretch;
+		justify-content: center;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.spinner {
+		animation-duration: 2.4s;
+	}
+
+	.input,
+	.slipAction {
+		transition: none;
 	}
 }

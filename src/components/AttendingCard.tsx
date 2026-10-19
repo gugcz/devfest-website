@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 // Mono white: the manual's only logo version on a red field.
 import logoUrl from '../assets/logo-mono-white.png?url';
-import samplePortraitUrl from '../assets/sample-portrait.svg?url';
 import {
 	CARD_SIZE,
 	DEFAULT_TRANSFORM,
@@ -16,6 +15,7 @@ import {
 	type Palette,
 	type PhotoTransform,
 } from '../lib/attending-card';
+import { initials } from '../lib/speakers';
 import s from './AttendingCard.module.scss';
 
 /** Decodes the brand wordmark once, off the DOM. `decode()` resolves only
@@ -28,15 +28,39 @@ async function loadLogo(): Promise<HTMLImageElement> {
 	return img;
 }
 
-/** Decodes the bundled sample silhouette the same way as the logo, then hands
- * it off as an `ImageBitmap` — the same type a visitor's own photo decodes
- * to — so it runs through `drawAttendingCard`'s one photo pipeline
- * unmodified (cover-fit, vignette, pan/zoom math all identical). */
-async function loadSamplePhoto(): Promise<ImageBitmap> {
-	const img = new Image();
-	img.src = samplePortraitUrl;
-	await img.decode();
-	return createImageBitmap(img);
+/** Stand-in "photo" while no photo is picked: the name's initials on the
+ * panel tone, the same monogram the speaker card falls back to. Handed off
+ * as an `ImageBitmap` so it runs through `drawAttendingCard`'s one photo
+ * pipeline unmodified (cover-fit, vignette, all identical). */
+function monogramBitmap(text: string, fonts: Fonts, palette: Palette): Promise<ImageBitmap> {
+	const canvas = document.createElement('canvas');
+	canvas.width = CARD_SIZE;
+	canvas.height = CARD_SIZE;
+	const ctx = canvas.getContext('2d');
+	if (ctx) {
+		// The panel token is white at an opacity: lay it over black, or the
+		// plate would export see-through.
+		ctx.fillStyle = '#000000';
+		ctx.fillRect(0, 0, CARD_SIZE, CARD_SIZE);
+		ctx.fillStyle = palette.panel;
+		ctx.fillRect(0, 0, CARD_SIZE, CARD_SIZE);
+		ctx.fillStyle = palette.monogramInk;
+		ctx.font = `420px ${fonts.bebas}`;
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.fillText(text, CARD_SIZE / 2, CARD_SIZE / 2 + 20);
+	}
+	return createImageBitmap(canvas);
+}
+
+/** "1/4" beside the step's own heading, so the count belongs to the step it
+ * counts instead of floating between the nav buttons. */
+function StepCount({ step }: { step: number }) {
+	return (
+		<span className={s.stepCount} aria-hidden="true">
+			{step}/4
+		</span>
+	);
 }
 
 const SAMPLE_NAME = 'Ada Lovelace';
@@ -237,8 +261,8 @@ export default function AttendingCard() {
 		fonts: Fonts;
 		palette: Palette;
 		logo: HTMLImageElement | null;
-		samplePhoto: ImageBitmap | null;
 	} | null>(null);
+	const [monogram, setMonogram] = useState<ImageBitmap | null>(null);
 
 	const dragRef = useRef<{ pointerId: number; startX: number; startY: number; panX: number; panY: number } | null>(
 		null,
@@ -246,8 +270,8 @@ export default function AttendingCard() {
 	// Tracks the live bitmap so it can be `.close()`d on replace/unmount —
 	// `photo` state lags one render behind the moment we need to release it.
 	const photoRef = useRef<ImageBitmap | null>(null);
-	// Same close-on-unmount need for the bundled sample bitmap.
-	const sampleRef = useRef<ImageBitmap | null>(null);
+	// Same close-on-replace/unmount need for the initials monogram.
+	const monogramRef = useRef<ImageBitmap | null>(null);
 	// Same lag problem for the thumbnail's object URL.
 	const thumbUrlRef = useRef('');
 	// Counts nested dragenter/dragleave pairs across the whole viewport — a
@@ -261,16 +285,9 @@ export default function AttendingCard() {
 	// first draw — and a fast visitor's first export — from running without it.
 	useEffect(() => {
 		let cancelled = false;
-		Promise.all([document.fonts.ready, loadLogo().catch(() => null), loadSamplePhoto().catch(() => null)]).then(
-			([, logo, samplePhoto]) => {
-				if (cancelled) {
-					samplePhoto?.close();
-					return;
-				}
-				sampleRef.current = samplePhoto;
-				setAssets({ fonts: readFonts(), palette: readPalette(), logo, samplePhoto });
-			},
-		);
+		Promise.all([document.fonts.ready, loadLogo().catch(() => null)]).then(([, logo]) => {
+			if (!cancelled) setAssets({ fonts: readFonts(), palette: readPalette(), logo });
+		});
 		return () => {
 			cancelled = true;
 		};
@@ -279,12 +296,36 @@ export default function AttendingCard() {
 	useEffect(() => {
 		return () => {
 			photoRef.current?.close();
-			sampleRef.current?.close();
+			monogramRef.current?.close();
 			if (thumbUrlRef.current) URL.revokeObjectURL(thumbUrlRef.current);
 		};
 	}, []);
 
-	// With no photo picked, the card still renders with the sample portrait and
+	// The monogram follows the typed name's initials (the sample name's while
+	// the field is empty). Rebuilt only when the initials change, and the old
+	// bitmap is closed only once the new one has replaced it in state.
+	const monogramText = initials(name.trim() || SAMPLE_NAME);
+	useEffect(() => {
+		if (!assets) return;
+		let cancelled = false;
+		monogramBitmap(monogramText, assets.fonts, assets.palette)
+			.then((bitmap) => {
+				if (cancelled) {
+					bitmap.close();
+					return;
+				}
+				const previous = monogramRef.current;
+				monogramRef.current = bitmap;
+				setMonogram(bitmap);
+				previous?.close();
+			})
+			.catch(() => {});
+		return () => {
+			cancelled = true;
+		};
+	}, [monogramText, assets]);
+
+	// With no photo picked, the card still renders with the initials monogram and
 	// (unless typed) the sample name, so the empty state reads as a finished
 	// card. `SAMPLE` badge + locked Download/Share mark it as a preview.
 	const draw = useCallback(() => {
@@ -293,7 +334,7 @@ export default function AttendingCard() {
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
 		const isSample = !photo;
-		const cardPhoto = photo ?? assets.samplePhoto;
+		const cardPhoto = photo ?? monogram;
 		const cardName = isSample ? name.trim() || SAMPLE_NAME : name;
 		const cardTransform = isSample ? DEFAULT_TRANSFORM : transform;
 		drawAttendingCard(
@@ -304,7 +345,7 @@ export default function AttendingCard() {
 			assets.logo,
 			{ isSample },
 		);
-	}, [name, photo, transform, assets]);
+	}, [name, photo, transform, assets, monogram]);
 
 	useEffect(() => {
 		draw();
@@ -603,7 +644,7 @@ export default function AttendingCard() {
 		<div className={s.wrapper}>
 			<div className={s.steps}>
 				{step === 1 && (
-					<section className={`${s.step} ${s.stepEnter}`} aria-labelledby="attending-step-1-head">
+					<section className={s.step} aria-labelledby="attending-step-1-head">
 						<div className={s.stepGutter} aria-hidden="true">
 							<span className={s.stepNumeral} data-filled={nameFilled}>01</span>
 							<span className={s.stepSpine} data-filled={nameFilled} />
@@ -612,6 +653,7 @@ export default function AttendingCard() {
 							<div className={s.stepHead} id="attending-step-1-head" ref={stepHeadRef} tabIndex={-1}>
 								<span className={s.stepHeadText}>Your name</span>
 								<span className={s.statusWord} data-tone="required">Required</span>
+								<StepCount step={1} />
 							</div>
 							<div className={s.nameFieldWrap}>
 								<input
@@ -636,7 +678,7 @@ export default function AttendingCard() {
 				)}
 
 				{step === 2 && (
-					<section className={`${s.step} ${s.stepEnter}`} aria-labelledby="attending-step-2-head">
+					<section className={s.step} aria-labelledby="attending-step-2-head">
 						<div className={s.stepGutter} aria-hidden="true">
 							<span className={s.stepNumeral} data-filled={photoFilled}>02</span>
 							<span className={s.stepSpine} data-filled={photoFilled} />
@@ -645,6 +687,7 @@ export default function AttendingCard() {
 							<div className={s.stepHead} id="attending-step-2-head" ref={stepHeadRef} tabIndex={-1}>
 								<span className={s.stepHeadText}>Your photo</span>
 								<span className={s.statusWord} data-tone="required">Required</span>
+								<StepCount step={2} />
 							</div>
 
 							<input
@@ -687,7 +730,7 @@ export default function AttendingCard() {
 				)}
 
 				{step === 3 && photo && panRange && (
-					<section className={`${s.step} ${s.stepEnter}`} aria-labelledby="attending-step-3-head">
+					<section className={s.step} aria-labelledby="attending-step-3-head">
 						<div className={s.stepGutter} aria-hidden="true">
 							<span className={s.stepNumeral} data-filled="true">03</span>
 							<span className={s.stepSpine} data-filled="false" />
@@ -695,6 +738,7 @@ export default function AttendingCard() {
 						<div className={s.stepBody}>
 							<div className={s.stepHead} id="attending-step-3-head" ref={stepHeadRef} tabIndex={-1}>
 								<span className={s.stepHeadText}>Framing</span>
+								<StepCount step={3} />
 							</div>
 
 							<div className={s.rail} data-disabled={false}>
@@ -770,7 +814,7 @@ export default function AttendingCard() {
 				)}
 
 				{step === 4 && (
-					<section className={`${s.step} ${s.stepEnter}`} aria-labelledby="attending-step-4-head">
+					<section className={s.step} aria-labelledby="attending-step-4-head">
 						<div className={s.stepGutter} aria-hidden="true">
 							<span className={s.stepNumeral} data-filled="true">04</span>
 							<span className={s.stepSpine} data-filled="false" />
@@ -778,6 +822,7 @@ export default function AttendingCard() {
 						<div className={s.stepBody}>
 							<div className={s.stepHead} id="attending-step-4-head" ref={stepHeadRef} tabIndex={-1}>
 								<span className={s.stepHeadText}>Download / Share</span>
+								<StepCount step={4} />
 							</div>
 
 							<div className={s.actions}>
@@ -821,9 +866,6 @@ export default function AttendingCard() {
 					) : (
 						<span />
 					)}
-					<span className={s.stepIndicator} aria-hidden="true">
-						{step}/4
-					</span>
 					{step < 4 ? (
 						<button
 							type="button"
@@ -863,6 +905,10 @@ export default function AttendingCard() {
 						onPointerCancel={handlePointerUp}
 						data-draggable={photo ? 'true' : 'false'}
 					/>
+					<span className={`paper-edge ${s.edge}`} aria-hidden="true">
+						<span className="edge-word">DevFest.cz</span>
+						<span>30.10.2026</span>
+					</span>
 					{isDragging && (
 						<div className={s.dragOverlay} aria-hidden="true">
 							<span>Drop to replace</span>

@@ -2,26 +2,24 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import NextStep from '../components/NextStep.astro';
-import Closer from '../components/Closer.astro';
+import NextStepList from '../components/NextStepList.astro';
+import EndLine from '../components/EndLine.astro';
 import { EVENT, googleCalendarUrl } from '../lib/event';
 
 // The one page on the site a visitor reaches AFTER paying, and it used to say
 // four words and offer a link home. Four things belong here and nowhere else:
 // the date in their calendar, the venue on a map, what happens next, and a way
 // to say they are coming. Built out of the site's own composition — hero,
-// running band, open field of steps, closer — not a bespoke centred stack.
+// the stub, the index cards, one end line — not a bespoke centred stack.
 const shareText = `I'm going to ${EVENT.name} on ${EVENT.dateLabel}.`;
 const shareUrl = EVENT.url;
 
+// The date, the hours and the place as one paper stub: the facts a ticket
+// carries, with the two calendar actions on it. Its .ics button is the
+// page's one red fill; the index cards below are the errands.
+const eventDay = EVENT.start.slice(0, 10);
+
 const STEPS = [
-	{
-		title: 'Put it in your calendar',
-		noteHtml: `${EVENT.dateLabel}, ${EVENT.timeLabel}. One day, one venue.`,
-		actions: [
-			{ href: EVENT.icsUrl, label: 'Download .ics', kind: 'primary' as const, download: true },
-			{ href: googleCalendarUrl(), label: 'Google Calendar', external: true },
-		],
-	},
 	{
 		title: 'Find the venue',
 		noteHtml:
@@ -36,7 +34,7 @@ const STEPS = [
 		title: 'What happens next',
 		noteHtml:
 			'Your ticket and receipt arrive by email from ti.to &mdash; check spam if nothing lands ' +
-			'within an hour. The programme goes up on the sessions and agenda pages as talks are confirmed.',
+			'within an hour. The programme goes up on the agenda page as talks are confirmed.',
 		actions: [{ href: '/agenda', label: 'See the programme' }],
 	},
 	{
@@ -45,16 +43,16 @@ const STEPS = [
 			'Half the value of a conference is who you go with. Tell the people you would want in the room. ' +
 			'Make yourself an "I\'m attending" card for socials in a minute.',
 		actions: [
-			{ href: '/attending/', label: 'Make your card', kind: 'primary' as const },
+			{ href: '/attending/', label: 'Your card' },
 			{
 				href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
-				label: 'Share on LinkedIn',
+				label: 'LinkedIn',
 				kind: 'ghost' as const,
 				external: true,
 			},
 			{
 				href: `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
-				label: 'Share on X',
+				label: 'X',
 				kind: 'ghost' as const,
 				external: true,
 			},
@@ -70,37 +68,42 @@ const STEPS = [
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={"You're <span class=\"red\">in.</span>"}
-			lede={`Ticket confirmed. The receipt and your QR code are on their way to your inbox — see you at ${EVENT.venue} on ${EVENT.dateLabel}.`}
+			titleHtml={"You're in"}
+			lede={`Ticket confirmed. The receipt and your QR code are on their way to your inbox — see you at ${EVENT.venue} on ${EVENT.dateLabel.replaceAll(' ', '\u00a0')}.`}
 			seoHeading="DevFest.cz 2026 ticket confirmed"
 			titleId="thank-you-title"
-			photo={false}
 		/>
 
 		<section class="band band--lit" aria-labelledby="next-heading">
 			<div class="band-inner">
-				<header class="head-stack">
-					<h2 id="next-heading" class="display head-title">Before you go.</h2>
-				</header>
+				<section class="paper event-stub" aria-labelledby="stub-heading">
+					<h2 id="stub-heading" class="stub-label">Put it in your calendar</h2>
+					<p class="stub-date"><time datetime={eventDay}>{EVENT.dateLabel}</time></p>
+					<dl class="stub-facts">
+						<dt>Time</dt>
+						<dd class="stub-fig">{EVENT.timeLabel}</dd>
+						<dt>Place</dt>
+						<dd>{EVENT.venue}, Libčice nad Vltavou</dd>
+					</dl>
+					<div class="stub-actions">
+						<a class="btn-primary" href={EVENT.icsUrl} download>Download .ics</a>
+						<a class="stub-go" href={googleCalendarUrl()} target="_blank" rel="noopener noreferrer">Google Calendar</a>
+					</div>
+				</section>
 
-				<ul class="field">
+				<NextStepList label="Before you go" labelId="next-heading">
 					{STEPS.map((step) => <NextStep {...step} />)}
-				</ul>
+				</NextStepList>
+
+				<EndLine text="See who you came for." href="/speakers" label="Meet the speakers" />
 			</div>
 		</section>
-
-		<Closer
-			titleHtml={'See who you<br />came for.'}
-			note="The lineup and the schedule are out. A few names are still to land — newsletter subscribers hear first."
-			tone="accent"
-			titleId="thank-you-closer"
-			actions={[
-				{ href: '/speakers', label: 'See the speakers' },
-				{ href: '/#newsletter', label: 'Join the newsletter', kind: 'ghost' },
-			]}
-		/>
 	</main>
 </BaseLayout>
+
+<style lang="scss">
+	@use './thank-you';
+</style>
 
 <script>
 	import { trackConversion } from '../lib/analytics';

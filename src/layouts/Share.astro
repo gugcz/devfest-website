@@ -9,6 +9,7 @@
  * instead. `og:url` is this page for the same reason (Facebook re-fetches
  * whatever `og:url` names). `noindex`: the content lives on `to`.
  */
+import { Font } from 'astro:assets';
 import { defaultOgImageVersion } from '../lib/og-version';
 
 interface Props {
@@ -59,9 +60,46 @@ const ogImageAlt = 'DevFest.cz 2026, 30 October at Uhelný Mlýn';
 		<script is:inline define:vars={{ to }}>
 			location.replace(new URL(to, location.origin).href);
 		</script>
+		<!-- No preload: a visitor's browser leaves before it paints. Only the
+		     no-script fallback below ever uses them. -->
+		<Font cssVariable="--font-special-elite" />
+		<Font cssVariable="--font-bebas-neue" />
 		<style>
-			body { background: #000; color: #fff; font: 1rem/1.5 monospace; padding: 2rem; }
-			a { color: inherit; }
+			/* The no-script fallback, as the site sets it: a paper slip on the
+			   black table, the talk or speaker in Bebas, the line on the typewriter. */
+			body {
+				margin: 0;
+				min-height: 100svh;
+				display: grid;
+				place-items: center;
+				padding: 1.5rem;
+				box-sizing: border-box;
+				background: #000000;
+			}
+			p {
+				max-width: 34rem;
+				margin: 0;
+				padding: 1.5rem 1.75rem;
+				background: rgba(255, 255, 255, 0.94);
+				color: #000000;
+				/* The site's --paper-shadow; straight, as only a photograph tilts. */
+				box-shadow: 0 1.5rem 1.5rem -1rem rgba(0, 0, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.7);
+				font: 1.05rem/1.6 var(--font-special-elite), cursive;
+			}
+			a {
+				display: block;
+				margin-bottom: 0.5rem;
+				color: inherit;
+				font: 2.1rem/1 var(--font-bebas-neue), sans-serif;
+				text-transform: uppercase;
+				text-decoration: underline;
+				text-decoration-thickness: 1px;
+				text-underline-offset: 0.15em;
+			}
+			a:focus-visible {
+				outline: 2px solid #F11000;
+				outline-offset: 3px;
+			}
 		</style>
 	</head>
 	<body>
