@@ -1,53 +1,12 @@
 @use '../styles/type' as *;
 
-// /app — one screen: the pitch and the badges on the left, what the app does
-// on the right. On a phone they stack, badges first.
+// /app — the store badges straight under the hero, then what the app does
+// as four index cards on the black table.
 
-// The page opens on this band, so it carries the header clearance itself.
-.app-hero {
-	min-height: 100svh;
-	display: flex;
-	align-items: center;
-	padding-top: calc(7.5rem + env(safe-area-inset-top));
-	padding-bottom: var(--section-y-tight);
-}
-
-.app-grid {
-	display: grid;
-	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-	gap: clamp(3rem, 7vw, 8rem);
-	align-items: center;
-}
-
-.app-intro {
-	min-width: 0;
-}
-
-.app-eyebrow {
-	@include mono(var(--fs-label), 0.3em, uppercase);
-	color: var(--ink-muted);
-	margin: 0 0 clamp(1.25rem, 2.4vw, 2rem);
-}
-
-// The page's one piece of poster-scale type.
-.app-title {
-	@include display(var(--fs-display));
-	margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
-	max-width: 11ch;
-	text-wrap: balance;
-}
-
-.app-lede {
-	@include prose(var(--fs-lede), 1.6);
-	color: var(--ink-soft);
-	max-width: 40ch;
-	margin: 0 0 clamp(2.25rem, 4vw, 3.25rem);
-}
-
-// THE BADGES. Apple's and Google's artwork stays as shipped (their guidelines
-// forbid recolouring or cropping); all three sit at one height, above Apple's
-// 40px on-screen minimum.
-.app-badges {
+/* ---- Download ---- */
+// The badges are Apple's and Google's artwork, unaltered (their guidelines
+// forbid recolouring or cropping), at one height above Apple's 40px minimum.
+.app-stores {
 	--badge-h: clamp(3.5rem, 4.6vw, 4.25rem);
 	list-style: none;
 	margin: 0;
@@ -55,18 +14,19 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-end;
-	gap: 1rem 1.25rem;
+	gap: 1.25rem 1.5rem;
 }
 
-.app-badge-item {
+.app-store {
 	display: flex;
 	flex-direction: column;
-	gap: 0.7rem;
+	align-items: flex-start;
+	gap: 0.6rem;
 }
 
-// The visitor's own store: one red word, the list's only red.
+// The visitor's own store: a note, the band's one red.
 .app-yours {
-	@include mono(var(--fs-label-sm), 0.24em, uppercase);
+	@include note;
 	color: var(--color-accent-hot);
 
 	&[hidden] {
@@ -76,15 +36,10 @@
 
 .app-badge-link {
 	display: block;
-	border-radius: 0.6rem;
 
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 4px;
-	}
-
-	&:hover .app-badge {
-		transform: translateY(-3px);
+		outline-offset: var(--focus-gap);
 	}
 }
 
@@ -92,157 +47,94 @@
 	display: block;
 	height: var(--badge-h);
 	width: auto;
-	transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-// The web app's badge: the store badges' shape (black, grey hairline, mark +
-// two lines) so the three read as one set. System sans like theirs.
-.app-badge--web {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.7rem;
-	padding: 0 1.3rem 0 1rem;
-	background: #000000;
-	color: #ffffff;
-	border: 1px solid #a6a6a6;
-	border-radius: 0.6rem;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-}
-
-.app-badge-icon {
-	width: calc(var(--badge-h) * 0.5);
-	height: calc(var(--badge-h) * 0.5);
-	fill: none;
-	stroke: currentColor;
-	stroke-width: 1.5;
-}
-
-.app-badge-text {
-	display: flex;
-	flex-direction: column;
-	line-height: 1.05;
-}
-
-.app-badge-small {
-	font-size: calc(var(--badge-h) * 0.2);
-}
-
-.app-badge-big {
-	font-size: calc(var(--badge-h) * 0.4);
-	font-weight: 600;
-	letter-spacing: -0.01em;
-}
-
-// A store without its link yet: badge height, its name and a status word.
-// Status is a word, never a dimmed badge.
+// A store still waiting for its link: its name and a status word, at badge
+// height. Status is a word, never a dimmed badge.
 .app-soon {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	gap: 0.35rem;
-	height: var(--badge-h);
+	gap: 0.3rem;
+	min-height: var(--badge-h);
 }
 
 .app-soon-name {
-	@include display(var(--fs-title-sm));
+	@include row-title(var(--fs-card-title));
 }
 
 .app-soon-word {
-	@include mono(var(--fs-label-sm), 0.24em, uppercase);
-	color: var(--ink-muted);
+	@include note;
+	color: var(--ink-soft);
 }
 
-// WHAT'S INSIDE. A short numbered field; the rows hold nothing to press.
-.app-inside {
-	min-width: 0;
-}
-
-.app-inside-title {
-	@include mono(var(--fs-label), 0.3em, uppercase);
-	color: var(--ink-muted);
-	margin: 0 0 0.5rem;
-	font-weight: 400;
-}
-
-.app-feature {
-	--field-step: clamp(1.1rem, 1.8vw, 1.5rem);
-	display: grid;
-	grid-template-columns: 2.5rem minmax(0, 1fr);
-	gap: 1rem;
+// The web app: a line and a text action, under the badges.
+.app-web {
+	display: flex;
+	flex-wrap: wrap;
 	align-items: baseline;
+	gap: 0.25rem 1.25rem;
+	margin: clamp(2rem, 4vw, 3rem) 0 0;
 }
 
-.app-feature-no {
-	@include mono(var(--fs-label), 0.1em);
-	color: var(--ink-faint);
+.app-web-text {
+	@include prose(var(--fs-body-lg), 1.5);
+	color: var(--ink-soft);
 }
 
-.app-feature-text {
+/* ---- What's inside: index cards ---- */
+.app-cards {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: clamp(1.5rem, 2.6vw, 2.5rem);
+	align-items: stretch;
+}
+
+.app-card {
 	display: flex;
 	flex-direction: column;
-	gap: 0.4rem;
-}
+	align-items: flex-start;
+	padding: 1.6rem 1.75rem 1.9rem;
 
-.app-feature-title {
-	@include display(var(--fs-card-title));
-}
-
-.app-feature-desc {
-	@include prose(var(--fs-body), 1.55);
-	color: var(--ink-soft);
-	max-width: 38ch;
-}
-
-@media (max-width: 900px) {
-	.app-hero {
-		min-height: 0;
-		display: block;
-		padding-top: calc(6.5rem + env(safe-area-inset-top));
+	p {
+		@include prose(var(--fs-body), 1.55);
+		color: var(--paper-ink);
+		margin: 0;
 	}
+}
 
-	.app-grid {
-		grid-template-columns: 1fr;
-		gap: var(--section-y-tight);
+.app-card-no {
+	display: block;
+	@include mono(var(--fs-head));
+	line-height: 1;
+	color: var(--paper-ink);
+}
+
+.app-card-title {
+	@include row-title(var(--fs-head));
+	line-height: 0.92;
+	color: var(--paper-ink);
+	margin: 0.85rem 0;
+}
+
+@media (max-width: 1100px) {
+	.app-cards {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 }
 
 @media (max-width: 600px) {
-	// QR visitors land on a phone: title, lede and the first badges inside the
-	// first screen, so the poster type steps down one size here.
-	.app-eyebrow {
-		margin-bottom: 1rem;
-	}
-
-	.app-title {
-		@include display(var(--fs-h2));
-		margin-bottom: 1.25rem;
-	}
-
-	.app-lede {
-		@include prose(var(--fs-body-lg), 1.55);
-		margin-bottom: 2rem;
-	}
-
-	// Stacked badges on a phone: the biggest target the QR visitor has.
-	.app-badges {
+	// A phone stacks the badges: one full target per row.
+	.app-stores {
 		--badge-h: 3.75rem;
 		flex-direction: column;
-		align-items: stretch;
-		gap: 1.25rem;
+		align-items: flex-start;
 	}
 
-	.app-badge-link,
-	.app-badge {
-		width: fit-content;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.app-badge {
-		transition: none;
-	}
-
-	.app-badge-link:hover .app-badge {
-		transform: none;
+	.app-cards {
+		grid-template-columns: minmax(0, 1fr);
 	}
 }

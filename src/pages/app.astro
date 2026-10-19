@@ -1,15 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import EndLine from '../components/EndLine.astro';
 import { APP_LINKS } from '../lib/app-links';
 // Official store badges (Apple and Google artwork, unaltered, as their brand
-// guidelines require). The web app has no official badge, so it gets one in
-// the same shape, drawn in CSS.
+// guidelines require): the one place the site shows a control it did not draw.
 import googlePlayBadge from '../assets/app-badges/google-play.svg';
 import appStoreBadge from '../assets/app-badges/app-store.svg';
 
-// THE APP PAGE. Venue QR codes land here, so the first screen on a phone is
-// the title and the badges, nothing else. The script below puts the visitor's
-// own store first and tags it; the DOM order moves too, so focus follows.
+// THE APP PAGE. Venue QR codes land here, so on a phone the store badges sit
+// straight under the hero. The script below puts the visitor's own store
+// first and notes it; the DOM order moves too, so focus follows the eye.
 const stores = [
 	{
 		platform: 'ios',
@@ -23,19 +24,13 @@ const stores = [
 		badge: { src: googlePlayBadge.src, alt: 'Get it on Google Play', width: 241, height: 71 },
 		href: APP_LINKS.googlePlay,
 	},
-	{
-		platform: 'web',
-		name: 'Web app',
-		badge: null,
-		href: APP_LINKS.pwa,
-	},
 ];
 
 // What the app does, as the privacy policy describes it — nothing it doesn't.
 const features = [
-	{ title: 'The programme', desc: 'Every talk and workshop, room by room, with what is on now.' },
-	{ title: 'Your schedule', desc: 'Star the talks you want; the app keeps your day in order.' },
-	{ title: 'Notifications', desc: 'Reminders before your talks, and news from the crew on the day.' },
+	{ title: 'The programme', desc: 'Every talk and workshop, room by room, and what is on right now.' },
+	{ title: 'Your schedule', desc: 'Star the talks you want and the app keeps your day in order.' },
+	{ title: 'Reminders', desc: 'A nudge before your talks, and news from the crew on the day.' },
 	{ title: 'Networking', desc: 'Scan the QR code on someone’s badge to keep their contact.' },
 ];
 ---
@@ -45,64 +40,64 @@ const features = [
 	description="The DevFest.cz 2026 app: the programme, your own schedule, reminders and badge-scan networking. App Store, Google Play, or the web app in any browser."
 >
 	<main class="page-stack">
-		<section class="app-hero band band--lit" aria-labelledby="app-title">
-			<div class="band-inner app-grid">
-				<div class="app-intro">
-					<p class="app-eyebrow">Official app · 30 Oct 2026</p>
-					<h1 id="app-title" class="app-title">
-						<span class="sr-only">DevFest.cz 2026 app — </span>
-						The whole festival in your pocket
-					</h1>
-					<p class="app-lede">
-						Your schedule, the rooms and reminders before every talk. Free, for iPhone, Android or any browser.
-					</p>
+		<SubpageHero
+			titleHtml="Get the app"
+			lede="The programme, your schedule and a reminder before every talk. Free, for iPhone, Android or any browser."
+			seoHeading="DevFest.cz 2026 app"
+			titleId="app-title"
+		/>
 
-					<ul class="app-badges" data-app-stores aria-label="Get the app">
-						{stores.map((s) => (
-							<li class="app-badge-item" data-platform={s.platform}>
-								<span class="app-yours" hidden>Your phone</span>
-								{!s.href ? (
-									<span class="app-soon">
-										<span class="app-soon-name">{s.name}</span>
-										<span class="app-soon-word">Coming soon</span>
-									</span>
-								) : (
-									<a class="app-badge-link" href={s.href} target="_blank" rel="noopener noreferrer">
-										{s.badge ? (
-											<img class="app-badge" src={s.badge.src} alt={s.badge.alt} width={s.badge.width} height={s.badge.height} />
-										) : (
-											<span class="app-badge app-badge--web">
-												<svg class="app-badge-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-													<circle cx="12" cy="12" r="9.25" />
-													<path d="M2.75 12h18.5M12 2.75c2.6 2.6 3.9 5.7 3.9 9.25S14.6 18.65 12 21.25C9.4 18.65 8.1 15.55 8.1 12S9.4 5.35 12 2.75Z" />
-												</svg>
-												<span class="app-badge-text">
-													<span class="app-badge-small">Open the</span>
-													<span class="app-badge-big">Web App</span>
-												</span>
-											</span>
-										)}
-									</a>
-								)}
-							</li>
-						))}
-					</ul>
-				</div>
+		<section class="band band--lit app-get-band" aria-labelledby="get-title">
+			<div class="band-inner">
+				<h2 id="get-title" class="sr-only">Download</h2>
 
-				<div class="app-inside" aria-labelledby="inside-title">
-					<h2 id="inside-title" class="app-inside-title">What’s inside</h2>
-					<ol class="field app-features">
-						{features.map((f, i) => (
-							<li class="field-row app-feature">
-								<span class="app-feature-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-								<span class="app-feature-text">
-									<span class="app-feature-title">{f.title}</span>
-									<span class="app-feature-desc">{f.desc}</span>
+				<ul class="app-stores" data-app-stores>
+					{stores.map((s) => (
+						<li class="app-store" data-platform={s.platform}>
+							<span class="app-yours" hidden>Your phone</span>
+							{s.href ? (
+								<a class="app-badge-link" href={s.href} target="_blank" rel="noopener noreferrer">
+									<img class="app-badge" src={s.badge.src} alt={s.badge.alt} width={s.badge.width} height={s.badge.height} />
+								</a>
+							) : (
+								<span class="app-soon">
+									<span class="app-soon-name">{s.name}</span>
+									<span class="app-soon-word">Coming soon</span>
 								</span>
-							</li>
-						))}
-					</ol>
+							)}
+						</li>
+					))}
+				</ul>
+
+				<p class="app-web">
+					<span class="app-web-text">Rather not install anything?</span>
+					{APP_LINKS.pwa ? (
+						<a class="action" href={APP_LINKS.pwa} target="_blank" rel="noopener noreferrer">Open the web app</a>
+					) : (
+						<span class="app-soon-word">The web app is coming soon.</span>
+					)}
+				</p>
+			</div>
+		</section>
+
+		<section class="band band--lit" aria-labelledby="inside-title">
+			<div class="band-inner">
+				<div class="head-rule">
+					<h2 id="inside-title" class="head-rule-title">What’s inside</h2>
+					<p class="head-rule-note">Built for the day itself: where to be, what is next, who you met.</p>
 				</div>
+
+				<ol class="app-cards" role="list">
+					{features.map((f, i) => (
+						<li class="paper app-card">
+							<span class="app-card-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+							<h3 class="app-card-title">{f.title}</h3>
+							<p>{f.desc}</p>
+						</li>
+					))}
+				</ol>
+
+				<EndLine text="Rather see it all on a big screen?" href="/agenda" label="Open the agenda" />
 			</div>
 		</section>
 	</main>
@@ -126,7 +121,6 @@ const features = [
 		const item = list.querySelector<HTMLElement>(`[data-platform="${platform}"]`);
 		if (!item) return;
 		list.prepend(item);
-		item.classList.add('app-badge-item--yours');
 		item.querySelector<HTMLElement>('.app-yours')?.removeAttribute('hidden');
 	});
 </script>
