@@ -2,7 +2,7 @@
 
 - Status: accepted
 - Date: 2026-10-19
-- PR: pending
+- PR: [#476](https://github.com/gugcz/devfest-website/pull/476)
 
 ## Context
 
