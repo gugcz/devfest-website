@@ -356,12 +356,13 @@
 	grid-template-columns: minmax(0, 1fr);
 	align-items: center;
 	gap: clamp(2rem, 5vw, 5rem);
-	// Take the room the footing does not.
+	// Take the room the footing does not, but never less than the lines need:
+	// on a short phone the panel scrolls instead of the lines running over the
+	// footing.
 	flex: 1 1 auto;
 	width: 100%;
 	max-width: var(--maxw);
 	margin-inline: auto;
-	min-height: 0;
 }
 
 .nav-lists {
