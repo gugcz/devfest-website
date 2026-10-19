@@ -550,8 +550,7 @@ Poster scale (Bebas), `BaseLayout.scss:61–79`:
 | `--fs-h2` | `clamp(2.25rem, min(6vw, 9svh), 5.5rem)` | 66 | the FAQ categories; the session sheet's title; the `/thank-you` date; the `/invoice` steps head; the live ticket slip's name and price; the menu's primary links ≥901px |
 | `--fs-h3` | `clamp(1.8rem, 3.4vw, 2.6rem)` | 67 | a ticket slip's price; `/team` names; the menu's secondary links |
 | `--fs-head` | `clamp(2.1rem, 3.4vw, 3rem)` | 68 | a compact head on paper: the `NextStep` titles and index, the `/contact` index-card titles, the `/venue` card titles and numbers, a clipping's headline, the partnerships contact's name, the legal `h2`, the workshop slip title, the invoice step numbers and estimate |
-| `--fs-card-title` | `1.95rem` | 71 | the speaker name on a print (and the keynote's on a phone), the live slip's Buy label |
-| `--fs-row` | `clamp(2.1rem, min(5.2vw, 7.5svh), 4.5rem)`; `2.1rem` ≤600px | 77 | the keynote print's name |
+| `--fs-card-title` | `1.95rem` | 71 | the speaker name on a print, the live slip's Buy label |
 | `--fs-row-sm` | `clamp(1.7rem, min(4vw, 6svh), 3.4rem)`; `1.7rem` ≤600px | 78 | a ticket slip's wave name |
 
 **[MUST] One display element per page, and it outranks the section
@@ -670,7 +669,7 @@ value from the histogram.
 
 | Query | Count | Where |
 | --- | --- | --- |
-| `max-width: 720px` | 29 | **the darkroom's phone step**: prints go one or two across and stop tilting past `--tilt-1` (`BaseLayout.scss`); the speaker grid goes two across under the keynote's full-width print (`SpeakerTile.module.scss`); the teaser trims; ticket slips stack; the agenda becomes the list; the FAQ index becomes a row of links; the subpage hero and every `.head-rule` stack; `Sessions`, `Sheet`, `NextStep`, the newsletter card, the `/venue`, `/contact`, `/team`, `/partners`, press and legal grids |
+| `max-width: 720px` | 29 | **the darkroom's phone step**: prints go one or two across and stop tilting past `--tilt-1` (`BaseLayout.scss`); the speaker grid goes two across (`SpeakerTile.module.scss`); the teaser trims; ticket slips stack; the agenda becomes the list; the FAQ index becomes a row of links; the subpage hero and every `.head-rule` stack; `Sessions`, `Sheet`, `NextStep`, the newsletter card, the `/venue`, `/contact`, `/team`, `/partners`, press and legal grids |
 | `max-width: 1100px` | 16 | tablet: the `/speakers` grid goes three across; the home event grid, the `/venue`, `/contact`, press and `/partners` CTA grids go one column; the agenda tightens; `/team` three across; the FAQ grid `4fr / 8fr`; the calendar stub folds (`thank-you.scss`) |
 | `max-width: 600px` | 8 | the phone type steps in `:root`; the menu bar tightens (`Menu.scss`); sheets and forms |
 | `max-width: 900px` | 5 | `NextStepList` one column, the card builder, `HeroBackground`, `BaseLayout.scss` |
@@ -1012,9 +1011,7 @@ is not a print: it sits straight, untaped.**
 - **[MUST] The portrait well is 4:5**: every speaker print
   (`SpeakerTile.module.scss`), the speaker sheet's print, the session
   sheet's speaker prints, every `/team` mugshot, the invite portrait, the
-  partnerships contact's mug. The opening keynote's print is the one
-  exception: two columns by two rows, its photograph taking the height the
-  caption leaves (`min-height: 26rem`), square and full width ≤720px.
+  partnerships contact's mug.
 - **[CURRENT] Other ratios in use:** `2.39 / 1` the home event print
   (`4 / 3` ≤720px, `index.scss`); `3 / 2` the contact-sheet frames, the
   home enlargement and the `/contact` press print (`index.scss`,
@@ -1271,26 +1268,21 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   no time. Tilts cycle `--tilt-2`, `-tilt-1`, `--tilt-1`, `-tilt-2` so
   neighbours never match (`TILTS`). Reached, the name turns
   `--color-accent` (Bebas at card scale, large enough on paper) and the
-  portrait develops; focus draws the ring at `--focus-gap-lg`. **The
-  opening keynote** (the first timed talk of the day) is the large print:
-  two columns by two rows (`grid-column: 1 / 3; grid-row: 1 / 3`),
-  tilted `-tilt-1`, its photograph taking the height the caption leaves,
-  its name at `--fs-row`, role at `--fs-note`, talk at `--fs-lede`, the
-  tape "Opening keynote, <room>" at `--fs-body-lg`. No grease on it.
-  **[MUST] On a phone the keynote is the one large print**: full width, a
-  square photograph, its name at `--fs-card-title`; every other print is
-  equal, two to a row, names at `--fs-title-sm`. The grid (`.grid`) is four
+  portrait develops; focus draws the ring at `--focus-gap-lg`. **[MUST] Every
+  print is the same size**, the opening keynote (the first timed talk of
+  the day) included: only its tape says "Opening keynote, <room>". On a
+  phone two to a row, names at `--fs-title-sm`. The grid (`.grid`) is four
   columns (`/speakers`: three ≤1100px; the home teaser stays four), two
   ≤720px, `grid-auto-flow: row dense`, gap `clamp(3.5rem, 5vw, 4.5rem)` ×
   `clamp(1.5rem, 2.8vw, 2.5rem)` with `1rem` of top padding for the first
   row's tapes.
-- **Speakers teaser** (`SpeakersTeaser`, home) — the first prints of the
-  lineup in running order. Head: the `.head-rule` "Speakers" with the note
-  "N confirmed. Times in CET." (the count a mono figure); then nine prints
-  (`TEASER_SIZE`), the keynote large, so three whole rows of four; each an
-  `<a>` to the speaker. ≤720px the prints from the eighth on are hidden:
-  the keynote across, then three rows of two. Under the grid one `.action`
-  at `--fs-cta`, "All N speakers". No auto-rotation. The teaser opens on
+- **Speakers teaser** (`SpeakersTeaser`, home) — a different random
+  handful of the lineup on every visit (`pickTeaser`), shown in running
+  order with each print's number from the full lineup. Head: the `.head-rule` "Speakers" with the note
+  "N confirmed. Times in CET." (the count a mono figure); then eight prints
+  (`TEASER_SIZE`), two whole rows of four; each an `<a>` to the speaker.
+  ≤720px the prints from the seventh on are hidden: three rows of two. Under the grid one `.action`
+  at `--fs-cta`, "All N speakers". No rotation while the page is open. The teaser opens on
   `--section-y` and closes on none, like every home section; nothing
   renders until the lineup resolves (`SpeakersTeaser.tsx`).
 - **Speakers lineup** (`Speakers`, `/speakers`) — every speaker with a talk
@@ -1630,8 +1622,9 @@ Decision criteria, picked per page:
   tilts repeating every four and never past `--tilt-2`: the 4:5 B&W
   mugshot with the colour bleeding from the cursor, the name Bebas
   `--fs-h3`, the role as a note, links as Bebas actions, the edge "NN" and
-  "2026", and the codename on the print's one tape, top-left, wrapping
-  rather than cut. It ends on its `EndLine` "Want to help next year?" and
+  "2026". No tape: hovering or focusing a card cross-fades the role into
+  the member's codename in full paper ink (`.crew-role[data-swap]`); with
+  no hover (a phone) both lines print, the codename under the role. It ends on its `EndLine` "Want to help next year?" and
   the inbox address.
 - **`/press/downloads`** — under a plain note label per logo variant, one
   straight `.paper` card: the mark in a 16:9 well on the paper (on black

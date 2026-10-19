@@ -1,5 +1,5 @@
 @use '../styles/type' as *;
-// Home-page speakers: the poster head, the first prints of the lineup
+// Home-page speakers: the poster head, a handful of the lineup
 // (`SpeakerTile.module.scss` owns the grid and the print), and the way to
 // all of them under the grid.
 
@@ -30,9 +30,9 @@
 	}
 }
 
-// Phone: the keynote across, then three rows of two.
+// Phone: three rows of two.
 @media (max-width: 720px) {
-	.table > li:nth-child(n + 8) {
+	.table > li:nth-child(n + 7) {
 		display: none;
 	}
 }

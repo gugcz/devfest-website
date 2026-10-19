@@ -2,17 +2,27 @@ import { useMemo } from 'react';
 import { fetchLineup } from '../lib/lineup';
 import { speakerTarget } from '../lib/share';
 import { useRemote } from '../lib/useRemote';
-import SpeakerTile, { billLineup } from './SpeakerTile';
+import SpeakerTile, { billLineup, type Billing } from './SpeakerTile';
 import tile from './SpeakerTile.module.scss';
 import s from './SpeakersTeaser.module.scss';
 
-// Prints on the home table in whole rows: the opening keynote large, then the
-// next talks of the day. Nine on a laptop and a tablet (three rows of four,
-// the keynote covering four cells); seven on a phone (the keynote across,
-// then three rows of two; the stylesheet drops the rest).
-const TEASER_SIZE = 9;
+// Prints on the home table in whole rows: two rows of four on a laptop and a
+// tablet, three rows of two on a phone (the stylesheet drops the rest).
+const TEASER_SIZE = 8;
 
-/** Home-page speakers: the first prints of the lineup /speakers shows in
+/** A different handful on every visit, kept in running order so the sheet
+ * numbers and the clocks read down the day. Each pick keeps its place in the
+ * full lineup for its number. */
+function pickTeaser(billings: Billing[]): { billing: Billing; index: number }[] {
+	const indexed = billings.map((billing, i) => ({ billing, index: i + 1 }));
+	for (let i = indexed.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[indexed[i], indexed[j]] = [indexed[j], indexed[i]];
+	}
+	return indexed.slice(0, TEASER_SIZE).sort((a, b) => a.index - b.index);
+}
+
+/** Home-page speakers: a random handful of the lineup /speakers shows in
  * full, in running order (`SpeakerTile`, each a link to the speaker). The
  * head with the confirmed count, the prints, then one text action across the
  * page to all of them. Renders nothing until the lineup resolves (clean
@@ -21,6 +31,7 @@ export default function SpeakersTeaser() {
 	const { status, data } = useRemote(fetchLineup, 'speakers-teaser', (l) => l.speakers.length === 0);
 	const billings = useMemo(() => (data ? billLineup(data) : []), [data]);
 	const total = billings.length;
+	const picks = useMemo(() => pickTeaser(billings), [billings]);
 
 	if (status !== 'ready' || total === 0) return null;
 
@@ -37,11 +48,11 @@ export default function SpeakersTeaser() {
 				</header>
 
 				<ul className={`${tile.grid} ${s.table}`} role="list">
-					{billings.slice(0, TEASER_SIZE).map((billing, i) => (
+					{picks.map(({ billing, index }) => (
 						<SpeakerTile
 							key={billing.speaker.id}
 							billing={billing}
-							index={i + 1}
+							index={index}
 							total={total}
 							href={speakerTarget(billing.speaker.id)}
 						/>

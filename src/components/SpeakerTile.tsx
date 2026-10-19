@@ -21,7 +21,7 @@ export interface Billing {
 	/** The right end of the print's edge: the CET start, or '' for a host or
 	 * an unscheduled talk (the tape says which). Mono sets figures only. */
 	clock: string;
-	/** The opening keynote: the first talk of the day, the large print. */
+	/** The opening keynote: the first talk of the day, named on its tape. */
 	keynote: boolean;
 	/** The emcee: no talk; /speakers sets the hosts in their own row. */
 	host: boolean;
@@ -132,8 +132,8 @@ const TILTS = ['var(--tilt-2)', 'calc(-1 * var(--tilt-1))', 'var(--tilt-1)', 'ca
 
 /** One speaker as a paper print: the portrait, the name in Bebas, the role
  * on the typewriter, the talk, and the edge with the sheet number and the
- * CET start. The tape says the room. The opening keynote is the large
- * print. The same tile on the home page (a link to the
+ * CET start. The tape says the room (and names the opening keynote). Every
+ * print is the same size. The same tile on the home page (a link to the
  * speaker) and on /speakers (a button that opens the sheet). The photo
  * develops to colour while the tile is hovered or focused. */
 export default function SpeakerTile({
@@ -156,9 +156,9 @@ export default function SpeakerTile({
 	morphing?: boolean;
 	eager?: boolean;
 }) {
-	const { speaker, keynote } = billing;
+	const { speaker } = billing;
 	const tag = cleanTagline(speaker.tagLine);
-	const tilt = keynote ? 'calc(-1 * var(--tilt-1))' : TILTS[index % TILTS.length];
+	const tilt = TILTS[index % TILTS.length];
 	const body = (
 		<>
 			{/* A host's print carries no tape: the "Hosts" label over their row says it. */}
@@ -198,7 +198,7 @@ export default function SpeakerTile({
 
 	return (
 		<li
-			className={`${s.cell} ${keynote ? s.keynote : ''}`}
+			className={s.cell}
 			style={{ '--tilt': tilt } as CSSProperties}
 		>
 			{href ? (

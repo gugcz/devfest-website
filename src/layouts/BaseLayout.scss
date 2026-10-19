@@ -73,7 +73,6 @@
 	// Row titles carry the separation: 72px for a short list, 54px for a long one.
 	// They take the same height term as --fs-h2, or on a short screen a list
 	// row outranks the section head above it. Floors = the phone steps below.
-	--fs-row: clamp(2.1rem, min(5.2vw, 7.5svh), 4.5rem);     // row title, short list (waves, desks)
 	--fs-row-sm: clamp(1.7rem, min(4vw, 6svh), 3.4rem);      // row title, long list (sessions, FAQ, clippings)
 
 	// ── THE RAMP ────────────────────────────────────────────────────────
@@ -168,7 +167,6 @@
 	// own list step; the section head (--fs-h2) and the one display title
 	// keep theirs, so the hierarchy opens up instead of flattening.
 	@media (max-width: 600px) {
-		--fs-row: 2.1rem;
 		--fs-row-sm: 1.7rem;
 		// Mono tracking at 72%, floored at 0.1em: see the `mono` mixin in `_type.scss`.
 		--track-scale: 0.72;

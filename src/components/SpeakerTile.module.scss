@@ -2,9 +2,8 @@
 // THE SPEAKER PRINTS. Every speaker is a paper print set down on the black
 // table (`.paper`, `.paper-photo`, `.paper-edge`, `.tape` in BaseLayout.scss):
 // a 4:5 B&W portrait, the Bebas name, the typewriter role and talk, the edge
-// with the running number and the CET start. The opening keynote is the
-// large print (two columns by two rows). Shared by
-// the home teaser and /speakers (`SpeakerTile.tsx`).
+// with the running number and the CET start. Every print the same size.
+// Shared by the home teaser and /speakers (`SpeakerTile.tsx`).
 
 .grid {
 	list-style: none;
@@ -155,52 +154,6 @@
 	margin-bottom: 0.4rem;
 }
 
-// THE OPENING KEYNOTE: two columns by two rows, stretched to the rows beside
-// it; the photo takes what the caption leaves.
-.keynote {
-	grid-column: 1 / 3;
-	grid-row: 1 / 3;
-	align-self: stretch;
-	display: flex;
-	flex-direction: column;
-
-	.tile {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		padding: 1rem 1rem 0;
-	}
-
-	.photo {
-		flex: 1;
-		min-height: 26rem;
-		aspect-ratio: auto;
-	}
-
-	.caption {
-		flex: none;
-	}
-
-	.name {
-		font-size: var(--fs-row);
-	}
-
-	.role {
-		font-size: var(--fs-note);
-		margin-top: 0.75rem;
-	}
-
-	.talk {
-		font-size: var(--fs-lede);
-		line-height: 1.45;
-	}
-
-	:global(.tape) {
-		font-size: var(--fs-body-lg);
-		left: 1.5rem;
-	}
-}
-
 // /speakers runs three across on a tablet; the home teaser stays at four.
 @media (max-width: 1100px) {
 	.grid {
@@ -212,7 +165,7 @@
 	}
 }
 
-// Phone: two equal columns under the keynote's full-width print.
+// Phone: two equal columns.
 @media (max-width: 720px) {
 	.grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -251,40 +204,6 @@
 
 	.edge {
 		gap: 0.4rem;
-	}
-
-	// The keynote stays the large print: the full width, one square row.
-	.keynote {
-		grid-column: 1 / -1;
-		grid-row: auto;
-
-		.tile {
-			padding: 0.65rem 0.65rem 0;
-		}
-
-		.photo {
-			flex: none;
-			min-height: 0;
-			aspect-ratio: 1 / 1;
-		}
-
-		.name {
-			font-size: var(--fs-card-title);
-		}
-
-		.role {
-			font-size: var(--fs-note-sm);
-			margin-top: 0.4rem;
-		}
-
-		.talk {
-			font-size: var(--fs-note);
-		}
-
-		:global(.tape) {
-			font-size: var(--fs-note-sm);
-			left: 0.65rem;
-		}
 	}
 }
 

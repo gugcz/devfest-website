@@ -85,7 +85,7 @@ function usePortraitMorph(
 }
 
 /** Every speaker as a print on one grid, in running order (`SpeakerTile`),
- * the opening keynote the large print, then the hosts in their own row of
+ * every print the same size, then the hosts in their own row of
  * the same prints. Pressing a print opens the sheet; its photo morphs into the
  * sheet's. The way on (agenda, tickets) is the page's `EndLine`, under the
  * island. Rendered by `Speakers`. */
