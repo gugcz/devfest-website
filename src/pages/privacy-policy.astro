@@ -224,8 +224,8 @@ const SECTIONS = [
 						</p>
 						<p>
 							You can use the agenda without logging in. Logging in with your ticket is
-							optional and is needed only for networking and for keeping your favourites on
-							your account.
+							optional and is needed only for networking, the detective game, stickers and for
+							keeping your favourites on your account.
 						</p>
 
 						<h3>a) What the app collects and why</h3>
@@ -272,6 +272,18 @@ const SECTIONS = [
 									<td data-label="Retention">At most 500 entries, until your account is deleted</td>
 								</tr>
 								<tr>
+									<th scope="row">Detective game progress: the suspects and clues you unlocked, the questions you answered, your golden-clue attempts and your one accusation, each with its time</th>
+									<td data-label="Source">The game codes you scan around the venue and your moves in the game, after logging in with your ticket</td>
+									<td data-label="Purpose">Run the game. After it ends we look up the name and email of the first players with a correct accusation to hand out the prizes</td>
+									<td data-label="Retention">Until the account is deleted</td>
+								</tr>
+								<tr>
+									<th scope="row">Sticker photo: one photo per sticker request, sent together with your app sign-in token</th>
+									<td data-label="Source">Taken with your camera or picked from your photo library by you, after logging in with your ticket</td>
+									<td data-label="Purpose">Turn the photo into stickers and print the ones you choose at the venue (see c) below)</td>
+									<td data-label="Retention">As set by the sticker printer service and Google Gemini; not part of deleting your app account</td>
+								</tr>
+								<tr>
 									<th scope="row">Account metadata (Firebase user id, created and updated timestamps)</th>
 									<td data-label="Source">Firebase Authentication</td>
 									<td data-label="Purpose">Run your account</td>
@@ -296,7 +308,7 @@ const SECTIONS = [
 									<td data-label="Retention">As set by Google and Apple for each platform</td>
 								</tr>
 								<tr>
-									<th scope="row">Push notification subscriptions: topics for announcements, general sessions and one per favourited session</th>
+									<th scope="row">Push notification subscriptions: topics for announcements, general sessions, one per favourited session and, once you log in with your ticket, detective game clues</th>
 									<td data-label="Source">Firebase Cloud Messaging. The device token is held by Google and is never stored in our database</td>
 									<td data-label="Purpose">Send announcements and reminders for sessions you favourited. Notification permission is optional</td>
 									<td data-label="Retention">Until you unsubscribe, turn notifications off or uninstall the app</td>
@@ -326,12 +338,22 @@ const SECTIONS = [
 							their account, and you can ask us to remove it earlier (see section 8).
 						</p>
 
-						<h3>c) Camera</h3>
+						<h3>c) Camera, photos and stickers</h3>
 						<p>
-							The app uses the camera only to scan a ticket or badge QR code. The camera frames
+							The app uses the camera to scan a ticket, badge or game QR code. Those camera frames
 							are processed on your device and are not uploaded or stored. On Android, scanning
 							uses Google's ML Kit barcode model, and Google receives its own usage telemetry
 							from ML Kit.
+						</p>
+						<p>
+							Stickers are the one place where a photo leaves your device. When you take or pick
+							a photo for stickers, the app sends it to the sticker printer service at the venue,
+							run for DevFest by one of the organisers, which passes it to Google Gemini to draw
+							the stickers. The app tells you this before you take the photo. It does not send the
+							printer an extra copy of the original photo to keep, and it does not record the
+							photo in analytics or logs. What the printer service and Google Gemini keep, and for
+							how long, is set by them; deleting your app account does not reach it. Email <a href="mailto:devfest@gug.cz">devfest@gug.cz</a> if you want us to ask the printer service to
+							remove what it holds.
 						</p>
 
 						<h3>d) Stored only on your device</h3>
@@ -344,8 +366,8 @@ const SECTIONS = [
 
 						<h3>e) Legal basis</h3>
 						<p>
-							The account, ticket verification, personal agenda, networking connections and push
-							notifications are processed to provide the app you asked for (GDPR Art. 6(1)(b)).
+							The account, ticket verification, personal agenda, networking connections, the
+							detective game, sticker photos and push notifications are processed to provide the app you asked for (GDPR Art. 6(1)(b)).
 							Usage analytics, crash reports, device attestation, update checks and backend logs
 							are processed on the basis of our legitimate interests
 							in keeping the app working, secure and useful (GDPR Art. 6(1)(f)).
@@ -371,6 +393,7 @@ const SECTIONS = [
 							<li>ti.to — ticket lookup</li>
 							<li>Resend — sending the verification email and the post-conference list of people you scanned</li>
 							<li>Shorebird — app code updates</li>
+							<li>The venue sticker printer service, run for DevFest by one of the organisers, and Google Gemini — turning your photo into stickers and printing them</li>
 						</ul>
 						<p>
 							Your rights from section 5 apply to app data too.
@@ -382,8 +405,8 @@ const SECTIONS = [
 						<p>
 							<strong>In the app:</strong> go to Profile &gt; Delete account. This immediately
 							deletes your Firebase Authentication account, your user record (name, email,
-							registration reference, favourite sessions and networking connections) and any
-							pending verification codes.
+							registration reference, favourite sessions and networking connections), your
+							detective game progress and any pending verification codes.
 						</p>
 						<p>
 							<strong>Without the app:</strong> email <a href="mailto:devfest@gug.cz?subject=Delete%20my%20DevFest%20app%20account">devfest@gug.cz</a> from
@@ -397,7 +420,8 @@ const SECTIONS = [
 							Data kept only on your device goes away when you uninstall the app. If another
 							attendee scanned your badge, your name and company stay in their list until they
 							delete their account; email <a href="mailto:devfest@gug.cz">devfest@gug.cz</a> and we
-							will remove them. Your ti.to ticket itself is not affected.
+							will remove them. Sticker photos are held by the sticker printer service and Google
+							Gemini, not on your account (see section 7 c). Your ti.to ticket itself is not affected.
 						</p>
 						<p>
 							The same instructions are on a page of their own at <a href="/delete-account">devfest.cz/delete-account</a>.
