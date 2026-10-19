@@ -1,6 +1,152 @@
-// An open field of `.field` rows; the desks are `<Desk>`. No `--lamp` box here:
-// a full-bleed lamp draws a hard horizontal step across the page.
-.contact-grid {
+@use '../styles/type' as *;
+
+// THE INBOXES: three typed paper index cards, straight on the table. The
+// general one is the large card on the left, its address marked with the red
+// grease pencil; the other two stack beside it, together exactly its height.
+.desks {
+	// Straight off the subpage hero: its bottom padding is the pause.
+	// The press band below opens on its own air: no second gap here.
+	padding: 0 var(--gutter);
+	background: var(--color-bg);
+}
+
+.desks-inner {
+	max-width: var(--maxw);
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(1.5rem, 2.5vw, 2.25rem);
+	align-items: stretch;
+}
+
+// Three inboxes, one row of equal cards: the pair joins the main card's row.
+.desk-side {
+	display: contents;
+}
+
+// Flat paper on `.paper`'s own --paper-shadow.
+.icard {
+	margin: 0;
+	padding: 1.75rem 2rem 2rem;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+// The address sits on the card's bottom edge, so the pair lines up.
+.icard > .icard-mail,
+.icard > .icard-mailwrap {
+	margin-top: auto;
+	padding-top: 1.25rem;
+}
+
+.icard--main {
+	padding: 1.75rem 2rem 2rem;
+}
+
+.icard-edge {
+	margin: 0 0 1.4rem;
+	padding: 0;
+}
+
+.icard-title {
+	@include display(var(--fs-head));
+	color: var(--paper-ink);
+	margin: 0;
+}
+
+.icard-desc {
+	@include prose(var(--fs-body), 1.5);
+	color: var(--paper-ink-dim);
+	margin: 0.75rem 0 0;
+	max-width: 34ch;
+}
+
+.icard-who {
+	@include note(var(--fs-body));
+	color: var(--paper-ink);
+	margin: 1.4rem 0 0;
+}
+
+.icard-role {
+	color: var(--paper-ink-dim);
+}
+
+// The address, typed large: the card's one action.
+.icard-mail {
+	display: inline-block;
+	margin-top: 1.25rem;
+	@include prose(var(--fs-lede), 1.2);
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 6px;
+	overflow-wrap: anywhere;
+	padding: 0.2rem 0;
+
+	// Red text on paper misses 4.5:1: the reach state thickens the ink line.
+	&:focus-visible {
+		text-decoration-thickness: 3px;
+	}
+}
+
+@media (hover: hover) {
+	.icard-mail:hover {
+		text-decoration-thickness: 3px;
+	}
+}
+
+.icard-mailwrap {
 	position: relative;
-	display: block;
+	display: inline-block;
+	max-width: 100%;
+	margin-top: 1.9rem;
+
+	.icard-mail {
+		margin-top: 0;
+		// The grease pencil underlines it instead.
+		text-decoration: none;
+	}
+}
+
+.icard-grease {
+	left: -3%;
+	bottom: -1rem;
+	width: 106%;
+	height: 1.25rem;
+}
+
+@media (max-width: 1100px) {
+	.desks-inner {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.icard--main {
+		grid-column: 1 / -1;
+	}
+}
+
+@media (max-width: 720px) {
+	.desks-inner {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.icard {
+		padding: 1.5rem 1.4rem 1.6rem;
+	}
+
+	.icard--main {
+		padding: 1.75rem 1.5rem 2rem;
+	}
+
+	.icard--main .icard-desc {
+		font-size: var(--fs-body);
+	}
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.icard-mail {
+		transition: none;
+	}
 }

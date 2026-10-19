@@ -1,277 +1,326 @@
 @use '../styles/type' as *;
-/* ===================== THE PARTNER WALL ===================== */
-// One section shape for every partner group — the four sponsor tiers and
-// the two off-ladder rows (media, community). They used to be two copies
-// under two sets of names with identical bodies.
-.logo-wall {
-	position: relative;
-	// Top padding only: the next wall's own top padding is the gap between
-	// them, and the closing accent band supplies the last one.
-	padding: var(--section-y) var(--gutter) 0;
+@use '../styles/logos' as *;
+
+/* ===================== THE TIERS ===================== */
+// Each tier is a plain label beside its marks on the black table. The size
+// of a mark carries the rank (`TIER_SCALE` in partners.astro feeds
+// `partnerLogo`); the grid only sets how many share a row. The caps below
+// keep every tier smaller than the one above it at every width.
+.tiers {
+	// Straight off the subpage hero: its bottom padding is the pause.
+	padding: 0 var(--gutter);
 	background: var(--color-bg);
 }
 
-.wall-inner {
+.tiers-inner {
 	max-width: var(--maxw);
 	margin: 0 auto;
+	container-type: inline-size;
 }
 
-// The group name on its own. It used to carry a mono "03 partners" caption
-// beside it — six sections down one page each announcing how few they had.
-.wall-head {
-	margin-bottom: clamp(2rem, 4vw, 3rem);
+.tier {
+	display: grid;
+	grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
+	gap: 1.5rem clamp(2rem, 4vw, 4rem);
+	align-items: start;
+	padding-bottom: clamp(4rem, 7vw, 6.5rem);
 }
 
-// ─── ONE GRID MODULE ──────────────────────────────────────────────────
-// Contact sheet, not a tile grid: one track size for every partner, no
-// panel fill or shadow. Per-tier sizing let cells grow to close their row.
-// The tier is carried by heading and section order; a short last row
-// stays empty — rules belong to the CELLS.
-.logo-grid {
-	--cell-min: 17.5rem;
-	--cell-height: 12.5rem;
+// A plain label, not a poster head: the logos are the headline. The same
+// label as the home partner strip (`.partners-label` in index.scss).
+.tier-label {
+	@include note(var(--fs-note));
+	font-weight: normal;
+	color: var(--ink-meta);
+	margin: 0;
+	padding-top: 0.35rem;
+}
 
+.tier-body {
+	min-width: 0;
+}
+
+.wall {
 	list-style: none;
 	margin: 0;
-	// The cells' -1px bottom margin puts the last row's border outside the container,
-	// where the next section paints over it. This gives that pixel back.
-	padding: 0 0 1px;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--cell-min)), 1fr));
-	width: 100%;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: clamp(2.25rem, 4vw, 3.25rem) clamp(2.5rem, 4.5vw, 4rem);
 }
 
-.logo-cell {
-	position: relative;
-	overflow: hidden;
+// Diamond two to a row, gold three: the grid gives each mark its own cell so
+// the strong sizes line up into columns instead of a ragged run.
+.tier-diamond .wall,
+.tier-gold .wall {
+	display: grid;
+	align-items: center;
+	gap: clamp(2.5rem, 5vw, 4.5rem) clamp(2.5rem, 6vw, 6rem);
+}
+
+.tier-diamond .wall {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tier-gold .wall {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(2.5rem, 4.5vw, 4rem) clamp(2.5rem, 5vw, 5rem);
+}
+
+.logo-item {
 	display: flex;
-	min-height: var(--cell-height);
-	// A box around each logo. The -1px pulls neighbours onto a shared
-	// hairline, so a row of cells still reads as one ruled sheet rather
-	// than as a strip of 2px-doubled boxes.
-	border: 1px solid var(--rule);
-	margin: 0 -1px -1px 0;
-	border-radius: 0;
-	background: transparent;
-	transition: background 0.28s ease;
-
-	// The cell lights rather than lifts.
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: var(--wash-strong);
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.28s ease;
-	}
-
-	a,
-	.logo {
-		margin: auto;
-	}
+	align-items: center;
+	min-width: 0;
+	max-width: 100%;
 
 	a {
-		position: relative;
-		z-index: 1;
-		width: 100%;
-		height: 100%;
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		padding: 1.6rem 2rem;
+		max-width: 100%;
 		text-decoration: none;
 	}
 
-	// Box computed per logo in partners.astro (`opticalBox`), arriving as
-	// --logo-w / --logo-h: equal ink AREA shaped to the mark's own ratio, so
-	// a wordmark and a square glyph read as the same weight. `height: auto`,
-	// not --logo-h: the two agree by construction, and following the width
-	// keeps proportions when a narrow cell clamps `max-width: 100%`.
 	.logo {
-		display: block;
-		width: var(--logo-w, 11.25rem);
-		height: auto;
-		max-width: 100%;
-		max-height: calc(var(--cell-height) - 3.2rem);
-		object-fit: contain;
-		opacity: 0.95;
-		transition: opacity 0.2s;
+		@include partner-logo;
 	}
 
-	&:has(a:hover),
-	&:has(a:focus-visible) {
-		// The cell under the cursor is the one the lamp is over.
-		&::before { opacity: 1; }
+	// The platinum tile gets the table's shadow.
+	.logo--tile {
+		box-shadow: var(--paper-shadow);
 	}
 
-	&:hover .logo,
-	a:focus-visible .logo {
-		opacity: 1;
+	// Dark ink made for a light ground: a straight paper chip on the table.
+	// Overrides the mixin's plain white card. The chip grows around the mark
+	// (content-box), so its padding never eats the ink area the mark is sized
+	// for.
+	.logo.logo--dark {
+		box-sizing: content-box;
+		background: var(--paper);
+		padding: 0.75rem 1.1rem;
+		box-shadow: var(--paper-shadow);
 	}
-}
 
-// Media marks ship DARK, so their cells carry a cream plate (inverting
-// flattened raster logos to white blobs). `--rule` is cream at 13% —
-// invisible on cream — so the rule inverts with the ground.
-.logo-grid--plated {
-	.logo-cell {
-		background: var(--color-cream);
-		border-color: rgba(0, 0, 0, 0.14);
-		transition: filter 0.25s ease;
-
-		&::before { content: none; }
-
-		&:hover,
-		&:focus-within {
-			filter: brightness(1.06);
-		}
+	// Wider than --focus-gap-lg on purpose: a wordmark carries its own
+	// whitespace, so a 4px ring lands on the image margin.
+	a:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 6px;
 	}
 }
 
-@media (max-width: 900px) {
-	.logo-grid {
-		--cell-min: 220px;
-		--cell-height: 160px;
+@media (max-width: 1100px) {
+	// The label goes over its marks, so Gold keeps three wide cells.
+	.tier {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.tier-label {
+		padding-top: 0;
+	}
+
+	// Narrower cells: the two grid tiers step down whole, so the widest
+	// wordmark still fits its cell and keeps its tier's area.
+	.tier-diamond .wall,
+	.tier-gold .wall {
+		--logo-scale: 0.86;
 	}
 }
 
-@media (max-width: 600px) {
-	// Two per row, never N — a three-partner row shared between however
-	// many partners a tier had put each wordmark in a ~116px cell.
-	.logo-grid {
-		--cell-min: 0;
-		--cell-height: 140px;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 720px) {
+	.tier {
+		gap: 1.5rem;
+		padding-bottom: 4.5rem;
 	}
 
-	.logo-cell {
-		a { padding: 1.1rem 1rem; }
+	.wall {
+		gap: 2.25rem 2.5rem;
+	}
 
-		.logo {
-			max-width: 100%;
-		}
+	// One column, and never as wide as the full-width Platinum tile.
+	.tier-diamond .wall {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.5rem;
+		--logo-scale: 0.6;
+	}
+
+	// Gold runs as a wrapped row: two fixed cells would squeeze the widest
+	// wordmark and leave the rest of the tier illegibly small.
+	.tier-gold .wall {
+		display: flex;
+		gap: 2.25rem 2rem;
+		--logo-scale: 0.75;
+	}
+
+	// The lower rows step down again so each stays under Gold, but no
+	// further than a phone can still read.
+	.tier-silver .wall {
+		--logo-scale: 0.7;
+	}
+
+	.tier-community .wall,
+	.tier-media .wall {
+		--logo-scale: 0.8;
+	}
+
+	.logo-item .logo.logo--dark {
+		padding: 0.5rem 0.7rem;
 	}
 }
 
-/* ===================== CLOSING STATEMENT ===================== */
-// A dark gap before the red field. `.logo-wall` above has zero bottom
-// padding by design, so the gap lives here, on this page's closing
-// section, not on the shared `.band--accent` (every other `Closer`
-// already sits after a full `--section-y`).
+/* ===================== BECOME A PARTNER ===================== */
 .partners-cta {
-	margin-top: var(--section-y);
+	padding: clamp(1rem, 3vw, 2.5rem) var(--gutter) var(--section-y-tight);
+	background: var(--color-bg);
 }
 
-// Contact block on the accent field. Ink inverts globally via
-// `.band--accent` in BaseLayout.scss; only the partner-specific bits
-// (the named contact, the disabled deck stamp) are stated here. These
-// classes appear ONLY inside the accent band, so there is no dark-ground
-// variant to inherit from.
-.partners-contact {
-	display: flex;
-	flex-direction: column;
-	gap: 0.4rem;
-	min-width: 0;
+.cta-inner {
+	max-width: var(--maxw);
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: clamp(2.5rem, 6vw, 6rem);
+	align-items: center;
+}
+
+.cta-title {
+	font-size: var(--fs-section);
+}
+
+// Filip's card: a typed paper card on the table, straight like every
+// card that is not a print.
+.cta-card {
+	padding: 2.25rem 2.5rem 2.5rem;
+}
+
+.cta-edge {
+	margin: 0 0 1.6rem;
+	padding: 0;
+}
+
+.cta-body {
+	display: grid;
+	grid-template-columns: 7.5rem minmax(0, 1fr);
+	gap: 1.75rem;
+	align-items: start;
+}
+
+.cta-mug {
+	aspect-ratio: 4 / 5;
+}
+
+.cta-say {
+	@include prose(var(--fs-lede), 1.5);
+	color: var(--paper-ink);
 	margin: 0;
 }
 
-.contact-name {
-	@include mono(var(--fs-label), 0.22em, uppercase);
-	// Full cream: a dimmed label measures 3.25:1 on red and fails 1.4.3.
-	color: var(--on-accent);
+.cta-who {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.4rem;
+	margin: 1.4rem 0 0;
 }
 
-.email-link {
-	@include mono(var(--fs-ui), 0.04em);
-	color: var(--on-accent);
-	align-self: flex-start;
-	display: inline-flex;
-	align-items: center;
-	min-height: 2.75rem;
+.cta-name {
+	@include display(var(--fs-head));
+	color: var(--paper-ink);
+	line-height: 1;
+}
+
+.cta-role {
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink-dim);
+}
+
+.cta-mail {
+	@include prose(var(--fs-body), 1.4);
+	color: var(--paper-ink);
 	text-decoration: underline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 4px;
-	text-decoration-color: var(--on-accent-border);
-	word-break: break-word;
-	transition: text-decoration-color 0.2s;
+	overflow-wrap: anywhere;
+	padding: 0.35rem 0;
 
-	&::after {
-		content: '\2197';
-		margin-left: 0.5rem;
-		text-decoration: none;
-		display: inline-block;
-		transition: transform 0.25s;
-	}
-
-	&:hover,
+	// Red text on paper misses 4.5:1: the reach state thickens the ink line.
 	&:focus-visible {
-		text-decoration-color: var(--on-accent);
-	}
-
-	&:hover::after,
-	&:focus-visible::after {
-		transform: translate(2px, -2px);
+		text-decoration-thickness: 2px;
 	}
 }
 
-// Flat "Coming soon" placeholder — outline, no rotation, no stamp ink.
+@media (hover: hover) {
+	.cta-mail:hover {
+		text-decoration-thickness: 2px;
+	}
+}
+
+.cta-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1.25rem 2.25rem;
+	margin-top: 2.1rem;
+}
+
+// The text action in the ink of the card.
+.action.cta-action {
+	font-size: var(--fs-cta);
+	@include paper-action;
+}
+
+// Deck not ready: a typed label in place of the red button.
 .partners-cta-soon {
 	display: inline-flex;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: 0.7rem;
-	@include mono(var(--fs-label-lg), 0.22em, uppercase);
-	color: var(--on-accent);
-	background: transparent;
-	border: 1px dashed rgba(255, 255, 255, 0.45);
-	border-radius: var(--radius);
-	padding: 1.25rem 2rem;
+	@include action;
+	color: var(--paper-ink);
+	border: 1px dashed var(--paper-ink-dim);
+	padding: 1.1rem 1.6rem;
 	cursor: not-allowed;
 }
 
-.partners-cta-label {
-	opacity: 0.92;
-}
-
 .partners-cta-stamp {
-	@include mono(var(--fs-label), 0.28em, uppercase);
-	padding: 0.22rem 0.55rem;
-	color: var(--on-accent);
-	border: 1px solid var(--rule-red);
-	border-radius: var(--radius);
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink-dim);
 }
 
-@media (max-width: 900px) {
-	.partners-cta-soon {
-		flex-wrap: wrap;
-		gap: 0.55rem;
-		white-space: normal;
+@media (max-width: 1100px) {
+	.cta-inner {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3.5rem;
 	}
 
-	.partners-cta-stamp {
-		font-size: var(--fs-label);
-		letter-spacing: 0.24em;
-		padding: 0.2rem 0.45rem;
+	.cta-card {
+		width: 100%;
+		max-width: 45rem;
+		margin-left: auto;
 	}
 }
 
-/* ===================== REDUCED MOTION ===================== */
+@media (max-width: 720px) {
+	.cta-card {
+		padding: 1.6rem 1.4rem 1.75rem;
+	}
+
+	.cta-body {
+		grid-template-columns: 5.25rem minmax(0, 1fr);
+		gap: 1.1rem;
+	}
+
+	.cta-say {
+		font-size: var(--fs-body);
+	}
+
+	.cta-actions .btn-primary {
+		width: 100%;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.logo-cell {
+	.logo-item a .logo {
 		transition: none;
-
-		&::before { transition: none; }
-
-		&:has(a:hover),
-		&:has(a:focus-visible) {
-			transform: none;
-		}
-	}
-
-	.email-link::after,
-	.email-link:hover::after,
-	.email-link:focus-visible::after {
-		transition: none;
-		transform: none;
 	}
 }

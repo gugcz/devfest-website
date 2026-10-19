@@ -26,13 +26,13 @@ interface Props {
 const siteUrl = "https://devfest.cz";
 const {
 	title = "DevFest.cz 2026 — Prague Developer Conference",
-	description = "DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. October 30, 2026 at Uhelný Mlýn. Tickets on sale now.",
+	description = "DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. 30 October 2026 at Uhelný Mlýn. Tickets on sale now.",
 	noindex = false,
 	bodyClass = "",
 	showFooter = true,
 	kiosk = false,
 	ogImage = `${siteUrl}/og-image.jpg?v=${defaultOgImageVersion()}`,
-	ogImageAlt = "DevFest.cz 2026 — classified mission starts Oct 30, 2026",
+	ogImageAlt = "DevFest.cz 2026 — classified mission starts 30 October 2026",
 	ogImageWidth = 1200,
 	ogImageHeight = 630,
 } = Astro.props;
@@ -96,7 +96,7 @@ const eventSchema = {
 	"image": [ogImage],
 	"url": siteUrl,
 	"startDate": "2026-10-30T09:00:00+01:00",
-	"endDate": "2026-10-30T20:00:00+01:00",
+	"endDate": "2026-10-30T19:00:00+01:00",
 	// Registration opens an hour before the keynote (see the agenda).
 	"doorTime": "2026-10-30T08:00:00+01:00",
 	"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
@@ -223,9 +223,9 @@ const jsonLd = JSON.stringify(
 		<meta name="color-scheme" content="dark" />
 		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
 		<!--
-			Mark JS available ASAP so `.develop` only animates when a script is
-			there to drive the change it marks — no-JS / crawlers get the
-			fully-visible render.
+			Mark JS available ASAP so a `.js`-gated rule only applies when a
+			script is there to drive it — no-JS / crawlers get the
+			fully-visible render. No stylesheet keys off `.js` today.
 		-->
 		<!--
 			ClientRouter's swap rebuilds <html>'s attributes from the incoming
@@ -332,7 +332,7 @@ const jsonLd = JSON.stringify(
 		*/}
 		<ClientRouter />
 	</head>
-	<body class:list={[bodyClass, { kiosk }]}>
+	<body class={bodyClass}>
 		<a href="#main-content" class="skip-link">Skip to main content</a>
 		{/*
 			Second in the DOM, not last. The banner is the one consent surface on

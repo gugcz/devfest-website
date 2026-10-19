@@ -1,27 +1,251 @@
-// Three photos at one height: landscape 4:3, portrait 3:4, landscape 4:3, so
-// the columns run 4 : 2.25 : 4. In colour, unlike the home gallery: they are for
-// recognising the building on arrival, and the red brick is part of that.
-.venue-photos {
-	padding: var(--section-y) 0;
-	background: var(--color-bg);
+@use '../styles/type' as *;
+
+// The address in type, the route as straight index cards, and the page's one
+// print: the entrance, with the one red grease circle on the door.
+
+// Consecutive bands share one beat of air, not two.
+.venue-band + .venue-band {
+	padding-top: 0;
 }
 
-.venue-photos-grid {
-	list-style: none;
-	margin: 0 auto;
-	display: grid;
-	grid-template-columns: 4fr 2.25fr 4fr;
-	gap: 1.25rem;
+// Figures inside typewriter copy: the mono voice records them.
+.fig {
+	font-family: var(--font-jetbrains-mono), monospace;
+}
 
-	img {
-		display: block;
-		width: 100%;
-		height: auto;
+/* ---- Address ---- */
+.venue-label {
+	@include note(var(--fs-note));
+	color: var(--ink-dim);
+	margin: 0 0 1rem;
+}
+
+.venue-addr-title {
+	@include display(var(--fs-section));
+	margin: 0;
+	text-wrap: balance;
+}
+
+.venue-town {
+	@include prose(var(--fs-lede), 1.4);
+	color: var(--color-text);
+	margin: 1.1rem 0 0;
+}
+
+.venue-hours {
+	@include prose(var(--fs-body-lg), 1.6);
+	color: var(--ink);
+	margin: 1.75rem 0 0;
+	max-width: 32ch;
+
+	.fig {
+		color: var(--color-text);
 	}
 }
 
-@media (max-width: 700px) {
-	.venue-photos-grid {
-		grid-template-columns: 1fr;
+.venue-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 2.25rem;
+	margin-top: 1.25rem;
+
+	.action {
+		font-size: var(--fs-cta);
+	}
+}
+
+/* ---- The route: index cards ---- */
+// Two steps side by side at one height, the flight under them full width.
+.venue-cards {
+	--cards-gap: clamp(1.75rem, 3vw, 3rem);
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--cards-gap);
+	align-items: stretch;
+}
+
+// The steps join the card grid; the list stays an ordered list for AT.
+.venue-steps {
+	display: contents;
+	list-style: none;
+}
+
+.venue-card {
+	--card-pad-x: 1.75rem;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 1.6rem var(--card-pad-x) 1.9rem;
+
+	p {
+		@include prose(var(--fs-body), 1.55);
+		color: var(--paper-ink);
+		margin: 0;
+	}
+
+	p + p {
+		margin-top: 0.75rem;
+	}
+
+	strong {
+		white-space: nowrap;
+		font-weight: 400;
+		color: var(--paper-ink);
+		background: linear-gradient(transparent 62%, rgba(0, 0, 0, 0.1) 62%);
+	}
+}
+
+.venue-card-no {
+	display: block;
+	@include mono(var(--fs-head));
+	line-height: 1;
+	color: var(--paper-ink);
+}
+
+.venue-card-title {
+	@include row-title(var(--fs-head));
+	line-height: 0.92;
+	color: var(--paper-ink);
+	margin: 0.85rem 0;
+}
+
+.venue-facts {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 0.5rem 1rem;
+	margin: 1.25rem 0 0;
+
+	dt {
+		@include note(var(--fs-note-sm));
+		color: var(--paper-ink-dim);
+	}
+
+	dd {
+		@include prose(var(--fs-ui), 1.4);
+		color: var(--paper-ink);
+		margin: 0;
+	}
+}
+
+// The site's text action on paper. Held to the card's foot, so both steps
+// end on one line.
+.action.venue-go {
+	margin-top: auto;
+	padding-top: 1.25rem;
+	@include paper-action;
+}
+
+// The flight is the leg before the route: one straight row across, on the
+// route's two columns. The column gap spans the cards' gap plus both cards'
+// side padding, so the body starts at the second card's text edge.
+.venue-fly {
+	grid-column: 1 / -1;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem calc(var(--cards-gap) + 2 * var(--card-pad-x));
+	align-items: baseline;
+
+	.venue-card-title {
+		margin: 0;
+	}
+
+	p {
+		max-width: 62ch;
+	}
+}
+
+/* ---- Closer ---- */
+// The last band hands its closing air to the closer: one beat, not two.
+.venue-door-band {
+	padding-bottom: 0;
+}
+
+// The page signs off at poster scale, like its section heads.
+:global(.venue-closer .closer-title) {
+	font-size: var(--fs-section);
+}
+
+/* ---- The entrance ---- */
+.venue-door {
+	display: grid;
+	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+	gap: clamp(2.5rem, 5vw, 5rem);
+	align-items: end;
+}
+
+.venue-door-print {
+	--tilt: var(--tilt-1);
+	--tape-tilt: -2deg;
+	margin: 0;
+	padding: 0.9rem 0.9rem 0;
+
+	.paper-photo {
+		aspect-ratio: 4 / 3;
+	}
+}
+
+// Around the glass doors, bottom left of the frame.
+.venue-door-mark {
+	left: 10%;
+	top: 49%;
+	width: 26%;
+	height: 36%;
+
+	path {
+		stroke-width: 2.5px;
+	}
+}
+
+.venue-door-title {
+	@include display(var(--fs-section));
+	margin: 0;
+}
+
+.venue-door-note {
+	@include prose(var(--fs-body-lg), 1.6);
+	color: var(--ink);
+	margin: 1.75rem 0 0;
+	max-width: 30ch;
+}
+
+@media (max-width: 1100px) {
+	.venue-cards {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.venue-door {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3rem;
+	}
+
+	// Stacked, the heading leads and the photograph follows.
+	.venue-door-text {
+		order: -1;
+	}
+}
+
+@media (max-width: 720px) {
+	.venue-door-print {
+		padding: 0.5rem 0.5rem 0;
+	}
+
+	.venue-cards {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.5rem;
+	}
+
+	.venue-card {
+		--card-pad-x: 1.4rem;
+		padding: 1.4rem var(--card-pad-x) 1.6rem;
+	}
+
+	.venue-fly {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.venue-go {
+		transition: none;
 	}
 }

@@ -12,7 +12,8 @@ Functions own all ti.to traffic; static build never calls it. Browser reads
 `/api/tickets`. Helpers in `src/lib/tito.ts`. `database.rules.json` is not
 wired into `firebase.json` — paste into the console.
 
-- `ticketsWebhook` reads `req.rawBody` for HMAC.
+- `ticketsWebhook` reads `req.rawBody` for HMAC and dedups redeliveries in
+  RTDB `webhookDedup/registrations` (indexed on `at`).
 - ti.to v3.0 has no `sale_status` field — a flag set (`sold_out`, `off_sale`,
   `expired`, `upcoming`, `archived`, `locked`, `secret`). `deriveSaleStatus`
   synthesises one string. Dates: `start_at` / `end_at`.
@@ -20,5 +21,8 @@ wired into `firebase.json` — paste into the console.
   `filterDisplayable` again in the browser). Every other state renders a badge.
   `paused` + zero sales → "Coming soon" (`releaseStatus()`).
 - Buy URL: `https://ti.to/<account>/<event>/with/<release-slug>`.
+- Refresh every 5 minutes (`refreshTicketsScheduled`), the same as the
+  `/api/tickets` edge TTL; `dailyTicketStatusScheduled` posts a Slack summary
+  at 09:00 Prague time.
 - Project is shared with the mobile app repo: keep `"codebase": "website"`
-  and unique function names.
+  and unique function names (CLAUDE.md > Firebase shared project).

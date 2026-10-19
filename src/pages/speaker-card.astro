@@ -15,22 +15,17 @@ import SpeakerCard from '../components/SpeakerCard';
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'I’m <span class="red">speaking.</span>'}
+			titleHtml={'I’m speaking'}
 			lede="Pick your name and we set your talk on the card. Download it or share it straight to your feed."
 			seoHeading="DevFest.cz 2026 — I'm speaking"
 			titleId="speaker-card-title"
-			photo={false}
 		/>
 
-		<section class="attending-body" aria-labelledby="speaker-card-form-heading">
-			<div class="attending-inner">
+		<section class="band band--lit" aria-labelledby="speaker-card-form-heading">
+			<div class="band-inner">
 				<h2 id="speaker-card-form-heading" class="sr-only">Build your speaker card</h2>
 				<SpeakerCard client:load />
 			</div>
 		</section>
 	</main>
 </BaseLayout>
-
-<style lang="scss">
-	@use './attending';
-</style>

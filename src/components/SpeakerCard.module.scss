@@ -1,39 +1,75 @@
 @use '../styles/type' as *;
-@use '../styles/controls' as *;
 
-// The shared lit field (`_controls.scss`), as a native select.
+// The speaker builder borrows the attending card's paper form and print
+// (AttendingCard.module.scss); these are its own pieces.
+
+// A typed line, as a native select: no box, the 2px paper-ink underline that
+// turns red on focus, a drawn chevron (two strokes, not a glyph).
 .select {
-	@include lit-field;
+	appearance: none;
+	-webkit-appearance: none;
+	width: 100%;
+	min-height: 2.75rem;
+	padding: 0.55rem 2.25rem 0.45rem 0.125rem;
+	background:
+		linear-gradient(45deg, transparent 50%, var(--paper-ink) 50%) right 0.85rem center / 0.45rem 0.45rem no-repeat,
+		linear-gradient(-45deg, transparent 50%, var(--paper-ink) 50%) right 0.4rem center / 0.45rem 0.45rem no-repeat;
+	border: 0;
+	border-bottom: 2px solid var(--paper-ink);
+	border-radius: 0;
+	color: var(--paper-ink);
+	@include prose(var(--fs-lede));
+	text-overflow: ellipsis;
 	cursor: pointer;
+	transition: border-color 0.2s ease;
 
 	&:focus {
-		box-shadow: var(--glow-red-soft);
+		outline: none;
+		border-bottom-color: var(--color-accent);
+	}
+
+	// Keyboard focus keeps a visible ring (WCAG 2.4.7).
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
+	}
+
+	// The open list is the system's: keep its rows legible on any theme.
+	option {
+		color: var(--paper-ink);
+		background: var(--color-text);
+	}
+
+	// Forced colours drop the drawn chevron: hand the control back.
+	@media (forced-colors: active) {
+		appearance: auto;
+		-webkit-appearance: auto;
 	}
 }
 
 .note {
-	margin: 0 0 0.9rem;
-	@include prose(var(--fs-ui));
-	color: var(--ink-dim);
+	margin: 0 0 0.25rem;
+	@include prose(var(--fs-ui), 1.55);
+	color: var(--paper-ink-dim);
 }
 
 .photoButtons {
 	display: flex;
-	margin-bottom: 1.4rem;
+	margin-bottom: 0.5rem;
 }
 
 .exportRow {
 	display: flex;
 	flex-direction: column;
-	gap: 0.9rem;
-	margin-top: 2.4rem;
+	margin-top: 2.25rem;
 }
 
 // Over the card while the photo loads: the previous card stays faintly
-// visible under the scrim, so the layout never jumps.
+// visible under the scrim, so the layout never jumps. Inset to the print's
+// photograph, clear of its border and edge.
 .photoLoading {
 	position: absolute;
-	inset: 0;
+	inset: 0.65rem 0.65rem 2.4rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -42,5 +78,11 @@
 
 	> * {
 		margin: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.select {
+		transition: none;
 	}
 }

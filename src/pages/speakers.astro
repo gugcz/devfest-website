@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Closer from '../components/Closer.astro';
 import Speakers from '../components/Speakers.tsx';
+import EndLine from '../components/EndLine.astro';
 ---
 
 <BaseLayout
@@ -11,24 +11,22 @@ import Speakers from '../components/Speakers.tsx';
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'The voices on<br />the <span class="red">stand.</span>'}
-			lede="Developers, makers and researchers on stage at DevFest.cz 2026, with a few names still to come. Pick anyone for their bio and talk."
+			titleHtml={'Speakers'}
+			lede="Everyone on stage on 30 October. Pick anyone for their bio and talk. Times in CET."
 			seoHeading="DevFest.cz 2026 Speakers"
 			titleId="speakers-title"
-			focus="68% 42%"
 		/>
 
-		<section class="band band--lit rake" aria-label="Speaker lineup">
-			<!-- Red raking light swept by the scroll; decorative, enhancement-only. -->
-			<span class="rake-beam" aria-hidden="true"></span>
+		<section class="band lineup" aria-label="Speaker lineup">
 			<div class="band-inner">
 				<!-- The hero already names this band, so its head is for screen
 				     readers only; a second poster headline ("Who's talking") under
-				     "The voices on the stand" said the same thing twice. -->
+				     "Speakers" said the same thing twice. -->
 				<h2 class="sr-only">Speakers</h2>
 
-				<!-- The grid hydrates client-side from Firestore; keep a static note
-				     for crawlers and no-JS visitors. -->
+				<!-- The prints hydrate client-side from /api/lineup; keep a static note
+				     for crawlers and no-JS visitors. The page ends on the way to the
+				     agenda and tickets (no closer). -->
 				<Speakers client:load />
 
 				<noscript>
@@ -37,15 +35,17 @@ import Speakers from '../components/Speakers.tsx';
 						check back soon.
 					</p>
 				</noscript>
+
+				<EndLine text="Every talk by time and room." href="/agenda" label="Full agenda" also={{ href: '/#tickets', label: 'Get tickets' }} />
 			</div>
 		</section>
-
-		<Closer
-			titleHtml={'See them<br />in the room.'}
-			note="One day, one mill, the whole lineup on stage."
-			tone="accent"
-			titleId="speakers-closer"
-			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/agenda#talks', label: 'Browse the talks', kind: 'ghost' }]}
-		/>
 	</main>
 </BaseLayout>
+
+<style>
+	/* The prints sit right under the head: the hero's own bottom padding is the
+	   only air between them, as on the approved mock. */
+	:global(.subpage-hero) + .band.lineup {
+		padding-top: 0;
+	}
+</style>

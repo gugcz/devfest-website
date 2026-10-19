@@ -53,8 +53,9 @@ const VIEWPORTS = [
 	{ label: '390x844', width: 390, height: 844 },
 ];
 const TARGETS = [
-	{ hash: '#tickets', heading: '#tickets-heading' },
-	{ hash: '#newsletter', heading: '#newsletter h2' },
+	// The hero CTA and the tickets footnote: the home page's in-page links.
+	{ hash: '#tickets', heading: '#tickets-heading', click: '.hero-cta' },
+	{ hash: '#newsletter', heading: '#newsletter h2', click: '#tickets a[href="#newsletter"]' },
 ];
 const ENGINES = process.env.ENGINE ? { [process.env.ENGINE]: { chromium, webkit, firefox }[process.env.ENGINE] } : { chromium, webkit, firefox };
 
@@ -269,7 +270,7 @@ for (const [engineName, engine] of Object.entries(ENGINES)) {
 		for (const t of TARGETS) {
 			await page.evaluate(() => window.scrollTo(0, 0));
 			await page.waitForTimeout(300);
-			await page.click(`.hero-actions a[href="${t.hash}"]`);
+			await page.click(t.click);
 			await quiet(page);
 			rows.push({ engine: engineName, vp: vp.label, target: t.hash, mode: 'in-page', ...(await measure(page, t.heading)) });
 		}

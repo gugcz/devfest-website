@@ -1,112 +1,68 @@
-import { useEffect, useMemo, useState } from 'react';
-import { type Speaker } from '../lib/speakers';
+import { useMemo } from 'react';
 import { fetchLineup } from '../lib/lineup';
-import { shuffle } from '../lib/shuffle';
+import { speakerTarget } from '../lib/share';
 import { useRemote } from '../lib/useRemote';
-import { usePrefersReducedMotion } from '../lib/useMediaQuery';
-import SpeakerPhoto from './SpeakerPhoto';
-import print from './Print.module.scss';
+import SpeakerTile, { billLineup, type Billing } from './SpeakerTile';
+import tile from './SpeakerTile.module.scss';
 import s from './SpeakersTeaser.module.scss';
 
-// Speakers shown at once on the home wall; the visible set rotates through the
-// full roster over time (rotation kicks in once there are more than this).
-const WALL_SIZE = 4;
-const ROTATE_MS = 5000;
+// Prints on the home table in whole rows: two rows of four on a laptop and a
+// tablet, three rows of two on a phone (the stylesheet drops the rest).
+const TEASER_SIZE = 8;
 
-function Thumb({ speaker }: { speaker: Speaker }) {
-	return (
-		<a
-			className={`${print.frame} ${s.tile} develop`}
-			href="/speakers"
-			aria-label={`${speaker.fullName} — see the full lineup`}
-		>
-			<span className={print.print}>
-				<SpeakerPhoto
-					speaker={speaker}
-					photoClass={print.photo}
-					monogramClass={print.monogram}
-					width={220}
-					height={275}
-				/>
-				<span className={print.scrim} aria-hidden="true" />
-				<span className={print.vignette} aria-hidden="true" />
-			</span>
-			<span className={s.plate}>
-				<span className={s.tname}>{speaker.fullName}</span>
-			</span>
-		</a>
-	);
+/** A different handful on every visit, kept in running order so the sheet
+ * numbers and the clocks read down the day. Each pick keeps its place in the
+ * full lineup for its number. */
+function pickTeaser(billings: Billing[]): { billing: Billing; index: number }[] {
+	const indexed = billings.map((billing, i) => ({ billing, index: i + 1 }));
+	for (let i = indexed.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[indexed[i], indexed[j]] = [indexed[j], indexed[i]];
+	}
+	return indexed.slice(0, TEASER_SIZE).sort((a, b) => a.index - b.index);
 }
 
-/** Home-page speaker teaser: a rotating subset of mugshots + link to
- * /speakers. Renders nothing until the lineup resolves (clean pre-announce). */
+/** Home-page speakers: a random handful of the lineup /speakers shows in
+ * full, in running order (`SpeakerTile`, each a link to the speaker). The
+ * head with the confirmed count, the prints, then one text action across the
+ * page to all of them. Renders nothing until the lineup resolves (clean
+ * pre-announce). */
 export default function SpeakersTeaser() {
 	const { status, data } = useRemote(fetchLineup, 'speakers-teaser', (l) => l.speakers.length === 0);
-	const [offset, setOffset] = useState(0);
-	const [paused, setPaused] = useState(false);
-	const reduceMotion = usePrefersReducedMotion();
-
-	// Shuffle once per payload so the starting window — and rotation order — is
-	// random on every load, not on every re-render or rotation tick.
-	const displaySpeakers = useMemo(() => shuffle(data?.speakers ?? []), [data]);
-
-	const total = displaySpeakers.length;
-	const size = Math.min(WALL_SIZE, total);
-	const canRotate = total > WALL_SIZE;
-
-	// Advance the visible window through the roster (wrapping) so the wall keeps
-	// changing. Paused on hover/focus and when reduced motion is preferred.
-	useEffect(() => {
-		if (status !== 'ready' || !canRotate || paused || reduceMotion) return;
-		const id = setInterval(() => {
-			setOffset((o) => (o + size) % total);
-		}, ROTATE_MS);
-		return () => clearInterval(id);
-	}, [status, canRotate, paused, reduceMotion, size, total]);
-
-	// Keep the window valid if the roster shrinks between syncs.
-	useEffect(() => {
-		if (total > 0 && offset >= total) setOffset(0);
-	}, [total, offset]);
+	const billings = useMemo(() => (data ? billLineup(data) : []), [data]);
+	const total = billings.length;
+	const picks = useMemo(() => pickTeaser(billings), [billings]);
 
 	if (status !== 'ready' || total === 0) return null;
 
-	const shown = Array.from({ length: size }, (_, i) => displaySpeakers[(offset + i) % total]);
-
 	return (
-		<section
-			className={s.teaser}
-			aria-labelledby="lineup-teaser-title"
-			onMouseEnter={() => setPaused(true)}
-			onMouseLeave={() => setPaused(false)}
-			onFocus={() => setPaused(true)}
-			onBlur={() => setPaused(false)}
-		>
+		<section className={s.teaser} aria-labelledby="lineup-teaser-title">
 			<div className={s.inner}>
-				{/* Title left, the lede and the way out right — NOT the
-				    eyebrow-over-title-over-lede stack the ticket section and the
-				    facts band were also running. Three sections sharing one head
-				    shape down one page is what reads as a template, and the
-				    stack left the right half of every section empty. */}
-				<div className="head-split head-split--ruled">
-					<h2 id="lineup-teaser-title" className="display head-title">
-						The speakers.
+				<header className="head-rule">
+					<h2 id="lineup-teaser-title" className="head-rule-title">
+						Speakers
 					</h2>
-					<div className={s.headSide}>
-						<p className="head-note">New names hit the wall as they&rsquo;re confirmed.</p>
-						<a className={s.allLink} href="/speakers">See all speakers</a>
-					</div>
-				</div>
+					<p className="head-rule-note">
+						<span className={s.figure}>{total}</span> confirmed. Times in CET.
+					</p>
+				</header>
 
-				<ul className={s.wall} role="list" key={offset}>
-					{shown.map((speaker, i) => (
-						// `--i` staggers the develop animation, so a rotation deals the
-						// new set out one print at a time instead of swapping all four.
-						<li key={speaker.id} style={{ '--i': i } as React.CSSProperties}>
-							<Thumb speaker={speaker} />
-						</li>
+				<ul className={`${tile.grid} ${s.table}`} role="list">
+					{picks.map(({ billing, index }) => (
+						<SpeakerTile
+							key={billing.speaker.id}
+							billing={billing}
+							index={index}
+							total={total}
+							href={speakerTarget(billing.speaker.id)}
+						/>
 					))}
 				</ul>
+				<p className={s.all}>
+					<a className="action" href="/speakers">
+						All {total} speakers
+					</a>
+				</p>
 			</div>
 		</section>
 	);
