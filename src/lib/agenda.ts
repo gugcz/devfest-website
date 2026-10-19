@@ -123,6 +123,19 @@ export function isBand(session: Session): boolean {
 	return session.isPlenumSession || (session.isServiceSession && !roomKey(session));
 }
 
+/** A speakerless service session in a room that runs at least this long (the
+ * lounge open 09:45–17:00) is "open all day", not a slot. It never counts as
+ * live or coming up: a lounge open through lunch must not hide "Next" all day. */
+const LONG_RUN_MIN = 180;
+
+/** A room open all day rather than a slot (see {@link LONG_RUN_MIN}). Bands
+ * stay bands. */
+export function isLongRunning(session: Session): boolean {
+	if (!session.isServiceSession || session.speakers.length > 0 || isBand(session)) return false;
+	const place = placement(session);
+	return place !== null && place.endMin - place.startMin >= LONG_RUN_MIN;
+}
+
 /** A session placed on the day's timeline (minutes from midnight). */
 export interface Placement {
 	startMin: number;
@@ -303,6 +316,17 @@ export function partitionAgenda(sessions: Session[], rooms: Room[] = []): Agenda
 	if (roomTba.length > 0) byRoom.set(ROOM_TBA, roomTba);
 
 	return { columns: finalColumns, bands, byRoom, roomTba };
+}
+
+/** A room's sessions are all open-all-day blocks (the lounge). */
+function isAllDayRoom(sessions: Session[]): boolean {
+	return sessions.length > 0 && sessions.every(isLongRunning);
+}
+
+/** The rooms that hold slots: every room but one open all day (the lounge),
+ * which `/agenda` sets as a line above the sheet and `/tv` leaves out. */
+export function slotColumns(partition: AgendaPartition): AgendaColumn[] {
+	return partition.columns.filter((column) => !isAllDayRoom(partition.byRoom.get(column.key) ?? []));
 }
 
 /** Spans with no talk (bands + dead time), sorted. A band overlapping a

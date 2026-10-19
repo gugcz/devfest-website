@@ -1,5 +1,5 @@
-// Partner logos for /partners and the homepage teaser. Data: the `partners`
-// collection (`src/content/partners.json`); masters under
+// Partner logos for /partners, the homepage teaser and the /tv credits band.
+// Data: the `partners` collection (`src/content/partners.json`); masters under
 // `src/assets/partners/<tier>/`, matched by filename. Every mark keeps its
 // original colours (brand manual p. 15); `LOGO_MONO` flags the masters that
 // need a paper card to read on the dark ground.
@@ -144,16 +144,22 @@ const opticalBox = (ratio: number, cell: Cell, plated = false) => {
 	return { width: Math.round(width), height: Math.round(height) };
 };
 
+/** A logo's master and its optical box in px, for a wall that sizes the
+ * marks itself (the `/tv` credits band, in its own unit). */
+export const logoBox = (p: Partner, tier: string, scale = 1) => {
+	const img = logoFor(p.logo, p.name);
+	const ratio = img.width && img.height ? img.width / img.height : 3;
+	const base = CELLS[tier] ?? CELLS.gold;
+	return { img, box: opticalBox(ratio, { w: base.w * scale, h: base.h * scale }, p.plated) };
+};
+
 /**
  * Everything one logo needs at one call site: the `<Image>` props (the
  * optical box as `--logo-w`, a srcset matching it). `scale` shrinks the
  * tier's box for a smaller wall (the home strip).
  */
 export const partnerLogo = (p: Partner, tier: string, scale = 1) => {
-	const img = logoFor(p.logo, p.name);
-	const ratio = img.width && img.height ? img.width / img.height : 3;
-	const base = CELLS[tier] ?? CELLS.gold;
-	const box = opticalBox(ratio, { w: base.w * scale, h: base.h * scale }, p.plated);
+	const { img, box } = logoBox(p, tier, scale);
 	const shared = { src: img, style: `--logo-w:${box.width / 16}rem` };
 	const props =
 		img.format === 'svg'
