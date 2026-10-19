@@ -12,12 +12,12 @@ Mode: Persuade (the home page). Confirmed by the maintainer on 2026-10-19.
   static sentence; the live figure is `aria-hidden`. Before hydration the
   item holds its box. From the keynote to `EVENT.end` it reads "Live now";
   after that it is gone.
-- **Agenda topics.** A section after "The eleventh DevFest.cz", before
-  Tickets: the head "Agenda" with the text action "Full agenda" (`/agenda`),
-  then the five `TOPICS` billed like a poster on the black table, each
-  name in Bebas on the left, its line in the typewriter in the side column.
-  No cards, no numbers, no tape: topics are not photographs. The
-  "Programme" row leaves the event card, so the topics appear once.
+- **Topics.** In the hero, under the statement: the five `TOPICS` names as
+  one Bebas billing split by dim slashes, so a visitor reads what the day is
+  about before scrolling. Names only; the descriptions stay on `/agenda`. A
+  separate section below the fold read as a stack of section heads and was
+  dropped (2026-10-19). The "Programme" row leaves the event card, so the
+  topics appear once.
 - **Words.** Never "programme" on this surface; it is the agenda.
 - **Record.** The countdown is the one thing that moves on its own; the
   "Nothing moves on its own" rule in `docs/design.md` is rewritten to say so.

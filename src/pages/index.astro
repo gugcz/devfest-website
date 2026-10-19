@@ -13,9 +13,8 @@ import { EVENT } from '../lib/event';
 
 // The home page as prints on a black table: the full-bleed plate with the
 // statement set left over it, then the event (a widescreen print and its
-// back), the agenda's topics, tickets, speakers, the past editions as a
-// contact sheet, the partner wall with a plain label per tier, and the
-// newsletter card.
+// back), tickets, speakers, the past editions as a contact sheet, the
+// partner wall with a plain label per tier, and the newsletter card.
 
 // One row per tier, top tier first. Silver and community share the last row
 // (each mark still sized by its own tier). Media partners live on /partners only.
@@ -90,6 +89,11 @@ const STRIP_SCALE = 1;
 					Prague&rsquo;s most original conference is <span class="red">back.</span>
 				</h1>
 
+				<!-- The day's five topics, billed under the statement. -->
+				<ul class="hero-topics" role="list" aria-label="Topics">
+					{TOPICS.map((t) => <li>{t.name}</li>)}
+				</ul>
+
 				<div class="hero-facts">
 					<time class="hero-date" datetime="2026-10-30"><span class="fig">30</span> Oct <span class="fig">2026</span></time>
 					<Countdown client:load />
@@ -150,27 +154,6 @@ const STRIP_SCALE = 1;
 						</dl>
 					</div>
 				</div>
-			</div>
-		</section>
-
-		<!-- AGENDA — the topics billed like a poster on the black table: each
-		     name large on the left, its line in the side column. -->
-		<section class="band sec" aria-labelledby="topics-title">
-			<div class="band-inner">
-				<header class="head-rule">
-					<h2 id="topics-title" class="head-rule-title">Agenda</h2>
-					<div class="topics-actions">
-						<a class="action" href="/agenda">Full agenda</a>
-					</div>
-				</header>
-				<ul class="topics" role="list">
-					{TOPICS.map((t) => (
-						<li class="topic">
-							<h3 class="topic-name">{t.name}</h3>
-							<p class="topic-desc">{t.desc}</p>
-						</li>
-					))}
-				</ul>
 			</div>
 		</section>
 

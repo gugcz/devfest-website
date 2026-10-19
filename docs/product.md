@@ -65,14 +65,13 @@ built by a community, not a vendor event.
   that go with them are straight paper slips and cards. A page carries one
   red grease-pencil mark.
 - The home page: a hero with the key art on the right and, over it, the
-  statement, the facts (date, a ticking countdown to the keynote, venue
-  link, the wave on sale "from <price>")
+  statement, the five topics billed under it, the facts (date, a ticking
+  countdown to the keynote, venue link, the wave on sale "from <price>")
   and the red "Get tickets"; then sections that each open on a
   poster-scale head, with a note only where it carries a fact: The
   eleventh DevFest.cz (a print of the mill with the one-line pitch, and its
-  back with date / place / doors / audience), Agenda (the five topics
-  billed large, each with its line, and "Full agenda"), Tickets (one paper ticket slip per wave: the wave on
-  sale first and large with its price, state, Buy / Company pays; spent
+  back with date / place / doors / audience), Tickets (one paper ticket
+  slip per wave: the wave on sale first and large with its price, state, Buy / Company pays; spent
   waves crossed out; the invoice route beside the head), Speakers (the
   first prints of the lineup, the opening keynote large, then "All N
   speakers"), Past editions (a contact sheet of eight frames with one

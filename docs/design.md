@@ -781,8 +781,8 @@ Rules:
 - **[MUST] One thing moves on its own: the hero countdown.** It ticks by
   the second in the facts line and drops the seconds under reduced motion,
   so nothing ticks there (maintainer decision, 2026-10-19). No ticker band,
-  no topic rotor, no marquee: the topics are billed still in the home
-  "Agenda" section. The agenda's
+  no topic rotor, no marquee: the topics are billed still under the hero
+  statement. The agenda's
   live dot is static: the "Live now" word carries the state. Nothing
   scrolls, nothing marquees: the contact sheet is still. A text action's
   hover is a colour change to `--color-accent-hot`, nothing slides: nothing
@@ -1660,10 +1660,16 @@ Decision criteria, picked per page:
   foot to black so the page runs on). Set left over it, on the page
   column: the statement (`h1.hero-statement.display` at `--fs-hero`,
   line-height 0.86, max `6.2em`, the red word and the full stop; see
-  Typography for its text-shadow); the facts line; the page's red "Get
-  tickets" (`.btn-primary.hero-cta`, `padding: 1rem 2.5rem`; full measure
+  Typography for its text-shadow); the topics; the facts line; the page's
+  red "Get tickets" (`.btn-primary.hero-cta`, `padding: 1rem 2.5rem`; full measure
   ≤720px). No stamp, no logo in the hero (the bar carries the mark), no
   rotor.
+- **The topics** (`.hero-topics`, `index.astro`, `index.scss`): the five
+  `TOPICS` names as a list under the statement, Bebas at
+  `--fs-card-title`, white, each but the last trailed by a `/` in
+  `--ink-faint` (empty alt text, so it is not read out), so a wrapped line
+  never opens on a slash. One line on a desktop, wrapping on a phone. Names
+  only; the descriptions live on `/agenda`.
 - **The facts line** (`.hero-facts`, `index.astro`, `index.scss`):
   typewriter `note(--fs-body-lg)` in `--ink-strong`, spaced by gap with no
   separators: the date as a mono `<time>` in white, the countdown (below),
@@ -1694,13 +1700,6 @@ Decision criteria, picked per page:
   figure is `aria-hidden`, a static sr-only sentence names the keynote.
   Before hydration it holds its box (`visibility: hidden`); from the
   keynote to `EVENT.end` it reads "Live now", after that it is gone.
-- **"Agenda"** (`index.astro`, `index.scss`), after the event and before
-  Tickets: the `.head-rule` "Agenda" with the text action "Full agenda"
-  (`/agenda`), then the five `TOPICS` billed on the black table, no paper:
-  each name in `display(--fs-h2)` on the left, its line in
-  `prose(--fs-body-lg)` in `--ink-soft` in the side column (the head's
-  grid), rows separated by space, never a rule; one column ≤720px. No
-  numbers, no cards.
 - **"Past editions"** (`index.astro`, `index.scss`),
   after the speakers teaser: the `.head-rule` "Past editions" with its note
   set beside the title, not across the page; then on a `7fr / 5fr` grid
