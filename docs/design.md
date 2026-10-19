@@ -1388,7 +1388,9 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   spine, white on black, ink on paper. The one grease mark rings the
   countdown to a talk inside ten minutes (the hero's while it is the next
   talk, else Up next's) or underlines "That's a wrap." at the day's end.
-  The credits band keeps every partner mark in its colours, equal-area
+  A shared session held in another room (the kick-off, on the Speakeasy
+  screen) names that room in a note, `In Moonshine`, and the hero title
+  steps down a size to give the note its line. The credits band keeps every partner mark in its colours, equal-area
   sized from the Gold box (`logoBox`, `partners.ts`), a `dark` master on a
   white card; a new partner page fades in (opacity, none under reduced
   motion). No split-flap, sweep or pulse.

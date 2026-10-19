@@ -5,6 +5,7 @@
  * same Prague wall clock as `/agenda`.
  */
 import {
+	isLongRunning,
 	partitionAgenda,
 	placement,
 	type AgendaColumn,
@@ -62,10 +63,12 @@ function toSlots(sessions: Session[]): Slot[] {
  * Now / upcoming for every room. `nowMin === null` means it is not the event
  * day: nothing is live and the whole day is upcoming. A room's own talk beats
  * a band running at the same time (a workshop that runs through lunch stays
- * the room's "now").
+ * the room's "now"). A room open all day (the lounge) is no slot, as on
+ * `/agenda`.
  */
 export function venueNow(sessions: Session[], rooms: Room[], nowMin: number | null): RoomNow[] {
-	const { columns, bands, byRoom } = partitionAgenda(sessions, rooms);
+	const slotted = sessions.filter((session) => !isLongRunning(session));
+	const { columns, bands, byRoom } = partitionAgenda(slotted, rooms);
 	const bandSlots = toSlots(bands);
 	return columns.map((column) => {
 		const own = toSlots(byRoom.get(column.key) ?? []);
@@ -82,21 +85,36 @@ export function venueNow(sessions: Session[], rooms: Room[], nowMin: number | nu
 	});
 }
 
-/** Breaks and lunch. A keynote is venue-wide too, but it is a talk. */
+/** The pauses, read off a service session's title, and what a screen calls
+ * each. First match wins: "Registration and coffee" is a registration. */
+const PAUSES: [RegExp, string][] = [
+	[/\bregist|registrace/i, 'Registration'],
+	[/\blunch\b|oběd/i, 'Lunch'],
+	[/\bbreakfast\b|snídaně/i, 'Breakfast'],
+	[/\bbreak\b|\bcoffee\b|\bpause\b|přestávka|pauza/i, 'Break'],
+];
+
+function pauseLabel(session: Session): string | null {
+	if (!session.isServiceSession) return null;
+	return PAUSES.find(([pattern]) => pattern.test(session.title))?.[1] ?? null;
+}
+
+/** Breaks, lunch and registration: the slots people wait through. Kick-off,
+ * lightning talks, closing remarks and the afterparty are there to be at, so
+ * they lead like a talk even when Sessionize files them as service sessions. */
 export function isBreak(session: Session): boolean {
-	return session.isServiceSession;
+	return pauseLabel(session) !== null;
 }
 
 /** `Break 20` → `Break`, `Lunch break` → `Lunch`: what a screen calls a pause. */
 export function breakLabel(session: Session): string {
-	if (/lunch|oběd/i.test(session.title)) return 'Lunch';
-	if (/break|coffee|přestávka|pauza/i.test(session.title)) return 'Break';
-	return session.title;
+	return pauseLabel(session) ?? session.title;
 }
 
 /** What a screen leads with for one room. During a break people want what
  * comes after it, so a break never leads: it is the `pause` beside the next
- * talk. */
+ * talk. "Talk" here is anything on the agenda that is not a pause: a kick-off
+ * or the afterparty leads too. */
 export interface RoomFocus {
 	/** The talk on now, else the next one. */
 	lead: Slot | null;

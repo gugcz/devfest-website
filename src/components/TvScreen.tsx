@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import logoUrl from '../assets/logo.png?url';
-import { eventDateISO, formatMinutes, isBand } from '../lib/agenda';
+import { eventDateISO, formatMinutes, isBand, roomKey } from '../lib/agenda';
 import { EVENT } from '../lib/event';
 import { fetchAgenda, type Lineup } from '../lib/lineup';
 import { isHostSession, type SessionSpeakerRef } from '../lib/sessions';
@@ -212,20 +212,32 @@ function timeLeft(slot: Slot, nowMin: number | null): string {
 	return `${Math.floor(left / 60)} h${minutes ? ` ${minutes} min` : ''} left`;
 }
 
-/** Long talk titles step down a size so they fit their line clamp. */
-function titleSize(title: string): string {
-	if (title.length > 70) return s.titleXl;
-	if (title.length > 55) return s.titleLong;
-	if (title.length > 40) return s.titleMid;
-	return '';
+const TITLE_SIZES = ['', s.titleMid, s.titleLong, s.titleXl];
+
+/** Long talk titles step down a size so they fit their line clamp; `step`
+ * takes them one further where another line shares their room. */
+function titleSize(title: string, step = 0): string {
+	const size = [40, 55, 70].filter((length) => title.length > length).length + step;
+	return TITLE_SIZES[Math.min(size, TITLE_SIZES.length - 1)];
 }
 
 /** `after the break`, `after lunch`. */
 function afterBreak(gap: Slot): string {
 	const label = breakLabel(gap.session);
-	if (label === 'Break') return 'after the break';
-	return `after ${label === 'Lunch' ? 'lunch' : label}`;
+	return label === 'Break' ? 'after the break' : `after ${label.toLowerCase()}`;
 }
+
+/** The room a shared session is held in, named on the other rooms' screens
+ * (the kick-off in Moonshine, on the Speakeasy screen). Empty in its own room
+ * and for a break that has no room. */
+function heldIn(slot: Slot | null, here: string, rooms: RoomNow[]): string {
+	const key = slot ? roomKey(slot.session) : '';
+	if (!slot || !key || key === here) return '';
+	return rooms.find((room) => room.column.key === key)?.column.label ?? slot.session.room.trim();
+}
+
+/** A line's parts that have something to say, `·` between them. */
+const joinNote = (...parts: string[]) => parts.filter(Boolean).join(' · ');
 
 /** A line in the note voice with its figures in mono, the way the site sets
  * a time or a count inside typewriter text (`.fig`). */
@@ -325,11 +337,11 @@ function Progress({ slot, nowMin }: { slot: Slot; nowMin: number | null }) {
 /** The room screen's main block: the talk on now, or the next one with its
  * countdown. A break never takes it: people on a break want what comes after,
  * so the break is a small tag beside the room name. */
-function Hero({ slot, live, nowMin }: { slot: Slot; live: boolean; nowMin: number | null }) {
+function Hero({ slot, live, where, nowMin }: { slot: Slot; live: boolean; where: string; nowMin: number | null }) {
 	const countdown = live ? '' : startsIn(slot.place.startMin, nowMin);
 	const aside = live ? timeLeft(slot, nowMin) : countdown && `Starts ${countdown}`;
 	return (
-		<section className={s.hero} aria-labelledby="tv-hero-title">
+		<section className={`${s.hero} ${where ? s.heroElsewhere : ''}`} aria-labelledby="tv-hero-title">
 			<p className={s.heroMeta}>
 				<Flag text={flagFor(slot, live, nowMin)} live={live} />
 				<span className={s.time}>{slotTime(slot)}</span>
@@ -341,9 +353,14 @@ function Hero({ slot, live, nowMin }: { slot: Slot; live: boolean; nowMin: numbe
 				)}
 			</p>
 			{live && <Progress slot={slot} nowMin={nowMin} />}
-			<h2 id="tv-hero-title" className={`${s.heroTitle} ${titleSize(slot.session.title)}`}>
+			<h2 id="tv-hero-title" className={`${s.heroTitle} ${titleSize(slot.session.title, where ? 1 : 0)}`}>
 				{slot.session.title}
 			</h2>
+			{where && (
+				<p className={s.heroWhere}>
+					<Note text={`In ${where}`} />
+				</p>
+			)}
 			<Speakers speakers={slot.session.speakers} start={slot.place.startMin} />
 		</section>
 	);
@@ -355,12 +372,14 @@ function Hero({ slot, live, nowMin }: { slot: Slot; live: boolean; nowMin: numbe
 function NextCard({
 	slot,
 	gap,
+	where,
 	nowMin,
 	cramped,
 	afterHero,
 }: {
 	slot: Slot;
 	gap: Slot | null;
+	where: string;
 	nowMin: number | null;
 	cramped: boolean;
 	afterHero: boolean;
@@ -382,6 +401,7 @@ function NextCard({
 			<p className={s.nextWhen}>
 				<span className={s.time}>{slotTime(slot)}</span>
 				{gap && <span className={s.nextGap}>{afterBreak(gap)}</span>}
+				{where && <span className={s.nextGap}>in {where}</span>}
 			</p>
 			<h2 id="tv-next-title" className={`${s.nextTitle} ${titleSize(slot.session.title)}`}>
 				{slot.session.title}
@@ -394,10 +414,11 @@ function NextCard({
 }
 
 /** The talk a room shows in a summary: its live talk, else the next one.
- * Breaks and venue-wide sessions read the same in every room, so they are
- * skipped. */
+ * Breaks are skipped, and so is a shared session held in another room: it
+ * belongs on the line of the room it is in (the afterparty under Moonshine). */
 function summarySlot(room: RoomNow): { slot: Slot; live: boolean } | null {
-	const talk = (slot: Slot) => !isBand(slot.session) && !isBreak(slot.session);
+	const talk = (slot: Slot) =>
+		!isBreak(slot.session) && (!isBand(slot.session) || roomKey(slot.session) === room.column.key);
 	if (room.now && talk(room.now)) return { slot: room.now, live: true };
 	const next = room.upcoming.find(talk);
 	return next ? { slot: next, live: false } : null;
@@ -527,12 +548,14 @@ function Credits({ partners, organizerLogo }: { partners: PartnerGroup[]; organi
 function Rail({
 	next,
 	gap,
+	nextWhere,
 	afterHero,
 	others,
 	nowMin,
 }: {
 	next: Slot | null;
 	gap: Slot | null;
+	nextWhere: string;
 	afterHero: boolean;
 	others: RoomNow[];
 	nowMin: number | null;
@@ -551,7 +574,16 @@ function Rail({
 		});
 	return (
 		<div className={s.rail}>
-			{next && <NextCard slot={next} gap={gap} nowMin={nowMin} cramped={fit >= FIT_CRAMPED} afterHero={afterHero} />}
+			{next && (
+				<NextCard
+					slot={next}
+					gap={gap}
+					where={nextWhere}
+					nowMin={nowMin}
+					cramped={fit >= FIT_CRAMPED}
+					afterHero={afterHero}
+				/>
+			)}
 			{lines.length > 0 && <Elsewhere lines={lines} fit={fit} measure={measure} onOverflow={onOverflow} />}
 		</div>
 	);
@@ -569,7 +601,17 @@ function boardWhen(slot: Slot, live: boolean, gap: Slot | null, nowMin: number |
 
 /** A board row's first column: the talk on now, else the next one, on a
  * paper slip. */
-function BoardNow({ lead, live, nowMin }: { lead: Slot | null; live: boolean; nowMin: number | null }) {
+function BoardNow({
+	lead,
+	live,
+	where,
+	nowMin,
+}: {
+	lead: Slot | null;
+	live: boolean;
+	where: string;
+	nowMin: number | null;
+}) {
 	if (!lead) {
 		return (
 			<div className={s.boardCell}>
@@ -583,7 +625,7 @@ function BoardNow({ lead, live, nowMin }: { lead: Slot | null; live: boolean; no
 			<p className={s.boardMeta}>
 				<Flag text={flagFor(lead, live, nowMin)} live={live} />
 				<span className={s.boardMetaText}>
-					<Note text={boardWhen(lead, live, null, nowMin)} />
+					<Note text={joinNote(boardWhen(lead, live, null, nowMin), where)} />
 				</span>
 				{speakers && <span className={s.boardWho}>{speakers}</span>}
 			</p>
@@ -597,12 +639,14 @@ function BoardNow({ lead, live, nowMin }: { lead: Slot | null; live: boolean; no
 function BoardNext({
 	next,
 	gap,
+	where,
 	live,
 	last,
 	nowMin,
 }: {
 	next: Slot | null;
 	gap: Slot | null;
+	where: string;
 	live: boolean;
 	last: boolean;
 	nowMin: number | null;
@@ -610,12 +654,14 @@ function BoardNext({
 	if (!next) {
 		return <div className={`${s.boardCell} ${s.boardNext}`}>{last && <p className={s.boardMeta}>Last of the day</p>}</div>;
 	}
+	// In the narrow column the room says more than a countdown.
+	const when = joinNote(boardWhen(next, false, gap, where ? null : nowMin), where);
 	return (
 		<div className={`${s.boardCell} ${s.boardNext}`}>
 			<p className={s.boardMeta}>
 				<span className={s.boardCellLabel}>{live ? 'Next' : 'Then'}</span>
 				<span className={s.boardMetaText}>
-					<Note text={boardWhen(next, false, gap, nowMin)} />
+					<Note text={when} />
 				</span>
 			</p>
 			<p className={`${s.boardTitleSm} ${titleSize(next.session.title)}`}>{next.session.title}</p>
@@ -635,8 +681,15 @@ function Board({ rooms, nowMin }: { rooms: RoomNow[]; nowMin: number | null }) {
 				{focus.map(({ room, lead, live, next, gap }) => (
 					<li key={room.column.key} className={s.boardRow}>
 						<h2 className={s.boardRoom}>{room.column.label}</h2>
-						<BoardNow lead={lead} live={live} nowMin={nowMin} />
-						<BoardNext next={next} gap={gap} live={live} last={lead !== null} nowMin={nowMin} />
+						<BoardNow lead={lead} live={live} where={heldIn(lead, room.column.key, rooms)} nowMin={nowMin} />
+						<BoardNext
+							next={next}
+							gap={gap}
+							where={heldIn(next, room.column.key, rooms)}
+							live={live}
+							last={lead !== null}
+							nowMin={nowMin}
+						/>
 					</li>
 				))}
 			</ul>
@@ -710,13 +763,17 @@ function Header({ heading, tag, clock, meta }: { heading: string; tag: string; c
 /** A screen pinned to one room: the hero is the talk on now, else the next
  * one; the card under it is the talk after that. */
 function RoomScreen({
+	here,
 	focus,
+	rooms,
 	others,
 	nowMin,
 	dayOver,
 	portrait,
 }: {
+	here: string;
 	focus: RoomFocus;
+	rooms: RoomNow[];
 	others: RoomNow[];
 	nowMin: number | null;
 	dayOver: boolean;
@@ -727,7 +784,7 @@ function RoomScreen({
 	return (
 		<div className={`${s.roomGrid} ${hero ? '' : s.roomGridWrap}`}>
 			{hero ? (
-				<Hero slot={hero} live={focus.live} nowMin={nowMin} />
+				<Hero slot={hero} live={focus.live} where={heldIn(hero, here, rooms)} nowMin={nowMin} />
 			) : (
 				<div className={s.wrap}>
 					<p className={s.wrapTitle}>
@@ -744,6 +801,7 @@ function RoomScreen({
 					key={portrait ? 'portrait' : 'landscape'}
 					next={focus.next}
 					gap={focus.gap}
+					nextWhere={heldIn(focus.next, here, rooms)}
 					afterHero={!focus.live}
 					others={others}
 					nowMin={nowMin}
@@ -787,9 +845,11 @@ export default function TvScreen({
 							Unknown room “{unknown}”. Use one of: {rooms.map((r) => roomSlug(r.column.label)).join(', ')}
 						</p>
 					)}
-					{focus ? (
+					{here && focus ? (
 						<RoomScreen
+							here={here.column.key}
 							focus={focus}
+							rooms={rooms}
 							others={others}
 							nowMin={nowMin}
 							dayOver={isDayOver(rooms, nowMin)}

@@ -413,6 +413,19 @@
 	}
 }
 
+// Where a shared session is held, on the other rooms' screens. The title
+// steps down a size to leave it the line, and the longest keeps three.
+.heroWhere {
+	@include tv-note(calc(var(--u) * 2.4));
+	flex: none;
+	margin-top: calc(var(--u) * -0.8);
+	color: var(--ink-strong);
+}
+
+.heroElsewhere .heroTitle.titleXl {
+	-webkit-line-clamp: 3;
+}
+
 .rail {
 	min-height: 0;
 	display: flex;

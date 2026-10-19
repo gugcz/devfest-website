@@ -6,6 +6,7 @@ import {
 	formatClock,
 	formatMinutes,
 	isBand,
+	isLongRunning,
 	nowState,
 	partitionAgenda,
 	placement,
@@ -30,12 +31,6 @@ import s from './Agenda.module.scss';
 // day (the lounge) is one line above the sheet, not a column. Phone: the same
 // day as one list, grouped by start time, the room named on each slip's edge.
 
-/** A speakerless service session in a room that runs at least this long (the
- * lounge open 09:45–17:00) is "open all day", not a slot: one line above the
- * sheet. It never counts as live or coming up: a lounge open through lunch
- * must not hide "Next" all day. */
-const LONG_RUN_MIN = 180;
-
 /** Sessionize placeholder titles for a slot nobody fills yet ("Talk TBA"). */
 const OPEN_SLOT_RE = /\b(tba|tbd)\b/i;
 
@@ -53,14 +48,6 @@ const NARROW = '(max-width: 720px)';
 const ROOM_NOTES: Record<string, string> = {
 	'crime lab': 'Workshops only',
 };
-
-/** A speakerless service session in a room, long enough to be "open all day"
- * rather than a slot (see {@link LONG_RUN_MIN}). Bands stay bands. */
-function isLongRunning(session: Session): boolean {
-	if (!session.isServiceSession || session.speakers.length > 0 || isBand(session)) return false;
-	const place = placement(session);
-	return place !== null && place.endMin - place.startMin >= LONG_RUN_MIN;
-}
 
 /** A slot held for a talk that is not announced yet: no speaker, and a
  * placeholder title. Shown as an empty slot, never as a talk called "Talk TBA". */
