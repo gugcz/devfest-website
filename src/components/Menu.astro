@@ -61,10 +61,10 @@ const isCurrent = (href: string) => {
 
 <header id="site-header" class="site-header" data-state="top" data-home={isHome ? 'true' : 'false'}>
 	<a href="/" class="brand" aria-label="DevFest.cz 2026 — home">
-		<!-- Header sits above the fold on every page, so it loads eagerly; the
+		{/* Header sits above the fold on every page, so it loads eagerly; the
 		     intrinsic width/height come from the official 3000×600 artboard (5:1,
 		     clear space included), and `widths` caps the srcset at the 190px CSS
-		     width up to 2× DPR. -->
+		     width up to 2× DPR. */}
 		<Image
 			src={logo}
 			alt="DevFest.cz 2026"
@@ -75,9 +75,9 @@ const isCurrent = (href: string) => {
 		/>
 	</a>
 
-	<!-- Desktop (>=1100px): the destinations sit in the bar, the four the visit
+	{/* Desktop (>=1100px): the destinations sit in the bar, the four the visit
 	     turns on, then the organisers' side one shade dimmer. Below 1100px this
-	     list is hidden and the same lines live in the full-screen panel. -->
+	     list is hidden and the same lines live in the full-screen panel. */}
 	<nav class="bar-nav" aria-label="Primary">
 		<ul class="bar-list">
 			{links.filter(({ cta }) => !cta).map(({ href, label }) => {
@@ -128,9 +128,9 @@ const isCurrent = (href: string) => {
 				<span class="nav-toggle-label">Menu</span>
 			</button>
 
-			<!-- Full-screen overlay at every width. The main destinations are here,
+			{/* Full-screen overlay at every width. The main destinations are here,
 			     in one column of two tiers: the four the visit turns on at poster
-			     scale, the rest straight under them, one step smaller. -->
+			     scale, the rest straight under them, one step smaller. */}
 			<div id="nav-list" class="nav-panel" data-open="false">
 				<div class="nav-body">
 					<div class="nav-lists">
@@ -171,8 +171,8 @@ const isCurrent = (href: string) => {
 						</ul>
 					</div>
 
-					<!-- One small print on the table beside the lines (>=901px only):
-					     where the day happens. Decorative; the foot line says it in words. -->
+					{/* One small print on the table beside the lines (>=901px only):
+					     where the day happens. Decorative; the foot line says it in words. */}
 					<div class="nav-print paper" aria-hidden="true">
 						<span class="tape">{EVENT.venue}</span>
 						<span class="paper-photo nav-print-photo">
@@ -187,7 +187,7 @@ const isCurrent = (href: string) => {
 
 				<div class="nav-foot">
 					<div class="nav-foot-meta">
-						<p class="nav-foot-line">30 October 2026 &mdash; Uhelný Mlýn, near Prague</p>
+						<p class="nav-foot-line">30 October 2026 &mdash; Uhelný Mlýn, Libčice nad Vltavou</p>
 						<a class="nav-foot-mail" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
 					</div>
 				</div>

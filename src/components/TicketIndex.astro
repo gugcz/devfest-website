@@ -1,0 +1,41 @@
+---
+/** The ticket types and prices as build-time text, for readers that run no
+ * script (`.no-js`). The `Tickets` island replaces it for everyone else. */
+import type { TicketLine } from '../lib/tickets-static';
+import { BUILD_DAY } from '../lib/static-api';
+
+interface Props {
+	lines: TicketLine[];
+}
+
+const { lines } = Astro.props;
+---
+
+<section class="no-js band" aria-label="Ticket prices">
+	<div class="band-inner static-index">
+		<p class="static-index-stamp">
+			Prices as of {BUILD_DAY}, VAT included, sold on ti.to. Paying by bank transfer?{' '}
+			<a href="/invoice">Request a company invoice</a>.
+		</p>
+		<ul class="static-index-list">
+			{lines.map((line) => (
+				<li>
+					<h3 class="static-index-title">{line.label}</h3>
+					<p class="static-index-meta">
+						{line.price} · {line.status}
+						{line.purchasable && (
+							<>
+								{' · '}
+								<a href={line.url}>Buy on ti.to</a>
+							</>
+						)}
+					</p>
+				</li>
+			))}
+		</ul>
+	</div>
+</section>
+
+<style lang="scss">
+	@use './StaticIndex';
+</style>

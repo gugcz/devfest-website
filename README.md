@@ -4,7 +4,7 @@ The most original developer conference in Prague is back.
 
 ![DevFest.cz 2026](public/og-image.jpg)
 
-DevFest.cz 2026 is a community-built conference and festival for developers, geeks, and tech enthusiasts — AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it — happening **October 30, 2026** at Uhelný Mlýn near Prague, Czech Republic.
+DevFest.cz 2026 is a community-built conference and festival for developers, geeks, and tech enthusiasts — AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it — happening **October 30, 2026** at Uhelný Mlýn in Libčice nad Vltavou, Czech Republic.
 
 ## Tech Stack
 
@@ -170,7 +170,9 @@ Browser
                                                             └─ read Firestore speakers+sessions+rooms via Admin SDK (cached, 15-min edge TTL)
 ```
 
-**Share pages.** `/talks/<id>` and `/speakers/<id>` are static pages built from the production `/api/lineup` at `astro build` (`src/lib/lineup-static.ts`; set `DEVFEST_LINEUP_URL` to build against another copy). They unfurl the talk's or speaker's own preview and forward to the sheet. A failed read builds none; `404.astro` forwards links to anything newer. See [ADR 0006](docs/adr/0006-share-pages-built-from-the-live-lineup.md).
+**Share pages.** `/talks/<id>` and `/speakers/<id>` are static pages built from the production `/api/lineup` at `astro build` (`src/lib/lineup-static.ts`; set `DEVFEST_LINEUP_URL` to build against another copy). They carry the talk or speaker as text and their own preview, are indexed, and forward a browser to the sheet. A failed read builds none; `404.astro` forwards links to anything newer. See [ADR 0006](docs/adr/0006-share-pages-built-from-the-live-lineup.md).
+
+**Readers without script.** The same build also reads `/api/tickets` and `/api/workshops` (`src/lib/static-api.ts`; `DEVFEST_TICKETS_URL` / `DEVFEST_WORKSHOPS_URL` override) and renders the lineup, the programme, the open workshops and the prices as plain HTML under the islands (`.no-js`, hidden once `html.js` is set), the Event JSON-LD offers, and `/llms.txt`. All of it is as fresh as the last Hosting deploy. See [ADR 0008](docs/adr/0008-agent-readable-build-time-html.md).
 
 ### Functions
 
@@ -287,6 +289,10 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 `firestore.rules` denies all client access. Not wired into `firebase.json` (ruleset is project-global, shared with the app) — merge the `invoices` block in the console manually.
 
+## Venue screens — `/tv`
+
+`/tv` is the unlisted page for the TVs at the venue (`noindex`, out of the sitemap, linked from nowhere). `/tv?room=<room id or name slug>` pins a screen to one room (the talk on now, up next with a countdown, what the other rooms are showing); plain `/tv` shows every room as a now/next board. During a break (a service session titled as a break, coffee, lunch or registration) both lead with the next talk and show the break as a small tag by the heading; a kick-off, lightning talks, closing remarks or the afterparty lead like a talk, and the other rooms' screens say which room it is in. A credits band under both names GUG.cz as the organiser and loops through the partners (the homepage set, from `src/content/partners.json`, three logos a page). A TV hung portrait gets the same type sizes with the zones stacked: the hero over the rail, and on the board each room as one block; `&at=10:15` fakes the clock on the event day for checking a screen early. The agenda comes from `/api/lineup`, polled every 2 minutes.
+
 ## Analytics (GA4)
 
 Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Architecture and gotchas: [`.claude/rules/analytics.md`](.claude/rules/analytics.md). This section is the console-side setup, **not** in the repo.
@@ -305,7 +311,8 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 |-------|-------------|
 | `/` | Landing page with countdown and newsletter signup |
 | `/speakers` | Speaker lineup (reads `/api/lineup`); `?speaker=<id>` opens one speaker |
-| `/speakers/<id>`, `/talks/<id>` | Share pages: one speaker's or talk's own link preview, then forward to the sheet |
+| `/speakers/<id>`, `/talks/<id>` | Share pages: one speaker or talk as text with its own link preview, then forward to the sheet; indexed |
+| `/llms.txt` | The site as Markdown for language models: facts, tickets, pages, every talk and speaker (built) |
 | `/agenda` | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day — and under it (`#talks`) every talk with search and filters (reads `/api/lineup`). `/sessions` redirects here, `?talk=` included |
 | `/workshops` | Workshop seat sign-up and waitlist for ticket holders (reads `/api/workshops`) |
 | `/invoice` | Request a company invoice to buy tickets by bank transfer |
@@ -314,6 +321,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/team` | Organizing team |
 | `/contact` | Contact desks, plus press coverage and the press-kit link (`#press`) |
 | `/faq` | Frequently asked questions |
+| `/tv` | Unlisted venue-screen page: a room's now/next, or the whole venue (reads `/api/lineup`) |
 | `/venue` | Getting to Uhelný Mlýn — train from Prague, walk from the station, airport |
 | `/attending` | "I'm attending" share-card generator (client-side canvas → PNG) |
 | `/code-of-conduct` | Code of Conduct one-pager, Listener's contact, link to the full text |

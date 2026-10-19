@@ -18,9 +18,9 @@ audited. There is no design canvas in the repo.
 ## The loop for a new or redesigned surface
 
 1. **Brief.** `/impeccable shape <surface>` (writes a surface brief under
-   `.impeccable/surfaces/`, creating the folder on first use; none exists
-   yet). Commit the brief with the surface it shaped. `docs/product.md` is
-   the product truth it reads; fix facts there, not in the brief.
+   `.impeccable/surfaces/`). Commit the brief with the surface it shaped.
+   `docs/product.md` is the product truth it reads; fix facts there, not in
+   the brief.
 2. **Code it.** Build in Astro + SCSS per `docs/design.md` (primitives by
    class name, recipes from `_type.scss`, tokens only). Every text uses a
    `--fs-*` step, every colour a token, every gap a spacing token. A value

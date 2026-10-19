@@ -22,9 +22,9 @@ client SDK** (client reads blocked on an App Check token, ~30s on mobile;
 | Endpoint | Function | Reads | Caller | Edge TTL |
 | --- | --- | --- | --- | --- |
 | `/api/lineup` | `lineupApi` | Firestore `speakers` + `sessions` + `rooms` | `src/lib/lineup.ts`, `src/lib/lineup-static.ts` (build) | 15min |
-| `/api/tickets` | `ticketsApi` | RTDB `/tickets` | `src/lib/tito.ts::fetchTickets` | 5min |
+| `/api/tickets` | `ticketsApi` | RTDB `/tickets` | `src/lib/tito.ts::fetchTickets`, `src/lib/tickets-static.ts` (build) | 5min |
 | `/api/speaker-photo?id=` | `speakerPhotoApi` | Storage `speakers/{id}` or the Sessionize CDN (image bytes) | `src/components/SpeakerCard.tsx` | 1 day |
-| `/api/workshops` | `workshopsApi` | RTDB `/workshops` (seat counts only) | `src/lib/workshops.ts::fetchSeats` | 30s |
+| `/api/workshops` | `workshopsApi` | RTDB `/workshops` (seat counts only) | `src/lib/workshops.ts::fetchSeats`, `src/lib/workshops-static.ts` (build) | 30s |
 
 - 2nd-gen `onRequest`, public, `europe-west1`, codebase `website`. Edge
   `s-maxage` + in-instance memo (`lib/cached-endpoint.ts`). Failed read →

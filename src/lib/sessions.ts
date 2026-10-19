@@ -214,7 +214,7 @@ export function hasActiveFilters(query: string, filters: SessionFilters): boolea
 
 /** Emcee/host slots come from Sessionize titled exactly "HOST" (no abstract,
  * no track) — they carry the day's host as a "speaker" but aren't talks. */
-function isHostSession(session: Session): boolean {
+export function isHostSession(session: Session): boolean {
 	return session.title.trim().toUpperCase() === 'HOST';
 }
 

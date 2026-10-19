@@ -1,23 +1,28 @@
 ---
 /**
- * A share page: one talk's or one speaker's link preview, then the page that
- * shows it. Link scrapers (Slack, LinkedIn, X, Messenger) read the head and
- * run no script, so they unfurl THIS title and description; a visitor's
- * browser runs the script and lands on `to`, where the sheet opens.
+ * A share page: one talk or one speaker, then the page that shows it. Link
+ * scrapers (Slack, LinkedIn, X, Messenger) and assistants (ChatGPT, Claude,
+ * Perplexity) run no script, so they unfurl THIS title and description and
+ * read the talk or speaker in the body (the slot); a visitor's browser runs
+ * the script and lands on `to`, where the sheet opens.
  *
  * No meta refresh: some scrapers follow one and would unfurl the agenda
- * instead. `og:url` is this page for the same reason (Facebook re-fetches
- * whatever `og:url` names). `noindex`: the content lives on `to`.
+ * instead. `og:url` and the canonical are this page for the same reason
+ * (Facebook re-fetches whatever `og:url` names). Indexed and in the sitemap:
+ * this is the only static copy of the talk or speaker. A crawler that runs
+ * script (Googlebot) follows the forward and may index the sheet instead;
+ * accepted, the page is for readers that run none (ADR 0008).
  */
 import { Font } from 'astro:assets';
 import { defaultOgImageVersion } from '../lib/og-version';
+import { EVENT } from '../lib/event';
 
 interface Props {
 	/** Where a visitor goes: `/agenda?talk=<id>` or `/speakers?speaker=<id>`. */
 	to: string;
 	title: string;
 	description: string;
-	/** What the no-script fallback line names. */
+	/** What the forwarding line names. */
 	label: string;
 }
 
@@ -33,9 +38,9 @@ const ogImageAlt = 'DevFest.cz 2026, 30 October at Uhelný Mlýn';
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="robots" content="noindex" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		<link rel="canonical" href={url} />
 
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content={url} />
@@ -60,13 +65,14 @@ const ogImageAlt = 'DevFest.cz 2026, 30 October at Uhelný Mlýn';
 		<script is:inline define:vars={{ to }}>
 			location.replace(new URL(to, location.origin).href);
 		</script>
-		<!-- No preload: a visitor's browser leaves before it paints. Only the
-		     no-script fallback below ever uses them. -->
+		{/* No preload: a visitor's browser leaves before it paints. Only a
+		    reader without script ever uses them. */}
 		<Font cssVariable="--font-special-elite" />
 		<Font cssVariable="--font-bebas-neue" />
 		<style>
-			/* The no-script fallback, as the site sets it: a paper slip on the
-			   black table, the talk or speaker in Bebas, the line on the typewriter. */
+			/* What a reader without script sees, as the site sets it: a paper
+			   slip on the black table, the name in Bebas, the rest on the
+			   typewriter. */
 			body {
 				margin: 0;
 				min-height: 100svh;
@@ -76,9 +82,8 @@ const ogImageAlt = 'DevFest.cz 2026, 30 October at Uhelný Mlýn';
 				box-sizing: border-box;
 				background: #000000;
 			}
-			p {
-				max-width: 34rem;
-				margin: 0;
+			article {
+				max-width: 40rem;
 				padding: 1.5rem 1.75rem;
 				background: rgba(255, 255, 255, 0.94);
 				color: #000000;
@@ -86,12 +91,22 @@ const ogImageAlt = 'DevFest.cz 2026, 30 October at Uhelný Mlýn';
 				box-shadow: 0 1.5rem 1.5rem -1rem rgba(0, 0, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.7);
 				font: 1.05rem/1.6 var(--font-special-elite), cursive;
 			}
-			a {
-				display: block;
-				margin-bottom: 0.5rem;
-				color: inherit;
+			h1,
+			h2 {
+				margin: 0 0 0.5rem;
 				font: 2.1rem/1 var(--font-bebas-neue), sans-serif;
 				text-transform: uppercase;
+			}
+			h2 {
+				margin-top: 1.5rem;
+				font-size: 1.5rem;
+			}
+			p,
+			ul {
+				margin: 0 0 0.75rem;
+			}
+			a {
+				color: inherit;
 				text-decoration: underline;
 				text-decoration-thickness: 1px;
 				text-underline-offset: 0.15em;
@@ -103,6 +118,9 @@ const ogImageAlt = 'DevFest.cz 2026, 30 October at Uhelný Mlýn';
 		</style>
 	</head>
 	<body>
-		<p><a href={to}>{label}</a> at DevFest.cz 2026.</p>
+		<article>
+			<slot />
+			<p><a href={to}>{label}</a> at DevFest.cz 2026, {EVENT.dateLabel}, {EVENT.venue}, {EVENT.address}.</p>
+		</article>
 	</body>
 </html>

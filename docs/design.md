@@ -778,10 +778,11 @@ Rules:
   transition into a sheet, it is the site's
   only decorative motion. The hero plate is still, and a print's tilt is
   set, never animated.
-- **[MUST] Nothing moves on its own.** The ticker band, the hero countdown
-  and the home topic rotor are gone (a ticking readout or a cycling word
-  under a still poster was the one thing on the page that moved for its own
-  sake; the topics are a "Programme" line on the event card). The agenda's
+- **[MUST] One thing moves on its own: the hero countdown.** It ticks by
+  the second in the facts line and drops the seconds under reduced motion,
+  so nothing ticks there (maintainer decision, 2026-10-19). No ticker band,
+  no topic rotor, no marquee: the topics are billed still under the hero
+  statement. The agenda's
   live dot is static: the "Live now" word carries the state. Nothing
   scrolls, nothing marquees: the contact sheet is still. A text action's
   hover is a colour change to `--color-accent-hot`, nothing slides: nothing
@@ -1355,7 +1356,7 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   both in `--paper-ink-dim`, then the title `prose(--fs-body, 1.3)` and the
   speakers in Bebas `--fs-action`, then the live or next flag (see
   Component states). A break or lunch is a quiet typewriter line across
-  the rooms, mono time and title in `--ink-soft`; the evening programme
+  the rooms, mono time and title in `--ink-soft`; the evening
   after the last talk is louder (`--fs-lede`, white) and names its room. A
   speakerless "TBA"/"TBD" slot is "Slot open": a dashed `--field-border`
   outline with its time and a note, not a control (`.open`). One room
@@ -1367,6 +1368,33 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   no head (`AgendaList`). Abstracts, tags and photos live only in "Every
   talk" below. On a phone the "Every talk" head drops its note (the list
   invites the search itself, `agenda.astro`).
+- **Venue screens** (`TvScreen.tsx`, `TvScreen.module.scss`, unlisted
+  `/tv`) — the darkroom at sign scale, read across a hall. **Recorded
+  exceptions:** (1) every size is a multiple of `--u` (1/100 of the
+  screen's long side), not a `--fs-*` step, because the ramp tops out at
+  laptop sizes; (2) the speaker print restates `.paper` / `.paper-photo` /
+  `.paper-edge` in `--u` for the same reason (tokens unchanged: `--paper`,
+  `--paper-shadow`, `--tilt-*`, `--paper-ink-dim`); (3) talk titles are
+  Bebas on paper too, where the agenda slip sets them in `prose()`: the
+  condensed face fits a title in two lines across the room; (4) a 1px
+  drift every six minutes keeps a still frame off the panel (burn-in), off
+  under reduced motion; (5) the credits band turns a partner page every 8 s
+  on its own, since a band of every partner cannot fit one screen.
+  Otherwise the site's rules: flat black, no rules or
+  cards on the table; word labels are notes (never under `1.6u`), times
+  mono and a figure inside a note a mono `.fig`; the speaker portraits are
+  tilted prints with frame number and start time on the edge, Up next and
+  the board's Now column straight slips; "Live now" is a red word and dot
+  on black, an ink word and red dot on paper; the live progress is a
+  spine, white on black, ink on paper. The one grease mark rings the
+  countdown to a talk inside ten minutes (the hero's while it is the next
+  talk, else Up next's) or underlines "That's a wrap." at the day's end.
+  A shared session held in another room (the kick-off, on the Speakeasy
+  screen) names that room in a note, `In Moonshine`, and the hero title
+  steps down a size to give the note its line. The credits band keeps every partner mark in its colours, equal-area
+  sized from the Gold box (`logoBox`, `partners.ts`), a `dark` master on a
+  white card; a new partner page fades in (opacity, none under reduced
+  motion). No split-flap, sweep or pulse.
 - **Menu** (`Menu.astro`, `Menu.scss`) — the bar is the mark left and the
   actions right (`display: flex; justify-content: space-between`). **At
   ≥1100px the destinations sit in the bar** (`.bar-nav`): Speakers, Agenda,
@@ -1671,13 +1699,20 @@ Decision criteria, picked per page:
   foot to black so the page runs on). Set left over it, on the page
   column: the statement (`h1.hero-statement.display` at `--fs-hero`,
   line-height 0.86, max `6.2em`, the red word and the full stop; see
-  Typography for its text-shadow); the facts line; the page's red "Get
-  tickets" (`.btn-primary.hero-cta`, `padding: 1rem 2.5rem`; full measure
+  Typography for its text-shadow); the topics; the facts line; the page's
+  red "Get tickets" (`.btn-primary.hero-cta`, `padding: 1rem 2.5rem`; full measure
   ≤720px). No stamp, no logo in the hero (the bar carries the mark), no
-  rotor, no countdown.
+  rotor.
+- **The topics** (`.hero-topics`, `index.astro`, `index.scss`): the five
+  `TOPICS` names as a list under the statement, Bebas at
+  `--fs-card-title`, white, each but the last trailed by a `/` in
+  `--ink-faint` (empty alt text, so it is not read out), so a wrapped line
+  never opens on a slash. One line on a desktop, wrapping on a phone. Names
+  only; the descriptions live on `/agenda`.
 - **The facts line** (`.hero-facts`, `index.astro`, `index.scss`):
   typewriter `note(--fs-body-lg)` in `--ink-strong`, spaced by gap with no
-  separators: the date as a mono `<time>` in white, the venue as a maps
+  separators: the date as a mono `<time>` in white, the countdown (below),
+  the venue as a maps
   link on the in-prose underline, and `HeroOffer` — the wave on sale ("Last
   chance" for the final wave), "· until <date>" when it has one, and "from
   <price>" linked to `#tickets`, at the line's one size (`note(1em)`), the
@@ -1695,8 +1730,15 @@ Decision criteria, picked per page:
   edge "On the back" as a note and the facts as a `<dl>`: the term a
   `note(--fs-note-sm)` in `--paper-ink-dim`, the value a `note(--fs-body)` —
   Date (a `<time>`), Place, Doors (mono "08:00–20:00"), Audience (mono
-  "350", "developers"), and **Programme**: the `TOPICS` joined by middle
-  dots, the line that replaced the rotor.
+  "350", "developers").
+- **The countdown** (`Countdown.tsx`, `Countdown.module.scss`): in the
+  facts line right after the date, at the line's one size — "Keynote in"
+  as the 0.72 qualifier, then the time left to `EVENT.start` as one mono
+  figure (`10d 14h 22m 05s`), no boxes, no red. Ticks by the second;
+  under reduced motion it drops the seconds and refreshes every 15s. The
+  figure is `aria-hidden`, a static sr-only sentence names the keynote.
+  Before hydration it holds its box (`visibility: hidden`); from the
+  keynote to `EVENT.end` it reads "Live now", after that it is gone.
 - **"Past editions"** (`index.astro`, `index.scss`),
   after the speakers teaser: the `.head-rule` "Past editions" with its note
   set beside the title, not across the page; then on a `7fr / 5fr` grid
@@ -1826,7 +1868,7 @@ No emoji in UI copy.
 running copy (`EVENT.dateLabel`), "30 Oct 2026" in mono stamps and meta
 lines (`EVENT.dateShort`), never "October 30". Hours are 24-hour `HH:MM`
 ("08:00", not "8:00" or "9 AM"), read from `src/lib/event.ts`. British
-spelling: "programme", not "program".
+spelling. The schedule is "the agenda", never "programme" or "program".
 
 **[MUST] Noir wordplay is spent in a few earned places, not everywhere.**
 It lives in: the home hero statement, the `/404` title "Nothing filed under
@@ -1883,9 +1925,11 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
   fragment; its ring alone is suppressed.
 - **[MUST] The cookie banner is second in the DOM**, `Escape` handler on
   `document` (`CookieBanner.astro:89–93`).
-- **[MUST] Nothing moves on its own (2.2.2 by construction).** The topic
-  rotor is gone; the only loops are the loading skeleton and pulse, both
-  stopped under reduced motion.
+- **[MUST] Only the countdown moves on its own.** It is `aria-hidden`
+  behind a static sentence, and under reduced motion it stops ticking. It
+  has no pause control, so its seconds are a known gap against 2.2.2 that
+  the maintainer accepted (2026-10-19). The other loops are the loading
+  skeleton and pulse, both stopped under reduced motion.
 - **[MUST] Header controls are 44px tap targets.** The mark link and the
   bar's controls and the desktop bar links take `min-height:
   var(--header-tap)` (`Menu.scss:83`, `149`, `189`, `267`); the text
