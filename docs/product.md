@@ -25,7 +25,7 @@ web
 ## Product Purpose
 
 The landing site for **DevFest.cz 2026**, a community-built developer
-conference and festival on **30 October 2026** at **Uhelný Mlýn** near Prague,
+conference and festival on **30 October 2026** at **Uhelný Mlýn** in Libčice nad Vltavou,
 organised by **GUG.cz, z.s.** The site exists to sell tickets and to carry the
 programme, speakers, venue and practical information. **[inferred]** Success
 is ticket sales and newsletter sign-ups; the analytics conversion events are

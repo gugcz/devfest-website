@@ -6,9 +6,9 @@ import { EVENT } from './event';
 /** The facts the copy states out loud, in the site's date format (`event.ts`). */
 export const INVITE_EVENT = {
 	date: EVENT.dateLabel,
-	city: 'Prague',
+	city: 'Libčice nad Vltavou',
 	/** The one-line meta under the CTA. */
-	stamp: `${EVENT.dateShort} · Prague`,
+	stamp: `${EVENT.dateShort} · Libčice nad Vltavou`,
 } as const;
 
 /** The closing line, by `role`. An unknown role falls back to the organiser
