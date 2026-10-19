@@ -169,13 +169,13 @@ export default function Sessions() {
 	if (status === 'error') {
 		return (
 			<ErrorState>
-				<p>The programme won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
+				<p>The agenda won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
 			</ErrorState>
 		);
 	}
 
 	if (status === 'loading') {
-		return <LoadingState label="Developing the programme" />;
+		return <LoadingState label="Developing the agenda" />;
 	}
 
 	if (status === 'empty') {

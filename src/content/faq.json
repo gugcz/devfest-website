@@ -68,7 +68,7 @@
 	{
 		"id": "program",
 		"order": 3,
-		"label": "Programme & speakers",
+		"label": "Agenda & speakers",
 		"items": [
 			{
 				"q": "Who is speaking?",
@@ -84,7 +84,7 @@
 			},
 			{
 				"q": "How can I become a speaker?",
-				"a": "The Call for Proposals closed over the summer and the programme for DevFest.cz 2026 is out — see the <a href=\"/speakers\">speakers</a> and <a href=\"/agenda\">agenda</a> pages. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>."
+				"a": "The Call for Proposals closed over the summer and the lineup for DevFest.cz 2026 is out — see the <a href=\"/speakers\">speakers</a> and <a href=\"/agenda\">agenda</a> pages. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>."
 			}
 		]
 	},
@@ -103,7 +103,7 @@
 			},
 			{
 				"q": "How do I stay updated?",
-				"a": "Drop your email in the form on the <a href=\"/#newsletter\">home page</a> and follow us on social media — ticket drops and programme news land there first."
+				"a": "Drop your email in the form on the <a href=\"/#newsletter\">home page</a> and follow us on social media — ticket drops and agenda news land there first."
 			}
 		]
 	}
