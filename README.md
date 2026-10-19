@@ -1,6 +1,6 @@
 # DevFest.cz 2026
 
-The most original developer conference in Prague is back.
+The most original developer conference near Prague is back.
 
 ![DevFest.cz 2026](public/og-image.jpg)
 

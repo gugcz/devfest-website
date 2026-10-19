@@ -17,7 +17,7 @@ setGlobalOptions({ maxInstances: 10 });
 /** Every function in this codebase deploys here — closest region to the event. */
 export const REGION = 'europe-west1';
 
-/** Schedules are authored in local time; the event and its organizers are in Prague. */
+/** Schedules are authored in local time; the event and its organizers are on Prague time. */
 export const TIME_ZONE = 'Europe/Prague';
 
 /**

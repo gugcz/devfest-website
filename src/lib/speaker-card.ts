@@ -251,7 +251,7 @@ export function drawSpeakerCard(
 	ctx.letterSpacing = '3px';
 	ctx.textAlign = 'right';
 	ctx.textBaseline = 'middle';
-	ctx.fillText('30 OCT 2026 · PRAGUE', size - MARGIN, bandMid + 1);
+	ctx.fillText('30 OCT 2026 · NEAR PRAGUE', size - MARGIN, bandMid + 1);
 	ctx.letterSpacing = '0px';
 	ctx.textAlign = 'left';
 }

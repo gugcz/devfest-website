@@ -33,7 +33,7 @@ the ticket CTA and the newsletter form.
 
 ## Positioning
 
-**[inferred]** "The most original developer conference in Prague": one day,
+**[inferred]** "The most original developer conference near Prague": one day,
 one venue, a curated lineup across AI agents, generative UI, cloud and
 backends, mobile and web accessibility, and the humans behind it. A festival
 built by a community, not a vendor event.
