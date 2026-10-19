@@ -1,20 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { PORTRAIT_TRANSITION, type Speaker } from '../lib/speakers';
+import type { Speaker } from '../lib/speakers';
 import { fetchLineup } from '../lib/lineup';
 import { useRemote } from '../lib/useRemote';
 import { REDUCED_MOTION } from '../lib/useMediaQuery';
 import { SPEAKER_PARAM } from '../lib/share';
 import SpeakerDetail from './SpeakerDetail';
-import SpeakerPhoto from './SpeakerPhoto';
+import SpeakerTile, { billLineup, type Billing } from './SpeakerTile';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
-import print from './Print.module.scss';
-import s from './Speakers.module.scss';
+import tile from './SpeakerTile.module.scss';
 
-/** Shared `view-transition-name` for the clicked print and the dialog photo,
- * so the browser morphs one into the other. Applied to the open speaker's
- * card only — two elements with the same name at capture time skips the
- * transition. */
+/** Shared `view-transition-name` for a tile's print and the dialog photo, so
+ * the browser morphs one into the other. Applied only to the print of the
+ * speaker being opened — two elements with the same name at capture time
+ * skips the transition. */
 type ViewTransitionDoc = Document & {
 	startViewTransition?: (cb: () => void) => { finished: Promise<void> };
 };
@@ -26,8 +25,8 @@ function canMorph(): boolean {
 }
 
 /**
- * Morphs the clicked print into the dialog photo. The name must be on the
- * card BEFORE the capture (so opening is two renders), only ONE element may
+ * Morphs a tile's print into the dialog photo. The name must be on the
+ * print BEFORE the capture (so opening is two renders), only ONE element may
  * carry it per capture (hand-off inside the callback), and `flushSync` is
  * needed or the "after" capture sees an unchanged DOM.
  */
@@ -35,7 +34,7 @@ function usePortraitMorph(
 	selected: Speaker | null,
 	setSelected: (sp: Speaker | null) => void,
 ) {
-	// Which card currently carries the transition name (never the open one).
+	// Which speaker's print carries the transition name (never the open one).
 	const [morphId, setMorphId] = useState<string | null>(null);
 	const pending = useRef<Speaker | null>(null);
 
@@ -51,7 +50,7 @@ function usePortraitMorph(
 		[setSelected],
 	);
 
-	// Second render of the open sequence: the name is now painted on the card,
+	// Second render of the open sequence: the name is now painted on the print,
 	// so the capture has something to morph from.
 	useEffect(() => {
 		const sp = pending.current;
@@ -77,7 +76,7 @@ function usePortraitMorph(
 				setMorphId(sp.id);
 			});
 		});
-		// Drop the name once the tween is done so no card is left carrying it
+		// Drop the name once the tween is done so the print is not left carrying it
 		// into the next transition.
 		transition?.finished.finally(() => setMorphId(null));
 	}, [selected, setSelected]);
@@ -85,75 +84,54 @@ function usePortraitMorph(
 	return { morphId, open, close };
 }
 
-function SpeakerCard({
-	speaker,
-	onOpen,
-	priority,
-	index,
-	morphing,
-}: {
-	speaker: Speaker;
-	onOpen: (speaker: Speaker) => void;
-	priority: boolean;
-	index: number;
-	morphing: boolean;
-}) {
-	return (
-		<li className={s.cell}>
-			<button
-				type="button"
-				className={`${print.frame} ${s.card}`}
-				onClick={() => onOpen(speaker)}
-				aria-label={`View ${speaker.fullName}'s profile`}
-				style={
-					morphing ? ({ viewTransitionName: PORTRAIT_TRANSITION } as React.CSSProperties) : undefined
-				}
-			>
-				<span className={print.print}>
-					<SpeakerPhoto
-						speaker={speaker}
-						photoClass={print.photo}
-						monogramClass={print.monogram}
-						width={400}
-						height={500}
-						eager={priority}
-					/>
-					<span className={print.scrim} aria-hidden="true" />
-					<span className={print.vignette} aria-hidden="true" />
-				</span>
-				<span className={s.body}>
-					<span className={s.name}>{speaker.fullName}</span>
-					{speaker.tagLine && <span className={s.tagline}>{speaker.tagLine}</span>}
-				</span>
-			</button>
-		</li>
-	);
-}
-
-/** The speaker lineup grid, rendered by `Speakers` below. */
+/** Every speaker as a print on one grid, in running order (`SpeakerTile`),
+ * every print the same size, then the hosts in their own row of
+ * the same prints. Pressing a print opens the sheet; its photo morphs into the
+ * sheet's. The way on (agenda, tickets) is the page's `EndLine`, under the
+ * island. Rendered by `Speakers`. */
 export function SpeakerLineup({
-	speakers,
+	billings,
 	onOpen,
-	openId = null,
+	morphId = null,
 }: {
-	speakers: Speaker[];
+	billings: Billing[];
 	onOpen: (speaker: Speaker) => void;
-	/** Id of the speaker whose dialog is open — that card carries the morph. */
-	openId?: string | null;
+	/** Id of the speaker whose photo carries the morph into the sheet. */
+	morphId?: string | null;
 }) {
+	const total = billings.length;
+	const tileFor = (billing: Billing, i: number) => (
+		<SpeakerTile
+			key={billing.speaker.id}
+			billing={billing}
+			index={i + 1}
+			total={total}
+			onOpen={onOpen}
+			morphing={billing.speaker.id === morphId}
+			eager={i < 4}
+		/>
+	);
+	// Hosts sort last (`billLineup`), so the running number stays continuous.
+	const hostsFrom = billings.findIndex((billing) => billing.host);
+	const talks = hostsFrom < 0 ? billings : billings.slice(0, hostsFrom);
+	const hosts = hostsFrom < 0 ? [] : billings.slice(hostsFrom);
+
 	return (
-		<ul className={s.grid} role="list">
-			{speakers.map((speaker, i) => (
-				<SpeakerCard
-					key={speaker.id}
-					speaker={speaker}
-					onOpen={onOpen}
-					priority={i < 4}
-					index={i}
-					morphing={speaker.id === openId}
-				/>
-			))}
-		</ul>
+		<>
+			<ul className={`${tile.grid} ${tile.sheet}`} role="list">
+				{talks.map((billing, i) => tileFor(billing, i))}
+			</ul>
+			{hosts.length > 0 && (
+				<>
+					<h3 id="lineup-hosts" className={tile.hostsLabel}>
+						Hosts
+					</h3>
+					<ul className={`${tile.grid} ${tile.sheet}`} role="list" aria-labelledby="lineup-hosts">
+						{hosts.map((billing, i) => tileFor(billing, talks.length + i))}
+					</ul>
+				</>
+			)}
+		</>
 	);
 }
 
@@ -166,6 +144,7 @@ export default function Speakers() {
 	// speaker's sheet once the lineup has loaded. No morph: there is no click
 	// to morph from.
 	const speakers = data?.speakers;
+	const billings = useMemo(() => (data ? billLineup(data) : []), [data]);
 	useEffect(() => {
 		const id = new URLSearchParams(window.location.search).get(SPEAKER_PARAM);
 		if (!id || !speakers) return;
@@ -195,8 +174,14 @@ export default function Speakers() {
 
 	return (
 		<>
-			<SpeakerLineup speakers={data.speakers} onOpen={open} openId={morphId} />
-			{selected && <SpeakerDetail speaker={selected} onClose={close} />}
+			<SpeakerLineup billings={billings} onOpen={open} morphId={morphId} />
+			{selected && (
+				<SpeakerDetail
+					speaker={selected}
+					slot={billings.find((billing) => billing.speaker.id === selected.id)}
+					onClose={close}
+				/>
+			)}
 		</>
 	);
 }

@@ -1,0 +1,26 @@
+// Partner marks — the home strip and the /partners wall share one treatment.
+// The brand manual (p. 15) keeps a partner's logo in its original colours, the
+// one exception to the three-colour rule, so nothing here recolours a mark.
+// The mode class comes from `LogoMono` in src/lib/partners.ts.
+
+// The size arrives per logo as `--logo-w` (`partnerLogo()`), scaled by the
+// caller's `--logo-scale`; the cell clamps it.
+@mixin partner-logo {
+	display: block;
+	box-sizing: border-box;
+	width: calc(var(--logo-w, 11.25rem) * var(--logo-scale, 1));
+	height: auto;
+	max-width: 100%;
+	object-fit: contain;
+
+	// Dark ink made for a light ground would vanish on black: it sits on a
+	// paper-white card, the manual's "paper card" for partner marks.
+	// `content-box` so the card grows around the mark: padding inside the
+	// width would shrink the ink a size step.
+	&.logo--dark {
+		box-sizing: content-box;
+		background: var(--color-text);
+		padding: 0.6rem 0.9rem;
+		max-width: calc(100% - 1.8rem);
+	}
+}

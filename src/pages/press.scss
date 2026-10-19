@@ -1,14 +1,120 @@
 @use '../styles/type' as *;
 
-// The press band on /contact (was the /press page).
+// The press band and the press kit on /contact (was the /press page).
 
-// A plain note, not a mounted panel and not a ruled one.
+/* ===================== IN THE NEWS ===================== */
+.press {
+	--section-air: var(--section-y);
+	padding: var(--section-air) var(--gutter) var(--section-y);
+	background: var(--color-bg);
+}
+
+.press-inner,
+.kit-inner {
+	max-width: var(--maxw);
+	margin: 0 auto;
+}
+
+.press-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+	gap: clamp(2.5rem, 5vw, 5rem);
+	// The print's top edge lines up with the first clipping's.
+	align-items: start;
+}
+
+// A clipping: a straight slip of newsprint, cut square.
+.clips {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: clamp(1.5rem, 2.5vw, 2.25rem);
+}
+
+.clip-link {
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+	background: var(--paper);
+	color: var(--paper-ink);
+	padding: 1.9rem 2.1rem;
+	text-decoration: none;
+	box-shadow: var(--paper-shadow);
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: 4px;
+	}
+}
+
+.clip-edge {
+	padding: 0;
+}
+
+// Scraped Czech: Bebas Neue sets ř/ě/č, so the headline is a row title, one
+// step under a list row so a long headline stays within three lines;
+// Special Elite ships a latin subset, so the standfirst stays mono.
+.clip-title {
+	@include row-title(var(--fs-head));
+	line-height: 1.05;
+	color: var(--paper-ink);
+	text-wrap: balance;
+}
+
+.clip-desc {
+	@include mono(var(--fs-ui));
+	line-height: 1.5;
+	color: var(--paper-ink-dim);
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.clip-read {
+	@include action;
+	color: var(--paper-ink);
+	margin-top: 0.3rem;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
+}
+
+// Red text on paper misses 4.5:1: the reach state is an ink underline, the
+// same 2px line as every paper action (`paper-action`).
+.clip-link:focus-visible .clip-read {
+	text-decoration-line: underline;
+}
+
+@media (hover: hover) {
+	.clip-link:hover .clip-read {
+		text-decoration-line: underline;
+	}
+}
+
+// A past edition on the table beside the clippings: the band's one print,
+// its tape top-left like every print.
+// On desktop it stays in view beside the clipping stack, so the right column
+// never runs empty while the clippings scroll past.
+.press-print {
+	--tilt: var(--tilt-2);
+	margin: 0;
+	position: sticky;
+	top: calc(var(--header-h) + 2.5rem);
+
+	.paper-photo {
+		aspect-ratio: 3 / 2;
+	}
+}
+
+.press-print-tape {
+	white-space: nowrap;
+}
+
+// No coverage yet: a plain note, not a panel.
 .empty-state {
-	position: relative;
-	border: 0;
-	border-radius: 0;
-	background: transparent;
-	padding: 2.2rem 0 0;
 	max-width: 52ch;
 	display: flex;
 	flex-direction: column;
@@ -17,174 +123,152 @@
 }
 
 .empty-stamp {
-	@include mono(var(--fs-label), 0.3em, uppercase);
+	@include note(var(--fs-note));
 	color: var(--color-accent-hot);
-	padding: 0;
-	background: transparent;
-	// A plain mono word, never a boxed stamp.
-	border: 0;
 }
 
 .empty-line {
 	@include prose(var(--fs-lede), 1.6);
 	color: var(--color-grey);
-	max-width: 56ch;
 	margin: 0;
 }
 
-// An open field of clippings.
-.coverage-list {
-	position: relative;
+/* ===================== PRESS KIT ===================== */
+.kit {
+	padding: 0 var(--gutter) var(--section-y-tight);
+	background: var(--color-bg);
 }
 
-// A clipping: thumbnail left, headline and outlet right. The whole entry is the
-// link, so it takes `.field-row--link`; this file owns only its grid and type.
-.coverage-card {
+.kit-inner {
 	display: grid;
-	grid-template-columns: 13.75rem 1fr;
-	gap: 1.8rem;
-	text-decoration: none;
-
-	// Not ink: a hairline inside the row, and the off-site arrow's motion. Hover only.
-	&:hover {
-		.coverage-meta { border-top-color: rgba(255, 255, 255, 0.4); }
-		.coverage-thumb img { transform: scale(1.04); filter: grayscale(0) contrast(1.02); }
-		.coverage-arrow { transform: translate(2px, -2px); }
-	}
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: clamp(2.5rem, 5vw, 5rem);
+	align-items: start;
 }
 
-// No preview image: the text takes the whole row instead of the 220px
-// thumbnail column.
-.coverage-card--bare {
-	grid-template-columns: 1fr;
+.kit-title {
+	font-size: var(--fs-section);
 }
 
-.coverage-thumb {
-	position: relative;
-	overflow: hidden;
-	aspect-ratio: 16 / 9;
-	background: var(--panel-lit-2);
-	border: 1px solid var(--rule);
-
-	img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-		filter: grayscale(0.4) contrast(1.05);
-		transition: transform 0.3s ease, filter 0.3s ease;
-	}
+.kit-note {
+	@include prose(var(--fs-body-lg), 1.6);
+	color: var(--ink-soft);
+	margin: 1.5rem 0 0;
+	max-width: 34ch;
 }
 
-.coverage-text {
-	position: relative;
+.kit-manual {
+	margin-top: 2rem;
+}
+
+// White on the red fill clears AA only as large text: the format and size
+// are set in the button's own Bebas at --fs-cta and its colour.
+.kit-manual-size {
+	font: inherit;
+	color: inherit;
+}
+
+.variants {
+	list-style: none;
+	margin: 0;
+	padding: 1.75rem 0 0;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 3.5rem 3rem;
+}
+
+// A plain label over the formats, not a strip of tape.
+.variant-label {
+	@include note(var(--fs-note));
+	color: var(--ink-soft);
+	margin: 0 0 0.6rem;
+}
+
+.formats {
+	list-style: none;
+	margin: 0;
+	padding: 0;
 	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
-	min-width: 0;
-
-	> .coverage-outlet,
-	> .coverage-title,
-	> .coverage-desc,
-	> .coverage-meta {
-		position: relative;
-		z-index: 1;
-	}
-}
-
-// Publication name — a plain mono eyebrow, muted at rest and full cream on the
-// reach field. Never a filled tab: a resting red label competes with the one
-// state the colour is for.
-.coverage-outlet {
-	align-self: flex-start;
-	@include mono(var(--fs-label-sm), 0.24em, uppercase);
-	color: var(--ink-muted);
-}
-
-// THE ONE ROW TITLE NOT IN BEBAS: scraped Czech, and JetBrains Mono is the
-// only brand face that sets Czech cleanly. Mono advances ~0.6em vs Bebas
-// ~0.42em, hence the ~0.6x step. No uppercase (diacritics unreadable).
-.coverage-title {
-	@include mono(clamp(1.45rem, 2.5vw, 2.1rem), 0);
-	font-weight: 500;
-	line-height: 1.3;
-	color: var(--color-text);
-}
-
-// Off-site marker on the mono "Read article" line, not the headline — on the
-// headline it scaled with the row title and became a 40px glyph mid-sentence.
-.coverage-arrow {
-	display: inline-block;
-	margin-left: 0.35rem;
-	transition: transform 0.25s;
-}
-
-// Mono, not Special Elite, for the same reason as the title: Special Elite ships
-// a `latin` subset only, so every ř/ě/č in scraped Czech falls back mid-word.
-.coverage-desc {
-	@include mono(var(--fs-body));
-	line-height: 1.5;
-	color: var(--color-grey);
-	// Push the meta row to the card foot for aligned baselines.
-	flex: 1;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-
-// The read/date meta row, set off by space alone.
-.coverage-meta {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1rem;
-	margin-top: 0.8rem;
-	padding-top: 0.9rem;
-	@include mono(var(--fs-label), 0.12em);
-	color: var(--ink-faint);
-	// Outlet and date sit on one line while they fit and wrap when they do
-	// not. `white-space: nowrap` pinned them to one line at any text size,
-	// and at a 32px root that pair is wider than a phone viewport.
 	flex-wrap: wrap;
+	gap: 0 1.6rem;
 }
 
-.coverage-read {
-	text-transform: uppercase;
-	letter-spacing: 0.2em;
+.format {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.4rem;
+	@include action;
+	color: var(--color-text);
+	text-decoration: none;
+	padding: 0.5rem 0;
+	transition: color 0.2s ease;
+
+	&:hover,
+	&:focus-visible {
+		color: var(--color-accent-hot);
+	}
+}
+
+.format-size {
+	@include mono(var(--fs-label-xs), 0.1em);
 	color: var(--ink-meta);
-	transition: color 0.2s;
 }
 
-.coverage-date {
-	color: var(--ink-faint);
+.kit-end {
+	@include prose(var(--fs-body-lg), 1.6);
+	color: var(--ink-soft);
+	margin: 3.5rem 0 0;
+}
+
+@media (max-width: 1100px) {
+	.press-grid,
+	.kit-inner {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.clips {
+		max-width: 50rem;
+	}
+
+	.press-print {
+		position: relative;
+		// The sticky offset would push the print into the press kit below.
+		top: auto;
+		width: 100%;
+		max-width: 32rem;
+		margin-left: auto;
+	}
+}
+
+@media (max-width: 720px) {
+	.clip-link {
+		padding: 1.5rem 1.4rem;
+	}
+
+	// A phone column fits a few Bebas words a line: the headline steps down
+	// again so it still reads in three or four lines.
+	.clip-title {
+		font-size: var(--fs-title-sm);
+	}
+
+	.press-print {
+		width: 88%;
+		margin: 0.5rem auto 0;
+	}
+
+	.kit-manual {
+		width: 100%;
+	}
+
+	.variants {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.5rem;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.coverage-arrow,
-	.coverage-thumb img { transition: none; }
-
-}
-
-@media (max-width: 600px) {
-	// Flush to the content column — the side padding inset the entry from its rule.
-	.coverage-card {
-		grid-template-columns: 1fr;
-		gap: 1rem;
-		padding: 1.5rem 0;
+	.clip-read,
+	.format {
+		transition: none;
 	}
-
-	// The mono headline's 1.45rem floor set five heavy lines per clipping on
-	// a phone. Mono runs ~0.6em a character, so it takes a smaller step than
-	// the Bebas row titles to sit at the same weight in the list.
-	.coverage-title {
-		font-size: var(--fs-body-lg);
-		line-height: 1.4;
-	}
-}
-
-// The way on to the kit, under the clippings.
-.press-kit-link {
-	margin: clamp(2rem, 4vw, 3rem) 0 0;
 }

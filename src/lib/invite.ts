@@ -1,12 +1,14 @@
 /** Copy for `/invite/<member>`. v1 GENERIC — members write their own later,
  * then only `body` changes. `roleLine` is the one line that varies. */
 
-/** The facts the copy states out loud. Kept here so all eleven pages agree. */
+import { EVENT } from './event';
+
+/** The facts the copy states out loud, in the site's date format (`event.ts`). */
 export const INVITE_EVENT = {
-	date: 'October 30, 2026',
+	date: EVENT.dateLabel,
 	city: 'Prague',
 	/** The one-line meta under the CTA. */
-	stamp: 'Oct 30, 2026 · Prague',
+	stamp: `${EVENT.dateShort} · Prague`,
 } as const;
 
 /** The closing line, by `role`. An unknown role falls back to the organiser

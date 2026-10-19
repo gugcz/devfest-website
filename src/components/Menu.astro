@@ -1,6 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
+import venuePrint from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
+import { EVENT } from '../lib/event';
 
 interface NavLink {
 	href: string;
@@ -22,7 +24,8 @@ const ticketsHref = isHome ? '#tickets' : '/#tickets';
 // TWO TIERS, EIGHT LINES. Ten destinations at one poster size made the
 // visitor read all ten every time; two tiers of twelve still did. So the
 // pages were merged, not just ranked: `Sessions` lives on `/agenda` under the
-// timetable (one programme, one door) and `Press` is a band on `/contact`.
+// timetable (one programme, one door). `Press` is a band on `/contact`, linked
+// in the second tier so a journalist finds it without guessing it is there.
 // The five below are what the site is for (docs/product.md: sell tickets, carry
 // the programme) plus the one thing every ticket holder has to look up: how
 // to get to the venue.
@@ -42,6 +45,7 @@ const links: readonly NavLink[] = [
 const secondary: readonly NavLink[] = [
 	{ href: '/partners', label: 'Partners' },
 	{ href: '/team', label: 'Team' },
+	{ href: '/contact#press', label: 'Press' },
 	{ href: '/contact', label: 'Contact' },
 ];
 
@@ -71,13 +75,44 @@ const isCurrent = (href: string) => {
 		/>
 	</a>
 
-	<!-- Event stamp. The where/when belongs in the bar, not three scrolls down.
-	     Decorative duplicate of the hero meta, so it stays out of the a11y tree. -->
-	<p class="header-stamp" aria-hidden="true">Prague <span>&middot;</span> 30 Oct 2026</p>
+	<!-- Desktop (>=1100px): the destinations sit in the bar, the four the visit
+	     turns on, then the organisers' side one shade dimmer. Below 1100px this
+	     list is hidden and the same lines live in the full-screen panel. -->
+	<nav class="bar-nav" aria-label="Primary">
+		<ul class="bar-list">
+			{links.filter(({ cta }) => !cta).map(({ href, label }) => {
+				const current = isCurrent(href);
+				return (
+					<li>
+						<a
+							href={href}
+							class={`bar-link${current ? ' bar-link--current' : ''}`}
+							{...(current ? { 'aria-current': 'page' } : {})}
+						>
+							{label}
+						</a>
+					</li>
+				);
+			})}
+			<li class="bar-sep" aria-hidden="true"></li>
+			{secondary.map(({ href, label }) => {
+				const current = isCurrent(href);
+				return (
+					<li>
+						<a
+							href={href}
+							class={`bar-link bar-link--secondary${current ? ' bar-link--current' : ''}`}
+							{...(current ? { 'aria-current': 'page' } : {})}
+						>
+							{label}
+						</a>
+					</li>
+				);
+			})}
+		</ul>
+	</nav>
 
 	<div class="header-actions">
-		{!isInvite && <a href={ticketsHref} class="header-cta">Tickets</a>}
-
 		<nav class="nav" aria-label="Primary">
 			<button
 				id="nav-toggle"
@@ -97,42 +132,57 @@ const isCurrent = (href: string) => {
 			     in one column of two tiers: the four the visit turns on at poster
 			     scale, the rest straight under them, one step smaller. -->
 			<div id="nav-list" class="nav-panel" data-open="false">
-				<div class="nav-lists">
-					<ul class="nav-list">
-						{links.map(({ href, label, external, cta }) => {
-							const current = isCurrent(href);
-							return (
-								<li>
-									<a
-										href={href}
-										class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
-										{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-										{...(current ? { 'aria-current': 'page' } : {})}
-									>
-										{label}
-									</a>
-								</li>
-							);
-						})}
-					</ul>
+				<div class="nav-body">
+					<div class="nav-lists">
+						<ul class="nav-list">
+							{links.map(({ href, label, external, cta }) => {
+								const current = isCurrent(href);
+								return (
+									<li>
+										<a
+											href={href}
+											class={`nav-link${cta ? ' nav-link--cta' : ''}${current ? ' nav-link--current' : ''}`}
+											{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+											{...(current ? { 'aria-current': 'page' } : {})}
+										>
+											{label}
+										</a>
+									</li>
+								);
+							})}
+						</ul>
 
-					<ul class="nav-secondary" aria-label="More pages">
-						{secondary.map(({ href, label, external }) => {
-							const current = isCurrent(href);
-							return (
-								<li>
-									<a
-										href={href}
-										class={`nav-secondary-link${current ? ' nav-secondary-link--current' : ''}`}
-										{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-										{...(current ? { 'aria-current': 'page' } : {})}
-									>
-										{label}
-									</a>
-								</li>
-							);
-						})}
-					</ul>
+						<ul class="nav-secondary" aria-label="More pages">
+							{secondary.map(({ href, label, external }) => {
+								const current = isCurrent(href);
+								return (
+									<li>
+										<a
+											href={href}
+											class={`nav-secondary-link${current ? ' nav-secondary-link--current' : ''}`}
+											{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+											{...(current ? { 'aria-current': 'page' } : {})}
+										>
+											{label}
+										</a>
+									</li>
+								);
+							})}
+						</ul>
+					</div>
+
+					<!-- One small print on the table beside the lines (>=901px only):
+					     where the day happens. Decorative; the foot line says it in words. -->
+					<div class="nav-print paper" aria-hidden="true">
+						<span class="tape">{EVENT.venue}</span>
+						<span class="paper-photo nav-print-photo">
+							<Image src={venuePrint} alt="" widths={[260, 520]} sizes="260px" loading="lazy" />
+						</span>
+						<span class="paper-edge">
+							<span>30 / 10 / 26</span>
+							<span>{EVENT.doorsTime}</span>
+						</span>
+					</div>
 				</div>
 
 				<div class="nav-foot">
@@ -143,6 +193,8 @@ const isCurrent = (href: string) => {
 				</div>
 			</div>
 		</nav>
+
+		{!isInvite && <a href={ticketsHref} class="header-cta">Tickets</a>}
 	</div>
 </header>
 
@@ -306,7 +358,11 @@ const isCurrent = (href: string) => {
 			if (!toggle || !list) return;
 			toggle.setAttribute('aria-expanded', String(open));
 			toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+			const label = toggle.querySelector('.nav-toggle-label');
+			if (label) label.textContent = open ? 'Close' : 'Menu';
 			list.dataset.open = String(open);
+			// The open panel shows the mark whatever the hero is doing.
+			if (header) header.dataset.menu = open ? 'open' : 'closed';
 			document.body.style.overflow = open ? 'hidden' : '';
 			// Force header visible when the drawer opens — user needs the toggle.
 			if (open && header) {

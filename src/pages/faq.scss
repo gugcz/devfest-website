@@ -1,148 +1,321 @@
 @use '../styles/type' as *;
-// Category on the left, its questions on the right.
-.faq-group {
+
+// The category index pinned on the left, the questions on the right as
+// straight rows on the black table: only the open question is a paper slip.
+.faq {
 	display: grid;
-	grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
-	gap: 1.5rem clamp(2rem, 6vw, 6rem);
+	grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+	gap: clamp(2rem, 5vw, 5rem);
 	align-items: start;
 }
 
-// Each group is its own sheet with its own heading, so groups sit a section apart.
-.faq-group + .faq-group {
-	margin-top: var(--section-y);
-}
-
-// Sticky, so the category stays beside its questions while a long group scrolls.
-.faq-head {
+/* ---- Index ---- */
+.faq-index {
 	position: sticky;
-	top: 7rem;
+	top: calc(var(--header-h) + 2rem);
+
+	ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+	}
+
+	ol a {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+		padding: 0.35rem 0;
+		@include action(var(--fs-cta));
+		color: var(--color-text);
+		text-decoration: none;
+		transition: color 0.2s ease;
+
+		&:focus-visible {
+			color: var(--color-accent-hot);
+		}
+	}
 }
 
-// A step above the questions: at --fs-h3 the category read as another entry in the list.
-.faq-cat {
-	@include display(clamp(2.4rem, 4.2vw, 3.75rem));
-	margin: 0;
+.faq-index-label {
+	@include note(var(--fs-note));
+	color: var(--ink-dim);
+	margin: 0 0 0.9rem;
 }
 
-// An open field of questions; the category head beside it is the list's top edge.
-.faq-list {
+.faq-index-no {
+	@include mono(var(--fs-label), 0.08em);
+	color: var(--ink-dim);
+}
+
+.faq-index-ask {
 	display: flex;
 	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.35rem;
+	margin: 2.5rem 0 0;
 }
 
-@media (max-width: 900px) {
-	.faq-group {
-		grid-template-columns: 1fr;
-		gap: 1.5rem;
-	}
+.faq-index-ask-label {
+	@include action(var(--fs-action));
+	color: var(--ink-dim);
+}
 
-	.faq-head {
-		position: static;
+// The address itself is typed, never set in Bebas caps.
+.faq-index-mail {
+	@include note(var(--fs-note));
+	@include hairline-link(var(--color-text));
+}
+
+@media (hover: hover) {
+	.faq-index ol a:hover {
+		color: var(--color-accent-hot);
 	}
 }
 
-// The REACH FIELD lives on the <summary> (`.field-row--link`), not here — a long
-// answer sitting on red is a lot of red to read against. An OPEN item takes the
-// warm wash instead: several <details> can be open at once, and four permanent
-// red bands down one page is the accent as texture.
+/* ---- Categories ---- */
+.faq-group + .faq-group {
+	margin-top: clamp(5rem, 8vw, 7.5rem);
+}
+
+// The category heads its slips at the h2 step, under the page title.
+// Jumped to from the index, it lands clear of the fixed header.
+.faq-cat {
+	@include display(var(--fs-h2));
+	margin: 0 0 clamp(1.75rem, 3vw, 2.75rem);
+	scroll-margin-top: calc(var(--header-h) + 2rem);
+}
+
+.faq-slips {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+/* ---- Rows and the open slip ---- */
+// A closed question is a straight row on black, set apart by space alone.
+// The open one becomes a paper slip holding its answer.
 .faq-item {
+	--faq-pad: 1.75rem;
+	--faq-ink: var(--color-text);
+	--faq-ink-dim: var(--ink-dim);
 	position: relative;
-	isolation: isolate;
-
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0 calc(-1 * var(--gutter));
-		background: var(--wash);
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.3s ease;
-		z-index: -2;
-		-webkit-mask-image: var(--field-feather);
-		mask-image: var(--field-feather);
-	}
-
-	&[open]::before {
-		opacity: 1;
-	}
+	padding: 0;
+	color: var(--faq-ink);
 }
 
-// Question text + toggle marker. Rhythm, reach field, ink inversion and focus ring
-// come from `.field-row--link`.
+.faq-item[open] {
+	--faq-ink: var(--paper-ink);
+	--faq-ink-dim: var(--paper-ink-dim);
+	background: var(--paper);
+	box-shadow: var(--paper-shadow);
+	margin-block: 0.9rem;
+}
+
+.faq-item[open]:first-child {
+	margin-top: 0;
+}
+
+// Number, question, marker. Red text on paper misses 4.5:1, so the reach
+// state is an underline under the question and the marker in full ink.
 .faq-q {
-	z-index: 1;
 	list-style: none;
 	cursor: pointer;
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-columns: 3.4rem minmax(0, 1fr) auto;
+	column-gap: 1.25rem;
 	align-items: baseline;
-	column-gap: clamp(1.25rem, 3vw, 2.75rem);
+	padding: 1.35rem var(--faq-pad);
 
-	// Strip the default disclosure triangle (WebKit + the rest).
 	&::-webkit-details-marker {
 		display: none;
 	}
+
+	// Inset, so the ring stays on the slip.
+	&:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: -4px;
+	}
+
+	&:focus-visible .faq-q-text {
+		text-decoration-line: underline;
+	}
+
+	&:focus-visible .faq-marker {
+		color: var(--faq-ink);
+	}
 }
 
-// The long-list row step, shared with the session rows and the press clippings.
+@media (hover: hover) {
+	.faq-q:hover .faq-q-text {
+		text-decoration-line: underline;
+	}
+
+	.faq-q:hover .faq-marker {
+		color: var(--faq-ink);
+	}
+}
+
+.faq-no {
+	@include mono(var(--fs-label-xs), 0.1em);
+	color: var(--faq-ink-dim);
+	white-space: nowrap;
+}
+
 .faq-q-text {
-	flex: 1;
-	@include row-title;
-	transition: color 0.2s;
+	@include prose(var(--fs-lede), 1.3);
+	color: var(--faq-ink);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 4px;
 }
 
-// Muted at rest; full cream on the red field. Red on twelve markers is not a highlight.
+// A drawn "+" that turns 45deg into an "×" when the slip is open.
 .faq-marker {
-	flex: 0 0 auto;
-	@include mono(var(--fs-title-sm));
-	line-height: 1;
-	color: var(--ink-muted);
-	transition: transform 0.2s ease, color 0.2s;
-	transform-origin: center;
-}
-
-// The open question holds the wash; the marker turns.
-.faq-item[open] .faq-marker {
-	transform: rotate(45deg); // + → ×
-}
-
-// The open answer is indented behind a hairline, like a margin note.
-.faq-a {
 	position: relative;
-	z-index: 1;
-	margin: 0 0 1.8rem;
-	padding-left: 1.4rem;
-	// No edge down the left at all: a bar or hairline along a block's left side
-	// is banned site-wide; the inset alone sets the answer under its question.
+	align-self: center;
+	width: 0.9rem;
+	height: 0.9rem;
+	color: var(--faq-ink-dim);
+	transition:
+		color 0.2s,
+		transform 0.25s ease;
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: calc(50% - 1px);
+		width: 100%;
+		height: 2px;
+		background: currentColor;
+	}
+
+	&::after {
+		transform: rotate(90deg);
+	}
+}
+
+.faq-item[open] .faq-marker {
+	transform: rotate(45deg);
+}
+
+// The answer starts under the question text, not under the number.
+.faq-a {
+	padding: 0 var(--faq-pad) 1.75rem calc(var(--faq-pad) + 3.4rem + 1.25rem);
 }
 
 .faq-a :global(p) {
-	@include prose(var(--fs-body), 1.85);
-	letter-spacing: 0.01em;
-	color: rgba(255, 255, 255, 0.72);
+	@include prose(var(--fs-body), 1.65);
+	color: var(--paper-ink);
 	margin: 0;
-	max-width: 70ch;
+	max-width: 62ch;
+}
+
+.faq-a :global(strong) {
+	font-weight: 400;
+	color: var(--paper-ink);
+	white-space: nowrap;
+}
+
+.faq-a :global(a strong) {
+	white-space: normal;
 }
 
 .faq-a :global(a) {
-	@include hairline-link(var(--color-accent-hot));
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+
+	// The reach state thickens the ink underline; red text fails on paper.
+	&:focus-visible {
+		text-decoration-thickness: 2px;
+	}
 }
 
-@media (max-width: 600px) {
-	// Flush to the content column — side padding insets each question from the rule it sits on.
-	.faq-q {
-		gap: 0.8rem;
+@media (hover: hover) {
+	.faq-a :global(a:hover) {
+		text-decoration-thickness: 2px;
 	}
+}
+
+@media (max-width: 1100px) {
+	.faq {
+		grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+	}
+}
+
+// Phone: the index becomes a wrapped row of links above the slips.
+@media (max-width: 720px) {
+	.faq {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3.5rem;
+	}
+
+	.faq-index {
+		position: static;
+
+		ol {
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: 0 1.4rem;
+		}
+
+		ol a {
+			font-size: var(--fs-action);
+			gap: 0.5rem;
+		}
+	}
+
+	.faq-index-ask {
+		display: none;
+	}
+
+	.faq-slips {
+		gap: 1.25rem;
+	}
+
+	.faq-item {
+		--faq-pad: 1.1rem;
+	}
+
+	.faq-q {
+		grid-template-columns: minmax(0, 1fr) auto;
+		row-gap: 0.4rem;
+		column-gap: 0.9rem;
+		padding-block: 1.1rem;
+	}
+
+	// The number and the marker share the top line; the question takes the
+	// slip's full width under them.
+	.faq-marker {
+		grid-row: 1;
+		grid-column: 2;
+	}
+
+	.faq-q-text {
+		grid-column: 1 / -1;
+	}
+
 	.faq-a {
-		margin: 0 0 1.3rem;
-		padding-left: 1.1rem;
+		padding: 0 var(--faq-pad) 1.4rem;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.faq-item,
+	.faq-index ol a,
 	.faq-q-text,
-	.faq-marker {
+	.faq-marker,
+	.faq-a :global(a) {
 		transition: none;
 	}
+}
+
+// The end line's action is the address: typed and lowercase, not Bebas caps.
+.faq :global(.end-line a[href^='mailto:']) {
+	@include note(var(--fs-lede));
+	@include hairline-link(var(--color-text));
 }

@@ -1,8 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
-import Closer from '../components/Closer.astro';
+import EndLine from '../components/EndLine.astro';
 import InvoiceForm from '../components/InvoiceForm';
+
+// The three steps, a plain numbered list on the black table.
+const STEPS = [
+	'Fill in your company billing details below.',
+	'We email the invoice right away. Pay it by bank transfer within 14 days.',
+	'Once the payment arrives, we email one code that claims all your tickets on ti.to.',
+];
 ---
 
 <BaseLayout
@@ -11,42 +18,42 @@ import InvoiceForm from '../components/InvoiceForm';
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'Buy on a company<br /><span class="red">invoice.</span>'}
+			titleHtml={'Buy on a company<br />invoice'}
 			lede="Need an invoice before you can pay? Request one here. We'll bill your company, and once it's settled you'll get a code to claim your tickets on ti.to."
 			seoHeading="DevFest.cz 2026 Company Invoice"
 			titleId="invoice-title"
-			photo={false}
 		/>
 
-		<section class="invoice-body" aria-labelledby="invoice-form-heading">
-			<div class="invoice-inner">
-				<div class="invoice-intro">
-					<h2 id="invoice-form-heading" class="intro-title">How it works</h2>
-					<ol class="steps">
-						<li><span class="step-no">01</span> Fill in your company billing details below.</li>
-						<li><span class="step-no">02</span> We email the invoice right away. Pay it by bank transfer within 14 days.</li>
-						<li><span class="step-no">03</span> Once the payment arrives, we email one code that claims all your tickets on ti.to.</li>
-					</ol>
-					<p class="intro-note">
+		<section class="band invoice-band" aria-labelledby="invoice-steps-heading">
+			<div class="band-inner">
+				<div class="head-rule">
+					<h2 id="invoice-steps-heading" class="head-rule-title">How it works</h2>
+					<p class="head-rule-note">
 						Paying by card instead? Skip this and buy directly on{' '}
 						<a href="/#tickets" class="intro-link">the tickets page</a>.
 					</p>
 				</div>
 
-				<InvoiceForm client:load />
+				<ol class="invoice-steps" role="list">
+					{STEPS.map((text, i) => (
+						<li class="invoice-step">
+							<span class="invoice-step-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+							<p class="invoice-step-text">{text}</p>
+						</li>
+					))}
+				</ol>
 			</div>
 		</section>
 
-		<!-- The closer answers the next question on this page, not a different
-		     purchase: "Skip the paperwork" sent a company that had come here to
-		     invoice back to card checkout, and the intro already offers that. -->
-		<Closer
-			titleHtml={'Questions about<br />the invoice?'}
-			note="Write to devfest@gug.cz and name the company on the request, so we can find it."
-			tone="accent"
-			titleId="invoice-closer"
-			actions={[{ href: 'mailto:devfest@gug.cz', label: 'Email us' }, { href: '/faq', label: 'Read the FAQ', kind: 'ghost' }]}
-		/>
+		<section class="band invoice-band" aria-labelledby="invoice-form-heading">
+			<div class="band-inner invoice-form-grid">
+				<h2 id="invoice-form-heading" class="sr-only">Company billing details</h2>
+				<InvoiceForm client:load />
+				<div class="invoice-aside">
+					<EndLine text="Questions about the invoice? Name the company when you write." href="mailto:devfest@gug.cz" label="devfest@gug.cz" />
+				</div>
+			</div>
+		</section>
 	</main>
 </BaseLayout>
 

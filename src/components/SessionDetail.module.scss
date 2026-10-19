@@ -1,48 +1,78 @@
 @use '../styles/type' as *;
 // Session detail. The chrome is `Sheet.module.scss`, shared with SpeakerDetail;
-// this file holds only the meta line, the abstract measure and the speaker rows.
+// this file holds the talk as one big paper slip and its speakers as small
+// prints beside it (under it below 1100px).
 
-// One mono line of plain labels — never bordered chips.
-.meta {
-	list-style: none;
+.layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(12rem, 15rem);
+	grid-template-areas:
+		'slip speakers'
+		'way way';
+	align-items: start;
+	gap: 0 clamp(3rem, 6vw, 6rem);
+	padding-top: clamp(2rem, 4vh, 3.5rem);
+}
+
+/* ===================== THE SLIP ===================== */
+.slip {
+	grid-area: slip;
+	position: relative;
+	max-width: 58rem;
+	// Flat paper: --paper laid over the black, opaque and one even tone.
+	background: linear-gradient(var(--paper), var(--paper)), var(--color-bg);
+	color: var(--paper-ink);
+	box-shadow: var(--paper-shadow);
+	padding: clamp(1.75rem, 4.5vw, 3.75rem) clamp(1.25rem, 4.5vw, 4rem) clamp(2rem, 5vw, 4rem);
+}
+
+// The room: a plain Bebas label over the edge, not tape (tape is for prints).
+.room {
+	display: block;
+	margin: 0 0 0.75rem;
+	@include action(var(--fs-action));
+	color: var(--paper-ink);
+}
+
+// Time in mono (a figure), track and level on the typewriter (words).
+.edge {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: space-between;
 	align-items: baseline;
-	gap: 0.5rem clamp(1.1rem, 2.4vw, 2rem);
-	margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
-	padding: 0;
+	gap: 0.4rem 1.5rem;
 }
 
-.metaItem {
-	position: relative;
-	@include mono(var(--fs-label-lg), 0.16em, uppercase);
-	color: var(--ink-muted);
-
-	& + .metaItem::before {
-		content: '';
-		position: absolute;
-		left: calc(-1 * clamp(0.55rem, 1.2vw, 1rem));
-		top: 50%;
-		width: 3px;
-		height: 3px;
-		transform: translateY(-50%);
-		background: rgba(255, 255, 255, 0.3);
-	}
+.time {
+	@include mono(var(--fs-label-lg), 0.1em);
+	color: var(--paper-ink);
+	font-variant-numeric: tabular-nums;
 }
 
-// No rule above it: the measure and the change of face are the separation.
+.tags {
+	@include note(var(--fs-note-sm));
+	color: var(--paper-ink-dim);
+}
+
+.title {
+	@include display(var(--fs-h2));
+	color: var(--paper-ink);
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+	margin: clamp(1rem, 2.4vw, 1.75rem) 0 0;
+}
+
+// The reading column: a measure on the slip, ragged.
 .abstract {
-	margin-top: clamp(2.5rem, 5vw, 4rem);
+	margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+	max-width: 70ch;
 
 	p {
-		@include prose(var(--fs-lede), 1.7);
-		color: var(--ink-strong);
+		@include prose(var(--fs-body-lg), 1.75);
+		color: var(--paper-ink);
 		margin: 0 0 1.1rem;
-		// THE COLUMN IS THE MEASURE — no character cap on sheet prose, so the
-		// abstract lines up with the title, rules and rows around it. At 1440 that
-		// is ~108 characters; justification with hyphens is what keeps it even.
-		text-align: justify;
-		hyphens: auto;
+		text-align: left;
+		hyphens: manual;
 
 		&:last-child {
 			margin-bottom: 0;
@@ -50,94 +80,139 @@
 	}
 }
 
+/* ===================== THE SPEAKERS ===================== */
 .speakers {
-	margin-top: clamp(3rem, 6vw, 5rem);
+	grid-area: speakers;
+	min-width: 0;
+	position: sticky;
+	top: clamp(5rem, 10vh, 6.5rem);
 }
 
-// A speaker row is a `.field-row--link` — rhythm, red reach field, ink
-// inversion and focus ring all come from the primitive.
-.speaker {
+.prints {
+	list-style: none;
 	display: flex;
-	align-items: center;
-	gap: clamp(1rem, 2.2vw, 1.6rem);
-	width: 100%;
+	flex-direction: column;
+	gap: clamp(2rem, 4vw, 3rem);
 	margin: 0;
-	text-align: left;
-	font: inherit;
-	color: inherit;
-	cursor: pointer;
-	// Shorter than a full row — a name and a tagline, no meta beneath.
-	--field-step: clamp(1.1rem, 2vw, 1.5rem);
+	padding: 0;
+}
 
-	// Not ink: the portrait has to stay a photograph on the red field.
-	&:hover .avatar {
-		border-color: var(--on-accent-border);
+.print {
+	width: 100%;
+	max-width: 15rem;
+	margin: 0;
+	padding-bottom: 0.9rem;
+	border: 0;
+	border-radius: 0;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap-lg);
 	}
 }
 
-.avatar {
-	position: relative;
-	flex-shrink: 0;
-	width: clamp(52px, 5vw, 64px);
-	aspect-ratio: 1;
-	border-radius: 50%;
-	overflow: hidden;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	background: var(--panel-lit);
-	border: 1px solid var(--rule);
-	transition: border-color 0.28s ease;
+.photo {
+	display: block;
+	aspect-ratio: 4 / 5;
 }
 
-.avatarImg {
+.img {
 	position: absolute;
 	inset: 0;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	object-position: center 22%;
-	filter: grayscale(1) contrast(1.06) brightness(0.92);
+	object-position: 50% 25%;
+	transition: filter 0.6s ease;
 }
 
-.avatarMono {
+.monogram {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-body-lg);
-	letter-spacing: 0.04em;
-	color: var(--ink-monogram-sm);
+	font-size: var(--fs-monogram);
+	color: var(--ink-monogram);
 	user-select: none;
 }
 
-.speakerText {
-	display: flex;
-	flex-direction: column;
-	gap: 0.2rem;
-	min-width: 0;
+// The print develops to colour: on keyboard focus always, on hover only where
+// a pointer hovers. Nothing lifts.
+.print:focus-visible .img {
+	filter: none;
 }
 
-.speakerName {
-	@include row-title;
+@media (hover: hover) {
+	.print:hover .img {
+		filter: none;
+	}
 }
 
-.speakerTag {
-	@include mono(var(--fs-label), 0.06em);
-	line-height: 1.45;
-	color: var(--ink-muted);
+.caption {
+	display: block;
+	padding: 0.8rem 0.2rem 0;
 }
 
-// A phone column holds ~30 characters of Special Elite: justified, every line
-// opened rivers between three or four words, and the lede step made it a
-// wall. Ragged and at body size, the abstract reads as a paragraph again.
+.name {
+	display: block;
+	@include row-title(var(--fs-title-sm));
+	line-height: 0.95;
+	color: var(--paper-ink);
+	overflow-wrap: anywhere;
+}
+
+.role {
+	display: -webkit-box;
+	@include note(var(--fs-note-sm));
+	line-height: 1.35;
+	color: var(--paper-ink-dim);
+	margin-top: 0.35rem;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	overflow: hidden;
+}
+
+.way {
+	grid-area: way;
+	max-width: 58rem;
+}
+
+@media (max-width: 1100px) {
+	.layout {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-areas:
+			'slip'
+			'speakers'
+			'way';
+	}
+
+	.speakers {
+		position: static;
+		margin-top: clamp(3rem, 7vw, 4.5rem);
+	}
+
+	.prints {
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: clamp(1.75rem, 4vw, 2.5rem);
+
+		li {
+			width: min(13rem, calc(50% - 0.9rem));
+		}
+	}
+}
+
 @media (max-width: 600px) {
 	.abstract p {
 		font-size: var(--fs-body);
-		text-align: left;
-		hyphens: manual;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.avatar {
+	.img {
 		transition: none;
 	}
 }

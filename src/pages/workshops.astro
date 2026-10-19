@@ -15,14 +15,13 @@ import Workshops from '../components/Workshops.tsx';
 >
 	<main class="page-stack">
 		<SubpageHero
-			titleHtml={'Save your seat<br /><span class="red">at a workshop.</span>'}
+			titleHtml={'Save a seat<br />at a workshop'}
 			lede="Workshops have limited seats. Sign in with the code from your ticket and register. When a workshop is full, join the waitlist: you move up as soon as someone cancels."
 			seoHeading="DevFest.cz 2026 Workshop Registration"
 			titleId="workshops-title"
-			photo={false}
 		/>
 
-		<section class="band band--lit" aria-labelledby="workshops-list-title">
+		<section class="band band--lit workshops-list" aria-labelledby="workshops-list-title">
 			<div class="band-inner">
 				<h2 id="workshops-list-title" class="sr-only">Workshops</h2>
 				<Workshops client:load />
@@ -35,9 +34,15 @@ import Workshops from '../components/Workshops.tsx';
 		<Closer
 			titleHtml={'No ticket<br />yet?'}
 			note="Workshops are for ticket holders. Get yours first, then come back to save a seat."
-			tone="accent"
 			titleId="workshops-closer"
 			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/agenda', label: 'See the agenda', kind: 'ghost' }]}
 		/>
 	</main>
 </BaseLayout>
+
+<style>
+	/* One gap between the list and the closer: the closer's opening air. */
+	.workshops-list {
+		padding-bottom: 0;
+	}
+</style>

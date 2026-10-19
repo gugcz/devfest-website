@@ -1,6 +1,6 @@
 @use '../styles/type' as *;
-// A bar, not a navigation. Three slots — mark, stamp, actions — and every
-// destination lives behind one control at every width.
+// The bar: the mark left; at >=1100px the destinations inline and the red
+// Tickets button, below that the full-screen menu toggle and Tickets.
 .site-header {
 	position: fixed;
 	top: 0;
@@ -9,13 +9,8 @@
 	// Above `.status-bar-cover` (10000) and the film-grain overlay, so nav content
 	// stays opaque across the full stacking order.
 	z-index: 10001;
-	display: grid;
-	// Stamp centred against the VIEWPORT: equal side tracks keep it centred
-	// when the brand is wider than the actions. `minmax(0, 1fr)`, not `1fr`:
-	// otherwise the side tracks floor at min-content and text zoom pushed
-	// the bar past the viewport.
-	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-	align-items: center;
+	display: flex;
+	justify-content: space-between;
 	gap: min(1.5rem, 7.5vw);
 	// Constant padding so the bar never jumps on a scroll-state flip.
 	// Vertical comes from `--header-pad-y` because `--header-h` derives from
@@ -82,42 +77,26 @@
 	display: inline-flex;
 	align-items: center;
 	justify-self: start;
-	min-width: 0;
+	// The link is a full tap target (WCAG 2.5.5) around the 38px mark. The
+	// mark never shrinks with its track (brand manual: 180px digital minimum),
+	// so the cell floors at the mark's width; the actions give way instead.
+	min-height: var(--header-tap);
+	min-width: max-content;
 	text-decoration: none;
 	color: var(--color-text);
 	flex-shrink: 0;
+	// Above the open panel (z-index 1), so the mark stays on screen with the menu.
+	position: relative;
+	z-index: 2;
 	opacity: 1;
-	transform: translateY(0);
-	// Reveal/hide: fade + slide; the visibility delay is handled per-state.
 	transition:
-		opacity 0.4s ease,
-		transform 0.4s ease,
+		opacity 0.15s ease,
 		visibility 0s linear 0s;
 }
 
-.brand:hover {
-	opacity: 0.7;
-}
-
-// Keep the global accent-hot focus ring (WCAG 2.4.7) — the brand is the first tab
-// stop, and opacity alone is indistinguishable from the hover look.
-.brand:focus-visible {
-	opacity: 0.7;
-}
-
-// Home + at top: the hero owns the identity. `visibility` keeps the grid slot so
-// nothing jumps on the state flip.
-.site-header[data-home='true'][data-state='top'] .brand {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-	transform: translateY(-6px);
-	// Delay the visibility flip until after the opacity fade-out.
-	transition:
-		opacity 0.4s ease,
-		transform 0.4s ease,
-		visibility 0s linear 0.4s;
-}
+// No hover or focus treatment on the mark itself: the brand manual never
+// dims or recolours the logo. Keyboard focus takes the global accent-hot
+// ring (WCAG 2.4.7) around the link.
 
 .brand-logo {
 	display: block;
@@ -126,10 +105,9 @@
 	// smaller, or the 2026 badge stops reading.
 	height: 38px;
 	width: auto;
-	// The mark gives way before the bar overflows. Its height is already in
-	// px so it does not grow with the root font; this only bounds it when
-	// the zoomed Tickets / Menu controls have taken the rest of the row.
-	max-width: 100%;
+	// Never bounded by its track: the bar makes room (phone CTA and toggle
+	// tighten, then the CTA drops into the menu), not the mark.
+	max-width: none;
 	object-fit: contain;
 }
 
@@ -138,38 +116,6 @@
 	.brand-logo {
 		height: 2.375rem;
 	}
-}
-
-.header-stamp {
-	margin: 0;
-	justify-self: center;
-	@include mono(var(--fs-label-lg), 0.24em, uppercase);
-	color: var(--color-text);
-	white-space: nowrap;
-	opacity: 1;
-	transform: translateY(0);
-	transition:
-		opacity 0.4s ease,
-		transform 0.4s ease,
-		visibility 0s linear 0s;
-
-	span {
-		color: var(--color-accent-hot);
-		padding: 0 0.35em;
-	}
-}
-
-// At the top the hero already says where and when, so the stamp arrives on scroll.
-// `visibility: hidden` keeps the centre grid slot so the bar never reflows.
-.site-header[data-state='top'] .header-stamp {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-	transform: translateY(-6px);
-	transition:
-		opacity 0.4s ease,
-		transform 0.4s ease,
-		visibility 0s linear 0.4s;
 }
 
 .header-actions {
@@ -189,38 +135,109 @@
 	// `--header-h` asserts the bar is one tap-target tall; a wrapped label
 	// would make that a lie and pull every anchor offset out with it.
 	white-space: nowrap;
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
+	// The red button. White Bebas on red stays at the large-text step
+	// (`cta-label`) — 4.4:1 clears AA only as large text.
+	@include cta-label;
 	text-decoration: none;
-	color: var(--on-accent);
+	color: var(--color-text);
 	background: var(--color-accent);
-	border: 1px solid var(--color-accent);
+	border: 0;
 	border-radius: var(--radius);
-	padding: 0.72rem min(1.5rem, 7.5vw);
+	padding: 0.3rem 1.1rem 0.1rem;
 	// Touch target — WCAG 2.5.5. It is also the tallest thing in the bar,
-	// so it is what `--header-h` is built from. The token is a physical
-	// 44px, not 2.75rem — see BaseLayout.scss.
+	// so it is what `--header-h` is built from.
 	min-height: var(--header-tap);
 	display: inline-flex;
 	align-items: center;
-	transition: background 0.2s ease, border-color 0.2s ease;
+	transition:
+		color 0.2s ease,
+		background 0.2s ease;
 }
 
-.header-cta:hover,
+@media (hover: hover) {
+	.header-cta:hover {
+		color: var(--color-bg);
+		background: var(--color-text);
+	}
+}
+
 .header-cta:focus-visible {
-	background: var(--color-accent-hot);
-	border-color: var(--color-accent-hot);
+	outline: 2px solid var(--color-accent-hot);
+	outline-offset: var(--focus-gap);
 }
 
-// The home hero carries its own "Get tickets" button, in view whenever the
-// bar is still transparent — a second route to the same place inside one
-// screen. It comes back the moment the hero has scrolled away.
-#site-header[data-home='true'][data-state='top'] .header-cta {
+// ── THE INLINE BAR (>=1100px) ──────────────────────────────────────────
+.bar-nav {
 	display: none;
+	margin-left: auto;
+}
+
+.bar-list {
+	display: flex;
+	align-items: center;
+	gap: clamp(1rem, 1.8vw, 1.65rem);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.bar-link {
+	@include action;
+	display: inline-flex;
+	align-items: center;
+	min-height: var(--header-tap);
+	color: var(--color-text);
+	text-decoration: none;
+	white-space: nowrap;
+	transition: color 0.18s ease;
+}
+
+.bar-link--secondary {
+	color: var(--ink-soft);
+}
+
+// The page you are on: red, and `aria-current` says the same to AT.
+.bar-link--current {
+	color: var(--color-accent-hot);
+}
+
+@media (hover: hover) {
+	.bar-link:hover {
+		color: var(--color-accent-hot);
+	}
+}
+
+.bar-link:focus-visible {
+	outline: 2px solid var(--color-accent-hot);
+	outline-offset: var(--focus-gap-tight);
+}
+
+// A short mark between the two groups, not a rule across the bar.
+.bar-sep {
+	width: 1px;
+	height: 1.1rem;
+	background: var(--rule-strong);
+}
+
+@media (min-width: 1100px) {
+	.bar-nav {
+		display: block;
+	}
+
+	// Doubled class: beats the base `.nav { display: flex }` further down.
+	.site-header .nav {
+		display: none;
+	}
+
+	.header-actions {
+		margin-left: clamp(1rem, 1.8vw, 1.65rem);
+	}
 }
 
 // On the hero's first screen the toggle would be the only bordered box —
-// a boxed control beside an unboxed one reads as two systems. Border
-// returns on hover/focus and once the bar goes solid.
+// a boxed control beside an unboxed one reads as two systems; on a phone it
+// was the only thing in the bar at all. Border returns on hover/focus and
+// once the bar goes solid.
 #site-header[data-home='true'][data-state='top'] .nav-toggle {
 	border-color: transparent;
 }
@@ -242,17 +259,17 @@
 	position: relative;
 	z-index: 2;
 	gap: min(0.65rem, 3.25vw);
-	padding: 0.72rem min(1.15rem, 5.75vw);
+	// Same type as `.header-cta`, and like it no box: the bar is two mono
+	// words and the mark.
+	padding: 0.72rem 0 0.72rem min(1.5rem, 7.5vw);
 	// Physical touch target — the token is px, not rem. See .header-cta.
 	min-height: var(--header-tap);
 	min-width: var(--header-tap);
 	background: transparent;
-	// The site's ONLY navigation control at every width — there is no
-	// horizontal nav breakpoint — so its boundary has to clear 1.4.11.
-	border: 1px solid var(--field-border);
-	border-radius: var(--radius);
+	border: 0;
+	border-radius: 0;
 	color: var(--color-text);
-	@include mono(var(--fs-label-lg), 0.2em, uppercase);
+	@include action;
 	cursor: pointer;
 	transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
@@ -333,17 +350,47 @@
 		visibility 0s linear 0s;
 }
 
-.nav-lists {
-	display: flex;
-	flex-direction: column;
-	// Take the room the footing does not, and sit centred in it. Lines pinned
-	// under the bar left a hole down the middle of a laptop panel; centred,
-	// the space reads as margin rather than as something missing.
+// One column of links at every width; >=901px one small print beside it.
+.nav-body {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	align-items: center;
+	gap: clamp(2rem, 5vw, 5rem);
+	// Take the room the footing does not.
 	flex: 1 1 auto;
-	justify-content: center;
 	width: 100%;
 	max-width: var(--maxw);
 	margin-inline: auto;
+	min-height: 0;
+}
+
+.nav-lists {
+	display: flex;
+	flex-direction: column;
+	// Sit centred in the body. Lines pinned under the bar left a hole down the
+	// middle of a laptop panel; centred, the space reads as margin.
+	justify-content: center;
+	width: 100%;
+}
+
+// THE PRINT: the venue, taped, set down beside the lines. Decorative and
+// only where the panel has room for it.
+.nav-print {
+	display: none;
+	width: clamp(12rem, 19vw, 17rem);
+	margin-right: clamp(0rem, 4vw, 4rem);
+	--tilt: var(--tilt-2);
+}
+
+.nav-print-photo {
+	display: block;
+	aspect-ratio: 3 / 4;
+}
+
+@media (min-width: 901px) and (min-height: 621px) {
+	.nav-print {
+		display: block;
+	}
 }
 
 .nav-list {
@@ -360,11 +407,11 @@
 // Destinations at poster scale — Bebas is condensed enough to fit them all.
 .nav-link {
 	font-family: var(--font-bebas-neue), sans-serif;
-	// Sized so the four destinations, the three under them and the footing line
-	// fit a 900px-tall laptop viewport without the panel scrolling.
-	font-size: clamp(2rem, 4.2vw, 3.3rem);
+	// Poster scale on a phone too: the five lines, the four under them and
+	// the footing still fit a 390x844 screen without the panel scrolling.
+	font-size: var(--fs-display);
 	line-height: 1;
-	letter-spacing: 0.01em;
+	letter-spacing: 0;
 	text-transform: uppercase;
 	color: var(--color-text);
 	text-decoration: none;
@@ -379,13 +426,18 @@
 	// differently at the same viewport, which is what made the lower tier
 	// read as a separate, clumped block on a desktop panel.
 	padding: 0.15em 0;
-	transition: color 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: color 0.18s ease;
 }
 
-.nav-link:hover,
+// Nothing slides: the line warms to red, and only that.
 .nav-link:focus-visible {
 	color: var(--color-accent-hot);
-	transform: translateX(0.75rem);
+}
+
+@media (hover: hover) {
+	.nav-link:hover {
+		color: var(--color-accent-hot);
+	}
 }
 
 // The current page is the one line that goes nowhere, so it steps back
@@ -433,28 +485,49 @@
 	// Physical touch target, same token as the bar's own controls (WCAG 2.5.5).
 	min-height: var(--header-tap);
 	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: clamp(1.6rem, 2.95vw, 2.3rem);
+	font-size: var(--fs-h3);
 	line-height: 1;
 	// The same share of the step as the tier above (see `.nav-link`). Without
 	// it the lower tier sat at exactly their text height on a desktop panel — no
 	// leading at all — while the tier above had room to breathe.
 	padding: 0.15em 0;
-	letter-spacing: 0.01em;
+	letter-spacing: 0;
 	text-transform: uppercase;
 	color: var(--color-text);
 	text-decoration: none;
-	transition: color 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: color 0.18s ease;
 }
 
-.nav-secondary-link:hover,
 .nav-secondary-link:focus-visible {
 	color: var(--color-accent-hot);
-	transform: translateX(0.75rem);
+}
+
+@media (hover: hover) {
+	.nav-secondary-link:hover {
+		color: var(--color-accent-hot);
+	}
 }
 
 // Same state the poster list uses.
 .nav-secondary-link--current {
 	color: var(--ink-dim);
+}
+
+@media (min-width: 901px) {
+	// After the base rules, or they win. Poster scale: the section-head step for the five, the sub-section step
+	// for the four under them.
+	.nav-body {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+
+	.nav-link {
+		font-size: var(--fs-h2);
+		padding: 0.08em 0;
+	}
+
+	.nav-secondary-link {
+		font-size: var(--fs-h3);
+	}
 }
 
 .nav-foot-meta {
@@ -465,7 +538,7 @@
 	gap: 1rem 2rem;
 	width: 100%;
 	padding-top: 0.9rem;
-	@include mono(var(--fs-label-lg), 0.16em, uppercase);
+	@include note;
 }
 
 .nav-foot-line {
@@ -474,30 +547,7 @@
 }
 
 .nav-foot-mail {
-	color: var(--color-text);
-	text-decoration: underline 1px solid var(--rule-strong);
-	text-underline-offset: 0.4rem;
-	transition: color 0.2s, text-decoration-color 0.2s;
-
-	&:hover,
-	&:focus-visible {
-		color: var(--color-accent-hot);
-		text-decoration-color: var(--color-accent-hot);
-	}
-}
-
-// The stamp goes first: it duplicates the hero meta, and the bar must never wrap.
-@media (max-width: 860px) {
-	.header-stamp {
-		display: none;
-	}
-
-	.site-header {
-		grid-template-columns: minmax(0, 1fr) auto;
-	}
-
-	// The brand is NOT re-shown here: mobile follows the same rule as every other
-	// width — the hero owns the mark at the top, the bar takes it over on scroll.
+	@include hairline-link;
 }
 
 @media (max-width: 600px) {
@@ -507,42 +557,47 @@
 		display: none;
 	}
 
+	// A square, bars centred, as tall as the Tickets button beside it (the
+	// label's line sets the height) and exactly that wide — not a tall
+	// slot with three thin lines lost in it.
 	.nav-toggle {
-		padding: 0.72rem min(0.9rem, 4.5vw);
+		justify-content: center;
+		padding: 0.72rem 0;
+		aspect-ratio: 1;
+		min-width: 0;
 	}
 
-	// On the page's own gutter, so the mark stands on the same edge as the
-	// title under it instead of 8px outside it.
+	// The full-size mark (190px), the large-text CTA and the 44px toggle
+	// take ~360px of a 390px row, so the bar runs on a tighter inset than
+	// the page gutter and on small gaps. Viewport-capped: 12px at 390px,
+	// back on the gutter's edge as the phone widens.
 	.site-header {
-		padding-inline: var(--gutter);
+		padding-inline: min(var(--gutter), 3.2vw);
+		gap: 0.5rem;
 	}
 
-	// In a 1.5rem-inset box the red block was the widest thing in the bar;
-	// tighter (and with the phone's tracking scale), it reads as a button
-	// beside the mark, not a banner across it. Height is `--header-tap`.
+	.header-actions {
+		gap: 0.375rem;
+	}
+
+	// Height is `--header-tap`; only the inline padding tightens.
 	.header-cta {
-		padding-inline: min(1.1rem, 5.5vw);
+		padding-inline: 0.8rem;
 	}
 }
 
-@media (max-width: 380px) {
-	// Horizontal only. The vertical tightening lives on `--header-pad-y` in
-	// BaseLayout.scss (:root) — overriding padding here would shrink the bar
-	// while `--header-h` asserted the old height.
-	.site-header {
-		padding-inline: min(0.85rem, 4.25vw);
-	}
-
+// Under 380px the mark, the Tickets button and the toggle no longer fit one
+// row. The CTA leaves the bar; Tickets stays the first line of the menu.
+@media (max-width: 379.98px) {
 	.header-cta {
-		padding: 0.72rem min(1rem, 5vw);
-		letter-spacing: 0.14em;
+		display: none;
 	}
 }
 
 // Short viewports (landscape phones): a smaller step, and the panel scrolls.
 @media (max-height: 620px) {
 	.nav-link {
-		font-size: clamp(1.5rem, 5vh, 2.6rem);
+		font-size: var(--fs-h3);
 		min-height: 2rem;
 		padding: 0.22rem 0;
 	}
@@ -551,7 +606,7 @@
 	// the panel scroll.
 	.nav-secondary-link {
 		min-height: 2rem;
-		font-size: clamp(1.2rem, 4vh, 1.8rem);
+		font-size: var(--fs-title-sm);
 	}
 
 	.nav-foot-meta {
@@ -574,17 +629,8 @@
 	.nav-secondary-link,
 	.header-cta,
 	.brand,
-	.site-header[data-home='true'][data-state='top'] .brand,
-	.header-stamp,
-	.site-header[data-state='top'] .header-stamp,
+	.bar-link,
 	.nav-toggle-bars span {
 		transition: none;
-	}
-
-	.nav-link:hover,
-	.nav-link:focus-visible,
-	.nav-secondary-link:hover,
-	.nav-secondary-link:focus-visible {
-		transform: none;
 	}
 }

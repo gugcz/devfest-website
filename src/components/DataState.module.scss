@@ -19,18 +19,18 @@
 
 // Loading is a status LINE, not a block — it sits in flow next to (or under)
 // the section head while the skeleton, where a section has one, holds the
-// layout. Mono, because it is a status word.
+// layout. A typewriter note, because it is a status word.
 .loading {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.55rem;
-	@include mono(var(--fs-label-lg), 0.18em, uppercase);
+	@include note;
 	color: var(--ink-dim);
 	margin: 1rem 0 0;
 }
 
 // The one red thing in the set, and it earns it: a live indicator is exactly
-// what --glow-red is reserved for.
+// what red is reserved for.
 .dot {
 	width: 8px;
 	height: 8px;

@@ -1,58 +1,121 @@
 @use '../styles/type' as *;
-@use '../styles/type' as *;
-// The 1.15/0.85 split the desks and the section heads use, so a step's
-// title shares its left edge and its measure with everything else.
-.step {
-	display: grid;
-	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-	align-items: start;
-	gap: 1rem clamp(2rem, 5vw, 5rem);
-}
 
-.step-head {
+// A typed index card, straight (only photo prints tilt): the errand as a
+// Bebas head, one or two typewriter lines under it, then its actions. Paper ink
+// only: no red text on paper (the one red fill is a button, white on red).
+.step {
 	display: flex;
 	flex-direction: column;
-	gap: 0.9rem;
+	align-items: flex-start;
 	min-width: 0;
+	padding: 1.6rem 1.75rem 1.7rem;
 }
 
-// The short-list row step (--fs-row, 72px) — these lists are three or four
-// entries long, the same length as the ticket waves and the contact desks.
+// Without subgrid the foot drops to the card's bottom edge.
+.step-foot {
+	margin-top: auto;
+	width: 100%;
+}
+
+// Across a row the cards share their row tracks (title, note, foot), so every
+// note starts at one height however many lines the titles take.
+@supports (grid-template-rows: subgrid) {
+	.step {
+		display: grid;
+		grid-row: span 3;
+		grid-template-rows: subgrid;
+		row-gap: 0;
+		justify-items: start;
+	}
+
+	.step:has(> .step-index) {
+		grid-row: span 4;
+	}
+
+	// The actions start on one line across the row too.
+	.step-foot {
+		margin-top: 0;
+	}
+}
+
+// The serial, when the cards are a real sequence: a figure, so mono.
+.step-index {
+	display: block;
+	margin-bottom: 0.85rem;
+	@include mono(var(--fs-head));
+	font-weight: 500;
+	line-height: 1;
+	color: var(--paper-ink);
+}
+
 .step-title {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-row);
-	line-height: 1.02;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--color-text);
-	margin: 0;
+	@include row-title(var(--fs-head));
+	line-height: 0.92;
+	color: var(--paper-ink);
+	margin: 0 0 0.9rem;
+	text-wrap: balance;
 }
 
 .step-note {
-	@include prose(var(--fs-body), 1.7);
-	color: rgba(255, 255, 255, 0.72);
-	max-width: 46ch;
+	@include prose(var(--fs-body), 1.55);
+	color: var(--paper-ink);
 	margin: 0;
 }
 
 .step-note :global(a) {
-	@include hairline-link(var(--color-accent-hot));
+	color: var(--paper-ink);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+	transition: text-decoration-thickness 0.2s ease;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration-thickness: 2px;
+	}
 }
 
 .step-actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.9rem;
-	justify-content: flex-end;
-	align-items: flex-start;
+	align-items: center;
+	gap: 0.5rem 1.6rem;
+	padding-top: 1.25rem;
 }
 
-@media (max-width: 900px) {
+// A text action on paper: black Bebas, the ink line only on hover and focus.
+.step-go {
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
+	@include action(var(--fs-cta));
+	@include paper-action;
+	overflow-wrap: anywhere;
+}
+
+// Three narrow cards on a tablet: two actions never fit one line, so every
+// card lists them, one under the other, instead of one card breaking.
+@media (min-width: 721px) and (max-width: 1100px) {
+	.step-actions {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0;
+	}
+}
+
+@media (max-width: 720px) {
 	.step {
-		grid-template-columns: 1fr;
+		padding: 1.4rem 1.4rem 1.5rem;
 	}
 
-	.step-actions {
-		justify-content: flex-start;
+	.step-actions .btn-primary {
+		width: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.step-go,
+	.step-note :global(a) {
+		transition: none;
 	}
 }

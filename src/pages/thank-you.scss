@@ -1,0 +1,101 @@
+@use '../styles/type' as *;
+
+// The ticket's facts as one straight paper stub on the black table:
+// [ date ][ time, place ][ calendar ], its heading a typed label across the
+// top. Paper ink only; the .ics button is the page's one red.
+.event-stub {
+	display: grid;
+	grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
+	align-items: end;
+	gap: 1.5rem clamp(2rem, 4vw, 4rem);
+	padding: clamp(1.75rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 2.25rem);
+	margin: 0 0 clamp(5rem, 9vw, 8rem);
+}
+
+.stub-label {
+	grid-column: 1 / -1;
+	@include note(var(--fs-note));
+	color: var(--paper-ink-dim);
+	margin: 0;
+}
+
+.stub-date {
+	@include display(var(--fs-h2));
+	color: var(--paper-ink);
+	margin: 0;
+}
+
+.stub-facts {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 0.6rem 1.25rem;
+	margin: 0;
+
+	dt {
+		@include note(var(--fs-note-sm));
+		color: var(--paper-ink-dim);
+		padding-top: 0.2rem;
+	}
+
+	dd {
+		@include note;
+		color: var(--paper-ink);
+		margin: 0;
+	}
+}
+
+// The hours are a figure.
+.stub-facts .stub-fig {
+	@include mono(var(--fs-ui));
+	padding-top: 0.1rem;
+}
+
+.stub-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0.5rem;
+}
+
+// A text action on paper: black Bebas, the ink line only on hover and focus.
+.stub-go {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 2.75rem;
+	@include action(var(--fs-cta));
+	@include paper-action;
+}
+
+@media (max-width: 1100px) {
+	.event-stub {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	}
+
+	.stub-actions {
+		grid-column: 1 / -1;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem 1.75rem;
+	}
+}
+
+@media (max-width: 700px) {
+	.event-stub {
+		grid-template-columns: minmax(0, 1fr);
+		align-items: start;
+		padding: 1.6rem 1.3rem 1.4rem;
+	}
+
+	.stub-actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stub-go {
+		transition: none;
+	}
+}
