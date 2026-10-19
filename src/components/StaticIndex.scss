@@ -1,0 +1,54 @@
+@use '../styles/type' as *;
+
+// The build-time text a reader without script gets in place of an island
+// (`.no-js`, hidden under `html.js`): plain rows on the black table, a
+// Bebas name, the details on the typewriter. Never seen by a visitor with
+// script, so it stays plain.
+.static-index {
+	margin: 2rem 0 0;
+}
+
+.static-index-stamp {
+	@include note;
+	color: var(--ink-meta);
+	margin: 0 0 1.5rem;
+
+	a {
+		@include hairline-link;
+	}
+}
+
+.static-index-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 1.75rem;
+	max-width: 70ch;
+}
+
+.static-index-title {
+	@include row-title;
+	margin: 0 0 0.35rem;
+
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+}
+
+.static-index-meta {
+	@include note(var(--fs-note-sm));
+	color: var(--ink-meta);
+	margin: 0 0 0.35rem;
+
+	a {
+		@include hairline-link(var(--ink-meta));
+	}
+}
+
+.static-index-text {
+	@include prose(var(--fs-body), 1.6);
+	color: var(--ink-soft);
+	margin: 0;
+}

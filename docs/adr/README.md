@@ -17,3 +17,4 @@ their dates are the PRs' merge dates. When to write one: `.claude/rules/docs.md`
 | [0005](0005-workshop-sign-up-on-the-app-login.md) | Workshop sign-up reuses the mobile app's ticket login; seats live in RTDB | accepted |
 | [0006](0006-share-pages-built-from-the-live-lineup.md) | Talk and speaker share pages are built from the live lineup at build time | accepted |
 | [0007](0007-analytics-basic-consent-mode.md) | GA4 runs in basic Consent Mode: nothing loads before consent | accepted |
+| [0008](0008-agent-readable-build-time-html.md) | Readers without script get the lineup, programme and prices as build-time HTML | accepted |

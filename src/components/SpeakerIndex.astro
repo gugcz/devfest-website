@@ -1,0 +1,42 @@
+---
+/** The speaker lineup as build-time text, for readers that run no script
+ * (`.no-js`): every speaker with their tagline and talks, each linking to
+ * its share page. The `Speakers` island replaces it for everyone else. */
+import type { Speaker } from '../lib/speakers';
+import type { Session } from '../lib/sessions';
+import { formatClock } from '../lib/agenda';
+import { speakerSharePath, talkSharePath } from '../lib/share';
+import { BUILD_DAY } from '../lib/static-api';
+import { EVENT } from '../lib/event';
+
+interface Props {
+	speakers: Speaker[];
+	sessions: Session[];
+}
+
+const { speakers, sessions } = Astro.props;
+const talksOf = (id: string) => sessions.filter((session) => session.speakers.some((sp) => sp.id === id));
+---
+
+<div class="no-js static-index">
+	<p class="static-index-stamp">
+		{speakers.length} speakers as of {BUILD_DAY}. Times in CET, on {EVENT.dateLabel}.
+	</p>
+	<ul class="static-index-list">
+		{speakers.map((speaker) => (
+			<li>
+				<h3 class="static-index-title"><a href={speakerSharePath(speaker.id)}>{speaker.fullName}</a></h3>
+				{speaker.tagLine && <p class="static-index-meta">{speaker.tagLine}</p>}
+				{talksOf(speaker.id).map((talk) => (
+					<p class="static-index-meta">
+						<a href={talkSharePath(talk.id)}>{talk.title}</a>{talk.startsAt && `, ${formatClock(talk.startsAt)}`}
+					</p>
+				))}
+			</li>
+		))}
+	</ul>
+</div>
+
+<style lang="scss">
+	@use './StaticIndex';
+</style>

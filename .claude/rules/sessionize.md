@@ -36,7 +36,8 @@ paths:
 - Share pages `/talks/<id>` and `/speakers/<id>` are built from production
   `/api/lineup` at `astro build` (`lineup-static.ts`, never shipped to the
   client; `DEVFEST_LINEUP_URL` overrides, `A11Y_MOCK` builds none). Each
-  unfurls its own title/description, then forwards to the sheet
+  carries the talk or speaker as text, unfurls its own title/description, is
+  indexed and in the sitemap, then forwards a browser to the sheet
   (`/agenda?talk=`, `/speakers?speaker=`). Something added after the last build
   has no page: `404.astro` forwards its link, with the site's own preview.
 - `SESSIONIZE_ENDPOINT_ID` must be a JSON API id or URL (embed id returns

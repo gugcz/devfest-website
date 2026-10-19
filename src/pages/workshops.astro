@@ -3,10 +3,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import Closer from '../components/Closer.astro';
 import Workshops from '../components/Workshops.tsx';
+import TalkIndex from '../components/TalkIndex.astro';
+import { staticLineup } from '../lib/lineup-static';
+import { staticWorkshops } from '../lib/workshops-static';
 
 // Workshop sign-up for ticket holders. A workshop opens here once its seat
 // limit is set in RTDB (`/workshops/{sessionId}/limit`); the page lists those
 // and nothing else. Sign-in is the app's ticket login (src/lib/workshops.ts).
+// Readers that run no script get the open workshops as of the build.
+const { sessions, rooms } = await staticLineup();
+const workshops = await staticWorkshops(sessions);
 ---
 
 <BaseLayout
@@ -25,6 +31,7 @@ import Workshops from '../components/Workshops.tsx';
 			<div class="band-inner">
 				<h2 id="workshops-list-title" class="sr-only">Workshops</h2>
 				<Workshops client:load />
+				{workshops.length > 0 && <TalkIndex sessions={workshops} rooms={rooms} noun="workshops open for sign-up" />}
 				<noscript>
 					<p class="fallback-note">Registration needs JavaScript. Please turn it on and reload the page.</p>
 				</noscript>

@@ -170,7 +170,9 @@ Browser
                                                             └─ read Firestore speakers+sessions+rooms via Admin SDK (cached, 15-min edge TTL)
 ```
 
-**Share pages.** `/talks/<id>` and `/speakers/<id>` are static pages built from the production `/api/lineup` at `astro build` (`src/lib/lineup-static.ts`; set `DEVFEST_LINEUP_URL` to build against another copy). They unfurl the talk's or speaker's own preview and forward to the sheet. A failed read builds none; `404.astro` forwards links to anything newer. See [ADR 0006](docs/adr/0006-share-pages-built-from-the-live-lineup.md).
+**Share pages.** `/talks/<id>` and `/speakers/<id>` are static pages built from the production `/api/lineup` at `astro build` (`src/lib/lineup-static.ts`; set `DEVFEST_LINEUP_URL` to build against another copy). They carry the talk or speaker as text and their own preview, are indexed, and forward a browser to the sheet. A failed read builds none; `404.astro` forwards links to anything newer. See [ADR 0006](docs/adr/0006-share-pages-built-from-the-live-lineup.md).
+
+**Readers without script.** The same build also reads `/api/tickets` and `/api/workshops` (`src/lib/static-api.ts`; `DEVFEST_TICKETS_URL` / `DEVFEST_WORKSHOPS_URL` override) and renders the lineup, the programme, the open workshops and the prices as plain HTML under the islands (`.no-js`, hidden once `html.js` is set), the Event JSON-LD offers, and `/llms.txt`. All of it is as fresh as the last Hosting deploy. See [ADR 0008](docs/adr/0008-agent-readable-build-time-html.md).
 
 ### Functions
 
@@ -305,7 +307,8 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 |-------|-------------|
 | `/` | Landing page with countdown and newsletter signup |
 | `/speakers` | Speaker lineup (reads `/api/lineup`); `?speaker=<id>` opens one speaker |
-| `/speakers/<id>`, `/talks/<id>` | Share pages: one speaker's or talk's own link preview, then forward to the sheet |
+| `/speakers/<id>`, `/talks/<id>` | Share pages: one speaker or talk as text with its own link preview, then forward to the sheet; indexed |
+| `/llms.txt` | The site as Markdown for language models: facts, tickets, pages, every talk and speaker (built) |
 | `/agenda` | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day — and under it (`#talks`) every talk with search and filters (reads `/api/lineup`). `/sessions` redirects here, `?talk=` included |
 | `/workshops` | Workshop seat sign-up and waitlist for ticket holders (reads `/api/workshops`) |
 | `/invoice` | Request a company invoice to buy tickets by bank transfer |

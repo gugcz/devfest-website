@@ -102,6 +102,16 @@ export function formatClock(iso: string): string {
 	return total === null ? '' : formatMinutes(total);
 }
 
+/** `09:00–09:45` for a session; `''` before it is scheduled. */
+export function timeRange(session: Session): string {
+	return session.startsAt ? [formatClock(session.startsAt), formatClock(session.endsAt)].filter(Boolean).join('–') : '';
+}
+
+/** The session's room name: its own, else the `rooms` doc its `roomId` names. */
+export function roomName(session: Session, rooms: Room[]): string {
+	return session.room.trim() || rooms.find((room) => room.id === session.roomId)?.name || '';
+}
+
 /** True when a session has a usable start time (and therefore a grid position). */
 function isTimed(session: Session): boolean {
 	return parseLocalMinutes(session.startsAt) !== null;

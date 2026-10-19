@@ -59,7 +59,7 @@ built by a community, not a vendor event.
   workshops, venue, attending, invoice, partners, press downloads, team, FAQ,
   contact (with press), code of conduct, newsletter thank-you, thank-you, 404,
   privacy policy, delete-account (mobile app), share pages per talk and
-  speaker, unlisted `/invite/<member>` and `/speaker-card`.
+  speaker, `/llms.txt`, unlisted `/invite/<member>` and `/speaker-card`.
 - The site is a darkroom: photographs are paper prints on a flat black
   table, each with one strip of tape, set down at a small tilt; the facts
   that go with them are straight paper slips and cards. A page carries one

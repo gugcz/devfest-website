@@ -1,21 +1,27 @@
 ---
 import Share from '../../layouts/Share.astro';
 import { staticLineup } from '../../lib/lineup-static';
-import { speakerNames, type Session } from '../../lib/sessions';
+import { speakerNames, visitorCategories, type Room, type Session } from '../../lib/sessions';
 import { EVENT } from '../../lib/event';
-import { excerpt, talkTarget } from '../../lib/share';
+import { roomName, timeRange } from '../../lib/agenda';
+import { paragraphs } from '../../lib/paragraphs';
+import { excerpt, speakerSharePath, talkTarget } from '../../lib/share';
 
-// One preview per talk; `/agenda?talk=<id>` is where it is read.
+// One page per talk; `/agenda?talk=<id>` is where a browser reads it.
 export async function getStaticPaths() {
-	const { sessions } = await staticLineup();
-	return sessions.map((session) => ({ params: { id: session.id }, props: { session } }));
+	const { sessions, rooms } = await staticLineup();
+	return sessions.map((session) => ({ params: { id: session.id }, props: { session, rooms } }));
 }
 
-const { session } = Astro.props as { session: Session };
+const { session, rooms } = Astro.props as { session: Session; rooms: Room[] };
 const names = speakerNames(session);
 const title = names ? `${session.title} — ${names}` : session.title;
 const when = `DevFest.cz 2026, ${EVENT.dateLabel}, ${EVENT.venue}.`;
 const description = session.description ? `${excerpt(session.description)} ${when}` : when;
+const time = timeRange(session);
+const facts = [time && `${time} CET`, roomName(session, rooms), ...visitorCategories(session).map((c) => `${c.name}: ${c.values.join(', ')}`)].filter(
+	Boolean,
+);
 ---
 
 <Share
@@ -23,4 +29,21 @@ const description = session.description ? `${excerpt(session.description)} ${whe
 	title={`${title} | DevFest.cz 2026`}
 	description={description}
 	label={`“${session.title}”`}
-/>
+>
+	<h1>{session.title}</h1>
+	{facts.length > 0 && <p>{facts.join(' · ')}</p>}
+	{paragraphs(session.description).map((text) => <p>{text}</p>)}
+	{session.speakers.length > 0 && (
+		<>
+			<h2>{session.speakers.length === 1 ? 'Speaker' : 'Speakers'}</h2>
+			<ul>
+				{session.speakers.map((sp) => (
+					<li>
+						<a href={speakerSharePath(sp.id)}>{sp.fullName}</a>
+						{sp.tagLine && `, ${sp.tagLine}`}
+					</li>
+				))}
+			</ul>
+		</>
+	)}
+</Share>
