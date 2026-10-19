@@ -9,26 +9,26 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TvScreen, { type PartnerGroup } from '../components/TvScreen';
 import gugLogo from '../assets/gug-logo.svg';
-import { getActivePartnerTiers, getCommunityPartners } from '../lib/partners';
+import { getActivePartnerTiers, getCommunityPartners, logoBox } from '../lib/partners';
 
 // The same set and order as the homepage strip: the ladder top tier first,
-// community last. Logos are looked up by filename, as on the homepage.
-const logoSources = import.meta.glob<{ default: ImageMetadata }>('../assets/partners/**/*', { eager: true });
-const logoByFile = new Map(
-	Object.entries(logoSources).map(([path, mod]) => [path.split('/').pop() as string, mod.default]),
-);
+// community last.
 const tiers = [
 	...(await getActivePartnerTiers()).map((tier) => ({ tier: tier.label, partners: tier.partners })),
 	{ tier: 'Community', partners: await getCommunityPartners() },
 ];
+// Every tier gets the Gold reference box, so the band keeps one height page
+// after page; inside it each mark gets the same ink area (`logoBox`), in the
+// screen's `--u` (0.06u per px of the box: a 5:1 wordmark ≈ 12u wide).
+const U_PER_PX = 0.06;
 // Three logos fit the band at a size that reads; a bigger tier splits into
 // even pages (5 → 3 + 2), each still labelled with its tier.
 const PER_PAGE = 3;
 const partners: PartnerGroup[] = tiers.flatMap(({ tier, partners }) => {
 	const label = `${tier} partner${partners.length === 1 ? '' : 's'}`;
-	const logos = partners.flatMap((p) => {
-		const logo = logoByFile.get(p.logo.split('/').pop() as string);
-		return logo ? [{ name: p.name, src: logo.src, plated: p.plated ?? false }] : [];
+	const logos = partners.map((p) => {
+		const { img, box } = logoBox(p, 'gold');
+		return { name: p.name, src: img.src, w: +(box.width * U_PER_PX).toFixed(2), dark: p.mono === 'dark' };
 	});
 	const pages = Math.ceil(logos.length / PER_PAGE);
 	return Array.from({ length: pages }, (_, i) => ({

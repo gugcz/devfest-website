@@ -1367,6 +1367,31 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   no head (`AgendaList`). Abstracts, tags and photos live only in "Every
   talk" below. On a phone the "Every talk" head drops its note (the list
   invites the search itself, `agenda.astro`).
+- **Venue screens** (`TvScreen.tsx`, `TvScreen.module.scss`, unlisted
+  `/tv`) — the darkroom at sign scale, read across a hall. **Recorded
+  exceptions:** (1) every size is a multiple of `--u` (1/100 of the
+  screen's long side), not a `--fs-*` step, because the ramp tops out at
+  laptop sizes; (2) the speaker print restates `.paper` / `.paper-photo` /
+  `.paper-edge` in `--u` for the same reason (tokens unchanged: `--paper`,
+  `--paper-shadow`, `--tilt-*`, `--paper-ink-dim`); (3) talk titles are
+  Bebas on paper too, where the agenda slip sets them in `prose()`: the
+  condensed face fits a title in two lines across the room; (4) a 1px
+  drift every six minutes keeps a still frame off the panel (burn-in), off
+  under reduced motion; (5) the credits band turns a partner page every 8 s
+  on its own, since a band of every partner cannot fit one screen.
+  Otherwise the site's rules: flat black, no rules or
+  cards on the table; word labels are notes (never under `1.6u`), times
+  mono and a figure inside a note a mono `.fig`; the speaker portraits are
+  tilted prints with frame number and start time on the edge, Up next and
+  the board's Now column straight slips; "Live now" is a red word and dot
+  on black, an ink word and red dot on paper; the live progress is a
+  spine, white on black, ink on paper. The one grease mark rings the
+  countdown to a talk inside ten minutes (the hero's while it is the next
+  talk, else Up next's) or underlines "That's a wrap." at the day's end.
+  The credits band keeps every partner mark in its colours, equal-area
+  sized from the Gold box (`logoBox`, `partners.ts`), a `dark` master on a
+  white card; a new partner page fades in (opacity, none under reduced
+  motion). No split-flap, sweep or pulse.
 - **Menu** (`Menu.astro`, `Menu.scss`) — the bar is the mark left and the
   actions right (`display: flex; justify-content: space-between`). **At
   ≥1100px the destinations sit in the bar** (`.bar-nav`): Speakers, Agenda,

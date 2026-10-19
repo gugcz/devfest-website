@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import logoUrl from '../assets/logo.png?url';
 import { eventDateISO, formatMinutes, isBand } from '../lib/agenda';
 import { EVENT } from '../lib/event';
@@ -32,10 +32,11 @@ const RELOAD_MS = 3 * 60 * 60_000;
 const PARTNER_GROUP_MS = 8_000;
 
 /** One page of the credits band's partner loop: a tier, or part of a big
- * one, resolved at build by `tv.astro`. */
+ * one, resolved at build by `tv.astro`. `w` is the mark's equal-area width
+ * in `--u`; a `dark` master sits on a white card. */
 export interface PartnerGroup {
 	label: string;
-	logos: { name: string; src: string; plated: boolean }[];
+	logos: { name: string; src: string; w: number; dark: boolean }[];
 }
 
 const PRAGUE = new Intl.DateTimeFormat('en-CA', {
@@ -79,9 +80,8 @@ function readParams(): Params {
 }
 
 /** The Prague wall clock, ticking. With `atMin` set it starts there on
- * `eventDate` instead of the real time. `phase` is how far into its minute
- * the clock was at mount, in seconds, for the sweep under the clock. */
-function useClock(atMin: number | null, eventDate: string): Clock & { phase: number } {
+ * `eventDate` instead of the real time. */
+function useClock(atMin: number | null, eventDate: string): Clock {
 	const [start] = useState(() => Date.now());
 	const [tick, setTick] = useState(() => Date.now());
 	useEffect(() => {
@@ -93,8 +93,8 @@ function useClock(atMin: number | null, eventDate: string): Clock & { phase: num
 		}, CLOCK_TICK_MS);
 		return () => clearInterval(id);
 	}, [atMin, start]);
-	if (atMin === null) return { ...pragueClock(new Date(tick)), phase: (start % 60_000) / 1000 };
-	return { date: eventDate, minutes: atMin + Math.floor((tick - start) / 60_000), phase: 0 };
+	if (atMin === null) return pragueClock(new Date(tick));
+	return { date: eventDate, minutes: atMin + Math.floor((tick - start) / 60_000) };
 }
 
 /** Polls `load` every `everyMs`, keeping the last good payload on a failed read. */
@@ -167,6 +167,18 @@ function usePortrait(): boolean {
 	return portrait;
 }
 
+/** Bumps when a web font finishes loading: text measured in the fallback
+ * face has to be measured again. */
+function useFontEpoch(): number {
+	const [epoch, setEpoch] = useState(0);
+	useEffect(() => {
+		const bump = () => setEpoch((e) => e + 1);
+		document.fonts?.addEventListener('loadingdone', bump);
+		return () => document.fonts?.removeEventListener('loadingdone', bump);
+	}, []);
+	return epoch;
+}
+
 function loadLineup(signal: AbortSignal): Promise<Lineup> {
 	return fetchAgenda(signal).then((lineup) => ({
 		...lineup,
@@ -215,49 +227,82 @@ function afterBreak(gap: Slot): string {
 	return `after ${label === 'Lunch' ? 'lunch' : label}`;
 }
 
-/** The word on a slot's chip. It steps up as the start nears, the way a
- * departures board goes from a time to Boarding: one word reads at a glance
- * where a countdown has to be parsed. Red is for Live alone. */
-function chipFor(slot: Slot, live: boolean, nowMin: number | null): { text: string; live: boolean } {
-	if (live) return { text: 'Live', live: true };
-	if (nowMin === null) return { text: 'First up', live: false };
-	if (slot.place.startMin - nowMin <= 2) return { text: 'Starting', live: false };
-	return { text: 'Next', live: false };
-}
-
-function Chip({ text, live }: { text: string; live: boolean }) {
-	return <span className={`${s.chip} ${live ? s.chipLive : ''}`}>{text}</span>;
-}
-
-/** The clock: Bebas digits and a seconds sweep that fills in 58.5 s and rests
- * until the minute turns, after the Swiss railway clock. */
-function ClockFace({ minutes, phase, meta }: { minutes: number; phase: number; meta: string }) {
+/** A line in the note voice with its figures in mono, the way the site sets
+ * a time or a count inside typewriter text (`.fig`). */
+function Note({ text }: { text: string }) {
 	return (
-		<p className={s.clockBlock}>
-			<span className={s.clock}>{formatMinutes(minutes)}</span>
-			<span className={s.sweep} aria-hidden="true">
-				<span style={{ animationDelay: `-${phase}s` }} />
-			</span>
-			<span className={s.clockMeta}>{meta}</span>
-		</p>
+		<>
+			{text.split(/(\d+(?:[:–]\d+)*)/).map((part, i) =>
+				i % 2 ? (
+					<span key={i} className={s.fig}>
+						{part}
+					</span>
+				) : (
+					part
+				),
+			)}
+		</>
 	);
 }
 
-/** Portraits and names, and the tagline when one person gives the talk. */
-function Speakers({ speakers }: { speakers: SessionSpeakerRef[] }) {
+/** The state word on a slot. It steps up as the start nears, the way a
+ * departures board goes from a time to Boarding: one word reads at a glance
+ * where a countdown has to be parsed. Red is for Live now alone. */
+function flagFor(slot: Slot, live: boolean, nowMin: number | null): string {
+	if (live) return 'Live now';
+	if (nowMin === null) return 'First up';
+	if (slot.place.startMin - nowMin <= 2) return 'Starting';
+	return 'Next';
+}
+
+function Flag({ text, live }: { text: string; live: boolean }) {
+	return <span className={`${s.flag} ${live ? s.flagLive : ''}`}>{text}</span>;
+}
+
+/** A talk this close to its start gets its countdown ringed. */
+const SOON_MIN = 10;
+
+const isSoon = (slot: Slot, nowMin: number | null) => nowMin !== null && slot.place.startMin - nowMin <= SOON_MIN;
+
+/** The red grease pencil, the page's one mark: a ring round the countdown
+ * to a talk inside ten minutes (the hero's while it is the next talk, else
+ * Up next's), or a stroke under the day's sign-off. */
+const GREASE = {
+	ring: { box: '0 0 200 140', d: 'M30 34 C 60 6, 150 4, 186 34 C 204 60, 196 112, 150 128 C 100 142, 30 134, 12 100 C 0 72, 14 44, 58 22' },
+	underline: { box: '0 0 200 20', d: 'M4 12 C 50 6, 110 4, 196 9 M 30 16 C 80 12, 140 12, 180 14' },
+};
+
+function Grease({ mark }: { mark: keyof typeof GREASE }) {
+	return (
+		<svg className={`grease ${s[mark]}`} viewBox={GREASE[mark].box} preserveAspectRatio="none" aria-hidden="true" focusable="false">
+			<path d={GREASE[mark].d} />
+		</svg>
+	);
+}
+
+/** Portraits as paper prints, the frame number and the start time on the
+ * edge, each name beside its print, and the tagline when one person gives
+ * the talk. */
+function Speakers({ speakers, start }: { speakers: SessionSpeakerRef[]; start: number }) {
 	if (speakers.length === 0) return null;
 	const solo = speakers.length === 1;
 	return (
 		<ul className={`${s.speakers} ${solo ? '' : s.speakersMany}`}>
-			{speakers.map((speaker) => (
+			{speakers.map((speaker, i) => (
 				<li key={speaker.id} className={s.speaker}>
-					{speaker.profilePicture ? (
-						<img className={s.photo} src={speaker.profilePicture} alt="" />
-					) : (
-						<span className={s.monogram} aria-hidden="true">
-							{initials(speaker.fullName) || '?'}
+					<span className={s.print} aria-hidden="true">
+						<span className={s.printPhoto}>
+							{speaker.profilePicture ? (
+								<img src={speaker.profilePicture} alt="" />
+							) : (
+								<span className={s.monogram}>{initials(speaker.fullName) || '?'}</span>
+							)}
 						</span>
-					)}
+						<span className={s.printEdge}>
+							<span>{String(i + 1).padStart(2, '0')}</span>
+							<span>{formatMinutes(start)}</span>
+						</span>
+					</span>
 					<span className={s.speakerText}>
 						<span className={s.speakerName}>{speaker.fullName}</span>
 						{solo && speaker.tagLine && <span className={s.speakerTag}>{speaker.tagLine}</span>}
@@ -268,14 +313,12 @@ function Speakers({ speakers }: { speakers: SessionSpeakerRef[] }) {
 	);
 }
 
-/** A live slot's progress: a thin line filling red. */
+/** A live slot's progress: a spine filling with ink. */
 function Progress({ slot, nowMin }: { slot: Slot; nowMin: number | null }) {
 	return (
-		<div className={s.progressRow} aria-hidden="true">
-			<span className={s.progress}>
-				<span style={{ transform: `scaleX(${progress(slot.place, nowMin)})` }} />
-			</span>
-		</div>
+		<span className={s.progress} aria-hidden="true">
+			<span style={{ transform: `scaleX(${progress(slot.place, nowMin)})` }} />
+		</span>
 	);
 }
 
@@ -284,19 +327,24 @@ function Progress({ slot, nowMin }: { slot: Slot; nowMin: number | null }) {
  * so the break is a small tag beside the room name. */
 function Hero({ slot, live, nowMin }: { slot: Slot; live: boolean; nowMin: number | null }) {
 	const countdown = live ? '' : startsIn(slot.place.startMin, nowMin);
+	const aside = live ? timeLeft(slot, nowMin) : countdown && `Starts ${countdown}`;
 	return (
 		<section className={s.hero} aria-labelledby="tv-hero-title">
 			<p className={s.heroMeta}>
-				<Chip {...chipFor(slot, live, nowMin)} />
-				<span className={s.metaTime}>{slotTime(slot)}</span>
-				{live && <span className={s.metaAside}>{timeLeft(slot, nowMin)}</span>}
-				{countdown && <span className={s.metaAside}>Starts {countdown}</span>}
+				<Flag text={flagFor(slot, live, nowMin)} live={live} />
+				<span className={s.time}>{slotTime(slot)}</span>
+				{aside && (
+					<span className={s.heroAside}>
+						<Note text={aside} />
+						{!live && isSoon(slot, nowMin) && <Grease mark="ring" />}
+					</span>
+				)}
 			</p>
 			{live && <Progress slot={slot} nowMin={nowMin} />}
-			<h2 key={slot.session.id} id="tv-hero-title" className={`${s.heroTitle} ${s.flip} ${titleSize(slot.session.title)}`}>
+			<h2 id="tv-hero-title" className={`${s.heroTitle} ${titleSize(slot.session.title)}`}>
 				{slot.session.title}
 			</h2>
-			<Speakers speakers={slot.session.speakers} />
+			<Speakers speakers={slot.session.speakers} start={slot.place.startMin} />
 		</section>
 	);
 }
@@ -318,22 +366,26 @@ function NextCard({
 	afterHero: boolean;
 }) {
 	const countdown = startsIn(slot.place.startMin, nowMin);
-	const soon = nowMin !== null && slot.place.startMin - nowMin <= 10;
+	// While the hero is itself the next talk, its countdown carries the ring.
+	const soon = !afterHero && isSoon(slot, nowMin);
 	return (
-		<section className={`${s.next} ${soon ? s.nextSoon : ''} ${cramped ? s.nextCramped : ''}`} aria-labelledby="tv-next-title">
+		<section className={`${s.next} ${cramped ? s.nextCramped : ''}`} aria-labelledby="tv-next-title">
 			<p className={s.nextTop}>
-				<span className={s.cardLabel}>{afterHero ? 'After that' : 'Up next'}</span>
-				{countdown && <span className={s.countdown}>{countdown}</span>}
+				<span className={s.nextLabel}>{afterHero ? 'After that' : 'Up next'}</span>
+				{countdown && (
+					<span className={s.countdown}>
+						<Note text={countdown} />
+						{soon && <Grease mark="ring" />}
+					</span>
+				)}
 			</p>
 			<p className={s.nextWhen}>
-				{slotTime(slot)}
-				{gap && ` · ${afterBreak(gap)}`}
+				<span className={s.time}>{slotTime(slot)}</span>
+				{gap && <span className={s.nextGap}>{afterBreak(gap)}</span>}
 			</p>
-			<div className={s.headline}>
-				<h2 key={slot.session.id} id="tv-next-title" className={`${s.nextTitle} ${s.flip} ${titleSize(slot.session.title)}`}>
-					{slot.session.title}
-				</h2>
-			</div>
+			<h2 id="tv-next-title" className={`${s.nextTitle} ${titleSize(slot.session.title)}`}>
+				{slot.session.title}
+			</h2>
 			{slot.session.speakers.length > 0 && (
 				<p className={s.nextSpeakers}>{slot.session.speakers.map((sp) => sp.fullName).join(', ')}</p>
 			)}
@@ -351,80 +403,78 @@ function summarySlot(room: RoomNow): { slot: Slot; live: boolean } | null {
 	return next ? { slot: next, live: false } : null;
 }
 
-/** `Until 10:40` for a live talk; `11:00 · in 10 min` for the next one
- * within the hour, else just its start. Short, so it shares a line with the
- * room name. */
-function summaryWhen(shown: { slot: Slot; live: boolean } | null, nowMin: number | null): string {
-	if (!shown) return nowMin === null ? 'Nothing scheduled' : 'Done for today';
-	const { place } = shown.slot;
-	if (shown.live) return `Until ${formatMinutes(place.endMin)}`;
-	const soon = nowMin !== null && place.startMin - nowMin < 60;
-	return soon ? `${formatMinutes(place.startMin)} · ${startsIn(place.startMin, nowMin)}` : formatMinutes(place.startMin);
+/** A room with nothing (more) to show. */
+function emptyLabel(nowMin: number | null): string {
+	return nowMin === null ? 'Nothing scheduled' : 'Done for today';
 }
 
-/** The rail under Up next: what the other rooms are showing. Titles get two
- * lines while every room fits, one line when they do not; a room that still
- * does not fit drops out whole (see `.elsewhereList`) rather than clip. */
-function Elsewhere({
-	rooms,
-	nowMin,
-	onCramped,
-}: {
-	rooms: RoomNow[];
-	nowMin: number | null;
-	onCramped: () => void;
-}) {
-	const items = rooms.map((room) => {
+/** One other room on the rail: its name, the talk it shows, and when. */
+interface RoomLine {
+	key: string;
+	label: string;
+	when: string;
+	live: boolean;
+	title: string;
+}
+
+function roomLines(rooms: RoomNow[], nowMin: number | null): RoomLine[] {
+	return rooms.map((room) => {
 		const shown = summarySlot(room);
 		return {
 			key: room.column.key,
 			label: room.column.label,
-			when: summaryWhen(shown, nowMin),
+			when: shown ? boardWhen(shown.slot, shown.live, null, nowMin) : emptyLabel(nowMin),
 			live: shown?.live ?? false,
 			title: shown?.slot.session.title ?? '',
 		};
 	});
-	const content = JSON.stringify(items);
+}
 
-	// Measured before paint, so the screen never shows the clipped version: a
-	// wrapped room lands in a second column, which widens the list. When even
-	// one-line titles do not fit, the Up next card gives up a line. Fonts that
-	// arrive later change the measure, so they trigger a re-check.
+/** How hard the rail squeezes so every other room shows: their titles drop
+ * to one line first, then the Up next slip gives up a title line and its
+ * speakers. */
+const FIT_FULL = 0;
+const FIT_DENSE = 1;
+const FIT_CRAMPED = 2;
+
+/** The rail under Up next: what the other rooms are showing. A room that
+ * still does not fit drops out whole (see `.elsewhereList`) rather than
+ * clip. The list is measured before paint, so the screen never shows the
+ * clipped version: a wrapped room lands in a second column, which widens
+ * the list, and the rail squeezes a step. */
+function Elsewhere({
+	lines,
+	fit,
+	measure,
+	onOverflow,
+}: {
+	lines: RoomLine[];
+	fit: number;
+	measure: string;
+	onOverflow: () => void;
+}) {
 	const list = useRef<HTMLUListElement>(null);
-	const [dense, setDense] = useState(false);
-	useLayoutEffect(() => setDense(false), [content]);
 	useLayoutEffect(() => {
-		const check = () => {
-			const el = list.current;
-			if (!el || el.scrollWidth <= el.clientWidth + 1) return;
-			if (dense) onCramped();
-			else setDense(true);
-		};
-		check();
-		document.fonts?.addEventListener('loadingdone', check);
-		return () => document.fonts?.removeEventListener('loadingdone', check);
-	}, [dense, content]);
+		const el = list.current;
+		if (el && el.scrollWidth > el.clientWidth + 1) onOverflow();
+	}, [fit, measure]);
 
 	return (
 		<section className={s.elsewhere} aria-labelledby="tv-elsewhere-heading">
-			<h2 id="tv-elsewhere-heading" className={s.cardLabel}>
+			<h2 id="tv-elsewhere-heading" className={s.nextLabel}>
 				Other rooms
 			</h2>
-			<ul ref={list} className={`${s.elsewhereList} ${dense ? s.elsewhereDense : ''}`}>
-				{items.map((item) => (
+			<ul ref={list} className={`${s.elsewhereList} ${fit > FIT_FULL ? s.elsewhereDense : ''}`}>
+				{lines.map((item) => (
 					<li key={item.key} className={s.elsewhereRoom}>
 						<p className={s.elsewhereHead}>
 							<span className={s.elsewhereName}>{item.label}</span>
 							<span className={s.elsewhereMeta}>
 								{item.live && <span className={s.dot} aria-hidden="true" />}
-								{item.when}
+								<Note text={item.when} />
 							</span>
 						</p>
-						{item.title && (
-							<p key={item.title} className={`${s.elsewhereTitle} ${s.flip}`}>
-								{item.title}
-							</p>
-						)}
+						{item.title && <p className={s.elsewhereTitle}>{item.title}</p>}
 					</li>
 				))}
 			</ul>
@@ -433,8 +483,8 @@ function Elsewhere({
 }
 
 /** The band under every screen: the organiser, then the partners a page at
- * a time, in ladder order, on paper cards. Marks print black; a plated logo
- * keeps its brand plate. */
+ * a time, in ladder order. Every mark keeps its own colours; a dark one sits
+ * on a white card. */
 function Credits({ partners, organizerLogo }: { partners: PartnerGroup[]; organizerLogo: string }) {
 	const [index, setIndex] = useState(0);
 	useEffect(() => {
@@ -450,12 +500,17 @@ function Credits({ partners, organizerLogo }: { partners: PartnerGroup[]; organi
 				<img className={s.organizerLogo} src={organizerLogo} alt="GUG.cz" />
 			</p>
 			{group && (
-				<div key={index} className={`${s.partnerGroup} ${s.flip}`}>
+				<div key={index} className={`${s.partnerGroup} ${s.fade}`}>
 					<p className={s.creditLabel}>{group.label}</p>
 					<ul className={s.partnerLogos}>
 						{group.logos.map((logo) => (
 							<li key={logo.name}>
-								<img className={`${s.partnerLogo} ${logo.plated ? s.plated : ''}`} src={logo.src} alt={logo.name} />
+								<img
+									className={`${s.partnerLogo} ${logo.dark ? s.logoDark : ''}`}
+									src={logo.src}
+									alt={logo.name}
+									style={{ '--w': logo.w } as CSSProperties}
+								/>
 							</li>
 						))}
 					</ul>
@@ -466,8 +521,9 @@ function Credits({ partners, organizerLogo }: { partners: PartnerGroup[]; organi
 }
 
 /** The room screen's right column: Up next, then the other rooms. Every
- * room has to show, so when they do not fit the card gives up a title line;
- * that resets whenever what the rail shows changes. */
+ * room has to show, so the rail squeezes until they fit; it starts over
+ * whenever what it shows changes or a web font arrives (the measure was
+ * taken in the fallback face). */
 function Rail({
 	next,
 	gap,
@@ -481,80 +537,106 @@ function Rail({
 	others: RoomNow[];
 	nowMin: number | null;
 }) {
-	const [cramped, setCramped] = useState(false);
-	const shows = [next, ...others.map((room) => summarySlot(room)?.slot ?? null)].map((slot) => slot?.session.id ?? '').join();
-	useLayoutEffect(() => setCramped(false), [shows]);
+	const fonts = useFontEpoch();
+	const lines = roomLines(others, nowMin);
+	const measure = JSON.stringify([next?.session.id, lines, fonts]);
+	// The squeeze belongs to one measure: a new one starts at FIT_FULL in the
+	// same render, so a stale step never reaches the screen.
+	const [squeeze, setSqueeze] = useState({ measure, fit: FIT_FULL });
+	const fit = squeeze.measure === measure ? squeeze.fit : FIT_FULL;
+	const onOverflow = () =>
+		setSqueeze((prev) => {
+			const from = prev.measure === measure ? prev.fit : FIT_FULL;
+			return from >= FIT_CRAMPED ? prev : { measure, fit: from + 1 };
+		});
 	return (
 		<div className={s.rail}>
-			{next && <NextCard slot={next} gap={gap} nowMin={nowMin} cramped={cramped} afterHero={afterHero} />}
-			{others.length > 0 && <Elsewhere rooms={others} nowMin={nowMin} onCramped={() => setCramped(true)} />}
+			{next && <NextCard slot={next} gap={gap} nowMin={nowMin} cramped={fit >= FIT_CRAMPED} afterHero={afterHero} />}
+			{lines.length > 0 && <Elsewhere lines={lines} fit={fit} measure={measure} onOverflow={onOverflow} />}
+		</div>
+	);
+}
+
+/** `Until 10:40` for a live talk; for a coming one its start, then the
+ * break before it or the countdown within the hour. */
+function boardWhen(slot: Slot, live: boolean, gap: Slot | null, nowMin: number | null): string {
+	const { startMin, endMin } = slot.place;
+	if (live) return `Until ${formatMinutes(endMin)}`;
+	if (gap) return `${formatMinutes(startMin)} · ${afterBreak(gap)}`;
+	const soon = nowMin !== null && startMin - nowMin < 60;
+	return soon ? `${formatMinutes(startMin)} · ${startsIn(startMin, nowMin)}` : formatMinutes(startMin);
+}
+
+/** A board row's first column: the talk on now, else the next one, on a
+ * paper slip. */
+function BoardNow({ lead, live, nowMin }: { lead: Slot | null; live: boolean; nowMin: number | null }) {
+	if (!lead) {
+		return (
+			<div className={s.boardCell}>
+				<p className={s.boardMeta}>{emptyLabel(nowMin)}</p>
+			</div>
+		);
+	}
+	const speakers = lead.session.speakers.map((sp) => sp.fullName).join(', ');
+	return (
+		<div className={`${s.boardCell} ${s.boardNow}`}>
+			<p className={s.boardMeta}>
+				<Flag text={flagFor(lead, live, nowMin)} live={live} />
+				<span className={s.boardMetaText}>
+					<Note text={boardWhen(lead, live, null, nowMin)} />
+				</span>
+				{speakers && <span className={s.boardWho}>{speakers}</span>}
+			</p>
+			<p className={`${s.boardTitle} ${titleSize(lead.session.title)}`}>{lead.session.title}</p>
+			{live && <Progress slot={lead} nowMin={nowMin} />}
+		</div>
+	);
+}
+
+/** A board row's second column, on the table: the talk after the first. */
+function BoardNext({
+	next,
+	gap,
+	live,
+	last,
+	nowMin,
+}: {
+	next: Slot | null;
+	gap: Slot | null;
+	live: boolean;
+	last: boolean;
+	nowMin: number | null;
+}) {
+	if (!next) {
+		return <div className={`${s.boardCell} ${s.boardNext}`}>{last && <p className={s.boardMeta}>Last of the day</p>}</div>;
+	}
+	return (
+		<div className={`${s.boardCell} ${s.boardNext}`}>
+			<p className={s.boardMeta}>
+				<span className={s.boardCellLabel}>{live ? 'Next' : 'Then'}</span>
+				<span className={s.boardMetaText}>
+					<Note text={boardWhen(next, false, gap, nowMin)} />
+				</span>
+			</p>
+			<p className={`${s.boardTitleSm} ${titleSize(next.session.title)}`}>{next.session.title}</p>
 		</div>
 	);
 }
 
 /** The venue screen: a departures board, one row per room. The first column
  * is the talk on now, else the next one, so a break shows what comes after
- * it; the break itself is a small tag beside the heading. */
+ * it; the break itself is a small tag beside the heading. Each cell names
+ * its own state, so the board needs no column heads. */
 function Board({ rooms, nowMin }: { rooms: RoomNow[]; nowMin: number | null }) {
 	const focus = rooms.map((room) => ({ room, ...roomFocus(room) }));
-	const anyLive = focus.some((row) => row.live);
 	return (
 		<div className={`${s.board} ${rooms.length > 3 ? s.boardDense : ''}`}>
-			<div className={s.boardHead} aria-hidden="true">
-				<span>Room</span>
-				<span>{anyLive ? 'Now' : 'Next'}</span>
-				<span>{anyLive ? 'Next' : 'Then'}</span>
-			</div>
 			<ul className={s.boardRows}>
 				{focus.map(({ room, lead, live, next, gap }) => (
 					<li key={room.column.key} className={s.boardRow}>
 						<h2 className={s.boardRoom}>{room.column.label}</h2>
-						<div className={`${s.boardCell} ${s.boardNow}`}>
-							{lead ? (
-								<>
-									<p className={s.boardMeta}>
-										<Chip {...chipFor(lead, live, nowMin)} />
-										<span className={s.boardMetaText}>
-											{live
-												? `Until ${formatMinutes(lead.place.endMin)}`
-												: `${formatMinutes(lead.place.startMin)}${nowMin === null ? '' : ` · ${startsIn(lead.place.startMin, nowMin)}`}`}
-											{lead.session.speakers.length > 0 &&
-												` · ${lead.session.speakers.map((sp) => sp.fullName).join(', ')}`}
-										</span>
-									</p>
-									<p key={lead.session.id} className={`${s.boardTitle} ${s.flip} ${titleSize(lead.session.title)}`}>
-										{lead.session.title}
-									</p>
-									{live && <Progress slot={lead} nowMin={nowMin} />}
-								</>
-							) : (
-								<p className={s.boardMeta}>{nowMin === null ? 'Nothing scheduled' : 'Done for today'}</p>
-							)}
-						</div>
-						<div className={`${s.boardCell} ${s.boardNext}`}>
-							{next ? (
-								<>
-									<p className={s.boardMeta}>
-										<span className={s.boardCellLabel} aria-hidden="true">
-											{live ? 'Next' : 'After that'}
-										</span>
-										<span className={s.boardMetaText}>
-											{formatMinutes(next.place.startMin)}
-											{gap
-												? ` · ${afterBreak(gap)}`
-												: nowMin !== null &&
-													next.place.startMin - nowMin < 60 &&
-													` · ${startsIn(next.place.startMin, nowMin)}`}
-										</span>
-									</p>
-									<p key={next.session.id} className={`${s.boardTitleSm} ${s.flip} ${titleSize(next.session.title)}`}>
-										{next.session.title}
-									</p>
-								</>
-							) : (
-								lead && <p className={s.boardMeta}>Last of the day</p>
-							)}
-						</div>
+						<BoardNow lead={lead} live={live} nowMin={nowMin} />
+						<BoardNext next={next} gap={gap} live={live} last={lead !== null} nowMin={nowMin} />
 					</li>
 				))}
 			</ul>
@@ -603,30 +685,24 @@ function wrapCopy(dayOver: boolean, nowMin: number | null): { title: string; lin
 	return { title: 'That’s it in here.', line: 'The rest of the day is in the other rooms.' };
 }
 
-function Header({
-	heading,
-	tag,
-	clock,
-	meta,
-}: {
-	heading: string;
-	tag: string;
-	clock: Clock & { phase: number };
-	meta: string;
-}) {
+function Header({ heading, tag, clock, meta }: { heading: string; tag: string; clock: Clock; meta: string }) {
 	return (
 		<header className={s.header}>
 			<img className={s.logo} src={logoUrl} alt="DevFest.cz 2026" />
 			<div className={s.titleRow}>
-				<h1 className={s.heading}>
-					{heading}
-					<span className={s.stop} aria-hidden="true">
-						.
-					</span>
-				</h1>
-				{tag && <p className={s.pause}>{tag}</p>}
+				<h1 className={s.heading}>{heading}</h1>
+				{tag && (
+					<p className={s.pause}>
+						<Note text={tag} />
+					</p>
+				)}
 			</div>
-			<ClockFace minutes={clock.minutes} phase={clock.phase} meta={meta} />
+			<p className={s.clockBlock}>
+				<span className={s.clockMeta}>
+					<Note text={meta} />
+				</span>
+				<span className={s.clock}>{formatMinutes(clock.minutes)}</span>
+			</p>
 		</header>
 	);
 }
@@ -654,9 +730,13 @@ function RoomScreen({
 				<Hero slot={hero} live={focus.live} nowMin={nowMin} />
 			) : (
 				<div className={s.wrap}>
-					{dayOver && <p className={s.wrapStamp}>Case closed</p>}
-					<p className={s.heroTitle}>{wrap.title}</p>
-					<p className={s.wrapLine}>{wrap.line}</p>
+					<p className={s.wrapTitle}>
+						{wrap.title}
+						{dayOver && <Grease mark="underline" />}
+					</p>
+					<p className={s.wrapLine}>
+						<Note text={wrap.line} />
+					</p>
 				</div>
 			)}
 			{(focus.next || others.length > 0) && (
