@@ -4,7 +4,7 @@
     "details": [
       {
         "appID": "HVYSPZ72AN.cz.devfest.app",
-        "paths": ["/sessions", "/sessions/", "/agenda", "/agenda/", "/game/*"]
+        "paths": ["/sessions", "/sessions/", "/agenda", "/agenda/", "/game/*", "/login/*"]
       }
     ]
   }
