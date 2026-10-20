@@ -333,7 +333,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 
 Unlisted pages (`noindex`, out of the sitemap, linked from nowhere): `/invite/<member>` (one per `src/content/team.json` entry) and `/speaker-card`.
 
-`public/.well-known/apple-app-site-association` decides which devfest.cz links open the iOS app: only `/sessions`, `/agenda` and `/game/*`. Add a path only when the app has a route for it.
+`public/.well-known/apple-app-site-association` decides which devfest.cz links open the iOS app: only `/sessions`, `/agenda`, `/game/*` and `/login/*`. Add a path only when the app has a route for it.
 
 ## Links
 
