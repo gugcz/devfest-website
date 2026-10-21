@@ -175,5 +175,13 @@
 		"name": "GenLive",
 		"logo": "/partners/community/genlive.png",
 		"url": "https://www.genlive.pro/"
+	},
+	{
+		"id": "liftago",
+		"tier": "community",
+		"order": 7,
+		"name": "Liftago",
+		"logo": "/partners/community/liftago.png",
+		"url": "https://www.liftago.com/"
 	}
 ]
