@@ -9,8 +9,8 @@ paths:
 # ti.to tickets
 
 Functions own all ti.to traffic; static build never calls it. Browser reads
-`/api/tickets`. Helpers in `src/lib/tito.ts`. `database.rules.json` is not
-wired into `firebase.json` — paste into the console.
+`/api/tickets`. Helpers in `src/lib/tito.ts`. RTDB rules live in the app
+repo (CLAUDE.md).
 
 - `ticketsWebhook` reads `req.rawBody` for HMAC and dedups redeliveries in
   RTDB `webhookDedup/registrations` (indexed on `at`).

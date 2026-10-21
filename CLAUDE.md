@@ -176,11 +176,13 @@ conventions: `.claude/rules/backend.md`; endpoints: `.claude/rules/api.md`.
 - The website **calls the app's** `verifyRegistrationCodeCallable` and
   `completeEmailVerificationCallable` for the workshop sign-in and reads the
   app's Firestore `users/{uid}`. Renaming either side breaks `/workshops`.
-- Rules are split by collection and merged by hand in the console:
-  this repo owns Firestore `sessions`, `speakers`, `rooms`, `invoices`,
-  `invoiceRateLimits`, all of RTDB (`tickets`, `workshops`, `webhookDedup`,
-  `ops`) and Storage `speakers/`. Neither `firestore.rules` nor
-  `database.rules.json` is wired into `firebase.json`.
+- Firestore and RTDB rules are project-global, so they live whole in the app
+  repo (`ryzizub/devfest_mobile_app`: `firestore.rules`,
+  `database.rules.json`) and deploy from its CI. A rule this site needs
+  (Firestore `sessions`, `speakers`, `invoices`; RTDB `tickets`,
+  `webhookDedup`) is a PR there. `rooms`, `invoiceRateLimits` and RTDB
+  `workshops`, `ops` are server-only under the root deny. Storage
+  `speakers/` stays this repo's.
 - App Check enforcement is project-global; coordinate before flipping it.
 
 ## Work tracking

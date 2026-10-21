@@ -73,7 +73,7 @@ async function releaseRegistrationReference(reference: string | undefined): Prom
  * stays the size of one day's registrations. Best-effort, and BEFORE the
  * ack: 2nd-gen functions throttle CPU once the response is sent, so work
  * queued after it may never run. Needs `.indexOn: ["at"]` on the node
- * (database.rules.json) or RTDB scans the whole tree per query. */
+ * (RTDB rules, in the app repo) or RTDB scans the whole tree per query. */
 async function pruneStaleClaims(): Promise<void> {
 	try {
 		const stale = await db()
