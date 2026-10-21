@@ -44,6 +44,30 @@ describe('validate', () => {
 		});
 	});
 
+	it('rejects line breaks and control characters in text fields', () => {
+		const forged = 'Acme,\n\nOur bank account has changed.';
+		for (const field of ['companyName', 'street', 'city', 'zip', 'country', 'email']) {
+			for (const bad of [forged, 'Acme\r\nX', 'Acme\u0000', 'Acme\u2028X', 'Acme\u202Eo.r.s']) {
+				const result = validate({ ...valid, [field]: bad });
+				assert.deepEqual(result, { ok: false, error: field }, `${field}: ${JSON.stringify(bad)}`);
+			}
+		}
+		// Passes EMAIL_RE, so only the control check can catch it.
+		assert.deepEqual(validate({ ...valid, email: 'billing\u202E@example.com' }), { ok: false, error: 'email' });
+	});
+
+	it('drops invisible characters a paste brings along', () => {
+		const result = validate({ ...valid, companyName: 'Acme\u00AD Exam\u200Bple\uFEFF s.r.o.' });
+		assert.equal(result.ok, true);
+		if (result.ok) assert.equal(result.value.companyName, 'Acme Example s.r.o.');
+	});
+
+	it('keeps diacritics and punctuation real company names use', () => {
+		for (const name of ['Česká spořitelna, a.s.', 'Smith & Sons (CZ) – Brno', 'Müller GmbH']) {
+			assert.equal(validate({ ...valid, companyName: name }).ok, true, name);
+		}
+	});
+
 	it('treats a blank DIČ as absent', () => {
 		const result = validate({ ...valid, registrationNumberDIC: '  ' });
 		assert.equal(result.ok, true);

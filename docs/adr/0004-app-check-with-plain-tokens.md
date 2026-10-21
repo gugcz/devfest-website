@@ -19,7 +19,7 @@ answered with 401 in production.
   reusable tokens. No `consumeAppCheckToken`.
 - `cors` lists devfest.cz and the PR preview origins only.
 - The invoice callable adds its own limits: a global ceiling per hour across
-  everyone (`GLOBAL_LIMIT_MAX`) and 3 per hour per (IČO, email), plus a
+  everyone (`GLOBAL_LIMIT_MAX`) and 3 per hour per IČO, plus a
   honeypot field and strict validation.
 - Hardening that depends on IAM roles or console settings outside the repo is
   proposed with that setup named, not shipped silently.

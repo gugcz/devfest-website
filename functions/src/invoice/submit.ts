@@ -1,7 +1,7 @@
 /**
  * `submitInvoiceCallable` — validates the form and writes a `pending` doc;
  * `processInvoiceTrigger` does the rest. Abuse protection: App Check, a
- * global hourly ceiling, a per-(IČO + email) throttle,
+ * global hourly ceiling, a per-IČO throttle,
  * `maxInstances`.
  */
 
@@ -13,11 +13,11 @@ import { CALLABLE } from '../options.js';
 import { checkInvoiceRateLimit, countRecentInvoiceRequests, createInvoiceRequest } from './firestore.js';
 import { str, validate } from './validate.js';
 
-// Per (company, email) inside the window.
+// Per company (IČO) inside the window, whatever email it names.
 const RATE_LIMIT_MAX = 3;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 // Across everyone inside the window — every request mints an invoice + email.
-const GLOBAL_LIMIT_MAX = 20;
+const GLOBAL_LIMIT_MAX = 10;
 
 export const submitInvoiceCallable = onCall(
 	{
@@ -60,7 +60,6 @@ export const submitInvoiceCallable = onCall(
 
 		const allowed = await checkInvoiceRateLimit({
 			registrationNumberIC: result.value.registrationNumberIC,
-			email: result.value.email,
 			max: RATE_LIMIT_MAX,
 			windowMs: RATE_LIMIT_WINDOW_MS,
 		});

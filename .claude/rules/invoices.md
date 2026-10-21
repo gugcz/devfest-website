@@ -51,9 +51,13 @@ ti.to code. Browser never touches Firestore.
   `consumeAppCheckToken` (it needs the App Check Token Verifier IAM role, and
   401s every submit without it); `cors` lists devfest.cz +
   PR previews only. Throttles, outermost first: `GLOBAL_LIMIT_MAX` per hour
-  across everyone (the backstop), then 3 per (IČO, email). Validation lives in
+  across everyone (the backstop), then 3 per IČO, separators stripped
+  (email left out of the key, so a fresh address does not reset it). The
+  accepted cost: anyone can spend a company's 3 with its public IČO. Validation lives in
   `validate.ts` (pure, tested); registration ids are whitespace-stripped and
-  charset-checked (no `~`/`|` — iDoklad filter syntax).
+  charset-checked (no `~`/`|` — iDoklad filter syntax); every other text
+  field rejects line breaks and control/format characters, since they reach
+  the invoice email body and Slack.
 - Anything user-typed that reaches Slack goes through `escapeMrkdwn`
   (`lib/slack.ts`) — `<!channel>` in a company name is a mass ping otherwise.
 - `invoiceRateLimits` docs carry `expiresAt` for a Firestore TTL policy

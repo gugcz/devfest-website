@@ -115,19 +115,19 @@ export async function countRecentInvoiceRequests(windowMs: number): Promise<numb
 }
 
 /**
- * Sliding-window rate limit keyed by (IČO + email), in a single-doc
- * transaction (no composite index). Returns `true` when within budget (and
+ * Sliding-window rate limit keyed by IČO alone, separators stripped (an
+ * email or a `12-345-678` spelling in the key would reset it), in a
+ * single-doc transaction (no composite index). Returns `true` when within budget (and
  * records it). The throttle App Check can't provide: a captured valid token
  * could otherwise drive unbounded invoice + email creation.
  */
 export async function checkInvoiceRateLimit(opts: {
 	registrationNumberIC: string;
-	email: string;
 	max: number;
 	windowMs: number;
 }): Promise<boolean> {
 	const key = createHash('sha256')
-		.update(`${opts.registrationNumberIC.toLowerCase()}|${opts.email.toLowerCase()}`)
+		.update(opts.registrationNumberIC.replace(/[./-]/g, '').toLowerCase())
 		.digest('hex');
 	const ref = firestore().collection(INVOICE_RATE_LIMITS_COLLECTION).doc(key);
 	const now = Date.now();
