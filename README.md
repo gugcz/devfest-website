@@ -123,7 +123,7 @@ Wire up the webhook in ti.to → Customize → Webhook Endpoints:
 
 ### RTDB rules
 
-`database.rules.json` documents the required rules. Either paste it into the Firebase console, or add `"database": { "rules": "database.rules.json" }` to `firebase.json` and run `firebase deploy --only database`.
+The RTDB ruleset is project-global, so it lives in the app repository ([`ryzizub/devfest_mobile_app`](https://github.com/ryzizub/devfest_mobile_app), `database.rules.json`) and deploys from its CI. Change it with a pull request there, never in the console.
 
 `/tickets` is read only by `ticketsApi` (Admin SDK), so `tickets.".read": true` is not required. Root default and all writes stay `false`. `/workshops`, `/webhookDedup` and `/ops` (function health) are server-only and covered by the root deny. The cache omits raw counts (`quantity` / `quantity_sold` / `tickets_count`) and ships a coarse `has_sales` boolean — see `tito-api.ts::projectRelease`.
 
@@ -287,7 +287,7 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 > **One-time setup:** create a **Firestore database (Native mode)**. Backs `invoices` and the Sessionize sync.
 
-`firestore.rules` denies all client access. Not wired into `firebase.json` (ruleset is project-global, shared with the app) — merge the `invoices` block in the console manually.
+The Firestore ruleset is project-global, so it lives in the app repository ([`ryzizub/devfest_mobile_app`](https://github.com/ryzizub/devfest_mobile_app), `firestore.rules`) and deploys from its CI. It denies all client access to `invoices`. Change it with a pull request there, never in the console.
 
 ## Venue screens — `/tv`
 

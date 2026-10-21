@@ -2,7 +2,7 @@
  * Firestore model + helpers for the `invoices` collection.
  *
  * The collection is server-only (Admin SDK bypasses rules; client access
- * is denied in firestore.rules). The browser never touches Firestore — it
+ * is denied by the Firestore rules, kept in the app repo). The browser never touches Firestore — it
  * POSTs to `submitInvoiceCallable`, which writes the doc here.
  *
  * Lifecycle (status):
@@ -25,7 +25,7 @@ export const INVOICES_COLLECTION = 'invoices';
 /**
  * Per-(company, email) throttle counters for `submitInvoiceCallable`. Like the
  * invoices collection, this is server-only — the catch-all deny in
- * firestore.rules covers it (no explicit client access anywhere).
+ * the Firestore rules cover it (no explicit client access anywhere).
  */
 export const INVOICE_RATE_LIMITS_COLLECTION = 'invoiceRateLimits';
 

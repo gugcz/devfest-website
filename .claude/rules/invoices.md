@@ -46,7 +46,7 @@ ti.to code. Browser never touches Firestore.
   `createdAt` on older docs; `pickInvoicedReleases`), so a closed wave stays
   on sale but secret in ti.to until its unpaid invoices are redeemed. A
   release that is no longer on sale falls back to every matching release.
-- `firestore.rules` denies all clients; not wired into `firebase.json`.
+- Firestore rules deny all clients; they live in the app repo (CLAUDE.md).
 - `submitInvoiceCallable` has `enforceAppCheck: true`, no
   `consumeAppCheckToken` (it needs the App Check Token Verifier IAM role, and
   401s every submit without it); `cors` lists devfest.cz +
