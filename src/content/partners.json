@@ -178,10 +178,10 @@
 	},
 	{
 		"id": "liftago",
-		"tier": "community",
-		"order": 7,
+		"tier": "travel",
+		"order": 1,
 		"name": "Liftago",
-		"logo": "/partners/community/liftago.png",
+		"logo": "/partners/travel/liftago.png",
 		"url": "https://www.liftago.com/"
 	}
 ]

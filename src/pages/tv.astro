@@ -9,13 +9,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TvScreen, { type PartnerGroup } from '../components/TvScreen';
 import gugLogo from '../assets/gug-logo.svg';
-import { getActivePartnerTiers, getCommunityPartners, logoBox } from '../lib/partners';
+import { getActivePartnerTiers, getCommunityPartners, getTravelPartners, logoBox } from '../lib/partners';
 
 // The same set and order as the homepage strip: the ladder top tier first,
-// community last.
+// community and travel last.
 const tiers = [
 	...(await getActivePartnerTiers()).map((tier) => ({ tier: tier.label, partners: tier.partners })),
 	{ tier: 'Community', partners: await getCommunityPartners() },
+	{ tier: 'Travel', partners: await getTravelPartners() },
 ];
 // Every tier gets the Gold reference box, so the band keeps one height page
 // after page; inside it each mark gets the same ink area (`logoBox`), in the

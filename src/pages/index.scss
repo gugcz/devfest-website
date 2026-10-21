@@ -356,7 +356,8 @@
 .item-diamond { --logo-scale: 0.9; }
 .item-gold { --logo-scale: 1; }
 .item-silver { --logo-scale: 1; }
-.item-community { --logo-scale: 1.1; }
+.item-community,
+.item-travel { --logo-scale: 1.1; }
 
 .partners-item {
 	display: flex;
@@ -505,7 +506,8 @@
 	.item-diamond { --logo-scale: 0.6; }
 	.item-gold { --logo-scale: 0.75; }
 	.item-silver,
-	.item-community { --logo-scale: 0.85; }
+	.item-community,
+	.item-travel { --logo-scale: 0.85; }
 
 	.newsletter {
 		grid-template-columns: minmax(0, 1fr);

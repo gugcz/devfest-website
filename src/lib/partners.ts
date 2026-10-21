@@ -27,7 +27,7 @@ const fileOf = (logo: string): string => logo.split('/').pop() as string;
 
 export type Partner = { name: string; logo: string; url?: string; plated?: boolean; mono: LogoMono };
 
-// Ladder tiers only — `media` and `community` are tiers in the schema but never
+// Ladder tiers only — `media`, `community` and `travel` are tiers in the schema but never
 // part of the ladder.
 export type PartnerTierId = 'diamond' | 'platinum' | 'gold' | 'silver';
 
@@ -78,6 +78,9 @@ export const getMediaPartners = (): Promise<Partner[]> => byTier('media');
 /** Community partners — off the ladder, but shown on both /partners and the homepage strip. */
 export const getCommunityPartners = (): Promise<Partner[]> => byTier('community');
 
+/** Travel partners — off the ladder, a row of their own right under community. */
+export const getTravelPartners = (): Promise<Partner[]> => byTier('travel');
+
 // ─── LOGO SIZING ─────────────────────────────────────────────────────────
 // The masters live in `src/assets/partners/<tier>/` so the build can resize
 // them; the collection stores plain path strings (`/partners/<tier>/<file>`),
@@ -108,6 +111,7 @@ const CELLS: Record<string, Cell> = {
 	gold: { w: 260, h: 150 },
 	silver: { w: 210, h: 120 },
 	community: { w: 180, h: 100 },
+	travel: { w: 180, h: 100 },
 	media: { w: 180, h: 100 },
 };
 

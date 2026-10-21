@@ -8,7 +8,13 @@ import HeroBackground from '../components/HeroBackground.astro';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
 import TicketIndex from '../components/TicketIndex.astro';
-import { getActivePartnerTiers, getCommunityPartners, partnerLogo, type Partner } from '../lib/partners';
+import {
+	getActivePartnerTiers,
+	getCommunityPartners,
+	getTravelPartners,
+	partnerLogo,
+	type Partner,
+} from '../lib/partners';
 import { TOPICS } from '../lib/topics';
 import { EVENT } from '../lib/event';
 import { staticTicketLines } from '../lib/tickets-static';
@@ -18,9 +24,11 @@ import { staticTicketLines } from '../lib/tickets-static';
 // back), tickets, speakers, the past editions as a contact sheet, the
 // partner wall with a plain label per tier, and the newsletter card.
 
-// One row per tier, top tier first. Silver and community share the last row
-// (each mark still sized by its own tier). Media partners live on /partners only.
+// One row per tier, top tier first. Silver and community share a row (each
+// mark still sized by its own tier), travel gets the last one. Media partners
+// live on /partners only.
 const communityPartners = await getCommunityPartners();
+const travelPartners = await getTravelPartners();
 const ladder = await getActivePartnerTiers();
 // The prices as of the build, for readers that run no script.
 const ticketLines = await staticTicketLines();
@@ -38,6 +46,7 @@ const homeRows: HomeRow[] = [
 		label: ladder.some((t) => t.id === 'silver') ? 'Silver and community' : 'Community',
 		partners: tail,
 	},
+	{ id: 'travel', label: 'Travel', partners: travelPartners.map((p) => ({ p, tier: 'travel' })) },
 ].filter((row) => row.partners.length > 0);
 
 // The contact sheet: two strips of four frames, the hall (01) third on the
