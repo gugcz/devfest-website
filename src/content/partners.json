@@ -175,5 +175,13 @@
 		"name": "GenLive",
 		"logo": "/partners/community/genlive.png",
 		"url": "https://www.genlive.pro/"
+	},
+	{
+		"id": "liftago",
+		"tier": "travel",
+		"order": 1,
+		"name": "Liftago",
+		"logo": "/partners/travel/liftago.png",
+		"url": "https://www.liftago.com/"
 	}
 ]

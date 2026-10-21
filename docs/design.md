@@ -1078,31 +1078,31 @@ is not a print: it sits straight, untaped.**
   ladder, then Community, then Media, at every width.
 - **[CURRENT] Rank is the tier's box; marks in a tier carry equal ink.**
   Each tier has a reference box (`CELLS`, `partners.ts`, px: Platinum
-  600×300, Diamond 330×190, Gold 260×150, Silver 210×120, Community and
-  Media 180×100). `partnerLogo()` fits each mark into a box of the same
+  600×300, Diamond 330×190, Gold 260×150, Silver 210×120, Community,
+  Travel and Media 180×100). `partnerLogo()` fits each mark into a box of the same
   area shaped to its ratio (`opticalBox()`, capped so no mark outgrows the
   box) and hands the width to the stylesheet as `--logo-w`; the
   `partner-logo` mixin sets `width: calc(var(--logo-w) *
   var(--logo-scale, 1)); height: auto` (`_logos.scss`). No height per
   tier. `/partners` sets each tier larger than its box through
   `TIER_SCALE` (`partners.astro`: Platinum and Diamond 1.5, Gold and Silver
-  1.28, Community and Media 1.2), one size per tier, passed to
+  1.28, Community, Travel and Media 1.2), one size per tier, passed to
   `partnerLogo()` so the srcset is cut for the rendered size. Narrower
   screens step whole tiers down through `--logo-scale`: Diamond and Gold
-  0.86 ≤1100px; ≤720px Diamond 0.6, Gold 0.75, Silver 0.7, Community and
-  Media 0.8 (`partners.scss`). `plated` is a per-partner flag, not a tier
+  0.86 ≤1100px; ≤720px Diamond 0.6, Gold 0.75, Silver 0.7, Community,
+  Travel and Media 0.8 (`partners.scss`). `plated` is a per-partner flag, not a tier
   inversion.
 - **[CURRENT] The home partner wall** (`index.astro`, `index.scss`): the
   `.head-rule` "Partners" with the two text actions "All partners" and
   "Become a partner" in the note's place, then one row per tier under a
   plain label (`.partners-label`, `note(--fs-note)` in `--ink-meta`), top
   tier first: Platinum and Diamond side by side on a `5fr / 7fr` grid, Gold
-  and the rest across the page; Silver and Community share the last row
-  under one label ("Silver and community", or "Community"), each mark still
-  sized by its own tier; Media on `/partners` only. The wall uses the
+  and the rest across the page; Silver and Community share a row under one
+  label ("Silver and community", or "Community"), each mark still sized by
+  its own tier; Travel takes the last row; Media on `/partners` only. The wall uses the
   reference boxes as they are (`STRIP_SCALE = 1`); each tier's
   `--logo-scale` sets the rank on this page (Platinum 0.85, Diamond 0.9,
-  Gold and Silver 1, Community 1.1; 0.55 to 0.85 ≤720px).
+  Gold and Silver 1, Community and Travel 1.1; 0.55 to 0.85 ≤720px).
 - **[MUST] A missing photograph falls back to initials** at `--ink-monogram` /
   `--ink-monogram-sm` (4.21:1 / 7.71:1, `BaseLayout.scss`).
 - **[MUST] Photography is B&W at high contrast** (manual p. 13).

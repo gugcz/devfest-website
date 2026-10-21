@@ -7,18 +7,20 @@ import {
 	getActivePartnerTiers,
 	getMediaPartners,
 	getCommunityPartners,
+	getTravelPartners,
 	partnerLogo,
 	type Partner,
 } from '../lib/partners';
 
 // Every logo wall on the page, top tier first: the ladder, then the two
-// off-ladder rows — community, then media. Each tier is a plain label and its
+// off-ladder rows — community, travel, then media. Each tier is a plain label and its
 // marks on the table; a logo's size comes from its tier's reference box
 // (`partnerLogo` in src/lib/partners.ts).
 type Wall = { id: string; label: string; partners: Partner[] };
 const walls: Wall[] = [
 	...(await getActivePartnerTiers()),
 	{ id: 'community', label: 'Community', partners: await getCommunityPartners() },
+	{ id: 'travel', label: 'Travel', partners: await getTravelPartners() },
 	{ id: 'media', label: 'Media', partners: await getMediaPartners() },
 ].filter((wall) => wall.partners.length > 0);
 
@@ -34,6 +36,7 @@ const TIER_SCALE: Record<string, number> = {
 	gold: 1.28,
 	silver: 1.28,
 	community: 1.2,
+	travel: 1.2,
 	media: 1.2,
 };
 
