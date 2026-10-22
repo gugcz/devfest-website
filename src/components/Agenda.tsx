@@ -5,6 +5,7 @@ import {
 	eventDateISO,
 	formatClock,
 	formatMinutes,
+	isAllDayRoom,
 	isBand,
 	isLongRunning,
 	nowState,
@@ -28,9 +29,11 @@ import s from './Agenda.module.scss';
 // names, every talk is a straight paper slip set at its start time, and a
 // break is a quiet typewriter line across the rooms. The sheet is NOT to
 // scale: one row per moment something starts or ends, each as tall as what
-// sits in it, so a lunch never outweighs the talks around it. A room open all
-// day (the lounge) is one line above the sheet, not a column. Phone: the same
-// day as one list, grouped by start time, the room named on each slip's edge.
+// sits in it, so a lunch never outweighs the talks around it. Each room is a
+// faint lane under a name that stays pinned while the day scrolls; a room open
+// all day (the lounge) is a lane with one block from open to close. Phone: the
+// same day as one list, grouped by start time, the room named on each slip's
+// edge, the lounge one line above it.
 
 /** Sessionize placeholder titles for a slot nobody fills yet ("Talk TBA"). */
 const OPEN_SLOT_RE = /\b(tba|tbd)\b/i;
@@ -61,12 +64,13 @@ function isOpenSlot(session: Session): boolean {
 	);
 }
 
-/** What an entry is on the sheet: a line across the rooms, a slot held open,
- * or a talk (the only control). Open-all-day sessions never reach the sheet. */
-type EntryKind = 'band' | 'open' | 'talk';
+/** What an entry is on the sheet: a line across the rooms, an open-all-day
+ * block (the grid only), a slot held open, or a talk. */
+type EntryKind = 'band' | 'allDay' | 'open' | 'talk';
 
 function entryKind(session: Session): EntryKind {
 	if (isBand(session)) return 'band';
+	if (isLongRunning(session)) return 'allDay';
 	if (isOpenSlot(session)) return 'open';
 	return 'talk';
 }
@@ -132,12 +136,13 @@ function trackLength(session: Session): string {
 	return [track, length].filter(Boolean).join(' · ');
 }
 
-/** The note under a room's name: its standing note, "Talks TBA" for a room
- * with nothing in it yet (an empty column all day reads as a failed load),
- * else none. */
+/** The note under a room's name: its standing note, "Open all day" for the
+ * lounge, "Talks TBA" for a room with nothing in it yet (an empty column all
+ * day reads as a failed load), else none. */
 function roomNote(label: string, sessions: Session[]): string | null {
 	const standing = ROOM_NOTES[label.trim().toLowerCase()];
 	if (standing) return standing;
+	if (isAllDayRoom(sessions)) return 'Open all day';
 	return sessions.length === 0 ? 'Talks TBA' : null;
 }
 
@@ -251,6 +256,41 @@ function LoungeLine({
 	);
 }
 
+/** The lounge on the sheet: one block in its lane from open to close. It
+ * opens its sheet when Sessionize carries a description for it. */
+function AllDayBlock({
+	session,
+	style,
+	onOpen,
+}: {
+	session: Session;
+	style?: CSSProperties;
+	onOpen: (session: Session) => void;
+}) {
+	const words = (
+		<>
+			<span className={s.allDayTime}>{timeRange(session)}</span>
+			<span className={s.allDayTitle}>{session.title}</span>
+			<span className={s.allDayNote}>Drop in any time</span>
+		</>
+	);
+	return session.description ? (
+		<button
+			type="button"
+			className={`${s.allDay} ${s.allDayOpen}`}
+			style={style}
+			onClick={() => onOpen(session)}
+			data-agenda-open
+		>
+			{words}
+		</button>
+	) : (
+		<div className={s.allDay} style={style}>
+			{words}
+		</div>
+	);
+}
+
 /** A slot held open: a dashed outline where a slip will go. */
 function OpenSlot({ session, room, style }: { session: Session; room: string; style?: CSSProperties }) {
 	return (
@@ -293,6 +333,8 @@ function Entry({
 			const loud = (placement(session)?.startMin ?? 0) >= sheet.lastTalkEnd;
 			return <BandLine session={session} loud={loud} room={room} live={live} style={style} />;
 		}
+		case 'allDay':
+			return <AllDayBlock session={session} style={style} onOpen={sheet.onOpen} />;
 		case 'open':
 			return <OpenSlot session={session} room={room} style={style} />;
 		default:
@@ -310,8 +352,8 @@ function Entry({
 	}
 }
 
-/** Every timed entry the sheet places — bands plus the shown rooms, the
- * open-all-day ones aside — in reading order, each with its room's name. */
+/** Every timed entry the sheet places — bands plus the shown rooms — in
+ * reading order, each with its room's name. */
 function sheetEntries(
 	partition: AgendaPartition,
 	columns: AgendaColumn[],
@@ -322,9 +364,7 @@ function sheetEntries(
 		...columns.flatMap((column, i) =>
 			(partition.byRoom.get(column.key) ?? []).map((session) => ({ session, room: column.label, column: i + 1 })),
 		),
-	]
-		.filter(({ session }) => !isLongRunning(session))
-		.sort((a, b) => byStart(a.session, b.session));
+	].sort((a, b) => byStart(a.session, b.session));
 }
 
 /* ============================ GRID ============================ */
@@ -389,6 +429,15 @@ function AgendaGrid({
 
 	return (
 		<div className={`${s.grid} ${columns.length === 1 ? s.gridSingle : ''}`} style={gridStyle}>
+			{columns.map((column, i) => (
+				<span
+					key={`lane-${column.key}`}
+					className={s.lane}
+					style={{ gridColumn: i + 2, gridRow: '1 / -1' }}
+					aria-hidden="true"
+				/>
+			))}
+
 			{columns.map((column, i) => {
 				const note = roomNote(column.label, partition.byRoom.get(column.key) ?? []);
 				return (
@@ -454,7 +503,10 @@ function AgendaList({
 	nowMin: number | null;
 	sheet: SheetState;
 }) {
-	const groups = groupByStart(sheetEntries(partition, columns, labels));
+	// The lounge is the line above the list, not an entry in it.
+	const groups = groupByStart(
+		sheetEntries(partition, columns, labels).filter(({ session }) => !isLongRunning(session)),
+	);
 	return (
 		<ol className={s.list} role="list">
 			{groups.map(([start, entries]) => {
@@ -533,6 +585,16 @@ export default function Agenda() {
 		() => roomColumns.filter((column) => room === null || column.key === room),
 		[roomColumns, room],
 	);
+	// The grid gives the lounge its own lane, always last: a break runs from the
+	// first room up to the first busy one, and the lounge is busy all day. The
+	// list keeps it as a line above.
+	const gridColumns = useMemo(
+		() =>
+			room === null
+				? [...roomColumns, ...partition.columns.filter((column) => !roomColumns.includes(column))]
+				: columns,
+		[room, roomColumns, partition, columns],
+	);
 	const lounges = useMemo(
 		() => sessions.filter(isLongRunning).sort(byStart).map((session) => ({ session, room: labels.get(roomKey(session)) ?? '' })),
 		[sessions, labels],
@@ -585,6 +647,7 @@ export default function Agenda() {
 			</div>
 
 			{room === null &&
+				isNarrow &&
 				lounges.map(({ session, room: where }) => (
 					<LoungeLine key={session.id} session={session} room={where} onOpen={setSelected} />
 				))}
@@ -592,7 +655,7 @@ export default function Agenda() {
 			{isNarrow ? (
 				<AgendaList partition={partition} columns={columns} labels={labels} nowMin={nowMin} sheet={sheet} />
 			) : (
-				<AgendaGrid partition={partition} columns={columns} labels={labels} placements={placements} sheet={sheet} />
+				<AgendaGrid partition={partition} columns={gridColumns} labels={labels} placements={placements} sheet={sheet} />
 			)}
 
 			{selected && (

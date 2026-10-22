@@ -86,8 +86,10 @@ built by a community, not a vendor event.
   it, no photograph; every section head's note lines up under the lede's
   column. Speakers and the agenda are paper:
   every speaker a print in running order with room and start time, the
-  hosts in their own row; every talk a slip by room and time, the all-day
-  lounge one line above them (one list grouped by time on a phone). The
+  hosts in their own row; every talk a slip by room and time, each room a
+  column under a name that stays in view, the all-day lounge a column of
+  its own (one list grouped by time on a phone, the lounge one line above
+  it). The
   FAQ is a list of questions, the open one a paper slip with its answer.
   `/speakers` ends on the way to the agenda and tickets, with no closing
   block.

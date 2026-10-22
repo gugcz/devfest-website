@@ -1337,15 +1337,21 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
 - **Agenda** (`Agenda`) — the day as slips on the table (`Agenda.tsx`,
   `Agenda.module.scss`). Over it, a bar: the room filter ("All rooms" and
   each room, Bebas `--fs-cta`, red when pressed) left and "All times
-  Prague (CET)" as a note right. **A room open all day (the lounge) is one
-  line above the sheet, not a column**: the room in Bebas, "<title>, open
-  all day <hours>, drop in any time" as a `note(--fs-note)` in
-  `--ink-soft`, the hours mono; a `<button>` that opens its sheet, out of
-  the live and coming-up state (`LONG_RUN_MIN` 180 minutes, `LoungeLine`,
-  `.lounge`). **Desktop (>720px)**: the remaining rooms, three in practice,
-  are columns under their names (`.headLabel`, Bebas `--fs-action`, no
-  tape; a standing note under a name where a room needs one, "Workshops
-  only"); a mono `--fs-label-lg` gutter names each start time. The grid is
+  Prague (CET)" as a note right. A room open all day (the lounge,
+  `LONG_RUN_MIN` 180 minutes) stays out of the live and coming-up state.
+  **Desktop (>720px)**: every room, four in practice, is a column: a faint
+  lane (`.lane`, `--panel-lit`) from its name to the
+  day's end, under a name pinned below the bar while the day scrolls
+  (`.head`, sticky at `--header-h`, `--panel-lit` over `--color-bg`;
+  `.headLabel`, Bebas `--fs-action`, no tape; a standing note under a name
+  where a room needs one, "Workshops only", "Open all day" for the lounge);
+  a mono `--fs-label-lg` gutter names each start time. The lounge's lane
+  holds one block from open to close (`AllDayBlock`, `.allDay`,
+  `--panel-lit-2`): mono hours, the title in Bebas, "Drop in any time" as a
+  note; a `<button>` that opens its sheet when it has a description, its
+  title red under the pointer. The lounge's lane is always the last column,
+  and a break line stops before the first room still busy at that time, so
+  it never runs under the lounge or a workshop. The grid is
   **not to scale**: one row per moment something starts or ends, each as
   tall as what sits in it, so a lunch never outweighs the talks around it
   (`AgendaGrid`). Every talk is a straight `.slip` from its start line to
@@ -1361,7 +1367,10 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   speakerless "TBA"/"TBD" slot is "Slot open": a dashed `--field-border`
   outline with its time and a note, not a control (`.open`). One room
   picked, the grid narrows to `44rem`. **Phone (≤720px, JS `NARROW`)**: the
-  same day as one compact list grouped by start time: a mono `--fs-body-lg`
+  same day as one compact list grouped by start time, the lounge one line
+  above it (the room in Bebas, "<title>, open all day <hours>, drop in any
+  time" as a `note(--fs-note)` in `--ink-soft`, the hours mono;
+  `LoungeLine`, `.lounge`): a mono `--fs-body-lg`
   time head per group (with a red "Now HH:MM" while live), then each slip
   with its room named on its edge (time and room on the first line, track
   and length on their own); a break alone at a moment is a quiet line with
