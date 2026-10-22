@@ -428,7 +428,10 @@ dot and Bebas at card scale (the speaker name reached, `--fs-card-title`),
 not for a note. The agenda's "Live now" stays in paper ink with a red dot
 in front of it for this reason (`.flag`, `Agenda.module.scss`); on the
 black table the same word is red (`.band .flagLive`). **The reach state on
-paper is an ink underline or a red dot, never red text**: the open FAQ
+paper is an ink underline, a red dot or a red highlighter under ink
+(black on `#F11000`, 4.82:1), never red text**: a hovered agenda slip's
+title takes a flat red highlighter under its ink (`.titleText`,
+`Agenda.module.scss`; a mark under the pointer, not a red fill), the open FAQ
 question underlines and its marker goes to full ink (`faq.scss`), a FAQ
 answer link, the partnerships and `/contact` addresses thicken their ink
 underline (`partners.scss`, `contact.scss`), a clipping's "Read article"
@@ -881,8 +884,9 @@ carries a red "Now HH:MM" note (`.groupNow`). No pulse, no ring, no
 shadow.
 
 **A slip is the control.** An agenda slip and a session slip are each one
-`<button>` that opens the sheet: no hover fill and no lift under the
-pointer; focus draws the ring outside the paper at `--focus-gap-lg`
+`<button>` that opens the sheet: no lift under the pointer; a hovered
+agenda slip's title takes the red highlighter (see Color), the paper
+itself never fills; focus draws the ring outside the paper at `--focus-gap-lg`
 (`Agenda.module.scss`, `Sessions.module.scss`).
 
 **A FAQ question is a row; only the open one is paper.** A closed

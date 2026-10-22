@@ -216,7 +216,9 @@ function TalkSlip({
 				</span>
 				<span className={s.edgeNote}>{trackLength(session)}</span>
 			</span>
-			<span className={s.title}>{session.title}</span>
+			<span className={s.title}>
+				<span className={s.titleText}>{session.title}</span>
+			</span>
 			{names && <span className={s.who}>{names}</span>}
 			<Flag live={live} coming={coming} />
 		</button>
