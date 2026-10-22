@@ -271,6 +271,19 @@
 	color: var(--paper-ink);
 }
 
+// The reach state on paper: a red highlighter under the title, painted flat
+// (nothing slides). The ink stays black (4.82:1 on #F11000), never red.
+.titleText {
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+}
+
+@media (hover: hover) {
+	.slip:hover .titleText {
+		background: var(--color-accent);
+	}
+}
+
 .who {
 	display: block;
 	margin-top: 0.625rem;
