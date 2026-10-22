@@ -1603,8 +1603,7 @@ Decision criteria, picked per page:
   "Open in maps" and "Station to venue". **The route**: the `.head-rule`
   "The route" with the train and the walk as its note, then two straight
   **index cards** in an ordered list (`display: contents`, so the `<ol>`
-  keeps the order for AT) side by side at one height, and "Flying in" as a
-  full-width card under them (a two-column grid, one column ≤720px). A
+  keeps the order for AT) side by side at one height (one column ≤720px). A
   step card carries a large mono number (`mono(--fs-head)`, tracking 0),
   the Bebas `--fs-head` title, `prose(--fs-body)` in paper ink with
   `strong` place names on a faint highlighter, a `<dl>` of facts (Get off,

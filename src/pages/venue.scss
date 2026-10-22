@@ -55,12 +55,11 @@
 }
 
 /* ---- The route: index cards ---- */
-// Two steps side by side at one height, the flight under them full width.
+// Two steps side by side at one height.
 .venue-cards {
-	--cards-gap: clamp(1.75rem, 3vw, 3rem);
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: var(--cards-gap);
+	gap: clamp(1.75rem, 3vw, 3rem);
 	align-items: stretch;
 }
 
@@ -133,25 +132,6 @@
 	margin-top: auto;
 	padding-top: 1.25rem;
 	@include paper-action;
-}
-
-// The flight is the leg before the route: one straight row across, on the
-// route's two columns. The column gap spans the cards' gap plus both cards'
-// side padding, so the body starts at the second card's text edge.
-.venue-fly {
-	grid-column: 1 / -1;
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 0.75rem calc(var(--cards-gap) + 2 * var(--card-pad-x));
-	align-items: baseline;
-
-	.venue-card-title {
-		margin: 0;
-	}
-
-	p {
-		max-width: 62ch;
-	}
 }
 
 /* ---- Closer ---- */
@@ -237,10 +217,6 @@
 	.venue-card {
 		--card-pad-x: 1.4rem;
 		padding: 1.4rem var(--card-pad-x) 1.6rem;
-	}
-
-	.venue-fly {
-		grid-template-columns: minmax(0, 1fr);
 	}
 }
 
