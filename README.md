@@ -322,7 +322,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/contact` | Contact desks, plus press coverage and the press-kit link (`#press`) |
 | `/faq` | Frequently asked questions |
 | `/tv` | Unlisted venue-screen page: a room's now/next, or the whole venue (reads `/api/lineup`) |
-| `/venue` | Getting to Uhelný Mlýn — train from Prague, walk from the station, airport |
+| `/venue` | Getting to Uhelný Mlýn — train from Prague, walk from the station |
 | `/attending` | "I'm attending" share-card generator (client-side canvas → PNG) |
 | `/code-of-conduct` | Code of Conduct one-pager, Listener's contact, link to the full text |
 | `/privacy-policy` | GDPR privacy policy, website and mobile app |
