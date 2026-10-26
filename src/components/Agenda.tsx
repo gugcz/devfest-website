@@ -645,7 +645,9 @@ export default function Agenda() {
 		<>
 			<div className={s.bar}>
 				{roomColumns.length > 1 && <RoomFilter columns={roomColumns} room={room} onPick={setRoom} />}
-				<p className={s.tz}>All times Prague (CET)</p>
+				<p className={s.tz}>
+					All times Prague (CET) · <a href="/workshops">Save a workshop seat</a>
+				</p>
 			</div>
 
 			{room === null &&
