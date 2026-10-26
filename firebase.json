@@ -27,6 +27,12 @@
         ]
       },
       {
+        "source": "**/!(*.*)",
+        "headers": [
+          { "key": "Cache-Control", "value": "max-age=900" }
+        ]
+      },
+      {
         "source": "/tv",
         "headers": [
           { "key": "Cache-Control", "value": "no-cache" }

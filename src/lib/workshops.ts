@@ -126,12 +126,14 @@ export function registration(
 }
 
 /** A callable failure as one sentence for the attendee. */
-export function loginErrorMessage(e: unknown): string {
+export function loginErrorMessage(e: unknown, step: 'ticket' | 'email'): string {
 	const code = (e as { code?: string }).code ?? '';
 	switch (code) {
 		case 'functions/not-found':
 		case 'functions/invalid-argument':
-			return 'That code does not match a ticket. It is on your ticket, four characters, a dash and a number.';
+			return step === 'email'
+				? 'That code does not match or has expired. Use the latest email, or start again with your ticket code.'
+				: 'That code does not match a ticket. It is on your ticket, four characters, a dash and a number.';
 		case 'functions/already-exists':
 			return 'This ticket is already linked to another account. Write to devfest@gug.cz and we will sort it out.';
 		case 'functions/resource-exhausted':
