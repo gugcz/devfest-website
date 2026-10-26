@@ -18,6 +18,9 @@ const RATE_LIMIT_MAX = 3;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 // Across everyone inside the window — every request mints an invoice + email.
 const GLOBAL_LIMIT_MAX = 10;
+// No requests from the event morning on; the site hides the form at the same
+// moment (`src/lib/event.ts`, keep in step).
+const INVOICES_CLOSE = Date.parse('2026-10-30T07:00:00+01:00');
 
 export const submitInvoiceCallable = onCall(
 	{
@@ -43,6 +46,10 @@ export const submitInvoiceCallable = onCall(
 		if (str(body.website)) {
 			logger.info('submitInvoiceCallable honeypot tripped');
 			return { ok: true };
+		}
+
+		if (Date.now() >= INVOICES_CLOSE) {
+			throw new HttpsError('failed-precondition', 'closed');
 		}
 
 		const result = validate(body);

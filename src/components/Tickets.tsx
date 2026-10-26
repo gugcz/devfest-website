@@ -15,7 +15,7 @@ import {
 	type TitoRelease,
 } from '../lib/tito';
 import { trackBeginCheckout } from '../lib/checkout';
-import { EVENT } from '../lib/event';
+import { EVENT, invoicesOpen } from '../lib/event';
 import { useRemote } from '../lib/useRemote';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Tickets.module.scss';
@@ -287,12 +287,14 @@ export default function Tickets() {
 			    beside the poster title, never a second red button. */}
 			<header className="head-rule">
 				<h2 id="tickets-heading" className="head-rule-title">Tickets</h2>
-				<div className={`head-rule-note ${s.note}`}>
-					<p>Need to pay by bank transfer?</p>
-					<a href="/invoice" className={`action ${s.noteAction}`}>
-						Request a company invoice
-					</a>
-				</div>
+				{invoicesOpen() && (
+					<div className={`head-rule-note ${s.note}`}>
+						<p>Need to pay by bank transfer?</p>
+						<a href="/invoice" className={`action ${s.noteAction}`}>
+							Request a company invoice
+						</a>
+					</div>
+				)}
 			</header>
 			<ul className={`${s.slips} ${hasLive ? s.slipsLed : ''}`} role="list">
 				{ordered.map((group) => (

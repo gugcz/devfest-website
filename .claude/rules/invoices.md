@@ -46,6 +46,10 @@ ti.to code. Browser never touches Firestore.
   `createdAt` on older docs; `pickInvoicedReleases`), so a closed wave stays
   on sale but secret in ti.to until its unpaid invoices are redeemed. A
   release that is no longer on sale falls back to every matching release.
+- Requests close at `INVOICES_CLOSE` (event morning, 07:00 Prague):
+  `submitInvoiceCallable` refuses with `failed-precondition` / `closed`, the
+  form shows a closed note, the Tickets section drops its invoice link. The
+  date sits in `submit.ts` and `src/lib/event.ts`; keep both in step.
 - Firestore rules deny all clients; they live in the app repo (CLAUDE.md).
 - `submitInvoiceCallable` has `enforceAppCheck: true`, no
   `consumeAppCheckToken` (it needs the App Check Token Verifier IAM role, and
