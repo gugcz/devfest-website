@@ -33,6 +33,10 @@ client SDK** (client reads blocked on an App Check token, ~30s on mobile;
   preset); the others scale to zero.
 - Writes go through callables, never the client SDK: `submitInvoiceCallable`
   (`/invoice`) and `workshopRegistrationCallable` (`/workshops`).
+- `lineupApi` also answers the mobile app's PWA (`https://devfest-cz-app.web.app`,
+  plus `http://localhost:*`) with CORS: `corsOrigins` on the spec
+  (`lib/cors.ts`), `Vary: Origin` so the CDN keeps one copy per origin. The
+  other endpoints stay same-origin.
 - Rewrites in `firebase.json` carry **no `pinTag`**: hosting deploys never
   build functions.
 - Endpoints return raw docs; the browser parses with `speakerFromDoc` /

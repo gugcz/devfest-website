@@ -8,6 +8,7 @@ import { logger } from 'firebase-functions/v2';
 import type { Response } from 'express';
 import type { Request } from 'firebase-functions/v2/https';
 
+import { applyReadCors, type AllowedOrigin } from './cors.js';
 import { describeError } from './errors.js';
 
 export interface CachedEndpointSpec<T> {
@@ -21,6 +22,8 @@ export interface CachedEndpointSpec<T> {
 	fallback: T;
 	/** Reads the payload from the Admin SDK. */
 	load: () => Promise<T>;
+	/** Origins allowed to read cross-origin (CORS). Omit for same-origin only. */
+	corsOrigins?: readonly AllowedOrigin[];
 }
 
 /**
@@ -48,6 +51,7 @@ export function cachedJsonEndpoint<T>(
 	};
 
 	return async (req, res) => {
+		if (spec.corsOrigins && applyReadCors(req, res, spec.corsOrigins)) return;
 		// Read-only endpoint; nothing else is routed here.
 		if (req.method !== 'GET' && req.method !== 'HEAD') {
 			res.set('Allow', 'GET, HEAD');
