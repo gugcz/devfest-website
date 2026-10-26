@@ -27,6 +27,12 @@
         ]
       },
       {
+        "regex": "^/(?:[^a./][^.]*|a(?:[^p./][^.]*)?|ap(?:[^i./][^.]*)?|api(?:[^/.][^.]*)?)?$",
+        "headers": [
+          { "key": "Cache-Control", "value": "max-age=900" }
+        ]
+      },
+      {
         "source": "/tv",
         "headers": [
           { "key": "Cache-Control", "value": "no-cache" }

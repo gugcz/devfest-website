@@ -91,9 +91,11 @@ interface LoginProps {
 	/** Resolves once the sign-ups have loaded, so the button stays busy until then. */
 	onSignedIn: () => Promise<void>;
 	onSignOut: () => void;
+	/** Back from the email-code step to the ticket code. */
+	onRestart: () => void;
 }
 
-function Login({ account, name, onCodeSent, onSignedIn, onSignOut }: LoginProps) {
+function Login({ account, name, onCodeSent, onSignedIn, onSignOut, onRestart }: LoginProps) {
 	const [value, setValue] = useState('');
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState('');
@@ -137,7 +139,7 @@ function Login({ account, name, onCodeSent, onSignedIn, onSignOut }: LoginProps)
 			}
 			setValue('');
 		} catch (err) {
-			setError(loginErrorMessage(err));
+			setError(loginErrorMessage(err, awaitingEmail ? 'email' : 'ticket'));
 		} finally {
 			setBusy(false);
 		}
@@ -190,6 +192,19 @@ function Login({ account, name, onCodeSent, onSignedIn, onSignOut }: LoginProps)
 				<p className={s.error} id={`${id}-error`} role="alert">
 					{error}
 				</p>
+			)}
+			{awaitingEmail && (
+				<button
+					type="button"
+					className={s.textButton}
+					onClick={() => {
+						setValue('');
+						setError('');
+						onRestart();
+					}}
+				>
+					Use a different ticket code
+				</button>
 			)}
 		</form>
 	);
@@ -282,8 +297,18 @@ export default function Workshops() {
 			setStatus(await registration(action, sessionId));
 			setAccount('signed-in');
 		} catch (err) {
-			if ((err as { code?: string }).code === 'functions/permission-denied') setAccount('signed-out');
-			else setMessage(registrationErrorMessage(err));
+			if ((err as { code?: string }).code === 'functions/permission-denied') {
+				// Signed in, but the account holds no ticket: drop it so the next
+				// ticket code starts from a fresh session.
+				await signOutAttendee().catch(() => undefined);
+				setStatus(null);
+				setAccount('signed-out');
+			} else {
+				// Every caller has a signed-in user; a failed read must not strand
+				// the page on "Checking" or the email-code form.
+				setAccount('signed-in');
+			}
+			setMessage(registrationErrorMessage(err));
 		} finally {
 			setBusy(false);
 			setPendingId(null);
@@ -313,6 +338,7 @@ export default function Workshops() {
 				onCodeSent={() => setAccount('code-sent')}
 				onSignedIn={() => refresh()}
 				onSignOut={signOut}
+				onRestart={() => setAccount('signed-out')}
 			/>
 			<p className={s.message} role="status" aria-live="polite">
 				{message}
