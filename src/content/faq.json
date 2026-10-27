@@ -10,11 +10,23 @@
 			},
 			{
 				"q": "What does the day look like?",
-				"a": "Registration opens at 08:00 (there is a cloakroom for coats and bags), kick-off is at 08:45, keynote at 09:00. From then on the talks run on two stages — <strong>Moonshine</strong> and <strong>Speakeasy</strong> — in 20- and 40-minute slots, with a lunch break around midday and a longer break in the afternoon. Lightning talks and closing remarks wrap up at 19:00, and the afterparty follows. The full timetable is on the <a href=\"/agenda\">agenda</a> page; a slot or two may still shift."
+				"a": "Registration and breakfast open at 08:00, kick-off is at 08:45, keynote at 09:00. The cloakroom for coats and bags is open until 19:30; after that, ask at the registration desk. From then on the talks run on two stages — <strong>Moonshine</strong> and <strong>Speakeasy</strong> — in 20- and 40-minute slots, with a lunch break around midday and a longer break in the afternoon. Lightning talks and closing remarks wrap up at 19:00, and the afterparty follows. The full timetable is on the <a href=\"/agenda\">agenda</a> page; a slot or two may still shift."
 			},
 			{
 				"q": "How do I get to the venue?",
-				"a": "Uhelný Mlýn is at <a href=\"https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8\" target=\"_blank\" rel=\"noopener noreferrer\"><strong>Areál Šroubáren 860, 252 66 Libčice nad Vltavou</strong></a> — on the map it looks like a trip, in practice it is Prague's backyard: a direct train from the city centre gets you there in 25 minutes. Take the <strong>S4</strong> toward <strong>Hněvice</strong> from <strong>Praha-Bubny</strong>; trains leave about every 30 minutes — get off at <strong>Libčice nad Vltavou</strong>. From the station it is a <a href=\"https://maps.app.goo.gl/95BeQWKRnyoXTXMF9\" target=\"_blank\" rel=\"noopener noreferrer\">10-minute walk</a> (about 0.7 km) to the venue. The whole route is on the <a href=\"/venue\">getting there</a> page."
+				"a": "Uhelný Mlýn is at <a href=\"https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8\" target=\"_blank\" rel=\"noopener noreferrer\"><strong>Areál Šroubáren 860, 252 66 Libčice nad Vltavou</strong></a> — on the map it looks like a trip, in practice it is Prague's backyard: a direct train from the city centre gets you there in 25 minutes. Take the <strong>S4</strong> toward <strong>Kralupy nad Vltavou</strong> from <strong>Praha-Bubny</strong>; trains leave about every 30 minutes — get off at <strong>Libčice nad Vltavou</strong>. From the station it is a <a href=\"https://maps.app.goo.gl/95BeQWKRnyoXTXMF9\" target=\"_blank\" rel=\"noopener noreferrer\">10-minute walk</a> (about 0.7 km) to the venue. The whole route is on the <a href=\"/venue\">getting there</a> page."
+			},
+			{
+				"q": "What do I need to get in?",
+				"a": "Just the QR code from your ti.to ticket, on your phone or printed. Come early to skip the queue at registration."
+			},
+			{
+				"q": "Can I come by car?",
+				"a": "There is only a <strong>limited number of parking places</strong>, at the far end of the complex (follow the signs), and no EV chargers on site. Share a ride or take the train."
+			},
+			{
+				"q": "When is the last train back to Prague?",
+				"a": "The last train from Libčice nad Vltavou to Prague leaves at <strong>23:18</strong>, right after the afterparty ends at 23:00."
 			},
 			{
 				"q": "I'm flying in — which airport, and where should I stay?",
@@ -30,7 +42,23 @@
 			},
 			{
 				"q": "Is there an afterparty?",
-				"a": "Yes. Once the closing remarks are done at 19:00, the afterparty kicks off right at the venue. More details closer to the date."
+				"a": "Yes. Once the closing remarks are done at 19:00, the networking afterparty kicks off right at the venue and runs until <strong>23:00</strong>."
+			},
+			{
+				"q": "Is food included?",
+				"a": "<strong>Breakfast and the coffee breaks</strong>, with sweet and savoury snacks, are included in your ticket. Lunch and dinner can be bought on site from our catering partners."
+			},
+			{
+				"q": "What should I wear?",
+				"a": "The venue is heated, but an industrial hall can feel chilly when the weather turns cold, so bring a sweater or a hoodie. Totally optional: come in 1940s clothing or a costume. We'd love to see a few fedoras and trench coats in the crowd."
+			},
+			{
+				"q": "Is there Wi-Fi?",
+				"a": "Yes. The network name and password are on the back of the badge you get at registration."
+			},
+			{
+				"q": "Will I be photographed or filmed?",
+				"a": "Yes, we take photos and film throughout the day. By entering the venue, you agree that this content may be published on our channels, for example in the event recap and to promote this and future editions. Don't want to be in the shot? Just tell the photographer or camera operator."
 			},
 			{
 				"q": "Is there a code of conduct?",
@@ -38,7 +66,7 @@
 			},
 			{
 				"q": "What's the story with the detective theme?",
-				"a": "This year's edition is styled as a film-noir case, and the case doesn't stay on the posters: there's a game running through the day for anyone who wants to play investigator. More is revealed closer to the date — and on the day itself."
+				"a": "This year's edition is styled as a film-noir case, and the case doesn't stay on the posters: there's a detective game running through the day for anyone who wants to play investigator, with prizes including a <strong>Prusa Core One+ 3D printer</strong> and long-term licences for popular dev tools. The game runs in the event app, so <a href=\"/app\">get the app</a> before you arrive."
 			}
 		]
 	},
@@ -80,7 +108,7 @@
 			},
 			{
 				"q": "Will the talks be recorded?",
-				"a": "Yes — talk recordings are published after the conference. We'll announce them via the <a href=\"/#newsletter\">newsletter</a> and our social channels."
+				"a": "Yes — every talk on the Moonshine and Speakeasy stages is recorded and published once the videos are processed. We'll announce them via the <a href=\"/#newsletter\">newsletter</a> and our social channels."
 			},
 			{
 				"q": "How can I become a speaker?",
@@ -95,7 +123,7 @@
 		"items": [
 			{
 				"q": "I'm coming — how do I tell people?",
-				"a": "Make a share card on the <a href=\"/attending\">I'm attending</a> page: add your photo (processed on your device only) or let your initials carry it, then download it or share it straight to your feed."
+				"a": "Make a share card on the <a href=\"/attending\">I'm attending</a> page: add your photo (processed on your device only) or let your initials carry it, then download it or share it straight to your feed. On the day, tag your photos with <strong>#DevFestCZ</strong>."
 			},
 			{
 				"q": "How can my company become a partner?",
