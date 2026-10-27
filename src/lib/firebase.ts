@@ -168,7 +168,7 @@ let performanceStarted = false;
  */
 function schedulePerformance(): void {
 	// The SDK reports `location.href` (minus the query) with every page-load
-	// trace and no hook rewrites it, so it never boots on an app-link page.
+	// trace and no hook rewrites it, so it never boots on the sign-in link page.
 	if (performanceStarted || isAppLinkPath(window.location.pathname)) return;
 	performanceStarted = true;
 	const boot = async (): Promise<void> => {
@@ -186,20 +186,19 @@ function schedulePerformance(): void {
 	}
 }
 
-/** `/login/<code>` and `/game/<token>`: the app's links. The code or token in
- * the path is a credential (a sign-in code, a venue clue), so it never
- * reaches GA4 or Performance Monitoring. */
+/** `/login/<code>`: the app's sign-in link. The code in the path is a
+ * credential, so it never reaches GA4 or Performance Monitoring. */
 function isAppLinkPath(pathname: string): boolean {
-	return /^\/(?:login|game)(?:\/|$)/.test(pathname);
+	return /^\/login(?:\/|$)/.test(pathname);
 }
 
-/** The URL with an app-link path cut to `/login/` or `/game/`, query and hash
- * dropped; any other URL unchanged. */
+/** The URL with an app-link path cut to `/login/`, query and hash dropped;
+ * any other URL unchanged. */
 function redactAppLink(url: string): string {
 	try {
 		const { origin, pathname } = new URL(url);
 		if (!isAppLinkPath(pathname)) return url;
-		return `${origin}/${pathname.split('/')[1]}/`;
+		return `${origin}/login/`;
 	} catch {
 		return url;
 	}

@@ -13,7 +13,6 @@
       { "source": "/api/tickets", "function": { "functionId": "ticketsApi", "region": "europe-west1" } },
       { "source": "/api/speaker-photo", "function": { "functionId": "speakerPhotoApi", "region": "europe-west1" } },
       { "source": "/api/workshops", "function": { "functionId": "workshopsApi", "region": "europe-west1" } },
-      { "source": "/game/**", "destination": "/game/index.html" },
       { "source": "/login/**", "destination": "/login/index.html" }
     ],
     "headers": [

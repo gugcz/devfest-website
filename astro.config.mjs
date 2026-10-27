@@ -129,9 +129,9 @@ export default defineConfig({
                 !page.includes('/speaker-card') &&
                 // And for the venue TV screens (src/pages/tv.astro).
                 !/\/tv\/?$/.test(page) &&
-                // And for the pages that catch the mobile app's own links
-                // (src/pages/game/, src/pages/login/).
-                !/\/(game|login)\/?$/.test(page) &&
+                // And for the page that catches the app's sign-in links
+                // (src/pages/login/).
+                !/\/login\/?$/.test(page) &&
                 // Their OG cards are a generated asset, not a page — never a
                 // sitemap entry regardless of `/invite/`'s own secrecy.
                 !page.includes('/og/invite/') &&
