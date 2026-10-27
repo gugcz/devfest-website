@@ -61,6 +61,13 @@ the buffered Performance API. Console: Firebase → Performance.
 accepted and for the page the boot has just reported, otherwise a `page_view`
 with explicit `page_location`/`page_title`/`page_referrer`.
 
+**Sign-in link URLs never reach GA4 or Performance:** `/login/<code>`
+carries a credential in the path. `sendPageView()` cuts it to `/login/`
+(query and hash dropped) in `page_location` and `page_referrer`, and
+`gtag('set')`s that URL for the page's later events. Performance Monitoring
+reports `location.href` with no hook to rewrite it, so `schedulePerformance()`
+never boots on that path.
+
 **Conversion events**, all via `src/lib/analytics.ts`:
 
 | Event | Where | Notes |

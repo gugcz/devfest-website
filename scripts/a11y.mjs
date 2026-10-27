@@ -35,6 +35,7 @@ const PATHS = [
 	'/privacy-policy/',
 	'/delete-account/',
 	'/app/',
+	'/login/',
 	// One of the eleven personal invitation pages. They are the same template
 	// with a different photograph and one different line, so auditing one
 	// audits all of them — and this is the only page where type sits over a

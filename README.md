@@ -332,7 +332,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/thank-you` | Post-purchase confirmation (ti.to "thank you URL") |
 | `/404` | Not-found page; also forwards share links to talks or speakers added since the last build |
 
-Unlisted pages (`noindex`, out of the sitemap, linked from nowhere): `/invite/<member>` (one per `src/content/team.json` entry) and `/speaker-card`.
+Unlisted pages (`noindex`, out of the sitemap, linked from nowhere): `/invite/<member>` (one per `src/content/team.json` entry), `/speaker-card`, and `/login/<code>` (where the app's sign-in email link lands without the app installed: App Store and Google Play links; a Hosting rewrite in `firebase.json` serves one page for every code).
 
 `public/.well-known/apple-app-site-association` decides which devfest.cz links open the iOS app: only `/sessions`, `/agenda`, `/game/*` and `/login/*`. Add a path only when the app has a route for it.
 

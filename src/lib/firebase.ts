@@ -1,6 +1,12 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, type AppCheck } from 'firebase/app-check';
-import { initializeAnalytics, isSupported, logEvent, type Analytics } from 'firebase/analytics';
+import {
+	initializeAnalytics,
+	isSupported,
+	logEvent,
+	setDefaultEventParameters,
+	type Analytics,
+} from 'firebase/analytics';
 import { readConsent } from './consent';
 
 const firebaseConfig = {
@@ -161,7 +167,9 @@ let performanceStarted = false;
  * API, so a late boot still reports the entry page.
  */
 function schedulePerformance(): void {
-	if (performanceStarted) return;
+	// The SDK reports `location.href` (minus the query) with every page-load
+	// trace and no hook rewrites it, so it never boots on the sign-in link page.
+	if (performanceStarted || isAppLinkPath(window.location.pathname)) return;
 	performanceStarted = true;
 	const boot = async (): Promise<void> => {
 		try {
@@ -178,6 +186,24 @@ function schedulePerformance(): void {
 	}
 }
 
+/** `/login/<code>`: the app's sign-in link. The code in the path is a
+ * credential, so it never reaches GA4 or Performance Monitoring. */
+function isAppLinkPath(pathname: string): boolean {
+	return /^\/login(?:\/|$)/.test(pathname);
+}
+
+/** The URL with an app-link path cut to `/login/`, query and hash dropped;
+ * any other URL unchanged. */
+function redactAppLink(url: string): string {
+	try {
+		const { origin, pathname } = new URL(url);
+		if (!isAppLinkPath(pathname)) return url;
+		return `${origin}/login/`;
+	} catch {
+		return url;
+	}
+}
+
 /**
  * Send one `page_view`. `page_referrer` is explicit: a soft navigation sends
  * no referrer of its own, so GA4 would otherwise read every in-site hop as a
@@ -185,11 +211,15 @@ function schedulePerformance(): void {
  */
 function sendPageView(location: string, title: string, referrer: string | undefined): void {
 	if (!analyticsInstance) return;
+	const pageLocation = redactAppLink(location);
 	try {
+		// `set`, so every later event on this page reports the redacted URL
+		// rather than gtag's own `document.location`.
+		setDefaultEventParameters({ page_location: pageLocation });
 		logEvent(analyticsInstance, 'page_view', {
-			page_location: location,
+			page_location: pageLocation,
 			page_title: title,
-			...(referrer ? { page_referrer: referrer } : {}),
+			...(referrer ? { page_referrer: redactAppLink(referrer) } : {}),
 		});
 	} catch (err) {
 		console.warn('[firebase] page_view failed:', err);
