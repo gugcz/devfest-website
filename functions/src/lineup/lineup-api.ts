@@ -21,9 +21,14 @@ const CACHE_CONTROL = 'public, max-age=0, s-maxage=900, stale-while-revalidate=3
 // concurrent revalidation.
 const MEMO_TTL_MS = 5 * 60 * 1000;
 
-// The app's PWA (`devfest-cz-app.web.app`, repo ryzizub/devfest_mobile_app)
-// reads the lineup from here cross-origin; localhost for its dev server.
-const CORS_ORIGINS = ['https://devfest-cz-app.web.app', /^http:\/\/localhost(:\d+)?$/];
+// The app's PWA (repo ryzizub/devfest_mobile_app) reads the lineup from here
+// cross-origin. One Hosting site under two domains; localhost for its dev
+// server.
+const CORS_ORIGINS = [
+	'https://app.devfest.cz',
+	'https://devfest-cz-app.web.app',
+	/^http:\/\/localhost(:\d+)?$/,
+];
 
 interface LineupDoc {
 	id: string;

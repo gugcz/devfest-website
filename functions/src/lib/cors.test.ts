@@ -9,11 +9,17 @@ import type { Request } from 'firebase-functions/v2/https';
 import { cachedJsonEndpoint } from './cached-endpoint.js';
 import { allowedOrigin, applyReadCors } from './cors.js';
 
-const ALLOWED = ['https://app.example.com', /^http:\/\/localhost(:\d+)?$/];
+// Shaped like lineupApi's list: one site under two domains, plus localhost.
+const ALLOWED = [
+	'https://app.example.com',
+	'https://app-example.web.app',
+	/^http:\/\/localhost(:\d+)?$/,
+];
 
 describe('allowedOrigin', () => {
-	it('echoes a listed origin', () => {
+	it('echoes either listed domain of the same site', () => {
 		assert.equal(allowedOrigin('https://app.example.com', ALLOWED), 'https://app.example.com');
+		assert.equal(allowedOrigin('https://app-example.web.app', ALLOWED), 'https://app-example.web.app');
 	});
 
 	it('echoes a localhost dev origin on any port', () => {
