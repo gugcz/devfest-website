@@ -50,7 +50,7 @@ export const GET: APIRoute = async () => {
 	const lines = [
 		`# ${EVENT.name}`,
 		'',
-		`> Prague's community developer conference: one day of talks and workshops in English on ${EVENT.dateLabel} at ${EVENT.venue}, a converted coal mill in Libčice nad Vltavou, 25 minutes north of Prague. Organised by GUG.cz, z.s. since 2015.`,
+		`> Prague's community developer conference: one day of talks and workshops in English on ${EVENT.dateLabel} at ${EVENT.venue}, a converted coal mill in Libčice nad Vltavou, 25 minutes north of Prague. Organised by GUG.cz, z.s. since 2012.`,
 		'',
 		`- Date: ${EVENT.dateLabel}. Doors and registration ${EVENT.doorsTime}, keynote ${EVENT.startTime}, closing remarks ${EVENT.endTime}, afterparty until ${EVENT.afterpartyEndTime} (CET).`,
 		`- Venue: ${EVENT.venue}, ${EVENT.street}. Map: ${EVENT.mapUrl}`,
