@@ -34,6 +34,6 @@ Ticket holders save a seat; a full workshop takes a waitlist.
   `emailVerified: true` and a `registrationReference`, written by the app.
   `enforceAppCheck: true`, `cors` = devfest.cz, PR previews, localhost.
 - Firebase Auth and Functions load lazily, on `/workshops` only. The agenda
-  does not link to registration.
+  links to `/workshops` from the bar above the timetable.
 - The RTDB rules (app repo) have no `workshops` entry on purpose: the root deny
   covers it and only the Admin SDK reads it.

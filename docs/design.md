@@ -1596,6 +1596,18 @@ Decision criteria, picked per page:
   then the red "Download .ics" and "Google Calendar" as a paper-ink
   underlined action; three columns, two ≤1100px with the actions across,
   one ≤700px. Then "Before you go", share and an `@media print` block.
+- **`/app`** (`app.astro`, `app.scss`) — a type-only hero ("Get the
+  app"), then the App Store and Google Play badges straight under it on
+  black (the venue QR codes land here, so a phone sees them on the first
+  screen), the visitor's own store first with a red "Your phone" note, and
+  the web app as an `.action` under them. **The store badges are the one
+  control the site does not draw**: Apple's and Google's artwork,
+  unaltered, at one height (their guidelines forbid recolouring). A store
+  without a link yet shows its name and "Coming soon", never a dimmed
+  badge. Then "What's inside" as four straight paper index cards (the
+  `/venue` route card: mono number, Bebas `--fs-head` title, paper-ink
+  prose; four across, two ≤1100px, one ≤600px) and an `EndLine` to the
+  agenda.
 - **`/venue`** (`venue.astro`, `venue.scss`) — a type-only hero
   ("Venue"), three plain `.band`s, then the closer. **The address**, type
   only: a note "Address", the street at `--fs-section`, the post code (mono)

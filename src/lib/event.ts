@@ -16,6 +16,15 @@ const DOORS = '2026-10-30T08:00:00+01:00';
 const KEYNOTE = '2026-10-30T09:00:00+01:00';
 const CLOSE = '2026-10-30T19:00:00+01:00';
 const AFTERPARTY_END = '2026-10-30T23:00:00+01:00';
+/** Company invoices close the morning of the event: the ticket code is minted
+ * only once the transfer lands, too late for the day. Keep in step with
+ * `INVOICES_CLOSE` in `functions/src/invoice/submit.ts`. */
+const INVOICES_CLOSE = '2026-10-30T07:00:00+01:00';
+
+/** Whether `/invoice` still takes requests. */
+export function invoicesOpen(now: number = Date.now()): boolean {
+	return now < Date.parse(INVOICES_CLOSE);
+}
 
 /** `HH:MM` read straight off an event-local ISO string (no time-zone math). */
 const clock = (iso: string): string => iso.slice(11, 16);

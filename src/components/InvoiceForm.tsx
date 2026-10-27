@@ -11,6 +11,7 @@ import {
 } from '../lib/tito';
 import { track } from '../lib/analytics';
 import { round2 } from '../lib/checkout';
+import { invoicesOpen } from '../lib/event';
 import s from './InvoiceForm.module.scss';
 
 // Cloud Functions region the callable is deployed to.
@@ -54,11 +55,15 @@ const FIELD_LABELS: Record<FieldName, string> = {
  * `functions/src/invoice/params.ts`; the two move together. */
 const INVOICE_DUE_DAYS = 14;
 
+const CLOSED_MESSAGE =
+	'Company invoices are closed for DevFest.cz 2026. Buy tickets on ti.to, or email devfest@gug.cz.';
+
 /** The visitor-facing message for a failed `submitInvoiceCallable` call. */
 function submitErrorMessage(e: unknown): string {
 	const code = (e as { code?: string }).code ?? '';
 	const key = (e as { message?: string }).message ?? '';
 	const field = key in FIELD_LABELS ? FIELD_LABELS[key as FieldName] : '';
+	if (key === 'closed') return CLOSED_MESSAGE;
 	return code === 'functions/invalid-argument'
 		? field
 			? `We could not use the ${field} you entered. Check it and send again.`
@@ -196,6 +201,10 @@ export default function InvoiceForm() {
 	const [status, setStatus] = useState<Status>('idle');
 	const [message, setMessage] = useState('');
 	const [release, setRelease] = useState<TitoRelease | null>(null);
+	// Read after mount: the page is built before the cutoff, so the server HTML
+	// always holds the form.
+	const [open, setOpen] = useState(true);
+	useEffect(() => setOpen(invoicesOpen()), []);
 	// Shown errors, not computed ones: a field that has never been touched and
 	// has never been submitted is not "wrong yet", it is just empty.
 	const [errors, setErrors] = useState<Errors>({});
@@ -320,6 +329,17 @@ export default function InvoiceForm() {
 			setStatus('error');
 			setMessage(submitErrorMessage(e));
 		}
+	}
+
+	if (!open) {
+		return (
+			<div className={`paper ${s.wrapper}`}>
+				<div className={s.success}>
+					<p className={s.successTitle}>Invoices closed</p>
+					<p className={s.successBody}>{CLOSED_MESSAGE}</p>
+				</div>
+			</div>
+		);
 	}
 
 	if (status === 'success') {

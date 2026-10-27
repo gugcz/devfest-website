@@ -27,7 +27,7 @@ const LINEUP_REFRESH_MS = 2 * 60_000;
 const CLOCK_TICK_MS = 1_000;
 /** A screen runs all day unattended: reload now and then so a deploy lands
  * and a long-lived tab can't drift. */
-const RELOAD_MS = 3 * 60 * 60_000;
+const RELOAD_MS = 15 * 60_000;
 /** How long the credits band holds one page of partner logos. */
 const PARTNER_GROUP_MS = 8_000;
 

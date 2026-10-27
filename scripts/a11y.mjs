@@ -34,6 +34,7 @@ const PATHS = [
 	'/code-of-conduct/',
 	'/privacy-policy/',
 	'/delete-account/',
+	'/app/',
 	'/game/',
 	'/login/',
 	// One of the eleven personal invitation pages. They are the same template
