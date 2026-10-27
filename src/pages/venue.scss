@@ -55,7 +55,7 @@
 }
 
 /* ---- The route: index cards ---- */
-// Two steps side by side at one height.
+// Two steps side by side at one height; the car card wraps under them.
 .venue-cards {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
