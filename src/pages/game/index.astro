@@ -3,23 +3,29 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SubpageHero from '../../components/SubpageHero.astro';
 import NextStep from '../../components/NextStep.astro';
 import NextStepList from '../../components/NextStepList.astro';
-import { APP_STORE_URL, GOOGLE_PLAY_URL } from '../../lib/app-stores';
+import { APP_LINKS } from '../../lib/app-links';
 
 // The detective game's venue codes point at `/game/<token>`. With the app
-// installed the phone opens the app instead (apple-app-site-association,
-// assetlinks.json); without it the browser lands here. Every token gets this
-// page through a Hosting rewrite in firebase.json, since a static build has
-// no page per token. Unlisted: noindex, out of the sitemap.
+// installed the phone opens the app instead (apple-app-site-association, and
+// the assetlinks.json devfest.cz serves from outside this repo); without it
+// the browser lands here. Every token gets this page through a Hosting
+// rewrite in firebase.json, since a static build has no page per token.
+// Unlisted: noindex, out of the sitemap.
+
+// A store link still `null` gets no button, as /app shows "Coming soon".
+const storeAction = (href: string | null, label: string, kind: 'primary' | 'ghost') =>
+	href ? [{ href, label, kind, external: true }] : [];
+
 const STEPS = [
 	{
 		title: 'iPhone',
 		noteHtml: 'Get DevFest.cz from the App Store and sign in with your ticket.',
-		actions: [{ href: APP_STORE_URL, label: 'Open the App Store', kind: 'primary' as const, external: true }],
+		actions: storeAction(APP_LINKS.appStore, 'Open the App Store', 'primary'),
 	},
 	{
 		title: 'Android',
 		noteHtml: 'Get DevFest.cz from Google Play and sign in with your ticket.',
-		actions: [{ href: GOOGLE_PLAY_URL, label: 'Open Google Play', external: true }],
+		actions: storeAction(APP_LINKS.googlePlay, 'Open Google Play', 'ghost'),
 	},
 	{
 		title: 'Then scan again',

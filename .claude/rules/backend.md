@@ -35,7 +35,9 @@ Failure text is a product surface: it lands in Slack, an invoice's
   best-effort, prefixed, never throws. Alerting functions list
   `SLACK_WEBHOOK_URL` in `secrets`.
 - **`lib/cached-endpoint.ts`** — `cachedJsonEndpoint({ name, cacheControl,
-  memoTtlMs, fallback, load })`, shared body of `/api/*`.
+  memoTtlMs, fallback, load, corsOrigins? })`, shared body of `/api/*`.
+- **`lib/cors.ts`** — `applyReadCors` for a spec's `corsOrigins`: echoes a
+  listed `Origin`, always `Vary: Origin`, answers its preflight with 204.
 - **`lib/errors.ts`** — `describeError(err)` unwraps `cause`/`code` (undici
   hides `ENOTFOUND` etc. under `fetch failed`; gRPC uses `code`).
   `stageError(stage, err)` labels the failing step. **Never log `err.message`
