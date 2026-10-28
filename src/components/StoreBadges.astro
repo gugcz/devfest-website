@@ -1,0 +1,71 @@
+---
+/** The App Store and Google Play badges for the DevFest.cz app (`/app`, the
+ * home page's app band). Official Apple and Google artwork, unaltered, as
+ * their brand guidelines require: the one control the site does not draw.
+ * On a phone the script puts the visitor's own store first and notes it; the
+ * DOM order moves too, so focus follows the eye. A store without its link yet
+ * (`src/lib/app-links.ts`) shows its name and "Coming soon". */
+import { APP_LINKS } from '../lib/app-links';
+import googlePlayBadge from '../assets/app-badges/google-play.svg';
+import appStoreBadge from '../assets/app-badges/app-store.svg';
+
+const stores = [
+	{
+		platform: 'ios',
+		name: 'App Store',
+		badge: { src: appStoreBadge.src, alt: 'Download on the App Store', width: 120, height: 40 },
+		href: APP_LINKS.appStore,
+	},
+	{
+		platform: 'android',
+		name: 'Google Play',
+		badge: { src: googlePlayBadge.src, alt: 'Get it on Google Play', width: 241, height: 71 },
+		href: APP_LINKS.googlePlay,
+	},
+];
+---
+
+<ul class="store-badges" data-store-badges>
+	{stores.map((s) => (
+		<li class="store-badge-item" data-platform={s.platform}>
+			<span class="store-yours" hidden>Your phone</span>
+			{s.href ? (
+				<a class="store-badge-link" href={s.href} target="_blank" rel="noopener noreferrer">
+					<img class="store-badge" src={s.badge.src} alt={s.badge.alt} width={s.badge.width} height={s.badge.height} />
+				</a>
+			) : (
+				<span class="store-soon">
+					<span class="store-soon-name">{s.name}</span>
+					<span class="store-soon-word">Coming soon</span>
+				</span>
+			)}
+		</li>
+	))}
+</ul>
+
+<script>
+	// iPadOS reports itself as a Mac, so a Mac with a touch screen counts as
+	// iOS. Anything else keeps the page order.
+	function detectPlatform(): 'android' | 'ios' | null {
+		const ua = navigator.userAgent;
+		if (/Android/i.test(ua)) return 'android';
+		if (/iPhone|iPad|iPod/i.test(ua)) return 'ios';
+		if (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1) return 'ios';
+		return null;
+	}
+
+	document.addEventListener('astro:page-load', () => {
+		const platform = detectPlatform();
+		if (!platform) return;
+		document.querySelectorAll<HTMLElement>('[data-store-badges]').forEach((list) => {
+			const item = list.querySelector<HTMLElement>(`[data-platform="${platform}"]`);
+			if (!item) return;
+			list.prepend(item);
+			item.querySelector<HTMLElement>('.store-yours')?.removeAttribute('hidden');
+		});
+	});
+</script>
+
+<style lang="scss">
+	@use './StoreBadges';
+</style>

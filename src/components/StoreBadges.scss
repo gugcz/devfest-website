@@ -1,0 +1,73 @@
+@use '../styles/type' as *;
+
+// The badges sit at one height, above Apple's 40px on-screen minimum.
+.store-badges {
+	--badge-h: clamp(3.5rem, 4.6vw, 4.25rem);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 1.25rem 1.5rem;
+}
+
+.store-badge-item {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.6rem;
+}
+
+// The visitor's own store: a note, the list's one red.
+.store-yours {
+	@include note;
+	color: var(--color-accent-hot);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.store-badge-link {
+	display: block;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent-hot);
+		outline-offset: var(--focus-gap);
+	}
+}
+
+.store-badge {
+	display: block;
+	height: var(--badge-h);
+	width: auto;
+}
+
+// A store still waiting for its link: its name and a status word, at badge
+// height. Status is a word, never a dimmed badge.
+.store-soon {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 0.3rem;
+	min-height: var(--badge-h);
+}
+
+.store-soon-name {
+	@include row-title(var(--fs-card-title));
+}
+
+.store-soon-word {
+	@include note;
+	color: var(--ink-soft);
+}
+
+// A phone stacks the badges: one full target per row.
+@media (max-width: 600px) {
+	.store-badges {
+		--badge-h: 3.75rem;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}

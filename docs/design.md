@@ -1442,7 +1442,7 @@ red word and the closing full stop belong to the home hero statement**
 list under Voice); every `SubpageHero` title is migrated. Section heads and every `Closer` title
 are plain white, because a red final word on ~30 headlines made none of them
 the loud one. On `/` the sections open on a `.head-rule` at poster scale:
-"The eleventh DevFest.cz", "Tickets",
+"The eleventh DevFest.cz", "Get the app", "Tickets",
 "Speakers", "Past editions", "Partners"; "Newsletter" is a `.display` `h2`
 on its own card's column. Space under the head, never a rule. No numbered
 eyebrow, no stamp. Headings are literal: no puns.
@@ -1454,7 +1454,8 @@ Past editions ("Ten editions since 2012."), Tickets (the invoice route:
 "Need to pay by bank transfer?" over the `.action` "Request a company
 invoice", `Tickets.tsx`; "Opens with the first wave" before the
 first wave), "Every talk" (how to search), "The route" (the train and the
-walk), "In the news" (where the press kit is). Partners takes its two text
+walk), "In the news" (where the press kit is), "Get the app" (what the app does,
+which the badges don't say). Partners takes its two text
 actions in the note's place; The eleventh DevFest.cz opens on the title
 alone. A note that only names what follows is filler and is left off.
 Section titles say what the section is; a full stop belongs to a statement,
@@ -1600,7 +1601,9 @@ Decision criteria, picked per page:
   app"), then the App Store and Google Play badges straight under it on
   black (the venue QR codes land here, so a phone sees them on the first
   screen), the visitor's own store first with a red "Your phone" note, and
-  the web app as an `.action` under them. **The store badges are the one
+  the web app as an `.action` under them. The badges are one component,
+  `StoreBadges.astro` (`StoreBadges.scss`), shared with the home page's
+  "Get the app" band. **The store badges are the one
   control the site does not draw**: Apple's and Google's artwork,
   unaltered, at one height (their guidelines forbid recolouring). A store
   without a link yet shows its name and "Coming soon", never a dimmed
@@ -1694,8 +1697,8 @@ Decision criteria, picked per page:
   `BaseLayout.astro:94–97`).
 - **The home page is prints on a black table** (`index.astro`,
   `index.scss`): the hero plate with the statement, the facts and the red
-  fill set over it, then five sections on a poster `.head-rule` (The
-  eleventh DevFest.cz, Tickets, Speakers, Past editions, Partners) and the
+  fill set over it, then six sections on a poster `.head-rule` (The
+  eleventh DevFest.cz, Get the app, Tickets, Speakers, Past editions, Partners) and the
   Newsletter card. No second hero, no numbered eyebrows, nothing that moves
   on its own. Each section is a `.band .sec` and closes on space, no bottom
   padding (`.sec`, `index.scss`); the next head is the cut, so there is one
@@ -1743,6 +1746,11 @@ Decision criteria, picked per page:
   `note(--fs-note-sm)` in `--paper-ink-dim`, the value a `note(--fs-body)` —
   Date (a `<time>`), Place, Doors (mono "08:00–20:00"), Audience (mono
   "350", "developers").
+- **"Get the app"** (`index.astro`, `index.scss`), right after the event:
+  the `.head-rule` with its note, the same `StoreBadges` as `/app` (the
+  visitor's own store first), and the `.action` "What's in the app" to
+  `/app`. No red fill: the hero's "Get tickets" stays the page's one.
+  The footer's Attend column carries "Get the app" too.
 - **The countdown** (`Countdown.tsx`, `Countdown.module.scss`): in the
   facts line right after the date, at the line's one size — "Keynote in"
   as the 0.72 qualifier, then the time left to `EVENT.start` as one mono

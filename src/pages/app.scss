@@ -4,64 +4,7 @@
 // as four index cards on the black table.
 
 /* ---- Download ---- */
-// The badges are Apple's and Google's artwork, unaltered (their guidelines
-// forbid recolouring or cropping), at one height above Apple's 40px minimum.
-.app-stores {
-	--badge-h: clamp(3.5rem, 4.6vw, 4.25rem);
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-end;
-	gap: 1.25rem 1.5rem;
-}
-
-.app-store {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 0.6rem;
-}
-
-// The visitor's own store: a note, the band's one red.
-.app-yours {
-	@include note;
-	color: var(--color-accent-hot);
-
-	&[hidden] {
-		display: none;
-	}
-}
-
-.app-badge-link {
-	display: block;
-
-	&:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: var(--focus-gap);
-	}
-}
-
-.app-badge {
-	display: block;
-	height: var(--badge-h);
-	width: auto;
-}
-
-// A store still waiting for its link: its name and a status word, at badge
-// height. Status is a word, never a dimmed badge.
-.app-soon {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	gap: 0.3rem;
-	min-height: var(--badge-h);
-}
-
-.app-soon-name {
-	@include row-title(var(--fs-card-title));
-}
+// The badges are `StoreBadges`; this band adds the web app line under them.
 
 .app-soon-word {
 	@include note;
@@ -127,13 +70,6 @@
 }
 
 @media (max-width: 600px) {
-	// A phone stacks the badges: one full target per row.
-	.app-stores {
-		--badge-h: 3.75rem;
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
 	.app-cards {
 		grid-template-columns: minmax(0, 1fr);
 	}
