@@ -68,14 +68,20 @@ interface Params {
 	/** `?at=10:15` pins the clock to that time on the event day (then lets it
 	 * run), so a screen can be checked before the day. */
 	atMin: number | null;
+	/** `?rotate=90` or `?rotate=270` turns the screen a quarter clockwise or
+	 * counter-clockwise, for a TV hung on its side that still reports
+	 * landscape. */
+	rotate: '90' | '270' | null;
 }
 
 function readParams(): Params {
 	const query = new URLSearchParams(window.location.search);
 	const at = /^(\d{1,2}):(\d{2})$/.exec(query.get('at') ?? '');
+	const rotate = query.get('rotate');
 	return {
 		room: query.get('room') ?? '',
 		atMin: at ? Number(at[1]) * 60 + Number(at[2]) : null,
+		rotate: rotate === '90' || rotate === '270' ? rotate : null,
 	};
 }
 
@@ -153,9 +159,10 @@ function useKioskUpkeep() {
 	}, []);
 }
 
-/** Whether the screen hangs on its side. The rail measures what fits, so it
- * starts over when the screen turns. */
-function usePortrait(): boolean {
+/** Whether the screen hangs on its side: the viewport's orientation, swapped
+ * by a quarter `rotate`. The rail measures what fits, so it starts over when
+ * the screen turns. */
+function usePortrait(rotated: boolean): boolean {
 	const [portrait, setPortrait] = useState(false);
 	useEffect(() => {
 		const query = window.matchMedia('(orientation: portrait)');
@@ -164,7 +171,7 @@ function usePortrait(): boolean {
 		query.addEventListener('change', update);
 		return () => query.removeEventListener('change', update);
 	}, []);
-	return portrait;
+	return rotated ? !portrait : portrait;
 }
 
 /** Bumps when a web font finishes loading: text measured in the fallback
@@ -821,7 +828,7 @@ export default function TvScreen({
 	const [params, setParams] = useState<Params | null>(null);
 	useEffect(() => setParams(readParams()), []);
 	useKioskUpkeep();
-	const portrait = usePortrait();
+	const portrait = usePortrait(params?.rotate != null);
 
 	const { lineup, clock, nowMin, rooms, dayAhead } = useVenue(params?.atMin ?? null);
 	const { here, others, unknown } = pickRoom(rooms, params?.room ?? '');
@@ -829,38 +836,40 @@ export default function TvScreen({
 	const reconnecting = lineup.failed && lineup.data !== null;
 
 	return (
-		<div className={s.screen}>
-			<Header
-				heading={here?.column.label ?? 'Agenda'}
-				tag={headerTag(pauseNow(focus, rooms), dayAhead)}
-				clock={clock}
-				meta={reconnecting ? 'Reconnecting…' : dayLabel(clock.date)}
-			/>
-			{lineup.data === null ? (
-				<p className={s.status}>{lineup.failed ? 'Agenda unavailable, retrying…' : 'Loading agenda…'}</p>
-			) : (
-				<main className={s.main}>
-					{unknown && (
-						<p className={s.notice}>
-							Unknown room “{unknown}”. Use one of: {rooms.map((r) => roomSlug(r.column.label)).join(', ')}
-						</p>
-					)}
-					{here && focus ? (
-						<RoomScreen
-							here={here.column.key}
-							focus={focus}
-							rooms={rooms}
-							others={others}
-							nowMin={nowMin}
-							dayOver={isDayOver(rooms, nowMin)}
-							portrait={portrait}
-						/>
-					) : (
-						<Board rooms={rooms} nowMin={nowMin} />
-					)}
-				</main>
-			)}
-			<Credits partners={partners} organizerLogo={organizerLogo} />
+		<div className={s.frame} data-rotate={params?.rotate}>
+			<div className={s.screen}>
+				<Header
+					heading={here?.column.label ?? 'Agenda'}
+					tag={headerTag(pauseNow(focus, rooms), dayAhead)}
+					clock={clock}
+					meta={reconnecting ? 'Reconnecting…' : dayLabel(clock.date)}
+				/>
+				{lineup.data === null ? (
+					<p className={s.status}>{lineup.failed ? 'Agenda unavailable, retrying…' : 'Loading agenda…'}</p>
+				) : (
+					<main className={s.main}>
+						{unknown && (
+							<p className={s.notice}>
+								Unknown room “{unknown}”. Use one of: {rooms.map((r) => roomSlug(r.column.label)).join(', ')}
+							</p>
+						)}
+						{here && focus ? (
+							<RoomScreen
+								here={here.column.key}
+								focus={focus}
+								rooms={rooms}
+								others={others}
+								nowMin={nowMin}
+								dayOver={isDayOver(rooms, nowMin)}
+								portrait={portrait}
+							/>
+						) : (
+							<Board rooms={rooms} nowMin={nowMin} />
+						)}
+					</main>
+				)}
+				<Credits partners={partners} organizerLogo={organizerLogo} />
+			</div>
 		</div>
 	);
 }
