@@ -357,6 +357,23 @@
 	object-position: left center;
 }
 
+// The hashtag to post with closes the band on every screen; it does not
+// page with the partners. Captioned like a column, so it takes the
+// least of the band's width from the logos.
+.hashtag {
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	align-items: flex-end;
+	margin: 0 0 0 auto;
+}
+
+.hashtagText {
+	@include display(calc(var(--u) * 3));
+	padding-top: 0.08em;
+	white-space: nowrap;
+}
+
 // Dark ink made for a light ground sits on a white card, as on /partners.
 .logoDark {
 	box-sizing: content-box;
@@ -1081,15 +1098,28 @@
 		}
 	}
 
-	// Credits: two captioned columns, the organiser and the partners.
+	// Credits: two captioned columns, the organiser and the partners, under
+	// the hashtag on a line of its own (beside them it squeezes the logos).
 	.credits {
+		flex-wrap: wrap;
 		align-items: stretch;
-		height: calc(var(--u) * 8.4);
+		row-gap: calc(var(--u) * 1.6);
+		height: auto;
 		padding-bottom: calc(var(--u) * 2);
+	}
+
+	.hashtag {
+		order: -1;
+		flex-basis: 100%;
+		flex-direction: row;
+		align-items: center;
+		gap: calc(var(--u) * 1.6);
+		margin: 0;
 	}
 
 	.organizer,
 	.partnerGroup {
+		height: calc(var(--u) * 6.4);
 		flex-direction: column;
 		align-items: flex-start;
 		justify-content: space-between;

@@ -1407,7 +1407,9 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   steps down a size to give the note its line. The credits band keeps every partner mark in its colours, equal-area
   sized from the Gold box (`logoBox`, `partners.ts`), a `dark` master on a
   white card; a new partner page fades in (opacity, none under reduced
-  motion). No split-flap, sweep or pulse.
+  motion). The band closes on the hashtag in Bebas under a "Post with"
+  note, still while the partners page (two marks a page, so they keep
+  their size beside it); in portrait it takes a line of its own above them. No split-flap, sweep or pulse.
 - **Menu** (`Menu.astro`, `Menu.scss`) — the bar is the mark left and the
   actions right (`display: flex; justify-content: space-between`). **At
   ≥1100px the destinations sit in the bar** (`.bar-nav`): Speakers, Agenda,

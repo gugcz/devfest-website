@@ -511,7 +511,7 @@ function Elsewhere({
 }
 
 /** The band under every screen: the organiser, then the partners a page at
- * a time, in ladder order. Every mark keeps its own colours; a dark one sits
+ * a time, in ladder order, then the hashtag to post with. Every mark keeps its own colours; a dark one sits
  * on a white card. */
 function Credits({ partners, organizerLogo }: { partners: PartnerGroup[]; organizerLogo: string }) {
 	const [index, setIndex] = useState(0);
@@ -544,6 +544,10 @@ function Credits({ partners, organizerLogo }: { partners: PartnerGroup[]; organi
 					</ul>
 				</div>
 			)}
+			<p className={s.hashtag}>
+				<span className={s.creditLabel}>Post with</span>
+				<span className={s.hashtagText}>#DevFestCZ</span>
+			</p>
 		</footer>
 	);
 }
