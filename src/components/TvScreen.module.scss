@@ -22,12 +22,46 @@
 //   a red dot on paper) and the page's one grease mark;
 // - nothing moves on its own: a partner page fades in when it changes, and
 //   a 1px drift every few minutes keeps a static frame off the panel.
+// `--u` is measured on the frame (`cq*`), so it has to be a registered
+// length: it then resolves once on `.screen` and inherits as pixels, not
+// against the nearest inner container (`.speakers`).
+@property --u {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 0px;
+}
+
+// The frame is the screen's canvas: the viewport, or with `?rotate=90|270`
+// the viewport turned a quarter, for a TV hung on its side that still
+// reports landscape. Layout asks the frame, never the viewport.
+.frame {
+	position: fixed;
+	inset: 0;
+	container: tv / size;
+	overflow: hidden;
+}
+
+.frame[data-rotate] {
+	inset: 0 auto auto 0;
+	width: 100vh;
+	height: 100vw;
+	transform-origin: top left;
+}
+
+.frame[data-rotate='90'] {
+	transform: translateX(100vw) rotate(90deg);
+}
+
+.frame[data-rotate='270'] {
+	transform: translateY(100vh) rotate(-90deg);
+}
+
 .screen {
-	--u: min(1vw, 1.7778vh);
+	--u: min(1cqw, 1.7778cqh);
 	--pad: calc(var(--u) * 4.4);
 	--label: calc(var(--u) * 1.7);
 
-	position: fixed;
+	position: absolute;
 	inset: 0;
 	display: flex;
 	flex-direction: column;
@@ -359,7 +393,7 @@
 // On a landscape screen the hero's height is fixed by the screen: the
 // speakers close it at the foot, and their prints take the height the title
 // leaves them (see `.print`).
-@media (orientation: landscape) {
+@container tv (orientation: landscape) {
 	.hero .speakers {
 		flex: 1 1 0;
 		min-height: calc(var(--u) * 7);
@@ -901,9 +935,9 @@
 // The unit swaps axes, so a letter is as tall as on the same panel hung
 // landscape; what sat side by side stacks instead.
 
-@media (orientation: portrait) {
+@container tv (orientation: portrait) {
 	.screen {
-		--u: min(1.7778vw, 1vh);
+		--u: min(1.7778cqw, 1cqh);
 	}
 
 	// Logo and clock on one line, the room name across the full width under

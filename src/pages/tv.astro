@@ -4,8 +4,10 @@
 // pins a screen to the room it hangs next to (the talk on now, what's next,
 // the other rooms), plain `/tv` shows every room. A credits band under both
 // names the organiser and loops through the partners. `?at=10:15` fakes the
-// time to check a screen before the day. UNLISTED = `noindex` + out of the
-// sitemap + linked from NOWHERE (not access control).
+// time to check a screen before the day. `?rotate=90` (or `270`) turns the
+// picture a quarter for a TV hung on its side that still reports landscape.
+// UNLISTED = `noindex` + out of the sitemap + linked from NOWHERE (not
+// access control).
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TvScreen, { type PartnerGroup } from '../components/TvScreen';
 import gugLogo from '../assets/gug-logo.svg';
