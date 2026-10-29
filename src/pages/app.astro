@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import EndLine from '../components/EndLine.astro';
-import { APP_LINKS } from '../lib/app-links';
 import StoreBadges from '../components/StoreBadges.astro';
 
 // THE APP PAGE. Venue QR codes land here, so on a phone the store badges sit
@@ -19,12 +18,12 @@ const features = [
 
 <BaseLayout
 	title="Get the App — DevFest.cz 2026"
-	description="The DevFest.cz 2026 app: the programme, your own schedule, reminders and badge-scan networking. App Store, Google Play, or the web app in any browser."
+	description="The DevFest.cz 2026 app: the programme, your own schedule, reminders and badge-scan networking. For iPhone and Android."
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml="Get the app"
-			lede="The programme, your schedule and a reminder before every talk. Free, for iPhone, Android or any browser."
+			lede="The programme, your schedule and a reminder before every talk. Free, for iPhone and Android."
 			seoHeading="DevFest.cz 2026 app"
 			titleId="app-title"
 		/>
@@ -34,15 +33,6 @@ const features = [
 				<h2 id="get-title" class="sr-only">Download</h2>
 
 				<StoreBadges />
-
-				<p class="app-web">
-					<span class="app-web-text">Rather not install anything?</span>
-					{APP_LINKS.pwa ? (
-						<a class="action" href={APP_LINKS.pwa} target="_blank" rel="noopener noreferrer">Open the web app</a>
-					) : (
-						<span class="app-soon-word">The web app is coming soon.</span>
-					)}
-				</p>
 			</div>
 		</section>
 

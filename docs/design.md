@@ -1600,8 +1600,8 @@ Decision criteria, picked per page:
 - **`/app`** (`app.astro`, `app.scss`) — a type-only hero ("Get the
   app"), then the App Store and Google Play badges straight under it on
   black (the venue QR codes land here, so a phone sees them on the first
-  screen), the visitor's own store first with a red "Your phone" note, and
-  the web app as an `.action` under them. The badges are one component,
+  screen), the visitor's own store first with a red "Your phone" note. No
+  web app: the app ships for iPhone and Android only. The badges are one component,
   `StoreBadges.astro` (`StoreBadges.scss`), shared with the home page's
   "Get the app" band. **The store badges are the one
   control the site does not draw**: Apple's and Google's artwork,

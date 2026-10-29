@@ -327,7 +327,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/code-of-conduct` | Code of Conduct one-pager, Listener's contact, link to the full text |
 | `/privacy-policy` | GDPR privacy policy, website and mobile app |
 | `/delete-account` | How to delete a mobile app account (the Google Play "Delete account URL"; keep the route) |
-| `/app` | Where to get the mobile app (App Store, Google Play, web app); the venue QR codes point here. Links in `src/lib/app-links.ts` |
+| `/app` | Where to get the mobile app (App Store, Google Play); the venue QR codes point here. Links in `src/lib/app-links.ts` |
 | `/newsletter-subscription-thank-you` | Post-signup confirmation |
 | `/thank-you` | Post-purchase confirmation (ti.to "thank you URL") |
 | `/404` | Not-found page; also forwards share links to talks or speakers added since the last build |

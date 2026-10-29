@@ -3,28 +3,6 @@
 // /app — the store badges straight under the hero, then what the app does
 // as four index cards on the black table.
 
-/* ---- Download ---- */
-// The badges are `StoreBadges`; this band adds the web app line under them.
-
-.app-soon-word {
-	@include note;
-	color: var(--ink-soft);
-}
-
-// The web app: a line and a text action, under the badges.
-.app-web {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 0.25rem 1.25rem;
-	margin: clamp(2rem, 4vw, 3rem) 0 0;
-}
-
-.app-web-text {
-	@include prose(var(--fs-body-lg), 1.5);
-	color: var(--ink-soft);
-}
-
 /* ---- What's inside: index cards ---- */
 .app-cards {
 	list-style: none;
