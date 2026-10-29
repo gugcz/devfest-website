@@ -86,6 +86,18 @@
 	}
 }
 
+// Flex `gap` reached Chromium in 84 and TV browsers run years behind: before
+// it, every sibling after the first takes the gap as a margin on the main
+// axis. `@supports` cannot ask about gap in flex layout, so the kiosk head
+// script measures it and marks `html.no-flex-gap` (`BaseLayout.astro`). The
+// class also lifts the margin over a child's own `margin: 0`; a child pushed
+// off by an auto margin restates it under the same class.
+@mixin flex-gap-fallback($side, $size) {
+	:global(.no-flex-gap) & > * + * {
+		margin-#{$side}: $size;
+	}
+}
+
 // A word label: the note voice at sign size.
 @mixin tv-note($size: var(--label)) {
 	@include note($size);
@@ -151,6 +163,8 @@
 	gap: calc(var(--u) * 2.4);
 	min-width: 0;
 	padding-left: calc(var(--u) * 1.4);
+
+	@include flex-gap-fallback(left, calc(var(--u) * 2.4));
 }
 
 // The room name never gives way to the tag beside it.
@@ -182,6 +196,8 @@
 	align-items: baseline;
 	gap: calc(var(--u) * 1.8);
 	margin: 0;
+
+	@include flex-gap-fallback(left, calc(var(--u) * 1.8));
 }
 
 .clock {
@@ -214,6 +230,8 @@
 	flex-direction: column;
 	gap: calc(var(--u) * 1.6);
 	padding: calc(var(--u) * 0.8) var(--pad) calc(var(--u) * 1.6);
+
+	@include flex-gap-fallback(top, calc(var(--u) * 1.6));
 }
 
 // ─── State: the flag, the live dot, the progress spine ─────────────────────
@@ -245,6 +263,14 @@
 	display: inline-block;
 }
 
+// Both sit before a text node, which `> * + *` never reaches.
+.flagLive::before,
+.dot {
+	:global(.no-flex-gap) & {
+		margin-right: 0.45em;
+	}
+}
+
 .progress {
 	display: block;
 	height: calc(var(--u) * 0.3);
@@ -264,6 +290,10 @@
 .underline {
 	path {
 		stroke-width: max(3px, calc(var(--u) * 0.24));
+
+		@supports not (width: max(1px, 2px)) {
+			stroke-width: calc(var(--u) * 0.24);
+		}
 	}
 }
 
@@ -279,6 +309,8 @@
 	height: calc(var(--u) * 6.4);
 	margin: 0 var(--pad);
 	padding: 0 0 calc(var(--u) * 2.4);
+
+	@include flex-gap-fallback(left, calc(var(--u) * 4.4));
 }
 
 .creditLabel {
@@ -294,6 +326,8 @@
 	align-items: center;
 	gap: calc(var(--u) * 1.6);
 	margin: 0;
+
+	@include flex-gap-fallback(left, calc(var(--u) * 1.6));
 }
 
 .organizerLogo {
@@ -314,6 +348,8 @@
 	.creditLabel {
 		min-width: calc(var(--u) * 14);
 	}
+
+	@include flex-gap-fallback(left, calc(var(--u) * 2.4));
 }
 
 // A new page fades in; nothing slides.
@@ -344,6 +380,8 @@
 		flex: 0 1 auto;
 		min-width: 0;
 	}
+
+	@include flex-gap-fallback(left, calc(var(--u) * 3.6));
 }
 
 // Equal ink area per mark (`w` from `tv.astro`), capped by the band.
@@ -366,6 +404,10 @@
 	flex-direction: column;
 	align-items: flex-end;
 	margin: 0 0 0 auto;
+
+	:global(.no-flex-gap) & {
+		margin-left: auto;
+	}
 }
 
 .hashtagText {
@@ -404,7 +446,13 @@
 	.progress {
 		flex: none;
 		margin-top: calc(var(--u) * -0.8);
+
+		:global(.no-flex-gap) & {
+			margin-top: calc(var(--u) * 1.4);
+		}
 	}
+
+	@include flex-gap-fallback(top, calc(var(--u) * 2.2));
 }
 
 // On a landscape screen the hero's height is fixed by the screen: the
@@ -429,6 +477,8 @@
 	.flagLive {
 		color: var(--color-accent-hot);
 	}
+
+	@include flex-gap-fallback(left, calc(var(--u) * 1.8));
 }
 
 // Time left (or the countdown) is the hero's second fact, set right.
@@ -444,6 +494,10 @@
 		top: -50%;
 		width: 118%;
 		height: 200%;
+	}
+
+	:global(.no-flex-gap) & {
+		margin-left: auto;
 	}
 }
 
@@ -471,6 +525,10 @@
 	flex: none;
 	margin-top: calc(var(--u) * -0.8);
 	color: var(--ink-strong);
+
+	:global(.no-flex-gap) & {
+		margin-top: calc(var(--u) * 1.4);
+	}
 }
 
 .heroElsewhere .heroTitle.titleXl {
@@ -485,6 +543,8 @@
 	overflow: hidden;
 	// Room for the slip's shadow inside the clip.
 	padding-bottom: calc(var(--u) * 0.4);
+
+	@include flex-gap-fallback(top, calc(var(--u) * 2.4));
 }
 
 // Up next: a straight paper slip, the agenda's.
@@ -495,6 +555,8 @@
 	flex-direction: column;
 	gap: calc(var(--u) * 0.8);
 	padding: calc(var(--u) * 1.4) calc(var(--u) * 2) calc(var(--u) * 1.8);
+
+	@include flex-gap-fallback(top, calc(var(--u) * 0.8));
 }
 
 .nextTop {
@@ -503,6 +565,8 @@
 	justify-content: space-between;
 	gap: calc(var(--u) * 2);
 	margin: 0;
+
+	@include flex-gap-fallback(left, calc(var(--u) * 2));
 }
 
 .nextLabel {
@@ -532,6 +596,8 @@
 	gap: 0 calc(var(--u) * 1.4);
 	margin: 0;
 	font-size: calc(var(--u) * 1.6);
+
+	@include flex-gap-fallback(left, calc(var(--u) * 1.4));
 }
 
 .nextGap {
@@ -586,6 +652,8 @@
 	> .nextLabel {
 		color: var(--ink-strong);
 	}
+
+	@include flex-gap-fallback(top, calc(var(--u) * 1.4));
 }
 
 // A column that wraps: a room that does not fit moves to a second column,
@@ -601,6 +669,8 @@
 	align-content: flex-start;
 	gap: calc(var(--u) * 1.6) var(--pad);
 	overflow: hidden;
+
+	@include flex-gap-fallback(top, calc(var(--u) * 1.6));
 }
 
 .elsewhereRoom {
@@ -609,6 +679,8 @@
 	gap: calc(var(--u) * 0.6);
 	width: 100%;
 	min-width: 0;
+
+	@include flex-gap-fallback(top, calc(var(--u) * 0.6));
 }
 
 .elsewhereHead {
@@ -618,6 +690,8 @@
 	justify-content: space-between;
 	gap: calc(var(--u) * 0.3) calc(var(--u) * 1.6);
 	margin: 0;
+
+	@include flex-gap-fallback(left, calc(var(--u) * 1.6));
 }
 
 .elsewhereName {
@@ -631,6 +705,8 @@
 	align-items: center;
 	gap: 0.5em;
 	line-height: 1.3;
+
+	@include flex-gap-fallback(left, 0.5em);
 }
 
 .elsewhereTitle {
@@ -685,6 +761,8 @@
 	margin: 0;
 	padding: 0 0 0 calc(var(--u) * 0.4);
 	list-style: none;
+
+	@include flex-gap-fallback(left, calc(var(--u) * 3.4));
 }
 
 .speakersMany {
@@ -713,6 +791,8 @@
 	&:nth-child(4n) .print {
 		--tilt: calc(0.6 * var(--tilt-2));
 	}
+
+	@include flex-gap-fallback(left, calc(var(--u) * 2));
 }
 
 .print {
@@ -766,6 +846,8 @@
 	line-height: 1.2;
 	color: var(--paper-ink-dim);
 	font-variant-numeric: tabular-nums;
+
+	@include flex-gap-fallback(left, calc(var(--u) * 0.8));
 }
 
 .speakerText {
@@ -773,6 +855,8 @@
 	flex-direction: column;
 	gap: calc(var(--u) * 0.6);
 	min-width: 0;
+
+	@include flex-gap-fallback(top, calc(var(--u) * 0.6));
 }
 
 .speakerName {
@@ -845,6 +929,8 @@
 	min-width: 0;
 	min-height: 0;
 	overflow: hidden;
+
+	@include flex-gap-fallback(top, calc(var(--u) * 0.8));
 }
 
 .boardNow {
@@ -887,6 +973,8 @@
 	color: var(--ink-strong);
 	white-space: nowrap;
 	overflow: hidden;
+
+	@include flex-gap-fallback(left, 0.8em);
 }
 
 .boardMetaText {
@@ -919,6 +1007,10 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+
+	:global(.no-flex-gap) & {
+		margin-left: auto;
+	}
 }
 
 .boardTitleSm {
@@ -952,11 +1044,7 @@
 // The unit swaps axes, so a letter is as tall as on the same panel hung
 // landscape; what sat side by side stacks instead.
 
-@container tv (orientation: portrait) {
-	.screen {
-		--u: min(1.7778cqw, 1cqh);
-	}
-
+@mixin tv-portrait {
 	// Logo and clock on one line, the room name across the full width under
 	// them.
 	.header {
@@ -1087,6 +1175,8 @@
 
 		.boardCell {
 			gap: calc(var(--u) * 0.6);
+
+			@include flex-gap-fallback(top, calc(var(--u) * 0.6));
 		}
 
 		.boardRoom {
@@ -1115,6 +1205,12 @@
 		align-items: center;
 		gap: calc(var(--u) * 1.6);
 		margin: 0;
+
+		@include flex-gap-fallback(left, calc(var(--u) * 1.6));
+
+		:global(.no-flex-gap) & {
+			margin-bottom: calc(var(--u) * 1.6);
+		}
 	}
 
 	.organizer,
@@ -1124,6 +1220,11 @@
 		align-items: flex-start;
 		justify-content: space-between;
 		gap: calc(var(--u) * 0.8);
+
+		:global(.no-flex-gap) & > * + * {
+			margin-top: calc(var(--u) * 0.8);
+			margin-left: 0;
+		}
 	}
 
 	.partnerGroup .creditLabel {
@@ -1135,7 +1236,17 @@
 		gap: calc(var(--u) * 2.8);
 		height: auto;
 		flex: 1;
+
+		@include flex-gap-fallback(left, calc(var(--u) * 2.8));
 	}
+}
+
+@container tv (orientation: portrait) {
+	.screen {
+		--u: min(1.7778cqw, 1cqh);
+	}
+
+	@include tv-portrait;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1146,5 +1257,52 @@
 
 	.progress span {
 		transition: none;
+	}
+}
+
+// ─── Before container queries (Chromium 105) ──────────────────────────────
+// Most TV browsers. The unit comes from the viewport instead: `min()` is
+// newer still, so media queries pick the shorter side at 16:9 (and 9:16 on
+// a portrait panel). A quarter turn swaps the frame's axes and its
+// orientation together, so the unit is the same with `?rotate` or without;
+// only which layout applies flips.
+@supports not (container-type: size) {
+	.screen {
+		--u: 1vw;
+	}
+
+	@media (min-aspect-ratio: 16/9) {
+		.screen {
+			--u: 1.7778vh;
+		}
+	}
+
+	@media (orientation: portrait) {
+		.screen {
+			--u: 1vh;
+		}
+	}
+
+	@media (max-aspect-ratio: 9/16) {
+		.screen {
+			--u: 1.7778vw;
+		}
+	}
+
+	// No row to measure: a print is `--photo` wide.
+	.print {
+		--photo-w: var(--photo);
+	}
+
+	@media (orientation: portrait) {
+		.frame:not([data-rotate]) {
+			@include tv-portrait;
+		}
+	}
+
+	@media (orientation: landscape) {
+		.frame[data-rotate] {
+			@include tv-portrait;
+		}
 	}
 }

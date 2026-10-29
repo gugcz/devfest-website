@@ -40,6 +40,20 @@ const a11yMockAlias = a11yMock
       }
     : {};
 
+// The venue TVs (`/tv`) run Chromium years old. Astro builds for `esnext`,
+// which ships `?.` and `??` as written and lets the CSS minifier fold
+// longhands into `inset`. Chrome 63 is the floor Astro's islands need anyway
+// (module scripts and dynamic `import()`). CSS is emitted by the server
+// builds too, so every environment gets the CSS target; only the browser
+// bundle gets the JS one (the server keeps its top-level `await`).
+/** @returns {import('vite').Plugin} */
+const legacyBrowserTarget = () => ({
+    name: 'devfest:legacy-browser-target',
+    configEnvironment(name) {
+        return { build: { cssTarget: 'chrome63', ...(name === 'client' && { target: 'chrome63' }) } };
+    },
+});
+
 // `/api/lineup` and `/api/tickets` are Hosting rewrites in production (see
 // CLAUDE.md "Browser data access"). A dev server has no rewrite table, so
 // every data-backed island would render "unavailable". Serve the audit's
@@ -149,7 +163,7 @@ export default defineConfig({
         react(),
     ],
     vite: {
-        plugins: [devApiMocks()],
+        plugins: [devApiMocks(), legacyBrowserTarget()],
         resolve: {
             alias: a11yMockAlias,
         },
