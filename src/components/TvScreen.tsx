@@ -342,40 +342,44 @@ function Progress({ slot, nowMin }: { slot: Slot; nowMin: number | null }) {
 }
 
 /** The room screen's main block: the talk on now, or the next one with its
- * countdown. A break never takes it: people on a break want what comes after,
- * so the break is a small tag beside the room name. */
+ * countdown, on the screen's one paper slip, the speakers' prints under it.
+ * A break never takes it: people on a break want what comes after, so the
+ * break is a small tag beside the room name. */
 function Hero({ slot, live, where, nowMin }: { slot: Slot; live: boolean; where: string; nowMin: number | null }) {
 	const countdown = live ? '' : startsIn(slot.place.startMin, nowMin);
 	const aside = live ? timeLeft(slot, nowMin) : countdown && `Starts ${countdown}`;
 	return (
 		<section className={`${s.hero} ${where ? s.heroElsewhere : ''}`} aria-labelledby="tv-hero-title">
-			<p className={s.heroMeta}>
-				<Flag text={flagFor(slot, live, nowMin)} live={live} />
-				<span className={s.time}>{slotTime(slot)}</span>
-				{aside && (
-					<span className={s.heroAside}>
-						<Note text={aside} />
-						{!live && isSoon(slot, nowMin) && <Grease mark="ring" />}
-					</span>
-				)}
-			</p>
-			{live && <Progress slot={slot} nowMin={nowMin} />}
-			<h2 id="tv-hero-title" className={`${s.heroTitle} ${titleSize(slot.session.title, where ? 1 : 0)}`}>
-				{slot.session.title}
-			</h2>
-			{where && (
-				<p className={s.heroWhere}>
-					<Note text={`In ${where}`} />
+			<div className={s.heroSlip}>
+				<p className={s.heroMeta}>
+					<Flag text={flagFor(slot, live, nowMin)} live={live} />
+					<span className={s.time}>{slotTime(slot)}</span>
+					{aside && (
+						<span className={s.heroAside}>
+							<Note text={aside} />
+							{!live && isSoon(slot, nowMin) && <Grease mark="ring" />}
+						</span>
+					)}
 				</p>
-			)}
+				{live && <Progress slot={slot} nowMin={nowMin} />}
+				<h2 id="tv-hero-title" className={`${s.heroTitle} ${titleSize(slot.session.title, where ? 1 : 0)}`}>
+					{slot.session.title}
+				</h2>
+				{where && (
+					<p className={s.heroWhere}>
+						<Note text={`In ${where}`} />
+					</p>
+				)}
+			</div>
 			<Speakers speakers={slot.session.speakers} start={slot.place.startMin} />
 		</section>
 	);
 }
 
-/** The rail's first card: the talk after the hero in this room, with the
- * break before it named so nobody waits at the door through lunch. While the
- * hero is itself the next talk, this one is After that. */
+/** The rail's first block, on the table beside the hero's slip: the talk
+ * after the hero in this room, with the break before it named so nobody
+ * waits at the door through lunch. While the hero is itself the next talk,
+ * this one is After that. */
 function NextCard({
 	slot,
 	gap,

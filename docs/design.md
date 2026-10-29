@@ -1396,8 +1396,11 @@ detail-view chrome for `SessionDetail` / `SpeakerDetail`).
   Otherwise the site's rules: flat black, no rules or
   cards on the table; word labels are notes (never under `1.6u`), times
   mono and a figure inside a note a mono `.fig`; the speaker portraits are
-  tilted prints with frame number and start time on the edge, Up next and
-  the board's Now column straight slips; "Live now" is a red word and dot
+  tilted prints with frame number and start time on the edge; the paper
+  slip always holds what is on now, else what starts next: the room
+  screen's hero (its prints on the table under it) and the board's Now
+  column. Up next, or After that while the hero is itself the next talk,
+  sits on the table a step under it; "Live now" is a red word and dot
   on black, an ink word and red dot on paper; the live progress is a
   spine, white on black, ink on paper. The one grease mark rings the
   countdown to a talk inside ten minutes (the hero's while it is the next
