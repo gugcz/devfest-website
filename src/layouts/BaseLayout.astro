@@ -226,6 +226,82 @@ const jsonLd = JSON.stringify(
 				document.documentElement.classList.add('js')
 			);
 		</script>
+		{/*
+			The venue TVs run Chromium years old (the build lowers syntax to
+			Chrome 63, not the library). Fill what the screen and Astro's island
+			runtime call that came later: `Object.fromEntries` (73), `flat` /
+			`flatMap` (69), `AbortController` (66, abort only: an old `fetch`
+			ignores the signal) and `Promise.allSettled` (76). And mark
+			`html.no-flex-gap` where flex `gap` (84) is missing, which `@supports`
+			cannot ask: `TvScreen.module.scss` falls back to margins under it.
+			Inline in the head, as the island runtime runs inline before any
+			module; ES5, as nothing transpiles it.
+		*/}
+		{kiosk && (
+			<script is:inline>
+				(function () {
+					function define(target, name, value) {
+						if (!target[name]) Object.defineProperty(target, name, { value: value, configurable: true, writable: true });
+					}
+					define(Object, 'fromEntries', function (entries) {
+						var out = {};
+						Array.from(entries, function (entry) {
+							out[entry[0]] = entry[1];
+						});
+						return out;
+					});
+					define(Array.prototype, 'flat', function flat(depth) {
+						depth = depth === undefined ? 1 : Number(depth);
+						return Array.prototype.reduce.call(this, function (out, item) {
+							return out.concat(Array.isArray(item) && depth > 0 ? flat.call(item, depth - 1) : [item]);
+						}, []);
+					});
+					define(Array.prototype, 'flatMap', function (fn, self) {
+						return Array.prototype.map.call(this, fn, self).flat();
+					});
+					define(Promise, 'allSettled', function (items) {
+						return Promise.all(Array.from(items, function (item) {
+							return Promise.resolve(item).then(
+								function (value) { return { status: 'fulfilled', value: value }; },
+								function (reason) { return { status: 'rejected', reason: reason }; }
+							);
+						}));
+					});
+					if (!window.AbortController) {
+						window.AbortController = function AbortController() {
+							var listeners = [];
+							this.signal = {
+								aborted: false,
+								reason: undefined,
+								onabort: null,
+								addEventListener: function (type, fn) {
+									if (type === 'abort') listeners.push(fn);
+								},
+								removeEventListener: function (type, fn) {
+									listeners = listeners.filter(function (other) { return other !== fn; });
+								},
+							};
+							this.abort = function (reason) {
+								var signal = this.signal;
+								if (signal.aborted) return;
+								signal.aborted = true;
+								signal.reason = reason;
+								if (typeof signal.onabort === 'function') signal.onabort();
+								listeners.forEach(function (fn) { fn(); });
+							};
+						};
+					}
+					var root = document.documentElement;
+					var probe = document.createElement('div');
+					probe.style.cssText = 'display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden';
+					probe.appendChild(document.createElement('div'));
+					probe.appendChild(document.createElement('div'));
+					root.appendChild(probe);
+					if (probe.scrollHeight !== 1) root.classList.add('no-flex-gap');
+					root.removeChild(probe);
+				})();
+			</script>
+		)}
 
 		<title>{title}</title>
 		<meta name="description" content={description} />
