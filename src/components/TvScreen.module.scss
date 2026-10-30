@@ -497,10 +497,13 @@
 	}
 }
 
+// A long countdown (`Starts in 1 h 45 min`) takes a line of its own rather
+// than run off the slip.
 .heroMeta {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: baseline;
-	gap: calc(var(--u) * 1.8);
+	gap: calc(var(--u) * 0.6) calc(var(--u) * 1.8);
 	margin: 0;
 	font-size: calc(var(--u) * 2.2);
 
