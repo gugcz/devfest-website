@@ -22,7 +22,7 @@
     "@astrojs/sitemap": "^3.7.2",
     "@resvg/resvg-js": "^2.6.2",
     "astro": "^7.3.8",
-    "firebase": "^12.16.0",
+    "firebase": "^13.1.0",
     "heic-to": "^1.6.6",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
