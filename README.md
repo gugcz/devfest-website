@@ -46,7 +46,7 @@ npm run preview
 # Accessibility audit (mock-data build + axe)
 npm run a11y
 
-# Everything CI checks: astro check, cognitive complexity, function tests, axe
+# Everything CI checks: astro check, cognitive complexity, site and function tests, axe
 npm run verify
 ```
 
@@ -291,7 +291,7 @@ The Firestore ruleset is project-global, so it lives in the app repository ([`ry
 
 ## Venue screens — `/tv`
 
-`/tv` is the unlisted page for the TVs at the venue (`noindex`, out of the sitemap, linked from nowhere). `/tv?room=<room id or name slug>` pins a screen to one room (the talk on now, up next with a countdown, what the other rooms are showing); plain `/tv` shows every room as a now/next board. During a break (a service session titled as a break, coffee, lunch or registration) both lead with the next talk and show the break as a small tag by the heading; a kick-off, lightning talks, closing remarks or the afterparty lead like a talk, and the other rooms' screens say which room it is in. A credits band under both names GUG.cz as the organiser and loops through the partners (the homepage set, from `src/content/partners.json`, three logos a page). A TV hung portrait gets the same type sizes with the zones stacked: the hero over the rail, and on the board each room as one block; `&rotate=90` (or `270`) turns the picture a quarter for a TV hung on its side that still reports landscape; `&at=10:15` fakes the clock on the event day for checking a screen early. The agenda comes from `/api/lineup`, polled every 2 minutes. TV browsers run old Chromium, so the page works down to Chrome 63: the browser bundle and all CSS build for that target (`astro.config.mjs`), the screen's stylesheet falls back from container queries and flex `gap`, and `/tv` alone loads ES5 polyfills inline (`BaseLayout.astro`, `kiosk`).
+`/tv` is the unlisted page for the TVs at the venue (`noindex`, out of the sitemap, linked from nowhere). `/tv?room=<room id or name slug>` pins a screen to one room (the talk on now, up next with a countdown, what the other rooms are showing); plain `/tv` shows every room as a now/next board. During a break (a service session titled as a break, coffee, lunch or registration) both lead with the next talk and show the break as a small tag by the heading; a kick-off, lightning talks, closing remarks or the afterparty lead like a talk, and the other rooms' screens say which room it is in. A credits band under both names GUG.cz as the organiser and loops through the partners (the homepage set, from `src/content/partners.json`, three logos a page). A TV hung portrait gets the same type sizes with the zones stacked: the hero over the rail, and on the board each room as one block; `&rotate=90` (or `270`) turns the picture a quarter for a TV hung on its side that still reports landscape; `&at=10:15` fakes the clock on the event day for checking a screen early. The agenda comes from `/api/lineup`, polled every 2 minutes. TV browsers run old Chromium, so the page works down to Chrome 63: the browser bundle and all CSS build for that target (`astro.config.ts`), the screen's stylesheet falls back from container queries and flex `gap`, and `/tv` alone loads ES5 polyfills inline (`BaseLayout.astro`, `kiosk`).
 
 ## Analytics (GA4)
 
@@ -313,6 +313,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/speakers` | Speaker lineup (reads `/api/lineup`); `?speaker=<id>` opens one speaker |
 | `/speakers/<id>`, `/talks/<id>` | Share pages: one speaker or talk as text with its own link preview, then forward to the sheet; indexed |
 | `/llms.txt` | The site as Markdown for language models: facts, tickets, pages, every talk and speaker (built) |
+| `/calendar.ics`, `/robots.txt` | Built from `src/site.config.ts`: the calendar entry (doors to closing remarks) and the crawler file naming the sitemap |
 | `/agenda` | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day — and under it (`#talks`) every talk with search and filters (reads `/api/lineup`). `/sessions` redirects here, `?talk=` included |
 | `/workshops` | Workshop seat sign-up and waitlist for ticket holders (reads `/api/workshops`) |
 | `/invoice` | Request a company invoice to buy tickets by bank transfer |

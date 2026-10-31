@@ -1,6 +1,6 @@
 /**
  * The `/api/*` payloads from the fixtures, shared by `scripts/a11y.mjs` and
- * `astro.config.mjs` (a dev server has no Hosting rewrites). Shapes mirror
+ * `astro.config.ts` (a dev server has no Hosting rewrites). Shapes mirror
  * the real endpoints so the browser runs its own parsers unchanged.
  */
 import { ROOMS, SPEAKERS, SESSIONS, TICKETS, WORKSHOPS } from './fixtures.mjs';

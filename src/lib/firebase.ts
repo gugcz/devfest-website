@@ -8,17 +8,9 @@ import {
 	type Analytics,
 } from 'firebase/analytics';
 import { readConsent } from './consent';
+import config from '../site.config';
 
-const firebaseConfig = {
-	apiKey: 'AIzaSyB7lXxnVicSWTtUe9CbVUarm2MwFVRMucU',
-	authDomain: 'devfest-cz-app.firebaseapp.com',
-	databaseURL: 'https://devfest-cz-app-default-rtdb.europe-west1.firebasedatabase.app',
-	projectId: 'devfest-cz-app',
-	storageBucket: 'devfest-cz-app.firebasestorage.app',
-	messagingSenderId: '544417536046',
-	appId: '1:544417536046:web:a238af229f95f75c2aa7bf',
-	measurementId: 'G-L5NK2S2EZ0',
-};
+const firebaseConfig = config.site.firebase;
 
 let appInstance: FirebaseApp | null = null;
 function getApp(): FirebaseApp {
@@ -29,9 +21,9 @@ function getApp(): FirebaseApp {
 	return appInstance;
 }
 
-// reCAPTCHA Enterprise key ID. Public like the Firebase `apiKey`, so it is safe to
-// commit; PUBLIC_FIREBASE_APPCHECK_SITE_KEY overrides it per environment.
-const APPCHECK_SITE_KEY = '6LdOhSYtAAAAALPcqSZIJoT7i7c6B5SOiByWChra';
+// reCAPTCHA Enterprise key ID. Public like the Firebase `apiKey`;
+// PUBLIC_FIREBASE_APPCHECK_SITE_KEY overrides it per environment.
+const APPCHECK_SITE_KEY = config.site.appCheckSiteKey;
 
 let appCheckInstance: AppCheck | null = null;
 /** Initialise App Check (reCAPTCHA Enterprise) for `submitInvoiceCallable`,

@@ -116,7 +116,7 @@ built by a community, not a vendor event.
   GDG; never "GDG Czech Republic").
 - Visual direction "noir, but loud", in the darkroom: one dark theme, red
   accent, poster-scale Bebas Neue headlines, photographs as paper prints.
-  Only the brand faces in `astro.config.mjs` may be used; never add a font.
+  Only the brand faces in `astro.config.ts` may be used; never add a font.
 - The detective key art (`/hero-detective.webp`) is the home hero. Every
   subpage opens on type; a subpage's photographs sit in its bands (venue
   its entrance, contact a 2019 print beside the clippings), graded B&W.

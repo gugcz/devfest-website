@@ -10,7 +10,7 @@ paths:
   - "src/components/SpeakerCard.tsx"
   - "scripts/a11y-mocks/**"
   - "firebase.json"
-  - "astro.config.mjs"
+  - "astro.config.ts"
 ---
 
 # Browser data access (`/api/*`)

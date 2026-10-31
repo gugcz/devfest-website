@@ -1,29 +1,29 @@
-// @ts-check
 import { fileURLToPath } from 'node:url';
 import { defineConfig, fontProviders } from 'astro/config';
 import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 
 import react from '@astrojs/react';
+import type { Plugin } from 'vite';
+import config from './src/site.config';
 
 const BUILD_DATE = new Date().toISOString();
 
-// Per-URL sitemap priority; anything unlisted falls back to 0.6.
-/** @type {Record<string, number>} */
-const PRIORITY = {
-    'https://devfest.cz': 1.0,
-    'https://devfest.cz/speakers': 0.9,
-    'https://devfest.cz/agenda': 0.9,
-    'https://devfest.cz/partners': 0.8,
-    'https://devfest.cz/faq': 0.7,
-    'https://devfest.cz/venue': 0.7,
-    'https://devfest.cz/team': 0.7,
-    'https://devfest.cz/contact': 0.6,
-    'https://devfest.cz/attending': 0.6,
-    'https://devfest.cz/invoice': 0.5,
-    'https://devfest.cz/press/downloads': 0.5,
-    'https://devfest.cz/code-of-conduct': 0.4,
-    'https://devfest.cz/privacy-policy': 0.3,
-    'https://devfest.cz/delete-account': 0.2,
+// Per-path sitemap priority; anything unlisted falls back to 0.6.
+const PRIORITY: Record<string, number> = {
+    '': 1.0,
+    '/speakers': 0.9,
+    '/agenda': 0.9,
+    '/partners': 0.8,
+    '/faq': 0.7,
+    '/venue': 0.7,
+    '/team': 0.7,
+    '/contact': 0.6,
+    '/attending': 0.6,
+    '/invoice': 0.5,
+    '/press/downloads': 0.5,
+    '/code-of-conduct': 0.4,
+    '/privacy-policy': 0.3,
+    '/delete-account': 0.2,
 };
 
 // Accessibility-audit mock mode. Page data comes from `/api/*`, served from
@@ -31,10 +31,8 @@ const PRIORITY = {
 // App Check (inits on every load); under A11Y_MOCK=1 `firebase/app-check` is
 // aliased to a no-op so headless CI doesn't load reCAPTCHA.
 const a11yMock = process.env.A11Y_MOCK === '1';
-/** @param {string} rel */
-const mock = (rel) => fileURLToPath(new URL(rel, import.meta.url));
-/** @type {Record<string, string>} */
-const a11yMockAlias = a11yMock
+const mock = (rel: string): string => fileURLToPath(new URL(rel, import.meta.url));
+const a11yMockAlias: Record<string, string> = a11yMock
     ? {
           'firebase/app-check': mock('./scripts/a11y-mocks/app-check.mjs'),
       }
@@ -46,8 +44,7 @@ const a11yMockAlias = a11yMock
 // (module scripts and dynamic `import()`). CSS is emitted by the server
 // builds too, so every environment gets the CSS target; only the browser
 // bundle gets the JS one (the server keeps its top-level `await`).
-/** @returns {import('vite').Plugin} */
-const legacyBrowserTarget = () => ({
+const legacyBrowserTarget = (): Plugin => ({
     name: 'devfest:legacy-browser-target',
     configEnvironment(name) {
         return { build: { cssTarget: 'chrome63', ...(name === 'client' && { target: 'chrome63' }) } };
@@ -61,8 +58,7 @@ const legacyBrowserTarget = () => ({
 //
 // `DEVFEST_LIVE_API=1 npm run dev` hits the deployed functions instead —
 // needed when changing the functions themselves.
-/** @returns {import('vite').Plugin} */
-const devApiMocks = () => ({
+const devApiMocks = (): Plugin => ({
     name: 'devfest:dev-api-fixtures',
     apply: 'serve',
     async configureServer(server) {
@@ -77,7 +73,7 @@ const devApiMocks = () => ({
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://devfest.cz',
+    site: config.site.url,
     trailingSlash: 'never',
     // Self-hosted, build-time-optimised replacements for the three brand faces
     // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
@@ -155,8 +151,8 @@ export default defineConfig({
             serialize(item) {
                 item.lastmod = BUILD_DATE;
                 item.changefreq = ChangeFreqEnum.WEEKLY;
-                const url = item.url.replace(/\/$/, '');
-                item.priority = PRIORITY[url] ?? 0.6;
+                const path = item.url.replace(/\/$/, '').replace(config.site.url, '');
+                item.priority = PRIORITY[path] ?? 0.6;
                 return item;
             },
         }),
