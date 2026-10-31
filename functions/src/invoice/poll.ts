@@ -1,5 +1,5 @@
 /**
- * `pollPaidInvoicesScheduled` — hourly payment poller (iDoklad has no
+ * `pollPaidInvoicesScheduled` — daily payment poller (iDoklad has no
  * webhooks): list `invoiced` docs → check PaymentStatus → (paid) mint code →
  * email → record + Slack. Completion flips to `completed`, so each invoice
  * is processed once.
@@ -48,7 +48,7 @@ import {
 export const pollPaidInvoicesScheduled = onSchedule(
 	{
 		...SCHEDULED,
-		schedule: 'every 1 hours',
+		schedule: 'every day 06:30',
 		secrets: [
 			IDOKLAD_CLIENT_ID,
 			IDOKLAD_CLIENT_SECRET,
@@ -66,8 +66,8 @@ export const pollPaidInvoicesScheduled = onSchedule(
 				name: 'pollPaidInvoicesScheduled',
 				domain: 'invoices',
 				// Per-invoice failures are handled inside the loop; reaching here means
-				// the whole poll died, so no payment was picked up at all this hour.
-				failureNote: 'no paid invoice was processed this run, retry within the hour',
+				// the whole poll died, so no payment was picked up at all this run.
+				failureNote: 'no paid invoice was processed this run, retried on the next daily run',
 			},
 			pollPaidInvoices,
 		),

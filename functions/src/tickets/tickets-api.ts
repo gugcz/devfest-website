@@ -1,8 +1,7 @@
 /**
  * `ticketsApi` — public endpoint serving the RTDB `/tickets` cache. Tighter
- * TTL than the lineup (sell-outs surface faster). The one function that
- * does NOT scale to zero: it revalidates often and the cold-start request is
- * a real visitor waiting on the roadmap.
+ * TTL than the lineup (sell-outs surface faster). Scale-to-zero since the
+ * event is over: a cold start now only costs the rare visitor a second.
  */
 
 import { onRequest } from 'firebase-functions/v2/https';
@@ -32,8 +31,7 @@ async function loadTickets(): Promise<TicketsCache> {
 }
 
 export const ticketsApi = onRequest(
-	// Deliberate override of the preset's scale-to-zero — see the file comment.
-	{ ...CACHED_ENDPOINT, minInstances: 1 },
+	CACHED_ENDPOINT,
 	cachedJsonEndpoint<TicketsCache>({
 		name: 'ticketsApi',
 		cacheControl: CACHE_CONTROL,

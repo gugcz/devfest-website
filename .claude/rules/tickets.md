@@ -21,8 +21,8 @@ repo (CLAUDE.md).
   `filterDisplayable` again in the browser). Every other state renders a badge.
   `paused` + zero sales → "Coming soon" (`releaseStatus()`).
 - Buy URL: `https://ti.to/<account>/<event>/with/<release-slug>`.
-- Refresh every 5 minutes (`refreshTicketsScheduled`), the same as the
-  `/api/tickets` edge TTL; `dailyTicketStatusScheduled` posts a Slack summary
+- Refresh daily at 06:00 (`refreshTicketsScheduled`; sales are closed);
+  `dailyTicketStatusScheduled` posts a Slack summary
   at 09:00 Prague time.
 - Project is shared with the mobile app repo: keep `"codebase": "website"`
   and unique function names (CLAUDE.md > Firebase shared project).

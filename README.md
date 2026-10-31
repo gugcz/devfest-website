@@ -68,7 +68,7 @@ functions — use it when changing the functions.
 The ticket section renders client-side from an RTDB cache, read through `/api/tickets` — never the Firebase SDK (see [CLAUDE.md](CLAUDE.md)). The static build never calls ti.to.
 
 ```
-Cloud Scheduler (every 5 min, Europe/Prague)
+Cloud Scheduler (daily 06:00, Europe/Prague)
   └─> Cloud Function `refreshTicketsScheduled` (europe-west1)
         ├─ fetch  https://api.tito.io/v3/<acc>/<evt>/releases
         └─ write  RTDB /tickets = { releases, accountSlug, eventSlug, fetchedAt }
@@ -111,7 +111,7 @@ The default Cloud Functions service account has the IAM needed to write RTDB; no
 
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
-| `refreshTicketsScheduled` | Cloud Scheduler, every 5 min | Sync ti.to releases → RTDB `/tickets` |
+| `refreshTicketsScheduled` | Cloud Scheduler, daily 06:00 | Sync ti.to releases → RTDB `/tickets` |
 | `ticketsApi` | HTTPS, public (`/api/tickets`) | Serve the cached `/tickets` roadmap as JSON for the browser to `fetch()` (5-min edge TTL) |
 | `ticketsWebhook` | HTTPS, public | Verifies `Tito-Signature`, drops redeliveries (RTDB `webhookDedup`) and posts purchase notifications to Slack |
 | `dailyTicketStatusScheduled` | Cloud Scheduler, daily `09:00 Europe/Prague` | Fetches live releases from ti.to and posts a sales summary to Slack |
@@ -154,10 +154,10 @@ Only `secret` releases are dropped (`isWebsiteVisible`, again client-side). Ever
 
 ## Speakers & Sessions — Sessionize → Firestore → `/api/lineup`
 
-`/speakers` and `/agenda` render client-side from **Firestore**, mirrored every 15 minutes from **Sessionize** by a Cloud Function. Browsers never touch Sessionize; they read the cached `/api/lineup` endpoint, not the Firebase SDK.
+`/speakers` and `/agenda` render client-side from **Firestore**, mirrored daily from **Sessionize** by a Cloud Function. Browsers never touch Sessionize; they read the cached `/api/lineup` endpoint, not the Firebase SDK.
 
 ```
-Cloud Scheduler (every 15 minutes)
+Cloud Scheduler (daily 06:15)
   └─> Cloud Function `refreshSessionizeScheduled` (europe-west1)
         ├─ fetch  Sessionize "All data" JSON view (SESSIONIZE_ENDPOINT_ID)
         ├─ fetch  its "Speakers" view too: hosts + keynote, missing from All, join the roster
@@ -178,7 +178,7 @@ Browser
 
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
-| `refreshSessionizeScheduled` | Cloud Scheduler, every 15 minutes | Sync Sessionize → Storage photos + Firestore `speakers`/`sessions`/`rooms` |
+| `refreshSessionizeScheduled` | Cloud Scheduler, daily 06:15 | Sync Sessionize → Storage photos + Firestore `speakers`/`sessions`/`rooms` |
 | `lineupApi` | HTTPS, public (`/api/lineup`) | Serve `{ speakers, sessions, rooms }` as JSON for the browser to `fetch()` (15-min edge TTL) |
 | `speakerPhotoApi` | HTTPS, public (`/api/speaker-photo?id=`) | Serve one speaker's photo same-origin so `/speaker-card` can export its canvas (1-day edge TTL) |
 
@@ -231,7 +231,7 @@ Firestore onCreate
         ├─ iDoklad: find/create contact → create issued invoice → email it (PDF attached)
         └─ invoices/{id} = { status: invoiced, idokladInvoiceId, variableSymbol, … }
 
-Cloud Scheduler (hourly) — iDoklad has NO webhooks
+Cloud Scheduler (daily 06:30) — iDoklad has NO webhooks
   └─> pollPaidInvoicesScheduled (europe-west1)
         ├─ for each `invoiced` doc → GET iDoklad PaymentStatus
         └─ if paid:
@@ -248,9 +248,9 @@ The browser never touches Firestore — it calls `submitInvoiceCallable`, so `in
 | ---- | ------- | ------- |
 | `submitInvoiceCallable` | Callable (App Check enforced) | Validate the form (honeypot), apply the global + per-company throttles, write `invoices/{id}` |
 | `processInvoiceTrigger` | Firestore onCreate `invoices/{id}` | Create the iDoklad contact + issued invoice and email it |
-| `pollPaidInvoicesScheduled` | Cloud Scheduler, hourly | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
+| `pollPaidInvoicesScheduled` | Cloud Scheduler, daily 06:30 | Check unpaid invoices' iDoklad PaymentStatus; on paid, mint + deliver the 100%-off ti.to code |
 
-> iDoklad has no webhooks — payment is polled hourly, so a paid invoice is claimed up to ~1 h later.
+> iDoklad has no webhooks — payment is polled daily, so a paid invoice is claimed up to ~24 h later.
 
 > `invoiceRateLimits` (the per-company throttle) writes an `expiresAt` timestamp. Set a Firestore **TTL policy** on that collection with field `expiresAt` (console → Firestore → TTL) so spent windows are deleted; the code does not depend on it, the collection just grows without it.
 

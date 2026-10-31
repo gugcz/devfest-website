@@ -1,5 +1,5 @@
 /**
- * 15-minute mirror of Sessionize into Firestore `speakers` (embeds
+ * Daily mirror of Sessionize into Firestore `speakers` (embeds
  * `sessions[]`), `sessions` (embeds `speakers[]`) and `rooms`. Photos
  * mirrored to Storage first.
  * Each collection is one atomic batch with guarded deletes; a truncated
@@ -136,15 +136,14 @@ async function syncSessionize(): Promise<void> {
 }
 
 /**
- * Scheduled refresh every 15 minutes, so a room or talk added in Sessionize
- * reaches /agenda within the half hour (plus the 15-min `/api/lineup` TTL).
- * Sessionize server-caches the All-data view ~5 min; 96 requests a day is
- * still trivial load, and photos only re-download when they change.
+ * Scheduled refresh once a day: the event is over and the lineup is final.
+ * During the run-up this ran every 15 minutes so a Sessionize edit reached
+ * /agenda within the half hour. Photos only re-download when they change.
  */
 export const refreshSessionizeScheduled = onSchedule(
 	{
 		...SCHEDULED,
-		schedule: 'every 15 minutes',
+		schedule: 'every day 06:15',
 		secrets: [SESSIONIZE_ENDPOINT_ID, SLACK_WEBHOOK_URL],
 		// Both raised above the shared defaults: the first run downloads the whole
 		// speaker roster into Storage. Steady-state runs are far quicker (only
@@ -159,7 +158,7 @@ export const refreshSessionizeScheduled = onSchedule(
 				domain: 'sessionize',
 				// The previous mirror stays live and correct, so this is a
 				// freshness problem, not an outage — nobody needs to act right away.
-				failureNote: 'live speakers/sessions left untouched, next run in 15 minutes',
+				failureNote: 'live speakers/sessions left untouched, next daily run',
 			},
 			syncSessionize,
 		),

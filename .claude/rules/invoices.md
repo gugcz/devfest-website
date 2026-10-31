@@ -9,7 +9,7 @@ paths:
 
 `/invoice` → `submitInvoiceCallable` → Firestore `invoices/{id}` →
 `processInvoiceTrigger` (iDoklad contact + invoice + email) →
-`pollPaidInvoicesScheduled` hourly (no iDoklad webhooks) → paid → 100%-off
+`pollPaidInvoicesScheduled` daily (no iDoklad webhooks) → paid → 100%-off
 ti.to code. Browser never touches Firestore.
 
 - Both stages claim the doc first (`claimInvoiceForIssuing` pending→

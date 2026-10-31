@@ -15,7 +15,7 @@ paths:
 
 # Sessionize lineup
 
-15-minute sync (`every 15 minutes`) into Firestore `speakers` (embeds `sessions[]`), `sessions`
+Daily sync (`every day 06:15`) into Firestore `speakers` (embeds `sessions[]`), `sessions`
 (embeds `speakers[]`) and `rooms`; browser reads `/api/lineup`.
 
 - Speakers come from the All view **plus** the Speakers view

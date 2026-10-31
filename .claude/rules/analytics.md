@@ -83,7 +83,7 @@ never boots on that path.
   `astro:page-load` listener survives soft navigations.
 - Mark the three conversions as key events in GA4 (README "Analytics").
 
-**Data stores:** RTDB `/tickets` (ti.to cache, every 5 min), Firestore
+**Data stores:** RTDB `/tickets` (ti.to cache, daily), Firestore
 `speakers`/`sessions` (Sessionize) and `invoices`. Project `devfest-cz-app`,
 site `devfest-public`.
 
