@@ -32,22 +32,37 @@
 		}
 	}
 
+	// While the slip is up, `--cookie-slip-h` on <html> holds the band it covers
+	// at the foot of the viewport (its height plus its bottom offset), and
+	// `scroll-padding-bottom` in `BaseLayout.scss` reads it: a focused element
+	// scrolled into view lands above the slip, not under it (WCAG 2.4.11).
+	const slipHeight = new ResizeObserver(([entry]) => {
+		const banner = entry.target as HTMLElement;
+		const covered = banner.offsetHeight + parseFloat(getComputedStyle(banner).bottom);
+		document.documentElement.style.setProperty('--cookie-slip-h', `${Math.ceil(covered)}px`);
+	});
+
+	function showBanner() {
+		const banner = document.getElementById('cookie-banner');
+		if (!banner) return;
+		banner.setAttribute('aria-hidden', 'false');
+		banner.classList.remove('cookie-banner--hidden');
+		slipHeight.disconnect();
+		slipHeight.observe(banner);
+	}
+
+	function hideBanner() {
+		const banner = document.getElementById('cookie-banner');
+		banner?.setAttribute('aria-hidden', 'true');
+		banner?.classList.add('cookie-banner--hidden');
+		slipHeight.disconnect();
+		document.documentElement.style.removeProperty('--cookie-slip-h');
+	}
+
 	// Re-bind on `astro:page-load`, never DOMContentLoaded: bundled module scripts
 	// run once per document, but <ClientRouter /> swaps the banner markup on every
 	// soft navigation. `astro:page-load` covers the initial load too.
 	document.addEventListener('astro:page-load', () => {
-		const banner = document.getElementById('cookie-banner');
-
-		const hideBanner = () => {
-			banner?.setAttribute('aria-hidden', 'true');
-			banner?.classList.add('cookie-banner--hidden');
-		};
-
-		const showBanner = () => {
-			banner?.setAttribute('aria-hidden', 'false');
-			banner?.classList.remove('cookie-banner--hidden');
-		};
-
 		// Nothing loads until (and unless) the visitor accepts — `initAnalytics()`
 		// reads the stored decision. A stored `accepted` boots GA4 right here, on
 		// the entry page, so the document-load `page_view` is attributed.
@@ -83,6 +98,20 @@
 		const banner = document.getElementById('cookie-banner');
 		if (!banner || banner.inert || banner.classList.contains('cookie-banner--hidden')) return;
 		(document.getElementById('cookie-decline') as HTMLButtonElement | null)?.click();
+	});
+
+	// Scroll padding only applies when the browser scrolls. Focus moving to an
+	// element already on screen but under the slip scrolls nothing, so do it
+	// here; `nearest` honours the padding and stops just above the slip.
+	document.addEventListener('focusin', (e) => {
+		const banner = document.getElementById('cookie-banner');
+		const target = e.target;
+		if (!banner || banner.inert || banner.classList.contains('cookie-banner--hidden')) return;
+		if (!(target instanceof Element) || banner.contains(target)) return;
+		const slip = banner.getBoundingClientRect();
+		const box = target.getBoundingClientRect();
+		const under = box.bottom > slip.top && box.top < slip.bottom && box.right > slip.left && box.left < slip.right;
+		if (under) target.scrollIntoView({ block: 'nearest' });
 	});
 </script>
 
