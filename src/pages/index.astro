@@ -27,8 +27,9 @@ const [heroDay, heroMonth, heroYear] = EVENT.dateShort.split(' ');
 
 // The home page as prints on a black table: the full-bleed plate with the
 // statement set left over it, then the event (a widescreen print and its
-// back), tickets, speakers, the past editions as a contact sheet, the
-// partner wall with a plain label per tier, and the newsletter card.
+// back), tickets, speakers, the past editions as a contact sheet (those
+// three lead at poster scale), then the utility sections a step down: the
+// partner wall with a plain label per tier, the app and the newsletter card.
 
 // One row per tier, top tier first. Silver and community share a row (each
 // mark still sized by its own tier), travel gets the last one. Media partners
@@ -126,6 +127,9 @@ const STRIP_SCALE = 1;
 					{ticketsHref && <HeroOffer client:load />}
 				</div>
 				{ticketsHref && <a href="#tickets" class="btn-primary hero-cta">Get tickets</a>}
+				{/* With the sale off, the page's one red fill goes to the newsletter.
+				     Neutral on purpose: it names no year and promises no edition. */}
+				{!ticketsHref && enabled('newsletter') && <a href="#newsletter" class="btn-primary hero-cta">Stay in the loop</a>}
 			</div>
 		</section>
 
@@ -176,19 +180,6 @@ const STRIP_SCALE = 1;
 				</div>
 			</div>
 		</section>
-
-		{/* THE APP — the same badges as /app, so nobody needs the venue QR code
-		     to find it. */}
-		{enabled('app') && <section class="band sec home-app" aria-labelledby="home-app-title">
-			<div class="band-inner">
-				<header class="head-rule">
-					<h2 id="home-app-title" class="head-rule-title">Get the app</h2>
-					<p class="head-rule-note">The programme, your schedule and a reminder before every talk, on your phone.</p>
-				</header>
-				<StoreBadges />
-				<p class="home-app-more"><a class="action" href="/app">What’s in the app</a></p>
-			</div>
-		</section>}
 
 		{/* TICKETS — client:load, not visible: the hero's "Get tickets" jumps
 		     straight here, and a visible-gated island only began loading on
@@ -293,7 +284,20 @@ const STRIP_SCALE = 1;
 			</section>
 		)}
 
-		{/* NEWSLETTER — `anchor-target`: the ticket footnote, the footer and the FAQ jump here. */}
+		{/* THE APP — the same badges as /app, so nobody needs the venue QR code
+		     to find it. */}
+		{enabled('app') && <section class="band sec home-app" aria-labelledby="home-app-title">
+			<div class="band-inner">
+				<header class="head-rule">
+					<h2 id="home-app-title" class="head-rule-title">Get the app</h2>
+					<p class="head-rule-note">The programme, your schedule and a reminder before every talk, on your phone.</p>
+				</header>
+				<StoreBadges />
+				<p class="home-app-more"><a class="action" href="/app">What’s in the app</a></p>
+			</div>
+		</section>}
+
+		{/* NEWSLETTER — `anchor-target`: the hero, the ticket footnote, the footer and the FAQ jump here. */}
 		{enabled('newsletter') && <section id="newsletter" class="band sec anchor-target" aria-labelledby="newsletter-title">
 			<div class="band-inner newsletter">
 				<div>

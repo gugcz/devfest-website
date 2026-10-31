@@ -35,7 +35,7 @@ typography:
     letterSpacing: "0"
   hero:
     fontFamily: "var(--font-bebas-neue), sans-serif"
-    fontSize: "clamp(4.5rem, 10.5vw, 9.25rem)"
+    fontSize: "clamp(4.25rem, 10.5vw, 9.25rem)"
     fontWeight: 400
     lineHeight: 0.86
     letterSpacing: "0"
@@ -403,7 +403,8 @@ other accent hue, no red-to-other-hue gradients.
 **[MUST] Red fills: the header's Tickets plus at most one per screen.**
 The header Tickets rides on every page; under it a screen carries one red
 fill at most. On `/` the hero's "Get tickets" and the live ticket slip's
-Buy are on different screens; the newsletter submit and the cookie
+Buy are on different screens; with the sale off the hero's one fill is
+"Stay in the loop" to the newsletter; the newsletter submit and the cookie
 Accept are black fills on their paper (`NewsletterForm.module.scss`,
 `CookieBanner.scss`), and `/speakers` ends on a plain `.action` "Get
 tickets" in its `EndLine` (`speakers.astro`). A spent wave's grease cross
@@ -577,10 +578,10 @@ Poster scale (Bebas), `BaseLayout.scss:59–76`:
 | Token | Value | Line | Use |
 | --- | --- | --- | --- |
 | `--fs-subpage` | `clamp(5rem, 13vw, 12.5rem)` | 70 | the subpage `<h1>` in `SubpageHero` — **one per page** |
-| `--fs-hero` | `clamp(4.5rem, 10.5vw, 9.25rem)` | 62 | the home statement (`index.scss:55–62`): `/`'s one display element, above every section head at every width |
-| `--fs-section` | `clamp(4rem, 9vw, 8rem)` | 69 | **the section head** (`.head-rule-title`): The eleventh DevFest.cz, Tickets, Speakers, Past editions, Partners on `/`; "Every talk" on `/agenda`; "The route" on `/venue`; "In the news" on `/contact`. **And every secondary poster title**: "Newsletter", the `/venue` address and "The entrance", "Become a partner", "Press kit", and every `Closer` title (`Closer.scss`; `BaseLayout.scss` says `--fs-h2`, see Open points) |
+| `--fs-hero` | `clamp(4.25rem, 10.5vw, 9.25rem)` | 62 | the home statement (`index.scss`): `/`'s one display element, above every section head at every width; the floor (68px) is the largest that keeps "CONFERENCE." on one 320px line |
+| `--fs-section` | `clamp(4rem, 9vw, 8rem)` | 69 | **the section head** (`.head-rule-title`): The eleventh DevFest.cz, Tickets, Speakers, Past editions on `/`; "Every talk" on `/agenda`; "The route" on `/venue`; "In the news" on `/contact`. **And every secondary poster title**: the `/venue` address and "The entrance", "Become a partner", "Press kit", and every `Closer` title (`Closer.scss`; `BaseLayout.scss` says `--fs-h2`, see Open points) |
 | `--fs-display` | `clamp(3rem, 9.5vw, 9rem)` | 61 | the speaker sheet's name; the menu panel's primary links under 901px; the invite title; the live ticket slip's name and price on a phone |
-| `--fs-h2` | `clamp(2.25rem, min(6vw, 9svh), 5.5rem)` | 66 | the FAQ categories; the session sheet's title; the `/thank-you` date; the `/invoice` steps head; the live ticket slip's name and price; the menu's primary links ≥901px |
+| `--fs-h2` | `clamp(2.25rem, min(6vw, 9svh), 5.5rem)` | 66 | the FAQ categories; the session sheet's title; the `/thank-you` date; the `/invoice` steps head; the live ticket slip's name and price; the menu's primary links ≥901px; the utility heads on `/` (Partners, Get the app, Newsletter; `index.scss`) |
 | `--fs-h3` | `clamp(1.8rem, 3.4vw, 2.6rem)` | 67 | a ticket slip's price; `/team` names; the menu's secondary links |
 | `--fs-head` | `clamp(2.1rem, 3.4vw, 3rem)` | 68 | a compact head on paper: the `NextStep` titles, the `/contact` index-card titles, the `/venue` card titles and numbers, a clipping's headline, the partnerships contact's name, the legal `h2`, the workshop slip title, the invoice step numbers and estimate |
 | `--fs-card-title` | `1.95rem` | 71 | the speaker name on a print, the live slip's Buy label |
@@ -588,7 +589,7 @@ Poster scale (Bebas), `BaseLayout.scss:59–76`:
 
 **[MUST] One display element per page, and it outranks the section
 heads.** On a subpage that is the `SubpageHero` title (`--fs-subpage`); on
-`/` the statement (`--fs-hero`, floor 4.5rem, cap 9.25rem = 148px), above
+`/` the statement (`--fs-hero`, floor 4.25rem, cap 9.25rem = 148px), above
 `--fs-section` (floor 4rem, cap 8rem) at every width. Every other poster
 title is a section step: subpage / hero > section > h2 > h3. `--fs-h2` and
 the row steps carry an `svh` term so a short desktop screen brings them
@@ -646,7 +647,9 @@ the row steps above to their phone values and `--track-scale: 0.72`; the
 result at `0.1em` (`max(0.1em, …)`, `_type.scss:49–51`), so a 0.15em figure
 sets at 0.108em on a phone and a 0.1em one stays at 0.1em; notes and actions
 carry no tracking and do not move. `--fs-h2` and `--fs-display` keep their floors: the section head and the page title stay poster scale while
-the lists under them come down.
+the lists under them come down. On `/` only the lead sections (the event,
+Speakers, Past editions) keep the poster head; the utility sections
+(Partners, Get the app, Newsletter) take `--fs-h2`, so the page has a lead.
 
 **[MUST] Body text caps at 65–75ch.** Cap the container, don't shrink the
 type. Mono never tracks under `0.1em`.
@@ -711,7 +714,7 @@ value from the histogram.
 | `max-width: 900px` | 4 | `NextStepList` one column, the card builder, `HeroBackground`, the closer stacks (`BaseLayout.scss`) |
 | `max-width: 860px` | 2 | the speaker sheet stacks, the invite page |
 | `max-width: 1240px` / `1000px` | 1 / 1 | four `NextStep` cards go two across (`NextStepList.astro`); `Workshops.module.scss` |
-| `max-width: 500px` | 1 | the newsletter form stacks |
+| `max-width: 500px` | 1 | the newsletter submit goes full width |
 | `max-width: 45em` / `23.75em` | 2 / 1 | the footer goes two columns, then one (`Footer.scss`) |
 | `max-width: 700px` | 1 | `thank-you.scss` |
 | `max-width: 380px` | 1 | narrowest phone (`BaseLayout.scss` header padding) |
@@ -908,7 +911,8 @@ header Tickets is a red button at every width (`.header-cta`, `Menu.scss`:
 `cta-label` on `--color-accent`, `--radius`, `padding: 0.3rem 1.1rem
 0.1rem`, `min-height: var(--header-tap)`, inverted on hover), hidden under
 380px and first in the menu; it is dropped on `/invite/*`. Under it, each
-screen spends at most one: the home hero's "Get tickets" (`.hero-cta`),
+screen spends at most one: the home hero's "Get tickets" or, with the sale
+off, "Stay in the loop" (`.hero-cta`),
 the live slip's "Buy"; a closer's primary; the brand-manual download on
 `/contact` and `/press/downloads`; the partnership deck; the invoice and
 workshop sign-in submits; a sheet's "Get tickets" (`Sheet.tsx`); the card
@@ -967,9 +971,8 @@ not a fade. **[CURRENT]** A spent ticket slip's paper is a shade darker
 (`filter: brightness(0.93)`, `Tickets.module.scss`) under its
 state word and grease cross.
 
-**[CURRENT] Disabled controls:** the newsletter submit (`disabled` until
-consent) is an outlined slot in `--paper-ink-dim` on the card (5.3:1), not
-a dimmed red; the invoice submit dims to `opacity: 0.55` only while in
+**[CURRENT] Disabled controls:** no submit is `disabled` for a missing
+input (Forms); the invoice submit dims to `opacity: 0.55` only while in
 flight (`[aria-disabled='true']`, `InvoiceForm.module.scss`);
 `/partners` marks a not-yet-live deck with `aria-disabled="true"` on a
 `<span>` drawn as a dashed paper-ink slot (`.partners-cta-soon`,
@@ -1023,13 +1026,23 @@ is not a print: it sits straight, untaped.**
 - **The newsletter form is a straight paper card on the table**
   (`NewsletterForm.module.scss`): `--paper`, `--paper-ink`, the paper
   shadow, a typed edge ("DevFest.cz" as a note, a mono figure) across its
-  top. Its label a `note(--fs-note-sm)` in `--paper-ink-dim`. The black
-  submit sits beside the field and stacks under it ≤500px.
+  top. Its label a `note(--fs-note-sm)` in `--paper-ink-dim`. One column in
+  fill order: the field, the consent, the black submit (natural width, full
+  width ≤500px). The submit is never `disabled`: a failed submit checks the
+  email, then the consent, focuses the first bad one, marks it
+  `aria-invalid` (the underline or the box turns red) and says why in the
+  `role="status"` line behind the red margin mark; the next change clears
+  both (`NewsletterForm.tsx`). One field and one box, so it validates on
+  submit only, not on blur. The consent is read from the DOM at submit, so
+  a tick made before hydration counts. Until the island hydrates the form validates
+  natively (`noValidate` only after hydration), so a submit before the
+  script still needs the consent.
 - **[MUST] The consent checkbox is drawn, not native**
   (`NewsletterForm.module.scss`): `appearance: none`, a 2px border in the
   card's ink (`--box-ink: var(--paper-ink)`), filled with that ink and a
   cut-out tick (`--box-tick: var(--paper)`) when checked; `--radius`
-  corners, focus ring at `--focus-gap`. The UA box read as disabled.
+  corners, focus ring at `--focus-gap` on `:focus` (a failed submit by
+  mouse moves focus there from script). The UA box read as disabled.
 - **Form pages.** `/invoice` runs two plain bands: "How it works" as a
   numbered list on black (mono `--fs-head` numbers, three across), then
   the paper form on a `minmax(0, 1fr) minmax(0, var(--side-col))` grid with
@@ -1151,8 +1164,9 @@ is not a print: it sits straight, untaped.**
   Travel and Media 0.8 (`partners.scss`). `plated` is a per-partner flag, not a tier
   inversion.
 - **[CURRENT] The home partner wall** (`index.astro`, `index.scss`): the
-  `.head-rule` "Partners" with the two text actions "All partners" and
-  "Become a partner" in the note's place, then one row per tier under a
+  `.head-rule` "Partners" at `--fs-h2` with the two text actions "All
+  partners" and "Become a partner" in the note's place, under the title,
+  then one row per tier under a
   plain label (`.partners-label`, `note(--fs-note)` in `--ink-meta`), top
   tier first: Platinum and Diamond side by side on a `5fr / 7fr` grid, Gold
   and the rest across the page; Silver and Community share a row under one
@@ -1228,7 +1242,7 @@ Primitives, all in `BaseLayout.scss`:
 | `.page-stack` | 470 | every page's `<main>`; its last `.band` closes on `--section-y-tight` (542) and the footer adds no opening air |
 | `.band` (+ `--lit` 523) / `.band-inner` | 507 / 546 | a section's ground, flat black; `--lit` is the same flat black, kept as the class of the form, legal and reference subpages (`/agenda`, `/faq` among them). There is no `--accent` variant. **[MUST] One gap between two sections**: a band followed by a closer hands its bottom air to the closer (`.band:has(+ .closer-band)`, 535), and consecutive bands of one page do the same (`/agenda`, `/invoice`), so two paddings never stack |
 | `.eyebrow` | 314 | plain typewriter note (`note()`, `--ink-muted`) — no decoration, no trailing hairline, never uppercased; the head of a `NextStepList`, a `Closer` eyebrow |
-| `.head-rule` (+ `.head-rule-title`, `.head-rule-note`) | 326 | **the section head**: a `<header>` (or `<div>`) on `SubpageHero`'s grid, `minmax(0, 1fr) minmax(0, var(--side-col))` with `--side-gap` between, aligned to the foot (`align-items: end`): the Bebas `--fs-section` title (`display()`) left and, in the right column, at most one note set as `prose(--fs-body-lg, 1.6)` in `--ink-soft` (max `34ch`) or the section's text actions, so every head's note starts at the hero note's x; a head with no note spans both columns (`> :only-child`); one column ≤720px; no rule, space closes it (`margin-bottom: clamp(2.5rem, 5vw, 4.5rem)`). The class keeps its old name |
+| `.head-rule` (+ `.head-rule-title`, `.head-rule-note`) | 326 | **the section head**: a `<header>` (or `<div>`) on `SubpageHero`'s grid, `minmax(0, 1fr) minmax(0, var(--side-col))` with `--side-gap` between, aligned to the foot (`align-items: end`): the Bebas `--fs-section` title (`display()`) left and, in the right column, at most one note set as `prose(--fs-body-lg, 1.6)` in `--ink-soft` (max `34ch`) or the section's text actions, so every head's note starts at the hero note's x; a head with no note spans both columns (`> :only-child`); one column ≤720px, and on `/` at every width except the Tickets head (`index.scss`), so a note sits under its title; no rule, space closes it (`margin-bottom: clamp(2.5rem, 5vw, 4.5rem)`). The class keeps its old name |
 | `.paper` | 364 | **a paper print**: `--paper` border (`0.65rem 0.65rem 0`), `--paper-ink`, `--paper-shadow`, `rotate(var(--tilt, 0deg))`; ≤720px the tilt clamps to ±`--tilt-1`. Also the class of a straight paper card, slip or form that carries no photograph (the `/venue` and `/contact` index cards, the `NextStep` cards, the partnerships card, the invoice and workshop forms, the `/thank-you` stub); those set no `--tilt` |
 | `.paper-photo` | 374 | the black photograph well inside a print; its `<img>` covers it in `grayscale(1) contrast(1.1)`; the caller sets the ratio |
 | `.paper-edge` | 389 | the print's bottom margin: two items pushed apart, `mono(--fs-label-xs, 0.12em, uppercase)` in `--paper-ink-dim`; a word on it is an `.edge-word` note |
@@ -1512,10 +1526,10 @@ red word and the closing full stop belong to the home hero statement**
 (and the invite title). Subpage hero titles carry neither (see the title
 list under Voice); every `SubpageHero` title is migrated. Section heads and every `Closer` title
 are plain white, because a red final word on ~30 headlines made none of them
-the loud one. On `/` the sections open on a `.head-rule` at poster scale:
-"The eleventh DevFest.cz", "Get the app", "Tickets",
-"Speakers", "Past editions", "Partners"; "Newsletter" is a `.display` `h2`
-on its own card's column. Space under the head, never a rule. No numbered
+the loud one. On `/` the lead sections open on a `.head-rule` at poster
+scale: "The eleventh DevFest.cz", "Tickets", "Speakers", "Past editions";
+"Partners" and "Get the app" take `--fs-h2`, and "Newsletter" is a
+`.display` `h2` at `--fs-h2` on its own card's column. Space under the head, never a rule. No numbered
 eyebrow, no stamp. Headings are literal: no puns.
 
 **[MUST] A head note carries a fact, never a label of the section's own
@@ -1768,9 +1782,9 @@ Decision criteria, picked per page:
   `BaseLayout.astro:74–77`).
 - **The home page is prints on a black table** (`index.astro`,
   `index.scss`): the hero plate with the statement, the facts and the red
-  fill set over it, then six sections on a poster `.head-rule` (The
-  eleventh DevFest.cz, Get the app, Tickets, Speakers, Past editions, Partners) and the
-  Newsletter card. No second hero, no numbered eyebrows, nothing that moves
+  fill set over it, then the lead sections on a poster `.head-rule` (The
+  eleventh DevFest.cz, Tickets, Speakers, Past editions) and the utility
+  sections a step down (Partners, Get the app, the Newsletter card). No second hero, no numbered eyebrows, nothing that moves
   on its own. Each section is a `.band .sec` and closes on space, no bottom
   padding (`.sec`, `index.scss`); the next head is the cut, so there is one
   section gap between two sections. The ticket slips and the speakers
@@ -1786,8 +1800,10 @@ Decision criteria, picked per page:
   column: the statement (`h1.hero-statement.display` at `--fs-hero`,
   line-height 0.86, max `6.2em`, the red word and the full stop; see
   Typography for its text-shadow); the topics; the facts line; the page's
-  red "Get tickets" (`.btn-primary.hero-cta`, `padding: 1rem 2.5rem`; full measure
-  ≤720px). No stamp, no logo in the hero (the bar carries the mark), no
+  red fill (`.btn-primary.hero-cta`, `padding: 1rem 2.5rem`; full measure
+  ≤720px): "Get tickets" to `#tickets` while the sale is on, otherwise
+  "Stay in the loop" to `#newsletter` while that section is on. The label
+  names no year and promises no edition. No stamp, no logo in the hero (the bar carries the mark), no
   rotor.
 - **The topics** (`.hero-topics`, `index.astro`, `index.scss`): the five
   `TOPICS` names as a list under the statement, Bebas at
@@ -1817,10 +1833,10 @@ Decision criteria, picked per page:
   `note(--fs-note-sm)` in `--paper-ink-dim`, the value a `note(--fs-body)` —
   Date (a `<time>`), Place, Doors (mono "08:00–20:00"), Audience (mono
   "350", "developers").
-- **"Get the app"** (`index.astro`, `index.scss`), right after the event:
-  the `.head-rule` with its note, the same `StoreBadges` as `/app` (the
+- **"Get the app"** (`index.astro`, `index.scss`), after the partners, before
+  the newsletter: the `.head-rule` at `--fs-h2` with its note under it, the same `StoreBadges` as `/app` (the
   visitor's own store first), and the `.action` "What's in the app" to
-  `/app`. No red fill: the hero's "Get tickets" stays the page's one.
+  `/app`. No red fill: the hero's fill stays the page's one.
   The footer's Attend column carries "Get the app" too.
 - **The countdown** (`Countdown.tsx`, `Countdown.module.scss`): in the
   facts line right after the date, at the line's one size — "Keynote in"
@@ -1832,7 +1848,7 @@ Decision criteria, picked per page:
   keynote to `EVENT.end` it reads "Live now", after that it is gone.
 - **"Past editions"** (`index.astro`, `index.scss`),
   after the speakers teaser: the `.head-rule` "Past editions" with its note
-  set beside the title, not across the page; then on a `7fr / 5fr` grid
+  under the title; then on a `7fr / 5fr` grid
   (one column ≤720px) the **contact sheet** and the **enlargement**. The
   contact sheet is a dark card (`rgba(255,255,255,0.055)`, tilted
   `-0.6deg`, flat ≤720px) holding two strips of four frames on black with
@@ -1847,7 +1863,7 @@ Decision criteria, picked per page:
 - **The partner wall on `/`** — see Images & media.
 - **The newsletter** (`index.astro`, `index.scss`): two
   equal columns (one ≤720px): left the `.display` "Newsletter" at
-  `--fs-section` (never broken) over a
+  `--fs-h2` (never broken) over a
   `prose(--fs-body-lg)` lede in `--ink` (max `30ch`); right the form as a
   straight paper card (see Forms).
 - **The bar over the home hero.** The mark and the red Tickets stay in the
@@ -2065,8 +2081,8 @@ Places the code contradicts itself or this document. Each needs a decision.
    `.status-bar-cover` both `10000`, `.skip-link` and header both `10001`.
 3. **The in-flight dim contradicts the no-dimming rule.** The invoice submit
    drops to `opacity: 0.55` while submitting (`InvoiceForm.module.scss`).
-   The newsletter's disabled state now uses a dedicated colour pair instead.
-4. **Three ways to say "not available":** disabled `<button>`,
+4. **Three ways to say "not available":** disabled `<button>`
+   (`SpeakerCard.tsx`, `AttendingCard.tsx`),
    `aria-disabled` `<span>` (`partners.astro`, the deck slot), and a
    spent ticket slip's state note under a grease cross.
 5. ~~**No `aria-invalid` in `src`.**~~ Done: the invoice fields carry

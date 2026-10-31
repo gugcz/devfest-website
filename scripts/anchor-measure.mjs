@@ -52,12 +52,12 @@ const VIEWPORTS = [
 	{ label: '820x1180', width: 820, height: 1180 },
 	{ label: '390x844', width: 390, height: 844 },
 ];
-// The hero CTA and the tickets footnote: the home page's in-page links. A
+// The hero CTAs and the tickets footnote: the home page's in-page links. A
 // section a feature flag removed has no anchor in the built page.
 const homeHtml = readFileSync(path.join(DIST, 'index.html'), 'utf-8');
 const TARGETS = [
 	{ hash: '#tickets', heading: '#tickets-heading', click: '.hero-cta' },
-	{ hash: '#newsletter', heading: '#newsletter h2', click: '#tickets a[href="#newsletter"]' },
+	{ hash: '#newsletter', heading: '#newsletter h2', click: '.hero-cta[href="#newsletter"], #tickets a[href="#newsletter"]' },
 ].filter((t) => homeHtml.includes(`id="${t.hash.slice(1)}"`));
 const ENGINES = process.env.ENGINE ? { [process.env.ENGINE]: { chromium, webkit, firefox }[process.env.ENGINE] } : { chromium, webkit, firefox };
 

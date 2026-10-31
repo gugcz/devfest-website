@@ -79,17 +79,20 @@ built by a community, not a vendor event.
   link). While tickets are on sale the facts also carry a ticking
   countdown to the keynote and the wave on sale "from <price>", and the
   red "Get tickets" sits under them; after the day the statement says
-  thank you and the countdown and the sale are gone. Then sections that each open on a
-  poster-scale head, with a note only where it carries a fact: The
-  eleventh DevFest.cz (a print of the mill with the one-line pitch, and its
-  back with date / place / doors / audience), Get the app (store badges and
-  a link to `/app`), Tickets while the `tickets` flag is on (one paper ticket
+  thank you, the countdown and the sale are gone, and the red action under
+  the facts is "Stay in the loop", a jump to the newsletter. Then the
+  sections, each head with its note (only where it carries a fact) under
+  it. The lead sections at poster scale: The eleventh DevFest.cz (a print of the
+  mill with the one-line pitch, and its back with date / place / doors /
+  audience), Tickets while the `tickets` flag is on (one paper ticket
   slip per wave: the wave on sale first and large with its price, state, Buy / Company pays; spent
   waves crossed out; the invoice route beside the head), Speakers (the
   first prints of the lineup, the opening keynote large, then "All N
   speakers"), Past editions (a contact sheet of eight frames with one
-  enlarged), Partners (a labelled row per tier, each mark sized by its
-  tier; "All partners", "Become a partner"), Newsletter (lede and the form
+  enlarged). The utility sections follow a step smaller: Partners (a
+  labelled row per tier, each mark sized by its tier; "All partners",
+  "Become a partner"), Get the app (store badges and a link to `/app`),
+  Newsletter (lede and the form
   on a paper card; after the day the lede promises a note when the next
   edition has a date). No arrow glyphs; the countdown is the only thing that moves on its own.
 - Navigation: at 1100px and wider the destinations sit inline in the
