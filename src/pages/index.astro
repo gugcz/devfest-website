@@ -21,6 +21,9 @@ import { EVENT, eventDate } from '../lib/event';
 import { staticTicketLines } from '../lib/tickets-static';
 import config from '../site.config';
 
+// The hero stamp sets the figures in the mono face and the month between them.
+const [heroDay, heroMonth, heroYear] = EVENT.dateShort.split(' ');
+
 // The home page as prints on a black table: the full-bleed plate with the
 // statement set left over it, then the event (a widescreen print and its
 // back), tickets, speakers, the past editions as a contact sheet, the
@@ -110,7 +113,7 @@ const STRIP_SCALE = 1;
 				</ul>
 
 				<div class="hero-facts">
-					<time class="hero-date" datetime={eventDate('iso')}><span class="fig">30</span> Oct <span class="fig">2026</span></time>
+					<time class="hero-date" datetime={eventDate('iso')}><span class="fig">{heroDay}</span> {heroMonth} <span class="fig">{heroYear}</span></time>
 					<Countdown client:load />
 					<a
 						class="hero-facts-link"
