@@ -1440,7 +1440,7 @@ refresh, `noindex`, with no styles of its own.
   outline with its time and a note, not a control (`.open`). One room
   picked, the grid narrows to `44rem`. **Phone (≤720px, JS `NARROW`)**: the
   bar stacks without wrapping and the room filter is one line that scrolls
-  sideways inside the viewport (`.rooms`, `min-width: 0`), so the page
+  sideways inside the viewport (`.bar`, `flex-wrap: nowrap`), so the page
   never outgrows the screen (SC 1.4.10); the
   same day as one compact list grouped by start time, the lounge one line
   above it (the room in Bebas, "<title>, open all day <hours>, drop in any
