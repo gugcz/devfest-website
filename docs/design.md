@@ -1537,7 +1537,7 @@ asks for a decision, on the black ground, its title at `--fs-section`:
 `/agenda`, `/workshops`, `/venue`, `/invite/<member>`. A page that asks
 for none ends on an `EndLine` (list above): `/speakers` ("Full agenda" and
 "Get tickets", no closer), `/contact` after its press kit, `/team` on
-"Want to help next year?" and the inbox address, `/app` on the agenda. `/partners` ends on its
+"Want to help?" and the inbox address, `/app` on the agenda. `/partners` ends on its
 "Become a partner" block (the title beside the partnerships card), `/404`
 and `/login` on their `NextStepList`, and `/privacy-policy`, `/code-of-conduct` and
 `/delete-account` on their content.
@@ -1750,7 +1750,7 @@ Decision criteria, picked per page:
   `--fs-h3`, the role as a note, links as Bebas actions, the edge "NN" and
   "2026". No tape: hovering or focusing a card cross-fades the role into
   the member's codename in full paper ink (`.crew-role[data-swap]`); with
-  no hover (a phone) both lines print, the codename under the role. It ends on its `EndLine` "Want to help next year?" and
+  no hover (a phone) both lines print, the codename under the role. It ends on its `EndLine` "Want to help?" and
   the inbox address.
 - **`/press/downloads`** — under a plain note label per logo variant, one
   straight `.paper` card: the mark in a 16:9 well on the paper (on black
