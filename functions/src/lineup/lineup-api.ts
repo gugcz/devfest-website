@@ -9,6 +9,7 @@ import { onRequest } from 'firebase-functions/v2/https';
 import { firestore } from '../lib/admin.js';
 import { cachedJsonEndpoint } from '../lib/cached-endpoint.js';
 import { CACHED_ENDPOINT } from '../options.js';
+import { APP_ORIGINS } from '../site.js';
 
 // Edge cache: 15 min fresh (a forced sync should surface in minutes), then a
 // SHORT stale window — a day-long one once served a stale compressed variant
@@ -21,14 +22,10 @@ const CACHE_CONTROL = 'public, max-age=0, s-maxage=900, stale-while-revalidate=3
 // concurrent revalidation.
 const MEMO_TTL_MS = 5 * 60 * 1000;
 
-// The app's PWA (repo ryzizub/devfest_mobile_app) reads the lineup from here
-// cross-origin. One Hosting site under two domains; localhost for its dev
-// server.
-const CORS_ORIGINS = [
-	'https://app.devfest.cz',
-	'https://devfest-cz-app.web.app',
-	/^http:\/\/localhost(:\d+)?$/,
-];
+// The mobile app's PWA (the mobile app's repo, see CLAUDE.md, Firebase shared
+// project) reads the lineup from here cross-origin. One Hosting site under two
+// domains; localhost for its dev server. Derived from the site mirror.
+const CORS_ORIGINS = APP_ORIGINS;
 
 interface LineupDoc {
 	id: string;

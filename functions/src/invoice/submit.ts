@@ -10,6 +10,7 @@ import { logger } from 'firebase-functions/v2';
 
 import { describeError } from '../lib/errors.js';
 import { CALLABLE } from '../options.js';
+import { SITE, SITE_ORIGINS } from '../site.js';
 import { checkInvoiceRateLimit, countRecentInvoiceRequests, createInvoiceRequest } from './firestore.js';
 import { str, validate } from './validate.js';
 
@@ -19,8 +20,9 @@ const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 // Across everyone inside the window — every request mints an invoice + email.
 const GLOBAL_LIMIT_MAX = 10;
 // No requests from the event morning on; the site hides the form at the same
-// moment (`src/lib/event.ts`, keep in step).
-const INVOICES_CLOSE = Date.parse('2026-10-30T07:00:00+01:00');
+// moment (`src/site.config.ts` → `event.invoicesClose`). This mirror is kept
+// in step by hand.
+const INVOICES_CLOSE = Date.parse(SITE.event.invoicesClose);
 
 export const submitInvoiceCallable = onCall(
 	{
@@ -33,11 +35,7 @@ export const submitInvoiceCallable = onCall(
 		// The browser is the only caller: production, the PR previews, and a dev
 		// server (README: App Check debug token). App Check is the real gate;
 		// this just stops other origins preflighting.
-		cors: [
-			/^https:\/\/(www\.)?devfest\.cz$/,
-			/^https:\/\/devfest-public--pr-\d+-[a-z0-9]+\.web\.app$/,
-			/^http:\/\/localhost(:\d+)?$/,
-		],
+		cors: SITE_ORIGINS,
 	},
 	async (request) => {
 		const body = (request.data ?? {}) as Record<string, unknown>;

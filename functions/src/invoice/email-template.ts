@@ -12,16 +12,18 @@
  * a consistent system stack.
  */
 
+import { eventName, FUNCTIONS_ONLY, SITE, SITE_HOST } from '../site.js';
+
 /** Event/brand facts every email footer repeats. */
 export const BRAND = {
-	eventName: 'DevFest.cz 2026',
-	tagline: "Prague's developer conference & festival",
-	dateLine: 'Friday, 30 October 2026',
-	venue: 'Uhelný Mlýn, Libčice nad Vltavou',
-	siteUrl: 'https://devfest.cz',
-	logoUrl: 'https://devfest.cz/logo.png',
-	contactEmail: 'devfest@gug.cz',
-	organizer: 'GUG.cz, z.s.',
+	eventName: eventName(),
+	tagline: SITE.event.tagline,
+	dateLine: FUNCTIONS_ONLY.dateLine,
+	venue: FUNCTIONS_ONLY.venue,
+	siteUrl: SITE.site.url,
+	logoUrl: `${SITE.site.url}/logo.png`,
+	contactEmail: SITE.organizer.email,
+	organizer: SITE.organizer.legalName,
 } as const;
 
 const COLOR = {
@@ -140,7 +142,7 @@ ${body}
 								${escapeHtml(BRAND.venue)}
 							</p>
 							<p style="margin:16px 0 0 0; font-family:${FONT_BODY}; font-size:13px; line-height:20px; color:${COLOR.muted};">
-								<a href="${escapeAttr(BRAND.siteUrl)}" style="color:${COLOR.cream}; text-decoration:underline;">devfest.cz</a>
+								<a href="${escapeAttr(BRAND.siteUrl)}" style="color:${COLOR.cream}; text-decoration:underline;">${escapeHtml(SITE_HOST)}</a>
 								&nbsp;·&nbsp;
 								<a href="mailto:${escapeAttr(BRAND.contactEmail)}" style="color:${COLOR.cream}; text-decoration:underline;">${escapeHtml(BRAND.contactEmail)}</a>
 							</p>

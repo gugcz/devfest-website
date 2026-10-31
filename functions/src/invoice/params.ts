@@ -7,6 +7,8 @@
 
 import { defineSecret } from 'firebase-functions/params';
 
+import { FUNCTIONS_ONLY } from '../site.js';
+
 // ── Secrets (firebase functions:secrets:set) ────────────────────────────
 // iDoklad OAuth client credentials (Nastavení → Aplikace → API).
 export const IDOKLAD_CLIENT_ID = defineSecret('IDOKLAD_CLIENT_ID');
@@ -29,5 +31,5 @@ export const INVOICE_VAT_RATE = 21;
 export const INVOICE_DUE_DAYS = 14;
 
 // Discount-code email sender. The domain MUST be verified in Resend.
-export const INVOICE_FROM_EMAIL = 'noreply@devfest.cz';
-export const INVOICE_FROM_NAME = 'DevFest.cz';
+export const INVOICE_FROM_EMAIL = FUNCTIONS_ONLY.fromEmail;
+export const INVOICE_FROM_NAME = FUNCTIONS_ONLY.fromName;
