@@ -40,7 +40,7 @@ if ($rel =~ m{^(dist|functions/lib|functions/lib-test)/}) {
 if ($rel =~ m{^(functions/)?package-lock\.json$}) {
 	decide('deny', "$rel is a lockfile. Change package.json and run npm install in that directory.");
 }
-if ($rel =~ m{^(firebase\.json|firestore\.rules|database\.rules\.json|public/\.well-known/apple-app-site-association|\.github/workflows/firebase-[\w-]+\.yml)$}) {
+if ($rel =~ m{^(firebase\.json|public/\.well-known/apple-app-site-association|\.github/workflows/firebase-[\w-]+\.yml)$}) {
 	decide('ask', "$rel reaches the Firebase project shared with the mobile app or the production deploy. Read CLAUDE.md > Firebase shared project before changing it.");
 }
 exit 0

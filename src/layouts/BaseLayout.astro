@@ -11,17 +11,12 @@ interface Props {
 	title?: string;
 	description?: string;
 	noindex?: boolean;
-	bodyClass?: string;
-	showFooter?: boolean;
 	/** A wall screen nobody interacts with (`/tv`): no menu, footer or cookie
 	 * banner. Without the banner nobody can accept, so GA never boots. */
 	kiosk?: boolean;
 	/** Absolute URL — an unfurler will not resolve a relative path. */
 	ogImage?: string;
 	ogImageAlt?: string;
-	/** Pixel dims of `ogImage` — only the default 1200×630 image shares these with every other page; a future non-1200×630 image must pass its own. */
-	ogImageWidth?: number;
-	ogImageHeight?: number;
 }
 
 const siteUrl = "https://devfest.cz";
@@ -29,13 +24,9 @@ const {
 	title = "DevFest.cz 2026 — Prague Developer Conference",
 	description = "DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. 30 October 2026 at Uhelný Mlýn. Tickets on sale now.",
 	noindex = false,
-	bodyClass = "",
-	showFooter = true,
 	kiosk = false,
 	ogImage = `${siteUrl}/og-image.jpg?v=${defaultOgImageVersion()}`,
 	ogImageAlt = "DevFest.cz 2026 — classified mission starts 30 October 2026",
-	ogImageWidth = 1200,
-	ogImageHeight = 630,
 } = Astro.props;
 
 const ogImageType = new URL(ogImage).pathname.endsWith(".png") ? "image/png" : "image/jpeg";
@@ -357,8 +348,8 @@ const jsonLd = JSON.stringify(
 		<meta property="og:image" content={ogImage} />
 		<meta property="og:image:secure_url" content={ogImage} />
 		<meta property="og:image:type" content={ogImageType} />
-		<meta property="og:image:width" content={ogImageWidth.toString()} />
-		<meta property="og:image:height" content={ogImageHeight.toString()} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
 		<meta property="og:image:alt" content={ogImageAlt} />
 		<link rel="image_src" href={ogImage} />
 
@@ -393,7 +384,7 @@ const jsonLd = JSON.stringify(
 		*/}
 		<ClientRouter />
 	</head>
-	<body class={bodyClass}>
+	<body>
 		<a href="#main-content" class="skip-link">Skip to main content</a>
 		{/*
 			Second in the DOM, not last. The banner is the one consent surface on
@@ -421,7 +412,7 @@ const jsonLd = JSON.stringify(
 			focus; -1 makes it a valid target without adding a tab stop.
 		*/}
 		<div id="main-content" tabindex="-1"><slot /></div>
-		{showFooter && !kiosk && <Footer />}
+		{!kiosk && <Footer />}
 
 		<script>
 			import { keepAnchorLanded } from '../lib/anchor';

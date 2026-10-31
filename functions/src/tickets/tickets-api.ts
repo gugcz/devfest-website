@@ -13,7 +13,7 @@ import { CACHED_ENDPOINT } from '../options.js';
 // The RTDB path `refreshTicketsScheduled` writes (see refresh-cache.ts).
 const TICKETS_PATH = 'tickets';
 
-// Shorter than the lineup: a sold-out wave should surface within minutes.
+// Shorter than the lineup, so a change in the cache shows within minutes.
 const CACHE_CONTROL = 'public, max-age=0, s-maxage=300, stale-while-revalidate=3600';
 const MEMO_TTL_MS = 60 * 1000;
 

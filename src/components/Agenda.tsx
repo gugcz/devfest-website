@@ -523,7 +523,7 @@ function AgendaList({
 				const live = nowMin !== null && entries.some(({ session }) => sheet.liveIds.has(session.id));
 				return (
 					<li key={start} className={s.group}>
-						<h3 className={`${s.groupTime} ${live ? s.groupLive : ''}`}>
+						<h3 className={s.groupTime}>
 							{formatMinutes(start)}
 							{live && nowMin !== null && <span className={s.groupNow}>Now {formatMinutes(nowMin)}</span>}
 						</h3>

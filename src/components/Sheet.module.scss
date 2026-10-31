@@ -111,23 +111,6 @@
 	padding: clamp(1.5rem, 4vh, 3rem) var(--gutter) var(--section-y);
 }
 
-// Muted, not accent-hot. Red is spent on the reach state of the rows below;
-// a red label at the top competes with the one thing the colour is for.
-.kicker {
-	@include note(var(--fs-note));
-	color: var(--ink-muted);
-	margin: 0 0 clamp(0.75rem, 1.5vw, 1.1rem);
-}
-
-// The sheet's one headline, at the section step. Both sheets used to set this
-// at --fs-h3 (41.6px) — a size BELOW the 54px row that opened them, so the
-// detail view of a thing was smaller than the summary of it.
-.title {
-	@include display(var(--fs-h2));
-	text-wrap: balance;
-	margin: 0;
-}
-
 // The typewriter label that opens a block inside the sheet ("Speakers", "Talks").
 .blockTitle {
 	@include note(var(--fs-note));

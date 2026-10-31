@@ -33,7 +33,10 @@ Ticket holders save a seat; a full workshop takes a waitlist.
   with the full status) trusts only Firestore `users/{uid}` with
   `emailVerified: true` and a `registrationReference`, written by the app.
   `enforceAppCheck: true`, `cors` = devfest.cz, PR previews, localhost.
-- Firebase Auth and Functions load lazily, on `/workshops` only. The agenda
+- `join` on a workshop with no valid `limit` throws `failed-precondition` /
+  `closed`.
+- Firebase Auth loads lazily, on `/workshops` only; Functions loads lazily
+  there and on `/invoice`. The agenda
   links to `/workshops` from the bar above the timetable.
 - The RTDB rules (app repo) have no `workshops` entry on purpose: the root deny
   covers it and only the Admin SDK reads it.

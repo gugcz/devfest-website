@@ -1,7 +1,7 @@
 /**
  * Scheduled trigger that refreshes the RTDB tickets cache from the ti.to
- * Admin API. The website reads `/tickets` directly so visitor traffic never
- * hits ti.to.
+ * Admin API. The website reads it through `ticketsApi` (`/api/tickets`), so
+ * visitor traffic never hits ti.to.
  */
 
 import { logger } from 'firebase-functions/v2';

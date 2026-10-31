@@ -310,13 +310,6 @@ b {
 }
 
 
-.u-container {
-	width: 100%;
-	max-width: var(--maxw);
-	margin-inline: auto;
-	padding-inline: var(--gutter);
-}
-
 // Eyebrow — a plain typewriter note. Never give it a trailing hairline or any other decoration.
 .eyebrow {
 	@include note;
@@ -792,10 +785,5 @@ b {
 	a[href^='mailto:']::after {
 		content: ' (' attr(href) ')';
 		@include mono(0.75em);
-	}
-
-	// …but not where the link IS its address, or the line prints twice.
-	a[href^='mailto:'].email-link::after {
-		content: none;
 	}
 }

@@ -1,6 +1,6 @@
 # 0002. One Firebase project, shared with the mobile app
 
-- Status: accepted
+- Status: accepted; the rules bullet superseded by [0009](0009-database-rules-live-in-the-app-repo.md)
 - Date: 2026-05-10
 - PR: [#134](https://github.com/gugcz/devfest-website/pull/134)
 

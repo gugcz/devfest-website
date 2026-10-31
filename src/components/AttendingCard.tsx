@@ -525,8 +525,7 @@ export default function AttendingCard() {
 	function updateZoom(zoom: number) {
 		setTransform((prev) => {
 			if (!photo) return { ...prev, zoom };
-			const scale = coverScale(photo.width, photo.height, WELL_SIZE) * zoom;
-			const clamped = clampPan(prev.panX, prev.panY, photo.width, photo.height, scale, WELL_SIZE);
+			const clamped = clampPan(prev.panX, prev.panY, photo.width, photo.height);
 			return { zoom, ...clamped };
 		});
 	}
@@ -534,8 +533,7 @@ export default function AttendingCard() {
 	function updatePan(panX: number, panY: number) {
 		setTransform((prev) => {
 			if (!photo) return prev;
-			const scale = coverScale(photo.width, photo.height, WELL_SIZE) * prev.zoom;
-			return { ...prev, ...clampPan(panX, panY, photo.width, photo.height, scale, WELL_SIZE) };
+			return { ...prev, ...clampPan(panX, panY, photo.width, photo.height) };
 		});
 	}
 
@@ -568,8 +566,6 @@ export default function AttendingCard() {
 			drag.panY + dCanvasY / scale,
 			photo.width,
 			photo.height,
-			scale,
-			WELL_SIZE,
 		);
 		setTransform((prev) => ({ ...prev, ...clamped }));
 	}

@@ -29,7 +29,8 @@ conference and festival on **30 October 2026** at **Uhelný Mlýn** in Libčice 
 organised by **GUG.cz, z.s.** The site exists to sell tickets and to carry the
 agenda, speakers, venue and practical information. **[inferred]** Success
 is ticket sales and newsletter sign-ups; the analytics conversion events are
-the ticket CTA and the newsletter form.
+the ticket CTA, the ti.to thank-you page, the newsletter form and the
+company invoice request.
 
 ## Positioning
 
@@ -58,8 +59,11 @@ built by a community, not a vendor event.
 - Pages: home, agenda (with every talk), speakers, tickets (on home),
   workshops, venue, attending, invoice, partners, press downloads, team, FAQ,
   contact (with press), code of conduct, newsletter thank-you, thank-you, 404,
-  privacy policy, delete-account (mobile app), share pages per talk and
-  speaker, `/llms.txt`, unlisted `/invite/<member>` and `/speaker-card`.
+  privacy policy, delete-account (mobile app), get the app (`/app`), share
+  pages per talk and speaker, `/llms.txt`; unlisted `/invite/<member>`,
+  `/speaker-card`, `/tv` (venue screens) and `/login/<code>` (the app's
+  sign-in link); `/press` and `/sessions` redirect to `/contact#press` and
+  `/agenda#talks`.
 - The site is a darkroom: photographs are paper prints on a flat black
   table, each with one strip of tape, set down at a small tilt; the facts
   that go with them are straight paper slips and cards. A page carries one
@@ -70,7 +74,8 @@ built by a community, not a vendor event.
   and the red "Get tickets"; then sections that each open on a
   poster-scale head, with a note only where it carries a fact: The
   eleventh DevFest.cz (a print of the mill with the one-line pitch, and its
-  back with date / place / doors / audience), Tickets (one paper ticket
+  back with date / place / doors / audience), Get the app (store badges and
+  a link to `/app`), Tickets (one paper ticket
   slip per wave: the wave on sale first and large with its price, state, Buy / Company pays; spent
   waves crossed out; the invoice route beside the head), Speakers (the
   first prints of the lineup, the opening keynote large, then "All N
@@ -81,7 +86,9 @@ built by a community, not a vendor event.
 - Navigation: at 1100px and wider the destinations sit inline in the
   header (Speakers, Agenda, Venue, FAQ, then Partners, Team, Press,
   Contact) beside a red Tickets button; narrower, they live behind one
-  menu toggle. The footer lists every page.
+  menu toggle. The footer lists every public page except `/workshops`
+  (linked from the agenda), `/press/downloads` (linked from the press
+  band) and `/delete-account` (linked from the privacy policy).
 - Subpages open on type: a poster-scale title and a factual lede beside
   it, no photograph; every section head's note lines up under the lede's
   column. Speakers and the agenda are paper:
@@ -120,8 +127,9 @@ built by a community, not a vendor event.
 
 - Real speakers and sessions arrive from Sessionize at runtime; local dev and
   a11y use fixtures in `scripts/a11y-mocks/api.mjs`. Do not invent speakers.
-- Press clippings and logos under `public/press/`; partner logos under
-  `public/partners/`.
+- Press clippings are URLs in `src/lib/press-coverage.ts`, read from their
+  Open Graph tags at build time; the press kit is in `public/press-kit/`;
+  partner logos are in `src/assets/partners/<tier>/`.
 - Event facts (date, venue, coordinates, `.ics`) in `src/lib/event.ts`.
 - **Absent:** testimonials, attendance figures beyond what page copy states,
   pricing outside ti.to. Do not fabricate any of these.

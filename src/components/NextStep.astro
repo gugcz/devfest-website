@@ -19,19 +19,12 @@ interface Props {
 	/** One or two lines on what this is. May contain inline HTML (links). */
 	noteHtml: string;
 	actions: readonly Action[];
-	/** 1-based position on a route. Set it only when the steps are a real
-	 * sequence; the `<ol>` already tells assistive tech, so the figure is
-	 * visual only. */
-	index?: number;
 }
 
-const { title, noteHtml, actions, index } = Astro.props;
+const { title, noteHtml, actions } = Astro.props;
 ---
 
 <li class="paper step">
-	{index !== undefined && (
-		<span class="step-index" aria-hidden="true">{String(index).padStart(2, '0')}</span>
-	)}
 	<h3 class="step-title">{title}</h3>
 	<p class="step-note" set:html={noteHtml} />
 
