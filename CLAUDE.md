@@ -1,7 +1,7 @@
 # DevFest Website
 
 DevFest.cz 2026 landing page. Astro 7, React 19 islands, TypeScript strict,
-SCSS (CSS Modules for React, globals in `BaseLayout.astro`), Node >= 22.12.0,
+SCSS (CSS Modules for React, globals in `BaseLayout.astro`), Node >= 24.12.0,
 Firebase Hosting + Cloud Functions in the project `devfest-cz-app`, shared with
 the mobile app ([Firebase shared project](#firebase-shared-project)).
 
