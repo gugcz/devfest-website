@@ -168,8 +168,10 @@
 	margin: 0;
 	padding: 0.6rem 0.25rem;
 	color: var(--color-text);
-	// Time, name, room: a long name wraps in its own column, never under the time.
+	// Time, name, room on one line. A name that does not fit beside the time
+	// (a band one narrow room wide) drops under it, never splitting a word.
 	display: flex;
+	flex-wrap: wrap;
 	align-items: baseline;
 	column-gap: 0.75rem;
 }
@@ -180,6 +182,7 @@
 	@include display(clamp(1.6rem, 2.4vw, 2.1rem));
 	color: var(--color-text);
 	min-width: 0;
+	overflow-wrap: normal;
 }
 
 .bandTime {
@@ -514,6 +517,9 @@
 	.bar {
 		flex-direction: column;
 		align-items: stretch;
+		// One line per child: a wrapping column line is sized by the room
+		// filter's full width and pushes the page past the viewport.
+		flex-wrap: nowrap;
 		gap: 0.5rem;
 		margin-bottom: 1.5rem;
 	}

@@ -184,8 +184,9 @@ html {
 	// Keeps anchor jumps (#tickets, #newsletter, …) clear of the fixed header.
 	// Derived from the bar's height, not guessed.
 	scroll-padding-top: calc(var(--header-h) + 1.5rem);
-	// keep keyboard-focused elements clear of the fixed cookie banner
-	scroll-padding-bottom: 8rem;
+	// Keeps keyboard-focused elements clear of the fixed cookie slip while it is
+	// up: `CookieBanner.astro` sets `--cookie-slip-h` to the band it covers.
+	scroll-padding-bottom: calc(var(--cookie-slip-h, 0px) + 1rem);
 	// LARGE SCREENS. Up to 1920px nothing moves. Past it the root grows with the
 	// viewport, so the whole rem-built page scales like a 1920px layout instead
 	// of a 1440px column floating in black: 2560px (a 4K screen at 150%) reads
@@ -237,6 +238,9 @@ body {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+	// While the cookie slip is up the page can scroll its last line (the
+	// footer's last link) above it; 0 once the visitor has decided.
+	padding-bottom: var(--cookie-slip-h, 0px);
 	background: var(--color-bg);
 	color: var(--color-text);
 	font-family: var(--font-special-elite), cursive;

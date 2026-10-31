@@ -114,6 +114,17 @@
 		@include hairline-link;
 	}
 
+	// Acts like a link in the sentence; it is a button because it changes
+	// the cookie choice rather than going anywhere.
+	.cookie-settings {
+		@include hairline-link;
+		font: inherit;
+		background: none;
+		border: 0;
+		padding: 0;
+		cursor: pointer;
+	}
+
 	code {
 		@include mono(var(--fs-ui));
 		color: var(--color-text);

@@ -1,7 +1,7 @@
 ---
 ---
 
-<div id="cookie-banner" class="cookie-banner cookie-banner--hidden" role="region" aria-label="Cookie consent" aria-live="polite" aria-hidden="true">
+<div id="cookie-banner" class="cookie-banner cookie-banner--hidden" tabindex="-1" role="region" aria-label="Cookie consent" aria-live="polite" aria-hidden="true">
 	<p class="cookie-text">
 		May we use analytics cookies?
 		Details in our <a href="/privacy-policy" class="cookie-link">Privacy Policy</a>.
@@ -17,7 +17,17 @@
 	// reads the same decision to decide whether GA4 boots at all. Static import
 	// (not dynamic): the module is a few lines of localStorage access and pulls in
 	// no Firebase code.
-	import { readConsent, storeConsent } from '../lib/consent';
+	import { clearConsent, deleteAnalyticsData, readConsent, storeConsent } from '../lib/consent';
+
+	// One-shot sessionStorage flag set by "Cookie settings" before its reload
+	// (below): the fresh page deletes the analytics data once more and focuses
+	// the banner.
+	const WITHDRAWN = 'cookie-consent-withdrawn';
+
+	// The last measured `--cookie-slip-h`, put back right after a soft
+	// navigation swaps <html>'s attributes (and drops its inline style), so
+	// the restored scroll position already has the slip's padding.
+	let slipCovers = '';
 
 	// Boot GA4 (only after an accept) and record the page view. Undecided or
 	// declined loads nothing and sends nothing. `trackPageView()` is a no-op for
@@ -32,22 +42,45 @@
 		}
 	}
 
+	// While the slip is up, `--cookie-slip-h` on <html> holds the band it covers
+	// at the foot of the viewport (its height plus its bottom offset), and
+	// `scroll-padding-bottom` in `BaseLayout.scss` reads it: a focused element
+	// scrolled into view lands above the slip, not under it (WCAG 2.4.11).
+	const slipHeight = new ResizeObserver(([entry]) => {
+		const banner = entry.target as HTMLElement;
+		const covered = banner.offsetHeight + parseFloat(getComputedStyle(banner).bottom);
+		slipCovers = `${Math.ceil(covered)}px`;
+		document.documentElement.style.setProperty('--cookie-slip-h', slipCovers);
+	});
+
+	document.addEventListener('astro:after-swap', () => {
+		if (slipCovers && !readConsent()) {
+			document.documentElement.style.setProperty('--cookie-slip-h', slipCovers);
+		}
+	});
+
+	function showBanner() {
+		const banner = document.getElementById('cookie-banner');
+		if (!banner) return;
+		banner.setAttribute('aria-hidden', 'false');
+		banner.classList.remove('cookie-banner--hidden');
+		slipHeight.disconnect();
+		slipHeight.observe(banner);
+	}
+
+	function hideBanner() {
+		const banner = document.getElementById('cookie-banner');
+		banner?.setAttribute('aria-hidden', 'true');
+		banner?.classList.add('cookie-banner--hidden');
+		slipHeight.disconnect();
+		slipCovers = '';
+		document.documentElement.style.removeProperty('--cookie-slip-h');
+	}
+
 	// Re-bind on `astro:page-load`, never DOMContentLoaded: bundled module scripts
 	// run once per document, but <ClientRouter /> swaps the banner markup on every
 	// soft navigation. `astro:page-load` covers the initial load too.
 	document.addEventListener('astro:page-load', () => {
-		const banner = document.getElementById('cookie-banner');
-
-		const hideBanner = () => {
-			banner?.setAttribute('aria-hidden', 'true');
-			banner?.classList.add('cookie-banner--hidden');
-		};
-
-		const showBanner = () => {
-			banner?.setAttribute('aria-hidden', 'false');
-			banner?.classList.remove('cookie-banner--hidden');
-		};
-
 		// Nothing loads until (and unless) the visitor accepts — `initAnalytics()`
 		// reads the stored decision. A stored `accepted` boots GA4 right here, on
 		// the entry page, so the document-load `page_view` is attributed.
@@ -56,6 +89,14 @@
 		// Banner starts hidden — reveal only if no decision yet
 		if (!readConsent()) {
 			showBanner();
+		}
+
+		// Back from a "Cookie settings" reload: delete again (the old page's tag
+		// could still write a cookie on its way out, or held the database
+		// open), then focus the banner the visitor asked for.
+		if (takeWithdrawnFlag()) {
+			deleteAnalyticsData();
+			document.getElementById('cookie-banner')?.focus();
 		}
 
 		document.getElementById('cookie-accept')?.addEventListener('click', () => {
@@ -72,15 +113,67 @@
 		});
 	});
 
+	function takeWithdrawnFlag(): boolean {
+		try {
+			const set = sessionStorage.getItem(WITHDRAWN) !== null;
+			sessionStorage.removeItem(WITHDRAWN);
+			return set;
+		} catch {
+			return false; // storage unavailable — no flag was set
+		}
+	}
+
 	// Escape dismisses the banner (as a decline) from ANYWHERE. Bound on
 	// `document` at module scope, not inside `astro:page-load` (which would
 	// stack a listener per navigation); the banner is looked up on keypress so
-	// it always hits the current document's.
+	// it always hits the current document's. One Escape closes one layer: while
+	// the mobile menu is open it makes the banner `inert`, and that Escape
+	// belongs to the menu (this listener runs first, before the menu un-inerts).
 	document.addEventListener('keydown', (e) => {
 		if (e.key !== 'Escape') return;
 		const banner = document.getElementById('cookie-banner');
-		if (!banner || banner.classList.contains('cookie-banner--hidden')) return;
+		if (!banner || banner.inert || banner.classList.contains('cookie-banner--hidden')) return;
 		(document.getElementById('cookie-decline') as HTMLButtonElement | null)?.click();
+	});
+
+	// "Cookie settings" (footer, privacy policy) forgets the decision and asks
+	// again (GDPR Art. 7(3): withdrawing is as easy as giving). After an accept
+	// GA4 and Performance Monitoring are loaded in this document and cannot be
+	// unloaded, so their cookies and storage are deleted and the page reloads
+	// clean; nothing runs while the visitor decides again. Delegated, because
+	// <ClientRouter /> swaps the buttons on every navigation.
+	document.addEventListener('click', async (e) => {
+		if (!(e.target instanceof Element) || !e.target.closest('[data-cookie-settings]')) return;
+		const accepted = readConsent() === 'accepted';
+		clearConsent();
+		if (accepted) {
+			await deleteAnalyticsData();
+			try {
+				sessionStorage.setItem(WITHDRAWN, '1');
+			} catch {
+				/* storage unavailable — the banner still shows, unfocused */
+			}
+			location.reload();
+			return;
+		}
+		showBanner();
+		document.getElementById('cookie-banner')?.focus();
+	});
+
+	// Scroll padding only applies when the browser scrolls. Focus moving to an
+	// element already on screen but under the slip scrolls nothing, so do it
+	// here; `nearest` honours the padding and stops just above the slip.
+	document.addEventListener('focusin', (e) => {
+		const banner = document.getElementById('cookie-banner');
+		const target = e.target;
+		if (!banner || banner.inert || banner.classList.contains('cookie-banner--hidden')) return;
+		// Keyboard focus only (SC 2.4.11): a click on a half-covered control
+		// must not make the page jump.
+		if (!(target instanceof Element) || banner.contains(target) || !target.matches(':focus-visible')) return;
+		const slip = banner.getBoundingClientRect();
+		const box = target.getBoundingClientRect();
+		const under = box.bottom > slip.top && box.top < slip.bottom && box.right > slip.left && box.left < slip.right;
+		if (under) target.scrollIntoView({ block: 'nearest' });
 	});
 </script>
 

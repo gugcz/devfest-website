@@ -48,6 +48,27 @@ Rules (each verified in-browser):
 - Hits leave gtag's queue a few seconds after an accept (batched with the
   engagement ping; gtag flushes on `pagehide`). gtag's scheduling, not ours.
 
+**Withdrawing consent** (GDPR Art. 7(3)): every `[data-cookie-settings]`
+button (the footer's About column, privacy policy §3) runs one delegated
+click listener in `CookieBanner.astro`. It `clearConsent()`s and shows the
+banner, focused. After an `accepted` the SDKs are already in the document and
+cannot be unloaded, so instead it `deleteAnalyticsData()`s (`consent.ts`:
+`_ga*` cookies on the host and each parent domain, the
+`firebase-installations-database` IndexedDB, Performance's cached config in
+localStorage) and reloads. A one-shot `sessionStorage` flag makes the fresh
+page delete once more (the old page's tag can write a cookie on `pagehide`,
+and its open connection blocks the IndexedDB delete) and focus the banner.
+Nothing runs while the visitor decides again. A
+new store set after consent is added to `deleteAnalyticsData()` and to the
+privacy policy's table.
+
+**The banner** shares the foot of the screen with focus: while it is up,
+`--cookie-slip-h` on `<html>` (a `ResizeObserver`) drives
+`scroll-padding-bottom` and the body's bottom padding, and a `focusin`
+listener scrolls an element the slip covers into view (WCAG 2.4.11).
+`Escape` declines only while the banner is visible and not `inert`: the open
+mobile menu makes it inert, and that Escape closes the menu alone.
+
 **Performance Monitoring** (`firebase/performance`): booted by
 `schedulePerformance()` at the end of the GA4 boot, so it shares both gates
 (consent + `ANALYTICS_HOSTS`) — it stores a Firebase Installations id in

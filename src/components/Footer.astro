@@ -98,6 +98,15 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 									</a>
 							</li>
 						))}
+						{id === 'footer-about' && (
+							<li>
+								{/* Withdraws or changes cookie consent: CookieBanner.astro
+								     listens for `data-cookie-settings`. */}
+								<button type="button" class="footer-link footer-button" data-cookie-settings>
+									Cookie settings
+								</button>
+							</li>
+						)}
 					</ul>
 				</nav>
 			))}

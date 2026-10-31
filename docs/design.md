@@ -361,7 +361,7 @@ Hairlines: `--rule` `rgba(255,255,255,0.13)`, `--rule-strong` `0.22`, `--rule-re
 
 **[MUST] Rules only where they carry structure.** Space and paper part the
 page, not lines: a section head sits on space (`.head-rule` draws no rule,
-`BaseLayout.scss:326–351`), a print or a slip is set apart by its own
+`BaseLayout.scss:330–355`), a print or a slip is set apart by its own
 edge and shadow, and the footer opens on space (`Footer.scss`). A line
 is drawn only in data tables (privacy policy), as a form control's
 boundary (on paper a field is a 2px `--paper-ink` underline), as an
@@ -689,7 +689,7 @@ floors and physical sizes (the 44px tap target, hairlines) only.
 sections, `--section-y-tight` the last band's close (`BaseLayout.scss`).
 
 **[MUST] `.anchor-target` cancels a section's opening air with a negative
-`scroll-margin-top` reading `--section-air`** (`BaseLayout.scss:499–501`), the
+`scroll-margin-top` reading `--section-air`** (`BaseLayout.scss:503–505`), the
 same variable the padding is built from. `--header-h` is the single source
 for the bar height. `src/lib/anchor.ts` keeps a jump landed while islands
 grow the page; its click handler must **not** check `event.defaultPrevented`
@@ -745,10 +745,10 @@ toggle is hidden; under it every destination lives behind the one toggle.
 | `10060` | a sheet stacked on another sheet (speaker opened from a session) | `SpeakerDetail.module.scss:9` (`--sheet-z`) |
 | `10050` | detail sheet (default `--sheet-z`) | `Sheet.module.scss:18` |
 | `10001` | fixed site header | `Menu.scss:11` |
-| `10001` | `.skip-link` | `BaseLayout.scss:266` |
+| `10001` | `.skip-link` | `BaseLayout.scss:270` |
 | `10000` | cookie banner | `CookieBanner.scss:11` |
-| `10000` | `.status-bar-cover` (iOS safe-area paint) | `BaseLayout.scss:717` |
-| `0`–`4` | in-component ordering only (the header mark at 2 over the open menu panel at 1, `Menu.scss`; on a print, the tape at 2 and the grease stroke at 3, `BaseLayout.scss:420`, `436`; on the home hero, the shade 1 and the type 3, `index.scss`) | local modules |
+| `10000` | `.status-bar-cover` (iOS safe-area paint) | `BaseLayout.scss:721` |
+| `0`–`4` | in-component ordering only (the header mark at 2 over the open menu panel at 1, `Menu.scss`; on a print, the tape at 2 and the grease stroke at 3, `BaseLayout.scss:424`, `436`; on the home hero, the shade 1 and the type 3, `index.scss`) | local modules |
 | `-1` | a close-set slip's paper shadow, on its `::before` under the isolated grid | `Agenda.module.scss`, `Sessions.module.scss`, `Workshops.module.scss` |
 
 **[MUST] No grain, no vignette overlay.** No page, scene or print carries
@@ -773,16 +773,16 @@ its call site. The de-facto scale, by frequency:
 
 | Duration | Where |
 | --- | --- |
-| `0.2s` (dominant) | the standard control transition: buttons, inputs, links; the text action's colour to `--color-accent-hot` (`BaseLayout.scss:637`, `669`; `_type.scss:105`) |
+| `0.2s` (dominant) | the standard control transition: buttons, inputs, links; the text action's colour to `--color-accent-hot` (`BaseLayout.scss:641`, `669`; `_type.scss:105`) |
 | `0.15s` | the header mark's fade (`Menu.scss:93`) |
 | `0.18s` | the desktop bar links' and the menu panel links' colour (`Menu.scss:192`, `430`, `499`) |
 | `0.24s` / `0.36s` | the menu panel opening: opacity / slide (`Menu.scss:348–349`) |
 | `0.25s` | the card builder's step figures and spine (`AttendingCard.module.scss:57`, `70`), the footer social marks (`Footer.scss:221`), the FAQ marker turning to "×" (`faq.scss:183`) |
 | `0.28s` / `0.32s` | the menu panel closing: opacity / slide (`Menu.scss:338–339`) |
-| `0.3s` | the header sliding away and back (auto-hide, `Menu.scss:24`) and its scrim fading (`Menu.scss:38`, `57`); the cookie slip's fade (`CookieBanner.scss:23`) |
+| `0.3s` | the header sliding away and back (auto-hide, `Menu.scss:24`) and its scrim fading (`Menu.scss:38`, `57`); the cookie slip's fade (`CookieBanner.scss:25`) |
 | `0.32s` | the sheet entry (`Sheet.module.scss:23`) |
 | `0.35s` | the `/team` role cross-fading into the codename (`team.scss:141`) |
-| `0.42s` / `0.24s` | the portrait view transition and the root cross-fade behind it (`BaseLayout.scss:697`, `704`) |
+| `0.42s` / `0.24s` | the portrait view transition and the root cross-fade behind it (`BaseLayout.scss:701`, `704`) |
 | `0.6s` | a B&W speaker print developing to colour (`SpeakerTile.module.scss:60`; the session sheet's prints, `SessionDetail.module.scss:126`); a new partner page fading in on the venue screens (`TvScreen.module.scss:357`) |
 | `0.7s` | the `/team` colour bleed from the cursor (`team.scss:100`) |
 | `1s` linear | the venue screens' live progress spine (`TvScreen.module.scss:284`) |
@@ -802,8 +802,8 @@ its call site. The de-facto scale, by frequency:
 Rules:
 
 - **[MUST] Every animation and transition has a `prefers-reduced-motion:
-  reduce` opt-out**, including `scroll-behavior` (`BaseLayout.scss:213–217`),
-  controls (`BaseLayout.scss:680–686`), sheet
+  reduce` opt-out**, including `scroll-behavior` (`BaseLayout.scss:214–218`),
+  controls (`BaseLayout.scss:684–690`), sheet
   (`Sheet.module.scss:147–155`), the speaker print and name
   (`SpeakerTile.module.scss:225–230`), the
   ticket skeleton (`Tickets.module.scss:297–306`). **[CURRENT]** The
@@ -864,7 +864,7 @@ look the same. A boxed secondary (the old outlined ghost), an underlined
 standalone link or a second filled colour is a third control and does not
 ship.
 
-`.btn-primary` (`BaseLayout.scss:611–646`):
+`.btn-primary` (`BaseLayout.scss:615–650`):
 
 | State | Treatment |
 | --- | --- |
@@ -873,7 +873,7 @@ ship.
 | focus-visible | `2px solid var(--color-accent-hot)` at `--focus-gap` |
 | disabled | not styled globally — see the form buttons below |
 
-`.btn-ghost` / `.action` (`BaseLayout.scss:651–678`): the second control.
+`.btn-ghost` / `.action` (`BaseLayout.scss:655–682`): the second control.
 Bebas `--fs-action` caps via `action()` (tracking 0, line-height 1) in
 `--color-text`, no box, no fill, no underline, no glyph, `border-radius:
 0`; padding `0.75rem 0` (vertical only, so the inline edge stays on the
@@ -979,7 +979,7 @@ flight (`[aria-disabled='true']`, `InvoiceForm.module.scss`);
 in the live layout, `Tickets.module.scss`, so nothing reflows on
 load) or the `DataState.tsx` loading pulse, then content or the shared
 `DataState.tsx` `ErrorState`. **[MUST]** Every data-backed page ships a
-`.fallback-note` (`BaseLayout.scss:483`) — except `/`, see Open points.
+`.fallback-note` (`BaseLayout.scss:487`) — except `/`, see Open points.
 
 ## Forms & errors
 
@@ -1262,7 +1262,7 @@ Shared components: `SubpageHero.astro` (takes `titleHtml`, `lede`,
 The build-time indexes for a reader without script, `SpeakerIndex.astro`
 (`/speakers`), `TalkIndex.astro` (`/agenda`, `/workshops`) and
 `TicketIndex.astro` (`/`), render in a `.no-js` block under their island
-(hidden under `.js`, `BaseLayout.scss:478`) and share
+(hidden under `.js`, `BaseLayout.scss:482`) and share
 `StaticIndex.scss`: plain rows on the black table, a Bebas name, the
 details as notes. A visitor with script never sees them, so they stay
 plain. `layouts/Redirect.astro` is the one page without `BaseLayout`: a
@@ -1432,11 +1432,16 @@ refresh, `noindex`, with no styles of its own.
   both in `--paper-ink-dim`, then the title `prose(--fs-body, 1.3)` and the
   speakers in Bebas `--fs-action`, then the live or next flag (see
   Component states). A break or lunch is a quiet typewriter line across
-  the rooms, mono time and title in `--ink-soft`; the evening
+  the rooms, mono time and title in `--ink-soft`; a break one narrow room
+  wide drops its title under the time (`.band` wraps, `.bandTitle` keeps
+  `overflow-wrap: normal`), never splitting a word; the evening
   after the last talk is louder (`--fs-lede`, white) and names its room. A
   speakerless "TBA"/"TBD" slot is "Slot open": a dashed `--field-border`
   outline with its time and a note, not a control (`.open`). One room
   picked, the grid narrows to `44rem`. **Phone (≤720px, JS `NARROW`)**: the
+  bar stacks without wrapping and the room filter is one line that scrolls
+  sideways inside the viewport (`.bar`, `flex-wrap: nowrap`), so the page
+  never outgrows the screen (SC 1.4.10); the
   same day as one compact list grouped by start time, the lounge one line
   above it (the room in Bebas, "<title>, open all day <hours>, drop in any
   time" as a `note(--fs-note)` in `--ink-soft`, the hours mono;
@@ -1505,7 +1510,10 @@ refresh, `noindex`, with no styles of its own.
   tilt, no edge drawn round it. Accept is the black fill, Decline a
   paper-ink text action; no red, the screen keeps its red for the ticket.
   It fades in and out (opacity and a `1.5rem` drop over `0.3s`, none under
-  reduced motion).
+  reduced motion); `visibility` flips at once on show and after the fade on
+  hide. "Cookie settings" (the footer, privacy policy §3) brings it back
+  focused (`tabindex="-1"`, the `--color-accent-hot` ring); in the privacy
+  policy's prose that button takes `hairline-link()`.
 
 **Structural rules [MUST]:** no decorated eyebrow; red text is flat; **the
 red word and the closing full stop belong to the home hero statement**
@@ -1564,7 +1572,9 @@ marks, one row at every width, each glyph at its target's left edge so the
 first lines up with the column), on a `1.4fr` + four `1fr` grid; two
 columns with the brand across the top ≤45em, one ≤23.75em. Column titles and the Event terms are `note(--fs-note-sm)` in
 `--ink-meta`, sentence case, no tracking; the links are Bebas `action()` in
-white at tracking 0, red on hover. The bottom line: `© 2026 GUG.cz, z.s.` left, the folio `Case no.
+white at tracking 0, red on hover. *About* ends on "Cookie settings", a
+`<button>` in the same look (`.footer-link.footer-button`: no box, no
+padding) because it reopens the cookie slip rather than going anywhere. The bottom line: `© 2026 GUG.cz, z.s.` left, the folio `Case no.
 DF-2026` centre, "Open source" right as an underlined note, no off-site
 glyph. The folio is the case-file mark the manual prints on every page and
 the footer's one mono figure: a `<small class="folio" aria-hidden="true">`
@@ -2014,12 +2024,17 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 - **[MUST] Semantics before ARIA.** A row that IS a control is a real
   `<button>` / `<a>` / `<summary>`.
 - **[MUST] `.skip-link` is the first focusable element** (`BaseLayout.astro:388`,
-  `BaseLayout.scss:256–281`). `html { scroll-padding-top: calc(var(--header-h)
-  + 1.5rem); scroll-padding-bottom: 8rem }` keeps targets clear of header and banner.
+  `BaseLayout.scss:260–285`). `html { scroll-padding-top: calc(var(--header-h)
+  + 1.5rem); scroll-padding-bottom: calc(var(--cookie-slip-h, 0px) + 1rem) }`
+  keeps targets clear of header and cookie slip: `CookieBanner.astro` sets
+  `--cookie-slip-h` to the band the slip covers while it is up, the body
+  pads its foot by the same, and a `focusin` listener scrolls an element
+  the slip covers into view (SC 2.4.11).
   `#main-content` has `tabindex="-1"` so `Enter` moves focus, not just the
   fragment; its ring alone is suppressed.
 - **[MUST] The cookie banner is second in the DOM**, `Escape` handler on
-  `document` (`CookieBanner.astro:79–84`).
+  `document` (`CookieBanner.astro`). One Escape closes one layer: while the
+  mobile menu is open the banner is `inert` and the handler leaves it.
 - **[MUST] Only the countdown moves on its own.** It is `aria-hidden`
   behind a static sentence, and under reduced motion it stops ticking. It
   has no pause control, so its seconds are a known gap against 2.2.2 that
@@ -2031,14 +2046,14 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 - **[MUST] Header controls are 44px tap targets.** The mark link and the
   bar's controls and the desktop bar links take `min-height:
   var(--header-tap)` (`Menu.scss:83`, `149`, `188`, `266`); the text
-  actions take `min-height: 2.75rem` (`BaseLayout.scss:663`).
+  actions take `min-height: 2.75rem` (`BaseLayout.scss:667`).
 - **[MUST] A white label on red is large text or it does not ship.** The
   `cta-label` size (Bebas 24px, regular large text) is the AA floor (see
   Color); where it does not fit, the
   control moves (the header Tickets into the menu under 380px), the label
   never shrinks.
 - **[MUST] `.sr-only`** for text in the a11y tree but off screen
-  (`BaseLayout.scss:299–310`).
+  (`BaseLayout.scss:303–314`).
 - **[MUST] A grease stroke is `aria-hidden`**, and so is a decorative
   print (the menu panel's print, the `/contact` press print). **[CURRENT]** Most paper edges are `aria-hidden` too (the home
   prints, the `/contact` and `/team` cards); the speaker print's tape and
@@ -2050,7 +2065,7 @@ sheets. Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 - **[MUST] Reduced motion** — see Motion.
 - **[MUST] `html { overflow-x: clip }`, never `hidden`** — `hidden` makes
   `html` a scroll container on iOS Safari and breaks `position: fixed` and
-  safe-area `env()` (`BaseLayout.scss:206–210`).
+  safe-area `env()` (`BaseLayout.scss:207–211`).
 
 
 ## Open points
@@ -2095,9 +2110,9 @@ Places the code contradicts itself or this document. Each needs a decision.
     the teaser count (`mono(1em)`, `SpeakersTeaser.module.scss:21`), the
     venue screens' `.fig` (`mono(0.86em)`, `TvScreen.module.scss:135`,
     beside their recorded `--u` sizes), the printed link address
-    (`mono(0.75em)`, the `@media print` block, `BaseLayout.scss:787`);
+    (`mono(0.75em)`, the `@media print` block, `BaseLayout.scss:791`);
     a literal clamp on the agenda's break line (`.bandTitle`,
-    `display(clamp(1.6rem, 2.4vw, 2.1rem))`, `Agenda.module.scss:180`);
+    `display(clamp(1.6rem, 2.4vw, 2.1rem))`, `Agenda.module.scss:182`);
     `font-size: inherit` on the footer's bottom line (`.copyright`,
     `.opensource`, `Footer.scss:253`, `262`); and the share page's
     no-script slip, which loads no site stylesheet (`font: 1.05rem/1.6`,
@@ -2238,12 +2253,12 @@ Places the code contradicts itself or this document. Each needs a decision.
     the room is a plain `.room` label (`SessionDetail.module.scss`).
 53. **The closer title has two sizes.** `Closer.scss:3–5` sets
     `.closer-title` at `--fs-section`, as this document records, while
-    `BaseLayout.scss:561–564` sets the same class at `--fs-h2`; which one
+    `BaseLayout.scss:565–568` sets the same class at `--fs-h2`; which one
     renders depends on stylesheet order. Decide the size and delete the
     other rule.
 54. **Hand-written `font-family` against "Go through the recipe".** 13
     declarations write `font-family: var(--font-…)` outside `_type.scss`
-    (the `body` default, `BaseLayout.scss:242`, aside): `InvoiceForm.module.scss:150`,
+    (the `body` default, `BaseLayout.scss:246`, aside): `InvoiceForm.module.scss:150`,
     `AttendingCard.module.scss:50`, `Workshops.module.scss:33`, `87`,
     `venue.scss:13`, `privacy-policy.scss:250` (JetBrains Mono);
     `SpeakerTile.module.scss:75`, `Sessions.module.scss:301`,
@@ -2251,8 +2266,8 @@ Places the code contradicts itself or this document. Each needs a decision.
     `SessionDetail.module.scss:135` (Bebas Neue); `Footer.scss:12` (Special
     Elite). Move each onto its mixin or record the exception.
 55. **Two hovers paint outside `@media (hover: hover)`.** `.btn-primary:hover`
-    (`BaseLayout.scss:641–645`) and `.btn-ghost:hover` / `.action:hover`
-    (`BaseLayout.scss:673–677`, shared with `:focus-visible`) are bare, so
+    (`BaseLayout.scss:645–649`) and `.btn-ghost:hover` / `.action:hover`
+    (`BaseLayout.scss:677–681`, shared with `:focus-visible`) are bare, so
     on touch a tap leaves the inverted fill or the red label behind,
     against "Hover painting sits under `@media (hover: hover)`".
 56. **Dead border rules on the menu toggle.** `.nav-toggle` is `border: 0`

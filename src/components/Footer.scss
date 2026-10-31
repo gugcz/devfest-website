@@ -113,6 +113,16 @@
 	}
 }
 
+// "Cookie settings" is a button (it acts, it goes nowhere) in a list of
+// links: the same Bebas line, none of the button chrome.
+.footer-button {
+	background: none;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+	text-align: left;
+}
+
 @media (hover: hover) {
 	.footer-link:hover {
 		color: var(--color-accent-hot);
