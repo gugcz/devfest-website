@@ -187,7 +187,7 @@ export default function SpeakerTile({
 				{billing.talk && <span className={s.talk}>{billing.talk}</span>}
 				{billing.with.length > 0 && <span className={s.with}>With {billing.with.join(', ')}</span>}
 				<span className={`paper-edge ${s.edge}`}>
-					<span>
+					<span aria-hidden="true">
 						{String(index).padStart(2, '0')} / {String(total).padStart(2, '0')}
 					</span>
 					{billing.clock && <span>{billing.clock}</span>}
@@ -210,7 +210,6 @@ export default function SpeakerTile({
 					type="button"
 					className={`paper ${s.tile}`}
 					onClick={() => onOpen?.(speaker)}
-					aria-label={`View ${speaker.fullName}'s profile`}
 				>
 					{body}
 				</button>

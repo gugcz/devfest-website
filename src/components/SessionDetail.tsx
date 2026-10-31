@@ -122,7 +122,6 @@ export default function SessionDetail({
 											type="button"
 											className={`paper ${s.print}`}
 											onClick={() => openSpeaker(speaker)}
-											aria-label={`View ${speaker.fullName}'s profile`}
 										>
 											<span className={`paper-photo ${s.photo}`}>
 												<SpeakerPhoto
@@ -145,8 +144,8 @@ export default function SessionDetail({
 					)}
 
 					<div className={s.way}>
-						{/* A drop-in (the lounge, open all day) is not a talk to catch at a time. */}
-						<SheetTickets line={session.isServiceSession ? 'Drop in on the day' : 'Catch this talk live'} />
+						{/* A drop-in (the lounge, open all day) is not a timed talk. */}
+						<SheetTickets line={session.isServiceSession ? 'Ran all day' : 'On stage'} />
 					</div>
 				</div>
 			</Sheet>
