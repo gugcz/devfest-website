@@ -19,9 +19,15 @@
 	// no Firebase code.
 	import { clearConsent, deleteAnalyticsData, readConsent, storeConsent } from '../lib/consent';
 
-	// One-shot sessionStorage flag: focus the banner after a "Cookie settings"
-	// reload (below).
-	const SETTINGS_FOCUS = 'cookie-settings-focus';
+	// One-shot sessionStorage flag set by "Cookie settings" before its reload
+	// (below): the fresh page deletes the analytics data once more and focuses
+	// the banner.
+	const WITHDRAWN = 'cookie-consent-withdrawn';
+
+	// The last measured `--cookie-slip-h`, put back right after a soft
+	// navigation swaps <html>'s attributes (and drops its inline style), so
+	// the restored scroll position already has the slip's padding.
+	let slipCovers = '';
 
 	// Boot GA4 (only after an accept) and record the page view. Undecided or
 	// declined loads nothing and sends nothing. `trackPageView()` is a no-op for
@@ -43,7 +49,14 @@
 	const slipHeight = new ResizeObserver(([entry]) => {
 		const banner = entry.target as HTMLElement;
 		const covered = banner.offsetHeight + parseFloat(getComputedStyle(banner).bottom);
-		document.documentElement.style.setProperty('--cookie-slip-h', `${Math.ceil(covered)}px`);
+		slipCovers = `${Math.ceil(covered)}px`;
+		document.documentElement.style.setProperty('--cookie-slip-h', slipCovers);
+	});
+
+	document.addEventListener('astro:after-swap', () => {
+		if (slipCovers && !readConsent()) {
+			document.documentElement.style.setProperty('--cookie-slip-h', slipCovers);
+		}
 	});
 
 	function showBanner() {
@@ -60,6 +73,7 @@
 		banner?.setAttribute('aria-hidden', 'true');
 		banner?.classList.add('cookie-banner--hidden');
 		slipHeight.disconnect();
+		slipCovers = '';
 		document.documentElement.style.removeProperty('--cookie-slip-h');
 	}
 
@@ -77,15 +91,12 @@
 			showBanner();
 		}
 
-		// Back from a "Cookie settings" reload: the visitor asked for the banner,
-		// so focus goes to it.
-		try {
-			if (sessionStorage.getItem(SETTINGS_FOCUS)) {
-				sessionStorage.removeItem(SETTINGS_FOCUS);
-				document.getElementById('cookie-banner')?.focus();
-			}
-		} catch {
-			/* storage unavailable — no flag was set */
+		// Back from a "Cookie settings" reload: delete again (the old page's tag
+		// could still write a cookie on its way out, or held the database
+		// open), then focus the banner the visitor asked for.
+		if (takeWithdrawnFlag()) {
+			deleteAnalyticsData();
+			document.getElementById('cookie-banner')?.focus();
 		}
 
 		document.getElementById('cookie-accept')?.addEventListener('click', () => {
@@ -101,6 +112,16 @@
 			hideBanner();
 		});
 	});
+
+	function takeWithdrawnFlag(): boolean {
+		try {
+			const set = sessionStorage.getItem(WITHDRAWN) !== null;
+			sessionStorage.removeItem(WITHDRAWN);
+			return set;
+		} catch {
+			return false; // storage unavailable — no flag was set
+		}
+	}
 
 	// Escape dismisses the banner (as a decline) from ANYWHERE. Bound on
 	// `document` at module scope, not inside `astro:page-load` (which would
@@ -128,7 +149,7 @@
 		if (accepted) {
 			await deleteAnalyticsData();
 			try {
-				sessionStorage.setItem(SETTINGS_FOCUS, '1');
+				sessionStorage.setItem(WITHDRAWN, '1');
 			} catch {
 				/* storage unavailable — the banner still shows, unfocused */
 			}
@@ -146,7 +167,9 @@
 		const banner = document.getElementById('cookie-banner');
 		const target = e.target;
 		if (!banner || banner.inert || banner.classList.contains('cookie-banner--hidden')) return;
-		if (!(target instanceof Element) || banner.contains(target)) return;
+		// Keyboard focus only (SC 2.4.11): a click on a half-covered control
+		// must not make the page jump.
+		if (!(target instanceof Element) || banner.contains(target) || !target.matches(':focus-visible')) return;
 		const slip = banner.getBoundingClientRect();
 		const box = target.getBoundingClientRect();
 		const under = box.bottom > slip.top && box.top < slip.bottom && box.right > slip.left && box.left < slip.right;

@@ -55,8 +55,10 @@ banner, focused. After an `accepted` the SDKs are already in the document and
 cannot be unloaded, so instead it `deleteAnalyticsData()`s (`consent.ts`:
 `_ga*` cookies on the host and each parent domain, the
 `firebase-installations-database` IndexedDB, Performance's cached config in
-localStorage) and reloads; a one-shot `sessionStorage` flag focuses the
-banner on the fresh page. Nothing runs while the visitor decides again. A
+localStorage) and reloads. A one-shot `sessionStorage` flag makes the fresh
+page delete once more (the old page's tag can write a cookie on `pagehide`,
+and its open connection blocks the IndexedDB delete) and focus the banner.
+Nothing runs while the visitor decides again. A
 new store set after consent is added to `deleteAnalyticsData()` and to the
 privacy policy's table.
 

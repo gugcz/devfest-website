@@ -46,8 +46,10 @@ export function cookieDomains(hostname: string): string[] {
 }
 
 /** Delete what an accept left behind: the `_ga` cookies, Performance
- * Monitoring's installation id (IndexedDB) and its cached remote config. The
- * SDKs already in memory stay loaded, so the caller reloads the page. */
+ * Monitoring's installation id (IndexedDB) and its cached remote config.
+ * Never throws. The SDKs already in memory stay loaded (and can write again
+ * or hold the database open), so the caller reloads and runs this once more
+ * on the fresh page, where nothing has booted. */
 export async function deleteAnalyticsData(): Promise<void> {
 	const names = document.cookie
 		.split(';')
@@ -66,9 +68,13 @@ export async function deleteAnalyticsData(): Promise<void> {
 		/* storage unavailable — nothing was stored */
 	}
 	await new Promise<void>((resolve) => {
-		const request = indexedDB.deleteDatabase('firebase-installations-database');
-		// `blocked` (a connection still open in this page) resolves too: the
-		// delete completes once the reload closes it.
-		request.onsuccess = request.onerror = request.onblocked = () => resolve();
+		try {
+			const request = indexedDB.deleteDatabase('firebase-installations-database');
+			// `blocked`: a connection is still open in this page; the run on the
+			// fresh page finishes the delete.
+			request.onsuccess = request.onerror = request.onblocked = () => resolve();
+		} catch {
+			resolve(); // IndexedDB unavailable (blocked storage): nothing stored
+		}
 	});
 }
