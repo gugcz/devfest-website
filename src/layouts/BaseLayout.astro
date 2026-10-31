@@ -9,6 +9,7 @@ import { staticTicketLines } from '../lib/tickets-static';
 import { EVENT, pageTitle } from '../lib/event';
 import config from '../site.config';
 import { enabled } from '../lib/flags';
+import { getSocials, twitterHandle } from '../lib/socials';
 
 interface Props {
 	title?: string;
@@ -23,6 +24,7 @@ interface Props {
 }
 
 const siteUrl = config.site.url;
+const twitter = await twitterHandle();
 const { venue } = config.event;
 const {
 	title = pageTitle("Prague Developer Conference"),
@@ -115,14 +117,7 @@ const organizationSchema = {
 		"email": config.organizer.email,
 		"contactType": "customer support"
 	},
-	// Keep in sync with the Footer socials.
-	"sameAs": [
-		"https://x.com/devfest_cz",
-		"https://www.facebook.com/DevFestCZ",
-		"https://bsky.app/profile/devfest.cz",
-		"https://www.linkedin.com/company/gugcz/",
-		"https://www.youtube.com/@gug_cz"
-	]
+	"sameAs": (await getSocials()).map((s) => s.url)
 };
 
 const websiteSchema = {
@@ -359,7 +354,7 @@ const jsonLd = JSON.stringify(
 
 		{/* Twitter */}
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:site" content="@devfest_cz" />
+		{twitter && <meta name="twitter:site" content={twitter} />}
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImage} />

@@ -54,9 +54,13 @@ app had to delete routes, menu items, footer links, sitemap filters and
   Flags own routes, links and sections, never prose. `npm run flags-off`
   builds twice with flags off and fails on a route, sitemap entry or link
   left behind.
+- **Content that is data lives in content collections** (phase 5): the
+  social profiles (one list behind the footer icons, the Organization
+  `sameAs` and `twitter:site`), the topics and the press coverage join the
+  FAQ, the team and the partners in `src/content/`, each with a zod schema in
+  `src/content.config.ts` that doubles as the documentation of its shape.
 - **Planned in the same plan, recorded here when they land:** the functions'
   mirror `functions/src/site.ts` with derived CORS lists (phase 4, #513),
-  the social, topic and press-coverage content collections (phase 5),
   `docs/adapting.md` (phase 6).
 
 ## Consequences

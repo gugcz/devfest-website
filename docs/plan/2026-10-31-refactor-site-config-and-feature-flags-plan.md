@@ -438,7 +438,7 @@ Parallel: phase 4 alongside everything; phases 1 to 3 and 5 are a chain.
 
 ### Phase 5: content collections
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** `socials`, `topics` and `press-coverage` collections with zod
   schemas; `Footer`, `BaseLayout` and the pages read them; `topics.ts`
   deleted.

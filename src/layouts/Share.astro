@@ -16,6 +16,7 @@
 import { Font } from 'astro:assets';
 import { defaultOgImageVersion } from '../lib/og-version';
 import { EVENT, eventDate } from '../lib/event';
+import { twitterHandle } from '../lib/socials';
 
 interface Props {
 	/** Where a visitor goes: `/agenda?talk=<id>` or `/speakers?speaker=<id>`. */
@@ -27,6 +28,7 @@ interface Props {
 }
 
 const { to, title, description, label } = Astro.props;
+const twitter = await twitterHandle();
 const site = 'https://devfest.cz';
 const url = new URL(Astro.url.pathname, site).href.replace(/\/$/, '');
 const ogImage = `${site}/og-image.jpg?v=${defaultOgImageVersion()}`;
@@ -56,7 +58,7 @@ const ogImageAlt = `${EVENT.name}, ${eventDate('dayMonth')} at ${EVENT.venue}`;
 		<meta property="og:image:alt" content={ogImageAlt} />
 
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:site" content="@devfest_cz" />
+		{twitter && <meta name="twitter:site" content={twitter} />}
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImage} />
