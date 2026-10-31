@@ -2,7 +2,8 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
 import venuePrint from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
-import { EVENT } from '../lib/event';
+import { EVENT, eventDate } from '../lib/event';
+import config from '../site.config';
 
 interface NavLink {
 	href: string;
@@ -60,14 +61,14 @@ const isCurrent = (href: string) => {
 ---
 
 <header id="site-header" class="site-header" data-state="top" data-home={isHome ? 'true' : 'false'}>
-	<a href="/" class="brand" aria-label="DevFest.cz 2026 — home">
+	<a href="/" class="brand" aria-label={`${EVENT.name} — home`}>
 		{/* Header sits above the fold on every page, so it loads eagerly; the
 		     intrinsic width/height come from the official 3000×600 artboard (5:1,
 		     clear space included), and `widths` caps the srcset at the 190px CSS
 		     width up to 2× DPR. */}
 		<Image
 			src={logo}
-			alt="DevFest.cz 2026"
+			alt={EVENT.name}
 			class="brand-logo"
 			loading="eager"
 			widths={[190, 380]}
@@ -179,7 +180,7 @@ const isCurrent = (href: string) => {
 							<Image src={venuePrint} alt="" widths={[260, 520]} sizes="260px" loading="lazy" />
 						</span>
 						<span class="paper-edge">
-							<span>30 / 10 / 26</span>
+							<span>{eventDate('slash')}</span>
 							<span>{EVENT.doorsTime}</span>
 						</span>
 					</div>
@@ -187,8 +188,8 @@ const isCurrent = (href: string) => {
 
 				<div class="nav-foot">
 					<div class="nav-foot-meta">
-						<p class="nav-foot-line">30 October 2026 &mdash; Uhelný Mlýn, Libčice nad Vltavou</p>
-						<a class="nav-foot-mail" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
+						<p class="nav-foot-line">{EVENT.dateLabel} &mdash; {EVENT.venue}, {config.event.venue.city}</p>
+						<a class="nav-foot-mail" href={`mailto:${EVENT.contactEmail}`}>{EVENT.contactEmail}</a>
 					</div>
 				</div>
 			</div>

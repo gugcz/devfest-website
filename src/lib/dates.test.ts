@@ -10,6 +10,7 @@ describe('formatDate', () => {
 	it('writes the six spellings the site uses', () => {
 		assert.equal(formatDate(DOORS, 'label', TZ), '30 October 2026');
 		assert.equal(formatDate(DOORS, 'short', TZ), '30 Oct 2026');
+		assert.equal(formatDate(DOORS, 'dayMonth', TZ), '30 October');
 		assert.equal(formatDate(DOORS, 'slash', TZ), '30 / 10 / 26');
 		assert.equal(formatDate(DOORS, 'dots', TZ), '30.10.2026');
 		assert.equal(formatDate(DOORS, 'stamp', TZ), '30 OCT 2026');

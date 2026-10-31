@@ -3,6 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import NextStep from '../components/NextStep.astro';
 import NextStepList from '../components/NextStepList.astro';
+import { EVENT } from '../lib/event';
+import config from '../site.config';
 
 // A dead URL is still a visitor who wanted something specific. The page used
 // to state the fault and offer one link home; it now offers the routes people
@@ -30,7 +32,7 @@ const STEPS = [
 		title: 'Still lost?',
 		noteHtml:
 			'The FAQ answers most of it, and one of the desks answers the rest. ' +
-			'Last year&rsquo;s edition lives on <a href="https://2025.devfest.cz">its own site</a>.',
+			`Last year&rsquo;s edition lives on <a href="${config.event.previousEditionUrl}">its own site</a>.`,
 		actions: [
 			{ href: '/faq', label: 'Read the FAQ' },
 			{ href: '/contact', label: 'Contact us' },
@@ -40,7 +42,7 @@ const STEPS = [
 ---
 
 <BaseLayout
-	title="404 — DevFest.cz 2026"
+	title={`404 — ${EVENT.name}`}
 	description="The page you're looking for doesn't exist."
 	noindex
 >

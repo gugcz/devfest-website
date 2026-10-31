@@ -5,6 +5,7 @@ import { fetchLineup } from '../lib/lineup';
 import { useRemote } from '../lib/useRemote';
 import { REDUCED_MOTION } from '../lib/useMediaQuery';
 import { SPEAKER_PARAM } from '../lib/share';
+import { EVENT } from '../lib/event';
 import SpeakerDetail from './SpeakerDetail';
 import SpeakerTile, { billLineup, type Billing } from './SpeakerTile';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
@@ -155,7 +156,7 @@ export default function Speakers() {
 	if (status === 'error') {
 		return (
 			<ErrorState>
-				<p>The lineup won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
+				<p>The lineup won't come up right now. Reload, or take it up with {EVENT.contactEmail}.</p>
 			</ErrorState>
 		);
 	}

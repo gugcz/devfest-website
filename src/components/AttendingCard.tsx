@@ -16,6 +16,7 @@ import {
 	type PhotoTransform,
 } from '../lib/attending-card';
 import { initials } from '../lib/speakers';
+import { EVENT, eventDate } from '../lib/event';
 import s from './AttendingCard.module.scss';
 
 /** Decodes the brand wordmark once, off the DOM. `decode()` resolves only
@@ -604,8 +605,8 @@ export default function AttendingCard() {
 			if (navigator.canShare?.({ files: [file] })) {
 				await navigator.share({
 					files: [file],
-					title: 'DevFest.cz 2026',
-					text: "I'm attending DevFest.cz 2026!",
+					title: EVENT.name,
+					text: `I'm attending ${EVENT.name}!`,
 				});
 				setShareState('done');
 				setShareMessage('Shared.');
@@ -628,8 +629,8 @@ export default function AttendingCard() {
 	const nameEmpty = name.trim().length === 0;
 	const exportDisabled = nameEmpty || !hasPhoto || shareState === 'working';
 	const cardLabel = nameEmpty
-		? 'Your DevFest.cz 2026 share card preview'
-		: `Your DevFest.cz 2026 share card preview, ${name.trim()}`;
+		? `Your ${EVENT.name} share card preview`
+		: `Your ${EVENT.name} share card preview, ${name.trim()}`;
 
 	const panRange = photo ? panBounds(photo.width, photo.height) : null;
 
@@ -903,7 +904,7 @@ export default function AttendingCard() {
 					/>
 					<span className={`paper-edge ${s.edge}`} aria-hidden="true">
 						<span className="edge-word">DevFest.cz</span>
-						<span>30.10.2026</span>
+						<span>{eventDate('dots')}</span>
 					</span>
 					{isDragging && (
 						<div className={s.dragOverlay} aria-hidden="true">

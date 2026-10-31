@@ -364,7 +364,7 @@ Parallel: phase 4 alongside everything; phases 1 to 3 and 5 are a chain.
 
 ### Phase 2: the literal sweep and the guard
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** Every event, organizer and origin literal in `src/` and the a11y
   fixtures replaced by a read from the config, `EVENT`, `formatDate` or
   `pageTitle`; `npm run literals` added to `verify` and to the

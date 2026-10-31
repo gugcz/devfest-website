@@ -17,8 +17,9 @@ import {
 	type Partner,
 } from '../lib/partners';
 import { TOPICS } from '../lib/topics';
-import { EVENT } from '../lib/event';
+import { EVENT, eventDate } from '../lib/event';
 import { staticTicketLines } from '../lib/tickets-static';
+import config from '../site.config';
 
 // The home page as prints on a black table: the full-bleed plate with the
 // statement set left over it, then the event (a widescreen print and its
@@ -74,7 +75,7 @@ const RINGED = '01';
 const STRIP_SCALE = 1;
 ---
 
-<BaseLayout description="DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. 30 October 2026. Tickets on sale now.">
+<BaseLayout description={`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch} ${EVENT.dateLabel}. Tickets on sale now.`}>
 	{/* Preload the LCP hero background so it isn't discovered only after CSS parse */}
 	<link
 		slot="head"
@@ -99,7 +100,7 @@ const STRIP_SCALE = 1;
 			<div class="hero-shade" aria-hidden="true"></div>
 			<div class="hero-body">
 				<h1 id="hero-title" class="hero-statement display">
-					<span class="sr-only">DevFest.cz 2026 — Prague Developer Conference, 30 October 2026. </span>
+					<span class="sr-only">{EVENT.name} — Prague Developer Conference, {EVENT.dateLabel}. </span>
 					Prague&rsquo;s most original conference is <span class="red">back.</span>
 				</h1>
 
@@ -109,14 +110,14 @@ const STRIP_SCALE = 1;
 				</ul>
 
 				<div class="hero-facts">
-					<time class="hero-date" datetime="2026-10-30"><span class="fig">30</span> Oct <span class="fig">2026</span></time>
+					<time class="hero-date" datetime={eventDate('iso')}><span class="fig">30</span> Oct <span class="fig">2026</span></time>
 					<Countdown client:load />
 					<a
 						class="hero-facts-link"
-						href="https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8"
+						href={EVENT.mapUrl}
 						target="_blank"
 						rel="noopener noreferrer"
-					>{EVENT.venue}, Libčice nad Vltavou</a>
+					>{EVENT.venue}, {config.event.venue.city}</a>
 					<HeroOffer client:load />
 				</div>
 				<a href="#tickets" class="btn-primary hero-cta">Get tickets</a>
@@ -132,11 +133,11 @@ const STRIP_SCALE = 1;
 				</header>
 				<div class="event-grid">
 					<div class="paper event-print">
-						<span class="tape">{EVENT.venue}, Libčice nad Vltavou</span>
+						<span class="tape">{EVENT.venue}, {config.event.venue.city}</span>
 						<div class="paper-photo event-photo">
 							<img
 								src="/gallery/uhelny-mlyn-chimney.webp"
-								alt={`The chimney of ${EVENT.venue}, the converted coal mill at Libčice nad Vltavou`}
+								alt={`The chimney of ${EVENT.venue}, the converted coal mill at ${config.event.venue.city}`}
 								loading="lazy"
 								decoding="async"
 								width="1824"
@@ -158,8 +159,8 @@ const STRIP_SCALE = 1;
 							<span class="edge-word">On the back</span>
 						</div>
 						<dl class="facts-list">
-							<div><dt>Date</dt><dd><time datetime="2026-10-30">30 October 2026</time></dd></div>
-							<div><dt>Place</dt><dd>{EVENT.venue}, Libčice nad Vltavou</dd></div>
+							<div><dt>Date</dt><dd><time datetime={eventDate('iso')}>{EVENT.dateLabel}</time></dd></div>
+							<div><dt>Place</dt><dd>{EVENT.venue}, {config.event.venue.city}</dd></div>
 							<div><dt>Doors</dt><dd><span class="fig">08:00&ndash;23:00</span></dd></div>
 							<div>
 								<dt>Audience</dt>

@@ -3,17 +3,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import EndLine from '../components/EndLine.astro';
 import AttendingCard from '../components/AttendingCard';
+import { EVENT, pageTitle } from '../lib/event';
 ---
 
 <BaseLayout
-	title="I'm attending — DevFest.cz 2026"
-	description="Make a DevFest.cz 2026 share card for your feed — add your photo or initials and download or share it."
+	title={`I'm attending — ${EVENT.name}`}
+	description={`Make a ${EVENT.name} share card for your feed — add your photo or initials and download or share it.`}
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'I’m attending'}
 			lede="Build a card for your feed. Add your photo (processed on your device only) or let your initials carry it, then download or share."
-			seoHeading="DevFest.cz 2026 — I'm attending"
+			seoHeading={pageTitle("I'm attending")}
 			titleId="attending-title"
 		/>
 

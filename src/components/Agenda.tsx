@@ -19,6 +19,7 @@ import {
 	type Placement,
 } from '../lib/agenda';
 import { fetchAgenda, speakersById } from '../lib/lineup';
+import { EVENT } from '../lib/event';
 import { useRemote } from '../lib/useRemote';
 import { useMediaQuery } from '../lib/useMediaQuery';
 import SessionDetail from './SessionDetail';
@@ -621,7 +622,7 @@ export default function Agenda() {
 	if (status === 'error') {
 		return (
 			<ErrorState>
-				<p>The agenda won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
+				<p>The agenda won't come up right now. Reload, or take it up with {EVENT.contactEmail}.</p>
 			</ErrorState>
 		);
 	}

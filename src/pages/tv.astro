@@ -12,6 +12,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import TvScreen, { type PartnerGroup } from '../components/TvScreen';
 import gugLogo from '../assets/gug-logo.svg';
 import { getActivePartnerTiers, getCommunityPartners, getTravelPartners, logoBox } from '../lib/partners';
+import { EVENT } from '../lib/event';
 
 // The same set and order as the homepage strip: the ladder top tier first,
 // community and travel last.
@@ -42,8 +43,8 @@ const partners: PartnerGroup[] = tiers.flatMap(({ tier, partners }) => {
 ---
 
 <BaseLayout
-	title="Venue screen — DevFest.cz 2026"
-	description="DevFest.cz 2026 agenda for the screens at the venue."
+	title={`Venue screen — ${EVENT.name}`}
+	description={`${EVENT.name} agenda for the screens at the venue.`}
 	noindex
 	kiosk
 >

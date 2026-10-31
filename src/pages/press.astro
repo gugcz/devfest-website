@@ -1,8 +1,9 @@
 ---
 import Redirect from '../layouts/Redirect.astro';
+import { EVENT } from '../lib/event';
 
 // Press coverage and the press-kit link now sit in a band on /contact, next to
 // the inbox that answers press. The kit itself stays at /press/downloads.
 ---
 
-<Redirect to="/contact#press" title="Press — DevFest.cz 2026" />
+<Redirect to="/contact#press" title={`Press — ${EVENT.name}`} />

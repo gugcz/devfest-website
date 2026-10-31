@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import EndLine from '../components/EndLine.astro';
+import { EVENT } from '../lib/event';
+import config from '../site.config';
 
 // FAQ content: the `faq` collection (`src/content/faq.json`). Accordion and
 // FAQPage JSON-LD both derive from it. `a` may contain inline HTML
@@ -45,8 +47,8 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout
-	title="FAQ — DevFest.cz 2026"
-	description="Frequently asked questions about DevFest.cz 2026 — ticket waves and prices, the venue and how to get there, the schedule, speakers, the afterparty, and what to expect on the day."
+	title={`FAQ — ${EVENT.name}`}
+	description={`Frequently asked questions about ${EVENT.name} — ticket waves and prices, the venue and how to get there, the schedule, speakers, the afterparty, and what to expect on the day.`}
 >
 	<script type="application/ld+json" slot="head" set:html={faqJsonLd} />
 
@@ -54,8 +56,8 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 		<SubpageHero
 			titleHtml={'FAQ'}
 			lede="Answers to the questions we hear most. Can't find yours?"
-			link={{ href: 'mailto:devfest@gug.cz', label: 'Get in touch' }}
-			seoHeading="DevFest.cz 2026 FAQ"
+			link={{ href: `mailto:${config.organizer.email}`, label: 'Get in touch' }}
+			seoHeading={`${EVENT.name} FAQ`}
 			titleId="faq-title"
 		/>
 
@@ -85,7 +87,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 					</ol>
 					<p class="faq-index-ask">
 						<span class="faq-index-ask-label">Write to us</span>
-						<a class="faq-index-mail" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
+						<a class="faq-index-mail" href={`mailto:${config.organizer.email}`}>{config.organizer.email}</a>
 					</p>
 				</nav>
 
@@ -117,7 +119,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 
 					{/* The page ends on one line to the inbox, not a closing band: a
 					    visitor who read this far wants an answer, not a pitch. */}
-					<EndLine text="Still stuck?" href="mailto:devfest@gug.cz" label="devfest@gug.cz" />
+					<EndLine text="Still stuck?" href={`mailto:${config.organizer.email}`} label={config.organizer.email} />
 				</div>
 			</div>
 		</section>

@@ -6,6 +6,8 @@ import Agenda from '../components/Agenda.tsx';
 import Sessions from '../components/Sessions.tsx';
 import TalkIndex from '../components/TalkIndex.astro';
 import { staticLineup } from '../lib/lineup-static';
+import { EVENT, eventDate } from '../lib/event';
+import config from '../site.config';
 
 // ONE PAGE FOR THE PROGRAMME. The timetable answers "when and where", the
 // list under it "what is it about" — search, filters and every abstract. They
@@ -15,15 +17,15 @@ const { sessions, rooms } = await staticLineup();
 ---
 
 <BaseLayout
-	title="Agenda & talks — DevFest.cz 2026"
-	description="The full agenda for DevFest.cz 2026 — registration from 08:00, keynote at 09:00, two stages of talks, lightning talks and the afterparty. Every talk, room and time slot, plus a searchable list of every talk at Prague's community developer conference."
+	title={`Agenda & talks — ${EVENT.name}`}
+	description={`The full agenda for ${EVENT.name} — registration from 08:00, keynote at 09:00, two stages of talks, lightning talks and the afterparty. Every talk, room and time slot, plus a searchable list of every talk at Prague's community developer conference.`}
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Agenda'}
 			lede="Every talk by room and time, and the full list with abstracts below it. A slot or two may still move before the day."
 			link={{ href: '#talks', label: 'Browse all talks' }}
-			seoHeading="DevFest.cz 2026 Agenda, Schedule & Sessions"
+			seoHeading={`${EVENT.name} Agenda, Schedule & Sessions`}
 			titleId="agenda-title"
 		/>
 
@@ -60,8 +62,8 @@ const { sessions, rooms } = await staticLineup();
 		</section>
 
 		<Closer
-			titleHtml={'Doors open<br />30 October.'}
-			note="Uhelný Mlýn, Libčice nad Vltavou. Doors at 08:00, closing remarks at 19:00, afterparty until 23:00."
+			titleHtml={`Doors open<br />${eventDate('dayMonth')}.`}
+			note={`${EVENT.venue}, ${config.event.venue.city}. Doors at 08:00, closing remarks at 19:00, afterparty until 23:00.`}
 			titleId="agenda-closer"
 			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/speakers', label: 'Meet the speakers', kind: 'ghost' }]}
 		/>

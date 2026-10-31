@@ -9,6 +9,8 @@ export type DateStyle =
 	| 'label'
 	/** `30 Oct 2026` — mono stamps and meta lines (uppercased by CSS where needed). */
 	| 'short'
+	/** `30 October` — copy that names the day of a year already stated. */
+	| 'dayMonth'
 	/** `30 / 10 / 26` — the case-file stamp in the menu and the detail sheets. */
 	| 'slash'
 	/** `30.10.2026` — the share cards. */
@@ -56,6 +58,8 @@ export function formatDate(iso: string, style: DateStyle, timeZone: string): str
 			return `${day} ${monthLong} ${year}`;
 		case 'short':
 			return `${day} ${monthShort} ${year}`;
+		case 'dayMonth':
+			return `${day} ${monthLong}`;
 		case 'slash':
 			return `${pad(day)} / ${pad(month)} / ${pad(year % 100)}`;
 		case 'dots':

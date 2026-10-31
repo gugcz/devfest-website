@@ -12,6 +12,7 @@ import {
 import { initials } from '../lib/speakers';
 import { byStart, formatMinutes, placement } from '../lib/agenda';
 import { fetchLineup, speakersById } from '../lib/lineup';
+import { EVENT } from '../lib/event';
 import { useRemote } from '../lib/useRemote';
 import { useMediaQuery } from '../lib/useMediaQuery';
 import { TALK_PARAM } from '../lib/share';
@@ -169,7 +170,7 @@ export default function Sessions() {
 	if (status === 'error') {
 		return (
 			<ErrorState>
-				<p>The agenda won't come up right now. Reload, or take it up with devfest@gug.cz.</p>
+				<p>The agenda won't come up right now. Reload, or take it up with {EVENT.contactEmail}.</p>
 			</ErrorState>
 		);
 	}

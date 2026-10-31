@@ -4,6 +4,7 @@ import SubpageHero from '../../components/SubpageHero.astro';
 import NextStep from '../../components/NextStep.astro';
 import NextStepList from '../../components/NextStepList.astro';
 import { APP_LINKS } from '../../lib/app-links';
+import { EVENT } from '../../lib/event';
 
 // The app's sign-in email links to `/login/<code>`. With the app installed
 // the phone opens the app instead (apple-app-site-association, and the
@@ -40,7 +41,7 @@ const STEPS = [
 ---
 
 <BaseLayout
-	title="Sign In to the App — DevFest.cz 2026"
+	title={`Sign In to the App — ${EVENT.name}`}
 	description="This sign-in link opens in the DevFest.cz app."
 	noindex
 >

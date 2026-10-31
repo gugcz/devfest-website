@@ -15,7 +15,7 @@
  */
 import { Font } from 'astro:assets';
 import { defaultOgImageVersion } from '../lib/og-version';
-import { EVENT } from '../lib/event';
+import { EVENT, eventDate } from '../lib/event';
 
 interface Props {
 	/** Where a visitor goes: `/agenda?talk=<id>` or `/speakers?speaker=<id>`. */
@@ -30,7 +30,7 @@ const { to, title, description, label } = Astro.props;
 const site = 'https://devfest.cz';
 const url = new URL(Astro.url.pathname, site).href.replace(/\/$/, '');
 const ogImage = `${site}/og-image.jpg?v=${defaultOgImageVersion()}`;
-const ogImageAlt = 'DevFest.cz 2026, 30 October at Uhelný Mlýn';
+const ogImageAlt = `${EVENT.name}, ${eventDate('dayMonth')} at ${EVENT.venue}`;
 ---
 
 <!doctype html>
@@ -120,7 +120,7 @@ const ogImageAlt = 'DevFest.cz 2026, 30 October at Uhelný Mlýn';
 	<body>
 		<article>
 			<slot />
-			<p><a href={to}>{label}</a> at DevFest.cz 2026, {EVENT.dateLabel}, {EVENT.venue}, {EVENT.address}.</p>
+			<p><a href={to}>{label}</a> at {EVENT.name}, {EVENT.dateLabel}, {EVENT.venue}, {EVENT.address}.</p>
 		</article>
 	</body>
 </html>

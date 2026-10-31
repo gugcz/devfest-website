@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 const { session, rooms } = Astro.props as { session: Session; rooms: Room[] };
 const names = speakerNames(session);
 const title = names ? `${session.title} — ${names}` : session.title;
-const when = `DevFest.cz 2026, ${EVENT.dateLabel}, ${EVENT.venue}.`;
+const when = `${EVENT.name}, ${EVENT.dateLabel}, ${EVENT.venue}.`;
 const description = session.description ? `${excerpt(session.description)} ${when}` : when;
 const time = timeRange(session);
 const facts = [time && `${time} CET`, roomName(session, rooms), ...visitorCategories(session).map((c) => `${c.name}: ${c.values.join(', ')}`)].filter(
@@ -26,7 +26,7 @@ const facts = [time && `${time} CET`, roomName(session, rooms), ...visitorCatego
 
 <Share
 	to={talkTarget(session.id)}
-	title={`${title} | DevFest.cz 2026`}
+	title={`${title} | ${EVENT.name}`}
 	description={description}
 	label={`“${session.title}”`}
 >

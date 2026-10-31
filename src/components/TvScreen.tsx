@@ -748,7 +748,7 @@ function headerTag(pause: Slot | null, dayAhead: string): string {
 
 /** What a room screen says once nothing more is scheduled in it. */
 function wrapCopy(dayOver: boolean, nowMin: number | null): { title: string; line: string } {
-	if (dayOver) return { title: 'That’s a wrap.', line: 'Thank you for coming to DevFest.cz 2026.' };
+	if (dayOver) return { title: 'That’s a wrap.', line: `Thank you for coming to ${EVENT.name}.` };
 	if (nowMin === null) return { title: 'Agenda coming soon.', line: 'Talks for this room are being scheduled.' };
 	return { title: 'That’s it in here.', line: 'The rest of the day is in the other rooms.' };
 }
@@ -756,7 +756,7 @@ function wrapCopy(dayOver: boolean, nowMin: number | null): { title: string; lin
 function Header({ heading, tag, clock, meta }: { heading: string; tag: string; clock: Clock; meta: string }) {
 	return (
 		<header className={s.header}>
-			<img className={s.logo} src={logoUrl} alt="DevFest.cz 2026" />
+			<img className={s.logo} src={logoUrl} alt={EVENT.name} />
 			<div className={s.titleRow}>
 				<h1 className={s.heading}>{heading}</h1>
 				{tag && (

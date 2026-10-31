@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { PORTRAIT_TRANSITION, type Speaker, type SpeakerLink } from '../lib/speakers';
 import { paragraphs } from '../lib/paragraphs';
+import { eventDate } from '../lib/event';
 import { speakerSharePath, useAddressBar } from '../lib/share';
 import Sheet, { SheetTickets } from './Sheet';
 import SpeakerPhoto from './SpeakerPhoto';
@@ -69,7 +70,7 @@ export default function SpeakerDetail({
 							<SpeakerPhoto speaker={speaker} photoClass={s.photo} monogramClass={s.monogram} eager />
 						</div>
 						<p className="paper-edge">
-							<span>30 / 10 / 26</span>
+							<span>{eventDate('slash')}</span>
 							{slot?.clock && <span>{slot.clock}</span>}
 						</p>
 					</div>

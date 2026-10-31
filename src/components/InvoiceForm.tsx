@@ -11,7 +11,7 @@ import {
 } from '../lib/tito';
 import { track } from '../lib/analytics';
 import { round2 } from '../lib/checkout';
-import { invoicesOpen } from '../lib/event';
+import { EVENT, invoicesOpen } from '../lib/event';
 import s from './InvoiceForm.module.scss';
 
 // Cloud Functions region the callable is deployed to.
@@ -56,7 +56,7 @@ const FIELD_LABELS: Record<FieldName, string> = {
 const INVOICE_DUE_DAYS = 14;
 
 const CLOSED_MESSAGE =
-	'Company invoices are closed for DevFest.cz 2026. Buy tickets on ti.to, or email devfest@gug.cz.';
+	`Company invoices are closed for ${EVENT.name}. Buy tickets on ti.to, or email ${EVENT.contactEmail}.`;
 
 /** The visitor-facing message for a failed `submitInvoiceCallable` call. */
 function submitErrorMessage(e: unknown): string {
@@ -69,10 +69,10 @@ function submitErrorMessage(e: unknown): string {
 			? `We could not use the ${field} you entered. Check it and send again.`
 			: 'The server rejected one of the fields. Please check them and try again.'
 		: code === 'functions/unauthenticated' || code === 'functions/failed-precondition'
-			? 'Could not verify your browser. Reload the page and try again, or email devfest@gug.cz.'
+			? `Could not verify your browser. Reload the page and try again, or email ${EVENT.contactEmail}.`
 			: code === 'functions/resource-exhausted'
-				? 'Too many invoice requests right now. Please try again in an hour, or email devfest@gug.cz.'
-				: 'Something went wrong. Please try again or email devfest@gug.cz.';
+				? `Too many invoice requests right now. Please try again in an hour, or email ${EVENT.contactEmail}.`
+				: `Something went wrong. Please try again or email ${EVENT.contactEmail}.`;
 }
 
 /** `consent` is not a billing field, but it fails the same way and is shown
@@ -318,7 +318,7 @@ export default function InvoiceForm() {
 				`The invoice is on its way to ${recipient}, due in ${INVOICE_DUE_DAYS} days. ` +
 					`Once the payment reaches us, we email one code that claims ` +
 					`${count === 1 ? 'the ticket' : `all ${count} tickets`} on ti.to. ` +
-					`No invoice within the hour? Write to devfest@gug.cz.`,
+					`No invoice within the hour? Write to ${EVENT.contactEmail}.`,
 			);
 			setFields(EMPTY);
 			setConsented(false);

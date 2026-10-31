@@ -12,7 +12,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Closer from '../../components/Closer.astro';
 import InviteCta from '../../components/InviteCta.tsx';
 import { INVITE_EVENT, inviteCopy } from '../../lib/invite';
-import { EVENT } from '../../lib/event';
+import { EVENT, eventDate } from '../../lib/event';
 import { ogCardVersion } from '../../lib/og-version';
 
 export async function getStaticPaths() {
@@ -65,11 +65,11 @@ const color = await plate(member.photoColor ?? member.photo);
 ---
 
 <BaseLayout
-	title={`${copy.titleFlat} — DevFest.cz 2026`}
-	description={`A personal invitation to DevFest.cz 2026 from ${member.name}. ${INVITE_EVENT.date}, ${INVITE_EVENT.city}.`}
+	title={`${copy.titleFlat} — ${EVENT.name}`}
+	description={`A personal invitation to ${EVENT.name} from ${member.name}. ${INVITE_EVENT.date}, ${INVITE_EVENT.city}.`}
 	noindex
 	ogImage={ogImageUrl}
-	ogImageAlt={`${member.name} invites you to DevFest.cz 2026`}
+	ogImageAlt={`${member.name} invites you to ${EVENT.name}`}
 >
 	<main class="page-stack">
 		<section class="invite" aria-labelledby="invite-title" data-bleed>
@@ -124,7 +124,7 @@ const color = await plate(member.photoColor ?? member.photo);
 							)}
 						</span>
 						<span class="paper-edge">
-							<span>30 / 10 / 26</span>
+							<span>{eventDate('slash')}</span>
 							<span>{EVENT.doorsTime}</span>
 						</span>
 					</div>

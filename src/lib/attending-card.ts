@@ -4,6 +4,7 @@
  * from the page's CSS custom properties (`cssVar`), so the card can't drift
  * from `BaseLayout.scss`.
  */
+import { EVENT } from './event';
 
 export const CARD_SIZE = 1200;
 
@@ -305,7 +306,7 @@ export function drawAttendingCard(
 	const headlineSize = fitFontSize(ctx, headline, fonts.bebas, 132, maxHeadlineWidth, 64);
 	const headlineY = SAFE_SPACE + headlineSize * 0.78;
 	const metaY = headlineY + 64;
-	const subtitleText = '30 OCT 2026 · LIBČICE NAD VLTAVOU';
+	const subtitleText = EVENT.cardStamp;
 	const subtitleFont = `500 44px ${fonts.mono}`;
 
 	const nameText = (data.name.trim() || 'Your name here').toUpperCase();
