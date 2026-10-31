@@ -15,7 +15,3 @@ export function useMediaQuery(query: string): boolean {
 }
 
 export const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
-
-export function usePrefersReducedMotion(): boolean {
-	return useMediaQuery(REDUCED_MOTION);
-}

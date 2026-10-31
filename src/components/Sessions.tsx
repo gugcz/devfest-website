@@ -96,7 +96,7 @@ function SessionCard({
 						{when.time && <span className={s.when}>{when.time}</span>}
 						{where && <span>{when.time ? `, ${where}` : where}</span>}
 					</span>
-					<span className={s.kicker}>{kicker}</span>
+					<span>{kicker}</span>
 				</span>
 
 				<span className={s.title}>{session.title}</span>

@@ -28,24 +28,10 @@
 		justify-items: start;
 	}
 
-	.step:has(> .step-index) {
-		grid-row: span 4;
-	}
-
 	// The actions start on one line across the row too.
 	.step-foot {
 		margin-top: 0;
 	}
-}
-
-// The serial, when the cards are a real sequence: a figure, so mono.
-.step-index {
-	display: block;
-	margin-bottom: 0.85rem;
-	@include mono(var(--fs-head));
-	font-weight: 500;
-	line-height: 1;
-	color: var(--paper-ink);
 }
 
 .step-title {

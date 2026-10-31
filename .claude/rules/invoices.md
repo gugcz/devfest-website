@@ -53,9 +53,9 @@ ti.to code. Browser never touches Firestore.
 - Firestore rules deny all clients; they live in the app repo (CLAUDE.md).
 - `submitInvoiceCallable` has `enforceAppCheck: true`, no
   `consumeAppCheckToken` (it needs the App Check Token Verifier IAM role, and
-  401s every submit without it); `cors` lists devfest.cz +
-  PR previews only. Throttles, outermost first: `GLOBAL_LIMIT_MAX` per hour
-  across everyone (the backstop), then 3 per IČO, separators stripped
+  401s every submit without it); `cors` lists devfest.cz,
+  PR previews and localhost (dev server with the App Check debug token). Throttles, outermost first: `GLOBAL_LIMIT_MAX` per hour
+  across everyone (the backstop), then 3 per hour per IČO, separators stripped
   (email left out of the key, so a fresh address does not reset it). The
   accepted cost: anyone can spend a company's 3 with its public IČO. Validation lives in
   `validate.ts` (pure, tested); registration ids are whitespace-stripped and

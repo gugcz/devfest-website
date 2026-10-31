@@ -26,6 +26,8 @@ Failure text is a product surface: it lands in Slack, an invoice's
 - **`options.ts`** — `setGlobalOptions` (`maxInstances` cost ceiling, shared
   billing project) + presets `SCHEDULED`, `CACHED_ENDPOINT`, `WEBHOOK`,
   `CALLABLE`, `TRIGGER`. Spread a preset; never restate `region`/`timeZone`.
+- **`lib/admin.ts`** — the one Admin SDK app (`adminApp`); `db()` (RTDB) and
+  `firestore()` accessors.
 - **`lib/run.ts`** — `runBackground({ name, domain, failureNote }, handler)`
   wraps every scheduled job. Logs start/finish, logs unwrapped cause, alerts
   Slack, rethrows. `failureNote` states blast radius. Alerts fire **on state

@@ -26,7 +26,7 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 | [docs/adr/](docs/adr/README.md) | Architecture decision records: why the site is built the way it is |
 | [docs/design.md](docs/design.md) | The design system |
 | [docs/product.md](docs/product.md) | The product record: users, purpose, brand commitments |
-| [`.claude/rules/`](.claude/rules) | Per-domain notes (tickets, lineup, invoices, workshops, analytics, design) |
+| [`.claude/rules/`](.claude/rules) | Per-domain notes (API, pages, backend, tickets, lineup, invoices, workshops, analytics, invite, design, docs) |
 
 ## Getting Started
 
@@ -81,7 +81,7 @@ Browser
 
 The Blaze plan is required for scheduled functions and Secret Manager.
 
-> **Shared Firebase project.** `devfest-cz-app` also hosts the mobile app's functions and site. This repo declares `"codebase": "website"` and only ever deploys `functions:website`; the app repo uses codebase `app` and different function names. Rules are split by collection and merged by hand. See [ADR 0002](docs/adr/0002-shared-firebase-project.md).
+> **Shared Firebase project.** `devfest-cz-app` also hosts the mobile app's functions and site. This repo declares `"codebase": "website"` and only ever deploys `functions:website`; the app repo uses codebase `app` and different function names. Firestore and RTDB rules live whole in the app repo and deploy from its CI. See [ADR 0002](docs/adr/0002-shared-firebase-project.md).
 
 ### Configure & deploy the functions
 
@@ -270,7 +270,7 @@ firebase functions:secrets:set RESEND_API_KEY         # discount-code email (Sla
 
 Plus the tickets-domain secrets `TITO_API_TOKEN` and `SLACK_WEBHOOK_URL`, and the string params `TITO_ACCOUNT_SLUG` / `TITO_EVENT_SLUG` (`functions/.env`).
 
-Everything else is a **code constant** in `functions/src/invoice/params.ts` (no env, nothing to set): `INVOICE_RELEASE_MATCH` (`company funded`), `INVOICE_VAT_RATE` (`21`), `INVOICE_DUE_DAYS` (`14`), `INVOICE_FROM_EMAIL` (`devfest@gug.cz`), `INVOICE_FROM_NAME`. Change them there and redeploy.
+Everything else is a **code constant** in `functions/src/invoice/params.ts` (no env, nothing to set): `INVOICE_RELEASE_MATCH` (`company funded`), `INVOICE_VAT_RATE` (`21`), `INVOICE_DUE_DAYS` (`14`), `INVOICE_FROM_EMAIL` (`noreply@devfest.cz`), `INVOICE_FROM_NAME` (`DevFest.cz`). Change them there and redeploy.
 
 The invoice **price is taken automatically** from the active ti.to release whose title contains `INVOICE_RELEASE_MATCH` — there is no manual price anywhere.
 
@@ -278,7 +278,7 @@ The invoice **price is taken automatically** from the active ti.to release whose
 
 - **iDoklad OAuth:** iDoklad → Settings → API → client credentials into the secrets above. Token endpoint and lifetime: [`.claude/rules/invoices.md`](.claude/rules/invoices.md).
 - **Invoice email** is sent by iDoklad (PDF attached, pay by bank transfer). If it fails, the invoice number goes to Slack for manual relay. Copy: `buildInvoiceEmail` in `functions/src/invoice/email.ts`.
-- **Discount-code email:** branded HTML from `email-template.ts`. Preview by building `functions/` and rendering `buildDiscountEmail(...).html`.
+- **Discount-code email:** built by `buildDiscountEmail` in `email.ts` on the `renderEmail` layout in `email-template.ts`. Preview by building `functions/` and rendering `buildDiscountEmail(...).html`.
 - **Invoice fields** are seeded from `GET /IssuedInvoices/Default`; contact `CountryId` from `GET /Contacts/Default` (free-text country stored, not mapped; foreign companies handled manually).
 - **ti.to** needs release(s) whose title contains `INVOICE_RELEASE_MATCH` (`company funded`); the public (non-secret) one on sale prices the invoice, and the paid code is scoped to the release the invoice was priced from. When a wave closes, keep its company-funded release on sale but secret until its unpaid invoices are redeemed.
 - **Frontend:** `submitInvoiceCallable` via `getFunctions(app, 'europe-west1')` → `httpsCallable`. App Check enforced; for local dev set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN` and register the token.
@@ -332,7 +332,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/thank-you` | Post-purchase confirmation (ti.to "thank you URL") |
 | `/404` | Not-found page; also forwards share links to talks or speakers added since the last build |
 
-Unlisted pages (`noindex`, out of the sitemap, linked from nowhere): `/invite/<member>` (one per `src/content/team.json` entry), `/speaker-card`, and `/login/<code>` (where the app's sign-in email link lands without the app installed: App Store and Google Play links; a Hosting rewrite in `firebase.json` serves one page for every code).
+Unlisted pages (`noindex`, out of the sitemap, linked from nowhere): `/invite/<member>` (one per `src/content/team.json` entry; its share image is `/og/invite/<member>.jpg`; the discount link comes from the build-time GitHub Actions secret `PUBLIC_INVITE_DISCOUNT_URL`, empty hides it), `/speaker-card`, and `/login/<code>` (where the app's sign-in email link lands without the app installed: App Store and Google Play links; a Hosting rewrite in `firebase.json` serves one page for every code).
 
 `public/.well-known/apple-app-site-association` decides which devfest.cz links open the iOS app: only `/sessions`, `/agenda`, `/game/*` and `/login/*`. Add a path only when the app has a route for it.
 

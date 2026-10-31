@@ -72,7 +72,7 @@ never boots on that path.
 
 | Event | Where | Notes |
 | --- | --- | --- |
-| `begin_checkout` | `Tickets.tsx` Buy CTA (one per variant) | ecommerce shape: `currency`, `value`, `items[]` (the one variant clicked, gross via `grossPrice()`) |
+| `begin_checkout` | `Tickets.tsx` Buy CTA (one per variant); `InviteCta.tsx` (adds `invite_member*`); both via `trackBeginCheckout()` in `checkout.ts` | ecommerce shape: `currency`, `value`, `items[]` (the one variant clicked, gross via `grossPrice()`) |
 | `ticket_purchase_confirmed` | `/thank-you` | ti.to thank-you URL. Not GA4 `purchase` — redirect carries no `transaction_id`/`value` |
 | `sign_up` (`method: 'newsletter'`) | `/newsletter-subscription-thank-you` | native POST to SmartEmailing; this page load is the signal |
 | `generate_lead` | `InvoiceForm.tsx` on callable success | `value`/`currency` from the ti.to estimate |
@@ -83,11 +83,13 @@ never boots on that path.
   `astro:page-load` listener survives soft navigations.
 - Mark the three conversions as key events in GA4 (README "Analytics").
 
-**Data stores:** RTDB `/tickets` (ti.to cache, daily), Firestore
-`speakers`/`sessions` (Sessionize) and `invoices`. Project `devfest-cz-app`,
+**Data stores:** RTDB `/tickets` (ti.to cache, daily) and `/workshops`
+(seats, registrations); Firestore `speakers`/`sessions`/`rooms` (Sessionize)
+and `invoices`. Project `devfest-cz-app`,
 site `devfest-public`.
 
 **App Check** (reCAPTCHA Enterprise): committed public key `APPCHECK_SITE_KEY`
 (`PUBLIC_FIREBASE_APPCHECK_SITE_KEY` overrides). Inits on load everywhere,
-not gated on consent. Only consumer: `submitInvoiceCallable`. Never enforce on
+not gated on consent. Consumers: `submitInvoiceCallable` and
+`workshopRegistrationCallable`. Never enforce on
 `ticketsWebhook` (external HMAC caller) or schedulers.

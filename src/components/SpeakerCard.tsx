@@ -247,8 +247,7 @@ export default function SpeakerCard() {
 	function updateZoom(zoom: number) {
 		setTransform((prev) => {
 			if (!photo) return { ...prev, zoom };
-			const scale = coverScale(photo.width, photo.height, WELL_SIZE) * zoom;
-			return { zoom, ...clampPan(prev.panX, prev.panY, photo.width, photo.height, scale, WELL_SIZE) };
+			return { zoom, ...clampPan(prev.panX, prev.panY, photo.width, photo.height) };
 		});
 	}
 
@@ -274,8 +273,6 @@ export default function SpeakerCard() {
 			drag.panY + ((event.clientY - drag.startY) * displayScale) / scale,
 			photo.width,
 			photo.height,
-			scale,
-			WELL_SIZE,
 		);
 		setTransform((prev) => ({ ...prev, ...clamped }));
 	}

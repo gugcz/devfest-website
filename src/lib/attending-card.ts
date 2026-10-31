@@ -66,8 +66,6 @@ export function clampPan(
 	panY: number,
 	naturalWidth: number,
 	naturalHeight: number,
-	scale: number,
-	wellSize: number,
 ): { panX: number; panY: number } {
 	const { maxX, maxY } = panBounds(naturalWidth, naturalHeight);
 	return {
@@ -99,16 +97,12 @@ export function readFonts(): Fonts {
 }
 
 export interface Palette {
-	bg: string;
 	ink: string;
 	red: string;
 	accent: string;
 	onAccent: string;
-	rule: string;
 	panel: string;
 	monogramInk: string;
-	/** The site's ad-hoc muted ink: `--color-text` at ~0.6 alpha (no token). */
-	muted: string;
 }
 
 /** Reads every color the card needs in one pass. `getComputedStyle` forces a
@@ -116,15 +110,12 @@ export interface Palette {
  * reads made panning janky. */
 export function readPalette(): Palette {
 	return {
-		bg: cssVar('--color-bg') || '#000000',
 		ink: cssVar('--color-text') || '#FFFFFF',
 		red: cssVar('--color-accent-hot') || '#F11000',
 		accent: cssVar('--color-accent') || '#F11000',
-		onAccent: cssVar('--on-accent') || '#000000',
-		rule: cssVar('--rule') || 'rgba(255, 255, 255, 0.16)',
+		onAccent: '#000000',
 		panel: cssVar('--panel-lit') || 'rgba(255, 255, 255, 0.04)',
 		monogramInk: cssVar('--ink-monogram') || 'rgba(255, 255, 255, 0.46)',
-		muted: 'rgba(255, 255, 255, 0.6)',
 	};
 }
 

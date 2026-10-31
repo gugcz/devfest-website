@@ -65,13 +65,15 @@ edited PR body keeps its old text in the public edit history.
 - `src/content/`: `faq.json`, `partners.json`, `team.json`. The mobile app
   bundles `faq.json` and `partners.json` verbatim, so a shape change there
   breaks its next copy.
-- `src/layouts/`: `BaseLayout.astro` (meta, OG, JSON-LD, global SCSS, tokens)
-  and `Share.astro` (share-page preview, then forward).
+- `src/layouts/`: `BaseLayout.astro` (meta, OG, JSON-LD; tokens and global
+  SCSS in `BaseLayout.scss`), `Share.astro` (share-page preview, then
+  forward) and `Redirect.astro` (`/press`, `/sessions`).
 - `functions/src/<domain>/`: Cloud Functions per domain (`tickets`,
   `sessionize`, `lineup`, `invoice`, `workshops`); shared helpers in `lib/`,
   option presets in `options.ts`.
-- `scripts/`: the axe sweep (`a11y.mjs`) and its `/api/*` fixtures
-  (`a11y-mocks/`).
+- `scripts/`: the axe sweep (`a11y.mjs`), its `/api/*` fixtures
+  (`a11y-mocks/`) and the anchor-scroll measure (`anchor-measure.mjs`,
+  `npm run anchors`).
 - `public/`: static assets, the press kit, `.well-known/` (iOS app links).
 - `docs/design.md`: the design system; `docs/product.md`: the product
   record.
@@ -122,7 +124,7 @@ refactored; never raise the threshold or add an ignore comment.
   - `guard-edits.sh` denies hand edits to build output and lockfiles
     (`dist/`, `functions/lib/`, `functions/lib-test/`, `package-lock.json`)
     and asks before editing what reaches the shared project (`firebase.json`,
-    the rules files, the deploy workflows, the iOS app-links file).
+    the deploy workflows, the iOS app-links file).
   - `session-start.sh` runs `npm ci` in a fresh checkout.
   - `.env` files are denied to Claude in `permissions.deny`;
     `permissions.allow` pre-approves only the `verify` gate and its parts,
@@ -144,7 +146,7 @@ one directly when working outside them.
 | `invoices.md` | `functions/src/invoice/**`, `InvoiceForm.tsx`, `invoice.astro` | iDoklad OAuth/API, invoice flow, discount code, emails |
 | `workshops.md` | `functions/src/workshops/**`, `src/lib/workshops.ts`, `Workshops.tsx`, `workshops.astro` | Seat limits, waitlist order, the app's ticket login |
 | `analytics.md` | `src/lib/firebase.ts`, `analytics.ts`, `consent.ts`, `CookieBanner.astro`, the thank-you pages | GA4 Consent Mode, page views, conversion events, Performance Monitoring |
-| `invite.md` | `src/pages/invite/**`, `src/lib/invite.ts`, `InviteCta.tsx`, `team.json` | `/invite/<member>` pages, CTA, visual direction |
+| `invite.md` | `src/pages/invite/**`, `src/pages/og/invite/**`, `src/lib/invite.ts`, `InviteCta.tsx`, `team.json` | `/invite/<member>` pages, CTA, visual direction |
 | `design.md` | `docs/design.md`, `docs/product.md`, `.impeccable/**`, `src/components/**`, `src/pages/**`, `src/layouts/**`, `src/styles/**` | Impeccable loop, `docs/design.md` as the record |
 | `docs.md` | `docs/**`, `README.md`, `CLAUDE.md`, `.claude/**`, the PR template | README, CLAUDE.md, ADRs, brainstorms, plans, what goes where |
 

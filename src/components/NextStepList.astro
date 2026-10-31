@@ -6,18 +6,15 @@ interface Props {
 	label: string;
 	/** Id for the `<h2>`, so the section can be `aria-labelledby` it. */
 	labelId: string;
-	/** `true` when the steps are a sequence (the venue route). */
-	ordered?: boolean;
 }
 
-const { label, labelId, ordered = false } = Astro.props;
-const List = ordered ? 'ol' : 'ul';
+const { label, labelId } = Astro.props;
 ---
 
 <h2 id={labelId} class="eyebrow step-list-label">{label}</h2>
-<List class="step-list" role="list">
+<ul class="step-list" role="list">
 	<slot />
-</List>
+</ul>
 
 <style lang="scss">
 	// The cards laid straight on the table, even in height: three across,

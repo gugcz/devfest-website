@@ -21,9 +21,6 @@ interface Props {
 	memberId: string;
 	memberName: string;
 	label: string;
-	/** Filled by default; the below-fold repeat is the same control. */
-	kind?: 'primary' | 'ghost';
-	className?: string;
 }
 
 /** On-site fallback while tickets are loading or the endpoint is down. */
@@ -44,7 +41,7 @@ const INITIAL: Target = DISCOUNT_URL
 	? { href: DISCOUNT_URL, external: true, releases: [] }
 	: { href: FALLBACK_HREF, external: false, releases: [] };
 
-export default function InviteCta({ memberId, memberName, label, kind = 'primary', className }: Props) {
+export default function InviteCta({ memberId, memberName, label }: Props) {
 	const [target, setTarget] = useState<Target>(INITIAL);
 
 	useEffect(() => {
@@ -91,7 +88,7 @@ export default function InviteCta({ memberId, memberName, label, kind = 'primary
 
 	return (
 		<a
-			className={`${kind === 'primary' ? 'btn-primary' : 'btn-ghost'}${className ? ` ${className}` : ''}`}
+			className="btn-primary"
 			href={target.href}
 			{...(target.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
 			onClick={onClick}

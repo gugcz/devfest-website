@@ -11,10 +11,11 @@ their dates are the PRs' merge dates. When to write one: `.claude/rules/docs.md`
 | # | Decision | Status |
 | --- | --- | --- |
 | [0001](0001-browser-reads-through-cached-api.md) | The browser reads data through cached `/api/*` functions, never the Firebase client SDK | accepted |
-| [0002](0002-shared-firebase-project.md) | One Firebase project, shared with the mobile app, split by codebase and collection | accepted |
+| [0002](0002-shared-firebase-project.md) | One Firebase project, shared with the mobile app, split by codebase and collection | accepted; rules part superseded by 0009 |
 | [0003](0003-invoice-first-company-tickets.md) | Company tickets go invoice first through iDoklad, payment is polled | accepted |
 | [0004](0004-app-check-with-plain-tokens.md) | Callables enforce App Check with plain tokens, plus throttles | accepted |
 | [0005](0005-workshop-sign-up-on-the-app-login.md) | Workshop sign-up reuses the mobile app's ticket login; seats live in RTDB | accepted |
 | [0006](0006-share-pages-built-from-the-live-lineup.md) | Talk and speaker share pages are built from the live lineup at build time | accepted |
 | [0007](0007-analytics-basic-consent-mode.md) | GA4 runs in basic Consent Mode: nothing loads before consent | accepted |
 | [0008](0008-agent-readable-build-time-html.md) | Readers without script get the lineup, programme and prices as build-time HTML | accepted |
+| [0009](0009-database-rules-live-in-the-app-repo.md) | Firestore and RTDB rules live whole in the app repo and deploy from its CI | accepted |

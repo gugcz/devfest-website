@@ -10,7 +10,7 @@ paths:
 
 - Routes are file-based under `src/pages/`; the list is in
   [README.md](../../README.md#key-pages).
-- **SEO.** `BaseLayout.astro`: meta, OG/Twitter, JSON-LD (Event + WebSite).
+- **SEO.** `BaseLayout.astro`: meta, OG/Twitter, JSON-LD (Event, Organization, WebSite, BreadcrumbList).
   Event offers come from `/api/tickets` at build time (`tickets-static.ts`).
   Sitemap via `@astrojs/sitemap`. Share pages and `/invite/*` set their own
   OG image.
