@@ -1,8 +1,9 @@
 ---
 import Redirect from '../layouts/Redirect.astro';
+import { EVENT } from '../lib/event';
 
 // The talk list now lives on /agenda under the timetable — one page for the
 // programme instead of two. `?talk=<id>` links still open their talk there.
 ---
 
-<Redirect to="/agenda#talks" title="Sessions — DevFest.cz 2026" />
+<Redirect to="/agenda#talks" title={`Sessions — ${EVENT.name}`} />

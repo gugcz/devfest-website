@@ -10,7 +10,7 @@
  * and closing remarks until 19:00, afterparty 19:00 to 23:00.
  */
 import config from '../site.config';
-import { formatDate, formatTime } from './dates';
+import { formatDate, formatTime, type DateStyle } from './dates';
 
 const { event, site } = config;
 const { venue, timeZone } = event;
@@ -21,6 +21,13 @@ export function invoicesOpen(now: number = Date.now()): boolean {
 }
 
 const clock = (iso: string): string => formatTime(iso, timeZone);
+
+/** `<event name> — <section>`, the shape most page titles take. */
+export const pageTitle = (section: string): string => `${event.name} ${event.edition} — ${section}`;
+
+/** `iso` in one of the site's date spellings, in the event's time zone. */
+export const eventDate = (style: DateStyle, iso: string = event.start): string =>
+	formatDate(iso, style, timeZone);
 
 export const EVENT = {
 	/** "DevFest.cz 2026": the brand and the edition. */
@@ -52,6 +59,10 @@ export const EVENT = {
 	/** The calendar file, built from this config (`src/pages/calendar.ics.ts`). */
 	icsUrl: '/calendar.ics',
 	url: site.url,
+	/** Where a visitor writes when something fails. */
+	contactEmail: config.organizer.email,
+	/** The band on the share cards: `30 OCT 2026 · LIBČICE NAD VLTAVOU`. */
+	cardStamp: `${formatDate(event.start, 'stamp', timeZone)} · ${venue.city.toUpperCase()}`,
 } as const;
 
 /** `20261030T080000Z` — the compact UTC form both ICS and Google Calendar want. */

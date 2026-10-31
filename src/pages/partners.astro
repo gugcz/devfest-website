@@ -11,6 +11,7 @@ import {
 	partnerLogo,
 	type Partner,
 } from '../lib/partners';
+import { EVENT } from '../lib/event';
 
 // Every logo wall on the page, top tier first: the ladder, then the two
 // off-ladder rows — community, travel, then media. Each tier is a plain label and its
@@ -46,14 +47,14 @@ const FILIP = { name: 'Filip Goszler', role: 'Partnerships', email: 'filip@gug.c
 ---
 
 <BaseLayout
-	title="Partners — DevFest.cz 2026"
-	description="Back DevFest.cz 2026 — partner with the community-built developer conference in the Czech Republic."
+	title={`Partners — ${EVENT.name}`}
+	description={`Back ${EVENT.name} — partner with the community-built developer conference in the Czech Republic.`}
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Partners'}
 			lede="DevFest.cz is a non-profit conference run by its community. The companies below pay for the venue and the day."
-			seoHeading="Partner with DevFest.cz 2026"
+			seoHeading={`Partner with ${EVENT.name}`}
 			titleId="partners-title"
 		/>
 

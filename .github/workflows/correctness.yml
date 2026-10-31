@@ -47,6 +47,9 @@ jobs:
       - name: Cognitive complexity
         run: npm run complexity
 
+      - name: No event, organizer or origin literal outside the site config
+        run: npm run literals
+
   site-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10

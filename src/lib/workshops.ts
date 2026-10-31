@@ -11,6 +11,7 @@
  * Firebase Auth and Functions load lazily, on the registration page only.
  */
 import type { Auth, User } from 'firebase/auth';
+import { EVENT } from './event';
 
 const FUNCTIONS_REGION = 'europe-west1';
 
@@ -135,7 +136,7 @@ export function loginErrorMessage(e: unknown, step: 'ticket' | 'email'): string 
 				? 'That code does not match or has expired. Use the latest email, or start again with your ticket code.'
 				: 'That code does not match a ticket. It is on your ticket, four characters, a dash and a number.';
 		case 'functions/already-exists':
-			return 'This ticket is already linked to another account. Write to devfest@gug.cz and we will sort it out.';
+			return `This ticket is already linked to another account. Write to ${EVENT.contactEmail} and we will sort it out.`;
 		case 'functions/resource-exhausted':
 			return 'Too many attempts. Wait a few minutes and try again.';
 		default:
@@ -147,5 +148,5 @@ export function registrationErrorMessage(e: unknown): string {
 	const code = (e as { code?: string }).code ?? '';
 	if (code === 'functions/failed-precondition') return 'Registration for this workshop is not open.';
 	if (code === 'functions/permission-denied') return 'Sign in with your ticket code first.';
-	return 'Something went wrong. Please try again or write to devfest@gug.cz.';
+	return `Something went wrong. Please try again or write to ${EVENT.contactEmail}.`;
 }

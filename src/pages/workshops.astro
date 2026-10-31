@@ -6,6 +6,7 @@ import Workshops from '../components/Workshops.tsx';
 import TalkIndex from '../components/TalkIndex.astro';
 import { staticLineup } from '../lib/lineup-static';
 import { staticWorkshops } from '../lib/workshops-static';
+import { EVENT } from '../lib/event';
 
 // Workshop sign-up for ticket holders. A workshop opens here once its seat
 // limit is set in RTDB (`/workshops/{sessionId}/limit`); the page lists those
@@ -16,14 +17,14 @@ const workshops = await staticWorkshops(sessions);
 ---
 
 <BaseLayout
-	title="Workshop registration — DevFest.cz 2026"
-	description="Save a seat at a DevFest.cz 2026 workshop. Sign in with the code from your ticket, pick a workshop, and join the waitlist when it is full."
+	title={`Workshop registration — ${EVENT.name}`}
+	description={`Save a seat at a ${EVENT.name} workshop. Sign in with the code from your ticket, pick a workshop, and join the waitlist when it is full.`}
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Save a seat<br />at a workshop'}
 			lede="Workshops have limited seats. Sign in with the code from your ticket and register. When a workshop is full, join the waitlist: you move up as soon as someone cancels."
-			seoHeading="DevFest.cz 2026 Workshop Registration"
+			seoHeading={`${EVENT.name} Workshop Registration`}
 			titleId="workshops-title"
 		/>
 

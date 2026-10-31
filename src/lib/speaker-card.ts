@@ -8,6 +8,7 @@
  */
 
 import { CARD_SIZE, coverScale, roundRectPath, type Fonts, type Palette, type PhotoTransform } from './attending-card';
+import { EVENT } from './event';
 
 export interface SpeakerCardData {
 	name: string;
@@ -251,7 +252,7 @@ export function drawSpeakerCard(
 	ctx.letterSpacing = '3px';
 	ctx.textAlign = 'right';
 	ctx.textBaseline = 'middle';
-	ctx.fillText('30 OCT 2026 · LIBČICE NAD VLTAVOU', size - MARGIN, bandMid + 1);
+	ctx.fillText(EVENT.cardStamp, size - MARGIN, bandMid + 1);
 	ctx.letterSpacing = '0px';
 	ctx.textAlign = 'left';
 }

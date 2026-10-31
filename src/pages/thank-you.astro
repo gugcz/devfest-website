@@ -5,6 +5,7 @@ import NextStep from '../components/NextStep.astro';
 import NextStepList from '../components/NextStepList.astro';
 import EndLine from '../components/EndLine.astro';
 import { EVENT, googleCalendarUrl } from '../lib/event';
+import config from '../site.config';
 
 // The one page on the site a visitor reaches AFTER paying, and it used to say
 // four words and offer a link home. Four things belong here and nowhere else:
@@ -62,15 +63,15 @@ const STEPS = [
 ---
 
 <BaseLayout
-	title="Ticket confirmed — DevFest.cz 2026"
-	description="Your DevFest.cz 2026 ticket is confirmed. See you in Libčice nad Vltavou on 30 October 2026."
+	title={`Ticket confirmed — ${EVENT.name}`}
+	description={`Your ${EVENT.name} ticket is confirmed. See you in ${config.event.venue.city} on ${EVENT.dateLabel}.`}
 	noindex
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={"You're in"}
 			lede={`Ticket confirmed. The receipt and your QR code are on their way to your inbox — see you at ${EVENT.venue} on ${EVENT.dateLabel.replaceAll(' ', '\u00a0')}.`}
-			seoHeading="DevFest.cz 2026 ticket confirmed"
+			seoHeading={`${EVENT.name} ticket confirmed`}
 			titleId="thank-you-title"
 		/>
 
@@ -83,7 +84,7 @@ const STEPS = [
 						<dt>Time</dt>
 						<dd class="stub-fig">{EVENT.timeLabel}</dd>
 						<dt>Place</dt>
-						<dd>{EVENT.venue}, Libčice nad Vltavou</dd>
+						<dd>{EVENT.venue}, {config.event.venue.city}</dd>
 					</dl>
 					<div class="stub-actions">
 						<a class="btn-primary" href={EVENT.icsUrl} download>Download .ics</a>

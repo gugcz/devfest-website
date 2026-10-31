@@ -6,18 +6,19 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import SpeakerCard from '../components/SpeakerCard';
+import { EVENT, pageTitle } from '../lib/event';
 ---
 
 <BaseLayout
-	title="I'm speaking — DevFest.cz 2026"
-	description="Make a DevFest.cz 2026 speaker card with your name and talk title."
+	title={`I'm speaking — ${EVENT.name}`}
+	description={`Make a ${EVENT.name} speaker card with your name and talk title.`}
 	noindex
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'I’m speaking'}
 			lede="Pick your name and we set your talk on the card. Download it or share it straight to your feed."
-			seoHeading="DevFest.cz 2026 — I'm speaking"
+			seoHeading={pageTitle("I'm speaking")}
 			titleId="speaker-card-title"
 		/>
 

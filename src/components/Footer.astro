@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
 import { EVENT } from '../lib/event';
+import config from '../site.config';
 
 const SOCIALS = [
 	{
@@ -79,7 +80,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		<a href="/" class="footer-logo-link">
 			<Image
 				src={logo}
-				alt="DevFest.cz 2026"
+				alt={EVENT.name}
 				class="footer-logo"
 				loading="lazy"
 				widths={[480, 960, 1280]}
@@ -93,7 +94,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 					Prague's developer conference &mdash; AI agents, generative UI, cloud &amp; backends, mobile &amp; web, and the humans behind it.
 				</p>
 				<address class="contact">
-					<a class="email" href="mailto:devfest@gug.cz">devfest@gug.cz</a>
+					<a class="email" href={`mailto:${EVENT.contactEmail}`}>{EVENT.contactEmail}</a>
 				</address>
 			</section>
 
@@ -129,7 +130,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 							href={EVENT.mapUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-						>{EVENT.venue}, Libčice nad Vltavou</a>
+						>{EVENT.venue}, {config.event.venue.city}</a>
 					</dd>
 					<dt>Format</dt>
 					<dd>In-person</dd>

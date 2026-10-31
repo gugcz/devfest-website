@@ -14,6 +14,7 @@ import {
 	type PhotoTransform,
 } from '../lib/attending-card';
 import { drawSpeakerCard } from '../lib/speaker-card';
+import { EVENT, eventDate } from '../lib/event';
 import { fetchLineup } from '../lib/lineup';
 import { initials, type Speaker } from '../lib/speakers';
 import { useRemote } from '../lib/useRemote';
@@ -94,8 +95,8 @@ function photoNoteFor(photoLoading: boolean, photoSource: PhotoSource): string {
 
 function cardLabelFor(speaker: Speaker | undefined, talk: string): string {
 	return speaker
-		? `DevFest.cz 2026 speaker card for ${speaker.fullName}${talk ? `, ${talk}` : ''}`
-		: 'DevFest.cz 2026 speaker card preview';
+		? `${EVENT.name} speaker card for ${speaker.fullName}${talk ? `, ${talk}` : ''}`
+		: `${EVENT.name} speaker card preview`;
 }
 
 export default function SpeakerCard() {
@@ -308,7 +309,7 @@ export default function SpeakerCard() {
 			if (!blob) throw new Error('no-blob');
 			const file = new File([blob], fileName, { type: 'image/png' });
 			if (navigator.canShare?.({ files: [file] })) {
-				await navigator.share({ files: [file], title: 'DevFest.cz 2026', text: "I'm speaking at DevFest.cz 2026!" });
+				await navigator.share({ files: [file], title: EVENT.name, text: `I'm speaking at ${EVENT.name}!` });
 				setShareState('done');
 				setShareMessage('Shared.');
 			} else {
@@ -520,7 +521,7 @@ export default function SpeakerCard() {
 					/>
 					<span className={`paper-edge ${a.edge}`} aria-hidden="true">
 						<span className="edge-word">DevFest.cz</span>
-						<span>30.10.2026</span>
+						<span>{eventDate('dots')}</span>
 					</span>
 					{photoLoading && (
 						<div className={s.photoLoading}>

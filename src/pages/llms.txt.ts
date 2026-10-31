@@ -15,6 +15,7 @@ import { staticTicketLines } from '../lib/tickets-static';
 import { staticWorkshops } from '../lib/workshops-static';
 import { speakerSharePath, talkSharePath } from '../lib/share';
 import { BUILD_DAY } from '../lib/static-api';
+import config from '../site.config';
 
 const site = EVENT.url;
 
@@ -23,7 +24,7 @@ const PAGES: Array<[string, string, string]> = [
 	['Agenda', '/agenda', 'the timetable by room and time, and every talk with its abstract'],
 	['Speakers', '/speakers', 'everyone on stage, with bios'],
 	['Workshops', '/workshops', 'workshop sign-up for ticket holders, limited seats'],
-	['Venue', '/venue', 'how to get to Uhelný Mlýn from Prague'],
+	['Venue', '/venue', `how to get to ${EVENT.venue} from Prague`],
 	['FAQ', '/faq', 'the essentials, tickets, agenda and speakers, getting involved'],
 	['Company invoice', '/invoice', 'pay for tickets by bank transfer'],
 	['Code of Conduct', '/code-of-conduct', ''],
@@ -50,13 +51,13 @@ export const GET: APIRoute = async () => {
 	const lines = [
 		`# ${EVENT.name}`,
 		'',
-		`> Prague's community developer conference: one day of talks and workshops in English on ${EVENT.dateLabel} at ${EVENT.venue}, a converted coal mill in Libčice nad Vltavou, 25 minutes north of Prague. Organised by GUG.cz, z.s. since 2012.`,
+		`> Prague's community developer conference: one day of talks and workshops in English on ${EVENT.dateLabel} at ${EVENT.venue}, a converted coal mill in ${config.event.venue.city}, 25 minutes north of Prague. Organised by ${config.organizer.legalName} since 2012.`,
 		'',
 		`- Date: ${EVENT.dateLabel}. Doors and registration ${EVENT.doorsTime}, keynote ${EVENT.startTime}, closing remarks ${EVENT.endTime}, afterparty until ${EVENT.afterpartyEndTime} (CET).`,
 		`- Venue: ${EVENT.venue}, ${EVENT.street}. Map: ${EVENT.mapUrl}`,
 		'- Audience: 350 medior and senior developers from across Central and Eastern Europe. In person only.',
 		`- Topics: ${TOPICS.map((t) => t.name).join(', ')}.`,
-		'- Contact: devfest@gug.cz',
+		`- Contact: ${config.organizer.email}`,
 		`- Calendar: ${site}${EVENT.icsUrl}`,
 		'',
 		`Lists below are as of ${BUILD_DAY}; the linked pages are live.`,

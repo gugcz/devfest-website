@@ -6,6 +6,8 @@ import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
 import { defaultOgImageVersion } from '../lib/og-version';
 import { staticTicketLines } from '../lib/tickets-static';
+import { EVENT, pageTitle } from '../lib/event';
+import config from '../site.config';
 
 interface Props {
 	title?: string;
@@ -19,14 +21,15 @@ interface Props {
 	ogImageAlt?: string;
 }
 
-const siteUrl = "https://devfest.cz";
+const siteUrl = config.site.url;
+const { venue } = config.event;
 const {
-	title = "DevFest.cz 2026 — Prague Developer Conference",
-	description = "DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. 30 October 2026 at Uhelný Mlýn. Tickets on sale now.",
+	title = pageTitle("Prague Developer Conference"),
+	description = `${EVENT.name} — ${config.event.tagline}: ${config.event.pitch.replace(/\.$/, "")}. ${EVENT.dateLabel} at ${EVENT.venue}. Tickets on sale now.`,
 	noindex = false,
 	kiosk = false,
 	ogImage = `${siteUrl}/og-image.jpg?v=${defaultOgImageVersion()}`,
-	ogImageAlt = "DevFest.cz 2026 — classified mission starts 30 October 2026",
+	ogImageAlt = `${EVENT.name} — classified mission starts ${EVENT.dateLabel}`,
 } = Astro.props;
 
 const ogImageType = new URL(ogImage).pathname.endsWith(".png") ? "image/png" : "image/jpeg";
@@ -47,8 +50,8 @@ const isHome = Astro.url.pathname === "/";
 // no `validFrom` / `priceValidUntil` to state.
 const organizer = {
 	"@type": "Organization",
-	"name": "GUG.cz, z.s.",
-	"url": "https://gug.cz"
+	"name": config.organizer.legalName,
+	"url": config.organizer.url
 };
 const offers = isHome
 	? (await staticTicketLines())
@@ -66,29 +69,29 @@ const offers = isHome
 const eventSchema = {
 	"@context": "https://schema.org",
 	"@type": "Event",
-	"name": "DevFest.cz 2026",
+	"name": EVENT.name,
 	"description":
-		"DevFest.cz 2026 — Prague's developer conference & festival: AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. Two stages, one day, an afterparty.",
+		`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch.replace(/\.$/, "")}. Two stages, one day, an afterparty.`,
 	"image": [ogImage],
 	"url": siteUrl,
-	"startDate": "2026-10-30T09:00:00+01:00",
-	"endDate": "2026-10-30T19:00:00+01:00",
+	"startDate": EVENT.start,
+	"endDate": EVENT.end,
 	// Registration opens an hour before the keynote (see the agenda).
-	"doorTime": "2026-10-30T08:00:00+01:00",
+	"doorTime": EVENT.doors,
 	"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
 	"eventStatus": "https://schema.org/EventScheduled",
 	"inLanguage": "en",
 	"keywords": "developer conference, technology conference, Prague, AI agents, generative UI, cloud, backends, web development, mobile development, accessibility, open source, DevFest",
 	"location": {
 		"@type": "Place",
-		"name": "Uhelný Mlýn",
+		"name": venue.name,
 		"address": {
 			"@type": "PostalAddress",
-			"streetAddress": "Areál Šroubáren 860",
-			"postalCode": "252 66",
-			"addressLocality": "Libčice nad Vltavou",
-			"addressRegion": "Central Bohemia",
-			"addressCountry": "CZ"
+			"streetAddress": venue.street,
+			"postalCode": venue.postalCode,
+			"addressLocality": venue.city,
+			"addressRegion": venue.region,
+			"addressCountry": venue.country
 		}
 	},
 	"organizer": organizer,
@@ -100,15 +103,15 @@ const eventSchema = {
 const organizationSchema = {
 	"@context": "https://schema.org",
 	"@type": "Organization",
-	"name": "DevFest.cz",
+	"name": config.event.name,
 	"url": siteUrl,
 	"logo": `${siteUrl}/logo.png`,
 	"description":
-		"DevFest.cz is Prague's community-run developer conference & festival — AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it.",
+		`${config.event.name} is Prague's community-run developer conference & festival — ${config.event.pitch}`,
 	"parentOrganization": organizer,
 	"contactPoint": {
 		"@type": "ContactPoint",
-		"email": "devfest@gug.cz",
+		"email": config.organizer.email,
 		"contactType": "customer support"
 	},
 	// Keep in sync with the Footer socials.

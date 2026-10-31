@@ -2,13 +2,14 @@
  * then only `body` changes. `roleLine` is the one line that varies. */
 
 import { EVENT } from './event';
+import config from '../site.config';
 
 /** The facts the copy states out loud, in the site's date format (`event.ts`). */
 export const INVITE_EVENT = {
 	date: EVENT.dateLabel,
-	city: 'Libčice nad Vltavou',
+	city: config.event.venue.city,
 	/** The one-line meta under the CTA. */
-	stamp: `${EVENT.dateShort} · Libčice nad Vltavou`,
+	stamp: `${EVENT.dateShort} · ${config.event.venue.city}`,
 } as const;
 
 /** The closing line, by `role`. An unknown role falls back to the organiser

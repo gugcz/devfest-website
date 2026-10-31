@@ -5,19 +5,20 @@ import Speakers from '../components/Speakers.tsx';
 import EndLine from '../components/EndLine.astro';
 import SpeakerIndex from '../components/SpeakerIndex.astro';
 import { staticLineup } from '../lib/lineup-static';
+import { EVENT, eventDate } from '../lib/event';
 
 const { speakers, sessions } = await staticLineup();
 ---
 
 <BaseLayout
-	title="Speakers — DevFest.cz 2026"
-	description="Meet the speakers taking the stage at DevFest.cz 2026 — developers, Google Developer Experts and researchers from across Europe and beyond, at Prague's community-built developer conference."
+	title={`Speakers — ${EVENT.name}`}
+	description={`Meet the speakers taking the stage at ${EVENT.name} — developers, Google Developer Experts and researchers from across Europe and beyond, at Prague's community-built developer conference.`}
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Speakers'}
-			lede="Everyone on stage on 30 October. Pick anyone for their bio and talk. Times in CET."
-			seoHeading="DevFest.cz 2026 Speakers"
+			lede={`Everyone on stage on ${eventDate('dayMonth')}. Pick anyone for their bio and talk. Times in CET.`}
+			seoHeading={`${EVENT.name} Speakers`}
 			titleId="speakers-title"
 		/>
 

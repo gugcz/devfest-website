@@ -6,6 +6,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import EndLine from '../components/EndLine.astro';
 import { initials } from '../lib/speakers';
+import { EVENT } from '../lib/event';
+import config from '../site.config';
 
 // ─── TEAM ROSTER ──────────────────────────────────────────────────────────
 // Roster: the `team` collection (`src/content/team.json`). Each member has a
@@ -65,14 +67,14 @@ const LINK_LABEL: Record<LinkKind, string> = {
 ---
 
 <BaseLayout
-	title="Team — DevFest.cz 2026"
-	description="Meet the crew behind DevFest.cz 2026 — the organisers running Prague's community-built developer conference."
+	title={`Team — ${EVENT.name}`}
+	description={`Meet the crew behind ${EVENT.name} — the organisers running Prague's community-built developer conference.`}
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'The team'}
 			lede="The volunteers putting this year's edition together, most of them developers who'd rather be debugging."
-			seoHeading="DevFest.cz 2026 Team"
+			seoHeading={`${EVENT.name} Team`}
 			titleId="team-title"
 		/>
 
@@ -156,7 +158,7 @@ const LINK_LABEL: Record<LinkKind, string> = {
 					))}
 				</ul>
 
-				<EndLine text="Want to help next year?" href="mailto:devfest@gug.cz" label="devfest@gug.cz" />
+				<EndLine text="Want to help next year?" href={`mailto:${config.organizer.email}`} label={config.organizer.email} />
 			</div>
 		</section>
 	</main>
