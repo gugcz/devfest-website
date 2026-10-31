@@ -91,7 +91,6 @@ function SessionCard({
 				type="button"
 				className={s.card}
 				onClick={() => onOpen(session)}
-				aria-label={`View details for ${session.title}`}
 			>
 				<span className={s.top}>
 					<span>
@@ -103,7 +102,7 @@ function SessionCard({
 
 				<span className={s.title}>{session.title}</span>
 
-				{session.description && <span className={s.excerpt}>{session.description}</span>}
+				{session.description && <span className={s.excerpt} aria-hidden="true">{session.description}</span>}
 
 				<span className={s.foot}>
 					<CardAvatars speakers={session.speakers} />

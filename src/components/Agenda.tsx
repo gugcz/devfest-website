@@ -3,7 +3,6 @@ import { speakerNames, visitorCategories, type Room, type Session } from '../lib
 import {
 	byStart,
 	eventDateISO,
-	formatClock,
 	formatMinutes,
 	isAllDayRoom,
 	isBand,
@@ -116,12 +115,6 @@ function useNowMinutes(eventDate: string): number | null {
 	return nowMin;
 }
 
-/** Accessible label for a talk slip — omits the room clause when unassigned. */
-function talkLabel(session: Session, room: string): string {
-	const time = formatClock(session.startsAt);
-	return room ? `${session.title} — ${time} in ${room}` : `${session.title} — ${time}`;
-}
-
 /** Start–end wall-clock range (`09:00–09:45`), fallback end included. */
 function timeRange(session: Session): string {
 	const place = placement(session);
@@ -208,13 +201,13 @@ function TalkSlip({
 			className={s.slip}
 			style={style}
 			onClick={() => onOpen(session)}
-			aria-label={talkLabel(session, room)}
 			data-agenda-open
 		>
 			<span className={s.edge}>
 				<span>
 					{timeRange(session)}
 					{showRoom && room && <span className={s.edgeRoom}>, {room}</span>}
+					{!showRoom && room && <span className="sr-only">, {room}</span>}
 				</span>
 				<span className={s.edgeNote}>{trackLength(session)}</span>
 			</span>

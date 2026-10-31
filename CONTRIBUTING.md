@@ -12,7 +12,7 @@ npm run dev          # /api/* served from fixtures
 npm run verify       # the gate CI runs on every PR
 ```
 
-Node 22 (`.nvmrc`). The dev server needs no Firebase credentials. Secrets
+Node 24 (`.nvmrc`). The dev server needs no Firebase credentials. Secrets
 and console steps for the Cloud Functions: [README.md](README.md).
 
 ## Before you open a PR
