@@ -31,6 +31,10 @@ paths:
   one.
 - **`docs/design.md`** and `.impeccable/design.json` are the design record;
   **`docs/product.md`** the product record (`.claude/rules/design.md`).
+- **`docs/adapting.md`** is the adopter's checklist: every `SiteConfig`
+  field, every feature flag, the assets with the year in them, the
+  functions mirror, the workflow lines. A change that adds a config field,
+  a flag or a year-bound asset updates it in the same PR.
 - When a change adds or renames a function, an endpoint, a page, a secret or a
   rule, update README's table, CLAUDE.md's function list and rules table,
   the endpoint table in `.claude/rules/api.md`, and the matching rule **in

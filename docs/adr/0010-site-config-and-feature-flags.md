@@ -59,9 +59,14 @@ app had to delete routes, menu items, footer links, sitemap filters and
   `sameAs` and `twitter:site`), the topics and the press coverage join the
   FAQ, the team and the partners in `src/content/`, each with a zod schema in
   `src/content.config.ts` that doubles as the documentation of its shape.
-- **Planned in the same plan, recorded here when they land:** the functions'
-  mirror `functions/src/site.ts` with derived CORS lists (phase 4, #513),
-  `docs/adapting.md` (phase 6).
+- **The Cloud Functions keep a mirror** (phase 4, #513): `functions/src/site.ts`
+  holds the public subset they need, shaped like the site config, and the
+  CORS allowlists of the callables and of `lineupApi` derive from it. The
+  functions build is a separate `tsconfig` and cannot import the site's
+  module; one shared contracts package is a later decision.
+- **The repo is adoptable** (phase 6): `LICENSE` (MIT), `CONTRIBUTING.md`
+  and `docs/adapting.md`, the checklist for a new edition and for another
+  chapter.
 
 ## Consequences
 
