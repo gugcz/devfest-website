@@ -96,15 +96,21 @@ loaded in the document, and neither can be fully unloaded. Options:
   effect from the next page load. Smallest, but the privacy policy would
   have to say so, and the slip currently promises nothing loads on decline.
 
-With A:
+With A (chosen 2026-11-01). Built: the clean-up and reload happen on the
+"Cookie settings" click itself when the stored choice was `accepted`, not on
+the Decline that follows, so GA4 sends nothing while the visitor decides
+again; after a decline the click just shows the banner. Focus lands on the
+banner either way (a one-shot `sessionStorage` flag across the reload).
 
 - `src/lib/consent.ts`: `clearConsent()` beside `readConsent`/`storeConsent`;
-  a `withdrawAnalytics()` helper (cookie + IndexedDB delete) lives there too
-  so `firebase.ts` stays the only Firebase importer.
+  a `deleteAnalyticsData()` helper (`_ga*` cookies, the Installations
+  IndexedDB, Performance's cached config) lives there too so `firebase.ts`
+  stays the only Firebase importer.
 - Cookie settings buttons carry `data-cookie-settings`; one delegated click
   listener in `CookieBanner.astro` (module scope, survives
   `<ClientRouter />` swaps).
-- A unit test for `clearConsent()` in `src/lib/consent.test.ts`.
+- Unit tests for `clearConsent()` and the cookie-domain list in
+  `src/lib/consent.test.ts`.
 
 ## Docs (same PR)
 

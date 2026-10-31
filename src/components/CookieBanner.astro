@@ -1,7 +1,7 @@
 ---
 ---
 
-<div id="cookie-banner" class="cookie-banner cookie-banner--hidden" role="region" aria-label="Cookie consent" aria-live="polite" aria-hidden="true">
+<div id="cookie-banner" class="cookie-banner cookie-banner--hidden" tabindex="-1" role="region" aria-label="Cookie consent" aria-live="polite" aria-hidden="true">
 	<p class="cookie-text">
 		May we use analytics cookies?
 		Details in our <a href="/privacy-policy" class="cookie-link">Privacy Policy</a>.
@@ -17,7 +17,11 @@
 	// reads the same decision to decide whether GA4 boots at all. Static import
 	// (not dynamic): the module is a few lines of localStorage access and pulls in
 	// no Firebase code.
-	import { readConsent, storeConsent } from '../lib/consent';
+	import { clearConsent, deleteAnalyticsData, readConsent, storeConsent } from '../lib/consent';
+
+	// One-shot sessionStorage flag: focus the banner after a "Cookie settings"
+	// reload (below).
+	const SETTINGS_FOCUS = 'cookie-settings-focus';
 
 	// Boot GA4 (only after an accept) and record the page view. Undecided or
 	// declined loads nothing and sends nothing. `trackPageView()` is a no-op for
@@ -73,6 +77,17 @@
 			showBanner();
 		}
 
+		// Back from a "Cookie settings" reload: the visitor asked for the banner,
+		// so focus goes to it.
+		try {
+			if (sessionStorage.getItem(SETTINGS_FOCUS)) {
+				sessionStorage.removeItem(SETTINGS_FOCUS);
+				document.getElementById('cookie-banner')?.focus();
+			}
+		} catch {
+			/* storage unavailable — no flag was set */
+		}
+
 		document.getElementById('cookie-accept')?.addEventListener('click', () => {
 			storeConsent('accepted');
 			hideBanner();
@@ -98,6 +113,30 @@
 		const banner = document.getElementById('cookie-banner');
 		if (!banner || banner.inert || banner.classList.contains('cookie-banner--hidden')) return;
 		(document.getElementById('cookie-decline') as HTMLButtonElement | null)?.click();
+	});
+
+	// "Cookie settings" (footer, privacy policy) forgets the decision and asks
+	// again (GDPR Art. 7(3): withdrawing is as easy as giving). After an accept
+	// GA4 and Performance Monitoring are loaded in this document and cannot be
+	// unloaded, so their cookies and storage are deleted and the page reloads
+	// clean; nothing runs while the visitor decides again. Delegated, because
+	// <ClientRouter /> swaps the buttons on every navigation.
+	document.addEventListener('click', async (e) => {
+		if (!(e.target instanceof Element) || !e.target.closest('[data-cookie-settings]')) return;
+		const accepted = readConsent() === 'accepted';
+		clearConsent();
+		if (accepted) {
+			await deleteAnalyticsData();
+			try {
+				sessionStorage.setItem(SETTINGS_FOCUS, '1');
+			} catch {
+				/* storage unavailable — the banner still shows, unfocused */
+			}
+			location.reload();
+			return;
+		}
+		showBanner();
+		document.getElementById('cookie-banner')?.focus();
 	});
 
 	// Scroll padding only applies when the browser scrolls. Focus moving to an
