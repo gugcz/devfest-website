@@ -12,13 +12,15 @@ import type { EventHandlerOptions } from 'firebase-functions/v2/options';
 import type { CallableOptions, HttpsOptions } from 'firebase-functions/v2/https';
 import type { ScheduleOptions } from 'firebase-functions/v2/scheduler';
 
+import { SITE } from './site.js';
+
 setGlobalOptions({ maxInstances: 10 });
 
 /** Every function in this codebase deploys here — closest region to the event. */
-export const REGION = 'europe-west1';
+export const REGION = SITE.site.functionsRegion;
 
-/** Schedules are authored in local time; the event and its organizers are on Prague time. */
-export const TIME_ZONE = 'Europe/Prague';
+/** Schedules are authored in local time; the event and its organizers are on the event's time. */
+export const TIME_ZONE = SITE.event.timeZone;
 
 /**
  * Scheduled jobs. `retryCount: 1` gives one platform-level retry, which covers

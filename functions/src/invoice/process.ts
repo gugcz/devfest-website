@@ -12,6 +12,7 @@ import { describeError } from '../lib/errors.js';
 import { SLACK_WEBHOOK_URL } from '../lib/params.js';
 import { escapeMrkdwn, notify } from '../lib/slack.js';
 import { TRIGGER } from '../options.js';
+import { eventName } from '../site.js';
 import { TITO_ACCOUNT_SLUG, TITO_API_TOKEN, TITO_EVENT_SLUG } from '../tickets/params.js';
 import { releaseTitle } from '../tickets/tito-api.js';
 import {
@@ -101,9 +102,9 @@ export const processInvoiceTrigger = onDocumentCreated(
 			const invoice = await createInvoice(idokladCfg, {
 				contactId,
 				dueDays,
-				description: 'DevFest.cz 2026',
+				description: eventName(),
 				line: {
-					name: `${releaseTitle(release)} — DevFest.cz 2026`,
+					name: `${releaseTitle(release)} — ${eventName()}`,
 					quantity: doc.countTickets,
 					unitPriceNet,
 					vatRatePercent: vatRate,

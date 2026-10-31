@@ -1,6 +1,6 @@
 /**
  * `speakerPhotoApi` — `/api/speaker-photo?id=<speakerId>` serves a speaker's
- * portrait from devfest.cz's own origin, for the `/speaker-card` canvas.
+ * portrait from the site's own origin, for the `/speaker-card` canvas.
  *
  * A canvas can only export an image whose server sends CORS headers. The
  * lineup's `profilePicture` is either our Storage mirror (App Check enforced,

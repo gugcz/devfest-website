@@ -17,6 +17,7 @@ import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { db, firestore } from '../lib/admin.js';
 import { describeError } from '../lib/errors.js';
 import { CALLABLE } from '../options.js';
+import { SITE_ORIGINS } from '../site.js';
 import {
 	parseLimit,
 	seats,
@@ -28,7 +29,8 @@ import {
 	type WorkshopSeats,
 } from './roster.js';
 
-// The mobile app's user collection (devfest_mobile_app `COLLECTIONS.USERS`).
+// The mobile app's user collection (`COLLECTIONS.USERS` in the mobile app's
+// repo, see CLAUDE.md, Firebase shared project).
 const USERS = 'users';
 
 type Action = 'status' | 'join' | 'leave';
@@ -97,11 +99,7 @@ export const workshopRegistrationCallable = onCall(
 	{
 		...CALLABLE,
 		enforceAppCheck: true,
-		cors: [
-			/^https:\/\/(www\.)?devfest\.cz$/,
-			/^https:\/\/devfest-public--pr-\d+-[a-z0-9]+\.web\.app$/,
-			/^http:\/\/localhost(:\d+)?$/,
-		],
+		cors: SITE_ORIGINS,
 	},
 	async (request) => {
 		const uid = request.auth?.uid;

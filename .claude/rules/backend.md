@@ -18,8 +18,14 @@ Failure text is a product surface: it lands in Slack, an invoice's
 - Names: `camelCase` + trigger suffix (`Scheduled`, `Api`, `Webhook`,
   `Callable`, `Trigger`), unique across the project shared with the mobile
   app. Add a new one to CLAUDE.md's function list and README's table.
-- Every `onCall` sets `enforceAppCheck: true` and a `cors` list (devfest.cz,
-  `devfest-public--pr-*` previews). Never `consumeAppCheckToken`
+- Event, organizer and site facts the functions need (event name, dates,
+  origins, sender, region, time zone) live in `functions/src/site.ts`, a
+  mirror of `src/site.config.ts`; keep the two in step. Never write the
+  domain, the event name or a date as a literal in code elsewhere in
+  `functions/` (comments are fine).
+- Every `onCall` sets `enforceAppCheck: true` and `cors: SITE_ORIGINS` (the
+  site, `www.`, the Hosting PR previews, localhost); `lineupApi` uses
+  `APP_ORIGINS`. Never `consumeAppCheckToken`
   ([ADR 0004](../../docs/adr/0004-app-check-with-plain-tokens.md)).
 - Removing a function: the deploy runs without `--force`, so it fails until
   the maintainer deletes the old one by hand. Say so in the PR.
