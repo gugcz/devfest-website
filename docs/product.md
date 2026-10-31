@@ -51,6 +51,8 @@ built by a community, not a vendor event.
 - Hosting and functions are **Firebase**, project `devfest-cz-app`, shared
   with the mobile app.
 - Analytics is GA4 behind Consent Mode; only consenting visitors are counted.
+  "Cookie settings" (footer, privacy policy §3) withdraws or changes the
+  choice at any time.
 - **[inferred]** Most visitors arrive on a phone from social or the community
   newsletter; the ticket section must work on a slow mobile connection.
 
