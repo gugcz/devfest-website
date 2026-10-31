@@ -92,9 +92,7 @@ built by a community, not a vendor event.
   enlarged). The utility sections follow a step smaller: Partners (a
   labelled row per tier, each mark sized by its tier; "All partners",
   "Become a partner"), Get the app (store badges and a link to `/app`),
-  Newsletter (lede and the form
-  on a paper card; after the day the lede promises a note when the next
-  edition has a date). No arrow glyphs; the countdown is the only thing that moves on its own.
+  Newsletter (lede and the form on a paper card). No arrow glyphs; the countdown is the only thing that moves on its own.
 - Navigation: at 1100px and wider the destinations sit inline in the
   header (Speakers, Agenda, Venue, FAQ, then Partners, Team, Press,
   Contact) beside a red Tickets button while tickets are on sale; narrower, they live behind one
