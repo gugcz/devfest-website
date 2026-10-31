@@ -1350,7 +1350,7 @@ refresh, `noindex`, with no styles of its own.
 - **Speakers teaser** (`SpeakersTeaser`, home) — a different random
   handful of the lineup on every visit (`pickTeaser`), shown in running
   order with each print's number from the full lineup. Head: the `.head-rule` "Speakers" with the note
-  "N confirmed. Times in CET." (the count a mono figure); then eight prints
+  "N on stage. Times in CET." (the count a mono figure); then eight prints
   (`TEASER_SIZE`), two whole rows of four; each an `<a>` to the speaker.
   ≤720px the prints from the seventh on are hidden: three rows of two. Under the grid one `.action`
   at `--fs-cta`, "All N speakers". No rotation while the page is open. The teaser opens on
@@ -1520,8 +1520,8 @@ eyebrow, no stamp. Headings are literal: no puns.
 
 **[MUST] A head note carries a fact, never a label of the section's own
 contents.** The note exists only where it tells the visitor something the
-section does not already show: Speakers ("N confirmed. Times in CET."),
-Past editions ("Ten editions since 2012."), Tickets (the invoice route:
+section does not already show: Speakers ("N on stage. Times in CET."),
+Past editions ("Eleven editions since 2012."), Tickets (the invoice route:
 "Need to pay by bank transfer?" over the `.action` "Request a company
 invoice", `Tickets.tsx`; "Opens with the first wave" before the
 first wave), "Every talk" (how to search), "The route" (the train and the
@@ -1537,7 +1537,7 @@ asks for a decision, on the black ground, its title at `--fs-section`:
 `/agenda`, `/workshops`, `/venue`, `/invite/<member>`. A page that asks
 for none ends on an `EndLine` (list above): `/speakers` ("Full agenda" and
 "Get tickets", no closer), `/contact` after its press kit, `/team` on
-"Want to help next year?" and the inbox address, `/app` on the agenda. `/partners` ends on its
+"Want to help?" and the inbox address, `/app` on the agenda. `/partners` ends on its
 "Become a partner" block (the title beside the partnerships card), `/404`
 and `/login` on their `NextStepList`, and `/privacy-policy`, `/code-of-conduct` and
 `/delete-account` on their content.
@@ -1750,7 +1750,7 @@ Decision criteria, picked per page:
   `--fs-h3`, the role as a note, links as Bebas actions, the edge "NN" and
   "2026". No tape: hovering or focusing a card cross-fades the role into
   the member's codename in full paper ink (`.crew-role[data-swap]`); with
-  no hover (a phone) both lines print, the codename under the role. It ends on its `EndLine` "Want to help next year?" and
+  no hover (a phone) both lines print, the codename under the role. It ends on its `EndLine` "Want to help?" and
   the inbox address.
 - **`/press/downloads`** — under a plain note label per logo variant, one
   straight `.paper` card: the mark in a 16:9 well on the paper (on black
@@ -1969,8 +1969,8 @@ that", and at most one closer line per page ("Doors open 30 October.",
 what it is ("The eleventh DevFest.cz", "Tickets", "Speakers", "Past
 editions", "Partners", "Newsletter", "Agenda", "Every talk", "The route",
 "The team", "FAQ", "In the news", "Press kit", "Become a partner");
-a `.head-rule` note is a fact or absent ("N confirmed. Times in CET.",
-"Ten editions since 2012."). The case dressing is the darkroom's own: the
+a `.head-rule` note is a fact or absent ("N on stage. Times in CET.",
+"Eleven editions since 2012."). The case dressing is the darkroom's own: the
 frame numbers and dates on a print's edge and the footer's folio. No triads, no em-dash chains, no hype words.
 
 **[CURRENT] Subpage titles** (`SubpageHero titleHtml`): `/speakers`
