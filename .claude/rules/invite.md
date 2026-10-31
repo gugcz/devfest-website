@@ -1,7 +1,7 @@
 ---
 paths:
-  - "src/pages/invite/**"
-  - "src/pages/og/invite/**"
+  - "src/routes/invite/**"
+  - "src/routes/og/invite/**"
   - "src/lib/invite.ts"
   - "src/components/InviteCta.tsx"
   - "src/content/team.json"

@@ -1,5 +1,11 @@
 import { defineCollection, z } from 'astro:content';
 import { file } from 'astro/loaders';
+import { FEATURE_FLAGS } from './lib/features';
+
+// A group or an item that belongs to a section a chapter may not run names
+// its flag and disappears with it (`src/lib/flags.ts`). The mobile app
+// bundles this file verbatim and ignores the field.
+const feature = z.enum(FEATURE_FLAGS).optional();
 
 // CONTENT COLLECTIONS. Each JSON file is an array keyed by `id`.
 // `getCollection()` gives no ordering guarantee — every collection carries a
@@ -13,11 +19,13 @@ const faq = defineCollection({
 	schema: z.object({
 		order: z.number().int(),
 		label: z.string(),
+		feature,
 		items: z
 			.array(
 				z.object({
 					q: z.string(),
 					a: z.string(),
+					feature,
 				})
 			)
 			.min(1),

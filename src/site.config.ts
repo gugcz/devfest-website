@@ -11,6 +11,17 @@
  * "fix" it to `+02:00`.
  */
 import type { SiteConfig } from './lib/site-config';
+import { checkFeatureDependencies, resolveFeatures } from './lib/features';
+
+/**
+ * `PUBLIC_FEATURES_OFF=workshops,invoice` turns flags off for one build (the
+ * flags-off check, `scripts/flags-off-build.mjs`). Read through
+ * `import.meta.env` so the client bundle sees the same answer as the build;
+ * plain Node (the Astro config loader, tests) has no `import.meta.env`.
+ */
+const featuresOff: string =
+	import.meta.env?.PUBLIC_FEATURES_OFF ??
+	(typeof process === 'undefined' ? '' : (process.env.PUBLIC_FEATURES_OFF ?? ''));
 
 const config: SiteConfig = {
 	event: {
@@ -69,6 +80,21 @@ const config: SiteConfig = {
 		iosId: '6818298786',
 		pwaUrl: 'https://app.devfest.cz',
 	},
+	features: resolveFeatures(
+		{
+			tickets: true,
+			invoice: true,
+			workshops: true,
+			app: true,
+			invite: true,
+			partners: true,
+			newsletter: true,
+			attending: true,
+		},
+		featuresOff,
+	),
 };
+
+checkFeatureDependencies(config.features);
 
 export default config;

@@ -5,13 +5,15 @@ import NextStep from '../components/NextStep.astro';
 import NextStepList from '../components/NextStepList.astro';
 import EndLine from '../components/EndLine.astro';
 import { EVENT } from '../lib/event';
+import { enabledOnly } from '../lib/flags';
 
 // The page used to dead-end: one line of confirmation and a link back to the
 // homepage the visitor had just come from. Someone who has just handed over
 // their address is the most engaged visitor the site gets — this page points
 // them at the three things they can actually do today.
-const STEPS = [
+const STEPS = enabledOnly([
 	{
+		feature: 'tickets' as const,
 		title: 'Get your ticket',
 		noteHtml:
 			'The newsletter tells you when a wave opens; it does not hold you a seat. ' +
@@ -25,12 +27,13 @@ const STEPS = [
 		actions: [{ href: '/agenda#talks', label: 'See the sessions' }],
 	},
 	{
+		feature: 'invoice' as const,
 		title: 'Buying for a team?',
 		noteHtml:
 			'Companies pay by invoice and claim their tickets afterwards with a code. Request one in a minute.',
 		actions: [{ href: '/invoice', label: 'Request an invoice' }],
 	},
-];
+]);
 ---
 
 <BaseLayout

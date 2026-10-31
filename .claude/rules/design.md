@@ -5,6 +5,7 @@ paths:
   - ".impeccable/**"
   - "src/components/**"
   - "src/pages/**"
+  - "src/routes/**"
   - "src/layouts/**"
   - "src/styles/**"
 ---

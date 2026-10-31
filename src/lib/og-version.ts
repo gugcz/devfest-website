@@ -12,7 +12,7 @@ let cachedTemplateDigest: string | undefined;
 function templateDigest(): string {
 	if (!cachedTemplateDigest) {
 		const hash = createHash('sha256');
-		hash.update(readFileSync(join(root, 'src/pages/og/invite/[member].jpg.ts')));
+		hash.update(readFileSync(join(root, 'src/routes/og/invite/[member].jpg.ts')));
 		hash.update(readFileSync(join(root, 'src/assets/logo.png')));
 		// The card prints the date stamp from these two.
 		hash.update(readFileSync(join(root, 'src/lib/invite.ts')));

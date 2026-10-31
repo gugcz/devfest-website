@@ -19,6 +19,7 @@ import { EVENT, invoicesOpen } from '../lib/event';
 import { useRemote } from '../lib/useRemote';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Tickets.module.scss';
+import { enabled } from '../lib/flags';
 
 type Variant = ReleaseGroup['variants'][number];
 
@@ -250,12 +251,16 @@ export default function Tickets() {
 				<EmptyState
 					action={hasEvent ? { href: eventUrl(accountSlug, eventSlug), label: 'Visit ti.to event', external: true } : undefined}
 				>
-					<p>
-						<a href="#newsletter" className={s.footnoteLink}>
-							Join the newsletter
-						</a>{' '}
-						to hear when the first wave opens.
-					</p>
+					{enabled('newsletter') ? (
+						<p>
+							<a href="#newsletter" className={s.footnoteLink}>
+								Join the newsletter
+							</a>{' '}
+							to hear when the first wave opens.
+						</p>
+					) : (
+						<p>Check back here when the first wave opens.</p>
+					)}
 				</EmptyState>
 			</section>
 		);
@@ -310,7 +315,7 @@ export default function Tickets() {
 				))}
 			</ul>
 			{/* No next wave to be notified about once the final one is on sale. */}
-			{!finalWave && (
+			{!finalWave && enabled('newsletter') && (
 				<p className={s.footnote}>
 					Not ready yet?{' '}
 					<a href="#newsletter" className={s.footnoteLink}>

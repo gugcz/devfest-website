@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { EVENT } from '../lib/event';
 import { useReturnFocus } from '../lib/useReturnFocus';
 import sheet from './Sheet.module.scss';
+import { ticketsHref } from '../lib/flags';
 
 /**
  * The modal chrome every detail dialog shares: portal to `<body>`, body
@@ -127,9 +128,11 @@ export function SheetTickets({ line }: { line: string }) {
 			<p className={sheet.ticketsLine}>
 				{line} &middot; {EVENT.dateLabel}, {EVENT.venue}
 			</p>
-			<a className="btn-primary" href="/#tickets">
-				Get tickets
-			</a>
+			{ticketsHref && (
+				<a className="btn-primary" href={ticketsHref}>
+					Get tickets
+				</a>
+			)}
 		</div>
 	);
 }

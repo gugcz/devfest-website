@@ -15,6 +15,7 @@
     "a11y": "A11Y_MOCK=1 astro build && node scripts/a11y.mjs",
     "verify": "npm run check && npm run complexity && npm run literals && npm run test:site && npm --prefix functions test && npm run a11y",
     "anchors": "A11Y_MOCK=1 astro build && node scripts/anchor-measure.mjs",
+    "flags-off": "node --experimental-strip-types scripts/flags-off-build.mjs",
     "complexity": "eslint src functions/src scripts astro.config.ts",
     "test:site": "node --experimental-strip-types --test 'src/**/*.test.ts'",
     "literals": "! grep -rniE 'DevFest\\.cz 2026|2026-10-30|30 October|30 Oct|30 / 10 / 26|30\\.10\\.2026|https://devfest\\.cz|devfest@gug\\.cz|Libčice|Uhelný' src --include='*.astro' --include='*.ts' --include='*.tsx' --exclude=site.config.ts --exclude=privacy-policy.astro --exclude=delete-account.astro --exclude=code-of-conduct.astro --exclude=press-kit.ts --exclude='*.test.ts' | grep -vE ':[[:space:]]*(\\*|//|/\\*)'"

@@ -20,6 +20,7 @@ import { TOPICS } from '../lib/topics';
 import { EVENT, eventDate } from '../lib/event';
 import { staticTicketLines } from '../lib/tickets-static';
 import config from '../site.config';
+import { enabled, ticketsHref } from '../lib/flags';
 
 // The hero stamp sets the figures in the mono face and the month between them.
 const [heroDay, heroMonth, heroYear] = EVENT.dateShort.split(' ');
@@ -36,7 +37,7 @@ const communityPartners = await getCommunityPartners();
 const travelPartners = await getTravelPartners();
 const ladder = await getActivePartnerTiers();
 // The prices as of the build, for readers that run no script.
-const ticketLines = await staticTicketLines();
+const ticketLines = enabled('tickets') ? await staticTicketLines() : [];
 type HomeRow = { id: string; label: string; partners: { p: Partner; tier: string }[] };
 const tail = [
 	...(ladder.find((t) => t.id === 'silver')?.partners.map((p) => ({ p, tier: 'silver' })) ?? []),
@@ -121,9 +122,9 @@ const STRIP_SCALE = 1;
 						target="_blank"
 						rel="noopener noreferrer"
 					>{EVENT.venue}, {config.event.venue.city}</a>
-					<HeroOffer client:load />
+					{ticketsHref && <HeroOffer client:load />}
 				</div>
-				<a href="#tickets" class="btn-primary hero-cta">Get tickets</a>
+				{ticketsHref && <a href="#tickets" class="btn-primary hero-cta">Get tickets</a>}
 			</div>
 		</section>
 
@@ -177,7 +178,7 @@ const STRIP_SCALE = 1;
 
 		{/* THE APP — the same badges as /app, so nobody needs the venue QR code
 		     to find it. */}
-		<section class="band sec home-app" aria-labelledby="home-app-title">
+		{enabled('app') && <section class="band sec home-app" aria-labelledby="home-app-title">
 			<div class="band-inner">
 				<header class="head-rule">
 					<h2 id="home-app-title" class="head-rule-title">Get the app</h2>
@@ -186,12 +187,12 @@ const STRIP_SCALE = 1;
 				<StoreBadges />
 				<p class="home-app-more"><a class="action" href="/app">What’s in the app</a></p>
 			</div>
-		</section>
+		</section>}
 
 		{/* TICKETS — client:load, not visible: the hero's "Get tickets" jumps
 		     straight here, and a visible-gated island only began loading on
 		     arrival, so a phone landed on the skeleton. */}
-		<Tickets client:load />
+		{enabled('tickets') && <Tickets client:load />}
 		{ticketLines.length > 0 && <TicketIndex lines={ticketLines} />}
 
 		{/* SPEAKERS — the register's first lines; hides until data loads. */}
@@ -254,7 +255,7 @@ const STRIP_SCALE = 1;
 
 		{/* PARTNERS — one plain label per tier; each mark's box comes from its
 		     tier (`partnerLogo()`), so the size carries the rank. */}
-		{homeRows.length > 0 && (
+		{enabled('partners') && homeRows.length > 0 && (
 			<section class="band sec" aria-labelledby="partners-title">
 				<div class="band-inner">
 					<header class="head-rule">
@@ -292,7 +293,7 @@ const STRIP_SCALE = 1;
 		)}
 
 		{/* NEWSLETTER — `anchor-target`: the ticket footnote, the footer and the FAQ jump here. */}
-		<section id="newsletter" class="band sec anchor-target" aria-labelledby="newsletter-title">
+		{enabled('newsletter') && <section id="newsletter" class="band sec anchor-target" aria-labelledby="newsletter-title">
 			<div class="band-inner newsletter">
 				<div>
 					<h2 id="newsletter-title" class="display newsletter-title">Newsletter</h2>
@@ -302,7 +303,7 @@ const STRIP_SCALE = 1;
 					<NewsletterForm client:visible />
 				</div>
 			</div>
-		</section>
+		</section>}
 	</main>
 </BaseLayout>
 

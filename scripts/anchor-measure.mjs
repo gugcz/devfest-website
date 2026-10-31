@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 import { createServer } from 'node:http';
 import { readFile, readdir } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { chromium, webkit, firefox } from 'playwright';
 import { API_FIXTURES } from './a11y-mocks/api.mjs';
@@ -52,11 +52,13 @@ const VIEWPORTS = [
 	{ label: '820x1180', width: 820, height: 1180 },
 	{ label: '390x844', width: 390, height: 844 },
 ];
+// The hero CTA and the tickets footnote: the home page's in-page links. A
+// section a feature flag removed has no anchor in the built page.
+const homeHtml = readFileSync(path.join(DIST, 'index.html'), 'utf-8');
 const TARGETS = [
-	// The hero CTA and the tickets footnote: the home page's in-page links.
 	{ hash: '#tickets', heading: '#tickets-heading', click: '.hero-cta' },
 	{ hash: '#newsletter', heading: '#newsletter h2', click: '#tickets a[href="#newsletter"]' },
-];
+].filter((t) => homeHtml.includes(`id="${t.hash.slice(1)}"`));
 const ENGINES = process.env.ENGINE ? { [process.env.ENGINE]: { chromium, webkit, firefox }[process.env.ENGINE] } : { chromium, webkit, firefox };
 
 async function settle(page) {
@@ -113,7 +115,8 @@ async function measure(page, heading) {
  */
 const HEADER_WIDTHS = [320, 360, 375, 500, 768, 960, 1024, 1100, 1200, 1280, 1440];
 const HEADER_ROOTS = [16, 20, 24, 32];
-const HEADER_ROUTES = [
+// Routes a feature flag removed are skipped (see a11y.mjs).
+const HEADER_ROUTES_ALL = [
 	'/',
 	'/speakers/',
 	'/agenda/',
@@ -130,6 +133,8 @@ const HEADER_ROUTES = [
 	'/newsletter-subscription-thank-you/',
 	'/404.html',
 ];
+const built = (p) => existsSync(path.join(DIST, p.endsWith('/') ? `${p}index.html` : p));
+const HEADER_ROUTES = HEADER_ROUTES_ALL.filter(built);
 
 /**
  * `src/lib/anchor.ts` MUST BE EXACTLY ONE CHUNK: two importers, and a copy
@@ -279,7 +284,7 @@ for (const [engineName, engine] of Object.entries(ENGINES)) {
 		// A soft navigation from a subpage — ClientRouter swaps the document and
 		// resolves the hash itself. `/invoice` is the one page that links to a
 		// home-page anchor.
-		{
+		if (built('/invoice/') && TARGETS.some((t) => t.hash === '#tickets')) {
 			const c3 = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
 			const p3 = await c3.newPage();
 			await p3.goto(`http://localhost:${PORT}/invoice/`);

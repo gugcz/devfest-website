@@ -6,6 +6,7 @@ import EndLine from '../components/EndLine.astro';
 import SpeakerIndex from '../components/SpeakerIndex.astro';
 import { staticLineup } from '../lib/lineup-static';
 import { EVENT, eventDate } from '../lib/event';
+import { ticketsHref } from '../lib/flags';
 
 const { speakers, sessions } = await staticLineup();
 ---
@@ -45,7 +46,7 @@ const { speakers, sessions } = await staticLineup();
 					</noscript>
 				)}
 
-				<EndLine text="Every talk by time and room." href="/agenda" label="Full agenda" also={{ href: '/#tickets', label: 'Get tickets' }} />
+				<EndLine text="Every talk by time and room." href="/agenda" label="Full agenda" also={ticketsHref ? { href: ticketsHref, label: 'Get tickets' } : undefined} />
 			</div>
 		</section>
 	</main>

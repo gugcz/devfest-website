@@ -13,10 +13,11 @@ import TvScreen, { type PartnerGroup } from '../components/TvScreen';
 import gugLogo from '../assets/gug-logo.svg';
 import { getActivePartnerTiers, getCommunityPartners, getTravelPartners, logoBox } from '../lib/partners';
 import { EVENT } from '../lib/event';
+import { enabled } from '../lib/flags';
 
 // The same set and order as the homepage strip: the ladder top tier first,
 // community and travel last.
-const tiers = [
+const tiers = !enabled('partners') ? [] : [
 	...(await getActivePartnerTiers()).map((tier) => ({ tier: tier.label, partners: tier.partners })),
 	{ tier: 'Community', partners: await getCommunityPartners() },
 	{ tier: 'Travel', partners: await getTravelPartners() },

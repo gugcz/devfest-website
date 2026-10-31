@@ -10,6 +10,7 @@ import SpeakerDetail from './SpeakerDetail';
 import SpeakerTile, { billLineup, type Billing } from './SpeakerTile';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import tile from './SpeakerTile.module.scss';
+import { enabled } from '../lib/flags';
 
 /** Shared `view-transition-name` for a tile's print and the dialog photo, so
  * the browser morphs one into the other. Applied only to the print of the
@@ -167,7 +168,7 @@ export default function Speakers() {
 
 	if (status === 'empty') {
 		return (
-			<EmptyState action={{ href: '/#newsletter', label: 'Get notified' }}>
+			<EmptyState action={enabled('newsletter') ? { href: '/#newsletter', label: 'Get notified' } : undefined}>
 				<p>Lineup announced soon.</p>
 			</EmptyState>
 		);

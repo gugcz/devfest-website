@@ -387,7 +387,7 @@ Parallel: phase 4 alongside everything; phases 1 to 3 and 5 are a chain.
 
 ### Phase 3: feature flags and injected routes
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** `features` block with the three dependency checks and
   `DEVFEST_FEATURES_OFF`; `src/lib/features.ts`; the `feature-routes`
   integration; flagged pages moved to `src/routes/` (commit 1); links,

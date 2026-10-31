@@ -16,23 +16,24 @@ import { staticWorkshops } from '../lib/workshops-static';
 import { speakerSharePath, talkSharePath } from '../lib/share';
 import { BUILD_DAY } from '../lib/static-api';
 import config from '../site.config';
+import { enabled, enabledOnly, type FeatureFlag } from '../lib/flags';
 
 const site = EVENT.url;
 
-const PAGES: Array<[string, string, string]> = [
-	['Tickets', '/#tickets', 'ticket waves and prices, bought on ti.to'],
-	['Agenda', '/agenda', 'the timetable by room and time, and every talk with its abstract'],
-	['Speakers', '/speakers', 'everyone on stage, with bios'],
-	['Workshops', '/workshops', 'workshop sign-up for ticket holders, limited seats'],
-	['Venue', '/venue', `how to get to ${EVENT.venue} from Prague`],
-	['FAQ', '/faq', 'the essentials, tickets, agenda and speakers, getting involved'],
-	['Company invoice', '/invoice', 'pay for tickets by bank transfer'],
-	['Code of Conduct', '/code-of-conduct', ''],
-	['Partners', '/partners', 'the partners and how to become one'],
-	['Team', '/team', 'the volunteers who organise it'],
-	['Contact', '/contact', 'organisers, partnerships and press'],
-	['Press kit', '/press/downloads', 'logos and photos'],
-];
+const PAGES = enabledOnly<{ label: string; path: string; note: string; feature?: FeatureFlag }>([
+	{ label: 'Tickets', path: '/#tickets', note: 'ticket waves and prices, bought on ti.to', feature: 'tickets' },
+	{ label: 'Agenda', path: '/agenda', note: 'the timetable by room and time, and every talk with its abstract' },
+	{ label: 'Speakers', path: '/speakers', note: 'everyone on stage, with bios' },
+	{ label: 'Workshops', path: '/workshops', note: 'workshop sign-up for ticket holders, limited seats', feature: 'workshops' },
+	{ label: 'Venue', path: '/venue', note: `how to get to ${EVENT.venue} from Prague` },
+	{ label: 'FAQ', path: '/faq', note: 'the essentials, tickets, agenda and speakers, getting involved' },
+	{ label: 'Company invoice', path: '/invoice', note: 'pay for tickets by bank transfer', feature: 'invoice' },
+	{ label: 'Code of Conduct', path: '/code-of-conduct', note: '' },
+	{ label: 'Partners', path: '/partners', note: 'the partners and how to become one', feature: 'partners' },
+	{ label: 'Team', path: '/team', note: 'the volunteers who organise it' },
+	{ label: 'Contact', path: '/contact', note: 'organisers, partnerships and press' },
+	{ label: 'Press kit', path: '/press/downloads', note: 'logos and photos' },
+]);
 
 const link = (label: string, path: string) => `[${label}](${site}${path})`;
 const clean = (text: string) => text.replace(/\s+/g, ' ').trim();
@@ -45,7 +46,10 @@ function talkLine(session: Session, rooms: Room[]): string {
 
 export const GET: APIRoute = async () => {
 	const { speakers, sessions, rooms } = await staticLineup();
-	const [tickets, workshops] = await Promise.all([staticTicketLines(), staticWorkshops(sessions)]);
+	const [tickets, workshops] = await Promise.all([
+		enabled('tickets') ? staticTicketLines() : [],
+		enabled('workshops') ? staticWorkshops(sessions) : [],
+	]);
 	const talks = [...sessions].sort(byStart);
 
 	const lines = [
@@ -62,24 +66,30 @@ export const GET: APIRoute = async () => {
 		'',
 		`Lists below are as of ${BUILD_DAY}; the linked pages are live.`,
 		'',
-		'## Tickets',
-		'',
-		...(tickets.length > 0
+		...(enabled('tickets')
 			? [
-					...tickets.map(
-						(t) =>
-							`- ${t.label}: ${t.price}, VAT included. ${t.status}${t.purchasable ? `. [Buy on ti.to](${t.url})` : ''}`,
-					),
-					`- Paying by bank transfer: ${link('request a company invoice', '/invoice')}.`,
+					'## Tickets',
+					'',
+					...(tickets.length > 0
+						? [
+								...tickets.map(
+									(t) =>
+										`- ${t.label}: ${t.price}, VAT included. ${t.status}${t.purchasable ? `. [Buy on ti.to](${t.url})` : ''}`,
+								),
+								...(enabled('invoice')
+									? [`- Paying by bank transfer: ${link('request a company invoice', '/invoice')}.`]
+									: []),
+							]
+						: [`- Live on the ${link('home page', '/#tickets')}.`]),
+					'',
 				]
-			: [`- Live on the ${link('home page', '/#tickets')}.`]),
-		'',
+			: []),
 		'## Pages',
 		'',
-		...PAGES.map(([label, path, note]) => `- ${link(label, path)}${note ? `: ${note}` : ''}`),
+		...PAGES.map(({ label, path, note }) => `- ${link(label, path)}${note ? `: ${note}` : ''}`),
 		'',
 		...(talks.length > 0 ? ['## Talks', '', ...talks.map((s) => talkLine(s, rooms)), ''] : []),
-		...(workshops.length > 0
+		...(enabled('workshops') && workshops.length > 0
 			? ['## Workshops', '', ...workshops.map((s) => talkLine(s, rooms)), '']
 			: []),
 		...(speakers.length > 0

@@ -15,9 +15,9 @@ import { formatDate, formatTime, type DateStyle } from './dates';
 const { event, site } = config;
 const { venue, timeZone } = event;
 
-/** Whether `/invoice` still takes requests. */
+/** Whether `/invoice` exists in this build and still takes requests. */
 export function invoicesOpen(now: number = Date.now()): boolean {
-	return now < Date.parse(event.invoicesClose);
+	return config.features.invoice && now < Date.parse(event.invoicesClose);
 }
 
 const clock = (iso: string): string => formatTime(iso, timeZone);

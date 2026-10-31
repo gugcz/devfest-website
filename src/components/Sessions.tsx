@@ -20,6 +20,7 @@ import SessionDetail from './SessionDetail';
 import SpeakerPhoto from './SpeakerPhoto';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Sessions.module.scss';
+import { enabled } from '../lib/flags';
 
 /** Width at or below which the list waits for a search or a filter: the
  * timetable above already lists every talk, a second copy of 21 slips under
@@ -181,7 +182,7 @@ export default function Sessions() {
 
 	if (status === 'empty') {
 		return (
-			<EmptyState action={{ href: '/#newsletter', label: 'Get notified' }}>
+			<EmptyState action={enabled('newsletter') ? { href: '/#newsletter', label: 'Get notified' } : undefined}>
 				<p>Sessions announced soon.</p>
 			</EmptyState>
 		);

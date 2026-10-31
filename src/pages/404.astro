@@ -5,12 +5,13 @@ import NextStep from '../components/NextStep.astro';
 import NextStepList from '../components/NextStepList.astro';
 import { EVENT } from '../lib/event';
 import config from '../site.config';
+import { enabled, enabledOnly } from '../lib/flags';
 
 // A dead URL is still a visitor who wanted something specific. The page used
 // to state the fault and offer one link home; it now offers the routes people
 // actually arrive looking for. Ordered by what a stale link most often points
 // at: last year's lineup, last year's programme, and tickets.
-const STEPS = [
+const STEPS = enabledOnly([
 	{
 		title: 'The lineup',
 		noteHtml: 'Everyone confirmed so far, with their talks.',
@@ -22,10 +23,11 @@ const STEPS = [
 		actions: [{ href: '/agenda', label: 'See the agenda' }],
 	},
 	{
+		feature: 'tickets' as const,
 		title: 'Tickets',
 		noteHtml:
-			'Pricing waves and what each one includes. Companies can pay by ' +
-			'<a href="/invoice">invoice</a> instead.',
+			'Pricing waves and what each one includes.' +
+			(enabled('invoice') ? ' Companies can pay by <a href="/invoice">invoice</a> instead.' : ''),
 		actions: [{ href: '/#tickets', label: 'Get tickets', kind: 'primary' as const }],
 	},
 	{
@@ -38,7 +40,7 @@ const STEPS = [
 			{ href: '/contact', label: 'Contact us' },
 		],
 	},
-];
+]);
 ---
 
 <BaseLayout

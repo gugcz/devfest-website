@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
 import { EVENT } from '../lib/event';
 import config from '../site.config';
+import { enabledOnly, type FeatureFlag } from '../lib/flags';
 
 const SOCIALS = [
 	{
@@ -32,7 +33,7 @@ const SOCIALS = [
 	},
 ] as const;
 
-type FooterLink = { href: string; label: string; external?: boolean };
+type FooterLink = { href: string; label: string; external?: boolean; feature?: FeatureFlag };
 
 // Every destination, in two groups. The menu is the only navigation above the
 // fold (one toggle at every width, by design), so the footer is the one place
@@ -44,17 +45,17 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		id: 'footer-attend',
 		title: 'Attend',
 		links: [
-			{ href: '/#tickets', label: 'Tickets' },
+			{ href: '/#tickets', label: 'Tickets', feature: 'tickets' },
 			{ href: '/agenda', label: 'Agenda' },
 			{ href: '/speakers', label: 'Speakers' },
 			{ href: '/faq', label: 'FAQ' },
 			{ href: '/venue', label: 'Getting there' },
-			{ href: '/app', label: 'Get the app' },
+			{ href: '/app', label: 'Get the app', feature: 'app' },
 			// The B2B revenue path was linked from nowhere — not the menu, not
 			// here — so a company that needed an invoice had to know the URL.
-			{ href: '/invoice', label: 'Company invoice' },
+			{ href: '/invoice', label: 'Company invoice', feature: 'invoice' },
 			{ href: '/code-of-conduct', label: 'Code of Conduct' },
-			{ href: '/attending', label: "I'm attending" },
+			{ href: '/attending', label: "I'm attending", feature: 'attending' },
 		],
 	},
 	{
@@ -62,10 +63,10 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		title: 'About',
 		links: [
 			{ href: '/team', label: 'Team' },
-			{ href: '/partners', label: 'Partners' },
+			{ href: '/partners', label: 'Partners', feature: 'partners' },
 			{ href: '/contact#press', label: 'Press' },
 			{ href: '/contact', label: 'Contact' },
-			{ href: '/#newsletter', label: 'Newsletter' },
+			{ href: '/#newsletter', label: 'Newsletter', feature: 'newsletter' },
 			{ href: 'https://2025.devfest.cz', label: "Last year's edition", external: true },
 			{ href: '/privacy-policy', label: 'Privacy Policy' },
 		],
@@ -102,7 +103,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 				<nav class="col col-links" aria-labelledby={id}>
 					<h2 id={id} class="col-title">{title}</h2>
 					<ul class="link-list">
-						{links.map(({ href, label, external }) => (
+						{enabledOnly(links).map(({ href, label, external }) => (
 							<li>
 								<a
 									class="footer-link"

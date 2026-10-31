@@ -4,12 +4,15 @@ import logo from '../assets/logo.png';
 import venuePrint from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
 import { EVENT, eventDate } from '../lib/event';
 import config from '../site.config';
+import { enabledOnly, ticketsHref as ticketsLink, type FeatureFlag } from '../lib/flags';
 
 interface NavLink {
 	href: string;
 	label: string;
 	external?: boolean;
 	cta?: boolean;
+	/** Listed only while this flag is on (`src/lib/flags.ts`). */
+	feature?: FeatureFlag;
 }
 
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -20,7 +23,7 @@ const isHome = currentPath === '/';
 const isInvite = currentPath === '/invite' || currentPath.startsWith('/invite/');
 // On the home page #tickets is a same-page anchor; from subpages we need
 // to send the visitor back to / first so the section actually exists.
-const ticketsHref = isHome ? '#tickets' : '/#tickets';
+const ticketsHref = ticketsLink ? (isHome ? '#tickets' : '/#tickets') : null;
 
 // TWO TIERS, EIGHT LINES. Ten destinations at one poster size made the
 // visitor read all ten every time; two tiers of twelve still did. So the
@@ -31,7 +34,7 @@ const ticketsHref = isHome ? '#tickets' : '/#tickets';
 // the programme) plus the one thing every ticket holder has to look up: how
 // to get to the venue.
 const links: readonly NavLink[] = [
-	{ href: ticketsHref, label: 'Tickets', cta: true },
+	...(ticketsHref ? [{ href: ticketsHref, label: 'Tickets', cta: true }] : []),
 	{ href: '/speakers', label: 'Speakers' },
 	{ href: '/agenda', label: 'Agenda' },
 	{ href: '/venue', label: 'Venue' },
@@ -43,12 +46,12 @@ const links: readonly NavLink[] = [
 // for: `Company invoice` (the Tickets section and the FAQ), `I'm attending`
 // (the post-purchase thank-you page and the FAQ), `Code of Conduct` (the FAQ).
 // All three stay in the footer, which lists every page.
-const secondary: readonly NavLink[] = [
-	{ href: '/partners', label: 'Partners' },
+const secondary: readonly NavLink[] = enabledOnly([
+	{ href: '/partners', label: 'Partners', feature: 'partners' },
 	{ href: '/team', label: 'Team' },
 	{ href: '/contact#press', label: 'Press' },
 	{ href: '/contact', label: 'Contact' },
-];
+]);
 
 const isCurrent = (href: string) => {
 	if (href.startsWith('http')) return false;
@@ -195,7 +198,7 @@ const isCurrent = (href: string) => {
 			</div>
 		</nav>
 
-		{!isInvite && <a href={ticketsHref} class="header-cta">Tickets</a>}
+		{!isInvite && ticketsHref && <a href={ticketsHref} class="header-cta">Tickets</a>}
 	</div>
 </header>
 

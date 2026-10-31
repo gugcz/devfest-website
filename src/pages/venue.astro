@@ -6,6 +6,7 @@ import { Image } from 'astro:assets';
 import { EVENT } from '../lib/event';
 import entrance from '../assets/venue/uhelny-mlyn-entrance.jpg';
 import config from '../site.config';
+import { ticketsHref } from '../lib/flags';
 
 // The postal address, split for the address block: the street as the head,
 // the post code and town under it.
@@ -145,7 +146,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 			titleId="venue-closer"
 			class="venue-closer"
 			actions={[
-				{ href: '/#tickets', label: 'Get tickets' },
+				...(ticketsHref ? [{ href: ticketsHref, label: 'Get tickets' }] : []),
 				{ href: '/agenda', label: 'See the agenda', kind: 'ghost' },
 			]}
 		/>
