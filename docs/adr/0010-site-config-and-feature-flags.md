@@ -2,7 +2,9 @@
 
 - Status: accepted
 - Date: 2026-10-31
-- PR: the config in the first PR of the plan
+- PR: [#512](https://github.com/gugcz/devfest-website/pull/512) (the config),
+  [#513](https://github.com/gugcz/devfest-website/pull/513) (the functions
+  mirror); plan
   [2026-10-31-refactor-site-config-and-feature-flags-plan.md](../plan/2026-10-31-refactor-site-config-and-feature-flags-plan.md);
   each later phase appends its paragraph and PR link below
 
