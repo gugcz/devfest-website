@@ -7,7 +7,7 @@
  */
 import type { APIRoute } from 'astro';
 import { EVENT } from '../lib/event';
-import { TOPICS } from '../lib/topics';
+import { getTopics } from '../lib/topics';
 import { byStart, roomName, timeRange } from '../lib/agenda';
 import { speakerNames, type Room, type Session } from '../lib/sessions';
 import { staticLineup } from '../lib/lineup-static';
@@ -46,6 +46,7 @@ function talkLine(session: Session, rooms: Room[]): string {
 
 export const GET: APIRoute = async () => {
 	const { speakers, sessions, rooms } = await staticLineup();
+	const topics = await getTopics();
 	const [tickets, workshops] = await Promise.all([
 		enabled('tickets') ? staticTicketLines() : [],
 		enabled('workshops') ? staticWorkshops(sessions) : [],
@@ -60,7 +61,7 @@ export const GET: APIRoute = async () => {
 		`- Date: ${EVENT.dateLabel}. Doors and registration ${EVENT.doorsTime}, keynote ${EVENT.startTime}, closing remarks ${EVENT.endTime}, afterparty until ${EVENT.afterpartyEndTime} (CET).`,
 		`- Venue: ${EVENT.venue}, ${EVENT.street}. Map: ${EVENT.mapUrl}`,
 		'- Audience: 350 medior and senior developers from across Central and Eastern Europe. In person only.',
-		`- Topics: ${TOPICS.map((t) => t.name).join(', ')}.`,
+		`- Topics: ${topics.map((t) => t.name).join(', ')}.`,
 		`- Contact: ${config.organizer.email}`,
 		`- Calendar: ${site}${EVENT.icsUrl}`,
 		'',

@@ -73,9 +73,10 @@ edited PR body keeps its old text in the public edit history.
   `client:load`) with co-located `.module.scss`.
 - `src/lib/`: browser and build helpers, one file per concern (`lineup.ts`,
   `tito.ts`, `workshops.ts`, `firebase.ts`, `analytics.ts`, …).
-- `src/content/`: `faq.json`, `partners.json`, `team.json`. The mobile app
-  bundles `faq.json` and `partners.json` verbatim, so a shape change there
-  breaks its next copy.
+- `src/content/`: `faq.json`, `partners.json`, `team.json`, `socials.json`,
+  `topics.json`, `press-coverage.json`; schemas in `src/content.config.ts`.
+  The mobile app bundles `faq.json` and `partners.json` verbatim, so a shape
+  change there breaks its next copy.
 - `src/layouts/`: `BaseLayout.astro` (meta, OG, JSON-LD; tokens and global
   SCSS in `BaseLayout.scss`), `Share.astro` (share-page preview, then
   forward) and `Redirect.astro` (`/press`, `/sessions`).

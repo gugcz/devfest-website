@@ -2,19 +2,9 @@
 // from .astro frontmatter, so the OG scrape runs in Node and never ships.
 import { fetchOg } from './og';
 
-// A media mention is just a URL. Outlet, title, image, description and date
-// are all read from the article's Open Graph tags at build time. Any field set
-// here wins over the scraped value — use that to pin a source that blocks
-// scraping or ships a poor preview.
-interface MediaMention {
-	href: string;
-	outlet?: string;
-	title?: string;
-	date?: string; // ISO — overrides article:published_time
-	dateLabel?: string;
-	image?: string;
-	description?: string;
-}
+// A media mention is a URL in `src/content/press-coverage.json`; the schema
+// in `src/content.config.ts` says which fields may pin a scraped value.
+import { getCollection } from 'astro:content';
 
 export interface ResolvedMention {
 	href: string;
@@ -26,12 +16,6 @@ export interface ResolvedMention {
 	description?: string;
 }
 
-const MEDIA_COVERAGE: readonly MediaMention[] = [
-	{ href: 'https://smartmania.cz/pripad-podzimu-se-otevira-devfest-cz-2026-prinasi-do-uhelneho-mlyna-svetove-recniky-a-film-noir-zahadu/' },
-	{ href: 'https://dotekomanie.cz/2026/09/pripad-podzimu-se-otevira-devfest-cz-2026-prinasi-do-uhelneho-mlyna-svetove-recniky-a-film-noir-zahadu/' },
-	{ href: 'https://smartmania.cz/pripad-se-posouva-devfest-cz-2026-odhaluje-prvni-recniky-a-meni-cenu-vstupenek/' },
-	{ href: 'https://dotekomanie.cz/2026/06/pripad-otevren-devfest-cz-2026-spousti-prodej-vstupenek-a-odhaluje-detektivni-tema/' },
-];
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
@@ -59,9 +43,12 @@ function slugTitle(url: string): string {
 // Resolve each entry from its Open Graph tags at build time. fetchOg never
 // throws (returns {} on failure), so a dead/blocked source degrades to a
 // hostname + bare-link card instead of breaking the build.
-export const loadMediaCoverage = (): Promise<ResolvedMention[]> =>
+export const loadMediaCoverage = async (): Promise<ResolvedMention[]> =>
 	Promise.all(
-		MEDIA_COVERAGE.map(async (m): Promise<ResolvedMention> => {
+		(await getCollection('pressCoverage'))
+			.sort((a, b) => a.data.order - b.data.order)
+			.map(({ data: m }) => m)
+			.map(async (m): Promise<ResolvedMention> => {
 			const og = await fetchOg(m.href);
 			const iso = m.date ?? og.publishedTime;
 			let dateLabel = m.dateLabel;

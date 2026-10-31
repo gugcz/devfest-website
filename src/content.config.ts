@@ -74,4 +74,50 @@ const partners = defineCollection({
 	}),
 });
 
-export const collections = { faq, team, partners };
+// Social profiles, once: the footer icons, the Organization JSON-LD `sameAs`
+// and `twitter:site` (the `x` entry's `handle`) all read this list. `network`
+// picks the icon in Footer.astro.
+const socials = defineCollection({
+	loader: file('src/content/socials.json'),
+	schema: z.object({
+		order: z.number().int(),
+		network: z.enum(['x', 'facebook', 'bluesky', 'linkedin', 'youtube', 'instagram', 'github', 'mastodon']),
+		url: z.url(),
+		/** `@handle`, for `twitter:site`; only the `x` entry needs one. */
+		handle: z.string().optional(),
+		/** The accessible name of the icon link. */
+		label: z.string(),
+	}),
+});
+
+// The day's topics, billed under the hero statement and listed in llms.txt.
+// Subjects, never product names (a subject outlives a vendor's naming).
+const topics = defineCollection({
+	loader: file('src/content/topics.json'),
+	schema: z.object({
+		order: z.number().int(),
+		name: z.string(),
+		desc: z.string(),
+	}),
+});
+
+// Press coverage for the press band on /contact. A mention is a URL; outlet,
+// title, image, description and date come from the article's Open Graph tags
+// at build time (src/lib/press-coverage.ts). A field set here wins over the
+// scraped value: pin a source that blocks scraping or ships a poor preview.
+const pressCoverage = defineCollection({
+	loader: file('src/content/press-coverage.json'),
+	schema: z.object({
+		order: z.number().int(),
+		href: z.url(),
+		outlet: z.string().optional(),
+		title: z.string().optional(),
+		/** ISO date; overrides `article:published_time`. */
+		date: z.string().optional(),
+		dateLabel: z.string().optional(),
+		image: z.string().optional(),
+		description: z.string().optional(),
+	}),
+});
+
+export const collections = { faq, team, partners, socials, topics, pressCoverage };

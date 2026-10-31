@@ -1,0 +1,38 @@
+[
+	{
+		"id": "x",
+		"order": 1,
+		"network": "x",
+		"url": "https://x.com/devfest_cz",
+		"handle": "@devfest_cz",
+		"label": "DevFest.cz on X (Twitter)"
+	},
+	{
+		"id": "facebook",
+		"order": 2,
+		"network": "facebook",
+		"url": "https://www.facebook.com/DevFestCZ",
+		"label": "DevFest.cz on Facebook"
+	},
+	{
+		"id": "bluesky",
+		"order": 3,
+		"network": "bluesky",
+		"url": "https://bsky.app/profile/devfest.cz",
+		"label": "DevFest.cz on Bluesky"
+	},
+	{
+		"id": "linkedin",
+		"order": 4,
+		"network": "linkedin",
+		"url": "https://www.linkedin.com/company/gugcz/",
+		"label": "GUG.cz on LinkedIn"
+	},
+	{
+		"id": "youtube",
+		"order": 5,
+		"network": "youtube",
+		"url": "https://www.youtube.com/@gug_cz",
+		"label": "GUG.cz on YouTube"
+	}
+]

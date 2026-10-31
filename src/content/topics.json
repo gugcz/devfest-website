@@ -1,0 +1,17 @@
+[
+	{ "id": "ai-agents", "order": 1, "name": "AI Agents", "desc": "Agents that touch real code and real systems." },
+	{ "id": "generative-ui", "order": 2, "name": "Generative UI", "desc": "LLMs as a product layer, not a demo." },
+	{
+		"id": "cloud-backends",
+		"order": 3,
+		"name": "Cloud & Backends",
+		"desc": "Where the AI actually runs — access, data, and the bill."
+	},
+	{
+		"id": "mobile-web",
+		"order": 4,
+		"name": "Mobile & Web",
+		"desc": "What you ship to a person — on every device, for every user."
+	},
+	{ "id": "humans-in-tech", "order": 5, "name": "Humans in Tech", "desc": "Teams, trust, and the part that is not code." }
+]
