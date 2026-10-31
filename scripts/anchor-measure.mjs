@@ -8,7 +8,9 @@ import { chromium, webkit, firefox } from 'playwright';
 import { API_FIXTURES } from './a11y-mocks/api.mjs';
 
 const DIST = path.resolve('dist');
-const PORT = 4399;
+// Port 0: the OS picks a free port, so parallel worktrees never collide.
+// `startServer` reads it back.
+let PORT;
 const MIME = { '.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.ico':'image/x-icon','.woff':'font/woff','.woff2':'font/woff2','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8' };
 
 function resolveFile(reqUrl) {
@@ -43,7 +45,8 @@ async function startServer() {
 		});
 		res.end(await readFile(file));
 	});
-	await new Promise((r) => server.listen(PORT, r));
+	await new Promise((r) => server.listen(0, r));
+	PORT = server.address().port;
 	return server;
 }
 

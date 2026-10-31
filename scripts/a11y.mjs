@@ -14,7 +14,9 @@ const DIST = path.resolve('dist');
 // them to Cloud Functions in production). CI has no functions, so the harness
 // serves the same shapes from fixtures — shared with the dev server, so the two
 // can never drift (see `a11y-mocks/api.mjs`).
-const PORT = 4321;
+// Port 0: the OS picks a free port, so the sweep never collides with an
+// `astro dev` or another worktree's run. `startServer` reads it back.
+let PORT;
 // A route a feature flag removed (`src/site.config.ts`) has no file in
 // `dist/`; the sweep skips it and says so, so a flag off is not a failure.
 const PATHS_ALL = [
@@ -111,7 +113,8 @@ async function startServer() {
 			res.end(String(err));
 		}
 	});
-	await new Promise((resolve) => server.listen(PORT, '127.0.0.1', resolve));
+	await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+	PORT = server.address().port;
 	return server;
 }
 

@@ -62,6 +62,10 @@ preview channel, `devfest-public--pr-<n>-*.web.app`, which calls the
 lineup, agenda and ticket sections render "unavailable"). `npm run a11y` uses
 the same fixtures.
 
+`npm run a11y` and `npm run anchors` serve `dist/` on a port the OS assigns
+(port 0), so several worktrees can run `verify` while another runs
+`npm run dev`.
+
 `DEVFEST_LIVE_API=1 npm run dev` skips the fixtures and hits the deployed
 functions — use it when changing the functions.
 
