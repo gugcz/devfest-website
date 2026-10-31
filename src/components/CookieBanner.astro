@@ -75,11 +75,13 @@
 	// Escape dismisses the banner (as a decline) from ANYWHERE. Bound on
 	// `document` at module scope, not inside `astro:page-load` (which would
 	// stack a listener per navigation); the banner is looked up on keypress so
-	// it always hits the current document's.
+	// it always hits the current document's. One Escape closes one layer: while
+	// the mobile menu is open it makes the banner `inert`, and that Escape
+	// belongs to the menu (this listener runs first, before the menu un-inerts).
 	document.addEventListener('keydown', (e) => {
 		if (e.key !== 'Escape') return;
 		const banner = document.getElementById('cookie-banner');
-		if (!banner || banner.classList.contains('cookie-banner--hidden')) return;
+		if (!banner || banner.inert || banner.classList.contains('cookie-banner--hidden')) return;
 		(document.getElementById('cookie-decline') as HTMLButtonElement | null)?.click();
 	});
 </script>
