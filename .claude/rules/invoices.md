@@ -2,7 +2,7 @@
 paths:
   - "functions/src/invoice/**"
   - "src/components/InvoiceForm.tsx"
-  - "src/pages/invoice.astro"
+  - "src/routes/invoice.astro"
 ---
 
 # Invoices (iDoklad)

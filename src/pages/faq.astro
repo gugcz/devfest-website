@@ -5,17 +5,19 @@ import SubpageHero from '../components/SubpageHero.astro';
 import EndLine from '../components/EndLine.astro';
 import { EVENT } from '../lib/event';
 import config from '../site.config';
+import { enabledOnly, unlink } from '../lib/flags';
 
 // FAQ content: the `faq` collection (`src/content/faq.json`). Accordion and
 // FAQPage JSON-LD both derive from it. `a` may contain inline HTML
 // (`set:html`); `order` fixes group sequence, items keep array order.
-const faqGroups = (await getCollection('faq'))
-	.sort((a, b) => a.data.order - b.data.order)
-	.map((entry) => ({
-		id: entry.id,
-		label: entry.data.label,
-		items: entry.data.items,
-	}));
+const faqGroups = enabledOnly((await getCollection('faq')).map((entry) => ({ id: entry.id, ...entry.data })))
+	.sort((a, b) => a.order - b.order)
+	.map((group) => ({
+		id: group.id,
+		label: group.label,
+		items: enabledOnly(group.items).map((item) => ({ ...item, a: unlink(item.a) })),
+	}))
+	.filter((group) => group.items.length > 0);
 
 let fileCounter = 0;
 const groupsForDisplay = faqGroups.map((group) => ({

@@ -60,6 +60,11 @@ edited PR body keeps its old text in the public edit history.
   edition versus per chapter: `src/lib/site-config.ts`). `src/lib/event.ts`
   derives `EVENT` from it; `src/lib/dates.ts` formats its dates. New code
   reads these from it, never as a literal.
+- `src/routes/`: pages behind a feature flag (`features` in the config;
+  `src/lib/features.ts` lists them), injected by
+  `src/integrations/feature-routes.ts` only while the flag is on. Templates
+  ask `src/lib/flags.ts`. `npm run flags-off` proves a flag removes its
+  section everywhere.
 - `src/pages/`: file-based routes (list in [README.md](README.md#key-pages)).
   `speakers/[id]` and `talks/[id]` are share pages built from the lineup at
   build time; `invite/[member]` and `og/` are unlisted; `calendar.ics.ts`
@@ -96,6 +101,7 @@ edited PR body keeps its old text in the public edit history.
 | Full gate (= the CI checks) | `npm run verify` |
 | Types | `npm run check` (`astro check`) |
 | Site tests | `npm run test:site` (`node --test` on `src/**/*.test.ts`, types stripped by Node) |
+| Flags off | `npm run flags-off` (two builds with feature flags off; fails on a route, sitemap entry or link left behind) |
 | Cognitive complexity | `npm run complexity` (`sonarjs/cognitive-complexity`, max 15) |
 | Function tests | `npm --prefix functions test` (`node --test`, stubs `fetch`) |
 | Accessibility | `npm run a11y` (axe on an `A11Y_MOCK=1` build, needs Playwright Chromium) |
@@ -146,15 +152,15 @@ one directly when working outside them.
 | Rule | Paths | Covers |
 | --- | --- | --- |
 | `api.md` | `/api/*` functions, their browser callers, `scripts/a11y-mocks/**`, `firebase.json`, `astro.config.ts` | The `/api/*` endpoint table, cache TTLs, callables for writes, dev mocks |
-| `pages.md` | `src/pages/**`, `src/layouts/**`, `public/.well-known/**`, `astro.config.ts` | Routes, SEO (meta, OG, JSON-LD, sitemap), iOS app links |
+| `pages.md` | `src/pages/**`, `src/routes/**`, `src/integrations/**`, `src/layouts/**`, `public/.well-known/**`, `astro.config.ts` | Routes, SEO (meta, OG, JSON-LD, sitemap), iOS app links |
 | `backend.md` | `functions/**` | `functions/src/lib/` helpers, option presets, error/HTTP/Slack rules, function tests |
 | `tickets.md` | `functions/src/tickets/**`, `src/lib/tito.ts`, `Tickets.tsx`, `InvoiceForm.tsx` | ti.to flags, cache, visibility, domain layout |
 | `sessionize.md` | `functions/src/sessionize/**`, `functions/src/lineup/**`, the lineup helpers, share pages | Lineup sync, delete-guard, photo mirror, share pages |
 | `invoices.md` | `functions/src/invoice/**`, `InvoiceForm.tsx`, `invoice.astro` | iDoklad OAuth/API, invoice flow, discount code, emails |
 | `workshops.md` | `functions/src/workshops/**`, `src/lib/workshops.ts`, `Workshops.tsx`, `workshops.astro` | Seat limits, waitlist order, the app's ticket login |
 | `analytics.md` | `src/lib/firebase.ts`, `analytics.ts`, `consent.ts`, `CookieBanner.astro`, the thank-you pages | GA4 Consent Mode, page views, conversion events, Performance Monitoring |
-| `invite.md` | `src/pages/invite/**`, `src/pages/og/invite/**`, `src/lib/invite.ts`, `InviteCta.tsx`, `team.json` | `/invite/<member>` pages, CTA, visual direction |
-| `design.md` | `docs/design.md`, `docs/product.md`, `.impeccable/**`, `src/components/**`, `src/pages/**`, `src/layouts/**`, `src/styles/**` | Impeccable loop, `docs/design.md` as the record |
+| `invite.md` | `src/routes/invite/**`, `src/routes/og/invite/**`, `src/lib/invite.ts`, `InviteCta.tsx`, `team.json` | `/invite/<member>` pages, CTA, visual direction |
+| `design.md` | `docs/design.md`, `docs/product.md`, `.impeccable/**`, `src/components/**`, `src/pages/**`, `src/routes/**`, `src/layouts/**`, `src/styles/**` | Impeccable loop, `docs/design.md` as the record |
 | `docs.md` | `docs/**`, `README.md`, `CLAUDE.md`, `.claude/**`, the PR template | README, CLAUDE.md, ADRs, brainstorms, plans, what goes where |
 
 ## Firebase shared project

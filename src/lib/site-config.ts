@@ -8,6 +8,7 @@
  * project in `.firebaserc` / `firebase.json` and the functions' own copy of
  * these facts (ADR 0010).
  */
+import type { Features } from './features';
 
 export interface Venue {
 	name: string;
@@ -103,4 +104,7 @@ export interface SiteConfig {
 	organizer: OrganizerConfig;
 	site: SiteDeployConfig;
 	apps: AppsConfig;
+	/** The sections this build has; a flag off removes routes, links and
+	 * sections (`src/lib/features.ts` lists the flags and what needs what). */
+	features: Features;
 }

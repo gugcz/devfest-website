@@ -39,17 +39,33 @@ app had to delete routes, menu items, footer links, sitemap filters and
   the config instead of hand-kept files in `public/`; `astro.config.ts` takes
   `site` and the sitemap priorities from it; `src/lib/firebase.ts` reads the
   web config and the App Check key from it.
-- **Planned in the same plan, recorded here when they land:** the literal
-  sweep with a `literals` guard in the gate (phase 2), the feature flags that
-  remove routes (phase 3), the functions' mirror `functions/src/site.ts`
-  with derived CORS lists (phase 4), the social, topic and press-coverage
-  content collections (phase 5), `docs/adapting.md` (phase 6).
+- **Every literal is swept and guarded** (phase 2, #514): `npm run literals`
+  fails the gate on an event, organizer or origin literal outside the config,
+  the content JSON, the legal pages and the brand asset names.
+- **Feature flags remove sections** (phase 3): `features` in the config names
+  the sections a chapter may not run (`tickets`, `invoice`, `workshops`,
+  `app`, `invite`, `partners`, `newsletter`, `attending`). Astro builds every
+  file under `src/pages/`, so a page behind a flag lives under `src/routes/`
+  and `src/integrations/feature-routes.ts` injects it (`injectRoute`) only
+  while the flag is on. Links and sections ask `src/lib/flags.ts`; authored
+  FAQ HTML has the links of an off section unwrapped; three dependencies
+  (`invoice` and `invite` need `tickets`, `workshops` needs `app`) fail the
+  build with a sentence. `/tv` and `/press` are not flags: delete the pages.
+  Flags own routes, links and sections, never prose. `npm run flags-off`
+  builds twice with flags off and fails on a route, sitemap entry or link
+  left behind.
+- **Planned in the same plan, recorded here when they land:** the functions'
+  mirror `functions/src/site.ts` with derived CORS lists (phase 4, #513),
+  the social, topic and press-coverage content collections (phase 5),
+  `docs/adapting.md` (phase 6).
 
 ## Consequences
 
-- A new edition starts as a change to `src/site.config.ts`; until phase 2
-  lands, the pages still carry their literals and `npm run literals` does
-  not exist yet.
+- A new edition starts as a change to `src/site.config.ts` and the content
+  JSON. A chapter without a section sets its flag to `false`; the Cloud
+  Functions and the `firebase.json` rewrites are not gated (ESM exports
+  cannot be conditional), so an adopter also deletes the domain's export
+  line and its rewrite.
 - The calendar file moved from `/devfest-cz-2026.ics` to `/calendar.ics`;
   nothing linked the old name.
 - `EVENT` now pulls the whole config and the `Intl` formatters into every

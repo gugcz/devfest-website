@@ -18,6 +18,9 @@ interface ImportMetaEnv {
 	/** ti.to discount checkout URL for the invite CTA (GitHub Actions secret).
 	 * Empty → `InviteCta` resolves the plain checkout from `/api/tickets`. */
 	readonly PUBLIC_INVITE_DISCOUNT_URL?: string;
+	/** Comma-separated feature flags to turn off for one build (the flags-off
+	 * check). Production sets none; a chapter edits `src/site.config.ts`. */
+	readonly PUBLIC_FEATURES_OFF?: string;
 }
 
 interface ImportMeta {

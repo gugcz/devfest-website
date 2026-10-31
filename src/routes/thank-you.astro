@@ -6,6 +6,7 @@ import NextStepList from '../components/NextStepList.astro';
 import EndLine from '../components/EndLine.astro';
 import { EVENT, googleCalendarUrl } from '../lib/event';
 import config from '../site.config';
+import { enabled } from '../lib/flags';
 
 // The one page on the site a visitor reaches AFTER paying, and it used to say
 // four words and offer a link home. Four things belong here and nowhere else:
@@ -44,7 +45,7 @@ const STEPS = [
 			'Half the value of a conference is who you go with. Tell the people you would want in the room. ' +
 			'Make yourself an "I\'m attending" card for socials in a minute.',
 		actions: [
-			{ href: '/attending/', label: 'Your card' },
+			...(enabled('attending') ? [{ href: '/attending/', label: 'Your card' }] : []),
 			{
 				href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
 				label: 'LinkedIn',

@@ -25,6 +25,7 @@ import { useMediaQuery } from '../lib/useMediaQuery';
 import SessionDetail from './SessionDetail';
 import { EmptyState, ErrorState, LoadingState } from './DataState';
 import s from './Agenda.module.scss';
+import { enabled } from '../lib/flags';
 
 // THE DAY AS SLIPS ON THE TABLE. Desktop: the rooms are columns under their
 // names, every talk is a straight paper slip set at its start time, and a
@@ -647,7 +648,11 @@ export default function Agenda() {
 			<div className={s.bar}>
 				{roomColumns.length > 1 && <RoomFilter columns={roomColumns} room={room} onPick={setRoom} />}
 				<p className={s.tz}>
-					All times Prague (CET) · <a href="/workshops">Save a workshop seat</a>
+					All times Prague (CET){enabled('workshops') && (
+						<>
+							{' '}· <a href="/workshops">Save a workshop seat</a>
+						</>
+					)}
 				</p>
 			</div>
 

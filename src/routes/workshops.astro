@@ -7,6 +7,7 @@ import TalkIndex from '../components/TalkIndex.astro';
 import { staticLineup } from '../lib/lineup-static';
 import { staticWorkshops } from '../lib/workshops-static';
 import { EVENT } from '../lib/event';
+import { ticketsHref } from '../lib/flags';
 
 // Workshop sign-up for ticket holders. A workshop opens here once its seat
 // limit is set in RTDB (`/workshops/{sessionId}/limit`); the page lists those
@@ -43,7 +44,7 @@ const workshops = await staticWorkshops(sessions);
 			titleHtml={'No ticket<br />yet?'}
 			note="Workshops are for ticket holders. Get yours first, then come back to save a seat."
 			titleId="workshops-closer"
-			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/agenda', label: 'See the agenda', kind: 'ghost' }]}
+			actions={[...(ticketsHref ? [{ href: ticketsHref, label: 'Get tickets' }] : []), { href: '/agenda', label: 'See the agenda', kind: 'ghost' }]}
 		/>
 	</main>
 </BaseLayout>

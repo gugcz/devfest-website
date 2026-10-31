@@ -8,6 +8,7 @@ import { defaultOgImageVersion } from '../lib/og-version';
 import { staticTicketLines } from '../lib/tickets-static';
 import { EVENT, pageTitle } from '../lib/event';
 import config from '../site.config';
+import { enabled } from '../lib/flags';
 
 interface Props {
 	title?: string;
@@ -25,7 +26,7 @@ const siteUrl = config.site.url;
 const { venue } = config.event;
 const {
 	title = pageTitle("Prague Developer Conference"),
-	description = `${EVENT.name} — ${config.event.tagline}: ${config.event.pitch.replace(/\.$/, "")}. ${EVENT.dateLabel} at ${EVENT.venue}. Tickets on sale now.`,
+	description = `${EVENT.name} — ${config.event.tagline}: ${config.event.pitch.replace(/\.$/, "")}. ${EVENT.dateLabel} at ${EVENT.venue}.${enabled('tickets') ? ' Tickets on sale now.' : ''}`,
 	noindex = false,
 	kiosk = false,
 	ogImage = `${siteUrl}/og-image.jpg?v=${defaultOgImageVersion()}`,
@@ -53,7 +54,7 @@ const organizer = {
 	"name": config.organizer.legalName,
 	"url": config.organizer.url
 };
-const offers = isHome
+const offers = isHome && enabled('tickets')
 	? (await staticTicketLines())
 			.filter((line) => line.purchasable && line.gross != null)
 			.map((line) => ({

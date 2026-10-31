@@ -5,6 +5,7 @@ import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import type { Plugin } from 'vite';
 import config from './src/site.config';
+import featureRoutes from './src/integrations/feature-routes';
 
 const BUILD_DATE = new Date().toISOString();
 
@@ -157,6 +158,7 @@ export default defineConfig({
             },
         }),
         react(),
+        featureRoutes(config.features),
     ],
     vite: {
         plugins: [devApiMocks(), legacyBrowserTarget()],

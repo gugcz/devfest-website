@@ -6,6 +6,7 @@ import { loadMediaCoverage } from '../lib/press-coverage';
 import { listPressKit } from '../lib/press-kit';
 import { EVENT } from '../lib/event';
 import config from '../site.config';
+import { enabledOnly, type FeatureFlag } from '../lib/flags';
 
 // CONTACT ABSORBS PRESS. `/press` redirects to `#press`: the clippings and the
 // press kit sit here, next to the inbox that answers press. The full kit
@@ -13,11 +14,12 @@ import config from '../site.config';
 const mediaCoverage = await loadMediaCoverage();
 
 // Three inboxes as typed index cards. The general one is the large card.
-type Desk = { id: string; title: string; desc: string; email: string; name?: string; role?: string };
-const [general, ...desks]: Desk[] = [
+type Desk = { id: string; title: string; desc: string; email: string; name?: string; role?: string; feature?: FeatureFlag };
+const [general, ...desks]: Desk[] = enabledOnly([
 	{ id: 'desk-general', title: 'General questions', desc: 'Tickets, billing, production, or anything else.', email: config.organizer.email },
 	{
 		id: 'desk-partners',
+		feature: 'partners',
 		title: 'Partners & sales',
 		desc: 'Partnerships, sponsorships, and media collaborations.',
 		email: 'filip@gug.cz',
@@ -25,7 +27,7 @@ const [general, ...desks]: Desk[] = [
 		role: 'Lead',
 	},
 	{ id: 'desk-speakers', title: 'Speakers & lineup', desc: 'Call for Proposals questions and speaker travel.', email: 'devfest-speakers@gug.cz' },
-];
+]);
 
 // The press kit: one plain label per logo variant with its formats, and the
 // document (the brand manual) as the band's one red button. Files are read

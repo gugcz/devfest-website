@@ -8,6 +8,7 @@ import TalkIndex from '../components/TalkIndex.astro';
 import { staticLineup } from '../lib/lineup-static';
 import { EVENT, eventDate } from '../lib/event';
 import config from '../site.config';
+import { ticketsHref } from '../lib/flags';
 
 // ONE PAGE FOR THE PROGRAMME. The timetable answers "when and where", the
 // list under it "what is it about" — search, filters and every abstract. They
@@ -65,7 +66,7 @@ const { sessions, rooms } = await staticLineup();
 			titleHtml={`Doors open<br />${eventDate('dayMonth')}.`}
 			note={`${EVENT.venue}, ${config.event.venue.city}. Doors at 08:00, closing remarks at 19:00, afterparty until 23:00.`}
 			titleId="agenda-closer"
-			actions={[{ href: '/#tickets', label: 'Get tickets' }, { href: '/speakers', label: 'Meet the speakers', kind: 'ghost' }]}
+			actions={[...(ticketsHref ? [{ href: ticketsHref, label: 'Get tickets' }] : []), { href: '/speakers', label: 'Meet the speakers', kind: 'ghost' }]}
 		/>
 	</main>
 </BaseLayout>

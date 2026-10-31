@@ -3,7 +3,7 @@ paths:
   - "functions/src/workshops/**"
   - "src/lib/workshops.ts"
   - "src/components/Workshops.tsx"
-  - "src/pages/workshops.astro"
+  - "src/routes/workshops.astro"
 ---
 
 # Workshops (`/workshops`)

@@ -15,7 +15,9 @@ const DIST = path.resolve('dist');
 // serves the same shapes from fixtures — shared with the dev server, so the two
 // can never drift (see `a11y-mocks/api.mjs`).
 const PORT = 4321;
-const PATHS = [
+// A route a feature flag removed (`src/site.config.ts`) has no file in
+// `dist/`; the sweep skips it and says so, so a flag off is not a failure.
+const PATHS_ALL = [
 	'/',
 	'/speakers/',
 	'/agenda/',
@@ -45,6 +47,15 @@ const PATHS = [
 	'/thank-you/',
 	'/404.html',
 ];
+
+/** The routes above that this build produced. */
+function builtPaths() {
+	return PATHS_ALL.filter((p) => {
+		if (resolveFile(p) !== null) return true;
+		console.log(`  ⤳ ${p} not built (feature off), skipped`);
+		return false;
+	});
+}
 
 const MIME = {
 	'.html': 'text/html; charset=utf-8',
@@ -512,6 +523,7 @@ async function run() {
 	const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 	const report = emptyReport();
 
+	const PATHS = builtPaths();
 	console.log(`Auditing ${PATHS.length} pages against ${tags.join(', ')}`);
 
 	for (const urlPath of PATHS) await auditPage(page, urlPath, tags, report);

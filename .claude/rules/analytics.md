@@ -4,8 +4,8 @@ paths:
   - "src/lib/analytics.ts"
   - "src/lib/consent.ts"
   - "src/components/CookieBanner.astro"
-  - "src/pages/thank-you.astro"
-  - "src/pages/newsletter-subscription-thank-you.astro"
+  - "src/routes/thank-you.astro"
+  - "src/routes/newsletter-subscription-thank-you.astro"
 ---
 
 # Analytics (`src/lib/firebase.ts`)

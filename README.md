@@ -307,6 +307,10 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 
 ## Key Pages
 
+A route marked with a flag exists only while that flag is on in
+`src/site.config.ts` (`features`); `/speaker-card` and `/login` follow
+`attending` and `app`.
+
 | Route | Description |
 |-------|-------------|
 | `/` | Landing page with countdown and newsletter signup |
@@ -315,22 +319,22 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 | `/llms.txt` | The site as Markdown for language models: facts, tickets, pages, every talk and speaker (built) |
 | `/calendar.ics`, `/robots.txt` | Built from `src/site.config.ts`: the calendar entry (doors to closing remarks) and the crawler file naming the sitemap |
 | `/agenda` | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day — and under it (`#talks`) every talk with search and filters (reads `/api/lineup`). `/sessions` redirects here, `?talk=` included |
-| `/workshops` | Workshop seat sign-up and waitlist for ticket holders (reads `/api/workshops`) |
-| `/invoice` | Request a company invoice to buy tickets by bank transfer |
-| `/partners` | Sponsors & partners |
+| `/workshops` (flag `workshops`) | Workshop seat sign-up and waitlist for ticket holders (reads `/api/workshops`) |
+| `/invoice` (flag `invoice`) | Request a company invoice to buy tickets by bank transfer |
+| `/partners` (flag `partners`) | Sponsors & partners |
 | `/press/downloads` | Press kit and downloadable assets (`/press` redirects to the press band on `/contact`) |
 | `/team` | Organizing team |
 | `/contact` | Contact desks, plus press coverage and the press-kit link (`#press`) |
 | `/faq` | Frequently asked questions |
 | `/tv` | Unlisted venue-screen page: a room's now/next, or the whole venue (reads `/api/lineup`) |
 | `/venue` | Getting to Uhelný Mlýn — train from Prague, walk from the station |
-| `/attending` | "I'm attending" share-card generator (client-side canvas → PNG) |
+| `/attending` (flag `attending`) | "I'm attending" share-card generator (client-side canvas → PNG) |
 | `/code-of-conduct` | Code of Conduct one-pager, Listener's contact, link to the full text |
 | `/privacy-policy` | GDPR privacy policy, website and mobile app |
-| `/delete-account` | How to delete a mobile app account (the Google Play "Delete account URL"; keep the route) |
-| `/app` | Where to get the mobile app (App Store, Google Play); the venue QR codes point here. Links in `src/lib/app-links.ts` |
-| `/newsletter-subscription-thank-you` | Post-signup confirmation |
-| `/thank-you` | Post-purchase confirmation (ti.to "thank you URL") |
+| `/delete-account` (flag `app`) | How to delete a mobile app account (the Google Play "Delete account URL"; keep the route) |
+| `/app` (flag `app`) | Where to get the mobile app (App Store, Google Play); the venue QR codes point here. Links in `src/lib/app-links.ts` |
+| `/newsletter-subscription-thank-you` (flag `newsletter`) | Post-signup confirmation |
+| `/thank-you` (flag `tickets`) | Post-purchase confirmation (ti.to "thank you URL") |
 | `/404` | Not-found page; also forwards share links to talks or speakers added since the last build |
 
 Unlisted pages (`noindex`, out of the sitemap, linked from nowhere): `/invite/<member>` (one per `src/content/team.json` entry; its share image is `/og/invite/<member>.jpg`; the discount link comes from the build-time GitHub Actions secret `PUBLIC_INVITE_DISCOUNT_URL`, empty hides it), `/speaker-card`, and `/login/<code>` (where the app's sign-in email link lands without the app installed: App Store and Google Play links; a Hosting rewrite in `firebase.json` serves one page for every code).
