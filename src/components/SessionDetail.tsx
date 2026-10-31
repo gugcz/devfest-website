@@ -122,7 +122,6 @@ export default function SessionDetail({
 											type="button"
 											className={`paper ${s.print}`}
 											onClick={() => openSpeaker(speaker)}
-											aria-label={`View ${speaker.fullName}'s profile`}
 										>
 											<span className={`paper-photo ${s.photo}`}>
 												<SpeakerPhoto
