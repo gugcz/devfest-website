@@ -455,7 +455,7 @@ Parallel: phase 4 alongside everything; phases 1 to 3 and 5 are a chain.
 
 ### Phase 6: LICENSE, CONTRIBUTING, adapting guide
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** `LICENSE` (MIT), `CONTRIBUTING.md`, `docs/adapting.md`; README
   gains the "Adapting the site" pointer; `docs/product.md` names the flags.
 - **Files touched:** `LICENSE` (new), `CONTRIBUTING.md` (new),

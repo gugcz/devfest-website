@@ -26,6 +26,8 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 | [docs/adr/](docs/adr/README.md) | Architecture decision records: why the site is built the way it is |
 | [docs/design.md](docs/design.md) | The design system |
 | [docs/product.md](docs/product.md) | The product record: users, purpose, brand commitments |
+| [docs/adapting.md](docs/adapting.md) | The checklist for the next edition, or for another chapter's event on this code |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | How to run the gate and open a PR; the code is MIT ([LICENSE](LICENSE)) |
 | [`.claude/rules/`](.claude/rules) | Per-domain notes (API, pages, backend, tickets, lineup, invoices, workshops, analytics, invite, design, docs) |
 
 ## Getting Started

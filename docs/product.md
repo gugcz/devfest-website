@@ -63,7 +63,10 @@ built by a community, not a vendor event.
   pages per talk and speaker, `/llms.txt`; unlisted `/invite/<member>`,
   `/speaker-card`, `/tv` (venue screens) and `/login/<code>` (the app's
   sign-in link); `/press` and `/sessions` redirect to `/contact#press` and
-  `/agenda#talks`.
+  `/agenda#talks`. Every section a chapter may not run is behind a feature
+  flag in `src/site.config.ts` (tickets, invoice, workshops, app, invite,
+  partners, newsletter, attending; `docs/adapting.md`); this edition runs
+  them all.
 - The site is a darkroom: photographs are paper prints on a flat black
   table, each with one strip of tape, set down at a small tilt; the facts
   that go with them are straight paper slips and cards. A page carries one
