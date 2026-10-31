@@ -80,7 +80,7 @@ const RINGED = '01';
 const STRIP_SCALE = 1;
 ---
 
-<BaseLayout description={`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch} ${EVENT.dateLabel}. Tickets on sale now.`}>
+<BaseLayout description={`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch} ${EVENT.dateLabel}. That was the eleventh edition; thank you for coming.`}>
 	{/* Preload the LCP hero background so it isn't discovered only after CSS parse */}
 	<link
 		slot="head"
@@ -106,7 +106,7 @@ const STRIP_SCALE = 1;
 			<div class="hero-body">
 				<h1 id="hero-title" class="hero-statement display">
 					<span class="sr-only">{EVENT.name} — Prague Developer Conference, {EVENT.dateLabel}. </span>
-					Prague&rsquo;s most original conference is <span class="red">back.</span>
+					That was Prague&rsquo;s most original conference. <span class="red">Thank you.</span>
 				</h1>
 
 				{/* The day's five topics, billed under the statement. */}
@@ -298,7 +298,7 @@ const STRIP_SCALE = 1;
 			<div class="band-inner newsletter">
 				<div>
 					<h2 id="newsletter-title" class="display newsletter-title">Newsletter</h2>
-					<p class="newsletter-lede">We write when a wave opens or a speaker is confirmed. Nothing else.</p>
+					<p class="newsletter-lede">We write when the next edition has a date, when a wave opens or a speaker is confirmed. Nothing else.</p>
 				</div>
 				<div class="newsletter-form">
 					<NewsletterForm client:visible />
