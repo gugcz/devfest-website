@@ -43,7 +43,7 @@ export default function SpeakersTeaser() {
 						Speakers
 					</h2>
 					<p className="head-rule-note">
-						<span className={s.figure}>{total}</span> confirmed. Times in CET.
+						<span className={s.figure}>{total}</span> on stage. Times in CET.
 					</p>
 				</header>
 

@@ -128,7 +128,7 @@ export default function SpeakerDetail({
 						</div>
 					)}
 
-					<SheetTickets line={`See ${speaker.fullName} live`} />
+					<SheetTickets line={`${speaker.fullName} on stage`} />
 				</div>
 			</div>
 		</Sheet>

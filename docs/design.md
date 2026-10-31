@@ -1350,7 +1350,7 @@ refresh, `noindex`, with no styles of its own.
 - **Speakers teaser** (`SpeakersTeaser`, home) — a different random
   handful of the lineup on every visit (`pickTeaser`), shown in running
   order with each print's number from the full lineup. Head: the `.head-rule` "Speakers" with the note
-  "N confirmed. Times in CET." (the count a mono figure); then eight prints
+  "N on stage. Times in CET." (the count a mono figure); then eight prints
   (`TEASER_SIZE`), two whole rows of four; each an `<a>` to the speaker.
   ≤720px the prints from the seventh on are hidden: three rows of two. Under the grid one `.action`
   at `--fs-cta`, "All N speakers". No rotation while the page is open. The teaser opens on
@@ -1520,8 +1520,8 @@ eyebrow, no stamp. Headings are literal: no puns.
 
 **[MUST] A head note carries a fact, never a label of the section's own
 contents.** The note exists only where it tells the visitor something the
-section does not already show: Speakers ("N confirmed. Times in CET."),
-Past editions ("Ten editions since 2012."), Tickets (the invoice route:
+section does not already show: Speakers ("N on stage. Times in CET."),
+Past editions ("Eleven editions since 2012."), Tickets (the invoice route:
 "Need to pay by bank transfer?" over the `.action` "Request a company
 invoice", `Tickets.tsx`; "Opens with the first wave" before the
 first wave), "Every talk" (how to search), "The route" (the train and the
@@ -1969,8 +1969,8 @@ that", and at most one closer line per page ("Doors open 30 October.",
 what it is ("The eleventh DevFest.cz", "Tickets", "Speakers", "Past
 editions", "Partners", "Newsletter", "Agenda", "Every talk", "The route",
 "The team", "FAQ", "In the news", "Press kit", "Become a partner");
-a `.head-rule` note is a fact or absent ("N confirmed. Times in CET.",
-"Ten editions since 2012."). The case dressing is the darkroom's own: the
+a `.head-rule` note is a fact or absent ("N on stage. Times in CET.",
+"Eleven editions since 2012."). The case dressing is the darkroom's own: the
 frame numbers and dates on a print's edge and the footer's folio. No triads, no em-dash chains, no hype words.
 
 **[CURRENT] Subpage titles** (`SubpageHero titleHtml`): `/speakers`

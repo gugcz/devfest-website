@@ -34,7 +34,7 @@ fails on a section a flag did not remove cleanly.
    under `src/assets/venue/`, `public/gallery/` (last edition's contact
    sheet on the home page; `src/pages/index.astro` names the frames).
 5. **Copy that names the day**: the home page's past-editions line
-   (`index.astro`, "Ten editions since 2012"), the "flying in" and "last
+   (`index.astro`, "Eleven editions since 2012"), the "flying in" and "last
    train" FAQ answers, the venue route on `/venue` (train line, station,
    walk), the privacy policy's "Last updated".
 6. **The production branch**: create the new year's branch from `2026`, add
