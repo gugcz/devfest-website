@@ -55,9 +55,15 @@ edited PR body keeps its old text in the public edit history.
 
 ## Map of the repo
 
+- `src/site.config.ts`: every fact about the edition, the organizer and the
+  deployment that the site states more than once (shape and what changes per
+  edition versus per chapter: `src/lib/site-config.ts`). `src/lib/event.ts`
+  derives `EVENT` from it; `src/lib/dates.ts` formats its dates. New code
+  reads these from it, never as a literal.
 - `src/pages/`: file-based routes (list in [README.md](README.md#key-pages)).
   `speakers/[id]` and `talks/[id]` are share pages built from the lineup at
-  build time; `invite/[member]` and `og/` are unlisted.
+  build time; `invite/[member]` and `og/` are unlisted; `calendar.ics.ts`
+  and `robots.txt.ts` are built from the config.
 - `src/components/`: `.astro` sections and React islands (`.tsx`,
   `client:load`) with co-located `.module.scss`.
 - `src/lib/`: browser and build helpers, one file per concern (`lineup.ts`,
@@ -89,12 +95,13 @@ edited PR body keeps its old text in the public edit history.
 | Dev server | `npm run dev` (`/api/*` from mocks; `DEVFEST_LIVE_API=1` for deployed functions) |
 | Full gate (= the CI checks) | `npm run verify` |
 | Types | `npm run check` (`astro check`) |
+| Site tests | `npm run test:site` (`node --test` on `src/**/*.test.ts`, types stripped by Node) |
 | Cognitive complexity | `npm run complexity` (`sonarjs/cognitive-complexity`, max 15) |
 | Function tests | `npm --prefix functions test` (`node --test`, stubs `fetch`) |
 | Accessibility | `npm run a11y` (axe on an `A11Y_MOCK=1` build, needs Playwright Chromium) |
 
 Only a green `npm run verify` counts as green: `astro check` alone misses
-complexity, the function tests and the axe sweep. A function over 15 is
+complexity, the site and function tests and the axe sweep. A function over 15 is
 refactored; never raise the threshold or add an ignore comment.
 
 ## Plugins and project tooling
@@ -138,8 +145,8 @@ one directly when working outside them.
 
 | Rule | Paths | Covers |
 | --- | --- | --- |
-| `api.md` | `/api/*` functions, their browser callers, `scripts/a11y-mocks/**`, `firebase.json`, `astro.config.mjs` | The `/api/*` endpoint table, cache TTLs, callables for writes, dev mocks |
-| `pages.md` | `src/pages/**`, `src/layouts/**`, `public/.well-known/**`, `astro.config.mjs` | Routes, SEO (meta, OG, JSON-LD, sitemap), iOS app links |
+| `api.md` | `/api/*` functions, their browser callers, `scripts/a11y-mocks/**`, `firebase.json`, `astro.config.ts` | The `/api/*` endpoint table, cache TTLs, callables for writes, dev mocks |
+| `pages.md` | `src/pages/**`, `src/layouts/**`, `public/.well-known/**`, `astro.config.ts` | Routes, SEO (meta, OG, JSON-LD, sitemap), iOS app links |
 | `backend.md` | `functions/**` | `functions/src/lib/` helpers, option presets, error/HTTP/Slack rules, function tests |
 | `tickets.md` | `functions/src/tickets/**`, `src/lib/tito.ts`, `Tickets.tsx`, `InvoiceForm.tsx` | ti.to flags, cache, visibility, domain layout |
 | `sessionize.md` | `functions/src/sessionize/**`, `functions/src/lineup/**`, the lineup helpers, share pages | Lineup sync, delete-guard, photo mirror, share pages |

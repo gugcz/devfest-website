@@ -3,7 +3,7 @@ paths:
   - "src/pages/**"
   - "src/layouts/**"
   - "public/.well-known/**"
-  - "astro.config.mjs"
+  - "astro.config.ts"
 ---
 
 # Pages, SEO and app links

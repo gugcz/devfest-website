@@ -267,7 +267,7 @@ the durable reference.
 | `src/styles/_type.scss` | the type recipes as mixins, one per voice — `note()`, `action()`, `cta-label()`, `mono()`, `display()`, `row-title()`, `prose()`, `hairline-link()`, `paper-action()`. A CSS Module that cannot compose a global class includes the mixin instead |
 | `src/styles/_logos.scss` | partner-mark recipe — `partner-logo()` (original colours; `.logo--dark` on a paper card) |
 | `src/components/Sheet.module.scss`, `SpeakerTile.module.scss` | shared chrome composed by more than one island (the detail sheets; the speaker print and its grid, on `/` and `/speakers`) |
-| `astro.config.mjs:86–120` | the three brand faces, self-hosted via the Astro Fonts API |
+| `astro.config.ts`, the `fonts` array | the three brand faces, self-hosted via the Astro Fonts API |
 | `src/components/*.module.scss` | co-located CSS Modules for React islands (`import s from './X.module.scss'`) |
 | `src/components/*.astro` + `*.scss` | static components with a sibling stylesheet |
 | `src/pages/*.scss` | page-scoped styles, one file per page |
@@ -497,7 +497,7 @@ measured ratios above assume the dark ground.
 
 ## Typography
 
-Three faces, self-hosted through the Astro Fonts API (`astro.config.mjs:86–120`),
+Three faces, self-hosted through the Astro Fonts API (the `fonts` array in `astro.config.ts`),
 each injected by a `<Font />` in `BaseLayout.astro` (lines 337–339).
 
 | Token | Face | Weights | Line | Role |
@@ -556,7 +556,7 @@ each injected by a `<Font />` in `BaseLayout.astro` (lines 337–339).
 - **[MUST] Czech letters Special Elite lacks fall to JetBrains Mono.** Google
   ships Special Elite in Latin only; its Fonts API entry sets
   `fallbacks: ['var(--font-jetbrains-mono)', 'monospace']` with
-  `optimizedFallbacks: false` (`astro.config.mjs`), so `--font-special-elite`
+  `optimizedFallbacks: false` (`astro.config.ts`), so `--font-special-elite`
   resolves to Special Elite → JetBrains Mono (latin-ext loaded). The default
   metric fallback was Arial at 117%, which printed "Libčice" as "LibČice".
   Never add a `subsets` entry or a fourth face to fix a glyph.
@@ -1176,7 +1176,7 @@ is not a print: it sits straight, untaped.**
 - **[MUST] Every `<img>` below the fold is `loading="lazy" decoding="async"`**
   with intrinsic `width`/`height`; above the fold `eager`. Local assets use
   Astro `<Image>` with `layout: 'constrained'`, `responsiveStyles: true`
-  (`astro.config.mjs`).
+  (`astro.config.ts`).
 - **[MUST] Decorative images take `alt=""`** (the contact-sheet frames,
   `index.astro`; the menu panel's print and the `/contact` press print,
   both `aria-hidden`; `press/downloads.astro`).

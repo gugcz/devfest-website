@@ -13,9 +13,10 @@
     "astro": "astro",
     "check": "astro check",
     "a11y": "A11Y_MOCK=1 astro build && node scripts/a11y.mjs",
-    "verify": "npm run check && npm run complexity && npm --prefix functions test && npm run a11y",
+    "verify": "npm run check && npm run complexity && npm run test:site && npm --prefix functions test && npm run a11y",
     "anchors": "A11Y_MOCK=1 astro build && node scripts/anchor-measure.mjs",
-    "complexity": "eslint src functions/src scripts astro.config.mjs"
+    "complexity": "eslint src functions/src scripts astro.config.ts",
+    "test:site": "node --experimental-strip-types --test 'src/**/*.test.ts'"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.1",

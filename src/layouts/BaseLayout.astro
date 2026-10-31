@@ -321,7 +321,7 @@ const jsonLd = JSON.stringify(
 
 		{/*
 			Self-hosted brand fonts (Astro Fonts API — see the `fonts` array in
-			astro.config.mjs). Served from our own origin, so no visitor IP
+			astro.config.ts). Served from our own origin, so no visitor IP
 			reaches Google's font CDN before the cookie banner is answered, and
 			there is no third-party round-trip in the critical path. Each <Font />
 			emits the @font-face block plus the `cssVariable` BaseLayout.scss
@@ -375,7 +375,7 @@ const jsonLd = JSON.stringify(
 			navigation still works.
 
 			Consequence: ClientRouter turns `prefetchAll` on by default, so the
-			explicit `prefetch.prefetchAll` in astro.config.mjs is now redundant;
+			explicit `prefetch.prefetchAll` in astro.config.ts is now redundant;
 			`defaultStrategy: 'hover'` still matters and stays.
 
 			Every inline <script> in this project is wrapped in an

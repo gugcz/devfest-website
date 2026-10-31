@@ -19,3 +19,4 @@ their dates are the PRs' merge dates. When to write one: `.claude/rules/docs.md`
 | [0007](0007-analytics-basic-consent-mode.md) | GA4 runs in basic Consent Mode: nothing loads before consent | accepted |
 | [0008](0008-agent-readable-build-time-html.md) | Readers without script get the lineup, programme and prices as build-time HTML | accepted |
 | [0009](0009-database-rules-live-in-the-app-repo.md) | Firestore and RTDB rules live whole in the app repo and deploy from its CI | accepted |
+| [0010](0010-site-config-and-feature-flags.md) | Every edition fact lives in one typed site config; sections switch off by flag | accepted |

@@ -1,68 +1,69 @@
 /**
- * Event facts: the day's hours, the date as the site writes it, the venue and
- * the calendar links. Code that states an hour or the date reads it from
- * here; copy that repeats an hour (`src/content/faq.json`, the agenda and
- * venue notes, the countdown's screen-reader line) and the Event JSON-LD in
- * `BaseLayout.astro` and `public/devfest-cz-2026.ics` must be kept in step.
+ * Event facts as the pages read them, derived from `src/site.config.ts`:
+ * the day's hours, the date as the site writes it, the venue and the
+ * calendar links. Code that states an hour or the date reads it from here;
+ * copy that repeats an hour (`src/content/faq.json`, the agenda and venue
+ * notes, the countdown's screen-reader line) is kept in step by hand.
  *
  * The hours come from the published agenda (Sessionize): breakfast and
  * registration 08:00, kick-off 08:45, opening keynote 09:00, lightning talks
  * and closing remarks until 19:00, afterparty 19:00 to 23:00.
- *
- * October 30 is after the DST switch: CET (+01:00) is correct — do not "fix"
- * it to +02:00.
  */
-const DOORS = '2026-10-30T08:00:00+01:00';
-const KEYNOTE = '2026-10-30T09:00:00+01:00';
-const CLOSE = '2026-10-30T19:00:00+01:00';
-const AFTERPARTY_END = '2026-10-30T23:00:00+01:00';
-/** Company invoices close the morning of the event: the ticket code is minted
- * only once the transfer lands, too late for the day. Keep in step with
- * `INVOICES_CLOSE` in `functions/src/invoice/submit.ts`. */
-const INVOICES_CLOSE = '2026-10-30T07:00:00+01:00';
+import config from '../site.config';
+import { formatDate, formatTime } from './dates';
+
+const { event, site } = config;
+const { venue, timeZone } = event;
 
 /** Whether `/invoice` still takes requests. */
 export function invoicesOpen(now: number = Date.now()): boolean {
-	return now < Date.parse(INVOICES_CLOSE);
+	return now < Date.parse(event.invoicesClose);
 }
 
-/** `HH:MM` read straight off an event-local ISO string (no time-zone math). */
-const clock = (iso: string): string => iso.slice(11, 16);
+const clock = (iso: string): string => formatTime(iso, timeZone);
 
 export const EVENT = {
-	name: 'DevFest.cz 2026',
+	/** "DevFest.cz 2026": the brand and the edition. */
+	name: `${event.name} ${event.edition}`,
 	/** Registration and breakfast. The calendar entry starts here. */
-	doors: DOORS,
+	doors: event.doors,
 	/** The opening keynote: the schema.org `startDate`. */
-	start: KEYNOTE,
+	start: event.start,
 	/** Closing remarks end; the calendar entry ends here. */
-	end: CLOSE,
-	afterpartyEnd: AFTERPARTY_END,
-	doorsTime: clock(DOORS),
-	startTime: clock(KEYNOTE),
-	endTime: clock(CLOSE),
-	afterpartyEndTime: clock(AFTERPARTY_END),
+	end: event.end,
+	afterpartyEnd: event.afterpartyEnd,
+	doorsTime: clock(event.doors),
+	startTime: clock(event.start),
+	endTime: clock(event.end),
+	afterpartyEndTime: clock(event.afterpartyEnd),
 	/** The date in running copy. Day-month-year everywhere, never "October 30". */
-	dateLabel: '30 October 2026',
+	dateLabel: formatDate(event.start, 'label', timeZone),
 	/** The date in mono stamps and meta lines (set uppercase by CSS). */
-	dateShort: '30 Oct 2026',
+	dateShort: formatDate(event.start, 'short', timeZone),
 	/** Doors to closing remarks, as the calendar entry spans it. */
-	timeLabel: `${clock(DOORS)}–${clock(CLOSE)} CET`,
-	venue: 'Uhelný Mlýn',
-	address: 'Libčice nad Vltavou, Czech Republic',
+	timeLabel: `${clock(event.doors)}–${clock(event.end)} ${event.timeZoneLabel}`,
+	venue: venue.name,
+	address: `${venue.city}, ${venue.countryName}`,
 	/** The full postal address, for the venue page and the FAQ. */
-	street: 'Areál Šroubáren 860, 252 66 Libčice nad Vltavou',
-	mapUrl: 'https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8',
-	/** Walking route from Libčice nad Vltavou station to the venue. */
-	stationWalkUrl: 'https://maps.app.goo.gl/95BeQWKRnyoXTXMF9',
-	/** The calendar file served from `public/`. */
-	icsUrl: '/devfest-cz-2026.ics',
-	url: 'https://devfest.cz',
+	street: `${venue.street}, ${venue.postalCode} ${venue.city}`,
+	mapUrl: venue.mapUrl,
+	/** Walking route from the nearest station to the venue. */
+	stationWalkUrl: venue.stationWalkUrl,
+	/** The calendar file, built from this config (`src/pages/calendar.ics.ts`). */
+	icsUrl: '/calendar.ics',
+	url: site.url,
 } as const;
 
 /** `20261030T080000Z` — the compact UTC form both ICS and Google Calendar want. */
-const toCalendarStamp = (iso: string): string =>
+export const toCalendarStamp = (iso: string): string =>
 	new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+
+/** The calendar entry's description: the pitch, the day's hours, the site. */
+export const calendarDescription = (): string =>
+	`${event.tagline} — ${event.pitch} Registration from ${EVENT.doorsTime}, keynote at ${EVENT.startTime}, afterparty until ${EVENT.afterpartyEndTime}.\n${site.url}`;
+
+/** `<venue>, <city>, <country>` as a calendar location. */
+export const calendarLocation = (): string => `${venue.name}, ${venue.city}, ${venue.countryName}`;
 
 /**
  * "Add to Google Calendar" template URL. The `.ics` download covers Apple
@@ -74,7 +75,7 @@ export const googleCalendarUrl = (): string => {
 		action: 'TEMPLATE',
 		text: EVENT.name,
 		dates: `${toCalendarStamp(EVENT.doors)}/${toCalendarStamp(EVENT.end)}`,
-		details: `Prague's developer conference & festival — AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it. Registration from ${EVENT.doorsTime}, keynote at ${EVENT.startTime}, afterparty until ${EVENT.afterpartyEndTime}.\n${EVENT.url}`,
+		details: calendarDescription(),
 		location: `${EVENT.venue}, ${EVENT.address}`,
 	});
 	return `https://calendar.google.com/calendar/render?${params.toString()}`;

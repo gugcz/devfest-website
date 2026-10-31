@@ -333,7 +333,7 @@ Parallel: phase 4 alongside everything; phases 1 to 3 and 5 are a chain.
 
 ### Phase 1: config foundation
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** `src/site.config.ts` and `SiteConfig`; `EVENT` derived from it;
   `formatDate`; `eventName()`/`pageTitle()`; `calendar.ics` and `robots.txt`
   endpoints; `astro.config.ts`; the ADR; the docs that name the renamed and
@@ -422,7 +422,7 @@ Parallel: phase 4 alongside everything; phases 1 to 3 and 5 are a chain.
 
 ### Phase 4: the functions mirror
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** `functions/src/site.ts` with derived CORS origins and the brand
   block; `INVOICES_CLOSE`, `BRAND`, `INVOICE_FROM_*`, the iDoklad line
   description in `process.ts`, the three CORS lists and `REGION`/`TIME_ZONE`
@@ -433,8 +433,8 @@ Parallel: phase 4 alongside everything; phases 1 to 3 and 5 are a chain.
   `functions/src/workshops/register.ts`, `functions/src/lineup/lineup-api.ts`,
   `functions/src/lineup/speaker-photo-api.ts` (comment),
   `.claude/rules/backend.md` (the mirror and its rule).
-- **Acceptance criteria:** `grep -rnE "devfest|gug|2026" functions/src --include='*.ts' --exclude=site.ts --exclude='*.test.ts'` prints nothing; `npm --prefix functions test` includes the origin tests and passes; in the emulator, `submitInvoiceCallable` preflights succeed from `https://devfest-public--pr-1-abc.web.app` and fail from `https://evil.example`, and `lineupApi` echoes `https://app.devfest.cz`.
-- **Validation:** `npm run verify` and `manual 1. firebase emulators:start --only functions; 2. curl -X OPTIONS the two callables and lineupApi with the three Origins above; 3. compare the Access-Control-Allow-Origin headers`. The PR body's Behavior section states that previews hit production functions and the deploy is the maintainer's.
+- **Acceptance criteria:** `grep -rnE "devfest|gug|2026" functions/src --include='*.ts' --exclude=site.ts --exclude='*.test.ts'` prints nothing; `npm --prefix functions test` includes the origin tests (accept the site, `www.`, a site preview host, the app origins and localhost; reject `https://evil.example`, the app's own preview host against the site list, `https://www.app.devfest.cz`, `https://localhost:4321`) and passes; the derived `RegExp.source` strings equal the old literals.
+- **Validation:** `npm run verify`. The emulator cannot prove the CORS lists: `firebase emulators:start` sets `enableCors` in `FIREBASE_DEBUG_FEATURES`, and `firebase-functions` then answers every origin (`v2/providers/https.js`), so the unit tests are the evidence. The PR body's Behavior section states that previews hit production functions and the deploy is the maintainer's.
 
 ### Phase 5: content collections
 
