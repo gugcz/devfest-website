@@ -43,8 +43,8 @@ built by a community, not a vendor event.
 - Tickets are sold on **ti.to**; the site renders releases from a cached
   `/api/tickets` endpoint. Company invoices go through **iDoklad**, paid by
   bank transfer, then redeemed as a 100%-off ti.to code.
-- The lineup is authored in **Sessionize** and mirrored into Firestore every
-  15 minutes; the site reads `/api/lineup`.
+- The lineup is authored in **Sessionize** and mirrored into Firestore once a
+  day; the site reads `/api/lineup`.
 - Workshop seats are opened by hand in RTDB; ticket holders sign in with the
   mobile app's ticket login to register.
 - Hosting and functions are **Firebase**, project `devfest-cz-app`, shared

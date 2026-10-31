@@ -34,7 +34,7 @@ export const SCHEDULED = {
 } satisfies Partial<ScheduleOptions>;
 
 /** Public CDN-cached `/api/*` endpoints. Scale-to-zero (edge TTLs absorb
- * nearly all traffic); `ticketsApi` overrides with `minInstances: 1`. */
+ * nearly all traffic). */
 export const CACHED_ENDPOINT = {
 	region: REGION,
 	invoker: 'public',

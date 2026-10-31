@@ -29,8 +29,7 @@ client SDK** (client reads blocked on an App Check token, ~30s on mobile;
 - 2nd-gen `onRequest`, public, `europe-west1`, codebase `website`. Edge
   `s-maxage` + in-instance memo (`lib/cached-endpoint.ts`). Failed read →
   `no-store` 503.
-- `ticketsApi` has `minInstances: 1` (override in `tickets-api.ts`, not the
-  preset); the others scale to zero.
+- Every endpoint scales to zero (no `minInstances`).
 - Writes go through callables, never the client SDK: `submitInvoiceCallable`
   (`/invoice`) and `workshopRegistrationCallable` (`/workshops`).
 - `lineupApi` also answers the mobile app's PWA with CORS: one Hosting site
