@@ -65,30 +65,36 @@ built by a community, not a vendor event.
   sign-in link); `/press` and `/sessions` redirect to `/contact#press` and
   `/agenda#talks`. Every section a chapter may not run is behind a feature
   flag in `src/site.config.ts` (tickets, invoice, workshops, app, invite,
-  partners, newsletter, attending; `docs/adapting.md`); this edition runs
-  them all.
+  partners, newsletter, attending; `docs/adapting.md`). The 2026 edition
+  took place on 30 October 2026; since then `tickets`, `invoice`, `invite`,
+  `workshops` and `attending` are off, so the site carries the programme,
+  the speakers, the venue, the partners, the app and the newsletter, and
+  no sale or sign-up.
 - The site is a darkroom: photographs are paper prints on a flat black
   table, each with one strip of tape, set down at a small tilt; the facts
   that go with them are straight paper slips and cards. A page carries one
   red grease-pencil mark.
 - The home page: a hero with the key art on the right and, over it, the
-  statement, the five topics billed under it, the facts (date, a ticking
-  countdown to the keynote, venue link, the wave on sale "from <price>")
-  and the red "Get tickets"; then sections that each open on a
+  statement, the five topics billed under it and the facts (date and venue
+  link). While tickets are on sale the facts also carry a ticking
+  countdown to the keynote and the wave on sale "from <price>", and the
+  red "Get tickets" sits under them; after the day the statement says
+  thank you and the countdown and the sale are gone. Then sections that each open on a
   poster-scale head, with a note only where it carries a fact: The
   eleventh DevFest.cz (a print of the mill with the one-line pitch, and its
   back with date / place / doors / audience), Get the app (store badges and
-  a link to `/app`), Tickets (one paper ticket
+  a link to `/app`), Tickets while the `tickets` flag is on (one paper ticket
   slip per wave: the wave on sale first and large with its price, state, Buy / Company pays; spent
   waves crossed out; the invoice route beside the head), Speakers (the
   first prints of the lineup, the opening keynote large, then "All N
   speakers"), Past editions (a contact sheet of eight frames with one
   enlarged), Partners (a labelled row per tier, each mark sized by its
   tier; "All partners", "Become a partner"), Newsletter (lede and the form
-  on a paper card). No arrow glyphs; the countdown is the only thing that moves on its own.
+  on a paper card; after the day the lede promises a note when the next
+  edition has a date). No arrow glyphs; the countdown is the only thing that moves on its own.
 - Navigation: at 1100px and wider the destinations sit inline in the
   header (Speakers, Agenda, Venue, FAQ, then Partners, Team, Press,
-  Contact) beside a red Tickets button; narrower, they live behind one
+  Contact) beside a red Tickets button while tickets are on sale; narrower, they live behind one
   menu toggle. The footer lists every public page except `/workshops`
   (linked from the agenda), `/press/downloads` (linked from the press
   band) and `/delete-account` (linked from the privacy policy).
@@ -101,8 +107,9 @@ built by a community, not a vendor event.
   its own (one list grouped by time on a phone, the lounge one line above
   it). The
   FAQ is a list of questions, the open one a paper slip with its answer.
-  `/speakers` ends on the way to the agenda and tickets, with no closing
-  block.
+  `/speakers` ends on the way to the agenda (and tickets, while on sale),
+  with no closing block. `/venue` and `/agenda` close on a thank-you once
+  the day is over.
 - Static Astro build with React islands only for data-backed behaviour.
   Browser reads come only from cached HTTP endpoints, never the Firebase
   client SDK; writes go through App Check-gated callables.

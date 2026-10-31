@@ -63,8 +63,8 @@ const { sessions, rooms } = await staticLineup();
 		</section>
 
 		<Closer
-			titleHtml={`Doors open<br />${eventDate('dayMonth')}.`}
-			note={`${EVENT.venue}, ${config.event.venue.city}. Doors at 08:00, closing remarks at 19:00, afterparty until 23:00.`}
+			titleHtml={`That was<br />${eventDate('dayMonth')}.`}
+			note={`${EVENT.venue}, ${config.event.venue.city}. The 2026 edition is over; the programme stays up for the record.`}
 			titleId="agenda-closer"
 			actions={[...(ticketsHref ? [{ href: ticketsHref, label: 'Get tickets' }] : []), { href: '/speakers', label: 'Meet the speakers', kind: 'ghost' }]}
 		/>

@@ -82,14 +82,17 @@ const config: SiteConfig = {
 	},
 	features: resolveFeatures(
 		{
-			tickets: true,
-			invoice: true,
-			workshops: true,
+			// The 2026 edition is over (30 October 2026): the ticket sale, the
+			// invoices, the invitations, the workshop sign-up and the share
+			// cards are off. The programme, the speakers and the app stay.
+			tickets: false,
+			invoice: false,
+			workshops: false,
 			app: true,
-			invite: true,
+			invite: false,
 			partners: true,
 			newsletter: true,
-			attending: true,
+			attending: false,
 		},
 		featuresOff,
 	),

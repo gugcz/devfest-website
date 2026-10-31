@@ -34,20 +34,26 @@ CI runs on every PR against `2026`.
 - A check the change cannot affect (e.g. a11y for a functions-only change) may
   be skipped only if it cannot run here; note which one and why in the PR.
 - Fix every failure and re-run. Do not continue on red.
-- Run the `update-docs` skill over the diff. A change that adds or renames a
-  function, endpoint, page, secret or rule, alters what a visitor sees or how
-  the site looks, or makes an architecture decision moves the docs in the
-  same PR (`.claude/rules/docs.md`).
 
-## 3. Review
+## 3. Update the docs
+
+Always, before the review and the PR; never offered as a follow-up. Run the
+`update-docs` skill over the diff. A change that adds or renames a function,
+endpoint, page, secret or rule, alters what a visitor sees or how the site
+looks, or makes an architecture decision moves the docs in the same PR
+(`.claude/rules/docs.md`). When the skill finds no document to touch, say so
+in one line. Name every changed decision document (`docs/product.md`,
+`docs/design.md`, an ADR) in the PR body.
+
+## 4. Review
 
 Run wingspan `/review` (or at least the
 `vgv-wingspan:codebase-review:vgv-review-agent` agent) over the diff. Fix
 each finding or answer it in one line. Where a finding contradicts
 `CLAUDE.md`, `docs/design.md` or `.claude/rules/`, the repo wins; say so
-rather than changing the code. If a fix touches code, re-run step 2.
+rather than changing the code. If a fix touches code, re-run steps 2 and 3.
 
-## 4. Commit
+## 5. Commit
 
 Conventional Commits with a scope; the subject says what a visitor or the
 maintainer notices:
@@ -58,7 +64,7 @@ fix(tickets): sold-out wave stays visible with a struck price
 
 Keep commits focused; add the attribution trailer the session requires.
 
-## 5. Push and open the PR
+## 6. Push and open the PR
 
 - `git push -u origin <branch>` (retry on network errors only).
 - Open a **draft** PR against `2026` (`gh pr create --draft`, or the GitHub
@@ -69,7 +75,7 @@ Keep commits focused; add the attribution trailer the session requires.
   plan section.
 - If the session has PR-attribution or assignee rules, apply them.
 
-## 6. Report
+## 7. Report
 
 - Wait for CI on the PR head (correctness gate, accessibility audit, hosting
   preview). If a check fails, fix, re-run the gate, push, repeat.
