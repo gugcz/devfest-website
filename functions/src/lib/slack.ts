@@ -29,6 +29,11 @@ const DOMAIN_PREFIX: Record<SlackDomain, string> = {
 	invoices: '🧾 INVOICES',
 };
 
+/** Kill switch for every Slack post (reports, purchase lines, alerts). While
+ * `false`, `postToSlack` logs the message at `warn` instead (it may carry a
+ * code to relay by hand, like `notify`'s skip log); `true` restores Slack. */
+const SLACK_ENABLED = false;
+
 /** Escape user/upstream text before mrkdwn — `<!channel>` in a company name
  * is a mass ping. https://api.slack.com/reference/surfaces/formatting#escaping */
 export function escapeMrkdwn(text: string): string {
@@ -37,6 +42,10 @@ export function escapeMrkdwn(text: string): string {
 
 /** POST a payload to an incoming webhook. Throws on a non-OK response. */
 export async function postToSlack(webhookUrl: string, payload: SlackPayload): Promise<void> {
+	if (!SLACK_ENABLED) {
+		logger.warn('Slack disabled — message logged, not posted', { text: payload.text });
+		return;
+	}
 	// `retryUnsafe` on a POST is deliberate here and nowhere else: the worst case
 	// is a duplicate line in the channel, while a dropped one is an alert (or a
 	// purchase notification) nobody ever sees.
