@@ -111,6 +111,10 @@ Only a green `npm run verify` counts as green: `astro check` alone misses
 complexity, the site and function tests and the axe sweep. A function over 15 is
 refactored; never raise the threshold or add an ignore comment.
 
+Worktrees run in parallel on one machine: a script that starts a server
+listens on port 0 and reads the port back (`scripts/a11y.mjs`), never a fixed
+port; outputs and caches stay inside the worktree.
+
 ## Plugins and project tooling
 
 - **Plugins.** `vgv-wingspan` and Impeccable are declared in

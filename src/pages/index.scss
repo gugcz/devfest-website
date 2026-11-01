@@ -110,10 +110,26 @@
 }
 
 /* ===================== SECTIONS ===================== */
-// Every section opens on the poster head and closes on space; the next
+// Every section opens on its head and closes on space; the next
 // head is the cut.
 .sec {
 	padding-bottom: 0;
+}
+
+// Two head steps: the event, speakers and past editions lead at poster scale
+// (`.head-rule`); partners, the app and the newsletter are utility and take
+// the h2 step (the newsletter's own title rule sets it below).
+#partners-title,
+#home-app-title {
+	font-size: var(--fs-h2);
+}
+
+// On this page a note (or the partners' actions) sits under its title at
+// every width, not in the right column a page-width away. Global: the
+// speakers head renders inside an island. The tickets head keeps its invoice
+// route beside it.
+.page-stack :global(.head-rule:not(:has(#tickets-heading))) {
+	grid-template-columns: minmax(0, 1fr);
 }
 
 /* ---- the event ---- */
@@ -386,13 +402,16 @@
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 	gap: clamp(2rem, 5vw, 5rem);
-	align-items: center;
+	// The head on the section's top edge, like every other head: centred
+	// against the taller form card it sat lower and an anchor jump landed
+	// short of it.
+	align-items: start;
 }
 
-// One word, never broken: the section step fits it in a half column.
+// One word, never broken; a utility head, so the h2 step.
 .newsletter-title {
 	margin: 0;
-	font-size: var(--fs-section);
+	font-size: var(--fs-h2);
 	overflow-wrap: normal;
 	word-break: normal;
 	hyphens: none;

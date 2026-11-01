@@ -71,7 +71,7 @@ Everything above, plus:
    | `app` | `/app`, `/login`, `/delete-account`, the store badges | |
    | `invite` | `/invite/<member>` and its OG cards | `tickets` |
    | `partners` | `/partners`, the partner bands, the TV credits | |
-   | `newsletter` | the form, `/newsletter-subscription-thank-you`, every "Get notified" link | |
+   | `newsletter` | the form, `/newsletter-subscription-thank-you`, every "Get notified" link, the home hero's "Stay in the loop" | |
    | `attending` | `/attending`, `/speaker-card` | |
 
    Not flags: `/tv` (delete `src/pages/tv.astro`) and `/press` (delete

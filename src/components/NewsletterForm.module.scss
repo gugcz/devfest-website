@@ -37,20 +37,21 @@
 	@include note(var(--fs-note-sm));
 }
 
+// In fill order: the email, the consent, then the button.
 .form {
 	display: flex;
-	align-items: flex-end;
+	flex-direction: column;
+	align-items: flex-start;
 	gap: 1.25rem;
 	width: 100%;
 
 	@media (max-width: 500px) {
-		flex-direction: column;
 		align-items: stretch;
 	}
 }
 
 .field {
-	flex: 1;
+	align-self: stretch;
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
@@ -82,6 +83,10 @@
 		border-bottom-color: var(--color-accent);
 	}
 
+	&[aria-invalid='true'] {
+		border-bottom-color: var(--color-accent);
+	}
+
 	// Keyboard focus keeps a visible ring (WCAG 2.4.7).
 	&:focus-visible {
 		outline: 2px solid var(--color-accent-hot);
@@ -103,7 +108,7 @@
 
 	// Hover inverts: the card's paper with the ink label, the border holding
 	// the button's edge.
-	&:hover:not(:disabled) {
+	&:hover {
 		background: var(--paper);
 		color: var(--paper-ink);
 	}
@@ -111,15 +116,6 @@
 	&:focus-visible {
 		outline: 2px solid var(--paper-ink);
 		outline-offset: var(--focus-gap);
-	}
-
-	// Until the consent is ticked: an outlined slot in the dim ink, which
-	// holds 5.3:1 on the paper (a dimmed red fell under 3:1).
-	&:disabled {
-		cursor: not-allowed;
-		background: transparent;
-		border-color: var(--paper-ink-dim);
-		color: var(--paper-ink-dim);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -162,6 +158,10 @@
 			transform: scale(0);
 		}
 
+		&[aria-invalid='true'] {
+			border-color: var(--color-accent);
+		}
+
 		&:checked {
 			background: var(--box-ink);
 		}
@@ -170,7 +170,9 @@
 			transform: scale(1);
 		}
 
-		&:focus-visible {
+		// `:focus`, not only `:focus-visible`: a failed submit by mouse moves
+		// focus here from script, and the ring must show where it went.
+		&:focus {
 			outline: 2px solid var(--color-accent-hot);
 			outline-offset: var(--focus-gap);
 		}
@@ -205,8 +207,10 @@
 }
 
 // The status line: black ink on paper (the error red is 4:1 here, under
-// the small-text floor).
+// the small-text floor); an error stands behind a red margin mark, as on
+// the invoice form.
 .message {
+	position: relative;
 	@include prose(var(--fs-ui));
 	color: var(--paper-ink);
 	margin: 0;
@@ -214,5 +218,19 @@
 
 	&:empty {
 		min-height: 0;
+	}
+
+	&[data-tone='error']:not(:empty) {
+		padding-left: 1.1rem;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 0.25em;
+			bottom: 0.25em;
+			width: 4px;
+			background: var(--color-accent);
+		}
 	}
 }
