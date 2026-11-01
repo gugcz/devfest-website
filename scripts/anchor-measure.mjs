@@ -8,9 +8,6 @@ import { chromium, webkit, firefox } from 'playwright';
 import { API_FIXTURES } from './a11y-mocks/api.mjs';
 
 const DIST = path.resolve('dist');
-// Port 0: the OS picks a free port, so parallel worktrees never collide.
-// `startServer` reads it back.
-let PORT;
 const MIME = { '.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.ico':'image/x-icon','.woff':'font/woff','.woff2':'font/woff2','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8' };
 
 function resolveFile(reqUrl) {
@@ -25,6 +22,8 @@ function resolveFile(reqUrl) {
 
 const DELAY_MS = Number(process.env.API_DELAY_MS ?? 400);
 
+// Port 0 on loopback: the OS picks a free port, so parallel worktrees never
+// collide, and `dist/` is never served to the LAN.
 async function startServer() {
 	const server = createServer(async (req, res) => {
 		const p = (req.url ?? '/').split('?')[0];
@@ -45,9 +44,8 @@ async function startServer() {
 		});
 		res.end(await readFile(file));
 	});
-	await new Promise((r) => server.listen(0, r));
-	PORT = server.address().port;
-	return server;
+	await new Promise((r) => server.listen(0, '127.0.0.1', r));
+	return { server, origin: `http://127.0.0.1:${server.address().port}` };
 }
 
 const VIEWPORTS = [
@@ -209,7 +207,7 @@ function headerFaults(result, root, virgin) {
 	return faults;
 }
 
-async function headerSweep(port) {
+async function headerSweep(origin) {
 	const browser = await chromium.launch();
 	const ctx = await browser.newContext({ viewport: { width: HEADER_WIDTHS[0], height: 800 } });
 	const page = await ctx.newPage();
@@ -240,7 +238,7 @@ async function headerSweep(port) {
 		// …and so does the root, for the same reason: the document must load at
 		// the size the virgin assertion below is about.
 		await setRootFontSize(16);
-		await page.goto(`http://localhost:${port}${route}`, { waitUntil: 'load' });
+		await page.goto(`${origin}${route}`, { waitUntil: 'load' });
 		for (const [index, width] of HEADER_WIDTHS.entries()) {
 			if (index > 0) await page.setViewportSize({ width, height: 800 });
 			for (const root of HEADER_ROOTS) {
@@ -262,7 +260,7 @@ async function headerSweep(port) {
 	return { bad, checks };
 }
 
-const server = await startServer();
+const { server, origin } = await startServer();
 const rows = [];
 for (const [engineName, engine] of Object.entries(ENGINES)) {
 	for (const vp of VIEWPORTS) {
@@ -273,7 +271,7 @@ for (const [engineName, engine] of Object.entries(ENGINES)) {
 		// In-page jumps, from the top of the page, on a page that has settled.
 		const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
 		const page = await ctx.newPage();
-		await page.goto(`http://localhost:${PORT}/`);
+		await page.goto(`${origin}/`);
 		await settle(page);
 		for (const t of TARGETS) {
 			await page.evaluate(() => window.scrollTo(0, 0));
@@ -290,7 +288,7 @@ for (const [engineName, engine] of Object.entries(ENGINES)) {
 		if (built('/invoice/') && TARGETS.some((t) => t.hash === '#tickets')) {
 			const c3 = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
 			const p3 = await c3.newPage();
-			await p3.goto(`http://localhost:${PORT}/invoice/`);
+			await p3.goto(`${origin}/invoice/`);
 			await settle(p3);
 			await p3.click('a[href="/#tickets"]');
 			await p3.waitForTimeout(600);
@@ -304,7 +302,7 @@ for (const [engineName, engine] of Object.entries(ENGINES)) {
 		for (const t of TARGETS) {
 			const c2 = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
 			const p2 = await c2.newPage();
-			await p2.goto(`http://localhost:${PORT}/${t.hash}`);
+			await p2.goto(`${origin}/${t.hash}`);
 			await settle(p2);
 			await quiet(p2);
 			rows.push({ engine: engineName, vp: vp.label, target: t.hash, mode: 'deep-link', ...(await measure(p2, t.heading)) });
@@ -315,7 +313,7 @@ for (const [engineName, engine] of Object.entries(ENGINES)) {
 	}
 }
 const chunks = await countProbeChunks();
-const header = await headerSweep(PORT);
+const header = await headerSweep(origin);
 await new Promise((r) => server.close(r));
 
 // An anchor jump should land the heading just clear of the bar. The in-page
