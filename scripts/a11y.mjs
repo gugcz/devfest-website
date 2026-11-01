@@ -532,6 +532,36 @@ function printFailureDetails({ failures, controlFailures, flowErrors, totalViola
 	);
 }
 
+// Pages are audited by a few tabs at once; most of each audit is waiting on
+// hydration timeouts, not CPU. Each tab has its own context, so no tab sees
+// another's state.
+const TABS = 4;
+
+async function auditPages(browser, origin, paths, tags, report) {
+	const queue = [...paths];
+	const tab = async () => {
+		// Force reduced motion so on-load fade animations finish instantly.
+		// Otherwise axe samples mid-fade and reports phantom contrast issues.
+		const context = await browser.newContext({ reducedMotion: 'reduce' });
+		const page = await context.newPage();
+		for (let urlPath = queue.shift(); urlPath !== undefined; urlPath = queue.shift()) {
+			await auditPage(page, origin, urlPath, tags, report);
+		}
+		await context.close();
+	};
+	await Promise.all(Array.from({ length: Math.min(TABS, paths.length) }, tab));
+}
+
+// Tabs finish in any order; the report lists pages in sweep order. A dialog
+// entry (`/agenda/ [label]`) sorts with its page, the mobile pass right after.
+function sortReport(report, paths) {
+	const order = ({ urlPath }) =>
+		paths.indexOf(urlPath.split(' [')[0]) + (urlPath.includes(' [mobile') ? 0.5 : 0);
+	for (const list of ['failures', 'controlFailures', 'controlReview', 'incompleteReview']) {
+		report[list].sort((a, b) => order(a) - order(b));
+	}
+}
+
 async function run() {
 	if (!existsSync(DIST)) {
 		console.error('dist/ missing. Run `npm run build` first.');
@@ -540,10 +570,6 @@ async function run() {
 
 	const { server, origin } = await startServer();
 	const browser = await chromium.launch();
-	// Force reduced motion so on-load fade animations finish instantly.
-	// Otherwise axe samples mid-fade and reports phantom contrast issues.
-	const context = await browser.newContext({ reducedMotion: 'reduce' });
-	const page = await context.newPage();
 
 	const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 	const report = emptyReport();
@@ -551,9 +577,8 @@ async function run() {
 	const PATHS = builtPaths();
 	console.log(`Auditing ${PATHS.length} pages against ${tags.join(', ')}`);
 
-	for (const urlPath of PATHS) await auditPage(page, origin, urlPath, tags, report);
-
-	await auditMobileAgenda(browser, origin, tags, report);
+	await Promise.all([auditPages(browser, origin, PATHS, tags, report), auditMobileAgenda(browser, origin, tags, report)]);
+	sortReport(report, PATHS);
 
 	await browser.close();
 	server.close();

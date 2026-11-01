@@ -15,7 +15,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  astro-check:
+  # One job, one `npm ci`: the checks themselves take seconds, the install
+  # is what each extra job would pay again.
+  site-checks:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -26,44 +28,24 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - run: npm ci
+      - id: install
+        run: npm ci
 
+      # Each check runs even when the one before it failed, so one red run
+      # names every failing check.
       - name: astro check
         run: npm run check
 
-  complexity:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7.0.1
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-
-      - run: npm ci
-
       - name: Cognitive complexity
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run complexity
 
       - name: No event, organizer or origin literal outside the site config
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run literals
 
-  site-test:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7.0.1
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-
-      - run: npm ci
-
       - name: Site tests (src/**/*.test.ts)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run test:site
 
   functions-test:
