@@ -115,6 +115,8 @@ The default Cloud Functions service account has the IAM needed to write RTDB; no
 
 ### Functions
 
+> **Slack posting is disabled.** `SLACK_ENABLED` in `functions/src/lib/slack.ts` is `false`, so every Slack message (reports, purchase lines, alerts, invoice fallbacks) only goes to Cloud Logging (`warn`, "Slack disabled"). Set it to `true` and deploy functions to restore; a job already in a failure streak then stays silent until it recovers.
+
 | Name | Trigger | Purpose |
 | ---- | ------- | ------- |
 | `refreshTicketsScheduled` | Cloud Scheduler, daily 06:00 | Sync ti.to releases → RTDB `/tickets` |

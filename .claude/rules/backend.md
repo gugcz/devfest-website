@@ -41,7 +41,9 @@ Failure text is a product surface: it lands in Slack, an invoice's
   `ops/health/{name}`, best-effort.
 - **`lib/slack.ts`** — `postToSlack` throws; `notify(domain, url, text)` is
   best-effort, prefixed, never throws. Alerting functions list
-  `SLACK_WEBHOOK_URL` in `secrets`.
+  `SLACK_WEBHOOK_URL` in `secrets`. **Slack is off**: `SLACK_ENABLED = false`
+  makes `postToSlack` log the message (`warn`) instead of posting; flip it to
+  restore. A failure streak open at that moment stays silent until recovery.
 - **`lib/cached-endpoint.ts`** — `cachedJsonEndpoint({ name, cacheControl,
   memoTtlMs, fallback, load, corsOrigins? })`, shared body of `/api/*`.
 - **`lib/cors.ts`** — `applyReadCors` for a spec's `corsOrigins`: echoes a
