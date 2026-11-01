@@ -18,6 +18,12 @@ jobs:
   axe:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Chromium and its system libraries ship in the image, so nothing is
+    # downloaded or apt-installed per run. The tag must equal the `playwright`
+    # version in package-lock.json; the first step fails loudly when it drifts.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --user 1001
     steps:
       - uses: actions/checkout@v7.0.1
 
@@ -29,20 +35,13 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v6.1.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright Chromium
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Install Playwright system deps
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+      - name: Playwright matches the container image
+        run: |
+          installed=$(node -p "require('playwright/package.json').version")
+          if [ "$installed" != "1.64.1" ]; then
+            echo "::error::playwright is $installed, the container image is v1.64.1. Bump the image tag in this workflow."
+            exit 1
+          fi
 
       # `npm run a11y` builds with A11Y_MOCK=1 (fixture-hydrated lineup + tickets,
       # see scripts/a11y-mocks/) so the gated ready-state content is audited, then
