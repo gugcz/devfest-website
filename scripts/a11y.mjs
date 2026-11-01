@@ -14,7 +14,6 @@ const DIST = path.resolve('dist');
 // them to Cloud Functions in production). CI has no functions, so the harness
 // serves the same shapes from fixtures — shared with the dev server, so the two
 // can never drift (see `a11y-mocks/api.mjs`).
-const PORT = 4321;
 // A route a feature flag removed (`src/site.config.ts`) has no file in
 // `dist/`; the sweep skips it and says so, so a flag off is not a failure.
 const PATHS_ALL = [
@@ -87,6 +86,8 @@ function resolveFile(reqUrl) {
 	return null;
 }
 
+// Port 0: the OS picks a free port, so the sweep never collides with an
+// `astro dev` or another worktree's run.
 async function startServer() {
 	const server = createServer(async (req, res) => {
 		const reqPath = (req.url ?? '/').split('?')[0];
@@ -111,8 +112,8 @@ async function startServer() {
 			res.end(String(err));
 		}
 	});
-	await new Promise((resolve) => server.listen(PORT, '127.0.0.1', resolve));
-	return server;
+	await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+	return { server, origin: `http://127.0.0.1:${server.address().port}` };
 }
 
 function formatViolation(v) {
@@ -391,8 +392,8 @@ function pageFailureSummary(violations, pageFails, modalFails) {
 	return parts.join(', ');
 }
 
-async function auditPage(page, urlPath, tags, report) {
-	const url = `http://127.0.0.1:${PORT}${urlPath}`;
+async function auditPage(page, origin, urlPath, tags, report) {
+	const url = `${origin}${urlPath}`;
 	const start = Date.now();
 	// 'networkidle' never fires on pages that hold a live realtime listener
 	// (the Firestore speakers wall, the RTDB tickets cache keep a channel
@@ -432,14 +433,14 @@ async function auditPage(page, urlPath, tags, report) {
 // distinct DOM (list rows, not grid cells) the desktop sweep never renders.
 // Audit it once at a phone width, including the detail dialog opened from a
 // list row.
-async function auditMobileAgenda(browser, tags, report) {
+async function auditMobileAgenda(browser, origin, tags, report) {
 	const mobile = await browser.newContext({
 		reducedMotion: 'reduce',
 		viewport: { width: 375, height: 812 },
 	});
 	const mp = await mobile.newPage();
 	const urlPath = '/agenda/ [mobile list]';
-	const url = `http://127.0.0.1:${PORT}/agenda/`;
+	const url = `${origin}/agenda/`;
 	await mp.goto(url, { waitUntil: 'domcontentloaded' });
 	await mp.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
 	await hydrateIslands(mp);
@@ -513,7 +514,7 @@ async function run() {
 		process.exit(2);
 	}
 
-	const server = await startServer();
+	const { server, origin } = await startServer();
 	const browser = await chromium.launch();
 	// Force reduced motion so on-load fade animations finish instantly.
 	// Otherwise axe samples mid-fade and reports phantom contrast issues.
@@ -526,9 +527,9 @@ async function run() {
 	const PATHS = builtPaths();
 	console.log(`Auditing ${PATHS.length} pages against ${tags.join(', ')}`);
 
-	for (const urlPath of PATHS) await auditPage(page, urlPath, tags, report);
+	for (const urlPath of PATHS) await auditPage(page, origin, urlPath, tags, report);
 
-	await auditMobileAgenda(browser, tags, report);
+	await auditMobileAgenda(browser, origin, tags, report);
 
 	await browser.close();
 	server.close();
