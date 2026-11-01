@@ -5,5 +5,20 @@
       "maxFindings": 5,
       "maxChars": 8000
     }
+  },
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/components/NewsletterForm.module.scss"
+        ],
+        "createdAt": "2026-10-31T23:54:30.460Z",
+        "reason": "docs/design.md [MUST] 'An error is never red prose': form errors sit behind a 4px red margin mark, same as InvoiceForm.module.scss .message"
+      }
+    ]
   }
 }

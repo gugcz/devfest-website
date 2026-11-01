@@ -59,7 +59,7 @@
 	// THE POSTER SCALE. Bebas above --fs-h3, Special Elite as body texture.
 	// --fs-display caps at 9rem: 11rem left nothing above a 760px fold.
 	--fs-display: clamp(3rem, 9.5vw, 9rem);
-	--fs-hero: clamp(4.5rem, 10.5vw, 9.25rem);  // home statement: floor and cap above --fs-section
+	--fs-hero: clamp(4.25rem, 10.5vw, 9.25rem); // home statement: floor and cap above --fs-section; the floor fits "CONFERENCE." on a 320px line
 	// Section headline. Always a clear step under the home hero, which
 	// `index.scss` caps at 11svh on short screens: a width-only term let a
 	// 1280×720 section head tie the hero, so the height term follows it down.

@@ -5,30 +5,49 @@ const FORM_ACTION =
 	'https://app.smartemailing.cz/public/web-forms-v2/display-form/167903-ggds3kxovwsftn01lh5m7yhk8m4wwxdjdm1xbq2dnhipx2twwqpfbdq66w91nbw4wvqi81suvi5r8bt43zw76foqqs2xigrw3a97';
 
 export default function NewsletterForm() {
-	const [consented, setConsented] = useState(false);
 	const [message, setMessage] = useState('');
+	// The field the last failed submit stopped on; its message is an error.
+	const [invalid, setInvalid] = useState<'email' | 'consent' | null>(null);
+	// Until the island hydrates the browser validates on its own: the
+	// required email and consent block a submit that skips the checkbox.
+	const [hydrated, setHydrated] = useState(false);
 
 	useEffect(() => {
+		setHydrated(true);
 		const refField = document.getElementById('se-ref-field-id') as HTMLInputElement | null;
 		if (refField && refField.value.trim() === '') {
 			refField.value = window.location.href;
 		}
 	}, []);
 
+	function fail(event: FormEvent, field: HTMLInputElement, which: 'email' | 'consent', text: string) {
+		event.preventDefault();
+		setInvalid(which);
+		setMessage(text);
+		field.focus();
+	}
+
+	function clear() {
+		setInvalid(null);
+		setMessage('');
+	}
+
+	// Checks in fill order (email, then consent) and focuses the first bad
+	// field. The checkbox is read from the DOM, not state: a tick made before
+	// the island hydrated counts.
 	function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		const form = event.currentTarget;
-		const emailInput = form.querySelector<HTMLInputElement>('#newsletter-email');
-		if (!consented) {
-			event.preventDefault();
-			setMessage('Please confirm the consent checkbox to continue.');
+		const email = form.elements.namedItem('fields[df_emailaddress]') as HTMLInputElement;
+		const consent = form.elements.namedItem('newsletter-consent') as HTMLInputElement;
+		if (!email.checkValidity()) {
+			fail(event, email, 'email', 'Enter a valid email address to receive updates.');
 			return;
 		}
-		if (emailInput && !emailInput.checkValidity()) {
-			event.preventDefault();
-			setMessage('Enter a valid email address to receive updates.');
-			emailInput.focus();
+		if (!consent.checked) {
+			fail(event, consent, 'consent', 'Please confirm the consent checkbox to continue.');
 			return;
 		}
+		setInvalid(null);
 		setMessage('Submitting your email…');
 	}
 
@@ -43,7 +62,7 @@ export default function NewsletterForm() {
 				method="post"
 				action={FORM_ACTION}
 				onSubmit={handleSubmit}
-				noValidate
+				noValidate={hydrated}
 			>
 				<div className={s.field}>
 					<label htmlFor="newsletter-email" className={s.label}>
@@ -58,15 +77,29 @@ export default function NewsletterForm() {
 						required
 						autoComplete="email"
 						aria-describedby="newsletter-message"
+						aria-invalid={invalid === 'email' || undefined}
+						onChange={clear}
 					/>
 				</div>
+				<label className={s.consent}>
+					<input
+						type="checkbox"
+						id="newsletter-consent"
+						aria-describedby="newsletter-message"
+						aria-invalid={invalid === 'consent' || undefined}
+						onChange={clear}
+						required
+					/>
+					<span>
+						I agree to receive conference updates by email. See our{' '}
+						<a href="/privacy-policy" className={s.consentLink}>Privacy Policy</a>.
+					</span>
+				</label>
 				<button
 					className={s.button}
 					type="submit"
 					name="_submit"
 					value="Subscribe"
-					disabled={!consented}
-					aria-describedby="newsletter-consent-text"
 				>
 					Notify me
 				</button>
@@ -75,21 +108,10 @@ export default function NewsletterForm() {
 				<input type="hidden" name="sessionUid" id="se-sessionUid-field" defaultValue="" />
 				<input type="hidden" name="_do" value="webFormHtmlRenderer-webFormForm-submit" />
 			</form>
-			<label className={s.consent}>
-				<input
-					type="checkbox"
-					checked={consented}
-					onChange={(e) => setConsented(e.target.checked)}
-					required
-				/>
-				<span id="newsletter-consent-text">
-					I agree to receive conference updates by email. See our{' '}
-					<a href="/privacy-policy" className={s.consentLink}>Privacy Policy</a>.
-				</span>
-			</label>
 			<p
 				id="newsletter-message"
 				className={s.message}
+				data-tone={invalid ? 'error' : 'info'}
 				role="status"
 				aria-live="polite"
 				aria-atomic="true"
