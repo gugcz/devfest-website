@@ -294,12 +294,26 @@ async function hydrateIslands(page) {
 }
 
 // Detail dialogs reached by clicking a card. Each flow reloads first for a clean
-// state, opens the dialog, and axe re-runs scoped to `[role="dialog"]`.
+// state, opens the dialog, and axe re-runs scoped to `[role="dialog"]`. Cards
+// are named by their visible text (no aria-label), so flows find them as a
+// list item's button and pin a specific one by its text.
+// A missing card fails in seconds, not Playwright's default 30 s per click.
+const CLICK = { timeout: 5000 };
+
+// SessionDetail opens the speaker as a second sheet over the session sheet,
+// so the speaker flow waits for that second dialog, not just any dialog.
+async function openSpeakerFromSession(p, session, speaker) {
+	await p.click(session, CLICK);
+	await p.waitForSelector('[role="dialog"]', CLICK);
+	await p.click(speaker, CLICK);
+	await p.waitForSelector('[role="dialog"] >> nth=1', CLICK);
+}
+
 const MODAL_FLOWS = {
 	'/speakers/': [
 		{
 			label: 'speaker detail dialog',
-			open: (p) => p.click('button[aria-label^="View "]'),
+			open: (p) => p.click('main li > button', CLICK),
 		},
 	],
 	// The talk list (was /sessions) sits under the timetable since the merge;
@@ -309,19 +323,15 @@ const MODAL_FLOWS = {
 			// A timetable cell opens the same SessionDetail dialog. Cells carry a
 			// hashed CSS-module class, so target the stable data hook instead.
 			label: 'agenda session dialog',
-			open: (p) => p.click('[data-agenda-open]'),
+			open: (p) => p.click('[data-agenda-open]', CLICK),
 		},
 		{
 			label: 'session detail dialog',
-			open: (p) => p.click('#talks button[aria-label^="View details for "]'),
+			open: (p) => p.click('#talks li > button', CLICK),
 		},
 		{
 			label: 'session → speaker dialog',
-			open: async (p) => {
-				await p.click('#talks button[aria-label^="View details for "]');
-				await p.waitForSelector('[role="dialog"]');
-				await p.click('[role="dialog"] button[aria-label^="View "]');
-			},
+			open: (p) => openSpeakerFromSession(p, '#talks li > button', '[role="dialog"] li > button'),
 		},
 		{
 			// The SAME sheet with no photograph, so the initials plate is audited
@@ -329,16 +339,17 @@ const MODAL_FLOWS = {
 			// ''`): the flow above takes whichever speaker is first, and a 2.58:1
 			// plate once slipped through because that one had a photo.
 			label: 'session → speaker dialog (no photo)',
-			open: async (p) => {
-				await p.click('#talks button[aria-label="View details for AI at the Edge"]');
-				await p.waitForSelector('[role="dialog"]');
-				await p.click('[role="dialog"] button[aria-label="View Alan Turing\'s profile"]');
-			},
+			open: (p) =>
+				openSpeakerFromSession(
+					p,
+					'#talks li > button:has(:text-is("AI at the Edge"))',
+					'[role="dialog"] li > button:has(:text-is("Alan Turing"))'
+				),
 		},
 	],
 };
 
-async function auditModals(page, urlPath, url, tags) {
+async function auditModals(page, urlPath, url, tags, report) {
 	const flows = MODAL_FLOWS[urlPath];
 	if (!flows) return [];
 	const found = [];
@@ -356,7 +367,8 @@ async function auditModals(page, urlPath, url, tags) {
 				.analyze();
 			if (res.violations.length) found.push({ urlPath: `${urlPath} [${flow.label}]`, violations: res.violations });
 		} catch (err) {
-			console.log(`  ⚠ ${urlPath} [${flow.label}] — flow error: ${err}`);
+			console.log(`  ✘ ${urlPath} [${flow.label}] — flow error: ${err}`);
+			report.flowErrors.push(`${urlPath} [${flow.label}]`);
 		}
 	}
 	return found;
@@ -370,6 +382,8 @@ function emptyReport() {
 		controlFailures: [],
 		controlReview: [],
 		incompleteReview: [],
+		// A dialog that never opened was never audited: a failure, not a pass.
+		flowErrors: [],
 	};
 }
 
@@ -384,11 +398,12 @@ function recordBlindSpots(report, urlPath, fails, review, incomplete) {
 	}
 }
 
-function pageFailureSummary(violations, pageFails, modalFails) {
+function pageFailureSummary(violations, pageFails, modalFails, flowFails) {
 	const parts = [];
 	if (violations.length) parts.push(`${violations.length} axe`);
 	if (pageFails) parts.push(`${pageFails} control-contrast`);
 	if (modalFails.length) parts.push(`${modalFails.reduce((n, m) => n + m.violations.length, 0)} modal`);
+	if (flowFails) parts.push(`${flowFails} dialog never opened`);
 	return parts.join(', ');
 }
 
@@ -410,7 +425,8 @@ async function auditPage(page, origin, urlPath, tags, report) {
 	recordBlindSpots(report, urlPath, fails, review, results.incomplete);
 
 	// Detail dialogs (speaker / session) only exist after a click.
-	const modalFails = await auditModals(page, urlPath, url, tags);
+	const flowErrorsBefore = report.flowErrors.length;
+	const modalFails = await auditModals(page, urlPath, url, tags, report);
 	for (const m of modalFails) {
 		report.totalViolations += m.violations.length;
 		report.failures.push(m);
@@ -418,7 +434,8 @@ async function auditPage(page, origin, urlPath, tags, report) {
 
 	const elapsed = Date.now() - start;
 	const pageFails = fails.length;
-	if (results.violations.length === 0 && pageFails === 0 && modalFails.length === 0) {
+	const flowFails = report.flowErrors.length - flowErrorsBefore;
+	if (results.violations.length === 0 && pageFails === 0 && modalFails.length === 0 && flowFails === 0) {
 		console.log(`  ✓ ${urlPath} (${elapsed}ms)`);
 		return;
 	}
@@ -426,7 +443,7 @@ async function auditPage(page, origin, urlPath, tags, report) {
 		report.totalViolations += results.violations.length;
 		report.failures.push({ urlPath, violations: results.violations });
 	}
-	console.log(`  ✘ ${urlPath} — ${pageFailureSummary(results.violations, pageFails, modalFails)} (${elapsed}ms)`);
+	console.log(`  ✘ ${urlPath} — ${pageFailureSummary(results.violations, pageFails, modalFails, flowFails)} (${elapsed}ms)`);
 }
 
 // Mobile pass: below 760px the /agenda grid collapses to AgendaList — a
@@ -447,17 +464,20 @@ async function auditMobileAgenda(browser, origin, tags, report) {
 	const results = await new AxeBuilder({ page: mp }).withTags(tags).analyze();
 	// The list rows open the same SessionDetail dialog as the grid cells.
 	let modalViolations = 0;
+	let flowFailed = false;
 	try {
-		await mp.click('[data-agenda-open]');
+		await mp.click('[data-agenda-open]', CLICK);
 		await mp.waitForSelector('[role="dialog"]', { timeout: 3000 });
 		await mp.waitForTimeout(200);
 		const modalRes = await new AxeBuilder({ page: mp }).withTags(tags).include('[role="dialog"]').analyze();
 		modalViolations = modalRes.violations.length;
 		if (modalViolations) report.failures.push({ urlPath: '/agenda/ [mobile list dialog]', violations: modalRes.violations });
 	} catch (err) {
-		console.log(`  ⚠ ${urlPath} — dialog flow error: ${err}`);
+		console.log(`  ✘ ${urlPath} — dialog flow error: ${err}`);
+		report.flowErrors.push(`${urlPath} [dialog]`);
+		flowFailed = true;
 	}
-	if (results.violations.length === 0 && modalViolations === 0) {
+	if (results.violations.length === 0 && modalViolations === 0 && !flowFailed) {
 		console.log(`  ✓ ${urlPath}`);
 	} else {
 		report.totalViolations += results.violations.length + modalViolations;
@@ -489,7 +509,7 @@ function printReviewSections({ incompleteReview, controlReview }, focusHits) {
 	}
 }
 
-function printFailureDetails({ failures, controlFailures, totalViolations }) {
+function printFailureDetails({ failures, controlFailures, flowErrors, totalViolations }) {
 	if (failures.length) {
 		console.log('\n=== axe violation details ===');
 		for (const { urlPath, violations } of failures) {
@@ -503,8 +523,12 @@ function printFailureDetails({ failures, controlFailures, totalViolations }) {
 			console.log(`  · ${f.urlPath} — ${f.sel} ${f.kind}: ${f.ratio}:1 (need ${f.need}:1)`);
 		}
 	}
+	if (flowErrors.length) {
+		console.log('\n=== dialogs never opened, so never audited (update the flow in MODAL_FLOWS) ===');
+		for (const f of flowErrors) console.log(`  · ${f}`);
+	}
 	console.log(
-		`\nTotal: ${totalViolations} axe violation(s), ${controlFailures.length} control-contrast failure(s).`
+		`\nTotal: ${totalViolations} axe violation(s), ${controlFailures.length} control-contrast failure(s), ${flowErrors.length} flow error(s).`
 	);
 }
 
@@ -538,7 +562,7 @@ async function run() {
 
 	printReviewSections(report, focusHits);
 
-	if (report.failures.length === 0 && report.controlFailures.length === 0) {
+	if (report.failures.length === 0 && report.controlFailures.length === 0 && report.flowErrors.length === 0) {
 		console.log('\nAll pages pass WCAG 2.2 AA (axe-core + custom control-contrast pass).');
 		process.exit(0);
 	}
