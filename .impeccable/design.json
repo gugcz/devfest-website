@@ -276,6 +276,14 @@
 			"css": ".ds-print { margin: 0; width: 240px; padding: 6px; border: 1px solid rgba(207,168,98,0.5); background: rgba(5,9,15,0.6); } .ds-print-img { aspect-ratio: 3 / 2; background: linear-gradient(135deg, #2b1a42, #173c44 60%, #5a2a1c); filter: saturate(0.85) contrast(1.05); }"
 		},
 		{
+			"name": "Film",
+			"kind": "custom",
+			"refersTo": "print",
+			"description": "The last edition's aftermovie (.film): a 16:9 YouTube player in the print's frame and plate (1px brass at 50%, 6px ink padding); flat, square, untilted; under the prints and stepping out to their width from 900px.",
+			"html": "<div class=\"ds-film\"><div class=\"ds-film-player\"></div></div>",
+			"css": ".ds-film { margin: 0; width: 480px; padding: 6px; border: 1px solid rgba(207,168,98,0.5); background: rgba(5,9,15,0.6); } .ds-film-player { display: block; width: 100%; aspect-ratio: 16 / 9; background: #05090f; }"
+		},
+		{
 			"name": "Facts",
 			"kind": "custom",
 			"refersTo": "fact-value",

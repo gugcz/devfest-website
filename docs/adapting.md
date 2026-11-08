@@ -25,7 +25,9 @@ ended moves to `devfest.cz/<year>` as a frozen build
    `/<year>`, and writes `archive/<year>/`. A section already switched off
    goes back on for the archive with `PUBLIC_FEATURES_ON` (e.g.
    `PUBLIC_FEATURES_ON=tickets npm run archive -- 2027`). Commit it whole;
-   never edit it by hand.
+   never edit it by hand. Its aftermovie, once out, goes into
+   `AFTERMOVIES` in `src/lib/editions.ts` (the YouTube video id); the home
+   page plays it under the edition's figures.
 2. **Move `config.event` to the next edition** in `src/site.config.ts`:
    `edition`, `season` and `city` as announced; `date`, `venue` and
    `audience` stay unset until they are. Nothing that needs a day renders

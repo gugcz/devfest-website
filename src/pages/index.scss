@@ -180,26 +180,33 @@
 	}
 }
 
-// Photographs in thin brass frames, a step wider than the text column.
+// Photographs in thin brass frames, a step wider than the text column; the
+// film under them shares the gap and the step out.
+$prints-gap: clamp(0.75rem, 2vw, 1.25rem);
+$prints-step-out: calc(-1 * clamp(0rem, 25vw - 10rem, 14rem));
+
 .prints {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	gap: clamp(0.75rem, 2vw, 1.25rem);
+	gap: $prints-gap;
 	margin: 0;
 	padding: 0;
 	list-style: none;
 
 	@media (min-width: 900px) {
 		grid-template-columns: repeat(4, 1fr);
-		margin: 0 calc(-1 * clamp(0rem, 25vw - 10rem, 14rem));
+		margin: 0 $prints-step-out;
 	}
 }
 
-.print {
+.print,
+.film {
 	padding: 6px;
 	border: 1px solid var(--print-edge);
 	background: var(--print-plate);
+}
 
+.print {
 	// `height: auto` releases the `height` attribute, so the 3:2 holds.
 	img {
 		display: block;
@@ -208,6 +215,24 @@
 		aspect-ratio: 3 / 2;
 		object-fit: cover;
 		filter: saturate(0.85) contrast(1.05);
+	}
+}
+
+// The last edition's aftermovie: a print-framed 16:9 player as wide as the
+// prints above it.
+.film {
+	margin: $prints-gap 0 0;
+
+	@media (min-width: 900px) {
+		margin-inline: $prints-step-out;
+	}
+
+	iframe {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 9;
+		border: 0;
 	}
 }
 
