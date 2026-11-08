@@ -79,7 +79,10 @@ edited PR body keeps its old text in the public edit history.
   pages, the 404, `llms.txt.ts` and `robots.txt.ts`.
 - `archive/<year>/`: past editions, frozen builds served at `/<year>`
   (`npm run archive`, `src/integrations/archives.ts`, `src/lib/editions.ts`).
-  Never edited by hand, excluded from the checks.
+  They live on the `archives` branch; `main` tracks only
+  `archive/sources.json`, the pinned commits, and every build fetches them
+  (`src/lib/archive-sources.ts`, ADR 0012). Never edited by hand, excluded
+  from the checks.
 - `src/components/`: `.astro` sections and React islands (`.tsx`,
   `client:load`) with co-located `.module.scss`; `aether/` holds the
   painting, the season mark, the portal and the cookie slip.
@@ -120,7 +123,7 @@ edited PR body keeps its old text in the public edit history.
 | Types | `npm run check` (`astro check`) |
 | Site tests | `npm run test:site` (`node --test` on `src/**/*.test.ts`, types stripped by Node) |
 | Flags off | `npm run flags-off` (two builds with feature flags off; fails on a route, sitemap entry or link left behind) |
-| Archive an edition | `npm run archive -- <year>` (once a year, while `config.event` is that edition; writes `archive/<year>/`; `docs/adapting.md`) |
+| Archive an edition | `npm run archive -- <year>` (once a year, while `config.event` is that edition; writes `archive/<year>/`, published on the `archives` branch and pinned in `archive/sources.json`; `docs/adapting.md`) |
 | Cognitive complexity | `npm run complexity` (`sonarjs/cognitive-complexity`, max 15) |
 | Function tests | `npm --prefix functions test` (`node --test`, stubs `fetch`) |
 | Accessibility | `npm run a11y` (axe on an `A11Y_MOCK=1` build, needs Playwright Chromium) |

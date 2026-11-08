@@ -7,7 +7,7 @@ brainstorm: docs/brainstorm/2026-11-08-edition-archive-and-teaser-brainstorm-doc
 
 ## refactor(archive): past editions' builds live on the archives branch, main pins them - Standard
 
-**Status:** Not started.
+**Status:** Done.
 
 ## Overview
 
@@ -83,7 +83,7 @@ Visitors see no change: `devfest.cz/2026` serves the same bytes.
 
 ### Phase 1: The archives branch
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** Create the orphan `archives` commit whose only entry is `2026/`
   (the tree of `2f9c9b9e:archive/2026`) and push it as `archives`. The
   maintainer adds the ruleset.
@@ -94,7 +94,7 @@ Visitors see no change: `devfest.cz/2026` serves the same bytes.
 
 ### Phase 2: main pins and fetches
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** One PR into `main`, with the deletion of `archive/2026/` in its
   own commit so the code reads alone.
 - **Files touched:**

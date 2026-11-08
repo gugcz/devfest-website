@@ -4,7 +4,7 @@ The developer conference & festival built by the community around GUG.cz in Prag
 
 ![DevFest.cz 2027](public/og-image.jpg)
 
-`devfest.cz` always belongs to the current or next edition; every past edition lives on at `devfest.cz/<year>` ([ADR 0011](docs/adr/0011-root-for-the-next-edition-archives-under-the-year.md)). Today the root is **DevFest.cz 2027** (fall 2027, Prague), its unannounced sections behind feature flags. **DevFest.cz 2026** (30 October 2026, Uhelný Mlýn in Libčice nad Vltavou) is a frozen archive at [`/2026`](https://devfest.cz/2026), built from this repository into `archive/2026/`.
+`devfest.cz` always belongs to the current or next edition; every past edition lives on at `devfest.cz/<year>` ([ADR 0011](docs/adr/0011-root-for-the-next-edition-archives-under-the-year.md)). Today the root is **DevFest.cz 2027** (fall 2027, Prague), its unannounced sections behind feature flags. **DevFest.cz 2026** (30 October 2026, Uhelný Mlýn in Libčice nad Vltavou) is a frozen archive at [`/2026`](https://devfest.cz/2026), built from this repository and kept on the `archives` branch.
 
 ## Tech Stack
 
@@ -58,7 +58,7 @@ npm run verify
 npm run archive -- 2027
 ```
 
-`archive/<year>/` is a frozen build: the live build copies it into `dist/` and serves it at `/<year>`. Never edit it by hand; `npm run preview` after a build shows it.
+`archive/<year>/` is a frozen build: it lives on the `archives` branch, `archive/sources.json` pins the commit, and every build fetches it the first time it is missing ([ADR 0012](docs/adr/0012-past-editions-live-on-the-archives-branch.md)). The live build copies it into `dist/` and serves it at `/<year>`. Never edit it by hand; `npm run preview` after a build shows it. Publishing a new one: `docs/adapting.md` → "The yearly switch".
 
 `main` is the production branch. A merge into it deploys the site
 (`firebase-hosting-merge.yml`) and, when `functions/**` or `firebase.json`
@@ -332,7 +332,7 @@ page.
 | Route | Description |
 |-------|-------------|
 | `/` | The edition's home: the DF27 stage, what is announced, tickets and speakers while their flags are on, the last edition in figures, the app, the newsletter |
-| `/2026/…` | The 2026 edition, frozen (`archive/2026/`): every page it had, its lineup and speaker photos included |
+| `/2026/…` | The 2026 edition, frozen (`2026/` on the `archives` branch): every page it had, its lineup and speaker photos included |
 | `/speakers` (flag `lineup`) | Speaker lineup (reads `/api/lineup`); `?speaker=<id>` opens one speaker |
 | `/speakers/<id>`, `/talks/<id>` (flag `lineup`) | Share pages: one speaker or talk as text with its own link preview, then forward to the sheet; indexed |
 | `/llms.txt` | The site as Markdown for language models: facts, tickets, pages, every talk and speaker (built) |
