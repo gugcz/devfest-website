@@ -27,7 +27,7 @@ interface Props {
 const { event } = config;
 // Before the day is announced the description says what is: the season and
 // the city (ADR 0011).
-const when = hasDate ? `${EVENT.dateLabel} at ${EVENT.venue}` : `${event.season.toLowerCase()}, ${event.city}`;
+const when = `${hasDate ? EVENT.dateLabel : event.season.toLowerCase()}${hasVenue ? ` at ${EVENT.venue}` : `, ${event.city}`}`;
 const {
 	title = pageTitle("Prague Developer Conference"),
 	description = `${EVENT.name} — ${event.tagline}: ${event.pitch.replace(/\.$/, "")}. ${when.charAt(0).toUpperCase()}${when.slice(1)}.${enabled('tickets') ? ' Tickets on sale now.' : ''}`,

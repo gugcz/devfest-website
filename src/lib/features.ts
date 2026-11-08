@@ -12,12 +12,12 @@ export const FEATURE_FLAGS = [
 	/**
 	 * The edition's programme: `/agenda`, `/speakers`, the share pages
 	 * (`/speakers/<id>`, `/talks/<id>`), `/sessions`, `/tv`, the speakers on
-	 * the home page. Off until the lineup is published.
+	 * the home page. Off until the lineup is published. Needs `event.date`.
 	 */
 	'lineup',
-	/** `/venue` and the venue's facts. Needs `event.venue`. */
+	/** `/venue` and the venue's facts. Needs `event.venue` and `event.date`. */
 	'venue',
-	/** The ti.to ticket section on the home page and `/thank-you`. Needs `event.date`. */
+	/** The ti.to ticket section on the home page and `/thank-you`. Needs `event.date` and `event.venue`. */
 	'tickets',
 	/** `/invoice`, company tickets paid by bank transfer. Needs `tickets`. */
 	'invoice',
@@ -44,7 +44,10 @@ type EventFact = 'date' | 'venue';
 /** `needs` must be on (a flag) or set (an event fact) for the key to be on. */
 const DEPENDENCIES: ReadonlyArray<{ flag: FeatureFlag; needs: FeatureFlag | EventFact; why: string }> = [
 	{ flag: 'tickets', needs: 'date', why: 'a ticket is for a dated edition' },
+	{ flag: 'tickets', needs: 'venue', why: 'the confirmation and its calendar entry give the venue' },
+	{ flag: 'lineup', needs: 'date', why: 'the agenda and the speakers give the day and its times' },
 	{ flag: 'venue', needs: 'venue', why: 'the page gives the venue\'s address and route' },
+	{ flag: 'venue', needs: 'date', why: 'the page gives the day\'s hours' },
 	{ flag: 'workshops', needs: 'lineup', why: 'workshops sit in the agenda' },
 	{ flag: 'attending', needs: 'date', why: 'the share cards name the day' },
 	{ flag: 'attending', needs: 'venue', why: 'the share cards name the venue\'s town' },

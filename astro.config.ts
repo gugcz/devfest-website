@@ -145,7 +145,7 @@ export default defineConfig({
             },
         }),
         react(),
-        featureRoutes(config.features, config.event.date !== undefined),
+        featureRoutes(config.features, config.event.date !== undefined && config.event.venue !== undefined),
         ...(archive ? [] : [archives(), redirectGuard()]),
     ],
     vite: {

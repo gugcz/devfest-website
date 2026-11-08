@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
-import { shadowedPaths, type HostingRedirect } from './redirects.ts';
+import { builtPath, shadowedPaths, type HostingRedirect } from './redirects.ts';
 
 describe('shadowedPaths', () => {
 	const redirects: HostingRedirect[] = [
@@ -33,6 +33,24 @@ describe('shadowedPaths', () => {
 			hosting: { redirects: HostingRedirect[] };
 		};
 		const alwaysBuilt = ['/', '/faq', '/team', '/contact', '/press', '/press/downloads', '/privacy-policy', '/code-of-conduct'];
+		// A 2027 share page is not one of 2026's, so the 301s by id leave it alone.
+		alwaysBuilt.push('/speakers/a-2027-speaker', '/talks/2027001');
 		assert.deepEqual(shadowedPaths(hosting.redirects, alwaysBuilt), []);
+	});
+});
+
+describe('builtPath', () => {
+	it('maps a built file to the URL Hosting serves it at', () => {
+		assert.equal(builtPath('index.html'), '/');
+		assert.equal(builtPath('faq/index.html'), '/faq');
+		assert.equal(builtPath('404.html'), '/404');
+		assert.equal(builtPath('calendar.ics'), '/calendar.ics');
+		assert.equal(builtPath('speakers/42/index.html'), '/speakers/42');
+	});
+
+	it('leaves out the archives and the assets', () => {
+		assert.equal(builtPath('2026/agenda/index.html'), null);
+		assert.equal(builtPath('2026'), null);
+		assert.equal(builtPath('_astro/x.js'), null);
 	});
 });

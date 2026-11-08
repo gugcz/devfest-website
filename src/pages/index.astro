@@ -76,7 +76,7 @@ const PRINTS = [
 ] as const;
 ---
 
-<BaseLayout title={`${EVENT.name} — ${event.tagline}, ${EVENT.dateLabel.toLowerCase()}`}>
+<BaseLayout title={`${EVENT.name} — ${event.tagline}, ${hasDate ? EVENT.dateLabel : event.season.toLowerCase()}`}>
 	<link slot="head" rel="preload" as="image" href="/df27-logo.svg" fetchpriority="high" />
 	<AetherCanvas />
 

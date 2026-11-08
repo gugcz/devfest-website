@@ -22,7 +22,8 @@
  *    live-only page; lists what a script bundle names, for a look.
  * 5. Replaces `archive/<year>/` with the result, plus `edition.json`: the
  *    edition's facts (date, venue, audience) that the live site states
- *    about its last edition once `config.event` has moved on.
+ *    about its last edition once `config.event` has moved on. Prints the
+ *    `firebase.json` redirects for the edition's share pages.
  *
  * `npm run archive -- <year> --facts` writes only `archive/<year>/edition.json`
  * (for an archive made before the file existed).
@@ -220,3 +221,18 @@ for await (const file of walk(TARGET)) {
 	files += 1;
 }
 console.log(`\n✓ archive/${year}/: ${files} files, ${(bytes / 1024 / 1024).toFixed(1)} MB, served at ${SITE}${BASE}`);
+
+// The edition's share pages answer 301 for good from the root (ADR 0011):
+// by id, so the next edition's own `/speakers/<id>` and `/talks/<id>` stay free.
+const ids = async (kind) =>
+	(await readdir(path.join(TARGET, kind), { withFileTypes: true }))
+		.filter((entry) => entry.isDirectory())
+		.map((entry) => entry.name)
+		.sort();
+console.log('\nAdd to firebase.json → hosting.redirects:');
+for (const kind of ['speakers', 'talks']) {
+	const list = await ids(kind).catch(() => []);
+	if (list.length > 0) {
+		console.log(`  { "regex": "^/${kind}/(${list.join('|')})$", "destination": "${BASE}/${kind}/:1", "type": 301 },`);
+	}
+}

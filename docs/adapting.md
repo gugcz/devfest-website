@@ -36,7 +36,8 @@ ended moves to `devfest.cz/<year>` as a frozen build
    `invite`, `attending`) until the sale, `workshops`, `partners`.
 4. **Redirect what is off** (`firebase.json` → `redirects`): a **302** from
    every path the next edition will reuse to its `/<year>/…` copy, a **301**
-   from the per-edition URLs (`/speakers/<id>`, `/talks/<id>`). The build
+   from the edition's share pages, by id (`npm run archive` prints the two
+   entries), so the next edition's own ids stay free. The build
    fails when a redirect matches one of its pages
    (`src/integrations/redirect-guard.ts`), because Hosting applies
    redirects before static files.

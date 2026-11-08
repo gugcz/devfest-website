@@ -71,7 +71,10 @@ describe('checkFeatureDependencies', () => {
 		);
 		assert.throws(() => checkFeatureDependencies({ ...ALL_OFF, venue: true }, { date: {} }), /venue needs event\.venue/);
 		assert.throws(() => checkFeatureDependencies({ ...ALL_OFF, attending: true }, { date: {} }), /attending needs event\.venue/);
-		checkFeatureDependencies({ ...ALL_OFF, lineup: true, partners: true, app: true, newsletter: true }, NOTHING_ANNOUNCED);
+		assert.throws(() => checkFeatureDependencies({ ...ALL_OFF, tickets: true }, { date: {} }), /tickets needs event\.venue/);
+		assert.throws(() => checkFeatureDependencies({ ...ALL_OFF, lineup: true }, NOTHING_ANNOUNCED), /lineup needs event\.date/);
+		assert.throws(() => checkFeatureDependencies({ ...ALL_OFF, venue: true }, { venue: {} }), /venue needs event\.date/);
+		checkFeatureDependencies({ ...ALL_OFF, partners: true, app: true, newsletter: true }, NOTHING_ANNOUNCED);
 	});
 });
 

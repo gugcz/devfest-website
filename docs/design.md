@@ -407,9 +407,10 @@ A beveled brass frame drawn in ink, the aether's button.
   glows; focus adds the aether ring at 5px.
 - **Framed** (`.btn-framed`, `Portal.astro` default): brass strokes over a
   plate, ivory label, brass arrow; hover and focus turn strokes and arrow
-  aether and the label brass light. `Portal.astro` also sweeps a band of
-  aether light across the plate (0.8s, `--ease-rise`).
-- **Reduced motion:** all transitions off.
+  aether, the plate a dark aether tint and the label brass light.
+- `Portal.astro` is the link form of the two classes; there is one drawing.
+- **Reduced motion:** all transitions off. **Forced colours:** the drawn
+  frame gives way to a 2px `ButtonText` border.
 
 **[MUST] The One Portal Rule.** One solid portal per screen. A form's
 submit (the newsletter) or a second choice (the last edition beside the

@@ -193,9 +193,9 @@ Of the 27 items in `src/content/faq.json`:
   - On `venue`: the venue route, parking, last train, the airport and stay.
   - On `lineup`: the day's shape, who is speaking, recordings.
   - On `tickets`: ticket prices and types, how to get in.
-- **Theme items** ("What's the story with the detective theme?", the 1940s
-  clothing in "What should I wear?") go to the maintainer for rewrite. Until
-  then they are gated on `lineup`.
+- **Theme items** go to the maintainer for rewrite. "What's the story with
+  the detective theme?" is gated on `lineup`. "What should I wear?" (the
+  hall and the 1940s clothing) is gated on `venue`.
 - **The CFP item** points at the 2026 lineup. It is rewritten to say the
   2027 call is not open yet, with no date.
 - **The mobile app** shows any item whose `feature` is not in its
@@ -312,6 +312,8 @@ docs.
     home `SpeakersTeaser`, the share pages (`Share.astro`), `/tv`
     (`TvScreen`) and `DataState`.
   - Add the all-flags-on a11y build with `PUBLIC_EVENT_FIXTURE`.
+  - The agenda's past-tense 2026 lines ("as the day ran", "That was") go.
+  - `SpeakerTile` and `Sessions` still name the 2026 headline face.
   - Docs for these surfaces.
 - **Files touched:** the components above and their `.module.scss`; in
   `src/routes/`: `agenda.*`, `speakers.*`, `speakers/[id].astro`,
@@ -337,6 +339,9 @@ docs.
   - Venue and partners: `/venue`, `Closer`, `/partners` and the partner
     bands.
   - `docs/design-2026.md` then binds only the archive.
+  - The 2026 copy these surfaces still carry is rewritten: the venue page
+    (the mill, the train, "thank you for coming"), the thank-you page ("half
+    an hour north of Prague"), the venue FAQ answers.
 - **Files touched:** the components and routes above,
   `src/lib/attending-card.ts`, `src/lib/speaker-card.ts`,
   `src/routes/og/invite/[member].jpg.ts`, `src/styles/_logos.scss`,

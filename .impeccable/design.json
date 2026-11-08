@@ -168,7 +168,7 @@
 			{
 				"name": "ease-rise",
 				"value": "cubic-bezier(0.2, 0.7, 0.2, 1)",
-				"purpose": "The house curve: the stage entrance and the portal's light sweep."
+				"purpose": "The house curve: the stage entrance."
 			},
 			{
 				"name": "rise",
@@ -179,11 +179,6 @@
 				"name": "control",
 				"value": "0.3s ease",
 				"purpose": "Colour, stroke, border, border-image and filter changes on links and controls; the portal arrow's 5px step."
-			},
-			{
-				"name": "portal-sweep",
-				"value": "0.8s ease-rise",
-				"purpose": "Portal.astro only: the band of aether light crossing the framed portal on hover and focus."
 			},
 			{
 				"name": "canvas-fade",

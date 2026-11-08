@@ -1,7 +1,5 @@
 ---
-import { Image } from 'astro:assets';
-import venuePrint from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
-import { EVENT, eventDate, hasDate, hasVenue } from '../lib/event';
+import { EVENT, hasVenue } from '../lib/event';
 import config from '../site.config';
 import { enabledOnly, ticketsHref as ticketsLink, type FeatureFlag } from '../lib/flags';
 import { ARCHIVE, liveUrl, withoutBase } from '../lib/base';
@@ -172,19 +170,6 @@ const isCurrent = (href: string) => {
 							})}
 						</ul>
 					</div>
-
-					{/* One small print on the table beside the lines (>=901px only):
-					     where the day happens. Decorative; the foot line says it in words. */}
-					{hasDate && hasVenue && <div class="nav-print paper" aria-hidden="true">
-						<span class="tape">{EVENT.venue}</span>
-						<span class="paper-photo nav-print-photo">
-							<Image src={venuePrint} alt="" widths={[260, 520]} sizes="260px" loading="lazy" />
-						</span>
-						<span class="paper-edge">
-							<span>{eventDate('slash')}</span>
-							<span>{EVENT.doorsTime}</span>
-						</span>
-					</div>}
 				</div>
 
 				<div class="nav-foot">

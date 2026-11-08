@@ -50,7 +50,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 
 <BaseLayout
 	title={`FAQ — ${EVENT.name}`}
-	description={`Frequently asked questions about ${EVENT.name} — ticket waves and prices, the venue and how to get there, the schedule, speakers, the afterparty, and what to expect on the day.`}
+	description={`Frequently asked questions about ${EVENT.name}: ${faqGroups.map((g) => g.label.toLowerCase()).join(', ')}.`}
 >
 	<script type="application/ld+json" slot="head" set:html={faqJsonLd} />
 

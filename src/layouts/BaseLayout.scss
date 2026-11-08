@@ -692,6 +692,22 @@ $portal-framed-lit: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
 	}
 }
 
+// Forced colours drop the drawn frame for a system border, so the label
+// never sits in system text on a brass plate.
+@media (forced-colors: active) {
+	.btn-primary,
+	.btn-framed {
+		border: 2px solid ButtonText;
+		border-image: none;
+		padding: 0.9rem 1.4rem;
+	}
+
+	.btn-primary::after,
+	.btn-framed::after {
+		background: ButtonText;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.btn-primary,
 	.btn-primary::after,

@@ -4,7 +4,7 @@
  * relative imports are unchanged) and is injected here only when its flag is
  * on (`injectRoute`, Astro integrations reference). Off means off: no HTML,
  * no sitemap entry. `/calendar.ics` exists only while the edition has a day
- * (`DATED_ROUTES`).
+ * and a venue (`DATED_ROUTES`).
  */
 import type { AstroIntegration } from 'astro';
 import type { FeatureFlag, Features } from '../lib/features';
@@ -48,7 +48,7 @@ const ROUTES: Record<FeatureFlag, readonly Route[]> = {
 	],
 };
 
-/** Routes that state the day: built only while `event.date` is set. */
+/** Routes that state the day and the place: built only while `event.date` and `event.venue` are set. */
 const DATED_ROUTES: readonly Route[] = [{ pattern: '/calendar.ics', entrypoint: 'calendar.ics.ts' }];
 
 export default function featureRoutes(features: Features, dated: boolean): AstroIntegration {
@@ -66,7 +66,7 @@ export default function featureRoutes(features: Features, dated: boolean): Astro
 					logger.info(`${flag} off: ${routes.map((r) => r.pattern).join(', ')} not built`);
 				}
 				if (dated) DATED_ROUTES.forEach(inject);
-				else logger.info(`no event.date: ${DATED_ROUTES.map((r) => r.pattern).join(', ')} not built`);
+				else logger.info(`no event.date or event.venue: ${DATED_ROUTES.map((r) => r.pattern).join(', ')} not built`);
 			},
 		},
 	};

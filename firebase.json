@@ -13,7 +13,8 @@
       { "source": "/workshops", "destination": "/2026/agenda", "type": 302 },
       { "regex": "^/(invoice|attending|thank-you|speaker-card)$", "destination": "/2026", "type": 302 },
       { "regex": "^/invite/[^/]+$", "destination": "/", "type": 302 },
-      { "regex": "^/(speakers|talks)/([^/]+)$", "destination": "/2026/:1/:2", "type": 301 }
+      { "regex": "^/speakers/(000e7162-82b5-4498-9cca-53d356e0b427|030b7f2f-6d69-496f-8483-b9f49752729d|085f6e1b-c573-4ea3-af24-dd5ab8a9d7be|10659767-356c-4cd5-ba9c-12cec7a3ce79|2a1f1548-349c-48fd-924d-c0fe6081e3df|2c55e3eb-4cd8-44fc-9e2c-4fd0c845bbb9|30920fde-c51d-4203-bb03-ec37ea56fe48|71d5ddeb-6c71-45de-b78e-8ca47cbbccbb|7294c298-79d4-4f61-8ba4-710a4b2b6d7c|73117d1d-312b-4364-91cb-a7b1dda5c162|919081d8-3c7d-4068-846b-cc672bd48ff9|9fe2c174-9bf5-4257-a132-afbdc019258e|b33499dc-5176-4117-b441-716cc1d3dce0|bdd1e2e7-e4fe-45e3-852a-0dd4e58dd2e7|c1a63204-d2a4-4818-87e8-3007a3e73d79|c1f8a2d9-c418-4ec2-a532-f49109568d2c|c48447d6-aae5-4c37-b0fb-98d2ede71527|d5730705-f1a6-4a5b-adce-3fa5ddc79a4f|e13d57a2-005f-4745-bfc0-2cf032d61ed0|e310df09-7217-44bc-a23d-b29fa60b16fd|ea140017-3979-4bc1-a998-fd3bacebc24f|ec6bf4cb-7e73-4c18-ae17-6f01dfefb7f6|ed5cdb60-eb09-49bc-af9c-a1df24e0c921|f2e1dff5-e8b9-4b4b-a8e4-4f5c6c61158f|f932d468-d10e-4496-9790-3c4f684e8569|fac66fe3-ba88-4812-b3d4-adb6b8504e06)$", "destination": "/2026/speakers/:1", "type": 301 },
+      { "regex": "^/talks/(1261231|1261741|1262499|1266085|1273646|1277204|1277848|1280731|1282231|1283993|1284230|1284297|1294033|1301663|1304897|1305862|1324624|1334110|1340575|1341362|1363900|1375541)$", "destination": "/2026/talks/:1", "type": 301 }
     ],
     "rewrites": [
       { "source": "/api/lineup", "function": { "functionId": "lineupApi", "region": "europe-west1" } },

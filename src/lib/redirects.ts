@@ -47,3 +47,15 @@ export function shadowedPaths(redirects: readonly HostingRedirect[], paths: read
 	}
 	return hits;
 }
+
+/**
+ * The URL Hosting serves a built file at (`cleanUrls`, no trailing slash):
+ * `faq/index.html` → `/faq`, `index.html` → `/`, `calendar.ics` →
+ * `/calendar.ics`. `null` for an archive's files (`2026/…`) and Astro's
+ * assets (`_astro/…`), which no redirect may name.
+ */
+export function builtPath(file: string): string | null {
+	if (/^\d{4}(\/|$)/.test(file) || file.startsWith('_astro/')) return null;
+	const path = `/${file}`.replace(/(?:\/index)?\.html$/, '');
+	return path === '' ? '/' : path;
+}

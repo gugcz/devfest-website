@@ -49,9 +49,10 @@ function talkLine(session: Session, rooms: Room[]): string {
 /** What is announced: the day and the venue, or the season and the city before them. */
 function facts(topics: string[]): string[] {
 	const { event, organizer } = config;
-	const summary = hasDate && hasVenue
-		? `> Prague's community developer conference: one day of talks and workshops in English on ${EVENT.dateLabel} at ${EVENT.venue}, ${EVENT.city}. Organised by ${organizer.legalName} since 2012.`
-		: `> ${event.tagline}: one day of talks and workshops in English, organised by ${organizer.legalName} since 2012. ${EVENT.name} is in ${event.season.toLowerCase().replace(/^fall/, 'the fall of')} in ${event.city}; its date and venue are not announced yet.`;
+	const when = hasDate ? `on ${EVENT.dateLabel}` : `in ${event.season.toLowerCase().replace(/^fall/, 'the fall of')}`;
+	const where = hasVenue ? `at ${EVENT.venue}, ${EVENT.city}` : `in ${event.city}`;
+	const pending = [!hasDate && 'date', !hasVenue && 'venue'].filter(Boolean).join(' and ');
+	const summary = `> ${event.tagline}: one day of talks and workshops in English, organised by ${organizer.legalName} since 2012. ${EVENT.name} is ${when} ${where}${pending ? `; its ${pending} ${pending.includes(' and ') ? 'are' : 'is'} not announced yet` : ''}.`;
 	return [
 		summary,
 		'',

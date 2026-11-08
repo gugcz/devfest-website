@@ -161,8 +161,12 @@
 	}
 }
 
+// The bevel clips anything outside the box, so the ring is drawn inside it
+// and focus fills the plate as hover does.
 .header-cta:focus-visible {
-	@include focus-ring(var(--focus-gap));
+	background: var(--aether);
+	outline: 2px solid var(--ink);
+	outline-offset: -5px;
 }
 
 // ── THE INLINE BAR (>=1100px) ──────────────────────────────────────────
@@ -374,26 +378,6 @@
 	width: 100%;
 }
 
-// THE PRINT: the venue, taped, set down beside the lines. Decorative and
-// only where the panel has room for it.
-.nav-print {
-	display: none;
-	width: clamp(12rem, 19vw, 17rem);
-	margin-right: clamp(0rem, 4vw, 4rem);
-	--tilt: var(--tilt-2);
-}
-
-.nav-print-photo {
-	display: block;
-	aspect-ratio: 3 / 4;
-}
-
-@media (min-width: 901px) and (min-height: 621px) {
-	.nav-print {
-		display: block;
-	}
-}
-
 .nav-list {
 	display: flex;
 	flex-direction: column;
@@ -405,7 +389,7 @@
 	margin-inline: auto;
 }
 
-// Destinations at poster scale — Bebas is condensed enough to fit them all.
+// Destinations at the headline step.
 .nav-link {
 	@include display(var(--fs-h2));
 	line-height: 1.15;
@@ -629,6 +613,11 @@
 // (one solid portal per screen); the bar's wait until the visitor scrolls.
 .site-header[data-home='true'][data-state='top'] .brand-logo {
 	opacity: 0;
+}
+
+// Reached by keyboard, the mark shows: never a focus ring around nothing.
+.site-header .brand:focus-visible .brand-logo {
+	opacity: 1;
 }
 
 .site-header[data-home='true'][data-state='top'] .header-cta {
