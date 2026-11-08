@@ -41,8 +41,10 @@ ended moves to `devfest.cz/<year>` as a frozen build
    fails when a redirect matches one of its pages
    (`src/integrations/redirect-guard.ts`), because Hosting applies
    redirects before static files.
-5. **The year-bound assets**: `public/df27-logo.svg`,
-   `public/favicon-2027.svg`, `public/og-image.jpg` (the share card), and
+5. **The year-bound assets**: `public/df27-logo.svg`, the favicon
+   (`public/favicon-2027.svg`, and `favicon.ico`, `apple-touch-icon.png`,
+   `icon-192.png`, `icon-512.png` rendered from it), `public/og-image.jpg`
+   (the share card), `public/site.webmanifest` (name and description), and
    the season lettering in `src/components/aether/SeasonMark.astro` (drawn
    for "Fall 2027"; any other season is set as type until it is drawn).
 6. **After the deploy**: submit `https://devfest.cz/sitemap-index.xml` in

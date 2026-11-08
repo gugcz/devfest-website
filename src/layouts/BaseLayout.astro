@@ -266,14 +266,8 @@ const jsonLd = isHome
 			</script>
 		)}
 
-		{/* Favicon */}
-		{/*
-			`favicon.ico` first, and it is a real file now: the two WebP icons
-			below are both `media`-gated, so anything that does not evaluate a
-			colour-scheme query (feed readers, link unfurlers, older browsers,
-			and every request for the well-known /favicon.ico path) fell through
-			to a 404. The .ico carries 16/32/48 from the same mark.
-		*/}
+		{/* Favicon: the DF27 mark. `favicon.ico` (16/32/48) first for anything
+		     that asks for the well-known path; the SVG for browsers that take it. */}
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" type="image/svg+xml" href="/favicon-2027.svg" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />

@@ -1,11 +1,11 @@
 {
-  "name": "DevFest.cz 2026",
+  "name": "DevFest.cz 2027",
   "short_name": "DevFest.cz",
-  "description": "DevFest.cz 2026 — global conference for developers in Libčice nad Vltavou",
+  "description": "DevFest.cz 2027 — Prague's developer conference & festival, fall 2027",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#05090f",
+  "theme_color": "#05090f",
   "scope": "/",
   "icons": [
     {
