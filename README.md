@@ -324,8 +324,7 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 ## Key Pages
 
 A route marked with a flag exists only while that flag is on in
-`src/site.config.ts` (`features`); `/speaker-card` and `/login` follow
-`attending` and `app`. While its flag is off, a route the next edition will
+`src/site.config.ts` (`features`); `/speaker-card` follows `attending`. While its flag is off, a route the next edition will
 reuse answers 302 to its `/2026/…` copy, and the 2026 share pages 301
 (`firebase.json` → `redirects`); the build fails if a redirect hides a built
 page.
@@ -351,8 +350,8 @@ page.
 | `/attending` (flag `attending`) | "I'm attending" share-card generator (client-side canvas → PNG) |
 | `/code-of-conduct` | Code of Conduct one-pager, Listener's contact, link to the full text |
 | `/privacy-policy` | GDPR privacy policy, website and mobile app |
-| `/delete-account` (flag `app`) | How to delete a mobile app account (the Google Play "Delete account URL"; keep the route) |
-| `/app` (flag `app`) | Where to get the mobile app (App Store, Google Play); the venue QR codes point here. Links in `src/lib/app-links.ts` |
+| `/delete-account` | How to delete a mobile app account (the Google Play "Delete account URL"; keep the route, whatever the `app` flag says) |
+| `/app` (flag `app`) | Where to get the mobile app (App Store, Google Play); the venue QR codes point here, and to `/` while the flag is off. Links in `src/lib/app-links.ts` |
 | `/newsletter-subscription-thank-you` (flag `newsletter`) | Post-signup confirmation |
 | `/thank-you` (flag `tickets`) | Post-purchase confirmation (ti.to "thank you URL") |
 | `/404` | Not-found page; also forwards share links to talks or speakers added since the last build |

@@ -112,7 +112,7 @@ Everything above, plus:
    | `tickets` | the ticket section, `/thank-you`, every "Get tickets" action, the JSON-LD offers | `event.date` |
    | `invoice` | `/invoice` and its links | `tickets` |
    | `workshops` | `/workshops` and its links | `app`, `lineup` |
-   | `app` | `/app`, `/login`, `/delete-account`, the store badges | |
+   | `app` | `/app`, the store badges, every "Get the app" link (`/login` and `/delete-account` stay: the app's sign-in link and its store listing need them) | |
    | `invite` | `/invite/<member>` and its OG cards | `tickets` |
    | `partners` | `/partners`, the partner bands, the TV credits | |
    | `newsletter` | the form, `/newsletter-subscription-thank-you`, every "Get notified" link, the home stage's "Hear it first" | |

@@ -29,11 +29,7 @@ const ROUTES: Record<FeatureFlag, readonly Route[]> = {
 	tickets: [{ pattern: '/thank-you', entrypoint: 'thank-you.astro' }],
 	invoice: [{ pattern: '/invoice', entrypoint: 'invoice.astro' }],
 	workshops: [{ pattern: '/workshops', entrypoint: 'workshops.astro' }],
-	app: [
-		{ pattern: '/app', entrypoint: 'app.astro' },
-		{ pattern: '/login', entrypoint: 'login/index.astro' },
-		{ pattern: '/delete-account', entrypoint: 'delete-account.astro' },
-	],
+	app: [{ pattern: '/app', entrypoint: 'app.astro' }],
 	invite: [
 		{ pattern: '/invite/[member]', entrypoint: 'invite/[member].astro' },
 		{ pattern: '/og/invite/[member].jpg', entrypoint: 'og/invite/[member].jpg.ts' },

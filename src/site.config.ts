@@ -73,13 +73,14 @@ const config: SiteConfig = {
 			// 2027 is announced for the fall in Prague; no day, venue or lineup
 			// yet. The 2026 edition is archived at /2026 (ADR 0011). A flag
 			// turns on once its section is ready, and its redirect in
-			// firebase.json goes in the same change.
+			// firebase.json goes in the same change. The app is not promoted
+			// until it carries the 2027 edition.
 			lineup: false,
 			venue: false,
 			tickets: false,
 			invoice: false,
 			workshops: false,
-			app: true,
+			app: false,
 			invite: false,
 			partners: false,
 			newsletter: true,

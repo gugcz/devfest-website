@@ -23,7 +23,11 @@ export const FEATURE_FLAGS = [
 	'invoice',
 	/** `/workshops`, seat sign-up for ticket holders. Needs `app` (its sign-in) and `lineup`. */
 	'workshops',
-	/** `/app`, `/login`, `/delete-account` and the store badges. */
+	/**
+	 * `/app`, the store badges and every "Get the app" link: the web's
+	 * promotion of the mobile app. `/login` (the app's sign-in link) and
+	 * `/delete-account` (its store listing's account deletion) stay either way.
+	 */
 	'app',
 	/** `/invite/<member>`, the team's personal invitation pages. Needs `tickets`. */
 	'invite',
@@ -108,7 +112,7 @@ export const FEATURE_LINKS: Record<FeatureFlag, readonly string[]> = {
 	tickets: ['/#tickets', '#tickets'],
 	invoice: ['/invoice'],
 	workshops: ['/workshops'],
-	app: ['/app', '/login', '/delete-account'],
+	app: ['/app'],
 	invite: ['/invite/'],
 	partners: ['/partners'],
 	newsletter: ['/#newsletter', '#newsletter'],

@@ -4,9 +4,9 @@
  * section is gone for good — no route directory in `dist/`, no sitemap
  * entry, and no built page linking to it or to its home-page anchor.
  *
- * Two builds, each with every flag off but one of the two that are on
- * while the next edition has no day (`app`, `newsletter`), so each is
- * checked removed beside the other. Both run on the a11y fixtures
+ * Two builds with every flag off that is off while the next edition has no
+ * day, then the one still on (`newsletter`) too, so each section is checked
+ * removed with the newsletter on and off. Both run on the a11y fixtures
  * (`A11Y_MOCK=1`), so no network and no Firebase, and on the config as it
  * is: without `event.date`, they also check that nothing states a day
  * (`/calendar.ics`, the `Event` JSON-LD). The archived editions copied into
@@ -30,7 +30,7 @@ const ROUTES = {
 	tickets: ['thank-you'],
 	invoice: ['invoice'],
 	workshops: ['workshops'],
-	app: ['app', 'login', 'delete-account'],
+	app: ['app'],
 	invite: ['invite', 'og/invite'],
 	partners: ['partners'],
 	newsletter: ['newsletter-subscription-thank-you'],
@@ -40,7 +40,7 @@ const ROUTES = {
 const OFF_UNTIL_ANNOUNCED = ['lineup', 'venue', 'tickets', 'invoice', 'workshops', 'invite', 'partners', 'attending'];
 const RUNS = [
 	['app', ...OFF_UNTIL_ANNOUNCED],
-	['newsletter', ...OFF_UNTIL_ANNOUNCED],
+	['app', 'newsletter', ...OFF_UNTIL_ANNOUNCED],
 ];
 
 /** Legal prose is not templated (ADR 0010): a chapter rewrites these pages. */

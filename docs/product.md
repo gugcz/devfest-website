@@ -81,13 +81,14 @@ built by a community, not a vendor event.
   DevFest.cz is and what is announced (when, where, language), the sections
   the flags have on (tickets, speakers, partners), 2026 in figures (from the
   archive's facts and frozen lineup) with prints from past editions, the
-  app, the newsletter. JSON-LD is `Organization` and `WebSite`, plus `Event`
+  app (flag `app`), the newsletter. JSON-LD is `Organization` and `WebSite`, plus `Event`
   once the day is set.
 - Pages today: home, FAQ, team, contact (with press), press downloads,
-  code of conduct, privacy policy, get the app (`/app`), delete-account,
-  newsletter thank-you, 404, `/llms.txt`; `/login/<code>` (the app's sign-in
-  link); `/press` redirects to `/contact#press`. Behind flags until the
-  edition has them: agenda (with every talk), speakers and the share pages
+  code of conduct, privacy policy, delete-account (the app's store
+  listing), newsletter thank-you, 404, `/llms.txt`; `/login/<code>` (the
+  app's sign-in link); `/press` redirects to `/contact#press`. The mobile
+  app is not promoted on the web until it carries 2027 (`app` off, `/app`
+  redirects home). Behind flags until the edition has them: agenda (with every talk), speakers and the share pages
   per talk and speaker, `/sessions`, `/tv` (venue screens), venue,
   tickets (on home) and `/thank-you`, invoice, workshops, partners,
   attending and `/speaker-card`, `/invite/<member>`; `/calendar.ics` once
