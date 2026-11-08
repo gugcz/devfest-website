@@ -21,6 +21,9 @@ interface ImportMetaEnv {
 	/** Comma-separated feature flags to turn off for one build (the flags-off
 	 * check). Production sets none; a chapter edits `src/site.config.ts`. */
 	readonly PUBLIC_FEATURES_OFF?: string;
+	/** Comma-separated feature flags to turn on for one build: an archive
+	 * build puts back the edition it freezes (`npm run archive`). */
+	readonly PUBLIC_FEATURES_ON?: string;
 	/** The edition this build archives (`2026`): the site under `/2026`, the
 	 * lineup read from the frozen copy. Set only by `npm run archive`. */
 	readonly PUBLIC_ARCHIVE?: string;

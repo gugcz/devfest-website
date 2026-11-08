@@ -78,3 +78,37 @@ export function rebaseHtml(html: string, base: string): string {
 			return `${attr}=${quote}${rebased}${quote}`;
 		});
 }
+
+/**
+ * Pages only the live site serves: an archive links them there and does not
+ * freeze its own copy (the privacy policy is the one that governs the
+ * cookies on an archived page too; ADR 0011).
+ */
+export const LIVE_ONLY_PATHS: readonly string[] = ['/privacy-policy', '/code-of-conduct'];
+
+const escapeRegExp = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** `html` with every link to a live-only page made absolute on `site`. */
+export function liveOnlyLinks(html: string, site: string): string {
+	const paths = LIVE_ONLY_PATHS.map(escapeRegExp).join('|');
+	const link = new RegExp(`(\\shref=)(["'])((?:${paths})(?:[?#][^"']*)?)\\2`, 'g');
+	return html.replace(link, (_, attr: string, quote: string, path: string) => `${attr}${quote}${site}${path}${quote}`);
+}
+
+/** Whether `href` is `path` or a page, fragment or query under it. */
+export const isUnder = (href: string, path: string): boolean =>
+	href === path || href.startsWith(`${path}/`) || href.startsWith(`${path}#`) || href.startsWith(`${path}?`);
+
+/**
+ * `html` with `data-astro-reload` on every link `crosses` says leads into
+ * another build (the live site and an archive are separate Astro builds):
+ * <ClientRouter /> must not swap one build's page into the other's document,
+ * or both builds' scripts run in it.
+ */
+export function reloadCrossBuildLinks(html: string, crosses: (href: string) => boolean): string {
+	return html.replace(/<a\b[^>]*>/g, (tag) => {
+		if (/\sdata-astro-reload\b/.test(tag)) return tag;
+		const href = /\shref=(["'])(.*?)\1/.exec(tag)?.[2];
+		return href && crosses(href) ? tag.replace(/^<a\b/, '<a data-astro-reload') : tag;
+	});
+}

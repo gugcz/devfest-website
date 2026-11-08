@@ -27,7 +27,7 @@ export const FEATURE_FLAGS = [
 	'app',
 	/** `/invite/<member>`, the team's personal invitation pages. Needs `tickets`. */
 	'invite',
-	/** `/partners` and the partner bands. */
+	/** `/partners` and the partner bands. Needs `edition`. */
 	'partners',
 	/** The newsletter form and `/newsletter-subscription-thank-you`. */
 	'newsletter',
@@ -43,24 +43,35 @@ const DEPENDENCIES: ReadonlyArray<{ flag: FeatureFlag; needs: FeatureFlag; why: 
 	{ flag: 'tickets', needs: 'edition', why: 'a ticket is for a dated edition' },
 	{ flag: 'workshops', needs: 'edition', why: 'workshops sit in the agenda' },
 	{ flag: 'attending', needs: 'edition', why: 'the share cards name the day and the talks' },
+	{ flag: 'partners', needs: 'edition', why: 'the partners are the dated edition\'s, and /partners redirects to the archive while it is off' },
 	{ flag: 'invoice', needs: 'tickets', why: 'an invoice redeems a ti.to ticket code' },
 	{ flag: 'invite', needs: 'tickets', why: 'the invitation CTA is a ticket checkout' },
 	{ flag: 'workshops', needs: 'app', why: 'the workshop sign-in is the app login' },
 ];
 
-/**
- * `features` with every flag named in `off` (a comma-separated list, as the
- * `PUBLIC_FEATURES_OFF` build variable carries it) set to `false`. An
- * unknown name is an error: a typo must not pass as "nothing off".
- */
-export function resolveFeatures(features: Features, off: string = ''): Features {
-	const resolved = { ...features };
-	for (const name of off.split(',').map((s) => s.trim()).filter(Boolean)) {
+/** The flags a comma-separated list names; an unknown name is an error. */
+function flagList(list: string, variable: string): FeatureFlag[] {
+	const names = list.split(',').map((s) => s.trim()).filter(Boolean);
+	for (const name of names) {
 		if (!(FEATURE_FLAGS as readonly string[]).includes(name)) {
-			throw new Error(`PUBLIC_FEATURES_OFF names "${name}", which is not a feature flag (${FEATURE_FLAGS.join(', ')}).`);
+			throw new Error(`${variable} names "${name}", which is not a feature flag (${FEATURE_FLAGS.join(', ')}).`);
 		}
-		resolved[name as FeatureFlag] = false;
 	}
+	return names as FeatureFlag[];
+}
+
+/**
+ * `features` with every flag named in `off` set to `false` and every flag
+ * named in `on` set to `true` (comma-separated lists, as the
+ * `PUBLIC_FEATURES_OFF` and `PUBLIC_FEATURES_ON` build variables carry
+ * them; `off` wins). `on` is for an archive build, which puts back the
+ * edition it freezes (`npm run archive`, ADR 0011). An unknown name is an
+ * error: a typo must not pass as "nothing changed".
+ */
+export function resolveFeatures(features: Features, off: string = '', on: string = ''): Features {
+	const resolved = { ...features };
+	for (const name of flagList(on, 'PUBLIC_FEATURES_ON')) resolved[name] = true;
+	for (const name of flagList(off, 'PUBLIC_FEATURES_OFF')) resolved[name] = false;
 	return resolved;
 }
 

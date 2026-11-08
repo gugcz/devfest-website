@@ -29,6 +29,14 @@ describe('resolveFeatures', () => {
 
 	it('rejects a name that is not a flag', () => {
 		assert.throws(() => resolveFeatures(ALL_ON, 'ticket'), /not a feature flag/);
+		assert.throws(() => resolveFeatures(ALL_ON, '', 'editions'), /PUBLIC_FEATURES_ON names "editions"/);
+	});
+
+	it('turns on every flag in the on list, and off wins over on', () => {
+		const teaser = { ...ALL_ON, edition: false, partners: false };
+		const resolved = resolveFeatures(teaser, 'partners', 'edition, partners');
+		assert.equal(resolved.edition, true);
+		assert.equal(resolved.partners, false);
 	});
 });
 
@@ -54,7 +62,8 @@ describe('checkFeatureDependencies', () => {
 		assert.throws(() => checkFeatureDependencies({ ...ALL_ON, edition: false }), /tickets needs features\.edition/);
 		const teaser = { ...ALL_ON, edition: false, tickets: false, invoice: false, invite: false };
 		assert.throws(() => checkFeatureDependencies(teaser), /workshops needs features\.edition/);
-		checkFeatureDependencies({ ...teaser, workshops: false, attending: false });
+		assert.throws(() => checkFeatureDependencies({ ...teaser, workshops: false, attending: false }), /partners needs features\.edition/);
+		checkFeatureDependencies({ ...teaser, workshops: false, attending: false, partners: false });
 	});
 });
 

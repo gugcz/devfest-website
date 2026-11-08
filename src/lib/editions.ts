@@ -7,7 +7,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import config from '../site.config';
-import { ARCHIVE, liveUrl } from './base';
+import { ARCHIVE, isUnder, liveUrl } from './base';
 import { isDisplayableSession, sessionFromDoc } from './sessions';
 
 // From the project root: the build bundles this module somewhere else.
@@ -84,4 +84,17 @@ export function editionHref(path: string): string {
 	const year = archivedEditions().at(-1);
 	if (!year) return '/';
 	return path === '/' ? `/${year}` : `/${year}${path}`;
+}
+
+/**
+ * Whether a link leaves this build for another: from the live site into an
+ * archive (`/2026/…`), or from an archive to any absolute page of the site
+ * (the live site, another archive). See `reloadCrossBuildLinks()`.
+ */
+let archivedYears: string[] | undefined;
+export function crossesBuild(href: string): boolean {
+	const site = config.site.url;
+	if (ARCHIVE) return isUnder(href, site);
+	archivedYears ??= archivedEditions();
+	return archivedYears.some((year) => isUnder(href, `/${year}`) || isUnder(href, `${site}/${year}`));
 }

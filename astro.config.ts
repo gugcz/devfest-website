@@ -15,10 +15,13 @@ const BUILD_DATE = new Date().toISOString();
 // freeze into `archive/<year>/`. A live build instead copies every archive
 // into its output (`archives()`) and lists their pages in its sitemap.
 const archive = process.env.PUBLIC_ARCHIVE;
-if (archive && !config.features.edition) {
+if (archive && config.event.edition !== Number(archive)) {
     throw new Error(
-        `PUBLIC_ARCHIVE=${archive}: this checkout builds no dated edition (features.edition is off). Archive from the last commit that did.`,
+        `PUBLIC_ARCHIVE=${archive}: src/site.config.ts describes the ${config.event.edition} edition. Archive ${archive} from a commit whose config still does.`,
     );
+}
+if (archive && !config.features.edition) {
+    throw new Error(`PUBLIC_ARCHIVE=${archive} needs the edition's pages: PUBLIC_FEATURES_ON=edition (npm run archive sets it).`);
 }
 const ARCHIVED = archive ? new Map<string, string | undefined>() : archivedPages();
 
@@ -153,8 +156,11 @@ export default defineConfig({
                 // Same three-part secrecy for the speakers' share-card tool
                 // (src/pages/speaker-card.astro).
                 !page.includes('/speaker-card') &&
-                // And for the venue TV screens (src/pages/tv.astro).
+                // And for the venue TV screens (src/routes/tv.astro).
                 !/\/tv\/?$/.test(page) &&
+                // An archive leaves the legal pages to the live site
+                // (LIVE_ONLY_PATHS in src/lib/base.ts).
+                !(archive && /\/(privacy-policy|code-of-conduct)\/?$/.test(page)) &&
                 // And for the page that catches the app's sign-in links
                 // (src/pages/login/).
                 !/\/login\/?$/.test(page) &&

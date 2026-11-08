@@ -1,17 +1,24 @@
 /**
- * `npm run archive -- <year>`: freezes the edition this checkout builds into
- * `archive/<year>/`, served at `devfest.cz/<year>` (ADR 0011). Run it once,
- * when the edition is over and before the root switches to the next one.
+ * `npm run archive -- <year>`: freezes the edition this checkout's config
+ * describes (`config.event`, which must be `<year>`) into `archive/<year>/`,
+ * served at `devfest.cz/<year>` (ADR 0011). Run it when the edition is over;
+ * it works before and after the root switches to the teaser, as long as
+ * `config.event` is still that edition.
  *
  * 1. Reads the live `/api/lineup` and downloads every speaker photo (resized
  *    to WebP), because production moves on to the next edition's lineup.
  * 2. Builds the site with `PUBLIC_ARCHIVE=<year>`: Astro's `base` is
- *    `/<year>`, `src/middleware.ts` rebases every link, the islands read the
- *    frozen lineup, and the live-only sections (`app`, `newsletter`) are off.
+ *    `/<year>`, `src/middleware.ts` rebases every link and points the
+ *    live-only pages (the privacy policy, the code of conduct) at the live
+ *    site, the islands read the frozen lineup, the `edition` flag is on (plus
+ *    `PUBLIC_FEATURES_ON`, e.g. `partners` once the root has switched it
+ *    off) and the live-only sections (`app`, `newsletter`) are off.
  * 3. Adds the frozen data to the output, drops what only the root serves
- *    (`robots.txt`, `404.html`), and rebases the web manifest.
- * 4. Fails if any page, stylesheet or text file still points at a site URL
- *    outside `/<year>`; lists what a script bundle names, for a look.
+ *    (`robots.txt`, `404.html`, the live-only pages), and rebases the web
+ *    manifest.
+ * 4. Fails if any page, stylesheet or text file points at a site URL
+ *    outside `/<year>` other than the live root, another archive or a
+ *    live-only page; lists what a script bundle names, for a look.
  * 5. Replaces `archive/<year>/` with the result.
  *
  * `ARCHIVE_SOURCE=https://…` reads the lineup from another origin.
@@ -36,6 +43,8 @@ const OUT = path.join(WORK, 'site');
 const TARGET = path.resolve('archive', year);
 /** Off in the archive: they belong to the live site (the app's pages, the newsletter form). */
 const LIVE_ONLY = ['app', 'newsletter'];
+/** Pages only the live site serves; mirrors `LIVE_ONLY_PATHS` in `src/lib/base.ts`. */
+const LIVE_ONLY_PAGES = ['privacy-policy', 'code-of-conduct'];
 const PHOTO_WIDTH = 800;
 
 await rm(WORK, { recursive: true, force: true });
@@ -87,6 +96,7 @@ const build = spawnSync('npx', ['astro', 'build'], {
 		PUBLIC_ARCHIVE: year,
 		ARCHIVE_DATA: DATA,
 		PUBLIC_FEATURES_OFF: [process.env.PUBLIC_FEATURES_OFF, ...LIVE_ONLY].filter(Boolean).join(','),
+		PUBLIC_FEATURES_ON: ['edition', process.env.PUBLIC_FEATURES_ON].filter(Boolean).join(','),
 	},
 });
 if (build.status !== 0) process.exit(build.status ?? 1);
@@ -95,7 +105,9 @@ if (build.status !== 0) process.exit(build.status ?? 1);
 await cp(PHOTOS, path.join(OUT, 'speaker-photos'), { recursive: true });
 await mkdir(path.join(OUT, 'api'), { recursive: true });
 await cp(path.join(DATA, 'lineup.json'), path.join(OUT, 'api', 'lineup.json'));
-for (const file of ['robots.txt', '404.html']) await rm(path.join(OUT, file), { force: true });
+for (const file of ['robots.txt', '404.html', ...LIVE_ONLY_PAGES]) {
+	await rm(path.join(OUT, file), { recursive: true, force: true });
+}
 const manifest = path.join(OUT, 'site.webmanifest');
 await writeFile(
 	manifest,
@@ -103,7 +115,11 @@ await writeFile(
 );
 
 // 4. Every site URL in the output must stay under /<year>.
-const outside = (url) => url !== BASE && !url.startsWith(`${BASE}/`) && !url.startsWith(`${BASE}#`) && !url.startsWith(`${BASE}?`);
+const under = (url, base) => url === base || url.startsWith(`${base}/`) || url.startsWith(`${base}#`) || url.startsWith(`${base}?`);
+const outside = (url) => !under(url, BASE);
+/** An absolute URL may also name the live root, another archive or a live-only page. */
+const elsewhereAllowed = (url) =>
+	url === '/' || /^\/\d{4}(?:[/#?]|$)/.test(url) || LIVE_ONLY_PAGES.some((page) => under(url, `/${page}`));
 const ATTR = /\s(?:href|src|action|poster|content|srcset|imagesrcset)=(["'])(.*?)\1/g;
 const ABSOLUTE = /https:\/\/devfest\.cz(\/[^\s"'<>)\\]*)?/g;
 const CSS_URL = /url\(\s*['"]?(\/(?!\/)[^'")\s]*)/g;
@@ -128,7 +144,7 @@ for await (const file of walk(OUT)) {
 	// An absolute site URL may name the live root (the link to the current
 	// edition, the Organization and WebSite in the JSON-LD) or the archive.
 	for (const [, urlPath] of text.matchAll(ABSOLUTE)) {
-		if (urlPath && urlPath !== '/' && outside(urlPath)) failures.push(`${rel}: ${SITE}${urlPath}`);
+		if (urlPath && outside(urlPath) && !elsewhereAllowed(urlPath)) failures.push(`${rel}: ${SITE}${urlPath}`);
 	}
 	if (ext === '.html') {
 		for (const [, , value] of text.matchAll(ATTR)) {

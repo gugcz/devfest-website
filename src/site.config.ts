@@ -15,13 +15,13 @@ import { checkFeatureDependencies, resolveFeatures } from './lib/features';
 
 /**
  * `PUBLIC_FEATURES_OFF=workshops,invoice` turns flags off for one build (the
- * flags-off check, `scripts/flags-off-build.mjs`). Read through
+ * flags-off check, `scripts/flags-off-build.mjs`); `PUBLIC_FEATURES_ON` turns
+ * them on (an archive build, `scripts/archive.mjs`). Read through
  * `import.meta.env` so the client bundle sees the same answer as the build;
  * plain Node (the Astro config loader, tests) has no `import.meta.env`.
  */
-const featuresOff: string =
-	import.meta.env?.PUBLIC_FEATURES_OFF ??
-	(typeof process === 'undefined' ? '' : (process.env.PUBLIC_FEATURES_OFF ?? ''));
+const buildVariable = (name: 'PUBLIC_FEATURES_OFF' | 'PUBLIC_FEATURES_ON'): string =>
+	import.meta.env?.[name] ?? (typeof process === 'undefined' ? '' : (process.env[name] ?? ''));
 
 const config: SiteConfig = {
 	event: {
@@ -103,7 +103,8 @@ const config: SiteConfig = {
 			newsletter: true,
 			attending: false,
 		},
-		featuresOff,
+		buildVariable('PUBLIC_FEATURES_OFF'),
+		buildVariable('PUBLIC_FEATURES_ON'),
 	),
 };
 

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { rebase, rebaseHtml } from './base.ts';
+import { liveOnlyLinks, rebase, rebaseHtml, reloadCrossBuildLinks } from './base.ts';
 
 describe('rebase', () => {
 	it('moves a root-relative path under the base', () => {
@@ -59,5 +59,29 @@ describe('rebaseHtml', () => {
 	it('is the identity without a base', () => {
 		const html = '<a href="/agenda">A</a>';
 		assert.equal(rebaseHtml(html, ''), html);
+	});
+});
+
+describe('liveOnlyLinks', () => {
+	it('points the live-only pages at the live site, fragments and queries kept', () => {
+		const html = '<a href="/privacy-policy#cookies">P</a><a href="/code-of-conduct">C</a><a href="/privacy-policy-old">X</a>';
+		assert.equal(
+			liveOnlyLinks(html, 'https://example.com'),
+			'<a href="https://example.com/privacy-policy#cookies">P</a><a href="https://example.com/code-of-conduct">C</a><a href="/privacy-policy-old">X</a>',
+		);
+	});
+});
+
+describe('reloadCrossBuildLinks', () => {
+	const intoArchive = (href: string) => href === '/2026' || href.startsWith('/2026/');
+
+	it('marks only the links that leave the build', () => {
+		const html = '<a href="/2026/agenda" class="x">A</a><a href="/app">B</a>';
+		assert.equal(reloadCrossBuildLinks(html, intoArchive), '<a data-astro-reload href="/2026/agenda" class="x">A</a><a href="/app">B</a>');
+	});
+
+	it('leaves a link already marked alone', () => {
+		const html = '<a href="/2026" data-astro-reload>A</a>';
+		assert.equal(reloadCrossBuildLinks(html, intoArchive), html);
 	});
 });
