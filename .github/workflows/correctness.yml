@@ -1,10 +1,10 @@
 name: Correctness gate
 
-# Every PR, no path filter: the `2026` ruleset requires these checks.
+# Every PR, no path filter: the `main` ruleset requires these checks.
 on:
   pull_request:
   push:
-    branches: [2026]
+    branches: [main]
 
 permissions:
   contents: read

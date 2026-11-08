@@ -83,12 +83,13 @@ ended moves to `devfest.cz/<year>` as a frozen build
 5. **Copy that names the day**: the FAQ answers (`src/content/faq.json`;
    the day, the venue and the theme), the venue route on `/venue` (train
    line, station, walk), the privacy policy's edition and "Last updated".
-6. **The production branch**: create the new year's branch from `2026`, add
-   the GitHub ruleset (pull request required, the four checks), and point
-   the workflow triggers at it: `on.push.branches` in
-   `.github/workflows/{correctness,accessibility,firebase-hosting-merge,firebase-functions-merge}.yml`
-   (literal globs; GitHub Actions cannot read them from a variable). Update
-   `CLAUDE.md` and `README.md` where they name the branch.
+6. **The production branch** stays `main`. Freeze the finished edition
+   first: push a `<year>` branch at the last commit before the new edition
+   merges (`2026` is the one before 2027). The GitHub ruleset (pull request
+   required, the four checks) covers `main` and the year branches; the
+   `production` environment deploys only from `main`, the branch in
+   `on.push.branches` of
+   `.github/workflows/{correctness,accessibility,firebase-hosting-merge,firebase-functions-merge}.yml`.
 7. **Sessionize and ti.to**: a new Sessionize event id
    (`SESSIONIZE_ENDPOINT_ID`) and ti.to event slug (`TITO_EVENT_SLUG`);
    `README.md` lists every secret and param. Clear the Firestore `speakers`

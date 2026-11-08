@@ -26,11 +26,12 @@ and console steps for the Cloud Functions: [README.md](README.md).
   (`CLAUDE.md`, "Real customer data never enters this repository").
 - One branch per change, `<type>/<slug>`; Conventional Commits with a
   scope, the subject saying what a visitor or the maintainer notices.
-- Open the PR as a draft against `2026` and fill
+- Open the PR as a draft against `main` and fill
   `.github/PULL_REQUEST_TEMPLATE.md`. Every PR gets a preview channel;
   previews call the **production** functions.
 
-`2026` is production. Only the maintainer merges, pushes to it or deploys.
+`main` is production. Only the maintainer merges, pushes to it or deploys.
+A year branch (`2026`) is a past edition, frozen; it takes no PRs.
 
 ## Using this site for your own event
 

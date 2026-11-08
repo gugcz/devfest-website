@@ -1,10 +1,10 @@
 name: Accessibility audit
 
-# Every PR, no path filter: the `2026` ruleset requires this check.
+# Every PR, no path filter: the `main` ruleset requires this check.
 on:
   pull_request:
   push:
-    branches: [2026]
+    branches: [main]
 
 permissions:
   contents: read

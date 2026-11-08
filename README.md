@@ -60,7 +60,7 @@ npm run archive -- 2027
 
 `archive/<year>/` is a frozen build: the live build copies it into `dist/` and serves it at `/<year>`. Never edit it by hand; `npm run preview` after a build shows it.
 
-`2026` is the production branch. A merge into it deploys the site
+`main` is the production branch. A merge into it deploys the site
 (`firebase-hosting-merge.yml`) and, when `functions/**` or `firebase.json`
 changed, the functions (`firebase-functions-merge.yml`). Every PR gets a
 preview channel, `devfest-public--pr-<n>-*.web.app`, which calls the
@@ -112,7 +112,7 @@ firebase functions:secrets:set SLACK_WEBHOOK_URL       # Slack incoming-webhook 
 echo 'TITO_ACCOUNT_SLUG=your-account' >> functions/.env
 echo 'TITO_EVENT_SLUG=your-event'      >> functions/.env
 
-# Deploy: happens on merge to 2026 (firebase-functions-merge.yml).
+# Deploy: happens on merge to main (firebase-functions-merge.yml).
 # A manual deploy is the maintainer's, and always scoped:
 firebase deploy --only functions:website
 ```

@@ -14,14 +14,15 @@ steps: [README.md](README.md). Why things are the way they are:
 [docs/adr/](docs/adr/README.md). Anything that only matters when touching
 certain files is a [path-scoped rule](#path-scoped-rules).
 
-## Agents do not merge to `2026` and do not deploy
+## Agents do not merge to `main` and do not deploy
 
-`2026` is production: a merge into it deploys to devfest.cz. **Only the
+`main` is production: a merge into it deploys to devfest.cz. **Only the
 maintainer merges, pushes to it, or deploys.** An agent's work ends at: branch
-pushed, PR opened, CI reported.
+pushed, PR opened, CI reported. A year branch (`2026`) is a past edition,
+frozen at its last commit; it never deploys and nobody pushes to it.
 
-- Never `git push origin 2026`, `gh pr merge`, `firebase deploy`, dispatch a
-  deploy workflow, or cut a release tag.
+- Never `git push origin main` (or a year branch), `gh pr merge`,
+  `firebase deploy`, dispatch a deploy workflow, or cut a release tag.
 - "push it", "ship it", a green CI report — not merge permission. Only an
   instruction naming the merge is ("merge PR #X", "mergni", "revertni").
 - Permission is per PR, once. Does not carry to the next PR or a follow-up fix.
@@ -29,13 +30,14 @@ pushed, PR opened, CI reported.
   a production URL.
 
 Enforced by a PreToolUse hook (`.claude/hooks/block-deploy.sh`, wired in
-`.claude/settings.json`): pushes to `2026` (also a bare `git push` or
-`git push origin HEAD` while on `2026`, or when the branch cannot be
-resolved), PR merges, `firebase deploy`, `npm run deploy`-style scripts,
+`.claude/settings.json`): pushes to `main` or a year branch (also a bare
+`git push` or `git push origin HEAD` while on one, or when the branch cannot
+be resolved), PR merges, `firebase deploy`, `npm run deploy`-style scripts,
 workflow dispatch and release tags are denied before they run — including
 through `sh -c`, `eval`, `git -C`, `npx -p` and flag-before-verb spellings.
 The hook is a belt against accidents; the boundary is the GitHub ruleset on
-`2026` (pull request required).
+`main` and the year branches (pull request required) and the `production`
+environment, which deploys only from `main`.
 
 ## Real customer data never enters this repository
 
@@ -154,7 +156,7 @@ port; outputs and caches stay inside the worktree.
   `update-docs` keeps the product record, the design record (via
   Impeccable), the ADRs, CLAUDE.md and README true to the code.
 - **Hooks** (`.claude/hooks/`, wired in `.claude/settings.json`):
-  - `block-deploy.sh`: [above](#agents-do-not-merge-to-2026-and-do-not-deploy).
+  - `block-deploy.sh`: [above](#agents-do-not-merge-to-main-and-do-not-deploy).
   - `guard-edits.sh` denies hand edits to build output and lockfiles
     (`dist/`, `functions/lib/`, `functions/lib-test/`, `package-lock.json`)
     and asks before editing what reaches the shared project (`firebase.json`,
@@ -246,7 +248,7 @@ conventions: `.claude/rules/backend.md`; endpoints: `.claude/rules/api.md`.
    integration, storage) records its decision in `docs/adr/` in the same PR.
 4. `/review` (or a review agent) has run over the diff and its findings are
    fixed or answered.
-5. The branch is committed and pushed, and a draft PR against `2026` is open.
+5. The branch is committed and pushed, and a draft PR against `main` is open.
 6. CI is green on the PR's head.
 7. The user has the PR link and its preview URL
    (`devfest-public--pr-<n>-*.web.app`).
