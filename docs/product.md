@@ -29,7 +29,7 @@ festival organised by **GUG.cz, z.s.** The root always belongs to the
 current or next edition, and every past one lives on at `/<year>`
 ([ADR 0011](adr/0011-root-for-the-next-edition-archives-under-the-year.md)).
 Today the root is **DevFest.cz 2027**: fall 2027, Prague, no date or venue
-announced, its programme, sale and venue behind feature flags until they
+announced, its agenda, sale and venue behind feature flags until they
 are ready. **DevFest.cz 2026** (30 October 2026, Uhelný Mlýn in
 Libčice nad Vltavou) is a frozen archive at `/2026`. While an edition is on,
 the site exists to sell tickets and to carry the agenda, speakers, venue and
@@ -96,7 +96,7 @@ edition is not announced; copy never says "one day".
   attending and `/speaker-card`, `/invite/<member>`; `/calendar.ics` once
   there is a day. Every flag: `src/site.config.ts`, `docs/adapting.md`. The
   2026 edition took place on 30 October 2026; its archive at `/2026`
-  carries the programme, the speakers, the venue and the partners, with no
+  carries the agenda, the speakers, the venue and the partners, with no
   sale, sign-up, app page or newsletter form.
 - Navigation: the DF27 mark (on the home page only once the stage has
   scrolled away); at 1100px and wider the destinations sit inline in the

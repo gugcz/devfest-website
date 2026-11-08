@@ -31,7 +31,7 @@ ended moves to `devfest.cz/<year>` as a frozen build
    `audience` stay unset until they are. Nothing that needs a day renders
    without `date` (the countdown, `/calendar.ics`, the `Event` JSON-LD),
    and the build refuses a flag that needs one.
-3. **Turn off what is not ready**: `lineup` until the programme is out,
+3. **Turn off what is not ready**: `lineup` until the agenda is out,
    `venue` until the venue is announced, `tickets` (and `invoice`,
    `invite`, `attending`) until the sale, `workshops`, `partners`.
 4. **Redirect what is off** (`firebase.json` → `redirects`): a **302** from
