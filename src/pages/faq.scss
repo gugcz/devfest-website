@@ -229,7 +229,7 @@
 	}
 }
 
-// Phone: the index becomes a wrapped row of links above the slips.
+// Phone: the index sits above the slips, still a list.
 @media (max-width: 720px) {
 	.faq {
 		grid-template-columns: minmax(0, 1fr);
@@ -238,12 +238,6 @@
 
 	.faq-index {
 		position: static;
-
-		ol {
-			flex-direction: row;
-			flex-wrap: wrap;
-			gap: 0 1.4rem;
-		}
 
 		ol a {
 			font-size: var(--fs-action);
