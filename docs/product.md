@@ -24,20 +24,28 @@ web
 
 ## Product Purpose
 
-The landing site for **DevFest.cz 2026**, a community-built developer
-conference and festival on **30 October 2026** at **Uhelný Mlýn** in Libčice nad Vltavou,
-organised by **GUG.cz, z.s.** The site exists to sell tickets and to carry the
-agenda, speakers, venue and practical information. **[inferred]** Success
+The site of **DevFest.cz**, a community-built developer conference and
+festival organised by **GUG.cz, z.s.** The root always belongs to the
+current or next edition, and every past one lives on at `/<year>`
+([ADR 0011](adr/0011-root-for-the-next-edition-archives-under-the-year.md)).
+Today the root is **DevFest.cz 2027**: fall 2027, Prague, no date or venue
+announced, its agenda, sale and venue behind feature flags until they
+are ready. **DevFest.cz 2026** (30 October 2026, Uhelný Mlýn in
+Libčice nad Vltavou) is a frozen archive at `/2026`. While an edition is on,
+the site exists to sell tickets and to carry the agenda, speakers, venue and
+practical information; between editions, to keep the domain's audience and
+collect newsletter sign-ups. **[inferred]** Success
 is ticket sales and newsletter sign-ups; the analytics conversion events are
 the ticket CTA, the ti.to thank-you page, the newsletter form and the
 company invoice request.
 
 ## Positioning
 
-**[inferred]** "The most original developer conference in Prague": one day,
-one venue, a curated lineup across AI agents, generative UI, cloud and
-backends, mobile and web accessibility, and the humans behind it. A festival
-built by a community, not a vendor event.
+**[inferred]** A developer conference & festival in Prague (never "Prague's
+developer conference"): a curated lineup across AI agents, generative UI,
+cloud and backends, mobile and web accessibility, and the humans behind it.
+A festival built by a community, not a vendor event. The length of the 2027
+edition is not announced; copy never says "one day".
 
 ## Operating Context
 
@@ -58,61 +66,50 @@ built by a community, not a vendor event.
 
 ## Capabilities and Constraints
 
-- Pages: home, agenda (with every talk), speakers, tickets (on home),
-  workshops, venue, attending, invoice, partners, press downloads, team, FAQ,
-  contact (with press), code of conduct, newsletter thank-you, thank-you, 404,
-  privacy policy, delete-account (mobile app), get the app (`/app`), share
-  pages per talk and speaker, `/llms.txt`; unlisted `/invite/<member>`,
-  `/speaker-card`, `/tv` (venue screens) and `/login/<code>` (the app's
-  sign-in link); `/press` and `/sessions` redirect to `/contact#press` and
-  `/agenda#talks`. Every section a chapter may not run is behind a feature
-  flag in `src/site.config.ts` (tickets, invoice, workshops, app, invite,
-  partners, newsletter, attending; `docs/adapting.md`). The 2026 edition
-  took place on 30 October 2026; since then `tickets`, `invoice`, `invite`,
-  `workshops` and `attending` are off, so the site carries the programme,
-  the speakers, the venue, the partners, the app and the newsletter, and
-  no sale or sign-up.
-- The site is a darkroom: photographs are paper prints on a flat black
-  table, each with one strip of tape, set down at a small tilt; the facts
-  that go with them are straight paper slips and cards. A page carries one
-  red grease-pencil mark.
-- The home page: a hero with the key art on the right and, over it, the
-  statement, the five topics billed under it and the facts (date and venue
-  link). While tickets are on sale the facts also carry a ticking
-  countdown to the keynote and the wave on sale "from <price>", and the
-  red "Get tickets" sits under them; after the day the statement says
-  thank you, the countdown and the sale are gone, and the red action under
-  the facts is "Stay in the loop", a jump to the newsletter. Then the
-  sections, each head with its note (only where it carries a fact) under
-  it. The lead sections at poster scale: The eleventh DevFest.cz (a print of the
-  mill with the one-line pitch, and its back with date / place / doors /
-  audience), Tickets while the `tickets` flag is on (one paper ticket
-  slip per wave: the wave on sale first and large with its price, state, Buy / Company pays; spent
-  waves crossed out; the invoice route beside the head), Speakers (the
-  first prints of the lineup, the opening keynote large, then "All N
-  speakers"), Past editions (a contact sheet of eight frames with one
-  enlarged). The utility sections follow a step smaller: Partners (a
-  labelled row per tier, each mark sized by its tier; "All partners",
-  "Become a partner"), Get the app (store badges and a link to `/app`),
-  Newsletter (lede and the form on a paper card). No arrow glyphs; the countdown is the only thing that moves on its own.
-- Navigation: at 1100px and wider the destinations sit inline in the
-  header (Speakers, Agenda, Venue, FAQ, then Partners, Team, Press,
-  Contact) beside a red Tickets button while tickets are on sale; narrower, they live behind one
-  menu toggle. The footer lists every public page except `/workshops`
+- **The yearly switch.** When an edition is over, `npm run archive`
+  freezes it into `archive/<year>/` (its lineup, speaker photos and facts
+  included) and `config.event` moves to the next edition, its day, venue and
+  audience unset until announced. Feature flags hide what the next edition
+  does not have yet (`lineup`, `venue`, `tickets`, `invoice`, `workshops`,
+  `invite`, `partners`, `attending`); their paths answer 302 to the
+  archive's copy, the per-edition share pages 301. The archive is indexed,
+  in the sitemap and linked from every footer. Older editions (2025, 2019,
+  2018, 2017) still live on their own subdomains.
+- **The home page** (`/`): the design's stage over the painted aether (the
+  DF27 logo, "Fall 2027" lettered in brass until there is a day, the
+  tagline, a solid portal to the newsletter or, during the sale, to the
+  tickets, and a framed portal to `/2026`), then on the veil: what
+  DevFest.cz is and what is announced (when, where, language), the sections
+  the flags have on (tickets, speakers, partners), 2026 in figures (from the
+  archive's facts and frozen lineup) with prints from past editions, the
+  app (flag `app`), the newsletter. JSON-LD is `Organization` and `WebSite`, plus `Event`
+  once the day is set.
+- Pages today: home, FAQ, contact, code of conduct, privacy policy,
+  delete-account (the app's store listing), newsletter thank-you, 404,
+  `/llms.txt`; `/login/<code>` (the app's sign-in link). The team, the
+  press kit and the coverage wait for 2027's (`team`, `press` off; their
+  paths redirect to `/2026`). The mobile
+  app is not promoted on the web until it carries 2027 (`app` off, `/app`
+  redirects home). Behind flags until the edition has them: agenda (with every talk), speakers and the share pages
+  per talk and speaker, `/sessions`, `/tv` (venue screens), venue,
+  tickets (on home) and `/thank-you`, invoice, workshops, partners,
+  attending and `/speaker-card`, `/invite/<member>`; `/calendar.ics` once
+  there is a day. Every flag: `src/site.config.ts`, `docs/adapting.md`. The
+  2026 edition took place on 30 October 2026; its archive at `/2026`
+  carries the agenda, the speakers, the venue and the partners, with no
+  sale, sign-up, app page or newsletter form.
+- Navigation: the DF27 mark (on the home page only once the stage has
+  scrolled away); at 1100px and wider the destinations sit inline in the
+  header (Speakers, Agenda, Venue while their flags are on, FAQ, then
+  Partners, Team, Press, Contact) beside a brass Tickets button while
+  tickets are on sale; narrower, they live behind one menu toggle. The footer lists every public page except `/workshops`
   (linked from the agenda), `/press/downloads` (linked from the press
   band) and `/delete-account` (linked from the privacy policy).
-- Subpages open on type: a poster-scale title and a factual lede beside
-  it, no photograph; every section head's note lines up under the lede's
-  column. Speakers and the agenda are paper:
-  every speaker a print in running order with room and start time, the
-  hosts in their own row; every talk a slip by room and time, each room a
-  column under a name that stays in view, the all-day lounge a column of
-  its own (one list grouped by time on a phone, the lounge one line above
-  it). The
-  FAQ is a list of questions, the open one a paper slip with its answer.
-  `/speakers` ends on the way to the agenda (and tickets, while on sale),
-  with no closing block. `/venue` and `/agenda` close on a thank-you once
-  the day is over.
+- Subpages open on a centred title and a factual lede, no photograph;
+  section heads are brass rubrics. Content sits on the veil, in square ink
+  plates where it groups (FAQ answers, contact desks, team members, next
+  steps). Every button is the inked portal; every other action is a text
+  link in the label voice.
 - Static Astro build with React islands only for data-backed behaviour.
   Browser reads come only from cached HTTP endpoints, never the Firebase
   client SDK; writes go through App Check-gated callables.
@@ -120,21 +117,22 @@ built by a community, not a vendor event.
   enters the repo, fixtures or docs.
 - Production is the `2026` branch; only the maintainer merges or deploys.
 - Copy is English; Czech appears only in quoted press clippings.
-- One day. Workshops run alongside the talks with limited seats
-  (`/workshops`).
+- Workshops run alongside the talks with limited seats (`/workshops`). 2026
+  was one day; 2027's length is not announced.
 
 ## Brand Commitments
 
 - Name: **DevFest.cz**. Organiser credit: **GUG.cz, z.s.** (rebranded from
   GDG; never "GDG Czech Republic").
-- Visual direction "noir, but loud", in the darkroom: one dark theme, red
-  accent, poster-scale Bebas Neue headlines, photographs as paper prints.
-  Only the brand faces in `astro.config.ts` may be used; never add a font.
-- The detective key art (`/hero-detective.webp`) is the home hero. Every
-  subpage opens on type; a subpage's photographs sit in its bands (venue
-  its entrance, contact a 2019 print beside the clippings), graded B&W.
-  Never stock or generated imagery.
-- The design system in `docs/design.md` is binding.
+- The live site is the aether (`docs/design.md`): ink, ivory, brass
+  ornament, the cold aether light only for hover and focus, the DF27 logo,
+  one system sans stack (no web font). The painting is the stage of the
+  home page and of every subpage's head.
+- 2026, "noir, but loud" (`docs/design-2026.md`), binds the `/2026`
+  archive and the flagged surfaces not yet reskinned, which stay off until
+  they are.
+- Photographs are prints: brass-framed, slightly desaturated. Never stock
+  or generated imagery.
 
 ## Evidence on Hand
 
@@ -144,8 +142,11 @@ built by a community, not a vendor event.
   Open Graph tags at build time; the press kit is in `public/press-kit/`;
   partner logos are in `src/assets/partners/<tier>/`.
 - Event facts (date, venue, coordinates, `.ics`) in `src/lib/event.ts`.
+- The 2026 lineup as it was on archive day: `archive/2026/api/lineup.json`.
 - **Absent:** testimonials, attendance figures beyond what page copy states,
-  pricing outside ti.to. Do not fabricate any of these.
+  pricing outside ti.to, photographs of 2026, an aftermovie, and for 2027
+  anything beyond "Fall 2027, Prague" (date, venue, prices, call for
+  speakers). Do not fabricate any of these.
 
 ## Product Principles
 

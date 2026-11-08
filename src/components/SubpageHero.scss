@@ -1,70 +1,67 @@
 @use '../styles/type' as *;
-// Every subpage opens on type: the title at poster scale on the left, one
-// factual line beside it. Compact on purpose: the first content row shows
-// without scrolling.
+// A subpage's stage: the painting behind (`AetherCanvas`, anchored on the
+// title), the title and its line centred over the darkest of the smoke with
+// the ink lift, then the veil fading in under it. Shorter than the home
+// stage: the page's content shows without a long scroll.
 .subpage-hero {
 	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	min-height: clamp(22rem, 58svh, 38rem);
 	// The padding is the only clearance under the fixed header.
 	padding:
-		calc(var(--header-h) + clamp(2.5rem, 5vw, 4.5rem) + env(safe-area-inset-top))
+		calc(var(--header-h) + clamp(2rem, 4vw, 3.5rem) + env(safe-area-inset-top))
 		var(--gutter)
-		clamp(3.5rem, 7vw, 6.5rem);
-	background: var(--color-bg);
+		clamp(3rem, 6vw, 5rem);
+	text-align: center;
+
+	// The veil rises under the title, so the band below starts on it.
+	&::after {
+		content: '';
+		position: absolute;
+		inset: auto 0 0;
+		height: 40%;
+		background: linear-gradient(to bottom, transparent, var(--ink-veil));
+		pointer-events: none;
+	}
 }
 
 .hero-content {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, var(--side-col));
-	grid-template-areas: 'title side';
-	align-items: end;
-	gap: var(--side-gap);
-	max-width: var(--maxw);
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.1rem;
+	max-width: var(--measure);
 	width: 100%;
 	margin: 0 auto;
 }
 
 .hero-title {
-	grid-area: title;
 	@include display(var(--fs-subpage));
 	margin: 0;
 	text-wrap: balance;
+	text-shadow: 0 2px 14px rgba(5, 9, 15, 0.75), 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 // set:html injects unscoped markup; :global lets a page's <span class="red">
-// take the accent.
+// take the accent: brass light, at rest.
 :global(.subpage-hero .hero-title .red) {
-	color: var(--color-accent-hot);
-}
-
-.hero-side {
-	grid-area: side;
-	padding-bottom: 0.6rem;
+	color: var(--brass-light);
 }
 
 .hero-lede {
 	@include prose(var(--fs-body-lg), 1.6);
-	color: var(--ink-soft);
-	margin: 0;
-	max-width: 34ch;
+	color: var(--ivory-muted);
+	margin: 0 auto;
+	max-width: 34rem;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 	// No one-word last line ("CET.", a lone year).
 	text-wrap: pretty;
 }
 
 .hero-link {
-	margin: 1.25rem 0 0;
-}
-
-@media (max-width: 720px) {
-	.hero-content {
-		grid-template-columns: minmax(0, 1fr);
-		grid-template-areas:
-			'title'
-			'side';
-		gap: 1.5rem;
-	}
-
-	.hero-lede {
-		font-size: var(--fs-body);
-		line-height: 1.65;
-	}
+	margin: 0.25rem 0 0;
 }

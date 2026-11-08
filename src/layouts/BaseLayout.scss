@@ -1,176 +1,137 @@
 @use '../styles/type' as *;
+@use '../styles/aether' as *;
 :root {
-	// Brand manual v1.0: three colours, no more. Noir Black, Paper White,
-	// Evidence Red. Greys exist only as white or black at an opacity — never
-	// a tinted grey or a solid near-black hex.
-	--color-bg: #000000;
-	--color-grey: rgba(255, 255, 255, 0.55);
-	--color-text: #FFFFFF;
-	--color-accent: #F11000;
-	// One red. Kept as its own token so hover/live call sites stay legible;
-	// hover feedback comes from an inverted fill, not a second red.
-	--color-accent-hot: #F11000;
+	// THE AETHER (`docs/design.md`). Three materials at rest (ink, ivory,
+	// brass) and one cold light (aether) for response only: hover, focus,
+	// selection. One system sans; no web font.
+	--ink: #05090f;
+	--ink-veil: rgba(5, 9, 15, 0.9);
+	--ivory: #f6ecd6;
+	--ivory-muted: #c9c0ad;
+	--brass: #cfa862;
+	--brass-light: #fbf1da;
+	--brass-deep: #d9b26a;
+	--aether: #74ebe0;
+	--font-sans: 'Avenir Next', 'Segoe UI Variable Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--ease-rise: cubic-bezier(0.2, 0.7, 0.2, 1);
+	--measure: 40rem;
 
-	// Injected into :root by the matching <Font /> in BaseLayout.astro; the
-	// families resolve to build-time hashes, so never write a literal
-	// 'Bebas Neue' string. Only these three faces — never add a fourth.
+	// The roles every component reads, in the aether's materials. The names
+	// predate it (2026, `docs/design-2026.md`); the values are the aether's.
+	--color-bg: var(--ink);
+	--color-grey: var(--ivory-muted);
+	--color-text: var(--ivory);
+	// The accent at rest is brass; the "hot" accent is the response light.
+	--color-accent: var(--brass);
+	--color-accent-hot: var(--aether);
 
 	// In rem so the column grows with the large-screen root step on `html`.
-	--maxw: 90rem;
-	// The right column of every head: SubpageHero's note and each section
-	// head's note (`.head-rule`) start at the same x on desktop.
+	--maxw: 76rem;
+	// The right column of a two-column head (SubpageHero's note).
 	--side-col: 24rem;
 	--side-gap: clamp(1.5rem, 4vw, 4rem);
 	// The `min()` ceiling keeps the page reflowable under text-only zoom
-	// (WCAG 1.4.4 / 1.4.10): at a 32px root the 1.25rem floor doubled and two
-	// gutters ate a quarter of a 320px viewport. 6.25vw equals the floor at
-	// 320px and sits above the clamp everywhere else, so nothing moves at 16px.
-	// Floor 1.5rem, not 1.25rem: 20px left every phone column running almost
-	// edge to edge. The 6.25vw ceiling still hands a 320px screen its 20px.
-	--gutter: min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw);
+	// (WCAG 1.4.4 / 1.4.10); the safe areas are honoured on a notched phone.
+	--gutter: max(min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw), env(safe-area-inset-left), env(safe-area-inset-right));
 
-	// Two densities: tight is a cut, base the normal beat.
-	--section-y-tight: clamp(3.75rem, 6vw, 6.5rem);
-	--section-y: clamp(6rem, 10vw, 11rem);
+	--section-y-tight: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+	--section-y: clamp(4.5rem, 3rem + 7vw, 9rem);
 
 	// The fixed bar's height, stated once: vertical padding plus the 44px
-	// WCAG 2.5.5 tap target (the logo caps at 34px). `Menu.scss` builds the
-	// bar from these same tokens, so anchor offsets can't drift from it.
+	// WCAG 2.5.5 tap target. `Menu.scss` builds the bar from these tokens, so
+	// anchor offsets can't drift from it.
 	--header-pad-y: 0.85rem;
-	// 44px, not 2.75rem: a physical target must not scale with the root font.
 	--header-tap: 44px;
 	--header-h: calc(var(--header-pad-y) * 2 + var(--header-tap));
-	// Tighter bar on the smallest phones. Changed on the token so `--header-h`
-	// follows (71.2px → 66.4px) — `Menu.scss` used to override the padding
-	// directly and left every anchor offset 4.8px out under 380px.
 	@media (max-width: 380px) {
 		--header-pad-y: 0.7rem;
 	}
-	// Past 1920px the root grows (see `html`), and a 44px bar under a 2x page
-	// read as a hairline. Browser zoom pulls the CSS viewport under 1921px, so
-	// a zoomed page keeps the physical 44px target above.
 	@media (min-width: 1921px) {
 		--header-tap: 2.75rem;
 	}
 
-	// Sharp corners — a hint of softening, never pill-shaped.
-	--radius: 2px;
+	// No radius anywhere: the aether's one shape is the bevel (`bevel()`).
+	--radius: 0;
 
-	// THE POSTER SCALE. Bebas above --fs-h3, Special Elite as body texture.
-	// --fs-display caps at 9rem: 11rem left nothing above a 760px fold.
-	--fs-display: clamp(3rem, 9.5vw, 9rem);
-	--fs-hero: clamp(4.25rem, 10.5vw, 9.25rem); // home statement: floor and cap above --fs-section; the floor fits "CONFERENCE." on a 320px line
-	// Section headline. Always a clear step under the home hero, which
-	// `index.scss` caps at 11svh on short screens: a width-only term let a
-	// 1280×720 section head tie the hero, so the height term follows it down.
-	--fs-h2: clamp(2.25rem, min(6vw, 9svh), 5.5rem);
-	--fs-h3: clamp(1.8rem, 3.4vw, 2.6rem);      // sub-section headline
-	--fs-head: clamp(2.1rem, 3.4vw, 3rem);      // a compact head (sheets, small blocks)
-	--fs-section: clamp(4rem, 9vw, 8rem);       // the section head (`.head-rule`) and any secondary title
-	--fs-subpage: clamp(5rem, 13vw, 12.5rem);   // the subpage title (`SubpageHero`)
-	--fs-card-title: 1.95rem;                   // card / dossier title
+	// THE SCALE. One sans; hierarchy from size, weight and the label voice.
+	--fs-display: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+	--fs-hero: clamp(2.75rem, 1.6rem + 4.6vw, 5rem);
+	--fs-h2: clamp(1.75rem, 1.3rem + 1.8vw, 2.75rem);
+	--fs-h3: clamp(1.4rem, 1.15rem + 1vw, 1.9rem);
+	--fs-head: clamp(1.4rem, 1.15rem + 1vw, 1.9rem);
+	--fs-section: clamp(1.75rem, 1.3rem + 1.8vw, 2.75rem);
+	--fs-subpage: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+	--fs-card-title: 1.5rem;
+	--fs-row-sm: clamp(1.15rem, 1rem + 0.6vw, 1.45rem);
 
-	// Row titles carry the separation: 72px for a short list, 54px for a long one.
-	// They take the same height term as --fs-h2, or on a short screen a list
-	// row outranks the section head above it. Floors = the phone steps below.
-	--fs-row-sm: clamp(1.7rem, min(4vw, 6svh), 3.4rem);      // row title, long list (sessions, FAQ, clippings)
+	// THE RAMP. Every font-size goes through a step below.
+	--fs-label-xs: 0.6875rem;
+	--fs-label-sm: 0.74rem;
+	--fs-label: 0.78rem;
+	--fs-label-lg: 0.84rem;
+	// The label voice at its default size (rubrics, portals).
+	--fs-rubric: 0.90625rem;
+	--fs-note-sm: 0.875rem;
+	--fs-note: 0.9375rem;
+	--fs-small: 0.875rem;
+	--fs-action: 0.875rem;
+	--fs-ui: 0.9375rem;
+	--fs-body: 1.0625rem;
+	--fs-body-lg: 1.125rem;
+	--fs-lede: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+	--fs-lead: var(--fs-lede);
+	--fs-figure: clamp(2.75rem, 1.75rem + 4.5vw, 5rem);
+	--fs-title-sm: 1.25rem;
+	--fs-monogram: 2.6rem;
+	--fs-cta: 0.90625rem;
+	--track-label: 0.24em;
 
-	// ── THE RAMP ────────────────────────────────────────────────────────
-	// Every font-size goes through a step below; never add one outside it.
-	--fs-label-xs: 0.6875rem; // micro mono figure: avatar counts — 11px, the mono floor
-	--fs-label-sm: 0.74rem;   // mono figure: counts, inline clears
-	--fs-label: 0.78rem;      // mono figure: indices, serials, times
-	--fs-label-lg: 0.84rem;   // mono figure: the larger index
-	--fs-note-sm: 0.85rem;    // Special Elite note: roles, captions, row metadata
-	--fs-note: 0.95rem;       // Special Elite note: section notes, eyebrows, nav meta
-	--fs-action: 1.3rem;      // Bebas action: text actions, nav, buttons
-	--fs-ui: 0.95rem;         // small UI prose, help text
-	--fs-body: 1.05rem;       // long-form reading copy
-	--fs-body-lg: 1.15rem;    // footnotes, short ledes
-	--fs-lede: clamp(1.2rem, 1.6vw, 1.5rem);  // section ledes, status prose
-	--fs-title-sm: 1.45rem;   // small titles: a talk slip in a sheet, phone-size names
-	--fs-monogram: 3.4rem;    // initials in an empty photo well
+	--lh-display: 1.1;
+	--track-display: -0.01em;
 
-	// Condensed caps at poster scale: the brand manual's 0.9–1.0 leading, at
-	// its floor, and zero tracking.
-	--lh-display: 0.9;
-	--track-display: 0;
+	// Lines: brass at an alpha over ink. Decorative ones stay faint; the
+	// control edge (`--field-border`) clears WCAG 1.4.11's 3:1.
+	--rule: rgba(207, 168, 98, 0.22);
+	--rule-strong: rgba(207, 168, 98, 0.4);
+	--rule-red: rgba(207, 168, 98, 0.55);
+	--field-border: rgba(207, 168, 98, 0.7);
 
-	--rule: rgba(255, 255, 255, 0.13);
-	--rule-strong: rgba(255, 255, 255, 0.22);
-	--rule-red: rgba(241, 16, 0, 0.55);
-	// THE control-edge token: boundary for anything operable (text fields,
-	// .btn-ghost, .nav-toggle, the cookie Decline, .crew-link). 3.33:1 on
-	// #000000, clearing WCAG 1.4.11; --rule-strong (1.74:1) and --rule
-	// (1.30:1) did not. Kept separate from those: they are decorative
-	// hairlines and must stay faint.
-	--field-border: rgba(255, 255, 255, 0.4);
+	// The ivory ramp. Named steps only.
+	--ink-strong: var(--ivory);
+	--ink-text: rgba(246, 236, 214, 0.9);
+	--ink-soft: var(--ivory-muted);
+	--ink-meta: var(--ivory-muted);
+	--ink-dim: var(--ivory-muted);
+	--ink-muted: var(--ivory-muted);
+	--ink-faint: var(--ivory-muted);
 
-	// Cream-ink ramp. Named steps only — a one-off alpha stays a raw literal.
-	--ink-strong: rgba(255, 255, 255, 0.85);
-	--ink: rgba(255, 255, 255, 0.78);
-	--ink-soft: rgba(255, 255, 255, 0.7);
-	--ink-meta: rgba(255, 255, 255, 0.62);
-	--ink-dim: rgba(255, 255, 255, 0.6);
-	--ink-muted: rgba(255, 255, 255, 0.55);
-	// 4.5:1 on #000000 at label size — the floor for small mono copy.
-	--ink-faint: rgba(255, 255, 255, 0.5);
-
-	// Plates are white at an opacity over the black ground (the old solid
-	// #0C0C0C / #111111 / #161616, same look on #000). Where a plate must be
-	// opaque (a fixed bar over content), layer it on `--color-bg`.
-
-	// The CTA label on red: Bebas at 1.5rem = 24px, the regular-weight
-	// "large text" line where white's 4.4:1 on #F11000 clears AA.
-	--fs-cta: 1.5rem;
-
-	// Focus-ring stand-off. The ring is always 2px solid --color-accent-hot; the gap
-	// tracks how much visible edge the control already has.
 	--focus-gap-tight: 2px;
 	--focus-gap: 3px;
 	--focus-gap-lg: 4px;
 
+	// THE PLATE: what the 2026 system drew as a paper print is an ink plate
+	// on the veil, edged in faint brass. Text on it is ivory.
+	--paper: rgba(6, 16, 22, 0.86);
+	--tape: transparent;
+	--paper-ink: var(--ivory);
+	--paper-ink-dim: var(--ivory-muted);
+	--paper-shadow: none;
+	// A photograph's frame: a brass hairline on an ink plate.
+	--print-edge: rgba(207, 168, 98, 0.5);
+	--print-plate: rgba(5, 9, 15, 0.6);
+	// Nothing is tilted in the aether.
+	--tilt-1: 0deg;
+	--tilt-2: 0deg;
+	--tilt-3: 0deg;
 
-	// THE DARKROOM. Photographs are paper prints on the black table, labelled
-	// with tape. Paper and tape are white at an opacity (the brand manual has
-	// no cream), the ink on them is black at an opacity.
-	--paper: rgba(255, 255, 255, 0.94);
-	--tape: rgba(255, 255, 255, 0.82);
-	--paper-ink: #000000;
-	// 5.3:1 on --paper: the floor for small mono edge labels on a print.
-	--paper-ink-dim: rgba(0, 0, 0, 0.66);
-	// A print lifted off the table: one deep drop, one contact shadow. The
-	// drop is pulled in (negative spread) so it stays under its own print: at
-	// full width it fell across the neighbouring print as a grey band, like
-	// a curl in the paper.
-	--paper-shadow: 0 1.5rem 1.5rem -1rem rgba(0, 0, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.7);
-	// Tilts, from barely set down to tossed. Never more than --tilt-3.
-	--tilt-1: 0.8deg;
-	--tilt-2: 1.4deg;
-	--tilt-3: 2.2deg;
+	--panel-lit: rgba(6, 16, 22, 0.6);
+	--panel-lit-2: rgba(6, 16, 22, 0.75);
 
-	// Was #0A0A0A / #0E0E0E.
-	--panel-lit: rgba(255, 255, 255, 0.04);
-	--panel-lit-2: rgba(255, 255, 255, 0.055);
+	// Initials standing in for a missing photograph, on --panel-lit.
+	--ink-monogram: var(--ivory-muted);
+	--ink-monogram-sm: var(--ivory-muted);
 
-	// Initials standing in for a missing photograph, on --panel-lit. Measured
-	// 4.21:1 on the large plate and 7.71:1 at label scale — never dim further.
-	--ink-monogram: rgba(255, 255, 255, 0.46);
-	--ink-monogram-sm: rgba(255, 255, 255, 0.66);
-
-	// ── PHONE TYPE ──────────────────────────────────────────────────────
-	// Last in :root on purpose: Sass emits a nested @media in source order,
-	// so declared above the base steps it would lose to them.
-	// The row steps' floors are poster sizes: a 35px FAQ question or agenda
-	// title wrapped to three lines of shouting caps on a 342px column, and
-	// every list on the phone read as a stack of headlines. Phones get their
-	// own list step; the section head (--fs-h2) and the one display title
-	// keep theirs, so the hierarchy opens up instead of flattening.
-	@media (max-width: 600px) {
-		--fs-row-sm: 1.7rem;
-		// Mono tracking at 72%, floored at 0.1em: see the `mono` mixin in `_type.scss`.
-		--track-scale: 0.72;
-	}
+	color-scheme: dark;
 }
 
 *, *::before, *::after {
@@ -196,8 +157,16 @@ html {
 	@media (min-width: 1921px) {
 		font-size: clamp(100%, calc(100% + (100vw - 1920px) / 120), 200%);
 	}
-	// Canvas colour — prevents a white flash during iOS rubber-band scroll.
-	background: var(--color-bg);
+	// The painting's palette as three gradients: the ground of every page,
+	// under the canvas (`AetherCanvas`, z-index -1) before WebGL starts or
+	// without it. On the root, so the canvas sits between it and the page;
+	// the ink also stops a white flash in iOS rubber-band scroll.
+	background:
+		radial-gradient(90% 60% at 50% 110%, #5a2a1c 0%, transparent 65%),
+		radial-gradient(70% 70% at 15% 15%, #173c44 0%, transparent 70%),
+		radial-gradient(60% 60% at 90% 30%, #2b1a42 0%, transparent 70%),
+		var(--ink);
+	background-attachment: fixed;
 	// Speaker photos come verbatim from Sessionize, and a phone portrait can
 	// carry an HDR gain map. On an HDR screen one such photo pushes the display
 	// into HDR mode, and every SDR pixel around it (the whole page) dims.
@@ -218,8 +187,8 @@ html {
 }
 
 ::selection {
-	background: rgba(241, 16, 0, 0.4);
-	color: var(--color-text);
+	background: var(--aether);
+	color: var(--ink);
 }
 
 :focus {
@@ -227,9 +196,7 @@ html {
 }
 
 :focus-visible {
-	outline: 2px solid var(--color-accent-hot);
-	outline-offset: var(--focus-gap);
-	border-radius: 2px;
+	@include focus-ring(var(--focus-gap));
 }
 
 body {
@@ -241,18 +208,16 @@ body {
 	// While the cookie slip is up the page can scroll its last line (the
 	// footer's last link) above it; 0 once the visitor has decided.
 	padding-bottom: var(--cookie-slip-h, 0px);
-	background: var(--color-bg);
+	// Transparent: the ground is the root's (`html`), under the painting.
+	background: transparent;
 	color: var(--color-text);
-	font-family: var(--font-special-elite), cursive;
-	// Every brand face ships one weight (JetBrains Mono two) and no italic, so
-	// a `<strong>` or `font-style: italic` was a browser-smeared fake: thickened
-	// typewriter strokes, a slanted Bebas. Hierarchy comes from size, case and
-	// ink instead — see `strong` below.
-	font-synthesis: none;
+	font-family: var(--font-sans);
+	font-size: var(--fs-body);
+	line-height: 1.6;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	// Inherited by everything. Under text-only zoom a long word (a Bebas
-	// title, a speaker name) widens the document (WCAG 1.4.10). `break-word`,
+	// Inherited by everything. Under text-only zoom a long word (a title, a
+	// speaker name) widens the document (WCAG 1.4.10). `break-word`,
 	// not `anywhere`: only breaks a word that has no other way to fit.
 	overflow-wrap: break-word;
 }
@@ -261,12 +226,11 @@ body {
 	position: absolute;
 	top: 0;
 	left: 0;
-	padding: 0.7rem 1.1rem;
-	background: #000000;
-	color: #FFFFFF;
-	@include action;
+	padding: 0.75rem 1rem;
+	background: var(--ink);
+	color: var(--ivory);
+	@include label(var(--fs-small));
 	text-decoration: none;
-	border: 1px solid rgba(241, 16, 0, 0.5);
 	z-index: 10001;
 	clip-path: inset(50%);
 	width: 1px;
@@ -280,7 +244,7 @@ body {
 		height: auto;
 		overflow: visible;
 		white-space: normal;
-		outline: 2px solid var(--color-accent);
+		@include focus-ring;
 	}
 }
 
@@ -291,12 +255,72 @@ body {
 	outline: none;
 }
 
-// Emphasis is ink, not weight: with synthesis off, a bold run in Special Elite
-// or Bebas sets at the one weight there is, so it steps up to full cream from
-// the dimmer prose ink around it. JetBrains Mono still takes its real 500.
+// Emphasis is weight and full ivory.
 strong,
 b {
 	color: var(--color-text);
+	font-weight: 600;
+}
+
+// Links: ivory, a thin brass underline; the cold light answers a hover.
+a {
+	color: inherit;
+	text-decoration-color: var(--brass);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.25em;
+	transition: color 0.3s ease, text-decoration-color 0.3s ease;
+}
+
+a:hover {
+	color: var(--brass-light);
+	text-decoration-color: var(--aether);
+}
+
+// Holds the shared ink filter and brass gradient (`BaseLayout.astro`); takes no room.
+.svg-defs {
+	position: absolute;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}
+
+// Entrance: the home stage rises into place, in order.
+.rise {
+	animation: rise 1.4s var(--ease-rise) both;
+}
+
+.rise-2 {
+	animation-delay: 0.25s;
+}
+
+.rise-3 {
+	animation-delay: 0.4s;
+}
+
+.rise-4 {
+	animation-delay: 0.55s;
+}
+
+@keyframes rise {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rise {
+		animation: none;
+	}
+
+	a {
+		transition: none;
+	}
 }
 
 // Visually hidden, but kept in the a11y tree + crawlable HTML.
@@ -314,161 +338,119 @@ b {
 }
 
 
-// Eyebrow — a plain typewriter note. Never give it a trailing hairline or any other decoration.
+// Eyebrow — a small caption in the label voice. Never any decoration.
 .eyebrow {
-	@include note;
-	color: var(--ink-muted);
+	@include label(0.78rem, 0.22em);
+	color: var(--brass);
 	display: inline-flex;
 	align-items: center;
 	gap: 0.75rem;
 }
 
-// THE SECTION HEAD. A poster-scale Bebas title on the left; one typewriter
-// note (or the section's text actions) on the right, sitting on the title's
-// baseline. Space closes it, never a rule: the ruled head made every section
-// read as a table. The class keeps its old name; every page uses it.
+// THE SECTION HEAD: the rubric. A small brass label between two inked
+// rules, each ending in a diamond (the Brass Ornament Rule allows it here
+// and beside the season mark only), centred; one note, or the section's
+// actions, under it. The class keeps its old name; every page uses it.
 .head-rule {
-	// SubpageHero's grid: title left, the note (or actions) in the right
-	// column, so every head's note starts at the hero note's x.
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, var(--side-col));
-	align-items: end;
-	gap: 1rem var(--side-gap);
-	margin: 0 0 clamp(2.5rem, 5vw, 4.5rem);
-
-	// A head with no note keeps the full width for its title.
-	> :only-child {
-		grid-column: 1 / -1;
-	}
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	margin: 0 auto clamp(2.25rem, 4vw, 3.5rem);
+	max-width: var(--measure);
+	text-align: center;
 
 	.head-rule-title {
-		@include display(var(--fs-section));
-		margin: 0;
+		@include rubric;
 	}
 
 	.head-rule-note {
 		@include prose(var(--fs-body-lg), 1.6);
 		color: var(--ink-soft);
-		margin: 0 0 0.6rem;
-		max-width: 34ch;
+		margin: 0;
+		text-wrap: balance;
 	}
 }
 
-@media (max-width: 720px) {
-	.head-rule {
-		grid-template-columns: minmax(0, 1fr);
-	}
-}
+/* ---- Plates and prints ---- */
 
-/* ---- The darkroom ---- */
-
-// A paper print: the photograph (`.paper-photo`) inside a white border, a
-// mono `.paper-edge` under it. Tilt it with `--tilt`; the tape sits over its
-// top edge. Under 720px a print never tilts past --tilt-1.
+// A plate: what the 2026 system drew as a paper print, now an ink plate on
+// the veil with a faint brass edge, square and untilted. A photograph in it
+// (`.paper-photo`) is a print: brass-framed, slightly desaturated.
 .paper {
 	position: relative;
 	display: block;
 	background: var(--paper);
 	color: var(--paper-ink);
-	padding: 0.65rem 0.65rem 0;
-	box-shadow: var(--paper-shadow);
-	transform: rotate(var(--tilt, 0deg));
+	border: 1px solid var(--rule);
+	padding: 0.4rem 0.4rem 0;
 }
 
 .paper-photo {
 	position: relative;
 	overflow: hidden;
-	background: #000000;
+	background: var(--ink);
+	outline: 1px solid var(--print-edge);
 
 	img {
 		display: block;
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		filter: grayscale(1) contrast(1.1);
+		filter: saturate(0.85) contrast(1.05);
 	}
 }
 
-// The frame number and the time along a print's bottom margin.
+// The caption line along a plate's bottom edge.
 .paper-edge {
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
 	gap: 0.75rem;
 	padding: 0.7rem 0.15rem 0.8rem;
-	@include mono(var(--fs-label-xs), 0.12em, uppercase);
+	@include label(var(--fs-label-xs), 0.18em);
 	color: var(--paper-ink-dim);
 
-	// Mono records figures only; a word on the edge is typed, not recorded.
 	.edge-word {
-		@include note(var(--fs-note-sm));
+		@include label(var(--fs-label-xs), 0.18em);
 		line-height: 1.2;
 	}
 }
 
-// A strip of tape with a typewritten label, only ever on a print, over its
-// top edge. A group label (a partner tier, a room) is plain type, not tape.
+// A plate's label, set on its top edge in the label voice.
 .tape {
 	display: inline-block;
-	background: var(--tape);
-	color: var(--paper-ink);
-	@include note(var(--fs-note-sm));
-	line-height: 1.2;
-	padding: 0.35rem 0.85rem 0.3rem;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-	transform: rotate(var(--tape-tilt, -1.5deg));
+	background: var(--ink);
+	color: var(--brass);
+	@include label(0.72rem, 0.2em);
+	padding: 0.2rem 0.6rem;
 }
 
 .paper > .tape {
 	position: absolute;
 	z-index: 2;
-	top: -0.85rem;
+	top: -0.7rem;
 	left: 1rem;
 	max-width: calc(100% - 2rem);
-	// One line, top-left: a label that does not fit gets a shorter text or a
-	// smaller tape on a phone. Never cut with an ellipsis; as a last resort
-	// it wraps inside the print.
 	width: max-content;
 }
 
-// The red grease pencil: one decorative mark per page, drawn as an
-// aria-hidden SVG over what it marks.
+// The 2026 grease pencil has no place in the aether: nothing decorates at rest.
 .grease {
-	position: absolute;
-	pointer-events: none;
-	overflow: visible;
-	z-index: 3;
-
-	path {
-		fill: none;
-		stroke: var(--color-accent);
-		stroke-linecap: round;
-		stroke-linejoin: round;
-		vector-effect: non-scaling-stroke;
-		stroke-width: 3px;
-	}
-}
-
-@media (max-width: 720px) {
-	.paper {
-		transform: rotate(clamp(calc(-1 * var(--tilt-1)), var(--tilt, 0deg), var(--tilt-1)));
-	}
+	display: none;
 }
 
 // THE headline class. No shadow, no glow, no gradient; size comes from the caller's --fs-*.
 .display {
 	@include display;
-	font-weight: 400;
 	margin: 0;
 	text-wrap: balance;
 }
 
-// Accent word inside a display line. FLAT red — never a glow. Spent ONCE per
-// page, on its h1: a red final word on every section head and closer was the
-// same device thirty times, so no single one of them read as the loud one.
+// Accent word inside a headline: brass light, at rest. Once per page.
 .display .red,
 :where(h1, h2, h3) .red {
-	color: var(--color-accent-hot);
+	color: var(--brass-light);
 }
 
 .page-stack {
@@ -515,17 +497,13 @@ b {
 	// is anchorable for free. Override the variable, not the padding.
 	--section-air: var(--section-y);
 	padding: var(--section-air) var(--gutter);
-	background: var(--color-bg);
+	// Text sits on the veil, never on the painting's bright patches.
+	background: var(--ink-veil);
 }
 
-// No red band. Red as a 500px ground on every page's closer and the home
-// newsletter was more red than the rest of the site put together, and the
-// accent stopped being one. Red is a verb: one word, one button, one state
-// per page. Every closer and the newsletter sit on the black ground.
-
-// The subpage ground: the same flat black table. No pool, no hairline.
+// The subpage ground: the same veil.
 .band--lit {
-	background: var(--color-bg);
+	background: var(--ink-veil);
 }
 
 // Straight off a subpage hero the band opens on a cut: the hero's own
@@ -555,114 +533,150 @@ b {
 	margin-inline: auto;
 }
 
+// A page's closing word: a headline, a note and its actions, centred on
+// the measure like every aether band.
 .closer {
-	display: grid;
-	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-	align-items: end;
-	gap: clamp(2rem, 5vw, 5rem);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: clamp(1.25rem, 2.5vw, 1.9rem);
+	max-width: var(--measure);
+	margin-inline: auto;
+	text-align: center;
 }
 
 .closer-title {
 	font-size: var(--fs-h2);
-	text-wrap: initial;
 }
 
 .closer-side {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: center;
 	gap: clamp(1.25rem, 2.5vw, 1.9rem);
 }
 
 .closer-note {
-	@include prose(var(--fs-lede), 1.6);
+	@include prose(var(--fs-lede), 1.5);
 	color: var(--ink-soft);
 	margin: 0;
-	max-width: 34ch;
+	text-wrap: balance;
 }
 
 .closer-actions {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: center;
 	align-items: center;
-	gap: 0.9rem;
+	gap: 0.9rem 1.5rem;
 }
 
-@media (max-width: 900px) {
-	.closer {
-		// `minmax(0, 1fr)`, not `1fr`: a bare `1fr` track floors at its
-		// min-content width, so one wide CTA drags the whole closer past
-		// the viewport under text zoom instead of wrapping inside it.
-		grid-template-columns: minmax(0, 1fr);
-		align-items: start;
-	}
-}
-
-// On a phone the two closer buttons wrapped into a ragged stack, each as
-// wide as its own label ("Get tickets" under a longer "Browse the talks").
-// Full measure, one width: a pair of choices, not two leftovers.
-@media (max-width: 600px) {
-	.closer-side {
-		align-items: stretch;
-	}
-
-	.closer-actions {
-		flex-direction: column;
-		align-items: stretch;
-	}
-}
+// THE BUTTON: the solid portal (`docs/design.md`, "Portal"). Its beveled
+// frame is drawn by an SVG through its own copy of the ink tremor, sliced
+// nine ways (`border-image`), so it fits any label and any element: a link,
+// a `<button>`, a React island's CTA. Brass at rest, aether when reached.
+// `Portal.astro` draws the same thing in markup for the framed variant.
+$portal-solid: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cfilter id='i' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='2' seed='7'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='2.4'/%3E%3C/filter%3E%3Cpath fill='%23cfa862' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cg fill='none' filter='url(%23i)'%3E%3Cpath stroke='%23fbf1da' stroke-width='1.6' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cpath stroke='%2305090f' stroke-opacity='.35' stroke-width='.8' d='M20 8H40L52 20V40L40 52H20L8 40V20Z'/%3E%3C/g%3E%3C/svg%3E";
+$portal-solid-lit: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cfilter id='i' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='2' seed='7'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='2.4'/%3E%3C/filter%3E%3Cpath fill='%2374ebe0' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cg fill='none' filter='url(%23i)'%3E%3Cpath stroke='%2374ebe0' stroke-width='1.6' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cpath stroke='%2305090f' stroke-opacity='.5' stroke-width='.8' d='M20 8H40L52 20V40L40 52H20L8 40V20Z'/%3E%3C/g%3E%3C/svg%3E";
+$portal-arrow: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 12'%3E%3Cpath d='M1 6H26M20 1L26 6L20 11' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
 
 .btn-primary {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.7rem;
-	// White Bebas at large-text size, as the brand manual sets the CTA: a thin
-	// black label on Evidence Red read faint (`cta-label` in _type.scss).
-	@include cta-label;
-	color: var(--color-text);
-	background: var(--color-accent);
-	border: 1px solid var(--color-accent);
-	border-radius: var(--radius);
-	// Large: at poster scale a small CTA reads as an afterthought. The
-	// horizontal padding is viewport-capped — the label must grow with the
-	// root font (1.4.4), but 2.8rem of padding per side must not (at a 32px
-	// root that pushed every `.closer` off a 320px viewport). 14vw equals
-	// 2.8rem at 320px, so desktop is untouched.
-	padding: 1.25rem min(2.8rem, 14vw);
+	gap: 14px;
+	@include label(var(--fs-rubric));
+	color: var(--ink);
+	// The frame's corners are 20px; the border carries them.
+	border: 20px solid transparent;
+	border-image: url($portal-solid) 20 fill / 20px stretch;
+	background: none;
+	min-height: 62px;
+	min-width: min(280px, 100%);
+	padding: 0 0.6rem 0 calc(0.6rem + 0.24em);
 	// A button is never wider than its column; the label wraps.
 	max-width: 100%;
-	// `anywhere`, not `break-word`: a label is an anonymous flex item whose
-	// min size is its min-content width, and only `anywhere` shrinks that.
 	overflow-wrap: anywhere;
+	text-align: center;
 	text-decoration: none;
 	cursor: pointer;
 	position: relative;
-	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+	transition: filter 0.3s ease;
 
-	// Hover inverts the fill — no lift, no glow, no shadow. The focus ring
-	// stays the global red one, clear of a white fill.
-	&:hover {
-		background: var(--color-text);
-		border-color: var(--color-text);
-		color: var(--color-bg);
+	// The portal's arrow, drawn in the label's colour.
+	&::after {
+		content: '';
+		flex: 0 0 auto;
+		width: 28px;
+		height: 12px;
+		background: currentColor;
+		mask: url($portal-arrow) center / contain no-repeat;
+		transition: transform 0.3s ease;
+	}
+
+	&:hover,
+	&:focus-visible {
+		color: var(--ink);
+		border-image-source: url($portal-solid-lit);
+		filter: drop-shadow(0 0 14px rgba(116, 235, 224, 0.4));
+
+		&::after {
+			transform: translateX(5px);
+		}
+	}
+
+	&:focus-visible {
+		@include focus-ring(5px);
+	}
+
+	&:active {
+		filter: drop-shadow(0 0 22px rgba(116, 235, 224, 0.65));
 	}
 }
 
-// THE SECOND CONTROL, and the last. Every action that is not the page's one
-// red fill is this: Bebas caps, no box, no underline, no glyph. `.btn-ghost`
-// is kept as the class name its callers use; it draws the same thing.
+$portal-framed: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cfilter id='i' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='2' seed='7'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='2.4'/%3E%3C/filter%3E%3Cpath fill='%23061016' fill-opacity='.86' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cg fill='none' stroke='%23cfa862' filter='url(%23i)'%3E%3Cpath stroke-width='1.6' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cpath stroke-opacity='.5' stroke-width='.8' d='M20 8H40L52 20V40L40 52H20L8 40V20Z'/%3E%3C/g%3E%3C/svg%3E";
+$portal-framed-lit: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cfilter id='i' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='2' seed='7'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='2.4'/%3E%3C/filter%3E%3Cpath fill='%23123438' fill-opacity='.95' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cg fill='none' stroke='%2374ebe0' filter='url(%23i)'%3E%3Cpath stroke-width='1.6' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cpath stroke-opacity='.8' stroke-width='.8' d='M20 8H40L52 20V40L40 52H20L8 40V20Z'/%3E%3C/g%3E%3C/svg%3E";
+
+// The framed portal: the same frame drawn in brass over a dark plate, for
+// every button that is not the page's one action (a form's submit beside
+// the stage's solid portal, a second choice). Ivory label, brass arrow;
+// the strokes and arrow turn aether when reached.
+.btn-framed {
+	@extend .btn-primary;
+	color: var(--ivory);
+	border-image-source: url($portal-framed);
+
+	&::after {
+		background: var(--brass);
+	}
+
+	&:hover,
+	&:focus-visible {
+		color: var(--brass-light);
+		border-image-source: url($portal-framed-lit);
+
+		&::after {
+			background: var(--aether);
+		}
+	}
+}
+
+// THE SECOND CONTROL: a text action in the label voice, ivory with a brass
+// underline, aether when reached. `.btn-ghost` is kept as the class name its
+// callers use; it draws the same thing.
 .btn-ghost,
 .action {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.6rem;
-	@include action;
+	@include label(var(--fs-small), 0.18em);
 	color: var(--color-text);
-	text-decoration: none;
+	text-decoration: underline;
+	text-decoration-color: var(--brass);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.45em;
 	cursor: pointer;
-	// A 44px target without a box: the padding is vertical only, the inline
-	// edge stays on the column.
+	// A 44px target without a box: the padding is vertical only.
 	padding: 0.75rem 0;
 	min-height: 2.75rem;
 	max-width: 100%;
@@ -670,19 +684,36 @@ b {
 	border: 0;
 	border-radius: 0;
 	background: transparent;
-	transition: color 0.2s ease;
+	transition: color 0.3s ease, text-decoration-color 0.3s ease;
 
-	// No arrow glyph anywhere (it renders differently on every system): the
-	// hover is the red the site keeps for a live state.
 	&:hover,
 	&:focus-visible {
-		color: var(--color-accent-hot);
+		color: var(--brass-light);
+		text-decoration-color: var(--aether);
 		background: transparent;
+	}
+}
+
+// Forced colours drop the drawn frame for a system border, so the label
+// never sits in system text on a brass plate.
+@media (forced-colors: active) {
+	.btn-primary,
+	.btn-framed {
+		border: 2px solid ButtonText;
+		border-image: none;
+		padding: 0.9rem 1.4rem;
+	}
+
+	.btn-primary::after,
+	.btn-framed::after {
+		background: ButtonText;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.btn-primary,
+	.btn-primary::after,
+	.btn-framed::after,
 	.btn-ghost,
 	.action {
 		transition: none;

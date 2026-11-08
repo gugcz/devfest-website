@@ -4,34 +4,45 @@
  * section is gone for good — no route directory in `dist/`, no sitemap
  * entry, and no built page linking to it or to its home-page anchor.
  *
- * Two builds: every optional flag off except `tickets` (so `invoice`,
- * `invite` and `workshops`' dependencies still hold), then `tickets`,
- * `invoice` and `invite` off together. Both run on the a11y fixtures
- * (`A11Y_MOCK=1`), so no network and no Firebase.
+ * Two builds with every flag off that is off while the next edition has no
+ * day, then the one still on (`newsletter`) too, so each section is checked
+ * removed with the newsletter on and off. Both run on the a11y fixtures
+ * (`A11Y_MOCK=1`), so no network and no Firebase, and on the config as it
+ * is: without `event.date`, they also check that nothing states a day
+ * (`/calendar.ics`, the `Event` JSON-LD). The archived editions copied into
+ * `dist/<year>/` are frozen builds of their own and are not checked.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
+import { runnerImport } from 'vite';
 import { FEATURE_LINKS } from '../src/lib/features.ts';
+
+const { default: config } = (await runnerImport('./src/site.config.ts')).module;
 
 const DIST = path.resolve('dist');
 
 /** The route directories each flag removes from `dist/`; the hrefs come
  * from `FEATURE_LINKS`, the same table the pages use. */
 const ROUTES = {
+	lineup: ['agenda', 'speakers', 'talks', 'sessions', 'tv'],
+	venue: ['venue'],
 	tickets: ['thank-you'],
 	invoice: ['invoice'],
 	workshops: ['workshops'],
-	app: ['app', 'login', 'delete-account'],
+	app: ['app'],
 	invite: ['invite', 'og/invite'],
 	partners: ['partners'],
 	newsletter: ['newsletter-subscription-thank-you'],
+	team: ['team'],
+	press: ['press'],
 	attending: ['attending', 'speaker-card'],
 };
 
+const OFF_UNTIL_ANNOUNCED = ['lineup', 'venue', 'tickets', 'invoice', 'workshops', 'invite', 'partners', 'attending', 'team', 'press'];
 const RUNS = [
-	['invoice', 'workshops', 'app', 'invite', 'partners', 'newsletter', 'attending'],
-	['tickets', 'invoice', 'invite'],
+	['app', ...OFF_UNTIL_ANNOUNCED],
+	['app', 'newsletter', ...OFF_UNTIL_ANNOUNCED],
 ];
 
 /** Legal prose is not templated (ADR 0010): a chapter rewrites these pages. */
@@ -41,16 +52,19 @@ function* htmlFiles(dir) {
 	for (const name of readdirSync(dir)) {
 		const full = path.join(dir, name);
 		if (statSync(full).isDirectory()) {
-			if (!LEGAL.includes(name)) yield* htmlFiles(full);
+			if (!LEGAL.includes(name) && !(dir === DIST && /^\d{4}$/.test(name))) yield* htmlFiles(full);
 		} else if (name.endsWith('.html') || name === 'llms.txt') yield full;
 	}
 }
 
-/** `href="/invoice"` or `href="/invoice/"` or `](https://…/invoice)` in llms.txt; never `/invoice-foo`. */
+/** `href="/invoice"`, `href="/invoice/…"` or `](https://…/invoice)` in llms.txt; never `/invoice-foo`. */
 function links(text, href) {
-	const escaped = href.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	return new RegExp(`(href="|\\]\\(https?://[^/)]+)${escaped}/?["#)?]`).test(text);
+	const escaped = href.replace(/\/$/, '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	return new RegExp(`(href="|\\]\\(https?://[^/)]+)${escaped}[/"#)?]`).test(text);
 }
+
+/** The sitemap's paths, without the origin. */
+const sitemapPaths = (xml) => [...xml.matchAll(/<loc>https?:\/\/[^/<]+(\/[^<]*)?<\/loc>/g)].map(([, p]) => p ?? '/');
 
 let failures = 0;
 const fail = (msg) => {
@@ -64,19 +78,26 @@ for (const off of RUNS) {
 		stdio: ['ignore', 'ignore', 'inherit'],
 		env: { ...process.env, A11Y_MOCK: '1', PUBLIC_FEATURES_OFF: off.join(',') },
 	});
-	const sitemap = readFileSync(path.join(DIST, 'sitemap-0.xml'), 'utf-8');
+	const sitemap = sitemapPaths(readFileSync(path.join(DIST, 'sitemap-0.xml'), 'utf-8'));
 	const pages = [...htmlFiles(DIST)].map((f) => ({ file: path.relative(DIST, f), text: readFileSync(f, 'utf-8') }));
 	for (const flag of off) {
 		const routes = ROUTES[flag];
 		const hrefs = FEATURE_LINKS[flag];
 		for (const route of routes) {
 			if (existsSync(path.join(DIST, route))) fail(`${flag}: dist/${route} was built`);
-			if (sitemap.includes(`/${route}<`) || sitemap.includes(`/${route}/`)) fail(`${flag}: /${route} is in the sitemap`);
+			if (sitemap.some((p) => p === `/${route}` || p.startsWith(`/${route}/`))) fail(`${flag}: /${route} is in the sitemap`);
 		}
 		for (const { file, text } of pages) {
 			for (const href of hrefs) {
 				if (links(text, href)) fail(`${flag}: ${file} links ${href}`);
 			}
+		}
+	}
+	if (!config.event.date) {
+		if (existsSync(path.join(DIST, 'calendar.ics'))) fail('no event.date: dist/calendar.ics was built');
+		for (const { file, text } of pages) {
+			if (links(text, '/calendar.ics')) fail(`no event.date: ${file} links /calendar.ics`);
+			if (text.includes('"@type":"Event"')) fail(`no event.date: ${file} carries an Event`);
 		}
 	}
 	console.log(failures === 0 ? '  ✓ nothing left behind' : `  ${failures} problem(s) so far`);

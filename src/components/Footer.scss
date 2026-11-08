@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/aether' as *;
 // The sign-off: the official logo at poster scale, then four columns, then
 // the folio line. Space separates the three, never a rule.
 .footer {
@@ -8,9 +9,9 @@
 	// No opening air: the last band's tight bottom step is the only space
 	// between the page and the sign-off (BaseLayout.scss, `.page-stack`).
 	padding: 0 var(--gutter) 3rem;
-	background: var(--color-bg);
-	font-family: var(--font-special-elite), cursive;
-	color: var(--ink);
+	background: var(--ink);
+	font-family: var(--font-sans);
+	color: var(--ink-text);
 }
 
 .footer-inner {
@@ -25,10 +26,8 @@
 .footer-logo-link {
 	display: block;
 	align-self: flex-start;
-	width: min(40rem, 80vw);
-	// The file carries transparent margin left of the mark (83 of 3000 px):
-	// pull it back so the mark starts on the text column.
-	margin-left: calc(min(40rem, 80vw) * -83 / 3000);
+	width: min(30rem, 80vw);
+	padding-top: clamp(2.5rem, 4vw, 3.5rem);
 	margin-bottom: clamp(2.5rem, 4vw, 3.5rem);
 
 	&:focus-visible {
@@ -74,15 +73,14 @@
 }
 
 .col-title {
-	@include note(var(--fs-note-sm));
-	color: var(--ink-meta);
-	font-weight: normal;
+	@include label(0.78rem, 0.22em);
+	color: var(--brass);
 	margin: 0 0 1.1rem;
 }
 
 .brand-tagline {
 	@include prose(var(--fs-ui), 1.55);
-	color: var(--ink);
+	color: var(--ink-text);
 	max-width: 30ch;
 	margin: 0 0 1.1rem;
 	text-wrap: pretty;
@@ -114,7 +112,7 @@
 }
 
 // "Cookie settings" is a button (it acts, it goes nowhere) in a list of
-// links: the same Bebas line, none of the button chrome.
+// links: the same line, none of the button chrome.
 .footer-button {
 	background: none;
 	border: 0;
@@ -242,7 +240,7 @@
 	}
 }
 
-// The folio line: copyright left, the case number centre, the repo right.
+// The folio line: copyright left, the repo right.
 .footer-bottom {
 	display: flex;
 	flex-wrap: wrap;
@@ -264,10 +262,6 @@
 }
 
 // The manual's `Case no.` stamp, a mono figure.
-.folio {
-	@include mono(var(--fs-label-xs), 0.16em, uppercase);
-}
-
 .opensource {
 	font-size: inherit;
 

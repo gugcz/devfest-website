@@ -1,10 +1,20 @@
 ---
+/**
+ * The home page of the edition in `src/site.config.ts` (ADR 0011). The stage
+ * is the DF27 comp: the painting, the logo, the season (or the day once it
+ * is announced), the tagline and two portals. Below it, on the veil: what
+ * DevFest.cz is and what is announced, the sections the flags have on
+ * (tickets, speakers, partners, the app), the last edition in figures, and
+ * the newsletter. Nothing about the edition is stated beyond the config.
+ */
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroOffer from '../components/HeroOffer';
-import Countdown from '../components/Countdown';
+import AetherCanvas from '../components/aether/AetherCanvas.astro';
+import SeasonMark from '../components/aether/SeasonMark.astro';
+import Portal from '../components/aether/Portal.astro';
 import NewsletterForm from '../components/NewsletterForm';
-import HeroBackground from '../components/HeroBackground.astro';
+import Countdown from '../components/Countdown';
+import HeroOffer from '../components/HeroOffer';
 import Tickets from '../components/Tickets';
 import SpeakersTeaser from '../components/SpeakersTeaser';
 import TicketIndex from '../components/TicketIndex.astro';
@@ -16,30 +26,28 @@ import {
 	partnerLogo,
 	type Partner,
 } from '../lib/partners';
-import { getTopics } from '../lib/topics';
-import { EVENT, eventDate } from '../lib/event';
+import { EVENT, eventDate, hasDate, hasVenue } from '../lib/event';
+import { lastEdition } from '../lib/editions';
 import { staticTicketLines } from '../lib/tickets-static';
 import config from '../site.config';
 import { enabled, ticketsHref } from '../lib/flags';
 
-// The hero stamp sets the figures in the mono face and the month between them.
-const [heroDay, heroMonth, heroYear] = EVENT.dateShort.split(' ');
+const { event } = config;
+const last = lastEdition();
 
-// The home page as prints on a black table: the full-bleed plate with the
-// statement set left over it, then the event (a widescreen print and its
-// back), tickets, speakers, the past editions as a contact sheet (those
-// three lead at poster scale), then the utility sections a step down: the
-// partner wall with a plain label per tier, the app and the newsletter card.
+// The stage's two portals: the page's one solid action (the sale while it
+// is on, else the newsletter) and the last edition's archive.
+const primary = ticketsHref
+	? { href: '#tickets', label: 'Get tickets' }
+	: enabled('newsletter')
+		? { href: '#newsletter', label: 'Hear it first' }
+		: null;
 
-// One row per tier, top tier first. Silver and community share a row (each
-// mark still sized by its own tier), travel gets the last one. Media partners
-// live on /partners only.
+// One row per tier, top tier first; silver and community share a row, travel
+// gets the last one. Media partners live on /partners only.
 const communityPartners = await getCommunityPartners();
 const travelPartners = await getTravelPartners();
 const ladder = await getActivePartnerTiers();
-// The prices as of the build, for readers that run no script.
-const ticketLines = enabled('tickets') ? await staticTicketLines() : [];
-const topics = await getTopics();
 type HomeRow = { id: string; label: string; partners: { p: Partner; tier: string }[] };
 const tail = [
 	...(ladder.find((t) => t.id === 'silver')?.partners.map((p) => ({ p, tier: 'silver' })) ?? []),
@@ -56,214 +64,120 @@ const homeRows: HomeRow[] = [
 	},
 	{ id: 'travel', label: 'Travel', partners: travelPartners.map((p) => ({ p, tier: 'travel' })) },
 ].filter((row) => row.partners.length > 0);
+// The prices as of the build, for readers that run no script.
+const ticketLines = enabled('tickets') ? await staticTicketLines() : [];
 
-// The contact sheet: two strips of four frames, the hall (01) third on the
-// first strip, ringed in grease and enlarged beside the sheet. Frame numbers
-// run on like a roll of film.
-const STRIPS = [
-	[
-		{ n: '02', no: '11A' },
-		{ n: '03', no: '12' },
-		{ n: '01', no: '12A' },
-		{ n: '08', no: '13' },
-	],
-	[
-		{ n: '20', no: '13A' },
-		{ n: '13', no: '14' },
-		{ n: '21', no: '14A' },
-		{ n: '14', no: '15' },
-	],
+// Frames from past editions' contact sheets (`public/gallery/`).
+const PRINTS = [
+	{ n: '01', alt: 'A full hall facing the stage at a past DevFest.cz' },
+	{ n: '03', alt: 'A speaker in an orange T-shirt raises a hand on stage' },
+	{ n: '08', alt: 'The audience laughing during a talk' },
+	{ n: '20', alt: 'Attendees laughing over their laptops at a long table' },
 ] as const;
-const RINGED = '01';
-
-// The home wall uses the /partners reference boxes (`partnerLogo()`) as they
-// are; each tier's `--logo-scale` in index.scss sets the rank on this page.
-const STRIP_SCALE = 1;
 ---
 
-<BaseLayout description={`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch} ${EVENT.dateLabel}. That was the eleventh edition; thank you for coming.`}>
-	{/* Preload the LCP hero background so it isn't discovered only after CSS parse */}
-	<link
-		slot="head"
-		rel="preload"
-		as="image"
-		href="/hero-detective.webp"
-		fetchpriority="high"
-	/>
+<BaseLayout title={`${EVENT.name} — ${event.tagline}, ${hasDate ? EVENT.dateLabel : event.season.toLowerCase()}`}>
+	<link slot="head" rel="preload" as="image" href="/df27-logo.svg" fetchpriority="high" />
+	<AetherCanvas />
 
-	<main class="page-stack">
-		{/* HERO — the plate runs edge to edge, the photograph pushed right and
-		     fading to black on its left and bottom; the statement, the facts
-		     line and the page's one red fill are set left over it. */}
-		<section id="hero" class="scene" aria-labelledby="hero-title">
-			<HeroBackground
-				photoOpacity={1}
-				mobilePhotoOpacity={1}
-				mobileFocus="42% 40%"
-				width="74%"
-				focus="38% 42%"
-			/>
-			<div class="hero-shade" aria-hidden="true"></div>
-			<div class="hero-body">
-				<h1 id="hero-title" class="hero-statement display">
-					<span class="sr-only">{EVENT.name} — Prague Developer Conference, {EVENT.dateLabel}. </span>
-					That was Prague&rsquo;s most original conference. <span class="red">Thank you.</span>
-				</h1>
-
-				{/* The day's five topics, billed under the statement. */}
-				<ul class="hero-topics" role="list" aria-label="Topics">
-					{topics.map((t) => <li>{t.name}</li>)}
-				</ul>
-
-				<div class="hero-facts">
-					<time class="hero-date" datetime={eventDate('iso')}><span class="fig">{heroDay}</span> {heroMonth} <span class="fig">{heroYear}</span></time>
-					<Countdown client:load />
-					<a
-						class="hero-facts-link"
-						href={EVENT.mapUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-					>{EVENT.venue}, {config.event.venue.city}</a>
-					{ticketsHref && <HeroOffer client:load />}
-				</div>
-				{ticketsHref && <a href="#tickets" class="btn-primary hero-cta">Get tickets</a>}
-				{/* With the sale off, the page's one red fill goes to the newsletter.
-				     Neutral on purpose: it names no year and promises no edition. */}
-				{!ticketsHref && enabled('newsletter') && <a href="#newsletter" class="btn-primary hero-cta">Stay in the loop</a>}
+	<main class="home">
+		<section class="stage" aria-labelledby="home-title">
+			<h1 id="home-title" class="logo rise" data-aether-anchor>
+				<img src="/df27-logo.svg" alt={EVENT.name} width="2880" height="280" fetchpriority="high" />
+			</h1>
+			{hasDate
+				? <p class="stage-date rise rise-2"><time datetime={eventDate('iso')}>{EVENT.dateLabel}</time>{hasVenue && <> · {EVENT.venue}, {EVENT.city}</>}</p>
+				: <SeasonMark season={event.season} class="rise rise-2" />}
+			<p class="stage-line rise rise-3">{event.tagline}</p>
+			{hasDate && <div class="stage-count rise rise-3"><Countdown client:load /></div>}
+			{ticketsHref && <div class="stage-offer rise rise-3"><HeroOffer client:load /></div>}
+			<div class="stage-actions rise rise-4">
+				{primary && <Portal href={primary.href} label={primary.label} variant="solid" />}
+				{last && <Portal href={last.href} label={`${last.year} Edition`} reload />}
 			</div>
 		</section>
 
-		{/* THE EVENT — a widescreen print of the mill with the line set over it
-		     like a subtitle, and the back of the print beside it. */}
-		<section class="band sec event" aria-labelledby="facts-title">
-			<div class="band-inner">
-				<header class="head-rule">
-					<h2 id="facts-title" class="head-rule-title event-title">The eleventh DevFest.cz</h2>
-				</header>
-				<div class="event-grid">
-					<div class="paper event-print">
-						<span class="tape">{EVENT.venue}, {config.event.venue.city}</span>
-						<div class="paper-photo event-photo">
-							<img
-								src="/gallery/uhelny-mlyn-chimney.webp"
-								alt={`The chimney of ${EVENT.venue}, the converted coal mill at ${config.event.venue.city}`}
-								loading="lazy"
-								decoding="async"
-								width="1824"
-								height="1368"
-							/>
-							<p class="event-subtitle">
-								One day in a converted coal mill <span class="fig">25</span> minutes
-								north of Prague, for <span class="fig">350</span> medior and senior
-								developers from across CEE.
-							</p>
-						</div>
-						<div class="paper-edge" aria-hidden="true">
-							<span>02</span><span>2.39 : 1</span><span>08:00</span>
-						</div>
+		<div class="veil">
+			<section class="band" aria-labelledby="about-title">
+				<h2 id="about-title" class="rubric">The festival</h2>
+				<p class="lead">
+					{event.name} is a {event.tagline.toLowerCase()} in {event.city}: {event.pitch}
+				</p>
+				<dl class="facts">
+					<div>
+						<dt>When</dt>
+						<dd>
+							{hasDate ? <time datetime={eventDate('iso')}>{EVENT.dateLabel}</time> : event.season}
+							{!hasDate && <span class="facts-note">date to be announced</span>}
+						</dd>
 					</div>
+					<div>
+						<dt>Where</dt>
+						<dd>
+							{hasVenue ? <a href={EVENT.mapUrl} target="_blank" rel="noopener noreferrer">{EVENT.venue}</a> : event.city}
+							<span class="facts-note">{hasVenue ? EVENT.city : 'venue to be announced'}</span>
+						</dd>
+					</div>
+					<div>
+						<dt>Language</dt>
+						<dd>English</dd>
+					</div>
+				</dl>
+			</section>
 
-					<div class="event-card">
-						<div class="paper-edge event-card-edge" aria-hidden="true">
-							<span class="edge-word">On the back</span>
-						</div>
-						<dl class="facts-list">
-							<div><dt>Date</dt><dd><time datetime={eventDate('iso')}>{EVENT.dateLabel}</time></dd></div>
-							<div><dt>Place</dt><dd>{EVENT.venue}, {config.event.venue.city}</dd></div>
-							<div><dt>Doors</dt><dd><span class="fig">08:00&ndash;23:00</span></dd></div>
+			{/* TICKETS — client:load: the stage's "Get tickets" jumps straight here. */}
+			{enabled('tickets') && <Tickets client:load />}
+			{ticketLines.length > 0 && <TicketIndex lines={ticketLines} />}
+
+			{/* SPEAKERS — the register's first lines; hides until data loads. */}
+			{enabled('lineup') && <SpeakersTeaser client:load />}
+
+			{
+				last && (
+					<section class="band" aria-labelledby="last-title">
+						<h2 id="last-title" class="rubric">{last.year} in figures</h2>
+						<dl class="figures">
+							{last.audience && (
+								<div>
+									<dt>developers</dt>
+									<dd>{last.audience}</dd>
+								</div>
+							)}
 							<div>
-								<dt>Audience</dt>
-								<dd><span class="fig">350</span> developers</dd>
+								<dt>talks</dt>
+								<dd>{last.talks}</dd>
+							</div>
+							<div>
+								<dt>speakers</dt>
+								<dd>{last.speakers}</dd>
 							</div>
 						</dl>
-					</div>
-				</div>
-			</div>
-		</section>
+						<ul class="prints" role="list" aria-label="Photographs from past editions">
+							{PRINTS.map(({ n, alt }) => (
+								<li class="print">
+									<img src={`/gallery/devfest-2025-${n}.webp`} {alt} loading="lazy" decoding="async" width="1080" height="720" />
+								</li>
+							))}
+						</ul>
+						<p class="band-link">
+							<a href={last.href} data-astro-reload>The {last.year} agenda and speakers</a>
+						</p>
+					</section>
+				)
+			}
 
-		{/* TICKETS — client:load, not visible: the hero's "Get tickets" jumps
-		     straight here, and a visible-gated island only began loading on
-		     arrival, so a phone landed on the skeleton. */}
-		{enabled('tickets') && <Tickets client:load />}
-		{ticketLines.length > 0 && <TicketIndex lines={ticketLines} />}
-
-		{/* SPEAKERS — the register's first lines; hides until data loads. */}
-		<SpeakersTeaser client:load />
-
-		{/* PAST EDITIONS — a contact sheet of the last edition, one frame ringed
-		     in grease and enlarged beside it. The frames are decorative; the
-		     enlargement carries the description. */}
-		<section class="band sec" aria-labelledby="gallery-title">
-			<div class="band-inner">
-				<header class="head-rule">
-					<h2 id="gallery-title" class="head-rule-title">Past editions</h2>
-					<p class="head-rule-note">Eleven editions since <span class="fig">2012</span>.</p>
-				</header>
-				<div class="past-grid">
-					<div class="sheet">
-						{STRIPS.map((strip) => (
-							<ul class="strip" role="list">
-								{strip.map((f) => (
-									<li class="frame">
-										<span class="frame-no" aria-hidden="true">{f.no}</span>
-										<div class="frame-photo">
-											<img
-												src={`/gallery/devfest-2025-${f.n}.webp`}
-												alt=""
-												loading="lazy"
-												decoding="async"
-												width="1080"
-												height="720"
-											/>
-										</div>
-										{f.n === RINGED && (
-											<svg class="grease" viewBox="0 0 200 140" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-												<path d="M30 34 C 60 6, 150 4, 186 34 C 204 60, 196 112, 150 128 C 100 142, 30 134, 12 100 C 0 72, 14 44, 58 22" />
-											</svg>
-										)}
-									</li>
-								))}
-							</ul>
-						))}
-						<div class="sheet-edge" aria-hidden="true"><span>2015</span><span>2025</span></div>
-					</div>
-					<div class="paper past-print">
-						<span class="tape">The big hall</span>
-						<div class="paper-photo past-photo">
-							<img
-								src={`/gallery/devfest-2025-${RINGED}.webp`}
-								alt="The big hall full of attendees facing the stage at DevFest.cz 2025"
-								loading="lazy"
-								decoding="async"
-								width="800"
-								height="533"
-							/>
-						</div>
-						<div class="paper-edge" aria-hidden="true"><span>12A</span><span>2025</span></div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		{/* PARTNERS — one plain label per tier; each mark's box comes from its
-		     tier (`partnerLogo()`), so the size carries the rank. */}
-		{enabled('partners') && homeRows.length > 0 && (
-			<section class="band sec" aria-labelledby="partners-title">
-				<div class="band-inner">
-					<header class="head-rule">
-						<h2 id="partners-title" class="head-rule-title">Partners</h2>
-						<div class="partners-actions">
-							<a class="action" href="/partners">All partners</a>
-							<a class="action" href="/partners#partners-cta-title">Become a partner</a>
-						</div>
-					</header>
+			{/* PARTNERS — one label per tier; each mark's box comes from its tier
+			     (`partnerLogo()`), so the size carries the rank. */}
+			{enabled('partners') && homeRows.length > 0 && (
+				<section class="band band-wide" aria-labelledby="partners-title">
+					<h2 id="partners-title" class="rubric">Partners</h2>
 					<div class="partners-tiers">
 						{homeRows.map((row) => (
 							<div class={`partners-tier tier-${row.id}`}>
 								<h3 class="partners-label" id={`tier-${row.id}-label`}>{row.label}</h3>
 								<ul class="partners-row" aria-labelledby={`tier-${row.id}-label`}>
 									{row.partners.map(({ p, tier }) => {
-										const { props } = partnerLogo(p, tier, STRIP_SCALE);
+										const { props } = partnerLogo(p, tier, 1);
 										return (
 											<li class={`partners-item item-${tier}`}>
 												{p.url ? (
@@ -280,35 +194,36 @@ const STRIP_SCALE = 1;
 							</div>
 						))}
 					</div>
-				</div>
-			</section>
-		)}
+					<p class="band-link partners-links">
+						<a href="/partners">All partners</a>
+						<a href="/partners#partners-cta-title">Become a partner</a>
+					</p>
+				</section>
+			)}
 
-		{/* THE APP — the same badges as /app, so nobody needs the venue QR code
-		     to find it. */}
-		{enabled('app') && <section class="band sec home-app" aria-labelledby="home-app-title">
-			<div class="band-inner">
-				<header class="head-rule">
-					<h2 id="home-app-title" class="head-rule-title">Get the app</h2>
-					<p class="head-rule-note">The programme, the talks and the speakers, on your phone.</p>
-				</header>
-				<StoreBadges />
-				<p class="home-app-more"><a class="action" href="/app">What’s in the app</a></p>
-			</div>
-		</section>}
+			{/* THE APP — the same badges as /app. */}
+			{enabled('app') && (
+				<section class="band" aria-labelledby="home-app-title">
+					<h2 id="home-app-title" class="rubric">The app</h2>
+					<p class="lead lead-short">The agenda, the talks and the speakers, on your phone.</p>
+					<StoreBadges />
+					<p class="band-link"><a href="/app">What’s in the app</a></p>
+				</section>
+			)}
 
-		{/* NEWSLETTER — `anchor-target`: the hero, the ticket footnote, the footer and the FAQ jump here. */}
-		{enabled('newsletter') && <section id="newsletter" class="band sec anchor-target" aria-labelledby="newsletter-title">
-			<div class="band-inner newsletter">
-				<div>
-					<h2 id="newsletter-title" class="display newsletter-title">Newsletter</h2>
-					<p class="newsletter-lede">Stay in the loop: we write when there is DevFest news. Nothing else.</p>
-				</div>
-				<div class="newsletter-form">
-					<NewsletterForm client:visible />
-				</div>
-			</div>
-		</section>}
+			{/* NEWSLETTER — `anchor-target`: the stage and the FAQ jump here. */}
+			{
+				enabled('newsletter') && (
+					<section class="band anchor-target" id="newsletter" aria-labelledby="newsletter-title">
+						<h2 id="newsletter-title" class="rubric">Hear it first</h2>
+						<p class="lead lead-short">
+							{hasDate ? `News of ${EVENT.name} as it happens, and a few emails a year after that.` : `One email when ${EVENT.name} has a date, and a few a year after that.`}
+						</p>
+						<NewsletterForm client:visible />
+					</section>
+				)
+			}
+		</div>
 	</main>
 </BaseLayout>
 

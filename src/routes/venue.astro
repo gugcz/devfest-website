@@ -1,0 +1,158 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubpageHero from '../components/SubpageHero.astro';
+import Closer from '../components/Closer.astro';
+import { Image } from 'astro:assets';
+import { EVENT } from '../lib/event';
+import entrance from '../assets/venue/uhelny-mlyn-entrance.jpg';
+import config from '../site.config';
+import { ticketsHref } from '../lib/flags';
+
+// The postal address, split for the address block: the street as the head,
+// the post code and town under it.
+const ADDRESS = /^(.+), (\d{3} \d{2}) (.+)$/.exec(EVENT.street);
+const STREET = ADDRESS?.[1] ?? EVENT.street;
+const POST_CODE = ADDRESS?.[2] ?? '';
+const TOWN = ADDRESS?.[3] ?? '';
+---
+
+<BaseLayout
+	title={`Getting there — ${EVENT.name}`}
+	description={`How to get to ${EVENT.name} at ${EVENT.venue}, ${EVENT.city}: a direct 25-minute train from Prague, then a ten-minute walk from the station.`}
+>
+	<main class="page-stack">
+		<SubpageHero
+			titleHtml={'Venue'}
+			lede={`${EVENT.venue} is a converted industrial mill in ${EVENT.city}, on the river just north of Prague.`}
+			seoHeading={`How to get to ${EVENT.venue}, ${EVENT.name}`}
+			titleId="venue-title"
+		/>
+
+		{/* The address, large. The page's one print is the entrance below. */}
+		<section class="band venue-band venue-addr" aria-labelledby="addr-title">
+			<div class="band-inner">
+				<div>
+					<p class="venue-label">Address</p>
+					<h2 id="addr-title" class="venue-addr-title">{STREET}</h2>
+					<p class="venue-town"><span class="fig">{POST_CODE}</span> {TOWN}</p>
+					<p class="venue-hours">
+						Registration opened at <span class="fig">{EVENT.doorsTime}</span>, the keynote started at <span class="fig">{EVENT.startTime}</span>.
+					</p>
+					<div class="venue-links">
+						<a class="action" href={EVENT.mapUrl} target="_blank" rel="noopener noreferrer">Open in maps</a>
+						<a class="action" href={EVENT.stationWalkUrl} target="_blank" rel="noopener noreferrer">
+							Station to venue
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* The route as the visitor travels it: Prague, the train, the walk,
+		    the door. Same facts as the FAQ answer ("How do I get to the
+		    venue?") — keep the two in step. */}
+		<section class="band venue-band" aria-labelledby="route-title">
+			<div class="band-inner">
+				<div class="head-rule">
+					<h2 id="route-title" class="head-rule-title">The route</h2>
+					<p class="head-rule-note">
+						A direct train, <span class="fig">25</span> minutes from the city centre, then a ten-minute walk.
+					</p>
+				</div>
+
+				<div class="venue-cards">
+					<ol class="venue-steps" role="list">
+						<li class="paper venue-card">
+							<span class="venue-card-no" aria-hidden="true">01</span>
+							<h3 class="venue-card-title">Take the train from Prague</h3>
+							<p>
+								Take the <strong>S4</strong> toward <strong>Kralupy nad Vltavou</strong> from <strong>Praha-Bubny</strong>. Trains leave about every <span class="fig">30</span> minutes.
+							</p>
+							<dl class="venue-facts">
+								<dt>Get off</dt>
+								<dd>{EVENT.city}</dd>
+								<dt>Ride</dt>
+								<dd><span class="fig">25</span> min</dd>
+							</dl>
+						</li>
+						<li class="paper venue-card">
+							<span class="venue-card-no" aria-hidden="true">02</span>
+							<h3 class="venue-card-title">Walk to {EVENT.venue}</h3>
+							<p>
+								From {EVENT.city} station it is a ten-minute walk, about <span class="fig">0.7&nbsp;km</span>, to the entrance in the black metal building.
+							</p>
+							<dl class="venue-facts">
+								<dt>Walk</dt>
+								<dd><span class="fig">10</span> min</dd>
+								<dt>Distance</dt>
+								<dd><span class="fig">0.7&nbsp;km</span></dd>
+							</dl>
+							<a class="action venue-go" href={EVENT.stationWalkUrl} target="_blank" rel="noopener noreferrer">
+								Station to venue
+							</a>
+						</li>
+					</ol>
+
+					{/* Not a step of the route, so no number. Same facts as the FAQ
+					    answer ("Can I come by car?"). */}
+					<div class="paper venue-card">
+						<h3 class="venue-card-title">Coming by car</h3>
+						<p>
+							There is only a <strong>limited number</strong> of parking places, at the far end of the complex. Follow the signs, or better, share a ride or take the train.
+						</p>
+						<dl class="venue-facts">
+							<dt>Parking</dt>
+							<dd>Limited</dd>
+							<dt>EV chargers</dt>
+							<dd>None on site</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* What to look for on arrival. The parked van's number plate is
+		    blurred in the source file. */}
+		<section class="band venue-band venue-door-band" aria-labelledby="door-title">
+			<div class="band-inner venue-door">
+				<figure class="paper venue-door-print">
+					<span class="tape">The black metal building</span>
+					<div class="paper-photo">
+						<Image
+							src={entrance}
+							alt="The entrance: glass doors under a black perforated-metal façade, up a few concrete steps."
+							widths={[640, 960, 1400]}
+							sizes="(max-width: 1100px) 92vw, 60vw"
+							loading="lazy"
+						/>
+					</div>
+					<figcaption class="paper-edge"><span class="edge-word">{EVENT.venue}</span><span>{EVENT.doorsTime}</span></figcaption>
+					<svg class="grease venue-door-mark" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+						<path d="M30 8 C 62 -2, 96 14, 96 48 C 96 84, 64 98, 36 94 C 8 90, 2 60, 6 38 C 10 18, 30 6, 54 6" />
+					</svg>
+				</figure>
+				<div class="venue-door-text">
+					<h2 id="door-title" class="venue-door-title">The entrance</h2>
+					<p class="venue-door-note">
+						Red-brick halls, one tall chimney, and the doors in the black metal building, up a few concrete steps.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<Closer
+			titleHtml={'Thank you<br />for coming.'}
+			note="The 2026 edition is over. The lineup and the schedule stay up for the record."
+			titleId="venue-closer"
+			class="venue-closer"
+			actions={[
+				...(ticketsHref ? [{ href: ticketsHref, label: 'Get tickets' }] : []),
+				{ href: '/agenda', label: 'See the agenda', kind: 'ghost' },
+			]}
+		/>
+	</main>
+</BaseLayout>
+
+<style lang="scss">
+	@use './venue';
+</style>

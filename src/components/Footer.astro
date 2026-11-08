@@ -1,10 +1,10 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../assets/logo.png';
-import { EVENT } from '../lib/event';
+import { EVENT, hasDate, hasVenue } from '../lib/event';
 import config from '../site.config';
 import { enabledOnly, type FeatureFlag } from '../lib/flags';
 import { getSocials } from '../lib/socials';
+import { ARCHIVE, liveUrl } from '../lib/base';
+import { pastEditions } from '../lib/editions';
 
 // One 24×24 glyph per network in `src/content/socials.json`. A network with
 // no glyph here renders its label as text instead of an icon.
@@ -17,7 +17,23 @@ const ICONS: Record<string, string> = {
 };
 const socials = (await getSocials()).map((social) => ({ ...social, path: ICONS[social.network] }));
 
-type FooterLink = { href: string; label: string; external?: boolean; feature?: FeatureFlag };
+type FooterLink = {
+	href: string;
+	label: string;
+	external?: boolean;
+	feature?: FeatureFlag;
+	/** Another build (the live site from an archive): a full load, no soft navigation. */
+	reload?: boolean;
+};
+
+// An archived edition (ADR 0011) links the live site.
+// The latest past edition: the archive at `/<year>`, or its own site.
+const lastEdition: FooterLink[] = pastEditions()
+	.slice(0, 1)
+	.map(({ year, href, external }) => ({ href, label: `${year} edition`, external }));
+const currentEdition: FooterLink[] = ARCHIVE
+	? [{ href: liveUrl('/'), label: 'Current edition', reload: true }]
+	: [];
 
 // Every destination, in two groups. The menu is the only navigation above the
 // fold (one toggle at every width, by design), so the footer is the one place
@@ -30,10 +46,10 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		title: 'Attend',
 		links: [
 			{ href: '/#tickets', label: 'Tickets', feature: 'tickets' },
-			{ href: '/agenda', label: 'Agenda' },
-			{ href: '/speakers', label: 'Speakers' },
+			{ href: '/agenda', label: 'Agenda', feature: 'lineup' },
+			{ href: '/speakers', label: 'Speakers', feature: 'lineup' },
 			{ href: '/faq', label: 'FAQ' },
-			{ href: '/venue', label: 'Getting there' },
+			{ href: '/venue', label: 'Getting there', feature: 'venue' },
 			{ href: '/app', label: 'Get the app', feature: 'app' },
 			// The B2B revenue path was linked from nowhere — not the menu, not
 			// here — so a company that needed an invoice had to know the URL.
@@ -46,12 +62,13 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		id: 'footer-about',
 		title: 'About',
 		links: [
-			{ href: '/team', label: 'Team' },
+			{ href: '/team', label: 'Team', feature: 'team' },
 			{ href: '/partners', label: 'Partners', feature: 'partners' },
-			{ href: '/contact#press', label: 'Press' },
+			{ href: '/contact#press', label: 'Press', feature: 'press' },
 			{ href: '/contact', label: 'Contact' },
 			{ href: '/#newsletter', label: 'Newsletter', feature: 'newsletter' },
-			{ href: 'https://2025.devfest.cz', label: "Last year's edition", external: true },
+			...currentEdition,
+			...lastEdition,
 			{ href: '/privacy-policy', label: 'Privacy Policy' },
 		],
 	},
@@ -63,20 +80,13 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		{/* The poster sign-off: the official logo file at poster scale, still
 		     the way home. The name is never typeset as a second wordmark. */}
 		<a href="/" class="footer-logo-link">
-			<Image
-				src={logo}
-				alt={EVENT.name}
-				class="footer-logo"
-				loading="lazy"
-				widths={[480, 960, 1280]}
-				sizes="min(40rem, 80vw)"
-			/>
+			<img src="/df27-logo.svg" alt={EVENT.name} class="footer-logo" width="2880" height="280" loading="lazy" decoding="async" />
 		</a>
 
 		<div class="footer-grid">
 			<section class="col col-brand" aria-label="About DevFest.cz">
 				<p class="brand-tagline">
-					Prague's developer conference &mdash; AI agents, generative UI, cloud &amp; backends, mobile &amp; web, and the humans behind it.
+					{config.event.tagline} &mdash; {config.event.pitch}
 				</p>
 				<address class="contact">
 					<a class="email" href={`mailto:${EVENT.contactEmail}`}>{EVENT.contactEmail}</a>
@@ -87,12 +97,13 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 				<nav class="col col-links" aria-labelledby={id}>
 					<h2 id={id} class="col-title">{title}</h2>
 					<ul class="link-list">
-						{enabledOnly(links).map(({ href, label, external }) => (
+						{enabledOnly(links).map(({ href, label, external, reload }) => (
 							<li>
 								<a
 									class="footer-link"
 									href={href}
 									{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+									{...(reload ? { 'data-astro-reload': true } : {})}
 								>
 									{label}
 									</a>
@@ -112,19 +123,21 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 			))}
 
 			<section class="col" aria-labelledby="footer-event">
-				<h2 id="footer-event" class="col-title">Event</h2>
+				<h2 id="footer-event" class="col-title">{EVENT.name}</h2>
 				<dl class="event-meta">
 					<dt>Date</dt>
 					<dd>
-						<time datetime={EVENT.start.slice(0, 10)}>{EVENT.dateLabel}</time>
+						{hasDate ? <time datetime={EVENT.start.slice(0, 10)}>{EVENT.dateLabel}</time> : EVENT.dateLabel}
 					</dd>
 					<dt>Place</dt>
 					<dd>
-						<a
-							href={EVENT.mapUrl}
-							target="_blank"
-							rel="noopener noreferrer"
-						>{EVENT.venue}, {config.event.venue.city}</a>
+						{hasVenue ? (
+							<a
+								href={EVENT.mapUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+							>{EVENT.venue}, {EVENT.city}</a>
+						) : EVENT.city}
 					</dd>
 					<dt>Format</dt>
 					<dd>In-person</dd>
@@ -167,9 +180,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		</div>
 
 		<div class="footer-bottom">
-			<small class="copyright">&copy; 2026 GUG.cz, z.s.</small>
-			{/* The case-file folio the brand manual prints on every page. */}
-			<small class="folio" aria-hidden="true">Case no. DF-2026</small>
+			<small class="copyright">&copy; {new Date().getFullYear()} {config.organizer.legalName}</small>
 			<small class="opensource">
 				<a
 					class="footer-link"

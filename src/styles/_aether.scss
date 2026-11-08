@@ -1,0 +1,63 @@
+// Recipes of the aether system (`docs/design.md`). The tokens are custom
+// properties on `:root` (`BaseLayout.scss`); these mixins are the few shapes
+// the system repeats.
+
+// The label voice: the portal's button text, the rubrics, every small
+// caption. Uppercase, tracked wide, semibold.
+@mixin label($size: var(--fs-rubric), $track: var(--track-label)) {
+	font-family: var(--font-sans);
+	font-size: $size;
+	font-weight: 600;
+	letter-spacing: $track;
+	text-transform: uppercase;
+	line-height: 1.3;
+}
+
+// The bevel: the portal's eight-sided outline, corners cut at `$cut`, inset
+// by `$inset` from the box. Used as a clip-path.
+@function bevel($cut: 14px, $inset: 2px) {
+	$a: $inset;
+	$b: $inset + $cut;
+	@return polygon(
+		$b $a,
+		calc(100% - #{$b}) $a,
+		calc(100% - #{$a}) $b,
+		calc(100% - #{$a}) calc(100% - #{$b}),
+		calc(100% - #{$b}) calc(100% - #{$a}),
+		$b calc(100% - #{$a}),
+		$a calc(100% - #{$b}),
+		$a $b
+	);
+}
+
+// Keyboard focus: the aether's cold light, never the brass.
+@mixin focus-ring($offset: 4px) {
+	outline: 2px solid var(--aether);
+	outline-offset: $offset;
+}
+
+// The rubric: a small brass label between two inked rules, each ending in a
+// diamond, as the season mark is set. A section heading, and nowhere else.
+@mixin rubric {
+	@include label;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	margin: 0;
+	color: var(--brass);
+
+	&::before,
+	&::after {
+		content: '';
+		flex: 0 0 auto;
+		width: clamp(2.5rem, 8vw, 4.5rem);
+		height: 10px;
+		background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 10'%3E%3Cg fill='none' stroke='%23d9b26a' stroke-width='1.2'%3E%3Cpath d='M0 5H60'/%3E%3Cpath d='M66 1L70 5L66 9L62 5Z'/%3E%3C/g%3E%3C/svg%3E")
+			center / 100% 100% no-repeat;
+	}
+
+	&::after {
+		transform: scaleX(-1);
+	}
+}

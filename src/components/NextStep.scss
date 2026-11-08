@@ -1,12 +1,12 @@
 @use '../styles/type' as *;
 
-// A typed index card, straight (only photo prints tilt): the errand as a
-// Bebas head, one or two typewriter lines under it, then its actions. Paper ink
-// only: no red text on paper (the one red fill is a button, white on red).
+// A plate: the errand as a title, one or two lines under it, then its
+// actions.
 .step {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: center;
+	text-align: center;
 	min-width: 0;
 	padding: 1.6rem 1.75rem 1.7rem;
 }
@@ -25,7 +25,7 @@
 		grid-row: span 3;
 		grid-template-rows: subgrid;
 		row-gap: 0;
-		justify-items: start;
+		justify-items: center;
 	}
 
 	// The actions start on one line across the row too.
@@ -35,8 +35,7 @@
 }
 
 .step-title {
-	@include row-title(var(--fs-head));
-	line-height: 0.92;
+	@include row-title(var(--fs-title-sm));
 	color: var(--paper-ink);
 	margin: 0 0 0.9rem;
 	text-wrap: balance;
@@ -64,29 +63,20 @@
 .step-actions {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: center;
 	align-items: center;
 	gap: 0.5rem 1.6rem;
 	padding-top: 1.25rem;
 }
 
-// A text action on paper: black Bebas, the ink line only on hover and focus.
+// A text action on the plate, in the label voice.
 .step-go {
 	display: inline-flex;
 	align-items: center;
 	min-height: 2.75rem;
-	@include action(var(--fs-cta));
+	@include action(var(--fs-small));
 	@include paper-action;
 	overflow-wrap: anywhere;
-}
-
-// Three narrow cards on a tablet: two actions never fit one line, so every
-// card lists them, one under the other, instead of one card breaking.
-@media (min-width: 721px) and (max-width: 1100px) {
-	.step-actions {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0;
-	}
 }
 
 @media (max-width: 720px) {

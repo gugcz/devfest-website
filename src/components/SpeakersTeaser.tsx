@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { withBase } from '../lib/base';
 import { fetchLineup } from '../lib/lineup';
 import { speakerTarget } from '../lib/share';
 import { useRemote } from '../lib/useRemote';
@@ -59,7 +60,7 @@ export default function SpeakersTeaser() {
 					))}
 				</ul>
 				<p className={s.all}>
-					<a className="action" href="/speakers">
+					<a className="action" href={withBase('/speakers')}>
 						All {total} speakers
 					</a>
 				</p>

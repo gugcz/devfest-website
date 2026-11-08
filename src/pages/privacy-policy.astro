@@ -17,14 +17,14 @@ const SECTIONS = [
 ---
 
 <BaseLayout
-	title="Privacy Policy — DevFest.cz 2026"
-	description="Privacy policy for DevFest.cz 2026 — how we collect, use, and protect your personal data."
+	title="Privacy Policy — DevFest.cz"
+	description="Privacy policy for DevFest.cz — how we collect, use, and protect your personal data."
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Privacy<br />Policy'}
 			lede="How GUG.cz, z.s. collects, uses and protects your personal data on this site and in the DevFest.cz app. Last updated October 2026."
-			seoHeading="DevFest.cz 2026 Privacy Policy"
+			seoHeading="DevFest.cz Privacy Policy"
 			titleId="privacy-title"
 		/>
 
@@ -33,11 +33,10 @@ const SECTIONS = [
 				<nav class="reading-index" aria-label="Contents">
 					<p class="reading-index-label">Contents</p>
 					<ol role="list">
-						{SECTIONS.map(({ id, title }, i) => (
+						{SECTIONS.map(({ id, title }) => (
 							<li>
 								<a href={`#${id}`}>
-									<span class="reading-index-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-									<span>{title}</span>
+									{title}
 								</a>
 							</li>
 						))}

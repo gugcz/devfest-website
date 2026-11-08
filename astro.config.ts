@@ -1,13 +1,30 @@
 import { fileURLToPath } from 'node:url';
-import { defineConfig, fontProviders } from 'astro/config';
+import { defineConfig } from 'astro/config';
 import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 
 import react from '@astrojs/react';
 import type { Plugin } from 'vite';
 import config from './src/site.config';
 import featureRoutes from './src/integrations/feature-routes';
+import archives, { archivedPages } from './src/integrations/archives';
+import redirectGuard from './src/integrations/redirect-guard';
 
 const BUILD_DATE = new Date().toISOString();
+
+// An archive build (`npm run archive <year>`, ADR 0011): the edition's whole
+// site under `/<year>`, written beside the live build for the script to
+// freeze into `archive/<year>/`. A live build instead copies every archive
+// into its output (`archives()`) and lists their pages in its sitemap.
+const archive = process.env.PUBLIC_ARCHIVE;
+if (archive && config.event.edition !== Number(archive)) {
+    throw new Error(
+        `PUBLIC_ARCHIVE=${archive}: src/site.config.ts describes the ${config.event.edition} edition. Archive ${archive} from a commit whose config still does.`,
+    );
+}
+if (archive && !config.event.date) {
+    throw new Error(`PUBLIC_ARCHIVE=${archive}: src/site.config.ts has no event.date; an edition is archived once it has taken place.`);
+}
+const ARCHIVED = archive ? new Map<string, string | undefined>() : archivedPages();
 
 // Per-path sitemap priority; anything unlisted falls back to 0.6.
 const PRIORITY: Record<string, number> = {
@@ -75,46 +92,8 @@ const devApiMocks = (): Plugin => ({
 // https://astro.build/config
 export default defineConfig({
     site: config.site.url,
+    ...(archive && { base: `/${archive}`, outDir: `.archive/${archive}/site` }),
     trailingSlash: 'never',
-    // Self-hosted, build-time-optimised replacements for the three brand faces
-    // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
-    // Weights/styles mirror exactly what that css2 URL requested. Only the three
-    // brand fonts are allowed — never add a fourth family here.
-    fonts: [
-        {
-            provider: fontProviders.google(),
-            name: 'Bebas Neue',
-            cssVariable: '--font-bebas-neue',
-            weights: [400],
-            styles: ['normal'],
-            subsets: ['latin', 'latin-ext'],
-        },
-        {
-            provider: fontProviders.google(),
-            name: 'JetBrains Mono',
-            cssVariable: '--font-jetbrains-mono',
-            weights: [400, 500],
-            styles: ['normal'],
-            subsets: ['latin', 'latin-ext'],
-        },
-        {
-            provider: fontProviders.google(),
-            name: 'Special Elite',
-            cssVariable: '--font-special-elite',
-            weights: [400],
-            styles: ['normal'],
-            // Google ships Special Elite in Latin only, so every č ř š ž ě ů
-            // fell through to the generated metric fallback — Arial at 117% —
-            // and "Libčice" printed as "LibČice". JetBrains Mono (latin-ext
-            // loaded above) takes those letters instead: a brand face, and a
-            // monospace whose 0.6em advance sits close to Special Elite's, so
-            // it also stands in without a reflow while the typewriter loads.
-            // Unquoted on purpose: Astro quotes only values with spaces, so
-            // the var() lands in `--font-special-elite` as a live reference.
-            fallbacks: ['var(--font-jetbrains-mono)', 'monospace'],
-            optimizedFallbacks: false,
-        },
-    ],
     image: {
         layout: 'constrained',
         // responsiveStyles defaults to false — without it the `layout` prop
@@ -127,6 +106,7 @@ export default defineConfig({
     },
     integrations: [
         sitemap({
+            customPages: [...ARCHIVED.keys()],
             filter: (page) =>
                 !page.includes('/newsletter-subscription-thank-you') &&
                 !page.includes('/thank-you') &&
@@ -138,8 +118,11 @@ export default defineConfig({
                 // Same three-part secrecy for the speakers' share-card tool
                 // (src/pages/speaker-card.astro).
                 !page.includes('/speaker-card') &&
-                // And for the venue TV screens (src/pages/tv.astro).
+                // And for the venue TV screens (src/routes/tv.astro).
                 !/\/tv\/?$/.test(page) &&
+                // An archive leaves the legal pages to the live site
+                // (LIVE_ONLY_PATHS in src/lib/base.ts).
+                !(archive && /\/(privacy-policy|code-of-conduct)\/?$/.test(page)) &&
                 // And for the page that catches the app's sign-in links
                 // (src/pages/login/).
                 !/\/login\/?$/.test(page) &&
@@ -150,7 +133,11 @@ export default defineConfig({
                 // Press → /contact#press). `/press/downloads` is a real page.
                 !/\/(sessions|press)\/?$/.test(page),
             serialize(item) {
-                item.lastmod = BUILD_DATE;
+                // The archive's home is `/<year>`, as its canonical says; the
+                // integration lists the base with a trailing slash.
+                if (archive && item.url.endsWith(`/${archive}/`)) item.url = item.url.slice(0, -1);
+                // An archived page changed the day it was archived.
+                item.lastmod = ARCHIVED.has(item.url) ? (ARCHIVED.get(item.url) ?? BUILD_DATE) : BUILD_DATE;
                 item.changefreq = ChangeFreqEnum.WEEKLY;
                 const path = item.url.replace(/\/$/, '').replace(config.site.url, '');
                 item.priority = PRIORITY[path] ?? 0.6;
@@ -158,7 +145,8 @@ export default defineConfig({
             },
         }),
         react(),
-        featureRoutes(config.features),
+        featureRoutes(config.features, config.event.date !== undefined && config.event.venue !== undefined),
+        ...(archive ? [] : [archives(), redirectGuard()]),
     ],
     vite: {
         plugins: [devApiMocks(), legacyBrowserTarget()],

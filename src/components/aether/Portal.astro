@@ -1,0 +1,25 @@
+---
+/**
+ * The portal: the aether's button as a link (`docs/design.md`, "Portal").
+ * The frame, the arrow and the states are the global `.btn-primary` (solid:
+ * the page's one action) and `.btn-framed` (the way somewhere else) in
+ * `BaseLayout.scss`, so a link here, a form's submit and an island's CTA
+ * are one drawing that grows with its label.
+ */
+interface Props {
+	href: string;
+	label: string;
+	variant?: 'framed' | 'solid';
+	/** Another build (an archive): a full page load, no soft navigation. */
+	reload?: boolean;
+	class?: string;
+}
+
+const { href, label, variant = 'framed', reload = false, class: className } = Astro.props;
+---
+
+<a
+	class:list={[variant === 'solid' ? 'btn-primary' : 'btn-framed', className]}
+	href={href}
+	{...(reload ? { 'data-astro-reload': true } : {})}
+>{label}</a>

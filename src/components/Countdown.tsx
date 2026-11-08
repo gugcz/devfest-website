@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { EVENT } from '../lib/event';
 import s from './Countdown.module.scss';
 
-const START = new Date(EVENT.start).getTime();
-const END = new Date(EVENT.end).getTime();
+// Read on use, not on import: the module loads on pages built before the
+// day is announced, where these throw (`eventDay()`).
+const start = (): number => new Date(EVENT.start).getTime();
+const end = (): number => new Date(EVENT.end).getTime();
 
 const DAY = 86_400_000;
 const HOUR = 3_600_000;
@@ -23,8 +25,8 @@ function timeLeft(diff: number, seconds: boolean): string {
 }
 
 function phaseAt(now: number): Phase {
-	if (now < START) return 'counting';
-	return now < END ? 'live' : 'over';
+	if (now < start()) return 'counting';
+	return now < end() ? 'live' : 'over';
 }
 
 /**
@@ -51,7 +53,7 @@ export default function Countdown() {
 			const t = Date.now();
 			setNow(t);
 			// Nothing left to show once the day is over.
-			if (t >= END) clearInterval(id);
+			if (t >= end()) clearInterval(id);
 		};
 		// Without seconds a 15s refresh keeps a stale minute from lingering.
 		const id = setInterval(tick, seconds ? 1000 : 15_000);
@@ -78,7 +80,7 @@ export default function Countdown() {
 			</span>
 			<span className={s.label} aria-hidden="true">Keynote in</span>
 			<span className={s.figure} aria-hidden="true">
-				{now === null ? '00d 00h 00m 00s' : timeLeft(START - now, seconds)}
+				{now === null ? '00d 00h 00m 00s' : timeLeft(start() - now, seconds)}
 			</span>
 		</p>
 	);

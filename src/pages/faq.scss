@@ -1,18 +1,21 @@
 @use '../styles/type' as *;
+@use '../styles/aether' as *;
 
-// The category index pinned on the left, the questions on the right as
-// straight rows on the black table: only the open question is a paper slip.
+// The FAQ on the veil, one centred column like the home page's bands: the
+// categories as a list under the stage, each group under its brass rubric,
+// every question a plate that opens on its answer.
 .faq {
-	display: grid;
-	grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-	gap: clamp(2rem, 5vw, 5rem);
-	align-items: start;
+	max-width: 46rem;
+	margin: 0 auto;
 }
 
-/* ---- Index ---- */
+/* ---- The categories ---- */
 .faq-index {
-	position: sticky;
-	top: calc(var(--header-h) + 2rem);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 0 0 clamp(3.5rem, 6vw, 5rem);
+	text-align: center;
 
 	ol {
 		list-style: none;
@@ -20,166 +23,114 @@
 		padding: 0;
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		gap: 0.15rem;
 	}
 
 	ol a {
-		display: flex;
-		align-items: baseline;
-		gap: 0.75rem;
-		padding: 0.35rem 0;
-		@include action(var(--fs-cta));
-		color: var(--color-text);
-		text-decoration: none;
-		transition: color 0.2s ease;
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
+		@include label(var(--fs-small), 0.18em);
+		color: var(--ivory);
+		text-decoration: underline;
+		text-decoration-color: var(--brass);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.45em;
+		transition: color 0.3s ease, text-decoration-color 0.3s ease;
 
+		&:hover,
 		&:focus-visible {
-			color: var(--color-accent-hot);
+			color: var(--brass-light);
+			text-decoration-color: var(--aether);
 		}
 	}
 }
 
 .faq-index-label {
-	@include note(var(--fs-note));
-	color: var(--ink-dim);
-	margin: 0 0 0.9rem;
+	@include label(0.78rem, 0.22em);
+	color: var(--brass);
+	margin: 0 0 0.75rem;
 }
 
-.faq-index-no {
-	@include mono(var(--fs-label), 0.08em);
-	color: var(--ink-dim);
-}
-
-.faq-index-ask {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 0.35rem;
-	margin: 2.5rem 0 0;
-}
-
-.faq-index-ask-label {
-	@include action(var(--fs-action));
-	color: var(--ink-dim);
-}
-
-// The address itself is typed, never set in Bebas caps.
-.faq-index-mail {
-	@include note(var(--fs-note));
-	@include hairline-link(var(--color-text));
-}
-
-@media (hover: hover) {
-	.faq-index ol a:hover {
-		color: var(--color-accent-hot);
-	}
-}
-
-/* ---- Categories ---- */
+/* ---- The groups ---- */
 .faq-group + .faq-group {
-	margin-top: clamp(5rem, 8vw, 7.5rem);
+	margin-top: clamp(4rem, 7vw, 6rem);
 }
 
-// The category heads its slips at the h2 step, under the page title.
-// Jumped to from the index, it lands clear of the fixed header.
+// The group's rubric. Jumped to from the list, it lands clear of the bar.
 .faq-cat {
-	@include display(var(--fs-h2));
-	margin: 0 0 clamp(1.75rem, 3vw, 2.75rem);
+	@include rubric;
+	margin: 0 0 clamp(1.75rem, 3vw, 2.5rem);
 	scroll-margin-top: calc(var(--header-h) + 2rem);
 }
 
 .faq-slips {
 	display: flex;
 	flex-direction: column;
-	gap: 0.35rem;
+	gap: 0.75rem;
 }
 
-/* ---- Rows and the open slip ---- */
-// A closed question is a straight row on black, set apart by space alone.
-// The open one becomes a paper slip holding its answer.
+/* ---- A question ---- */
+// A plate: the question, and the answer under it when open.
 .faq-item {
-	--faq-pad: 1.75rem;
-	--faq-ink: var(--color-text);
-	--faq-ink-dim: var(--ink-dim);
-	position: relative;
-	padding: 0;
-	color: var(--faq-ink);
+	--faq-pad: 1.5rem;
+	background: var(--paper);
+	border: 1px solid var(--rule);
+	transition: border-color 0.3s ease;
 }
 
 .faq-item[open] {
-	--faq-ink: var(--paper-ink);
-	--faq-ink-dim: var(--paper-ink-dim);
-	background: var(--paper);
-	box-shadow: var(--paper-shadow);
-	margin-block: 0.9rem;
+	border-color: var(--rule-strong);
 }
 
-.faq-item[open]:first-child {
-	margin-top: 0;
-}
-
-// Number, question, marker. Red text on paper misses 4.5:1, so the reach
-// state is an underline under the question and the marker in full ink.
+// The question and its marker. The cold light answers a reach.
 .faq-q {
 	list-style: none;
 	cursor: pointer;
 	display: grid;
-	grid-template-columns: 3.4rem minmax(0, 1fr) auto;
+	grid-template-columns: minmax(0, 1fr) auto;
 	column-gap: 1.25rem;
-	align-items: baseline;
-	padding: 1.35rem var(--faq-pad);
+	align-items: center;
+	padding: 1.25rem var(--faq-pad);
 
 	&::-webkit-details-marker {
 		display: none;
 	}
 
-	// Inset, so the ring stays on the slip.
+	// Inset, so the ring stays on the plate.
 	&:focus-visible {
-		outline: 2px solid var(--color-accent);
-		outline-offset: -4px;
+		@include focus-ring(-4px);
 	}
+}
 
-	&:focus-visible .faq-q-text {
-		text-decoration-line: underline;
-	}
-
-	&:focus-visible .faq-marker {
-		color: var(--faq-ink);
-	}
+.faq-q-text {
+	@include row-title;
+	transition: color 0.3s ease;
 }
 
 @media (hover: hover) {
 	.faq-q:hover .faq-q-text {
-		text-decoration-line: underline;
+		color: var(--brass-light);
 	}
 
 	.faq-q:hover .faq-marker {
-		color: var(--faq-ink);
+		color: var(--aether);
 	}
 }
 
-.faq-no {
-	@include mono(var(--fs-label-xs), 0.1em);
-	color: var(--faq-ink-dim);
-	white-space: nowrap;
+.faq-q:focus-visible .faq-marker {
+	color: var(--aether);
 }
 
-.faq-q-text {
-	@include prose(var(--fs-lede), 1.3);
-	color: var(--faq-ink);
-	text-decoration-thickness: 1px;
-	text-underline-offset: 4px;
-}
-
-// A drawn "+" that turns 45deg into an "×" when the slip is open.
+// A drawn "+" in brass that turns into an "×" when the plate is open.
 .faq-marker {
 	position: relative;
-	align-self: center;
 	width: 0.9rem;
 	height: 0.9rem;
-	color: var(--faq-ink-dim);
+	color: var(--brass);
 	transition:
-		color 0.2s,
+		color 0.3s ease,
 		transform 0.25s ease;
 
 	&::before,
@@ -202,120 +153,35 @@
 	transform: rotate(45deg);
 }
 
-// The answer starts under the question text, not under the number.
 .faq-a {
-	padding: 0 var(--faq-pad) 1.75rem calc(var(--faq-pad) + 3.4rem + 1.25rem);
+	padding: 0 var(--faq-pad) 1.5rem;
 }
 
 .faq-a :global(p) {
 	@include prose(var(--fs-body), 1.65);
-	color: var(--paper-ink);
+	color: var(--ivory-muted);
 	margin: 0;
-	max-width: 62ch;
 }
 
 .faq-a :global(strong) {
-	font-weight: 400;
-	color: var(--paper-ink);
-	white-space: nowrap;
-}
-
-.faq-a :global(a strong) {
-	white-space: normal;
+	color: var(--ivory);
 }
 
 .faq-a :global(a) {
-	color: var(--paper-ink);
-	text-decoration: underline;
-	text-decoration-thickness: 1px;
-	text-underline-offset: 3px;
-
-	// The reach state thickens the ink underline; red text fails on paper.
-	&:focus-visible {
-		text-decoration-thickness: 2px;
-	}
+	@include hairline-link(var(--ivory));
 }
 
-@media (hover: hover) {
-	.faq-a :global(a:hover) {
-		text-decoration-thickness: 2px;
-	}
-}
-
-@media (max-width: 1100px) {
-	.faq {
-		grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-	}
-}
-
-// Phone: the index becomes a wrapped row of links above the slips.
 @media (max-width: 720px) {
-	.faq {
-		grid-template-columns: minmax(0, 1fr);
-		gap: 3.5rem;
-	}
-
-	.faq-index {
-		position: static;
-
-		ol {
-			flex-direction: row;
-			flex-wrap: wrap;
-			gap: 0 1.4rem;
-		}
-
-		ol a {
-			font-size: var(--fs-action);
-			gap: 0.5rem;
-		}
-	}
-
-	.faq-index-ask {
-		display: none;
-	}
-
-	.faq-slips {
-		gap: 1.25rem;
-	}
-
 	.faq-item {
 		--faq-pad: 1.1rem;
-	}
-
-	.faq-q {
-		grid-template-columns: minmax(0, 1fr) auto;
-		row-gap: 0.4rem;
-		column-gap: 0.9rem;
-		padding-block: 1.1rem;
-	}
-
-	// The number and the marker share the top line; the question takes the
-	// slip's full width under them.
-	.faq-marker {
-		grid-row: 1;
-		grid-column: 2;
-	}
-
-	.faq-q-text {
-		grid-column: 1 / -1;
-	}
-
-	.faq-a {
-		padding: 0 var(--faq-pad) 1.4rem;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.faq-index ol a,
+	.faq-item,
 	.faq-q-text,
 	.faq-marker,
-	.faq-a :global(a) {
+	.faq-index ol a {
 		transition: none;
 	}
-}
-
-// The end line's action is the address: typed and lowercase, not Bebas caps.
-.faq :global(.end-line a[href^='mailto:']) {
-	@include note(var(--fs-lede));
-	@include hairline-link(var(--color-text));
 }

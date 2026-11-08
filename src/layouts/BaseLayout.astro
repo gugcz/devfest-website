@@ -1,15 +1,16 @@
 ---
-import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
-import CookieBanner from '../components/CookieBanner.astro';
+import CookieBanner from '../components/aether/CookieBanner.astro';
+import Head from './Head.astro';
 import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
 import { defaultOgImageVersion } from '../lib/og-version';
 import { staticTicketLines } from '../lib/tickets-static';
-import { EVENT, pageTitle } from '../lib/event';
+import { EVENT, eventVenue, hasDate, hasVenue, pageTitle } from '../lib/event';
+import { absoluteUrl, withoutBase } from '../lib/base';
 import config from '../site.config';
 import { enabled } from '../lib/flags';
-import { getSocials, twitterHandle } from '../lib/socials';
+import { organizationSchema, organizer, websiteSchema } from '../lib/structured-data';
 
 interface Props {
 	title?: string;
@@ -23,27 +24,26 @@ interface Props {
 	ogImageAlt?: string;
 }
 
-const siteUrl = config.site.url;
-const twitter = await twitterHandle();
-const { venue } = config.event;
+const { event } = config;
+// Before the day is announced the description says what is: the season and
+// the city (ADR 0011).
+const when = `${hasDate ? EVENT.dateLabel : event.season.toLowerCase()}${hasVenue ? ` at ${EVENT.venue}` : `, ${event.city}`}`;
 const {
-	title = pageTitle("Prague Developer Conference"),
-	description = `${EVENT.name} — ${config.event.tagline}: ${config.event.pitch.replace(/\.$/, "")}. ${EVENT.dateLabel} at ${EVENT.venue}.${enabled('tickets') ? ' Tickets on sale now.' : ''}`,
+	title = pageTitle(config.event.tagline),
+	description = `${EVENT.name} — ${event.tagline}: ${event.pitch.replace(/\.$/, "")}. ${when.charAt(0).toUpperCase()}${when.slice(1)}.${enabled('tickets') ? ' Tickets on sale now.' : ''}`,
 	noindex = false,
 	kiosk = false,
-	ogImage = `${siteUrl}/og-image.jpg?v=${defaultOgImageVersion()}`,
-	ogImageAlt = `${EVENT.name} — classified mission starts ${EVENT.dateLabel}`,
+	ogImage = `${absoluteUrl('/og-image.jpg')}?v=${defaultOgImageVersion()}`,
+	ogImageAlt = `${EVENT.name} — ${event.tagline}, ${EVENT.dateLabel}`,
 } = Astro.props;
-
-const ogImageType = new URL(ogImage).pathname.endsWith(".png") ? "image/png" : "image/jpeg";
-// Strip the trailing slash (root would be `https://devfest.cz/`) to match the
-// no-slash URLs the sitemap + JSON-LD use under `trailingSlash: 'never'`.
-const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, "") || siteUrl;
 
 // Event schema follows https://developers.google.com/search/docs/appearance/structured-data/event
 // Only rendered on the home page so subpages (privacy, contact, etc.) don't
-// claim to BE the event. WebSite + Organization render sitewide.
-const isHome = Astro.url.pathname === "/";
+// claim to BE the event, and only once the day is announced: until then the
+// home page is the Organization's (ADR 0011). WebSite + Organization render
+// sitewide.
+const sitePath = withoutBase(Astro.url.pathname);
+const isHome = sitePath === "/";
 
 // `offers[].url` → #tickets (survives slug changes). Read from ti.to through
 // `/api/tickets` at build time (`tickets-static.ts`): every ticket type on sale
@@ -51,32 +51,45 @@ const isHome = Astro.url.pathname === "/";
 // with nothing on sale, or a failed read, lists none. As fresh as the last
 // Hosting deploy (ADR 0008); the cache carries no release dates, so there is
 // no `validFrom` / `priceValidUntil` to state.
-const organizer = {
-	"@type": "Organization",
-	"name": config.organizer.legalName,
-	"url": config.organizer.url
-};
 const offers = isHome && enabled('tickets')
 	? (await staticTicketLines())
 			.filter((line) => line.purchasable && line.gross != null)
 			.map((line) => ({
 				"@type": "Offer",
 				"name": line.label,
-				"url": `${siteUrl}/#tickets`,
+				"url": absoluteUrl("/#tickets"),
 				"price": String(line.gross),
 				"priceCurrency": "CZK",
 				"availability": "https://schema.org/InStock",
 				"seller": organizer
 			}))
 	: [];
-const eventSchema = {
+// The venue, or the announced city while there is none.
+const location = hasVenue
+	? (() => {
+			const venue = eventVenue();
+			return {
+				"@type": "Place",
+				"name": venue.name,
+				"address": {
+					"@type": "PostalAddress",
+					"streetAddress": venue.street,
+					"postalCode": venue.postalCode,
+					"addressLocality": venue.city,
+					"addressRegion": venue.region,
+					"addressCountry": venue.country
+				}
+			};
+		})()
+	: { "@type": "Place", "name": event.city, "address": { "@type": "PostalAddress", "addressLocality": event.city } };
+const eventSchema = hasDate && {
 	"@context": "https://schema.org",
 	"@type": "Event",
 	"name": EVENT.name,
 	"description":
-		`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch.replace(/\.$/, "")}. Two stages, one day, an afterparty.`,
+		`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch}`,
 	"image": [ogImage],
-	"url": siteUrl,
+	"url": absoluteUrl("/"),
 	"startDate": EVENT.start,
 	"endDate": EVENT.end,
 	// Registration opens an hour before the keynote (see the agenda).
@@ -85,46 +98,11 @@ const eventSchema = {
 	"eventStatus": "https://schema.org/EventScheduled",
 	"inLanguage": "en",
 	"keywords": "developer conference, technology conference, Prague, AI agents, generative UI, cloud, backends, web development, mobile development, accessibility, open source, DevFest",
-	"location": {
-		"@type": "Place",
-		"name": venue.name,
-		"address": {
-			"@type": "PostalAddress",
-			"streetAddress": venue.street,
-			"postalCode": venue.postalCode,
-			"addressLocality": venue.city,
-			"addressRegion": venue.region,
-			"addressCountry": venue.country
-		}
-	},
+	"location": location,
 	"organizer": organizer,
 	// Omitted rather than `[]` once nothing is on sale (Google reads an empty
 	// list as "no offers", a missing key as "unknown").
 	...(offers.length > 0 ? { "offers": offers } : {})
-};
-
-const organizationSchema = {
-	"@context": "https://schema.org",
-	"@type": "Organization",
-	"name": config.event.name,
-	"url": siteUrl,
-	"logo": `${siteUrl}/logo.png`,
-	"description":
-		`${config.event.name} is Prague's community-run developer conference & festival — ${config.event.pitch}`,
-	"parentOrganization": organizer,
-	"contactPoint": {
-		"@type": "ContactPoint",
-		"email": config.organizer.email,
-		"contactType": "customer support"
-	},
-	"sameAs": (await getSocials()).map((s) => s.url)
-};
-
-const websiteSchema = {
-	"@context": "https://schema.org",
-	"@type": "WebSite",
-	"name": "DevFest.cz",
-	"url": siteUrl
 };
 
 // Home → <Page> breadcrumb trail for subpages. Names map from the first path
@@ -144,7 +122,7 @@ const pageNames: Record<string, string> = {
 	"privacy-policy": "Privacy Policy",
 	"delete-account": "Delete Account"
 };
-const slug = Astro.url.pathname.replace(/^\/+|\/+$/g, "").split("/")[0];
+const slug = sitePath.replace(/^\/+|\/+$/g, "").split("/")[0];
 const breadcrumbName =
 	pageNames[slug] ??
 	slug
@@ -160,31 +138,27 @@ const breadcrumbSchema = !isHome && slug
 					"@type": "ListItem",
 					"position": 1,
 					"name": "Home",
-					"item": siteUrl
+					"item": absoluteUrl("/")
 				},
 				{
 					"@type": "ListItem",
 					"position": 2,
 					"name": breadcrumbName,
-					"item": canonicalUrl
+					"item": absoluteUrl(sitePath)
 				}
 			]
 		}
 	: null;
 
-// `<` escaped so a `</script>` in content can't end the element (still `<` to JSON).
-const jsonLd = JSON.stringify(
-	isHome
-		? [eventSchema, organizationSchema, websiteSchema]
-		: [organizationSchema, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])]
-).replace(/</g, '\\u003c');
+const organization = await organizationSchema();
+const jsonLd = isHome
+	? [...(eventSchema ? [eventSchema] : []), organization, websiteSchema]
+	: [organization, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])];
 ---
 
 <html lang="en">
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-		<meta name="generator" content={Astro.generator} />
+		<Head {title} {description} {noindex} {ogImage} {ogImageAlt} {jsonLd} />
 		{/*
 			theme-color: tints iOS Safari's status bar / URL bar so the
 			native chrome stays brand-dark even when the layout viewport
@@ -192,11 +166,10 @@ const jsonLd = JSON.stringify(
 			browsers that only respect the media-scoped form (Firefox,
 			Samsung Internet, older iOS in-app browsers).
 		*/}
-		<meta name="theme-color" content="#000000" />
-		<meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)" />
-		<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+		<meta name="theme-color" content="#05090f" />
+		<meta name="theme-color" content="#05090f" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#05090f" media="(prefers-color-scheme: dark)" />
 		<meta name="color-scheme" content="dark" />
-		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
 		{/*
 			Mark JS available ASAP so a `.js`-gated rule only applies when a
 			script is there to drive it — no-JS / crawlers get the
@@ -293,76 +266,14 @@ const jsonLd = JSON.stringify(
 			</script>
 		)}
 
-		<title>{title}</title>
-		<meta name="description" content={description} />
-		{!noindex && (
-			<>
-				<link rel="canonical" href={canonicalUrl} />
-				<link rel="alternate" hreflang="en" href={canonicalUrl} />
-				<link rel="alternate" hreflang="x-default" href={canonicalUrl} />
-			</>
-		)}
-
-		{/* Favicon */}
-		{/*
-			`favicon.ico` first, and it is a real file now: the two WebP icons
-			below are both `media`-gated, so anything that does not evaluate a
-			colour-scheme query (feed readers, link unfurlers, older browsers,
-			and every request for the well-known /favicon.ico path) fell through
-			to a 404. The .ico carries 16/32/48 from the same mark.
-		*/}
+		{/* Favicon: the DF27 mark. `favicon.ico` (16/32/48) first for anything
+		     that asks for the well-known path; the SVG for browsers that take it. */}
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
-		<link rel="icon" type="image/webp" href="/favicon-light.webp" media="(prefers-color-scheme: light)" />
-		<link rel="icon" type="image/webp" href="/favicon-dark.webp" media="(prefers-color-scheme: dark)" />
+		<link rel="icon" type="image/svg+xml" href="/favicon-2027.svg" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/site.webmanifest" />
-		<link rel="sitemap" href="/sitemap-index.xml" />
 
-		{/*
-			Self-hosted brand fonts (Astro Fonts API — see the `fonts` array in
-			astro.config.ts). Served from our own origin, so no visitor IP
-			reaches Google's font CDN before the cookie banner is answered, and
-			there is no third-party round-trip in the critical path. Each <Font />
-			emits the @font-face block plus the `cssVariable` BaseLayout.scss
-			consumes — the resolved family names are build-time hashes, so CSS
-			must never name a face literally.
-
-			`preload` is deliberate, not blanket: only the faces that paint above
-			the fold everywhere get the hint (Special Elite is the body face set
-			on <body>; Bebas Neue is the display face). Preloading all three would
-			make them compete for bandwidth and delay the two that actually
-			gate first paint. This comment is stripped from the built HTML.
-		*/}
-		<Font cssVariable="--font-special-elite" preload />
-		<Font cssVariable="--font-bebas-neue" preload />
-		<Font cssVariable="--font-jetbrains-mono" />
-
-		{/* Open Graph / Facebook */}
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content={canonicalUrl} />
-		<meta property="og:site_name" content="DevFest.cz" />
-		<meta property="og:locale" content="en_US" />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={description} />
-		<meta property="og:image" content={ogImage} />
-		<meta property="og:image:secure_url" content={ogImage} />
-		<meta property="og:image:type" content={ogImageType} />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
-		<meta property="og:image:alt" content={ogImageAlt} />
-		<link rel="image_src" href={ogImage} />
-
-		{/* Twitter */}
-		<meta name="twitter:card" content="summary_large_image" />
-		{twitter && <meta name="twitter:site" content={twitter} />}
-		<meta name="twitter:title" content={title} />
-		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content={ogImage} />
-		<meta name="twitter:image:alt" content={ogImageAlt} />
-
-		{/* Structured Data */}
-		{!noindex && <script type="application/ld+json" set:html={jsonLd} />}
-
+		{/* No web font: the aether sets everything in one system sans (`docs/design.md`). */}
 		{/* Page-specific <head> extras (e.g. FAQPage JSON-LD) */}
 		<slot name="head" />
 
@@ -402,6 +313,20 @@ const jsonLd = JSON.stringify(
 			overlays (9999 / 9998) so it stays opaque under the chrome.
 		*/}
 		<div class="status-bar-cover" aria-hidden="true"></div>
+		{/* Shared by every inked line on the page: a slight tremor that makes a
+		     vector stroke read as drawn, and the brass of the lettering. */}
+		<svg class="svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
+			<defs>
+				<filter id="aether-ink" x="-5%" y="-15%" width="110%" height="130%">
+					<feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="2" seed="7"></feTurbulence>
+					<feDisplacementMap in="SourceGraphic" scale="2.4"></feDisplacementMap>
+				</filter>
+				<linearGradient id="aether-brass" x1="0" y1="0" x2="0" y2="1">
+					<stop offset="0" stop-color="#fbf1da"></stop>
+					<stop offset="1" stop-color="#d9b26a"></stop>
+				</linearGradient>
+			</defs>
+		</svg>
 		{!kiosk && <Menu />}
 		{/*
 			`tabindex="-1"` is what makes the skip link actually skip. Without it

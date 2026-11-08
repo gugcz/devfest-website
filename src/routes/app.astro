@@ -4,13 +4,14 @@ import SubpageHero from '../components/SubpageHero.astro';
 import EndLine from '../components/EndLine.astro';
 import StoreBadges from '../components/StoreBadges.astro';
 import { EVENT } from '../lib/event';
+import { enabled } from '../lib/flags';
 
 // THE APP PAGE. Venue QR codes land here, so on a phone the store badges sit
 // straight under the hero.
 
 // What the app does, as the privacy policy describes it — nothing it doesn't.
 const features = [
-	{ title: 'The programme', desc: 'Every talk and workshop, room by room, and what is on right now.' },
+	{ title: 'The agenda', desc: 'Every talk and workshop, room by room, and what is on right now.' },
 	{ title: 'Your schedule', desc: 'Star the talks you want and the app keeps your day in order.' },
 	{ title: 'Reminders', desc: 'A nudge before your talks, and news from the crew on the day.' },
 	{ title: 'Networking', desc: 'Scan the QR code on someone’s badge to keep their contact.' },
@@ -19,12 +20,12 @@ const features = [
 
 <BaseLayout
 	title={`Get the App — ${EVENT.name}`}
-	description={`The ${EVENT.name} app: the programme, your own schedule, reminders and badge-scan networking. For iPhone and Android.`}
+	description={`The ${EVENT.name} app: the agenda, your own schedule, reminders and badge-scan networking. For iPhone and Android.`}
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml="Get the app"
-			lede="The programme, your schedule and a reminder before every talk. Free, for iPhone and Android."
+			lede="The agenda, your schedule and a reminder before every talk. Free, for iPhone and Android."
 			seoHeading={`${EVENT.name} app`}
 			titleId="app-title"
 		/>
@@ -54,7 +55,7 @@ const features = [
 					))}
 				</ol>
 
-				<EndLine text="Rather see it all on a big screen?" href="/agenda" label="Open the agenda" />
+				{enabled('lineup') && <EndLine text="Rather see it all on a big screen?" href="/agenda" label="Open the agenda" />}
 			</div>
 		</section>
 	</main>

@@ -45,7 +45,7 @@
 
 .invoice-step-text {
 	@include prose(var(--fs-body-lg), 1.55);
-	color: var(--ink);
+	color: var(--ink-text);
 	margin: 1rem 0 0;
 	max-width: 30ch;
 }

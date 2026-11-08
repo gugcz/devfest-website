@@ -26,17 +26,9 @@ export interface Venue {
 	stationWalkUrl: string;
 }
 
-export interface EventConfig {
-	/** The brand, without the year: "DevFest.cz". */
-	name: string;
-	/** The year; `eventName()` appends it to `name`. */
-	edition: number;
-	hashtag: string;
-	/** IANA zone every time below is in; dates are formatted in it. */
-	timeZone: string;
-	/** What copy writes after a time ("CET"). One edition, one label. */
-	timeZoneLabel: string;
-	/** Registration and breakfast open. ISO 8601 with the local offset. */
+/** The day, once it is announced. ISO 8601 with the local offset. */
+export interface EventDate {
+	/** Registration and breakfast open. */
 	doors: string;
 	/** The opening keynote: the schema.org `startDate`. */
 	start: string;
@@ -46,12 +38,36 @@ export interface EventConfig {
 	/** Company invoices stop being taken. `INVOICES_CLOSE` in
 	 * `functions/src/invoice/submit.ts` repeats it; keep in step. */
 	invoicesClose: string;
-	/** One line under the name: "Prague's developer conference & festival". */
+}
+
+export interface EventConfig {
+	/** The brand, without the year: "DevFest.cz". */
+	name: string;
+	/** The year; `EVENT.name` appends it to `name`. */
+	edition: number;
+	hashtag: string;
+	/** When, as announced before there is a day: "Fall 2027". */
+	season: string;
+	/** Where, as announced before there is a venue: "Prague". */
+	city: string;
+	/** IANA zone every time is in; dates are formatted in it. */
+	timeZone: string;
+	/** What copy writes after a time ("CET"). One edition, one label. */
+	timeZoneLabel: string;
+	/** The day. Unset until announced: nothing that needs a day renders, and
+	 * the flags that need one (`src/lib/features.ts`) cannot be on. */
+	date?: EventDate;
+	/** One line under the name, sentence case: "Developer conference & festival". */
 	tagline: string;
-	/** What the day is about, one sentence, used in meta and calendar text. */
+	/** How many developers the day is for (the venue's audience). Unset until
+	 * the venue is known. */
+	audience?: number;
+	/** What the edition is, one sentence in lower case after the tagline
+	 * ("Developer conference & festival: <pitch>"), used in meta, the footer
+	 * and calendar text. */
 	pitch: string;
-	previousEditionUrl: string;
-	venue: Venue;
+	/** The venue. Unset until announced; `venue` (the flag) needs it. */
+	venue?: Venue;
 }
 
 export interface OrganizerConfig {

@@ -6,7 +6,7 @@
  * as fresh as the last Hosting deploy and says so.
  */
 import type { APIRoute } from 'astro';
-import { EVENT } from '../lib/event';
+import { EVENT, hasDate, hasVenue } from '../lib/event';
 import { getTopics } from '../lib/topics';
 import { byStart, roomName, timeRange } from '../lib/agenda';
 import { speakerNames, type Room, type Session } from '../lib/sessions';
@@ -15,27 +15,29 @@ import { staticTicketLines } from '../lib/tickets-static';
 import { staticWorkshops } from '../lib/workshops-static';
 import { speakerSharePath, talkSharePath } from '../lib/share';
 import { BUILD_DAY } from '../lib/static-api';
+import { absoluteUrl } from '../lib/base';
+import { lastEdition, pastEditions } from '../lib/editions';
 import config from '../site.config';
 import { enabled, enabledOnly, type FeatureFlag } from '../lib/flags';
 
-const site = EVENT.url;
-
 const PAGES = enabledOnly<{ label: string; path: string; note: string; feature?: FeatureFlag }>([
 	{ label: 'Tickets', path: '/#tickets', note: 'ticket waves and prices, bought on ti.to', feature: 'tickets' },
-	{ label: 'Agenda', path: '/agenda', note: 'the timetable by room and time, and every talk with its abstract' },
-	{ label: 'Speakers', path: '/speakers', note: 'everyone on stage, with bios' },
+	{ label: 'Agenda', path: '/agenda', note: 'the timetable by room and time, and every talk with its abstract', feature: 'lineup' },
+	{ label: 'Speakers', path: '/speakers', note: 'everyone on stage, with bios', feature: 'lineup' },
 	{ label: 'Workshops', path: '/workshops', note: 'workshop sign-up for ticket holders, limited seats', feature: 'workshops' },
-	{ label: 'Venue', path: '/venue', note: `how to get to ${EVENT.venue} from Prague` },
-	{ label: 'FAQ', path: '/faq', note: 'the essentials, tickets, agenda and speakers, getting involved' },
+	{ label: 'Venue', path: '/venue', note: `how to get to ${EVENT.venue} from Prague`, feature: 'venue' },
+	{ label: 'FAQ', path: '/faq', note: 'the essentials and how to get involved' },
 	{ label: 'Company invoice', path: '/invoice', note: 'pay for tickets by bank transfer', feature: 'invoice' },
 	{ label: 'Code of Conduct', path: '/code-of-conduct', note: '' },
 	{ label: 'Partners', path: '/partners', note: 'the partners and how to become one', feature: 'partners' },
-	{ label: 'Team', path: '/team', note: 'the volunteers who organise it' },
-	{ label: 'Contact', path: '/contact', note: 'organisers, partnerships and press' },
-	{ label: 'Press kit', path: '/press/downloads', note: 'logos and photos' },
+	{ label: 'Team', path: '/team', note: 'the volunteers who organise it', feature: 'team' },
+	{ label: 'Contact', path: '/contact', note: 'the organisers\' inboxes' },
+	{ label: 'Press kit', path: '/press/downloads', note: 'logos and photos', feature: 'press' },
+	{ label: 'Newsletter', path: '/#newsletter', note: 'news of the next edition first', feature: 'newsletter' },
+	{ label: 'App', path: '/app', note: 'the DevFest.cz app for iOS and Android', feature: 'app' },
 ]);
 
-const link = (label: string, path: string) => `[${label}](${site}${path})`;
+const link = (label: string, path: string) => `[${label}](${absoluteUrl(path)})`;
 const clean = (text: string) => text.replace(/\s+/g, ' ').trim();
 
 function talkLine(session: Session, rooms: Room[]): string {
@@ -44,66 +46,92 @@ function talkLine(session: Session, rooms: Room[]): string {
 	return `- ${link(clean(session.title), talkSharePath(session.id))}${details ? `: ${details}` : ''}`;
 }
 
-export const GET: APIRoute = async () => {
-	const { speakers, sessions, rooms } = await staticLineup();
-	const topics = await getTopics();
-	const [tickets, workshops] = await Promise.all([
-		enabled('tickets') ? staticTicketLines() : [],
-		enabled('workshops') ? staticWorkshops(sessions) : [],
-	]);
-	const talks = [...sessions].sort(byStart);
+/** What is announced: the day and the venue, or the season and the city before them. */
+function facts(topics: string[]): string[] {
+	const { event, organizer } = config;
+	const when = hasDate ? `on ${EVENT.dateLabel}` : `in ${event.season.toLowerCase().replace(/^fall/, 'the fall of')}`;
+	const where = hasVenue ? `at ${EVENT.venue}, ${EVENT.city}` : `in ${event.city}`;
+	const pending = [!hasDate && 'date', !hasVenue && 'venue'].filter(Boolean).join(' and ');
+	const summary = `> ${event.tagline}: ${event.pitch.replace(/\.$/, '')} (${organizer.legalName}). ${EVENT.name} is ${when} ${where}${pending ? `; its ${pending} ${pending.includes(' and ') ? 'are' : 'is'} not announced yet` : ''}.`;
+	return [
+		summary,
+		'',
+		...(hasDate
+			? [`- Date: ${EVENT.dateLabel}. Doors and registration ${EVENT.doorsTime}, keynote ${EVENT.startTime}, closing remarks ${EVENT.endTime}, afterparty until ${EVENT.afterpartyEndTime} (CET).`]
+			: []),
+		...(hasVenue ? [`- Venue: ${EVENT.venue}, ${EVENT.street}. Map: ${EVENT.mapUrl}`] : []),
+		...(event.audience ? [`- Audience: ${event.audience} medior and senior developers from across Central and Eastern Europe. In person only.`] : []),
+		...(topics.length > 0 ? [`- Topics: ${topics.join(', ')}.`] : []),
+		`- Contact: ${organizer.email}`,
+		...(hasDate ? [`- Calendar: ${absoluteUrl(EVENT.icsUrl)}`] : []),
+	];
+}
 
-	const lines = [
-		`# ${EVENT.name}`,
-		'',
-		`> Prague's community developer conference: one day of talks and workshops in English on ${EVENT.dateLabel} at ${EVENT.venue}, a converted coal mill in ${config.event.venue.city}, 25 minutes north of Prague. Organised by ${config.organizer.legalName} since 2012.`,
-		'',
-		`- Date: ${EVENT.dateLabel}. Doors and registration ${EVENT.doorsTime}, keynote ${EVENT.startTime}, closing remarks ${EVENT.endTime}, afterparty until ${EVENT.afterpartyEndTime} (CET).`,
-		`- Venue: ${EVENT.venue}, ${EVENT.street}. Map: ${EVENT.mapUrl}`,
-		'- Audience: 350 medior and senior developers from across Central and Eastern Europe. In person only.',
-		`- Topics: ${topics.map((t) => t.name).join(', ')}.`,
-		`- Contact: ${config.organizer.email}`,
-		`- Calendar: ${site}${EVENT.icsUrl}`,
-		'',
-		`Lists below are as of ${BUILD_DAY}; the linked pages are live.`,
-		'',
-		...(enabled('tickets')
+/** The last edition in figures, and where every past edition lives. */
+function history(): string[] {
+	const last = lastEdition();
+	const editions = pastEditions();
+	return [
+		...(last
 			? [
-					'## Tickets',
-					'',
-					...(tickets.length > 0
-						? [
-								...tickets.map(
-									(t) =>
-										`- ${t.label}: ${t.price}, VAT included. ${t.status}${t.purchasable ? `. [Buy on ti.to](${t.url})` : ''}`,
-								),
-								...(enabled('invoice')
-									? [`- Paying by bank transfer: ${link('request a company invoice', '/invoice')}.`]
-									: []),
-							]
-						: [`- Live on the ${link('home page', '/#tickets')}.`]),
-					'',
+					`- Last edition: ${last.name}, ${last.dateLabel}${last.venue ? ` at ${last.venue}` : ''}, ${last.city}: ${last.audience ? `${last.audience} developers, ` : ''}${last.talks} talks, ${last.speakers} speakers. Archive: ${absoluteUrl(last.href)} (its own ${link('llms.txt', `${last.href}/llms.txt`)}).`,
 				]
 			: []),
-		'## Pages',
-		'',
-		...PAGES.map(({ label, path, note }) => `- ${link(label, path)}${note ? `: ${note}` : ''}`),
-		'',
+		`- Past editions: ${editions.map(({ year, href }) => `[${year}](${href.startsWith('/') ? absoluteUrl(href) : href})`).join(', ')}.`,
+	];
+}
+
+/** The ticket waves, while the sale is on. */
+function ticketSection(tickets: Awaited<ReturnType<typeof staticTicketLines>>): string[] {
+	if (!enabled('tickets')) return [];
+	const lines =
+		tickets.length > 0
+			? [
+					...tickets.map((t) => `- ${t.label}: ${t.price}, VAT included. ${t.status}${t.purchasable ? `. [Buy on ti.to](${t.url})` : ''}`),
+					...(enabled('invoice') ? [`- Paying by bank transfer: ${link('request a company invoice', '/invoice')}.`] : []),
+				]
+			: [`- Live on the ${link('home page', '/#tickets')}.`];
+	return ['## Tickets', '', ...lines, ''];
+}
+
+/** The talks, the workshops and the speakers, while the lineup is on. */
+async function lineupSections(): Promise<string[]> {
+	if (!enabled('lineup')) return [];
+	const { speakers, sessions, rooms } = await staticLineup();
+	const workshops = enabled('workshops') ? await staticWorkshops(sessions) : [];
+	const talks = [...sessions].sort(byStart);
+	return [
 		...(talks.length > 0 ? ['## Talks', '', ...talks.map((s) => talkLine(s, rooms)), ''] : []),
-		...(enabled('workshops') && workshops.length > 0
-			? ['## Workshops', '', ...workshops.map((s) => talkLine(s, rooms)), '']
-			: []),
+		...(workshops.length > 0 ? ['## Workshops', '', ...workshops.map((s) => talkLine(s, rooms)), ''] : []),
 		...(speakers.length > 0
 			? [
 					'## Speakers',
 					'',
-					...speakers.map(
-						(sp) => `- ${link(clean(sp.fullName), speakerSharePath(sp.id))}${sp.tagLine ? `: ${clean(sp.tagLine)}` : ''}`,
-					),
+					...speakers.map((sp) => `- ${link(clean(sp.fullName), speakerSharePath(sp.id))}${sp.tagLine ? `: ${clean(sp.tagLine)}` : ''}`),
 					'',
 				]
 			: []),
 	];
+}
 
+export const GET: APIRoute = async () => {
+	// The topics are the lineup's tracks: stated once the lineup is out.
+	const topics = enabled('lineup') ? (await getTopics()).map((t) => t.name) : [];
+	const tickets = enabled('tickets') ? await staticTicketLines() : [];
+	const lines = [
+		`# ${EVENT.name}`,
+		'',
+		...facts(topics),
+		...history(),
+		'',
+		`Lists below are as of ${BUILD_DAY}; the linked pages are live.`,
+		'',
+		...ticketSection(tickets),
+		'## Pages',
+		'',
+		...PAGES.map(({ label, path, note }) => `- ${link(label, path)}${note ? `: ${note}` : ''}`),
+		'',
+		...(await lineupSections()),
+	];
 	return new Response(lines.join('\n'), { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

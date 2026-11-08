@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../lib/base';
+
 /**
  * A retired URL that still has links pointing at it. Static hosting has no
  * server to answer with a 301, so the page does the redirect itself: the
@@ -13,7 +15,8 @@ interface Props {
 	title: string;
 }
 
-const { to, title } = Astro.props;
+const { title } = Astro.props;
+const to = withBase(Astro.props.to);
 const canonical = new URL(to.split('#')[0], Astro.site).href;
 ---
 

@@ -1,5 +1,6 @@
 /** Browser fetch of `/api/lineup` (plain `fetch()`, never the Firestore
  * SDK); raw docs parsed by `speakerFromDoc` / `sessionFromDoc` / `roomFromDoc`. */
+import { apiUrl } from './base';
 import { speakerFromDoc, type Speaker } from './speakers';
 import {
 	isAgendaSession,
@@ -18,7 +19,7 @@ export interface Lineup {
 	rooms: Room[];
 }
 
-const ENDPOINT = '/api/lineup';
+const ENDPOINT = apiUrl('lineup');
 
 interface WireDoc {
 	id?: unknown;

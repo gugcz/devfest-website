@@ -1,0 +1,56 @@
+---
+/**
+ * The painted background (`src/lib/aether`), fixed behind the whole page.
+ * The sigil centres on the element marked `data-aether-anchor` (the home
+ * page's logo, a subpage's title).
+ * Without WebGL the body's gradients show through.
+ */
+---
+
+<canvas id="aether" class="aether-canvas" aria-hidden="true"></canvas>
+
+<script>
+	import { startAether } from '../../lib/aether';
+
+	let stop: (() => void) | null = null;
+
+	// Once per page: <ClientRouter /> keeps this module alive across soft
+	// navigations, so it starts on every page that has the canvas and stops
+	// (freeing the GPU) before the page is swapped out.
+	document.addEventListener('astro:page-load', () => {
+		stop?.();
+		stop = null;
+		const canvas = document.getElementById('aether');
+		const anchor = document.querySelector('[data-aether-anchor]');
+		if (canvas instanceof HTMLCanvasElement && anchor instanceof HTMLElement) stop = startAether(canvas, anchor);
+	});
+	document.addEventListener('astro:before-swap', () => {
+		stop?.();
+		stop = null;
+	});
+</script>
+
+<style>
+	/* Under every block of the page, over the body's gradient: a section
+	   without its own stacking still covers it with its ground. */
+	.aether-canvas {
+		position: fixed;
+		z-index: -1;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		display: block;
+		opacity: 0;
+		transition: opacity 1.8s ease;
+	}
+
+	.aether-canvas.is-live {
+		opacity: 1;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.aether-canvas {
+			transition: none;
+		}
+	}
+</style>

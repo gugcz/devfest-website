@@ -53,10 +53,6 @@ export default function NewsletterForm() {
 
 	return (
 		<div className={s.wrapper}>
-			<div className={s.edge} aria-hidden="true">
-				<span className={s.edgeWord}>DevFest.cz</span>
-				<span>2026</span>
-			</div>
 			<form
 				className={s.form}
 				method="post"

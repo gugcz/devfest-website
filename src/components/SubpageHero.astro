@@ -1,10 +1,17 @@
 ---
+/**
+ * A subpage's stage (`docs/design.md`): the painting behind the title, as
+ * on the home page, the title over it, one factual line under it; the veil
+ * takes over below.
+ */
+import AetherCanvas from './aether/AetherCanvas.astro';
+
 interface Props {
 	titleHtml: string;
 	lede: string;
 	titleId?: string;
 	/** Visually-hidden keyword text prepended to the <h1>, ahead of the
-	 * decorative title (e.g. "DevFest.cz 2026 Speakers"). Omit to skip. */
+	 * decorative title (e.g. "DevFest.cz 2027 Speakers"). Omit to skip. */
 	seoHeading?: string;
 	/** One cross-link under the lede, to the page's sibling view. */
 	link?: { href: string; label: string };
@@ -20,19 +27,18 @@ const {
 ---
 
 <section class="subpage-hero" aria-labelledby={titleId}>
+	<AetherCanvas />
 	<div class="hero-content">
-		<h1 id={titleId} class="hero-title">
+		<h1 id={titleId} class="hero-title rise" data-aether-anchor>
 			{seoHeading && <span class="sr-only">{seoHeading} — </span>}
 			<span set:html={titleHtml} />
 		</h1>
-		<div class="hero-side">
-			<p class="hero-lede">{lede}</p>
-			{link && (
-				<p class="hero-link">
-					<a class="action" href={link.href}>{link.label}</a>
-				</p>
-			)}
-		</div>
+		<p class="hero-lede rise rise-2">{lede}</p>
+		{link && (
+			<p class="hero-link rise rise-3">
+				<a class="action" href={link.href}>{link.label}</a>
+			</p>
+		)}
 	</div>
 </section>
 

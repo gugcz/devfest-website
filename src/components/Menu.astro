@@ -1,10 +1,8 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../assets/logo.png';
-import venuePrint from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
-import { EVENT, eventDate } from '../lib/event';
+import { EVENT, hasVenue } from '../lib/event';
 import config from '../site.config';
 import { enabledOnly, ticketsHref as ticketsLink, type FeatureFlag } from '../lib/flags';
+import { ARCHIVE, liveUrl, withoutBase } from '../lib/base';
 
 interface NavLink {
 	href: string;
@@ -15,7 +13,7 @@ interface NavLink {
 	feature?: FeatureFlag;
 }
 
-const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const currentPath = withoutBase(Astro.url.pathname).replace(/\/$/, '') || '/';
 const isHome = currentPath === '/';
 // An invitation has ONE primary action (`Take the ticket` → ti.to). The red
 // `Tickets` bar action would be a second one pointing off the invitation, so
@@ -24,6 +22,11 @@ const isInvite = currentPath === '/invite' || currentPath.startsWith('/invite/')
 // On the home page #tickets is a same-page anchor; from subpages we need
 // to send the visitor back to / first so the section actually exists.
 const ticketsHref = ticketsLink ? (isHome ? '#tickets' : '/#tickets') : null;
+// An archived edition (ADR 0011) has no sale; the red button takes the
+// visitor to the live site instead. A full load: the two are separate builds.
+const nextEdition = ARCHIVE
+	? { href: liveUrl('/'), label: 'Current edition', name: `${config.event.name}, the current edition` }
+	: null;
 
 // TWO TIERS, EIGHT LINES. Ten destinations at one poster size made the
 // visitor read all ten every time; two tiers of twelve still did. So the
@@ -33,13 +36,13 @@ const ticketsHref = ticketsLink ? (isHome ? '#tickets' : '/#tickets') : null;
 // The five below are what the site is for (docs/product.md: sell tickets, carry
 // the programme) plus the one thing every ticket holder has to look up: how
 // to get to the venue.
-const links: readonly NavLink[] = [
+const links: readonly NavLink[] = enabledOnly([
 	...(ticketsHref ? [{ href: ticketsHref, label: 'Tickets', cta: true }] : []),
-	{ href: '/speakers', label: 'Speakers' },
-	{ href: '/agenda', label: 'Agenda' },
-	{ href: '/venue', label: 'Venue' },
+	{ href: '/speakers', label: 'Speakers', feature: 'lineup' },
+	{ href: '/agenda', label: 'Agenda', feature: 'lineup' },
+	{ href: '/venue', label: 'Venue', feature: 'venue' },
 	{ href: '/faq', label: 'FAQ' },
-];
+]);
 
 // The organisers' side, one step smaller so it reads as the same list rather
 // than as fine print. Off the menu but one click from where they are asked
@@ -48,10 +51,13 @@ const links: readonly NavLink[] = [
 // All three stay in the footer, which lists every page.
 const secondary: readonly NavLink[] = enabledOnly([
 	{ href: '/partners', label: 'Partners', feature: 'partners' },
-	{ href: '/team', label: 'Team' },
-	{ href: '/contact#press', label: 'Press' },
+	{ href: '/team', label: 'Team', feature: 'team' },
+	{ href: '/contact#press', label: 'Press', feature: 'press' },
 	{ href: '/contact', label: 'Contact' },
 ]);
+const hasMenu = links.length + secondary.length > 0;
+// Where and when, as far as it is announced: "Fall 2027 — Prague".
+const where = hasVenue ? `${EVENT.venue}, ${EVENT.city}` : EVENT.city;
 
 const isCurrent = (href: string) => {
 	if (href.startsWith('http')) return false;
@@ -65,24 +71,14 @@ const isCurrent = (href: string) => {
 
 <header id="site-header" class="site-header" data-state="top" data-home={isHome ? 'true' : 'false'}>
 	<a href="/" class="brand" aria-label={`${EVENT.name} — home`}>
-		{/* Header sits above the fold on every page, so it loads eagerly; the
-		     intrinsic width/height come from the official 3000×600 artboard (5:1,
-		     clear space included), and `widths` caps the srcset at the 190px CSS
-		     width up to 2× DPR. */}
-		<Image
-			src={logo}
-			alt={EVENT.name}
-			class="brand-logo"
-			loading="eager"
-			widths={[190, 380]}
-			sizes="190px"
-		/>
+		{/* The DF27 mark (`public/df27-logo.svg`, cropped to the artwork: 2880×280). */}
+		<img src="/df27-logo.svg" alt={EVENT.name} class="brand-logo" width="2880" height="280" loading="eager" decoding="async" />
 	</a>
 
 	{/* Desktop (>=1100px): the destinations sit in the bar, the four the visit
 	     turns on, then the organisers' side one shade dimmer. Below 1100px this
 	     list is hidden and the same lines live in the full-screen panel. */}
-	<nav class="bar-nav" aria-label="Primary">
+	{hasMenu && <nav class="bar-nav" aria-label="Primary">
 		<ul class="bar-list">
 			{links.filter(({ cta }) => !cta).map(({ href, label }) => {
 				const current = isCurrent(href);
@@ -114,10 +110,10 @@ const isCurrent = (href: string) => {
 				);
 			})}
 		</ul>
-	</nav>
+	</nav>}
 
 	<div class="header-actions">
-		<nav class="nav" aria-label="Primary">
+		{hasMenu && <nav class="nav" aria-label="Primary">
 			<button
 				id="nav-toggle"
 				class="nav-toggle"
@@ -174,31 +170,23 @@ const isCurrent = (href: string) => {
 							})}
 						</ul>
 					</div>
-
-					{/* One small print on the table beside the lines (>=901px only):
-					     where the day happens. Decorative; the foot line says it in words. */}
-					<div class="nav-print paper" aria-hidden="true">
-						<span class="tape">{EVENT.venue}</span>
-						<span class="paper-photo nav-print-photo">
-							<Image src={venuePrint} alt="" widths={[260, 520]} sizes="260px" loading="lazy" />
-						</span>
-						<span class="paper-edge">
-							<span>{eventDate('slash')}</span>
-							<span>{EVENT.doorsTime}</span>
-						</span>
-					</div>
 				</div>
 
 				<div class="nav-foot">
 					<div class="nav-foot-meta">
-						<p class="nav-foot-line">{EVENT.dateLabel} &mdash; {EVENT.venue}, {config.event.venue.city}</p>
+						<p class="nav-foot-line">{EVENT.dateLabel} &mdash; {where}</p>
 						<a class="nav-foot-mail" href={`mailto:${EVENT.contactEmail}`}>{EVENT.contactEmail}</a>
 					</div>
 				</div>
 			</div>
-		</nav>
+		</nav>}
 
 		{!isInvite && ticketsHref && <a href={ticketsHref} class="header-cta">Tickets</a>}
+		{nextEdition && (
+			<a href={nextEdition.href} class="header-cta" data-astro-reload>
+				{nextEdition.label}<span class="sr-only">: {nextEdition.name}</span>
+			</a>
+		)}
 	</div>
 </header>
 

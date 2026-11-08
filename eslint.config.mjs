@@ -5,7 +5,7 @@ import tseslint from 'typescript-eslint';
 
 export default [
   {
-    ignores: ['dist/**', '.astro/**', 'functions/lib/**', 'functions/lib-test/**'],
+    ignores: ['dist/**', 'archive/**', '.archive/**', '.astro/**', 'functions/lib/**', 'functions/lib-test/**'],
   },
   ...astro.configs['flat/base'],
   {

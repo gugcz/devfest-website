@@ -3,7 +3,8 @@
  * so a page a flag can remove lives under `src/routes/` (same nesting, so its
  * relative imports are unchanged) and is injected here only when its flag is
  * on (`injectRoute`, Astro integrations reference). Off means off: no HTML,
- * no sitemap entry.
+ * no sitemap entry. `/calendar.ics` exists only while the edition has a day
+ * and a venue (`DATED_ROUTES`).
  */
 import type { AstroIntegration } from 'astro';
 import type { FeatureFlag, Features } from '../lib/features';
@@ -16,19 +17,29 @@ interface Route {
 }
 
 const ROUTES: Record<FeatureFlag, readonly Route[]> = {
+	lineup: [
+		{ pattern: '/agenda', entrypoint: 'agenda.astro' },
+		{ pattern: '/speakers', entrypoint: 'speakers.astro' },
+		{ pattern: '/speakers/[id]', entrypoint: 'speakers/[id].astro' },
+		{ pattern: '/talks/[id]', entrypoint: 'talks/[id].astro' },
+		{ pattern: '/sessions', entrypoint: 'sessions.astro' },
+		{ pattern: '/tv', entrypoint: 'tv.astro' },
+	],
+	venue: [{ pattern: '/venue', entrypoint: 'venue.astro' }],
 	tickets: [{ pattern: '/thank-you', entrypoint: 'thank-you.astro' }],
 	invoice: [{ pattern: '/invoice', entrypoint: 'invoice.astro' }],
 	workshops: [{ pattern: '/workshops', entrypoint: 'workshops.astro' }],
-	app: [
-		{ pattern: '/app', entrypoint: 'app.astro' },
-		{ pattern: '/login', entrypoint: 'login/index.astro' },
-		{ pattern: '/delete-account', entrypoint: 'delete-account.astro' },
-	],
+	app: [{ pattern: '/app', entrypoint: 'app.astro' }],
 	invite: [
 		{ pattern: '/invite/[member]', entrypoint: 'invite/[member].astro' },
 		{ pattern: '/og/invite/[member].jpg', entrypoint: 'og/invite/[member].jpg.ts' },
 	],
 	partners: [{ pattern: '/partners', entrypoint: 'partners.astro' }],
+	team: [{ pattern: '/team', entrypoint: 'team.astro' }],
+	press: [
+		{ pattern: '/press', entrypoint: 'press.astro' },
+		{ pattern: '/press/downloads', entrypoint: 'press/downloads.astro' },
+	],
 	newsletter: [
 		{ pattern: '/newsletter-subscription-thank-you', entrypoint: 'newsletter-subscription-thank-you.astro' },
 	],
@@ -38,20 +49,25 @@ const ROUTES: Record<FeatureFlag, readonly Route[]> = {
 	],
 };
 
-export default function featureRoutes(features: Features): AstroIntegration {
+/** Routes that state the day and the place: built only while `event.date` and `event.venue` are set. */
+const DATED_ROUTES: readonly Route[] = [{ pattern: '/calendar.ics', entrypoint: 'calendar.ics.ts' }];
+
+export default function featureRoutes(features: Features, dated: boolean): AstroIntegration {
 	return {
 		name: 'devfest:feature-routes',
 		hooks: {
 			'astro:config:setup': ({ injectRoute, logger }) => {
+				const inject = ({ pattern, entrypoint }: Route) =>
+					injectRoute({ pattern, entrypoint: new URL(`../routes/${entrypoint}`, import.meta.url) });
 				for (const [flag, routes] of Object.entries(ROUTES) as [FeatureFlag, readonly Route[]][]) {
-					if (!features[flag]) {
-						logger.info(`${flag} off: ${routes.map((r) => r.pattern).join(', ')} not built`);
+					if (features[flag]) {
+						routes.forEach(inject);
 						continue;
 					}
-					for (const { pattern, entrypoint } of routes) {
-						injectRoute({ pattern, entrypoint: new URL(`../routes/${entrypoint}`, import.meta.url) });
-					}
+					logger.info(`${flag} off: ${routes.map((r) => r.pattern).join(', ')} not built`);
 				}
+				if (dated) DATED_ROUTES.forEach(inject);
+				else logger.info(`no event.date or event.venue: ${DATED_ROUTES.map((r) => r.pattern).join(', ')} not built`);
 			},
 		},
 	};

@@ -7,49 +7,38 @@
  * `INVOICES_CLOSE` in `functions/src/invoice/submit.ts`; one mirror module
  * is planned, ADR 0010); change both.
  *
- * The event is after the autumn DST switch, so `+01:00` is right; do not
- * "fix" it to `+02:00`.
+ * Times carry the local offset: `+01:00` after the autumn DST switch,
+ * `+02:00` before it.
  */
 import type { SiteConfig } from './lib/site-config';
 import { checkFeatureDependencies, resolveFeatures } from './lib/features';
 
 /**
  * `PUBLIC_FEATURES_OFF=workshops,invoice` turns flags off for one build (the
- * flags-off check, `scripts/flags-off-build.mjs`). Read through
+ * flags-off check, `scripts/flags-off-build.mjs`); `PUBLIC_FEATURES_ON` turns
+ * them on (an archive build, `scripts/archive.mjs`). Read through
  * `import.meta.env` so the client bundle sees the same answer as the build;
  * plain Node (the Astro config loader, tests) has no `import.meta.env`.
  */
-const featuresOff: string =
-	import.meta.env?.PUBLIC_FEATURES_OFF ??
-	(typeof process === 'undefined' ? '' : (process.env.PUBLIC_FEATURES_OFF ?? ''));
+const buildVariable = (name: 'PUBLIC_FEATURES_OFF' | 'PUBLIC_FEATURES_ON'): string =>
+	import.meta.env?.[name] ?? (typeof process === 'undefined' ? '' : (process.env[name] ?? ''));
 
 const config: SiteConfig = {
 	event: {
 		name: 'DevFest.cz',
-		edition: 2026,
+		edition: 2027,
 		hashtag: '#DevFestCZ',
+		// Announced: the season and the city. The day, the venue and its
+		// audience follow once they are; until then the sections that need
+		// them stay off (`features` below).
+		season: 'Fall 2027',
+		city: 'Prague',
 		timeZone: 'Europe/Prague',
 		timeZoneLabel: 'CET',
-		doors: '2026-10-30T08:00:00+01:00',
-		start: '2026-10-30T09:00:00+01:00',
-		end: '2026-10-30T19:00:00+01:00',
-		afterpartyEnd: '2026-10-30T23:00:00+01:00',
-		invoicesClose: '2026-10-30T07:00:00+01:00',
-		tagline: "Prague's developer conference & festival",
-		pitch:
-			'AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it.',
-		previousEditionUrl: 'https://2025.devfest.cz',
-		venue: {
-			name: 'Uhelný Mlýn',
-			street: 'Areál Šroubáren 860',
-			postalCode: '252 66',
-			city: 'Libčice nad Vltavou',
-			region: 'Central Bohemia',
-			country: 'CZ',
-			countryName: 'Czech Republic',
-			mapUrl: 'https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8',
-			stationWalkUrl: 'https://maps.app.goo.gl/95BeQWKRnyoXTXMF9',
-		},
+		tagline: 'Developer conference & festival',
+		// No topics until the 2027 lineup has them (`src/content/topics.json`
+		// holds 2026's, shown only with `lineup` on).
+		pitch: 'talks and workshops in English, run by the developer community around GUG.cz since 2012.',
 	},
 	organizer: {
 		name: 'GUG.cz',
@@ -82,22 +71,30 @@ const config: SiteConfig = {
 	},
 	features: resolveFeatures(
 		{
-			// The 2026 edition is over (30 October 2026): the ticket sale, the
-			// invoices, the invitations, the workshop sign-up and the share
-			// cards are off. The programme, the speakers and the app stay.
+			// 2027 is announced for the fall in Prague; no day, venue or lineup
+			// yet. The 2026 edition is archived at /2026 (ADR 0011). A flag
+			// turns on once its section is ready, and its redirect in
+			// firebase.json goes in the same change. The app is not promoted
+			// until it carries the 2027 edition; the team, the press kit and
+			// the coverage wait for 2027's.
+			lineup: false,
+			venue: false,
 			tickets: false,
 			invoice: false,
 			workshops: false,
-			app: true,
+			app: false,
 			invite: false,
-			partners: true,
+			partners: false,
 			newsletter: true,
+			team: false,
+			press: false,
 			attending: false,
 		},
-		featuresOff,
+		buildVariable('PUBLIC_FEATURES_OFF'),
+		buildVariable('PUBLIC_FEATURES_ON'),
 	),
 };
 
-checkFeatureDependencies(config.features);
+checkFeatureDependencies(config.features, config.event);
 
 export default config;
