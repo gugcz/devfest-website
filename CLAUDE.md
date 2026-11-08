@@ -117,7 +117,7 @@ edited PR body keeps its old text in the public edit history.
 | Types | `npm run check` (`astro check`) |
 | Site tests | `npm run test:site` (`node --test` on `src/**/*.test.ts`, types stripped by Node) |
 | Flags off | `npm run flags-off` (two builds with feature flags off; fails on a route, sitemap entry or link left behind) |
-| Archive an edition | `npm run archive -- <year>` (once a year, on the last commit with `edition` on; writes `archive/<year>/`; `docs/adapting.md`) |
+| Archive an edition | `npm run archive -- <year>` (once a year, while `config.event` is that edition; writes `archive/<year>/`; `docs/adapting.md`) |
 | Cognitive complexity | `npm run complexity` (`sonarjs/cognitive-complexity`, max 15) |
 | Function tests | `npm --prefix functions test` (`node --test`, stubs `fetch`) |
 | Accessibility | `npm run a11y` (axe on an `A11Y_MOCK=1` build, needs Playwright Chromium) |

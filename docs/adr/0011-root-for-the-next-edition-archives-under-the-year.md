@@ -28,13 +28,21 @@ slows every deploy and rots with its toolchain.
   (`scripts/archive.mjs`) builds the site as it stands with
   `PUBLIC_ARCHIVE=<year>`: Astro's `base` is `/<year>`,
   `src/middleware.ts` rebases every root-relative URL in the rendered HTML,
-  client code calls `withBase()` / `apiUrl()` (`src/lib/base.ts`), and the
-  live-only sections (`app`, `newsletter`) are off. The script freezes
-  `/api/lineup` and every speaker photo into the output first (production
-  moves on to the next edition's lineup), fails on any URL outside
-  `/<year>`, and writes `archive/<year>/`. Nobody edits it by hand and it is
-  not rebuilt; an archive build refuses to run once `features.edition` is
-  off.
+  client code calls `withBase()` / `apiUrl()` (`src/lib/base.ts`), the
+  `edition` flag is forced on (`PUBLIC_FEATURES_ON`) and the live-only
+  sections (`app`, `newsletter`) are off. The script freezes `/api/lineup`
+  and every speaker photo into the output first (production moves on to the
+  next edition's lineup), fails on any URL outside `/<year>` other than the
+  live root, another archive or a live-only page, and writes
+  `archive/<year>/`. Nobody edits it by hand. It is rebuilt only while
+  `config.event` is still that edition; the build refuses otherwise.
+- **The legal pages stay live.** The privacy policy and the code of conduct
+  (`LIVE_ONLY_PATHS`) are not frozen: an archived page links the live ones,
+  so the policy behind an archived page's cookie banner is the current one.
+- **A link between builds is a full load.** The middleware gives every link
+  from the live site into an archive, and from an archive to the live site,
+  `data-astro-reload`: `<ClientRouter />` would otherwise swap one build's
+  page into the other's document and run both builds' scripts.
 - **The live build carries the archives.** `src/integrations/archives.ts`
   copies every `archive/<year>/` into `dist/` after the build and lists its
   pages in the live sitemap. Every archived page names the live site in its
@@ -43,8 +51,8 @@ slows every deploy and rots with its toolchain.
   edition's pages (the event home, `/agenda`, `/speakers`, the share pages,
   `/venue`, `/faq`, `/team`, `/contact`, `/press`, `/tv`, `/calendar.ics`).
   Off, the home page is the teaser of `config.upcoming` (`src/routes/teaser.astro`)
-  with `Organization` JSON-LD and no `Event`; `tickets`, `workshops` and
-  `attending` need it on. The legal pages, the app's pages, the 404 and the
+  with `Organization` JSON-LD and no `Event`; `tickets`, `workshops`,
+  `attending` and `partners` need it on. The legal pages, the app's pages, the 404 and the
   newsletter thank-you stay at the root.
 - **Moved URLs answer 301.** `firebase.json` redirects every path the
   edition owned to `/2026/…`. Hosting applies redirects before static

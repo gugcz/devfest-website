@@ -52,8 +52,9 @@ npm run a11y
 # Everything CI checks: astro check, cognitive complexity, site and function tests, axe
 npm run verify
 
-# Freeze the edition this checkout builds into archive/<year>/ (once a year)
-npm run archive -- 2026
+# Freeze the edition src/site.config.ts describes into archive/<year>/ (once a year;
+# a section the root already switched off goes back on with PUBLIC_FEATURES_ON)
+PUBLIC_FEATURES_ON=partners npm run archive -- 2026
 ```
 
 `archive/<year>/` is a frozen build: the live build copies it into `dist/` and serves it at `/<year>`. Never edit it by hand; `npm run preview` after a build shows it.

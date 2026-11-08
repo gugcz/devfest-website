@@ -35,8 +35,11 @@ paths:
   path works because `src/middleware.ts` rebases root-relative URLs in
   rendered HTML; code the middleware never sees (islands, scripts, absolute
   URLs, `/api/*` reads) uses `withBase()`, `absoluteUrl()`, `liveUrl()` and
-  `apiUrl()` from `src/lib/base.ts`. A link from one build to another (the
-  archive and the live site) carries `data-astro-reload`.
+  `apiUrl()` from `src/lib/base.ts`. The middleware also gives every link
+  between the two builds (live site ↔ archive) `data-astro-reload`, so
+  `<ClientRouter />` never swaps one build's page into the other's
+  document; and in an archive it points the live-only pages
+  (`LIVE_ONLY_PATHS`: privacy policy, code of conduct) at the live site.
 - **SEO.** `Head.astro` (shared by `BaseLayout` and `TeaserLayout`): meta,
   OG/Twitter, canonical, JSON-LD. `BaseLayout` adds Event (home only),
   Organization, WebSite, BreadcrumbList; the teaser Organization and

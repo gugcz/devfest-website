@@ -16,14 +16,18 @@ fails on a section a flag did not remove cleanly.
 ended moves to `devfest.cz/<year>` as a frozen build
 ([ADR 0011](adr/0011-root-for-the-next-edition-archives-under-the-year.md)).
 
-1. **Archive it**, on the last commit whose config still builds the
-   edition (`features.edition` on): `npm run archive -- <year>`. It freezes
-   `/api/lineup` and the speaker photos, builds the site under `/<year>`
-   with `app` and `newsletter` off, fails on any URL outside `/<year>`, and
-   writes `archive/<year>/`. Commit it whole; never edit it by hand.
+1. **Archive it** while `config.event` is still that edition:
+   `npm run archive -- <year>`. It freezes `/api/lineup` and the speaker
+   photos, builds the site under `/<year>` with `edition` on and `app` and
+   `newsletter` off, leaves the privacy policy and the code of conduct to
+   the live site, fails on any URL outside `/<year>`, and writes
+   `archive/<year>/`. A section the root has already switched off goes back
+   on for the archive with `PUBLIC_FEATURES_ON` (e.g.
+   `PUBLIC_FEATURES_ON=partners npm run archive -- 2026`). Commit it whole;
+   never edit it by hand.
 2. **Switch the root to the teaser** in `src/site.config.ts`:
-   `features.edition` off with `tickets`, `invoice`, `invite`, `workshops`,
-   `attending` and `partners`; `upcoming` set to what is announced
+   `features.edition` off with everything that needs it (`tickets`,
+   `invoice`, `invite`, `workshops`, `attending`, `partners`); `upcoming` set to what is announced
    (`edition`, `season`, `city`; never a day or a venue). `event` keeps the
    archived edition's facts until the next one has a date.
 3. **Redirect what moved**: `firebase.json` → `redirects`, a 301 from every
@@ -103,7 +107,7 @@ Everything above, plus:
    | `workshops` | `/workshops` and its links | `app`, `edition` |
    | `app` | `/app`, `/login`, `/delete-account`, the store badges | |
    | `invite` | `/invite/<member>` and its OG cards | `tickets` |
-   | `partners` | `/partners`, the partner bands, the TV credits | |
+   | `partners` | `/partners`, the partner bands, the TV credits | `edition` |
    | `newsletter` | the form, `/newsletter-subscription-thank-you`, every "Get notified" link, the home hero's "Stay in the loop" | |
    | `attending` | `/attending`, `/speaker-card` | `edition` |
 
