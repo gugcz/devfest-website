@@ -4,8 +4,9 @@
  * is the DF27 comp: the painting, the logo, the season (or the day once it
  * is announced), the tagline and two portals. Below it, on the veil: what
  * DevFest.cz is and what is announced, the sections the flags have on
- * (tickets, speakers, partners, the app), the last edition in figures, and
- * the newsletter. Nothing about the edition is stated beyond the config.
+ * (tickets, speakers, partners, the app), the last edition in figures and
+ * its aftermovie, and the newsletter. Nothing about the edition is stated
+ * beyond the config.
  */
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -159,6 +160,20 @@ const PRINTS = [
 								</li>
 							))}
 						</ul>
+						{last.aftermovie && (
+							<div class="film">
+								<iframe
+									src={`https://www.youtube-nocookie.com/embed/${last.aftermovie}`}
+									title={`${last.name} aftermovie`}
+									loading="lazy"
+									allow="encrypted-media; picture-in-picture; web-share"
+									referrerpolicy="strict-origin-when-cross-origin"
+									allowfullscreen
+									width="1280"
+									height="720"
+								></iframe>
+							</div>
+						)}
 						<p class="band-link">
 							<a href={last.href} data-astro-reload>The {last.year} agenda and speakers</a>
 						</p>

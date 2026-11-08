@@ -329,7 +329,7 @@ fixed menu bar sits over it; the stage pads `header-h` + 1.5rem.
 `ink-veil` over the first 14rem, then solid. Home bands are centred single
 columns at the `measure`, separated by `section` top padding; partners
 widen to `maxw`; the prints step out to four columns from 900px, past the
-measure by up to 14rem a side.
+measure by up to 14rem a side, and the film under them to the same width.
 
 **A subpage** opens on its own stage (`SubpageHero`, at least 22rem, up to
 58svh): the painting behind, anchored on the title; the title and one note
@@ -447,6 +447,8 @@ two inked rules with diamonds (`clamp(2.5rem, 8vw, 4.5rem)` each), centred.
   voice) and an optional label on its top edge (`.tape`, brass on ink).
 - **Print** (`.paper-photo`, the home `.print`): a photograph in a 1px brass
   frame (50%), slightly desaturated (`saturate(0.85) contrast(1.05)`).
+- **Film** (the home `.film`): the last edition's aftermovie, a 16:9
+  YouTube player in the print's frame and plate, as wide as the prints.
 
 **[MUST] The Plates Not Cards Rule.** What repeats sits on square ink plates
 with a faint brass edge, never tilted, never shadowed, never rounded. The

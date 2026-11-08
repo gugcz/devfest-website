@@ -331,7 +331,7 @@ page.
 
 | Route | Description |
 |-------|-------------|
-| `/` | The edition's home: the DF27 stage, what is announced, tickets and speakers while their flags are on, the last edition in figures, the app, the newsletter |
+| `/` | The edition's home: the DF27 stage, what is announced, tickets and speakers while their flags are on, the last edition in figures and its aftermovie, the app, the newsletter |
 | `/2026/…` | The 2026 edition, frozen (`archive/2026/`): every page it had, its lineup and speaker photos included |
 | `/speakers` (flag `lineup`) | Speaker lineup (reads `/api/lineup`); `?speaker=<id>` opens one speaker |
 | `/speakers/<id>`, `/talks/<id>` (flag `lineup`) | Share pages: one speaker or talk as text with its own link preview, then forward to the sheet; indexed |
