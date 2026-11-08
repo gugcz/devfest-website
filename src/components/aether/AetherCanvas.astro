@@ -32,13 +32,18 @@
 
 <style>
 	/* Under every block of the page, over the body's gradient: a section
-	   without its own stacking still covers it with its ground. */
+	   without its own stacking still covers it with its ground.
+	   As tall as the large viewport (the URL bar hidden), never `inset: 0`:
+	   a fixed box with a bottom edge follows a phone's URL bar as it slides
+	   in or out while scrolling, and every new height re-centres the smoke. */
 	.aether-canvas {
 		position: fixed;
 		z-index: -1;
-		inset: 0;
+		top: 0;
+		left: 0;
 		width: 100%;
-		height: 100%;
+		height: 100vh;
+		height: 100lvh;
 		display: block;
 		opacity: 0;
 		transition: opacity 1.8s ease;

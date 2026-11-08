@@ -371,7 +371,9 @@ else glows.
 
 ### The aether (the painting)
 **[CURRENT]** `AetherCanvas.astro` runs behind every stage: the home page
-and every subpage's head. It is a fixed full-viewport WebGL 1 canvas at
+and every subpage's head. It is a fixed WebGL 1 canvas as tall as the
+large viewport (`100lvh`), so a phone's URL bar sliding in or out while
+scrolling never resizes or moves it, at
 z-index -1 (over the root's ground, under every block), fading in over
 1.8s. It paints smoke, the sigil (centred on the element marked
 `data-aether-anchor`: the logo, a subpage's title), the traces with pulses,
