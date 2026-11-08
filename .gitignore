@@ -43,3 +43,4 @@ CLAUDE.local.md
 !.impeccable/live/
 .impeccable/live/inject-journal.json
 .agent_context/
+.archive/

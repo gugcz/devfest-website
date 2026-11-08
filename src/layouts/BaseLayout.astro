@@ -7,6 +7,7 @@ import Menu from '../components/Menu.astro';
 import { defaultOgImageVersion } from '../lib/og-version';
 import { staticTicketLines } from '../lib/tickets-static';
 import { EVENT, pageTitle } from '../lib/event';
+import { absoluteUrl, withoutBase } from '../lib/base';
 import config from '../site.config';
 import { enabled } from '../lib/flags';
 import { getSocials, twitterHandle } from '../lib/socials';
@@ -31,7 +32,7 @@ const {
 	description = `${EVENT.name} — ${config.event.tagline}: ${config.event.pitch.replace(/\.$/, "")}. ${EVENT.dateLabel} at ${EVENT.venue}.${enabled('tickets') ? ' Tickets on sale now.' : ''}`,
 	noindex = false,
 	kiosk = false,
-	ogImage = `${siteUrl}/og-image.jpg?v=${defaultOgImageVersion()}`,
+	ogImage = `${absoluteUrl('/og-image.jpg')}?v=${defaultOgImageVersion()}`,
 	ogImageAlt = `${EVENT.name} — classified mission starts ${EVENT.dateLabel}`,
 } = Astro.props;
 
@@ -43,7 +44,8 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, ""
 // Event schema follows https://developers.google.com/search/docs/appearance/structured-data/event
 // Only rendered on the home page so subpages (privacy, contact, etc.) don't
 // claim to BE the event. WebSite + Organization render sitewide.
-const isHome = Astro.url.pathname === "/";
+const sitePath = withoutBase(Astro.url.pathname);
+const isHome = sitePath === "/";
 
 // `offers[].url` → #tickets (survives slug changes). Read from ti.to through
 // `/api/tickets` at build time (`tickets-static.ts`): every ticket type on sale
@@ -62,7 +64,7 @@ const offers = isHome && enabled('tickets')
 			.map((line) => ({
 				"@type": "Offer",
 				"name": line.label,
-				"url": `${siteUrl}/#tickets`,
+				"url": absoluteUrl("/#tickets"),
 				"price": String(line.gross),
 				"priceCurrency": "CZK",
 				"availability": "https://schema.org/InStock",
@@ -76,7 +78,7 @@ const eventSchema = {
 	"description":
 		`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch.replace(/\.$/, "")}. Two stages, one day, an afterparty.`,
 	"image": [ogImage],
-	"url": siteUrl,
+	"url": absoluteUrl("/"),
 	"startDate": EVENT.start,
 	"endDate": EVENT.end,
 	// Registration opens an hour before the keynote (see the agenda).
@@ -108,7 +110,7 @@ const organizationSchema = {
 	"@type": "Organization",
 	"name": config.event.name,
 	"url": siteUrl,
-	"logo": `${siteUrl}/logo.png`,
+	"logo": absoluteUrl("/logo.png"),
 	"description":
 		`${config.event.name} is Prague's community-run developer conference & festival — ${config.event.pitch}`,
 	"parentOrganization": organizer,
@@ -144,7 +146,7 @@ const pageNames: Record<string, string> = {
 	"privacy-policy": "Privacy Policy",
 	"delete-account": "Delete Account"
 };
-const slug = Astro.url.pathname.replace(/^\/+|\/+$/g, "").split("/")[0];
+const slug = sitePath.replace(/^\/+|\/+$/g, "").split("/")[0];
 const breadcrumbName =
 	pageNames[slug] ??
 	slug
@@ -160,7 +162,7 @@ const breadcrumbSchema = !isHome && slug
 					"@type": "ListItem",
 					"position": 1,
 					"name": "Home",
-					"item": siteUrl
+					"item": absoluteUrl("/")
 				},
 				{
 					"@type": "ListItem",

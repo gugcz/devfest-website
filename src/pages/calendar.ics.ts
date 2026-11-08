@@ -7,6 +7,7 @@
 import type { APIRoute } from 'astro';
 import config from '../site.config';
 import { calendarDescription, calendarLocation, EVENT, toCalendarStamp } from '../lib/event';
+import { absoluteUrl } from '../lib/base';
 
 /** RFC 5545 TEXT: backslash, comma and semicolon escaped, newlines as `\n`. */
 const escapeText = (text: string): string =>
@@ -53,7 +54,7 @@ export const GET: APIRoute = () => {
 		`SUMMARY:${escapeText(EVENT.name)}`,
 		`DESCRIPTION:${escapeText(calendarDescription())}`,
 		`LOCATION:${escapeText(calendarLocation())}`,
-		`URL:${EVENT.url}`,
+		`URL:${absoluteUrl('/')}`,
 		'END:VEVENT',
 		'END:VCALENDAR',
 	];

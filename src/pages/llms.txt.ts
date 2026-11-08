@@ -15,10 +15,9 @@ import { staticTicketLines } from '../lib/tickets-static';
 import { staticWorkshops } from '../lib/workshops-static';
 import { speakerSharePath, talkSharePath } from '../lib/share';
 import { BUILD_DAY } from '../lib/static-api';
+import { absoluteUrl } from '../lib/base';
 import config from '../site.config';
 import { enabled, enabledOnly, type FeatureFlag } from '../lib/flags';
-
-const site = EVENT.url;
 
 const PAGES = enabledOnly<{ label: string; path: string; note: string; feature?: FeatureFlag }>([
 	{ label: 'Tickets', path: '/#tickets', note: 'ticket waves and prices, bought on ti.to', feature: 'tickets' },
@@ -35,7 +34,7 @@ const PAGES = enabledOnly<{ label: string; path: string; note: string; feature?:
 	{ label: 'Press kit', path: '/press/downloads', note: 'logos and photos' },
 ]);
 
-const link = (label: string, path: string) => `[${label}](${site}${path})`;
+const link = (label: string, path: string) => `[${label}](${absoluteUrl(path)})`;
 const clean = (text: string) => text.replace(/\s+/g, ' ').trim();
 
 function talkLine(session: Session, rooms: Room[]): string {
@@ -63,7 +62,7 @@ export const GET: APIRoute = async () => {
 		'- Audience: 350 medior and senior developers from across Central and Eastern Europe. In person only.',
 		`- Topics: ${topics.map((t) => t.name).join(', ')}.`,
 		`- Contact: ${config.organizer.email}`,
-		`- Calendar: ${site}${EVENT.icsUrl}`,
+		`- Calendar: ${absoluteUrl(EVENT.icsUrl)}`,
 		'',
 		`Lists below are as of ${BUILD_DAY}; the linked pages are live.`,
 		'',

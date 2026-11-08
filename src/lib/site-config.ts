@@ -54,6 +54,14 @@ export interface EventConfig {
 	venue: Venue;
 }
 
+/** The next edition while it has no date yet. Only what is announced. */
+export interface UpcomingConfig {
+	/** The year: "DevFest.cz 2027". */
+	edition: number;
+	/** When, as announced: "Fall 2027". Never a day until `event` has one. */
+	season: string;
+}
+
 export interface OrganizerConfig {
 	/** Short form for copy: "GUG.cz". */
 	name: string;
@@ -101,6 +109,10 @@ export interface AppsConfig {
 
 export interface SiteConfig {
 	event: EventConfig;
+	/** The next edition before it has a date: the home page's teaser while
+	 * the `edition` flag is off, and the link every archived page carries to
+	 * it (ADR 0011). Remove once `event` is that edition. */
+	upcoming?: UpcomingConfig;
 	organizer: OrganizerConfig;
 	site: SiteDeployConfig;
 	apps: AppsConfig;

@@ -5,6 +5,7 @@ import { EVENT } from '../lib/event';
 import config from '../site.config';
 import { enabledOnly, type FeatureFlag } from '../lib/flags';
 import { getSocials } from '../lib/socials';
+import { ARCHIVE, liveUrl } from '../lib/base';
 
 // One 24×24 glyph per network in `src/content/socials.json`. A network with
 // no glyph here renders its label as text instead of an icon.
@@ -17,7 +18,21 @@ const ICONS: Record<string, string> = {
 };
 const socials = (await getSocials()).map((social) => ({ ...social, path: ICONS[social.network] }));
 
-type FooterLink = { href: string; label: string; external?: boolean; feature?: FeatureFlag };
+type FooterLink = {
+	href: string;
+	label: string;
+	external?: boolean;
+	feature?: FeatureFlag;
+	/** Another build (the live site from an archive): a full load, no soft navigation. */
+	reload?: boolean;
+};
+
+// An archived edition (ADR 0011) links the live site, named by the next
+// edition while it has no date.
+const { upcoming } = config;
+const currentEdition: FooterLink[] = ARCHIVE
+	? [{ href: liveUrl('/'), label: upcoming ? `${config.event.name} ${upcoming.edition}` : 'Current edition', reload: true }]
+	: [];
 
 // Every destination, in two groups. The menu is the only navigation above the
 // fold (one toggle at every width, by design), so the footer is the one place
@@ -51,6 +66,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 			{ href: '/contact#press', label: 'Press' },
 			{ href: '/contact', label: 'Contact' },
 			{ href: '/#newsletter', label: 'Newsletter', feature: 'newsletter' },
+			...currentEdition,
 			{ href: 'https://2025.devfest.cz', label: "Last year's edition", external: true },
 			{ href: '/privacy-policy', label: 'Privacy Policy' },
 		],
@@ -87,12 +103,13 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 				<nav class="col col-links" aria-labelledby={id}>
 					<h2 id={id} class="col-title">{title}</h2>
 					<ul class="link-list">
-						{enabledOnly(links).map(({ href, label, external }) => (
+						{enabledOnly(links).map(({ href, label, external, reload }) => (
 							<li>
 								<a
 									class="footer-link"
 									href={href}
 									{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+									{...(reload ? { 'data-astro-reload': true } : {})}
 								>
 									{label}
 									</a>

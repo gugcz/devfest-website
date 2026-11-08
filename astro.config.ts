@@ -6,8 +6,16 @@ import react from '@astrojs/react';
 import type { Plugin } from 'vite';
 import config from './src/site.config';
 import featureRoutes from './src/integrations/feature-routes';
+import archives, { archivedPages } from './src/integrations/archives';
 
 const BUILD_DATE = new Date().toISOString();
+
+// An archive build (`npm run archive <year>`, ADR 0011): the edition's whole
+// site under `/<year>`, written beside the live build for the script to
+// freeze into `archive/<year>/`. A live build instead copies every archive
+// into its output (`archives()`) and lists their pages in its sitemap.
+const archive = process.env.PUBLIC_ARCHIVE;
+const ARCHIVED = archive ? new Map<string, string | undefined>() : archivedPages();
 
 // Per-path sitemap priority; anything unlisted falls back to 0.6.
 const PRIORITY: Record<string, number> = {
@@ -75,6 +83,7 @@ const devApiMocks = (): Plugin => ({
 // https://astro.build/config
 export default defineConfig({
     site: config.site.url,
+    ...(archive && { base: `/${archive}`, outDir: `.archive/${archive}/site` }),
     trailingSlash: 'never',
     // Self-hosted, build-time-optimised replacements for the three brand faces
     // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
@@ -127,6 +136,7 @@ export default defineConfig({
     },
     integrations: [
         sitemap({
+            customPages: [...ARCHIVED.keys()],
             filter: (page) =>
                 !page.includes('/newsletter-subscription-thank-you') &&
                 !page.includes('/thank-you') &&
@@ -150,7 +160,11 @@ export default defineConfig({
                 // Press → /contact#press). `/press/downloads` is a real page.
                 !/\/(sessions|press)\/?$/.test(page),
             serialize(item) {
-                item.lastmod = BUILD_DATE;
+                // The archive's home is `/<year>`, as its canonical says; the
+                // integration lists the base with a trailing slash.
+                if (archive && item.url.endsWith(`/${archive}/`)) item.url = item.url.slice(0, -1);
+                // An archived page changed the day it was archived.
+                item.lastmod = ARCHIVED.has(item.url) ? (ARCHIVED.get(item.url) ?? BUILD_DATE) : BUILD_DATE;
                 item.changefreq = ChangeFreqEnum.WEEKLY;
                 const path = item.url.replace(/\/$/, '').replace(config.site.url, '');
                 item.priority = PRIORITY[path] ?? 0.6;
@@ -159,6 +173,7 @@ export default defineConfig({
         }),
         react(),
         featureRoutes(config.features),
+        ...(archive ? [] : [archives()]),
     ],
     vite: {
         plugins: [devApiMocks(), legacyBrowserTarget()],

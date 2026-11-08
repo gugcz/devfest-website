@@ -51,6 +51,10 @@ const config: SiteConfig = {
 			stationWalkUrl: 'https://maps.app.goo.gl/95BeQWKRnyoXTXMF9',
 		},
 	},
+	upcoming: {
+		edition: 2027,
+		season: 'Fall 2027',
+	},
 	organizer: {
 		name: 'GUG.cz',
 		legalName: 'GUG.cz, z.s.',

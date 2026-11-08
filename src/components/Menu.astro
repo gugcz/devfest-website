@@ -5,6 +5,7 @@ import venuePrint from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
 import { EVENT, eventDate } from '../lib/event';
 import config from '../site.config';
 import { enabledOnly, ticketsHref as ticketsLink, type FeatureFlag } from '../lib/flags';
+import { ARCHIVE, liveUrl, withoutBase } from '../lib/base';
 
 interface NavLink {
 	href: string;
@@ -15,7 +16,7 @@ interface NavLink {
 	feature?: FeatureFlag;
 }
 
-const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const currentPath = withoutBase(Astro.url.pathname).replace(/\/$/, '') || '/';
 const isHome = currentPath === '/';
 // An invitation has ONE primary action (`Take the ticket` → ti.to). The red
 // `Tickets` bar action would be a second one pointing off the invitation, so
@@ -24,6 +25,16 @@ const isInvite = currentPath === '/invite' || currentPath.startsWith('/invite/')
 // On the home page #tickets is a same-page anchor; from subpages we need
 // to send the visitor back to / first so the section actually exists.
 const ticketsHref = ticketsLink ? (isHome ? '#tickets' : '/#tickets') : null;
+// An archived edition (ADR 0011) has no sale; the red button takes the
+// visitor to the live site instead. A full load: the two are separate builds.
+const { upcoming } = config;
+const nextEdition = ARCHIVE
+	? {
+			href: liveUrl('/'),
+			label: upcoming ? `${upcoming.edition} edition` : 'Current edition',
+			name: upcoming ? `${config.event.name} ${upcoming.edition}, ${upcoming.season}` : `${config.event.name}, the current edition`,
+		}
+	: null;
 
 // TWO TIERS, EIGHT LINES. Ten destinations at one poster size made the
 // visitor read all ten every time; two tiers of twelve still did. So the
@@ -199,6 +210,11 @@ const isCurrent = (href: string) => {
 		</nav>
 
 		{!isInvite && ticketsHref && <a href={ticketsHref} class="header-cta">Tickets</a>}
+		{nextEdition && (
+			<a href={nextEdition.href} class="header-cta" aria-label={nextEdition.name} data-astro-reload>
+				{nextEdition.label}
+			</a>
+		)}
 	</div>
 </header>
 

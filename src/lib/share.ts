@@ -7,6 +7,7 @@
  * added after the last build has no page yet; `404.astro` forwards those.
  */
 import { useEffect } from 'react';
+import { withBase } from './base';
 
 /** Query parameter `/agenda` reads to open a talk's sheet. */
 export const TALK_PARAM = 'talk';
@@ -19,12 +20,13 @@ export function isShareId(id: string): boolean {
 	return /^[A-Za-z0-9-]{1,64}$/.test(id);
 }
 
-export const talkSharePath = (id: string): string => `/talks/${encodeURIComponent(id)}`;
-export const speakerSharePath = (id: string): string => `/speakers/${encodeURIComponent(id)}`;
+export const talkSharePath = (id: string): string => withBase(`/talks/${encodeURIComponent(id)}`);
+export const speakerSharePath = (id: string): string => withBase(`/speakers/${encodeURIComponent(id)}`);
 
 /** Where a share page (or the 404 fallback) sends a visitor. */
-export const talkTarget = (id: string): string => `/agenda?${TALK_PARAM}=${encodeURIComponent(id)}`;
-export const speakerTarget = (id: string): string => `/speakers?${SPEAKER_PARAM}=${encodeURIComponent(id)}`;
+export const talkTarget = (id: string): string => withBase(`/agenda?${TALK_PARAM}=${encodeURIComponent(id)}`);
+export const speakerTarget = (id: string): string =>
+	withBase(`/speakers?${SPEAKER_PARAM}=${encodeURIComponent(id)}`);
 
 /**
  * While a sheet is open, the address bar shows its share link
