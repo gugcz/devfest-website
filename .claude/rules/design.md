@@ -1,6 +1,7 @@
 ---
 paths:
   - "docs/design.md"
+  - "docs/design-2026.md"
   - "docs/product.md"
   - ".impeccable/**"
   - "src/components/**"
@@ -12,9 +13,16 @@ paths:
 
 # Design workflow: impeccable as the gate, docs/design.md as the law
 
-**`docs/design.md`** (+ `.impeccable/design.json`) is the binding record.
-**Impeccable** (`/impeccable …`) is how a surface is briefed, critiqued and
-audited. There is no design canvas in the repo.
+**`docs/design.md`** (+ `.impeccable/design.json`) is the binding record of
+the current system, the 2027 aether: the teaser (`TeaserLayout.astro`,
+`src/components/teaser/`) and every new surface. **`docs/design-2026.md`**
+stays binding for the pages still on `BaseLayout.astro` (the legal pages,
+the app pages, the 404, the newsletter thank-you, and every page under the
+`edition` flag) until they are reskinned; the frozen `archive/2026/` is never
+restyled. Never mix the two systems on one page: their tokens, fonts and
+recipes differ (the aether loads no web font). **Impeccable**
+(`/impeccable …`) is how a surface is briefed, critiqued and audited. There
+is no design canvas in the repo.
 
 ## The loop for a new or redesigned surface
 

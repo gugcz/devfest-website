@@ -4,6 +4,8 @@ paths:
   - "src/lib/analytics.ts"
   - "src/lib/consent.ts"
   - "src/components/CookieBanner.astro"
+  - "src/components/teaser/TeaserCookieBanner.astro"
+  - "src/lib/cookie-banner.ts"
   - "src/routes/thank-you.astro"
   - "src/routes/newsletter-subscription-thank-you.astro"
 ---
@@ -13,7 +15,9 @@ paths:
 GA4 via Firebase Analytics in **basic Google Consent Mode**: nothing loads and
 nothing is sent to Google until the visitor accepts. `initAnalytics()` is a
 no-op while `readConsent()` (`src/lib/consent.ts`) isn't `accepted`; the
-accept handler in `CookieBanner.astro` stores the decision and calls
+accept handler in `src/lib/cookie-banner.ts` (the behaviour both banner
+skins share: `CookieBanner.astro`, `TeaserCookieBanner.astro`) stores the
+decision and calls
 `trackPageView()`, which boots the tag. The boot pushes `consent: 'default'`
 with `analytics_storage` granted and `ad_*` denied (we never collect for
 advertising), then `initializeAnalytics()`.
@@ -50,7 +54,7 @@ Rules (each verified in-browser):
 
 **Withdrawing consent** (GDPR Art. 7(3)): every `[data-cookie-settings]`
 button (the footer's About column, privacy policy §3) runs one delegated
-click listener in `CookieBanner.astro`. It `clearConsent()`s and shows the
+click listener in `src/lib/cookie-banner.ts`. It `clearConsent()`s and shows the
 banner, focused. After an `accepted` the SDKs are already in the document and
 cannot be unloaded, so instead it `deleteAnalyticsData()`s (`consent.ts`:
 `_ga*` cookies on the host and each parent domain, the

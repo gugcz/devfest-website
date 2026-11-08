@@ -4,6 +4,9 @@ paths:
   - "src/routes/**"
   - "src/integrations/**"
   - "src/layouts/**"
+  - "src/middleware.ts"
+  - "scripts/archive.mjs"
+  - "archive/**"
   - "public/.well-known/**"
   - "astro.config.ts"
 ---
@@ -21,7 +24,23 @@ paths:
   and sections, never prose. `npm run flags-off` builds with flags off and
   fails on anything left behind. Flags and what needs what:
   `src/lib/features.ts`.
-- **SEO.** `BaseLayout.astro`: meta, OG/Twitter, JSON-LD (Event, Organization, WebSite, BreadcrumbList).
+- **The root belongs to the next edition** (ADR 0011). With `edition` off
+  the home page is `src/routes/teaser.astro` (`TeaserLayout`), stating only
+  what `config.upcoming` announces: never a day, a venue or a price. Every
+  path the edition owned answers 301 to `/<year>/…` from `firebase.json`
+  (`redirects`). Hosting applies redirects before static files: turning
+  `edition` back on means deleting the redirect of every path it reclaims.
+- **Archives** (`archive/<year>/`) are frozen builds from
+  `npm run archive -- <year>`; never edit one by hand. A build under a base
+  path works because `src/middleware.ts` rebases root-relative URLs in
+  rendered HTML; code the middleware never sees (islands, scripts, absolute
+  URLs, `/api/*` reads) uses `withBase()`, `absoluteUrl()`, `liveUrl()` and
+  `apiUrl()` from `src/lib/base.ts`. A link from one build to another (the
+  archive and the live site) carries `data-astro-reload`.
+- **SEO.** `Head.astro` (shared by `BaseLayout` and `TeaserLayout`): meta,
+  OG/Twitter, canonical, JSON-LD. `BaseLayout` adds Event (home only),
+  Organization, WebSite, BreadcrumbList; the teaser Organization and
+  WebSite only. Title and description name the edition's year.
   Event offers come from `/api/tickets` at build time (`tickets-static.ts`).
   Sitemap via `@astrojs/sitemap`. Share pages and `/invite/*` set their own
   OG image.

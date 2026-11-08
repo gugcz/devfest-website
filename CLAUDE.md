@@ -1,6 +1,9 @@
 # DevFest Website
 
-DevFest.cz 2026 landing page. Astro 7, React 19 islands, TypeScript strict,
+The DevFest.cz site: the root belongs to the next edition (today the 2027
+teaser), every past edition is a frozen build under `/<year>`
+([ADR 0011](docs/adr/0011-root-for-the-next-edition-archives-under-the-year.md)).
+Astro 7, React 19 islands, TypeScript strict,
 SCSS (CSS Modules for React, globals in `BaseLayout.astro`), Node >= 24.12.0,
 Firebase Hosting + Cloud Functions in the project `devfest-cz-app`, shared with
 the mobile app ([Firebase shared project](#firebase-shared-project)).
@@ -64,30 +67,41 @@ edited PR body keeps its old text in the public edit history.
   `src/lib/features.ts` lists them), injected by
   `src/integrations/feature-routes.ts` only while the flag is on. Templates
   ask `src/lib/flags.ts`. `npm run flags-off` proves a flag removes its
-  section everywhere.
-- `src/pages/`: file-based routes (list in [README.md](README.md#key-pages)).
-  `speakers/[id]` and `talks/[id]` are share pages built from the lineup at
-  build time; `invite/[member]` and `og/` are unlisted; `calendar.ics.ts`
-  and `robots.txt.ts` are built from the config.
+  section everywhere. The dated edition's pages (event home `index.astro`,
+  agenda, speakers, share pages `speakers/[id]` and `talks/[id]`, venue,
+  FAQ, team, contact, press, TV, `calendar.ics.ts`) follow `edition`; while
+  it is off `teaser.astro` is the home page.
+- `src/pages/`: the routes every build has (list in
+  [README.md](README.md#key-pages)): the legal pages, the 404, `llms.txt.ts`
+  and `robots.txt.ts`.
+- `archive/<year>/`: past editions, frozen builds served at `/<year>`
+  (`npm run archive`, `src/integrations/archives.ts`, `src/lib/editions.ts`).
+  Never edited by hand, excluded from the checks.
 - `src/components/`: `.astro` sections and React islands (`.tsx`,
   `client:load`) with co-located `.module.scss`.
 - `src/lib/`: browser and build helpers, one file per concern (`lineup.ts`,
-  `tito.ts`, `workshops.ts`, `firebase.ts`, `analytics.ts`, …).
+  `tito.ts`, `workshops.ts`, `firebase.ts`, `analytics.ts`, …). `base.ts`
+  and `src/middleware.ts` put a build under `/<year>`; `aether/` is the
+  teaser's WebGL background.
 - `src/content/`: `faq.json`, `partners.json`, `team.json`, `socials.json`,
   `topics.json`, `press-coverage.json`; schemas in `src/content.config.ts`.
   The mobile app bundles `faq.json` and `partners.json` verbatim, so a shape
   change there breaks its next copy.
-- `src/layouts/`: `BaseLayout.astro` (meta, OG, JSON-LD; tokens and global
-  SCSS in `BaseLayout.scss`), `Share.astro` (share-page preview, then
-  forward) and `Redirect.astro` (`/press`, `/sessions`).
+- `src/layouts/`: `Head.astro` (meta, OG, JSON-LD every layout shares),
+  `BaseLayout.astro` (the 2026 noir chrome; tokens and global SCSS in
+  `BaseLayout.scss`), `TeaserLayout.astro` (the 2027 aether; tokens in
+  `TeaserLayout.scss`), `Share.astro` (share-page preview, then forward)
+  and `Redirect.astro` (`/press`, `/sessions`).
 - `functions/src/<domain>/`: Cloud Functions per domain (`tickets`,
   `sessionize`, `lineup`, `invoice`, `workshops`); shared helpers in `lib/`,
   option presets in `options.ts`.
 - `scripts/`: the axe sweep (`a11y.mjs`), its `/api/*` fixtures
-  (`a11y-mocks/`) and the anchor-scroll measure (`anchor-measure.mjs`,
-  `npm run anchors`).
+  (`a11y-mocks/`), the anchor-scroll measure (`anchor-measure.mjs`,
+  `npm run anchors`) and the archiver (`archive.mjs`).
 - `public/`: static assets, the press kit, `.well-known/` (iOS app links).
-- `docs/design.md`: the design system; `docs/product.md`: the product
+- `docs/design.md`: the design system (2027, the aether);
+  `docs/design-2026.md`: the 2026 noir system, binding for the archive and
+  the pages still on `BaseLayout.astro`; `docs/product.md`: the product
   record.
 - `docs/adr/`: architecture decision records; `docs/brainstorm/` and
   `docs/plan/`: the `vgv-wingspan` brainstorms and plans, committed with the
@@ -103,6 +117,7 @@ edited PR body keeps its old text in the public edit history.
 | Types | `npm run check` (`astro check`) |
 | Site tests | `npm run test:site` (`node --test` on `src/**/*.test.ts`, types stripped by Node) |
 | Flags off | `npm run flags-off` (two builds with feature flags off; fails on a route, sitemap entry or link left behind) |
+| Archive an edition | `npm run archive -- <year>` (once a year, on the last commit with `edition` on; writes `archive/<year>/`; `docs/adapting.md`) |
 | Cognitive complexity | `npm run complexity` (`sonarjs/cognitive-complexity`, max 15) |
 | Function tests | `npm --prefix functions test` (`node --test`, stubs `fetch`) |
 | Accessibility | `npm run a11y` (axe on an `A11Y_MOCK=1` build, needs Playwright Chromium) |
@@ -157,7 +172,7 @@ one directly when working outside them.
 | Rule | Paths | Covers |
 | --- | --- | --- |
 | `api.md` | `/api/*` functions, their browser callers, `scripts/a11y-mocks/**`, `firebase.json`, `astro.config.ts` | The `/api/*` endpoint table, cache TTLs, callables for writes, dev mocks |
-| `pages.md` | `src/pages/**`, `src/routes/**`, `src/integrations/**`, `src/layouts/**`, `public/.well-known/**`, `astro.config.ts` | Routes, SEO (meta, OG, JSON-LD, sitemap), iOS app links |
+| `pages.md` | `src/pages/**`, `src/routes/**`, `src/integrations/**`, `src/layouts/**`, `src/middleware.ts`, `scripts/archive.mjs`, `archive/**`, `public/.well-known/**`, `astro.config.ts` | Routes, SEO (meta, OG, JSON-LD, sitemap), the archive and its redirects, iOS app links |
 | `backend.md` | `functions/**` | `functions/src/lib/` helpers, option presets, error/HTTP/Slack rules, function tests |
 | `tickets.md` | `functions/src/tickets/**`, `src/lib/tito.ts`, `Tickets.tsx`, `InvoiceForm.tsx` | ti.to flags, cache, visibility, domain layout |
 | `sessionize.md` | `functions/src/sessionize/**`, `functions/src/lineup/**`, the lineup helpers, share pages | Lineup sync, delete-guard, photo mirror, share pages |
@@ -165,7 +180,7 @@ one directly when working outside them.
 | `workshops.md` | `functions/src/workshops/**`, `src/lib/workshops.ts`, `Workshops.tsx`, `workshops.astro` | Seat limits, waitlist order, the app's ticket login |
 | `analytics.md` | `src/lib/firebase.ts`, `analytics.ts`, `consent.ts`, `CookieBanner.astro`, the thank-you pages | GA4 Consent Mode, page views, conversion events, Performance Monitoring |
 | `invite.md` | `src/routes/invite/**`, `src/routes/og/invite/**`, `src/lib/invite.ts`, `InviteCta.tsx`, `team.json` | `/invite/<member>` pages, CTA, visual direction |
-| `design.md` | `docs/design.md`, `docs/product.md`, `.impeccable/**`, `src/components/**`, `src/pages/**`, `src/routes/**`, `src/layouts/**`, `src/styles/**` | Impeccable loop, `docs/design.md` as the record |
+| `design.md` | `docs/design.md`, `docs/design-2026.md`, `docs/product.md`, `.impeccable/**`, `src/components/**`, `src/pages/**`, `src/routes/**`, `src/layouts/**`, `src/styles/**` | Impeccable loop, which design record binds which page |
 | `docs.md` | `docs/**`, `README.md`, `CLAUDE.md`, `.claude/**`, the PR template | README, CLAUDE.md, ADRs, brainstorms, plans, what goes where |
 
 ## Firebase shared project

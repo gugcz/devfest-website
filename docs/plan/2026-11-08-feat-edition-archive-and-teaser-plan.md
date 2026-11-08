@@ -7,7 +7,7 @@ brainstorm: docs/brainstorm/2026-11-08-edition-archive-and-teaser-brainstorm-doc
 
 ## feat(home): the 2027 teaser takes the root, 2026 moves to /2026 - Standard
 
-**Status:** In progress
+**Status:** Done
 
 ## Overview
 

@@ -41,6 +41,11 @@ client SDK** (client reads blocked on an App Check token, ~30s on mobile;
   build functions.
 - Endpoints return raw docs; the browser parses with `speakerFromDoc` /
   `sessionFromDoc` / `filterDisplayable`.
+- An archived edition (`archive/<year>/`, ADR 0011) never calls `/api/*`:
+  `npm run archive` freezes the lineup into `/<year>/api/lineup.json`
+  (`apiUrl()` in `src/lib/base.ts` picks it) and the speaker photos into
+  `/<year>/speaker-photos/`; its build reads the same copy (`ARCHIVE_DATA`,
+  `src/lib/static-api.ts`).
 - Dev and a11y serve `/api/*` from `scripts/a11y-mocks/api.mjs` (a dev server
   has no rewrite table). `DEVFEST_LIVE_API=1 npm run dev` hits deployed
   functions. Only `firebase/app-check` is mocked under `A11Y_MOCK`.

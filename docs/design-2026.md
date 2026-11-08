@@ -244,6 +244,13 @@ components:
     textColor: "{colors.text}"
 ---
 
+
+> **Archived record (2026, "noir, but loud").** Binding for the 2026 archive
+> (`archive/2026/`, frozen) and for the pages still rendered by
+> `BaseLayout.astro` (the legal pages, the app pages, the 404 and the
+> newsletter thank-you) until they are reskinned. The current system, the
+> 2027 aether, is [`docs/design.md`](design.md). ADR 0011.
+
 Design system for the DevFest.cz 2026 site. Every value was read out of the
 codebase and carries its source as `file:line`. Rationale lives here, inline
 with the rules; `CLAUDE.md` only points here.

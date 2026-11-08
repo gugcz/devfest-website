@@ -20,3 +20,4 @@ their dates are the PRs' merge dates. When to write one: `.claude/rules/docs.md`
 | [0008](0008-agent-readable-build-time-html.md) | Readers without script get the lineup, programme and prices as build-time HTML | accepted |
 | [0009](0009-database-rules-live-in-the-app-repo.md) | Firestore and RTDB rules live whole in the app repo and deploy from its CI | accepted |
 | [0010](0010-site-config-and-feature-flags.md) | Every edition fact lives in one typed site config; sections switch off by flag | accepted |
+| [0011](0011-root-for-the-next-edition-archives-under-the-year.md) | The root belongs to the next edition; past editions are frozen builds under `/<year>` | accepted |

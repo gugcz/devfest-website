@@ -1,21 +1,21 @@
-# DevFest.cz 2026
+# DevFest.cz
 
-The most original developer conference in Prague is back.
+Prague's developer conference & festival, built by the community around GUG.cz.
 
-![DevFest.cz 2026](public/og-image.jpg)
+![DevFest.cz 2027](public/og-2027.jpg)
 
-DevFest.cz 2026 is a community-built conference and festival for developers, geeks, and tech enthusiasts — AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it — happening **October 30, 2026** at Uhelný Mlýn in Libčice nad Vltavou, Czech Republic.
+`devfest.cz` always belongs to the current or next edition; every past edition lives on at `devfest.cz/<year>` ([ADR 0011](docs/adr/0011-root-for-the-next-edition-archives-under-the-year.md)). Today the root is the teaser of **DevFest.cz 2027** (fall 2027, Prague). **DevFest.cz 2026** (30 October 2026, Uhelný Mlýn in Libčice nad Vltavou) is a frozen archive at [`/2026`](https://devfest.cz/2026), built from this repository into `archive/2026/`.
 
 ## Tech Stack
 
 - **Framework:** [Astro](https://astro.build/) 7
 - **Language:** TypeScript (strict mode)
-- **Styling:** Sass — the design system is documented in [docs/design.md](docs/design.md)
+- **Styling:** Sass — the design system is documented in [docs/design.md](docs/design.md) (2027) and [docs/design-2026.md](docs/design-2026.md) (2026)
 - **UI:** React 19 (interactive islands)
 - **Backend:** Firebase
 - **Node:** 24 (see `.nvmrc`; `engine-strict` is on)
 
-[docs/design.md](docs/design.md) is the binding visual system — check it before styling anything.
+[docs/design.md](docs/design.md) is the binding visual system of the teaser, [docs/design-2026.md](docs/design-2026.md) of the 2026 archive and the pages still on `BaseLayout.astro` — check the right one before styling anything.
 
 ## Docs
 
@@ -24,9 +24,10 @@ DevFest.cz 2026 is a community-built conference and festival for developers, gee
 | [README.md](README.md) | Setup, every function, secrets and the console-only steps (this file) |
 | [CLAUDE.md](CLAUDE.md) | Working rules for contributors and coding agents: commands, definition of done, the repo map |
 | [docs/adr/](docs/adr/README.md) | Architecture decision records: why the site is built the way it is |
-| [docs/design.md](docs/design.md) | The design system |
+| [docs/design.md](docs/design.md) | The design system (2027, the aether) |
+| [docs/design-2026.md](docs/design-2026.md) | The 2026 design system (noir), for the archive and the pages still in it |
 | [docs/product.md](docs/product.md) | The product record: users, purpose, brand commitments |
-| [docs/adapting.md](docs/adapting.md) | The checklist for the next edition, or for another chapter's event on this code |
+| [docs/adapting.md](docs/adapting.md) | The yearly switch (archive, teaser), the checklist for the next edition, or for another chapter's event on this code |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to run the gate and open a PR; the code is MIT ([LICENSE](LICENSE)) |
 | [`.claude/rules/`](.claude/rules) | Per-domain notes (API, pages, backend, tickets, lineup, invoices, workshops, analytics, invite, design, docs) |
 
@@ -50,7 +51,12 @@ npm run a11y
 
 # Everything CI checks: astro check, cognitive complexity, site and function tests, axe
 npm run verify
+
+# Freeze the edition this checkout builds into archive/<year>/ (once a year)
+npm run archive -- 2026
 ```
+
+`archive/<year>/` is a frozen build: the live build copies it into `dist/` and serves it at `/<year>`. Never edit it by hand; `npm run preview` after a build shows it.
 
 `2026` is the production branch. A merge into it deploys the site
 (`firebase-hosting-merge.yml`) and, when `functions/**` or `firebase.json`
@@ -317,25 +323,27 @@ Firebase Analytics, measurement ID `G-L5NK2S2EZ0`, in Google Consent Mode. Archi
 
 A route marked with a flag exists only while that flag is on in
 `src/site.config.ts` (`features`); `/speaker-card` and `/login` follow
-`attending` and `app`.
+`attending` and `app`. Every route under the `edition` flag answers 301 to
+`/2026/…` while it is off (`firebase.json` → `redirects`).
 
 | Route | Description |
 |-------|-------------|
-| `/` | Landing page with countdown and newsletter signup |
-| `/speakers` | Speaker lineup (reads `/api/lineup`); `?speaker=<id>` opens one speaker |
-| `/speakers/<id>`, `/talks/<id>` | Share pages: one speaker or talk as text with its own link preview, then forward to the sheet; indexed |
+| `/` | The teaser of the next edition while `edition` is off (`src/routes/teaser.astro`): the DF27 stage, what is announced, the last edition in figures, the newsletter; otherwise (flag `edition`) the event home with countdown and newsletter signup |
+| `/2026/…` | The 2026 edition, frozen (`archive/2026/`): every page it had, its lineup and speaker photos included |
+| `/speakers` (flag `edition`) | Speaker lineup (reads `/api/lineup`); `?speaker=<id>` opens one speaker |
+| `/speakers/<id>`, `/talks/<id>` (flag `edition`) | Share pages: one speaker or talk as text with its own link preview, then forward to the sheet; indexed |
 | `/llms.txt` | The site as Markdown for language models: facts, tickets, pages, every talk and speaker (built) |
-| `/calendar.ics`, `/robots.txt` | Built from `src/site.config.ts`: the calendar entry (doors to closing remarks) and the crawler file naming the sitemap |
-| `/agenda` | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day — and under it (`#talks`) every talk with search and filters (reads `/api/lineup`). `/sessions` redirects here, `?talk=` included |
+| `/calendar.ics` (flag `edition`), `/robots.txt` | Built from `src/site.config.ts`: the calendar entry (doors to closing remarks) and the crawler file naming the sitemap |
+| `/agenda` (flag `edition`) | Conference-day timetable — room grid on wide screens, time-ordered list on a phone or a single-room day — and under it (`#talks`) every talk with search and filters (reads `/api/lineup`). `/sessions` redirects here, `?talk=` included |
 | `/workshops` (flag `workshops`) | Workshop seat sign-up and waitlist for ticket holders (reads `/api/workshops`) |
 | `/invoice` (flag `invoice`) | Request a company invoice to buy tickets by bank transfer |
 | `/partners` (flag `partners`) | Sponsors & partners |
-| `/press/downloads` | Press kit and downloadable assets (`/press` redirects to the press band on `/contact`) |
-| `/team` | Organizing team |
-| `/contact` | Contact desks, plus press coverage and the press-kit link (`#press`) |
-| `/faq` | Frequently asked questions |
-| `/tv` | Unlisted venue-screen page: a room's now/next, or the whole venue (reads `/api/lineup`) |
-| `/venue` | Getting to Uhelný Mlýn — train from Prague, walk from the station |
+| `/press/downloads` (flag `edition`) | Press kit and downloadable assets (`/press` redirects to the press band on `/contact`) |
+| `/team` (flag `edition`) | Organizing team |
+| `/contact` (flag `edition`) | Contact desks, plus press coverage and the press-kit link (`#press`) |
+| `/faq` (flag `edition`) | Frequently asked questions |
+| `/tv` (flag `edition`) | Unlisted venue-screen page: a room's now/next, or the whole venue (reads `/api/lineup`) |
+| `/venue` (flag `edition`) | Getting to Uhelný Mlýn — train from Prague, walk from the station |
 | `/attending` (flag `attending`) | "I'm attending" share-card generator (client-side canvas → PNG) |
 | `/code-of-conduct` | Code of Conduct one-pager, Listener's contact, link to the full text |
 | `/privacy-policy` | GDPR privacy policy, website and mobile app |
