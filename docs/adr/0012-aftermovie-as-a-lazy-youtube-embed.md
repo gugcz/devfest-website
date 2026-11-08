@@ -2,7 +2,7 @@
 
 - Status: accepted
 - Date: 2026-11-08
-- PR: to be linked
+- PR: [#536](https://github.com/gugcz/devfest-website/pull/536)
 
 ## Context
 
