@@ -377,9 +377,10 @@ z-index -1 (over the root's ground, under every block), fading in over
 `data-aether-anchor`: the logo, a subpage's title), the traces with pulses,
 embers, the hatched vignette and paper grain; a lamp follows the pointer
 for five seconds, then drifts. It runs at 24 fps and only while its anchor
-is on screen (scrolled under the veil it holds its frame), drops a fifth of
-its resolution when 48 frames average slower than about 16 fps (down to
-40%), caps its pixel count (lower on a small screen), and stops, freeing the
+is on screen (scrolled under the veil it holds its frame, then resumes from
+it), drops a fifth of its resolution when 48 frames average slower than
+about 16 fps (down to 40%), caps its pixel count (lower on a small screen),
+and stops, freeing the
 GPU, before a navigation swaps the page. Under it, on the root (`html`), the
 three radial gradients (rust below, petrol top-left, plum top-right, fixed)
 over ink are the ground of every page.
