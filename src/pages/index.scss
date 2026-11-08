@@ -117,12 +117,25 @@
 }
 
 // ── WHAT IS ANNOUNCED ────────────────────────────────────────────────────
+// Equal columns, not content-sized ones, so every fact centres on its own
+// column and the middle one on the lead's axis, whatever its note's length.
+// Below 720px the first fact takes the whole row and the other two share
+// the next, mirrored about that axis. The row takes back the band's own
+// gutter (the veil's still holds it off the edge), so a note fits its
+// column on one line.
 .facts {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 1.5rem clamp(2rem, 6vw, 4rem);
-	margin: 2.75rem 0 0;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 1.5rem clamp(1rem, 4vw, 3rem);
+	margin: 2.75rem calc(-1 * var(--gutter)) 0;
+
+	@media (max-width: 720px) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+
+		> :first-child {
+			grid-column: 1 / -1;
+		}
+	}
 
 	div {
 		display: flex;
@@ -140,6 +153,7 @@
 		font-size: 1.25rem;
 		font-weight: 600;
 		color: var(--ivory);
+		text-wrap: balance;
 	}
 }
 

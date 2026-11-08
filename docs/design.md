@@ -457,9 +457,11 @@ with a faint brass edge, never tilted, never shadowed, never rounded. The
 hidden).
 
 ### Facts and figures
-Description lists, centred and wrapping. A fact: brass term over an ivory
-value, an optional muted note. A figure: the number in brass light over
-its muted term.
+Description lists, centred. Facts sit in equal columns, three in a row
+(below 720px the first takes the row and the other two share the next),
+so each centres on its column and the row on the lead. A fact: brass term
+over an ivory value, an optional muted note. A figure: the number in brass
+light over its muted term.
 
 ### Inputs / Fields
 - **Style:** a 1px `field-border` on an ink plate (70%), ivory text, square,
