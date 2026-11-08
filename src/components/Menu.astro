@@ -215,8 +215,8 @@ const isCurrent = (href: string) => {
 
 		{!isInvite && ticketsHref && <a href={ticketsHref} class="header-cta">Tickets</a>}
 		{nextEdition && (
-			<a href={nextEdition.href} class="header-cta" aria-label={nextEdition.name} data-astro-reload>
-				{nextEdition.label}
+			<a href={nextEdition.href} class="header-cta" data-astro-reload>
+				{nextEdition.label}<span class="sr-only">: {nextEdition.name}</span>
 			</a>
 		)}
 	</div>
