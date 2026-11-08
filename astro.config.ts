@@ -7,6 +7,7 @@ import type { Plugin } from 'vite';
 import config from './src/site.config';
 import featureRoutes from './src/integrations/feature-routes';
 import archives, { archivedPages } from './src/integrations/archives';
+import redirectGuard from './src/integrations/redirect-guard';
 
 const BUILD_DATE = new Date().toISOString();
 
@@ -20,8 +21,8 @@ if (archive && config.event.edition !== Number(archive)) {
         `PUBLIC_ARCHIVE=${archive}: src/site.config.ts describes the ${config.event.edition} edition. Archive ${archive} from a commit whose config still does.`,
     );
 }
-if (archive && !config.features.edition) {
-    throw new Error(`PUBLIC_ARCHIVE=${archive} needs the edition's pages: PUBLIC_FEATURES_ON=edition (npm run archive sets it).`);
+if (archive && !config.event.date) {
+    throw new Error(`PUBLIC_ARCHIVE=${archive}: src/site.config.ts has no event.date; an edition is archived once it has taken place.`);
 }
 const ARCHIVED = archive ? new Map<string, string | undefined>() : archivedPages();
 
@@ -183,8 +184,8 @@ export default defineConfig({
             },
         }),
         react(),
-        featureRoutes(config.features),
-        ...(archive ? [] : [archives()]),
+        featureRoutes(config.features, config.event.date !== undefined),
+        ...(archive ? [] : [archives(), redirectGuard()]),
     ],
     vite: {
         plugins: [devApiMocks(), legacyBrowserTarget()],

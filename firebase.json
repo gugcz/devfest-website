@@ -9,10 +9,11 @@
     "cleanUrls": true,
     "trailingSlash": false,
     "redirects": [
-      { "regex": "^/(agenda|speakers|venue|faq|team|contact|partners|press|sessions|tv|calendar\\.ics)$", "destination": "/2026/:1", "type": 301 },
-      { "regex": "^/(speakers|talks|press)/([^/]+)$", "destination": "/2026/:1/:2", "type": 301 },
-      { "source": "/workshops", "destination": "/2026/agenda", "type": 301 },
-      { "regex": "^/(invoice|attending|thank-you|speaker-card)$", "destination": "/2026", "type": 301 }
+      { "regex": "^/(agenda|speakers|sessions|venue|partners|tv|calendar\\.ics)$", "destination": "/2026/:1", "type": 302 },
+      { "source": "/workshops", "destination": "/2026/agenda", "type": 302 },
+      { "regex": "^/(invoice|attending|thank-you|speaker-card)$", "destination": "/2026", "type": 302 },
+      { "regex": "^/invite/[^/]+$", "destination": "/", "type": 302 },
+      { "regex": "^/(speakers|talks)/([^/]+)$", "destination": "/2026/:1/:2", "type": 301 }
     ],
     "rewrites": [
       { "source": "/api/lineup", "function": { "functionId": "lineupApi", "region": "europe-west1" } },

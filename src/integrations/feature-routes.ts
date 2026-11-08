@@ -3,8 +3,8 @@
  * so a page a flag can remove lives under `src/routes/` (same nesting, so its
  * relative imports are unchanged) and is injected here only when its flag is
  * on (`injectRoute`, Astro integrations reference). Off means off: no HTML,
- * no sitemap entry. A few routes stand in while their flag is off
- * (`STAND_INS`): the teaser is the home page while `edition` is off.
+ * no sitemap entry. `/calendar.ics` exists only while the edition has a day
+ * (`DATED_ROUTES`).
  */
 import type { AstroIntegration } from 'astro';
 import type { FeatureFlag, Features } from '../lib/features';
@@ -17,22 +17,15 @@ interface Route {
 }
 
 const ROUTES: Record<FeatureFlag, readonly Route[]> = {
-	edition: [
-		{ pattern: '/', entrypoint: 'index.astro' },
+	lineup: [
 		{ pattern: '/agenda', entrypoint: 'agenda.astro' },
 		{ pattern: '/speakers', entrypoint: 'speakers.astro' },
 		{ pattern: '/speakers/[id]', entrypoint: 'speakers/[id].astro' },
 		{ pattern: '/talks/[id]', entrypoint: 'talks/[id].astro' },
 		{ pattern: '/sessions', entrypoint: 'sessions.astro' },
-		{ pattern: '/venue', entrypoint: 'venue.astro' },
-		{ pattern: '/faq', entrypoint: 'faq.astro' },
-		{ pattern: '/team', entrypoint: 'team.astro' },
-		{ pattern: '/contact', entrypoint: 'contact.astro' },
-		{ pattern: '/press', entrypoint: 'press.astro' },
-		{ pattern: '/press/downloads', entrypoint: 'press/downloads.astro' },
 		{ pattern: '/tv', entrypoint: 'tv.astro' },
-		{ pattern: '/calendar.ics', entrypoint: 'calendar.ics.ts' },
 	],
+	venue: [{ pattern: '/venue', entrypoint: 'venue.astro' }],
 	tickets: [{ pattern: '/thank-you', entrypoint: 'thank-you.astro' }],
 	invoice: [{ pattern: '/invoice', entrypoint: 'invoice.astro' }],
 	workshops: [{ pattern: '/workshops', entrypoint: 'workshops.astro' }],
@@ -55,12 +48,10 @@ const ROUTES: Record<FeatureFlag, readonly Route[]> = {
 	],
 };
 
-/** Routes injected while their flag is OFF, in place of the flag's own. */
-const STAND_INS: Partial<Record<FeatureFlag, readonly Route[]>> = {
-	edition: [{ pattern: '/', entrypoint: 'teaser.astro' }],
-};
+/** Routes that state the day: built only while `event.date` is set. */
+const DATED_ROUTES: readonly Route[] = [{ pattern: '/calendar.ics', entrypoint: 'calendar.ics.ts' }];
 
-export default function featureRoutes(features: Features): AstroIntegration {
+export default function featureRoutes(features: Features, dated: boolean): AstroIntegration {
 	return {
 		name: 'devfest:feature-routes',
 		hooks: {
@@ -73,8 +64,9 @@ export default function featureRoutes(features: Features): AstroIntegration {
 						continue;
 					}
 					logger.info(`${flag} off: ${routes.map((r) => r.pattern).join(', ')} not built`);
-					STAND_INS[flag]?.forEach(inject);
 				}
+				if (dated) DATED_ROUTES.forEach(inject);
+				else logger.info(`no event.date: ${DATED_ROUTES.map((r) => r.pattern).join(', ')} not built`);
 			},
 		},
 	};

@@ -5,13 +5,13 @@ import NextStep from '../components/NextStep.astro';
 import NextStepList from '../components/NextStepList.astro';
 import { pageTitle } from '../lib/event';
 import { enabled, enabledOnly } from '../lib/flags';
-import { editionHref, pastEditions } from '../lib/editions';
+import { flagHref, pastEditions } from '../lib/editions';
 
 // A dead URL is still a visitor who wanted something specific. The page used
 // to state the fault and offer one link home; it now offers the routes people
 // actually arrive looking for. Ordered by what a stale link most often points
-// at: last year's lineup, last year's programme, and tickets. While the next
-// edition has no date, those pages are the archive's (`editionHref`).
+// at: last year's lineup, last year's programme, and tickets. While the
+// lineup is off, those pages are the archive's (`flagHref`).
 const last = pastEditions()[0];
 const lastLine = last
 	? ` The ${last.year} edition lives on <a href="${last.href}">${last.external ? 'its own site' : 'in the archive'}</a>.`
@@ -20,12 +20,12 @@ const STEPS = enabledOnly([
 	{
 		title: 'The lineup',
 		noteHtml: 'Everyone who spoke, with their talks.',
-		actions: [{ href: editionHref('/speakers'), label: 'See the speakers' }],
+		actions: [{ href: flagHref('lineup', '/speakers'), label: 'See the speakers' }],
 	},
 	{
 		title: 'The agenda',
 		noteHtml: 'The timetable, and every talk by track under it.',
-		actions: [{ href: editionHref('/agenda'), label: 'See the agenda' }],
+		actions: [{ href: flagHref('lineup', '/agenda'), label: 'See the agenda' }],
 	},
 	{
 		feature: 'tickets' as const,
@@ -40,8 +40,8 @@ const STEPS = enabledOnly([
 		noteHtml:
 			'The FAQ answers most of it, and one of the desks answers the rest.' + lastLine,
 		actions: [
-			{ href: editionHref('/faq'), label: 'Read the FAQ' },
-			{ href: editionHref('/contact'), label: 'Contact us' },
+			{ href: '/faq', label: 'Read the FAQ' },
+			{ href: '/contact', label: 'Contact us' },
 		],
 	},
 ]);
@@ -66,9 +66,7 @@ const STEPS = enabledOnly([
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Nothing filed<br />under that'}
-			lede={enabled('edition')
-				? "404 — the page you asked for doesn't exist, or it moved when this site replaced the old one."
-				: "404 — the page you asked for doesn't exist, or it moved to the archive of its edition."}
+			lede="404 — the page you asked for doesn't exist, or it moved to the archive of its edition."
 			seoHeading="Page not found"
 			titleId="notfound-title"
 		/>

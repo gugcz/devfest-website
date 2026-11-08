@@ -8,6 +8,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import config from '../site.config';
 import { ARCHIVE, isUnder, liveUrl } from './base';
+import type { FeatureFlag } from './features';
 import { isDisplayableSession, sessionFromDoc } from './sessions';
 
 // From the project root: the build bundles this module somewhere else.
@@ -49,38 +50,65 @@ export function pastEditions(): PastEdition[] {
 	return [...here, ...elsewhere].filter((edition) => edition.year < before).sort((a, b) => b.year - a.year);
 }
 
-export interface EditionFigures {
+/** The facts `npm run archive` froze with an edition (`archive/<year>/edition.json`). */
+export interface EditionFacts {
 	year: number;
+	/** "DevFest.cz 2026". */
+	name: string;
+	/** The opening keynote, ISO 8601. */
+	start: string;
+	/** "30 October 2026". */
+	dateLabel: string;
+	venue: string | null;
+	city: string;
+	audience: number | null;
+}
+
+/** An archived edition: its facts, and what it had on stage. */
+export interface LastEdition extends EditionFacts {
+	/** Root-relative link to the archive: `/2026`. */
+	href: string;
 	speakers: number;
 	talks: number;
 }
 
 /**
- * What the latest archived edition had on stage, counted from its frozen
- * lineup the way `/agenda` lists it: every session but the service ones
- * and the hosts', and everyone who gave one. `null` with no archive.
+ * Talks and speakers counted from an edition's frozen lineup the way
+ * `/agenda` lists them: every session but the service ones and the hosts',
+ * and everyone who gave one.
  */
-export function lastEditionFigures(): EditionFigures | null {
-	const year = archivedEditions().at(-1);
-	if (!year) return null;
+function onStage(year: string): { speakers: number; talks: number } {
 	const file = join(ARCHIVE_ROOT, year, 'api', 'lineup.json');
-	if (!existsSync(file)) return null;
+	if (!existsSync(file)) return { speakers: 0, talks: 0 };
 	const raw = JSON.parse(readFileSync(file, 'utf8')) as { sessions?: unknown };
 	const docs = Array.isArray(raw.sessions) ? (raw.sessions as Record<string, unknown>[]) : [];
 	const talks = docs
 		.map((doc) => sessionFromDoc(typeof doc.id === 'string' ? doc.id : '', doc))
 		.filter(isDisplayableSession);
 	const speakers = new Set(talks.flatMap((talk) => talk.speakers.map((speaker) => speaker.id)));
-	return { year: Number(year), speakers: speakers.size, talks: talks.length };
+	return { speakers: speakers.size, talks: talks.length };
 }
 
 /**
- * `path` on the site of the edition the pages talk about: the live page
- * while `edition` is on, the latest archive's while it is off (the agenda a
- * stale link or a thank-you page points at is then last year's).
+ * The latest edition archived here, for the lines the live site says about
+ * last year. `null` without an archive that has `edition.json`.
  */
-export function editionHref(path: string): string {
-	if (config.features.edition) return path;
+export function lastEdition(): LastEdition | null {
+	const year = archivedEditions().at(-1);
+	if (!year) return null;
+	const file = join(ARCHIVE_ROOT, year, 'edition.json');
+	if (!existsSync(file)) return null;
+	const facts = JSON.parse(readFileSync(file, 'utf8')) as EditionFacts;
+	return { ...facts, href: `/${year}`, ...onStage(year) };
+}
+
+/**
+ * `path` while `flag` is on; while it is off, the same page in the latest
+ * archive (the agenda a stale link or a thank-you page points at is then
+ * last year's), or the home page without one.
+ */
+export function flagHref(flag: FeatureFlag, path: string): string {
+	if (config.features[flag]) return path;
 	const year = archivedEditions().at(-1);
 	if (!year) return '/';
 	return path === '/' ? `/${year}` : `/${year}${path}`;

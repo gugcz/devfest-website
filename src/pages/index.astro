@@ -17,13 +17,13 @@ import {
 	type Partner,
 } from '../lib/partners';
 import { getTopics } from '../lib/topics';
-import { EVENT, eventDate } from '../lib/event';
+import { EVENT, eventDate, hasDate, hasVenue } from '../lib/event';
 import { staticTicketLines } from '../lib/tickets-static';
 import config from '../site.config';
 import { enabled, ticketsHref } from '../lib/flags';
 
 // The hero stamp sets the figures in the mono face and the month between them.
-const [heroDay, heroMonth, heroYear] = EVENT.dateShort.split(' ');
+const [heroDay, heroMonth, heroYear] = hasDate ? EVENT.dateShort.split(' ') : [];
 
 // The home page as prints on a black table: the full-bleed plate with the
 // statement set left over it, then the event (a widescreen print and its
@@ -81,7 +81,7 @@ const RINGED = '01';
 const STRIP_SCALE = 1;
 ---
 
-<BaseLayout description={`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch} ${EVENT.dateLabel}. That was the eleventh edition; thank you for coming.`}>
+<BaseLayout>
 	{/* Preload the LCP hero background so it isn't discovered only after CSS parse */}
 	<link
 		slot="head"
@@ -107,7 +107,7 @@ const STRIP_SCALE = 1;
 			<div class="hero-body">
 				<h1 id="hero-title" class="hero-statement display">
 					<span class="sr-only">{EVENT.name} — Prague Developer Conference, {EVENT.dateLabel}. </span>
-					That was Prague&rsquo;s most original conference. <span class="red">Thank you.</span>
+					{config.event.tagline}, <span class="red">{EVENT.dateLabel}.</span>
 				</h1>
 
 				{/* The day's five topics, billed under the statement. */}
@@ -116,14 +116,16 @@ const STRIP_SCALE = 1;
 				</ul>
 
 				<div class="hero-facts">
-					<time class="hero-date" datetime={eventDate('iso')}><span class="fig">{heroDay}</span> {heroMonth} <span class="fig">{heroYear}</span></time>
-					<Countdown client:load />
-					<a
-						class="hero-facts-link"
-						href={EVENT.mapUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-					>{EVENT.venue}, {config.event.venue.city}</a>
+					{hasDate && <time class="hero-date" datetime={eventDate('iso')}><span class="fig">{heroDay}</span> {heroMonth} <span class="fig">{heroYear}</span></time>}
+					{hasDate && <Countdown client:load />}
+					{hasVenue ? (
+						<a
+							class="hero-facts-link"
+							href={EVENT.mapUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+						>{EVENT.venue}, {EVENT.city}</a>
+					) : <span class="hero-facts-link">{EVENT.city}</span>}
 					{ticketsHref && <HeroOffer client:load />}
 				</div>
 				{ticketsHref && <a href="#tickets" class="btn-primary hero-cta">Get tickets</a>}
@@ -135,18 +137,18 @@ const STRIP_SCALE = 1;
 
 		{/* THE EVENT — a widescreen print of the mill with the line set over it
 		     like a subtitle, and the back of the print beside it. */}
-		<section class="band sec event" aria-labelledby="facts-title">
+		{hasDate && hasVenue && <section class="band sec event" aria-labelledby="facts-title">
 			<div class="band-inner">
 				<header class="head-rule">
 					<h2 id="facts-title" class="head-rule-title event-title">The eleventh DevFest.cz</h2>
 				</header>
 				<div class="event-grid">
 					<div class="paper event-print">
-						<span class="tape">{EVENT.venue}, {config.event.venue.city}</span>
+						<span class="tape">{EVENT.venue}, {EVENT.city}</span>
 						<div class="paper-photo event-photo">
 							<img
 								src="/gallery/uhelny-mlyn-chimney.webp"
-								alt={`The chimney of ${EVENT.venue}, the converted coal mill at ${config.event.venue.city}`}
+								alt={`The chimney of ${EVENT.venue}, the converted coal mill at ${EVENT.city}`}
 								loading="lazy"
 								decoding="async"
 								width="1824"
@@ -169,7 +171,7 @@ const STRIP_SCALE = 1;
 						</div>
 						<dl class="facts-list">
 							<div><dt>Date</dt><dd><time datetime={eventDate('iso')}>{EVENT.dateLabel}</time></dd></div>
-							<div><dt>Place</dt><dd>{EVENT.venue}, {config.event.venue.city}</dd></div>
+							<div><dt>Place</dt><dd>{EVENT.venue}, {EVENT.city}</dd></div>
 							<div><dt>Doors</dt><dd><span class="fig">08:00&ndash;23:00</span></dd></div>
 							<div>
 								<dt>Audience</dt>
@@ -179,7 +181,7 @@ const STRIP_SCALE = 1;
 					</div>
 				</div>
 			</div>
-		</section>
+		</section>}
 
 		{/* TICKETS — client:load, not visible: the hero's "Get tickets" jumps
 		     straight here, and a visible-gated island only began loading on
@@ -188,7 +190,7 @@ const STRIP_SCALE = 1;
 		{ticketLines.length > 0 && <TicketIndex lines={ticketLines} />}
 
 		{/* SPEAKERS — the register's first lines; hides until data loads. */}
-		<SpeakersTeaser client:load />
+		{enabled('lineup') && <SpeakersTeaser client:load />}
 
 		{/* PAST EDITIONS — a contact sheet of the last edition, one frame ringed
 		     in grease and enlarged beside it. The frames are decorative; the

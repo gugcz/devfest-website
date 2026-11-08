@@ -42,17 +42,3 @@ export function defaultOgImageVersion(): string {
 	}
 	return cachedDefaultVersion;
 }
-
-const publicVersions = new Map<string, string>();
-/** The same `?v=<hash>` for any file in `public/` (`/og-2027.jpg`). */
-export function publicFileVersion(path: string): string {
-	let version = publicVersions.get(path);
-	if (!version) {
-		version = createHash('sha256').update(readFileSync(join(root, 'public', path))).digest('hex').slice(0, 10);
-		publicVersions.set(path, version);
-	}
-	return version;
-}
-
-/** The next edition's share card in `public/` (year-bound: `docs/adapting.md`). */
-export const UPCOMING_OG_FILE = 'og-2027.jpg';

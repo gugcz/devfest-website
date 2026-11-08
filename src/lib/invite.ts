@@ -7,9 +7,9 @@ import config from '../site.config';
 /** The facts the copy states out loud, in the site's date format (`event.ts`). */
 export const INVITE_EVENT = {
 	date: EVENT.dateLabel,
-	city: config.event.venue.city,
+	city: EVENT.city,
 	/** The one-line meta under the CTA. */
-	stamp: `${EVENT.dateShort} · ${config.event.venue.city}`,
+	stamp: `${EVENT.dateShort} · ${EVENT.city}`,
 } as const;
 
 /** The closing line, by `role`. An unknown role falls back to the organiser

@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
 import venuePrint from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
-import { EVENT, eventDate } from '../lib/event';
+import { EVENT, eventDate, hasDate, hasVenue } from '../lib/event';
 import config from '../site.config';
 import { enabledOnly, ticketsHref as ticketsLink, type FeatureFlag } from '../lib/flags';
 import { ARCHIVE, liveUrl, withoutBase } from '../lib/base';
@@ -27,13 +27,8 @@ const isInvite = currentPath === '/invite' || currentPath.startsWith('/invite/')
 const ticketsHref = ticketsLink ? (isHome ? '#tickets' : '/#tickets') : null;
 // An archived edition (ADR 0011) has no sale; the red button takes the
 // visitor to the live site instead. A full load: the two are separate builds.
-const { upcoming } = config;
 const nextEdition = ARCHIVE
-	? {
-			href: liveUrl('/'),
-			label: upcoming ? `${upcoming.edition} edition` : 'Current edition',
-			name: upcoming ? `${config.event.name} ${upcoming.edition}, ${upcoming.season}` : `${config.event.name}, the current edition`,
-		}
+	? { href: liveUrl('/'), label: 'Current edition', name: `${config.event.name}, the current edition` }
 	: null;
 
 // TWO TIERS, EIGHT LINES. Ten destinations at one poster size made the
@@ -46,10 +41,10 @@ const nextEdition = ARCHIVE
 // to get to the venue.
 const links: readonly NavLink[] = enabledOnly([
 	...(ticketsHref ? [{ href: ticketsHref, label: 'Tickets', cta: true }] : []),
-	{ href: '/speakers', label: 'Speakers', feature: 'edition' },
-	{ href: '/agenda', label: 'Agenda', feature: 'edition' },
-	{ href: '/venue', label: 'Venue', feature: 'edition' },
-	{ href: '/faq', label: 'FAQ', feature: 'edition' },
+	{ href: '/speakers', label: 'Speakers', feature: 'lineup' },
+	{ href: '/agenda', label: 'Agenda', feature: 'lineup' },
+	{ href: '/venue', label: 'Venue', feature: 'venue' },
+	{ href: '/faq', label: 'FAQ' },
 ]);
 
 // The organisers' side, one step smaller so it reads as the same list rather
@@ -59,14 +54,13 @@ const links: readonly NavLink[] = enabledOnly([
 // All three stay in the footer, which lists every page.
 const secondary: readonly NavLink[] = enabledOnly([
 	{ href: '/partners', label: 'Partners', feature: 'partners' },
-	{ href: '/team', label: 'Team', feature: 'edition' },
-	{ href: '/contact#press', label: 'Press', feature: 'edition' },
-	{ href: '/contact', label: 'Contact', feature: 'edition' },
+	{ href: '/team', label: 'Team' },
+	{ href: '/contact#press', label: 'Press' },
+	{ href: '/contact', label: 'Contact' },
 ]);
-// While the next edition has no date (`edition` off) the pages left at the
-// root are the legal and app pages: the mark is the way home, and there is
-// no menu to open.
 const hasMenu = links.length + secondary.length > 0;
+// Where and when, as far as it is announced: "Fall 2027 — Prague".
+const where = hasVenue ? `${EVENT.venue}, ${EVENT.city}` : EVENT.city;
 
 const isCurrent = (href: string) => {
 	if (href.startsWith('http')) return false;
@@ -192,7 +186,7 @@ const isCurrent = (href: string) => {
 
 					{/* One small print on the table beside the lines (>=901px only):
 					     where the day happens. Decorative; the foot line says it in words. */}
-					<div class="nav-print paper" aria-hidden="true">
+					{hasDate && hasVenue && <div class="nav-print paper" aria-hidden="true">
 						<span class="tape">{EVENT.venue}</span>
 						<span class="paper-photo nav-print-photo">
 							<Image src={venuePrint} alt="" widths={[260, 520]} sizes="260px" loading="lazy" />
@@ -201,12 +195,12 @@ const isCurrent = (href: string) => {
 							<span>{eventDate('slash')}</span>
 							<span>{EVENT.doorsTime}</span>
 						</span>
-					</div>
+					</div>}
 				</div>
 
 				<div class="nav-foot">
 					<div class="nav-foot-meta">
-						<p class="nav-foot-line">{EVENT.dateLabel} &mdash; {EVENT.venue}, {config.event.venue.city}</p>
+						<p class="nav-foot-line">{EVENT.dateLabel} &mdash; {where}</p>
 						<a class="nav-foot-mail" href={`mailto:${EVENT.contactEmail}`}>{EVENT.contactEmail}</a>
 					</div>
 				</div>

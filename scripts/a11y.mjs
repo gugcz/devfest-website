@@ -577,7 +577,7 @@ async function run() {
 	const PATHS = builtPaths();
 	console.log(`Auditing ${PATHS.length} pages against ${tags.join(', ')}`);
 
-	// The phone list lives on /agenda; a build without it (the `edition` flag off) skips it like any page.
+	// The phone list lives on /agenda; a build without it (the `lineup` flag off) skips it like any page.
 	const mobileAgenda = PATHS.includes('/agenda/')
 		? auditMobileAgenda(browser, origin, tags, report)
 		: Promise.resolve(console.log('  ⤳ /agenda/ [mobile list] not built (feature off), skipped'));

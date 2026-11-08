@@ -24,8 +24,9 @@ import { enabled } from '../lib/flags';
 type Variant = ReleaseGroup['variants'][number];
 
 /** The event day as the slip's edge stamps it: `30.10.2026`. */
-const EVENT_DAY_ISO = EVENT.doors.slice(0, 10);
-const EVENT_DAY_STAMP = EVENT_DAY_ISO.split('-').reverse().join('.');
+// Read on use, not on import: the module loads on pages built before the
+// day is announced, where `EVENT.doors` throws (`eventDay()`).
+const eventDayIso = (): string => EVENT.doors.slice(0, 10);
 
 /** The variant an employer pays for: same ticket, invoiced to the company. */
 function isCompanyFunded(release: TitoRelease): boolean {
@@ -177,8 +178,8 @@ function WaveSlip({ group, laterWaveOnSale, finalWave, vatNote, accountSlug, eve
 			<div className={s.row}>
 				<p className={s.edge}>
 					{vatNote && <span>{vatNote}</span>}
-					<time className={s.edgeDate} dateTime={EVENT_DAY_ISO}>
-						{EVENT_DAY_STAMP}
+					<time className={s.edgeDate} dateTime={eventDayIso()}>
+						{eventDayIso().split('-').reverse().join('.')}
 					</time>
 				</p>
 				<SlipCtas group={group} buyable={buyable} accountSlug={accountSlug} eventSlug={eventSlug} />

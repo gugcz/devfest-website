@@ -18,12 +18,12 @@ const TOWN = ADDRESS?.[3] ?? '';
 
 <BaseLayout
 	title={`Getting there — ${EVENT.name}`}
-	description={`How to get to ${EVENT.name} at ${EVENT.venue}, ${config.event.venue.city}: a direct 25-minute train from Prague, then a ten-minute walk from the station.`}
+	description={`How to get to ${EVENT.name} at ${EVENT.venue}, ${EVENT.city}: a direct 25-minute train from Prague, then a ten-minute walk from the station.`}
 >
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Venue'}
-			lede={`${EVENT.venue} is a converted industrial mill in ${config.event.venue.city}, on the river just north of Prague.`}
+			lede={`${EVENT.venue} is a converted industrial mill in ${EVENT.city}, on the river just north of Prague.`}
 			seoHeading={`How to get to ${EVENT.venue}, ${EVENT.name}`}
 			titleId="venue-title"
 		/>
@@ -70,7 +70,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 							</p>
 							<dl class="venue-facts">
 								<dt>Get off</dt>
-								<dd>{config.event.venue.city}</dd>
+								<dd>{EVENT.city}</dd>
 								<dt>Ride</dt>
 								<dd><span class="fig">25</span> min</dd>
 							</dl>
@@ -79,7 +79,7 @@ const TOWN = ADDRESS?.[3] ?? '';
 							<span class="venue-card-no" aria-hidden="true">02</span>
 							<h3 class="venue-card-title">Walk to {EVENT.venue}</h3>
 							<p>
-								From {config.event.venue.city} station it is a ten-minute walk, about <span class="fig">0.7&nbsp;km</span>, to the entrance in the black metal building.
+								From {EVENT.city} station it is a ten-minute walk, about <span class="fig">0.7&nbsp;km</span>, to the entrance in the black metal building.
 							</p>
 							<dl class="venue-facts">
 								<dt>Walk</dt>

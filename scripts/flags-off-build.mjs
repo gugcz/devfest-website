@@ -4,24 +4,29 @@
  * section is gone for good — no route directory in `dist/`, no sitemap
  * entry, and no built page linking to it or to its home-page anchor.
  *
- * Two builds: every optional flag off except `tickets` (so `invoice`,
- * `invite` and `workshops`' dependencies still hold), then the dated
- * `edition` off with everything that needs it. Both run on the a11y
- * fixtures (`A11Y_MOCK=1`), so no network and no Firebase. The archived
- * editions copied into `dist/<year>/` are frozen builds of their own and
- * are not checked.
+ * Two builds, each with every flag off but one of the two that are on
+ * while the next edition has no day (`app`, `newsletter`), so each is
+ * checked removed beside the other. Both run on the a11y fixtures
+ * (`A11Y_MOCK=1`), so no network and no Firebase, and on the config as it
+ * is: without `event.date`, they also check that nothing states a day
+ * (`/calendar.ics`, the `Event` JSON-LD). The archived editions copied into
+ * `dist/<year>/` are frozen builds of their own and are not checked.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
+import { runnerImport } from 'vite';
 import { FEATURE_LINKS } from '../src/lib/features.ts';
+
+const { default: config } = (await runnerImport('./src/site.config.ts')).module;
 
 const DIST = path.resolve('dist');
 
 /** The route directories each flag removes from `dist/`; the hrefs come
  * from `FEATURE_LINKS`, the same table the pages use. */
 const ROUTES = {
-	edition: ['agenda', 'speakers', 'talks', 'sessions', 'venue', 'faq', 'team', 'contact', 'press', 'tv', 'calendar.ics'],
+	lineup: ['agenda', 'speakers', 'talks', 'sessions', 'tv'],
+	venue: ['venue'],
 	tickets: ['thank-you'],
 	invoice: ['invoice'],
 	workshops: ['workshops'],
@@ -32,9 +37,10 @@ const ROUTES = {
 	attending: ['attending', 'speaker-card'],
 };
 
+const OFF_UNTIL_ANNOUNCED = ['lineup', 'venue', 'tickets', 'invoice', 'workshops', 'invite', 'partners', 'attending'];
 const RUNS = [
-	['invoice', 'workshops', 'app', 'invite', 'partners', 'newsletter', 'attending'],
-	['edition', 'tickets', 'invoice', 'invite', 'workshops', 'attending'],
+	['app', ...OFF_UNTIL_ANNOUNCED],
+	['newsletter', ...OFF_UNTIL_ANNOUNCED],
 ];
 
 /** Legal prose is not templated (ADR 0010): a chapter rewrites these pages. */
@@ -83,6 +89,13 @@ for (const off of RUNS) {
 			for (const href of hrefs) {
 				if (links(text, href)) fail(`${flag}: ${file} links ${href}`);
 			}
+		}
+	}
+	if (!config.event.date) {
+		if (existsSync(path.join(DIST, 'calendar.ics'))) fail('no event.date: dist/calendar.ics was built');
+		for (const { file, text } of pages) {
+			if (links(text, '/calendar.ics')) fail(`no event.date: ${file} links /calendar.ics`);
+			if (text.includes('"@type":"Event"')) fail(`no event.date: ${file} carries an Event`);
 		}
 	}
 	console.log(failures === 0 ? '  ✓ nothing left behind' : `  ${failures} problem(s) so far`);

@@ -7,8 +7,8 @@
  * `INVOICES_CLOSE` in `functions/src/invoice/submit.ts`; one mirror module
  * is planned, ADR 0010); change both.
  *
- * The event is after the autumn DST switch, so `+01:00` is right; do not
- * "fix" it to `+02:00`.
+ * Times carry the local offset: `+01:00` after the autumn DST switch,
+ * `+02:00` before it.
  */
 import type { SiteConfig } from './lib/site-config';
 import { checkFeatureDependencies, resolveFeatures } from './lib/features';
@@ -26,36 +26,18 @@ const buildVariable = (name: 'PUBLIC_FEATURES_OFF' | 'PUBLIC_FEATURES_ON'): stri
 const config: SiteConfig = {
 	event: {
 		name: 'DevFest.cz',
-		edition: 2026,
-		hashtag: '#DevFestCZ',
-		timeZone: 'Europe/Prague',
-		timeZoneLabel: 'CET',
-		doors: '2026-10-30T08:00:00+01:00',
-		start: '2026-10-30T09:00:00+01:00',
-		end: '2026-10-30T19:00:00+01:00',
-		afterpartyEnd: '2026-10-30T23:00:00+01:00',
-		invoicesClose: '2026-10-30T07:00:00+01:00',
-		tagline: "Prague's developer conference & festival",
-		audience: 350,
-		pitch:
-			'AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it.',
-		previousEditionUrl: 'https://2025.devfest.cz',
-		venue: {
-			name: 'Uhelný Mlýn',
-			street: 'Areál Šroubáren 860',
-			postalCode: '252 66',
-			city: 'Libčice nad Vltavou',
-			region: 'Central Bohemia',
-			country: 'CZ',
-			countryName: 'Czech Republic',
-			mapUrl: 'https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8',
-			stationWalkUrl: 'https://maps.app.goo.gl/95BeQWKRnyoXTXMF9',
-		},
-	},
-	upcoming: {
 		edition: 2027,
+		hashtag: '#DevFestCZ',
+		// Announced: the season and the city. The day, the venue and its
+		// audience follow once they are; until then the sections that need
+		// them stay off (`features` below).
 		season: 'Fall 2027',
 		city: 'Prague',
+		timeZone: 'Europe/Prague',
+		timeZoneLabel: 'CET',
+		tagline: "Prague's developer conference & festival",
+		pitch:
+			'AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it.',
 	},
 	organizer: {
 		name: 'GUG.cz',
@@ -88,12 +70,12 @@ const config: SiteConfig = {
 	},
 	features: resolveFeatures(
 		{
-			// The 2026 edition is over (30 October 2026) and archived at /2026
-			// (ADR 0011). Until 2027 has a date the home page is its teaser:
-			// the edition's pages, the sale, the invoices, the invitations,
-			// the workshop sign-up, the share cards and the partners are off.
-			// The app and the newsletter stay.
-			edition: false,
+			// 2027 is announced for the fall in Prague; no day, venue or lineup
+			// yet. The 2026 edition is archived at /2026 (ADR 0011). A flag
+			// turns on once its section is ready, and its redirect in
+			// firebase.json goes in the same change.
+			lineup: false,
+			venue: false,
 			tickets: false,
 			invoice: false,
 			workshops: false,
@@ -108,6 +90,6 @@ const config: SiteConfig = {
 	),
 };
 
-checkFeatureDependencies(config.features);
+checkFeatureDependencies(config.features, config.event);
 
 export default config;

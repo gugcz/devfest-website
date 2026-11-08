@@ -65,7 +65,7 @@ const STEPS = [
 
 <BaseLayout
 	title={`Ticket confirmed — ${EVENT.name}`}
-	description={`Your ${EVENT.name} ticket is confirmed. See you in ${config.event.venue.city} on ${EVENT.dateLabel}.`}
+	description={`Your ${EVENT.name} ticket is confirmed. See you in ${EVENT.city} on ${EVENT.dateLabel}.`}
 	noindex
 >
 	<main class="page-stack">
@@ -85,7 +85,7 @@ const STEPS = [
 						<dt>Time</dt>
 						<dd class="stub-fig">{EVENT.timeLabel}</dd>
 						<dt>Place</dt>
-						<dd>{EVENT.venue}, {config.event.venue.city}</dd>
+						<dd>{EVENT.venue}, {EVENT.city}</dd>
 					</dl>
 					<div class="stub-actions">
 						<a class="btn-primary" href={EVENT.icsUrl} download>Download .ics</a>

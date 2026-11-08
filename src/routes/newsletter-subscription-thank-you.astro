@@ -5,8 +5,12 @@ import NextStep from '../components/NextStep.astro';
 import NextStepList from '../components/NextStepList.astro';
 import EndLine from '../components/EndLine.astro';
 import { EVENT, pageTitle } from '../lib/event';
-import { editionHref } from '../lib/editions';
-import { enabledOnly } from '../lib/flags';
+import { flagHref, lastEdition } from '../lib/editions';
+import { enabled, enabledOnly } from '../lib/flags';
+
+// The talks on show: this edition's once its lineup is out, last year's in
+// the archive before that.
+const onStage = enabled('lineup') ? EVENT.name : (lastEdition()?.name ?? EVENT.name);
 
 // The page used to dead-end: one line of confirmation and a link back to the
 // homepage the visitor had just come from. Someone who has just handed over
@@ -24,8 +28,8 @@ const STEPS = enabledOnly([
 	{
 		title: 'Catch up on the talks',
 		noteHtml:
-			`The talks and speakers of ${EVENT.name} stay up &mdash; both pages read straight from the schedule.`,
-		actions: [{ href: editionHref('/agenda#talks'), label: 'See the talks' }],
+			`The talks and speakers of ${onStage} stay up &mdash; both pages read straight from the schedule.`,
+		actions: [{ href: flagHref('lineup', '/agenda#talks'), label: 'See the talks' }],
 	},
 	{
 		feature: 'invoice' as const,
@@ -56,7 +60,7 @@ const STEPS = enabledOnly([
 					{STEPS.map((step) => <NextStep {...step} />)}
 				</NextStepList>
 
-				<EndLine text={`Here is who took the stage at ${EVENT.name}.`} href={editionHref('/speakers')} label="See the speakers" />
+				<EndLine text={`Here is who took the stage at ${onStage}.`} href={flagHref('lineup', '/speakers')} label="See the speakers" />
 			</div>
 		</section>
 	</main>

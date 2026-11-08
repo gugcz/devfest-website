@@ -1,9 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
-import { EVENT } from '../lib/event';
+import { EVENT, hasDate, hasVenue } from '../lib/event';
 import config from '../site.config';
-import { enabled, enabledOnly, type FeatureFlag } from '../lib/flags';
+import { enabledOnly, type FeatureFlag } from '../lib/flags';
 import { getSocials } from '../lib/socials';
 import { ARCHIVE, liveUrl } from '../lib/base';
 import { pastEditions } from '../lib/editions';
@@ -28,15 +28,13 @@ type FooterLink = {
 	reload?: boolean;
 };
 
-// An archived edition (ADR 0011) links the live site, named by the next
-// edition while it has no date.
-const { upcoming } = config;
+// An archived edition (ADR 0011) links the live site.
 // The latest past edition: the archive at `/<year>`, or its own site.
 const lastEdition: FooterLink[] = pastEditions()
 	.slice(0, 1)
 	.map(({ year, href, external }) => ({ href, label: `${year} edition`, external }));
 const currentEdition: FooterLink[] = ARCHIVE
-	? [{ href: liveUrl('/'), label: upcoming ? `${config.event.name} ${upcoming.edition}` : 'Current edition', reload: true }]
+	? [{ href: liveUrl('/'), label: 'Current edition', reload: true }]
 	: [];
 
 // Every destination, in two groups. The menu is the only navigation above the
@@ -50,10 +48,10 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		title: 'Attend',
 		links: [
 			{ href: '/#tickets', label: 'Tickets', feature: 'tickets' },
-			{ href: '/agenda', label: 'Agenda', feature: 'edition' },
-			{ href: '/speakers', label: 'Speakers', feature: 'edition' },
-			{ href: '/faq', label: 'FAQ', feature: 'edition' },
-			{ href: '/venue', label: 'Getting there', feature: 'edition' },
+			{ href: '/agenda', label: 'Agenda', feature: 'lineup' },
+			{ href: '/speakers', label: 'Speakers', feature: 'lineup' },
+			{ href: '/faq', label: 'FAQ' },
+			{ href: '/venue', label: 'Getting there', feature: 'venue' },
 			{ href: '/app', label: 'Get the app', feature: 'app' },
 			// The B2B revenue path was linked from nowhere — not the menu, not
 			// here — so a company that needed an invoice had to know the URL.
@@ -66,10 +64,10 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		id: 'footer-about',
 		title: 'About',
 		links: [
-			{ href: '/team', label: 'Team', feature: 'edition' },
+			{ href: '/team', label: 'Team' },
 			{ href: '/partners', label: 'Partners', feature: 'partners' },
-			{ href: '/contact#press', label: 'Press', feature: 'edition' },
-			{ href: '/contact', label: 'Contact', feature: 'edition' },
+			{ href: '/contact#press', label: 'Press' },
+			{ href: '/contact', label: 'Contact' },
 			{ href: '/#newsletter', label: 'Newsletter', feature: 'newsletter' },
 			...currentEdition,
 			...lastEdition,
@@ -133,25 +131,27 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 				</nav>
 			))}
 
-			{enabled('edition') && <section class="col" aria-labelledby="footer-event">
-				<h2 id="footer-event" class="col-title">Event</h2>
+			<section class="col" aria-labelledby="footer-event">
+				<h2 id="footer-event" class="col-title">{EVENT.name}</h2>
 				<dl class="event-meta">
 					<dt>Date</dt>
 					<dd>
-						<time datetime={EVENT.start.slice(0, 10)}>{EVENT.dateLabel}</time>
+						{hasDate ? <time datetime={EVENT.start.slice(0, 10)}>{EVENT.dateLabel}</time> : EVENT.dateLabel}
 					</dd>
 					<dt>Place</dt>
 					<dd>
-						<a
-							href={EVENT.mapUrl}
-							target="_blank"
-							rel="noopener noreferrer"
-						>{EVENT.venue}, {config.event.venue.city}</a>
+						{hasVenue ? (
+							<a
+								href={EVENT.mapUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+							>{EVENT.venue}, {EVENT.city}</a>
+						) : EVENT.city}
 					</dd>
 					<dt>Format</dt>
 					<dd>In-person</dd>
 				</dl>
-			</section>}
+			</section>
 
 			<section class="col col-organizer" aria-labelledby="footer-organizer">
 				<h2 id="footer-organizer" class="col-title">Organizer</h2>

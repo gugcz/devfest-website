@@ -5,9 +5,9 @@ import CookieBanner from '../components/CookieBanner.astro';
 import Head from './Head.astro';
 import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
-import { defaultOgImageVersion, publicFileVersion, UPCOMING_OG_FILE } from '../lib/og-version';
+import { defaultOgImageVersion } from '../lib/og-version';
 import { staticTicketLines } from '../lib/tickets-static';
-import { EVENT, pageTitle } from '../lib/event';
+import { EVENT, eventVenue, hasDate, hasVenue, pageTitle } from '../lib/event';
 import { absoluteUrl, withoutBase } from '../lib/base';
 import config from '../site.config';
 import { enabled } from '../lib/flags';
@@ -25,28 +25,24 @@ interface Props {
 	ogImageAlt?: string;
 }
 
-const { venue } = config.event;
-// While the next edition has no date (`edition` off, ADR 0011) the pages left
-// at the root describe and share it, not the archived one.
-const upcoming = enabled('edition') ? undefined : config.upcoming;
+const { event } = config;
+// Before the day is announced the description says what is: the season and
+// the city (ADR 0011).
+const when = hasDate ? `${EVENT.dateLabel} at ${EVENT.venue}` : `${event.season.toLowerCase()}, ${event.city}`;
 const {
 	title = pageTitle("Prague Developer Conference"),
-	description = upcoming
-		? `${config.event.name} ${upcoming.edition}: ${config.event.tagline} returns in ${upcoming.season.toLowerCase()}.`
-		: `${EVENT.name} — ${config.event.tagline}: ${config.event.pitch.replace(/\.$/, "")}. ${EVENT.dateLabel} at ${EVENT.venue}.${enabled('tickets') ? ' Tickets on sale now.' : ''}`,
+	description = `${EVENT.name} — ${event.tagline}: ${event.pitch.replace(/\.$/, "")}. ${when.charAt(0).toUpperCase()}${when.slice(1)}.${enabled('tickets') ? ' Tickets on sale now.' : ''}`,
 	noindex = false,
 	kiosk = false,
-	ogImage = upcoming
-		? `${absoluteUrl(`/${UPCOMING_OG_FILE}`)}?v=${publicFileVersion(UPCOMING_OG_FILE)}`
-		: `${absoluteUrl('/og-image.jpg')}?v=${defaultOgImageVersion()}`,
-	ogImageAlt = upcoming
-		? `${config.event.name} ${upcoming.edition}, ${upcoming.season}`
-		: `${EVENT.name} — classified mission starts ${EVENT.dateLabel}`,
+	ogImage = `${absoluteUrl('/og-image.jpg')}?v=${defaultOgImageVersion()}`,
+	ogImageAlt = `${EVENT.name} — ${event.tagline}, ${EVENT.dateLabel}`,
 } = Astro.props;
 
 // Event schema follows https://developers.google.com/search/docs/appearance/structured-data/event
 // Only rendered on the home page so subpages (privacy, contact, etc.) don't
-// claim to BE the event. WebSite + Organization render sitewide.
+// claim to BE the event, and only once the day is announced: until then the
+// home page is the Organization's (ADR 0011). WebSite + Organization render
+// sitewide.
 const sitePath = withoutBase(Astro.url.pathname);
 const isHome = sitePath === "/";
 
@@ -69,7 +65,25 @@ const offers = isHome && enabled('tickets')
 				"seller": organizer
 			}))
 	: [];
-const eventSchema = {
+// The venue, or the announced city while there is none.
+const location = hasVenue
+	? (() => {
+			const venue = eventVenue();
+			return {
+				"@type": "Place",
+				"name": venue.name,
+				"address": {
+					"@type": "PostalAddress",
+					"streetAddress": venue.street,
+					"postalCode": venue.postalCode,
+					"addressLocality": venue.city,
+					"addressRegion": venue.region,
+					"addressCountry": venue.country
+				}
+			};
+		})()
+	: { "@type": "Place", "name": event.city, "address": { "@type": "PostalAddress", "addressLocality": event.city } };
+const eventSchema = hasDate && {
 	"@context": "https://schema.org",
 	"@type": "Event",
 	"name": EVENT.name,
@@ -85,18 +99,7 @@ const eventSchema = {
 	"eventStatus": "https://schema.org/EventScheduled",
 	"inLanguage": "en",
 	"keywords": "developer conference, technology conference, Prague, AI agents, generative UI, cloud, backends, web development, mobile development, accessibility, open source, DevFest",
-	"location": {
-		"@type": "Place",
-		"name": venue.name,
-		"address": {
-			"@type": "PostalAddress",
-			"streetAddress": venue.street,
-			"postalCode": venue.postalCode,
-			"addressLocality": venue.city,
-			"addressRegion": venue.region,
-			"addressCountry": venue.country
-		}
-	},
+	"location": location,
 	"organizer": organizer,
 	// Omitted rather than `[]` once nothing is on sale (Google reads an empty
 	// list as "no offers", a missing key as "unknown").
@@ -150,7 +153,7 @@ const breadcrumbSchema = !isHome && slug
 
 const organization = await organizationSchema();
 const jsonLd = isHome
-	? [eventSchema, organization, websiteSchema]
+	? [...(eventSchema ? [eventSchema] : []), organization, websiteSchema]
 	: [organization, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])];
 ---
 

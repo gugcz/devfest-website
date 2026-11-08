@@ -10,40 +10,44 @@
 
 export const FEATURE_FLAGS = [
 	/**
-	 * The dated edition's own pages: the event home, `/agenda`, `/speakers`,
-	 * the share pages, `/venue`, `/faq`, `/team`, `/contact`, `/press`,
-	 * `/tv`, `/calendar.ics`. Off while the next edition has no date: the home
-	 * page is the teaser of `upcoming` and the old URLs redirect to the
-	 * archive (ADR 0011).
+	 * The edition's programme: `/agenda`, `/speakers`, the share pages
+	 * (`/speakers/<id>`, `/talks/<id>`), `/sessions`, `/tv`, the speakers on
+	 * the home page. Off until the lineup is published.
 	 */
-	'edition',
-	/** The ti.to ticket section on the home page and `/thank-you`. Needs `edition`. */
+	'lineup',
+	/** `/venue` and the venue's facts. Needs `event.venue`. */
+	'venue',
+	/** The ti.to ticket section on the home page and `/thank-you`. Needs `event.date`. */
 	'tickets',
 	/** `/invoice`, company tickets paid by bank transfer. Needs `tickets`. */
 	'invoice',
-	/** `/workshops`, seat sign-up for ticket holders. Needs `app` (its sign-in) and `edition`. */
+	/** `/workshops`, seat sign-up for ticket holders. Needs `app` (its sign-in) and `lineup`. */
 	'workshops',
 	/** `/app`, `/login`, `/delete-account` and the store badges. */
 	'app',
 	/** `/invite/<member>`, the team's personal invitation pages. Needs `tickets`. */
 	'invite',
-	/** `/partners` and the partner bands. Needs `edition`. */
+	/** `/partners` and the partner bands. */
 	'partners',
 	/** The newsletter form and `/newsletter-subscription-thank-you`. */
 	'newsletter',
-	/** `/attending` and `/speaker-card`, the canvas share cards. Needs `edition`. */
+	/** `/attending` and `/speaker-card`, the canvas share cards. Needs `event.date` and `event.venue`. */
 	'attending',
 ] as const;
 
 export type FeatureFlag = (typeof FEATURE_FLAGS)[number];
 export type Features = Record<FeatureFlag, boolean>;
 
-/** `needs` must be on for the key to be on. */
-const DEPENDENCIES: ReadonlyArray<{ flag: FeatureFlag; needs: FeatureFlag; why: string }> = [
-	{ flag: 'tickets', needs: 'edition', why: 'a ticket is for a dated edition' },
-	{ flag: 'workshops', needs: 'edition', why: 'workshops sit in the agenda' },
-	{ flag: 'attending', needs: 'edition', why: 'the share cards name the day and the talks' },
-	{ flag: 'partners', needs: 'edition', why: 'the partners are the dated edition\'s, and /partners redirects to the archive while it is off' },
+/** What a flag can need besides another flag: a fact of `config.event`. */
+type EventFact = 'date' | 'venue';
+
+/** `needs` must be on (a flag) or set (an event fact) for the key to be on. */
+const DEPENDENCIES: ReadonlyArray<{ flag: FeatureFlag; needs: FeatureFlag | EventFact; why: string }> = [
+	{ flag: 'tickets', needs: 'date', why: 'a ticket is for a dated edition' },
+	{ flag: 'venue', needs: 'venue', why: 'the page gives the venue\'s address and route' },
+	{ flag: 'workshops', needs: 'lineup', why: 'workshops sit in the agenda' },
+	{ flag: 'attending', needs: 'date', why: 'the share cards name the day' },
+	{ flag: 'attending', needs: 'venue', why: 'the share cards name the venue\'s town' },
 	{ flag: 'invoice', needs: 'tickets', why: 'an invoice redeems a ti.to ticket code' },
 	{ flag: 'invite', needs: 'tickets', why: 'the invitation CTA is a ticket checkout' },
 	{ flag: 'workshops', needs: 'app', why: 'the workshop sign-in is the app login' },
@@ -75,10 +79,15 @@ export function resolveFeatures(features: Features, off: string = '', on: string
 	return resolved;
 }
 
-/** Throws one sentence when a flag is on without the flag it depends on. */
-export function checkFeatureDependencies(features: Features): void {
+/** Throws one sentence when a flag is on without the flag or the event fact it depends on. */
+export function checkFeatureDependencies(features: Features, event: Partial<Record<EventFact, unknown>>): void {
 	for (const { flag, needs, why } of DEPENDENCIES) {
-		if (features[flag] && !features[needs]) {
+		if (!features[flag]) continue;
+		if (needs === 'date' || needs === 'venue') {
+			if (event[needs] === undefined) {
+				throw new Error(`features.${flag} needs event.${needs}: ${why}. Turn ${flag} off or set event.${needs} in src/site.config.ts.`);
+			}
+		} else if (!features[needs]) {
 			throw new Error(`features.${flag} needs features.${needs}: ${why}. Turn ${flag} off or ${needs} on in src/site.config.ts.`);
 		}
 	}
@@ -91,19 +100,8 @@ export function checkFeatureDependencies(features: Features): void {
  * carries one.
  */
 export const FEATURE_LINKS: Record<FeatureFlag, readonly string[]> = {
-	edition: [
-		'/agenda',
-		'/speakers',
-		'/talks/',
-		'/sessions',
-		'/venue',
-		'/faq',
-		'/team',
-		'/contact',
-		'/press',
-		'/tv',
-		'/calendar.ics',
-	],
+	lineup: ['/agenda', '/speakers', '/talks/', '/sessions', '/tv'],
+	venue: ['/venue'],
 	tickets: ['/#tickets', '#tickets'],
 	invoice: ['/invoice'],
 	workshops: ['/workshops'],

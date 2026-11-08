@@ -5,36 +5,42 @@
 		"label": "Essentials",
 		"items": [
 			{
-				"q": "When and where was DevFest.cz 2026?",
-				"a": "DevFest.cz 2026 took place on <strong>30 October 2026</strong> at <strong>Uhelný Mlýn</strong> — a converted industrial mill in Libčice nad Vltavou, just outside Prague — fully in person. Registration opened at <strong>8:00</strong>, the keynote started at <strong>9:00</strong>, and the day ran through the closing lightning talks into the afterparty."
+				"q": "When and where is DevFest.cz 2027?",
+				"a": "DevFest.cz 2027 takes place in <strong>fall 2027</strong> in <strong>Prague</strong>. The date and the venue are not announced yet; the <a href=\"/#newsletter\">newsletter</a> tells you first. The 2026 edition, its talks and its speakers are in the <a href=\"/2026\">archive</a>."
 			},
 			{
 				"q": "What does the day look like?",
-				"a": "Registration and breakfast open at 08:00, kick-off is at 08:45, keynote at 09:00. The cloakroom for coats and bags is open until 19:30; after that, ask at the registration desk. From then on the talks run on two stages — <strong>Moonshine</strong> and <strong>Speakeasy</strong> — in 20- and 40-minute slots, with a lunch break around midday and a longer break in the afternoon. Lightning talks and closing remarks wrap up at 19:00, and the afterparty follows. The full timetable is on the <a href=\"/agenda\">agenda</a> page; a slot or two may still shift."
+				"a": "Registration and breakfast open at 08:00, kick-off is at 08:45, keynote at 09:00. The cloakroom for coats and bags is open until 19:30; after that, ask at the registration desk. From then on the talks run on two stages — <strong>Moonshine</strong> and <strong>Speakeasy</strong> — in 20- and 40-minute slots, with a lunch break around midday and a longer break in the afternoon. Lightning talks and closing remarks wrap up at 19:00, and the afterparty follows. The full timetable is on the <a href=\"/agenda\">agenda</a> page; a slot or two may still shift.",
+				"feature": "lineup"
 			},
 			{
 				"q": "How do I get to the venue?",
-				"a": "Uhelný Mlýn is at <a href=\"https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8\" target=\"_blank\" rel=\"noopener noreferrer\"><strong>Areál Šroubáren 860, 252 66 Libčice nad Vltavou</strong></a> — on the map it looks like a trip, in practice it is Prague's backyard: a direct train from the city centre gets you there in 25 minutes. Take the <strong>S4</strong> toward <strong>Kralupy nad Vltavou</strong> from <strong>Praha-Bubny</strong>; trains leave about every 30 minutes — get off at <strong>Libčice nad Vltavou</strong>. From the station it is a <a href=\"https://maps.app.goo.gl/95BeQWKRnyoXTXMF9\" target=\"_blank\" rel=\"noopener noreferrer\">10-minute walk</a> (about 0.7 km) to the venue. The whole route is on the <a href=\"/venue\">getting there</a> page."
+				"a": "Uhelný Mlýn is at <a href=\"https://maps.app.goo.gl/W5bcH4BgFQ1B8QAm8\" target=\"_blank\" rel=\"noopener noreferrer\"><strong>Areál Šroubáren 860, 252 66 Libčice nad Vltavou</strong></a> — on the map it looks like a trip, in practice it is Prague's backyard: a direct train from the city centre gets you there in 25 minutes. Take the <strong>S4</strong> toward <strong>Kralupy nad Vltavou</strong> from <strong>Praha-Bubny</strong>; trains leave about every 30 minutes — get off at <strong>Libčice nad Vltavou</strong>. From the station it is a <a href=\"https://maps.app.goo.gl/95BeQWKRnyoXTXMF9\" target=\"_blank\" rel=\"noopener noreferrer\">10-minute walk</a> (about 0.7 km) to the venue. The whole route is on the <a href=\"/venue\">getting there</a> page.",
+				"feature": "venue"
 			},
 			{
 				"q": "What did you need to get in?",
-				"a": "Just the QR code from your ti.to ticket, on your phone or printed."
+				"a": "Just the QR code from your ti.to ticket, on your phone or printed.",
+				"feature": "tickets"
 			},
 			{
 				"q": "Can I come by car?",
-				"a": "There is only a <strong>limited number of parking places</strong>, at the far end of the complex (follow the signs), and no EV chargers on site. Share a ride or take the train."
+				"a": "There is only a <strong>limited number of parking places</strong>, at the far end of the complex (follow the signs), and no EV chargers on site. Share a ride or take the train.",
+				"feature": "venue"
 			},
 			{
 				"q": "When is the last train back to Prague?",
-				"a": "The last train from Libčice nad Vltavou to Prague leaves at <strong>23:18</strong>, right after the afterparty ends at 23:00."
+				"a": "The last train from Libčice nad Vltavou to Prague leaves at <strong>23:18</strong>, right after the afterparty ends at 23:00.",
+				"feature": "venue"
 			},
 			{
 				"q": "I'm flying in — which airport, and where should I stay?",
-				"a": "Fly to <strong>Prague</strong> (Václav Havel Airport, PRG) — the venue is just outside the city, not in another one. The Airport Express bus runs straight from the airport to Praha hlavní nádraží. Stay anywhere near <strong>Praha-Bubny</strong> or <strong>Holešovice</strong> and the venue is a single 25-minute S4 ride away on the day."
+				"a": "Fly to <strong>Prague</strong> (Václav Havel Airport, PRG) — the venue is just outside the city, not in another one. The Airport Express bus runs straight from the airport to Praha hlavní nádraží. Stay anywhere near <strong>Praha-Bubny</strong> or <strong>Holešovice</strong> and the venue is a single 25-minute S4 ride away on the day.",
+				"feature": "venue"
 			},
 			{
 				"q": "Who organises DevFest.cz?",
-				"a": "It's run by GUG.cz, z.s. — a Czech developer community. DevFest.cz is a volunteer-driven community event, now in its 11th edition."
+				"a": "It's run by GUG.cz, z.s. — a Czech developer community. DevFest.cz is a volunteer-driven community event, running since 2012."
 			},
 			{
 				"q": "What language are the talks in?",
@@ -42,19 +48,23 @@
 			},
 			{
 				"q": "Is there an afterparty?",
-				"a": "Yes. Once the closing remarks are done at 19:00, the networking afterparty kicks off right at the venue and runs until <strong>23:00</strong>."
+				"a": "Yes. Once the closing remarks are done at 19:00, the networking afterparty kicks off right at the venue and runs until <strong>23:00</strong>.",
+				"feature": "venue"
 			},
 			{
 				"q": "Is food included?",
-				"a": "<strong>Breakfast and the coffee breaks</strong>, with sweet and savoury snacks, are included in your ticket. Lunch and dinner can be bought on site from our catering partners."
+				"a": "<strong>Breakfast and the coffee breaks</strong>, with sweet and savoury snacks, are included in your ticket. Lunch and dinner can be bought on site from our catering partners.",
+				"feature": "tickets"
 			},
 			{
 				"q": "What should I wear?",
-				"a": "The venue is heated, but an industrial hall can feel chilly when the weather turns cold, so bring a sweater or a hoodie. Totally optional: come in 1940s clothing or a costume. We'd love to see a few fedoras and trench coats in the crowd."
+				"a": "The venue is heated, but an industrial hall can feel chilly when the weather turns cold, so bring a sweater or a hoodie. Totally optional: come in 1940s clothing or a costume. We'd love to see a few fedoras and trench coats in the crowd.",
+				"feature": "venue"
 			},
 			{
 				"q": "Is there Wi-Fi?",
-				"a": "Yes. The network name and password are on the back of the badge you get at registration."
+				"a": "Yes. The network name and password are on the back of the badge you get at registration.",
+				"feature": "venue"
 			},
 			{
 				"q": "Will I be photographed or filmed?",
@@ -65,7 +75,7 @@
 				"a": "Yes. DevFest.cz is a community event and harassment of any kind is not allowed; if you are asked to stop, you stop. The short version, and who to talk to on the day, is on the <a href=\"/code-of-conduct\">Code of Conduct</a> page."
 			},
 			{
-				"feature": "app",
+				"feature": "lineup",
 				"q": "What's the story with the detective theme?",
 				"a": "This year's edition is styled as a film-noir case, and the case doesn't stay on the posters: there's a detective game running through the day for anyone who wants to play investigator, with prizes including a <strong>Prusa Core One+ 3D printer</strong> and long-term licences for popular dev tools. The game runs in the event app, so <a href=\"/app\">get the app</a> before you arrive."
 			}
@@ -79,15 +89,18 @@
 		"items": [
 			{
 				"q": "How much do tickets cost?",
-				"a": "Tickets are sold in three waves — <strong>Early Bird</strong>, <strong>Regular</strong>, and <strong>Lazy Bird</strong> — with the price rising each wave. Which wave is on sale right now, and at what price, is always shown live in the <a href=\"/#tickets\">Tickets</a> section on the home page. Already paid a company invoice from an earlier wave? The code we email you still claims those tickets."
+				"a": "Tickets are sold in three waves — <strong>Early Bird</strong>, <strong>Regular</strong>, and <strong>Lazy Bird</strong> — with the price rising each wave. Which wave is on sale right now, and at what price, is always shown live in the <a href=\"/#tickets\">Tickets</a> section on the home page. Already paid a company invoice from an earlier wave? The code we email you still claims those tickets.",
+				"feature": "tickets"
 			},
 			{
 				"q": "What ticket types are available?",
-				"a": "Each wave offers two options: <strong>Individual</strong> (personal purchase) and <strong>Company funded</strong> (priced for employer-reimbursed purchases). Both grant full access to the conference — every talk on both stages."
+				"a": "Each wave offers two options: <strong>Individual</strong> (personal purchase) and <strong>Company funded</strong> (priced for employer-reimbursed purchases). Both grant full access to the conference — every talk on both stages.",
+				"feature": "tickets"
 			},
 			{
 				"q": "How do I get tickets?",
-				"a": "Tickets are sold through ti.to from the <a href=\"/#tickets\">Tickets</a> section on the home page. Pay by card and the ticket lands in your inbox right away. Each wave closes on its date or when it sells out — the earlier you grab one, the better the price."
+				"a": "Tickets are sold through ti.to from the <a href=\"/#tickets\">Tickets</a> section on the home page. Pay by card and the ticket lands in your inbox right away. Each wave closes on its date or when it sells out — the earlier you grab one, the better the price.",
+				"feature": "tickets"
 			},
 			{
 				"feature": "invoice",
@@ -103,19 +116,22 @@
 		"items": [
 			{
 				"q": "Who is speaking?",
-				"a": "The lineup is live on the <a href=\"/speakers\">speakers</a> page — developers, Google Developer Experts and researchers from across Europe and beyond, with a few more names still to land. Every talk, with its abstract and speakers, is on the <a href=\"/agenda#talks\">agenda</a> page, under the timetable."
+				"a": "The lineup is live on the <a href=\"/speakers\">speakers</a> page — developers, Google Developer Experts and researchers from across Europe and beyond, with a few more names still to land. Every talk, with its abstract and speakers, is on the <a href=\"/agenda#talks\">agenda</a> page, under the timetable.",
+				"feature": "lineup"
 			},
 			{
 				"q": "What topics are covered?",
-				"a": "AI agents, generative UI, cloud & backends, mobile & web (accessibility included), and the humans in tech — teams, trust, and the part that is not code. On the agenda the talks are grouped into three tracks: <strong>AI</strong>, <strong>Open Source</strong> and <strong>Humans</strong>."
+				"a": "AI agents, generative UI, cloud & backends, mobile & web (accessibility included), and the humans in tech — teams, trust, and the part that is not code. On the agenda the talks are grouped into three tracks: <strong>AI</strong>, <strong>Open Source</strong> and <strong>Humans</strong>.",
+				"feature": "lineup"
 			},
 			{
 				"q": "Will the talks be recorded?",
-				"a": "Yes — every talk on the Moonshine and Speakeasy stages is recorded and published once the videos are processed. We'll announce them via the <a href=\"/#newsletter\">newsletter</a> and our social channels."
+				"a": "Yes — every talk on the Moonshine and Speakeasy stages is recorded and published once the videos are processed. We'll announce them via the <a href=\"/#newsletter\">newsletter</a> and our social channels.",
+				"feature": "lineup"
 			},
 			{
 				"q": "How can I become a speaker?",
-				"a": "The Call for Proposals closed over the summer and the lineup for DevFest.cz 2026 is out — see the <a href=\"/speakers\">speakers</a> and <a href=\"/agenda\">agenda</a> pages. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>."
+				"a": "The Call for Proposals for DevFest.cz 2027 is not open yet; the <a href=\"/#newsletter\">newsletter</a> announces it first. For any speaker enquiries, reach us at <a href=\"mailto:devfest-speakers@gug.cz\">devfest-speakers@gug.cz</a>."
 			}
 		]
 	},

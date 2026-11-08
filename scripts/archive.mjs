@@ -10,26 +10,33 @@
  * 2. Builds the site with `PUBLIC_ARCHIVE=<year>`: Astro's `base` is
  *    `/<year>`, `src/middleware.ts` rebases every link and points the
  *    live-only pages (the privacy policy, the code of conduct) at the live
- *    site, the islands read the frozen lineup, the `edition` flag is on (plus
- *    `PUBLIC_FEATURES_ON`, e.g. `partners` once the root has switched it
- *    off) and the live-only sections (`app`, `newsletter`) are off.
+ *    site, the islands read the frozen lineup, the flags are the config's
+ *    (plus `PUBLIC_FEATURES_ON`, e.g. `tickets` if it was switched off
+ *    before the archive) and the live-only sections (`app`, `newsletter`)
+ *    are off.
  * 3. Adds the frozen data to the output, drops what only the root serves
  *    (`robots.txt`, `404.html`, the live-only pages), and rebases the web
  *    manifest.
  * 4. Fails if any page, stylesheet or text file points at a site URL
  *    outside `/<year>` other than the live root, another archive or a
  *    live-only page; lists what a script bundle names, for a look.
- * 5. Replaces `archive/<year>/` with the result.
+ * 5. Replaces `archive/<year>/` with the result, plus `edition.json`: the
+ *    edition's facts (date, venue, audience) that the live site states
+ *    about its last edition once `config.event` has moved on.
  *
+ * `npm run archive -- <year> --facts` writes only `archive/<year>/edition.json`
+ * (for an archive made before the file existed).
  * `ARCHIVE_SOURCE=https://…` reads the lineup from another origin.
  */
 import { spawnSync } from 'node:child_process';
 import { cp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { runnerImport } from 'vite';
 
 const year = process.argv[2];
+const factsOnly = process.argv.includes('--facts');
 if (!/^\d{4}$/.test(year ?? '')) {
-	console.error('Usage: npm run archive -- <year>');
+	console.error('Usage: npm run archive -- <year> [--facts]');
 	process.exit(1);
 }
 
@@ -46,6 +53,36 @@ const LIVE_ONLY = ['app', 'newsletter'];
 /** Pages only the live site serves; mirrors `LIVE_ONLY_PATHS` in `src/lib/base.ts`. */
 const LIVE_ONLY_PAGES = ['privacy-policy', 'code-of-conduct'];
 const PHOTO_WIDTH = 800;
+
+/**
+ * The edition's facts from this checkout's config, read through Vite's module
+ * runner (the config is TypeScript). Fails unless the config describes `year`.
+ */
+async function editionFacts() {
+	const { module } = await runnerImport('./src/lib/event.ts');
+	const { default: config } = (await runnerImport('./src/site.config.ts')).module;
+	const { event } = config;
+	if (event.edition !== Number(year) || !event.date) {
+		throw new Error(`src/site.config.ts describes ${event.edition}${event.date ? '' : ' without a date'}; archive ${year} from a commit whose config still has it.`);
+	}
+	return {
+		year: event.edition,
+		name: module.EVENT.name,
+		start: event.date.start,
+		dateLabel: module.EVENT.dateLabel,
+		venue: event.venue?.name ?? null,
+		city: module.EVENT.city,
+		audience: event.audience ?? null,
+	};
+}
+const FACTS = `${JSON.stringify(await editionFacts(), null, '\t')}\n`;
+
+if (factsOnly) {
+	await mkdir(TARGET, { recursive: true });
+	await writeFile(path.join(TARGET, 'edition.json'), FACTS);
+	console.log(`✓ archive/${year}/edition.json`);
+	process.exit(0);
+}
 
 await rm(WORK, { recursive: true, force: true });
 await mkdir(DATA, { recursive: true });
@@ -96,12 +133,13 @@ const build = spawnSync('npx', ['astro', 'build'], {
 		PUBLIC_ARCHIVE: year,
 		ARCHIVE_DATA: DATA,
 		PUBLIC_FEATURES_OFF: [process.env.PUBLIC_FEATURES_OFF, ...LIVE_ONLY].filter(Boolean).join(','),
-		PUBLIC_FEATURES_ON: ['edition', process.env.PUBLIC_FEATURES_ON].filter(Boolean).join(','),
+		PUBLIC_FEATURES_ON: process.env.PUBLIC_FEATURES_ON ?? '',
 	},
 });
 if (build.status !== 0) process.exit(build.status ?? 1);
 
 // 3. Frozen data in, root-only files out.
+await writeFile(path.join(OUT, 'edition.json'), FACTS);
 await cp(PHOTOS, path.join(OUT, 'speaker-photos'), { recursive: true });
 await mkdir(path.join(OUT, 'api'), { recursive: true });
 await cp(path.join(DATA, 'lineup.json'), path.join(OUT, 'api', 'lineup.json'));
