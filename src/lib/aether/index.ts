@@ -133,6 +133,8 @@ function animate(
 	let lastFrame = 0;
 	let slow = { sum: 0, count: 0 };
 	let lost = false;
+	/** The time of the frame on the canvas, repainted after a resize. */
+	let shown = STILL_AT;
 
 	function resize(): void {
 		cssW = window.innerWidth;
@@ -151,6 +153,7 @@ function animate(
 
 	function render(seconds: number): void {
 		if (lost) return;
+		shown = seconds;
 		gl.uniform1f(u.u_time, seconds);
 		// 0 → 1 over the painting's first seconds of movement (the wave of
 		// light), then 1.
@@ -224,7 +227,10 @@ function animate(
 	const onResize = (): void => {
 		if (lost) return;
 		resize();
-		if (reduced.matches) render(STILL_AT);
+		// A new canvas size clears it to black. Repaint the held frame now: the
+		// next 24 fps tick can be several display frames away, and scrolled
+		// past the anchor there is no next tick at all.
+		render(shown);
 	};
 	// A lost context stays lost: the canvas fades out and the CSS gradient
 	// behind it is the background until the next page load.
