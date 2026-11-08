@@ -1,7 +1,8 @@
 # DevFest Website
 
-The DevFest.cz site: the root belongs to the next edition (today the 2027
-teaser), every past edition is a frozen build under `/<year>`
+The DevFest.cz site: the root belongs to the next edition (today 2027, its
+unannounced sections behind flags), every past edition is a frozen build
+under `/<year>`
 ([ADR 0011](docs/adr/0011-root-for-the-next-edition-archives-under-the-year.md)).
 Astro 7, React 19 islands, TypeScript strict,
 SCSS (CSS Modules for React, globals in `BaseLayout.astro`), Node >= 24.12.0,
@@ -67,30 +68,30 @@ edited PR body keeps its old text in the public edit history.
   `src/lib/features.ts` lists them), injected by
   `src/integrations/feature-routes.ts` only while the flag is on. Templates
   ask `src/lib/flags.ts`. `npm run flags-off` proves a flag removes its
-  section everywhere. The dated edition's pages (event home `index.astro`,
-  agenda, speakers, share pages `speakers/[id]` and `talks/[id]`, venue,
-  FAQ, team, contact, press, TV, `calendar.ics.ts`) follow `edition`; while
-  it is off `teaser.astro` is the home page.
+  section everywhere. While a flag is off its paths redirect to the last
+  archive (`firebase.json`); the build fails when a redirect hides a page
+  (`src/integrations/redirect-guard.ts`). `calendar.ics.ts` exists once
+  `event.date` is set.
 - `src/pages/`: the routes every build has (list in
-  [README.md](README.md#key-pages)): the legal pages, the 404, `llms.txt.ts`
-  and `robots.txt.ts`.
+  [README.md](README.md#key-pages)): the home page, FAQ, team, contact,
+  press, the legal pages, the 404, `llms.txt.ts` and `robots.txt.ts`.
 - `archive/<year>/`: past editions, frozen builds served at `/<year>`
   (`npm run archive`, `src/integrations/archives.ts`, `src/lib/editions.ts`).
   Never edited by hand, excluded from the checks.
 - `src/components/`: `.astro` sections and React islands (`.tsx`,
-  `client:load`) with co-located `.module.scss`.
+  `client:load`) with co-located `.module.scss`; `aether/` holds the
+  painting, the season mark, the portal and the cookie slip.
 - `src/lib/`: browser and build helpers, one file per concern (`lineup.ts`,
   `tito.ts`, `workshops.ts`, `firebase.ts`, `analytics.ts`, …). `base.ts`
   and `src/middleware.ts` put a build under `/<year>`; `aether/` is the
-  teaser's WebGL background.
+  home stage's WebGL painting.
 - `src/content/`: `faq.json`, `partners.json`, `team.json`, `socials.json`,
   `topics.json`, `press-coverage.json`; schemas in `src/content.config.ts`.
   The mobile app bundles `faq.json` and `partners.json` verbatim, so a shape
   change there breaks its next copy.
 - `src/layouts/`: `Head.astro` (meta, OG, JSON-LD every layout shares),
-  `BaseLayout.astro` (the 2026 noir chrome; tokens and global SCSS in
-  `BaseLayout.scss`), `TeaserLayout.astro` (the 2027 aether; tokens in
-  `TeaserLayout.scss`), `Share.astro` (share-page preview, then forward)
+  `BaseLayout.astro` (the aether chrome; tokens and global SCSS in
+  `BaseLayout.scss`), `Share.astro` (share-page preview, then forward)
   and `Redirect.astro` (`/press`, `/sessions`).
 - `functions/src/<domain>/`: Cloud Functions per domain (`tickets`,
   `sessionize`, `lineup`, `invoice`, `workshops`); shared helpers in `lib/`,
@@ -99,10 +100,10 @@ edited PR body keeps its old text in the public edit history.
   (`a11y-mocks/`), the anchor-scroll measure (`anchor-measure.mjs`,
   `npm run anchors`) and the archiver (`archive.mjs`).
 - `public/`: static assets, the press kit, `.well-known/` (iOS app links).
-- `docs/design.md`: the design system (2027, the aether);
-  `docs/design-2026.md`: the 2026 noir system, binding for the archive and
-  the pages still on `BaseLayout.astro`; `docs/product.md`: the product
-  record.
+- `docs/design.md`: the design system (the aether), binding for the live
+  site; `docs/design-2026.md`: the 2026 noir system, binding for the
+  archive and the flagged surfaces not yet reskinned; `docs/product.md`:
+  the product record.
 - `docs/adr/`: architecture decision records; `docs/brainstorm/` and
   `docs/plan/`: the `vgv-wingspan` brainstorms and plans, committed with the
   change they led to and never deleted (`.claude/rules/docs.md`).

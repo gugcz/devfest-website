@@ -14,15 +14,13 @@ paths:
 # Design workflow: impeccable as the gate, docs/design.md as the law
 
 **`docs/design.md`** (+ `.impeccable/design.json`) is the binding record of
-the current system, the 2027 aether: the teaser (`TeaserLayout.astro`,
-`src/components/teaser/`) and every new surface. **`docs/design-2026.md`**
-stays binding for the pages still on `BaseLayout.astro` (the legal pages,
-the app pages, the 404, the newsletter thank-you, and every page under the
-`edition` flag) until they are reskinned; the frozen `archive/2026/` is never
-restyled. Never mix the two systems on one page: their tokens, fonts and
-recipes differ (the aether loads no web font). **Impeccable**
-(`/impeccable …`) is how a surface is briefed, critiqued and audited. There
-is no design canvas in the repo.
+the live site's system, the aether: `BaseLayout.astro` and every page on
+it. **`docs/design-2026.md`** binds the frozen `archive/2026/` (never
+restyled) and the flagged surfaces not yet reskinned (the lineup, ticket,
+invoice, workshop, invitation, share-card, partner and venue surfaces); such
+a flag stays off until its surface follows `docs/design.md`. Never mix the
+two systems on one page. **Impeccable** (`/impeccable …`) is how a surface
+is briefed, critiqued and audited. There is no design canvas in the repo.
 
 ## The loop for a new or redesigned surface
 
@@ -31,8 +29,9 @@ is no design canvas in the repo.
    `docs/product.md` is the product truth it reads; fix facts there, not in
    the brief.
 2. **Code it.** Build in Astro + SCSS per `docs/design.md` (primitives by
-   class name, recipes from `_type.scss`, tokens only). Every text uses a
-   `--fs-*` step, every colour a token, every gap a spacing token. A value
+   class name, recipes from `_aether.scss` and `_type.scss`, tokens only).
+   Every text uses a `--fs-*` step, every colour a token, every gap a
+   spacing token. A value
    the tokens lack goes into `BaseLayout.scss` and `docs/design.md`
    (frontmatter + prose).
 3. **Critique.** `/impeccable critique` on the built route.

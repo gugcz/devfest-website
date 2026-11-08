@@ -116,6 +116,9 @@
 	--paper-ink: var(--ivory);
 	--paper-ink-dim: var(--ivory-muted);
 	--paper-shadow: none;
+	// A photograph's frame: a brass hairline on an ink plate.
+	--print-edge: rgba(207, 168, 98, 0.5);
+	--print-plate: rgba(5, 9, 15, 0.6);
 	// Nothing is tilted in the aether.
 	--tilt-1: 0deg;
 	--tilt-2: 0deg;
@@ -385,7 +388,7 @@ a:hover {
 	position: relative;
 	overflow: hidden;
 	background: var(--ink);
-	outline: 1px solid rgba(207, 168, 98, 0.5);
+	outline: 1px solid var(--print-edge);
 
 	img {
 		display: block;

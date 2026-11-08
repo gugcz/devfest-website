@@ -275,7 +275,7 @@ docs.
 
 ### Phase 3: Always-on pages (PR 1)
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** reskin every page live today, then the PR 1 docs.
   - Pages: the home sections, `/faq`, `/team`, `/contact`,
     `/press/downloads`, `/privacy-policy`, `/code-of-conduct`, `/app`,

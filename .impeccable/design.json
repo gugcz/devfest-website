@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 2,
-	"generatedAt": "2026-11-08T17:58:13Z",
+	"generatedAt": "2026-11-08T20:19:20Z",
 	"title": "Design System: DevFest.cz 2027",
 	"extensions": {
 		"colorMeta": {
@@ -20,7 +20,11 @@
 			},
 			"ink-veil": {
 				"role": "neutral",
-				"displayName": "Ink Veil (ink at 90%): the veil under the bands, the cookie slip"
+				"displayName": "Ink Veil (ink at 90%): the ground of every band, the cookie slip"
+			},
+			"plate": {
+				"role": "neutral",
+				"displayName": "Plate (--paper): the ink of a plate and of the framed portal"
 			},
 			"ivory": {
 				"role": "neutral",
@@ -36,13 +40,17 @@
 					"#fdf8ee"
 				]
 			},
+			"ivory-text": {
+				"role": "neutral",
+				"displayName": "Ivory Text (--ink-text, 90%): the footer's running text"
+			},
 			"ivory-muted": {
 				"role": "neutral",
 				"displayName": "Muted Ivory (11.05:1 on ink)"
 			},
 			"brass": {
 				"role": "primary",
-				"displayName": "Aged Brass (8.96:1 on ink)",
+				"displayName": "Aged Brass (8.96:1 on ink): labels, rubrics, the solid portal's fill",
 				"tonalRamp": [
 					"#2a1f0c",
 					"#4a3816",
@@ -56,11 +64,23 @@
 			},
 			"brass-light": {
 				"role": "primary",
-				"displayName": "Brass Light: lettering gradient top, figures, link hover (17.77:1)"
+				"displayName": "Brass Light: lettering gradient top, figures, accent words, link hover (17.77:1)"
 			},
 			"brass-deep": {
 				"role": "primary",
 				"displayName": "Brass Deep: lettering gradient foot, inked rules and diamonds (10.0:1)"
+			},
+			"rule": {
+				"role": "primary",
+				"displayName": "Rule (brass 22%): a plate's edge, decorative"
+			},
+			"rule-strong": {
+				"role": "primary",
+				"displayName": "Rule Strong (brass 40%): a stronger divider, decorative"
+			},
+			"field-border": {
+				"role": "primary",
+				"displayName": "Field Border (brass 70%, 4.76:1): a control boundary"
 			},
 			"aether": {
 				"role": "tertiary",
@@ -78,13 +98,25 @@
 			}
 		},
 		"typographyMeta": {
+			"display": {
+				"displayName": "Display",
+				"purpose": "A subpage's centred title (--fs-subpage), 600, accent word in brass light."
+			},
+			"headline": {
+				"displayName": "Headline",
+				"purpose": "A closer's title (--fs-h2)."
+			},
 			"label": {
 				"displayName": "Label",
-				"purpose": "The label voice (label() recipe): rubrics and the portal; uppercase, 600, tracked 0.18-0.28em."
+				"purpose": "The label voice (label() recipe): rubrics and portals; uppercase, 600, tracked 0.18-0.28em."
 			},
 			"label-sm": {
 				"displayName": "Label (small)",
-				"purpose": "Fact and figure terms, form labels, footer titles."
+				"purpose": "Fact and figure terms, form labels, footer column titles."
+			},
+			"action": {
+				"displayName": "Action",
+				"purpose": "action(): menu and footer links, text actions, the cookie Decline."
 			},
 			"stage-line": {
 				"displayName": "Stage line",
@@ -98,6 +130,10 @@
 				"displayName": "Lead",
 				"purpose": "One lead per band, ivory, balanced wrap, inside the 40rem measure."
 			},
+			"row-title": {
+				"displayName": "Row title",
+				"purpose": "A row or plate title: FAQ questions, next steps, crew names."
+			},
 			"fact": {
 				"displayName": "Fact",
 				"purpose": "An announced fact's value."
@@ -108,14 +144,14 @@
 			},
 			"small": {
 				"displayName": "Small",
-				"purpose": "Footer, cookie slip, consent copy, form messages, fact notes."
+				"purpose": "Cookie slip, consent copy, form messages, fact notes."
 			}
 		},
 		"shadows": [
 			{
 				"name": "logo-halo",
 				"value": "drop-shadow(0 0 26px rgba(116,235,224,0.22)) drop-shadow(0 2px 2px rgba(0,0,0,0.55))",
-				"purpose": "The logo glowing in the aether (part of the painting)."
+				"purpose": "The home logo glowing in the aether (part of the painting)."
 			},
 			{
 				"name": "ink-lift",
@@ -125,7 +161,7 @@
 			{
 				"name": "portal-glow",
 				"value": "drop-shadow(0 0 14px rgba(116,235,224,0.4)); active drop-shadow(0 0 22px rgba(116,235,224,0.65))",
-				"purpose": "The portal under the pointer or focus, and pressed."
+				"purpose": "A portal (solid or framed) under the pointer or focus, and pressed."
 			}
 		],
 		"motion": [
@@ -142,17 +178,17 @@
 			{
 				"name": "control",
 				"value": "0.3s ease",
-				"purpose": "Colour, stroke, border and filter changes on links and controls; the portal arrow's 5px step."
+				"purpose": "Colour, stroke, border, border-image and filter changes on links and controls; the portal arrow's 5px step."
 			},
 			{
 				"name": "portal-sweep",
 				"value": "0.8s ease-rise",
-				"purpose": "The band of aether light crossing the portal on hover and focus."
+				"purpose": "Portal.astro only: the band of aether light crossing the framed portal on hover and focus."
 			},
 			{
 				"name": "canvas-fade",
 				"value": "opacity 1.8s ease",
-				"purpose": "The painting fading in over its CSS gradient fallback."
+				"purpose": "The home painting fading in over the body gradient."
 			},
 			{
 				"name": "aether-loop",
@@ -166,27 +202,83 @@
 				"value": "900px"
 			},
 			{
+				"name": "plates-two",
+				"value": "1100px"
+			},
+			{
+				"name": "menu-inline",
+				"value": "1100px"
+			},
+			{
+				"name": "plates-one",
+				"value": "720px"
+			},
+			{
+				"name": "footer-two",
+				"value": "45em"
+			},
+			{
+				"name": "footer-one",
+				"value": "23.75em"
+			},
+			{
 				"name": "aether-low-end",
 				"value": "600px (shorter viewport side)"
+			},
+			{
+				"name": "root-scales",
+				"value": "1921px"
 			}
 		]
 	},
 	"components": [
 		{
-			"name": "Portal",
+			"name": "Solid Portal",
 			"kind": "button",
-			"refersTo": "portal",
-			"description": "The aether's one button, one per screen: a beveled brass frame on a dark petrol plate, ivory label, brass arrow; on hover or focus a band of aether light sweeps through, strokes and arrow turn aether, the arrow steps forward.",
-			"html": "<a class=\"ds-portal\" href=\"#\"><svg class=\"ds-portal-frame\" viewBox=\"0 0 280 62\" aria-hidden=\"true\"><g fill=\"none\"><path class=\"ds-portal-outer\" d=\"M16 2H264L278 16V46L264 60H16L2 46V16Z\"/><path class=\"ds-portal-inner\" d=\"M20 8H260L272 20V42L260 54H20L8 42V20Z\"/></g></svg><span class=\"ds-portal-label\">2026 Edition</span><svg class=\"ds-portal-arrow\" viewBox=\"0 0 28 12\" aria-hidden=\"true\"><path d=\"M1 6H26M20 1L26 6L20 11\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></a>",
-			"css": ".ds-portal { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.90625rem; letter-spacing: 0.24em; position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 14px; width: 280px; height: 62px; color: #f6ecd6; text-decoration: none; isolation: isolate; transition: color 0.3s ease, filter 0.3s ease; } .ds-portal::before { content: ''; position: absolute; inset: 0; z-index: -1; clip-path: polygon(16px 2px, 264px 2px, 278px 16px, 278px 46px, 264px 60px, 16px 60px, 2px 46px, 2px 16px); background: linear-gradient(100deg, rgba(6,16,22,0.86) 0 42%, rgba(116,235,224,0.34) 50%, rgba(6,16,22,0.86) 58% 100%); background-size: 320% 100%; background-position: 100% 0; transition: background-position 0.8s cubic-bezier(0.2,0.7,0.2,1); } .ds-portal-frame { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; } .ds-portal-outer { stroke: #cfa862; stroke-width: 1.6; transition: stroke 0.3s ease; } .ds-portal-inner { stroke: #cfa862; stroke-width: 0.8; opacity: 0.5; transition: stroke 0.3s ease, opacity 0.3s ease; } .ds-portal-label { position: relative; padding-left: 0.24em; } .ds-portal-arrow { position: relative; width: 28px; height: 12px; color: #cfa862; transition: transform 0.3s ease, color 0.3s ease; } .ds-portal:hover, .ds-portal:focus-visible { color: #fbf1da; filter: drop-shadow(0 0 14px rgba(116,235,224,0.4)); } .ds-portal:hover::before, .ds-portal:focus-visible::before { background-position: 0 0; } .ds-portal:hover .ds-portal-outer, .ds-portal:hover .ds-portal-inner, .ds-portal:focus-visible .ds-portal-outer, .ds-portal:focus-visible .ds-portal-inner { stroke: #74ebe0; } .ds-portal:hover .ds-portal-arrow, .ds-portal:focus-visible .ds-portal-arrow { color: #74ebe0; transform: translateX(5px); } .ds-portal:focus-visible { outline: 2px solid #74ebe0; outline-offset: 5px; } .ds-portal:active { filter: drop-shadow(0 0 22px rgba(116,235,224,0.65)); }"
+			"refersTo": "portal-solid",
+			"description": "The button (.btn-primary): a beveled brass fill drawn by border-image from an SVG carrying its own ink tremor; ink label and arrow; aether fill, a 5px arrow step and a glow when reached. One per screen; the cookie slip's Accept is one in its own layer.",
+			"html": "<a class=\"ds-btn ds-btn-primary\" href=\"#\">Hear it first</a>",
+			"css": ".ds-btn { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.90625rem; letter-spacing: 0.24em; display: inline-flex; align-items: center; justify-content: center; gap: 14px; min-height: 62px; min-width: 280px; padding: 0 0.6rem 0 calc(0.6rem + 0.24em); border: 20px solid transparent; background: none; text-decoration: none; cursor: pointer; transition: filter 0.3s ease; } .ds-btn::after { content: ''; width: 28px; height: 12px; background: currentColor; mask: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 12'%3E%3Cpath d='M1 6H26M20 1L26 6L20 11' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\") center / contain no-repeat; -webkit-mask: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 12'%3E%3Cpath d='M1 6H26M20 1L26 6L20 11' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\") center / contain no-repeat; transition: transform 0.3s ease; } .ds-btn:hover, .ds-btn:focus-visible { filter: drop-shadow(0 0 14px rgba(116,235,224,0.4)); } .ds-btn:hover::after, .ds-btn:focus-visible::after { transform: translateX(5px); } .ds-btn:focus-visible { outline: 2px solid #74ebe0; outline-offset: 5px; } .ds-btn:active { filter: drop-shadow(0 0 22px rgba(116,235,224,0.65)); } .ds-btn-primary { color: #05090f; border-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cfilter id='i' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='2' seed='7'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='2.4'/%3E%3C/filter%3E%3Cpath fill='%23cfa862' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cg fill='none' filter='url(%23i)'%3E%3Cpath stroke='%23fbf1da' stroke-width='1.6' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cpath stroke='%2305090f' stroke-opacity='.35' stroke-width='.8' d='M20 8H40L52 20V40L40 52H20L8 40V20Z'/%3E%3C/g%3E%3C/svg%3E\") 20 fill / 20px stretch; } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { border-image-source: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cfilter id='i' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='2' seed='7'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='2.4'/%3E%3C/filter%3E%3Cpath fill='%2374ebe0' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cg fill='none' filter='url(%23i)'%3E%3Cpath stroke='%2374ebe0' stroke-width='1.6' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cpath stroke='%2305090f' stroke-opacity='.5' stroke-width='.8' d='M20 8H40L52 20V40L40 52H20L8 40V20Z'/%3E%3C/g%3E%3C/svg%3E\"); }"
+		},
+		{
+			"name": "Framed Portal",
+			"kind": "button",
+			"refersTo": "portal-framed",
+			"description": "The second portal (.btn-framed, Portal.astro default): brass strokes over a dark plate, ivory label, brass arrow; strokes and arrow turn aether, the label brass light. A form's submit or a second choice.",
+			"html": "<a class=\"ds-btn ds-btn-framed\" href=\"#\">2026 Edition</a>",
+			"css": ".ds-btn { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.90625rem; letter-spacing: 0.24em; display: inline-flex; align-items: center; justify-content: center; gap: 14px; min-height: 62px; min-width: 280px; padding: 0 0.6rem 0 calc(0.6rem + 0.24em); border: 20px solid transparent; background: none; text-decoration: none; cursor: pointer; transition: filter 0.3s ease; } .ds-btn::after { content: ''; width: 28px; height: 12px; background: currentColor; mask: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 12'%3E%3Cpath d='M1 6H26M20 1L26 6L20 11' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\") center / contain no-repeat; -webkit-mask: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 12'%3E%3Cpath d='M1 6H26M20 1L26 6L20 11' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\") center / contain no-repeat; transition: transform 0.3s ease; } .ds-btn:hover, .ds-btn:focus-visible { filter: drop-shadow(0 0 14px rgba(116,235,224,0.4)); } .ds-btn:hover::after, .ds-btn:focus-visible::after { transform: translateX(5px); } .ds-btn:focus-visible { outline: 2px solid #74ebe0; outline-offset: 5px; } .ds-btn:active { filter: drop-shadow(0 0 22px rgba(116,235,224,0.65)); } .ds-btn-framed { color: #f6ecd6; border-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cfilter id='i' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='2' seed='7'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='2.4'/%3E%3C/filter%3E%3Cpath fill='%23061016' fill-opacity='.86' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cg fill='none' filter='url(%23i)'%3E%3Cpath stroke='%23cfa862' stroke-width='1.6' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cpath stroke='%23cfa862' stroke-opacity='.5' stroke-width='.8' d='M20 8H40L52 20V40L40 52H20L8 40V20Z'/%3E%3C/g%3E%3C/svg%3E\") 20 fill / 20px stretch; } .ds-btn-framed::after { background: #cfa862; } .ds-btn-framed:hover, .ds-btn-framed:focus-visible { color: #fbf1da; border-image-source: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cfilter id='i' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='2' seed='7'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='2.4'/%3E%3C/filter%3E%3Cpath fill='%23123438' fill-opacity='.95' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cg fill='none' filter='url(%23i)'%3E%3Cpath stroke='%2374ebe0' stroke-width='1.6' d='M16 2H44L58 16V44L44 58H16L2 44V16Z'/%3E%3Cpath stroke='%2374ebe0' stroke-opacity='.8' stroke-width='.8' d='M20 8H40L52 20V40L40 52H20L8 40V20Z'/%3E%3C/g%3E%3C/svg%3E\"); } .ds-btn-framed:hover::after, .ds-btn-framed:focus-visible::after { background: #74ebe0; }"
+		},
+		{
+			"name": "Text Action",
+			"kind": "button",
+			"refersTo": "action",
+			"description": "The second control (.action / .btn-ghost): the action voice in ivory with a brass underline; brass light and an aether underline when reached; a 44px target with no box.",
+			"html": "<a class=\"ds-action\" href=\"#\">Write to us</a>",
+			"css": ".ds-action { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.875rem; letter-spacing: 0.18em; display: inline-flex; align-items: center; padding: 0.75rem 0; min-height: 2.75rem; color: #f6ecd6; text-decoration: underline; text-decoration-color: #cfa862; text-decoration-thickness: 1px; text-underline-offset: 0.45em; transition: color 0.3s ease, text-decoration-color 0.3s ease; } .ds-action:hover, .ds-action:focus-visible { color: #fbf1da; text-decoration-color: #74ebe0; } .ds-action:focus-visible { outline: 2px solid #74ebe0; outline-offset: 3px; }"
 		},
 		{
 			"name": "Rubric",
 			"kind": "custom",
 			"refersTo": "rubric",
-			"description": "A section heading in the label voice, brass, between two inked rules ending in a diamond (mirrored). The ornament appears only here and around the season mark.",
+			"description": "The section head (rubric mixin, .head-rule): a brass label-voice heading between two inked rules ending in a diamond (mirrored), centred, an optional note under it. The ornament appears only here and around the season mark.",
 			"html": "<h2 class=\"ds-rubric\">The festival</h2>",
 			"css": ".ds-rubric { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.90625rem; letter-spacing: 0.24em; display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 0; color: #cfa862; } .ds-rubric::before, .ds-rubric::after { content: ''; flex: 0 0 auto; width: 4.5rem; height: 10px; background: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 10'%3E%3Cg fill='none' stroke='%23d9b26a' stroke-width='1.2'%3E%3Cpath d='M0 5H60'/%3E%3Cpath d='M66 1L70 5L66 9L62 5Z'/%3E%3C/g%3E%3C/svg%3E\") center / 100% 100% no-repeat; } .ds-rubric::after { transform: scaleX(-1); }"
+		},
+		{
+			"name": "Plate",
+			"kind": "card",
+			"refersTo": "plate",
+			"description": "A plate (.paper): a square ink plate on the veil with a faint 1px brass edge, ivory text, a label-voice caption on its bottom edge; never tilted, never shadowed.",
+			"html": "<article class=\"ds-plate\"><h3 class=\"ds-plate-title\">Speak at DevFest</h3><p class=\"ds-plate-note\">The call for papers opens with the date.</p><p class=\"ds-plate-edge\"><span>02</span></p></article>",
+			"css": ".ds-plate { width: 18rem; background: rgba(6,16,22,0.86); color: #f6ecd6; border: 1px solid rgba(207,168,98,0.22); padding: 1.6rem 1.75rem 0; font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); } .ds-plate-title { margin: 0 0 0.6rem; font-size: 1.25rem; font-weight: 600; line-height: 1.3; } .ds-plate-note { margin: 0; font-size: 1.0625rem; line-height: 1.55; } .ds-plate-edge { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.6875rem; letter-spacing: 0.18em; margin: 0; padding: 0.7rem 0.15rem 0.8rem; color: #c9c0ad; text-align: right; }"
+		},
+		{
+			"name": "Print",
+			"kind": "card",
+			"refersTo": "print",
+			"description": "A photograph in a thin brass frame (1px, 50%) on ink, slightly desaturated; flat, square, untilted.",
+			"html": "<figure class=\"ds-print\"><div class=\"ds-print-img\"></div></figure>",
+			"css": ".ds-print { margin: 0; width: 240px; padding: 6px; border: 1px solid rgba(207,168,98,0.5); background: rgba(5,9,15,0.6); } .ds-print-img { aspect-ratio: 3 / 2; background: linear-gradient(135deg, #2b1a42, #173c44 60%, #5a2a1c); filter: saturate(0.85) contrast(1.05); }"
 		},
 		{
 			"name": "Facts",
@@ -205,14 +297,6 @@
 			"css": ".ds-figures { display: flex; justify-content: center; gap: 5rem; margin: 0; font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); } .ds-figures div { display: flex; flex-direction: column-reverse; align-items: center; gap: 0.25rem; } .ds-figures dd { margin: 0; font-size: clamp(2.75rem, 1.75rem + 4.5vw, 5rem); font-weight: 600; line-height: 1; letter-spacing: -0.02em; color: #fbf1da; font-variant-numeric: lining-nums tabular-nums; } .ds-figures dt { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.78rem; letter-spacing: 0.22em; color: #c9c0ad; }"
 		},
 		{
-			"name": "Print",
-			"kind": "card",
-			"refersTo": "print",
-			"description": "A photograph from a past edition in a thin brass frame on an ink plate, 3:2, slightly desaturated; flat, square, untilted.",
-			"html": "<figure class=\"ds-print\"><div class=\"ds-print-img\"></div></figure>",
-			"css": ".ds-print { margin: 0; width: 240px; padding: 6px; border: 1px solid rgba(207,168,98,0.5); background: rgba(5,9,15,0.6); } .ds-print-img { aspect-ratio: 3 / 2; background: linear-gradient(135deg, #2b1a42, #173c44 60%, #5a2a1c); filter: saturate(0.85) contrast(1.05); }"
-		},
-		{
 			"name": "Field",
 			"kind": "input",
 			"refersTo": "field",
@@ -221,32 +305,24 @@
 			"css": ".ds-field { display: flex; flex-direction: column; gap: 0.45rem; width: 20rem; font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); } .ds-field-label { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.78rem; letter-spacing: 0.22em; color: #cfa862; } .ds-field-input { min-height: 3.25rem; padding: 0.75rem 1rem; border: 1px solid rgba(207,168,98,0.7); border-radius: 0; background: rgba(5,9,15,0.7); color: #f6ecd6; font: inherit; font-size: 1.0625rem; transition: border-color 0.3s ease; } .ds-field-input:hover { border-color: #fbf1da; } .ds-field-input:focus-visible { outline: 2px solid #74ebe0; outline-offset: -3px; }"
 		},
 		{
-			"name": "Cookie Accept",
-			"kind": "button",
-			"refersTo": "cookie-accept",
-			"description": "The cookie slip's Accept: a beveled brass fill (8px cut) with ink label text, turning aether on hover; Decline beside it is an underlined text button.",
-			"html": "<span class=\"ds-cookie\"><button class=\"ds-cookie-accept\" type=\"button\">Accept</button><button class=\"ds-cookie-decline\" type=\"button\">Decline</button></span>",
-			"css": ".ds-cookie { display: flex; align-items: center; gap: 1.25rem; } .ds-cookie-accept, .ds-cookie-decline { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.875rem; letter-spacing: 0.18em; min-height: 44px; border: 0; cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease; } .ds-cookie-accept { padding: 0 1.1rem; background: #cfa862; color: #05090f; clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px); } .ds-cookie-accept:hover { background: #74ebe0; } .ds-cookie-decline { padding: 0; background: none; color: #f6ecd6; text-decoration: underline; text-decoration-color: #cfa862; text-underline-offset: 0.3em; } .ds-cookie-decline:hover { color: #74ebe0; } .ds-cookie-accept:focus-visible, .ds-cookie-decline:focus-visible { outline: 2px solid #74ebe0; outline-offset: 3px; }"
-		},
-		{
 			"name": "Footer Navigation",
 			"kind": "nav",
 			"refersTo": "footer",
-			"description": "The teaser has no header; the footer navigates: past editions as a large label row (ivory, aether on hover), then columns with brass titles and underlined ivory links.",
-			"html": "<nav class=\"ds-footer\"><h2 class=\"ds-footer-title\">Past editions</h2><ul class=\"ds-footer-row\"><li><a href=\"#\">2026</a></li><li><a href=\"#\">2025</a></li></ul><h2 class=\"ds-footer-title\">About</h2><a class=\"ds-footer-link\" href=\"#\">Code of Conduct</a></nav>",
-			"css": ".ds-footer { background: #05090f; color: #c9c0ad; font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-size: 0.875rem; padding: 2rem; } .ds-footer-title { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.78rem; letter-spacing: 0.22em; margin: 0 0 0.9rem; color: #cfa862; } .ds-footer-row { display: flex; gap: 0.5rem 1.75rem; margin: 0 0 2rem; padding: 0; list-style: none; } .ds-footer-row a { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 1.125rem; letter-spacing: 0.18em; color: #f6ecd6; text-decoration: none; transition: color 0.3s ease; } .ds-footer-row a:hover { color: #74ebe0; } .ds-footer-link { color: #f6ecd6; text-decoration-color: #cfa862; text-decoration-thickness: 1px; text-underline-offset: 0.25em; transition: color 0.3s ease, text-decoration-color 0.3s ease; } .ds-footer-link:hover { color: #fbf1da; text-decoration-color: #74ebe0; } .ds-footer a:focus-visible { outline: 2px solid #74ebe0; outline-offset: 4px; }"
+			"description": "The footer: brass column titles, links in the action voice (ivory, aether on hover), no underline; the cookie-settings button styled as a link.",
+			"html": "<nav class=\"ds-footer\"><h2 class=\"ds-footer-title\">Attend</h2><ul class=\"ds-footer-list\"><li><a class=\"ds-footer-link\" href=\"#\">FAQ</a></li><li><a class=\"ds-footer-link\" href=\"#\">Code of Conduct</a></li></ul></nav>",
+			"css": ".ds-footer { background: #05090f; color: rgba(246,236,214,0.9); font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); padding: 2rem; } .ds-footer-title { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.78rem; letter-spacing: 0.22em; margin: 0 0 0.9rem; color: #cfa862; } .ds-footer-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; } .ds-footer-link { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; line-height: 1.2; font-size: 0.875rem; letter-spacing: 0.18em; color: #f6ecd6; text-decoration: none; transition: color 0.2s ease; } .ds-footer-link:hover { color: #74ebe0; } .ds-footer-link:focus-visible { outline: 2px solid #74ebe0; outline-offset: 2px; }"
 		}
 	],
 	"narrative": {
 		"northStar": "The Aether",
-		"overview": "The page is a painting first. A slow WebGL sky of dark petrol smoke, warm plum and rust, three sigil rings cut into the paint around the logo, circuit traces running out to the edges, embers rising and a hatched, inked vignette in the corners. On it sits a single, centred stage: the DF27 logo, the season lettered in brass ink, one tracked line, and one beveled brass portal. Nothing else competes on the first screen.\n\nBelow the stage a veil darkens the painting to near-black and the page becomes a quiet single column: brass rubric headings between inked rules, a large ivory lead, what is announced, the last edition in figures, photographs in thin brass frames, the newsletter. The materials are few and old-world (ink, ivory, brass), and the one modern element, the cold aether light, is spent only on response: hover, focus, and the painting's own glow.",
+		"overview": "The site is a painting first. On the home page a slow WebGL sky of dark petrol smoke, warm plum and rust turns behind the logo: three sigil rings, circuit traces running to the edges, embers, a hatched, inked vignette. On it sits a single, centred stage: the DF27 logo, the season lettered in brass ink, one tracked line, and the portals. Every other page stands on the same palette as a still ground (three radial gradients over ink) and opens on a centred title.\n\nBelow the stage, and on every subpage, a veil darkens the ground to near-black and the page becomes quiet centred columns: brass rubric headings between inked rules, a large ivory lead, facts and figures, square ink plates edged in faint brass, photographs in thin brass frames. The materials are few and old-world (ink, ivory, brass), and the one modern element, the cold aether light, is spent only on response: hover, focus, and the painting's own glow.",
 		"keyCharacteristics": [
-			"An ink ground under a live painting; text lives on the veil, not on the paint.",
+			"An ink ground under a painting; text lives on the veil, not on the paint.",
 			"Ivory type in one system sans; brass for ornament, labels and figures.",
 			"The aether light (cyan) means \"this responds\"; it never decorates at rest.",
-			"A beveled, eight-sided brass portal is the one button, once per screen.",
-			"Inked, slightly trembling strokes (the `aether-ink` filter) on every drawn line.",
-			"Centred and symmetric throughout; no cards, no grid of panels."
+			"A beveled, eight-sided brass portal is the button; one solid portal per screen.",
+			"Inked, slightly trembling strokes (the `aether-ink` tremor) on every drawn line.",
+			"Centred and symmetric; content that repeats sits on plates, not cards."
 		],
 		"rules": [
 			{
@@ -256,27 +332,27 @@
 			},
 			{
 				"name": "The Three Materials Rule",
-				"body": "Ink, ivory and brass carry everything at rest. No new hue enters the page chrome; the painting's petrol, plum and rust stay inside the canvas and its CSS fallback gradients.",
+				"body": "Ink, ivory and brass carry everything at rest. No new hue enters the page chrome; the painting's petrol, plum and rust stay inside the canvas and the body's gradients.",
 				"section": "colors"
 			},
 			{
 				"name": "The One Stack Rule",
-				"body": "The aether loads no web font. Bebas Neue, Special Elite and JetBrains Mono belong to the 2026 system (`docs/design-2026.md`) and never appear on a `TeaserLayout` page; nothing else is added either.",
+				"body": "The site loads no web font. Bebas Neue, Special Elite and JetBrains Mono belong to the 2026 system (`docs/design-2026.md`) and the archive; they are gone from the build and never return to a live page; nothing else is added either.",
 				"section": "typography"
 			},
 			{
 				"name": "The Label Voice Rule",
-				"body": "Small captions and headings speak in the label voice: uppercase, 600, tracked between 0.18em and 0.28em, always through `label()`. Running text is never uppercase.",
+				"body": "Small captions and headings speak in the label voice: uppercase, 600, tracked between 0.18em and 0.28em, always through `label()` (or `action()`, which calls it). Running text is never uppercase.",
 				"section": "typography"
 			},
 			{
 				"name": "The Veil Rule",
-				"body": "Text never sits on the bright painting. Below the stage every band is on the veil; on the stage only the logo, the season, one label line (with a dark text shadow) and the portal sit over the paint, where the shader keeps the smoke darkest and calmest behind the logo.",
+				"body": "Text never sits on the bright painting. Every band is on the veil; on the home stage only the logo, the season, one label line (with a dark text shadow) and the portals sit over the paint, where the shader keeps the smoke darkest behind the logo.",
 				"section": "layout"
 			},
 			{
 				"name": "The Light Is Response Rule",
-				"body": "A glow is the aether light: only on the logo (part of the painting) and on the portal in response. Nothing else glows.",
+				"body": "A glow is the aether light: only on the home logo (part of the painting) and on a portal in response. Nothing else glows.",
 				"section": "elevation"
 			},
 			{
@@ -286,24 +362,30 @@
 			},
 			{
 				"name": "The One Portal Rule",
-				"body": "One solid portal per page, at most two portals per screen. The stage carries the solid one (the newsletter) and a framed one (the last edition's archive), side by side where both fit, stacked on a phone; the newsletter's submit is the only other, a full screen below.",
+				"body": "One solid portal per screen. A form's submit (the newsletter) or a second choice (the last edition beside the stage's action) is framed. The cookie slip's Accept is the solid portal in its own fixed layer and does not count against the page.",
+				"section": "components"
+			},
+			{
+				"name": "The Plates Not Cards Rule",
+				"body": "What repeats sits on square ink plates with a faint brass edge, never tilted, never shadowed, never rounded. The 2026 paper, tape strip and grease pencil do not come back (`.grease` is hidden).",
 				"section": "components"
 			}
 		],
 		"dos": [
-			"**Do** take every colour, size and space from the `:root.aether` tokens and the `_aether.scss` recipes.",
-			"**Do** set every caption and heading through `label()`, tracked 0.18–0.28em.",
-			"**Do** keep text below the stage on the veil.",
+			"**Do** take every colour, size and space from the `:root` tokens in `BaseLayout.scss` and the `_aether.scss` / `_type.scss` recipes.",
+			"**Do** set every caption and heading through `label()` or `action()`, tracked 0.18–0.28em.",
+			"**Do** keep every band on the veil.",
 			"**Do** give every animation and transition a `prefers-reduced-motion` opt-out; the painting becomes one still frame.",
-			"**Do** pass every drawn stroke through `aether-ink` so it reads as inked.",
-			"**Do** meet WCAG 2.2 AA; the `npm run a11y` axe sweep covers `/`."
+			"**Do** pass every drawn stroke through the ink tremor so it reads as inked.",
+			"**Do** meet WCAG 2.2 AA; `npm run a11y` (axe) covers the live pages."
 		],
 		"donts": [
 			"**Don't** use the aether colour at rest; it is hover, focus and the painting's glow.",
-			"**Don't** put a second solid portal on a page, more than two portals on a screen, or round a portal's corners.",
+			"**Don't** put a second solid portal on a screen, or round a portal's corners.",
 			"**Don't** use the brass rule and diamond anywhere but the season mark and rubric headings.",
-			"**Don't** load a web font or bring a 2026 face (Bebas Neue, Special Elite, JetBrains Mono) onto a teaser page.",
-			"**Don't** add cards, box shadows or radius; depth is the painting and the veil.",
+			"**Don't** load a web font or bring a 2026 face (Bebas Neue, Special Elite, JetBrains Mono) onto a live page.",
+			"**Don't** add cards, tilt, box shadows or radius; repeated content sits on flat plates.",
+			"**Don't** turn on a flagged surface still in the 2026 system.",
 			"**Don't** set text over the bright painting."
 		]
 	}

@@ -245,11 +245,14 @@ components:
 ---
 
 
-> **Archived record (2026, "noir, but loud").** Binding for the 2026 archive
-> (`archive/2026/`, frozen) and for the pages still rendered by
-> `BaseLayout.astro` (the legal pages, the app pages, the 404 and the
-> newsletter thank-you) until they are reskinned. The current system, the
-> 2027 aether, is [`docs/design.md`](design.md). ADR 0011.
+> **Archived record (2026, "noir, but loud").** Binding only for the 2026
+> archive (`archive/2026/`, frozen) and for the flagged surfaces not yet
+> reskinned: the lineup pages (`/agenda`, `/speakers`, the share pages,
+> `/tv`) and the tickets, invoice, workshops, invite, attending/speaker-card,
+> partners-page and venue surfaces. None of those flags is turned on until
+> its surface is reskinned to the aether. Every live page, `BaseLayout.astro`
+> included, follows [`docs/design.md`](design.md); the tokens, fonts and
+> file references below describe the 2026 build, not today's code. ADR 0011.
 
 Design system for the DevFest.cz 2026 site. Every value was read out of the
 codebase and carries its source as `file:line`. Rationale lives here, inline

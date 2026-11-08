@@ -1,6 +1,6 @@
 @use '../styles/type' as *;
 @use '../styles/aether' as *;
-// The bar: the mark left; at >=1100px the destinations inline and the red
+// The bar: the mark left; at >=1100px the destinations inline and the brass
 // Tickets button, below that the full-screen menu toggle and Tickets.
 .site-header {
 	position: fixed;
@@ -195,8 +195,8 @@
 	color: var(--ink-soft);
 }
 
-// The page you are on: red, and `aria-current` says the same to AT.
-// The current page: brass, at rest; the cold light is for a hover.
+// The page you are on: brass, at rest (the cold light is for a hover), and
+// `aria-current` says the same to AT.
 .bar-link--current {
 	color: var(--brass);
 }
@@ -625,10 +625,14 @@
 	}
 }
 
-// On the home page's stage the logo is the stage's own; the bar's mark
-// waits until the visitor scrolls.
+// On the home page's stage the logo and the action are the stage's own
+// (one solid portal per screen); the bar's wait until the visitor scrolls.
 .site-header[data-home='true'][data-state='top'] .brand-logo {
 	opacity: 0;
+}
+
+.site-header[data-home='true'][data-state='top'] .header-cta {
+	visibility: hidden;
 }
 
 .brand-logo {

@@ -3,8 +3,7 @@ paths:
   - "src/lib/firebase.ts"
   - "src/lib/analytics.ts"
   - "src/lib/consent.ts"
-  - "src/components/CookieBanner.astro"
-  - "src/components/teaser/TeaserCookieBanner.astro"
+  - "src/components/aether/CookieBanner.astro"
   - "src/lib/cookie-banner.ts"
   - "src/routes/thank-you.astro"
   - "src/routes/newsletter-subscription-thank-you.astro"
@@ -15,9 +14,9 @@ paths:
 GA4 via Firebase Analytics in **basic Google Consent Mode**: nothing loads and
 nothing is sent to Google until the visitor accepts. `initAnalytics()` is a
 no-op while `readConsent()` (`src/lib/consent.ts`) isn't `accepted`; the
-accept handler in `src/lib/cookie-banner.ts` (the behaviour both banner
-skins share: `CookieBanner.astro`, `TeaserCookieBanner.astro`) stores the
-decision and calls
+accept handler in `src/lib/cookie-banner.ts` (the banner's behaviour;
+markup in `src/components/aether/CookieBanner.astro`) stores the decision
+and calls
 `trackPageView()`, which boots the tag. The boot pushes `consent: 'default'`
 with `analytics_storage` granted and `ad_*` denied (we never collect for
 advertising), then `initializeAnalytics()`.

@@ -7,7 +7,7 @@ brainstorm: docs/brainstorm/2026-11-08-edition-archive-and-teaser-brainstorm-doc
 
 ## feat(home): the 2027 teaser takes the root, 2026 moves to /2026 - Standard
 
-**Status:** Done
+**Status:** Done; the teaser half is superseded by [2026-11-08-feat-2027-edition-on-the-root-plan.md](2026-11-08-feat-2027-edition-on-the-root-plan.md) (the root is the next edition behind flags, not a teaser).
 
 ## Overview
 

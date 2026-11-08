@@ -256,11 +256,9 @@
 	text-decoration-thickness: 1px;
 }
 
-// The number is a figure: mono, still on the Bebas action's line.
+// The number is a figure: tabular numerals on the action's line.
 .policy .listener-link--tel {
-	font-family: var(--font-jetbrains-mono), monospace;
-	font-size: var(--fs-body-lg);
-	letter-spacing: 0.04em;
+	@include mono(var(--fs-body-lg), 0.04em);
 }
 
 /* ---- Responsive ---- */
