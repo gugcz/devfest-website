@@ -72,8 +72,8 @@ built by a community, not a vendor event.
   linked from every footer. Older editions (2025, 2019, 2018, 2017) still
   live on their own subdomains.
 - **The teaser** (the root today): the design's stage over the painted
-  aether (the DF27 logo, "Fall 2027" lettered in brass, the tagline, one
-  portal to `/2026`), then what DevFest.cz is, what is announced (when,
+  aether (the DF27 logo, "Fall 2027" lettered in brass, the tagline, a solid
+  "Hear it first" to the newsletter and a framed portal to `/2026`), then what DevFest.cz is, what is announced (when,
   where, language), 2026 in figures (the audience from the config, talks
   and speakers counted from the frozen lineup) with prints from past
   editions, the newsletter, and a footer with every past edition, the

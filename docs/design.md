@@ -1,6 +1,6 @@
 ---
 name: DevFest.cz 2027
-description: The aether. A dark painted sky of smoke, turning sigil rings and circuit traces behind one logo; ivory type in one system sans, brass ink for ornament and labels, and a cold aether light that appears only when something is hovered, focused or lit by the painting. One portal per screen.
+description: The aether. A dark painted sky of smoke, turning sigil rings and circuit traces behind one logo; ivory type in one system sans, brass ink for ornament and labels, and a cold aether light that appears only when something is hovered, focused or lit by the painting. One solid portal per page.
 colors:
   ink: "#05090f"
   ink-veil: "rgba(5, 9, 15, 0.9)"
@@ -325,13 +325,19 @@ A beveled brass frame drawn in ink, the aether's one button
   (0.8s, `--ease-rise`), the strokes and arrow turn aether, the arrow steps
   5px forward, the portal glows; focus adds the aether ring at 5px.
 - **Reduced motion:** all transitions off.
+- **Solid variant** (`variant="solid"`): the bevel filled with brass, the
+  label and arrow in ink, the outer stroke brass-light; hover and focus fill
+  it with aether instead of the sweep. The page's one action (on the stage:
+  "Hear it first", a jump to the newsletter).
 - **Submit variant:** the newsletter submit is the same frame drawn as a
   background; hover deepens the plate to a dark aether tint instead of the
   sweep.
 
-**[MUST] The One Portal Rule.** One portal per screen. The stage's portal
-leads to the last edition's archive; the newsletter's submit is the only
-other, a full screen below.
+**[MUST] The One Portal Rule.** One solid portal per page, at most two
+portals per screen. The stage carries the solid one (the newsletter) and a
+framed one (the last edition's archive), side by side where both fit,
+stacked on a phone; the newsletter's submit is the only other, a full
+screen below.
 
 ### Season mark
 `SeasonMark.astro`: "Fall 2027" hand-lettered as SVG strokes in the brass
@@ -388,7 +394,7 @@ light and the underline aether (0.3s). Focus is always the aether ring
 
 ### Don't:
 - **Don't** use the aether colour at rest; it is hover, focus and the painting's glow.
-- **Don't** put more than one portal on a screen, or round its corners.
+- **Don't** put a second solid portal on a page, more than two portals on a screen, or round a portal's corners.
 - **Don't** use the brass rule and diamond anywhere but the season mark and rubric headings.
 - **Don't** load a web font or bring a 2026 face (Bebas Neue, Special Elite, JetBrains Mono) onto a teaser page.
 - **Don't** add cards, box shadows or radius; depth is the painting and the veil.

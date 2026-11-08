@@ -1,21 +1,27 @@
 ---
 /**
- * The portal: the aether's one button. A beveled brass frame drawn in ink;
- * on hover or focus a band of cold light runs through it and the arrow
- * steps forward. One per screen (`docs/design.md`, "Portal").
+ * The portal: the aether's button. A beveled brass frame drawn in ink; on
+ * hover or focus a band of cold light runs through it and the arrow steps
+ * forward. `solid` fills the bevel with brass for the page's one action;
+ * the framed one is the way somewhere else (`docs/design.md`, "Portal").
  */
 interface Props {
 	href: string;
 	label: string;
+	variant?: 'framed' | 'solid';
 	/** Another build (an archive): a full page load, no soft navigation. */
 	reload?: boolean;
 	class?: string;
 }
 
-const { href, label, reload = false, class: className } = Astro.props;
+const { href, label, variant = 'framed', reload = false, class: className } = Astro.props;
 ---
 
-<a class:list={['portal', className]} href={href} {...(reload ? { 'data-astro-reload': true } : {})}>
+<a
+	class:list={['portal', { 'portal--solid': variant === 'solid' }, className]}
+	href={href}
+	{...(reload ? { 'data-astro-reload': true } : {})}
+>
 	<svg class="portal-frame" viewBox="0 0 280 62" aria-hidden="true" focusable="false">
 		<g fill="none" filter="url(#aether-ink)">
 			<path class="portal-outer" d="M16 2H264L278 16V46L264 60H16L2 46V16Z"></path>
@@ -124,6 +130,52 @@ const { href, label, reload = false, class: className } = Astro.props;
 
 	.portal:active {
 		filter: drop-shadow(0 0 22px rgba(116, 235, 224, 0.65));
+	}
+
+	// The solid portal: brass fill, ink label; the cold light replaces the
+	// brass when the visitor reaches it.
+	.portal--solid {
+		color: var(--ink);
+
+		&::before {
+			background: var(--brass);
+			transition: background-color 0.3s ease;
+		}
+
+		.portal-outer {
+			stroke: var(--brass-light);
+		}
+
+		.portal-inner {
+			stroke: var(--ink);
+			opacity: 0.35;
+		}
+
+		.portal-arrow {
+			color: var(--ink);
+		}
+
+		&:hover,
+		&:focus-visible {
+			color: var(--ink);
+
+			&::before {
+				background: var(--aether);
+			}
+
+			.portal-outer {
+				stroke: var(--aether);
+			}
+
+			.portal-inner {
+				stroke: var(--ink);
+				opacity: 0.5;
+			}
+
+			.portal-arrow {
+				color: var(--ink);
+			}
+		}
 	}
 
 	.portal:focus-visible {

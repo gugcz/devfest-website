@@ -286,7 +286,7 @@
 			},
 			{
 				"name": "The One Portal Rule",
-				"body": "One portal per screen. The stage's portal leads to the last edition's archive; the newsletter's submit is the only other, a full screen below.",
+				"body": "One solid portal per page, at most two portals per screen. The stage carries the solid one (the newsletter) and a framed one (the last edition's archive), side by side where both fit, stacked on a phone; the newsletter's submit is the only other, a full screen below.",
 				"section": "components"
 			}
 		],
@@ -300,7 +300,7 @@
 		],
 		"donts": [
 			"**Don't** use the aether colour at rest; it is hover, focus and the painting's glow.",
-			"**Don't** put more than one portal on a screen, or round its corners.",
+			"**Don't** put a second solid portal on a page, more than two portals on a screen, or round a portal's corners.",
 			"**Don't** use the brass rule and diamond anywhere but the season mark and rubric headings.",
 			"**Don't** load a web font or bring a 2026 face (Bebas Neue, Special Elite, JetBrains Mono) onto a teaser page.",
 			"**Don't** add cards, box shadows or radius; depth is the painting and the veil.",

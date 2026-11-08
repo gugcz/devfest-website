@@ -67,7 +67,10 @@ const PRINTS = [
 			</h1>
 			<SeasonMark season={upcoming.season} class="rise rise-2" />
 			<p class="stage-line rise rise-3">{event.tagline}</p>
-			{archiveYear && <Portal href={`/${archiveYear}`} label={`${archiveYear} Edition`} reload class="rise rise-4" />}
+			<div class="stage-actions rise rise-4">
+				{enabled('newsletter') && <Portal href="#newsletter" label="Hear it first" variant="solid" />}
+				{archiveYear && <Portal href={`/${archiveYear}`} label={`${archiveYear} Edition`} reload />}
+			</div>
 		</section>
 
 		<div class="veil">

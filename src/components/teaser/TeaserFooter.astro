@@ -88,7 +88,11 @@ const year = new Date().getFullYear();
 		position: relative;
 		background: var(--ink);
 		border-top: 1px solid rgba(207, 168, 98, 0.3);
-		padding: clamp(3rem, 2rem + 4vw, 5rem) var(--gutter) calc(2rem + env(safe-area-inset-bottom));
+		// While the cookie slip is up (`--cookie-slip-h`, src/lib/cookie-banner.ts)
+		// the footer grows by its height, so the last line scrolls clear of it
+		// and the room under the slip is the footer's ink, not the painting.
+		padding: clamp(3rem, 2rem + 4vw, 5rem) var(--gutter)
+			calc(2rem + env(safe-area-inset-bottom) + var(--cookie-slip-h, 0px));
 		color: var(--ivory-muted);
 		font-size: var(--fs-small);
 	}

@@ -2,7 +2,7 @@
 
 - Status: accepted
 - Date: 2026-11-08
-- PR: to be linked; plan
+- PR: [#531](https://github.com/gugcz/devfest-website/pull/531); plan
   [2026-11-08-feat-edition-archive-and-teaser-plan.md](../plan/2026-11-08-feat-edition-archive-and-teaser-plan.md),
   brainstorm
   [2026-11-08-edition-archive-and-teaser-brainstorm-doc.md](../brainstorm/2026-11-08-edition-archive-and-teaser-brainstorm-doc.md)

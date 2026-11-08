@@ -43,8 +43,13 @@
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-// The portal (its own component) sits a little lower, as in the comp.
-.stage :global(.portal) {
+// The portals sit a little lower, as in the comp: the newsletter first,
+// then the way to the last edition; side by side where both fit.
+.stage-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 14px 18px;
 	margin-top: clamp(6px, 1.6vh, 18px);
 }
 
