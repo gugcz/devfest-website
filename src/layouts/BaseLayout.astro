@@ -1,7 +1,6 @@
 ---
-import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
-import CookieBanner from '../components/CookieBanner.astro';
+import CookieBanner from '../components/aether/CookieBanner.astro';
 import Head from './Head.astro';
 import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
@@ -167,9 +166,9 @@ const jsonLd = isHome
 			browsers that only respect the media-scoped form (Firefox,
 			Samsung Internet, older iOS in-app browsers).
 		*/}
-		<meta name="theme-color" content="#000000" />
-		<meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)" />
-		<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+		<meta name="theme-color" content="#05090f" />
+		<meta name="theme-color" content="#05090f" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#05090f" media="(prefers-color-scheme: dark)" />
 		<meta name="color-scheme" content="dark" />
 		{/*
 			Mark JS available ASAP so a `.js`-gated rule only applies when a
@@ -276,30 +275,11 @@ const jsonLd = isHome
 			to a 404. The .ico carries 16/32/48 from the same mark.
 		*/}
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
-		<link rel="icon" type="image/webp" href="/favicon-light.webp" media="(prefers-color-scheme: light)" />
-		<link rel="icon" type="image/webp" href="/favicon-dark.webp" media="(prefers-color-scheme: dark)" />
+		<link rel="icon" type="image/svg+xml" href="/favicon-2027.svg" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/site.webmanifest" />
 
-		{/*
-			Self-hosted brand fonts (Astro Fonts API — see the `fonts` array in
-			astro.config.ts). Served from our own origin, so no visitor IP
-			reaches Google's font CDN before the cookie banner is answered, and
-			there is no third-party round-trip in the critical path. Each <Font />
-			emits the @font-face block plus the `cssVariable` BaseLayout.scss
-			consumes — the resolved family names are build-time hashes, so CSS
-			must never name a face literally.
-
-			`preload` is deliberate, not blanket: only the faces that paint above
-			the fold everywhere get the hint (Special Elite is the body face set
-			on <body>; Bebas Neue is the display face). Preloading all three would
-			make them compete for bandwidth and delay the two that actually
-			gate first paint. This comment is stripped from the built HTML.
-		*/}
-		<Font cssVariable="--font-special-elite" preload />
-		<Font cssVariable="--font-bebas-neue" preload />
-		<Font cssVariable="--font-jetbrains-mono" />
-
+		{/* No web font: the aether sets everything in one system sans (`docs/design.md`). */}
 		{/* Page-specific <head> extras (e.g. FAQPage JSON-LD) */}
 		<slot name="head" />
 
@@ -339,6 +319,20 @@ const jsonLd = isHome
 			overlays (9999 / 9998) so it stays opaque under the chrome.
 		*/}
 		<div class="status-bar-cover" aria-hidden="true"></div>
+		{/* Shared by every inked line on the page: a slight tremor that makes a
+		     vector stroke read as drawn, and the brass of the lettering. */}
+		<svg class="svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
+			<defs>
+				<filter id="aether-ink" x="-5%" y="-15%" width="110%" height="130%">
+					<feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="2" seed="7"></feTurbulence>
+					<feDisplacementMap in="SourceGraphic" scale="2.4"></feDisplacementMap>
+				</filter>
+				<linearGradient id="aether-brass" x1="0" y1="0" x2="0" y2="1">
+					<stop offset="0" stop-color="#fbf1da"></stop>
+					<stop offset="1" stop-color="#d9b26a"></stop>
+				</linearGradient>
+			</defs>
+		</svg>
 		{!kiosk && <Menu />}
 		{/*
 			`tabindex="-1"` is what makes the skip link actually skip. Without it

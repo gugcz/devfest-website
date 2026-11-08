@@ -1,141 +1,104 @@
-// Type recipes shared by every stylesheet. Each mixin is one face in one
-// role; the size (and where it varies, the tracking/case) stays the caller's
-// — never snap a site's actual value to the nearest one used elsewhere,
-// that's a visual decision, not a refactor's.
+// Type recipes shared by every stylesheet, in the aether's one sans
+// (`docs/design.md`). The mixin names are the 2026 system's roles; each now
+// sets the aether's voice for that role. The size (and where it varies, the
+// tracking/case) stays the caller's.
+@use './aether' as *;
 
-// THE THREE VOICES. Bebas speaks (headlines and actions), Special Elite
-// tells (prose, notes, every label made of words), JetBrains Mono records
-// (figures only: prices, times, indices, counts, codes). Mono never sets a
-// word-label; that was the site's "AI" tell.
-
-// The note voice: a label, role, caption, eyebrow or section note. Sentence
-// case, no tracking — the typewriter does not shout. Floor `--fs-note-sm`:
-// Special Elite's texture breaks up under 13px.
+// The note voice: a role, caption or section note. Sentence case, the body
+// sans at the caller's size.
 @mixin note($size: var(--fs-note)) {
-	font-family: var(--font-special-elite), cursive;
+	font-family: var(--font-sans);
 	font-size: $size;
+	font-weight: 400;
 	letter-spacing: 0;
 	text-transform: none;
-	line-height: 1.45;
+	line-height: 1.5;
 }
 
-// The action voice: a link or button label. Bebas caps at `--fs-action`,
-// tracking 0 (manual), one line.
+// The action voice: a link or button label, in the label voice.
 @mixin action($size: var(--fs-action)) {
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: $size;
-	line-height: 1;
-	letter-spacing: 0;
-	text-transform: uppercase;
+	@include label($size, 0.18em);
+	line-height: 1.2;
 }
 
-// A label on a red fill: white Bebas at the 24px "large text" size. White
-// on #F11000 is 4.4:1, which clears AA only as large text (3:1); Bebas has
-// no bold, so the size carries it. Never shrink it.
+// A button label: the label voice at the portal's size.
 @mixin cta-label {
-	@include action(var(--fs-cta));
+	@include label(var(--fs-cta));
 }
 
-// Mono figure (JetBrains Mono + size + optional tracking/case). For numbers
-// and codes; a word-label uses `note`, an action uses `action`.
+// A figure (prices, times, indices, counts, codes): the sans with lining,
+// tabular numerals, semibold. Tracking and case are the caller's.
 @mixin mono($size, $track: null, $case: null) {
-	font-family: var(--font-jetbrains-mono), monospace;
+	font-family: var(--font-sans);
 	font-size: $size;
-	// Tracking goes through `--track-scale` (1 everywhere, pulled in on
-	// phones in BaseLayout.scss): a 0.26em label that reads as a caption on a
-	// laptop spells itself out letter by letter across a 390px column.
-	// Floored at 0.1em: the brand manual sets mono labels at 0.1–0.2em, so
-	// the phone scale may pull a wide label in but never under the range.
+	font-weight: 600;
+	font-variant-numeric: lining-nums tabular-nums;
 	@if $track {
-		letter-spacing: max(0.1em, calc(#{$track} * var(--track-scale, 1)));
+		letter-spacing: $track;
 	}
 	@if $case {
 		text-transform: $case;
 	}
 }
 
-// Poster headline — the global `.display` class as a mixin, for a CSS Module
-// or a scoped component that cannot compose the class on its markup. Size is
-// the caller's `--fs-*` step. Brand manual: Bebas sets at 0.9–1.0 leading,
-// zero tracking, always caps.
+// A headline — the global `.display` class as a mixin, for a CSS Module or a
+// scoped component. Ivory sans, semibold, sentence case as written.
 @mixin display($size: null) {
-	font-family: var(--font-bebas-neue), sans-serif;
+	font-family: var(--font-sans);
 	@if $size {
 		font-size: $size;
 	}
+	font-weight: 600;
 	line-height: var(--lh-display);
 	letter-spacing: var(--track-display);
-	text-transform: uppercase;
+	text-transform: none;
 	color: var(--color-text);
 }
 
-// Row title — the long-list step: session rows, FAQ questions, agenda list,
-// the talk rows inside a sheet. More leading than `display` (the manual's
-// 1.0 ceiling), because these sit in a list, not on a poster.
+// Row title — the long-list step: session rows, FAQ questions, the talk rows
+// inside a sheet. The aether's fact voice.
 @mixin row-title($size: var(--fs-row-sm)) {
-	font-family: var(--font-bebas-neue), sans-serif;
+	font-family: var(--font-sans);
 	font-size: $size;
-	line-height: 1;
+	font-weight: 600;
+	line-height: 1.3;
 	letter-spacing: 0;
-	text-transform: uppercase;
+	text-transform: none;
 	color: var(--color-text);
 }
 
-// Typewriter reading copy — ledes, notes, abstracts. Colour is the caller's:
-// it depends on the ground (white ink on black, `--paper-ink` on paper).
+// Reading copy — ledes, notes, abstracts. Colour is the caller's.
 @mixin prose($size: var(--fs-body), $lh: null) {
-	font-family: var(--font-special-elite), cursive;
+	font-family: var(--font-sans);
 	font-size: $size;
+	font-weight: 400;
 	@if $lh {
 		line-height: $lh;
 	}
 }
 
-// Inline link on a red hairline that lights to accent-hot. Keyboard focus
-// takes the global ring; a caller with its own offset restates only that.
-// A link inside running text: a plain underline (SC 1.4.1 — colour alone
-// does not mark it), white, red on hover. Standalone actions do not use
-// this; they are `.action` (mono caps + arrow, BaseLayout.scss).
+// A link inside running text: ivory, a thin brass underline (SC 1.4.1 —
+// colour alone does not mark it); brass light and an aether line on hover.
 @mixin hairline-link($color: var(--color-text)) {
 	color: $color;
 	text-decoration: underline;
 	text-decoration-thickness: 1px;
-	text-underline-offset: 3px;
-	text-decoration-color: var(--rule-red);
-	transition: color 0.2s, text-decoration-color 0.2s;
+	text-underline-offset: 0.25em;
+	text-decoration-color: var(--brass);
+	transition: color 0.3s, text-decoration-color 0.3s;
 
 	&:hover,
 	&:focus-visible {
-		color: var(--color-accent-hot);
-		text-decoration-color: var(--color-accent-hot);
-	}
-}
-
-// A Bebas text action on paper (`.action`/`.btn-ghost` or a bare button):
-// paper ink, no line at rest, a 2px ink underline on hover and focus. Red
-// text misses 4.5:1 on paper, so the line is the only reach state. One
-// treatment for every paper card on the site.
-@mixin paper-action {
-	color: var(--paper-ink);
-	text-decoration: underline;
-	text-decoration-color: transparent;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 4px;
-	transition: text-decoration-color 0.2s ease;
-
-	&:focus-visible {
-		color: var(--paper-ink);
-		text-decoration-color: var(--paper-ink);
-	}
-
-	@media (hover: hover) {
-		&:hover {
-			color: var(--paper-ink);
-			text-decoration-color: var(--paper-ink);
-		}
+		color: var(--brass-light);
+		text-decoration-color: var(--aether);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		transition: none;
 	}
+}
+
+// A text action on a plate: the same link treatment as everywhere else.
+@mixin paper-action {
+	@include hairline-link(var(--paper-ink));
 }

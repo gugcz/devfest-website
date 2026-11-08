@@ -1,19 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import paper from './NewsletterForm.module.scss';
+import s from './NewsletterForm.module.scss';
 
 const FORM_ACTION =
 	'https://app.smartemailing.cz/public/web-forms-v2/display-form/167903-ggds3kxovwsftn01lh5m7yhk8m4wwxdjdm1xbq2dnhipx2twwqpfbdq66w91nbw4wvqi81suvi5r8bt43zw76foqqs2xigrw3a97';
 
-interface Props {
-	/** Class names for the form's parts, as a CSS module exports them: the
-	 * paper card by default, the aether skin on the teaser. */
-	skin?: Readonly<Record<string, string>>;
-	/** The card's top edge with the brand and the year (the paper card's). */
-	edge?: boolean;
-}
-
-export default function NewsletterForm({ skin = paper, edge = true }: Props) {
-	const s = skin;
+export default function NewsletterForm() {
 	const [message, setMessage] = useState('');
 	// The field the last failed submit stopped on; its message is an error.
 	const [invalid, setInvalid] = useState<'email' | 'consent' | null>(null);
@@ -62,12 +53,6 @@ export default function NewsletterForm({ skin = paper, edge = true }: Props) {
 
 	return (
 		<div className={s.wrapper}>
-			{edge && (
-				<div className={s.edge} aria-hidden="true">
-					<span className={s.edgeWord}>DevFest.cz</span>
-					<span>2026</span>
-				</div>
-			)}
 			<form
 				className={s.form}
 				method="post"

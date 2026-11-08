@@ -1,4 +1,5 @@
 @use '../styles/type' as *;
+@use '../styles/aether' as *;
 // The bar: the mark left; at >=1100px the destinations inline and the red
 // Tickets button, below that the full-screen menu toggle and Tickets.
 .site-header {
@@ -31,7 +32,7 @@
 	content: '';
 	position: absolute;
 	inset: 0;
-	background: #000000;
+	background: var(--ink);
 	opacity: 1;
 	pointer-events: none;
 	z-index: -1;
@@ -47,9 +48,9 @@
 	inset: 0;
 	background: linear-gradient(
 		180deg,
-		rgba(0, 0, 0, 0.6) 0%,
-		rgba(0, 0, 0, 0.34) 58%,
-		rgba(0, 0, 0, 0) 100%
+		rgba(5, 9, 15, 0.7) 0%,
+		rgba(5, 9, 15, 0.4) 58%,
+		rgba(5, 9, 15, 0) 100%
 	);
 	opacity: 0;
 	pointer-events: none;
@@ -100,10 +101,9 @@
 
 .brand-logo {
 	display: block;
-	// 38px tall = 190px wide: the brand manual's 180px digital minimum for
-	// the logo itself (the artboard adds 3% clear space each side). Never
-	// smaller, or the 2026 badge stops reading.
-	height: 38px;
+	// The DF27 mark is 10.3:1: 26px tall on a laptop, narrower on a phone so
+	// the toggle keeps its 44px beside it.
+	height: min(26px, calc((100vw - 8rem) / 10.3));
 	width: auto;
 	// Never bounded by its track: the bar makes room (phone CTA and toggle
 	// tighten, then the CTA drops into the menu), not the mark.
@@ -114,7 +114,7 @@
 // Large screens: the page scales with the root past 1920px, so the mark does too.
 @media (min-width: 1921px) {
 	.brand-logo {
-		height: 2.375rem;
+		height: 1.625rem;
 	}
 }
 
@@ -135,15 +135,15 @@
 	// `--header-h` asserts the bar is one tap-target tall; a wrapped label
 	// would make that a lie and pull every anchor offset out with it.
 	white-space: nowrap;
-	// The red button. White Bebas on red stays at the large-text step
-	// (`cta-label`) — 4.4:1 clears AA only as large text.
-	@include cta-label;
+	// The bar's one action, the solid portal cut down to the bar: a brass
+	// bevel with an ink label, aether when reached.
+	@include label(var(--fs-small), 0.18em);
 	text-decoration: none;
-	color: var(--color-text);
-	background: var(--color-accent);
+	color: var(--ink);
+	background: var(--brass);
 	border: 0;
-	border-radius: var(--radius);
-	padding: 0.3rem 1.1rem 0.1rem;
+	clip-path: bevel(8px, 0px);
+	padding: 0 1.1rem;
 	// Touch target — WCAG 2.5.5. It is also the tallest thing in the bar,
 	// so it is what `--header-h` is built from.
 	min-height: var(--header-tap);
@@ -156,14 +156,13 @@
 
 @media (hover: hover) {
 	.header-cta:hover {
-		color: var(--color-bg);
-		background: var(--color-text);
+		color: var(--ink);
+		background: var(--aether);
 	}
 }
 
 .header-cta:focus-visible {
-	outline: 2px solid var(--color-accent-hot);
-	outline-offset: var(--focus-gap);
+	@include focus-ring(var(--focus-gap));
 }
 
 // ── THE INLINE BAR (>=1100px) ──────────────────────────────────────────
@@ -197,8 +196,9 @@
 }
 
 // The page you are on: red, and `aria-current` says the same to AT.
+// The current page: brass, at rest; the cold light is for a hover.
 .bar-link--current {
-	color: var(--color-accent-hot);
+	color: var(--brass);
 }
 
 @media (hover: hover) {
@@ -326,7 +326,7 @@
 		calc(var(--header-h) + 1.3rem + env(safe-area-inset-top))
 		min(clamp(1.5rem, 5vw, 4.5rem), 6.25vw)
 		calc(2rem + env(safe-area-inset-bottom));
-	background: #000000;
+	background: var(--ink);
 	overflow-y: auto;
 	overscroll-behavior: contain;
 	// The closed panel must be inert to the pointer AND out of the a11y tree;
@@ -407,13 +407,8 @@
 
 // Destinations at poster scale — Bebas is condensed enough to fit them all.
 .nav-link {
-	font-family: var(--font-bebas-neue), sans-serif;
-	// Poster scale on a phone too: the five lines, the four under them and
-	// the footing still fit a 390x844 screen without the panel scrolling.
-	font-size: var(--fs-display);
-	line-height: 1;
-	letter-spacing: 0;
-	text-transform: uppercase;
+	@include display(var(--fs-h2));
+	line-height: 1.15;
 	color: var(--color-text);
 	text-decoration: none;
 	// Same tap floor as the three under it, so on a phone both tiers keep one
@@ -453,7 +448,7 @@
 // Tickets is a filled button in the bar; inside the panel it is just the last
 // destination, so it drops the fill.
 .nav-link--cta {
-	color: var(--color-accent-hot);
+	color: var(--brass);
 }
 
 .nav-foot {
@@ -485,15 +480,9 @@
 	align-items: center;
 	// Physical touch target, same token as the bar's own controls (WCAG 2.5.5).
 	min-height: var(--header-tap);
-	font-family: var(--font-bebas-neue), sans-serif;
-	font-size: var(--fs-h3);
-	line-height: 1;
-	// The same share of the step as the tier above (see `.nav-link`). Without
-	// it the lower tier sat at exactly their text height on a desktop panel — no
-	// leading at all — while the tier above had room to breathe.
+	@include label(var(--fs-rubric));
+	// The same share of the step as the tier above (see `.nav-link`).
 	padding: 0.15em 0;
-	letter-spacing: 0;
-	text-transform: uppercase;
 	color: var(--color-text);
 	text-decoration: none;
 	transition: color 0.18s ease;
@@ -632,6 +621,22 @@
 	.brand,
 	.bar-link,
 	.nav-toggle-bars span {
+		transition: none;
+	}
+}
+
+// On the home page's stage the logo is the stage's own; the bar's mark
+// waits until the visitor scrolls.
+.site-header[data-home='true'][data-state='top'] .brand-logo {
+	opacity: 0;
+}
+
+.brand-logo {
+	transition: opacity 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.brand-logo {
 		transition: none;
 	}
 }

@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { defineConfig, fontProviders } from 'astro/config';
+import { defineConfig } from 'astro/config';
 import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 
 import react from '@astrojs/react';
@@ -94,45 +94,6 @@ export default defineConfig({
     site: config.site.url,
     ...(archive && { base: `/${archive}`, outDir: `.archive/${archive}/site` }),
     trailingSlash: 'never',
-    // Self-hosted, build-time-optimised replacements for the three brand faces
-    // that used to come from the fonts.googleapis.com <link> in BaseLayout.astro.
-    // Weights/styles mirror exactly what that css2 URL requested. Only the three
-    // brand fonts are allowed — never add a fourth family here.
-    fonts: [
-        {
-            provider: fontProviders.google(),
-            name: 'Bebas Neue',
-            cssVariable: '--font-bebas-neue',
-            weights: [400],
-            styles: ['normal'],
-            subsets: ['latin', 'latin-ext'],
-        },
-        {
-            provider: fontProviders.google(),
-            name: 'JetBrains Mono',
-            cssVariable: '--font-jetbrains-mono',
-            weights: [400, 500],
-            styles: ['normal'],
-            subsets: ['latin', 'latin-ext'],
-        },
-        {
-            provider: fontProviders.google(),
-            name: 'Special Elite',
-            cssVariable: '--font-special-elite',
-            weights: [400],
-            styles: ['normal'],
-            // Google ships Special Elite in Latin only, so every č ř š ž ě ů
-            // fell through to the generated metric fallback — Arial at 117% —
-            // and "Libčice" printed as "LibČice". JetBrains Mono (latin-ext
-            // loaded above) takes those letters instead: a brand face, and a
-            // monospace whose 0.6em advance sits close to Special Elite's, so
-            // it also stands in without a reflow while the typewriter loads.
-            // Unquoted on purpose: Astro quotes only values with spaces, so
-            // the var() lands in `--font-special-elite` as a live reference.
-            fallbacks: ['var(--font-jetbrains-mono)', 'monospace'],
-            optimizedFallbacks: false,
-        },
-    ],
     image: {
         layout: 'constrained',
         // responsiveStyles defaults to false — without it the `layout` prop

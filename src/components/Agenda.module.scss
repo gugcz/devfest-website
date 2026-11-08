@@ -154,7 +154,7 @@
 	align-self: start;
 	padding-top: 0.75rem;
 	@include mono(var(--fs-label-lg));
-	color: var(--ink);
+	color: var(--ink-text);
 	font-variant-numeric: tabular-nums;
 }
 

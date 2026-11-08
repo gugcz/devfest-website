@@ -1,16 +1,14 @@
 @use '../styles/type' as *;
-// A question and the next step, on one baseline; wraps under on a phone.
-// The action at the CTA step, so the page's last control reads as one.
+// A question and the next step, centred like every aether band; the action
+// under it on a phone.
 .end-line {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: center;
 	align-items: baseline;
 	gap: 0.5rem 1.75rem;
-	margin: 6rem 0 0;
-
-	.action {
-		font-size: var(--fs-cta);
-	}
+	margin: 5rem 0 0;
+	text-align: center;
 }
 
 .end-line-text {

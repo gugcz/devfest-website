@@ -1,359 +1,234 @@
-@use '../styles/type' as *;
+@use '../styles/aether' as *;
 @use '../styles/logos' as *;
 
-// The home page as prints on a black table (docs/design-2026.md, "The darkroom").
-// The section head, paper, tape, edge and grease are global (BaseLayout.scss);
-// this file owns the plate and each section's inner layout.
+// The home page (`index.astro`, `docs/design.md`). The stage is the comp:
+// everything centred on the logo, over the painting. Below it the veil
+// darkens the painting so the text reads, and every band is one centred
+// column on the measure.
 
-// A figure inside a line of typewriter text: JetBrains Mono a step down, so
-// it sits on the same x-height.
-.fig {
-	@include mono(0.86em);
+.home {
+	position: relative;
 }
 
-/* ===================== HERO ===================== */
-// The photograph is pushed right and fades to black on its left and bottom;
-// the statement, the facts line and the red fill are set left over it.
-#hero {
+// ── THE STAGE ─────────────────────────────────────────────────────────────
+.stage {
 	position: relative;
-	isolation: isolate;
-	overflow: hidden;
+	min-height: 100vh;
+	min-height: 100svh;
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-end;
-	min-height: clamp(45rem, 62vw, 56.25rem);
-	background: var(--color-bg);
-}
-
-#hero :global(.hero-photo) {
-	filter: grayscale(1) contrast(1.12) brightness(0.95);
-	--hero-mask-shape: linear-gradient(to right, transparent 0, #000 32%);
-}
-
-// Lifts the type off the plate: the bar's shade at the top, the left third
-// to black under the statement, the foot to black so the page runs on.
-.hero-shade {
-	position: absolute;
-	inset: 0;
-	z-index: 1;
-	pointer-events: none;
-	background:
-		linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0, transparent 9rem),
-		linear-gradient(to right, #000 0%, rgba(0, 0, 0, 0.78) 30%, rgba(0, 0, 0, 0.1) 60%, transparent 100%),
-		linear-gradient(to bottom, transparent 55%, rgba(0, 0, 0, 0.75) 82%, #000 100%);
-}
-
-.hero-body {
-	position: relative;
-	z-index: 3;
-	width: 100%;
-	max-width: calc(var(--maxw) + 2 * var(--gutter));
-	margin: 0 auto;
-	padding: calc(var(--header-h, 4.5rem) + 4rem) var(--gutter) clamp(5rem, 7vw, 7.5rem);
-}
-
-.hero-statement {
-	margin: 0;
-	font-size: var(--fs-hero);
-	line-height: 0.86;
-	max-width: 6.2em;
-	text-wrap: wrap;
-	text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
-}
-
-// The five topics under the statement: a Bebas billing, white, split by a
-// dim slash, wrapping as a line of type.
-.hero-topics {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.15em 0;
-	list-style: none;
-	margin: 1.75rem 0 0;
-	padding: 0;
-	@include display(var(--fs-card-title));
-	line-height: 1.05;
-	text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
-
-	// The slash trails its topic, so a wrapped line never opens on one.
-	li:not(:last-child)::after {
-		// Empty alt text: the slash is not read out.
-		content: '/' / '';
-		padding: 0 0.45em;
-		color: var(--ink-faint);
-	}
-}
-
-// Date, countdown, venue, the wave on sale: one voice at one size. Words on the
-// typewriter, figures in mono (`.fig`), no separators.
-.hero-facts {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 0.6rem 2.25rem;
-	margin-top: 2.5rem;
-	@include note(var(--fs-body-lg));
-	color: var(--ink-strong);
-}
-
-.hero-date {
-	color: var(--color-text);
-}
-
-// The venue is a link in a line of text, so it keeps the in-prose underline.
-.hero-facts-link {
-	@include hairline-link(var(--ink-strong));
-}
-
-.hero-cta {
-	margin-top: 2.1rem;
-	padding: 1rem 2.5rem;
-}
-
-/* ===================== SECTIONS ===================== */
-// Every section opens on its head and closes on space; the next
-// head is the cut.
-.sec {
-	padding-bottom: 0;
-}
-
-// Two head steps: the event, speakers and past editions lead at poster scale
-// (`.head-rule`); partners, the app and the newsletter are utility and take
-// the h2 step (the newsletter's own title rule sets it below).
-#partners-title,
-#home-app-title {
-	font-size: var(--fs-h2);
-}
-
-// On this page a note (or the partners' actions) sits under its title at
-// every width, not in the right column a page-width away. Global: the
-// speakers head renders inside an island. The tickets head keeps its invoice
-// route beside it.
-.page-stack :global(.head-rule:not(:has(#tickets-heading))) {
-	grid-template-columns: minmax(0, 1fr);
-}
-
-/* ---- the event ---- */
-.event-title {
-	font-size: var(--fs-section);
-	max-width: 10em;
-}
-
-.event-grid {
-	display: grid;
-	grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
-	gap: clamp(2rem, 4vw, 4rem);
 	align-items: center;
+	justify-content: center;
+	gap: clamp(20px, 4.2vh, 44px);
+	// Clear of the fixed menu bar.
+	padding: calc(var(--header-h) + 1.5rem) var(--gutter) 48px;
+	text-align: center;
 }
 
-.event-print {
-	--tilt: calc(-1 * var(--tilt-1));
-	padding: 0.875rem 0.875rem 0;
-}
-
-.event-photo {
-	aspect-ratio: 2.39 / 1;
+// The logo file is cropped to its drawing (`public/df27-logo.svg`), so it
+// centres as it is.
+.logo {
+	margin: 0;
+	width: min(100%, 860px);
+	line-height: 0;
 
 	img {
-		object-position: 50% 40%;
-		filter: grayscale(1) contrast(1.1) brightness(0.7);
+		width: 100%;
+		height: auto;
+		filter: drop-shadow(0 0 26px rgba(116, 235, 224, 0.22)) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.55));
 	}
 }
 
-// The line set over the photograph like a subtitle.
-.event-subtitle {
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: clamp(0.875rem, 2vw, 1.75rem);
-	margin: 0 auto;
-	max-width: 44ch;
-	padding: 0 1rem;
-	text-align: center;
-	@include prose(var(--fs-body-lg), 1.5);
-	color: var(--color-text);
-	text-shadow: 0 1px 2px #000, 0 0 16px rgba(0, 0, 0, 0.95);
-
-	// A phone print is a third as wide: at the desktop size the line covered
-	// the mill.
-	@media (max-width: 720px) {
-		font-size: var(--fs-note-sm);
-		line-height: 1.4;
-		padding: 0 0.75rem;
-	}
-}
-
-// The back of the print: the facts, typed.
-.event-card {
-	position: relative;
-	background: var(--paper);
-	color: var(--paper-ink);
-	padding: 1.75rem 1.875rem 1.875rem;
-	box-shadow: var(--paper-shadow);
-}
-
-.event-card-edge {
-	padding: 0 0 1.1rem;
-}
-
-.facts-list {
+// Once the day is announced it takes the season mark's place, in type.
+.stage-date {
+	@include label(clamp(1rem, 0.85rem + 0.7vw, 1.4rem), 0.2em);
 	margin: 0;
-	display: grid;
-	grid-template-columns: max-content minmax(0, 1fr);
-	gap: 0.75rem 1.125rem;
+	color: var(--brass-light);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.stage-line {
+	@include label(clamp(0.72rem, 0.66rem + 0.3vw, 0.84rem), 0.28em);
+	margin: 0;
+	color: var(--ivory-muted);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.stage-count,
+.stage-offer {
+	margin: 0;
+	font-size: var(--fs-small);
+	color: var(--ivory);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+// The portals sit a little lower, as in the comp: the page's action first,
+// then the way to the last edition; side by side where both fit.
+.stage-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 14px 18px;
+	margin-top: clamp(6px, 1.6vh, 18px);
+}
+
+// ── BELOW THE STAGE ──────────────────────────────────────────────────────
+// The painting stays fixed behind; the veil fades it to near-black over the
+// first band, so text never sits on a bright patch of it.
+.veil {
+	position: relative;
+	padding: 0 var(--gutter) var(--section-y);
+	background: linear-gradient(to bottom, transparent, var(--ink-veil) 14rem);
+
+	// The islands (tickets, speakers) bring their own `.band`: on the veil,
+	// they take its ground, not a second one.
+	:global(.band) {
+		background: transparent;
+	}
+}
+
+.band {
+	max-width: var(--measure);
+	margin: 0 auto;
+	padding-top: var(--section-y);
+	text-align: center;
+}
+
+.band-wide {
+	max-width: var(--maxw);
+}
+
+.rubric {
+	@include rubric;
+	margin-bottom: 1.75rem;
+}
+
+.lead {
+	margin: 0 auto;
+	font-size: var(--fs-lead);
+	font-weight: 500;
+	line-height: 1.45;
+	color: var(--ivory);
+	text-wrap: balance;
+}
+
+.lead-short {
+	margin-bottom: 2rem;
+}
+
+// ── WHAT IS ANNOUNCED ────────────────────────────────────────────────────
+.facts {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 1.5rem clamp(2rem, 6vw, 4rem);
+	margin: 2.75rem 0 0;
 
 	div {
-		display: contents;
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
 	}
 
 	dt {
-		@include note(var(--fs-note-sm));
-		color: var(--paper-ink-dim);
-		padding-top: 0.15rem;
+		@include label(0.78rem, 0.22em);
+		color: var(--brass);
 	}
 
 	dd {
 		margin: 0;
-		@include note(var(--fs-body));
-		line-height: 1.4;
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: var(--ivory);
 	}
 }
 
-/* ---- past editions ---- */
-// The note sits beside the title, not across the page.
-.past-grid {
-	display: grid;
-	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-	gap: clamp(2rem, 4vw, 4rem);
-	align-items: center;
-}
-
-// The contact sheet: two strips of negatives on a dark card.
-.sheet {
-	position: relative;
-	background: rgba(255, 255, 255, 0.055);
-	padding: clamp(1.25rem, 2.6vw, 2.5rem);
-	transform: rotate(-0.6deg);
-	box-shadow: 0 2rem 4.5rem rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.08);
-}
-
-.strip {
-	position: relative;
-	list-style: none;
-	margin: 0;
-	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: clamp(0.5rem, 1.2vw, 1rem);
-	background: #000;
-	padding: 1.875rem clamp(0.625rem, 1.2vw, 1rem);
-
-	// The sprocket holes along both edges.
-	&::before,
-	&::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		height: 0.625rem;
-		background-image: radial-gradient(ellipse 5px 3.5px at center, rgba(255, 255, 255, 0.14) 98%, transparent 100%);
-		background-size: 1.375rem 0.625rem;
-		background-repeat: repeat-x;
-	}
-
-	&::before {
-		top: 0.5625rem;
-	}
-
-	&::after {
-		bottom: 0.5625rem;
-	}
-
-	& + & {
-		margin-top: clamp(0.875rem, 1.6vw, 1.375rem);
-	}
-}
-
-.frame {
-	position: relative;
-	min-width: 0;
-
-	.grease {
-		left: -9%;
-		top: 4%;
-		width: 118%;
-		height: 118%;
-	}
-}
-
-.frame-no {
+.facts-note {
 	display: block;
-	@include mono(var(--fs-label-xs), 0.08em);
-	color: var(--ink-dim);
-	padding-bottom: 0.375rem;
+	font-size: var(--fs-small);
+	font-weight: 400;
+	color: var(--ivory-muted);
 }
 
-.frame-photo {
-	aspect-ratio: 3 / 2;
-	overflow: hidden;
+// ── THE LAST EDITION ─────────────────────────────────────────────────────
+.figures {
+	display: flex;
+	justify-content: center;
+	gap: clamp(1.5rem, 8vw, 5rem);
+	margin: 0 0 3rem;
+
+	div {
+		display: flex;
+		flex-direction: column-reverse;
+		align-items: center;
+		gap: 0.25rem;
+	}
+
+	dd {
+		margin: 0;
+		font-size: var(--fs-figure);
+		font-weight: 600;
+		line-height: 1;
+		letter-spacing: -0.02em;
+		color: var(--brass-light);
+		font-variant-numeric: lining-nums tabular-nums;
+	}
+
+	dt {
+		@include label(0.78rem, 0.22em);
+		color: var(--ivory-muted);
+	}
+}
+
+// Photographs in thin brass frames, a step wider than the text column.
+.prints {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: clamp(0.75rem, 2vw, 1.25rem);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	@media (min-width: 900px) {
+		grid-template-columns: repeat(4, 1fr);
+		margin: 0 calc(-1 * clamp(0rem, 25vw - 10rem, 14rem));
+	}
+}
+
+.print {
+	padding: 6px;
+	border: 1px solid rgba(207, 168, 98, 0.5);
+	background: rgba(5, 9, 15, 0.6);
 
 	img {
 		display: block;
 		width: 100%;
-		height: 100%;
+		aspect-ratio: 3 / 2;
 		object-fit: cover;
-		filter: grayscale(1) contrast(1.15) brightness(0.9);
+		filter: saturate(0.85) contrast(1.05);
 	}
 }
 
-.sheet-edge {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 1.125rem;
-	@include mono(var(--fs-label-xs), 0.14em);
-	color: var(--ink-dim);
+.band-link {
+	@include label(var(--fs-small), 0.18em);
+	margin: 2.25rem 0 0;
+
+	a {
+		color: var(--ivory);
+	}
 }
 
-.past-print {
-	--tilt: var(--tilt-3);
-	padding: 0.875rem 0.875rem 0;
-}
-
-// The enlargement is the ringed frame itself: the same 3:2 negative, so
-// it reads as 12A blown up, not a different shot.
-.past-photo {
-	aspect-ratio: 3 / 2;
-}
-
-/* ---- partners ---- */
-.partners-actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0 2.25rem;
-	margin-bottom: 0.4rem;
-}
-
-// Platinum and diamond side by side, gold and the rest across the page.
+// ── PARTNERS ─────────────────────────────────────────────────────────────
 .partners-tiers {
-	display: grid;
-	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-	gap: 4rem clamp(2.5rem, 6vw, 6rem);
-	align-items: start;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3rem;
 }
 
-.partners-tier {
-	grid-column: 1 / -1;
-	min-width: 0;
-}
-
-.tier-platinum,
-.tier-diamond {
-	grid-column: auto;
-}
-
-// A group label, not a print: no tape, the quiet note voice.
 .partners-label {
-	@include note(var(--fs-note));
-	font-weight: normal;
-	color: var(--ink-meta);
+	@include label(0.78rem, 0.22em);
+	color: var(--brass);
 	margin: 0 0 1.375rem;
 }
 
@@ -363,6 +238,7 @@
 	padding: 0;
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: center;
 	align-items: center;
 	gap: 2rem 3.5rem;
 }
@@ -392,148 +268,13 @@
 	}
 
 	a:focus-visible {
-		outline: 2px solid var(--color-accent-hot);
-		outline-offset: 6px;
+		@include focus-ring(6px);
 	}
 }
 
-/* ---- newsletter ---- */
-.newsletter {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	gap: clamp(2rem, 5vw, 5rem);
-	// The head on the section's top edge, like every other head: centred
-	// against the taller form card it sat lower and an anchor jump landed
-	// short of it.
-	align-items: start;
-}
-
-// One word, never broken; a utility head, so the h2 step.
-.newsletter-title {
-	margin: 0;
-	font-size: var(--fs-h2);
-	overflow-wrap: normal;
-	word-break: normal;
-	hyphens: none;
-}
-
-.newsletter-lede {
-	@include prose(var(--fs-body-lg), 1.6);
-	color: var(--ink);
-	max-width: 30ch;
-	margin: 1.5rem 0 0;
-}
-
-/* ===================== RESPONSIVE ===================== */
-@media (max-width: 1100px) {
-	.event-grid {
-		grid-template-columns: minmax(0, 1fr);
-		gap: 3rem;
-	}
-
-	.event-card {
-		width: 100%;
-		max-width: 35rem;
-		margin-left: auto;
-	}
-}
-
-@media (max-width: 720px) {
-	#hero {
-		min-height: 47.5rem;
-	}
-
-	#hero :global(.hero-photo) {
-		width: 100%;
-		bottom: 32%;
-		background-size: cover;
-		--hero-mask-shape: linear-gradient(to bottom, #000 55%, transparent 100%);
-	}
-
-	.hero-shade {
-		background:
-			linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0, transparent 7.5rem),
-			linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.85) 58%, #000 75%);
-	}
-
-	.hero-body {
-		padding-top: 7.5rem;
-		padding-bottom: 4.5rem;
-	}
-
-	.hero-statement {
-		max-width: none;
-	}
-
-	.hero-facts {
-		flex-direction: column;
-		gap: 0.375rem;
-		margin-top: 1.75rem;
-	}
-
-	.hero-cta {
-		display: flex;
-		width: 100%;
-	}
-
-	.event-print {
-		padding: 0.5rem 0.5rem 0;
-	}
-
-	.event-photo {
-		aspect-ratio: 4 / 3;
-	}
-
-	.event-card {
-		padding: 1.5rem 1.375rem;
-	}
-
-	.past-grid {
-		grid-template-columns: minmax(0, 1fr);
-		gap: 2.75rem;
-	}
-
-	.sheet {
-		transform: none;
-	}
-
-	.strip {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		padding: 1.625rem 0.625rem;
-	}
-
-	.past-print {
-		width: 84%;
-		margin: 0 auto;
-	}
-
-	.partners-actions {
-		flex-direction: column;
-		margin-bottom: 0;
-	}
-
-	.partners-tiers {
-		grid-template-columns: minmax(0, 1fr);
-		gap: 3rem;
-	}
-
-	.partners-row {
-		gap: 1.5rem 2rem;
-	}
-
-	.item-platinum { --logo-scale: 0.55; }
-	.item-diamond { --logo-scale: 0.6; }
-	.item-gold { --logo-scale: 0.75; }
-	.item-silver,
-	.item-community,
-	.item-travel { --logo-scale: 0.85; }
-
-	.newsletter {
-		grid-template-columns: minmax(0, 1fr);
-	}
-}
-
-// THE APP — badges, then one action to /app.
-.home-app-more {
-	margin: 1.75rem 0 0;
+.partners-links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.5rem 2.25rem;
 }

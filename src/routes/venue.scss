@@ -34,7 +34,7 @@
 
 .venue-hours {
 	@include prose(var(--fs-body-lg), 1.6);
-	color: var(--ink);
+	color: var(--ink-text);
 	margin: 1.75rem 0 0;
 	max-width: 32ch;
 
@@ -183,7 +183,7 @@
 
 .venue-door-note {
 	@include prose(var(--fs-body-lg), 1.6);
-	color: var(--ink);
+	color: var(--ink-text);
 	margin: 1.75rem 0 0;
 	max-width: 30ch;
 }

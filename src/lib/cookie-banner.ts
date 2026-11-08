@@ -1,9 +1,8 @@
 /**
- * The cookie banner's behaviour, shared by every skin of it (the noir
- * `CookieBanner.astro`, the teaser's `TeaserCookieBanner.astro`). A skin
- * renders `#cookie-banner` with `#cookie-accept` and `#cookie-decline` and
- * the `cookie-banner--hidden` class, and imports this module from a
- * `<script>`; it binds once per document. Rules: `.claude/rules/analytics.md`.
+ * The cookie banner's behaviour (`src/components/aether/CookieBanner.astro`).
+ * The markup renders `#cookie-banner` with `#cookie-accept` and
+ * `#cookie-decline` and the `cookie-banner--hidden` class, and imports this
+ * module from a `<script>`; it binds once per document. Rules: `.claude/rules/analytics.md`.
  */
 // Consent storage lives in `src/lib/consent.ts` because `src/lib/firebase.ts`
 // reads the same decision to decide whether GA4 boots at all. Static import

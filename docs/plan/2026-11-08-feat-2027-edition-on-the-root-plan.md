@@ -251,7 +251,7 @@ docs.
 
 ### Phase 2: Aether foundation, chrome and home hero (PR 1)
 
-- **Status:** Not started
+- **Status:** Done
 - **Scope:** the aether becomes `BaseLayout`'s system:
   - Every token, the recipes for the global primitives and `_type.scss`.
   - Menu, footer, cookie banner, `SubpageHero`, `EndLine`, `NextStep`.

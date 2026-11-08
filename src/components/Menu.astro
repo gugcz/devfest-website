@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import logo from '../assets/logo.png';
 import venuePrint from '../assets/venue/uhelny-mlyn-entrance-tower.jpg';
 import { EVENT, eventDate, hasDate, hasVenue } from '../lib/event';
 import config from '../site.config';
@@ -74,18 +73,8 @@ const isCurrent = (href: string) => {
 
 <header id="site-header" class="site-header" data-state="top" data-home={isHome ? 'true' : 'false'}>
 	<a href="/" class="brand" aria-label={`${EVENT.name} — home`}>
-		{/* Header sits above the fold on every page, so it loads eagerly; the
-		     intrinsic width/height come from the official 3000×600 artboard (5:1,
-		     clear space included), and `widths` caps the srcset at the 190px CSS
-		     width up to 2× DPR. */}
-		<Image
-			src={logo}
-			alt={EVENT.name}
-			class="brand-logo"
-			loading="eager"
-			widths={[190, 380]}
-			sizes="190px"
-		/>
+		{/* The DF27 mark (`public/df27-logo.svg`, cropped to the artwork: 2880×280). */}
+		<img src="/df27-logo.svg" alt={EVENT.name} class="brand-logo" width="2880" height="280" loading="eager" decoding="async" />
 	</a>
 
 	{/* Desktop (>=1100px): the destinations sit in the bar, the four the visit

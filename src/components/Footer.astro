@@ -1,6 +1,4 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../assets/logo.png';
 import { EVENT, hasDate, hasVenue } from '../lib/event';
 import config from '../site.config';
 import { enabledOnly, type FeatureFlag } from '../lib/flags';
@@ -82,14 +80,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		{/* The poster sign-off: the official logo file at poster scale, still
 		     the way home. The name is never typeset as a second wordmark. */}
 		<a href="/" class="footer-logo-link">
-			<Image
-				src={logo}
-				alt={EVENT.name}
-				class="footer-logo"
-				loading="lazy"
-				widths={[480, 960, 1280]}
-				sizes="min(40rem, 80vw)"
-			/>
+			<img src="/df27-logo.svg" alt={EVENT.name} class="footer-logo" width="2880" height="280" loading="lazy" decoding="async" />
 		</a>
 
 		<div class="footer-grid">
@@ -190,8 +181,6 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 
 		<div class="footer-bottom">
 			<small class="copyright">&copy; 2026 GUG.cz, z.s.</small>
-			{/* The case-file folio the brand manual prints on every page. */}
-			<small class="folio" aria-hidden="true">Case no. DF-2026</small>
 			<small class="opensource">
 				<a
 					class="footer-link"

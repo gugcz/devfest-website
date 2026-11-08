@@ -65,7 +65,7 @@
 .policy {
 	@include prose(var(--fs-body), 1.8);
 	max-width: 68ch;
-	color: var(--ink);
+	color: var(--ink-text);
 
 	section + section {
 		margin-top: clamp(3.5rem, 6vw, 5rem);
@@ -146,7 +146,7 @@
 .policy table {
 	@include prose(var(--fs-ui));
 	margin: 1.6rem 0 0;
-	color: var(--ink);
+	color: var(--ink-text);
 }
 
 // The column heads move into each cell's label (`data-label`); they stay in
