@@ -5,12 +5,11 @@
  * an `&` stays bare where HTML allows it (`previewText`); Astro would write
  * `&amp;`, which some unfurlers show as it is.
  */
-import { previewText } from '../lib/preview-text';
+import { previewMeta, type PreviewMetaKey } from '../lib/preview-text';
 
-type Props = { content: string } & ({ name: string; property?: never } | { property: string; name?: never });
+type Props = PreviewMetaKey & { content: string };
 
-const { name, property, content } = Astro.props;
-const key = property === undefined ? `name="${name}"` : `property="${property}"`;
+const { content, ...key } = Astro.props;
 ---
 
-<Fragment set:html={`<meta ${key} content="${previewText(content)}" />`} />
+<Fragment set:html={previewMeta(key, content)} />
