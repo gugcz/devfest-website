@@ -57,8 +57,7 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'FAQ'}
-			lede="Answers to the questions we hear most. Can't find yours?"
-			link={{ href: `mailto:${config.organizer.email}`, label: 'Get in touch' }}
+			lede="Answers to the questions we hear most."
 			seoHeading={`${EVENT.name} FAQ`}
 			titleId="faq-title"
 		/>
@@ -87,10 +86,6 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 							</li>
 						))}
 					</ol>
-					<p class="faq-index-ask">
-						<span class="faq-index-ask-label">Write to us</span>
-						<a class="faq-index-mail" href={`mailto:${config.organizer.email}`}>{config.organizer.email}</a>
-					</p>
 				</nav>
 
 				<div class="faq-body">
@@ -119,8 +114,8 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 						</div>
 					))}
 
-					{/* The page ends on one line to the inbox, not a closing band: a
-					    visitor who read this far wants an answer, not a pitch. */}
+					{/* The page's one way to the inbox, at its end: a visitor who read
+					    this far wants an answer, not a pitch. */}
 					<EndLine text="Still stuck?" href={`mailto:${config.organizer.email}`} label={config.organizer.email} />
 				</div>
 			</div>
