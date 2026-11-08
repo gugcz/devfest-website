@@ -29,7 +29,7 @@ const { event } = config;
 // the city (ADR 0011).
 const when = `${hasDate ? EVENT.dateLabel : event.season.toLowerCase()}${hasVenue ? ` at ${EVENT.venue}` : `, ${event.city}`}`;
 const {
-	title = pageTitle("Prague Developer Conference"),
+	title = pageTitle(config.event.tagline),
 	description = `${EVENT.name} — ${event.tagline}: ${event.pitch.replace(/\.$/, "")}. ${when.charAt(0).toUpperCase()}${when.slice(1)}.${enabled('tickets') ? ' Tickets on sale now.' : ''}`,
 	noindex = false,
 	kiosk = false,
@@ -87,7 +87,7 @@ const eventSchema = hasDate && {
 	"@type": "Event",
 	"name": EVENT.name,
 	"description":
-		`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch.replace(/\.$/, "")}. Two stages, one day, an afterparty.`,
+		`${EVENT.name} — ${config.event.tagline}: ${config.event.pitch}`,
 	"image": [ogImage],
 	"url": absoluteUrl("/"),
 	"startDate": EVENT.start,

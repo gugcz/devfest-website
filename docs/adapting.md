@@ -115,15 +115,16 @@ Everything above, plus:
    | `invoice` | `/invoice` and its links | `tickets` |
    | `workshops` | `/workshops` and its links | `app`, `lineup` |
    | `app` | `/app`, the store badges, every "Get the app" link (`/login` and `/delete-account` stay: the app's sign-in link and its store listing need them) | |
-   | `invite` | `/invite/<member>` and its OG cards | `tickets` |
+   | `invite` | `/invite/<member>` and its OG cards | `tickets`, `team` |
    | `partners` | `/partners`, the partner bands, the TV credits | |
    | `newsletter` | the form, `/newsletter-subscription-thank-you`, every "Get notified" link, the home stage's "Hear it first" | |
+   | `team` | `/team` and its links | |
+   | `press` | `/press`, `/press/downloads` (the press kit), the coverage and kit band on `/contact` | |
    | `attending` | `/attending`, `/speaker-card` | `event.date`, `event.venue` |
 
    `/calendar.ics` is not a flag: it exists while `event.date` is set.
 
-   Not flags of their own: `/press` (delete `src/pages/press.astro`,
-   `src/pages/press/` and the band in `src/pages/contact.astro`). Flags own routes, links and sections, never
+   Flags own routes, links and sections, never
    prose: a sentence that names a feature stays as written
    (`src/pages/llms.txt.ts` "talks and workshops", the agenda's "Workshops
    only" room label, the contact desks, the privacy policy's processors).

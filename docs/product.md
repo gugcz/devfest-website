@@ -41,10 +41,11 @@ company invoice request.
 
 ## Positioning
 
-**[inferred]** "The most original developer conference in Prague": one day,
-one venue, a curated lineup across AI agents, generative UI, cloud and
-backends, mobile and web accessibility, and the humans behind it. A festival
-built by a community, not a vendor event.
+**[inferred]** A developer conference & festival in Prague (never "Prague's
+developer conference"): a curated lineup across AI agents, generative UI,
+cloud and backends, mobile and web accessibility, and the humans behind it.
+A festival built by a community, not a vendor event. The length of the 2027
+edition is not announced; copy never says "one day".
 
 ## Operating Context
 
@@ -83,10 +84,11 @@ built by a community, not a vendor event.
   archive's facts and frozen lineup) with prints from past editions, the
   app (flag `app`), the newsletter. JSON-LD is `Organization` and `WebSite`, plus `Event`
   once the day is set.
-- Pages today: home, FAQ, team, contact (with press), press downloads,
-  code of conduct, privacy policy, delete-account (the app's store
-  listing), newsletter thank-you, 404, `/llms.txt`; `/login/<code>` (the
-  app's sign-in link); `/press` redirects to `/contact#press`. The mobile
+- Pages today: home, FAQ, contact, code of conduct, privacy policy,
+  delete-account (the app's store listing), newsletter thank-you, 404,
+  `/llms.txt`; `/login/<code>` (the app's sign-in link). The team, the
+  press kit and the coverage wait for 2027's (`team`, `press` off; their
+  paths redirect to `/2026`). The mobile
   app is not promoted on the web until it carries 2027 (`app` off, `/app`
   redirects home). Behind flags until the edition has them: agenda (with every talk), speakers and the share pages
   per talk and speaker, `/sessions`, `/tv` (venue screens), venue,
@@ -115,8 +117,8 @@ built by a community, not a vendor event.
   enters the repo, fixtures or docs.
 - Production is the `2026` branch; only the maintainer merges or deploys.
 - Copy is English; Czech appears only in quoted press clippings.
-- One day. Workshops run alongside the talks with limited seats
-  (`/workshops`).
+- Workshops run alongside the talks with limited seats (`/workshops`). 2026
+  was one day; 2027's length is not announced.
 
 ## Brand Commitments
 

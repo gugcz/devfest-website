@@ -51,8 +51,8 @@ const links: readonly NavLink[] = enabledOnly([
 // All three stay in the footer, which lists every page.
 const secondary: readonly NavLink[] = enabledOnly([
 	{ href: '/partners', label: 'Partners', feature: 'partners' },
-	{ href: '/team', label: 'Team' },
-	{ href: '/contact#press', label: 'Press' },
+	{ href: '/team', label: 'Team', feature: 'team' },
+	{ href: '/contact#press', label: 'Press', feature: 'press' },
 	{ href: '/contact', label: 'Contact' },
 ]);
 const hasMenu = links.length + secondary.length > 0;

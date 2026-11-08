@@ -1,6 +1,6 @@
 # DevFest.cz
 
-Prague's developer conference & festival, built by the community around GUG.cz.
+The developer conference & festival built by the community around GUG.cz in Prague.
 
 ![DevFest.cz 2027](public/og-image.jpg)
 
@@ -341,9 +341,9 @@ page.
 | `/workshops` (flag `workshops`) | Workshop seat sign-up and waitlist for ticket holders (reads `/api/workshops`) |
 | `/invoice` (flag `invoice`) | Request a company invoice to buy tickets by bank transfer |
 | `/partners` (flag `partners`) | Sponsors & partners |
-| `/press/downloads` | Press kit and downloadable assets (`/press` redirects to the press band on `/contact`) |
-| `/team` | Organizing team |
-| `/contact` | Contact desks, plus press coverage and the press-kit link (`#press`) |
+| `/press/downloads` (flag `press`) | Press kit and downloadable assets (`/press` redirects to the press band on `/contact`) |
+| `/team` (flag `team`) | Organizing team |
+| `/contact` | Contact desks, plus press coverage and the press-kit link (`#press`, flag `press`) |
 | `/faq` | Frequently asked questions |
 | `/tv` (flag `lineup`) | Unlisted venue-screen page: a room's now/next, or the whole venue (reads `/api/lineup`) |
 | `/venue` (flag `venue`) | Getting to the venue — train from Prague, walk from the station |

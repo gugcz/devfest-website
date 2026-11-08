@@ -32,7 +32,7 @@ describe('shadowedPaths', () => {
 		const { hosting } = JSON.parse(readFileSync(new URL('../../firebase.json', import.meta.url), 'utf8')) as {
 			hosting: { redirects: HostingRedirect[] };
 		};
-		const alwaysBuilt = ['/', '/faq', '/team', '/contact', '/press', '/press/downloads', '/privacy-policy', '/code-of-conduct'];
+		const alwaysBuilt = ['/', '/faq', '/contact', '/privacy-policy', '/code-of-conduct', '/delete-account', '/login', '/404'];
 		// A 2027 share page is not one of 2026's, so the 301s by id leave it alone.
 		alwaysBuilt.push('/speakers/a-2027-speaker', '/talks/2027001');
 		assert.deepEqual(shadowedPaths(hosting.redirects, alwaysBuilt), []);

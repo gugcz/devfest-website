@@ -12,6 +12,8 @@ const ALL_ON: Features = {
 	invite: true,
 	partners: true,
 	newsletter: true,
+	team: true,
+	press: true,
 	attending: true,
 };
 

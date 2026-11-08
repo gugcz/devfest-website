@@ -35,6 +35,11 @@ const ROUTES: Record<FeatureFlag, readonly Route[]> = {
 		{ pattern: '/og/invite/[member].jpg', entrypoint: 'og/invite/[member].jpg.ts' },
 	],
 	partners: [{ pattern: '/partners', entrypoint: 'partners.astro' }],
+	team: [{ pattern: '/team', entrypoint: 'team.astro' }],
+	press: [
+		{ pattern: '/press', entrypoint: 'press.astro' },
+		{ pattern: '/press/downloads', entrypoint: 'press/downloads.astro' },
+	],
 	newsletter: [
 		{ pattern: '/newsletter-subscription-thank-you', entrypoint: 'newsletter-subscription-thank-you.astro' },
 	],

@@ -57,7 +57,7 @@ export interface EventConfig {
 	/** The day. Unset until announced: nothing that needs a day renders, and
 	 * the flags that need one (`src/lib/features.ts`) cannot be on. */
 	date?: EventDate;
-	/** One line under the name: "Prague's developer conference & festival". */
+	/** One line under the name, sentence case: "Developer conference & festival". */
 	tagline: string;
 	/** How many developers the day is for (the venue's audience). Unset until
 	 * the venue is known. */

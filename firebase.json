@@ -9,7 +9,8 @@
     "cleanUrls": true,
     "trailingSlash": false,
     "redirects": [
-      { "regex": "^/(agenda|speakers|sessions|venue|partners|tv|calendar\\.ics)$", "destination": "/2026/:1", "type": 302 },
+      { "regex": "^/(agenda|speakers|sessions|venue|partners|tv|calendar\\.ics|team|press)$", "destination": "/2026/:1", "type": 302 },
+      { "source": "/press/downloads", "destination": "/2026/press/downloads", "type": 302 },
       { "source": "/workshops", "destination": "/2026/agenda", "type": 302 },
       { "regex": "^/(invoice|attending|thank-you|speaker-card)$", "destination": "/2026", "type": 302 },
       { "regex": "^/invite/[^/]+$", "destination": "/", "type": 302 },

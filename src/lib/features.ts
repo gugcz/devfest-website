@@ -35,6 +35,11 @@ export const FEATURE_FLAGS = [
 	'partners',
 	/** The newsletter form and `/newsletter-subscription-thank-you`. */
 	'newsletter',
+	/** `/team`, the organising team. */
+	'team',
+	/** `/press/downloads` (the press kit), the press band on `/contact` (the
+	 * coverage and the kit) and `/press`. */
+	'press',
 	/** `/attending` and `/speaker-card`, the canvas share cards. Needs `event.date` and `event.venue`. */
 	'attending',
 ] as const;
@@ -57,6 +62,7 @@ const DEPENDENCIES: ReadonlyArray<{ flag: FeatureFlag; needs: FeatureFlag | Even
 	{ flag: 'attending', needs: 'venue', why: 'the share cards name the venue\'s town' },
 	{ flag: 'invoice', needs: 'tickets', why: 'an invoice redeems a ti.to ticket code' },
 	{ flag: 'invite', needs: 'tickets', why: 'the invitation CTA is a ticket checkout' },
+	{ flag: 'invite', needs: 'team', why: 'an invitation is from a team member and links the team' },
 	{ flag: 'workshops', needs: 'app', why: 'the workshop sign-in is the app login' },
 ];
 
@@ -116,6 +122,8 @@ export const FEATURE_LINKS: Record<FeatureFlag, readonly string[]> = {
 	invite: ['/invite/'],
 	partners: ['/partners'],
 	newsletter: ['/#newsletter', '#newsletter'],
+	team: ['/team'],
+	press: ['/press', '/contact#press'],
 	attending: ['/attending', '/speaker-card'],
 };
 

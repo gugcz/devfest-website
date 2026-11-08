@@ -62,9 +62,9 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		id: 'footer-about',
 		title: 'About',
 		links: [
-			{ href: '/team', label: 'Team' },
+			{ href: '/team', label: 'Team', feature: 'team' },
 			{ href: '/partners', label: 'Partners', feature: 'partners' },
-			{ href: '/contact#press', label: 'Press' },
+			{ href: '/contact#press', label: 'Press', feature: 'press' },
 			{ href: '/contact', label: 'Contact' },
 			{ href: '/#newsletter', label: 'Newsletter', feature: 'newsletter' },
 			...currentEdition,
@@ -86,7 +86,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		<div class="footer-grid">
 			<section class="col col-brand" aria-label="About DevFest.cz">
 				<p class="brand-tagline">
-					Prague's developer conference &mdash; AI agents, generative UI, cloud &amp; backends, mobile &amp; web, and the humans behind it.
+					{config.event.tagline} &mdash; {config.event.pitch}
 				</p>
 				<address class="contact">
 					<a class="email" href={`mailto:${EVENT.contactEmail}`}>{EVENT.contactEmail}</a>

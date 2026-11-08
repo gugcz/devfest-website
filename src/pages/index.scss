@@ -200,9 +200,11 @@
 	border: 1px solid var(--print-edge);
 	background: var(--print-plate);
 
+	// `height: auto` releases the `height` attribute, so the 3:2 holds.
 	img {
 		display: block;
 		width: 100%;
+		height: auto;
 		aspect-ratio: 3 / 2;
 		object-fit: cover;
 		filter: saturate(0.85) contrast(1.05);

@@ -30,9 +30,9 @@ const PAGES = enabledOnly<{ label: string; path: string; note: string; feature?:
 	{ label: 'Company invoice', path: '/invoice', note: 'pay for tickets by bank transfer', feature: 'invoice' },
 	{ label: 'Code of Conduct', path: '/code-of-conduct', note: '' },
 	{ label: 'Partners', path: '/partners', note: 'the partners and how to become one', feature: 'partners' },
-	{ label: 'Team', path: '/team', note: 'the volunteers who organise it' },
-	{ label: 'Contact', path: '/contact', note: 'organisers, partnerships and press' },
-	{ label: 'Press kit', path: '/press/downloads', note: 'logos and photos' },
+	{ label: 'Team', path: '/team', note: 'the volunteers who organise it', feature: 'team' },
+	{ label: 'Contact', path: '/contact', note: 'the organisers\' inboxes' },
+	{ label: 'Press kit', path: '/press/downloads', note: 'logos and photos', feature: 'press' },
 	{ label: 'Newsletter', path: '/#newsletter', note: 'news of the next edition first', feature: 'newsletter' },
 	{ label: 'App', path: '/app', note: 'the DevFest.cz app for iOS and Android', feature: 'app' },
 ]);
@@ -52,7 +52,7 @@ function facts(topics: string[]): string[] {
 	const when = hasDate ? `on ${EVENT.dateLabel}` : `in ${event.season.toLowerCase().replace(/^fall/, 'the fall of')}`;
 	const where = hasVenue ? `at ${EVENT.venue}, ${EVENT.city}` : `in ${event.city}`;
 	const pending = [!hasDate && 'date', !hasVenue && 'venue'].filter(Boolean).join(' and ');
-	const summary = `> ${event.tagline}: one day of talks and workshops in English, organised by ${organizer.legalName} since 2012. ${EVENT.name} is ${when} ${where}${pending ? `; its ${pending} ${pending.includes(' and ') ? 'are' : 'is'} not announced yet` : ''}.`;
+	const summary = `> ${event.tagline}: talks and workshops in English, organised by ${organizer.legalName} since 2012. ${EVENT.name} is ${when} ${where}${pending ? `; its ${pending} ${pending.includes(' and ') ? 'are' : 'is'} not announced yet` : ''}.`;
 	return [
 		summary,
 		'',

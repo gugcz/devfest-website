@@ -34,10 +34,12 @@ const ROUTES = {
 	invite: ['invite', 'og/invite'],
 	partners: ['partners'],
 	newsletter: ['newsletter-subscription-thank-you'],
+	team: ['team'],
+	press: ['press'],
 	attending: ['attending', 'speaker-card'],
 };
 
-const OFF_UNTIL_ANNOUNCED = ['lineup', 'venue', 'tickets', 'invoice', 'workshops', 'invite', 'partners', 'attending'];
+const OFF_UNTIL_ANNOUNCED = ['lineup', 'venue', 'tickets', 'invoice', 'workshops', 'invite', 'partners', 'attending', 'team', 'press'];
 const RUNS = [
 	['app', ...OFF_UNTIL_ANNOUNCED],
 	['app', 'newsletter', ...OFF_UNTIL_ANNOUNCED],

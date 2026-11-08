@@ -35,7 +35,7 @@ const config: SiteConfig = {
 		city: 'Prague',
 		timeZone: 'Europe/Prague',
 		timeZoneLabel: 'CET',
-		tagline: "Prague's developer conference & festival",
+		tagline: 'Developer conference & festival',
 		pitch:
 			'AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it.',
 	},
@@ -74,7 +74,8 @@ const config: SiteConfig = {
 			// yet. The 2026 edition is archived at /2026 (ADR 0011). A flag
 			// turns on once its section is ready, and its redirect in
 			// firebase.json goes in the same change. The app is not promoted
-			// until it carries the 2027 edition.
+			// until it carries the 2027 edition; the team, the press kit and
+			// the coverage wait for 2027's.
 			lineup: false,
 			venue: false,
 			tickets: false,
@@ -84,6 +85,8 @@ const config: SiteConfig = {
 			invite: false,
 			partners: false,
 			newsletter: true,
+			team: false,
+			press: false,
 			attending: false,
 		},
 		buildVariable('PUBLIC_FEATURES_OFF'),

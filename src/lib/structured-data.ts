@@ -23,7 +23,7 @@ export async function organizationSchema(): Promise<Record<string, unknown>> {
 		name: config.event.name,
 		url: liveUrl('/'),
 		logo: absoluteUrl('/logo.png'),
-		description: `${config.event.name} is Prague's community-run developer conference & festival — ${config.event.pitch}`,
+		description: `${config.event.name} is a community-run ${config.event.tagline.toLowerCase()} in ${config.event.city} — ${config.event.pitch}`,
 		parentOrganization: organizer,
 		contactPoint: {
 			'@type': 'ContactPoint',

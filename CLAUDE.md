@@ -73,8 +73,8 @@ edited PR body keeps its old text in the public edit history.
   (`src/integrations/redirect-guard.ts`). `calendar.ics.ts` exists once
   `event.date` is set.
 - `src/pages/`: the routes every build has (list in
-  [README.md](README.md#key-pages)): the home page, FAQ, team, contact,
-  press, the legal pages, the 404, `llms.txt.ts` and `robots.txt.ts`.
+  [README.md](README.md#key-pages)): the home page, FAQ, contact, the legal
+  pages, the 404, `llms.txt.ts` and `robots.txt.ts`.
 - `archive/<year>/`: past editions, frozen builds served at `/<year>`
   (`npm run archive`, `src/integrations/archives.ts`, `src/lib/editions.ts`).
   Never edited by hand, excluded from the checks.
