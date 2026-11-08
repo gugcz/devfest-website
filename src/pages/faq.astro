@@ -19,14 +19,7 @@ const faqGroups = enabledOnly((await getCollection('faq')).map((entry) => ({ id:
 	}))
 	.filter((group) => group.items.length > 0);
 
-let fileCounter = 0;
-const groupsForDisplay = faqGroups.map((group) => ({
-	...group,
-	items: group.items.map((item) => {
-		fileCounter += 1;
-		return { ...item, num: String(fileCounter).padStart(2, '0') };
-	}),
-}));
+const groupsForDisplay = faqGroups;
 
 // FAQPage structured data — flattened from the same source so it can never
 // drift from what's rendered. https://developers.google.com/search/docs/appearance/structured-data/faqpage
@@ -72,17 +65,13 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 			<div class="band-inner faq">
 				<h2 id="faq-list-heading" class="sr-only">All questions</h2>
 
-				{/* The categories as a list, pinned beside the slips on a desktop,
-				    above them on a phone. */}
+				{/* The categories as a centred list, above the questions. */}
 				<nav class="faq-index" aria-label="FAQ categories">
 					<p class="faq-index-label">Categories</p>
 					<ol role="list">
-						{groupsForDisplay.map((group, groupIndex) => (
+						{groupsForDisplay.map((group) => (
 							<li>
-								<a href={`#faq-cat-${group.id}`}>
-									<span class="faq-index-no" aria-hidden="true">{String(groupIndex + 1).padStart(2, '0')}</span>
-									<span>{group.label}</span>
-								</a>
+								<a href={`#faq-cat-${group.id}`}>{group.label}</a>
 							</li>
 						))}
 					</ol>
@@ -101,7 +90,6 @@ const faqJsonLd = JSON.stringify(faqSchema).replace(/</g, '\\u003c');
 									   enough to show what an answer looks like. */
 									<details class="faq-item" open={groupIndex === 0 && itemIndex === 0}>
 										<summary class="faq-q">
-											<span class="faq-no">Q {item.num}</span>
 											<span class="faq-q-text">{item.q}</span>
 											<span class="faq-marker" aria-hidden="true" />
 										</summary>

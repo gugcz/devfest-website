@@ -271,7 +271,7 @@ brass; it turns aether when the visitor reaches it.
 
 **[MUST] The Three Materials Rule.** Ink, ivory and brass carry everything
 at rest. No new hue enters the page chrome; the painting's petrol, plum and
-rust stay inside the canvas and the body's gradients.
+rust stay inside the canvas and the root's gradients.
 
 ## Typography
 
@@ -331,12 +331,16 @@ columns at the `measure`, separated by `section` top padding; partners
 widen to `maxw`; the prints step out to four columns from 900px, past the
 measure by up to 14rem a side.
 
-**A subpage** opens on `SubpageHero`: the title and one note centred on the
-measure, fading from the ground to `ink-veil`. Its bands sit on the veil
-(`.band`, `section` padding, `gutter` sides, content up to `maxw`); the
-`rubric` heads them, centred, with a note under it. Plates sit in rows of
-three, two on a tablet, one on a phone. A page ends on a centred closer or
-end line, then the footer.
+**A subpage** opens on its own stage (`SubpageHero`, at least 22rem, up to
+58svh): the painting behind, anchored on the title; the title and one note
+centred over it with the ink lift; the veil rising under them. Its bands sit
+on the veil (`.band`, `section` padding, `gutter` sides) as one centred
+column: an index (the FAQ's categories, a policy's contents) is a centred
+list of label-voice links under a brass label, never a side rail; a group
+or a section is headed by the `rubric`; the questions are plates; long
+reading stays left-set inside a centred 44rem column. Plates of one width
+sit in centred rows, as many as fit. Nothing is numbered for show. A page
+ends on a centred closer or end line, then the footer.
 
 **The footer** is ink, up to `maxw`: the logo as artwork (at most 30rem),
 then a grid (a wider brand column and the link, event and organizer
@@ -366,19 +370,22 @@ the home logo (part of the painting) and on a portal in response. Nothing
 else glows.
 
 ### The aether (the painting)
-**[CURRENT]** `AetherCanvas.astro` runs on the home page only: a fixed
-full-viewport WebGL 1 canvas behind the page, fading in over 1.8s. It
-paints smoke, the sigil (centred on the element marked
-`data-aether-anchor`, the logo), the traces with pulses, embers, the
-hatched vignette and paper grain; a lamp follows the pointer for five
-seconds, then drifts. It runs at 24 fps, drops a fifth of its resolution
-when 48 frames average slower than about 16 fps (down to 40%), caps its
-pixel count (lower on a small screen), and stops, freeing the GPU, before a
-navigation swaps the page. Every other page shows the body's three radial
-gradients (rust below, petrol top-left, plum top-right, fixed) over ink.
+**[CURRENT]** `AetherCanvas.astro` runs behind every stage: the home page
+and every subpage's head. It is a fixed full-viewport WebGL 1 canvas at
+z-index -1 (over the root's ground, under every block), fading in over
+1.8s. It paints smoke, the sigil (centred on the element marked
+`data-aether-anchor`: the logo, a subpage's title), the traces with pulses,
+embers, the hatched vignette and paper grain; a lamp follows the pointer
+for five seconds, then drifts. It runs at 24 fps and only while its anchor
+is on screen (scrolled under the veil it holds its frame), drops a fifth of
+its resolution when 48 frames average slower than about 16 fps (down to
+40%), caps its pixel count (lower on a small screen), and stops, freeing the
+GPU, before a navigation swaps the page. Under it, on the root (`html`), the
+three radial gradients (rust below, petrol top-left, plum top-right, fixed)
+over ink are the ground of every page.
 
 **[MUST]** Under `prefers-reduced-motion` the painting is one still frame.
-Without WebGL the body gradients are the painting.
+Without WebGL the root's gradients are the painting.
 
 ## Shapes
 

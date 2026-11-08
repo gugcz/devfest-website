@@ -69,16 +69,14 @@ const inboxes = INBOXES[desks.length] ?? `${desks.length + 1} inboxes`;
 				<h2 id="desks-heading" class="sr-only">Contact desks</h2>
 
 				<article class="paper icard icard--main" aria-labelledby={general.id}>
-					<p class="paper-edge icard-edge" aria-hidden="true"><span>01</span></p>
 					<h3 id={general.id} class="icard-title">{general.title}</h3>
 					<p class="icard-desc">{general.desc}</p>
 					<a class="icard-mail" href={`mailto:${general.email}`}>{general.email}</a>
 				</article>
 
 				<div class="desk-side">
-					{desks.map((d, i) => (
+					{desks.map((d) => (
 						<article class="paper icard" aria-labelledby={d.id}>
-							<p class="paper-edge icard-edge" aria-hidden="true"><span>{String(i + 2).padStart(2, '0')}</span></p>
 							<h3 id={d.id} class="icard-title">{d.title}</h3>
 							<p class="icard-desc">{d.desc}</p>
 							{d.name && (

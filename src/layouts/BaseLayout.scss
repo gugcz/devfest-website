@@ -157,8 +157,16 @@ html {
 	@media (min-width: 1921px) {
 		font-size: clamp(100%, calc(100% + (100vw - 1920px) / 120), 200%);
 	}
-	// Canvas colour — prevents a white flash during iOS rubber-band scroll.
-	background: var(--color-bg);
+	// The painting's palette as three gradients: the ground of every page,
+	// under the canvas (`AetherCanvas`, z-index -1) before WebGL starts or
+	// without it. On the root, so the canvas sits between it and the page;
+	// the ink also stops a white flash in iOS rubber-band scroll.
+	background:
+		radial-gradient(90% 60% at 50% 110%, #5a2a1c 0%, transparent 65%),
+		radial-gradient(70% 70% at 15% 15%, #173c44 0%, transparent 70%),
+		radial-gradient(60% 60% at 90% 30%, #2b1a42 0%, transparent 70%),
+		var(--ink);
+	background-attachment: fixed;
 	// Speaker photos come verbatim from Sessionize, and a phone portrait can
 	// carry an HDR gain map. On an HDR screen one such photo pushes the display
 	// into HDR mode, and every SDR pixel around it (the whole page) dims.
@@ -200,14 +208,8 @@ body {
 	// While the cookie slip is up the page can scroll its last line (the
 	// footer's last link) above it; 0 once the visitor has decided.
 	padding-bottom: var(--cookie-slip-h, 0px);
-	// The painting's palette as three gradients: the ground of every page
-	// (and the home page's, under the canvas, before WebGL starts or without it).
-	background:
-		radial-gradient(90% 60% at 50% 110%, #5a2a1c 0%, transparent 65%),
-		radial-gradient(70% 70% at 15% 15%, #173c44 0%, transparent 70%),
-		radial-gradient(60% 60% at 90% 30%, #2b1a42 0%, transparent 70%),
-		var(--ink);
-	background-attachment: fixed;
+	// Transparent: the ground is the root's (`html`), under the painting.
+	background: transparent;
 	color: var(--color-text);
 	font-family: var(--font-sans);
 	font-size: var(--fs-body);

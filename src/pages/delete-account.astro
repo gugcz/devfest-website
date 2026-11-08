@@ -31,11 +31,10 @@ const SECTIONS = [
 				<nav class="reading-index" aria-label="Contents">
 					<p class="reading-index-label">Contents</p>
 					<ol role="list">
-						{SECTIONS.map(({ id, title }, i) => (
+						{SECTIONS.map(({ id, title }) => (
 							<li>
 								<a href={`#${id}`}>
-									<span class="reading-index-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-									<span>{title}</span>
+									{title}
 								</a>
 							</li>
 						))}

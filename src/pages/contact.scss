@@ -40,11 +40,6 @@
 	padding-top: 1.25rem;
 }
 
-.icard-edge {
-	margin: 0 0 1.1rem;
-	padding: 0;
-}
-
 .icard-title {
 	@include display(var(--fs-title-sm));
 	color: var(--paper-ink);

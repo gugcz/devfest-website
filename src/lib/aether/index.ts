@@ -1,9 +1,10 @@
 /**
- * The aether: the painted, slowly moving background behind the teaser
+ * The aether: the painted, slowly moving background behind a page's stage
  * (`docs/design.md`, "The aether"). WebGL 1, no dependencies.
  *
  * Without WebGL nothing starts and the CSS gradient behind the canvas stays.
- * Under `prefers-reduced-motion` it paints one still frame and never
+ * It moves only while the anchor is on screen. Under
+ * `prefers-reduced-motion` it paints one still frame and never
  * animates. It runs at 24 frames a second, drops resolution on a slow GPU
  * and stops (freeing the GPU) when the page is left.
  */
@@ -190,12 +191,20 @@ function animate(
 		render(STILL_AT);
 	}
 
+	// The painting only moves while its anchor (the logo, a page title) is on
+	// screen; scrolled under the veil it holds its last frame.
+	let inView = true;
 	function run(): void {
 		cancelAnimationFrame(raf);
 		resize();
 		if (reduced.matches) still();
-		else raf = requestAnimationFrame(frame);
+		else if (inView) raf = requestAnimationFrame(frame);
 	}
+	const watch = new IntersectionObserver(([entry]) => {
+		inView = entry?.isIntersecting ?? true;
+		if (!lost) run();
+	});
+	watch.observe(logo);
 
 	const onPointer = (e: PointerEvent): void => {
 		if (e.pointerType === 'touch') return;
@@ -228,6 +237,7 @@ function animate(
 	canvas.classList.add('is-live');
 
 	return () => {
+		watch.disconnect();
 		cancelAnimationFrame(raf);
 		window.removeEventListener('pointermove', onPointer);
 		window.removeEventListener('resize', onResize);

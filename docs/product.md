@@ -126,8 +126,8 @@ edition is not announced; copy never says "one day".
   GDG; never "GDG Czech Republic").
 - The live site is the aether (`docs/design.md`): ink, ivory, brass
   ornament, the cold aether light only for hover and focus, the DF27 logo,
-  one system sans stack (no web font). The painting is the home page's
-  stage; subpages sit on its palette as a still gradient.
+  one system sans stack (no web font). The painting is the stage of the
+  home page and of every subpage's head.
 - 2026, "noir, but loud" (`docs/design-2026.md`), binds the `/2026`
   archive and the flagged surfaces not yet reskinned, which stay off until
   they are.
