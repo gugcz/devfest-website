@@ -1,6 +1,6 @@
 ---
 name: update-docs
-description: Keep devfest-website's documentation true to the code. Updates the product record (docs/product.md), the design record (docs/design.md and .impeccable/design.json, through Impeccable), the ADRs and their index, CLAUDE.md's map, function list and rules table, the path-scoped rules, and README's setup and functions tables after a change, or audits all of them against 2026. Use when a change alters what a visitor sees, how the site looks, what the functions do, or how the repo is worked on; or when asked to "update the docs", "sync the docs" or "audit the docs".
+description: Keep devfest-website's documentation true to the code. Updates the product record (docs/product.md), the design record (docs/design.md and .impeccable/design.json, through Impeccable), the ADRs and their index, CLAUDE.md's map, function list and rules table, the path-scoped rules, and README's setup and functions tables after a change, or audits all of them against main. Use when a change alters what a visitor sees, how the site looks, what the functions do, or how the repo is worked on; or when asked to "update the docs", "sync the docs" or "audit the docs".
 ---
 
 # Update docs
@@ -13,8 +13,8 @@ asks when the two disagree.
 ## 1. Pick the scope
 
 - **After a change** (the usual case, from `ship` before the PR):
-  `git diff --name-only origin/2026...HEAD` plus uncommitted changes.
-- **Audit** ("audit the docs"): the whole repo on `2026` against every
+  `git diff --name-only origin/main...HEAD` plus uncommitted changes.
+- **Audit** ("audit the docs"): the whole repo on `main` against every
   document below.
 
 ## 2. Map the change to the documents it touches

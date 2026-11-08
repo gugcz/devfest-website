@@ -3,7 +3,7 @@ name: Deploy to Firebase Hosting on merge
 on:
   push:
     branches:
-      - "2026"
+      - main
     # Everything except what never reaches the built site (docs, agent config,
     # functions, other workflows) — those skip the rebuild + redeploy.
     paths:

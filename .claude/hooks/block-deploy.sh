@@ -1,9 +1,10 @@
 #!/usr/bin/env perl
-# PreToolUse hook: enforces the "agents do not merge to 2026 and do not deploy"
+# PreToolUse hook: enforces the "agents do not merge to main and do not deploy"
 # rule from CLAUDE.md. Blocks the command unconditionally; the maintainer runs
 # these from their own shell, never through Claude.
 #
-# A belt, not a boundary — the boundary is the GitHub ruleset on `2026`.
+# A belt, not a boundary — the boundary is the GitHub ruleset on `main` and
+# the frozen year branches (`2026`, …).
 #
 # Perl + core JSON::PP only, so there is no jq dependency to fail open on.
 use strict;
@@ -22,7 +23,7 @@ exit 0 if $command eq '';
 
 sub deny {
 	my ($what) = @_;
-	print STDERR "Blocked by .claude/hooks/block-deploy.sh: $what (see CLAUDE.md — only the maintainer merges to 2026 or deploys)\n";
+	print STDERR "Blocked by .claude/hooks/block-deploy.sh: $what (see CLAUDE.md — only the maintainer merges to main or deploys)\n";
 	exit 2;
 }
 
@@ -99,7 +100,7 @@ while (@segments) {
 		next;
 	}
 
-	# 6. Drop quotes: `git push origin "2026"` is `git push origin 2026`.
+	# 6. Drop quotes: `git push origin "main"` is `git push origin main`.
 	$seg =~ s/["']//g;
 
 	# `cd <dir>` moves where a later bare `git push` resolves its branch.
@@ -123,13 +124,14 @@ while (@segments) {
 	$seg =~ s/^(npm|pnpm|yarn|bun) $npm_opts+/$1 /;
 
 	if ($seg =~ /^git push\b/) {
-		# Any refspec form landing on 2026: `2026`, `HEAD:2026`,
-		# `x:refs/heads/2026`, `refs/heads/2026`, `+2026`, `:2026`.
-		deny('git push to 2026') if $seg =~ /(?:^|[ :\/+])2026(?:\s|$)/;
+		# Any refspec form landing on main or a year branch: `main`,
+		# `HEAD:main`, `x:refs/heads/2026`, `refs/heads/main`, `+2026`, `:2026`.
+		deny('git push to main or a year branch') if $seg =~ /(?:^|[ :\/+])(?:main|20\d\d)(?:\s|$)/;
 		deny('pushing tags')     if $seg =~ /\s--tags(?:\s|$)/;
 
 		# No refspec, or `HEAD` / `@` (optionally forced), pushes the current
-		# branch. Deny it when that branch is 2026 or cannot be resolved.
+		# branch. Deny it when that branch is main, a year branch, or cannot
+		# be resolved.
 		my @args = split / /, $seg;
 		splice @args, 0, 2;
 		my @positional;
@@ -142,7 +144,7 @@ while (@segments) {
 		shift @positional; # the remote
 		if (!@positional || grep { /^\+?(?:HEAD|@)$/ } @positional) {
 			my $branch = current_branch($git_dir, @git_loc);
-			deny('git push of the current branch, 2026') if $branch eq '2026';
+			deny("git push of the current branch, $branch") if $branch =~ /^(?:main|20\d\d)$/;
 			deny('git push of the current branch, which could not be resolved') if $branch eq '';
 		}
 	}

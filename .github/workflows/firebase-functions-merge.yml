@@ -11,7 +11,7 @@ name: Deploy Functions on merge
 on:
   push:
     branches:
-      - "2026"
+      - main
     paths:
       - "functions/**"
       - "firebase.json"

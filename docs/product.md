@@ -115,7 +115,8 @@ edition is not announced; copy never says "one day".
   client SDK; writes go through App Check-gated callables.
 - **Public repository.** No real attendee, partner or customer data ever
   enters the repo, fixtures or docs.
-- Production is the `2026` branch; only the maintainer merges or deploys.
+- Production is the `main` branch; only the maintainer merges or deploys.
+  The 2026 edition's last state is frozen on the `2026` branch.
 - Copy is English; Czech appears only in quoted press clippings.
 - Workshops run alongside the talks with limited seats (`/workshops`). 2026
   was one day; 2027's length is not announced.
