@@ -120,13 +120,15 @@
 // Equal columns, not content-sized ones, so every fact centres on its own
 // column and the middle one on the lead's axis, whatever its note's length.
 // Below 720px the first fact takes the whole row and the other two share
-// the next, mirrored about that axis. The row takes back the band's own
-// gutter (the veil's still holds it off the edge), so a note fits its
-// column on one line.
+// the next, mirrored about that axis; under 20em (a narrow phone at a large
+// text size) they stack. The row takes back the band's own gutter (the
+// veil's still holds it off the edge) and the gap stays small, so a long
+// date fits its column on one line and a note mostly does (balanced when
+// it wraps).
 .facts {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 1.5rem clamp(1rem, 4vw, 3rem);
+	gap: 1.5rem clamp(1rem, 4vw, 1.5rem);
 	margin: 2.75rem calc(-1 * var(--gutter)) 0;
 
 	@media (max-width: 720px) {
@@ -135,6 +137,10 @@
 		> :first-child {
 			grid-column: 1 / -1;
 		}
+	}
+
+	@media (max-width: 20em) {
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	div {

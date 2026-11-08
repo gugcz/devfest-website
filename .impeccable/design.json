@@ -209,6 +209,14 @@
 				"value": "720px"
 			},
 			{
+				"name": "facts-two",
+				"value": "720px"
+			},
+			{
+				"name": "facts-one",
+				"value": "20em"
+			},
+			{
 				"name": "footer-two",
 				"value": "45em"
 			},
@@ -287,9 +295,9 @@
 			"name": "Facts",
 			"kind": "custom",
 			"refersTo": "fact-value",
-			"description": "What is announced: a brass label term over an ivory value, an optional muted note; centred in equal columns, three in a row (below 720px the first takes the row, the other two share the next).",
+			"description": "What is announced: a brass label term over an ivory value, an optional muted note; centred in equal columns, three in a row (below 720px the first takes the row, the other two share the next; under 20em they stack).",
 			"html": "<dl class=\"ds-facts\"><div><dt>When</dt><dd>Fall 2027<span>date to be announced</span></dd></div><div><dt>Where</dt><dd>Prague<span>venue to be announced</span></dd></div><div><dt>Language</dt><dd>English</dd></div></dl>",
-			"css": ".ds-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 3rem; margin: 0; font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); } .ds-facts div { display: flex; flex-direction: column; gap: 0.35rem; text-align: center; } .ds-facts dt { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.78rem; letter-spacing: 0.22em; color: #cfa862; } .ds-facts dd { margin: 0; font-size: 1.25rem; font-weight: 600; color: #f6ecd6; } .ds-facts dd span { display: block; font-size: 0.875rem; font-weight: 400; color: #c9c0ad; }"
+			"css": ".ds-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 1.5rem; margin: 0; font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); } .ds-facts div { display: flex; flex-direction: column; gap: 0.35rem; text-align: center; } .ds-facts dt { font-family: var(--font-sans, 'Avenir Next', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); font-weight: 600; text-transform: uppercase; line-height: 1.3; font-size: 0.78rem; letter-spacing: 0.22em; color: #cfa862; } .ds-facts dd { margin: 0; font-size: 1.25rem; font-weight: 600; color: #f6ecd6; } .ds-facts dd span { display: block; font-size: 0.875rem; font-weight: 400; color: #c9c0ad; }"
 		},
 		{
 			"name": "Figures",
