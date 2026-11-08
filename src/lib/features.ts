@@ -9,11 +9,19 @@
  */
 
 export const FEATURE_FLAGS = [
-	/** The ti.to ticket section on the home page and `/thank-you`. */
+	/**
+	 * The dated edition's own pages: the event home, `/agenda`, `/speakers`,
+	 * the share pages, `/venue`, `/faq`, `/team`, `/contact`, `/press`,
+	 * `/tv`, `/calendar.ics`. Off while the next edition has no date: the home
+	 * page is the teaser of `upcoming` and the old URLs redirect to the
+	 * archive (ADR 0011).
+	 */
+	'edition',
+	/** The ti.to ticket section on the home page and `/thank-you`. Needs `edition`. */
 	'tickets',
 	/** `/invoice`, company tickets paid by bank transfer. Needs `tickets`. */
 	'invoice',
-	/** `/workshops`, seat sign-up for ticket holders. Needs `app` (its sign-in). */
+	/** `/workshops`, seat sign-up for ticket holders. Needs `app` (its sign-in) and `edition`. */
 	'workshops',
 	/** `/app`, `/login`, `/delete-account` and the store badges. */
 	'app',
@@ -23,7 +31,7 @@ export const FEATURE_FLAGS = [
 	'partners',
 	/** The newsletter form and `/newsletter-subscription-thank-you`. */
 	'newsletter',
-	/** `/attending` and `/speaker-card`, the canvas share cards. */
+	/** `/attending` and `/speaker-card`, the canvas share cards. Needs `edition`. */
 	'attending',
 ] as const;
 
@@ -32,6 +40,9 @@ export type Features = Record<FeatureFlag, boolean>;
 
 /** `needs` must be on for the key to be on. */
 const DEPENDENCIES: ReadonlyArray<{ flag: FeatureFlag; needs: FeatureFlag; why: string }> = [
+	{ flag: 'tickets', needs: 'edition', why: 'a ticket is for a dated edition' },
+	{ flag: 'workshops', needs: 'edition', why: 'workshops sit in the agenda' },
+	{ flag: 'attending', needs: 'edition', why: 'the share cards name the day and the talks' },
 	{ flag: 'invoice', needs: 'tickets', why: 'an invoice redeems a ti.to ticket code' },
 	{ flag: 'invite', needs: 'tickets', why: 'the invitation CTA is a ticket checkout' },
 	{ flag: 'workshops', needs: 'app', why: 'the workshop sign-in is the app login' },
@@ -69,6 +80,19 @@ export function checkFeatureDependencies(features: Features): void {
  * carries one.
  */
 export const FEATURE_LINKS: Record<FeatureFlag, readonly string[]> = {
+	edition: [
+		'/agenda',
+		'/speakers',
+		'/talks/',
+		'/sessions',
+		'/venue',
+		'/faq',
+		'/team',
+		'/contact',
+		'/press',
+		'/tv',
+		'/calendar.ics',
+	],
 	tickets: ['/#tickets', '#tickets'],
 	invoice: ['/invoice'],
 	workshops: ['/workshops'],

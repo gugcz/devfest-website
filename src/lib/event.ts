@@ -22,8 +22,11 @@ export function invoicesOpen(now: number = Date.now()): boolean {
 
 const clock = (iso: string): string => formatTime(iso, timeZone);
 
+/** The edition the site is about now: the next one while it has no date (ADR 0011). */
+const currentEdition = !config.features.edition && config.upcoming ? config.upcoming.edition : event.edition;
+
 /** `<event name> — <section>`, the shape most page titles take. */
-export const pageTitle = (section: string): string => `${event.name} ${event.edition} — ${section}`;
+export const pageTitle = (section: string): string => `${event.name} ${currentEdition} — ${section}`;
 
 /** `iso` in one of the site's date spellings, in the event's time zone. */
 export const eventDate = (style: DateStyle, iso: string = event.start): string =>

@@ -1,0 +1,37 @@
+// Recipes of the aether system (the 2027 teaser; `docs/design.md`). The
+// tokens are custom properties on `:root.aether` (`TeaserLayout.scss`); these
+// mixins are the few shapes the system repeats.
+
+// The label voice: the portal's button text, the rubrics, every small
+// caption. Uppercase, tracked wide, semibold.
+@mixin label($size: var(--fs-label), $track: var(--track-label)) {
+	font-family: var(--font-sans);
+	font-size: $size;
+	font-weight: 600;
+	letter-spacing: $track;
+	text-transform: uppercase;
+	line-height: 1.3;
+}
+
+// The bevel: the portal's eight-sided outline, corners cut at `$cut`, inset
+// by `$inset` from the box. Used as a clip-path.
+@function bevel($cut: 14px, $inset: 2px) {
+	$a: $inset;
+	$b: $inset + $cut;
+	@return polygon(
+		$b $a,
+		calc(100% - #{$b}) $a,
+		calc(100% - #{$a}) $b,
+		calc(100% - #{$a}) calc(100% - #{$b}),
+		calc(100% - #{$b}) calc(100% - #{$a}),
+		$b calc(100% - #{$a}),
+		$a calc(100% - #{$b}),
+		$a $b
+	);
+}
+
+// Keyboard focus: the aether's cold light, never the brass.
+@mixin focus-ring($offset: 4px) {
+	outline: 2px solid var(--aether);
+	outline-offset: $offset;
+}

@@ -3,9 +3,10 @@ import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
 import { EVENT } from '../lib/event';
 import config from '../site.config';
-import { enabledOnly, type FeatureFlag } from '../lib/flags';
+import { enabled, enabledOnly, type FeatureFlag } from '../lib/flags';
 import { getSocials } from '../lib/socials';
 import { ARCHIVE, liveUrl } from '../lib/base';
+import { pastEditions } from '../lib/editions';
 
 // One 24×24 glyph per network in `src/content/socials.json`. A network with
 // no glyph here renders its label as text instead of an icon.
@@ -30,6 +31,10 @@ type FooterLink = {
 // An archived edition (ADR 0011) links the live site, named by the next
 // edition while it has no date.
 const { upcoming } = config;
+// The latest past edition: the archive at `/<year>`, or its own site.
+const lastEdition: FooterLink[] = pastEditions()
+	.slice(0, 1)
+	.map(({ year, href, external }) => ({ href, label: `${year} edition`, external }));
 const currentEdition: FooterLink[] = ARCHIVE
 	? [{ href: liveUrl('/'), label: upcoming ? `${config.event.name} ${upcoming.edition}` : 'Current edition', reload: true }]
 	: [];
@@ -45,10 +50,10 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		title: 'Attend',
 		links: [
 			{ href: '/#tickets', label: 'Tickets', feature: 'tickets' },
-			{ href: '/agenda', label: 'Agenda' },
-			{ href: '/speakers', label: 'Speakers' },
-			{ href: '/faq', label: 'FAQ' },
-			{ href: '/venue', label: 'Getting there' },
+			{ href: '/agenda', label: 'Agenda', feature: 'edition' },
+			{ href: '/speakers', label: 'Speakers', feature: 'edition' },
+			{ href: '/faq', label: 'FAQ', feature: 'edition' },
+			{ href: '/venue', label: 'Getting there', feature: 'edition' },
 			{ href: '/app', label: 'Get the app', feature: 'app' },
 			// The B2B revenue path was linked from nowhere — not the menu, not
 			// here — so a company that needed an invoice had to know the URL.
@@ -61,13 +66,13 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 		id: 'footer-about',
 		title: 'About',
 		links: [
-			{ href: '/team', label: 'Team' },
+			{ href: '/team', label: 'Team', feature: 'edition' },
 			{ href: '/partners', label: 'Partners', feature: 'partners' },
-			{ href: '/contact#press', label: 'Press' },
-			{ href: '/contact', label: 'Contact' },
+			{ href: '/contact#press', label: 'Press', feature: 'edition' },
+			{ href: '/contact', label: 'Contact', feature: 'edition' },
 			{ href: '/#newsletter', label: 'Newsletter', feature: 'newsletter' },
 			...currentEdition,
-			{ href: 'https://2025.devfest.cz', label: "Last year's edition", external: true },
+			...lastEdition,
 			{ href: '/privacy-policy', label: 'Privacy Policy' },
 		],
 	},
@@ -128,7 +133,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 				</nav>
 			))}
 
-			<section class="col" aria-labelledby="footer-event">
+			{enabled('edition') && <section class="col" aria-labelledby="footer-event">
 				<h2 id="footer-event" class="col-title">Event</h2>
 				<dl class="event-meta">
 					<dt>Date</dt>
@@ -146,7 +151,7 @@ const LINK_GROUPS: { id: string; title: string; links: FooterLink[] }[] = [
 					<dt>Format</dt>
 					<dd>In-person</dd>
 				</dl>
-			</section>
+			</section>}
 
 			<section class="col col-organizer" aria-labelledby="footer-organizer">
 				<h2 id="footer-organizer" class="col-title">Organizer</h2>

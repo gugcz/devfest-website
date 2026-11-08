@@ -15,6 +15,11 @@ const BUILD_DATE = new Date().toISOString();
 // freeze into `archive/<year>/`. A live build instead copies every archive
 // into its output (`archives()`) and lists their pages in its sitemap.
 const archive = process.env.PUBLIC_ARCHIVE;
+if (archive && !config.features.edition) {
+    throw new Error(
+        `PUBLIC_ARCHIVE=${archive}: this checkout builds no dated edition (features.edition is off). Archive from the last commit that did.`,
+    );
+}
 const ARCHIVED = archive ? new Map<string, string | undefined>() : archivedPages();
 
 // Per-path sitemap priority; anything unlisted falls back to 0.6.

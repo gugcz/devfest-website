@@ -1,0 +1,176 @@
+---
+/**
+ * The teaser's footer: who runs it, how to reach them, every past edition
+ * (the archive linked from every page, ADR 0011), the legal pages and the
+ * cookie choice.
+ */
+import config from '../../site.config';
+import { getSocials } from '../../lib/socials';
+import { pastEditions } from '../../lib/editions';
+import { enabled } from '../../lib/flags';
+
+const socials = await getSocials();
+const editions = pastEditions();
+const year = new Date().getFullYear();
+---
+
+<footer class="teaser-footer">
+	<div class="footer-inner">
+		<nav class="footer-editions" aria-labelledby="footer-editions-title">
+			<h2 id="footer-editions-title" class="footer-title">Past editions</h2>
+			<ul class="footer-list" role="list">
+				{
+					editions.map(({ year: edition, href, external }) => (
+						<li>
+							<a
+								href={href}
+								{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : { 'data-astro-reload': true })}
+							>
+								{edition}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+
+		<div class="footer-grid">
+			<section class="footer-col" aria-labelledby="footer-org-title">
+				<h2 id="footer-org-title" class="footer-title">Organised by</h2>
+				<p>
+					<a href={config.organizer.url} target="_blank" rel="noopener noreferrer">{config.organizer.legalName}</a>,
+					the community behind {config.event.name}.
+				</p>
+				<p><a href={`mailto:${config.organizer.email}`}>{config.organizer.email}</a></p>
+			</section>
+
+			<nav class="footer-col" aria-labelledby="footer-follow-title">
+				<h2 id="footer-follow-title" class="footer-title">Follow</h2>
+				<ul class="footer-list footer-list--stack" role="list">
+					{
+						socials.map(({ url, label }) => (
+							<li>
+								<a href={url} target="_blank" rel="noopener noreferrer">
+									{label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+
+			<nav class="footer-col" aria-labelledby="footer-about-title">
+				<h2 id="footer-about-title" class="footer-title">About</h2>
+				<ul class="footer-list footer-list--stack" role="list">
+					{enabled('app') && <li><a href="/app">Get the app</a></li>}
+					<li><a href="/code-of-conduct">Code of Conduct</a></li>
+					<li><a href="/privacy-policy">Privacy Policy</a></li>
+					<li>
+						{/* Withdraws or changes cookie consent: src/lib/cookie-banner.ts
+						     listens for `data-cookie-settings`. */}
+						<button type="button" class="footer-button" data-cookie-settings>Cookie settings</button>
+					</li>
+				</ul>
+			</nav>
+		</div>
+
+		<p class="footer-fine">
+			<small>&copy; {year} {config.organizer.legalName}</small>
+			<small><a href={config.organizer.repoUrl} target="_blank" rel="noopener noreferrer">Open source</a></small>
+		</p>
+	</div>
+</footer>
+
+<style lang="scss">
+	@use '../../styles/aether' as *;
+
+	.teaser-footer {
+		position: relative;
+		background: var(--ink);
+		border-top: 1px solid rgba(207, 168, 98, 0.3);
+		padding: clamp(3rem, 2rem + 4vw, 5rem) var(--gutter) calc(2rem + env(safe-area-inset-bottom));
+		color: var(--ivory-muted);
+		font-size: var(--fs-small);
+	}
+
+	.footer-inner {
+		max-width: 64rem;
+		margin: 0 auto;
+		display: grid;
+		gap: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+	}
+
+	.footer-title {
+		@include label(0.78rem, 0.22em);
+		margin: 0 0 0.9rem;
+		color: var(--brass);
+	}
+
+	.footer-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.75rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.footer-editions .footer-list a {
+		@include label(1.125rem, 0.18em);
+		color: var(--ivory);
+		text-decoration: none;
+
+		&:hover {
+			color: var(--aether);
+		}
+	}
+
+	.footer-list--stack {
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.footer-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+		gap: 2rem;
+
+		p {
+			margin: 0 0 0.6rem;
+		}
+	}
+
+	.footer-col a {
+		color: var(--ivory);
+	}
+
+	.footer-button {
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--ivory);
+		font: inherit;
+		cursor: pointer;
+		text-decoration: underline;
+		text-decoration-color: var(--brass);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.25em;
+
+		&:hover {
+			color: var(--brass-light);
+			text-decoration-color: var(--aether);
+		}
+	}
+
+	.footer-fine {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.5rem 2rem;
+		margin: 0;
+
+		a {
+			color: var(--ivory-muted);
+		}
+	}
+</style>

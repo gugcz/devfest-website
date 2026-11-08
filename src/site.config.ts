@@ -36,6 +36,7 @@ const config: SiteConfig = {
 		afterpartyEnd: '2026-10-30T23:00:00+01:00',
 		invoicesClose: '2026-10-30T07:00:00+01:00',
 		tagline: "Prague's developer conference & festival",
+		audience: 350,
 		pitch:
 			'AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it.',
 		previousEditionUrl: 'https://2025.devfest.cz',
@@ -54,6 +55,7 @@ const config: SiteConfig = {
 	upcoming: {
 		edition: 2027,
 		season: 'Fall 2027',
+		city: 'Prague',
 	},
 	organizer: {
 		name: 'GUG.cz',
@@ -86,15 +88,18 @@ const config: SiteConfig = {
 	},
 	features: resolveFeatures(
 		{
-			// The 2026 edition is over (30 October 2026): the ticket sale, the
-			// invoices, the invitations, the workshop sign-up and the share
-			// cards are off. The programme, the speakers and the app stay.
+			// The 2026 edition is over (30 October 2026) and archived at /2026
+			// (ADR 0011). Until 2027 has a date the home page is its teaser:
+			// the edition's pages, the sale, the invoices, the invitations,
+			// the workshop sign-up, the share cards and the partners are off.
+			// The app and the newsletter stay.
+			edition: false,
 			tickets: false,
 			invoice: false,
 			workshops: false,
 			app: true,
 			invite: false,
-			partners: true,
+			partners: false,
 			newsletter: true,
 			attending: false,
 		},

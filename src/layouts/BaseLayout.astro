@@ -2,6 +2,7 @@
 import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
 import CookieBanner from '../components/CookieBanner.astro';
+import Head from './Head.astro';
 import Footer from '../components/Footer.astro';
 import Menu from '../components/Menu.astro';
 import { defaultOgImageVersion } from '../lib/og-version';
@@ -10,7 +11,7 @@ import { EVENT, pageTitle } from '../lib/event';
 import { absoluteUrl, withoutBase } from '../lib/base';
 import config from '../site.config';
 import { enabled } from '../lib/flags';
-import { getSocials, twitterHandle } from '../lib/socials';
+import { organizationSchema, organizer, websiteSchema } from '../lib/structured-data';
 
 interface Props {
 	title?: string;
@@ -24,8 +25,6 @@ interface Props {
 	ogImageAlt?: string;
 }
 
-const siteUrl = config.site.url;
-const twitter = await twitterHandle();
 const { venue } = config.event;
 const {
 	title = pageTitle("Prague Developer Conference"),
@@ -35,11 +34,6 @@ const {
 	ogImage = `${absoluteUrl('/og-image.jpg')}?v=${defaultOgImageVersion()}`,
 	ogImageAlt = `${EVENT.name} — classified mission starts ${EVENT.dateLabel}`,
 } = Astro.props;
-
-const ogImageType = new URL(ogImage).pathname.endsWith(".png") ? "image/png" : "image/jpeg";
-// Strip the trailing slash (root would be `https://devfest.cz/`) to match the
-// no-slash URLs the sitemap + JSON-LD use under `trailingSlash: 'never'`.
-const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, "") || siteUrl;
 
 // Event schema follows https://developers.google.com/search/docs/appearance/structured-data/event
 // Only rendered on the home page so subpages (privacy, contact, etc.) don't
@@ -53,11 +47,6 @@ const isHome = sitePath === "/";
 // with nothing on sale, or a failed read, lists none. As fresh as the last
 // Hosting deploy (ADR 0008); the cache carries no release dates, so there is
 // no `validFrom` / `priceValidUntil` to state.
-const organizer = {
-	"@type": "Organization",
-	"name": config.organizer.legalName,
-	"url": config.organizer.url
-};
 const offers = isHome && enabled('tickets')
 	? (await staticTicketLines())
 			.filter((line) => line.purchasable && line.gross != null)
@@ -105,30 +94,6 @@ const eventSchema = {
 	...(offers.length > 0 ? { "offers": offers } : {})
 };
 
-const organizationSchema = {
-	"@context": "https://schema.org",
-	"@type": "Organization",
-	"name": config.event.name,
-	"url": siteUrl,
-	"logo": absoluteUrl("/logo.png"),
-	"description":
-		`${config.event.name} is Prague's community-run developer conference & festival — ${config.event.pitch}`,
-	"parentOrganization": organizer,
-	"contactPoint": {
-		"@type": "ContactPoint",
-		"email": config.organizer.email,
-		"contactType": "customer support"
-	},
-	"sameAs": (await getSocials()).map((s) => s.url)
-};
-
-const websiteSchema = {
-	"@context": "https://schema.org",
-	"@type": "WebSite",
-	"name": "DevFest.cz",
-	"url": siteUrl
-};
-
 // Home → <Page> breadcrumb trail for subpages. Names map from the first path
 // segment; unknown routes fall back to a title-cased slug.
 const pageNames: Record<string, string> = {
@@ -168,25 +133,21 @@ const breadcrumbSchema = !isHome && slug
 					"@type": "ListItem",
 					"position": 2,
 					"name": breadcrumbName,
-					"item": canonicalUrl
+					"item": absoluteUrl(sitePath)
 				}
 			]
 		}
 	: null;
 
-// `<` escaped so a `</script>` in content can't end the element (still `<` to JSON).
-const jsonLd = JSON.stringify(
-	isHome
-		? [eventSchema, organizationSchema, websiteSchema]
-		: [organizationSchema, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])]
-).replace(/</g, '\\u003c');
+const organization = await organizationSchema();
+const jsonLd = isHome
+	? [eventSchema, organization, websiteSchema]
+	: [organization, websiteSchema, ...(breadcrumbSchema ? [breadcrumbSchema] : [])];
 ---
 
 <html lang="en">
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-		<meta name="generator" content={Astro.generator} />
+		<Head {title} {description} {noindex} {ogImage} {ogImageAlt} {jsonLd} />
 		{/*
 			theme-color: tints iOS Safari's status bar / URL bar so the
 			native chrome stays brand-dark even when the layout viewport
@@ -198,7 +159,6 @@ const jsonLd = JSON.stringify(
 		<meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)" />
 		<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 		<meta name="color-scheme" content="dark" />
-		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
 		{/*
 			Mark JS available ASAP so a `.js`-gated rule only applies when a
 			script is there to drive it — no-JS / crawlers get the
@@ -295,16 +255,6 @@ const jsonLd = JSON.stringify(
 			</script>
 		)}
 
-		<title>{title}</title>
-		<meta name="description" content={description} />
-		{!noindex && (
-			<>
-				<link rel="canonical" href={canonicalUrl} />
-				<link rel="alternate" hreflang="en" href={canonicalUrl} />
-				<link rel="alternate" hreflang="x-default" href={canonicalUrl} />
-			</>
-		)}
-
 		{/* Favicon */}
 		{/*
 			`favicon.ico` first, and it is a real file now: the two WebP icons
@@ -318,7 +268,6 @@ const jsonLd = JSON.stringify(
 		<link rel="icon" type="image/webp" href="/favicon-dark.webp" media="(prefers-color-scheme: dark)" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/site.webmanifest" />
-		<link rel="sitemap" href="/sitemap-index.xml" />
 
 		{/*
 			Self-hosted brand fonts (Astro Fonts API — see the `fonts` array in
@@ -338,32 +287,6 @@ const jsonLd = JSON.stringify(
 		<Font cssVariable="--font-special-elite" preload />
 		<Font cssVariable="--font-bebas-neue" preload />
 		<Font cssVariable="--font-jetbrains-mono" />
-
-		{/* Open Graph / Facebook */}
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content={canonicalUrl} />
-		<meta property="og:site_name" content="DevFest.cz" />
-		<meta property="og:locale" content="en_US" />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={description} />
-		<meta property="og:image" content={ogImage} />
-		<meta property="og:image:secure_url" content={ogImage} />
-		<meta property="og:image:type" content={ogImageType} />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
-		<meta property="og:image:alt" content={ogImageAlt} />
-		<link rel="image_src" href={ogImage} />
-
-		{/* Twitter */}
-		<meta name="twitter:card" content="summary_large_image" />
-		{twitter && <meta name="twitter:site" content={twitter} />}
-		<meta name="twitter:title" content={title} />
-		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content={ogImage} />
-		<meta name="twitter:image:alt" content={ogImageAlt} />
-
-		{/* Structured Data */}
-		{!noindex && <script type="application/ld+json" set:html={jsonLd} />}
 
 		{/* Page-specific <head> extras (e.g. FAQPage JSON-LD) */}
 		<slot name="head" />

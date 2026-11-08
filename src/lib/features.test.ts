@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 import { checkFeatureDependencies, resolveFeatures, unlinkDisabled, type Features } from './features.ts';
 
 const ALL_ON: Features = {
+	edition: true,
 	tickets: true,
 	invoice: true,
 	workshops: true,
@@ -48,6 +49,13 @@ describe('checkFeatureDependencies', () => {
 		assert.throws(() => checkFeatureDependencies({ ...ALL_ON, tickets: false, invoice: false }), /invite needs/);
 		assert.throws(() => checkFeatureDependencies({ ...ALL_ON, app: false }), /workshops needs/);
 	});
+
+	it('fails when a section of the dated edition is on without the edition', () => {
+		assert.throws(() => checkFeatureDependencies({ ...ALL_ON, edition: false }), /tickets needs features\.edition/);
+		const teaser = { ...ALL_ON, edition: false, tickets: false, invoice: false, invite: false };
+		assert.throws(() => checkFeatureDependencies(teaser), /workshops needs features\.edition/);
+		checkFeatureDependencies({ ...teaser, workshops: false, attending: false });
+	});
 });
 
 describe('unlinkDisabled', () => {
@@ -60,6 +68,11 @@ describe('unlinkDisabled', () => {
 
 	it('leaves everything alone with every flag on', () => {
 		assert.equal(unlinkDisabled(html, ALL_ON), html);
+	});
+
+	it('unwraps the dated edition\'s pages while it is off', () => {
+		const out = unlinkDisabled(html, { ...ALL_ON, edition: false });
+		assert.equal(out, 'Drop your email on the <a href="/#newsletter">home page</a>, or <a href="/invoice" class="x">request an invoice</a>; see the FAQ.');
 	});
 
 	it('does not touch a longer path that merely starts the same', () => {

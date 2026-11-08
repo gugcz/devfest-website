@@ -4,7 +4,7 @@
 // voice, every field a typed line (a 2px paper-ink underline that turns red
 // on focus), errors in paper ink behind a red margin mark, the one red fill
 // at the foot. Contrast on --paper uses --paper-ink(-dim) only: red there
-// is a mark, never small text (docs/design.md).
+// is a mark, never small text (docs/design-2026.md).
 
 // The wrapper also carries the global `.paper` (set on the element); this
 // module sets its padding. A form is not a print: it sits straight, untaped.

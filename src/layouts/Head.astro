@@ -1,0 +1,72 @@
+---
+/**
+ * The `<head>` tags every layout shares: robots, title, description,
+ * canonical, Open Graph, Twitter and the JSON-LD. A layout adds its own
+ * theme colour, icons, fonts and scripts around it.
+ */
+import { jsonLdText } from '../lib/structured-data';
+import { twitterHandle } from '../lib/socials';
+import config from '../site.config';
+
+interface Props {
+	title: string;
+	description: string;
+	noindex?: boolean;
+	/** Absolute URL — an unfurler will not resolve a relative path. */
+	ogImage: string;
+	ogImageAlt: string;
+	/** schema.org objects for this page; none on a `noindex` page. */
+	jsonLd: readonly object[];
+}
+
+const { title, description, noindex = false, ogImage, ogImageAlt, jsonLd } = Astro.props;
+const twitter = await twitterHandle();
+const ogImageType = new URL(ogImage).pathname.endsWith('.png') ? 'image/png' : 'image/jpeg';
+// Strip the trailing slash (root would be `https://devfest.cz/`) to match the
+// no-slash URLs the sitemap + JSON-LD use under `trailingSlash: 'never'`.
+const siteUrl = config.site.url;
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, '') || siteUrl;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="generator" content={Astro.generator} />
+<meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+<title>{title}</title>
+<meta name="description" content={description} />
+{
+	!noindex && (
+		<>
+			<link rel="canonical" href={canonicalUrl} />
+			<link rel="alternate" hreflang="en" href={canonicalUrl} />
+			<link rel="alternate" hreflang="x-default" href={canonicalUrl} />
+		</>
+	)
+}
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+{/* Open Graph / Facebook */}
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:site_name" content={config.event.name} />
+<meta property="og:locale" content="en_US" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:secure_url" content={ogImage} />
+<meta property="og:image:type" content={ogImageType} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={ogImageAlt} />
+<link rel="image_src" href={ogImage} />
+
+{/* Twitter */}
+<meta name="twitter:card" content="summary_large_image" />
+{twitter && <meta name="twitter:site" content={twitter} />}
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="twitter:image:alt" content={ogImageAlt} />
+
+{/* Structured Data */}
+{!noindex && jsonLd.length > 0 && <script type="application/ld+json" set:html={jsonLdText(jsonLd)} />}

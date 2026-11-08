@@ -1,0 +1,207 @@
+@use '../styles/aether' as *;
+
+// The teaser (`teaser.astro`). The stage is the comp: everything centred on
+// the logo, over the aether. Below it the veil darkens the painting so the
+// text reads, and every band is one centred column.
+
+.teaser {
+	position: relative;
+}
+
+// ── THE STAGE ─────────────────────────────────────────────────────────────
+.stage {
+	position: relative;
+	min-height: 100vh;
+	min-height: 100svh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: clamp(20px, 4.2vh, 44px);
+	padding: 48px var(--gutter);
+	text-align: center;
+}
+
+// The logo file is cropped to its drawing (`public/df27-logo.svg`), so it
+// centres as it is.
+.logo {
+	margin: 0;
+	width: min(100%, 860px);
+	line-height: 0;
+
+	img {
+		width: 100%;
+		height: auto;
+		filter: drop-shadow(0 0 26px rgba(116, 235, 224, 0.22)) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.55));
+	}
+}
+
+.stage-line {
+	@include label(clamp(0.72rem, 0.66rem + 0.3vw, 0.84rem), 0.28em);
+	margin: 0;
+	color: var(--ivory-muted);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+// The portal (its own component) sits a little lower, as in the comp.
+.stage :global(.portal) {
+	margin-top: clamp(6px, 1.6vh, 18px);
+}
+
+// ── BELOW THE STAGE ──────────────────────────────────────────────────────
+// The painting stays fixed behind; the veil fades it to near-black over the
+// first band, so text never sits on a bright patch of it.
+.veil {
+	position: relative;
+	padding: 0 var(--gutter) var(--space-section);
+	background: linear-gradient(to bottom, transparent, var(--ink-veil) 14rem);
+}
+
+.band {
+	max-width: var(--measure);
+	margin: 0 auto;
+	padding-top: var(--space-section);
+	text-align: center;
+}
+
+// The rubric: a small brass label between two inked rules, each ending in
+// a diamond, as the season mark is set.
+.rubric {
+	@include label;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	margin: 0 0 1.75rem;
+	color: var(--brass);
+
+	&::before,
+	&::after {
+		content: '';
+		flex: 0 0 auto;
+		width: clamp(2.5rem, 8vw, 4.5rem);
+		height: 10px;
+		background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 10'%3E%3Cg fill='none' stroke='%23d9b26a' stroke-width='1.2'%3E%3Cpath d='M0 5H60'/%3E%3Cpath d='M66 1L70 5L66 9L62 5Z'/%3E%3C/g%3E%3C/svg%3E")
+			center / 100% 100% no-repeat;
+	}
+
+	&::after {
+		transform: scaleX(-1);
+	}
+}
+
+.lead {
+	margin: 0 auto;
+	font-size: var(--fs-lead);
+	font-weight: 500;
+	line-height: 1.45;
+	color: var(--ivory);
+	text-wrap: balance;
+}
+
+.lead-short {
+	margin-bottom: 2rem;
+}
+
+// ── WHAT IS ANNOUNCED ────────────────────────────────────────────────────
+.facts {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 1.5rem clamp(2rem, 6vw, 4rem);
+	margin: 2.75rem 0 0;
+
+	div {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	dt {
+		@include label(0.78rem, 0.22em);
+		color: var(--brass);
+	}
+
+	dd {
+		margin: 0;
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: var(--ivory);
+	}
+}
+
+.facts-note {
+	display: block;
+	font-size: var(--fs-small);
+	font-weight: 400;
+	color: var(--ivory-muted);
+}
+
+// ── THE LAST EDITION ─────────────────────────────────────────────────────
+.figures {
+	display: flex;
+	justify-content: center;
+	gap: clamp(1.5rem, 8vw, 5rem);
+	margin: 0 0 3rem;
+
+	div {
+		display: flex;
+		flex-direction: column-reverse;
+		align-items: center;
+		gap: 0.25rem;
+	}
+
+	dd {
+		margin: 0;
+		font-size: var(--fs-figure);
+		font-weight: 600;
+		line-height: 1;
+		letter-spacing: -0.02em;
+		color: var(--brass-light);
+		font-variant-numeric: lining-nums tabular-nums;
+	}
+
+	dt {
+		@include label(0.78rem, 0.22em);
+		color: var(--ivory-muted);
+	}
+}
+
+// Photographs in thin brass frames, a step wider than the text column.
+.prints {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: clamp(0.75rem, 2vw, 1.25rem);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	// Wider than the text column once four fit in a row.
+	@media (min-width: 900px) {
+		grid-template-columns: repeat(4, 1fr);
+		margin: 0 calc(-1 * clamp(0rem, 25vw - 10rem, 14rem));
+	}
+}
+
+.print {
+	padding: 6px;
+	border: 1px solid rgba(207, 168, 98, 0.5);
+	background: rgba(5, 9, 15, 0.6);
+
+	img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 3 / 2;
+		object-fit: cover;
+		filter: saturate(0.85) contrast(1.05);
+	}
+}
+
+.band-link {
+	@include label(var(--fs-small), 0.18em);
+	margin: 2.25rem 0 0;
+
+	a {
+		color: var(--ivory);
+	}
+}

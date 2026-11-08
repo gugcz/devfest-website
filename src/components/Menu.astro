@@ -44,13 +44,13 @@ const nextEdition = ARCHIVE
 // The five below are what the site is for (docs/product.md: sell tickets, carry
 // the programme) plus the one thing every ticket holder has to look up: how
 // to get to the venue.
-const links: readonly NavLink[] = [
+const links: readonly NavLink[] = enabledOnly([
 	...(ticketsHref ? [{ href: ticketsHref, label: 'Tickets', cta: true }] : []),
-	{ href: '/speakers', label: 'Speakers' },
-	{ href: '/agenda', label: 'Agenda' },
-	{ href: '/venue', label: 'Venue' },
-	{ href: '/faq', label: 'FAQ' },
-];
+	{ href: '/speakers', label: 'Speakers', feature: 'edition' },
+	{ href: '/agenda', label: 'Agenda', feature: 'edition' },
+	{ href: '/venue', label: 'Venue', feature: 'edition' },
+	{ href: '/faq', label: 'FAQ', feature: 'edition' },
+]);
 
 // The organisers' side, one step smaller so it reads as the same list rather
 // than as fine print. Off the menu but one click from where they are asked
@@ -59,10 +59,14 @@ const links: readonly NavLink[] = [
 // All three stay in the footer, which lists every page.
 const secondary: readonly NavLink[] = enabledOnly([
 	{ href: '/partners', label: 'Partners', feature: 'partners' },
-	{ href: '/team', label: 'Team' },
-	{ href: '/contact#press', label: 'Press' },
-	{ href: '/contact', label: 'Contact' },
+	{ href: '/team', label: 'Team', feature: 'edition' },
+	{ href: '/contact#press', label: 'Press', feature: 'edition' },
+	{ href: '/contact', label: 'Contact', feature: 'edition' },
 ]);
+// While the next edition has no date (`edition` off) the pages left at the
+// root are the legal and app pages: the mark is the way home, and there is
+// no menu to open.
+const hasMenu = links.length + secondary.length > 0;
 
 const isCurrent = (href: string) => {
 	if (href.startsWith('http')) return false;
@@ -93,7 +97,7 @@ const isCurrent = (href: string) => {
 	{/* Desktop (>=1100px): the destinations sit in the bar, the four the visit
 	     turns on, then the organisers' side one shade dimmer. Below 1100px this
 	     list is hidden and the same lines live in the full-screen panel. */}
-	<nav class="bar-nav" aria-label="Primary">
+	{hasMenu && <nav class="bar-nav" aria-label="Primary">
 		<ul class="bar-list">
 			{links.filter(({ cta }) => !cta).map(({ href, label }) => {
 				const current = isCurrent(href);
@@ -125,10 +129,10 @@ const isCurrent = (href: string) => {
 				);
 			})}
 		</ul>
-	</nav>
+	</nav>}
 
 	<div class="header-actions">
-		<nav class="nav" aria-label="Primary">
+		{hasMenu && <nav class="nav" aria-label="Primary">
 			<button
 				id="nav-toggle"
 				class="nav-toggle"
@@ -207,7 +211,7 @@ const isCurrent = (href: string) => {
 					</div>
 				</div>
 			</div>
-		</nav>
+		</nav>}
 
 		{!isInvite && ticketsHref && <a href={ticketsHref} class="header-cta">Tickets</a>}
 		{nextEdition && (

@@ -4,6 +4,7 @@ import SubpageHero from '../components/SubpageHero.astro';
 import EndLine from '../components/EndLine.astro';
 import StoreBadges from '../components/StoreBadges.astro';
 import { EVENT } from '../lib/event';
+import { enabled } from '../lib/flags';
 
 // THE APP PAGE. Venue QR codes land here, so on a phone the store badges sit
 // straight under the hero.
@@ -54,7 +55,7 @@ const features = [
 					))}
 				</ol>
 
-				<EndLine text="Rather see it all on a big screen?" href="/agenda" label="Open the agenda" />
+				{enabled('edition') && <EndLine text="Rather see it all on a big screen?" href="/agenda" label="Open the agenda" />}
 			</div>
 		</section>
 	</main>

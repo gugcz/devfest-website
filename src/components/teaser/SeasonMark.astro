@@ -1,0 +1,66 @@
+---
+/**
+ * The season, lettered in brass ink under the logo. The lettering is drawn
+ * artwork for "Fall 2027"; any other season is set as type until someone
+ * draws it (`docs/design.md`, "Season mark").
+ */
+interface Props {
+	season: string;
+	class?: string;
+}
+
+const { season, class: className } = Astro.props;
+const drawn = season === 'Fall 2027';
+---
+
+<p class:list={['season', { 'season--type': !drawn }, className]}>
+	{
+		drawn ? (
+			<>
+				<span class="sr-only">{season}</span>
+				<svg viewBox="-150 -8 1072 116" aria-hidden="true" focusable="false">
+					<g fill="none" stroke="url(#aether-brass)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#aether-ink)">
+						<path d="M0 100V0H58M0 46H48" />
+						<path d="M88 100L125 0L162 100M102 64H148" />
+						<path d="M190 0V100H244" />
+						<path d="M274 0V100H328" />
+						<path d="M402 28C402 12 416 0 434 0C452 0 466 12 466 28C466 42 456 52 442 66L402 100H470" />
+						<ellipse cx="534" cy="50" rx="34" ry="50" />
+						<path d="M602 28C602 12 616 0 634 0C652 0 666 12 666 28C666 42 656 52 642 66L602 100H670" />
+						<path d="M700 0H772L726 100" />
+						<path stroke="#d9b26a" stroke-width="3" d="M-140 50H-44M816 50H912" />
+						<path stroke="#d9b26a" stroke-width="3" d="M-30 40L-20 50L-30 60L-40 50ZM802 40L812 50L802 60L792 50Z" />
+					</g>
+				</svg>
+			</>
+		) : (
+			season
+		)
+	}
+</p>
+
+<style lang="scss">
+	@use '../../styles/aether' as *;
+
+	.season {
+		margin: 0;
+		width: min(84%, 460px);
+		line-height: 0;
+	}
+
+	.season svg {
+		width: 100%;
+		height: auto;
+		display: block;
+		overflow: visible;
+		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+	}
+
+	.season--type {
+		@include label(clamp(1.5rem, 1rem + 2.5vw, 2.25rem), 0.28em);
+		width: auto;
+		line-height: 1;
+		color: var(--brass-light);
+		text-align: center;
+	}
+</style>

@@ -6,20 +6,13 @@
  * the live sitemap (`archivedPages()`, read by `astro.config.ts`).
  */
 import { cp, readdir } from 'node:fs/promises';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { AstroIntegration } from 'astro';
+import { archivedEditions } from '../lib/editions';
 
-const ARCHIVE_ROOT = new URL('../../archive/', import.meta.url);
-
-/** The archived editions, oldest first: every `archive/<year>/`. */
-export function archivedEditions(): string[] {
-	if (!existsSync(ARCHIVE_ROOT)) return [];
-	return readdirSync(ARCHIVE_ROOT, { withFileTypes: true })
-		.filter((entry) => entry.isDirectory() && /^\d{4}$/.test(entry.name))
-		.map((entry) => entry.name)
-		.sort();
-}
+const ARCHIVE_ROOT = join(process.cwd(), 'archive');
 
 /**
  * Every page URL the archives' own sitemaps list, with the day each was
@@ -29,13 +22,14 @@ export function archivedEditions(): string[] {
 export function archivedPages(): Map<string, string | undefined> {
 	const pages = new Map<string, string | undefined>();
 	for (const year of archivedEditions()) {
-		const dir = new URL(`${year}/`, ARCHIVE_ROOT);
+		const dir = join(ARCHIVE_ROOT, year);
 		for (const name of readdirSync(dir)) {
 			if (!/^sitemap-\d+\.xml$/.test(name)) continue;
-			const xml = readFileSync(new URL(name, dir), 'utf8');
+			const xml = readFileSync(join(dir, name), 'utf8');
 			for (const [, entry] of xml.matchAll(/<url>(.*?)<\/url>/gs)) {
 				const loc = /<loc>(.*?)<\/loc>/s.exec(entry)?.[1];
-				if (loc) pages.set(loc, /<lastmod>(.*?)<\/lastmod>/s.exec(entry)?.[1]);
+				// The archive's home is `/<year>`, as its canonical says.
+				if (loc) pages.set(loc.replace(/\/$/, ''), /<lastmod>(.*?)<\/lastmod>/s.exec(entry)?.[1]);
 			}
 		}
 	}
@@ -48,8 +42,8 @@ export default function archives(): AstroIntegration {
 		hooks: {
 			'astro:build:done': async ({ dir, logger }) => {
 				for (const year of archivedEditions()) {
-					const from = fileURLToPath(new URL(`${year}/`, ARCHIVE_ROOT));
-					await cp(from, fileURLToPath(new URL(`${year}/`, dir)), { recursive: true });
+					const from = join(ARCHIVE_ROOT, year);
+					await cp(from, join(fileURLToPath(dir), year), { recursive: true });
 					logger.info(`archive/${year}/ → /${year} (${(await readdir(from)).length} entries)`);
 				}
 			},

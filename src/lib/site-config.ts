@@ -48,6 +48,8 @@ export interface EventConfig {
 	invoicesClose: string;
 	/** One line under the name: "Prague's developer conference & festival". */
 	tagline: string;
+	/** How many developers the day is for (the venue's audience). */
+	audience: number;
 	/** What the day is about, one sentence, used in meta and calendar text. */
 	pitch: string;
 	previousEditionUrl: string;
@@ -60,6 +62,8 @@ export interface UpcomingConfig {
 	edition: number;
 	/** When, as announced: "Fall 2027". Never a day until `event` has one. */
 	season: string;
+	/** Where, as announced: "Prague". Never a venue until `event` has one. */
+	city: string;
 }
 
 export interface OrganizerConfig {

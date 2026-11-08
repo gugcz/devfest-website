@@ -1,0 +1,109 @@
+---
+/**
+ * The cookie banner in the aether skin. Same markup contract and behaviour
+ * as `CookieBanner.astro` (`src/lib/cookie-banner.ts`); only the look is
+ * the teaser's.
+ */
+---
+
+<div id="cookie-banner" class="cookie-banner cookie-banner--hidden" tabindex="-1" role="region" aria-label="Cookie consent" aria-live="polite" aria-hidden="true">
+	<p class="cookie-text">
+		May we use analytics cookies? Details in our <a href="/privacy-policy">Privacy Policy</a>.
+	</p>
+	<div class="cookie-actions">
+		<button id="cookie-accept" type="button" class="cookie-btn cookie-btn--accept">Accept</button>
+		<button id="cookie-decline" type="button" class="cookie-btn cookie-btn--decline">Decline</button>
+	</div>
+</div>
+
+<script>
+	import '../../lib/cookie-banner';
+</script>
+
+<style lang="scss">
+	@use '../../styles/aether' as *;
+
+	.cookie-banner {
+		position: fixed;
+		right: min(var(--gutter), 5vw);
+		bottom: calc(min(1.25rem, 4vw) + env(safe-area-inset-bottom));
+		z-index: 10000;
+		width: min(26rem, calc(100% - 2 * min(var(--gutter), 5vw)));
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding: 1.25rem 1.4rem;
+		background: var(--ink-veil);
+		border: 1px solid rgba(207, 168, 98, 0.45);
+		color: var(--ivory);
+		transition: opacity 0.3s, transform 0.3s, visibility 0s;
+
+		&:focus-visible {
+			@include focus-ring(-4px);
+		}
+	}
+
+	.cookie-banner--hidden {
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(1.5rem);
+		visibility: hidden;
+		transition-delay: 0s, 0s, 0.3s;
+	}
+
+	.cookie-text {
+		margin: 0;
+		font-size: var(--fs-small);
+		line-height: 1.55;
+	}
+
+	.cookie-actions {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+	}
+
+	.cookie-btn {
+		@include label(var(--fs-small), 0.18em);
+		min-height: 44px;
+		padding: 0 1.1rem;
+		border: 0;
+		cursor: pointer;
+		font-family: var(--font-sans);
+		transition: background-color 0.3s ease, color 0.3s ease;
+	}
+
+	.cookie-btn--accept {
+		background: var(--brass);
+		color: var(--ink);
+		clip-path: bevel(8px, 0px);
+
+		&:hover {
+			background: var(--aether);
+		}
+	}
+
+	.cookie-btn--decline {
+		padding: 0;
+		background: none;
+		color: var(--ivory);
+		text-decoration: underline;
+		text-decoration-color: var(--brass);
+		text-underline-offset: 0.3em;
+
+		&:hover {
+			color: var(--aether);
+		}
+	}
+
+	.cookie-btn:focus-visible {
+		@include focus-ring(3px);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.cookie-banner,
+		.cookie-btn {
+			transition: none;
+		}
+	}
+</style>

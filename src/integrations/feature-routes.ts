@@ -3,7 +3,8 @@
  * so a page a flag can remove lives under `src/routes/` (same nesting, so its
  * relative imports are unchanged) and is injected here only when its flag is
  * on (`injectRoute`, Astro integrations reference). Off means off: no HTML,
- * no sitemap entry.
+ * no sitemap entry. A few routes stand in while their flag is off
+ * (`STAND_INS`): the teaser is the home page while `edition` is off.
  */
 import type { AstroIntegration } from 'astro';
 import type { FeatureFlag, Features } from '../lib/features';
@@ -16,6 +17,22 @@ interface Route {
 }
 
 const ROUTES: Record<FeatureFlag, readonly Route[]> = {
+	edition: [
+		{ pattern: '/', entrypoint: 'index.astro' },
+		{ pattern: '/agenda', entrypoint: 'agenda.astro' },
+		{ pattern: '/speakers', entrypoint: 'speakers.astro' },
+		{ pattern: '/speakers/[id]', entrypoint: 'speakers/[id].astro' },
+		{ pattern: '/talks/[id]', entrypoint: 'talks/[id].astro' },
+		{ pattern: '/sessions', entrypoint: 'sessions.astro' },
+		{ pattern: '/venue', entrypoint: 'venue.astro' },
+		{ pattern: '/faq', entrypoint: 'faq.astro' },
+		{ pattern: '/team', entrypoint: 'team.astro' },
+		{ pattern: '/contact', entrypoint: 'contact.astro' },
+		{ pattern: '/press', entrypoint: 'press.astro' },
+		{ pattern: '/press/downloads', entrypoint: 'press/downloads.astro' },
+		{ pattern: '/tv', entrypoint: 'tv.astro' },
+		{ pattern: '/calendar.ics', entrypoint: 'calendar.ics.ts' },
+	],
 	tickets: [{ pattern: '/thank-you', entrypoint: 'thank-you.astro' }],
 	invoice: [{ pattern: '/invoice', entrypoint: 'invoice.astro' }],
 	workshops: [{ pattern: '/workshops', entrypoint: 'workshops.astro' }],
@@ -38,19 +55,25 @@ const ROUTES: Record<FeatureFlag, readonly Route[]> = {
 	],
 };
 
+/** Routes injected while their flag is OFF, in place of the flag's own. */
+const STAND_INS: Partial<Record<FeatureFlag, readonly Route[]>> = {
+	edition: [{ pattern: '/', entrypoint: 'teaser.astro' }],
+};
+
 export default function featureRoutes(features: Features): AstroIntegration {
 	return {
 		name: 'devfest:feature-routes',
 		hooks: {
 			'astro:config:setup': ({ injectRoute, logger }) => {
+				const inject = ({ pattern, entrypoint }: Route) =>
+					injectRoute({ pattern, entrypoint: new URL(`../routes/${entrypoint}`, import.meta.url) });
 				for (const [flag, routes] of Object.entries(ROUTES) as [FeatureFlag, readonly Route[]][]) {
-					if (!features[flag]) {
-						logger.info(`${flag} off: ${routes.map((r) => r.pattern).join(', ')} not built`);
+					if (features[flag]) {
+						routes.forEach(inject);
 						continue;
 					}
-					for (const { pattern, entrypoint } of routes) {
-						injectRoute({ pattern, entrypoint: new URL(`../routes/${entrypoint}`, import.meta.url) });
-					}
+					logger.info(`${flag} off: ${routes.map((r) => r.pattern).join(', ')} not built`);
+					STAND_INS[flag]?.forEach(inject);
 				}
 			},
 		},

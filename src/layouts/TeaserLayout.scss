@@ -1,0 +1,162 @@
+@use '../styles/aether' as *;
+
+// THE AETHER (2027 teaser). One dark theme: ink ground, ivory type, brass
+// ornament, the cold aether light for hover and focus. One sans stack from
+// the system (no web font). Tokens here; `docs/design.md` is the record.
+:root.aether {
+	--ink: #05090f;
+	--ink-veil: rgba(5, 9, 15, 0.9);
+	--ivory: #f6ecd6;
+	--ivory-muted: #c9c0ad;
+	--brass: #cfa862;
+	--brass-light: #fbf1da;
+	--brass-deep: #d9b26a;
+	--aether: #74ebe0;
+
+	--font-sans: 'Avenir Next', 'Segoe UI Variable Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--fs-label: 0.90625rem;
+	--fs-small: 0.875rem;
+	--fs-body: 1.0625rem;
+	--fs-lead: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+	--fs-figure: clamp(2.75rem, 1.75rem + 4.5vw, 5rem);
+	--track-label: 0.24em;
+
+	--gutter: max(24px, env(safe-area-inset-left), env(safe-area-inset-right));
+	--measure: 40rem;
+	--space-section: clamp(4.5rem, 3rem + 7vw, 9rem);
+	--ease-rise: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+	color-scheme: dark;
+	scroll-padding-bottom: var(--cookie-slip-h, 0px);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	color: var(--ivory);
+	// Without WebGL (or before it starts) the painting is these gradients in
+	// the same palette; the canvas fades in over them.
+	background:
+		radial-gradient(90% 60% at 50% 110%, #5a2a1c 0%, transparent 65%),
+		radial-gradient(70% 70% at 15% 15%, #173c44 0%, transparent 70%),
+		radial-gradient(60% 60% at 90% 30%, #2b1a42 0%, transparent 70%),
+		var(--ink);
+	background-attachment: fixed;
+	font-family: var(--font-sans);
+	font-size: var(--fs-body);
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+	padding-bottom: var(--cookie-slip-h, 0px);
+}
+
+a {
+	color: inherit;
+	text-decoration-color: var(--brass);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.25em;
+	transition: color 0.3s ease, text-decoration-color 0.3s ease;
+}
+
+a:hover {
+	color: var(--brass-light);
+	text-decoration-color: var(--aether);
+}
+
+:focus-visible {
+	@include focus-ring;
+}
+
+::selection {
+	background: var(--aether);
+	color: var(--ink);
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+// Holds the shared filter and gradient; takes no room.
+.svg-defs {
+	position: absolute;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}
+
+.skip-link {
+	@include label(var(--fs-small));
+	position: absolute;
+	left: var(--gutter);
+	top: 1rem;
+	z-index: 10002;
+	padding: 0.75rem 1rem;
+	background: var(--ink);
+	color: var(--ivory);
+	transform: translateY(-200%);
+
+	&:focus-visible {
+		transform: none;
+	}
+}
+
+#main-content:focus {
+	outline: none;
+}
+
+// Entrance: content rises into place, in order.
+.rise {
+	animation: rise 1.4s var(--ease-rise) both;
+}
+
+// The stage rises in order: logo, season, line, portal.
+.rise-2 {
+	animation-delay: 0.25s;
+}
+
+.rise-3 {
+	animation-delay: 0.4s;
+}
+
+.rise-4 {
+	animation-delay: 0.55s;
+}
+
+@keyframes rise {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rise {
+		animation: none;
+	}
+
+	a {
+		transition: none;
+	}
+}
