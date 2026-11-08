@@ -91,6 +91,22 @@ export function startAether(canvas: HTMLCanvasElement, logo: HTMLElement): () =>
 	return animate(canvas, logo, gl, u, lowEnd ? 5e5 : 1.15e6);
 }
 
+/**
+ * Where `el` sits in the document, as at the top of the page: the offsets
+ * ignore scrolling and transforms (the logo's entrance), so the sigil stays
+ * behind the logo's resting place while the page scrolls over the fixed
+ * canvas.
+ */
+function restingBox(el: HTMLElement): { x: number; y: number; w: number; h: number } {
+	let x = 0;
+	let y = 0;
+	for (let node: HTMLElement | null = el; node; node = node.offsetParent as HTMLElement | null) {
+		x += node.offsetLeft;
+		y += node.offsetTop;
+	}
+	return { x, y, w: el.offsetWidth, h: el.offsetHeight };
+}
+
 /** The render loop over a set-up context; returns its stop. */
 function animate(
 	canvas: HTMLCanvasElement,
@@ -109,6 +125,7 @@ function animate(
 	let raf = 0;
 	let lastFrame = 0;
 	let slow = { sum: 0, count: 0 };
+	let lost = false;
 
 	function resize(): void {
 		cssW = window.innerWidth;
@@ -120,12 +137,13 @@ function animate(
 		gl.viewport(0, 0, canvas.width, canvas.height);
 		gl.uniform2f(u.u_res, canvas.width, canvas.height);
 		// The sigil sits exactly behind the logo, whatever the layout.
-		const box = logo.getBoundingClientRect();
+		const box = restingBox(logo);
 		const mn = Math.min(cssW, cssH);
-		gl.uniform2f(u.u_center, (box.left + box.width / 2 - cssW / 2) / mn, (cssH / 2 - (box.top + box.height / 2)) / mn);
+		gl.uniform2f(u.u_center, (box.x + box.w / 2 - cssW / 2) / mn, (cssH / 2 - (box.y + box.h / 2)) / mn);
 	}
 
 	function render(seconds: number): void {
+		if (lost) return;
 		gl.uniform1f(u.u_time, seconds);
 		// 0 → 1 over the first seconds (the wave of light after load), then 1.
 		const ignite = reduced.matches ? 1 : Math.min(1, Math.max(0, (seconds - START_OFFSET - 0.6) / 4.2));
@@ -186,18 +204,25 @@ function animate(
 		pointer.at = performance.now();
 	};
 	const onResize = (): void => {
+		if (lost) return;
 		resize();
 		if (reduced.matches) render(STILL_AT);
 	};
+	// A lost context stays lost: the canvas fades out and the CSS gradient
+	// behind it is the background until the next page load.
 	const onLost = (e: Event): void => {
 		e.preventDefault();
+		lost = true;
 		cancelAnimationFrame(raf);
 		canvas.classList.remove('is-live');
 	};
 
 	window.addEventListener('pointermove', onPointer, { passive: true });
 	window.addEventListener('resize', onResize);
-	reduced.addEventListener('change', run);
+	const onMotionChange = (): void => {
+		if (!lost) run();
+	};
+	reduced.addEventListener('change', onMotionChange);
 	canvas.addEventListener('webglcontextlost', onLost);
 	run();
 	canvas.classList.add('is-live');
@@ -206,7 +231,7 @@ function animate(
 		cancelAnimationFrame(raf);
 		window.removeEventListener('pointermove', onPointer);
 		window.removeEventListener('resize', onResize);
-		reduced.removeEventListener('change', run);
+		reduced.removeEventListener('change', onMotionChange);
 		canvas.removeEventListener('webglcontextlost', onLost);
 		gl.getExtension('WEBGL_lose_context')?.loseContext();
 	};

@@ -17,7 +17,7 @@ import skin from '../components/teaser/TeaserNewsletter.module.scss';
 import { absoluteUrl } from '../lib/base';
 import { archivedEditions, lastEditionFigures } from '../lib/editions';
 import { enabled } from '../lib/flags';
-import { publicFileVersion } from '../lib/og-version';
+import { publicFileVersion, UPCOMING_OG_FILE } from '../lib/og-version';
 import { organizationSchema, websiteSchema } from '../lib/structured-data';
 import config from '../site.config';
 
@@ -53,7 +53,7 @@ const PRINTS = [
 <TeaserLayout
 	{title}
 	{description}
-	ogImage={`${absoluteUrl('/og-2027.jpg')}?v=${publicFileVersion('og-2027.jpg')}`}
+	ogImage={`${absoluteUrl(`/${UPCOMING_OG_FILE}`)}?v=${publicFileVersion(UPCOMING_OG_FILE)}`}
 	ogImageAlt={`${name}, ${upcoming.season}`}
 	{jsonLd}
 >

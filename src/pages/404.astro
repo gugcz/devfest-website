@@ -3,16 +3,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SubpageHero from '../components/SubpageHero.astro';
 import NextStep from '../components/NextStep.astro';
 import NextStepList from '../components/NextStepList.astro';
-import { EVENT } from '../lib/event';
-import config from '../site.config';
+import { pageTitle } from '../lib/event';
 import { enabled, enabledOnly } from '../lib/flags';
-import { editionHref } from '../lib/editions';
+import { editionHref, pastEditions } from '../lib/editions';
 
 // A dead URL is still a visitor who wanted something specific. The page used
 // to state the fault and offer one link home; it now offers the routes people
 // actually arrive looking for. Ordered by what a stale link most often points
 // at: last year's lineup, last year's programme, and tickets. While the next
 // edition has no date, those pages are the archive's (`editionHref`).
+const last = pastEditions()[0];
+const lastLine = last
+	? ` The ${last.year} edition lives on <a href="${last.href}">${last.external ? 'its own site' : 'in the archive'}</a>.`
+	: '';
 const STEPS = enabledOnly([
 	{
 		title: 'The lineup',
@@ -35,8 +38,7 @@ const STEPS = enabledOnly([
 	{
 		title: 'Still lost?',
 		noteHtml:
-			'The FAQ answers most of it, and one of the desks answers the rest. ' +
-			`Last year&rsquo;s edition lives on <a href="${config.event.previousEditionUrl}">its own site</a>.`,
+			'The FAQ answers most of it, and one of the desks answers the rest.' + lastLine,
 		actions: [
 			{ href: editionHref('/faq'), label: 'Read the FAQ' },
 			{ href: editionHref('/contact'), label: 'Contact us' },
@@ -46,7 +48,7 @@ const STEPS = enabledOnly([
 ---
 
 <BaseLayout
-	title={`404 — ${EVENT.name}`}
+	title={pageTitle('Page not found')}
 	description="The page you're looking for doesn't exist."
 	noindex
 >

@@ -53,3 +53,6 @@ export function publicFileVersion(path: string): string {
 	}
 	return version;
 }
+
+/** The next edition's share card in `public/` (year-bound: `docs/adapting.md`). */
+export const UPCOMING_OG_FILE = 'og-2027.jpg';
