@@ -14,7 +14,7 @@ import { enabled, enabledOnly, type FeatureFlag } from '../lib/flags';
 const press = enabled('press');
 const mediaCoverage = press ? await loadMediaCoverage() : [];
 
-// Three inboxes as typed index cards. The general one is the large card.
+// The inboxes, one plate each; the general one first.
 type Desk = { id: string; title: string; desc: string; email: string; name?: string; role?: string; feature?: FeatureFlag };
 const [general, ...desks]: Desk[] = enabledOnly([
 	{ id: 'desk-general', title: 'General questions', desc: 'Tickets, billing, production, or anything else.', email: config.organizer.email },
@@ -72,12 +72,7 @@ const inboxes = INBOXES[desks.length] ?? `${desks.length + 1} inboxes`;
 					<p class="paper-edge icard-edge" aria-hidden="true"><span>01</span></p>
 					<h3 id={general.id} class="icard-title">{general.title}</h3>
 					<p class="icard-desc">{general.desc}</p>
-					<span class="icard-mailwrap">
-						<a class="icard-mail" href={`mailto:${general.email}`}>{general.email}</a>
-						<svg class="grease icard-grease" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true">
-							<path d="M4 12 C 50 6, 110 4, 196 9 M 30 16 C 80 12, 140 12, 180 14" />
-						</svg>
-					</span>
+					<a class="icard-mail" href={`mailto:${general.email}`}>{general.email}</a>
 				</article>
 
 				<div class="desk-side">
