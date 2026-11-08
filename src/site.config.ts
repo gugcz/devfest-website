@@ -36,8 +36,9 @@ const config: SiteConfig = {
 		timeZone: 'Europe/Prague',
 		timeZoneLabel: 'CET',
 		tagline: 'Developer conference & festival',
-		pitch:
-			'AI agents, generative UI, cloud & backends, mobile & web accessibility, and the humans behind it.',
+		// No topics until the 2027 lineup has them (`src/content/topics.json`
+		// holds 2026's, shown only with `lineup` on).
+		pitch: 'talks and workshops in English, run by the developer community around GUG.cz since 2012.',
 	},
 	organizer: {
 		name: 'GUG.cz',

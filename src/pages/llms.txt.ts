@@ -52,7 +52,7 @@ function facts(topics: string[]): string[] {
 	const when = hasDate ? `on ${EVENT.dateLabel}` : `in ${event.season.toLowerCase().replace(/^fall/, 'the fall of')}`;
 	const where = hasVenue ? `at ${EVENT.venue}, ${EVENT.city}` : `in ${event.city}`;
 	const pending = [!hasDate && 'date', !hasVenue && 'venue'].filter(Boolean).join(' and ');
-	const summary = `> ${event.tagline}: talks and workshops in English, organised by ${organizer.legalName} since 2012. ${EVENT.name} is ${when} ${where}${pending ? `; its ${pending} ${pending.includes(' and ') ? 'are' : 'is'} not announced yet` : ''}.`;
+	const summary = `> ${event.tagline}: ${event.pitch.replace(/\.$/, '')} (${organizer.legalName}). ${EVENT.name} is ${when} ${where}${pending ? `; its ${pending} ${pending.includes(' and ') ? 'are' : 'is'} not announced yet` : ''}.`;
 	return [
 		summary,
 		'',
@@ -115,7 +115,8 @@ async function lineupSections(): Promise<string[]> {
 }
 
 export const GET: APIRoute = async () => {
-	const topics = (await getTopics()).map((t) => t.name);
+	// The topics are the lineup's tracks: stated once the lineup is out.
+	const topics = enabled('lineup') ? (await getTopics()).map((t) => t.name) : [];
 	const tickets = enabled('tickets') ? await staticTicketLines() : [];
 	const lines = [
 		`# ${EVENT.name}`,

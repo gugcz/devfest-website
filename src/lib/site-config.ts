@@ -62,7 +62,9 @@ export interface EventConfig {
 	/** How many developers the day is for (the venue's audience). Unset until
 	 * the venue is known. */
 	audience?: number;
-	/** What the day is about, one sentence, used in meta and calendar text. */
+	/** What the edition is, one sentence in lower case after the tagline
+	 * ("Developer conference & festival: <pitch>"), used in meta, the footer
+	 * and calendar text. */
 	pitch: string;
 	/** The venue. Unset until announced; `venue` (the flag) needs it. */
 	venue?: Venue;
